@@ -14,13 +14,8 @@
 namespace ui
 {
 
-AIHeadPropertyEditor::AIHeadPropertyEditor() :
-	_widget(nullptr),
-	_entity(nullptr)
-{}
-
-AIHeadPropertyEditor::AIHeadPropertyEditor(wxWindow* parent, Entity* entity, const std::string& key, const std::string& options) :
-	_entity(entity)
+AIHeadPropertyEditor::AIHeadPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key, const std::string& options) :
+	_entities(entities)
 {
 	// Construct the main widget (will be managed by the base class)
 	_widget = new wxPanel(parent, wxID_ANY);
@@ -47,22 +42,15 @@ wxPanel* AIHeadPropertyEditor::getWidget()
 	return _widget;
 }
 
-void AIHeadPropertyEditor::updateFromEntity()
+void AIHeadPropertyEditor::updateFromEntities()
 {
 	// nothing to do
 }
 
-void AIHeadPropertyEditor::setEntity(Entity* entity)
-{
-	if (entity == nullptr) throw std::logic_error("No nullptrs allowed as entity argument");
-
-	_entity = entity;
-}
-
-IPropertyEditorPtr AIHeadPropertyEditor::createNew(wxWindow* parent, Entity* entity,
+IPropertyEditor::Ptr AIHeadPropertyEditor::CreateNew(wxWindow* parent, IEntitySelection& entities,
 	const std::string& key, const std::string& options)
 {
-	return IPropertyEditorPtr(new AIHeadPropertyEditor(parent, entity, key, options));
+	return std::make_shared<AIHeadPropertyEditor>(parent, entities, key, options);
 }
 
 void AIHeadPropertyEditor::onChooseButton(wxCommandEvent& ev)
@@ -70,36 +58,39 @@ void AIHeadPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	// Construct a new head chooser dialog
 	AIHeadChooserDialog* dialog = new AIHeadChooserDialog;
 
-	dialog->setSelectedHead(_entity->getKeyValue(DEF_HEAD_KEY));
+	dialog->setSelectedHead(_entities.getSharedKeyValue(DEF_HEAD_KEY));
 
 	// Show and block
 	if (dialog->ShowModal() == wxID_OK)
 	{
-		_entity->setKeyValue(DEF_HEAD_KEY, dialog->getSelectedHead());
+        _entities.foreachEntity([&](Entity* entity)
+        {
+            entity->setKeyValue(DEF_HEAD_KEY, dialog->getSelectedHead());
+        });
 	}
 
 	dialog->Destroy();
 }
 
-std::string AIHeadPropertyEditor::runDialog(Entity* entity, const std::string& key)
+std::string AIHeadEditorDialogWrapper::runDialog(Entity* entity, const std::string& key)
 {
-	// Construct a new head chooser dialog
-	AIHeadChooserDialog* dialog = new AIHeadChooserDialog;
+    // Construct a new head chooser dialog
+    AIHeadChooserDialog* dialog = new AIHeadChooserDialog;
 
-	std::string prevHead = entity->getKeyValue(key);
-	dialog->setSelectedHead(prevHead);
+    std::string prevHead = entity->getKeyValue(key);
+    dialog->setSelectedHead(prevHead);
 
-	// Show and block
-	std::string selected = prevHead;
-	
-	if (dialog->ShowModal() == wxID_OK)
-	{
-		selected = dialog->getSelectedHead();
-	}
+    // Show and block
+    std::string selected = prevHead;
 
-	dialog->Destroy();
+    if (dialog->ShowModal() == wxID_OK)
+    {
+        selected = dialog->getSelectedHead();
+    }
 
-	return selected;
+    dialog->Destroy();
+
+    return selected;
 }
 
 } // namespace ui

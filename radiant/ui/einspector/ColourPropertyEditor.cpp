@@ -12,15 +12,10 @@
 namespace ui
 {
 
-// Blank ctor
-ColourPropertyEditor::ColourPropertyEditor() :
-	_colorButton(NULL)
-{}
-
 // Main ctor
-ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, Entity* entity,
+ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, IEntitySelection& entities,
 										   const std::string& name)
-: PropertyEditor(entity),
+: PropertyEditor(entities),
   _key(name)
 {
 	// Construct the main widget (will be managed by the base class)
@@ -46,7 +41,7 @@ ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, Entity* entity,
 void ColourPropertyEditor::updateFromEntity()
 {
 	// Set colour button's colour
-	setColourButton(_entity->getKeyValue(_key));
+	setColourButton(_entities.getSharedKeyValue(_key));
 }
 
 // Set displayed colour from the keyvalue

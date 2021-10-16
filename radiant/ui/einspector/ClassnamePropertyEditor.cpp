@@ -17,10 +17,10 @@ namespace ui
 {
 
 // Main constructor
-ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, Entity* entity,
+ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelection& entities,
 									     		 const std::string& name,
 									     		 const std::string& options)
-: PropertyEditor(entity),
+: PropertyEditor(entities),
   _key(name)
 {
 	constructBrowseButtonPanel(parent, _("Choose entity class..."),
@@ -29,7 +29,7 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, Entity* entit
 
 void ClassnamePropertyEditor::onBrowseButtonClick()
 {
-	std::string currentEclass = _entity->getKeyValue(_key);
+	std::string currentEclass = _entities.getSharedKeyValue(_key);
 
 	// Use the EntityClassChooser dialog to get a selection from the user
 	std::string selection = wxutil::EntityClassChooser::chooseEntityClass(currentEclass);

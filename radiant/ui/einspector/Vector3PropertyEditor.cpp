@@ -36,13 +36,10 @@ wxSpinCtrl* makeSpinCtrl(wxPanel* parent)
     return ctrl;
 }
 
-// Blank ctor
-Vector3PropertyEditor::Vector3PropertyEditor() {}
-
 // Constructor. Create the widgets here
-Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, Entity* entity,
+Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, IEntitySelection& entities,
                                              const std::string& name)
-: PropertyEditor(entity),
+: PropertyEditor(entities),
   _key(name)
 {
     // Construct the main widget (will be managed by the base class)
@@ -77,7 +74,7 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, Entity* entity,
 
 void Vector3PropertyEditor::updateFromEntity()
 {
-	setWidgetsFromKey(_entity->getKeyValue(_key));
+	setWidgetsFromKey(_entities.getSharedKeyValue(_key));
 }
 
 void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val)
@@ -91,7 +88,7 @@ void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val)
     while (stream >> buf)
         values.push_back(buf);
 
-    // Set the Gtk widgets
+    // Set the widgets
     if (values.size() == 3)
 	{
 		_xValue->SetValue(values[0]);

@@ -13,8 +13,8 @@ namespace ui
 {
 
 // Constructor
-AnglePropertyEditor::AnglePropertyEditor(wxWindow* parent, Entity* entity, const std::string& key)
-: PropertyEditor(entity),
+AnglePropertyEditor::AnglePropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key)
+: PropertyEditor(entities),
   _key(key)
 {
 	// Construct the main widget (will be managed by the base class)

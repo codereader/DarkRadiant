@@ -14,10 +14,10 @@ namespace ui
 {
 
 // Main constructor
-SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, Entity* entity,
+SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, IEntitySelection& entities,
 									     const std::string& name,
 									     const std::string& options)
-: PropertyEditor(entity),
+: PropertyEditor(entities),
   _key(name)
 {
 	constructBrowseButtonPanel(parent, _("Choose sound..."),

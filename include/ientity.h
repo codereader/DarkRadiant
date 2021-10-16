@@ -311,6 +311,26 @@ inline bool Node_isEntity(const scene::INodePtr& node)
     return node->getNodeType() == scene::INode::Type::Entity;
 }
 
+// Represents a set of selected entities
+class IEntitySelection
+{
+public:
+    virtual ~IEntitySelection() {}
+
+    // True if there's no selected entity available
+    virtual bool empty() const = 0;
+
+    // Returns the number of selected entities
+    virtual std::size_t size() const = 0;
+
+    // Iterates over each selected entity, invoking the given functor
+    virtual void foreachEntity(const std::function<void(Entity*)>& functor) = 0;
+
+    // Returns the key value shared by all entities in this set, or an empty string 
+    // if there is no such value.
+    virtual std::string getSharedKeyValue(const std::string& key) = 0;
+};
+
 /**
 * greebo: This is an abstract representation of a target.
 * In Doom3 maps, a Target can be any entity node, that's

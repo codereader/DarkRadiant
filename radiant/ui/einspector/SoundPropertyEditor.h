@@ -21,23 +21,15 @@ private:
 
 public:
 
-	// Default constructor for the map
-	SoundPropertyEditor() { }
-
 	// Main constructor
-	SoundPropertyEditor(wxWindow* parent, Entity* entity,
-					    const std::string& name,
-					    const std::string& options);
+    SoundPropertyEditor(wxWindow* parent, IEntitySelection& entities,
+                        const std::string& name, const std::string& options);
 
-	// Clone method for virtual construction
-	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-								const std::string& name,
-								const std::string& options) override
-	{
-		return PropertyEditorPtr(
-			new SoundPropertyEditor(parent, entity, name, options)
-		);
-	}
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                  const std::string& name, const std::string& options)
+    {
+        return std::make_shared<SoundPropertyEditor>(parent, entities, name, options);
+    }
 };
 
 }

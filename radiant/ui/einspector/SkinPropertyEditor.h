@@ -12,8 +12,7 @@ namespace ui
  * model.
  */
 class SkinPropertyEditor : 
-	public PropertyEditor,
-	public IPropertyEditorDialog
+	public PropertyEditor
 {
 private:
 	// Keyvalue to set
@@ -25,23 +24,22 @@ private:
 
 public:
 
-	// Default constructor for the map
-	SkinPropertyEditor() { }
-
 	// Main constructor
-	SkinPropertyEditor(wxWindow* parent, Entity* entity,
-					   const std::string& name,
-					   const std::string& options);
+    SkinPropertyEditor(wxWindow* parent, IEntitySelection& entities,
+        const std::string& name, const std::string& options);
 
-	// Clone method for virtual construction
-	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-								const std::string& name,
-								const std::string& options) override
-	{
-		return PropertyEditorPtr(new SkinPropertyEditor(parent, entity, name, options));
-	}
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                  const std::string& name, const std::string& options)
+    {
+        return std::make_shared<SkinPropertyEditor>(parent, entities, name, options);
+    }
+};
 
-	std::string runDialog(Entity* entity, const std::string& key) override;
+class SkinChooserDialogWrapper :
+    public IPropertyEditorDialog
+{
+public:
+    std::string runDialog(Entity* entity, const std::string& key) override;
 };
 
 } // namespace

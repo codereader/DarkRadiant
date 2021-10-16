@@ -46,12 +46,14 @@ public:
 
 		// Associated "def_head" with an empty property editor instance
 		GlobalEntityInspector().registerPropertyEditor(
-			ui::DEF_HEAD_KEY, ui::IPropertyEditorPtr(new ui::AIHeadPropertyEditor())
-		);
+			ui::DEF_HEAD_KEY, ui::AIHeadPropertyEditor::CreateNew);
+        GlobalEntityInspector().registerPropertyEditorDialog(ui::DEF_HEAD_KEY,
+            []() { return std::make_shared<ui::AIHeadEditorDialogWrapper>(); });
 
 		GlobalEntityInspector().registerPropertyEditor(
-			ui::DEF_VOCAL_SET_KEY, ui::IPropertyEditorPtr(new ui::AIVocalSetPropertyEditor())
-		);
+			ui::DEF_VOCAL_SET_KEY, ui::AIVocalSetPropertyEditor::CreateNew);
+        GlobalEntityInspector().registerPropertyEditorDialog(ui::DEF_VOCAL_SET_KEY,
+            []() { return std::make_shared<ui::AIVocalSetEditorDialogWrapper>(); });
 
 		GlobalCommandSystem().addCommand("FixupMapDialog", ui::FixupMapDialog::RunDialog);
 
@@ -83,6 +85,9 @@ public:
 		// Remove associated property keys
 		GlobalEntityInspector().unregisterPropertyEditor(ui::DEF_VOCAL_SET_KEY);
 		GlobalEntityInspector().unregisterPropertyEditor(ui::DEF_HEAD_KEY);
+
+        GlobalEntityInspector().unregisterPropertyEditorDialog(ui::DEF_HEAD_KEY);
+        GlobalEntityInspector().unregisterPropertyEditorDialog(ui::DEF_VOCAL_SET_KEY);
 	}
 };
 typedef std::shared_ptr<EditingModule> EditingModulePtr;

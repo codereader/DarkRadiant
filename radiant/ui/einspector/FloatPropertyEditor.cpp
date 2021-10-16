@@ -17,15 +17,10 @@
 namespace ui
 {
 
-FloatPropertyEditor::FloatPropertyEditor() :
-	_spinCtrl(nullptr)
-{}
-
-// Main constructor
-FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, Entity* entity,
+FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, IEntitySelection& entities,
 										 const std::string& key,
 										 const std::string& options)
-: PropertyEditor(entity),
+: PropertyEditor(entities),
   _spinCtrl(nullptr),
   _key(key)
 {
@@ -78,7 +73,7 @@ void FloatPropertyEditor::updateFromEntity()
 {
 	if (_spinCtrl == nullptr) return;
 
-	float value = string::convert<float>(_entity->getKeyValue(_key), 0);
+	float value = string::convert<float>(_entities.getSharedKeyValue(_key), 0);
 	
 	_spinCtrl->SetValue(value);
 }

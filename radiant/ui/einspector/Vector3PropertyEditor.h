@@ -34,19 +34,14 @@ private:
 
 public:
 	// Construct a TextPropertyEditor with an entity and key to edit
-	Vector3PropertyEditor(wxWindow* parent, Entity* entity, const std::string& name);
+	Vector3PropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name);
 
-	// Construct a blank TextPropertyEditor for use in the PropertyEditorFactory
-	Vector3PropertyEditor();
+	void updateFromEntity();
 
-	void updateFromEntity() override;
-
-	// Create a new TextPropertyEditor
-    virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-    									const std::string& name,
-    									const std::string& options) override
-	{
-    	return PropertyEditorPtr(new Vector3PropertyEditor(parent, entity, name));
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                          const std::string& name, const std::string& options)
+    {
+        return std::make_shared<Vector3PropertyEditor>(parent, entities, name);
     }
 };
 

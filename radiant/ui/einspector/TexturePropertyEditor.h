@@ -27,22 +27,14 @@ private:
 public:
 
 	// Construct a TexturePropertyEditor with an entity and key to edit
-	TexturePropertyEditor(wxWindow* parent, Entity* entity,
-						  const std::string& name,
-						  const std::string& options);
-
-	// Construct a blank TexturePropertyEditor for use in the
-	// PropertyEditorFactory
-	TexturePropertyEditor() {}
+    TexturePropertyEditor(wxWindow* parent, IEntitySelection& entities,
+                          const std::string& name, const std::string& options);
 
 	// Create a new TexturePropertyEditor
-    virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-    									const std::string& name,
-    									const std::string& options) override
-	{
-    	return PropertyEditorPtr(
-    		new TexturePropertyEditor(parent, entity, name, options)
-    	);
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                          const std::string& name, const std::string& options)
+    {
+        return std::make_shared<TexturePropertyEditor>(parent, entities, name, options);
     }
 };
 

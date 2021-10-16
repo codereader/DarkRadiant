@@ -20,14 +20,11 @@
 namespace ui
 {
 
-ModelPropertyEditor::ModelPropertyEditor()
-{}
-
 // Main constructor
-ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, Entity* entity,
+ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, IEntitySelection& entities,
 									     const std::string& name,
 									     const std::string& options)
-: PropertyEditor(entity),
+: PropertyEditor(entities),
   _key(name)
 {
 	// Construct the main widget (will be managed by the base class)
@@ -62,7 +59,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 {
 	// Use the ModelSelector to choose a model
 	ModelSelectorResult result = ModelSelector::chooseModel(
-		_entity->getKeyValue(_key), false, false // pass the current model, don't show options or skins
+		_entities.getSharedKeyValue(_key), false, false // pass the current model, don't show options or skins
 	);
 
     UndoableCommand cmd("setModelProperty");
@@ -100,7 +97,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
 {
 	// Invoke ParticlesChooser
-    std::string currentSelection = _entity->getKeyValue(_key);
+    std::string currentSelection = _entities.getSharedKeyValue(_key);
 	std::string particle = ParticlesChooser::ChooseParticle(currentSelection);
 
 	if (!particle.empty())
@@ -111,10 +108,17 @@ void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
 
 void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
 {
-	// Display the SkinChooser to get a skin from the user
-	std::string modelName = _entity->getKeyValue("model");
-	std::string prevSkin = _entity->getKeyValue("skin");
-	std::string skin = SkinChooser::chooseSkin(modelName, prevSkin);
+    auto model = _entities.getSharedKeyValue("model");
+
+    if (model.empty())
+    {
+        wxutil::Messagebox::ShowError(
+            _("The model key values of the selection are ambiguous, cannot choose a skin."), getWidget());
+        return;
+    }
+
+	std::string prevSkin = _entities.getSharedKeyValue("skin");
+	std::string skin = SkinChooser::chooseSkin(model, prevSkin);
 
 	if (skin != prevSkin)
 	{

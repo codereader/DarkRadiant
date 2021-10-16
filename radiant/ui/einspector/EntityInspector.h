@@ -131,7 +131,7 @@ private:
 	wxutil::PopupMenuPtr _contextMenu;
 
 	// Currently displayed PropertyEditor
-	IPropertyEditorPtr _currentPropertyEditor;
+	IPropertyEditor::Ptr _currentPropertyEditor;
 
 	// The clipboard for spawnargs
 	typedef std::pair<std::string, std::string> KeyValuePair;
@@ -276,9 +276,12 @@ public:
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent);
 
-	void registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor);
-	IPropertyEditorPtr getRegisteredPropertyEditor(const std::string& key);
-	void unregisterPropertyEditor(const std::string& key);
+	void registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator) override;
+	void unregisterPropertyEditor(const std::string& key) override;
+
+    void registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create) override;
+    IPropertyEditorDialog::Ptr createDialog(const std::string& key) override;
+    void unregisterPropertyEditorDialog(const std::string& key) override;
 
 	void onMainFrameConstructed();
 	void onMainFrameShuttingDown();

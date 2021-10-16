@@ -5,6 +5,7 @@
 class Entity;
 class wxPanel;
 class wxWindow;
+class IEntitySelection; // defined in ientity.h
 
 namespace ui
 {
@@ -16,6 +17,9 @@ namespace ui
 class IPropertyEditorDialog
 {
 public:
+    using Ptr = std::shared_ptr<IPropertyEditorDialog>;
+    using CreationFunc = std::function<Ptr()>;
+
     virtual ~IPropertyEditorDialog() {}
 
 	/**
@@ -23,10 +27,6 @@ public:
 	 */
 	virtual std::string runDialog(Entity* entity, const std::string& key) = 0;
 };
-typedef std::shared_ptr<IPropertyEditorDialog> IPropertyEditorDialogPtr;
-
-class IPropertyEditor;
-typedef std::shared_ptr<IPropertyEditor> IPropertyEditorPtr;
 
 /**
  * Abstract base for a PropertyEditor which provides
@@ -35,6 +35,26 @@ typedef std::shared_ptr<IPropertyEditor> IPropertyEditorPtr;
 class IPropertyEditor
 {
 public:
+    using Ptr = std::shared_ptr<IPropertyEditor>;
+
+    /**
+     * Construction function object. This callable returns the new PropertyEditor instance.
+     *
+     * @param parent
+     * The parent window, needed by the code to pack the widgets of this editor.
+     *
+     * @param entities
+     * The Entity Set to interact with.
+     *
+     * @param key
+     * The key name which this PropertyEditor is displaying.
+     *
+     * @param options
+     * PropertyEditor-specific options string, from the .game file.
+     */
+    using CreationFunc = std::function<Ptr(wxWindow*, IEntitySelection&, 
+        const std::string& key, const std::string& options)>;
+
     virtual ~IPropertyEditor() {}
 
 	/**
@@ -43,40 +63,9 @@ public:
 	virtual wxPanel* getWidget() = 0;
 
 	/**
-	 * Instructs this editor to focus on a different target, so all operations
-	 * should be performed on the given entity.
-	 * It's not valid to pass nullptrs into this method, doing so will result
-	 * in an exception being thrown.
-	 */
-	virtual void setEntity(Entity* entity) = 0;
-
-	/**
 	 * Instructs the editor to update its widgets from the edited entity's key values.
 	 */
-	virtual void updateFromEntity() = 0;
-
-	/**
-	 * Clone method for virtual construction. This method must create a new
-	 * PropertyEditor of the same type as the derive class which is implementing
-	 * the method.
-	 *
-	 * @param parent
-	 * The parent window, needed by the code to pack the widgets of this editor.
-	 *
-	 * @param entity
-	 * The Entity to edit.
-	 *
-	 * @param key
-	 * The key name which this PropertyEditor is displaying.
-	 *
-	 * @param options
-	 * PropertyEditor-specific options string, from the .game file.
-	 */
-	virtual IPropertyEditorPtr createNew(wxWindow* parent,
-										Entity* entity,
-										const std::string& key,
-										const std::string& options) = 0;
-
+	virtual void updateFromEntities() = 0;
 };
 
 class IEntityInspector :
@@ -92,17 +81,18 @@ public:
 	 * Registers the given property editor and associates it with the given entity key.
 	 * (The string key is interpreted as regular expression.)
 	 */
-	virtual void registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor) = 0;
+	virtual void registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& create) = 0;
 
-	/**
-	 * Looks up a property editor for the given key.
-	 */
-	virtual IPropertyEditorPtr getRegisteredPropertyEditor(const std::string& key) = 0;
-
-	/**
-	 * Removes the property editor for the given key.
-	 */
+    /**
+     * Removes the property editor for the given key.
+     */
 	virtual void unregisterPropertyEditor(const std::string& key) = 0;
+
+    // Dialog Handling
+
+    virtual void registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create) = 0;
+    virtual IPropertyEditorDialog::Ptr createDialog(const std::string& key) = 0;
+    virtual void unregisterPropertyEditorDialog(const std::string& key) = 0;
 
 	// Lets the EntityInspector restore its settings from the Registry
 	virtual void restoreSettings() = 0;
@@ -110,7 +100,7 @@ public:
 
 } // namespace ui
 
-const char* const MODULE_ENTITYINSPECTOR("EntityInspector");
+constexpr const char* const MODULE_ENTITYINSPECTOR("EntityInspector");
 
 inline ui::IEntityInspector& GlobalEntityInspector()
 {

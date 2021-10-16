@@ -13,10 +13,10 @@ namespace ui
 {
 
 // Main constructor
-TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, Entity* entity,
+TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, IEntitySelection& entities,
 											 const std::string& name,
 											 const std::string& options)
-: PropertyEditor(entity),
+: PropertyEditor(entities),
   _prefixes(options),
   _key(name)
 {

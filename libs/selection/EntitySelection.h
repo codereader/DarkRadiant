@@ -30,7 +30,8 @@ namespace selection
  * This class keeps weak references to the scene::Nodes to not interfere with
  * node destruction.
  */
-class EntitySelection final
+class EntitySelection final :
+    public IEntitySelection
 {
 private:
     class SpawnargTracker final :
@@ -112,12 +113,12 @@ public:
         _trackedEntities.clear();
     }
 
-    bool empty() const
+    bool empty() const override
     {
         return _trackedEntities.empty();
     }
 
-    std::size_t size() const
+    std::size_t size() const override
     {
         return _trackedEntities.size();
     }
@@ -163,7 +164,12 @@ public:
         }
     }
 
-    void foreachEntity(const std::function<void(Entity*)>& functor)
+    std::string getSharedKeyValue(const std::string& key) override
+    {
+        return _spawnargs.getSharedKeyValue(key);
+    }
+
+    void foreachEntity(const std::function<void(Entity*)>& functor) override
     {
         for (auto& tracked : _trackedEntities)
         {

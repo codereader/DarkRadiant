@@ -17,38 +17,26 @@
 namespace ui
 {
 
-// Blank ctor
-EntityPropertyEditor::EntityPropertyEditor() :
-	PropertyEditor()
-{}
-
-// Constructor. Create the widgets here
-
-EntityPropertyEditor::EntityPropertyEditor(wxWindow* parent, Entity* entity, const std::string& name) :
-	PropertyEditor(entity),
+EntityPropertyEditor::EntityPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name) :
+	PropertyEditor(entities),
 	_key(name)
 {
 	constructBrowseButtonPanel(parent, _("Choose target entity..."),
 		PropertyEditorFactory::getBitmapFor("entity"));
 }
 
-void EntityPropertyEditor::updateFromEntity()
-{
-	// nothing to do
-}
-
 void EntityPropertyEditor::onBrowseButtonClick()
 {
 	// Use a new dialog window to get a selection from the user
-	std::string selection = EntityChooser::ChooseEntity(_entity->getKeyValue(_key));
+	std::string selection = EntityChooser::ChooseEntity(_entities.getSharedKeyValue(_key));
 
-	// Only apply non-empty selections if the classname has actually changed
-	if (!selection.empty() && selection != _entity->getKeyValue(_key))
+	// Only apply non-empty selections if the value has actually changed
+	if (!selection.empty() && selection != _entities.getSharedKeyValue(_key))
 	{
 		UndoableCommand cmd("changeKeyValue");
 
 		// Apply the change
-		_entity->setKeyValue(_key, selection);
+        setKeyValue(_key, selection);
 	}
 }
 

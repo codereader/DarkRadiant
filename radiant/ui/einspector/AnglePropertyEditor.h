@@ -30,26 +30,16 @@ private:
     std::string _key;
 
 public:
-
-    /**
-     * \brief
-     * Default constructor for the factory map.
-     */
-    AnglePropertyEditor()
-    { }
-
     /**
      * \brief
      * Construct a AnglePropertyEditor to edit the given entity and key.
      */
-    AnglePropertyEditor(wxWindow* parent, Entity* entity, const std::string& key);
+    AnglePropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key);
 
-    /* PropertyEditor implementation */
-    IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-                                const std::string& key,
-                                const std::string& options) override
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                         const std::string& key, const std::string& options)
     {
-        return PropertyEditorPtr(new AnglePropertyEditor(parent, entity, key));
+        return std::make_shared<AnglePropertyEditor>(parent, entities, key);
     }
 
 private:

@@ -21,20 +21,13 @@ protected:
 
 public:
     // Construct a EntityPropertyEditor with an entity and key to edit
-    EntityPropertyEditor(wxWindow* parent, Entity* entity, const std::string& name);
-
-    // Construct a blank EntityPropertyEditor for use in the
-    // PropertyEditorFactory
-    EntityPropertyEditor();
-
-	void updateFromEntity() override;
+    EntityPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name);
 
     // Create a new EntityPropertyEditor
-    virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-    									const std::string& name,
-    									const std::string& options) override
-	{
-        return PropertyEditorPtr(new EntityPropertyEditor(parent, entity, name));
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                         const std::string& name, const std::string& options)
+    {
+        return std::make_shared<EntityPropertyEditor>(parent, entities, name);
     }
 
 private:

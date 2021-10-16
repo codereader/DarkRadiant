@@ -29,28 +29,17 @@ private:
 public:
 
 	/**
-	 * Default constructor for creation in the map.
-	 */
-	FloatPropertyEditor();
-
-	/**
 	 * Construct with Entity, key name and options.
 	 */
-	FloatPropertyEditor(wxWindow* parent, Entity*, const std::string&, const std::string&);
+	FloatPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string&, const std::string&);
 
-	void updateFromEntity() override;
+	void updateFromEntity();
 
-	/**
-	 * Virtual PropertyEditor clone method.
-	 */
-	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-    							const std::string& name,
-    							const std::string& options) override
-	{
-		return PropertyEditorPtr(
-			new FloatPropertyEditor(parent, entity, name, options)
-		);
-	}
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                         const std::string& name, const std::string& options)
+    {
+        return std::make_shared<FloatPropertyEditor>(parent, entities, name, options);
+    }
 
 };
 

@@ -20,12 +20,11 @@ class PropertyEditor;
 typedef std::shared_ptr<PropertyEditor> PropertyEditorPtr;
 
 /**
- * Base class for built-in PropertyEditor widgets. Derived classes
- * need to implement the createNew method for virtual construction.
+ * Base class for built-in PropertyEditor widgets.
  *
  * Derived classes should call setMainWdiget() to pass a smart pointer
- * to this base class. The reference is then
- * held by the base class and destroyed along with the base class.
+ * to this base class. The reference is then held by the base and 
+ * destroyed along with it.
  */
 class PropertyEditor :
 	public wxEvtHandler,
@@ -38,14 +37,11 @@ private:
 	std::function<void()> _oneButtonPanelCallback;
 
 protected:
-	// The entity being focused (NULL if none there)
-	Entity* _entity;
-
-	// Protected blank constructor
-	PropertyEditor();
+	// The selected entities we're working with
+    IEntitySelection& _entities;
 
 	// Protected constructor
-	PropertyEditor(Entity* entity);
+	PropertyEditor(IEntitySelection& entities);
 
 protected:
 	/**
@@ -87,12 +83,8 @@ public:
 	// IPropertyEditor implementation
 	wxPanel* getWidget() override;
 
-	virtual void updateFromEntity() override
-	{
-		// nothing by default, override in subclasses if needed
-	}
-
-	virtual void setEntity(Entity* entity) override;
+    virtual void updateFromEntities() override
+    {}
 };
 
 } // namespace

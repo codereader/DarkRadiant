@@ -11,9 +11,9 @@ class wxColourPickerEvent;
 namespace ui
 {
 
-/** PropertyEditor to allow selection of a colour via GtkColorSelection. The property editor
- * panel will display a GtkColorButton, which when clicked on automatically displays a
- * GtkColorSelectionDialog to choose a new colour.
+/** PropertyEditor to allow selection of a colour via wxColourPickerCtrl. The property editor
+ * panel will display a button, which when clicked on automatically displays a
+ * dialog to choose a new colour.
  */
 
 class ColourPropertyEditor : 
@@ -39,19 +39,15 @@ private:
 public:
 
 	/// Construct a ColourPropertyEditor with a given Entity and keyname
-	ColourPropertyEditor(wxWindow* parent, Entity* entity, const std::string& name);
+	ColourPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name);
 
-	/// Blank constructor for the PropertyEditorFactory
-	ColourPropertyEditor();
-
-	void updateFromEntity() override;
+	void updateFromEntity();
 
 	/// Create a new ColourPropertyEditor
-    virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-    									const std::string& name,
-    									const std::string& options) override
-	{
-    	return PropertyEditorPtr(new ColourPropertyEditor(parent, entity, name));
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+        const std::string& name, const std::string& options)
+    {
+        return std::make_shared<ColourPropertyEditor>(parent, entities, name);
     }
 };
 

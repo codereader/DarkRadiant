@@ -11,38 +11,37 @@ namespace
 	const std::string DEF_VOCAL_SET_KEY = "def_vocal_set";
 }
 
-class AIVocalSetPropertyEditor :
+class AIVocalSetPropertyEditor final :
 	public wxEvtHandler,
-	public IPropertyEditor,
-	public IPropertyEditorDialog
+	public IPropertyEditor
 {
 private:
 	// The top-level widget
 	wxPanel* _widget;
 
-	Entity* _entity;
+    IEntitySelection& _entities;
 
 public:
-	// Default constructor
-	AIVocalSetPropertyEditor();
-
 	~AIVocalSetPropertyEditor();
 
-	AIVocalSetPropertyEditor(wxWindow* parent, Entity* entity,
-		const std::string& key, const std::string& options);
+    AIVocalSetPropertyEditor(wxWindow* parent, IEntitySelection& entities,
+        const std::string& key, const std::string& options);
 
 	wxPanel* getWidget() override;
-	void updateFromEntity() override;
-	void setEntity(Entity* entity) override;
-
-	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-								 const std::string& key,
-								 const std::string& options) override;
-
-	std::string runDialog(Entity* entity, const std::string& key) override;
+	void updateFromEntities() override;
+	
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                         const std::string& key, const std::string& options);
 
 private:
 	void onChooseButton(wxCommandEvent& ev);
+};
+
+class AIVocalSetEditorDialogWrapper :
+    public IPropertyEditorDialog
+{
+public:
+    std::string runDialog(Entity* entity, const std::string& key) override;
 };
 
 } // namespace ui

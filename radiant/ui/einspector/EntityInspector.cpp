@@ -367,7 +367,7 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     // Also update the property editor if the changed key is highlighted
     if (_currentPropertyEditor && key == selectedKey)
     {
-        _currentPropertyEditor->updateFromEntity();
+        _currentPropertyEditor->updateFromEntities();
     }
 }
 
@@ -560,6 +560,8 @@ const StringSet& EntityInspector::getDependencies() const
 
 void EntityInspector::initialiseModule(const IApplicationContext& ctx)
 {
+    PropertyEditorFactory::registerClasses();
+
     construct();
 
     GlobalMainFrame().signal_MainFrameConstructed().connect(
@@ -572,14 +574,9 @@ void EntityInspector::initialiseModule(const IApplicationContext& ctx)
     GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);
 }
 
-void EntityInspector::registerPropertyEditor(const std::string& key, const IPropertyEditorPtr& editor)
+void EntityInspector::registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator)
 {
-    PropertyEditorFactory::registerPropertyEditor(key, editor);
-}
-
-IPropertyEditorPtr EntityInspector::getRegisteredPropertyEditor(const std::string& key)
-{
-    return PropertyEditorFactory::getRegisteredPropertyEditor(key);
+    PropertyEditorFactory::registerPropertyEditor(key, creator);
 }
 
 void EntityInspector::unregisterPropertyEditor(const std::string& key)
@@ -1380,7 +1377,7 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 
             // Construct and add a new PropertyEditor
             _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
-                parms.type, nullptr, key, parms.options);
+                parms.type, *_entitySelection, key, parms.options);
 
             if (_currentPropertyEditor)
             {
@@ -1762,6 +1759,21 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
             }
         }
     });
+}
+
+void EntityInspector::registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create)
+{
+    PropertyEditorFactory::registerPropertyEditorDialog(key, create);
+}
+
+IPropertyEditorDialog::Ptr EntityInspector::createDialog(const std::string& key)
+{
+    return PropertyEditorFactory::createDialog(key);
+}
+
+void EntityInspector::unregisterPropertyEditorDialog(const std::string& key)
+{
+    PropertyEditorFactory::unregisterPropertyEditorDialog(key);
 }
 
 void EntityInspector::toggle(const cmd::ArgumentList& args)

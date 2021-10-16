@@ -428,8 +428,7 @@ void AIEditingPanel::onBrowseButton(wxCommandEvent& ev, const std::string& key)
 	if (_entity == nullptr) return;
 
 	// Look up the property editor dialog
-	IPropertyEditorPtr editor = GlobalEntityInspector().getRegisteredPropertyEditor(key);
-	IPropertyEditorDialogPtr dialog = std::dynamic_pointer_cast<IPropertyEditorDialog>(editor);
+    IPropertyEditorDialog::Ptr dialog = GlobalEntityInspector().createDialog(key);
 
 	if (dialog)
 	{

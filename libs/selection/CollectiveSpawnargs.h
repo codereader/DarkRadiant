@@ -77,6 +77,20 @@ public:
         return _entitiesByKey.count(key) > 0;
     }
 
+    std::string getSharedKeyValue(const std::string& key)
+    {
+        auto existingKeySet = _entitiesByKey.find(key);
+
+        if (existingKeySet == _entitiesByKey.end() ||
+            !existingKeySet->second.valueIsEqualOnAllEntities ||
+            existingKeySet->second.entities.empty())
+        {
+            return {};
+        }
+
+        return getCachedKeyValuePairForEntity(*existingKeySet->second.entities.begin(), key).second;
+    }
+
     void foreachKey(const std::function<void(const std::string&, const KeyValueSet&)>& functor)
     {
         for (const auto& pair : _entitiesByKey)

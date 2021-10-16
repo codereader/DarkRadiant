@@ -26,23 +26,15 @@ private:
 
 public:
 
-	// Default constructor for the map
-	ModelPropertyEditor();
-
 	// Main constructor
-	ModelPropertyEditor(wxWindow* parent, Entity* entity,
-					    const std::string& name,
-					    const std::string& options);
+    ModelPropertyEditor(wxWindow* parent, IEntitySelection& entities,
+        const std::string& name, const std::string& options);
 
-	// Clone method for virtual construction
-	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-								const std::string& name,
-								const std::string& options) override
-	{
-		return PropertyEditorPtr(
-			new ModelPropertyEditor(parent, entity, name, options)
-		);
-	}
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                  const std::string& name, const std::string& options)
+    {
+        return std::make_shared<ModelPropertyEditor>(parent, entities, name, options);
+    }
 };
 
 } // namespace

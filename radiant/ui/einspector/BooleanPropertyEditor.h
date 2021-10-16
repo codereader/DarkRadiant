@@ -29,21 +29,16 @@ private:
 
 public:
 
-	// Construct a BooleanPropertyEditor with an entity and key to edit
-	BooleanPropertyEditor(wxWindow* parent, Entity* entity, const std::string& name);
+	// Construct a BooleanPropertyEditor with a key to edit
+	BooleanPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name);
 
-	// Construct a blank BooleanPropertyEditor for use in the
-	// PropertyEditorFactory
-	BooleanPropertyEditor();
-
-	void updateFromEntity() override;
+	void updateFromEntity();
 
 	// Create a new BooleanPropertyEditor
-    virtual IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-    									const std::string& name,
-    									const std::string& options) override
-	{
-    	return PropertyEditorPtr(new BooleanPropertyEditor(parent, entity, name));
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                         const std::string& name, const std::string& options)
+    {
+        return std::make_shared<BooleanPropertyEditor>(parent, entities, name);
     }
 };
 

@@ -11,38 +11,37 @@ namespace ui
 		const std::string DEF_HEAD_KEY = "def_head";
 	}
 
-class AIHeadPropertyEditor :
+class AIHeadPropertyEditor final :
 	public wxEvtHandler,
-	public IPropertyEditor,
-	public IPropertyEditorDialog
+	public IPropertyEditor
 {
 private:
 	// The top-level widget
 	wxPanel* _widget;
 
-	Entity* _entity;
+    IEntitySelection& _entities;
 
 public:
-	// Default constructor
-	AIHeadPropertyEditor();
-
 	~AIHeadPropertyEditor();
 
 	wxPanel* getWidget() override;
-	void updateFromEntity() override;
-	void setEntity(Entity* entity) override;
+	void updateFromEntities();
 
-	AIHeadPropertyEditor(wxWindow* parent, Entity* entity,
+	AIHeadPropertyEditor(wxWindow* parent, IEntitySelection& entities,
 		const std::string& key, const std::string& options);
 
-	IPropertyEditorPtr createNew(wxWindow* parent, Entity* entity,
-								const std::string& key,
-								const std::string& options) override;
-
-	std::string runDialog(Entity* entity, const std::string& key) override;
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
+                         const std::string& key, const std::string& options);
 
 private:
 	void onChooseButton(wxCommandEvent& ev);
+};
+
+class AIHeadEditorDialogWrapper :
+    public IPropertyEditorDialog
+{
+public:
+    std::string runDialog(Entity* entity, const std::string& key) override;
 };
 
 } // namespace ui

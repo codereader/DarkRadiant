@@ -9,14 +9,9 @@
 namespace ui
 {
 
-PropertyEditor::PropertyEditor() :
+PropertyEditor::PropertyEditor(IEntitySelection& entities) :
 	_mainWidget(nullptr),
-	_entity(nullptr)
-{}
-
-PropertyEditor::PropertyEditor(Entity* entity) :
-	_mainWidget(nullptr),
-	_entity(entity)
+	_entities(entities)
 {}
 
 PropertyEditor::~PropertyEditor()
@@ -47,31 +42,21 @@ wxPanel* PropertyEditor::getWidget()
 	return _mainWidget;
 }
 
-void PropertyEditor::setEntity(Entity* entity)
-{
-	if (entity == nullptr) throw std::logic_error("No nullptrs allowed as entity argument");
-
-	if (_entity != entity)
-	{
-		_entity = entity;
-
-		// Let any subclasses update themselves now that the entity got changed
-		updateFromEntity();
-	}
-}
-
 std::string PropertyEditor::getKeyValue(const std::string& key)
 {
-	return _entity != nullptr ? _entity->getKeyValue(key) : std::string();
+    return _entities.getSharedKeyValue(key);
 }
 
 void PropertyEditor::setKeyValue(const std::string& key, const std::string& value)
 {
-	if (_entity == nullptr) return;
+    if (_entities.empty()) return;
 
-	UndoableCommand cmd("setProperty");
+    UndoableCommand cmd("setProperty");
 
-	_entity->setKeyValue(key, value);
+    _entities.foreachEntity([&](Entity* entity)
+    {
+        entity->setKeyValue(key, value);
+    });
 }
 
 void PropertyEditor::constructBrowseButtonPanel(wxWindow* parent, const std::string& label,

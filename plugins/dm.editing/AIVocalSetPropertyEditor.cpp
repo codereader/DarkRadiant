@@ -14,13 +14,8 @@
 namespace ui
 {
 
-AIVocalSetPropertyEditor::AIVocalSetPropertyEditor() :
-	_widget(nullptr),
-	_entity(nullptr)
-{}
-
-AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, Entity* entity, const std::string& key, const std::string& options) :
-	_entity(entity)
+AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key, const std::string& options) :
+	_entities(entities)
 {
 	// Construct the main widget (will be managed by the base class)
 	_widget = new wxPanel(parent, wxID_ANY);
@@ -47,22 +42,15 @@ wxPanel* AIVocalSetPropertyEditor::getWidget()
 	return _widget;
 }
 
-void AIVocalSetPropertyEditor::updateFromEntity()
+void AIVocalSetPropertyEditor::updateFromEntities()
 {
 	// Nothing to do
 }
 
-void AIVocalSetPropertyEditor::setEntity(Entity* entity)
-{
-	if (entity == nullptr) throw std::logic_error("No nullptrs allowed as entity argument");
-
-	_entity = entity;
-}
-
-IPropertyEditorPtr AIVocalSetPropertyEditor::createNew(wxWindow* parent, Entity* entity,
+IPropertyEditor::Ptr AIVocalSetPropertyEditor::CreateNew(wxWindow* parent, IEntitySelection& entities,
 	const std::string& key, const std::string& options)
 {
-	return IPropertyEditorPtr(new AIVocalSetPropertyEditor(parent, entity, key, options));
+	return std::make_shared<AIVocalSetPropertyEditor>(parent, entities, key, options);
 }
 
 void AIVocalSetPropertyEditor::onChooseButton(wxCommandEvent& ev)
@@ -70,36 +58,39 @@ void AIVocalSetPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	// Construct a new vocal set chooser dialog
 	AIVocalSetChooserDialog* dialog = new AIVocalSetChooserDialog;
 
-	dialog->setSelectedVocalSet(_entity->getKeyValue(DEF_VOCAL_SET_KEY));
+	dialog->setSelectedVocalSet(_entities.getSharedKeyValue(DEF_VOCAL_SET_KEY));
 
 	// Show and block
 	if (dialog->ShowModal() == wxID_OK)
 	{
-		_entity->setKeyValue(DEF_VOCAL_SET_KEY, dialog->getSelectedVocalSet());
+        _entities.foreachEntity([&](Entity* entity)
+        {
+            entity->setKeyValue(DEF_VOCAL_SET_KEY, dialog->getSelectedVocalSet());
+        });
 	}
 
 	dialog->Destroy();
 }
 
-std::string AIVocalSetPropertyEditor::runDialog(Entity* entity, const std::string& key)
+std::string AIVocalSetEditorDialogWrapper::runDialog(Entity* entity, const std::string& key)
 {
-	// Construct a new vocal set chooser dialog
-	AIVocalSetChooserDialog* dialog = new AIVocalSetChooserDialog;
+    // Construct a new vocal set chooser dialog
+    AIVocalSetChooserDialog* dialog = new AIVocalSetChooserDialog;
 
-	std::string oldValue = entity->getKeyValue(DEF_VOCAL_SET_KEY);
-	dialog->setSelectedVocalSet(oldValue);
+    std::string oldValue = entity->getKeyValue(DEF_VOCAL_SET_KEY);
+    dialog->setSelectedVocalSet(oldValue);
 
-	// Show and block
-	std::string rv = oldValue;
+    // Show and block
+    std::string rv = oldValue;
 
-	if (dialog->ShowModal() == wxID_OK)
-	{
-		rv = dialog->getSelectedVocalSet();
-	}
+    if (dialog->ShowModal() == wxID_OK)
+    {
+        rv = dialog->getSelectedVocalSet();
+    }
 
-	dialog->Destroy();
+    dialog->Destroy();
 
-	return rv;
+    return rv;
 }
 
 } // namespace ui
