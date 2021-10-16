@@ -142,6 +142,17 @@ void EntityInspector::construct()
     // changes.
     GlobalSelectionSystem().addObserver(this);
     _entitySelection.reset(new selection::EntitySelection);
+
+    // Connect the signals
+    _keyValueAddedHandler = _entitySelection->getSpawnargs().signal_KeyAdded().connect(
+        sigc::mem_fun(this, &EntityInspector::onKeyAdded)
+    );
+    _keyValueRemovedHandler = _entitySelection->getSpawnargs().signal_KeyRemoved().connect(
+        sigc::mem_fun(this, &EntityInspector::onKeyRemoved)
+    );
+    _keyValueSetChangedHandler = _entitySelection->getSpawnargs().signal_KeyValueSetChanged().connect(
+        sigc::mem_fun(this, &EntityInspector::onKeyValueSetChanged)
+    );
     
     _defsReloadedHandler = GlobalEntityClassManager().defsReloadedSignal().connect(
         sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
@@ -188,17 +199,10 @@ void EntityInspector::onMapEditModeChanged(IMap::EditMode mode)
 void EntityInspector::onKeyInsert(const std::string& key,
                                   EntityKeyValue& value)
 {
-    onKeyChange(key, value.get());
+    //onKeyChange(key, value.get());
 }
 
-void EntityInspector::onKeyChange(const std::string& key,
-    const std::string& value)
-{
-    onKeyChange(nullptr, key, value);
-}
-
-void EntityInspector::onKeyChange(Entity* entity, const std::string& key,
-                                  const std::string& value)
+void EntityInspector::onKeyChange(const std::string& key, const std::string& value)
 {
     wxDataViewItem keyValueIter;
     bool added = false;
@@ -215,7 +219,7 @@ void EntityInspector::onKeyChange(Entity* entity, const std::string& key,
     {
         // Append a new row to the list store and add it to the iter map
         keyValueIter = _kvStore->AddItem().getItem();
-        _keyValueIterMap.insert(TreeIterMap::value_type(key, keyValueIter));
+        _keyValueIterMap.emplace(key, keyValueIter);
 
         added = true;
     }
@@ -227,10 +231,11 @@ void EntityInspector::onKeyChange(Entity* entity, const std::string& key,
 
     //assert(!_selectedEntity.expired());
     //Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
-    auto selectedEntity = entity;
+    //auto selectedEntity = entity;
 
     bool hasDescription = false;
 
+#if 0
     if (selectedEntity != nullptr)
     {
         // Check the entityclass (which will return blank if not found)
@@ -244,6 +249,7 @@ void EntityInspector::onKeyChange(Entity* entity, const std::string& key,
 
         hasDescription = !attr.getDescription().empty();
     }
+#endif
 
     // Set the values for the row
     wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
@@ -365,6 +371,8 @@ void EntityInspector::onKeyChange(Entity* entity, const std::string& key,
 void EntityInspector::onKeyErase(const std::string& key,
                                  EntityKeyValue& value)
 {
+    return;
+
     // Look up iter in the TreeIter map, and delete it from the list store
     TreeIterMap::iterator i = _keyValueIterMap.find(key);
     if (i != _keyValueIterMap.end())
@@ -455,6 +463,9 @@ void EntityInspector::onMainFrameShuttingDown()
     _selectedEntity.reset();
 
     GlobalSelectionSystem().removeObserver(this);
+    _keyValueAddedHandler.disconnect();
+    _keyValueRemovedHandler.disconnect();
+    _keyValueSetChangedHandler.disconnect();
     _entitySelection.reset();
 
     _mergeActions.clear();
@@ -471,6 +482,36 @@ void EntityInspector::onMainFrameShuttingDown()
     // Remove the current property editor to prevent destructors
     // from firing too late in the shutdown process
     _currentPropertyEditor.reset();
+}
+
+void EntityInspector::onKeyAdded(const std::string& key, const std::string& value)
+{
+    onKeyChange(key, value);
+}
+
+void EntityInspector::onKeyRemoved(const std::string& key)
+{
+    // Look up iter in the TreeIter map, and delete it from the list store
+    auto i = _keyValueIterMap.find(key);
+
+    if (i != _keyValueIterMap.end())
+    {
+        // Erase row from tree store
+        _kvStore->RemoveItem(i->second);
+
+        // Erase iter from iter map
+        _keyValueIterMap.erase(i);
+    }
+    else
+    {
+        rConsoleError() << "EntityInspector: warning: removed key '" << key
+            << "' not found in map." << std::endl;
+    }
+}
+
+void EntityInspector::onKeyValueSetChanged(const std::string& key, const std::string& uniqueValue)
+{
+    onKeyChange(key, uniqueValue.empty() ? _("[differing values]") : uniqueValue);
 }
 
 void EntityInspector::onUndoRedoOperation()
@@ -1463,14 +1504,14 @@ void EntityInspector::getEntityFromSelectionSystem()
 
     if (numSelectedEntities == 0)
     {
-        changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+        //changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
         _primitiveNumLabel->SetLabelText("");
         return;
     }
 
     if (numSelectedEntities > 1)
     {
-        changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+        //changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
         _primitiveNumLabel->SetLabelText(fmt::format("[{0} Entities]", numSelectedEntities));
     }
 
@@ -1559,6 +1600,7 @@ void EntityInspector::getEntityFromSelectionSystem()
 
 void EntityInspector::updateTreeView()
 {
+#if 0
     // Clear the view. If the old entity has been destroyed before we had
     // a chance to disconnect the list store might contain remnants
     _keyValueIterMap.clear();
@@ -1568,7 +1610,8 @@ void EntityInspector::updateTreeView()
 
     // Reset the sorting when changing entities
     _keyValueTreeView->ResetSortingOnAllColumns();
-
+#endif
+#if 0
     _entitySelection->foreachKey([&](const std::string& key, const selection::CollectiveSpawnargs::KeyValueSet& set)
     {
         if (set.valueIsEqualOnAllEntities)
@@ -1581,10 +1624,12 @@ void EntityInspector::updateTreeView()
             onKeyChange(key, _("[multiple values]"));
         }
     });
+#endif
 }
 
 void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode)
 {
+    return;
 #if 0
     // Check what we need to do with the existing entity
     scene::INodePtr oldEntity = _selectedEntity.lock();

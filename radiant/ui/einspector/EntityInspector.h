@@ -153,6 +153,10 @@ private:
 	sigc::connection _defsReloadedHandler;
 	sigc::connection _mapEditModeChangedHandler;
 
+	sigc::connection _keyValueAddedHandler;
+	sigc::connection _keyValueRemovedHandler;
+	sigc::connection _keyValueSetChangedHandler;
+
     // Maps the key names to a possible merge action that should be displayed
     std::map<std::string, scene::merge::IEntityKeyValueMergeAction::Ptr> _mergeActions;
     std::map<std::string, scene::merge::IConflictResolutionAction::Ptr> _conflictActions;
@@ -203,6 +207,10 @@ private:
 	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
 	void _onContextMenu(wxDataViewEvent& ev);
 	void _onDataViewItemChanged(wxDataViewEvent& ev);
+
+    void onKeyAdded(const std::string& key, const std::string& value);
+    void onKeyRemoved(const std::string& key);
+    void onKeyValueSetChanged(const std::string& key, const std::string& uniqueValue);
 
 	void handleShowInheritedChanged();
 	void handleShowHelpTextChanged();
@@ -271,10 +279,8 @@ public:
 	void onMainFrameConstructed();
 	void onMainFrameShuttingDown();
 
-	/* Entity::Observer implementation */
     void onKeyInsert(const std::string& key, EntityKeyValue& value);
     void onKeyChange(const std::string& key, const std::string& value);
-    void onKeyChange(Entity* entity, const std::string& key, const std::string& value);
     void onKeyErase(const std::string& key, EntityKeyValue& value);
 
 	// greebo: Tells the inspector to reload the window settings from the registry.
