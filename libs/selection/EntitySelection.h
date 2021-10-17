@@ -57,11 +57,6 @@ private:
 
         ~SpawnargTracker()
         {
-            if (_node.expired())
-            {
-                return; // cannot unsubscribe, the node is gone
-            }
-
             // Call the onEntityRemoved method instead of relying on the onKeyErase()
             // invocations when detaching the observer. This allows us to keep some
             // assumptions about entity count in the CollectiveSpawnargs::onKeyErase method
@@ -71,8 +66,11 @@ private:
             auto entity = _entity;
             _entity = nullptr;
 
-            // Detaching the observer won't do anything here anymore
-            entity->detachObserver(this);
+            if (!_node.expired())
+            {
+                // Detaching the observer won't do anything here anymore
+                entity->detachObserver(this);
+            }
         }
 
         scene::INodePtr getNode() const

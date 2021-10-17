@@ -7,6 +7,7 @@
 #include "iselectable.h"
 #include "selection/EntitySelection.h"
 #include "algorithm/Entity.h"
+#include "scenelib.h"
 
 namespace test
 {
@@ -492,6 +493,34 @@ TEST_F(EntityInspectorTest, UndoRedoKeyValueAdditionRemoval)
             EXPECT_EQ(keyValueStore.store[pair.first], pair.second) << "Keyvalues not matching up after redo";
         }
     }
+}
+
+TEST_F(EntityInspectorTest, DeletedEntitiesAreSafelyUntracked)
+{
+    KeyValueStore keyValueStore;
+
+    // Create a single entity
+    auto cls = GlobalEntityClassManager().findClass("atdm:ai_builder_guard");
+    auto guardNode = GlobalEntityModule().createEntity(cls);
+
+    // Create a weak reference to check whether the entity is gone
+    std::weak_ptr<IEntityNode> weakGuardNode(guardNode);
+
+    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
+    Node_setSelected(guardNode, true);
+
+    keyValueStore.rescanSelection();
+
+    EXPECT_FALSE(keyValueStore.store.empty()) << "No key values visible after selecting the entity";
+    guardNode.reset();
+
+    // Close the existing map, this should release all references
+    GlobalCommandSystem().executeCommand("NewMap");
+
+    EXPECT_TRUE(weakGuardNode.expired()) << "Guard node is still alive after changing maps";
+    keyValueStore.rescanSelection();
+
+    EXPECT_TRUE(keyValueStore.store.empty()) << "No key values should be visible after changing maps";
 }
 
 }
