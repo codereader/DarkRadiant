@@ -1425,11 +1425,9 @@ TEST_F(EntityTest, KeyObserverAttachedAfterUndo)
     EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on change";
     EXPECT_EQ(observer.receivedValue, SomeOtherValue) << "Observer didn't get the correct value";
 
-    // Reset and hit Undo to revert the changed value
+    // Hit Undo to revert the changed value
     GlobalUndoSystem().undo();
-
-    // Key should be reverted now
-    EXPECT_EQ(guard->getKeyValue(NewKeyName), NewKeyValue);
+    EXPECT_EQ(guard->getKeyValue(NewKeyName), NewKeyValue) << "Key is still changed after undo";
 
     // Reset the observer and check whether it still receives messages
     observer.reset();
@@ -1437,6 +1435,50 @@ TEST_F(EntityTest, KeyObserverAttachedAfterUndo)
 
     EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on assign";
     EXPECT_EQ(observer.receivedValue, SomeOtherValue) << "Observer didn't get the correct value";
+
+    keyValue->detach(observer);
+}
+
+// Checks that the value changes by undo/redo commands are sent out to the KeyObservers
+TEST_F(EntityTest, KeyObserverUndoRedoValueChange)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
+    auto guard = Node_getEntity(guardNode);
+
+    constexpr const char* NewKeyName = "New_Unique_Key";
+    constexpr const char* NewKeyValue = "New_Unique_Value";
+    guard->setKeyValue(NewKeyName, NewKeyValue);
+
+    TestKeyObserver observer;
+    EntityKeyValue* keyValue = findKeyValue(guard, NewKeyName);
+    EXPECT_TRUE(keyValue != nullptr) << "Could not locate the key value";
+
+    // Monitor this new key
+    keyValue->attach(observer);
+    observer.reset();
+
+    // Open an undoable transaction and change that keyvalue
+    constexpr const char* SomeOtherValue = "SomeOtherValue";
+    {
+        UndoableCommand cmd("changeKeyValue");
+        guard->setKeyValue(NewKeyName, SomeOtherValue);
+    }
+
+    // Undo
+    observer.reset();
+    GlobalUndoSystem().undo();
+    EXPECT_EQ(guard->getKeyValue(NewKeyName), NewKeyValue) << "Key value wasn't properly reverted";
+    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on undo";
+    EXPECT_EQ(observer.receivedValue, NewKeyValue) << "Observer didn't get the value before change";
+
+    // Redo
+    observer.reset();
+    GlobalUndoSystem().redo();
+
+    EXPECT_EQ(guard->getKeyValue(NewKeyName), SomeOtherValue) << "Key value wasn't properly redone";
+    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on redo";
+    EXPECT_EQ(observer.receivedValue, SomeOtherValue) << "Observer didn't get the value after change";
 
     keyValue->detach(observer);
 }
