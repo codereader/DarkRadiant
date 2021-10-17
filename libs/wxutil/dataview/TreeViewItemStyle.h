@@ -88,6 +88,12 @@ public:
         SetStrikethrough(attr, true);
     }
 
+    static void ApplyKeyValueAmbiguousStyle(wxDataViewItemAttr& attr)
+    {
+        attr.SetColour(wxColour(80, 80, 80));
+        SetItalic(attr, true);
+    }
+
     static void ApplyKeyValueConflictStyle(wxDataViewItemAttr& attr)
     {
         if (SupportsBackgroundColour())
@@ -105,6 +111,13 @@ public:
     {
 #if wxCHECK_VERSION(3, 1, 2)
         attr.SetStrikethrough(enabled);
+#endif
+    }
+
+    static void SetItalic(wxDataViewItemAttr& attr, bool enabled)
+    {
+#if wxCHECK_VERSION(3, 1, 2)
+        attr.SetItalic(enabled);
 #endif
     }
 

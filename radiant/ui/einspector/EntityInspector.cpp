@@ -205,7 +205,7 @@ void EntityInspector::onKeyInsert(const std::string& key,
     //onKeyChange(key, value.get());
 }
 
-void EntityInspector::onKeyChange(const std::string& key, const std::string& value)
+void EntityInspector::onKeyChange(const std::string& key, const std::string& value, bool isMultiValue)
 {
     wxDataViewItem keyValueIter;
     bool added = false;
@@ -336,8 +336,15 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
 
     // Apply background style to all other columns
     row[_columns.name] = style;
-    row[_columns.value] = style;
     row[_columns.booleanValue] = style;
+
+    // Before applying the style to the value, check if the value is ambiguous
+    if (isMultiValue)
+    {
+        wxutil::TreeViewItemStyle::ApplyKeyValueAmbiguousStyle(style);
+    }
+
+    row[_columns.value] = style;
 
     row[_columns.isInherited] = false;
     row[_columns.hasHelpText] = key == "classname" || hasDescription; // classname always has a description
@@ -514,12 +521,12 @@ void EntityInspector::onKeyRemoved(const std::string& key)
 
 void EntityInspector::onKeyValueSetChanged(const std::string& key, const std::string& uniqueValue)
 {
-    onKeyChange(key, uniqueValue.empty() ? _("[differing values]") : uniqueValue);
+    onKeyChange(key, uniqueValue.empty() ? _("[differing values]") : uniqueValue, uniqueValue.empty());
 }
 
 void EntityInspector::onUndoRedoOperation()
 {
-    refresh();
+    //refresh();
 }
 
 void EntityInspector::onDefsReloaded()
