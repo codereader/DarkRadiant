@@ -41,20 +41,18 @@ namespace selection
 namespace ui
 {
 
-class EntityInspector;
-typedef std::shared_ptr<EntityInspector> EntityInspectorPtr;
+class PropertyEditorFactory;
 
 /**
  * The EntityInspector class represents the GTK dialog for editing properties
  * on the selected game entity. The class is implemented as a singleton and
  * contains a method to return the current instance.
  */
-class EntityInspector :
+class EntityInspector final :
 	public IEntityInspector,
     public selection::SelectionSystem::Observer,
     public wxutil::SingleIdleCallback,
-    public Entity::Observer,
-	public std::enable_shared_from_this<EntityInspector>
+    public Entity::Observer
 {
 public:
 	struct TreeColumns :
@@ -80,6 +78,8 @@ public:
 	};
 
 private:
+    std::unique_ptr<PropertyEditorFactory> _propertyEditorFactory;
+
     // Tracking helpers to organise the selected entities and their key values
     std::unique_ptr<selection::CollectiveSpawnargs> _spawnargs;
     std::unique_ptr<selection::EntitySelection> _entitySelection;
@@ -298,10 +298,11 @@ public:
 	 */
 	static void toggle(const cmd::ArgumentList& args);
 
-	// RegisterableModule implementation
-	virtual const std::string& getName() const;
-	virtual const StringSet& getDependencies() const;
-	virtual void initialiseModule(const IApplicationContext& ctx);
+    // RegisterableModule implementation
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const IApplicationContext& ctx) override;
+    void shutdownModule() override;
 };
 
 } // namespace ui

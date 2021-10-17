@@ -287,7 +287,7 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     }
 
     wxIcon icon;
-    icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : PropertyEditorFactory::getBitmapFor(parms.type));
+    icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : _propertyEditorFactory->getBitmapFor(parms.type));
 
     row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
     row[_columns.value] = value;
@@ -560,7 +560,7 @@ const StringSet& EntityInspector::getDependencies() const
 
 void EntityInspector::initialiseModule(const IApplicationContext& ctx)
 {
-    PropertyEditorFactory::registerClasses();
+    _propertyEditorFactory.reset(new PropertyEditorFactory);
 
     construct();
 
@@ -574,17 +574,20 @@ void EntityInspector::initialiseModule(const IApplicationContext& ctx)
     GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);
 }
 
+void EntityInspector::shutdownModule()
+{
+    _propertyEditorFactory.reset();
+}
+
 void EntityInspector::registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator)
 {
-    PropertyEditorFactory::registerPropertyEditor(key, creator);
+    _propertyEditorFactory->registerPropertyEditor(key, creator);
 }
 
 void EntityInspector::unregisterPropertyEditor(const std::string& key)
 {
-    PropertyEditorFactory::unregisterPropertyEditor(key);
+    _propertyEditorFactory->unregisterPropertyEditor(key);
 }
-
-// Return the Gtk widget for the EntityInspector dialog.
 
 wxPanel* EntityInspector::getWidget()
 {
@@ -1376,7 +1379,7 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
             }
 
             // Construct and add a new PropertyEditor
-            _currentPropertyEditor = PropertyEditorFactory::create(_editorFrame,
+            _currentPropertyEditor = _propertyEditorFactory->create(_editorFrame,
                 parms.type, *_entitySelection, key, parms.options);
 
             if (_currentPropertyEditor)
@@ -1763,17 +1766,17 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
 
 void EntityInspector::registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create)
 {
-    PropertyEditorFactory::registerPropertyEditorDialog(key, create);
+    _propertyEditorFactory->registerPropertyEditorDialog(key, create);
 }
 
 IPropertyEditorDialog::Ptr EntityInspector::createDialog(const std::string& key)
 {
-    return PropertyEditorFactory::createDialog(key);
+    return _propertyEditorFactory->createDialog(key);
 }
 
 void EntityInspector::unregisterPropertyEditorDialog(const std::string& key)
 {
-    PropertyEditorFactory::unregisterPropertyEditorDialog(key);
+    _propertyEditorFactory->unregisterPropertyEditorDialog(key);
 }
 
 void EntityInspector::toggle(const cmd::ArgumentList& args)

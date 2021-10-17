@@ -7,52 +7,50 @@
 #include <wx/bitmap.h>
 
 /* FORWARD DECLS */
-class Entity;
+class IEntitySelection;
 
 namespace ui
 {
 
-/* PropertyEditorFactory
- *
- * Factory class to create PropertyEditor child classes based on the classnames
- * provided at runtime.
+/**
+ * PropertyEditorFactory
+ * Factory class to create PropertyEditor instances for given entity keys.
  */
-
-class PropertyEditorFactory
+class PropertyEditorFactory final
 {
-
-   // Mapping from classnames to PropertyEditor child instances. The child
-   // instance's createNew() function will be used to create a new object of
-   // the correct type.
-   typedef std::map<std::string, IPropertyEditor::CreationFunc> PropertyEditorMap;
-   static PropertyEditorMap _peMap;
+   // Mapping from classnames to PropertyEditor child instances. The type's 
+   // CreationFunc object will be used to create a new object
+   std::map<std::string, IPropertyEditor::CreationFunc> _peMap;
 
    // A mapping between (regex) keys and custom editors (registered by plug-ins, etc.)
-   static PropertyEditorMap _customEditors;
+   std::map<std::string, IPropertyEditor::CreationFunc> _customEditors;
 
-   static std::map<std::string, IPropertyEditorDialog::CreationFunc> _dialogs;
+   std::map<std::string, IPropertyEditorDialog::CreationFunc> _dialogs;
 
 public:
+    PropertyEditorFactory();
+    ~PropertyEditorFactory();
 
     // Create a new PropertyEditor with the provided classname to manage the
     // given Entity object and key name.
-    static IPropertyEditor::Ptr create(wxWindow* parent, const std::string& className,
+    IPropertyEditor::Ptr create(wxWindow* parent, const std::string& className,
         IEntitySelection& entities, const std::string& key, const std::string& options);
 
-    // Register the classes
-    static void registerClasses();
+    // Associate a specific property editor for the given key (regex)
+	void registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator);
 
-	// Associate a specific property editor for the given key (regex)
-	static void registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator);
+	void unregisterPropertyEditor(const std::string& key);
 
-	static void unregisterPropertyEditor(const std::string& key);
-
-    static void registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create);
-    static IPropertyEditorDialog::Ptr createDialog(const std::string& key);
-    static void unregisterPropertyEditorDialog(const std::string& key);
+    void registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create);
+    IPropertyEditorDialog::Ptr createDialog(const std::string& key);
+    void unregisterPropertyEditorDialog(const std::string& key);
 
     // Return the bitmap that corresponds to the provided PropertyEditor type.
 	static wxBitmap getBitmapFor(const std::string& type);
+
+private:
+    // Register the default classes
+    void registerBuiltinTypes();
 };
 
 }

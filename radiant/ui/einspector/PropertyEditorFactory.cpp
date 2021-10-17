@@ -21,13 +21,19 @@
 namespace ui
 {
 
-// Initialisation
-PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_peMap;
-PropertyEditorFactory::PropertyEditorMap PropertyEditorFactory::_customEditors;
-std::map<std::string, IPropertyEditorDialog::CreationFunc> PropertyEditorFactory::_dialogs;
+PropertyEditorFactory::PropertyEditorFactory()
+{
+    registerBuiltinTypes();
+}
 
-// Register the classes
-void PropertyEditorFactory::registerClasses()
+PropertyEditorFactory::~PropertyEditorFactory()
+{
+    _customEditors.clear();
+    _peMap.clear();
+    _dialogs.clear();
+}
+
+void PropertyEditorFactory::registerBuiltinTypes()
 {
     _peMap["vector3"] = Vector3PropertyEditor::CreateNew;
     _peMap["bool"] = BooleanPropertyEditor::CreateNew;
@@ -64,41 +70,33 @@ void PropertyEditorFactory::registerPropertyEditor(const std::string& key, const
 
 void PropertyEditorFactory::unregisterPropertyEditor(const std::string& key)
 {
-	PropertyEditorMap::iterator found = _customEditors.find(key);
+	auto found = _customEditors.find(key);
 
 	if (found != _customEditors.end())
 	{
 		_customEditors.erase(found);
+        return;
 	}
-	else
-	{
-		rWarning() << "Cannot unregister property editor for key " << key << std::endl;
-	}
+	
+    rWarning() << "Cannot unregister property editor for key " << key << std::endl;
 }
 
-// Create a PropertyEditor from the given name.
 IPropertyEditor::Ptr PropertyEditorFactory::create(wxWindow* parent, const std::string& className,
     IEntitySelection& entities, const std::string& key, const std::string& options)
 {
-    // Register the PropertyEditors if the map is empty
-    if (_peMap.empty()) {
-        registerClasses();
-    }
-
 	// greebo: First, search the custom editors for a match
-	for (PropertyEditorMap::const_iterator i = _customEditors.begin();
-		 i != _customEditors.end(); ++i)
+	for (const auto& pair : _customEditors)
 	{
-		if (i->first.empty()) continue; // skip empty keys
+		if (pair.first.empty()) continue; // skip empty keys
 
 		// Try to match the entity key against the regex (i->first)
-		std::regex expr(i->first);
+		std::regex expr(pair.first);
 		std::smatch matches;
 
 		if (!std::regex_match(key, matches, expr)) continue;
 
-		// We have a match
-		return i->second(parent, entities, key, options);
+		// We have a match, invoke the creation function
+		return pair.second(parent, entities, key, options);
 	}
 
 	// No custom editor found, search for the named property editor type
@@ -116,7 +114,13 @@ IPropertyEditor::Ptr PropertyEditorFactory::create(wxWindow* parent, const std::
 
 void PropertyEditorFactory::registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create)
 {
-    _dialogs.emplace(key, create);
+    auto result = _dialogs.emplace(key, create);
+
+    if (!result.second)
+    {
+        rWarning() << "Could not register property editor dialog for key " << key
+            << ", it is already associated." << std::endl;;
+    }
 }
 
 IPropertyEditorDialog::Ptr PropertyEditorFactory::createDialog(const std::string& key)
@@ -138,14 +142,9 @@ wxBitmap PropertyEditorFactory::getBitmapFor(const std::string& type)
 
 	std::string iconName = "icon_" + type + ".png";
 
-	wxBitmap candidate = wxutil::GetLocalBitmap(iconName);
+	auto candidate = wxutil::GetLocalBitmap(iconName);
 
-	if (!candidate.IsOk())
-	{
-		candidate = wxutil::GetLocalBitmap("empty.png");
-	}
-
-	return candidate;
+    return candidate.IsOk() ? candidate : wxutil::GetLocalBitmap("empty.png");
 }
 
 }
