@@ -71,7 +71,8 @@ EntityInspector::EntityInspector() :
     _keyEntry(nullptr),
     _valEntry(nullptr),
     _setButton(nullptr),
-    _selectionNeedsUpdate(true)
+    _selectionNeedsUpdate(true),
+    _inheritedPropertiesNeedUpdate(true)
 {}
 
 void EntityInspector::construct()
@@ -123,22 +124,6 @@ void EntityInspector::construct()
 
     _helpText->Hide();
 
-    // Connect to registry key and handle the loaded value
-    registry::bindWidget(_showHelpColumnCheckbox, RKEY_SHOW_HELP_AREA);
-    registry::bindWidget(_showInheritedCheckbox, RKEY_SHOW_INHERITED_PROPERTIES);
-
-    handleShowInheritedChanged();
-    handleShowHelpTextChanged();
-
-    // Reload the information from the registry
-    restoreSettings();
-
-    // Create the context menu
-    createContextMenu();
-
-    // Stimulate initial redraw to get the correct status
-    requestIdleCallback();
-
     // Register self to the SelectionSystem to get notified upon selection
     // changes.
     GlobalSelectionSystem().addObserver(this);
@@ -156,6 +141,22 @@ void EntityInspector::construct()
     );
 
     _entitySelection = std::make_unique<selection::EntitySelection>(*_spawnargs);
+
+    // Connect to registry key and handle the loaded value
+    registry::bindWidget(_showHelpColumnCheckbox, RKEY_SHOW_HELP_AREA);
+    registry::bindWidget(_showInheritedCheckbox, RKEY_SHOW_INHERITED_PROPERTIES);
+
+    handleShowInheritedChanged();
+    handleShowHelpTextChanged();
+
+    // Reload the information from the registry
+    restoreSettings();
+
+    // Create the context menu
+    createContextMenu();
+
+    // Stimulate initial redraw to get the correct status
+    requestIdleCallback();
     
     _defsReloadedHandler = GlobalEntityClassManager().defsReloadedSignal().connect(
         sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
@@ -463,13 +464,24 @@ void EntityInspector::onMainFrameShuttingDown()
     _currentPropertyEditor.reset();
 }
 
+void EntityInspector::onKeyUpdatedCommon(const std::string& key)
+{
+    if (key == "classname")
+    {
+        _inheritedPropertiesNeedUpdate = true;
+    }
+}
+
 void EntityInspector::onKeyAdded(const std::string& key, const std::string& value)
 {
+    onKeyUpdatedCommon(key);
     onKeyChange(key, value);
 }
 
 void EntityInspector::onKeyRemoved(const std::string& key)
 {
+    onKeyUpdatedCommon(key);
+
     // Look up iter in the TreeIter map, and delete it from the list store
     auto i = _keyValueIterMap.find(key);
 
@@ -490,6 +502,7 @@ void EntityInspector::onKeyRemoved(const std::string& key)
 
 void EntityInspector::onKeyValueSetChanged(const std::string& key, const std::string& uniqueValue)
 {
+    onKeyUpdatedCommon(key);
     onKeyChange(key, uniqueValue.empty() ? _("[differing values]") : uniqueValue, uniqueValue.empty());
 }
 
@@ -726,7 +739,7 @@ void EntityInspector::updateGUIElements()
     {
         _editorFrame->Enable(entityCanBeUpdated);
         _keyValueTreeView->Enable(true);
-        _showInheritedCheckbox->Enable(true);
+        //_showInheritedCheckbox->Enable(true);
         _showHelpColumnCheckbox->Enable(true);
         _keyEntry->Enable(entityCanBeUpdated);
         _valEntry->Enable(entityCanBeUpdated);
@@ -750,6 +763,9 @@ void EntityInspector::updateGUIElements()
     }
     else  // no selected entity
     {
+        // Reset the sorting when changing entities
+        _keyValueTreeView->ResetSortingOnAllColumns();
+
         // Remove the displayed PropertyEditor
 		_currentPropertyEditor.reset();
 
@@ -769,6 +785,25 @@ void EntityInspector::onIdle()
     {
         _selectionNeedsUpdate = false;
         _entitySelection->update();
+    }
+
+    if (_inheritedPropertiesNeedUpdate)
+    {
+        _inheritedPropertiesNeedUpdate = false;
+
+        // We can display inherited key values if the classname is unique
+        bool canShowInheritedKeys = !_spawnargs->getSharedKeyValue("classname").empty();
+
+        _showInheritedCheckbox->Enable(canShowInheritedKeys);
+
+        if (canShowInheritedKeys && _showInheritedCheckbox->IsChecked())
+        {
+            addClassProperties();
+        }
+        else
+        {
+            removeClassProperties();
+        }
     }
 
     updateGUIElements();

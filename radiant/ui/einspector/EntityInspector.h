@@ -163,6 +163,7 @@ private:
     std::map<std::string, scene::merge::IConflictResolutionAction::Ptr> _conflictActions;
 
     bool _selectionNeedsUpdate;
+    bool _inheritedPropertiesNeedUpdate;
 
 private:
     bool canUpdateEntity();
@@ -214,6 +215,9 @@ private:
     void onKeyAdded(const std::string& key, const std::string& value);
     void onKeyRemoved(const std::string& key);
     void onKeyValueSetChanged(const std::string& key, const std::string& uniqueValue);
+    
+    // Routines shared by onKeyAdded, onKeyRemoved and onKeyValueSetChanged
+    void onKeyUpdatedCommon(const std::string& key);
 
 	void handleShowInheritedChanged();
 	void handleShowHelpTextChanged();
