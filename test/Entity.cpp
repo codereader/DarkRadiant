@@ -928,4 +928,112 @@ TEST_F(EntityTest, CreateAIEntity)
     EXPECT_EQ(attachments.front().joint, "Spine2");
 }
 
+namespace
+{
+
+class TestEntityObserver final :
+    public Entity::Observer
+{
+public:
+    bool insertFired;
+    bool changeFired;
+    bool eraseFired;
+
+    std::vector<std::pair<std::string, std::string>> insertStack;
+    std::vector<std::pair<std::string, std::string>> changeStack;
+    std::vector<std::pair<std::string, std::string>> eraseStack;
+
+    TestEntityObserver()
+    {
+        reset();
+    }
+
+    void reset()
+    {
+        insertFired = false;
+        insertStack.clear();
+        changeFired = false;
+        changeStack.clear();
+        eraseFired = false;
+        eraseStack.clear();
+    }
+
+    void onKeyInsert(const std::string& key, EntityKeyValue& value) override
+    {
+        insertFired = true;
+        insertStack.emplace_back(key, value.get());
+    }
+
+    void onKeyChange(const std::string& key, const std::string& value) override
+    {
+        changeFired = true;
+        changeStack.emplace_back(key, value);
+    }
+
+    void onKeyErase(const std::string& key, EntityKeyValue& value) override
+    {
+        eraseFired = true;
+        eraseStack.emplace_back(key, value.get());
+    }
+};
+
+inline bool stackHasKeyValuePair(const std::vector<std::pair<std::string, std::string>>& stack, 
+    const std::string& key, const std::string& value)
+{
+    auto it = std::find(stack.begin(), stack.end(), std::make_pair(key, value));
+    return it != stack.end();
+}
+
+}
+
+TEST_F(EntityTest, EntityObserverAttachDetach)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guard = Node_getEntity(guardNode);
+
+    TestEntityObserver observer;
+
+    // Collect all existing key values of this entity
+    std::vector<std::pair<std::string, std::string>> existingKeyValues;
+
+    guard->forEachKeyValue([&](const std::string& key, const std::string& value)
+    {
+        existingKeyValues.emplace_back(key, value);
+    });
+
+    EXPECT_FALSE(existingKeyValues.empty()) << "Entity doesn't have any keys";
+
+    // On attachment, the observer gets notified about all existing keys (insert)
+    guard->attachObserver(&observer);
+
+    EXPECT_EQ(observer.insertStack.size(), existingKeyValues.size()) << "Observer didn't get notified about all keys";
+
+    for (const auto& pair : existingKeyValues)
+    {
+        EXPECT_TRUE(stackHasKeyValuePair(observer.insertStack, pair.first, pair.second)) <<
+            "Insert stack doesn't have the expected kv " << pair.first << " = " << pair.second;
+    }
+
+    // Everything else should be silent
+    EXPECT_TRUE(observer.changeStack.empty()) << "Change stack should be clean";
+    EXPECT_TRUE(observer.eraseStack.empty()) << "Erase stack should be clean";
+
+    observer.reset();
+
+    // On detaching the observer receives an erase call for each key value pair
+    guard->detachObserver(&observer);
+
+    EXPECT_EQ(observer.eraseStack.size(), existingKeyValues.size()) << "Observer didn't get notified about all keys";
+
+    for (const auto& pair : existingKeyValues)
+    {
+        EXPECT_TRUE(stackHasKeyValuePair(observer.eraseStack, pair.first, pair.second)) <<
+            "Erase stack doesn't have the expected kv " << pair.first << " = " << pair.second;
+    }
+
+    // Everything else should be silent
+    EXPECT_TRUE(observer.insertStack.empty()) << "Insert stack should be clean";
+    EXPECT_TRUE(observer.changeStack.empty()) << "Change stack should be clean";
+}
+
 }
