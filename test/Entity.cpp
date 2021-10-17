@@ -1244,7 +1244,9 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
     // On attachment, the observer gets notified about all existing keys (insert)
     guard->attachObserver(&observer);
 
-    // Perform an undo operation
+    // Perform an undoable operation. The order of additions/changes/removals
+    // does actually matter, since adding/removing will push the whole spawnarg set to the undo stack
+    // whereas changing a single key will only push that single value to the stack
     {
         UndoableCommand cmd("testcommand");
 
@@ -1324,6 +1326,60 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
 
     // Everything else should be silent
     EXPECT_TRUE(observer.changeStack.empty()) << "Change stack should be clean";
+
+    guard->detachObserver(&observer);
+}
+
+TEST_F(EntityTest, EntityObserverUndoSingleKeyValue)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
+    auto guard = Node_getEntity(guardNode);
+
+    constexpr const char* NewKey = "New_Unique_Key";
+    constexpr const char* NewValue = "New_Unique_Value";
+    guard->setKeyValue(NewKey, NewValue);
+
+    TestEntityObserver observer;
+    // On attachment, the observer gets notified about all existing keys (insert)
+    guard->attachObserver(&observer);
+
+    // Perform an undoable operation. In this scenario, we're only editing
+    // a single key, this means the entity is not saving the entire set to the stack
+    constexpr const char* SomeOtherValue = "SomeOtherValue";
+    {
+        UndoableCommand cmd("testcommand");
+        guard->setKeyValue(NewKey, SomeOtherValue);
+    }
+
+    observer.reset();
+
+    // UNDO
+    GlobalUndoSystem().undo();
+
+    EXPECT_EQ(guard->getKeyValue(NewKey), NewValue) << "Key value not reverted properly";
+
+    EXPECT_EQ(observer.changeStack.size(), 1) << "Reverted key didn't get reported";
+    EXPECT_TRUE(stackHasKeyValuePair(observer.changeStack, NewKey, NewValue)) <<
+        "Change stack doesn't have the expected kv " << NewKey << " = " << NewValue;
+    
+    // Everything else should be silent
+    EXPECT_TRUE(observer.eraseStack.empty()) << "Erase stack should be clean";
+    EXPECT_TRUE(observer.insertStack.empty()) << "Insert stack should be clean";
+
+    // REDO
+    observer.reset();
+    GlobalUndoSystem().redo();
+
+    EXPECT_EQ(guard->getKeyValue(NewKey), SomeOtherValue) << "Key value not re-done properly";
+
+    EXPECT_EQ(observer.changeStack.size(), 1) << "Reverted key didn't get reported";
+    EXPECT_TRUE(stackHasKeyValuePair(observer.changeStack, NewKey, SomeOtherValue)) <<
+        "Change stack doesn't have the expected kv " << NewKey << " = " << SomeOtherValue;
+
+    // Everything else should be silent
+    EXPECT_TRUE(observer.eraseStack.empty()) << "Erase stack should be clean";
+    EXPECT_TRUE(observer.insertStack.empty()) << "Insert stack should be clean";
 
     guard->detachObserver(&observer);
 }
