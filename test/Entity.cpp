@@ -1036,4 +1036,117 @@ TEST_F(EntityTest, EntityObserverAttachDetach)
     EXPECT_TRUE(observer.changeStack.empty()) << "Change stack should be clean";
 }
 
+TEST_F(EntityTest, EntityObserverKeyAddition)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guard = Node_getEntity(guardNode);
+
+    TestEntityObserver observer;
+
+    // Attach and reset the observer
+    guard->attachObserver(&observer);
+    observer.reset();
+
+    constexpr const char* key = "New_Unique_Key";
+    constexpr const char* value = "New_Unique_Value";
+    guard->setKeyValue(key, value);
+
+    // Assert on the new key
+    EXPECT_EQ(observer.insertStack.size(), 1) << "Observer didn't get notified about the new key";
+    EXPECT_TRUE(stackHasKeyValuePair(observer.insertStack, key, value)) <<
+            "Insert stack doesn't have the expected kv " << key << " = " << value;
+
+    // Everything else should be silent
+    EXPECT_TRUE(observer.changeStack.empty()) << "Change stack should be clean";
+    EXPECT_TRUE(observer.eraseStack.empty()) << "Erase stack should be clean";
+
+    observer.reset();
+
+    // On detaching the observer should receive a corresponding erase for the new key
+    guard->detachObserver(&observer);
+
+    EXPECT_TRUE(stackHasKeyValuePair(observer.eraseStack, key, value)) <<
+        "Insert stack doesn't have the expected kv " << key << " = " << value;
+}
+
+TEST_F(EntityTest, EntityObserverKeyRemoval)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guard = Node_getEntity(guardNode);
+
+    TestEntityObserver observer;
+
+    constexpr const char* key = "New_Unique_Key";
+    constexpr const char* value = "New_Unique_Value";
+    guard->setKeyValue(key, value);
+
+    // Attach and reset the observer
+    guard->attachObserver(&observer);
+    observer.reset();
+
+    // Remove the key
+    guard->setKeyValue(key, "");
+
+    // Assert on the event that should have been received
+    EXPECT_EQ(observer.eraseStack.size(), 1) << "Observer didn't get notified about the removed key";
+    EXPECT_TRUE(stackHasKeyValuePair(observer.eraseStack, key, value)) <<
+        "Erase stack doesn't have the expected kv " << key << " = " << value;
+
+    // Everything else should be silent
+    EXPECT_TRUE(observer.changeStack.empty()) << "Change stack should be clean";
+    EXPECT_TRUE(observer.insertStack.empty()) << "Insert stack should be clean";
+
+    observer.reset();
+
+    // On detaching the observer should not receive a corresponding erase for the already removed key
+    guard->detachObserver(&observer);
+
+    EXPECT_FALSE(stackHasKeyValuePair(observer.eraseStack, key, value)) <<
+        "Erase stack unexpectedly contained the kv " << key << " = " << value;
+}
+
+TEST_F(EntityTest, EntityObserverKeyChange)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guard = Node_getEntity(guardNode);
+
+    TestEntityObserver observer;
+
+    // Attach and reset the observer
+    guard->attachObserver(&observer);
+    observer.reset();
+
+    constexpr const char* NameKey = "name";
+    constexpr const char* NewName = "Ignazius";
+
+    EXPECT_FALSE(guard->getKeyValue(NameKey).empty()) << "Key " << NameKey << " must exist for this test";
+
+    guard->setKeyValue(NameKey, NewName);
+
+    // Assert on the event that should have been received
+    EXPECT_EQ(observer.changeStack.size(), 1) << "Observer didn't get notified about the changed key";
+    EXPECT_TRUE(stackHasKeyValuePair(observer.changeStack, NameKey, NewName)) <<
+        "Erase stack doesn't have the expected kv " << NameKey << " = " << NewName;
+
+    // Everything else should be silent
+    EXPECT_TRUE(observer.insertStack.empty()) << "Insert stack should be clean";
+    EXPECT_TRUE(observer.eraseStack.empty()) << "Erase stack should be clean";
+
+    observer.reset();
+
+    constexpr const char* EvenNewerName = "Bonifazius";
+    guard->setKeyValue(NameKey, EvenNewerName);
+
+    // Assert on the event that should have been received
+    EXPECT_EQ(observer.changeStack.size(), 1) << "Observer didn't get notified about the changed key";
+    EXPECT_TRUE(stackHasKeyValuePair(observer.changeStack, NameKey, EvenNewerName)) <<
+        "Erase stack doesn't have the expected kv " << NameKey << " = " << EvenNewerName;
+
+    // On detaching the observer should not receive a corresponding erase for the newer value
+    guard->detachObserver(&observer);
+
+    EXPECT_TRUE(stackHasKeyValuePair(observer.eraseStack, NameKey, EvenNewerName)) <<
+        "Erase stack unexpectedly contained the kv " << NameKey << " = " << EvenNewerName;
+}
+
 }
