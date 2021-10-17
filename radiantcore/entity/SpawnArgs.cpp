@@ -71,14 +71,9 @@ void SpawnArgs::importState(const KeyValues& keyValues)
 		erase(_keyValues.begin());
 	}
 
-	/* greebo: This code somehow doesn't delete all the keys (only every second one)
-	for(KeyValues::iterator i = _keyValues.begin(); i != _keyValues.end();) {
-		erase(i++);
-	}*/
-
-	for (KeyValues::const_iterator i = keyValues.begin(); i != keyValues.end(); ++i)
+	for (const auto& pair : keyValues)
 	{
-		insert(i->first, i->second);
+		insert(pair.first, pair.second);
 	}
 }
 
@@ -303,12 +298,10 @@ void SpawnArgs::insert(const std::string& key, const std::string& value)
 
     if (i != _keyValues.end())
     {
-        // Key has been found
+        // Key has been found, assign the value
         i->second->assign(value);
-
-        // Notify observers of key change, using the found key as argument
-        // as the case of the incoming "key" might be different
-        notifyChange(i->first, value);
+        // Observer notification happens through the lambda callback we passed 
+        // to the KeyValue constructor
     }
 	else
 	{
@@ -316,7 +309,9 @@ void SpawnArgs::insert(const std::string& key, const std::string& value)
 		_undo.save();
 
 		// Allocate a new KeyValue object and insert it into the map
-		insert(key, std::make_shared<KeyValue>(*this, value, _eclass->getAttribute(key).getValue()));
+        // Capture the key by value in the lambda
+		insert(key, std::make_shared<KeyValue>(value, _eclass->getAttribute(key).getValue(),
+            [key, this](const std::string& value) { notifyChange(key, value); }));
 	}
 }
 

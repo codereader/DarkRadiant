@@ -1234,6 +1234,7 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
     constexpr const char* NewValue2 = "New_Unique_Value2";
     constexpr const char* NameKey = "name";
     constexpr const char* NewNameValue = "Ignazius";
+    auto originalName = guard->getKeyValue(NameKey);
 
     TestEntityObserver observer;
 
@@ -1293,8 +1294,10 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
             "Erase stack doesn't have the expected kv " << pair.first << " = " << pair.second;
     }
 
-    // Everything else should be silent
-    EXPECT_TRUE(observer.changeStack.empty()) << "Change stack should be clean";
+    // The single key value change triggered one key value change notification
+    EXPECT_EQ(observer.changeStack.size(), 1) << "Change stack should just contain the single keyvalue change";
+    EXPECT_TRUE(stackHasKeyValuePair(observer.changeStack, NameKey, originalName))
+        << "Change stack should just contain the single keyvalue change";
 
     // REDO
     observer.reset();
@@ -1324,8 +1327,10 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
             "Erase stack doesn't have the expected kv " << pair.first << " = " << pair.second;
     }
 
-    // Everything else should be silent
-    EXPECT_TRUE(observer.changeStack.empty()) << "Change stack should be clean";
+    // The single key value change triggered one key value change notification
+    EXPECT_EQ(observer.changeStack.size(), 1) << "Change stack should just contain the single keyvalue change";
+    EXPECT_TRUE(stackHasKeyValuePair(observer.changeStack, NameKey, NewNameValue))
+        << "Change stack should just contain the single keyvalue change";
 
     guard->detachObserver(&observer);
 }
@@ -1352,9 +1357,8 @@ TEST_F(EntityTest, EntityObserverUndoSingleKeyValue)
         guard->setKeyValue(NewKey, SomeOtherValue);
     }
 
-    observer.reset();
-
     // UNDO
+    observer.reset();
     GlobalUndoSystem().undo();
 
     EXPECT_EQ(guard->getKeyValue(NewKey), NewValue) << "Key value not reverted properly";

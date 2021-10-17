@@ -21,8 +21,6 @@ class KeyValue final :
 	public sigc::trackable
 {
 private:
-    SpawnArgs& _owner;
-
 	typedef std::vector<KeyObserver*> KeyObservers;
 	KeyObservers _observers;
 
@@ -32,8 +30,12 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 
+    // This is a specialised callback pointing to the owning SpawnArgs
+    std::function<void(const std::string&)> _valueChanged;
+
 public:
-	KeyValue(SpawnArgs& owner, const std::string& value, const std::string& empty);
+	KeyValue(const std::string& value, const std::string& empty, const std::function<void(const std::string&)>& valueChanged);
+
     KeyValue(const KeyValue& other) = delete;
     KeyValue& operator=(const KeyValue& other) = delete;
 

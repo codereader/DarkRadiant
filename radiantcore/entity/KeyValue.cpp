@@ -6,14 +6,13 @@
 namespace entity 
 {
 
-KeyValue::KeyValue(SpawnArgs& owner, const std::string& value, const std::string& empty) :
-    _owner(owner),
+KeyValue::KeyValue(const std::string& value, const std::string& empty, 
+                   const std::function<void(const std::string&)>& valueChanged) :
     _value(value),
     _emptyValue(empty),
-    _undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1), "KeyValue")
-{
-	notify();
-}
+    _undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1), "KeyValue"),
+    _valueChanged(valueChanged)
+{}
 
 KeyValue::~KeyValue()
 {
@@ -30,7 +29,8 @@ void KeyValue::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
     _undo.disconnectUndoSystem(changeTracker);
 }
 
-void KeyValue::attach(KeyObserver& observer) {
+void KeyValue::attach(KeyObserver& observer)
+{
 	// Store the observer
 	_observers.push_back(&observer);
 
@@ -42,19 +42,24 @@ void KeyValue::detach(KeyObserver& observer)
 {
 	observer.onKeyValueChanged(_emptyValue);
 
-	KeyObservers::iterator found = std::find(_observers.begin(), _observers.end(), &observer);
-	if (found != _observers.end()) {
+	auto found = std::find(_observers.begin(), _observers.end(), &observer);
+
+	if (found != _observers.end())
+    {
 		_observers.erase(found);
 	}
 }
 
-const std::string& KeyValue::get() const {
+const std::string& KeyValue::get() const
+{
 	// Return the <empty> string if the actual value is ""
 	return (_value.empty()) ? _emptyValue : _value;
 }
 
-void KeyValue::assign(const std::string& other) {
-	if (_value != other) {
+void KeyValue::assign(const std::string& other)
+{
+	if (_value != other)
+    {
 		_undo.save();
 		_value = other;
 		notify();
@@ -66,22 +71,24 @@ void KeyValue::notify()
 	// Store the name locally, to avoid string-copy operations in the loop below
 	const std::string& value = get();
 
-	KeyObservers::reverse_iterator i = _observers.rbegin();
-	while(i != _observers.rend()) {
-		(*i++)->onKeyValueChanged(value);
+    // Notify the owning SpawnArgs instance
+    _valueChanged(value);
+
+	for (auto i = _observers.rbegin(); i != _observers.rend(); ++i)
+    {
+		(*i)->onKeyValueChanged(value);
 	}
 }
 
 void KeyValue::importState(const std::string& string) 
 {
-	// Add ourselves to the Undo event observers, to get notified after all this has been finished
+	// We notify our observers after the entire undo rollback is done
 	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
 		sigc::mem_fun(this, &KeyValue::onUndoRedoOperationFinished));
 	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
 		sigc::mem_fun(this, &KeyValue::onUndoRedoOperationFinished));
 
 	_value = string;
-	notify();
 }
 
 void KeyValue::onUndoRedoOperationFinished()
