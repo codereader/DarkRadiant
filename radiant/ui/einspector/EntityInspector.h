@@ -51,8 +51,7 @@ class PropertyEditorFactory;
 class EntityInspector final :
 	public IEntityInspector,
     public selection::SelectionSystem::Observer,
-    public wxutil::SingleIdleCallback,
-    public Entity::Observer
+    public wxutil::SingleIdleCallback
 {
 public:
 	struct TreeColumns :
@@ -286,9 +285,7 @@ public:
 	void onMainFrameConstructed();
 	void onMainFrameShuttingDown();
 
-    void onKeyInsert(const std::string& key, EntityKeyValue& value);
     void onKeyChange(const std::string& key, const std::string& value, bool isMultiValue = false);
-    void onKeyErase(const std::string& key, EntityKeyValue& value);
 
 	// greebo: Tells the inspector to reload the window settings from the registry.
 	void restoreSettings();

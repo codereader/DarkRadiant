@@ -197,14 +197,6 @@ void EntityInspector::onMapEditModeChanged(IMap::EditMode mode)
     requestIdleCallback();
 }
 
-// Entity::Observer implementation
-
-void EntityInspector::onKeyInsert(const std::string& key,
-                                  EntityKeyValue& value)
-{
-    //onKeyChange(key, value.get());
-}
-
 void EntityInspector::onKeyChange(const std::string& key, const std::string& value, bool isMultiValue)
 {
     wxDataViewItem keyValueIter;
@@ -378,29 +370,6 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     }
 }
 
-void EntityInspector::onKeyErase(const std::string& key,
-                                 EntityKeyValue& value)
-{
-    return;
-
-    // Look up iter in the TreeIter map, and delete it from the list store
-    TreeIterMap::iterator i = _keyValueIterMap.find(key);
-    if (i != _keyValueIterMap.end())
-    {
-        // Erase row from tree store
-        _kvStore->RemoveItem(i->second);
-
-        // Erase iter from iter map
-        _keyValueIterMap.erase(i);
-    }
-    else
-    {
-        rConsoleError() << "EntityInspector: warning: removed key '" << key
-                  << "' not found in map." << std::endl;
-    }
-}
-
-// Create the context menu
 void EntityInspector::createContextMenu()
 {
     _contextMenu.reset(new wxutil::PopupMenu);
