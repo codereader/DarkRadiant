@@ -285,44 +285,38 @@ void SpawnArgs::notifyErase(const std::string& key, KeyValue& value)
 void SpawnArgs::insert(const std::string& key, const KeyValuePtr& keyValue)
 {
 	// Insert the new key at the end of the list
-	KeyValues::iterator i = _keyValues.insert(
-		_keyValues.end(),
-		KeyValuePair(key, keyValue)
-	);
+	auto& pair = _keyValues.emplace_back(key, keyValue);
 
 	// Dereference the iterator to get a KeyValue& reference and notify the observers
-	notifyInsert(key, *i->second);
+	notifyInsert(key, *pair.second);
 
 	if (_instanced)
 	{
-		i->second->connectUndoSystem(_undo.getUndoChangeTracker());
+        pair.second->connectUndoSystem(_undo.getUndoChangeTracker());
 	}
 }
 
 void SpawnArgs::insert(const std::string& key, const std::string& value)
 {
 	// Try to lookup the key in the map
-	KeyValues::iterator i = find(key);
+    auto i = find(key);
 
-	if (i != _keyValues.end())
+    if (i != _keyValues.end())
     {
-		// Key has been found
-		i->second->assign(value);
+        // Key has been found
+        i->second->assign(value);
 
         // Notify observers of key change, using the found key as argument
-		// as the case of the incoming "key" might be different
+        // as the case of the incoming "key" might be different
         notifyChange(i->first, value);
-	}
+    }
 	else
 	{
 		// No key with that name found, create a new one
 		_undo.save();
 
 		// Allocate a new KeyValue object and insert it into the map
-		insert(
-			key,
-			KeyValuePtr(new KeyValue(value, _eclass->getAttribute(key).getValue()))
-		);
+		insert(key, std::make_shared<KeyValue>(*this, value, _eclass->getAttribute(key).getValue()));
 	}
 }
 

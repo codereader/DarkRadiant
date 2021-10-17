@@ -6,15 +6,17 @@
 namespace entity 
 {
 
-KeyValue::KeyValue(const std::string& value, const std::string& empty) :
-	_value(value),
-	_emptyValue(empty),
-	_undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1), "KeyValue")
+KeyValue::KeyValue(SpawnArgs& owner, const std::string& value, const std::string& empty) :
+    _owner(owner),
+    _value(value),
+    _emptyValue(empty),
+    _undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1), "KeyValue")
 {
 	notify();
 }
 
-KeyValue::~KeyValue() {
+KeyValue::~KeyValue()
+{
 	assert(_observers.empty());
 }
 

@@ -10,6 +10,8 @@
 namespace entity
 {
 
+class SpawnArgs;
+
 /// \brief A key/value pair of strings.
 ///
 /// - Notifies observers when value changes - value changes to "" on destruction.
@@ -19,6 +21,8 @@ class KeyValue :
 	public sigc::trackable
 {
 private:
+    SpawnArgs& _owner;
+
 	typedef std::vector<KeyObserver*> KeyObservers;
 	KeyObservers _observers;
 
@@ -29,7 +33,7 @@ private:
 	sigc::connection _redoHandler;
 
 public:
-	KeyValue(const std::string& value, const std::string& empty);
+	KeyValue(SpawnArgs& owner, const std::string& value, const std::string& empty);
 
 	~KeyValue();
 
