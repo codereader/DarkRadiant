@@ -986,6 +986,17 @@ inline bool stackHasKeyValuePair(const std::vector<std::pair<std::string, std::s
     return it != stack.end();
 }
 
+inline bool stackHasKey(const std::vector<std::pair<std::string, std::string>>& stack,
+    const std::string& key)
+{
+    for (const auto& pair : stack)
+    {
+        if (pair.first == key) return true;
+    }
+
+    return false;
+}
+
 class TestKeyObserver :
     public KeyObserver
 {
@@ -1026,6 +1037,30 @@ inline EntityKeyValue* findKeyValue(Entity* entity, const std::string& keyToFind
     return keyValue;
 }
 
+inline std::vector<std::pair<std::string, std::string>> getAllKeyValuePairs(Entity* entity)
+{
+    std::vector<std::pair<std::string, std::string>> existingKeyValues;
+
+    entity->forEachKeyValue([&](const std::string& key, const std::string& value)
+    {
+        existingKeyValues.emplace_back(key, value);
+    });
+
+    return existingKeyValues;
+}
+
+inline void expectKeyValuesAreEquivalent(const std::vector<std::pair<std::string, std::string>>& stack1, 
+    const std::vector<std::pair<std::string, std::string>>& stack2)
+{
+    EXPECT_EQ(stack1.size(), stack2.size()) << "Stack1 differs from Stack 2 in size";
+
+    for (const auto& pair : stack1)
+    {
+        EXPECT_TRUE(stackHasKeyValuePair(stack2, pair.first, pair.second)) <<
+            "Stack 2 was missing the key value pair " << pair.first << " = " << pair.second;
+    }
+}
+
 }
 
 TEST_F(EntityTest, EntityObserverAttachDetach)
@@ -1036,13 +1071,7 @@ TEST_F(EntityTest, EntityObserverAttachDetach)
     TestEntityObserver observer;
 
     // Collect all existing key values of this entity
-    std::vector<std::pair<std::string, std::string>> existingKeyValues;
-
-    guard->forEachKeyValue([&](const std::string& key, const std::string& value)
-    {
-        existingKeyValues.emplace_back(key, value);
-    });
-
+    auto existingKeyValues = getAllKeyValuePairs(guard);
     EXPECT_FALSE(existingKeyValues.empty()) << "Entity doesn't have any keys";
 
     // On attachment, the observer gets notified about all existing keys (insert)
@@ -1189,6 +1218,114 @@ TEST_F(EntityTest, EntityObserverKeyChange)
 
     EXPECT_TRUE(stackHasKeyValuePair(observer.eraseStack, NameKey, EvenNewerName)) <<
         "Erase stack unexpectedly contained the kv " << NameKey << " = " << EvenNewerName;
+}
+
+TEST_F(EntityTest, EntityObserverUndoRedo)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
+    auto guard = Node_getEntity(guardNode);
+
+    constexpr const char* NewKey = "New_Unique_Key";
+    constexpr const char* NewValue = "New_Unique_Value";
+    guard->setKeyValue(NewKey, NewValue);
+
+    constexpr const char* NewKey2 = "New_Unique_Key2";
+    constexpr const char* NewValue2 = "New_Unique_Value2";
+    constexpr const char* NameKey = "name";
+    constexpr const char* NewNameValue = "Ignazius";
+
+    TestEntityObserver observer;
+
+    // Collect all existing key values of this entity
+    auto keyValuesBeforeChange = getAllKeyValuePairs(guard);
+    EXPECT_FALSE(keyValuesBeforeChange.empty()) << "Entity doesn't have any keys";
+
+    // On attachment, the observer gets notified about all existing keys (insert)
+    guard->attachObserver(&observer);
+
+    // Perform an undo operation
+    {
+        UndoableCommand cmd("testcommand");
+
+        // Add another key
+        guard->setKeyValue(NewKey2, NewValue2);
+
+        // Change an existing key value
+        guard->setKeyValue(NameKey, NewNameValue);
+
+        // Remove a previously existing key
+        guard->setKeyValue(NewKey, "");
+    }
+
+    auto keyValuesAfterChange = getAllKeyValuePairs(guard);
+
+    observer.reset();
+
+    // UNDO
+    GlobalUndoSystem().undo();
+
+    // Check that the entity has now the same state as before the change
+    expectKeyValuesAreEquivalent(getAllKeyValuePairs(guard), keyValuesBeforeChange);
+
+    // The Undo operation spams the observer with an erase() for each existing pair, 
+    // and a subsequent insert() for each one imported from the undo stack
+    // Note that the value attached to the erase() event might depend on the order the SpawnArgs have been
+    // manipulated during the Undoable operation - if a key value got changed before a new one
+    // was added to the SpawnArg set, the value passed to erase() might differ from the case where 
+    // these two operations were happening the other way around.
+    EXPECT_EQ(observer.eraseStack.size(), keyValuesAfterChange.size()) << "All keys before undo should have been reported";
+
+    for (const auto& pair : keyValuesAfterChange)
+    {
+        // Only check the key of the erase calls, not the value
+        EXPECT_TRUE(stackHasKey(observer.eraseStack, pair.first)) <<
+            "Erase stack doesn't have the expected key " << pair.first;
+    }
+    
+    EXPECT_EQ(observer.insertStack.size(), keyValuesBeforeChange.size()) << "Not all keys got reported as re-inserted";
+
+    for (const auto& pair : keyValuesBeforeChange)
+    {
+        EXPECT_TRUE(stackHasKeyValuePair(observer.insertStack, pair.first, pair.second)) <<
+            "Erase stack doesn't have the expected kv " << pair.first << " = " << pair.second;
+    }
+
+    // Everything else should be silent
+    EXPECT_TRUE(observer.changeStack.empty()) << "Change stack should be clean";
+
+    // REDO
+    observer.reset();
+    GlobalUndoSystem().redo();
+
+    // Check that the entity has now the same state as before the undo
+    expectKeyValuesAreEquivalent(getAllKeyValuePairs(guard), keyValuesAfterChange);
+
+    // The Redo operation should behave analogous to the undo, report all key values before the change as erased
+    EXPECT_EQ(observer.eraseStack.size(), keyValuesBeforeChange.size()) << "All keys before redo should have been reported";
+
+    for (const auto& pair : keyValuesBeforeChange)
+    {
+        // Only check the key of the erase calls, not the value
+        EXPECT_TRUE(stackHasKey(observer.eraseStack, pair.first)) <<
+            "Erase stack doesn't have the expected key " << pair.first;
+    }
+
+    EXPECT_EQ(observer.insertStack.size(), keyValuesAfterChange.size()) << "Not all keys got reported as re-inserted";
+
+    // This can be considered a bug: on redo, not even the insert() call receives the correct
+    // name key value "Ignazius", instead it receives the name before the change "atdm:ai_builder_guard_1"
+    // So we can only assert on the key at this point
+    for (const auto& pair : keyValuesAfterChange)
+    {
+        EXPECT_TRUE(stackHasKey(observer.insertStack, pair.first)) <<
+            "Erase stack doesn't have the expected kv " << pair.first << " = " << pair.second;
+    }
+
+    // Everything else should be silent
+    EXPECT_TRUE(observer.changeStack.empty()) << "Change stack should be clean";
+
+    guard->detachObserver(&observer);
 }
 
 TEST_F(EntityTest, KeyObserverAttachDetach)
