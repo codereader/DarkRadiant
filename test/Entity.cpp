@@ -5,6 +5,7 @@
 #include "irendersystemfactory.h"
 #include "iselectable.h"
 #include "iselection.h"
+#include "iundo.h"
 #include "ishaders.h"
 #include "icolourscheme.h"
 #include "ieclasscolours.h"
@@ -15,6 +16,7 @@
 #include "registry/registry.h"
 #include "eclass.h"
 #include "string/join.h"
+#include "scenelib.h"
 
 namespace test
 {
@@ -984,6 +986,46 @@ inline bool stackHasKeyValuePair(const std::vector<std::pair<std::string, std::s
     return it != stack.end();
 }
 
+class TestKeyObserver :
+    public KeyObserver
+{
+public:
+    bool hasBeenInvoked;
+    std::string receivedValue;
+
+    TestKeyObserver()
+    {
+        reset();
+    }
+
+    void reset()
+    {
+        hasBeenInvoked = false;
+        receivedValue.clear();
+    }
+
+    void onKeyValueChanged(const std::string& newValue) override
+    {
+        hasBeenInvoked = true;
+        receivedValue = newValue;
+    }
+};
+
+inline EntityKeyValue* findKeyValue(Entity* entity, const std::string& keyToFind)
+{
+    EntityKeyValue* keyValue = nullptr;
+
+    entity->forEachEntityKeyValue([&](const std::string& key, EntityKeyValue& value)
+    {
+        if (!keyValue && key == keyToFind)
+        {
+            keyValue = &value;
+        }
+    });
+
+    return keyValue;
+}
+
 }
 
 TEST_F(EntityTest, EntityObserverAttachDetach)
@@ -1147,6 +1189,103 @@ TEST_F(EntityTest, EntityObserverKeyChange)
 
     EXPECT_TRUE(stackHasKeyValuePair(observer.eraseStack, NameKey, EvenNewerName)) <<
         "Erase stack unexpectedly contained the kv " << NameKey << " = " << EvenNewerName;
+}
+
+TEST_F(EntityTest, KeyObserverAttachDetach)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guard = Node_getEntity(guardNode);
+
+    constexpr const char* NewKeyName = "New_Unique_Key";
+    constexpr const char* NewKeyValue = "New_Unique_Value";
+    guard->setKeyValue(NewKeyName, NewKeyValue);
+
+    TestKeyObserver observer;
+
+    EntityKeyValue* keyValue = findKeyValue(guard, NewKeyName);
+    EXPECT_TRUE(keyValue != nullptr) << "Could not locate the key value";
+
+    // On attachment, the observer gets notified about the existing value
+    keyValue->attach(observer);
+
+    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on attach";
+    EXPECT_EQ(observer.receivedValue, NewKeyValue) << "Observer didn't get the correct value";
+
+    observer.reset();
+    observer.receivedValue = "dummyvalue_that_should_be_overwritten";
+
+    // On detaching the observer receives another call with an empty value
+    keyValue->detach(observer);
+
+    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on attach";
+    EXPECT_EQ(observer.receivedValue, "") << "Observer didn't get the expected empty value";
+}
+
+TEST_F(EntityTest, KeyObserverValueChange)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guard = Node_getEntity(guardNode);
+
+    constexpr const char* NewKeyName = "New_Unique_Key";
+    constexpr const char* NewKeyValue = "New_Unique_Value";
+    guard->setKeyValue(NewKeyName, NewKeyValue);
+
+    TestKeyObserver observer;
+    
+    EntityKeyValue* keyValue = findKeyValue(guard, NewKeyName);
+    EXPECT_TRUE(keyValue != nullptr) << "Could not locate the key value";
+
+    keyValue->attach(observer);
+    observer.reset();
+    
+    constexpr const char* SomeOtherValue = "SomeOtherValue";
+    guard->setKeyValue(NewKeyName, SomeOtherValue);
+
+    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on change";
+    EXPECT_EQ(observer.receivedValue, SomeOtherValue) << "Observer didn't get the correct value";
+
+    // One more round, this time we use the assign() method
+    observer.reset();
+    constexpr const char* DistinguishableValue = "DistinguishableValue";
+    keyValue->assign(DistinguishableValue);
+
+    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on assign";
+    EXPECT_EQ(observer.receivedValue, DistinguishableValue) << "Observer didn't get the correct value";
+    observer.reset();
+
+    keyValue->detach(observer);
+
+    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on attach";
+    EXPECT_EQ(observer.receivedValue, "") << "Observer didn't get the expected empty value";
+}
+
+// KeyObserver doesn't get called when a key is removed entirely from the SpawnArgs
+TEST_F(EntityTest, KeyObserverKeyRemoval)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
+    auto guard = Node_getEntity(guardNode);
+
+    constexpr const char* NewKeyName = "New_Unique_Key";
+    constexpr const char* NewKeyValue = "New_Unique_Value";
+    guard->setKeyValue(NewKeyName, NewKeyValue);
+
+    UndoableCommand cmd("removeKey"); // prevent the key value from going out of scope
+    TestKeyObserver observer;
+
+    EntityKeyValue* keyValue = findKeyValue(guard, NewKeyName);
+    EXPECT_TRUE(keyValue != nullptr) << "Could not locate the key value";
+
+    keyValue->attach(observer);
+    observer.reset();
+
+    // Remove the key
+    guard->setKeyValue(NewKeyName, "");
+
+    // The observer shouldn't have been notified
+    EXPECT_FALSE(observer.hasBeenInvoked) << "Observer has been notified on key remove";
+
+    keyValue->detach(observer);
 }
 
 }
