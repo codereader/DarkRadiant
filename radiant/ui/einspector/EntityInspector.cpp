@@ -72,7 +72,8 @@ EntityInspector::EntityInspector() :
     _valEntry(nullptr),
     _setButton(nullptr),
     _selectionNeedsUpdate(true),
-    _inheritedPropertiesNeedUpdate(true)
+    _inheritedPropertiesNeedUpdate(true),
+    _helpTextNeedsUpdate(true)
 {}
 
 void EntityInspector::construct()
@@ -96,7 +97,7 @@ void EntityInspector::construct()
 
     _showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help"));
     _showHelpColumnCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
-        handleShowHelpTextChanged();
+        updateHelpTextPanel();
     });
 
     _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
@@ -147,7 +148,7 @@ void EntityInspector::construct()
     registry::bindWidget(_showInheritedCheckbox, RKEY_SHOW_INHERITED_PROPERTIES);
 
     handleShowInheritedChanged();
-    handleShowHelpTextChanged();
+    updateHelpTextPanel();
 
     // Reload the information from the registry
     restoreSettings();
@@ -225,13 +226,9 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     // Get the type for this key if it exists, and the options
     PropertyParms parms = getPropertyParmsForKey(key);
 
-    //assert(!_selectedEntity.expired());
-    //Entity* selectedEntity = Node_getEntity(_selectedEntity.lock());
-    //auto selectedEntity = entity;
-
+#if 0
     bool hasDescription = false;
 
-#if 0
     if (selectedEntity != nullptr)
     {
         // Check the entityclass (which will return blank if not found)
@@ -246,7 +243,6 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
         hasDescription = !attr.getDescription().empty();
     }
 #endif
-
     // Set the values for the row
     wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
 
@@ -338,9 +334,7 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     }
 
     row[_columns.value] = style;
-
     row[_columns.isInherited] = false;
-    row[_columns.hasHelpText] = key == "classname" || hasDescription; // classname always has a description
 
     if (added)
     {
@@ -470,6 +464,8 @@ void EntityInspector::onKeyUpdatedCommon(const std::string& key)
     {
         _inheritedPropertiesNeedUpdate = true;
     }
+
+    _helpTextNeedsUpdate = true;
 }
 
 void EntityInspector::onKeyAdded(const std::string& key, const std::string& value)
@@ -769,7 +765,7 @@ void EntityInspector::updateGUIElements()
         // Remove the displayed PropertyEditor
 		_currentPropertyEditor.reset();
 
-        _helpText->SetValue("");
+        setHelpText("");
 
         // Disable the dialog and clear the TreeView
         _editorFrame->Enable(false);
@@ -804,6 +800,12 @@ void EntityInspector::onIdle()
         {
             removeClassProperties();
         }
+    }
+
+    if (_helpTextNeedsUpdate)
+    {
+        _helpTextNeedsUpdate = false;
+        updateHelpTextPanel();
     }
 
     updateGUIElements();
@@ -1273,12 +1275,9 @@ void EntityInspector::handleShowInheritedChanged()
     }
 }
 
-void EntityInspector::handleShowHelpTextChanged()
+void EntityInspector::updateHelpTextPanel()
 {
     bool helpIsVisible = _showHelpColumnCheckbox->IsChecked();
-
-    // Set the visibility of the help text panel
-    _helpText->Show(helpIsVisible);
 
     if (helpIsVisible)
     {
@@ -1291,45 +1290,60 @@ void EntityInspector::handleShowHelpTextChanged()
             wxutil::TreeModel::Row row(selectedItems.front(), *_kvStore);
             updateHelpText(row);
         }
+        else
+        {
+            // No single key selected, clear the help contents and we're done
+            setHelpText("");
+        }
     }
 
-    // After showing a packed control we need to call the sizer's layout() method
-    _mainWidget->GetSizer()->Layout();
+    // Set the visibility of the help text panel
+    if (_helpText->IsShown() != helpIsVisible)
+    {
+        _helpText->Show(helpIsVisible);
+
+        // After showing a packed control we need to call the sizer's layout() method
+        _mainWidget->GetSizer()->Layout();
+    }
+}
+
+void EntityInspector::setHelpText(const std::string& newText)
+{
+    _helpText->SetValue(newText);
+    _helpText->Enable(!newText.empty());
 }
 
 void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
 {
-    _helpText->SetValue("");
+    assert(row.getItem().IsOk());
 
-    if (!row.getItem().IsOk()) return;
+    // Get the highlighted key
+    auto selectedKey = getSelectedKey();
 
-    // Get the key pointed at
-    bool hasHelp = row[_columns.hasHelpText].getBool();
+    // Look up type for this key. First check the property parm map,
+    // then the entity class itself. If nothing is found, leave blank.
+    // Get the type for this key if it exists, and the options
+    PropertyParms parms = getPropertyParmsForKey(selectedKey);
 
-    if (!hasHelp) return;
-    
-    std::string key = getSelectedKey();
-
+    // Check the entityclass (which will return blank if not found)
     auto eclass = _entitySelection->getSingleSharedEntityClass();
+    
+    if (!eclass)
+    {
+        setHelpText("");
+        return; // non-unique eclass, cannot show any reliable help
+    }
 
-    if (!eclass) return; // non-unique eclass, cannot show any reliable help
-
-    if (key == "classname")
+    if (selectedKey == "classname")
     {
         // #5621: Show the editor_usage string when the classname is selected
-        _helpText->SetValue(eclass::getUsage(*eclass));
+        setHelpText(eclass::getUsage(*eclass));
+        return;
     }
-    else
-    {
-        // Find the attribute on the eclass, that's where the descriptions are defined
-        const auto& attr = eclass->getAttribute(key);
 
-        if (!attr.getDescription().empty())
-        {
-            // Check the description of the focused item
-            _helpText->SetValue(attr.getDescription());
-        }
-    }
+    // Find the attribute on the eclass, that's where the descriptions are defined
+    const auto& attr = eclass->getAttribute(selectedKey);
+    setHelpText(!attr.getDescription().empty() ? attr.getDescription() : "");
 }
 
 // Update the PropertyEditor pane, displaying the PropertyEditor if necessary
@@ -1441,8 +1455,6 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
     // "editor_var xxx" properties here.
     if (!a.getValue().empty())
     {
-        bool hasDescription = !a.getDescription().empty();
-
         wxutil::TreeModel::Row row = _kvStore->AddItem();
 
         wxDataViewItemAttr grey;
@@ -1468,7 +1480,6 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
         row[_columns.newValue] = std::string();
 
         row[_columns.isInherited] = true;
-        row[_columns.hasHelpText] = hasDescription;
 
         row.SendItemAdded();
     }

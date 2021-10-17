@@ -61,7 +61,6 @@ public:
 			name(add(wxutil::TreeModel::Column::IconText)),
 			value(add(wxutil::TreeModel::Column::String)),
 			isInherited(add(wxutil::TreeModel::Column::Boolean)),
-			hasHelpText(add(wxutil::TreeModel::Column::Boolean)),
 			booleanValue(add(wxutil::TreeModel::Column::Boolean)),
             oldValue(add(wxutil::TreeModel::Column::String)),
             newValue(add(wxutil::TreeModel::Column::String))
@@ -70,7 +69,6 @@ public:
 		wxutil::TreeModel::Column name;
 		wxutil::TreeModel::Column value;
 		wxutil::TreeModel::Column isInherited;
-		wxutil::TreeModel::Column hasHelpText;
 		wxutil::TreeModel::Column booleanValue;
 		wxutil::TreeModel::Column oldValue; // when displaying merge changes
 		wxutil::TreeModel::Column newValue; // when displaying merge changes
@@ -164,6 +162,7 @@ private:
 
     bool _selectionNeedsUpdate;
     bool _inheritedPropertiesNeedUpdate;
+    bool _helpTextNeedsUpdate;
 
 private:
     bool canUpdateEntity();
@@ -220,8 +219,9 @@ private:
     void onKeyUpdatedCommon(const std::string& key);
 
 	void handleShowInheritedChanged();
-	void handleShowHelpTextChanged();
+	void updateHelpTextPanel();
 	void updateHelpText(const wxutil::TreeModel::Row& row);
+	void setHelpText(const std::string& newText);
     static std::string  cleanInputString( const std::string& );
 
     // Add and remove inherited properties from the entity class
