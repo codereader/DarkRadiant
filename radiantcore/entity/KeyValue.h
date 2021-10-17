@@ -16,7 +16,7 @@ class SpawnArgs;
 ///
 /// - Notifies observers when value changes - value changes to "" on destruction.
 /// - Provides undo support through the global undo system.
-class KeyValue :
+class KeyValue final :
 	public EntityKeyValue,
 	public sigc::trackable
 {
@@ -34,6 +34,8 @@ private:
 
 public:
 	KeyValue(SpawnArgs& owner, const std::string& value, const std::string& empty);
+    KeyValue(const KeyValue& other) = delete;
+    KeyValue& operator=(const KeyValue& other) = delete;
 
 	~KeyValue();
 

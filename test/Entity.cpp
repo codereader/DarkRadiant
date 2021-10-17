@@ -1396,6 +1396,51 @@ TEST_F(EntityTest, KeyObserverValueChange)
     EXPECT_EQ(observer.receivedValue, "") << "Observer didn't get the expected empty value";
 }
 
+// Check that an KeyObserver stays attached to the key value after Undo
+TEST_F(EntityTest, KeyObserverAttachedAfterUndo)
+{
+    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
+    auto guard = Node_getEntity(guardNode);
+
+    constexpr const char* NewKeyName = "New_Unique_Key";
+    constexpr const char* NewKeyValue = "New_Unique_Value";
+    guard->setKeyValue(NewKeyName, NewKeyValue);
+
+    TestKeyObserver observer;
+    EntityKeyValue* keyValue = findKeyValue(guard, NewKeyName);
+    EXPECT_TRUE(keyValue != nullptr) << "Could not locate the key value";
+
+    // Monitor this new key
+    keyValue->attach(observer);
+    observer.reset();
+
+    // Open an undoable transaction and change that keyvalue
+    constexpr const char* SomeOtherValue = "SomeOtherValue";
+    {
+        UndoableCommand cmd("changeKeyValue");
+        guard->setKeyValue(NewKeyName, SomeOtherValue);
+    }
+
+    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on change";
+    EXPECT_EQ(observer.receivedValue, SomeOtherValue) << "Observer didn't get the correct value";
+
+    // Reset and hit Undo to revert the changed value
+    GlobalUndoSystem().undo();
+
+    // Key should be reverted now
+    EXPECT_EQ(guard->getKeyValue(NewKeyName), NewKeyValue);
+
+    // Reset the observer and check whether it still receives messages
+    observer.reset();
+    guard->setKeyValue(NewKeyName, SomeOtherValue);
+
+    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on assign";
+    EXPECT_EQ(observer.receivedValue, SomeOtherValue) << "Observer didn't get the correct value";
+
+    keyValue->detach(observer);
+}
+
 // KeyObserver doesn't get called when a key is removed entirely from the SpawnArgs
 TEST_F(EntityTest, KeyObserverKeyRemoval)
 {
