@@ -3,29 +3,47 @@ Version 2
 {
 "classname" "light_torchflame"
 "name" "light_torchflame_1"
-"origin" "0 -64 64"
+"canBeBlownOut" "0"
 "light_center" "0 0 0"
 "light_radius" "126 102 79"
-"canBeBlownOut" "0"
+"origin" "0 -64 64"
 "unique_to_1" "unique_value"
 }
 // entity 1
 {
 "classname" "light_torchflame"
 "name" "light_torchflame_2"
-"origin" "224 -64 64"
+"canBeBlownOut" "0"
 "light_center" "0 0 0"
 "light_radius" "126 102 79"
-"canBeBlownOut" "0"
+"origin" "224 -64 64"
 "unique_to_2" "unique_value"
 }
 // entity 2
 {
 "classname" "light_torchflame"
 "name" "light_torchflame_3"
-"origin" "224 128 64"
+"canBeBlownOut" "1"
 "light_center" "0 0 0"
 "light_radius" "126 102 79"
-"canBeBlownOut" "1"
+"origin" "224 128 64"
 "unique_to_3" "unique_value"
+}
+// entity 3
+{
+"classname" "speaker"
+"name" "speaker_1"
+"origin" "-33 116 0"
+"s_shader" "steam_engine_01"
+"s_mindistance" "0.665232"
+"s_maxdistance" "5.543600"
+}
+// entity 4
+{
+"classname" "speaker"
+"name" "speaker_2"
+"origin" "92 237 0"
+"s_shader" "steam_engine_01"
+"s_mindistance" "0.665232"
+"s_maxdistance" "5.543600"
 }

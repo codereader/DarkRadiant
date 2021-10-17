@@ -5,6 +5,7 @@
 #include "ui/idialogmanager.h"
 #include "i18n.h"
 #include "ientity.h"
+#include "isound.h"
 
 #include <wx/panel.h>
 #include <wx/button.h>
@@ -22,6 +23,11 @@ SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, IEntitySelection& ent
 {
 	constructBrowseButtonPanel(parent, _("Choose sound..."),
 		PropertyEditorFactory::getBitmapFor("sound"));
+
+    if (!module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
+    {
+        getWidget()->Disable();
+    }
 }
 
 void SoundPropertyEditor::onBrowseButtonClick()

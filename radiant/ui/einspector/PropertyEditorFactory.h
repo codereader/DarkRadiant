@@ -38,7 +38,6 @@ public:
 
     // Associate a specific property editor for the given key (regex)
 	void registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator);
-
 	void unregisterPropertyEditor(const std::string& key);
 
     void registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create);

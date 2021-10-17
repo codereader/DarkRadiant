@@ -1,6 +1,5 @@
 #include "PropertyEditorFactory.h"
 
-#include "isound.h"
 #include "itextstream.h"
 #include "Vector3PropertyEditor.h"
 #include "BooleanPropertyEditor.h"
@@ -43,12 +42,7 @@ void PropertyEditorFactory::registerBuiltinTypes()
 	_peMap["texture"] = TexturePropertyEditor::CreateNew;
 	_peMap["mat"] = TexturePropertyEditor::CreateNew;
 	_peMap["skin"] = SkinPropertyEditor::CreateNew;
-
-	if (module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
-	{
-		_peMap["sound"] = SoundPropertyEditor::CreateNew;
-	}
-
+	_peMap["sound"] = SoundPropertyEditor::CreateNew;
 	_peMap["float"] = FloatPropertyEditor::CreateNew;
 	_peMap["model"] = ModelPropertyEditor::CreateNew;
 	_peMap["classname"] = ClassnamePropertyEditor::CreateNew;
