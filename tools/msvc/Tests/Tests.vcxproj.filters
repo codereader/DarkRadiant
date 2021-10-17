@@ -76,6 +76,9 @@
     <ClInclude Include="..\..\..\test\testutil\FileSelectionHelper.h">
       <Filter>testutil</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\algorithm\Entity.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="algorithm">

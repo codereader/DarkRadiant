@@ -17,6 +17,7 @@
 #include "eclass.h"
 #include "string/join.h"
 #include "scenelib.h"
+#include "algorithm/Entity.h"
 
 namespace test
 {
@@ -1037,18 +1038,6 @@ inline EntityKeyValue* findKeyValue(Entity* entity, const std::string& keyToFind
     return keyValue;
 }
 
-inline std::vector<std::pair<std::string, std::string>> getAllKeyValuePairs(Entity* entity)
-{
-    std::vector<std::pair<std::string, std::string>> existingKeyValues;
-
-    entity->forEachKeyValue([&](const std::string& key, const std::string& value)
-    {
-        existingKeyValues.emplace_back(key, value);
-    });
-
-    return existingKeyValues;
-}
-
 inline void expectKeyValuesAreEquivalent(const std::vector<std::pair<std::string, std::string>>& stack1, 
     const std::vector<std::pair<std::string, std::string>>& stack2)
 {
@@ -1071,7 +1060,7 @@ TEST_F(EntityTest, EntityObserverAttachDetach)
     TestEntityObserver observer;
 
     // Collect all existing key values of this entity
-    auto existingKeyValues = getAllKeyValuePairs(guard);
+    auto existingKeyValues = algorithm::getAllKeyValuePairs(guard);
     EXPECT_FALSE(existingKeyValues.empty()) << "Entity doesn't have any keys";
 
     // On attachment, the observer gets notified about all existing keys (insert)
@@ -1239,7 +1228,7 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
     TestEntityObserver observer;
 
     // Collect all existing key values of this entity
-    auto keyValuesBeforeChange = getAllKeyValuePairs(guard);
+    auto keyValuesBeforeChange = algorithm::getAllKeyValuePairs(guard);
     EXPECT_FALSE(keyValuesBeforeChange.empty()) << "Entity doesn't have any keys";
 
     // On attachment, the observer gets notified about all existing keys (insert)
@@ -1261,7 +1250,7 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
         guard->setKeyValue(NewKey, "");
     }
 
-    auto keyValuesAfterChange = getAllKeyValuePairs(guard);
+    auto keyValuesAfterChange = algorithm::getAllKeyValuePairs(guard);
 
     observer.reset();
 
@@ -1269,7 +1258,7 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
     GlobalUndoSystem().undo();
 
     // Check that the entity has now the same state as before the change
-    expectKeyValuesAreEquivalent(getAllKeyValuePairs(guard), keyValuesBeforeChange);
+    expectKeyValuesAreEquivalent(algorithm::getAllKeyValuePairs(guard), keyValuesBeforeChange);
 
     // The Undo operation spams the observer with an erase() for each existing pair, 
     // and a subsequent insert() for each one imported from the undo stack
@@ -1304,7 +1293,7 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
     GlobalUndoSystem().redo();
 
     // Check that the entity has now the same state as before the undo
-    expectKeyValuesAreEquivalent(getAllKeyValuePairs(guard), keyValuesAfterChange);
+    expectKeyValuesAreEquivalent(algorithm::getAllKeyValuePairs(guard), keyValuesAfterChange);
 
     // The Redo operation should behave analogous to the undo, report all key values before the change as erased
     EXPECT_EQ(observer.eraseStack.size(), keyValuesBeforeChange.size()) << "All keys before redo should have been reported";

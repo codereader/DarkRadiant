@@ -6,6 +6,7 @@
 #include "algorithm/Scene.h"
 #include "iselectable.h"
 #include "selection/EntitySelection.h"
+#include "algorithm/Entity.h"
 
 namespace test
 {
@@ -384,6 +385,113 @@ TEST_F(EntityInspectorTest, DeselectOneEntity)
     expectUnique(keyValueStore, "canBeBlownOut", "0");
     // The other ones are still listed
     expectUnique(keyValueStore, "classname", "light_torchflame");
+}
+
+TEST_F(EntityInspectorTest, UndoRedoKeyValueChange)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto entity1Node = selectEntity("light_torchflame_1");
+    auto entity1 = Node_getEntity(entity1Node);
+    keyValueStore.rescanSelection();
+
+    // All of the entity's spawnargs should be present and showing their value
+    assumeLightTorchflame1Spawnargs(keyValueStore);
+
+    auto keyValuesBeforeChange = algorithm::getAllKeyValuePairs(entity1);
+    constexpr const char* ChangedValue = "changed_value";
+    {
+        UndoableCommand cmd("ChangeKeyValue");
+        entity1->setKeyValue("unique_to_1", ChangedValue);
+    }
+
+    for (const auto& pair : keyValuesBeforeChange)
+    {
+        EXPECT_EQ(keyValueStore.store[pair.first], pair.first == "unique_to_1" ? ChangedValue : pair.second) 
+            << "Keyvalues not matching up after change";
+    }
+
+    // Undo, this should revert the change and immediately update the store
+    GlobalUndoSystem().undo();
+
+    for (const auto& pair : keyValuesBeforeChange)
+    {
+        EXPECT_EQ(keyValueStore.store[pair.first], pair.second) << "Keyvalues not matching up after undo";
+    }
+
+    // Redo and check again
+    GlobalUndoSystem().redo();
+
+    for (const auto& pair : keyValuesBeforeChange)
+    {
+        EXPECT_EQ(keyValueStore.store[pair.first], pair.first == "unique_to_1" ? ChangedValue : pair.second)
+            << "Keyvalues not matching up after redo";
+    }
+}
+
+TEST_F(EntityInspectorTest, UndoRedoKeyValueAdditionRemoval)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto entity1Node = selectEntity("light_torchflame_1");
+    auto entity1 = Node_getEntity(entity1Node);
+    keyValueStore.rescanSelection();
+
+    // All of the entity's spawnargs should be present and showing their value
+    assumeLightTorchflame1Spawnargs(keyValueStore);
+
+    constexpr const char* NewKey = "NewKey";
+    constexpr const char* NewValue = "NewValue";
+
+    auto keyValuesBeforeChange = algorithm::getAllKeyValuePairs(entity1);
+    {
+        UndoableCommand cmd("AddAndRemoveKeyValues");
+
+        // Add a new key
+        entity1->setKeyValue(NewKey, NewValue);
+
+        // Remove the unique key
+        entity1->setKeyValue("unique_to_1", "");
+    }
+
+    // Check that the change got reflected
+    expectNotListed(keyValueStore, "unique_to_1");
+    expectUnique(keyValueStore, NewKey, NewValue);
+
+    for (const auto& pair : keyValuesBeforeChange)
+    {
+        if (pair.first != "unique_to_1")
+        {
+            EXPECT_EQ(keyValueStore.store[pair.first], pair.second) << "Keyvalues not matching up after change";
+        }
+    }
+
+    // Undo, this should revert the two changes
+    GlobalUndoSystem().undo();
+
+    expectNotListed(keyValueStore, NewKey);
+
+    // All other values should be restored again
+    for (const auto& pair : keyValuesBeforeChange)
+    {
+        EXPECT_EQ(keyValueStore.store[pair.first], pair.second) << "Keyvalues not matching up after undo";
+    }
+
+    // Redo and check the opposite
+    GlobalUndoSystem().redo();
+
+    expectNotListed(keyValueStore, "unique_to_1");
+    expectUnique(keyValueStore, NewKey, NewValue);
+
+    for (const auto& pair : keyValuesBeforeChange)
+    {
+        if (pair.first != "unique_to_1")
+        {
+            EXPECT_EQ(keyValueStore.store[pair.first], pair.second) << "Keyvalues not matching up after redo";
+        }
+    }
 }
 
 }

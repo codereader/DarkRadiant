@@ -60,6 +60,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
+    <ClInclude Include="..\..\..\test\algorithm\Entity.h" />
     <ClInclude Include="..\..\..\test\algorithm\Primitives.h" />
     <ClInclude Include="..\..\..\test\algorithm\Scene.h" />
     <ClInclude Include="..\..\..\test\algorithm\View.h" />
