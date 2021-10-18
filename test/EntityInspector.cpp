@@ -388,6 +388,50 @@ TEST_F(EntityInspectorTest, DeselectOneEntity)
     expectUnique(keyValueStore, "classname", "light_torchflame");
 }
 
+// Two speakers and one light are selected, the light is deselected which should make "s_shader" visible
+TEST_F(EntityInspectorTest, DeselectOneLight)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto light1 = selectEntity("light_torchflame_1");
+    auto speaker1 = selectEntity("speaker_1");
+    auto speaker2 = selectEntity("speaker_2");
+    keyValueStore.rescanSelection();
+
+    // Check a few assumptions on the involved spawnwargs
+    auto s_shader = Node_getEntity(speaker1)->getKeyValue("s_shader");
+    auto s_maxdistance = Node_getEntity(speaker1)->getKeyValue("s_maxdistance");
+    auto s_mindistance = Node_getEntity(speaker1)->getKeyValue("s_mindistance");
+
+    EXPECT_EQ(Node_getEntity(speaker2)->getKeyValue("s_shader"), s_shader) << "s_shader should be the same";
+    EXPECT_EQ(Node_getEntity(speaker2)->getKeyValue("s_maxdistance"), s_maxdistance) << "s_maxdistance should be the same";
+    EXPECT_EQ(Node_getEntity(speaker2)->getKeyValue("s_mindistance"), s_mindistance) << "s_mindistance should be the same";
+
+    EXPECT_TRUE(Node_getEntity(light1)->getKeyValue("s_shader").empty()) << "Light shouldn't have the s_shader key";
+    EXPECT_TRUE(Node_getEntity(light1)->getKeyValue("s_maxdistance").empty()) << "Light shouldn't have the s_maxdistance key";
+    EXPECT_TRUE(Node_getEntity(light1)->getKeyValue("s_mindistance").empty()) << "Light shouldn't have the s_mindistance key";
+
+    // These are shown with non-unique values
+    expectNonUnique(keyValueStore, "classname");
+    expectNonUnique(keyValueStore, "name");
+    expectNonUnique(keyValueStore, "origin");
+
+    // These are not shown because the light doesn't have them
+    expectNotListed(keyValueStore, "s_shader");
+    expectNotListed(keyValueStore, "s_maxdistance");
+    expectNotListed(keyValueStore, "s_mindistance");
+
+    // De-select light1, it should make the s_shader key value visible
+    Node_setSelected(light1, false);
+    keyValueStore.rescanSelection();
+
+    // These should be shown now
+    expectUnique(keyValueStore, "s_shader", s_shader);
+    expectUnique(keyValueStore, "s_maxdistance", s_maxdistance);
+    expectUnique(keyValueStore, "s_mindistance", s_mindistance);
+}
+
 TEST_F(EntityInspectorTest, UndoRedoKeyValueChange)
 {
     KeyValueStore keyValueStore;
