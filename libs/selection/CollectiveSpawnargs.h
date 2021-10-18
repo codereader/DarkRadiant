@@ -226,6 +226,37 @@ public:
         {
             removeKey(entity, pair.first);
         }
+
+        // Removing an entity might render existing keys visible
+        // if the entity was the last one lacking that key
+        for (auto& pair : _entitiesByKey)
+        {
+            const auto& key = pair.first;
+            auto& keyValueSet = pair.second;
+
+            // Only check the keys that were lacking on the removed entity,
+            // these are the only ones that might have been hidden before
+            if (keyValues.count(key) > 0 ||
+                keyValueSet.entities.size() != _keyValuesByEntity.size())
+            {
+                continue;
+            }
+
+            // The key was lacking on the entity and the key is now present
+            // on all entities, check if we have a unique key
+            auto sharedValue = getKeySharedByAllEntities(key);
+
+            keyValueSet.valueIsEqualOnAllEntities = !sharedValue.empty();
+            
+            // Fire the signal to make that value re-appear
+            _sigKeyAdded.emit(key, sharedValue);
+
+            // In case the key has differing values, fire another signal to make it appear non-unique
+            if (!keyValueSet.valueIsEqualOnAllEntities)
+            {
+                _sigKeyValueSetChanged.emit(key, "");
+            }
+        }
     }
 
 private:
@@ -314,34 +345,41 @@ private:
         }
     }
 
+    std::string getKeySharedByAllEntities(const std::string& key) const
+    {
+        // Get the key value of the first remaining entity
+        auto firstEntity = _keyValuesByEntity.begin();
+        auto firstKey = firstEntity->second.find(key);
+
+        // For comparison it's enough to fall back to an empty value if the key is not present
+        auto remainingValue = firstKey != firstEntity->second.end() ? firstKey->second : "";
+
+        // Skip beyond the first entity and check the rest for uniqueness
+        // std::all_of will still return true if the range is empty
+        bool valueIsUnique = std::all_of(++firstEntity, _keyValuesByEntity.end(),
+            [&](const KeyValuesByEntity::value_type& pair)
+        {
+            auto existingKey = pair.second.find(key);
+            return existingKey != pair.second.end() && existingKey->second == remainingValue;
+        });
+
+        return valueIsUnique ? remainingValue : "";
+    }
+
     void checkKeyValueSetAfterRemoval(const std::string& key, KeyValueSet& keyValueSet)
     {
         // If the value was not shared before, this could be the case now
         if (!keyValueSet.valueIsEqualOnAllEntities)
         {
-            // Get the key value of the first remaining entity
-            auto firstEntity = _keyValuesByEntity.begin();
-            auto firstKey = firstEntity->second.find(key);
-
-            // For comparison it's enough to fall back to an empty value if the key is not present
-            auto remainingValue = firstKey != firstEntity->second.end() ? firstKey->second : "";
-
-            // Skip beyond the first entity and check the rest for uniqueness
-            // std::all_of will still return true if the range is empty
-            bool valueIsUnique = std::all_of(++firstEntity, _keyValuesByEntity.end(),
-                [&](const KeyValuesByEntity::value_type& pair)
-            {
-                auto existingKey = pair.second.find(key);
-                return existingKey != pair.second.end() && existingKey->second == remainingValue;
-            });
-
-            if (valueIsUnique)
+            auto sharedValue = getKeySharedByAllEntities(key);
+            
+            if (!sharedValue.empty())
             {
                 keyValueSet.valueIsEqualOnAllEntities = true;
-                _sigKeyValueSetChanged.emit(key, remainingValue);
+                _sigKeyValueSetChanged.emit(key, sharedValue);
             }
         }
-        // The value was shared on all entities before, but maybe that's no longer the case
+        // If the value was shared on all entities before, that may be no longer the case;
         // it must still be present on *all* involved entities
         else if (keyValueSet.entities.size() != _keyValuesByEntity.size())
         {
