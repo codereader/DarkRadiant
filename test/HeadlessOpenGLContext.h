@@ -33,7 +33,7 @@ public:
 
 	void initialiseModule(const IApplicationContext& ctx) override;
 
-	void shutdownModule()
+	void shutdownModule() override
 	{
 		GlobalOpenGLContext().setSharedContext(IGLContext::Ptr());
 	}

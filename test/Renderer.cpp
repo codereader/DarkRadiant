@@ -189,9 +189,23 @@ TEST_F(RendererTest, SimpleProjectedLight)
     EXPECT_EQ(projT.x(), 0.5);
     EXPECT_EQ(projT.y(), 0.5);
 
-    // Z coordinate controls the falloff; this should increase to 1 at the
-    // target plane.
+    // Follow the target vector, then +/- RIGHT should get to the S (X) texture
+    // boundaries
+    EXPECT_EQ(mat * V4(TARGET + RIGHT), V4(1, 0.5, 1, 1));
+    EXPECT_EQ(mat * V4(TARGET - RIGHT), V4(0, 0.5, 1, 1));
+
+    // Likewise, TARGET +/- UP should get to the boundaries of T (Y). Currently
+    // the T coordinate is inverted so 0 is at the top and 1 at the bottom.
+    EXPECT_EQ(mat * V4(TARGET + UP), V4(0.5, 0, 1, 1));
+    EXPECT_EQ(mat * V4(TARGET - UP), V4(0.5, 1, 1, 1));
+
+    // Z coordinate controls the falloff; this should increase from 0 at the
+    // origin to 1 at the target plane (so it basically does the same as W for
+    // this example)
     EXPECT_EQ(projT.z(), 1);
+    EXPECT_EQ((mat * V4(0.25 * TARGET)).z(), 0.25);
+    EXPECT_EQ((mat * V4(0.5 * TARGET)).z(), 0.5);
+    EXPECT_EQ((mat * V4(0.75 * TARGET)).z(), 0.75);
 }
 
 }
