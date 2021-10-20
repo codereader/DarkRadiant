@@ -222,6 +222,7 @@ private:
 	void updateHelpTextPanel();
 	void updateHelpText(const wxutil::TreeModel::Row& row);
 	void setHelpText(const std::string& newText);
+    void updatePrimitiveNumber();
     static std::string  cleanInputString( const std::string& );
 
     // Add and remove inherited properties from the entity class

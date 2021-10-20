@@ -734,7 +734,7 @@ void EntityInspector::updateGUIElements()
     if (!_entitySelection->empty())
     {
         _editorFrame->Enable(entityCanBeUpdated);
-        _keyValueTreeView->Enable(true);
+        //_keyValueTreeView->Enable(true);
         //_showInheritedCheckbox->Enable(true);
         _showHelpColumnCheckbox->Enable(true);
         _keyEntry->Enable(entityCanBeUpdated);
@@ -769,10 +769,21 @@ void EntityInspector::updateGUIElements()
 
         // Disable the dialog and clear the TreeView
         _editorFrame->Enable(false);
-        _keyValueTreeView->Enable(true); // leave the treeview enabled
+        //_keyValueTreeView->Enable(true); // leave the treeview enabled
         _showInheritedCheckbox->Enable(false);
         _showHelpColumnCheckbox->Enable(false);
     }
+}
+
+void EntityInspector::updatePrimitiveNumber()
+{
+    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge && _entitySelection->size() > 1)
+    {
+        _primitiveNumLabel->SetLabelText(_("No multi-selection in merge mode"));
+        return;
+    }
+    
+    _primitiveNumLabel->SetLabelText("");
 }
 
 void EntityInspector::onIdle()
@@ -781,6 +792,22 @@ void EntityInspector::onIdle()
     {
         _selectionNeedsUpdate = false;
         _entitySelection->update();
+
+        // Clear the merge info
+        _mergeActions.clear();
+        _conflictActions.clear();
+
+        bool mergeMode = GlobalMapModule().getEditMode() == IMap::EditMode::Merge;
+
+        // Disable the tree view if we're in merge mode and multiple entities are selected
+        _keyValueTreeView->Enable(!mergeMode || _entitySelection->size() == 1);
+
+        if (mergeMode && _entitySelection->size() == 1)
+        {
+            handleMergeActions(_entitySelection->getSingleSelectedEntity());
+        }
+
+        updatePrimitiveNumber();
     }
 
     if (_inheritedPropertiesNeedUpdate)
@@ -1739,9 +1766,7 @@ void EntityInspector::handleKeyValueMergeAction(const scene::merge::IEntityKeyVa
 
 void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
 {
-    // Any possible merge actions go in first
-    if (GlobalMapModule().getEditMode() != IMap::EditMode::Merge || !selectedNode ||
-        selectedNode->getNodeType() != scene::INode::Type::MergeAction)
+    if (!selectedNode || selectedNode->getNodeType() != scene::INode::Type::MergeAction)
     {
         return;
     }
