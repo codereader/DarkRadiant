@@ -208,4 +208,25 @@ TEST_F(RendererTest, SimpleProjectedLight)
     EXPECT_EQ((mat * V4(0.75 * TARGET)).z(), 0.75);
 }
 
+TEST_F(RendererTest, TranslatedProjectedLight)
+{
+    // This light points directly downwards as with SimpleProjectedLight, but it
+    // is not at the origin
+    const V3 TARGET(0, 0, -8), UP(0, 4, 0), RIGHT(4, 0, 0);
+    const V3 ORIGIN(128, 64, -80);
+    Light light = Light::projected(TARGET, RIGHT, UP);
+    light.entity->setKeyValue("origin", string::to_string(ORIGIN));
+
+    Matrix4 mat = light.getMatrix();
+
+    // The light's own origin should transform to [0, 0, 0, 0]
+    auto origT = mat * V4(ORIGIN);
+    EXPECT_EQ(origT, V4(0, 0, 0, 0));
+
+    // Target vector is relative (it does not update when the light is moved),
+    // so we add it to the light origin to get the absolute target point.
+    auto targetT = mat * V4(ORIGIN + TARGET);
+    EXPECT_EQ(targetT, V4(0.5, 0.5, 1, 1));
+}
+
 }
