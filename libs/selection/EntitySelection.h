@@ -216,7 +216,7 @@ public:
             // will let the entity inspector interact with the world entity
             auto entity = getEntityForNode(selected);
 
-            if (!entity || selectedAndTracked.count(selected) > 0)
+            if (!entity || selectedAndTracked.count(entity) > 0)
             {
                 return; // not an entity or already tracked
             }

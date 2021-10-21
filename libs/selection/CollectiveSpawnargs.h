@@ -215,11 +215,17 @@ public:
     void onEntityRemoved(Entity* entity)
     {
         // Don't de-reference the entity pointer, it might have been erased already
-        
+        auto foundKeyValues = _keyValuesByEntity.find(entity);
+
+        if (foundKeyValues == _keyValuesByEntity.end())
+        {
+            return;
+        }
+
         // Remove the entity from the entity-to-kv mapping first
         // The entity count should be reduced when we invoke removeKey()
         // We do this by move-extracting the value pairs from the map
-        KeyValues keyValues(std::move(_keyValuesByEntity.extract(entity).mapped()));
+        KeyValues keyValues(std::move(_keyValuesByEntity.extract(foundKeyValues).mapped()));
 
         // Remove the entity from all key-mapped lists
         for (const auto& pair : keyValues)
