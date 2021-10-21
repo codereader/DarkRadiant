@@ -59,6 +59,11 @@ public:
 
     std::map<std::string, std::string> store;
 
+    std::size_t getNumSelectedEntities()
+    {
+        return _selectionTracker->size();
+    }
+
     void rescanSelection()
     {
         _selectionTracker->update();
@@ -565,6 +570,46 @@ TEST_F(EntityInspectorTest, DeletedEntitiesAreSafelyUntracked)
     keyValueStore.rescanSelection();
 
     EXPECT_TRUE(keyValueStore.store.empty()) << "No key values should be visible after changing maps";
+}
+
+TEST_F(EntityInspectorTest, SelectWorldspawnBrushes)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    auto brush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    auto brush3 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/3");
+
+    keyValueStore.rescanSelection();
+
+    // Select one after the other
+    Node_setSelected(brush1, true);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+
+    Node_setSelected(brush2, true);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+
+    Node_setSelected(brush3, true);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+
+    // Deselect again
+    Node_setSelected(brush1, false);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+
+    Node_setSelected(brush3, false);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+
+    Node_setSelected(brush2, false);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Expect nothing to be selected";
 }
 
 }
