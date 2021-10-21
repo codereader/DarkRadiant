@@ -503,6 +503,27 @@ TEST_F(EntityInspectorTest, SelectEntitiesPlusWorldspawnPrimitive)
     expectNonUnique(keyValueStore, "origin");
 }
 
+// As result of a drag-selection
+TEST_F(EntityInspectorTest, SelectMultipleEntitiesAndWorldspawnPrimitive)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    // Selection contains 2 lights, 2 speakers and one worldspawn brush
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    Node_setSelected(brush, true);
+    auto light1 = selectEntity("light_torchflame_1");
+    auto light3 = selectEntity("light_torchflame_3");
+    auto speaker1 = selectEntity("speaker_1");
+    auto speaker2 = selectEntity("speaker_2");
+    keyValueStore.rescanSelection();
+
+    // These are shown with non-unique values
+    expectNonUnique(keyValueStore, "classname");
+    EXPECT_EQ(keyValueStore.store.size(), 1) << "Too many keys showing up";
+}
+
 TEST_F(EntityInspectorTest, UndoRedoKeyValueChange)
 {
     KeyValueStore keyValueStore;
