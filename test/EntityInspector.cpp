@@ -589,27 +589,126 @@ TEST_F(EntityInspectorTest, SelectWorldspawnBrushes)
     Node_setSelected(brush1, true);
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+    expectUnique(keyValueStore, "classname", "worldspawn");
 
     Node_setSelected(brush2, true);
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+    expectUnique(keyValueStore, "classname", "worldspawn");
 
     Node_setSelected(brush3, true);
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+    expectUnique(keyValueStore, "classname", "worldspawn");
 
     // Deselect again
     Node_setSelected(brush1, false);
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+    expectUnique(keyValueStore, "classname", "worldspawn");
 
     Node_setSelected(brush3, false);
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+    expectUnique(keyValueStore, "classname", "worldspawn");
 
     Node_setSelected(brush2, false);
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Expect nothing to be selected";
+    expectNotListed(keyValueStore, "classname");
+
+    // Select all at once
+    Node_setSelected(brush1, true);
+    Node_setSelected(brush2, true);
+    Node_setSelected(brush3, true);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+    expectUnique(keyValueStore, "classname", "worldspawn");
+
+    // de-select all at once
+    Node_setSelected(brush1, false);
+    Node_setSelected(brush2, false);
+    Node_setSelected(brush3, false);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Expect nothing to be selected";
+    expectNotListed(keyValueStore, "classname");
+}
+
+TEST_F(EntityInspectorTest, SelectChildPrimitivesOfTwoEntities)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    auto brush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    auto func_static = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+    auto fsBrush4 = algorithm::findFirstBrushWithMaterial(func_static, "textures/numbers/4");
+    auto fsBrush5 = algorithm::findFirstBrushWithMaterial(func_static, "textures/numbers/5");
+
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Nothing should be selected at start";
+
+    // Select one after the other
+    Node_setSelected(brush1, true);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
+    expectUnique(keyValueStore, "classname", "worldspawn");
+
+    Node_setSelected(fsBrush4, true);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
+    expectNonUnique(keyValueStore, "classname");
+
+    Node_setSelected(brush2, true);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
+    expectNonUnique(keyValueStore, "classname");
+
+    Node_setSelected(fsBrush5, true);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
+    expectNonUnique(keyValueStore, "classname");
+
+    // Deselect again
+    Node_setSelected(brush2, false);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
+    expectNonUnique(keyValueStore, "classname");
+
+    Node_setSelected(fsBrush5, false);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";;
+    expectNonUnique(keyValueStore, "classname");
+
+    Node_setSelected(brush1, false);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect nothing to be selected";
+    expectUnique(keyValueStore, "classname", "func_static");
+
+    Node_setSelected(fsBrush4, false);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Expect nothing to be selected";
+    expectNotListed(keyValueStore, "classname");
+
+    // Select all at once
+    Node_setSelected(brush1, true);
+    Node_setSelected(brush2, true);
+    Node_setSelected(fsBrush4, true);
+    Node_setSelected(fsBrush5, true);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
+    expectNonUnique(keyValueStore, "classname");
+
+    // de-select all at once
+    Node_setSelected(brush1, false);
+    Node_setSelected(brush2, false);
+    Node_setSelected(fsBrush4, false);
+    Node_setSelected(fsBrush5, false);
+    keyValueStore.rescanSelection();
+    EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Expect nothing to be selected";
+    expectNotListed(keyValueStore, "classname");
 }
 
 }
