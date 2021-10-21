@@ -453,6 +453,56 @@ TEST_F(EntityInspectorTest, DeselectOneLight)
     expectUnique(keyValueStore, "s_mindistance", s_mindistance);
 }
 
+TEST_F(EntityInspectorTest, SelectEntitiesPlusWorldspawnPrimitive)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto light1 = selectEntity("light_torchflame_1");
+    auto speaker1 = selectEntity("speaker_1");
+    keyValueStore.rescanSelection();
+    
+    // Prerequisites of worldspawn
+    EXPECT_EQ(Node_getEntity(worldspawn)->getKeyValue("name"), "") << "Worldspawn shouldn't have a name";
+    EXPECT_EQ(Node_getEntity(worldspawn)->getKeyValue("origin"), "") << "Worldspawn shouldn't have an origin";
+
+    // These are shown with non-unique values
+    expectNonUnique(keyValueStore, "classname");
+    expectNonUnique(keyValueStore, "name");
+    expectNonUnique(keyValueStore, "origin");
+
+    // These are not shown because the light doesn't have them
+    expectNotListed(keyValueStore, "s_shader");
+    expectNotListed(keyValueStore, "s_maxdistance");
+    expectNotListed(keyValueStore, "s_mindistance");
+    // These are not shown because the speaker doesn't have them
+    expectNotListed(keyValueStore, "light_center");
+    expectNotListed(keyValueStore, "light_radius");
+    expectNotListed(keyValueStore, "unique_to_1");
+    expectNotListed(keyValueStore, "canBeBlownOut");
+
+    // Now select the worldspawn brush
+    // The worldspawn has only one classname spawnarg, so the set should be reduced to 1 key
+    auto brush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    Node_setSelected(brush1, true);
+    keyValueStore.rescanSelection();
+
+    expectNonUnique(keyValueStore, "classname");
+
+    // Worldspawn doesn't have name nor origin, so these should be gone
+    expectNotListed(keyValueStore, "name");
+    expectNotListed(keyValueStore, "origin");
+
+    // De-select the brush again, the name and origin should show up again
+    Node_setSelected(brush1, false);
+    keyValueStore.rescanSelection();
+
+    expectNonUnique(keyValueStore, "classname");
+    expectNonUnique(keyValueStore, "name");
+    expectNonUnique(keyValueStore, "origin");
+}
+
 TEST_F(EntityInspectorTest, UndoRedoKeyValueChange)
 {
     KeyValueStore keyValueStore;
