@@ -188,7 +188,20 @@ public:
     // Rescan the selection system for entities to observe
     void update()
     {
-        std::set<scene::INodePtr> selectedAndTracked;
+        // Assemble the set of currently selected entities
+        std::set<scene::INodePtr> selectedEntities;
+
+        GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& selected)
+        {
+            // Get the entity this node is attached to - a selected worldspawn brush
+            // will let the entity inspector interact with the world entity
+            auto entity = getEntityForNode(selected);
+
+            if (entity)
+            {
+                selectedEntities.emplace(std::move(entity));
+            }
+        });
 
         auto trackerCountChanged = false;
 
@@ -197,39 +210,29 @@ public:
         {
             auto node = tracked->getNode();
 
-            if (!node || !Node_isSelected(node))
+            if (!node || selectedEntities.count(node) == 0)
             {
-                // This entity is gone, remove the tracker entry
+                // This entity is gone or no longer selected, remove the tracker entry
                 _trackedEntities.erase(tracked++);
                 trackerCountChanged = true;
                 continue;
             }
 
-            selectedAndTracked.insert(node);
+            // This entity is still selected, scratch it from the list
+            selectedEntities.erase(node);
             ++tracked;
         }
 
-        // Check the selection system for new candidates
-        GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& selected)
+        // Entities that are still in the set at this point are untracked
+        for (auto& node : selectedEntities)
         {
-            // Get the entity this node is attached to - selected a worldspawn brush
-            // will let the entity inspector interact with the world entity
-            auto entity = getEntityForNode(selected);
-
-            if (!entity || selectedAndTracked.count(entity) > 0)
-            {
-                return; // not an entity or already tracked
-            }
-
-            // Not yet registered, create a new tracker
-            _trackedEntities.emplace_back(_spawnargs, entity);
-            selectedAndTracked.emplace(std::move(entity));
+            _trackedEntities.emplace_back(_spawnargs, node);
             trackerCountChanged = true;
-        });
+        }
 
         if (trackerCountChanged)
         {
-            // Notify that the spawnarg collection about newly selected entities
+            // Notify that the spawnarg collection about the changed selection set
             _spawnargs.onEntityCountChanged();
         }
     }
