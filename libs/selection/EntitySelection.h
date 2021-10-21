@@ -50,6 +50,8 @@ private:
         {
             assert(_entity != nullptr);
             _entity->attachObserver(this);
+
+            _spawnargCollection.onEntityAdded(_entity);
         }
 
         SpawnargTracker(const SpawnargTracker& other) = delete;

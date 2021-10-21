@@ -194,6 +194,28 @@ public:
         removeKey(entity, key);
     }
 
+    void onEntityAdded(Entity* entity)
+    {
+        // There are cases that cannot be tracked on the spawnarg level only
+        // like keys that are not present on the new set of selected entities
+        // In these cases, those keys should disappear from the set
+        for (auto& pair : _entitiesByKey)
+        {
+            auto numEntities = _keyValuesByEntity.size();
+            auto numEntitiesForKey = pair.second.entities.size();
+
+            // If the new entity makes an existing set incomplete, remove the key
+            if (numEntities > 1 && numEntitiesForKey == numEntities - 1)
+            {
+                // We got more entities in the tracked set than we have values for this key
+                // which was not the case before this entity was here, which means
+                // we should remove it from the visible set
+                pair.second.valueIsEqualOnAllEntities = false;
+                _sigKeyRemoved.emit(pair.first);
+            }
+        }
+    }
+
     void onEntityCountChanged()
     {
         // There are cases that cannot be tracked on the spawnarg level only
