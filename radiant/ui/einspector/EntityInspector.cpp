@@ -759,14 +759,15 @@ void EntityInspector::updateGUIElements()
     }
     else  // no selected entity
     {
+#if 0
         // Reset the sorting when changing entities
         _keyValueTreeView->ResetSortingOnAllColumns();
-
+#endif
         // Remove the displayed PropertyEditor
 		_currentPropertyEditor.reset();
-
+#if 0
         setHelpText("");
-
+#endif
         // Disable the dialog and clear the TreeView
         _editorFrame->Enable(false);
         //_keyValueTreeView->Enable(true); // leave the treeview enabled
@@ -833,7 +834,14 @@ void EntityInspector::onIdle()
     if (_selectionNeedsUpdate)
     {
         _selectionNeedsUpdate = false;
+
         _entitySelection->update();
+
+        if (_entitySelection->empty())
+        {
+            // Reset the sorting when the last entity is released
+            _keyValueTreeView->ResetSortingOnAllColumns();
+        }
 
         // Clear the merge info
         _mergeActions.clear();
@@ -1160,7 +1168,7 @@ void EntityInspector::_onAcceptMergeAction()
 
     // We perform a full refresh of the view
     changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
-    getEntityFromSelectionSystem();
+    _selectionNeedsUpdate = true;
 }
 
 void EntityInspector::_onRejectMergeAction()
@@ -1212,7 +1220,7 @@ void EntityInspector::_onRejectMergeAction()
 
     // We perform a full refresh of the view
     changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
-    getEntityFromSelectionSystem();
+    _selectionNeedsUpdate = true;
 }
 
 bool EntityInspector::_testAcceptMergeAction()
@@ -1580,111 +1588,6 @@ void EntityInspector::removeClassProperties()
         // If this is an inherited row, remove it
         return row[_columns.isInherited].getBool();
     });
-}
-
-// Update the selected Entity pointer from the selection system
-void EntityInspector::getEntityFromSelectionSystem()
-{
-    return;
-
-    _entitySelection->update();
-
-    auto numSelectedEntities = _entitySelection->size();
-
-    if (numSelectedEntities == 0)
-    {
-        //changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
-        _primitiveNumLabel->SetLabelText("");
-        return;
-    }
-
-    if (numSelectedEntities > 1)
-    {
-        //changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
-        _primitiveNumLabel->SetLabelText(fmt::format("[{0} Entities]", numSelectedEntities));
-    }
-
-    updateTreeView();
-
-#if 0
-    if (GlobalSelectionSystem().countSelected() != 1)
-    {
-        changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
-        _primitiveNumLabel->SetLabelText("");
-        return;
-    }
-
-    auto selectedNode = GlobalSelectionSystem().ultimateSelected();
-#endif
-#if 0
-    auto selectedNode = _entitySelection->getSingleSelectedEntity();
-#endif
-#if 0
-    // The root node must not be selected (this can happen if Invert Selection is
-    // activated with an empty scene, or by direct selection in the entity list).
-    if (selectedNode->isRoot())
-    {
-        changeSelectedEntity(scene::INodePtr(), selectedNode);
-        _primitiveNumLabel->SetLabelText("");
-        return;
-    }
-#endif
-
-#if 0
-    // Try both the selected node (if an entity is selected) or the parent node
-    // (if a brush is selected).
-    Entity* newSelectedEntity = Node_getEntity(selectedNode);
-
-    if (newSelectedEntity)
-    {
-        // Node was an entity, use this
-        changeSelectedEntity(selectedNode, selectedNode);
-
-        // Just set the entity number
-        auto indices = scene::getNodeIndices(selectedNode);
-
-        _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}"), indices.first));
-    }
-    else
-    {
-        // Check if this is a special merge node
-        if (selectedNode->getNodeType() == scene::INode::Type::MergeAction &&
-            GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
-        {
-            auto mergeAction = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNode);
-            assert(mergeAction);
-
-            if (mergeAction && Node_isEntity(mergeAction->getAffectedNode()))
-            {
-                // Use the entity of the merge node
-                changeSelectedEntity(mergeAction->getAffectedNode(), selectedNode);
-                _primitiveNumLabel->SetLabelText(_("Merge Preview"));
-                return;
-            }
-        }
-
-        // Node was not an entity, try parent instead
-        scene::INodePtr selectedNodeParent = selectedNode->getParent();
-        changeSelectedEntity(selectedNodeParent, selectedNode);
-
-        if (!_selectedEntity.lock())
-        {
-            return;
-        }
-
-        try
-        {
-            auto indices = scene::getNodeIndices(selectedNode);
-
-            _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}, Primitive {1}"), indices.first, indices.second));
-        }
-        catch (const std::out_of_range& ex)
-        {
-            rWarning() << ex.what() << std::endl;
-            _primitiveNumLabel->SetLabelText("-");
-        }
-    }
-#endif
 }
 
 void EntityInspector::updateTreeView()

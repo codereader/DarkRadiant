@@ -230,9 +230,6 @@ private:
     void addClassProperties();
     void removeClassProperties();
 
-    // Update our selected entity pointer from the selection system
-    void getEntityFromSelectionSystem();
-
     // Change the selected entity pointer, setting up the observer
     void changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode);
 
