@@ -1048,8 +1048,8 @@ bool EntityInspector::isItemDeletable(const wxutil::TreeModel::Row& row)
     // We don't delete any inherited key values
     if (row[_columns.isInherited].getBool()) return false;
 
-    // Don't delete any classnames either
-    if (key == "classname") return false;
+    // Don't delete any classnames or names
+    if (key == "classname" || key == "name") return false;
 
     return true;
 }
