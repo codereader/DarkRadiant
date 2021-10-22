@@ -113,9 +113,18 @@ public:
 
         if (keyValueSet.entities.size() == 1)
         {
-            // The set was newly created, this was a new (and therefore unique) keyvalue
-            keyValueSet.valueIsEqualOnAllEntities = true;
-            _sigKeyAdded.emit(key, value.get());
+            // If we have only one entity registered, this is a unique set
+            if (_keyValuesByEntity.size() == 1)
+            {
+                // The set was newly created, this was a new (and therefore unique) keyvalue
+                keyValueSet.valueIsEqualOnAllEntities = true;
+                _sigKeyAdded.emit(key, value.get());
+            }
+            else
+            {
+                // We know of more entities that don't have this key, don't add it
+                keyValueSet.valueIsEqualOnAllEntities = false;
+            }
         }
         // This was not the first entity using this key, check if the values are unique
         // We only bother checking if the already existing set had the same value
