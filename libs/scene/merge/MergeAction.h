@@ -225,7 +225,7 @@ private:
     INodePtr _node;
     std::string _key;
     std::string _value;
-    std::string _existingValue;
+    std::string _unchangedValue;
 
 public:
     // Will call setKeyValue(key, value) on the targetnode when applyChanges() is called
@@ -240,7 +240,7 @@ public:
         assert(!_key.empty());
         
         // Store the existing value, it's reverted when deactivating this action
-        _existingValue = Node_getEntity(node)->getKeyValue(key);
+        _unchangedValue = Node_getEntity(node)->getKeyValue(key);
     }
 
     void applyChanges() override
@@ -265,6 +265,11 @@ public:
         return _value;
     }
 
+    const std::string& getUnchangedValue() const override
+    {
+        return _unchangedValue;
+    }
+
     INodePtr getAffectedNode() override
     {
         return getEntityNode();
@@ -283,7 +288,7 @@ public:
     {
         MergeAction::deactivate();
 
-        applyValue(_existingValue);
+        applyValue(_unchangedValue);
     }
 
 private:

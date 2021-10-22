@@ -99,6 +99,11 @@ public:
 
     // Gets the value that is going to be set by this action
     virtual const std::string& getValue() const = 0;
+
+    // The action is usually applying its value as soon as it is inserted into
+    // the scene for preview. It remembers the original entity key value,
+    // use tis method to retrieve it.
+    virtual const std::string& getUnchangedValue() const = 0;
 };
 
 class IConflictResolutionAction :

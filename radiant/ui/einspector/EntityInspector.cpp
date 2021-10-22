@@ -194,8 +194,15 @@ void EntityInspector::restoreSettings()
 
 void EntityInspector::onMapEditModeChanged(IMap::EditMode mode)
 {
-    // Clear the selection to not hold any references to merge nodes
-    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
+    if (mode == IMap::EditMode::Normal)
+    {
+        _mergeActions.clear();
+        _conflictActions.clear();
+        _keyValueIterMap.clear();
+        _kvStore->Clear();
+    }
+
+    _selectionNeedsUpdate = true;
     requestIdleCallback();
 }
 
@@ -306,7 +313,7 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
         {
             wxDataViewItemAttr oldAttr = style;
             wxutil::TreeViewItemStyle::SetStrikethrough(oldAttr, true);
-            row[_columns.oldValue] = value;
+            row[_columns.oldValue] = action->second->getUnchangedValue();
             row[_columns.oldValue] = oldAttr;
         }
 
@@ -843,6 +850,9 @@ void EntityInspector::onIdle()
             _keyValueTreeView->ResetSortingOnAllColumns();
         }
 
+        _mergeActions.clear();
+        _conflictActions.clear();
+
         if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
         {
             auto selectionCount = GlobalSelectionSystem().countSelected();
@@ -854,8 +864,6 @@ void EntityInspector::onIdle()
             // no entities are directly selected, only merge nodes are candidates
 
             // We do a full refresh on every selection change in merge mode
-            _mergeActions.clear();
-            _conflictActions.clear();
             _kvStore->Clear();
             _keyValueIterMap.clear();
             _keyValueTreeView->ResetSortingOnAllColumns();
@@ -1721,6 +1729,12 @@ void EntityInspector::handleKeyValueMergeAction(const scene::merge::IEntityKeyVa
         (mergeAction->getType() == scene::merge::ActionType::ChangeKeyValue && !_spawnargs->containsKey(key)))
     {
         onKeyChange(key, mergeAction->getValue());
+    }
+
+    // Remove keys are special too
+    if (mergeAction->getType() == scene::merge::ActionType::RemoveKeyValue && !_spawnargs->containsKey(key))
+    {
+        onKeyChange(key, mergeAction->getUnchangedValue());
     }
 }
 
