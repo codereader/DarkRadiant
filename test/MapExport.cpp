@@ -3,6 +3,8 @@
 #include "imap.h"
 #include "imapformat.h"
 #include "ibrush.h"
+#include "math/Plane3.h"
+#include "math/Matrix3.h"
 #include "iselection.h"
 #include "scenelib.h"
 #include "os/path.h"
@@ -125,6 +127,68 @@ brushDef3
     EXPECT_NE(brushTextIndex, std::string::npos) << "Could not locate the exported brush in the expected format";
 }
 
+struct XmlFace
+{
+    Plane3 plane;
+    Matrix3 textureMatrix;
+    std::string material;
+    unsigned int contentsFlag;
+
+    static XmlFace ParseFromNode(const xml::Node& node)
+    {
+        XmlFace face;
+
+        face.material = node.getNamedChildren("material")[0].getAttributeValue("name");
+
+        auto planeNode = node.getNamedChildren("plane")[0];
+
+        face.plane.normal().x() = string::to_float(planeNode.getAttributeValue("x"));
+        face.plane.normal().y() = string::to_float(planeNode.getAttributeValue("y"));
+        face.plane.normal().z() = string::to_float(planeNode.getAttributeValue("z"));
+        face.plane.dist() = -string::to_float(planeNode.getAttributeValue("d")); // negate d
+
+        auto texProjTag = node.getNamedChildren("textureProjection")[0];
+
+        face.textureMatrix.xx() = string::to_float(texProjTag.getAttributeValue("xx"));
+        face.textureMatrix.yx() = string::to_float(texProjTag.getAttributeValue("yx"));
+        face.textureMatrix.zx() = string::to_float(texProjTag.getAttributeValue("tx"));
+        face.textureMatrix.xy() = string::to_float(texProjTag.getAttributeValue("xy"));
+        face.textureMatrix.yy() = string::to_float(texProjTag.getAttributeValue("yy"));
+        face.textureMatrix.zy() = string::to_float(texProjTag.getAttributeValue("ty"));
+
+        face.contentsFlag = string::convert<unsigned int>(node.getNamedChildren("contentsFlag")[0].getAttributeValue("value"));
+
+        return face;
+    }
+};
+
+inline bool hasFaceWithProperties(const std::vector<XmlFace>& faces, const std::string& material, unsigned int contentsFlag,
+    const Plane3& plane, double xx, double yx, double tx, double xy, double yy, double ty)
+{
+    constexpr double Epsilon = 0.001;
+    
+    for (const auto& face : faces)
+    {
+        if (face.material != material) continue;
+
+        if (face.contentsFlag != contentsFlag) continue;
+
+        if (!math::isNear(face.plane.normal(), plane.normal(), Epsilon)) continue;
+        if (std::abs(face.plane.dist() - plane.dist()) > Epsilon) continue;
+
+        if (std::abs(face.textureMatrix.xx() - xx) > Epsilon) continue;
+        if (std::abs(face.textureMatrix.yx() - yx) > Epsilon) continue;
+        if (std::abs(face.textureMatrix.zx() - tx) > Epsilon) continue;
+        if (std::abs(face.textureMatrix.xy() - xy) > Epsilon) continue;
+        if (std::abs(face.textureMatrix.yy() - yy) > Epsilon) continue;
+        if (std::abs(face.textureMatrix.zy() - ty) > Epsilon) continue;
+
+        return true;
+    }
+
+    return false;
+}
+
 TEST_F(MapExportTest, exportDoom3BrushPortable)
 {
     fs::path tempPath = _context.getTemporaryDataPath();
@@ -132,53 +196,27 @@ TEST_F(MapExportTest, exportDoom3BrushPortable)
 
     auto text = exportDefaultBrushUsingFormat("doom3", tempPath.string());
 
-    auto brushTextIndex = text.find(R"BRUSH(<brush number="0">
-        <faces>
-          <face>
-            <plane x="1.000000" y="0" z="0" d="-64.000000"/>
-            <textureProjection xx="0.003906" yx="0" tx="0.500000" xy="0" yy="0.001953" ty="0.500000"/>
-            <material name="textures/darkmod/numbers/1"/>
-            <contentsFlag value="0"/>
-          </face>
-          <face>
-            <plane x="-1.000000" y="0" z="0" d="-64.000000"/>
-            <textureProjection xx="0.003906" yx="0" tx="0.500000" xy="0" yy="0.001953" ty="0.500000"/>
-            <material name="textures/darkmod/numbers/1"/>
-            <contentsFlag value="0"/>
-          </face>
-          <face>
-            <plane x="0" y="1.000000" z="0" d="-128.000000"/>
-            <textureProjection xx="0.007813" yx="0" tx="0.500000" xy="0" yy="0.001953" ty="0.500000"/>
-            <material name="textures/darkmod/numbers/1"/>
-            <contentsFlag value="0"/>
-          </face>
-          <face>
-            <plane x="0" y="-1.000000" z="0" d="-128.000000"/>
-            <textureProjection xx="0.007813" yx="0" tx="0.500000" xy="0" yy="0.001953" ty="0.500000"/>
-            <material name="textures/darkmod/numbers/1"/>
-            <contentsFlag value="0"/>
-          </face>
-          <face>
-            <plane x="0" y="0" z="1.000000" d="-256.000000"/>
-            <textureProjection xx="0.003906" yx="0" tx="0.500000" xy="0" yy="0.007813" ty="0.500000"/>
-            <material name="textures/darkmod/numbers/1"/>
-            <contentsFlag value="0"/>
-          </face>
-          <face>
-            <plane x="0" y="0" z="-1.000000" d="-256.000000"/>
-            <textureProjection xx="0.003906" yx="0" tx="0.500000" xy="0" yy="0.007813" ty="0.500000"/>
-            <material name="textures/darkmod/numbers/1"/>
-            <contentsFlag value="0"/>
-          </face>
-        </faces>
-        <layers>
-          <layer id="0"/>
-        </layers>
-        <selectionGroups/>
-        <selectionSets/>
-      </brush>)BRUSH");
+    std::stringstream stream(text);
+    xml::Document doc(stream);
 
-    EXPECT_NE(brushTextIndex, std::string::npos) << "Could not locate the exported brush in the expected format";
+    auto brush = doc.findXPath("//brush[@number='0']");
+    EXPECT_EQ(brush.size(), 1) << "More than 1 brush found in XML";
+    
+    auto faceNodes = doc.findXPath("//brush[@number='0']/faces//face");
+    EXPECT_EQ(faceNodes.size(), 6) << "Other than 6 faces brush found in XML";
+
+    std::vector<XmlFace> faces;
+    for (const auto& faceNode : faceNodes)
+    {
+        faces.emplace_back(XmlFace::ParseFromNode(faceNode));
+    }
+
+    EXPECT_TRUE(hasFaceWithProperties(faces, "textures/darkmod/numbers/1", 0, Plane3(1.0, 0.0, 0.0, 64), 0.003906, 0, 0.5, 0, 0.001953, 0.5));
+    EXPECT_TRUE(hasFaceWithProperties(faces, "textures/darkmod/numbers/1", 0, Plane3(-1.0, 0.0, 0.0, 64), 0.003906, 0, 0.5, 0, 0.001953, 0.5));
+    EXPECT_TRUE(hasFaceWithProperties(faces, "textures/darkmod/numbers/1", 0, Plane3(0, 1.0, 0.0, 128), 0.007813, 0, 0.5, 0, 0.001953, 0.5));
+    EXPECT_TRUE(hasFaceWithProperties(faces, "textures/darkmod/numbers/1", 0, Plane3(0, -1.0, 0.0, 128), 0.007813, 0, 0.5, 0, 0.001953, 0.5));
+    EXPECT_TRUE(hasFaceWithProperties(faces, "textures/darkmod/numbers/1", 0, Plane3(0, 0, 1.0, 256), 0.003906, 0, 0.5, 0, 0.007813, 0.5));
+    EXPECT_TRUE(hasFaceWithProperties(faces, "textures/darkmod/numbers/1", 0, Plane3(0, 0, -1.0, 256), 0.003906, 0, 0.5, 0, 0.007813, 0.5));
 }
 
 TEST_F(MapExportTest, exportQuake3Brush)
