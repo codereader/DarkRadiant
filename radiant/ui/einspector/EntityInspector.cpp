@@ -777,10 +777,52 @@ void EntityInspector::updateGUIElements()
 
 void EntityInspector::updatePrimitiveNumber()
 {
-    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge && _entitySelection->size() > 1)
+    auto numSelectedEntities = _entitySelection->size();
+
+    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
     {
-        _primitiveNumLabel->SetLabelText(_("No multi-selection in merge mode"));
+        if (numSelectedEntities > 1)
+        {
+            _primitiveNumLabel->SetLabelText(_("No multi-selection in merge mode"));
+            return;
+        }
+        else if (numSelectedEntities == 1)
+        {
+            _primitiveNumLabel->SetLabelText(_("Merge Preview"));
+            return;
+        }
+    }
+
+    // Do we have exactly one primitive selected?
+    if (numSelectedEntities > 1)
+    {
+        _primitiveNumLabel->SetLabelText(fmt::format("[{0} Entities]", numSelectedEntities));
         return;
+    }
+
+    // Check if the node is a primitive
+    if (GlobalSelectionSystem().countSelected() == 1)
+    {
+        try
+        {
+            auto selectedNode = GlobalSelectionSystem().ultimateSelected();
+            auto indices = scene::getNodeIndices(selectedNode);
+
+            if (Node_isEntity(selectedNode))
+            {
+                _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}"), indices.first));
+            }
+            else
+            {
+                _primitiveNumLabel->SetLabelText(fmt::format(_("Entity {0}, Primitive {1}"), indices.first, indices.second));
+            }
+
+            return;
+        }
+        catch (const std::out_of_range& ex)
+        {
+            rWarning() << ex.what() << std::endl;
+        }
     }
     
     _primitiveNumLabel->SetLabelText("");
