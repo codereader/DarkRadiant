@@ -453,7 +453,8 @@ void MergeControlDialog::updateControls()
 
     findNamedObject<wxStaticText>(this, "NoMergeNodeSelected")->Show(selectedMergeNodes.size() != 1);
     findNamedObject<wxButton>(this, "ResolveAcceptButton")->Show(mergeInProgress && conflictNode != nullptr);
-    findNamedObject<wxButton>(this, "ResolveKeepBothButton")->Show(mergeInProgress && conflictNode != nullptr);
+    findNamedObject<wxButton>(this, "ResolveKeepBothButton")->Show(mergeInProgress && 
+        conflictNode != nullptr && scene::merge::canBeResolvedByKeepingBothEntities(conflictNode));
     findNamedObject<wxButton>(this, "ResolveRejectButton")->Show(mergeInProgress && !selectedMergeNodes.empty());
     findNamedObject<wxButton>(this, "JumpToNextConflictButton")->Enable(mergeInProgress && _numUnresolvedConflicts > 0);
 

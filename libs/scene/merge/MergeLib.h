@@ -191,6 +191,42 @@ inline bool actionIsTargetingKeyValue(const IMergeAction::Ptr& action)
     return false;
 }
 
+inline std::set<std::pair<INodePtr, INodePtr>> getSourceAndTargetEntitiesAffectedByConflict(const std::shared_ptr<IMergeActionNode>& mergeNode)
+{
+    std::set<std::pair<INodePtr, INodePtr>> sourceAndTargetEntities;
+
+    mergeNode->foreachMergeAction([&](const IMergeAction::Ptr& action)
+    {
+        auto conflictAction = std::dynamic_pointer_cast<IConflictResolutionAction>(action);
+
+        if (conflictAction)
+        {
+            sourceAndTargetEntities.emplace(conflictAction->getConflictingSourceEntity(), conflictAction->getConflictingTargetEntity());
+        }
+    });
+
+    return sourceAndTargetEntities;
+}
+
+inline bool canBeResolvedByKeepingBothEntities(const scene::INodePtr& node)
+{
+    auto mergeNode = std::dynamic_pointer_cast<IMergeActionNode>(node);
+
+    if (!mergeNode) return false;
+
+    // We expect that we only get one source/target combination from a single node
+    auto sourceAndTargetEntities = getSourceAndTargetEntitiesAffectedByConflict(mergeNode);
+
+    if (sourceAndTargetEntities.size() != 1)
+    {
+        rWarning() << "The conflict action node contains a weird combination and source and target entity nodes, cannot resolve" << std::endl;
+        return false;
+    }
+
+    // We need to have two entities if we want to keep both
+    return sourceAndTargetEntities.begin()->first && sourceAndTargetEntities.begin()->second;
+}
+
 // Resolves the single selected merge conflict by keeping both entity versions.
 // The entity in the target map won't receive any changes, whereas the source entity will
 // be marked for addition to the target map.
@@ -223,24 +259,7 @@ inline void resolveConflictByKeepingBothEntities()
         // and extract the source/target entity pairs from the conflict actions
         
         // We expect that we only get one source/target combination from a single node
-        std::set<std::pair<INodePtr, INodePtr>> sourceAndTargetEntities;
-        std::vector<IMergeAction::Ptr> keyValueActions;
-
-        mergeNode->foreachMergeAction([&](const IMergeAction::Ptr& action)
-        {
-            if (actionIsTargetingKeyValue(action))
-            {
-                keyValueActions.push_back(action);
-            }
-
-            auto conflictAction = std::dynamic_pointer_cast<IConflictResolutionAction>(action);
-
-            if (conflictAction)
-            {
-                sourceAndTargetEntities.insert(
-                    std::make_pair(conflictAction->getConflictingSourceEntity(), conflictAction->getConflictingTargetEntity()));
-            }
-        });
+        auto sourceAndTargetEntities = getSourceAndTargetEntitiesAffectedByConflict(mergeNode);
 
         if (sourceAndTargetEntities.size() != 1)
         {
@@ -250,6 +269,13 @@ inline void resolveConflictByKeepingBothEntities()
 
         // Add the action to import the source node as a whole
         const auto& pair = *sourceAndTargetEntities.begin();
+
+        if (!pair.first || !pair.second)
+        {
+            rWarning() << "The conflict action node doesn't refer to two entities, cannot keep both" << std::endl;
+            return; // cannot be resolved
+        }
+
         auto addSourceEntityAction = std::make_shared<AddEntityAction>(pair.first, pair.second->getRootNode());
 
         operation->addAction(addSourceEntityAction);
