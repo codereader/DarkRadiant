@@ -36,6 +36,9 @@ void MergeActionNodeBase::onInsertIntoScene(IMapRootNode& rootNode)
         {
             action->activate();
         });
+
+        // The activated actions might have changed the node bounds in some way
+        boundsChanged();
     }
 
     hideAffectedNodes();

@@ -225,6 +225,7 @@ private:
     INodePtr _node;
     std::string _key;
     std::string _value;
+    std::string _existingValue;
 
 public:
     // Will call setKeyValue(key, value) on the targetnode when applyChanges() is called
@@ -237,21 +238,16 @@ public:
         assert(_node);
         assert(Node_isEntity(_node));
         assert(!_key.empty());
+        
+        // Store the existing value, it's reverted when deactivating this action
+        _existingValue = Node_getEntity(node)->getKeyValue(key);
     }
 
     void applyChanges() override
     {
         if (!isActive()) return;
 
-        // No post-clone callback since we don't care about selection groups right now
-        auto entity = Node_getEntity(_node);
-
-        if (!entity)
-        {
-            throw std::runtime_error("Node " + _node->name() + " is not an entity");
-        }
-
-        entity->setKeyValue(_key, _value);
+        applyValue(_value);
     }
 
     const INodePtr& getEntityNode() const
@@ -272,6 +268,35 @@ public:
     INodePtr getAffectedNode() override
     {
         return getEntityNode();
+    }
+
+    virtual void activate() override
+    {
+        MergeAction::activate();
+
+        // Key Value Actions apply their values to the target node
+        // on activation, to allow for proper preview and bounds calculations
+        applyValue(_value);
+    }
+
+    virtual void deactivate() override
+    {
+        MergeAction::deactivate();
+
+        applyValue(_existingValue);
+    }
+
+private:
+    void applyValue(const std::string& value)
+    {
+        auto entity = Node_getEntity(_node);
+
+        if (!entity)
+        {
+            throw std::runtime_error("Node " + _node->name() + " is not an entity");
+        }
+
+        entity->setKeyValue(_key, value);
     }
 };
 
