@@ -163,13 +163,6 @@ void EntityInspector::construct()
         sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
     );
 
-    // Observe the Undo system for undo/redo operations, to refresh the
-    // keyvalues when this happens
-    _undoHandler = GlobalUndoSystem().signal_postUndo().connect(
-        sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
-    _redoHandler = GlobalUndoSystem().signal_postRedo().connect(
-        sigc::mem_fun(this, &EntityInspector::onUndoRedoOperation));
-
     _mapEditModeChangedHandler = GlobalMapModule().signal_editModeChanged().connect(
         sigc::mem_fun(this, &EntityInspector::onMapEditModeChanged)
     );
@@ -202,8 +195,7 @@ void EntityInspector::onMapEditModeChanged(IMap::EditMode mode)
         _kvStore->Clear();
     }
 
-    _selectionNeedsUpdate = true;
-    requestIdleCallback();
+    refresh();
 }
 
 void EntityInspector::onKeyChange(const std::string& key, const std::string& value, bool isMultiValue)
@@ -233,23 +225,6 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     // Get the type for this key if it exists, and the options
     PropertyParms parms = getPropertyParmsForKey(key);
 
-#if 0
-    bool hasDescription = false;
-
-    if (selectedEntity != nullptr)
-    {
-        // Check the entityclass (which will return blank if not found)
-        auto eclass = selectedEntity->getEntityClass();
-        const auto& attr = eclass->getAttribute(key);
-
-        if (parms.type.empty())
-        {
-            parms.type = attr.getType();
-        }
-
-        hasDescription = !attr.getDescription().empty();
-    }
-#endif
     // Set the values for the row
     wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
 
@@ -440,8 +415,6 @@ void EntityInspector::onMainFrameConstructed()
 void EntityInspector::onMainFrameShuttingDown()
 {
     // Clear the selection and unsubscribe from the selection system
-    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
-
     GlobalSelectionSystem().removeObserver(this);
     _keyValueAddedHandler.disconnect();
     _keyValueRemovedHandler.disconnect();
@@ -453,8 +426,6 @@ void EntityInspector::onMainFrameShuttingDown()
     _conflictActions.clear();
 
     _mapEditModeChangedHandler.disconnect();
-    _undoHandler.disconnect();
-    _redoHandler.disconnect();
     _defsReloadedHandler.disconnect();
 
     // Remove all previously stored pane information
@@ -509,11 +480,6 @@ void EntityInspector::onKeyValueSetChanged(const std::string& key, const std::st
     onKeyChange(key, uniqueValue.empty() ? _("[differing values]") : uniqueValue, uniqueValue.empty());
 }
 
-void EntityInspector::onUndoRedoOperation()
-{
-    //refresh();
-}
-
 void EntityInspector::onDefsReloaded()
 {
     refresh();
@@ -521,10 +487,8 @@ void EntityInspector::onDefsReloaded()
 
 void EntityInspector::refresh()
 {
-    // Clear the previous entity (detaches this class as observer)
-    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
-
-    // Now rescan the selection and update the stores
+    _selectionNeedsUpdate = true;
+    _helpTextNeedsUpdate = true;
     requestIdleCallback();
 }
 
@@ -595,8 +559,6 @@ wxWindow* EntityInspector::createPropertyEditorPane(wxWindow* parent)
     return _editorFrame;
 }
 
-// Create the TreeView pane
-
 wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 {
     wxPanel* treeViewPanel = new wxPanel(parent, wxID_ANY);
@@ -663,8 +625,6 @@ wxWindow* EntityInspector::createTreeViewPane(wxWindow* parent)
 
     return treeViewPanel;
 }
-
-// Retrieve the selected string from the given property in the list store
 
 std::string EntityInspector::getSelectedKey()
 {
@@ -741,8 +701,6 @@ void EntityInspector::updateGUIElements()
     if (!_entitySelection->empty())
     {
         _editorFrame->Enable(entityCanBeUpdated);
-        //_keyValueTreeView->Enable(true);
-        //_showInheritedCheckbox->Enable(true);
         _showHelpColumnCheckbox->Enable(true);
         _keyEntry->Enable(entityCanBeUpdated);
         _valEntry->Enable(entityCanBeUpdated);
@@ -753,31 +711,13 @@ void EntityInspector::updateGUIElements()
         {
             _currentPropertyEditor.reset();
         }
-		// Update the target entity on any active property editor (#5092)
-        else if (_currentPropertyEditor)
-		{
-#if 0
-			auto newEntity = Node_getEntity(_selectedEntity.lock());
-			assert(newEntity != nullptr);
-
-			_currentPropertyEditor->setEntity(newEntity);
-#endif
-		}
     }
     else  // no selected entity
     {
-#if 0
-        // Reset the sorting when changing entities
-        _keyValueTreeView->ResetSortingOnAllColumns();
-#endif
         // Remove the displayed PropertyEditor
 		_currentPropertyEditor.reset();
-#if 0
-        setHelpText("");
-#endif
         // Disable the dialog and clear the TreeView
         _editorFrame->Enable(false);
-        //_keyValueTreeView->Enable(true); // leave the treeview enabled
         _showInheritedCheckbox->Enable(false);
         _showHelpColumnCheckbox->Enable(false);
     }
@@ -914,8 +854,7 @@ void EntityInspector::selectionChanged(const scene::INodePtr& node, bool isCompo
 {
     if (isComponent) return; // ignore component changes
 
-    _selectionNeedsUpdate = true;
-    requestIdleCallback();
+    refresh();
 }
 
 std::string EntityInspector::cleanInputString(const std::string &input)
@@ -1188,9 +1127,7 @@ void EntityInspector::_onAcceptMergeAction()
     }
 
     // We perform a full refresh of the view
-    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
-    _selectionNeedsUpdate = true;
-    requestIdleCallback();
+    refresh();
 }
 
 void EntityInspector::_onRejectMergeAction()
@@ -1241,9 +1178,7 @@ void EntityInspector::_onRejectMergeAction()
     }
 
     // We perform a full refresh of the view
-    changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
-    _selectionNeedsUpdate = true;
-    requestIdleCallback();
+    refresh();
 }
 
 bool EntityInspector::_testAcceptMergeAction()
@@ -1303,8 +1238,6 @@ bool EntityInspector::isItemAffecedByMergeOperation(const wxutil::TreeModel::Row
     auto key = row[_columns.name].getString().ToStdString();
     return _mergeActions.count(key) > 0 || _conflictActions.count(key) > 0;
 }
-
-// wxWidget callbacks
 
 void EntityInspector::_onContextMenu(wxDataViewEvent& ev)
 {
@@ -1611,110 +1544,6 @@ void EntityInspector::removeClassProperties()
         // If this is an inherited row, remove it
         return row[_columns.isInherited].getBool();
     });
-}
-
-void EntityInspector::updateTreeView()
-{
-#if 0
-    // Clear the view. If the old entity has been destroyed before we had
-    // a chance to disconnect the list store might contain remnants
-    _keyValueIterMap.clear();
-    _kvStore->Clear();
-    _mergeActions.clear();
-    _conflictActions.clear();
-
-    // Reset the sorting when changing entities
-    _keyValueTreeView->ResetSortingOnAllColumns();
-#endif
-#if 0
-    _entitySelection->foreachKey([&](const std::string& key, const selection::CollectiveSpawnargs::KeyValueSet& set)
-    {
-        if (set.valueIsEqualOnAllEntities)
-        {
-            auto entity = *set.entities.begin();
-            onKeyChange(entity, key, entity->getKeyValue(key));
-        }
-        else
-        {
-            onKeyChange(key, _("[multiple values]"));
-        }
-    });
-#endif
-}
-
-void EntityInspector::changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode)
-{
-    return;
-#if 0
-    // Check what we need to do with the existing entity
-    scene::INodePtr oldEntity = _selectedEntity.lock();
-
-    if (oldEntity)
-    {
-        // The old entity still exists
-        if (oldEntity != newEntity)
-        {
-            // Entity change, disconnect from previous entity
-            Node_getEntity(oldEntity)->detachObserver(this);
-            removeClassProperties();
-        }
-        else
-        {
-            // No change detected
-            return;
-        }
-    }
-#endif
-
-#if 0
-    // At this point, we either disconnected from the old entity or
-    // it has already been deleted (no disconnection necessary)
-    _selectedEntity.reset();
-#endif
-
-    // Clear the view. If the old entity has been destroyed before we had
-    // a chance to disconnect the list store might contain remnants
-    _keyValueIterMap.clear();
-    _kvStore->Clear();
-    _mergeActions.clear();
-    _conflictActions.clear();
-
-    // Reset the sorting when changing entities
-    _keyValueTreeView->ResetSortingOnAllColumns();
-
-#if 0
-    _entitySelection->foreachKey([&](const std::string& key, const selection::CollectiveSpawnargs::KeyValueSet& set)
-    {
-        if (set.valueIsEqualOnAllEntities)
-        {
-            auto entity = *set.entities.begin();
-            onKeyChange(key, entity->getKeyValue(key));
-        }
-        else
-        {
-            onKeyChange(key, _("[multiple values]"));
-        }
-    });
-#endif
-#if 0
-    // Attach to new entity if it is non-NULL
-    if (newEntity && newEntity->getNodeType() == scene::INode::Type::Entity)
-    {
-        _selectedEntity = newEntity;
-
-        // Any possible merge actions go in first
-        handleMergeActions(selectedNode);
-
-        // Attach as observer to fill the listview
-        Node_getEntity(newEntity)->attachObserver(this);
-
-        // Add inherited properties if the checkbox is set
-        if (_showInheritedCheckbox->IsChecked())
-        {
-            addClassProperties();
-        }
-    }
-#endif
 }
 
 void EntityInspector::handleKeyValueMergeAction(const scene::merge::IEntityKeyValueMergeAction::Ptr& mergeAction)

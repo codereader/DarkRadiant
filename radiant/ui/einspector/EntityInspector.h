@@ -147,8 +147,6 @@ private:
 	typedef std::map<std::string, PropertyParms> PropertyParmMap;
 	PropertyParmMap _propertyTypes;
 
-	sigc::connection _undoHandler;
-	sigc::connection _redoHandler;
 	sigc::connection _defsReloadedHandler;
 	sigc::connection _mapEditModeChangedHandler;
 
@@ -230,9 +228,6 @@ private:
     void addClassProperties();
     void removeClassProperties();
 
-    // Change the selected entity pointer, setting up the observer
-    void changeSelectedEntity(const scene::INodePtr& newEntity, const scene::INodePtr& selectedNode);
-
     void handleMergeActions(const scene::INodePtr& selectedNode);
     void handleKeyValueMergeAction(const scene::merge::IEntityKeyValueMergeAction::Ptr& mergeAction);
 
@@ -252,13 +247,10 @@ private:
 
     // Update tree view contents and property editor
     void updateGUIElements();
-    void updateTreeView();
 
     // Release the current entity and rescan the selection
     void refresh();
 
-	// Gets called after an undo operation
-	void onUndoRedoOperation();
     void onMapEditModeChanged(IMap::EditMode mode);
 	void onDefsReloaded();
 
