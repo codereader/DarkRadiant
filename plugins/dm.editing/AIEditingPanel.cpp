@@ -307,7 +307,7 @@ Entity* AIEditingPanel::getEntityFromSelection()
 		{
 			Entity* candidate = Node_getEntity(node);
 
-			if (candidate->isOfType("atdm:ai_base"))
+			if (candidate != nullptr && candidate->isOfType("atdm:ai_base"))
 			{
 				entity = candidate;
 			}
