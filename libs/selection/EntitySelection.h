@@ -6,7 +6,6 @@
 #include "ientity.h"
 #include "iselection.h"
 #include "iselectable.h"
-#include "imapmerge.h"
 #include "CollectiveSpawnargs.h"
 
 namespace selection
@@ -257,20 +256,6 @@ private:
         if (Node_isEntity(selectedNodeParent))
         {
             return selectedNodeParent;
-        }
-
-        // Finally, we may encounter merge node types
-        if (selected->getNodeType() == scene::INode::Type::MergeAction &&
-            GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
-        {
-            auto mergeAction = std::dynamic_pointer_cast<scene::IMergeActionNode>(selected);
-            assert(mergeAction);
-
-            if (mergeAction && Node_isEntity(mergeAction->getAffectedNode()))
-            {
-                // Use the entity of the merge node
-                return mergeAction->getAffectedNode();
-            }
         }
 
         return {}; // nothing of interest

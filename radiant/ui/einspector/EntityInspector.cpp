@@ -843,18 +843,31 @@ void EntityInspector::onIdle()
             _keyValueTreeView->ResetSortingOnAllColumns();
         }
 
-        // Clear the merge info
-        _mergeActions.clear();
-        _conflictActions.clear();
-
-        bool mergeMode = GlobalMapModule().getEditMode() == IMap::EditMode::Merge;
-
-        // Disable the tree view if we're in merge mode and multiple entities are selected
-        _keyValueTreeView->Enable(!mergeMode || _entitySelection->size() == 1);
-
-        if (mergeMode && _entitySelection->size() == 1)
+        if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
         {
-            handleMergeActions(_entitySelection->getSingleSelectedEntity());
+            auto selectionCount = GlobalSelectionSystem().countSelected();
+
+            // Disable the tree view if we're in merge mode and multiple entities are selected
+            _keyValueTreeView->Enable(selectionCount == 1);
+
+            // In merge mode, we handle all updates ourselves,
+            // no entities are directly selected, only merge nodes are candidates
+
+            // We do a full refresh on every selection change in merge mode
+            _mergeActions.clear();
+            _conflictActions.clear();
+            _kvStore->Clear();
+            _keyValueIterMap.clear();
+            _keyValueTreeView->ResetSortingOnAllColumns();
+
+            if (GlobalSelectionSystem().countSelected() == 1)
+            {
+                handleMergeActions(GlobalSelectionSystem().ultimateSelected());
+            }
+        }
+        else
+        {
+            _keyValueTreeView->Enable(!_entitySelection->empty());
         }
 
         updatePrimitiveNumber();
@@ -1169,6 +1182,7 @@ void EntityInspector::_onAcceptMergeAction()
     // We perform a full refresh of the view
     changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
     _selectionNeedsUpdate = true;
+    requestIdleCallback();
 }
 
 void EntityInspector::_onRejectMergeAction()
@@ -1221,6 +1235,7 @@ void EntityInspector::_onRejectMergeAction()
     // We perform a full refresh of the view
     changeSelectedEntity(scene::INodePtr(), scene::INodePtr());
     _selectionNeedsUpdate = true;
+    requestIdleCallback();
 }
 
 bool EntityInspector::_testAcceptMergeAction()
@@ -1719,7 +1734,8 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
     auto mergeNode = std::dynamic_pointer_cast<scene::IMergeActionNode>(selectedNode);
 
     if (!mergeNode) return;
-    
+
+    // Collect all the merge actions and conflict info first
     mergeNode->foreachMergeAction([&](const scene::merge::IMergeAction::Ptr& action)
     {
         if (!action->isActive()) return; // don't apply inactive actions to our view
@@ -1753,6 +1769,16 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
                 }
             }
         }
+    });
+
+    // Now load the regular key values from the entity into the view
+    auto affectedEntity = Node_getEntity(mergeNode->getAffectedNode());
+
+    if (!affectedEntity) return; // not an entity we're looking at
+
+    affectedEntity->forEachKeyValue([&](const std::string& key, const std::string& value)
+    {
+        onKeyChange(key, value, false);
     });
 }
 
