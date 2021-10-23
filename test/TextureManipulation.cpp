@@ -738,6 +738,31 @@ TEST_F(TextureManipulationTest, FaceRotationPreservesTexelScale)
     EXPECT_NEAR(texelScaleBefore.y(), texelScaleAfter.y(), 0.01) << "Texel scale Y changed after rotation by 90 degrees";
 }
 
+TEST_F(TextureManipulationTest, PatchRotationPreservesTexelScale)
+{
+    auto material = "textures/a_1024x512";
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patchNode = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, 60), Vector3(64, 128, 256)), "textures/a_1024x512");
+    auto patch = Node_getIPatch(patchNode);
+    patch->fitTexture(1, 1);
+
+    EXPECT_NEAR(patch->getTextureAspectRatio(), 2, 0.01) << "This test needs a 2:1 texture aspect";
+
+    // The texture bounds should be 1x1, since the texture is fitted
+    auto boundsBefore = algorithm::getTextureSpaceBounds(*patch);
+
+    EXPECT_NEAR(boundsBefore.extents.x() * 2, 1, 0.01) << "Patch UV bounds should be 1x1 before rotating";
+    EXPECT_NEAR(boundsBefore.extents.y() * 2, 1, 0.01) << "Patch UV bounds should be 1x1 before rotating";
+
+    patch->rotateTexture(45); // degrees
+    patch->rotateTexture(45);
+
+    auto boundsAfter = algorithm::getTextureSpaceBounds(*patch);
+
+    EXPECT_NEAR(boundsAfter.extents.x() * 2, 0.5, 0.01) << "Patch UV bounds should be 0.5x2 after rotating";
+    EXPECT_NEAR(boundsAfter.extents.y() * 2, 2, 0.01) << "Patch UV bounds should be 0.5x2 after rotating";
+}
+
 TEST_F(TextureManipulationTest, FaceGetShiftScaleRotation)
 {
     // These materials have an editor image with 2:1 aspect ratio
