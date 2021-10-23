@@ -844,8 +844,12 @@ void TextureToolSelectionSystem::rotateSelectionCmd(const cmd::ArgumentList& arg
         return;
     }
 
+    auto material = GlobalMaterialManager().getMaterial(GlobalTextureToolSceneGraph().getActiveMaterial());
+    auto texture = material->getEditorImage();
+    auto aspectRatio = static_cast<float>(texture->getWidth()) / texture->getHeight();
+
     Vector2 pivot{ accumulator.getBounds().origin.x(), accumulator.getBounds().origin.y() };
-    selection::algorithm::TextureRotator rotator(pivot, angle, 1.0);
+    selection::algorithm::TextureRotator rotator(pivot, angle, aspectRatio);
     foreachSelectedNode(rotator);
 }
 

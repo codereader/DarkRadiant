@@ -2098,4 +2098,80 @@ TEST_F(TextureToolTest, FlipSingleFaceT)
     performFaceFlipTest(1);
 }
 
+TEST_F(TextureToolTest, RotateSelectedPreservesPatchTexelScale)
+{
+    auto material = "textures/a_1024x512";
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patchNode = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, 60), Vector3(64, 128, 256)), "textures/a_1024x512");
+    auto patch = Node_getIPatch(patchNode);
+    patch->fitTexture(1, 1);
+    Node_setSelected(patchNode, true);
+
+    // The texture bounds should be 1x1, since the texture is fitted
+    auto bounds = algorithm::getTextureSpaceBounds(*patch);
+
+    EXPECT_NEAR(bounds.extents.x() * 2, 1, 0.01) << "Patch UV bounds should be 1x1 before rotating";
+    EXPECT_NEAR(bounds.extents.y() * 2, 1, 0.01) << "Patch UV bounds should be 1x1 before rotating";
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Test-select in the middle of the bounds
+    performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view);
+
+    // Item should be selected
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 1) << "Only one patch should be selected";
+
+    GlobalCommandSystem().executeCommand("TexToolRotateSelected", cmd::Argument(45));
+    GlobalCommandSystem().executeCommand("TexToolRotateSelected", cmd::Argument(45));
+
+    auto boundsAfter = algorithm::getTextureSpaceBounds(*patch);
+
+    EXPECT_NEAR(boundsAfter.extents.x() * 2, 0.5, 0.01) << "Patch UV bounds should be 0.5x2 after rotating";
+    EXPECT_NEAR(boundsAfter.extents.y() * 2, 2, 0.01) << "Patch UV bounds should be 0.5x2 after rotating";
+}
+
+TEST_F(TextureToolTest, RotateSelectedPreservesFaceTexelScale)
+{
+    auto material = "textures/a_1024x512";
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto test1024x512Node = algorithm::createCuboidBrush(worldspawn, AABB({ 128, 32, 16 }, { 128, 32, 16 }), material);
+    algorithm::foreachFace(*Node_getIBrush(test1024x512Node), [](IFace& face) 
+    {
+        // Shift all unrelated faces
+        if (math::isNear(face.getPlane3().normal(), { 0, 0, 1 }, 0.01)) return;
+
+        face.fitTexture(1, 1);
+        face.shiftTexdef(3, 3);
+    });
+    Node_getIBrush(test1024x512Node)->evaluateBRep();
+    Node_setSelected(test1024x512Node, true);
+
+    auto& face = *algorithm::findBrushFaceWithNormal(Node_getIBrush(test1024x512Node), { 0, 0, 1 });
+    face.fitTexture(1, 1);
+
+    auto bounds = algorithm::getTextureSpaceBounds(face);
+
+    EXPECT_NEAR(bounds.extents.x() * 2, 1, 0.01) << "Face UV bounds should be 1x1 before rotating";
+    EXPECT_NEAR(bounds.extents.y() * 2, 1, 0.01) << "Face UV bounds should be 1x1 before rotating";
+
+    render::TextureToolView view;
+    view.constructFromTextureSpaceBounds(bounds, TEXTOOL_WIDTH, TEXTOOL_HEIGHT);
+
+    // Test-select in the middle of the bounds
+    performPointSelection(Vector2(bounds.origin.x(), bounds.origin.y()), view);
+
+    // Item should be selected
+    EXPECT_EQ(getAllSelectedTextoolNodes().size(), 1) << "Only one face should be selected";
+
+    GlobalCommandSystem().executeCommand("TexToolRotateSelected", cmd::Argument(45));
+    GlobalCommandSystem().executeCommand("TexToolRotateSelected", cmd::Argument(45));
+
+    Node_getIBrush(test1024x512Node)->evaluateBRep();
+    auto boundsAfter = algorithm::getTextureSpaceBounds(face);
+
+    EXPECT_NEAR(boundsAfter.extents.x() * 2, 0.5, 0.01) << "Face UV bounds should be 0.5x2 after rotating";
+    EXPECT_NEAR(boundsAfter.extents.y() * 2, 2, 0.01) << "Face UV bounds should be 0.5x2 after rotating";
+}
+
 }

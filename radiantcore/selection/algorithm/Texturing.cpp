@@ -105,7 +105,7 @@ TextureRotator::TextureRotator(const Vector2& pivot, double angle, double textur
 
 void TextureRotator::RotatePatch(IPatch& patch, double angle)
 {
-    RotateNode(std::make_shared<textool::PatchNode>(patch), angle, 1.0);
+    RotateNode(std::make_shared<textool::PatchNode>(patch), angle, patch.getTextureAspectRatio());
 }
 
 void TextureRotator::RotateFace(IFace& face, double angle)
