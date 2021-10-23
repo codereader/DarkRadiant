@@ -371,4 +371,100 @@ TEST_F(UndoTest, MultipleKeyValueChangeInSingleOperation)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "4");
 }
 
+TEST_F(UndoTest, SceneNodeRemoval)
+{
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto speaker_1 = algorithm::getEntityByName(GlobalMapModule().getRoot(), "speaker_1");
+    auto func_static = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+
+    auto childBrush = algorithm::findFirstBrushWithMaterial(func_static, "textures/numbers/4");
+    auto worldspawnBrush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+
+    // Check the prerequisities
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map already modified before the change";
+
+    EXPECT_TRUE(speaker_1);
+    EXPECT_TRUE(func_static);
+    EXPECT_TRUE(childBrush);
+    EXPECT_TRUE(worldspawnBrush);
+
+    EXPECT_TRUE(speaker_1->getParent());
+    EXPECT_TRUE(func_static->getParent());
+    EXPECT_TRUE(childBrush->getParent());
+    EXPECT_TRUE(worldspawnBrush->getParent());
+
+    {
+        UndoableCommand cmd("testOperation");
+        
+        // Remove one of the entities
+        scene::removeNodeFromParent(speaker_1);
+
+        // Remove a worldspawn brush
+        scene::removeNodeFromParent(worldspawnBrush);
+
+        // Remove a child brush from the func_static
+        scene::removeNodeFromParent(childBrush);
+
+        // And top that by removing the func_static itself
+        scene::removeNodeFromParent(func_static);
+    }
+
+    // All nodes should now be without parent
+    EXPECT_FALSE(speaker_1->getParent());
+    EXPECT_FALSE(func_static->getParent());
+    EXPECT_FALSE(childBrush->getParent());
+    EXPECT_FALSE(worldspawnBrush->getParent());
+
+    // Lookup the nodes again, they should be gone
+    EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "speaker_1"));
+    EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1"));
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(func_static, "textures/numbers/4"));
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1"));
+
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after this change";
+
+    GlobalUndoSystem().undo();
+
+    // All nodes should have proper parents now
+    EXPECT_TRUE(speaker_1->getParent());
+    EXPECT_TRUE(func_static->getParent());
+    EXPECT_TRUE(childBrush->getParent());
+    EXPECT_TRUE(worldspawnBrush->getParent());
+
+    EXPECT_TRUE(speaker_1->inScene());
+    EXPECT_TRUE(func_static->inScene());
+    EXPECT_TRUE(childBrush->inScene());
+    EXPECT_TRUE(worldspawnBrush->inScene());
+
+    // Lookup the nodes, they should be present again
+    EXPECT_TRUE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "speaker_1"));
+    EXPECT_TRUE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1"));
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(func_static, "textures/numbers/4"));
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1"));
+
+    GlobalUndoSystem().redo();
+
+    // Well, this is weird, parents are not cleared when importing a TraversableNodeSet from
+    // an undo memento, this seems to have been introduced in the fix to #2118
+    EXPECT_TRUE(speaker_1->getParent());
+    EXPECT_TRUE(func_static->getParent());
+    EXPECT_TRUE(childBrush->getParent());
+    EXPECT_TRUE(worldspawnBrush->getParent());
+
+    // All nodes should be outside the scene
+    EXPECT_FALSE(speaker_1->inScene());
+    EXPECT_FALSE(func_static->inScene());
+    EXPECT_FALSE(childBrush->inScene());
+    EXPECT_FALSE(worldspawnBrush->inScene());
+
+    // At least, they should be gone when trying to look them up through the scene
+    EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "speaker_1"));
+    EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1"));
+    // Same oddity here, the child brush didn't get its parent reference cleared during redo
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(func_static, "textures/numbers/4"));
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1"));
+}
+
 }
