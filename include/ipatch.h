@@ -143,6 +143,9 @@ public:
 	// greebo: returns true if the patch's shader is visible, false otherwise
 	virtual bool hasVisibleMaterial() const = 0;
 
+    // Returns the texture aspect ratio width/height
+    virtual float getTextureAspectRatio() const = 0;
+
 	/**
 	 * greebo: Sets/gets whether this patch is a patchDef3 (fixed tesselation)
 	 */

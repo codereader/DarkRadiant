@@ -665,6 +665,26 @@ TEST_F(TextureManipulationTest, FaceGetTextureAspectRatio)
         << "Number texture aspect ratio should be 1.0";
 }
 
+TEST_F(TextureManipulationTest, PatchGetTextureAspectRatio)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patchNode = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, 60), Vector3(64, 128, 256)), "textures/a_1024x512");
+    auto patch = Node_getIPatch(patchNode);
+
+    // Get the texture dimensions
+    auto editorImage = GlobalMaterialManager().getMaterial(patch->getShader())->getEditorImage();
+    auto textureWidth = editorImage->getWidth();
+    auto textureHeight = editorImage->getHeight();
+
+    EXPECT_NEAR(patch->getTextureAspectRatio(), static_cast<float>(textureWidth) / textureHeight, 0.01)
+        << "Wrong texture aspect ratio reported";
+
+    patchNode = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, 60), Vector3(64, 128, 256)), "textures/numbers/0");
+    patch = Node_getIPatch(patchNode);
+    
+    EXPECT_NEAR(patch->getTextureAspectRatio(), 1.0, 0.001) << "Number texture aspect ratio should be 1.0";
+}
+
 TEST_F(TextureManipulationTest, FaceTextureChangePreservesTexelScale)
 {
     auto largeTexture = "textures/a_1024x512";

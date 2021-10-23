@@ -495,10 +495,7 @@ Vector2 Face::getTexelScale() const
 
 float Face::getTextureAspectRatio() const
 {
-    auto imageWidth = _shader.getWidth();
-    auto imageHeight = _shader.getHeight();
-    
-    return static_cast<float>(imageWidth) / imageHeight;
+    return _shader.getTextureAspectRatio();
 }
 
 // Returns the index pair forming an edge, keeping the winding direction intact

@@ -128,6 +128,11 @@ public:
         return 1;
     }
 
+    float getTextureAspectRatio() const
+    {
+        return static_cast<float>(getWidth()) / getHeight();
+    }
+
     void setRenderSystem(const RenderSystemPtr& renderSystem)
     {
         _renderSystem = renderSystem;

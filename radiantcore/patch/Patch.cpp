@@ -387,6 +387,11 @@ bool Patch::hasVisibleMaterial() const
     return material && material->isVisible();
 }
 
+float Patch::getTextureAspectRatio() const
+{
+    return _shader.getTextureAspectRatio();
+}
+
 int Patch::getShaderFlags() const
 {
     if (_shader.getGLShader() != 0)
