@@ -83,26 +83,24 @@ void TextureToolSceneGraph::ensureSceneIsAnalysed()
             _nodes.emplace_back(std::make_shared<FaceNode>(face));
         });
     }
-    else
+    
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
     {
-        GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+        if (Node_isBrush(node))
         {
-            if (Node_isBrush(node))
-            {
-                auto brush = Node_getIBrush(node);
-                assert(brush);
+            auto brush = Node_getIBrush(node);
+            assert(brush);
 
-                for (auto i = 0; i < brush->getNumFaces(); ++i)
-                {
-                    _nodes.emplace_back(std::make_shared<FaceNode>(brush->getFace(i)));
-                }
-            }
-            else if (Node_isPatch(node))
+            for (auto i = 0; i < brush->getNumFaces(); ++i)
             {
-                _nodes.emplace_back(std::make_shared<PatchNode>(*Node_getIPatch(node)));
+                _nodes.emplace_back(std::make_shared<FaceNode>(brush->getFace(i)));
             }
-        });
-    }
+        }
+        else if (Node_isPatch(node))
+        {
+            _nodes.emplace_back(std::make_shared<PatchNode>(*Node_getIPatch(node)));
+        }
+    });
 }
 
 void TextureToolSceneGraph::onSceneSelectionChanged(const ISelectable& selectable)
