@@ -37,6 +37,7 @@ add_executable(drtest
                TextureManipulation.cpp
                TextureTool.cpp
                Transformation.cpp
+               UndoRedo.cpp
                VFS.cpp
                WorldspawnColour.cpp)
 
