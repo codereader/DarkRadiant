@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "iselection.h"
 #include "ieclass.h"
+#include "imap.h"
 #include "itextstream.h"
 #include "ui/ientityinspector.h"
 #include "ui/imainframe.h"
@@ -281,9 +282,9 @@ void AIEditingPanel::onMainFrameConstructed()
 	Instance()._tempParent->Destroy();
 	Instance()._tempParent = nullptr;
 
-	Instance()._undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+	Instance()._undoHandler = GlobalMapModule().signal_postUndo().connect(
 		sigc::mem_fun(Instance(), &AIEditingPanel::updateWidgetsFromSelection));
-	Instance()._redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+	Instance()._redoHandler = GlobalMapModule().signal_postRedo().connect(
 		sigc::mem_fun(Instance(), &AIEditingPanel::updateWidgetsFromSelection));
 }
 

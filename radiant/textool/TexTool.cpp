@@ -9,6 +9,7 @@
 #include "ui/imainframe.h"
 #include "igl.h"
 #include "iundo.h"
+#include "imap.h"
 #include "igrid.h"
 #include "iradiant.h"
 #include "ui/itoolbarmanager.h"
@@ -227,9 +228,9 @@ void TexTool::_preShow()
         radiant::TypeListener<selection::GridSnapRequest>(
             sigc::mem_fun(this, &TexTool::handleGridSnapRequest)));
 
-	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+	_undoHandler = GlobalMapModule().signal_postUndo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
-	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+	_redoHandler = GlobalMapModule().signal_postRedo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
 
     _manipulatorChanged = GlobalTextureToolSelectionSystem().signal_activeManipulatorChanged().connect(

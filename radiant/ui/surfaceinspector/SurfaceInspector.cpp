@@ -806,9 +806,9 @@ void SurfaceInspector::_preShow()
 	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
 		[this] (const ISelectable&) { doUpdate(); });
 
-	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+	_undoHandler = GlobalMapModule().signal_postUndo().connect(
 		sigc::mem_fun(this, &SurfaceInspector::doUpdate));
-	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+	_redoHandler = GlobalMapModule().signal_postRedo().connect(
 		sigc::mem_fun(this, &SurfaceInspector::doUpdate));
 
 	// Get notified about texture changes

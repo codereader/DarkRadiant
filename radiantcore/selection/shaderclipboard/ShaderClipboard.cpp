@@ -207,14 +207,7 @@ const std::string& ShaderClipboard::getName() const
 
 const StringSet& ShaderClipboard::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_UNDOSYSTEM);
-		_dependencies.insert(MODULE_MAP);
-	}
-
+    static StringSet _dependencies{ MODULE_MAP };
 	return _dependencies;
 }
 
@@ -222,9 +215,9 @@ void ShaderClipboard::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	_postUndoConn = GlobalUndoSystem().signal_postUndo().connect(
+	_postUndoConn = GlobalMapModule().signal_postUndo().connect(
 		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
-	_postRedoConn = GlobalUndoSystem().signal_postRedo().connect(
+	_postRedoConn = GlobalMapModule().signal_postRedo().connect(
 		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
 
 	_mapEventConn = GlobalMapModule().signal_mapEvent().connect(

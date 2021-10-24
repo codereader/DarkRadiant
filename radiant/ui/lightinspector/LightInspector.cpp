@@ -274,9 +274,9 @@ void LightInspector::_preShow()
     _redoHandler.disconnect();
 
     // Register self as observer to receive events
-    _undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+    _undoHandler = GlobalMapModule().signal_postUndo().connect(
         sigc::mem_fun(this, &LightInspector::update));
-    _redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+    _redoHandler = GlobalMapModule().signal_postRedo().connect(
         sigc::mem_fun(this, &LightInspector::update));
 
     // Register self to the SelSystem to get notified upon selection changes.

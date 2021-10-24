@@ -497,9 +497,9 @@ void MergeControlDialog::_preShow()
         sigc::mem_fun(this, &MergeControlDialog::onMapEvent)
     );
     
-    _undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+    _undoHandler = GlobalMapModule().signal_postUndo().connect(
         sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
-    _redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+    _redoHandler = GlobalMapModule().signal_postRedo().connect(
         sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
 
     // Check for selection changes before showing the dialog again

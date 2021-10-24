@@ -272,9 +272,9 @@ void PatchInspector::_preShow()
 	// Register self to the SelSystem to get notified upon selection changes.
 	GlobalSelectionSystem().addObserver(this);
 	
-	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
+	_undoHandler = GlobalMapModule().signal_postUndo().connect(
 		sigc::mem_fun(this, &PatchInspector::queueUpdate));
-	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
+	_redoHandler = GlobalMapModule().signal_postRedo().connect(
 		sigc::mem_fun(this, &PatchInspector::queueUpdate));
 
 	// Check for selection changes before showing the dialog again
