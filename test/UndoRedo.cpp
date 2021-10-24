@@ -675,4 +675,69 @@ TEST_F(UndoTest, TwoSceneGraphs)
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(entity, materialName)) << "Failed to find the brush";
 }
 
+// Map is firing the undo/redo signals after an operation completes
+TEST_F(UndoTest, MapUndoRedoSignals)
+{
+    auto postUndoFired = false;
+    auto postRedoFired = false;
+
+    GlobalMapModule().signal_postUndo().connect([&] { postUndoFired = true; });
+    GlobalMapModule().signal_postRedo().connect([&] { postRedoFired = true; });
+
+    // Record one undoable operation
+    {
+        UndoableCommand cmd("testOperation");
+        auto entity = setupTestEntity();
+    }
+
+    GlobalUndoSystem().undo();
+    EXPECT_TRUE(postUndoFired) << "Map didn't fire the post-undo signal";
+
+    // Reset and undo one more
+    postUndoFired = false;
+    GlobalUndoSystem().undo();
+    EXPECT_FALSE(postUndoFired) << "Map fired the undo signal even though there's nothing to undo";
+
+    GlobalUndoSystem().redo();
+    EXPECT_TRUE(postRedoFired) << "Map didn't fire the post-redo signal";
+
+    postRedoFired = false;
+    GlobalUndoSystem().redo();
+    EXPECT_FALSE(postUndoFired) << "Map fired the redo signal even though there's nothing to redo";
+}
+
+TEST_F(UndoTest, MapUndoRedoSignalsWhenChangingMaps)
+{
+    auto postUndoFired = false;
+    auto postRedoFired = false;
+
+    // Subscribe to the signals before changing the map
+    GlobalMapModule().signal_postUndo().connect([&] { postUndoFired = true; });
+    GlobalMapModule().signal_postRedo().connect([&] { postRedoFired = true; });
+
+    // Record one undoable operation in the existing map
+    {
+        UndoableCommand cmd("testOperation");
+        setupTestEntity();
+    }
+
+    auto previousRoot = GlobalMapModule().getRoot();
+
+    // Discard the map and open a new one
+    GlobalCommandSystem().execute("NewMap");
+
+    EXPECT_NE(previousRoot, GlobalMapModule().getRoot()) << "Map root didn't change";
+
+    {
+        UndoableCommand cmd("testOperation");
+        setupTestEntity();
+    }
+
+    GlobalUndoSystem().undo();
+    EXPECT_TRUE(postUndoFired) << "Map didn't fire the post-undo signal after changing maps";
+
+    GlobalUndoSystem().redo();
+    EXPECT_TRUE(postRedoFired) << "Map didn't fire the post-redo signal after changing maps";
+}
+
 }

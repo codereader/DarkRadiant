@@ -442,6 +442,16 @@ sigc::signal<void>& Map::signal_modifiedChanged()
     return _mapModifiedChangedSignal;
 }
 
+sigc::signal<void>& Map::signal_postUndo()
+{
+    return _mapPostUndoSignal;
+}
+
+sigc::signal<void>& Map::signal_postRedo()
+{
+    return _mapPostRedoSignal;
+}
+
 // move the view to a certain position
 void Map::focusViews(const Vector3& point, const Vector3& angles)
 {
@@ -1352,6 +1362,7 @@ const StringSet& Map::getDependencies() const
 		_dependencies.insert(MODULE_FILETYPES);
 		_dependencies.insert(MODULE_MAPRESOURCEMANAGER);
         _dependencies.insert(MODULE_COMMANDSYSTEM);
+        _dependencies.insert(MODULE_UNDOSYSTEM);
     }
 
     return _dependencies;
@@ -1393,10 +1404,23 @@ void Map::initialiseModule(const IApplicationContext& ctx)
         radiant::IMessage::Type::ApplicationShutdownRequest,
         radiant::TypeListener<radiant::ApplicationShutdownRequest>(
             sigc::mem_fun(this, &Map::handleShutdownRequest)));
+
+    // Prepare to dispatch the undo/redo signals
+    _postUndoListener = GlobalUndoSystem().signal_postUndo().connect([this]()
+    {
+        _mapPostUndoSignal.emit();
+    });
+    _postRedoListener = GlobalUndoSystem().signal_postRedo().connect([this]()
+    {
+        _mapPostRedoSignal.emit();
+    });
 }
 
 void Map::shutdownModule()
 {
+    _postUndoListener.disconnect();
+    _postRedoListener.disconnect();
+
     abortMergeOperation();
 
     GlobalRadiantCore().getMessageBus().removeListener(_shutdownListener);

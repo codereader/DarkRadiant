@@ -45,6 +45,8 @@ private:
 
 	sigc::signal<void> _mapNameChangedSignal;
 	sigc::signal<void> _mapModifiedChangedSignal;
+    sigc::signal<void> _mapPostUndoSignal;
+    sigc::signal<void> _mapPostRedoSignal;
 	sigc::signal<void, EditMode> _mapEditModeChangedSignal;
 
 	// Pointer to the resource for this map
@@ -71,6 +73,9 @@ private:
     scene::merge::IMergeOperation::Ptr _mergeOperation;
     std::list<scene::MergeActionNodeBase::Ptr> _mergeActionNodes;
     sigc::connection _mergeOperationListener;
+
+    sigc::connection _postUndoListener;
+    sigc::connection _postRedoListener;
 
     // Point trace for leak detection
     std::unique_ptr<PointFile> _pointTrace;
@@ -187,6 +192,8 @@ public:
 	void setModified(bool modifiedFlag) override;
 
 	sigc::signal<void>& signal_modifiedChanged() override;
+    sigc::signal<void>& signal_postUndo() override;
+    sigc::signal<void>& signal_postRedo() override;
 
 	// greebo: Creates a new, empty map file.
 	void createNewMap() override;

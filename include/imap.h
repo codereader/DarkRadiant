@@ -175,6 +175,12 @@ public:
 	 */
 	virtual sigc::signal<void>& signal_modifiedChanged() = 0;
 
+    // Signal emitted when an operation affecting the map has been undone
+    virtual sigc::signal<void>& signal_postUndo() = 0;
+
+    // Signal emitted when an operation affecting the map has been redone
+    virtual sigc::signal<void>& signal_postRedo() = 0;
+
 	// Caution: this is upposed to be called on startup, since it doesn't ask the user
 	// whether to save the current map. Use the "NewMap" command for regular purposes.
 	virtual void createNewMap() = 0;
