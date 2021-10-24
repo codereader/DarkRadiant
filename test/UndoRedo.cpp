@@ -4,12 +4,14 @@
 #include "ibrush.h"
 #include "ieclass.h"
 #include "ientity.h"
+#include "iscenegraphfactory.h"
 #include "imap.h"
 #include "icommandsystem.h"
 #include "math/Matrix4.h"
 #include "algorithm/Scene.h"
 #include "algorithm/Primitives.h"
 #include "scenelib.h"
+#include "scene/BasicRootNode.h"
 #include "testutil/FileSelectionHelper.h"
 
 namespace test
@@ -634,6 +636,43 @@ TEST_F(UndoTest, MapChangeTracking)
 
     GlobalCommandSystem().executeCommand("SaveMap");
     EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified after saving";
+}
+
+// Changing a second scene should not mark the main scene as modified
+TEST_F(UndoTest, TwoSceneGraphs)
+{
+    // Load a map, it is unmodified
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified after loading";
+
+    auto scene = GlobalSceneGraphFactory().createSceneGraph();
+    auto rootNode = std::make_shared<scene::BasicRootNode>();
+    scene->setRoot(rootNode);
+
+    // Crete the host entity
+    auto materialName = "textures/numbers/12";
+    auto entity = GlobalEntityModule().createEntity(GlobalEntityClassManager().findClass("func_static"));
+    scene::addNodeToContainer(entity, rootNode);
+
+    {
+        // Create an brush in an Undoable operation
+        UndoableCommand cmd("createBrush");
+        algorithm::createCubicBrush(entity, Vector3(0,0,0), materialName);
+    }
+
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(entity, materialName)) << "Failed to find the brush";
+
+    // This should not have affected the main scene
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified after loading";
+
+    // Undoing the main scene should not affect the secondary scene
+    GlobalUndoSystem().undo();
+
+    // Still no change in the main map
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified (no undo should be possible)";
+
+    // The brush should still be present in the second scene
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(entity, materialName)) << "Failed to find the brush";
 }
 
 }
