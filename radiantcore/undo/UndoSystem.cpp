@@ -1,41 +1,24 @@
 #include "UndoSystem.h"
 
-#include "i18n.h"
-
 #include "itextstream.h"
-#include "ipreferencesystem.h"
 #include "iscenegraph.h"
 
 #include <iostream>
 
-#include "registry/registry.h"
-#include "module/StaticModule.h"
 #include "Operation.h"
 #include "StackFiller.h"
 
 namespace undo 
 {
 
-namespace
-{
-	const std::string RKEY_UNDO_QUEUE_SIZE = "user/ui/undo/queueSize";
-	const std::size_t MAX_UNDO_LEVELS = 16384;
-}
-
-// Constructor
 UndoSystem::UndoSystem() :
 	_activeUndoStack(nullptr),
-	_undoLevels(64)
+	_undoLevels(RKEY_UNDO_QUEUE_SIZE)
 {}
 
 UndoSystem::~UndoSystem()
 {
 	clear();
-}
-
-void UndoSystem::keyChanged()
-{
-	_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
 }
 
 IUndoStateSaver* UndoSystem::getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker)
@@ -64,7 +47,7 @@ std::size_t UndoSystem::size() const
 void UndoSystem::start()
 {
 	_redoStack.clear();
-	if (_undoStack.size() == _undoLevels)
+	if (_undoStack.size() == _undoLevels.get())
 	{
 		_undoStack.pop_front();
 	}
@@ -198,89 +181,6 @@ void UndoSystem::detachTracker(Tracker& tracker)
 	_trackers.erase(&tracker);
 }
 
-const std::string& UndoSystem::getName() const
-{
-	static std::string _name(MODULE_UNDOSYSTEM);
-	return _name;
-}
-
-const StringSet& UndoSystem::getDependencies() const
-{
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_SCENEGRAPH);
-		_dependencies.insert(MODULE_MAP);
-	}
-
-	return _dependencies;
-}
-
-void UndoSystem::initialiseModule(const IApplicationContext& ctx)
-{
-	rMessage() << "UndoSystem::initialiseModule called" << std::endl;
-
-	// Add commands for console input
-	GlobalCommandSystem().addCommand("Undo", std::bind(&UndoSystem::undoCmd, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("Redo", std::bind(&UndoSystem::redoCmd, this, std::placeholders::_1));
-
-	_undoLevels = registry::getValue<int>(RKEY_UNDO_QUEUE_SIZE);
-
-	// Add self to the key observers to get notified on change
-	GlobalRegistry().signalForKey(RKEY_UNDO_QUEUE_SIZE).connect(
-        sigc::mem_fun(this, &UndoSystem::keyChanged)
-    );
-
-	// add the preference settings
-	constructPreferences();
-
-	GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(*this, &UndoSystem::onMapEvent)
-	);
-}
-
-void UndoSystem::undoCmd(const cmd::ArgumentList& args)
-{
-	undo();
-}
-
-void UndoSystem::redoCmd(const cmd::ArgumentList& args)
-{
-	redo();
-}
-
-void UndoSystem::onMapEvent(IMap::MapEvent ev)
-{
-	if (ev == IMap::MapUnloaded)
-	{
-		clear();
-	}
-}
-
-// Sets the size of the undoStack
-void UndoSystem::setLevels(std::size_t levels)
-{
-	if (levels > MAX_UNDO_LEVELS)
-	{
-		levels = MAX_UNDO_LEVELS;
-	}
-
-	while (_undoStack.size() > levels)
-	{
-		_undoStack.pop_front();
-	}
-	_undoLevels = levels;
-}
-
-std::size_t UndoSystem::getLevels() const
-{
-	return _undoLevels;
-}
-
 void UndoSystem::startUndo()
 {
 	_undoStack.start("unnamedCommand");
@@ -345,14 +245,5 @@ void UndoSystem::trackersRedo() const
 {
 	foreachTracker([&] (Tracker& tracker) { tracker.redo(); });
 }
-
-void UndoSystem::constructPreferences()
-{
-	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Undo System"));
-	page.appendSpinner(_("Undo Queue Size"), RKEY_UNDO_QUEUE_SIZE, 0, 1024, 1);
-}
-
-// Static module instance
-module::StaticModule<UndoSystem> _staticUndoSystemModule;
 
 } // namespace undo

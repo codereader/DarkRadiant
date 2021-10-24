@@ -6,13 +6,15 @@
 
 #include "iundo.h"
 #include "icommandsystem.h"
-#include "imap.h"
 
 #include "Stack.h"
 #include "StackFiller.h"
+#include "registry/CachedKey.h"
 
 namespace undo
 {
+
+constexpr const char* const RKEY_UNDO_QUEUE_SIZE = "user/ui/undo/queueSize";
 
 /**
 * greebo: The UndoSystem (interface: iundo.h) is maintaining two internal
@@ -32,7 +34,7 @@ namespace undo
 * The RedoStack is discarded as soon as a new Undoable Operation is recorded
 * and pushed to the UndoStack.
 */
-class UndoSystem :
+class UndoSystem final :
 	public IUndoSystem
 {
 private:
@@ -45,7 +47,7 @@ private:
 	typedef std::map<IUndoable*, UndoStackFiller> UndoablesMap;
 	UndoablesMap _undoables;
 
-	std::size_t _undoLevels;
+    registry::CachedKey<std::size_t> _undoLevels;
 
 	typedef std::set<Tracker*> Trackers;
 	Trackers _trackers;
@@ -54,10 +56,8 @@ private:
 	sigc::signal<void> _signalPostRedo;
 
 public:
-	// Constructor
 	UndoSystem();
-
-	virtual ~UndoSystem();
+	~UndoSystem();
 
 	IUndoStateSaver* getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker) override;
 
@@ -88,28 +88,7 @@ public:
 	void attachTracker(Tracker& tracker) override;
 	void detachTracker(Tracker& tracker) override;
 
-	// RegisterableModule implementation
-	const std::string& getName() const override;
-	const StringSet& getDependencies() const override;
-	void initialiseModule(const IApplicationContext& ctx) override;
-
 private:
-	// This is connected to the CommandSystem
-	void undoCmd(const cmd::ArgumentList& args);
-
-	// This is connected to the CommandSystem
-	void redoCmd(const cmd::ArgumentList& args);
-
-	// Gets called as soon as the observed registry key is changed
-	void keyChanged();
-
-	void onMapEvent(IMap::MapEvent ev);
-
-	// Sets the size of the undoStack
-	void setLevels(std::size_t levels);
-
-	std::size_t getLevels() const;
-
 	void startUndo();
 	bool finishUndo(const std::string& command);
 
@@ -125,8 +104,6 @@ private:
 	void trackersBegin() const;
 	void trackersUndo() const;
 	void trackersRedo() const;
-
-	void constructPreferences();
 };
 
 }

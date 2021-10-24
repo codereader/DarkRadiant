@@ -195,6 +195,8 @@ public:
     sigc::signal<void>& signal_postUndo() override;
     sigc::signal<void>& signal_postRedo() override;
 
+    IUndoSystem& getUndoSystem() override;
+
 	// greebo: Creates a new, empty map file.
 	void createNewMap() override;
 
@@ -282,6 +284,7 @@ private:
 	void emitMapEvent(MapEvent ev);
 
 	void clearMapResource();
+	void connectToUndoSystem();
 
     void cleanupMergeOperation();
 
@@ -289,6 +292,9 @@ private:
      */
     void focusViews(const Vector3& point, const Vector3& angles);
     void focusViewCmd(const cmd::ArgumentList& args);
+
+    void undoCmd(const cmd::ArgumentList& args);
+    void redoCmd(const cmd::ArgumentList& args);
 };
 
 } // namespace map

@@ -100,7 +100,6 @@ const StringSet& BrushModuleImpl::getDependencies() const {
 		_dependencies.insert(MODULE_GAMEMANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
-		_dependencies.insert(MODULE_UNDOSYSTEM);
 	}
 
 	return _dependencies;

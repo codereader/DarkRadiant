@@ -84,6 +84,25 @@ void Map::clearMapResource()
 
     // Rename the map to "unnamed" in any case to avoid overwriting the failed map
     setMapName(_(MAP_UNNAMED_STRING));
+
+    connectToUndoSystem();
+}
+
+void Map::connectToUndoSystem()
+{
+    _postUndoListener.disconnect();
+    _postRedoListener.disconnect();
+
+    if (!_resource->getRootNode()) return;
+
+    _postUndoListener = _resource->getRootNode()->getUndoSystem().signal_postUndo().connect([this]()
+    {
+        _mapPostUndoSignal.emit();
+    });
+    _postRedoListener = _resource->getRootNode()->getUndoSystem().signal_postRedo().connect([this]()
+    {
+        _mapPostRedoSignal.emit();
+    });
 }
 
 void Map::loadMapResourceFromPath(const std::string& path)
@@ -113,10 +132,7 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
         GlobalMapResourceManager().createFromArchiveFile(location.path, location.archiveRelativePath) :
         GlobalMapResourceManager().createFromPath(location.path);
 
-    if (!_resource)
-    {
-        return;
-    }
+    assert(_resource);
 
     try
     {
@@ -132,6 +148,8 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
         radiant::NotificationMessage::SendError(ex.what());
         clearMapResource();
     }
+
+    connectToUndoSystem();
 
     // Take the new node and insert it as map root
     GlobalSceneGraph().setRoot(_resource->getRootNode());
@@ -450,6 +468,18 @@ sigc::signal<void>& Map::signal_postUndo()
 sigc::signal<void>& Map::signal_postRedo()
 {
     return _mapPostRedoSignal;
+}
+
+IUndoSystem& Map::getUndoSystem()
+{
+    const auto& rootNode = _resource->getRootNode();
+
+    if (!rootNode)
+    {
+        throw std::runtime_error("No map resource loaded");
+    }
+
+    return rootNode->getUndoSystem();
 }
 
 // move the view to a certain position
@@ -774,6 +804,8 @@ bool Map::saveAs()
         return false;
     }
 
+    connectToUndoSystem();
+
     // Resource save was successful, notify about this name change
     rename(fileInfo.fullPath);
 
@@ -924,6 +956,34 @@ void Map::registerCommands()
           cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
           cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
           cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
+
+    // Add undo commands
+    GlobalCommandSystem().addCommand("Undo", std::bind(&Map::undoCmd, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("Redo", std::bind(&Map::redoCmd, this, std::placeholders::_1));
+}
+
+void Map::undoCmd(const cmd::ArgumentList& args)
+{
+    try
+    {
+        getUndoSystem().undo();
+    }
+    catch (const std::runtime_error& err)
+    {
+        throw cmd::ExecutionNotPossible(err.what());
+    }
+}
+
+void Map::redoCmd(const cmd::ArgumentList& args)
+{
+    try
+    {
+        getUndoSystem().redo();
+    }
+    catch (const std::runtime_error& err)
+    {
+        throw cmd::ExecutionNotPossible(err.what());
+    }
 }
 
 // Static command targets
@@ -1352,18 +1412,15 @@ const std::string& Map::getName() const
 
 const StringSet& Map::getDependencies() const
 {
-    static StringSet _dependencies;
-
-    if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_GAMEMANAGER);
-		_dependencies.insert(MODULE_SCENEGRAPH);
-		_dependencies.insert(MODULE_MAPINFOFILEMANAGER);
-		_dependencies.insert(MODULE_FILETYPES);
-		_dependencies.insert(MODULE_MAPRESOURCEMANAGER);
-        _dependencies.insert(MODULE_COMMANDSYSTEM);
-        _dependencies.insert(MODULE_UNDOSYSTEM);
-    }
+    static StringSet _dependencies
+    {
+        MODULE_GAMEMANAGER,
+        MODULE_SCENEGRAPH,
+        MODULE_MAPINFOFILEMANAGER,
+        MODULE_FILETYPES,
+        MODULE_MAPRESOURCEMANAGER,
+        MODULE_COMMANDSYSTEM
+    };
 
     return _dependencies;
 }
@@ -1404,16 +1461,6 @@ void Map::initialiseModule(const IApplicationContext& ctx)
         radiant::IMessage::Type::ApplicationShutdownRequest,
         radiant::TypeListener<radiant::ApplicationShutdownRequest>(
             sigc::mem_fun(this, &Map::handleShutdownRequest)));
-
-    // Prepare to dispatch the undo/redo signals
-    _postUndoListener = GlobalUndoSystem().signal_postUndo().connect([this]()
-    {
-        _mapPostUndoSignal.emit();
-    });
-    _postRedoListener = GlobalUndoSystem().signal_postRedo().connect([this]()
-    {
-        _mapPostRedoSignal.emit();
-    });
 }
 
 void Map::shutdownModule()

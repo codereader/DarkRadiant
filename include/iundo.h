@@ -4,6 +4,7 @@
 /// \brief The undo-system interface. Uses the 'memento' pattern.
 
 #include "imodule.h"
+#include "imap.h"
 #include <cstddef>
 #include <memory>
 #include <sigc++/signal.h>
@@ -53,12 +54,11 @@ public:
 	virtual void save(IUndoable& undoable) = 0;
 };
 
-const char* const MODULE_UNDOSYSTEM("UndoSystem");
-
-class IUndoSystem :
-	public RegisterableModule
+class IUndoSystem
 {
 public:
+    using Ptr = std::shared_ptr<IUndoSystem>;
+
 	// Undoable objects need to call this to get hold of a StateSaver instance
 	// which will take care of exporting and saving the state. The passed map file change 
     // tracker will be notified when the state is saved.
@@ -104,11 +104,28 @@ public:
 	virtual void detachTracker(Tracker& tracker) = 0;
 };
 
-// The accessor function
-inline IUndoSystem& GlobalUndoSystem() 
+class IUndoSystemFactory :
+    public RegisterableModule
 {
-	static module::InstanceReference<IUndoSystem> _reference(MODULE_UNDOSYSTEM);
-	return _reference;
+public:
+    virtual ~IUndoSystemFactory() {}
+
+    // Create a new UndoSystem instance for use in a map root node
+    virtual IUndoSystem::Ptr createUndoSystem() = 0;
+};
+
+constexpr const char* const MODULE_UNDOSYSTEM_FACTORY("UndoSystemFactory");
+
+inline IUndoSystemFactory& GlobalUndoSystemFactory()
+{
+    static module::InstanceReference<IUndoSystemFactory> _reference(MODULE_UNDOSYSTEM_FACTORY);
+    return _reference;
+}
+
+// The accessor function to the main map's undo system
+inline IUndoSystem& GlobalUndoSystem()
+{
+    return GlobalMapModule().getUndoSystem();
 }
 
 class UndoableCommand

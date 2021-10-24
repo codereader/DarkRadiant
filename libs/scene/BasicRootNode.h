@@ -4,6 +4,7 @@
 #include "mapfile.h"
 #include "ilayer.h"
 #include "ientity.h"
+#include "iundo.h"
 #include "iselectiongroup.h"
 #include "iselectionset.h"
 #include "Node.h"
@@ -16,7 +17,7 @@ namespace scene
 
 // A very simple implementation of a Map Root Node
 // for use in the preview widget's scenes.
-class BasicRootNode :
+class BasicRootNode final :
     public IMapRootNode,
     public Node,
     public KeyValueStore
@@ -29,6 +30,7 @@ private:
     selection::ISelectionGroupManager::Ptr _selectionGroupManager;
     selection::ISelectionSetManager::Ptr _selectionSetManager;
     ILayerManager::Ptr _layerManager;
+    IUndoSystem::Ptr _undoSystem;
     AABB _emptyAABB;
 
 public:
@@ -39,12 +41,10 @@ public:
         _selectionGroupManager = GlobalSelectionGroupModule().createSelectionGroupManager();
         _selectionSetManager = GlobalSelectionSetModule().createSelectionSetManager();
         _layerManager = GlobalLayerModule().createLayerManager();
+        _undoSystem = GlobalUndoSystemFactory().createUndoSystem();
     }
 
-    virtual ~BasicRootNode()
-    {}
-
-    virtual void setName(const std::string& name) override
+    void setName(const std::string& name) override
     {
         _name = name;
     }
@@ -77,6 +77,11 @@ public:
     scene::ILayerManager& getLayerManager() override
     {
         return *_layerManager;
+    }
+
+    IUndoSystem& getUndoSystem() override
+    {
+        return *_undoSystem;
     }
 
     const AABB& localAABB() const override

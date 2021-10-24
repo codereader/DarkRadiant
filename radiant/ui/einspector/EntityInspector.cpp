@@ -505,10 +505,10 @@ const StringSet& EntityInspector::getDependencies() const
         MODULE_XMLREGISTRY,
         MODULE_GROUPDIALOG,
         MODULE_SELECTIONSYSTEM,
-        MODULE_UNDOSYSTEM,
         MODULE_GAMEMANAGER,
         MODULE_COMMANDSYSTEM,
-        MODULE_MAINFRAME
+        MODULE_MAINFRAME,
+        MODULE_MAP,
     };
 
     return _dependencies;

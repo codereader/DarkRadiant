@@ -10,6 +10,7 @@
 #include "UndoFileChangeTracker.h"
 #include "transformlib.h"
 #include "KeyValueStore.h"
+#include "undo/UndoSystem.h"
 
 namespace map 
 {
@@ -46,6 +47,8 @@ private:
 
     scene::ILayerManager::Ptr _layerManager;
 
+    IUndoSystem::Ptr _undoSystem;
+
 	AABB _emptyAABB;
 
 public:
@@ -62,6 +65,7 @@ public:
     selection::ISelectionGroupManager& getSelectionGroupManager() override;
     selection::ISelectionSetManager& getSelectionSetManager() override;
     scene::ILayerManager& getLayerManager() override;
+    IUndoSystem& getUndoSystem() override;
 
 	// Renderable implementation (empty)
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override

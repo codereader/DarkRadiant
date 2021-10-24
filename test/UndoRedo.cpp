@@ -19,6 +19,11 @@ namespace test
 
 using UndoTest = RadiantTest;
 
+TEST_F(UndoTest, UndoSystemFactory)
+{
+    EXPECT_TRUE(GlobalUndoSystemFactory().createUndoSystem()) << "Undo system factory must not return empty references";
+}
+
 TEST_F(UndoTest, BrushCreation)
 {
     std::string mapPath = "maps/simple_brushes.map";

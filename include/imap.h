@@ -31,6 +31,9 @@ class ITargetManager;
 // see ilayer.h
 class ILayerManager;
 
+// see iundo.h
+class IUndoSystem;
+
 namespace selection
 {
 	class ISelectionSetManager;
@@ -85,6 +88,9 @@ public:
 	 * Provides methods to create and assign layers in this map.
 	 */
 	virtual ILayerManager& getLayerManager() = 0;
+
+    // The UndoSystem of this map
+    virtual IUndoSystem& getUndoSystem() = 0;
 };
 typedef std::shared_ptr<IMapRootNode> IMapRootNodePtr;
 
@@ -180,6 +186,10 @@ public:
 
     // Signal emitted when an operation affecting the map has been redone
     virtual sigc::signal<void>& signal_postRedo() = 0;
+
+    // Accessor to the undo system of the main scene. 
+    // Throws std::runtime_error if no map resource has been loaded.
+    virtual IUndoSystem& getUndoSystem() = 0;
 
 	// Caution: this is upposed to be called on startup, since it doesn't ask the user
 	// whether to save the current map. Use the "NewMap" command for regular purposes.

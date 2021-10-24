@@ -11,8 +11,6 @@ RootNode::RootNode(const std::string& name) :
 	// Apply root status to this node
 	setIsRoot(true);
 
-	GlobalUndoSystem().attachTracker(*this);
-
 	// Create a new namespace
 	_namespace = GlobalNamespaceFactory().createNamespace();
 	assert(_namespace);
@@ -28,11 +26,16 @@ RootNode::RootNode(const std::string& name) :
 
 	_layerManager = GlobalLayerModule().createLayerManager();
 	assert(_layerManager);
+
+    _undoSystem = GlobalUndoSystemFactory().createUndoSystem();
+    assert(_undoSystem);
+
+    _undoSystem->attachTracker(*this);
 }
 
 RootNode::~RootNode()
 {
-	GlobalUndoSystem().detachTracker(*this);
+    _undoSystem->detachTracker(*this);
 
 	// Remove all child nodes to trigger their destruction
 	removeAllChildNodes();
@@ -66,6 +69,11 @@ selection::ISelectionSetManager& RootNode::getSelectionSetManager()
 scene::ILayerManager& RootNode::getLayerManager()
 {
 	return *_layerManager;
+}
+
+IUndoSystem& RootNode::getUndoSystem()
+{
+    return *_undoSystem;
 }
 
 std::string RootNode::name() const 
