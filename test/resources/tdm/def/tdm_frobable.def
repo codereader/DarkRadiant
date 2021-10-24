@@ -1,0 +1,16 @@
+entityDef atdm:frobable_base
+{
+	"inherit"			    	"atdm:entity_base"
+	"editor_usage"				"Base class for all TDM frobable items.  May be used for a simple non-moving frobable which triggers its targets."	
+	"editor_displayFolder"		"Internal"
+
+	"frobable"					"1"
+	"frob_action_script"		"frob_trigger"
+	"used_action_script"		"frob_trigger"
+	"grabable"					"1"
+
+	"spawnclass"				"idStaticEntity"
+
+	"solid"						"1"
+	"noclipmodel"				"0"
+}

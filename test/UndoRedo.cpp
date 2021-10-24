@@ -8,6 +8,7 @@
 #include "icommandsystem.h"
 #include "math/Matrix4.h"
 #include "algorithm/Scene.h"
+#include "algorithm/Primitives.h"
 #include "scenelib.h"
 
 namespace test
@@ -465,6 +466,59 @@ TEST_F(UndoTest, SceneNodeRemoval)
     // Same oddity here, the child brush didn't get its parent reference cleared during redo
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(func_static, "textures/numbers/4"));
     EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1"));
+}
+
+// Test corresponding to #2118: Crash when undoing "create entity from brush "atdm:mover_door_sliding"
+TEST_F(UndoTest, CreateBrushBasedEntity)
+{
+    // start DR, create a brush
+    // right-click, select "make entity" and select "atdm:mover_door_sliding" => "Ok"
+    // Press CTRL-Z to undo - DR crashes
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    // Create and select a brush
+    auto brush = algorithm::createCubicBrush(worldspawn, { 5, 5, 15 }, "textures/numbers/1");
+    Node_setSelected(brush, true);
+
+    // Initially, this brush has the worldspawn as parent
+    EXPECT_TRUE(Node_getEntity(brush->getParent())->isWorldspawn());
+
+    EXPECT_TRUE(GlobalEntityClassManager().findClass("atdm:mover_door_sliding")) << "Need atdm:mover_door_sliding for this test";
+
+    IEntityNodePtr entity;
+    {
+        UndoableCommand command("createEntity");
+        entity = GlobalEntityModule().createEntityFromSelection("atdm:mover_door_sliding", Vector3(7.5, 12, 0));
+    }
+
+    EXPECT_TRUE(entity);
+    EXPECT_TRUE(brush->getParent());
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1")) << "Worldspawn should have lost this brush";
+
+    EXPECT_FALSE(Node_getEntity(brush->getParent())->isWorldspawn());
+    EXPECT_EQ(Node_getEntity(brush->getParent())->getEntityClass()->getName(), "atdm:mover_door_sliding");
+
+    auto entityName = Node_getEntity(entity)->getKeyValue("name");
+    EXPECT_TRUE(algorithm::getEntityByName(GlobalMapModule().getRoot(), entityName)) << "Could not look up the entity by name";
+
+    GlobalUndoSystem().undo();
+
+    // The brush should be back at worldspawn
+    EXPECT_TRUE(Node_getEntity(brush->getParent())->isWorldspawn());
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1")) << "Worldspawn should have this brush again";
+    
+    // The entity should be gone
+    EXPECT_FALSE(algorithm::getEntityByName(GlobalMapModule().getRoot(), entityName)) << "Could look up the entity by name";
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(entity, "textures/numbers/1")) << "The door should have lost this brush";
+
+    GlobalUndoSystem().redo();
+
+    // All should be back in place after redo
+    EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1")) << "Worldspawn should have lost this brush";
+    EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(entity, "textures/numbers/1")) << "The door should have this brush now";
+    EXPECT_FALSE(Node_getEntity(brush->getParent())->isWorldspawn());
+    EXPECT_EQ(Node_getEntity(brush->getParent())->getEntityClass()->getName(), "atdm:mover_door_sliding");
+    EXPECT_TRUE(algorithm::getEntityByName(GlobalMapModule().getRoot(), entityName)) << "Could not look up the entity by name";
 }
 
 }

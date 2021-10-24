@@ -1,0 +1,195 @@
+entityDef atdm:moveable_base
+{
+	"inherit"					"moveable_base"
+
+	"editor_displayFolder"		"Moveables/Misc"
+	"editor_usage"				"Don't use. Base class for all TDM moveables."
+
+	// if the model has an origin set to the bottom, move it to the center
+	"origin"					"0 0 0"
+
+    //not sure if this is in the right place:
+    "tdm_bounce_sound_max_vel"                   "At velocities higher than this value, collision sounds are played at the loudest possible volume. Default 400."
+    "tdm_bounce_sound_min_vel"                   "At velocities below this value, no collision sound is played.  Default 80.  The decrease of the propagated volume between the max and min velocity is the spawn arg min_velocity_volume_decrease, which is currently 20 db."
+
+	"min_velocity_volume_decrease"		"20"
+
+	"snd_bounce_carpet"                                 "tdm_impact_carpet"
+        "snd_bounce_cloth"                                "tdm_impact_carpet"
+	"snd_bounce_grass"					"human_grass"
+	"snd_bounce_dirt"				"tdm_impact_dirt"
+	"snd_bounce_snow"				"tdm_impact_dirt"   //needs something better
+    "snd_water"                                   "water_hit_by_medium_object"
+}
+
+entityDef atdm:mover_base
+{
+	"inherit"						"atdm:moveable_base"
+	
+	"editor_color"					"0 .5 .8"
+	"editor_mins"					"?"
+	"editor_maxs"					"?"
+    "editor_displayFolder"			"Movers"
+	"editor_usage"					"Default mover."
+
+	"frobable"					"1"
+	// allow frobbing of movers from far away so they don't hit us when they move
+	"frob_distance"				"100"
+	"frob_simple"				"1" // allow frobbing movers while carrying body
+
+	"nomoss"					"1" // don't spawn moss blobs on movers
+}
+
+entityDef atdm:mover_binarymover_base
+{
+	"inherit"						"atdm:mover_base"
+
+	"spawnclass"					"CBinaryFrobMover"
+
+	"editor_mover"					"1"
+	"editor_usage"					"Don't use. Base class for all binary (two-state) movers like buttons, doors, levers, etc."
+
+	"frob_action_script"		"frob_door"
+
+	"open"						"0"
+	"interruptable"				"1"
+	"rotate"					"0 90 0"
+	"translate"					"0 0 0"
+	"first_frob_open"			"1"
+	"translate_speed"			"0"
+
+	"locked"					"0"
+	"pickable"					"1"
+
+	"start_rotate"				"0 0 0"
+	"start_position"			"0 0 0"
+
+	"open_on_unlock"			"1"
+	"trigger_when_opened"		"0"
+
+	"auto_open_time"			"-1" // do not autoopen
+	"auto_close_time"			"-1" // do not autoclose
+
+	"snd_open"					"door_open_01"
+	"snd_close"					"door_shut_01"
+	"snd_lock"					"door_locked_04"
+	"snd_locked"				"door_locked_01"
+	"snd_unlock"				"door_unlocked_01"
+    "snd_silence"               "nosound"
+
+	// Sounds for the lockpicking pin patterns.
+	// These sounds are used to construct a soundpattern
+	// based on the mapper setting for a given doorlock.
+    "snd_lockpick_pin_00"       "lockpick_pin_00"
+	"snd_lockpick_pin_01"		"lockpick_pin_01"
+	"snd_lockpick_pin_02"		"lockpick_pin_02"
+	"snd_lockpick_pin_03"		"lockpick_pin_03"
+	"snd_lockpick_pin_04"		"lockpick_pin_04"
+	"snd_lockpick_pin_05"		"lockpick_pin_05"
+	"snd_lockpick_pin_06"		"lockpick_pin_06"
+	"snd_lockpick_pin_07"		"lockpick_pin_07"
+	"snd_lockpick_pin_08"		"lockpick_pin_08"
+	"snd_lockpick_pin_09"		"lockpick_pin_09"
+	"snd_lockpick_pin_10"		"lockpick_pin_10"
+	"snd_lockpick_pin_11"		"lockpick_pin_11"
+	"snd_lockpick_pin_12"		"lockpick_pin_12"
+	"snd_lockpick_pin_13"		"lockpick_pin_13"
+	"snd_lockpick_pin_14"		"lockpick_pin_14"
+	"snd_lockpick_pin_success"	"lockpick_pin_success"
+
+	"snd_lockpick_pick_wrong"	"lockpick_pick_wrong"
+	"snd_lockpick_pin_fail"		"lockpick_pin_fail"
+	"snd_lockpick_lock_picked"	""
+
+	"snd_lockpick_pin_sweetspot"	"lockpick_pin_sweetspot"
+}
+
+entityDef atdm:mover_door
+{
+	"inherit"					"atdm:mover_binarymover_base"
+	"spawnclass"				"CFrobDoor"
+	"editor_color"				"0 .5 .8"
+	"editor_mins"				"?"
+	"editor_maxs"				"?"
+	"editor_mover"				"1"
+	"editor_usage"				"Default swinging door.  You must specify the rotation."
+    "editor_displayFolder"		"Movers/Doors"
+
+	"AIUse"						"AIUSE_DOOR"
+
+	"used_by_key_master"		"key_master"
+	"interruptable"				"1"
+	"rotate"					"0 90 0"
+	"translate"					"0 0 0"
+	"snd_open"					"door_open_01"
+	"snd_opened"				"nosound"
+	"snd_close"					"door_shut_01"
+	"snd_locked"				"door_locked_01"
+	"snd_unlock"				"door_unlocked_01"
+	"snd_wrong_key"				"lockpick_pick_wrong"
+	"shouldBeClosed"			"0"
+	"canRemainOpen"				"0" // grayman #3523
+	
+	"loss_open"					"1"
+	"loss_closed"				"10"
+	"loss_double_open"			"1"
+	"frobable"					"1"
+	"move_time"					"1.75" // seconds
+	"frob_action_script"		"frob_door"
+	// overload the default target-triggering used_action_script
+	"used_action_script"			""
+	"trigger_on_open"			"1"
+	"trigger_on_close"			"0"
+
+	"auto_setup_door_handles"	"1"
+
+	// This is the master spawnarg for auto-setting up double doors
+	"auto_setup_double_door"	"1"
+
+	// These can be used to define *what* exactly should be setup when "auto_setup_double_door" == "1"
+	"auto_setup_double_door_open_peer"		"1"
+	"auto_setup_double_door_lock_peer"		"1"
+	"auto_setup_double_door_frob_peer"		"0"
+
+	"pickable"						"1"
+	"locked"						"0"
+	"used_by"						"name of key"
+	"lock_pins"						"0"
+	"lock_picktype"						"-"
+	"editor_setKeyValue locked"			"0"
+	"editor_setKeyValue used_by"			"-"
+	"editor_setKeyValue lock_pins"			"0"
+	"editor_setKeyValue lock_picktype"		"-"
+	"editor_setKeyValue rotate"			"0 90 0"
+
+	// greebo: By default, the mover stops when it is blocked
+	"stop_when_blocked"				"1"
+
+	"push_player"					"0"
+
+	"open"							"0"
+	"should_always_be_locked"		"0"
+
+	"sr_class_1"			"S"
+	"sr_time_interval_1"	"1500" // grayman #3462 - was '2000'
+	"sr_type_1"				"STIM_VISUAL"
+	"sr_state_1"			"1"
+	"sr_radius_1"			"500"
+}
+
+entityDef atdm:mover_door_sliding
+{
+	"inherit"				"atdm:mover_door"
+
+	"editor_usage"				"Default sliding door.  You must specify the translation"
+
+	"rotate"				"0 0 0"
+	"editor_setKeyValue rotate"		"0 0 0" // Fidcal: else rotate 0 90 0 overrides it from inherited setKeyValue
+	"translate"				"0 0 0"
+	"editor_setKeyValue translate"		"0 0 0"
+
+	"snd_open"			"door_open_01"
+	"snd_close"			"door_shut_01"
+	"snd_locked"			"door_locked_01"
+	"snd_unlock"			"door_unlocked_01"
+}

@@ -1,0 +1,44 @@
+entityDef moveable_base
+{
+	"inherit"							"atdm:frobable_base"
+
+	"editor_displayFolder"				"x doom3 junk"
+
+	"editor_color"						"0 .5 .8"
+	"editor_rotatable"					"1"
+
+	"spawnclass"						"idMoveable"
+
+	"density"						"0.5"
+	"friction"						"0.05"
+	"bouncyness"					"0.6"
+	"explode"						"0"
+	"unbindondeath"					"0"
+	"health"						"0"
+	"nodrop"						"0"
+	"noimpact"						"0"
+	"solid"							"1"
+	"notPushable"					"0"
+	"clipshrink"					"0"
+	"allowStep"						"1"
+
+	"snd_bounce"						"tdm_impact_carpet_heavy"
+	"snd_bounce_cloth"				"tdm_impact_carpet_heavy"
+	"snd_bounce_carpet"				"tdm_impact_carpet_heavy"
+	"snd_bounce_grass"				"tdm_impact_carpet_heavy"
+	"snd_bounce_dirt"				"tdm_impact_carpet_heavy"
+	"snd_bounce_snow"				"tdm_impact_carpet_heavy"
+
+	"frobable"						"1"
+	"frob_action_script"			""
+
+	"snd_water"						"water_hit_by_small_object"
+
+	 // grayman #2816
+	"def_damage"					"atdm:damage_moveable"
+	"damage_mult_armor_leath"		"0.50"
+	"damage_mult_armor_chain"		"0.25"
+	"damage_mult_armor_plate"		"0.00"
+}
+
+
