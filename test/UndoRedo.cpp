@@ -10,6 +10,7 @@
 #include "algorithm/Scene.h"
 #include "algorithm/Primitives.h"
 #include "scenelib.h"
+#include "testutil/FileSelectionHelper.h"
 
 namespace test
 {
@@ -54,10 +55,14 @@ TEST_F(UndoTest, BrushCreation)
     EXPECT_FALSE(brushNode->inScene());
     EXPECT_FALSE(algorithm::findFirstBrushWithMaterial(worldspawn, material)) << "Brush should be gone after undo";
 
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unchanged again after undo";
+
     // Redo, brush should be back again
     GlobalUndoSystem().redo();
     EXPECT_TRUE(brushNode->inScene());
     EXPECT_TRUE(algorithm::findFirstBrushWithMaterial(worldspawn, material)) << "Could not locate the brush after redo";
+
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be changed again after redo";
 }
 
 namespace
@@ -163,6 +168,8 @@ TEST_F(UndoTest, MultipleChangesInSingleOperation)
     Node_getEntity(entity2)->setKeyValue("test2", "");
     Node_getEntity(entity2)->setKeyValue("test3", "");
 
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be marked as unchanged again";
+
     GlobalUndoSystem().redo();
     Node_getEntity(entity)->setKeyValue("test", "1");
     Node_getEntity(entity)->setKeyValue("test1", "value1");
@@ -170,6 +177,8 @@ TEST_F(UndoTest, MultipleChangesInSingleOperation)
     Node_getEntity(entity2)->setKeyValue("test", "2");
     Node_getEntity(entity2)->setKeyValue("test2", "value2");
     Node_getEntity(entity2)->setKeyValue("test3", "value3");
+
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after redo";
 }
 
 TEST_F(UndoTest, NodeOutsideScene)
@@ -193,8 +202,12 @@ TEST_F(UndoTest, NodeOutsideScene)
     // Node should still be unaffected by this
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1");
 
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should not be modified after this change";
+
     GlobalUndoSystem().redo();
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1");
+
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should not be modified after this change";
 }
 
 TEST_F(UndoTest, SequentialOperations)
@@ -236,6 +249,8 @@ TEST_F(UndoTest, SequentialOperations)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), "value1"); // unchanged
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1"); // unchanged
 
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should still be modified after 1 undo";
+
     GlobalUndoSystem().undo();
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test3"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test2"), ""); // undone
@@ -243,6 +258,8 @@ TEST_F(UndoTest, SequentialOperations)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), "value1"); // unchanged
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1"); // unchanged
 
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should still be modified after 2 undos";
+
     GlobalUndoSystem().undo();
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test3"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test2"), ""); // undone
@@ -250,6 +267,8 @@ TEST_F(UndoTest, SequentialOperations)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), "value1"); // unchanged
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1"); // unchanged
 
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should still be modified after 3 undos";
+
     GlobalUndoSystem().undo();
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test3"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test2"), ""); // undone
@@ -257,12 +276,16 @@ TEST_F(UndoTest, SequentialOperations)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1"); // unchanged
 
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should still be modified after 4 undos";
+
     GlobalUndoSystem().undo();
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test3"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test2"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test"), InitialTestKeyValue); // undone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), InitialTestKeyValue); // undone
+
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified after 5 undos";
 
     // Then redo all of these one after one
 
@@ -273,6 +296,8 @@ TEST_F(UndoTest, SequentialOperations)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1"); // redone
 
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 1 redo";
+
     GlobalUndoSystem().redo();
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test3"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test2"), ""); // undone
@@ -280,6 +305,8 @@ TEST_F(UndoTest, SequentialOperations)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), "value1"); // redone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1"); // redone
 
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 2 redos";
+
     GlobalUndoSystem().redo();
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test3"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test2"), ""); // undone
@@ -287,6 +314,8 @@ TEST_F(UndoTest, SequentialOperations)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), "value1"); // redone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1"); // redone
 
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 3 redos";
+
     GlobalUndoSystem().redo();
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test3"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test2"), "value2"); // redone
@@ -294,12 +323,16 @@ TEST_F(UndoTest, SequentialOperations)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), "value1"); // redone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1"); // redone
 
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 4 redos";
+
     GlobalUndoSystem().redo();
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test3"), "value3"); // redone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test2"), "value2"); // redone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test"), "2"); // redone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), "value1"); // redone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1"); // redone
+
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 5 redos";
 }
 
 TEST_F(UndoTest, NestedOperations)
@@ -340,12 +373,16 @@ TEST_F(UndoTest, NestedOperations)
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), ""); // undone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), InitialTestKeyValue); // undone
 
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified after undo";
+
     GlobalUndoSystem().redo();
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("last"), "one"); // redone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test2"), "value2"); // redone
     EXPECT_EQ(Node_getEntity(entity2)->getKeyValue("test"), "2"); // redone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test1"), "value1"); // redone
     EXPECT_EQ(Node_getEntity(entity)->getKeyValue("test"), "1"); // redone
+
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after redo";
 }
 
 // Changing a key value multiple times within a single operation is treated correctly
@@ -519,6 +556,84 @@ TEST_F(UndoTest, CreateBrushBasedEntity)
     EXPECT_FALSE(Node_getEntity(brush->getParent())->isWorldspawn());
     EXPECT_EQ(Node_getEntity(brush->getParent())->getEntityClass()->getName(), "atdm:mover_door_sliding");
     EXPECT_TRUE(algorithm::getEntityByName(GlobalMapModule().getRoot(), entityName)) << "Could not look up the entity by name";
+}
+
+TEST_F(UndoTest, MapChangeTracking)
+{
+    auto entity = setupTestEntity();
+    auto entity2 = setupTestEntity();
+
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map already modified before the change";
+
+    // Issue 5 commands to the undo stack
+    {
+        UndoableCommand cmd("testOperation");
+        Node_getEntity(entity)->setKeyValue("test", "1");
+    }
+    {
+        UndoableCommand cmd("testOperation");
+        Node_getEntity(entity)->setKeyValue("test1", "value1");
+    }
+    {
+        UndoableCommand cmd("testOperation");
+        Node_getEntity(entity2)->setKeyValue("test", "2");
+    }
+    {
+        UndoableCommand cmd("testOperation");
+        Node_getEntity(entity2)->setKeyValue("test2", "value2");
+    }
+    {
+        UndoableCommand cmd("testOperation");
+        Node_getEntity(entity2)->setKeyValue("test3", "value3");
+    }
+
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after this change";
+
+    // Select the format based on the extension
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "just_a_map.map";
+    auto format = GlobalMapFormatManager().getMapFormatForFilename(tempPath.string());
+
+    // Respond to the event asking for the target path
+    FileSelectionHelper responder(tempPath.string(), format);
+
+    GlobalCommandSystem().executeCommand("SaveMapAs");
+
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified after saving";
+
+    // Two undo steps will mark the map as modified
+    GlobalUndoSystem().undo();
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 2 undos";
+    GlobalUndoSystem().undo();
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 2 undos";
+
+    // Save at this point, this clears the modified status
+    GlobalCommandSystem().executeCommand("SaveMap");
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified after saving";
+
+    // One step back, one step forward
+    GlobalUndoSystem().undo();
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 1 undo";
+    GlobalUndoSystem().redo();
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified after 1 redo";
+
+    // Two steps forward, two steps back, map is unmodified again
+    GlobalUndoSystem().redo();
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 1 redo";
+    GlobalUndoSystem().redo();
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 2 redos";
+    GlobalUndoSystem().undo();
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 1 undo";
+    GlobalUndoSystem().undo();
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified after 2 undos";
+
+    // Two more redos, then save
+    GlobalUndoSystem().redo();
+    GlobalUndoSystem().redo();
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 2 redos";
+
+    GlobalCommandSystem().executeCommand("SaveMap");
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should be unmodified after saving";
 }
 
 }
