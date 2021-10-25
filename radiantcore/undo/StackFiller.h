@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iundo.h"
-#include "mapfile.h"
+#include "imapfilechangetracker.h"
 #include "Stack.h"
 
 namespace undo 

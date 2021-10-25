@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include <numeric>
 #include <iostream>
-#include "mapfile.h"
+#include "imapfilechangetracker.h"
 #include "itextstream.h"
 #include "iscenegraph.h"
 #include "iradiant.h"
@@ -57,7 +57,7 @@ namespace
 
 AutoMapSaver::AutoMapSaver() :
 	_snapshotsEnabled(false),
-	_changes(0)
+    _savedChangeCount(0)
 {}
 
 void AutoMapSaver::registryKeyChanged()
@@ -67,7 +67,7 @@ void AutoMapSaver::registryKeyChanged()
 
 void AutoMapSaver::clearChanges()
 {
-	_changes = 0;
+    _savedChangeCount = 0;
 }
 
 void AutoMapSaver::saveSnapshot() 
@@ -195,7 +195,7 @@ void AutoMapSaver::collectExistingSnapshots(std::map<int, std::string>& existing
 bool AutoMapSaver::runAutosaveCheck()
 {
     // Check, if changes have been made since the last autosave
-    if (!GlobalSceneGraph().root() || _changes == GlobalSceneGraph().root()->getUndoChangeTracker().changes())
+    if (!GlobalSceneGraph().root() || _savedChangeCount == GlobalSceneGraph().root()->getUndoChangeTracker().getCurrentChangeCount())
     {
         return false;
     }
@@ -215,7 +215,7 @@ bool AutoMapSaver::runAutosaveCheck()
 void AutoMapSaver::performAutosave()
 {
     // Remember the change tracking counter
-    _changes = GlobalSceneGraph().root()->getUndoChangeTracker().changes();
+    _savedChangeCount = GlobalSceneGraph().root()->getUndoChangeTracker().getCurrentChangeCount();
 
     // only snapshot if not working on an unnamed map
     if (_snapshotsEnabled && !GlobalMapModule().isUnnamed())

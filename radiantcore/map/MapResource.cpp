@@ -13,7 +13,7 @@
 #include "imapinfofile.h"
 
 #include "map/RootNode.h"
-#include "mapfile.h"
+#include "imapfilechangetracker.h"
 #include "gamelib.h"
 #include "debugging/debugging.h"
 #include "os/path.h"
@@ -267,14 +267,14 @@ sigc::signal<void(bool)>& MapResource::signal_modifiedStatusChanged()
 
 void MapResource::onMapChanged()
 {
-    _signalModifiedStatusChanged.emit(!_mapRoot->getUndoChangeTracker().saved());
+    _signalModifiedStatusChanged.emit(!_mapRoot->getUndoChangeTracker().isAtSavedPosition());
 }
 
 void MapResource::mapSave()
 {
     if (_mapRoot)
     {
-        _mapRoot->getUndoChangeTracker().save();
+        _mapRoot->getUndoChangeTracker().setSavedChangeCount();
     }
 }
 

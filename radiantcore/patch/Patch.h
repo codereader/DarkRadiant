@@ -6,7 +6,7 @@
 #include "editable.h"
 #include "iundo.h"
 #include "irender.h"
-#include "mapfile.h"
+#include "imapfilechangetracker.h"
 #include "SurfaceShader.h"
 
 #include "PatchConstants.h"

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iundo.h"
-#include "mapfile.h"
+#include "imapfilechangetracker.h"
 #include <limits>
 #include <sigc++/signal.h>
 
@@ -12,78 +12,65 @@ class UndoFileChangeTracker :
 private:
     constexpr static std::size_t MAPFILE_MAX_CHANGES = std::numeric_limits<std::size_t>::max();
 
-	std::size_t _size;
-	std::size_t _saved;
+	std::size_t _currentChangeCount;
+	std::size_t _savedChangeCount;
     sigc::signal<void()> _changed;
 
 public:
 	UndoFileChangeTracker() :
-		_size(0),
-		_saved(MAPFILE_MAX_CHANGES)
+        _currentChangeCount(0),
+        _savedChangeCount(MAPFILE_MAX_CHANGES)
 	{}
 
-	void push() 
+    void setSavedChangeCount() override
     {
-        ++_size;
+        _savedChangeCount = _currentChangeCount;
         _changed.emit();
-	}
-
-	void pop()
-    {
-        --_size;
-        _changed.emit();
-	}
-
-	void pushOperation()
-    {
-		if (_size < _saved)
-        {
-			// redo queue has been flushed.. it is now impossible to get back to the saved state via undo/redo
-			_saved = MAPFILE_MAX_CHANGES;
-		}
-		push();
-	}
-
-	void clear() override
-    {
-		_size = 0;
-        _changed.emit();
-	}
-
-    void save() override 
-    {
-		_saved = _size;
-        _changed.emit();
-	}
+    }
 
     // Returns true if the current undo history position corresponds to the most recently saved state
-    bool saved() const override
+    bool isAtSavedPosition() const override
     {
-		return _saved == _size;
-	}
+        return _savedChangeCount == _currentChangeCount;
+    }
 
     sigc::signal<void()>& signal_changed() override
     {
         return _changed;
-	}
+    }
 
-    std::size_t changes() const override
+    std::size_t getCurrentChangeCount() const override
     {
-		return _size;
-	}
+        return _currentChangeCount;
+    }
 
     void onOperationRecorded() override
     {
-        pushOperation();
+        if (_currentChangeCount < _savedChangeCount)
+        {
+            // redo queue has been flushed.. it is now impossible to get back to the saved state via undo/redo
+            _savedChangeCount = MAPFILE_MAX_CHANGES;
+        }
+        
+        ++_currentChangeCount;
+        _changed.emit();
     }
 
     void onOperationUndone() override
     {
-        pop();
+        --_currentChangeCount;
+        _changed.emit();
     }
     
     void onOperationRedone() override
     {
-        push();
+        ++_currentChangeCount;
+        _changed.emit();
+    }
+
+    void onAllOperationsCleared() override
+    {
+        _currentChangeCount = 0;
+        _changed.emit();
     }
 };

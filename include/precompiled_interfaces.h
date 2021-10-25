@@ -81,7 +81,7 @@
 #include "itransformnode.h"
 #include "iundo.h"
 #include "ivolumetest.h"
-#include "mapfile.h"
+#include "imapfilechangetracker.h"
 #include "modelskin.h"
 #include "ModResource.h"
 #include "ishaderlayer.h"

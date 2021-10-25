@@ -4,7 +4,7 @@
 #include <algorithm>
 #include "LayerValidityCheckWalker.h"
 #include "BasicUndoMemento.h"
-#include "mapfile.h"
+#include "imapfilechangetracker.h"
 #include "Node.h"
 
 namespace scene

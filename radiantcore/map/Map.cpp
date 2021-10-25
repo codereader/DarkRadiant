@@ -80,7 +80,7 @@ void Map::clearMapResource()
     // Map is unnamed or load failed, reset map resource node to empty
     _resource->clear();
 
-    _resource->getRootNode()->getUndoChangeTracker().save();
+    _resource->getRootNode()->getUndoChangeTracker().setSavedChangeCount();
 
     // Rename the map to "unnamed" in any case to avoid overwriting the failed map
     setMapName(_(MAP_UNNAMED_STRING));

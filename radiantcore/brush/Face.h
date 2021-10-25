@@ -2,7 +2,7 @@
 
 #include "irender.h"
 #include "iundo.h"
-#include "mapfile.h"
+#include "imapfilechangetracker.h"
 #include "iselectiontest.h"
 #include <sigc++/connection.h>
 

@@ -2,7 +2,7 @@
 
 #include <string>
 #include "inode.h"
-#include "mapfile.h"
+#include "imapfilechangetracker.h"
 #include "ObservedUndoable.h"
 
 /**

@@ -153,7 +153,7 @@ void UndoSystem::clear()
 	setActiveUndoStack(nullptr);
 	_undoStack.clear();
 	_redoStack.clear();
-    foreachTracker([&](Tracker& tracker) { tracker.clear(); });
+    foreachTracker([&](Tracker& tracker) { tracker.onAllOperationsCleared(); });
 
 	// greebo: This is called on map shutdown, so don't clear the observers,
 	// there are some "persistent" observers like EntityInspector and ShaderClipboard

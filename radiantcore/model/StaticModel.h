@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iundo.h"
-#include "mapfile.h"
+#include "imapfilechangetracker.h"
 #include "imodel.h"
 #include "math/AABB.h"
 #include "imodelsurface.h"

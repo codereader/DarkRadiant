@@ -100,7 +100,6 @@
     <ClInclude Include="..\..\include\iundo.h" />
     <ClInclude Include="..\..\include\iversioncontrol.h" />
     <ClInclude Include="..\..\include\ivolumetest.h" />
-    <ClInclude Include="..\..\include\mapfile.h" />
     <ClInclude Include="..\..\include\modelskin.h" />
     <ClInclude Include="..\..\include\ModResource.h" />
     <ClInclude Include="..\..\include\precompiled_interfaces.h" />
@@ -162,6 +161,7 @@
     <ClInclude Include="..\..\include\ui\iwxgl.h">
       <Filter>ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\imapfilechangetracker.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ui">

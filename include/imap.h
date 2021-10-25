@@ -22,7 +22,7 @@ const char* const LOAD_PREFAB_AT_CMD = "LoadPrefabAt";
 class INamespace;
 typedef std::shared_ptr<INamespace> INamespacePtr;
 
-// see mapfile.h
+// see imapfilechangetracker.h
 class IMapFileChangeTracker;
 
 // see ientity.h

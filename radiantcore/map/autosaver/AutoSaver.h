@@ -23,7 +23,7 @@ private:
 	// TRUE, if the autosaver generates snapshots
 	bool _snapshotsEnabled;
 
-	std::size_t _changes;
+	std::size_t _savedChangeCount;
 
 	std::vector<sigc::connection> _signalConnections;
 
