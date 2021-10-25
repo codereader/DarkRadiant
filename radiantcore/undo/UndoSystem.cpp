@@ -72,8 +72,10 @@ void UndoSystem::cancel()
 
 void UndoSystem::finish(const std::string& command)
 {
-	if (finishUndo(command)) {
+	if (finishUndo(command))
+    {
 		rMessage() << command << std::endl;
+        foreachTracker([&](Tracker& tracker) { tracker.onOperationRecorded(); });
 	}
 }
 
@@ -99,6 +101,7 @@ void UndoSystem::undo()
 	operation->restoreSnapshot();
 	finishRedo(operation->getName());
 	_undoStack.pop_back();
+    foreachTracker([&](Tracker& tracker) { tracker.onOperationUndone(); });
 
 	_signalPostUndo.emit();
 
@@ -134,6 +137,7 @@ void UndoSystem::redo()
 	operation->restoreSnapshot();
 	finishUndo(operation->getName());
 	_redoStack.pop_back();
+    foreachTracker([&](Tracker& tracker) { tracker.onOperationRedone(); });
 
 	_signalPostRedo.emit();
 

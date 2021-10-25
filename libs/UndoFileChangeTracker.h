@@ -41,7 +41,7 @@ public:
         }
 	}
 
-	void pop() 
+	void pop()
     {
         --_size;
         if (_changed)
@@ -70,17 +70,17 @@ public:
 
 	void begin() override 
     {
-		_pending = Pending(&UndoFileChangeTracker::pushOperation);
+		//_pending = Pending(&UndoFileChangeTracker::pushOperation);
 	}
 
 	void undo() override 
     {
-		_pending = Pending(&UndoFileChangeTracker::pop);
+		//_pending = Pending(&UndoFileChangeTracker::pop);
 	}
 
 	void redo() override 
     {
-		_pending = Pending(&UndoFileChangeTracker::push);
+		//_pending = Pending(&UndoFileChangeTracker::push);
 	}
 
     void changed() override {
@@ -99,7 +99,9 @@ public:
         }
 	}
 
-    bool saved() const override {
+    // Returns true if the current undo history position corresponds to the most recently saved state
+    bool saved() const override
+    {
 		return _saved == _size;
 	}
 
@@ -117,4 +119,19 @@ public:
     {
 		return _size;
 	}
+
+    void onOperationRecorded() override
+    {
+        pushOperation();
+    }
+
+    void onOperationUndone() override
+    {
+        pop();
+    }
+    
+    void onOperationRedone() override
+    {
+        push();
+    }
 };

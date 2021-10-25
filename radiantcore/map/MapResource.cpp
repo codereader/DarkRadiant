@@ -256,7 +256,7 @@ bool MapResource::fileHasBeenModifiedSinceLastSave()
 
 void MapResource::onMapChanged()
 {
-	GlobalMap().setModified(true);
+	GlobalMap().setModified(!_mapRoot->getUndoChangeTracker().saved());
 }
 
 void MapResource::connectMap()
