@@ -8,6 +8,7 @@
 #include "RootNode.h"
 #include "os/fs.h"
 #include "stream/MapResourceStream.h"
+#include <sigc++/connection.h>
 
 namespace map
 {
@@ -37,6 +38,9 @@ private:
     // have been modified since the last load time
     fs::file_time_type _lastKnownModificationTime;
 
+    sigc::signal<void(bool)> _signalModifiedStatusChanged;
+    sigc::connection _mapChangeCountListener;
+
 public:
 	// Constructor
 	MapResource(const std::string& resourcePath);
@@ -53,7 +57,9 @@ public:
     virtual void clear() override;
 
     // Check if the file has been modified since it was last saved
-    virtual bool fileHasBeenModifiedSinceLastSave() override;
+    virtual bool fileOnDiskHasBeenModifiedSinceLastSave() override;
+
+    sigc::signal<void(bool)>& signal_modifiedStatusChanged() override;
 
 	// Save the map contents to the given filename using the given MapFormat export module
 	// Throws an OperationException if anything prevents successful completion

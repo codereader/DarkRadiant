@@ -3,7 +3,7 @@
 #include "iundo.h"
 #include "mapfile.h"
 #include <limits>
-#include <functional>
+#include <sigc++/signal.h>
 
 class UndoFileChangeTracker :
     public IUndoSystem::Tracker,
@@ -14,7 +14,7 @@ private:
 
 	std::size_t _size;
 	std::size_t _saved;
-	std::function<void()> _changed;
+    sigc::signal<void()> _changed;
 
 public:
 	UndoFileChangeTracker() :
@@ -25,19 +25,13 @@ public:
 	void push() 
     {
         ++_size;
-        if (_changed)
-        {
-            _changed();
-        }
+        _changed.emit();
 	}
 
 	void pop()
     {
         --_size;
-        if (_changed)
-        {
-            _changed();
-        }
+        _changed.emit();
 	}
 
 	void pushOperation()
@@ -53,20 +47,13 @@ public:
 	void clear() override
     {
 		_size = 0;
-
-        if (_changed)
-        {
-            _changed();
-        }
+        _changed.emit();
 	}
 
     void save() override 
     {
 		_saved = _size;
-        if (_changed)
-        {
-            _changed();
-        }
+        _changed.emit();
 	}
 
     // Returns true if the current undo history position corresponds to the most recently saved state
@@ -75,14 +62,9 @@ public:
 		return _saved == _size;
 	}
 
-    void setChangedCallback(const std::function<void()>& changed) override
+    sigc::signal<void()>& signal_changed() override
     {
-		_changed = changed;
-
-        if (_changed)
-        {
-            _changed();
-        }
+        return _changed;
 	}
 
     std::size_t changes() const override

@@ -76,6 +76,7 @@ private:
 
     sigc::connection _postUndoListener;
     sigc::connection _postRedoListener;
+    sigc::connection _modifiedStatusListener;
 
     // Point trace for leak detection
     std::unique_ptr<PointFile> _pointTrace;

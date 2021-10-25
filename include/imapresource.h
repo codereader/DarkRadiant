@@ -86,8 +86,12 @@ public:
 
     virtual void clear() = 0;
 
-    // Check if the file has been modified since it was last saved
-    virtual bool fileHasBeenModifiedSinceLastSave() = 0;
+    // Check if the target file on disk has been modified since it was last saved
+    virtual bool fileOnDiskHasBeenModifiedSinceLastSave() = 0;
+
+    // A signal that is emitted as soon as the map modified status changes due
+    // to a regular edit, undo or redo. The bool value corresponds to the new modification state.
+    virtual sigc::signal<void(bool)>& signal_modifiedStatusChanged() = 0;
 };
 typedef std::shared_ptr<IMapResource> IMapResourcePtr;
 

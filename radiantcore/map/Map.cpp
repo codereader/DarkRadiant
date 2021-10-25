@@ -92,6 +92,11 @@ void Map::connectToUndoSystem()
 {
     _postUndoListener.disconnect();
     _postRedoListener.disconnect();
+    _modifiedStatusListener.disconnect();
+
+    _modifiedStatusListener = _resource->signal_modifiedStatusChanged().connect(
+        [this](bool newStatus) { setModified(newStatus); }
+    );
 
     if (!_resource->getRootNode()) return;
 
@@ -433,6 +438,7 @@ void Map::freeMap()
     emitMapEvent(MapUnloaded);
 
     // Reset the resource pointer
+    _modifiedStatusListener.disconnect();
     _resource.reset();
 }
 
@@ -568,7 +574,8 @@ bool Map::save(const MapFormatPtr& mapFormat)
     }
 
     // Check if the map file has been modified in the meantime
-    if (_resource->fileHasBeenModifiedSinceLastSave() && !radiant::FileOverwriteConfirmation::SendAndReceiveAnswer(
+    if (_resource->fileOnDiskHasBeenModifiedSinceLastSave() && 
+        !radiant::FileOverwriteConfirmation::SendAndReceiveAnswer(
             fmt::format(_("The file {0} has been modified since it was last saved,\nperhaps by another application. "
                 "Do you really want to overwrite the file?"), _mapName), _("File modification detected")))
     {

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "inode.h"
-#include <functional>
+#include <sigc++/signal.h>
 
 /**
  * The file change tracker monitors the changes made to a single map with the help
@@ -18,6 +18,6 @@ public:
 
     virtual void save() = 0;
     virtual bool saved() const = 0;
-    virtual void setChangedCallback(const std::function<void()>& changed) = 0;
+    virtual sigc::signal<void()>& signal_changed() = 0;
     virtual std::size_t changes() const = 0;
 };

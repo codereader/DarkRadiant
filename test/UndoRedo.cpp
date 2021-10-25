@@ -610,7 +610,7 @@ TEST_F(UndoTest, MapChangeTracking)
 
     // Two undo steps will mark the map as modified
     GlobalUndoSystem().undo();
-    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 2 undos";
+    EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 1 undo";
     GlobalUndoSystem().undo();
     EXPECT_TRUE(GlobalMapModule().isModified()) << "Map should be modified after 2 undos";
 

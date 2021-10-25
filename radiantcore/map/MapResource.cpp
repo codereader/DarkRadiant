@@ -12,7 +12,6 @@
 #include "iregistry.h"
 #include "imapinfofile.h"
 
-#include "map/Map.h"
 #include "map/RootNode.h"
 #include "mapfile.h"
 #include "gamelib.h"
@@ -237,16 +236,15 @@ const scene::IMapRootNodePtr& MapResource::getRootNode()
 void MapResource::setRootNode(const scene::IMapRootNodePtr& root)
 {
     // Unsubscribe from the old root node first
-    if (_mapRoot)
-    {
-        _mapRoot->getUndoChangeTracker().setChangedCallback(std::function<void()>());
-    }
+    _mapChangeCountListener.disconnect();
 
     _mapRoot = root;
 
     if (_mapRoot)
     {
-        _mapRoot->getUndoChangeTracker().setChangedCallback(std::bind(&MapResource::onMapChanged, this));
+        _mapChangeCountListener = _mapRoot->getUndoChangeTracker().signal_changed().connect(
+            sigc::mem_fun(this, &MapResource::onMapChanged)
+        );
     }
 }
 
@@ -255,16 +253,21 @@ void MapResource::clear()
     setRootNode(std::make_shared<RootNode>(""));
 }
 
-bool MapResource::fileHasBeenModifiedSinceLastSave()
+bool MapResource::fileOnDiskHasBeenModifiedSinceLastSave()
 {
     auto fullPath = getAbsoluteResourcePath();
 
     return os::fileOrDirExists(fullPath) && fs::last_write_time(fullPath) > _lastKnownModificationTime;
 }
 
+sigc::signal<void(bool)>& MapResource::signal_modifiedStatusChanged()
+{
+    return _signalModifiedStatusChanged;
+}
+
 void MapResource::onMapChanged()
 {
-	GlobalMap().setModified(!_mapRoot->getUndoChangeTracker().saved());
+    _signalModifiedStatusChanged.emit(!_mapRoot->getUndoChangeTracker().saved());
 }
 
 void MapResource::mapSave()
