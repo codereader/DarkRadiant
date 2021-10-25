@@ -40,6 +40,7 @@ private:
 public:
 	// Constructor
 	MapResource(const std::string& resourcePath);
+    virtual ~MapResource();
 
 	virtual void rename(const std::string& fullPath) override;
 
@@ -84,8 +85,6 @@ private:
 	bool saveBackup();
 
 	RootNodePtr loadMapNode();
-
-	void connectMap();
 
 	// Opens a stream for the given path, which might be VFS path or an absolute one. 
     // Throws IMapResource::OperationException on stream open failure.

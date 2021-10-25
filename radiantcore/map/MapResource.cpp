@@ -58,6 +58,11 @@ MapResource::MapResource(const std::string& resourcePath)
     refreshLastModifiedTime();
 }
 
+MapResource::~MapResource()
+{
+    clear();
+}
+
 void MapResource::rename(const std::string& fullPath)
 {
     constructPaths(fullPath);
@@ -98,8 +103,7 @@ bool MapResource::load()
 	if (!_mapRoot)
     {
 		// Map not loaded yet, acquire map root node from loader
-		_mapRoot = loadMapNode();
-		connectMap();
+        setRootNode(loadMapNode());
 		mapSave();
 	}
 
@@ -232,19 +236,23 @@ const scene::IMapRootNodePtr& MapResource::getRootNode()
 
 void MapResource::setRootNode(const scene::IMapRootNodePtr& root)
 {
+    // Unsubscribe from the old root node first
+    if (_mapRoot)
+    {
+        _mapRoot->getUndoChangeTracker().setChangedCallback(std::function<void()>());
+    }
+
     _mapRoot = root;
+
+    if (_mapRoot)
+    {
+        _mapRoot->getUndoChangeTracker().setChangedCallback(std::bind(&MapResource::onMapChanged, this));
+    }
 }
 
 void MapResource::clear()
 {
-    // Disconnect from the old root first
-    if (_mapRoot)
-    {
-        _mapRoot->getUndoChangeTracker().setChangedCallback(Callback());
-    }
-
-    _mapRoot = std::make_shared<RootNode>("");
-	connectMap();
+    setRootNode(std::make_shared<RootNode>(""));
 }
 
 bool MapResource::fileHasBeenModifiedSinceLastSave()
@@ -257,15 +265,6 @@ bool MapResource::fileHasBeenModifiedSinceLastSave()
 void MapResource::onMapChanged()
 {
 	GlobalMap().setModified(!_mapRoot->getUndoChangeTracker().saved());
-}
-
-void MapResource::connectMap()
-{
-    if (_mapRoot)
-    {
-        // Reroute the changed callback to the onMapChanged() call.
-        _mapRoot->getUndoChangeTracker().setChangedCallback(std::bind(&MapResource::onMapChanged, this));
-    }
 }
 
 void MapResource::mapSave()
