@@ -52,7 +52,6 @@ void UndoSystem::start()
 		_undoStack.pop_front();
 	}
 	startUndo();
-	trackersBegin();
 }
 
 bool UndoSystem::operationStarted() const
@@ -97,7 +96,6 @@ void UndoSystem::undo()
 	rMessage() << "Undo: " << operation->getName() << std::endl;
 
 	startRedo();
-	trackersUndo();
 	operation->restoreSnapshot();
 	finishRedo(operation->getName());
 	_undoStack.pop_back();
@@ -133,7 +131,6 @@ void UndoSystem::redo()
 	rMessage() << "Redo: " << operation->getName() << std::endl;
 
 	startUndo();
-	trackersRedo();
 	operation->restoreSnapshot();
 	finishUndo(operation->getName());
 	_redoStack.pop_back();
@@ -156,7 +153,7 @@ void UndoSystem::clear()
 	setActiveUndoStack(nullptr);
 	_undoStack.clear();
 	_redoStack.clear();
-	trackersClear();
+    foreachTracker([&](Tracker& tracker) { tracker.clear(); });
 
 	// greebo: This is called on map shutdown, so don't clear the observers,
 	// there are some "persistent" observers like EntityInspector and ShaderClipboard
@@ -228,26 +225,6 @@ void UndoSystem::foreachTracker(const std::function<void(Tracker&)>& functor) co
 	{ 
 		functor(*tracker);
 	});
-}
-
-void UndoSystem::trackersClear() const
-{
-	foreachTracker([&] (Tracker& tracker) { tracker.clear(); });
-}
-
-void UndoSystem::trackersBegin() const
-{
-	foreachTracker([&] (Tracker& tracker) { tracker.begin(); });
-}
-
-void UndoSystem::trackersUndo() const
-{
-	foreachTracker([&] (Tracker& tracker) { tracker.undo(); });
-}
-
-void UndoSystem::trackersRedo() const
-{
-	foreachTracker([&] (Tracker& tracker) { tracker.redo(); });
 }
 
 } // namespace undo

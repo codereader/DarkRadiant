@@ -95,9 +95,6 @@ public:
         virtual ~Tracker() {}
 
         virtual void clear() = 0;
-        virtual void begin() = 0;
-        virtual void undo() = 0;
-        virtual void redo() = 0;
 
         // Invoked when a non-empty operation has been recorded by the undo system
         virtual void onOperationRecorded() = 0;

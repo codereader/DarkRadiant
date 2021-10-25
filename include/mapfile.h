@@ -3,6 +3,14 @@
 #include "inode.h"
 #include <functional>
 
+/**
+ * The file change tracker monitors the changes made to a single map with the help
+ * of the root node's undo system. It fires the given callback function whenever 
+ * the change count is increased or decreased (this is happening on change, undo and redo).
+ * It also provides methods for the client code to check whether the current point 
+ * in the map's undo history corresponds to a saved state or not - this allows to keep 
+ * the map's modified flag up to date.
+ */
 class IMapFileChangeTracker
 {
 public:
@@ -10,7 +18,6 @@ public:
 
     virtual void save() = 0;
     virtual bool saved() const = 0;
-    virtual void changed() = 0;
     virtual void setChangedCallback(const std::function<void()>& changed) = 0;
     virtual std::size_t changes() const = 0;
 };

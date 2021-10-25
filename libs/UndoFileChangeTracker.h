@@ -2,7 +2,6 @@
 
 #include "iundo.h"
 #include "mapfile.h"
-#include "itextstream.h"
 #include <limits>
 #include <functional>
 
@@ -11,26 +10,17 @@ class UndoFileChangeTracker :
     public IMapFileChangeTracker
 {
 private:
-    const std::size_t MAPFILE_MAX_CHANGES;
+    constexpr static std::size_t MAPFILE_MAX_CHANGES = std::numeric_limits<std::size_t>::max();
 
 	std::size_t _size;
 	std::size_t _saved;
-	typedef void (UndoFileChangeTracker::*Pending)();
-	Pending _pending;
 	std::function<void()> _changed;
 
 public:
 	UndoFileChangeTracker() :
-        MAPFILE_MAX_CHANGES(std::numeric_limits<std::size_t>::max()),
 		_size(0),
-		_saved(MAPFILE_MAX_CHANGES),
-		_pending(0)
+		_saved(MAPFILE_MAX_CHANGES)
 	{}
-
-	void print()
-    {
-		rMessage() << "saved: " << _saved << " size: " << _size << std::endl;
-	}
 
 	void push() 
     {
@@ -50,8 +40,10 @@ public:
         }
 	}
 
-	void pushOperation() {
-		if (_size < _saved) {
+	void pushOperation()
+    {
+		if (_size < _saved)
+        {
 			// redo queue has been flushed.. it is now impossible to get back to the saved state via undo/redo
 			_saved = MAPFILE_MAX_CHANGES;
 		}
@@ -66,28 +58,6 @@ public:
         {
             _changed();
         }
-	}
-
-	void begin() override 
-    {
-		//_pending = Pending(&UndoFileChangeTracker::pushOperation);
-	}
-
-	void undo() override 
-    {
-		//_pending = Pending(&UndoFileChangeTracker::pop);
-	}
-
-	void redo() override 
-    {
-		//_pending = Pending(&UndoFileChangeTracker::push);
-	}
-
-    void changed() override {
-		if (_pending != 0) {
-			((*this).*_pending)();
-			_pending = 0;
-		}
 	}
 
     void save() override 

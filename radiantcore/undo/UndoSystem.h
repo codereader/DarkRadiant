@@ -99,11 +99,6 @@ private:
 	void setActiveUndoStack(UndoStack* stack);
 
 	void foreachTracker(const std::function<void(Tracker&)>& functor) const;
-
-	void trackersClear() const;
-	void trackersBegin() const;
-	void trackersUndo() const;
-	void trackersRedo() const;
 };
 
 }

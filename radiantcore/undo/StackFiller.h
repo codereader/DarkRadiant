@@ -40,12 +40,13 @@ public:
 	{
         if (_stack != nullptr)
 		{
+#if 0
             // Optionally notify the change tracker
             if (_tracker != nullptr)
             {
                 _tracker->changed();
             }
-
+#endif
             // Export the Undoable's memento
 			_stack->save(undoable);
 
