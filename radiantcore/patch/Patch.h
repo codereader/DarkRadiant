@@ -6,7 +6,6 @@
 #include "editable.h"
 #include "iundo.h"
 #include "irender.h"
-#include "imapfilechangetracker.h"
 #include "SurfaceShader.h"
 
 #include "PatchConstants.h"
@@ -110,8 +109,8 @@ public:
 	void attachObserver(Observer* observer) override;
 	void detachObserver(Observer* observer) override;
 
-	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
-    void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
+	void connectUndoSystem();
+    void disconnectUndoSystem();
 
 	// Allocate callback: pass the allocate call to all the observers
 	void onAllocate(std::size_t size);

@@ -2,7 +2,6 @@
 
 #include "irender.h"
 #include "iundo.h"
-#include "imapfilechangetracker.h"
 #include "iselectiontest.h"
 #include <sigc++/connection.h>
 
@@ -87,8 +86,8 @@ public:
 	// greebo: Emits the updated normals to the Winding class.
 	void updateWinding();
 
-    void connectUndoSystem(IMapFileChangeTracker& changeTracker);
-    void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
+    void connectUndoSystem();
+    void disconnectUndoSystem();
 
 	void undoSave();
 

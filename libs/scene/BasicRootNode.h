@@ -1,7 +1,6 @@
 #pragma once
 
 #include "imap.h"
-#include "imapfilechangetracker.h"
 #include "ilayer.h"
 #include "ientity.h"
 #include "iundo.h"

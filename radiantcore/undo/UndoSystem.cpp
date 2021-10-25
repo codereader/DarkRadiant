@@ -21,9 +21,9 @@ UndoSystem::~UndoSystem()
 	clear();
 }
 
-IUndoStateSaver* UndoSystem::getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker)
+IUndoStateSaver* UndoSystem::getStateSaver(IUndoable& undoable)
 {
-    auto result = _undoables.insert(std::make_pair(&undoable, UndoStackFiller(tracker)));
+    auto result = _undoables.try_emplace(&undoable);
 
 	// If we're in the middle of an active undo operation, assign this to the tracker (#4861)
 	if (_activeUndoStack != nullptr)

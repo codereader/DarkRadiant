@@ -1,7 +1,6 @@
 #pragma once
 
 #include "iundo.h"
-#include "imapfilechangetracker.h"
 #include "Stack.h"
 
 namespace undo 
@@ -16,45 +15,33 @@ namespace undo
  * to save() will not have any effect. The stack reference is set
  * by the UndoSystem on start of an undo or redo operation.
  */
-class UndoStackFiller :
+class UndoStackFiller final :
 	public IUndoStateSaver
 {
+private:
 	UndoStack* _stack;
 
-    IMapFileChangeTracker* _tracker;
-
 public:
-
-	// Constructor
-	UndoStackFiller() : 
-		_stack(nullptr),
-        _tracker(nullptr)
-	{}
-
-    UndoStackFiller(IMapFileChangeTracker& tracker) :
-        _stack(nullptr),
-        _tracker(&tracker)
+    UndoStackFiller() :
+        _stack(nullptr)
     {}
 
-	void save(IUndoable& undoable)
-	{
+    // Noncopyable
+    UndoStackFiller(const UndoStackFiller& other) = delete;
+    UndoStackFiller& operator=(const UndoStackFiller& other) = delete;
+
+    void save(IUndoable& undoable)
+    {
         if (_stack != nullptr)
-		{
-#if 0
-            // Optionally notify the change tracker
-            if (_tracker != nullptr)
-            {
-                _tracker->changed();
-            }
-#endif
+        {
             // Export the Undoable's memento
-			_stack->save(undoable);
+            _stack->save(undoable);
 
             // Make sure the stack is dissociated after saving
             // to make sure further save() calls don't have any effect
             _stack = nullptr;
-		}
-	}
+        }
+    }
 
 	// Assign the stack of this class. This usually happens when starting
 	// an undo or redo operation.

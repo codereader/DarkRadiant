@@ -59,7 +59,7 @@ public:
 	UndoSystem();
 	~UndoSystem();
 
-	IUndoStateSaver* getStateSaver(IUndoable& undoable, IMapFileChangeTracker& tracker) override;
+	IUndoStateSaver* getStateSaver(IUndoable& undoable) override;
 
 	void releaseStateSaver(IUndoable& undoable) override;
 

@@ -204,8 +204,8 @@ protected:
 
 	TraversableNodeSet& getTraversable();
 
-    virtual void connectUndoSystem(IMapFileChangeTracker& changeTracker);
-    virtual void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
+    virtual void connectUndoSystem();
+    virtual void disconnectUndoSystem();
 
 	// Clears the TraversableNodeSet
 	virtual void removeAllChildNodes();

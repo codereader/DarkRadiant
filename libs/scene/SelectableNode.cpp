@@ -28,7 +28,7 @@ SelectableNode::~SelectableNode()
 
 void SelectableNode::onInsertIntoScene(IMapRootNode& root)
 {
-	connectUndoSystem(root.getUndoChangeTracker());
+	connectUndoSystem();
 
 	Node::onInsertIntoScene(root);
 
@@ -51,7 +51,7 @@ void SelectableNode::onRemoveFromScene(IMapRootNode& root)
 {
 	setSelected(false);
 
-	disconnectUndoSystem(root.getUndoChangeTracker());
+	disconnectUndoSystem();
 
 	// When a node is removed from the scene with a non-empty group assignment
 	// we do notify the SelectionGroup to remove ourselves, but we keep the ID list
@@ -233,19 +233,19 @@ void SelectableNode::onSelectionStatusChange(bool changeGroupStatus)
 	}
 }
 
-void SelectableNode::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void SelectableNode::connectUndoSystem()
 {
-	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 
-	Node::connectUndoSystem(changeTracker);
+	Node::connectUndoSystem();
 }
 
-void SelectableNode::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void SelectableNode::disconnectUndoSystem()
 {
 	_undoStateSaver = nullptr;
 	GlobalUndoSystem().releaseStateSaver(*this);
 
-	Node::disconnectUndoSystem(changeTracker);
+	Node::disconnectUndoSystem();
 }
 
 void SelectableNode::undoSave()

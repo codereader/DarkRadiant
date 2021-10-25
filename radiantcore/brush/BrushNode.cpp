@@ -269,7 +269,7 @@ scene::INodePtr BrushNode::clone() const {
 
 void BrushNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-    m_brush.connectUndoSystem(root.getUndoChangeTracker());
+    m_brush.connectUndoSystem();
 	GlobalCounters().getCounter(counterBrushes).increment();
 
     // Update the origin information needed for transformations
@@ -289,7 +289,7 @@ void BrushNode::onRemoveFromScene(scene::IMapRootNode& root)
 	setSelectedComponents(false, selection::ComponentSelectionMode::Face);
 
 	GlobalCounters().getCounter(counterBrushes).decrement();
-    m_brush.disconnectUndoSystem(root.getUndoChangeTracker());
+    m_brush.disconnectUndoSystem();
 
 	SelectableNode::onRemoveFromScene(root);
 }

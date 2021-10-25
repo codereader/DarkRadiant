@@ -19,14 +19,14 @@ KeyValue::~KeyValue()
 	assert(_observers.empty());
 }
 
-void KeyValue::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void KeyValue::connectUndoSystem()
 {
-    _undo.connectUndoSystem(changeTracker);
+    _undo.connectUndoSystem();
 }
 
-void KeyValue::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void KeyValue::disconnectUndoSystem()
 {
-    _undo.disconnectUndoSystem(changeTracker);
+    _undo.disconnectUndoSystem();
 }
 
 void KeyValue::attach(KeyObserver& observer)

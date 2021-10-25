@@ -26,14 +26,14 @@ StaticModelNode::~StaticModelNode()
 
 void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-    _model->connectUndoSystem(root.getUndoChangeTracker());
+    _model->connectUndoSystem();
     
     Node::onInsertIntoScene(root);
 }
 
 void StaticModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
-    _model->disconnectUndoSystem(root.getUndoChangeTracker());
+    _model->disconnectUndoSystem();
 
     Node::onRemoveFromScene(root);
 }

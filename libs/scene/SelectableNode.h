@@ -65,8 +65,8 @@ protected:
      */
 	virtual void onSelectionStatusChange(bool changeGroupStatus);
 
-	virtual void connectUndoSystem(IMapFileChangeTracker& changeTracker) override;
-	virtual void disconnectUndoSystem(IMapFileChangeTracker& changeTracker) override;
+	virtual void connectUndoSystem() override;
+	virtual void disconnectUndoSystem() override;
 
 private:
 	void undoSave();

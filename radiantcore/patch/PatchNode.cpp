@@ -269,7 +269,7 @@ void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
     // Mark the GL shader as used from now on, this is used by the TextureBrowser's filtering
     m_patch.getSurfaceShader().setInUse(true);
 
-	m_patch.connectUndoSystem(root.getUndoChangeTracker());
+	m_patch.connectUndoSystem();
 	GlobalCounters().getCounter(counterPatches).increment();
 
     // Update the origin information needed for transformations
@@ -288,7 +288,7 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 
 	GlobalCounters().getCounter(counterPatches).decrement();
 
-	m_patch.disconnectUndoSystem(root.getUndoChangeTracker());
+	m_patch.disconnectUndoSystem();
 
     m_patch.getSurfaceShader().setInUse(false);
 

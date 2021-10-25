@@ -38,7 +38,6 @@ namespace {
 Brush::Brush(BrushNode& owner) :
     _owner(owner),
     _undoStateSaver(nullptr),
-    _mapFileChangeTracker(nullptr),
     _faceCentroidPoints(GL_POINTS),
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
@@ -54,7 +53,6 @@ Brush::Brush(BrushNode& owner) :
 Brush::Brush(BrushNode& owner, const Brush& other) :
     _owner(owner),
     _undoStateSaver(nullptr),
-    _mapFileChangeTracker(nullptr),
     _faceCentroidPoints(GL_POINTS),
     _uniqueVertexPoints(GL_POINTS),
     _uniqueEdgePoints(GL_POINTS),
@@ -144,27 +142,22 @@ void Brush::forEachVisibleFace(const std::function<void(Face&)>& functor) const
     }
 }
 
-void Brush::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void Brush::connectUndoSystem()
 {
     assert(_undoStateSaver == nullptr);
 
-    // Keep a reference around, we need it when faces are changing
-    _mapFileChangeTracker = &changeTracker;
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 
-	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
-
-    // Notify each face that we have a tracker
-    forEachFace([&](Face& face) { face.connectUndoSystem(changeTracker); });
+    forEachFace([&](Face& face) { face.connectUndoSystem(); });
 }
 
-void Brush::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void Brush::disconnectUndoSystem()
 {
     assert(_undoStateSaver != nullptr);
 
     // Notify each face
-    forEachFace([&](Face& face) { face.disconnectUndoSystem(changeTracker); });
+    forEachFace([&](Face& face) { face.disconnectUndoSystem(); });
 
-    _mapFileChangeTracker = nullptr;
     _undoStateSaver = nullptr;
     GlobalUndoSystem().releaseStateSaver(*this);
 }
@@ -436,7 +429,7 @@ void Brush::push_back(Faces::value_type face) {
 
     if (_undoStateSaver)
     {
-        m_faces.back()->connectUndoSystem(*_mapFileChangeTracker);
+        m_faces.back()->connectUndoSystem();
     }
 
     for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
@@ -449,7 +442,7 @@ void Brush::pop_back()
 {
     if (_undoStateSaver)
     {
-        m_faces.back()->disconnectUndoSystem(*_mapFileChangeTracker);
+        m_faces.back()->disconnectUndoSystem();
     }
 
     m_faces.pop_back();
@@ -463,7 +456,7 @@ void Brush::erase(std::size_t index)
 {
     if (_undoStateSaver)
     {
-        m_faces[index]->disconnectUndoSystem(*_mapFileChangeTracker);
+        m_faces[index]->disconnectUndoSystem();
     }
 
     m_faces.erase(m_faces.begin() + index);
@@ -506,7 +499,7 @@ void Brush::clear()
     undoSave();
     if (_undoStateSaver)
     {
-        forEachFace([&](Face& face) { face.disconnectUndoSystem(*_mapFileChangeTracker); });
+        forEachFace([&](Face& face) { face.disconnectUndoSystem(); });
     }
 
     m_faces.clear();

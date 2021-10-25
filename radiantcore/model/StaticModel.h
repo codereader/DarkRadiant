@@ -1,7 +1,6 @@
 #pragma once
 
 #include "iundo.h"
-#include "imapfilechangetracker.h"
 #include "imodel.h"
 #include "math/AABB.h"
 #include "imodelsurface.h"
@@ -89,7 +88,6 @@ private:
 
 	// Undoable stuff
 	IUndoStateSaver* _undoStateSaver;
-	IMapFileChangeTracker* _mapFileChangeTracker;
 
 private:
 
@@ -119,8 +117,8 @@ public:
 	 */
 	StaticModel(const StaticModel& other);
 
-	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
-	void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
+	void connectUndoSystem();
+	void disconnectUndoSystem();
 
     // Delegated render methods called by StaticModelNode (not part of any
     // interface)

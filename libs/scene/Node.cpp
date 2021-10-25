@@ -283,14 +283,14 @@ void Node::onRemoveFromScene(IMapRootNode& root)
 	_instantiated = false;
 }
 
-void Node::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void Node::connectUndoSystem()
 {
-    _children.connectUndoSystem(changeTracker);
+    _children.connectUndoSystem();
 }
 
-void Node::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void Node::disconnectUndoSystem()
 {
-    _children.disconnectUndoSystem(changeTracker);
+    _children.disconnectUndoSystem();
 }
 
 TraversableNodeSet& Node::getTraversable() {

@@ -94,7 +94,6 @@ private:
 	typedef std::set<BrushObserver*> Observers;
 	Observers m_observers;
 	IUndoStateSaver* _undoStateSaver;
-	IMapFileChangeTracker* _mapFileChangeTracker;
 
 	// state
 	Faces m_faces;
@@ -177,8 +176,8 @@ public:
     // but are forcedly visible due to the brush being selected)
     void forEachVisibleFace(const std::function<void(Face&)>& functor) const;
 
-	void connectUndoSystem(IMapFileChangeTracker& map);
-	void disconnectUndoSystem(IMapFileChangeTracker& map);
+	void connectUndoSystem();
+	void disconnectUndoSystem();
 
 	// Face observer callbacks
 	void onFacePlaneChanged();

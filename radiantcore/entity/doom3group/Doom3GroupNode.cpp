@@ -231,7 +231,7 @@ void Doom3GroupNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     // A D3GroupNode supports child primitives, so connect
     // the Node's TraversableNodeSet to the UndoSystem
-    Node::connectUndoSystem(root.getUndoChangeTracker());
+    Node::connectUndoSystem();
 
 	EntityNode::onInsertIntoScene(root);
 }
@@ -246,7 +246,7 @@ void Doom3GroupNode::onRemoveFromScene(scene::IMapRootNode& root)
 
     // A D3GroupNode supports child primitives, so disconnect
     // the Node's TraversableNodeSet to the UndoSystem
-	Node::disconnectUndoSystem(root.getUndoChangeTracker());
+	Node::disconnectUndoSystem();
 }
 
 // Snappable implementation

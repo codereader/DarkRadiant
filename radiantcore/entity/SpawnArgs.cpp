@@ -114,25 +114,25 @@ void SpawnArgs::detachObserver(Observer* observer)
 	}
 }
 
-void SpawnArgs::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void SpawnArgs::connectUndoSystem()
 {
 	_instanced = true;
 
 	for (const auto& keyValue : _keyValues)
 	{
-		keyValue.second->connectUndoSystem(changeTracker);
+		keyValue.second->connectUndoSystem();
 	}
 
-    _undo.connectUndoSystem(changeTracker);
+    _undo.connectUndoSystem();
 }
 
-void SpawnArgs::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void SpawnArgs::disconnectUndoSystem()
 {
-	_undo.disconnectUndoSystem(changeTracker);
+	_undo.disconnectUndoSystem();
 
 	for (const auto& keyValue : _keyValues)
 	{
-		keyValue.second->disconnectUndoSystem(changeTracker);
+		keyValue.second->disconnectUndoSystem();
 	}
 
 	_instanced = false;
@@ -287,7 +287,7 @@ void SpawnArgs::insert(const std::string& key, const KeyValuePtr& keyValue)
 
 	if (_instanced)
 	{
-        pair.second->connectUndoSystem(_undo.getUndoChangeTracker());
+        pair.second->connectUndoSystem();
 	}
 }
 
@@ -319,7 +319,7 @@ void SpawnArgs::erase(const KeyValues::iterator& i)
 {
 	if (_instanced)
 	{
-		i->second->disconnectUndoSystem(_undo.getUndoChangeTracker());
+		i->second->disconnectUndoSystem();
 	}
 
 	// Retrieve the key and value from the vector before deletion

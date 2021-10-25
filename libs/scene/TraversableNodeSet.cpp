@@ -4,7 +4,6 @@
 #include <algorithm>
 #include "LayerValidityCheckWalker.h"
 #include "BasicUndoMemento.h"
-#include "imapfilechangetracker.h"
 #include "Node.h"
 
 namespace scene
@@ -190,12 +189,12 @@ bool TraversableNodeSet::empty() const
 	return _children.empty();
 }
 
-void TraversableNodeSet::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void TraversableNodeSet::connectUndoSystem()
 {
-	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 }
 
-void TraversableNodeSet::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void TraversableNodeSet::disconnectUndoSystem()
 {
     _undoStateSaver = nullptr;
 	GlobalUndoSystem().releaseStateSaver(*this);

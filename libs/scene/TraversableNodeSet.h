@@ -7,8 +7,6 @@
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
 
-class IMapFileChangeTracker;
-
 namespace scene
 {
 
@@ -23,7 +21,7 @@ class Node;
  * as any child nodes are removed or inserted. When the user hits Undo, the UndoSystem sends back
  * the memento and asks the TraversableNodeSet to overwrite its current children with the saved state.
  */
-class TraversableNodeSet :
+class TraversableNodeSet final :
 	public IUndoable,
 	public util::Noncopyable,
 	public sigc::trackable
@@ -89,8 +87,8 @@ public:
 	 */
 	bool empty() const;
 
-	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
-    void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
+	void connectUndoSystem();
+    void disconnectUndoSystem();
 
 	// Undoable implementation
 	IUndoMementoPtr exportState() const;

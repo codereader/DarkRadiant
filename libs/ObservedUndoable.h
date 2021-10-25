@@ -1,7 +1,6 @@
 #pragma once
 
 #include "iundo.h"
-#include "imapfilechangetracker.h"
 #include <functional>
 #include "BasicUndoMemento.h"
 
@@ -17,7 +16,6 @@ class ObservedUndoable :
 	Copyable& _object;
 	ImportCallback _importCallback;
 	IUndoStateSaver* _undoStateSaver;
-    IMapFileChangeTracker* _changeTracker;
 
 	std::string _debugName;
 
@@ -25,33 +23,24 @@ public:
 	ObservedUndoable<Copyable>(Copyable& object, const ImportCallback& importCallback) :
 		_object(object), 
 		_importCallback(importCallback), 
-        _undoStateSaver(nullptr),
-        _changeTracker(nullptr)
+        _undoStateSaver(nullptr)
 	{}
 
 	ObservedUndoable<Copyable>(Copyable& object, const ImportCallback& importCallback, const std::string& debugName) :
 		_object(object),
 		_importCallback(importCallback),
 		_undoStateSaver(nullptr),
-		_changeTracker(nullptr),
 		_debugName(debugName)
 	{}
 
-    IMapFileChangeTracker& getUndoChangeTracker()
-    {
-        return *_changeTracker;
-    }
-
-	void connectUndoSystem(IMapFileChangeTracker& changeTracker)
+	void connectUndoSystem()
 	{
-        _changeTracker = &changeTracker;
-		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 	}
 
-    void disconnectUndoSystem(IMapFileChangeTracker& map)
+    void disconnectUndoSystem()
 	{
         _undoStateSaver = nullptr;
-        _changeTracker = nullptr;
 		GlobalUndoSystem().releaseStateSaver(*this);
 	}
 

@@ -113,14 +113,14 @@ void RootNode::onInsertIntoScene(IMapRootNode& root)
 
     // A RootNode supports child entities, so connect
     // the Node's TraversableNodeSet to the UndoSystem
-    Node::connectUndoSystem(root.getUndoChangeTracker());
+    Node::connectUndoSystem();
 }
 
 void RootNode::onRemoveFromScene(IMapRootNode& root)
 {
     // A RootNode supports child entities, so disconnect
     // the Node's TraversableNodeSet to the UndoSystem
-    Node::disconnectUndoSystem(root.getUndoChangeTracker());
+    Node::disconnectUndoSystem();
 
 	Node::onRemoveFromScene(root);
 }

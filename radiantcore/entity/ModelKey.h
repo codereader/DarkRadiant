@@ -2,7 +2,6 @@
 
 #include <string>
 #include "inode.h"
-#include "imapfilechangetracker.h"
 #include "ObservedUndoable.h"
 
 /**
@@ -48,8 +47,8 @@ public:
 	// Returns the reference to the "singleton" model node
 	const scene::INodePtr& getNode() const;
 
-	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
-	void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
+	void connectUndoSystem();
+	void disconnectUndoSystem();
 
 private:
 	// Loads the model node and attaches it to the parent node

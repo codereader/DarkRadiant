@@ -56,8 +56,8 @@ public:
     /* Entity implementation */
 	void attachObserver(Observer* observer) override;
 	void detachObserver(Observer* observer) override;
-	void connectUndoSystem(IMapFileChangeTracker& changeTracker);
-    void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
+	void connectUndoSystem();
+    void disconnectUndoSystem();
 	IEntityClassPtr getEntityClass() const override;
     void forEachKeyValue(KeyValueVisitFunc func,
                          bool includeInherited) const override;

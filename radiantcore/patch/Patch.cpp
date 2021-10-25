@@ -162,16 +162,16 @@ PatchNode& Patch::getPatchNode()
     return _node;
 }
 
-void Patch::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void Patch::connectUndoSystem()
 {
     assert(!_undoStateSaver);
 
     // Acquire a new state saver
-    _undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+    _undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 }
 
 // Remove the attached instance and decrease the counters
-void Patch::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void Patch::disconnectUndoSystem()
 {
     assert(_undoStateSaver);
 

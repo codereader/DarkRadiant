@@ -131,14 +131,14 @@ void ModelKey::skinChanged(const std::string& value)
 	}
 }
 
-void ModelKey::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void ModelKey::connectUndoSystem()
 {
-	_undo.connectUndoSystem(changeTracker);
+	_undo.connectUndoSystem();
 }
 
-void ModelKey::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void ModelKey::disconnectUndoSystem()
 {
-	_undo.disconnectUndoSystem(changeTracker);
+	_undo.disconnectUndoSystem();
 }
 
 void ModelKey::importState(const ModelNodeAndPath& data)

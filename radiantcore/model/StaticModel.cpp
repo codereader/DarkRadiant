@@ -18,8 +18,7 @@ namespace model
 StaticModel::StaticModel(const std::vector<StaticModelSurfacePtr>& surfaces) :
     _scaleTransformed(1, 1, 1),
     _scale(1, 1, 1),
-    _undoStateSaver(nullptr),
-    _mapFileChangeTracker(nullptr)
+    _undoStateSaver(nullptr)
 {
     for (const auto& surface : surfaces)
     {
@@ -37,8 +36,7 @@ StaticModel::StaticModel(const StaticModel& other) :
     _localAABB(other._localAABB),
     _filename(other._filename),
     _modelPath(other._modelPath),
-    _undoStateSaver(nullptr),
-    _mapFileChangeTracker(nullptr)
+    _undoStateSaver(nullptr)
 {
     // Copy the other model's surfaces, but not its shaders, revert to default
     for (std::size_t i = 0; i < other._surfVec.size(); ++i)
@@ -50,21 +48,17 @@ StaticModel::StaticModel(const StaticModel& other) :
     }
 }
 
-void StaticModel::connectUndoSystem(IMapFileChangeTracker& changeTracker)
+void StaticModel::connectUndoSystem()
 {
     assert(_undoStateSaver == nullptr);
 
-    // Keep a reference around, we need it when faces are changing
-    _mapFileChangeTracker = &changeTracker;
-
-    _undoStateSaver = GlobalUndoSystem().getStateSaver(*this, changeTracker);
+    _undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
 }
 
-void StaticModel::disconnectUndoSystem(IMapFileChangeTracker& changeTracker)
+void StaticModel::disconnectUndoSystem()
 {
     assert(_undoStateSaver != nullptr);
 
-    _mapFileChangeTracker = nullptr;
     _undoStateSaver = nullptr;
     GlobalUndoSystem().releaseStateSaver(*this);
 }

@@ -41,8 +41,8 @@ public:
 
 	~KeyValue();
 
-    void connectUndoSystem(IMapFileChangeTracker& changeTracker);
-    void disconnectUndoSystem(IMapFileChangeTracker& changeTracker);
+    void connectUndoSystem();
+    void disconnectUndoSystem();
 
 	void attach(KeyObserver& observer);
 	void detach(KeyObserver& observer);
