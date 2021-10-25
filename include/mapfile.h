@@ -16,8 +16,15 @@ class IMapFileChangeTracker
 public:
     virtual ~IMapFileChangeTracker() {}
 
-    virtual void save() = 0;
-    virtual bool saved() const = 0;
+    // The change count we're currently at. This represents a position in the map's undo history.
+    virtual std::size_t getCurrentChangeCount() const = 0;
+
+    // Marks the current change count as the one that got saved
+    virtual void setSavedChangeCount() = 0;
+
+    // Returns true if the current undo history position corresponds to the most recently saved state
+    virtual bool isAtSavedPosition() const = 0;
+
+    // Emitted as soon as the current change count is modified
     virtual sigc::signal<void()>& signal_changed() = 0;
-    virtual std::size_t changes() const = 0;
 };

@@ -94,8 +94,6 @@ public:
     public:
         virtual ~Tracker() {}
 
-        virtual void clear() = 0;
-
         // Invoked when a non-empty operation has been recorded by the undo system
         virtual void onOperationRecorded() = 0;
 
@@ -104,6 +102,9 @@ public:
 
         // Called when a single operation has been redone
         virtual void onOperationRedone() = 0;
+
+        // Invoked when the undo and redo stacks have been cleared
+        virtual void onAllOperationsCleared() = 0;
     };
 
 	virtual void attachTracker(Tracker& tracker) = 0;
