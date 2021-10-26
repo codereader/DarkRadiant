@@ -25,30 +25,12 @@ struct ObserverEraseFunctor :
 	}
 };
 
-// Adds all visited nodes to the public list "nodes"
-class CollectNodesFunctor :
-	public ObserverFunctor
-{
-private:
-	TraversableNodeSet::NodeList& _target;
-
-public:
-	CollectNodesFunctor(TraversableNodeSet::NodeList& target) :
-		_target(target)
-	{}
-
-	void operator() (Node& owner, const INodePtr& node)
-	{
-		_target.push_back(node);
-	}
-};
-
 /** greebo: This iterator is required by the std::set_difference algorithm and
  * is used to call	owning node's onChildAdded() or onChildRemoved()
  * as soon as the assignment operator is invoked by the set_difference algorithm.
  *
- * Note: The operator++ is apparently necessary, but is not doing anything, as this iterator
- * is only "fake" and is only used to trigger the observer call.
+ * Note: The operator++ is part of the algorithm requirement, its implementation 
+ * is used to trigger the observer call.
  */
 class ObserverOutputIterator
 {
@@ -94,7 +76,7 @@ typedef undo::BasicUndoMemento<TraversableNodeSet::NodeList> UndoListMemento;
 // Default constructor, creates an empty set
 TraversableNodeSet::TraversableNodeSet(Node& owner) :
 	_owner(owner),
-	_undoStateSaver(NULL)
+	_undoStateSaver(nullptr)
 {}
 
 // Destructor
@@ -219,7 +201,7 @@ void TraversableNodeSet::importState(const IUndoMementoPtr& state)
 	undoSave();
 
 	// Import the child set from the state
-	const NodeList& other = std::static_pointer_cast<UndoListMemento>(state)->data();
+	const auto& other = std::static_pointer_cast<UndoListMemento>(state)->data();
 
 	// Copy the current container into a temporary one for later comparison
 	std::vector<INodePtr> before_sorted(_children.begin(), _children.end());
@@ -245,19 +227,17 @@ void TraversableNodeSet::importState(const IUndoMementoPtr& state)
 		ObserverOutputIterator(_owner, eraseFunctor)
 	);
 
-	// A special treatment is necessary for insertions of new nodes, as calling onChildAdded
-	// right away might lead to double-insertions into the scenegraph (in case the same node
-	// has not been removed from another node yet - a race condition during undo).
-	// Therefore, collect all nodes that need to be added and process them in onOperationRestored().
-	CollectNodesFunctor collectFunctor(_undoInsertBuffer);
-
-	// greebo: Next step is to find all nodes existing in <other>, but not in <_children>,
-	// these have to be added, that's why the onChildAdded() method is called for each of them
-	std::set_difference(
-		after_sorted.begin(), after_sorted.end(),
-		before_sorted.begin(), before_sorted.end(),
-		ObserverOutputIterator(_owner, collectFunctor)
-	);
+    // greebo: Next step is to find all nodes existing in <other>, but not in <_children>,
+    // to ultimately call onChildAdded() for each of them.
+    // A special treatment is necessary for insertions of new nodes, as calling onChildAdded
+    // right away might lead to double-insertions into the scenegraph (in case the same node
+    // has not been removed from another node yet - a race condition during undo).
+    // Therefore, collect all nodes that need to be added and process them in onOperationRestored().
+    std::set_difference(
+        after_sorted.begin(), after_sorted.end(),
+        before_sorted.begin(), before_sorted.end(),
+        std::back_inserter(_undoInsertBuffer)
+    );
 }
 
 void TraversableNodeSet::onOperationRestored()
@@ -283,25 +263,25 @@ void TraversableNodeSet::processInsertBuffer()
 
 void TraversableNodeSet::notifyInsertAll()
 {
-	for (NodeList::iterator i = _children.begin(); i != _children.end(); ++i)
+	for (const auto& node : _children)
 	{
-		_owner.onChildAdded(*i);
+		_owner.onChildAdded(node);
 	}
 }
 
 void TraversableNodeSet::notifyEraseAll()
 {
-	for (NodeList::iterator i = _children.begin(); i != _children.end(); ++i)
+	for (const auto& node : _children)
 	{
-		_owner.onChildRemoved(*i);
+		_owner.onChildRemoved(node);
 	}
 }
 
 void TraversableNodeSet::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-	for (NodeList::iterator i = _children.begin(); i != _children.end(); ++i)
+	for (const auto& node : _children)
 	{
-		(*i)->setRenderSystem(renderSystem);
+		node->setRenderSystem(renderSystem);
 	}
 }
 
