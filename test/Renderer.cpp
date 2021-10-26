@@ -61,6 +61,15 @@ struct Light
         light.entity->setKeyValue("light_up", string::to_string(up));
         return light;
     }
+
+    // Construct a projected light with vectors and origin
+    static Light projected(const V3& target, const V3& right,
+                           const V3& up, const V3& origin)
+    {
+        Light light = projected(target, right, up);
+        light.entity->setKeyValue("origin", string::to_string(origin));
+        return light;
+    }
 };
 
 TEST_F(RendererTest, CreateLightNode)
@@ -214,8 +223,7 @@ TEST_F(RendererTest, TranslatedProjectedLight)
     // is not at the origin
     const V3 TARGET(0, 0, -8), UP(0, 4, 0), RIGHT(4, 0, 0);
     const V3 ORIGIN(128, 64, -80);
-    Light light = Light::projected(TARGET, RIGHT, UP);
-    light.entity->setKeyValue("origin", string::to_string(ORIGIN));
+    Light light = Light::projected(TARGET, RIGHT, UP, ORIGIN);
 
     Matrix4 mat = light.getMatrix();
 
@@ -227,6 +235,26 @@ TEST_F(RendererTest, TranslatedProjectedLight)
     // so we add it to the light origin to get the absolute target point.
     auto targetT = mat * V4(ORIGIN + TARGET);
     EXPECT_EQ(targetT, V4(0.5, 0.5, 1, 1));
+}
+
+TEST_F(RendererTest, RotatedProjectedLight)
+{
+    // Light is at [-16, 0, 0] and is rotated (not targeted) to point towards
+    // [16, 0, 0], so directly along the positive X axis.
+    const V3 ORIGIN(-16, 0, 0), TARGET(0, 0, -32), UP(0, 8, 0), RIGHT(8, 0, 0);
+    Light light = Light::projected(TARGET, RIGHT, UP, ORIGIN);
+
+    // Apply the rotation matrix (rotation key is 3x3)
+    light.entity->setKeyValue("rotation", "0 0 1 0 1 0 -1 0 0");
+
+    Matrix4 mat = light.getMatrix();
+
+    // Check the origin
+    EXPECT_EQ(mat * V4(ORIGIN), V4(0, 0, 0, 0));
+
+    // World space target should be [16, 0, 0], not [0, 0, -32], due to the
+    // rotation
+    EXPECT_EQ(mat * V4(16, 0, 0, 1), V4(0.5, 0.5, 1, 1));
 }
 
 }
