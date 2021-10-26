@@ -65,7 +65,6 @@ public:
     virtual IUndoStateSaver* getStateSaver(IUndoable& undoable) = 0;
 	virtual void releaseStateSaver(IUndoable& undoable) = 0;
 
-	virtual std::size_t size() const = 0;
 	virtual void start() = 0;
 	virtual void finish(const std::string& command) = 0;
 	virtual void undo() = 0;

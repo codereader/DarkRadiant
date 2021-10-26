@@ -63,8 +63,6 @@ public:
 
 	void releaseStateSaver(IUndoable& undoable) override;
 
-	std::size_t size() const override;
-
 	void start() override;
 
 	bool operationStarted() const override;

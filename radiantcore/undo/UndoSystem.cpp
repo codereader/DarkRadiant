@@ -39,11 +39,6 @@ void UndoSystem::releaseStateSaver(IUndoable& undoable)
 	_undoables.erase(&undoable);
 }
 
-std::size_t UndoSystem::size() const
-{
-	return _undoStack.size();
-}
-
 void UndoSystem::start()
 {
 	_redoStack.clear();
