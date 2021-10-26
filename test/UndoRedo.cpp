@@ -24,6 +24,18 @@ TEST_F(UndoTest, UndoSystemFactory)
     EXPECT_TRUE(GlobalUndoSystemFactory().createUndoSystem()) << "Undo system factory must not return empty references";
 }
 
+TEST_F(UndoTest, EmptyOperation)
+{
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map modified without doing anything";
+
+    // Open an undo operation and finish it without doing anything
+    {
+        UndoableCommand cmd("test");
+    }
+
+    EXPECT_FALSE(GlobalMapModule().isModified()) << "Map should still be modified";
+}
+
 TEST_F(UndoTest, BrushCreation)
 {
     std::string mapPath = "maps/simple_brushes.map";

@@ -14,22 +14,19 @@ namespace undo
  * Each named operation in this stack contains a snapshot of the undoable objects
  * that have been touched between start() and finish().
  *
- * When start() is called, a new Operation is allocated  and 
- * on calling save(Undoable*) the Undoable is actually stored within
- * the allocated Operation. The method finish() deallocates the
- * memory used in this timespan.
+ * On start() a new Operation is allocated  and on save(IUndoable) 
+ * the IUndoable's memento is actually stored within the allocated Operation. 
+ * The method finish() commits the operation to the stack.
  */
 class UndoStack
 {
-	//! Note: using std::list instead of vector/deque, to avoid copying of undos
-	typedef std::list<OperationPtr> Operations;
-
+private:
 	// The list of Operations that can be undone
-	Operations _stack;
+	//! Note: using std::list instead of vector/deque, to avoid copying of undos
+    std::list<Operation::Ptr> _stack;
 
-	// The pending undo operation (will be committed as soon as the first
-	// undoable saves its data to the stack)
-	OperationPtr _pending;
+	// The pending undo operation (will be committed on finish, if not empty)
+    Operation::Ptr _pending;
 
 public:
 
@@ -43,12 +40,12 @@ public:
 		return _stack.size();
 	}
 
-	const OperationPtr& back() const
+	const Operation::Ptr& back() const
 	{
 		return _stack.back();
 	}
 
-	const OperationPtr& front() const 
+	const Operation::Ptr& front() const
 	{
 		return _stack.front();
 	}
@@ -83,7 +80,7 @@ public:
 	// Finish the current undo operation
 	bool finish(const std::string& command)
 	{
-		if (_pending)
+		if (!_pending || _pending->empty())
 		{
 			// The started operation has not been filled with any data
 			// so just discard it without doing anything
@@ -91,30 +88,20 @@ public:
 			return false;
 		}
 		
-		// Reaching this point we don't have a *pending* operation
-		// but we need to make sure we have *any* operation at all
-		ASSERT_MESSAGE(!_stack.empty(), "undo stack empty");
-
 		// Rename the last undo operation (it may be "unnamed" till now)
-		_stack.back()->setName(command);
+        _pending->setName(command);
+
+        // Move the pending operation into its place
+        _stack.emplace_back(std::move(_pending));
 		return true;
 	}
 
-	// Store an Undoable into the last snapshot
-	void save(IUndoable& undoable)
-	{
-		// Check, if there is still a pending undo operation waiting to be added to the stack
-		if (_pending)
-		{
-			// Save the pending undo command
-			_stack.push_back(_pending);
-			_pending.reset();
-		}
+    // Store an Undoable's state into the active operation
+    void save(IUndoable& undoable)
+    {
+        assert(_pending);
+        _pending->save(undoable);
+    }
+};
 
-		// Save the UndoMemento of the most recently added command into the snapshot
-		back()->save(undoable);
-	}
-
-}; // class UndoStack
-
-} // namespace undo
+} // namespace

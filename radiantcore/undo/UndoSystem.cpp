@@ -87,7 +87,7 @@ void UndoSystem::undo()
         return;
     }
 		
-	const OperationPtr& operation = _undoStack.back();
+	const auto& operation = _undoStack.back();
 	rMessage() << "Undo: " << operation->getName() << std::endl;
 
 	startRedo();
@@ -122,7 +122,7 @@ void UndoSystem::redo()
         return;
     }
 		
-	const OperationPtr& operation = _redoStack.back();
+	const auto& operation = _redoStack.back();
 	rMessage() << "Redo: " << operation->getName() << std::endl;
 
 	startUndo();

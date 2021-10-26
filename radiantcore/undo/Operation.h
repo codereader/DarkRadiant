@@ -26,13 +26,16 @@ private:
 		IUndoMementoPtr _data;
 
 	public:
-		// Constructor
-		UndoableState(IUndoable& undoable) :
-			_undoable(undoable),
-			_data(_undoable.exportState())
-		{}
+        UndoableState(IUndoable& undoable) :
+            _undoable(undoable),
+            _data(_undoable.exportState())
+        {}
 
-		void restoreState()
+        // Noncopyable
+        UndoableState(const UndoableState& other) = delete;
+        UndoableState& operator=(const UndoableState& other) = delete;
+
+		void restore()
 		{
 			_undoable.importState(_data);
 		}
@@ -45,7 +48,8 @@ private:
 	std::string _command;
 
 public:
-	// Constructor
+    using Ptr = std::shared_ptr<Operation>;
+
 	Operation(const std::string& command) :
 		_command(command)
 	{}
@@ -60,21 +64,26 @@ public:
 		_command = name;
 	}
 
+    bool empty() const
+    {
+        return _snapshot.empty();
+    }
+
 	void save(IUndoable& undoable)
 	{
 		// Record the state of the given undable and push it to the snapshot
-		// The order is relevant, we use push_front()
-		_snapshot.push_front(UndoableState(undoable));
+		// The order is relevant, we add to the front
+		_snapshot.emplace_front(undoable);
 	}
 
 	void restoreSnapshot()
 	{
-		for (auto& undoablePlusMemento : _snapshot)
+        // Walk through the snapshot front-to-back, the most recently added one is at the front
+		for (auto& state : _snapshot)
 		{
-			undoablePlusMemento.restoreState();
+            state.restore();
 		}
 	}
 };
-typedef std::shared_ptr<Operation> OperationPtr;
 
-} // namespace undo
+} // namespace

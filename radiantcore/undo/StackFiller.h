@@ -38,15 +38,16 @@ public:
 
     void saveState() override
     {
-        if (_stack != nullptr)
-        {
-            // Export the Undoable's memento
-            _stack->save(_undoable);
+        // If the stack reference is empty, the associated undoable 
+        // already submitted its state this round
+        if (_stack == nullptr) return;
 
-            // Make sure the stack is dissociated after saving
-            // to make sure further save() calls don't have any effect
-            _stack = nullptr;
-        }
+        // Export the Undoable's memento
+        _stack->save(_undoable);
+
+        // Make sure the stack is dissociated after saving
+        // to make sure further saveState() calls don't have any effect
+        _stack = nullptr;
     }
 
     IUndoSystem& getUndoSystem() override
