@@ -44,13 +44,11 @@ private:
 
 	UndoStack* _activeUndoStack;
 
-	typedef std::map<IUndoable*, UndoStackFiller> UndoablesMap;
-	UndoablesMap _undoables;
+	std::map<IUndoable*, UndoStackFiller> _undoables;
 
     registry::CachedKey<std::size_t> _undoLevels;
 
-	typedef std::set<Tracker*> Trackers;
-	Trackers _trackers;
+    std::set<Tracker*> _trackers;
 
 	sigc::signal<void> _signalPostUndo;
 	sigc::signal<void> _signalPostRedo;
@@ -95,8 +93,6 @@ private:
 
 	// Assigns the given stack to all of the Undoables listed in the map
 	void setActiveUndoStack(UndoStack* stack);
-
-	void foreachTracker(const std::function<void(Tracker&)>& functor) const;
 };
 
 }

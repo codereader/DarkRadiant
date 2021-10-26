@@ -69,7 +69,7 @@ void UndoSystem::finish(const std::string& command)
 	if (finishUndo(command))
     {
 		rMessage() << command << std::endl;
-        foreachTracker([&](Tracker& tracker) { tracker.onOperationRecorded(); });
+        for (auto tracker : _trackers) { tracker->onOperationRecorded(); }
 	}
 }
 
@@ -94,7 +94,7 @@ void UndoSystem::undo()
 	operation->restoreSnapshot();
 	finishRedo(operation->getName());
 	_undoStack.pop_back();
-    foreachTracker([&](Tracker& tracker) { tracker.onOperationUndone(); });
+    for (auto tracker : _trackers) { tracker->onOperationUndone(); }
 
 	_signalPostUndo.emit();
 
@@ -129,7 +129,7 @@ void UndoSystem::redo()
 	operation->restoreSnapshot();
 	finishUndo(operation->getName());
 	_redoStack.pop_back();
-    foreachTracker([&](Tracker& tracker) { tracker.onOperationRedone(); });
+    for (auto tracker : _trackers) { tracker->onOperationRedone(); }
 
 	_signalPostRedo.emit();
 
@@ -148,7 +148,7 @@ void UndoSystem::clear()
 	setActiveUndoStack(nullptr);
 	_undoStack.clear();
 	_redoStack.clear();
-    foreachTracker([&](Tracker& tracker) { tracker.onAllOperationsCleared(); });
+    for (auto tracker : _trackers) { tracker->onAllOperationsCleared(); }
 
 	// greebo: This is called on map shutdown, so don't clear the observers,
 	// there are some "persistent" observers like EntityInspector and ShaderClipboard
@@ -167,13 +167,13 @@ sigc::signal<void>& UndoSystem::signal_postRedo()
 
 void UndoSystem::attachTracker(Tracker& tracker)
 {
-	ASSERT_MESSAGE(_trackers.find(&tracker) == _trackers.end(), "undo tracker already attached");
+	ASSERT_MESSAGE(_trackers.count(&tracker) == 0, "undo tracker already attached");
 	_trackers.insert(&tracker);
 }
 
 void UndoSystem::detachTracker(Tracker& tracker)
 {
-	ASSERT_MESSAGE(_trackers.find(&tracker) != _trackers.end(), "undo tracker cannot be detached");
+	ASSERT_MESSAGE(_trackers.count(&tracker) > 0, "undo tracker cannot be detached");
 	_trackers.erase(&tracker);
 }
 
@@ -208,18 +208,10 @@ void UndoSystem::setActiveUndoStack(UndoStack* stack)
 {
 	_activeUndoStack = stack;
 
-	for (UndoablesMap::value_type& pair : _undoables)
+	for (auto& pair : _undoables)
 	{
 		pair.second.setStack(_activeUndoStack);
 	}
-}
-
-void UndoSystem::foreachTracker(const std::function<void(Tracker&)>& functor) const
-{
-	std::for_each(_trackers.begin(), _trackers.end(), [&] (Tracker* tracker)
-	{ 
-		functor(*tracker);
-	});
 }
 
 } // namespace undo
