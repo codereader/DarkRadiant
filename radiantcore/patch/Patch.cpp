@@ -428,7 +428,7 @@ void Patch::undoSave()
     // Notify the undo observer to save this patch state
     if (_undoStateSaver != NULL)
     {
-        _undoStateSaver->save(*this);
+        _undoStateSaver->saveState();
     }
 }
 

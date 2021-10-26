@@ -61,7 +61,7 @@ public:
 	{
 		if (_undoStateSaver != nullptr)
 		{
-			_undoStateSaver->save(*this);
+			_undoStateSaver->saveState();
 		}
 	}
 

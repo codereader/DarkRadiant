@@ -7,24 +7,28 @@ namespace undo
 {
 
 /**
- * greebo: This class acts as some sort of "duplication guard".
- * Undoable objects like brushes and patches will save their state
- * by calling the save() method - to ensure Undoables don't submit
- * their state more than once, the associated UndoStack reference 
- * is cleared after submission in the save() routine. Further calls
- * to save() will not have any effect. The stack reference is set
- * by the UndoSystem on start of an undo or redo operation.
+ * greebo: This class represents a one-shot state saver, only the first
+ * call to saveState() will submit the IUndoable's state, subsequent calls
+ * don't have any effect.
+ * 
+ * The associated UndoStack reference is set up right before an undo/redo
+ * operation by the UndoSystem, and is cleared after submission in 
+ * the saveState() routine.
  */
 class UndoStackFiller final :
 	public IUndoStateSaver
 {
 private:
     IUndoSystem& _owner;
+    IUndoable& _undoable;
 	UndoStack* _stack;
 
 public:
-    UndoStackFiller(IUndoSystem& owner) :
+    using Ptr = std::shared_ptr<UndoStackFiller>;
+
+    UndoStackFiller(IUndoSystem& owner, IUndoable& undoable) :
         _owner(owner),
+        _undoable(undoable),
         _stack(nullptr)
     {}
 
@@ -32,12 +36,12 @@ public:
     UndoStackFiller(const UndoStackFiller& other) = delete;
     UndoStackFiller& operator=(const UndoStackFiller& other) = delete;
 
-    void save(IUndoable& undoable)
+    void saveState() override
     {
         if (_stack != nullptr)
         {
             // Export the Undoable's memento
-            _stack->save(undoable);
+            _stack->save(_undoable);
 
             // Make sure the stack is dissociated after saving
             // to make sure further save() calls don't have any effect

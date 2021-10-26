@@ -168,7 +168,7 @@ void Face::undoSave()
 {
     if (_undoStateSaver)
     {
-        _undoStateSaver->save(*this);
+        _undoStateSaver->saveState();
     }
 }
 
