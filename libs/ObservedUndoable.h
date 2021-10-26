@@ -12,23 +12,25 @@ class ObservedUndoable :
 	public IUndoable
 {
 	typedef std::function<void (const Copyable&)> ImportCallback;
+	typedef std::function<void()> RestoreFinishedCallback;
 
 	Copyable& _object;
 	ImportCallback _importCallback;
+    RestoreFinishedCallback _finishedCallback;
 	IUndoStateSaver* _undoStateSaver;
 
 	std::string _debugName;
 
 public:
-	ObservedUndoable<Copyable>(Copyable& object, const ImportCallback& importCallback) :
-		_object(object), 
-		_importCallback(importCallback), 
-        _undoStateSaver(nullptr)
+    ObservedUndoable<Copyable>(Copyable& object, const ImportCallback& importCallback) :
+        ObservedUndoable(object, importCallback, RestoreFinishedCallback(), "")
 	{}
 
-	ObservedUndoable<Copyable>(Copyable& object, const ImportCallback& importCallback, const std::string& debugName) :
+    ObservedUndoable<Copyable>(Copyable& object, const ImportCallback& importCallback, 
+                               const RestoreFinishedCallback& finishedCallback, const std::string& debugName) :
 		_object(object),
 		_importCallback(importCallback),
+        _finishedCallback(finishedCallback),
 		_undoStateSaver(nullptr),
 		_debugName(debugName)
 	{}
@@ -65,17 +67,25 @@ public:
 		}
 	}
 
-	IUndoMementoPtr exportState() const
+	IUndoMementoPtr exportState() const override
 	{
 		return IUndoMementoPtr(new BasicUndoMemento<Copyable>(_object));
 	}
 
-	void importState(const IUndoMementoPtr& state)
+	void importState(const IUndoMementoPtr& state) override
 	{
 		save();
 
 		_importCallback(std::static_pointer_cast<BasicUndoMemento<Copyable> >(state)->data());
 	}
+
+    void onOperationRestored() override
+    {
+        if (_finishedCallback)
+        {
+            _finishedCallback();
+        }
+    }
 };
 
 } // namespace

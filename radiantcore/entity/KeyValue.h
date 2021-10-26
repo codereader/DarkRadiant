@@ -4,21 +4,19 @@
 #include "ObservedUndoable.h"
 #include "string/string.h"
 #include <vector>
-#include <sigc++/connection.h>
-#include <sigc++/trackable.h>
 
 namespace entity
 {
 
 class SpawnArgs;
 
-/// \brief A key/value pair of strings.
+/// \brief 
+/// Represents the string value of an entity key.
 ///
 /// - Notifies observers when value changes - value changes to "" on destruction.
-/// - Provides undo support through the global undo system.
+/// - Provides undo support through the map's undo system.
 class KeyValue final :
-	public EntityKeyValue,
-	public sigc::trackable
+	public EntityKeyValue
 {
 private:
 	typedef std::vector<KeyObserver*> KeyObservers;
@@ -27,8 +25,6 @@ private:
 	std::string _value;
 	std::string _emptyValue;
 	undo::ObservedUndoable<std::string> _undo;
-	sigc::connection _undoHandler;
-	sigc::connection _redoHandler;
 
     // This is a specialised callback pointing to the owning SpawnArgs
     std::function<void(const std::string&)> _valueChanged;
@@ -60,9 +56,9 @@ public:
 	void onNameChange(const std::string& oldName, const std::string& newName);
 
 private:
-	// Gets called after a undo/redo operation is fully completed.
-	// This triggers a keyobserver refresh, to allow for reconnection to Namespaces and such.
-	void onUndoRedoOperationFinished();
+    // Gets called after a undo/redo operation is fully completed.
+    // This triggers a keyobserver refresh, to allow for reconnection to Namespaces and such.
+    void onUndoRedoOperationFinished();
 };
 
 } // namespace entity

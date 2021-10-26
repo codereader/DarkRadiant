@@ -10,7 +10,8 @@ namespace entity
 
 SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
 	_eclass(eclass),
-	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), "EntityKeyValues"),
+	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), 
+        std::function<void()>(), "EntityKeyValues"),
 	_observerMutex(false),
 	_isContainer(!eclass->isFixedSize()),
 	_attachments(eclass->getName())
@@ -22,7 +23,8 @@ SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
 SpawnArgs::SpawnArgs(const SpawnArgs& other) :
 	Entity(other),
 	_eclass(other.getEntityClass()),
-	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), "EntityKeyValues"),
+	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), 
+        std::function<void()>(), "EntityKeyValues"),
 	_observerMutex(false),
 	_isContainer(other._isContainer),
 	_attachments(other._attachments)

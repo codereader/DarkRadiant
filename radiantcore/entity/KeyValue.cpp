@@ -10,7 +10,8 @@ KeyValue::KeyValue(const std::string& value, const std::string& empty,
                    const std::function<void(const std::string&)>& valueChanged) :
     _value(value),
     _emptyValue(empty),
-    _undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1), "KeyValue"),
+    _undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1), 
+        std::bind(&KeyValue::onUndoRedoOperationFinished, this), "KeyValue"),
     _valueChanged(valueChanged)
 {}
 
@@ -83,19 +84,11 @@ void KeyValue::notify()
 void KeyValue::importState(const std::string& string) 
 {
 	// We notify our observers after the entire undo rollback is done
-	_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
-		sigc::mem_fun(this, &KeyValue::onUndoRedoOperationFinished));
-	_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
-		sigc::mem_fun(this, &KeyValue::onUndoRedoOperationFinished));
-
 	_value = string;
 }
 
 void KeyValue::onUndoRedoOperationFinished()
 {
-	_undoHandler.disconnect();
-	_redoHandler.disconnect();
-
 	notify();
 }
 
