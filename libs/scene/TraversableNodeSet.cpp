@@ -248,7 +248,7 @@ void TraversableNodeSet::importState(const IUndoMementoPtr& state)
 	// A special treatment is necessary for insertions of new nodes, as calling onChildAdded
 	// right away might lead to double-insertions into the scenegraph (in case the same node
 	// has not been removed from another node yet - a race condition during undo).
-	// Therefore, collect all nodes that need to be added and process them in postUndo/postRedo.
+	// Therefore, collect all nodes that need to be added and process them in onOperationRestored().
 	CollectNodesFunctor collectFunctor(_undoInsertBuffer);
 
 	// greebo: Next step is to find all nodes existing in <other>, but not in <_children>,
@@ -258,33 +258,23 @@ void TraversableNodeSet::importState(const IUndoMementoPtr& state)
 		before_sorted.begin(), before_sorted.end(),
 		ObserverOutputIterator(_owner, collectFunctor)
 	);
-
-	if (!_undoInsertBuffer.empty())
-	{
-		// Register to get notified when the undo operation is complete
-		_undoHandler = GlobalUndoSystem().signal_postUndo().connect(
-			sigc::mem_fun(this, &TraversableNodeSet::onUndoRedoOperationFinished));
-		_redoHandler = GlobalUndoSystem().signal_postRedo().connect(
-			sigc::mem_fun(this, &TraversableNodeSet::onUndoRedoOperationFinished));
-	}
 }
 
-void TraversableNodeSet::onUndoRedoOperationFinished()
+void TraversableNodeSet::onOperationRestored()
 {
-	_undoHandler.disconnect();
-	_redoHandler.disconnect();
-
-	processInsertBuffer();
+    if (!_undoInsertBuffer.empty())
+    {
+        processInsertBuffer();
+    }
 }
 
 void TraversableNodeSet::processInsertBuffer()
 {
-	for (NodeList::const_iterator i = _undoInsertBuffer.begin();
-		 i != _undoInsertBuffer.end(); ++i)
+    for (const auto& node : _undoInsertBuffer)
 	{
-		_owner.onChildAdded(*i);
+		_owner.onChildAdded(node);
 
-		LayerValidityCheckWalker::ProcessNode(*i);
+		LayerValidityCheckWalker::ProcessNode(node);
 	}
 
 	// Clear the buffer after this operation

@@ -4,8 +4,6 @@
 #include "iundo.h"
 #include <list>
 #include "util/Noncopyable.h"
-#include <sigc++/connection.h>
-#include <sigc++/trackable.h>
 
 namespace scene
 {
@@ -39,9 +37,6 @@ private:
 
 	// A list collecting nodes for insertion in postUndo/postRedo
 	NodeList _undoInsertBuffer;
-
-	sigc::connection _undoHandler;
-	sigc::connection _redoHandler;
 
 public:
 	// Default constructor, creates an empty set
@@ -91,15 +86,13 @@ public:
     void disconnectUndoSystem(IUndoSystem& undoSystem);
 
 	// Undoable implementation
-	IUndoMementoPtr exportState() const;
-	void importState(const IUndoMementoPtr& state);
+	IUndoMementoPtr exportState() const override;
+	void importState(const IUndoMementoPtr& state) override;
+    void onOperationRestored() override;
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 private:
-	// UndoSystem event handler
-	void onUndoRedoOperationFinished();
-
 	// Sends the current state to the undosystem
 	void undoSave();
 

@@ -36,6 +36,12 @@ public:
     virtual ~IUndoable() {}
 	virtual IUndoMementoPtr exportState() const = 0;
 	virtual void importState(const IUndoMementoPtr& state) = 0;
+
+    // Optional method that is invoked after the whole snapshot has been restored,
+    // applicable to both undo or redo operations.
+    // May be used by Undoable objects to perform a post-undo cleanup.
+    virtual void onOperationRestored()
+    {}
 };
 
 /**

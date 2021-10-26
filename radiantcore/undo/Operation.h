@@ -39,6 +39,11 @@ private:
 		{
 			_undoable.importState(_data);
 		}
+
+        void notifyOperationRestored()
+        {
+            _undoable.onOperationRestored();
+        }
 	};
 
 	// The Snapshot (the list of structs containing Undoable+Data)
@@ -83,6 +88,12 @@ public:
 		{
             state.restore();
 		}
+
+        // After all the snapshots have been restored, notify the undoables to give them a chance to cleanup
+        for (auto& state : _snapshot)
+        {
+            state.notifyOperationRestored();
+        }
 	}
 };
 
