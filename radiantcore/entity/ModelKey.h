@@ -47,8 +47,8 @@ public:
 	// Returns the reference to the "singleton" model node
 	const scene::INodePtr& getNode() const;
 
-	void connectUndoSystem();
-	void disconnectUndoSystem();
+	void connectUndoSystem(IUndoSystem& undoSystem);
+	void disconnectUndoSystem(IUndoSystem& undoSystem);
 
 private:
 	// Loads the model node and attaches it to the parent node

@@ -142,24 +142,24 @@ void Brush::forEachVisibleFace(const std::function<void(Face&)>& functor) const
     }
 }
 
-void Brush::connectUndoSystem()
+void Brush::connectUndoSystem(IUndoSystem& undoSystem)
 {
     assert(_undoStateSaver == nullptr);
 
-	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
+	_undoStateSaver = undoSystem.getStateSaver(*this);
 
-    forEachFace([&](Face& face) { face.connectUndoSystem(); });
+    forEachFace([&](Face& face) { face.connectUndoSystem(undoSystem); });
 }
 
-void Brush::disconnectUndoSystem()
+void Brush::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
     assert(_undoStateSaver != nullptr);
 
     // Notify each face
-    forEachFace([&](Face& face) { face.disconnectUndoSystem(); });
+    forEachFace([&](Face& face) { face.disconnectUndoSystem(undoSystem); });
 
     _undoStateSaver = nullptr;
-    GlobalUndoSystem().releaseStateSaver(*this);
+    undoSystem.releaseStateSaver(*this);
 }
 
 void Brush::setShader(const std::string& newShader) {
@@ -429,7 +429,7 @@ void Brush::push_back(Faces::value_type face) {
 
     if (_undoStateSaver)
     {
-        m_faces.back()->connectUndoSystem();
+        m_faces.back()->connectUndoSystem(_undoStateSaver->getUndoSystem());
     }
 
     for (Observers::iterator i = m_observers.begin(); i != m_observers.end(); ++i) {
@@ -442,7 +442,7 @@ void Brush::pop_back()
 {
     if (_undoStateSaver)
     {
-        m_faces.back()->disconnectUndoSystem();
+        m_faces.back()->disconnectUndoSystem(_undoStateSaver->getUndoSystem());
     }
 
     m_faces.pop_back();
@@ -456,7 +456,7 @@ void Brush::erase(std::size_t index)
 {
     if (_undoStateSaver)
     {
-        m_faces[index]->disconnectUndoSystem();
+        m_faces[index]->disconnectUndoSystem(_undoStateSaver->getUndoSystem());
     }
 
     m_faces.erase(m_faces.begin() + index);
@@ -499,7 +499,7 @@ void Brush::clear()
     undoSave();
     if (_undoStateSaver)
     {
-        forEachFace([&](Face& face) { face.disconnectUndoSystem(); });
+        forEachFace([&](Face& face) { face.disconnectUndoSystem(_undoStateSaver->getUndoSystem()); });
     }
 
     m_faces.clear();

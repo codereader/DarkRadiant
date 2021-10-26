@@ -67,8 +67,7 @@ public:
 	// Bounded implementation
 	virtual const AABB& localAABB() const override;
 
-	// override scene::Inode methods to deselect the child components
-	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
+	// override scene::Node methods to deselect the child components
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// Snappable implementation

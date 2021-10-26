@@ -86,9 +86,6 @@ public:
 	virtual void onChildAdded(const scene::INodePtr& child) override;
 	virtual void onChildRemoved(const scene::INodePtr& child) override;
 
-    virtual void onInsertIntoScene(IMapRootNode& root) override;
-    virtual void onRemoveFromScene(IMapRootNode& root) override;
-
 	const AABB& localAABB() const override
 	{
 		return _emptyAABB;

@@ -87,8 +87,8 @@ public:
 	 */
 	bool empty() const;
 
-	void connectUndoSystem();
-    void disconnectUndoSystem();
+	void connectUndoSystem(IUndoSystem& undoSystem);
+    void disconnectUndoSystem(IUndoSystem& undoSystem);
 
 	// Undoable implementation
 	IUndoMementoPtr exportState() const;

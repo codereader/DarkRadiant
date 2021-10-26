@@ -11,7 +11,6 @@ namespace entity
 SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
 	_eclass(eclass),
 	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), "EntityKeyValues"),
-	_instanced(false),
 	_observerMutex(false),
 	_isContainer(!eclass->isFixedSize()),
 	_attachments(eclass->getName())
@@ -24,7 +23,6 @@ SpawnArgs::SpawnArgs(const SpawnArgs& other) :
 	Entity(other),
 	_eclass(other.getEntityClass()),
 	_undo(_keyValues, std::bind(&SpawnArgs::importState, this, std::placeholders::_1), "EntityKeyValues"),
-	_instanced(false),
 	_observerMutex(false),
 	_isContainer(other._isContainer),
 	_attachments(other._attachments)
@@ -114,28 +112,24 @@ void SpawnArgs::detachObserver(Observer* observer)
 	}
 }
 
-void SpawnArgs::connectUndoSystem()
+void SpawnArgs::connectUndoSystem(IUndoSystem& undoSystem)
 {
-	_instanced = true;
-
 	for (const auto& keyValue : _keyValues)
 	{
-		keyValue.second->connectUndoSystem();
+		keyValue.second->connectUndoSystem(undoSystem);
 	}
 
-    _undo.connectUndoSystem();
+    _undo.connectUndoSystem(undoSystem);
 }
 
-void SpawnArgs::disconnectUndoSystem()
+void SpawnArgs::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
-	_undo.disconnectUndoSystem();
+	_undo.disconnectUndoSystem(undoSystem);
 
 	for (const auto& keyValue : _keyValues)
 	{
-		keyValue.second->disconnectUndoSystem();
+		keyValue.second->disconnectUndoSystem(undoSystem);
 	}
-
-	_instanced = false;
 }
 
 IEntityClassPtr SpawnArgs::getEntityClass() const
@@ -285,9 +279,9 @@ void SpawnArgs::insert(const std::string& key, const KeyValuePtr& keyValue)
 	// Dereference the iterator to get a KeyValue& reference and notify the observers
 	notifyInsert(key, *pair.second);
 
-	if (_instanced)
+	if (_undo.isConnected())
 	{
-        pair.second->connectUndoSystem();
+        pair.second->connectUndoSystem(_undo.getUndoSystem());
 	}
 }
 
@@ -317,9 +311,9 @@ void SpawnArgs::insert(const std::string& key, const std::string& value)
 
 void SpawnArgs::erase(const KeyValues::iterator& i)
 {
-	if (_instanced)
+	if (_undo.isConnected())
 	{
-		i->second->disconnectUndoSystem();
+		i->second->disconnectUndoSystem(_undo.getUndoSystem());
 	}
 
 	// Retrieve the key and value from the vector before deletion

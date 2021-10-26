@@ -23,7 +23,7 @@ UndoSystem::~UndoSystem()
 
 IUndoStateSaver* UndoSystem::getStateSaver(IUndoable& undoable)
 {
-    auto result = _undoables.try_emplace(&undoable);
+    auto result = _undoables.emplace(&undoable, *this);
 
 	// If we're in the middle of an active undo operation, assign this to the tracker (#4861)
 	if (_activeUndoStack != nullptr)

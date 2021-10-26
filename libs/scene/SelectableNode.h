@@ -65,10 +65,10 @@ protected:
      */
 	virtual void onSelectionStatusChange(bool changeGroupStatus);
 
-	virtual void connectUndoSystem() override;
-	virtual void disconnectUndoSystem() override;
-
 private:
+	void connectUndoSystem(IUndoSystem& undoSystem);
+    void disconnectUndoSystem(IUndoSystem& undoSystem);
+
 	void undoSave();
 };
 

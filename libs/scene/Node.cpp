@@ -276,21 +276,23 @@ void Node::onChildRemoved(const INodePtr& child)
 void Node::onInsertIntoScene(IMapRootNode& root)
 {
 	_instantiated = true;
+    connectUndoSystem(root.getUndoSystem());
 }
 
 void Node::onRemoveFromScene(IMapRootNode& root)
 {
+    disconnectUndoSystem(root.getUndoSystem());
 	_instantiated = false;
 }
 
-void Node::connectUndoSystem()
+void Node::connectUndoSystem(IUndoSystem& undoSystem)
 {
-    _children.connectUndoSystem();
+    _children.connectUndoSystem(undoSystem);
 }
 
-void Node::disconnectUndoSystem()
+void Node::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
-    _children.disconnectUndoSystem();
+    _children.disconnectUndoSystem(undoSystem);
 }
 
 TraversableNodeSet& Node::getTraversable() {

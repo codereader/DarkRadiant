@@ -86,8 +86,8 @@ public:
 	// greebo: Emits the updated normals to the Winding class.
 	void updateWinding();
 
-    void connectUndoSystem();
-    void disconnectUndoSystem();
+    void connectUndoSystem(IUndoSystem& undoSystem);
+    void disconnectUndoSystem(IUndoSystem& undoSystem);
 
 	void undoSave();
 

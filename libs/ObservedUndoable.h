@@ -33,16 +33,29 @@ public:
 		_debugName(debugName)
 	{}
 
-	void connectUndoSystem()
+	void connectUndoSystem(IUndoSystem& undoSystem)
 	{
-		_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
+		_undoStateSaver = undoSystem.getStateSaver(*this);
 	}
 
-    void disconnectUndoSystem()
+    void disconnectUndoSystem(IUndoSystem& undoSystem)
 	{
         _undoStateSaver = nullptr;
-		GlobalUndoSystem().releaseStateSaver(*this);
+		undoSystem.releaseStateSaver(*this);
 	}
+
+    // Returns true if this Undoable is connected to an UndoSystem
+    bool isConnected() const
+    {
+        return _undoStateSaver != nullptr;
+    }
+
+    IUndoSystem& getUndoSystem()
+    {
+        if (!_undoStateSaver) throw std::logic_error("ObservedUndoable node connected to any UndoSystem");
+
+        return _undoStateSaver->getUndoSystem();
+    }
 
 	void save()
 	{

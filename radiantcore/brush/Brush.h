@@ -176,8 +176,8 @@ public:
     // but are forcedly visible due to the brush being selected)
     void forEachVisibleFace(const std::function<void(Face&)>& functor) const;
 
-	void connectUndoSystem();
-	void disconnectUndoSystem();
+	void connectUndoSystem(IUndoSystem& undoSystem);
+	void disconnectUndoSystem(IUndoSystem& undoSystem);
 
 	// Face observer callbacks
 	void onFacePlaneChanged();

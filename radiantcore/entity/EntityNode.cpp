@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "icounter.h"
 #include "imodel.h"
+#include "imap.h"
 #include "itransformable.h"
 #include "math/Hash.h"
 #include "string/case_conv.h"
@@ -295,8 +296,8 @@ void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     GlobalCounters().getCounter(counterEntities).increment();
 
-	_spawnArgs.connectUndoSystem();
-	_modelKey.connectUndoSystem();
+	_spawnArgs.connectUndoSystem(root.getUndoSystem());
+	_modelKey.connectUndoSystem(root.getUndoSystem());
 
 	SelectableNode::onInsertIntoScene(root);
     TargetableNode::onInsertIntoScene(root);
@@ -307,8 +308,8 @@ void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
     TargetableNode::onRemoveFromScene(root);
 	SelectableNode::onRemoveFromScene(root);
 
-	_modelKey.disconnectUndoSystem();
-	_spawnArgs.disconnectUndoSystem();
+	_modelKey.disconnectUndoSystem(root.getUndoSystem());
+	_spawnArgs.disconnectUndoSystem(root.getUndoSystem());
 
     GlobalCounters().getCounter(counterEntities).decrement();
 }

@@ -5,6 +5,7 @@
 #include "ishaders.h"
 #include "iscenegraph.h"
 #include "ifilter.h"
+#include "imap.h"
 #include "imodelcache.h"
 #include "math/Frustum.h"
 #include "generic/callback.h"
@@ -26,14 +27,14 @@ StaticModelNode::~StaticModelNode()
 
 void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-    _model->connectUndoSystem();
+    _model->connectUndoSystem(root.getUndoSystem());
     
     Node::onInsertIntoScene(root);
 }
 
 void StaticModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
-    _model->disconnectUndoSystem();
+    _model->disconnectUndoSystem(root.getUndoSystem());
 
     Node::onRemoveFromScene(root);
 }

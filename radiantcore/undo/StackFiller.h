@@ -19,10 +19,12 @@ class UndoStackFiller final :
 	public IUndoStateSaver
 {
 private:
+    IUndoSystem& _owner;
 	UndoStack* _stack;
 
 public:
-    UndoStackFiller() :
+    UndoStackFiller(IUndoSystem& owner) :
+        _owner(owner),
         _stack(nullptr)
     {}
 
@@ -41,6 +43,11 @@ public:
             // to make sure further save() calls don't have any effect
             _stack = nullptr;
         }
+    }
+
+    IUndoSystem& getUndoSystem() override
+    {
+        return _owner;
     }
 
 	// Assign the stack of this class. This usually happens when starting

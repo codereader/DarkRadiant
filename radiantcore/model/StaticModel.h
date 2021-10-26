@@ -117,8 +117,8 @@ public:
 	 */
 	StaticModel(const StaticModel& other);
 
-	void connectUndoSystem();
-	void disconnectUndoSystem();
+	void connectUndoSystem(IUndoSystem& undoSystem);
+	void disconnectUndoSystem(IUndoSystem& undoSystem);
 
     // Delegated render methods called by StaticModelNode (not part of any
     // interface)

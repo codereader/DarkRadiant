@@ -50,6 +50,9 @@ class IUndoStateSaver
 public:
     virtual ~IUndoStateSaver() {}
 	virtual void save(IUndoable& undoable) = 0;
+
+    // Returns the undo system this saver is associated to
+    virtual IUndoSystem& getUndoSystem() = 0;
 };
 
 class IUndoSystem

@@ -162,21 +162,21 @@ PatchNode& Patch::getPatchNode()
     return _node;
 }
 
-void Patch::connectUndoSystem()
+void Patch::connectUndoSystem(IUndoSystem& undoSystem)
 {
     assert(!_undoStateSaver);
 
     // Acquire a new state saver
-    _undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
+    _undoStateSaver = undoSystem.getStateSaver(*this);
 }
 
 // Remove the attached instance and decrease the counters
-void Patch::disconnectUndoSystem()
+void Patch::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
     assert(_undoStateSaver);
 
     _undoStateSaver = nullptr;
-    GlobalUndoSystem().releaseStateSaver(*this);
+    undoSystem.releaseStateSaver(*this);
 }
 
 // Allocate callback: pass the allocate call to all the observers

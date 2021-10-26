@@ -6,6 +6,8 @@
 #include "KeyValue.h"
 #include <memory>
 
+class IUndoSystem;
+
 namespace entity {
 
 /**
@@ -35,7 +37,6 @@ class SpawnArgs: public Entity
 	Observers _observers;
 
 	undo::ObservedUndoable<KeyValues> _undo;
-	bool _instanced;
 
 	bool _observerMutex;
 
@@ -56,8 +57,8 @@ public:
     /* Entity implementation */
 	void attachObserver(Observer* observer) override;
 	void detachObserver(Observer* observer) override;
-	void connectUndoSystem();
-    void disconnectUndoSystem();
+	void connectUndoSystem(IUndoSystem& undoSystem);
+    void disconnectUndoSystem(IUndoSystem& undoSystem);
 	IEntityClassPtr getEntityClass() const override;
     void forEachKeyValue(KeyValueVisitFunc func,
                          bool includeInherited) const override;

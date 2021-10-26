@@ -9,6 +9,8 @@
 #include "math/Matrix4.h"
 #include "generic/callback.h"
 
+class IUndoSystem;
+
 namespace scene
 {
 
@@ -204,13 +206,13 @@ protected:
 
 	TraversableNodeSet& getTraversable();
 
-    virtual void connectUndoSystem();
-    virtual void disconnectUndoSystem();
-
 	// Clears the TraversableNodeSet
 	virtual void removeAllChildNodes();
 
 private:
+    void connectUndoSystem(IUndoSystem& undoSystem);
+    void disconnectUndoSystem(IUndoSystem& undoSystem);
+
 	void evaluateBounds() const;
 	void evaluateChildBounds() const;
 	void evaluateTransform() const;

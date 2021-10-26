@@ -189,15 +189,15 @@ bool TraversableNodeSet::empty() const
 	return _children.empty();
 }
 
-void TraversableNodeSet::connectUndoSystem()
+void TraversableNodeSet::connectUndoSystem(IUndoSystem& undoSystem)
 {
-	_undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
+	_undoStateSaver = undoSystem.getStateSaver(*this);
 }
 
-void TraversableNodeSet::disconnectUndoSystem()
+void TraversableNodeSet::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
     _undoStateSaver = nullptr;
-	GlobalUndoSystem().releaseStateSaver(*this);
+    undoSystem.releaseStateSaver(*this);
 }
 
 void TraversableNodeSet::undoSave()

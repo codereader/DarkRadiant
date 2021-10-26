@@ -48,19 +48,19 @@ StaticModel::StaticModel(const StaticModel& other) :
     }
 }
 
-void StaticModel::connectUndoSystem()
+void StaticModel::connectUndoSystem(IUndoSystem& undoSystem)
 {
     assert(_undoStateSaver == nullptr);
 
-    _undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
+    _undoStateSaver = undoSystem.getStateSaver(*this);
 }
 
-void StaticModel::disconnectUndoSystem()
+void StaticModel::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
     assert(_undoStateSaver != nullptr);
 
     _undoStateSaver = nullptr;
-    GlobalUndoSystem().releaseStateSaver(*this);
+    undoSystem.releaseStateSaver(*this);
 }
 
 void StaticModel::foreachVisibleSurface(const std::function<void(const Surface& s)>& func) const

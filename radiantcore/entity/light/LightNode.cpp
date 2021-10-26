@@ -95,12 +95,6 @@ float LightNode::getShaderParm(int parmNum) const
 	return EntityNode::getShaderParm(parmNum);
 }
 
-void LightNode::onInsertIntoScene(scene::IMapRootNode& root)
-{
-	// Call the base class first
-	EntityNode::onInsertIntoScene(root);
-}
-
 void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	// Call the base class first

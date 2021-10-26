@@ -107,22 +107,4 @@ void RootNode::onChildRemoved(const scene::INodePtr& child)
 	Node::onChildRemoved(child);
 }
 
-void RootNode::onInsertIntoScene(IMapRootNode& root)
-{
-	Node::onInsertIntoScene(root);
-
-    // A RootNode supports child entities, so connect
-    // the Node's TraversableNodeSet to the UndoSystem
-    Node::connectUndoSystem();
-}
-
-void RootNode::onRemoveFromScene(IMapRootNode& root)
-{
-    // A RootNode supports child entities, so disconnect
-    // the Node's TraversableNodeSet to the UndoSystem
-    Node::disconnectUndoSystem();
-
-	Node::onRemoveFromScene(root);
-}
-
 } // namespace map

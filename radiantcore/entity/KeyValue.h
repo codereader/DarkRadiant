@@ -41,8 +41,8 @@ public:
 
 	~KeyValue();
 
-    void connectUndoSystem();
-    void disconnectUndoSystem();
+    void connectUndoSystem(IUndoSystem& undoSystem);
+    void disconnectUndoSystem(IUndoSystem& undoSystem);
 
 	void attach(KeyObserver& observer);
 	void detach(KeyObserver& observer);

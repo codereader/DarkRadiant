@@ -146,20 +146,20 @@ void Face::realiseShader()
     _owner.onFaceShaderChanged();
 }
 
-void Face::connectUndoSystem()
+void Face::connectUndoSystem(IUndoSystem& undoSystem)
 {
     assert(!_undoStateSaver);
 
     _shader.setInUse(true);
 
-    _undoStateSaver = GlobalUndoSystem().getStateSaver(*this);
+    _undoStateSaver = undoSystem.getStateSaver(*this);
 }
 
-void Face::disconnectUndoSystem()
+void Face::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
     assert(_undoStateSaver);
     _undoStateSaver = nullptr;
-    GlobalUndoSystem().releaseStateSaver(*this);
+    undoSystem.releaseStateSaver(*this);
 
     _shader.setInUse(false);
 }

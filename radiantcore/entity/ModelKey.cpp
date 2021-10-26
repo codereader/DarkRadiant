@@ -131,14 +131,14 @@ void ModelKey::skinChanged(const std::string& value)
 	}
 }
 
-void ModelKey::connectUndoSystem()
+void ModelKey::connectUndoSystem(IUndoSystem& undoSystem)
 {
-	_undo.connectUndoSystem();
+	_undo.connectUndoSystem(undoSystem);
 }
 
-void ModelKey::disconnectUndoSystem()
+void ModelKey::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
-	_undo.disconnectUndoSystem();
+	_undo.disconnectUndoSystem(undoSystem);
 }
 
 void ModelKey::importState(const ModelNodeAndPath& data)

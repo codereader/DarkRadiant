@@ -5,6 +5,7 @@
 #include "iradiant.h"
 #include "icounter.h"
 #include "iclipper.h"
+#include "imap.h"
 #include "ientity.h"
 #include "math/Frustum.h"
 #include "math/Hash.h"
@@ -269,7 +270,7 @@ scene::INodePtr BrushNode::clone() const {
 
 void BrushNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-    m_brush.connectUndoSystem();
+    m_brush.connectUndoSystem(root.getUndoSystem());
 	GlobalCounters().getCounter(counterBrushes).increment();
 
     // Update the origin information needed for transformations
@@ -289,7 +290,7 @@ void BrushNode::onRemoveFromScene(scene::IMapRootNode& root)
 	setSelectedComponents(false, selection::ComponentSelectionMode::Face);
 
 	GlobalCounters().getCounter(counterBrushes).decrement();
-    m_brush.disconnectUndoSystem();
+    m_brush.disconnectUndoSystem(root.getUndoSystem());
 
 	SelectableNode::onRemoveFromScene(root);
 }

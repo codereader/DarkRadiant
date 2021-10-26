@@ -19,14 +19,14 @@ KeyValue::~KeyValue()
 	assert(_observers.empty());
 }
 
-void KeyValue::connectUndoSystem()
+void KeyValue::connectUndoSystem(IUndoSystem& undoSystem)
 {
-    _undo.connectUndoSystem();
+    _undo.connectUndoSystem(undoSystem);
 }
 
-void KeyValue::disconnectUndoSystem()
+void KeyValue::disconnectUndoSystem(IUndoSystem& undoSystem)
 {
-    _undo.disconnectUndoSystem();
+    _undo.disconnectUndoSystem(undoSystem);
 }
 
 void KeyValue::attach(KeyObserver& observer)
