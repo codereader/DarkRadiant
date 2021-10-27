@@ -107,6 +107,11 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 	textPanel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 	textPanel->SetName("Statusbarconainer " + name);
 
+    if (pos == StandardPosition::Commands)
+    {
+        textPanel->SetMinSize(wxSize(150, -1));
+    }
+
 	if (!description.empty())
 	{
 		textPanel->SetToolTip(description);

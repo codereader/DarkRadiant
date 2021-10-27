@@ -12,9 +12,11 @@ namespace statusbar
 namespace
 {
     const char* const STATUS_BAR_ELEMENT = "Commands";
+    const int MESSAGE_LIFETIME_MSECS = 4000;
 }
 
-CommandStatus::CommandStatus()
+CommandStatus::CommandStatus() :
+    _timer(this)
 {
     _mapOperationListener = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::MapOperationFinished,
@@ -23,16 +25,28 @@ CommandStatus::CommandStatus()
 
     // Add the status bar element
     GlobalStatusBarManager().addTextElement(STATUS_BAR_ELEMENT, "", StandardPosition::Commands, "");
+
+    Bind(wxEVT_TIMER, &CommandStatus::onTimerIntervalReached, this);
 }
 
 CommandStatus::~CommandStatus()
 {
+    _timer.Stop();
     GlobalRadiantCore().getMessageBus().removeListener(_mapOperationListener);
 }
 
 void CommandStatus::onOperationFinished(map::OperationMessage& message)
 {
     GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, message.getMessage(), false);
+
+    // (re-)start the timer on every message
+    _timer.Start(MESSAGE_LIFETIME_MSECS, true);
+}
+
+void CommandStatus::onTimerIntervalReached(wxTimerEvent& ev)
+{
+    // Clear the timer when the interval is reached
+    GlobalStatusBarManager().setText(STATUS_BAR_ELEMENT, _("Ready"), false);
 }
 
 }
