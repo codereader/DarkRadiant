@@ -9,7 +9,6 @@
 #include "module/StaticModule.h"
 
 #include "AuiLayout.h"
-#include "FloatingLayout.h"
 #include "SplitPaneLayout.h"
 #include "RegularLayout.h"
 #include "EmbeddedLayout.h"
@@ -34,11 +33,9 @@ IMainFrameLayoutPtr MainFrameLayoutManager::getLayout(const std::string& name) {
 void MainFrameLayoutManager::registerLayout(
 	const std::string& name, const CreateMainFrameLayoutFunc& func)
 {
-	std::pair<LayoutMap::iterator, bool> result = _layouts.insert(
-		LayoutMap::value_type(name, func)
-	);
+    auto result = _layouts.insert({name, func});
 
-	// Check if the insertion was successful
+    // Check if the insertion was successful
 	if (!result.second) {
 		rError() << "MainFrameLayoutManager: Layout "
 			<< name << " already registered." << std::endl;
@@ -85,7 +82,6 @@ void MainFrameLayoutManager::initialiseModule(const IApplicationContext& ctx)
 	// Register the default layouts
 	registerLayout(EMBEDDED_LAYOUT_NAME, EmbeddedLayout::CreateInstance);
 	registerLayout(AUI_LAYOUT_NAME, AuiLayout::CreateInstance);
-	registerLayout(FLOATING_LAYOUT_NAME, FloatingLayout::CreateInstance);
 	registerLayout(SPLITPANE_LAYOUT_NAME, SplitPaneLayout::CreateInstance);
 	registerLayout(REGULAR_LAYOUT_NAME, RegularLayout::CreateRegularInstance);
 	registerLayout(REGULAR_LEFT_LAYOUT_NAME, RegularLayout::CreateRegularLeftInstance);
