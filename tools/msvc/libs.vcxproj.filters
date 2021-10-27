@@ -326,6 +326,9 @@
     <ClInclude Include="..\..\libs\selection\CollectiveSpawnargs.h">
       <Filter>selection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\messages\MapOperationMessage.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

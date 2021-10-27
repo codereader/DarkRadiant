@@ -213,6 +213,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	_mruMenu.reset(new MRUMenu);
 	_shaderClipboardStatus.reset(new statusbar::ShaderClipboardStatus);
 	_editStopwatchStatus.reset(new statusbar::EditingStopwatchStatus);
+    _commandStatus.reset(new statusbar::CommandStatus);
     _mapStatisticsStatus.reset(new statusbar::MapStatistics);
 	_manipulatorToggle.reset(new ManipulatorToggle);
     _textureToolModeToggles.reset(new TexToolModeToggles);
@@ -252,6 +253,7 @@ void UserInterfaceModule::shutdownModule()
 	_shaderClipboardStatus.reset();
     _mapStatisticsStatus.reset();
 	_editStopwatchStatus.reset();
+	_commandStatus.reset();
 	_manipulatorToggle.reset();
 	_selectionModeToggle.reset();
     _textureToolModeToggles.reset();

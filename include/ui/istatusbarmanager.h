@@ -11,18 +11,19 @@ namespace statusbar
 {
 
 // Use these positions to place the status bar elements in between
-// the default ones. A position of 31 would put a widget in between
-// StandardPosition::MapStatistics and StandardPosition::ShaderClipboard.
+// the default ones. A position of 32 would put a widget in between
+// StandardPosition::GridSize and StandardPosition::OrthoViewPosition.
 struct StandardPosition
 {
     enum
     {
         Front = 0,
-        MapStatistics = 10,
-        GridSize = 20,
-        OrthoViewPosition = 30,
-        ShaderClipboard = 40,
-        MapEditStopwatch = 50,
+        Commands = 10,
+        MapStatistics = 20,
+        GridSize = 30,
+        OrthoViewPosition = 40,
+        ShaderClipboard = 50,
+        MapEditStopwatch = 60,
         Back = 9000,
     };
 };

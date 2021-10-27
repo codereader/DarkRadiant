@@ -17,6 +17,7 @@
 #include "SelectionModeToggle.h"
 #include "statusbar/ShaderClipboardStatus.h"
 #include "statusbar/EditingStopwatchStatus.h"
+#include "statusbar/CommandStatus.h"
 #include "statusbar/MapStatistics.h"
 #include "messages/CommandExecutionFailed.h"
 #include "messages/TextureChanged.h"
@@ -49,6 +50,7 @@ private:
 	std::unique_ptr<FileSaveConfirmationHandler> _fileSaveConfirmationHandler;
 	std::unique_ptr<statusbar::ShaderClipboardStatus> _shaderClipboardStatus;
 	std::unique_ptr<statusbar::EditingStopwatchStatus> _editStopwatchStatus;
+	std::unique_ptr<statusbar::CommandStatus> _commandStatus;
 	std::unique_ptr<statusbar::MapStatistics> _mapStatisticsStatus;
 	std::unique_ptr<ManipulatorToggle> _manipulatorToggle;
 	std::unique_ptr<SelectionModeToggle> _selectionModeToggle;

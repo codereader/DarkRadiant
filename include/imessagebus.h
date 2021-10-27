@@ -45,6 +45,7 @@ public:
         GameConfigNeeded,
         LongRunningOperation,
         MapFileOperation,
+        MapOperationFinished,
         FileSelectionRequest,
         Notification,
         TextureChanged,

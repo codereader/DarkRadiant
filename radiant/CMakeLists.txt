@@ -159,6 +159,7 @@ add_executable(darkradiant
                ui/script/ScriptWindow.cpp
                ui/selectionset/SelectionSetToolmenu.cpp
                ui/splash/Splash.cpp
+               ui/statusbar/CommandStatus.cpp
                ui/statusbar/EditingStopwatchStatus.cpp
                ui/statusbar/MapStatistics.cpp
                ui/statusbar/StatusBarManager.cpp

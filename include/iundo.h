@@ -94,7 +94,7 @@ public:
 
     /**
     * Observer implementation which gets notified
-    * on undo/redo perations.
+    * on undo/redo operations.
     */
     class Tracker
     {

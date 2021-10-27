@@ -241,7 +241,8 @@ void StatusBarManager::rebuildStatusBar()
       
         // A few default elements don't need to use 1 as proportion
         auto proportion = i->first == StandardPosition::MapStatistics || i->first == StandardPosition::GridSize ||
-            i->first == StandardPosition::MapEditStopwatch || i->first == StandardPosition::OrthoViewPosition ? 0 : 1;
+            i->first == StandardPosition::MapEditStopwatch || i->first == StandardPosition::OrthoViewPosition ||
+            i->first == StandardPosition::Commands ? 0 : 1;
 
 		_statusBar->GetSizer()->Add(i->second->toplevel, proportion, flags, spacing);
 

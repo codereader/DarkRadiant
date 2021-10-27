@@ -44,6 +44,7 @@
 #include "messages/ScopedLongRunningOperation.h"
 #include "messages/FileOverwriteConfirmation.h"
 #include "messages/FileSaveConfirmation.h"
+#include "messages/MapOperationMessage.h"
 #include "selection/algorithm/Primitives.h"
 #include "selection/algorithm/Group.h"
 #include "scene/Group.h"
@@ -173,6 +174,8 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
 
     // Map loading finished, emit the signal
     emitMapEvent(MapLoaded);
+
+    OperationMessage::Send(_("Map loaded"));
 
     rMessage() << "--- LoadMapFile ---\n";
     rMessage() << _mapName << "\n";
@@ -606,6 +609,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
     }
 
     emitMapEvent(MapSaved);
+    OperationMessage::Send(_("Map saved"));
 
     _saveInProgress = false;
 
@@ -626,6 +630,7 @@ void Map::createNewMap()
 
     setModified(false);
 
+    OperationMessage::Send(_("Empty Map created"));
     focusViews(Vector3(0,0,30), Vector3(0,0,0));
 }
 
