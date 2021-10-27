@@ -161,12 +161,6 @@ main editing panels. There are no floating subwindows in this layout.
 *RegularLeft*:: The same as *Regular* except the full-height 2D window is on the
  right and the 3D window and texture panels are on the left.
 
-*Floating*:: The 2D window, 3D window and editing tab widget are all shown in
-separate floating windows which always appear above the main DarkRadiant window.
-The main window itself is empty apart from the toolbars and status bar. Until
-the introduction of the *Dockable* layout this was the most flexible, but the
-multiple subwindows may be cumbersome to manage.
-
 *SplitPane*:: Three separate 2D windows, showing each of the major axes, are
  shown alongside the 3D camera view in a 2x2 layout similar to traditional 3D
  modelling applications. The editing tab widget is in a floating window.
@@ -174,9 +168,9 @@ multiple subwindows may be cumbersome to manage.
 === Colour schemes
 
 DarkRadiant defaults to a black-on-white colour scheme in the 2D windows, but
-ships with four other colour schemes, which can be accessed under `View ->
-Colours...`. If you prefer a dark theme, the `Black & Green` scheme might be
-suitable, whereas the `Maya/Max/Lightwave Emulation` and `Super Mal` themes
+ships with four other colour schemes, which can be chosen with the *View ->
+Colours...* dialog. If you prefer a dark theme, the `Black & Green` scheme might
+be suitable, whereas the `Maya/Max/Lightwave Emulation` and `Super Mal` themes
 provide a more neutral, low-contrast look.
 
 [align="center",cols="^.<a,^.<a,^.<a",grid="none"]
