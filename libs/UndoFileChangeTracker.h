@@ -44,7 +44,7 @@ public:
         return _currentChangeCount;
     }
 
-    void onOperationRecorded() override
+    void onOperationRecorded(const std::string& operationName) override
     {
         if (_currentChangeCount < _savedChangeCount)
         {
@@ -56,13 +56,13 @@ public:
         _changed.emit();
     }
 
-    void onOperationUndone() override
+    void onOperationUndone(const std::string& operationName) override
     {
         --_currentChangeCount;
         _changed.emit();
     }
     
-    void onOperationRedone() override
+    void onOperationRedone(const std::string& operationName) override
     {
         ++_currentChangeCount;
         _changed.emit();

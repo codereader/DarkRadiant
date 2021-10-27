@@ -69,7 +69,7 @@ void UndoSystem::finish(const std::string& command)
 	if (finishUndo(command))
     {
 		rMessage() << command << std::endl;
-        for (auto tracker : _trackers) { tracker->onOperationRecorded(); }
+        for (auto tracker : _trackers) { tracker->onOperationRecorded(command); }
 	}
 }
 
@@ -88,13 +88,14 @@ void UndoSystem::undo()
     }
 		
 	const auto& operation = _undoStack.back();
-	rMessage() << "Undo: " << operation->getName() << std::endl;
+    auto operationName = operation->getName(); // copy this name, we need it after op destruction
+	rMessage() << "Undo: " << operationName << std::endl;
 
 	startRedo();
 	operation->restoreSnapshot();
-	finishRedo(operation->getName());
+	finishRedo(operationName);
 	_undoStack.pop_back();
-    for (auto tracker : _trackers) { tracker->onOperationUndone(); }
+    for (auto tracker : _trackers) { tracker->onOperationUndone(operationName); }
 
 	_signalPostUndo.emit();
 
@@ -123,13 +124,14 @@ void UndoSystem::redo()
     }
 		
 	const auto& operation = _redoStack.back();
-	rMessage() << "Redo: " << operation->getName() << std::endl;
+    auto operationName = operation->getName(); // copy this name, we need it after op destruction
+	rMessage() << "Redo: " << operationName << std::endl;
 
 	startUndo();
 	operation->restoreSnapshot();
-	finishUndo(operation->getName());
+	finishUndo(operationName);
 	_redoStack.pop_back();
-    for (auto tracker : _trackers) { tracker->onOperationRedone(); }
+    for (auto tracker : _trackers) { tracker->onOperationRedone(operationName); }
 
 	_signalPostRedo.emit();
 

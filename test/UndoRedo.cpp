@@ -757,4 +757,132 @@ TEST_F(UndoTest, MapUndoRedoSignalsWhenChangingMaps)
     EXPECT_TRUE(postRedoFired) << "Map didn't fire the post-redo signal after changing maps";
 }
 
+class TestUndoTracker :
+    public IUndoSystem::Tracker
+{
+public:
+    TestUndoTracker()
+    {
+        reset();
+    }
+
+    bool recordedFired;
+    bool undoneFired;
+    bool redoneFired;
+    bool clearedFired;
+    std::string receivedOperationName;
+
+    void reset()
+    {
+        recordedFired = false;
+        undoneFired = false;
+        redoneFired = false;
+        clearedFired = false;
+        receivedOperationName.clear();
+    }
+
+    void onOperationRecorded(const std::string& operationName) override
+    {
+        recordedFired = true;
+        receivedOperationName = operationName;
+    }
+
+    void onOperationUndone(const std::string& operationName) override
+    {
+        undoneFired = true;
+        receivedOperationName = operationName;
+    }
+
+    void onOperationRedone(const std::string& operationName) override
+    {
+        redoneFired = true;
+        receivedOperationName = operationName;
+    }
+
+    void onAllOperationsCleared() override
+    {
+        clearedFired = true;
+        receivedOperationName.clear();
+    }
+};
+
+TEST_F(UndoTest, OperationTracking)
+{
+    TestUndoTracker tracker;
+
+    GlobalMapModule().getRoot()->getUndoSystem().attachTracker(tracker);
+
+    // Record one undoable operation in the existing map
+    {
+        UndoableCommand cmd("testOperation");
+        setupTestEntity();
+    }
+
+    EXPECT_TRUE(tracker.recordedFired) << "Expected signal not fired after operation complete";
+    EXPECT_FALSE(tracker.undoneFired) << "Wrong signal fired";
+    EXPECT_FALSE(tracker.redoneFired) << "Wrong signal fired";
+    EXPECT_FALSE(tracker.clearedFired) << "Wrong signal fired";
+    EXPECT_EQ(tracker.receivedOperationName, "testOperation") << "Message not correct";
+
+    tracker.reset();
+    GlobalUndoSystem().undo();
+
+    EXPECT_TRUE(tracker.undoneFired) << "Expected signal not fired after operation undone";
+    EXPECT_FALSE(tracker.recordedFired) << "Wrong signal fired";
+    EXPECT_FALSE(tracker.redoneFired) << "Wrong signal fired";
+    EXPECT_FALSE(tracker.clearedFired) << "Wrong signal fired";
+    EXPECT_EQ(tracker.receivedOperationName, "testOperation") << "Message not correct";
+
+    // Undo again
+    tracker.reset();
+    GlobalUndoSystem().undo();
+
+    EXPECT_FALSE(tracker.undoneFired) << "Nothing should fire, nothing to undo";
+    EXPECT_FALSE(tracker.recordedFired) << "Nothing should fire, nothing to undo";
+    EXPECT_FALSE(tracker.redoneFired) << "Nothing should fire, nothing to undo";
+    EXPECT_FALSE(tracker.clearedFired) << "Nothing should fire, nothing to undo";
+    EXPECT_EQ(tracker.receivedOperationName, "") << "Nothing should fire, nothing to undo";
+
+    tracker.reset();
+    GlobalUndoSystem().redo();
+
+    EXPECT_TRUE(tracker.redoneFired) << "Expected signal not fired after operation redone";
+    EXPECT_FALSE(tracker.recordedFired) << "Wrong signal fired";
+    EXPECT_FALSE(tracker.undoneFired) << "Wrong signal fired";
+    EXPECT_FALSE(tracker.clearedFired) << "Wrong signal fired";
+    EXPECT_EQ(tracker.receivedOperationName, "testOperation") << "Message not correct";
+
+    tracker.reset();
+    GlobalUndoSystem().redo();
+
+    EXPECT_FALSE(tracker.undoneFired) << "Nothing should fire, nothing to redo";
+    EXPECT_FALSE(tracker.recordedFired) << "Nothing should fire, nothing to redo";
+    EXPECT_FALSE(tracker.redoneFired) << "Nothing should fire, nothing to redo";
+    EXPECT_FALSE(tracker.clearedFired) << "Nothing should fire, nothing to redo";
+    EXPECT_EQ(tracker.receivedOperationName, "") << "Nothing should fire, nothing to redo";
+
+    GlobalMapModule().getRoot()->getUndoSystem().clear();
+
+    EXPECT_TRUE(tracker.clearedFired) << "Expected signal not fired after operation redone";
+    EXPECT_FALSE(tracker.recordedFired) << "Wrong signal fired";
+    EXPECT_FALSE(tracker.undoneFired) << "Wrong signal fired";
+    EXPECT_FALSE(tracker.redoneFired) << "Wrong signal fired";
+    EXPECT_EQ(tracker.receivedOperationName, "") << "Message not correct";
+
+    GlobalMapModule().getRoot()->getUndoSystem().detachTracker(tracker);
+    tracker.reset();
+
+    // One more change after detaching
+    {
+        UndoableCommand cmd("testOperation");
+        setupTestEntity();
+    }
+
+    EXPECT_FALSE(tracker.undoneFired) << "Nothing should fire, already detached";
+    EXPECT_FALSE(tracker.recordedFired) << "Nothing should fire, already detached";
+    EXPECT_FALSE(tracker.redoneFired) << "Nothing should fire, already detached";
+    EXPECT_FALSE(tracker.clearedFired) << "Nothing should fire, already detached";
+    EXPECT_EQ(tracker.receivedOperationName, "") << "Nothing should fire, already detached";
+}
+
 }

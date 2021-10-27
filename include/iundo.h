@@ -102,13 +102,13 @@ public:
         virtual ~Tracker() {}
 
         // Invoked when a non-empty operation has been recorded by the undo system
-        virtual void onOperationRecorded() = 0;
+        virtual void onOperationRecorded(const std::string& operationName) = 0;
 
         // Called when a single operation has been undone
-        virtual void onOperationUndone() = 0;
+        virtual void onOperationUndone(const std::string& operationName) = 0;
 
         // Called when a single operation has been redone
-        virtual void onOperationRedone() = 0;
+        virtual void onOperationRedone(const std::string& operationName) = 0;
 
         // Invoked when the undo and redo stacks have been cleared
         virtual void onAllOperationsCleared() = 0;
