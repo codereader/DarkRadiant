@@ -6,7 +6,6 @@
 #include <sigc++/signal.h>
 
 class UndoFileChangeTracker :
-    public IUndoSystem::Tracker,
     public IMapFileChangeTracker
 {
 private:
@@ -44,33 +43,32 @@ public:
         return _currentChangeCount;
     }
 
-    void onOperationRecorded(const std::string& operationName) override
+    void onUndoEvent(IUndoSystem::EventType type, const std::string& operationName)
     {
-        if (_currentChangeCount < _savedChangeCount)
+        switch (type)
         {
-            // redo queue has been flushed.. it is now impossible to get back to the saved state via undo/redo
-            _savedChangeCount = MAPFILE_MAX_CHANGES;
+        case IUndoSystem::EventType::OperationRecorded:
+            if (_currentChangeCount < _savedChangeCount)
+            {
+                // redo queue has been flushed.. it is now impossible to get back to the saved state via undo/redo
+                _savedChangeCount = MAPFILE_MAX_CHANGES;
+            }
+            ++_currentChangeCount;
+            break;
+
+        case IUndoSystem::EventType::OperationUndone:
+            --_currentChangeCount;
+            break;
+
+        case IUndoSystem::EventType::OperationRedone:
+            ++_currentChangeCount;
+            break;
+
+        case IUndoSystem::EventType::AllOperationsCleared:
+            _currentChangeCount = 0;
+            break;
         }
-        
-        ++_currentChangeCount;
-        _changed.emit();
-    }
 
-    void onOperationUndone(const std::string& operationName) override
-    {
-        --_currentChangeCount;
-        _changed.emit();
-    }
-    
-    void onOperationRedone(const std::string& operationName) override
-    {
-        ++_currentChangeCount;
-        _changed.emit();
-    }
-
-    void onAllOperationsCleared() override
-    {
-        _currentChangeCount = 0;
         _changed.emit();
     }
 };

@@ -69,7 +69,7 @@ void UndoSystem::finish(const std::string& command)
 	if (finishUndo(command))
     {
 		rMessage() << command << std::endl;
-        for (auto tracker : _trackers) { tracker->onOperationRecorded(command); }
+        _eventSignal.emit(EventType::OperationRecorded, command);
 	}
 }
 
@@ -95,7 +95,7 @@ void UndoSystem::undo()
 	operation->restoreSnapshot();
 	finishRedo(operationName);
 	_undoStack.pop_back();
-    for (auto tracker : _trackers) { tracker->onOperationUndone(operationName); }
+    _eventSignal.emit(EventType::OperationUndone, operationName);
 
 	_signalPostUndo.emit();
 
@@ -131,7 +131,7 @@ void UndoSystem::redo()
 	operation->restoreSnapshot();
 	finishUndo(operationName);
 	_redoStack.pop_back();
-    for (auto tracker : _trackers) { tracker->onOperationRedone(operationName); }
+    _eventSignal.emit(EventType::OperationRedone, operationName);
 
 	_signalPostRedo.emit();
 
@@ -150,7 +150,7 @@ void UndoSystem::clear()
 	setActiveUndoStack(nullptr);
 	_undoStack.clear();
 	_redoStack.clear();
-    for (auto tracker : _trackers) { tracker->onAllOperationsCleared(); }
+    _eventSignal.emit(EventType::AllOperationsCleared, std::string());
 
 	// greebo: This is called on map shutdown, so don't clear the observers,
 	// there are some "persistent" observers like EntityInspector and ShaderClipboard
@@ -167,16 +167,9 @@ sigc::signal<void>& UndoSystem::signal_postRedo()
 	return _signalPostRedo;
 }
 
-void UndoSystem::attachTracker(Tracker& tracker)
+sigc::signal<void(IUndoSystem::EventType, const std::string&)>& UndoSystem::signal_undoEvent()
 {
-	ASSERT_MESSAGE(_trackers.count(&tracker) == 0, "undo tracker already attached");
-	_trackers.insert(&tracker);
-}
-
-void UndoSystem::detachTracker(Tracker& tracker)
-{
-	ASSERT_MESSAGE(_trackers.count(&tracker) > 0, "undo tracker cannot be detached");
-	_trackers.erase(&tracker);
+    return _eventSignal;
 }
 
 void UndoSystem::startUndo()

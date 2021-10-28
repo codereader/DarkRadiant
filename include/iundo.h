@@ -92,30 +92,19 @@ public:
 	// it immediately from the stack, therefore it never existed.
 	virtual void cancel() = 0;
 
-    /**
-    * Observer implementation which gets notified
-    * on undo/redo operations.
-    */
-    class Tracker
+    enum class EventType
     {
-    public:
-        virtual ~Tracker() {}
-
-        // Invoked when a non-empty operation has been recorded by the undo system
-        virtual void onOperationRecorded(const std::string& operationName) = 0;
-
-        // Called when a single operation has been undone
-        virtual void onOperationUndone(const std::string& operationName) = 0;
-
-        // Called when a single operation has been redone
-        virtual void onOperationRedone(const std::string& operationName) = 0;
-
-        // Invoked when the undo and redo stacks have been cleared
-        virtual void onAllOperationsCleared() = 0;
+        OperationRecorded,
+        OperationUndone,
+        OperationRedone,
+        AllOperationsCleared,
     };
 
-	virtual void attachTracker(Tracker& tracker) = 0;
-	virtual void detachTracker(Tracker& tracker) = 0;
+    /**
+     * Emitted on edit/undo/redo and clear events, passes the operation type and name
+     * as arguments. Except for AllOperationsCleared, which will have an empty name argument.
+     */
+    virtual sigc::signal<void(EventType, const std::string&)>& signal_undoEvent() = 0;
 };
 
 class IUndoSystemFactory :

@@ -2,6 +2,7 @@
 
 #include "inode.h"
 #include "imap.h"
+#include "iundo.h"
 #include "imapformat.h"
 #include "inamespace.h"
 #include "imapresource.h"
@@ -77,6 +78,7 @@ private:
     sigc::connection _postUndoListener;
     sigc::connection _postRedoListener;
     sigc::connection _modifiedStatusListener;
+    sigc::connection _undoEventListener;
 
     // Point trace for leak detection
     std::unique_ptr<PointFile> _pointTrace;
@@ -286,6 +288,8 @@ private:
 
 	void clearMapResource();
 	void connectToUndoSystem();
+
+    void onUndoEvent(IUndoSystem::EventType type, const std::string& operationName);
 
     void cleanupMergeOperation();
 

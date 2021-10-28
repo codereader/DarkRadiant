@@ -48,10 +48,10 @@ private:
 
     registry::CachedKey<std::size_t> _undoLevels;
 
-    std::set<Tracker*> _trackers;
-
 	sigc::signal<void> _signalPostUndo;
 	sigc::signal<void> _signalPostRedo;
+
+    sigc::signal<void(EventType, const std::string&)> _eventSignal;
 
 public:
 	UndoSystem();
@@ -81,8 +81,7 @@ public:
 	// Emitted after a redo operation is fully completed, allows objects to refresh their state
 	sigc::signal<void>& signal_postRedo() override;
 
-	void attachTracker(Tracker& tracker) override;
-	void detachTracker(Tracker& tracker) override;
+    sigc::signal<void(EventType, const std::string&)>& signal_undoEvent() override;
 
 private:
 	void startUndo();

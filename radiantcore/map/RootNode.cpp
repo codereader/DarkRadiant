@@ -30,12 +30,14 @@ RootNode::RootNode(const std::string& name) :
     _undoSystem = GlobalUndoSystemFactory().createUndoSystem();
     assert(_undoSystem);
 
-    _undoSystem->attachTracker(*this);
+    _undoEventHandler = _undoSystem->signal_undoEvent().connect(
+        sigc::mem_fun(this, &RootNode::onUndoEvent)
+    );
 }
 
 RootNode::~RootNode()
 {
-    _undoSystem->detachTracker(*this);
+    _undoEventHandler.disconnect();
 
 	// Remove all child nodes to trigger their destruction
 	removeAllChildNodes();

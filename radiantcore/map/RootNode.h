@@ -11,6 +11,7 @@
 #include "transformlib.h"
 #include "KeyValueStore.h"
 #include "undo/UndoSystem.h"
+#include <sigc++/connection.h>
 
 namespace map 
 {
@@ -29,7 +30,7 @@ class RootNode :
 	public scene::Node,
     public scene::IMapRootNode,
 	public IdentityTransform,
-    protected UndoFileChangeTracker,
+    public UndoFileChangeTracker,
 	public KeyValueStore
 {
 private:
@@ -50,6 +51,8 @@ private:
     IUndoSystem::Ptr _undoSystem;
 
 	AABB _emptyAABB;
+
+    sigc::connection _undoEventHandler;
 
 public:
 	// Constructor, pass the name of the map to it

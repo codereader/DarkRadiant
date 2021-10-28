@@ -1,5 +1,6 @@
 #include "RadiantTest.h"
 
+#include <sigc++/connection.h>
 #include "iundo.h"
 #include "ibrush.h"
 #include "ieclass.h"
@@ -757,8 +758,7 @@ TEST_F(UndoTest, MapUndoRedoSignalsWhenChangingMaps)
     EXPECT_TRUE(postRedoFired) << "Map didn't fire the post-redo signal after changing maps";
 }
 
-class TestUndoTracker :
-    public IUndoSystem::Tracker
+class TestUndoTracker
 {
 public:
     TestUndoTracker()
@@ -781,28 +781,14 @@ public:
         receivedOperationName.clear();
     }
 
-    void onOperationRecorded(const std::string& operationName) override
+    void onUndoEvent(IUndoSystem::EventType type, const std::string& operationName)
     {
-        recordedFired = true;
-        receivedOperationName = operationName;
-    }
+        recordedFired |= type == IUndoSystem::EventType::OperationRecorded;
+        undoneFired |= type == IUndoSystem::EventType::OperationUndone;
+        redoneFired |= type == IUndoSystem::EventType::OperationRedone;
+        clearedFired |= type == IUndoSystem::EventType::AllOperationsCleared;
 
-    void onOperationUndone(const std::string& operationName) override
-    {
-        undoneFired = true;
         receivedOperationName = operationName;
-    }
-
-    void onOperationRedone(const std::string& operationName) override
-    {
-        redoneFired = true;
-        receivedOperationName = operationName;
-    }
-
-    void onAllOperationsCleared() override
-    {
-        clearedFired = true;
-        receivedOperationName.clear();
     }
 };
 
@@ -810,7 +796,8 @@ TEST_F(UndoTest, OperationTracking)
 {
     TestUndoTracker tracker;
 
-    GlobalMapModule().getRoot()->getUndoSystem().attachTracker(tracker);
+    sigc::connection handler = GlobalMapModule().getRoot()->getUndoSystem()
+        .signal_undoEvent().connect(sigc::mem_fun(tracker, &TestUndoTracker::onUndoEvent));
 
     // Record one undoable operation in the existing map
     {
@@ -869,7 +856,7 @@ TEST_F(UndoTest, OperationTracking)
     EXPECT_FALSE(tracker.redoneFired) << "Wrong signal fired";
     EXPECT_EQ(tracker.receivedOperationName, "") << "Message not correct";
 
-    GlobalMapModule().getRoot()->getUndoSystem().detachTracker(tracker);
+    handler.disconnect();
     tracker.reset();
 
     // One more change after detaching

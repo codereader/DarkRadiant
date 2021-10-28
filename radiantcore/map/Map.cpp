@@ -94,6 +94,7 @@ void Map::connectToUndoSystem()
     _postUndoListener.disconnect();
     _postRedoListener.disconnect();
     _modifiedStatusListener.disconnect();
+    _undoEventListener.disconnect();
 
     _modifiedStatusListener = _resource->signal_modifiedStatusChanged().connect(
         [this](bool newStatus) { setModified(newStatus); }
@@ -109,6 +110,27 @@ void Map::connectToUndoSystem()
     {
         _mapPostRedoSignal.emit();
     });
+    _undoEventListener = _resource->getRootNode()->getUndoSystem().signal_undoEvent().connect(
+        sigc::mem_fun(this, &Map::onUndoEvent)
+    );
+}
+
+void Map::onUndoEvent(IUndoSystem::EventType type, const std::string& operationName)
+{
+    switch (type)
+    {
+    case IUndoSystem::EventType::OperationRecorded:
+        OperationMessage::Send(operationName);
+        break;
+
+    case IUndoSystem::EventType::OperationUndone:
+        OperationMessage::Send(fmt::format(_("Undo: {0}"), operationName));
+        break;
+
+    case IUndoSystem::EventType::OperationRedone:
+        OperationMessage::Send(fmt::format(_("Redo: {0}"), operationName));
+        break;
+    }
 }
 
 void Map::loadMapResourceFromPath(const std::string& path)
@@ -1479,6 +1501,7 @@ void Map::shutdownModule()
 {
     _postUndoListener.disconnect();
     _postRedoListener.disconnect();
+    _undoEventListener.disconnect();
 
     abortMergeOperation();
 
