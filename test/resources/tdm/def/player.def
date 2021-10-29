@@ -1,0 +1,12 @@
+entityDef info_player_start
+{
+	"spawnclass"				"idPlayerStart"
+
+	"editor_color"				"1 0 0"
+	"editor_mins"				"-16 -16 0"
+	"editor_maxs"				"16 16 64"
+	"editor_showangle"			"1"
+
+	"editor_usage"				"The spawning position for the player."
+	"editor_var skin"			"Skin to use for player model."
+}

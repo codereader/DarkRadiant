@@ -18,6 +18,7 @@
 #include "string/join.h"
 #include "scenelib.h"
 #include "algorithm/Entity.h"
+#include "algorithm/Scene.h"
 
 namespace test
 {
@@ -1559,6 +1560,58 @@ TEST_F(EntityTest, KeyObserverKeyRemoval)
     EXPECT_FALSE(observer.hasBeenInvoked) << "Observer has been notified on key remove";
 
     keyValue->detach(observer);
+}
+
+inline Entity* findPlayerStartEntity()
+{
+    Entity* found = nullptr;
+
+    algorithm::findFirstEntity(GlobalMapModule().getRoot(), [&](IEntityNode& entityNode)
+    {
+        if (entityNode.getEntity().getEntityClass()->getName() == "info_player_start")
+        {
+            found = &entityNode.getEntity();
+        }
+
+        return found == nullptr;
+    });
+
+    return found;
+}
+
+TEST_F(EntityTest, AddPlayerStart)
+{
+    // Empty map, check prerequisites
+    EXPECT_EQ(findPlayerStartEntity(), nullptr) << "Empty map shouldn't have a player start";
+
+    Vector3 position(50, 30, 40);
+    GlobalCommandSystem().executeCommand("PlacePlayerStart", cmd::Argument(position));
+
+    auto playerStart = findPlayerStartEntity();
+    EXPECT_TRUE(playerStart) << "Couldn't find the player start entity after placing it";
+
+    EXPECT_EQ(playerStart->getKeyValue("origin"), string::to_string(position)) << "Origin has the wrong value";
+
+    // Ensure this action is undoable
+    GlobalUndoSystem().undo();
+    EXPECT_EQ(findPlayerStartEntity(), nullptr) << "Couldn't undo the place player start action";
+}
+
+TEST_F(EntityTest, MovePlayerStart)
+{
+    // Empty map, check prerequisites
+    auto originalPosition = "50 30 47";
+    auto playerStart = GlobalEntityModule().createEntity(GlobalEntityClassManager().findOrInsert("info_player_start", false));
+    scene::addNodeToContainer(playerStart, GlobalMapModule().getRoot());
+    Node_getEntity(playerStart)->setKeyValue("origin", originalPosition);
+
+    Vector3 position(7, 2, -4);
+    GlobalCommandSystem().executeCommand("PlacePlayerStart", cmd::Argument(position));
+    EXPECT_EQ(Node_getEntity(playerStart)->getKeyValue("origin"), string::to_string(position)) << "Origin didn't get updated";
+
+    // Ensure this action is undoable
+    GlobalUndoSystem().undo();
+    EXPECT_EQ(Node_getEntity(playerStart)->getKeyValue("origin"), originalPosition) << "Origin change didn't get undone";
 }
 
 }
