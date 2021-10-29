@@ -3,6 +3,7 @@
 #include <list>
 #include <sigc++/connection.h>
 #include "itexturetoolmodel.h"
+#include "messages/TextureChanged.h"
 
 namespace textool
 {
@@ -12,8 +13,10 @@ class TextureToolSceneGraph :
 {
 private:
     sigc::connection _sceneSelectionChanged;
+    std::size_t _textureChangedHandler;
 
     bool _selectionNeedsRescan;
+    bool _activeMaterialNeedsRescan;
 
     std::list<INode::Ptr> _nodes;
 
@@ -34,7 +37,9 @@ public:
 
 private:
     void onSceneSelectionChanged(const ISelectable& selectable);
+    void onTextureChanged(radiant::TextureChangedMessage& msg);
     void ensureSceneIsAnalysed();
+    void ensureActiveMaterialIsAnalysed();
 };
 
 }

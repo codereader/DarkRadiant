@@ -35,10 +35,16 @@ void TextureToolSceneGraph::initialiseModule(const IApplicationContext& ctx)
     _sceneSelectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
         sigc::mem_fun(this, &TextureToolSceneGraph::onSceneSelectionChanged)
     );
+
+    _textureChangedHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::TextureChanged,
+        radiant::TypeListener<radiant::TextureChangedMessage>(
+            sigc::mem_fun(this, &TextureToolSceneGraph::onTextureChanged)));
 }
 
 void TextureToolSceneGraph::shutdownModule()
 {
+    GlobalRadiantCore().getMessageBus().removeListener(_textureChangedHandler);
     _selectionNeedsRescan = false;
     _nodes.clear();
     _sceneSelectionChanged.disconnect();
@@ -60,8 +66,17 @@ void TextureToolSceneGraph::foreachNode(const std::function<bool(const INode::Pt
 const std::string& TextureToolSceneGraph::getActiveMaterial()
 {
     ensureSceneIsAnalysed();
+    ensureActiveMaterialIsAnalysed();
 
     return _activeMaterial;
+}
+
+void TextureToolSceneGraph::ensureActiveMaterialIsAnalysed()
+{
+    if (!_activeMaterialNeedsRescan) return;
+
+    _activeMaterialNeedsRescan = false;
+    _activeMaterial = selection::getShaderFromSelection();
 }
 
 void TextureToolSceneGraph::ensureSceneIsAnalysed()
@@ -69,6 +84,7 @@ void TextureToolSceneGraph::ensureSceneIsAnalysed()
     if (!_selectionNeedsRescan) return;
     
     _selectionNeedsRescan = false;
+    _activeMaterialNeedsRescan = false;
 
     _nodes.clear();
 
@@ -107,6 +123,11 @@ void TextureToolSceneGraph::onSceneSelectionChanged(const ISelectable& selectabl
 {
     // Mark our own selection as dirty
     _selectionNeedsRescan = true;
+}
+
+void TextureToolSceneGraph::onTextureChanged(radiant::TextureChangedMessage& msg)
+{
+    _activeMaterialNeedsRescan = true;
 }
 
 module::StaticModule<TextureToolSceneGraph> _textureToolSceneGraphModule;

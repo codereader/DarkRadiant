@@ -67,6 +67,7 @@ private:
 	// For idle callbacks
 	bool _selectionRescanNeeded;
     bool _manipulatorPanelNeedsUpdate;
+    bool _activeMaterialNeedsUpdate;
 
 	sigc::connection _sceneSelectionChanged;
 	sigc::connection _undoHandler;
@@ -126,6 +127,7 @@ private:
 	 * selectionsystem and prepares the member variables for drawing.
 	 */
 	void update();
+    void updateActiveMaterial();
 
 	bool onGLDraw();
 	void onGLResize(wxSizeEvent& ev);
@@ -152,6 +154,7 @@ private:
     void handleManipulatorModeToggleRequest(selection::ManipulatorModeToggleRequest& request);
     void handleComponentSelectionModeToggleRequest(selection::ComponentSelectionModeToggleRequest& request);
     void handleGridSnapRequest(selection::GridSnapRequest& request);
+    void handleTextureChanged(radiant::TextureChangedMessage& message);
 
     // Returns true if the texture tool window or the GL widget has focus
     bool textureToolHasFocus();

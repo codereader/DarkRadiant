@@ -55,6 +55,7 @@ TexTool::TexTool() :
     _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
     _selectionRescanNeeded(false),
     _manipulatorPanelNeedsUpdate(true),
+    _activeMaterialNeedsUpdate(true),
     _manipulatorModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
     _componentSelectionModeToggleRequestHandler(std::numeric_limits<std::size_t>::max()),
     _textureMessageHandler(std::numeric_limits<std::size_t>::max()),
@@ -220,7 +221,7 @@ void TexTool::_preShow()
     _textureMessageHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::TextureChanged,
         radiant::TypeListener<radiant::TextureChangedMessage>(
-            [this](radiant::TextureChangedMessage& msg) { queueDraw(); }));
+            sigc::mem_fun(this, &TexTool::handleTextureChanged)));
     
     // Intercept the grid snap message
     _gridSnapHandler = GlobalRadiantCore().getMessageBus().addListener(
@@ -275,6 +276,12 @@ void TexTool::handleManipulatorModeToggleRequest(selection::ManipulatorModeToggl
         request.setHandled(true);
         break;
     };
+}
+
+void TexTool::handleTextureChanged(radiant::TextureChangedMessage& message)
+{
+    _activeMaterialNeedsUpdate = true;
+    queueDraw();
 }
 
 void TexTool::handleGridSnapRequest(selection::GridSnapRequest& request)
@@ -367,18 +374,25 @@ TexTool& TexTool::Instance()
 	return *instancePtr;
 }
 
-void TexTool::update()
+void TexTool::updateActiveMaterial()
 {
+    _activeMaterialNeedsUpdate = false;
+
     auto material = GlobalTextureToolSceneGraph().getActiveMaterial();
     _shader = !material.empty() ? GlobalMaterialManager().getMaterial(material) : MaterialPtr();
-
-	recalculateVisibleTexSpace();
 
     if (material != _material)
     {
         _material = material;
         _determineThemeFromImage = true;
+        recalculateVisibleTexSpace();
     }
+}
+
+void TexTool::update()
+{
+    updateActiveMaterial();
+	recalculateVisibleTexSpace();
 }
 
 int TexTool::getWidth() const
@@ -693,6 +707,12 @@ void TexTool::updateProjection()
 
 bool TexTool::onGLDraw()
 {
+    if (_activeMaterialNeedsUpdate)
+    {
+        // Make sure to detect material changes
+        updateActiveMaterial();
+    }
+
 	// Initialise the viewport
 	glViewport(0, 0, _windowDims[0], _windowDims[1]);
 	glMatrixMode(GL_PROJECTION);
