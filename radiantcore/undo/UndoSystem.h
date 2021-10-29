@@ -48,9 +48,6 @@ private:
 
     registry::CachedKey<std::size_t> _undoLevels;
 
-	sigc::signal<void> _signalPostUndo;
-	sigc::signal<void> _signalPostRedo;
-
     sigc::signal<void(EventType, const std::string&)> _eventSignal;
 
 public:
@@ -66,7 +63,7 @@ public:
 	bool operationStarted() const override;
 
 	// greebo: This finishes the current operation and
-	// removes it instantly from the stack
+	// instantly removes it from the stack
 	void cancel() override;
 
 	void finish(const std::string& command) override;
@@ -75,11 +72,6 @@ public:
 	void redo() override;
 
 	void clear() override;
-
-	sigc::signal<void>& signal_postUndo() override;
-
-	// Emitted after a redo operation is fully completed, allows objects to refresh their state
-	sigc::signal<void>& signal_postRedo() override;
 
     sigc::signal<void(EventType, const std::string&)>& signal_undoEvent() override;
 

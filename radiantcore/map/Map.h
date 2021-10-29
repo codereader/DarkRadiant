@@ -75,8 +75,6 @@ private:
     std::list<scene::MergeActionNodeBase::Ptr> _mergeActionNodes;
     sigc::connection _mergeOperationListener;
 
-    sigc::connection _postUndoListener;
-    sigc::connection _postRedoListener;
     sigc::connection _modifiedStatusListener;
     sigc::connection _undoEventListener;
 

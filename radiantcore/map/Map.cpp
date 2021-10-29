@@ -91,8 +91,6 @@ void Map::clearMapResource()
 
 void Map::connectToUndoSystem()
 {
-    _postUndoListener.disconnect();
-    _postRedoListener.disconnect();
     _modifiedStatusListener.disconnect();
     _undoEventListener.disconnect();
 
@@ -102,14 +100,6 @@ void Map::connectToUndoSystem()
 
     if (!_resource->getRootNode()) return;
 
-    _postUndoListener = _resource->getRootNode()->getUndoSystem().signal_postUndo().connect([this]()
-    {
-        _mapPostUndoSignal.emit();
-    });
-    _postRedoListener = _resource->getRootNode()->getUndoSystem().signal_postRedo().connect([this]()
-    {
-        _mapPostRedoSignal.emit();
-    });
     _undoEventListener = _resource->getRootNode()->getUndoSystem().signal_undoEvent().connect(
         sigc::mem_fun(this, &Map::onUndoEvent)
     );
@@ -124,10 +114,12 @@ void Map::onUndoEvent(IUndoSystem::EventType type, const std::string& operationN
         break;
 
     case IUndoSystem::EventType::OperationUndone:
+        _mapPostUndoSignal.emit();
         OperationMessage::Send(fmt::format(_("Undo: {0}"), operationName));
         break;
 
     case IUndoSystem::EventType::OperationRedone:
+        _mapPostRedoSignal.emit();
         OperationMessage::Send(fmt::format(_("Redo: {0}"), operationName));
         break;
     }
@@ -1499,8 +1491,6 @@ void Map::initialiseModule(const IApplicationContext& ctx)
 
 void Map::shutdownModule()
 {
-    _postUndoListener.disconnect();
-    _postRedoListener.disconnect();
     _undoEventListener.disconnect();
 
     abortMergeOperation();

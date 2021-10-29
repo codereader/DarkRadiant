@@ -82,12 +82,6 @@ public:
 	// Returns true if an operation is already started
 	virtual bool operationStarted() const = 0;
 
-	// Emitted after an undo operation is fully completed, allows objects to refresh their state
-	virtual sigc::signal<void>& signal_postUndo() = 0;
-
-	// Emitted after a redo operation is fully completed, allows objects to refresh their state
-	virtual sigc::signal<void>& signal_postRedo() = 0;
-
 	// greebo: This finishes the current operation and removes
 	// it immediately from the stack, therefore it never existed.
 	virtual void cancel() = 0;

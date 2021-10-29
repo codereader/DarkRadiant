@@ -97,8 +97,6 @@ void UndoSystem::undo()
 	_undoStack.pop_back();
     _eventSignal.emit(EventType::OperationUndone, operationName);
 
-	_signalPostUndo.emit();
-
 	// Trigger the onPostUndo event on all scene nodes
 	GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
 	{
@@ -133,8 +131,6 @@ void UndoSystem::redo()
 	_redoStack.pop_back();
     _eventSignal.emit(EventType::OperationRedone, operationName);
 
-	_signalPostRedo.emit();
-
 	// Trigger the onPostRedo event on all scene nodes
 	GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
 	{
@@ -154,17 +150,6 @@ void UndoSystem::clear()
 
 	// greebo: This is called on map shutdown, so don't clear the observers,
 	// there are some "persistent" observers like EntityInspector and ShaderClipboard
-}
-
-sigc::signal<void>& UndoSystem::signal_postUndo()
-{
-	return _signalPostUndo;
-}
-
-// Emitted after a redo operation is fully completed, allows objects to refresh their state
-sigc::signal<void>& UndoSystem::signal_postRedo()
-{
-	return _signalPostRedo;
 }
 
 sigc::signal<void(IUndoSystem::EventType, const std::string&)>& UndoSystem::signal_undoEvent()
