@@ -51,7 +51,8 @@ private:
 
 TreeView::TreeView(wxWindow* parent, wxDataViewModel* model, long style) :
 	wxDataViewCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, style),
-	_collapseRecursively(true)
+	_collapseRecursively(true),
+    _searchPopupEnabled(true)
 {
 	EnableAutoColumnWidthFix();
 
@@ -175,6 +176,16 @@ void TreeView::AddSearchColumn(const TreeModel::Column& column)
 bool TreeView::HasActiveSearchPopup()
 {
     return _search != nullptr;
+}
+
+void TreeView::EnableSearchPopup(bool enabled)
+{
+    _searchPopupEnabled = enabled;
+
+    if (!_searchPopupEnabled)
+    {
+        CloseSearch();
+    }
 }
 
 #if !defined(__linux__)
@@ -571,7 +582,7 @@ void TreeView::CloseSearch()
 
 void TreeView::_onChar(wxKeyEvent& ev)
 {
-	if (GetModel() == nullptr || _colsToSearch.empty())
+	if (!_searchPopupEnabled || GetModel() == nullptr || _colsToSearch.empty())
 	{
 		ev.Skip();
 		return;

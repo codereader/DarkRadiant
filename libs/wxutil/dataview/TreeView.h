@@ -29,6 +29,7 @@ protected:
 	std::vector<TreeModel::Column> _colsToSearch;
 
 	bool _collapseRecursively;
+    bool _searchPopupEnabled;
 
 	TreeView(wxWindow* parent, wxDataViewModel* model, long style);
 
@@ -77,6 +78,9 @@ public:
 
     // Returns true if the treeview search popup is currently visible
     bool HasActiveSearchPopup();
+
+    // Enable/Disable the search popup (which is enabled by default)
+    void EnableSearchPopup(bool enabled);
 
 #if !defined(__linux__)
     // Triggers a rebuild of the tree (done by calling ItemDeleted+ItemAdded for each
