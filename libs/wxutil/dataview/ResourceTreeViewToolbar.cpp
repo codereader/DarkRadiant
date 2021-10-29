@@ -12,7 +12,7 @@ namespace wxutil
 
 namespace
 {
-    constexpr const int APPLY_FILTER_TEXT_DELAY_MSEC = 400;
+    constexpr const int APPLY_FILTER_TEXT_DELAY_MSEC = 250;
 }
 
 ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeView* treeView) :

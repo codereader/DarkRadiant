@@ -18,6 +18,7 @@ namespace wxutil
 namespace
 {
 	const int MSECS_TO_AUTO_CLOSE_POPUP = 6000;
+	const int MSECS_TO_HIGHLIGHT_MATCH = 250;
 }
 
 class TreeView::Search :
@@ -28,6 +29,7 @@ private:
 	SearchPopupWindow* _popup;
 	wxDataViewItem _curSearchMatch;
 	wxTimer _closeTimer;
+	wxTimer _highlightSearchTimer;
 
 public:
 	Search(TreeView& treeView);
@@ -431,7 +433,8 @@ private:
 
 TreeView::Search::Search(TreeView& treeView) :
 	_treeView(treeView),
-	_closeTimer(this)
+	_closeTimer(this),
+    _highlightSearchTimer(this)
 {
 	_popup = new SearchPopupWindow(&_treeView, *this);
 	_popup->Show();
@@ -473,10 +476,20 @@ void TreeView::Search::_onTreeViewCharHook(wxKeyEvent& ev)
 
 void TreeView::Search::_onIntervalReached(wxTimerEvent& ev)
 {
-	// Disconnect the timing event
-	_closeTimer.Stop();
+    if (ev.GetTimer().GetId() == _closeTimer.GetId())
+    {
+        // Disconnect the timing event
+        _closeTimer.Stop();
 
-	_treeView.CloseSearch();
+        _treeView.CloseSearch();
+    }
+    else if (ev.GetTimer().GetId() == _highlightSearchTimer.GetId())
+    {
+        auto* model = dynamic_cast<TreeModel*>(_treeView.GetModel());
+        if (model == nullptr) return;
+
+        HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch));
+    }
 }
 
 void TreeView::Search::HighlightMatch(const wxDataViewItem& item)
@@ -514,7 +527,8 @@ void TreeView::Search::HandleKeyEvent(wxKeyEvent& ev)
 		{
 			_popup->SetSearchString(_popup->GetSearchString() + ev.GetUnicodeKey());
 
-			HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch));
+            // Perform the actual search a bit later (#5745)
+            _highlightSearchTimer.Start(MSECS_TO_HIGHLIGHT_MATCH, true);
 		}
 		else if (ev.GetKeyCode() == WXK_ESCAPE)
 		{
@@ -523,8 +537,9 @@ void TreeView::Search::HandleKeyEvent(wxKeyEvent& ev)
 		else if (ev.GetKeyCode() == WXK_BACK)
 		{
 			_popup->SetSearchString(_popup->GetSearchString().RemoveLast(1));
-
-			HighlightMatch(model->FindNextString(_popup->GetSearchString(), _treeView._colsToSearch));
+            
+            // Perform the actual search a bit later (#5745)
+            _highlightSearchTimer.Start(MSECS_TO_HIGHLIGHT_MATCH, true);
 		}
 		else
 		{
@@ -572,6 +587,7 @@ void TreeView::Search::HighlightPrevMatch()
 
 void TreeView::Search::Close()
 {
+    _highlightSearchTimer.Stop();
 	_treeView.CloseSearch();
 }
 
