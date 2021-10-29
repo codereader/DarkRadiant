@@ -77,6 +77,12 @@ public:
 		_pending = std::make_shared<Operation>(command);
 	}
 
+    void cancel()
+    {
+        // discard the pending operation without storing it in the stack
+        _pending.reset();
+    }
+
 	// Finish the current undo operation
 	bool finish(const std::string& command)
 	{

@@ -55,18 +55,13 @@ public:
 	~UndoSystem();
 
 	IUndoStateSaver* getStateSaver(IUndoable& undoable) override;
-
 	void releaseStateSaver(IUndoable& undoable) override;
 
 	void start() override;
+	void cancel() override;
+	void finish(const std::string& command) override;
 
 	bool operationStarted() const override;
-
-	// greebo: This finishes the current operation and
-	// instantly removes it from the stack
-	void cancel() override;
-
-	void finish(const std::string& command) override;
 
 	void undo() override;
 	void redo() override;

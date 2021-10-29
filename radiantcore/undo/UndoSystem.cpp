@@ -55,12 +55,11 @@ bool UndoSystem::operationStarted() const
 
 void UndoSystem::cancel()
 {
-	// Try to add the last operation as "temp"
-	if (finishUndo("$TEMPORARY"))
-	{
-		// Instantly remove the added operation
-		_undoStack.pop_back();
-	}
+    if (_activeUndoStack != nullptr)
+    {
+        _activeUndoStack->cancel();
+        setActiveUndoStack(nullptr);
+    }
 }
 
 void UndoSystem::finish(const std::string& command)
