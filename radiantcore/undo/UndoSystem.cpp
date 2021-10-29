@@ -1,7 +1,6 @@
 #include "UndoSystem.h"
 
 #include "itextstream.h"
-#include "iscenegraph.h"
 
 #include <iostream>
 
@@ -96,15 +95,6 @@ void UndoSystem::undo()
 	finishRedo(operationName);
 	_undoStack.pop_back();
     _eventSignal.emit(EventType::OperationUndone, operationName);
-
-	// Trigger the onPostUndo event on all scene nodes
-	GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
-	{
-		node->onPostUndo();
-		return true;
-	});
-
-	GlobalSceneGraph().sceneChanged();
 }
 
 void UndoSystem::redo()
@@ -130,15 +120,6 @@ void UndoSystem::redo()
 	finishUndo(operationName);
 	_redoStack.pop_back();
     _eventSignal.emit(EventType::OperationRedone, operationName);
-
-	// Trigger the onPostRedo event on all scene nodes
-	GlobalSceneGraph().foreachNode([&] (const scene::INodePtr& node)->bool
-	{
-		node->onPostRedo();
-		return true;
-	});
-
-	GlobalSceneGraph().sceneChanged();
 }
 
 void UndoSystem::clear()

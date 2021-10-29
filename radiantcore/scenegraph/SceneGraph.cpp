@@ -76,6 +76,8 @@ void SceneGraph::setRoot(const IMapRootNodePtr& newRoot)
 		return;
 	}
 
+    _undoEventHandler.disconnect();
+
 	if (_root)
 	{
 		// "Uninstantiate" the whole scene
@@ -86,7 +88,7 @@ void SceneGraph::setRoot(const IMapRootNodePtr& newRoot)
 	_root = newRoot;
 
 	// Refresh the space partition class
-	_spacePartition = ISpacePartitionSystemPtr(new Octree);
+	_spacePartition = std::make_shared<Octree>();
 
 	if (_root)
 	{
@@ -94,7 +96,37 @@ void SceneGraph::setRoot(const IMapRootNodePtr& newRoot)
 		GraphPtr self = shared_from_this();
 		InstanceSubgraphWalker instanceWalker(self);
 		_root->traverse(instanceWalker);
+        
+        _undoEventHandler = _root->getUndoSystem().signal_undoEvent().connect(
+            sigc::mem_fun(this, &SceneGraph::onUndoEvent)
+        );
 	}
+}
+
+void SceneGraph::onUndoEvent(IUndoSystem::EventType type, const std::string& operationName)
+{
+    if (type == IUndoSystem::EventType::OperationUndone)
+    {
+        // Trigger the onPostUndo event on all scene nodes
+        foreachNode([&](const INodePtr& node)->bool
+        {
+            node->onPostUndo();
+            return true;
+        });
+
+        sceneChanged();
+    }
+    else if (type == IUndoSystem::EventType::OperationRedone)
+    {
+        // Trigger the onPostRedo event on all scene nodes
+        foreachNode([&](const INodePtr& node)->bool
+        {
+            node->onPostRedo();
+            return true;
+        });
+
+        sceneChanged();
+    }
 }
 
 void SceneGraph::boundsChanged()

@@ -3,6 +3,7 @@
 #include <map>
 #include <list>
 #include <sigc++/signal.h>
+#include <sigc++/connection.h>
 
 #include "iscenegraph.h"
 #include "imodule.h"
@@ -50,6 +51,8 @@ private:
     BufferedActions _actionBuffer;
 
     bool _traversalOngoing;
+
+    sigc::connection _undoEventHandler;
 
 public:
 	SceneGraph();
@@ -100,6 +103,8 @@ private:
 							   const INode::VisitorFunc& functor, bool visitHidden);
 
     void flushActionBuffer();
+
+    void onUndoEvent(IUndoSystem::EventType type, const std::string& operationName);
 };
 typedef std::shared_ptr<SceneGraph> SceneGraphPtr;
 
