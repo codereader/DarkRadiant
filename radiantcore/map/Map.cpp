@@ -85,8 +85,6 @@ void Map::clearMapResource()
 
     // Rename the map to "unnamed" in any case to avoid overwriting the failed map
     setMapName(_(MAP_UNNAMED_STRING));
-
-    connectToUndoSystem();
 }
 
 void Map::connectToUndoSystem()
