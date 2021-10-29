@@ -1062,6 +1062,7 @@ void registerCommands()
 
 	GlobalCommandSystem().addCommand("ConnectSelection", connectSelectedEntities);
     GlobalCommandSystem().addCommand("BindSelection", bindEntities);
+    GlobalCommandSystem().addCommand("PlacePlayerStart", placePlayerStart, { cmd::ARGTYPE_VECTOR3 });
 	GlobalCommandSystem().addCommand("SetEntityKeyValue", setEntityKeyValueOnSelection, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("CreateCurveNURBS", createCurveNURBS);
     GlobalCommandSystem().addCommand("CreateCurveCatmullRom", createCurveCatmullRom);

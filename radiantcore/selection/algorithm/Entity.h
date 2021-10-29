@@ -48,5 +48,8 @@ void deselectItemsByModel(const std::string& model);
 void selectItemsByModelCmd(const cmd::ArgumentList& args);
 void deselectItemsByModelCmd(const cmd::ArgumentList& args);
 
+// Command target: PlacePlayerStart <origin>
+void placePlayerStart(const cmd::ArgumentList& args);
+
 } // namespace algorithm
 } // namespace selection

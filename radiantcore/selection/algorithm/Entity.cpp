@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "itransformable.h"
 #include "ieclass.h"
+#include "iundo.h"
 #include "selectionlib.h"
 #include "iregistry.h"
 #include "inamespace.h"
@@ -25,7 +26,11 @@ namespace selection
 namespace algorithm 
 {
 
-const char* const GKEY_BIND_KEY("/defaults/bindKey");
+constexpr const char* const GKEY_BIND_KEY("/defaults/bindKey");
+constexpr const char* const PLAYERSTART_CLASSNAME = "info_player_start";
+// Angle key for the player start
+constexpr const char* const ANGLE_KEY_NAME = "angle";
+constexpr const char* const DEFAULT_ANGLE = "90"; // north
 
 void setEntityKeyValue(const scene::INodePtr& node, const std::string& key, const std::string& value)
 {
@@ -304,6 +309,41 @@ void deselectItemsByModelCmd(const cmd::ArgumentList& args)
     }
 
     deselectItemsByModel(args[0].getString());
+}
+
+void placePlayerStart(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        rWarning() << "Usage: PlacePlayerStart <position:vector3>" << std::endl;
+        return;
+    }
+
+    auto position = args[0].getVector3();
+
+    UndoableCommand command(_("Place Player Start"));
+
+    EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
+    GlobalSceneGraph().root()->traverse(walker);
+
+    auto playerStartEntity = walker.getEntity();
+
+    if (playerStartEntity == nullptr)
+    {
+        // Create the player start entity
+        auto eclass = GlobalEntityClassManager().findClass(PLAYERSTART_CLASSNAME);
+        if (!eclass) throw cmd::ExecutionNotPossible(_("Could not find the info_player_start entityDef"));
+
+        auto playerStartNode = GlobalEntityModule().createEntity(eclass);
+        scene::addNodeToContainer(playerStartNode, GlobalSceneGraph().root());
+
+        playerStartEntity = &playerStartNode->getEntity();
+
+        // Set a default angle
+        playerStartEntity->setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
+    }
+
+    playerStartEntity->setKeyValue("origin", string::to_string(position));
 }
 
 } // namespace algorithm
