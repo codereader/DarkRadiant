@@ -43,16 +43,10 @@ namespace {
     const char* MODEL_CLASSNAME_STATIC = "func_static";
     const char* PLAYERSTART_CLASSNAME = "info_player_start";
 
-    // Angle key for the player start
-    const char* ANGLE_KEY_NAME = "angle";
-    const char* DEFAULT_ANGLE = "90"; // north
-
     const char* ADD_ENTITY_TEXT = N_("Create entity...");
     const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
-    const char* ADD_PLAYERSTART_TEXT = N_("Create player start here");
-    const char* ADD_PLAYERSTART_ICON = "player_start16.png";
-    const char* MOVE_PLAYERSTART_TEXT = N_("Move player start here");
-    const char* MOVE_PLAYERSTART_ICON = "player_start16.png";
+    const char* PLACE_PLAYERSTART_TEXT = N_("Place Player Start here");
+    const char* PLACE_PLAYERSTART_ICON = "player_start16.png";
     const char* ADD_MODEL_TEXT = N_("Create model...");
     const char* ADD_MODEL_ICON = "cmenu_add_model.png";
     const char* ADD_MONSTERCLIP_TEXT = N_("Surround with monsterclip");
@@ -198,14 +192,9 @@ bool OrthoContextMenu::checkAddModel()
     return !_selectionInfo.anythingSelected;
 }
 
-bool OrthoContextMenu::checkAddPlayerStart()
+bool OrthoContextMenu::checkPlacePlayerStart()
 {
-    return !_selectionInfo.anythingSelected && !_selectionInfo.playerStartExists;
-}
-
-bool OrthoContextMenu::checkMovePlayerStart()
-{
-    return !_selectionInfo.anythingSelected && _selectionInfo.playerStartExists;
+    return !_selectionInfo.anythingSelected;
 }
 
 bool OrthoContextMenu::checkRevertToWorldspawn()
@@ -276,40 +265,9 @@ void OrthoContextMenu::addEntity()
     }
 }
 
-void OrthoContextMenu::addPlayerStart()
+void OrthoContextMenu::placePlayerStart()
 {
-    UndoableCommand command("addPlayerStart");
-
-    try
-    {
-        // Create the player start entity
-        auto playerStartNode = GlobalEntityModule().createEntityFromSelection(
-            PLAYERSTART_CLASSNAME, _lastPoint
-        );
-        auto& playerStart = playerStartNode->getEntity();
-
-        // Set a default angle
-        playerStart.setKeyValue(ANGLE_KEY_NAME, DEFAULT_ANGLE);
-    }
-    catch (cmd::ExecutionFailure& e)
-    {
-        wxutil::Messagebox::ShowError(e.what());
-    }
-}
-
-void OrthoContextMenu::callbackMovePlayerStart()
-{
-    UndoableCommand _cmd("movePlayerStart");
-
-    EntityNodeFindByClassnameWalker walker(PLAYERSTART_CLASSNAME);
-    GlobalSceneGraph().root()->traverse(walker);
-
-    Entity* playerStart = walker.getEntity();
-
-    if (playerStart != nullptr)
-    {
-        playerStart->setKeyValue("origin", string::to_string(_lastPoint));
-    }
+    GlobalCommandSystem().executeCommand("PlacePlayerStart", cmd::Argument(_lastPoint));
 }
 
 void OrthoContextMenu::callbackAddLight()
@@ -459,19 +417,12 @@ void OrthoContextMenu::registerDefaultItems()
             std::bind(&OrthoContextMenu::checkAddMonsterclip, this))
     );
 
-    wxutil::MenuItemPtr addPlayerStart(
+    wxutil::MenuItemPtr placePlayerStart(
         new wxutil::MenuItem(
-			new wxutil::IconTextMenuItem(_(ADD_PLAYERSTART_TEXT), ADD_PLAYERSTART_ICON),
-            std::bind(&OrthoContextMenu::addPlayerStart, this),
-            std::bind(&OrthoContextMenu::checkAddPlayerStart, this),
-            std::bind(&OrthoContextMenu::checkAddPlayerStart, this))
-    );
-
-    wxutil::MenuItemPtr movePlayerStart(
-        new wxutil::MenuItem(
-			new wxutil::IconTextMenuItem(_(MOVE_PLAYERSTART_TEXT), MOVE_PLAYERSTART_ICON),
-            std::bind(&OrthoContextMenu::callbackMovePlayerStart, this),
-            std::bind(&OrthoContextMenu::checkMovePlayerStart, this))
+			new wxutil::IconTextMenuItem(_(PLACE_PLAYERSTART_TEXT), PLACE_PLAYERSTART_ICON),
+            std::bind(&OrthoContextMenu::placePlayerStart, this),
+            std::bind(&OrthoContextMenu::checkPlacePlayerStart, this),
+            std::bind(&OrthoContextMenu::checkPlacePlayerStart, this))
     );
 
     wxutil::CommandMenuItemPtr convertStatic(
@@ -523,8 +474,7 @@ void OrthoContextMenu::registerDefaultItems()
     addItem(addSpeaker, SECTION_CREATE);
     addItem(addPrefab, SECTION_CREATE);
 
-    addItem(addPlayerStart, SECTION_ACTION);
-    addItem(movePlayerStart, SECTION_ACTION);
+    addItem(placePlayerStart, SECTION_ACTION);
     addItem(convertStatic, SECTION_ACTION);
     addItem(revertWorldspawn, SECTION_ACTION);
     addItem(revertToWorldspawnPartial, SECTION_ACTION);

@@ -95,16 +95,14 @@ private:
 	bool checkMergeEntities();
 	bool checkReparentPrimitives();
 	bool checkRevertToWorldspawnPartial();
-	bool checkAddPlayerStart();
-	bool checkMovePlayerStart();
+	bool checkPlacePlayerStart();
 	bool checkMakeVisportal();
 	bool checkAddMonsterclip();
 	bool checkAddEntity();
 	bool checkAddModel();
 
 	void addEntity();
-	void addPlayerStart();
-	void callbackMovePlayerStart();
+	void placePlayerStart();
 	void callbackAddModel();
 	void callbackAddLight();
 	void callbackAddPrefab();
