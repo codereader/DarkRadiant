@@ -3,6 +3,7 @@
 #include <wx/panel.h>
 #include <wx/radiobut.h>
 #include <wx/bmpbuttn.h>
+#include <wx/timer.h>
 
 #include "ResourceTreeView.h"
 
@@ -29,6 +30,8 @@ private:
     wxSizer* _leftSizer;
     wxSizer* _rightSizer;
 
+    wxTimer _applyFilterTimer;
+
 public:
     ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeView* treeView = nullptr);
 
@@ -52,7 +55,8 @@ private:
     void _onEntryText(wxCommandEvent& ev);
     void _onFilterButtonToggled(wxCommandEvent& ev);
     void _onTreeViewFilterTextCleared(wxCommandEvent& ev);
-    
+    void _onFilterTimeoutReached(wxTimerEvent& ev);
+
     void HandleFilterEntryChanged();
     void UpdateFromTreeView();
 };

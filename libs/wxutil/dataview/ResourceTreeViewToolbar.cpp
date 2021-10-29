@@ -10,12 +10,18 @@
 namespace wxutil
 {
 
+namespace
+{
+    constexpr const int APPLY_FILTER_TEXT_DELAY_MSEC = 400;
+}
+
 ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeView* treeView) :
     wxPanel(parent, wxID_ANY),
     _treeView(nullptr),
     _filterEntry(nullptr),
     _showAll(nullptr),
-    _showFavourites(nullptr)
+    _showFavourites(nullptr),
+    _applyFilterTimer(this)
 {
     auto* grid = new wxFlexGridSizer(2);
     grid->AddGrowableCol(1);
@@ -74,6 +80,8 @@ ResourceTreeViewToolbar::ResourceTreeViewToolbar(wxWindow* parent, ResourceTreeV
     grid->Add(_rightSizer, 0, wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT, 6);
 
     AssociateToTreeView(treeView);
+
+    Bind(wxEVT_TIMER, &ResourceTreeViewToolbar::_onFilterTimeoutReached, this);
 }
 
 wxSizer* ResourceTreeViewToolbar::GetLeftSizer()
@@ -106,6 +114,7 @@ void ResourceTreeViewToolbar::AssociateToTreeView(ResourceTreeView* treeView)
 
 void ResourceTreeViewToolbar::ClearFilter()
 {
+    _applyFilterTimer.Stop();
     _filterEntry->SetValue("");
 
     if (_treeView != nullptr)
@@ -166,20 +175,8 @@ void ResourceTreeViewToolbar::HandleFilterEntryChanged()
         return;
     }
 
-    auto filterText = _filterEntry->GetValue();
-    bool filterResult = _treeView->SetFilterText(filterText);
-
-    if (!filterText.empty() && !filterResult)
-    {
-        // No match, set the text to red for user feedback
-        _filterEntry->SetForegroundColour(wxColor(220, 0, 0));
-    }
-    else
-    {
-        _filterEntry->SetForegroundColour(wxNullColour);
-    }
-
-    _filterEntry->Refresh();
+    // Put in a slight delay before actually firing off the search (#5745)
+    _applyFilterTimer.Start(APPLY_FILTER_TEXT_DELAY_MSEC, true);
 }
 
 void ResourceTreeViewToolbar::_onFilterButtonToggled(wxCommandEvent& ev)
@@ -198,6 +195,7 @@ void ResourceTreeViewToolbar::_onTreeViewFilterTextCleared(wxCommandEvent& ev)
 {
     // Tree view cleared the filter, clear our entry box
     _filterEntry->Clear();
+    _applyFilterTimer.Stop();
     ev.Skip();
 }
 
@@ -208,6 +206,24 @@ void ResourceTreeViewToolbar::UpdateFromTreeView()
     auto mode = _treeView->GetTreeMode();
     _showAll->SetValue(mode == ResourceTreeView::TreeMode::ShowAll);
     _showFavourites->SetValue(mode == ResourceTreeView::TreeMode::ShowFavourites);
+}
+
+void ResourceTreeViewToolbar::_onFilterTimeoutReached(wxTimerEvent& ev)
+{
+    auto filterText = _filterEntry->GetValue();
+    bool filterResult = _treeView->SetFilterText(filterText);
+
+    if (!filterText.empty() && !filterResult)
+    {
+        // No match, set the text to red for user feedback
+        _filterEntry->SetForegroundColour(wxColor(220, 0, 0));
+    }
+    else
+    {
+        _filterEntry->SetForegroundColour(wxNullColour);
+    }
+
+    _filterEntry->Refresh();
 }
 
 }
