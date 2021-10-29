@@ -32,6 +32,7 @@ wxEvent* ResourceTreeView::PopulationFinishedEvent::Clone() const
 }
 
 wxDEFINE_EVENT(EV_TREEVIEW_POPULATION_FINISHED, ResourceTreeView::PopulationFinishedEvent);
+wxDEFINE_EVENT(EV_TREEVIEW_FILTERTEXT_CLEARED, wxCommandEvent);
 
 ResourceTreeView::ResourceTreeView(wxWindow* parent, const ResourceTreeView::Columns& columns, long style) :
     ResourceTreeView(parent, TreeModel::Ptr(), columns, style)
@@ -297,6 +298,8 @@ void ResourceTreeView::ClearFilterText()
     _filterText.clear();
 
     UpdateTreeVisibility();
+
+    wxQueueEvent(this, new wxCommandEvent(EV_TREEVIEW_FILTERTEXT_CLEARED));
 }
 
 std::string ResourceTreeView::GetSelectedFullname()
@@ -342,6 +345,9 @@ void ResourceTreeView::SetSelectedElement(const std::string& value, const TreeMo
         Collapse(GetTreeModel()->GetRoot());
         return;
     }
+
+    // Clear the filter before seeking an element
+    ClearFilterText();
 
     // Find the requested element
     auto item = GetTreeModel()->FindString(value, column);

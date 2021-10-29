@@ -197,5 +197,7 @@ private:
 
 // Emitted when the tree view is done populating
 wxDECLARE_EVENT(EV_TREEVIEW_POPULATION_FINISHED, ResourceTreeView::PopulationFinishedEvent);
+// Emitted when the tree view cleared its filter text on its own
+wxDECLARE_EVENT(EV_TREEVIEW_FILTERTEXT_CLEARED, wxCommandEvent);
 
 }

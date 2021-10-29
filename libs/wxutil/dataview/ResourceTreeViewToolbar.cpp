@@ -95,6 +95,12 @@ void ResourceTreeViewToolbar::EnableFavouriteManagement(bool enable)
 void ResourceTreeViewToolbar::AssociateToTreeView(ResourceTreeView* treeView)
 {
     _treeView = treeView;
+
+    if (_treeView != nullptr)
+    {
+        _treeView->Bind(EV_TREEVIEW_FILTERTEXT_CLEARED, &ResourceTreeViewToolbar::_onTreeViewFilterTextCleared, this);
+    }
+
     UpdateFromTreeView();
 }
 
@@ -186,6 +192,13 @@ void ResourceTreeViewToolbar::_onFilterButtonToggled(wxCommandEvent& ev)
 
     _filterEntry->Clear();
     HandleFilterEntryChanged();
+}
+
+void ResourceTreeViewToolbar::_onTreeViewFilterTextCleared(wxCommandEvent& ev)
+{
+    // Tree view cleared the filter, clear our entry box
+    _filterEntry->Clear();
+    ev.Skip();
 }
 
 void ResourceTreeViewToolbar::UpdateFromTreeView()

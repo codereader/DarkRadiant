@@ -51,6 +51,7 @@ private:
     void _onEntryChar(wxKeyEvent& ev);
     void _onEntryText(wxCommandEvent& ev);
     void _onFilterButtonToggled(wxCommandEvent& ev);
+    void _onTreeViewFilterTextCleared(wxCommandEvent& ev);
     
     void HandleFilterEntryChanged();
     void UpdateFromTreeView();
