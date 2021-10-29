@@ -40,11 +40,11 @@ public:
 	const Matrix4& getMatrix4();
 
 	// Returns the position of the pivot point relative to origin
-	const Vector3& getVector3();
+	Vector3 getVector3();
 
 	void setFromMatrix(const Matrix4& newPivot2World);
 
-	// Set the dirty flag of the matrix, this will trigger 
+	// Set the dirty flag of the matrix, this will trigger
 	// an updateFromSelection() next time getMatrix4() is called
 	void setNeedsRecalculation(bool needsRecalculation);
 

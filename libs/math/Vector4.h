@@ -4,7 +4,7 @@
 
 /* greebo: This file contains the templated class definition of the three-component vector
  *
- * BasicVector4: A vector with three components of type <Element>
+ * BasicVector4: A vector with three components of type <T>
  *
  * The BasicVector4 is equipped with the most important operators like *, *= and so on.
  *
@@ -19,40 +19,38 @@
 #include "FloatTools.h"
 #include "Vector3.h"
 
-/// A 4-element vector of type <Element>
-template<typename Element>
+/// A 4-element vector of type <T>
+template<typename T>
 class BasicVector4
 {
-    // The components of this vector
-    Element _v[4];
+public:
+    /// Eigen vector type to store data
+    using Eigen_T = Eigen::Matrix<T, 4, 1>;
+
+    /// Public typedef to read the type of our elements
+    using ElementType = T;
+
+private:
+    // Eigen vector for storage and calculations
+    Eigen_T _v;
 
 public:
-    // Public typedef to read the type of our elements
-    typedef Element ElementType;
 
-    // Constructor (no arguments)
-    BasicVector4() {
-        _v[0] = 0;
-        _v[1] = 0;
-        _v[2] = 0;
-        _v[3] = 0;
-    }
+    /// Default construct a zero vector
+    BasicVector4(): _v(0, 0, 0, 0)
+    {}
 
     /**
      * \brief Construct a BasicVector4 out of 4 explicit values.
      *
      * If the W coordinate is unspecified it will default to 1.
      */
-    BasicVector4(Element x_, Element y_, Element z_, Element w_ = 1)
-    {
-        _v[0] = x_;
-        _v[1] = y_;
-        _v[2] = z_;
-        _v[3] = w_;
-    }
+    BasicVector4(T x_, T y_, T z_, T w_ = 1)
+    : _v(x_, y_, z_, w_)
+    {}
 
     // Construct a BasicVector4 out of a Vector3 plus a W value (default 1)
-    BasicVector4(const BasicVector3<Element>& other, Element w_ = 1)
+    BasicVector4(const BasicVector3<T>& other, T w_ = 1)
     {
         _v[0] = other.x();
         _v[1] = other.y();
@@ -60,253 +58,107 @@ public:
         _v[3] = w_;
     }
 
+    /// Construct directly from Eigen type
+    BasicVector4(const Eigen_T& vec): _v(vec)
+    {}
+
+    /// Return the underlying Eigen vector
+    const Eigen_T& eigen() const { return _v; }
+
     // Return non-constant references to the components
-    Element& x() { return _v[0]; }
-    Element& y() { return _v[1]; }
-    Element& z() { return _v[2]; }
-    Element& w() { return _v[3]; }
+    T& x() { return _v[0]; }
+    T& y() { return _v[1]; }
+    T& z() { return _v[2]; }
+    T& w() { return _v[3]; }
 
     // Return constant references to the components
-    const Element& x() const { return _v[0]; }
-    const Element& y() const { return _v[1]; }
-    const Element& z() const { return _v[2]; }
-    const Element& w() const { return _v[3]; }
+    const T& x() const { return _v[0]; }
+    const T& y() const { return _v[1]; }
+    const T& z() const { return _v[2]; }
+    const T& w() const { return _v[3]; }
 
-    Element index(std::size_t i) const {
-        return _v[i];
-    }
-    Element& index(std::size_t i) {
-        return _v[i];
+    /// Dot product this BasicVector4 with another vector
+    T dot(const BasicVector4<T>& other) const {
+        return x() * other.x()
+             + y() * other.y()
+             + z() * other.z()
+             + w() * other.w();
     }
 
-    /**
-     * \brief
-     * Return a readable (pretty-printed) string representation of the vector
-     *
-     * We need a dedicated function for this because the standard operator<< is
-     * already used for serialisation to the less readable space-separated text
-     * format.
-     */
-    std::string pp() const
+    /// Truncate this Vector4 into a Vector3 (no division by W)
+    BasicVector3<T> getVector3() const {
+        return BasicVector3<T>(x(), y(), z());
+    }
+
+    /// Project homogeneous BasicVector4 into 3 dimensions by dividing by W
+    BasicVector3<T> getProjected() const
     {
-        std::stringstream ss;
-        ss << "(" << x() << ", " << y() << ", " << z() << ", " << w() << ")";
-        return ss.str();
+        return getVector3() / w();
     }
 
-    /** Compare this BasicVector4 against another for equality.
-     */
-    bool operator== (const BasicVector4& other) const {
-        return (other.x() == x()
-                && other.y() == y()
-                && other.z() == z()
-                && other.w() == w());
-    }
+    /// Cast to const raw array
+    operator const T* () const { return _v.data(); }
 
-    /** Compare this BasicVector4 against another for inequality.
-     */
-    bool operator!= (const BasicVector4& other) const {
-        return !(*this == other);
-    }
+    /// Cast to non-const raw array
+    operator T* () { return _v.data(); }
+};
 
-    /*  Define the addition operators + and += with any other BasicVector4 of type OtherElement
-     *  The vectors are added to each other element-wise
-     */
-    template<typename OtherElement>
-    BasicVector4<Element> operator+ (const BasicVector4<OtherElement>& other) const {
-        return BasicVector4<Element>(
-            _v[0] + static_cast<Element>(other.x()),
-            _v[1] + static_cast<Element>(other.y()),
-            _v[2] + static_cast<Element>(other.z()),
-            _v[3] + static_cast<Element>(other.w())
-        );
-    }
+/// Equality comparison for BasicVector4
+template<typename T>
+bool operator== (const BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    return (v1.x() == v2.x()
+            && v1.y() == v2.y()
+            && v1.z() == v2.z()
+            && v1.w() == v2.w());
+}
 
-    template<typename OtherElement>
-	BasicVector4<Element>& operator+= (const BasicVector4<OtherElement>& other) {
-        _v[0] += static_cast<Element>(other.x());
-        _v[1] += static_cast<Element>(other.y());
-        _v[2] += static_cast<Element>(other.z());
-        _v[3] += static_cast<Element>(other.w());
-		return *this;
-    }
+/// Inequality comparison for BasicVector4
+template<typename T>
+bool operator!= (const BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    return !(v1 == v2);
+}
 
-    /*  Define the substraction operators - and -= with any other BasicVector4 of type OtherElement
-     *  The vectors are substracted from each other element-wise
-     */
-    template<typename OtherElement>
-    BasicVector4<Element> operator- (const BasicVector4<OtherElement>& other) const {
-        return BasicVector4<Element>(
-            _v[0] - static_cast<Element>(other.x()),
-            _v[1] - static_cast<Element>(other.y()),
-            _v[2] - static_cast<Element>(other.z()),
-            _v[3] - static_cast<Element>(other.w())
-        );
-    }
+/// Componentwise addition of two vectors
+template <typename T>
+BasicVector4<T> operator+(const BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    return BasicVector4<T>(v1.x() + v2.x(),
+                           v1.y() + v2.y(),
+                           v1.z() + v2.z(),
+                           v1.w() + v2.w());
+}
 
-    template<typename OtherElement>
-	BasicVector4<Element>& operator-= (const BasicVector4<OtherElement>& other) {
-        _v[0] -= static_cast<Element>(other.x());
-        _v[1] -= static_cast<Element>(other.y());
-        _v[2] -= static_cast<Element>(other.z());
-        _v[3] -= static_cast<Element>(other.w());
-		return *this;
-    }
+template <typename T>
+BasicVector4<T>& operator+=(BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    v1.x() += v2.x();
+    v1.y() += v2.y();
+    v1.z() += v2.z();
+    v1.w() += v2.w();
+    return v1;
+}
 
-    /*  Define the multiplication operators * and *= with another Vector4 of type OtherElement
-     *
-     *  The vectors are multiplied element-wise
-     *
-     *  greebo: This is mathematically kind of senseless, as this is a mixture of
-     *  a dot product and scalar multiplication. It can be used to scale each
-     *  vector component by a different factor, so maybe this comes in handy.
-     */
-    template<typename OtherElement>
-    BasicVector4<Element> operator* (const BasicVector4<OtherElement>& other) const {
-        return BasicVector4<Element>(
-            _v[0] * static_cast<Element>(other.x()),
-            _v[1] * static_cast<Element>(other.y()),
-            _v[2] * static_cast<Element>(other.z()),
-            _v[3] * static_cast<Element>(other.w())
-        );
-    }
+/// Componentwise subtraction of two vectors
+template<typename T>
+BasicVector4<T> operator- (const BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    return BasicVector4<T>(v1.x() - v2.x(),
+                           v1.y() - v2.y(),
+                           v1.z() - v2.z(),
+                           v1.w() - v2.w());
+}
 
-    template<typename OtherElement>
-	BasicVector4<Element>& operator*= (const BasicVector4<OtherElement>& other) {
-        _v[0] *= static_cast<Element>(other.x());
-        _v[1] *= static_cast<Element>(other.y());
-        _v[2] *= static_cast<Element>(other.z());
-        _v[3] *= static_cast<Element>(other.w());
-		return *this;
-    }
-
-
-    /*  Define the multiplications * and *= with a scalar
-     */
-    template<typename OtherElement>
-	BasicVector4<Element>& operator*= (const OtherElement& other) {
-        Element factor = static_cast<Element>(other);
-        _v[0] *= factor;
-        _v[1] *= factor;
-        _v[2] *= factor;
-        _v[3] *= factor;
-		return *this;
-    }
-
-    /*  Define the division operators / and /= with another Vector4 of type OtherElement
-     *  The vectors are divided element-wise
-     */
-    template<typename OtherElement>
-    BasicVector4<Element> operator/ (const BasicVector4<OtherElement>& other) const {
-        return BasicVector4<Element>(
-            _v[0] / static_cast<Element>(other.x()),
-            _v[1] / static_cast<Element>(other.y()),
-            _v[2] / static_cast<Element>(other.z()),
-            _v[3] / static_cast<Element>(other.w())
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector4<Element>& operator/= (const BasicVector4<OtherElement>& other) {
-        _v[0] /= static_cast<Element>(other.x());
-        _v[1] /= static_cast<Element>(other.y());
-        _v[2] /= static_cast<Element>(other.z());
-        _v[3] /= static_cast<Element>(other.w());
-		return *this;
-    }
-
-    /*  Define the scalar divisions / and /=
-     */
-    template<typename OtherElement>
-    BasicVector4<Element> operator/ (const OtherElement& other) const {
-        Element divisor = static_cast<Element>(other);
-        return BasicVector4<Element>(
-            _v[0] / divisor,
-            _v[1] / divisor,
-            _v[2] / divisor,
-            _v[3] / divisor
-        );
-    }
-
-    template<typename OtherElement>
-	BasicVector4<Element>& operator/= (const OtherElement& other) {
-        Element divisor = static_cast<Element>(other);
-        _v[0] /= divisor;
-        _v[1] /= divisor;
-        _v[2] /= divisor;
-        _v[3] /= divisor;
-		return *this;
-    }
-
-    /* Scalar product this vector with another Vector4,
-     * returning the projection of <self> onto <other>
-     *
-     * @param other
-     * The Vector4 to dot-product with this Vector4.
-     *
-     * @returns
-     * The inner product (a scalar): a[0]*b[0] + a[1]*b[1] + a[2]*b[2] + a[3]*b[3]
-     */
-
-    template<typename OtherT>
-    Element dot(const BasicVector4<OtherT>& other) const {
-        return  Element(_v[0] * other.x() +
-                        _v[1] * other.y() +
-                        _v[2] * other.z() +
-                        _v[3] * other.w());
-    }
-
-    /** Project this homogeneous Vector4 into a Cartesian Vector3
-     * by dividing by w.
-     *
-     * @returns
-     * A Vector3 representing the Cartesian equivalent of this
-     * homogeneous vector.
-     */
-    BasicVector3<Element> getProjected() {
-        return BasicVector3<Element>(
-            _v[0] / _v[3],
-            _v[1] / _v[3],
-            _v[2] / _v[3]);
-    }
-
-    /** Implicit cast to C-style array. This allows a Vector4 to be
-     * passed directly to GL functions that expect an array (e.g.
-     * glFloat4dv()). These functions implicitly provide operator[]
-     * as well, since the C-style array provides this function.
-     */
-
-    operator const Element* () const {
-        return _v;
-    }
-
-    operator Element* () {
-        return _v;
-    }
-
-    /*  Cast this Vector4 onto a Vector3, both const and non-const
-     */
-    BasicVector3<Element>& getVector3() {
-        return *reinterpret_cast<BasicVector3<Element>*>(_v);
-    }
-
-    const BasicVector3<Element>& getVector3() const {
-        return *reinterpret_cast<const BasicVector3<Element>*>(_v);
-    }
-
-    /**
-     * Equality check with tolerance epsilon.
-     */
-    template<typename OtherElement>
-    bool isEqual(const BasicVector4<OtherElement>& other, Element epsilon) const
-    {
-        return float_equal_epsilon(x(), other.x(), epsilon) &&
-               float_equal_epsilon(y(), other.y(), epsilon) &&
-               float_equal_epsilon(z(), other.z(), epsilon) &&
-               float_equal_epsilon(w(), other.w(), epsilon);
-    }
-
-}; // BasicVector4
+template<typename T>
+BasicVector4<T>& operator-= (BasicVector4<T>& v1, const BasicVector4<T>& v2)
+{
+    v1.x() -= v2.x();
+    v1.y() -= v2.y();
+    v1.z() -= v2.z();
+    v1.w() -= v2.w();
+    return v1;
+}
 
 /// Multiply BasicVector4 with a scalar
 template <
@@ -318,7 +170,7 @@ BasicVector4<T> operator*(const BasicVector4<T>& v, S s)
     return BasicVector4<T>(v.x() * s, v.y() * s, v.z() * s, v.w() * s);
 }
 
-/// Multiply BasicVector3 with a scalar
+/// Multiply BasicVector4 with a scalar
 template <
     typename T, typename S,
     typename = typename std::enable_if<std::is_arithmetic<S>::value, S>::type
@@ -326,6 +178,37 @@ template <
 BasicVector4<T> operator*(S s, const BasicVector4<T>& v)
 {
     return v * s;
+}
+
+/// Multiply BasicVector4 with a scalar and modify in place
+template<typename T, typename S>
+BasicVector4<T>& operator*= (BasicVector4<T>& v, S s)
+{
+    v.x() *= s;
+    v.y() *= s;
+    v.z() *= s;
+    v.w() *= s;
+    return v;
+}
+
+/// Divide and assign BasicVector4 by a scalar
+template<typename T, typename S>
+BasicVector4<T>& operator/= (BasicVector4<T>& v, S s)
+{
+    v.x() /= s;
+    v.y() /= s;
+    v.z() /= s;
+    v.w() /= s;
+    return v;
+}
+
+/// Divide a BasicVector4 by a scalar
+template<typename T, typename S>
+BasicVector4<T> operator/ (const BasicVector4<T>& v, S s)
+{
+    auto result = v;
+    result /= s;
+    return result;
 }
 
 /// Stream insertion for BasicVector4
@@ -358,6 +241,21 @@ inline bool isNear(const BasicVector4<T>& v1, const BasicVector4<T>& v2, double 
     BasicVector4<T> diff = v1 - v2;
     return std::abs(diff.x()) < epsilon && std::abs(diff.y()) < epsilon
         && std::abs(diff.z()) < epsilon && std::abs(diff.w()) < epsilon;
+}
+
+/**
+ * \brief Return a readable (pretty-printed) string representation of a
+ * BasicVector4.
+ *
+ * We need a dedicated function for this because the standard operator<< is
+ * already used for serialisation to the less readable space-separated text
+ * format.
+ */
+template<typename T> std::string pp(const BasicVector4<T>& v)
+{
+    std::stringstream ss;
+    ss << "(" << v.x() << ", " << v.y() << ", " << v.z() << ", " << v.w() << ")";
+    return ss.str();
 }
 
 }

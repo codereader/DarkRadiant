@@ -249,8 +249,8 @@ void TextureProjection::emitTextureCoordinates(Winding& winding, const Vector3& 
     local2tex.multiplyBy(xyz2st);
 
     // Calculate the tangent and bitangent vectors to allow the correct openGL transformations
-    auto tangent(local2tex.getTransposed().xCol().getVector3().getNormalised());
-    auto bitangent(local2tex.getTransposed().yCol().getVector3().getNormalised());
+    Vector3 tangent(local2tex.getTransposed().xCol3().getNormalised());
+    Vector3 bitangent(local2tex.getTransposed().yCol3().getNormalised());
 
     // Transform the texture basis vectors into the "BrushFace space"
     // usually the localToWorld matrix is identity, so this doesn't do anything.

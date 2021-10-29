@@ -3,4 +3,5 @@ usr/lib/*/darkradiant/lib*
 usr/lib/*/darkradiant/modules
 usr/share/darkradiant/scripts
 usr/share/darkradiant
+usr/share/doc/darkradiant
 usr/share/applications

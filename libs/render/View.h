@@ -22,8 +22,7 @@ namespace render
 {
 
 /// \brief View-volume culling and transformations.
-class View : 
-	public IRenderView
+class View: public IRenderView
 {
 private:
 	/// modelview matrix
@@ -54,7 +53,7 @@ private:
 	int _count_bboxs;
 	int _count_oriented_bboxs;
 #endif
-	
+
 public:
 	View(bool fill = false) :
 		_modelview(Matrix4::getIdentity()),
@@ -64,7 +63,7 @@ public:
 	{}
 
 	View(const View& other) = default;
-    
+
 	View(const VolumeTest& other) :
 		_modelview(other.GetModelview()),
 		_projection(other.GetProjection()),
@@ -173,8 +172,8 @@ public:
 	{
 		return _fill;
 	}
-	
-	const Vector3& getViewer() const override
+
+	Vector3 getViewer() const override
 	{
 		return _viewer.getVector3();
 	}
@@ -183,7 +182,7 @@ public:
 	{
 		return _frustum;
 	}
-	
+
 	std::string getCullStats() const override
 	{
 		std::string stats;

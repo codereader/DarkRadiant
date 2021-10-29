@@ -52,13 +52,13 @@ void TranslateManipulator::render(RenderableCollector& collector, const VolumeTe
     // temp hack
     UpdateColours();
 
-    Vector3 x = _pivot2World._worldSpace.xCol().getVector3().getNormalised();
+    Vector3 x = _pivot2World._worldSpace.xCol3().getNormalised();
     bool show_x = manipulator_show_axis(_pivot2World, x);
 
-    Vector3 y = _pivot2World._worldSpace.yCol().getVector3().getNormalised();
+    Vector3 y = _pivot2World._worldSpace.yCol3().getNormalised();
     bool show_y = manipulator_show_axis(_pivot2World, y);
 
-    Vector3 z = _pivot2World._worldSpace.zCol().getVector3().getNormalised();
+    Vector3 z = _pivot2World._worldSpace.zCol3().getNormalised();
     bool show_z = manipulator_show_axis(_pivot2World, z);
 
     if(show_x)
@@ -97,13 +97,13 @@ void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2
 
     SelectionPool selector;
 
-    Vector3 x = _pivot2World._worldSpace.xCol().getVector3().getNormalised();
+    Vector3 x = _pivot2World._worldSpace.xCol3().getNormalised();
     bool show_x = manipulator_show_axis(_pivot2World, x);
 
-    Vector3 y = _pivot2World._worldSpace.yCol().getVector3().getNormalised();
+    Vector3 y = _pivot2World._worldSpace.yCol3().getNormalised();
     bool show_y = manipulator_show_axis(_pivot2World, y);
 
-    Vector3 z = _pivot2World._worldSpace.zCol().getVector3().getNormalised();
+    Vector3 z = _pivot2World._worldSpace.zCol3().getNormalised();
     bool show_z = manipulator_show_axis(_pivot2World, z);
 
     {

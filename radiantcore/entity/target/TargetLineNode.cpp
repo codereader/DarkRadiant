@@ -62,7 +62,7 @@ Vector3 TargetLineNode::getOwnerPosition() const
             return bounds.getOrigin();
         }
 
-        return _owner.localToWorld().tCol().getVector3();
+        return _owner.localToWorld().translation();
     }
 
     return light->getSelectAABB().getOrigin();

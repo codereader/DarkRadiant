@@ -75,7 +75,7 @@ public:
         // and a translation part. Calculate the translation part and apply it.
 
         // Translate the world pivot into local coordinates (we only care about the translation part)
-        Vector3 localPivot = worldPivot - localToWorld.tCol().getVector3();
+        Vector3 localPivot = worldPivot - localToWorld.translation();
 
         Matrix4 rotation = Matrix4::getRotationQuantised(value);
 
@@ -195,12 +195,10 @@ private:
 	static Matrix4 getMatrixForComponents(const Vector3& translation, const Quaternion& rotation, const Vector3& scale)
 	{
 		Matrix4 result(Matrix4::getRotationQuantised(rotation));
-		result.xCol().getVector3() *= scale.x();
-		result.yCol().getVector3() *= scale.y();
-		result.zCol().getVector3() *= scale.z();
-		result.tx() = translation.x();
-		result.ty() = translation.y();
-		result.tz() = translation.z();
+		result.setXCol(result.xCol3() * scale.x());
+		result.setYCol(result.yCol3() * scale.y());
+		result.setZCol(result.zCol3() * scale.z());
+        result.setTranslation(translation);
 		return result;
 	}
 };

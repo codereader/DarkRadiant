@@ -248,7 +248,7 @@ inline double arctangent_yx(double y, double x) {
 // Returns the index of the one edge which points "most" into the given direction, <direction> should be normalised
 inline std::size_t findBestEdgeForDirection(const Vector2& direction, const std::vector<Vector2>& edges)
 {
-	double best = -LONG_MAX;
+	double best = std::numeric_limits<double>::lowest();
 	std::size_t bestIndex = 0;
 
 	for (std::size_t i = 0; i < edges.size(); ++i)

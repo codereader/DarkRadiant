@@ -137,16 +137,22 @@ but there will be no available textures, models, entities or other game assets.
 
 DarkRadiant ships with a number of different user interface layouts, which
 control the position, visibility and window type of the major interface
-elements. The current layout can be changed from the `View -> Window Layout`
+elements. The current layout can be changed from the *View -> Window Layout*
 menu, and will require DarkRadiant to be restarted.
 
-There is currently no support for custom layouts, however all of the provided
-layouts allow window sizes and splitter positions to be changed, and the changes
-will persist through multiple editing sessions.
+All of the provided layouts allow window sizes and splitter positions to be
+changed, and the changes will persist through multiple editing sessions. It is
+also possible to create a new floating 2D view using the *View -> New XY view*
+command at any time, regardless of which layout is chosen.
+
+*Dockable*:: Editing tab widget and 3D camera view are placed in dockable
+subwindows which can be floated and positioned freely, or docked to the window
+edges. The 2D view takes up the remaining space in the main window. This is the
+most flexible layout.
 
 *Embedded*:: A large 2D window is shown on the right, while the left-hand side
- is divided vertically into the 3D camera window and a tab widget containing the
- main editing panels. There are no floating subwindows in this layout.
+is divided vertically into the 3D camera window and a tab widget containing the
+main editing panels. There are no floating subwindows in this layout.
 
 *Regular*:: A legacy GtkRadiant layout which places the 2D window on the left,
  the 3D camera view on the top right, and a 2D scrolling textures panel on the
@@ -155,12 +161,6 @@ will persist through multiple editing sessions.
 *RegularLeft*:: The same as *Regular* except the full-height 2D window is on the
  right and the 3D window and texture panels are on the left.
 
-*Floating*:: The 2D window, 3D window and editing tab widget are all shown in
- separate floating windows which always appear above the main DarkRadiant
- window. The main window itself is empty apart from the toolbars and status bar.
- This is the most flexible layout, since each subwindow can be sized or
- positioned as desired, but the multiple subwindows may be cumbersome to manage.
-
 *SplitPane*:: Three separate 2D windows, showing each of the major axes, are
  shown alongside the 3D camera view in a 2x2 layout similar to traditional 3D
  modelling applications. The editing tab widget is in a floating window.
@@ -168,9 +168,9 @@ will persist through multiple editing sessions.
 === Colour schemes
 
 DarkRadiant defaults to a black-on-white colour scheme in the 2D windows, but
-ships with four other colour schemes, which can be accessed under `View ->
-Colours...`. If you prefer a dark theme, the `Black & Green` scheme might be
-suitable, whereas the `Maya/Max/Lightwave Emulation` and `Super Mal` themes
+ships with four other colour schemes, which can be chosen with the *View ->
+Colours...* dialog. If you prefer a dark theme, the `Black & Green` scheme might
+be suitable, whereas the `Maya/Max/Lightwave Emulation` and `Super Mal` themes
 provide a more neutral, low-contrast look.
 
 [align="center",cols="^.<a,^.<a,^.<a",grid="none"]
@@ -793,8 +793,22 @@ the current *Step* value.
 rotate the texture clockwise or anticlockwise by the current *Step* value.
 |Fit Texture|These controls allow you to fit an exact number of copies of the
 texture across the face, so that the texture edges correspond to the face edges.
-The numeric spin boxes control how many copies of the texture are tiled, and the
-operation is performed by clicking the *Fit* button.
+
+The numeric spin boxes control how many copies of the texture are tiled on each
+axis. You can enter a value manually (including fractional values above or below
+1.0) or use the spin buttons to quickly increase or decrease the number of
+tiles. Using the spin buttons will apply the fit immediately, so you can quickly
+preview the results in the camera view.
+
+Toggle the image:preserveAspect.png[] button to *preserve aspect ratio* when
+using the spin buttons to fit the texture on one axis. This automatically
+adjusts the other axis so that the aspect ratio of the texture image is
+preserved, ignoring the value in the other axis' spin box. This can be useful
+for textures like wooden planks, where you might want an exact number of plank
+_widths_ on a certain brush face but the number of _lengths_ is not important
+(since the texture is seamless); in this case, avoiding aspect ratio distortion
+is more useful than fitting an exact number of lengths.
+
 |Align Texture|These buttons shift the texture so that the Top/Bottom/Left/Right
 edge of the face are aligned with a texture boundary, but otherwise do not
 modify the scaling of the texture (unlike the *Fit* operation).
@@ -1724,9 +1738,11 @@ partially-complete maps.
  configuring game-specific settings.
 
 *Pointfile*:: Load and show the <<PointFile,pointfile>> for the current map, if
- there is one. An error dialog will be displayed if there is no current
- pointfile (which is usually the case if the current map has not leaked during
- compilation).
+there is one. If more than pointfile is available, a dialog will be shown
+allowing you to choose which pointfile to load. An error dialog will be
+displayed if there is no current pointfile (which is usually the case if the
+current map has not leaked during compilation). Choose this option a second time
+to hide the rendered pointfile.
 
 *Exit*:: Exit DarkRadiant, prompting to save the current map if necessary.
 

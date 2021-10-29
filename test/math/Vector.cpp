@@ -6,7 +6,7 @@
 namespace test
 {
 
-TEST(MathTest, ConstructVector3)
+TEST(VectorTest, ConstructVector3)
 {
     Vector3 vec(1.0, 2.0, 3.5);
 
@@ -15,14 +15,14 @@ TEST(MathTest, ConstructVector3)
     EXPECT_EQ(vec.z(), 3.5);
 }
 
-TEST(MathTest, DefaultConstructVector3)
+TEST(VectorTest, DefaultConstructVector3)
 {
     Vector3 vec;
 
     EXPECT_EQ(vec, Vector3(0, 0, 0));
 }
 
-TEST(MathTest, ConstructVector3FromArray)
+TEST(VectorTest, ConstructVector3FromArray)
 {
     double values[3] = { 1.0, 14.0, -96.5 };
     Vector3 vec(values);
@@ -30,7 +30,31 @@ TEST(MathTest, ConstructVector3FromArray)
     EXPECT_EQ(vec, Vector3(1.0, 14.0, -96.5));
 }
 
-TEST(MathTest, SetVector3Components)
+TEST(VectorTest, ConstructVector4)
+{
+    Vector4 vec(25.0, -356, 128.25, 14);
+
+    EXPECT_EQ(vec.x(), 25.0);
+    EXPECT_EQ(vec.y(), -356);
+    EXPECT_EQ(vec.z(), 128.25);
+    EXPECT_EQ(vec.w(), 14);
+}
+
+TEST(VectorTest, ConstructVector4DefaultW)
+{
+    Vector4 vec(16, 2, 8);
+
+    EXPECT_EQ(vec.w(), 1);
+}
+
+TEST(VectorTest, DefaultConstructVector4)
+{
+    Vector4 vec;
+
+    EXPECT_EQ(vec, Vector4(0, 0, 0, 0));
+}
+
+TEST(VectorTest, SetVector3Components)
 {
     Vector3 vec(-16, 256, 0.95);
 
@@ -45,7 +69,7 @@ TEST(MathTest, SetVector3Components)
     EXPECT_EQ(vec, Vector3(-20, 1230, 9));
 }
 
-TEST(MathTest, PromoteVector3To4)
+TEST(VectorTest, PromoteVector3To4)
 {
     Vector3 v3(8, 12, -5);
     Vector4 v4(v3);
@@ -53,7 +77,7 @@ TEST(MathTest, PromoteVector3To4)
     EXPECT_EQ(v4, Vector4(8, 12, -5, 1));
 }
 
-TEST(MathTest, DemoteVector4To3)
+TEST(VectorTest, DemoteVector4To3)
 {
     Vector4 v4(1, -96, 0.125);
     Vector3 v3 = v4.getVector3();
@@ -61,7 +85,7 @@ TEST(MathTest, DemoteVector4To3)
     EXPECT_EQ(v3, Vector3(1, -96, 0.125));
 }
 
-TEST(MathTest, Vector3EqualityComparison)
+TEST(VectorTest, Vector3EqualityComparison)
 {
     Vector3 v1(1, 2, 8);
     Vector3 v1a(1, 2, 8);
@@ -72,7 +96,7 @@ TEST(MathTest, Vector3EqualityComparison)
     EXPECT_NE(v1, v2);
 }
 
-TEST(MathTest, VectorEpsilonComparison)
+TEST(VectorTest, Vector3EpsilonComparison)
 {
     const Vector3 v(1, 8, 320);
     const Vector3 increment(1e-8, 1e-7, 1e-8);
@@ -85,7 +109,31 @@ TEST(MathTest, VectorEpsilonComparison)
     EXPECT_TRUE(math::isNear(v, v + Vector3(1000, 10000, 20000), 1e6));
 }
 
-TEST(MathTest, NegateVector3)
+TEST(VectorTest, Vector4EqualityComparison)
+{
+    Vector4 v1(-5, 27, 9562);
+    Vector4 v1a(-5, 27, 9562);
+    Vector4 v2(350, 0.025, 16);
+
+    EXPECT_EQ(v1, v1);
+    EXPECT_EQ(v1, v1a);
+    EXPECT_NE(v1, v2);
+}
+
+TEST(VectorTest, Vector4EpsilonComparison)
+{
+    const Vector4 v(256, -18, -0.5);
+    const Vector4 increment(1e-8, 1e-8, 1e-8, 1e-8);
+
+    EXPECT_NE(v, v + increment);
+    EXPECT_TRUE(math::isNear(v, v, 1e-10));
+    EXPECT_TRUE(math::isNear(v, v + increment, 1e-6));
+    EXPECT_TRUE(math::isNear(v, v - increment, 1e-6));
+    EXPECT_FALSE(math::isNear(v, v + increment, 1e-10));
+    EXPECT_FALSE(math::isNear(v, v - increment, 1e-10));
+}
+
+TEST(VectorTest, NegateVector3)
 {
     Vector3 vec(5, 10, 125);
 
@@ -93,7 +141,7 @@ TEST(MathTest, NegateVector3)
     EXPECT_EQ(-(-vec), vec);
 }
 
-TEST(MathTest, VectorLength)
+TEST(VectorTest, VectorLength)
 {
     const Vector3 vA(3, 4, 5);
     EXPECT_EQ(vA.getLengthSquared(), 3*3 + 4*4 + 5*5);
@@ -104,7 +152,7 @@ TEST(MathTest, VectorLength)
     EXPECT_EQ(vB.getLength(), sqrt(4 + 0.25 + 256));
 }
 
-TEST(MathTest, NormaliseVector3)
+TEST(VectorTest, NormaliseVector3)
 {
     Vector3 v(10, 5, 4);
     Vector3 vN = v.getNormalised();
@@ -118,7 +166,7 @@ TEST(MathTest, NormaliseVector3)
     EXPECT_EQ(v, vN);
 }
 
-TEST(MathTest, AddVector3)
+TEST(VectorTest, AddVector3)
 {
     Vector3 v1(2, -5, 17);
     const Vector3 v1Orig = v1;
@@ -134,7 +182,7 @@ TEST(MathTest, AddVector3)
     EXPECT_EQ(v1, sum);
 }
 
-TEST(MathTest, AddVector4)
+TEST(VectorTest, AddVector4)
 {
     Vector4 v1(10, 0.25, -60, 11);
     const Vector4 v1Orig = v1;
@@ -150,7 +198,7 @@ TEST(MathTest, AddVector4)
     EXPECT_EQ(v1, sum);
 }
 
-TEST(MathTest, SubtractVector3)
+TEST(VectorTest, SubtractVector3)
 {
     Vector3 v1(-9, 14.5, 650);
     const Vector3 v1Orig = v1;
@@ -166,15 +214,23 @@ TEST(MathTest, SubtractVector3)
     EXPECT_EQ(v1, diff);
 }
 
-TEST(MathTest, SubtractVector4)
+TEST(VectorTest, SubtractVector4)
 {
     Vector4 v1(0, 96, 457, -3.5);
     Vector4 v2(0.125, 4, 7.5, 90);
 
+    // Subtract and return
     EXPECT_EQ(v1 - v2, Vector4(-0.125, 92, 449.5, -93.5));
+    EXPECT_EQ(v2 - v2, Vector4());
+
+    // Subtract in place
+    auto v1Copy = v1;
+    v1 -= v2;
+    EXPECT_NE(v1, v1Copy);
+    EXPECT_EQ(v1, Vector4(-0.125, 92, 449.5, -93.5));
 }
 
-TEST(MathTest, ScalarMultiplyVector3)
+TEST(VectorTest, ScalarMultiplyVector3)
 {
     Vector3 vec(2, 4, -5);
     const Vector3 vecOrig = vec;
@@ -192,7 +248,7 @@ TEST(MathTest, ScalarMultiplyVector3)
     EXPECT_EQ(vec, Vector3(6, 12, -15));
 }
 
-TEST(MathTest, ScalarDivideVector3)
+TEST(VectorTest, ScalarDivideVector3)
 {
     Vector3 vec(-6, 12, 36);
     const Vector3 orig = vec;
@@ -212,7 +268,23 @@ TEST(MathTest, ScalarDivideVector3)
     EXPECT_EQ(vec, Vector3(-1, 2, 6));
 }
 
-TEST(MathTest, ScalarMultiplyVector4)
+TEST(VectorTest, ScalarDivideVector4)
+{
+    Vector4 vec(32, 168, -25, 0.8);
+
+    // Divide and return
+    EXPECT_EQ(vec / 2, Vector4(16, 84, -12.5, 0.4));
+    EXPECT_EQ(vec / 0.5, Vector4(64, 336, -50, 1.6));
+    EXPECT_EQ(vec / -1, Vector4(-32, -168, 25, -0.8));
+
+    // Divide in place
+    const Vector4 orig = vec;
+    EXPECT_EQ(vec, orig);
+    vec /= 2;
+    EXPECT_EQ(vec, Vector4(16, 84, -12.5, 0.4));
+}
+
+TEST(VectorTest, ScalarMultiplyVector4)
 {
     Vector4 vec(8, -14, 26, 1.8);
 
@@ -221,9 +293,15 @@ TEST(MathTest, ScalarMultiplyVector4)
 
     EXPECT_EQ(vec * 0.5, Vector4(4, -7, 13, 0.9));
     EXPECT_EQ(0.5 * vec, Vector4(4, -7, 13, 0.9));
+
+    // Multiply in place
+    Vector4 v2 = vec * 3.5;
+    EXPECT_NE(vec, v2);
+    vec *= 3.5;
+    EXPECT_EQ(vec, v2);
 }
 
-TEST(MathTest, ComponentwiseMultiplyVector3)
+TEST(VectorTest, ComponentwiseMultiplyVector3)
 {
     Vector3 v(0.8, 24, -300);
     const Vector3 vOrig = v;
@@ -240,7 +318,7 @@ TEST(MathTest, ComponentwiseMultiplyVector3)
     EXPECT_EQ(v, prod);
 }
 
-TEST(MathTest, ComponentwiseDivideVector3)
+TEST(VectorTest, ComponentwiseDivideVector3)
 {
     Vector3 vec(320, -240, 128);
     const Vector3 vOrig = vec;
@@ -257,7 +335,7 @@ TEST(MathTest, ComponentwiseDivideVector3)
     EXPECT_EQ(vec, result);
 }
 
-TEST(MathTest, Vector3DotProduct)
+TEST(VectorTest, Vector3DotProduct)
 {
     const Vector3 v1(2, 4, 30);
     const Vector3 v2(8, 0.25, -5);
@@ -272,7 +350,19 @@ TEST(MathTest, Vector3DotProduct)
     EXPECT_EQ(v3.dot(v3), v3.getLengthSquared());
 }
 
-TEST(MathTest, Vector3CrossProduct)
+TEST(VectorTest, Vector4DotProduct)
+{
+    const Vector4 v1(-8, 0.5, 128, 26);
+    const Vector4 v2(0.5, 256, -18, 4);
+    const Vector4 v3(25, 0.1, 0.75, 800);
+
+    EXPECT_EQ(v1.dot(v2), -2076);
+    EXPECT_EQ(v2.dot(v1), v1.dot(v2));
+    EXPECT_EQ(v2.dot(v3), 3224.6);
+    EXPECT_EQ(v3.dot(v2), v2.dot(v3));
+}
+
+TEST(VectorTest, Vector3CrossProduct)
 {
     const Vector3 i(1, 0, 0);
     const Vector3 j(0, 1, 0);
@@ -301,7 +391,7 @@ TEST(MathTest, Vector3CrossProduct)
               Vector3(3340.8, 28696.0, -267.39375));
 }
 
-TEST(MathTest, AngleBetweenVector3s)
+TEST(VectorTest, AngleBetweenVector3s)
 {
     const Vector3 i(1, 0, 0);
     const Vector3 j(0, 1, 0);
@@ -321,7 +411,7 @@ TEST(MathTest, AngleBetweenVector3s)
                      1.7732415935926593);
 }
 
-TEST(MathTest, VectorIsParallel)
+TEST(VectorTest, VectorIsParallel)
 {
     const Vector3 i(1, 0, 0);
     const Vector3 j(0, 1, 0);
@@ -343,7 +433,7 @@ TEST(MathTest, VectorIsParallel)
     EXPECT_TRUE(math::isParallel(j * 356, j * 0.05));
 }
 
-TEST(MathTest, SnapVector3)
+TEST(VectorTest, SnapVector3)
 {
     Vector3 v1(5, -15.25, -28);
     const Vector3 v1Orig = v1;
@@ -360,7 +450,7 @@ TEST(MathTest, SnapVector3)
     EXPECT_EQ(v1, Vector3(6, -15, -27));
 }
 
-TEST(MathTest, Vector3MidPoint)
+TEST(VectorTest, Vector3MidPoint)
 {
     Vector3 v1(18, 26, -350);
     Vector3 v2(-4.5, 96, 10);
@@ -370,7 +460,7 @@ TEST(MathTest, Vector3MidPoint)
     EXPECT_EQ(math::midPoint(v1, Vector3()), v1 / 2);
 }
 
-TEST(MathTest, Vector3AsCArray)
+TEST(VectorTest, Vector3AsCArray)
 {
     Vector3 vec(256, -10, 10000);
 
@@ -385,7 +475,7 @@ TEST(MathTest, Vector3AsCArray)
     EXPECT_EQ(array[2], 10000);
 }
 
-TEST(MathTest, Vector3fAsCArray)
+TEST(VectorTest, Vector3fAsCArray)
 {
     Vector3f vec(-0.5, 485, 0);
 
@@ -396,6 +486,41 @@ TEST(MathTest, Vector3fAsCArray)
     EXPECT_EQ(array[0], -0.5);
     EXPECT_EQ(array[1], 485);
     EXPECT_EQ(array[2], 0);
+}
+
+TEST(VectorTest, Vector4AsCArray)
+{
+    Vector4 vec(-15, 15, 36.9, -0.5);
+
+    EXPECT_EQ(&vec.y(), &vec.x() + 1);
+    EXPECT_EQ(&vec.z(), &vec.y() + 1);
+    EXPECT_EQ(&vec.w(), &vec.z() + 1);
+
+    double* array = vec;
+    EXPECT_EQ(array[0], -15);
+    EXPECT_EQ(array[1], 15);
+    EXPECT_EQ(array[2], 36.9);
+    EXPECT_EQ(array[3], -0.5);
+}
+
+TEST(VectorTest, ProjectVector4To3)
+{
+    Vector4 v1(128, 56, 5, 1);
+    Vector4 v2(1500, -12, 18, 2);
+
+    EXPECT_EQ(v1.getProjected(), Vector3(128, 56, 5));
+    EXPECT_EQ(v2.getProjected(), Vector3(750, -6, 9));
+    v2.w() = 3;
+    EXPECT_EQ(v2.getProjected(), Vector3(500, -4, 6));
+}
+
+TEST(VectorTest, TruncateVector4To3)
+{
+    // Const truncation
+    const Vector4 v1(56, 58, 40, 2);
+    Vector3 v1Trunc = v1.getVector3();
+    EXPECT_EQ(v1Trunc, Vector3(56, 58, 40));
+    EXPECT_NE(v1Trunc, v1.getProjected());
 }
 
 }

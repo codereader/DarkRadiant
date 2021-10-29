@@ -44,13 +44,13 @@ void rotateSelected(const Quaternion& rotation)
 	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 	{
 		GlobalSelectionSystem().foreachSelectedComponent(
-			RotateComponentSelected(rotation, GlobalSelectionSystem().getPivot2World().tCol().getVector3()));
+			RotateComponentSelected(rotation, GlobalSelectionSystem().getPivot2World().translation()));
 	}
 	else
 	{
 		// Cycle through the selections and rotate them
 		GlobalSelectionSystem().foreachSelected(RotateSelected(rotation,
-			GlobalSelectionSystem().getPivot2World().tCol().getVector3()));
+			GlobalSelectionSystem().getPivot2World().translation()));
 	}
 
 	// Update the views
@@ -95,12 +95,12 @@ void scaleSelected(const Vector3& scaleXYZ)
 		if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
 		{
 			GlobalSelectionSystem().foreachSelectedComponent(ScaleComponentSelected(scaleXYZ,
-				GlobalSelectionSystem().getPivot2World().tCol().getVector3()));
+				GlobalSelectionSystem().getPivot2World().translation()));
 		}
 		else
 		{
 			GlobalSelectionSystem().foreachSelected(ScaleSelected(scaleXYZ,
-				GlobalSelectionSystem().getPivot2World().tCol().getVector3()));
+				GlobalSelectionSystem().getPivot2World().translation()));
 		}
 
 		// Update the scene views

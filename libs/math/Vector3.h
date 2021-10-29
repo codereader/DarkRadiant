@@ -102,14 +102,6 @@ public:
     T y() const { return _v[1]; }
     T z() const { return _v[2]; }
 
-    /// Return human readable debug string (pretty print)
-    std::string pp() const
-    {
-        std::stringstream ss;
-        ss << "[" << x() << ", " << y() << ", " << z() << "]";
-        return ss.str();
-    }
-
     /// Compare this BasicVector3 against another for equality.
     bool operator== (const BasicVector3& other) const {
         return (other.x() == x()
@@ -366,6 +358,14 @@ template<typename T>
 BasicVector3<T> midPoint(const BasicVector3<T>& v1, const BasicVector3<T>& v2)
 {
     return (v1 + v2) * 0.5;
+}
+
+/// Return human readable debug string (pretty print)
+template<typename T> std::string pp(const BasicVector3<T>& v)
+{
+    std::stringstream ss;
+    ss << "[" << v.x() << ", " << v.y() << ", " << v.z() << "]";
+    return ss.str();
 }
 
 }

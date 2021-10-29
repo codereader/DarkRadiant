@@ -197,7 +197,7 @@ Matrix4 RenderableParticleBunch::getAimedMatrix(const Vector3& particleVelocity)
     Vector3 viewProj = view - vel * view.dot(vel);
 
     // This is the particle normal in object space (after being oriented such that y || velocity)
-    Vector3 z = object2Vel.zCol().getVector3();
+    Vector3 z = object2Vel.zCol3();
 
     // The particle needs to be rotated by this angle around the velocity axis
     double aimedAngle = z.angle(-viewProj);
@@ -563,7 +563,7 @@ void RenderableParticleBunch::pushQuad(ParticleRenderInfo& particle, const Vecto
     // greebo: Create a (rotated) quad facing the z axis
     // then rotate it to fit the requested orientation
     // finally translate it to its position.
-    const Vector3& normal = _viewRotation.zCol().getVector3();
+    const Vector3 normal = _viewRotation.zCol3();
 
     _quads.push_back(ParticleQuad(particle.size, particle.aspect, particle.angle, colour, normal, s0, sWidth));
     _quads.back().transform(_viewRotation);
@@ -625,7 +625,7 @@ void RenderableParticleBunch::pushAimedParticles(ParticleRenderInfo& particle, s
         Matrix4 local2aimed = getAimedMatrix(velocity);
 
         {
-            const Vector3& normal = local2aimed.zCol().getVector3();
+            const Vector3 normal = local2aimed.zCol3();
 
             // Ignore the angle for aimed orientation
             ParticleQuad curQuad(aimedParticle.size, aimedParticle.aspect, 0,

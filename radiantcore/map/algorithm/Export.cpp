@@ -138,7 +138,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 
             if (options.centerObjects)
             {
-                modelPos = -exporter.getCenterTransform().tCol().getVector3();
+                modelPos = -exporter.getCenterTransform().translation();
             }
 
             auto modelNode = GlobalEntityModule().createEntityFromSelection("func_static", modelPos);

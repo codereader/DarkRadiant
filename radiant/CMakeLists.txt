@@ -89,7 +89,6 @@ add_executable(darkradiant
                ui/LongRunningOperationHandler.cpp
                ui/mainframe/AuiLayout.cpp
                ui/mainframe/EmbeddedLayout.cpp
-               ui/mainframe/FloatingLayout.cpp
                ui/mainframe/MainFrame.cpp
                ui/mainframe/MainFrameLayoutManager.cpp
                ui/mainframe/RegularLayout.cpp

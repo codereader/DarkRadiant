@@ -126,8 +126,7 @@ public:
     }
 
     /**
-     * \brief
-     * Construct a matrix containing the given elements.
+     * \brief Construct a matrix containing the given elements.
      *
      * The elements are specified column-wise, starting with the left-most
      * column.
@@ -138,8 +137,7 @@ public:
                              double tx, double ty, double tz, double tw);
 
     /**
-     * \brief
-     * Construct a matrix containing the given elements.
+     * \brief Construct a matrix containing the given elements.
      *
      * The elements are specified row-wise, starting with the top row.
      */
@@ -201,41 +199,43 @@ public:
      * Return columns of the matrix as vectors.
      * \{
      */
-    Vector4& xCol()
+    Vector3 xCol3() const
     {
-        return reinterpret_cast<Vector4&>(xx());
+        return Vector3(_transform.matrix().col(0).head(3));
     }
-    const Vector4& xCol() const
+    Vector3 yCol3() const
     {
-        return reinterpret_cast<const Vector4&>(xx());
+        return Vector3(_transform.matrix().col(1).head(3));
     }
-    Vector4& yCol()
+    Vector3 zCol3() const
     {
-        return reinterpret_cast<Vector4&>(yx());
+        return Vector3(_transform.matrix().col(2).head(3));
     }
-    const Vector4& yCol() const
+    Vector4 tCol() const
     {
-        return reinterpret_cast<const Vector4&>(yx());
-    }
-    Vector4& zCol()
-    {
-        return reinterpret_cast<Vector4&>(zx());
-    }
-    const Vector4& zCol() const
-    {
-        return reinterpret_cast<const Vector4&>(zx());
-    }
-    Vector4& tCol()
-    {
-        return reinterpret_cast<Vector4&>(tx());
-    }
-    const Vector4& tCol() const
-    {
-        return reinterpret_cast<const Vector4&>(tx());
+        return Vector4(translation(), tw());
     }
     /**
      * \}
      */
+
+    /// Set the X column from a Vector3
+    void setXCol(const Vector3& vec)
+    {
+        _transform.matrix().col(0).head(3) = vec.eigen();
+    }
+
+    /// Set the Y column from a Vector3
+    void setYCol(const Vector3& vec)
+    {
+        _transform.matrix().col(1).head(3) = vec.eigen();
+    }
+
+    /// Set the Z column from a Vector3
+    void setZCol(const Vector3& vec)
+    {
+        _transform.matrix().col(2).head(3) = vec.eigen();
+    }
 
     /**
      * Cast to double* for use with GL functions that accept a double
@@ -397,9 +397,15 @@ public:
     Handedness getHandedness() const;
 
     /// Return the 3-element translation component of this matrix
-    const Vector3& translation() const
+    Vector3 translation() const
     {
-        return tCol().getVector3();
+        return Vector3(_transform.matrix().col(3).head(3));
+    }
+
+    /// Set the translation component of this matrix
+    void setTranslation(const Vector3& translation)
+    {
+        _transform.matrix().col(3).head(3) = translation.eigen();
     }
 
     /**
@@ -516,15 +522,13 @@ inline bool operator!=(const Matrix4& l, const Matrix4& r)
 
 inline Matrix4::Handedness Matrix4::getHandedness() const
 {
-    return (xCol().getVector3().cross(yCol().getVector3()).dot(zCol().getVector3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
+    return (xCol3().cross(yCol3()).dot(zCol3()) < 0.0f) ? LEFTHANDED : RIGHTHANDED;
 }
 
 template<typename T>
 BasicVector4<T> Matrix4::transform(const BasicVector4<T>& vector4) const
 {
-    Eigen::Matrix<T, 4, 1> eVec(&vector4.x());
-    auto result = _transform * eVec;
-    return BasicVector4<T>(result[0], result[1], result[2], result[3]);
+    return _transform * vector4.eigen();
 }
 
 inline Vector3 Matrix4::getEulerAnglesXYZ() const
@@ -559,9 +563,9 @@ inline Vector3 Matrix4::getEulerAnglesXYZDegrees() const
 inline Vector3 Matrix4::getScale() const
 {
     return Vector3(
-        xCol().getVector3().getLength(),
-        yCol().getVector3().getLength(),
-        zCol().getVector3().getLength()
+        xCol3().getLength(),
+        yCol3().getLength(),
+        zCol3().getLength()
     );
 }
 

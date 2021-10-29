@@ -51,7 +51,7 @@ public:
     GLenum getGLFormat() const override { return GL_RGBA; }
 
     /* BindableTexture implementation */
-    TexturePtr bindTexture(const std::string& name, Role role) const
+    TexturePtr bindTexture(const std::string& name, Role role) const override
     {
 		GLuint textureNum;
 
@@ -102,7 +102,7 @@ public:
 		return tex2DObject;
 	}
 
-	bool isPrecompressed() const
+	bool isPrecompressed() const override
 	{
 		return false; // not compressed
 	}

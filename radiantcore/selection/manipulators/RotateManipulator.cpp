@@ -93,37 +93,46 @@ void RotateManipulator::UpdateColours()
 void RotateManipulator::updateCircleTransforms()
 {
     Vector3 localViewpoint(
-		_pivot2World._worldSpace.getTransposed().transformDirection(_pivot2World._viewpointSpace.zCol().getVector3())
-    );
+        _pivot2World._worldSpace.getTransposed().transformDirection(
+            _pivot2World._viewpointSpace.zCol3()));
 
     _circleX_visible = !math::isNear(g_vector3_axis_x, localViewpoint, 1e-6);
-    if(_circleX_visible)
+    if (_circleX_visible)
     {
-      _local2worldX = Matrix4::getIdentity();
-      _local2worldX.yCol().getVector3() = g_vector3_axis_x.cross(localViewpoint).getNormalised();
-      _local2worldX.zCol().getVector3() = _local2worldX.xCol().getVector3().cross(
-        											_local2worldX.yCol().getVector3()).getNormalised();
-	  _local2worldX.premultiplyBy(_pivot2World._worldSpace);
+        _local2worldX = Matrix4::getIdentity();
+        _local2worldX.setYCol(
+            g_vector3_axis_x.cross(localViewpoint).getNormalised()
+        );
+        _local2worldX.setZCol(
+            _local2worldX.xCol3().cross(_local2worldX.yCol3()).getNormalised()
+        );
+        _local2worldX.premultiplyBy(_pivot2World._worldSpace);
     }
 
-	_circleY_visible = !math::isNear(g_vector3_axis_y, localViewpoint, 1e-6);
-    if(_circleY_visible)
+    _circleY_visible = !math::isNear(g_vector3_axis_y, localViewpoint, 1e-6);
+    if (_circleY_visible)
     {
-      _local2worldY = Matrix4::getIdentity();
-      _local2worldY.zCol().getVector3() = g_vector3_axis_y.cross(localViewpoint).getNormalised();
-      _local2worldY.xCol().getVector3() = _local2worldY.yCol().getVector3().cross(
-      													_local2worldY.zCol().getVector3()).getNormalised();
-      _local2worldY.premultiplyBy(_pivot2World._worldSpace);
+        _local2worldY = Matrix4::getIdentity();
+        _local2worldY.setZCol(
+            g_vector3_axis_y.cross(localViewpoint).getNormalised()
+        );
+        _local2worldY.setXCol(
+            _local2worldY.yCol3().cross(_local2worldY.zCol3()).getNormalised()
+        );
+        _local2worldY.premultiplyBy(_pivot2World._worldSpace);
     }
 
-	_circleZ_visible = !math::isNear(g_vector3_axis_z, localViewpoint, 1e-6);
-    if(_circleZ_visible)
+    _circleZ_visible = !math::isNear(g_vector3_axis_z, localViewpoint, 1e-6);
+    if (_circleZ_visible)
     {
-      _local2worldZ = Matrix4::getIdentity();
-      _local2worldZ.xCol().getVector3() = g_vector3_axis_z.cross(localViewpoint).getNormalised();
-      _local2worldZ.yCol().getVector3() = _local2worldZ.zCol().getVector3().cross(
-      												_local2worldZ.xCol().getVector3()).getNormalised();
-	  _local2worldZ.premultiplyBy(_pivot2World._worldSpace);
+        _local2worldZ = Matrix4::getIdentity();
+        _local2worldZ.setXCol(
+            g_vector3_axis_z.cross(localViewpoint).getNormalised()
+        );
+        _local2worldZ.setYCol(
+            _local2worldZ.zCol3().cross(_local2worldZ.xCol3()).getNormalised()
+        );
+        _local2worldZ.premultiplyBy(_pivot2World._worldSpace);
     }
 }
 
@@ -161,7 +170,7 @@ std::string RotateManipulator::getRotationAxisName() const
     if (_selectableX.isSelected()) return "X";
     if (_selectableY.isSelected()) return "Y";
     if (_selectableZ.isSelected()) return "Z";
-    
+
     return std::string();
 }
 
@@ -172,7 +181,7 @@ void RotateManipulator::render(const RenderInfo& info) const
 	{
 		glColor3d(0.75, 0, 0);
 
-		glRasterPos3dv(_pivot2World._worldSpace.tCol().getVector3() - Vector3(10, 10, 10));
+		glRasterPos3dv(_pivot2World._worldSpace.translation() - Vector3(10, 10, 10));
 
 		double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
         auto rotationAxisName = getRotationAxisName();

@@ -91,7 +91,7 @@ public:
     std::size_t unlinkFromRegisters() override
     {
         _registers = nullptr;
-        
+
         auto oldIndex = _index;
         _index = -1;
 
@@ -145,13 +145,13 @@ public:
         _parmNum(other._parmNum)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		// parmNN is 0 without entity
 		return 0.0f;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return entity.getShaderParm(_parmNum);
 	}
@@ -185,13 +185,13 @@ public:
         _parmNum(other._parmNum)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		// globalNN is 0 without entity
 		return 0.0f;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return getValue(time);
 	}
@@ -220,12 +220,12 @@ public:
         ShaderExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return time / 1000.0f; // convert msecs to secs
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return getValue(time);
 	}
@@ -259,12 +259,12 @@ public:
         _value(other._value)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _value;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return getValue(time);
 	}
@@ -289,7 +289,7 @@ private:
 	IShaderExpression::Ptr _lookupExpr;
 
 public:
-	// Pass the table and the expression used to perform the lookup 
+	// Pass the table and the expression used to perform the lookup
 	TableLookupExpression(const ITableDefinition::Ptr& tableDef,
 						  const IShaderExpression::Ptr& lookupExpr) :
 		ShaderExpression(),
@@ -306,13 +306,13 @@ public:
         _lookupExpr(other._lookupExpr ? other._lookupExpr->clone() : Ptr())
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		float lookupVal = _lookupExpr->getValue(time);
 		return _tableDef->getValue(lookupVal);
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		float lookupVal = _lookupExpr->getValue(time, entity);
 		return _tableDef->getValue(lookupVal);
@@ -356,7 +356,7 @@ protected:
 
 protected:
 	BinaryExpression(Precedence precedence,
-					 const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+					 const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 				     const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		ShaderExpression(),
 		_a(a),
@@ -395,7 +395,7 @@ class AddExpression :
 	public BinaryExpression
 {
 public:
-	AddExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	AddExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 				  const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(ADDITION, a, b)
 	{}
@@ -404,12 +404,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _a->getValue(time) + _b->getValue(time);
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return _a->getValue(time, entity) + _b->getValue(time, entity);
 	}
@@ -430,7 +430,7 @@ class SubtractExpression :
 	public BinaryExpression
 {
 public:
-	SubtractExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	SubtractExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 					   const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(SUBTRACTION, a, b)
 	{}
@@ -439,12 +439,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _a->getValue(time) - _b->getValue(time);
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return _a->getValue(time, entity) - _b->getValue(time, entity);
 	}
@@ -465,7 +465,7 @@ class MultiplyExpression :
 	public BinaryExpression
 {
 public:
-	MultiplyExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	MultiplyExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 					   const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(MULTIPLICATION, a, b)
 	{}
@@ -474,12 +474,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _a->getValue(time) * _b->getValue(time);
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return _a->getValue(time, entity) * _b->getValue(time, entity);
 	}
@@ -500,7 +500,7 @@ class DivideExpression :
 	public BinaryExpression
 {
 public:
-	DivideExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	DivideExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 					 const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(DIVISION, a, b)
 	{}
@@ -509,12 +509,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _a->getValue(time) / _b->getValue(time);
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return _a->getValue(time, entity) / _b->getValue(time, entity);
 	}
@@ -535,7 +535,7 @@ class ModuloExpression :
 	public BinaryExpression
 {
 public:
-	ModuloExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	ModuloExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 					 const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(MODULO, a, b)
 	{}
@@ -544,12 +544,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return fmod(_a->getValue(time), _b->getValue(time));
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return fmod(_a->getValue(time, entity), _b->getValue(time, entity));
 	}
@@ -570,7 +570,7 @@ class LessThanExpression :
 	public BinaryExpression
 {
 public:
-	LessThanExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	LessThanExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
                        const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
@@ -579,12 +579,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _a->getValue(time) < _b->getValue(time) ? 1.0f : 0;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return _a->getValue(time, entity) < _b->getValue(time, entity) ? 1.0f : 0;
 	}
@@ -605,7 +605,7 @@ class LessThanOrEqualExpression :
 	public BinaryExpression
 {
 public:
-	LessThanOrEqualExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	LessThanOrEqualExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
                               const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
@@ -614,12 +614,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _a->getValue(time) <= _b->getValue(time) ? 1.0f : 0;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return _a->getValue(time, entity) <= _b->getValue(time, entity) ? 1.0f : 0;
 	}
@@ -640,7 +640,7 @@ class GreaterThanExpression :
 	public BinaryExpression
 {
 public:
-	GreaterThanExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	GreaterThanExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 						  const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
@@ -649,12 +649,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _a->getValue(time) > _b->getValue(time) ? 1.0f : 0;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return _a->getValue(time, entity) > _b->getValue(time, entity) ? 1.0f : 0;
 	}
@@ -675,7 +675,7 @@ class GreaterThanOrEqualExpression :
 	public BinaryExpression
 {
 public:
-	GreaterThanOrEqualExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	GreaterThanOrEqualExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 								 const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(RELATIONAL_COMPARISON, a, b)
 	{}
@@ -684,12 +684,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _a->getValue(time) >= _b->getValue(time) ? 1.0f : 0;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return _a->getValue(time, entity) >= _b->getValue(time, entity) ? 1.0f : 0;
 	}
@@ -710,7 +710,7 @@ class EqualityExpression :
 	public BinaryExpression
 {
 public:
-	EqualityExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	EqualityExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 					   const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(EQUALITY_COMPARISON, a, b)
 	{}
@@ -719,12 +719,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _a->getValue(time) == _b->getValue(time) ? 1.0f : 0;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return _a->getValue(time, entity) == _b->getValue(time, entity) ? 1.0f : 0;
 	}
@@ -745,7 +745,7 @@ class InequalityExpression :
 	public BinaryExpression
 {
 public:
-	InequalityExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	InequalityExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 					     const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(EQUALITY_COMPARISON, a, b)
 	{}
@@ -754,12 +754,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return _a->getValue(time) != _b->getValue(time) ? 1.0f : 0;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return _a->getValue(time, entity) != _b->getValue(time, entity) ? 1.0f : 0;
 	}
@@ -780,7 +780,7 @@ class LogicalAndExpression :
 	public BinaryExpression
 {
 public:
-	LogicalAndExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	LogicalAndExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 					     const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(LOGICAL_AND, a, b)
 	{}
@@ -789,12 +789,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return (_a->getValue(time) != 0 && _b->getValue(time) != 0) ? 1.0f : 0;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return (_a->getValue(time, entity) != 0 && _b->getValue(time, entity) != 0) ? 1.0f : 0;
 	}
@@ -815,7 +815,7 @@ class LogicalOrExpression :
 	public BinaryExpression
 {
 public:
-	LogicalOrExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(), 
+	LogicalOrExpression(const IShaderExpression::Ptr& a = IShaderExpression::Ptr(),
 					    const IShaderExpression::Ptr& b = IShaderExpression::Ptr()) :
 		BinaryExpression(LOGICAL_OR, a, b)
 	{}
@@ -824,12 +824,12 @@ public:
         BinaryExpression(other)
     {}
 
-	virtual float getValue(std::size_t time)
+	float getValue(std::size_t time) override
 	{
 		return (_a->getValue(time) != 0 || _b->getValue(time) != 0) ? 1.0f : 0;
 	}
 
-	virtual float getValue(std::size_t time, const IRenderEntity& entity)
+	float getValue(std::size_t time, const IRenderEntity& entity) override
 	{
 		return (_a->getValue(time, entity) != 0 || _b->getValue(time, entity) != 0) ? 1.0f : 0;
 	}
