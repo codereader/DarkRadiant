@@ -360,7 +360,6 @@
     <ClCompile Include="..\..\radiant\ui\layers\LayerControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\EmbeddedLayout.cpp" />
-    <ClCompile Include="..\..\radiant\ui\mainframe\FloatingLayout.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\MainFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\MainFrameLayoutManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\RegularLayout.cpp" />
@@ -578,7 +577,6 @@
     <ClInclude Include="..\..\radiant\ui\layers\LayerControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\EmbeddedLayout.h" />
-    <ClInclude Include="..\..\radiant\ui\mainframe\FloatingLayout.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\LayoutCommand.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\MainFrame.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\MainFrameLayoutManager.h" />

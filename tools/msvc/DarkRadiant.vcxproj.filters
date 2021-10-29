@@ -370,9 +370,6 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\EmbeddedLayout.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\mainframe\FloatingLayout.cpp">
-      <Filter>src\ui\mainframe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\mainframe\MainFrame.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
@@ -907,9 +904,6 @@
       <Filter>src\ui\layers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\EmbeddedLayout.h">
-      <Filter>src\ui\mainframe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mainframe\FloatingLayout.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\LayoutCommand.h">

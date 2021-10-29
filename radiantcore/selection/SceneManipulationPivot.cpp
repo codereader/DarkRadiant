@@ -45,7 +45,9 @@ void SceneManipulationPivot::applyTranslation(const Vector3& translation)
     if (_snapPivotToGrid)
     {
         // The resulting pivot should be grid-snapped
-        _pivot2World.tCol().getVector3().snap(GlobalGrid().getGridSize());
+        _pivot2World.setTranslation(
+            _pivot2World.translation().getSnapped(GlobalGrid().getGridSize())
+        );
     }
 }
 

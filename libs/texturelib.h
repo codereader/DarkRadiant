@@ -183,10 +183,13 @@ inline void ComputeAxisBase(const Vector3& normal, Vector3& texS, Vector3& texT)
  */
 inline Matrix4 getBasisTransformForNormal(const Vector3& normal)
 {
-    auto basis = Matrix4::getIdentity();
+    Vector3 texS, texT;
+    ComputeAxisBase(normal, texS, texT);
 
-    ComputeAxisBase(normal, basis.xCol().getVector3(), basis.yCol().getVector3());
-    basis.zCol().getVector3() = normal;
+    Matrix4 basis = Matrix4::getIdentity();
+    basis.setXCol(texS);
+    basis.setYCol(texT);
+    basis.setZCol(normal);
 
     // At this point the basis matrix contains three column vectors that are
     // perpendicular to each other.
