@@ -1581,7 +1581,7 @@ void XYWnd::zoomInOn(wxPoint cursor, int zoom)
     const float newScale = getZoomedScale(zoom);
     scrollByPixels(_width / 2 - cursor.x, _height / 2 - cursor.y);
     setScale(newScale);
-    scrollByPixels((cursor.x - _width / 2) * oldScale / newScale, (cursor.y - _height / 2) * oldScale / newScale);
+    scrollByPixels(cursor.x - _width / 2, cursor.y - _height / 2);
 }
 
 // ================ CALLBACKS ======================================
@@ -1631,9 +1631,12 @@ bool XYWnd::onRender()
 
 void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 {
-    if ( !ev.ShiftDown() ) {
-        zoomInOn( ev.GetPosition(), ev.GetWheelRotation() / ev.GetWheelDelta() );
+    if (!ev.ShiftDown())
+    {
+        zoomInOn(ev.GetPosition(), ev.GetWheelRotation() > 0 ? 1 : -1);
+        return;
     }
+
 	if (ev.GetWheelRotation() > 0)
 	{
 		zoomIn();
