@@ -14,13 +14,14 @@ namespace module
 #define FORMAT_BUFSIZE 2048
 
 // Helper method to retrieve the error when DLL load failed.
-const wchar_t* FormatGetLastError() {
+std::string FormatGetLastError()
+{
 	static wchar_t buf[FORMAT_BUFSIZE];
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM |FORMAT_MESSAGE_IGNORE_INSERTS,
 			NULL, GetLastError(), MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
 			buf,
 			FORMAT_BUFSIZE, NULL);
-	return buf;
+	return string::unicode_to_utf8(buf);
 }
 
 DynamicLibrary::DynamicLibrary(const std::string& filename) :
@@ -29,8 +30,8 @@ DynamicLibrary::DynamicLibrary(const std::string& filename) :
 {
 	if (_library == 0)
     {
-        rConsoleError() << "LoadLibrary failed: '" << filename << "'" << std::endl;
-        rConsoleError() << "GetLastError: " << FormatGetLastError();
+        rError() << "LoadLibrary failed: '" << filename << "'" << std::endl;
+        rError() << "GetLastError: " << FormatGetLastError();
 	}
 }
 
