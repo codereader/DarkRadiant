@@ -205,6 +205,43 @@ TEST_F(TextureToolTest, SceneGraphRecognisesPatches)
     EXPECT_GT(getTextureToolNodeCount(), 0) << "There should be some tex tool nodes now";
 }
 
+// Selecting an inhomogenously textured brush will result in an empty scene graph
+TEST_F(TextureToolTest, SceneGraphSkipsInhomogeneousBrushes)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush1 = algorithm::createCubicBrush(worldspawn, Vector3(0, 0, 0), "textures/numbers/1");
+    Node_getIBrush(brush1)->getFace(2).setShader("textures/numbers/2");
+
+    Node_setSelected(brush1, true);
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "1 Brush must be selected";
+
+    // No tex tool nodes should show up here
+    EXPECT_EQ(getTextureToolNodeCount(), 0) << "There shouldn't be any tex tool nodes here";
+}
+
+// Harmonising the textures of all brush faces should make it show up in the texture tool
+TEST_F(TextureToolTest, SceneGraphUpdatesOnBrushMaterialChange)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush1Node = algorithm::createCubicBrush(worldspawn, Vector3(0, 0, 0), "textures/numbers/1");
+    auto brush1 = Node_getIBrush(brush1Node);
+    brush1->getFace(2).setShader("textures/numbers/2");
+
+    Node_setSelected(brush1Node, true);
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "1 Brush must be selected";
+
+    // No tex tool nodes should show up here
+    EXPECT_EQ(getTextureToolNodeCount(), 0) << "There shouldn't be any tex tool nodes here";
+
+    // Now apply the same texture to all faces
+    for (int i = 0; i < brush1->getNumFaces(); ++i)
+    {
+        brush1->getFace(i).setShader("textures/numbers/1");
+    }
+
+    EXPECT_EQ(getTextureToolNodeCount(), brush1->getNumFaces()) << "There shoud be 6 faces in the tex tool";
+}
+
 TEST_F(TextureToolTest, PatchNodeBounds)
 {
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();

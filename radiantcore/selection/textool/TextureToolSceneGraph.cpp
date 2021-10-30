@@ -13,7 +13,8 @@ namespace textool
 {
 
 TextureToolSceneGraph::TextureToolSceneGraph() :
-    _selectionNeedsRescan(true)
+    _selectionNeedsRescan(true),
+    _activeMaterialNeedsRescan(true)
 {}
 
 const std::string& TextureToolSceneGraph::getName() const
@@ -44,10 +45,11 @@ void TextureToolSceneGraph::initialiseModule(const IApplicationContext& ctx)
 
 void TextureToolSceneGraph::shutdownModule()
 {
-    GlobalRadiantCore().getMessageBus().removeListener(_textureChangedHandler);
     _selectionNeedsRescan = false;
+    _activeMaterialNeedsRescan = false;
     _nodes.clear();
     _sceneSelectionChanged.disconnect();
+    GlobalRadiantCore().getMessageBus().removeListener(_textureChangedHandler);
 }
 
 void TextureToolSceneGraph::foreachNode(const std::function<bool(const INode::Ptr&)>& functor)
@@ -66,29 +68,34 @@ void TextureToolSceneGraph::foreachNode(const std::function<bool(const INode::Pt
 const std::string& TextureToolSceneGraph::getActiveMaterial()
 {
     ensureSceneIsAnalysed();
-    ensureActiveMaterialIsAnalysed();
 
     return _activeMaterial;
 }
 
-void TextureToolSceneGraph::ensureActiveMaterialIsAnalysed()
-{
-    if (!_activeMaterialNeedsRescan) return;
-
-    _activeMaterialNeedsRescan = false;
-    _activeMaterial = selection::getShaderFromSelection();
-}
-
 void TextureToolSceneGraph::ensureSceneIsAnalysed()
 {
+    // First, check if the material has changed
+    if (_activeMaterialNeedsRescan)
+    {
+        _activeMaterialNeedsRescan = false;
+
+        auto material = selection::getShaderFromSelection();
+
+        if (material != _activeMaterial)
+        {
+            _activeMaterial = std::move(material);
+
+            // The material changed, we need to rebuild the nodes
+            _selectionNeedsRescan = true;
+        }
+    }
+
     if (!_selectionNeedsRescan) return;
     
     _selectionNeedsRescan = false;
-    _activeMaterialNeedsRescan = false;
-
     _nodes.clear();
 
-    _activeMaterial = selection::getShaderFromSelection();
+    // No unique material, leave everything empty
     if (_activeMaterial.empty()) return;
 
     if (GlobalSelectionSystem().countSelectedComponents() > 0)
@@ -99,7 +106,7 @@ void TextureToolSceneGraph::ensureSceneIsAnalysed()
             _nodes.emplace_back(std::make_shared<FaceNode>(face));
         });
     }
-    
+
     GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
     {
         if (Node_isBrush(node))
@@ -122,6 +129,7 @@ void TextureToolSceneGraph::ensureSceneIsAnalysed()
 void TextureToolSceneGraph::onSceneSelectionChanged(const ISelectable& selectable)
 {
     // Mark our own selection as dirty
+    _activeMaterialNeedsRescan = true;
     _selectionNeedsRescan = true;
 }
 

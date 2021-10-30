@@ -38,8 +38,8 @@ public:
 private:
     void onSceneSelectionChanged(const ISelectable& selectable);
     void onTextureChanged(radiant::TextureChangedMessage& msg);
+
     void ensureSceneIsAnalysed();
-    void ensureActiveMaterialIsAnalysed();
 };
 
 }
