@@ -470,6 +470,12 @@
 		3A383120272D36D30049C4A1 /* TextureToolManipulationPivot.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38310E272D36D20049C4A1 /* TextureToolManipulationPivot.h */; };
 		3A383121272D36D30049C4A1 /* TextureToolDragManipulator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38310F272D36D30049C4A1 /* TextureToolDragManipulator.cpp */; };
 		3A383123272D37730049C4A1 /* UndoSystemFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A383122272D37730049C4A1 /* UndoSystemFactory.cpp */; };
+		3A383128272D5BE90049C4A1 /* link_scale_down.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A383126272D5BE80049C4A1 /* link_scale_down.png */; };
+		3A383129272D5BE90049C4A1 /* link_scale_up.png in Resources */ = {isa = PBXBuildFile; fileRef = 3A383127272D5BE90049C4A1 /* link_scale_up.png */; };
+		3A38312A272D5C3B0049C4A1 /* link_scale_down.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A383126272D5BE80049C4A1 /* link_scale_down.png */; };
+		3A38312B272D5C3B0049C4A1 /* link_scale_up.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A383127272D5BE90049C4A1 /* link_scale_up.png */; };
+		3A38312C272D5C510049C4A1 /* link_scale_down.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A383126272D5BE80049C4A1 /* link_scale_down.png */; };
+		3A38312D272D5C510049C4A1 /* link_scale_up.png in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A383127272D5BE90049C4A1 /* link_scale_up.png */; };
 		3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBE263C7893000C068E /* Bitmap.h */; };
 		3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */; };
 		3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3F623B1B764008A1B2D /* ParticleEditor.cpp */; };
@@ -2117,6 +2123,8 @@
 			dstPath = Contents/Resources/bitmaps;
 			dstSubfolderSpec = 1;
 			files = (
+				3A38312A272D5C3B0049C4A1 /* link_scale_down.png in CopyFiles */,
+				3A38312B272D5C3B0049C4A1 /* link_scale_up.png in CopyFiles */,
 				3A3830AD272D334B0049C4A1 /* activityindicator.png in CopyFiles */,
 				3A3830AE272D334B0049C4A1 /* arrow_down_blue.png in CopyFiles */,
 				3A3830AF272D334B0049C4A1 /* arrow_left_blue.png in CopyFiles */,
@@ -2563,6 +2571,8 @@
 			dstPath = Resources/bitmaps;
 			dstSubfolderSpec = 16;
 			files = (
+				3A38312C272D5C510049C4A1 /* link_scale_down.png in CopyFiles */,
+				3A38312D272D5C510049C4A1 /* link_scale_up.png in CopyFiles */,
 				3A383097272D33250049C4A1 /* activityindicator.png in CopyFiles */,
 				3A383098272D33250049C4A1 /* arrow_down_blue.png in CopyFiles */,
 				3A383099272D33250049C4A1 /* arrow_left_blue.png in CopyFiles */,
@@ -3354,6 +3364,8 @@
 		3A38310E272D36D20049C4A1 /* TextureToolManipulationPivot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureToolManipulationPivot.h; path = ../../radiantcore/selection/textool/TextureToolManipulationPivot.h; sourceTree = SOURCE_ROOT; };
 		3A38310F272D36D30049C4A1 /* TextureToolDragManipulator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureToolDragManipulator.cpp; path = ../../radiantcore/selection/textool/TextureToolDragManipulator.cpp; sourceTree = SOURCE_ROOT; };
 		3A383122272D37730049C4A1 /* UndoSystemFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UndoSystemFactory.cpp; path = ../../radiantcore/undo/UndoSystemFactory.cpp; sourceTree = SOURCE_ROOT; };
+		3A383126272D5BE80049C4A1 /* link_scale_down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = link_scale_down.png; path = ../../install/bitmaps/link_scale_down.png; sourceTree = SOURCE_ROOT; };
+		3A383127272D5BE90049C4A1 /* link_scale_up.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = link_scale_up.png; path = ../../install/bitmaps/link_scale_up.png; sourceTree = SOURCE_ROOT; };
 		3A8D4CBE263C7893000C068E /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../libs/wxutil/Bitmap.h; sourceTree = SOURCE_ROOT; };
 		3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../libs/wxutil/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
@@ -5315,6 +5327,8 @@
 		3A0122531E503C4D00A62BC1 /* bitmaps */ = {
 			isa = PBXGroup;
 			children = (
+				3A383126272D5BE80049C4A1 /* link_scale_down.png */,
+				3A383127272D5BE90049C4A1 /* link_scale_up.png */,
 				3A383058272D31BF0049C4A1 /* activityindicator.png */,
 				3A38305F272D31C30049C4A1 /* arrow_down_blue.png */,
 				3A38305A272D31C00049C4A1 /* arrow_left_blue.png */,
@@ -9686,6 +9700,7 @@
 				3A383073272D31C70049C4A1 /* arrow_up_blue.png in Resources */,
 				3A382FA126C176340049C4A1 /* preserveAspect.png in Resources */,
 				3A383071272D31C60049C4A1 /* increase.png in Resources */,
+				3A383128272D5BE90049C4A1 /* link_scale_down.png in Resources */,
 				3A383096272D32E50049C4A1 /* texturetoolmanipulationpanel.xrc in Resources */,
 				3A382FA726C176800049C4A1 /* two_way_merge.png in Resources */,
 				3AC88AC925BC10EE00E6CCCE /* favourite.png in Resources */,
@@ -9710,6 +9725,7 @@
 				3A383070272D31C60049C4A1 /* vscale_down.png in Resources */,
 				3A382FAC26C176AD0049C4A1 /* mergecontroldialog.xrc in Resources */,
 				3A382FA526C176340049C4A1 /* outgoing_commits.png in Resources */,
+				3A383129272D5BE90049C4A1 /* link_scale_up.png in Resources */,
 				3A382FA026C176340049C4A1 /* merge_fork.png in Resources */,
 				3A383075272D31C70049C4A1 /* decrease.png in Resources */,
 			);
