@@ -124,7 +124,7 @@ else
 
 if (-not $SkipBuild)
 {
-	Start-Process "msbuild" -ArgumentList ("..\msvc\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4", "/nodeReuse:false", "/p:UseSharedConfiguration=false") -NoNewWindow -Wait
+	Start-Process "msbuild" -ArgumentList ("..\..\DarkRadiant.sln", "/p:configuration=release", "/t:rebuild", "/p:platform=$platform", "/maxcpucount:4", "/nodeReuse:false", "/p:UseSharedConfiguration=false") -NoNewWindow -Wait
 }
 
 # Copy files to portable files folder
