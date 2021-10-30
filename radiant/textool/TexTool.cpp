@@ -535,6 +535,13 @@ AABB TexTool::getUvBoundsFromSceneSelection()
         return true;
     });
 
+    // Don't return negative bounds in case we don't have anything selected
+    if (!bounds.isValid())
+    {
+        bounds.origin.set(0, 0, 0);
+        bounds.extents.set(0.5, 0.5, 0);
+    }
+
 	return bounds;
 }
 
@@ -562,7 +569,7 @@ void TexTool::drawGrid()
 
     auto smallestUvPerPixel = uPerPixel > vPerPixel ? vPerPixel : uPerPixel;
 
-    auto gridSpacingInPixels = gridSpacing / smallestUvPerPixel;
+    auto gridSpacingInPixels = gridSpacing / std::abs(smallestUvPerPixel);
 
     // Ensure that the grid spacing is at least 10 pixels wide
     while (gridSpacingInPixels < 12)
@@ -734,6 +741,12 @@ bool TexTool::onGLDraw()
 	}
 
 	auto& texSpaceAABB = getVisibleTexSpace();
+
+    // Avoid drawing invalid bounds
+    if (texSpaceAABB.extents.x() < 0 || texSpaceAABB.extents.y() < 0)
+    {
+        return true;
+    }
 
 	// Get the upper left and lower right corner coordinates
 	auto orthoTopLeft = texSpaceAABB.origin - texSpaceAABB.extents;
