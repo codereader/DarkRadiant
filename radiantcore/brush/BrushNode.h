@@ -42,6 +42,8 @@ class BrushNode :
 	typedef std::vector<brush::VertexInstance> VertexInstances;
 	VertexInstances m_vertexInstances;
 
+    mutable bool _faceVisibilityChanged;
+
 	mutable RenderableWireframe m_render_wireframe;
 
     // Renderable array of vertex and edge points
@@ -168,10 +170,15 @@ public:
     // Should only be used by the internal Brush object
     bool facesAreForcedVisible();
 
+    // Will be invoked if one of this brush's faces updates its visibility status
+    void onFaceVisibilityChanged();
+
     void onPostUndo() override;
     void onPostRedo() override;
 
 protected:
+    virtual void setForcedVisibility(bool forceVisible, bool includeChildren) override;
+
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.
 	void _onTransformationChanged() override;
@@ -192,7 +199,7 @@ private:
                               const Matrix4& localToWorld) const;
 
 	void renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const;
-	void evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void updateWireframeVisibility(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 }; // class BrushNode
 typedef std::shared_ptr<BrushNode> BrushNodePtr;

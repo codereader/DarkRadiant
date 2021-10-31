@@ -15,6 +15,7 @@
 BrushNode::BrushNode() :
 	scene::SelectableNode(),
 	m_brush(*this),
+    _faceVisibilityChanged(true),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false),
@@ -42,6 +43,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	LitObject(other),
 	Transformable(other),
 	m_brush(*this, other.m_brush),
+    _faceVisibilityChanged(true),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	m_viewChanged(false),
@@ -355,7 +357,7 @@ void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTes
 
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Face)
 	{
-		evaluateViewDependent(volume, l2w);
+        updateWireframeVisibility(volume, l2w);
 		collector.addRenderable(*m_brush.m_state_point, _faceCentroidPointsCulled, l2w);
 	}
 	else
@@ -418,11 +420,23 @@ std::size_t BrushNode::getHighlightFlags()
 	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }
 
-void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const
+void BrushNode::onFaceVisibilityChanged()
 {
-	if (!m_viewChanged) return;
+    _faceVisibilityChanged = true;
+}
 
-	m_viewChanged = false;
+void BrushNode::setForcedVisibility(bool forceVisible, bool includeChildren)
+{
+    Node::setForcedVisibility(forceVisible, includeChildren);
+ 
+    _faceVisibilityChanged = true;
+}
+
+void BrushNode::updateWireframeVisibility(const VolumeTest& volume, const Matrix4& localToWorld) const
+{
+    if (!_faceVisibilityChanged) return;
+
+    _faceVisibilityChanged = false;
 
 	// Array of booleans to indicate which faces are visible
 	static bool faces_visible[brush::c_brush_maxFaces];
@@ -503,7 +517,7 @@ void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest
 {
 	//renderCommon(collector, volume);
 
-	evaluateViewDependent(volume, localToWorld);
+    updateWireframeVisibility(volume, localToWorld);
 
 	if (m_render_wireframe.m_size != 0)
 	{

@@ -724,7 +724,14 @@ bool Face::isVisible() const
 
 void Face::updateFaceVisibility()
 {
-    _faceIsVisible = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();
+    auto newValue = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();
+    
+    // Notify the owning brush if the value changes
+    if (newValue != _faceIsVisible)
+    {
+        _faceIsVisible = newValue;
+        _owner.getBrushNode().onFaceVisibilityChanged();
+    }
 }
 
 sigc::signal<void>& Face::signal_texdefChanged()

@@ -196,7 +196,7 @@ public:
 
 protected:
     // Set the "forced visible" flag, only to be used internally by subclasses
-	void setForcedVisibility(bool forceVisible, bool includeChildren) override;
+	virtual void setForcedVisibility(bool forceVisible, bool includeChildren) override;
 
 	// Method for subclasses to check whether this node is forcedly visible
 	bool isForcedVisible() const;
