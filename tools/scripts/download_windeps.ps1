@@ -41,7 +41,7 @@ try
     
     Write-Host ("Extracting dependencies package...")
 
-    & ..\7z\7za.exe x $package_path -o"$target_folder"
+    & ..\7z\7za.exe x $package_path -o"$target_folder" -aoa
 
     if ((Get-ChildItem "..\..\windeps" -ErrorAction SilentlyContinue) -eq $null)
     {
