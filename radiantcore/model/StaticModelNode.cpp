@@ -110,14 +110,8 @@ void StaticModelNode::renderWireframe(RenderableCollector& collector, const Volu
 {
     assert(_renderEntity);
 
-    // Test the model's intersection volume, if it intersects pass on the render call
-    const Matrix4& l2w = localToWorld();
-
-    if (volume.TestAABB(_model->localAABB(), l2w) != VOLUME_OUTSIDE)
-    {
-        // Submit the model's geometry
-        _model->renderWireframe(collector, l2w, *_renderEntity);
-    }
+    // Submit the model's geometry
+    _model->renderWireframe(collector, localToWorld(), *_renderEntity);
 }
 
 void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
