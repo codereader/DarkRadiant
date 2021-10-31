@@ -13,7 +13,8 @@ PatchNode::PatchNode(patch::PatchDefType type) :
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
 	m_render_selected(GL_POINTS),
 	m_patch(*this),
-    _untransformedOriginChanged(true)
+    _untransformedOriginChanged(true),
+    _selectedControlVerticesNeedUpdate(true)
 {
 	m_patch.setFixedSubdivisions(type == patch::PatchDefType::Def3, Subdivisions(m_patch.getSubdivisions()));
 }
@@ -34,12 +35,10 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
 	m_render_selected(GL_POINTS),
 	m_patch(other.m_patch, *this), // create the patch out of the <other> one
-    _untransformedOriginChanged(true)
+    _untransformedOriginChanged(true),
+    _selectedControlVerticesNeedUpdate(true)
 {
 }
-
-PatchNode::~PatchNode()
-{}
 
 scene::INode::Type PatchNode::getNodeType() const
 {
@@ -211,15 +210,18 @@ void PatchNode::invertSelectedComponents(selection::ComponentSelectionMode mode)
 	}
 }
 
-void PatchNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) {
+void PatchNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode)
+{
 	test.BeginMesh(localToWorld());
 
 	// Only react to eVertex selection mode
 	switch(mode) {
-        case selection::ComponentSelectionMode::Vertex: {
+        case selection::ComponentSelectionMode::Vertex:
+        {
 			// Cycle through all the control instances and test them for selection
-			for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
-				i->testSelect(selector, test);
+			for (auto& i : m_ctrl_instances)
+            {
+				i.testSelect(selector, test);
 			}
 		}
 		break;
@@ -252,7 +254,11 @@ bool PatchNode::hasVisibleMaterial() const
 	return m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible();
 }
 
-void PatchNode::selectedChangedComponent(const ISelectable& selectable) {
+void PatchNode::selectedChangedComponent(const ISelectable& selectable)
+{
+    // We need to update our vertex colours next time we render them
+    _selectedControlVerticesNeedUpdate = true;
+
 	// Notify the selection system that this PatchNode was selected. The RadiantSelectionSystem adds
 	// this to its internal list of selected nodes.
 	GlobalSelectionSystem().onComponentSelection(SelectableNode::getSelf(), selectable);
@@ -375,17 +381,22 @@ void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTes
 	}
 }
 
-void PatchNode::update_selected() const {
+void PatchNode::updateSelectedControlVertices() const
+{
+    if (!_selectedControlVerticesNeedUpdate) return;
+
+    _selectedControlVerticesNeedUpdate = false;
+
 	// Clear the renderable point vector that represents the selection
 	m_render_selected.clear();
 
 	// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
-	PatchControlConstIter ctrl = m_patch.getControlPointsTransformed().begin();
+	auto ctrl = m_patch.getControlPointsTransformed().begin();
 
-	for (PatchControlInstances::const_iterator i = m_ctrl_instances.begin();
-		 i != m_ctrl_instances.end(); ++i, ++ctrl)
+	for (auto i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i, ++ctrl)
 	{
-		if (i->isSelected()) {
+		if (i->isSelected())
+        {
 			const Colour4b colour_selected(0, 0, 0, 255);
 			// Add this patch control instance to the render list
 			m_render_selected.push_back(VertexCb(reinterpret_cast<const Vertex3f&>(ctrl->vertex), colour_selected));
@@ -395,11 +406,10 @@ void PatchNode::update_selected() const {
 
 void PatchNode::renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume) const
 {
-	// greebo: Don't know yet, what evaluateTransform() is really doing
 	const_cast<Patch&>(m_patch).evaluateTransform();
 
 	// Rebuild the array of selected control vertices
-	update_selected();
+    updateSelectedControlVertices();
 
 	// If there are any selected components, add them to the collector
 	if (!m_render_selected.empty())
@@ -454,6 +464,7 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 
 		// mark this patch transform as dirty
 		m_patch.transformChanged();
+        _selectedControlVerticesNeedUpdate = true;
 	}
 
 	// Also, check if there are any drag planes selected

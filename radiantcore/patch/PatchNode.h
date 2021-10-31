@@ -47,14 +47,14 @@ class PatchNode :
     // If true, the _untransformedOrigin member needs an update
     bool _untransformedOriginChanged;
 
+    mutable bool _selectedControlVerticesNeedUpdate;
+
 public:
 	// Construct a PatchNode with no arguments
 	PatchNode(patch::PatchDefType type);
 
 	// Copy Constructor
 	PatchNode(const PatchNode& other);
-
-	virtual ~PatchNode();
 
 	// Patch::Observer implementation
 	void allocate(std::size_t size);
@@ -158,7 +158,7 @@ private:
 
 	// greebo: Updates the internal render array m_render_selected, that contains all control vertices that should be
 	// rendered as highlighted.
-	void update_selected() const;
+	void updateSelectedControlVertices() const;
 
 	// greebo: Renders the selected components. This is called by the above two render functions
 	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume) const;
