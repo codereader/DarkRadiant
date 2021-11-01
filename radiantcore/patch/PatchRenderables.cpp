@@ -157,3 +157,39 @@ void RenderablePatchVectorsNTB::render(RenderableCollector& collector, const Vol
 	collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
 	collector.addRenderable(*_shader, *this, localToWorld);
 }
+
+void RenderablePatchTesselation::setShader(const ShaderPtr& shader)
+{
+    _shader = shader;
+}
+
+void RenderablePatchTesselation::update()
+{
+    if (!_shader) return;
+    if (!_needsUpdate) return;
+
+    _needsUpdate = false;
+
+    // Load all the vertices into the target vector
+    _vertices = _tess.vertices;
+    _indices.reserve((_tess.height - 1) * (_tess.width - 1) * 6); // 6 => 2 triangles per quad
+
+    // Generate the indices to define the triangles in clockwise order
+    for (std::size_t h = 0; h < _tess.height - 1; ++h)
+    {
+        auto rowOffset = h * _tess.width;
+
+        for (std::size_t w = 0; w < _tess.width - 1; ++w)
+        {
+            _indices.push_back(static_cast<unsigned int>(rowOffset + w + _tess.width));
+            _indices.push_back(static_cast<unsigned int>(rowOffset + w + 1));
+            _indices.push_back(static_cast<unsigned int>(rowOffset + w));
+
+            _indices.push_back(static_cast<unsigned int>(rowOffset + w + _tess.width));
+            _indices.push_back(static_cast<unsigned int>(rowOffset + w + _tess.width + 1));
+            _indices.push_back(static_cast<unsigned int>(rowOffset + w + 1));
+        }
+    }
+
+    _shader->addSurface(_vertices, _indices);
+}

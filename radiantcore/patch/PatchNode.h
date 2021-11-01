@@ -9,6 +9,7 @@
 #include "scene/SelectableNode.h"
 #include "PatchControlInstance.h"
 #include "dragplanes.h"
+#include "PatchRenderables.h"
 
 class PatchNode :
 	public scene::SelectableNode,
@@ -48,6 +49,8 @@ class PatchNode :
     bool _untransformedOriginChanged;
 
     mutable bool _selectedControlVerticesNeedUpdate;
+
+    RenderablePatchTesselation _renderableSurface;
 
 public:
 	// Construct a PatchNode with no arguments

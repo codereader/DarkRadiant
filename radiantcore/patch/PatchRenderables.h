@@ -6,6 +6,8 @@
 #pragma once
 
 #include "igl.h"
+#include "imodelsurface.h"
+
 #include "PatchTesselation.h"
 
 #include "render/VertexBuffer.h"
@@ -89,4 +91,34 @@ public:
 	void render(const RenderInfo& info) const;
 
 	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+};
+
+class RenderablePatchTesselation
+{
+private:
+    const PatchTesselation& _tess;
+    bool _needsUpdate;
+    ShaderPtr _shader;
+
+    std::vector<ArbitraryMeshVertex> _vertices;
+    std::vector<unsigned int> _indices;
+
+public:
+    RenderablePatchTesselation(const PatchTesselation& tess) :
+        _tess(tess),
+        _needsUpdate(true)
+    {}
+
+    void update();
+    void setShader(const ShaderPtr& shader);
+
+    const std::vector<ArbitraryMeshVertex>& getVertexArray() const
+    {
+        return _vertices;
+    }
+
+    const std::vector<unsigned int>& getIndexArray() const
+    {
+        return _indices;
+    }
 };

@@ -194,10 +194,7 @@ public:
 	/**
 	 * Returns true if this shaderpass doesn't have anything to render.
 	 */
-	bool empty() const
-	{
-		return _renderables.empty() && _renderablesWithoutEntity.empty();
-	}
+    bool empty();
 
 	friend std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
 };

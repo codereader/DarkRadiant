@@ -44,6 +44,10 @@ private:
 	typedef std::set<Observer*> Observers;
 	Observers _observers;
 
+    // Hacky triangle soup
+    std::vector<ArbitraryMeshVertex> _vertices;
+    std::vector<unsigned int> _indices;
+
 private:
 
     // Start point for constructing shader passes from the shader name
@@ -95,6 +99,12 @@ public:
 					   const Matrix4& modelview,
 					   const LightSources* lights,
                        const IRenderEntity* entity) override;
+
+    void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
+
+    const std::vector<ArbitraryMeshVertex>& getVertices() const;
+    const std::vector<unsigned int> getIndices() const;
+
     void setVisible(bool visible) override;
     bool isVisible() const override;
     void incrementUsed() override;

@@ -576,6 +576,32 @@ void OpenGLShaderPass::render(OpenGLState& current,
     // Apply our state to the current state object
     applyState(current, flagsMask, viewer, time, NULL);
 
+#if 1
+    if (!_owner.getVertices().empty())
+    {
+        // Render all triangles
+        const auto& vertices = _owner.getVertices();
+        const auto& indices = _owner.getIndices();
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+
+        // Set the vertex pointer first
+        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
+        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
+        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
+        //glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
+        //glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().tangent);
+        //glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().bitangent);
+
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, indices.data());
+
+        //glDisableClientState(GL_NORMAL_ARRAY);
+        //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        //glDisableClientState(GL_VERTEX_ARRAY);
+    }
+#endif
+
     if (!_renderablesWithoutEntity.empty())
     {
         renderAllContained(_renderablesWithoutEntity, current, viewer, time);
@@ -598,6 +624,11 @@ void OpenGLShaderPass::render(OpenGLState& current,
 
     _renderablesWithoutEntity.clear();
     _renderables.clear();
+}
+
+bool OpenGLShaderPass::empty()
+{
+    return _renderables.empty() && _renderablesWithoutEntity.empty() && _owner.getVertices().empty();
 }
 
 bool OpenGLShaderPass::stateIsActive()

@@ -14,7 +14,8 @@ PatchNode::PatchNode(patch::PatchDefType type) :
 	m_render_selected(GL_POINTS),
 	m_patch(*this),
     _untransformedOriginChanged(true),
-    _selectedControlVerticesNeedUpdate(true)
+    _selectedControlVerticesNeedUpdate(true),
+    _renderableSurface(m_patch.getTesselation())
 {
 	m_patch.setFixedSubdivisions(type == patch::PatchDefType::Def3, Subdivisions(m_patch.getSubdivisions()));
 }
@@ -36,7 +37,8 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_render_selected(GL_POINTS),
 	m_patch(other.m_patch, *this), // create the patch out of the <other> one
     _untransformedOriginChanged(true),
-    _selectedControlVerticesNeedUpdate(true)
+    _selectedControlVerticesNeedUpdate(true),
+    _renderableSurface(m_patch.getTesselation())
 {
 }
 
@@ -315,18 +317,22 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	// Don't render invisible shaders
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
+    const_cast<PatchNode&>(*this)._renderableSurface.setShader(m_patch._shader.getGLShader());
+    const_cast<PatchNode&>(*this)._renderableSurface.update();
+
     // Defer the tesselation calculation to the last minute
 	const_cast<Patch&>(m_patch).evaluateTransform();
     const_cast<Patch&>(m_patch).updateTesselation();
 
 	assert(_renderEntity); // patches rendered without parent - no way!
 
+#if 0
     // Render the patch itself
     collector.addRenderable(
         *m_patch._shader.getGLShader(), m_patch._solidRenderable,
         localToWorld(), this, _renderEntity
     );
-
+#endif
 #if DEBUG_PATCH_NTB_VECTORS
     m_patch._renderableVectors.render(collector, volume, localToWorld());
 #endif

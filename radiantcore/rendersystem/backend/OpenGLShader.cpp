@@ -110,6 +110,32 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     }
 }
 
+void OpenGLShader::addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
+{
+    // Offset all incoming vertices with a given offset
+    auto indexOffset = static_cast<unsigned int>(_vertices.size());
+
+    _vertices.reserve(_vertices.size() + vertices.size());
+    _indices.reserve(_indices.size() + indices.size());
+
+    _vertices.insert(_vertices.end(), vertices.begin(), vertices.end());
+
+    for (const auto index : indices)
+    {
+        _indices.push_back(indexOffset + index);
+    }
+}
+
+const std::vector<ArbitraryMeshVertex>& OpenGLShader::getVertices() const
+{
+    return _vertices;
+}
+
+const std::vector<unsigned int> OpenGLShader::getIndices() const
+{
+    return _indices;
+}
+
 void OpenGLShader::setVisible(bool visible)
 {
     // Control visibility by inserting or removing our shader passes from the GL

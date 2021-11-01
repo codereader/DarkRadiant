@@ -2,9 +2,11 @@
 
 #include "imodule.h"
 #include <functional>
+#include <vector>
 
 #include "math/Vector3.h"
 #include "math/AABB.h"
+#include "render/ArbitraryMeshVertex.h"
 
 #include "ishaderlayer.h"
 #include <sigc++/signal.h>
@@ -422,6 +424,8 @@ public:
 							   const Matrix4& modelview,
 							   const LightSources* lights = nullptr,
                                const IRenderEntity* entity = nullptr) = 0;
+
+    virtual void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) = 0;
 
     /**
      * \brief
