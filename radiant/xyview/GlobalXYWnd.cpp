@@ -754,16 +754,17 @@ void XYWndManager::foreachMouseTool(const std::function<void(const MouseToolPtr&
 
 void XYWndManager::runBenchmark(const cmd::ArgumentList& args)
 {
-    setScale(0.17f);
-    setOrigin({ 0, -1370, 185 });
+    auto cam = GlobalCamera().getActiveCamWnd();
+
+    cam->getCamera().setCameraOrigin({ 2517, -4511, 713 });
+    cam->getCamera().setCameraAngles({ -2.1, 123.91, 0 });
 
     int numRuns = args.empty() ? 1 : args[0].getInt();
-    auto firstView = *_xyWnds.begin();
 
-    ScopedDebugTimer timer("OrthoView refresh, " + string::to_string(numRuns) + " runs");
+    ScopedDebugTimer timer("Camera refresh, " + string::to_string(numRuns) + " runs");
     for (int i = 0; i < numRuns; ++i)
     {
-        firstView.second->forceRedraw();
+        cam->getCamera().forceRedraw();
     }
 }
 
