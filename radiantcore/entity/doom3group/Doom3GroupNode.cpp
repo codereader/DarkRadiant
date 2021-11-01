@@ -264,8 +264,9 @@ void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTes
 	_d3Group.renderSolid(collector, volume, localToWorld(), isSelected());
 
 	// Render curves always relative to the absolute map origin
-	_nurbsEditInstance.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
-	_catmullRomEditInstance.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
+    static Matrix4 identity = Matrix4::getIdentity();
+	_nurbsEditInstance.renderComponentsSelected(collector, volume, identity);
+	_catmullRomEditInstance.renderComponentsSelected(collector, volume, identity);
 }
 
 void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
@@ -274,8 +275,9 @@ void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const Volum
 
 	_d3Group.renderWireframe(collector, volume, localToWorld(), isSelected());
 
-	_nurbsEditInstance.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
-	_catmullRomEditInstance.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
+    static Matrix4 identity = Matrix4::getIdentity();
+	_nurbsEditInstance.renderComponentsSelected(collector, volume, identity);
+	_catmullRomEditInstance.renderComponentsSelected(collector, volume, identity);
 }
 
 void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
