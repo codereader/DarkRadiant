@@ -104,9 +104,17 @@ public:
     {
         // Keep the shader map intact, but clear the renderables vectors,
         // so that we don't have to re-allocate the whole memory every frame
-        for (auto& pair : _litRenderables)
+        // Purge the ones that have not been used in this render round
+        for (auto i = _litRenderables.begin(); i != _litRenderables.end();)
         {
-            pair.second.clear();
+            if (i->second.empty())
+            {
+                // This shader has not been used at all in the last frame, free the memory
+                _litRenderables.erase(i++);
+                continue;
+            }
+
+            (i++)->second.clear();
         }
 
         _sceneLights.clear();
