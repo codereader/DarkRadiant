@@ -6,7 +6,7 @@
 
 #include "VectorLightList.h"
 
-#include <map>
+#include <unordered_map>
 
 namespace render
 {
@@ -62,7 +62,7 @@ private:
     // Renderables added with addLitObject() need to be stored until their
     // light lists can be calculated, which can't happen until all the lights
     // are submitted too.
-    std::map<Shader*, LitRenderables> _litRenderables;
+    std::unordered_map<Shader*, LitRenderables> _litRenderables;
 
     // Intersect all received renderables wiith lights
     void calculateLightIntersections()
@@ -231,9 +231,7 @@ public:
             LitRenderables emptyList;
             emptyList.reserve(1024);
 
-            auto result = _litRenderables.insert(
-                std::make_pair(&shader, std::move(emptyList))
-            );
+            auto result = _litRenderables.emplace(&shader, std::move(emptyList));
             wxASSERT(result.second);
             iter = result.first;
         }
@@ -242,7 +240,7 @@ public:
 
         // Store a LitRenderable object for this renderable
         LitRenderable lr { renderable, litObject, localToWorld, entity };
-        iter->second.push_back(std::move(lr));
+        iter->second.emplace_back(std::move(lr));
     }
 };
 
