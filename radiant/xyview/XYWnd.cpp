@@ -171,7 +171,9 @@ void XYWnd::destroyXYView()
     _wxGLWidget = nullptr;
 }
 
-void XYWnd::setScale(float f) {
+void XYWnd::setScale(float f) 
+{
+    rMessage() << "Setting scale to " << f << " (previous was " << _scale << ")" << std::endl;
     _scale = f;
     updateProjection();
     updateModelview();
@@ -1577,7 +1579,6 @@ void XYWnd::zoomIn()
 
 void XYWnd::zoomInOn(wxPoint cursor, int zoom)
 {
-    const float oldScale = _scale;
     const float newScale = getZoomedScale(zoom);
     scrollByPixels(_width / 2 - cursor.x, _height / 2 - cursor.y);
     setScale(newScale);
@@ -1633,16 +1634,19 @@ void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 {
     if (!ev.ShiftDown())
     {
+        rMessage() << "Received GL Window Scroll" << std::endl;
         zoomInOn(ev.GetPosition(), ev.GetWheelRotation() > 0 ? 1 : -1);
         return;
     }
 
 	if (ev.GetWheelRotation() > 0)
 	{
+        rMessage() << "Received SHIFT + ZoomIn" << std::endl;
 		zoomIn();
 	}
 	else if (ev.GetWheelRotation() < 0)
 	{
+        rMessage() << "Received SHIFT + ZoomOut" << std::endl;
 		zoomOut();
 	}
 }
