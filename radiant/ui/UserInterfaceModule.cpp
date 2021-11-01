@@ -229,6 +229,14 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 
     _autosaveTimer.reset(new map::AutoSaveTimer);
     _autosaveTimer->initialise();
+
+#ifdef WIN32
+    // Hide the local user guide item in Windows
+    GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
+    {
+        GlobalMenuManager().setVisibility("main/help/userGuideLocal", false);
+    });
+#endif
 }
 
 void UserInterfaceModule::shutdownModule()
@@ -400,7 +408,9 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
 	GlobalCommandSystem().addCommand("ShowUserGuide", Documentation::showUserGuide);
 	GlobalCommandSystem().addCommand("OpenForumUrl", Documentation::OpenForumUrl);
+#ifndef WIN32
 	GlobalCommandSystem().addCommand("ShowOfflineUserGuide", Documentation::showOfflineUserGuide);
+#endif
 	GlobalCommandSystem().addCommand("ExportSelectedAsModelDialog", ExportAsModelDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("ConvertModelDialog", ConvertModelDialog::ShowDialog);
 
