@@ -100,9 +100,6 @@ private:
     bool _needsUpdate;
     ShaderPtr _shader;
 
-    std::vector<ArbitraryMeshVertex> _vertices;
-    std::vector<unsigned int> _indices;
-
 public:
     RenderablePatchTesselation(const PatchTesselation& tess) :
         _tess(tess),
@@ -111,14 +108,4 @@ public:
 
     void update();
     void setShader(const ShaderPtr& shader);
-
-    const std::vector<ArbitraryMeshVertex>& getVertexArray() const
-    {
-        return _vertices;
-    }
-
-    const std::vector<unsigned int>& getIndexArray() const
-    {
-        return _indices;
-    }
 };

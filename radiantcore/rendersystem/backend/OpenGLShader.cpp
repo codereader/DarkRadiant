@@ -75,6 +75,7 @@ OpenGLRenderSystem& OpenGLShader::getRenderSystem()
 
 void OpenGLShader::destroy()
 {
+    _vertexBuffer.reset();
     _materialChanged.disconnect();
     _material.reset();
     _shaderPasses.clear();
@@ -112,28 +113,55 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 
 void OpenGLShader::addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
 {
-    // Offset all incoming vertices with a given offset
-    auto indexOffset = static_cast<unsigned int>(_vertices.size());
-
-    _vertices.reserve(_vertices.size() + vertices.size());
-    _indices.reserve(_indices.size() + indices.size());
-
-    _vertices.insert(_vertices.end(), vertices.begin(), vertices.end());
-
-    for (const auto index : indices)
+    if (!_vertexBuffer)
     {
-        _indices.push_back(indexOffset + index);
+        _vertexBuffer = std::make_unique<IndexedVertexBuffer<ArbitraryMeshVertex>>();
+    }
+
+    // Offset all incoming vertices with a given offset
+    auto indexOffset = static_cast<unsigned int>(_vertexBuffer->getNumVertices());
+
+    // Pump the data to the VBO
+    _vertexBuffer->addVertices(vertices.begin(), vertices.end());
+    _vertexBuffer->addIndicesToLastBatch(indices.begin(), indices.size(), indexOffset);
+}
+
+void OpenGLShader::drawSurfaces()
+{
+    if (hasSurfaces())
+    {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+
+        _vertexBuffer->renderAllBatches(GL_TRIANGLES, false);
+#if 0
+        // Render all triangles
+
+        glBindBuffer(GL_VERTEX_ARRAY, _vbo);
+
+        // Set the vertex pointer first
+        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
+        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
+        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
+        //glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
+        //glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().tangent);
+        //glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().bitangent);
+
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_indices.size()), GL_UNSIGNED_INT, _indices.data());
+
+        //glDisableClientState(GL_NORMAL_ARRAY);
+        //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        //glDisableClientState(GL_VERTEX_ARRAY);
+
+        glBindBuffer(GL_VERTEX_ARRAY, 0);
+#endif
     }
 }
 
-const std::vector<ArbitraryMeshVertex>& OpenGLShader::getVertices() const
+bool OpenGLShader::hasSurfaces() const
 {
-    return _vertices;
-}
-
-const std::vector<unsigned int> OpenGLShader::getIndices() const
-{
-    return _indices;
+    return _vertexBuffer && _vertexBuffer->getNumVertices() > 0;
 }
 
 void OpenGLShader::setVisible(bool visible)

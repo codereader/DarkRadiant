@@ -5,6 +5,7 @@
 #include "irender.h"
 #include "ishaders.h"
 #include "string/string.h"
+#include "render/IndexedVertexBuffer.h"
 
 #include <list>
 #include <sigc++/connection.h>
@@ -44,9 +45,7 @@ private:
 	typedef std::set<Observer*> Observers;
 	Observers _observers;
 
-    // Hacky triangle soup
-    std::vector<ArbitraryMeshVertex> _vertices;
-    std::vector<unsigned int> _indices;
+    std::unique_ptr<render::IndexedVertexBuffer<ArbitraryMeshVertex>> _vertexBuffer;
 
 private:
 
@@ -101,9 +100,8 @@ public:
                        const IRenderEntity* entity) override;
 
     void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
-
-    const std::vector<ArbitraryMeshVertex>& getVertices() const;
-    const std::vector<unsigned int> getIndices() const;
+    bool hasSurfaces() const;
+    void drawSurfaces();
 
     void setVisible(bool visible) override;
     bool isVisible() const override;
