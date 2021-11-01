@@ -93,6 +93,25 @@ public:
       _shaders(shaders)
     {}
 
+    void prepare()
+    {
+        _totalLights = 0;
+        _visibleLights = 0;
+        _editMode = GlobalMapModule().getEditMode();
+    }
+
+    void cleanup()
+    {
+        // Keep the shader map intact, but clear the renderables vectors,
+        // so that we don't have to re-allocate the whole memory every frame
+        for (auto& pair : _litRenderables)
+        {
+            pair.second.clear();
+        }
+
+        _sceneLights.clear();
+    }
+
     /**
      * \brief
      * Instruct the CamRenderer to push its sorted renderables to their

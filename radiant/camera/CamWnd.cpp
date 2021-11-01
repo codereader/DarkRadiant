@@ -127,6 +127,8 @@ CamWnd::CamWnd(wxWindow* parent) :
         radiant::IMessage::Type::TextureChanged,
         radiant::TypeListener<radiant::TextureChangedMessage>(
             sigc::mem_fun(this, &CamWnd::handleTextureChanged)));
+
+    _renderer.reset(new render::CamRenderer(_view, _shaders));
 }
 
 wxWindow* CamWnd::getMainWidget() const
@@ -784,27 +786,30 @@ void CamWnd::Cam_Draw()
 
     // Main scene render
     {
+        _renderer->prepare();
+
         // Front end (renderable collection from scene)
-        render::CamRenderer renderer(_view, _shaders);
-        render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
+        render::RenderableCollectionWalker::CollectRenderablesInScene(*_renderer, _view);
 
         // Accumulate render statistics
-        _renderStats.setLightCount(renderer.getVisibleLights(),
-                                   renderer.getTotalLights());
+        _renderStats.setLightCount(_renderer->getVisibleLights(),
+                                   _renderer->getTotalLights());
         _renderStats.frontEndComplete();
 
         // Render any active mousetools
         for (const ActiveMouseTools::value_type& i : _activeMouseTools)
         {
-            i.second->render(GlobalRenderSystem(), renderer, _view);
+            i.second->render(GlobalRenderSystem(), *_renderer, _view);
         }
 
         // Back end (submit to shaders and do the actual render)
-        renderer.submitToShaders(
+        _renderer->submitToShaders(
             getCameraSettings()->getRenderMode() == RENDER_MODE_LIGHTING
         );
         GlobalRenderSystem().render(allowedRenderFlags, _camera->getModelView(),
                                     _camera->getProjection(), _view.getViewer());
+
+        _renderer->cleanup();
     }
 
     // greebo: Draw the clipper's points (skipping the depth-test)
