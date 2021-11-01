@@ -97,9 +97,9 @@ void StaticModelNode::renderSolid(RenderableCollector& collector, const VolumeTe
 
     const Matrix4& l2w = localToWorld();
 
-    // Test the model's intersection volume, if it intersects pass on the
-    // render call
-    if (volume.TestAABB(_model->localAABB(), l2w) != VOLUME_OUTSIDE)
+    // The space partitioning system will consider this node also if the cell is only partially visible
+    // Do a quick bounds check against the world AABB to cull ourselves if we're not in the view
+    if (volume.TestAABB(worldAABB()) != VOLUME_OUTSIDE)
     {
         // Submit the model's geometry
         _model->renderSolid(collector, l2w, *_renderEntity, *this);
