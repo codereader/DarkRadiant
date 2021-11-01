@@ -140,13 +140,12 @@ public:
         }
 
         // Render objects with calculated light lists
-        for (auto i = _litRenderables.begin(); i != _litRenderables.end(); ++i)
+        for (const auto& pair : _litRenderables)
         {
-            Shader* shader = i->first;
+            Shader* shader = pair.first;
             wxASSERT(shader);
-            for (auto j = i->second.begin(); j != i->second.end(); ++j)
+            for (const LitRenderable& lr : pair.second)
             {
-                const LitRenderable& lr = *j;
                 shader->addRenderable(lr.renderable, lr.local2World,
                                       useLights ? &lr.lights : nullptr,
                                       lr.entity);
