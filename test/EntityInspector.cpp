@@ -3,6 +3,7 @@
 #include <sigc++/trackable.h>
 #include <map>
 #include "icommandsystem.h"
+#include "itransformable.h"
 #include "algorithm/Scene.h"
 #include "iselectable.h"
 #include "selection/EntitySelection.h"
@@ -837,6 +838,48 @@ TEST_F(EntityInspectorTest, SelectChildPrimitivesOfTwoEntities)
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Expect nothing to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
     expectNotListed(keyValueStore, "classname");
+}
+
+// In a problematic case, a worldspawn patch and a func_static have been moved,
+// the modified "origin" key on the func_static was appearing in the Entity Inspector 
+// after the modification. It should remain hidden, since worldspawn doesn't have an "origin" key.
+TEST_F(EntityInspectorTest, MoveFuncStaticAndWorldPrimitives)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    auto brush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto func_static = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+
+    Node_setSelected(brush1, true);
+    Node_setSelected(func_static, true);
+
+    keyValueStore.rescanSelection();
+    expectNonUnique(keyValueStore, "classname");
+    expectNotListed(keyValueStore, "origin");
+    EXPECT_EQ(keyValueStore.store.size(), 1) << "Only classname should show up after selection";
+
+    auto previousOrigin = Node_getEntity(func_static)->getKeyValue("origin");
+
+    auto transformable = Node_getTransformable(func_static);
+    if (transformable)
+    {
+        transformable->setType(TRANSFORM_PRIMITIVE);
+        transformable->setTranslation(Vector3(10, 0, 0));
+        transformable->freezeTransform();
+    }
+
+    EXPECT_NE(Node_getEntity(func_static)->getKeyValue("origin"), previousOrigin) << "Origin should have changed";
+
+    keyValueStore.rescanSelection();
+
+    // The spawnarg situation visible in the entity inspector should be the same as before
+    // classname is visible, but origin should not be
+    expectNonUnique(keyValueStore, "classname");
+    expectNotListed(keyValueStore, "origin");
+    EXPECT_EQ(keyValueStore.store.size(), 1) << "Only classname should show up after selection";
 }
 
 }
