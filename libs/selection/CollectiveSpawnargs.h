@@ -187,9 +187,10 @@ public:
                 // We have more than one entity check the set
                 checkKeyValueSetAfterChange(entity, key, value, e->second);
             }
-            else
+            // We only have one entity with this key, 
+            // fire the signal only if this is the only entity we know about
+            else if (_keyValuesByEntity.size() == 1)
             {
-                // Signal will be emitted nonetheless, the value got changed
                 _sigKeyValueSetChanged.emit(key, value);
             }
         }
