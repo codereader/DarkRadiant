@@ -189,9 +189,6 @@ public:
             }
             else
             {
-                // We only have one entity for this key, it should have been unique in the first place
-                assert(e->second.valueIsEqualOnAllEntities);
-
                 // Signal will be emitted nonetheless, the value got changed
                 _sigKeyValueSetChanged.emit(key, value);
             }
