@@ -1591,10 +1591,18 @@ void XYWnd::zoomInOn(wxPoint cursor, int zoom)
     // and after zooming, so the origin delta can be calculated from what we have
     auto scaleAdjustment = (1 / _scale - 1 / newScale);
 
+    rMessage() << "ZoomInOn|BEFORE: Origin = " << _origin << " Mouse cursor: " << cursor.x << "," << cursor.y << " Dims: " << _width << "x" << _height << std::endl;
+    rMessage() << "    convertXYToWorld(cursor): " << convertXYToWorld(cursor.x, cursor.y) << 
+        " Screen Normalised: " << screen_normalised(cursor.x, _width) << "," << screen_normalised(cursor.y, _height) << std::endl;
+
     _origin[dim1] += screen_normalised(cursor.x, _width) * _width / 2 * scaleAdjustment;
     _origin[dim2] -= screen_normalised(cursor.y, _height) * _height / 2 * scaleAdjustment;
 
     setScale(newScale);
+
+    rMessage() << "  ZoomInOn|AFTER: Origin = " << _origin << " Mouse cursor: " << cursor.x << "," << cursor.y << " Dims: " << _width << "x" << _height << std::endl;
+    rMessage() << "    convertXYToWorld(cursor): " << convertXYToWorld(cursor.x, cursor.y) << 
+        " Screen Normalised: " << screen_normalised(cursor.x, _width) << "," << screen_normalised(cursor.y, _height) << std::endl;
 }
 
 // ================ CALLBACKS ======================================
