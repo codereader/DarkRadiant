@@ -401,17 +401,23 @@ void SurfaceInspector::populateWindow()
 	dialogVBox->Add(table, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
 	// Initial parameter editing rows
-	_manipulators[HSHIFT] = createManipulatorRow(this, _(LABEL_HSHIFT), table, "arrow_left_blue.png", "arrow_right_blue.png");
-	_manipulators[VSHIFT] = createManipulatorRow(this, _(LABEL_VSHIFT), table, "arrow_down_blue.png", "arrow_up_blue.png");
-	_manipulators[HSCALE] = createManipulatorRow(this, _(LABEL_HSCALE), table, "hscale_down.png", "hscale_up.png");
+    _manipulators[HSHIFT] = createManipulatorRow(
+        _(LABEL_HSHIFT), table, "arrow_left_blue.png", "arrow_right_blue.png"
+    );
+    _manipulators[VSHIFT] = createManipulatorRow(
+        _(LABEL_VSHIFT), table, "arrow_down_blue.png", "arrow_up_blue.png"
+    );
+    _manipulators[HSCALE] = createManipulatorRow(
+        _(LABEL_HSCALE), table, "hscale_down.png", "hscale_up.png"
+    );
 
     // Scale link widgets
     table->AddSpacer(1); // instead of a label
     createScaleLinkButtons(*table);
 
     // Remaining parameter rows
-	_manipulators[VSCALE] = createManipulatorRow(this, _(LABEL_VSCALE), table, "vscale_down.png", "vscale_up.png");
-	_manipulators[ROTATION] = createManipulatorRow(this, _(LABEL_ROTATION), table, "rotate_cw.png", "rotate_ccw.png");
+	_manipulators[VSCALE] = createManipulatorRow(_(LABEL_VSCALE), table, "vscale_down.png", "vscale_up.png");
+	_manipulators[ROTATION] = createManipulatorRow(_(LABEL_ROTATION), table, "rotate_cw.png", "rotate_ccw.png");
 
 	// ======================== Texture Operations ====================================
 
@@ -517,35 +523,36 @@ void SurfaceInspector::populateWindow()
 	SetSizerAndFit(border);
 }
 
-SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
-	wxWindow* parent, const std::string& label, wxFlexGridSizer* table,
-    const std::string& bitmapSmaller, const std::string& bitmapLarger)
+SurfaceInspector::ManipulatorRow
+SurfaceInspector::createManipulatorRow(const std::string& label, wxFlexGridSizer* table,
+                                       const std::string& bitmapSmaller,
+                                       const std::string& bitmapLarger)
 {
 	ManipulatorRow manipRow;
 
-	wxStaticText* text = new wxStaticText(parent, wxID_ANY, label);
+	wxStaticText* text = new wxStaticText(this, wxID_ANY, label);
 	table->Add(text, 0, wxALIGN_CENTER_VERTICAL);
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
 	// Create the entry field
-	manipRow.value = new wxTextCtrl(parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	manipRow.value = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	manipRow.value->SetMinSize(PixelSize(50, -1));
 	manipRow.value->Bind(wxEVT_TEXT_ENTER, &SurfaceInspector::onValueEntryActivate, this);
 
     // Create the nudge buttons
 	wxBoxSizer* controlButtonBox = new wxBoxSizer(wxHORIZONTAL);
-    manipRow.smaller = new wxutil::ControlButton(parent, wxutil::GetLocalBitmap(bitmapSmaller));
+    manipRow.smaller = new wxutil::ControlButton(this, wxutil::GetLocalBitmap(bitmapSmaller));
     controlButtonBox->Add(manipRow.smaller, 0, wxEXPAND);
     controlButtonBox->AddSpacer(2);
-    manipRow.larger = new wxutil::ControlButton(parent, wxutil::GetLocalBitmap(bitmapLarger));
+    manipRow.larger = new wxutil::ControlButton(this, wxutil::GetLocalBitmap(bitmapLarger));
     controlButtonBox->Add(manipRow.larger, 0, wxEXPAND);
 
 	// Create the label
-	wxStaticText* steplabel = new wxStaticText(parent, wxID_ANY, _(LABEL_STEP));
+	wxStaticText* steplabel = new wxStaticText(this, wxID_ANY, _(LABEL_STEP));
 
 	// Create the entry field
-	manipRow.stepEntry = new wxTextCtrl(parent, wxID_ANY, "");
+	manipRow.stepEntry = new wxTextCtrl(this, wxID_ANY, "");
     manipRow.stepEntry->SetMinSize(PixelSize(30, -1));
 
 	// Arrange all items in a row
