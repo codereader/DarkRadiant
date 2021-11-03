@@ -36,7 +36,7 @@ namespace ui
 class TexTool;
 typedef std::shared_ptr<TexTool> TexToolPtr;
 
-class TexTool : 
+class TexTool :
 	public wxutil::TransientWindow,
     public IOrthoViewBase,
 	public sigc::trackable,
@@ -88,8 +88,8 @@ private:
 	static TexToolPtr& InstancePtr();
 
 	/* TransientWindow callbacks */
-	virtual void _preHide();
-	virtual void _preShow();
+	virtual void _preHide() override;
+	virtual void _preShow() override;
 
 	void setGridActive(bool active);
 

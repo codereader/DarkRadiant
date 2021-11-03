@@ -91,15 +91,25 @@ namespace
     // GTK styles) vs Windows.
 #ifdef __WXMSW__
     const int SPINBOX_WIDTH_CHARS = 7;
-
-    // Only Windows can use fixed pixel sizes for widgets; on Linux, the
-    // availability of GTK themes + configurable DPI (e.g. via gnome-tweak-tool)
-    // make it impossible to predict how many pixels are needed to show a
-    // widget.
-    #define ALLOW_FIXED_PIXEL_SIZES
 #else
     const int SPINBOX_WIDTH_CHARS = 16;
 #endif
+
+    // Minimum pixel size for a widget. Converts to a wxSize of the specified
+    // dimensions on Windows, and wxDefaultSize on Linux (because pixel sizes
+    // don't work with GTK themes and variable DPI)
+    struct PixelSize: public wxSize
+    {
+#if defined(__WXMSW__)
+        PixelSize(int width, int height)
+        : wxSize(width, height)
+        {}
+#else
+        PixelSize(int width, int height)
+        : wxSize(wxDefaultSize.GetX(), wxDefaultSize.GetY())
+        {}
+#endif
+    };
 }
 
 void SurfaceInspector::ManipulatorRow::setValue(double v)
@@ -306,10 +316,8 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
           "other axis automatically to preserve texture aspect ratio")
     );
 
-#if defined(ALLOW_FIXED_PIXEL_SIZES)
-    _fitTexture.preserveAspectButton->SetMinSize(wxSize(30, -1));
-    _fitTexture.fitButton->SetMinSize(wxSize(30, -1));
-#endif
+    _fitTexture.preserveAspectButton->SetMinSize(PixelSize(30, -1));
+    _fitTexture.fitButton->SetMinSize(PixelSize(30, -1));
 
     // Add widgets to the sizer
     auto* widthTimesHeight = new wxBoxSizer(wxHORIZONTAL);
@@ -430,12 +438,10 @@ void SurfaceInspector::populateWindow()
 	_alignTexture.left = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_LEFT));
 	_alignTexture.right = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_RIGHT));
 
-#if defined(ALLOW_FIXED_PIXEL_SIZES)
-    _alignTexture.top->SetMinSize(wxSize(20, -1));
-    _alignTexture.bottom->SetMinSize(wxSize(20, -1));
-    _alignTexture.left->SetMinSize(wxSize(20, -1));
-    _alignTexture.right->SetMinSize(wxSize(20, -1));
-#endif
+    _alignTexture.top->SetMinSize(PixelSize(20, -1));
+    _alignTexture.bottom->SetMinSize(PixelSize(20, -1));
+    _alignTexture.left->SetMinSize(PixelSize(20, -1));
+    _alignTexture.right->SetMinSize(PixelSize(20, -1));
 
 	auto* alignTextureBox = new wxGridSizer(1, 4, 0, 6);
 
@@ -519,9 +525,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 
 	// Create the entry field
 	manipRow.value = new wxTextCtrl(parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-#if defined(ALLOW_FIXED_PIXEL_SIZES)
-	manipRow.value->SetMinSize(wxSize(50, -1));
-#endif
+	manipRow.value->SetMinSize(PixelSize(50, -1));
 	manipRow.value->Bind(wxEVT_TEXT_ENTER, &SurfaceInspector::onValueEntryActivate, this);
 
     // Create the nudge buttons
@@ -537,9 +541,7 @@ SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
 
 	// Create the entry field
 	manipRow.stepEntry = new wxTextCtrl(parent, wxID_ANY, "");
-#if defined(ALLOW_FIXED_PIXEL_SIZES)
-    manipRow.stepEntry->SetMinSize(wxSize(30, -1));
-#endif
+    manipRow.stepEntry->SetMinSize(PixelSize(30, -1));
 
 	// Arrange all items in a row
     hbox->Add(manipRow.value, 1, wxALIGN_CENTER_VERTICAL);
