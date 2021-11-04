@@ -41,6 +41,7 @@ class XYWndManager :
 	bool _showOutline;
 	bool _showAxes;
 	bool _showWorkzone;
+	bool _zoomCenteredOnMouseCursor;
 
 	unsigned int _defaultBlockSize;
     int _fontSize;
@@ -75,6 +76,7 @@ public:
 	int fontSize() const;
     IGLFont::Style fontStyle() const;
     float maxZoomFactor() const;
+    bool zoomCenteredOnMouseCursor() const;
 
 	unsigned int defaultBlockSize() const;
 

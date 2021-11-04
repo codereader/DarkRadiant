@@ -48,6 +48,7 @@ namespace
 	const std::string RKEY_FONT_SIZE = "user/ui/xyview/fontSize";
 	const std::string RKEY_FONT_STYLE = "user/ui/xyview/fontStyle";
 	const std::string RKEY_MAX_ZOOM_FACTOR = "user/ui/xyview/maxZoomFactor";
+	const std::string RKEY_CURSOR_CENTERED_ZOOM = "user/ui/xyview/cursorCenteredZoom";
 
     const int DEFAULT_CHASE_MOUSE_CAP = 32; // pixels per chase moue timer interval
 }
@@ -203,6 +204,7 @@ void XYWndManager::constructPreferences()
 	page.appendCheckBox(_("Translate Manipulator always constrained to Axis"), RKEY_TRANSLATE_CONSTRAINED);
 	page.appendCheckBox(_("Higher Selection Priority for Entities"), RKEY_HIGHER_ENTITY_PRIORITY);
     page.appendSpinner(_("Maximum Zoom Factor"), RKEY_MAX_ZOOM_FACTOR, 1, 65536, 0);
+	page.appendCheckBox(_("Zoom centers on Mouse Cursor"), RKEY_CURSOR_CENTERED_ZOOM);
     page.appendCombo(_("Font Style"), RKEY_FONT_STYLE, { "Sans", "Mono" }, true);
     page.appendSpinner(_("Font Size"), RKEY_FONT_SIZE, 4, 48, 0);
 }
@@ -225,6 +227,7 @@ void XYWndManager::refreshFromRegistry()
     _fontSize = registry::getValue<int>(RKEY_FONT_SIZE);
     _fontStyle = registry::getValue<std::string>(RKEY_FONT_STYLE) == "Sans" ? IGLFont::Style::Sans : IGLFont::Style::Mono;
     _maxZoomFactor = registry::getValue<float>(RKEY_MAX_ZOOM_FACTOR);
+    _zoomCenteredOnMouseCursor = registry::getValue<bool>(RKEY_CURSOR_CENTERED_ZOOM);
 
 	updateAllViews();
 
@@ -296,6 +299,11 @@ IGLFont::Style XYWndManager::fontStyle() const
 float XYWndManager::maxZoomFactor() const
 {
     return _maxZoomFactor;
+}
+
+bool XYWndManager::zoomCenteredOnMouseCursor() const
+{
+    return _zoomCenteredOnMouseCursor;
 }
 
 void XYWndManager::updateAllViews(bool force)
@@ -699,6 +707,7 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 	observeKey(RKEY_FONT_SIZE);
 	observeKey(RKEY_FONT_STYLE);
 	observeKey(RKEY_MAX_ZOOM_FACTOR);
+	observeKey(RKEY_CURSOR_CENTERED_ZOOM);
 
 	// Trigger loading the values of the observed registry keys
 	refreshFromRegistry();

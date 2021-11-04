@@ -1641,7 +1641,7 @@ bool XYWnd::onRender()
 
 void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 {
-    if (!ev.ShiftDown())
+    if (!ev.ShiftDown() && GlobalXYWnd().zoomCenteredOnMouseCursor())
     {
         zoomInOn(ev.GetPosition(), ev.GetWheelRotation() > 0 ? 1 : -1);
         return;
