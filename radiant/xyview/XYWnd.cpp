@@ -175,7 +175,6 @@ void XYWnd::destroyXYView()
 
 void XYWnd::setScale(float f) 
 {
-    rMessage() << "Setting scale to " << f << " (previous was " << _scale << ")" << std::endl;
     _scale = f;
     updateProjection();
     updateModelview();
@@ -348,8 +347,6 @@ void XYWnd::performChaseMouse()
 {
 	float multiplier = _chaseMouseTimer.Time() / 10.0f;
     scrollByPixels(float_to_integer(-multiplier * _chasemouseDeltaX), float_to_integer(multiplier * -_chasemouseDeltaY));
-
-	//rMessage() << "chasemouse: multiplier=" << multiplier << " x=" << _chasemouseDeltaX << " y=" << _chasemouseDeltaY << std::endl;
 
 	handleGLMouseMotion(_chasemouseCurrentX, _chasemouseCurrentY, _eventState, false);
 
@@ -1591,18 +1588,10 @@ void XYWnd::zoomInOn(wxPoint cursor, int zoom)
     // and after zooming, so the origin delta can be calculated from what we have
     auto scaleAdjustment = (1 / _scale - 1 / newScale);
 
-    rMessage() << "ZoomInOn|BEFORE: Origin = " << _origin << " Mouse cursor: " << cursor.x << "," << cursor.y << " Dims: " << _width << "x" << _height << std::endl;
-    rMessage() << "    convertXYToWorld(cursor): " << convertXYToWorld(cursor.x, cursor.y) << 
-        " Screen Normalised: " << screen_normalised(cursor.x, _width) << "," << screen_normalised(cursor.y, _height) << std::endl;
-
     _origin[dim1] += screen_normalised(cursor.x, _width) * _width / 2 * scaleAdjustment;
     _origin[dim2] -= screen_normalised(cursor.y, _height) * _height / 2 * scaleAdjustment;
 
     setScale(newScale);
-
-    rMessage() << "  ZoomInOn|AFTER: Origin = " << _origin << " Mouse cursor: " << cursor.x << "," << cursor.y << " Dims: " << _width << "x" << _height << std::endl;
-    rMessage() << "    convertXYToWorld(cursor): " << convertXYToWorld(cursor.x, cursor.y) << 
-        " Screen Normalised: " << screen_normalised(cursor.x, _width) << "," << screen_normalised(cursor.y, _height) << std::endl;
 }
 
 // ================ CALLBACKS ======================================
@@ -1654,19 +1643,16 @@ void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 {
     if (!ev.ShiftDown())
     {
-        rMessage() << "Received GL Window Scroll" << std::endl;
         zoomInOn(ev.GetPosition(), ev.GetWheelRotation() > 0 ? 1 : -1);
         return;
     }
 
 	if (ev.GetWheelRotation() > 0)
 	{
-        rMessage() << "Received SHIFT + ZoomIn" << std::endl;
 		zoomIn();
 	}
 	else if (ev.GetWheelRotation() < 0)
 	{
-        rMessage() << "Received SHIFT + ZoomOut" << std::endl;
 		zoomOut();
 	}
 }
