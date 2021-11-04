@@ -49,7 +49,9 @@ double two_to_the_power(int power) {
     return pow(2.0f, power);
 }
 
-inline float screen_normalised(int pos, unsigned int size) {
+// Converts a pixel dimensions into device coords, maps [0..size] to [-1..+1]
+inline float screen_normalised(int pos, unsigned int size)
+{
     return ((2.0f * pos) / size) - 1.0f;
 }
 
@@ -171,7 +173,8 @@ void XYWnd::destroyXYView()
     _wxGLWidget = nullptr;
 }
 
-void XYWnd::setScale(float f) {
+void XYWnd::setScale(float f) 
+{
     _scale = f;
     updateProjection();
     updateModelview();
@@ -344,8 +347,6 @@ void XYWnd::performChaseMouse()
 {
 	float multiplier = _chaseMouseTimer.Time() / 10.0f;
     scrollByPixels(float_to_integer(-multiplier * _chasemouseDeltaX), float_to_integer(multiplier * -_chasemouseDeltaY));
-
-	//rMessage() << "chasemouse: multiplier=" << multiplier << " x=" << _chasemouseDeltaX << " y=" << _chasemouseDeltaY << std::endl;
 
 	handleGLMouseMotion(_chasemouseCurrentX, _chasemouseCurrentY, _eventState, false);
 
@@ -1577,11 +1578,20 @@ void XYWnd::zoomIn()
 
 void XYWnd::zoomInOn(wxPoint cursor, int zoom)
 {
-    const float oldScale = _scale;
     const float newScale = getZoomedScale(zoom);
-    scrollByPixels(_width / 2 - cursor.x, _height / 2 - cursor.y);
+
+    int dim1 = _viewType == YZ ? 1 : 0;
+    int dim2 = _viewType == XY ? 1 : 2;
+
+    // worldPos = origin + devicePos * device2WorldScale
+    // devicePos and worldPos should remain constant. device2WorldScale is known before 
+    // and after zooming, so the origin delta can be calculated from what we have
+    auto scaleAdjustment = (1 / _scale - 1 / newScale);
+
+    _origin[dim1] += screen_normalised(cursor.x, _width) * _width / 2 * scaleAdjustment;
+    _origin[dim2] -= screen_normalised(cursor.y, _height) * _height / 2 * scaleAdjustment;
+
     setScale(newScale);
-    scrollByPixels(cursor.x - _width / 2, cursor.y - _height / 2);
 }
 
 // ================ CALLBACKS ======================================
@@ -1631,7 +1641,7 @@ bool XYWnd::onRender()
 
 void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 {
-    if (!ev.ShiftDown())
+    if (!ev.ShiftDown() && GlobalXYWnd().zoomCenteredOnMouseCursor())
     {
         zoomInOn(ev.GetPosition(), ev.GetWheelRotation() > 0 ? 1 : -1);
         return;
