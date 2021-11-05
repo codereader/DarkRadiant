@@ -162,6 +162,7 @@
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\imapfilechangetracker.h" />
+    <ClInclude Include="..\..\include\iwindingrenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ui">
