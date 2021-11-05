@@ -63,10 +63,10 @@ TEST_F(GridTest, WorldGridPower)
 
 TEST_F(GridTest, TextureGridSize)
 {
-    checkGridSize(GRID_0125, grid::Space::Texture, 0.0078125f);
-    checkGridSize(GRID_025, grid::Space::Texture, 0.0078125f);
-    checkGridSize(GRID_05, grid::Space::Texture, 0.0078125f);
-    checkGridSize(GRID_1, grid::Space::Texture, 0.0078125f); // lower bound
+    checkGridSize(GRID_0125, grid::Space::Texture, 0.0009765625f); // lower bound
+    checkGridSize(GRID_025, grid::Space::Texture, 0.001953125f);
+    checkGridSize(GRID_05, grid::Space::Texture, 0.00390625f);
+    checkGridSize(GRID_1, grid::Space::Texture, 0.0078125f); 
     checkGridSize(GRID_2, grid::Space::Texture, 0.015625f);
     checkGridSize(GRID_4, grid::Space::Texture, 0.03125f);
     checkGridSize(GRID_8, grid::Space::Texture, 0.0625f);
@@ -79,10 +79,10 @@ TEST_F(GridTest, TextureGridSize)
 
 TEST_F(GridTest, TextureGridPower)
 {
-    checkGridPower(GRID_0125, grid::Space::Texture, -7);
-    checkGridPower(GRID_025, grid::Space::Texture, -7);
-    checkGridPower(GRID_05, grid::Space::Texture, -7);
-    checkGridPower(GRID_1, grid::Space::Texture, -7); // lower bound
+    checkGridPower(GRID_0125, grid::Space::Texture, -10); // lower bound
+    checkGridPower(GRID_025, grid::Space::Texture, -9);
+    checkGridPower(GRID_05, grid::Space::Texture, -8);
+    checkGridPower(GRID_1, grid::Space::Texture, -7); 
     checkGridPower(GRID_2, grid::Space::Texture, -6);
     checkGridPower(GRID_4, grid::Space::Texture, -5);
     checkGridPower(GRID_8, grid::Space::Texture, -4);

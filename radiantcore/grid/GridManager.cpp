@@ -242,7 +242,7 @@ int GridManager::getGridPower(grid::Space space) const
     {
         power -= 7;
 
-        if (power < -7) power = -7;
+        if (power < -10) power = -10;
         if (power > 0) power = 0;
     }
 
