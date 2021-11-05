@@ -44,7 +44,7 @@ wxPanel* PropertyEditor::getWidget()
 
 std::string PropertyEditor::getKeyValue(const std::string& key)
 {
-    return _entities.getSharedKeyValue(key, false);
+    return _entities.getSharedKeyValue(key, true);
 }
 
 void PropertyEditor::setKeyValue(const std::string& key, const std::string& value)
