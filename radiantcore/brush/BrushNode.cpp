@@ -486,7 +486,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 	// Check for the override status of this brush
 	bool forceVisible = isForcedVisible();
 
-    // Submit the lights and renderable geometry for each face
+    // Submit the renderable geometry for each face
     for (const FaceInstance& faceInst : m_faceInstances)
     {
 		// Skip invisible faces before traversing further
@@ -499,11 +499,14 @@ void BrushNode::renderSolid(RenderableCollector& collector,
             if (highlight)
                 collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
 
+#if 0
             // greebo: BrushNodes have always an identity l2w, don't do any transforms
             collector.addRenderable(
                 *face.getFaceShader().getGLShader(), face.getWinding(),
                 Matrix4::getIdentity(), this, _renderEntity
             );
+#endif
+            const_cast<Face&>(face).getWindingSurface().update(face.getFaceShader().getGLShader());
 
             if (highlight)
                 collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);

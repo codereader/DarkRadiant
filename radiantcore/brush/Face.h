@@ -15,6 +15,7 @@
 #include "util/Noncopyable.h"
 #include <sigc++/signal.h>
 #include "selection/algorithm/Shader.h"
+#include "RenderableWinding.h"
 
 const double GRID_MIN = 0.125;
 
@@ -59,6 +60,8 @@ private:
 
 	// Cached visibility flag, queried during front end rendering
 	bool _faceIsVisible;
+
+    render::RenderableWinding _windingSurface;
 
 public:
 
@@ -187,6 +190,8 @@ public:
 
 	const Winding& getWinding() const;
 	Winding& getWinding();
+
+    render::RenderableWinding& getWindingSurface();
 
 	const Plane3& plane3() const;
 

@@ -731,6 +731,7 @@
     <ClInclude Include="..\..\radiantcore\brush\FacePlane.h" />
     <ClInclude Include="..\..\radiantcore\brush\FixedWinding.h" />
     <ClInclude Include="..\..\radiantcore\brush\PlanePoints.h" />
+    <ClInclude Include="..\..\radiantcore\brush\RenderableWinding.h" />
     <ClInclude Include="..\..\radiantcore\brush\RenderableWireFrame.h" />
     <ClInclude Include="..\..\radiantcore\brush\SelectableComponents.h" />
     <ClInclude Include="..\..\radiantcore\brush\TextureMatrix.h" />

@@ -35,7 +35,8 @@ Face::Face(Brush& owner) :
     _owner(owner),
     _shader(texdef_name_default(), _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
-    _faceIsVisible(true)
+    _faceIsVisible(true),
+    _windingSurface(m_winding)
 {
     setupSurfaceShader();
 
@@ -58,7 +59,8 @@ Face::Face(
     _shader(shader, _owner.getBrushNode().getRenderSystem()),
     _texdef(projection),
     _undoStateSaver(nullptr),
-    _faceIsVisible(true)
+    _faceIsVisible(true),
+    _windingSurface(m_winding)
 {
     setupSurfaceShader();
     m_plane.initialiseFromPoints(p0, p1, p2);
@@ -70,7 +72,8 @@ Face::Face(Brush& owner, const Plane3& plane) :
     _owner(owner),
     _shader("", _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
-    _faceIsVisible(true)
+    _faceIsVisible(true),
+    _windingSurface(m_winding)
 {
     setupSurfaceShader();
     m_plane.setPlane(plane);
@@ -82,7 +85,8 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix3& textureProjection, 
     _owner(owner),
     _shader(material, _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
-    _faceIsVisible(true)
+    _faceIsVisible(true),
+    _windingSurface(m_winding)
 {
     setupSurfaceShader();
     m_plane.setPlane(plane);
@@ -101,7 +105,8 @@ Face::Face(Brush& owner, const Face& other) :
     _shader(other._shader.getMaterialName(), _owner.getBrushNode().getRenderSystem()),
     _texdef(other.getProjection()),
     _undoStateSaver(nullptr),
-    _faceIsVisible(other._faceIsVisible)
+    _faceIsVisible(other._faceIsVisible),
+    _windingSurface(m_winding)
 {
     setupSurfaceShader();
     planepts_assign(m_move_planepts, other.m_move_planepts);
@@ -672,6 +677,11 @@ const Winding& Face::getWinding() const {
 }
 Winding& Face::getWinding() {
     return m_winding;
+}
+
+render::RenderableWinding& Face::getWindingSurface()
+{
+    return _windingSurface;
 }
 
 const Plane3& Face::plane3() const
