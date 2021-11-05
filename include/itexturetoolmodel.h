@@ -230,6 +230,8 @@ public:
     virtual void onComponentSelectionChanged(ISelectable& selectable) = 0;
 };
 
+constexpr const char* const RKEY_GRID_STATE = "user/ui/textures/texTool/gridActive";
+
 }
 
 constexpr const char* const MODULE_TEXTOOL_SCENEGRAPH("TextureToolSceneGraph");

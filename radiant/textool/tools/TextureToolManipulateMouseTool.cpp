@@ -6,6 +6,10 @@
 namespace ui
 {
 
+TextureToolManipulateMouseTool::TextureToolManipulateMouseTool() :
+    _gridEnabled(textool::RKEY_GRID_STATE)
+{}
+
 const std::string& TextureToolManipulateMouseTool::getName()
 {
     static std::string name("TextureToolManipulateMouseTool");
@@ -51,6 +55,11 @@ void TextureToolManipulateMouseTool::onManipulationFinished()
 void TextureToolManipulateMouseTool::onManipulationCancelled()
 {
     GlobalTextureToolSelectionSystem().onManipulationCancelled();
+}
+
+bool TextureToolManipulateMouseTool::gridIsEnabled()
+{
+    return _gridEnabled.get();
 }
 
 }

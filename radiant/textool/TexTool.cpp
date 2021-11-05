@@ -38,7 +38,6 @@ namespace
 
     const std::string RKEY_TEXTOOL_ROOT = "user/ui/textures/texTool/";
 	const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
-	const std::string RKEY_GRID_STATE = RKEY_TEXTOOL_ROOT + "gridActive";
     const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 
     const std::string RKEY_HSCALE_FACTOR = RKEY_TEXTOOL_ROOT + "horizontalScaleFactor";
@@ -52,7 +51,7 @@ TexTool::TexTool() :
     TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
     MouseToolHandler(IMouseToolGroup::Type::TextureTool),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
-    _gridActive(registry::getValue<bool>(RKEY_GRID_STATE)),
+    _gridActive(registry::getValue<bool>(textool::RKEY_GRID_STATE)),
     _selectionRescanNeeded(false),
     _manipulatorPanelNeedsUpdate(true),
     _activeMaterialNeedsUpdate(true),
@@ -69,7 +68,7 @@ TexTool::TexTool() :
 	InitialiseWindowPosition(600, 400, RKEY_WINDOW_STATE);
 
     registry::observeBooleanKey(
-        RKEY_GRID_STATE,
+        textool::RKEY_GRID_STATE,
         sigc::bind(sigc::mem_fun(this, &TexTool::setGridActive), true),
         sigc::bind(sigc::mem_fun(this, &TexTool::setGridActive), false)
     );
@@ -896,7 +895,7 @@ void TexTool::registerCommands()
 {
 	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
 	GlobalCommandSystem().addCommand("TextureToolResetView", TexTool::resetViewCmd);
-	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", RKEY_GRID_STATE);
+	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", textool::RKEY_GRID_STATE);
 
     GlobalEventManager().addToggle("TextureToolUseLightTheme", [](bool toggled)
     {

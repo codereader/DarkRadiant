@@ -61,6 +61,11 @@ void SceneManipulateMouseTool::onManipulationFinished()
     GlobalSelectionSystem().onManipulationEnd();
 }
 
+bool SceneManipulateMouseTool::gridIsEnabled()
+{
+    return true;
+}
+
 bool SceneManipulateMouseTool::nothingSelected() const
 {
     switch (GlobalSelectionSystem().Mode())

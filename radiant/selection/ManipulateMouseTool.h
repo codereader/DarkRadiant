@@ -59,6 +59,9 @@ protected:
     virtual bool manipulationIsPossible() = 0;
     virtual Matrix4 getPivot2World() = 0;
 
+    // Returns true if the grid is enabled at all
+    virtual bool gridIsEnabled() = 0;
+
 private:
 	void handleMouseMove(const render::View& view, const Vector2& devicePoint);
 	void endMove();

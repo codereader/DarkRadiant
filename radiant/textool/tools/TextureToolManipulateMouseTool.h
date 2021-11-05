@@ -1,6 +1,7 @@
 #pragma once
 
 #include "selection/ManipulateMouseTool.h"
+#include "registry/CachedKey.h"
 
 namespace ui
 {
@@ -11,7 +12,12 @@ namespace ui
 class TextureToolManipulateMouseTool :
     public ManipulateMouseTool
 {
+private:
+    registry::CachedKey<bool> _gridEnabled;
+
 public:
+    TextureToolManipulateMouseTool();
+
     const std::string& getName() override;
     const std::string& getDisplayName() override;
 
@@ -25,6 +31,7 @@ protected:
 
     bool manipulationIsPossible() override;
     Matrix4 getPivot2World() override;
+    bool gridIsEnabled() override;
 };
 
 }

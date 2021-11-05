@@ -26,6 +26,8 @@ protected:
 
     bool manipulationIsPossible() override;
     Matrix4 getPivot2World() override;
+
+    bool gridIsEnabled() override;
 private:
     bool nothingSelected() const;
 };

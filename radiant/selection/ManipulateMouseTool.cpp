@@ -161,8 +161,11 @@ void ManipulateMouseTool::handleMouseMove(const render::View& view, const Vector
 	constraintFlag |= wxGetKeyState(WXK_SHIFT) ? selection::IManipulator::Component::Constraint::Type1 : 0;
 	constraintFlag |= wxGetKeyState(WXK_ALT) ? selection::IManipulator::Component::Constraint::Type3 : 0;
 
-	// Grid constraint is ON by default, unless CTRL is held
-	constraintFlag |= wxGetKeyState(WXK_CONTROL) ? 0 : selection::IManipulator::Component::Constraint::Grid;
+    if (gridIsEnabled())
+    {
+        // Grid constraint is ON if available, constraing is off when CTRL is held
+        constraintFlag |= wxGetKeyState(WXK_CONTROL) ? 0 : selection::IManipulator::Component::Constraint::Grid;
+    }
 
 	// Get the component of the currently active manipulator (done by selection test)
 	// and call the transform method
