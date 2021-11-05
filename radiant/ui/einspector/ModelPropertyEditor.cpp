@@ -59,7 +59,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 {
 	// Use the ModelSelector to choose a model
 	ModelSelectorResult result = ModelSelector::chooseModel(
-		_entities.getSharedKeyValue(_key), false, false // pass the current model, don't show options or skins
+		_entities.getSharedKeyValue(_key, true), false, false // pass the current model, don't show options or skins
 	);
 
     UndoableCommand cmd("setModelProperty");
@@ -97,7 +97,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
 {
 	// Invoke ParticlesChooser
-    std::string currentSelection = _entities.getSharedKeyValue(_key);
+    std::string currentSelection = _entities.getSharedKeyValue(_key, true);
 	std::string particle = ParticlesChooser::ChooseParticle(currentSelection);
 
 	if (!particle.empty())
@@ -108,7 +108,7 @@ void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
 
 void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
 {
-    auto model = _entities.getSharedKeyValue("model");
+    auto model = _entities.getSharedKeyValue("model", true);
 
     if (model.empty())
     {
@@ -117,7 +117,7 @@ void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
         return;
     }
 
-	std::string prevSkin = _entities.getSharedKeyValue("skin");
+	std::string prevSkin = _entities.getSharedKeyValue("skin", true);
 	std::string skin = SkinChooser::chooseSkin(model, prevSkin);
 
 	if (skin != prevSkin)

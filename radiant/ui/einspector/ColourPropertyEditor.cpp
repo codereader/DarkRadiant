@@ -41,7 +41,7 @@ ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, IEntitySelection& e
 void ColourPropertyEditor::updateFromEntity()
 {
 	// Set colour button's colour
-	setColourButton(_entities.getSharedKeyValue(_key));
+	setColourButton(_entities.getSharedKeyValue(_key, false));
 }
 
 // Set displayed colour from the keyvalue

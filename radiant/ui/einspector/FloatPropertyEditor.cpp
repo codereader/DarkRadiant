@@ -73,7 +73,7 @@ void FloatPropertyEditor::updateFromEntity()
 {
 	if (_spinCtrl == nullptr) return;
 
-	float value = string::convert<float>(_entities.getSharedKeyValue(_key), 0);
+	float value = string::convert<float>(_entities.getSharedKeyValue(_key, false), 0);
 	
 	_spinCtrl->SetValue(value);
 }

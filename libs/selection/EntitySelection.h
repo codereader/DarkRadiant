@@ -163,8 +163,20 @@ public:
         }
     }
 
-    std::string getSharedKeyValue(const std::string& key) override
+    std::string getSharedKeyValue(const std::string& key, bool includeInherited) override
     {
+        if (includeInherited)
+        {
+            std::set<std::string> values;
+
+            foreachEntity([&](Entity* entity)
+            {
+                values.emplace(std::move(entity->getKeyValue(key)));
+            });
+
+            return values.size() == 1 ? *values.begin() : std::string();
+        }
+
         return _spawnargs.getSharedKeyValue(key);
     }
 

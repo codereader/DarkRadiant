@@ -27,7 +27,7 @@ SkinPropertyEditor::SkinPropertyEditor(wxWindow* parent, IEntitySelection& entit
 
 void SkinPropertyEditor::onBrowseButtonClick()
 {
-    auto model = _entities.getSharedKeyValue("model");
+    auto model = _entities.getSharedKeyValue("model", true);
 
     if (model.empty())
     {
@@ -37,7 +37,7 @@ void SkinPropertyEditor::onBrowseButtonClick()
     }
 
 	// Display the SkinChooser to get a skin from the user
-	std::string prevSkin = _entities.getSharedKeyValue(_key);
+	std::string prevSkin = _entities.getSharedKeyValue(_key, true);
 	std::string skin = SkinChooser::chooseSkin(model, prevSkin);
 
 	// Apply the key to the entity

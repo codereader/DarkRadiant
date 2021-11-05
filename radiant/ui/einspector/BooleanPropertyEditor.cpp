@@ -36,7 +36,7 @@ BooleanPropertyEditor::BooleanPropertyEditor(wxWindow* parent, IEntitySelection&
 
 void BooleanPropertyEditor::updateFromEntity()
 {
-	_checkBox->SetValue(_entities.getSharedKeyValue(_key) == "1");
+	_checkBox->SetValue(_entities.getSharedKeyValue(_key, false) == "1");
 }
 
 void BooleanPropertyEditor::_onToggle(wxCommandEvent& ev)

@@ -74,7 +74,7 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, IEntitySelection&
 
 void Vector3PropertyEditor::updateFromEntity()
 {
-	setWidgetsFromKey(_entities.getSharedKeyValue(_key));
+	setWidgetsFromKey(_entities.getSharedKeyValue(_key, false));
 }
 
 void Vector3PropertyEditor::setWidgetsFromKey(const std::string& val)

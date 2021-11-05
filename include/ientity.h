@@ -328,7 +328,7 @@ public:
 
     // Returns the key value shared by all entities in this set, or an empty string 
     // if there is no such value.
-    virtual std::string getSharedKeyValue(const std::string& key) = 0;
+    virtual std::string getSharedKeyValue(const std::string& key, bool includeInherited) = 0;
 };
 
 /**

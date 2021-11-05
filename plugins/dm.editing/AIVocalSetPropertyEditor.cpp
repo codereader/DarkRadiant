@@ -58,7 +58,7 @@ void AIVocalSetPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	// Construct a new vocal set chooser dialog
 	AIVocalSetChooserDialog* dialog = new AIVocalSetChooserDialog;
 
-	dialog->setSelectedVocalSet(_entities.getSharedKeyValue(DEF_VOCAL_SET_KEY));
+	dialog->setSelectedVocalSet(_entities.getSharedKeyValue(DEF_VOCAL_SET_KEY, true));
 
 	// Show and block
 	if (dialog->ShowModal() == wxID_OK)

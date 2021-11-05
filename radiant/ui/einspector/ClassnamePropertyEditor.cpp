@@ -29,7 +29,7 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelect
 
 void ClassnamePropertyEditor::onBrowseButtonClick()
 {
-	std::string currentEclass = _entities.getSharedKeyValue(_key);
+	std::string currentEclass = _entities.getSharedKeyValue(_key, false);
 
 	// Use the EntityClassChooser dialog to get a selection from the user
 	std::string selection = wxutil::EntityClassChooser::chooseEntityClass(currentEclass);

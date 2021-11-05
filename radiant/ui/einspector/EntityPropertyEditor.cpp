@@ -28,10 +28,11 @@ EntityPropertyEditor::EntityPropertyEditor(wxWindow* parent, IEntitySelection& e
 void EntityPropertyEditor::onBrowseButtonClick()
 {
 	// Use a new dialog window to get a selection from the user
-	std::string selection = EntityChooser::ChooseEntity(_entities.getSharedKeyValue(_key));
+    auto previousValue = _entities.getSharedKeyValue(_key, false);
+	std::string selection = EntityChooser::ChooseEntity(previousValue);
 
 	// Only apply non-empty selections if the value has actually changed
-	if (!selection.empty() && selection != _entities.getSharedKeyValue(_key))
+	if (!selection.empty() && selection != previousValue)
 	{
 		UndoableCommand cmd("changeKeyValue");
 

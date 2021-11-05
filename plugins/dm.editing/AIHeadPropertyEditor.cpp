@@ -58,7 +58,7 @@ void AIHeadPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	// Construct a new head chooser dialog
 	AIHeadChooserDialog* dialog = new AIHeadChooserDialog;
 
-	dialog->setSelectedHead(_entities.getSharedKeyValue(DEF_HEAD_KEY));
+	dialog->setSelectedHead(_entities.getSharedKeyValue(DEF_HEAD_KEY, true));
 
 	// Show and block
 	if (dialog->ShowModal() == wxID_OK)
