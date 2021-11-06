@@ -19,13 +19,23 @@ private:
     std::vector<unsigned int> _indices;
 
 public:
-    CompactWindingVertexBuffer(std::size_t size) :
+    using Slot = std::uint32_t;
+
+    explicit CompactWindingVertexBuffer(std::size_t size) :
         _size(size),
         _numIndicesPerWinding(3 * (_size - 2))
     {}
 
     CompactWindingVertexBuffer(const CompactWindingVertexBuffer& other) = delete;
     CompactWindingVertexBuffer& operator=(const CompactWindingVertexBuffer& other) = delete;
+
+    // Move ctor
+    CompactWindingVertexBuffer(CompactWindingVertexBuffer&& other) noexcept :
+        _size(other._size),
+        _numIndicesPerWinding(other._numIndicesPerWinding),
+        _vertices(std::move(other._vertices)),
+        _indices(std::move(other._indices))
+    {}
 
     std::size_t getWindingSize() const
     {
@@ -48,7 +58,7 @@ public:
     }
 
     // Appends the given winding data to the end of the buffer, returns the position in the array
-    std::size_t pushWinding(const std::vector<VertexT>& winding)
+    Slot pushWinding(const std::vector<VertexT>& winding)
     {
         assert(winding.size() == _size);
 
@@ -68,13 +78,24 @@ public:
             _indices.push_back(static_cast<unsigned int>(currentSize) + n);
         }
 
-        return position;
+        return static_cast<Slot>(position);
+    }
+
+    // Replaces the winding in the given slot with the given data
+    void replaceWinding(Slot slot, const std::vector<VertexT>& winding)
+    {
+        assert(winding.size() == _size);
+
+        // Copy the incoming data to the target slot
+        std::copy(winding.begin(), winding.end(), _vertices.begin() + (slot * _size));
+
+        // Indices remain unchanged
     }
 
     // Removes the winding from the given slot. All slots greater than the given one
     // will be shifted towards the left, their values are shifted by -1
     // Invalid slot indices will result in a std::logic_error
-    void removeWinding(std::size_t slot)
+    void removeWinding(Slot slot)
     {
         const auto currentSize = _vertices.size();
 

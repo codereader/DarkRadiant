@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <limits>
+#include <cstdint>
 #include "render/ArbitraryMeshVertex.h"
 
 namespace render
@@ -23,15 +24,15 @@ class IWindingRenderer
 public:
     virtual ~IWindingRenderer() {}
 
-    using Slot = std::size_t;
+    using Slot = std::uint64_t;
     static constexpr Slot InvalidSlot = std::numeric_limits<std::size_t>::max();
 
     // Allocate a slot to hold the vertex data of a winding of the given size
     // Returns the handle which can be used to update or deallocate the data later
-    virtual Slot allocateWinding(int size) = 0;
+    virtual Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) = 0;
 
     // Releases a previously allocated winding slot. This invalidates the handle.
-    virtual void deallocateWinding(Slot slot) = 0;
+    virtual void removeWinding(Slot slot) = 0;
 
     // Sets the winding data
     virtual void updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) = 0;
