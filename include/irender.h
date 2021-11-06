@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imodule.h"
+#include "iwindingrenderer.h"
 #include <functional>
 #include <vector>
 
@@ -386,7 +387,8 @@ typedef std::shared_ptr<Material> MaterialPtr;
  * which use it -- the actual rendering is performed by traversing a list of
  * Shaders and rendering the geometry attached to each one.
  */
-class Shader
+class Shader :
+    public render::IWindingRenderer
 {
 public:
 	// Observer interface to get notified on (un-)realisation

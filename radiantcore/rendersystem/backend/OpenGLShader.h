@@ -6,6 +6,7 @@
 #include "ishaders.h"
 #include "string/string.h"
 #include "render/IndexedVertexBuffer.h"
+#include "render/WindingRenderer.h"
 
 #include <list>
 #include <sigc++/connection.h>
@@ -19,7 +20,8 @@ class OpenGLRenderSystem;
  * Implementation of the Shader class.
  */
 class OpenGLShader final : 
-	public Shader
+	public Shader,
+    protected WindingRenderer
 {
 private:
     // Name used to construct the shader
@@ -102,6 +104,10 @@ public:
     void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
     bool hasSurfaces() const;
     void drawSurfaces();
+
+    Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override;
+    void removeWinding(Slot slot) override;
+    void updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override;
 
     void setVisible(bool visible) override;
     bool isVisible() const override;

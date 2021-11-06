@@ -164,6 +164,21 @@ bool OpenGLShader::hasSurfaces() const
     return _vertexBuffer && _vertexBuffer->getNumVertices() > 0;
 }
 
+IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices)
+{
+    return WindingRenderer::addWinding(vertices);
+}
+
+void OpenGLShader::removeWinding(Slot slot)
+{
+    WindingRenderer::removeWinding(slot);
+}
+
+void OpenGLShader::updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices)
+{
+    WindingRenderer::updateWinding(slot, vertices);
+}
+
 void OpenGLShader::setVisible(bool visible)
 {
     // Control visibility by inserting or removing our shader passes from the GL
