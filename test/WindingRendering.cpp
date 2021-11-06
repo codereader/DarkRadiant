@@ -14,7 +14,11 @@ inline std::vector<ArbitraryMeshVertex> createWinding(int id, int size)
 
     for (int i = 0; i < size; ++i)
     {
-        winding.emplace_back(ArbitraryMeshVertex({ id + 0.0, id + 0.5, id + 0.3 }, { 0, 0, id + 0.0 }, { id + 0.0, -id + 0.0 }));
+        auto offset = static_cast<double>(i + size * id);
+        winding.emplace_back(ArbitraryMeshVertex(
+            { offset + 0.0, offset + 0.5, offset + 0.3 }, 
+            { 0, 0, offset + 0.0 }, 
+            { offset + 0.0, -offset + 0.0 }));
     }
 
     return winding;
@@ -25,7 +29,8 @@ inline void checkWindingIndices(const VertexBuffer& buffer, std::size_t slot)
     // Slot must be within range
     auto windingSize = buffer.getWindingSize();
 
-    EXPECT_LT(slot, buffer.getVertices().size() / windingSize);
+    auto numWindingsInBuffer = buffer.getVertices().size() / windingSize;
+    EXPECT_LT(slot, numWindingsInBuffer) << "Slot out of bounds";
 
     // Assume the indices are within bounds
     auto indexStart = buffer.getNumIndicesPerWinding() * slot;
@@ -52,18 +57,42 @@ TEST(CompactWindingVertexBuffer, NumIndicesPerWinding)
 
 TEST(CompactWindingVertexBuffer, AddSingleWinding)
 {
-    auto winding1 = createWinding(1, 4);
+    for (auto size = 3; size < 12; ++size)
+    {
+        VertexBuffer buffer(size);
 
-    VertexBuffer buffer(4);
+        auto winding1 = createWinding(1, size);
+        auto slot = buffer.pushWinding(winding1);
 
-    auto slot = buffer.pushWinding(winding1);
+        EXPECT_EQ(slot, 0) << "Wrong slot assignment";
+        EXPECT_EQ(buffer.getVertices().size(), size);
+        EXPECT_EQ(buffer.getIndices().size(), buffer.getNumIndicesPerWinding());
 
-    EXPECT_EQ(slot, 0) << "Wrong slot assignment";
-    EXPECT_EQ(buffer.getVertices().size(), 4);
-    EXPECT_EQ(buffer.getIndices().size(), buffer.getNumIndicesPerWinding());
+        // Assume that the indices have been correctly calculated
+        checkWindingIndices(buffer, slot);
+    }
+}
 
-    // Assume that the indices have been correctly calculated
-    checkWindingIndices(buffer, slot);
+TEST(CompactWindingVertexBuffer, AddMultipleWindings)
+{
+    for (auto size = 3; size < 12; ++size)
+    {
+        VertexBuffer buffer(size);
+
+        // Add 10 windings to the buffer
+        for (auto n = 1; n <= 10; ++n)
+        {
+            auto winding1 = createWinding(n, size);
+            auto slot = buffer.pushWinding(winding1);
+
+            EXPECT_EQ(slot, n-1) << "Unexpected slot assignment";
+            EXPECT_EQ(buffer.getVertices().size(), n * size);
+            EXPECT_EQ(buffer.getIndices().size(), n * buffer.getNumIndicesPerWinding());
+
+            // Assume that the indices have been correctly calculated
+            checkWindingIndices(buffer, slot);
+        }
+    }
 }
 
 }

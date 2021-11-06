@@ -51,7 +51,7 @@ public:
     {
         assert(winding.size() == _size);
 
-        auto currentSize = _vertices.size();
+        const auto currentSize = _vertices.size();
         auto position = currentSize / _size;
         _vertices.reserve(currentSize + _size); // reserve() never shrinks
 
@@ -62,9 +62,9 @@ public:
 
         for (unsigned int n = static_cast<unsigned int>(_size) - 1; n - 1 > 0; --n)
         {
-            _indices.push_back(0);
-            _indices.push_back(n - 1);
-            _indices.push_back(n);
+            _indices.push_back(static_cast<unsigned int>(currentSize) + 0);
+            _indices.push_back(static_cast<unsigned int>(currentSize) + n - 1);
+            _indices.push_back(static_cast<unsigned int>(currentSize) + n);
         }
 
         return position;
