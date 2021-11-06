@@ -6,6 +6,9 @@
 namespace test
 {
 
+constexpr int SmallestWindingSize = 3;
+constexpr int LargestWindingSize = 12;
+
 using VertexBuffer = render::CompactWindingVertexBuffer<ArbitraryMeshVertex>;
 
 inline std::vector<ArbitraryMeshVertex> createWinding(int id, int size)
@@ -57,7 +60,7 @@ TEST(CompactWindingVertexBuffer, NumIndicesPerWinding)
 
 TEST(CompactWindingVertexBuffer, AddSingleWinding)
 {
-    for (auto size = 3; size < 12; ++size)
+    for (auto size = SmallestWindingSize; size < LargestWindingSize; ++size)
     {
         VertexBuffer buffer(size);
 
@@ -75,7 +78,7 @@ TEST(CompactWindingVertexBuffer, AddSingleWinding)
 
 TEST(CompactWindingVertexBuffer, AddMultipleWindings)
 {
-    for (auto size = 3; size < 12; ++size)
+    for (auto size = SmallestWindingSize; size < LargestWindingSize; ++size)
     {
         VertexBuffer buffer(size);
 
@@ -93,6 +96,61 @@ TEST(CompactWindingVertexBuffer, AddMultipleWindings)
             checkWindingIndices(buffer, slot);
         }
     }
+}
+
+TEST(CompactWindingVertexBuffer, RemoveOneWinding)
+{
+    for (auto size = SmallestWindingSize; size < LargestWindingSize; ++size)
+    {
+        // We will work with a buffer containing 13 windings, 
+        // the test will remove a single winding from every possible position
+        constexpr auto NumWindings = 13;
+
+        for (int slotToRemove = 0; slotToRemove < NumWindings; ++slotToRemove)
+        {
+            VertexBuffer buffer(size);
+
+            // Add the desired number of windings to the buffer
+            for (auto n = 1; n <= NumWindings; ++n)
+            {
+                buffer.pushWinding(createWinding(n, size));
+            }
+
+            // Remove a winding from the slot, this should move all
+            // windings in greater slot numbers towards the left
+            buffer.removeWinding(slotToRemove);
+
+            // Check the resized vectors
+            EXPECT_EQ(buffer.getVertices().size(), (NumWindings - 1) * buffer.getWindingSize()) << "Vertex array not resized";
+            EXPECT_EQ(buffer.getIndices().size(), (NumWindings - 1) * buffer.getNumIndicesPerWinding()) << "Index array not resized";
+
+            // All higher winding indices must have been adjusted
+            auto remainingSlots = NumWindings - 1;
+            for (auto slot = slotToRemove; slot < remainingSlots; ++slot)
+            {
+                checkWindingIndices(buffer, slot);
+            }
+        }
+    }
+}
+
+TEST(CompactWindingVertexBuffer, RemoveNonExistentSlot)
+{
+    VertexBuffer buffer(4);
+
+    // Add a few windings to the buffer
+    for (auto n = 1; n <= 20; ++n)
+    {
+        auto winding1 = createWinding(n, 4);
+        buffer.pushWinding(winding1);
+    }
+
+    // Pass a non-existent slot number to removeWinding(), it should throw
+    auto numSlots = buffer.getVertices().size() / buffer.getWindingSize();
+
+    EXPECT_THROW(buffer.removeWinding(numSlots), std::logic_error);
+    EXPECT_THROW(buffer.removeWinding(numSlots + 1), std::logic_error);
+    EXPECT_THROW(buffer.removeWinding(numSlots + 200), std::logic_error);
 }
 
 }

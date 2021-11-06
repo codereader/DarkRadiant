@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <stdexcept>
 
 namespace render
 {
@@ -68,6 +69,36 @@ public:
         }
 
         return position;
+    }
+
+    // Removes the winding from the given slot. All slots greater than the given one
+    // will be shifted towards the left, their values are shifted by -1
+    // Invalid slot indices will result in a std::logic_error
+    void removeWinding(std::size_t slot)
+    {
+        const auto currentSize = _vertices.size();
+
+        if (slot >= currentSize / _size) throw std::logic_error("Slot index out of bounds");
+
+        // Remove _size elements at the given position
+        auto firstVertexToRemove = _vertices.begin() + (slot * _size);
+        _vertices.erase(firstVertexToRemove, firstVertexToRemove + _size);
+
+        // Since all the windings have the same structure, the index array will always look the same
+        // after shifting the index values of the remaining windings. So just cut off the last one
+#if 0
+        // Shift all indices after this slot towards the left, applying the -size offset
+        auto firstIndexToAdjust = (slot + 1) * _numIndicesPerWinding;
+        auto lastIndexToAdjust = _indices.size() - 1;
+        auto indexToReassign = slot * _numIndicesPerWinding;
+
+        for (auto i = firstIndexToAdjust; i < lastIndexToAdjust; ++i, ++indexToReassign)
+        {
+            _indices[indexToReassign] = _indices[i] - static_cast<unsigned int>(_size);
+        }
+#endif
+        // Cut off one winding from the end of the index array
+        _indices.resize(_indices.size() - _numIndicesPerWinding);
     }
 };
 
