@@ -53,11 +53,6 @@ public:
             return;
         }
 
-#if 0
-        // Triangulate our winding and submit
-        std::vector<unsigned int> indices;
-        indices.reserve(3 * (numPoints - 2));
-#endif
         std::vector<ArbitraryMeshVertex> vertices;
         vertices.reserve(numPoints);
 
@@ -65,16 +60,7 @@ public:
         {
             vertices.emplace_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, vertex.texcoord, { 1, 1, 1 }));
         }
-#if 0
-        for (unsigned int n = static_cast<unsigned int>(numPoints) - 1; n - 1 > 0; --n)
-        {
-            indices.push_back(0);
-            indices.push_back(n - 1);
-            indices.push_back(n);
-        }
 
-        shader->addSurface(vertices, indices);
-#endif
         if (_shader && _slot != IWindingRenderer::InvalidSlot && (shaderChanged || numPoints != _windingSize))
         {
             _shader->removeWinding(_slot);
@@ -92,6 +78,16 @@ public:
         else
         {
             shader->updateWinding(_slot, vertices);
+        }
+    }
+
+    void clear()
+    {
+        if (_shader && _slot != IWindingRenderer::InvalidSlot)
+        {
+            _shader->removeWinding(_slot);
+            _slot = IWindingRenderer::InvalidSlot;
+            _windingSize = 0;
         }
     }
 };

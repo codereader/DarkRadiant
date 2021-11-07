@@ -19,12 +19,26 @@ private:
     std::vector<VertexBuffer> _buckets;
 
     using BucketIndex = std::uint16_t;
+    static constexpr BucketIndex InvalidBucketIndex = std::numeric_limits<BucketIndex>::max();
+    static constexpr VertexBuffer::Slot InvalidVertexBufferSlot = std::numeric_limits<VertexBuffer::Slot>::max();
+
+    // Stores the indices to a winding slot into a bucket, client code receives an index to a SlotMapping
+    struct SlotMapping
+    {
+        BucketIndex bucketIndex = InvalidBucketIndex;
+        VertexBuffer::Slot slotNumber = InvalidVertexBufferSlot;
+    };
+
+    std::vector<SlotMapping> _slots;
+    static constexpr std::uint32_t InvalidSlotMapping = std::numeric_limits<std::uint32_t>::max();
+    std::uint32_t _freeSlotMappingHint;
 
     std::size_t _windings;
 
 public:
     WindingRenderer() :
-        _windings(0)
+        _windings(0),
+        _freeSlotMappingHint(InvalidSlotMapping)
     {}
 
     bool empty() const
@@ -41,25 +55,54 @@ public:
         // Get the Bucket this Slot is referring to
         auto bucketIndex = getBucketIndexForWindingSize(windingSize);
         auto& bucket = ensureBucketForWindingSize(windingSize);
+
         auto bufferSlot = _buckets[bucketIndex].pushWinding(vertices);
+
+        // Allocate a new slot descriptor, we can't hand out absolute indices to clients
+        auto slotMappingIndex = getNextFreeSlotMapping();
+
+        auto& slotMapping = _slots[slotMappingIndex];
+        slotMapping.occupied = true;
+        slotMapping.slotNumber = bufferSlot;
+
         ++_windings;
 
-        return getSlot(bucketIndex, bufferSlot);
+        return getSlot(bucketIndex, slotMappingIndex);
     }
 
     void removeWinding(Slot slot) override
     {
+        // Get the bucket and mapping indices from the encoded Slot
         auto bucket = getBucketIndex(slot);
-        auto bufferSlot = getVertexBufferSlot(slot);
-        --_windings;
+        auto slotMappingIndex = getSlotMappingIndex(slot);
 
-        _buckets[bucket].removeWinding(bufferSlot);
+        auto& slotMapping = _slots[slotMappingIndex];
+
+        assert(slotMapping.occupied);
+
+        // Remove the winding from the bucket
+        _buckets[bucket].removeWinding(slotMapping.slotNumber);
+
+        // Invalidate the slot mapping
+        slotMapping.occupied = false;
+        slotMapping.slotNumber = InvalidSlotMapping;
+
+        // Update the value in other slot mappings, now that the bucket shrunk
+
+
+        // Update the free slot hint
+        if (slotMappingIndex < _freeSlotMappingHint)
+        {
+            _freeSlotMappingHint = slotMappingIndex;
+        }
+
+        --_windings;
     }
 
     void updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override
     {
         auto bucketIndex = getBucketIndex(slot);
-        auto bufferSlot = getVertexBufferSlot(slot);
+        auto slotMappingIndex = getSlotMappingIndex(slot);
 
         auto& bucket = _buckets[bucketIndex];
 
@@ -68,6 +111,8 @@ public:
             throw std::logic_error("Winding size changes are not supported through updateWinding.");
         }
 
+        assert(_slots[slotMappingIndex].occupied);
+        auto bufferSlot = _slots[slotMappingIndex].slotNumber;
         bucket.replaceWinding(bufferSlot, vertices);
     }
 
@@ -94,6 +139,23 @@ public:
     }
 
 private:
+    std::uint32_t getNextFreeSlotMapping()
+    {
+        auto numSlots = static_cast<std::uint32_t>(_slots.size());
+
+        for (auto i = _freeSlotMappingHint; i < numSlots; ++i)
+        {
+            if (!_slots[i].occupied)
+            {
+                _freeSlotMappingHint = i + 1; // start searching here next time
+                return i;
+            }
+        }
+
+        _slots.emplace_back();
+        return numSlots; // == the size before we emplaced the new slot
+    }
+
     inline static BucketIndex getBucketIndex(IWindingRenderer::Slot slot)
     {
         // Highest part of the slot stores the bucket index
@@ -103,17 +165,17 @@ private:
         return slot >> BitsToShiftRight;
     }
 
-    inline static VertexBuffer::Slot getVertexBufferSlot(IWindingRenderer::Slot slot)
+    inline static std::uint32_t getSlotMappingIndex(IWindingRenderer::Slot slot)
     {
         constexpr auto BitsToShiftLeft = (sizeof(IWindingRenderer::Slot) - sizeof(BucketIndex)) << 3;
-        constexpr auto BufferSlotMask = ~(static_cast<IWindingRenderer::Slot>(std::numeric_limits<BucketIndex>::max()) << BitsToShiftLeft);
-        return static_cast<VertexBuffer::Slot>(slot & BufferSlotMask);
+        constexpr auto SlotMappingMask = ~(static_cast<IWindingRenderer::Slot>(std::numeric_limits<BucketIndex>::max()) << BitsToShiftLeft);
+        return static_cast<std::uint32_t>(slot & SlotMappingMask);
     }
 
-    inline static IWindingRenderer::Slot getSlot(BucketIndex bucketIndex, VertexBuffer::Slot bufferSlot)
+    inline static IWindingRenderer::Slot getSlot(BucketIndex bucketIndex, std::uint32_t slotMappingIndex)
     {
         constexpr auto BitsToShiftLeft = (sizeof(IWindingRenderer::Slot) - sizeof(BucketIndex)) << 3;
-        return (static_cast<IWindingRenderer::Slot>(bucketIndex) << BitsToShiftLeft) + bufferSlot;
+        return (static_cast<IWindingRenderer::Slot>(bucketIndex) << BitsToShiftLeft) + slotMappingIndex;
     }
 
     inline static BucketIndex getBucketIndexForWindingSize(std::size_t windingSize)

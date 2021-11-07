@@ -116,6 +116,9 @@ Face::Face(Brush& owner, const Face& other) :
 Face::~Face()
 {
     _surfaceShaderRealised.disconnect();
+
+    // Deallocate the winding surface
+    _windingSurface.clear();
 }
 
 void Face::setupSurfaceShader()
@@ -397,6 +400,7 @@ void Face::shaderChanged()
         _faceIsVisible = false; // no shader => not visible
     }
 
+    _windingSurface.queueUpdate();
     planeChanged();
     SceneChangeNotify();
 }
