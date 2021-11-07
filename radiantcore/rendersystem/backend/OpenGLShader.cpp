@@ -128,12 +128,12 @@ void OpenGLShader::addSurface(const std::vector<ArbitraryMeshVertex>& vertices, 
 
 void OpenGLShader::drawSurfaces()
 {
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    
     if (hasSurfaces())
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
-
         _vertexBuffer->renderAllBatches(GL_TRIANGLES, false);
 #if 0
         // Render all triangles
@@ -157,6 +157,12 @@ void OpenGLShader::drawSurfaces()
         glBindBuffer(GL_VERTEX_ARRAY, 0);
 #endif
     }
+
+    // Render all windings
+    WindingRenderer::render();
+
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 bool OpenGLShader::hasSurfaces() const
@@ -177,6 +183,11 @@ void OpenGLShader::removeWinding(Slot slot)
 void OpenGLShader::updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices)
 {
     WindingRenderer::updateWinding(slot, vertices);
+}
+
+bool OpenGLShader::hasWindings() const
+{
+    return !WindingRenderer::empty();
 }
 
 void OpenGLShader::setVisible(bool visible)

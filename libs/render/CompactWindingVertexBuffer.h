@@ -74,8 +74,8 @@ public:
         for (unsigned int n = static_cast<unsigned int>(_size) - 1; n - 1 > 0; --n)
         {
             _indices.push_back(static_cast<unsigned int>(currentSize) + 0);
-            _indices.push_back(static_cast<unsigned int>(currentSize) + n - 1);
             _indices.push_back(static_cast<unsigned int>(currentSize) + n);
+            _indices.push_back(static_cast<unsigned int>(currentSize) + n - 1);
         }
 
         return static_cast<Slot>(position);

@@ -108,6 +108,7 @@ public:
     Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override;
     void removeWinding(Slot slot) override;
     void updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override;
+    bool hasWindings() const;
 
     void setVisible(bool visible) override;
     bool isVisible() const override;

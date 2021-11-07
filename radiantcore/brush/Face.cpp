@@ -142,6 +142,8 @@ Brush& Face::getBrushInternal()
 
 void Face::planeChanged()
 {
+    _windingSurface.queueUpdate();
+
     revertTransform();
     _owner.onFacePlaneChanged();
 }
@@ -335,7 +337,9 @@ void Face::freezeTransform()
     updateWinding();
 }
 
-void Face::updateWinding() {
+void Face::updateWinding()
+{
+    _windingSurface.queueUpdate();
     m_winding.updateNormals(m_plane.getPlane().normal());
 }
 

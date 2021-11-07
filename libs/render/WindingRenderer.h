@@ -1,8 +1,10 @@
 #pragma once
 
+#include "igl.h"
 #include <limits>
 #include "iwindingrenderer.h"
 #include "CompactWindingVertexBuffer.h"
+#include "debugging/gl.h"
 
 namespace render
 {
@@ -18,7 +20,18 @@ private:
 
     using BucketIndex = std::uint16_t;
 
+    std::size_t _windings;
+
 public:
+    WindingRenderer() :
+        _windings(0)
+    {}
+
+    bool empty() const
+    {
+        return _windings == 0;
+    }
+
     Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override
     {
         auto windingSize = vertices.size();
@@ -29,6 +42,7 @@ public:
         auto bucketIndex = getBucketIndexForWindingSize(windingSize);
         auto& bucket = ensureBucketForWindingSize(windingSize);
         auto bufferSlot = _buckets[bucketIndex].pushWinding(vertices);
+        ++_windings;
 
         return getSlot(bucketIndex, bufferSlot);
     }
@@ -37,6 +51,7 @@ public:
     {
         auto bucket = getBucketIndex(slot);
         auto bufferSlot = getVertexBufferSlot(slot);
+        --_windings;
 
         _buckets[bucket].removeWinding(bufferSlot);
     }
@@ -54,6 +69,28 @@ public:
         }
 
         bucket.replaceWinding(bufferSlot, vertices);
+    }
+
+    void render()
+    {
+        for (const auto& bucket : _buckets)
+        {
+            if (bucket.getVertices().empty()) continue;
+
+            const auto& vertices = bucket.getVertices();
+            const auto& indices = bucket.getIndices();
+
+            glDisableClientState(GL_COLOR_ARRAY);
+            glColor3f(1, 1, 1);
+
+            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
+            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
+            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
+            
+            glDrawElements(GL_TRIANGLES, GLint(indices.size()), GL_UNSIGNED_INT, &indices.front());
+
+            debug::checkGLErrors();
+        }
     }
 
 private:
