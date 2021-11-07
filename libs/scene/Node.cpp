@@ -76,12 +76,28 @@ void Node::setIsRoot(bool isRoot)
 
 void Node::enable(unsigned int state)
 {
+    bool wasVisible = visible();
+
 	_state |= state;
+
+    // After setting a flag, this node may have changed to invisible
+    if (wasVisible && _state != eVisible)
+    {
+        onVisibilityChanged(false);
+    }
 }
 
 void Node::disable(unsigned int state)
 {
+    bool wasVisible = visible();
+
 	_state &= ~state;
+
+    // After clearing a flag, this node can only switch from invisible to visible
+    if (!wasVisible && visible())
+    {
+        onVisibilityChanged(true);
+    }
 }
 
 bool Node::checkStateFlag(unsigned int state) const

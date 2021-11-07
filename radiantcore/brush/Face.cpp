@@ -162,6 +162,7 @@ void Face::connectUndoSystem(IUndoSystem& undoSystem)
 
     _shader.setInUse(true);
 
+    _windingSurface.queueUpdate();
     _undoStateSaver = undoSystem.getStateSaver(*this);
 }
 
@@ -171,6 +172,8 @@ void Face::disconnectUndoSystem(IUndoSystem& undoSystem)
     _undoStateSaver = nullptr;
     undoSystem.releaseStateSaver(*this);
 
+    // Disconnect the renderable winding vertices from the scene
+    _windingSurface.clear();
     _shader.setInUse(false);
 }
 
@@ -250,14 +253,9 @@ void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
     // Update the visibility flag, we might have switched shaders
     const ShaderPtr& shader = _shader.getGLShader();
 
-    if (shader)
-    {
-        _faceIsVisible = shader->getMaterial()->isVisible();
-    }
-    else
-    {
-        _faceIsVisible = false; // no shader => not visible
-    }
+    _faceIsVisible = shader && shader->getMaterial()->isVisible();
+
+    _windingSurface.clear();
 }
 
 void Face::transformTexDefLocked(const Matrix4& transform)
@@ -390,15 +388,7 @@ void Face::shaderChanged()
 
     // Update the visibility flag, but leave out the contributes() check
     const ShaderPtr& shader = getFaceShader().getGLShader();
-
-    if (shader)
-    {
-        _faceIsVisible = shader->getMaterial()->isVisible();
-    }
-    else
-    {
-        _faceIsVisible = false; // no shader => not visible
-    }
+    _faceIsVisible = shader && shader->getMaterial()->isVisible();
 
     _windingSurface.queueUpdate();
     planeChanged();

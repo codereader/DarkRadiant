@@ -83,12 +83,12 @@ public:
 
     void clear()
     {
-        if (_shader && _slot != IWindingRenderer::InvalidSlot)
-        {
-            _shader->removeWinding(_slot);
-            _slot = IWindingRenderer::InvalidSlot;
-            _windingSize = 0;
-        }
+        if (!_shader || _slot == IWindingRenderer::InvalidSlot) return;
+
+        _shader->removeWinding(_slot);
+        _shader.reset();
+        _slot = IWindingRenderer::InvalidSlot;
+        _windingSize = 0;
     }
 };
 
