@@ -730,6 +730,20 @@ bool Face::isVisible() const
     return _faceIsVisible;
 }
 
+void Face::onBrushVisibilityChanged(bool visible)
+{
+    if (!visible)
+    {
+        // Disconnect our renderable when the owning brush goes invisible
+        _windingSurface.clear();
+    }
+    else
+    {
+        // Update the vertex buffers next we need to render
+        _windingSurface.queueUpdate();
+    }
+}
+
 void Face::updateFaceVisibility()
 {
     auto newValue = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();

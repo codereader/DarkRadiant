@@ -177,6 +177,8 @@ public:
     void onPostRedo() override;
 
 protected:
+    virtual void onVisibilityChanged(bool isVisibleNow) override;
+
     virtual void setForcedVisibility(bool forceVisible, bool includeChildren) override;
 
 	// Gets called by the Transformable implementation whenever

@@ -664,3 +664,14 @@ void BrushNode::_applyTransformation()
 
     _untransformedOriginChanged = true;
 }
+
+void BrushNode::onVisibilityChanged(bool isVisibleNow)
+{
+    SelectableNode::onVisibilityChanged(isVisibleNow);
+
+    // Let each face know about the change
+    forEachFaceInstance([=](FaceInstance& face)
+    {
+        face.getFace().onBrushVisibilityChanged(isVisibleNow);
+    });
+}
