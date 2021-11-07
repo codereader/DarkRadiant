@@ -140,11 +140,13 @@ public:
 	 */
 	virtual void setFiltered(bool filtered) override
     {
-		if (filtered) {
-			_state |= eFiltered;
+		if (filtered)
+        {
+			enable(eFiltered);
 		}
-		else {
-			_state &= ~eFiltered;
+		else
+        {
+			disable(eFiltered);
 		}
 	}
 

@@ -513,7 +513,16 @@ void Node::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void Node::setForcedVisibility(bool forceVisible, bool includeChildren)
 {
+    bool wasVisible = visible();
+
 	_forceVisible = forceVisible;
+
+    bool isVisible = visible();
+
+    if (wasVisible ^ isVisible)
+    {
+        onVisibilityChanged(isVisible);
+    }
 
 	if (includeChildren)
 	{
