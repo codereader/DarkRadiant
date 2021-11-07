@@ -150,7 +150,7 @@ private:
 
         for (auto i = _freeSlotMappingHint; i < numSlots; ++i)
         {
-            if (_slots[i].bucketIndex != InvalidBucketIndex)
+            if (_slots[i].bucketIndex == InvalidBucketIndex)
             {
                 _freeSlotMappingHint = i + 1; // start searching here next time
                 return i;

@@ -42,14 +42,7 @@ public:
 
         if (numPoints < 3 || !shader)
         {
-            if (_slot != IWindingRenderer::InvalidSlot && _shader)
-            {
-                _shader->removeWinding(_slot);
-            }
-
-            _slot = IWindingRenderer::InvalidSlot;
-            _windingSize = 0;
-            _shader.reset();
+            clear();
             return;
         }
 
