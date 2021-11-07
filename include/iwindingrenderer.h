@@ -25,7 +25,7 @@ public:
     virtual ~IWindingRenderer() {}
 
     using Slot = std::uint64_t;
-    static constexpr Slot InvalidSlot = std::numeric_limits<std::size_t>::max();
+    static constexpr Slot InvalidSlot = std::numeric_limits<Slot>::max();
 
     // Allocate a slot to hold the vertex data of a winding of the given size
     // Returns the handle which can be used to update or deallocate the data later
