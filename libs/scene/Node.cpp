@@ -114,7 +114,7 @@ bool Node::visible() const
 {
 	// Only instantiated nodes can be considered visible
 	// The force visible flag is allowed to override the regular status
-	return (_state == eVisible && _instantiated) || _forceVisible;
+	return _instantiated && (_state == eVisible || _forceVisible);
 }
 
 bool Node::excluded() const
@@ -292,13 +292,29 @@ void Node::onChildRemoved(const INodePtr& child)
 void Node::onInsertIntoScene(IMapRootNode& root)
 {
 	_instantiated = true;
+
+    // The node was 100% not visible before, check if it is now
+    if (visible())
+    {
+        onVisibilityChanged(true);
+    }
+
     connectUndoSystem(root.getUndoSystem());
 }
 
 void Node::onRemoveFromScene(IMapRootNode& root)
 {
     disconnectUndoSystem(root.getUndoSystem());
+
+    bool wasVisible = visible();
+
 	_instantiated = false;
+
+    // The node is 100% not visible after removing from the scene
+    if (wasVisible)
+    {
+        onVisibilityChanged(false);
+    }
 }
 
 void Node::connectUndoSystem(IUndoSystem& undoSystem)
