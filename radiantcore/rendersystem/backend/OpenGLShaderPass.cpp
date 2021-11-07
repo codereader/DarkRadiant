@@ -576,8 +576,6 @@ void OpenGLShaderPass::render(OpenGLState& current,
     // Apply our state to the current state object
     applyState(current, flagsMask, viewer, time, NULL);
 
-    // Surfaces like windings are using CCW culling and an identity matrix
-    glFrontFace(GL_CCW);
     _owner.drawSurfaces();
 
     if (!_renderablesWithoutEntity.empty())

@@ -132,6 +132,9 @@ void OpenGLShader::drawSurfaces()
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     
+    // Surfaces like windings are using CW culling
+    glFrontFace(GL_CW);
+
     if (hasSurfaces())
     {
         _vertexBuffer->renderAllBatches(GL_TRIANGLES, false);
@@ -159,6 +162,7 @@ void OpenGLShader::drawSurfaces()
     }
 
     // Render all windings
+    glFrontFace(GL_CCW);
     WindingRenderer::render();
 
     glDisableClientState(GL_NORMAL_ARRAY);
