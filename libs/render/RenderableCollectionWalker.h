@@ -51,6 +51,8 @@ public:
     // scene::Graph::Walker implementation
     bool visit(const scene::INodePtr& node)
     {
+        node->onPreRender(_volume);
+
         // greebo: Highlighting propagates to child nodes
         scene::INodePtr parent = node->getParent();
 

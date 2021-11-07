@@ -349,6 +349,21 @@ bool BrushNode::intersectsLight(const RendererLight& light) const {
 	return light.lightAABB().intersects(worldAABB());
 }
 
+void BrushNode::onPreRender(const VolumeTest& volume)
+{
+    // Every intersecting face is asked to run the rendering preparations
+    // to submit their geometry to the active shader
+    for (auto& faceInstance : m_faceInstances)
+    {
+        auto& face = faceInstance.getFace();
+
+        if (face.intersectVolume(volume))
+        {
+            face.getWindingSurface().update(face.getFaceShader().getGLShader());
+        }
+    }
+}
+
 void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	m_brush.evaluateBRep();
@@ -483,6 +498,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 {
 	assert(_renderEntity); // brushes rendered without parent entity - no way!
 
+#if 0 // The faces already sent their geomtry in onPreRender()
 	// Check for the override status of this brush
 	bool forceVisible = isForcedVisible();
 
@@ -512,7 +528,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
                 collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
         }
     }
-
+#endif
 	renderSelectedPoints(collector, volume, localToWorld);
 }
 

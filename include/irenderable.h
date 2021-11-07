@@ -133,6 +133,10 @@ public:
      */
     virtual void setRenderSystem(const RenderSystemPtr& renderSystem) = 0;
 
+    // Called in preparation of rendering this node
+    virtual void onPreRender(const VolumeTest& volume)
+    {}
+
     /// Submit renderable geometry when rendering in Solid mode.
     virtual void renderSolid(RenderableCollector& collector,
                              const VolumeTest& volume) const = 0;
