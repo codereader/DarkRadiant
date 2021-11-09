@@ -1643,7 +1643,13 @@ void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 {
     if (!ev.ShiftDown() && GlobalXYWnd().zoomCenteredOnMouseCursor())
     {
-        zoomInOn(ev.GetPosition(), ev.GetWheelRotation() > 0 ? 1 : -1);
+        rMessage() << "Mouse event position: " << ev.GetPosition().x << "|" << ev.GetPosition().y << std::endl;
+        auto screenPos = wxGetMousePosition();
+        auto clientPos = _wxGLWidget->ScreenToClient(screenPos);
+        rMessage() << "Screen position: " << screenPos.x << "|" << screenPos.y << std::endl;
+        rMessage() << "Client position: " << clientPos.x << "|" << clientPos.y << std::endl;
+
+        zoomInOn(clientPos, ev.GetWheelRotation() > 0 ? 1 : -1);
         return;
     }
 
