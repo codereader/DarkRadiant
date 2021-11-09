@@ -20,6 +20,7 @@
 #include "wxutil/ControlButton.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/Button.h"
+#include "wxutil/BitmapToggleButton.h"
 
 #include "registry/Widgets.h"
 #include "selectionlib.h"
@@ -350,14 +351,14 @@ void SurfaceInspector::createScaleLinkButtons(wxFlexGridSizer& table)
     _useHorizScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(true); });
     _useVertScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(false); });
 
-    auto linkToggle = new wxBitmapToggleButton(this, wxID_ANY,
-                                               wxutil::GetLocalBitmap("link_inactive.png"));
-    linkToggle->SetBitmapSelected(wxutil::GetLocalBitmap("link_active.png"));
+    auto linkToggle = new wxutil::BitmapToggleButton(this,
+                                                     wxutil::GetLocalBitmap("link_active.png"),
+                                                     wxutil::GetLocalBitmap("link_inactive.png"));
     linkToggle->SetToolTip(_("Linked Scaling: when active, scale changes will affect horizontal "
                              "and vertical values proportionally"));
     linkToggle->SetMaxClientSize(wxSize(35, -1));
     _scaleLinkToggle = linkToggle;
-    scaleLinkSizer->Add(_scaleLinkToggle, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 24);
+    scaleLinkSizer->Add(_scaleLinkToggle, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
     table.Add(scaleLinkSizer, 1, wxEXPAND);
 }
