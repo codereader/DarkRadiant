@@ -62,6 +62,7 @@ public:
 		glBindTexture(GL_TEXTURE_2D, textureNum);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
 		// Upload the image to OpenGL, choosing an internal format based on role
         GLint format = GL_RGBA8;
@@ -69,25 +70,10 @@ public:
             format = GL_RG8;
         }
 
-        if (GLEW_VERSION_3_0)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, format, static_cast<GLint>(getWidth()),
-                         static_cast<GLint>(getHeight()), 0, GL_RGBA,
-                         GL_UNSIGNED_BYTE, getPixels());
-
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else // no openGL 3+ context, run the old-fashioned code
-        {
-            glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
-
-            // Download the image to OpenGL
-            gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA,
-                static_cast<GLint>(getWidth()), static_cast<GLint>(getHeight()),
-                GL_RGBA, GL_UNSIGNED_BYTE,
-                getPixels()
-            );
-        }
+        // Download image and set up mipmaps and filtering
+        glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_TRUE);
+        gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, static_cast<GLint>(getWidth()),
+                          static_cast<GLint>(getHeight()), GL_RGBA, GL_UNSIGNED_BYTE, getPixels());
 
         // Un-bind the texture
 		glBindTexture(GL_TEXTURE_2D, 0);
