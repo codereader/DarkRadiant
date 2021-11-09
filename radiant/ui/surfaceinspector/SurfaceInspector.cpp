@@ -337,20 +337,24 @@ void SurfaceInspector::createScaleLinkButtons(wxFlexGridSizer& table)
 {
     auto scaleLinkSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    _useHorizScale = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("arrow_down_blue.png"));
+    _useHorizScale = new wxBitmapButton(this, wxID_ANY,
+                                        wxutil::GetLocalBitmap("link_scale_down.png"));
     _useHorizScale->SetToolTip(_("Assign horizontal scale to vertical scale"));
-    scaleLinkSizer->Add(_useHorizScale, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 24);
+    scaleLinkSizer->Add(_useHorizScale, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 0);
 
-    _useVertScale = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("arrow_up_blue.png"));
+    _useVertScale = new wxBitmapButton(this, wxID_ANY,
+                                       wxutil::GetLocalBitmap("link_scale_up.png"));
     _useVertScale->SetToolTip(_("Assign vertical scale to horizontal scale"));
     scaleLinkSizer->Add(_useVertScale, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
     _useHorizScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(true); });
     _useVertScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(false); });
 
-    auto linkToggle = new wxBitmapToggleButton(this, wxID_ANY, wxutil::GetLocalBitmap("link_inactive.png"));
+    auto linkToggle = new wxBitmapToggleButton(this, wxID_ANY,
+                                               wxutil::GetLocalBitmap("link_inactive.png"));
     linkToggle->SetBitmapSelected(wxutil::GetLocalBitmap("link_active.png"));
-    linkToggle->SetToolTip(_("Linked Scaling: when active, scale changes will affect horizontal and vertical values proportionally"));
+    linkToggle->SetToolTip(_("Linked Scaling: when active, scale changes will affect horizontal "
+                             "and vertical values proportionally"));
     linkToggle->SetMaxClientSize(wxSize(35, -1));
     _scaleLinkToggle = linkToggle;
     scaleLinkSizer->Add(_scaleLinkToggle, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 24);
