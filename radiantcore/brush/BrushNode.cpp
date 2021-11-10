@@ -507,7 +507,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 
             if (!winding.empty())
             {
-                collector.addGeometry(winding, RenderableCollector::Highlight::Primitives);
+                collector.addGeometry(winding, RenderableCollector::Highlight::Primitives|RenderableCollector::Highlight::Flags::Faces);
             }
         }
     }

@@ -242,7 +242,7 @@ public:
         iter->second.emplace_back(std::move(lr));
     }
 
-    void addGeometry(RenderableGeometry& geometry, Highlight::Flags flags) override
+    void addGeometry(RenderableGeometry& geometry, std::size_t flags) override
     {
         if (_editMode == IMap::EditMode::Merge && (flags & Highlight::Flags::MergeAction) != 0)
         {

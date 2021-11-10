@@ -165,6 +165,7 @@ void OpenGLShader::drawSurfaces()
     glFrontFace(GL_CCW);
     WindingRenderer::render();
 
+    glFrontFace(GL_CW);
     for (auto& geometry: _geometry)
     {
         GLenum mode = GL_TRIANGLES;

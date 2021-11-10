@@ -133,7 +133,8 @@ public:
     virtual void setHighlightFlag(Highlight::Flags flags, bool enabled) = 0;
 
     // Submits renderable geometry to the collector, it will only rendered in the current frame
-    virtual void addGeometry(RenderableGeometry& geometry, Highlight::Flags flags)
+    // Flags are a combination of Highlight::Flags
+    virtual void addGeometry(RenderableGeometry& geometry, std::size_t flags)
     {}
 };
 
