@@ -247,7 +247,7 @@ void OpenGLShader::setVisible(bool visible)
 
 bool OpenGLShader::isVisible() const
 {
-    return _isVisible;
+    return _isVisible && (!_material || _material->isVisible());
 }
 
 void OpenGLShader::incrementUsed()

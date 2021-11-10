@@ -567,6 +567,8 @@ void OpenGLShaderPass::render(OpenGLState& current,
                               const Vector3& viewer,
                               std::size_t time)
 {
+    if (!_owner.isVisible()) return;
+
     // Reset the texture matrix
     glMatrixMode(GL_TEXTURE);
     glLoadMatrixd(Matrix4::getIdentity());
