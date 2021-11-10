@@ -165,8 +165,32 @@ void OpenGLShader::drawSurfaces()
     glFrontFace(GL_CCW);
     WindingRenderer::render();
 
+    for (auto& geometry: _geometry)
+    {
+        GLenum mode = GL_TRIANGLES;
+
+        switch (geometry.get().getType())
+        {
+        case RenderableGeometry::Type::Quads:
+            mode = GL_QUADS;
+            break;
+
+        case RenderableGeometry::Type::Polygons:
+            mode = GL_POLYGON;
+            break;
+        }
+
+        glVertexPointer(3, GL_DOUBLE, static_cast<GLsizei>(geometry.get().getVertexStride()), &geometry.get().getFirstVertex());
+        glDrawElements(mode, static_cast<GLsizei>(geometry.get().getNumIndices()), GL_UNSIGNED_INT, &geometry.get().getFirstIndex());
+    }
+
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+void OpenGLShader::clearGeometry()
+{
+    _geometry.clear();
 }
 
 bool OpenGLShader::hasSurfaces() const
@@ -192,6 +216,16 @@ void OpenGLShader::updateWinding(Slot slot, const std::vector<ArbitraryMeshVerte
 bool OpenGLShader::hasWindings() const
 {
     return !WindingRenderer::empty();
+}
+
+void OpenGLShader::addGeometry(RenderableGeometry& geometry)
+{
+    _geometry.emplace_back(std::ref(geometry));
+}
+
+bool OpenGLShader::hasGeometry() const
+{
+    return !_geometry.empty();
 }
 
 void OpenGLShader::setVisible(bool visible)

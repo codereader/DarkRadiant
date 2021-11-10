@@ -120,6 +120,8 @@ typedef BasicVector3<double> Vector3;
 class Shader;
 typedef std::shared_ptr<Shader> ShaderPtr;
 
+struct RenderableGeometry;
+
 /**
  * A RenderEntity represents a map entity as seen by the renderer.
  * It provides up to 12 numbered parameters to the renderer:
@@ -428,6 +430,8 @@ public:
                                const IRenderEntity* entity = nullptr) = 0;
 
     virtual void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) = 0;
+
+    virtual void addGeometry(RenderableGeometry& geometry) = 0;
 
     /**
      * \brief

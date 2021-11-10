@@ -1,7 +1,9 @@
 #pragma once
 
 #include <memory>
+#include "math/Vector3.h"
 
+class ArbitraryMeshVertex;
 class Shader;
 typedef std::shared_ptr<Shader> ShaderPtr;
 
@@ -14,6 +16,27 @@ class Matrix4;
 class IRenderEntity;
 class RendererLight;
 class LitObject;
+
+// Contains the vertex and index data to render geometry of the given type
+struct RenderableGeometry
+{
+    enum class Type
+    {
+        Triangles,
+        Quads,
+        Polygons,
+    };
+
+    // The primitive type which will be translated to openGL enums
+    virtual Type getType() const = 0;
+
+    // Data as needed by glDrawArrays
+
+    virtual const Vector3& getFirstVertex() = 0;
+    virtual std::size_t getVertexStride() = 0;
+    virtual const unsigned int& getFirstIndex() = 0;
+    virtual std::size_t getNumIndices() = 0;
+};
 
 /**
  * \brief Class which accepts OpenGLRenderable objects during the first pass of
@@ -108,6 +131,10 @@ public:
     };
 
     virtual void setHighlightFlag(Highlight::Flags flags, bool enabled) = 0;
+
+    // Submits renderable geometry to the collector, it will only rendered in the current frame
+    virtual void addGeometry(RenderableGeometry& geometry, Highlight::Flags flags)
+    {}
 };
 
 class VolumeTest;

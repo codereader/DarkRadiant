@@ -1,26 +1,4 @@
-/*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_WINDING_H)
-#define INCLUDED_WINDING_H
+#pragma once
 
 #include "debugging/debugging.h"
 
@@ -28,6 +6,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "iclipper.h"
 #include "irender.h"
+#include "irenderable.h"
 #include "iselectiontest.h"
 #include "ibrush.h"
 
@@ -40,10 +19,14 @@ class SelectionIntersection;
 
 // The Winding structure extends the abstract IWinding class
 // by a few methods for rendering and selection tests.
-class Winding :
+class Winding final :
 	public IWinding,
-    public OpenGLRenderable
+    public OpenGLRenderable,
+    public RenderableGeometry
 {
+private:
+    std::vector<unsigned int> _indices;
+
 public:
 	/** greebo: Calculates the AABB of this winding
 	 */
@@ -96,6 +79,12 @@ public:
 
 	/// \brief Returns true if any point in \p w1 is in front of plane2, or any point in \p w2 is in front of plane1
 	static bool planesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2);
-};
 
-#endif
+    Type getType() const override;
+    const Vector3& getFirstVertex() override;
+    std::size_t getVertexStride() override;
+    const unsigned int& getFirstIndex() override;
+    std::size_t getNumIndices() override;
+
+    void updateIndices();
+};

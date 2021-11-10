@@ -49,6 +49,8 @@ private:
 
     std::unique_ptr<render::IndexedVertexBuffer<ArbitraryMeshVertex>> _vertexBuffer;
 
+    std::vector<std::reference_wrapper<RenderableGeometry>> _geometry;
+
 private:
 
     // Start point for constructing shader passes from the shader name
@@ -104,6 +106,10 @@ public:
     void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
     bool hasSurfaces() const;
     void drawSurfaces();
+
+    void addGeometry(RenderableGeometry& geometry) override;
+    bool hasGeometry() const;
+    void clearGeometry();
 
     Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override;
     void removeWinding(Slot slot) override;

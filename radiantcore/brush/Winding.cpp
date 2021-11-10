@@ -297,3 +297,48 @@ void Winding::printConnectivity()
 			<< " adjacent: " << i->adjacent << std::endl;
 	}
 }
+
+Winding::Type Winding::getType() const
+{
+    return Type::Polygons;
+}
+
+const Vector3& Winding::getFirstVertex()
+{
+    return front().vertex;
+}
+
+std::size_t Winding::getVertexStride()
+{
+    return sizeof(WindingVertex);
+}
+
+const unsigned int& Winding::getFirstIndex()
+{
+    updateIndices();
+    return _indices.front();
+}
+
+std::size_t Winding::getNumIndices()
+{
+    updateIndices();
+    return _indices.size();
+}
+
+void Winding::updateIndices()
+{
+    auto windingSize = size();
+
+    if (_indices.size() == windingSize) return;
+
+    if (_indices.size() > windingSize)
+    {
+        _indices.resize(windingSize);
+        return;
+    }
+    
+    while (_indices.size() < windingSize)
+    {
+        _indices.push_back(static_cast<unsigned int>(_indices.size()));
+    }
+}
