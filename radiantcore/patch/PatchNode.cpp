@@ -319,16 +319,29 @@ bool PatchNode::intersectsLight(const RendererLight& light) const {
 	return light.lightAABB().intersects(worldAABB());
 }
 
-void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void PatchNode::onPreRender(const VolumeTest& volume)
 {
-	// Don't render invisible shaders
-	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
+    // Don't do anything when invisible
+    if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
     // Defer the tesselation calculation to the last minute
-    const_cast<Patch&>(m_patch).evaluateTransform();
-    const_cast<Patch&>(m_patch).updateTesselation();
+    m_patch.evaluateTransform();
+    m_patch.updateTesselation();
 
-    const_cast<PatchNode&>(*this)._renderableSurface.update(m_patch._shader.getGLShader());
+    _renderableSurface.update(m_patch._shader.getGLShader());
+}
+
+void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+{
+	// Don't render invisible patches
+	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
+
+    if (isSelected())
+    {
+        // Send the patch geometry for rendering highlights
+        collector.addGeometry(const_cast<Patch&>(m_patch)._solidRenderable, 
+            RenderableCollector::Highlight::Primitives | RenderableCollector::Highlight::Flags::Faces);
+    }
 
     assert(_renderEntity); // patches rendered without parent - no way!
 

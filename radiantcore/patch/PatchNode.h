@@ -135,6 +135,7 @@ public:
 
 	// Render functions, these make sure that all things get rendered properly. The calls are also passed on
 	// to the contained patch <m_patch>
+    void onPreRender(const VolumeTest& volume) override;
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
