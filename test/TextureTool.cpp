@@ -12,6 +12,7 @@
 #include "scenelib.h"
 #include "algorithm/Primitives.h"
 #include "render/TextureToolView.h"
+#include "algorithm/View.h"
 #include "selection/SelectionVolume.h"
 #include "Rectangle.h"
 
@@ -190,6 +191,32 @@ TEST_F(TextureToolTest, SceneGraphRecognisesBrushes)
 
     // We don't know how many tex tool nodes there are, but it should be more than 0
     EXPECT_GT(getTextureToolNodeCount(), 0) << "There should be some tex tool nodes now";
+}
+
+TEST_F(TextureToolTest, SceneGraphRecognisesSingleFaces)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush1 = algorithm::createCubicBrush(worldspawn, Vector3(0, 0, 0), "textures/numbers/1");
+    auto brush2 = algorithm::createCubicBrush(worldspawn, Vector3(100, 100, 0), "textures/numbers/1");
+
+    auto faceUp = algorithm::findBrushFaceWithNormal(Node_getIBrush(brush1), Vector3(0, 0, 1));
+
+    // Position the camera top-down, similar to what an XY view is seeing
+    render::View viewFaceUp(true);
+    algorithm::constructCameraView(viewFaceUp, brush1->localAABB(), { 0, 0, -1 }, { -90, 0, 0 });
+
+    SelectionVolume testFaceUp(viewFaceUp);
+    GlobalSelectionSystem().selectPoint(testFaceUp, selection::SelectionSystem::eToggle, true);
+
+    EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "1 Face component should be selected";
+    EXPECT_EQ(getTextureToolNodeCount(), 1) << "There should be some exactly 1 tex tool node now";
+
+    Node_setSelected(brush2, true);
+
+    EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "1 Face component should be selected";
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "1 Brush should be selected";
+    
+    EXPECT_EQ(getTextureToolNodeCount(), 7) << "There should be 7 tex tool nodes now, 1 single face + 6 brush faces";
 }
 
 TEST_F(TextureToolTest, SceneGraphRecognisesPatches)
