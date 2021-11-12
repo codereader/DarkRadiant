@@ -158,19 +158,31 @@ void RenderablePatchVectorsNTB::render(RenderableCollector& collector, const Vol
 	collector.addRenderable(*_shader, *this, localToWorld);
 }
 
-void RenderablePatchTesselation::setShader(const ShaderPtr& shader)
+void RenderablePatchTesselation::queueUpdate()
 {
-    _shader = shader;
+    _needsUpdate = true;
 }
 
-void RenderablePatchTesselation::update()
+void RenderablePatchTesselation::update(const ShaderPtr& shader)
 {
-    if (!_shader) return;
-    if (!_needsUpdate) return;
+    bool shaderChanged = _shader != shader;
+
+    if (!_needsUpdate && !shaderChanged) return;
 
     _needsUpdate = false;
+    auto sizeChanged = _tess.vertices.size() != _size;
 
-    // Load all the vertices into the target vector
+    if (_shader && _surfaceSlot != render::ISurfaceRenderer::InvalidSlot && (shaderChanged || sizeChanged))
+    {
+        _shader->removeSurface(_surfaceSlot);
+        _surfaceSlot = render::ISurfaceRenderer::InvalidSlot;
+        _size = 0;
+    }
+
+    _shader = shader;
+    _size = _tess.vertices.size();
+
+    // Generate the index array
     std::vector<unsigned int> indices;
     indices.reserve((_tess.height - 1) * (_tess.width - 1) * 6); // 6 => 2 triangles per quad
 
@@ -191,5 +203,12 @@ void RenderablePatchTesselation::update()
         }
     }
 
-    _shader->addSurface(_tess.vertices, indices);
+    if (_surfaceSlot == render::ISurfaceRenderer::InvalidSlot)
+    {
+        _surfaceSlot = shader->addSurface(_tess.vertices, indices);
+    }
+    else
+    {
+        shader->updateSurface(_surfaceSlot, _tess.vertices, indices);
+    }
 }

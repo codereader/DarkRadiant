@@ -2259,5 +2259,8 @@
     <ClInclude Include="..\..\radiantcore\brush\RenderableWinding.h">
       <Filter>src\brush</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\SurfaceRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

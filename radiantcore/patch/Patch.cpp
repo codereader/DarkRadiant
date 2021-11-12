@@ -332,6 +332,7 @@ void Patch::controlPointsChanged()
     transformChanged();
     evaluateTransform();
     updateTesselation();
+    _node.onControlPointsChanged();
 
     for (Observers::iterator i = _observers.begin(); i != _observers.end();)
     {

@@ -7,6 +7,7 @@
 #include "string/string.h"
 #include "render/IndexedVertexBuffer.h"
 #include "render/WindingRenderer.h"
+#include "SurfaceRenderer.h"
 
 #include <list>
 #include <sigc++/connection.h>
@@ -21,7 +22,8 @@ class OpenGLRenderSystem;
  */
 class OpenGLShader final : 
 	public Shader,
-    protected WindingRenderer
+    protected WindingRenderer,
+    protected SurfaceRenderer
 {
 private:
     // Name used to construct the shader
@@ -103,17 +105,22 @@ public:
 					   const LightSources* lights,
                        const IRenderEntity* entity) override;
 
-    void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
+    //void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
     bool hasSurfaces() const;
     void drawSurfaces();
+
+    ISurfaceRenderer::Slot addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
+    void removeSurface(ISurfaceRenderer::Slot slot) override;
+    void updateSurface(ISurfaceRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+        const std::vector<unsigned int>& indices) override;
 
     void addGeometry(RenderableGeometry& geometry) override;
     bool hasGeometry() const;
     void clearGeometry();
 
-    Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override;
-    void removeWinding(Slot slot) override;
-    void updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override;
+    IWindingRenderer::Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override;
+    void removeWinding(IWindingRenderer::Slot slot) override;
+    void updateWinding(IWindingRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override;
     bool hasWindings() const;
 
     void setVisible(bool visible) override;

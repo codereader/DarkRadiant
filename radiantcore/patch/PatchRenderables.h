@@ -99,13 +99,18 @@ private:
     const PatchTesselation& _tess;
     bool _needsUpdate;
     ShaderPtr _shader;
+    std::size_t _size;
+
+    render::ISurfaceRenderer::Slot _surfaceSlot;
 
 public:
     RenderablePatchTesselation(const PatchTesselation& tess) :
         _tess(tess),
-        _needsUpdate(true)
+        _needsUpdate(true),
+        _surfaceSlot(render::ISurfaceRenderer::InvalidSlot),
+        _size(0)
     {}
 
-    void update();
-    void setShader(const ShaderPtr& shader);
+    void queueUpdate();
+    void update(const ShaderPtr& shader);
 };

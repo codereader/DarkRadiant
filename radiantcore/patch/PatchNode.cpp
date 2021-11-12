@@ -317,14 +317,13 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	// Don't render invisible shaders
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
-    const_cast<PatchNode&>(*this)._renderableSurface.setShader(m_patch._shader.getGLShader());
-    const_cast<PatchNode&>(*this)._renderableSurface.update();
-
     // Defer the tesselation calculation to the last minute
-	const_cast<Patch&>(m_patch).evaluateTransform();
+    const_cast<Patch&>(m_patch).evaluateTransform();
     const_cast<Patch&>(m_patch).updateTesselation();
 
-	assert(_renderEntity); // patches rendered without parent - no way!
+    const_cast<PatchNode&>(*this)._renderableSurface.update(m_patch._shader.getGLShader());
+
+    assert(_renderEntity); // patches rendered without parent - no way!
 
 #if 0
     // Render the patch itself
@@ -484,6 +483,7 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 void PatchNode::_onTransformationChanged()
 {
 	m_patch.transformChanged();
+    _renderableSurface.queueUpdate();
 }
 
 void PatchNode::_applyTransformation()
@@ -505,4 +505,9 @@ const Vector3& PatchNode::getUntransformedOrigin()
     }
 
     return _untransformedOrigin;
+}
+
+void PatchNode::onControlPointsChanged()
+{
+    _renderableSurface.queueUpdate();
 }

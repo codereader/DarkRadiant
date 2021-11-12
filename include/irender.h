@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 #include "iwindingrenderer.h"
+#include "isurfacerenderer.h"
 #include <functional>
 #include <vector>
 
@@ -390,7 +391,8 @@ typedef std::shared_ptr<Material> MaterialPtr;
  * Shaders and rendering the geometry attached to each one.
  */
 class Shader :
-    public render::IWindingRenderer
+    public render::IWindingRenderer,
+    public render::ISurfaceRenderer
 {
 public:
 	// Observer interface to get notified on (un-)realisation
@@ -428,8 +430,6 @@ public:
 							   const Matrix4& modelview,
 							   const LightSources* lights = nullptr,
                                const IRenderEntity* entity = nullptr) = 0;
-
-    virtual void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) = 0;
 
     virtual void addGeometry(RenderableGeometry& geometry) = 0;
 

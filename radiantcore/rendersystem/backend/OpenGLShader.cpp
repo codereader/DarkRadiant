@@ -111,6 +111,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     }
 }
 
+#if 0
 void OpenGLShader::addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
 {
     if (!_vertexBuffer)
@@ -125,19 +126,21 @@ void OpenGLShader::addSurface(const std::vector<ArbitraryMeshVertex>& vertices, 
     _vertexBuffer->addVertices(vertices.begin(), vertices.end());
     _vertexBuffer->addIndicesToLastBatch(indices.begin(), indices.size(), indexOffset);
 }
-
+#endif
 void OpenGLShader::drawSurfaces()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     
-    // Surfaces like windings are using CW culling
+    // Surfaces are using CW culling
     glFrontFace(GL_CW);
 
     if (hasSurfaces())
     {
-        _vertexBuffer->renderAllBatches(GL_TRIANGLES, false);
+        //_vertexBuffer->renderAllBatches(GL_TRIANGLES, false);
+
+        SurfaceRenderer::render();
 #if 0
         // Render all triangles
 
@@ -196,7 +199,24 @@ void OpenGLShader::clearGeometry()
 
 bool OpenGLShader::hasSurfaces() const
 {
-    return _vertexBuffer && _vertexBuffer->getNumVertices() > 0;
+    return !SurfaceRenderer::empty() || _vertexBuffer && _vertexBuffer->getNumVertices() > 0;
+}
+
+ISurfaceRenderer::Slot OpenGLShader::addSurface(const std::vector<ArbitraryMeshVertex>& vertices,
+    const std::vector<unsigned int>& indices)
+{
+    return SurfaceRenderer::addSurface(vertices, indices);
+}
+
+void OpenGLShader::removeSurface(ISurfaceRenderer::Slot slot)
+{
+    SurfaceRenderer::removeSurface(slot);
+}
+
+void OpenGLShader::updateSurface(ISurfaceRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    const std::vector<unsigned int>& indices)
+{
+    SurfaceRenderer::updateSurface(slot, vertices, indices);
 }
 
 IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices)
@@ -204,12 +224,12 @@ IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshV
     return WindingRenderer::addWinding(vertices);
 }
 
-void OpenGLShader::removeWinding(Slot slot)
+void OpenGLShader::removeWinding(IWindingRenderer::Slot slot)
 {
     WindingRenderer::removeWinding(slot);
 }
 
-void OpenGLShader::updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices)
+void OpenGLShader::updateWinding(IWindingRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices)
 {
     WindingRenderer::updateWinding(slot, vertices);
 }
