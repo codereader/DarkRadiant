@@ -739,7 +739,7 @@ void Face::onBrushVisibilityChanged(bool visible)
     }
     else
     {
-        // Update the vertex buffers next we need to render
+        // Update the vertex buffers next time we need to render
         _windingSurface.queueUpdate();
     }
 }

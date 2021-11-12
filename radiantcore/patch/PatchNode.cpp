@@ -42,6 +42,11 @@ PatchNode::PatchNode(const PatchNode& other) :
 {
 }
 
+PatchNode::~PatchNode()
+{
+    _renderableSurface.clear();
+}
+
 scene::INode::Type PatchNode::getNodeType() const
 {
 	return Type::Patch;
@@ -276,6 +281,7 @@ void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     // Mark the GL shader as used from now on, this is used by the TextureBrowser's filtering
     m_patch.getSurfaceShader().setInUse(true);
+    _renderableSurface.queueUpdate();
 
 	m_patch.connectUndoSystem(root.getUndoSystem());
 	GlobalCounters().getCounter(counterPatches).increment();
@@ -298,6 +304,7 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 
 	m_patch.disconnectUndoSystem(root.getUndoSystem());
 
+    _renderableSurface.clear();
     m_patch.getSurfaceShader().setInUse(false);
 
 	SelectableNode::onRemoveFromScene(root);
@@ -359,6 +366,7 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	SelectableNode::setRenderSystem(renderSystem);
 
 	m_patch.setRenderSystem(renderSystem);
+    _renderableSurface.clear();
 
 	if (renderSystem)
 	{
@@ -510,4 +518,25 @@ const Vector3& PatchNode::getUntransformedOrigin()
 void PatchNode::onControlPointsChanged()
 {
     _renderableSurface.queueUpdate();
+}
+
+void PatchNode::onMaterialChanged()
+{
+    _renderableSurface.queueUpdate();
+}
+
+void PatchNode::onVisibilityChanged(bool visible)
+{
+    SelectableNode::onVisibilityChanged(visible);
+
+    if (!visible)
+    {
+        // Disconnect our renderable when the node is hidden
+        _renderableSurface.clear();
+    }
+    else
+    {
+        // Update the vertex buffers next time we need to render
+        _renderableSurface.queueUpdate();
+    }
 }

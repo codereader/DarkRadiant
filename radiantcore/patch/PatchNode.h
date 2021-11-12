@@ -11,7 +11,7 @@
 #include "dragplanes.h"
 #include "PatchRenderables.h"
 
-class PatchNode :
+class PatchNode final :
 	public scene::SelectableNode,
 	public scene::Cloneable,
 	public Snappable,
@@ -59,6 +59,8 @@ public:
 	// Copy Constructor
 	PatchNode(const PatchNode& other);
 
+    ~PatchNode();
+
 	// Patch::Observer implementation
 	void allocate(std::size_t size);
 
@@ -95,8 +97,8 @@ public:
 	void testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) override;
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
-    virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
-    virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// Traceable implementation
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
@@ -147,6 +149,7 @@ public:
     const Vector3& getUntransformedOrigin() override;
 
     void onControlPointsChanged();
+    void onMaterialChanged();
 
 protected:
 	// Gets called by the Transformable implementation whenever
@@ -156,6 +159,8 @@ protected:
 	// Called by the Transformable implementation before freezing
 	// or when reverting transformations.
     void _applyTransformation() override;
+
+    void onVisibilityChanged(bool isVisibleNow) override;
 
 private:
 	// Transforms the patch components with the given transformation matrix

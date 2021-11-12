@@ -2699,7 +2699,9 @@ bool Patch::getIntersection(const Ray& ray, Vector3& intersection)
 
 void Patch::textureChanged()
 {
-    for (Observers::iterator i = _observers.begin(); i != _observers.end();)
+    _node.onMaterialChanged();
+
+    for (auto i = _observers.begin(); i != _observers.end();)
     {
         (*i++)->onPatchTextureChanged();
     }

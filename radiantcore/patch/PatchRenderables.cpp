@@ -158,6 +158,17 @@ void RenderablePatchVectorsNTB::render(RenderableCollector& collector, const Vol
 	collector.addRenderable(*_shader, *this, localToWorld);
 }
 
+void RenderablePatchTesselation::clear()
+{
+    if (!_shader || _surfaceSlot == render::ISurfaceRenderer::InvalidSlot) return;
+
+    _shader->removeSurface(_surfaceSlot);
+    _shader.reset();
+
+    _surfaceSlot = render::ISurfaceRenderer::InvalidSlot;
+    _size = 0;
+}
+
 void RenderablePatchTesselation::queueUpdate()
 {
     _needsUpdate = true;
@@ -174,9 +185,7 @@ void RenderablePatchTesselation::update(const ShaderPtr& shader)
 
     if (_shader && _surfaceSlot != render::ISurfaceRenderer::InvalidSlot && (shaderChanged || sizeChanged))
     {
-        _shader->removeSurface(_surfaceSlot);
-        _surfaceSlot = render::ISurfaceRenderer::InvalidSlot;
-        _size = 0;
+        clear();
     }
 
     _shader = shader;

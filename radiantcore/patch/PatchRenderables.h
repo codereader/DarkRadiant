@@ -111,6 +111,7 @@ public:
         _size(0)
     {}
 
+    void clear();
     void queueUpdate();
     void update(const ShaderPtr& shader);
 };
