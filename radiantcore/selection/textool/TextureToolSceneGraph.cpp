@@ -6,6 +6,7 @@
 #include "module/StaticModule.h"
 #include "selectionlib.h"
 
+#include "selection/algorithm/Primitives.h"
 #include "FaceNode.h"
 #include "PatchNode.h"
 
@@ -47,6 +48,7 @@ void TextureToolSceneGraph::shutdownModule()
 {
     _selectionNeedsRescan = false;
     _activeMaterialNeedsRescan = false;
+    clearFaceObservers();
     _nodes.clear();
     _sceneSelectionChanged.disconnect();
     GlobalRadiantCore().getMessageBus().removeListener(_textureChangedHandler);
@@ -93,6 +95,7 @@ void TextureToolSceneGraph::ensureSceneIsAnalysed()
     if (!_selectionNeedsRescan) return;
     
     _selectionNeedsRescan = false;
+    clearFaceObservers();
     _nodes.clear();
 
     // No unique material, leave everything empty
@@ -100,10 +103,9 @@ void TextureToolSceneGraph::ensureSceneIsAnalysed()
 
     if (GlobalSelectionSystem().countSelectedComponents() > 0)
     {
-        // Check each selected face
-        GlobalSelectionSystem().foreachFace([&](IFace& face)
+        selection::algorithm::forEachSelectedFaceComponent([&](IFace& face)
         {
-            _nodes.emplace_back(std::make_shared<FaceNode>(face));
+            createFaceNode(face);
         });
     }
 
@@ -116,7 +118,7 @@ void TextureToolSceneGraph::ensureSceneIsAnalysed()
 
             for (auto i = 0; i < brush->getNumFaces(); ++i)
             {
-                _nodes.emplace_back(std::make_shared<FaceNode>(brush->getFace(i)));
+                createFaceNode(brush->getFace(i));
             }
         }
         else if (Node_isPatch(node))
@@ -124,6 +126,26 @@ void TextureToolSceneGraph::ensureSceneIsAnalysed()
             _nodes.emplace_back(std::make_shared<PatchNode>(*Node_getIPatch(node)));
         }
     });
+}
+
+void TextureToolSceneGraph::clearFaceObservers()
+{
+    for (auto& conn : _faceObservers)
+    {
+        conn.disconnect();
+    }
+
+    _faceObservers.clear();
+}
+
+void TextureToolSceneGraph::createFaceNode(IFace& face)
+{
+    _nodes.emplace_back(std::make_shared<FaceNode>(face));
+
+    // When faces are destroyed, the selection is out of date, queue a rescan
+    _faceObservers.emplace_back(face.signal_faceDestroyed().connect(
+        [this]() { _selectionNeedsRescan = true; }
+    ));
 }
 
 void TextureToolSceneGraph::onSceneSelectionChanged(const ISelectable& selectable)

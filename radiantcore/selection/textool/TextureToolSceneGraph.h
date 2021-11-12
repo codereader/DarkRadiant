@@ -19,6 +19,7 @@ private:
     bool _activeMaterialNeedsRescan;
 
     std::list<INode::Ptr> _nodes;
+    std::vector<sigc::connection> _faceObservers;
 
     // The single active material. Is empty if the scene graph has no items
     std::string _activeMaterial;
@@ -38,6 +39,8 @@ public:
 private:
     void onSceneSelectionChanged(const ISelectable& selectable);
     void onTextureChanged(radiant::TextureChangedMessage& msg);
+    void createFaceNode(IFace& face);
+    void clearFaceObservers();
 
     void ensureSceneIsAnalysed();
 };

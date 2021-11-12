@@ -111,6 +111,13 @@ Face::Face(Brush& owner, const Face& other) :
 Face::~Face()
 {
     _surfaceShaderRealised.disconnect();
+    _sigDestroyed.emit();
+    _sigDestroyed.clear();
+}
+
+sigc::signal<void>& Face::signal_faceDestroyed()
+{
+    return _sigDestroyed;
 }
 
 void Face::setupSurfaceShader()

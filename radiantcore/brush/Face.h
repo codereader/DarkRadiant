@@ -60,6 +60,8 @@ private:
 	// Cached visibility flag, queried during front end rendering
 	bool _faceIsVisible;
 
+    sigc::signal<void> _sigDestroyed;
+
 public:
 
 	// Constructors
@@ -80,6 +82,8 @@ public:
 	IBrush& getBrush() override;
 
     Brush& getBrushInternal();
+
+    sigc::signal<void>& signal_faceDestroyed() override;
 
 	void planeChanged();
 

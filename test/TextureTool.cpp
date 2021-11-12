@@ -209,14 +209,14 @@ TEST_F(TextureToolTest, SceneGraphRecognisesSingleFaces)
     GlobalSelectionSystem().selectPoint(testFaceUp, selection::SelectionSystem::eToggle, true);
 
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "1 Face component should be selected";
-    EXPECT_EQ(getTextureToolNodeCount(), 1) << "There should be some exactly 1 tex tool node now";
+    EXPECT_EQ(getTextureToolNodeCount(), 1) << "There should be exactly 1 tex tool node in the scene";
 
     Node_setSelected(brush2, true);
 
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "1 Face component should be selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "1 Brush should be selected";
     
-    EXPECT_EQ(getTextureToolNodeCount(), 7) << "There should be 7 tex tool nodes now, 1 single face + 6 brush faces";
+    EXPECT_EQ(getTextureToolNodeCount(), 7) << "There should be 7 tex tool nodes in the scene, 1 single face + 6 brush faces";
 }
 
 TEST_F(TextureToolTest, SceneGraphRecognisesPatches)
@@ -230,6 +230,21 @@ TEST_F(TextureToolTest, SceneGraphRecognisesPatches)
 
     // We don't know how many tex tool nodes there are, but it should be more than 0
     EXPECT_GT(getTextureToolNodeCount(), 0) << "There should be some tex tool nodes now";
+}
+
+TEST_F(TextureToolTest, SceneGraphNotifiedAboutFaceDestruction)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush1 = algorithm::createCubicBrush(worldspawn, Vector3(0, 0, 0), "textures/numbers/1");
+    Node_setSelected(brush1, true);
+
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "1 Brush should be selected";
+    EXPECT_EQ(getTextureToolNodeCount(), 6) << "There should be exactly 6 tex tool nodes in the scene";
+
+    Node_getIBrush(brush1)->clear();
+
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "Technically, 1 Brush should still be selected";
+    EXPECT_EQ(getTextureToolNodeCount(), 0) << "All faces have been cleared, tex tool scene should be empty now";
 }
 
 // Selecting an inhomogenously textured brush will result in an empty scene graph
