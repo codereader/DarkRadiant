@@ -17,6 +17,7 @@ class IRenderEntity;
 class RendererLight;
 class LitObject;
 
+#ifdef RENDERABLE_GEOMETRY
 // Contains the vertex and index data to render geometry of the given type
 struct RenderableGeometry
 {
@@ -37,6 +38,7 @@ struct RenderableGeometry
     virtual const unsigned int& getFirstIndex() = 0;
     virtual std::size_t getNumIndices() = 0;
 };
+#endif
 
 /**
  * \brief Class which accepts OpenGLRenderable objects during the first pass of
@@ -135,10 +137,12 @@ public:
     // Returns true if the current set of highlight flags is not empty
     virtual bool hasHighlightFlags() const = 0;
 
+#ifdef RENDERABLE_GEOMETRY
     // Submits renderable geometry to the collector, it will only rendered in the current frame
     // Flags are a combination of Highlight::Flags
     virtual void addGeometry(RenderableGeometry& geometry, std::size_t flags)
     {}
+#endif
 };
 
 class VolumeTest;

@@ -498,7 +498,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 {
 	assert(_renderEntity); // brushes rendered without parent entity - no way!
 
-#if 0
+#ifdef RENDERABLE_GEOMETRY
     if (isSelected())
     {
         for (FaceInstance& faceInst : const_cast<BrushNode&>(*this).m_faceInstances)

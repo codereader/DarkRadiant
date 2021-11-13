@@ -95,7 +95,7 @@ void RenderablePatchSolid::queueUpdate()
 {
     _needsUpdate = true;
 }
-
+#ifdef RENDERABLE_GEOMETRY
 RenderableGeometry::Type RenderablePatchSolid::getType() const
 {
     return RenderableGeometry::Type::Quads;
@@ -153,7 +153,7 @@ void RenderablePatchSolid::updateIndices()
         }
     }
 }
-
+#endif
 const ShaderPtr& RenderablePatchVectorsNTB::getShader() const
 {
 	return _shader;

@@ -217,11 +217,12 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
         }
     }
 
+#ifdef RENDERABLE_GEOMETRY
     for (auto& shader : _shaders)
     {
         shader.second->clearGeometry();
     }
-
+#endif
     glPopAttrib();
 }
 

@@ -21,8 +21,10 @@ class SelectionIntersection;
 // by a few methods for rendering and selection tests.
 class Winding final :
 	public IWinding,
-    public OpenGLRenderable,
-    public RenderableGeometry
+    public OpenGLRenderable
+#ifdef RENDERABLE_GEOMETRY
+    , public RenderableGeometry
+#endif
 {
 private:
     std::vector<unsigned int> _indices;
@@ -80,6 +82,7 @@ public:
 	/// \brief Returns true if any point in \p w1 is in front of plane2, or any point in \p w2 is in front of plane1
 	static bool planesConcave(const Winding& w1, const Winding& w2, const Plane3& plane1, const Plane3& plane2);
 
+#ifdef RENDERABLE_GEOMETRY
     Type getType() const override;
     const Vector3& getFirstVertex() override;
     std::size_t getVertexStride() override;
@@ -87,4 +90,5 @@ public:
     std::size_t getNumIndices() override;
 
     void updateIndices();
+#endif
 };

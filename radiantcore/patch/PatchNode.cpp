@@ -336,7 +336,7 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	// Don't render invisible patches
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
-#if 0
+#ifdef RENDERABLE_GEOMETRY
     if (isSelected())
     {
         // Send the patch geometry for rendering highlights

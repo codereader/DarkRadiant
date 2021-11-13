@@ -298,6 +298,7 @@ void Winding::printConnectivity()
 	}
 }
 
+#ifdef RENDERABLE_GEOMETRY
 Winding::Type Winding::getType() const
 {
     return Type::Polygons;
@@ -342,3 +343,4 @@ void Winding::updateIndices()
         _indices.push_back(static_cast<unsigned int>(_indices.size()));
     }
 }
+#endif

@@ -607,7 +607,11 @@ void OpenGLShaderPass::render(OpenGLState& current,
 bool OpenGLShaderPass::empty()
 {
     return _renderables.empty() && _renderablesWithoutEntity.empty() && 
-        !_owner.hasSurfaces() && !_owner.hasWindings() && !_owner.hasGeometry();
+        !_owner.hasSurfaces() && !_owner.hasWindings() 
+#ifdef RENDERABLE_GEOMETRY
+        && !_owner.hasGeometry()
+#endif
+        ;
 }
 
 bool OpenGLShaderPass::stateIsActive()

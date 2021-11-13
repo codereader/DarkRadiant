@@ -247,6 +247,7 @@ public:
         iter->second.emplace_back(std::move(lr));
     }
 
+#ifdef RENDERABLE_GEOMETRY
     void addGeometry(RenderableGeometry& geometry, std::size_t flags) override
     {
         if (_editMode == IMap::EditMode::Merge && (flags & Highlight::Flags::MergeAction) != 0)
@@ -271,6 +272,7 @@ public:
             _shaders.faceHighlightShader->addGeometry(geometry);
         }
     }
+#endif
 };
 
 

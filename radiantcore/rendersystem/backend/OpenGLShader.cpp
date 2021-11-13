@@ -168,6 +168,7 @@ void OpenGLShader::drawSurfaces()
     glFrontFace(GL_CCW);
     WindingRenderer::render();
 
+#ifdef RENDERABLE_GEOMETRY
     glFrontFace(GL_CW);
     for (auto& geometry: _geometry)
     {
@@ -187,15 +188,18 @@ void OpenGLShader::drawSurfaces()
         glVertexPointer(3, GL_DOUBLE, static_cast<GLsizei>(geometry.get().getVertexStride()), &geometry.get().getFirstVertex());
         glDrawElements(mode, static_cast<GLsizei>(geometry.get().getNumIndices()), GL_UNSIGNED_INT, &geometry.get().getFirstIndex());
     }
+#endif
 
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
+#ifdef RENDERABLE_GEOMETRY
 void OpenGLShader::clearGeometry()
 {
     _geometry.clear();
 }
+#endif
 
 bool OpenGLShader::hasSurfaces() const
 {
@@ -239,6 +243,7 @@ bool OpenGLShader::hasWindings() const
     return !WindingRenderer::empty();
 }
 
+#ifdef RENDERABLE_GEOMETRY
 void OpenGLShader::addGeometry(RenderableGeometry& geometry)
 {
     _geometry.emplace_back(std::ref(geometry));
@@ -248,6 +253,7 @@ bool OpenGLShader::hasGeometry() const
 {
     return !_geometry.empty();
 }
+#endif
 
 void OpenGLShader::setVisible(bool visible)
 {

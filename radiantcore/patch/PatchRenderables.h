@@ -52,8 +52,10 @@ public:
 
 /// Helper class to render a PatchTesselation in solid mode
 class RenderablePatchSolid :
-	public OpenGLRenderable,
-    public RenderableGeometry
+	public OpenGLRenderable
+#ifdef RENDERABLE_GEOMETRY
+    , public RenderableGeometry
+#endif
 {
     // Geometry source
 	PatchTesselation& _tess;
@@ -74,6 +76,7 @@ public:
 
     void queueUpdate();
 
+#ifdef RENDERABLE_GEOMETRY
     Type getType() const override;
     const Vector3& getFirstVertex() override;
     std::size_t getVertexStride() override;
@@ -82,6 +85,7 @@ public:
 
 private:
     void updateIndices();
+#endif
 };
 
 // Renders a vertex' normal/tangent/bitangent vector (for debugging purposes)
