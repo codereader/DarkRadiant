@@ -352,6 +352,11 @@ scene::INode::Type EntityNode::getNodeType() const
 	return Type::Entity;
 }
 
+bool EntityNode::isOriented() const
+{
+    return true;
+}
+
 void EntityNode::renderSolid(RenderableCollector& collector,
                              const VolumeTest& volume) const
 {

@@ -152,8 +152,8 @@ public:
 		}
 
         // If any of the above concludes that this node should be highlighted,
-        // ask it to submit its geometry.
-        if (_collector.hasHighlightFlags())
+        // ask it to submit its geometry. Oriented nodes are submitting every frame.
+        if (_collector.hasHighlightFlags() || node->isOriented())
         {
 		    dispatchRenderable(*node);
         }

@@ -172,6 +172,14 @@ public:
     virtual void onPreRender(const VolumeTest& volume)
     {}
 
+    // Returns true if this renderable makes use of a non-identity model matrix,
+    // or submit their geometry in final world coordinates.
+    // Geometry of renderables returning true will not be streamlined into a larger buffer
+    virtual bool isOriented() const
+    {
+        return false; // by default, renderables render in world coordinates
+    }
+
     /// Submit renderable geometry when rendering in Solid mode.
     virtual void renderSolid(RenderableCollector& collector,
                              const VolumeTest& volume) const = 0;

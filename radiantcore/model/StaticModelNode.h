@@ -74,6 +74,7 @@ public:
 	bool intersectsLight(const RendererLight& light) const override;
 
 	// Renderable implementation
+    bool isOriented() const override;
   	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;

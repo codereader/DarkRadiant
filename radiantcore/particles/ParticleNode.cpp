@@ -59,6 +59,11 @@ Matrix4 ParticleNode::localToParent() const
 	return _local2Parent;
 }
 
+bool ParticleNode::isOriented() const
+{
+    return true;
+}
+
 void ParticleNode::renderSolid(RenderableCollector& collector,
 							   const VolumeTest& volume) const
 {

@@ -91,6 +91,11 @@ bool StaticModelNode::intersectsLight(const RendererLight& light) const
     return light.lightAABB().intersects(worldAABB());
 }
 
+bool StaticModelNode::isOriented() const
+{
+    return true;
+}
+
 void StaticModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);

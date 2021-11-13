@@ -142,7 +142,7 @@ public:
 	bool intersectsLight(const RendererLight& light) const override;
 
 	// Renderable implementation
-    virtual void onPreRender(const VolumeTest& volume) override;
+    void onPreRender(const VolumeTest& volume) override;
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
