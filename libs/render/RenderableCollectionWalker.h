@@ -151,7 +151,12 @@ public:
 			_collector.setHighlightFlag(RenderableCollector::Highlight::GroupMember, false);
 		}
 
-		dispatchRenderable(*node);
+        // If any of the above concludes that this node should be highlighted,
+        // ask it to submit its geometry.
+        if (_collector.hasHighlightFlags())
+        {
+		    dispatchRenderable(*node);
+        }
 
         return true;
     }

@@ -41,6 +41,11 @@ public:
         return false;
     }
 
+    bool hasHighlightFlags() const override
+    {
+        return _flags != 0;
+    }
+
     void setHighlightFlag(Highlight::Flags flags, bool enabled) override
     {
         if (enabled)

@@ -163,6 +163,11 @@ public:
 
     bool supportsFullMaterials() const override { return true; }
 
+    bool hasHighlightFlags() const override
+    {
+        return _flags != 0;
+    }
+
     void setHighlightFlag(Highlight::Flags flags, bool enabled) override
     {
         if (enabled)

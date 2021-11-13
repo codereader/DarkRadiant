@@ -498,6 +498,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 {
 	assert(_renderEntity); // brushes rendered without parent entity - no way!
 
+#if 0
     if (isSelected())
     {
         for (FaceInstance& faceInst : const_cast<BrushNode&>(*this).m_faceInstances)
@@ -511,8 +512,9 @@ void BrushNode::renderSolid(RenderableCollector& collector,
             }
         }
     }
+#endif
 
-#if 0 // The faces already sent their geomtry in onPreRender()
+#if 1 // The faces already sent their geomtry in onPreRender()
 	// Check for the override status of this brush
 	bool forceVisible = isForcedVisible();
 
@@ -529,7 +531,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
             if (highlight)
                 collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
 
-#if 0
+#if 1
             // greebo: BrushNodes have always an identity l2w, don't do any transforms
             collector.addRenderable(
                 *face.getFaceShader().getGLShader(), face.getWinding(),

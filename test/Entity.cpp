@@ -427,6 +427,10 @@ namespace
         }
 
         bool supportsFullMaterials() const override { return true; }
+        bool hasHighlightFlags() const override
+        {
+            return true;
+        }
         void setHighlightFlag(Highlight::Flags flags, bool enabled) override
         {}
     };

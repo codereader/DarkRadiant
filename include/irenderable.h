@@ -132,6 +132,9 @@ public:
 
     virtual void setHighlightFlag(Highlight::Flags flags, bool enabled) = 0;
 
+    // Returns true if the current set of highlight flags is not empty
+    virtual bool hasHighlightFlags() const = 0;
+
     // Submits renderable geometry to the collector, it will only rendered in the current frame
     // Flags are a combination of Highlight::Flags
     virtual void addGeometry(RenderableGeometry& geometry, std::size_t flags)
