@@ -22,7 +22,6 @@ class OpenGLRenderSystem;
  */
 class OpenGLShader final : 
 	public Shader,
-    public IWindingRenderer,
     protected SurfaceRenderer
 {
 private:

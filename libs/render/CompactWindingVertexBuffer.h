@@ -6,12 +6,35 @@
 namespace render
 {
 
-template<typename VertexT>
+// Winding index provider. Generates render indices for a single winding
+// in a specific order. The number of generated indices per winding varies.
+class WindingIndexer_Triangles
+{
+public:
+    constexpr static std::size_t GetNumberOfIndicesPerWinding(const std::size_t windingSize)
+    {
+        return 3 * (windingSize - 2);
+    }
+
+    // Generate indices for a single winding of the given size, insert it in the target container using the given output iterator
+    // each index is shifted by the given offset
+    static void GenerateAndAssignIndices(std::back_insert_iterator<std::vector<unsigned int>> outputIt, 
+        std::size_t windingSize, const unsigned int offset)
+    {
+        for (auto n = static_cast<unsigned int>(windingSize) - 1; n - 1 > 0; --n)
+        {
+            outputIt = offset + 0;
+            outputIt = offset + n;
+            outputIt = offset + n - 1;
+        }
+    }
+};
+
+template<typename VertexT, class WindingIndexerT = WindingIndexer_Triangles>
 class CompactWindingVertexBuffer
 {
 private:
     std::size_t _size;
-    std::size_t _numIndicesPerWinding;
 
     std::vector<VertexT> _vertices;
 
@@ -22,8 +45,7 @@ public:
     using Slot = std::uint32_t;
 
     explicit CompactWindingVertexBuffer(std::size_t size) :
-        _size(size),
-        _numIndicesPerWinding(3 * (_size - 2))
+        _size(size)
     {}
 
     CompactWindingVertexBuffer(const CompactWindingVertexBuffer& other) = delete;
@@ -32,7 +54,6 @@ public:
     // Move ctor
     CompactWindingVertexBuffer(CompactWindingVertexBuffer&& other) noexcept :
         _size(other._size),
-        _numIndicesPerWinding(other._numIndicesPerWinding),
         _vertices(std::move(other._vertices)),
         _indices(std::move(other._indices))
     {}
@@ -44,7 +65,7 @@ public:
 
     std::size_t getNumIndicesPerWinding() const
     {
-        return _numIndicesPerWinding;
+        return WindingIndexerT::GetNumberOfIndicesPerWinding(_size);
     }
 
     const std::vector<VertexT>& getVertices() const
@@ -69,14 +90,9 @@ public:
         std::copy(winding.begin(), winding.end(), std::back_inserter(_vertices));
 
         // Allocate and calculate indices
-        _indices.reserve(_indices.size() + _numIndicesPerWinding);
-
-        for (unsigned int n = static_cast<unsigned int>(_size) - 1; n - 1 > 0; --n)
-        {
-            _indices.push_back(static_cast<unsigned int>(currentSize) + 0);
-            _indices.push_back(static_cast<unsigned int>(currentSize) + n);
-            _indices.push_back(static_cast<unsigned int>(currentSize) + n - 1);
-        }
+        _indices.reserve(_indices.size() + getNumIndicesPerWinding());
+        
+        WindingIndexerT::GenerateAndAssignIndices(std::back_inserter(_indices), _size, static_cast<unsigned int>(currentSize));
 
         return static_cast<Slot>(position);
     }
@@ -108,7 +124,7 @@ public:
         // Since all the windings have the same structure, the index array will always look the same
         // after shifting the index values of the remaining windings. 
         // So just cut off one winding from the end of the index array
-        _indices.resize(_indices.size() - _numIndicesPerWinding);
+        _indices.resize(_indices.size() - getNumIndicesPerWinding());
     }
 };
 

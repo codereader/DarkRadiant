@@ -226,4 +226,67 @@ TEST(CompactWindingVertexBuffer, ReplaceWinding)
     }
 }
 
+TEST(CompactWindingVertexBuffer, TriangleIndexerSize3) // Winding size == 3
+{
+    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Triangles> buffer(3);
+
+    EXPECT_EQ(buffer.getNumIndicesPerWinding(), 3);
+
+    // Generate winding indices and check the result
+    std::vector<unsigned int> indices;
+    render::WindingIndexer_Triangles::GenerateAndAssignIndices(std::back_inserter(indices), buffer.getWindingSize(), 80);
+
+    EXPECT_EQ(indices.size(), buffer.getNumIndicesPerWinding()) << "Wrong number of indices generated";
+
+    EXPECT_EQ(indices[0], 80) << "Index 0 mismatch";
+    EXPECT_EQ(indices[1], 82) << "Index 1 mismatch";
+    EXPECT_EQ(indices[2], 81) << "Index 2 mismatch";
+}
+
+TEST(CompactWindingVertexBuffer, TriangleIndexerSize4) // Winding size == 4
+{
+    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Triangles> buffer(4);
+
+    EXPECT_EQ(buffer.getNumIndicesPerWinding(), 6);
+
+    // Generate winding indices and check the result
+    std::vector<unsigned int> indices;
+    render::WindingIndexer_Triangles::GenerateAndAssignIndices(std::back_inserter(indices), buffer.getWindingSize(), 80);
+
+    EXPECT_EQ(indices.size(), buffer.getNumIndicesPerWinding()) << "Wrong number of indices generated";
+
+    EXPECT_EQ(indices[0], 80) << "Index 0 mismatch";
+    EXPECT_EQ(indices[1], 83) << "Index 1 mismatch";
+    EXPECT_EQ(indices[2], 82) << "Index 2 mismatch";
+
+    EXPECT_EQ(indices[3], 80) << "Index 3 mismatch";
+    EXPECT_EQ(indices[4], 82) << "Index 4 mismatch";
+    EXPECT_EQ(indices[5], 81) << "Index 5 mismatch";
+}
+
+TEST(CompactWindingVertexBuffer, TriangleIndexerSize5) // Winding size == 5
+{
+    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Triangles> buffer(5);
+
+    EXPECT_EQ(buffer.getNumIndicesPerWinding(), 9);
+
+    // Generate winding indices and check the result
+    std::vector<unsigned int> indices;
+    render::WindingIndexer_Triangles::GenerateAndAssignIndices(std::back_inserter(indices), buffer.getWindingSize(), 80);
+
+    EXPECT_EQ(indices.size(), buffer.getNumIndicesPerWinding()) << "Wrong number of indices generated";
+
+    EXPECT_EQ(indices[0], 80) << "Index 0 mismatch";
+    EXPECT_EQ(indices[1], 84) << "Index 1 mismatch";
+    EXPECT_EQ(indices[2], 83) << "Index 2 mismatch";
+
+    EXPECT_EQ(indices[3], 80) << "Index 3 mismatch";
+    EXPECT_EQ(indices[4], 83) << "Index 4 mismatch";
+    EXPECT_EQ(indices[5], 82) << "Index 5 mismatch";
+
+    EXPECT_EQ(indices[6], 80) << "Index 6 mismatch";
+    EXPECT_EQ(indices[7], 82) << "Index 7 mismatch";
+    EXPECT_EQ(indices[8], 81) << "Index 8 mismatch";
+}
+
 }
