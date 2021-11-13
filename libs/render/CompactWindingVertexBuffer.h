@@ -6,8 +6,7 @@
 namespace render
 {
 
-// Winding index provider. Generates render indices for a single winding
-// in a specific order. The number of generated indices per winding varies.
+// Winding index provider. Generates render indices for a single winding suitable for rendering triangles.
 class WindingIndexer_Triangles
 {
 public:
@@ -27,6 +26,31 @@ public:
             outputIt = offset + n;
             outputIt = offset + n - 1;
         }
+    }
+};
+
+// Winding index provider. Generates render indices for a single winding suitable for rendering lines.
+class WindingIndexer_Lines
+{
+public:
+    constexpr static std::size_t GetNumberOfIndicesPerWinding(const std::size_t windingSize)
+    {
+        return windingSize * 2; // 2 indices per winding
+    }
+
+    // Generate indices for a single winding of the given size, insert it in the target container using the given output iterator
+    // each index is shifted by the given offset
+    static void GenerateAndAssignIndices(std::back_insert_iterator<std::vector<unsigned int>> outputIt,
+        std::size_t windingSize, const unsigned int offset)
+    {
+        for (auto n = 0; n < windingSize - 1; ++n)
+        {
+            outputIt = offset + n + 0;
+            outputIt = offset + n + 1;
+        }
+
+        outputIt = offset + windingSize - 1;
+        outputIt = offset; // the last index points at the first vertex
     }
 };
 

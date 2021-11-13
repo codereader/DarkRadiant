@@ -289,4 +289,79 @@ TEST(CompactWindingVertexBuffer, TriangleIndexerSize5) // Winding size == 5
     EXPECT_EQ(indices[8], 81) << "Index 8 mismatch";
 }
 
+TEST(CompactWindingVertexBuffer, LineIndexerSize3) // Winding size == 3
+{
+    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Lines> buffer(3);
+
+    EXPECT_EQ(buffer.getNumIndicesPerWinding(), 6);
+
+    // Generate winding indices and check the result
+    std::vector<unsigned int> indices;
+    render::WindingIndexer_Lines::GenerateAndAssignIndices(std::back_inserter(indices), buffer.getWindingSize(), 80);
+
+    EXPECT_EQ(indices.size(), buffer.getNumIndicesPerWinding()) << "Wrong number of indices generated";
+
+    EXPECT_EQ(indices[0], 80) << "Index 0 mismatch";
+    EXPECT_EQ(indices[1], 81) << "Index 1 mismatch";
+
+    EXPECT_EQ(indices[2], 81) << "Index 2 mismatch";
+    EXPECT_EQ(indices[3], 82) << "Index 3 mismatch";
+
+    EXPECT_EQ(indices[4], 82) << "Index 4 mismatch";
+    EXPECT_EQ(indices[5], 80) << "Index 5 mismatch";
+}
+
+TEST(CompactWindingVertexBuffer, LineIndexerSize4) // Winding size == 4
+{
+    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Lines> buffer(4);
+
+    EXPECT_EQ(buffer.getNumIndicesPerWinding(), 8);
+
+    // Generate winding indices and check the result
+    std::vector<unsigned int> indices;
+    render::WindingIndexer_Lines::GenerateAndAssignIndices(std::back_inserter(indices), buffer.getWindingSize(), 80);
+
+    EXPECT_EQ(indices.size(), buffer.getNumIndicesPerWinding()) << "Wrong number of indices generated";
+
+    EXPECT_EQ(indices[0], 80) << "Index 0 mismatch";
+    EXPECT_EQ(indices[1], 81) << "Index 1 mismatch";
+
+    EXPECT_EQ(indices[2], 81) << "Index 2 mismatch";
+    EXPECT_EQ(indices[3], 82) << "Index 3 mismatch";
+
+    EXPECT_EQ(indices[4], 82) << "Index 4 mismatch";
+    EXPECT_EQ(indices[5], 83) << "Index 5 mismatch";
+
+    EXPECT_EQ(indices[6], 83) << "Index 6 mismatch";
+    EXPECT_EQ(indices[7], 80) << "Index 7 mismatch";
+}
+
+TEST(CompactWindingVertexBuffer, LineIndexerSize5) // Winding size == 5
+{
+    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Lines> buffer(5);
+
+    EXPECT_EQ(buffer.getNumIndicesPerWinding(), 10);
+
+    // Generate winding indices and check the result
+    std::vector<unsigned int> indices;
+    render::WindingIndexer_Lines::GenerateAndAssignIndices(std::back_inserter(indices), buffer.getWindingSize(), 80);
+
+    EXPECT_EQ(indices.size(), buffer.getNumIndicesPerWinding()) << "Wrong number of indices generated";
+
+    EXPECT_EQ(indices[0], 80) << "Index 0 mismatch";
+    EXPECT_EQ(indices[1], 81) << "Index 1 mismatch";
+
+    EXPECT_EQ(indices[2], 81) << "Index 2 mismatch";
+    EXPECT_EQ(indices[3], 82) << "Index 3 mismatch";
+
+    EXPECT_EQ(indices[4], 82) << "Index 4 mismatch";
+    EXPECT_EQ(indices[5], 83) << "Index 5 mismatch";
+
+    EXPECT_EQ(indices[6], 83) << "Index 6 mismatch";
+    EXPECT_EQ(indices[7], 84) << "Index 7 mismatch";
+
+    EXPECT_EQ(indices[8], 84) << "Index 8 mismatch";
+    EXPECT_EQ(indices[9], 80) << "Index 9 mismatch";
+}
+
 }
