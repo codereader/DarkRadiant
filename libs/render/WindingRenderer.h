@@ -9,10 +9,33 @@
 namespace render
 {
 
-class WindingRenderer :
+class IBackendWindingRenderer :
     public IWindingRenderer
 {
+public:
+    virtual ~IBackendWindingRenderer() 
+    {}
+
+    // Returns true if the vertex buffers are empty
+    virtual bool empty() const = 0;
+
+    // Issues the openGL calls to render the vertex buffers
+    virtual void renderAllWindings() = 0;
+};
+
+class WindingRenderer :
+    public IBackendWindingRenderer
+{
+public:
+    enum class RenderMethod
+    {
+        Triangles,  // Triangulate each winding
+        Lines,      // Lines between all vertices, counter-clockwise
+    };
+
 private:
+    RenderMethod _renderMethod;
+
     using VertexBuffer = CompactWindingVertexBuffer<ArbitraryMeshVertex>;
 
     // Maintain one bucket per winding size, allocated on demand
@@ -36,7 +59,8 @@ private:
     std::size_t _windings;
 
 public:
-    WindingRenderer() :
+    WindingRenderer(RenderMethod renderMethod) :
+        _renderMethod(renderMethod),
         _windings(0),
         _freeSlotMappingHint(InvalidSlotMapping)
     {}
@@ -121,7 +145,7 @@ public:
         bucket.replaceWinding(slotMapping.slotNumber, vertices);
     }
 
-    void render()
+    void renderAllWindings() override
     {
         for (const auto& bucket : _buckets)
         {
@@ -141,6 +165,13 @@ public:
 
             debug::checkGLErrors();
         }
+    }
+
+    void setRenderMethod(RenderMethod method)
+    {
+        _renderMethod = method;
+
+        // TODO: Re-allocate buckets
     }
 
 private:

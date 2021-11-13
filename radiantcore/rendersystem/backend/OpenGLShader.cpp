@@ -61,7 +61,9 @@ OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSy
     _renderSystem(renderSystem),
     _isVisible(true),
     _useCount(0)
-{}
+{
+    _windingRenderer.reset(new WindingRenderer(WindingRenderer::RenderMethod::Triangles));
+}
 
 OpenGLShader::~OpenGLShader()
 {
@@ -166,7 +168,7 @@ void OpenGLShader::drawSurfaces()
 
     // Render all windings
     glFrontFace(GL_CCW);
-    WindingRenderer::render();
+    _windingRenderer->renderAllWindings();
 
 #ifdef RENDERABLE_GEOMETRY
     glFrontFace(GL_CW);
@@ -225,22 +227,22 @@ void OpenGLShader::updateSurface(ISurfaceRenderer::Slot slot, const std::vector<
 
 IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices)
 {
-    return WindingRenderer::addWinding(vertices);
+    return _windingRenderer->addWinding(vertices);
 }
 
 void OpenGLShader::removeWinding(IWindingRenderer::Slot slot)
 {
-    WindingRenderer::removeWinding(slot);
+    _windingRenderer->removeWinding(slot);
 }
 
 void OpenGLShader::updateWinding(IWindingRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices)
 {
-    WindingRenderer::updateWinding(slot, vertices);
+    _windingRenderer->updateWinding(slot, vertices);
 }
 
 bool OpenGLShader::hasWindings() const
 {
-    return !WindingRenderer::empty();
+    return !_windingRenderer->empty();
 }
 
 #ifdef RENDERABLE_GEOMETRY
@@ -842,6 +844,9 @@ void OpenGLShader::construct()
 
         case '<': // wireframe shader
         {
+            // Wireframe renderer is using GL_LINES to display each winding
+            _windingRenderer.reset(new WindingRenderer(WindingRenderer::RenderMethod::Lines));
+
             OpenGLState& state = appendDefaultPass();
 			state.setName(_name);
 

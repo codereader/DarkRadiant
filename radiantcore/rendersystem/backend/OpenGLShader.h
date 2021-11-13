@@ -22,7 +22,7 @@ class OpenGLRenderSystem;
  */
 class OpenGLShader final : 
 	public Shader,
-    protected WindingRenderer,
+    public IWindingRenderer,
     protected SurfaceRenderer
 {
 private:
@@ -54,6 +54,8 @@ private:
 #ifdef RENDERABLE_GEOMETRY
     std::vector<std::reference_wrapper<RenderableGeometry>> _geometry;
 #endif
+
+    std::unique_ptr<IBackendWindingRenderer> _windingRenderer;
 
 private:
 
