@@ -23,26 +23,26 @@ public:
     virtual void renderAllWindings() = 0;
 };
 
+// Traits class to retrieve the GLenum render mode based on the indexer type
+template<typename IndexerT> struct RenderingTraits
+{};
+
+template<>
+struct RenderingTraits<WindingIndexer_Lines>
+{
+    constexpr static GLenum Mode() { return GL_LINES; }
+};
+
+template<>
+struct RenderingTraits<WindingIndexer_Triangles>
+{
+    constexpr static GLenum Mode() { return GL_TRIANGLES; }
+};
+
 template<class WindingIndexerT>
 class WindingRenderer :
     public IBackendWindingRenderer
 {
-private:
-    template<typename IndexerT> struct RenderingTraits
-    {};
-
-    template<>
-    struct RenderingTraits<WindingIndexer_Lines>
-    {
-        constexpr static GLenum Mode() { return GL_LINES; }
-    };
-
-    template<>
-    struct RenderingTraits<WindingIndexer_Triangles>
-    {
-        constexpr static GLenum Mode() { return GL_TRIANGLES; }
-    };
-
 private:
     using VertexBuffer = CompactWindingVertexBuffer<ArbitraryMeshVertex, WindingIndexerT>;
 
