@@ -382,6 +382,18 @@ void EntityNode::renderWireframe(IRenderableCollector& collector,
     );
 }
 
+void EntityNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (collector.supportsFullMaterials())
+    {
+        renderSolid(collector, volume);
+    }
+    else
+    {
+        renderWireframe(collector, volume);
+    }
+}
+
 void EntityNode::acquireShaders()
 {
     acquireShaders(getRenderSystem());

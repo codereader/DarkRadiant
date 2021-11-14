@@ -86,6 +86,11 @@ void MD5ModelNode::renderWireframe(IRenderableCollector& collector, const Volume
     render(collector, volume, localToWorld(), *_renderEntity);
 }
 
+void MD5ModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    render(collector, volume, localToWorld(), *_renderEntity);
+}
+
 void MD5ModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     Node::setRenderSystem(renderSystem);

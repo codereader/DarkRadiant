@@ -71,6 +71,8 @@ public:
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, 
 						 const Matrix4& localToWorld, const IRenderEntity* entity) const;
 
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
+
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	std::size_t getHighlightFlags() override

@@ -89,6 +89,11 @@ void RenderableParticle::renderWireframe(IRenderableCollector& collector, const 
 	renderSolid(collector, volume);
 }
 
+void RenderableParticle::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    renderSolid(collector, volume);
+}
+
 void RenderableParticle::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	_renderSystem = renderSystem;

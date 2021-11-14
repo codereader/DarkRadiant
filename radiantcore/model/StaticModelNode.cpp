@@ -119,6 +119,18 @@ void StaticModelNode::renderWireframe(IRenderableCollector& collector, const Vol
     _model->renderWireframe(collector, localToWorld(), *_renderEntity);
 }
 
+void StaticModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (collector.supportsFullMaterials())
+    {
+        renderSolid(collector, volume);
+    }
+    else
+    {
+        renderWireframe(collector, volume);
+    }
+}
+
 void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     Node::setRenderSystem(renderSystem);

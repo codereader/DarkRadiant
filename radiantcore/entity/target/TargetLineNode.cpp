@@ -41,6 +41,11 @@ void TargetLineNode::renderWireframe(IRenderableCollector& collector, const Volu
 	_targetLines.render(_owner.getWireShader(), collector, volume, getOwnerPosition());
 }
 
+void TargetLineNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    renderWireframe(collector, volume);
+}
+
 std::size_t TargetLineNode::getHighlightFlags()
 {
     // We don't need to return highlighting, since the render system will use

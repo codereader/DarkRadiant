@@ -408,6 +408,36 @@ void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 	renderWireframe(collector, volume, localToWorld());
 }
 
+void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    // Check for the override status of this brush
+    bool forceVisible = isForcedVisible();
+
+    // Submit the renderable geometry for each face
+    for (const auto& faceInstance : m_faceInstances)
+    {
+        // Skip invisible faces before traversing further
+        if (!forceVisible && !faceInstance.faceIsVisible()) continue;
+
+        const Face& face = faceInstance.getFace();
+        if (face.intersectVolume(volume))
+        {
+            bool highlight = faceInstance.selectedComponents();
+            if (highlight)
+                collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
+
+            // greebo: BrushNodes have always an identity l2w, don't do any transforms
+            collector.addRenderable(
+                *face.getFaceShader().getGLShader(), face.getWinding(),
+                Matrix4::getIdentity(), this, _renderEntity
+            );
+
+            if (highlight)
+                collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
+        }
+    }
+}
+
 void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	SelectableNode::setRenderSystem(renderSystem);
@@ -523,7 +553,7 @@ void BrushNode::renderSolid(IRenderableCollector& collector,
     }
 #endif
 
-#if 1 // The faces already sent their geomtry in onPreRender()
+#if 0 // The faces already sent their geomtry in onPreRender()
 	// Check for the override status of this brush
 	bool forceVisible = isForcedVisible();
 

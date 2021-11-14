@@ -191,6 +191,10 @@ public:
     virtual void renderWireframe(IRenderableCollector& collector,
                                  const VolumeTest& volume) const = 0;
 
+    // Submit renderable geometry for highlighting the object
+    virtual void renderHighlights(IRenderableCollector& collector,
+        const VolumeTest& volume) = 0;
+
     virtual void renderComponents(IRenderableCollector&, const VolumeTest&) const
     { }
 

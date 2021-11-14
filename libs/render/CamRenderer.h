@@ -143,7 +143,7 @@ public:
         for (const auto& pair : _litRenderables)
         {
             Shader* shader = pair.first;
-            wxASSERT(shader);
+            assert(shader);
             for (const LitRenderable& lr : pair.second)
             {
                 shader->addRenderable(lr.renderable, lr.local2World,
@@ -241,11 +241,11 @@ public:
             emptyList.reserve(1024);
 
             auto result = _litRenderables.emplace(&shader, std::move(emptyList));
-            wxASSERT(result.second);
+            assert(result.second);
             iter = result.first;
         }
-        wxASSERT(iter != _litRenderables.end());
-        wxASSERT(iter->first == &shader);
+        assert(iter != _litRenderables.end());
+        assert(iter->first == &shader);
 
         // Store a LitRenderable object for this renderable
         LitRenderable lr { renderable, litObject, localToWorld, entity };

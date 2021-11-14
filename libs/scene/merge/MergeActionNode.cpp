@@ -122,6 +122,18 @@ void MergeActionNodeBase::renderWireframe(IRenderableCollector& collector, const
     });
 }
 
+void MergeActionNodeBase::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (collector.supportsFullMaterials())
+    {
+        renderSolid(collector, volume);
+    }
+    else
+    {
+        renderWireframe(collector, volume);
+    }
+}
+
 std::size_t MergeActionNodeBase::getHighlightFlags()
 {
     return isSelected() ? Highlight::Selected : Highlight::NoHighlight;

@@ -121,11 +121,17 @@ public:
             setHighlightFlag(Highlight::GroupMember, false);
         }
 
-        // If any of the above concludes that this node should be highlighted,
-        // ask it to submit its geometry. Oriented nodes are submitting every frame.
-        if (hasHighlightFlags() || node->isOriented())
+        // Oriented nodes are submitting every frame. The ones without parent matrix
+        // like Brushes and Patches are maintaining their geometry in the shader, on their own
+        if (node->isOriented())
         {
             processRenderable(*node, volume);
+        }
+
+        // If this node should be highlighted, ask it to submit the corresponding geometry
+        if (hasHighlightFlags())
+        {
+            node->renderHighlights(*this, volume);
         }
     }
 };

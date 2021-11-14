@@ -53,6 +53,9 @@ public:
 		}
 	}
 
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override
+    {}
+
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override
 	{
 		if (renderSystem)

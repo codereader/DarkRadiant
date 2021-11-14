@@ -346,7 +346,7 @@ void PatchNode::renderSolid(IRenderableCollector& collector, const VolumeTest& v
 #endif
     assert(_renderEntity); // patches rendered without parent - no way!
 
-#if 1
+#if 0
     // Render the patch itself
     collector.addRenderable(
         *m_patch._shader.getGLShader(), m_patch._solidRenderable,
@@ -373,6 +373,14 @@ void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 
 	// Render the selected components
 	renderComponentsSelected(collector, volume);
+}
+
+void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    collector.addRenderable(
+        *m_patch._shader.getGLShader(), m_patch._solidRenderable,
+        localToWorld(), this, _renderEntity
+    );
 }
 
 void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)

@@ -89,6 +89,13 @@ void ParticleNode::renderWireframe(IRenderableCollector& collector,
 #endif
 }
 
+void ParticleNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (!collector.supportsFullMaterials()) return;
+
+    renderSolid(collector, volume);
+}
+
 void ParticleNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	Node::setRenderSystem(renderSystem);

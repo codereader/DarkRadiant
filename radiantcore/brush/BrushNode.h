@@ -146,6 +146,7 @@ public:
 	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	void viewChanged() const override;

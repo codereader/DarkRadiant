@@ -66,6 +66,18 @@ void NullModelNode::renderWireframe(IRenderableCollector& collector, const Volum
 	_nullModel->renderWireframe(collector, volume, localToWorld());
 }
 
+void NullModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (collector.supportsFullMaterials())
+    {
+        renderSolid(collector, volume);
+    }
+    else
+    {
+        renderWireframe(collector, volume);
+    }
+}
+
 void NullModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	_nullModel->setRenderSystem(renderSystem);
