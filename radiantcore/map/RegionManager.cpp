@@ -388,7 +388,7 @@ void RegionManager::saveRegion(const cmd::ArgumentList& args)
 
 		if (!fileInfo.mapFormat)
 		{
-			fileInfo.mapFormat = GlobalMapFormatManager().getMapFormatForFilename(fileInfo.fullPath);
+			fileInfo.mapFormat = GlobalMap().getMapFormatForFilenameSafe(fileInfo.fullPath);
 		}
 
         // Save the map and pass the RegionManager::traverseRegion functor

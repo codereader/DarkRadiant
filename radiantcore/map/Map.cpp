@@ -436,6 +436,14 @@ MapFormatPtr Map::getFormat()
     return GlobalMapFormatManager().getMapFormatForFilename(_mapName);
 }
 
+MapFormatPtr Map::getMapFormatForFilenameSafe(const std::string& filename)
+{
+    auto candidate = GlobalMapFormatManager().getMapFormatForFilename(filename);
+
+    // Fall back to the format of the current map if the selection is empty (#5808)
+    return candidate ? candidate : getFormat();
+}
+
 // free all map elements, reinitialize the structures that depend on them
 void Map::freeMap()
 {
@@ -693,7 +701,7 @@ void Map::saveDirect(const std::string& filename, const MapFormatPtr& mapFormat)
 
 	if (!mapFormat)
 	{
-		format = GlobalMapFormatManager().getMapFormatForFilename(filename);
+		format = getMapFormatForFilenameSafe(filename);
 	}
 
     try
@@ -718,14 +726,8 @@ void Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
 
 	if (!format)
 	{
-		format = GlobalMapFormatManager().getMapFormatForFilename(filename);
+		format = getMapFormatForFilenameSafe(filename);
 	}
-
-    // Fall back to the format of the current map if the selection is empty (#5808)
-    if (!format)
-    {
-        format = getFormat();
-    }
 
     try
     {
@@ -974,7 +976,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveMapCopyAs", std::bind(&Map::saveMapCopyAs, this, std::placeholders::_1), { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     // Command used by the autosaver to save a copy without messing with the remembered paths
     GlobalCommandSystem().addCommand("SaveAutomaticBackup", std::bind(&Map::saveAutomaticMapBackup, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
-    GlobalCommandSystem().addCommand("ExportMap", Map::exportMap);
+    GlobalCommandSystem().addCommand("ExportMap", std::bind(&Map::exportMap, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
     GlobalCommandSystem().addCommand("FocusViews", std::bind(&Map::focusViewCmd, this, std::placeholders::_1), { cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_VECTOR3 });
@@ -1142,16 +1144,21 @@ void Map::exportMap(const cmd::ArgumentList& args)
 {
     auto fileInfo = MapFileManager::getMapFileSelection(false, _("Export Map"), filetype::TYPE_MAP_EXPORT);
 
-	if (!fileInfo.fullPath.empty())
+    if (!fileInfo.fullPath.empty())
 	{
-        GlobalMap().emitMapEvent(MapSaving);
+        if (!fileInfo.mapFormat)
+        {
+            fileInfo.mapFormat = getMapFormatForFilenameSafe(fileInfo.fullPath);
+        }
+
+        emitMapEvent(MapSaving);
 
         MapResource::saveFile(*fileInfo.mapFormat,
             GlobalSceneGraph().root(),
             scene::traverse,
             fileInfo.fullPath);
 
-        GlobalMap().emitMapEvent(MapSaved);
+        emitMapEvent(MapSaved);
     }
 }
 

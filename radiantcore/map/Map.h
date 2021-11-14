@@ -211,6 +211,10 @@ public:
 	 */
 	MapFormatPtr getFormat();
 
+    // Return the map format for the given filename, falling back to the
+    // format of the currently loaded map in case the lookup fails.
+	MapFormatPtr getMapFormatForFilenameSafe(const std::string& filename);
+
 	/** greebo: Registers the commands with the EventManager.
 	 */
 	void registerCommands();
@@ -223,7 +227,7 @@ public:
 	static void importMap(const cmd::ArgumentList& args);
 	void saveMapCmd(const cmd::ArgumentList& args);
 	static void saveMapAs(const cmd::ArgumentList& args);
-	static void exportMap(const cmd::ArgumentList& args);
+	void exportMap(const cmd::ArgumentList& args);
 
 	/** greebo: Queries a filename from the user and saves a copy
 	 *          of the current map to the specified filename.
