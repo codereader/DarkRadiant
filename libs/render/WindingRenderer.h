@@ -23,33 +23,41 @@ public:
     virtual void renderAllWindings() = 0;
 };
 
+template<class WindingIndexerT>
 class WindingRenderer :
     public IBackendWindingRenderer
 {
-public:
-    enum class RenderMethod
+private:
+    template<typename IndexerT> struct RenderingTraits
+    {};
+
+    template<>
+    struct RenderingTraits<WindingIndexer_Lines>
     {
-        Triangles,  // Triangulate each winding
-        Lines,      // Lines between all vertices, counter-clockwise
+        constexpr static GLenum Mode() { return GL_LINES; }
+    };
+
+    template<>
+    struct RenderingTraits<WindingIndexer_Triangles>
+    {
+        constexpr static GLenum Mode() { return GL_TRIANGLES; }
     };
 
 private:
-    RenderMethod _renderMethod;
-
-    using VertexBuffer = CompactWindingVertexBuffer<ArbitraryMeshVertex>;
+    using VertexBuffer = CompactWindingVertexBuffer<ArbitraryMeshVertex, WindingIndexerT>;
 
     // Maintain one bucket per winding size, allocated on demand
     std::vector<VertexBuffer> _buckets;
 
     using BucketIndex = std::uint16_t;
     static constexpr BucketIndex InvalidBucketIndex = std::numeric_limits<BucketIndex>::max();
-    static constexpr VertexBuffer::Slot InvalidVertexBufferSlot = std::numeric_limits<VertexBuffer::Slot>::max();
+    static constexpr typename VertexBuffer::Slot InvalidVertexBufferSlot = std::numeric_limits<typename VertexBuffer::Slot>::max();
 
     // Stores the indices to a winding slot into a bucket, client code receives an index to a SlotMapping
     struct SlotMapping
     {
         BucketIndex bucketIndex = InvalidBucketIndex;
-        VertexBuffer::Slot slotNumber = InvalidVertexBufferSlot;
+        typename VertexBuffer::Slot slotNumber = InvalidVertexBufferSlot;
     };
 
     std::vector<SlotMapping> _slots;
@@ -59,8 +67,7 @@ private:
     std::size_t _windings;
 
 public:
-    WindingRenderer(RenderMethod renderMethod) :
-        _renderMethod(renderMethod),
+    WindingRenderer() :
         _windings(0),
         _freeSlotMappingHint(InvalidSlotMapping)
     {}
@@ -161,17 +168,11 @@ public:
             glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
             glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
             
-            glDrawElements(GL_TRIANGLES, GLint(indices.size()), GL_UNSIGNED_INT, &indices.front());
+            auto primitiveMode = RenderingTraits<WindingIndexerT>::Mode();
+            glDrawElements(primitiveMode, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, &indices.front());
 
             debug::checkGLErrors();
         }
-    }
-
-    void setRenderMethod(RenderMethod method)
-    {
-        _renderMethod = method;
-
-        // TODO: Re-allocate buckets
     }
 
 private:

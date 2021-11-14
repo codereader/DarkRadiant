@@ -43,13 +43,13 @@ public:
     static void GenerateAndAssignIndices(std::back_insert_iterator<std::vector<unsigned int>> outputIt,
         std::size_t windingSize, const unsigned int offset)
     {
-        for (auto n = 0; n < windingSize - 1; ++n)
+        for (unsigned int n = 0; n < windingSize - 1; ++n)
         {
             outputIt = offset + n + 0;
             outputIt = offset + n + 1;
         }
 
-        outputIt = offset + windingSize - 1;
+        outputIt = offset + static_cast<unsigned int>(windingSize) - 1;
         outputIt = offset; // the last index points at the first vertex
     }
 };

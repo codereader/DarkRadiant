@@ -62,7 +62,7 @@ OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSy
     _isVisible(true),
     _useCount(0)
 {
-    _windingRenderer.reset(new WindingRenderer(WindingRenderer::RenderMethod::Triangles));
+    _windingRenderer.reset(new WindingRenderer<WindingIndexer_Triangles>());
 }
 
 OpenGLShader::~OpenGLShader()
@@ -845,7 +845,7 @@ void OpenGLShader::construct()
         case '<': // wireframe shader
         {
             // Wireframe renderer is using GL_LINES to display each winding
-            _windingRenderer.reset(new WindingRenderer(WindingRenderer::RenderMethod::Lines));
+            _windingRenderer.reset(new WindingRenderer<WindingIndexer_Lines>());
 
             OpenGLState& state = appendDefaultPass();
 			state.setName(_name);
