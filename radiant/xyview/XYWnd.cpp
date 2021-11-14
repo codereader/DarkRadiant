@@ -1643,7 +1643,12 @@ void XYWnd::onGLWindowScroll(wxMouseEvent& ev)
 {
     if (!ev.ShiftDown() && GlobalXYWnd().zoomCenteredOnMouseCursor())
     {
-        zoomInOn(ev.GetPosition(), ev.GetWheelRotation() > 0 ? 1 : -1);
+        // The mouse position passed in the scroll event is not accurate on some systems,
+        // it fails to send widget-relative coordinates (even got negative numbers, see #5792)
+        // Translate the mouse coordinates on our own
+        auto clientPos = _wxGLWidget->ScreenToClient(wxGetMousePosition());
+
+        zoomInOn(clientPos, ev.GetWheelRotation() > 0 ? 1 : -1);
         return;
     }
 
