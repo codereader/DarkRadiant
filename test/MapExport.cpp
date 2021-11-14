@@ -289,4 +289,39 @@ brushDef3
     EXPECT_NE(brushTextIndex, std::string::npos) << "Could not locate the exported brush in the expected format";
 }
 
+TEST_F(MapExportTest, ExportSelectedWithEmptyFileExtension)
+{
+    auto brush = algorithm::createCuboidBrush(GlobalMapModule().findOrInsertWorldspawn(),
+        AABB(Vector3(0, 0, 0), Vector3(64, 128, 256)), "textures/darkmod/numbers/1");
+
+    Node_setSelected(brush, true);
+
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "export_empty_file_extension";
+    EXPECT_FALSE(fs::exists(tempPath)) << "File already exists";
+
+    // Subscribe to the event asking for the target path
+    auto msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::FileSelectionRequest,
+        radiant::TypeListener<radiant::FileSelectionRequest>(
+            [&](radiant::FileSelectionRequest& msg)
+    {
+        msg.setHandled(true);
+        msg.setResult(radiant::FileSelectionRequest::Result
+            {
+                tempPath.string(),
+                "" // this can happen if e.g. the *.* filter is active
+            });
+    }));
+    GlobalCommandSystem().executeCommand("SaveSelected");
+
+    EXPECT_TRUE(fs::exists(tempPath)) << "File still doesn't exist";
+
+    std::ifstream tempFile(tempPath);
+    std::stringstream content;
+    content << tempFile.rdbuf();
+
+    EXPECT_NE(content.str().find("brushDef3"), std::string::npos) << "Couldn't find the brush keyword in the export";
+}
+
 }
