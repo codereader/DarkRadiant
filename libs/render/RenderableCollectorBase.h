@@ -8,7 +8,13 @@
 namespace render
 {
 
-// Front end renderer base implementation shared by CamRenderer and XYRenderer
+/**
+ * Front end renderer base implementation shared by CamRenderer and XYRenderer
+ * 
+ * Provides support for highlighting selected objects by activating the
+ * RenderableCollector's "highlight" flags based on the renderable object's
+ * selection state.
+ */
 class RenderableCollectorBase :
     public IRenderableCollector
 {
