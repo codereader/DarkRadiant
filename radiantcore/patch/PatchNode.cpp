@@ -356,9 +356,6 @@ void PatchNode::renderSolid(IRenderableCollector& collector, const VolumeTest& v
 #if DEBUG_PATCH_NTB_VECTORS
     m_patch._renderableVectors.render(collector, volume, localToWorld());
 #endif
-
-	// Render the selected components
-	renderComponentsSelected(collector, volume);
 }
 
 void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
@@ -381,6 +378,9 @@ void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
         *m_patch._shader.getGLShader(), m_patch._solidRenderable,
         localToWorld(), this, _renderEntity
     );
+
+    // Render the selected components
+    renderComponentsSelected(collector, volume);
 }
 
 void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
