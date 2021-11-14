@@ -20,6 +20,7 @@
 #include "wxutil/ControlButton.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/Button.h"
+#include "wxutil/BitmapToggleButton.h"
 
 #include "registry/Widgets.h"
 #include "selectionlib.h"
@@ -91,15 +92,25 @@ namespace
     // GTK styles) vs Windows.
 #ifdef __WXMSW__
     const int SPINBOX_WIDTH_CHARS = 7;
-
-    // Only Windows can use fixed pixel sizes for widgets; on Linux, the
-    // availability of GTK themes + configurable DPI (e.g. via gnome-tweak-tool)
-    // make it impossible to predict how many pixels are needed to show a
-    // widget.
-    #define ALLOW_FIXED_PIXEL_SIZES
 #else
     const int SPINBOX_WIDTH_CHARS = 16;
 #endif
+
+    // Minimum pixel size for a widget. Converts to a wxSize of the specified
+    // dimensions on Windows, and wxDefaultSize on Linux (because pixel sizes
+    // don't work with GTK themes and variable DPI)
+    struct PixelSize: public wxSize
+    {
+#if defined(__WXMSW__)
+        PixelSize(int width, int height)
+        : wxSize(width, height)
+        {}
+#else
+        PixelSize(int width, int height)
+        : wxSize(wxDefaultSize.GetX(), wxDefaultSize.GetY())
+        {}
+#endif
+    };
 }
 
 void SurfaceInspector::ManipulatorRow::setValue(double v)
@@ -306,10 +317,8 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
           "other axis automatically to preserve texture aspect ratio")
     );
 
-#if defined(ALLOW_FIXED_PIXEL_SIZES)
-    _fitTexture.preserveAspectButton->SetMinSize(wxSize(30, -1));
-    _fitTexture.fitButton->SetMinSize(wxSize(30, -1));
-#endif
+    _fitTexture.preserveAspectButton->SetMinSize(PixelSize(30, -1));
+    _fitTexture.fitButton->SetMinSize(PixelSize(30, -1));
 
     // Add widgets to the sizer
     auto* widthTimesHeight = new wxBoxSizer(wxHORIZONTAL);
@@ -323,6 +332,35 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
     fitTextureHBox->Add(_fitTexture.fitButton, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
     return fitTextureHBox;
+}
+
+void SurfaceInspector::createScaleLinkButtons(wxFlexGridSizer& table)
+{
+    auto scaleLinkSizer = new wxBoxSizer(wxHORIZONTAL);
+
+    _useHorizScale = new wxBitmapButton(this, wxID_ANY,
+                                        wxutil::GetLocalBitmap("link_scale_down.png"));
+    _useHorizScale->SetToolTip(_("Assign horizontal scale to vertical scale"));
+    scaleLinkSizer->Add(_useHorizScale, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 0);
+
+    _useVertScale = new wxBitmapButton(this, wxID_ANY,
+                                       wxutil::GetLocalBitmap("link_scale_up.png"));
+    _useVertScale->SetToolTip(_("Assign vertical scale to horizontal scale"));
+    scaleLinkSizer->Add(_useVertScale, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+
+    _useHorizScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(true); });
+    _useVertScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(false); });
+
+    auto linkToggle = new wxutil::BitmapToggleButton(this,
+                                                     wxutil::GetLocalBitmap("link_active.png"),
+                                                     wxutil::GetLocalBitmap("link_inactive.png"));
+    linkToggle->SetToolTip(_("Linked Scaling: when active, scale changes will affect horizontal "
+                             "and vertical values proportionally"));
+    linkToggle->SetMaxClientSize(wxSize(35, -1));
+    _scaleLinkToggle = linkToggle;
+    scaleLinkSizer->Add(_scaleLinkToggle, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+
+    table.Add(scaleLinkSizer, 1, wxEXPAND);
 }
 
 void SurfaceInspector::populateWindow()
@@ -367,38 +405,24 @@ void SurfaceInspector::populateWindow()
 	dialogVBox->Add(topLabel, 0, wxEXPAND | wxBOTTOM, 6);
 	dialogVBox->Add(table, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
-	// Populate the table with the according widgets
-	_manipulators[HSHIFT] = createManipulatorRow(this, _(LABEL_HSHIFT), table, "arrow_left_blue.png", "arrow_right_blue.png");
-	_manipulators[VSHIFT] = createManipulatorRow(this, _(LABEL_VSHIFT), table, "arrow_down_blue.png", "arrow_up_blue.png");
-	_manipulators[HSCALE] = createManipulatorRow(this, _(LABEL_HSCALE), table, "hscale_down.png", "hscale_up.png");
+	// Initial parameter editing rows
+    _manipulators[HSHIFT] = createManipulatorRow(
+        _(LABEL_HSHIFT), table, "arrow_left_blue.png", "arrow_right_blue.png"
+    );
+    _manipulators[VSHIFT] = createManipulatorRow(
+        _(LABEL_VSHIFT), table, "arrow_down_blue.png", "arrow_up_blue.png"
+    );
+    _manipulators[HSCALE] = createManipulatorRow(
+        _(LABEL_HSCALE), table, "hscale_down.png", "hscale_up.png"
+    );
 
     // Scale link widgets
     table->AddSpacer(1); // instead of a label
+    createScaleLinkButtons(*table);
 
-    auto scaleLinkSizer = new wxBoxSizer(wxHORIZONTAL);
-
-    _useHorizScale = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("arrow_down_blue.png"));
-    _useHorizScale->SetToolTip(_("Assign horizontal scale to vertical scale"));
-    scaleLinkSizer->Add(_useHorizScale, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 24);
-
-    _useVertScale = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("arrow_up_blue.png"));
-    _useVertScale->SetToolTip(_("Assign vertical scale to horizontal scale"));
-    scaleLinkSizer->Add(_useVertScale, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
-
-    _useHorizScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(true); });
-    _useVertScale->Bind(wxEVT_BUTTON, [&](wxCommandEvent& ev) { onHarmoniseScale(false); });
-
-    auto linkToggle = new wxBitmapToggleButton(this, wxID_ANY, wxutil::GetLocalBitmap("link_inactive.png"));
-    linkToggle->SetBitmapSelected(wxutil::GetLocalBitmap("link_active.png"));
-    linkToggle->SetToolTip(_("Linked Scaling: when active, scale changes will affect horizontal and vertical values proportionally"));
-    linkToggle->SetMaxClientSize(wxSize(35, -1));
-    _scaleLinkToggle = linkToggle;
-    scaleLinkSizer->Add(_scaleLinkToggle, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 24);
-
-    table->Add(scaleLinkSizer, 1, wxEXPAND);
-
-	_manipulators[VSCALE] = createManipulatorRow(this, _(LABEL_VSCALE), table, "vscale_down.png", "vscale_up.png");
-	_manipulators[ROTATION] = createManipulatorRow(this, _(LABEL_ROTATION), table, "rotate_cw.png", "rotate_ccw.png");
+    // Remaining parameter rows
+	_manipulators[VSCALE] = createManipulatorRow(_(LABEL_VSCALE), table, "vscale_down.png", "vscale_up.png");
+	_manipulators[ROTATION] = createManipulatorRow(_(LABEL_ROTATION), table, "rotate_cw.png", "rotate_ccw.png");
 
 	// ======================== Texture Operations ====================================
 
@@ -430,12 +454,10 @@ void SurfaceInspector::populateWindow()
 	_alignTexture.left = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_LEFT));
 	_alignTexture.right = new wxButton(this, wxID_ANY, _(LABEL_ALIGN_RIGHT));
 
-#if defined(ALLOW_FIXED_PIXEL_SIZES)
-    _alignTexture.top->SetMinSize(wxSize(20, -1));
-    _alignTexture.bottom->SetMinSize(wxSize(20, -1));
-    _alignTexture.left->SetMinSize(wxSize(20, -1));
-    _alignTexture.right->SetMinSize(wxSize(20, -1));
-#endif
+    _alignTexture.top->SetMinSize(PixelSize(20, -1));
+    _alignTexture.bottom->SetMinSize(PixelSize(20, -1));
+    _alignTexture.left->SetMinSize(PixelSize(20, -1));
+    _alignTexture.right->SetMinSize(PixelSize(20, -1));
 
 	auto* alignTextureBox = new wxGridSizer(1, 4, 0, 6);
 
@@ -506,40 +528,37 @@ void SurfaceInspector::populateWindow()
 	SetSizerAndFit(border);
 }
 
-SurfaceInspector::ManipulatorRow SurfaceInspector::createManipulatorRow(
-	wxWindow* parent, const std::string& label, wxFlexGridSizer* table,
-    const std::string& bitmapSmaller, const std::string& bitmapLarger)
+SurfaceInspector::ManipulatorRow
+SurfaceInspector::createManipulatorRow(const std::string& label, wxFlexGridSizer* table,
+                                       const std::string& bitmapSmaller,
+                                       const std::string& bitmapLarger)
 {
 	ManipulatorRow manipRow;
 
-	wxStaticText* text = new wxStaticText(parent, wxID_ANY, label);
+	wxStaticText* text = new wxStaticText(this, wxID_ANY, label);
 	table->Add(text, 0, wxALIGN_CENTER_VERTICAL);
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
 	// Create the entry field
-	manipRow.value = new wxTextCtrl(parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
-#if defined(ALLOW_FIXED_PIXEL_SIZES)
-	manipRow.value->SetMinSize(wxSize(50, -1));
-#endif
+	manipRow.value = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+	manipRow.value->SetMinSize(PixelSize(50, -1));
 	manipRow.value->Bind(wxEVT_TEXT_ENTER, &SurfaceInspector::onValueEntryActivate, this);
 
     // Create the nudge buttons
 	wxBoxSizer* controlButtonBox = new wxBoxSizer(wxHORIZONTAL);
-    manipRow.smaller = new wxutil::ControlButton(parent, wxutil::GetLocalBitmap(bitmapSmaller));
+    manipRow.smaller = new wxutil::ControlButton(this, wxutil::GetLocalBitmap(bitmapSmaller));
     controlButtonBox->Add(manipRow.smaller, 0, wxEXPAND);
     controlButtonBox->AddSpacer(2);
-    manipRow.larger = new wxutil::ControlButton(parent, wxutil::GetLocalBitmap(bitmapLarger));
+    manipRow.larger = new wxutil::ControlButton(this, wxutil::GetLocalBitmap(bitmapLarger));
     controlButtonBox->Add(manipRow.larger, 0, wxEXPAND);
 
 	// Create the label
-	wxStaticText* steplabel = new wxStaticText(parent, wxID_ANY, _(LABEL_STEP));
+	wxStaticText* steplabel = new wxStaticText(this, wxID_ANY, _(LABEL_STEP));
 
 	// Create the entry field
-	manipRow.stepEntry = new wxTextCtrl(parent, wxID_ANY, "");
-#if defined(ALLOW_FIXED_PIXEL_SIZES)
-    manipRow.stepEntry->SetMinSize(wxSize(30, -1));
-#endif
+	manipRow.stepEntry = new wxTextCtrl(this, wxID_ANY, "");
+    manipRow.stepEntry->SetMinSize(PixelSize(30, -1));
 
 	// Arrange all items in a row
     hbox->Add(manipRow.value, 1, wxALIGN_CENTER_VERTICAL);
