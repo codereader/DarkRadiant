@@ -289,14 +289,17 @@ brushDef3
     EXPECT_NE(brushTextIndex, std::string::npos) << "Could not locate the exported brush in the expected format";
 }
 
-TEST_F(MapExportTest, ExportSelectedWithEmptyFileExtension)
+namespace
+{
+
+void runExportWithEmptyFileExtension(const std::string& temporaryDataPath,const std::string& command)
 {
     auto brush = algorithm::createCuboidBrush(GlobalMapModule().findOrInsertWorldspawn(),
         AABB(Vector3(0, 0, 0), Vector3(64, 128, 256)), "textures/darkmod/numbers/1");
 
     Node_setSelected(brush, true);
 
-    fs::path tempPath = _context.getTemporaryDataPath();
+    fs::path tempPath = temporaryDataPath;
     tempPath /= "export_empty_file_extension";
     EXPECT_FALSE(fs::exists(tempPath)) << "File already exists";
 
@@ -313,7 +316,7 @@ TEST_F(MapExportTest, ExportSelectedWithEmptyFileExtension)
                 "" // this can happen if e.g. the *.* filter is active
             });
     }));
-    GlobalCommandSystem().executeCommand("SaveSelected");
+    GlobalCommandSystem().executeCommand(command);
 
     EXPECT_TRUE(fs::exists(tempPath)) << "File still doesn't exist";
 
@@ -322,6 +325,18 @@ TEST_F(MapExportTest, ExportSelectedWithEmptyFileExtension)
     content << tempFile.rdbuf();
 
     EXPECT_NE(content.str().find("brushDef3"), std::string::npos) << "Couldn't find the brush keyword in the export";
+}
+
+}
+
+TEST_F(MapExportTest, ExportSelectedWithEmptyFileExtension)
+{
+    runExportWithEmptyFileExtension(_context.getTemporaryDataPath(), "SaveSelected");
+}
+
+TEST_F(MapExportTest, ExportPrefabWithEmptyFileExtension)
+{
+    runExportWithEmptyFileExtension(_context.getTemporaryDataPath(), "SaveSelectedAsPrefab");
 }
 
 }

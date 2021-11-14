@@ -721,6 +721,12 @@ void Map::saveSelected(const std::string& filename, const MapFormatPtr& mapForma
 		format = GlobalMapFormatManager().getMapFormatForFilename(filename);
 	}
 
+    // Fall back to the format of the current map if the selection is empty (#5808)
+    if (!format)
+    {
+        format = getFormat();
+    }
+
     try
     {
         MapResource::saveFile(
@@ -1154,7 +1160,7 @@ void Map::exportSelection(const cmd::ArgumentList& args)
     MapFileSelection fileInfo =
         MapFileManager::getMapFileSelection(false, _("Export selection"), filetype::TYPE_MAP);
 
-	if (!fileInfo.fullPath.empty())
+    if (!fileInfo.fullPath.empty())
 	{
 		GlobalMap().saveSelected(fileInfo.fullPath, fileInfo.mapFormat);
     }
