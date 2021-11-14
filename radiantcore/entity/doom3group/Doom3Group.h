@@ -85,8 +85,8 @@ public:
 	void appendControlPoints(unsigned int numPoints);
 	void convertCurveType();
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, bool selected) const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);

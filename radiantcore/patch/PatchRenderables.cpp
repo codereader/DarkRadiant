@@ -210,9 +210,9 @@ void RenderablePatchVectorsNTB::render(const RenderInfo& info) const
 	glEnd();
 }
 
-void RenderablePatchVectorsNTB::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+void RenderablePatchVectorsNTB::render(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 {
-	collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+	collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
 	collector.addRenderable(*_shader, *this, localToWorld);
 }
 

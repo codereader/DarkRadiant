@@ -373,7 +373,7 @@ void BrushNode::onPreRender(const VolumeTest& volume)
     }
 }
 
-void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	m_brush.evaluateBRep();
 
@@ -390,7 +390,7 @@ void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTes
 	}
 }
 
-void BrushNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void BrushNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	m_brush.evaluateBRep();
 
@@ -399,7 +399,7 @@ void BrushNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	renderSolid(collector, volume, localToWorld());
 }
 
-void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	m_brush.evaluateBRep();
 
@@ -425,7 +425,7 @@ void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	m_clipPlane.setRenderSystem(renderSystem);
 }
 
-void BrushNode::renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const
+void BrushNode::renderClipPlane(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (GlobalClipper().clipMode() && isSelected())
 	{
@@ -501,7 +501,7 @@ void BrushNode::updateWireframeVisibility(const VolumeTest& volume, const Matrix
 	m_brush.update_faces_wireframe(_faceCentroidPointsCulled, visibleFaceIndices, numVisibleFaces);
 }
 
-void BrushNode::renderSolid(RenderableCollector& collector,
+void BrushNode::renderSolid(IRenderableCollector& collector,
                             const VolumeTest& volume,
                             const Matrix4& localToWorld) const
 {
@@ -517,7 +517,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
 
             if (!winding.empty())
             {
-                collector.addGeometry(winding, RenderableCollector::Highlight::Primitives|RenderableCollector::Highlight::Flags::Faces);
+                collector.addGeometry(winding, IRenderableCollector::Highlight::Primitives|IRenderableCollector::Highlight::Flags::Faces);
             }
         }
     }
@@ -538,7 +538,7 @@ void BrushNode::renderSolid(RenderableCollector& collector,
         {
             bool highlight = faceInst.selectedComponents();
             if (highlight)
-                collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
+                collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
 
 #if 1
             // greebo: BrushNodes have always an identity l2w, don't do any transforms
@@ -548,14 +548,14 @@ void BrushNode::renderSolid(RenderableCollector& collector,
             );
 #endif
             if (highlight)
-                collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+                collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
         }
     }
 #endif
 	renderSelectedPoints(collector, volume, localToWorld);
 }
 
-void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	//renderCommon(collector, volume);
 
@@ -584,7 +584,7 @@ void BrushNode::update_selected() const
 	}
 }
 
-void BrushNode::renderSelectedPoints(RenderableCollector& collector,
+void BrushNode::renderSelectedPoints(IRenderableCollector& collector,
                                      const VolumeTest& volume,
                                      const Matrix4& localToWorld) const
 {
@@ -594,7 +594,7 @@ void BrushNode::renderSelectedPoints(RenderableCollector& collector,
 
 	if (!_selectedPoints.empty())
     {
-		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+		collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
 		collector.addRenderable(*m_state_selpoint, _selectedPoints, localToWorld);
 	}
 }

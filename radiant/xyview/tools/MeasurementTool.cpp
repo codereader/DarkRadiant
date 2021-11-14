@@ -162,7 +162,7 @@ void MeasurementTool::ensureShaders(RenderSystem& renderSystem)
 	}
 }
 
-void MeasurementTool::render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume)
+void MeasurementTool::render(RenderSystem& renderSystem, IRenderableCollector& collector, const VolumeTest& volume)
 {
 	ensureShaders(renderSystem);
 

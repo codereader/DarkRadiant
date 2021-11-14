@@ -41,7 +41,7 @@ public:
 	void testSelect(SelectionTest& test, const Matrix4& pivot2world) override;
 	void setSelected(bool select) override;
 	bool isSelected() const override;
-	void render(RenderableCollector& collector, const VolumeTest& volume) override;
+	void render(IRenderableCollector& collector, const VolumeTest& volume) override;
 
 private:
 	void foreachSelectedTransformable(

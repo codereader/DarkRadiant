@@ -36,8 +36,8 @@ public:
 
     const AABB& localAABB() const override;
 
-    void renderSolid(RenderableCollector& collector, const VolumeTest& volumeTest) const override;
-    void renderWireframe(RenderableCollector& collector, const VolumeTest& volumeTest) const override;
+    void renderSolid(IRenderableCollector& collector, const VolumeTest& volumeTest) const override;
+    void renderWireframe(IRenderableCollector& collector, const VolumeTest& volumeTest) const override;
 	std::size_t getHighlightFlags() override;
 
 private:

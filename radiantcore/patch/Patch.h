@@ -119,11 +119,11 @@ public:
 	const AABB& localAABB() const override;
 
 	// Render functions: wireframe mode and components
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, 
 		const Matrix4& localToWorld, const IRenderEntity& entity) const;
 
     /// Submit renderable edge and face points
-	void submitRenderablePoints(RenderableCollector& collector,
+	void submitRenderablePoints(IRenderableCollector& collector,
                                 const VolumeTest& volume,
                                 const Matrix4& localToWorld) const;
 

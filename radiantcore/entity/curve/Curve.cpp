@@ -69,7 +69,7 @@ ControlPoints& Curve::getControlPoints() {
 	return _controlPoints;
 }
 
-void Curve::submitRenderables(const ShaderPtr& shader, RenderableCollector& collector, const VolumeTest& volume,
+void Curve::submitRenderables(const ShaderPtr& shader, IRenderableCollector& collector, const VolumeTest& volume,
 	const Matrix4& localToWorld) const
 {
 	collector.addRenderable(*shader, _renderCurve, localToWorld);

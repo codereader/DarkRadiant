@@ -357,7 +357,7 @@ bool EntityNode::isOriented() const
     return true;
 }
 
-void EntityNode::renderSolid(RenderableCollector& collector,
+void EntityNode::renderSolid(IRenderableCollector& collector,
                              const VolumeTest& volume) const
 {
     // Render any attached entities
@@ -366,7 +366,7 @@ void EntityNode::renderSolid(RenderableCollector& collector,
     );
 }
 
-void EntityNode::renderWireframe(RenderableCollector& collector,
+void EntityNode::renderWireframe(IRenderableCollector& collector,
                                  const VolumeTest& volume) const
 {
 	// Submit renderable text name if required

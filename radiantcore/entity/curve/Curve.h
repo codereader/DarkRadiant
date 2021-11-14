@@ -80,7 +80,7 @@ public:
 	virtual void saveToEntity(Entity& target) = 0;
 
 	// Front-end render method
-	void submitRenderables(const ShaderPtr& shader, RenderableCollector& collector, 
+	void submitRenderables(const ShaderPtr& shader, IRenderableCollector& collector, 
 		const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Performs a selection test on the point vertices of this curve

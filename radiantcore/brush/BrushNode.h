@@ -143,9 +143,9 @@ public:
 
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	void viewChanged() const override;
@@ -193,15 +193,15 @@ protected:
 private:
 	void transformComponents(const Matrix4& matrix);
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void update_selected() const;
-	void renderSelectedPoints(RenderableCollector& collector,
+	void renderSelectedPoints(IRenderableCollector& collector,
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const;
 
-	void renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderClipPlane(IRenderableCollector& collector, const VolumeTest& volume) const;
 	void updateWireframeVisibility(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 }; // class BrushNode

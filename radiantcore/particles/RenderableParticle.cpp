@@ -50,7 +50,7 @@ void RenderableParticle::update(const Matrix4& viewRotation)
 }
 
 // Front-end render methods
-void RenderableParticle::renderSolid(RenderableCollector& collector,
+void RenderableParticle::renderSolid(IRenderableCollector& collector,
                                      const VolumeTest& volume,
                                      const Matrix4& localToWorld,
                                      const IRenderEntity* entity) const
@@ -71,19 +71,19 @@ void RenderableParticle::renderSolid(RenderableCollector& collector,
 	}
 }
 
-void RenderableParticle::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void RenderableParticle::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	renderSolid(collector, volume, Matrix4::getIdentity(), nullptr);
 }
 
-void RenderableParticle::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
+void RenderableParticle::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, 
 	const Matrix4& localToWorld, const IRenderEntity* entity) const
 {
 	// Does the same thing as renderSolid
 	renderSolid(collector, volume, localToWorld, entity);
 }
 
-void RenderableParticle::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void RenderableParticle::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Does the same thing as renderSolid
 	renderSolid(collector, volume);

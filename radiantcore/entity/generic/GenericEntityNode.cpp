@@ -127,7 +127,7 @@ GenericEntityNode::SolidAAABBRenderMode GenericEntityNode::getSolidAABBRenderMod
     return _solidAABBRenderMode;
 }
 
-void GenericEntityNode::renderArrow(const ShaderPtr& shader, RenderableCollector& collector,
+void GenericEntityNode::renderArrow(const ShaderPtr& shader, IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	if (EntitySettings::InstancePtr()->getShowEntityAngles())
@@ -136,7 +136,7 @@ void GenericEntityNode::renderArrow(const ShaderPtr& shader, RenderableCollector
 	}
 }
 
-void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void GenericEntityNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
 
@@ -147,7 +147,7 @@ void GenericEntityNode::renderSolid(RenderableCollector& collector, const Volume
 	renderArrow(shader, collector, volume, localToWorld());
 }
 
-void GenericEntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void GenericEntityNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
 

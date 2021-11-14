@@ -64,7 +64,7 @@ bool ParticleNode::isOriented() const
     return true;
 }
 
-void ParticleNode::renderSolid(RenderableCollector& collector,
+void ParticleNode::renderSolid(IRenderableCollector& collector,
 							   const VolumeTest& volume) const
 {
 	if (!_renderableParticle) return;
@@ -75,7 +75,7 @@ void ParticleNode::renderSolid(RenderableCollector& collector,
 	_renderableParticle->renderSolid(collector, volume, localToWorld(), _renderEntity);
 }
 
-void ParticleNode::renderWireframe(RenderableCollector& collector,
+void ParticleNode::renderWireframe(IRenderableCollector& collector,
 								   const VolumeTest& volume) const
 {
 	// greebo: For now, don't draw particles in ortho views they are too distracting

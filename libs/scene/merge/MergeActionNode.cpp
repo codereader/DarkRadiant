@@ -98,7 +98,7 @@ const Matrix4& MergeActionNodeBase::localToWorld() const
     return identity;
 }
 
-void MergeActionNodeBase::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void MergeActionNodeBase::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     _affectedNode->viewChanged();
     _affectedNode->renderSolid(collector, volume);
@@ -110,7 +110,7 @@ void MergeActionNodeBase::renderSolid(RenderableCollector& collector, const Volu
     });
 }
 
-void MergeActionNodeBase::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void MergeActionNodeBase::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     _affectedNode->viewChanged();
     _affectedNode->renderWireframe(collector, volume);

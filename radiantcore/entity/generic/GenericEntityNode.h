@@ -99,10 +99,10 @@ public:
 	scene::INodePtr clone() const override;
 
 	// Renderable implementation
-	void renderArrow(const ShaderPtr& shader, RenderableCollector& collector,
+	void renderArrow(const ShaderPtr& shader, IRenderableCollector& collector,
                      const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 
     SolidAAABBRenderMode getSolidAABBRenderMode() const;
 

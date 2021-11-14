@@ -28,12 +28,12 @@ const AABB& TargetLineNode::localAABB() const
     return _aabb;
 }
 
-void TargetLineNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void TargetLineNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     renderWireframe(collector, volume);
 }
 
-void TargetLineNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void TargetLineNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     // If the owner is hidden, the lines are hidden too
     if (!_targetLines.hasTargets() || !_owner.visible()) return;

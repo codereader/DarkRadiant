@@ -145,8 +145,8 @@ public:
 
 	// Renderable implementation, can be overridden by subclasses
     virtual bool isOriented() const override;
-	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	virtual void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	virtual void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	virtual void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 	virtual std::size_t getHighlightFlags() override;
 

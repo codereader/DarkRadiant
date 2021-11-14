@@ -257,7 +257,7 @@ void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test)
 	}
 }
 
-void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void Doom3GroupNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
 
@@ -269,7 +269,7 @@ void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTes
 	_catmullRomEditInstance.renderComponentsSelected(collector, volume, identity);
 }
 
-void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void Doom3GroupNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
 
@@ -291,7 +291,7 @@ void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_originInstance.setRenderSystem(renderSystem);
 }
 
-void Doom3GroupNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+void Doom3GroupNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
 	{

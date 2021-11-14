@@ -81,9 +81,9 @@ public:
 
 	void updateSelected() const;
 
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderComponentsSelected(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void curveChanged();
 

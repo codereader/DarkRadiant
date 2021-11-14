@@ -16,6 +16,8 @@ class Matrix4;
 class IRenderEntity;
 class RendererLight;
 class LitObject;
+class Renderable;
+class VolumeTest;
 
 #ifdef RENDERABLE_GEOMETRY
 // Contains the vertex and index data to render geometry of the given type
@@ -44,17 +46,20 @@ struct RenderableGeometry
  * \brief Class which accepts OpenGLRenderable objects during the first pass of
  * rendering.
  *
- * Each Renderable in the scenegraph is passed a reference to a
- * RenderableCollector, to which the Renderable submits its OpenGLRenderable(s)
+ * Each Renderable in the scenegraph is passed a reference to an
+ * IRenderableCollector, to which the Renderable submits its OpenGLRenderable(s)
  * for later rendering. A single Renderable may submit more than one
  * OpenGLRenderable, with different options each time -- for instance a
  * Renderable model class may submit each of its material surfaces separately
  * with different shaders.
  */
-class RenderableCollector
+class IRenderableCollector
 {
 public:
-    virtual ~RenderableCollector() {}
+    virtual ~IRenderableCollector() {}
+
+    // Process the given renderable object
+    virtual void processRenderable(const Renderable& renderable, const VolumeTest& volume) = 0;
 
     /**
      * \brief Submit a renderable object.
@@ -145,8 +150,6 @@ public:
 #endif
 };
 
-class VolumeTest;
-
 /**
  * \brief
  * Main interface for Renderable scene objects.
@@ -181,14 +184,14 @@ public:
     }
 
     /// Submit renderable geometry when rendering in Solid mode.
-    virtual void renderSolid(RenderableCollector& collector,
+    virtual void renderSolid(IRenderableCollector& collector,
                              const VolumeTest& volume) const = 0;
 
     /// Submit renderable geometry when rendering in Wireframe mode.
-    virtual void renderWireframe(RenderableCollector& collector,
+    virtual void renderWireframe(IRenderableCollector& collector,
                                  const VolumeTest& volume) const = 0;
 
-    virtual void renderComponents(RenderableCollector&, const VolumeTest&) const
+    virtual void renderComponents(IRenderableCollector&, const VolumeTest&) const
     { }
 
     virtual void viewChanged() const

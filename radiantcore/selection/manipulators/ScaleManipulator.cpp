@@ -28,7 +28,7 @@ void ScaleManipulator::UpdateColours() {
     _quadScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
 }
 
-void ScaleManipulator::render(RenderableCollector& collector, const VolumeTest& volume)
+void ScaleManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
 {
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 

@@ -331,7 +331,7 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     _renderableSurface.update(m_patch._shader.getGLShader());
 }
 
-void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void PatchNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible patches
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
@@ -341,7 +341,7 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
     {
         // Send the patch geometry for rendering highlights
         collector.addGeometry(const_cast<Patch&>(m_patch)._solidRenderable, 
-            RenderableCollector::Highlight::Primitives | RenderableCollector::Highlight::Flags::Faces);
+            IRenderableCollector::Highlight::Primitives | IRenderableCollector::Highlight::Flags::Faces);
     }
 #endif
     assert(_renderEntity); // patches rendered without parent - no way!
@@ -361,7 +361,7 @@ void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	renderComponentsSelected(collector, volume);
 }
 
-void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
@@ -393,7 +393,7 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 }
 
 // Renders the components of this patch instance
-void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+void PatchNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
 	if (!m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible()) return;
@@ -431,7 +431,7 @@ void PatchNode::updateSelectedControlVertices() const
 	}
 }
 
-void PatchNode::renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume) const
+void PatchNode::renderComponentsSelected(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	const_cast<Patch&>(m_patch).evaluateTransform();
 
@@ -441,7 +441,7 @@ void PatchNode::renderComponentsSelected(RenderableCollector& collector, const V
 	// If there are any selected components, add them to the collector
 	if (!m_render_selected.empty())
     {
-		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+		collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
 		collector.addRenderable(*m_state_selpoint, m_render_selected, localToWorld());
 	}
 }

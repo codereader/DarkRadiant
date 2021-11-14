@@ -10,7 +10,7 @@
 #include <sigc++/signal.h>
 #include "util/Noncopyable.h"
 
-class RenderableCollector;
+class IRenderableCollector;
 class Ray;
 
 /// \brief Returns true if 'self' takes priority when building brush b-rep.
@@ -211,7 +211,7 @@ public:
 
 	const AABB& localAABB() const;
 
-	void renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderComponents(selection::ComponentSelectionMode mode, IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void transform(const Matrix4& matrix);
 

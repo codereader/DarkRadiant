@@ -244,7 +244,7 @@ scene::INodePtr SpeakerNode::clone() const
 
 /* Renderable implementation */
 
-void SpeakerNode::renderSolid(RenderableCollector& collector,
+void SpeakerNode::renderSolid(IRenderableCollector& collector,
                               const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
@@ -258,7 +258,7 @@ void SpeakerNode::renderSolid(RenderableCollector& collector,
 		collector.addRenderable(*getFillShader(), _renderableRadii, localToWorld());
     }
 }
-void SpeakerNode::renderWireframe(RenderableCollector& collector,
+void SpeakerNode::renderWireframe(IRenderableCollector& collector,
                                   const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);

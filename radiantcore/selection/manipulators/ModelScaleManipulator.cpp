@@ -65,7 +65,7 @@ bool ModelScaleManipulator::isSelected() const
 	return _curManipulatable != nullptr;
 }
 
-void ModelScaleManipulator::render(RenderableCollector& collector, const VolumeTest& volume)
+void ModelScaleManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
 {
 	_renderableAabbs.clear();
 	_renderableCornerPoints.clear();

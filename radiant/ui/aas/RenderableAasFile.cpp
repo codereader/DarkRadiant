@@ -36,7 +36,7 @@ void RenderableAasFile::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_renderSystem = renderSystem;
 }
 
-void RenderableAasFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void RenderableAasFile::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (!_aasFile) return;
 
@@ -60,7 +60,7 @@ void RenderableAasFile::renderSolid(RenderableCollector& collector, const Volume
 	}
 }
 
-void RenderableAasFile::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void RenderableAasFile::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Do nothing in wireframe mode
 }

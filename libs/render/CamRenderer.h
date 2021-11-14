@@ -1,6 +1,6 @@
 #pragma once
 
-#include "irenderable.h"
+#include "render/RenderableCollectorBase.h"
 #include "imap.h"
 #include "ivolumetest.h"
 
@@ -13,7 +13,7 @@ namespace render
 
 /// RenderableCollector for use with 3D camera views or preview widgets
 class CamRenderer : 
-    public RenderableCollector
+    public RenderableCollectorBase
 {
 public:
     struct HighlightShaders
@@ -195,6 +195,11 @@ public:
 
         // Count total lights
         ++_totalLights;
+    }
+
+    void processRenderable(const Renderable& renderable, const VolumeTest& volume) override
+    {
+        renderable.renderSolid(*this, volume);
     }
 
     void addRenderable(Shader& shader,

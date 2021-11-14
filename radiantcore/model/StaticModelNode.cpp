@@ -96,7 +96,7 @@ bool StaticModelNode::isOriented() const
     return true;
 }
 
-void StaticModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void StaticModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
 
@@ -111,7 +111,7 @@ void StaticModelNode::renderSolid(RenderableCollector& collector, const VolumeTe
     }
 }
 
-void StaticModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void StaticModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
 

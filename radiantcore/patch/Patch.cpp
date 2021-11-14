@@ -191,7 +191,7 @@ const AABB& Patch::localAABB() const
     return _localAABB;
 }
 
-void Patch::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, const IRenderEntity& entity) const
+void Patch::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, const IRenderEntity& entity) const
 {
     // Defer the tesselation calculation to the last minute
     const_cast<Patch&>(*this).updateTesselation();
@@ -201,7 +201,7 @@ void Patch::renderWireframe(RenderableCollector& collector, const VolumeTest& vo
 }
 
 // greebo: This renders the patch components, namely the lattice and the corner controls
-void Patch::submitRenderablePoints(RenderableCollector& collector,
+void Patch::submitRenderablePoints(IRenderableCollector& collector,
                                    const VolumeTest& volume,
                                    const Matrix4& localToWorld) const
 {

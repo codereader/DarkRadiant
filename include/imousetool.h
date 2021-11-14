@@ -6,7 +6,7 @@
 #include "imousetoolevent.h"
 
 class RenderSystem;
-class RenderableCollector;
+class IRenderableCollector;
 class VolumeTest;
 
 namespace ui
@@ -128,7 +128,7 @@ public:
 	// For in-scene rendering of active mousetools they need implement this method.
 	// Any needed shaders should be acquired on-demand from the attached rendersystem.
 	// Renderable objects need to be submitted to the given RenderableCollector.
-	virtual void render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume)
+	virtual void render(RenderSystem& renderSystem, IRenderableCollector& collector, const VolumeTest& volume)
 	{}
 };
 typedef std::shared_ptr<MouseTool> MouseToolPtr;

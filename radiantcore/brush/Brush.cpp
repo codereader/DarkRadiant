@@ -263,7 +263,7 @@ const AABB& Brush::localAABB() const {
     return m_aabb_local;
 }
 
-void Brush::renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector,
+void Brush::renderComponents(selection::ComponentSelectionMode mode, IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
     switch (mode)

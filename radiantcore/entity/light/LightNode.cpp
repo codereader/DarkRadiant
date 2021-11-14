@@ -273,7 +273,7 @@ void LightNode::selectedChangedComponent(const ISelectable& selectable) {
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }
 
-void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void LightNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     // Submit self to the renderer as an actual light source
     collector.addLight(_light);
@@ -286,7 +286,7 @@ void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
     renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
-void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void LightNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     EntityNode::renderWireframe(collector, volume);
 
@@ -295,7 +295,7 @@ void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest
     renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
-void LightNode::renderLightVolume(RenderableCollector& collector,
+void LightNode::renderLightVolume(IRenderableCollector& collector,
                                   const Matrix4& localToWorld,
                                   bool selected) const
 {
@@ -351,7 +351,7 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 }
 
 // Renders the components of this light instance
-void LightNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+void LightNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Render the components (light center) as selected/deselected, if we are in the according mode
 	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
@@ -399,7 +399,7 @@ void LightNode::renderComponents(RenderableCollector& collector, const VolumeTes
 	}
 }
 
-void LightNode::renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const
+void LightNode::renderInactiveComponents(IRenderableCollector& collector, const VolumeTest& volume, const bool selected) const
 {
 	// greebo: We are not in component selection mode (and the light is still selected),
 	// check if we should draw the center of the light anyway

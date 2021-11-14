@@ -108,7 +108,7 @@ public:
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Frontend render methods for submitting the face winding
-	void renderWireframe(RenderableCollector& collector, const Matrix4& localToWorld,
+	void renderWireframe(IRenderableCollector& collector, const Matrix4& localToWorld,
 		const IRenderEntity& entity) const;
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);

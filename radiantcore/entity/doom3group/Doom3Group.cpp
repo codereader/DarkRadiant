@@ -85,7 +85,7 @@ const AABB& Doom3Group::localAABB() const {
 	return m_curveBounds;
 }
 
-void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& volume,
+void Doom3Group::renderSolid(IRenderableCollector& collector, const VolumeTest& volume,
 	const Matrix4& localToWorld, bool selected) const
 {
 	if (selected) 
@@ -106,7 +106,7 @@ void Doom3Group::renderSolid(RenderableCollector& collector, const VolumeTest& v
 	}
 }
 
-void Doom3Group::renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
+void Doom3Group::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume,
 	const Matrix4& localToWorld, bool selected) const
 {
 	renderSolid(collector, volume, localToWorld, selected);

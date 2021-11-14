@@ -1,12 +1,12 @@
 #pragma once
 
 #include "irender.h"
-#include "irenderable.h"
+#include "render/RenderableCollectorBase.h"
 #include "imap.h"
 
 /// RenderableCollector implementation for the ortho view
 class XYRenderer : 
-    public RenderableCollector
+    public render::RenderableCollectorBase
 {
 public:
     struct HighlightShaders
@@ -60,6 +60,11 @@ public:
 
     // Ortho view never processes lights
     void addLight(const RendererLight&) override {}
+
+    void processRenderable(const Renderable& renderable, const VolumeTest& volume) override
+    {
+        renderable.renderWireframe(*this, volume);
+    }
 
     void addRenderable(Shader& shader,
                        const OpenGLRenderable& renderable,

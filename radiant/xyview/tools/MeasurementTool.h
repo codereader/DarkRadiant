@@ -40,7 +40,7 @@ public:
 	Result onCancel(IInteractiveView& view) override;
 	void onMouseCaptureLost(IInteractiveView& view) override;
 
-	void render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume) override;
+	void render(RenderSystem& renderSystem, IRenderableCollector& collector, const VolumeTest& volume) override;
 
 private:
 	void ensureShaders(RenderSystem& renderSystem);
