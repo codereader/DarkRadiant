@@ -36,7 +36,8 @@ Face::Face(Brush& owner) :
     _shader(texdef_name_default(), _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
     _faceIsVisible(true),
-    _windingSurface(m_winding)
+    _windingSurfaceSolid(m_winding),
+    _windingSurfaceWireframe(m_winding)
 {
     setupSurfaceShader();
 
@@ -60,7 +61,8 @@ Face::Face(
     _texdef(projection),
     _undoStateSaver(nullptr),
     _faceIsVisible(true),
-    _windingSurface(m_winding)
+    _windingSurfaceSolid(m_winding),
+    _windingSurfaceWireframe(m_winding)
 {
     setupSurfaceShader();
     m_plane.initialiseFromPoints(p0, p1, p2);
@@ -73,7 +75,8 @@ Face::Face(Brush& owner, const Plane3& plane) :
     _shader("", _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
     _faceIsVisible(true),
-    _windingSurface(m_winding)
+    _windingSurfaceSolid(m_winding),
+    _windingSurfaceWireframe(m_winding)
 {
     setupSurfaceShader();
     m_plane.setPlane(plane);
@@ -86,7 +89,8 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix3& textureProjection, 
     _shader(material, _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
     _faceIsVisible(true),
-    _windingSurface(m_winding)
+    _windingSurfaceSolid(m_winding),
+    _windingSurfaceWireframe(m_winding)
 {
     setupSurfaceShader();
     m_plane.setPlane(plane);
@@ -106,7 +110,8 @@ Face::Face(Brush& owner, const Face& other) :
     _texdef(other.getProjection()),
     _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible),
-    _windingSurface(m_winding)
+    _windingSurfaceSolid(m_winding),
+    _windingSurfaceWireframe(m_winding)
 {
     setupSurfaceShader();
     planepts_assign(m_move_planepts, other.m_move_planepts);
@@ -118,7 +123,8 @@ Face::~Face()
     _surfaceShaderRealised.disconnect();
 
     // Deallocate the winding surface
-    _windingSurface.clear();
+    _windingSurfaceSolid.clear();
+    _windingSurfaceWireframe.clear();
 }
 
 void Face::setupSurfaceShader()
@@ -145,7 +151,8 @@ Brush& Face::getBrushInternal()
 
 void Face::planeChanged()
 {
-    _windingSurface.queueUpdate();
+    _windingSurfaceSolid.queueUpdate();
+    _windingSurfaceWireframe.queueUpdate();
 
     revertTransform();
     _owner.onFacePlaneChanged();
@@ -162,7 +169,8 @@ void Face::connectUndoSystem(IUndoSystem& undoSystem)
 
     _shader.setInUse(true);
 
-    _windingSurface.queueUpdate();
+    _windingSurfaceSolid.queueUpdate();
+    _windingSurfaceWireframe.queueUpdate();
     _undoStateSaver = undoSystem.getStateSaver(*this);
 }
 
@@ -173,7 +181,8 @@ void Face::disconnectUndoSystem(IUndoSystem& undoSystem)
     undoSystem.releaseStateSaver(*this);
 
     // Disconnect the renderable winding vertices from the scene
-    _windingSurface.clear();
+    _windingSurfaceSolid.clear();
+    _windingSurfaceWireframe.clear();
     _shader.setInUse(false);
 }
 
@@ -255,7 +264,8 @@ void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     _faceIsVisible = shader && shader->getMaterial()->isVisible();
 
-    _windingSurface.clear();
+    _windingSurfaceSolid.clear();
+    _windingSurfaceWireframe.clear();
 }
 
 void Face::transformTexDefLocked(const Matrix4& transform)
@@ -340,7 +350,8 @@ void Face::freezeTransform()
 
 void Face::updateWinding()
 {
-    _windingSurface.queueUpdate();
+    _windingSurfaceSolid.queueUpdate();
+    _windingSurfaceWireframe.queueUpdate();
     m_winding.updateNormals(m_plane.getPlane().normal());
 }
 
@@ -390,7 +401,8 @@ void Face::shaderChanged()
     const ShaderPtr& shader = getFaceShader().getGLShader();
     _faceIsVisible = shader && shader->getMaterial()->isVisible();
 
-    _windingSurface.queueUpdate();
+    _windingSurfaceSolid.queueUpdate();
+    _windingSurfaceWireframe.queueUpdate();
     planeChanged();
     SceneChangeNotify();
 }
@@ -677,9 +689,14 @@ Winding& Face::getWinding() {
     return m_winding;
 }
 
-render::RenderableWinding& Face::getWindingSurface()
+render::RenderableWinding& Face::getWindingSurfaceSolid()
 {
-    return _windingSurface;
+    return _windingSurfaceSolid;
+}
+
+render::RenderableWinding& Face::getWindingSurfaceWireframe()
+{
+    return _windingSurfaceWireframe;
 }
 
 const Plane3& Face::plane3() const
@@ -735,12 +752,14 @@ void Face::onBrushVisibilityChanged(bool visible)
     if (!visible)
     {
         // Disconnect our renderable when the owning brush goes invisible
-        _windingSurface.clear();
+        _windingSurfaceSolid.clear();
+        _windingSurfaceWireframe.clear();
     }
     else
     {
         // Update the vertex buffers next time we need to render
-        _windingSurface.queueUpdate();
+        _windingSurfaceSolid.queueUpdate();
+        _windingSurfaceWireframe.queueUpdate();
     }
 }
 

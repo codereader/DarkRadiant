@@ -351,6 +351,8 @@ bool BrushNode::intersectsLight(const RendererLight& light) const {
 
 void BrushNode::onPreRender(const VolumeTest& volume)
 {
+    assert(_renderEntity);
+
     // Every intersecting face is asked to run the rendering preparations
     // to submit their geometry to the active shader
     for (auto& faceInstance : m_faceInstances)
@@ -359,7 +361,14 @@ void BrushNode::onPreRender(const VolumeTest& volume)
 
         if (face.intersectVolume(volume))
         {
-            face.getWindingSurface().update(face.getFaceShader().getGLShader());
+            if (volume.fill())
+            {
+                face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader());
+            }
+            else
+            {
+                face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader());
+            }
         }
     }
 }
@@ -538,8 +547,6 @@ void BrushNode::renderSolid(RenderableCollector& collector,
                 Matrix4::getIdentity(), this, _renderEntity
             );
 #endif
-            const_cast<Face&>(face).getWindingSurface().update(face.getFaceShader().getGLShader());
-
             if (highlight)
                 collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
         }

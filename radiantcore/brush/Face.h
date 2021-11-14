@@ -61,7 +61,8 @@ private:
 	// Cached visibility flag, queried during front end rendering
 	bool _faceIsVisible;
 
-    render::RenderableWinding _windingSurface;
+    render::RenderableWinding _windingSurfaceSolid;
+    render::RenderableWinding _windingSurfaceWireframe;
 
 public:
 
@@ -191,7 +192,8 @@ public:
 	const Winding& getWinding() const;
 	Winding& getWinding();
 
-    render::RenderableWinding& getWindingSurface();
+    render::RenderableWinding& getWindingSurfaceSolid();
+    render::RenderableWinding& getWindingSurfaceWireframe();
 
 	const Plane3& plane3() const;
 
