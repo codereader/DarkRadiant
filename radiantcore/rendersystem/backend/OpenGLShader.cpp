@@ -819,6 +819,8 @@ void OpenGLShader::construct()
             state.setRenderFlag(RENDER_CULLFACE);
             state.setRenderFlag(RENDER_DEPTHWRITE);
             state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+
+            enableViewType(RenderViewType::Camera);
             break;
         }
 
@@ -839,6 +841,8 @@ void OpenGLShader::construct()
             state.setRenderFlag(RENDER_DEPTHWRITE);
             state.setRenderFlag(RENDER_BLEND);
             state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
+
+            enableViewType(RenderViewType::Camera);
             break;
         }
 
@@ -860,6 +864,8 @@ void OpenGLShader::construct()
             state.setDepthFunc(GL_LESS);
             state.m_linewidth = 1;
             state.m_pointsize = 1;
+
+            enableViewType(RenderViewType::OrthoView);
             break;
         }
 
@@ -875,6 +881,9 @@ void OpenGLShader::construct()
 
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
               state.m_pointsize = 4;
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$SELPOINT")
             {
@@ -883,6 +892,9 @@ void OpenGLShader::construct()
 
               state.setSortPosition(OpenGLState::SORT_POINT_LAST);
               state.m_pointsize = 4;
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$BIGPOINT")
             {
@@ -891,6 +903,9 @@ void OpenGLShader::construct()
 
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
               state.m_pointsize = 6;
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$PIVOT")
             {
@@ -905,18 +920,26 @@ void OpenGLShader::construct()
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.m_linewidth = 2;
               hiddenLine.setDepthFunc(GL_GREATER);
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$LATTICE")
             {
               state.setColour(1, 0.5, 0, 1);
               state.setRenderFlag(RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
+#if 0
             else if (_name == "$WIREFRAME")
             {
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
             }
+#endif
             else if (_name == "$CAM_HIGHLIGHT")
             {
 				// This is the shader drawing a coloured overlay
@@ -931,6 +954,8 @@ void OpenGLShader::construct()
 				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
 				state.polygonOffset = 0.5f;
 				state.setDepthFunc(GL_LEQUAL);
+
+                enableViewType(RenderViewType::Camera);
             }
             else if (_name == "$CAM_OVERLAY")
             {
@@ -952,6 +977,8 @@ void OpenGLShader::construct()
 				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
 				hiddenLine.setDepthFunc(GL_GREATER);
 				hiddenLine.m_linestipple_factor = 2;
+
+                enableViewType(RenderViewType::Camera);
             }
             else if (string::starts_with(_name, "$MERGE_ACTION_"))
             {
@@ -999,6 +1026,8 @@ void OpenGLShader::construct()
                 linesOverlay.setColour(colour);
                 linesOverlay.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST | RENDER_BLEND);
                 linesOverlay.setSortPosition(lineSortPosition);
+
+                enableViewType(RenderViewType::Camera);
             }
             else if (_name == "$XY_OVERLAY")
             {
@@ -1011,6 +1040,8 @@ void OpenGLShader::construct()
               state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
               state.m_linewidth = 2;
               state.m_linestipple_factor = 3;
+
+              enableViewType(RenderViewType::OrthoView);
             }
 			else if (_name == "$XY_OVERLAY_GROUP")
 			{
@@ -1023,6 +1054,8 @@ void OpenGLShader::construct()
 				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
 				state.m_linewidth = 2;
 				state.m_linestipple_factor = 3;
+
+                enableViewType(RenderViewType::OrthoView);
 			}
             else if (string::starts_with(_name, "$XY_MERGE_ACTION_"))
             {
@@ -1054,6 +1087,8 @@ void OpenGLShader::construct()
                 state.setColour(colour);
                 state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
                 state.m_linewidth = 2;
+
+                enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$XY_INACTIVE_NODE")
             {
@@ -1072,18 +1107,25 @@ void OpenGLShader::construct()
 
                 state.m_linewidth = 1;
                 state.m_pointsize = 1;
+
+                enableViewType(RenderViewType::OrthoView);
             }
+#if 0
             else if (_name == "$DEBUG_CLIPPED")
             {
               state.setRenderFlag(RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_LAST);
             }
+#endif
             else if (_name == "$POINTFILE")
             {
               state.setColour(1, 0, 0, 1);
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
               state.m_linewidth = 4;
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$WIRE_OVERLAY")
             {
@@ -1103,6 +1145,9 @@ void OpenGLShader::construct()
 									  | RENDER_VERTEX_COLOUR);
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.setDepthFunc(GL_GREATER);
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$FLATSHADE_OVERLAY")
             {
@@ -1130,6 +1175,9 @@ void OpenGLShader::construct()
                                       | RENDER_POLYGONSTIPPLE);
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.setDepthFunc(GL_GREATER);
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$CLIPPER_OVERLAY")
             {
@@ -1139,6 +1187,9 @@ void OpenGLShader::construct()
                                  | RENDER_FILL
                                  | RENDER_POLYGONSTIPPLE);
               state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$AAS_AREA")
             {
@@ -1157,6 +1208,8 @@ void OpenGLShader::construct()
 					| RENDER_LINESTIPPLE);
 				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
 				hiddenLine.setDepthFunc(GL_GREATER);
+
+                enableViewType(RenderViewType::Camera);
             }
             else
             {
@@ -1169,6 +1222,8 @@ void OpenGLShader::construct()
         {
             // This is not a hard-coded shader, construct from the shader system
             constructNormalShader();
+
+            enableViewType(RenderViewType::Camera);
         }
     } // switch (name[0])
 }
@@ -1183,6 +1238,16 @@ void OpenGLShader::onMaterialChanged()
 
     unrealise();
     realise();
+}
+
+bool OpenGLShader::isApplicableTo(RenderViewType renderViewType) const
+{
+    return (_enabledViewTypes & static_cast<std::size_t>(renderViewType)) != 0;
+}
+
+void OpenGLShader::enableViewType(RenderViewType renderViewType)
+{
+    _enabledViewTypes |= static_cast<std::size_t>(renderViewType);
 }
 
 }

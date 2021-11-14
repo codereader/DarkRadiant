@@ -479,6 +479,14 @@ typedef std::shared_ptr<Shader> ShaderPtr;
 
 const char* const MODULE_RENDERSYSTEM("ShaderCache");
 
+// Render view type enumeration, is used to select (or leave out)
+// Shader objects during rendering
+enum class RenderViewType
+{
+    Camera      = 1 << 0,
+    OrthoView   = 1 << 1,
+};
+
 /**
  * \brief
  * The main interface for the backend renderer.
@@ -526,7 +534,8 @@ public:
      * \param viewer
      * Location of the viewer in world space.
      */
-    virtual void render(RenderStateFlags globalFlagsMask,
+    virtual void render(RenderViewType renderViewType,
+                        RenderStateFlags globalFlagsMask,
                         const Matrix4& modelview,
                         const Matrix4& projection,
                         const Vector3& viewer) = 0;

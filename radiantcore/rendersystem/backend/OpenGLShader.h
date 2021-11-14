@@ -56,6 +56,9 @@ private:
 
     std::unique_ptr<IBackendWindingRenderer> _windingRenderer;
 
+    // Each shader can be used by either camera or orthoview, or both 
+    std::size_t _enabledViewTypes;
+
 private:
 
     // Start point for constructing shader passes from the shader name
@@ -149,6 +152,9 @@ public:
     const MaterialPtr& getMaterial() const override;
 
     unsigned int getFlags() const override;
+
+    bool isApplicableTo(RenderViewType renderViewType) const;
+    void enableViewType(RenderViewType renderViewType);
 };
 
 typedef std::shared_ptr<OpenGLShader> OpenGLShaderPtr;

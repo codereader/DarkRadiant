@@ -117,10 +117,11 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
  * Render all states in the ShaderCache along with their renderables. This
  * is where the actual OpenGL rendering starts.
  */
-void OpenGLRenderSystem::render(RenderStateFlags globalstate,
-                               const Matrix4& modelview,
-                               const Matrix4& projection,
-                               const Vector3& viewer)
+void OpenGLRenderSystem::render(RenderViewType renderViewType, 
+                                RenderStateFlags globalstate,
+                                const Matrix4& modelview,
+                                const Matrix4& projection,
+                                const Vector3& viewer)
 {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -206,15 +207,17 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
     // OpenGLShaderPasses (containing the renderable geometry), and render the
     // contents of each bucket. Each pass is passed a reference to the "current"
     // state, which it can change.
-    for (OpenGLStates::iterator i = _state_sorted.begin();
-        i != _state_sorted.end();
-        ++i)
+    for (const auto& pair : _state_sorted)
     {
         // Render the OpenGLShaderPass
-        if (!i->second->empty())
+        if (pair.second->empty()) continue;
+
+        if (pair.second->isApplicableTo(renderViewType))
         {
-            i->second->render(current, globalstate, viewer, _time);
+            pair.second->render(current, globalstate, viewer, _time);
         }
+
+        pair.second->clearRenderables();
     }
 
 #ifdef RENDERABLE_GEOMETRY

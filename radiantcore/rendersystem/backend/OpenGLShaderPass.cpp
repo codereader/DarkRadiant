@@ -599,7 +599,10 @@ void OpenGLShaderPass::render(OpenGLState& current,
 
         renderAllContained(i->second, current, viewer, time);
     }
+}
 
+void OpenGLShaderPass::clearRenderables()
+{
     _renderablesWithoutEntity.clear();
     _renderables.clear();
 }
@@ -612,6 +615,11 @@ bool OpenGLShaderPass::empty()
         && !_owner.hasGeometry()
 #endif
         ;
+}
+
+bool OpenGLShaderPass::isApplicableTo(RenderViewType renderViewType) const
+{
+    return _owner.isApplicableTo(renderViewType);
 }
 
 bool OpenGLShaderPass::stateIsActive()
