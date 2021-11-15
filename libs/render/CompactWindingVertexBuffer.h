@@ -108,16 +108,12 @@ public:
         assert(winding.size() == _size);
 
         const auto currentSize = _vertices.size();
-        auto position = currentSize / _size;
-        _vertices.reserve(currentSize + _size); // reserve() never shrinks
-
+        
         std::copy(winding.begin(), winding.end(), std::back_inserter(_vertices));
 
-        // Allocate and calculate indices
-        _indices.reserve(_indices.size() + getNumIndicesPerWinding());
-        
         WindingIndexerT::GenerateAndAssignIndices(std::back_inserter(_indices), _size, static_cast<unsigned int>(currentSize));
 
+        auto position = currentSize / _size;
         return static_cast<Slot>(position);
     }
 
