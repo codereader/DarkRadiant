@@ -50,7 +50,8 @@ class PatchNode final :
 
     mutable bool _selectedControlVerticesNeedUpdate;
 
-    RenderablePatchTesselation _renderableSurface;
+    RenderablePatchTesselation<TesselationIndexer_Triangles> _renderableSurfaceSolid;
+    RenderablePatchTesselation<TesselationIndexer_Quads> _renderableSurfaceWireframe;
 
 public:
 	// Construct a PatchNode with no arguments

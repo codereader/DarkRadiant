@@ -15,7 +15,8 @@ PatchNode::PatchNode(patch::PatchDefType type) :
 	m_patch(*this),
     _untransformedOriginChanged(true),
     _selectedControlVerticesNeedUpdate(true),
-    _renderableSurface(m_patch.getTesselation())
+    _renderableSurfaceSolid(m_patch.getTesselation()),
+    _renderableSurfaceWireframe(m_patch.getTesselation())
 {
 	m_patch.setFixedSubdivisions(type == patch::PatchDefType::Def3, Subdivisions(m_patch.getSubdivisions()));
 }
@@ -38,13 +39,15 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_patch(other.m_patch, *this), // create the patch out of the <other> one
     _untransformedOriginChanged(true),
     _selectedControlVerticesNeedUpdate(true),
-    _renderableSurface(m_patch.getTesselation())
+    _renderableSurfaceSolid(m_patch.getTesselation()),
+    _renderableSurfaceWireframe(m_patch.getTesselation())
 {
 }
 
 PatchNode::~PatchNode()
 {
-    _renderableSurface.clear();
+    _renderableSurfaceSolid.clear();
+    _renderableSurfaceWireframe.clear();
 }
 
 scene::INode::Type PatchNode::getNodeType() const
@@ -281,7 +284,8 @@ void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     // Mark the GL shader as used from now on, this is used by the TextureBrowser's filtering
     m_patch.getSurfaceShader().setInUse(true);
-    _renderableSurface.queueUpdate();
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
 
 	m_patch.connectUndoSystem(root.getUndoSystem());
 	GlobalCounters().getCounter(counterPatches).increment();
@@ -304,7 +308,8 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 
 	m_patch.disconnectUndoSystem(root.getUndoSystem());
 
-    _renderableSurface.clear();
+    _renderableSurfaceSolid.clear();
+    _renderableSurfaceWireframe.clear();
     m_patch.getSurfaceShader().setInUse(false);
 
 	SelectableNode::onRemoveFromScene(root);
@@ -328,7 +333,14 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     m_patch.evaluateTransform();
     m_patch.updateTesselation();
 
-    _renderableSurface.update(m_patch._shader.getGLShader());
+    if (volume.fill())
+    {
+        _renderableSurfaceSolid.update(m_patch._shader.getGLShader());
+    }
+    else
+    {
+        _renderableSurfaceWireframe.update(_renderEntity->getWireShader());
+    }
 }
 
 void PatchNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
@@ -388,7 +400,8 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	SelectableNode::setRenderSystem(renderSystem);
 
 	m_patch.setRenderSystem(renderSystem);
-    _renderableSurface.clear();
+    _renderableSurfaceSolid.clear();
+    _renderableSurfaceWireframe.clear();
 
 	if (renderSystem)
 	{
@@ -513,7 +526,8 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 void PatchNode::_onTransformationChanged()
 {
 	m_patch.transformChanged();
-    _renderableSurface.queueUpdate();
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
 }
 
 void PatchNode::_applyTransformation()
@@ -539,12 +553,14 @@ const Vector3& PatchNode::getUntransformedOrigin()
 
 void PatchNode::onControlPointsChanged()
 {
-    _renderableSurface.queueUpdate();
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
 }
 
 void PatchNode::onMaterialChanged()
 {
-    _renderableSurface.queueUpdate();
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
 }
 
 void PatchNode::onVisibilityChanged(bool visible)
@@ -554,11 +570,13 @@ void PatchNode::onVisibilityChanged(bool visible)
     if (!visible)
     {
         // Disconnect our renderable when the node is hidden
-        _renderableSurface.clear();
+        _renderableSurfaceSolid.clear();
+        _renderableSurfaceWireframe.clear();
     }
     else
     {
         // Update the vertex buffers next time we need to render
-        _renderableSurface.queueUpdate();
+        _renderableSurfaceSolid.queueUpdate();
+        _renderableSurfaceWireframe.queueUpdate();
     }
 }
