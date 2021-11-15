@@ -9,13 +9,20 @@ class SurfaceRenderer :
     public ISurfaceRenderer
 {
 private:
-    std::vector<ArbitraryMeshVertex> _vertices;
-    std::vector<unsigned int> _indices;
+    struct VertexBuffer
+    {
+        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<unsigned int> indices;
+    };
+
+    VertexBuffer _triangleBuffer;
+    VertexBuffer _quadBuffer;
 
     static constexpr std::size_t InvalidVertexIndex = std::numeric_limits<std::size_t>::max();
 
     struct SlotInfo
     {
+        std::uint8_t bucketIndex;
         std::size_t firstVertex;
         std::size_t numVertices;
         std::size_t firstIndex;
@@ -33,34 +40,38 @@ public:
 
     bool empty() const
     {
-        return _vertices.empty();
+        return _triangleBuffer.vertices.empty() && _quadBuffer.vertices.empty();
     }
 
-    Slot addSurface(const std::vector<ArbitraryMeshVertex>& vertices,
+    Slot addSurface(SurfaceIndexingType indexType, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {
+        auto bucketIndex = GetBucketIndexForIndexType(indexType);
+        auto& bucket = getBucketByIndex(bucketIndex);
+
         // Allocate a slot
-        auto oldVertexSize = _vertices.size();
-        auto oldIndexSize = _indices.size();
+        auto oldVertexSize = bucket.vertices.size();
+        auto oldIndexSize = bucket.indices.size();
 
         auto newSlotIndex = getNextFreeSlotMapping();
 
         auto& slot = _slots.at(newSlotIndex);
         
+        slot.bucketIndex = bucketIndex;
         slot.firstVertex = oldVertexSize;
         slot.numVertices = vertices.size();
         slot.firstIndex = oldIndexSize;
         slot.numIndices = indices.size();
 
-        _vertices.reserve(oldVertexSize + vertices.size()); // reserve() never shrinks
-        std::copy(vertices.begin(), vertices.end(), std::back_inserter(_vertices));
+        bucket.vertices.reserve(oldVertexSize + vertices.size()); // reserve() never shrinks
+        std::copy(vertices.begin(), vertices.end(), std::back_inserter(bucket.vertices));
 
         // Allocate, copy and offset indices
-        _indices.reserve(oldIndexSize + indices.size());
+        bucket.indices.reserve(oldIndexSize + indices.size());
 
         for (auto index : indices)
         {
-            _indices.push_back(index + static_cast<unsigned int>(oldVertexSize));
+            bucket.indices.push_back(index + static_cast<unsigned int>(oldVertexSize));
         }
 
         return newSlotIndex;
@@ -69,25 +80,26 @@ public:
     void removeSurface(Slot slot) override
     {
         auto& slotInfo = _slots.at(slot);
+        auto& bucket = getBucketByIndex(slotInfo.bucketIndex);
 
         // Cut out the vertices
-        auto firstVertexToRemove = _vertices.begin() + slotInfo.firstVertex;
-        _vertices.erase(firstVertexToRemove, firstVertexToRemove + slotInfo.numVertices);
+        auto firstVertexToRemove = bucket.vertices.begin() + slotInfo.firstVertex;
+        bucket.vertices.erase(firstVertexToRemove, firstVertexToRemove + slotInfo.numVertices);
 
         // Shift all indices to the left, offsetting their values by the number of removed vertices
         auto offsetToApply = -static_cast<int>(slotInfo.numVertices);
 
-        auto targetIndex = _indices.begin() + slotInfo.firstIndex;
+        auto targetIndex = bucket.indices.begin() + slotInfo.firstIndex;
         auto indexToMove = targetIndex + slotInfo.numIndices;
 
-        auto indexEnd = _indices.end();
+        auto indexEnd = bucket.indices.end();
         while (indexToMove != indexEnd)
         {
             *targetIndex++ = *indexToMove++ + offsetToApply;
         }
 
         // Cut off the tail of the indices
-        _indices.resize(_indices.size() - slotInfo.numIndices);
+        bucket.indices.resize(bucket.indices.size() - slotInfo.numIndices);
 
         // Adjust all offsets in other slots
         for (auto& slot : _slots)
@@ -115,12 +127,13 @@ public:
         const std::vector<unsigned int>& indices) override
     {
         auto& slotInfo = _slots.at(slot);
+        auto& bucket = getBucketByIndex(slotInfo.bucketIndex);
 
         // Copy the data to the correct slot in the array
-        std::copy(vertices.begin(), vertices.end(), _vertices.begin() + slotInfo.firstVertex);
+        std::copy(vertices.begin(), vertices.end(), bucket.vertices.begin() + slotInfo.firstVertex);
 
         // Before assignment, the indices need to be shifted to match the array offset of the vertices
-        auto targetIndex = _indices.begin() + slotInfo.firstIndex;
+        auto targetIndex = bucket.indices.begin() + slotInfo.firstIndex;
         auto indexShift = static_cast<unsigned int>(slotInfo.firstVertex);
 
         for (auto index : indices)
@@ -131,15 +144,34 @@ public:
 
     void render()
     {
-        // Vertex pointer includes whole vertex buffer
-        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
-        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
-        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
-            
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_indices.size()), GL_UNSIGNED_INT, &_indices.front());
+        renderBuffer(_triangleBuffer, GL_TRIANGLES);
+        renderBuffer(_quadBuffer, GL_QUADS);
     }
 
 private:
+
+    void renderBuffer(const VertexBuffer& buffer, GLenum mode)
+    {
+        if (!buffer.indices.empty())
+        {
+            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.front().vertex);
+            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.front().texcoord);
+            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.front().normal);
+
+            glDrawElements(mode, static_cast<GLsizei>(buffer.indices.size()), GL_UNSIGNED_INT, &buffer.indices.front());
+        }
+    }
+
+    constexpr static std::uint8_t GetBucketIndexForIndexType(SurfaceIndexingType indexType)
+    {
+        return indexType == SurfaceIndexingType::Triangles ? 0 : 1;
+    }
+
+    VertexBuffer& getBucketByIndex(std::uint8_t bucketIndex)
+    {
+        return bucketIndex == 0 ? _triangleBuffer : _quadBuffer;
+    }
+
     ISurfaceRenderer::Slot getNextFreeSlotMapping()
     {
         auto numSlots = _slots.size();

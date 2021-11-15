@@ -208,10 +208,10 @@ bool OpenGLShader::hasSurfaces() const
     return !SurfaceRenderer::empty() || _vertexBuffer && _vertexBuffer->getNumVertices() > 0;
 }
 
-ISurfaceRenderer::Slot OpenGLShader::addSurface(const std::vector<ArbitraryMeshVertex>& vertices,
-    const std::vector<unsigned int>& indices)
+ISurfaceRenderer::Slot OpenGLShader::addSurface(SurfaceIndexingType indexType,
+    const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
 {
-    return SurfaceRenderer::addSurface(vertices, indices);
+    return SurfaceRenderer::addSurface(indexType, vertices, indices);
 }
 
 void OpenGLShader::removeSurface(ISurfaceRenderer::Slot slot)

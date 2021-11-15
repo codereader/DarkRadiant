@@ -8,6 +8,12 @@
 namespace render
 {
 
+enum class SurfaceIndexingType
+{
+    Triangles,
+    Quads,
+};
+
 /**
  * A surface renderer accepts a variable number of indexed surfaces and arranges 
  * them into one or more continuous blocks of vertices for efficient rendering.
@@ -26,7 +32,9 @@ public:
 
     // Allocate a slot to hold the given surface data of the given size
     // Returns the handle which can be used to update or deallocate the data later
-    virtual Slot addSurface(const std::vector<ArbitraryMeshVertex>& vertices,
+    // The indexType determines the primitive GLenum that is chosen to render this surface
+    virtual Slot addSurface(SurfaceIndexingType indexType, 
+        const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
 
     // Releases a previously allocated slot. This invalidates the handle.

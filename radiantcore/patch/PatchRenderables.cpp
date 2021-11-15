@@ -272,7 +272,7 @@ void RenderablePatchTesselation::update(const ShaderPtr& shader)
 
     if (_surfaceSlot == render::ISurfaceRenderer::InvalidSlot)
     {
-        _surfaceSlot = shader->addSurface(_tess.vertices, indices);
+        _surfaceSlot = shader->addSurface(render::SurfaceIndexingType::Triangles, _tess.vertices, indices);
     }
     else
     {

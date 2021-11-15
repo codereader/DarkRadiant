@@ -115,7 +115,8 @@ public:
     bool hasSurfaces() const;
     void drawSurfaces();
 
-    ISurfaceRenderer::Slot addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
+    ISurfaceRenderer::Slot addSurface(SurfaceIndexingType indexType, 
+        const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
     void removeSurface(ISurfaceRenderer::Slot slot) override;
     void updateSurface(ISurfaceRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
