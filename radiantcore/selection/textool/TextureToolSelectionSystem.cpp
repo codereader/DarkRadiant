@@ -780,6 +780,8 @@ void TextureToolSelectionSystem::shiftSelectionCmd(const cmd::ArgumentList& args
         node->commitTransformation();
         return true;
     });
+
+    radiant::TextureChangedMessage::Send();
 }
 
 void TextureToolSelectionSystem::scaleSelectionCmd(const cmd::ArgumentList& args)
