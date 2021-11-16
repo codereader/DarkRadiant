@@ -63,11 +63,7 @@ public:
         slot.firstIndex = oldIndexSize;
         slot.numIndices = indices.size();
 
-        bucket.vertices.reserve(oldVertexSize + vertices.size()); // reserve() never shrinks
         std::copy(vertices.begin(), vertices.end(), std::back_inserter(bucket.vertices));
-
-        // Allocate, copy and offset indices
-        bucket.indices.reserve(oldIndexSize + indices.size());
 
         for (auto index : indices)
         {
