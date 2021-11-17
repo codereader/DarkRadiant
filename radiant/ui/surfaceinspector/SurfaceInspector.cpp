@@ -2,14 +2,8 @@
 
 #include "i18n.h"
 
-#include <wx/panel.h>
-#include <wx/sizer.h>
-#include <wx/button.h>
-#include "wxutil/Bitmap.h"
-#include <wx/stattext.h>
-#include <wx/bmpbuttn.h>
-#include <wx/spinctrl.h>
-#include <wx/tglbtn.h>
+#include <wx/wx.h>
+#include <wx/statline.h>
 
 #include "iscenegraph.h"
 #include "ui/ieventmanager.h"
@@ -17,6 +11,7 @@
 #include "ui/imainframe.h"
 #include "iundo.h"
 
+#include "wxutil/Bitmap.h"
 #include "wxutil/ControlButton.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/Button.h"
@@ -400,24 +395,22 @@ void SurfaceInspector::populateWindow()
 	dialogVBox->Add(table.getSizer(), 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
 	// Initial parameter editing rows
-    _manipulators[HSHIFT] = createManipulatorRow(
-        _(LABEL_HSHIFT), table, "arrow_left_blue.png", "arrow_right_blue.png"
-    );
-    _manipulators[VSHIFT] = createManipulatorRow(
-        _(LABEL_VSHIFT), table, "arrow_down_blue.png", "arrow_up_blue.png"
-    );
-    _manipulators[HSCALE] = createManipulatorRow(
-        _(LABEL_HSCALE), table, "hscale_down.png", "hscale_up.png"
-    );
+    _manipulators[HSHIFT] = createManipulatorRow(_(LABEL_HSHIFT), table, "arrow_left_blue.png",
+                                                 "arrow_right_blue.png");
+    _manipulators[VSHIFT] = createManipulatorRow(_(LABEL_VSHIFT), table, "arrow_down_blue.png",
+                                                 "arrow_up_blue.png");
+    _manipulators[ROTATION] = createManipulatorRow(_(LABEL_ROTATION), table, "rotate_cw.png",
+                                                   "rotate_ccw.png");
 
-    // Scale link widgets
+    // Scale rows separated by a line
+    table.addFullWidth(new wxStaticLine(this));
+    _manipulators[HSCALE] = createManipulatorRow(_(LABEL_HSCALE), table, "hscale_down.png",
+                                                 "hscale_up.png");
     createScaleLinkButtons(table);
+    _manipulators[VSCALE] = createManipulatorRow(_(LABEL_VSCALE), table, "vscale_down.png",
+                                                 "vscale_up.png");
 
-    // Remaining parameter rows
-	_manipulators[VSCALE] = createManipulatorRow(_(LABEL_VSCALE), table, "vscale_down.png", "vscale_up.png");
-	_manipulators[ROTATION] = createManipulatorRow(_(LABEL_ROTATION), table, "rotate_cw.png", "rotate_ccw.png");
-
-	// ======================== Texture Operations ====================================
+    // ======================== Texture Operations ====================================
 
 	// Create the texture operations label (bold font)
 	wxStaticText* operLabel = new wxStaticText(this, wxID_ANY, _(LABEL_OPERATIONS));
@@ -429,6 +422,7 @@ void SurfaceInspector::populateWindow()
 	operTable->AddGrowableCol(1);
 
     // Pack label & table into the dialog
+    dialogVBox->AddSpacer(6);
 	dialogVBox->Add(operLabel, 0, wxEXPAND | wxTOP | wxBOTTOM, 6);
 	dialogVBox->Add(operTable, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
