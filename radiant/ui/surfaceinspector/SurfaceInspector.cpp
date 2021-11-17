@@ -334,7 +334,7 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
     return fitTextureHBox;
 }
 
-void SurfaceInspector::createScaleLinkButtons(wxFlexGridSizer& table)
+void SurfaceInspector::createScaleLinkButtons(wxutil::FormLayout& table)
 {
     auto scaleLinkSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -360,7 +360,7 @@ void SurfaceInspector::createScaleLinkButtons(wxFlexGridSizer& table)
     _scaleLinkToggle = linkToggle;
     scaleLinkSizer->Add(_scaleLinkToggle, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
-    table.Add(scaleLinkSizer, 1, wxEXPAND);
+    table.add(scaleLinkSizer);
 }
 
 void SurfaceInspector::populateWindow()
@@ -371,16 +371,11 @@ void SurfaceInspector::populateWindow()
 	wxStaticText* topLabel = new wxStaticText(this, wxID_ANY, _(LABEL_PROPERTIES));
 	topLabel->SetFont(topLabel->GetFont().Bold());
 
-	// 7x2 table with 12 pixel hspacing and 6 pixels vspacing
-	auto table = new wxFlexGridSizer(7, 2, 6, 12);
-	table->AddGrowableCol(1);
+    // Two-column form layout
+	wxutil::FormLayout table(this);
 
-	// Create the entry field and pack it into the first table row
-	wxStaticText* shaderLabel = new wxStaticText(this, wxID_ANY, _(LABEL_SHADER));
-	table->Add(shaderLabel, 0, wxALIGN_CENTER_VERTICAL);
-
+    // Shader entry box
 	wxBoxSizer* shaderHBox = new wxBoxSizer(wxHORIZONTAL);
-
 	_shaderEntry = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	_shaderEntry->SetMinSize(wxSize(100, -1));
 	_shaderEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SurfaceInspector::onShaderEntryActivate), NULL, this);
@@ -394,16 +389,15 @@ void SurfaceInspector::populateWindow()
         _("Choose shader using the shader selection dialog"))
     ;
     _selectShaderButton->Connect(
-        wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect),
-        NULL, this
+        wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect), NULL, this
     );
     shaderHBox->Add(_selectShaderButton, 0, wxLEFT, 6);
 
-	table->Add(shaderHBox, 1, wxEXPAND);
+	table.add(_(LABEL_SHADER), shaderHBox);
 
 	// Pack everything into the vbox
 	dialogVBox->Add(topLabel, 0, wxEXPAND | wxBOTTOM, 6);
-	dialogVBox->Add(table, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
+	dialogVBox->Add(table.getSizer(), 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
 	// Initial parameter editing rows
     _manipulators[HSHIFT] = createManipulatorRow(
@@ -417,8 +411,7 @@ void SurfaceInspector::populateWindow()
     );
 
     // Scale link widgets
-    table->AddSpacer(1); // instead of a label
-    createScaleLinkButtons(*table);
+    createScaleLinkButtons(table);
 
     // Remaining parameter rows
 	_manipulators[VSCALE] = createManipulatorRow(_(LABEL_VSCALE), table, "vscale_down.png", "vscale_up.png");
@@ -529,14 +522,11 @@ void SurfaceInspector::populateWindow()
 }
 
 SurfaceInspector::ManipulatorRow
-SurfaceInspector::createManipulatorRow(const std::string& label, wxFlexGridSizer* table,
+SurfaceInspector::createManipulatorRow(const std::string& label, wxutil::FormLayout& table,
                                        const std::string& bitmapSmaller,
                                        const std::string& bitmapLarger)
 {
 	ManipulatorRow manipRow;
-
-	wxStaticText* text = new wxStaticText(this, wxID_ANY, label);
-	table->Add(text, 0, wxALIGN_CENTER_VERTICAL);
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -567,7 +557,7 @@ SurfaceInspector::createManipulatorRow(const std::string& label, wxFlexGridSizer
 	hbox->Add(manipRow.stepEntry, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
 	// Pack the hbox into the table
-	table->Add(hbox, 1, wxEXPAND);
+    table.add(label, hbox);
 
 	// Return the filled structure
 	return manipRow;
