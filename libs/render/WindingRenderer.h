@@ -162,7 +162,6 @@ public:
             const auto& indices = bucket.getIndices();
 
             glDisableClientState(GL_COLOR_ARRAY);
-            glColor3f(1, 1, 1);
 
             glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
             glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
