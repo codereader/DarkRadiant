@@ -205,9 +205,6 @@ public:
     virtual void renderComponents(IRenderableCollector&, const VolumeTest&) const
     { }
 
-    virtual void viewChanged() const
-    { }
-
     struct Highlight
     {
         enum Flags

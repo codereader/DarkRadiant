@@ -18,7 +18,6 @@ BrushNode::BrushNode() :
     _faceVisibilityChanged(true),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
-	m_viewChanged(false),
 	_renderableComponentsNeedUpdate(true),
     _untransformedOriginChanged(true)
 {
@@ -46,7 +45,6 @@ BrushNode::BrushNode(const BrushNode& other) :
     _faceVisibilityChanged(true),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
-	m_viewChanged(false),
 	_renderableComponentsNeedUpdate(true),
     _untransformedOriginChanged(true)
 {
@@ -351,6 +349,8 @@ bool BrushNode::intersectsLight(const RendererLight& light) const {
 
 void BrushNode::onPreRender(const VolumeTest& volume)
 {
+    m_brush.evaluateBRep();
+
     assert(_renderEntity);
 
     // Every intersecting face is asked to run the rendering preparations
@@ -392,8 +392,6 @@ void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTe
 
 void BrushNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	m_brush.evaluateBRep();
-
 	renderClipPlane(collector, volume);
 
 	renderSolid(collector, volume, localToWorld());
@@ -401,8 +399,6 @@ void BrushNode::renderSolid(IRenderableCollector& collector, const VolumeTest& v
 
 void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	m_brush.evaluateBRep();
-
 	renderClipPlane(collector, volume);
 
 	renderWireframe(collector, volume, localToWorld());
@@ -454,14 +450,10 @@ void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void BrushNode::renderClipPlane(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	if (GlobalClipper().clipMode() && isSelected())
+	if (isSelected() && GlobalClipper().clipMode())
 	{
 		m_clipPlane.render(collector, volume, localToWorld());
 	}
-}
-
-void BrushNode::viewChanged() const {
-	m_viewChanged = true;
 }
 
 std::size_t BrushNode::getHighlightFlags()

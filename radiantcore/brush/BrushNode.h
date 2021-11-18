@@ -51,7 +51,6 @@ class BrushNode :
 
 	mutable AABB m_aabb_component;
 	mutable RenderablePointVector _faceCentroidPointsCulled;
-	mutable bool m_viewChanged; // requires re-evaluation of view-dependent cached data
 
 	BrushClipPlane m_clipPlane;
 
@@ -149,7 +148,6 @@ public:
 	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	void viewChanged() const override;
 	std::size_t getHighlightFlags() override;
 
 	void evaluateTransform();

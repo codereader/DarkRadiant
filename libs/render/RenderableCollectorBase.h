@@ -26,8 +26,6 @@ public:
         // greebo: Highlighting propagates to child nodes
         scene::INodePtr parent = node->getParent();
 
-        node->viewChanged();
-
         std::size_t highlightFlags = node->getHighlightFlags();
 
         auto nodeType = node->getNodeType();

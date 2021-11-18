@@ -100,11 +100,9 @@ const Matrix4& MergeActionNodeBase::localToWorld() const
 
 void MergeActionNodeBase::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-    _affectedNode->viewChanged();
     _affectedNode->renderSolid(collector, volume);
     _affectedNode->foreachNode([&](const INodePtr& child)
     {
-        child->viewChanged();
         child->renderSolid(collector, volume);
         return true;
     });
@@ -112,11 +110,9 @@ void MergeActionNodeBase::renderSolid(IRenderableCollector& collector, const Vol
 
 void MergeActionNodeBase::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-    _affectedNode->viewChanged();
     _affectedNode->renderWireframe(collector, volume);
     _affectedNode->foreachNode([&](const INodePtr& child)
     {
-        child->viewChanged();
         child->renderWireframe(collector, volume);
         return true;
     });
