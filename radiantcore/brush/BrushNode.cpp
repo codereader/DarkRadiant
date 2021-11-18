@@ -427,10 +427,7 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
                 collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
 
             // greebo: BrushNodes have always an identity l2w, don't do any transforms
-            collector.addRenderable(
-                *face.getFaceShader().getGLShader(), face.getWinding(),
-                Matrix4::getIdentity(), this, _renderEntity
-            );
+            collector.addHighlightRenderable(face.getWinding(), Matrix4::getIdentity());
 
             if (highlight)
                 collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);

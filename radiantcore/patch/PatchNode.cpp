@@ -386,10 +386,7 @@ void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 
 void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    collector.addRenderable(
-        *m_patch._shader.getGLShader(), m_patch._solidRenderable,
-        localToWorld(), this, _renderEntity
-    );
+    collector.addHighlightRenderable(m_patch._solidRenderable, localToWorld());
 
     // Render the selected components
     renderComponentsSelected(collector, volume);
@@ -549,6 +546,12 @@ const Vector3& PatchNode::getUntransformedOrigin()
     }
 
     return _untransformedOrigin;
+}
+
+void PatchNode::onTesselationChanged()
+{
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
 }
 
 void PatchNode::onControlPointsChanged()

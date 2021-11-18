@@ -102,6 +102,13 @@ public:
                                const IRenderEntity* entity = nullptr) = 0;
 
     /**
+     * Submits a renderable object that is used for highlighting an object.
+     * Depending on the view, this might be a coloured, transparent overlay
+     * or a wireframe outline.
+     */
+    virtual void addHighlightRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld) = 0;
+
+    /**
      * \brief Submit a light source for the render operation.
      *
      * This is the entry point for lights into the render front-end. Each light

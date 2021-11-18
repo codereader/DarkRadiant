@@ -208,27 +208,7 @@ public:
                        const LitObject* litObject = nullptr,
                        const IRenderEntity* entity = nullptr) override
     {
-        if (_editMode == IMap::EditMode::Merge && (_flags & Highlight::Flags::MergeAction) != 0)
-        {
-            const auto& mergeShader = (_flags & Highlight::Flags::MergeActionAdd) != 0 ? _shaders.mergeActionShaderAdd :
-                (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove : 
-                (_flags & Highlight::Flags::MergeActionConflict) != 0 ? _shaders.mergeActionShaderConflict : _shaders.mergeActionShaderChange;
-            
-            if (mergeShader)
-            {
-                mergeShader->addRenderable(renderable, localToWorld, nullptr, entity);
-            }
-        }
-
-        if ((_flags & Highlight::Flags::Primitives) != 0 && _shaders.primitiveHighlightShader)
-        {
-            _shaders.primitiveHighlightShader->addRenderable(renderable, localToWorld, nullptr, entity);
-        }
-
-        if ((_flags & Highlight::Flags::Faces) != 0 && _shaders.faceHighlightShader)
-        {
-            _shaders.faceHighlightShader->addRenderable(renderable, localToWorld, nullptr, entity);
-        }
+        addHighlightRenderable(renderable, localToWorld);
 
         // Construct an entry for this shader in the map if it is the first
         // time we've seen it
@@ -250,6 +230,31 @@ public:
         // Store a LitRenderable object for this renderable
         LitRenderable lr { renderable, litObject, localToWorld, entity };
         iter->second.emplace_back(std::move(lr));
+    }
+
+    void addHighlightRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld) override
+    {
+        if (_editMode == IMap::EditMode::Merge && (_flags & Highlight::Flags::MergeAction) != 0)
+        {
+            const auto& mergeShader = (_flags & Highlight::Flags::MergeActionAdd) != 0 ? _shaders.mergeActionShaderAdd :
+                (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove :
+                (_flags & Highlight::Flags::MergeActionConflict) != 0 ? _shaders.mergeActionShaderConflict : _shaders.mergeActionShaderChange;
+
+            if (mergeShader)
+            {
+                mergeShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
+            }
+        }
+
+        if ((_flags & Highlight::Flags::Primitives) != 0 && _shaders.primitiveHighlightShader)
+        {
+            _shaders.primitiveHighlightShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
+        }
+
+        if ((_flags & Highlight::Flags::Faces) != 0 && _shaders.faceHighlightShader)
+        {
+            _shaders.faceHighlightShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
+        }
     }
 
 #ifdef RENDERABLE_GEOMETRY

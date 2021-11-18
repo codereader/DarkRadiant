@@ -583,6 +583,7 @@ void Patch::updateTesselation(bool force)
         }
     }
 
+    _node.onTesselationChanged();
     _solidRenderable.queueUpdate();
 
     if (_patchDef3)

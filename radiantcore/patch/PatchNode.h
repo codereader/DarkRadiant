@@ -153,6 +153,7 @@ public:
 
     void onControlPointsChanged();
     void onMaterialChanged();
+    void onTesselationChanged();
 
 protected:
 	// Gets called by the Transformable implementation whenever

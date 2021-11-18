@@ -427,6 +427,10 @@ namespace
             renderablePtrs.push_back(std::make_pair(&shader, &renderable));
         }
 
+        void addHighlightRenderable(const OpenGLRenderable& renderable,
+            const Matrix4& localToWorld) override
+        {}
+
         void addLight(const RendererLight& light)
         {
             ++lights;
