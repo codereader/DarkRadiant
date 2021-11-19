@@ -408,6 +408,9 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
 {
     // Check for the override status of this brush
     bool forceVisible = isForcedVisible();
+    bool wholeBrushSelected = isSelected();
+
+    collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, wholeBrushSelected);
 
     // Submit the renderable geometry for each face
     for (const auto& faceInstance : m_faceInstances)
@@ -418,17 +421,20 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
         const Face& face = faceInstance.getFace();
         if (face.intersectVolume(volume))
         {
-            bool highlight = faceInstance.selectedComponents();
-            if (highlight)
-                collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
+            bool highlight = wholeBrushSelected || faceInstance.selectedComponents();
+
+            if (!highlight) continue;
+
+            collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
 
             // greebo: BrushNodes have always an identity l2w, don't do any transforms
             collector.addHighlightRenderable(face.getWinding(), Matrix4::getIdentity());
 
-            if (highlight)
-                collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
+            collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
         }
     }
+
+    collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
 }
 
 void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -458,7 +464,7 @@ void BrushNode::renderClipPlane(IRenderableCollector& collector, const VolumeTes
 
 std::size_t BrushNode::getHighlightFlags()
 {
-	if (!isSelected()) return Highlight::NoHighlight;
+	if (!isSelected() && !isSelectedComponents()) return Highlight::NoHighlight;
 
 	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }
