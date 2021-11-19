@@ -120,7 +120,7 @@ public:
     void removeSurface(ISurfaceRenderer::Slot slot) override;
     void updateSurface(ISurfaceRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
-
+    void renderSurface(ISurfaceRenderer::Slot slot) override;
 #ifdef RENDERABLE_GEOMETRY
     void addGeometry(RenderableGeometry& geometry) override;
     bool hasGeometry() const;

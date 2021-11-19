@@ -225,6 +225,11 @@ void OpenGLShader::updateSurface(ISurfaceRenderer::Slot slot, const std::vector<
     SurfaceRenderer::updateSurface(slot, vertices, indices);
 }
 
+void OpenGLShader::renderSurface(ISurfaceRenderer::Slot slot)
+{
+    SurfaceRenderer::renderSurface(slot);
+}
+
 IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices)
 {
     return _windingRenderer->addWinding(vertices);

@@ -43,6 +43,9 @@ public:
     // Sets the surface data
     virtual void updateSurface(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
+
+    // Submits the geometry of a single surface slot to GL
+    virtual void renderSurface(Slot slot) = 0;
 };
 
 }

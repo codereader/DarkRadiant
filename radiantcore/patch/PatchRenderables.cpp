@@ -1,5 +1,6 @@
 #include "PatchRenderables.h"
 
+#if 0
 RenderablePatchSolid::RenderablePatchSolid(PatchTesselation& tess) :
     _tess(tess),
     _needsUpdate(true)
@@ -55,6 +56,8 @@ void RenderablePatchSolid::queueUpdate()
 {
     _needsUpdate = true;
 }
+#endif
+
 #ifdef RENDERABLE_GEOMETRY
 RenderableGeometry::Type RenderablePatchSolid::getType() const
 {
@@ -114,6 +117,7 @@ void RenderablePatchSolid::updateIndices()
     }
 }
 #endif
+
 const ShaderPtr& RenderablePatchVectorsNTB::getShader() const
 {
 	return _shader;

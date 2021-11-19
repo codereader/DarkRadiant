@@ -11,6 +11,7 @@ class SurfaceRenderer :
 private:
     struct VertexBuffer
     {
+        GLenum mode;
         std::vector<ArbitraryMeshVertex> vertices;
         std::vector<unsigned int> indices;
     };
@@ -36,7 +37,10 @@ private:
 public:
     SurfaceRenderer() :
         _freeSlotMappingHint(InvalidSlotMapping)
-    {}
+    {
+        _triangleBuffer.mode = GL_TRIANGLES;
+        _quadBuffer.mode = GL_QUADS;
+    }
 
     bool empty() const
     {
@@ -140,13 +144,25 @@ public:
 
     void render()
     {
-        renderBuffer(_triangleBuffer, GL_TRIANGLES);
-        renderBuffer(_quadBuffer, GL_QUADS);
+        renderBuffer(_triangleBuffer);
+        renderBuffer(_quadBuffer);
+    }
+
+    void renderSurface(Slot slot) override
+    {
+        auto& slotInfo = _slots.at(slot);
+        auto& buffer = getBucketByIndex(slotInfo.bucketIndex);
+
+        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.at(slotInfo.firstVertex).vertex);
+        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.at(slotInfo.firstVertex).texcoord);
+        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.at(slotInfo.firstVertex).normal);
+
+        glDrawElements(buffer.mode, static_cast<GLsizei>(buffer.indices.size()), GL_UNSIGNED_INT, &buffer.indices.at(slotInfo.firstIndex));
     }
 
 private:
 
-    void renderBuffer(const VertexBuffer& buffer, GLenum mode)
+    void renderBuffer(const VertexBuffer& buffer)
     {
         if (!buffer.indices.empty())
         {
@@ -154,7 +170,7 @@ private:
             glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.front().texcoord);
             glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.front().normal);
 
-            glDrawElements(mode, static_cast<GLsizei>(buffer.indices.size()), GL_UNSIGNED_INT, &buffer.indices.front());
+            glDrawElements(buffer.mode, static_cast<GLsizei>(buffer.indices.size()), GL_UNSIGNED_INT, &buffer.indices.front());
         }
     }
 

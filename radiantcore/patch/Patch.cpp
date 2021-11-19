@@ -48,7 +48,6 @@ inline bool double_valid(double f) {
 Patch::Patch(PatchNode& node) :
     _node(node),
     _undoStateSaver(nullptr),
-    _solidRenderable(_mesh),
     _renderableNTBVectors(_mesh),
     _renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
     _renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
@@ -67,7 +66,6 @@ Patch::Patch(const Patch& other, PatchNode& node) :
     IUndoable(other),
     _node(node),
     _undoStateSaver(nullptr),
-    _solidRenderable(_mesh),
     _renderableNTBVectors(_mesh),
     _renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
     _renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
@@ -571,7 +569,6 @@ void Patch::updateTesselation(bool force)
     }
 
     _node.onTesselationChanged();
-    _solidRenderable.queueUpdate();
 }
 
 void Patch::invertMatrix()

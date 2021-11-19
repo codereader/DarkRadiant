@@ -56,8 +56,6 @@ class Patch :
 	// The tesselation for this patch
 	PatchTesselation _mesh;
 
-	// The OpenGL renderables for three rendering modes
-	RenderablePatchSolid _solidRenderable;
     RenderablePatchVectorsNTB _renderableNTBVectors;
 
 	// The shader states for the control points and the lattice

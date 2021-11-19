@@ -14,6 +14,7 @@
 #include "render/VertexBuffer.h"
 #include "render/IndexedVertexBuffer.h"
 
+#if 0
 /// Helper class to render a PatchTesselation in solid mode
 class RenderablePatchSolid :
 	public OpenGLRenderable
@@ -51,6 +52,7 @@ private:
     void updateIndices();
 #endif
 };
+#endif
 
 // Renders a vertex' normal/tangent/bitangent vector (for debugging purposes)
 class RenderablePatchVectorsNTB :
@@ -146,16 +148,17 @@ public:
             for (std::size_t w = 0; w < tess.width - 1; ++w)
             {
                 outputIt = static_cast<unsigned int>(rowOffset + w);
-                outputIt = static_cast<unsigned int>(rowOffset + w + 1);
-                outputIt = static_cast<unsigned int>(rowOffset + w + tess.width + 1);
                 outputIt = static_cast<unsigned int>(rowOffset + w + tess.width);
+                outputIt = static_cast<unsigned int>(rowOffset + w + tess.width + 1);
+                outputIt = static_cast<unsigned int>(rowOffset + w + 1);
             }
         }
     }
 };
 
 template<typename TesselationIndexerT>
-class RenderablePatchTesselation
+class RenderablePatchTesselation :
+    public OpenGLRenderable
 {
 private:
     static_assert(std::is_base_of_v<ITesselationIndexer, TesselationIndexerT>, "Indexer must implement ITesselationIndexer");
@@ -222,6 +225,14 @@ public:
         else
         {
             shader->updateSurface(_surfaceSlot, _tess.vertices, indices);
+        }
+    }
+
+    void render(const RenderInfo& info) const override
+    {
+        if (_surfaceSlot != render::ISurfaceRenderer::InvalidSlot && _shader)
+        {
+            _shader->renderSurface(_surfaceSlot);
         }
     }
 };

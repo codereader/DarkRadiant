@@ -54,7 +54,6 @@ class PatchNode final :
     RenderablePatchTesselation<TesselationIndexer_Quads> _renderableSurfaceWireframe;
 
 public:
-	// Construct a PatchNode with no arguments
 	PatchNode(patch::PatchDefType type);
 
 	// Copy Constructor

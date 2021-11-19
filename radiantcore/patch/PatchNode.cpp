@@ -383,7 +383,8 @@ void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 
 void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    collector.addHighlightRenderable(m_patch._solidRenderable, localToWorld());
+    // Overlay the selected node with the quadrangulated wireframe
+    collector.addHighlightRenderable(_renderableSurfaceWireframe, localToWorld());
 
     // Render the selected components
     renderComponentsSelected(collector, volume);
