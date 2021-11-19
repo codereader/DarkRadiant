@@ -44,8 +44,9 @@ class BrushNode :
 
     mutable bool _faceVisibilityChanged;
 
+#if 0
 	mutable RenderableWireframe m_render_wireframe;
-
+#endif
     // Renderable array of vertex and edge points
 	mutable RenderablePointVector _selectedPoints;
 

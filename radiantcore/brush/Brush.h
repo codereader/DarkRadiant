@@ -270,7 +270,9 @@ public:
 	/// \brief Constructs \p winding from the intersection of \p plane with the other planes of the brush.
 	void windingForClipPlane(Winding& winding, const Plane3& plane) const;
 
+#if 0
 	void update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const;
+#endif
 
 	void update_faces_wireframe(RenderablePointVector& wire,
 								const std::size_t* visibleFaceIndices,

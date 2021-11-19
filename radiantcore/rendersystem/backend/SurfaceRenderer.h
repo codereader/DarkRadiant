@@ -153,11 +153,21 @@ public:
         auto& slotInfo = _slots.at(slot);
         auto& buffer = getBucketByIndex(slotInfo.bucketIndex);
 
-        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.at(slotInfo.firstVertex).vertex);
-        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.at(slotInfo.firstVertex).texcoord);
-        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.at(slotInfo.firstVertex).normal);
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
 
-        glDrawElements(buffer.mode, static_cast<GLsizei>(buffer.indices.size()), GL_UNSIGNED_INT, &buffer.indices.at(slotInfo.firstIndex));
+        glFrontFace(GL_CW);
+
+        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices[slotInfo.firstVertex].vertex);
+        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices[slotInfo.firstVertex].texcoord);
+        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices[slotInfo.firstVertex].normal);
+
+        glDrawElements(buffer.mode, static_cast<GLsizei>(slotInfo.numIndices), GL_UNSIGNED_INT, &buffer.indices[slotInfo.firstIndex]);
+
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
 private:

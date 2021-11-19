@@ -515,8 +515,9 @@ void BrushNode::updateWireframeVisibility(const VolumeTest& volume, const Matrix
 			*j = false;
 		}
 	}
-
+#if 0
 	m_brush.update_wireframe(m_render_wireframe, faces_visible);
+#endif
 	m_brush.update_faces_wireframe(_faceCentroidPointsCulled, visibleFaceIndices, numVisibleFaces);
 }
 
@@ -579,12 +580,12 @@ void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 	//renderCommon(collector, volume);
 
     updateWireframeVisibility(volume, localToWorld);
-
+#if 0
 	if (m_render_wireframe.m_size != 0)
 	{
 		collector.addRenderable(*_renderEntity->getWireShader(), m_render_wireframe, localToWorld);
 	}
-
+#endif
 	renderSelectedPoints(collector, volume, localToWorld);
 }
 
