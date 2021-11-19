@@ -160,12 +160,11 @@ public:
 
         glFrontFace(GL_CW);
 
-        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices[slotInfo.firstVertex].vertex);
-        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices[slotInfo.firstVertex].texcoord);
-        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices[slotInfo.firstVertex].normal);
+        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.front().vertex);
+        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.front().texcoord);
+        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &buffer.vertices.front().normal);
 
         glDrawElements(buffer.mode, static_cast<GLsizei>(slotInfo.numIndices), GL_UNSIGNED_INT, &buffer.indices[slotInfo.firstIndex]);
-
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
