@@ -58,8 +58,6 @@ class Patch :
 
 	// The OpenGL renderables for three rendering modes
 	RenderablePatchSolid _solidRenderable;
-	RenderablePatchWireframe _wireframeRenderable;
-	RenderablePatchFixedWireframe _fixedWireframeRenderable;
     RenderablePatchVectorsNTB _renderableNTBVectors;
 
 	// The shader states for the control points and the lattice
@@ -117,10 +115,6 @@ public:
 
 	// Return the interally stored AABB
 	const AABB& localAABB() const override;
-
-	// Render functions: wireframe mode and components
-	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, 
-		const Matrix4& localToWorld, const IRenderEntity& entity) const;
 
     /// Submit renderable edge and face points
 	void submitRenderablePoints(IRenderableCollector& collector,

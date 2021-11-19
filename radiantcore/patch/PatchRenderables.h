@@ -14,43 +14,6 @@
 #include "render/VertexBuffer.h"
 #include "render/IndexedVertexBuffer.h"
 
-/// Helper class to render a PatchTesselation in wireframe mode
-class RenderablePatchWireframe :
-	public OpenGLRenderable
-{
-protected:
-	// Geometry source
-	const PatchTesselation& _tess;
-
-	// VertexBuffer for rendering
-	typedef render::IndexedVertexBuffer<Vertex3f> VertexBuffer_T;
-	mutable VertexBuffer_T _vertexBuf;
-
-	mutable bool _needsUpdate;
-
-public:
-	RenderablePatchWireframe(const PatchTesselation& tess) :
-		_tess(tess),
-		_needsUpdate(true)
-	{ }
-
-	virtual ~RenderablePatchWireframe() {}
-
-    void render(const RenderInfo& info) const;
-
-    void queueUpdate();
-};
-
-/// Helper class to render a fixed geometry PatchTesselation in wireframe mode
-class RenderablePatchFixedWireframe : 
-	public RenderablePatchWireframe
-{
-public:
-    RenderablePatchFixedWireframe(PatchTesselation& tess) : 
-		RenderablePatchWireframe(tess)
-    {}
-};
-
 /// Helper class to render a PatchTesselation in solid mode
 class RenderablePatchSolid :
 	public OpenGLRenderable

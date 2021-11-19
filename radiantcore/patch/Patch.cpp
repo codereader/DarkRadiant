@@ -49,8 +49,6 @@ Patch::Patch(PatchNode& node) :
     _node(node),
     _undoStateSaver(nullptr),
     _solidRenderable(_mesh),
-    _wireframeRenderable(_mesh),
-    _fixedWireframeRenderable(_mesh),
     _renderableNTBVectors(_mesh),
     _renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
     _renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
@@ -70,8 +68,6 @@ Patch::Patch(const Patch& other, PatchNode& node) :
     _node(node),
     _undoStateSaver(nullptr),
     _solidRenderable(_mesh),
-    _wireframeRenderable(_mesh),
-    _fixedWireframeRenderable(_mesh),
     _renderableNTBVectors(_mesh),
     _renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
     _renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
@@ -189,15 +185,6 @@ void Patch::onAllocate(std::size_t size)
 const AABB& Patch::localAABB() const
 {
     return _localAABB;
-}
-
-void Patch::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, const IRenderEntity& entity) const
-{
-    // Defer the tesselation calculation to the last minute
-    const_cast<Patch&>(*this).updateTesselation();
-
-    collector.addRenderable(*entity.getWireShader(),
-        _patchDef3 ? _fixedWireframeRenderable : _wireframeRenderable, localToWorld);
 }
 
 // greebo: This renders the patch components, namely the lattice and the corner controls
@@ -585,15 +572,6 @@ void Patch::updateTesselation(bool force)
 
     _node.onTesselationChanged();
     _solidRenderable.queueUpdate();
-
-    if (_patchDef3)
-    {
-        _fixedWireframeRenderable.queueUpdate();
-    }
-    else
-    {
-        _wireframeRenderable.queueUpdate();
-    }
 }
 
 void Patch::invertMatrix()

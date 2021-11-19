@@ -377,9 +377,6 @@ void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 
 	const_cast<Patch&>(m_patch).evaluateTransform();
 
-	// Pass the call to the patch instance, it adds the renderable
-	m_patch.renderWireframe(collector, volume, localToWorld(), *_renderEntity);
-
 	// Render the selected components
 	renderComponentsSelected(collector, volume);
 }
