@@ -52,8 +52,18 @@ class WindingRenderer :
 private:
     using VertexBuffer = CompactWindingVertexBuffer<ArbitraryMeshVertex, WindingIndexerT>;
 
+    struct Bucket
+    {
+        Bucket(std::size_t size) :
+            buffer(size)
+        {}
+
+        VertexBuffer buffer;
+        std::vector<typename VertexBuffer::Slot> pendingDeletions;
+    };
+
     // Maintain one bucket per winding size, allocated on demand
-    std::vector<VertexBuffer> _buckets;
+    std::vector<Bucket> _buckets;
 
     using BucketIndex = std::uint16_t;
     static constexpr BucketIndex InvalidBucketIndex = std::numeric_limits<BucketIndex>::max();
@@ -93,14 +103,26 @@ public:
         auto bucketIndex = getBucketIndexForWindingSize(windingSize);
         auto& bucket = ensureBucketForWindingSize(windingSize);
 
-        auto bufferSlot = _buckets[bucketIndex].pushWinding(vertices);
-
         // Allocate a new slot descriptor, we can't hand out absolute indices to clients
-        auto slotMappingIndex = getNextFreeSlotMapping();
+        auto slotMappingIndex = allocateSlotMapping();
 
         auto& slotMapping = _slots[slotMappingIndex];
         slotMapping.bucketIndex = bucketIndex;
-        slotMapping.slotNumber = bufferSlot;
+
+        // Check if we have a free slot in this buffer (marked for deletion)
+        if (!bucket.pendingDeletions.empty())
+        {
+            slotMapping.slotNumber = bucket.pendingDeletions.back();
+            bucket.pendingDeletions.pop_back();
+
+            // Use the replace method to load the data
+            bucket.buffer.replaceWinding(slotMapping.slotNumber, vertices);
+        }
+        else
+        {
+            // No deleted slot available, allocate a new one
+            slotMapping.slotNumber = bucket.buffer.pushWinding(vertices);
+        }
 
         ++_windings;
 
@@ -115,6 +137,10 @@ public:
         auto bucketIndex = slotMapping.bucketIndex;
         assert(bucketIndex != InvalidBucketIndex);
 
+#if 1
+        // Mark this winding slot as pending for deletion
+        _buckets[bucketIndex].pendingDeletions.push_back(slotMapping.slotNumber);
+#else
         // Remove the winding from the bucket
         _buckets[bucketIndex].removeWinding(slotMapping.slotNumber);
 
@@ -127,6 +153,7 @@ public:
                 --mapping.slotNumber;
             }
         }
+#endif
 
         // Invalidate the slot mapping
         slotMapping.bucketIndex = InvalidBucketIndex;
@@ -150,22 +177,25 @@ public:
 
         auto& bucket = _buckets[slotMapping.bucketIndex];
 
-        if (bucket.getWindingSize() != vertices.size())
+        if (bucket.buffer.getWindingSize() != vertices.size())
         {
             throw std::logic_error("Winding size changes are not supported through updateWinding.");
         }
 
-        bucket.replaceWinding(slotMapping.slotNumber, vertices);
+        bucket.buffer.replaceWinding(slotMapping.slotNumber, vertices);
     }
 
     void renderAllWindings() override
     {
-        for (const auto& bucket : _buckets)
+        for (auto bucketIndex = 0; bucketIndex < _buckets.size(); ++bucketIndex)
         {
-            if (bucket.getVertices().empty()) continue;
+            auto& bucket = _buckets[bucketIndex];
+            commitDeletions(bucketIndex);
 
-            const auto& vertices = bucket.getVertices();
-            const auto& indices = bucket.getIndices();
+            if (bucket.buffer.getVertices().empty()) continue;
+
+            const auto& vertices = bucket.buffer.getVertices();
+            const auto& indices = bucket.buffer.getIndices();
 
             glDisableClientState(GL_COLOR_ARRAY);
 
@@ -188,8 +218,10 @@ public:
         assert(slotMapping.bucketIndex != InvalidBucketIndex);
         auto& bucket = _buckets[slotMapping.bucketIndex];
 
-        const auto& vertices = bucket.getVertices();
-        const auto& indices = bucket.getIndices();
+        commitDeletions(slotMapping.bucketIndex);
+
+        const auto& vertices = bucket.buffer.getVertices();
+        const auto& indices = bucket.buffer.getIndices();
 
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -204,11 +236,11 @@ public:
 
         if (mode == IWindingRenderer::RenderMode::Triangles)
         {
-            renderElements<WindingIndexer_Triangles>(bucket, slotMapping.slotNumber);
+            renderElements<WindingIndexer_Triangles>(bucket.buffer, slotMapping.slotNumber);
         }
         else if (mode == IWindingRenderer::RenderMode::Polygon)
         {
-            renderElements<WindingIndexer_Polygon>(bucket, slotMapping.slotNumber);
+            renderElements<WindingIndexer_Polygon>(bucket.buffer, slotMapping.slotNumber);
         }
 
         glDisableClientState(GL_NORMAL_ARRAY);
@@ -216,6 +248,34 @@ public:
     }
 
 private:
+    void commitDeletions(std::size_t bucketIndex)
+    {
+        auto& bucket = _buckets[bucketIndex];
+
+        if (bucket.pendingDeletions.empty()) return;
+
+        std::sort(bucket.pendingDeletions.begin(), bucket.pendingDeletions.end());
+
+        for (auto s = bucket.pendingDeletions.rbegin(); s != bucket.pendingDeletions.rend(); ++s)
+        {
+            auto slotNumber = *s;
+
+            // Remove the winding from the bucket
+            bucket.buffer.removeWinding(slotNumber);
+
+            // Update the value in other slot mappings, now that the bucket shrank
+            for (auto& mapping : _slots)
+            {
+                // Every index in the same bucket beyond the removed winding needs to be shifted to left
+                if (mapping.bucketIndex == bucketIndex && mapping.slotNumber > slotNumber)
+                {
+                    --mapping.slotNumber;
+                }
+            }
+        }
+
+        bucket.pendingDeletions.clear();
+    }
 
     template<class CustomWindingIndexerT>
     void renderElements(const VertexBuffer& buffer, typename VertexBuffer::Slot slotNumber) const
@@ -230,7 +290,7 @@ private:
         glDrawElements(mode, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, &indices.front());
     }
 
-    IWindingRenderer::Slot getNextFreeSlotMapping()
+    IWindingRenderer::Slot allocateSlotMapping()
     {
         auto numSlots = static_cast<IWindingRenderer::Slot>(_slots.size());
 
@@ -255,7 +315,7 @@ private:
         return static_cast<BucketIndex>(windingSize - 3);
     }
 
-    VertexBuffer& ensureBucketForWindingSize(std::size_t windingSize)
+    Bucket& ensureBucketForWindingSize(std::size_t windingSize)
     {
         auto bucketIndex = getBucketIndexForWindingSize(windingSize);
 
