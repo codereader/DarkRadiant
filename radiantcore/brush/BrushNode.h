@@ -201,7 +201,6 @@ private:
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const;
 
-	void renderClipPlane(IRenderableCollector& collector, const VolumeTest& volume) const;
 	void updateWireframeVisibility(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 }; // class BrushNode

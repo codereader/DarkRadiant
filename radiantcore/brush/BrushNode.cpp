@@ -392,15 +392,11 @@ void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTe
 
 void BrushNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	renderClipPlane(collector, volume);
-
 	renderSolid(collector, volume, localToWorld());
 }
 
 void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	renderClipPlane(collector, volume);
-
 	renderWireframe(collector, volume, localToWorld());
 }
 
@@ -427,19 +423,16 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
 
             collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
 
-            // greebo: BrushNodes have always an identity l2w, don't do any transforms
-            if (volume.fill())
-            {
-                collector.addHighlightRenderable(face.getWindingSurfaceSolid(), Matrix4::getIdentity());
-            }
-            else
-            {
-                collector.addHighlightRenderable(face.getWindingSurfaceWireframe(), Matrix4::getIdentity());
-            }
-            
+            // Submit the RenderableWinding as reference, it will render the winding in polygon mode
+            collector.addHighlightRenderable(face.getWindingSurfaceSolid(), Matrix4::getIdentity());
 
             collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
         }
+    }
+
+    if (wholeBrushSelected && GlobalClipper().clipMode())
+    {
+        m_clipPlane.render(collector, volume, Matrix4::getIdentity());
     }
 
     collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
@@ -460,14 +453,6 @@ void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 	m_brush.setRenderSystem(renderSystem);
 	m_clipPlane.setRenderSystem(renderSystem);
-}
-
-void BrushNode::renderClipPlane(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-	if (isSelected() && GlobalClipper().clipMode())
-	{
-		m_clipPlane.render(collector, volume, localToWorld());
-	}
 }
 
 std::size_t BrushNode::getHighlightFlags()
