@@ -167,6 +167,57 @@ public:
         // So just cut off one winding from the end of the index array
         _indices.resize(_indices.size() - getNumIndicesPerWinding());
     }
+
+    // Removes multiple slots from this buffer in one sweep. The given array of slots must be sorted in ascending order
+    void removeWindings(const std::vector<Slot>& slotsToRemove)
+    {
+        if (slotsToRemove.empty()) return;
+
+        auto highestPossibleSlotNumber = static_cast<Slot>(_vertices.size() / _size);
+
+        auto s = slotsToRemove.begin();
+        auto gapStart = *s; // points at the first position that can be overwritten
+
+        while (s != slotsToRemove.end())
+        {
+            auto slotToRemove = *s;
+
+            if (slotToRemove >= highestPossibleSlotNumber) throw std::logic_error("Slot index out of bounds");
+
+            // Move forward until we hit the next unremoved slot
+            auto firstSlotToKeep = slotToRemove + 1;
+            ++s;
+
+            while (s != slotsToRemove.end() && *s == firstSlotToKeep)
+            {
+                ++firstSlotToKeep;
+                ++s;
+            }
+
+            auto lastSlotToKeep = s == slotsToRemove.end() ? highestPossibleSlotNumber - 1 : *s - 1;
+            auto numSlotsToMove = lastSlotToKeep + 1 - firstSlotToKeep;
+
+            if (numSlotsToMove == 0) break;
+
+            // We move all vertices to the gap
+            auto target = _vertices.begin() + (gapStart * _size);
+
+            auto sourceStart = _vertices.begin() + (firstSlotToKeep * _size);
+            auto sourceEnd = sourceStart + (numSlotsToMove * _size);
+
+            std::move(sourceStart, sourceEnd, target);
+
+            gapStart += numSlotsToMove;
+        }
+
+        // Cut off the now unused range at the end
+        _vertices.resize(_vertices.size() - slotsToRemove.size() * _size);
+
+        // Since all the windings have the same structure, the index array will always look the same
+        // after shifting the index values of the remaining windings. 
+        // So just cut off one winding from the end of the index array
+        _indices.resize(_indices.size() - slotsToRemove.size() * getNumIndicesPerWinding());
+    }
 };
 
 }

@@ -226,6 +226,61 @@ TEST(CompactWindingVertexBuffer, ReplaceWinding)
     }
 }
 
+TEST(CompactWindingVertexBuffer, RemoveMultipleWindings)
+{
+    for (auto size = SmallestWindingSize; size < LargestWindingSize; ++size)
+    {
+        // We will work with a buffer containing N windings, 
+        // the test will remove 1 to N windings from every possible position (2^N - 1)
+        constexpr auto NumWindings = 9;
+
+        for (int combination = 1; combination <= (1 << NumWindings) - 1; ++combination)
+        {
+            VertexBuffer buffer(size);
+
+            // Add the desired number of windings to the buffer
+            for (auto n = 1; n <= NumWindings; ++n)
+            {
+                buffer.pushWinding(createWinding(n, size));
+            }
+
+            std::vector<VertexBuffer::Slot> slotsToRemove;
+
+            // Translate the bit combination to a set of slots to remove
+            for (int pos = 0; pos < NumWindings; ++pos)
+            {
+                if (combination & (1 << pos))
+                {
+                    slotsToRemove.push_back(pos);
+                }
+            }
+
+            buffer.removeWindings(slotsToRemove);
+
+            // The buffer should be smaller now
+            auto remainingWindings = NumWindings - slotsToRemove.size();
+
+            EXPECT_EQ(buffer.getVertices().size(), remainingWindings * buffer.getWindingSize()) <<
+                "Winding vertex array has the wrong size after removal";
+            EXPECT_EQ(buffer.getIndices().size(), remainingWindings * buffer.getNumIndicesPerWinding()) <<
+                "Winding index array has the wrong size after removal";
+
+            // Check the winding data, the ones we removed should be missing now
+            for (int i = 0, slot = 0; i < NumWindings; ++i)
+            {
+                if (std::find(slotsToRemove.begin(), slotsToRemove.end(), i) != slotsToRemove.end())
+                {
+                    continue; // this id got removed, skip it
+                }
+
+                checkWindingIndices(buffer, slot);
+                checkWindingDataInSlot(buffer, slot, i + 1);
+                ++slot;
+            }
+        }
+    }
+}
+
 TEST(CompactWindingVertexBuffer, TriangleIndexerSize3) // Winding size == 3
 {
     render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Triangles> buffer(3);

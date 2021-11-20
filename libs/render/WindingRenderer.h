@@ -256,6 +256,10 @@ private:
 
         std::sort(bucket.pendingDeletions.begin(), bucket.pendingDeletions.end());
 
+#if 1
+        // Remove the winding from the bucket
+        bucket.buffer.removeWindings(bucket.pendingDeletions);
+#else
         for (auto s = bucket.pendingDeletions.rbegin(); s != bucket.pendingDeletions.rend(); ++s)
         {
             auto slotNumber = *s;
@@ -273,7 +277,7 @@ private:
                 }
             }
         }
-
+#endif
         bucket.pendingDeletions.clear();
     }
 
