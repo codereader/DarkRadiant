@@ -51,7 +51,7 @@ class BrushNode :
 	mutable RenderablePointVector _selectedPoints;
 
 	mutable AABB m_aabb_component;
-	mutable RenderablePointVector _faceCentroidPointsCulled;
+	mutable RenderablePointVector _visibleFaceCentroidPoints;
 
 	BrushClipPlane m_clipPlane;
 
@@ -193,15 +193,16 @@ protected:
 private:
 	void transformComponents(const Matrix4& matrix);
 
+#if 0
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+#endif
 
 	void updateSelectedPointsArray() const;
 	void renderSelectedPoints(IRenderableCollector& collector,
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const;
 
-	void updateWireframeVisibility() const;
 	void updateFaceCentroidPoints() const;
 
 }; // class BrushNode

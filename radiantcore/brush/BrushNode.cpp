@@ -17,7 +17,7 @@ BrushNode::BrushNode() :
 	m_brush(*this),
     _faceCentroidPointsNeedUpdate(true),
 	_selectedPoints(GL_POINTS),
-	_faceCentroidPointsCulled(GL_POINTS),
+	_visibleFaceCentroidPoints(GL_POINTS),
 	_renderableComponentsNeedUpdate(true),
     _untransformedOriginChanged(true)
 {
@@ -44,7 +44,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	m_brush(*this, other.m_brush),
     _faceCentroidPointsNeedUpdate(true),
 	_selectedPoints(GL_POINTS),
-	_faceCentroidPointsCulled(GL_POINTS),
+	_visibleFaceCentroidPoints(GL_POINTS),
 	_renderableComponentsNeedUpdate(true),
     _untransformedOriginChanged(true)
 {
@@ -377,7 +377,7 @@ void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTe
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Face)
 	{
         updateFaceCentroidPoints();
-		collector.addRenderable(*m_brush.m_state_point, _faceCentroidPointsCulled, l2w);
+		collector.addRenderable(*m_brush.m_state_point, _visibleFaceCentroidPoints, l2w);
 	}
 	else
 	{
@@ -387,12 +387,16 @@ void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTe
 
 void BrushNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
+#if 0
 	renderSolid(collector, volume, localToWorld());
+#endif
 }
 
 void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
+#if 0
 	renderWireframe(collector, volume, localToWorld());
+#endif
 }
 
 void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
@@ -485,17 +489,18 @@ void BrushNode::updateFaceCentroidPoints() const
 
     _faceCentroidPointsNeedUpdate = false;
 
-    _faceCentroidPointsCulled.clear();
+    _visibleFaceCentroidPoints.clear();
 
     for (const auto& faceInstance:  m_faceInstances)
     {
         if (faceInstance.faceIsVisible())
         {
-            _faceCentroidPointsCulled.emplace_back(faceInstance.centroid(), vertexColour);
+            _visibleFaceCentroidPoints.emplace_back(faceInstance.centroid(), vertexColour);
         }
     }
 }
 
+#if 0
 void BrushNode::updateWireframeVisibility() const
 {
     if (!_faceCentroidPointsNeedUpdate) return;
@@ -512,7 +517,7 @@ void BrushNode::updateWireframeVisibility() const
 	bool* j = faces_visible;
 	bool forceVisible = isForcedVisible();
 
-    _faceCentroidPointsCulled.clear();
+    _visibleFaceCentroidPoints.clear();
 
 	// Iterator to an index of a visible face
 	std::size_t* visibleFaceIter = visibleFaceIndices;
@@ -527,7 +532,7 @@ void BrushNode::updateWireframeVisibility() const
         // Don't cull backfacing planes to make those faces visible in orthoview (#5465)
 		if (forceVisible || i->faceIsVisible())
 		{
-            _faceCentroidPointsCulled.push_back(i->centroid());
+            _visibleFaceCentroidPoints.push_back(i->centroid());
 #if 0
 			*j = true;
 
@@ -545,10 +550,12 @@ void BrushNode::updateWireframeVisibility() const
 	m_brush.update_wireframe(m_render_wireframe, faces_visible);
 #endif
 #if 0
-	m_brush.update_faces_wireframe(_faceCentroidPointsCulled, visibleFaceIndices, numVisibleFaces);
+	m_brush.update_faces_wireframe(_visibleFaceCentroidPoints, visibleFaceIndices, numVisibleFaces);
 #endif
 }
+#endif
 
+#if 0
 void BrushNode::renderSolid(IRenderableCollector& collector,
                             const VolumeTest& volume,
                             const Matrix4& localToWorld) const
@@ -620,6 +627,7 @@ void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 	renderSelectedPoints(collector, volume, localToWorld);
 #endif
 }
+#endif
 
 void BrushNode::updateSelectedPointsArray() const
 {
