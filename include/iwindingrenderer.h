@@ -36,6 +36,16 @@ public:
 
     // Sets the winding data
     virtual void updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) = 0;
+
+    // Mode used to specify how to render a single winding
+    enum class RenderMode
+    {
+        Triangles,
+        Polygon,
+    };
+
+    // Submits a single winding to GL
+    virtual void renderWinding(RenderMode mode, Slot slot) = 0;
 };
 
 }

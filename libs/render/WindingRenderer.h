@@ -39,6 +39,12 @@ struct RenderingTraits<WindingIndexer_Triangles>
     constexpr static GLenum Mode() { return GL_TRIANGLES; }
 };
 
+template<>
+struct RenderingTraits<WindingIndexer_Polygon>
+{
+    constexpr static GLenum Mode() { return GL_POLYGON; }
+};
+
 template<class WindingIndexerT>
 class WindingRenderer :
     public IBackendWindingRenderer
@@ -174,7 +180,56 @@ public:
         }
     }
 
+    void renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot) override
+    {
+        assert(slot < _slots.size());
+        auto& slotMapping = _slots[slot];
+
+        assert(slotMapping.bucketIndex != InvalidBucketIndex);
+        auto& bucket = _buckets[slotMapping.bucketIndex];
+
+        const auto& vertices = bucket.getVertices();
+        const auto& indices = bucket.getIndices();
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+
+        glFrontFace(GL_CCW);
+
+        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
+        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
+        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
+
+        if (mode == IWindingRenderer::RenderMode::Triangles)
+        {
+            renderElements<WindingIndexer_Triangles>(bucket, slotMapping.slotNumber);
+        }
+        else if (mode == IWindingRenderer::RenderMode::Polygon)
+        {
+            renderElements<WindingIndexer_Polygon>(bucket, slotMapping.slotNumber);
+        }
+
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+
 private:
+
+    template<class CustomWindingIndexerT>
+    void renderElements(const VertexBuffer& buffer, typename VertexBuffer::Slot slotNumber) const
+    {
+        std::vector<unsigned int> indices;
+        indices.reserve(CustomWindingIndexerT::GetNumberOfIndicesPerWinding(buffer.getWindingSize()));
+
+        auto firstVertex = static_cast<unsigned int>(buffer.getWindingSize() * slotNumber);
+        CustomWindingIndexerT::GenerateAndAssignIndices(std::back_inserter(indices), buffer.getWindingSize(), firstVertex);
+        auto mode = RenderingTraits<CustomWindingIndexerT>::Mode();
+
+        glDrawElements(mode, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, &indices.front());
+    }
+
     IWindingRenderer::Slot getNextFreeSlotMapping()
     {
         auto numSlots = static_cast<IWindingRenderer::Slot>(_slots.size());

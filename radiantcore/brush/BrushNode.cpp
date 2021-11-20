@@ -413,12 +413,12 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
     collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, wholeBrushSelected);
 
     // Submit the renderable geometry for each face
-    for (const auto& faceInstance : m_faceInstances)
+    for (auto& faceInstance : m_faceInstances)
     {
         // Skip invisible faces before traversing further
         if (!forceVisible && !faceInstance.faceIsVisible()) continue;
 
-        const Face& face = faceInstance.getFace();
+        Face& face = faceInstance.getFace();
         if (face.intersectVolume(volume))
         {
             bool highlight = wholeBrushSelected || faceInstance.selectedComponents();
@@ -428,7 +428,15 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
             collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
 
             // greebo: BrushNodes have always an identity l2w, don't do any transforms
-            collector.addHighlightRenderable(face.getWinding(), Matrix4::getIdentity());
+            if (volume.fill())
+            {
+                collector.addHighlightRenderable(face.getWindingSurfaceSolid(), Matrix4::getIdentity());
+            }
+            else
+            {
+                collector.addHighlightRenderable(face.getWindingSurfaceWireframe(), Matrix4::getIdentity());
+            }
+            
 
             collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
         }

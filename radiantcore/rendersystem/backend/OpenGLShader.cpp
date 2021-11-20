@@ -250,6 +250,11 @@ bool OpenGLShader::hasWindings() const
     return !_windingRenderer->empty();
 }
 
+void OpenGLShader::renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot)
+{
+    _windingRenderer->renderWinding(mode, slot);
+}
+
 #ifdef RENDERABLE_GEOMETRY
 void OpenGLShader::addGeometry(RenderableGeometry& geometry)
 {

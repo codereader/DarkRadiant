@@ -131,6 +131,7 @@ public:
     void removeWinding(IWindingRenderer::Slot slot) override;
     void updateWinding(IWindingRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override;
     bool hasWindings() const;
+    void renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot) override;
 
     void setVisible(bool visible) override;
     bool isVisible() const override;

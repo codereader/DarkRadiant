@@ -54,6 +54,27 @@ public:
     }
 };
 
+// Winding index provider. Generates render indices for a single winding suitable for drawing a single polygon.
+class WindingIndexer_Polygon
+{
+public:
+    constexpr static std::size_t GetNumberOfIndicesPerWinding(const std::size_t windingSize)
+    {
+        return windingSize;
+    }
+
+    // Generate indices for a single winding of the given size, insert it in the target container using the given output iterator
+    // each index is shifted by the given offset
+    static void GenerateAndAssignIndices(std::back_insert_iterator<std::vector<unsigned int>> outputIt,
+        std::size_t windingSize, const unsigned int offset)
+    {
+        for (auto n = static_cast<unsigned int>(windingSize); n > 0; --n)
+        {
+            outputIt = offset + n - 1;
+        }
+    }
+};
+
 template<typename VertexT, class WindingIndexerT = WindingIndexer_Triangles>
 class CompactWindingVertexBuffer
 {

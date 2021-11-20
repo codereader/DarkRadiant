@@ -7,7 +7,8 @@
 namespace render
 {
 
-class RenderableWinding
+class RenderableWinding :
+    public OpenGLRenderable
 {
 private:
     const Winding& _winding;
@@ -82,6 +83,14 @@ public:
         _shader.reset();
         _slot = IWindingRenderer::InvalidSlot;
         _windingSize = 0;
+    }
+
+    void render(const RenderInfo& info) const override
+    {
+        if (_slot != render::IWindingRenderer::InvalidSlot && _shader)
+        {
+            _shader->renderWinding(render::IWindingRenderer::RenderMode::Polygon, _slot);
+        }
     }
 };
 
