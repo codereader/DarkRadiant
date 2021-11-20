@@ -281,6 +281,12 @@ public:
 	void push_back(const VertexCb& point) {
 		_vector.push_back(point);
 	}
+
+    template<class... Args>
+    VertexCb& emplace_back(Args&&... args)
+    {
+        return _vector.emplace_back(std::forward<Args>(args)...);
+    }
 };
 
 

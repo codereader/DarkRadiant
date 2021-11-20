@@ -15,7 +15,7 @@
 BrushNode::BrushNode() :
 	scene::SelectableNode(),
 	m_brush(*this),
-    _faceVisibilityChanged(true),
+    _faceCentroidPointsNeedUpdate(true),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	_renderableComponentsNeedUpdate(true),
@@ -42,7 +42,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	LitObject(other),
 	Transformable(other),
 	m_brush(*this, other.m_brush),
-    _faceVisibilityChanged(true),
+    _faceCentroidPointsNeedUpdate(true),
 	_selectedPoints(GL_POINTS),
 	_faceCentroidPointsCulled(GL_POINTS),
 	_renderableComponentsNeedUpdate(true),
@@ -376,7 +376,7 @@ void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTe
 
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Face)
 	{
-        updateWireframeVisibility(volume, l2w);
+        updateFaceCentroidPoints();
 		collector.addRenderable(*m_brush.m_state_point, _faceCentroidPointsCulled, l2w);
 	}
 	else
@@ -462,21 +462,45 @@ std::size_t BrushNode::getHighlightFlags()
 
 void BrushNode::onFaceVisibilityChanged()
 {
-    _faceVisibilityChanged = true;
+    _faceCentroidPointsNeedUpdate = true;
 }
 
 void BrushNode::setForcedVisibility(bool forceVisible, bool includeChildren)
 {
     Node::setForcedVisibility(forceVisible, includeChildren);
  
-    _faceVisibilityChanged = true;
+    _faceCentroidPointsNeedUpdate = true;
 }
 
-void BrushNode::updateWireframeVisibility(const VolumeTest& volume, const Matrix4& localToWorld) const
+void BrushNode::updateFaceCentroidPoints() const
 {
-    if (!_faceVisibilityChanged) return;
+    if (!_faceCentroidPointsNeedUpdate) return;
 
-    _faceVisibilityChanged = false;
+    static const auto& colourSetting = GlobalBrushCreator().getSettings().getVertexColour();
+    const Colour4b vertexColour(
+        static_cast<int>(colourSetting[0] * 255), 
+        static_cast<int>(colourSetting[1] * 255),
+        static_cast<int>(colourSetting[2] * 255), 
+        255);
+
+    _faceCentroidPointsNeedUpdate = false;
+
+    _faceCentroidPointsCulled.clear();
+
+    for (const auto& faceInstance:  m_faceInstances)
+    {
+        if (faceInstance.faceIsVisible())
+        {
+            _faceCentroidPointsCulled.emplace_back(faceInstance.centroid(), vertexColour);
+        }
+    }
+}
+
+void BrushNode::updateWireframeVisibility() const
+{
+    if (!_faceCentroidPointsNeedUpdate) return;
+
+    _faceCentroidPointsNeedUpdate = false;
 
 	// Array of booleans to indicate which faces are visible
 	static bool faces_visible[brush::c_brush_maxFaces];
@@ -487,6 +511,8 @@ void BrushNode::updateWireframeVisibility(const VolumeTest& volume, const Matrix
 	std::size_t numVisibleFaces(0);
 	bool* j = faces_visible;
 	bool forceVisible = isForcedVisible();
+
+    _faceCentroidPointsCulled.clear();
 
 	// Iterator to an index of a visible face
 	std::size_t* visibleFaceIter = visibleFaceIndices;
@@ -501,6 +527,8 @@ void BrushNode::updateWireframeVisibility(const VolumeTest& volume, const Matrix
         // Don't cull backfacing planes to make those faces visible in orthoview (#5465)
 		if (forceVisible || i->faceIsVisible())
 		{
+            _faceCentroidPointsCulled.push_back(i->centroid());
+#if 0
 			*j = true;
 
 			// Store the index of this visible face in the array
@@ -510,12 +538,15 @@ void BrushNode::updateWireframeVisibility(const VolumeTest& volume, const Matrix
 		else
 		{
 			*j = false;
+#endif
 		}
 	}
 #if 0
 	m_brush.update_wireframe(m_render_wireframe, faces_visible);
 #endif
+#if 0
 	m_brush.update_faces_wireframe(_faceCentroidPointsCulled, visibleFaceIndices, numVisibleFaces);
+#endif
 }
 
 void BrushNode::renderSolid(IRenderableCollector& collector,
@@ -578,7 +609,7 @@ void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 {
 	//renderCommon(collector, volume);
 
-    updateWireframeVisibility(volume, localToWorld);
+    //updateWireframeVisibility();
 #if 0
 	if (m_render_wireframe.m_size != 0)
 	{
@@ -714,6 +745,7 @@ void BrushNode::_onTransformationChanged()
 	m_brush.transformChanged();
 
 	_renderableComponentsNeedUpdate = true;
+    _faceCentroidPointsNeedUpdate = true;
 }
 
 void BrushNode::_applyTransformation()

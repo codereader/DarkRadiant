@@ -42,7 +42,7 @@ class BrushNode :
 	typedef std::vector<brush::VertexInstance> VertexInstances;
 	VertexInstances m_vertexInstances;
 
-    mutable bool _faceVisibilityChanged;
+    mutable bool _faceCentroidPointsNeedUpdate;
 
 #if 0
 	mutable RenderableWireframe m_render_wireframe;
@@ -201,7 +201,8 @@ private:
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const;
 
-	void updateWireframeVisibility(const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void updateWireframeVisibility() const;
+	void updateFaceCentroidPoints() const;
 
 }; // class BrushNode
 typedef std::shared_ptr<BrushNode> BrushNodePtr;
