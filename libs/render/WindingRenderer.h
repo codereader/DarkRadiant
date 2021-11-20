@@ -259,6 +259,38 @@ private:
 #if 1
         // Remove the winding from the bucket
         bucket.buffer.removeWindings(bucket.pendingDeletions);
+
+        // A mapping to quickly know which mapping has been shifted by how many positions
+        std::map<typename VertexBuffer::Slot, typename VertexBuffer::Slot> offsets;
+        auto offsetToApply = 0;
+
+        for (auto removed : bucket.pendingDeletions)
+        {
+            offsets[removed] = offsetToApply++;
+        }
+
+        auto maxOffsetToApply = offsetToApply;
+
+        for (auto& mapping : _slots)
+        {
+            // Every index in the same bucket beyond the first removed winding needs to be shifted
+            if (mapping.bucketIndex != bucketIndex || mapping.slotNumber == InvalidVertexBufferSlot)
+            {
+                continue;
+            }
+
+            // lower_bound yields the item that is equal to or larger
+            auto offset = offsets.lower_bound(mapping.slotNumber);
+
+            if (offset != offsets.end())
+            {
+                mapping.slotNumber -= offset->second;
+            }
+            else
+            {
+                mapping.slotNumber -= maxOffsetToApply;
+            }
+        }
 #else
         for (auto s = bucket.pendingDeletions.rbegin(); s != bucket.pendingDeletions.rend(); ++s)
         {
