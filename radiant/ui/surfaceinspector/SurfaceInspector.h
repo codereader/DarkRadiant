@@ -5,6 +5,7 @@
 #include "iregistry.h"
 #include "iradiant.h"
 #include "wxutil/window/TransientWindow.h"
+#include "wxutil/FormLayout.h"
 #include "ui/common/ShaderChooser.h"
 #include "messages/TextureChanged.h"
 
@@ -144,14 +145,14 @@ private:
 	 *
 	 * @returns: the structure containing the widget pointers.
 	 */
-    ManipulatorRow createManipulatorRow(const std::string& label, wxFlexGridSizer* table,
+    ManipulatorRow createManipulatorRow(const std::string& label, wxutil::FormLayout& table,
                                         const std::string& bitmapSmaller,
                                         const std::string& bitmapLarger);
 
     // Widget construction
 	void populateWindow();
     wxBoxSizer* createFitTextureRow();
-    void createScaleLinkButtons(wxFlexGridSizer& table);
+    void createScaleLinkButtons(wxutil::FormLayout& table);
 
 	// Connect IEvents to the widgets
 	void connectEvents();

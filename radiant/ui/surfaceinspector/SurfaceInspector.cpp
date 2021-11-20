@@ -2,14 +2,8 @@
 
 #include "i18n.h"
 
-#include <wx/panel.h>
-#include <wx/sizer.h>
-#include <wx/button.h>
-#include "wxutil/Bitmap.h"
-#include <wx/stattext.h>
-#include <wx/bmpbuttn.h>
-#include <wx/spinctrl.h>
-#include <wx/tglbtn.h>
+#include <wx/wx.h>
+#include <wx/statline.h>
 
 #include "iscenegraph.h"
 #include "ui/ieventmanager.h"
@@ -17,6 +11,7 @@
 #include "ui/imainframe.h"
 #include "iundo.h"
 
+#include "wxutil/Bitmap.h"
 #include "wxutil/ControlButton.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/Button.h"
@@ -334,7 +329,7 @@ wxBoxSizer* SurfaceInspector::createFitTextureRow()
     return fitTextureHBox;
 }
 
-void SurfaceInspector::createScaleLinkButtons(wxFlexGridSizer& table)
+void SurfaceInspector::createScaleLinkButtons(wxutil::FormLayout& table)
 {
     auto scaleLinkSizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -360,7 +355,7 @@ void SurfaceInspector::createScaleLinkButtons(wxFlexGridSizer& table)
     _scaleLinkToggle = linkToggle;
     scaleLinkSizer->Add(_scaleLinkToggle, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
-    table.Add(scaleLinkSizer, 1, wxEXPAND);
+    table.add(scaleLinkSizer);
 }
 
 void SurfaceInspector::populateWindow()
@@ -371,16 +366,11 @@ void SurfaceInspector::populateWindow()
 	wxStaticText* topLabel = new wxStaticText(this, wxID_ANY, _(LABEL_PROPERTIES));
 	topLabel->SetFont(topLabel->GetFont().Bold());
 
-	// 7x2 table with 12 pixel hspacing and 6 pixels vspacing
-	auto table = new wxFlexGridSizer(7, 2, 6, 12);
-	table->AddGrowableCol(1);
+    // Two-column form layout
+	wxutil::FormLayout table(this);
 
-	// Create the entry field and pack it into the first table row
-	wxStaticText* shaderLabel = new wxStaticText(this, wxID_ANY, _(LABEL_SHADER));
-	table->Add(shaderLabel, 0, wxALIGN_CENTER_VERTICAL);
-
+    // Shader entry box
 	wxBoxSizer* shaderHBox = new wxBoxSizer(wxHORIZONTAL);
-
 	_shaderEntry = new wxTextCtrl(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	_shaderEntry->SetMinSize(wxSize(100, -1));
 	_shaderEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SurfaceInspector::onShaderEntryActivate), NULL, this);
@@ -394,37 +384,33 @@ void SurfaceInspector::populateWindow()
         _("Choose shader using the shader selection dialog"))
     ;
     _selectShaderButton->Connect(
-        wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect),
-        NULL, this
+        wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onShaderSelect), NULL, this
     );
     shaderHBox->Add(_selectShaderButton, 0, wxLEFT, 6);
 
-	table->Add(shaderHBox, 1, wxEXPAND);
+	table.add(_(LABEL_SHADER), shaderHBox);
 
 	// Pack everything into the vbox
 	dialogVBox->Add(topLabel, 0, wxEXPAND | wxBOTTOM, 6);
-	dialogVBox->Add(table, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
+	dialogVBox->Add(table.getSizer(), 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
 	// Initial parameter editing rows
-    _manipulators[HSHIFT] = createManipulatorRow(
-        _(LABEL_HSHIFT), table, "arrow_left_blue.png", "arrow_right_blue.png"
-    );
-    _manipulators[VSHIFT] = createManipulatorRow(
-        _(LABEL_VSHIFT), table, "arrow_down_blue.png", "arrow_up_blue.png"
-    );
-    _manipulators[HSCALE] = createManipulatorRow(
-        _(LABEL_HSCALE), table, "hscale_down.png", "hscale_up.png"
-    );
+    _manipulators[HSHIFT] = createManipulatorRow(_(LABEL_HSHIFT), table, "arrow_left_blue.png",
+                                                 "arrow_right_blue.png");
+    _manipulators[VSHIFT] = createManipulatorRow(_(LABEL_VSHIFT), table, "arrow_down_blue.png",
+                                                 "arrow_up_blue.png");
+    _manipulators[ROTATION] = createManipulatorRow(_(LABEL_ROTATION), table, "rotate_cw.png",
+                                                   "rotate_ccw.png");
 
-    // Scale link widgets
-    table->AddSpacer(1); // instead of a label
-    createScaleLinkButtons(*table);
+    // Scale rows separated by a line
+    table.addFullWidth(new wxStaticLine(this));
+    _manipulators[HSCALE] = createManipulatorRow(_(LABEL_HSCALE), table, "hscale_down.png",
+                                                 "hscale_up.png");
+    createScaleLinkButtons(table);
+    _manipulators[VSCALE] = createManipulatorRow(_(LABEL_VSCALE), table, "vscale_down.png",
+                                                 "vscale_up.png");
 
-    // Remaining parameter rows
-	_manipulators[VSCALE] = createManipulatorRow(_(LABEL_VSCALE), table, "vscale_down.png", "vscale_up.png");
-	_manipulators[ROTATION] = createManipulatorRow(_(LABEL_ROTATION), table, "rotate_cw.png", "rotate_ccw.png");
-
-	// ======================== Texture Operations ====================================
+    // ======================== Texture Operations ====================================
 
 	// Create the texture operations label (bold font)
 	wxStaticText* operLabel = new wxStaticText(this, wxID_ANY, _(LABEL_OPERATIONS));
@@ -436,6 +422,7 @@ void SurfaceInspector::populateWindow()
 	operTable->AddGrowableCol(1);
 
     // Pack label & table into the dialog
+    dialogVBox->AddSpacer(6);
 	dialogVBox->Add(operLabel, 0, wxEXPAND | wxTOP | wxBOTTOM, 6);
 	dialogVBox->Add(operTable, 0, wxEXPAND | wxLEFT, 18); // 18 pixels left indentation
 
@@ -529,14 +516,11 @@ void SurfaceInspector::populateWindow()
 }
 
 SurfaceInspector::ManipulatorRow
-SurfaceInspector::createManipulatorRow(const std::string& label, wxFlexGridSizer* table,
+SurfaceInspector::createManipulatorRow(const std::string& label, wxutil::FormLayout& table,
                                        const std::string& bitmapSmaller,
                                        const std::string& bitmapLarger)
 {
 	ManipulatorRow manipRow;
-
-	wxStaticText* text = new wxStaticText(this, wxID_ANY, label);
-	table->Add(text, 0, wxALIGN_CENTER_VERTICAL);
 
 	wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
 
@@ -567,7 +551,7 @@ SurfaceInspector::createManipulatorRow(const std::string& label, wxFlexGridSizer
 	hbox->Add(manipRow.stepEntry, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
 	// Pack the hbox into the table
-	table->Add(hbox, 1, wxEXPAND);
+    table.add(label, hbox);
 
 	// Return the filled structure
 	return manipRow;
