@@ -159,6 +159,7 @@
     <ClInclude Include="..\..\libs\wxutil\event\KeyEventFilter.h" />
     <ClInclude Include="..\..\libs\wxutil\event\SingleIdleCallback.h" />
     <ClInclude Include="..\..\libs\wxutil\FileChooser.h" />
+    <ClInclude Include="..\..\libs\wxutil\FormLayout.h" />
     <ClInclude Include="..\..\libs\wxutil\FreezePointer.h" />
     <ClInclude Include="..\..\libs\wxutil\fsview\FileSystemView.h" />
     <ClInclude Include="..\..\libs\wxutil\fsview\Populator.h" />

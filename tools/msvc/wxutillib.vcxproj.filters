@@ -150,6 +150,7 @@
     <ClInclude Include="..\..\libs\wxutil\dialog\AutoSaveRequestBlocker.h">
       <Filter>dialog</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\FormLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

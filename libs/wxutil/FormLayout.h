@@ -1,5 +1,6 @@
 #pragma once
 
+#include <wx/stattext.h>
 #include <wx/gbsizer.h>
 
 namespace wxutil
