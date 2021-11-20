@@ -353,22 +353,19 @@ void BrushNode::onPreRender(const VolumeTest& volume)
 
     assert(_renderEntity);
 
-    // Every intersecting face is asked to run the rendering preparations
-    // to submit their geometry to the active shader
+    // Every face is asked to run the rendering preparations
+    // to link/unlink their geometry to/from the active shader
     for (auto& faceInstance : m_faceInstances)
     {
         auto& face = faceInstance.getFace();
 
-        if (face.intersectVolume(volume))
+        if (volume.fill())
         {
-            if (volume.fill())
-            {
-                face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader());
-            }
-            else
-            {
-                face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader());
-            }
+            face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader());
+        }
+        else
+        {
+            face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader());
         }
     }
 }
