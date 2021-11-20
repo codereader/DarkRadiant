@@ -196,7 +196,7 @@ private:
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
-	void update_selected() const;
+	void updateSelectedPointsArray() const;
 	void renderSelectedPoints(IRenderableCollector& collector,
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const;

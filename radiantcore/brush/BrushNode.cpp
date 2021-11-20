@@ -375,8 +375,6 @@ void BrushNode::onPreRender(const VolumeTest& volume)
 
 void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	m_brush.evaluateBRep();
-
 	const Matrix4& l2w = localToWorld();
 
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Face)
@@ -436,6 +434,9 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
     }
 
     collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
+
+    // Render any selected points (vertices, edges, faces)
+    renderSelectedPoints(collector, volume, Matrix4::getIdentity());
 }
 
 void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -571,7 +572,9 @@ void BrushNode::renderSolid(IRenderableCollector& collector,
         }
     }
 #endif
+#if 0
 	renderSelectedPoints(collector, volume, localToWorld);
+#endif
 }
 
 void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
@@ -585,31 +588,33 @@ void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 		collector.addRenderable(*_renderEntity->getWireShader(), m_render_wireframe, localToWorld);
 	}
 #endif
+#if 0
 	renderSelectedPoints(collector, volume, localToWorld);
+#endif
 }
 
-void BrushNode::update_selected() const
+void BrushNode::updateSelectedPointsArray() const
 {
-	if (!_renderableComponentsNeedUpdate) return;
+    if (!_renderableComponentsNeedUpdate) return;
 
-	_renderableComponentsNeedUpdate = false;
+    _renderableComponentsNeedUpdate = false;
 
-	_selectedPoints.clear();
+    _selectedPoints.clear();
 
-	for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		if (i->getFace().contributes()) {
-			i->iterate_selected(_selectedPoints);
-		}
-	}
+    for (const auto& faceInstance : m_faceInstances)
+    {
+        if (faceInstance.getFace().contributes())
+        {
+            faceInstance.iterate_selected(_selectedPoints);
+        }
+    }
 }
 
 void BrushNode::renderSelectedPoints(IRenderableCollector& collector,
                                      const VolumeTest& volume,
                                      const Matrix4& localToWorld) const
 {
-	m_brush.evaluateBRep();
-
-	update_selected();
+    updateSelectedPointsArray();
 
 	if (!_selectedPoints.empty())
     {
