@@ -223,7 +223,7 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     // Look up type for this key. First check the property parm map,
     // then the entity class itself. If nothing is found, leave blank.
     // Get the type for this key if it exists, and the options
-    PropertyParms parms = getPropertyParmsForKey(key);
+    auto parms = getPropertyParmsForKey(key);
 
     // Set the values for the row
     wxutil::TreeModel::Row row(item, *_kvStore);
@@ -1469,30 +1469,24 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     }
 }
 
-EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(
-    const std::string& key
-)
+EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(const std::string& key)
 {
-    PropertyParms returnValue;
-
-    // First, attempt to find the key in the property map
-    for (PropertyParmMap::const_iterator i = _propertyTypes.begin();
-         i != _propertyTypes.end(); ++i)
+    // Attempt to find the key in the property map
+    for (auto&& [expression, parms] : _propertyTypes)
     {
-        if (i->first.empty()) continue; // safety check
+        if (expression.empty()) continue; // safety check
 
-        // Try to match the entity key against the regex (i->first)
-        std::regex expr(i->first);
+        // Try to match the entity key against the regex
         std::smatch matches;
 
-        if (!std::regex_match(key, matches, expr)) continue;
-
-        // We have a match
-        returnValue.type = i->second.type;
-        returnValue.options = i->second.options;
+        if (std::regex_match(key, matches, std::regex(expression)))
+        {
+            // We have a match
+            return parms;
+        }
     }
 
-    return returnValue;
+    return {};
 }
 
 void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
