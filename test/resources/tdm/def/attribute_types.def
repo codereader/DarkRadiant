@@ -1,7 +1,15 @@
 
 entityDef attribute_type_base
 {
-    
+    // A boolean descriptor, the defined bool is defined on this same class
+    "editor_bool base_defined_bool" "Some bool description"
+    "base_defined_bool" "1"
+
+    // A description for a key that is not defined here, but maybe on the subclasses
+    "editor_bool bool_not_defined_in_base" "Some bool description"
+
+    // This bool is only described here, but there's no key for it anywhere
+    "editor_bool bool_not_defined_anywhere" "Some bool description"
 }
 
 entityDef attribute_type_test
@@ -17,4 +25,14 @@ entityDef attribute_type_test
     // An editor bool key with the key defined on this same class
     "editor_bool defined_bool" "Some bool description"
     "defined_bool"  "1"
+
+    // The description is defined in base
+    "bool_not_defined_in_base"  "0"
+
+    // Some types
+    "editor_var a_var"          "A var"
+    "editor_string a_string"    "A string"
+    "editor_text a_text"        "A text"
+    "editor_vector a_vector"    "A vector"
+    "editor_hurk a_hurk"        "A hurk"
 }

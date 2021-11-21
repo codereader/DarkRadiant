@@ -1631,4 +1631,32 @@ TEST_F(EntityTest, GetNonInheritedAttributeType)
     EXPECT_EQ(eclass->getAttributeType("undefined_bool"), "bool");
 }
 
+TEST_F(EntityTest, GetInheritedAttributeType)
+{
+    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
+
+    // The "base_defined_bool" is described in the base, as is the key
+    EXPECT_EQ(eclass->getAttributeType("base_defined_bool"), "bool");
+
+    // The "bool_not_defined_in_base" is set on the subclass, the description is in base
+    EXPECT_EQ(eclass->getAttributeType("bool_not_defined_in_base"), "bool");
+
+    // The "bool_not_defined_anywhere" is not set anywhere, only the description is there
+    EXPECT_EQ(eclass->getAttributeType("bool_not_defined_anywhere"), "bool");
+}
+
+TEST_F(EntityTest, GetVariousAttributeTypes)
+{
+    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
+
+    // editor_var and editor_string will be converted to "text"
+    EXPECT_EQ(eclass->getAttributeType("a_var"), "text");
+    EXPECT_EQ(eclass->getAttributeType("a_string"), "text");
+
+    // Some definitions: the suffix after "editor_" should be accepted as type
+    EXPECT_EQ(eclass->getAttributeType("a_text"), "text");
+    EXPECT_EQ(eclass->getAttributeType("a_vector"), "vector");
+    EXPECT_EQ(eclass->getAttributeType("a_hurk"), "hurk");
+}
+
 }
