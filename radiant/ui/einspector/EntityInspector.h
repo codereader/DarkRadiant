@@ -228,6 +228,9 @@ private:
     void addClassProperties();
     void removeClassProperties();
 
+    void applyMergeActionStyle(const std::string& key, wxDataViewItemAttr& style);
+    void setOldAndNewValueColumns(wxutil::TreeModel::Row& row, const std::string& key, const wxDataViewItemAttr& style);
+
     void handleMergeActions(const scene::INodePtr& selectedNode);
     void handleKeyValueMergeAction(const scene::merge::IEntityKeyValueMergeAction::Ptr& mergeAction);
 

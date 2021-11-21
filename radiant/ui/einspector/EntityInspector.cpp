@@ -200,7 +200,7 @@ void EntityInspector::onMapEditModeChanged(IMap::EditMode mode)
 
 void EntityInspector::onKeyChange(const std::string& key, const std::string& value, bool isMultiValue)
 {
-    wxDataViewItem keyValueIter;
+    wxDataViewItem item;
     bool added = false;
 
     // Check if we already have an iter for this key (i.e. this is a
@@ -209,13 +209,13 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
 
     if (i != _keyValueIterMap.end())
     {
-        keyValueIter = i->second;
+        item = i->second;
     }
     else
     {
         // Append a new row to the list store and add it to the iter map
-        keyValueIter = _kvStore->AddItem().getItem();
-        _keyValueIterMap.emplace(key, keyValueIter);
+        item = _kvStore->AddItem().getItem();
+        _keyValueIterMap.emplace(key, item);
 
         added = true;
     }
@@ -226,36 +226,12 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     PropertyParms parms = getPropertyParmsForKey(key);
 
     // Set the values for the row
-    wxutil::TreeModel::Row row(keyValueIter, *_kvStore);
+    wxutil::TreeModel::Row row(item, *_kvStore);
 
     wxDataViewItemAttr style;
 
-    // Check if this key is affected by a merge operation
-    auto action = _mergeActions.find(key);
-
-    if (action != _mergeActions.end())
-    {
-        switch (action->second->getType())
-        {
-        case scene::merge::ActionType::AddKeyValue:
-            wxutil::TreeViewItemStyle::ApplyKeyValueAddedStyle(style);
-            break;
-        case scene::merge::ActionType::ChangeKeyValue:
-            wxutil::TreeViewItemStyle::ApplyKeyValueChangedStyle(style);
-            break;
-        case scene::merge::ActionType::RemoveKeyValue:
-            wxutil::TreeViewItemStyle::ApplyKeyValueRemovedStyle(style);
-            break;
-        }
-    }
-
-    // Conflicting actions get a special render style
-    auto conflict = _conflictActions.find(key);
-
-    if (conflict != _conflictActions.end() && conflict->second->getResolution() == scene::merge::ResolutionType::Unresolved)
-    {
-        wxutil::TreeViewItemStyle::ApplyKeyValueConflictStyle(style);
-    }
+    // Get a base style for any merge actions on this key
+    applyMergeActionStyle(key, style);
 
     wxIcon icon;
     icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : _propertyEditorFactory->getBitmapFor(parms.type));
@@ -277,33 +253,7 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
         row[_columns.booleanValue].setEnabled(false);
     }
 
-    if (action != _mergeActions.end())
-    {
-        if (action->second->getType() == scene::merge::ActionType::AddKeyValue)
-        {
-            row[_columns.oldValue] = std::string(); // no old value to show
-            row[_columns.oldValue] = style;
-        }
-        else
-        {
-            wxDataViewItemAttr oldAttr = style;
-            wxutil::TreeViewItemStyle::SetStrikethrough(oldAttr, true);
-            row[_columns.oldValue] = action->second->getUnchangedValue();
-            row[_columns.oldValue] = oldAttr;
-        }
-
-        row[_columns.newValue] = action->second->getValue();
-
-        wxDataViewItemAttr newAttr = style;
-        newAttr.SetBold(true);
-
-        row[_columns.newValue] = newAttr;
-    }
-    else
-    {
-        row[_columns.oldValue] = std::string();
-        row[_columns.newValue] = std::string();
-    }
+    setOldAndNewValueColumns(row, key, style);
 
     // Apply background style to all other columns
     row[_columns.name] = style;
@@ -344,6 +294,69 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     if (_currentPropertyEditor && key == selectedKey)
     {
         _currentPropertyEditor->updateFromEntities();
+    }
+}
+
+void EntityInspector::setOldAndNewValueColumns(wxutil::TreeModel::Row& row, const std::string& key, const wxDataViewItemAttr& style)
+{
+    auto action = _mergeActions.find(key);
+
+    if (action != _mergeActions.end())
+    {
+        if (action->second->getType() == scene::merge::ActionType::AddKeyValue)
+        {
+            row[_columns.oldValue] = std::string(); // no old value to show
+            row[_columns.oldValue] = style;
+        }
+        else
+        {
+            wxDataViewItemAttr oldAttr = style;
+            wxutil::TreeViewItemStyle::SetStrikethrough(oldAttr, true);
+            row[_columns.oldValue] = action->second->getUnchangedValue();
+            row[_columns.oldValue] = oldAttr;
+        }
+
+        row[_columns.newValue] = action->second->getValue();
+
+        wxDataViewItemAttr newAttr = style;
+        newAttr.SetBold(true);
+
+        row[_columns.newValue] = newAttr;
+    }
+    else
+    {
+        row[_columns.oldValue] = std::string();
+        row[_columns.newValue] = std::string();
+    }
+}
+
+void EntityInspector::applyMergeActionStyle(const std::string& key, wxDataViewItemAttr& style)
+{
+    // Check if this key is affected by a merge operation
+    auto action = _mergeActions.find(key);
+
+    if (action != _mergeActions.end())
+    {
+        switch (action->second->getType())
+        {
+        case scene::merge::ActionType::AddKeyValue:
+            wxutil::TreeViewItemStyle::ApplyKeyValueAddedStyle(style);
+            break;
+        case scene::merge::ActionType::ChangeKeyValue:
+            wxutil::TreeViewItemStyle::ApplyKeyValueChangedStyle(style);
+            break;
+        case scene::merge::ActionType::RemoveKeyValue:
+            wxutil::TreeViewItemStyle::ApplyKeyValueRemovedStyle(style);
+            break;
+        }
+    }
+
+    // Conflicting actions get a special render style
+    auto conflict = _conflictActions.find(key);
+
+    if (conflict != _conflictActions.end() && conflict->second->getResolution() == scene::merge::ResolutionType::Unresolved)
+    {
+        wxutil::TreeViewItemStyle::ApplyKeyValueConflictStyle(style);
     }
 }
 
