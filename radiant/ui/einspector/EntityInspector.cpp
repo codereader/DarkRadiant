@@ -1528,7 +1528,7 @@ std::string EntityInspector::getPropertyTypeForKey(const std::string& key)
     // Query each eclass for the key type, pick the first one
     for (const auto& eclass : selectedEclasses)
     {
-        const auto& keyType = eclass->getAttribute(key, true).getType();
+        const auto& keyType = eclass->getAttributeType(key);
 
         if (!keyType.empty())
         {
