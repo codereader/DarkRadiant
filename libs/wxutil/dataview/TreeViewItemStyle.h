@@ -45,6 +45,14 @@ public:
         return wxDataViewItemAttr();
     }
 
+    static wxDataViewItemAttr Inherited()
+    {
+        wxDataViewItemAttr italic;
+        italic.SetItalic(true);
+
+        return italic;
+    }
+
     // Styles used by the merge action visualisation in data views
 
     static void ApplyKeyValueAddedStyle(wxDataViewItemAttr& attr)

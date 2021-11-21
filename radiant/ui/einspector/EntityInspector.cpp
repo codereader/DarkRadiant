@@ -1552,36 +1552,37 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 {
     // Only add properties with values, we don't want the optional
     // "editor_var xxx" properties here.
-    if (!a.getValue().empty())
+    if (a.getValue().empty()) return;
+
+    auto row = _kvStore->AddItem();
+
+    auto style = wxutil::TreeViewItemStyle::Inherited();
+
+    row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), _emptyIcon));
+    row[_columns.value] = a.getValue();
+
+    // Load the correct icon for this key
+    updateKeyType(row);
+
+    // Inherited values have an inactive checkbox, so assign a false value and disable
+    if (a.getType() == "bool")
     {
-        wxutil::TreeModel::Row row = _kvStore->AddItem();
-
-        wxDataViewItemAttr grey;
-        grey.SetItalic(true);
-
-        row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), _emptyIcon));
-        row[_columns.value] = a.getValue();
-
-        // Inherited values have an inactive checkbox, so assign a false value and disable
-        if (a.getType() == "bool")
-        {
-            row[_columns.booleanValue] = a.getValue() == "1";
-        }
-        else
-        {
-            row[_columns.booleanValue] = false;
-            row[_columns.booleanValue].setEnabled(false);
-        }
-
-        row[_columns.name] = grey;
-        row[_columns.value] = grey;
-        row[_columns.oldValue] = std::string();
-        row[_columns.newValue] = std::string();
-
-        row[_columns.isInherited] = true;
-
-        row.SendItemAdded();
+        row[_columns.booleanValue] = a.getValue() == "1";
     }
+    else
+    {
+        row[_columns.booleanValue] = false;
+        row[_columns.booleanValue].setEnabled(false);
+    }
+
+    row[_columns.name] = style;
+    row[_columns.value] = style;
+    row[_columns.oldValue] = std::string();
+    row[_columns.newValue] = std::string();
+
+    row[_columns.isInherited] = true;
+
+    row.SendItemAdded();
 }
 
 // Append inherited (entityclass) properties
