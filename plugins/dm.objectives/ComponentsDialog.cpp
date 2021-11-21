@@ -502,6 +502,25 @@ void ComponentsDialog::_onDeleteComponent(wxCommandEvent& ev)
 
         // Erase the actual component
 		_components.erase(idx);
+
+        // #5810: Re-index the remaining components (shift all higher ones by -1)
+        auto highestKey = _components.rbegin();
+
+        if (highestKey != _components.rend())
+        {
+            for (auto key = idx + 1; key <= highestKey->first; ++key)
+            {
+                // Attempt to move the component with the given key
+                auto node = _components.extract(key);
+
+                // If a component was unlinked from the map, move it downwards by one index
+                if (!node.empty())
+                {
+                    node.key()--;
+                    _components.insert(std::move(node));
+                }
+            }
+        }
 	}
 
 	// Refresh the list
