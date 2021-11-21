@@ -149,11 +149,9 @@ private:
     void resetColour();
     const std::string& getWireShader() const override;
     const std::string& getFillShader() const override;
-    EntityClassAttribute& getAttribute(const std::string&,
-                                       bool includeInherited = true) override;
-    const EntityClassAttribute&
-    getAttribute(const std::string&,
-                 bool includeInherited = true) const override;
+    EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) override;
+    const EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) const override;
+    const std::string& getAttributeType(const std::string& name) const override;
     void forEachAttribute(AttributeVisitor, bool) const override;
 
     const std::string& getModelPath() const override { return _model; }

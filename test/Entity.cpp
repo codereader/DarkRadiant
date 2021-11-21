@@ -1614,4 +1614,21 @@ TEST_F(EntityTest, MovePlayerStart)
     EXPECT_EQ(Node_getEntity(playerStart)->getKeyValue("origin"), originalPosition) << "Origin change didn't get undone";
 }
 
+TEST_F(EntityTest, GetDefaultAttributeType)
+{
+    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
+    EXPECT_EQ(eclass->getAttributeType("ordinary_key"), "text");
+}
+
+TEST_F(EntityTest, GetNonInheritedAttributeType)
+{
+    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
+    
+    // The "defined_bool" is defined on the eclass, next to its editor_bool descriptor
+    EXPECT_EQ(eclass->getAttributeType("defined_bool"), "bool");
+
+    // The "undefined_bool" is not directly set on the eclass
+    EXPECT_EQ(eclass->getAttributeType("undefined_bool"), "bool");
+}
+
 }

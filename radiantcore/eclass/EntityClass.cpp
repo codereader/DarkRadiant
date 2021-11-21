@@ -323,9 +323,7 @@ EntityClassAttribute& EntityClass::getAttribute(const std::string& name,
 }
 
 // Find a single attribute
-const EntityClassAttribute&
-EntityClass::getAttribute(const std::string& name,
-                               bool includeInherited) const
+const EntityClassAttribute& EntityClass::getAttribute(const std::string& name, bool includeInherited) const
 {
     // First look up the attribute on this class; if found, we can simply return it
     auto f = _attributes.find(name);
@@ -340,6 +338,11 @@ EntityClass::getAttribute(const std::string& name,
     // Otherwise delegate to the parent (which will recurse until an attribute
     // is found or a null parent ends the process)
     return _parent->getAttribute(name);
+}
+
+const std::string& EntityClass::getAttributeType(const std::string& name) const
+{
+    return _emptyAttribute.getType();
 }
 
 void EntityClass::clear()
@@ -402,6 +405,11 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 
     // Required open brace (the name has already been parsed by the EClassManager)
     tokeniser.assertNextToken("{");
+
+    if (getName() == "atdm:security_camera01")
+    {
+        int i = 6;
+    }
 
     // Loop over all of the keys in this entitydef
     std::string key;

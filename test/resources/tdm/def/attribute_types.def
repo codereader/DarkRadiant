@@ -1,0 +1,20 @@
+
+entityDef attribute_type_base
+{
+    
+}
+
+entityDef attribute_type_test
+{
+    "inherit" "attribute_type_base"
+
+    // Just an ordinary key without any editor_ declarations
+    "ordinary_key" "Test"
+
+    // An editor_bool key without the actual key being defined on this class
+    "editor_bool undefined_bool" "Some bool description"
+
+    // An editor bool key with the key defined on this same class
+    "editor_bool defined_bool" "Some bool description"
+    "defined_bool"  "1"
+}

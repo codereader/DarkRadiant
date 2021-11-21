@@ -138,10 +138,11 @@ typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
  *
  * \ingroup eclass
  */
-class IEntityClass
-: public ModResource
+class IEntityClass : 
+    public ModResource
 {
 public:
+    virtual ~IEntityClass() {}
 
     /// Signal emitted when entity class contents are changed or reloaded
     virtual sigc::signal<void>& changedSignal() = 0;
@@ -201,13 +202,17 @@ public:
      * A reference to the named EntityClassAttribute. If the named attribute is
      * not found, an empty EntityClassAttribute is returned.
      */
-    virtual EntityClassAttribute&
-    getAttribute(const std::string& name, bool includeInherited = true) = 0;
+    virtual EntityClassAttribute& getAttribute(const std::string& name, 
+        bool includeInherited = true) = 0;
 
     /// Get a const EntityClassAttribute reference by name
-    virtual const EntityClassAttribute&
-    getAttribute(const std::string& name,
+    virtual const EntityClassAttribute& getAttribute(const std::string& name,
                  bool includeInherited = true) const = 0;
+
+    // Returns the attribute type string for the given name.
+    // This method will walk up the inheritance hierarchy until it encounters a type definition.
+    // If no type is found, an empty string will be returned.
+    virtual const std::string& getAttributeType(const std::string& name) const = 0;
 
     /**
      * Function that will be invoked by forEachAttribute.
