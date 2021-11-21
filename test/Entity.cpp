@@ -1617,7 +1617,9 @@ TEST_F(EntityTest, MovePlayerStart)
 TEST_F(EntityTest, GetDefaultAttributeType)
 {
     auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-    EXPECT_EQ(eclass->getAttributeType("ordinary_key"), "text");
+    
+    // The default type is empty
+    EXPECT_EQ(eclass->getAttributeType("ordinary_key"), "");
 }
 
 TEST_F(EntityTest, GetNonInheritedAttributeType)

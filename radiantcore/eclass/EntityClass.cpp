@@ -151,31 +151,28 @@ const std::string& EntityClass::getFillShader() const
 /* ATTRIBUTES */
 
 /**
- * Insert an EntityClassAttribute, without overwriting previous values.
+ * Insert an EntityClassAttribute, doesn't overwrite previous values,
+ * but will merge useful description information into the existing one.
  */
-void EntityClass::addAttribute(const EntityClassAttribute& attribute)
+void EntityClass::emplaceAttribute(EntityClassAttribute&& attribute)
 {
-    // Try to insert the class attribute
-    std::pair<EntityAttributeMap::iterator, bool> result = _attributes.insert(
-        EntityAttributeMap::value_type(attribute.getName(), attribute)
-    );
+    // Try to emplace the class attribute
+    auto result = _attributes.try_emplace(attribute.getName(), std::move(attribute));
 
     if (!result.second)
     {
-        EntityClassAttribute& existing = result.first->second;
+        auto& existing = result.first->second;
 
         // greebo: Attribute already existed, check if we have some
         // descriptive properties to be added to the existing one.
         if (!attribute.getDescription().empty() && existing.getDescription().empty())
         {
-            // Use the shared string reference to save memory
             existing.setDescription(attribute.getDescription());
         }
 
-        // Check if we have a more descriptive type than "text"
-        if (attribute.getType() != "text" && existing.getType() == "text")
+        // Check if we have a more descriptive type
+        if (!attribute.getType().empty() && existing.getType().empty())
         {
-            // Use the shared string reference to save memory
             existing.setType(attribute.getType());
         }
     }
@@ -407,7 +404,7 @@ void EntityClass::parseEditorSpawnarg(const std::string& key,
 
             // Construct an attribute with empty value, but with valid
             // description
-            addAttribute(EntityClassAttribute(type, attName, "", value));
+            emplaceAttribute(EntityClassAttribute(type, attName, "", value));
         }
     }
 }
@@ -454,11 +451,11 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         // Add the EntityClassAttribute for this key/val
         if (attribute.getType().empty())
         {
-            // Following key-specific processing, add the keyvalue to the eclass
-            EntityClassAttribute attribute("text", key, value, "");
-
             // Type is empty, attribute does not exist, add it.
-            addAttribute(attribute);
+            // 
+            // Following key-specific processing, add the keyvalue to the eclass
+            // The type is an empty string, it will be set to a non-type as soon as we encounter it
+            emplaceAttribute(EntityClassAttribute("", key, value, ""));
         }
         else if (attribute.getValue().empty())
         {

@@ -99,7 +99,7 @@ private:
     void forEachAttributeInternal(InternalAttrVisitor visitor,
                                   bool editorKeys) const;
 
-  public:
+public:
     /**
      * Static function to create a default entity class.
      *
@@ -132,8 +132,7 @@ private:
      */
     EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
 
-    /// Add a new attribute
-    void addAttribute(const EntityClassAttribute& attribute);
+    void emplaceAttribute(EntityClassAttribute&& attribute);
 
     // IEntityClass implementation
     std::string getName() const override;
