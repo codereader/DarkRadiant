@@ -220,11 +220,6 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
         added = true;
     }
 
-    // Look up type for this key. First check the property parm map,
-    // then the entity class itself. If nothing is found, leave blank.
-    // Get the type for this key if it exists, and the options
-    auto keyType = getPropertyTypeForKey(key);
-
     // Set the values for the row
     wxutil::TreeModel::Row row(item, *_kvStore);
 
@@ -233,25 +228,9 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     // Get a base style for any merge actions on this key
     applyMergeActionStyle(key, style);
 
-    wxIcon icon;
-    icon.CopyFromBitmap(keyType.empty() ? _emptyIcon : _propertyEditorFactory->getBitmapFor(keyType));
-
-    row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
+    // Insert the key and the value, the icon will be updated later
+    row[_columns.name] = wxVariant(wxDataViewIconText(key, _emptyIcon));
     row[_columns.value] = value;
-
-    if (keyType == "bool")
-    {
-        // Render a checkbox for boolean values (store an actual bool)
-        row[_columns.booleanValue] = value == "1";
-
-        // Column is enabled by default after assignment
-    }
-    else
-    {
-        // Store false to render the checkbox as unchecked
-        row[_columns.booleanValue] = false;
-        row[_columns.booleanValue].setEnabled(false);
-    }
 
     setOldAndNewValueColumns(row, key, style);
 
@@ -267,6 +246,8 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
 
     row[_columns.value] = style;
     row[_columns.isInherited] = false;
+
+    updateKeyType(row);
 
     if (added)
     {
@@ -294,6 +275,38 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     if (_currentPropertyEditor && key == selectedKey)
     {
         _currentPropertyEditor->updateFromEntities();
+    }
+}
+
+void EntityInspector::updateKeyType(wxutil::TreeModel::Row& row)
+{
+    auto namePlusIcon = static_cast<wxDataViewIconText>(row[_columns.name]);
+    auto key = namePlusIcon.GetText().ToStdString();
+    auto value = row[_columns.value].getString();
+
+    // Look up type for this key. First check the property parm map,
+    // then the entity class itself. If nothing is found, leave blank.
+    // Get the type for this key if it exists, and the options
+    auto keyType = getPropertyTypeForKey(key);
+
+    wxIcon icon;
+    icon.CopyFromBitmap(keyType.empty() ? _emptyIcon : _propertyEditorFactory->getBitmapFor(keyType));
+
+    // Assign the icon to the column
+    row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
+
+    if (keyType == "bool")
+    {
+        // Render a checkbox for boolean values (store an actual bool)
+        row[_columns.booleanValue] = value == "1";
+
+        // Column is enabled by default after assignment
+    }
+    else
+    {
+        // Store false to render the checkbox as unchecked
+        row[_columns.booleanValue] = false;
+        row[_columns.booleanValue].setEnabled(false);
     }
 }
 
@@ -795,7 +808,14 @@ void EntityInspector::onIdle()
     {
         _selectionNeedsUpdate = false;
 
+        // Fire the selection update. This will invoke onKeyAdded/onKeyChanged etc.
+        // on ourselves for every spawnarg that should be listed or removed
         _entitySelection->update();
+        
+        // After selection rescan, trigger an update of the key types
+        // of all listed key/value pairs. Not all information is fully available
+        // during the above update
+        updateListedKeyTypes();
 
         if (_entitySelection->empty())
         {
@@ -1491,7 +1511,41 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(const std
 
 std::string EntityInspector::getPropertyTypeForKey(const std::string& key)
 {
-    return getPropertyParmsForKey(key).type;
+    auto type = getPropertyParmsForKey(key).type;
+
+    if (!type.empty())
+    {
+        return type;
+    }
+
+    std::set<IEntityClassPtr> selectedEclasses;
+
+    _entitySelection->foreachEntity([&](Entity* entity)
+    {
+        selectedEclasses.emplace(entity->getEntityClass());
+    });
+
+    // Query each eclass for the key type, pick the first one
+    for (const auto& eclass : selectedEclasses)
+    {
+        const auto& keyType = eclass->getAttribute(key, true).getType();
+
+        if (!keyType.empty())
+        {
+            return keyType;
+        }
+    }
+
+    return {};
+}
+
+void EntityInspector::updateListedKeyTypes()
+{
+    _kvStore->ForeachNode([&](wxutil::TreeModel::Row& row)
+    {
+        updateKeyType(row);
+        row.SendItemChanged();
+    });
 }
 
 void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
