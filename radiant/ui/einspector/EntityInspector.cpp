@@ -18,6 +18,7 @@
 #include "scene/SelectionIndex.h"
 #include "scenelib.h"
 #include "eclass.h"
+#include "gamelib.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dataview/TreeModel.h"
@@ -924,19 +925,15 @@ void EntityInspector::loadPropertyMap()
 {
     _propertyTypes.clear();
 
-    xml::NodeList pNodes = GlobalGameManager().currentGame()->getLocalXPath(PROPERTY_NODES_XPATH);
+    auto nodes = game::current::getNodes(PROPERTY_NODES_XPATH);
 
-    for (xml::NodeList::const_iterator iter = pNodes.begin();
-         iter != pNodes.end();
-         ++iter)
+    for (const auto& node : nodes)
     {
         PropertyParms parms;
-        parms.type = iter->getAttributeValue("type");
-        parms.options = iter->getAttributeValue("options");
+        parms.type = node.getAttributeValue("type");
+        parms.options = node.getAttributeValue("options");
 
-        _propertyTypes.insert(PropertyParmMap::value_type(
-            iter->getAttributeValue("match"), parms)
-        );
+        _propertyTypes.emplace(node.getAttributeValue("match"), parms);
     }
 }
 
@@ -1459,7 +1456,7 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 
                 if (eclass)
                 {
-                    parms.type = eclass->getAttribute(key).getType();
+                    parms.type = eclass->getAttributeType(key);
                 }
             }
 
