@@ -342,7 +342,21 @@ const EntityClassAttribute& EntityClass::getAttribute(const std::string& name, b
 
 const std::string& EntityClass::getAttributeType(const std::string& name) const
 {
-    return _emptyAttribute.getType();
+    // Check the attributes on this class
+    const auto& attribute = _attributes.find(name);
+
+    if (attribute != _attributes.end())
+    {
+        const auto& type = attribute->second.getType();
+
+        if (!type.empty())
+        {
+            return type;
+        }
+    }
+
+    // Walk up the inheritance tree until we spot a non-empty type
+    return _parent ? _parent->getAttributeType(name) : _emptyAttribute.getType();
 }
 
 void EntityClass::clear()
@@ -405,11 +419,6 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 
     // Required open brace (the name has already been parsed by the EClassManager)
     tokeniser.assertNextToken("{");
-
-    if (getName() == "atdm:security_camera01")
-    {
-        int i = 6;
-    }
 
     // Loop over all of the keys in this entitydef
     std::string key;
