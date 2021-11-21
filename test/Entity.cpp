@@ -1622,6 +1622,14 @@ TEST_F(EntityTest, GetDefaultAttributeType)
     EXPECT_EQ(eclass->getAttributeType("ordinary_key"), "");
 }
 
+TEST_F(EntityTest, GetDefaultAttributeDescription)
+{
+    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
+
+    // The default description is empty
+    EXPECT_EQ(eclass->getAttributeDescription("ordinary_key"), "");
+}
+
 TEST_F(EntityTest, GetNonInheritedAttributeType)
 {
     auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
@@ -1645,6 +1653,31 @@ TEST_F(EntityTest, GetInheritedAttributeType)
 
     // The "bool_not_defined_anywhere" is not set anywhere, only the description is there
     EXPECT_EQ(eclass->getAttributeType("bool_not_defined_anywhere"), "bool");
+}
+
+TEST_F(EntityTest, GetNonInheritedAttributeDescription)
+{
+    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
+
+    // The "defined_bool" is defined on the eclass, next to its editor_bool descriptor
+    EXPECT_EQ(eclass->getAttributeDescription("defined_bool"), "Some bool description 2");
+
+    // The "undefined_bool" is not directly set on the eclass
+    EXPECT_EQ(eclass->getAttributeDescription("undefined_bool"), "Some bool description 1");
+}
+
+TEST_F(EntityTest, GetInheritedAttributeDescription)
+{
+    auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
+
+    // The "base_defined_bool" is described in the base, as is the key
+    EXPECT_EQ(eclass->getAttributeDescription("base_defined_bool"), "Some bool description");
+
+    // The "bool_not_defined_in_base" is set on the subclass, the description is in base
+    EXPECT_EQ(eclass->getAttributeDescription("bool_not_defined_in_base"), "Some bool description 12");
+
+    // The "bool_not_defined_anywhere" is not set anywhere, only the description is there
+    EXPECT_EQ(eclass->getAttributeDescription("bool_not_defined_anywhere"), "Some bool description 23");
 }
 
 TEST_F(EntityTest, GetVariousAttributeTypes)

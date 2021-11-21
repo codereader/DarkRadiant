@@ -15,6 +15,7 @@ namespace eclass
 const std::string EntityClass::DefaultWireShader("<0.3 0.3 1>");
 const std::string EntityClass::DefaultFillShader("(0.3 0.3 1)");
 const Vector3 EntityClass::DefaultEntityColour(0.3, 0.3, 1);
+const EntityClassAttribute EntityClass::_emptyAttribute("", "", "");
 
 EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo) :
     EntityClass(name, fileInfo, false)
@@ -31,7 +32,6 @@ EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo,
   _skin(""),
   _inheritanceResolved(false),
   _modName("base"),
-  _emptyAttribute("", "", ""),
   _parseStamp(0),
   _blockChangeSignal(false)
 {}
@@ -354,6 +354,25 @@ const std::string& EntityClass::getAttributeType(const std::string& name) const
 
     // Walk up the inheritance tree until we spot a non-empty type
     return _parent ? _parent->getAttributeType(name) : _emptyAttribute.getType();
+}
+
+const std::string& EntityClass::getAttributeDescription(const std::string& name) const
+{
+    // Check the attributes on this class first
+    const auto& attribute = _attributes.find(name);
+
+    if (attribute != _attributes.end())
+    {
+        const auto& description = attribute->second.getDescription();
+
+        if (!description.empty())
+        {
+            return description;
+        }
+    }
+
+    // Walk up the inheritance tree until we spot a non-empty description
+    return _parent ? _parent->getAttributeDescription(name) : _emptyAttribute.getDescription();
 }
 
 void EntityClass::clear()

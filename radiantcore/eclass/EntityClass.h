@@ -79,7 +79,7 @@ private:
     std::string _modName;
 
     // The empty attribute
-    EntityClassAttribute _emptyAttribute;
+    static const EntityClassAttribute _emptyAttribute;
 
     // The time this def has been parsed
     std::size_t _parseStamp;
@@ -151,6 +151,7 @@ public:
     EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) override;
     const EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) const override;
     const std::string& getAttributeType(const std::string& name) const override;
+    const std::string& getAttributeDescription(const std::string& name) const override;
     void forEachAttribute(AttributeVisitor, bool) const override;
 
     const std::string& getModelPath() const override { return _model; }

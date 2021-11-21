@@ -1386,11 +1386,6 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
     // Get the highlighted key
     auto selectedKey = getSelectedKey();
 
-    // Look up type for this key. First check the property parm map,
-    // then the entity class itself. If nothing is found, leave blank.
-    // Get the type for this key if it exists, and the options
-    PropertyParms parms = getPropertyParmsForKey(selectedKey);
-
     // Check the entityclass (which will return blank if not found)
     auto eclass = _entitySelection->getSingleSharedEntityClass();
     
@@ -1407,9 +1402,8 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
         return;
     }
 
-    // Find the attribute on the eclass, that's where the descriptions are defined
-    const auto& attr = eclass->getAttribute(selectedKey);
-    setHelpText(!attr.getDescription().empty() ? attr.getDescription() : "");
+    // Find the (inherited) attribute description
+    setHelpText(eclass->getAttributeDescription(selectedKey));
 }
 
 // Update the PropertyEditor pane, displaying the PropertyEditor if necessary

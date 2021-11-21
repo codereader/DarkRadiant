@@ -214,6 +214,10 @@ public:
     // If no type is found, an empty string will be returned.
     virtual const std::string& getAttributeType(const std::string& name) const = 0;
 
+    // Returns the attribute description string for the given name.
+    // This method will walk up the inheritance hierarchy until it encounters a non-empty description.
+    virtual const std::string& getAttributeDescription(const std::string& name) const = 0;
+
     /**
      * Function that will be invoked by forEachAttribute.
      *

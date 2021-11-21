@@ -6,10 +6,10 @@ entityDef attribute_type_base
     "base_defined_bool" "1"
 
     // A description for a key that is not defined here, but maybe on the subclasses
-    "editor_bool bool_not_defined_in_base" "Some bool description"
+    "editor_bool bool_not_defined_in_base" "Some bool description 12"
 
     // This bool is only described here, but there's no key for it anywhere
-    "editor_bool bool_not_defined_anywhere" "Some bool description"
+    "editor_bool bool_not_defined_anywhere" "Some bool description 23"
 }
 
 entityDef attribute_type_test
@@ -20,10 +20,10 @@ entityDef attribute_type_test
     "ordinary_key" "Test"
 
     // An editor_bool key without the actual key being defined on this class
-    "editor_bool undefined_bool" "Some bool description"
+    "editor_bool undefined_bool" "Some bool description 1"
 
     // An editor bool key with the key defined on this same class
-    "editor_bool defined_bool" "Some bool description"
+    "editor_bool defined_bool" "Some bool description 2"
     "defined_bool"  "1"
 
     // The description is defined in base
