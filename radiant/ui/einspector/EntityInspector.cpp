@@ -223,7 +223,7 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     // Look up type for this key. First check the property parm map,
     // then the entity class itself. If nothing is found, leave blank.
     // Get the type for this key if it exists, and the options
-    auto parms = getPropertyParmsForKey(key);
+    auto keyType = getPropertyTypeForKey(key);
 
     // Set the values for the row
     wxutil::TreeModel::Row row(item, *_kvStore);
@@ -234,12 +234,12 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     applyMergeActionStyle(key, style);
 
     wxIcon icon;
-    icon.CopyFromBitmap(parms.type.empty() ? _emptyIcon : _propertyEditorFactory->getBitmapFor(parms.type));
+    icon.CopyFromBitmap(keyType.empty() ? _emptyIcon : _propertyEditorFactory->getBitmapFor(keyType));
 
     row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
     row[_columns.value] = value;
 
-    if (parms.type == "bool")
+    if (keyType == "bool")
     {
         // Render a checkbox for boolean values (store an actual bool)
         row[_columns.booleanValue] = value == "1";
@@ -1487,6 +1487,11 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(const std
     }
 
     return {};
+}
+
+std::string EntityInspector::getPropertyTypeForKey(const std::string& key)
+{
+    return getPropertyParmsForKey(key).type;
 }
 
 void EntityInspector::addClassAttribute(const EntityClassAttribute& a)

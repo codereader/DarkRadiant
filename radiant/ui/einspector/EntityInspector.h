@@ -247,6 +247,7 @@ private:
 
 	// Returns property type and option for the given entity key
 	PropertyParms getPropertyParmsForKey(const std::string& key);
+	std::string getPropertyTypeForKey(const std::string& key);
 
     // Update tree view contents and property editor
     void updateGUIElements();
