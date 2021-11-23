@@ -24,8 +24,6 @@ class Doom3GroupNode;
  * An entity that contains brushes or patches, such as func_static.
  */
 class Doom3Group
-: public Bounded,
-  public Snappable
 {
 	Doom3GroupNode& _owner;
 	SpawnArgs& _spawnArgs;
