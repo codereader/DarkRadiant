@@ -370,7 +370,7 @@ void Doom3GroupNode::_onTransformationChanged()
 	// If this is a container, pass the call to the children and leave the entity unharmed
 	if (!isModel())
 	{
-		scene::foreachTransformable(shared_from_this(), [] (ITransformable& child)
+		scene::forEachTransformable(*this, [] (ITransformable& child)
 		{
 			child.revertTransform();
 		});
@@ -491,7 +491,7 @@ void Doom3GroupNode::rotate(const Quaternion& rotation)
 	if (!isModel())
 	{
 		// Rotate all child nodes too
-		scene::foreachTransformable(shared_from_this(), [&] (ITransformable& child)
+		scene::forEachTransformable(*this, [&] (ITransformable& child)
 		{
 			child.setType(TRANSFORM_PRIMITIVE);
 			child.setRotation(rotation);
@@ -512,7 +512,7 @@ void Doom3GroupNode::scale(const Vector3& scale)
 	if (!isModel())
 	{
 		// Scale all child nodes too
-		scene::foreachTransformable(shared_from_this(), [&] (ITransformable& child)
+		scene::forEachTransformable(*this, [&] (ITransformable& child)
 		{
 			child.setType(TRANSFORM_PRIMITIVE);
 			child.setScale(scale);
@@ -554,7 +554,7 @@ void Doom3GroupNode::freezeTransform()
 
 	if (!isModel())
 	{
-		scene::foreachTransformable(shared_from_this(), [] (ITransformable& child)
+		scene::forEachTransformable(*this, [] (ITransformable& child)
 		{
 			child.freezeTransform();
 		});
@@ -694,7 +694,7 @@ void Doom3GroupNode::translateChildren(const Vector3& childTranslation)
 	if (inScene())
 	{
 		// Translate all child nodes too
-		scene::foreachTransformable(shared_from_this(), [&] (ITransformable& child)
+		scene::forEachTransformable(*this, [&] (ITransformable& child)
 		{
 			child.setType(TRANSFORM_PRIMITIVE);
 			child.setTranslation(childTranslation);

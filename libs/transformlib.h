@@ -21,23 +21,29 @@ namespace scene
 {
 
 /**
- * Visit each transformable that is child of the given node with the given functor.
+ * @brief Visit each Transformable child node
+ *
+ * @tparam Func
+ * Functor object accepting a single parameter consisting of an ITransformable&.
+ *
+ * @param node
+ * Node to start traversal from.
+ *
+ * @param functor
+ * Functor to invoke.
  */
-inline void foreachTransformable(const scene::INodePtr& node, const std::function<void(ITransformable&)>& functor)
+template<typename Func>
+void forEachTransformable(const INode& node, Func functor)
 {
-	if (!node) return;
+    node.foreachNode(
+        [&](const scene::INodePtr& child) -> bool
+        {
+            ITransformablePtr transformable = Node_getTransformable(child);
+            if (transformable)
+                functor(*transformable);
 
-	node->foreachNode([&] (const scene::INodePtr& child)->bool
-	{
-		ITransformablePtr transformable = Node_getTransformable(child);
-
-		if (transformable)
-		{
-			functor(*transformable);
-		}
-
-		return true;
-	});
+            return true;
+        }
+    );
 }
-
 }
