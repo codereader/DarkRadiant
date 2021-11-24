@@ -88,7 +88,7 @@ class Patch :
 
 	// If true, this patch is using fixed subdivisions
 	bool _patchDef3;
-	
+
 	// Fixed subdivision layout of this patch
 	Subdivisions _subDivisions;
 
@@ -119,7 +119,7 @@ public:
 	const AABB& localAABB() const override;
 
 	// Render functions: wireframe mode and components
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
+	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
 		const Matrix4& localToWorld, const IRenderEntity& entity) const;
 
     /// Submit renderable edge and face points
@@ -277,7 +277,7 @@ public:
 	 * texture scale. So if the default texture scale is 0.5, the texture coordinates
 	 * are set such that the scaling never exceeds this value.
 	 */
-	void scaleTextureNaturally();
+	void scaleTextureNaturally() override;
 
 	// Aligns the patch texture along the given side/border - if possible
 	void alignTexture(AlignEdge type) override;
@@ -354,14 +354,14 @@ public:
 	 */
 	void setFixedSubdivisions(bool isFixed, const Subdivisions& divisions) override;
 
-	// Calculate the intersection of the given ray with the full patch mesh, 
+	// Calculate the intersection of the given ray with the full patch mesh,
 	// returns true on intersection and fills in the out variable
 	bool getIntersection(const Ray& ray, Vector3& intersection);
 
 	// Static signal holder, signal is emitted after any patch texture has changed
 	static sigc::signal<void>& signal_patchTextureChanged();
 
-    void updateTesselation(bool force = false);
+    void updateTesselation(bool force = false) override;
 
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change

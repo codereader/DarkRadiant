@@ -89,11 +89,11 @@ public:
     void connectUndoSystem(IUndoSystem& undoSystem);
     void disconnectUndoSystem(IUndoSystem& undoSystem);
 
-	void undoSave();
+	void undoSave() override;
 
 	// undoable
-	IUndoMementoPtr exportState() const;
-	void importState(const IUndoMementoPtr& data);
+	IUndoMementoPtr exportState() const override;
+	void importState(const IUndoMementoPtr& data) override;
 
     /// Translate the face by the given vector
     void translate(const Vector3& translation);
@@ -126,8 +126,8 @@ public:
 
 	void shaderChanged();
 
-	const std::string& getShader() const;
-	void setShader(const std::string& name);
+	const std::string& getShader() const override;
+	void setShader(const std::string& name) override;
 
 	void revertTexdef();
 	void texdefChanged();
@@ -140,7 +140,7 @@ public:
 
     // Constructs the texture projection matrix from the given (world) vertex and texture coords.
     // Three vertices and their UV coordinates are enough to construct the texdef.
-    void setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3]);
+    void setTexDefFromPoints(const Vector3 points[3], const Vector2 uvs[3]) override;
 
 	ShiftScaleRotation getShiftScaleRotation() const override;
 	void setShiftScaleRotation(const ShiftScaleRotation& ssr) override;
@@ -173,7 +173,7 @@ public:
 	/** greebo: This translates the texture as much towards
 	 * 	the origin as possible. The face appearance stays unchanged.
 	 */
-	void normaliseTexture();
+	void normaliseTexture() override;
 
 	void emitTextureCoordinates();
 
@@ -185,13 +185,13 @@ public:
 
 	void construct_centroid();
 
-	const Winding& getWinding() const;
-	Winding& getWinding();
+	const Winding& getWinding() const override;
+	Winding& getWinding() override;
 
 	const Plane3& plane3() const;
 
 	// Returns the Doom 3 plane
-	const Plane3& getPlane3() const;
+	const Plane3& getPlane3() const override;
 
 	FacePlane& getPlane();
 	const FacePlane& getPlane() const;
