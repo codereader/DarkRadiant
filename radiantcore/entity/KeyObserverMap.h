@@ -50,13 +50,16 @@ class KeyObserverMap :
 
     void attachObserver(const std::string& key, KeyObserver& observer)
     {
-		// Attach immediately if the entity already has such a (non-inherited) spawnarg
-		if (EntityKeyValuePtr keyValue = _entity.getEntityKeyValue(key); keyValue) {
-			keyValue->attach(observer);
-		}
-
-		// Call the observer right now with the current keyvalue as argument
-		observer.onKeyValueChanged(_entity.getKeyValue(key));
+        if (EntityKeyValuePtr keyValue = _entity.getEntityKeyValue(key); keyValue) {
+            // Attach immediately if the entity already has such a (non-inherited)
+            // spawnarg. This will automatically send the current value.
+            keyValue->attach(observer);
+        }
+        else {
+            // No current value, call the observer with the inherited value or
+            // the empty string.
+            observer.onKeyValueChanged(_entity.getKeyValue(key));
+        }
     }
 
     void detachObserver(const std::string& key, KeyObserver& observer, bool sendEmptyValue)
