@@ -285,6 +285,9 @@ public:
     virtual void forEachAttachment(AttachmentFunc func) const = 0;
 };
 
+/// Callback for an entity key value change
+using KeyObserverFunc = std::function<void(const std::string&)>;
+
 /**
  * \brief Interface for a node which represents an entity.
  *
@@ -316,6 +319,9 @@ public:
      * will be invoked with the new value. Likewise, if the key is deleted, the
      * KeyObserver will be invoked with an empty value.
      *
+     * It is the responsibility of the calling code to ensure that the
+     * KeyObserver remains alive as long as it is attached.
+     *
      * @param key
      * The key to observe.
      *
@@ -323,6 +329,21 @@ public:
      * Observer to attach.
      */
 	virtual void addKeyObserver(const std::string& key, KeyObserver& observer) = 0;
+
+    /**
+     * @brief Observe key value changes using a callback function.
+     *
+     * This method provides a simpler interface for observing key value changes
+     * via the use of a callback function, rather than requiring a full
+     * KeyObserver object to be constructed and maintained by the calling code.
+     *
+     * @param key
+     * The key to observe.
+     *
+     * @param func
+     * Function to call when the key value changes.
+     */
+    virtual void observeKey(const std::string& key, KeyObserverFunc func) = 0;
 
     /**
      * @brief Remove a key observer attached with addKeyObserver.

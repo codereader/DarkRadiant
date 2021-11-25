@@ -50,7 +50,7 @@ public:
 	void importState(const std::string& string);
 
 	// NameObserver implementation
-	void onNameChange(const std::string& oldName, const std::string& newName);
+	void onNameChange(const std::string& oldName, const std::string& newName) override;
 
 private:
     // Gets called after a undo/redo operation is fully completed.

@@ -6,9 +6,6 @@
 namespace entity
 {
 
-// The function type used by KeyObserverDelegate
-typedef std::function<void(const std::string&)> KeyObserverFunc;
-
 /**
  * greebo: A KeyObserver wrapping around a function object.
  * The function is called as soon as the onKeyValueChanged

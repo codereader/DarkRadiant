@@ -149,8 +149,9 @@ public:
 	virtual void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 	virtual std::size_t getHighlightFlags() override;
 
-	// Adds/removes the keyobserver to/from the KeyObserverMap
+	// IEntityNode implementation
 	void addKeyObserver(const std::string& key, KeyObserver& observer) override;
+    void observeKey(const std::string& key, KeyObserverFunc func) override;
 	void removeKeyObserver(const std::string& key, KeyObserver& observer) override;
 
 	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme

@@ -72,13 +72,9 @@ void Doom3GroupNode::construct()
 
     // Observe relevant spawnarg changes
 	addKeyObserver("origin", m_originKey);
-    _keyObservers.observeKey(
-        "angle", [=](const std::string& val) { m_rotationKey.angleChanged(val); }
-    );
-    _keyObservers.observeKey(
-        "rotation", [=](const std::string& val) { m_rotationKey.rotationChanged(val); }
-    );
-    _keyObservers.observeKey("name", [=](const std::string& val) { nameChanged(val); });
+    observeKey("angle", [=](const std::string& val) { m_rotationKey.angleChanged(val); });
+    observeKey("rotation", [=](const std::string& val) { m_rotationKey.rotationChanged(val); });
+    observeKey("name", [=](const std::string& val) { nameChanged(val); });
 	addKeyObserver(curve_Nurbs, m_curveNURBS);
 	addKeyObserver(curve_CatmullRomSpline, m_curveCatmullRom);
 

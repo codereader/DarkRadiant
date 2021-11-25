@@ -180,6 +180,11 @@ void EntityNode::addKeyObserver(const std::string& key, KeyObserver& observer)
 	_keyObservers.insert(key, observer);
 }
 
+void EntityNode::observeKey(const std::string& key, KeyObserverFunc func)
+{
+    _keyObservers.observeKey(key, func);
+}
+
 void EntityNode::removeKeyObserver(const std::string& key, KeyObserver& observer)
 {
 	_keyObservers.erase(key, observer);
@@ -209,7 +214,7 @@ std::string EntityNode::getFingerprint()
 {
     std::map<std::string, std::string> sortedKeyValues;
 
-    // Entities are just a collection of key/value pairs, 
+    // Entities are just a collection of key/value pairs,
     // use them in lower case form, ignore inherited keys, sort before hashing
     _spawnArgs.forEachKeyValue([&](const std::string& key, const std::string& value)
     {

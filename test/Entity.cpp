@@ -1624,6 +1624,52 @@ TEST_F(EntityTest, EntityNodeObserveKeyChange)
     entityNode->getEntity().setKeyValue(TEST_KEY, "Foobar");
     EXPECT_EQ(observer.invocationCount, 4);
     EXPECT_EQ(observer.receivedValue, "Foobar");
+
+    // Observer must not trigger for any other keys
+    entityNode->getEntity().setKeyValue("TestKeyB", "B");
+    entityNode->getEntity().setKeyValue("another", "Something");
+    EXPECT_EQ(observer.invocationCount, 4);
+    EXPECT_EQ(observer.receivedValue, "Foobar");
+}
+
+TEST_F(EntityTest, EntityNodeObserveKeyViaFunc)
+{
+    auto entityNode = createByClassName("atdm:ai_builder_guard");
+    scene::addNodeToContainer(entityNode, GlobalMapModule().getRoot());
+
+    constexpr const char* TEST_KEY = "AnotherTestKey";
+
+    // No need for a KeyObserver, just store the info locally and bind it via lambdas
+    int invocationCount = 0;
+    std::string receivedValue;
+
+    // Observe key before creating it
+    entityNode->observeKey(TEST_KEY, [&](const std::string& value) {
+        ++invocationCount;
+        receivedValue = value;
+    });
+    EXPECT_EQ(invocationCount, 1);
+    EXPECT_EQ(receivedValue, "");
+
+    // Add the key with a new value
+    entityNode->getEntity().setKeyValue(TEST_KEY, "First value");
+    EXPECT_EQ(invocationCount, 2);
+    EXPECT_EQ(receivedValue, "First value");
+
+    // Change the value
+    entityNode->getEntity().setKeyValue(TEST_KEY, "3.1425");
+    EXPECT_EQ(invocationCount, 3);
+    EXPECT_EQ(receivedValue, "3.1425");
+
+    // Remove the value
+    entityNode->getEntity().setKeyValue(TEST_KEY, "");
+    EXPECT_EQ(invocationCount, 4);
+    EXPECT_EQ(receivedValue, "");
+
+    // Set another value
+    entityNode->getEntity().setKeyValue(TEST_KEY, "-O-O-O-");
+    EXPECT_EQ(invocationCount, 5);
+    EXPECT_EQ(receivedValue, "-O-O-O-");
 }
 
 inline Entity* findPlayerStartEntity()
