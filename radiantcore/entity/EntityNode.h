@@ -150,8 +150,8 @@ public:
 	virtual std::size_t getHighlightFlags() override;
 
 	// Adds/removes the keyobserver to/from the KeyObserverMap
-	void addKeyObserver(const std::string& key, KeyObserver& observer);
-	void removeKeyObserver(const std::string& key, KeyObserver& observer);
+	void addKeyObserver(const std::string& key, KeyObserver& observer) override;
+	void removeKeyObserver(const std::string& key, KeyObserver& observer) override;
 
 	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme
     const ModelKey& getModelKey() const;
