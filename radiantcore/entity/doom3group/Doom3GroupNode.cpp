@@ -68,16 +68,17 @@ void Doom3GroupNode::construct()
 {
     EntityNode::construct();
 
-	_angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &m_rotationKey, std::placeholders::_1));
-	_rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &m_rotationKey, std::placeholders::_1));
-	_nameObserver.setCallback(std::bind(&Doom3GroupNode::nameChanged, this, std::placeholders::_1));
-
 	m_rotation.setIdentity();
 
+    // Observe relevant spawnarg changes
 	addKeyObserver("origin", m_originKey);
-	addKeyObserver("angle", _angleObserver);
-	addKeyObserver("rotation", _rotationObserver);
-	addKeyObserver("name", _nameObserver);
+    _keyObservers.observeKey(
+        "angle", [=](const std::string& val) { m_rotationKey.angleChanged(val); }
+    );
+    _keyObservers.observeKey(
+        "rotation", [=](const std::string& val) { m_rotationKey.rotationChanged(val); }
+    );
+    _keyObservers.observeKey("name", [=](const std::string& val) { nameChanged(val); });
 	addKeyObserver(curve_Nurbs, m_curveNURBS);
 	addKeyObserver(curve_CatmullRomSpline, m_curveCatmullRom);
 
@@ -601,9 +602,6 @@ void Doom3GroupNode::destroy()
 	modelChanged("");
 
 	removeKeyObserver("origin", m_originKey);
-	removeKeyObserver("angle", _angleObserver);
-	removeKeyObserver("rotation", _rotationObserver);
-	removeKeyObserver("name", _nameObserver);
 	removeKeyObserver(curve_Nurbs, m_curveNURBS);
 	removeKeyObserver(curve_CatmullRomSpline, m_curveCatmullRom);
 }

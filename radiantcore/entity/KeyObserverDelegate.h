@@ -1,5 +1,4 @@
-#ifndef _KEY_OBSERVER_DELEGATE_H_
-#define _KEY_OBSERVER_DELEGATE_H_
+#pragma once
 
 #include "ientity.h"
 #include <functional>
@@ -46,5 +45,3 @@ private:
 };
 
 } // namespace entity
-
-#endif /* _KEY_OBSERVER_DELEGATE_H_ */

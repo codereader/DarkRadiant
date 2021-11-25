@@ -3,14 +3,14 @@
 #include <functional>
 #include "iundo.h"
 
-namespace entity 
+namespace entity
 {
 
-KeyValue::KeyValue(const std::string& value, const std::string& empty, 
+KeyValue::KeyValue(const std::string& value, const std::string& empty,
                    const std::function<void(const std::string&)>& valueChanged) :
     _value(value),
     _emptyValue(empty),
-    _undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1), 
+    _undo(_value, std::bind(&KeyValue::importState, this, std::placeholders::_1),
         std::bind(&KeyValue::onUndoRedoOperationFinished, this), "KeyValue"),
     _valueChanged(valueChanged)
 {}
@@ -39,16 +39,16 @@ void KeyValue::attach(KeyObserver& observer)
 	observer.onKeyValueChanged(get());
 }
 
-void KeyValue::detach(KeyObserver& observer)
+void KeyValue::detach(KeyObserver& observer, bool sendEmptyValue)
 {
-	observer.onKeyValueChanged(_emptyValue);
+    // Send final empty value if requested
+    if (sendEmptyValue)
+        observer.onKeyValueChanged(_emptyValue);
 
+    // Remove the observer if present
 	auto found = std::find(_observers.begin(), _observers.end(), &observer);
-
 	if (found != _observers.end())
-    {
 		_observers.erase(found);
-	}
 }
 
 const std::string& KeyValue::get() const
@@ -81,7 +81,7 @@ void KeyValue::notify()
 	}
 }
 
-void KeyValue::importState(const std::string& string) 
+void KeyValue::importState(const std::string& string)
 {
 	// We notify our observers after the entire undo rollback is done
 	_value = string;

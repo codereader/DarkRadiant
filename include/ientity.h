@@ -19,6 +19,8 @@ typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 class KeyObserver
 {
 public:
+    using Ptr = std::shared_ptr<KeyObserver>;
+
     virtual ~KeyObserver() {}
 
     /**
@@ -28,24 +30,40 @@ public:
     virtual void onKeyValueChanged(const std::string& newValue) = 0;
 };
 
-class EntityKeyValue :
-    public NameObserver
+/**
+ * @brief Object representing a single keyvalue (spawnarg) on an entity.
+ *
+ * This class exists so that each spawnarg can have its own independent set of
+ * KeyObservers responding to changes in its value. For most purposes it is
+ * simpler to use Entity::Observer::onKeyChange, Entity::setKeyValue and
+ * Entity::getKeyValue to interact with key values.
+ */
+class EntityKeyValue: public NameObserver
 {
 public:
     virtual ~EntityKeyValue() {}
-    /** greebo: Retrieves the actual value of this key
-     */
+
+    /// Retrieves the actual value of this key
     virtual const std::string& get() const = 0;
 
-    /** greebo: Sets the value of this key
-     */
+    /// Sets the value of this key
     virtual void assign(const std::string& other) = 0;
 
-    /** greebo: Attaches/detaches a callback to get notified about
-     *          the key change.
-     */
+    /// Attaches a callback to get notified about the key change.
     virtual void attach(KeyObserver& observer) = 0;
-    virtual void detach(KeyObserver& observer) = 0;
+
+    /**
+     * @brief Detach the given observer from this key value.
+     *
+     * @param observer
+     * Observer to detach. No action will be taken if this observer is not
+     * already attached.
+     *
+     * @param sendEmptyValue
+     * If true (the default), the observer will be invoked with an empty value
+     * before being detached. If false, no final value will be sent.
+     */
+    virtual void detach(KeyObserver& observer, bool sendEmptyValue = true) = 0;
 };
 typedef std::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
 
@@ -326,7 +344,7 @@ public:
     // Iterates over each selected entity, invoking the given functor
     virtual void foreachEntity(const std::function<void(Entity*)>& functor) = 0;
 
-    // Returns the key value shared by all entities in this set, or an empty string 
+    // Returns the key value shared by all entities in this set, or an empty string
     // if there is no such value.
     virtual std::string getSharedKeyValue(const std::string& key) = 0;
 };

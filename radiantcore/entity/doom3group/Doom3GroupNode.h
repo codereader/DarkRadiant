@@ -56,10 +56,6 @@ class Doom3GroupNode :
 	// brushes).
 	bool m_isModel;
 
-	KeyObserverDelegate _rotationObserver;
-	KeyObserverDelegate _angleObserver;
-	KeyObserverDelegate _nameObserver;
-
 	CurveNURBS m_curveNURBS;
 	std::size_t m_curveNURBSChanged;
 	CurveCatmullRom m_curveCatmullRom;

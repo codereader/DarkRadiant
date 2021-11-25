@@ -10,13 +10,12 @@ namespace entity
 
 class SpawnArgs;
 
-/// \brief 
+/// \brief
 /// Represents the string value of an entity key.
 ///
 /// - Notifies observers when value changes - value changes to "" on destruction.
 /// - Provides undo support through the map's undo system.
-class KeyValue final :
-	public EntityKeyValue
+class KeyValue final: public EntityKeyValue
 {
 private:
 	typedef std::vector<KeyObserver*> KeyObservers;
@@ -40,13 +39,11 @@ public:
     void connectUndoSystem(IUndoSystem& undoSystem);
     void disconnectUndoSystem(IUndoSystem& undoSystem);
 
-	void attach(KeyObserver& observer);
-	void detach(KeyObserver& observer);
-
-	// Accessor method, retrieve the actual value
-	const std::string& get() const;
-
-	void assign(const std::string& other);
+    // EntityKeyValue implementation
+	void attach(KeyObserver& observer) override;
+	void detach(KeyObserver& observer, bool sendEmptyValue) override;
+	const std::string& get() const override;
+	void assign(const std::string& other) override;
 
 	void notify();
 
