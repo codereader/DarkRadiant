@@ -370,6 +370,32 @@ TEST_F(EntityTest, CopySpawnargs)
     EXPECT_EQ(overlap.size(), 0);
 }
 
+TEST_F(EntityTest, UndoRedoSpawnargValueChange)
+{
+    // Create entity with initial default args. Note that we must add the node
+    // to the global map in order for undo to work.
+    auto cls = GlobalEntityClassManager().findClass("bucket_metal");
+    auto bucketNode = GlobalEntityModule().createEntity(cls);
+    scene::addNodeToContainer(bucketNode, GlobalMapModule().getRoot());
+    Entity& spawnArgs = bucketNode->getEntity();
+
+    // Make a simple value change
+    EXPECT_EQ(spawnArgs.getKeyValue("name"), "bucket_metal_1");
+    {
+        UndoableCommand cmd("changeKeyValue");
+        spawnArgs.setKeyValue("name", "another_bucket");
+    }
+
+    // Confirm we can undo this change
+    EXPECT_EQ(spawnArgs.getKeyValue("name"), "another_bucket");
+    GlobalUndoSystem().undo();
+    EXPECT_EQ(spawnArgs.getKeyValue("name"), "bucket_metal_1");
+
+    // Confirm we can redo the change
+    GlobalUndoSystem().redo();
+    EXPECT_EQ(spawnArgs.getKeyValue("name"), "another_bucket");
+}
+
 TEST_F(EntityTest, SelectEntity)
 {
     auto light = createByClassName("light");
