@@ -35,6 +35,30 @@ IEntityNodePtr createByClassName(const std::string& className)
     return GlobalEntityModule().createEntity(cls);
 }
 
+// Container for an entity under test. Stores the entity and adds it to the
+// global map to enable undo.
+struct TestEntity
+{
+    IEntityNodePtr node;
+    Entity* spawnArgs = nullptr;
+
+    // Create an entity with the given class name
+    static TestEntity create(const std::string& className)
+    {
+        TestEntity result;
+        result.node = createByClassName(className);
+        result.spawnArgs = &result.node->getEntity();
+
+        // Enable undo
+        scene::addNodeToContainer(result.node, GlobalMapModule().getRoot());
+
+        return result;
+    }
+
+    // Access the spawnargs
+    Entity& args() { return *spawnArgs; }
+};
+
 // Obtain entity attachments as a simple std::list
 std::list<Entity::Attachment> getAttachments(const IEntityNodePtr& node)
 {
@@ -372,28 +396,24 @@ TEST_F(EntityTest, CopySpawnargs)
 
 TEST_F(EntityTest, UndoRedoSpawnargValueChange)
 {
-    // Create entity with initial default args. Note that we must add the node
-    // to the global map in order for undo to work.
-    auto cls = GlobalEntityClassManager().findClass("bucket_metal");
-    auto bucketNode = GlobalEntityModule().createEntity(cls);
-    scene::addNodeToContainer(bucketNode, GlobalMapModule().getRoot());
-    Entity& spawnArgs = bucketNode->getEntity();
+    // Create entity with initial default args.
+    auto entity = TestEntity::create("bucket_metal");
 
     // Make a simple value change
-    EXPECT_EQ(spawnArgs.getKeyValue("name"), "bucket_metal_1");
+    EXPECT_EQ(entity.args().getKeyValue("name"), "bucket_metal_1");
     {
         UndoableCommand cmd("changeKeyValue");
-        spawnArgs.setKeyValue("name", "another_bucket");
+        entity.args().setKeyValue("name", "another_bucket");
     }
 
     // Confirm we can undo this change
-    EXPECT_EQ(spawnArgs.getKeyValue("name"), "another_bucket");
+    EXPECT_EQ(entity.args().getKeyValue("name"), "another_bucket");
     GlobalUndoSystem().undo();
-    EXPECT_EQ(spawnArgs.getKeyValue("name"), "bucket_metal_1");
+    EXPECT_EQ(entity.args().getKeyValue("name"), "bucket_metal_1");
 
     // Confirm we can redo the change
     GlobalUndoSystem().redo();
-    EXPECT_EQ(spawnArgs.getKeyValue("name"), "another_bucket");
+    EXPECT_EQ(entity.args().getKeyValue("name"), "another_bucket");
 }
 
 TEST_F(EntityTest, SelectEntity)
@@ -1242,9 +1262,7 @@ TEST_F(EntityTest, EntityObserverKeyChange)
 
 TEST_F(EntityTest, EntityObserverUndoRedo)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
-    auto guard = Node_getEntity(guardNode);
+    auto [guardNode, guard] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* NewKey = "New_Unique_Key";
     constexpr const char* NewValue = "New_Unique_Value";
@@ -1357,9 +1375,7 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
 
 TEST_F(EntityTest, EntityObserverUndoSingleKeyValue)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
-    auto guard = Node_getEntity(guardNode);
+    auto [guardNode, guard] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* NewKey = "New_Unique_Key";
     constexpr const char* NewValue = "New_Unique_Value";
@@ -1479,9 +1495,7 @@ TEST_F(EntityTest, KeyObserverValueChange)
 // Check that an KeyObserver stays attached to the key value after Undo
 TEST_F(EntityTest, KeyObserverAttachedAfterUndo)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
-    auto guard = Node_getEntity(guardNode);
+    auto [guardNode, guard] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* NewKeyName = "New_Unique_Key";
     constexpr const char* NewKeyValue = "New_Unique_Value";
@@ -1522,9 +1536,7 @@ TEST_F(EntityTest, KeyObserverAttachedAfterUndo)
 // Checks that the value changes by undo/redo commands are sent out to the KeyObservers
 TEST_F(EntityTest, KeyObserverUndoRedoValueChange)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
-    auto guard = Node_getEntity(guardNode);
+    auto [guardNode, guard] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* NewKeyName = "New_Unique_Key";
     constexpr const char* NewKeyValue = "New_Unique_Value";
@@ -1566,9 +1578,7 @@ TEST_F(EntityTest, KeyObserverUndoRedoValueChange)
 // KeyObserver doesn't get called when a key is removed entirely from the SpawnArgs
 TEST_F(EntityTest, KeyObserverKeyRemoval)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
-    auto guard = Node_getEntity(guardNode);
+    auto [guardNode, guard] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* NewKeyName = "New_Unique_Key";
     constexpr const char* NewKeyValue = "New_Unique_Value";
@@ -1594,8 +1604,7 @@ TEST_F(EntityTest, KeyObserverKeyRemoval)
 
 TEST_F(EntityTest, EntityNodeAttachKeyObserver)
 {
-    auto entityNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(entityNode, GlobalMapModule().getRoot());
+    auto [entityNode, _] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* TEST_KEY = "TestKey";
 
@@ -1625,8 +1634,7 @@ TEST_F(EntityTest, EntityNodeAttachKeyObserver)
 
 TEST_F(EntityTest, EntityNodeObserveKeyChange)
 {
-    auto entityNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(entityNode, GlobalMapModule().getRoot());
+    auto [entityNode, _] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* TEST_KEY = "TestKey";
 
@@ -1660,8 +1668,7 @@ TEST_F(EntityTest, EntityNodeObserveKeyChange)
 
 TEST_F(EntityTest, EntityNodeObserveKeyViaFunc)
 {
-    auto entityNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(entityNode, GlobalMapModule().getRoot());
+    auto [entityNode, _] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* TEST_KEY = "AnotherTestKey";
 
