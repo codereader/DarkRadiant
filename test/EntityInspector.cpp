@@ -33,14 +33,17 @@ private:
     std::unique_ptr<selection::CollectiveSpawnargs> _spawnargs;
     std::unique_ptr<selection::EntitySelection> _selectionTracker;
 
-    std::size_t _eventCounter;
+    std::size_t _additions;
+    std::size_t _removals;
+    std::size_t _changes;
 
 public:
     static constexpr const char* DifferingValues = "[differing values]";
 
-    KeyValueStore() :
-        _eventCounter(0)
+    KeyValueStore()
     {
+        resetEventCounters();
+
         _spawnargs.reset(new selection::CollectiveSpawnargs);
         _selectionTracker.reset(new selection::EntitySelection(*_spawnargs));
 
@@ -75,30 +78,47 @@ public:
 
     std::size_t getEventCounter() const
     {
-        return _eventCounter;
+        return _additions + _removals + _changes;
     }
 
-    void resetEventCounter()
+    std::size_t getNumAdditions() const
     {
-        _eventCounter = 0;
+        return _additions;
+    }
+
+    std::size_t getNumRemovals() const
+    {
+        return _removals;
+    }
+
+    std::size_t getNumChanges() const
+    {
+        return _changes;
+    }
+
+    void resetEventCounters()
+    {
+        _additions = 0;
+        _removals = 0;
+        _changes = 0;
     }
 
 private:
     void onKeyAdded(const std::string& key, const std::string& value)
     {
-        ++_eventCounter;
+        ++_additions;
         store[key] = value;
     }
 
     void onKeyRemoved(const std::string& key)
     {
-        ++_eventCounter;
+        ++_removals;
         store.erase(key);
     }
 
     void onKeyValueSetChanged(const std::string& key, const std::string& uniqueValue)
     {
-        ++_eventCounter;
+        ++_changes;
         store[key] = uniqueValue.empty() ? DifferingValues : uniqueValue;
     }
 };
@@ -148,7 +168,7 @@ TEST_F(EntityInspectorTest, EmptySelection)
     EXPECT_TRUE(keyValueStore.store.empty()) << "Shouldn't have any key values without selection";
 }
 
-TEST_F(EntityInspectorTest, DeselectAllEntities)
+TEST_F(EntityInspectorTest, DeselectSingleSelectedEntity)
 {
     KeyValueStore keyValueStore;
     GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
@@ -160,6 +180,38 @@ TEST_F(EntityInspectorTest, DeselectAllEntities)
     GlobalSelectionSystem().setSelectedAll(false);
     keyValueStore.rescanSelection();
     EXPECT_TRUE(keyValueStore.store.empty()) << "Shouldn't have any key values without selection";
+}
+
+// #5824: Don't trigger change events when all entities are deselected at once
+// This prevents the entity inspector from writing the last remaining (and therefore unique)
+// value from being written to the value entry box.
+TEST_F(EntityInspectorTest, DeselectAllEntitiesAtOnce)
+{
+    KeyValueStore keyValueStore;
+    GlobalCommandSystem().executeCommand("OpenMap", cmd::Argument("maps/entityinspector.map"));
+
+    selectEntity("light_torchflame_1");
+    selectEntity("light_torchflame_2");
+    selectEntity("light_torchflame_3");
+    keyValueStore.rescanSelection();
+
+    // Shared keys, but differing values
+    expectNonUnique(keyValueStore, "canBeBlownOut");
+    expectNonUnique(keyValueStore, "name");
+    expectNonUnique(keyValueStore, "origin");
+
+    // Reset the counters and deselect all entities
+    auto numShownKeys = keyValueStore.store.size();
+    keyValueStore.resetEventCounters();
+    GlobalSelectionSystem().setSelectedAll(false);
+    keyValueStore.rescanSelection();
+
+    // The event counters should prove that no change events were received, only removals
+    EXPECT_TRUE(keyValueStore.store.empty()) << "Shouldn't have any key values without selection";
+    EXPECT_EQ(keyValueStore.getNumAdditions(), 0) << "No additions whatsoever";
+    EXPECT_EQ(keyValueStore.getNumChanges(), 0) << "The listener shouldn't have received any changes";
+
+    EXPECT_EQ(keyValueStore.getNumRemovals(), numShownKeys) << "The listener should have received an exact number of removals";
 }
 
 inline void assumeLightTorchflame1Spawnargs(const KeyValueStore& keyValueStore)
@@ -676,21 +728,21 @@ TEST_F(EntityInspectorTest, SelectWorldspawnBrushes)
 
     // Select one after the other
     Node_setSelected(brush1, true);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
     expectUnique(keyValueStore, "classname", "worldspawn");
 
     Node_setSelected(brush2, true);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
     EXPECT_EQ(keyValueStore.getEventCounter(), 0) << "Key value store should not have received any events";
     expectUnique(keyValueStore, "classname", "worldspawn");
 
     Node_setSelected(brush3, true);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
     EXPECT_EQ(keyValueStore.getEventCounter(), 0) << "Key value store should not have received any events";
@@ -698,21 +750,21 @@ TEST_F(EntityInspectorTest, SelectWorldspawnBrushes)
 
     // Deselect again
     Node_setSelected(brush1, false);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
     EXPECT_EQ(keyValueStore.getEventCounter(), 0) << "Key value store should not have received any events";
     expectUnique(keyValueStore, "classname", "worldspawn");
 
     Node_setSelected(brush3, false);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
     EXPECT_EQ(keyValueStore.getEventCounter(), 0) << "Key value store should not have received any events";
     expectUnique(keyValueStore, "classname", "worldspawn");
 
     Node_setSelected(brush2, false);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Expect nothing to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
@@ -722,7 +774,7 @@ TEST_F(EntityInspectorTest, SelectWorldspawnBrushes)
     Node_setSelected(brush1, true);
     Node_setSelected(brush2, true);
     Node_setSelected(brush3, true);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
@@ -732,7 +784,7 @@ TEST_F(EntityInspectorTest, SelectWorldspawnBrushes)
     Node_setSelected(brush1, false);
     Node_setSelected(brush2, false);
     Node_setSelected(brush3, false);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Expect nothing to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
@@ -761,28 +813,28 @@ TEST_F(EntityInspectorTest, SelectChildPrimitivesOfTwoEntities)
 
     // Select one after the other
     Node_setSelected(brush1, true);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect 1 worldspawn to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
     expectUnique(keyValueStore, "classname", "worldspawn");
 
     Node_setSelected(fsBrush4, true);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
     expectNonUnique(keyValueStore, "classname");
 
     Node_setSelected(brush2, true);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
     EXPECT_EQ(keyValueStore.getEventCounter(), 0) << "Key value store should not have received any events";
     expectNonUnique(keyValueStore, "classname");
 
     Node_setSelected(fsBrush5, true);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
     EXPECT_EQ(keyValueStore.getEventCounter(), 0) << "Key value store should not have received any events";
@@ -790,28 +842,28 @@ TEST_F(EntityInspectorTest, SelectChildPrimitivesOfTwoEntities)
 
     // Deselect again
     Node_setSelected(brush2, false);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
     EXPECT_EQ(keyValueStore.getEventCounter(), 0) << "Key value store should not have received any events";
     expectNonUnique(keyValueStore, "classname");
 
     Node_setSelected(fsBrush5, false);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
     EXPECT_EQ(keyValueStore.getEventCounter(), 0) << "Key value store should not have received any events";
     expectNonUnique(keyValueStore, "classname");
 
     Node_setSelected(brush1, false);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 1) << "Expect nothing to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
     expectUnique(keyValueStore, "classname", "func_static");
 
     Node_setSelected(fsBrush4, false);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Expect nothing to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
@@ -822,7 +874,7 @@ TEST_F(EntityInspectorTest, SelectChildPrimitivesOfTwoEntities)
     Node_setSelected(brush2, true);
     Node_setSelected(fsBrush4, true);
     Node_setSelected(fsBrush5, true);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 2) << "Expect worldspawn and func_static to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
@@ -833,7 +885,7 @@ TEST_F(EntityInspectorTest, SelectChildPrimitivesOfTwoEntities)
     Node_setSelected(brush2, false);
     Node_setSelected(fsBrush4, false);
     Node_setSelected(fsBrush5, false);
-    keyValueStore.resetEventCounter();
+    keyValueStore.resetEventCounters();
     keyValueStore.rescanSelection();
     EXPECT_EQ(keyValueStore.getNumSelectedEntities(), 0) << "Expect nothing to be selected";
     EXPECT_GT(keyValueStore.getEventCounter(), 0) << "Key value store should have received some events";
