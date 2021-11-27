@@ -35,6 +35,30 @@ IEntityNodePtr createByClassName(const std::string& className)
     return GlobalEntityModule().createEntity(cls);
 }
 
+// Container for an entity under test. Stores the entity and adds it to the
+// global map to enable undo.
+struct TestEntity
+{
+    IEntityNodePtr node;
+    Entity* spawnArgs = nullptr;
+
+    // Create an entity with the given class name
+    static TestEntity create(const std::string& className)
+    {
+        TestEntity result;
+        result.node = createByClassName(className);
+        result.spawnArgs = &result.node->getEntity();
+
+        // Enable undo
+        scene::addNodeToContainer(result.node, GlobalMapModule().getRoot());
+
+        return result;
+    }
+
+    // Access the spawnargs
+    Entity& args() { return *spawnArgs; }
+};
+
 // Obtain entity attachments as a simple std::list
 std::list<Entity::Attachment> getAttachments(const IEntityNodePtr& node)
 {
@@ -370,6 +394,28 @@ TEST_F(EntityTest, CopySpawnargs)
     EXPECT_EQ(overlap.size(), 0);
 }
 
+TEST_F(EntityTest, UndoRedoSpawnargValueChange)
+{
+    // Create entity with initial default args.
+    auto entity = TestEntity::create("bucket_metal");
+
+    // Make a simple value change
+    EXPECT_EQ(entity.args().getKeyValue("name"), "bucket_metal_1");
+    {
+        UndoableCommand cmd("changeKeyValue");
+        entity.args().setKeyValue("name", "another_bucket");
+    }
+
+    // Confirm we can undo this change
+    EXPECT_EQ(entity.args().getKeyValue("name"), "another_bucket");
+    GlobalUndoSystem().undo();
+    EXPECT_EQ(entity.args().getKeyValue("name"), "bucket_metal_1");
+
+    // Confirm we can redo the change
+    GlobalUndoSystem().redo();
+    EXPECT_EQ(entity.args().getKeyValue("name"), "another_bucket");
+}
+
 TEST_F(EntityTest, SelectEntity)
 {
     auto light = createByClassName("light");
@@ -420,7 +466,7 @@ namespace
             renderablePtrs.push_back(std::make_pair(&shader, &renderable));
         }
 
-        void addLight(const RendererLight& light)
+        void addLight(const RendererLight& light) override
         {
             ++lights;
             lightPtrs.push_back(&light);
@@ -981,7 +1027,7 @@ public:
     }
 };
 
-inline bool stackHasKeyValuePair(const std::vector<std::pair<std::string, std::string>>& stack, 
+inline bool stackHasKeyValuePair(const std::vector<std::pair<std::string, std::string>>& stack,
     const std::string& key, const std::string& value)
 {
     auto it = std::find(stack.begin(), stack.end(), std::make_pair(key, value));
@@ -999,11 +1045,11 @@ inline bool stackHasKey(const std::vector<std::pair<std::string, std::string>>& 
     return false;
 }
 
-class TestKeyObserver :
-    public KeyObserver
+// Test observer which keeps track of invocations and last received value
+class TestKeyObserver: public KeyObserver
 {
 public:
-    bool hasBeenInvoked;
+    int invocationCount = 0;
     std::string receivedValue;
 
     TestKeyObserver()
@@ -1013,15 +1059,19 @@ public:
 
     void reset()
     {
-        hasBeenInvoked = false;
+        invocationCount = 0;
         receivedValue.clear();
     }
 
+    // KeyObserver implementation
     void onKeyValueChanged(const std::string& newValue) override
     {
-        hasBeenInvoked = true;
+        ++invocationCount;
         receivedValue = newValue;
     }
+
+    // Return true if the observer has been invoked at least once
+    bool hasBeenInvoked() const { return invocationCount > 0; }
 };
 
 inline EntityKeyValue* findKeyValue(Entity* entity, const std::string& keyToFind)
@@ -1039,7 +1089,7 @@ inline EntityKeyValue* findKeyValue(Entity* entity, const std::string& keyToFind
     return keyValue;
 }
 
-inline void expectKeyValuesAreEquivalent(const std::vector<std::pair<std::string, std::string>>& stack1, 
+inline void expectKeyValuesAreEquivalent(const std::vector<std::pair<std::string, std::string>>& stack1,
     const std::vector<std::pair<std::string, std::string>>& stack2)
 {
     EXPECT_EQ(stack1.size(), stack2.size()) << "Stack1 differs from Stack 2 in size";
@@ -1212,9 +1262,7 @@ TEST_F(EntityTest, EntityObserverKeyChange)
 
 TEST_F(EntityTest, EntityObserverUndoRedo)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
-    auto guard = Node_getEntity(guardNode);
+    auto [guardNode, guard] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* NewKey = "New_Unique_Key";
     constexpr const char* NewValue = "New_Unique_Value";
@@ -1261,11 +1309,11 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
     // Check that the entity has now the same state as before the change
     expectKeyValuesAreEquivalent(algorithm::getAllKeyValuePairs(guard), keyValuesBeforeChange);
 
-    // The Undo operation spams the observer with an erase() for each existing pair, 
+    // The Undo operation spams the observer with an erase() for each existing pair,
     // and a subsequent insert() for each one imported from the undo stack
     // Note that the value attached to the erase() event might depend on the order the SpawnArgs have been
     // manipulated during the Undoable operation - if a key value got changed before a new one
-    // was added to the SpawnArg set, the value passed to erase() might differ from the case where 
+    // was added to the SpawnArg set, the value passed to erase() might differ from the case where
     // these two operations were happening the other way around.
     EXPECT_EQ(observer.eraseStack.size(), keyValuesAfterChange.size()) << "All keys before undo should have been reported";
 
@@ -1275,7 +1323,7 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
         EXPECT_TRUE(stackHasKey(observer.eraseStack, pair.first)) <<
             "Erase stack doesn't have the expected key " << pair.first;
     }
-    
+
     EXPECT_EQ(observer.insertStack.size(), keyValuesBeforeChange.size()) << "Not all keys got reported as re-inserted";
 
     for (const auto& pair : keyValuesBeforeChange)
@@ -1327,9 +1375,7 @@ TEST_F(EntityTest, EntityObserverUndoRedo)
 
 TEST_F(EntityTest, EntityObserverUndoSingleKeyValue)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
-    auto guard = Node_getEntity(guardNode);
+    auto [guardNode, guard] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* NewKey = "New_Unique_Key";
     constexpr const char* NewValue = "New_Unique_Value";
@@ -1356,7 +1402,7 @@ TEST_F(EntityTest, EntityObserverUndoSingleKeyValue)
     EXPECT_EQ(observer.changeStack.size(), 1) << "Reverted key didn't get reported";
     EXPECT_TRUE(stackHasKeyValuePair(observer.changeStack, NewKey, NewValue)) <<
         "Change stack doesn't have the expected kv " << NewKey << " = " << NewValue;
-    
+
     // Everything else should be silent
     EXPECT_TRUE(observer.eraseStack.empty()) << "Erase stack should be clean";
     EXPECT_TRUE(observer.insertStack.empty()) << "Insert stack should be clean";
@@ -1395,7 +1441,7 @@ TEST_F(EntityTest, KeyObserverAttachDetach)
     // On attachment, the observer gets notified about the existing value
     keyValue->attach(observer);
 
-    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on attach";
+    EXPECT_TRUE(observer.hasBeenInvoked()) << "Observer didn't get notified on attach";
     EXPECT_EQ(observer.receivedValue, NewKeyValue) << "Observer didn't get the correct value";
 
     observer.reset();
@@ -1404,7 +1450,7 @@ TEST_F(EntityTest, KeyObserverAttachDetach)
     // On detaching the observer receives another call with an empty value
     keyValue->detach(observer);
 
-    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on attach";
+    EXPECT_TRUE(observer.hasBeenInvoked()) << "Observer didn't get notified on attach";
     EXPECT_EQ(observer.receivedValue, "") << "Observer didn't get the expected empty value";
 }
 
@@ -1418,17 +1464,17 @@ TEST_F(EntityTest, KeyObserverValueChange)
     guard->setKeyValue(NewKeyName, NewKeyValue);
 
     TestKeyObserver observer;
-    
+
     EntityKeyValue* keyValue = findKeyValue(guard, NewKeyName);
     EXPECT_TRUE(keyValue != nullptr) << "Could not locate the key value";
 
     keyValue->attach(observer);
     observer.reset();
-    
+
     constexpr const char* SomeOtherValue = "SomeOtherValue";
     guard->setKeyValue(NewKeyName, SomeOtherValue);
 
-    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on change";
+    EXPECT_TRUE(observer.hasBeenInvoked()) << "Observer didn't get notified on change";
     EXPECT_EQ(observer.receivedValue, SomeOtherValue) << "Observer didn't get the correct value";
 
     // One more round, this time we use the assign() method
@@ -1436,22 +1482,20 @@ TEST_F(EntityTest, KeyObserverValueChange)
     constexpr const char* DistinguishableValue = "DistinguishableValue";
     keyValue->assign(DistinguishableValue);
 
-    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on assign";
+    EXPECT_TRUE(observer.hasBeenInvoked()) << "Observer didn't get notified on assign";
     EXPECT_EQ(observer.receivedValue, DistinguishableValue) << "Observer didn't get the correct value";
     observer.reset();
 
     keyValue->detach(observer);
 
-    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on attach";
+    EXPECT_TRUE(observer.hasBeenInvoked()) << "Observer didn't get notified on attach";
     EXPECT_EQ(observer.receivedValue, "") << "Observer didn't get the expected empty value";
 }
 
 // Check that an KeyObserver stays attached to the key value after Undo
 TEST_F(EntityTest, KeyObserverAttachedAfterUndo)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
-    auto guard = Node_getEntity(guardNode);
+    auto [guardNode, guard] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* NewKeyName = "New_Unique_Key";
     constexpr const char* NewKeyValue = "New_Unique_Value";
@@ -1472,7 +1516,7 @@ TEST_F(EntityTest, KeyObserverAttachedAfterUndo)
         guard->setKeyValue(NewKeyName, SomeOtherValue);
     }
 
-    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on change";
+    EXPECT_TRUE(observer.hasBeenInvoked()) << "Observer didn't get notified on change";
     EXPECT_EQ(observer.receivedValue, SomeOtherValue) << "Observer didn't get the correct value";
 
     // Hit Undo to revert the changed value
@@ -1483,7 +1527,7 @@ TEST_F(EntityTest, KeyObserverAttachedAfterUndo)
     observer.reset();
     guard->setKeyValue(NewKeyName, SomeOtherValue);
 
-    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on assign";
+    EXPECT_TRUE(observer.hasBeenInvoked()) << "Observer didn't get notified on assign";
     EXPECT_EQ(observer.receivedValue, SomeOtherValue) << "Observer didn't get the correct value";
 
     keyValue->detach(observer);
@@ -1492,9 +1536,7 @@ TEST_F(EntityTest, KeyObserverAttachedAfterUndo)
 // Checks that the value changes by undo/redo commands are sent out to the KeyObservers
 TEST_F(EntityTest, KeyObserverUndoRedoValueChange)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
-    auto guard = Node_getEntity(guardNode);
+    auto [guardNode, guard] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* NewKeyName = "New_Unique_Key";
     constexpr const char* NewKeyValue = "New_Unique_Value";
@@ -1519,7 +1561,7 @@ TEST_F(EntityTest, KeyObserverUndoRedoValueChange)
     observer.reset();
     GlobalUndoSystem().undo();
     EXPECT_EQ(guard->getKeyValue(NewKeyName), NewKeyValue) << "Key value wasn't properly reverted";
-    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on undo";
+    EXPECT_TRUE(observer.hasBeenInvoked()) << "Observer didn't get notified on undo";
     EXPECT_EQ(observer.receivedValue, NewKeyValue) << "Observer didn't get the value before change";
 
     // Redo
@@ -1527,7 +1569,7 @@ TEST_F(EntityTest, KeyObserverUndoRedoValueChange)
     GlobalUndoSystem().redo();
 
     EXPECT_EQ(guard->getKeyValue(NewKeyName), SomeOtherValue) << "Key value wasn't properly redone";
-    EXPECT_TRUE(observer.hasBeenInvoked) << "Observer didn't get notified on redo";
+    EXPECT_TRUE(observer.hasBeenInvoked()) << "Observer didn't get notified on redo";
     EXPECT_EQ(observer.receivedValue, SomeOtherValue) << "Observer didn't get the value after change";
 
     keyValue->detach(observer);
@@ -1536,9 +1578,7 @@ TEST_F(EntityTest, KeyObserverUndoRedoValueChange)
 // KeyObserver doesn't get called when a key is removed entirely from the SpawnArgs
 TEST_F(EntityTest, KeyObserverKeyRemoval)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
-    scene::addNodeToContainer(guardNode, GlobalMapModule().getRoot());
-    auto guard = Node_getEntity(guardNode);
+    auto [guardNode, guard] = TestEntity::create("atdm:ai_builder_guard");
 
     constexpr const char* NewKeyName = "New_Unique_Key";
     constexpr const char* NewKeyValue = "New_Unique_Value";
@@ -1557,9 +1597,112 @@ TEST_F(EntityTest, KeyObserverKeyRemoval)
     guard->setKeyValue(NewKeyName, "");
 
     // The observer shouldn't have been notified
-    EXPECT_FALSE(observer.hasBeenInvoked) << "Observer has been notified on key remove";
+    EXPECT_FALSE(observer.hasBeenInvoked()) << "Observer has been notified on key remove";
 
     keyValue->detach(observer);
+}
+
+TEST_F(EntityTest, EntityNodeAttachKeyObserver)
+{
+    auto [entityNode, _] = TestEntity::create("atdm:ai_builder_guard");
+
+    constexpr const char* TEST_KEY = "TestKey";
+
+    {
+        // Attach the observer. Since the key does not yet exist, the observer
+        // will be invoked with an empty value.
+        TestKeyObserver observer;
+        entityNode->addKeyObserver(TEST_KEY, observer);
+        EXPECT_EQ(observer.invocationCount, 1);
+        EXPECT_EQ(observer.receivedValue, "");
+    }
+
+    {
+        entityNode->getEntity().setKeyValue(TEST_KEY, "Blah");
+
+        // Attaching an observer when the key already exists should send the
+        // current value immediately.
+        TestKeyObserver observer;
+        entityNode->addKeyObserver(TEST_KEY, observer);
+        EXPECT_EQ(observer.invocationCount, 1);
+        EXPECT_EQ(observer.receivedValue, "Blah");
+    }
+
+    // Destroying the entity node should not crash
+    entityNode.reset();
+}
+
+TEST_F(EntityTest, EntityNodeObserveKeyChange)
+{
+    auto [entityNode, _] = TestEntity::create("atdm:ai_builder_guard");
+
+    constexpr const char* TEST_KEY = "TestKey";
+
+    // Attach the observer first
+    TestKeyObserver observer;
+    entityNode->addKeyObserver(TEST_KEY, observer);
+    EXPECT_EQ(observer.invocationCount, 1);
+
+    // Create the key with a new value
+    entityNode->getEntity().setKeyValue(TEST_KEY, "123");
+    EXPECT_EQ(observer.invocationCount, 2);
+    EXPECT_EQ(observer.receivedValue, "123");
+
+    // Remove the key by setting it to empty
+    entityNode->getEntity().setKeyValue(TEST_KEY, "");
+    EXPECT_EQ(observer.invocationCount, 3);
+    EXPECT_EQ(observer.receivedValue, "");
+
+    // Add the key again with another value; observer must still be active even
+    // though the old keyvalue was removed.
+    entityNode->getEntity().setKeyValue(TEST_KEY, "Foobar");
+    EXPECT_EQ(observer.invocationCount, 4);
+    EXPECT_EQ(observer.receivedValue, "Foobar");
+
+    // Observer must not trigger for any other keys
+    entityNode->getEntity().setKeyValue("TestKeyB", "B");
+    entityNode->getEntity().setKeyValue("another", "Something");
+    EXPECT_EQ(observer.invocationCount, 4);
+    EXPECT_EQ(observer.receivedValue, "Foobar");
+}
+
+TEST_F(EntityTest, EntityNodeObserveKeyViaFunc)
+{
+    auto [entityNode, _] = TestEntity::create("atdm:ai_builder_guard");
+
+    constexpr const char* TEST_KEY = "AnotherTestKey";
+
+    // No need for a KeyObserver, just store the info locally and bind it via lambdas
+    int invocationCount = 0;
+    std::string receivedValue;
+
+    // Observe key before creating it
+    entityNode->observeKey(TEST_KEY, [&](const std::string& value) {
+        ++invocationCount;
+        receivedValue = value;
+    });
+    EXPECT_EQ(invocationCount, 1);
+    EXPECT_EQ(receivedValue, "");
+
+    // Add the key with a new value
+    entityNode->getEntity().setKeyValue(TEST_KEY, "First value");
+    EXPECT_EQ(invocationCount, 2);
+    EXPECT_EQ(receivedValue, "First value");
+
+    // Change the value
+    entityNode->getEntity().setKeyValue(TEST_KEY, "3.1425");
+    EXPECT_EQ(invocationCount, 3);
+    EXPECT_EQ(receivedValue, "3.1425");
+
+    // Remove the value
+    entityNode->getEntity().setKeyValue(TEST_KEY, "");
+    EXPECT_EQ(invocationCount, 4);
+    EXPECT_EQ(receivedValue, "");
+
+    // Set another value
+    entityNode->getEntity().setKeyValue(TEST_KEY, "-O-O-O-");
+    EXPECT_EQ(invocationCount, 5);
+    EXPECT_EQ(receivedValue, "-O-O-O-");
 }
 
 inline Entity* findPlayerStartEntity()

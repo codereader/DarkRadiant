@@ -158,14 +158,14 @@ public:
 	// BrushNode
 	BrushNode& getBrushNode();
 
-	IFace& getFace(std::size_t index);
-	const IFace& getFace(std::size_t index) const;
+	IFace& getFace(std::size_t index) override;
+	const IFace& getFace(std::size_t index) const override;
 
 	IFace& addFace(const Plane3& plane) override;
 	IFace& addFace(const Plane3& plane, const Matrix3& textureProjection, const std::string& material) override;
 
     // Translatable implementation
-	void translate(const Vector3& translation);
+	void translate(const Vector3& translation) override;
 
 	void attach(BrushObserver& observer);
 	void detach(BrushObserver& observer);
@@ -186,19 +186,19 @@ public:
     void onFaceEvaluateTransform();
 
 	// Sets the shader of all faces to the given name
-	void setShader(const std::string& newShader);
+	void setShader(const std::string& newShader) override;
 
 	// Returns TRUE if any of the faces has the given shader
-	bool hasShader(const std::string& name);
+	bool hasShader(const std::string& name) override;
 
 	// Returns TRUE if any face materials are visible
-	bool hasVisibleMaterial() const;
+	bool hasVisibleMaterial() const override;
 
 	// Update call issued by the filter system
-	void updateFaceVisibility();
+	void updateFaceVisibility() override;
 
-	DetailFlag getDetailFlag() const;
-	void setDetailFlag(DetailFlag newValue);
+	DetailFlag getDetailFlag() const override;
+	void setDetailFlag(DetailFlag newValue) override;
 
 	BrushSplitType classifyPlane(const Plane3& plane) const override;
 
@@ -209,13 +209,13 @@ public:
 
 	void aabbChanged();
 
-	const AABB& localAABB() const;
+	const AABB& localAABB() const override;
 
 	void renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void transform(const Matrix4& matrix);
 
-	void snapto(float snap);
+	void snapto(float snap) override;
 
 	void revertTransform();
 	void freezeTransform();
@@ -225,9 +225,9 @@ public:
 
 	void appendFaces(const Faces& other);
 
-	void undoSave();
-	IUndoMementoPtr exportState() const;
-	void importState(const IUndoMementoPtr& state);
+	void undoSave() override;
+	IUndoMementoPtr exportState() const override;
+	void importState(const IUndoMementoPtr& state) override;
 
 	/// \brief Appends a copy of \p face to the end of the face list.
 	FacePtr addFace(const Face& face);
@@ -256,16 +256,16 @@ public:
 
 	void clear() override;
 
-	std::size_t getNumFaces() const;
+	std::size_t getNumFaces() const override;
 
-	bool empty() const;
+	bool empty() const override;
 
 	/// \brief Returns true if any face of the brush contributes to the final B-Rep.
-	bool hasContributingFaces() const;
+	bool hasContributingFaces() const override;
 
 	/// \brief Removes faces that do not contribute to the brush. This is useful for cleaning up after CSG operations on the brush.
 	/// Note: removal of empty faces is not performed during direct brush manipulations, because it would make a manipulation irreversible if it created an empty face.
-	void removeEmptyFaces();
+	void removeEmptyFaces() override;
 
 	/// \brief Constructs \p winding from the intersection of \p plane with the other planes of the brush.
 	void windingForClipPlane(Winding& winding, const Plane3& plane) const;

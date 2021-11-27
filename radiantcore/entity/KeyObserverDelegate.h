@@ -1,14 +1,10 @@
-#ifndef _KEY_OBSERVER_DELEGATE_H_
-#define _KEY_OBSERVER_DELEGATE_H_
+#pragma once
 
 #include "ientity.h"
 #include <functional>
 
 namespace entity
 {
-
-// The function type used by KeyObserverDelegate
-typedef std::function<void(const std::string&)> KeyObserverFunc;
 
 /**
  * greebo: A KeyObserver wrapping around a function object.
@@ -46,5 +42,3 @@ private:
 };
 
 } // namespace entity
-
-#endif /* _KEY_OBSERVER_DELEGATE_H_ */

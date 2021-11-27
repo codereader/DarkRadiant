@@ -19,6 +19,8 @@ typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 class KeyObserver
 {
 public:
+    using Ptr = std::shared_ptr<KeyObserver>;
+
     virtual ~KeyObserver() {}
 
     /**
@@ -28,24 +30,40 @@ public:
     virtual void onKeyValueChanged(const std::string& newValue) = 0;
 };
 
-class EntityKeyValue :
-    public NameObserver
+/**
+ * @brief Object representing a single keyvalue (spawnarg) on an entity.
+ *
+ * This class exists so that each spawnarg can have its own independent set of
+ * KeyObservers responding to changes in its value. For most purposes it is
+ * simpler to use Entity::Observer::onKeyChange, Entity::setKeyValue and
+ * Entity::getKeyValue to interact with key values.
+ */
+class EntityKeyValue: public NameObserver
 {
 public:
     virtual ~EntityKeyValue() {}
-    /** greebo: Retrieves the actual value of this key
-     */
+
+    /// Retrieves the actual value of this key
     virtual const std::string& get() const = 0;
 
-    /** greebo: Sets the value of this key
-     */
+    /// Sets the value of this key
     virtual void assign(const std::string& other) = 0;
 
-    /** greebo: Attaches/detaches a callback to get notified about
-     *          the key change.
-     */
+    /// Attaches a callback to get notified about the key change.
     virtual void attach(KeyObserver& observer) = 0;
-    virtual void detach(KeyObserver& observer) = 0;
+
+    /**
+     * @brief Detach the given observer from this key value.
+     *
+     * @param observer
+     * Observer to detach. No action will be taken if this observer is not
+     * already attached.
+     *
+     * @param sendEmptyValue
+     * If true (the default), the observer will be invoked with an empty value
+     * before being detached. If false, no final value will be sent.
+     */
+    virtual void detach(KeyObserver& observer, bool sendEmptyValue = true) = 0;
 };
 typedef std::shared_ptr<EntityKeyValue> EntityKeyValuePtr;
 
@@ -267,6 +285,9 @@ public:
     virtual void forEachAttachment(AttachmentFunc func) const = 0;
 };
 
+/// Callback for an entity key value change
+using KeyObserverFunc = std::function<void(const std::string&)>;
+
 /**
  * \brief Interface for a node which represents an entity.
  *
@@ -284,6 +305,56 @@ public:
 
     /// Get a modifiable reference to the contained Entity
     virtual Entity& getEntity() = 0;
+
+    /**
+     * @brief Attach a KeyObserver to observe a key's value changes.
+     *
+     * This is similar to attaching the KeyObserver directly to the
+     * EntityKeyValue, except that it is not required that the key value
+     * currently exist.
+     *
+     * If the key already exists, the KeyObserver will be immediately invoked
+     * with the current value; otherwise the observer will be invoked with an
+     * empty value. If the key is subsequently created or changed, the observer
+     * will be invoked with the new value. Likewise, if the key is deleted, the
+     * KeyObserver will be invoked with an empty value.
+     *
+     * It is the responsibility of the calling code to ensure that the
+     * KeyObserver remains alive as long as it is attached.
+     *
+     * @param key
+     * The key to observe.
+     *
+     * @param observer
+     * Observer to attach.
+     */
+	virtual void addKeyObserver(const std::string& key, KeyObserver& observer) = 0;
+
+    /**
+     * @brief Observe key value changes using a callback function.
+     *
+     * This method provides a simpler interface for observing key value changes
+     * via the use of a callback function, rather than requiring a full
+     * KeyObserver object to be constructed and maintained by the calling code.
+     *
+     * @param key
+     * The key to observe.
+     *
+     * @param func
+     * Function to call when the key value changes.
+     */
+    virtual void observeKey(const std::string& key, KeyObserverFunc func) = 0;
+
+    /**
+     * @brief Remove a key observer attached with addKeyObserver.
+     *
+     * @param key
+     * Key being observed.
+     *
+     * @param observer
+     * Observer to remove.
+     */
+	virtual void removeKeyObserver(const std::string& key, KeyObserver& observer) = 0;
 
     /**
      * greebo: Tells the entity to reload the child model. This usually
@@ -326,7 +397,7 @@ public:
     // Iterates over each selected entity, invoking the given functor
     virtual void foreachEntity(const std::function<void(Entity*)>& functor) = 0;
 
-    // Returns the key value shared by all entities in this set, or an empty string 
+    // Returns the key value shared by all entities in this set, or an empty string
     // if there is no such value.
     virtual std::string getSharedKeyValue(const std::string& key, bool includeInherited) = 0;
 };

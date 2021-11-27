@@ -2,16 +2,20 @@
 
 #include "igroupnode.h"
 #include "icurve.h"
-#include "Doom3Group.h"
 #include "irenderable.h"
+#include "../OriginKey.h"
+#include "../RotationKey.h"
 #include "../NameKey.h"
 #include "../curve/CurveEditInstance.h"
+#include "../curve/CurveNURBS.h"
+#include "../curve/CurveCatmullRom.h"
 #include "../VertexInstance.h"
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
 #include "../KeyObserverDelegate.h"
+#include "render/RenderablePivot.h"
 
-namespace entity 
+namespace entity
 {
 
 class Doom3GroupNode;
@@ -26,11 +30,39 @@ class Doom3GroupNode :
 	public ComponentSnappable,
 	public CurveNode
 {
-private:
-	friend class Doom3Group;
+	// ------------------------------------------------------------------------
+    // Doom3Group members
 
-	// The contained Doom3Group class
-	Doom3Group _d3Group;
+	OriginKey m_originKey;
+	Vector3 m_origin;
+
+	// A separate origin for the renderable pivot points
+	Vector3 m_nameOrigin;
+
+	RotationKey m_rotationKey;
+	RotationMatrix m_rotation;
+
+	render::RenderablePivot m_renderOrigin;
+
+	mutable AABB m_curveBounds;
+
+	// The value of the "name" key for this Doom3Group.
+	std::string m_name;
+
+	// The value of the "model" key for this Doom3Group.
+	std::string m_modelKey;
+
+	// Flag to indicate this Doom3Group is a model (i.e. does not contain
+	// brushes).
+	bool m_isModel;
+
+	CurveNURBS m_curveNURBS;
+	std::size_t m_curveNURBSChanged;
+	CurveCatmullRom m_curveCatmullRom;
+	std::size_t m_curveCatmullRomChanged;
+
+	// ------------------------------------------------------------------------
+    // Doom3GroupNode members
 
 	CurveEditInstance _nurbsEditInstance;
 	CurveEditInstance _catmullRomEditInstance;
@@ -123,6 +155,48 @@ protected:
 private:
 	void evaluateTransform();
 
+    // ------------------------------------------------------------------------
+    // Doom3Group methods
+
+	void destroy();
+	void setIsModel(bool newValue);
+    void renderCommon(RenderableCollector& collector, const VolumeTest& volume) const;
+
+	/** Determine if this Doom3Group is a model (func_static) or a
+	 * brush-containing entity. If the "model" key is equal to the
+	 * "name" key, then this is a brush-based entity, otherwise it is
+	 * a model entity. The exception to this is for the "worldspawn"
+	 * entity class, which is always a brush-based entity.
+	 */
+	void updateIsModel();
+
+	Vector3& getOrigin();
+	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);
+	void translate(const Vector3& translation);
+	void rotate(const Quaternion& rotation);
+	void scale(const Vector3& scale);
+	void revertTransform() override;
+	void freezeTransform() override;
+
+	// Translates the origin only (without the children)
+	void translateOrigin(const Vector3& translation);
+	// Snaps the origin to the grid
+	void snapOrigin(float snap);
+
+	void translateChildren(const Vector3& childTranslation);
+
+	// Returns TRUE if this D3Group is a model
+	bool isModel() const;
+
+	void setTransformChanged(Callback& callback);
+
+public:
+
+	void nameChanged(const std::string& value);
+	void modelChanged(const std::string& value);
+	void updateTransform();
+	void originChanged();
+	void rotationChanged();
 };
 
 } // namespace

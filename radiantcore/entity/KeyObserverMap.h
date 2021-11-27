@@ -31,16 +31,42 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 namespace entity
 {
 
+/**
+ * @brief Map of key observers associated with a particular entity.
+ *
+ * This is used internally by EntityNode to keep track of the KeyObserver
+ * classes which are observing particular spawnargs.
+ */
 class KeyObserverMap :
 	public Entity::Observer,
     public sigc::trackable
 {
 	// A map using case-insensitive comparison
-	typedef std::multimap<std::string, KeyObserver*, string::ILess> KeyObservers;
-	KeyObservers _keyObservers;
+    typedef std::multimap<std::string, KeyObserver::Ptr, string::ILess> KeyObservers;
+    KeyObservers _keyObservers;
 
 	// The observed entity
 	SpawnArgs& _entity;
+
+    void attachObserver(const std::string& key, KeyObserver& observer)
+    {
+        if (EntityKeyValuePtr keyValue = _entity.getEntityKeyValue(key); keyValue) {
+            // Attach immediately if the entity already has such a (non-inherited)
+            // spawnarg. This will automatically send the current value.
+            keyValue->attach(observer);
+        }
+        else {
+            // No current value, call the observer with the inherited value or
+            // the empty string.
+            observer.onKeyValueChanged(_entity.getKeyValue(key));
+        }
+    }
+
+    void detachObserver(const std::string& key, KeyObserver& observer, bool sendEmptyValue)
+    {
+        if (EntityKeyValuePtr kvp = _entity.getEntityKeyValue(key); kvp)
+            kvp->detach(observer, sendEmptyValue);
+    }
 
 public:
 	KeyObserverMap(SpawnArgs& entity) :
@@ -52,50 +78,85 @@ public:
 
 	~KeyObserverMap()
 	{
+        // Detach each individual KeyObserver from its EntityKeyValue, to avoid
+        // dangling pointers if KeyObservers are destroyed.
+        for (auto& [key, observer]: _keyObservers)
+            detachObserver(key, *observer, false /* don't send final value change */);
+
+        // All observers are detached, clear them out
+        _keyObservers.clear();
+
+        // Remove ourselves as an Entity::Observer (onKeyInsert and onKeyErase)
 		_entity.detachObserver(this);
 	}
 
-	/**
-	 * greebo: This registers a key for observation. As soon as the key gets inserted in the
-	 * entity's spawnargs, the given observer is attached to the entity's keyvalue.
-	 */
+    /**
+     * @brief Add an observer function for the specified key.
+     *
+     * The observer function will be wrapped in a KeyObserver interface object
+     * owned and deleted by the KeyObserverMap. This allows calling code to
+     * attach a callback function without worrying about maintaining a
+     * KeyObserver object.
+     *
+     * There is currently no way to manually delete an observer function added
+     * in this way. All observer functions will be removed on destruction.
+     *
+     * @param key
+     * Key to observe.
+     *
+     * @param func
+     * Callback function to be invoked when the key value changes. It will also
+     * be invoked immediately with the key's current value, or an empty string
+     * if the key does not currently exist.
+     */
+    void observeKey(const std::string& key, KeyObserverFunc func)
+    {
+        auto iter = _keyObservers.insert(
+            {key, std::make_shared<KeyObserverDelegate>(func)}
+        );
+        assert(iter != _keyObservers.end());
+        attachObserver(key, *iter->second);
+    }
+
+    /**
+     * @brief Add an observer object for the specified key.
+     *
+     * Multiple observers can be attached to the same key. It is the calling
+     * code's responsibility to ensure that the KeyObserver exists for the
+     * lifetime of the attachment; undefined behaviour will result if a
+     * KeyObserver is destroyed while still attached to the entity.
+     *
+     * @param key
+     * Key to observe.
+     *
+     * @param observer
+     * Observer which will be invoked when the key value changes. The observer
+     * will also be invoked immediately with the key's current value, which may
+     * be an empty string if the key does not exist.
+     */
 	void insert(const std::string& key, KeyObserver& observer)
 	{
-		_keyObservers.insert(KeyObservers::value_type(key, &observer));
+        // Wrap observer in a shared_ptr with a NOP deleter, since we don't own it
+		_keyObservers.insert({key, KeyObserver::Ptr(&observer, [](KeyObserver*) {})});
 
-		// Check if the entity already has such a (non-inherited) spawnarg
-		EntityKeyValuePtr keyValue = _entity.getEntityKeyValue(key);
-
-		if (keyValue != NULL)
-		{
-			// Attach an observer to a the given KeyValue
-			keyValue->attach(observer);
-		}
-
-		// Call the observer right now with the current keyvalue as argument
-		observer.onKeyValueChanged(_entity.getKeyValue(key));
+        attachObserver(key, observer);
 	}
 
 	void erase(const std::string& key, KeyObserver& observer)
 	{
-		for (KeyObservers::iterator i = _keyObservers.find(key);
-			 i != _keyObservers.upper_bound(key) && i != _keyObservers.end();
+        const auto upperBound = _keyObservers.upper_bound(key);
+		for (auto i = _keyObservers.find(key);
+			 i != upperBound && i != _keyObservers.end();
 			 /* in-loop increment */)
 		{
-			if (i->second == &observer)
-			{
-				EntityKeyValuePtr keyValue = _entity.getEntityKeyValue(key);
+			if (i->second.get() == &observer) {
+                // Detach the observer from the actual keyvalue, if it exists
+                detachObserver(key, observer, true /* send final empty value */);
 
-				if (keyValue != NULL)
-				{
-					// Detach the observer from the actual keyvalue
-					keyValue->detach(observer);
-				}
-
+                // Order is important: first increment, then erase the non-incremented value
 				_keyObservers.erase(i++);
 			}
-			else
-			{
+			else {
 				++i;
 			}
 		}
