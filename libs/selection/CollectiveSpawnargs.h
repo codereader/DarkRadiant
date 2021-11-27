@@ -294,6 +294,30 @@ public:
         }
     }
 
+    // Special case handling of all entities having been deselected at once
+    // Takes a few shortcuts and issues removal events of all listed keys (no change or add events)
+    void onAllEntitiesRemoved()
+    {
+        // Send a remove event for all keys that are currently listed
+        // (They are the ones that exist on all known entities)
+        for (auto& pair : _entitiesByKey)
+        {
+            const auto& key = pair.first;
+            auto& keyValueSet = pair.second;
+
+            // The entity count for this key must be equal to the count of all known entities
+            // then the key is listed (unique or non-unique, this doesn't matter here)
+            if (keyValueSet.entities.size() == _keyValuesByEntity.size())
+            {
+                _sigKeyRemoved.emit(key);
+            }
+        }
+
+        // Clear out both mappings
+        _keyValuesByEntity.clear();
+        _entitiesByKey.clear();
+    }
+
 private:
     void removeKey(Entity* entity, const std::string& key)
     {

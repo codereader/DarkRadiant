@@ -40,12 +40,14 @@ private:
         CollectiveSpawnargs& _spawnargCollection;
         Entity* _entity;
         scene::INodeWeakPtr _node;
+        bool _destroySilently;
 
     public:
         SpawnargTracker(CollectiveSpawnargs& spawnargCollection, const scene::INodePtr& node) :
             _spawnargCollection(spawnargCollection),
             _entity(Node_getEntity(node)),
-            _node(node)
+            _node(node),
+            _destroySilently(false)
         {
             assert(_entity != nullptr);
             _entity->attachObserver(this);
@@ -58,10 +60,13 @@ private:
 
         ~SpawnargTracker()
         {
-            // Call the onEntityRemoved method instead of relying on the onKeyErase()
-            // invocations when detaching the observer. This allows us to keep some
-            // assumptions about entity count in the CollectiveSpawnargs::onKeyErase method
-            _spawnargCollection.onEntityRemoved(_entity);
+            if (!_destroySilently)
+            {
+                // Call the onEntityRemoved method instead of relying on the onKeyErase()
+                // invocations when detaching the observer. This allows us to keep some
+                // assumptions about entity count in the CollectiveSpawnargs::onKeyErase method
+                _spawnargCollection.onEntityRemoved(_entity);
+            }
 
             // Clear the reference to disable the observer callbacks
             auto entity = _entity;
@@ -95,6 +100,12 @@ private:
         {
             if (!_entity) return;
             _spawnargCollection.onKeyErase(_entity, key, value);
+        }
+
+        // Instruct the tracker to not fire any callbacks on destruction
+        void setDestroySilently(bool value)
+        {
+            _destroySilently = value;
         }
     };
 
@@ -215,6 +226,23 @@ public:
                 selectedEntities.emplace(std::move(entity));
             }
         });
+
+        // We take a shortcut in case a previous selection was fully cleared
+        if (selectedEntities.empty() && !_trackedEntities.empty())
+        {
+            // Prevent the spawnarg trackers from firing any callbacks on destruction
+            for (auto& tracked : _trackedEntities)
+            {
+                tracked.setDestroySilently(true);
+            }
+
+            _trackedEntities.clear();
+
+            // This will notify the collection that all entities are gone.
+            // It will fire remove events to properly clean up the client code
+            _spawnargs.onAllEntitiesRemoved();
+            return;
+        }
 
         auto trackerCountChanged = false;
 
