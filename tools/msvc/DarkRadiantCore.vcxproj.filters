@@ -457,9 +457,6 @@
     <ClCompile Include="..\..\radiantcore\entity\curve\CurveNURBS.cpp">
       <Filter>src\entity\curve</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\entity\doom3group\Doom3Group.cpp">
-      <Filter>src\entity\doom3group</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\entity\doom3group\Doom3GroupNode.cpp">
       <Filter>src\entity\doom3group</Filter>
     </ClCompile>
@@ -1493,9 +1490,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\curve\RenderableCurve.h">
       <Filter>src\entity\curve</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\doom3group\Doom3Group.h">
-      <Filter>src\entity\doom3group</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\doom3group\Doom3GroupNode.h">
       <Filter>src\entity\doom3group</Filter>

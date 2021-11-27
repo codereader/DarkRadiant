@@ -47,7 +47,6 @@
     <ClCompile Include="..\..\radiantcore\entity\curve\CurveCatmullRom.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\curve\CurveEditInstance.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\curve\CurveNURBS.cpp" />
-    <ClCompile Include="..\..\radiantcore\entity\doom3group\Doom3Group.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\doom3group\Doom3GroupNode.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\eclassmodel\EclassModelNode.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\EntityModule.cpp" />
@@ -760,7 +759,6 @@
     <ClInclude Include="..\..\radiantcore\entity\curve\CurveEditInstance.h" />
     <ClInclude Include="..\..\radiantcore\entity\curve\CurveNURBS.h" />
     <ClInclude Include="..\..\radiantcore\entity\curve\RenderableCurve.h" />
-    <ClInclude Include="..\..\radiantcore\entity\doom3group\Doom3Group.h" />
     <ClInclude Include="..\..\radiantcore\entity\doom3group\Doom3GroupNode.h" />
     <ClInclude Include="..\..\radiantcore\entity\eclassmodel\EclassModelNode.h" />
     <ClInclude Include="..\..\radiantcore\entity\EntityModule.h" />
