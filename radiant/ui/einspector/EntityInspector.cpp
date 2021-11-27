@@ -232,6 +232,7 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     // Insert the key and the value, the icon will be updated later
     row[_columns.name] = wxVariant(wxDataViewIconText(key, _emptyIcon));
     row[_columns.value] = value;
+    row[_columns.isMultiValue] = isMultiValue;
 
     setOldAndNewValueColumns(row, key, style);
 
@@ -267,7 +268,7 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     // update the value accordingly, otherwise leave it alone. This is to fix
     // the entry boxes not being updated when a PropertyEditor is changing the value.
     // Therefore only do this if the selectedKey is matching too.
-    if (curKey == key && selectedKey == key)
+    if (!isMultiValue && curKey == key && selectedKey == key)
     {
         _valEntry->SetValue(value);
     }
@@ -1440,7 +1441,9 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         if (!key.empty())
         {
             _keyEntry->SetValue(key);
-            _valEntry->SetValue(value);
+
+            // Leave the entry box empty, don't store the "[differing values]" placeholder in the entry box
+            _valEntry->SetValue(row[_columns.isMultiValue].getBool() ? "" : value);
         }
 
         // Update property editor, unless we're in merge mode

@@ -61,6 +61,7 @@ public:
 			name(add(wxutil::TreeModel::Column::IconText)),
 			value(add(wxutil::TreeModel::Column::String)),
 			isInherited(add(wxutil::TreeModel::Column::Boolean)),
+			isMultiValue(add(wxutil::TreeModel::Column::Boolean)),
 			booleanValue(add(wxutil::TreeModel::Column::Boolean)),
             oldValue(add(wxutil::TreeModel::Column::String)),
             newValue(add(wxutil::TreeModel::Column::String))
@@ -69,6 +70,7 @@ public:
 		wxutil::TreeModel::Column name;
 		wxutil::TreeModel::Column value;
 		wxutil::TreeModel::Column isInherited;
+		wxutil::TreeModel::Column isMultiValue; // non-unique value (when multiple entities are selected)
 		wxutil::TreeModel::Column booleanValue;
 		wxutil::TreeModel::Column oldValue; // when displaying merge changes
 		wxutil::TreeModel::Column newValue; // when displaying merge changes
