@@ -1615,6 +1615,7 @@ TEST_F(EntityTest, EntityNodeAttachKeyObserver)
         entityNode->addKeyObserver(TEST_KEY, observer);
         EXPECT_EQ(observer.invocationCount, 1);
         EXPECT_EQ(observer.receivedValue, "");
+        entityNode->removeKeyObserver(TEST_KEY, observer);
     }
 
     {
@@ -1626,6 +1627,7 @@ TEST_F(EntityTest, EntityNodeAttachKeyObserver)
         entityNode->addKeyObserver(TEST_KEY, observer);
         EXPECT_EQ(observer.invocationCount, 1);
         EXPECT_EQ(observer.receivedValue, "Blah");
+        entityNode->removeKeyObserver(TEST_KEY, observer);
     }
 
     // Destroying the entity node should not crash
@@ -1664,6 +1666,8 @@ TEST_F(EntityTest, EntityNodeObserveKeyChange)
     entityNode->getEntity().setKeyValue("another", "Something");
     EXPECT_EQ(observer.invocationCount, 4);
     EXPECT_EQ(observer.receivedValue, "Foobar");
+
+    entityNode->removeKeyObserver(TEST_KEY, observer);
 }
 
 TEST_F(EntityTest, EntityNodeObserveKeyViaFunc)
