@@ -730,6 +730,7 @@
     <ClInclude Include="..\..\radiantcore\brush\FacePlane.h" />
     <ClInclude Include="..\..\radiantcore\brush\FixedWinding.h" />
     <ClInclude Include="..\..\radiantcore\brush\PlanePoints.h" />
+    <ClInclude Include="..\..\radiantcore\brush\RenderableWinding.h" />
     <ClInclude Include="..\..\radiantcore\brush\RenderableWireFrame.h" />
     <ClInclude Include="..\..\radiantcore\brush\SelectableComponents.h" />
     <ClInclude Include="..\..\radiantcore\brush\TextureMatrix.h" />
@@ -981,6 +982,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateLess.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateManager.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\SurfaceRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\GLFont.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLModule.h" />

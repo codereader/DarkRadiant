@@ -109,6 +109,7 @@ public:
 	void splitViewFocus(const cmd::ArgumentList& args); // Re-position all available views
 	void zoom100(const cmd::ArgumentList& args); // Sets the scale of all windows to 1
 	void focusActiveView(const cmd::ArgumentList& args); // sets the focus of the active view
+	void runBenchmark(const cmd::ArgumentList& args);
 
 	// Sets the origin of all available views
 	void setOrigin(const Vector3& origin) override;

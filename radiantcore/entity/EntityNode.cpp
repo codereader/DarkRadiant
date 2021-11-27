@@ -357,7 +357,12 @@ scene::INode::Type EntityNode::getNodeType() const
 	return Type::Entity;
 }
 
-void EntityNode::renderSolid(RenderableCollector& collector,
+bool EntityNode::isOriented() const
+{
+    return true;
+}
+
+void EntityNode::renderSolid(IRenderableCollector& collector,
                              const VolumeTest& volume) const
 {
     // Render any attached entities
@@ -366,7 +371,7 @@ void EntityNode::renderSolid(RenderableCollector& collector,
     );
 }
 
-void EntityNode::renderWireframe(RenderableCollector& collector,
+void EntityNode::renderWireframe(IRenderableCollector& collector,
                                  const VolumeTest& volume) const
 {
 	// Submit renderable text name if required
@@ -380,6 +385,18 @@ void EntityNode::renderWireframe(RenderableCollector& collector,
     renderAttachments(
         [&](const scene::INodePtr& n) { n->renderWireframe(collector, volume); }
     );
+}
+
+void EntityNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (collector.supportsFullMaterials())
+    {
+        renderSolid(collector, volume);
+    }
+    else
+    {
+        renderWireframe(collector, volume);
+    }
 }
 
 void EntityNode::acquireShaders()

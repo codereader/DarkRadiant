@@ -76,12 +76,28 @@ void Node::setIsRoot(bool isRoot)
 
 void Node::enable(unsigned int state)
 {
+    bool wasVisible = visible();
+
 	_state |= state;
+
+    // After setting a flag, this node may have changed to invisible
+    if (wasVisible && _state != eVisible)
+    {
+        onVisibilityChanged(false);
+    }
 }
 
 void Node::disable(unsigned int state)
 {
+    bool wasVisible = visible();
+
 	_state &= ~state;
+
+    // After clearing a flag, this node can only switch from invisible to visible
+    if (!wasVisible && visible())
+    {
+        onVisibilityChanged(true);
+    }
 }
 
 bool Node::checkStateFlag(unsigned int state) const
@@ -98,7 +114,7 @@ bool Node::visible() const
 {
 	// Only instantiated nodes can be considered visible
 	// The force visible flag is allowed to override the regular status
-	return (_state == eVisible && _instantiated) || _forceVisible;
+	return _instantiated && (_state == eVisible || _forceVisible);
 }
 
 bool Node::excluded() const
@@ -276,13 +292,29 @@ void Node::onChildRemoved(const INodePtr& child)
 void Node::onInsertIntoScene(IMapRootNode& root)
 {
 	_instantiated = true;
+
+    // The node was 100% not visible before, check if it is now
+    if (visible())
+    {
+        onVisibilityChanged(true);
+    }
+
     connectUndoSystem(root.getUndoSystem());
 }
 
 void Node::onRemoveFromScene(IMapRootNode& root)
 {
     disconnectUndoSystem(root.getUndoSystem());
+
+    bool wasVisible = visible();
+
 	_instantiated = false;
+
+    // The node is 100% not visible after removing from the scene
+    if (wasVisible)
+    {
+        onVisibilityChanged(false);
+    }
 }
 
 void Node::connectUndoSystem(IUndoSystem& undoSystem)
@@ -481,7 +513,16 @@ void Node::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void Node::setForcedVisibility(bool forceVisible, bool includeChildren)
 {
+    bool wasVisible = visible();
+
 	_forceVisible = forceVisible;
+
+    bool isVisible = visible();
+
+    if (wasVisible ^ isVisible)
+    {
+        onVisibilityChanged(isVisible);
+    }
 
 	if (includeChildren)
 	{

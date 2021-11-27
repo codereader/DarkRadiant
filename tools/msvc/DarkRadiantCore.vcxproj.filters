@@ -2250,5 +2250,11 @@
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Texturing.h">
       <Filter>src\selection\algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\brush\RenderableWinding.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\SurfaceRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

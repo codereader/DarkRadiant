@@ -23,8 +23,8 @@ public:
 
 	const AABB& localAABB() const;
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
 

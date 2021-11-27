@@ -56,7 +56,7 @@ public:
 		}
 	}
 
-	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+	void render(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 	{
 		collector.addRenderable(*_shader, *this, localToWorld);
 	}

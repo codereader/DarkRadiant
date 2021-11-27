@@ -1,7 +1,9 @@
 #pragma once
 
 #include <memory>
+#include "math/Vector3.h"
 
+class ArbitraryMeshVertex;
 class Shader;
 typedef std::shared_ptr<Shader> ShaderPtr;
 
@@ -14,22 +16,50 @@ class Matrix4;
 class IRenderEntity;
 class RendererLight;
 class LitObject;
+class Renderable;
+class VolumeTest;
+
+#ifdef RENDERABLE_GEOMETRY
+// Contains the vertex and index data to render geometry of the given type
+struct RenderableGeometry
+{
+    enum class Type
+    {
+        Triangles,
+        Quads,
+        Polygons,
+    };
+
+    // The primitive type which will be translated to openGL enums
+    virtual Type getType() const = 0;
+
+    // Data as needed by glDrawArrays
+
+    virtual const Vector3& getFirstVertex() = 0;
+    virtual std::size_t getVertexStride() = 0;
+    virtual const unsigned int& getFirstIndex() = 0;
+    virtual std::size_t getNumIndices() = 0;
+};
+#endif
 
 /**
  * \brief Class which accepts OpenGLRenderable objects during the first pass of
  * rendering.
  *
- * Each Renderable in the scenegraph is passed a reference to a
- * RenderableCollector, to which the Renderable submits its OpenGLRenderable(s)
+ * Each Renderable in the scenegraph is passed a reference to an
+ * IRenderableCollector, to which the Renderable submits its OpenGLRenderable(s)
  * for later rendering. A single Renderable may submit more than one
  * OpenGLRenderable, with different options each time -- for instance a
  * Renderable model class may submit each of its material surfaces separately
  * with different shaders.
  */
-class RenderableCollector
+class IRenderableCollector
 {
 public:
-    virtual ~RenderableCollector() {}
+    virtual ~IRenderableCollector() {}
+
+    // Process the given renderable object
+    virtual void processRenderable(const Renderable& renderable, const VolumeTest& volume) = 0;
 
     /**
      * \brief Submit a renderable object.
@@ -72,6 +102,13 @@ public:
                                const IRenderEntity* entity = nullptr) = 0;
 
     /**
+     * Submits a renderable object that is used for highlighting an object.
+     * Depending on the view, this might be a coloured, transparent overlay
+     * or a wireframe outline.
+     */
+    virtual void addHighlightRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld) = 0;
+
+    /**
      * \brief Submit a light source for the render operation.
      *
      * This is the entry point for lights into the render front-end. Each light
@@ -108,9 +145,17 @@ public:
     };
 
     virtual void setHighlightFlag(Highlight::Flags flags, bool enabled) = 0;
-};
 
-class VolumeTest;
+    // Returns true if the current set of highlight flags is not empty
+    virtual bool hasHighlightFlags() const = 0;
+
+#ifdef RENDERABLE_GEOMETRY
+    // Submits renderable geometry to the collector, it will only rendered in the current frame
+    // Flags are a combination of Highlight::Flags
+    virtual void addGeometry(RenderableGeometry& geometry, std::size_t flags)
+    {}
+#endif
+};
 
 /**
  * \brief
@@ -133,18 +178,31 @@ public:
      */
     virtual void setRenderSystem(const RenderSystemPtr& renderSystem) = 0;
 
+    // Called in preparation of rendering this node
+    virtual void onPreRender(const VolumeTest& volume)
+    {}
+
+    // Returns true if this renderable makes use of a non-identity model matrix,
+    // or submit their geometry in final world coordinates.
+    // Geometry of renderables returning true will not be streamlined into a larger buffer
+    virtual bool isOriented() const
+    {
+        return false; // by default, renderables render in world coordinates
+    }
+
     /// Submit renderable geometry when rendering in Solid mode.
-    virtual void renderSolid(RenderableCollector& collector,
+    virtual void renderSolid(IRenderableCollector& collector,
                              const VolumeTest& volume) const = 0;
 
     /// Submit renderable geometry when rendering in Wireframe mode.
-    virtual void renderWireframe(RenderableCollector& collector,
+    virtual void renderWireframe(IRenderableCollector& collector,
                                  const VolumeTest& volume) const = 0;
 
-    virtual void renderComponents(RenderableCollector&, const VolumeTest&) const
-    { }
+    // Submit renderable geometry for highlighting the object
+    virtual void renderHighlights(IRenderableCollector& collector,
+        const VolumeTest& volume) = 0;
 
-    virtual void viewChanged() const
+    virtual void renderComponents(IRenderableCollector&, const VolumeTest&) const
     { }
 
     struct Highlight

@@ -15,6 +15,7 @@
 #include "util/Noncopyable.h"
 #include <sigc++/signal.h>
 #include "selection/algorithm/Shader.h"
+#include "RenderableWinding.h"
 
 const double GRID_MIN = 0.125;
 
@@ -59,6 +60,9 @@ private:
 
 	// Cached visibility flag, queried during front end rendering
 	bool _faceIsVisible;
+
+    render::RenderableWinding _windingSurfaceSolid;
+    render::RenderableWinding _windingSurfaceWireframe;
 
     sigc::signal<void> _sigDestroyed;
 
@@ -108,7 +112,7 @@ public:
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Frontend render methods for submitting the face winding
-	void renderWireframe(RenderableCollector& collector, const Matrix4& localToWorld,
+	void renderWireframe(IRenderableCollector& collector, const Matrix4& localToWorld,
 		const IRenderEntity& entity) const;
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
@@ -192,6 +196,9 @@ public:
 	const Winding& getWinding() const override;
 	Winding& getWinding() override;
 
+    render::RenderableWinding& getWindingSurfaceSolid();
+    render::RenderableWinding& getWindingSurfaceWireframe();
+
 	const Plane3& plane3() const;
 
 	// Returns the Doom 3 plane
@@ -210,6 +217,9 @@ public:
 	bool is_bounded() const;
 
 	bool isVisible() const override;
+
+    // Called when the owning brush changes its visibility status
+    void onBrushVisibilityChanged(bool visible);
 
 	void updateFaceVisibility();
 

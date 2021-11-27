@@ -25,7 +25,7 @@ public:
 	}
 
 	// No visual representation by default
-	virtual void render(RenderableCollector& collector, const VolumeTest& volume) override
+	virtual void render(IRenderableCollector& collector, const VolumeTest& volume) override
 	{}
 
 public:

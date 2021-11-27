@@ -98,28 +98,36 @@ const Matrix4& MergeActionNodeBase::localToWorld() const
     return identity;
 }
 
-void MergeActionNodeBase::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void MergeActionNodeBase::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-    _affectedNode->viewChanged();
     _affectedNode->renderSolid(collector, volume);
     _affectedNode->foreachNode([&](const INodePtr& child)
     {
-        child->viewChanged();
         child->renderSolid(collector, volume);
         return true;
     });
 }
 
-void MergeActionNodeBase::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void MergeActionNodeBase::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-    _affectedNode->viewChanged();
     _affectedNode->renderWireframe(collector, volume);
     _affectedNode->foreachNode([&](const INodePtr& child)
     {
-        child->viewChanged();
         child->renderWireframe(collector, volume);
         return true;
     });
+}
+
+void MergeActionNodeBase::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (collector.supportsFullMaterials())
+    {
+        renderSolid(collector, volume);
+    }
+    else
+    {
+        renderWireframe(collector, volume);
+    }
 }
 
 std::size_t MergeActionNodeBase::getHighlightFlags()

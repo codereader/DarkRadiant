@@ -94,7 +94,7 @@ public:
 		glDisableClientState(GL_COLOR_ARRAY);
 	}
 
-	void render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+	void render(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 	{
 		// greebo: Commented this out to avoid the point from being moved along with the view.
 		//Pivot2World_worldSpace(m_localToWorld, localToWorld, volume.GetModelview(), volume.GetProjection(), volume.GetViewport());

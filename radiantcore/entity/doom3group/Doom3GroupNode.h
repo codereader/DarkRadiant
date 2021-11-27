@@ -126,11 +126,11 @@ public:
 	void removeOriginFromChildren() override;
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
 
 	void transformComponents(const Matrix4& matrix);
 
@@ -160,7 +160,7 @@ private:
 
 	void destroy();
 	void setIsModel(bool newValue);
-    void renderCommon(RenderableCollector& collector, const VolumeTest& volume) const;
+    void renderCommon(IRenderableCollector& collector, const VolumeTest& volume) const;
 
 	/** Determine if this Doom3Group is a model (func_static) or a
 	 * brush-containing entity. If the "model" key is equal to the

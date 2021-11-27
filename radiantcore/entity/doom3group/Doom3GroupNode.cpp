@@ -260,7 +260,7 @@ void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test)
 	}
 }
 
-void Doom3GroupNode::renderCommon(RenderableCollector& collector, const VolumeTest& volume) const
+void Doom3GroupNode::renderCommon(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (isSelected()) {
 		m_renderOrigin.render(collector, volume, localToWorld());
@@ -277,23 +277,25 @@ void Doom3GroupNode::renderCommon(RenderableCollector& collector, const VolumeTe
 	}
 }
 
-void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void Doom3GroupNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
     renderCommon(collector, volume);
 
 	// Render curves always relative to the absolute map origin
-	_nurbsEditInstance.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
-	_catmullRomEditInstance.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
+    static Matrix4 identity = Matrix4::getIdentity();
+	_nurbsEditInstance.renderComponentsSelected(collector, volume, identity);
+	_catmullRomEditInstance.renderComponentsSelected(collector, volume, identity);
 }
 
-void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void Doom3GroupNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
     renderCommon(collector, volume);
 
-	_nurbsEditInstance.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
-	_catmullRomEditInstance.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
+    static Matrix4 identity = Matrix4::getIdentity();
+	_nurbsEditInstance.renderComponentsSelected(collector, volume, identity);
+	_catmullRomEditInstance.renderComponentsSelected(collector, volume, identity);
 }
 
 void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -307,7 +309,7 @@ void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_originInstance.setRenderSystem(renderSystem);
 }
 
-void Doom3GroupNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+void Doom3GroupNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
 	{

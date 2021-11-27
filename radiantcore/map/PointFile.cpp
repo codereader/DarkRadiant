@@ -82,7 +82,7 @@ void PointFile::show(const fs::path& pointfile)
 	SceneChangeNotify();
 }
 
-void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void PointFile::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (isVisible())
 	{
@@ -90,7 +90,7 @@ void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 	}
 }
 
-void PointFile::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void PointFile::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	renderSolid(collector, volume);
 }

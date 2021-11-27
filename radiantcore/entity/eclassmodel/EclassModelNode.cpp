@@ -68,7 +68,7 @@ const AABB& EclassModelNode::localAABB() const
 	return _localAABB;
 }
 
-void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void EclassModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
 
@@ -78,7 +78,7 @@ void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTe
 	}
 }
 
-void EclassModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void EclassModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
 

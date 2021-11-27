@@ -42,14 +42,16 @@ class BrushNode :
 	typedef std::vector<brush::VertexInstance> VertexInstances;
 	VertexInstances m_vertexInstances;
 
-	mutable RenderableWireframe m_render_wireframe;
+    mutable bool _faceCentroidPointsNeedUpdate;
 
+#if 0
+	mutable RenderableWireframe m_render_wireframe;
+#endif
     // Renderable array of vertex and edge points
 	mutable RenderablePointVector _selectedPoints;
 
 	mutable AABB m_aabb_component;
-	mutable RenderablePointVector _faceCentroidPointsCulled;
-	mutable bool m_viewChanged; // requires re-evaluation of view-dependent cached data
+	mutable RenderablePointVector _visibleFaceCentroidPoints;
 
 	BrushClipPlane m_clipPlane;
 
@@ -140,12 +142,13 @@ public:
 	bool intersectsLight(const RendererLight& light) const override;
 
 	// Renderable implementation
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void onPreRender(const VolumeTest& volume) override;
+	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	void viewChanged() const override;
 	std::size_t getHighlightFlags() override;
 
 	void evaluateTransform();
@@ -168,10 +171,17 @@ public:
     // Should only be used by the internal Brush object
     bool facesAreForcedVisible();
 
+    // Will be invoked if one of this brush's faces updates its visibility status
+    void onFaceVisibilityChanged();
+
     void onPostUndo() override;
     void onPostRedo() override;
 
 protected:
+    virtual void onVisibilityChanged(bool isVisibleNow) override;
+
+    virtual void setForcedVisibility(bool forceVisible, bool includeChildren) override;
+
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.
 	void _onTransformationChanged() override;
@@ -183,16 +193,17 @@ protected:
 private:
 	void transformComponents(const Matrix4& matrix);
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+#if 0
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+#endif
 
-	void update_selected() const;
-	void renderSelectedPoints(RenderableCollector& collector,
+	void updateSelectedPointsArray() const;
+	void renderSelectedPoints(IRenderableCollector& collector,
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const;
 
-	void renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const;
-	void evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void updateFaceCentroidPoints() const;
 
 }; // class BrushNode
 typedef std::shared_ptr<BrushNode> BrushNodePtr;

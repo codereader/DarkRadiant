@@ -39,7 +39,7 @@ public:
         return !_targetKeys.empty();
     }
 
-	void render(const ShaderPtr& shader, RenderableCollector& collector, const VolumeTest& volume, const Vector3& worldPosition)
+	void render(const ShaderPtr& shader, IRenderableCollector& collector, const VolumeTest& volume, const Vector3& worldPosition)
 	{
 		if (_targetKeys.empty())
 		{

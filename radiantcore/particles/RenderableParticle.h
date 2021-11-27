@@ -63,13 +63,15 @@ public:
 	void update(const Matrix4& viewRotation) override;
 
 	// Front-end render methods
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, 
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume, 
 					 const Matrix4& localToWorld, const IRenderEntity* entity) const;
 
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, 
 						 const Matrix4& localToWorld, const IRenderEntity* entity) const;
+
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 

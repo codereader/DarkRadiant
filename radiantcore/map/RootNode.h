@@ -71,11 +71,14 @@ public:
     IUndoSystem& getUndoSystem() override;
 
 	// Renderable implementation (empty)
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override
 	{}
 
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override
 	{}
+
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override
+    {}
 
 	std::size_t getHighlightFlags() override
 	{

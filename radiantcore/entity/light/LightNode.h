@@ -114,10 +114,10 @@ public:
 	void selectedChangedComponent(const ISelectable& selectable);
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
 
     // OpenGLRenderable implementation
     void render(const RenderInfo& info) const override;
@@ -140,11 +140,11 @@ protected:
 	void construct() override;
 
 private:
-    void renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
+    void renderInactiveComponents(IRenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
     void evaluateTransform();
 
     // Render the light volume including bounds and origin
-    void renderLightVolume(RenderableCollector& collector,
+    void renderLightVolume(IRenderableCollector& collector,
                            const Matrix4& localToWorld, bool selected) const;
 
     // Update the bounds of the renderable radius box

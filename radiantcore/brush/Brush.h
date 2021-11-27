@@ -10,7 +10,7 @@
 #include <sigc++/signal.h>
 #include "util/Noncopyable.h"
 
-class RenderableCollector;
+class IRenderableCollector;
 class Ray;
 
 /// \brief Returns true if 'self' takes priority when building brush b-rep.
@@ -211,7 +211,7 @@ public:
 
 	const AABB& localAABB() const override;
 
-	void renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderComponents(selection::ComponentSelectionMode mode, IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void transform(const Matrix4& matrix);
 
@@ -270,7 +270,9 @@ public:
 	/// \brief Constructs \p winding from the intersection of \p plane with the other planes of the brush.
 	void windingForClipPlane(Winding& winding, const Plane3& plane) const;
 
+#if 0
 	void update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const;
+#endif
 
 	void update_faces_wireframe(RenderablePointVector& wire,
 								const std::size_t* visibleFaceIndices,

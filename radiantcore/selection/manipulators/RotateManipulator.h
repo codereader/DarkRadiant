@@ -68,7 +68,7 @@ public:
 	void UpdateColours();
 	void updateCircleTransforms();
 
-	void render(RenderableCollector& collector, const VolumeTest& volume) override;
+	void render(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void render(const RenderInfo& info) const override;
 
 	void testSelect(SelectionTest& view, const Matrix4& pivot2world) override;

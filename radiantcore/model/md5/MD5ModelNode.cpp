@@ -72,17 +72,22 @@ bool MD5ModelNode::intersectsLight(const RendererLight& light) const
     return light.lightAABB().intersects(worldAABB());
 }
 
-void MD5ModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void MD5ModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
 
     render(collector, volume, localToWorld(), *_renderEntity);
 }
 
-void MD5ModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void MD5ModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
 
+    render(collector, volume, localToWorld(), *_renderEntity);
+}
+
+void MD5ModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
     render(collector, volume, localToWorld(), *_renderEntity);
 }
 
@@ -93,7 +98,7 @@ void MD5ModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     _model->setRenderSystem(renderSystem);
 }
 
-void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volume,
+void MD5ModelNode::render(IRenderableCollector& collector, const VolumeTest& volume,
         const Matrix4& localToWorld, const IRenderEntity& entity) const
 {
     // Do some rough culling (per model, not per surface)

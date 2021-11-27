@@ -1,10 +1,14 @@
 #pragma once
 
 #include "imodule.h"
+#include "iwindingrenderer.h"
+#include "isurfacerenderer.h"
 #include <functional>
+#include <vector>
 
 #include "math/Vector3.h"
 #include "math/AABB.h"
+#include "render/ArbitraryMeshVertex.h"
 
 #include "ishaderlayer.h"
 #include <sigc++/signal.h>
@@ -116,6 +120,8 @@ typedef BasicVector3<double> Vector3;
 
 class Shader;
 typedef std::shared_ptr<Shader> ShaderPtr;
+
+struct RenderableGeometry;
 
 /**
  * A RenderEntity represents a map entity as seen by the renderer.
@@ -384,7 +390,9 @@ typedef std::shared_ptr<Material> MaterialPtr;
  * which use it -- the actual rendering is performed by traversing a list of
  * Shaders and rendering the geometry attached to each one.
  */
-class Shader
+class Shader :
+    public render::IWindingRenderer,
+    public render::ISurfaceRenderer
 {
 public:
 	// Observer interface to get notified on (un-)realisation
@@ -422,6 +430,10 @@ public:
 							   const Matrix4& modelview,
 							   const LightSources* lights = nullptr,
                                const IRenderEntity* entity = nullptr) = 0;
+
+#ifdef RENDERABLE_GEOMETRY
+    virtual void addGeometry(RenderableGeometry& geometry) = 0;
+#endif
 
     /**
      * \brief
@@ -466,6 +478,14 @@ public:
 typedef std::shared_ptr<Shader> ShaderPtr;
 
 const char* const MODULE_RENDERSYSTEM("ShaderCache");
+
+// Render view type enumeration, is used to select (or leave out)
+// Shader objects during rendering
+enum class RenderViewType
+{
+    Camera      = 1 << 0,
+    OrthoView   = 1 << 1,
+};
 
 /**
  * \brief
@@ -514,7 +534,8 @@ public:
      * \param viewer
      * Location of the viewer in world space.
      */
-    virtual void render(RenderStateFlags globalFlagsMask,
+    virtual void render(RenderViewType renderViewType,
+                        RenderStateFlags globalFlagsMask,
                         const Matrix4& modelview,
                         const Matrix4& projection,
                         const Vector3& viewer) = 0;

@@ -58,12 +58,24 @@ void NullModelNode::testSelect(Selector& selector, SelectionTest& test) {
 	_nullModel->testSelect(selector, test, localToWorld());
 }
 
-void NullModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const {
+void NullModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const {
 	_nullModel->renderSolid(collector, volume, localToWorld());
 }
 
-void NullModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const {
+void NullModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const {
 	_nullModel->renderWireframe(collector, volume, localToWorld());
+}
+
+void NullModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (collector.supportsFullMaterials())
+    {
+        renderSolid(collector, volume);
+    }
+    else
+    {
+        renderWireframe(collector, volume);
+    }
 }
 
 void NullModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)

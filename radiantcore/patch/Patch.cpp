@@ -48,9 +48,6 @@ inline bool double_valid(double f) {
 Patch::Patch(PatchNode& node) :
     _node(node),
     _undoStateSaver(nullptr),
-    _solidRenderable(_mesh),
-    _wireframeRenderable(_mesh),
-    _fixedWireframeRenderable(_mesh),
     _renderableNTBVectors(_mesh),
     _renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
     _renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
@@ -69,9 +66,6 @@ Patch::Patch(const Patch& other, PatchNode& node) :
     IUndoable(other),
     _node(node),
     _undoStateSaver(nullptr),
-    _solidRenderable(_mesh),
-    _wireframeRenderable(_mesh),
-    _fixedWireframeRenderable(_mesh),
     _renderableNTBVectors(_mesh),
     _renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
     _renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
@@ -191,17 +185,8 @@ const AABB& Patch::localAABB() const
     return _localAABB;
 }
 
-void Patch::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, const IRenderEntity& entity) const
-{
-    // Defer the tesselation calculation to the last minute
-    const_cast<Patch&>(*this).updateTesselation();
-
-    collector.addRenderable(*entity.getWireShader(),
-        _patchDef3 ? _fixedWireframeRenderable : _wireframeRenderable, localToWorld);
-}
-
 // greebo: This renders the patch components, namely the lattice and the corner controls
-void Patch::submitRenderablePoints(RenderableCollector& collector,
+void Patch::submitRenderablePoints(IRenderableCollector& collector,
                                    const VolumeTest& volume,
                                    const Matrix4& localToWorld) const
 {
@@ -332,6 +317,7 @@ void Patch::controlPointsChanged()
     transformChanged();
     evaluateTransform();
     updateTesselation();
+    _node.onControlPointsChanged();
 
     for (Observers::iterator i = _observers.begin(); i != _observers.end();)
     {
@@ -582,16 +568,7 @@ void Patch::updateTesselation(bool force)
         }
     }
 
-    _solidRenderable.queueUpdate();
-
-    if (_patchDef3)
-    {
-        _fixedWireframeRenderable.queueUpdate();
-    }
-    else
-    {
-        _wireframeRenderable.queueUpdate();
-    }
+    _node.onTesselationChanged();
 }
 
 void Patch::invertMatrix()
@@ -2698,7 +2675,9 @@ bool Patch::getIntersection(const Ray& ray, Vector3& intersection)
 
 void Patch::textureChanged()
 {
-    for (Observers::iterator i = _observers.begin(); i != _observers.end();)
+    _node.onMaterialChanged();
+
+    for (auto i = _observers.begin(); i != _observers.end();)
     {
         (*i++)->onPatchTextureChanged();
     }

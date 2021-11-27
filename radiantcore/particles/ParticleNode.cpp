@@ -59,7 +59,12 @@ Matrix4 ParticleNode::localToParent() const
 	return _local2Parent;
 }
 
-void ParticleNode::renderSolid(RenderableCollector& collector,
+bool ParticleNode::isOriented() const
+{
+    return true;
+}
+
+void ParticleNode::renderSolid(IRenderableCollector& collector,
 							   const VolumeTest& volume) const
 {
 	if (!_renderableParticle) return;
@@ -70,7 +75,7 @@ void ParticleNode::renderSolid(RenderableCollector& collector,
 	_renderableParticle->renderSolid(collector, volume, localToWorld(), _renderEntity);
 }
 
-void ParticleNode::renderWireframe(RenderableCollector& collector,
+void ParticleNode::renderWireframe(IRenderableCollector& collector,
 								   const VolumeTest& volume) const
 {
 	// greebo: For now, don't draw particles in ortho views they are too distracting
@@ -82,6 +87,13 @@ void ParticleNode::renderWireframe(RenderableCollector& collector,
 
 	_renderableParticle->renderWireframe(collector, volume, localToWorld(), _renderEntity.get());
 #endif
+}
+
+void ParticleNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (!collector.supportsFullMaterials()) return;
+
+    renderSolid(collector, volume);
 }
 
 void ParticleNode::setRenderSystem(const RenderSystemPtr& renderSystem)
