@@ -1,4 +1,4 @@
-darkradiant (2.14.0~focal1) focal; urgency=medium
+darkradiant (2.14.0~focal2) focal; urgency=medium
 
   * New major release on all platforms.
   * Multi-selection support in Entity Inspector.
