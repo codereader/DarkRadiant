@@ -716,6 +716,23 @@ TEST_F(EntityTest, FuncStaticLocalToWorld)
     EXPECT_EQ(funcStatic->localToWorld(), Matrix4::getIdentity());
 }
 
+TEST_F(EntityTest, TranslateFuncStatic)
+{
+    auto torch = TestEntity::create("func_static");
+    torch.args().setKeyValue("origin", "0 0 0");
+    torch.args().setKeyValue("model", "models/torch.lwo");
+
+    // Set translation via the ITransformable interface
+    auto transformable = Node_getTransformable(torch.node);
+    ASSERT_TRUE(transformable);
+    transformable->setTranslation(Vector3(128, 56, -64));
+
+    // Translation does not appear in origin spawnarg until frozen
+    EXPECT_EQ(torch.args().getKeyValue("origin"), "0 0 0");
+    transformable->freezeTransform();
+    EXPECT_EQ(torch.args().getKeyValue("origin"), "128 56 -64");
+}
+
 TEST_F(EntityTest, LightTransformedByParent)
 {
     // Parent a light to another entity (this isn't currently how the attachment
@@ -1764,7 +1781,7 @@ TEST_F(EntityTest, MovePlayerStart)
 TEST_F(EntityTest, GetDefaultAttributeType)
 {
     auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-    
+
     // The default type is empty
     EXPECT_EQ(eclass->getAttributeType("ordinary_key"), "");
 }
@@ -1780,7 +1797,7 @@ TEST_F(EntityTest, GetDefaultAttributeDescription)
 TEST_F(EntityTest, GetNonInheritedAttributeType)
 {
     auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-    
+
     // The "defined_bool" is defined on the eclass, next to its editor_bool descriptor
     EXPECT_EQ(eclass->getAttributeType("defined_bool"), "bool");
 
