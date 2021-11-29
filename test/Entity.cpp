@@ -739,7 +739,7 @@ TEST_F(EntityTest, RotateFuncStatic)
     torch.args().setKeyValue("origin", "0 0 0");
     torch.args().setKeyValue("model", "models/torch.lwo");
 
-    // Set translation via the ITransformable interface
+    // Set rotation via the ITransformable interface
     auto transformable = Node_getTransformable(torch.node);
     ASSERT_TRUE(transformable);
     transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 45)));
@@ -752,6 +752,27 @@ TEST_F(EntityTest, RotateFuncStatic)
 
     // Rotation does not change origin
     EXPECT_EQ(torch.args().getKeyValue("origin"), "0 0 0");
+}
+
+TEST_F(EntityTest, TranslateFuncStaticAfterRotation)
+{
+    auto torch = TestEntity::create("func_static");
+    torch.args().setKeyValue("origin", "0 0 0");
+    torch.args().setKeyValue("model", "models/torch.lwo");
+
+    // Set rotation via the ITransformable interface and freeze the transform
+    auto transformable = Node_getTransformable(torch.node);
+    ASSERT_TRUE(transformable);
+    transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 90)));
+    transformable->freezeTransform();
+    EXPECT_EQ(torch.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
+
+    // Now add a translation
+    transformable->setTranslation(Vector3(-1200, 45, 962));
+    transformable->freezeTransform();
+
+    // Rotation must not have changed
+    EXPECT_EQ(torch.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
 }
 
 TEST_F(EntityTest, LightTransformedByParent)
