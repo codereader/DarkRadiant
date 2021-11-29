@@ -733,6 +733,27 @@ TEST_F(EntityTest, TranslateFuncStatic)
     EXPECT_EQ(torch.args().getKeyValue("origin"), "128 56 -64");
 }
 
+TEST_F(EntityTest, RotateFuncStatic)
+{
+    auto torch = TestEntity::create("func_static");
+    torch.args().setKeyValue("origin", "0 0 0");
+    torch.args().setKeyValue("model", "models/torch.lwo");
+
+    // Set translation via the ITransformable interface
+    auto transformable = Node_getTransformable(torch.node);
+    ASSERT_TRUE(transformable);
+    transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 45)));
+
+    // Should not appear in spawnargs until frozen
+    EXPECT_EQ(torch.args().getKeyValue("rotation"), "");
+    transformable->freezeTransform();
+    EXPECT_EQ(torch.args().getKeyValue("rotation"),
+              "0.707107 0.707107 0 -0.707107 0.707107 0 0 0 1");
+
+    // Rotation does not change origin
+    EXPECT_EQ(torch.args().getKeyValue("origin"), "0 0 0");
+}
+
 TEST_F(EntityTest, LightTransformedByParent)
 {
     // Parent a light to another entity (this isn't currently how the attachment
