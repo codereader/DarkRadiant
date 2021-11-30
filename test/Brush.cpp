@@ -133,10 +133,10 @@ TEST_F(BrushTest, FacePlaneRotateWithMatrix)
                 const double ANGLE = 2.0;
                 Matrix4 rot = Matrix4::getRotation(Vector3(0, 1, 0), ANGLE);
 
-                Node_getTransformable(_brushNode)->setRotation(
+                scene::node_cast<ITransformable>(_brushNode)->setRotation(
                     Quaternion::createForY(-ANGLE)
                 );
-                Node_getTransformable(_brushNode)->freezeTransform();
+                scene::node_cast<ITransformable>(_brushNode)->freezeTransform();
 
                 double EPSILON = 0.001;
                 EXPECT_NE(face.getPlane3(), orig);
@@ -167,8 +167,8 @@ TEST_F(BrushTest, FacePlaneTranslate)
                 // Translate in the Y direction
                 const Vector3 translation(0, 3, 0);
 
-                Node_getTransformable(_brushNode)->setTranslation(translation);
-                Node_getTransformable(_brushNode)->freezeTransform();
+                scene::node_cast<ITransformable>(_brushNode)->setTranslation(translation);
+                scene::node_cast<ITransformable>(_brushNode)->freezeTransform();
 
                 EXPECT_NE(face.getPlane3(), orig);
                 EXPECT_EQ(face.getPlane3().normal(), orig.normal());
@@ -375,7 +375,7 @@ TEST_F(BrushTest, RotateBrushZ90Degrees)
     GlobalCommandSystem().executeCommand("RotateSelectionZ");
 
     auto brush = Node_getIBrush(brushNode);
-    
+
     // Check the faces explicitly, normals should have been rotated, order of faces unchanged
     checkFaceNormalAndShader(brush, 0, { 0,-1, 0 }, "textures/numbers/1");
     checkFaceNormalAndShader(brush, 1, { 0, 1, 0 }, "textures/numbers/1");

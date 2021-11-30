@@ -162,7 +162,7 @@ IEntityNodePtr Doom3EntityModule::createEntityFromSelection(const std::string& n
     {
         selection::algorithm::deleteSelection();
 
-        ITransformablePtr transform = Node_getTransformable(node);
+        ITransformablePtr transform = scene::node_cast<ITransformable>(node);
 
         if (transform != 0) {
             transform->setType(TRANSFORM_PRIMITIVE);

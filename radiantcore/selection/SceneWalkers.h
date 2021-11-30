@@ -81,7 +81,7 @@ namespace scene
 
 inline bool freezeTransformableNode(const scene::INodePtr& node)
 {
-	ITransformablePtr transform = Node_getTransformable(node);
+	ITransformablePtr transform = scene::node_cast<ITransformable>(node);
 
 	if (transform)
 	{

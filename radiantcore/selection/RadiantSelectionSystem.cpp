@@ -814,7 +814,7 @@ void RadiantSelectionSystem::onManipulationCancelled()
     // Tell all the scene objects to revert their transformations
     foreachSelected([](const scene::INodePtr& node)
     {
-        ITransformablePtr transform = Node_getTransformable(node);
+        ITransformablePtr transform = scene::node_cast<ITransformable>(node);
 
         if (transform)
         {
@@ -826,7 +826,7 @@ void RadiantSelectionSystem::onManipulationCancelled()
         {
             node->foreachNode([&](const scene::INodePtr& child)
             {
-                ITransformablePtr transform = Node_getTransformable(child);
+                ITransformablePtr transform = scene::node_cast<ITransformable>(child);
 
                 if (transform)
                 {

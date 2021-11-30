@@ -952,7 +952,7 @@ void floorNode(const scene::INodePtr& node)
 	{
 		Vector3 translation = finder.getIntersection() - objectOrigin;
 
-		ITransformablePtr transformable = Node_getTransformable(node);
+		ITransformablePtr transformable = scene::node_cast<ITransformable>(node);
 
 		if (transformable)
 		{
@@ -987,7 +987,7 @@ void registerCommands()
     GlobalCommandSystem().addCommand("InvertSelection", invertSelection);
     GlobalCommandSystem().addCommand("SelectInside", selectInside,
         { cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL });
-    GlobalCommandSystem().addCommand("SelectFullyInside", selectFullyInside, 
+    GlobalCommandSystem().addCommand("SelectFullyInside", selectFullyInside,
         { cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL });
 	GlobalCommandSystem().addCommand("SelectTouching", selectTouching,
         { cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL });

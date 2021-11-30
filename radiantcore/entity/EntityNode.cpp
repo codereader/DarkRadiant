@@ -91,7 +91,7 @@ void EntityNode::constructClone(const EntityNode& original)
         if (originalModel && originalModel->hasModifiedScale())
         {
             assert(getModelKey().getNode()); // clone should have a child model like the original
-            auto transformable = Node_getTransformable(getModelKey().getNode());
+            auto transformable = scene::node_cast<ITransformable>(getModelKey().getNode());
 
             if (transformable)
             {

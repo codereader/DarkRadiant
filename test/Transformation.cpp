@@ -113,7 +113,7 @@ TEST_F(TransformationTest, NonUniformLightDragResize)
     auto entityNode = createAndSelectLight();
     selectLightPlaneAt320(entityNode);
 
-    auto transformable = Node_getTransformable(entityNode);
+    auto transformable = scene::node_cast<ITransformable>(entityNode);
     transformable->setType(TRANSFORM_COMPONENT); // we manipulate a component (a plane)
     transformable->setTranslation({ -64, 0, 0 });
 
@@ -136,7 +136,7 @@ TEST_F(TransformationTest, UniformLightDragResize)
     auto entityNode = createAndSelectLight();
     selectLightPlaneAt320(entityNode);
 
-    auto transformable = Node_getTransformable(entityNode);
+    auto transformable = scene::node_cast<ITransformable>(entityNode);
     transformable->setType(TRANSFORM_COMPONENT); // we manipulate a component (a plane)
     transformable->setTranslation({ -64, 0, 0 });
 

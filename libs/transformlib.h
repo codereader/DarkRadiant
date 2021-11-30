@@ -38,7 +38,7 @@ void forEachTransformable(const INode& node, Func functor)
     node.foreachNode(
         [&](const scene::INodePtr& child) -> bool
         {
-            ITransformablePtr transformable = Node_getTransformable(child);
+            ITransformablePtr transformable = scene::node_cast<ITransformable>(child);
             if (transformable)
                 functor(*transformable);
 

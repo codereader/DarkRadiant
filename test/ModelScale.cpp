@@ -25,7 +25,7 @@ TEST_F(RadiantTest, DuplicateScaledModel)
     // Apply the scale to the model beneath the entity
     func_static->foreachNode([&](const scene::INodePtr& node)
     {
-        ITransformablePtr transformable = Node_getTransformable(node);
+        ITransformablePtr transformable = scene::node_cast<ITransformable>(node);
 
         if (transformable)
         {
