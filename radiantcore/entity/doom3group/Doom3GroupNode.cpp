@@ -372,7 +372,7 @@ void Doom3GroupNode::_onTransformationChanged()
 			child.revertTransform();
 		});
 
-        revertTransform();
+        revertTransformInternal();
 
 		evaluateTransform();
 
@@ -382,7 +382,7 @@ void Doom3GroupNode::_onTransformationChanged()
 	else
 	{
 		// It's a model
-		revertTransform();
+		revertTransformInternal();
 		evaluateTransform();
 		updateTransform();
 	}
@@ -393,9 +393,9 @@ void Doom3GroupNode::_onTransformationChanged()
 
 void Doom3GroupNode::_applyTransformation()
 {
-	revertTransform();
+	revertTransformInternal();
 	evaluateTransform();
-	freezeTransform();
+	freezeTransformInternal();
 
 	if (!isModel())
 	{
@@ -527,7 +527,7 @@ void Doom3GroupNode::snapto(float snap)
 	m_originKey.write(_spawnArgs);
 }
 
-void Doom3GroupNode::revertTransform()
+void Doom3GroupNode::revertTransformInternal()
 {
 	m_origin = m_originKey.get();
 
@@ -544,7 +544,7 @@ void Doom3GroupNode::revertTransform()
 	m_curveCatmullRom.revertTransform();
 }
 
-void Doom3GroupNode::freezeTransform()
+void Doom3GroupNode::freezeTransformInternal()
 {
 	m_originKey.set(m_origin);
 	m_originKey.write(_spawnArgs);

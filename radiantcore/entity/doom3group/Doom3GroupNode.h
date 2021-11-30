@@ -175,8 +175,8 @@ private:
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
 	void scale(const Vector3& scale);
-	void revertTransform() override;
-	void freezeTransform() override;
+	void revertTransformInternal();
+	void freezeTransformInternal();
 
 	// Translates the origin only (without the children)
 	void translateOrigin(const Vector3& translation);
@@ -187,8 +187,6 @@ private:
 
 	// Returns TRUE if this D3Group is a model
 	bool isModel() const;
-
-	void setTransformChanged(Callback& callback);
 
 public:
 
