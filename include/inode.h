@@ -261,4 +261,11 @@ public:
     virtual void transformChangedLocal() = 0;
 };
 
+/// Cast an INode to a particular interface
+template<typename Interface>
+std::shared_ptr<Interface> node_cast(INodePtr nodeP)
+{
+    return std::dynamic_pointer_cast<Interface>(nodeP);
+}
+
 } // namespace scene
