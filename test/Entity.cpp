@@ -423,9 +423,9 @@ TEST_F(EntityTest, SelectEntity)
     // Confirm that setting entity node's selection status propagates to the
     // selection system
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
-    Node_getSelectable(light)->setSelected(true);
+    scene::node_cast<ISelectable>(light)->setSelected(true);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
-    Node_getSelectable(light)->setSelected(false);
+    scene::node_cast<ISelectable>(light)->setSelected(false);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
 }
 
@@ -436,7 +436,7 @@ TEST_F(EntityTest, DestroySelectedEntity)
     // Confirm that setting entity node's selection status propagates to the
     // selection system
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
-    Node_getSelectable(light)->setSelected(true);
+    scene::node_cast<ISelectable>(light)->setSelected(true);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
 
     // Destructor called here and should not crash
@@ -723,7 +723,7 @@ TEST_F(EntityTest, TranslateFuncStatic)
     torch.args().setKeyValue("model", "models/torch.lwo");
 
     // Set translation via the ITransformable interface
-    auto transformable = Node_getTransformable(torch.node);
+    auto transformable = scene::node_cast<ITransformable>(torch.node);
     ASSERT_TRUE(transformable);
     transformable->setTranslation(Vector3(128, 56, -64));
 
@@ -740,7 +740,7 @@ TEST_F(EntityTest, RotateFuncStatic)
     torch.args().setKeyValue("model", "models/torch.lwo");
 
     // Set rotation via the ITransformable interface
-    auto transformable = Node_getTransformable(torch.node);
+    auto transformable = scene::node_cast<ITransformable>(torch.node);
     ASSERT_TRUE(transformable);
     transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 45)));
 
@@ -750,8 +750,30 @@ TEST_F(EntityTest, RotateFuncStatic)
     EXPECT_EQ(torch.args().getKeyValue("rotation"),
               "0.707107 0.707107 0 -0.707107 0.707107 0 0 0 1");
 
+    // Applying the transform should be idempotent
+    transformable->freezeTransform();
+    EXPECT_EQ(torch.args().getKeyValue("rotation"),
+              "0.707107 0.707107 0 -0.707107 0.707107 0 0 0 1");
+
     // Rotation does not change origin
     EXPECT_EQ(torch.args().getKeyValue("origin"), "0 0 0");
+}
+
+TEST_F(EntityTest, RotateLight)
+{
+    auto light = TestEntity::create("light");
+    light.args().setKeyValue("origin", "0 0 0");
+
+    // Rotate the light via ITransformable
+    auto transformable = scene::node_cast<ITransformable>(light.node);
+    ASSERT_TRUE(transformable);
+    transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 75)));
+
+    // Rotation appears after freezing transform
+    EXPECT_EQ(light.args().getKeyValue("rotation"), "");
+    transformable->freezeTransform();
+    EXPECT_EQ(light.args().getKeyValue("rotation"),
+              "0.258819 0.965926 0 -0.965926 0.258819 0 0 0 1");
 }
 
 TEST_F(EntityTest, TranslateFuncStaticAfterRotation)
@@ -761,7 +783,7 @@ TEST_F(EntityTest, TranslateFuncStaticAfterRotation)
     torch.args().setKeyValue("model", "models/torch.lwo");
 
     // Set rotation via the ITransformable interface and freeze the transform
-    auto transformable = Node_getTransformable(torch.node);
+    auto transformable = scene::node_cast<ITransformable>(torch.node);
     ASSERT_TRUE(transformable);
     transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 90)));
     transformable->freezeTransform();
@@ -770,9 +792,31 @@ TEST_F(EntityTest, TranslateFuncStaticAfterRotation)
     // Now add a translation
     transformable->setTranslation(Vector3(-1200, 45, 962));
     transformable->freezeTransform();
+    EXPECT_EQ(torch.args().getKeyValue("origin"), "-1200 45 962");
 
     // Rotation must not have changed
     EXPECT_EQ(torch.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
+}
+
+TEST_F(EntityTest, TranslateLightAfterRotation)
+{
+    auto light = TestEntity::create("light");
+    light.args().setKeyValue("origin", "0 0 0");
+
+    // Set rotation via the ITransformable interface and freeze the transform
+    auto transformable = scene::node_cast<ITransformable>(light.node);
+    ASSERT_TRUE(transformable);
+    transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 90)));
+    transformable->freezeTransform();
+    EXPECT_EQ(light.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
+
+    // Now add a translation
+    transformable->setTranslation(Vector3(565.25, -450, 35.2));
+    transformable->freezeTransform();
+    EXPECT_EQ(light.args().getKeyValue("origin"), "565.25 -450 35.2");
+
+    // Rotation must not have changed
+    EXPECT_EQ(light.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
 }
 
 TEST_F(EntityTest, LightTransformedByParent)
@@ -833,7 +877,7 @@ TEST_F(EntityTest, RenderSelectedLightEntity)
     RenderFixture renderF;
 
     // Select the light then render it in wireframe mode
-    Node_getSelectable(light)->setSelected(true);
+    scene::node_cast<ISelectable>(light)->setSelected(true);
     light->setRenderSystem(renderF.backend);
     light->renderWireframe(renderF.collector, renderF.volumeTest);
 
