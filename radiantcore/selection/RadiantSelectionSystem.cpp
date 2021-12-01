@@ -1055,7 +1055,7 @@ void RadiantSelectionSystem::shutdownModule()
 
         // If this is a selectable node, unselect it (which might remove it from
         // the map and invalidate the original iterator)
-        auto selectable = Node_getSelectable(node);
+        auto selectable = scene::node_cast<ISelectable>(node);
         if (selectable)
             selectable->setSelected(false);
     }

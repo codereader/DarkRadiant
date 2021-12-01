@@ -370,7 +370,7 @@ public:
 		Entity* entity = Node_getEntity(node);
 
 		// Check if we have a selectable
-		ISelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
 		if (selectable)
 		{
@@ -444,7 +444,7 @@ public:
 		Entity* entity = Node_getEntity(node);
 
 		// Check if we have a selectable
-		ISelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
 		if (selectable != NULL)
 		{
@@ -558,7 +558,7 @@ public:
 		// Don't traverse hidden nodes
 		if (!node->visible()) return false;
 
-		ISelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
 		// ignore worldspawn
         Entity* entity = Node_getEntity(node);

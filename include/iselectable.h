@@ -26,14 +26,9 @@ namespace scene
 	typedef std::shared_ptr<INode> INodePtr;
 }
 
-inline ISelectablePtr Node_getSelectable(const scene::INodePtr& node)
-{
-    return std::dynamic_pointer_cast<ISelectable>(node);
-}
-
 inline void Node_setSelected(const scene::INodePtr& node, bool selected)
 {
-	ISelectablePtr selectable = Node_getSelectable(node);
+	ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
     if (selectable)
 	{
@@ -43,7 +38,7 @@ inline void Node_setSelected(const scene::INodePtr& node, bool selected)
 
 inline bool Node_isSelected(const scene::INodePtr& node)
 {
-	ISelectablePtr selectable = Node_getSelectable(node);
+	ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
     if (selectable)
 	{

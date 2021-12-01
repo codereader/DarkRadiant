@@ -48,7 +48,7 @@ void SelectionTestWalker::performSelectionTest(const scene::INodePtr& selectable
         return;
     }
 
-    auto selectable = Node_getSelectable(selectableNode);
+    auto selectable = scene::node_cast<ISelectable>(selectableNode);
 
 	if (!selectable) return; // skip non-selectables
 

@@ -10,7 +10,7 @@
 #include "EntityInterface.h"
 #include "PatchInterface.h"
 
-namespace script 
+namespace script
 {
 
 ScriptSceneNode::ScriptSceneNode(const scene::INodePtr& node) :
@@ -33,7 +33,7 @@ void ScriptSceneNode::removeFromParent()
 	}
 }
 
-void ScriptSceneNode::addToContainer(const ScriptSceneNode& container) 
+void ScriptSceneNode::addToContainer(const ScriptSceneNode& container)
 {
 	scene::INodePtr node = _node.lock();
 	if (node != NULL) {
@@ -41,18 +41,18 @@ void ScriptSceneNode::addToContainer(const ScriptSceneNode& container)
 	}
 }
 
-const AABB& ScriptSceneNode::getWorldAABB() const 
+const AABB& ScriptSceneNode::getWorldAABB() const
 {
 	scene::INodePtr node = _node.lock();
 	return node != NULL ? node->worldAABB() : _emptyAABB;
 }
 
-bool ScriptSceneNode::isNull() const 
+bool ScriptSceneNode::isNull() const
 {
 	return _node.lock() == NULL;
 }
 
-ScriptSceneNode ScriptSceneNode::getParent() 
+ScriptSceneNode ScriptSceneNode::getParent()
 {
 	scene::INodePtr node = _node.lock();
 	return node != NULL ? ScriptSceneNode(node->getParent()) : ScriptSceneNode(scene::INodePtr());
@@ -64,7 +64,7 @@ std::string ScriptSceneNode::getNodeType()
 	return node != NULL ? getNameForNodeType(node->getNodeType()) : "null";
 }
 
-void ScriptSceneNode::traverse(scene::NodeVisitor& visitor) 
+void ScriptSceneNode::traverse(scene::NodeVisitor& visitor)
 {
 	scene::INodePtr node = _node.lock();
 	if (node != NULL) {
@@ -72,7 +72,7 @@ void ScriptSceneNode::traverse(scene::NodeVisitor& visitor)
 	}
 }
 
-void ScriptSceneNode::traverseChildren(scene::NodeVisitor& visitor) 
+void ScriptSceneNode::traverseChildren(scene::NodeVisitor& visitor)
 {
 	scene::INodePtr node = _node.lock();
 	if (node != NULL) {
@@ -80,12 +80,12 @@ void ScriptSceneNode::traverseChildren(scene::NodeVisitor& visitor)
 	}
 }
 
-bool ScriptSceneNode::isSelected() 
+bool ScriptSceneNode::isSelected()
 {
 	scene::INodePtr node = _node.lock();
 	if (node == NULL) return false;
 
-	ISelectablePtr selectable = Node_getSelectable(node);
+	ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
 	return (selectable != NULL) ? selectable->isSelected() : false;
 }
@@ -95,19 +95,19 @@ void ScriptSceneNode::setSelected(int selected)
 	scene::INodePtr node = _node.lock();
 	if (node == NULL) return;
 
-	ISelectablePtr selectable = Node_getSelectable(node);
+	ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
 	if (selectable != NULL) {
 		selectable->setSelected(static_cast<bool>(selected));
 	}
 }
 
-void ScriptSceneNode::invertSelected() 
+void ScriptSceneNode::invertSelected()
 {
 	scene::INodePtr node = _node.lock();
 	if (node == NULL) return;
 
-	ISelectablePtr selectable = Node_getSelectable(node);
+	ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
 	if (selectable != NULL) {
 		selectable->setSelected(!selectable->isSelected());
@@ -161,7 +161,7 @@ void SceneGraphInterface::registerInterface(py::module& scope, py::dict& globals
 	// Add the module declaration to the given python namespace
 	py::class_<SceneGraphInterface> sceneGraphInterface(scope, "SceneGraph");
 	sceneGraphInterface.def("root", &SceneGraphInterface::root);
-		
+
 	// Now point the Python variable "GlobalSceneGraph" to this instance
 	globals["GlobalSceneGraph"] = this;
 }
