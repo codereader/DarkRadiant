@@ -1,3 +1,15 @@
+darkradiant (2.14.0~focal2) focal; urgency=medium
+
+  * New major release on all platforms.
+  * Multi-selection support in Entity Inspector.
+  * New model importer with ability to import FBX models.
+  * Improved copy-paste of textures on angled faces.
+  * Improved scaling functionality in Surface Inspector.
+  * Redesigned Game Connection UI to enable hot reload in The Dark Mod.
+  * Numerous smaller fixes and improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Sun, 28 Nov 2021 18:52:23 +0000
+
 darkradiant (2.13.0~focal4) focal; urgency=medium
 
   * Fix for incorrect entity/brush colours in canvas windows.
