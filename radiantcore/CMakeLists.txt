@@ -33,7 +33,7 @@ add_library(radiantcore MODULE
             entity/curve/CurveEditInstance.cpp
             entity/curve/CurveNURBS.cpp
             entity/SpawnArgs.cpp
-            entity/doom3group/Doom3GroupNode.cpp
+            entity/doom3group/StaticGeometryNode.cpp
             entity/eclassmodel/EclassModelNode.cpp
             entity/EntityModule.cpp
             entity/EntityNode.cpp

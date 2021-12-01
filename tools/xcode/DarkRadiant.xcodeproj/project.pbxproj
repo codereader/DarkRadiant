@@ -1735,7 +1735,7 @@
 		3AFF0571253AE272002B1472 /* CurveEditInstance.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2B9239F4CA1008A1B2D /* CurveEditInstance.cpp */; };
 		3AFF0572253AE272002B1472 /* CurveNURBS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2BB239F4CA1008A1B2D /* CurveNURBS.cpp */; };
 		3AFF0573253AE283002B1472 /* Doom3Group.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2C1239F4CA1008A1B2D /* Doom3Group.cpp */; };
-		3AFF0574253AE283002B1472 /* Doom3GroupNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2C3239F4CA1008A1B2D /* Doom3GroupNode.cpp */; };
+		3AFF0574253AE283002B1472 /* StaticGeometryNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2C3239F4CA1008A1B2D /* StaticGeometryNode.cpp */; };
 		3AFF0575253AE291002B1472 /* EclassModelNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2C6239F4CA1008A1B2D /* EclassModelNode.cpp */; };
 		3AFF0577253AE2A7002B1472 /* GenericEntityNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2D1239F4CA1008A1B2D /* GenericEntityNode.cpp */; };
 		3AFF0578253AE2BF002B1472 /* Light.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F2DC239F4CA1008A1B2D /* Light.cpp */; };
@@ -3674,8 +3674,8 @@
 		3AE6F2BD239F4CA1008A1B2D /* RenderableCurve.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableCurve.h; path = ../../radiantcore/entity/curve/RenderableCurve.h; sourceTree = SOURCE_ROOT; };
 		3AE6F2C1239F4CA1008A1B2D /* Doom3Group.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3Group.cpp; path = ../../radiantcore/entity/doom3group/Doom3Group.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F2C2239F4CA1008A1B2D /* Doom3Group.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3Group.h; path = ../../radiantcore/entity/doom3group/Doom3Group.h; sourceTree = SOURCE_ROOT; };
-		3AE6F2C3239F4CA1008A1B2D /* Doom3GroupNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3GroupNode.cpp; path = ../../radiantcore/entity/doom3group/Doom3GroupNode.cpp; sourceTree = SOURCE_ROOT; };
-		3AE6F2C4239F4CA1008A1B2D /* Doom3GroupNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Doom3GroupNode.h; path = ../../radiantcore/entity/doom3group/Doom3GroupNode.h; sourceTree = SOURCE_ROOT; };
+		3AE6F2C3239F4CA1008A1B2D /* StaticGeometryNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = StaticGeometryNode.cpp; path = ../../radiantcore/entity/doom3group/StaticGeometryNode.cpp; sourceTree = SOURCE_ROOT; };
+		3AE6F2C4239F4CA1008A1B2D /* StaticGeometryNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StaticGeometryNode.h; path = ../../radiantcore/entity/doom3group/StaticGeometryNode.h; sourceTree = SOURCE_ROOT; };
 		3AE6F2C6239F4CA1008A1B2D /* EclassModelNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EclassModelNode.cpp; path = ../../radiantcore/entity/eclassmodel/EclassModelNode.cpp; sourceTree = SOURCE_ROOT; };
 		3AE6F2C7239F4CA1008A1B2D /* EclassModelNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EclassModelNode.h; path = ../../radiantcore/entity/eclassmodel/EclassModelNode.h; sourceTree = SOURCE_ROOT; };
 		3AE6F2CA239F4CA1008A1B2D /* EntityNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityNode.cpp; path = ../../radiantcore/entity/EntityNode.cpp; sourceTree = SOURCE_ROOT; };
@@ -6238,8 +6238,8 @@
 			children = (
 				3AE6F2C1239F4CA1008A1B2D /* Doom3Group.cpp */,
 				3AE6F2C2239F4CA1008A1B2D /* Doom3Group.h */,
-				3AE6F2C3239F4CA1008A1B2D /* Doom3GroupNode.cpp */,
-				3AE6F2C4239F4CA1008A1B2D /* Doom3GroupNode.h */,
+				3AE6F2C3239F4CA1008A1B2D /* StaticGeometryNode.cpp */,
+				3AE6F2C4239F4CA1008A1B2D /* StaticGeometryNode.h */,
 			);
 			name = doom3group;
 			path = ../../../radiant/entity/doom3group;
@@ -10474,7 +10474,7 @@
 				3AFF06E0253C01D9002B1472 /* SelectionTestWalkers.cpp in Sources */,
 				3AFF0526253AE031002B1472 /* PortableMapReader.cpp in Sources */,
 				3AFF0545253AE0A6002B1472 /* PointFile.cpp in Sources */,
-				3AFF0574253AE283002B1472 /* Doom3GroupNode.cpp in Sources */,
+				3AFF0574253AE283002B1472 /* StaticGeometryNode.cpp in Sources */,
 				3AFF0470253AB96C002B1472 /* DirectoryArchive.cpp in Sources */,
 				3AFF054F253AE18F002B1472 /* LogFile.cpp in Sources */,
 				3AE5C346263930D900643850 /* MaterialSourceGenerator.cpp in Sources */,

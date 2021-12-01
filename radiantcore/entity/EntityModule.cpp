@@ -15,7 +15,7 @@
 #include "SpawnArgs.h"
 
 #include "light/LightNode.h"
-#include "doom3group/Doom3GroupNode.h"
+#include "doom3group/StaticGeometryNode.h"
 #include "speaker/SpeakerNode.h"
 #include "generic/GenericEntityNode.h"
 #include "eclassmodel/EclassModelNode.h"
@@ -76,7 +76,7 @@ IEntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
 	else if (!eclass->isFixedSize())
 	{
 		// Variable size entity
-		node = Doom3GroupNode::Create(eclass);
+		node = StaticGeometryNode::Create(eclass);
 	}
 	else if (!eclass->getAttribute("model").getValue().empty())
 	{
