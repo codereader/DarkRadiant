@@ -1,14 +1,12 @@
 /** 
  * greebo: Precompiled header module. This is included by the respective precompiled.h
- * files throughout the project. Many of those include boost headers into the
- * pre-compilation, and they do so by #include'ing this file.
+ * files throughout the project.
  */
 #pragma once
 
-// Add DarkRadiant interfaces
+// Commonly used DarkRadiant interfaces
 #include "Bounded.h"
 #include "editable.h"
-#include "GLProgramAttributes.h"
 #include "i18n.h"
 #include "iarchive.h"
 #include "ibrush.h"
@@ -25,9 +23,6 @@
 #include "ifilter.h"
 #include "ifonts.h"
 #include "igame.h"
-#include "igl.h"
-#include "iglprogram.h"
-#include "iglrender.h"
 #include "igrid.h"
 #include "igroupnode.h"
 #include "iimage.h"
@@ -60,9 +55,6 @@
 #include "ipreferencesystem.h"
 #include "iradiant.h"
 #include "iregistry.h"
-#include "irender.h"
-#include "irenderable.h"
-#include "irendersystemfactory.h"
 #include "iscenegraph.h"
 #include "iscenegraphfactory.h"
 #include "iselectable.h"
