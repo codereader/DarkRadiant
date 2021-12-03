@@ -169,24 +169,24 @@ private:
     ShaderPtr _shader;
     std::size_t _size;
 
-    render::ISurfaceRenderer::Slot _surfaceSlot;
+    render::IGeometryRenderer::Slot _surfaceSlot;
 
 public:
     RenderablePatchTesselation(const PatchTesselation& tess) :
         _tess(tess),
         _needsUpdate(true),
-        _surfaceSlot(render::ISurfaceRenderer::InvalidSlot),
+        _surfaceSlot(render::IGeometryRenderer::InvalidSlot),
         _size(0)
     {}
     
     void clear()
     {
-        if (!_shader || _surfaceSlot == render::ISurfaceRenderer::InvalidSlot) return;
+        if (!_shader || _surfaceSlot == render::IGeometryRenderer::InvalidSlot) return;
 
         _shader->removeSurface(_surfaceSlot);
         _shader.reset();
 
-        _surfaceSlot = render::ISurfaceRenderer::InvalidSlot;
+        _surfaceSlot = render::IGeometryRenderer::InvalidSlot;
         _size = 0;
     }
 
@@ -204,7 +204,7 @@ public:
         _needsUpdate = false;
         auto sizeChanged = _tess.vertices.size() != _size;
 
-        if (_shader && _surfaceSlot != render::ISurfaceRenderer::InvalidSlot && (shaderChanged || sizeChanged))
+        if (_shader && _surfaceSlot != render::IGeometryRenderer::InvalidSlot && (shaderChanged || sizeChanged))
         {
             clear();
         }
@@ -218,7 +218,7 @@ public:
 
         _indexer.generateIndices(_tess, std::back_inserter(indices));
 
-        if (_surfaceSlot == render::ISurfaceRenderer::InvalidSlot)
+        if (_surfaceSlot == render::IGeometryRenderer::InvalidSlot)
         {
             _surfaceSlot = shader->addSurface(_indexer.getType(), _tess.vertices, indices);
         }
@@ -230,7 +230,7 @@ public:
 
     void render(const RenderInfo& info) const override
     {
-        if (_surfaceSlot != render::ISurfaceRenderer::InvalidSlot && _shader)
+        if (_surfaceSlot != render::IGeometryRenderer::InvalidSlot && _shader)
         {
             _shader->renderSurface(_surfaceSlot);
         }

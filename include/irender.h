@@ -2,7 +2,7 @@
 
 #include "imodule.h"
 #include "iwindingrenderer.h"
-#include "isurfacerenderer.h"
+#include "igeometryrenderer.h"
 #include <functional>
 #include <vector>
 
@@ -392,7 +392,7 @@ typedef std::shared_ptr<Material> MaterialPtr;
  */
 class Shader :
     public render::IWindingRenderer,
-    public render::ISurfaceRenderer
+    public render::IGeometryRenderer
 {
 public:
 	// Observer interface to get notified on (un-)realisation

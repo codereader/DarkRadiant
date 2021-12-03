@@ -1,12 +1,12 @@
 #pragma once
 
-#include "isurfacerenderer.h"
+#include "igeometryrenderer.h"
 
 namespace render
 {
 
-class SurfaceRenderer :
-    public ISurfaceRenderer
+class GeometryRenderer :
+    public IGeometryRenderer
 {
 private:
     class VertexBuffer
@@ -134,7 +134,7 @@ private:
     std::size_t _freeSlotMappingHint;
 
 public:
-    SurfaceRenderer() :
+    GeometryRenderer() :
         _freeSlotMappingHint(InvalidSlotMapping)
     {
         _buffers.emplace_back(GL_TRIANGLES);
@@ -237,7 +237,7 @@ private:
         return _buffers[bucketIndex];
     }
 
-    ISurfaceRenderer::Slot getNextFreeSlotMapping()
+    Slot getNextFreeSlotMapping()
     {
         auto numSlots = _slots.size();
 

@@ -15,17 +15,17 @@ enum class SurfaceIndexingType
 };
 
 /**
- * A surface renderer accepts a variable number of indexed surfaces and arranges 
- * them into one or more continuous blocks of vertices for efficient rendering.
+ * A geometry renderer accepts a variable number of indexed vertices and internally
+ * arranges them into one or more continuous blocks for efficient rendering.
  *
  * The internal arrangement has the goal of reducing the amount of draw calls for
- * suraces sharing a single material. Allocating a surface slot yields a handle which
+ * primitives sharing a single material. Allocating a geometry slot yields a handle which
  * allows for later update or deallocation of the slot.
  */
-class ISurfaceRenderer
+class IGeometryRenderer
 {
 public:
-    virtual ~ISurfaceRenderer() {}
+    virtual ~IGeometryRenderer() {}
 
     using Slot = std::uint64_t;
     static constexpr Slot InvalidSlot = std::numeric_limits<Slot>::max();

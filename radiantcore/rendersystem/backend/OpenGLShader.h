@@ -7,7 +7,7 @@
 #include "string/string.h"
 #include "render/IndexedVertexBuffer.h"
 #include "render/WindingRenderer.h"
-#include "SurfaceRenderer.h"
+#include "GeometryRenderer.h"
 
 #include <list>
 #include <sigc++/connection.h>
@@ -22,7 +22,7 @@ class OpenGLRenderSystem;
  */
 class OpenGLShader final : 
 	public Shader,
-    protected SurfaceRenderer
+    protected GeometryRenderer
 {
 private:
     // Name used to construct the shader
@@ -115,12 +115,12 @@ public:
     bool hasSurfaces() const;
     void drawSurfaces();
 
-    ISurfaceRenderer::Slot addSurface(SurfaceIndexingType indexType, 
+    IGeometryRenderer::Slot addSurface(SurfaceIndexingType indexType, 
         const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
-    void removeSurface(ISurfaceRenderer::Slot slot) override;
-    void updateSurface(ISurfaceRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    void removeSurface(IGeometryRenderer::Slot slot) override;
+    void updateSurface(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
-    void renderSurface(ISurfaceRenderer::Slot slot) override;
+    void renderSurface(IGeometryRenderer::Slot slot) override;
 #ifdef RENDERABLE_GEOMETRY
     void addGeometry(RenderableGeometry& geometry) override;
     bool hasGeometry() const;
