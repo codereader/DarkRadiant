@@ -115,12 +115,12 @@ public:
     bool hasSurfaces() const;
     void drawSurfaces();
 
-    IGeometryRenderer::Slot addSurface(SurfaceIndexingType indexType, 
+    IGeometryRenderer::Slot addGeometry(GeometryType indexType,
         const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
-    void removeSurface(IGeometryRenderer::Slot slot) override;
-    void updateSurface(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    void removeGeometry(IGeometryRenderer::Slot slot) override;
+    void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
-    void renderSurface(IGeometryRenderer::Slot slot) override;
+    void renderGeometry(IGeometryRenderer::Slot slot) override;
 #ifdef RENDERABLE_GEOMETRY
     void addGeometry(RenderableGeometry& geometry) override;
     bool hasGeometry() const;

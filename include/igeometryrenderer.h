@@ -8,7 +8,7 @@
 namespace render
 {
 
-enum class SurfaceIndexingType
+enum class GeometryType
 {
     Triangles,
     Quads,
@@ -30,22 +30,23 @@ public:
     using Slot = std::uint64_t;
     static constexpr Slot InvalidSlot = std::numeric_limits<Slot>::max();
 
-    // Allocate a slot to hold the given surface data of the given size
+    // Allocate a slot to hold the given indexed vertex data.
     // Returns the handle which can be used to update or deallocate the data later
     // The indexType determines the primitive GLenum that is chosen to render this surface
-    virtual Slot addSurface(SurfaceIndexingType indexType, 
+    virtual Slot addGeometry(GeometryType indexType, 
         const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
 
     // Releases a previously allocated slot. This invalidates the handle.
-    virtual void removeSurface(Slot slot) = 0;
+    virtual void removeGeometry(Slot slot) = 0;
 
-    // Sets the surface data
-    virtual void updateSurface(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    // Updates the vertex data. The size of the vertex and index array must be the same
+    // as the one passed to addGeometry. To change the size the data needs to be removed and re-added.
+    virtual void updateGeometry(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
 
-    // Submits the geometry of a single surface slot to GL
-    virtual void renderSurface(Slot slot) = 0;
+    // Submits the geometry of a single slot to GL
+    virtual void renderGeometry(Slot slot) = 0;
 };
 
 }

@@ -151,7 +151,7 @@ public:
         return true;
     }
 
-    Slot addSurface(SurfaceIndexingType indexType, const std::vector<ArbitraryMeshVertex>& vertices,
+    Slot addGeometry(GeometryType indexType, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {
         auto bucketIndex = GetBucketIndexForIndexType(indexType);
@@ -172,7 +172,7 @@ public:
         return newSlotIndex;
     }
 
-    void removeSurface(Slot slot) override
+    void removeGeometry(Slot slot) override
     {
         auto& slotInfo = _slots.at(slot);
         auto& bucket = getBucketByIndex(slotInfo.bucketIndex);
@@ -201,10 +201,17 @@ public:
         }
     }
 
-    void updateSurface(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    void updateGeometry(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {
         auto& slotInfo = _slots.at(slot);
+
+        if (slotInfo.numVertices != vertices.size() ||
+            slotInfo.numIndices != indices.size())
+        {
+            throw std::logic_error("updateGeometry: Data size mismatch");
+        }
+
         auto& bucket = getBucketByIndex(slotInfo.bucketIndex);
 
         bucket.updateSurface(slotInfo.firstVertex, slotInfo.firstIndex, vertices, indices);
@@ -218,7 +225,7 @@ public:
         }
     }
 
-    void renderSurface(Slot slot) override
+    void renderGeometry(Slot slot) override
     {
         auto& slotInfo = _slots.at(slot);
         auto& buffer = getBucketByIndex(slotInfo.bucketIndex);
@@ -227,9 +234,9 @@ public:
     }
 
 private:
-    constexpr static std::uint8_t GetBucketIndexForIndexType(SurfaceIndexingType indexType)
+    constexpr static std::uint8_t GetBucketIndexForIndexType(GeometryType indexType)
     {
-        return indexType == SurfaceIndexingType::Triangles ? 0 : 1;
+        return indexType == GeometryType::Triangles ? 0 : 1;
     }
 
     VertexBuffer& getBucketByIndex(std::uint8_t bucketIndex)
