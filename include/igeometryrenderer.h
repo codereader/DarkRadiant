@@ -12,6 +12,7 @@ enum class GeometryType
 {
     Triangles,
     Quads,
+    Lines,
 };
 
 /**

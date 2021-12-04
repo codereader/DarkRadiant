@@ -90,17 +90,17 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 {
     // Usual ritual, check cache and return if found, otherwise create/
     // insert/return.
-    ShaderMap::const_iterator i = _shaders.find(name);
+    auto existing = _shaders.find(name);
 
-    if (i != _shaders.end())
+    if (existing != _shaders.end())
     {
-        return i->second;
+        return existing->second;
     }
 
     // Either the shader was not found, or the weak pointer failed to lock
     // because the shader had been deleted. Either way, create a new shader
     // and insert into the cache.
-    OpenGLShaderPtr shd(new OpenGLShader(name, *this));
+    auto shd = std::make_shared<OpenGLShader>(name, *this);
     _shaders[name] = shd;
 
     // Realise the shader if the cache is realised

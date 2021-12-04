@@ -876,6 +876,7 @@ void OpenGLShader::construct()
             state.m_pointsize = 1;
 
             enableViewType(RenderViewType::OrthoView);
+            enableViewType(RenderViewType::Camera);
             break;
         }
 
