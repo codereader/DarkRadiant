@@ -20,11 +20,9 @@ class TargetLineNode final :
     public scene::Node
 {
 private:
-    AABB _aabb;
-
     EntityNode& _owner;
 
-    mutable RenderableTargetLines _targetLines;
+    RenderableTargetLines _targetLines;
 
 public:
     TargetLineNode(EntityNode& owner);

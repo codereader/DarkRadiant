@@ -25,6 +25,7 @@ scene::INode::Type TargetLineNode::getNodeType() const
 
 const AABB& TargetLineNode::localAABB() const
 {
+    static AABB _aabb;
     return _aabb;
 }
 
@@ -57,19 +58,10 @@ void TargetLineNode::onPreRender(const VolumeTest& volume)
 
 void TargetLineNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-#if 0
-    renderWireframe(collector, volume);
-#endif
 }
 
 void TargetLineNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-#if 0
-    // If the owner is hidden, the lines are hidden too
-    if (!_targetLines.hasTargets() || !_owner.visible()) return;
-
-	_targetLines.render(_owner.getWireShader(), collector, volume, getOwnerPosition());
-#endif
 }
 
 void TargetLineNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
