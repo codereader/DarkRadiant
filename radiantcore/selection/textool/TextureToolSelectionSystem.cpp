@@ -1,5 +1,8 @@
 #include "TextureToolSelectionSystem.h"
 
+#include "igrid.h"
+#include "ishaders.h"
+#include "iundo.h"
 #include "itextstream.h"
 #include "iradiant.h"
 #include "module/StaticModule.h"

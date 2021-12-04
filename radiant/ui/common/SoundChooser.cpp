@@ -4,6 +4,7 @@
 #include "isound.h"
 #include "ui/imainframe.h"
 #include "ifavourites.h"
+#include "registry/registry.h"
 
 #include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
@@ -16,8 +17,10 @@
 #include "ui/UserInterfaceModule.h"
 
 #include <wx/sizer.h>
-#include "wxutil/Bitmap.h"
 #include <wx/button.h>
+#include <wx/stattext.h>
+
+#include "wxutil/Bitmap.h"
 #include <sigc++/functors/mem_fun.h>
 
 #include <functional>

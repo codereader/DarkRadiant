@@ -3,10 +3,12 @@
 #include "iselectiontest.h"
 #include "itexturetoolmodel.h"
 #include "itexturetoolcolours.h"
+#include "ishaders.h"
 #include "selection/BestPoint.h"
 #include "selection/SelectionPool.h"
 #include "pivot.h"
 #include "math/Matrix3.h"
+#include "registry/registry.h"
 
 namespace textool
 {

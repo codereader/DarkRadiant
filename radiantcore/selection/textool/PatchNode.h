@@ -5,6 +5,7 @@
 #include "Node.h"
 
 class IPatch;
+struct PatchControl;
 
 namespace textool
 {

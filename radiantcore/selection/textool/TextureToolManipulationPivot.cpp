@@ -1,5 +1,6 @@
 #include "TextureToolManipulationPivot.h"
 
+#include "math/AABB.h"
 #include "itexturetoolmodel.h"
 
 namespace textool

@@ -5,6 +5,7 @@
 #include "Bounded.h"
 #include "iselection.h"
 #include "iselectiontest.h"
+#include "iselectable.h"
 #include "imanipulator.h"
 #include "editable.h"
 #include <sigc++/signal.h>

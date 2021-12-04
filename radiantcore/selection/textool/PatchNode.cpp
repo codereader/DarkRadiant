@@ -2,6 +2,8 @@
 
 #include "ipatch.h"
 #include "math/Matrix3.h"
+#include "math/Matrix4.h"
+#include <GL/glew.h>
 
 namespace textool
 {

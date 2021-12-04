@@ -1,5 +1,6 @@
 #include "CommandStatus.h"
 
+#include "i18n.h"
 #include "ui/istatusbarmanager.h"
 #include "iradiant.h"
 

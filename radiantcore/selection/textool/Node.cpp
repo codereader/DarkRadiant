@@ -1,7 +1,10 @@
 #include "Node.h"
 
+#include "math/Vector2.h"
+#include "math/Matrix4.h"
 #include "itexturetoolcolours.h"
 #include <sigc++/functors/mem_fun.h>
+#include <GL/glew.h>
 
 namespace textool
 {

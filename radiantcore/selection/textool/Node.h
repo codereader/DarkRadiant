@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "render/Colour4.h"
 #include "math/AABB.h"
 #include "itexturetoolmodel.h"
 #include "ObservedSelectable.h"
