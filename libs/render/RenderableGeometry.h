@@ -21,9 +21,14 @@ private:
     ShaderPtr _shader;
     IGeometryRenderer::Slot _surfaceSlot;
 
+    std::size_t _lastVertexSize; // To detect size changes when updating geometry
+    std::size_t _lastIndexSize; // To detect size changes when updating geometry
+
 protected:
     RenderableGeometry() :
-        _surfaceSlot(IGeometryRenderer::InvalidSlot)
+        _surfaceSlot(IGeometryRenderer::InvalidSlot),
+        _lastVertexSize(0),
+        _lastIndexSize(0)
     {}
 
 public:
@@ -54,14 +59,15 @@ public:
     }
 
     // Removes the geometry and clears the shader reference
-    virtual void clear()
+    void clear()
     {
         removeGeometry();
 
         _shader.reset();
     }
 
-    virtual void render(const RenderInfo& info) const override
+    // Renders the geometry stored in our single slot
+    void render(const RenderInfo& info) const override
     {
         if (_surfaceSlot != IGeometryRenderer::InvalidSlot && _shader)
         {
@@ -89,10 +95,19 @@ protected:
     // Submits the given geometry to the known _shader reference
     // This method is supposed to be called from within updateGeometry()
     // to ensure that the _shader reference is already up to date.
-    virtual void addOrUpdateGeometry(GeometryType type,
+    void updateGeometry(GeometryType type,
         const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices)
     {
+        // Size changes require removal of the geometry before update
+        if (_lastVertexSize != vertices.size() || _lastIndexSize != indices.size())
+        {
+            removeGeometry();
+
+            _lastVertexSize = vertices.size();
+            _lastIndexSize = indices.size();
+        }
+
         if (_surfaceSlot == IGeometryRenderer::InvalidSlot)
         {
             _surfaceSlot = _shader->addGeometry(type, vertices, indices);

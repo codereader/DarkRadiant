@@ -31,24 +31,15 @@ private:
     const TargetKeyCollection& _targetKeys;
 
     Vector3 _worldPosition;
-    std::size_t _numVisibleLines;
 
 public:
     RenderableTargetLines(const TargetKeyCollection& targetKeys) :
-        _targetKeys(targetKeys),
-        _numVisibleLines(0)
+        _targetKeys(targetKeys)
     {}
 
     bool hasTargets() const
     {
         return !_targetKeys.empty();
-    }
-
-    void clear() override
-    {
-        RenderableGeometry::clear();
-
-        _numVisibleLines = 0;
     }
 
     void update(const ShaderPtr& shader, const Vector3& worldPosition)
@@ -71,7 +62,6 @@ protected:
         std::vector<ArbitraryMeshVertex> vertices;
         std::vector<unsigned int> indices;
         auto maxTargets = _targetKeys.getNumTargets();
-        auto numVisibleLines = 0;
 
         vertices.reserve(6 * maxTargets);
         indices.reserve(6 * maxTargets);
@@ -83,20 +73,12 @@ protected:
                 return;
             }
 
-            numVisibleLines++;
             auto targetPosition = target->getPosition();
 
             addTargetLine(_worldPosition, targetPosition, vertices, indices);
         });
 
-        // Size changes requires detaching our geometry first
-        if (numVisibleLines != _numVisibleLines)
-        {
-            removeGeometry();
-            _numVisibleLines = numVisibleLines;
-        }
-
-        addOrUpdateGeometry(render::GeometryType::Lines, vertices, indices);
+        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
     }
 
 private:

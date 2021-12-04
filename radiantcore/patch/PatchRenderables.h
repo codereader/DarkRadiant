@@ -167,21 +167,13 @@ private:
 
     const PatchTesselation& _tess;
     bool _needsUpdate;
-    std::size_t _size;
 
 public:
     RenderablePatchTesselation(const PatchTesselation& tess) :
         _tess(tess),
-        _needsUpdate(true),
-        _size(0)
+        _needsUpdate(true)
     {}
     
-    void clear() override
-    {
-        RenderableGeometry::clear();
-        _size = 0;
-    }
-
     void queueUpdate()
     {
         _needsUpdate = true;
@@ -194,19 +186,12 @@ protected:
 
         _needsUpdate = false;
 
-        // Tesselation size change requires to remove the geometry first
-        if (_tess.vertices.size() != _size)
-        {
-            removeGeometry();
-            _size = _tess.vertices.size();
-        }
-
         // Generate the new index array
         std::vector<unsigned int> indices;
         indices.reserve(_indexer.getNumIndices(_tess));
 
         _indexer.generateIndices(_tess, std::back_inserter(indices));
 
-        addOrUpdateGeometry(_indexer.getType(), _tess.vertices, indices);
+        RenderableGeometry::updateGeometry(_indexer.getType(), _tess.vertices, indices);
     }
 };
