@@ -410,11 +410,13 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
     {
         _fillShader = renderSystem->capture(_spawnArgs.getEntityClass()->getFillShader());
         _wireShader = renderSystem->capture(_spawnArgs.getEntityClass()->getWireShader());
+        _colourShader = renderSystem->capture(_spawnArgs.getEntityClass()->getColourShader());
     }
     else
     {
         _fillShader.reset();
         _wireShader.reset();
+        _colourShader.reset();
     }
 }
 
@@ -467,6 +469,11 @@ void EntityNode::_modelKeyChanged(const std::string& value)
 const ShaderPtr& EntityNode::getWireShader() const
 {
 	return _wireShader;
+}
+
+const ShaderPtr& EntityNode::getColourShader() const
+{
+	return _colourShader;
 }
 
 const ShaderPtr& EntityNode::getFillShader() const

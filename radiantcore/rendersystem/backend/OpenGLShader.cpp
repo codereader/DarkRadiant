@@ -60,7 +60,8 @@ OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSy
     _name(name),
     _renderSystem(renderSystem),
     _isVisible(true),
-    _useCount(0)
+    _useCount(0),
+    _enabledViewTypes(0)
 {
     _windingRenderer.reset(new WindingRenderer<WindingIndexer_Triangles>());
 }
@@ -77,6 +78,7 @@ OpenGLRenderSystem& OpenGLShader::getRenderSystem()
 
 void OpenGLShader::destroy()
 {
+    _enabledViewTypes = 0;
     _vertexBuffer.reset();
     _materialChanged.disconnect();
     _material.reset();
@@ -875,6 +877,27 @@ void OpenGLShader::construct()
             state.m_linewidth = 1;
             state.m_pointsize = 1;
 
+            enableViewType(RenderViewType::OrthoView);
+            break;
+        }
+
+        case '{': // cam + wireframe shader
+        {
+            OpenGLState& state = appendDefaultPass();
+            state.setName(_name);
+
+            Colour4 colour;
+            sscanf(_name.c_str(), "{%f %f %f}", &colour[0], &colour[1], &colour[2]);
+            colour[3] = 1;
+            state.setColour(colour);
+
+            state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
+            state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+            state.setDepthFunc(GL_LESS);
+            state.m_linewidth = 1;
+            state.m_pointsize = 1;
+
+            // Applicable to both views
             enableViewType(RenderViewType::OrthoView);
             enableViewType(RenderViewType::Camera);
             break;

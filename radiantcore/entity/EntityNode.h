@@ -73,9 +73,11 @@ protected:
 	// This entity's main direction, usually determined by the angle/rotation keys
 	Vector3 _direction;
 
-	// The wireframe / solid shaders as determined by the entityclass
-	ShaderPtr _fillShader;
-	ShaderPtr _wireShader;
+	// The coloured shaders as determined by the entityclass
+
+	ShaderPtr _fillShader; // cam only
+	ShaderPtr _wireShader; // ortho only
+	ShaderPtr _colourShader; // cam+ortho view
 
 	sigc::connection _eclassChangedConn;
 
@@ -160,6 +162,7 @@ public:
     const ModelKey& getModelKey() const;
 
 	const ShaderPtr& getWireShader() const override;
+	const ShaderPtr& getColourShader() const override;
 	const ShaderPtr& getFillShader() const;
 
 	virtual void onPostUndo() override;

@@ -150,6 +150,14 @@ public:
 	 * Returns the wireframe shader for this entity - child primitives need this for rendering.
 	 */
 	virtual const ShaderPtr& getWireShader() const = 0;
+
+    /**
+     * Returns the shader that is used to render coloured primitives like lines and points,
+     * using the colour of the entity as defined by its entityDef, light colour, etc.
+     * This shader will be applicable to both camera and ortho views, it can be used for
+     * visualisations such as target lines and light boxes.
+     */
+    virtual const ShaderPtr& getColourShader() const = 0;
 };
 typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;

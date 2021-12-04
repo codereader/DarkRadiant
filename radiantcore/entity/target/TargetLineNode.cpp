@@ -53,7 +53,7 @@ void TargetLineNode::onPreRender(const VolumeTest& volume)
         return;
     }
 
-    _targetLines.update(_owner.getWireShader(), getOwnerPosition());
+    _targetLines.update(_owner.getColourShader(), getOwnerPosition());
 }
 
 void TargetLineNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
