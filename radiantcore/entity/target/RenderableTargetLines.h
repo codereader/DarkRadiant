@@ -11,7 +11,7 @@ namespace entity
 
 namespace
 {
-    const double TARGET_MAX_ARROW_LENGTH = 10;
+    constexpr const double TARGET_MAX_ARROW_LENGTH = 10;
 }
 
 /**
@@ -24,8 +24,9 @@ namespace
  * frontend render pass.
  */
 class RenderableTargetLines :
-	public RenderablePointVector
+	public OpenGLRenderable
 {
+private:
 	const TargetKeyCollection& _targetKeys;
 
     bool _needsUpdate;
@@ -35,7 +36,6 @@ class RenderableTargetLines :
 
 public:
     RenderableTargetLines(const TargetKeyCollection& targetKeys) :
-        RenderablePointVector(GL_LINES),
         _targetKeys(targetKeys),
         _needsUpdate(true),
         _surfaceSlot(render::IGeometryRenderer::InvalidSlot),
@@ -114,39 +114,12 @@ public:
         }
     }
 
-	void render(const ShaderPtr& shader, IRenderableCollector& collector, const VolumeTest& volume, const Vector3& worldPosition)
+    void render(const RenderInfo& info) const override
 	{
-#if 0
-		if (_targetKeys.empty())
-		{
-			return;
-		}
-
-		// Clear the vector
-		clear();
-
-		// Populate the RenderablePointVector with all target coordinates
-        _targetKeys.forEachTarget([&] (const TargetPtr& target)
+        if (_surfaceSlot != render::IGeometryRenderer::InvalidSlot && _shader)
         {
-            if (!target || target->isEmpty() || !target->isVisible())
-            {
-                return;
-            }
-
-            Vector3 targetPosition = target->getPosition();
-
-            if (volume.TestLine(Segment::createForStartEnd(worldPosition, targetPosition)))
-            {
-                addTargetLine(worldPosition, targetPosition);
-            }
-        });
-
-		// If we hold any objects now, add us as renderable
-		if (!empty())
-        {
-			collector.addRenderable(*shader, *this, Matrix4::getIdentity());
-		}
-#endif
+            _shader->renderGeometry(_surfaceSlot);
+        }
 	}
 
 private:

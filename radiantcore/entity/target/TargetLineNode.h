@@ -16,7 +16,7 @@ class EntityNode;
  * the lines from disappearing from the view when the targeting/targeted entities
  * get culled by the space partitioning system during rendering.
  */
-class TargetLineNode :
+class TargetLineNode final :
     public scene::Node
 {
 private:
@@ -41,6 +41,11 @@ public:
     void renderWireframe(IRenderableCollector& collector, const VolumeTest& volumeTest) const override;
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volumeTest) override;
 	std::size_t getHighlightFlags() override;
+
+    void onRenderSystemChanged();
+
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 protected:
     void onVisibilityChanged(bool isVisibleNow) override;

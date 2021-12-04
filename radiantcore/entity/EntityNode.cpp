@@ -430,6 +430,8 @@ void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     // Make sure any attached entities have a render system too
     for (IEntityNodePtr node: _attachedEnts)
         node->setRenderSystem(renderSystem);
+
+	TargetableNode::onRenderSystemChanged();
 }
 
 std::size_t EntityNode::getHighlightFlags()

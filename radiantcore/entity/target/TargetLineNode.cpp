@@ -28,6 +28,20 @@ const AABB& TargetLineNode::localAABB() const
     return _aabb;
 }
 
+void TargetLineNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    Node::onInsertIntoScene(root);
+
+    _targetLines.queueUpdate();
+}
+
+void TargetLineNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    Node::onRemoveFromScene(root);
+
+    _targetLines.clear();
+}
+
 void TargetLineNode::onPreRender(const VolumeTest& volume)
 {
     // If the owner is hidden, the lines are hidden too
@@ -60,10 +74,13 @@ void TargetLineNode::renderWireframe(IRenderableCollector& collector, const Volu
 
 void TargetLineNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    // TODO: render slot
-#if 0
-    renderWireframe(collector, volume);
-#endif
+    collector.addHighlightRenderable(_targetLines, Matrix4::getIdentity());
+}
+
+void TargetLineNode::onRenderSystemChanged()
+{
+    _targetLines.clear();
+    _targetLines.queueUpdate();
 }
 
 void TargetLineNode::onVisibilityChanged(bool visible)
