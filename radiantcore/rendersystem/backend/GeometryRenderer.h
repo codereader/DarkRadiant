@@ -180,11 +180,16 @@ public:
 
         bucket.removeSurface(slotInfo.firstVertex, slotInfo.numVertices, slotInfo.firstIndex, slotInfo.numIndices);
 
-        // Adjust all offsets in other slots
+        // Adjust all offsets in other slots pointing to the same bucket
         for (auto& slot : _slots)
         {
-            if (slot.firstVertex > slotInfo.firstVertex)
+            if (slot.bucketIndex == slotInfo.bucketIndex && 
+                slot.firstVertex > slotInfo.firstVertex && 
+                slot.firstVertex != InvalidVertexIndex)
             {
+                assert(slot.firstVertex >= slotInfo.numVertices);
+                assert(slot.firstIndex >= slotInfo.numIndices);
+
                 slot.firstVertex -= slotInfo.numVertices;
                 slot.firstIndex -= slotInfo.numIndices;
             }
