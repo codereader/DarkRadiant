@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ibrush.h"
 #include "imapformat.h"
 #include "math/Matrix3.h"
 

@@ -4,6 +4,8 @@
 #include "itexturetoolcolours.h"
 #include "math/Matrix3.h"
 
+#include <GL/glew.h>
+
 namespace textool
 {
 

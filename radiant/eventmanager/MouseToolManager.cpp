@@ -12,6 +12,8 @@
 #include "module/StaticModule.h"
 #include "ModifierHintPopup.h"
 
+#include <wx/frame.h>
+
 namespace ui
 {
 

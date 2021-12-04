@@ -3,6 +3,7 @@
 #include "igroupnode.h"
 #include "icurve.h"
 #include "irenderable.h"
+#include "editable.h"
 #include "../OriginKey.h"
 #include "../RotationKey.h"
 #include "../NameKey.h"

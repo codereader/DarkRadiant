@@ -15,6 +15,8 @@
 class Entity;
 class wxColourPickerEvent;
 
+class wxSlider;
+
 namespace ui
 {
 

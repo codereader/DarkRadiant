@@ -1,6 +1,9 @@
 #pragma once
 
 #include <wx/popupwin.h>
+#include <wx/window.h>
+#include <wx/stattext.h>
+#include <wx/sizer.h>
 #include "MouseToolManager.h"
 
 namespace ui

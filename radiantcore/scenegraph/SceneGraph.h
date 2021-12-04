@@ -9,6 +9,7 @@
 #include "imodule.h"
 #include "ispacepartition.h"
 #include "imap.h"
+#include "iundo.h"
 
 namespace scene
 {

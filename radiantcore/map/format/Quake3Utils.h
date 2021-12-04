@@ -1,8 +1,10 @@
 #pragma once
 
+#include "math/Plane3.h"
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "texturelib.h"
+#include "ibrush.h"
 
 namespace map
 {

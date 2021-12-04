@@ -1,6 +1,7 @@
 #include "LightInspector.h"
 
 #include "i18n.h"
+#include "icameraview.h"
 #include "ientity.h"
 #include "ieclass.h"
 #include "igame.h"
@@ -15,7 +16,9 @@
 #include <wx/checkbox.h>
 #include <wx/artprov.h>
 #include <wx/stattext.h>
+#include <wx/slider.h>
 #include <wx/radiobut.h>
+
 
 #include "ui/common/ShaderChooser.h" // for static displayLightInfo() function
 #include "util/ScopedBoolLock.h"

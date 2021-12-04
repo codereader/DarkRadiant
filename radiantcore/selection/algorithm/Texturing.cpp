@@ -4,6 +4,9 @@
 #include "selection/textool/PatchNode.h"
 #include "messages/TextureChanged.h"
 
+#include "ipatch.h"
+#include "ibrush.h"
+
 namespace selection
 {
 

@@ -3,6 +3,7 @@
 #include "itexturetoolmodel.h"
 #include "math/Matrix3.h"
 #include "pivot.h"
+#include "igrid.h"
 #include "selection/SelectionPool.h"
 
 namespace textool

@@ -1,7 +1,9 @@
 #include "AutoSaveTimer.h"
 
+#include "ipreferencesystem.h"
 #include "iautosaver.h"
 #include "registry/registry.h"
+#include "i18n.h"
 
 namespace map
 {

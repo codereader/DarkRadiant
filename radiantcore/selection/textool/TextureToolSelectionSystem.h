@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <map>
 #include "itexturetoolmodel.h"
 #include "icommandsystem.h"
 #include "TextureToolManipulationPivot.h"

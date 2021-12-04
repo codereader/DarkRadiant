@@ -21,6 +21,8 @@
 
 #include "scene/LayerUsageBreakdown.h"
 
+#include <map>
+
 namespace ui
 {
 
