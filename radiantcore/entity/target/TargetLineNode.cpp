@@ -33,7 +33,7 @@ void TargetLineNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     Node::onInsertIntoScene(root);
 
-    _targetLines.queueUpdate();
+    _targetLines.clear();
 }
 
 void TargetLineNode::onRemoveFromScene(scene::IMapRootNode& root)
@@ -72,7 +72,6 @@ void TargetLineNode::renderHighlights(IRenderableCollector& collector, const Vol
 void TargetLineNode::onRenderSystemChanged()
 {
     _targetLines.clear();
-    _targetLines.queueUpdate();
 }
 
 void TargetLineNode::onVisibilityChanged(bool visible)
@@ -82,12 +81,9 @@ void TargetLineNode::onVisibilityChanged(bool visible)
     if (!visible)
     {
         // Disconnect our renderable when the node is hidden
+        // Once this node is shown again, the onPreRender method will
+        // call RenderableTargetLines::update()
         _targetLines.clear();
-    }
-    else
-    {
-        // Update the vertex buffers next time we need to render
-        _targetLines.queueUpdate();
     }
 }
 

@@ -28,15 +28,14 @@ class RenderableTargetLines :
     public render::RenderableGeometry
 {
 private:
-	const TargetKeyCollection& _targetKeys;
+    const TargetKeyCollection& _targetKeys;
 
-    bool _needsUpdate;
+    Vector3 _worldPosition;
     std::size_t _numVisibleLines;
 
 public:
     RenderableTargetLines(const TargetKeyCollection& targetKeys) :
         _targetKeys(targetKeys),
-        _needsUpdate(true),
         _numVisibleLines(0)
     {}
 
@@ -45,11 +44,6 @@ public:
         return !_targetKeys.empty();
     }
 
-    void queueUpdate()
-    {
-        _needsUpdate = true;
-    }
-    
     void clear() override
     {
         RenderableGeometry::clear();
@@ -59,12 +53,19 @@ public:
 
     void update(const ShaderPtr& shader, const Vector3& worldPosition)
     {
+        // Store the new world position for use in updateGeometry()
+        _worldPosition = worldPosition;
+
+        // Tell the base class to run the rest of the update routine
+        RenderableGeometry::update(shader);
+    }
+
+protected:
+    void updateGeometry() override
+    {
         // Target lines are visible if both their start and end entities are visible
         // This is hard to track in the scope of this class, so we fall back to doing 
-        // an update on the renderable geometry every frame
-
-        auto shaderChanged = _shader != shader;
-        _needsUpdate = false;
+        // an update on the renderable geometry every time we're asked to
 
         // Collect vertex and index data
         std::vector<ArbitraryMeshVertex> vertices;
@@ -85,19 +86,17 @@ public:
             numVisibleLines++;
             auto targetPosition = target->getPosition();
 
-            addTargetLine(worldPosition, targetPosition, vertices, indices);
+            addTargetLine(_worldPosition, targetPosition, vertices, indices);
         });
 
-        // Size or shader changes both require detaching our geometry first
-        if (_shader && _surfaceSlot != render::IGeometryRenderer::InvalidSlot && (shaderChanged || numVisibleLines != _numVisibleLines))
+        // Size changes requires detaching our geometry first
+        if (numVisibleLines != _numVisibleLines)
         {
-            clear();
+            removeGeometry();
+            _numVisibleLines = numVisibleLines;
         }
 
-        _shader = shader;
-        _numVisibleLines = numVisibleLines;
-        
-        addOrUpdateGeometry(shader, render::GeometryType::Lines, vertices, indices);
+        addOrUpdateGeometry(render::GeometryType::Lines, vertices, indices);
     }
 
 private:

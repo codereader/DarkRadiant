@@ -187,29 +187,26 @@ public:
         _needsUpdate = true;
     }
 
-    void update(const ShaderPtr& shader)
+protected:
+    void updateGeometry() override
     {
-        bool shaderChanged = _shader != shader;
-
-        if (!_needsUpdate && !shaderChanged) return;
+        if (!_needsUpdate) return;
 
         _needsUpdate = false;
-        auto sizeChanged = _tess.vertices.size() != _size;
 
-        if (_shader && _surfaceSlot != render::IGeometryRenderer::InvalidSlot && (shaderChanged || sizeChanged))
+        // Tesselation size change requires to remove the geometry first
+        if (_tess.vertices.size() != _size)
         {
-            clear();
+            removeGeometry();
+            _size = _tess.vertices.size();
         }
 
-        _shader = shader;
-        _size = _tess.vertices.size();
-
-        // Generate the index array
+        // Generate the new index array
         std::vector<unsigned int> indices;
         indices.reserve(_indexer.getNumIndices(_tess));
 
         _indexer.generateIndices(_tess, std::back_inserter(indices));
 
-        addOrUpdateGeometry(shader, _indexer.getType(), _tess.vertices, indices);
+        addOrUpdateGeometry(_indexer.getType(), _tess.vertices, indices);
     }
 };

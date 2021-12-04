@@ -17,7 +17,7 @@ namespace render
 class RenderableGeometry :
     public OpenGLRenderable
 {
-protected:
+private:
     ShaderPtr _shader;
     IGeometryRenderer::Slot _surfaceSlot;
 
@@ -27,16 +27,38 @@ protected:
     {}
 
 public:
-    // Removes any geometry attached to a shader
-    virtual void clear()
+    // Noncopyable
+    RenderableGeometry(const RenderableGeometry& other) = delete;
+    RenderableGeometry& operator=(const RenderableGeometry& other) = delete;
+
+    // (Non-virtual) update method handling any possible shader change
+    // The geometry is withdrawn from the given shader if it turns out
+    // to be different from the last update.
+    void update(const ShaderPtr& shader)
     {
-        if (_shader && _surfaceSlot != IGeometryRenderer::InvalidSlot)
+        bool shaderChanged = _shader != shader;
+
+        if (shaderChanged)
         {
-            _shader->removeGeometry(_surfaceSlot);
+            clear();
         }
 
+        // Update our local shader reference
+        _shader = shader;
+
+        if (_shader)
+        {
+            // Invoke the virtual method to run needed updates in the subclass
+            updateGeometry();
+        }
+    }
+
+    // Removes the geometry and clears the shader reference
+    virtual void clear()
+    {
+        removeGeometry();
+
         _shader.reset();
-        _surfaceSlot = IGeometryRenderer::InvalidSlot;
     }
 
     virtual void render(const RenderInfo& info) const override
@@ -48,17 +70,36 @@ public:
     }
 
 protected:
-    virtual void addOrUpdateGeometry(const ShaderPtr& shader, GeometryType type,
+    // Removes the geometry from the attached shader. Does nothing if no geometry has been added.
+    void removeGeometry()
+    {
+        if (_shader && _surfaceSlot != IGeometryRenderer::InvalidSlot)
+        {
+            _shader->removeGeometry(_surfaceSlot);
+        }
+
+        _surfaceSlot = IGeometryRenderer::InvalidSlot;
+    }
+
+    // Sub-class specific geometry update. Should check whether any of the
+    // vertex data needs to be added or updated to the shader, in which case
+    // the implementation should invoke addOrUpdateGeometry()
+    virtual void updateGeometry() = 0;
+
+    // Submits the given geometry to the known _shader reference
+    // This method is supposed to be called from within updateGeometry()
+    // to ensure that the _shader reference is already up to date.
+    virtual void addOrUpdateGeometry(GeometryType type,
         const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices)
     {
         if (_surfaceSlot == IGeometryRenderer::InvalidSlot)
         {
-            _surfaceSlot = shader->addGeometry(type, vertices, indices);
+            _surfaceSlot = _shader->addGeometry(type, vertices, indices);
         }
         else
         {
-            shader->updateGeometry(_surfaceSlot, vertices, indices);
+            _shader->updateGeometry(_surfaceSlot, vertices, indices);
         }
     }
 };
