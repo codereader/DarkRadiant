@@ -5,6 +5,7 @@
 #include "irenderable.h"
 #include "ivolumetest.h"
 #include "math/Segment.h"
+#include "render/RenderableGeometry.h"
 
 namespace entity 
 {
@@ -24,21 +25,18 @@ namespace
  * frontend render pass.
  */
 class RenderableTargetLines :
-	public OpenGLRenderable
+    public render::RenderableGeometry
 {
 private:
 	const TargetKeyCollection& _targetKeys;
 
     bool _needsUpdate;
-    ShaderPtr _shader;
-    render::IGeometryRenderer::Slot _surfaceSlot;
     std::size_t _numVisibleLines;
 
 public:
     RenderableTargetLines(const TargetKeyCollection& targetKeys) :
         _targetKeys(targetKeys),
         _needsUpdate(true),
-        _surfaceSlot(render::IGeometryRenderer::InvalidSlot),
         _numVisibleLines(0)
     {}
 
@@ -52,15 +50,10 @@ public:
         _needsUpdate = true;
     }
     
-    void clear()
+    void clear() override
     {
-        if (_shader && _surfaceSlot != render::IGeometryRenderer::InvalidSlot)
-        {
-            _shader->removeGeometry(_surfaceSlot);
-        }
+        RenderableGeometry::clear();
 
-        _shader.reset();
-        _surfaceSlot = render::IGeometryRenderer::InvalidSlot;
         _numVisibleLines = 0;
     }
 
@@ -104,23 +97,8 @@ public:
         _shader = shader;
         _numVisibleLines = numVisibleLines;
         
-        if (_surfaceSlot == render::IGeometryRenderer::InvalidSlot)
-        {
-            _surfaceSlot = shader->addGeometry(render::GeometryType::Lines, vertices, indices);
-        }
-        else
-        {
-            shader->updateGeometry(_surfaceSlot, vertices, indices);
-        }
+        addOrUpdateGeometry(shader, render::GeometryType::Lines, vertices, indices);
     }
-
-    void render(const RenderInfo& info) const override
-	{
-        if (_surfaceSlot != render::IGeometryRenderer::InvalidSlot && _shader)
-        {
-            _shader->renderGeometry(_surfaceSlot);
-        }
-	}
 
 private:
     // Adds points to the vector, defining a line from start to end, with arrow indicators

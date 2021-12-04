@@ -13,6 +13,7 @@
 
 #include "render/VertexBuffer.h"
 #include "render/IndexedVertexBuffer.h"
+#include "render/RenderableGeometry.h"
 
 #if 0
 /// Helper class to render a PatchTesselation in solid mode
@@ -158,7 +159,7 @@ public:
 
 template<typename TesselationIndexerT>
 class RenderablePatchTesselation :
-    public OpenGLRenderable
+    public render::RenderableGeometry
 {
 private:
     static_assert(std::is_base_of_v<ITesselationIndexer, TesselationIndexerT>, "Indexer must implement ITesselationIndexer");
@@ -166,27 +167,18 @@ private:
 
     const PatchTesselation& _tess;
     bool _needsUpdate;
-    ShaderPtr _shader;
     std::size_t _size;
-
-    render::IGeometryRenderer::Slot _surfaceSlot;
 
 public:
     RenderablePatchTesselation(const PatchTesselation& tess) :
         _tess(tess),
         _needsUpdate(true),
-        _surfaceSlot(render::IGeometryRenderer::InvalidSlot),
         _size(0)
     {}
     
-    void clear()
+    void clear() override
     {
-        if (!_shader || _surfaceSlot == render::IGeometryRenderer::InvalidSlot) return;
-
-        _shader->removeGeometry(_surfaceSlot);
-        _shader.reset();
-
-        _surfaceSlot = render::IGeometryRenderer::InvalidSlot;
+        RenderableGeometry::clear();
         _size = 0;
     }
 
@@ -218,21 +210,6 @@ public:
 
         _indexer.generateIndices(_tess, std::back_inserter(indices));
 
-        if (_surfaceSlot == render::IGeometryRenderer::InvalidSlot)
-        {
-            _surfaceSlot = shader->addGeometry(_indexer.getType(), _tess.vertices, indices);
-        }
-        else
-        {
-            shader->updateGeometry(_surfaceSlot, _tess.vertices, indices);
-        }
-    }
-
-    void render(const RenderInfo& info) const override
-    {
-        if (_surfaceSlot != render::IGeometryRenderer::InvalidSlot && _shader)
-        {
-            _shader->renderGeometry(_surfaceSlot);
-        }
+        addOrUpdateGeometry(shader, _indexer.getType(), _tess.vertices, indices);
     }
 };
