@@ -31,16 +31,16 @@ class RenderableTargetLines :
     bool _needsUpdate;
     ShaderPtr _shader;
     render::IGeometryRenderer::Slot _surfaceSlot;
-    std::size_t _numTargets;
+    std::size_t _numVisibleLines;
 
 public:
-	RenderableTargetLines(const TargetKeyCollection& targetKeys) :
-		RenderablePointVector(GL_LINES),
-		_targetKeys(targetKeys),
+    RenderableTargetLines(const TargetKeyCollection& targetKeys) :
+        RenderablePointVector(GL_LINES),
+        _targetKeys(targetKeys),
         _needsUpdate(true),
         _surfaceSlot(render::IGeometryRenderer::InvalidSlot),
-        _numTargets(0)
-	{}
+        _numVisibleLines(0)
+    {}
 
     bool hasTargets() const
     {
@@ -61,32 +61,26 @@ public:
 
         _shader.reset();
         _surfaceSlot = render::IGeometryRenderer::InvalidSlot;
-        _numTargets = 0;
+        _numVisibleLines = 0;
     }
 
     void update(const ShaderPtr& shader, const Vector3& worldPosition)
     {
-        bool shaderChanged = _shader != shader;
+        // Target lines are visible if both their start and end entities are visible
+        // This is hard to track in the scope of this class, so we fall back to doing 
+        // an update on the renderable geometry every frame
 
-        if (!_needsUpdate && !shaderChanged) return;
-
+        auto shaderChanged = _shader != shader;
         _needsUpdate = false;
-        auto sizeChanged = _numTargets != _targetKeys.getNumTargets();
 
-        if (_shader && _surfaceSlot != render::IGeometryRenderer::InvalidSlot && (shaderChanged || sizeChanged))
-        {
-            clear();
-        }
-
-        _shader = shader;
-        _numTargets = _targetKeys.getNumTargets();
-        
         // Collect vertex and index data
         std::vector<ArbitraryMeshVertex> vertices;
         std::vector<unsigned int> indices;
+        auto maxTargets = _targetKeys.getNumTargets();
+        auto numVisibleLines = 0;
 
-        vertices.reserve(6 * _numTargets);
-        indices.reserve(6 * _numTargets);
+        vertices.reserve(6 * maxTargets);
+        indices.reserve(6 * maxTargets);
 
         _targetKeys.forEachTarget([&](const TargetPtr& target)
         {
@@ -95,11 +89,21 @@ public:
                 return;
             }
 
+            numVisibleLines++;
             auto targetPosition = target->getPosition();
 
             addTargetLine(worldPosition, targetPosition, vertices, indices);
         });
 
+        // Size or shader changes both require detaching our geometry first
+        if (_shader && _surfaceSlot != render::IGeometryRenderer::InvalidSlot && (shaderChanged || numVisibleLines != _numVisibleLines))
+        {
+            clear();
+        }
+
+        _shader = shader;
+        _numVisibleLines = numVisibleLines;
+        
         if (_surfaceSlot == render::IGeometryRenderer::InvalidSlot)
         {
             _surfaceSlot = shader->addGeometry(render::GeometryType::Lines, vertices, indices);
@@ -183,7 +187,7 @@ private:
         Vector3 xyPoint1 = arrowBase + xyDir;
         Vector3 xyPoint2 = arrowBase - xyDir;
 
-        auto indexOffset = vertices.size();
+        auto indexOffset = static_cast<unsigned int>(vertices.size());
 
         // The line from this to the other entity
         vertices.push_back(ArbitraryMeshVertex(startPosition, { 1,0,0 }, { 0, 0 }));

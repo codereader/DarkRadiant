@@ -139,6 +139,7 @@ public:
     {
         _buffers.emplace_back(GL_TRIANGLES);
         _buffers.emplace_back(GL_QUADS);
+        _buffers.emplace_back(GL_LINES);
     }
 
     bool empty() const
@@ -236,7 +237,14 @@ public:
 private:
     constexpr static std::uint8_t GetBucketIndexForIndexType(GeometryType indexType)
     {
-        return indexType == GeometryType::Triangles ? 0 : 1;
+        switch (indexType)
+        {
+            case GeometryType::Triangles: return 0;
+            case GeometryType::Quads: return 1;
+            case GeometryType::Lines: return 2;
+        }
+
+        return 0;
     }
 
     VertexBuffer& getBucketByIndex(std::uint8_t bucketIndex)
