@@ -45,12 +45,12 @@ class RenderableLightOctagon :
     public render::RenderableGeometry
 {
 private:
-    const scene::INode& _owner;
+    const LightNode& _light;
     bool _needsUpdate;
 
 public:
-    RenderableLightOctagon(const scene::INode& owner) :
-        _owner(owner),
+    RenderableLightOctagon(const LightNode& light) :
+        _light(light),
         _needsUpdate(true)
     {}
 
@@ -85,6 +85,10 @@ public:
 
 protected:
     void updateGeometry() override;
+
+private:
+    void updatePointLightVolume();
+    void updateProjectedLightVolume();
 };
 
 } // namespace entity

@@ -70,6 +70,18 @@ void LightNode::construct()
 	_light.construct();
 }
 
+bool LightNode::isProjected() const
+{
+    return _light.isProjected();
+}
+
+const Frustum& LightNode::getLightFrustum() const
+{
+    if (!_light.isProjected()) throw std::logic_error("getLightFrustum can be called on projected lights only");
+
+    return _light._frustum;
+}
+
 // Snappable implementation
 void LightNode::snapto(float snap) {
 	_light.snapto(snap);

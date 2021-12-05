@@ -1,5 +1,7 @@
 #include "Renderables.h"
 
+#include "LightNode.h"
+
 void light_draw_box_lines(const Vector3& origin, const Vector3 points[8]) {
 	//draw lines from the center of the bbox to the corners
 	glBegin(GL_LINES);
@@ -174,6 +176,19 @@ void RenderLightProjection::render(const RenderInfo& info) const
     }
 }
 
+namespace
+{
+
+inline void applyTransform(std::vector<ArbitraryMeshVertex>& vertices, const Matrix4& transform)
+{
+    for (auto& vertex : vertices)
+    {
+        vertex.vertex = transform * vertex.vertex;
+    }
+}
+
+}
+
 void RenderableLightOctagon::updateGeometry()
 {
     if (!_needsUpdate) return;
@@ -201,11 +216,7 @@ void RenderableLightOctagon::updateGeometry()
     };
 
     // Orient the points using the transform
-    const auto& orientation = _owner.localToWorld();
-    for (auto& vertex : vertices)
-    {
-        vertex.vertex = orientation * vertex.vertex;
-    }
+    applyTransform(vertices, _light.localToWorld());
 
     // Indices are always the same, therefore constant
     static const std::vector<unsigned int> Indices
@@ -229,7 +240,81 @@ void RenderableLightVolume::updateGeometry()
 
     _needsUpdate = false;
 
-    // TODO
+    if (_light.isProjected())
+    {
+        updateProjectedLightVolume();
+    }
+    else
+    {
+        updatePointLightVolume();
+    }
 }
 
-} // namespace entity
+void RenderableLightVolume::updatePointLightVolume()
+{
+
+}
+
+void RenderableLightVolume::updateProjectedLightVolume()
+{
+    const auto& frustum = _light.getLightFrustum();
+
+    // greebo: These four define the base area and are always needed to draw the light
+    auto backUpperLeft = frustum.getCornerPoint(Frustum::BACK, Frustum::TOP_LEFT);
+    auto backLowerLeft = frustum.getCornerPoint(Frustum::BACK, Frustum::BOTTOM_LEFT);
+    auto backUpperRight = frustum.getCornerPoint(Frustum::BACK, Frustum::TOP_RIGHT);
+    auto backLowerRight = frustum.getCornerPoint(Frustum::BACK, Frustum::BOTTOM_RIGHT);
+
+#if 0
+    if (_start != Vector3(0, 0, 0))
+    {
+        // Calculate the vertices defining the top area
+        Vector3 frontUpperLeft = _frustum.getCornerPoint(Frustum::FRONT, Frustum::TOP_LEFT);
+        Vector3 frontLowerLeft = _frustum.getCornerPoint(Frustum::FRONT, Frustum::BOTTOM_LEFT);
+        Vector3 frontUpperRight = _frustum.getCornerPoint(Frustum::FRONT, Frustum::TOP_RIGHT);
+        Vector3 frontLowerRight = _frustum.getCornerPoint(Frustum::FRONT, Frustum::BOTTOM_RIGHT);
+
+        frontUpperLeft += _origin;
+        frontLowerLeft += _origin;
+        frontUpperRight += _origin;
+        frontLowerRight += _origin;
+
+        Vector3 frustum[8] = { frontUpperLeft, frontLowerLeft, frontLowerRight, frontUpperRight,
+                               backUpperLeft, backLowerLeft, backLowerRight, backUpperRight };
+        drawFrustum(frustum);
+    }
+    else
+#endif
+    {
+        // no light_start, just use the top vertex (doesn't need to be mirrored)
+        auto top = Plane3::intersect(frustum.left, frustum.right, frustum.top);
+
+        std::vector<ArbitraryMeshVertex> vertices
+        {
+            ArbitraryMeshVertex(top, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(backUpperLeft, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(backLowerLeft, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(backLowerRight, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(backUpperRight, {1,0,0}, {0,0}),
+        };
+
+        // Orient the points using the transform
+        applyTransform(vertices, _light.localToWorld());
+
+        static const std::vector<unsigned int> Indices
+        {
+          0, 1, // top to first
+          0, 2, // top to second
+          0, 3, // top to third
+          0, 4, // top to fourth
+          1, 2, // first to second
+          2, 3, // second to third
+          3, 4, // third to fourth
+          4, 1, // fourth to first
+        };
+
+        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, Indices);
+    }
+}
+
+} // namespace

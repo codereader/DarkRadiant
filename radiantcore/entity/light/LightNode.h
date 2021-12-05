@@ -136,6 +136,11 @@ public:
 
     void onEntitySettingsChanged();
 
+    bool isProjected() const;
+
+    // Returns the frustum structure (calling this on point lights will throw)
+    const Frustum& getLightFrustum() const;
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.
