@@ -252,7 +252,55 @@ void RenderableLightVolume::updateGeometry()
 
 void RenderableLightVolume::updatePointLightVolume()
 {
+    static Vector3 Origin(0, 0, 0);
 
+    const auto& radius = _light.getLightRadius();
+
+    // Calculate the corner vertices of this bounding box, plus the mid-point
+    Vector3 max(Origin + radius);
+    Vector3 min(Origin - radius);
+
+    // Load the 8 corner points
+    std::vector<ArbitraryMeshVertex> vertices
+    {
+        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {1,0,0}, {0,0}),
+        
+        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {1,0,0}, {0,0}),
+    };
+
+    // Orient the points using the transform
+    applyTransform(vertices, _light.localToWorld());
+
+    static const std::vector<unsigned int> Indices
+    {
+        0, 1, // bottom rectangle
+        1, 2, //
+        2, 3, //
+        3, 0, //
+
+        4, 5, // top rectangle
+        5, 6, //
+        6, 7, //
+        7, 4, //
+
+        0, 4, // vertical edges
+        1, 5, //
+        2, 6, //
+        3, 7, //
+
+        0, 6, // diagonals
+        1, 7, //
+        2, 4, //
+        3, 5, //
+    };
+
+    RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, Indices);
 }
 
 void RenderableLightVolume::updateProjectedLightVolume()

@@ -91,6 +91,13 @@ const Vector3& LightNode::getLightStart() const
     return _light._lightStartTransformed;
 }
 
+const Vector3& LightNode::getLightRadius() const
+{
+    if (_light.isProjected()) throw std::logic_error("getLightRadius can be called on point lights only");
+
+    return _light.m_doom3Radius.m_radiusTransformed;
+}
+
 // Snappable implementation
 void LightNode::snapto(float snap) {
 	_light.snapto(snap);
@@ -354,6 +361,8 @@ void LightNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
 {
     collector.addHighlightRenderable(_renderableOctagon, Matrix4::getIdentity());
     collector.addHighlightRenderable(_renderableLightVolume, Matrix4::getIdentity());
+
+    EntityNode::renderHighlights(collector, volume);
 }
 
 void LightNode::renderLightVolume(IRenderableCollector& collector,

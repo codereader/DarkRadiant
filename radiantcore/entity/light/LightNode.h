@@ -126,6 +126,11 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
 
+    bool isOriented() const override
+    {
+        return false; // light wireframe stuff is rendered in world coordinates
+    }
+
     // OpenGLRenderable implementation
     void render(const RenderInfo& info) const override;
 
@@ -145,6 +150,10 @@ public:
     // the upper part of the projection cone to form the frustum
     // Calling this on point lights will throw.
     const Vector3& getLightStart() const;
+
+    // Returns the light radius for point lights
+    // Calling this on projected lights will throw
+    const Vector3& getLightRadius() const;
 
 protected:
 	// Gets called by the Transformable implementation whenever
