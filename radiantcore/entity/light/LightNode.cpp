@@ -26,6 +26,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
     _renderableOctagon(*this),
+    _renderableLightVolume(*this),
     _renderableRadius(_light._lightBox.origin),
     _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
@@ -48,6 +49,7 @@ LightNode::LightNode(const LightNode& other) :
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this,std::placeholders:: _1)),
 	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
     _renderableOctagon(*this),
+    _renderableLightVolume(*this),
     _renderableRadius(_light._lightBox.origin),
     _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
@@ -107,6 +109,7 @@ void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 	setSelectedComponents(false, selection::ComponentSelectionMode::Face);
 
     _renderableOctagon.clear();
+    _renderableLightVolume.clear();
 }
 
 void LightNode::testSelect(Selector& selector, SelectionTest& test)
@@ -280,7 +283,19 @@ void LightNode::selectedChangedComponent(const ISelectable& selectable) {
 void LightNode::onPreRender(const VolumeTest& volume)
 {
     // Pick the colour shader according to our settings
-    _renderableOctagon.update(_overrideColKey.get() ? getColourShader() : _colourKey.getColourShader());
+    const auto& colourShader = _overrideColKey.get() ? getColourShader() : _colourKey.getColourShader();
+    _renderableOctagon.update(colourShader);
+
+    // Depending on the selected status or the entity settings, we need to update the wireframe volume
+    if (_showLightVolumeWhenUnselected || isSelected())
+    {
+        _renderableLightVolume.update(colourShader);
+    }
+    else
+    {
+        // Light volume is not visible, hide it
+        _renderableLightVolume.clear();
+    }
 }
 
 void LightNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
@@ -308,22 +323,24 @@ void LightNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 void LightNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     collector.addHighlightRenderable(_renderableOctagon, Matrix4::getIdentity());
+    collector.addHighlightRenderable(_renderableLightVolume, Matrix4::getIdentity());
 }
 
 void LightNode::renderLightVolume(IRenderableCollector& collector,
                                   const Matrix4& localToWorld,
                                   bool selected) const
 {
+#if 0
     // Obtain the appropriate Shader for the light volume colour
     const auto& colourShader = _overrideColKey.get() ? getWireShader() : _colourKey.getColourShader();
 
     if (!colourShader) return;
-
+#endif
 #if 0
     // Main render, submit the diamond that represents the light entity
     collector.addRenderable(*colourShader, *this, localToWorld);
 #endif
-
+#if 0
     // Render bounding box if selected or the showAllLighRadii flag is set
     if (selected || EntitySettings::InstancePtr()->getShowAllLightRadii())
     {
@@ -340,6 +357,7 @@ void LightNode::renderLightVolume(IRenderableCollector& collector,
             collector.addRenderable(*colourShader, _renderableRadius, localToWorld);
         }
     }
+#endif
 }
 
 /* greebo: Calculates the corners of the light radii box and rotates them according the rotation matrix.
@@ -592,7 +610,9 @@ void LightNode::_onTransformationChanged()
 	_light.revertTransform();
 	evaluateTransform();
 	_light.updateOrigin();
+
     _renderableOctagon.queueUpdate();
+    _renderableLightVolume.queueUpdate();
 }
 
 void LightNode::_applyTransformation()
@@ -614,16 +634,19 @@ void LightNode::onVisibilityChanged(bool isVisibleNow)
     if (isVisibleNow)
     {
         _renderableOctagon.queueUpdate();
+        _renderableLightVolume.queueUpdate();
     }
     else
     {
+        _renderableLightVolume.clear();
         _renderableOctagon.clear();
     }
 }
 
 void LightNode::onEntitySettingsChanged()
 {
-    // TODO
+    _showLightVolumeWhenUnselected = EntitySettings::InstancePtr()->getShowAllLightRadii();
+    _renderableLightVolume.queueUpdate();
 }
 
 } // namespace entity

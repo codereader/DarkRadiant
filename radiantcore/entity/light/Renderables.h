@@ -11,7 +11,10 @@
 
 void light_draw_box_lines(const Vector3& origin, const Vector3 points[8]);
 
-namespace entity {
+namespace entity
+{
+
+class LightNode;
 
 class RenderLightRadiiBox : public OpenGLRenderable {
 	const Vector3& m_origin;
@@ -36,6 +39,8 @@ public:
 }; // class RenderLightProjection
 
 // The small diamond representing at the light's origin
+// This is using the Triangle geometry type such that we can see 
+// the half-transparent (red) overlay when the light is selected
 class RenderableLightOctagon :
     public render::RenderableGeometry
 {
@@ -55,54 +60,31 @@ public:
     }
 
 protected:
-    void updateGeometry() override
+    void updateGeometry() override;
+};
+
+// The wireframe showing the light volume of the light
+// which is either a box (point light) or a frustum/cone (projected)
+class RenderableLightVolume :
+    public render::RenderableGeometry
+{
+private:
+    const LightNode& _light;
+    bool _needsUpdate;
+
+public:
+    RenderableLightVolume(const LightNode& light) :
+        _light(light),
+        _needsUpdate(true)
+    {}
+
+    void queueUpdate()
     {
-        if (!_needsUpdate) return;
-
-        _needsUpdate = false;
-
-        // Generate the indexed vertex data
-        static Vector3 Origin(0, 0, 0);
-        static Vector3 Extents(8, 8, 8);
-
-        // Calculate the light vertices of this bounding box and store them into <points>
-        Vector3 max(Origin + Extents);
-        Vector3 min(Origin - Extents);
-        Vector3 mid(Origin);
-
-        // top, bottom, tleft, tright, bright, bleft
-        std::vector<ArbitraryMeshVertex> vertices
-        {
-            ArbitraryMeshVertex({ mid[0], mid[1], max[2] }, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex({ mid[0], mid[1], min[2] }, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex({ min[0], max[1], mid[2] }, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex({ max[0], max[1], mid[2] }, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex({ max[0], min[1], mid[2] }, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex({ min[0], min[1], mid[2] }, {1,0,0}, {0,0}),
-        };
-
-        // Orient the points using the transform
-        const auto& orientation = _owner.localToWorld();
-        for (auto& vertex : vertices)
-        {
-            vertex.vertex = orientation * vertex.vertex;
-        }
-
-        // Indices are always the same, therefore constant
-        static const std::vector<unsigned int> Indices
-        {
-            0, 2, 3,
-            0, 3, 4,
-            0, 4, 5,
-            0, 5, 2,
-            1, 2, 5,
-            1, 5, 4,
-            1, 4, 3,
-            1, 3, 2
-        };
-
-        RenderableGeometry::updateGeometry(render::GeometryType::Triangles, vertices, Indices);
+        _needsUpdate = true;
     }
+
+protected:
+    void updateGeometry() override;
 };
 
 } // namespace entity

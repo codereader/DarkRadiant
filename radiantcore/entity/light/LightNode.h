@@ -7,6 +7,7 @@
 #include "dragplanes.h"
 #include "../VertexInstance.h"
 #include "../EntityNode.h"
+#include "Renderables.h"
 
 namespace entity
 {
@@ -41,8 +42,11 @@ class LightNode :
 
 	// Renderable components of this light
     RenderableLightOctagon _renderableOctagon;
+    RenderableLightVolume _renderableLightVolume;
 	RenderLightRadiiBox _renderableRadius;
     RenderLightProjection _renderableFrustum;
+
+    bool _showLightVolumeWhenUnselected;
 
 	// a temporary variable for calculating the AABB of all (selected) components
 	mutable AABB m_aabb_component;

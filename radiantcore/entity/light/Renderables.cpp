@@ -174,4 +174,62 @@ void RenderLightProjection::render(const RenderInfo& info) const
     }
 }
 
+void RenderableLightOctagon::updateGeometry()
+{
+    if (!_needsUpdate) return;
+
+    _needsUpdate = false;
+
+    // Generate the indexed vertex data
+    static Vector3 Origin(0, 0, 0);
+    static Vector3 Extents(8, 8, 8);
+
+    // Calculate the light vertices of this bounding box and store them into <points>
+    Vector3 max(Origin + Extents);
+    Vector3 min(Origin - Extents);
+    Vector3 mid(Origin);
+
+    // top, bottom, tleft, tright, bright, bleft
+    std::vector<ArbitraryMeshVertex> vertices
+    {
+        ArbitraryMeshVertex({ mid[0], mid[1], max[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ mid[0], mid[1], min[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ min[0], max[1], mid[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ max[0], max[1], mid[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ max[0], min[1], mid[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ min[0], min[1], mid[2] }, {1,0,0}, {0,0}),
+    };
+
+    // Orient the points using the transform
+    const auto& orientation = _owner.localToWorld();
+    for (auto& vertex : vertices)
+    {
+        vertex.vertex = orientation * vertex.vertex;
+    }
+
+    // Indices are always the same, therefore constant
+    static const std::vector<unsigned int> Indices
+    {
+        0, 2, 3,
+        0, 3, 4,
+        0, 4, 5,
+        0, 5, 2,
+        1, 2, 5,
+        1, 5, 4,
+        1, 4, 3,
+        1, 3, 2
+    };
+
+    RenderableGeometry::updateGeometry(render::GeometryType::Triangles, vertices, Indices);
+}
+
+void RenderableLightVolume::updateGeometry()
+{
+    if (!_needsUpdate) return;
+
+    _needsUpdate = false;
+
+    // TODO
+}
+
 } // namespace entity
