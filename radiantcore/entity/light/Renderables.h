@@ -40,12 +40,12 @@ class RenderableLightOctagon :
     public render::RenderableGeometry
 {
 private:
-    const Vector3& _origin;
+    const scene::INode& _owner;
     bool _needsUpdate;
 
 public:
-    RenderableLightOctagon(const Vector3& origin) :
-        _origin(origin),
+    RenderableLightOctagon(const scene::INode& owner) :
+        _owner(owner),
         _needsUpdate(true)
     {}
 
@@ -62,12 +62,13 @@ protected:
         _needsUpdate = false;
 
         // Generate the indexed vertex data
+        static Vector3 Origin(0, 0, 0);
         static Vector3 Extents(8, 8, 8);
 
         // Calculate the light vertices of this bounding box and store them into <points>
-        Vector3 max(_origin + Extents);
-        Vector3 min(_origin - Extents);
-        Vector3 mid(_origin);
+        Vector3 max(Origin + Extents);
+        Vector3 min(Origin - Extents);
+        Vector3 mid(Origin);
 
         // top, bottom, tleft, tright, bright, bleft
         std::vector<ArbitraryMeshVertex> vertices
@@ -79,6 +80,13 @@ protected:
             ArbitraryMeshVertex({ max[0], min[1], mid[2] }, {1,0,0}, {0,0}),
             ArbitraryMeshVertex({ min[0], min[1], mid[2] }, {1,0,0}, {0,0}),
         };
+
+        // Orient the points using the transform
+        const auto& orientation = _owner.localToWorld();
+        for (auto& vertex : vertices)
+        {
+            vertex.vertex = orientation * vertex.vertex;
+        }
 
         // Indices are always the same, therefore constant
         static const std::vector<unsigned int> Indices

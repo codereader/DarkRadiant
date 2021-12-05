@@ -25,7 +25,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	_lightStartInstance(_light.startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-    _renderableOctagon(_light._originTransformed),
+    _renderableOctagon(*this),
     _renderableRadius(_light._lightBox.origin),
     _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
@@ -47,7 +47,7 @@ LightNode::LightNode(const LightNode& other) :
 	_lightStartInstance(_light.startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this,std::placeholders:: _1)),
 	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-    _renderableOctagon(_light._originTransformed),
+    _renderableOctagon(*this),
     _renderableRadius(_light._lightBox.origin),
     _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
@@ -623,7 +623,7 @@ void LightNode::onVisibilityChanged(bool isVisibleNow)
 
 void LightNode::onEntitySettingsChanged()
 {
-    _renderableOctagon.queueUpdate();
+    // TODO
 }
 
 } // namespace entity

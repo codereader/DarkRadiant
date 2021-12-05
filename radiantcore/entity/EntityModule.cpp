@@ -312,6 +312,8 @@ void Doom3EntityModule::shutdownModule()
 
 void Doom3EntityModule::onEntitySettingsChanged()
 {
+    if (!GlobalMapModule().getRoot()) return;
+
     // Actively notify all LightNodes (only those for now) about the settings change
     GlobalMapModule().getRoot()->foreachNode([](const scene::INodePtr& node)
     {
