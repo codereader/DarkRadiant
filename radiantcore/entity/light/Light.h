@@ -19,11 +19,10 @@
 #include "LightShader.h"
 #include "RenderableVertices.h"
 #include "Doom3LightRadius.h"
+#include "generic/callback.h"
 
-namespace entity {
-
-void light_vertices(const AABB& aabb_light, Vector3 points[6]);
-void light_draw(const AABB& aabb_light, RenderStateFlags state);
+namespace entity
+{
 
 inline void default_extents(Vector3& extents) {
 	extents = Vector3(8,8,8);

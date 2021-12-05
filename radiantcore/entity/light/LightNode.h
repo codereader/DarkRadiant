@@ -23,8 +23,7 @@ class LightNode :
     public ComponentSelectionTestable,
     public ComponentEditable,
     public ComponentSnappable,
-    public PlaneSelectable,
-    public OpenGLRenderable
+    public PlaneSelectable
 {
 	Light _light;
 
@@ -43,8 +42,6 @@ class LightNode :
 	// Renderable components of this light
     RenderableLightOctagon _renderableOctagon;
     RenderableLightVolume _renderableLightVolume;
-	RenderLightRadiiBox _renderableRadius;
-    RenderLightProjection _renderableFrustum;
 
     bool _showLightVolumeWhenUnselected;
 
@@ -131,9 +128,6 @@ public:
         return false; // light wireframe stuff is rendered in world coordinates
     }
 
-    // OpenGLRenderable implementation
-    void render(const RenderInfo& info) const override;
-
 	const Matrix4& rotation() const;
 
     // Returns the original "origin" value
@@ -173,14 +167,7 @@ private:
     void renderInactiveComponents(IRenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
     void evaluateTransform();
 
-    // Render the light volume including bounds and origin
-    void renderLightVolume(IRenderableCollector& collector,
-                           const Matrix4& localToWorld, bool selected) const;
-
-    // Update the bounds of the renderable radius box
-    void updateRenderableRadius() const;
-
     void onLightRadiusChanged();
-}; // class LightNode
+};
 
 } // namespace entity
