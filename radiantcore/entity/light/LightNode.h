@@ -130,6 +130,8 @@ public:
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
 
+    void onEntitySettingsChanged();
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.

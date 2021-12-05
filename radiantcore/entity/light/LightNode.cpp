@@ -621,4 +621,9 @@ void LightNode::onVisibilityChanged(bool isVisibleNow)
     }
 }
 
+void LightNode::onEntitySettingsChanged()
+{
+    _renderableOctagon.queueUpdate();
+}
+
 } // namespace entity

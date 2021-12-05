@@ -2,14 +2,18 @@
 
 #include "ientity.h"
 #include "ieclass.h"
+#include <sigc++/connection.h>
 
 namespace entity
 {
 
 /// Implementation of the IEntityModule interface for Doom 3
-class Doom3EntityModule :
+class Doom3EntityModule final :
 	public IEntityModule
 {
+private:
+    sigc::connection _settingsListener;
+
 public:
     // EntityCreator implementation
 	IEntityNodePtr createEntity(const IEntityClassPtr& eclass) override;
@@ -25,10 +29,13 @@ public:
 	IEntityNodePtr createEntityFromSelection(const std::string& name, const Vector3& origin) override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const override;
-	virtual const StringSet& getDependencies() const override;
-	virtual void initialiseModule(const IApplicationContext& ctx) override;
-	virtual void shutdownModule() override;
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const IApplicationContext& ctx) override;
+	void shutdownModule() override;
+
+private:
+    void onEntitySettingsChanged();
 };
 
 } // namespace entity

@@ -295,14 +295,35 @@ void Doom3EntityModule::initialiseModule(const IApplicationContext& ctx)
 
     GlobalCommandSystem().addCommand("CreateSpeaker", std::bind(&algorithm::CreateSpeaker, std::placeholders::_1),
         { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3 });
+
+    _settingsListener = EntitySettings::InstancePtr()->signal_settingsChanged().connect(
+        sigc::mem_fun(this, &Doom3EntityModule::onEntitySettingsChanged));
 }
 
 void Doom3EntityModule::shutdownModule()
 {
 	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
+    _settingsListener.disconnect();
+
 	// Destroy the settings instance
 	EntitySettings::destroy();
+}
+
+void Doom3EntityModule::onEntitySettingsChanged()
+{
+    // Actively notify all LightNodes (only those for now) about the settings change
+    GlobalMapModule().getRoot()->foreachNode([](const scene::INodePtr& node)
+    {
+        auto light = std::dynamic_pointer_cast<LightNode>(node);
+
+        if (light)
+        {
+            light->onEntitySettingsChanged();
+        }
+
+        return true;
+    });
 }
 
 // Static module instance
