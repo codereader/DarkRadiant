@@ -7,8 +7,8 @@ namespace render
 {
 
 /**
- * Geometry base type, taking care of adding/removing/updating
- * indexed vertex data to an IGeometryRenderer instance.
+ * Geometry base type, handling vertex data updates in combination 
+ * with an IGeometryRenderer instance.
  * 
  * It implements the OpenGLRenderable interface which will instruct
  * the shader to render just the geometry batch managed by this object.
@@ -87,9 +87,9 @@ protected:
         _surfaceSlot = IGeometryRenderer::InvalidSlot;
     }
 
-    // Sub-class specific geometry update. Should check whether any of the
-    // vertex data needs to be added or updated to the shader, in which case
-    // the implementation should invoke addOrUpdateGeometry()
+    // Sub-class specific geometry update. Should check whether any of the vertex data 
+    // needs to be added or updated to the shader, in which case the implementation 
+    // should invoke the updateGeometry(type, vertices, indices) overload below
     virtual void updateGeometry() = 0;
 
     // Submits the given geometry to the known _shader reference

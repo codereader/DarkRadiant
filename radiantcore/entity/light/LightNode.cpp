@@ -25,6 +25,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	_lightStartInstance(_light.startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+    _renderableOctagon(_light._originTransformed),
     _renderableRadius(_light._lightBox.origin),
     _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
@@ -46,6 +47,7 @@ LightNode::LightNode(const LightNode& other) :
 	_lightStartInstance(_light.startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this,std::placeholders:: _1)),
 	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+    _renderableOctagon(_light._originTransformed),
     _renderableRadius(_light._lightBox.origin),
     _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
@@ -103,6 +105,8 @@ void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 	// De-select all child components as well
 	setSelectedComponents(false, selection::ComponentSelectionMode::Vertex);
 	setSelectedComponents(false, selection::ComponentSelectionMode::Face);
+
+    _renderableOctagon.clear();
 }
 
 void LightNode::testSelect(Selector& selector, SelectionTest& test)
@@ -273,6 +277,12 @@ void LightNode::selectedChangedComponent(const ISelectable& selectable) {
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }
 
+void LightNode::onPreRender(const VolumeTest& volume)
+{
+    // Pick the colour shader according to our settings
+    _renderableOctagon.update(_overrideColKey.get() ? getColourShader() : _colourKey.getColourShader());
+}
+
 void LightNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     // Submit self to the renderer as an actual light source
@@ -300,13 +310,14 @@ void LightNode::renderLightVolume(IRenderableCollector& collector,
                                   bool selected) const
 {
     // Obtain the appropriate Shader for the light volume colour
-    Shader* colourShader = _overrideColKey.get() ? EntityNode::_wireShader.get()
-                                                 : _colourKey.getWireShader();
-    if (!colourShader)
-        return;
+    const auto& colourShader = _overrideColKey.get() ? getWireShader() : _colourKey.getColourShader();
 
+    if (!colourShader) return;
+
+#if 0
     // Main render, submit the diamond that represents the light entity
     collector.addRenderable(*colourShader, *this, localToWorld);
+#endif
 
     // Render bounding box if selected or the showAllLighRadii flag is set
     if (selected || EntitySettings::InstancePtr()->getShowAllLightRadii())
@@ -338,6 +349,9 @@ void LightNode::updateRenderableRadius() const
 void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	EntityNode::setRenderSystem(renderSystem);
+
+    // Clear the geometry from any previous shader
+    _renderableOctagon.clear();
 
 	// The renderable vertices are maintaining shader objects, acquire/free them now
 	_light.setRenderSystem(renderSystem);
@@ -435,6 +449,7 @@ void LightNode::renderInactiveComponents(IRenderableCollector& collector, const 
 // Backend render function (GL calls)
 void LightNode::render(const RenderInfo& info) const
 {
+#if 0
     // Revert the light "diamond" to default extents for drawing
     AABB tempAABB(_light._lightBox.origin, Vector3(8, 8, 8));
 
@@ -469,6 +484,7 @@ void LightNode::render(const RenderInfo& info) const
 
     glVertexPointer(3, GL_DOUBLE, 0, points);
     glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(index_t), RenderIndexTypeID, indices);
+#endif
 }
 
 void LightNode::evaluateTransform()
@@ -571,6 +587,7 @@ void LightNode::_onTransformationChanged()
 	_light.revertTransform();
 	evaluateTransform();
 	_light.updateOrigin();
+    _renderableOctagon.queueUpdate();
 }
 
 void LightNode::_applyTransformation()
@@ -583,6 +600,20 @@ void LightNode::_applyTransformation()
 const Vector3& LightNode::getUntransformedOrigin()
 {
     return _light.getUntransformedOrigin();
+}
+
+void LightNode::onVisibilityChanged(bool isVisibleNow)
+{
+    EntityNode::onVisibilityChanged(isVisibleNow);
+
+    if (isVisibleNow)
+    {
+        _renderableOctagon.queueUpdate();
+    }
+    else
+    {
+        _renderableOctagon.clear();
+    }
 }
 
 } // namespace entity

@@ -40,6 +40,7 @@ class LightNode :
     selection::DragPlanes _dragPlanes;
 
 	// Renderable components of this light
+    RenderableLightOctagon _renderableOctagon;
 	RenderLightRadiiBox _renderableRadius;
     RenderLightProjection _renderableFrustum;
 
@@ -114,6 +115,7 @@ public:
 	void selectedChangedComponent(const ISelectable& selectable);
 
 	// Renderable implementation
+    void onPreRender(const VolumeTest& volume) override;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
@@ -138,6 +140,8 @@ protected:
 
 	// Override EntityNode::construct()
 	void construct() override;
+
+    void onVisibilityChanged(bool isVisibleNow) override;
 
 private:
     void renderInactiveComponents(IRenderableCollector& collector, const VolumeTest& volume, const bool selected) const;

@@ -56,10 +56,10 @@ public:
 		captureShader();
 	}
 
-    /// Return a non-owning (possibly null) pointer to the Shader
-    Shader* getWireShader() const
+    /// Return a (possibly empty) reference to the Shader
+    const ShaderPtr& getColourShader() const
     {
-        return _wireShader.get();
+        return _wireShader;
     }
 
 private:
@@ -70,7 +70,7 @@ private:
 
 		if (renderSystem)
 		{
-			std::string wireCol = fmt::format("<{0:f} {1:f} {2:f}>", _colour[0], _colour[1], _colour[2]);
+			auto wireCol = fmt::format("{{{0:f} {1:f} {2:f}}}", _colour[0], _colour[1], _colour[2]);
 			_wireShader = renderSystem->capture(wireCol);
 		}
 		else
