@@ -141,6 +141,11 @@ public:
     // Returns the frustum structure (calling this on point lights will throw)
     const Frustum& getLightFrustum() const;
 
+    // Returns the relative start point used by projected lights to cut off
+    // the upper part of the projection cone to form the frustum
+    // Calling this on point lights will throw.
+    const Vector3& getLightStart() const;
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.

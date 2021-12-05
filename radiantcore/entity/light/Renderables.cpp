@@ -265,26 +265,52 @@ void RenderableLightVolume::updateProjectedLightVolume()
     auto backUpperRight = frustum.getCornerPoint(Frustum::BACK, Frustum::TOP_RIGHT);
     auto backLowerRight = frustum.getCornerPoint(Frustum::BACK, Frustum::BOTTOM_RIGHT);
 
-#if 0
-    if (_start != Vector3(0, 0, 0))
+    const auto& lightStart = _light.getLightStart();
+
+    if (lightStart != Vector3(0, 0, 0))
     {
         // Calculate the vertices defining the top area
-        Vector3 frontUpperLeft = _frustum.getCornerPoint(Frustum::FRONT, Frustum::TOP_LEFT);
-        Vector3 frontLowerLeft = _frustum.getCornerPoint(Frustum::FRONT, Frustum::BOTTOM_LEFT);
-        Vector3 frontUpperRight = _frustum.getCornerPoint(Frustum::FRONT, Frustum::TOP_RIGHT);
-        Vector3 frontLowerRight = _frustum.getCornerPoint(Frustum::FRONT, Frustum::BOTTOM_RIGHT);
+        auto frontUpperLeft = frustum.getCornerPoint(Frustum::FRONT, Frustum::TOP_LEFT);
+        auto frontLowerLeft = frustum.getCornerPoint(Frustum::FRONT, Frustum::BOTTOM_LEFT);
+        auto frontUpperRight = frustum.getCornerPoint(Frustum::FRONT, Frustum::TOP_RIGHT);
+        auto frontLowerRight = frustum.getCornerPoint(Frustum::FRONT, Frustum::BOTTOM_RIGHT);
 
-        frontUpperLeft += _origin;
-        frontLowerLeft += _origin;
-        frontUpperRight += _origin;
-        frontLowerRight += _origin;
+        std::vector<ArbitraryMeshVertex> vertices
+        {
+            ArbitraryMeshVertex(frontUpperLeft, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(frontLowerLeft, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(frontLowerRight, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(frontUpperRight, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(backUpperLeft, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(backLowerLeft, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(backLowerRight, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(backUpperRight, {1,0,0}, {0,0}),
+        };
 
-        Vector3 frustum[8] = { frontUpperLeft, frontLowerLeft, frontLowerRight, frontUpperRight,
-                               backUpperLeft, backLowerLeft, backLowerRight, backUpperRight };
-        drawFrustum(frustum);
+        // Orient the points using the transform
+        applyTransform(vertices, _light.localToWorld());
+
+        static const std::vector<unsigned int> Indices
+        {
+            0, 4, // top up right to bottom up right
+            1, 5, // top down right to bottom down right
+            2, 6, // top down left to bottom down left
+            3, 7, // top up left to bottom up left
+
+            0, 1, // top up right to top down right
+            1, 2, // top down right to top down left
+            2, 3, // top down left to top up left
+            3, 0, // top up left to top up right
+
+            4, 5, // bottom up right to bottom down right
+            5, 6, // bottom down right to bottom down left
+            6, 7, // bottom down left to bottom up left
+            7, 4, // bottom up left to bottom up right
+        };
+
+        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, Indices);
     }
     else
-#endif
     {
         // no light_start, just use the top vertex (doesn't need to be mirrored)
         auto top = Plane3::intersect(frustum.left, frustum.right, frustum.top);

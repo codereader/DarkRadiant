@@ -29,6 +29,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
     _renderableLightVolume(*this),
     _renderableRadius(_light._lightBox.origin),
     _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
+    _showLightVolumeWhenUnselected(EntitySettings::InstancePtr()->getShowAllLightRadii()),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {}
 
@@ -52,6 +53,7 @@ LightNode::LightNode(const LightNode& other) :
     _renderableLightVolume(*this),
     _renderableRadius(_light._lightBox.origin),
     _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
+    _showLightVolumeWhenUnselected(other._showLightVolumeWhenUnselected),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {}
 
@@ -80,6 +82,13 @@ const Frustum& LightNode::getLightFrustum() const
     if (!_light.isProjected()) throw std::logic_error("getLightFrustum can be called on projected lights only");
 
     return _light._frustum;
+}
+
+const Vector3& LightNode::getLightStart() const
+{
+    if (!_light.isProjected()) throw std::logic_error("getLightStart can be called on projected lights only");
+
+    return _light._lightStartTransformed;
 }
 
 // Snappable implementation
@@ -301,6 +310,15 @@ void LightNode::onPreRender(const VolumeTest& volume)
     // Depending on the selected status or the entity settings, we need to update the wireframe volume
     if (_showLightVolumeWhenUnselected || isSelected())
     {
+        if (isProjected())
+        {
+            _light.updateProjection();
+        }
+        else
+        {
+            updateRenderableRadius();
+        }
+
         _renderableLightVolume.update(colourShader);
     }
     else
