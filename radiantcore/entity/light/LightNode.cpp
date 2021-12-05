@@ -305,6 +305,11 @@ void LightNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
     renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
+void LightNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    collector.addHighlightRenderable(_renderableOctagon, Matrix4::getIdentity());
+}
+
 void LightNode::renderLightVolume(IRenderableCollector& collector,
                                   const Matrix4& localToWorld,
                                   bool selected) const
