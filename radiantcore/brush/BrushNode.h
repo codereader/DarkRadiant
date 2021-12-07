@@ -27,7 +27,6 @@ class BrushNode :
 	public ComponentEditable,
 	public ComponentSnappable,
 	public PlaneSelectable,
-	public LitObject,
 	public Transformable,
 	public ITraceable,
     public scene::IComparableNode
@@ -136,9 +135,6 @@ public:
 	void vertex_push_back(SelectableVertex& vertex) override;
 	void DEBUG_verify() override;
 
-	// LitObject implementation
-	bool intersectsLight(const RendererLight& light) const override;
-
 	// Renderable implementation
 	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -163,7 +159,7 @@ public:
     // Returns the center of the untransformed world AABB
     const Vector3& getUntransformedOrigin() override;
 
-    // Returns true if this node is visible due to its selection status 
+    // Returns true if this node is visible due to its selection status
     // even though it might otherwise be filtered or hidden
     // Should only be used by the internal Brush object
     bool facesAreForcedVisible();

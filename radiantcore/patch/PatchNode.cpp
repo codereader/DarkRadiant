@@ -29,7 +29,6 @@ PatchNode::PatchNode(const PatchNode& other) :
 	ComponentEditable(other),
 	ComponentSnappable(other),
 	PlaneSelectable(other),
-	LitObject(other),
 	Transformable(other),
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
 	m_render_selected(GL_POINTS),
@@ -298,10 +297,6 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 bool PatchNode::getIntersection(const Ray& ray, Vector3& intersection)
 {
 	return m_patch.getIntersection(ray, intersection);
-}
-
-bool PatchNode::intersectsLight(const RendererLight& light) const {
-	return light.lightAABB().intersects(worldAABB());
 }
 
 void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const

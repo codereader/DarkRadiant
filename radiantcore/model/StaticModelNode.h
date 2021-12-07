@@ -26,7 +26,6 @@ class StaticModelNode :
 	public scene::Node,
 	public ModelNode,
 	public SelectionTestable,
-	public LitObject,
 	public SkinnedModel,
 	public ITraceable,
     public Transformable
@@ -74,9 +73,6 @@ public:
 
 	const StaticModelPtr& getModel() const;
 	void setModel(const StaticModelPtr& model);
-
-	// LitObject test function
-	bool intersectsLight(const RendererLight& light) const override;
 
 	// Renderable implementation
   	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
