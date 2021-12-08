@@ -17,6 +17,7 @@
 #include "../KeyObserverDelegate.h"
 
 #include "RenderableArrow.h"
+#include "../RenderableEntityBox.h"
 
 namespace entity
 {
@@ -48,6 +49,7 @@ class GenericEntityNode: public EntityNode, public Snappable
 	RenderableArrow m_arrow;
 	RenderableSolidAABB m_aabb_solid;
 	RenderableWireframeAABB m_aabb_wire;
+    RenderableEntityBox _renderableBox;
 
 	// TRUE if this entity's arrow can be rotated in all directions,
 	// FALSE if the arrow is caught in the xy plane
@@ -99,10 +101,12 @@ public:
 	scene::INodePtr clone() const override;
 
 	// Renderable implementation
+    void onPreRender(const VolumeTest& volume) override;
 	void renderArrow(const ShaderPtr& shader, IRenderableCollector& collector,
                      const VolumeTest& volume, const Matrix4& localToWorld) const;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
     SolidAAABBRenderMode getSolidAABBRenderMode() const;
 
@@ -115,6 +119,9 @@ public:
     void onChildAdded(const scene::INodePtr& child) override;
 	void onChildRemoved(const scene::INodePtr& child) override;
 
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.
@@ -126,6 +133,8 @@ protected:
 
 	// Override EntityNode::construct()
 	void construct() override;
+
+    void onVisibilityChanged(bool isVisibleNow) override;
 };
 
 } // namespace entity

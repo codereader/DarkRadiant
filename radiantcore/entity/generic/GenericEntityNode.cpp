@@ -16,6 +16,7 @@ GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
+    _renderableBox(*this),
 	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1"),
     _solidAABBRenderMode(SolidBoxes)
 {}
@@ -31,6 +32,7 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	m_arrow(m_ray),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
+    _renderableBox(*this),
 	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1"),
     _solidAABBRenderMode(other._solidAABBRenderMode)
 {}
@@ -127,6 +129,13 @@ GenericEntityNode::SolidAAABBRenderMode GenericEntityNode::getSolidAABBRenderMod
     return _solidAABBRenderMode;
 }
 
+void GenericEntityNode::onPreRender(const VolumeTest& volume)
+{
+    EntityNode::onPreRender(volume);
+
+    _renderableBox.update(getColourShader());
+}
+
 void GenericEntityNode::renderArrow(const ShaderPtr& shader, IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
@@ -139,20 +148,30 @@ void GenericEntityNode::renderArrow(const ShaderPtr& shader, IRenderableCollecto
 void GenericEntityNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
-
+#if 0
 	const ShaderPtr& shader = getSolidAABBRenderMode() == GenericEntityNode::WireFrameOnly ?
 		getWireShader() : getFillShader();
 
 	collector.addRenderable(*shader, m_aabb_solid, localToWorld());
 	renderArrow(shader, collector, volume, localToWorld());
+#endif
 }
 
 void GenericEntityNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
-
+#if 0
 	collector.addRenderable(*getWireShader(), m_aabb_wire, localToWorld());
 	renderArrow(getWireShader(), collector, volume, localToWorld());
+#endif
+}
+
+void GenericEntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+    EntityNode::setRenderSystem(renderSystem);
+
+    // Clear the geometry from any previous shader
+    _renderableBox.clear();
 }
 
 const Vector3& GenericEntityNode::getDirection() const
@@ -231,6 +250,7 @@ void GenericEntityNode::_onTransformationChanged()
 		rotate(getRotation());
 
 		updateTransform();
+        _renderableBox.queueUpdate();
 	}
 }
 
@@ -291,6 +311,36 @@ void GenericEntityNode::onChildRemoved(const scene::INodePtr& child)
 
         return true;
     });
+}
+
+void GenericEntityNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    // Call the base class first
+    EntityNode::onInsertIntoScene(root);
+
+    _renderableBox.queueUpdate();
+}
+
+void GenericEntityNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    // Call the base class first
+    EntityNode::onRemoveFromScene(root);
+
+    _renderableBox.clear();
+}
+
+void GenericEntityNode::onVisibilityChanged(bool isVisibleNow)
+{
+    EntityNode::onVisibilityChanged(isVisibleNow);
+
+    if (isVisibleNow)
+    {
+        _renderableBox.queueUpdate();
+    }
+    else
+    {
+        _renderableBox.clear();
+    }
 }
 
 void GenericEntityNode::originChanged()
