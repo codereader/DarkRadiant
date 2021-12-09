@@ -11,7 +11,7 @@
 namespace entity
 {
 
-class RotationKey
+class RotationKey: public sigc::trackable
 {
 private:
 	std::function<void()> m_rotationChanged;

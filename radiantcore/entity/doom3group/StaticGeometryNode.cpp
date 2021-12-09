@@ -70,11 +70,14 @@ void StaticGeometryNode::construct()
 
 	m_rotation.setIdentity();
 
+    static_assert(std::is_base_of<sigc::trackable, RotationKey>::value);
+    static_assert(std::is_base_of<sigc::trackable, StaticGeometryNode>::value);
+
     // Observe relevant spawnarg changes
 	addKeyObserver("origin", m_originKey);
-    observeKey("angle", [=](const std::string& val) { m_rotationKey.angleChanged(val); });
-    observeKey("rotation", [=](const std::string& val) { m_rotationKey.rotationChanged(val); });
-    observeKey("name", [=](const std::string& val) { nameChanged(val); });
+    observeKey("angle", sigc::mem_fun(m_rotationKey, &RotationKey::angleChanged));
+    observeKey("rotation", sigc::mem_fun(m_rotationKey, &RotationKey::rotationChanged));
+    observeKey("name", sigc::mem_fun(this, &StaticGeometryNode::nameChanged));
 	addKeyObserver(curve_Nurbs, m_curveNURBS);
 	addKeyObserver(curve_CatmullRomSpline, m_curveCatmullRom);
 
