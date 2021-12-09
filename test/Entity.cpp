@@ -1812,6 +1812,29 @@ TEST_F(EntityTest, EntityNodeObserveKeyViaFunc)
     EXPECT_EQ(receivedValue, "-O-O-O-");
 }
 
+TEST_F(EntityTest, EntityNodeObserveKeyAutoDisconnect)
+{
+    auto [entityNode, spawnArgs] = TestEntity::create("atdm:ai_builder_guard");
+
+    constexpr const char* TEST_KEY = "AnotherTestKey";
+
+    // Allocate observer on the heap, so we can free the memory and hopefully
+    // trigger a crash if the slot is called after deletion.
+    auto* observer = new TestKeyObserver();
+
+    // Observe key before creating it
+    entityNode->observeKey(TEST_KEY,
+                           sigc::mem_fun(observer, &TestKeyObserver::onKeyValueChanged));
+    EXPECT_EQ(observer->invocationCount, 1);
+    EXPECT_EQ(observer->receivedValue, "");
+
+    // Destroy the observer and reclaim memory
+    delete observer;
+
+    // Making a new key change should not cause a crash
+    spawnArgs->setKeyValue(TEST_KEY, "whatever");
+}
+
 inline Entity* findPlayerStartEntity()
 {
     Entity* found = nullptr;

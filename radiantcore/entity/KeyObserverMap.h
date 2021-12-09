@@ -41,9 +41,17 @@ class KeyObserverMap :
 	public Entity::Observer,
     public sigc::trackable
 {
-	// A map using case-insensitive comparison
+	// A map using case-insensitive comparison, storing one or more KeyObserver
+	// objects for each observed key.
     typedef std::multimap<std::string, KeyObserver::Ptr, string::ILess> KeyObservers;
     KeyObservers _keyObservers;
+
+    // Signals for each key observed with observeKey(). This is a map, not a
+    // multimap, since each signal can be connected to an arbitrary number of
+    // slots.
+    using KeySignal = sigc::signal<void, std::string>;
+    using KeySignals = std::map<std::string, KeySignal, string::ILess>;
+    KeySignals _keySignals;
 
 	// The observed entity
 	SpawnArgs& _entity;
@@ -86,36 +94,60 @@ public:
         // All observers are detached, clear them out
         _keyObservers.clear();
 
+        // Clear out and destroy all signals
+        _keySignals.clear();
+
         // Remove ourselves as an Entity::Observer (onKeyInsert and onKeyErase)
 		_entity.detachObserver(this);
 	}
 
     /**
-     * @brief Add an observer function for the specified key.
+     * @brief Add an observer slot for the specified key.
      *
-     * The observer function will be wrapped in a KeyObserver interface object
-     * owned and deleted by the KeyObserverMap. This allows calling code to
-     * attach a callback function without worrying about maintaining a
-     * KeyObserver object.
+     * The slot will be connected to an internal signal which will be emitted
+     * when the associated key changes. This enables the standard libsigc++
+     * auto-disconnection if the slot is bound to a member function of a
+     * sigc::trackable class using sigc::mem_fun. If a lambda is used, there
+     * will be no auto-disconnection; in this case the calling code must ensure
+     * that the lambda does not capture variables that may become invalid while
+     * the signal is still connected.
      *
-     * There is currently no way to manually delete an observer function added
-     * in this way. All observer functions will be removed on destruction.
+     * There is currently no way to manually disconnect an observer function
+     * added in this way. All observer functions will be removed on destruction.
      *
      * @param key
      * Key to observe.
      *
      * @param func
-     * Callback function to be invoked when the key value changes. It will also
-     * be invoked immediately with the key's current value, or an empty string
-     * if the key does not currently exist.
+     * Slot to be invoked when the key value changes. It will also be invoked
+     * immediately with the key's current value, or an empty string if the key
+     * does not currently exist.
      */
     void observeKey(const std::string& key, KeyObserverFunc func)
     {
-        auto iter = _keyObservers.insert(
-            {key, std::make_shared<KeyObserverDelegate>(func)}
-        );
-        assert(iter != _keyObservers.end());
-        attachObserver(key, *iter->second);
+        // If there is already a signal for this key, just connect the slot to it
+        if (auto iter = _keySignals.find(key); iter != _keySignals.end()) {
+            iter->second.connect(func);
+        }
+        else {
+            // No existing signal, so we need to create one
+            _keySignals[key].connect(func);
+
+            // Create and attach an internal KeyObserver to respond to keyvalue
+            // changes and emit the associated signal. Note that we don't just wrap
+            // the slot in a delegate to invoke it directly — we need the
+            // intervening sigc::signal to allow for auto-disconnection.
+            auto delegate = std::make_shared<KeyObserverDelegate>(
+                [=](const std::string& value) { _keySignals[key].emit(value); }
+            );
+
+            // Store the observer internally. We must only do this once per key;
+            // multiple observers would result in multiple signal emissions.
+            _keyObservers.insert({key, delegate});
+
+            // Send initial value and attach to EntityKeyValue immediately if needed
+            attachObserver(key, *delegate);
+        }
     }
 
     /**

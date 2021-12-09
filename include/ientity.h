@@ -16,7 +16,7 @@ typedef std::shared_ptr<IEntityClass> IEntityClassPtr;
 typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
 // Observes a single entity key value and gets notified on change
-class KeyObserver
+class KeyObserver: public sigc::trackable
 {
 public:
     using Ptr = std::shared_ptr<KeyObserver>;
@@ -286,7 +286,7 @@ public:
 };
 
 /// Callback for an entity key value change
-using KeyObserverFunc = std::function<void(const std::string&)>;
+using KeyObserverFunc = sigc::slot<void(const std::string&)>;
 
 /**
  * \brief Interface for a node which represents an entity.
