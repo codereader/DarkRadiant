@@ -187,7 +187,7 @@ void EntityNode::observeKey(const std::string& key, KeyObserverFunc func)
 
 void EntityNode::removeKeyObserver(const std::string& key, KeyObserver& observer)
 {
-	_keyObservers.erase(key, observer);
+	_keyObservers.erase(observer);
 }
 
 Entity& EntityNode::getEntity()

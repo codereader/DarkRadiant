@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 #include <map>
 #include <string>
+#include <sigc++/connection.h>
 
 #include "SpawnArgs.h"
 
@@ -52,6 +53,10 @@ class KeyObserverMap :
     using KeySignal = sigc::signal<void, std::string>;
     using KeySignals = std::map<std::string, KeySignal, string::ILess>;
     KeySignals _keySignals;
+
+    // Keep track of connections for each external observer, so we can
+    // disconnect them if erase() is called.
+    std::multimap<KeyObserver*, sigc::connection> _connectionsByObserver;
 
 	// The observed entity
 	SpawnArgs& _entity;
@@ -123,15 +128,19 @@ public:
      * immediately with the key's current value, or an empty string if the key
      * does not currently exist.
      */
-    void observeKey(const std::string& key, KeyObserverFunc func)
+    sigc::connection observeKey(const std::string& key, KeyObserverFunc func)
     {
         // If there is already a signal for this key, just connect the slot to it
+        sigc::connection conn;
         if (auto iter = _keySignals.find(key); iter != _keySignals.end()) {
-            iter->second.connect(func);
+            conn = iter->second.connect(func);
+
+            // Send initial value to slot
+            func(_entity.getKeyValue(key));
         }
         else {
             // No existing signal, so we need to create one
-            _keySignals[key].connect(func);
+            conn = _keySignals[key].connect(func);
 
             // Create and attach an internal KeyObserver to respond to keyvalue
             // changes and emit the associated signal. Note that we don't just wrap
@@ -148,15 +157,13 @@ public:
             // Send initial value and attach to EntityKeyValue immediately if needed
             attachObserver(key, *delegate);
         }
+        return conn;
     }
 
     /**
      * @brief Add an observer object for the specified key.
      *
-     * Multiple observers can be attached to the same key. It is the calling
-     * code's responsibility to ensure that the KeyObserver exists for the
-     * lifetime of the attachment; undefined behaviour will result if a
-     * KeyObserver is destroyed while still attached to the entity.
+     * Multiple observers can be attached to the same key.
      *
      * @param key
      * Key to observe.
@@ -168,30 +175,44 @@ public:
      */
 	void insert(const std::string& key, KeyObserver& observer)
 	{
-        // Wrap observer in a shared_ptr with a NOP deleter, since we don't own it
-		_keyObservers.insert({key, KeyObserver::Ptr(&observer, [](KeyObserver*) {})});
+        // Connect to observer method, ensuring auto-disconnection is set up
+        static_assert(std::is_base_of<sigc::trackable, KeyObserver>::value);
+        auto conn = observeKey(key, sigc::mem_fun(observer, &KeyObserver::onKeyValueChanged));
 
-        attachObserver(key, observer);
+        // Store the connection so we can remove it if erase() is called with the same observer
+        _connectionsByObserver.insert({&observer, conn});
 	}
 
-	void erase(const std::string& key, KeyObserver& observer)
+    /**
+     * @brief Disconnect the given observer.
+     *
+     * If the observer was previously connected, it will be invoked with a final
+     * empty value before being removed. Attempting to disconnect an observer
+     * which was not connected has no effect.
+     *
+     * If the observer was connected to multiple keys, it will be disconnected
+     * from all of them.
+     *
+     * @param observer
+     * Observer to remove.
+     */
+	void erase(KeyObserver& observer)
 	{
-        const auto upperBound = _keyObservers.upper_bound(key);
-		for (auto i = _keyObservers.find(key);
-			 i != upperBound && i != _keyObservers.end();
-			 /* in-loop increment */)
-		{
-			if (i->second.get() == &observer) {
-                // Detach the observer from the actual keyvalue, if it exists
-                detachObserver(key, observer, true /* send final empty value */);
+        // Find all connections for this observer
+        auto [iter, end] = _connectionsByObserver.equal_range(&observer);
+        if (iter == end)
+            return;
 
-                // Order is important: first increment, then erase the non-incremented value
-				_keyObservers.erase(i++);
-			}
-			else {
-				++i;
-			}
-		}
+        // Send final value before removing observer
+        observer.onKeyValueChanged("");
+
+        // Disconnect all the connections
+        for (auto localIter = iter; localIter != end; ++localIter) {
+            localIter->second.disconnect();
+        }
+
+        // Erase all connections from the multimap
+        _connectionsByObserver.erase(iter, end);
 	}
 
 	void refreshObservers()

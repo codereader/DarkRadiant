@@ -1737,6 +1737,51 @@ TEST_F(EntityTest, EntityNodeAttachKeyObserver)
     entityNode.reset();
 }
 
+TEST_F(EntityTest, EntityNodeRemoveKeyObserver)
+{
+    auto [entityNode, spawnArgs] = TestEntity::create("atdm:ai_builder_guard");
+
+    constexpr const char* TEST_KEY = "TestKey";
+
+    // Attach the observer
+    TestKeyObserver observer;
+    entityNode->addKeyObserver(TEST_KEY, observer);
+    spawnArgs->setKeyValue(TEST_KEY, "first");
+    EXPECT_EQ(observer.invocationCount, 2);
+    EXPECT_EQ(observer.receivedValue, "first");
+
+    // Remove the key observer again; this will send the final empty value
+    entityNode->removeKeyObserver(TEST_KEY, observer);
+    EXPECT_EQ(observer.invocationCount, 3);
+    EXPECT_EQ(observer.receivedValue, "");
+
+    // Key change after observer removal should not update anything
+    spawnArgs->setKeyValue(TEST_KEY, "second");
+    EXPECT_EQ(observer.invocationCount, 3);
+    EXPECT_EQ(observer.receivedValue, "");
+}
+
+TEST_F(EntityTest, EntityNodeKeyObserverAutoDisconnect)
+{
+    auto [entityNode, spawnArgs] = TestEntity::create("atdm:ai_builder_guard");
+
+    constexpr const char* TEST_KEY = "TestKey";
+
+    // Allocate test observer on the heap to trigger crashes if accessed after deletion
+    auto* observer = new TestKeyObserver();
+
+    // Attach the observer
+    entityNode->addKeyObserver(TEST_KEY, *observer);
+    EXPECT_EQ(observer->invocationCount, 1);
+    EXPECT_EQ(observer->receivedValue, "");
+
+    // Destroy the observer and free memory
+    delete observer;
+
+    // Key change should not crash due to deleted observer
+    spawnArgs->setKeyValue(TEST_KEY, "Some value");
+}
+
 TEST_F(EntityTest, EntityNodeObserveKeyChange)
 {
     auto [entityNode, _] = TestEntity::create("atdm:ai_builder_guard");
