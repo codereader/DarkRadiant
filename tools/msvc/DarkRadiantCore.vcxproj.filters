@@ -1111,6 +1111,9 @@
     <ClCompile Include="..\..\radiantcore\entity\RenderableEntityBox.cpp">
       <Filter>src\entity</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\entity\RenderableArrow.cpp">
+      <Filter>src\entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2260,6 +2263,9 @@
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\RenderableEntityBox.h">
+      <Filter>src\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\RenderableArrow.h">
       <Filter>src\entity</Filter>
     </ClInclude>
   </ItemGroup>

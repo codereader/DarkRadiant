@@ -119,7 +119,7 @@ void RenderableEntityBox::setFillMode(bool fill)
     if (_filledBox != fill)
     {
         _filledBox = fill;
-        clear(); // maybe only clear the box part?
+        clear();
     }
 }
 

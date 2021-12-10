@@ -16,7 +16,7 @@
 #include "../SpawnArgs.h"
 #include "../KeyObserverDelegate.h"
 
-#include "RenderableArrow.h"
+#include "../RenderableArrow.h"
 #include "../RenderableEntityBox.h"
 
 namespace entity
@@ -46,7 +46,7 @@ class GenericEntityNode: public EntityNode, public Snappable
 	AABB m_aabb_local;
 	Ray m_ray;
 
-	RenderableArrow m_arrow;
+	RenderableArrow _renderableArrow;
 	RenderableSolidAABB m_aabb_solid;
 	RenderableWireframeAABB m_aabb_wire;
     RenderableEntityBox _renderableBox;

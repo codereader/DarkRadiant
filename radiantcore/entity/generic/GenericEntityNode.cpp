@@ -13,7 +13,7 @@ GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	m_angleKey(std::bind(&GenericEntityNode::angleChanged, this)),
 	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
-	m_arrow(m_ray),
+    _renderableArrow(*this),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
     _renderableBox(*this),
@@ -29,7 +29,7 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	m_angleKey(std::bind(&GenericEntityNode::angleChanged, this)),
 	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
-	m_arrow(m_ray),
+    _renderableArrow(*this),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
     _renderableBox(*this),
@@ -134,15 +134,18 @@ void GenericEntityNode::onPreRender(const VolumeTest& volume)
     EntityNode::onPreRender(volume);
 
     _renderableBox.update(getColourShader());
+    _renderableArrow.update(getColourShader());
 }
 
 void GenericEntityNode::renderArrow(const ShaderPtr& shader, IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
+#if 0
 	if (EntitySettings::InstancePtr()->getShowEntityAngles())
 	{
 		collector.addRenderable(*shader, m_arrow, localToWorld);
 	}
+#endif
 }
 
 void GenericEntityNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
@@ -172,6 +175,7 @@ void GenericEntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     // Clear the geometry from any previous shader
     _renderableBox.clear();
+    _renderableArrow.clear();
 }
 
 const Vector3& GenericEntityNode::getDirection() const
@@ -237,6 +241,7 @@ void GenericEntityNode::updateTransform()
                                   .transformDirection(Vector3(1, 0, 0));
     }
 
+    _renderableArrow.queueUpdate();
 	transformChanged();
 }
 
@@ -251,6 +256,7 @@ void GenericEntityNode::_onTransformationChanged()
 
 		updateTransform();
         _renderableBox.queueUpdate();
+        _renderableArrow.queueUpdate();
 	}
 }
 
@@ -323,6 +329,7 @@ void GenericEntityNode::onInsertIntoScene(scene::IMapRootNode& root)
     EntityNode::onInsertIntoScene(root);
 
     _renderableBox.queueUpdate();
+    _renderableArrow.queueUpdate();
 }
 
 void GenericEntityNode::onRemoveFromScene(scene::IMapRootNode& root)
@@ -331,6 +338,7 @@ void GenericEntityNode::onRemoveFromScene(scene::IMapRootNode& root)
     EntityNode::onRemoveFromScene(root);
 
     _renderableBox.clear();
+    _renderableArrow.clear();
 }
 
 void GenericEntityNode::onVisibilityChanged(bool isVisibleNow)
@@ -340,10 +348,12 @@ void GenericEntityNode::onVisibilityChanged(bool isVisibleNow)
     if (isVisibleNow)
     {
         _renderableBox.queueUpdate();
+        _renderableArrow.queueUpdate();
     }
     else
     {
         _renderableBox.clear();
+        _renderableArrow.clear();
     }
 }
 
