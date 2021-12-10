@@ -22,11 +22,8 @@
 namespace entity
 {
 
-class GenericEntityNode;
-typedef std::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
-
 /// EntityNode subclass for all entity types not handled by a specific class
-class GenericEntityNode: public EntityNode, public Snappable
+class GenericEntityNode final : public EntityNode, public Snappable
 {
 	OriginKey m_originKey;
 	Vector3 m_origin;
@@ -47,8 +44,6 @@ class GenericEntityNode: public EntityNode, public Snappable
 	Ray m_ray;
 
 	RenderableArrow _renderableArrow;
-	RenderableSolidAABB m_aabb_solid;
-	RenderableWireframeAABB m_aabb_wire;
     RenderableEntityBox _renderableBox;
 
 	// TRUE if this entity's arrow can be rotated in all directions,
@@ -57,15 +52,6 @@ class GenericEntityNode: public EntityNode, public Snappable
 
 	KeyObserverDelegate _rotationObserver;
 	KeyObserverDelegate _angleObserver;
-
-    // Whether to draw a solid/shaded box in full material render mode or just the wireframe
-    enum SolidAAABBRenderMode
-    {
-        SolidBoxes,
-        WireFrameOnly,
-    };
-
-    SolidAAABBRenderMode _solidAABBRenderMode;
 
 public:
 	GenericEntityNode(const IEntityClassPtr& eclass);
@@ -87,7 +73,7 @@ private:
 	void rotationChanged();
 
 public:
-	static GenericEntityNodePtr Create(const IEntityClassPtr& eclass);
+	static std::shared_ptr<GenericEntityNode> Create(const IEntityClassPtr& eclass);
 
 	// Snappable implementation
 	void snapto(float snap) override;
@@ -102,13 +88,7 @@ public:
 
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
-	void renderArrow(const ShaderPtr& shader, IRenderableCollector& collector,
-                     const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-
-    SolidAAABBRenderMode getSolidAABBRenderMode() const;
 
 	// Override EntityNode::getDirection()
 	const Vector3& getDirection() const override;

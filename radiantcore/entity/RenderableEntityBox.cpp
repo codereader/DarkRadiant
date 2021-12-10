@@ -120,6 +120,7 @@ void RenderableEntityBox::setFillMode(bool fill)
     {
         _filledBox = fill;
         clear();
+        queueUpdate();
     }
 }
 
