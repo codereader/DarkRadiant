@@ -891,8 +891,13 @@ void OpenGLShader::construct()
             colour[3] = 1;
             state.setColour(colour);
 
-            state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
-            state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+            state.setRenderFlag(RENDER_FILL);
+            state.setRenderFlag(RENDER_LIGHTING);
+            state.setRenderFlag(RENDER_DEPTHTEST);
+            state.setRenderFlag(RENDER_CULLFACE);
+            state.setRenderFlag(RENDER_DEPTHWRITE);
+            state.setRenderFlag(RENDER_BLEND);
+            state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
             state.setDepthFunc(GL_LESS);
             state.m_linewidth = 1;
             state.m_pointsize = 1;

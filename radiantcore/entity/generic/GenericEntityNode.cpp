@@ -277,6 +277,7 @@ void GenericEntityNode::onChildAdded(const scene::INodePtr& child)
     EntityNode::onChildAdded(child);
 
     _solidAABBRenderMode = SolidBoxes;
+    _renderableBox.setFillMode(true);
 
     // Check if this node has any actual models/particles as children
     Node::foreachNode([&](const scene::INodePtr& node)
@@ -285,6 +286,7 @@ void GenericEntityNode::onChildAdded(const scene::INodePtr& child)
         if (child->getNodeType() != scene::INode::Type::EntityConnection)
         {
             _solidAABBRenderMode = WireFrameOnly;
+            _renderableBox.setFillMode(false);
             return false; // stop traversal
         }
 
@@ -297,6 +299,7 @@ void GenericEntityNode::onChildRemoved(const scene::INodePtr& child)
     EntityNode::onChildRemoved(child);
 
     _solidAABBRenderMode = SolidBoxes;
+    _renderableBox.setFillMode(true);
 
     // Check if this node has any actual models/particles as children
     Node::foreachNode([&](const scene::INodePtr& node)
@@ -306,6 +309,7 @@ void GenericEntityNode::onChildRemoved(const scene::INodePtr& child)
         if (node != child && child->getNodeType() != scene::INode::Type::EntityConnection)
         {
             _solidAABBRenderMode = WireFrameOnly;
+            _renderableBox.setFillMode(false);
             return false; // stop traversal
         }
 

@@ -11,6 +11,7 @@ class RenderableEntityBox :
     public render::RenderableGeometry
 {
 private:
+    const EntityNode& _node;
     bool _needsUpdate;
     bool _filledBox;
 
