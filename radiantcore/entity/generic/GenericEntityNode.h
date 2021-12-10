@@ -88,6 +88,7 @@ public:
 
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	// Override EntityNode::getDirection()

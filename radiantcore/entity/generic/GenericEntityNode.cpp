@@ -126,6 +126,14 @@ void GenericEntityNode::onPreRender(const VolumeTest& volume)
     _renderableArrow.update(getColourShader());
 }
 
+void GenericEntityNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    EntityNode::renderHighlights(collector, volume);
+
+    collector.addHighlightRenderable(_renderableArrow, Matrix4::getIdentity());
+    collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());
+}
+
 void GenericEntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     EntityNode::setRenderSystem(renderSystem);
