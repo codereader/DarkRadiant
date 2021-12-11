@@ -55,10 +55,6 @@ class SpeakerNode :
     RenderableSolidAABB m_aabb_solid;
     RenderableWireframeAABB m_aabb_wire;
 
-    KeyObserverDelegate _radiusMinObserver;
-    KeyObserverDelegate _radiusMaxObserver;
-    KeyObserverDelegate _shaderObserver;
-
     // dragplanes for resizing using mousedrag
     selection::DragPlanes _dragPlanes;
 
@@ -84,7 +80,7 @@ public:
 
     /// Public construction function
     static SpeakerNodePtr create(const IEntityClassPtr& eclass);
-    
+
     ~SpeakerNode();
 
     // Snappable implementation

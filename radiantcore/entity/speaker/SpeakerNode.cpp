@@ -24,9 +24,6 @@ SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	m_maxIsSet(false),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	_radiusMinObserver(std::bind(&SpeakerNode::sMinChanged, this, std::placeholders::_1)),
-	_radiusMaxObserver(std::bind(&SpeakerNode::sMaxChanged, this, std::placeholders::_1)),
-	_shaderObserver(std::bind(&SpeakerNode::sShaderChanged, this, std::placeholders::_1)),
 	_dragPlanes(std::bind(&SpeakerNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
 
@@ -41,9 +38,6 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	m_maxIsSet(false),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
-	_radiusMinObserver(std::bind(&SpeakerNode::sMinChanged, this, std::placeholders::_1)),
-	_radiusMaxObserver(std::bind(&SpeakerNode::sMaxChanged, this, std::placeholders::_1)),
-	_shaderObserver(std::bind(&SpeakerNode::sShaderChanged, this, std::placeholders::_1)),
 	_dragPlanes(std::bind(&SpeakerNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
 
@@ -62,18 +56,17 @@ void SpeakerNode::construct()
 	m_aabb_local = _spawnArgs.getEntityClass()->getBounds();
 	m_aabb_border = m_aabb_local;
 
-	addKeyObserver("origin", m_originKey);
-	addKeyObserver(KEY_S_SHADER, _shaderObserver);
-	addKeyObserver(KEY_S_MINDISTANCE, _radiusMinObserver);
-	addKeyObserver(KEY_S_MAXDISTANCE, _radiusMaxObserver);
+	observeKey("origin", sigc::mem_fun(m_originKey, &OriginKey::onKeyValueChanged));
+
+    // Observe speaker-related spawnargs
+    static_assert(std::is_base_of<sigc::trackable, SpeakerNode>::value);
+	observeKey(KEY_S_SHADER, sigc::mem_fun(this, &SpeakerNode::sShaderChanged));
+	observeKey(KEY_S_MINDISTANCE, sigc::mem_fun(this, &SpeakerNode::sMinChanged));
+	observeKey(KEY_S_MAXDISTANCE, sigc::mem_fun(this, &SpeakerNode::sMaxChanged));
 }
 
 SpeakerNode::~SpeakerNode()
 {
-	removeKeyObserver("origin", m_originKey);
-	removeKeyObserver(KEY_S_SHADER, _shaderObserver);
-	removeKeyObserver(KEY_S_MINDISTANCE, _radiusMinObserver);
-	removeKeyObserver(KEY_S_MAXDISTANCE, _radiusMaxObserver);
 }
 
 void SpeakerNode::originChanged()
