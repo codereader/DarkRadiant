@@ -404,7 +404,7 @@ public:
 
 // VertexArray must expose a value_type typedef and implement an index operator[], like std::vector
 template<typename remap_policy, typename VertexArray>
-inline void draw_ellipse(const std::size_t numSegments, const float radiusX, const float radiusY, VertexArray& vertices)
+inline void draw_ellipse(const std::size_t numSegments, const float radiusX, const float radiusY, VertexArray& vertices, std::size_t firstVertex = 0)
 {
     // Per half circle we push in (Segments x 4) vertices (the caller made room for that)
     const auto numVerticesPerHalf = numSegments << 2;
@@ -417,8 +417,8 @@ inline void draw_ellipse(const std::size_t numSegments, const float radiusX, con
         auto x = radiusX * cos(curAngle);
         auto y = radiusY * sin(curAngle);
 
-        remap_policy::set(vertices[curSegment], x, y, 0);
-        remap_policy::set(vertices[curSegment + numVerticesPerHalf], -x, -y, 0);
+        remap_policy::set(vertices[firstVertex + curSegment], x, y, 0);
+        remap_policy::set(vertices[firstVertex + curSegment + numVerticesPerHalf], -x, -y, 0);
     }
 }
 
@@ -457,9 +457,9 @@ inline void draw_semicircle(const std::size_t segments, const float radius, Vert
 }
 
 template<typename remap_policy, typename VertexArray>
-inline void draw_circle(const std::size_t segments, const float radius, VertexArray& vertices)
+inline void draw_circle(const std::size_t segments, const float radius, VertexArray& vertices, std::size_t firstVertex = 0)
 {
-    draw_ellipse<remap_policy>(segments, radius, radius, vertices);
+    draw_ellipse<remap_policy>(segments, radius, radius, vertices, firstVertex);
 }
 
 inline void draw_quad(const float radius, VertexCb* quad) {

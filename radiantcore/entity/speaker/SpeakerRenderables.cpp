@@ -1,5 +1,7 @@
 #include "SpeakerRenderables.h"
 
+#include "render.h"
+
 // the drawing functions
 
 void sphereDrawFill(const Vector3& origin, float radius, int sides)
@@ -183,15 +185,32 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
     _needsUpdate = false;
 
     // Generate the three circles in axis-aligned planes
-#if 0
+    const std::size_t NumSegments = 2;
+
+    std::vector<ArbitraryMeshVertex> vertices;
+    // Allocate space for 3 circles, each has NumSegments * 8 vertices
+    vertices.resize(1 * (NumSegments << 3));
+
+    draw_circle<RemapXYZ>(NumSegments, _radii.getMax(), vertices, 0);
+
+    // Generate the indices, walking around the vertices
+    std::vector<unsigned int> indices;
+    auto numVertices = vertices.size();
+    indices.reserve(numVertices << 1); // 2 indices per vertex
+
+    for (auto i = 0; i < numVertices; ++i)
+    {
+        indices.push_back(i);
+        indices.push_back((i + 1) % numVertices); // wrap around the last index to point at 0 again
+    }
+
     // Move the points to their world position
     for (auto& vertex : vertices)
     {
-        vertex.vertex += _worldPos;
+        vertex.vertex += _origin;
     }
 
-    RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, WireframeBoxIndices);
-#endif
+    RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
 }
 
 #if 0

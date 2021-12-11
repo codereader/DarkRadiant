@@ -243,38 +243,50 @@ void SpeakerNode::onPreRender(const VolumeTest& volume)
     EntityNode::onPreRender(volume);
 
     _renderableBox.update(getColourShader());
+
+    if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
+    {
+        _renderableRadiiWireframe.update(getWireShader());
+    }
+    else
+    {
+        _renderableRadiiWireframe.clear();
+    }
 }
 
 void SpeakerNode::renderSolid(IRenderableCollector& collector,
                               const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
-
+#if 0
     // Submit the speaker radius if we are selected or the "show all speaker
     // radii" option is set
 	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
     {
 		collector.addRenderable(*getFillShader(), _renderableRadiiWireframe, localToWorld());
     }
+#endif
 }
 void SpeakerNode::renderWireframe(IRenderableCollector& collector,
                                   const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
-
+#if 0
     // Submit the speaker radius if we are selected or the "show all speaker
     // radii" option is set
 	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
     {
 		collector.addRenderable(*getWireShader(), _renderableRadiiWireframe, localToWorld());
     }
+#endif
 }
 
 void SpeakerNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    EntityNode::renderHighlights(collector, volume);
-
     collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());
+    collector.addHighlightRenderable(_renderableRadiiWireframe, Matrix4::getIdentity());
+
+    EntityNode::renderHighlights(collector, volume);
 }
 
 void SpeakerNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -283,6 +295,7 @@ void SpeakerNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     // Clear the geometry from any previous shader
     _renderableBox.clear();
+    _renderableRadiiWireframe.clear();
 }
 
 void SpeakerNode::translate(const Vector3& translation)
@@ -296,6 +309,7 @@ void SpeakerNode::updateTransform()
 	transformChanged();
 
     _renderableBox.queueUpdate();
+    _renderableRadiiWireframe.queueUpdate();
 }
 
 void SpeakerNode::updateAABB()
