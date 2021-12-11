@@ -185,23 +185,32 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
     _needsUpdate = false;
 
     // Generate the three circles in axis-aligned planes
-    const std::size_t NumSegments = 2;
+    constexpr std::size_t NumSegments = 2;
 
     std::vector<ArbitraryMeshVertex> vertices;
+
     // Allocate space for 3 circles, each has NumSegments * 8 vertices
-    vertices.resize(1 * (NumSegments << 3));
+    constexpr std::size_t NumVerticesPerCircle = NumSegments << 3;
+    vertices.resize(3 * NumVerticesPerCircle);
 
     draw_circle<RemapXYZ>(NumSegments, _radii.getMax(), vertices, 0);
+    draw_circle<RemapYZX>(NumSegments, _radii.getMax(), vertices, NumVerticesPerCircle);
+    draw_circle<RemapZXY>(NumSegments, _radii.getMax(), vertices, NumVerticesPerCircle << 1);
 
     // Generate the indices, walking around the vertices
     std::vector<unsigned int> indices;
     auto numVertices = vertices.size();
     indices.reserve(numVertices << 1); // 2 indices per vertex
 
-    for (auto i = 0; i < numVertices; ++i)
+    for (unsigned int circle = 0; circle < 3; ++circle)
     {
-        indices.push_back(i);
-        indices.push_back((i + 1) % numVertices); // wrap around the last index to point at 0 again
+        unsigned int offset = circle * NumVerticesPerCircle;
+
+        for (unsigned int i = 0; i < NumVerticesPerCircle; ++i)
+        {
+            indices.push_back(offset + i);
+            indices.push_back(offset + (i + 1) % NumVerticesPerCircle); // wrap around the last index to point at <offset> again
+        }
     }
 
     // Move the points to their world position

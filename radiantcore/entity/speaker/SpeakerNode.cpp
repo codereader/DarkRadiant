@@ -284,7 +284,11 @@ void SpeakerNode::renderWireframe(IRenderableCollector& collector,
 void SpeakerNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());
-    collector.addHighlightRenderable(_renderableRadiiWireframe, Matrix4::getIdentity());
+
+    if (!collector.supportsFullMaterials())
+    {
+        collector.addHighlightRenderable(_renderableRadiiWireframe, Matrix4::getIdentity());
+    }
 
     EntityNode::renderHighlights(collector, volume);
 }
