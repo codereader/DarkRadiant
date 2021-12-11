@@ -448,4 +448,12 @@ void SpeakerNode::_applyTransformation()
 	freezeTransform();
 }
 
+void SpeakerNode::onSelectionStatusChange(bool changeGroupStatus)
+{
+    EntityNode::onSelectionStatusChange(changeGroupStatus);
+
+    // Radius renderable is not always prepared for rendering, queue an update
+    _renderableRadiiWireframe.queueUpdate();
+}
+
 } // namespace entity

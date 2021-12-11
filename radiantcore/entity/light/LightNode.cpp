@@ -589,6 +589,14 @@ void LightNode::onVisibilityChanged(bool isVisibleNow)
     }
 }
 
+void LightNode::onSelectionStatusChange(bool changeGroupStatus)
+{
+    EntityNode::onSelectionStatusChange(changeGroupStatus);
+
+    // Volume renderable is not always prepared for rendering, queue an update
+    _renderableLightVolume.queueUpdate();
+}
+
 void LightNode::onEntitySettingsChanged()
 {
     _showLightVolumeWhenUnselected = EntitySettings::InstancePtr()->getShowAllLightRadii();

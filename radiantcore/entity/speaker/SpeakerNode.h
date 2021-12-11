@@ -136,6 +136,8 @@ protected:
     // Called after the constructor is done, overrides EntityNode
     void construct() override;
 
+    void onSelectionStatusChange(bool changeGroupStatus) override;
+
 private:
     void evaluateTransform();
 };

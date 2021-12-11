@@ -162,6 +162,7 @@ protected:
 	void construct() override;
 
     void onVisibilityChanged(bool isVisibleNow) override;
+    void onSelectionStatusChange(bool changeGroupStatus) override;
 
 private:
     void renderInactiveComponents(IRenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
