@@ -70,18 +70,22 @@ void StaticGeometryNode::construct()
 
 	m_rotation.setIdentity();
 
+    // Observe common spawnarg changes
     static_assert(std::is_base_of<sigc::trackable, RotationKey>::value);
     static_assert(std::is_base_of<sigc::trackable, StaticGeometryNode>::value);
-
-    // Observe relevant spawnarg changes
-	addKeyObserver("origin", m_originKey);
+    observeKey("origin", sigc::mem_fun(m_originKey, &OriginKey::onKeyValueChanged));
     observeKey("angle", sigc::mem_fun(m_rotationKey, &RotationKey::angleChanged));
     observeKey("rotation", sigc::mem_fun(m_rotationKey, &RotationKey::rotationChanged));
     observeKey("name", sigc::mem_fun(this, &StaticGeometryNode::nameChanged));
-	addKeyObserver(curve_Nurbs, m_curveNURBS);
-	addKeyObserver(curve_CatmullRomSpline, m_curveCatmullRom);
 
-	updateIsModel();
+    // Observe curve-related spawnargs
+    static_assert(std::is_base_of<sigc::trackable, CurveNURBS>::value);
+    static_assert(std::is_base_of<sigc::trackable, CurveCatmullRom>::value);
+    observeKey(curve_Nurbs, sigc::mem_fun(m_curveNURBS, &CurveNURBS::onKeyValueChanged));
+    observeKey(curve_CatmullRomSpline,
+               sigc::mem_fun(m_curveCatmullRom, &CurveCatmullRom::onKeyValueChanged));
+
+    updateIsModel();
 
     m_curveNURBS.signal_curveChanged().connect(
         sigc::mem_fun(_nurbsEditInstance, &CurveEditInstance::curveChanged)
@@ -599,10 +603,6 @@ void StaticGeometryNode::convertCurveType() {
 void StaticGeometryNode::destroy()
 {
 	modelChanged("");
-
-	removeKeyObserver("origin", m_originKey);
-	removeKeyObserver(curve_Nurbs, m_curveNURBS);
-	removeKeyObserver(curve_CatmullRomSpline, m_curveCatmullRom);
 }
 
 bool StaticGeometryNode::isModel() const {
