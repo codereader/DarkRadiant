@@ -20,6 +20,7 @@ SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	m_origin(ORIGINKEY_IDENTITY),
     _renderableBox(m_aabb_local, worldAABB().getOrigin()),
     _renderableRadiiWireframe(m_origin, _radiiTransformed),
+    _renderableRadiiFill(m_origin, _radiiTransformed),
     _showRadiiWhenUnselected(EntitySettings::InstancePtr()->getShowAllSpeakerRadii()),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
@@ -37,6 +38,7 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	m_origin(ORIGINKEY_IDENTITY),
     _renderableBox(m_aabb_local, worldAABB().getOrigin()),
     _renderableRadiiWireframe(m_origin, _radiiTransformed),
+    _renderableRadiiFill(m_origin, _radiiTransformed),
     _showRadiiWhenUnselected(EntitySettings::InstancePtr()->getShowAllSpeakerRadii()),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
@@ -249,10 +251,12 @@ void SpeakerNode::onPreRender(const VolumeTest& volume)
     if (_showRadiiWhenUnselected || isSelected())
     {
         _renderableRadiiWireframe.update(getWireShader());
+        _renderableRadiiFill.update(getFillShader());
     }
     else
     {
         _renderableRadiiWireframe.clear();
+        _renderableRadiiFill.clear();
     }
 }
 
@@ -291,6 +295,10 @@ void SpeakerNode::renderHighlights(IRenderableCollector& collector, const Volume
     {
         collector.addHighlightRenderable(_renderableRadiiWireframe, Matrix4::getIdentity());
     }
+    else
+    {
+        collector.addHighlightRenderable(_renderableRadiiFill, Matrix4::getIdentity());
+    }
 
     EntityNode::renderHighlights(collector, volume);
 }
@@ -302,6 +310,7 @@ void SpeakerNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     // Clear the geometry from any previous shader
     _renderableBox.clear();
     _renderableRadiiWireframe.clear();
+    _renderableRadiiFill.clear();
 }
 
 void SpeakerNode::translate(const Vector3& translation)
@@ -316,6 +325,7 @@ void SpeakerNode::updateTransform()
 
     _renderableBox.queueUpdate();
     _renderableRadiiWireframe.queueUpdate();
+    _renderableRadiiFill.queueUpdate();
 }
 
 void SpeakerNode::updateAABB()
@@ -460,6 +470,7 @@ void SpeakerNode::onSelectionStatusChange(bool changeGroupStatus)
 
     // Radius renderable is not always prepared for rendering, queue an update
     _renderableRadiiWireframe.queueUpdate();
+    _renderableRadiiFill.queueUpdate();
 }
 
 
@@ -469,6 +480,7 @@ void SpeakerNode::onEntitySettingsChanged()
 
     _showRadiiWhenUnselected = EntitySettings::InstancePtr()->getShowAllSpeakerRadii();
     _renderableRadiiWireframe.queueUpdate();
+    _renderableRadiiFill.queueUpdate();
 }
 
 } // namespace entity

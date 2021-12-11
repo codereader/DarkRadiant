@@ -46,6 +46,7 @@ class SpeakerNode final :
 
     // Renderable speaker radii
     RenderableSpeakerRadiiWireframe _renderableRadiiWireframe;
+    RenderableSpeakerRadiiFill _renderableRadiiFill;
 
     bool _showRadiiWhenUnselected;
 

@@ -1,88 +1,6 @@
 #include "SpeakerRenderables.h"
 
-#include "igl.h"
 #include "render.h"
-
-void sphereDrawFill(const Vector3& origin, float radius, int sides)
-{
-  if (radius <= 0)
-    return;
-
-  const double dt = c_2pi / static_cast<float>(sides);
-  const double dp = math::PI / static_cast<float>(sides);
-
-  glBegin(GL_TRIANGLES);
-  for (int i = 0; i <= sides - 1; ++i)
-  {
-    for (int j = 0; j <= sides - 2; ++j)
-    {
-      const double t = i * dt;
-      const double p = (j * dp) - (math::PI / 2.0);
-
-      {
-        Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
-        glVertex3dv(v);
-      }
-
-      {
-        Vector3 v(origin + Vector3::createForSpherical(t, p + dp) * radius);
-        glVertex3dv(v);
-      }
-
-      {
-        Vector3 v(origin + Vector3::createForSpherical(t + dt, p + dp) * radius);
-        glVertex3dv(v);
-      }
-
-      {
-        Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
-        glVertex3dv(v);
-      }
-
-      {
-        Vector3 v(origin + Vector3::createForSpherical(t + dt, p + dp) * radius);
-        glVertex3dv(v);
-      }
-
-      {
-        Vector3 v(origin + Vector3::createForSpherical(t + dt, p) * radius);
-        glVertex3dv(v);
-      }
-    }
-  }
-
-  {
-    const double p = (sides - 1) * dp - (static_cast<float>(math::PI) / 2.0f);
-    for (int i = 0; i <= sides - 1; ++i)
-    {
-      const double t = i * dt;
-
-      {
-        Vector3 v(origin + Vector3::createForSpherical(t, p) * radius);
-        glVertex3dv(v);
-      }
-
-      {
-        Vector3 v(origin + Vector3::createForSpherical(t + dt, p + dp) * radius);
-        glVertex3dv(v);
-      }
-
-      {
-        Vector3 v(origin + Vector3::createForSpherical(t + dt, p) * radius);
-        glVertex3dv(v);
-      }
-    }
-  }
-  glEnd();
-}
-
-void speakerDrawRadiiFill(const Vector3& origin, const SoundRadii& rad)
-{
-  if(rad.getMin() > 0)
-    sphereDrawFill(origin, rad.getMin(), 16);
-  if(rad.getMax() > 0)
-    sphereDrawFill(origin, rad.getMax(), 16);
-}
 
 namespace entity
 {
@@ -108,6 +26,8 @@ inline std::vector<unsigned int> generateWireframeCircleIndices(std::size_t numV
 
     return indices;
 }
+
+// ---- Wireframe Variant ----
 
 void RenderableSpeakerRadiiWireframe::updateGeometry()
 {
@@ -147,6 +67,114 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
     }
 
     RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, CircleIndices);
+}
+
+// ---- Fill Variant ----
+
+// Generates the draw indices for a sphere with N circles plus two pole vertices at the back
+inline std::vector<unsigned int> generateSphereIndices(std::size_t numVertices, unsigned int numCircles)
+{
+    assert(numVertices > 2);
+
+    std::vector<unsigned int> indices;
+
+    const auto numVerticesPerCircle = static_cast<unsigned int>(numVertices - 2) / numCircles;
+
+    indices.reserve((numCircles + 1) * numVerticesPerCircle * 4); // 4 indices per quad
+
+    for (unsigned int circle = 0; circle < numCircles - 1; ++circle)
+    {
+        unsigned int offset = circle * numVerticesPerCircle;
+
+        for (unsigned int i = 0; i < numVerticesPerCircle; ++i)
+        {
+            indices.push_back(offset + i);
+            indices.push_back(offset + (i + 1) % numVerticesPerCircle); // wrap
+            indices.push_back(offset + numVerticesPerCircle + (i + 1) % numVerticesPerCircle); // wrap
+            indices.push_back(offset + numVerticesPerCircle + i);
+        }
+    }
+
+    // Connect the topmost circle to the top pole vertex
+    // These are tris, but we cannot mix, so let's form a degenerate quad
+    auto topPoleIndex = static_cast<unsigned int>(numVertices) - 2;
+    auto bottomPoleIndex = static_cast<unsigned int>(numVertices) - 1;
+    
+    for (unsigned int i = 0; i < numVerticesPerCircle; ++i)
+    {
+        indices.push_back(topPoleIndex);
+        indices.push_back(topPoleIndex);
+        indices.push_back((i + 1) % numVerticesPerCircle); // wrap
+        indices.push_back(i);
+    }
+
+    // Connect the most southern circle to the south pole vertex
+    auto bottomCircleOffset = (numCircles - 1) * numVerticesPerCircle;
+
+    for (unsigned int i = 0; i < numVerticesPerCircle; ++i)
+    {
+        indices.push_back(bottomCircleOffset + i);
+        indices.push_back(bottomCircleOffset + (i + 1) % numVerticesPerCircle); // wrap
+        indices.push_back(bottomPoleIndex);
+        indices.push_back(bottomPoleIndex);
+    }
+
+    assert((numCircles + 1) * numVerticesPerCircle * 4 == indices.size());
+
+    return indices;
+}
+
+void RenderableSpeakerRadiiFill::updateGeometry()
+{
+    if (!_needsUpdate) return;
+
+    _needsUpdate = false;
+
+    constexpr std::size_t ThetaDivisions = 8; // Inclination divisions
+    constexpr std::size_t PhiDivisions = 16;  // Azimuth divisions
+
+    const double ThetaStep = math::PI / ThetaDivisions;
+    const double PhiStep = 2 * math::PI / PhiDivisions;
+
+    // We have (divisions-1) vertex circles between the top and bottom vertex
+    constexpr auto NumCircles = ThetaDivisions - 1;
+
+    std::vector<ArbitraryMeshVertex> vertices;
+
+    // Reserve the vertices for the two pole vertices and the circles
+    vertices.reserve(NumCircles * PhiDivisions + 2);
+
+    auto radius = _radii.getMax();
+
+    for (auto strip = 0; strip < NumCircles; ++strip)
+    {
+        auto theta = ThetaStep * (strip + 1);
+        auto z = cos(theta);
+
+        for (auto p = 0; p < PhiDivisions; ++p)
+        {
+            auto phi = PhiStep * p;
+            auto sinTheta = sin(theta);
+            auto cosTheta = cos(theta);
+
+            // We use the unit direction for the normal at that vertex
+            auto unit = Vector3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
+
+            // Move the points to their world position
+            vertices.push_back(ArbitraryMeshVertex(unit * radius + _origin, unit, {0, 0}));
+        }
+    }
+
+    // The north and south pole vertices
+    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, radius) + _origin, { 0,0,1 }, { 0,0 }));
+    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, -radius) + _origin, { 0,0,-1 }, { 0,0 }));
+
+    assert(vertices.size() == NumCircles * PhiDivisions + 2);
+
+    // Generate the triangle indices
+    static auto SphereIndices = generateSphereIndices(vertices.size(), NumCircles);
+
+    RenderableGeometry::updateGeometry(render::GeometryType::Quads, vertices, SphereIndices);
 }
 
 } // namespace
