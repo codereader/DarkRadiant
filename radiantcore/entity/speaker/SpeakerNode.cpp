@@ -18,12 +18,11 @@ SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_originKey(std::bind(&SpeakerNode::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
+    _renderableBox(m_aabb_local, worldAABB().getOrigin()),
 	_renderableRadii(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
 	m_maxIsSet(false),
-	m_aabb_solid(m_aabb_local),
-	m_aabb_wire(m_aabb_local),
 	_radiusMinObserver(std::bind(&SpeakerNode::sMinChanged, this, std::placeholders::_1)),
 	_radiusMaxObserver(std::bind(&SpeakerNode::sMaxChanged, this, std::placeholders::_1)),
 	_shaderObserver(std::bind(&SpeakerNode::sShaderChanged, this, std::placeholders::_1)),
@@ -35,12 +34,11 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	Snappable(other),
 	m_originKey(std::bind(&SpeakerNode::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
+    _renderableBox(m_aabb_local, worldAABB().getOrigin()),
 	_renderableRadii(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
 	m_maxIsSet(false),
-	m_aabb_solid(m_aabb_local),
-	m_aabb_wire(m_aabb_local),
 	_radiusMinObserver(std::bind(&SpeakerNode::sMinChanged, this, std::placeholders::_1)),
 	_radiusMaxObserver(std::bind(&SpeakerNode::sMaxChanged, this, std::placeholders::_1)),
 	_shaderObserver(std::bind(&SpeakerNode::sShaderChanged, this, std::placeholders::_1)),
@@ -161,14 +159,12 @@ void SpeakerNode::sMaxChanged(const std::string& value)
 	updateAABB();
 }
 
-// Snappable implementation
 void SpeakerNode::snapto(float snap)
 {
 	m_originKey.snap(snap);
 	m_originKey.write(_spawnArgs);
 }
 
-// Bounded implementation
 const AABB& SpeakerNode::localAABB() const
 {
 	return m_aabb_border;
@@ -242,14 +238,17 @@ scene::INodePtr SpeakerNode::clone() const
 	return node;
 }
 
-/* Renderable implementation */
+void SpeakerNode::onPreRender(const VolumeTest& volume)
+{
+    EntityNode::onPreRender(volume);
+
+    _renderableBox.update(getColourShader());
+}
 
 void SpeakerNode::renderSolid(IRenderableCollector& collector,
                               const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
-
-	collector.addRenderable(*getFillShader(), m_aabb_solid, localToWorld());
 
     // Submit the speaker radius if we are selected or the "show all speaker
     // radii" option is set
@@ -263,14 +262,27 @@ void SpeakerNode::renderWireframe(IRenderableCollector& collector,
 {
 	EntityNode::renderWireframe(collector, volume);
 
-	collector.addRenderable(*getWireShader(), m_aabb_wire, localToWorld());
-
     // Submit the speaker radius if we are selected or the "show all speaker
     // radii" option is set
 	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
     {
 		collector.addRenderable(*getWireShader(), _renderableRadii, localToWorld());
     }
+}
+
+void SpeakerNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    EntityNode::renderHighlights(collector, volume);
+
+    collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());
+}
+
+void SpeakerNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+    EntityNode::setRenderSystem(renderSystem);
+
+    // Clear the geometry from any previous shader
+    _renderableBox.clear();
 }
 
 void SpeakerNode::translate(const Vector3& translation)
@@ -282,6 +294,8 @@ void SpeakerNode::updateTransform()
 {
 	localToParent() = Matrix4::getTranslation(m_origin);
 	transformChanged();
+
+    _renderableBox.queueUpdate();
 }
 
 void SpeakerNode::updateAABB()

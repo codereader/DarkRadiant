@@ -103,8 +103,9 @@ static const std::vector<unsigned int> FillBoxIndices
 
 }
 
-RenderableEntityBox::RenderableEntityBox(EntityNode& node) :
-    _node(node),
+RenderableEntityBox::RenderableEntityBox(const AABB& bounds, const Vector3& worldPos) :
+    _bounds(bounds),
+    _worldPos(worldPos),
     _needsUpdate(true),
     _filledBox(true)
 {}
@@ -131,20 +132,17 @@ void RenderableEntityBox::updateGeometry()
     _needsUpdate = false;
 
     static Vector3 Origin(0, 0, 0);
-    const auto& bounds = _node.localAABB();
 
     // Calculate the corner vertices of this bounding box, plus the mid-point
-    Vector3 max(Origin + bounds.extents);
-    Vector3 min(Origin - bounds.extents);
+    Vector3 max(Origin + _bounds.extents);
+    Vector3 min(Origin - _bounds.extents);
 
     auto vertices = _filledBox ? getFillBoxVertices(min, max) : getWireframeBoxVertices(min, max);
 
     // Move the points to their world position
-    const auto& translation = _node.worldAABB().getOrigin();
-    
     for (auto& vertex : vertices)
     {
-        vertex.vertex += translation;
+        vertex.vertex += _worldPos;
     }
 
     if (_filledBox)

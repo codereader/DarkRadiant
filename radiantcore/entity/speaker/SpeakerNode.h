@@ -14,6 +14,7 @@
 #include "dragplanes.h"
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
+#include "../RenderableEntityBox.h"
 
 namespace entity
 {
@@ -22,7 +23,7 @@ class SpeakerNode;
 typedef std::shared_ptr<SpeakerNode> SpeakerNodePtr;
 
 /// Entity node representing a speaker
-class SpeakerNode :
+class SpeakerNode final :
     public EntityNode,
     public Snappable,
     public PlaneSelectable,
@@ -40,6 +41,9 @@ class SpeakerNode :
     // The default radii as defined on the currently active sound shader
     SoundRadii _defaultRadii;
 
+    // The small entity box
+    RenderableEntityBox _renderableBox;
+
     // Renderable speaker radii
     RenderableSpeakerRadii _renderableRadii;
 
@@ -52,9 +56,6 @@ class SpeakerNode :
     // the AABB that determines the rendering area
     AABB m_aabb_border;
 
-    RenderableSolidAABB m_aabb_solid;
-    RenderableWireframeAABB m_aabb_wire;
-
     KeyObserverDelegate _radiusMinObserver;
     KeyObserverDelegate _radiusMaxObserver;
     KeyObserverDelegate _shaderObserver;
@@ -66,7 +67,6 @@ private:
     SpeakerNode(const IEntityClassPtr& eclass);
     SpeakerNode(const SpeakerNode& other);
     void translate(const Vector3& translation);
-    void rotate(const Quaternion& rotation);
     void revertTransform() override;
     void freezeTransform() override;
     void updateTransform();
@@ -111,8 +111,11 @@ public:
     scene::INodePtr clone() const override;
 
     // Renderable implementation
+    void onPreRender(const VolumeTest& volume);
     void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
     void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume);
+    void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
     void selectedChangedComponent(const ISelectable& selectable);
 
@@ -132,4 +135,4 @@ private:
     void evaluateTransform();
 };
 
-} // namespace entity
+} // namespace

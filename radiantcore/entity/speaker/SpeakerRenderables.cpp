@@ -172,26 +172,14 @@ const AABB& RenderableSpeakerRadii::localAABB()
 	return m_aabb_local;
 }
 
-// Set min
-/*void RenderableSpeakerRadii::setMin(float min, bool inMetres)
-{
-    m_radii.setMin(min, inMetres);
-}
-
-// Set max
-void RenderableSpeakerRadii::setMax(float max, bool inMetres)
-{
-    m_radii.setMax(max, inMetres);
-}*/
-
-float RenderableSpeakerRadii::getMin()
+float RenderableSpeakerRadii::getMin() const
 {
 	return m_radii.getMin();
 }
 
-float RenderableSpeakerRadii::getMax()
+float RenderableSpeakerRadii::getMax() const
 {
 	return m_radii.getMax();
 }
 
-} // namespace entity
+} // namespace
