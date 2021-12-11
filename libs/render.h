@@ -198,6 +198,8 @@ protected:
 	const GLenum _mode;
 
 public:
+    using value_type = PointVertexVector::value_type;
+
 	RenderablePointVector(GLenum mode) :
 		_mode(mode)
 	{}
@@ -349,39 +351,60 @@ public:
 	}
 };
 
+template<typename VertexContainerT> struct RemappingTraits
+{};
 
-class RemapXYZ {
+template<>
+struct RemappingTraits<VertexCb>
+{
+    static Vertex3f& getVertex(VertexCb& container) { return container.vertex; }
+};
+
+template<>
+struct RemappingTraits<ArbitraryMeshVertex>
+{
+    static Vertex3f& getVertex(ArbitraryMeshVertex& container) { return container.vertex; }
+};
+
+class RemapXYZ
+{
 public:
-	static void set(Vertex3f& vertex, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
+    template<typename VertexContainerT>
+	static void set(VertexContainerT& container, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
     {
-		vertex.x() = x;
-		vertex.y() = y;
-		vertex.z() = z;
+        RemappingTraits<VertexContainerT>::getVertex(container).x() = x;
+		RemappingTraits<VertexContainerT>::getVertex(container).y() = y;
+		RemappingTraits<VertexContainerT>::getVertex(container).z() = z;
 	}
 };
 
-class RemapYZX {
+class RemapYZX
+{
 public:
-	static void set(Vertex3f& vertex, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
+    template<typename VertexContainerT>
+	static void set(VertexContainerT& container, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
     {
-		vertex.x() = z;
-		vertex.y() = x;
-		vertex.z() = y;
+        RemappingTraits<VertexContainerT>::getVertex(container).x() = z;
+        RemappingTraits<VertexContainerT>::getVertex(container).y() = x;
+        RemappingTraits<VertexContainerT>::getVertex(container).z() = y;
 	}
 };
 
-class RemapZXY {
+class RemapZXY
+{
 public:
-	static void set(Vertex3f& vertex, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
+    template<typename VertexContainerT>
+	static void set(VertexContainerT& container, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
     {
-		vertex.x() = y;
-		vertex.y() = z;
-		vertex.z() = x;
+        RemappingTraits<VertexContainerT>::getVertex(container).x() = y;
+        RemappingTraits<VertexContainerT>::getVertex(container).y() = z;
+        RemappingTraits<VertexContainerT>::getVertex(container).z() = x;
 	}
 };
 
-template<typename remap_policy>
-inline void draw_ellipse(const std::size_t numSegments, const float radiusX, const float radiusY, VertexCb* vertices, remap_policy remap)
+// VertexArray must expose a value_type typedef and implement an index operator[], like std::vector
+template<typename remap_policy, typename VertexArray>
+inline void draw_ellipse(const std::size_t numSegments, const float radiusX, const float radiusY, VertexArray& vertices)
 {
     // Per half circle we push in (Segments x 4) vertices (the caller made room for that)
     const auto numVerticesPerHalf = numSegments << 2;
@@ -394,15 +417,49 @@ inline void draw_ellipse(const std::size_t numSegments, const float radiusX, con
         auto x = radiusX * cos(curAngle);
         auto y = radiusY * sin(curAngle);
 
-        remap_policy::set((vertices + curSegment)->vertex, x, y, 0);
-        remap_policy::set((vertices + curSegment + numVerticesPerHalf)->vertex, -x, -y, 0);
+        remap_policy::set(vertices[curSegment], x, y, 0);
+        remap_policy::set(vertices[curSegment + numVerticesPerHalf], -x, -y, 0);
     }
 }
 
-template<typename remap_policy>
-inline void draw_circle(const std::size_t segments, const float radius, VertexCb* vertices, remap_policy remap)
+template<typename remap_policy, typename VertexArray>
+inline void draw_semicircle(const std::size_t segments, const float radius, VertexArray& vertices)
 {
-    draw_ellipse(segments, radius, radius, vertices, remap);
+    const double increment = math::PI / double(segments << 2);
+
+    std::size_t count = 0;
+    float x = radius;
+    float y = 0;
+    remap_policy::set(vertices[segments << 2], -radius, 0, 0);
+
+    while (count < segments)
+    {
+        auto& i = vertices[count];
+        auto& j = vertices[(segments << 1) - (count + 1)];
+
+        auto& k = vertices[count + (segments << 1)];
+        auto& l = vertices[(segments << 1) - (count + 1) + (segments << 1)];
+
+        remap_policy::set(i, x, -y, 0);
+        remap_policy::set(k, -y, -x, 0);
+
+        ++count;
+
+        {
+            const double theta = increment * count;
+            x = static_cast<float>(radius * cos(theta));
+            y = static_cast<float>(radius * sin(theta));
+        }
+
+        remap_policy::set(j, y, -x, 0);
+        remap_policy::set(l, -x, -y, 0);
+    }
+}
+
+template<typename remap_policy, typename VertexArray>
+inline void draw_circle(const std::size_t segments, const float radius, VertexArray& vertices)
+{
+    draw_ellipse<remap_policy>(segments, radius, radius, vertices);
 }
 
 inline void draw_quad(const float radius, VertexCb* quad) {

@@ -7,6 +7,7 @@
 #include "entitylib.h"
 #include "igl.h"
 #include "isound.h"
+#include "render/RenderableGeometry.h"
 
 namespace entity
 {
@@ -18,34 +19,45 @@ namespace entity
  * This OpenGLRenderable renders the two spherical radii of a speaker,
  * representing the s_min and s_max values.
  */
-class RenderableSpeakerRadii
-: public OpenGLRenderable
+class RenderableSpeakerRadiiWireframe :
+    public render::RenderableGeometry
 {
-	const Vector3& m_origin;
-	AABB m_aabb_local;
+private:
+    bool _needsUpdate;
+
+	const Vector3& _origin;
 
     // SoundRadii reference containing min and max radius values
-	// (the actual instance resides in the Speaker class)
-	const SoundRadii& m_radii;
+	// (the actual instance resides in the SpeakerNode)
+	const SoundRadii& _radii;
 
 public:
 
     /**
      * \brief
-     * Construct a RenderableSpeakerRadii with the given origin.
+     * Construct an instance with the given origin.
      */
-	RenderableSpeakerRadii(const Vector3& origin, const SoundRadii& radii) :
-		m_origin(origin),
-		m_radii(radii)
+    RenderableSpeakerRadiiWireframe(const Vector3& origin, const SoundRadii& radii) :
+		_origin(origin),
+		_radii(radii)
     {}
 
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+    void updateGeometry() override;
+
+#if 0
 	// Gets the minimum/maximum values to render
 	float getMin() const;
 	float getMax() const;
-
 	void render(const RenderInfo& info) const;
+#endif
+#if 0
 	const AABB& localAABB();
-
-}; // class RenderSpeakerRadii
+#endif
+};
 
 } // namespace

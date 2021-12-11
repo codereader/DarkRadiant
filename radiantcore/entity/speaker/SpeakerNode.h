@@ -45,7 +45,7 @@ class SpeakerNode final :
     RenderableEntityBox _renderableBox;
 
     // Renderable speaker radii
-    RenderableSpeakerRadii _renderableRadii;
+    RenderableSpeakerRadiiWireframe _renderableRadiiWireframe;
 
     bool m_useSpeakerRadii;
     bool m_minIsSet;

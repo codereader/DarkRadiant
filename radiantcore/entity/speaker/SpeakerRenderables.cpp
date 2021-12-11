@@ -151,6 +151,7 @@ void speakerDrawRadiiFill(const Vector3& origin, const SoundRadii& rad)
 namespace entity
 {
 
+#if 0
 void RenderableSpeakerRadii::render(const RenderInfo& info) const
 {
 	//draw the radii of speaker based on speaker shader/radii keys
@@ -161,7 +162,9 @@ void RenderableSpeakerRadii::render(const RenderInfo& info) const
 		speakerDrawRadiiWire(Vector3(0,0,0), m_radii);
 	}
 }
+#endif
 
+#if 0
 const AABB& RenderableSpeakerRadii::localAABB()
 {
 	// create the AABB from the radii we have and
@@ -171,7 +174,27 @@ const AABB& RenderableSpeakerRadii::localAABB()
 	m_aabb_local = AABB(Vector3(0,0,0), radiiVector);
 	return m_aabb_local;
 }
+#endif
 
+void RenderableSpeakerRadiiWireframe::updateGeometry()
+{
+    if (!_needsUpdate) return;
+
+    _needsUpdate = false;
+
+    // Generate the three circles in axis-aligned planes
+#if 0
+    // Move the points to their world position
+    for (auto& vertex : vertices)
+    {
+        vertex.vertex += _worldPos;
+    }
+
+    RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, WireframeBoxIndices);
+#endif
+}
+
+#if 0
 float RenderableSpeakerRadii::getMin() const
 {
 	return m_radii.getMin();
@@ -181,5 +204,6 @@ float RenderableSpeakerRadii::getMax() const
 {
 	return m_radii.getMax();
 }
+#endif
 
 } // namespace

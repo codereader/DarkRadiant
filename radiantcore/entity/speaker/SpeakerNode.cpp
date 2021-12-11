@@ -19,7 +19,7 @@ SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	m_originKey(std::bind(&SpeakerNode::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
     _renderableBox(m_aabb_local, worldAABB().getOrigin()),
-	_renderableRadii(m_origin, _radiiTransformed),
+    _renderableRadiiWireframe(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
 	m_maxIsSet(false),
@@ -35,7 +35,7 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	m_originKey(std::bind(&SpeakerNode::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
     _renderableBox(m_aabb_local, worldAABB().getOrigin()),
-	_renderableRadii(m_origin, _radiiTransformed),
+    _renderableRadiiWireframe(m_origin, _radiiTransformed),
 	m_useSpeakerRadii(true),
 	m_minIsSet(false),
 	m_maxIsSet(false),
@@ -254,7 +254,7 @@ void SpeakerNode::renderSolid(IRenderableCollector& collector,
     // radii" option is set
 	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
     {
-		collector.addRenderable(*getFillShader(), _renderableRadii, localToWorld());
+		collector.addRenderable(*getFillShader(), _renderableRadiiWireframe, localToWorld());
     }
 }
 void SpeakerNode::renderWireframe(IRenderableCollector& collector,
@@ -266,7 +266,7 @@ void SpeakerNode::renderWireframe(IRenderableCollector& collector,
     // radii" option is set
 	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
     {
-		collector.addRenderable(*getWireShader(), _renderableRadii, localToWorld());
+		collector.addRenderable(*getWireShader(), _renderableRadiiWireframe, localToWorld());
     }
 }
 

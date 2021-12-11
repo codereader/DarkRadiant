@@ -9,53 +9,6 @@
 namespace selection
 {
 
-template<typename remap_policy>
-inline void draw_semicircle(const std::size_t segments, const float radius, VertexCb* vertices, remap_policy remap) {
-  const double increment = math::PI / double(segments << 2);
-
-  std::size_t count = 0;
-  float x = radius;
-  float y = 0;
-  remap_policy::set(vertices[segments << 2].vertex, -radius, 0, 0);
-  while(count < segments)
-  {
-    VertexCb* i = vertices + count;
-    VertexCb* j = vertices + ((segments << 1) - (count + 1));
-
-    VertexCb* k = i + (segments << 1);
-    VertexCb* l = j + (segments << 1);
-
-#if 0
-    VertexCb* m = i + (segments << 2);
-    VertexCb* n = j + (segments << 2);
-    VertexCb* o = k + (segments << 2);
-    VertexCb* p = l + (segments << 2);
-#endif
-
-    remap_policy::set(i->vertex, x,-y, 0);
-    remap_policy::set(k->vertex,-y,-x, 0);
-#if 0
-    remap_policy::set(m->vertex,-x, y, 0);
-    remap_policy::set(o->vertex, y, x, 0);
-#endif
-
-    ++count;
-
-    {
-      const double theta = increment * count;
-      x = static_cast<float>(radius * cos(theta));
-      y = static_cast<float>(radius * sin(theta));
-    }
-
-    remap_policy::set(j->vertex, y,-x, 0);
-    remap_policy::set(l->vertex,-x,-y, 0);
-#if 0
-    remap_policy::set(n->vertex,-y, x, 0);
-    remap_policy::set(p->vertex, x, y, 0);
-#endif
-  }
-}
-
 // Constructor
 RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius) :
 	_pivot(pivot),
@@ -70,12 +23,12 @@ RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segme
     _circleSphere(segments<<3),
 	_pivotPoint(GL_POINTS)
 {
-	draw_semicircle(segments, radius, &_circleX.front(), RemapYZX());
-    draw_semicircle(segments, radius, &_circleY.front(), RemapZXY());
-    draw_semicircle(segments, radius, &_circleZ.front(), RemapXYZ());
+	draw_semicircle<RemapYZX>(segments, radius, _circleX);
+    draw_semicircle<RemapZXY>(segments, radius, _circleY);
+    draw_semicircle<RemapXYZ>(segments, radius, _circleZ);
 
-	draw_circle(segments, radius * 1.15f, &_circleScreen.front(), RemapXYZ());
-    draw_circle(segments, radius, &_circleSphere.front(), RemapXYZ());
+	draw_circle<RemapXYZ>(segments, radius * 1.15f, _circleScreen);
+    draw_circle<RemapXYZ>(segments, radius, _circleSphere);
 
 	_pivotPoint.push_back(VertexCb(Vertex3f(0,0,0), ManipulatorBase::COLOUR_SPHERE()));
 }
