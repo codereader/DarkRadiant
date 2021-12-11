@@ -71,81 +71,79 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
 
 // ---- Fill Variant ----
 
-// Generates the draw indices for a sphere with N circles plus two pole vertices at the back
-inline std::vector<unsigned int> generateSphereIndices(std::size_t numVertices, unsigned int numCircles)
+namespace
 {
-    assert(numVertices > 2);
 
-    std::vector<unsigned int> indices;
+constexpr std::size_t ThetaDivisions = 8; // Inclination divisions
+constexpr std::size_t PhiDivisions = 16;  // Azimuth divisions
 
-    const auto numVerticesPerCircle = static_cast<unsigned int>(numVertices - 2) / numCircles;
+const double ThetaStep = math::PI / ThetaDivisions;
+const double PhiStep = 2 * math::PI / PhiDivisions;
 
-    indices.reserve((numCircles + 1) * numVerticesPerCircle * 4); // 4 indices per quad
+// For one sphere, we have (divisions-1) vertex circles between the top and bottom vertex
+constexpr auto NumCircles = ThetaDivisions - 1;
 
-    for (unsigned int circle = 0; circle < numCircles - 1; ++circle)
+constexpr auto NumVerticesPerSphere = (NumCircles * PhiDivisions + 2);
+constexpr auto NumVerticesPerCircle = static_cast<unsigned int>(NumVerticesPerSphere - 2) / NumCircles;
+
+inline void generateSphereIndices(std::vector<unsigned int>& indices, unsigned int sphereOffset)
+{
+    for (unsigned int circle = 0; circle < NumCircles - 1; ++circle)
     {
-        unsigned int offset = circle * numVerticesPerCircle;
+        unsigned int offset = sphereOffset + circle * NumVerticesPerCircle;
 
-        for (unsigned int i = 0; i < numVerticesPerCircle; ++i)
+        for (unsigned int i = 0; i < NumVerticesPerCircle; ++i)
         {
             indices.push_back(offset + i);
-            indices.push_back(offset + (i + 1) % numVerticesPerCircle); // wrap
-            indices.push_back(offset + numVerticesPerCircle + (i + 1) % numVerticesPerCircle); // wrap
-            indices.push_back(offset + numVerticesPerCircle + i);
+            indices.push_back(offset + (i + 1) % NumVerticesPerCircle); // wrap
+            indices.push_back(offset + NumVerticesPerCircle + (i + 1) % NumVerticesPerCircle); // wrap
+            indices.push_back(offset + NumVerticesPerCircle + i);
         }
     }
 
     // Connect the topmost circle to the top pole vertex
     // These are tris, but we cannot mix, so let's form a degenerate quad
-    auto topPoleIndex = static_cast<unsigned int>(numVertices) - 2;
-    auto bottomPoleIndex = static_cast<unsigned int>(numVertices) - 1;
-    
-    for (unsigned int i = 0; i < numVerticesPerCircle; ++i)
+    auto topPoleIndex = sphereOffset + static_cast<unsigned int>(NumVerticesPerSphere) - 2;
+    auto bottomPoleIndex = sphereOffset + static_cast<unsigned int>(NumVerticesPerSphere) - 1;
+
+    for (unsigned int i = 0; i < NumVerticesPerCircle; ++i)
     {
         indices.push_back(topPoleIndex);
         indices.push_back(topPoleIndex);
-        indices.push_back((i + 1) % numVerticesPerCircle); // wrap
-        indices.push_back(i);
+        indices.push_back(sphereOffset + (i + 1) % NumVerticesPerCircle); // wrap
+        indices.push_back(sphereOffset + i);
     }
 
     // Connect the most southern circle to the south pole vertex
-    auto bottomCircleOffset = (numCircles - 1) * numVerticesPerCircle;
+    auto bottomCircleOffset = sphereOffset + static_cast<unsigned int>((NumCircles - 1) * NumVerticesPerCircle);
 
-    for (unsigned int i = 0; i < numVerticesPerCircle; ++i)
+    for (unsigned int i = 0; i < NumVerticesPerCircle; ++i)
     {
         indices.push_back(bottomCircleOffset + i);
-        indices.push_back(bottomCircleOffset + (i + 1) % numVerticesPerCircle); // wrap
+        indices.push_back(bottomCircleOffset + (i + 1) % NumVerticesPerCircle); // wrap
         indices.push_back(bottomPoleIndex);
         indices.push_back(bottomPoleIndex);
     }
+}
 
-    assert((numCircles + 1) * numVerticesPerCircle * 4 == indices.size());
+// Generates the draw indices for a sphere with N circles plus two pole vertices at the back
+inline std::vector<unsigned int> generateSphereIndices()
+{
+    std::vector<unsigned int> indices;
+
+    indices.reserve((NumCircles + 1) * NumVerticesPerCircle * 4 * 2); // 4 indices per quad, 2 spheres
+
+    // Generate the two index sets, one for each sphere
+    generateSphereIndices(indices, 0);
+    generateSphereIndices(indices, NumVerticesPerSphere);
+
+    assert((NumCircles + 1) * NumVerticesPerCircle * 4 * 2 == indices.size());
 
     return indices;
 }
 
-void RenderableSpeakerRadiiFill::updateGeometry()
+inline void generateSphereVertices(std::vector<ArbitraryMeshVertex>& vertices, double radius, const Vector3& origin)
 {
-    if (!_needsUpdate) return;
-
-    _needsUpdate = false;
-
-    constexpr std::size_t ThetaDivisions = 8; // Inclination divisions
-    constexpr std::size_t PhiDivisions = 16;  // Azimuth divisions
-
-    const double ThetaStep = math::PI / ThetaDivisions;
-    const double PhiStep = 2 * math::PI / PhiDivisions;
-
-    // We have (divisions-1) vertex circles between the top and bottom vertex
-    constexpr auto NumCircles = ThetaDivisions - 1;
-
-    std::vector<ArbitraryMeshVertex> vertices;
-
-    // Reserve the vertices for the two pole vertices and the circles
-    vertices.reserve(NumCircles * PhiDivisions + 2);
-
-    auto radius = _radii.getMax();
-
     for (auto strip = 0; strip < NumCircles; ++strip)
     {
         auto theta = ThetaStep * (strip + 1);
@@ -161,18 +159,33 @@ void RenderableSpeakerRadiiFill::updateGeometry()
             auto unit = Vector3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 
             // Move the points to their world position
-            vertices.push_back(ArbitraryMeshVertex(unit * radius + _origin, unit, {0, 0}));
+            vertices.push_back(ArbitraryMeshVertex(unit * radius + origin, unit, { 0, 0 }));
         }
     }
 
     // The north and south pole vertices
-    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, radius) + _origin, { 0,0,1 }, { 0,0 }));
-    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, -radius) + _origin, { 0,0,-1 }, { 0,0 }));
+    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, radius) + origin, { 0,0,1 }, { 0,0 }));
+    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, -radius) + origin, { 0,0,-1 }, { 0,0 }));
+}
 
-    assert(vertices.size() == NumCircles * PhiDivisions + 2);
+}
 
-    // Generate the triangle indices
-    static auto SphereIndices = generateSphereIndices(vertices.size(), NumCircles);
+void RenderableSpeakerRadiiFill::updateGeometry()
+{
+    if (!_needsUpdate) return;
+
+    _needsUpdate = false;
+
+    std::vector<ArbitraryMeshVertex> vertices;
+
+    // Make space for two spheres
+    vertices.reserve(NumVerticesPerSphere << 1);
+
+    generateSphereVertices(vertices, _radii.getMax(), _origin);
+    generateSphereVertices(vertices, _radii.getMin(), _origin);
+
+    // Generate the quad indices for two spheres
+    static auto SphereIndices = generateSphereIndices();
 
     RenderableGeometry::updateGeometry(render::GeometryType::Quads, vertices, SphereIndices);
 }
