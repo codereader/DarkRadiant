@@ -599,6 +599,8 @@ void LightNode::onSelectionStatusChange(bool changeGroupStatus)
 
 void LightNode::onEntitySettingsChanged()
 {
+    EntityNode::onEntitySettingsChanged();
+
     _showLightVolumeWhenUnselected = EntitySettings::InstancePtr()->getShowAllLightRadii();
     _renderableLightVolume.queueUpdate();
 }

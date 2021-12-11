@@ -168,6 +168,10 @@ public:
 	virtual void onPostUndo() override;
 	virtual void onPostRedo() override;
 
+    // Optional implementation: gets invoked by the EntityModule when the settings are changing
+    virtual void onEntitySettingsChanged()
+    {}
+
 protected:
 	virtual void onModelKeyChanged(const std::string& value);
 

@@ -47,6 +47,8 @@ class SpeakerNode final :
     // Renderable speaker radii
     RenderableSpeakerRadiiWireframe _renderableRadiiWireframe;
 
+    bool _showRadiiWhenUnselected;
+
     bool m_useSpeakerRadii;
     bool m_minIsSet;
     bool m_maxIsSet;
@@ -123,6 +125,8 @@ public:
     }
 
     void selectedChangedComponent(const ISelectable& selectable);
+
+    void onEntitySettingsChanged() override;
 
 protected:
     // Gets called by the Transformable implementation whenever

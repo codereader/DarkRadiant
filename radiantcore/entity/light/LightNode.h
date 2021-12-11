@@ -133,7 +133,7 @@ public:
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
 
-    void onEntitySettingsChanged();
+    void onEntitySettingsChanged() override;
 
     bool isProjected() const;
 

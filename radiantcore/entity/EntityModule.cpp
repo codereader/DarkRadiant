@@ -314,14 +314,14 @@ void Doom3EntityModule::onEntitySettingsChanged()
 {
     if (!GlobalMapModule().getRoot()) return;
 
-    // Actively notify all LightNodes (only those for now) about the settings change
+    // Actively notify all EntityNodes about the settings change
     GlobalMapModule().getRoot()->foreachNode([](const scene::INodePtr& node)
     {
-        auto light = std::dynamic_pointer_cast<LightNode>(node);
+        auto entity = std::dynamic_pointer_cast<EntityNode>(node);
 
-        if (light)
+        if (entity)
         {
-            light->onEntitySettingsChanged();
+            entity->onEntitySettingsChanged();
         }
 
         return true;
