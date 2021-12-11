@@ -1,8 +1,7 @@
 #include "SpeakerRenderables.h"
 
+#include "igl.h"
 #include "render.h"
-
-// the drawing functions
 
 void sphereDrawFill(const Vector3& origin, float radius, int sides)
 {
@@ -77,71 +76,6 @@ void sphereDrawFill(const Vector3& origin, float radius, int sides)
   glEnd();
 }
 
-void sphereDrawWire(const Vector3& origin, float radius, int sides)
-{
-  {
-    glBegin(GL_LINE_LOOP);
-
-    for (int i = 0; i <= sides; i++)
-    {
-      float ds = sin((i * 2 * static_cast<float>(math::PI)) / sides);
-      float dc = cos((i * 2 * static_cast<float>(math::PI)) / sides);
-
-      glVertex3d(
-        origin[0] + radius * dc,
-        origin[1] + radius * ds,
-        origin[2]
-      );
-    }
-
-    glEnd();
-  }
-
-  {
-    glBegin(GL_LINE_LOOP);
-
-    for (int i = 0; i <= sides; i++)
-    {
-      float ds = sin((i * 2 * static_cast<float>(math::PI)) / sides);
-      float dc = cos((i * 2 * static_cast<float>(math::PI)) / sides);
-
-      glVertex3d(
-        origin[0] + radius * dc,
-        origin[1],
-        origin[2] + radius * ds
-      );
-    }
-
-    glEnd();
-  }
-
-  {
-    glBegin(GL_LINE_LOOP);
-
-    for (int i = 0; i <= sides; i++)
-    {
-      float ds = sin((i * 2 * static_cast<float>(math::PI)) / sides);
-      float dc = cos((i * 2 * static_cast<float>(math::PI)) / sides);
-
-      glVertex3d(
-        origin[0],
-        origin[1] + radius * dc,
-        origin[2] + radius * ds
-      );
-    }
-
-    glEnd();
-  }
-}
-
-void speakerDrawRadiiWire(const Vector3& origin, const SoundRadii& rad)
-{
-  if(rad.getMin() > 0)
-    sphereDrawWire(origin, rad.getMin(), 24);
-  if(rad.getMax() > 0)
-    sphereDrawWire(origin, rad.getMax(), 24);
-}
-
 void speakerDrawRadiiFill(const Vector3& origin, const SoundRadii& rad)
 {
   if(rad.getMin() > 0)
@@ -153,30 +87,27 @@ void speakerDrawRadiiFill(const Vector3& origin, const SoundRadii& rad)
 namespace entity
 {
 
-#if 0
-void RenderableSpeakerRadii::render(const RenderInfo& info) const
+// Generates the draw indices for N circles stored in the given vertex array
+inline std::vector<unsigned int> generateWireframeCircleIndices(std::size_t numVertices, unsigned int numCircles)
 {
-	//draw the radii of speaker based on speaker shader/radii keys
-	if(info.checkFlag(RENDER_FILL)) {
-		speakerDrawRadiiFill(Vector3(0,0,0), m_radii);
-	}
-	else {
-		speakerDrawRadiiWire(Vector3(0,0,0), m_radii);
-	}
-}
-#endif
+    std::vector<unsigned int> indices;
 
-#if 0
-const AABB& RenderableSpeakerRadii::localAABB()
-{
-	// create the AABB from the radii we have and
-	// make sure we take the biggest radius (even though the min radius doesn't make much sense)
-	float radii = m_radii.getMin() > m_radii.getMax() ? m_radii.getMin() : m_radii.getMax();
-	Vector3 radiiVector (radii, radii, radii);
-	m_aabb_local = AABB(Vector3(0,0,0), radiiVector);
-	return m_aabb_local;
+    indices.reserve(numVertices << 1); // 2 indices per vertex
+    const auto numVerticesPerCircle = static_cast<unsigned int>(numVertices) / numCircles;
+
+    for (unsigned int circle = 0; circle < numCircles; ++circle)
+    {
+        unsigned int offset = circle * numVerticesPerCircle;
+
+        for (unsigned int i = 0; i < numVerticesPerCircle; ++i)
+        {
+            indices.push_back(offset + i);
+            indices.push_back(offset + (i + 1) % numVerticesPerCircle); // wrap around the last index to point at <offset> again
+        }
+    }
+
+    return indices;
 }
-#endif
 
 void RenderableSpeakerRadiiWireframe::updateGeometry()
 {
@@ -189,29 +120,25 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
 
     std::vector<ArbitraryMeshVertex> vertices;
 
-    // Allocate space for 3 circles, each has NumSegments * 8 vertices
+    // Allocate space for 6 circles, one per radius, each radius has NumSegments * 8 vertices
     constexpr std::size_t NumVerticesPerCircle = NumSegments << 3;
-    vertices.resize(3 * NumVerticesPerCircle);
+    constexpr unsigned int NumCircles = 6;
 
-    draw_circle<RemapXYZ>(NumSegments, _radii.getMax(), vertices, 0);
-    draw_circle<RemapYZX>(NumSegments, _radii.getMax(), vertices, NumVerticesPerCircle);
-    draw_circle<RemapZXY>(NumSegments, _radii.getMax(), vertices, NumVerticesPerCircle << 1);
+    vertices.resize(NumCircles * NumVerticesPerCircle);
 
-    // Generate the indices, walking around the vertices
-    std::vector<unsigned int> indices;
-    auto numVertices = vertices.size();
-    indices.reserve(numVertices << 1); // 2 indices per vertex
+    // Min radius
+    draw_circle<RemapXYZ>(NumSegments, _radii.getMin(), vertices, 0);
+    draw_circle<RemapYZX>(NumSegments, _radii.getMin(), vertices, NumVerticesPerCircle);
+    draw_circle<RemapZXY>(NumSegments, _radii.getMin(), vertices, NumVerticesPerCircle * 2);
 
-    for (unsigned int circle = 0; circle < 3; ++circle)
-    {
-        unsigned int offset = circle * NumVerticesPerCircle;
+    // Max radius
+    draw_circle<RemapXYZ>(NumSegments, _radii.getMax(), vertices, NumVerticesPerCircle * 3);
+    draw_circle<RemapYZX>(NumSegments, _radii.getMax(), vertices, NumVerticesPerCircle * 4);
+    draw_circle<RemapZXY>(NumSegments, _radii.getMax(), vertices, NumVerticesPerCircle * 5);
 
-        for (unsigned int i = 0; i < NumVerticesPerCircle; ++i)
-        {
-            indices.push_back(offset + i);
-            indices.push_back(offset + (i + 1) % NumVerticesPerCircle); // wrap around the last index to point at <offset> again
-        }
-    }
+    // Generate the indices for all 6 circles, walking around each circle
+    // The indices for 6 circles stay the same, so we can store this statically
+    static auto CircleIndices = generateWireframeCircleIndices(vertices.size(), NumCircles);
 
     // Move the points to their world position
     for (auto& vertex : vertices)
@@ -219,19 +146,7 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
         vertex.vertex += _origin;
     }
 
-    RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+    RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, CircleIndices);
 }
-
-#if 0
-float RenderableSpeakerRadii::getMin() const
-{
-	return m_radii.getMin();
-}
-
-float RenderableSpeakerRadii::getMax() const
-{
-	return m_radii.getMax();
-}
-#endif
 
 } // namespace
