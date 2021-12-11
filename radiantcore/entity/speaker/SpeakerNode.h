@@ -30,7 +30,7 @@ class SpeakerNode :
     public ISpeakerNode
 {
     OriginKey m_originKey;
-    Vector3 m_origin;
+    Vector3 m_origin = ORIGINKEY_IDENTITY;
 
     // The current speaker radii (min / max)
     SoundRadii _radii;
@@ -43,9 +43,9 @@ class SpeakerNode :
     // Renderable speaker radii
     RenderableSpeakerRadii _renderableRadii;
 
-    bool m_useSpeakerRadii;
-    bool m_minIsSet;
-    bool m_maxIsSet;
+    bool m_useSpeakerRadii = true;
+    bool m_minIsSet = false;
+    bool m_maxIsSet = false;
 
     AABB m_aabb_local;
 

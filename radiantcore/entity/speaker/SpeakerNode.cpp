@@ -17,11 +17,7 @@ namespace
 SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_originKey(std::bind(&SpeakerNode::originChanged, this)),
-	m_origin(ORIGINKEY_IDENTITY),
 	_renderableRadii(m_origin, _radiiTransformed),
-	m_useSpeakerRadii(true),
-	m_minIsSet(false),
-	m_maxIsSet(false),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
 	_dragPlanes(std::bind(&SpeakerNode::selectedChangedComponent, this, std::placeholders::_1))
@@ -31,11 +27,7 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	Snappable(other),
 	m_originKey(std::bind(&SpeakerNode::originChanged, this)),
-	m_origin(ORIGINKEY_IDENTITY),
 	_renderableRadii(m_origin, _radiiTransformed),
-	m_useSpeakerRadii(true),
-	m_minIsSet(false),
-	m_maxIsSet(false),
 	m_aabb_solid(m_aabb_local),
 	m_aabb_wire(m_aabb_local),
 	_dragPlanes(std::bind(&SpeakerNode::selectedChangedComponent, this, std::placeholders::_1))
