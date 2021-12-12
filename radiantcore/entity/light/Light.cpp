@@ -31,11 +31,11 @@ Light::Light(SpawnArgs& entity,
     _originTransformed(ORIGINKEY_IDENTITY),
     m_rotationKey(std::bind(&Light::rotationChanged, this)),
     _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
-    _rTarget(_lightTargetTransformed, _lightBox.origin, _colourLightTarget),
-    _rUp(_lightUpTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightUp),
-    _rRight(_lightRightTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightRight),
-    _rStart(_lightStartTransformed, _lightBox.origin, _colourLightStart),
-    _rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
+    _rTarget(_projVectors.transformed.target, _lightBox.origin, _colourLightTarget),
+    _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin, _colourLightUp),
+    _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin, _colourLightRight),
+    _rStart(_projVectors.transformed.start, _lightBox.origin, _colourLightStart),
+    _rEnd(_projVectors.transformed.end, _lightBox.origin, _colourLightEnd),
     m_useLightRotation(false),
     m_transformChanged(transformChanged),
     m_boundsChanged(boundsChanged)
@@ -56,11 +56,11 @@ Light::Light(const Light& other,
   _originTransformed(ORIGINKEY_IDENTITY),
   m_rotationKey(std::bind(&Light::rotationChanged, this)),
   _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
-  _rTarget(_lightTargetTransformed, _lightBox.origin, _colourLightTarget),
-  _rUp(_lightUpTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightUp),
-  _rRight(_lightRightTransformed, _lightTargetTransformed, _lightBox.origin, _colourLightRight),
-  _rStart(_lightStartTransformed, _lightBox.origin, _colourLightStart),
-  _rEnd(_lightEndTransformed, _lightBox.origin, _colourLightEnd),
+  _rTarget(_projVectors.transformed.target, _lightBox.origin, _colourLightTarget),
+  _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin, _colourLightUp),
+  _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin, _colourLightRight),
+  _rStart(_projVectors.transformed.start, _lightBox.origin, _colourLightStart),
+  _rEnd(_projVectors.transformed.end, _lightBox.origin, _colourLightEnd),
   m_useLightRotation(false),
   m_transformChanged(transformChanged),
   m_boundsChanged(boundsChanged)
@@ -105,8 +105,10 @@ void Light::construct()
     static_assert(std::is_base_of<sigc::trackable, Doom3LightRadius>::value);
     static_assert(std::is_base_of<sigc::trackable, Light>::value);
     static_assert(std::is_base_of<sigc::trackable, LightShader>::value);
-    _owner.observeKey("light_radius", sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightRadiusChanged));
-    _owner.observeKey("light_center", sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightCenterChanged));
+    _owner.observeKey("light_radius",
+                      sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightRadiusChanged));
+    _owner.observeKey("light_center",
+                      sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightCenterChanged));
     _owner.observeKey("light_rotation", sigc::mem_fun(this, &Light::lightRotationChanged));
     _owner.observeKey("light_target", sigc::mem_fun(this, &Light::lightTargetChanged));
     _owner.observeKey("light_up", sigc::mem_fun(this, &Light::lightUpChanged));
@@ -168,10 +170,10 @@ void Light::lightTargetChanged(const std::string& value)
 
     if (m_useLightTarget)
     {
-        _lightTarget = string::convert<Vector3>(value);
+        _projVectors.base.target = string::convert<Vector3>(value);
     }
 
-    _lightTargetTransformed = _lightTarget;
+    _projVectors.transformed.target = _projVectors.base.target;
     projectionChanged();
 }
 
@@ -181,10 +183,10 @@ void Light::lightUpChanged(const std::string& value)
 
     if (m_useLightUp)
     {
-        _lightUp = string::convert<Vector3>(value);
+        _projVectors.base.up = string::convert<Vector3>(value);
     }
 
-    _lightUpTransformed = _lightUp;
+    _projVectors.transformed.up = _projVectors.base.up;
     projectionChanged();
 }
 
@@ -194,10 +196,10 @@ void Light::lightRightChanged(const std::string& value)
 
     if (m_useLightRight)
     {
-        _lightRight = string::convert<Vector3>(value);
+        _projVectors.base.right = string::convert<Vector3>(value);
     }
 
-    _lightRightTransformed = _lightRight;
+    _projVectors.transformed.right = _projVectors.base.right;
     projectionChanged();
 }
 
@@ -206,10 +208,10 @@ void Light::lightStartChanged(const std::string& value) {
 
     if (m_useLightStart)
     {
-        _lightStart = string::convert<Vector3>(value);
+        _projVectors.base.start = string::convert<Vector3>(value);
     }
 
-    _lightStartTransformed = _lightStart;
+    _projVectors.transformed.start = _projVectors.base.start;
 
     // If the light_end key is still unused, set it to a reasonable value
     if (m_useLightEnd) {
@@ -224,10 +226,10 @@ void Light::lightEndChanged(const std::string& value) {
 
     if (m_useLightEnd)
     {
-        _lightEnd = string::convert<Vector3>(value);
+        _projVectors.base.end = string::convert<Vector3>(value);
     }
 
-    _lightEndTransformed = _lightEnd;
+    _projVectors.transformed.end = _projVectors.base.end;
 
     // If the light_start key is still unused, set it to a reasonable value
     if (m_useLightStart) {
@@ -248,20 +250,20 @@ void Light::checkStartEnd()
 {
     if (m_useLightStart && m_useLightEnd)
     {
-        if (_lightEnd.getLengthSquared() < _lightStart.getLengthSquared())
+        if (_projVectors.base.end.getLengthSquared() < _projVectors.base.start.getLengthSquared())
         {
             // Swap the two vectors
-            Vector3 temp = _lightEnd;
-            _lightEndTransformed = _lightEnd = _lightStart;
-            _lightStartTransformed = _lightStart = temp;
+            Vector3 temp = _projVectors.base.end;
+            _projVectors.transformed.end = _projVectors.base.end = _projVectors.base.start;
+            _projVectors.transformed.start = _projVectors.base.start = temp;
         }
 
         // The light_end on the same point as the light_start is an unlucky situation, revert it
         // otherwise the vertices won't be separable again for the user
-        if (_lightEnd == _lightStart)
+        if (_projVectors.base.end == _projVectors.base.start)
         {
-            _lightEndTransformed = _lightEnd = _lightTarget;
-            _lightStartTransformed = _lightStart = Vector3(0,0,0);
+            _projVectors.transformed.end = _projVectors.base.end = _projVectors.base.target;
+            _projVectors.transformed.start = _projVectors.base.start = Vector3(0,0,0);
         }
     }
 }
@@ -345,11 +347,7 @@ void Light::revertTransform()
     m_doom3Radius.m_centerTransformed = m_doom3Radius.m_center;
 
     // revert all the projection changes to the saved values
-    _lightTargetTransformed = _lightTarget;
-    _lightRightTransformed = _lightRight;
-    _lightUpTransformed = _lightUp;
-    _lightStartTransformed = _lightStart;
-    _lightEndTransformed = _lightEnd;
+    _projVectors.revertTransform();
 }
 
 void Light::freezeTransform()
@@ -361,23 +359,23 @@ void Light::freezeTransform()
     {
         if (m_useLightTarget)
         {
-            _lightTarget = _lightTargetTransformed;
+            _projVectors.base.target = _projVectors.transformed.target;
             _entity.setKeyValue("light_target",
-                                string::to_string(_lightTarget));
+                                string::to_string(_projVectors.base.target));
         }
 
         if (m_useLightUp)
         {
-            _lightUp = _lightUpTransformed;
+            _projVectors.base.up = _projVectors.transformed.up;
             _entity.setKeyValue("light_up",
-                               string::to_string(_lightUp));
+                               string::to_string(_projVectors.base.up));
         }
 
         if (m_useLightRight)
         {
-            _lightRight = _lightRightTransformed;
+            _projVectors.base.right = _projVectors.transformed.right;
             _entity.setKeyValue("light_right",
-                                string::to_string(_lightRight));
+                                string::to_string(_projVectors.base.right));
         }
 
         // Check the start and end (if the end is "above" the start, for example)
@@ -385,16 +383,16 @@ void Light::freezeTransform()
 
         if (m_useLightStart)
         {
-            _lightStart = _lightStartTransformed;
+            _projVectors.base.start = _projVectors.transformed.start;
             _entity.setKeyValue("light_start",
-                                string::to_string(_lightStart));
+                                string::to_string(_projVectors.base.start));
         }
 
         if (m_useLightEnd)
         {
-            _lightEnd = _lightEndTransformed;
+            _projVectors.base.end = _projVectors.transformed.end;
             _entity.setKeyValue("light_end",
-                                string::to_string(_lightEnd));
+                                string::to_string(_projVectors.base.end));
         }
     }
     else
@@ -477,24 +475,24 @@ void Light::translate(const Vector3& translation)
 
 void Light::ensureLightStartConstraints()
 {
-    Vector3 assumedEnd = (m_useLightEnd) ? _lightEndTransformed : _lightTargetTransformed;
+    Vector3 assumedEnd = (m_useLightEnd) ? _projVectors.transformed.end : _projVectors.transformed.target;
 
-    Vector3 normal = (_lightStartTransformed - assumedEnd).getNormalised();
+    Vector3 normal = (_projVectors.transformed.start - assumedEnd).getNormalised();
 
     // Calculate the distance to the plane going through the origin, hence the minus sign
-    double dist = normal.dot(_lightStartTransformed);
+    double dist = normal.dot(_projVectors.transformed.start);
 
     if (dist > 0)
     {
         // Light_Start is too "high", project it back onto the origin plane
-        _lightStartTransformed = _lightStartTransformed - normal*dist;
-        _lightStartTransformed.snap(GlobalGrid().getGridSize());
+        _projVectors.transformed.start = _projVectors.transformed.start - normal*dist;
+        _projVectors.transformed.start.snap(GlobalGrid().getGridSize());
     }
 }
 
 void Light::setLightStart(const Vector3& newLightStart)
 {
-    _lightStartTransformed = newLightStart;
+    _projVectors.transformed.start = newLightStart;
 
     // Prevent the light_start to cause the volume form an hourglass-shaped frustum
     ensureLightStartConstraints();
@@ -513,12 +511,12 @@ const AABB& Light::localAABB() const
         // start with an empty AABB and include all the projection vertices
         m_doom3AABB = AABB();
         m_doom3AABB.includePoint(_lightBox.origin);
-        m_doom3AABB.includePoint(_lightBox.origin + _lightTargetTransformed);
-        m_doom3AABB.includePoint(_lightBox.origin + _lightTargetTransformed + _lightRightTransformed);
-        m_doom3AABB.includePoint(_lightBox.origin + _lightTargetTransformed + _lightUpTransformed);
+        m_doom3AABB.includePoint(_lightBox.origin + _projVectors.transformed.target);
+        m_doom3AABB.includePoint(_lightBox.origin + _projVectors.transformed.target + _projVectors.transformed.right);
+        m_doom3AABB.includePoint(_lightBox.origin + _projVectors.transformed.target + _projVectors.transformed.up);
         if (useStartEnd()) {
-            m_doom3AABB.includePoint(_lightBox.origin + _lightStartTransformed);
-            m_doom3AABB.includePoint(_lightBox.origin + _lightEndTransformed);
+            m_doom3AABB.includePoint(_lightBox.origin + _projVectors.transformed.start);
+            m_doom3AABB.includePoint(_lightBox.origin + _projVectors.transformed.end);
         }
     }
     else {
@@ -634,16 +632,16 @@ Vector3 Light::getLightOrigin() const
     }
 }
 
-Vector3& Light::target()            { return _lightTarget; }
-Vector3& Light::targetTransformed() { return _lightTargetTransformed; }
-Vector3& Light::up()                { return _lightUp; }
-Vector3& Light::upTransformed()     { return _lightUpTransformed; }
-Vector3& Light::right()             { return _lightRight; }
-Vector3& Light::rightTransformed()  { return _lightRightTransformed; }
-Vector3& Light::start()             { return _lightStart; }
-Vector3& Light::startTransformed()  { return _lightStartTransformed; }
-Vector3& Light::end()               { return _lightEnd; }
-Vector3& Light::endTransformed()    { return _lightEndTransformed; }
+Vector3& Light::target()            { return _projVectors.base.target; }
+Vector3& Light::targetTransformed() { return _projVectors.transformed.target; }
+Vector3& Light::up()                { return _projVectors.base.up; }
+Vector3& Light::upTransformed()     { return _projVectors.transformed.up; }
+Vector3& Light::right()             { return _projVectors.base.right; }
+Vector3& Light::rightTransformed()  { return _projVectors.transformed.right; }
+Vector3& Light::start()             { return _projVectors.base.start; }
+Vector3& Light::startTransformed()  { return _projVectors.transformed.start; }
+Vector3& Light::end()               { return _projVectors.base.end; }
+Vector3& Light::endTransformed()    { return _projVectors.transformed.end; }
 
 Vector3& Light::colourLightTarget() { return _colourLightTarget; }
 Vector3& Light::colourLightRight()  { return _colourLightRight; }
@@ -693,13 +691,13 @@ void Light::updateProjection() const
 
     Plane3 lightProject[4];
 
-    auto rLen = _lightRightTransformed.getLength();
-    Vector3 right = _lightRightTransformed / rLen;
-    auto uLen = _lightUpTransformed.getLength();
-    Vector3 up = _lightUpTransformed / uLen;
+    auto rLen = _projVectors.transformed.right.getLength();
+    Vector3 right = _projVectors.transformed.right / rLen;
+    auto uLen = _projVectors.transformed.up.getLength();
+    Vector3 up = _projVectors.transformed.up / uLen;
     Vector3 normal = up.cross(right).getNormalised();
 
-    auto dist = _lightTargetTransformed.dot(normal);
+    auto dist = _projVectors.transformed.target.dot(normal);
     if ( dist < 0 ) {
         dist = -dist;
         normal = -normal;
@@ -713,7 +711,7 @@ void Light::updateProjection() const
     lightProject[1] = Plane3(up, 0);
 
     // now offset to center
-    Vector4 targetGlobal(_lightTargetTransformed, 1);
+    Vector4 targetGlobal(_projVectors.transformed.target, 1);
     {
         double a = targetGlobal.dot(plane3_to_vector4(lightProject[0]));
         double b = targetGlobal.dot(plane3_to_vector4(lightProject[2]));
@@ -736,14 +734,14 @@ void Light::updateProjection() const
     // If there is a light_start key set, use this, otherwise use the zero
     // vector
     Vector3 start = m_useLightStart && m_useLightEnd
-                    ? _lightStartTransformed
+                    ? _projVectors.transformed.start
                     : Vector3(0, 0, 0);
 
     // If there is no light_end, but a light_start, assume light_end =
     // light_target
     Vector3 stop = m_useLightStart && m_useLightEnd
-                   ? _lightEndTransformed
-                   : _lightTargetTransformed;
+                   ? _projVectors.transformed.end
+                   : _projVectors.transformed.target;
 
     // Calculate the falloff vector
     Vector3 falloff = stop - start;
@@ -798,9 +796,9 @@ void Light::updateProjection() const
 	//rMessage() << "  Frustum Plane " << 4 << ": " << _frustum.front.normal() << ", dist: " << _frustum.front.dist() << std::endl;
 	//rMessage() << "  Frustum Plane " << 5 << ": " << _frustum.back.normal() << ", dist: " << _frustum.back.dist() << std::endl;
 
-    const Vector3& t = _lightTargetTransformed;
-    const Vector3& u = _lightUpTransformed;
-    const Vector3& r = _lightRightTransformed;
+    const Vector3& t = _projVectors.transformed.target;
+    const Vector3& u = _projVectors.transformed.up;
+    const Vector3& r = _projVectors.transformed.right;
 
     // Scale the light volume such that it is in a [-0.5..0.5] cube, including light origin
     Vector3 boundsOrigin = (t - start) * 0.5f;

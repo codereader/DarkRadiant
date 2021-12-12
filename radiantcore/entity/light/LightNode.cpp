@@ -26,7 +26,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass) :
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
 	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
     _renderableRadius(_light._lightBox.origin),
-    _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
+    _renderableFrustum(_light._lightBox.origin, _light._projVectors.transformed.start, _light._frustum),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {}
 
@@ -47,7 +47,7 @@ LightNode::LightNode(const LightNode& other) :
 	_lightEndInstance(_light.endTransformed(), std::bind(&LightNode::selectedChangedComponent, this,std::placeholders:: _1)),
 	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
     _renderableRadius(_light._lightBox.origin),
-    _renderableFrustum(_light._lightBox.origin, _light._lightStartTransformed, _light._frustum),
+    _renderableFrustum(_light._lightBox.origin, _light._projVectors.transformed.start, _light._frustum),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {}
 
@@ -524,7 +524,7 @@ void LightNode::evaluateTransform()
 
             // Extend the regular local2World by the additional light_target transform
             Matrix4 local2World = localToWorld();
-            local2World.translateBy(_light._lightTarget);
+            local2World.translateBy(_light._projVectors.base.target);
             Matrix4 world2Local = local2World.getFullInverse();
 
 			if (_lightRightInstance.isSelected())
@@ -553,7 +553,7 @@ void LightNode::evaluateTransform()
         {
 			// Ordinary Drag manipulator
 			// greebo: To evaluate the drag operation use a fresh AABB as starting point.
-			// We don't use the aabb() or localABB() methods, those return the bounding box 
+			// We don't use the aabb() or localABB() methods, those return the bounding box
             // including the light center, which may be positioned way out of the volume
             _dragPlanes.m_bounds = AABB(_light._originTransformed, _light.m_doom3Radius.m_radiusTransformed);
 

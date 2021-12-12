@@ -7,6 +7,7 @@
 #include "irenderable.h"
 #include "math/Frustum.h"
 #include "transformlib.h"
+#include "scene/TransformedCopy.h"
 
 #include "../OriginKey.h"
 #include "../RotationKey.h"
@@ -79,19 +80,18 @@ class Light: public RendererLight, public sigc::trackable
     RotationMatrix m_lightRotation;
     bool m_useLightRotation;
 
-	// These are the vectors that define a projected light
-	Vector3 _lightTarget;
-	Vector3 _lightUp;
-	Vector3 _lightRight;
-	Vector3 _lightStart;
-	Vector3 _lightEnd;
+    // Vectors defining a projected light
+    struct ProjectedVectors
+    {
+        Vector3 target;
+        Vector3 up;
+        Vector3 right;
+        Vector3 start;
+        Vector3 end;
+    };
 
-	// The "temporary" vectors, that get changed during a transform operation
-	Vector3 _lightTargetTransformed;
-	Vector3 _lightUpTransformed;
-	Vector3 _lightRightTransformed;
-	Vector3 _lightStartTransformed;
-	Vector3 _lightEndTransformed;
+    // Storage of projected light vectors, both base and transformed
+    scene::TransformedCopy<ProjectedVectors> _projVectors;
 
 	Vector3 _colourLightTarget;
 	Vector3 _colourLightUp;
