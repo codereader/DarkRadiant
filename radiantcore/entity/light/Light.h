@@ -80,30 +80,24 @@ class Light: public RendererLight, public sigc::trackable
     RotationMatrix m_lightRotation;
     bool m_useLightRotation;
 
-    // Vectors defining a projected light
-    struct ProjectedVectors
+    // Set of values defining a projected light
+    template<typename T> struct Projected
     {
-        Vector3 target;
-        Vector3 up;
-        Vector3 right;
-        Vector3 start;
-        Vector3 end;
+        T target;
+        T up;
+        T right;
+        T start;
+        T end;
     };
 
-    // Storage of projected light vectors, both base and transformed
-    scene::TransformedCopy<ProjectedVectors> _projVectors;
+    // Projected light vectors, both base and transformed
+    scene::TransformedCopy<Projected<Vector3>> _projVectors;
 
-	Vector3 _colourLightTarget;
-	Vector3 _colourLightUp;
-	Vector3 _colourLightRight;
-	Vector3 _colourLightStart;
-	Vector3 _colourLightEnd;
+    // Projected light vector colours
+    Projected<Vector3> _projColours;
 
-	bool m_useLightTarget;
-	bool m_useLightUp;
-	bool m_useLightRight;
-	bool m_useLightStart;
-	bool m_useLightEnd;
+    // Projected light use flags
+    Projected<bool> _projUseFlags;
 
     mutable AABB m_doom3AABB;
     mutable Matrix4 m_doom3Rotation;

@@ -31,11 +31,11 @@ Light::Light(SpawnArgs& entity,
     _originTransformed(ORIGINKEY_IDENTITY),
     m_rotationKey(std::bind(&Light::rotationChanged, this)),
     _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
-    _rTarget(_projVectors.transformed.target, _lightBox.origin, _colourLightTarget),
-    _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin, _colourLightUp),
-    _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin, _colourLightRight),
-    _rStart(_projVectors.transformed.start, _lightBox.origin, _colourLightStart),
-    _rEnd(_projVectors.transformed.end, _lightBox.origin, _colourLightEnd),
+    _rTarget(_projVectors.transformed.target, _lightBox.origin, _projColours.target),
+    _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin, _projColours.up),
+    _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin, _projColours.right),
+    _rStart(_projVectors.transformed.start, _lightBox.origin, _projColours.start),
+    _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
     m_useLightRotation(false),
     m_transformChanged(transformChanged),
     m_boundsChanged(boundsChanged)
@@ -56,11 +56,11 @@ Light::Light(const Light& other,
   _originTransformed(ORIGINKEY_IDENTITY),
   m_rotationKey(std::bind(&Light::rotationChanged, this)),
   _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
-  _rTarget(_projVectors.transformed.target, _lightBox.origin, _colourLightTarget),
-  _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin, _colourLightUp),
-  _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin, _colourLightRight),
-  _rStart(_projVectors.transformed.start, _lightBox.origin, _colourLightStart),
-  _rEnd(_projVectors.transformed.end, _lightBox.origin, _colourLightEnd),
+  _rTarget(_projVectors.transformed.target, _lightBox.origin, _projColours.target),
+  _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin, _projColours.up),
+  _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin, _projColours.right),
+  _rStart(_projVectors.transformed.start, _lightBox.origin, _projColours.start),
+  _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
   m_useLightRotation(false),
   m_transformChanged(transformChanged),
   m_boundsChanged(boundsChanged)
@@ -79,20 +79,16 @@ Light::~Light()
  */
 void Light::construct()
 {
-    _colourLightTarget = Vector3(255,255,0);
-    _colourLightUp = Vector3(255,0,255);
-    _colourLightRight = Vector3(255,0,255);
-    _colourLightStart = Vector3(0,0,0);
-    _colourLightEnd = Vector3(0,0,0);
+    _projColours.target = Vector3(255,255,0);
+    _projColours.up = Vector3(255,0,255);
+    _projColours.right = Vector3(255,0,255);
+    _projColours.start = Vector3(0,0,0);
+    _projColours.end = Vector3(0,0,0);
 
     m_rotation.setIdentity();
     _lightBox.origin = Vector3(0, 0, 0);
     _lightBox.extents = Vector3(8, 8, 8);
     _originTransformed = ORIGINKEY_IDENTITY;
-
-    // Set the flags to their default values, before attaching the key observers,
-    // which might set them to true again.
-    m_useLightTarget = m_useLightUp = m_useLightRight = m_useLightStart = m_useLightEnd = false;
 
     // Observe position and rotation spawnargs
     static_assert(std::is_base_of<sigc::trackable, OriginKey>::value);
@@ -166,9 +162,9 @@ void Light::originChanged()
 
 void Light::lightTargetChanged(const std::string& value)
 {
-    m_useLightTarget = (!value.empty());
+    _projUseFlags.target = (!value.empty());
 
-    if (m_useLightTarget)
+    if (_projUseFlags.target)
     {
         _projVectors.base.target = string::convert<Vector3>(value);
     }
@@ -179,9 +175,9 @@ void Light::lightTargetChanged(const std::string& value)
 
 void Light::lightUpChanged(const std::string& value)
 {
-    m_useLightUp = (!value.empty());
+    _projUseFlags.up = (!value.empty());
 
-    if (m_useLightUp)
+    if (_projUseFlags.up)
     {
         _projVectors.base.up = string::convert<Vector3>(value);
     }
@@ -192,9 +188,9 @@ void Light::lightUpChanged(const std::string& value)
 
 void Light::lightRightChanged(const std::string& value)
 {
-    m_useLightRight = (!value.empty());
+    _projUseFlags.right = (!value.empty());
 
-    if (m_useLightRight)
+    if (_projUseFlags.right)
     {
         _projVectors.base.right = string::convert<Vector3>(value);
     }
@@ -204,9 +200,9 @@ void Light::lightRightChanged(const std::string& value)
 }
 
 void Light::lightStartChanged(const std::string& value) {
-    m_useLightStart = (!value.empty());
+    _projUseFlags.start = (!value.empty());
 
-    if (m_useLightStart)
+    if (_projUseFlags.start)
     {
         _projVectors.base.start = string::convert<Vector3>(value);
     }
@@ -214,7 +210,7 @@ void Light::lightStartChanged(const std::string& value) {
     _projVectors.transformed.start = _projVectors.base.start;
 
     // If the light_end key is still unused, set it to a reasonable value
-    if (m_useLightEnd) {
+    if (_projUseFlags.end) {
         checkStartEnd();
     }
 
@@ -222,9 +218,9 @@ void Light::lightStartChanged(const std::string& value) {
 }
 
 void Light::lightEndChanged(const std::string& value) {
-    m_useLightEnd = (!value.empty());
+    _projUseFlags.end = (!value.empty());
 
-    if (m_useLightEnd)
+    if (_projUseFlags.end)
     {
         _projVectors.base.end = string::convert<Vector3>(value);
     }
@@ -232,7 +228,7 @@ void Light::lightEndChanged(const std::string& value) {
     _projVectors.transformed.end = _projVectors.base.end;
 
     // If the light_start key is still unused, set it to a reasonable value
-    if (m_useLightStart) {
+    if (_projUseFlags.start) {
         checkStartEnd();
     }
 
@@ -248,7 +244,7 @@ void Light::lightEndChanged(const std::string& value) {
  */
 void Light::checkStartEnd()
 {
-    if (m_useLightStart && m_useLightEnd)
+    if (_projUseFlags.start && _projUseFlags.end)
     {
         if (_projVectors.base.end.getLengthSquared() < _projVectors.base.start.getLengthSquared())
         {
@@ -357,21 +353,21 @@ void Light::freezeTransform()
 
     if (isProjected())
     {
-        if (m_useLightTarget)
+        if (_projUseFlags.target)
         {
             _projVectors.base.target = _projVectors.transformed.target;
             _entity.setKeyValue("light_target",
                                 string::to_string(_projVectors.base.target));
         }
 
-        if (m_useLightUp)
+        if (_projUseFlags.up)
         {
             _projVectors.base.up = _projVectors.transformed.up;
             _entity.setKeyValue("light_up",
                                string::to_string(_projVectors.base.up));
         }
 
-        if (m_useLightRight)
+        if (_projUseFlags.right)
         {
             _projVectors.base.right = _projVectors.transformed.right;
             _entity.setKeyValue("light_right",
@@ -381,14 +377,14 @@ void Light::freezeTransform()
         // Check the start and end (if the end is "above" the start, for example)
         checkStartEnd();
 
-        if (m_useLightStart)
+        if (_projUseFlags.start)
         {
             _projVectors.base.start = _projVectors.transformed.start;
             _entity.setKeyValue("light_start",
                                 string::to_string(_projVectors.base.start));
         }
 
-        if (m_useLightEnd)
+        if (_projUseFlags.end)
         {
             _projVectors.base.end = _projVectors.transformed.end;
             _entity.setKeyValue("light_end",
@@ -437,12 +433,12 @@ void Light::renderProjectionPoints(RenderableCollector& collector,
 	collector.addRenderable(*_rUp.getShader(), _rUp, localToWorld);
 	collector.addRenderable(*_rTarget.getShader(), _rTarget, localToWorld);
 
-    if (m_useLightStart)
+    if (_projUseFlags.start)
 	{
 		collector.addRenderable(*_rStart.getShader(), _rStart, localToWorld);
     }
 
-    if (m_useLightEnd)
+    if (_projUseFlags.end)
 	{
 		collector.addRenderable(*_rEnd.getShader(), _rEnd, localToWorld);
     }
@@ -475,7 +471,7 @@ void Light::translate(const Vector3& translation)
 
 void Light::ensureLightStartConstraints()
 {
-    Vector3 assumedEnd = (m_useLightEnd) ? _projVectors.transformed.end : _projVectors.transformed.target;
+    Vector3 assumedEnd = (_projUseFlags.end) ? _projVectors.transformed.end : _projVectors.transformed.target;
 
     Vector3 normal = (_projVectors.transformed.start - assumedEnd).getNormalised();
 
@@ -643,21 +639,21 @@ Vector3& Light::startTransformed()  { return _projVectors.transformed.start; }
 Vector3& Light::end()               { return _projVectors.base.end; }
 Vector3& Light::endTransformed()    { return _projVectors.transformed.end; }
 
-Vector3& Light::colourLightTarget() { return _colourLightTarget; }
-Vector3& Light::colourLightRight()  { return _colourLightRight; }
-Vector3& Light::colourLightUp()     { return _colourLightUp; }
-Vector3& Light::colourLightStart()  { return _colourLightStart; }
-Vector3& Light::colourLightEnd()    { return _colourLightEnd; }
+Vector3& Light::colourLightTarget() { return _projColours.target; }
+Vector3& Light::colourLightRight()  { return _projColours.right; }
+Vector3& Light::colourLightUp()     { return _projColours.up; }
+Vector3& Light::colourLightStart()  { return _projColours.start; }
+Vector3& Light::colourLightEnd()    { return _projColours.end; }
 
 /* greebo: A light is projected, if the entity keys light_target/light_up/light_right are not empty.
  */
 bool Light::isProjected() const {
-    return m_useLightTarget && m_useLightUp && m_useLightRight;
+    return _projUseFlags.target && _projUseFlags.up && _projUseFlags.right;
 }
 
 // greebo: Returns true if BOTH the light_start and light_end vectors are used
 bool Light::useStartEnd() const {
-    return m_useLightStart && m_useLightEnd;
+    return _projUseFlags.start && _projUseFlags.end;
 }
 
 void Light::projectionChanged()
@@ -733,13 +729,13 @@ void Light::updateProjection() const
 
     // If there is a light_start key set, use this, otherwise use the zero
     // vector
-    Vector3 start = m_useLightStart && m_useLightEnd
+    Vector3 start = _projUseFlags.start && _projUseFlags.end
                     ? _projVectors.transformed.start
                     : Vector3(0, 0, 0);
 
     // If there is no light_end, but a light_start, assume light_end =
     // light_target
-    Vector3 stop = m_useLightStart && m_useLightEnd
+    Vector3 stop = _projUseFlags.start && _projUseFlags.end
                    ? _projVectors.transformed.end
                    : _projVectors.transformed.target;
 
