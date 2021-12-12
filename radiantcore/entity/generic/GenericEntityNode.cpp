@@ -37,19 +37,6 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 
 GenericEntityNode::~GenericEntityNode()
 {
-	if (!_allow3Drotations)
-	{
-		// Ordinary rotation (2D around z axis), use angle key observer
-		removeKeyObserver("angle", _angleObserver);
-	}
-	else
-	{
-		// Full 3D rotations allowed, observe both keys using the rotation key observer
-		removeKeyObserver("angle", _angleObserver);
-		removeKeyObserver("rotation", _rotationObserver);
-	}
-
-	removeKeyObserver("origin", m_originKey);
 }
 
 GenericEntityNodePtr GenericEntityNode::Create(const IEntityClassPtr& eclass)
@@ -71,22 +58,20 @@ void GenericEntityNode::construct()
 
 	if (!_allow3Drotations)
 	{
-		_angleObserver.setCallback(std::bind(&AngleKey::angleChanged, &m_angleKey, std::placeholders::_1));
-
 		// Ordinary rotation (2D around z axis), use angle key observer
-		addKeyObserver("angle", _angleObserver);
+        static_assert(std::is_base_of<sigc::trackable, AngleKey>::value);
+		observeKey("angle", sigc::mem_fun(m_angleKey, &AngleKey::angleChanged));
 	}
 	else
 	{
-		_angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &m_rotationKey, std::placeholders::_1));
-		_rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &m_rotationKey, std::placeholders::_1));
-
 		// Full 3D rotations allowed, observe both keys using the rotation key observer
-		addKeyObserver("angle", _angleObserver);
-		addKeyObserver("rotation", _rotationObserver);
-	}
+        static_assert(std::is_base_of<sigc::trackable, RotationKey>::value);
+		observeKey("angle", sigc::mem_fun(m_rotationKey, &RotationKey::angleChanged));
+        observeKey("rotation", sigc::mem_fun(m_rotationKey, &RotationKey::rotationChanged));
+    }
 
-	addKeyObserver("origin", m_originKey);
+    static_assert(std::is_base_of<sigc::trackable, OriginKey>::value);
+	observeKey("origin", sigc::mem_fun(m_originKey, &OriginKey::onKeyValueChanged));
 }
 
 void GenericEntityNode::snapto(float snap)

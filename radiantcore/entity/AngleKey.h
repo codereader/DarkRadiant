@@ -9,7 +9,8 @@ class Entity;
 namespace entity
 {
 
-class AngleKey
+/// Wrapper for an "angle" spawnarg
+class AngleKey: public sigc::trackable
 {
 private:
 	std::function<void()> _angleChanged;
@@ -19,8 +20,8 @@ private:
 public:
     static const float IDENTITY;
 
-    AngleKey(const std::function<void()>& angleChanged) : 
-        _angleChanged(angleChanged), 
+    AngleKey(const std::function<void()>& angleChanged) :
+        _angleChanged(angleChanged),
         _value(IDENTITY)
     {}
 
