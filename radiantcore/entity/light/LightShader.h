@@ -5,7 +5,8 @@
 
 namespace entity {
 
-class LightShader
+/// Wrapper for a Shader used to render a Light
+class LightShader: public sigc::trackable
 {
 private:
 	std::string _shaderName;
@@ -25,7 +26,7 @@ public:
 	void valueChanged(const std::string& value)
 	{
 		_shaderName = value.empty() ? m_defaultShader : value;
-		
+
 		captureShader();
 		SceneChangeNotify();
 	}

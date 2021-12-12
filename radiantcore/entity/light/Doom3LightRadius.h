@@ -12,7 +12,7 @@
  * (see Light::setLightChangedCallback)
  */
 
-class Doom3LightRadius
+class Doom3LightRadius: public sigc::trackable
 {
 public:
     Vector3 _defaultRadius;

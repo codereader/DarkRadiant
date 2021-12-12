@@ -90,36 +90,30 @@ void Light::construct()
     _lightBox.extents = Vector3(8, 8, 8);
     _originTransformed = ORIGINKEY_IDENTITY;
 
-    _angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &m_rotationKey, std::placeholders::_1));
-    _rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &m_rotationKey, std::placeholders::_1));
-
-    _lightRadiusObserver.setCallback(std::bind(&Doom3LightRadius::lightRadiusChanged, &m_doom3Radius, std::placeholders::_1));
-    _lightCenterObserver.setCallback(std::bind(&Doom3LightRadius::lightCenterChanged, &m_doom3Radius, std::placeholders::_1));
-    _lightRotationObserver.setCallback(std::bind(&Light::lightRotationChanged, this, std::placeholders::_1));
-    _lightTargetObserver.setCallback(std::bind(&Light::lightTargetChanged, this, std::placeholders::_1));
-    _lightUpObserver.setCallback(std::bind(&Light::lightUpChanged, this, std::placeholders::_1));
-    _lightRightObserver.setCallback(std::bind(&Light::lightRightChanged, this, std::placeholders::_1));
-    _lightStartObserver.setCallback(std::bind(&Light::lightStartChanged, this, std::placeholders::_1));
-    _lightEndObserver.setCallback(std::bind(&Light::lightEndChanged, this, std::placeholders::_1));
-    _lightTextureObserver.setCallback(std::bind(&LightShader::valueChanged, &m_shader, std::placeholders::_1));
-
     // Set the flags to their default values, before attaching the key observers,
     // which might set them to true again.
     m_useLightTarget = m_useLightUp = m_useLightRight = m_useLightStart = m_useLightEnd = false;
 
-    _owner.addKeyObserver("origin", m_originKey);
+    // Observe position and rotation spawnargs
+    static_assert(std::is_base_of<sigc::trackable, OriginKey>::value);
+    static_assert(std::is_base_of<sigc::trackable, RotationKey>::value);
+    _owner.observeKey("origin", sigc::mem_fun(m_originKey, &OriginKey::onKeyValueChanged));
+    _owner.observeKey("angle", sigc::mem_fun(m_rotationKey, &RotationKey::angleChanged));
+    _owner.observeKey("rotation", sigc::mem_fun(m_rotationKey, &RotationKey::rotationChanged));
 
-    _owner.addKeyObserver("angle", _angleObserver);
-    _owner.addKeyObserver("rotation", _rotationObserver);
-    _owner.addKeyObserver("light_radius", _lightRadiusObserver);
-    _owner.addKeyObserver("light_center", _lightCenterObserver);
-    _owner.addKeyObserver("light_rotation", _lightRotationObserver);
-    _owner.addKeyObserver("light_target", _lightTargetObserver);
-    _owner.addKeyObserver("light_up", _lightUpObserver);
-    _owner.addKeyObserver("light_right", _lightRightObserver);
-    _owner.addKeyObserver("light_start", _lightStartObserver);
-    _owner.addKeyObserver("light_end", _lightEndObserver);
-    _owner.addKeyObserver("texture", _lightTextureObserver);
+    // Observe light-specific spawnargs
+    static_assert(std::is_base_of<sigc::trackable, Doom3LightRadius>::value);
+    static_assert(std::is_base_of<sigc::trackable, Light>::value);
+    static_assert(std::is_base_of<sigc::trackable, LightShader>::value);
+    _owner.observeKey("light_radius", sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightRadiusChanged));
+    _owner.observeKey("light_center", sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightCenterChanged));
+    _owner.observeKey("light_rotation", sigc::mem_fun(this, &Light::lightRotationChanged));
+    _owner.observeKey("light_target", sigc::mem_fun(this, &Light::lightTargetChanged));
+    _owner.observeKey("light_up", sigc::mem_fun(this, &Light::lightUpChanged));
+    _owner.observeKey("light_right", sigc::mem_fun(this, &Light::lightRightChanged));
+    _owner.observeKey("light_start", sigc::mem_fun(this, &Light::lightStartChanged));
+    _owner.observeKey("light_end", sigc::mem_fun(this, &Light::lightEndChanged));
+    _owner.observeKey("texture", sigc::mem_fun(m_shader, &LightShader::valueChanged));
 
     _projectionChanged = true;
 
@@ -134,20 +128,6 @@ void Light::construct()
 
 void Light::destroy()
 {
-    _owner.removeKeyObserver("origin", m_originKey);
-
-    _owner.removeKeyObserver("angle", _angleObserver);
-    _owner.removeKeyObserver("rotation", _rotationObserver);
-
-    _owner.removeKeyObserver("light_radius", _lightRadiusObserver);
-    _owner.removeKeyObserver("light_center", _lightCenterObserver);
-    _owner.removeKeyObserver("light_rotation", _lightRotationObserver);
-    _owner.removeKeyObserver("light_target", _lightTargetObserver);
-    _owner.removeKeyObserver("light_up", _lightUpObserver);
-    _owner.removeKeyObserver("light_right", _lightRightObserver);
-    _owner.removeKeyObserver("light_start", _lightStartObserver);
-    _owner.removeKeyObserver("light_end", _lightEndObserver);
-    _owner.removeKeyObserver("texture", _lightTextureObserver);
 }
 
 void Light::updateOrigin() {

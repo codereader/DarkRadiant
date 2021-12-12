@@ -48,7 +48,7 @@ class LightNode;
  * Note: All the selection stuff is handled by the LightInstance class. This is
  * just the bare bone light.
  */
-class Light: public RendererLight
+class Light: public RendererLight, public sigc::trackable
 {
 	friend class LightNode;
 
@@ -126,19 +126,6 @@ class Light: public RendererLight
     Callback m_transformChanged;
     Callback m_boundsChanged;
     Callback m_evaluateTransform;
-
-    KeyObserverDelegate _rotationObserver;
-	KeyObserverDelegate _angleObserver;
-
-	KeyObserverDelegate _lightRadiusObserver;
-	KeyObserverDelegate _lightCenterObserver;
-	KeyObserverDelegate _lightRotationObserver;
-	KeyObserverDelegate _lightTargetObserver;
-	KeyObserverDelegate _lightUpObserver;
-	KeyObserverDelegate _lightRightObserver;
-	KeyObserverDelegate _lightStartObserver;
-	KeyObserverDelegate _lightEndObserver;
-	KeyObserverDelegate _lightTextureObserver;
 
 private:
 
