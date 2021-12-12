@@ -22,6 +22,12 @@ namespace entity
 class EclassModelNode;
 typedef std::shared_ptr<EclassModelNode> EclassModelNodePtr;
 
+/**
+ * @brief Entity node displaying a model defined in an entityDef.
+ *
+ * This is used for entities whose model is defined in the entity class, e.g.
+ * guards, interactable objects etc.
+ */
 class EclassModelNode :
 	public EntityNode,
 	public Snappable
@@ -39,9 +45,6 @@ private:
     render::RenderablePivot _renderOrigin;
 
 	AABB _localAABB;
-
-    KeyObserverDelegate _rotationObserver;
-	KeyObserverDelegate _angleObserver;
 
 private:
 	// Constructor
@@ -66,7 +69,7 @@ public:
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-    
+
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
 

@@ -29,9 +29,6 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
 
 EclassModelNode::~EclassModelNode()
 {
-    removeKeyObserver("origin", _originKey);
-    removeKeyObserver("rotation", _rotationObserver);
-    removeKeyObserver("angle", _angleObserver);
 }
 
 EclassModelNodePtr EclassModelNode::Create(const IEntityClassPtr& eclass)
@@ -46,14 +43,14 @@ void EclassModelNode::construct()
 {
 	EntityNode::construct();
 
-    _rotationObserver.setCallback(std::bind(&RotationKey::rotationChanged, &_rotationKey, std::placeholders::_1));
-	_angleObserver.setCallback(std::bind(&RotationKey::angleChanged, &_rotationKey, std::placeholders::_1));
-
     _rotation.setIdentity();
 
-    addKeyObserver("angle", _angleObserver);
-	addKeyObserver("rotation", _rotationObserver);
-    addKeyObserver("origin", _originKey);
+    // Observe position and orientation spawnargs
+    static_assert(std::is_base_of<sigc::trackable, OriginKey>::value);
+    static_assert(std::is_base_of<sigc::trackable, RotationKey>::value);
+    observeKey("angle", sigc::mem_fun(_rotationKey, &RotationKey::angleChanged));
+	observeKey("rotation", sigc::mem_fun(_rotationKey, &RotationKey::rotationChanged));
+    observeKey("origin", sigc::mem_fun(_originKey, &OriginKey::onKeyValueChanged));
 }
 
 // Snappable implementation
@@ -109,7 +106,7 @@ void EclassModelNode::translate(const Vector3& translation)
 	_origin += translation;
 }
 
-void EclassModelNode::rotate(const Quaternion& rotation) 
+void EclassModelNode::rotate(const Quaternion& rotation)
 {
 	_rotation.rotate(rotation);
 }
