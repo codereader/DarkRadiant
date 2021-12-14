@@ -171,19 +171,9 @@ void EntityNode::onEntityClassChanged()
     acquireShaders();
 }
 
-void EntityNode::addKeyObserver(const std::string& key, KeyObserver& observer)
-{
-	_keyObservers.insert(key, observer);
-}
-
 void EntityNode::observeKey(const std::string& key, KeyObserverFunc func)
 {
     _keyObservers.observeKey(key, func);
-}
-
-void EntityNode::removeKeyObserver(const std::string& key, KeyObserver& observer)
-{
-	_keyObservers.erase(observer);
 }
 
 Entity& EntityNode::getEntity()
