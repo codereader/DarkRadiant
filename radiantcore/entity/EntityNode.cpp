@@ -62,15 +62,17 @@ void EntityNode::construct()
 
 	TargetableNode::construct();
 
-	addKeyObserver("name", _nameKey);
-	addKeyObserver("_color", _colourKey);
+    // Observe basic keys
+    static_assert(std::is_base_of<sigc::trackable, NameKey>::value);
+    static_assert(std::is_base_of<sigc::trackable, ColourKey>::value);
+	observeKey("name", sigc::mem_fun(_nameKey, &NameKey::onKeyValueChanged));
+	observeKey("_color", sigc::mem_fun(_colourKey, &ColourKey::onKeyValueChanged));
 
-	_modelKeyObserver.setCallback(std::bind(&EntityNode::_modelKeyChanged, this, std::placeholders::_1));
-	addKeyObserver("model", _modelKeyObserver);
-
-	// Connect the skin keyvalue change handler directly to the model node manager
-	_skinKeyObserver.setCallback(std::bind(&ModelKey::skinChanged, &_modelKey, std::placeholders::_1));
-	addKeyObserver("skin", _skinKeyObserver);
+    // Observe model-related keys
+    static_assert(std::is_base_of<sigc::trackable, EntityNode>::value);
+    static_assert(std::is_base_of<sigc::trackable, ModelKey>::value);
+	observeKey("model", sigc::mem_fun(this, &EntityNode::_modelKeyChanged));
+	observeKey("skin", sigc::mem_fun(_modelKey, &ModelKey::skinChanged));
 
 	_shaderParms.addKeyObservers();
 
@@ -107,13 +109,7 @@ void EntityNode::destruct()
 {
 	_shaderParms.removeKeyObservers();
 
-	removeKeyObserver("skin", _skinKeyObserver);
-
 	_modelKey.setActive(false); // disable callbacks during destruction
-	removeKeyObserver("model", _modelKeyObserver);
-
-	removeKeyObserver("_color", _colourKey);
-	removeKeyObserver("name", _nameKey);
 
 	_eclassChangedConn.disconnect();
 
