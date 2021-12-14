@@ -80,6 +80,13 @@ void Curve::onPreRender(const ShaderPtr& shader, const VolumeTest& volume)
     _renderCurve.update(shader);
 }
 
+void Curve::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (isEmpty()) return;
+
+    collector.addHighlightRenderable(_renderCurve, Matrix4::getIdentity());
+}
+
 const AABB& Curve::getBounds() const {
 	return _bounds;
 }

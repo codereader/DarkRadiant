@@ -79,8 +79,9 @@ public:
 	// which writes the points to the spawnargs
 	virtual void saveToEntity(Entity& target) = 0;
 
-	// Front-end render method
+	// Render methods
     void onPreRender(const ShaderPtr& shader, const VolumeTest& volume);
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume);
 
 	// Performs a selection test on the point vertices of this curve
 	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);

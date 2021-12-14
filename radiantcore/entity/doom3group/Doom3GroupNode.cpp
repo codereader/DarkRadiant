@@ -324,6 +324,14 @@ void Doom3GroupNode::renderWireframe(IRenderableCollector& collector, const Volu
     renderCommon(collector, volume);
 }
 
+void Doom3GroupNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    m_curveNURBS.renderHighlights(collector, volume);
+    m_curveCatmullRom.renderHighlights(collector, volume);
+
+    EntityNode::renderHighlights(collector, volume);
+}
+
 void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	EntityNode::setRenderSystem(renderSystem);
