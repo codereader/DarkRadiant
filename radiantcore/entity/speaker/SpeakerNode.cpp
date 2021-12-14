@@ -483,4 +483,22 @@ void SpeakerNode::onEntitySettingsChanged()
     _renderableRadiiFill.queueUpdate();
 }
 
+void SpeakerNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    EntityNode::onInsertIntoScene(root);
+
+    _renderableBox.queueUpdate();
+    _renderableRadiiWireframe.queueUpdate();
+    _renderableRadiiFill.queueUpdate();
+}
+
+void SpeakerNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    EntityNode::onRemoveFromScene(root);
+
+    _renderableBox.clear();
+    _renderableRadiiWireframe.clear();
+    _renderableRadiiFill.clear();
+}
+
 } // namespace entity

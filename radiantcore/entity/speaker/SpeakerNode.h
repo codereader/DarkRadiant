@@ -129,6 +129,9 @@ public:
 
     void onEntitySettingsChanged() override;
 
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
+
 protected:
     // Gets called by the Transformable implementation whenever
     // scale, rotation or translation is changed.
