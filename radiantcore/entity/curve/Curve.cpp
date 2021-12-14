@@ -69,18 +69,24 @@ ControlPoints& Curve::getControlPoints() {
 	return _controlPoints;
 }
 
-void Curve::submitRenderables(const ShaderPtr& shader, IRenderableCollector& collector, const VolumeTest& volume,
-	const Matrix4& localToWorld) const
+void Curve::onPreRender(const ShaderPtr& shader, const VolumeTest& volume)
 {
-	collector.addRenderable(*shader, _renderCurve, localToWorld);
+    if (_renderCurve.m_vertices.empty())
+    {
+        _renderCurve.clear();
+        return;
+    }
+
+    _renderCurve.update(shader);
 }
 
 const AABB& Curve::getBounds() const {
 	return _bounds;
 }
 
-bool Curve::isEmpty() const {
-	return _renderCurve.m_vertices.size() == 0;
+bool Curve::isEmpty() const
+{
+	return _renderCurve.m_vertices.empty();
 }
 
 bool Curve::parseCurve(const std::string& value) {
@@ -119,6 +125,7 @@ void Curve::curveChanged()
 {
 	// Recalculate the tesselation
 	tesselate();
+    _renderCurve.queueUpdate();
 
 	// Recalculate bounds
     _bounds = AABB();
@@ -225,6 +232,16 @@ void Curve::insertControlPointsAt(IteratorList iterators) {
 
 	_controlPoints = newSet;
 	_controlPointsTransformed = _controlPoints;
+}
+
+void Curve::clearRenderable()
+{
+    _renderCurve.clear();
+}
+
+void Curve::updateRenderable()
+{
+    _renderCurve.queueUpdate();
 }
 
 } // namespace entity

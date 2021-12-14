@@ -57,9 +57,7 @@ class Doom3GroupNode :
 	bool m_isModel;
 
 	CurveNURBS m_curveNURBS;
-	std::size_t m_curveNURBSChanged;
 	CurveCatmullRom m_curveCatmullRom;
-	std::size_t m_curveCatmullRomChanged;
 
 	// ------------------------------------------------------------------------
     // Doom3GroupNode members
@@ -103,7 +101,7 @@ public:
 	void invertSelectedComponents(selection::ComponentSelectionMode mode) override;
 	void testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) override;
 
-	// override scene::Inode::onRemoveFromScene to deselect the child components
+	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ComponentEditable implementation
@@ -126,6 +124,7 @@ public:
 	void removeOriginFromChildren() override;
 
 	// Renderable implementation
+    void onPreRender(const VolumeTest& volume) override;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
@@ -151,6 +150,8 @@ protected:
 
 	// Override EntityNode::construct()
 	virtual void construct() override;
+
+    void onVisibilityChanged(bool isVisibleNow) override;
 
 private:
 	void evaluateTransform();

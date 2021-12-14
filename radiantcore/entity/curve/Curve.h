@@ -80,8 +80,7 @@ public:
 	virtual void saveToEntity(Entity& target) = 0;
 
 	// Front-end render method
-	void submitRenderables(const ShaderPtr& shader, IRenderableCollector& collector, 
-		const VolumeTest& volume, const Matrix4& localToWorld) const;
+    void onPreRender(const ShaderPtr& shader, const VolumeTest& volume);
 
 	// Performs a selection test on the point vertices of this curve
 	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);
@@ -92,6 +91,9 @@ public:
 
 	// Returns the string representation of this curve to store it into entity spawnargs
 	std::string getEntityKeyValue();
+
+    void clearRenderable();
+    void updateRenderable();
 
 protected:
 	// Clears the control points and other associated elements

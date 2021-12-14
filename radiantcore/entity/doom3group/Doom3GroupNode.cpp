@@ -88,6 +88,22 @@ void Doom3GroupNode::construct()
     );
 }
 
+void Doom3GroupNode::onVisibilityChanged(bool isVisibleNow)
+{
+    EntityNode::onVisibilityChanged(isVisibleNow);
+
+    if (isVisibleNow)
+    {
+        m_curveNURBS.updateRenderable();
+        m_curveCatmullRom.updateRenderable();
+    }
+    else
+    {
+        m_curveNURBS.clearRenderable();
+        m_curveCatmullRom.clearRenderable();
+    }
+}
+
 bool Doom3GroupNode::hasEmptyCurve() {
 	return m_curveNURBS.isEmpty() &&
 		   m_curveCatmullRom.isEmpty();
@@ -234,10 +250,23 @@ scene::INodePtr Doom3GroupNode::clone() const
 	return clone;
 }
 
+void Doom3GroupNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    EntityNode::onInsertIntoScene(root);
+
+    // Clear curve renderables when hidden
+    m_curveNURBS.updateRenderable();
+    m_curveCatmullRom.updateRenderable();
+}
+
 void Doom3GroupNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	// Call the base class first
 	EntityNode::onRemoveFromScene(root);
+
+    // Clear curve renderables when hidden
+    m_curveNURBS.clearRenderable();
+    m_curveCatmullRom.clearRenderable();
 
 	// De-select all child components as well
 	setSelectedComponents(false, selection::ComponentSelectionMode::Vertex);
@@ -260,47 +289,48 @@ void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test)
 	}
 }
 
+void Doom3GroupNode::onPreRender(const VolumeTest& volume)
+{
+    EntityNode::onPreRender(volume);
+
+    m_curveNURBS.onPreRender(getColourShader(), volume);
+    m_curveCatmullRom.onPreRender(getColourShader(), volume);
+}
+
 void Doom3GroupNode::renderCommon(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	if (isSelected()) {
+	if (isSelected())
+    {
 		m_renderOrigin.render(collector, volume, localToWorld());
 	}
 
-	if (!m_curveNURBS.isEmpty()) {
-		// Always render curves relative to map origin
-		m_curveNURBS.submitRenderables(getWireShader(), collector, volume, Matrix4::getIdentity());
-	}
-
-	if (!m_curveCatmullRom.isEmpty()) {
-		// Always render curves relative to map origin
-		m_curveCatmullRom.submitRenderables(getWireShader(), collector, volume, Matrix4::getIdentity());
-	}
+    // Render curves always relative to the absolute map origin
+    static Matrix4 identity = Matrix4::getIdentity();
+    _nurbsEditInstance.renderComponentsSelected(collector, volume, identity);
+    _catmullRomEditInstance.renderComponentsSelected(collector, volume, identity);
 }
 
 void Doom3GroupNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
+    
     renderCommon(collector, volume);
-
-	// Render curves always relative to the absolute map origin
-    static Matrix4 identity = Matrix4::getIdentity();
-	_nurbsEditInstance.renderComponentsSelected(collector, volume, identity);
-	_catmullRomEditInstance.renderComponentsSelected(collector, volume, identity);
 }
 
 void Doom3GroupNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
+ 
     renderCommon(collector, volume);
-
-    static Matrix4 identity = Matrix4::getIdentity();
-	_nurbsEditInstance.renderComponentsSelected(collector, volume, identity);
-	_catmullRomEditInstance.renderComponentsSelected(collector, volume, identity);
 }
 
 void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	EntityNode::setRenderSystem(renderSystem);
+
+    // Clear the geometry from any previous shader
+    m_curveNURBS.clearRenderable();
+    m_curveCatmullRom.clearRenderable();
 
 	m_renderOrigin.setRenderSystem(renderSystem);
 	_nurbsEditInstance.setRenderSystem(renderSystem);
