@@ -93,8 +93,10 @@ private:
     // Write the widget contents to the given entity
     void setValuesOnEntity(Entity* entity);
 
-    // Write contents to all light entities
-    void writeToAllEntities();
+    // Write contents to all light entities. By default will call
+    // setValuesOnEntity() for each entity, otherwise it will invoke the given
+    // functor to adjust each entity in turn.
+    void writeToAllEntities(std::function<void(Entity&)> setter = {});
 
     // Set the given key/value pair on ALL entities in the list of lights
     void setKeyValueAllLights(const std::string& k, const std::string& v);

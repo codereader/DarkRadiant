@@ -379,10 +379,10 @@ namespace
     }
 
     // Set colour on entity
-    void setEntityColour(Entity* entity, const Vector3& col)
+    void setEntityColour(Entity& entity, const Vector3& col)
     {
         setEntityValueIfDifferent(
-            entity, "_color",
+            &entity, "_color",
             fmt::format("{:.3f} {:.3f} {:.3f}", col.x(), col.y(), col.z())
         );
     }
@@ -555,7 +555,7 @@ void LightInspector::adjustBrightness() const
             newColour = Vector3(newHighest, newHighest, newHighest);
         }
 
-        setEntityColour(light, newColour);
+        setEntityColour(*light, newColour);
     }
 
     // Update camera immediately to provide user feedback
@@ -563,14 +563,22 @@ void LightInspector::adjustBrightness() const
 }
 
 // Write to all entities
-void LightInspector::writeToAllEntities()
+void LightInspector::writeToAllEntities(std::function<void(Entity&)> setter)
 {
 	UndoableCommand command("setLightProperties");
 
     for (auto entity : _lightEntities)
     {
-        setValuesOnEntity(entity);
+        if (setter)
+            // Invoke setter to set required value
+            setter(*entity);
+        else
+            // Set all values from dialog elements
+            setValuesOnEntity(entity);
     }
+
+    // Whatever we changed probably requires a redraw
+    GlobalCameraManager().getActiveView().queueDraw();
 }
 
 // Set a given key value on all light entities
@@ -586,12 +594,6 @@ void LightInspector::setKeyValueAllLights(const std::string& key,
 // Set the keyvalues on the entity from the dialog widgets
 void LightInspector::setValuesOnEntity(Entity* entity)
 {
-    // Set the "_color" keyvalue
-    wxColour col = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->GetColour();
-    Vector3 colFloat(col.Red() / 255.0f, col.Green() / 255.0f,
-                     col.Blue() / 255.0f);
-    setEntityColour(entity, colFloat);
-
     // Write out all vectors to the entity
 	for (const auto& pair : _valueMap)
 	{
@@ -651,7 +653,12 @@ void LightInspector::_onColourChange(wxColourPickerEvent& ev)
 {
     if (_updateActive) return; // avoid callback loops
 
-    writeToAllEntities();
+    writeToAllEntities([this](Entity& entity) {
+        auto picker = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour");
+        auto col = picker->GetColour();
+        Vector3 colFloat(col.Red() / 255.0f, col.Green() / 255.0f, col.Blue() / 255.0f);
+        setEntityColour(entity, colFloat);
+    });
 }
 
 } // namespace ui
