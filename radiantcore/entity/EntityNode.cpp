@@ -481,6 +481,11 @@ const ShaderPtr& EntityNode::getFillShader() const
 	return _fillShader;
 }
 
+Vector4 EntityNode::getEntityColour() const
+{
+    return Vector4(_spawnArgs.getEntityClass()->getColour(), 1.0);
+}
+
 void EntityNode::onPostUndo()
 {
 	// After undo operations there might remain some child nodes

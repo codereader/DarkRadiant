@@ -31,7 +31,7 @@ public:
         _needsUpdate = true;
     }
 
-    void update(const ShaderPtr& shader)
+    void update(const ShaderPtr& shader, const IRenderEntity& entity)
     {
         bool shaderChanged = _shader != shader;
 
@@ -50,9 +50,12 @@ public:
         std::vector<ArbitraryMeshVertex> vertices;
         vertices.reserve(numPoints);
 
+        // Use the colour defined by the entity as vertex colour
+        auto entityColour = entity.getEntityColour();
+
         for (const auto& vertex : _winding)
         {
-            vertices.emplace_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, vertex.texcoord, { 1, 1, 1 }));
+            vertices.emplace_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, vertex.texcoord, entityColour));
         }
 
         if (_shader && _slot != IWindingRenderer::InvalidSlot && (shaderChanged || numPoints != _windingSize))

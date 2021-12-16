@@ -35,7 +35,6 @@ public:
 	const AABB& localAABB() const override;
 	std::size_t getHighlightFlags() override;
 
-    bool isOriented() const override;
 	void onPreRender(const VolumeTest& volume) override;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;

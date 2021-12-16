@@ -361,11 +361,11 @@ void BrushNode::onPreRender(const VolumeTest& volume)
 
         if (volume.fill())
         {
-            face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader());
+            face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader(), *_renderEntity);
         }
         else
         {
-            face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader());
+            face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader(), *_renderEntity);
         }
     }
 }

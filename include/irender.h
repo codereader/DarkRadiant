@@ -7,6 +7,7 @@
 #include <vector>
 
 #include "math/Vector3.h"
+#include "math/Vector4.h"
 #include "math/AABB.h"
 #include "render/ArbitraryMeshVertex.h"
 
@@ -158,6 +159,12 @@ public:
      * visualisations such as target lines and light boxes.
      */
     virtual const ShaderPtr& getColourShader() const = 0;
+
+    /**
+     * Returns the colour of this entity, that is used to display its
+     * wireframe representation.
+     */
+    virtual Vector4 getEntityColour() const = 0;
 };
 typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;
