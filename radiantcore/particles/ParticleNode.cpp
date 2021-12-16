@@ -59,11 +59,6 @@ Matrix4 ParticleNode::localToParent() const
 	return _local2Parent;
 }
 
-bool ParticleNode::isOriented() const
-{
-    return true;
-}
-
 void ParticleNode::onPreRender(const VolumeTest& volume)
 {
     if (!_renderableParticle) return;
@@ -131,7 +126,7 @@ void ParticleNode::update(const VolumeTest& viewVolume) const
 	_renderableParticle->setEntityColour(Vector3(
 		_renderEntity->getShaderParm(0), _renderEntity->getShaderParm(1), _renderEntity->getShaderParm(2)));
 
-	_renderableParticle->update(viewRotation);
+	_renderableParticle->update(viewRotation, localToWorld());
 }
 
 } // namespace

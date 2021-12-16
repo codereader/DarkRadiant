@@ -32,6 +32,8 @@ class RenderableParticleStage :
 
 	// The rotation matrix to orient particles
 	Matrix4 _viewRotation;
+    // Matrix to produce world coordinates
+	Matrix4 _localToWorld;
 
 	// The particle direction (instance owned by RenderableParticle)
 	const Vector3& _direction;
@@ -48,12 +50,10 @@ public:
 							const Vector3& direction,
 							const Vector3& entityColour);
 
-	void render(const RenderInfo& info) const;
-
 	// Generate particle geometry, time is absolute in msecs
 	void update(std::size_t time, const Matrix4& viewRotation);
 
-    void submitGeometry(const ShaderPtr& shader);
+    void submitGeometry(const ShaderPtr& shader, const Matrix4& localToWorld);
 
 	const AABB& getBounds();
 

@@ -19,7 +19,7 @@ namespace particles
 #define MS2SEC(x) ((x)*0.001f)
 
 /// A single bunch of particles, consisting of a renderable set of quads
-class RenderableParticleBunch : public OpenGLRenderable
+class RenderableParticleBunch
 {
 	// The bunch index
 	std::size_t _index;
@@ -74,9 +74,8 @@ public:
 	void update(std::size_t time);
 
     // Add the renderable geometry to the given arrays
-    void addVertexData(std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices);
-
-	void render(const RenderInfo& info) const;
+    void addVertexData(std::vector<ArbitraryMeshVertex>& vertices, 
+        std::vector<unsigned int>& indices, const Matrix4& localToWorld);
 
 	const AABB& getBounds();
 

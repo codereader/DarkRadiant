@@ -13,6 +13,7 @@ RenderableParticleStage::RenderableParticleStage(
 	_seeds(_numSeeds),
 	_bunches(2), // two bunches
 	_viewRotation(Matrix4::getIdentity()), // is re-calculated each update anyway
+    _localToWorld(Matrix4::getIdentity()),
 	_direction(direction),
 	_entityColour(entityColour)
 {
@@ -21,20 +22,6 @@ RenderableParticleStage::RenderableParticleStage(
 	for (std::size_t i = 0; i < _numSeeds; ++i)
 	{
 		_seeds[i] = random();
-	}
-}
-
-void RenderableParticleStage::render(const RenderInfo& info) const
-{
-	// Draw up to two active bunches
-	if (_bunches[0])
-	{
-		_bunches[0]->render(info);
-	}
-
-	if (_bunches[1])
-	{
-		_bunches[1]->render(info);
 	}
 }
 
@@ -81,8 +68,10 @@ void RenderableParticleStage::update(std::size_t time, const Matrix4& viewRotati
 	}
 }
 
-void RenderableParticleStage::submitGeometry(const ShaderPtr& shader)
+void RenderableParticleStage::submitGeometry(const ShaderPtr& shader, const Matrix4& localToWorld)
 {
+    _localToWorld = localToWorld;
+
     RenderableGeometry::update(shader);
 }
 
@@ -93,12 +82,12 @@ void RenderableParticleStage::updateGeometry()
 
     if (_bunches[0])
     {
-        _bunches[0]->addVertexData(vertices, indices);
+        _bunches[0]->addVertexData(vertices, indices, _localToWorld);
     }
 
     if (_bunches[1])
     {
-        _bunches[1]->addVertexData(vertices, indices);
+        _bunches[1]->addVertexData(vertices, indices, _localToWorld);
     }
 
     RenderableGeometry::updateGeometry(render::GeometryType::Quads, vertices, indices);

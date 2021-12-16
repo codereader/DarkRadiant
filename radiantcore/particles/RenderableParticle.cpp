@@ -20,7 +20,7 @@ RenderableParticle::~RenderableParticle()
 }
 
 // Time is in msecs
-void RenderableParticle::update(const Matrix4& viewRotation)
+void RenderableParticle::update(const Matrix4& viewRotation, const Matrix4& localToWorld)
 {
 	auto renderSystem = _renderSystem.lock();
 
@@ -47,7 +47,7 @@ void RenderableParticle::update(const Matrix4& viewRotation)
             stage->update(time, invViewRotation);
 
             // Attach the geometry to the shader
-            stage->submitGeometry(pair.second.shader);
+            stage->submitGeometry(pair.second.shader, localToWorld);
 		}
 	}
 }

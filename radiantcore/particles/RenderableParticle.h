@@ -60,7 +60,7 @@ public:
 	~RenderableParticle();
 
 	// Time is in msecs
-	void update(const Matrix4& viewRotation) override;
+	void update(const Matrix4& viewRotation, const Matrix4& localToWorld) override;
 
 	// Front-end render methods
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
