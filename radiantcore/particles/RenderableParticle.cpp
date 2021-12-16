@@ -43,7 +43,11 @@ void RenderableParticle::update(const Matrix4& viewRotation)
 	{
 		for (const auto& stage : pair.second.stages)
 		{
-			stage->update(time, invViewRotation);
+            // Update the particle geometry
+            stage->update(time, invViewRotation);
+
+            // Attach the geometry to the shader
+            stage->submitGeometry(pair.second.shader);
 		}
 	}
 }

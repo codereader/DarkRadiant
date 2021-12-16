@@ -36,6 +36,11 @@ public:
     RenderableGeometry(const RenderableGeometry& other) = delete;
     RenderableGeometry& operator=(const RenderableGeometry& other) = delete;
 
+    virtual ~RenderableGeometry()
+    {
+        clear();
+    }
+
     // (Non-virtual) update method handling any possible shader change
     // The geometry is withdrawn from the given shader if it turns out
     // to be different from the last update.

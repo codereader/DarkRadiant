@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderableParticleBunch.h"
+#include "render/RenderableGeometry.h"
 
 namespace particles
 {
@@ -16,7 +17,7 @@ namespace particles
  * time.
  */
 class RenderableParticleStage :
-	public OpenGLRenderable
+    public render::RenderableGeometry
 {
 	// The stage def we're rendering
 	const IStageDef& _stageDef;
@@ -52,10 +53,15 @@ public:
 	// Generate particle geometry, time is absolute in msecs
 	void update(std::size_t time, const Matrix4& viewRotation);
 
+    void submitGeometry(const ShaderPtr& shader);
+
 	const AABB& getBounds();
 
     /// Return the stage definition associated with this renderable
 	const IStageDef& getDef() const;
+
+protected:
+    void updateGeometry() override;
 
 private:
 	// Returns the correct rotation matrix required by the stage orientation settings

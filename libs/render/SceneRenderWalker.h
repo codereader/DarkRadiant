@@ -36,6 +36,8 @@ public:
 	// scene::Graph::Walker implementation, tells each node to submit its OpenGLRenderables
 	bool visit(const scene::INodePtr& node)
 	{
+        node->onPreRender(_volume);
+
 		render(*node);
 
 		return true;

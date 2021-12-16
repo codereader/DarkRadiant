@@ -69,16 +69,39 @@ void RenderableParticleStage::update(std::size_t time, const Matrix4& viewRotati
 	// The 0 bunch is the active one, the 1 bunch is the previous one if not null
 
 	// Tell the particle batches to update their geometry
-	if (_bunches[0] != NULL)
+	if (_bunches[0])
 	{
 		// Get one of our seed values
 		_bunches[0]->update(localtimeMsec);
 	}
 
-	if (_bunches[1] != NULL)
+	if (_bunches[1])
 	{
 		_bunches[1]->update(localtimeMsec);
 	}
+}
+
+void RenderableParticleStage::submitGeometry(const ShaderPtr& shader)
+{
+    RenderableGeometry::update(shader);
+}
+
+void RenderableParticleStage::updateGeometry()
+{
+    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<unsigned int> indices;
+
+    if (_bunches[0])
+    {
+        _bunches[0]->addVertexData(vertices, indices);
+    }
+
+    if (_bunches[1])
+    {
+        _bunches[1]->addVertexData(vertices, indices);
+    }
+
+    RenderableGeometry::updateGeometry(render::GeometryType::Quads, vertices, indices);
 }
 
 const AABB& RenderableParticleStage::getBounds()

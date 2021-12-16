@@ -151,6 +151,35 @@ void RenderableParticleBunch::update(std::size_t time)
     }
 }
 
+void RenderableParticleBunch::addVertexData(std::vector<ArbitraryMeshVertex>& vertices, 
+    std::vector<unsigned int>& indices)
+{
+    if (_quads.empty()) return;
+
+    auto firstIndex = static_cast<unsigned int>(vertices.size());
+
+    vertices.reserve(vertices.size() + _quads.size() * 4);
+    indices.reserve(indices.size() + _quads.size() * 4);
+
+    for (const auto& quad : _quads)
+    {
+        for (auto i = 0; i < 4; ++i)
+        {
+            vertices.push_back(ArbitraryMeshVertex(
+                quad.verts[i].vertex, 
+                quad.verts[i].normal, 
+                quad.verts[i].texcoord, 
+                quad.verts[i].colour.getVector3()) // TODO: 4th colour component
+            );
+        }
+
+        indices.push_back(firstIndex++);
+        indices.push_back(firstIndex++);
+        indices.push_back(firstIndex++);
+        indices.push_back(firstIndex++);
+    }
+}
+
 void RenderableParticleBunch::render(const RenderInfo& info) const
 {
     if (_quads.empty()) return;

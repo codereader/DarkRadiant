@@ -73,6 +73,9 @@ public:
 	// Time is specified in stage time without offset,in msecs.
 	void update(std::size_t time);
 
+    // Add the renderable geometry to the given arrays
+    void addVertexData(std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices);
+
 	void render(const RenderInfo& info) const;
 
 	const AABB& getBounds();
