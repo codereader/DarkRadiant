@@ -80,6 +80,9 @@ private:
     void _onOptionsToggle(wxCommandEvent& ev);
     void adjustBrightness() const;
 
+    // Get value of a checkbox as a spawnarg string (1 or 0)
+	std::string checkboxValue(std::string cbName) const;
+
     void updateColourPicker();
     void updateColourWidgets();
     void updateLightShapeWidgets();
@@ -93,10 +96,10 @@ private:
     // Write the widget contents to the given entity
     void setValuesOnEntity(Entity* entity);
 
-    // Write contents to all light entities. By default will call
-    // setValuesOnEntity() for each entity, otherwise it will invoke the given
-    // functor to adjust each entity in turn.
-    void writeToAllEntities(std::function<void(Entity&)> setter = {});
+    // Write contents to all light entities. Pass a string map containing
+    // explicit values to set, or an empty map to call setValuesOnEntity() for
+    // each entity.
+    void writeToAllEntities(StringMap newValues = {});
 
     // Set the given key/value pair on ALL entities in the list of lights
     void setKeyValueAllLights(const std::string& k, const std::string& v);

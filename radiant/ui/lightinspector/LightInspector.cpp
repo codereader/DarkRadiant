@@ -29,10 +29,9 @@ namespace ui
 namespace
 {
     const char* LIGHTINSPECTOR_TITLE = N_("Light properties");
-
     const std::string RKEY_WINDOW_STATE = "user/ui/lightInspector/window";
-
     const char* LIGHT_PREFIX_XPATH = "/light/texture//prefix";
+    const char* COLOR_KEY = "_color";
 
     /** greebo: Loads the prefixes from the registry and creates a
      *          comma-separated list string
@@ -358,7 +357,7 @@ namespace
     {
         // If the light has no colour key, use a default of white rather than
         // the Vector3 default of black (0, 0, 0).
-        std::string colString = entity.getKeyValue("_color");
+        std::string colString = entity.getKeyValue(COLOR_KEY);
         if (colString.empty())
         {
             colString = "1.0 1.0 1.0";
@@ -378,13 +377,15 @@ namespace
         }
     }
 
+    std::string colourToKeyValue(const Vector3& col)
+    {
+        return fmt::format("{:.3f} {:.3f} {:.3f}", col.x(), col.y(), col.z());
+    }
+
     // Set colour on entity
     void setEntityColour(Entity& entity, const Vector3& col)
     {
-        setEntityValueIfDifferent(
-            &entity, "_color",
-            fmt::format("{:.3f} {:.3f} {:.3f}", col.x(), col.y(), col.z())
-        );
+        setEntityValueIfDifferent(&entity, COLOR_KEY, colourToKeyValue(col));
     }
 
     // Convert Vector3 colour to wxColour
@@ -562,19 +563,27 @@ void LightInspector::adjustBrightness() const
     GlobalCameraManager().getActiveView().queueDraw();
 }
 
+std::string LightInspector::checkboxValue(std::string cbName) const
+{
+	return findNamedObject<wxCheckBox>(this, cbName)->GetValue() ? "1" : "0";
+}
+
 // Write to all entities
-void LightInspector::writeToAllEntities(std::function<void(Entity&)> setter)
+void LightInspector::writeToAllEntities(StringMap newValues)
 {
 	UndoableCommand command("setLightProperties");
 
     for (auto entity : _lightEntities)
     {
-        if (setter)
-            // Invoke setter to set required value
-            setter(*entity);
-        else
+        if (!newValues.empty()) {
+            // Set all values from the map
+            for (auto [k, v]: newValues)
+                setEntityValueIfDifferent(entity, k, v);
+        }
+        else {
             // Set all values from dialog elements
             setValuesOnEntity(entity);
+        }
     }
 
     // Whatever we changed probably requires a redraw
@@ -630,12 +639,6 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 	// Write the texture key
 	setEntityValueIfDifferent(entity, "texture", _texSelector->getSelection());
 
-	// Write the options
-	setEntityValueIfDifferent(entity, "parallel", findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->GetValue() ? "1" : "0");
-	setEntityValueIfDifferent(entity, "nospecular", findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->GetValue() ? "1" : "0");
-	setEntityValueIfDifferent(entity, "nodiffuse", findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->GetValue() ? "1" : "0");
-	setEntityValueIfDifferent(entity, "noshadows", findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->GetValue() ? "1" : "0");
-
     if (_supportsAiSee)
     {
         setEntityValueIfDifferent(entity, "ai_see", findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->GetValue() ? "1" : "0");
@@ -646,19 +649,23 @@ void LightInspector::_onOptionsToggle(wxCommandEvent& ev)
 {
     if (_updateActive) return; // avoid callback loops
 
-    writeToAllEntities();
+    writeToAllEntities({{"parallel", checkboxValue("LightInspectorParallel")},
+                        {"nospecular", checkboxValue("LightInspectorSkipSpecular")},
+                        {"nodiffuse", checkboxValue("LightInspectorSkipDiffuse")},
+                        {"noshadows", checkboxValue("LightInspectorNoShadows")}});
 }
 
 void LightInspector::_onColourChange(wxColourPickerEvent& ev)
 {
     if (_updateActive) return; // avoid callback loops
 
-    writeToAllEntities([this](Entity& entity) {
-        auto picker = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour");
-        auto col = picker->GetColour();
-        Vector3 colFloat(col.Red() / 255.0f, col.Green() / 255.0f, col.Blue() / 255.0f);
-        setEntityColour(entity, colFloat);
-    });
+    // Convert colour from the wxColourPicker into the floating-point format
+    // required for the spawnarg
+    auto picker = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour");
+    auto col = picker->GetColour();
+    Vector3 colFloat(col.Red() / 255.0f, col.Green() / 255.0f, col.Blue() / 255.0f);
+
+    writeToAllEntities({{COLOR_KEY, colourToKeyValue(colFloat)}});
 }
 
 } // namespace ui
