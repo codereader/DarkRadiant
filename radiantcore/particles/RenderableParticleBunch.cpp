@@ -169,7 +169,7 @@ void RenderableParticleBunch::addVertexData(std::vector<ArbitraryMeshVertex>& ve
                 quad.verts[i].vertex, 
                 quad.verts[i].normal, 
                 quad.verts[i].texcoord, 
-                quad.verts[i].colour.getVector3()) // TODO: 4th colour component
+                quad.verts[i].colour)
             );
         }
 

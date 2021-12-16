@@ -3,6 +3,7 @@
 #include <cstddef>
 
 #include "math/Vector3.h"
+#include "math/Vector4.h"
 #include "Vertex3f.h"
 #include "TexCoord2f.h"
 #include "VertexTraits.h"
@@ -20,27 +21,27 @@ public:
 	Normal3f	bitangent;
 
 	// Vertex colour
-	Vector3		colour;
+	Vector4		colour;
 
 	/// Default constructor.
 	ArbitraryMeshVertex()
 	: tangent(0, 0, 0),
 	  bitangent(0, 0, 0),
-	  colour(1.0, 1.0, 1.0)
+	  colour(1.0, 1.0, 1.0, 1.0)
 	{}
 
-	/// Initialising constructor, leaves colour at 1,1,1 and tangent vectors at 0,0,0
+	/// Initialising constructor, leaves colour at 1,1,1,1 and tangent vectors at 0,0,0
 	ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t) : 
         texcoord(t),
         normal(n),
         vertex(v),
         tangent(0, 0, 0),
         bitangent(0, 0, 0),
-        colour(1.0, 1.0, 1.0)
+        colour(1.0, 1.0, 1.0, 1.0)
     {}
 
 	/// Initialising constructor, leaves tangent vectors at 0,0,0
-    ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t, const Vector3& c) : 
+    ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t, const Vector4& c) : 
         texcoord(t),
         normal(n),
         vertex(v),

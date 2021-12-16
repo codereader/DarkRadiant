@@ -136,6 +136,7 @@ void OpenGLShader::drawSurfaces()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
     
     // Surfaces are using CW culling
     glFrontFace(GL_CW);
@@ -195,6 +196,7 @@ void OpenGLShader::drawSurfaces()
 #endif
 
     glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 

@@ -210,7 +210,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 
 		for (std::size_t v = 0; v < surface.vertices.size(); ++v)
 		{
-			const Vector3& vcol = surface.vertices[v].colour;
+			const auto& vcol = surface.vertices[v].colour.getVector3();
 
 			stream << "\t\t\t*MESH_VERTCOL " << v << "\t" << vcol.x() << "\t" << vcol.y() << "\t" << vcol.z() << std::endl;
 		}
