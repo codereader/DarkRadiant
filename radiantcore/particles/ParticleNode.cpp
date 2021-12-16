@@ -64,15 +64,25 @@ bool ParticleNode::isOriented() const
     return true;
 }
 
+void ParticleNode::onPreRender(const VolumeTest& volume)
+{
+    if (!_renderableParticle) return;
+
+    // Update the particle system before rendering
+    update(volume);
+}
+
 void ParticleNode::renderSolid(IRenderableCollector& collector,
 							   const VolumeTest& volume) const
 {
+#if 0
 	if (!_renderableParticle) return;
 
 	// Update the particle system before rendering
 	update(volume);
 
 	_renderableParticle->renderSolid(collector, volume, localToWorld(), _renderEntity);
+#endif
 }
 
 void ParticleNode::renderWireframe(IRenderableCollector& collector,
@@ -91,9 +101,11 @@ void ParticleNode::renderWireframe(IRenderableCollector& collector,
 
 void ParticleNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
+#if 0
     if (!collector.supportsFullMaterials()) return;
 
     renderSolid(collector, volume);
+#endif
 }
 
 void ParticleNode::setRenderSystem(const RenderSystemPtr& renderSystem)
