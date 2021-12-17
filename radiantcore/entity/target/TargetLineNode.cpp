@@ -9,13 +9,13 @@ namespace entity
 TargetLineNode::TargetLineNode(EntityNode& owner) :
     scene::Node(),
     _owner(owner),
-    _targetLines(_owner.getTargetKeys())
+    _targetLines(_owner, _owner.getTargetKeys())
 {}
 
 TargetLineNode::TargetLineNode(TargetLineNode& other) :
     scene::Node(other),
     _owner(other._owner),
-    _targetLines(_owner.getTargetKeys())
+    _targetLines(_owner, _owner.getTargetKeys())
 {}
 
 scene::INode::Type TargetLineNode::getNodeType() const

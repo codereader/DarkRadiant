@@ -28,12 +28,14 @@ class RenderableTargetLines :
     public render::RenderableGeometry
 {
 private:
+    const IEntityNode& _entity;
     const TargetKeyCollection& _targetKeys;
 
     Vector3 _worldPosition;
 
 public:
-    RenderableTargetLines(const TargetKeyCollection& targetKeys) :
+    RenderableTargetLines(const IEntityNode& entity, const TargetKeyCollection& targetKeys) :
+        _entity(entity),
         _targetKeys(targetKeys)
     {}
 
@@ -119,18 +121,20 @@ private:
         Vector3 xyPoint1 = arrowBase + xyDir;
         Vector3 xyPoint2 = arrowBase - xyDir;
 
+        auto colour = _entity.getEntityColour();
+
         auto indexOffset = static_cast<unsigned int>(vertices.size());
 
         // The line from this to the other entity
-        vertices.push_back(ArbitraryMeshVertex(startPosition, { 1,0,0 }, { 0, 0 }));
-        vertices.push_back(ArbitraryMeshVertex(endPosition, { 1,0,0 }, { 0, 0 }));
+        vertices.push_back(ArbitraryMeshVertex(startPosition, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(ArbitraryMeshVertex(endPosition, { 1,0,0 }, { 0, 0 }, colour));
 
         // The "arrow indicators" in the xy plane
-        vertices.push_back(ArbitraryMeshVertex(mid, { 1,0,0 }, { 0, 0 }));
-        vertices.push_back(ArbitraryMeshVertex(xyPoint1, { 1,0,0 }, { 0, 0 }));
+        vertices.push_back(ArbitraryMeshVertex(mid, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(ArbitraryMeshVertex(xyPoint1, { 1,0,0 }, { 0, 0 }, colour));
 
-        vertices.push_back(ArbitraryMeshVertex(mid, { 1,0,0 }, { 0, 0 }));
-        vertices.push_back(ArbitraryMeshVertex(xyPoint2, { 1,0,0 }, { 0, 0 }));
+        vertices.push_back(ArbitraryMeshVertex(mid, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(ArbitraryMeshVertex(xyPoint2, { 1,0,0 }, { 0, 0 }, colour));
 
         indices.push_back(indexOffset + 0);
         indices.push_back(indexOffset + 1);
