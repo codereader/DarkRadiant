@@ -33,15 +33,17 @@ void RenderableLightOctagon::updateGeometry()
     Vector3 min(Origin - Extents);
     Vector3 mid(Origin);
 
+    auto colour = _light.getEntityColour();
+
     // top, bottom, tleft, tright, bright, bleft
     std::vector<ArbitraryMeshVertex> vertices
     {
-        ArbitraryMeshVertex({ mid[0], mid[1], max[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ mid[0], mid[1], min[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], mid[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], max[1], mid[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], min[1], mid[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], min[1], mid[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ mid[0], mid[1], max[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ mid[0], mid[1], min[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], mid[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], mid[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], mid[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], min[1], mid[2] }, {1,0,0}, {0,0}, colour),
     };
 
     // Orient the points using the transform
@@ -89,18 +91,20 @@ void RenderableLightVolume::updatePointLightVolume()
     Vector3 max(Origin + radius);
     Vector3 min(Origin - radius);
 
+    auto colour = _light.getEntityColour();
+
     // Load the 8 corner points
     std::vector<ArbitraryMeshVertex> vertices
     {
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {1,0,0}, {0,0}),
-        
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {1,0,0}, {0,0}, colour),
+
+        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {1,0,0}, {0,0}, colour),
     };
 
     // Orient the points using the transform
@@ -144,6 +148,8 @@ void RenderableLightVolume::updateProjectedLightVolume()
 
     const auto& lightStart = _light.getLightStart();
 
+    auto colour = _light.getEntityColour();
+
     if (lightStart != Vector3(0, 0, 0))
     {
         // Calculate the vertices defining the top area
@@ -154,14 +160,14 @@ void RenderableLightVolume::updateProjectedLightVolume()
 
         std::vector<ArbitraryMeshVertex> vertices
         {
-            ArbitraryMeshVertex(frontUpperLeft, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(frontLowerLeft, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(frontLowerRight, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(frontUpperRight, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(backUpperLeft, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(backLowerLeft, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(backLowerRight, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(backUpperRight, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(frontUpperLeft, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(frontLowerLeft, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(frontLowerRight, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(frontUpperRight, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(backUpperLeft, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(backLowerLeft, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(backLowerRight, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(backUpperRight, {1,0,0}, {0,0}, colour),
         };
 
         // Orient the points using the transform
@@ -194,11 +200,11 @@ void RenderableLightVolume::updateProjectedLightVolume()
 
         std::vector<ArbitraryMeshVertex> vertices
         {
-            ArbitraryMeshVertex(top, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(backUpperLeft, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(backLowerLeft, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(backLowerRight, {1,0,0}, {0,0}),
-            ArbitraryMeshVertex(backUpperRight, {1,0,0}, {0,0}),
+            ArbitraryMeshVertex(top, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(backUpperLeft, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(backLowerLeft, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(backLowerRight, {1,0,0}, {0,0}, colour),
+            ArbitraryMeshVertex(backUpperRight, {1,0,0}, {0,0}, colour),
         };
 
         // Orient the points using the transform

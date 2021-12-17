@@ -164,7 +164,7 @@ public:
 	const ShaderPtr& getWireShader() const override;
 	const ShaderPtr& getColourShader() const override;
 	const ShaderPtr& getFillShader() const;
-    Vector4 getEntityColour() const override;
+    virtual Vector4 getEntityColour() const override;
 
 	virtual void onPostUndo() override;
 	virtual void onPostRedo() override;

@@ -149,6 +149,8 @@ public:
     // Calling this on projected lights will throw
     const Vector3& getLightRadius() const;
 
+    virtual Vector4 getEntityColour() const override;
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.

@@ -456,6 +456,11 @@ void LightNode::renderInactiveComponents(IRenderableCollector& collector, const 
 	}
 }
 
+Vector4 LightNode::getEntityColour() const
+{
+    return _overrideColKey.get() ? EntityNode::getEntityColour() : Vector4(_colourKey.getColour(), 1.0);
+}
+
 void LightNode::evaluateTransform()
 {
 	if (getType() == TRANSFORM_PRIMITIVE)
