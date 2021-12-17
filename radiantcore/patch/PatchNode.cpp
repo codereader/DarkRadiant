@@ -15,8 +15,8 @@ PatchNode::PatchNode(patch::PatchDefType type) :
 	m_patch(*this),
     _untransformedOriginChanged(true),
     _selectedControlVerticesNeedUpdate(true),
-    _renderableSurfaceSolid(m_patch.getTesselation()),
-    _renderableSurfaceWireframe(m_patch.getTesselation())
+    _renderableSurfaceSolid(m_patch.getTesselation(), true),
+    _renderableSurfaceWireframe(m_patch.getTesselation(), false)
 {
 	m_patch.setFixedSubdivisions(type == patch::PatchDefType::Def3, Subdivisions(m_patch.getSubdivisions()));
 }
@@ -39,8 +39,8 @@ PatchNode::PatchNode(const PatchNode& other) :
 	m_patch(other.m_patch, *this), // create the patch out of the <other> one
     _untransformedOriginChanged(true),
     _selectedControlVerticesNeedUpdate(true),
-    _renderableSurfaceSolid(m_patch.getTesselation()),
-    _renderableSurfaceWireframe(m_patch.getTesselation())
+    _renderableSurfaceSolid(m_patch.getTesselation(), true),
+    _renderableSurfaceWireframe(m_patch.getTesselation(), false)
 {
 }
 
@@ -284,6 +284,11 @@ void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     // Mark the GL shader as used from now on, this is used by the TextureBrowser's filtering
     m_patch.getSurfaceShader().setInUse(true);
+
+    // When inserting a patch into the scene, it gets a parent entity assigned
+    // The colour of that entity will influence the tesselation's vertex colours
+    m_patch.queueTesselationUpdate();
+
     _renderableSurfaceSolid.queueUpdate();
     _renderableSurfaceWireframe.queueUpdate();
 
@@ -375,7 +380,9 @@ void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 	// Don't render invisible shaders
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
+#if 0
 	const_cast<Patch&>(m_patch).evaluateTransform();
+#endif
 
 	// Render the selected components
 	renderComponentsSelected(collector, volume);

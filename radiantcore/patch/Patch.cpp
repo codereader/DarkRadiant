@@ -538,7 +538,7 @@ void Patch::updateTesselation(bool force)
     }
 
     // Run the tesselation code
-    _mesh.generate(_width, _height, _ctrlTransformed, subdivisionsFixed(), getSubdivisions());
+    _mesh.generate(_width, _height, _ctrlTransformed, subdivisionsFixed(), getSubdivisions(), _node.getRenderEntity());
 
     updateAABB();
 
@@ -2699,4 +2699,9 @@ sigc::signal<void>& Patch::signal_patchTextureChanged()
 {
     static sigc::signal<void> _sigPatchTextureChanged;
     return _sigPatchTextureChanged;
+}
+
+void Patch::queueTesselationUpdate()
+{
+    _tesselationChanged = true;
 }

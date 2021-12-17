@@ -354,6 +354,7 @@ public:
 	static sigc::signal<void>& signal_patchTextureChanged();
 
     void updateTesselation(bool force = false) override;
+    void queueTesselationUpdate();
 
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change

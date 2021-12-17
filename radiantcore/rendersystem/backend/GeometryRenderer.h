@@ -43,18 +43,18 @@ private:
             glEnableClientState(GL_VERTEX_ARRAY);
             glEnableClientState(GL_TEXTURE_COORD_ARRAY);
             glEnableClientState(GL_NORMAL_ARRAY);
-            glEnableClientState(GL_COLOR_ARRAY);
+
+            // Render this slot without any vertex colours
+            glDisableClientState(GL_COLOR_ARRAY);
 
             glFrontFace(GL_CW);
 
             glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
             glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
             glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
-            glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().colour);
 
             glDrawElements(_mode, static_cast<GLsizei>(numIndices), GL_UNSIGNED_INT, &_indices[firstIndex]);
             glDisableClientState(GL_NORMAL_ARRAY);
-            glDisableClientState(GL_COLOR_ARRAY);
             glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         }
 

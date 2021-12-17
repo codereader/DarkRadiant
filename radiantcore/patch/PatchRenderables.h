@@ -168,10 +168,14 @@ private:
     const PatchTesselation& _tess;
     bool _needsUpdate;
 
+    bool _whiteVertexColour;
+
 public:
-    RenderablePatchTesselation(const PatchTesselation& tess) :
+    // When whiteVertexColour is set to true, all colour vertex attributes will be set to 1,1,1,1
+    RenderablePatchTesselation(const PatchTesselation& tess, bool whiteVertexColour) :
         _tess(tess),
-        _needsUpdate(true)
+        _needsUpdate(true),
+        _whiteVertexColour(whiteVertexColour)
     {}
     
     void queueUpdate()
@@ -192,6 +196,21 @@ protected:
 
         _indexer.generateIndices(_tess, std::back_inserter(indices));
 
-        RenderableGeometry::updateGeometry(_indexer.getType(), _tess.vertices, indices);
+        RenderableGeometry::updateGeometry(_indexer.getType(), 
+            _whiteVertexColour ? getColouredVertices() : _tess.vertices, indices);
+    }
+
+    std::vector<ArbitraryMeshVertex> getColouredVertices()
+    {
+        std::vector<ArbitraryMeshVertex> vertices;
+        vertices.reserve(_tess.vertices.size());
+
+        for (const auto& vertex : _tess.vertices)
+        {
+            // Copy vertex data, but set the colour to 1,1,1,1
+            vertices.push_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, vertex.texcoord, { 1, 1, 1, 1 }));
+        }
+
+        return vertices;
     }
 };
