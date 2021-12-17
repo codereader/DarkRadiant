@@ -60,10 +60,13 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
     // The indices for 6 circles stay the same, so we can store this statically
     static auto CircleIndices = generateWireframeCircleIndices(vertices.size(), NumCircles);
 
+    auto colour = _entity.getEntityColour();
+
     // Move the points to their world position
     for (auto& vertex : vertices)
     {
         vertex.vertex += _origin;
+        vertex.colour = colour;
     }
 
     RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, CircleIndices);
@@ -142,8 +145,12 @@ inline std::vector<unsigned int> generateSphereIndices()
     return indices;
 }
 
-inline void generateSphereVertices(std::vector<ArbitraryMeshVertex>& vertices, double radius, const Vector3& origin)
+}
+
+void RenderableSpeakerRadiiFill::generateSphereVertices(std::vector<ArbitraryMeshVertex>& vertices, double radius)
 {
+    auto colour = _entity.getEntityColour();
+
     for (auto strip = 0; strip < NumCircles; ++strip)
     {
         auto theta = ThetaStep * (strip + 1);
@@ -159,15 +166,13 @@ inline void generateSphereVertices(std::vector<ArbitraryMeshVertex>& vertices, d
             auto unit = Vector3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 
             // Move the points to their world position
-            vertices.push_back(ArbitraryMeshVertex(unit * radius + origin, unit, { 0, 0 }));
+            vertices.push_back(ArbitraryMeshVertex(unit * radius + _origin, unit, { 0, 0 }, colour));
         }
     }
 
     // The north and south pole vertices
-    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, radius) + origin, { 0,0,1 }, { 0,0 }));
-    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, -radius) + origin, { 0,0,-1 }, { 0,0 }));
-}
-
+    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, radius) + _origin, { 0,0,1 }, { 0,0 }, colour));
+    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, -radius) + _origin, { 0,0,-1 }, { 0,0 }, colour));
 }
 
 void RenderableSpeakerRadiiFill::updateGeometry()
@@ -181,8 +186,8 @@ void RenderableSpeakerRadiiFill::updateGeometry()
     // Make space for two spheres
     vertices.reserve(NumVerticesPerSphere << 1);
 
-    generateSphereVertices(vertices, _radii.getMax(), _origin);
-    generateSphereVertices(vertices, _radii.getMin(), _origin);
+    generateSphereVertices(vertices, _radii.getMax());
+    generateSphereVertices(vertices, _radii.getMin());
 
     // Generate the quad indices for two spheres
     static auto SphereIndices = generateSphereIndices();

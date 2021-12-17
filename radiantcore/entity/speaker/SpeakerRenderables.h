@@ -13,6 +13,8 @@ class RenderableSpeakerRadiiBase :
 protected:
     bool _needsUpdate;
 
+    const IEntityNode& _entity;
+
     const Vector3& _origin;
 
     // SoundRadii reference containing min and max radius values
@@ -20,7 +22,8 @@ protected:
     const SoundRadii& _radii;
 
 protected:
-    RenderableSpeakerRadiiBase(const Vector3& origin, const SoundRadii& radii) :
+    RenderableSpeakerRadiiBase(const IEntityNode& entity, const Vector3& origin, const SoundRadii& radii) :
+        _entity(entity),
         _origin(origin),
         _radii(radii)
     {}
@@ -42,8 +45,8 @@ class RenderableSpeakerRadiiWireframe :
 {
 public:
     // Construct an instance with the given origin and radius.
-    RenderableSpeakerRadiiWireframe(const Vector3& origin, const SoundRadii& radii) :
-        RenderableSpeakerRadiiBase(origin, radii)
+    RenderableSpeakerRadiiWireframe(const IEntityNode& entity, const Vector3& origin, const SoundRadii& radii) :
+        RenderableSpeakerRadiiBase(entity, origin, radii)
     {}
 
     void updateGeometry() override;
@@ -59,11 +62,14 @@ class RenderableSpeakerRadiiFill :
 {
 public:
     // Construct an instance with the given origin and radius.
-    RenderableSpeakerRadiiFill(const Vector3& origin, const SoundRadii& radii) :
-        RenderableSpeakerRadiiBase(origin, radii)
+    RenderableSpeakerRadiiFill(const IEntityNode& entity, const Vector3& origin, const SoundRadii& radii) :
+        RenderableSpeakerRadiiBase(entity, origin, radii)
     {}
 
     void updateGeometry() override;
+
+private:
+    void generateSphereVertices(std::vector<ArbitraryMeshVertex>& vertices, double radius);
 };
 
 } // namespace
