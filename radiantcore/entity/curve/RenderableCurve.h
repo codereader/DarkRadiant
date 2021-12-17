@@ -12,12 +12,14 @@ class RenderableCurve :
     public render::RenderableGeometry
 {
 private:
+    const IEntityNode& _entity;
     bool _needsUpdate;
 
 public:
 	std::vector<VertexCb> m_vertices;
 
-    RenderableCurve() :
+    RenderableCurve(const IEntityNode& entity) :
+        _entity(entity),
         _needsUpdate(true)
     {}
 
@@ -47,9 +49,11 @@ protected:
 
         unsigned int index = 0;
 
+        auto colour = _entity.getEntityColour();
+
         for (const auto& v : m_vertices)
         {
-            vertices.push_back(ArbitraryMeshVertex(v.vertex, { 0,0,1 }, { 0,0 }));
+            vertices.push_back(ArbitraryMeshVertex(v.vertex, { 0,0,1 }, { 0,0 }, colour));
             indices.push_back(index);
             indices.push_back(++index);
         };

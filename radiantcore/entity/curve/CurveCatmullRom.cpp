@@ -2,8 +2,8 @@
 
 namespace entity {
 
-CurveCatmullRom::CurveCatmullRom(const Callback& callback) :
-	Curve(callback)
+CurveCatmullRom::CurveCatmullRom(const IEntityNode& entity, const Callback& callback) :
+	Curve(entity, callback)
 {}
 
 void CurveCatmullRom::clearCurve() {

@@ -20,7 +20,8 @@ namespace entity {
 
 	} // namespace
 
-Curve::Curve(const Callback& boundsChanged) :
+Curve::Curve(const IEntityNode& entity, const Callback& boundsChanged) :
+    _renderCurve(entity),
 	_boundsChanged(boundsChanged)
 {}
 
