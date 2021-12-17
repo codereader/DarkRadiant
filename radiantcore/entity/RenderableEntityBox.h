@@ -11,13 +11,14 @@ class RenderableEntityBox :
     public render::RenderableGeometry
 {
 private:
+    const IEntityNode& _entity;
     const AABB& _bounds;
     const Vector3& _worldPos;
     bool _needsUpdate;
     bool _filledBox;
 
 public:
-    RenderableEntityBox(const AABB& bounds, const Vector3& worldPos);
+    RenderableEntityBox(const IEntityNode& entity, const AABB& bounds, const Vector3& worldPos);
 
     void queueUpdate();
     void setFillMode(bool fill);

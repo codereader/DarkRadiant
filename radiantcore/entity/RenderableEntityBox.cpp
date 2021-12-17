@@ -8,65 +8,65 @@ namespace entity
 namespace
 {
 
-inline std::vector<ArbitraryMeshVertex> getFillBoxVertices(const Vector3& min, const Vector3& max)
+inline std::vector<ArbitraryMeshVertex> getFillBoxVertices(const Vector3& min, const Vector3& max, const Vector4& colour)
 {
     // Load the 6 times 4 = 24 corner points, each with the correct face normal
     return
     {
         // Bottom quad
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,0,-1}, {0,0}),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,0,-1}, {0,0}),
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,0,-1}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,0,-1}, {0,0}),
+        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,0,-1}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,0,-1}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,0,-1}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,0,-1}, {0,0}, colour),
 
         // Top quad
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,0,+1}, {0,0}),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,0,+1}, {0,0}),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,0,+1}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,0,+1}, {0,0}),
+        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,0,+1}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,0,+1}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,0,+1}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,0,+1}, {0,0}, colour),
 
         // Front quad
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,-1,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,-1,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,-1,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,-1,0}, {0,0}),
+        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,-1,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,-1,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,-1,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,-1,0}, {0,0}, colour),
 
         // Back quad
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,+1,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,+1,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,+1,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,+1,0}, {0,0}),
+        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,+1,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,+1,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,+1,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,+1,0}, {0,0}, colour),
 
         // Right quad
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {+1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {+1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {+1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {+1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {+1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {+1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {+1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {+1,0,0}, {0,0}, colour),
 
         // Left quad
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {-1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {-1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {-1,0,0}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {-1,0,0}, {0,0}),
+        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {-1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {-1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {-1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {-1,0,0}, {0,0}, colour),
     };
 }
 
-inline std::vector<ArbitraryMeshVertex> getWireframeBoxVertices(const Vector3& min, const Vector3& max)
+inline std::vector<ArbitraryMeshVertex> getWireframeBoxVertices(const Vector3& min, const Vector3& max, const Vector4& colour)
 {
     // Load the 8 corner points
     return
     {
         // Bottom quad
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,0,1}, {0,0}),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,0,1}, {0,0}),
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,0,1}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,0,1}, {0,0}),
+        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,0,1}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,0,1}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,0,1}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,0,1}, {0,0}, colour),
 
         // Top quad
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,0,1}, {0,0}),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,0,1}, {0,0}),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,0,1}, {0,0}),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,0,1}, {0,0}),
+        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,0,1}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,0,1}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,0,1}, {0,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,0,1}, {0,0}, colour),
     };
 }
 
@@ -103,7 +103,8 @@ static const std::vector<unsigned int> FillBoxIndices
 
 }
 
-RenderableEntityBox::RenderableEntityBox(const AABB& bounds, const Vector3& worldPos) :
+RenderableEntityBox::RenderableEntityBox(const IEntityNode& entity, const AABB& bounds, const Vector3& worldPos) :
+    _entity(entity),
     _bounds(bounds),
     _worldPos(worldPos),
     _needsUpdate(true),
@@ -137,7 +138,9 @@ void RenderableEntityBox::updateGeometry()
     Vector3 max(Origin + _bounds.extents);
     Vector3 min(Origin - _bounds.extents);
 
-    auto vertices = _filledBox ? getFillBoxVertices(min, max) : getWireframeBoxVertices(min, max);
+    auto colour = _entity.getEntityColour();
+
+    auto vertices = _filledBox ? getFillBoxVertices(min, max, colour) : getWireframeBoxVertices(min, max, colour);
 
     // Move the points to their world position
     for (auto& vertex : vertices)

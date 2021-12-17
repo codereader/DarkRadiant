@@ -768,7 +768,6 @@
     <ClInclude Include="..\..\radiantcore\entity\EntityNode.h" />
     <ClInclude Include="..\..\radiantcore\entity\EntitySettings.h" />
     <ClInclude Include="..\..\radiantcore\entity\generic\GenericEntityNode.h" />
-    <ClInclude Include="..\..\radiantcore\entity\generic\RenderableArrow.h" />
     <ClInclude Include="..\..\radiantcore\entity\KeyObserverDelegate.h" />
     <ClInclude Include="..\..\radiantcore\entity\KeyObserverMap.h" />
     <ClInclude Include="..\..\radiantcore\entity\KeyValue.h" />

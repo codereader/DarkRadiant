@@ -24,6 +24,8 @@ void RenderableArrow::updateGeometry()
     static Vector3 Up(0, 0, 1);
     const auto& origin = _node.worldAABB().getOrigin();
     const auto& direction = _node.getDirection();
+    auto colour = _node.getEntityColour();
+
     Vector3 left(-direction.y(), direction.x(), 0);
 
     Vector3 endpoint(origin + direction * 32.0);
@@ -35,12 +37,12 @@ void RenderableArrow::updateGeometry()
 
     std::vector<ArbitraryMeshVertex> vertices
     {
-        ArbitraryMeshVertex(origin, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex(endpoint, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex(tip1, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex(tip2, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex(tip3, {1,0,0}, {0,0}),
-        ArbitraryMeshVertex(tip4, {1,0,0}, {0,0}),
+        ArbitraryMeshVertex(origin, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex(endpoint, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex(tip1, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex(tip2, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex(tip3, {1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex(tip4, {1,0,0}, {0,0}, colour),
     };
 
     // Indices are always the same, therefore constant

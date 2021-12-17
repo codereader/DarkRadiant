@@ -1476,9 +1476,6 @@
     <ClInclude Include="..\..\radiantcore\entity\generic\GenericEntityNode.h">
       <Filter>src\entity\generic</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\generic\RenderableArrow.h">
-      <Filter>src\entity\generic</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\curve\Curve.h">
       <Filter>src\entity\curve</Filter>
     </ClInclude>
