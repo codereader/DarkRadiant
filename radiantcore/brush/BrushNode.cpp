@@ -403,7 +403,7 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
 {
     // Check for the override status of this brush
     bool forceVisible = isForcedVisible();
-    bool wholeBrushSelected = isSelected();
+    bool wholeBrushSelected = isSelected() || Node_isSelected(getParent());
 
     collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, wholeBrushSelected);
 
