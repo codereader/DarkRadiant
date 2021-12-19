@@ -423,9 +423,9 @@ TEST_F(EntityTest, SelectEntity)
     // Confirm that setting entity node's selection status propagates to the
     // selection system
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
-    Node_getSelectable(light)->setSelected(true);
+    scene::node_cast<ISelectable>(light)->setSelected(true);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
-    Node_getSelectable(light)->setSelected(false);
+    scene::node_cast<ISelectable>(light)->setSelected(false);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
 }
 
@@ -436,7 +436,7 @@ TEST_F(EntityTest, DestroySelectedEntity)
     // Confirm that setting entity node's selection status propagates to the
     // selection system
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
-    Node_getSelectable(light)->setSelected(true);
+    scene::node_cast<ISelectable>(light)->setSelected(true);
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
 
     // Destructor called here and should not crash
@@ -716,6 +716,109 @@ TEST_F(EntityTest, FuncStaticLocalToWorld)
     EXPECT_EQ(funcStatic->localToWorld(), Matrix4::getIdentity());
 }
 
+TEST_F(EntityTest, TranslateFuncStatic)
+{
+    auto torch = TestEntity::create("func_static");
+    torch.args().setKeyValue("origin", "0 0 0");
+    torch.args().setKeyValue("model", "models/torch.lwo");
+
+    // Set translation via the ITransformable interface
+    auto transformable = scene::node_cast<ITransformable>(torch.node);
+    ASSERT_TRUE(transformable);
+    transformable->setTranslation(Vector3(128, 56, -64));
+
+    // Translation does not appear in origin spawnarg until frozen
+    EXPECT_EQ(torch.args().getKeyValue("origin"), "0 0 0");
+    transformable->freezeTransform();
+    EXPECT_EQ(torch.args().getKeyValue("origin"), "128 56 -64");
+}
+
+TEST_F(EntityTest, RotateFuncStatic)
+{
+    auto torch = TestEntity::create("func_static");
+    torch.args().setKeyValue("origin", "0 0 0");
+    torch.args().setKeyValue("model", "models/torch.lwo");
+
+    // Set rotation via the ITransformable interface
+    auto transformable = scene::node_cast<ITransformable>(torch.node);
+    ASSERT_TRUE(transformable);
+    transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 45)));
+
+    // Should not appear in spawnargs until frozen
+    EXPECT_EQ(torch.args().getKeyValue("rotation"), "");
+    transformable->freezeTransform();
+    EXPECT_EQ(torch.args().getKeyValue("rotation"),
+              "0.707107 0.707107 0 -0.707107 0.707107 0 0 0 1");
+
+    // Applying the transform should be idempotent
+    transformable->freezeTransform();
+    EXPECT_EQ(torch.args().getKeyValue("rotation"),
+              "0.707107 0.707107 0 -0.707107 0.707107 0 0 0 1");
+
+    // Rotation does not change origin
+    EXPECT_EQ(torch.args().getKeyValue("origin"), "0 0 0");
+}
+
+TEST_F(EntityTest, RotateLight)
+{
+    auto light = TestEntity::create("light");
+    light.args().setKeyValue("origin", "0 0 0");
+
+    // Rotate the light via ITransformable
+    auto transformable = scene::node_cast<ITransformable>(light.node);
+    ASSERT_TRUE(transformable);
+    transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 75)));
+
+    // Rotation appears after freezing transform
+    EXPECT_EQ(light.args().getKeyValue("rotation"), "");
+    transformable->freezeTransform();
+    EXPECT_EQ(light.args().getKeyValue("rotation"),
+              "0.258819 0.965926 0 -0.965926 0.258819 0 0 0 1");
+}
+
+TEST_F(EntityTest, TranslateFuncStaticAfterRotation)
+{
+    auto torch = TestEntity::create("func_static");
+    torch.args().setKeyValue("origin", "0 0 0");
+    torch.args().setKeyValue("model", "models/torch.lwo");
+
+    // Set rotation via the ITransformable interface and freeze the transform
+    auto transformable = scene::node_cast<ITransformable>(torch.node);
+    ASSERT_TRUE(transformable);
+    transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 90)));
+    transformable->freezeTransform();
+    EXPECT_EQ(torch.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
+
+    // Now add a translation
+    transformable->setTranslation(Vector3(-1200, 45, 962));
+    transformable->freezeTransform();
+    EXPECT_EQ(torch.args().getKeyValue("origin"), "-1200 45 962");
+
+    // Rotation must not have changed
+    EXPECT_EQ(torch.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
+}
+
+TEST_F(EntityTest, TranslateLightAfterRotation)
+{
+    auto light = TestEntity::create("light");
+    light.args().setKeyValue("origin", "0 0 0");
+
+    // Set rotation via the ITransformable interface and freeze the transform
+    auto transformable = scene::node_cast<ITransformable>(light.node);
+    ASSERT_TRUE(transformable);
+    transformable->setRotation(Quaternion::createForEulerXYZDegrees(Vector3(0, 0, 90)));
+    transformable->freezeTransform();
+    EXPECT_EQ(light.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
+
+    // Now add a translation
+    transformable->setTranslation(Vector3(565.25, -450, 35.2));
+    transformable->freezeTransform();
+    EXPECT_EQ(light.args().getKeyValue("origin"), "565.25 -450 35.2");
+
+    // Rotation must not have changed
+    EXPECT_EQ(light.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
+}
+
 TEST_F(EntityTest, LightTransformedByParent)
 {
     // Parent a light to another entity (this isn't currently how the attachment
@@ -774,7 +877,7 @@ TEST_F(EntityTest, RenderSelectedLightEntity)
     RenderFixture renderF;
 
     // Select the light then render it in wireframe mode
-    Node_getSelectable(light)->setSelected(true);
+    scene::node_cast<ISelectable>(light)->setSelected(true);
     light->setRenderSystem(renderF.backend);
     light->renderWireframe(renderF.collector, renderF.volumeTest);
 
@@ -1602,74 +1705,6 @@ TEST_F(EntityTest, KeyObserverKeyRemoval)
     keyValue->detach(observer);
 }
 
-TEST_F(EntityTest, EntityNodeAttachKeyObserver)
-{
-    auto [entityNode, _] = TestEntity::create("atdm:ai_builder_guard");
-
-    constexpr const char* TEST_KEY = "TestKey";
-
-    {
-        // Attach the observer. Since the key does not yet exist, the observer
-        // will be invoked with an empty value.
-        TestKeyObserver observer;
-        entityNode->addKeyObserver(TEST_KEY, observer);
-        EXPECT_EQ(observer.invocationCount, 1);
-        EXPECT_EQ(observer.receivedValue, "");
-        entityNode->removeKeyObserver(TEST_KEY, observer);
-    }
-
-    {
-        entityNode->getEntity().setKeyValue(TEST_KEY, "Blah");
-
-        // Attaching an observer when the key already exists should send the
-        // current value immediately.
-        TestKeyObserver observer;
-        entityNode->addKeyObserver(TEST_KEY, observer);
-        EXPECT_EQ(observer.invocationCount, 1);
-        EXPECT_EQ(observer.receivedValue, "Blah");
-        entityNode->removeKeyObserver(TEST_KEY, observer);
-    }
-
-    // Destroying the entity node should not crash
-    entityNode.reset();
-}
-
-TEST_F(EntityTest, EntityNodeObserveKeyChange)
-{
-    auto [entityNode, _] = TestEntity::create("atdm:ai_builder_guard");
-
-    constexpr const char* TEST_KEY = "TestKey";
-
-    // Attach the observer first
-    TestKeyObserver observer;
-    entityNode->addKeyObserver(TEST_KEY, observer);
-    EXPECT_EQ(observer.invocationCount, 1);
-
-    // Create the key with a new value
-    entityNode->getEntity().setKeyValue(TEST_KEY, "123");
-    EXPECT_EQ(observer.invocationCount, 2);
-    EXPECT_EQ(observer.receivedValue, "123");
-
-    // Remove the key by setting it to empty
-    entityNode->getEntity().setKeyValue(TEST_KEY, "");
-    EXPECT_EQ(observer.invocationCount, 3);
-    EXPECT_EQ(observer.receivedValue, "");
-
-    // Add the key again with another value; observer must still be active even
-    // though the old keyvalue was removed.
-    entityNode->getEntity().setKeyValue(TEST_KEY, "Foobar");
-    EXPECT_EQ(observer.invocationCount, 4);
-    EXPECT_EQ(observer.receivedValue, "Foobar");
-
-    // Observer must not trigger for any other keys
-    entityNode->getEntity().setKeyValue("TestKeyB", "B");
-    entityNode->getEntity().setKeyValue("another", "Something");
-    EXPECT_EQ(observer.invocationCount, 4);
-    EXPECT_EQ(observer.receivedValue, "Foobar");
-
-    entityNode->removeKeyObserver(TEST_KEY, observer);
-}
-
 TEST_F(EntityTest, EntityNodeObserveKeyViaFunc)
 {
     auto [entityNode, _] = TestEntity::create("atdm:ai_builder_guard");
@@ -1707,6 +1742,29 @@ TEST_F(EntityTest, EntityNodeObserveKeyViaFunc)
     entityNode->getEntity().setKeyValue(TEST_KEY, "-O-O-O-");
     EXPECT_EQ(invocationCount, 5);
     EXPECT_EQ(receivedValue, "-O-O-O-");
+}
+
+TEST_F(EntityTest, EntityNodeObserveKeyAutoDisconnect)
+{
+    auto [entityNode, spawnArgs] = TestEntity::create("atdm:ai_builder_guard");
+
+    constexpr const char* TEST_KEY = "AnotherTestKey";
+
+    // Allocate observer on the heap, so we can free the memory and hopefully
+    // trigger a crash if the slot is called after deletion.
+    auto* observer = new TestKeyObserver();
+
+    // Observe key before creating it
+    entityNode->observeKey(TEST_KEY,
+                           sigc::mem_fun(observer, &TestKeyObserver::onKeyValueChanged));
+    EXPECT_EQ(observer->invocationCount, 1);
+    EXPECT_EQ(observer->receivedValue, "");
+
+    // Destroy the observer and reclaim memory
+    delete observer;
+
+    // Making a new key change should not cause a crash
+    spawnArgs->setKeyValue(TEST_KEY, "whatever");
 }
 
 inline Entity* findPlayerStartEntity()
@@ -1764,7 +1822,7 @@ TEST_F(EntityTest, MovePlayerStart)
 TEST_F(EntityTest, GetDefaultAttributeType)
 {
     auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-    
+
     // The default type is empty
     EXPECT_EQ(eclass->getAttributeType("ordinary_key"), "");
 }
@@ -1780,7 +1838,7 @@ TEST_F(EntityTest, GetDefaultAttributeDescription)
 TEST_F(EntityTest, GetNonInheritedAttributeType)
 {
     auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
-    
+
     // The "defined_bool" is defined on the eclass, next to its editor_bool descriptor
     EXPECT_EQ(eclass->getAttributeType("defined_bool"), "bool");
 

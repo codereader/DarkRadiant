@@ -330,7 +330,7 @@ void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest
 	assert(!_entityNode.expired());
 
 	scene::INodePtr entityNode = _entityNode.lock();
-	ITransformablePtr transformable = Node_getTransformable(entityNode);
+	ITransformablePtr transformable = scene::node_cast<ITransformable>(entityNode);
 
 	if (transformable)
 	{
@@ -341,7 +341,7 @@ void ModelScaleComponent::transform(const Matrix4& pivot2world, const VolumeTest
 	// Apply the scale to the model beneath the entity
 	entityNode->foreachNode([&](const scene::INodePtr& node)
 	{
-		ITransformablePtr transformable = Node_getTransformable(node);
+		ITransformablePtr transformable = scene::node_cast<ITransformable>(node);
 
 		if (transformable)
 		{

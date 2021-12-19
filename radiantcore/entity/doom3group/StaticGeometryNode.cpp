@@ -1,4 +1,4 @@
-#include "Doom3GroupNode.h"
+#include "StaticGeometryNode.h"
 
 #include <functional>
 #include "../curve/CurveControlPointFunctors.h"
@@ -8,24 +8,24 @@
 namespace entity
 {
 
-Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
+StaticGeometryNode::StaticGeometryNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
-	m_originKey(std::bind(&Doom3GroupNode::originChanged, this)),
+	m_originKey(std::bind(&StaticGeometryNode::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
 	m_nameOrigin(0,0,0),
-	m_rotationKey(std::bind(&Doom3GroupNode::rotationChanged, this)),
+	m_rotationKey(std::bind(&StaticGeometryNode::rotationChanged, this)),
 	m_renderOrigin(m_nameOrigin),
 	m_isModel(false),
 	m_curveNURBS(std::bind(&scene::Node::boundsChanged, this)),
 	m_curveCatmullRom(std::bind(&scene::Node::boundsChanged, this)),
 	_nurbsEditInstance(m_curveNURBS,
-				 std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)),
+				 std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
 	_catmullRomEditInstance(m_curveCatmullRom,
-					  std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)),
-	_originInstance(VertexInstance(getOrigin(), std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)))
+					  std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
+	_originInstance(VertexInstance(getOrigin(), std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)))
 {}
 
-Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
+StaticGeometryNode::StaticGeometryNode(const StaticGeometryNode& other) :
 	EntityNode(other),
 	scene::GroupNode(other),
 	Snappable(other),
@@ -33,52 +33,59 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	ComponentEditable(other),
 	ComponentSnappable(other),
 	CurveNode(other),
-	m_originKey(std::bind(&Doom3GroupNode::originChanged, this)),
+	m_originKey(std::bind(&StaticGeometryNode::originChanged, this)),
 	m_origin(other.m_origin),
 	m_nameOrigin(other.m_nameOrigin),
-	m_rotationKey(std::bind(&Doom3GroupNode::rotationChanged, this)),
+	m_rotationKey(std::bind(&StaticGeometryNode::rotationChanged, this)),
 	m_renderOrigin(m_nameOrigin),
 	m_isModel(other.m_isModel),
 	m_curveNURBS(std::bind(&scene::Node::boundsChanged, this)),
 	m_curveCatmullRom(std::bind(&scene::Node::boundsChanged, this)),
 	_nurbsEditInstance(m_curveNURBS,
-				 std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)),
+				 std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
 	_catmullRomEditInstance(m_curveCatmullRom,
-					  std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)),
-	_originInstance(VertexInstance(getOrigin(), std::bind(&Doom3GroupNode::selectionChangedComponent, this, std::placeholders::_1)))
+					  std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
+	_originInstance(VertexInstance(getOrigin(), std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)))
 {
 	// greebo: Don't call construct() here, this should be invoked by the
 	// clone() method
 }
 
-Doom3GroupNodePtr Doom3GroupNode::Create(const IEntityClassPtr& eclass)
+StaticGeometryNode::Ptr StaticGeometryNode::Create(const IEntityClassPtr& eclass)
 {
-	Doom3GroupNodePtr instance(new Doom3GroupNode(eclass));
+	StaticGeometryNode::Ptr instance(new StaticGeometryNode(eclass));
 	instance->construct();
 
 	return instance;
 }
 
-Doom3GroupNode::~Doom3GroupNode()
+StaticGeometryNode::~StaticGeometryNode()
 {
 	destroy();
 }
 
-void Doom3GroupNode::construct()
+void StaticGeometryNode::construct()
 {
     EntityNode::construct();
 
 	m_rotation.setIdentity();
 
-    // Observe relevant spawnarg changes
-	addKeyObserver("origin", m_originKey);
-    observeKey("angle", [=](const std::string& val) { m_rotationKey.angleChanged(val); });
-    observeKey("rotation", [=](const std::string& val) { m_rotationKey.rotationChanged(val); });
-    observeKey("name", [=](const std::string& val) { nameChanged(val); });
-	addKeyObserver(curve_Nurbs, m_curveNURBS);
-	addKeyObserver(curve_CatmullRomSpline, m_curveCatmullRom);
+    // Observe common spawnarg changes
+    static_assert(std::is_base_of<sigc::trackable, RotationKey>::value);
+    static_assert(std::is_base_of<sigc::trackable, StaticGeometryNode>::value);
+    observeKey("origin", sigc::mem_fun(m_originKey, &OriginKey::onKeyValueChanged));
+    observeKey("angle", sigc::mem_fun(m_rotationKey, &RotationKey::angleChanged));
+    observeKey("rotation", sigc::mem_fun(m_rotationKey, &RotationKey::rotationChanged));
+    observeKey("name", sigc::mem_fun(this, &StaticGeometryNode::nameChanged));
 
-	updateIsModel();
+    // Observe curve-related spawnargs
+    static_assert(std::is_base_of<sigc::trackable, CurveNURBS>::value);
+    static_assert(std::is_base_of<sigc::trackable, CurveCatmullRom>::value);
+    observeKey(curve_Nurbs, sigc::mem_fun(m_curveNURBS, &CurveNURBS::onKeyValueChanged));
+    observeKey(curve_CatmullRomSpline,
+               sigc::mem_fun(m_curveCatmullRom, &CurveCatmullRom::onKeyValueChanged));
+
+    updateIsModel();
 
     m_curveNURBS.signal_curveChanged().connect(
         sigc::mem_fun(_nurbsEditInstance, &CurveEditInstance::curveChanged)
@@ -88,12 +95,12 @@ void Doom3GroupNode::construct()
     );
 }
 
-bool Doom3GroupNode::hasEmptyCurve() {
+bool StaticGeometryNode::hasEmptyCurve() {
 	return m_curveNURBS.isEmpty() &&
 		   m_curveCatmullRom.isEmpty();
 }
 
-void Doom3GroupNode::removeSelectedControlPoints()
+void StaticGeometryNode::removeSelectedControlPoints()
 {
 	if (_catmullRomEditInstance.isSelected()) {
 		_catmullRomEditInstance.removeSelectedControlPoints();
@@ -105,7 +112,7 @@ void Doom3GroupNode::removeSelectedControlPoints()
 	}
 }
 
-void Doom3GroupNode::insertControlPointsAtSelected() {
+void StaticGeometryNode::insertControlPointsAtSelected() {
 	if (_catmullRomEditInstance.isSelected()) {
 		_catmullRomEditInstance.insertControlPointsAtSelected();
 		_catmullRomEditInstance.write(curve_CatmullRomSpline, _spawnArgs);
@@ -141,7 +148,7 @@ public:
 
 }
 
-void Doom3GroupNode::addOriginToChildren()
+void StaticGeometryNode::addOriginToChildren()
 {
 	if (!isModel())
     {
@@ -150,7 +157,7 @@ void Doom3GroupNode::addOriginToChildren()
 	}
 }
 
-void Doom3GroupNode::removeOriginFromChildren()
+void StaticGeometryNode::removeOriginFromChildren()
 {
 	if (!isModel())
     {
@@ -159,15 +166,15 @@ void Doom3GroupNode::removeOriginFromChildren()
 	}
 }
 
-void Doom3GroupNode::selectionChangedComponent(const ISelectable& selectable) {
+void StaticGeometryNode::selectionChangedComponent(const ISelectable& selectable) {
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }
 
-bool Doom3GroupNode::isSelectedComponents() const {
+bool StaticGeometryNode::isSelectedComponents() const {
 	return _nurbsEditInstance.isSelected() || _catmullRomEditInstance.isSelected() || (isModel() && _originInstance.isSelected());
 }
 
-void Doom3GroupNode::setSelectedComponents(bool selected, selection::ComponentSelectionMode mode) {
+void StaticGeometryNode::setSelectedComponents(bool selected, selection::ComponentSelectionMode mode) {
 	if (mode == selection::ComponentSelectionMode::Vertex) {
 		_nurbsEditInstance.setSelected(selected);
 		_catmullRomEditInstance.setSelected(selected);
@@ -175,7 +182,7 @@ void Doom3GroupNode::setSelectedComponents(bool selected, selection::ComponentSe
 	}
 }
 
-void Doom3GroupNode::invertSelectedComponents(selection::ComponentSelectionMode mode)
+void StaticGeometryNode::invertSelectedComponents(selection::ComponentSelectionMode mode)
 {
 	if (mode == selection::ComponentSelectionMode::Vertex)
 	{
@@ -185,7 +192,7 @@ void Doom3GroupNode::invertSelectedComponents(selection::ComponentSelectionMode 
 	}
 }
 
-void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode)
+void StaticGeometryNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode)
 {
 	if (mode == selection::ComponentSelectionMode::Vertex)
 	{
@@ -198,7 +205,7 @@ void Doom3GroupNode::testSelectComponents(Selector& selector, SelectionTest& tes
 	}
 }
 
-const AABB& Doom3GroupNode::getSelectedComponentsBounds() const {
+const AABB& StaticGeometryNode::getSelectedComponentsBounds() const {
 	m_aabb_component = AABB();
 
 	ControlPointBoundsAdder boundsAdder(m_aabb_component);
@@ -211,7 +218,7 @@ const AABB& Doom3GroupNode::getSelectedComponentsBounds() const {
 	return m_aabb_component;
 }
 
-void Doom3GroupNode::snapComponents(float snap) {
+void StaticGeometryNode::snapComponents(float snap) {
 	if (_nurbsEditInstance.isSelected()) {
 		_nurbsEditInstance.snapto(snap);
 		_nurbsEditInstance.write(curve_Nurbs, _spawnArgs);
@@ -225,16 +232,16 @@ void Doom3GroupNode::snapComponents(float snap) {
 	}
 }
 
-scene::INodePtr Doom3GroupNode::clone() const
+scene::INodePtr StaticGeometryNode::clone() const
 {
-	Doom3GroupNodePtr clone(new Doom3GroupNode(*this));
+	StaticGeometryNode::Ptr clone(new StaticGeometryNode(*this));
 	clone->construct();
     clone->constructClone(*this);
 
 	return clone;
 }
 
-void Doom3GroupNode::onRemoveFromScene(scene::IMapRootNode& root)
+void StaticGeometryNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
 	// Call the base class first
 	EntityNode::onRemoveFromScene(root);
@@ -243,14 +250,14 @@ void Doom3GroupNode::onRemoveFromScene(scene::IMapRootNode& root)
 	setSelectedComponents(false, selection::ComponentSelectionMode::Vertex);
 }
 
-void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test)
+void StaticGeometryNode::testSelect(Selector& selector, SelectionTest& test)
 {
 	EntityNode::testSelect(selector, test);
 
 	test.BeginMesh(localToWorld());
 	SelectionIntersection best;
 
-	// Pass the selection test to the Doom3GroupNode class
+	// Pass the selection test to the StaticGeometryNode class
 	m_curveNURBS.testSelect(selector, test, best);
 	m_curveCatmullRom.testSelect(selector, test, best);
 
@@ -260,7 +267,7 @@ void Doom3GroupNode::testSelect(Selector& selector, SelectionTest& test)
 	}
 }
 
-void Doom3GroupNode::renderCommon(RenderableCollector& collector, const VolumeTest& volume) const
+void StaticGeometryNode::renderCommon(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (isSelected()) {
 		m_renderOrigin.render(collector, volume, localToWorld());
@@ -277,7 +284,7 @@ void Doom3GroupNode::renderCommon(RenderableCollector& collector, const VolumeTe
 	}
 }
 
-void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void StaticGeometryNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderSolid(collector, volume);
     renderCommon(collector, volume);
@@ -287,7 +294,7 @@ void Doom3GroupNode::renderSolid(RenderableCollector& collector, const VolumeTes
 	_catmullRomEditInstance.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
 }
 
-void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void StaticGeometryNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	EntityNode::renderWireframe(collector, volume);
     renderCommon(collector, volume);
@@ -296,7 +303,7 @@ void Doom3GroupNode::renderWireframe(RenderableCollector& collector, const Volum
 	_catmullRomEditInstance.renderComponentsSelected(collector, volume, Matrix4::getIdentity());
 }
 
-void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+void StaticGeometryNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	EntityNode::setRenderSystem(renderSystem);
 
@@ -307,7 +314,7 @@ void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_originInstance.setRenderSystem(renderSystem);
 }
 
-void Doom3GroupNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+void StaticGeometryNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
 {
 	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
 	{
@@ -322,7 +329,7 @@ void Doom3GroupNode::renderComponents(RenderableCollector& collector, const Volu
 	}
 }
 
-void Doom3GroupNode::evaluateTransform()
+void StaticGeometryNode::evaluateTransform()
 {
 	if (getType() == TRANSFORM_PRIMITIVE)
 	{
@@ -347,7 +354,7 @@ void Doom3GroupNode::evaluateTransform()
 	m_curveCatmullRom.curveChanged();
 }
 
-void Doom3GroupNode::transformComponents(const Matrix4& matrix)
+void StaticGeometryNode::transformComponents(const Matrix4& matrix)
 {
 	if (_nurbsEditInstance.isSelected()) {
 		_nurbsEditInstance.transform(matrix);
@@ -362,7 +369,7 @@ void Doom3GroupNode::transformComponents(const Matrix4& matrix)
 	}
 }
 
-void Doom3GroupNode::_onTransformationChanged()
+void StaticGeometryNode::_onTransformationChanged()
 {
 	// If this is a container, pass the call to the children and leave the entity unharmed
 	if (!isModel())
@@ -372,7 +379,7 @@ void Doom3GroupNode::_onTransformationChanged()
 			child.revertTransform();
 		});
 
-        revertTransform();
+        revertTransformInternal();
 
 		evaluateTransform();
 
@@ -382,7 +389,7 @@ void Doom3GroupNode::_onTransformationChanged()
 	else
 	{
 		// It's a model
-		revertTransform();
+		revertTransformInternal();
 		evaluateTransform();
 		updateTransform();
 	}
@@ -391,11 +398,11 @@ void Doom3GroupNode::_onTransformationChanged()
 	m_curveCatmullRom.curveChanged();
 }
 
-void Doom3GroupNode::_applyTransformation()
+void StaticGeometryNode::_applyTransformation()
 {
-	revertTransform();
+	revertTransformInternal();
 	evaluateTransform();
-	freezeTransform();
+	freezeTransformInternal();
 
 	if (!isModel())
 	{
@@ -404,7 +411,7 @@ void Doom3GroupNode::_applyTransformation()
 	}
 }
 
-void Doom3GroupNode::onModelKeyChanged(const std::string& value)
+void StaticGeometryNode::onModelKeyChanged(const std::string& value)
 {
 	// Override the default behaviour
 	// Don't call EntityNode::onModelKeyChanged(value);
@@ -423,16 +430,16 @@ inline void PointVertexArray_testSelect(VertexCb* first, std::size_t count,
 	);
 }
 
-Vector3& Doom3GroupNode::getOrigin() {
+Vector3& StaticGeometryNode::getOrigin() {
 	return m_origin;
 }
 
-const Vector3& Doom3GroupNode::getUntransformedOrigin()
+const Vector3& StaticGeometryNode::getUntransformedOrigin()
 {
     return m_originKey.get();
 }
 
-const AABB& Doom3GroupNode::localAABB() const {
+const AABB& StaticGeometryNode::localAABB() const {
 	m_curveBounds = m_curveNURBS.getBounds();
 	m_curveBounds.includeAABB(m_curveCatmullRom.getBounds());
 
@@ -449,14 +456,14 @@ const AABB& Doom3GroupNode::localAABB() const {
 	return m_curveBounds;
 }
 
-void Doom3GroupNode::snapOrigin(float snap)
+void StaticGeometryNode::snapOrigin(float snap)
 {
 	m_originKey.snap(snap);
 	m_originKey.write(_spawnArgs);
 	m_renderOrigin.updatePivot();
 }
 
-void Doom3GroupNode::translateOrigin(const Vector3& translation)
+void StaticGeometryNode::translateOrigin(const Vector3& translation)
 {
 	m_origin = m_originKey.get() + translation;
 
@@ -469,7 +476,7 @@ void Doom3GroupNode::translateOrigin(const Vector3& translation)
 	m_renderOrigin.updatePivot();
 }
 
-void Doom3GroupNode::translate(const Vector3& translation)
+void StaticGeometryNode::translate(const Vector3& translation)
 {
 	m_origin += translation;
 
@@ -483,7 +490,7 @@ void Doom3GroupNode::translate(const Vector3& translation)
 	translateChildren(translation);
 }
 
-void Doom3GroupNode::rotate(const Quaternion& rotation)
+void StaticGeometryNode::rotate(const Quaternion& rotation)
 {
 	if (!isModel())
 	{
@@ -504,7 +511,7 @@ void Doom3GroupNode::rotate(const Quaternion& rotation)
 	}
 }
 
-void Doom3GroupNode::scale(const Vector3& scale)
+void StaticGeometryNode::scale(const Vector3& scale)
 {
 	if (!isModel())
 	{
@@ -521,13 +528,13 @@ void Doom3GroupNode::scale(const Vector3& scale)
 	}
 }
 
-void Doom3GroupNode::snapto(float snap)
+void StaticGeometryNode::snapto(float snap)
 {
 	m_originKey.snap(snap);
 	m_originKey.write(_spawnArgs);
 }
 
-void Doom3GroupNode::revertTransform()
+void StaticGeometryNode::revertTransformInternal()
 {
 	m_origin = m_originKey.get();
 
@@ -544,7 +551,7 @@ void Doom3GroupNode::revertTransform()
 	m_curveCatmullRom.revertTransform();
 }
 
-void Doom3GroupNode::freezeTransform()
+void StaticGeometryNode::freezeTransformInternal()
 {
 	m_originKey.set(m_origin);
 	m_originKey.write(_spawnArgs);
@@ -569,7 +576,7 @@ void Doom3GroupNode::freezeTransform()
 	m_curveCatmullRom.saveToEntity(_spawnArgs);
 }
 
-void Doom3GroupNode::appendControlPoints(unsigned int numPoints) {
+void StaticGeometryNode::appendControlPoints(unsigned int numPoints) {
 	if (!m_curveNURBS.isEmpty()) {
 		m_curveNURBS.appendControlPoints(numPoints);
 		m_curveNURBS.saveToEntity(_spawnArgs);
@@ -580,7 +587,7 @@ void Doom3GroupNode::appendControlPoints(unsigned int numPoints) {
 	}
 }
 
-void Doom3GroupNode::convertCurveType() {
+void StaticGeometryNode::convertCurveType() {
 	if (!m_curveNURBS.isEmpty() && m_curveCatmullRom.isEmpty()) {
 		std::string keyValue = _spawnArgs.getKeyValue(curve_Nurbs);
 		_spawnArgs.setKeyValue(curve_Nurbs, "");
@@ -593,20 +600,16 @@ void Doom3GroupNode::convertCurveType() {
 	}
 }
 
-void Doom3GroupNode::destroy()
+void StaticGeometryNode::destroy()
 {
 	modelChanged("");
-
-	removeKeyObserver("origin", m_originKey);
-	removeKeyObserver(curve_Nurbs, m_curveNURBS);
-	removeKeyObserver(curve_CatmullRomSpline, m_curveCatmullRom);
 }
 
-bool Doom3GroupNode::isModel() const {
+bool StaticGeometryNode::isModel() const {
 	return m_isModel;
 }
 
-void Doom3GroupNode::setIsModel(bool newValue) {
+void StaticGeometryNode::setIsModel(bool newValue) {
 	if (newValue && !m_isModel) {
 		// The model key is not recognised as "name"
 		getModelKey().modelChanged(m_modelKey);
@@ -620,13 +623,13 @@ void Doom3GroupNode::setIsModel(bool newValue) {
 	updateTransform();
 }
 
-/** Determine if this Doom3GroupNode is a model (func_static) or a
+/** Determine if this StaticGeometryNode is a model (func_static) or a
  * brush-containing entity. If the "model" key is equal to the
  * "name" key, then this is a brush-based entity, otherwise it is
  * a model entity. The exception to this is the "worldspawn"
  * entity class, which is always a brush-based entity.
  */
-void Doom3GroupNode::updateIsModel()
+void StaticGeometryNode::updateIsModel()
 {
 	if (m_modelKey != m_name && !_spawnArgs.isWorldspawn())
 	{
@@ -644,13 +647,13 @@ void Doom3GroupNode::updateIsModel()
 	}
 }
 
-void Doom3GroupNode::nameChanged(const std::string& value) {
+void StaticGeometryNode::nameChanged(const std::string& value) {
 	m_name = value;
 	updateIsModel();
 	m_renderOrigin.updatePivot();
 }
 
-void Doom3GroupNode::modelChanged(const std::string& value)
+void StaticGeometryNode::modelChanged(const std::string& value)
 {
 	m_modelKey = value;
 	updateIsModel();
@@ -669,7 +672,7 @@ void Doom3GroupNode::modelChanged(const std::string& value)
 	m_renderOrigin.updatePivot();
 }
 
-void Doom3GroupNode::updateTransform()
+void StaticGeometryNode::updateTransform()
 {
 	localToParent() = Matrix4::getIdentity();
 
@@ -683,7 +686,7 @@ void Doom3GroupNode::updateTransform()
 	transformChanged();
 }
 
-void Doom3GroupNode::translateChildren(const Vector3& childTranslation)
+void StaticGeometryNode::translateChildren(const Vector3& childTranslation)
 {
 	if (inScene())
 	{
@@ -696,7 +699,7 @@ void Doom3GroupNode::translateChildren(const Vector3& childTranslation)
 	}
 }
 
-void Doom3GroupNode::originChanged()
+void StaticGeometryNode::originChanged()
 {
 	m_origin = m_originKey.get();
 	updateTransform();
@@ -710,7 +713,7 @@ void Doom3GroupNode::originChanged()
 	m_renderOrigin.updatePivot();
 }
 
-void Doom3GroupNode::rotationChanged() {
+void StaticGeometryNode::rotationChanged() {
 	m_rotation = m_rotationKey.m_rotation;
 	updateTransform();
 }

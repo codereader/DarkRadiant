@@ -39,7 +39,6 @@ BrushNode::BrushNode(const BrushNode& other) :
 	ComponentEditable(other),
 	ComponentSnappable(other),
 	PlaneSelectable(other),
-	LitObject(other),
 	Transformable(other),
 	m_brush(*this, other.m_brush),
 	_selectedPoints(GL_POINTS),
@@ -75,7 +74,7 @@ std::string BrushNode::getFingerprint()
     }
 
     math::Hash hash;
-    
+
     hash.addSizet(static_cast<std::size_t>(m_brush.getDetailFlag() + 1));
 
     hash.addSizet(m_brush.getNumFaces());
@@ -341,10 +340,6 @@ void BrushNode::vertex_push_back(SelectableVertex& vertex) {
 
 void BrushNode::DEBUG_verify() {
 	ASSERT_MESSAGE(m_faceInstances.size() == m_brush.DEBUG_size(), "FATAL: mismatch");
-}
-
-bool BrushNode::intersectsLight(const RendererLight& light) const {
-	return light.lightAABB().intersects(worldAABB());
 }
 
 void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const

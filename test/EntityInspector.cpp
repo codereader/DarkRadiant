@@ -131,7 +131,7 @@ inline void expectUnique(const KeyValueStore& keyValueStore, const std::string& 
         return;
     }
 
-    EXPECT_EQ(keyValueStore.store.at(key), value) << 
+    EXPECT_EQ(keyValueStore.store.at(key), value) <<
         "Key Value Store should contain " << key << " = " << value << ", but value was " << keyValueStore.store.at(key);
 }
 
@@ -144,13 +144,13 @@ inline void expectNonUnique(const KeyValueStore& keyValueStore, const std::strin
     }
 
     EXPECT_EQ(keyValueStore.store.at(key), KeyValueStore::DifferingValues) <<
-        "Key Value Store should contain " << key << " = " << KeyValueStore::DifferingValues << 
+        "Key Value Store should contain " << key << " = " << KeyValueStore::DifferingValues <<
         ", but value was " << keyValueStore.store.at(key);
 }
 
 inline void expectNotListed(const KeyValueStore& keyValueStore, const std::string& key)
 {
-    EXPECT_EQ(keyValueStore.store.count(key), 0) << 
+    EXPECT_EQ(keyValueStore.store.count(key), 0) <<
         "Key Value Store should not contain " << key;
 }
 
@@ -256,7 +256,7 @@ TEST_F(EntityInspectorTest, TwoEntitiesSelected)
     expectUnique(keyValueStore, "classname", "light_torchflame");
     expectUnique(keyValueStore, "light_center", "0 0 0");
     expectUnique(keyValueStore, "light_radius", "126 102 79");
-    
+
     // Shared keys, but differing values
     expectNonUnique(keyValueStore, "name");
     expectNonUnique(keyValueStore, "origin");
@@ -515,7 +515,7 @@ TEST_F(EntityInspectorTest, SelectEntitiesPlusWorldspawnPrimitive)
     auto light1 = selectEntity("light_torchflame_1");
     auto speaker1 = selectEntity("speaker_1");
     keyValueStore.rescanSelection();
-    
+
     // Prerequisites of worldspawn
     EXPECT_EQ(Node_getEntity(worldspawn)->getKeyValue("name"), "") << "Worldspawn shouldn't have a name";
     EXPECT_EQ(Node_getEntity(worldspawn)->getKeyValue("origin"), "") << "Worldspawn shouldn't have an origin";
@@ -598,7 +598,7 @@ TEST_F(EntityInspectorTest, UndoRedoKeyValueChange)
 
     for (const auto& pair : keyValuesBeforeChange)
     {
-        EXPECT_EQ(keyValueStore.store[pair.first], pair.first == "unique_to_1" ? ChangedValue : pair.second) 
+        EXPECT_EQ(keyValueStore.store[pair.first], pair.first == "unique_to_1" ? ChangedValue : pair.second)
             << "Keyvalues not matching up after change";
     }
 
@@ -793,7 +793,7 @@ TEST_F(EntityInspectorTest, SelectWorldspawnBrushes)
 
 // Check behaviour when selecting and deselecting various child primitives of two entities
 // every time the entity selection changes, the key value store is supposed to receive callbacks.
-// Even if a primitive selection changes, as long as the corresponding entity selection set 
+// Even if a primitive selection changes, as long as the corresponding entity selection set
 // doesn't change, the key value store should not receive any change events.
 TEST_F(EntityInspectorTest, SelectChildPrimitivesOfTwoEntities)
 {
@@ -893,7 +893,7 @@ TEST_F(EntityInspectorTest, SelectChildPrimitivesOfTwoEntities)
 }
 
 // In a problematic case, a worldspawn patch and a func_static have been moved,
-// the modified "origin" key on the func_static was appearing in the Entity Inspector 
+// the modified "origin" key on the func_static was appearing in the Entity Inspector
 // after the modification. It should remain hidden, since worldspawn doesn't have an "origin" key.
 TEST_F(EntityInspectorTest, MoveFuncStaticAndWorldPrimitives)
 {
@@ -915,7 +915,7 @@ TEST_F(EntityInspectorTest, MoveFuncStaticAndWorldPrimitives)
 
     auto previousOrigin = Node_getEntity(func_static)->getKeyValue("origin");
 
-    auto transformable = Node_getTransformable(func_static);
+    auto transformable = scene::node_cast<ITransformable>(func_static);
     if (transformable)
     {
         transformable->setType(TRANSFORM_PRIMITIVE);

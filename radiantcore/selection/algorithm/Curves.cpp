@@ -26,7 +26,7 @@ namespace
     const char* const GKEY_CURVE_CATMULLROM_KEY = "/defaults/curveCatmullRomKey";
 }
 
-/** 
+/**
  * greebo: Creates a new entity with an attached curve
  *
  * @key: The curve type: pass either "curve_CatmullRomSpline" or "curve_Nurbs".
@@ -71,7 +71,7 @@ void createCurve(const std::string& key)
         "3 ( 0 0 0  50 50 0  50 100 0 )"
     );
 
-    ITransformablePtr transformable = Node_getTransformable(curve);
+    ITransformablePtr transformable = scene::node_cast<ITransformable>(curve);
     if (transformable != NULL) {
         // Translate the entity to the center of the current workzone
         transformable->setTranslation(GlobalXYWndManager().getActiveViewOrigin());
@@ -238,7 +238,7 @@ void insertCurveControlPoints(const cmd::ArgumentList& args)
 			_("Can't insert curve points - no entities with curves selected.")
 		);
 	}
-	
+
 	UndoableCommand command("curveInsertControlPoints");
 
 	// The functor object

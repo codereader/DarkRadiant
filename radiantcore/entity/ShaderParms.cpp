@@ -45,7 +45,7 @@ void ShaderParms::removeKeyObservers()
 {
 	for (std::size_t i = MIN_SHADERPARM_NUM_TO_OBSERVE; i < MAX_ENTITY_SHADERPARMS; ++i)
 	{
-		_keyObserverMap.erase("shaderParm" + string::to_string(i), _shaderParmObservers[i]);
+		_keyObserverMap.erase(_shaderParmObservers[i]);
 	}
 }
 

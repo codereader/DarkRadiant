@@ -7,6 +7,7 @@
 #include "irenderable.h"
 #include "math/Frustum.h"
 #include "transformlib.h"
+#include "scene/TransformedCopy.h"
 
 #include "../OriginKey.h"
 #include "../RotationKey.h"
@@ -48,7 +49,7 @@ class LightNode;
  * Note: All the selection stuff is handled by the LightInstance class. This is
  * just the bare bone light.
  */
-class Light: public RendererLight
+class Light: public RendererLight, public sigc::trackable
 {
 	friend class LightNode;
 
@@ -79,31 +80,24 @@ class Light: public RendererLight
     RotationMatrix m_lightRotation;
     bool m_useLightRotation;
 
-	// These are the vectors that define a projected light
-	Vector3 _lightTarget;
-	Vector3 _lightUp;
-	Vector3 _lightRight;
-	Vector3 _lightStart;
-	Vector3 _lightEnd;
+    // Set of values defining a projected light
+    template<typename T> struct Projected
+    {
+        T target;
+        T up;
+        T right;
+        T start;
+        T end;
+    };
 
-	// The "temporary" vectors, that get changed during a transform operation
-	Vector3 _lightTargetTransformed;
-	Vector3 _lightUpTransformed;
-	Vector3 _lightRightTransformed;
-	Vector3 _lightStartTransformed;
-	Vector3 _lightEndTransformed;
+    // Projected light vectors, both base and transformed
+    scene::TransformedCopy<Projected<Vector3>> _projVectors;
 
-	Vector3 _colourLightTarget;
-	Vector3 _colourLightUp;
-	Vector3 _colourLightRight;
-	Vector3 _colourLightStart;
-	Vector3 _colourLightEnd;
+    // Projected light vector colours
+    Projected<Vector3> _projColours;
 
-	bool m_useLightTarget;
-	bool m_useLightUp;
-	bool m_useLightRight;
-	bool m_useLightStart;
-	bool m_useLightEnd;
+    // Projected light use flags
+    Projected<bool> _projUseFlags;
 
     mutable AABB m_doom3AABB;
     mutable Matrix4 m_doom3Rotation;
@@ -126,19 +120,6 @@ class Light: public RendererLight
     Callback m_transformChanged;
     Callback m_boundsChanged;
     Callback m_evaluateTransform;
-
-    KeyObserverDelegate _rotationObserver;
-	KeyObserverDelegate _angleObserver;
-
-	KeyObserverDelegate _lightRadiusObserver;
-	KeyObserverDelegate _lightCenterObserver;
-	KeyObserverDelegate _lightRotationObserver;
-	KeyObserverDelegate _lightTargetObserver;
-	KeyObserverDelegate _lightUpObserver;
-	KeyObserverDelegate _lightRightObserver;
-	KeyObserverDelegate _lightStartObserver;
-	KeyObserverDelegate _lightEndObserver;
-	KeyObserverDelegate _lightTextureObserver;
 
 private:
 

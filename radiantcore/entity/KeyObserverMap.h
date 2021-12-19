@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "ientity.h"
 #include <map>
 #include <string>
+#include <sigc++/connection.h>
 
 #include "SpawnArgs.h"
 
@@ -41,9 +42,21 @@ class KeyObserverMap :
 	public Entity::Observer,
     public sigc::trackable
 {
-	// A map using case-insensitive comparison
+	// A map using case-insensitive comparison, storing one or more KeyObserver
+	// objects for each observed key.
     typedef std::multimap<std::string, KeyObserver::Ptr, string::ILess> KeyObservers;
     KeyObservers _keyObservers;
+
+    // Signals for each key observed with observeKey(). This is a map, not a
+    // multimap, since each signal can be connected to an arbitrary number of
+    // slots.
+    using KeySignal = sigc::signal<void, std::string>;
+    using KeySignals = std::map<std::string, KeySignal, string::ILess>;
+    KeySignals _keySignals;
+
+    // Keep track of connections for each external observer, so we can
+    // disconnect them if erase() is called.
+    std::multimap<KeyObserver*, sigc::connection> _connectionsByObserver;
 
 	// The observed entity
 	SpawnArgs& _entity;
@@ -86,45 +99,71 @@ public:
         // All observers are detached, clear them out
         _keyObservers.clear();
 
+        // Clear out and destroy all signals
+        _keySignals.clear();
+
         // Remove ourselves as an Entity::Observer (onKeyInsert and onKeyErase)
 		_entity.detachObserver(this);
 	}
 
     /**
-     * @brief Add an observer function for the specified key.
+     * @brief Add an observer slot for the specified key.
      *
-     * The observer function will be wrapped in a KeyObserver interface object
-     * owned and deleted by the KeyObserverMap. This allows calling code to
-     * attach a callback function without worrying about maintaining a
-     * KeyObserver object.
+     * The slot will be connected to an internal signal which will be emitted
+     * when the associated key changes. This enables the standard libsigc++
+     * auto-disconnection if the slot is bound to a member function of a
+     * sigc::trackable class using sigc::mem_fun. If a lambda is used, there
+     * will be no auto-disconnection; in this case the calling code must ensure
+     * that the lambda does not capture variables that may become invalid while
+     * the signal is still connected.
      *
-     * There is currently no way to manually delete an observer function added
-     * in this way. All observer functions will be removed on destruction.
+     * There is currently no way to manually disconnect an observer function
+     * added in this way. All observer functions will be removed on destruction.
      *
      * @param key
      * Key to observe.
      *
      * @param func
-     * Callback function to be invoked when the key value changes. It will also
-     * be invoked immediately with the key's current value, or an empty string
-     * if the key does not currently exist.
+     * Slot to be invoked when the key value changes. It will also be invoked
+     * immediately with the key's current value, or an empty string if the key
+     * does not currently exist.
      */
-    void observeKey(const std::string& key, KeyObserverFunc func)
+    sigc::connection observeKey(const std::string& key, KeyObserverFunc func)
     {
-        auto iter = _keyObservers.insert(
-            {key, std::make_shared<KeyObserverDelegate>(func)}
-        );
-        assert(iter != _keyObservers.end());
-        attachObserver(key, *iter->second);
+        // If there is already a signal for this key, just connect the slot to it
+        sigc::connection conn;
+        if (auto iter = _keySignals.find(key); iter != _keySignals.end()) {
+            conn = iter->second.connect(func);
+
+            // Send initial value to slot
+            func(_entity.getKeyValue(key));
+        }
+        else {
+            // No existing signal, so we need to create one
+            conn = _keySignals[key].connect(func);
+
+            // Create and attach an internal KeyObserver to respond to keyvalue
+            // changes and emit the associated signal. Note that we don't just wrap
+            // the slot in a delegate to invoke it directly — we need the
+            // intervening sigc::signal to allow for auto-disconnection.
+            auto delegate = std::make_shared<KeyObserverDelegate>(
+                [=](const std::string& value) { _keySignals[key].emit(value); }
+            );
+
+            // Store the observer internally. We must only do this once per key;
+            // multiple observers would result in multiple signal emissions.
+            _keyObservers.insert({key, delegate});
+
+            // Send initial value and attach to EntityKeyValue immediately if needed
+            attachObserver(key, *delegate);
+        }
+        return conn;
     }
 
     /**
      * @brief Add an observer object for the specified key.
      *
-     * Multiple observers can be attached to the same key. It is the calling
-     * code's responsibility to ensure that the KeyObserver exists for the
-     * lifetime of the attachment; undefined behaviour will result if a
-     * KeyObserver is destroyed while still attached to the entity.
+     * Multiple observers can be attached to the same key.
      *
      * @param key
      * Key to observe.
@@ -136,30 +175,44 @@ public:
      */
 	void insert(const std::string& key, KeyObserver& observer)
 	{
-        // Wrap observer in a shared_ptr with a NOP deleter, since we don't own it
-		_keyObservers.insert({key, KeyObserver::Ptr(&observer, [](KeyObserver*) {})});
+        // Connect to observer method, ensuring auto-disconnection is set up
+        static_assert(std::is_base_of<sigc::trackable, KeyObserver>::value);
+        auto conn = observeKey(key, sigc::mem_fun(observer, &KeyObserver::onKeyValueChanged));
 
-        attachObserver(key, observer);
+        // Store the connection so we can remove it if erase() is called with the same observer
+        _connectionsByObserver.insert({&observer, conn});
 	}
 
-	void erase(const std::string& key, KeyObserver& observer)
+    /**
+     * @brief Disconnect the given observer.
+     *
+     * If the observer was previously connected, it will be invoked with a final
+     * empty value before being removed. Attempting to disconnect an observer
+     * which was not connected has no effect.
+     *
+     * If the observer was connected to multiple keys, it will be disconnected
+     * from all of them.
+     *
+     * @param observer
+     * Observer to remove.
+     */
+	void erase(KeyObserver& observer)
 	{
-        const auto upperBound = _keyObservers.upper_bound(key);
-		for (auto i = _keyObservers.find(key);
-			 i != upperBound && i != _keyObservers.end();
-			 /* in-loop increment */)
-		{
-			if (i->second.get() == &observer) {
-                // Detach the observer from the actual keyvalue, if it exists
-                detachObserver(key, observer, true /* send final empty value */);
+        // Find all connections for this observer
+        auto [iter, end] = _connectionsByObserver.equal_range(&observer);
+        if (iter == end)
+            return;
 
-                // Order is important: first increment, then erase the non-incremented value
-				_keyObservers.erase(i++);
-			}
-			else {
-				++i;
-			}
-		}
+        // Send final value before removing observer
+        observer.onKeyValueChanged("");
+
+        // Disconnect all the connections
+        for (auto localIter = iter; localIter != end; ++localIter) {
+            localIter->second.disconnect();
+        }
+
+        // Erase all connections from the multimap
+        _connectionsByObserver.erase(iter, end);
 	}
 
 	void refreshObservers()

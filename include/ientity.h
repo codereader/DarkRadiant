@@ -16,7 +16,7 @@ typedef std::shared_ptr<IEntityClass> IEntityClassPtr;
 typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
 
 // Observes a single entity key value and gets notified on change
-class KeyObserver
+class KeyObserver: public sigc::trackable
 {
 public:
     using Ptr = std::shared_ptr<KeyObserver>;
@@ -286,7 +286,7 @@ public:
 };
 
 /// Callback for an entity key value change
-using KeyObserverFunc = std::function<void(const std::string&)>;
+using KeyObserverFunc = sigc::slot<void(const std::string&)>;
 
 /**
  * \brief Interface for a node which represents an entity.
@@ -307,30 +307,6 @@ public:
     virtual Entity& getEntity() = 0;
 
     /**
-     * @brief Attach a KeyObserver to observe a key's value changes.
-     *
-     * This is similar to attaching the KeyObserver directly to the
-     * EntityKeyValue, except that it is not required that the key value
-     * currently exist.
-     *
-     * If the key already exists, the KeyObserver will be immediately invoked
-     * with the current value; otherwise the observer will be invoked with an
-     * empty value. If the key is subsequently created or changed, the observer
-     * will be invoked with the new value. Likewise, if the key is deleted, the
-     * KeyObserver will be invoked with an empty value.
-     *
-     * It is the responsibility of the calling code to ensure that the
-     * KeyObserver remains alive as long as it is attached.
-     *
-     * @param key
-     * The key to observe.
-     *
-     * @param observer
-     * Observer to attach.
-     */
-	virtual void addKeyObserver(const std::string& key, KeyObserver& observer) = 0;
-
-    /**
      * @brief Observe key value changes using a callback function.
      *
      * This method provides a simpler interface for observing key value changes
@@ -344,17 +320,6 @@ public:
      * Function to call when the key value changes.
      */
     virtual void observeKey(const std::string& key, KeyObserverFunc func) = 0;
-
-    /**
-     * @brief Remove a key observer attached with addKeyObserver.
-     *
-     * @param key
-     * Key being observed.
-     *
-     * @param observer
-     * Observer to remove.
-     */
-	virtual void removeKeyObserver(const std::string& key, KeyObserver& observer) = 0;
 
     /**
      * greebo: Tells the entity to reload the child model. This usually

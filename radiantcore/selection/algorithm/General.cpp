@@ -370,7 +370,7 @@ public:
 		Entity* entity = Node_getEntity(node);
 
 		// Check if we have a selectable
-		ISelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
 		if (selectable)
 		{
@@ -444,7 +444,7 @@ public:
 		Entity* entity = Node_getEntity(node);
 
 		// Check if we have a selectable
-		ISelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
 		if (selectable != NULL)
 		{
@@ -558,7 +558,7 @@ public:
 		// Don't traverse hidden nodes
 		if (!node->visible()) return false;
 
-		ISelectablePtr selectable = Node_getSelectable(node);
+		ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
 
 		// ignore worldspawn
         Entity* entity = Node_getEntity(node);
@@ -952,7 +952,7 @@ void floorNode(const scene::INodePtr& node)
 	{
 		Vector3 translation = finder.getIntersection() - objectOrigin;
 
-		ITransformablePtr transformable = Node_getTransformable(node);
+		ITransformablePtr transformable = scene::node_cast<ITransformable>(node);
 
 		if (transformable)
 		{
@@ -987,7 +987,7 @@ void registerCommands()
     GlobalCommandSystem().addCommand("InvertSelection", invertSelection);
     GlobalCommandSystem().addCommand("SelectInside", selectInside,
         { cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL });
-    GlobalCommandSystem().addCommand("SelectFullyInside", selectFullyInside, 
+    GlobalCommandSystem().addCommand("SelectFullyInside", selectFullyInside,
         { cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL });
 	GlobalCommandSystem().addCommand("SelectTouching", selectTouching,
         { cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL });

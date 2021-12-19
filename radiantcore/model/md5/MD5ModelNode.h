@@ -12,7 +12,6 @@ class MD5ModelNode :
 	public scene::Node,
 	public model::ModelNode,
 	public SelectionTestable,
-	public LitObject,
 	public SkinnedModel,
 	public ITraceable
 {
@@ -47,9 +46,6 @@ public:
 	// Traceable implementation
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
-	// LitObject implementation
-	bool intersectsLight(const RendererLight& light) const override;
-
 	// Renderable implementation
 	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
@@ -65,7 +61,7 @@ public:
 	void skinChanged(const std::string& newSkinName) override;
 
 private:
-	void render(RenderableCollector& collector, const VolumeTest& volume, 
+	void render(RenderableCollector& collector, const VolumeTest& volume,
 				const Matrix4& localToWorld, const IRenderEntity& entity) const;
 };
 typedef std::shared_ptr<MD5ModelNode> MD5ModelNodePtr;

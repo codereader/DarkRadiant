@@ -15,7 +15,7 @@ namespace model {
 
 // greebo: Construct a new StaticModel instance, we re-use the surfaces only
 StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
-    _model(new StaticModel(*picoModel)), 
+    _model(new StaticModel(*picoModel)),
     _name(picoModel->getFilename())
 {
     // Update the skin
@@ -28,7 +28,7 @@ StaticModelNode::~StaticModelNode()
 void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     _model->connectUndoSystem(root.getUndoSystem());
-    
+
     Node::onInsertIntoScene(root);
 }
 
@@ -44,7 +44,7 @@ const IModel& StaticModelNode::getIModel() const
     return *_model;
 }
 
-IModel& StaticModelNode::getIModel() 
+IModel& StaticModelNode::getIModel()
 {
     return *_model;
 }
@@ -83,12 +83,6 @@ const StaticModelPtr& StaticModelNode::getModel() const {
 
 void StaticModelNode::setModel(const StaticModelPtr& model) {
     _model = model;
-}
-
-// LitObject test function
-bool StaticModelNode::intersectsLight(const RendererLight& light) const
-{
-    return light.lightAABB().intersects(worldAABB());
 }
 
 void StaticModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const

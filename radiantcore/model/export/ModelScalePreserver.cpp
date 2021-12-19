@@ -34,7 +34,7 @@ ModelScalePreserver::ModelScalePreserver() :
 	);
 }
 
-void ModelScalePreserver::forEachScaledModel(const scene::IMapRootNodePtr& root, 
+void ModelScalePreserver::forEachScaledModel(const scene::IMapRootNodePtr& root,
 	const std::function<void(Entity&, model::ModelNode&)>& func)
 {
 	root->foreachNode([&](const scene::INodePtr& node)
@@ -104,7 +104,7 @@ void ModelScalePreserver::restoreModelScale(const scene::IMapRootNodePtr& root)
 				node->foreachNode([&](const scene::INodePtr& child)
 				{
 					model::ModelNodePtr model = Node_getModel(child);
-					ITransformablePtr transformable = Node_getTransformable(child);
+					ITransformablePtr transformable = scene::node_cast<ITransformable>(child);
 
 					if (model && transformable)
 					{

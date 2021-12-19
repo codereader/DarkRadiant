@@ -5,11 +5,12 @@
 #include "ObservedUndoable.h"
 
 /**
- * greebo: A ModelKey object watches the "model" spawnarg of
- * an entity. As soon as the keyvalue changes, the according
- * modelnode is loaded and inserted into the entity's Traversable.
+ * @brief A ModelKey watches the "model" spawnarg of an entity.
+ *
+ * As soon as the keyvalue changes, the according modelnode is loaded and
+ * inserted into the entity's Traversable.
  */
-class ModelKey
+class ModelKey: public sigc::trackable
 {
 private:
 	// The parent node, where the model node can be added to (as child)

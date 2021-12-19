@@ -61,8 +61,6 @@ protected:
 
 	// Model child node handling helper
 	ModelKey _modelKey;
-	KeyObserverDelegate _modelKeyObserver;
-	KeyObserverDelegate _skinKeyObserver;
 
 	// A helper class managing the collection of KeyObservers attached to the SpawnArgs
 	KeyObserverMap _keyObservers;
@@ -150,9 +148,7 @@ public:
 	virtual std::size_t getHighlightFlags() override;
 
 	// IEntityNode implementation
-	void addKeyObserver(const std::string& key, KeyObserver& observer) override;
     void observeKey(const std::string& key, KeyObserverFunc func) override;
-	void removeKeyObserver(const std::string& key, KeyObserver& observer) override;
 
 	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme
     const ModelKey& getModelKey() const;

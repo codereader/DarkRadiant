@@ -49,7 +49,7 @@ void translation_for_pivoted_scale(Vector3& parent_translation, const Vector3& l
 // ===================================================================================
 
 void TranslateSelected::visit(const scene::INodePtr& node) const {
-	ITransformablePtr transform = Node_getTransformable(node);
+	ITransformablePtr transform = scene::node_cast<ITransformable>(node);
     if(transform != 0) {
     	transform->setType(TRANSFORM_PRIMITIVE);
     	transform->setTranslation(m_translate);
@@ -58,20 +58,20 @@ void TranslateSelected::visit(const scene::INodePtr& node) const {
 
 // ===================================================================================
 
-RotateSelected::RotateSelected(const Quaternion& rotation, const Vector3& world_pivot) : 
-    _rotation(rotation), 
+RotateSelected::RotateSelected(const Quaternion& rotation, const Vector3& world_pivot) :
+    _rotation(rotation),
     _worldPivot(world_pivot),
     _freeObjectRotation(registry::getValue<bool>(selection::algorithm::RKEY_FREE_OBJECT_ROTATION))
 {}
 
 void RotateSelected::visit(const scene::INodePtr& node) const
 {
-    ITransformNodePtr transformNode = Node_getTransformNode(node);
+    ITransformNodePtr transformNode = scene::node_cast<ITransformNode>(node);
 
-    if (transformNode) 
+    if (transformNode)
     {
         // Upcast the instance onto a Transformable
-        ITransformablePtr transformable = Node_getTransformable(node);
+        ITransformablePtr transformable = scene::node_cast<ITransformable>(node);
 
         if (transformable)
         {
@@ -81,10 +81,10 @@ void RotateSelected::visit(const scene::INodePtr& node) const
             transformable->setScale(c_scale_identity);
             transformable->setTranslation(c_translation_identity);
 
-            // Pass the rotation quaternion and the world pivot, 
+            // Pass the rotation quaternion and the world pivot,
             // unless we're rotating each object around their own center
-            transformable->setRotation(_rotation, 
-                _freeObjectRotation ? transformable->getUntransformedOrigin() : _worldPivot, 
+            transformable->setRotation(_rotation,
+                _freeObjectRotation ? transformable->getUntransformedOrigin() : _worldPivot,
                 node->localToWorld());
         }
     }
@@ -93,10 +93,10 @@ void RotateSelected::visit(const scene::INodePtr& node) const
 // ===================================================================================
 
 void ScaleSelected::visit(const scene::INodePtr& node) const {
-    ITransformNodePtr transformNode = Node_getTransformNode(node);
+    ITransformNodePtr transformNode = scene::node_cast<ITransformNode>(node);
     if(transformNode != 0)
     {
-      ITransformablePtr transform = Node_getTransformable(node);
+      ITransformablePtr transform = scene::node_cast<ITransformable>(node);
       if(transform != 0)
       {
         transform->setType(TRANSFORM_PRIMITIVE);
@@ -124,7 +124,7 @@ void ScaleSelected::visit(const scene::INodePtr& node) const {
 // ====== Component Visitors ==========================================================
 
 void TranslateComponentSelected::visit(const scene::INodePtr& node) const {
-    ITransformablePtr transform = Node_getTransformable(node);
+    ITransformablePtr transform = scene::node_cast<ITransformable>(node);
     if(transform != 0)
     {
       transform->setType(TRANSFORM_COMPONENT);
@@ -133,12 +133,12 @@ void TranslateComponentSelected::visit(const scene::INodePtr& node) const {
 }
 
 void RotateComponentSelected::visit(const scene::INodePtr& node) const {
-    ITransformablePtr transform = Node_getTransformable(node);
+    ITransformablePtr transform = scene::node_cast<ITransformable>(node);
     if(transform != 0) {
       Vector3 parent_translation;
       translation_for_pivoted_rotation(parent_translation, m_rotate, m_world_pivot,
 						node->localToWorld(),
-      					Node_getTransformNode(node)->localToParent());
+      					scene::node_cast<ITransformNode>(node)->localToParent());
 
       transform->setType(TRANSFORM_COMPONENT);
       transform->setRotation(m_rotate);
@@ -147,10 +147,10 @@ void RotateComponentSelected::visit(const scene::INodePtr& node) const {
 }
 
 void ScaleComponentSelected::visit(const scene::INodePtr& node) const {
-    ITransformablePtr transform = Node_getTransformable(node);
+    ITransformablePtr transform = scene::node_cast<ITransformable>(node);
     if(transform != 0) {
       Vector3 parent_translation;
-	  translation_for_pivoted_scale(parent_translation, m_scale, m_world_pivot, node->localToWorld(), Node_getTransformNode(node)->localToParent());
+	  translation_for_pivoted_scale(parent_translation, m_scale, m_world_pivot, node->localToWorld(), scene::node_cast<ITransformNode>(node)->localToParent());
 
       transform->setType(TRANSFORM_COMPONENT);
       transform->setScale(m_scale);

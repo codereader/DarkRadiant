@@ -479,6 +479,11 @@ void Node::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_children.setRenderSystem(renderSystem);
 }
 
+bool Node::intersectsLight(const RendererLight& light) const
+{
+    return light.lightAABB().intersects(worldAABB());
+}
+
 void Node::setForcedVisibility(bool forceVisible, bool includeChildren)
 {
 	_forceVisible = forceVisible;

@@ -124,7 +124,7 @@ void performPatchRotateTest(bool clockwise)
     algorithm::foreachPatchVertex(*patch, [&](const PatchControl& ctrl)
     {
         auto transformed = transform * (*old++);
-        EXPECT_TRUE(math::isNear(transformed, ctrl.texcoord, 0.02)) 
+        EXPECT_TRUE(math::isNear(transformed, ctrl.texcoord, 0.02))
             << "Transformed UV coords should be " << transformed << " but was " << ctrl.texcoord;
     });
 }
@@ -373,7 +373,7 @@ TEST_F(TextureManipulationTest, PasteTextureToOrthogonalFace1)
 
     for (const auto& pair : sharedVertices)
     {
-        EXPECT_FALSE(math::isNear(pair.first->texcoord, pair.second->texcoord, 0.01)) 
+        EXPECT_FALSE(math::isNear(pair.first->texcoord, pair.second->texcoord, 0.01))
             << "Texture coordinates are the same before pasting the texture projection";
     }
 
@@ -384,7 +384,7 @@ TEST_F(TextureManipulationTest, PasteTextureToOrthogonalFace1)
     SelectionVolume testFaceUp(viewFaceUp);
     GlobalShaderClipboard().pickFromSelectionTest(testFaceUp);
 
-    EXPECT_EQ(GlobalShaderClipboard().getSourceType(), selection::IShaderClipboard::SourceType::Face) 
+    EXPECT_EQ(GlobalShaderClipboard().getSourceType(), selection::IShaderClipboard::SourceType::Face)
         << "Selection test failed to select the face";
 
     render::View viewFaceRight(true);
@@ -561,7 +561,7 @@ void performTextureLockBrushTransformationTest(const std::function<void(ITransfo
         oldTexCoords.push_back(vertex.texcoord);
     }
 
-    auto transformable = Node_getTransformable(brushNode);
+    auto transformable = scene::node_cast<ITransformable>(brushNode);
 
     if (transformable)
     {
@@ -619,7 +619,7 @@ inline scene::INodePtr create512CubeTextured1x1(const std::string& material)
 TEST_F(TextureManipulationTest, FaceGetTexelScale)
 {
     auto brushNode = create512CubeTextured1x1("textures/a_1024x512");
-    
+
     // Get the texture dimensions
     auto editorImage = GlobalMaterialManager().getMaterial("textures/a_1024x512")->getEditorImage();
     auto textureWidth = editorImage->getWidth();
@@ -647,7 +647,7 @@ TEST_F(TextureManipulationTest, FaceGetTexelScale)
 TEST_F(TextureManipulationTest, FaceGetTextureAspectRatio)
 {
     auto brushNode = create512CubeTextured1x1("textures/a_1024x512");
-    
+
     // Get the texture dimensions
     auto editorImage = GlobalMaterialManager().getMaterial("textures/a_1024x512")->getEditorImage();
     auto textureWidth = editorImage->getWidth();
@@ -655,8 +655,8 @@ TEST_F(TextureManipulationTest, FaceGetTextureAspectRatio)
 
     // Get a face and check the texture bounds
     auto& face = Node_getIBrush(brushNode)->getFace(0);
-    
-    EXPECT_NEAR(face.getTextureAspectRatio(), static_cast<float>(textureWidth) / textureHeight, 0.01) 
+
+    EXPECT_NEAR(face.getTextureAspectRatio(), static_cast<float>(textureWidth) / textureHeight, 0.01)
         << "Wrong texture aspect ratio reported";
 
     brushNode = create512CubeTextured1x1("textures/numbers/0");
@@ -681,7 +681,7 @@ TEST_F(TextureManipulationTest, PatchGetTextureAspectRatio)
 
     patchNode = algorithm::createPatchFromBounds(worldspawn, AABB(Vector3(4, 50, 60), Vector3(64, 128, 256)), "textures/numbers/0");
     patch = Node_getIPatch(patchNode);
-    
+
     EXPECT_NEAR(patch->getTextureAspectRatio(), 1.0, 0.001) << "Number texture aspect ratio should be 1.0";
 }
 
@@ -768,7 +768,7 @@ TEST_F(TextureManipulationTest, FaceGetShiftScaleRotation)
     // These materials have an editor image with 2:1 aspect ratio
     auto materialA = "textures/a_1024x512";
     auto materialB = "textures/b_1024x512";
-    
+
     std::string mapPath = "maps/simple_brushes.map";
     GlobalCommandSystem().executeCommand("OpenMap", mapPath);
 

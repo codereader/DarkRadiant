@@ -814,7 +814,7 @@ void RadiantSelectionSystem::onManipulationCancelled()
     // Tell all the scene objects to revert their transformations
     foreachSelected([](const scene::INodePtr& node)
     {
-        ITransformablePtr transform = Node_getTransformable(node);
+        ITransformablePtr transform = scene::node_cast<ITransformable>(node);
 
         if (transform)
         {
@@ -826,7 +826,7 @@ void RadiantSelectionSystem::onManipulationCancelled()
         {
             node->foreachNode([&](const scene::INodePtr& child)
             {
-                ITransformablePtr transform = Node_getTransformable(child);
+                ITransformablePtr transform = scene::node_cast<ITransformable>(child);
 
                 if (transform)
                 {
@@ -1055,7 +1055,7 @@ void RadiantSelectionSystem::shutdownModule()
 
         // If this is a selectable node, unselect it (which might remove it from
         // the map and invalidate the original iterator)
-        auto selectable = Node_getSelectable(node);
+        auto selectable = scene::node_cast<ISelectable>(node);
         if (selectable)
             selectable->setSelected(false);
     }

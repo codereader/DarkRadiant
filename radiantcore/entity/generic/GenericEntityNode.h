@@ -24,7 +24,16 @@ namespace entity
 class GenericEntityNode;
 typedef std::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
 
-/// EntityNode subclass for all entity types not handled by a specific class
+
+/**
+ * @brief EntityNode subclass for all entity types not handled by a specific
+ * class.
+ *
+ * Generic entity nodes represent entities which have no editor-specific
+ * functionality, beyond simply existing and pointing in a particular direction.
+ * They are rendered as boxes with an angle/rotation arrow. Common generic
+ * entities include "info_playerstart" and "info_location".
+ */
 class GenericEntityNode: public EntityNode, public Snappable
 {
 	OriginKey m_originKey;
@@ -52,9 +61,6 @@ class GenericEntityNode: public EntityNode, public Snappable
 	// TRUE if this entity's arrow can be rotated in all directions,
 	// FALSE if the arrow is caught in the xy plane
 	bool _allow3Drotations;
-
-	KeyObserverDelegate _rotationObserver;
-	KeyObserverDelegate _angleObserver;
 
     // Whether to draw a solid/shaded box in full material render mode or just the wireframe
     enum SolidAAABBRenderMode

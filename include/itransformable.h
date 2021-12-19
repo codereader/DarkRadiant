@@ -16,6 +16,17 @@ typedef BasicVector4<double> Vector4;
 class Quaternion;
 class Matrix4;
 
+/**
+ * @brief Interface for a node which can be transformed via GUI operations.
+ *
+ * This interface is designed for nodes which can be translated, rotated and
+ * scaled via manipulators or other mouse operations. A number of incremental
+ * transforms can be accumulated, which are then "committed" via
+ * freezeTransform() or abandoned via revertTransform(). Typically the
+ * uncommitted live transform will affect rendering (so the user can see the
+ * effect of the manipulation), but will not be saved into entity spawnargs
+ * until the transform is frozen.
+ */
 class ITransformable
 {
 public:
@@ -38,14 +49,3 @@ public:
     virtual const Vector3& getUntransformedOrigin() = 0;
 };
 typedef std::shared_ptr<ITransformable> ITransformablePtr;
-
-namespace scene
-{
-	class INode;
-	typedef std::shared_ptr<INode> INodePtr;
-}
-
-inline ITransformablePtr Node_getTransformable(const scene::INodePtr& node)
-{
-    return std::dynamic_pointer_cast<ITransformable>(node);
-}

@@ -14,14 +14,18 @@
 namespace model {
 
 /**
- * \brief
- * Scenegraph node representing a static model
+ * \brief Scenegraph node representing a static model loaded from a file (e.g.
+ * LWO or ASE).
+ *
+ * This node does not represent a "func_static" (or similar object) directly,
+ * but is added as a child of the respective entity node (e.g.
+ * StaticGeometryNode). It is normally created by the ModelCache in response to
+ * a particular entity gaining a "model" spawnarg.
  */
 class StaticModelNode :
 	public scene::Node,
 	public ModelNode,
 	public SelectionTestable,
-	public LitObject,
 	public SkinnedModel,
 	public ITraceable,
     public Transformable
@@ -69,9 +73,6 @@ public:
 
 	const StaticModelPtr& getModel() const;
 	void setModel(const StaticModelPtr& model);
-
-	// LitObject test function
-	bool intersectsLight(const RendererLight& light) const override;
 
 	// Renderable implementation
   	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;

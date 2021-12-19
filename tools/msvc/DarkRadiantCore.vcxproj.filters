@@ -457,7 +457,7 @@
     <ClCompile Include="..\..\radiantcore\entity\curve\CurveNURBS.cpp">
       <Filter>src\entity\curve</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\entity\doom3group\Doom3GroupNode.cpp">
+    <ClCompile Include="..\..\radiantcore\entity\doom3group\StaticGeometryNode.cpp">
       <Filter>src\entity\doom3group</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\entity\eclassmodel\EclassModelNode.cpp">
@@ -1491,7 +1491,7 @@
     <ClInclude Include="..\..\radiantcore\entity\curve\RenderableCurve.h">
       <Filter>src\entity\curve</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\doom3group\Doom3GroupNode.h">
+    <ClInclude Include="..\..\radiantcore\entity\doom3group\StaticGeometryNode.h">
       <Filter>src\entity\doom3group</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\eclassmodel\EclassModelNode.h">

@@ -19,10 +19,16 @@
 namespace entity
 {
 
-class Doom3GroupNode;
-typedef std::shared_ptr<Doom3GroupNode> Doom3GroupNodePtr;
-
-class Doom3GroupNode :
+/**
+ * @brief Container node for static geometry, either in the form of brushes and
+ * patches, or a model loaded from a file.
+ *
+ * This node is used for "func_static" and similar entities which contain static
+ * geometry. It is always used as a parent node, either of the brushes and
+ * patches it contains, or a StaticModelNode containing a model file. It never
+ * stores or renders any geometry itself.
+ */
+class StaticGeometryNode :
 	public EntityNode,
 	public scene::GroupNode,
 	public Snappable,
@@ -31,9 +37,6 @@ class Doom3GroupNode :
 	public ComponentSnappable,
 	public CurveNode
 {
-	// ------------------------------------------------------------------------
-    // Doom3Group members
-
 	OriginKey m_originKey;
 	Vector3 m_origin;
 
@@ -62,9 +65,6 @@ class Doom3GroupNode :
 	CurveCatmullRom m_curveCatmullRom;
 	std::size_t m_curveCatmullRomChanged;
 
-	// ------------------------------------------------------------------------
-    // Doom3GroupNode members
-
 	CurveEditInstance _nurbsEditInstance;
 	CurveEditInstance _catmullRomEditInstance;
 	mutable AABB m_aabb_component;
@@ -73,14 +73,16 @@ class Doom3GroupNode :
 
 private:
 	// Constructor
-	Doom3GroupNode(const IEntityClassPtr& eclass);
+	StaticGeometryNode(const IEntityClassPtr& eclass);
 	// Private copy constructor, is invoked by clone()
-	Doom3GroupNode(const Doom3GroupNode& other);
+	StaticGeometryNode(const StaticGeometryNode& other);
 
 public:
-	static Doom3GroupNodePtr Create(const IEntityClassPtr& eclass);
+    using Ptr = std::shared_ptr<StaticGeometryNode>;
 
-	virtual ~Doom3GroupNode();
+	static StaticGeometryNode::Ptr Create(const IEntityClassPtr& eclass);
+
+	virtual ~StaticGeometryNode();
 
 	// CurveNode implementation
 	virtual bool hasEmptyCurve() override;
@@ -176,8 +178,8 @@ private:
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
 	void scale(const Vector3& scale);
-	void revertTransform() override;
-	void freezeTransform() override;
+	void revertTransformInternal();
+	void freezeTransformInternal();
 
 	// Translates the origin only (without the children)
 	void translateOrigin(const Vector3& translation);
@@ -188,8 +190,6 @@ private:
 
 	// Returns TRUE if this D3Group is a model
 	bool isModel() const;
-
-	void setTransformChanged(Callback& callback);
 
 public:
 
