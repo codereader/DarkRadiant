@@ -36,13 +36,14 @@ class Doom3GroupNode :
 	OriginKey m_originKey;
 	Vector3 m_origin;
 
+#if 0
 	// A separate origin for the renderable pivot points
 	Vector3 m_nameOrigin;
-
+#endif
 	RotationKey m_rotationKey;
 	RotationMatrix m_rotation;
 
-	render::RenderablePivot m_renderOrigin;
+	render::RenderablePivot _renderOrigin;
 
 	mutable AABB m_curveBounds;
 
@@ -67,6 +68,8 @@ class Doom3GroupNode :
 	mutable AABB m_aabb_component;
 
 	VertexInstance _originInstance;
+
+    ShaderPtr _pivotShader;
 
 private:
 	// Constructor
@@ -153,6 +156,8 @@ protected:
 	virtual void construct() override;
 
     void onVisibilityChanged(bool isVisibleNow) override;
+
+    void onSelectionStatusChange(bool changeGroupStatus) override;
 
 private:
 	void evaluateTransform();

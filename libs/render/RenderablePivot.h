@@ -2,71 +2,65 @@
 
 #include "irender.h"
 #include "irenderable.h"
-#include "igl.h"
+#include "render/RenderableGeometry.h"
 
 #include <vector>
 #include "math/Vector3.h"
-#include "math/Matrix4.h"
-
-#include "Colour4b.h"
-#include "VertexCb.h"
+#include "math/Vector4.h"
 
 namespace render
 {
 
 class RenderablePivot :
-	public OpenGLRenderable
+	public RenderableGeometry
 {
 private:
-	const Colour4b _colourX;
-	const Colour4b _colourY;
-	const Colour4b _colourZ;
-
+#if 0
 	std::vector<VertexCb> _vertices;
+#endif
 	const Vector3& _pivot;
-
-	ShaderPtr _shader;
+    bool _needsUpdate;
 
 public:
-	mutable Matrix4 m_localToWorld;
-
-	const ShaderPtr& getShader() const
-	{
-		return _shader;
-	}
-
+    // Pass a reference to the pivot is in world coordinates
 	RenderablePivot(const Vector3& pivot) :
-		_colourX(255, 0, 0, 255),
-		_colourY(0, 255, 0, 255),
-		_colourZ(0, 0, 255, 255),
-		_pivot(pivot)
+		_pivot(pivot),
+        _needsUpdate(true)
 	{
+#if 0
 		_vertices.reserve(6);
 
-		_vertices.push_back(VertexCb(_pivot, _colourX));
-		_vertices.push_back(VertexCb(_pivot + Vector3(16, 0, 0), _colourX));
+		_vertices.push_back(VertexCb(_pivot, ColourX));
+		_vertices.push_back(VertexCb(_pivot + Vector3(16, 0, 0), ColourX));
 
-		_vertices.push_back(VertexCb(_pivot, _colourY));
-		_vertices.push_back(VertexCb(_pivot + Vector3(0, 16, 0), _colourY));
+		_vertices.push_back(VertexCb(_pivot, ColourY));
+		_vertices.push_back(VertexCb(_pivot + Vector3(0, 16, 0), ColourY));
 
-		_vertices.push_back(VertexCb(_pivot, _colourZ));
-		_vertices.push_back(VertexCb(_pivot + Vector3(0, 0, 16), _colourZ));
+		_vertices.push_back(VertexCb(_pivot, ColourZ));
+		_vertices.push_back(VertexCb(_pivot + Vector3(0, 0, 16), ColourZ));
+#endif
 	}
 
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+#if 0
 	/** greebo: Updates the renderable vertex array to the given pivot point
 	*/
 	void updatePivot()
 	{
 		_vertices.clear();
 
-		_vertices.push_back(VertexCb(_pivot, _colourX));
-		_vertices.push_back(VertexCb(_pivot + Vector3(16, 0, 0), _colourX));
+		_vertices.push_back(VertexCb(_pivot, ColourX));
+		_vertices.push_back(VertexCb(_pivot + Vector3(16, 0, 0), ColourX));
 
-		_vertices.push_back(VertexCb(_pivot, _colourY));
-		_vertices.push_back(VertexCb(_pivot + Vector3(0, 16, 0), _colourY));
+		_vertices.push_back(VertexCb(_pivot, ColourY));
+		_vertices.push_back(VertexCb(_pivot + Vector3(0, 16, 0), ColourY));
 
-		_vertices.push_back(VertexCb(_pivot, _colourZ));
-		_vertices.push_back(VertexCb(_pivot + Vector3(0, 0, 16), _colourZ));
+		_vertices.push_back(VertexCb(_pivot, ColourZ));
+		_vertices.push_back(VertexCb(_pivot + Vector3(0, 0, 16), ColourZ));
 	}
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -80,7 +74,9 @@ public:
 			_shader.reset();
 		}
 	}
+#endif
 
+#if 0
 	void render(const RenderInfo& info) const
 	{
 		if (_vertices.empty()) return;
@@ -93,7 +89,9 @@ public:
 
 		glDisableClientState(GL_COLOR_ARRAY);
 	}
+#endif
 
+#if 0
 	void render(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 	{
 		// greebo: Commented this out to avoid the point from being moved along with the view.
@@ -101,6 +99,39 @@ public:
 
 		collector.addRenderable(*_shader, *this, localToWorld);
 	}
+#endif
+
+protected:
+    void updateGeometry() override
+    {
+        if (!_needsUpdate) return;
+
+        _needsUpdate = false;
+
+        static const Vector4 ColourX{ 255, 0, 0, 255 };
+        static const Vector4 ColourY{ 0, 255, 0, 255 };
+        static const Vector4 ColourZ{ 0, 0, 255, 255 };
+
+        std::vector<ArbitraryMeshVertex> vertices;
+
+        vertices.push_back(ArbitraryMeshVertex(_pivot, { 0, 0, 0 }, { 0, 0 }, ColourX));
+        vertices.push_back(ArbitraryMeshVertex(_pivot + Vector3(16, 0, 0), { 0, 0, 0 }, { 0, 0 }, ColourX));
+
+        vertices.push_back(ArbitraryMeshVertex(_pivot, { 0, 0, 0 }, { 0, 0 }, ColourY));
+        vertices.push_back(ArbitraryMeshVertex(_pivot + Vector3(0, 16, 0), { 0, 0, 0 }, { 0, 0 }, ColourY));
+
+        vertices.push_back(ArbitraryMeshVertex(_pivot, { 0, 0, 0 }, { 0, 0 }, ColourZ));
+        vertices.push_back(ArbitraryMeshVertex(_pivot + Vector3(0, 0, 16), { 0, 0, 0 }, { 0, 0 }, ColourZ));
+
+        static std::vector<unsigned int> Indices =
+        {
+            0, 1,
+            2, 3,
+            4, 5
+        };
+
+        RenderableGeometry::updateGeometry(GeometryType::Lines, vertices, Indices);
+    }
 };
 
 }

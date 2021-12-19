@@ -12,9 +12,9 @@ Doom3GroupNode::Doom3GroupNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_originKey(std::bind(&Doom3GroupNode::originChanged, this)),
 	m_origin(ORIGINKEY_IDENTITY),
-	m_nameOrigin(0,0,0),
+	//m_nameOrigin(0,0,0),
 	m_rotationKey(std::bind(&Doom3GroupNode::rotationChanged, this)),
-	m_renderOrigin(m_nameOrigin),
+	_renderOrigin(m_origin),
 	m_isModel(false),
 	m_curveNURBS(*this, std::bind(&scene::Node::boundsChanged, this)),
 	m_curveCatmullRom(*this, std::bind(&scene::Node::boundsChanged, this)),
@@ -35,9 +35,9 @@ Doom3GroupNode::Doom3GroupNode(const Doom3GroupNode& other) :
 	CurveNode(other),
 	m_originKey(std::bind(&Doom3GroupNode::originChanged, this)),
 	m_origin(other.m_origin),
-	m_nameOrigin(other.m_nameOrigin),
+	//m_nameOrigin(other.m_nameOrigin),
 	m_rotationKey(std::bind(&Doom3GroupNode::rotationChanged, this)),
-	m_renderOrigin(m_nameOrigin),
+	_renderOrigin(m_origin),
 	m_isModel(other.m_isModel),
 	m_curveNURBS(*this, std::bind(&scene::Node::boundsChanged, this)),
 	m_curveCatmullRom(*this, std::bind(&scene::Node::boundsChanged, this)),
@@ -101,6 +101,20 @@ void Doom3GroupNode::onVisibilityChanged(bool isVisibleNow)
     {
         m_curveNURBS.clearRenderable();
         m_curveCatmullRom.clearRenderable();
+    }
+}
+
+void Doom3GroupNode::onSelectionStatusChange(bool changeGroupStatus)
+{
+    EntityNode::onSelectionStatusChange(changeGroupStatus);
+
+    if (isSelected())
+    {
+        _renderOrigin.queueUpdate();
+    }
+    else
+    {
+        _renderOrigin.clear();
     }
 }
 
@@ -295,14 +309,21 @@ void Doom3GroupNode::onPreRender(const VolumeTest& volume)
 
     m_curveNURBS.onPreRender(getColourShader(), volume);
     m_curveCatmullRom.onPreRender(getColourShader(), volume);
+
+    if (isSelected())
+    {
+        _renderOrigin.update(_pivotShader);
+    }
 }
 
 void Doom3GroupNode::renderCommon(IRenderableCollector& collector, const VolumeTest& volume) const
 {
+#if 0
 	if (isSelected())
     {
 		m_renderOrigin.render(collector, volume, localToWorld());
 	}
+#endif
 
     // Render curves always relative to the absolute map origin
     static Matrix4 identity = Matrix4::getIdentity();
@@ -340,7 +361,15 @@ void Doom3GroupNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     m_curveNURBS.clearRenderable();
     m_curveCatmullRom.clearRenderable();
 
-	m_renderOrigin.setRenderSystem(renderSystem);
+    if (renderSystem)
+    {
+        _pivotShader = renderSystem->capture("$PIVOT");
+    }
+    else
+    {
+        _pivotShader.reset();
+    }
+
 	_nurbsEditInstance.setRenderSystem(renderSystem);
 	_catmullRomEditInstance.setRenderSystem(renderSystem);
 
@@ -493,33 +522,36 @@ void Doom3GroupNode::snapOrigin(float snap)
 {
 	m_originKey.snap(snap);
 	m_originKey.write(_spawnArgs);
-	m_renderOrigin.updatePivot();
+	_renderOrigin.queueUpdate();
 }
 
 void Doom3GroupNode::translateOrigin(const Vector3& translation)
 {
 	m_origin = m_originKey.get() + translation;
 
+#if 0
 	// Only non-models should have their rendered origin different than <0,0,0>
 	if (!isModel())
 	{
 		m_nameOrigin = m_origin;
 	}
-
-	m_renderOrigin.updatePivot();
+#endif
+    _renderOrigin.queueUpdate();
 }
 
 void Doom3GroupNode::translate(const Vector3& translation)
 {
 	m_origin += translation;
 
+#if 0
 	// Only non-models should have their rendered origin different than <0,0,0>
 	if (!isModel())
 	{
 		m_nameOrigin = m_origin;
 	}
+#endif
 
-	m_renderOrigin.updatePivot();
+    _renderOrigin.queueUpdate();
 	translateChildren(translation);
 }
 
@@ -535,8 +567,10 @@ void Doom3GroupNode::rotate(const Quaternion& rotation)
 		});
 
         m_origin = rotation.transformPoint(m_origin);
+#if 0
         m_nameOrigin = m_origin;
-        m_renderOrigin.updatePivot();
+#endif
+        _renderOrigin.queueUpdate();
 	}
 	else
 	{
@@ -556,8 +590,10 @@ void Doom3GroupNode::scale(const Vector3& scale)
 		});
 
         m_origin *= scale;
+#if 0
         m_nameOrigin = m_origin;
-        m_renderOrigin.updatePivot();
+#endif
+        _renderOrigin.queueUpdate();
 	}
 }
 
@@ -571,15 +607,12 @@ void Doom3GroupNode::revertTransform()
 {
 	m_origin = m_originKey.get();
 
-	// Only non-models should have their origin different than <0,0,0>
-	if (!isModel()) {
-		m_nameOrigin = m_origin;
-	}
-	else {
+	if (isModel())
+    {
 		m_rotation = m_rotationKey.m_rotation;
 	}
 
-	m_renderOrigin.updatePivot();
+    _renderOrigin.queueUpdate();
 	m_curveNURBS.revertTransform();
 	m_curveCatmullRom.revertTransform();
 }
@@ -654,7 +687,9 @@ void Doom3GroupNode::setIsModel(bool newValue) {
 	else if (!newValue && m_isModel) {
 		// Clear the model path
 		getModelKey().modelChanged("");
+#if 0
 		m_nameOrigin = m_origin;
+#endif
 	}
 	m_isModel = newValue;
 	updateTransform();
@@ -687,7 +722,6 @@ void Doom3GroupNode::updateIsModel()
 void Doom3GroupNode::nameChanged(const std::string& value) {
 	m_name = value;
 	updateIsModel();
-	m_renderOrigin.updatePivot();
 }
 
 void Doom3GroupNode::modelChanged(const std::string& value)
@@ -698,15 +732,19 @@ void Doom3GroupNode::modelChanged(const std::string& value)
 	if (isModel())
 	{
 		getModelKey().modelChanged(value);
+#if 0
 		m_nameOrigin = Vector3(0,0,0);
+#endif
 	}
 	else
 	{
 		getModelKey().modelChanged("");
+#if 0
 		m_nameOrigin = m_origin;
+#endif
 	}
 
-	m_renderOrigin.updatePivot();
+    _renderOrigin.queueUpdate();
 }
 
 void Doom3GroupNode::updateTransform()
@@ -740,14 +778,16 @@ void Doom3GroupNode::originChanged()
 {
 	m_origin = m_originKey.get();
 	updateTransform();
+
 	// Only non-models should have their origin different than <0,0,0>
 	if (!isModel())
 	{
+#if 0
 		m_nameOrigin = m_origin;
-		// Update the renderable name
+#endif
 		_renderableName.setOrigin(getOrigin());
 	}
-	m_renderOrigin.updatePivot();
+    _renderOrigin.queueUpdate();
 }
 
 void Doom3GroupNode::rotationChanged() {
