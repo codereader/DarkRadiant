@@ -36,10 +36,6 @@ class Doom3GroupNode :
 	OriginKey m_originKey;
 	Vector3 m_origin;
 
-#if 0
-	// A separate origin for the renderable pivot points
-	Vector3 m_nameOrigin;
-#endif
 	RotationKey m_rotationKey;
 	RotationMatrix m_rotation;
 
@@ -178,7 +174,6 @@ private:
 	void updateIsModel();
 
 	Vector3& getOrigin();
-	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
 	void scale(const Vector3& scale);
@@ -194,8 +189,6 @@ private:
 
 	// Returns TRUE if this D3Group is a model
 	bool isModel() const;
-
-	void setTransformChanged(Callback& callback);
 
 public:
 

@@ -65,10 +65,6 @@ public:
 
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
-#if 0
-	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
-#endif
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
     
     // Returns the original "origin" value

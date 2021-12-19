@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include "igeometryrenderer.h"
 #include "irender.h"
 

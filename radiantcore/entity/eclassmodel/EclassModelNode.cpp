@@ -78,28 +78,6 @@ void EclassModelNode::onPreRender(const VolumeTest& volume)
     }
 }
 
-#if 0
-void EclassModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-	EntityNode::renderSolid(collector, volume);
-
-    if (isSelected())
-	{
-		_renderOrigin.render(collector, volume, localToWorld());
-	}
-}
-
-void EclassModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-	EntityNode::renderWireframe(collector, volume);
-
-	if (isSelected())
-	{
-		_renderOrigin.render(collector, volume, localToWorld());
-	}
-}
-#endif
-
 void EclassModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	EntityNode::setRenderSystem(renderSystem);
