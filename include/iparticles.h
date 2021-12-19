@@ -119,8 +119,9 @@ public:
 	 * the current render time.
 	 *
 	 * @viewRotation: the matrix to orient themselves to the viewer.
+     * @localToWorld: the combined transform of local to world coordinates
 	 */
-	virtual void update(const Matrix4& viewRotation) = 0;
+	virtual void update(const Matrix4& viewRotation, const Matrix4& localToWorld) = 0;
 		
 	/**
 	 * Get the particle definition used by this renderable.

@@ -43,6 +43,7 @@ private:
 	float _angle;
 
     render::RenderablePivot _renderOrigin;
+    ShaderPtr _pivotShader;
 
 	AABB _localAABB;
 
@@ -66,8 +67,7 @@ public:
 	scene::INodePtr clone() const override;
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void onPreRender(const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
     // Returns the original "origin" value
@@ -84,6 +84,8 @@ protected:
 
 	// Override EntityNode::construct()
 	void construct() override;
+
+    void onSelectionStatusChange(bool changeGroupStatus) override;
 
 private:
     void translate(const Vector3& translation);

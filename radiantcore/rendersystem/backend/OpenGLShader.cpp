@@ -60,8 +60,11 @@ OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSy
     _name(name),
     _renderSystem(renderSystem),
     _isVisible(true),
-    _useCount(0)
-{}
+    _useCount(0),
+    _enabledViewTypes(0)
+{
+    _windingRenderer.reset(new WindingRenderer<WindingIndexer_Triangles>());
+}
 
 OpenGLShader::~OpenGLShader()
 {
@@ -75,6 +78,8 @@ OpenGLRenderSystem& OpenGLShader::getRenderSystem()
 
 void OpenGLShader::destroy()
 {
+    _enabledViewTypes = 0;
+    _vertexBuffer.reset();
     _materialChanged.disconnect();
     _material.reset();
     _shaderPasses.clear();
@@ -110,6 +115,162 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     }
 }
 
+#if 0
+void OpenGLShader::addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
+{
+    if (!_vertexBuffer)
+    {
+        _vertexBuffer = std::make_unique<IndexedVertexBuffer<ArbitraryMeshVertex>>();
+    }
+
+    // Offset all incoming vertices with a given offset
+    auto indexOffset = static_cast<unsigned int>(_vertexBuffer->getNumVertices());
+
+    // Pump the data to the VBO
+    _vertexBuffer->addVertices(vertices.begin(), vertices.end());
+    _vertexBuffer->addIndicesToLastBatch(indices.begin(), indices.size(), indexOffset);
+}
+#endif
+void OpenGLShader::drawSurfaces()
+{
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    
+    // Surfaces are using CW culling
+    glFrontFace(GL_CW);
+
+    if (hasSurfaces())
+    {
+        //_vertexBuffer->renderAllBatches(GL_TRIANGLES, false);
+
+        GeometryRenderer::render();
+#if 0
+        // Render all triangles
+
+        glBindBuffer(GL_VERTEX_ARRAY, _vbo);
+
+        // Set the vertex pointer first
+        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
+        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
+        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
+        //glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
+        //glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().tangent);
+        //glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().bitangent);
+
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_indices.size()), GL_UNSIGNED_INT, _indices.data());
+
+        //glDisableClientState(GL_NORMAL_ARRAY);
+        //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        //glDisableClientState(GL_VERTEX_ARRAY);
+
+        glBindBuffer(GL_VERTEX_ARRAY, 0);
+#endif
+    }
+
+    // Render all windings
+    glFrontFace(GL_CCW);
+    _windingRenderer->renderAllWindings();
+
+#ifdef RENDERABLE_GEOMETRY
+    glFrontFace(GL_CW);
+    for (auto& geometry: _geometry)
+    {
+        GLenum mode = GL_TRIANGLES;
+
+        switch (geometry.get().getType())
+        {
+        case RenderableGeometry::Type::Quads:
+            mode = GL_QUADS;
+            break;
+
+        case RenderableGeometry::Type::Polygons:
+            mode = GL_POLYGON;
+            break;
+        }
+
+        glVertexPointer(3, GL_DOUBLE, static_cast<GLsizei>(geometry.get().getVertexStride()), &geometry.get().getFirstVertex());
+        glDrawElements(mode, static_cast<GLsizei>(geometry.get().getNumIndices()), GL_UNSIGNED_INT, &geometry.get().getFirstIndex());
+    }
+#endif
+
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+#ifdef RENDERABLE_GEOMETRY
+void OpenGLShader::clearGeometry()
+{
+    _geometry.clear();
+}
+#endif
+
+bool OpenGLShader::hasSurfaces() const
+{
+    return !GeometryRenderer::empty() || _vertexBuffer && _vertexBuffer->getNumVertices() > 0;
+}
+
+IGeometryRenderer::Slot OpenGLShader::addGeometry(GeometryType indexType,
+    const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
+{
+    return GeometryRenderer::addGeometry(indexType, vertices, indices);
+}
+
+void OpenGLShader::removeGeometry(IGeometryRenderer::Slot slot)
+{
+    GeometryRenderer::removeGeometry(slot);
+}
+
+void OpenGLShader::updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    const std::vector<unsigned int>& indices)
+{
+    GeometryRenderer::updateGeometry(slot, vertices, indices);
+}
+
+void OpenGLShader::renderGeometry(IGeometryRenderer::Slot slot)
+{
+    GeometryRenderer::renderGeometry(slot);
+}
+
+IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices)
+{
+    return _windingRenderer->addWinding(vertices);
+}
+
+void OpenGLShader::removeWinding(IWindingRenderer::Slot slot)
+{
+    _windingRenderer->removeWinding(slot);
+}
+
+void OpenGLShader::updateWinding(IWindingRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices)
+{
+    _windingRenderer->updateWinding(slot, vertices);
+}
+
+bool OpenGLShader::hasWindings() const
+{
+    return !_windingRenderer->empty();
+}
+
+void OpenGLShader::renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot)
+{
+    _windingRenderer->renderWinding(mode, slot);
+}
+
+#ifdef RENDERABLE_GEOMETRY
+void OpenGLShader::addGeometry(RenderableGeometry& geometry)
+{
+    _geometry.emplace_back(std::ref(geometry));
+}
+
+bool OpenGLShader::hasGeometry() const
+{
+    return !_geometry.empty();
+}
+#endif
+
 void OpenGLShader::setVisible(bool visible)
 {
     // Control visibility by inserting or removing our shader passes from the GL
@@ -128,7 +289,7 @@ void OpenGLShader::setVisible(bool visible)
 
 bool OpenGLShader::isVisible() const
 {
-    return _isVisible;
+    return _isVisible && (!_material || _material->isVisible());
 }
 
 void OpenGLShader::incrementUsed()
@@ -672,6 +833,8 @@ void OpenGLShader::construct()
             state.setRenderFlag(RENDER_CULLFACE);
             state.setRenderFlag(RENDER_DEPTHWRITE);
             state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+
+            enableViewType(RenderViewType::Camera);
             break;
         }
 
@@ -692,11 +855,16 @@ void OpenGLShader::construct()
             state.setRenderFlag(RENDER_DEPTHWRITE);
             state.setRenderFlag(RENDER_BLEND);
             state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
+
+            enableViewType(RenderViewType::Camera);
             break;
         }
 
         case '<': // wireframe shader
         {
+            // Wireframe renderer is using GL_LINES to display each winding
+            _windingRenderer.reset(new WindingRenderer<WindingIndexer_Lines>());
+
             OpenGLState& state = appendDefaultPass();
 			state.setName(_name);
 
@@ -710,6 +878,35 @@ void OpenGLShader::construct()
             state.setDepthFunc(GL_LESS);
             state.m_linewidth = 1;
             state.m_pointsize = 1;
+
+            enableViewType(RenderViewType::OrthoView);
+            break;
+        }
+
+        case '{': // cam + wireframe shader
+        {
+            OpenGLState& state = appendDefaultPass();
+            state.setName(_name);
+
+            Colour4 colour;
+            sscanf(_name.c_str(), "{%f %f %f}", &colour[0], &colour[1], &colour[2]);
+            colour[3] = 1;
+            state.setColour(colour);
+
+            state.setRenderFlag(RENDER_FILL);
+            state.setRenderFlag(RENDER_LIGHTING);
+            state.setRenderFlag(RENDER_DEPTHTEST);
+            state.setRenderFlag(RENDER_CULLFACE);
+            state.setRenderFlag(RENDER_DEPTHWRITE);
+            state.setRenderFlag(RENDER_BLEND);
+            state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
+            state.setDepthFunc(GL_LESS);
+            state.m_linewidth = 1;
+            state.m_pointsize = 1;
+
+            // Applicable to both views
+            enableViewType(RenderViewType::OrthoView);
+            enableViewType(RenderViewType::Camera);
             break;
         }
 
@@ -725,6 +922,9 @@ void OpenGLShader::construct()
 
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
               state.m_pointsize = 4;
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$SELPOINT")
             {
@@ -733,6 +933,9 @@ void OpenGLShader::construct()
 
               state.setSortPosition(OpenGLState::SORT_POINT_LAST);
               state.m_pointsize = 4;
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$BIGPOINT")
             {
@@ -741,6 +944,9 @@ void OpenGLShader::construct()
 
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
               state.m_pointsize = 6;
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$PIVOT")
             {
@@ -755,18 +961,26 @@ void OpenGLShader::construct()
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.m_linewidth = 2;
               hiddenLine.setDepthFunc(GL_GREATER);
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$LATTICE")
             {
               state.setColour(1, 0.5, 0, 1);
               state.setRenderFlag(RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
+#if 0
             else if (_name == "$WIREFRAME")
             {
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
             }
+#endif
             else if (_name == "$CAM_HIGHLIGHT")
             {
 				// This is the shader drawing a coloured overlay
@@ -781,6 +995,8 @@ void OpenGLShader::construct()
 				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
 				state.polygonOffset = 0.5f;
 				state.setDepthFunc(GL_LEQUAL);
+
+                enableViewType(RenderViewType::Camera);
             }
             else if (_name == "$CAM_OVERLAY")
             {
@@ -802,6 +1018,8 @@ void OpenGLShader::construct()
 				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
 				hiddenLine.setDepthFunc(GL_GREATER);
 				hiddenLine.m_linestipple_factor = 2;
+
+                enableViewType(RenderViewType::Camera);
             }
             else if (string::starts_with(_name, "$MERGE_ACTION_"))
             {
@@ -849,6 +1067,8 @@ void OpenGLShader::construct()
                 linesOverlay.setColour(colour);
                 linesOverlay.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST | RENDER_BLEND);
                 linesOverlay.setSortPosition(lineSortPosition);
+
+                enableViewType(RenderViewType::Camera);
             }
             else if (_name == "$XY_OVERLAY")
             {
@@ -861,6 +1081,8 @@ void OpenGLShader::construct()
               state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
               state.m_linewidth = 2;
               state.m_linestipple_factor = 3;
+
+              enableViewType(RenderViewType::OrthoView);
             }
 			else if (_name == "$XY_OVERLAY_GROUP")
 			{
@@ -873,6 +1095,8 @@ void OpenGLShader::construct()
 				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
 				state.m_linewidth = 2;
 				state.m_linestipple_factor = 3;
+
+                enableViewType(RenderViewType::OrthoView);
 			}
             else if (string::starts_with(_name, "$XY_MERGE_ACTION_"))
             {
@@ -904,6 +1128,8 @@ void OpenGLShader::construct()
                 state.setColour(colour);
                 state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
                 state.m_linewidth = 2;
+
+                enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$XY_INACTIVE_NODE")
             {
@@ -922,18 +1148,25 @@ void OpenGLShader::construct()
 
                 state.m_linewidth = 1;
                 state.m_pointsize = 1;
+
+                enableViewType(RenderViewType::OrthoView);
             }
+#if 0
             else if (_name == "$DEBUG_CLIPPED")
             {
               state.setRenderFlag(RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_LAST);
             }
+#endif
             else if (_name == "$POINTFILE")
             {
               state.setColour(1, 0, 0, 1);
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
               state.m_linewidth = 4;
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$WIRE_OVERLAY")
             {
@@ -953,6 +1186,9 @@ void OpenGLShader::construct()
 									  | RENDER_VERTEX_COLOUR);
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.setDepthFunc(GL_GREATER);
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$FLATSHADE_OVERLAY")
             {
@@ -980,6 +1216,9 @@ void OpenGLShader::construct()
                                       | RENDER_POLYGONSTIPPLE);
               hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
               hiddenLine.setDepthFunc(GL_GREATER);
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$CLIPPER_OVERLAY")
             {
@@ -989,6 +1228,9 @@ void OpenGLShader::construct()
                                  | RENDER_FILL
                                  | RENDER_POLYGONSTIPPLE);
               state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+
+              enableViewType(RenderViewType::Camera);
+              enableViewType(RenderViewType::OrthoView);
             }
             else if (_name == "$AAS_AREA")
             {
@@ -1007,6 +1249,8 @@ void OpenGLShader::construct()
 					| RENDER_LINESTIPPLE);
 				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
 				hiddenLine.setDepthFunc(GL_GREATER);
+
+                enableViewType(RenderViewType::Camera);
             }
             else
             {
@@ -1019,6 +1263,8 @@ void OpenGLShader::construct()
         {
             // This is not a hard-coded shader, construct from the shader system
             constructNormalShader();
+
+            enableViewType(RenderViewType::Camera);
         }
     } // switch (name[0])
 }
@@ -1033,6 +1279,16 @@ void OpenGLShader::onMaterialChanged()
 
     unrealise();
     realise();
+}
+
+bool OpenGLShader::isApplicableTo(RenderViewType renderViewType) const
+{
+    return (_enabledViewTypes & static_cast<std::size_t>(renderViewType)) != 0;
+}
+
+void OpenGLShader::enableViewType(RenderViewType renderViewType)
+{
+    _enabledViewTypes |= static_cast<std::size_t>(renderViewType);
 }
 
 }

@@ -83,12 +83,12 @@ public:
 	}
 
 	// Front-end render function
-	void render(RenderableCollector& collector,
+	void render(IRenderableCollector& collector,
                 const VolumeTest& volume,
                 const Matrix4& localToWorld) const
     {
-		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-		collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+		collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
+		collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
 		collector.addRenderable(*_shader, *this, localToWorld);
 	}
 

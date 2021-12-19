@@ -190,7 +190,7 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 			stream::writeBigEndian<float>(colourVmap->stream, static_cast<float>(vertex.colour.x()));
 			stream::writeBigEndian<float>(colourVmap->stream, static_cast<float>(vertex.colour.y()));
 			stream::writeBigEndian<float>(colourVmap->stream, static_cast<float>(vertex.colour.z()));
-			stream::writeBigEndian<float>(colourVmap->stream, 1.0f);
+			stream::writeBigEndian<float>(colourVmap->stream, static_cast<float>(vertex.colour.w()));
 
 			// Accumulate the BBOX
 			bounds.includePoint(vertex.vertex);

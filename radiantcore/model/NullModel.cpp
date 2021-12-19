@@ -20,13 +20,13 @@ const AABB& NullModel::localAABB() const {
 	return _aabbLocal;
 }
 
-void NullModel::renderSolid(RenderableCollector& collector,
+void NullModel::renderSolid(IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	collector.addRenderable(*_state, _aabbSolid, localToWorld);
 }
 
-void NullModel::renderWireframe(RenderableCollector& collector,
+void NullModel::renderWireframe(IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	collector.addRenderable(*_state, _aabbWire, localToWorld);

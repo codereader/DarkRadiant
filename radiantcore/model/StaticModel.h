@@ -15,7 +15,7 @@ namespace model
 	class StaticModelSurface;
 	typedef std::shared_ptr<StaticModelSurface> StaticModelSurfacePtr;
 }
-class RenderableCollector;
+class IRenderableCollector;
 class RendererLight;
 class SelectionTest;
 class Selector;
@@ -122,9 +122,9 @@ public:
 
     // Delegated render methods called by StaticModelNode (not part of any
     // interface)
-	void renderSolid(RenderableCollector& rend, const Matrix4& localToWorld,
+	void renderSolid(IRenderableCollector& rend, const Matrix4& localToWorld,
                      const IRenderEntity& entity, const LitObject& litObj) const;
-	void renderWireframe(RenderableCollector& rend, const Matrix4& localToWorld,
+	void renderWireframe(IRenderableCollector& rend, const Matrix4& localToWorld,
 		const IRenderEntity& entity) const;
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);

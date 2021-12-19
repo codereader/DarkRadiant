@@ -30,6 +30,11 @@ void TargetKeyCollection::forEachTarget(const std::function<void(const TargetPtr
 	}
 }
 
+std::size_t TargetKeyCollection::getNumTargets() const
+{
+    return _targetKeys.size();
+}
+
 bool TargetKeyCollection::empty() const
 {
 	return _targetKeys.empty();

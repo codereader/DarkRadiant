@@ -52,6 +52,8 @@
     <ClCompile Include="..\..\..\test\TextureManipulation.cpp" />
     <ClCompile Include="..\..\..\test\EntityInspector.cpp" />
     <ClCompile Include="..\..\..\test\UndoRedo.cpp" />
+    <ClCompile Include="..\..\..\test\WindingRendering.cpp" />
+    <ClCompile Include="..\..\..\test\SceneNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

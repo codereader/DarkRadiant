@@ -61,6 +61,8 @@
     <ClCompile Include="..\..\radiantcore\entity\ModelKey.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\NameKeyObserver.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\NamespaceManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\entity\RenderableArrow.cpp" />
+    <ClCompile Include="..\..\radiantcore\entity\RenderableEntityBox.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\RotationKey.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\RotationMatrix.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\ShaderParms.cpp" />
@@ -730,6 +732,7 @@
     <ClInclude Include="..\..\radiantcore\brush\FacePlane.h" />
     <ClInclude Include="..\..\radiantcore\brush\FixedWinding.h" />
     <ClInclude Include="..\..\radiantcore\brush\PlanePoints.h" />
+    <ClInclude Include="..\..\radiantcore\brush\RenderableWinding.h" />
     <ClInclude Include="..\..\radiantcore\brush\RenderableWireFrame.h" />
     <ClInclude Include="..\..\radiantcore\brush\SelectableComponents.h" />
     <ClInclude Include="..\..\radiantcore\brush\TextureMatrix.h" />
@@ -765,7 +768,6 @@
     <ClInclude Include="..\..\radiantcore\entity\EntityNode.h" />
     <ClInclude Include="..\..\radiantcore\entity\EntitySettings.h" />
     <ClInclude Include="..\..\radiantcore\entity\generic\GenericEntityNode.h" />
-    <ClInclude Include="..\..\radiantcore\entity\generic\RenderableArrow.h" />
     <ClInclude Include="..\..\radiantcore\entity\KeyObserverDelegate.h" />
     <ClInclude Include="..\..\radiantcore\entity\KeyObserverMap.h" />
     <ClInclude Include="..\..\radiantcore\entity\KeyValue.h" />
@@ -781,6 +783,8 @@
     <ClInclude Include="..\..\radiantcore\entity\NameKeyObserver.h" />
     <ClInclude Include="..\..\radiantcore\entity\NamespaceManager.h" />
     <ClInclude Include="..\..\radiantcore\entity\OriginKey.h" />
+    <ClInclude Include="..\..\radiantcore\entity\RenderableArrow.h" />
+    <ClInclude Include="..\..\radiantcore\entity\RenderableEntityBox.h" />
     <ClInclude Include="..\..\radiantcore\entity\RotationKey.h" />
     <ClInclude Include="..\..\radiantcore\entity\RotationMatrix.h" />
     <ClInclude Include="..\..\radiantcore\entity\ShaderParms.h" />
@@ -971,6 +975,7 @@
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h" />
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleRegistry.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\GeometryRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.h" />

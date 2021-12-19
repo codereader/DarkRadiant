@@ -14,6 +14,7 @@ namespace eclass
 
 const std::string EntityClass::DefaultWireShader("<0.3 0.3 1>");
 const std::string EntityClass::DefaultFillShader("(0.3 0.3 1)");
+const std::string EntityClass::DefaultColourShader("{0.3 0.3 1}");
 const Vector3 EntityClass::DefaultEntityColour(0.3, 0.3, 1);
 const EntityClassAttribute EntityClass::_emptyAttribute("", "", "");
 
@@ -107,6 +108,7 @@ void EntityClass::setColour(const Vector3& colour)
         fmt::format("({0:f} {1:f} {2:f})", _colour[0], _colour[1], _colour[2]);
 
     _wireShader = fmt::format("<{0:f} {1:f} {2:f}>", _colour[0], _colour[1], _colour[2]);
+    _colourShader = fmt::format("{{{0:f} {1:f} {2:f}}}", _colour[0], _colour[1], _colour[2]);
 
     emitChangedSignal();
 }
@@ -146,6 +148,12 @@ const std::string& EntityClass::getFillShader() const
 {
     // Use a fallback shader colour in case we don't have anything
     return !_fillShader.empty() ? _fillShader : DefaultFillShader;
+}
+
+const std::string& EntityClass::getColourShader() const
+{
+    // Use a fallback shader colour in case we don't have anything
+    return !_colourShader.empty() ? _colourShader : DefaultColourShader;
 }
 
 /* ATTRIBUTES */

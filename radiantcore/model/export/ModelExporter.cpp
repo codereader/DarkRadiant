@@ -31,7 +31,7 @@ ArbitraryMeshVertex convertWindingVertex(const WindingVertex& in)
 	out.texcoord = in.texcoord;
 	out.bitangent = in.bitangent;
 	out.tangent = in.tangent;
-	out.colour.set(1.0, 1.0, 1.0);
+	out.colour = Vector4(1.0, 1.0, 1.0, 1.0);
 
 	return out;
 }

@@ -1,10 +1,15 @@
 #pragma once
 
 #include "imodule.h"
+#include "iwindingrenderer.h"
+#include "igeometryrenderer.h"
 #include <functional>
+#include <vector>
 
 #include "math/Vector3.h"
+#include "math/Vector4.h"
 #include "math/AABB.h"
+#include "render/ArbitraryMeshVertex.h"
 
 #include "ishaderlayer.h"
 #include <sigc++/signal.h>
@@ -117,6 +122,8 @@ typedef BasicVector3<double> Vector3;
 class Shader;
 typedef std::shared_ptr<Shader> ShaderPtr;
 
+struct RenderableGeometry;
+
 /**
  * A RenderEntity represents a map entity as seen by the renderer.
  * It provides up to 12 numbered parameters to the renderer:
@@ -144,6 +151,20 @@ public:
 	 * Returns the wireframe shader for this entity - child primitives need this for rendering.
 	 */
 	virtual const ShaderPtr& getWireShader() const = 0;
+
+    /**
+     * Returns the shader that is used to render coloured primitives like lines and points,
+     * using the colour of the entity as defined by its entityDef, light colour, etc.
+     * This shader will be applicable to both camera and ortho views, it can be used for
+     * visualisations such as target lines and light boxes.
+     */
+    virtual const ShaderPtr& getColourShader() const = 0;
+
+    /**
+     * Returns the colour of this entity, that is used to display its
+     * wireframe representation.
+     */
+    virtual Vector4 getEntityColour() const = 0;
 };
 typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;
@@ -384,7 +405,9 @@ typedef std::shared_ptr<Material> MaterialPtr;
  * which use it -- the actual rendering is performed by traversing a list of
  * Shaders and rendering the geometry attached to each one.
  */
-class Shader
+class Shader :
+    public render::IWindingRenderer,
+    public render::IGeometryRenderer
 {
 public:
 	// Observer interface to get notified on (un-)realisation
@@ -422,6 +445,10 @@ public:
 							   const Matrix4& modelview,
 							   const LightSources* lights = nullptr,
                                const IRenderEntity* entity = nullptr) = 0;
+
+#ifdef RENDERABLE_GEOMETRY
+    virtual void addGeometry(RenderableGeometry& geometry) = 0;
+#endif
 
     /**
      * \brief
@@ -466,6 +493,14 @@ public:
 typedef std::shared_ptr<Shader> ShaderPtr;
 
 const char* const MODULE_RENDERSYSTEM("ShaderCache");
+
+// Render view type enumeration, is used to select (or leave out)
+// Shader objects during rendering
+enum class RenderViewType
+{
+    Camera      = 1 << 0,
+    OrthoView   = 1 << 1,
+};
 
 /**
  * \brief
@@ -514,7 +549,8 @@ public:
      * \param viewer
      * Location of the viewer in world space.
      */
-    virtual void render(RenderStateFlags globalFlagsMask,
+    virtual void render(RenderViewType renderViewType,
+                        RenderStateFlags globalFlagsMask,
                         const Matrix4& modelview,
                         const Matrix4& projection,
                         const Vector3& viewer) = 0;

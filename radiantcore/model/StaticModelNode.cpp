@@ -85,32 +85,43 @@ void StaticModelNode::setModel(const StaticModelPtr& model) {
     _model = model;
 }
 
-void StaticModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+bool StaticModelNode::isOriented() const
+{
+    return true;
+}
+
+void StaticModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
 
     const Matrix4& l2w = localToWorld();
 
-    // Test the model's intersection volume, if it intersects pass on the
-    // render call
-    if (volume.TestAABB(_model->localAABB(), l2w) != VOLUME_OUTSIDE)
+    // The space partitioning system will consider this node also if the cell is only partially visible
+    // Do a quick bounds check against the world AABB to cull ourselves if we're not in the view
+    if (volume.TestAABB(worldAABB()) != VOLUME_OUTSIDE)
     {
         // Submit the model's geometry
         _model->renderSolid(collector, l2w, *_renderEntity, *this);
     }
 }
 
-void StaticModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void StaticModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
 
-    // Test the model's intersection volume, if it intersects pass on the render call
-    const Matrix4& l2w = localToWorld();
+    // Submit the model's geometry
+    _model->renderWireframe(collector, localToWorld(), *_renderEntity);
+}
 
-    if (volume.TestAABB(_model->localAABB(), l2w) != VOLUME_OUTSIDE)
+void StaticModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (collector.supportsFullMaterials())
     {
-        // Submit the model's geometry
-        _model->renderWireframe(collector, l2w, *_renderEntity);
+        renderSolid(collector, volume);
+    }
+    else
+    {
+        renderWireframe(collector, volume);
     }
 }
 

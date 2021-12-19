@@ -263,7 +263,7 @@ const AABB& Brush::localAABB() const {
     return m_aabb_local;
 }
 
-void Brush::renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector,
+void Brush::renderComponents(selection::ComponentSelectionMode mode, IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
     switch (mode)
@@ -581,6 +581,7 @@ void Brush::windingForClipPlane(Winding& winding, const Plane3& plane) const {
     buffer[swap].writeToWinding(winding);
 }
 
+#if 0
 void Brush::update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const
 {
     wire.m_faceVertex.resize(_edgeIndices.size());
@@ -595,6 +596,7 @@ void Brush::update_wireframe(RenderableWireframe& wire, const bool* faces_visibl
         }
     }
 }
+#endif
 
 void Brush::update_faces_wireframe(RenderablePointVector& wire,
                                    const std::size_t* visibleFaceIndices,

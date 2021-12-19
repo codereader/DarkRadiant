@@ -90,17 +90,17 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 {
     // Usual ritual, check cache and return if found, otherwise create/
     // insert/return.
-    ShaderMap::const_iterator i = _shaders.find(name);
+    auto existing = _shaders.find(name);
 
-    if (i != _shaders.end())
+    if (existing != _shaders.end())
     {
-        return i->second;
+        return existing->second;
     }
 
     // Either the shader was not found, or the weak pointer failed to lock
     // because the shader had been deleted. Either way, create a new shader
     // and insert into the cache.
-    OpenGLShaderPtr shd(new OpenGLShader(name, *this));
+    auto shd = std::make_shared<OpenGLShader>(name, *this);
     _shaders[name] = shd;
 
     // Realise the shader if the cache is realised
@@ -117,10 +117,11 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
  * Render all states in the ShaderCache along with their renderables. This
  * is where the actual OpenGL rendering starts.
  */
-void OpenGLRenderSystem::render(RenderStateFlags globalstate,
-                               const Matrix4& modelview,
-                               const Matrix4& projection,
-                               const Vector3& viewer)
+void OpenGLRenderSystem::render(RenderViewType renderViewType, 
+                                RenderStateFlags globalstate,
+                                const Matrix4& modelview,
+                                const Matrix4& projection,
+                                const Vector3& viewer)
 {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -206,17 +207,25 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
     // OpenGLShaderPasses (containing the renderable geometry), and render the
     // contents of each bucket. Each pass is passed a reference to the "current"
     // state, which it can change.
-    for (OpenGLStates::iterator i = _state_sorted.begin();
-        i != _state_sorted.end();
-        ++i)
+    for (const auto& pair : _state_sorted)
     {
         // Render the OpenGLShaderPass
-        if (!i->second->empty())
+        if (pair.second->empty()) continue;
+
+        if (pair.second->isApplicableTo(renderViewType))
         {
-            i->second->render(current, globalstate, viewer, _time);
+            pair.second->render(current, globalstate, viewer, _time);
         }
+
+        pair.second->clearRenderables();
     }
 
+#ifdef RENDERABLE_GEOMETRY
+    for (auto& shader : _shaders)
+    {
+        shader.second->clearGeometry();
+    }
+#endif
     glPopAttrib();
 }
 

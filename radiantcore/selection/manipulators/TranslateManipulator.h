@@ -49,7 +49,7 @@ public:
 	void UpdateColours();
 	bool manipulator_show_axis(const Pivot2World& pivot, const Vector3& axis);
 
-	void render(RenderableCollector& collector, const VolumeTest& volume) override;
+	void render(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void testSelect(SelectionTest& test, const Matrix4& pivot2world) override;
 	Component* getActiveComponent() override;
 

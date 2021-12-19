@@ -185,6 +185,9 @@ public:
     /// Get the shader used for rendering this entity class in filled mode.
     virtual const std::string& getFillShader() const = 0;
 
+    // Get the shader name used for rendering coloured primitives in both cam and ortho
+    virtual const std::string& getColourShader() const = 0;
+
 
     /* ENTITY CLASS ATTRIBUTES */
 

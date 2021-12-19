@@ -445,8 +445,15 @@ TEST_F(EntityTest, DestroySelectedEntity)
 namespace
 {
     // A simple RenderableCollector which just logs/stores whatever is submitted
-    struct TestRenderableCollector: public RenderableCollector
+    struct TestRenderableCollector : 
+        public IRenderableCollector
     {
+        TestRenderableCollector(bool solid) :
+            renderSolid(solid)
+        {}
+
+        bool renderSolid;
+
         // Count of submitted renderables and lights
         int renderables = 0;
         int lights = 0;
@@ -466,6 +473,10 @@ namespace
             renderablePtrs.push_back(std::make_pair(&shader, &renderable));
         }
 
+        void addHighlightRenderable(const OpenGLRenderable& renderable,
+            const Matrix4& localToWorld) override
+        {}
+
         void addLight(const RendererLight& light) override
         {
             ++lights;
@@ -473,8 +484,24 @@ namespace
         }
 
         bool supportsFullMaterials() const override { return true; }
+        bool hasHighlightFlags() const override
+        {
+            return true;
+        }
         void setHighlightFlag(Highlight::Flags flags, bool enabled) override
         {}
+
+        void processRenderable(const Renderable& renderable, const VolumeTest& volume) override
+        {
+            if (renderSolid)
+            {
+                renderable.renderSolid(*this, volume);
+            }
+            else
+            {
+                renderable.renderWireframe(*this, volume);
+            }
+        }
     };
 
     // Collection of objects needed for rendering. Since not all tests require
@@ -488,14 +515,12 @@ namespace
         render::NopVolumeTest volumeTest;
         TestRenderableCollector collector;
 
-        // Whether to render solid or wireframe
-        const bool renderSolid;
-
         // Keep track of nodes visited
         int nodesVisited = 0;
 
         // Construct
-        RenderFixture(bool solid = false): renderSolid(solid)
+        RenderFixture(bool solid = false) :
+            collector(solid)
         {}
 
         // Convenience method to set render backend and traverse a node and its
@@ -513,10 +538,7 @@ namespace
             ++nodesVisited;
 
             // Render the node in appropriate mode
-            if (renderSolid)
-                node->renderSolid(collector, volumeTest);
-            else
-                node->renderWireframe(collector, volumeTest);
+            collector.processRenderable(*node, volumeTest);
 
             // Continue traversing
             return true;

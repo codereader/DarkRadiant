@@ -194,10 +194,13 @@ public:
 	/**
 	 * Returns true if this shaderpass doesn't have anything to render.
 	 */
-	bool empty() const
-	{
-		return _renderables.empty() && _renderablesWithoutEntity.empty();
-	}
+    bool empty();
+
+    // Clear out all renderable references accumulated during this frame
+    void clearRenderables();
+
+    // Whether this shader pass is suitable for the give view type
+    bool isApplicableTo(RenderViewType renderViewType) const;
 
 	friend std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
 };

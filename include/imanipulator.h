@@ -11,7 +11,7 @@ typedef BasicVector2<double> Vector2;
 class Matrix4;
 class VolumeTest;
 class SelectionTest;
-class RenderableCollector;
+class IRenderableCollector;
 
 namespace selection
 {
@@ -118,7 +118,7 @@ public:
     virtual ~ISceneManipulator() {}
 
     // Renders the manipulator's visual representation to the scene
-    virtual void render(RenderableCollector& collector, const VolumeTest& volume) = 0;
+    virtual void render(IRenderableCollector& collector, const VolumeTest& volume) = 0;
 
     // Manipulators should indicate whether component editing is supported or not
     virtual bool supportsComponentManipulation() const = 0;

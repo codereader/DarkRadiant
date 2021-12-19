@@ -15,6 +15,11 @@
 	#include "precompiled_interfaces.h"
 #endif
 
+#ifdef DR_PRECOMPILED_RENDER_INTERFACES
+	// Add render-specific interfaces
+	#include "precompiled_render_interfaces.h"
+#endif
+
 #ifdef DR_PRECOMPILED_UI_INTERFACES
     // Add DarkRadiant UI interfaces
     #include "precompiled_ui_interfaces.h"

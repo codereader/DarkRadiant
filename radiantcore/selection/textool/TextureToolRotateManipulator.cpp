@@ -103,7 +103,7 @@ TextureToolRotateManipulator::TextureToolRotateManipulator(TextureToolManipulati
     _renderableCircle(CircleSegments << 3),
     _circleRadius(DefaultCircleRadius)
 {
-    draw_ellipse(CircleSegments, static_cast<float>(DefaultCircleRadius), static_cast<float>(DefaultCircleRadius), &_renderableCircle.front(), RemapXYZ());
+    draw_ellipse<RemapXYZ>(CircleSegments, static_cast<float>(DefaultCircleRadius), static_cast<float>(DefaultCircleRadius), _renderableCircle);
     _renderableCircle.setColour(Colour4b(200, 200, 200, 200));
 }
 
@@ -181,7 +181,7 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
 
     // Recalculate the circle radius based on the view
     // Raw circle is R=DefaultCircleRadius centered around origin
-    draw_ellipse(CircleSegments, DefaultCircleRadius, DefaultCircleRadius, &_renderableCircle.front(), RemapXYZ());
+    draw_ellipse<RemapXYZ>(CircleSegments, DefaultCircleRadius, DefaultCircleRadius, _renderableCircle);
 
     auto deselectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::Manipulator);
     auto selectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::SelectedManipulator);

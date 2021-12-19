@@ -343,7 +343,12 @@ scene::INode::Type EntityNode::getNodeType() const
 	return Type::Entity;
 }
 
-void EntityNode::renderSolid(RenderableCollector& collector,
+bool EntityNode::isOriented() const
+{
+    return true;
+}
+
+void EntityNode::renderSolid(IRenderableCollector& collector,
                              const VolumeTest& volume) const
 {
     // Render any attached entities
@@ -352,7 +357,7 @@ void EntityNode::renderSolid(RenderableCollector& collector,
     );
 }
 
-void EntityNode::renderWireframe(RenderableCollector& collector,
+void EntityNode::renderWireframe(IRenderableCollector& collector,
                                  const VolumeTest& volume) const
 {
 	// Submit renderable text name if required
@@ -368,6 +373,18 @@ void EntityNode::renderWireframe(RenderableCollector& collector,
     );
 }
 
+void EntityNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    if (collector.supportsFullMaterials())
+    {
+        renderSolid(collector, volume);
+    }
+    else
+    {
+        renderWireframe(collector, volume);
+    }
+}
+
 void EntityNode::acquireShaders()
 {
     acquireShaders(getRenderSystem());
@@ -379,11 +396,13 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
     {
         _fillShader = renderSystem->capture(_spawnArgs.getEntityClass()->getFillShader());
         _wireShader = renderSystem->capture(_spawnArgs.getEntityClass()->getWireShader());
+        _colourShader = renderSystem->capture(_spawnArgs.getEntityClass()->getColourShader());
     }
     else
     {
         _fillShader.reset();
         _wireShader.reset();
+        _colourShader.reset();
     }
 }
 
@@ -399,6 +418,8 @@ void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     // Make sure any attached entities have a render system too
     for (IEntityNodePtr node: _attachedEnts)
         node->setRenderSystem(renderSystem);
+
+	TargetableNode::onRenderSystemChanged();
 }
 
 std::size_t EntityNode::getHighlightFlags()
@@ -436,9 +457,19 @@ const ShaderPtr& EntityNode::getWireShader() const
 	return _wireShader;
 }
 
+const ShaderPtr& EntityNode::getColourShader() const
+{
+	return _colourShader;
+}
+
 const ShaderPtr& EntityNode::getFillShader() const
 {
 	return _fillShader;
+}
+
+Vector4 EntityNode::getEntityColour() const
+{
+    return Vector4(_spawnArgs.getEntityClass()->getColour(), 1.0);
 }
 
 void EntityNode::onPostUndo()

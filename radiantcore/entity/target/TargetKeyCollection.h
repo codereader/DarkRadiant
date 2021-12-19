@@ -39,6 +39,9 @@ public:
 	 */
     void forEachTarget(const std::function<void(const TargetPtr&)>& func) const;
 
+    // Returns the number of target keys
+    std::size_t getNumTargets() const;
+
 	// Returns TRUE if there are no "target" keys observed
 	bool empty() const;
 

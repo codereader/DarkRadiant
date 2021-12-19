@@ -47,8 +47,9 @@ public:
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	std::size_t getHighlightFlags() override
@@ -61,7 +62,7 @@ public:
 	void skinChanged(const std::string& newSkinName) override;
 
 private:
-	void render(RenderableCollector& collector, const VolumeTest& volume,
+	void render(IRenderableCollector& collector, const VolumeTest& volume,
 				const Matrix4& localToWorld, const IRenderEntity& entity) const;
 };
 typedef std::shared_ptr<MD5ModelNode> MD5ModelNodePtr;

@@ -126,7 +126,7 @@ GLuint StaticModelSurface::compileProgramList(bool includeColour)
         // Optional vertex colour
         if (includeColour)
         {
-            glColor3dv(v.colour);
+            glColor4dv(v.colour);
         }
 
         // Submit the vertex itself

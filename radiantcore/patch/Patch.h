@@ -56,10 +56,6 @@ class Patch :
 	// The tesselation for this patch
 	PatchTesselation _mesh;
 
-	// The OpenGL renderables for three rendering modes
-	RenderablePatchSolid _solidRenderable;
-	RenderablePatchWireframe _wireframeRenderable;
-	RenderablePatchFixedWireframe _fixedWireframeRenderable;
     RenderablePatchVectorsNTB _renderableNTBVectors;
 
 	// The shader states for the control points and the lattice
@@ -118,12 +114,8 @@ public:
 	// Return the interally stored AABB
 	const AABB& localAABB() const override;
 
-	// Render functions: wireframe mode and components
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
-		const Matrix4& localToWorld, const IRenderEntity& entity) const;
-
     /// Submit renderable edge and face points
-	void submitRenderablePoints(RenderableCollector& collector,
+	void submitRenderablePoints(IRenderableCollector& collector,
                                 const VolumeTest& volume,
                                 const Matrix4& localToWorld) const;
 
@@ -362,6 +354,7 @@ public:
 	static sigc::signal<void>& signal_patchTextureChanged();
 
     void updateTesselation(bool force = false) override;
+    void queueTesselationUpdate();
 
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change

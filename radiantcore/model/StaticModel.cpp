@@ -79,7 +79,7 @@ void StaticModel::foreachVisibleSurface(const std::function<void(const Surface& 
     }
 }
 
-void StaticModel::renderSolid(RenderableCollector& rend,
+void StaticModel::renderSolid(IRenderableCollector& rend,
                               const Matrix4& localToWorld,
                               const IRenderEntity& entity,
                               const LitObject& litObject) const
@@ -93,7 +93,7 @@ void StaticModel::renderSolid(RenderableCollector& rend,
     });
 }
 
-void StaticModel::renderWireframe(RenderableCollector& rend,
+void StaticModel::renderWireframe(IRenderableCollector& rend,
                                   const Matrix4& localToWorld,
                                   const IRenderEntity& entity) const
 {

@@ -223,9 +223,6 @@
     <ClCompile Include="..\..\radiant\ui\common\MapPreview.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\common\RenderableAABB.cpp">
-      <Filter>src\ui\common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\common\ShaderChooser.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
@@ -748,9 +745,6 @@
       <Filter>src\ui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\MapPreview.h">
-      <Filter>src\ui\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\common\RenderableAABB.h">
       <Filter>src\ui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\ShaderChooser.h">

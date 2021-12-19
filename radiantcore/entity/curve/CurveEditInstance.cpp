@@ -167,13 +167,13 @@ void CurveEditInstance::updateSelected() const {
     forEachSelected(adder);
 }
 
-void CurveEditInstance::renderComponents(RenderableCollector& collector,
+void CurveEditInstance::renderComponents(IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	collector.addRenderable(*_shaders.controlsShader, m_controlsRender, localToWorld);
 }
 
-void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector,
+void CurveEditInstance::renderComponentsSelected(IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
     updateSelected();

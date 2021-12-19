@@ -143,4 +143,12 @@ void TargetableNode::onTargetKeyCollectionChanged()
     }
 }
 
+void TargetableNode::onRenderSystemChanged()
+{
+    if (_targetLineNode)
+    {
+        _targetLineNode->onRenderSystemChanged();
+    }
+}
+
 } // namespace entity

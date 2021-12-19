@@ -71,9 +71,11 @@ protected:
 	// This entity's main direction, usually determined by the angle/rotation keys
 	Vector3 _direction;
 
-	// The wireframe / solid shaders as determined by the entityclass
-	ShaderPtr _fillShader;
-	ShaderPtr _wireShader;
+	// The coloured shaders as determined by the entityclass
+
+	ShaderPtr _fillShader; // cam only
+	ShaderPtr _wireShader; // ortho only
+	ShaderPtr _colourShader; // cam+ortho view
 
 	sigc::connection _eclassChangedConn;
 
@@ -142,8 +144,10 @@ public:
 	Type getNodeType() const override;
 
 	// Renderable implementation, can be overridden by subclasses
-	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    virtual bool isOriented() const override;
+	virtual void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	virtual void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	virtual void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	virtual void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 	virtual std::size_t getHighlightFlags() override;
 
@@ -154,10 +158,16 @@ public:
     const ModelKey& getModelKey() const;
 
 	const ShaderPtr& getWireShader() const override;
+	const ShaderPtr& getColourShader() const override;
 	const ShaderPtr& getFillShader() const;
+    virtual Vector4 getEntityColour() const override;
 
 	virtual void onPostUndo() override;
 	virtual void onPostRedo() override;
+
+    // Optional implementation: gets invoked by the EntityModule when the settings are changing
+    virtual void onEntitySettingsChanged()
+    {}
 
 protected:
 	virtual void onModelKeyChanged(const std::string& value);

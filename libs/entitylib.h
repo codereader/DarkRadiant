@@ -16,50 +16,6 @@
 #include <list>
 #include <set>
 
-inline void arrow_draw(const Vector3& origin, const Vector3& direction)
-{
-  Vector3 up(0, 0, 1);
-  Vector3 left(-direction[1], direction[0], 0);
-
-	Vector3 endpoint(origin + direction*32.0);
-
-  Vector3 tip1(endpoint + direction *(-8.0) + up*(-4.0));
-	Vector3 tip2(tip1 + up*8.0);
-  Vector3 tip3(endpoint + direction*(-8.0) + left*(-4.0));
-	Vector3 tip4(tip3 + left*8.0);
-
-  glBegin (GL_LINES);
-
-  glVertex3dv(origin);
-  glVertex3dv(endpoint);
-
-  glVertex3dv(endpoint);
-  glVertex3dv(tip1);
-
-  glVertex3dv(endpoint);
-  glVertex3dv(tip2);
-
-  glVertex3dv(endpoint);
-  glVertex3dv(tip3);
-
-  glVertex3dv(endpoint);
-  glVertex3dv(tip4);
-
-  glVertex3dv(tip1);
-  glVertex3dv(tip3);
-
-  glVertex3dv(tip3);
-  glVertex3dv(tip2);
-
-  glVertex3dv(tip2);
-  glVertex3dv(tip4);
-
-  glVertex3dv(tip4);
-  glVertex3dv(tip1);
-
-  glEnd();
-}
-
 class SelectionIntersection;
 
 inline void aabb_testselect(const AABB& aabb, SelectionTest& test, SelectionIntersection& best)

@@ -65,31 +65,28 @@ const AABB& EclassModelNode::localAABB() const
 	return _localAABB;
 }
 
-void EclassModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void EclassModelNode::onPreRender(const VolumeTest& volume)
 {
-	EntityNode::renderSolid(collector, volume);
+    EntityNode::onPreRender(volume);
 
     if (isSelected())
-	{
-		_renderOrigin.render(collector, volume, localToWorld());
-	}
-}
-
-void EclassModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
-{
-	EntityNode::renderWireframe(collector, volume);
-
-	if (isSelected())
-	{
-		_renderOrigin.render(collector, volume, localToWorld());
-	}
+    {
+        _renderOrigin.update(_pivotShader);
+    }
 }
 
 void EclassModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	EntityNode::setRenderSystem(renderSystem);
 
-	_renderOrigin.setRenderSystem(renderSystem);
+    if (renderSystem)
+    {
+        _pivotShader = renderSystem->capture("$PIVOT");
+    }
+    else
+    {
+        _pivotShader.reset();
+    }
 }
 
 scene::INodePtr EclassModelNode::clone() const
@@ -104,6 +101,7 @@ scene::INodePtr EclassModelNode::clone() const
 void EclassModelNode::translate(const Vector3& translation)
 {
 	_origin += translation;
+    _renderOrigin.queueUpdate();
 }
 
 void EclassModelNode::rotate(const Quaternion& rotation)
@@ -114,6 +112,7 @@ void EclassModelNode::rotate(const Quaternion& rotation)
 void EclassModelNode::_revertTransform()
 {
 	_origin = _originKey.get();
+    _renderOrigin.queueUpdate();
 	_rotation = _rotationKey.m_rotation;
 }
 
@@ -159,6 +158,8 @@ const Vector3& EclassModelNode::getUntransformedOrigin()
 
 void EclassModelNode::updateTransform()
 {
+    _renderOrigin.queueUpdate();
+
 	localToParent() = Matrix4::getIdentity();
 	localToParent().translateBy(_origin);
 
@@ -183,6 +184,20 @@ void EclassModelNode::angleChanged()
 {
 	_angle = _angleKey.getValue();
 	updateTransform();
+}
+
+void EclassModelNode::onSelectionStatusChange(bool changeGroupStatus)
+{
+    EntityNode::onSelectionStatusChange(changeGroupStatus);
+
+    if (isSelected())
+    {
+        _renderOrigin.queueUpdate();
+    }
+    else
+    {
+        _renderOrigin.clear();
+    }
 }
 
 } // namespace entity

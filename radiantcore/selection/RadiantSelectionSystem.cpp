@@ -850,7 +850,7 @@ void RadiantSelectionSystem::onManipulationCancelled()
     pivotChanged();
 }
 
-void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void RadiantSelectionSystem::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     renderSolid(collector, volume);
 }
@@ -927,12 +927,12 @@ Vector3 RadiantSelectionSystem::getCurrentSelectionCenter()
 /* greebo: Renders the currently active manipulator by setting the render state and
  * calling the manipulator's render method
  */
-void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void RadiantSelectionSystem::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     if (!nothingSelected())
 	{
-        collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-        collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+        collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
+        collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
 
 		_activeManipulator->render(collector, volume);
     }

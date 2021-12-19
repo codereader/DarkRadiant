@@ -103,9 +103,9 @@ inline bool surfaceHasVertex(const model::IModelSurface& surface, const std::fun
 }
 
 const std::string CustomMaterialName = "custom_surface_name";
-const Vector3 VertexColour1(0.1, 0.2, 0.3);
-const Vector3 VertexColour2(0.4, 0.5, 0.6);
-const Vector3 VertexColour3(0.7, 0.8, 0.9);
+const Vector4 VertexColour1(0.1, 0.2, 0.3, 0.11);
+const Vector4 VertexColour2(0.4, 0.5, 0.6, 0.12);
+const Vector4 VertexColour3(0.7, 0.8, 0.9, 0.13);
 
 inline model::ModelNodePtr getChildModelNode(const scene::INodePtr& entity)
 {

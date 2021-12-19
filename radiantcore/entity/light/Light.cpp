@@ -421,13 +421,13 @@ Doom3LightRadius& Light::getDoom3Radius() {
     return m_doom3Radius;
 }
 
-void Light::renderProjectionPoints(RenderableCollector& collector,
+void Light::renderProjectionPoints(IRenderableCollector& collector,
                                    const VolumeTest& volume,
                                    const Matrix4& localToWorld) const
 {
     // Add the renderable light target
-    collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-    collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+    collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
+    collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
 
 	collector.addRenderable(*_rRight.getShader(), _rRight, localToWorld);
 	collector.addRenderable(*_rUp.getShader(), _rUp, localToWorld);
@@ -445,7 +445,7 @@ void Light::renderProjectionPoints(RenderableCollector& collector,
 }
 
 // Adds the light centre renderable to the given collector
-void Light::renderLightCentre(RenderableCollector& collector,
+void Light::renderLightCentre(IRenderableCollector& collector,
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const
 {

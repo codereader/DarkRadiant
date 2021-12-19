@@ -20,11 +20,10 @@
 #include "LightShader.h"
 #include "RenderableVertices.h"
 #include "Doom3LightRadius.h"
+#include "generic/callback.h"
 
-namespace entity {
-
-void light_vertices(const AABB& aabb_light, Vector3 points[6]);
-void light_draw(const AABB& aabb_light, RenderStateFlags state);
+namespace entity
+{
 
 inline void default_extents(Vector3& extents) {
 	extents = Vector3(8,8,8);
@@ -179,7 +178,7 @@ public:
 	mutable Matrix4 m_projectionOrientation;
 
 	// Renderable submission functions
-	void renderWireframe(RenderableCollector& collector,
+	void renderWireframe(IRenderableCollector& collector,
 						 const VolumeTest& volume,
 						 const Matrix4& localToWorld,
 						 bool selected) const;
@@ -187,8 +186,8 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	// Adds the light centre renderable to the given collector
-	void renderLightCentre(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderProjectionPoints(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderLightCentre(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderProjectionPoints(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Returns a reference to the member class Doom3LightRadius (used to set colours)
 	Doom3LightRadius& getDoom3Radius();

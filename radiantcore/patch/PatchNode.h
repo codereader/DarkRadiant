@@ -9,8 +9,9 @@
 #include "scene/SelectableNode.h"
 #include "PatchControlInstance.h"
 #include "dragplanes.h"
+#include "PatchRenderables.h"
 
-class PatchNode :
+class PatchNode final :
 	public scene::SelectableNode,
 	public scene::Cloneable,
 	public Snappable,
@@ -46,14 +47,18 @@ class PatchNode :
     // If true, the _untransformedOrigin member needs an update
     bool _untransformedOriginChanged;
 
+    mutable bool _selectedControlVerticesNeedUpdate;
+
+    RenderablePatchTesselation<TesselationIndexer_Triangles> _renderableSurfaceSolid;
+    RenderablePatchTesselation<TesselationIndexer_Quads> _renderableSurfaceWireframe;
+
 public:
-	// Construct a PatchNode with no arguments
 	PatchNode(patch::PatchDefType type);
 
 	// Copy Constructor
 	PatchNode(const PatchNode& other);
 
-	virtual ~PatchNode();
+    ~PatchNode();
 
 	// Patch::Observer implementation
 	void allocate(std::size_t size);
@@ -91,8 +96,8 @@ public:
 	void testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) override;
 
 	// override scene::Inode::onRemoveFromScene to deselect the child components
-    virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
-    virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// Traceable implementation
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
@@ -126,18 +131,24 @@ public:
 
 	// Render functions, these make sure that all things get rendered properly. The calls are also passed on
 	// to the contained patch <m_patch>
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void onPreRender(const VolumeTest& volume) override;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	// Renders the components of this patch instance, makes use of the Patch::render_component() method
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
 
 	void evaluateTransform();
 	std::size_t getHighlightFlags() override;
 
     // Returns the center of the untransformed world AABB
     const Vector3& getUntransformedOrigin() override;
+
+    void onControlPointsChanged();
+    void onMaterialChanged();
+    void onTesselationChanged();
 
 protected:
 	// Gets called by the Transformable implementation whenever
@@ -148,16 +159,18 @@ protected:
 	// or when reverting transformations.
     void _applyTransformation() override;
 
+    void onVisibilityChanged(bool isVisibleNow) override;
+
 private:
 	// Transforms the patch components with the given transformation matrix
 	void transformComponents(const Matrix4& matrix);
 
 	// greebo: Updates the internal render array m_render_selected, that contains all control vertices that should be
 	// rendered as highlighted.
-	void update_selected() const;
+	void updateSelectedControlVertices() const;
 
 	// greebo: Renders the selected components. This is called by the above two render functions
-	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume) const;
+	void renderComponentsSelected(IRenderableCollector& collector, const VolumeTest& volume) const;
 };
 typedef std::shared_ptr<PatchNode> PatchNodePtr;
 typedef std::weak_ptr<PatchNode> PatchNodeWeakPtr;
