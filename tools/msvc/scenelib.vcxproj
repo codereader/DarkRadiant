@@ -160,6 +160,7 @@
     <ClInclude Include="..\..\libs\scene\SelectableNode.h" />
     <ClInclude Include="..\..\libs\scene\SelectionIndex.h" />
     <ClInclude Include="..\..\libs\scene\ShaderBreakdown.h" />
+    <ClInclude Include="..\..\libs\scene\TransformedCopy.h" />
     <ClInclude Include="..\..\libs\scene\TraversableNodeSet.h" />
     <ClInclude Include="..\..\libs\scenelib.h" />
     <ClInclude Include="..\..\libs\scene\Traverse.h" />

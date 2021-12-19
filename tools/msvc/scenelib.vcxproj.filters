@@ -163,5 +163,8 @@
     <ClInclude Include="..\..\libs\scene\merge\MergeActionNode.h">
       <Filter>scene\merge</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\scene\TransformedCopy.h">
+      <Filter>scene</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
