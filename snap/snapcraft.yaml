@@ -13,9 +13,10 @@ confinement: strict
 #confinement: devmode
 apps:
   darkradiant:
+    extensions: [gnome-3-38]
     command: usr/local/bin/darkradiant
     desktop: usr/local/share/applications/darkradiant.desktop
-    plugs: [desktop, gsettings, home, opengl, pulseaudio, x11]
+    plugs: [desktop, gsettings, home, removable-media, opengl, pulseaudio, x11]
 parts:
   darkradiant:
     plugin: cmake
