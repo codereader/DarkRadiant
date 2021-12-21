@@ -135,14 +135,20 @@ void LightInspector::setupLightShapeOptions()
 
     // Start/end checkbox
     wxControl* startEnd = findNamedObject<wxCheckBox>(this, "LightInspectorStartEnd");
-    startEnd->Connect(
-        wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle),
-        NULL, this
+    startEnd->Bind(
+        wxEVT_CHECKBOX, [=](wxCommandEvent&) { writeToAllEntities(); }
     );
     startEnd->Enable(false);
 }
 
-// Connect the options checkboxes
+void LightInspector::bindSpawnargToCheckbox(std::string spawnarg, std::string checkbox)
+{
+    findNamedObject<wxCheckBox>(this, checkbox)->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) {
+        if (_updateActive) return; // avoid callback loops
+        writeToAllEntities({{spawnarg, checkboxValue(checkbox)}});
+    });
+}
+
 void LightInspector::setupOptionsPanel()
 {
     // Colour and brightness
@@ -171,15 +177,18 @@ void LightInspector::setupOptionsPanel()
         }
     );
 
-    findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
-    findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
-    findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
-    findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
+    // Connect light option checkboxes
+    bindSpawnargToCheckbox("parallel", "LightInspectorParallel");
+    bindSpawnargToCheckbox("noshadows", "LightInspectorNoShadows");
+    bindSpawnargToCheckbox("nospecular", "LightInspectorSkipSpecular");
+    bindSpawnargToCheckbox("nodiffuse", "LightInspectorSkipDiffuse");
 
     if (_supportsAiSee)
     {
         findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Show();
-        findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
+        findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Bind(
+            wxEVT_CHECKBOX, [=](wxCommandEvent&) { writeToAllEntities(); }
+        );
     }
     else
     {
@@ -643,16 +652,6 @@ void LightInspector::setValuesOnEntity(Entity* entity)
     {
         setEntityValueIfDifferent(entity, "ai_see", findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->GetValue() ? "1" : "0");
     }
-}
-
-void LightInspector::_onOptionsToggle(wxCommandEvent& ev)
-{
-    if (_updateActive) return; // avoid callback loops
-
-    writeToAllEntities({{"parallel", checkboxValue("LightInspectorParallel")},
-                        {"nospecular", checkboxValue("LightInspectorSkipSpecular")},
-                        {"nodiffuse", checkboxValue("LightInspectorSkipDiffuse")},
-                        {"noshadows", checkboxValue("LightInspectorNoShadows")}});
 }
 
 void LightInspector::_onColourChange(wxColourPickerEvent& ev)

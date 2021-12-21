@@ -71,13 +71,13 @@ private:
 
     // Widget construction functions
     void setupLightShapeOptions();
+    void bindSpawnargToCheckbox(std::string spawnarg, std::string checkbox);
     void setupOptionsPanel();
     void setupTextureWidgets();
 
     // Callbacks
     void _onProjToggle(wxCommandEvent& ev);
     void _onColourChange(wxColourPickerEvent& ev);
-    void _onOptionsToggle(wxCommandEvent& ev);
     void adjustBrightness() const;
 
     // Get value of a checkbox as a spawnarg string (1 or 0)
