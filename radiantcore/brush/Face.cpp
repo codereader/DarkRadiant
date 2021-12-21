@@ -255,13 +255,6 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
     }
 }
 
-void Face::renderWireframe(IRenderableCollector& collector, const Matrix4& localToWorld,
-    const IRenderEntity& entity) const
-{
-    collector.addRenderable(*entity.getWireShader(), m_winding, localToWorld,
-                            nullptr, &entity);
-}
-
 void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     _shader.setRenderSystem(renderSystem);

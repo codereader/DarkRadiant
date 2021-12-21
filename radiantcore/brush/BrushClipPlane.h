@@ -6,11 +6,10 @@
 #include "Winding.h"
 #include "RenderableWinding.h"
 
-class BrushClipPlane : 
+class BrushClipPlane final :
     public render::RenderableWinding
 {
 private:
-	Plane3 _plane;
 	Winding _winding;
 	ShaderPtr _shader;
 
@@ -19,17 +18,13 @@ public:
         RenderableWinding(_winding)
     {}
 
-    virtual ~BrushClipPlane() {}
-
 	void setPlane(const Brush& brush, const Plane3& plane, IRenderEntity& entity)
 	{
-		_plane = plane;
-
-		if (_plane.isValid())
+		if (plane.isValid())
 		{
-			brush.windingForClipPlane(_winding, _plane);
+			brush.windingForClipPlane(_winding, plane);
 
-            _winding.updateNormals(_plane.normal());
+            _winding.updateNormals(plane.normal());
 
             // Update the RenderableWinding
             queueUpdate();
@@ -42,20 +37,6 @@ public:
 		}
 	}
 
-#if 0
-	void render(const RenderInfo& info) const override
-	{
-		if (info.checkFlag(RENDER_FILL))
-		{
-			_winding.render(info);
-		}
-		else
-		{
-			_winding.drawWireframe();
-		}
-	}
-#endif
-
 	void setRenderSystem(const RenderSystemPtr& renderSystem)
 	{
 		if (renderSystem)
@@ -67,11 +48,4 @@ public:
 			_shader.reset();
 		}
 	}
-
-#if 0
-	void render(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
-	{
-		collector.addRenderable(*_shader, *this, localToWorld);
-	}
-#endif
 };

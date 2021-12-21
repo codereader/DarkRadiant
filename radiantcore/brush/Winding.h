@@ -20,8 +20,7 @@ class SelectionIntersection;
 // The Winding structure extends the abstract IWinding class
 // by a few methods for rendering and selection tests.
 class Winding final :
-	public IWinding,
-    public OpenGLRenderable
+	public IWinding
 #ifdef RENDERABLE_GEOMETRY
     , public RenderableGeometry
 #endif
@@ -39,12 +38,6 @@ public:
 	// greebo: Updates the array containing the normal vectors of this winding
 	// The normal is the same for each vertex, so this just copies the values
 	void updateNormals(const Vector3& normal);
-
-	// Submits this winding to OpenGL
-	void render(const RenderInfo& info) const;
-
-	// Submits the wireframe render commands to OpenGL
-	void drawWireframe() const;
 
 	// Wraps the given index around if it's larger than the size of this winding
 	inline std::size_t wrap(std::size_t i) const

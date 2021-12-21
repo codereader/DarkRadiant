@@ -54,15 +54,7 @@ namespace {
 	}
 }
 
-void Winding::drawWireframe() const
-{
-	if (!empty())
-	{
-		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &front().vertex);
-		glDrawArrays(GL_LINE_LOOP, 0, GLsizei(size()));
-	}
-}
-
+#if 0
 void Winding::render(const RenderInfo& info) const
 {
     // Do not render if there are no points
@@ -136,6 +128,7 @@ void Winding::render(const RenderInfo& info) const
 
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
+#endif
 
 void Winding::testSelect(SelectionTest& test, SelectionIntersection& best)
 {
