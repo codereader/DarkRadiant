@@ -4,9 +4,10 @@
 #include "irender.h"
 #include "irenderable.h"
 #include "Winding.h"
+#include "RenderableWinding.h"
 
 class BrushClipPlane : 
-	public OpenGLRenderable
+    public render::RenderableWinding
 {
 private:
 	Plane3 _plane;
@@ -14,24 +15,34 @@ private:
 	ShaderPtr _shader;
 
 public:
+    BrushClipPlane() :
+        RenderableWinding(_winding)
+    {}
+
     virtual ~BrushClipPlane() {}
 
-	void setPlane(const Brush& brush, const Plane3& plane)
+	void setPlane(const Brush& brush, const Plane3& plane, IRenderEntity& entity)
 	{
 		_plane = plane;
 
 		if (_plane.isValid())
 		{
 			brush.windingForClipPlane(_winding, _plane);
+
+            _winding.updateNormals(_plane.normal());
+
+            // Update the RenderableWinding
+            queueUpdate();
+            update(_shader, entity);
 		}
 		else 
 		{
 			_winding.resize(0);
+            clear();
 		}
-
-		_winding.updateNormals(_plane.normal());
 	}
 
+#if 0
 	void render(const RenderInfo& info) const override
 	{
 		if (info.checkFlag(RENDER_FILL))
@@ -43,6 +54,7 @@ public:
 			_winding.drawWireframe();
 		}
 	}
+#endif
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem)
 	{
@@ -56,8 +68,10 @@ public:
 		}
 	}
 
+#if 0
 	void render(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 	{
 		collector.addRenderable(*_shader, *this, localToWorld);
 	}
+#endif
 };

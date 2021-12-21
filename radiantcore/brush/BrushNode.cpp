@@ -426,7 +426,7 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
 
     if (wholeBrushSelected && GlobalClipper().clipMode())
     {
-        m_clipPlane.render(collector, volume, Matrix4::getIdentity());
+        collector.addHighlightRenderable(m_clipPlane, Matrix4::getIdentity());
     }
 
     collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
@@ -704,8 +704,12 @@ void BrushNode::transformComponents(const Matrix4& matrix) {
 	}
 }
 
-void BrushNode::setClipPlane(const Plane3& plane) {
-	m_clipPlane.setPlane(m_brush, plane);
+void BrushNode::setClipPlane(const Plane3& plane)
+{
+    if (_renderEntity)
+    {
+        m_clipPlane.setPlane(m_brush, plane, *_renderEntity);
+    }
 }
 
 void BrushNode::forEachFaceInstance(const std::function<void(FaceInstance&)>& functor)
@@ -769,4 +773,21 @@ void BrushNode::onVisibilityChanged(bool isVisibleNow)
     {
         face.getFace().onBrushVisibilityChanged(isVisibleNow);
     });
+
+    m_clipPlane.clear();
+}
+
+void BrushNode::onSelectionStatusChange(bool changeGroupStatus)
+{
+    SelectableNode::onSelectionStatusChange(changeGroupStatus);
+
+    // In clip mode we need to check if there's an active clip plane defined in the scene
+    if (isSelected() && GlobalClipper().clipMode())
+    {
+        setClipPlane(GlobalClipper().getClipPlane());
+    }
+    else
+    {
+        m_clipPlane.clear();
+    }
 }

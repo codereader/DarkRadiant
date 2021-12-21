@@ -186,6 +186,8 @@ protected:
 	// or when reverting transformations.
     void _applyTransformation() override;
 
+    void onSelectionStatusChange(bool changeGroupStatus) override;
+
 private:
 	void transformComponents(const Matrix4& matrix);
 
