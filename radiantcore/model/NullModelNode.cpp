@@ -5,11 +5,13 @@
 namespace model {
 
 NullModelNode::NullModelNode() :
-	_nullModel(new NullModel)
+	_nullModel(new NullModel),
+    _renderableBox(localAABB(), worldAABB().getOrigin())
 {}
 
 NullModelNode::NullModelNode(const NullModelPtr& nullModel) :
-	_nullModel(nullModel)
+	_nullModel(nullModel),
+    _renderableBox(localAABB(), worldAABB().getOrigin())
 {}
 
 std::string NullModelNode::name() const

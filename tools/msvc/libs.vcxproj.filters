@@ -347,6 +347,9 @@
     <ClInclude Include="..\..\libs\render\RenderableGeometry.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableBox.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

@@ -4,19 +4,22 @@
 #include "irenderable.h"
 
 #include "NullModel.h"
+#include "render/RenderableBox.h"
 
 namespace model {
 
 class NullModelNode;
 typedef std::shared_ptr<NullModelNode> NullModelNodePtr;
 
-class NullModelNode :
+class NullModelNode final :
 	public scene::Node,
 	public SelectionTestable,
 	public ModelNode
 {
 private:
 	NullModelPtr _nullModel;
+    render::RenderableBox _renderableBox;
+
 public:
 	// Default constructor, allocates a new NullModel
 	NullModelNode();
@@ -48,7 +51,7 @@ public:
 	}
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const override;
+	const AABB& localAABB() const override;
 };
 
 } // namespace model

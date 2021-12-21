@@ -214,6 +214,7 @@
     <ClInclude Include="..\..\libs\render\CompactWindingVertexBuffer.h" />
     <ClInclude Include="..\..\libs\render\IndexedVertexBuffer.h" />
     <ClInclude Include="..\..\libs\render\NopVolumeTest.h" />
+    <ClInclude Include="..\..\libs\render\RenderableBox.h" />
     <ClInclude Include="..\..\libs\render\RenderableCollectionWalker.h" />
     <ClInclude Include="..\..\libs\render\RenderableCollectorBase.h" />
     <ClInclude Include="..\..\libs\render\RenderableGeometry.h" />
