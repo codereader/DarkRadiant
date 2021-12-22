@@ -136,7 +136,7 @@ void LightInspector::setupLightShapeOptions()
     // Start/end checkbox
     wxControl* startEnd = findNamedObject<wxCheckBox>(this, "LightInspectorStartEnd");
     startEnd->Bind(
-        wxEVT_CHECKBOX, [=](wxCommandEvent&) { writeToAllEntities(); }
+        wxEVT_CHECKBOX, [=](auto) { writeToAllEntities(); }
     );
     startEnd->Enable(false);
 }
@@ -157,7 +157,7 @@ void LightInspector::setupOptionsPanel()
     );
     _brightnessSlider->Bind( // drag in progress
         wxEVT_SCROLL_THUMBTRACK,
-        [=](wxScrollEvent&) {
+        [=](auto) {
             if (!_adjustingBrightness && !GlobalUndoSystem().operationStarted())
             {
                 GlobalUndoSystem().start();
@@ -168,7 +168,7 @@ void LightInspector::setupOptionsPanel()
     );
     _brightnessSlider->Bind( // drag finished
         wxEVT_SCROLL_CHANGED,
-        [=](wxScrollEvent&) {
+        [=](auto) {
             if (_adjustingBrightness) {
                 GlobalUndoSystem().finish("Adjust light brightness");
                 _adjustingBrightness = false;
@@ -183,15 +183,12 @@ void LightInspector::setupOptionsPanel()
     bindSpawnargToCheckbox("nospecular", "LightInspectorSkipSpecular");
     bindSpawnargToCheckbox("nodiffuse", "LightInspectorSkipDiffuse");
 
-    if (_supportsAiSee)
-    {
+    // Show and connect the AI See checkbox if the game supports the feature
+    if (_supportsAiSee) {
         findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Show();
-        findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Bind(
-            wxEVT_CHECKBOX, [=](wxCommandEvent&) { writeToAllEntities(); }
-        );
+        bindSpawnargToCheckbox("ai_see", "LightInspectorAiSee");
     }
-    else
-    {
+    else {
         findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Hide();
     }
 }
@@ -647,11 +644,6 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 
 	// Write the texture key
 	setEntityValueIfDifferent(entity, "texture", _texSelector->getSelection());
-
-    if (_supportsAiSee)
-    {
-        setEntityValueIfDifferent(entity, "ai_see", findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->GetValue() ? "1" : "0");
-    }
 }
 
 void LightInspector::_onColourChange(wxColourPickerEvent& ev)
