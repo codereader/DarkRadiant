@@ -14,40 +14,40 @@ inline std::vector<ArbitraryMeshVertex> getFillBoxVertices(const Vector3& min, c
     return
     {
         // Bottom quad
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,0,-1}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,0,-1}, {1,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,0,-1}, {1,1}, colour),
         ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,0,-1}, {0,1}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,0,-1}, {1,1}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,0,-1}, {1,0}, colour),
+        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,0,-1}, {0,0}, colour),
 
         // Top quad
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,0,+1}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,0,+1}, {1,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,0,+1}, {1,1}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,0,+1}, {0,1}, colour),
+        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,0,+1}, {0,1}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,0,+1}, {1,1}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,0,+1}, {1,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,0,+1}, {0,0}, colour),
 
         // Front quad
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,-1,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,-1,0}, {1,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,-1,0}, {1,1}, colour),
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,-1,0}, {0,1}, colour),
+        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,-1,0}, {0,1}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,-1,0}, {1,1}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,-1,0}, {1,0}, colour),
+        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,-1,0}, {0,0}, colour),
 
         // Back quad
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,+1,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,+1,0}, {1,0}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,+1,0}, {1,1}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,+1,0}, {0,1}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,+1,0}, {1,1}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,+1,0}, {1,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,+1,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,+1,0}, {0,1}, colour),
 
         // Right quad
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {+1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {+1,0,0}, {1,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {+1,0,0}, {1,1}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {+1,0,0}, {0,1}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {+1,0,0}, {1,1}, colour),
+        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {+1,0,0}, {1,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {+1,0,0}, {0,0}, colour),
+        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {+1,0,0}, {0,1}, colour),
 
         // Left quad
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {-1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {-1,0,0}, {1,0}, colour),
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {-1,0,0}, {1,1}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {-1,0,0}, {0,1}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {-1,0,0}, {0,1}, colour),
+        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {-1,0,0}, {1,1}, colour),
+        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {-1,0,0}, {1,0}, colour),
+        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {-1,0,0}, {0,0}, colour),
     };
 }
 
@@ -100,10 +100,24 @@ inline std::vector<unsigned int> generateFillBoxIndices()
         3, 2, 1, 0, // bottom rectangle
         7, 6, 5, 4, // top rectangle
 
-        4, 5, 1, 0, // sides
-        5, 6, 2, 1,
-        6, 7, 3, 2,
-        7, 4, 0, 3,
+        11, 10, 9, 8, // sides
+        15, 14, 13, 12,
+        19, 18, 17, 16,
+        23, 22, 21, 20,
+    };
+};
+
+inline std::vector<unsigned int> generateTriangleBoxIndices()
+{
+    return
+    {
+        3, 2, 1, 3, 1, 0, // bottom rectangle
+        7, 6, 5, 7, 5, 4, // top rectangle
+
+        11, 10, 9, 11, 9, 8, // sides
+        15, 14, 13, 15, 13, 12,
+        19, 18, 17, 19, 17, 16,
+        23, 22, 21, 23, 21, 20,
     };
 };
 
@@ -154,7 +168,7 @@ public:
 
         static Vector3 Origin(0, 0, 0);
 
-        // Calculate the corner vertices of this bounding box, plus the mid-point
+        // Calculate the corner vertices of this bounding box
         Vector3 max(Origin + _bounds.extents);
         Vector3 min(Origin - _bounds.extents);
 
@@ -181,6 +195,53 @@ public:
         {
             RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, WireframeBoxIndices);
         }
+    }
+};
+
+class RenderableBoxSurface :
+    public render::RenderableGeometry
+{
+private:
+    const AABB& _bounds;
+    const Matrix4& _orientation;
+    bool _needsUpdate;
+
+public:
+    RenderableBoxSurface(const AABB& bounds, const Matrix4& orientation) :
+        _bounds(bounds),
+        _orientation(orientation),
+        _needsUpdate(true)
+    {}
+
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+    virtual void updateGeometry() override
+    {
+        if (!_needsUpdate) return;
+
+        _needsUpdate = false;
+
+        static Vector3 Origin(0, 0, 0);
+
+        // Calculate the corner vertices of this bounding box
+        Vector3 max(Origin + _bounds.extents);
+        Vector3 min(Origin - _bounds.extents);
+
+        auto vertices = detail::getFillBoxVertices(min, max, { 1, 1, 1, 1 });
+
+        static auto Indices = detail::generateTriangleBoxIndices();
+
+        RenderableGeometry::updateGeometry(render::GeometryType::OrientedSurface, vertices, Indices,
+            std::bind(&RenderableBoxSurface::getOrientation, this));
+    }
+
+private:
+    const Matrix4& getOrientation() const
+    {
+        return _orientation;
     }
 };
 

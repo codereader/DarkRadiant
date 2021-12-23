@@ -20,31 +20,8 @@ const AABB& NullModel::localAABB() const {
 	return _aabbLocal;
 }
 
-void NullModel::renderSolid(IRenderableCollector& collector,
-	const VolumeTest& volume, const Matrix4& localToWorld) const
+void NullModel::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
 {
-	collector.addRenderable(*_state, _aabbSolid, localToWorld);
-}
-
-void NullModel::renderWireframe(IRenderableCollector& collector,
-	const VolumeTest& volume, const Matrix4& localToWorld) const
-{
-	collector.addRenderable(*_state, _aabbWire, localToWorld);
-}
-
-void NullModel::setRenderSystem(const RenderSystemPtr& renderSystem)
-{
-	if (renderSystem)
-	{
-		_state = renderSystem->capture("");
-	}
-	else
-	{
-		_state.reset();
-	}
-}
-
-void NullModel::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld) {
 	test.BeginMesh(localToWorld);
 
 	SelectionIntersection best;
@@ -95,17 +72,6 @@ const IModelSurface& NullModel::getSurface(unsigned surfaceNum) const
 const StringList& NullModel::getActiveMaterials() const {
 	static std::vector<std::string> _dummyMaterials;
 	return _dummyMaterials;
-}
-
-void NullModel::render(const RenderInfo& info) const {
-	if (info.checkFlag(RENDER_TEXTURE_2D))
-    {
-		aabb_draw_solid(_aabbLocal, info.getFlags());
-	}
-	else
-    {
-		aabb_draw_wire(_aabbLocal);
-	}
 }
 
 } // namespace model

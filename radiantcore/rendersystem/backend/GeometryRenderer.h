@@ -40,22 +40,11 @@ private:
 
         void renderIndexRange(std::size_t firstIndex, std::size_t numIndices) const
         {
-            glEnableClientState(GL_VERTEX_ARRAY);
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            glEnableClientState(GL_NORMAL_ARRAY);
-
-            // Render this slot without any vertex colours
-            glDisableClientState(GL_COLOR_ARRAY);
-
-            glFrontFace(GL_CW);
-
             glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
             glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
             glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
 
             glDrawElements(_mode, static_cast<GLsizei>(numIndices), GL_UNSIGNED_INT, &_indices[firstIndex]);
-            glDisableClientState(GL_NORMAL_ARRAY);
-            glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         }
 
         // Returns the vertex and index offsets in this buffer
@@ -130,19 +119,26 @@ private:
         std::size_t numVertices;
         std::size_t firstIndex;
         std::size_t numIndices;
+
+        // Matrix getter used for oriented surfaces
+        std::function<const Matrix4&()> getTransform;
     };
     std::vector<SlotInfo> _slots;
 
     static constexpr std::size_t InvalidSlotMapping = std::numeric_limits<std::size_t>::max();
     std::size_t _freeSlotMappingHint;
 
+    const std::uint8_t _orientedSurfaceBufferIndex;
+
 public:
     GeometryRenderer() :
-        _freeSlotMappingHint(InvalidSlotMapping)
+        _freeSlotMappingHint(InvalidSlotMapping),
+        _orientedSurfaceBufferIndex(GetBucketIndexForIndexType(GeometryType::OrientedSurface))
     {
         _buffers.emplace_back(GL_TRIANGLES);
         _buffers.emplace_back(GL_QUADS);
         _buffers.emplace_back(GL_LINES);
+        _buffers.emplace_back(GL_TRIANGLES); // oriented surfaces
     }
 
     bool empty() const
@@ -156,22 +152,24 @@ public:
     }
 
     Slot addGeometry(GeometryType indexType, const std::vector<ArbitraryMeshVertex>& vertices,
-        const std::vector<unsigned int>& indices) override
+        const std::vector<unsigned int>& indices,
+        const std::function<const Matrix4& ()>& getTransformCallback) override
     {
-        auto bucketIndex = GetBucketIndexForIndexType(indexType);
-        auto& bucket = getBucketByIndex(bucketIndex);
+        auto bufferIndex = GetBucketIndexForIndexType(indexType);
+        auto& buffer = getBucketByIndex(bufferIndex);
 
         // Allocate a slot
         auto newSlotIndex = getNextFreeSlotMapping();
         auto& slot = _slots.at(newSlotIndex);
 
-        auto [vertexOffset, indexOffset] = bucket.addSurface(vertices, indices);
+        auto [vertexOffset, indexOffset] = buffer.addSurface(vertices, indices);
 
-        slot.bucketIndex = bucketIndex;
+        slot.bucketIndex = bufferIndex;
         slot.firstVertex = vertexOffset;
         slot.numVertices = vertices.size();
         slot.firstIndex = indexOffset;
         slot.numIndices = indices.size();
+        slot.getTransform = getTransformCallback;
 
         return newSlotIndex;
     }
@@ -203,6 +201,7 @@ public:
         slotInfo.firstVertex = InvalidVertexIndex;
         slotInfo.firstIndex = 0;
         slotInfo.numIndices = 0;
+        slotInfo.getTransform = std::function<const Matrix4&()>();
         
         if (slot < _freeSlotMappingHint)
         {
@@ -228,31 +227,84 @@ public:
 
     void render()
     {
-        for (auto& buffer : _buffers)
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+
+        // Render this slot without any vertex colours
+        glDisableClientState(GL_COLOR_ARRAY);
+
+        glFrontFace(GL_CW);
+
+        for (auto indexType : { GeometryType::Triangles, GeometryType::Quads, GeometryType::Lines })
         {
+            auto bufferIndex = GetBucketIndexForIndexType(indexType);
+            auto& buffer = getBucketByIndex(bufferIndex);
+
             buffer.render();
         }
+
+        auto& orientedSurfaceBuffer = getBucketByIndex(_orientedSurfaceBufferIndex);
+
+        for (auto& slot : _slots)
+        {
+            if (slot.bucketIndex != _orientedSurfaceBufferIndex)
+            {
+                continue;
+            }
+
+            glMatrixMode(GL_MODELVIEW);
+            glPushMatrix();
+
+            glMultMatrixd(slot.getTransform());
+
+            orientedSurfaceBuffer.renderIndexRange(slot.firstIndex, slot.numIndices);
+
+            glPopMatrix();
+        }
+
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     void renderGeometry(Slot slot) override
     {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+
+        // Render this slot without any vertex colours
+        glDisableClientState(GL_COLOR_ARRAY);
+
+        glFrontFace(GL_CW);
+
         auto& slotInfo = _slots.at(slot);
         auto& buffer = getBucketByIndex(slotInfo.bucketIndex);
 
-        buffer.renderIndexRange(slotInfo.firstIndex, slotInfo.numIndices);
+        if (slotInfo.getTransform)
+        {
+            glMatrixMode(GL_MODELVIEW);
+            glPushMatrix();
+
+            glMultMatrixd(slotInfo.getTransform());
+
+            buffer.renderIndexRange(slotInfo.firstIndex, slotInfo.numIndices);
+
+            glPopMatrix();
+        }
+        else
+        {
+            buffer.renderIndexRange(slotInfo.firstIndex, slotInfo.numIndices);
+        }
+
+        glDisableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
 private:
     constexpr static std::uint8_t GetBucketIndexForIndexType(GeometryType indexType)
     {
-        switch (indexType)
-        {
-            case GeometryType::Triangles: return 0;
-            case GeometryType::Quads: return 1;
-            case GeometryType::Lines: return 2;
-        }
-
-        return 0;
+        return static_cast<std::uint8_t>(indexType);
     }
 
     VertexBuffer& getBucketByIndex(std::uint8_t bucketIndex)

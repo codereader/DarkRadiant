@@ -4,6 +4,7 @@
 #include <limits>
 #include <cstdint>
 #include "render/ArbitraryMeshVertex.h"
+#include "math/Matrix4.h"
 
 namespace render
 {
@@ -13,6 +14,7 @@ enum class GeometryType
     Triangles,
     Quads,
     Lines,
+    OrientedSurface, // Triangles with a per-surface transformation matrix
 };
 
 /**
@@ -34,9 +36,10 @@ public:
     // Allocate a slot to hold the given indexed vertex data.
     // Returns the handle which can be used to update or deallocate the data later
     // The indexType determines the primitive GLenum that is chosen to render this surface
-    virtual Slot addGeometry(GeometryType indexType, 
+    virtual Slot addGeometry(GeometryType indexType,
         const std::vector<ArbitraryMeshVertex>& vertices,
-        const std::vector<unsigned int>& indices) = 0;
+        const std::vector<unsigned int>& indices,
+        const std::function<const Matrix4& ()>& getTransformCallback = std::function<const Matrix4&()>()) = 0;
 
     // Releases a previously allocated slot. This invalidates the handle.
     virtual void removeGeometry(Slot slot) = 0;

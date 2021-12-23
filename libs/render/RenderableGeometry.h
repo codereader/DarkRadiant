@@ -103,7 +103,8 @@ protected:
     // to ensure that the _shader reference is already up to date.
     void updateGeometry(GeometryType type,
         const std::vector<ArbitraryMeshVertex>& vertices,
-        const std::vector<unsigned int>& indices)
+        const std::vector<unsigned int>& indices,
+        const std::function<const Matrix4& ()>& getTransformCallback = std::function<const Matrix4&()>())
     {
         // Size changes require removal of the geometry before update
         if (_lastVertexSize != vertices.size() || _lastIndexSize != indices.size())
@@ -116,7 +117,7 @@ protected:
 
         if (_surfaceSlot == IGeometryRenderer::InvalidSlot)
         {
-            _surfaceSlot = _shader->addGeometry(type, vertices, indices);
+            _surfaceSlot = _shader->addGeometry(type, vertices, indices, getTransformCallback);
         }
         else
         {

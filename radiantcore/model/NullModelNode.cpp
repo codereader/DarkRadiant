@@ -2,16 +2,17 @@
 
 #include "math/Frustum.h"
 
-namespace model {
+namespace model
+{
 
 NullModelNode::NullModelNode() :
 	_nullModel(new NullModel),
-    _renderableBox(localAABB(), worldAABB().getOrigin())
+    _renderableBox(localAABB(), localToWorld())
 {}
 
 NullModelNode::NullModelNode(const NullModelPtr& nullModel) :
 	_nullModel(nullModel),
-    _renderableBox(localAABB(), worldAABB().getOrigin())
+    _renderableBox(localAABB(), localToWorld())
 {}
 
 std::string NullModelNode::name() const
@@ -22,18 +23,6 @@ std::string NullModelNode::name() const
 scene::INode::Type NullModelNode::getNodeType() const
 {
 	return Type::Model;
-}
-
-NullModelNodePtr NullModelNode::InstancePtr()
-{
-	static NullModelNodePtr _nullModelNode;
-
-	if (_nullModelNode == NULL) {
-		// Not yet instantiated, create a new NullModel
-		_nullModelNode = NullModelNodePtr(new NullModelNode);
-	}
-
-	return _nullModelNode;
 }
 
 const IModel& NullModelNode::getIModel() const
@@ -56,37 +45,81 @@ Vector3 NullModelNode::getModelScale()
 	return Vector3(1,1,1);
 }
 
-void NullModelNode::testSelect(Selector& selector, SelectionTest& test) {
+void NullModelNode::testSelect(Selector& selector, SelectionTest& test)
+{
 	_nullModel->testSelect(selector, test, localToWorld());
 }
 
-void NullModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const {
-	_nullModel->renderSolid(collector, volume, localToWorld());
+void NullModelNode::onPreRender(const VolumeTest& volume)
+{
+    Node::onPreRender(volume);
+
+    _renderableBox.update(_shader);
 }
 
-void NullModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const {
-	_nullModel->renderWireframe(collector, volume, localToWorld());
+void NullModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
+{
+}
+
+void NullModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
+{
 }
 
 void NullModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    if (collector.supportsFullMaterials())
-    {
-        renderSolid(collector, volume);
-    }
-    else
-    {
-        renderWireframe(collector, volume);
-    }
+    collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());
 }
 
 void NullModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-	_nullModel->setRenderSystem(renderSystem);
+    if (renderSystem)
+    {
+        _shader = renderSystem->capture("");
+    }
+    else
+    {
+        _shader.reset();
+    }
 }
 
-const AABB& NullModelNode::localAABB() const {
+const AABB& NullModelNode::localAABB() const
+{
 	return _nullModel->localAABB();
+}
+
+void NullModelNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    Node::onInsertIntoScene(root);
+
+    _renderableBox.queueUpdate();
+}
+
+void NullModelNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    Node::onRemoveFromScene(root);
+
+    _renderableBox.clear();
+}
+
+void NullModelNode::boundsChanged()
+{
+    Node::boundsChanged();
+
+    _renderableBox.queueUpdate();
+}
+
+void NullModelNode::onVisibilityChanged(bool isVisibleNow)
+{
+    Node::onVisibilityChanged(isVisibleNow);
+
+    if (isVisibleNow)
+    {
+        _renderableBox.queueUpdate();
+    }
+    else
+    {
+        _renderableBox.clear();
+    }
 }
 
 } // namespace model

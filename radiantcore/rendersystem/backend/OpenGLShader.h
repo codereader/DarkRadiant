@@ -116,7 +116,8 @@ public:
     void drawSurfaces();
 
     IGeometryRenderer::Slot addGeometry(GeometryType indexType,
-        const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
+        const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices,
+        const std::function<const Matrix4& ()>& getTransformCallback = std::function<const Matrix4& ()>()) override;
     void removeGeometry(IGeometryRenderer::Slot slot) override;
     void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override;

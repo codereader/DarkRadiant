@@ -18,7 +18,9 @@ class NullModelNode final :
 {
 private:
 	NullModelPtr _nullModel;
-    render::RenderableBox _renderableBox;
+    render::RenderableBoxSurface _renderableBox;
+
+    ShaderPtr _shader;
 
 public:
 	// Default constructor, allocates a new NullModel
@@ -30,9 +32,6 @@ public:
 	std::string name() const override;
 	Type getNodeType() const override;
 
-	// Accessor to the singleton instance
-	static NullModelNodePtr InstancePtr();
-
 	const IModel& getIModel() const override;
 	IModel& getIModel() override;
 	bool hasModifiedScale() override;
@@ -40,6 +39,7 @@ public:
 
 	void testSelect(Selector& selector, SelectionTest& test) override;
 
+    void onPreRender(const VolumeTest& volume) override;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
@@ -52,6 +52,14 @@ public:
 
 	// Bounded implementation
 	const AABB& localAABB() const override;
+
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
+
+    void boundsChanged() override;
+
+protected:
+    void onVisibilityChanged(bool isVisibleNow) override;
 };
 
 } // namespace model

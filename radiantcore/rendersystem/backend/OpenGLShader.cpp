@@ -213,9 +213,10 @@ bool OpenGLShader::hasSurfaces() const
 }
 
 IGeometryRenderer::Slot OpenGLShader::addGeometry(GeometryType indexType,
-    const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
+    const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices,
+    const std::function<const Matrix4& ()>& getTransformCallback)
 {
-    return GeometryRenderer::addGeometry(indexType, vertices, indices);
+    return GeometryRenderer::addGeometry(indexType, vertices, indices, getTransformCallback);
 }
 
 void OpenGLShader::removeGeometry(IGeometryRenderer::Slot slot)
