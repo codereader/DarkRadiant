@@ -8,6 +8,7 @@
 #include "render/IndexedVertexBuffer.h"
 #include "render/WindingRenderer.h"
 #include "GeometryRenderer.h"
+#include "SurfaceRenderer.h"
 
 #include <list>
 #include <sigc++/connection.h>
@@ -20,9 +21,8 @@ class OpenGLRenderSystem;
 /**
  * Implementation of the Shader class.
  */
-class OpenGLShader final : 
-	public Shader,
-    protected GeometryRenderer
+class OpenGLShader final :
+	public Shader
 {
 private:
     // Name used to construct the shader
@@ -55,6 +55,8 @@ private:
 #endif
 
     std::unique_ptr<IBackendWindingRenderer> _windingRenderer;
+    GeometryRenderer _geometryRenderer;
+    SurfaceRenderer _surfaceRenderer;
 
     // Each shader can be used by either camera or orthoview, or both 
     std::size_t _enabledViewTypes;
@@ -116,12 +118,17 @@ public:
     void drawSurfaces();
 
     IGeometryRenderer::Slot addGeometry(GeometryType indexType,
-        const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices,
-        const std::function<const Matrix4& ()>& getTransformCallback = std::function<const Matrix4& ()>()) override;
+        const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
     void removeGeometry(IGeometryRenderer::Slot slot) override;
     void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
     void renderGeometry(IGeometryRenderer::Slot slot) override;
+
+    ISurfaceRenderer::Slot addSurface(IRenderableSurface& surface) override;
+    void removeSurface(ISurfaceRenderer::Slot slot) override;
+    void updateSurface(ISurfaceRenderer::Slot slot) override;
+    void renderSurface(ISurfaceRenderer::Slot slot) override;
+
 #ifdef RENDERABLE_GEOMETRY
     void addGeometry(RenderableGeometry& geometry) override;
     bool hasGeometry() const;

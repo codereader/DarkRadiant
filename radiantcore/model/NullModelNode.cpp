@@ -50,13 +50,6 @@ void NullModelNode::testSelect(Selector& selector, SelectionTest& test)
 	_nullModel->testSelect(selector, test, localToWorld());
 }
 
-void NullModelNode::onPreRender(const VolumeTest& volume)
-{
-    Node::onPreRender(volume);
-
-    _renderableBox.update(_shader);
-}
-
 void NullModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 }
@@ -75,10 +68,12 @@ void NullModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     if (renderSystem)
     {
         _shader = renderSystem->capture("");
+        _renderableBox.update(_shader);
     }
     else
     {
         _shader.reset();
+        _renderableBox.clear();
     }
 }
 
@@ -91,7 +86,7 @@ void NullModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     Node::onInsertIntoScene(root);
 
-    _renderableBox.queueUpdate();
+    _renderableBox.update(_shader);
 }
 
 void NullModelNode::onRemoveFromScene(scene::IMapRootNode& root)
@@ -101,20 +96,13 @@ void NullModelNode::onRemoveFromScene(scene::IMapRootNode& root)
     _renderableBox.clear();
 }
 
-void NullModelNode::boundsChanged()
-{
-    Node::boundsChanged();
-
-    _renderableBox.queueUpdate();
-}
-
 void NullModelNode::onVisibilityChanged(bool isVisibleNow)
 {
     Node::onVisibilityChanged(isVisibleNow);
 
     if (isVisibleNow)
     {
-        _renderableBox.queueUpdate();
+        _renderableBox.update(_shader);
     }
     else
     {

@@ -1,6 +1,8 @@
 #pragma once
 
+#include "isurfacerenderer.h"
 #include "render/RenderableGeometry.h"
+#include "render/RenderableSurface.h"
 
 namespace render
 {
@@ -124,7 +126,7 @@ inline std::vector<unsigned int> generateTriangleBoxIndices()
 }
 
 class RenderableBox :
-    public render::RenderableGeometry
+    public RenderableGeometry
 {
 private:
     const AABB& _bounds;
@@ -198,48 +200,40 @@ public:
     }
 };
 
-class RenderableBoxSurface :
-    public render::RenderableGeometry
+class RenderableBoxSurface final :
+    public RenderableSurface
 {
 private:
-    const AABB& _bounds;
     const Matrix4& _orientation;
-    bool _needsUpdate;
+
+    std::vector<ArbitraryMeshVertex> _vertices;
+    std::vector<unsigned int> _indices;
 
 public:
     RenderableBoxSurface(const AABB& bounds, const Matrix4& orientation) :
-        _bounds(bounds),
-        _orientation(orientation),
-        _needsUpdate(true)
-    {}
-
-    void queueUpdate()
+        _orientation(orientation)
     {
-        _needsUpdate = true;
-    }
-
-    virtual void updateGeometry() override
-    {
-        if (!_needsUpdate) return;
-
-        _needsUpdate = false;
-
         static Vector3 Origin(0, 0, 0);
 
         // Calculate the corner vertices of this bounding box
-        Vector3 max(Origin + _bounds.extents);
-        Vector3 min(Origin - _bounds.extents);
+        Vector3 max(Origin + bounds.extents);
+        Vector3 min(Origin - bounds.extents);
 
-        auto vertices = detail::getFillBoxVertices(min, max, { 1, 1, 1, 1 });
-
-        static auto Indices = detail::generateTriangleBoxIndices();
-
-        RenderableGeometry::updateGeometry(render::GeometryType::OrientedSurface, vertices, Indices,
-            std::bind(&RenderableBoxSurface::getOrientation, this));
+        _vertices = detail::getFillBoxVertices(min, max, { 1, 1, 1, 1 });
+        _indices = detail::generateTriangleBoxIndices();
     }
 
-private:
-    const Matrix4& getOrientation() const
+    const std::vector<ArbitraryMeshVertex>& getVertices() override
+    {
+        return _vertices;
+    }
+
+    const std::vector<unsigned int>& getIndices() override
+    {
+        return _indices;
+    }
+
+    const Matrix4& getSurfaceTransform() override
     {
         return _orientation;
     }

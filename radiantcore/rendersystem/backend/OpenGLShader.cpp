@@ -145,7 +145,8 @@ void OpenGLShader::drawSurfaces()
     {
         //_vertexBuffer->renderAllBatches(GL_TRIANGLES, false);
 
-        GeometryRenderer::render();
+        _geometryRenderer.render();
+        _surfaceRenderer.render();
 #if 0
         // Render all triangles
 
@@ -209,30 +210,49 @@ void OpenGLShader::clearGeometry()
 
 bool OpenGLShader::hasSurfaces() const
 {
-    return !GeometryRenderer::empty() || _vertexBuffer && _vertexBuffer->getNumVertices() > 0;
+    return !_geometryRenderer.empty() || !_surfaceRenderer.empty() || _vertexBuffer && _vertexBuffer->getNumVertices() > 0;
 }
 
 IGeometryRenderer::Slot OpenGLShader::addGeometry(GeometryType indexType,
-    const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices,
-    const std::function<const Matrix4& ()>& getTransformCallback)
+    const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
 {
-    return GeometryRenderer::addGeometry(indexType, vertices, indices, getTransformCallback);
+    return _geometryRenderer.addGeometry(indexType, vertices, indices);
 }
 
 void OpenGLShader::removeGeometry(IGeometryRenderer::Slot slot)
 {
-    GeometryRenderer::removeGeometry(slot);
+    _geometryRenderer.removeGeometry(slot);
 }
 
 void OpenGLShader::updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
     const std::vector<unsigned int>& indices)
 {
-    GeometryRenderer::updateGeometry(slot, vertices, indices);
+    _geometryRenderer.updateGeometry(slot, vertices, indices);
 }
 
 void OpenGLShader::renderGeometry(IGeometryRenderer::Slot slot)
 {
-    GeometryRenderer::renderGeometry(slot);
+    _geometryRenderer.renderGeometry(slot);
+}
+
+ISurfaceRenderer::Slot OpenGLShader::addSurface(IRenderableSurface& surface)
+{
+    return _surfaceRenderer.addSurface(surface);
+}
+
+void OpenGLShader::removeSurface(ISurfaceRenderer::Slot slot)
+{
+    _surfaceRenderer.removeSurface(slot);
+}
+
+void OpenGLShader::updateSurface(ISurfaceRenderer::Slot slot)
+{
+    _surfaceRenderer.updateSurface(slot);
+}
+
+void OpenGLShader::renderSurface(ISurfaceRenderer::Slot slot)
+{
+    _surfaceRenderer.renderSurface(slot);
 }
 
 IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices)

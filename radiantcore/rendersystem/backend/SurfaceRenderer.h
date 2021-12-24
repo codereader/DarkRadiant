@@ -5,8 +5,8 @@
 namespace render
 {
 
-class GeometryRenderer :
-    public IGeometryRenderer
+class SurfaceRenderer :
+    public ISurfaceRenderer
 {
 private:
     class VertexBuffer
@@ -24,6 +24,12 @@ private:
         bool empty() const
         {
             return _indices.empty();
+        }
+
+        void clear()
+        {
+            _vertices.clear();
+            _indices.clear();
         }
 
         void render() const
@@ -64,7 +70,7 @@ private:
             return { vertexOffset, indexOffset };
         }
 
-        void updateSurface(std::size_t firstVertex, std::size_t firstIndex, 
+        void updateSurface(std::size_t firstVertex, std::size_t firstIndex,
             const std::vector<ArbitraryMeshVertex>& vertices,
             const std::vector<unsigned int>& indices)
         {
@@ -105,114 +111,56 @@ private:
         }
     };
 
-    std::vector<VertexBuffer> _buffers;
-
-    static constexpr std::size_t InvalidVertexIndex = std::numeric_limits<std::size_t>::max();
-
-    // Internal information about where the chunk of indexed vertex data is located:
-    // Which buffer they're in, and the data offset and count within the buffer.
-    // This is enough information to access, replace or remove the data at a later point.
-    struct SlotInfo
+    struct SurfaceInfo
     {
-        std::uint8_t bucketIndex;
-        std::size_t firstVertex;
-        std::size_t numVertices;
-        std::size_t firstIndex;
-        std::size_t numIndices;
-    };
-    std::vector<SlotInfo> _slots;
+        std::reference_wrapper<IRenderableSurface> surface;
+        bool surfaceDataChanged;
+        VertexBuffer buffer;
 
-    static constexpr std::size_t InvalidSlotMapping = std::numeric_limits<std::size_t>::max();
-    std::size_t _freeSlotMappingHint;
+        SurfaceInfo(IRenderableSurface& surface_) :
+            surface(surface_),
+            buffer(GL_TRIANGLES),
+            surfaceDataChanged(true)
+        {}
+    };
+    std::map<Slot, SurfaceInfo> _surfaces;
+
+    Slot _freeSlotMappingHint;
 
 public:
-    GeometryRenderer() :
-        _freeSlotMappingHint(InvalidSlotMapping)
-    {
-        _buffers.emplace_back(GL_TRIANGLES);
-        _buffers.emplace_back(GL_QUADS);
-        _buffers.emplace_back(GL_LINES);
-    }
+    SurfaceRenderer() :
+        _freeSlotMappingHint(0)
+    {}
 
     bool empty() const
     {
-        for (const auto& buffer : _buffers)
-        {
-            if (!buffer.empty()) return false;
-        }
-
-        return true;
+        return _surfaces.empty();
     }
 
-    Slot addGeometry(GeometryType indexType, const std::vector<ArbitraryMeshVertex>& vertices,
-        const std::vector<unsigned int>& indices) override
+    Slot addSurface(IRenderableSurface& surface) override
     {
-        auto bufferIndex = GetBucketIndexForIndexType(indexType);
-        auto& buffer = getBucketByIndex(bufferIndex);
+        // Find a free slot
+        auto newSlotIndex = getNextFreeSlotIndex();
 
-        // Allocate a slot
-        auto newSlotIndex = getNextFreeSlotMapping();
-        auto& slot = _slots.at(newSlotIndex);
-
-        auto [vertexOffset, indexOffset] = buffer.addSurface(vertices, indices);
-
-        slot.bucketIndex = bufferIndex;
-        slot.firstVertex = vertexOffset;
-        slot.numVertices = vertices.size();
-        slot.firstIndex = indexOffset;
-        slot.numIndices = indices.size();
+        _surfaces.emplace(newSlotIndex, surface);
 
         return newSlotIndex;
     }
 
-    void removeGeometry(Slot slot) override
+    void removeSurface(Slot slot) override
     {
-        auto& slotInfo = _slots.at(slot);
-        auto& bucket = getBucketByIndex(slotInfo.bucketIndex);
+        // Remove the surface
+        _surfaces.erase(slot);
 
-        bucket.removeSurface(slotInfo.firstVertex, slotInfo.numVertices, slotInfo.firstIndex, slotInfo.numIndices);
-
-        // Adjust all offsets in other slots pointing to the same bucket
-        for (auto& slot : _slots)
-        {
-            if (slot.bucketIndex == slotInfo.bucketIndex && 
-                slot.firstVertex > slotInfo.firstVertex && 
-                slot.firstVertex != InvalidVertexIndex)
-            {
-                assert(slot.firstVertex >= slotInfo.numVertices);
-                assert(slot.firstIndex >= slotInfo.numIndices);
-
-                slot.firstVertex -= slotInfo.numVertices;
-                slot.firstIndex -= slotInfo.numIndices;
-            }
-        }
-
-        // Invalidate the slot
-        slotInfo.numVertices = 0;
-        slotInfo.firstVertex = InvalidVertexIndex;
-        slotInfo.firstIndex = 0;
-        slotInfo.numIndices = 0;
-        
         if (slot < _freeSlotMappingHint)
         {
             _freeSlotMappingHint = slot;
         }
     }
 
-    void updateGeometry(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
-        const std::vector<unsigned int>& indices) override
+    void updateSurface(Slot slot) override
     {
-        auto& slotInfo = _slots.at(slot);
-
-        if (slotInfo.numVertices != vertices.size() ||
-            slotInfo.numIndices != indices.size())
-        {
-            throw std::logic_error("updateGeometry: Data size mismatch");
-        }
-
-        auto& bucket = getBucketByIndex(slotInfo.bucketIndex);
-
-        bucket.updateSurface(slotInfo.firstVertex, slotInfo.firstIndex, vertices, indices);
+        _surfaces.at(slot).surfaceDataChanged = true;
     }
 
     void render()
@@ -226,16 +174,16 @@ public:
 
         glFrontFace(GL_CW);
 
-        for (auto& buffer : _buffers)
+        for (auto& surface : _surfaces)
         {
-            buffer.render();
+            renderSlot(surface.second);
         }
 
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
-    void renderGeometry(Slot slot) override
+    void renderSurface(Slot slot) override
     {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -246,41 +194,53 @@ public:
 
         glFrontFace(GL_CW);
 
-        auto& slotInfo = _slots.at(slot);
-        auto& buffer = getBucketByIndex(slotInfo.bucketIndex);
-
-        buffer.renderIndexRange(slotInfo.firstIndex, slotInfo.numIndices);
+        renderSlot(_surfaces.at(slot));
 
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
 private:
-    constexpr static std::uint8_t GetBucketIndexForIndexType(GeometryType indexType)
+    void renderSlot(SurfaceInfo& slot)
     {
-        return static_cast<std::uint8_t>(indexType);
-    }
+        auto& surface = slot.surface.get();
 
-    VertexBuffer& getBucketByIndex(std::uint8_t bucketIndex)
-    {
-        return _buffers[bucketIndex];
-    }
-
-    Slot getNextFreeSlotMapping()
-    {
-        auto numSlots = _slots.size();
-
-        for (auto i = _freeSlotMappingHint; i < numSlots; ++i)
+        // Update the vertex data now if necessary
+        if (slot.surfaceDataChanged)
         {
-            if (_slots[i].firstVertex == InvalidVertexIndex)
+            slot.surfaceDataChanged = false;
+
+            slot.buffer.clear();
+            slot.buffer.addSurface(surface.getVertices(), surface.getIndices());
+        }
+
+        if (slot.buffer.empty())
+        {
+            return;
+        }
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+
+        glMultMatrixd(surface.getSurfaceTransform());
+
+        slot.buffer.render();
+
+        glPopMatrix();
+    }
+
+    Slot getNextFreeSlotIndex()
+    {
+        for (auto i = _freeSlotMappingHint; i < std::numeric_limits<Slot>::max(); ++i)
+        {
+            if (_surfaces.count(i) == 0)
             {
                 _freeSlotMappingHint = i + 1; // start searching here next time
                 return i;
             }
         }
-
-        _slots.emplace_back();
-        return numSlots; // == the size before we emplaced the new slot
+        
+        throw std::runtime_error("SurfaceRenderer ran out of surface slot numbers");
     }
 };
 

@@ -2265,5 +2265,8 @@
     <ClInclude Include="..\..\radiantcore\entity\RenderableArrow.h">
       <Filter>src\entity</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\SurfaceRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -14,7 +14,6 @@ enum class GeometryType
     Triangles,
     Quads,
     Lines,
-    OrientedSurface, // Triangles with a per-surface transformation matrix
 };
 
 /**
@@ -38,8 +37,7 @@ public:
     // The indexType determines the primitive GLenum that is chosen to render this surface
     virtual Slot addGeometry(GeometryType indexType,
         const std::vector<ArbitraryMeshVertex>& vertices,
-        const std::vector<unsigned int>& indices,
-        const std::function<const Matrix4& ()>& getTransformCallback = std::function<const Matrix4&()>()) = 0;
+        const std::vector<unsigned int>& indices) = 0;
 
     // Releases a previously allocated slot. This invalidates the handle.
     virtual void removeGeometry(Slot slot) = 0;

@@ -39,7 +39,6 @@ public:
 
 	void testSelect(Selector& selector, SelectionTest& test) override;
 
-    void onPreRender(const VolumeTest& volume) override;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
@@ -55,8 +54,6 @@ public:
 
     void onInsertIntoScene(scene::IMapRootNode& root) override;
     void onRemoveFromScene(scene::IMapRootNode& root) override;
-
-    void boundsChanged() override;
 
 protected:
     void onVisibilityChanged(bool isVisibleNow) override;
