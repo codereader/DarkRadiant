@@ -805,9 +805,14 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
 // Construct a normal shader
 void OpenGLShader::constructNormalShader()
 {
-    // Obtain the Material
-    _material = GlobalMaterialManager().getMaterial(_name);
-    assert(_material);
+    constructFromMaterial(GlobalMaterialManager().getMaterial(_name));
+}
+
+void OpenGLShader::constructFromMaterial(const MaterialPtr& material)
+{
+    assert(material);
+
+    _material = material;
 
     _materialChanged = _material->sig_materialChanged().connect(
         sigc::mem_fun(this, &OpenGLShader::onMaterialChanged));
@@ -1270,6 +1275,29 @@ void OpenGLShader::construct()
 					| RENDER_LINESTIPPLE);
 				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
 				hiddenLine.setDepthFunc(GL_GREATER);
+
+                enableViewType(RenderViewType::Camera);
+            }
+            else if (_name == "$MISSING_MODEL")
+            {
+                // Render a custom texture
+                auto imgPath = module::GlobalModuleRegistry().getApplicationContext().getBitmapsPath();
+                imgPath += "missing_model.tga";
+
+                auto editorTex = GlobalMaterialManager().loadTextureFromFile(imgPath);
+                state.texture0 = editorTex ? editorTex->getGLTexNum() : 0;
+
+                state.setRenderFlag(RENDER_FILL);
+                state.setRenderFlag(RENDER_TEXTURE_2D);
+                state.setRenderFlag(RENDER_DEPTHTEST);
+                state.setRenderFlag(RENDER_LIGHTING);
+                state.setRenderFlag(RENDER_SMOOTH);
+                state.setRenderFlag(RENDER_DEPTHWRITE);
+                state.setRenderFlag(RENDER_CULLFACE);
+                
+                // Set the GL color to white
+                state.setColour(Colour4::WHITE());
+                state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
 
                 enableViewType(RenderViewType::Camera);
             }

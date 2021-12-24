@@ -67,7 +67,7 @@ void NullModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     if (renderSystem)
     {
-        _fillShader = renderSystem->capture("");
+        _fillShader = renderSystem->capture("$MISSING_MODEL");
         _wireShader = renderSystem->capture("<1.0 0 0>");
 
         _renderableBox.clear();

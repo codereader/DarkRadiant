@@ -70,6 +70,8 @@ private:
     // built-in shader)
     void constructNormalShader();
 
+    void constructFromMaterial(const MaterialPtr& material);
+
     // Shader pass construction helpers
     void appendBlendLayer(const IShaderLayer::Ptr& layer);
 
