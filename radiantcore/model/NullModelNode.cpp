@@ -67,13 +67,18 @@ void NullModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     if (renderSystem)
     {
-        _shader = renderSystem->capture("");
-        _renderableBox.update(_shader);
+        _fillShader = renderSystem->capture("");
+        _wireShader = renderSystem->capture("<1.0 0 0>");
+
+        _renderableBox.clear();
+        _renderableBox.attachToShader(_fillShader);
+        _renderableBox.attachToShader(_wireShader);
     }
     else
     {
-        _shader.reset();
         _renderableBox.clear();
+        _fillShader.reset();
+        _wireShader.reset();
     }
 }
 
@@ -86,7 +91,15 @@ void NullModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     Node::onInsertIntoScene(root);
 
-    _renderableBox.update(_shader);
+    if (_fillShader)
+    {
+        _fillShader->addSurface(_renderableBox);
+    }
+
+    if (_wireShader)
+    {
+        _wireShader->addSurface(_renderableBox);
+    }
 }
 
 void NullModelNode::onRemoveFromScene(scene::IMapRootNode& root)
@@ -102,7 +115,15 @@ void NullModelNode::onVisibilityChanged(bool isVisibleNow)
 
     if (isVisibleNow)
     {
-        _renderableBox.update(_shader);
+        if (_fillShader)
+        {
+            _fillShader->addSurface(_renderableBox);
+        }
+
+        if (_wireShader)
+        {
+            _wireShader->addSurface(_renderableBox);
+        }
     }
     else
     {

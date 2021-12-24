@@ -9,7 +9,7 @@ namespace render
 
 /**
  * Surface base type, handling vertex data updates in combination
- * with an ISurfaceRenderer instance.
+ * with one or more ISurfaceRenderer instances.
  *
  * It implements the OpenGLRenderable interface which will instruct
  * the shader to render just the surface managed by this object.
@@ -20,17 +20,11 @@ class RenderableSurface :
     public OpenGLRenderable
 {
 private:
-    ShaderPtr _shader;
-    ISurfaceRenderer::Slot _surfaceSlot;
-
-    std::size_t _lastVertexSize; // To detect size changes when updating surfaces
-    std::size_t _lastIndexSize; // To detect size changes when updating surfaces
+    using ShaderMapping = std::map<ShaderPtr, ISurfaceRenderer::Slot>;
+    ShaderMapping _shaders;
 
 protected:
-    RenderableSurface() :
-        _surfaceSlot(ISurfaceRenderer::InvalidSlot),
-        _lastVertexSize(0),
-        _lastIndexSize(0)
+    RenderableSurface()
     {}
 
 public:
@@ -46,50 +40,49 @@ public:
     // (Non-virtual) update method handling any possible shader change
     // The surface is withdrawn from the given shader if it turns out
     // to be different from the last update.
-    void update(const ShaderPtr& shader)
+    void attachToShader(const ShaderPtr& shader)
     {
-        bool shaderChanged = _shader != shader;
-        auto currentVertexSize = getVertices().size();
-        auto currentIndexSize = getVertices().size();
-
-        bool sizeChanged = _lastIndexSize != currentIndexSize || _lastVertexSize != currentVertexSize;
-
-        if (shaderChanged || sizeChanged)
+        if (_shaders.count(shader) > 0)
         {
-            clear();
+            return; // already attached
         }
 
-        // Update our local shader reference
-        _shader = shader;
+        _shaders[shader] = shader->addSurface(*this);
+    }
 
-        if (_shader)
+    void detachFromShader(const ShaderPtr& shader)
+    {
+        auto handle = _shaders.find(shader);
+
+        if (handle != _shaders.end())
         {
-            _surfaceSlot = _shader->addSurface(*this);
-
-            _lastVertexSize = currentVertexSize;
-            _lastIndexSize = currentIndexSize;
+            detachFromShader(handle);
         }
     }
 
     // Removes the surface and clears the shader reference
     void clear()
     {
-        if (_shader && _surfaceSlot != ISurfaceRenderer::InvalidSlot)
+        while (!_shaders.empty())
         {
-            _shader->removeSurface(_surfaceSlot);
+            detachFromShader(_shaders.begin());
         }
-
-        _surfaceSlot = ISurfaceRenderer::InvalidSlot;
-        _shader.reset();
     }
 
     // Renders the surface stored in our single slot
     void render(const RenderInfo& info) const override
     {
-        if (_surfaceSlot != ISurfaceRenderer::InvalidSlot && _shader)
-        {
-            _shader->renderSurface(_surfaceSlot);
-        }
+        if (_shaders.empty()) return;
+
+        auto& [shader, slot] = *_shaders.begin();
+        shader->renderSurface(slot);
+    }
+
+private:
+    void detachFromShader(const ShaderMapping::iterator& iter)
+    {
+        iter->first->removeSurface(iter->second);
+        _shaders.erase(iter);
     }
 };
 

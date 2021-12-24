@@ -20,7 +20,8 @@ private:
 	NullModelPtr _nullModel;
     render::RenderableBoxSurface _renderableBox;
 
-    ShaderPtr _shader;
+    ShaderPtr _fillShader;
+    ShaderPtr _wireShader;
 
 public:
 	// Default constructor, allocates a new NullModel
