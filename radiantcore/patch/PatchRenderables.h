@@ -10,6 +10,7 @@
 #include "imodelsurface.h"
 
 #include "PatchTesselation.h"
+#include "PatchControlInstance.h"
 
 #include "render/VertexBuffer.h"
 #include "render/IndexedVertexBuffer.h"
@@ -212,5 +213,80 @@ protected:
         }
 
         return vertices;
+    }
+};
+
+// Renders the wireframe lines between a patch's control points
+class RenderablePatchLattice :
+    public render::RenderableGeometry
+{
+private:
+    const IPatch& _patch;
+    const std::vector<PatchControlInstance>& _controlPoints;
+    bool _needsUpdate;
+
+public:
+    RenderablePatchLattice(const IPatch& patch, const std::vector<PatchControlInstance>& controlPoints) :
+        _patch(patch),
+        _controlPoints(controlPoints),
+        _needsUpdate(true)
+    {}
+
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+protected:
+    void updateGeometry() override
+    {
+        if (!_needsUpdate) return;
+
+        _needsUpdate = false;
+
+        auto width = _patch.getWidth();
+        auto height = _patch.getHeight();
+        assert(width * height == _controlPoints.size());
+
+        std::vector<ArbitraryMeshVertex> vertices;
+        vertices.reserve(_controlPoints.size());
+
+        for (const auto& ctrl : _controlPoints)
+        {
+            vertices.push_back(ArbitraryMeshVertex(ctrl.control.vertex, { 0, 0, 1 }, ctrl.control.texcoord, { 1, 0.5, 0, 1 }));
+        }
+
+        // Generate the index array
+        std::vector<unsigned int> indices;
+        indices.reserve(((width * (height - 1)) + (height * (width - 1))) << 1);
+
+        for (std::size_t h = 0; h < height - 1; ++h)
+        {
+            auto rowOffset = h * width;
+
+            for (std::size_t w = 0; w < width - 1; ++w)
+            {
+                indices.push_back(static_cast<unsigned int>(rowOffset + w));
+                indices.push_back(static_cast<unsigned int>(rowOffset + w + 1));
+
+                indices.push_back(static_cast<unsigned int>(rowOffset + w));
+                indices.push_back(static_cast<unsigned int>(rowOffset + w + width));
+            }
+
+            indices.push_back(static_cast<unsigned int>(rowOffset + width - 1));
+            indices.push_back(static_cast<unsigned int>(rowOffset + width - 1 + width));
+        }
+
+        auto rowOffset = (height - 1) * width;
+
+        for (std::size_t w = 0; w < width - 1; ++w)
+        {
+            indices.push_back(static_cast<unsigned int>(rowOffset + w));
+            indices.push_back(static_cast<unsigned int>(rowOffset + w + 1));
+        }
+
+        assert(indices.size() == ((width * (height - 1)) + (height * (width - 1))) << 1);
+
+        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
     }
 };

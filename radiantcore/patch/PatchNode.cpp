@@ -16,7 +16,8 @@ PatchNode::PatchNode(patch::PatchDefType type) :
     _untransformedOriginChanged(true),
     _selectedControlVerticesNeedUpdate(true),
     _renderableSurfaceSolid(m_patch.getTesselation(), true),
-    _renderableSurfaceWireframe(m_patch.getTesselation(), false)
+    _renderableSurfaceWireframe(m_patch.getTesselation(), false),
+    _renderableCtrlLattice(m_patch, m_ctrl_instances)
 {
 	m_patch.setFixedSubdivisions(type == patch::PatchDefType::Def3, Subdivisions(m_patch.getSubdivisions()));
 }
@@ -39,14 +40,9 @@ PatchNode::PatchNode(const PatchNode& other) :
     _untransformedOriginChanged(true),
     _selectedControlVerticesNeedUpdate(true),
     _renderableSurfaceSolid(m_patch.getTesselation(), true),
-    _renderableSurfaceWireframe(m_patch.getTesselation(), false)
+    _renderableSurfaceWireframe(m_patch.getTesselation(), false),
+    _renderableCtrlLattice(m_patch, m_ctrl_instances)
 {
-}
-
-PatchNode::~PatchNode()
-{
-    _renderableSurfaceSolid.clear();
-    _renderableSurfaceWireframe.clear();
 }
 
 scene::INode::Type PatchNode::getNodeType() const
@@ -290,6 +286,7 @@ void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 
     _renderableSurfaceSolid.queueUpdate();
     _renderableSurfaceWireframe.queueUpdate();
+    _renderableCtrlLattice.queueUpdate();
 
 	m_patch.connectUndoSystem(root.getUndoSystem());
 	GlobalCounters().getCounter(counterPatches).increment();
@@ -314,6 +311,7 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 
     _renderableSurfaceSolid.clear();
     _renderableSurfaceWireframe.clear();
+    _renderableCtrlLattice.clear();
     m_patch.getSurfaceShader().setInUse(false);
 
 	SelectableNode::onRemoveFromScene(root);
@@ -341,6 +339,9 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     {
         _renderableSurfaceWireframe.update(_renderEntity->getWireShader());
     }
+
+    // Selected patches in component mode render the lattice connecting the control points
+    _renderableCtrlLattice.update(_ctrlLatticeShader);
 }
 
 void PatchNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
@@ -379,17 +380,20 @@ void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 	const_cast<Patch&>(m_patch).evaluateTransform();
 #endif
 
+#if 0
 	// Render the selected components
 	renderComponentsSelected(collector, volume);
+#endif
 }
 
 void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     // Overlay the selected node with the quadrangulated wireframe
     collector.addHighlightRenderable(_renderableSurfaceWireframe, localToWorld());
-
+#if 0
     // Render the selected components
     renderComponentsSelected(collector, volume);
+#endif
 }
 
 void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -399,20 +403,24 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	m_patch.setRenderSystem(renderSystem);
     _renderableSurfaceSolid.clear();
     _renderableSurfaceWireframe.clear();
+    _renderableCtrlLattice.clear();
 
 	if (renderSystem)
 	{
 		m_state_selpoint = renderSystem->capture("$SELPOINT");
+        _ctrlLatticeShader = renderSystem->capture("$LATTICE");
 	}
 	else
 	{
 		m_state_selpoint.reset();
+        _ctrlLatticeShader.reset();
 	}
 }
 
 // Renders the components of this patch instance
 void PatchNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
+#if 0
 	// Don't render invisible shaders
 	if (!m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible()) return;
 
@@ -423,7 +431,8 @@ void PatchNode::renderComponents(IRenderableCollector& collector, const VolumeTe
 	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
     {
 		m_patch.submitRenderablePoints(collector, volume, localToWorld());
-	}
+    }
+#endif
 }
 
 void PatchNode::updateSelectedControlVertices() const
@@ -525,6 +534,7 @@ void PatchNode::_onTransformationChanged()
 	m_patch.transformChanged();
     _renderableSurfaceSolid.queueUpdate();
     _renderableSurfaceWireframe.queueUpdate();
+    _renderableCtrlLattice.queueUpdate();
 }
 
 void PatchNode::_applyTransformation()
@@ -552,12 +562,14 @@ void PatchNode::onTesselationChanged()
 {
     _renderableSurfaceSolid.queueUpdate();
     _renderableSurfaceWireframe.queueUpdate();
+    _renderableCtrlLattice.queueUpdate();
 }
 
 void PatchNode::onControlPointsChanged()
 {
     _renderableSurfaceSolid.queueUpdate();
     _renderableSurfaceWireframe.queueUpdate();
+    _renderableCtrlLattice.queueUpdate();
 }
 
 void PatchNode::onMaterialChanged()
@@ -575,11 +587,13 @@ void PatchNode::onVisibilityChanged(bool visible)
         // Disconnect our renderable when the node is hidden
         _renderableSurfaceSolid.clear();
         _renderableSurfaceWireframe.clear();
+        _renderableCtrlLattice.clear();
     }
     else
     {
         // Update the vertex buffers next time we need to render
         _renderableSurfaceSolid.queueUpdate();
         _renderableSurfaceWireframe.queueUpdate();
+        _renderableCtrlLattice.queueUpdate();
     }
 }

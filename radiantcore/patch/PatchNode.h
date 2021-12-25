@@ -41,6 +41,7 @@ class PatchNode final :
 	mutable AABB m_aabb_component;
 
 	ShaderPtr m_state_selpoint;
+    ShaderPtr _ctrlLatticeShader;
 
     // For pivoted rotations, we need a copy of this lying around
     Vector3 _untransformedOrigin;
@@ -52,13 +53,14 @@ class PatchNode final :
     RenderablePatchTesselation<TesselationIndexer_Triangles> _renderableSurfaceSolid;
     RenderablePatchTesselation<TesselationIndexer_Quads> _renderableSurfaceWireframe;
 
+    // Draws the wireframe connecting the control points
+    RenderablePatchLattice _renderableCtrlLattice;
+
 public:
 	PatchNode(patch::PatchDefType type);
 
 	// Copy Constructor
 	PatchNode(const PatchNode& other);
-
-    ~PatchNode();
 
 	// Patch::Observer implementation
 	void allocate(std::size_t size);
