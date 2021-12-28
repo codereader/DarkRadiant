@@ -641,9 +641,6 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 		setEntityValueIfDifferent(entity, "light_start", "");
 		setEntityValueIfDifferent(entity, "light_end", "");
 	}
-
-	// Write the texture key
-	setEntityValueIfDifferent(entity, "texture", _texSelector->getSelection());
 }
 
 void LightInspector::_onColourChange(wxColourPickerEvent& ev)
