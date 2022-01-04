@@ -588,7 +588,7 @@ void LightInspector::writeToAllEntities(StringMap newValues)
         }
         else {
             // Set all values from dialog elements
-            setValuesOnEntity(entity);
+            setLightVectorsOnEntity(entity);
         }
     }
 
@@ -607,7 +607,7 @@ void LightInspector::setKeyValueAllLights(const std::string& key,
 }
 
 // Set the keyvalues on the entity from the dialog widgets
-void LightInspector::setValuesOnEntity(Entity* entity)
+void LightInspector::setLightVectorsOnEntity(Entity* entity)
 {
     // Write out all vectors to the entity
 	for (const auto& pair : _valueMap)

@@ -94,10 +94,10 @@ private:
     void getValuesFromEntity();
 
     // Write the widget contents to the given entity
-    void setValuesOnEntity(Entity* entity);
+    void setLightVectorsOnEntity(Entity* entity);
 
     // Write contents to all light entities. Pass a string map containing
-    // explicit values to set, or an empty map to call setValuesOnEntity() for
+    // explicit values to set, or an empty map to call setLightVectorsOnEntity() for
     // each entity.
     void writeToAllEntities(StringMap newValues = {});
 
