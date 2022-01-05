@@ -23,9 +23,71 @@ class LightNode :
     public ComponentEditable,
     public ComponentSnappable,
     public PlaneSelectable,
-    public OpenGLRenderable
+    public OpenGLRenderable,
+    public RendererLight
 {
-	Light _light;
+	OriginKey m_originKey;
+	// The "working" version of the origin
+	Vector3 _originTransformed;
+
+    RotationKey m_rotationKey;
+    RotationMatrix m_rotation;
+
+	Doom3LightRadius m_doom3Radius;
+
+	// Renderable components of this light
+	RenderableLightTarget _rCentre;
+	RenderableLightTarget _rTarget;
+
+	RenderableLightRelative _rUp;
+	RenderableLightRelative _rRight;
+
+	RenderableLightTarget _rStart;
+	RenderableLightTarget _rEnd;
+
+    RotationMatrix m_lightRotation;
+    bool m_useLightRotation = false;
+
+    // Set of values defining a projected light
+    template<typename T> struct Projected
+    {
+        T target;
+        T up;
+        T right;
+        T start;
+        T end;
+    };
+
+    // Projected light vectors, both base and transformed
+    scene::TransformedCopy<Projected<Vector3>> _projVectors;
+
+    // Projected light vector colours
+    Projected<Vector3> _projColours;
+
+    // Projected light use flags
+    Projected<bool> _projUseFlags;
+
+    mutable AABB m_doom3AABB;
+    mutable Matrix4 m_doom3Rotation;
+
+    // Frustum for projected light (used for rendering the light volume)
+    mutable Frustum _frustum;
+
+    // Transforms local space coordinates into texture coordinates
+    // To get the complete texture transform this one needs to be
+    // post-multiplied by the world rotation and translation.
+    mutable Matrix4 _localToTexture;
+
+    mutable bool _projectionChanged;
+
+	LightShader m_shader;
+
+    // The 8x8 box representing the light object itself
+    AABB _lightBox;
+
+    Callback m_transformChanged;
+    Callback m_boundsChanged;
+    Callback m_evaluateTransform;
 
 	// The (draggable) light center instance
 	VertexInstance _lightCenterInstance;
@@ -49,6 +111,8 @@ class LightNode :
     // Cached rkey to override light volume colour
     registry::CachedKey<bool> _overrideColKey;
 
+	mutable Matrix4 m_projectionOrientation;
+
 public:
 	LightNode(const IEntityClassPtr& eclass);
 
@@ -59,19 +123,19 @@ public:
 	static LightNodePtr Create(const IEntityClassPtr& eclass);
 
     // ILightNode implementation
-    const RendererLight& getRendererLight() const override { return _light; }
+    const RendererLight& getRendererLight() const override { return *this; }
 
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const override;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const override;
+	const AABB& localAABB() const override;
 
 	// override scene::Node methods to deselect the child components
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// Snappable implementation
-	virtual void snapto(float snap) override;
+	void snapto(float snap) override;
 
 	/** greebo: Returns the AABB of the small diamond representation.
 	 *	(use this to select the light against an AABB selectiontest like CompleteTall or similar).
@@ -110,7 +174,6 @@ public:
 	const AABB& getSelectedComponentsBounds() const override;
 
 	scene::INodePtr clone() const override;
-
 	void selectedChangedComponent(const ISelectable& selectable);
 
 	// Renderable implementation
@@ -151,6 +214,94 @@ private:
     void updateRenderableRadius() const;
 
     void onLightRadiusChanged();
+
+private: // Light methods
+	void destroy();
+
+    // Ensure the start and end points are set to sensible values
+	void checkStartEnd();
+
+	void updateOrigin();
+	void originChanged();
+	void lightTargetChanged(const std::string& value);
+	void lightUpChanged(const std::string& value);
+	void lightRightChanged(const std::string& value);
+	void lightStartChanged(const std::string& value);
+	void lightEndChanged(const std::string& value);
+	void writeLightOrigin();
+	void rotationChanged();
+	void lightRotationChanged(const std::string& value);
+
+	// Renderable submission functions
+	void renderWireframe(RenderableCollector& collector,
+						 const VolumeTest& volume,
+						 const Matrix4& localToWorld,
+						 bool selected) const;
+
+	// Adds the light centre renderable to the given collector
+	void renderLightCentre(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderProjectionPoints(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+
+	// Returns a reference to the member class Doom3LightRadius (used to set colours)
+	Doom3LightRadius& getDoom3Radius();
+
+	void translate(const Vector3& translation);
+
+    /**
+     * greebo: This sets the light start to the given value, including bounds checks.
+     */
+	void setLightStart(const Vector3& newLightStart);
+
+    /**
+     * greebo: Checks if the light_start is positioned "above" the light origin and constrains
+     * the movement accordingly to prevent the light volume to become an "hourglass".
+     * Only affects the _lightStartTransformed member.
+     */
+    void ensureLightStartConstraints();
+
+	void rotate(const Quaternion& rotation);
+
+	// This snaps the light as a whole to the grid (basically the light origin)
+	void setLightRadius(const AABB& aabb);
+	void transformLightRadius(const Matrix4& transform);
+	void revertLightTransform();
+	void freezeLightTransform();
+
+    // Is this light projected or omni?
+    bool isProjected() const;
+
+    // Set the projection-changed flag
+	void projectionChanged();
+
+    // Update the projected light frustum
+    void updateProjection() const;
+
+    // RendererLight implementation
+    const IRenderEntity& getLightEntity() const override;
+    Matrix4 getLightTextureTransformation() const override;
+    Vector3 getLightOrigin() const override;
+    const ShaderPtr& getShader() const override;
+	AABB lightAABB() const override;
+
+	Vector3& target();
+	Vector3& targetTransformed();
+	Vector3& up();
+	Vector3& upTransformed();
+	Vector3& right();
+	Vector3& rightTransformed();
+	Vector3& start();
+	Vector3& startTransformed();
+	Vector3& end();
+	Vector3& endTransformed();
+
+	Vector3& colourLightTarget();
+	Vector3& colourLightRight();
+	Vector3& colourLightUp();
+	Vector3& colourLightStart();
+	Vector3& colourLightEnd();
+
+	bool useStartEnd() const;
+
 }; // class LightNode
 
 } // namespace entity
