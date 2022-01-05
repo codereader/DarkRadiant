@@ -9,6 +9,9 @@
 
 namespace entity {
 
+// Store the static default shader string (it's here because LightShader does not have a .cpp file)
+std::string LightShader::m_defaultShader = "";
+
 // --------- LightNode implementation ------------------------------------
 
 LightNode::LightNode(const IEntityClassPtr& eclass) :
@@ -125,11 +128,8 @@ void LightNode::construct()
 
 AABB LightNode::getSelectAABB() const
 {
-    // Use the light origin as select AAB centerpoint
-    Vector3 extents;
-	default_extents(extents);
-
-	return AABB(getLightOrigin(), extents);
+    // Use the light origin as select AABB centerpoint
+    return AABB(getLightOrigin(), Vector3(8, 8, 8));
 }
 
 void LightNode::onLightRadiusChanged()

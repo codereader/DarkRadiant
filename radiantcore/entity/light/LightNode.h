@@ -1,12 +1,19 @@
 #pragma once
 
+#include "Doom3LightRadius.h"
+#include "RenderableVertices.h"
+#include "Renderables.h"
+#include "LightShader.h"
+
 #include "ilightnode.h"
 #include "registry/CachedKey.h"
+#include "scene/TransformedCopy.h"
 
-#include "Light.h"
 #include "dragplanes.h"
 #include "../VertexInstance.h"
 #include "../EntityNode.h"
+#include "../OriginKey.h"
+#include "../RotationKey.h"
 
 namespace entity
 {
