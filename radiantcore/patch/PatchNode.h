@@ -62,8 +62,7 @@ public:
 	// Copy Constructor
 	PatchNode(const PatchNode& other);
 
-	// Patch::Observer implementation
-	void allocate(std::size_t size);
+	void updateSelectableControls();
 
 	std::string name() const override;
 	Type getNodeType() const override;

@@ -141,14 +141,15 @@ void Patch::setDims(std::size_t w, std::size_t h)
   else if(h < MIN_PATCH_HEIGHT)
     h = MIN_PATCH_HEIGHT;
 
-  _width = w;
-  _height = h;
+    _width = w;
+    _height = h;
 
-  if(_width * _height != _ctrl.size())
-  {
-    _ctrl.resize(_width * _height);
-    onAllocate(_ctrl.size());
-  }
+    if(_width * _height != _ctrl.size())
+    {
+        _ctrl.resize(_width * _height);
+        _ctrlTransformed.resize(_ctrl.size());
+        _node.updateSelectableControls();
+    }
 }
 
 PatchNode& Patch::getPatchNode()
@@ -171,12 +172,6 @@ void Patch::disconnectUndoSystem(IUndoSystem& undoSystem)
 
     _undoStateSaver = nullptr;
     undoSystem.releaseStateSaver(*this);
-}
-
-// Allocate callback: pass the allocate call to all the observers
-void Patch::onAllocate(std::size_t size)
-{
-    _node.allocate(size);
 }
 
 // Return the interally stored AABB
@@ -438,7 +433,8 @@ void Patch::importState(const IUndoMementoPtr& state)
         _width = other.m_width;
         _height = other.m_height;
         _ctrl = other.m_ctrl;
-        onAllocate(_ctrl.size());
+        _ctrlTransformed = _ctrl;
+        _node.updateSelectableControls();
         _patchDef3 = other.m_patchDef3;
         _subDivisions = Subdivisions(other.m_subdivisions_x, other.m_subdivisions_y);
         _shader.setMaterialName(other._materialName);

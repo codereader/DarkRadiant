@@ -108,10 +108,6 @@ public:
 	void connectUndoSystem(IUndoSystem& undoSystem);
     void disconnectUndoSystem(IUndoSystem& undoSystem);
 
-	// Allocate callback: pass the allocate call to all the observers
-	void onAllocate(std::size_t size);
-
-	// Return the interally stored AABB
 	const AABB& localAABB() const override;
 
     /// Submit renderable edge and face points

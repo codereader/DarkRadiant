@@ -86,19 +86,23 @@ std::string PatchNode::getFingerprint()
     return hash;
 }
 
-void PatchNode::allocate(std::size_t size) {
+void PatchNode::updateSelectableControls()
+{
 	// Clear the control instance vector and reserve <size> memory
 	m_ctrl_instances.clear();
-	m_ctrl_instances.reserve(size);
+
+    // We link the instances to the working control point set
+    auto& ctrlPoints = m_patch.getControlPointsTransformed();
+
+	m_ctrl_instances.reserve(ctrlPoints.size());
 
 	// greebo: Cycle through the patch's control vertices and add them as PatchControlInstance to the vector
 	// The PatchControlInstance constructor takes a pointer to a PatchControl and the SelectionChanged callback
 	// The passed callback points back to this class (the member method selectedChangedComponent() is called).
-	for(PatchControlIter i = m_patch.begin(); i != m_patch.end(); ++i)
+	for(auto& ctrl : ctrlPoints)
 	{
-		m_ctrl_instances.push_back(
-			PatchControlInstance(*i, std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1))
-		);
+		m_ctrl_instances.emplace_back(ctrl, 
+            std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1));
 	}
 }
 
