@@ -69,7 +69,7 @@ class LightNode :
     scene::TransformedCopy<Projected<Vector3>> _projVectors;
 
     // Projected light vector colours
-    Projected<Vector3> _projColours;
+    mutable Projected<Vector3> _projColours;
 
     // Projected light use flags
     Projected<bool> _projUseFlags;
@@ -289,12 +289,6 @@ private: // Light methods
     Vector3 getLightOrigin() const override;
     const ShaderPtr& getShader() const override;
 	AABB lightAABB() const override;
-
-	Vector3& colourLightTarget();
-	Vector3& colourLightRight();
-	Vector3& colourLightUp();
-	Vector3& colourLightStart();
-	Vector3& colourLightEnd();
 
 	bool useStartEnd() const;
 

@@ -444,14 +444,19 @@ void LightNode::renderComponents(RenderableCollector& collector, const VolumeTes
 			const Vector3& colourVertexDeselected = settings.getLightVertexColour(LightEditVertexType::Deselected);
 
 			// Update the colour of the light center dot
-			const_cast<LightNode&>(*this).colourLightTarget() = (_lightTargetInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
-			const_cast<LightNode&>(*this).colourLightRight() = (_lightRightInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
-			const_cast<LightNode&>(*this).colourLightUp() = (_lightUpInstance.isSelected()) ? colourVertexSelected : colourVertexDeselected;
+            _projColours.target = (_lightTargetInstance.isSelected()) ? colourVertexSelected
+                                                                      : colourVertexDeselected;
+            _projColours.right = (_lightRightInstance.isSelected()) ? colourVertexSelected
+                                                                    : colourVertexDeselected;
+            _projColours.up = (_lightUpInstance.isSelected()) ? colourVertexSelected
+                                                              : colourVertexDeselected;
 
-			const_cast<LightNode&>(*this).colourLightStart() = (_lightStartInstance.isSelected()) ? colourStartEndSelected : colourStartEndDeselected;
-			const_cast<LightNode&>(*this).colourLightEnd() = (_lightEndInstance.isSelected()) ? colourStartEndSelected : colourStartEndDeselected;
+            _projColours.start = (_lightStartInstance.isSelected()) ? colourStartEndSelected
+                                                                    : colourStartEndDeselected;
+            _projColours.end = (_lightEndInstance.isSelected()) ? colourStartEndSelected
+                                                                : colourStartEndDeselected;
 
-			// Render the projection points
+            // Render the projection points
 			renderProjectionPoints(collector, volume, localToWorld());
 		}
 		else
@@ -489,11 +494,11 @@ void LightNode::renderInactiveComponents(RenderableCollector& collector, const V
 			const Vector3& colourStartEndInactive = settings.getLightVertexColour(LightEditVertexType::StartEndDeselected);
 			const Vector3& colourVertexInactive = settings.getLightVertexColour(LightEditVertexType::Deselected);
 
-			const_cast<LightNode&>(*this).colourLightStart() = colourStartEndInactive;
-			const_cast<LightNode&>(*this).colourLightEnd() = colourStartEndInactive;
-			const_cast<LightNode&>(*this).colourLightTarget() = colourVertexInactive;
-			const_cast<LightNode&>(*this).colourLightRight() = colourVertexInactive;
-			const_cast<LightNode&>(*this).colourLightUp() = colourVertexInactive;
+			_projColours.start = colourStartEndInactive;
+			_projColours.end = colourStartEndInactive;
+			_projColours.target = colourVertexInactive;
+			_projColours.right = colourVertexInactive;
+			_projColours.up = colourVertexInactive;
 
 			// Render the projection points
 			renderProjectionPoints(collector, volume, localToWorld());
@@ -1138,12 +1143,6 @@ Vector3 LightNode::getLightOrigin() const
         );
     }
 }
-
-Vector3& LightNode::colourLightTarget() { return _projColours.target; }
-Vector3& LightNode::colourLightRight()  { return _projColours.right; }
-Vector3& LightNode::colourLightUp()     { return _projColours.up; }
-Vector3& LightNode::colourLightStart()  { return _projColours.start; }
-Vector3& LightNode::colourLightEnd()    { return _projColours.end; }
 
 /* greebo: A light is projected, if the entity keys light_target/light_up/light_right are not empty.
  */
