@@ -290,17 +290,6 @@ private: // Light methods
     const ShaderPtr& getShader() const override;
 	AABB lightAABB() const override;
 
-	Vector3& target();
-	Vector3& targetTransformed();
-	Vector3& up();
-	Vector3& upTransformed();
-	Vector3& right();
-	Vector3& rightTransformed();
-	Vector3& start();
-	Vector3& startTransformed();
-	Vector3& end();
-	Vector3& endTransformed();
-
 	Vector3& colourLightTarget();
 	Vector3& colourLightRight();
 	Vector3& colourLightUp();

@@ -14,57 +14,78 @@ std::string LightShader::m_defaultShader = "";
 
 // --------- LightNode implementation ------------------------------------
 
-LightNode::LightNode(const IEntityClassPtr& eclass) :
-	EntityNode(eclass),
-    m_originKey(std::bind(&LightNode::originChanged, this)),
-    _originTransformed(ORIGINKEY_IDENTITY),
-    m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
-    _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
-    _rTarget(_projVectors.transformed.target, _lightBox.origin, _projColours.target),
-    _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin, _projColours.up),
-    _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin, _projColours.right),
-    _rStart(_projVectors.transformed.start, _lightBox.origin, _projColours.start),
-    _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
-    m_transformChanged(std::bind(&scene::Node::transformChanged, this)),
-    m_boundsChanged(std::bind(&scene::Node::boundsChanged, this)),
-	_lightCenterInstance(getDoom3Radius().m_centerTransformed, std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_lightTargetInstance(targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_lightRightInstance(rightTransformed(), targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_lightUpInstance(upTransformed(), targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_lightStartInstance(startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_lightEndInstance(endTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-    _renderableRadius(_lightBox.origin),
-    _renderableFrustum(_lightBox.origin, _projVectors.transformed.start, _frustum),
-    _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
+LightNode::LightNode(const IEntityClassPtr& eclass)
+: EntityNode(eclass), m_originKey(std::bind(&LightNode::originChanged, this)),
+  _originTransformed(ORIGINKEY_IDENTITY),
+  m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
+  _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
+  _rTarget(_projVectors.transformed.target, _lightBox.origin, _projColours.target),
+  _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin,
+       _projColours.up),
+  _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin,
+          _projColours.right),
+  _rStart(_projVectors.transformed.start, _lightBox.origin, _projColours.start),
+  _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
+  m_transformChanged(std::bind(&scene::Node::transformChanged, this)),
+  m_boundsChanged(std::bind(&scene::Node::boundsChanged, this)),
+  _lightCenterInstance(
+      getDoom3Radius().m_centerTransformed,
+      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightTargetInstance(
+      _projVectors.transformed.target,
+      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightRightInstance(
+      _projVectors.transformed.right, _projVectors.transformed.target,
+      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightUpInstance(_projVectors.transformed.up, _projVectors.transformed.target,
+                   std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightStartInstance(
+      _projVectors.transformed.start,
+      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightEndInstance(_projVectors.transformed.end,
+                    std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _renderableRadius(_lightBox.origin),
+  _renderableFrustum(_lightBox.origin, _projVectors.transformed.start, _frustum),
+  _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
     m_doom3Radius.m_changed = std::bind(&LightNode::onLightRadiusChanged, this);
 }
 
-LightNode::LightNode(const LightNode& other) :
-	EntityNode(other),
-	ILightNode(other),
-    m_originKey(std::bind(&LightNode::originChanged, this)),
-    _originTransformed(ORIGINKEY_IDENTITY),
-    m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
-    _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
-    _rTarget(_projVectors.transformed.target, _lightBox.origin, _projColours.target),
-    _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin, _projColours.up),
-    _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin, _projColours.right),
-    _rStart(_projVectors.transformed.start, _lightBox.origin, _projColours.start),
-    _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
-    m_transformChanged(std::bind(&Node::transformChanged, this)),
-    m_boundsChanged(std::bind(&Node::boundsChanged, this)),
-	_lightCenterInstance(getDoom3Radius().m_centerTransformed, std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_lightTargetInstance(targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_lightRightInstance(rightTransformed(), targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_lightUpInstance(upTransformed(), targetTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_lightStartInstance(startTransformed(), std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-	_lightEndInstance(endTransformed(), std::bind(&LightNode::selectedChangedComponent, this,std::placeholders:: _1)),
-	_dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-    _renderableRadius(_lightBox.origin),
-    _renderableFrustum(_lightBox.origin, _projVectors.transformed.start, _frustum),
-    _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
+LightNode::LightNode(const LightNode& other)
+: EntityNode(other), ILightNode(other), m_originKey(std::bind(&LightNode::originChanged, this)),
+  _originTransformed(ORIGINKEY_IDENTITY),
+  m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
+  _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
+  _rTarget(_projVectors.transformed.target, _lightBox.origin, _projColours.target),
+  _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin,
+       _projColours.up),
+  _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin,
+          _projColours.right),
+  _rStart(_projVectors.transformed.start, _lightBox.origin, _projColours.start),
+  _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
+  m_transformChanged(std::bind(&Node::transformChanged, this)),
+  m_boundsChanged(std::bind(&Node::boundsChanged, this)),
+  _lightCenterInstance(
+      getDoom3Radius().m_centerTransformed,
+      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightTargetInstance(
+      _projVectors.transformed.target,
+      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightRightInstance(
+      _projVectors.transformed.right, _projVectors.transformed.target,
+      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightUpInstance(_projVectors.transformed.up, _projVectors.transformed.target,
+                   std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightStartInstance(
+      _projVectors.transformed.start,
+      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightEndInstance(_projVectors.transformed.end,
+                    std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _renderableRadius(_lightBox.origin),
+  _renderableFrustum(_lightBox.origin, _projVectors.transformed.start, _frustum),
+  _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
     m_doom3Radius.m_changed = std::bind(&LightNode::onLightRadiusChanged, this);
 }
@@ -255,34 +276,34 @@ void LightNode::snapComponents(float snap) {
 		// Check, if any components are selected and snap the selected ones to the grid
 		if (isSelectedComponents()) {
 			if (_lightTargetInstance.isSelected()) {
-				targetTransformed().snap(snap);
+				_projVectors.transformed.target.snap(snap);
 			}
 			if (_lightRightInstance.isSelected()) {
-				rightTransformed().snap(snap);
+				_projVectors.transformed.right.snap(snap);
 			}
 			if (_lightUpInstance.isSelected()) {
-				upTransformed().snap(snap);
+				_projVectors.transformed.up.snap(snap);
 			}
 
 			if (useStartEnd()) {
 				if (_lightEndInstance.isSelected()) {
-					endTransformed().snap(snap);
+					_projVectors.transformed.end.snap(snap);
 				}
 
 				if (_lightStartInstance.isSelected()) {
-					startTransformed().snap(snap);
+					_projVectors.transformed.start.snap(snap);
 				}
 			}
 		}
 		else {
 			// None are selected, snap them all
-			targetTransformed().snap(snap);
-			rightTransformed().snap(snap);
-			upTransformed().snap(snap);
+			_projVectors.transformed.target.snap(snap);
+			_projVectors.transformed.right.snap(snap);
+			_projVectors.transformed.up.snap(snap);
 
 			if (useStartEnd()) {
-				endTransformed().snap(snap);
-				startTransformed().snap(snap);
+				_projVectors.transformed.end.snap(snap);
+				_projVectors.transformed.start.snap(snap);
 			}
 		}
 	}
@@ -553,13 +574,13 @@ void LightNode::evaluateTransform()
 
 			if (_lightTargetInstance.isSelected())
             {
-                Vector3 newWorldPos = localToWorld().transformPoint(target()) + getTranslation();
-                targetTransformed() = localToWorld().getFullInverse().transformPoint(newWorldPos);
+                Vector3 newWorldPos = localToWorld().transformPoint(_projVectors.base.target) + getTranslation();
+                _projVectors.transformed.target = localToWorld().getFullInverse().transformPoint(newWorldPos);
 			}
 
             if (_lightStartInstance.isSelected())
             {
-                Vector3 newWorldPos = localToWorld().transformPoint(start()) + getTranslation();
+                Vector3 newWorldPos = localToWorld().transformPoint(_projVectors.base.start) + getTranslation();
                 Vector3 newLightStart = localToWorld().getFullInverse().transformPoint(newWorldPos);
 
                 // Assign the light start, perform the boundary checks
@@ -568,8 +589,8 @@ void LightNode::evaluateTransform()
 
             if (_lightEndInstance.isSelected())
             {
-                Vector3 newWorldPos = localToWorld().transformPoint(end()) + getTranslation();
-                endTransformed() = localToWorld().getFullInverse().transformPoint(newWorldPos);
+                Vector3 newWorldPos = localToWorld().transformPoint(_projVectors.base.end) + getTranslation();
+                _projVectors.transformed.end = localToWorld().getFullInverse().transformPoint(newWorldPos);
 
                 ensureLightStartConstraints();
             }
@@ -584,14 +605,14 @@ void LightNode::evaluateTransform()
 
 			if (_lightRightInstance.isSelected())
             {
-                Vector3 newWorldPos = local2World.transformPoint(right()) + getTranslation();
-                rightTransformed() = world2Local.transformPoint(newWorldPos);
+                Vector3 newWorldPos = local2World.transformPoint(_projVectors.base.right) + getTranslation();
+                _projVectors.transformed.right = world2Local.transformPoint(newWorldPos);
 			}
 
 			if (_lightUpInstance.isSelected())
             {
-                Vector3 newWorldPos = local2World.transformPoint(up()) + getTranslation();
-                upTransformed() = world2Local.transformPoint(newWorldPos);
+                Vector3 newWorldPos = local2World.transformPoint(_projVectors.base.up) + getTranslation();
+                _projVectors.transformed.up = world2Local.transformPoint(newWorldPos);
 			}
 
 			// If this is a projected light, then it is likely for the according vertices to have changed, so update the projection
@@ -1117,17 +1138,6 @@ Vector3 LightNode::getLightOrigin() const
         );
     }
 }
-
-Vector3& LightNode::target()            { return _projVectors.base.target; }
-Vector3& LightNode::targetTransformed() { return _projVectors.transformed.target; }
-Vector3& LightNode::up()                { return _projVectors.base.up; }
-Vector3& LightNode::upTransformed()     { return _projVectors.transformed.up; }
-Vector3& LightNode::right()             { return _projVectors.base.right; }
-Vector3& LightNode::rightTransformed()  { return _projVectors.transformed.right; }
-Vector3& LightNode::start()             { return _projVectors.base.start; }
-Vector3& LightNode::startTransformed()  { return _projVectors.transformed.start; }
-Vector3& LightNode::end()               { return _projVectors.base.end; }
-Vector3& LightNode::endTransformed()    { return _projVectors.transformed.end; }
 
 Vector3& LightNode::colourLightTarget() { return _projColours.target; }
 Vector3& LightNode::colourLightRight()  { return _projColours.right; }
