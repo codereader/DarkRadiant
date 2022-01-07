@@ -11,10 +11,8 @@
 PatchNode::PatchNode(patch::PatchDefType type) :
 	scene::SelectableNode(),
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
-	m_render_selected(GL_POINTS),
 	m_patch(*this),
     _untransformedOriginChanged(true),
-    _selectedControlVerticesNeedUpdate(true),
     _renderableSurfaceSolid(m_patch.getTesselation(), true),
     _renderableSurfaceWireframe(m_patch.getTesselation(), false),
     _renderableCtrlLattice(m_patch, m_ctrl_instances),
@@ -36,10 +34,8 @@ PatchNode::PatchNode(const PatchNode& other) :
 	PlaneSelectable(other),
 	Transformable(other),
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
-	m_render_selected(GL_POINTS),
 	m_patch(other.m_patch, *this), // create the patch out of the <other> one
     _untransformedOriginChanged(true),
-    _selectedControlVerticesNeedUpdate(true),
     _renderableSurfaceSolid(m_patch.getTesselation(), true),
     _renderableSurfaceWireframe(m_patch.getTesselation(), false),
     _renderableCtrlLattice(m_patch, m_ctrl_instances),
@@ -268,7 +264,6 @@ bool PatchNode::hasVisibleMaterial() const
 void PatchNode::selectedChangedComponent(const ISelectable& selectable)
 {
     // We need to update our vertex colours next time we render them
-    _selectedControlVerticesNeedUpdate = true;
     _renderableCtrlPoints.queueUpdate();
 
 	// Notify the selection system that this PatchNode was selected. The RadiantSelectionSystem adds
@@ -349,8 +344,6 @@ void PatchNode::onPreRender(const VolumeTest& volume)
 
     if (isSelected() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
     {
-        updateSelectedControlVertices();
-
         // Selected patches in component mode render the lattice connecting the control points
         _renderableCtrlLattice.update(_ctrlLatticeShader);
         _renderableCtrlPoints.update(_ctrlPointShader);
@@ -458,29 +451,6 @@ void PatchNode::renderComponents(IRenderableCollector& collector, const VolumeTe
 #endif
 }
 
-void PatchNode::updateSelectedControlVertices() const
-{
-    if (!_selectedControlVerticesNeedUpdate) return;
-
-    _selectedControlVerticesNeedUpdate = false;
-
-	// Clear the renderable point vector that represents the selection
-	m_render_selected.clear();
-
-	// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
-	auto ctrl = m_patch.getControlPointsTransformed().begin();
-
-	for (auto i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i, ++ctrl)
-	{
-		if (i->isSelected())
-        {
-			const Colour4b colour_selected(0, 0, 0, 255);
-			// Add this patch control instance to the render list
-			m_render_selected.push_back(VertexCb(reinterpret_cast<const Vertex3f&>(ctrl->vertex), colour_selected));
-		}
-	}
-}
-
 #if 0
 void PatchNode::renderComponentsSelected(IRenderableCollector& collector, const VolumeTest& volume) const
 {
@@ -543,7 +513,6 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 
 		// mark this patch transform as dirty
 		m_patch.transformChanged();
-        _selectedControlVerticesNeedUpdate = true;
 	}
 
 	// Also, check if there are any drag planes selected

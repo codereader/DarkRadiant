@@ -32,9 +32,6 @@ class PatchNode final :
 	typedef std::vector<PatchControlInstance> PatchControlInstances;
 	PatchControlInstances m_ctrl_instances;
 
-	// An array of renderable points
-	mutable RenderablePointVector m_render_selected;
-
 	Patch m_patch;
 
 	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable)
@@ -47,8 +44,6 @@ class PatchNode final :
     Vector3 _untransformedOrigin;
     // If true, the _untransformedOrigin member needs an update
     bool _untransformedOriginChanged;
-
-    mutable bool _selectedControlVerticesNeedUpdate;
 
     RenderablePatchTesselation<TesselationIndexer_Triangles> _renderableSurfaceSolid;
     RenderablePatchTesselation<TesselationIndexer_Quads> _renderableSurfaceWireframe;
@@ -163,10 +158,6 @@ protected:
 private:
 	// Transforms the patch components with the given transformation matrix
 	void transformComponents(const Matrix4& matrix);
-
-	// greebo: Updates the internal render array m_render_selected, that contains all control vertices that should be
-	// rendered as highlighted.
-	void updateSelectedControlVertices() const;
 
 #if 0
 	// greebo: Renders the selected components. This is called by the above two render functions
