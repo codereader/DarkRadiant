@@ -62,8 +62,6 @@ public:
 	// Copy Constructor
 	PatchNode(const PatchNode& other);
 
-	void updateSelectableControls();
-
 	std::string name() const override;
 	Type getNodeType() const override;
 
@@ -150,6 +148,7 @@ public:
     void onControlPointsChanged();
     void onMaterialChanged();
     void onTesselationChanged();
+    void updateSelectableControls();
 
 protected:
 	// Gets called by the Transformable implementation whenever

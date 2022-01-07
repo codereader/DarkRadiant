@@ -344,8 +344,16 @@ void PatchNode::onPreRender(const VolumeTest& volume)
         _renderableSurfaceWireframe.update(_renderEntity->getWireShader());
     }
 
-    // Selected patches in component mode render the lattice connecting the control points
-    _renderableCtrlLattice.update(_ctrlLatticeShader);
+    if (isSelected() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
+    {
+        // Selected patches in component mode render the lattice connecting the control points
+        _renderableCtrlLattice.update(_ctrlLatticeShader);
+    }
+    else
+    {
+        _renderableCtrlLattice.clear();
+        _renderableCtrlLattice.queueUpdate(); // will be updated next time it's rendered
+    }
 }
 
 void PatchNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
