@@ -269,6 +269,7 @@ void PatchNode::selectedChangedComponent(const ISelectable& selectable)
 {
     // We need to update our vertex colours next time we render them
     _selectedControlVerticesNeedUpdate = true;
+    _renderableCtrlPoints.queueUpdate();
 
 	// Notify the selection system that this PatchNode was selected. The RadiantSelectionSystem adds
 	// this to its internal list of selected nodes.
