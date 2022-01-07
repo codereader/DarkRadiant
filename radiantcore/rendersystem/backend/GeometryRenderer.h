@@ -132,6 +132,7 @@ public:
         _buffers.emplace_back(GL_TRIANGLES);
         _buffers.emplace_back(GL_QUADS);
         _buffers.emplace_back(GL_LINES);
+        _buffers.emplace_back(GL_POINTS);
     }
 
     bool empty() const
@@ -220,9 +221,7 @@ public:
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnableClientState(GL_NORMAL_ARRAY);
-
-        // Render this slot without any vertex colours
-        glDisableClientState(GL_COLOR_ARRAY);
+        glEnableClientState(GL_COLOR_ARRAY);
 
         glFrontFace(GL_CW);
 

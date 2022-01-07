@@ -40,7 +40,7 @@ class PatchNode final :
 	// An internal AABB variable to calculate the bounding box of the selected components (has to be mutable)
 	mutable AABB m_aabb_component;
 
-	ShaderPtr m_state_selpoint;
+	ShaderPtr _ctrlPointShader;
     ShaderPtr _ctrlLatticeShader;
 
     // For pivoted rotations, we need a copy of this lying around
@@ -52,9 +52,8 @@ class PatchNode final :
 
     RenderablePatchTesselation<TesselationIndexer_Triangles> _renderableSurfaceSolid;
     RenderablePatchTesselation<TesselationIndexer_Quads> _renderableSurfaceWireframe;
-
-    // Draws the wireframe connecting the control points
-    RenderablePatchLattice _renderableCtrlLattice;
+    RenderablePatchLattice _renderableCtrlLattice; // Wireframe connecting the control points
+    RenderablePatchControlPoints _renderableCtrlPoints; // the coloured control points
 
 public:
 	PatchNode(patch::PatchDefType type);
@@ -169,8 +168,10 @@ private:
 	// rendered as highlighted.
 	void updateSelectedControlVertices() const;
 
+#if 0
 	// greebo: Renders the selected components. This is called by the above two render functions
 	void renderComponentsSelected(IRenderableCollector& collector, const VolumeTest& volume) const;
+#endif
 };
 typedef std::shared_ptr<PatchNode> PatchNodePtr;
 typedef std::weak_ptr<PatchNode> PatchNodeWeakPtr;

@@ -14,6 +14,7 @@ enum class GeometryType
     Triangles,
     Quads,
     Lines,
+    Points,
 };
 
 /**

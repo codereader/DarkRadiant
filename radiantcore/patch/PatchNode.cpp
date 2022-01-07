@@ -17,7 +17,8 @@ PatchNode::PatchNode(patch::PatchDefType type) :
     _selectedControlVerticesNeedUpdate(true),
     _renderableSurfaceSolid(m_patch.getTesselation(), true),
     _renderableSurfaceWireframe(m_patch.getTesselation(), false),
-    _renderableCtrlLattice(m_patch, m_ctrl_instances)
+    _renderableCtrlLattice(m_patch, m_ctrl_instances),
+    _renderableCtrlPoints(m_patch, m_ctrl_instances)
 {
 	m_patch.setFixedSubdivisions(type == patch::PatchDefType::Def3, Subdivisions(m_patch.getSubdivisions()));
 }
@@ -41,7 +42,8 @@ PatchNode::PatchNode(const PatchNode& other) :
     _selectedControlVerticesNeedUpdate(true),
     _renderableSurfaceSolid(m_patch.getTesselation(), true),
     _renderableSurfaceWireframe(m_patch.getTesselation(), false),
-    _renderableCtrlLattice(m_patch, m_ctrl_instances)
+    _renderableCtrlLattice(m_patch, m_ctrl_instances),
+    _renderableCtrlPoints(m_patch, m_ctrl_instances)
 {
 }
 
@@ -346,13 +348,20 @@ void PatchNode::onPreRender(const VolumeTest& volume)
 
     if (isSelected() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
     {
+        updateSelectedControlVertices();
+
         // Selected patches in component mode render the lattice connecting the control points
         _renderableCtrlLattice.update(_ctrlLatticeShader);
+        _renderableCtrlPoints.update(_ctrlPointShader);
     }
     else
     {
+        _renderableCtrlPoints.clear();
         _renderableCtrlLattice.clear();
-        _renderableCtrlLattice.queueUpdate(); // will be updated next time it's rendered
+
+        // Queue an update the next time it's rendered
+        _renderableCtrlPoints.queueUpdate();
+        _renderableCtrlLattice.queueUpdate();
     }
 }
 
@@ -416,15 +425,16 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     _renderableSurfaceSolid.clear();
     _renderableSurfaceWireframe.clear();
     _renderableCtrlLattice.clear();
+    _renderableCtrlPoints.clear();
 
 	if (renderSystem)
 	{
-		m_state_selpoint = renderSystem->capture("$SELPOINT");
+        _ctrlPointShader = renderSystem->capture("$POINT");
         _ctrlLatticeShader = renderSystem->capture("$LATTICE");
 	}
 	else
 	{
-		m_state_selpoint.reset();
+        _ctrlPointShader.reset();
         _ctrlLatticeShader.reset();
 	}
 }
@@ -470,6 +480,7 @@ void PatchNode::updateSelectedControlVertices() const
 	}
 }
 
+#if 0
 void PatchNode::renderComponentsSelected(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	const_cast<Patch&>(m_patch).evaluateTransform();
@@ -484,6 +495,7 @@ void PatchNode::renderComponentsSelected(IRenderableCollector& collector, const 
 		collector.addRenderable(*m_state_selpoint, m_render_selected, localToWorld());
 	}
 }
+#endif
 
 std::size_t PatchNode::getHighlightFlags()
 {
@@ -547,6 +559,7 @@ void PatchNode::_onTransformationChanged()
     _renderableSurfaceSolid.queueUpdate();
     _renderableSurfaceWireframe.queueUpdate();
     _renderableCtrlLattice.queueUpdate();
+    _renderableCtrlPoints.queueUpdate();
 }
 
 void PatchNode::_applyTransformation()
@@ -575,6 +588,7 @@ void PatchNode::onTesselationChanged()
     _renderableSurfaceSolid.queueUpdate();
     _renderableSurfaceWireframe.queueUpdate();
     _renderableCtrlLattice.queueUpdate();
+    _renderableCtrlPoints.queueUpdate();
 }
 
 void PatchNode::onControlPointsChanged()
@@ -582,6 +596,7 @@ void PatchNode::onControlPointsChanged()
     _renderableSurfaceSolid.queueUpdate();
     _renderableSurfaceWireframe.queueUpdate();
     _renderableCtrlLattice.queueUpdate();
+    _renderableCtrlPoints.queueUpdate();
 }
 
 void PatchNode::onMaterialChanged()
@@ -600,6 +615,7 @@ void PatchNode::onVisibilityChanged(bool visible)
         _renderableSurfaceSolid.clear();
         _renderableSurfaceWireframe.clear();
         _renderableCtrlLattice.clear();
+        _renderableCtrlPoints.clear();
     }
     else
     {
@@ -607,5 +623,6 @@ void PatchNode::onVisibilityChanged(bool visible)
         _renderableSurfaceSolid.queueUpdate();
         _renderableSurfaceWireframe.queueUpdate();
         _renderableCtrlLattice.queueUpdate();
+        _renderableCtrlPoints.queueUpdate();
     }
 }
