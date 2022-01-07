@@ -171,7 +171,6 @@ void OpenGLShader::drawSurfaces()
     }
 
     // Render all windings
-    glFrontFace(GL_CCW);
     _windingRenderer->renderAllWindings();
 
 #ifdef RENDERABLE_GEOMETRY

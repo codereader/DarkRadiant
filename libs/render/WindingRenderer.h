@@ -187,6 +187,13 @@ public:
 
     void renderAllWindings() override
     {
+        glEnableClientState(GL_VERTEX_ARRAY);
+        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        glEnableClientState(GL_NORMAL_ARRAY);
+        glDisableClientState(GL_COLOR_ARRAY);
+
+        glFrontFace(GL_CCW);
+
         for (auto bucketIndex = 0; bucketIndex < _buckets.size(); ++bucketIndex)
         {
             auto& bucket = _buckets[bucketIndex];
@@ -197,8 +204,6 @@ public:
             const auto& vertices = bucket.buffer.getVertices();
             const auto& indices = bucket.buffer.getIndices();
 
-            glDisableClientState(GL_COLOR_ARRAY);
-
             glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
             glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
             glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
@@ -208,6 +213,9 @@ public:
 
             debug::checkGLErrors();
         }
+
+        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        glDisableClientState(GL_NORMAL_ARRAY);
     }
 
     void renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot) override
