@@ -371,7 +371,7 @@ void BrushNode::onPreRender(const VolumeTest& volume)
     if (isSelected() && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent)
     {
         _renderableVertices.setComponentMode(GlobalSelectionSystem().ComponentMode());
-        _renderableVertices.update(m_brush.m_state_point);
+        _renderableVertices.update(_pointShader);
     }
     else
     {
@@ -387,7 +387,7 @@ void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTe
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Face)
 	{
         updateFaceCentroidPoints();
-		collector.addRenderable(*m_brush.m_state_point, _visibleFaceCentroidPoints, l2w);
+		collector.addRenderable(*_pointShader, _visibleFaceCentroidPoints, l2w);
 	}
 #if 0
 	else
@@ -458,11 +458,17 @@ void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 	if (renderSystem)
 	{
+        _pointShader = renderSystem->capture("$POINT");
 		m_state_selpoint = renderSystem->capture("$SELPOINT");
+
+        _renderableVertices.queueUpdate();
 	}
 	else
 	{
+        _pointShader.reset();
 		m_state_selpoint.reset();
+
+        _renderableVertices.clear();
 	}
 
 	m_brush.setRenderSystem(renderSystem);

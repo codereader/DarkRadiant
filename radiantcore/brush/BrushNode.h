@@ -56,6 +56,7 @@ class BrushNode :
 	BrushClipPlane m_clipPlane;
 
 	ShaderPtr m_state_selpoint;
+	ShaderPtr _pointShader;
 
 	// TRUE if any of the FaceInstance's component selection got changed or transformed
 	mutable bool _renderableComponentsNeedUpdate;

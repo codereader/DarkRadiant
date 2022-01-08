@@ -386,15 +386,6 @@ FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2,
 
 void Brush::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-    if (renderSystem)
-    {
-        m_state_point = renderSystem->capture("$POINT");
-    }
-    else
-    {
-        m_state_point.reset();
-    }
-
     for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i)
     {
         (*i)->setRenderSystem(renderSystem);

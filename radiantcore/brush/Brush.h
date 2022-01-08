@@ -143,10 +143,6 @@ public:
 		DetailFlag _detailFlag;
 	};
 
-	// static data
-	ShaderPtr m_state_point;
-	// ----
-
 	static double m_maxWorldCoord;
 
 	// Constructors

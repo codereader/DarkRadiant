@@ -1,5 +1,6 @@
 #include "RenderableBrushVertices.h"
 
+#include "ibrush.h"
 #include "Brush.h"
 
 namespace brush
@@ -20,16 +21,12 @@ void RenderableBrushVertices::updateGeometry()
     vertices.reserve(brushVertices.size());
     indices.reserve(brushVertices.size());
 
+    static const Vector3& vertexColour = GlobalBrushCreator().getSettings().getVertexColour();
+    const Vector4 colour(vertexColour, 1);
+
     for (auto i = 0; i < brushVertices.size(); ++i)
     {
         const auto& vertex = brushVertices[i];
-
-        Vector4 colour(
-            vertex.colour.r / 255.0,
-            vertex.colour.g / 255.0,
-            vertex.colour.b / 255.0,
-            1.0
-        );
 
         vertices.push_back(ArbitraryMeshVertex(vertex.vertex, { 0,0,0 }, { 0,0 }, colour));
         indices.push_back(i);
