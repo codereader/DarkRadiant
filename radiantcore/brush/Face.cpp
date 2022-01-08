@@ -771,7 +771,6 @@ void Face::updateFaceVisibility()
     if (newValue != _faceIsVisible)
     {
         _faceIsVisible = newValue;
-        _owner.getBrushNode().onFaceVisibilityChanged();
     }
 }
 

@@ -42,17 +42,10 @@ class BrushNode :
 	typedef std::vector<brush::VertexInstance> VertexInstances;
 	VertexInstances m_vertexInstances;
 
-    mutable bool _faceCentroidPointsNeedUpdate;
-
-#if 0
-	mutable RenderableWireframe m_render_wireframe;
-#endif
     // Renderable array of vertex and edge points
 	mutable RenderablePointVector _selectedPoints;
 
 	mutable AABB m_aabb_component;
-	mutable RenderablePointVector _visibleFaceCentroidPoints;
-
 	BrushClipPlane m_clipPlane;
 
 	ShaderPtr m_state_selpoint;
@@ -171,16 +164,11 @@ public:
     // Should only be used by the internal Brush object
     bool facesAreForcedVisible();
 
-    // Will be invoked if one of this brush's faces updates its visibility status
-    void onFaceVisibilityChanged();
-
     void onPostUndo() override;
     void onPostRedo() override;
 
 protected:
     virtual void onVisibilityChanged(bool isVisibleNow) override;
-
-    virtual void setForcedVisibility(bool forceVisible, bool includeChildren) override;
 
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.

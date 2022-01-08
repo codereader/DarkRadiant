@@ -15,9 +15,7 @@
 BrushNode::BrushNode() :
 	scene::SelectableNode(),
 	m_brush(*this),
-    _faceCentroidPointsNeedUpdate(true),
 	_selectedPoints(GL_POINTS),
-	_visibleFaceCentroidPoints(GL_POINTS),
 	_renderableComponentsNeedUpdate(true),
     _untransformedOriginChanged(true),
     _renderableVertices(m_brush)
@@ -42,9 +40,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	PlaneSelectable(other),
 	Transformable(other),
 	m_brush(*this, other.m_brush),
-    _faceCentroidPointsNeedUpdate(true),
 	_selectedPoints(GL_POINTS),
-	_visibleFaceCentroidPoints(GL_POINTS),
 	_renderableComponentsNeedUpdate(true),
     _untransformedOriginChanged(true),
     _renderableVertices(m_brush)
@@ -382,6 +378,7 @@ void BrushNode::onPreRender(const VolumeTest& volume)
 
 void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
+#if 0
 	const Matrix4& l2w = localToWorld();
 
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Face)
@@ -394,6 +391,7 @@ void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTe
 	{
 		m_brush.renderComponents(GlobalSelectionSystem().ComponentMode(), collector, volume, l2w);
 	}
+#endif
 #endif
 }
 
@@ -482,18 +480,7 @@ std::size_t BrushNode::getHighlightFlags()
 	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }
 
-void BrushNode::onFaceVisibilityChanged()
-{
-    _faceCentroidPointsNeedUpdate = true;
-}
-
-void BrushNode::setForcedVisibility(bool forceVisible, bool includeChildren)
-{
-    Node::setForcedVisibility(forceVisible, includeChildren);
- 
-    _faceCentroidPointsNeedUpdate = true;
-}
-
+#if 0
 void BrushNode::updateFaceCentroidPoints() const
 {
     if (!_faceCentroidPointsNeedUpdate) return;
@@ -517,7 +504,7 @@ void BrushNode::updateFaceCentroidPoints() const
         }
     }
 }
-
+#endif
 #if 0
 void BrushNode::updateWireframeVisibility() const
 {
@@ -776,7 +763,6 @@ void BrushNode::_onTransformationChanged()
 
     _renderableVertices.queueUpdate();
 	_renderableComponentsNeedUpdate = true;
-    _faceCentroidPointsNeedUpdate = true;
 }
 
 void BrushNode::_applyTransformation()
