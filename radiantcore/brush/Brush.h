@@ -6,6 +6,7 @@
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"
 #include "Translatable.h"
+#include "render/VertexCb.h"
 
 #include <sigc++/signal.h>
 #include "util/Noncopyable.h"
@@ -211,7 +212,9 @@ public:
 
 	const AABB& localAABB() const override;
 
+#if 0
 	void renderComponents(selection::ComponentSelectionMode mode, IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+#endif
 
 	void transform(const Matrix4& matrix);
 
@@ -298,6 +301,8 @@ public:
 
 	// Signal for external code to get notified each time any face of any brush changes
 	static sigc::signal<void>& signal_faceShaderChanged();
+
+    const std::vector<VertexCb>& getVertices(selection::ComponentSelectionMode mode) const;
 
 private:
 	void edge_push_back(FaceVertexId faceVertex);

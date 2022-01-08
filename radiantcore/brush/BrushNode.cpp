@@ -19,7 +19,8 @@ BrushNode::BrushNode() :
 	_selectedPoints(GL_POINTS),
 	_visibleFaceCentroidPoints(GL_POINTS),
 	_renderableComponentsNeedUpdate(true),
-    _untransformedOriginChanged(true)
+    _untransformedOriginChanged(true),
+    _renderableVertices(m_brush)
 {
 	m_brush.attach(*this); // BrushObserver
 
@@ -45,7 +46,8 @@ BrushNode::BrushNode(const BrushNode& other) :
 	_selectedPoints(GL_POINTS),
 	_visibleFaceCentroidPoints(GL_POINTS),
 	_renderableComponentsNeedUpdate(true),
-    _untransformedOriginChanged(true)
+    _untransformedOriginChanged(true),
+    _renderableVertices(m_brush)
 {
 	m_brush.attach(*this); // BrushObserver
 }
@@ -274,6 +276,7 @@ void BrushNode::onInsertIntoScene(scene::IMapRootNode& root)
 
     // Update the origin information needed for transformations
     _untransformedOriginChanged = true;
+    _renderableVertices.queueUpdate();
 
 	SelectableNode::onInsertIntoScene(root);
 }
@@ -290,6 +293,7 @@ void BrushNode::onRemoveFromScene(scene::IMapRootNode& root)
 
 	GlobalCounters().getCounter(counterBrushes).decrement();
     m_brush.disconnectUndoSystem(root.getUndoSystem());
+    _renderableVertices.clear();
 
 	SelectableNode::onRemoveFromScene(root);
 }
@@ -363,6 +367,17 @@ void BrushNode::onPreRender(const VolumeTest& volume)
             face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader(), *_renderEntity);
         }
     }
+
+    if (isSelected() && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent)
+    {
+        _renderableVertices.setComponentMode(GlobalSelectionSystem().ComponentMode());
+        _renderableVertices.update(m_brush.m_state_point);
+    }
+    else
+    {
+        _renderableVertices.clear();
+        _renderableVertices.queueUpdate();
+    }
 }
 
 void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
@@ -374,10 +389,12 @@ void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTe
         updateFaceCentroidPoints();
 		collector.addRenderable(*m_brush.m_state_point, _visibleFaceCentroidPoints, l2w);
 	}
+#if 0
 	else
 	{
 		m_brush.renderComponents(GlobalSelectionSystem().ComponentMode(), collector, volume, l2w);
 	}
+#endif
 }
 
 void BrushNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
@@ -751,6 +768,7 @@ void BrushNode::_onTransformationChanged()
 {
 	m_brush.transformChanged();
 
+    _renderableVertices.queueUpdate();
 	_renderableComponentsNeedUpdate = true;
     _faceCentroidPointsNeedUpdate = true;
 }
@@ -775,6 +793,7 @@ void BrushNode::onVisibilityChanged(bool isVisibleNow)
     });
 
     m_clipPlane.clear();
+    _renderableVertices.clear();
 }
 
 void BrushNode::onSelectionStatusChange(bool changeGroupStatus)

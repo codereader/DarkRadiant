@@ -263,6 +263,7 @@ const AABB& Brush::localAABB() const {
     return m_aabb_local;
 }
 
+#if 0
 void Brush::renderComponents(selection::ComponentSelectionMode mode, IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
@@ -281,6 +282,7 @@ void Brush::renderComponents(selection::ComponentSelectionMode mode, IRenderable
             break;
     }
 }
+#endif
 
 void Brush::translate(const Vector3& translation)
 {
@@ -1389,6 +1391,23 @@ void Brush::buildBRep() {
       }
     }
   }
+}
+
+const std::vector<VertexCb>& Brush::getVertices(selection::ComponentSelectionMode mode) const
+{
+    switch (mode)
+    {
+        case selection::ComponentSelectionMode::Vertex: 
+            return _uniqueVertexPoints.getPointVector();
+
+        case selection::ComponentSelectionMode::Edge: 
+            return _uniqueEdgePoints.getPointVector();
+
+        case selection::ComponentSelectionMode::Face: 
+            return _faceCentroidPoints.getPointVector();
+    }
+
+    throw std::runtime_error("Brush::getVertices: Component mode not supported");
 }
 
 // ----------------------------------------------------------------------------

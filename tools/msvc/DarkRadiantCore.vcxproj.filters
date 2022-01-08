@@ -1114,6 +1114,9 @@
     <ClCompile Include="..\..\radiantcore\entity\RenderableArrow.cpp">
       <Filter>src\entity</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\brush\RenderableBrushVertices.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2267,6 +2270,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\SurfaceRenderer.h">
       <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\brush\RenderableBrushVertices.h">
+      <Filter>src\brush</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -13,6 +13,7 @@
 #include "BrushClipPlane.h"
 #include "transformlib.h"
 #include "scene/Node.h"
+#include "RenderableBrushVertices.h"
 
 class BrushNode :
 	public scene::SelectableNode,
@@ -63,6 +64,8 @@ class BrushNode :
     Vector3 _untransformedOrigin;
     // If true, the _untransformedOrigin member needs an update
     bool _untransformedOriginChanged;
+
+    brush::RenderableBrushVertices _renderableVertices;
 
 public:
 	// Constructor

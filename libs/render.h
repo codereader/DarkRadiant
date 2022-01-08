@@ -192,8 +192,10 @@ inline void pointvertex_gl_array(const VertexCb* array)
 class RenderablePointVector :
 	public OpenGLRenderable
 {
-protected:
+public:
 	typedef std::vector<VertexCb> PointVertexVector;
+
+protected:
 	PointVertexVector _vector;
 	const GLenum _mode;
 
@@ -208,6 +210,11 @@ public:
 		_vector(initialSize),
 		_mode(mode)
 	{}
+
+    const PointVertexVector& getPointVector() const
+    {
+        return _vector;
+    }
 
 	void render(const RenderInfo& info) const
 	{
