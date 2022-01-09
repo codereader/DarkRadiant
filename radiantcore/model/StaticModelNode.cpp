@@ -133,6 +133,12 @@ void StaticModelNode::renderWireframe(IRenderableCollector& collector, const Vol
 
 void StaticModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
+    auto identity = Matrix4::getIdentity();
+
+    for (const auto& surface : _renderableSurfaces)
+    {
+        collector.addHighlightRenderable(*surface, identity);
+    }
 #if 0
     if (collector.supportsFullMaterials())
     {
