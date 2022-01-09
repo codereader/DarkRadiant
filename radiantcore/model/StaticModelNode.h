@@ -47,6 +47,8 @@ private:
     // We need to keep a reference for skin swapping
     RenderSystemWeakPtr _renderSystem;
 
+    bool _attachedToShaders;
+
 public:
     typedef std::shared_ptr<StaticModelNode> Ptr;
 
@@ -82,6 +84,7 @@ public:
 
 	// Renderable implementation
     bool isOriented() const override;
+  	void onPreRender(const VolumeTest& volume) override;
   	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
@@ -100,7 +103,8 @@ protected:
 	void _applyTransformation() override;
 
 private:
-    void updateShaders();
+    void attachToShaders();
+    void detachFromShaders();
 };
 
 } // namespace model

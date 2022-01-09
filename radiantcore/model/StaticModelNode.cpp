@@ -16,7 +16,8 @@ namespace model
 
 StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
     _model(new StaticModel(*picoModel)),
-    _name(picoModel->getFilename())
+    _name(picoModel->getFilename()),
+    _attachedToShaders(false)
 {
     // Update the skin
     skinChanged("");
@@ -26,13 +27,11 @@ void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     _model->connectUndoSystem(root.getUndoSystem());
 
-    // Generate renderables
+    // Renderables will acquire their shaders in onPreRender
     _model->foreachSurface([&](const StaticModelSurface& surface)
     {
         _renderableSurfaces.emplace_back(std::make_shared<RenderableStaticSurface>(surface, localToWorld()));
     });
-
-    updateShaders();
 
     Node::onInsertIntoScene(root);
 }
@@ -97,6 +96,14 @@ bool StaticModelNode::isOriented() const
     return false;
 }
 
+void StaticModelNode::onPreRender(const VolumeTest& volume)
+{
+    assert(_renderEntity);
+
+    // Attach renderables (or do nothing if everything is up to date)
+    attachToShaders();
+}
+
 void StaticModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
@@ -143,25 +150,42 @@ void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     Node::setRenderSystem(renderSystem);
 
     _renderSystem = renderSystem;
-    updateShaders();
+    
+    // Detach renderables on render system change
+    detachFromShaders();
 
     _model->setRenderSystem(renderSystem);
 }
 
-void StaticModelNode::updateShaders()
+void StaticModelNode::detachFromShaders()
 {
+    // Detach any existing surfaces. In case we need them again,
+    // the node will re-attach in the next pre-render phase
+    for (auto& surface : _renderableSurfaces)
+    {
+        surface->clear();
+    }
+
+    _attachedToShaders = false;
+}
+
+void StaticModelNode::attachToShaders()
+{
+    if (_attachedToShaders) return;
+
+    _attachedToShaders = true;
+
     auto renderSystem = _renderSystem.lock();
 
     for (auto& surface : _renderableSurfaces)
     {
-        if (renderSystem)
+        auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
+        surface->attachToShader(shader);
+
+        // For orthoview rendering we need the entity's colour shader
+        if (_renderEntity)
         {
-            auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
-            surface->attachToShader(shader);
-        }
-        else
-        {
-            surface->clear();
+            surface->attachToShader(_renderEntity->getColourShader());
         }
     }
 }
@@ -183,7 +207,8 @@ void StaticModelNode::skinChanged(const std::string& newSkinName)
     ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
     _model->applySkin(skin);
 
-    updateShaders();
+    // Detach from existing shaders, re-acquire them in onPreRender
+    detachFromShaders();
 
     // Refresh the scene (TODO: get rid of that)
     GlobalSceneGraph().sceneChanged();
