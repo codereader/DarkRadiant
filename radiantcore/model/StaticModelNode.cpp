@@ -196,6 +196,14 @@ void StaticModelNode::attachToShaders()
     }
 }
 
+void StaticModelNode::updateAttachedRenderables()
+{
+    for (auto& surface : _renderableSurfaces)
+    {
+        surface->queueUpdate();
+    }
+}
+
 // Traceable implementation
 bool StaticModelNode::getIntersection(const Ray& ray, Vector3& intersection)
 {
@@ -233,6 +241,7 @@ void StaticModelNode::_onTransformationChanged()
     {
         _model->revertScale();
         _model->evaluateScale(getScale());
+        updateAttachedRenderables();
     }
     else if (getTransformationType() == TransformationType::NoTransform)
     {
@@ -240,6 +249,7 @@ void StaticModelNode::_onTransformationChanged()
         // so the reason we got here is a cancelTransform() call, revert everything
         _model->revertScale();
         _model->evaluateScale(Vector3(1,1,1));
+        updateAttachedRenderables();
     }
 }
 

@@ -61,6 +61,15 @@ public:
         }
     }
 
+    // Notifies all the attached shaders that the surface geometry changed
+    void queueUpdate()
+    {
+        for (auto& [shader, slot] : _shaders)
+        {
+            shader->updateSurface(slot);
+        }
+    }
+
     // Removes the surface and clears the shader reference
     void clear()
     {

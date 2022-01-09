@@ -105,6 +105,7 @@ protected:
 private:
     void attachToShaders();
     void detachFromShaders();
+    void updateAttachedRenderables();
 };
 
 } // namespace model
