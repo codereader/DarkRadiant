@@ -931,6 +931,7 @@
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\pm_fm.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelModule.h" />
+    <ClInclude Include="..\..\radiantcore\model\RenderableStaticSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModel.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModelNode.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModelSurface.h" />

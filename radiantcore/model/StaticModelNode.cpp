@@ -11,9 +11,9 @@
 #include "generic/callback.h"
 #include <functional>
 
-namespace model {
+namespace model
+{
 
-// greebo: Construct a new StaticModel instance, we re-use the surfaces only
 StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
     _model(new StaticModel(*picoModel)),
     _name(picoModel->getFilename())
@@ -22,12 +22,17 @@ StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
     skinChanged("");
 }
 
-StaticModelNode::~StaticModelNode()
-{}
-
 void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     _model->connectUndoSystem(root.getUndoSystem());
+
+    // Generate renderables
+    _model->foreachSurface([&](const StaticModelSurface& surface)
+    {
+        _renderableSurfaces.emplace_back(std::make_shared<RenderableStaticSurface>(surface, localToWorld()));
+    });
+
+    updateShaders();
 
     Node::onInsertIntoScene(root);
 }
@@ -35,6 +40,8 @@ void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 void StaticModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     _model->disconnectUndoSystem(root.getUndoSystem());
+
+    _renderableSurfaces.clear();
 
     Node::onRemoveFromScene(root);
 }
@@ -87,7 +94,7 @@ void StaticModelNode::setModel(const StaticModelPtr& model) {
 
 bool StaticModelNode::isOriented() const
 {
-    return true;
+    return false;
 }
 
 void StaticModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
@@ -100,8 +107,10 @@ void StaticModelNode::renderSolid(IRenderableCollector& collector, const VolumeT
     // Do a quick bounds check against the world AABB to cull ourselves if we're not in the view
     if (volume.TestAABB(worldAABB()) != VOLUME_OUTSIDE)
     {
+#if 0
         // Submit the model's geometry
         _model->renderSolid(collector, l2w, *_renderEntity, *this);
+#endif
     }
 }
 
@@ -109,12 +118,15 @@ void StaticModelNode::renderWireframe(IRenderableCollector& collector, const Vol
 {
     assert(_renderEntity);
 
+#if 0
     // Submit the model's geometry
     _model->renderWireframe(collector, localToWorld(), *_renderEntity);
+#endif
 }
 
 void StaticModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
+#if 0
     if (collector.supportsFullMaterials())
     {
         renderSolid(collector, volume);
@@ -123,13 +135,35 @@ void StaticModelNode::renderHighlights(IRenderableCollector& collector, const Vo
     {
         renderWireframe(collector, volume);
     }
+#endif
 }
 
 void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     Node::setRenderSystem(renderSystem);
 
+    _renderSystem = renderSystem;
+    updateShaders();
+
     _model->setRenderSystem(renderSystem);
+}
+
+void StaticModelNode::updateShaders()
+{
+    auto renderSystem = _renderSystem.lock();
+
+    for (auto& surface : _renderableSurfaces)
+    {
+        if (renderSystem)
+        {
+            auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
+            surface->attachToShader(shader);
+        }
+        else
+        {
+            surface->clear();
+        }
+    }
 }
 
 // Traceable implementation
@@ -148,6 +182,8 @@ void StaticModelNode::skinChanged(const std::string& newSkinName)
     // Note: This always returns a valid reference
     ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
     _model->applySkin(skin);
+
+    updateShaders();
 
     // Refresh the scene (TODO: get rid of that)
     GlobalSceneGraph().sceneChanged();

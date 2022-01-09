@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include <vector>
 #include "isurfacerenderer.h"
 #include "irender.h"

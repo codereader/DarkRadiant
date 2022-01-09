@@ -226,6 +226,8 @@ public:
 
 	// Returns the current base scale of this model
 	const Vector3& getScale() const;
+
+    void foreachSurface(const std::function<void(const StaticModelSurface&)>& func) const;
 };
 typedef std::shared_ptr<StaticModel> StaticModelPtr;
 

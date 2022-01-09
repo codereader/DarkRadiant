@@ -2274,5 +2274,8 @@
     <ClInclude Include="..\..\radiantcore\brush\RenderableBrushVertices.h">
       <Filter>src\brush</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\RenderableStaticSurface.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

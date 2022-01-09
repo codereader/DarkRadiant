@@ -409,4 +409,12 @@ const Vector3& StaticModel::getScale() const
     return _scale;
 }
 
+void StaticModel::foreachSurface(const std::function<void(const StaticModelSurface&)>& func) const
+{
+    for (const Surface& surf : _surfVec)
+    {
+        func(*surf.surface);
+    }
+}
+
 } // namespace
