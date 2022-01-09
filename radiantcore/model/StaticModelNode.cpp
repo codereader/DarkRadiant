@@ -179,9 +179,9 @@ void StaticModelNode::attachToShaders()
 {
     if (_attachedToShaders) return;
 
-    _attachedToShaders = true;
-
     auto renderSystem = _renderSystem.lock();
+
+    if (!renderSystem) return;
 
     for (auto& surface : _renderableSurfaces)
     {
@@ -194,9 +194,11 @@ void StaticModelNode::attachToShaders()
             surface->attachToShader(_renderEntity->getColourShader());
         }
     }
+
+    _attachedToShaders = true;
 }
 
-void StaticModelNode::updateAttachedRenderables()
+void StaticModelNode::queueRenderableUpdate()
 {
     for (auto& surface : _renderableSurfaces)
     {
@@ -241,7 +243,7 @@ void StaticModelNode::_onTransformationChanged()
     {
         _model->revertScale();
         _model->evaluateScale(getScale());
-        updateAttachedRenderables();
+        queueRenderableUpdate();
     }
     else if (getTransformationType() == TransformationType::NoTransform)
     {
@@ -249,7 +251,7 @@ void StaticModelNode::_onTransformationChanged()
         // so the reason we got here is a cancelTransform() call, revert everything
         _model->revertScale();
         _model->evaluateScale(Vector3(1,1,1));
-        updateAttachedRenderables();
+        queueRenderableUpdate();
     }
 }
 
@@ -260,6 +262,18 @@ void StaticModelNode::_applyTransformation()
         _model->revertScale();
         _model->evaluateScale(getScale());
         _model->freezeScale();
+    }
+}
+
+void StaticModelNode::onVisibilityChanged(bool isVisibleNow)
+{
+    if (isVisibleNow)
+    {
+        attachToShaders();
+    }
+    else
+    {
+        detachFromShaders();
     }
 }
 

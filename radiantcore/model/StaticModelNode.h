@@ -101,11 +101,12 @@ public:
 protected:
 	void _onTransformationChanged() override;
 	void _applyTransformation() override;
+    void onVisibilityChanged(bool isVisibleNow) override;
 
 private:
     void attachToShaders();
     void detachFromShaders();
-    void updateAttachedRenderables();
+    void queueRenderableUpdate();
 };
 
 } // namespace model
