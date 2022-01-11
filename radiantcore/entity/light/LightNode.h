@@ -45,10 +45,8 @@ class LightNode :
 	// Renderable components of this light
 	RenderableLightTarget _rCentre;
 	RenderableLightTarget _rTarget;
-
 	RenderableLightRelative _rUp;
 	RenderableLightRelative _rRight;
-
 	RenderableLightTarget _rStart;
 	RenderableLightTarget _rEnd;
 
@@ -220,11 +218,6 @@ private:
     // Update the bounds of the renderable radius box
     void updateRenderableRadius() const;
 
-    void onLightRadiusChanged();
-
-private: // Light methods
-	void destroy();
-
     // Ensure the start and end points are set to sensible values
 	void checkStartEnd();
 
@@ -238,6 +231,8 @@ private: // Light methods
 	void writeLightOrigin();
 	void rotationChanged();
 	void lightRotationChanged(const std::string& value);
+    void onLightRadiusChanged();
+	void destroy();
 
 	// Renderable submission functions
 	void renderWireframe(RenderableCollector& collector,
@@ -252,8 +247,6 @@ private: // Light methods
 	// Returns a reference to the member class Doom3LightRadius (used to set colours)
 	Doom3LightRadius& getDoom3Radius();
 
-	void translate(const Vector3& translation);
-
     /**
      * greebo: This sets the light start to the given value, including bounds checks.
      */
@@ -266,9 +259,8 @@ private: // Light methods
      */
     void ensureLightStartConstraints();
 
+	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
-
-	// This snaps the light as a whole to the grid (basically the light origin)
 	void setLightRadius(const AABB& aabb);
 	void transformLightRadius(const Matrix4& transform);
 	void revertLightTransform();

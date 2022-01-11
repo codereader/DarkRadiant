@@ -963,6 +963,44 @@ TEST_F(EntityTest, RenderFuncStaticWithMultiSurfaceModel)
     EXPECT_EQ(rf.collector.renderables, 3);
 }
 
+TEST_F(EntityTest, EntityNodeRGBShaderParms)
+{
+    auto funcStatic = TestEntity::create("func_static");
+
+    // Parms 0-3 represent the colour (RGBA)
+    EXPECT_EQ(funcStatic.node->getShaderParm(0), 1.0f);
+    EXPECT_EQ(funcStatic.node->getShaderParm(1), 1.0f);
+    EXPECT_EQ(funcStatic.node->getShaderParm(2), 1.0f);
+    EXPECT_EQ(funcStatic.node->getShaderParm(3), 1.0f);
+
+    // Change the colour and observe the new shader parms
+    funcStatic.args().setKeyValue("_color", "0.25 0.3 0.75");
+    EXPECT_EQ(funcStatic.node->getShaderParm(0), 0.25f);
+    EXPECT_EQ(funcStatic.node->getShaderParm(1), 0.3f);
+    EXPECT_EQ(funcStatic.node->getShaderParm(2), 0.75f);
+    EXPECT_EQ(funcStatic.node->getShaderParm(3), 1.0f);
+}
+
+TEST_F(EntityTest, EntityNodeGenericShaderParms)
+{
+    auto torch = TestEntity::create("atdm:torch_brazier");
+
+    // Initial params should be 0
+    EXPECT_EQ(torch.node->getShaderParm(4), 0.0f);
+    EXPECT_EQ(torch.node->getShaderParm(5), 0.0f);
+    EXPECT_EQ(torch.node->getShaderParm(8), 0.0f);
+
+    // Set some values
+    torch.args().setKeyValue("shaderParm4", "127");
+    torch.args().setKeyValue("shaderParm5", "-0.5");
+    torch.args().setKeyValue("shaderParm8", "10245");
+
+    // Values should be reflected in shader parm floats
+    EXPECT_EQ(torch.node->getShaderParm(4), 127.0f);
+    EXPECT_EQ(torch.node->getShaderParm(5), -0.5f);
+    EXPECT_EQ(torch.node->getShaderParm(8), 10245.0f);
+}
+
 TEST_F(EntityTest, CreateAttachedLightEntity)
 {
     // Create the torch entity which has an attached light

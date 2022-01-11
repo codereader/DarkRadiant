@@ -28,23 +28,19 @@ LightNode::LightNode(const IEntityClassPtr& eclass)
   _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
   m_transformChanged(std::bind(&scene::Node::transformChanged, this)),
   m_boundsChanged(std::bind(&scene::Node::boundsChanged, this)),
-  _lightCenterInstance(
-      getDoom3Radius().m_centerTransformed,
-      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _lightTargetInstance(
-      _projVectors.transformed.target,
-      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _lightRightInstance(
-      _projVectors.transformed.right, _projVectors.transformed.target,
-      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+  _lightCenterInstance(getDoom3Radius().m_centerTransformed,
+                       sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
+  _lightTargetInstance(_projVectors.transformed.target,
+                       sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
+  _lightRightInstance(_projVectors.transformed.right, _projVectors.transformed.target,
+                      sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
   _lightUpInstance(_projVectors.transformed.up, _projVectors.transformed.target,
-                   std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _lightStartInstance(
-      _projVectors.transformed.start,
-      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+                   sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
+  _lightStartInstance(_projVectors.transformed.start,
+                      sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
   _lightEndInstance(_projVectors.transformed.end,
-                    std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+                    sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
+  _dragPlanes(sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
   _renderableRadius(_lightBox.origin),
   _renderableFrustum(_lightBox.origin, _projVectors.transformed.start, _frustum),
   _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
@@ -125,9 +121,9 @@ void LightNode::construct()
     static_assert(std::is_base_of<sigc::trackable, LightNode>::value);
     static_assert(std::is_base_of<sigc::trackable, LightShader>::value);
     observeKey("light_radius",
-                      sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightRadiusChanged));
+               sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightRadiusChanged));
     observeKey("light_center",
-                      sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightCenterChanged));
+               sigc::mem_fun(m_doom3Radius, &Doom3LightRadius::lightCenterChanged));
     observeKey("light_rotation", sigc::mem_fun(this, &LightNode::lightRotationChanged));
     observeKey("light_target", sigc::mem_fun(this, &LightNode::lightTargetChanged));
     observeKey("light_up", sigc::mem_fun(this, &LightNode::lightUpChanged));
