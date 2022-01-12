@@ -160,61 +160,6 @@ public:
         return conn;
     }
 
-    /**
-     * @brief Add an observer object for the specified key.
-     *
-     * Multiple observers can be attached to the same key.
-     *
-     * @param key
-     * Key to observe.
-     *
-     * @param observer
-     * Observer which will be invoked when the key value changes. The observer
-     * will also be invoked immediately with the key's current value, which may
-     * be an empty string if the key does not exist.
-     */
-	void insert(const std::string& key, KeyObserver& observer)
-	{
-        // Connect to observer method, ensuring auto-disconnection is set up
-        static_assert(std::is_base_of<sigc::trackable, KeyObserver>::value);
-        auto conn = observeKey(key, sigc::mem_fun(observer, &KeyObserver::onKeyValueChanged));
-
-        // Store the connection so we can remove it if erase() is called with the same observer
-        _connectionsByObserver.insert({&observer, conn});
-	}
-
-    /**
-     * @brief Disconnect the given observer.
-     *
-     * If the observer was previously connected, it will be invoked with a final
-     * empty value before being removed. Attempting to disconnect an observer
-     * which was not connected has no effect.
-     *
-     * If the observer was connected to multiple keys, it will be disconnected
-     * from all of them.
-     *
-     * @param observer
-     * Observer to remove.
-     */
-	void erase(KeyObserver& observer)
-	{
-        // Find all connections for this observer
-        auto [iter, end] = _connectionsByObserver.equal_range(&observer);
-        if (iter == end)
-            return;
-
-        // Send final value before removing observer
-        observer.onKeyValueChanged("");
-
-        // Disconnect all the connections
-        for (auto localIter = iter; localIter != end; ++localIter) {
-            localIter->second.disconnect();
-        }
-
-        // Erase all connections from the multimap
-        _connectionsByObserver.erase(iter, end);
-	}
-
 	void refreshObservers()
 	{
 		for (KeyObservers::const_iterator i = _keyObservers.begin();
