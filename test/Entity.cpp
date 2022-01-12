@@ -999,6 +999,16 @@ TEST_F(EntityTest, EntityNodeGenericShaderParms)
     EXPECT_EQ(torch.node->getShaderParm(4), 127.0f);
     EXPECT_EQ(torch.node->getShaderParm(5), -0.5f);
     EXPECT_EQ(torch.node->getShaderParm(8), 10245.0f);
+
+    // Remove the spawnargs again
+    torch.args().setKeyValue("shaderParm4", "");
+    torch.args().setKeyValue("shaderParm5", "");
+    torch.args().setKeyValue("shaderParm8", "");
+
+    // Params should revert to their initial state
+    EXPECT_EQ(torch.node->getShaderParm(4), 0.0f);
+    EXPECT_EQ(torch.node->getShaderParm(5), 0.0f);
+    EXPECT_EQ(torch.node->getShaderParm(8), 0.0f);
 }
 
 TEST_F(EntityTest, CreateAttachedLightEntity)

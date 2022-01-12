@@ -107,8 +107,6 @@ void EntityNode::constructClone(const EntityNode& original)
 
 void EntityNode::destruct()
 {
-	_shaderParms.removeKeyObservers();
-
 	_modelKey.setActive(false); // disable callbacks during destruction
 
 	_eclassChangedConn.disconnect();
