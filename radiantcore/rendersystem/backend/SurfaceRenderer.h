@@ -163,7 +163,7 @@ public:
         _surfaces.at(slot).surfaceDataChanged = true;
     }
 
-    void render()
+    void render(const VolumeTest& view)
     {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -176,7 +176,7 @@ public:
 
         for (auto& surface : _surfaces)
         {
-            renderSlot(surface.second);
+            renderSlot(surface.second, &view);
         }
 
         glDisableClientState(GL_NORMAL_ARRAY);
@@ -201,7 +201,7 @@ public:
     }
 
 private:
-    void renderSlot(SurfaceInfo& slot)
+    void renderSlot(SurfaceInfo& slot, const VolumeTest* view = nullptr)
     {
         auto& surface = slot.surface.get();
 

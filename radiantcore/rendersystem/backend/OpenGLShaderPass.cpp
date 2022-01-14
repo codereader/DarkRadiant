@@ -565,6 +565,7 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 void OpenGLShaderPass::render(OpenGLState& current,
                               unsigned int flagsMask,
                               const Vector3& viewer,
+                              const VolumeTest& view,
                               std::size_t time)
 {
     if (!_owner.isVisible()) return;
@@ -578,7 +579,7 @@ void OpenGLShaderPass::render(OpenGLState& current,
     // Apply our state to the current state object
     applyState(current, flagsMask, viewer, time, NULL);
 
-    _owner.drawSurfaces();
+    _owner.drawSurfaces(view);
 
     if (!_renderablesWithoutEntity.empty())
     {

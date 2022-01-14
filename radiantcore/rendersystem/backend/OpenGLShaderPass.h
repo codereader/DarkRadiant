@@ -97,9 +97,9 @@ protected:
 
 	// Render all of the given TransformedRenderables
 	void renderAllContained(const Renderables& renderables,
-							OpenGLState& current,
-						    const Vector3& viewer,
-							std::size_t time);
+                            OpenGLState& current,
+                            const Vector3& viewer,
+                            std::size_t time);
 
     /* Helper functions to enable/disable particular GL states */
 
@@ -187,9 +187,10 @@ public:
      *
      */
 	void render(OpenGLState& current,
-				unsigned int flagsMask,
-				const Vector3& viewer,
-				std::size_t time);
+                unsigned int flagsMask,
+                const Vector3& viewer,
+                const VolumeTest& view,
+                std::size_t time);
 
 	/**
 	 * Returns true if this shaderpass doesn't have anything to render.

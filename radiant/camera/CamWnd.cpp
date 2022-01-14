@@ -807,7 +807,7 @@ void CamWnd::Cam_Draw()
             getCameraSettings()->getRenderMode() == RENDER_MODE_LIGHTING
         );
         GlobalRenderSystem().render(RenderViewType::Camera, allowedRenderFlags, 
-            _camera->getModelView(), _camera->getProjection(), _view.getViewer());
+            _camera->getModelView(), _camera->getProjection(), _view.getViewer(), _view);
 
         _renderer->cleanup();
     }

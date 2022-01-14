@@ -122,8 +122,8 @@ public:
         }
     }
 
-    void render(const Matrix4& modelview, const Matrix4& projection)
+    void render(const Matrix4& modelview, const Matrix4& projection, const VolumeTest& view)
     {
-        GlobalRenderSystem().render(RenderViewType::OrthoView, _globalstate, modelview, projection, Vector3(0,0,0));
+        GlobalRenderSystem().render(RenderViewType::OrthoView, _globalstate, modelview, projection, Vector3(0,0,0), view);
     }
 }; // class XYRenderer

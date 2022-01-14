@@ -131,7 +131,7 @@ void OpenGLShader::addSurface(const std::vector<ArbitraryMeshVertex>& vertices, 
     _vertexBuffer->addIndicesToLastBatch(indices.begin(), indices.size(), indexOffset);
 }
 #endif
-void OpenGLShader::drawSurfaces()
+void OpenGLShader::drawSurfaces(const VolumeTest& view)
 {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -146,7 +146,7 @@ void OpenGLShader::drawSurfaces()
         //_vertexBuffer->renderAllBatches(GL_TRIANGLES, false);
 
         _geometryRenderer.render();
-        _surfaceRenderer.render();
+        _surfaceRenderer.render(view);
 #if 0
         // Render all triangles
 

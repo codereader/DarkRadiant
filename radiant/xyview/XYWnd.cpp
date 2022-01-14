@@ -1389,7 +1389,7 @@ void XYWnd::draw()
 		}
 
         // Second pass (GL calls)
-        renderer.render(_modelView, _projection);
+        renderer.render(_modelView, _projection, _view);
     }
 
     glDepthMask(GL_FALSE);

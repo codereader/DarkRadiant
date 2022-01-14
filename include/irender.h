@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imodule.h"
+#include "ivolumetest.h"
 #include "iwindingrenderer.h"
 #include "igeometryrenderer.h"
 #include "isurfacerenderer.h"
@@ -546,12 +547,16 @@ public:
      *
      * \param viewer
      * Location of the viewer in world space.
+     * 
+     * * \param volume
+     * The volume structure that can be used for culling.
      */
     virtual void render(RenderViewType renderViewType,
                         RenderStateFlags globalFlagsMask,
                         const Matrix4& modelview,
                         const Matrix4& projection,
-                        const Vector3& viewer) = 0;
+                        const Vector3& viewer,
+                        const VolumeTest& volume) = 0;
 
     virtual void realise() = 0;
     virtual void unrealise() = 0;

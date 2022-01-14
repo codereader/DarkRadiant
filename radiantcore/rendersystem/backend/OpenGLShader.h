@@ -113,7 +113,7 @@ public:
 
     //void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
     bool hasSurfaces() const;
-    void drawSurfaces();
+    void drawSurfaces(const VolumeTest& view);
 
     IGeometryRenderer::Slot addGeometry(GeometryType indexType,
         const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;

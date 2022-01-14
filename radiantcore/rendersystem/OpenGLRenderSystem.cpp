@@ -121,7 +121,8 @@ void OpenGLRenderSystem::render(RenderViewType renderViewType,
                                 RenderStateFlags globalstate,
                                 const Matrix4& modelview,
                                 const Matrix4& projection,
-                                const Vector3& viewer)
+                                const Vector3& viewer,
+                                const VolumeTest& view)
 {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -214,7 +215,7 @@ void OpenGLRenderSystem::render(RenderViewType renderViewType,
 
         if (pair.second->isApplicableTo(renderViewType))
         {
-            pair.second->render(current, globalstate, viewer, _time);
+            pair.second->render(current, globalstate, viewer, view, _time);
         }
 
         pair.second->clearRenderables();
