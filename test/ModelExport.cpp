@@ -254,6 +254,19 @@ public:
     {
         return indices;
     }
+
+    const AABB& getSurfaceBounds() override
+    {
+        static AABB aabb;
+        aabb = AABB();
+
+        for (const auto& vertex : vertices)
+        {
+            aabb.includePoint(vertex);
+        }
+
+        return aabb;
+    }
 };
 
 TEST_F(ModelExportTest, LwoVertexColoursAddedBySurface)

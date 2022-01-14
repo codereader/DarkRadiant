@@ -120,6 +120,8 @@ public:
 	const std::string& getActiveMaterial() const override;
 	void setActiveMaterial(const std::string& activeMaterial);
 
+    const AABB& getSurfaceBounds() override;
+
 	void parseFromTokens(parser::DefTokeniser& tok);
 
 	// Rebuild the render index array - usually needs to be called only once

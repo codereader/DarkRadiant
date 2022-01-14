@@ -256,6 +256,11 @@ void StaticModelSurface::setActiveMaterial(const std::string& activeMaterial)
 	_activeMaterial = activeMaterial;
 }
 
+const AABB& StaticModelSurface::getSurfaceBounds()
+{
+    return getAABB();
+}
+
 bool StaticModelSurface::getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld)
 {
 	Vector3 bestIntersection = ray.origin;
