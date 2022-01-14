@@ -256,7 +256,7 @@ void StaticModelSurface::setActiveMaterial(const std::string& activeMaterial)
 	_activeMaterial = activeMaterial;
 }
 
-const AABB& StaticModelSurface::getSurfaceBounds()
+const AABB& StaticModelSurface::getSurfaceBounds() const
 {
     return getAABB();
 }

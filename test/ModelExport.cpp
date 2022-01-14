@@ -255,7 +255,7 @@ public:
         return indices;
     }
 
-    const AABB& getSurfaceBounds() override
+    const AABB& getSurfaceBounds() const override
     {
         static AABB aabb;
         aabb = AABB();

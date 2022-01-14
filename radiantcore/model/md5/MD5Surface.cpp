@@ -277,7 +277,7 @@ void MD5Surface::setActiveMaterial(const std::string& activeMaterial)
 	_activeMaterial = activeMaterial;
 }
 
-const AABB& MD5Surface::getSurfaceBounds()
+const AABB& MD5Surface::getSurfaceBounds() const
 {
     return _aabb_local;
 }

@@ -219,6 +219,12 @@ private:
             return;
         }
 
+        // Check if this surface is in view
+        if (view && view->TestAABB(surface.getSurfaceBounds(), surface.getSurfaceTransform()) == VOLUME_OUTSIDE)
+        {
+            return;
+        }
+
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
 

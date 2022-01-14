@@ -36,7 +36,7 @@ public:
     const std::vector<ArbitraryMeshVertex>& getVertexArray() const override;
     const std::vector<unsigned int>& getIndexArray() const override;
 
-    const AABB& getSurfaceBounds() override;
+    const AABB& getSurfaceBounds() const override;
 };
 
 }

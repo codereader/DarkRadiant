@@ -204,6 +204,7 @@ class RenderableBoxSurface final :
     public RenderableSurface
 {
 private:
+    const AABB& _bounds;
     const Matrix4& _orientation;
 
     std::vector<ArbitraryMeshVertex> _vertices;
@@ -211,13 +212,14 @@ private:
 
 public:
     RenderableBoxSurface(const AABB& bounds, const Matrix4& orientation) :
+        _bounds(bounds),
         _orientation(orientation)
     {
         static Vector3 Origin(0, 0, 0);
 
         // Calculate the corner vertices of this bounding box
-        Vector3 max(Origin + bounds.extents);
-        Vector3 min(Origin - bounds.extents);
+        Vector3 max(Origin + _bounds.extents);
+        Vector3 min(Origin - _bounds.extents);
 
         _vertices = detail::getFillBoxVertices(min, max, { 1, 1, 1, 1 });
         _indices = detail::generateTriangleBoxIndices();
@@ -236,6 +238,11 @@ public:
     const Matrix4& getSurfaceTransform() override
     {
         return _orientation;
+    }
+
+    const AABB& getSurfaceBounds() override
+    {
+        return _bounds;
     }
 };
 

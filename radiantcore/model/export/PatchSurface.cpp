@@ -102,7 +102,7 @@ const std::vector<unsigned int>& PatchSurface::getIndexArray() const
     return _indices;
 }
 
-const AABB& PatchSurface::getSurfaceBounds()
+const AABB& PatchSurface::getSurfaceBounds() const
 {
     return _bounds;
 }

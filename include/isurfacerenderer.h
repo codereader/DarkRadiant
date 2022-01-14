@@ -28,6 +28,9 @@ public:
 
     // The model view matrix used to render this surface
     virtual const Matrix4& getSurfaceTransform() = 0;
+
+    // The surface bounds in local coordinates
+    virtual const AABB& getSurfaceBounds() = 0;
 };
 
 /**

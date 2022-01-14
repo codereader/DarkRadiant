@@ -47,6 +47,11 @@ public:
     {
         return _localToWorld;
     }
+
+    const AABB& getSurfaceBounds() override
+    {
+        return _surface.getSurfaceBounds();
+    }
 };
 
 }

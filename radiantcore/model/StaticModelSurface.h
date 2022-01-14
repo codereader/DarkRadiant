@@ -109,7 +109,7 @@ public:
 	const std::string& getActiveMaterial() const override;
 	void setActiveMaterial(const std::string& activeMaterial);
 
-    const AABB& getSurfaceBounds() override;
+    const AABB& getSurfaceBounds() const override;
 
 	// Returns true if the given ray intersects this surface geometry and fills in
 	// the exact point in the given Vector3, returns false if no intersection was found.

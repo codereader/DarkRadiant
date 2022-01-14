@@ -120,7 +120,7 @@ public:
 	const std::string& getActiveMaterial() const override;
 	void setActiveMaterial(const std::string& activeMaterial);
 
-    const AABB& getSurfaceBounds() override;
+    const AABB& getSurfaceBounds() const override;
 
 	void parseFromTokens(parser::DefTokeniser& tok);
 
