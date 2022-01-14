@@ -58,66 +58,6 @@ void RenderablePatchSolid::queueUpdate()
 }
 #endif
 
-#ifdef RENDERABLE_GEOMETRY
-RenderableGeometry::Type RenderablePatchSolid::getType() const
-{
-    return RenderableGeometry::Type::Quads;
-}
-
-const Vector3& RenderablePatchSolid::getFirstVertex()
-{
-    return _tess.vertices.front().vertex;
-}
-
-std::size_t RenderablePatchSolid::getVertexStride()
-{
-    return sizeof(ArbitraryMeshVertex);
-}
-
-const unsigned int& RenderablePatchSolid::getFirstIndex()
-{
-    updateIndices();
-    return _indices.front();
-}
-
-std::size_t RenderablePatchSolid::getNumIndices()
-{
-    updateIndices();
-    return _indices.size();
-}
-
-void RenderablePatchSolid::updateIndices()
-{
-    // To render the patch mesh as quads, we need 4 indices per quad
-    auto numRequiredIndices = (_tess.height - 1) * (_tess.width - 1) * 4;
-
-    if (_indices.size() == numRequiredIndices)
-    {
-        return;
-    }
-
-    if (_tess.height == 0 || _tess.width == 0)
-    {
-        _indices.clear();
-        return;
-    }
-
-    _indices.resize(numRequiredIndices);
-
-    auto index = 0;
-    for (auto h = 0; h < _tess.height - 1; ++h)
-    {
-        for (auto w = 0; w < _tess.width - 1; ++w)
-        {
-            _indices[index++] = static_cast<unsigned int>(h * _tess.width + w + 0);
-            _indices[index++] = static_cast<unsigned int>((h + 1) * _tess.width + w + 0);
-            _indices[index++] = static_cast<unsigned int>((h + 1) * _tess.width + w + 1);
-            _indices[index++] = static_cast<unsigned int>(h * _tess.width + w + 1);
-        }
-    }
-}
-#endif
-
 const ShaderPtr& RenderablePatchVectorsNTB::getShader() const
 {
 	return _shader;

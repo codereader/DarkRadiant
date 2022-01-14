@@ -364,14 +364,6 @@ void PatchNode::renderSolid(IRenderableCollector& collector, const VolumeTest& v
 	// Don't render invisible patches
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
-#ifdef RENDERABLE_GEOMETRY
-    if (isSelected())
-    {
-        // Send the patch geometry for rendering highlights
-        collector.addGeometry(const_cast<Patch&>(m_patch)._solidRenderable, 
-            IRenderableCollector::Highlight::Primitives | IRenderableCollector::Highlight::Flags::Faces);
-    }
-#endif
     assert(_renderEntity); // patches rendered without parent - no way!
 
 #if 0

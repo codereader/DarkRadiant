@@ -20,9 +20,6 @@
 /// Helper class to render a PatchTesselation in solid mode
 class RenderablePatchSolid :
 	public OpenGLRenderable
-#ifdef RENDERABLE_GEOMETRY
-    , public RenderableGeometry
-#endif
 {
     // Geometry source
 	PatchTesselation& _tess;
@@ -42,17 +39,6 @@ public:
 	void render(const RenderInfo& info) const;
 
     void queueUpdate();
-
-#ifdef RENDERABLE_GEOMETRY
-    Type getType() const override;
-    const Vector3& getFirstVertex() override;
-    std::size_t getVertexStride() override;
-    const unsigned int& getFirstIndex() override;
-    std::size_t getNumIndices() override;
-
-private:
-    void updateIndices();
-#endif
 };
 #endif
 

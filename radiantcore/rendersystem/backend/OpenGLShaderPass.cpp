@@ -610,11 +610,7 @@ void OpenGLShaderPass::clearRenderables()
 bool OpenGLShaderPass::empty()
 {
     return _renderables.empty() && _renderablesWithoutEntity.empty() && 
-        !_owner.hasSurfaces() && !_owner.hasWindings() 
-#ifdef RENDERABLE_GEOMETRY
-        && !_owner.hasGeometry()
-#endif
-        ;
+        !_owner.hasSurfaces() && !_owner.hasWindings();
 }
 
 bool OpenGLShaderPass::isApplicableTo(RenderViewType renderViewType) const

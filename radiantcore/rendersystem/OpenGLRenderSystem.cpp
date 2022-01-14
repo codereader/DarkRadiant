@@ -220,12 +220,6 @@ void OpenGLRenderSystem::render(RenderViewType renderViewType,
         pair.second->clearRenderables();
     }
 
-#ifdef RENDERABLE_GEOMETRY
-    for (auto& shader : _shaders)
-    {
-        shader.second->clearGeometry();
-    }
-#endif
     glPopAttrib();
 }
 

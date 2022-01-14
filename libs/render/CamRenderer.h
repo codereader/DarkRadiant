@@ -256,33 +256,6 @@ public:
             _shaders.faceHighlightShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
         }
     }
-
-#ifdef RENDERABLE_GEOMETRY
-    void addGeometry(RenderableGeometry& geometry, std::size_t flags) override
-    {
-        if (_editMode == IMap::EditMode::Merge && (flags & Highlight::Flags::MergeAction) != 0)
-        {
-            const auto& mergeShader = (flags & Highlight::Flags::MergeActionAdd) != 0 ? _shaders.mergeActionShaderAdd :
-                (flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove :
-                (flags & Highlight::Flags::MergeActionConflict) != 0 ? _shaders.mergeActionShaderConflict : _shaders.mergeActionShaderChange;
-
-            if (mergeShader)
-            {
-                mergeShader->addGeometry(geometry);
-            }
-        }
-
-        if ((flags & Highlight::Flags::Primitives) != 0 && _shaders.primitiveHighlightShader)
-        {
-            _shaders.primitiveHighlightShader->addGeometry(geometry);
-        }
-
-        if ((flags & Highlight::Flags::Faces) != 0 && _shaders.faceHighlightShader)
-        {
-            _shaders.faceHighlightShader->addGeometry(geometry);
-        }
-    }
-#endif
 };
 
 

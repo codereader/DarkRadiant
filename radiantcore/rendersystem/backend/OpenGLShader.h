@@ -50,10 +50,6 @@ private:
 
     std::unique_ptr<render::IndexedVertexBuffer<ArbitraryMeshVertex>> _vertexBuffer;
 
-#ifdef RENDERABLE_GEOMETRY
-    std::vector<std::reference_wrapper<RenderableGeometry>> _geometry;
-#endif
-
     std::unique_ptr<IBackendWindingRenderer> _windingRenderer;
     GeometryRenderer _geometryRenderer;
     SurfaceRenderer _surfaceRenderer;
@@ -130,12 +126,6 @@ public:
     void removeSurface(ISurfaceRenderer::Slot slot) override;
     void updateSurface(ISurfaceRenderer::Slot slot) override;
     void renderSurface(ISurfaceRenderer::Slot slot) override;
-
-#ifdef RENDERABLE_GEOMETRY
-    void addGeometry(RenderableGeometry& geometry) override;
-    bool hasGeometry() const;
-    void clearGeometry();
-#endif
 
     IWindingRenderer::Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override;
     void removeWinding(IWindingRenderer::Slot slot) override;

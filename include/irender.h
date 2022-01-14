@@ -448,10 +448,6 @@ public:
 							   const LightSources* lights = nullptr,
                                const IRenderEntity* entity = nullptr) = 0;
 
-#ifdef RENDERABLE_GEOMETRY
-    virtual void addGeometry(RenderableGeometry& geometry) = 0;
-#endif
-
     /**
      * \brief
      * Control the visibility of this shader.

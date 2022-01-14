@@ -567,22 +567,6 @@ void BrushNode::renderSolid(IRenderableCollector& collector,
 {
 	assert(_renderEntity); // brushes rendered without parent entity - no way!
 
-#ifdef RENDERABLE_GEOMETRY
-    if (isSelected())
-    {
-        for (FaceInstance& faceInst : const_cast<BrushNode&>(*this).m_faceInstances)
-        {
-            // Send the winding geometry for rendering highlights
-            auto& winding = faceInst.getFace().getWinding();
-
-            if (!winding.empty())
-            {
-                collector.addGeometry(winding, IRenderableCollector::Highlight::Primitives|IRenderableCollector::Highlight::Flags::Faces);
-            }
-        }
-    }
-#endif
-
 #if 0 // The faces already sent their geomtry in onPreRender()
 	// Check for the override status of this brush
 	bool forceVisible = isForcedVisible();
