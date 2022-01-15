@@ -188,10 +188,10 @@ void StaticModelNode::attachToShaders()
         auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
         surface->attachToShader(shader);
 
-        // For orthoview rendering we need the entity's colour shader
+        // For orthoview rendering we need the entity's wireframe shader
         if (_renderEntity)
         {
-            surface->attachToShader(_renderEntity->getColourShader());
+            surface->attachToShader(_renderEntity->getWireShader());
         }
     }
 
