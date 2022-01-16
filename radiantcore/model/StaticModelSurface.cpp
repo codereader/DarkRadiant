@@ -34,7 +34,6 @@ StaticModelSurface::StaticModelSurface(const StaticModelSurface& other) :
 	_defaultMaterial(other._defaultMaterial),
 	_vertices(other._vertices),
 	_indices(other._indices),
-	_nIndices(other._nIndices),
 	_localAABB(other._localAABB),
 	_dlRegular(0),
 	_dlProgramVcol(0),

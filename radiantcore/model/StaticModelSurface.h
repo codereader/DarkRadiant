@@ -20,13 +20,13 @@ namespace model
 
 /**
  * \brief
- * Renderable class containing a series of polygons textured with the same
- * material.
+ * A static surface contains a series of triangles textured with the same
+ * material. The number of vertices and indices of a surface never changes.
  *
  * StaticModelSurface objects are composited into a StaticModel object to
  * create a renderable static mesh.
  */
-class StaticModelSurface :
+class StaticModelSurface final :
 	public IIndexedModelSurface,
 	public OpenGLRenderable
 {
@@ -46,10 +46,6 @@ private:
 	// used to create triangles
 	typedef std::vector<unsigned int> Indices;
 	Indices _indices;
-
-	// Keep track of the number of indices to iterate over, since vector::size()
-	// may not be fast
-	unsigned int _nIndices;
 
 	// The AABB containing this surface, in local object space.
 	AABB _localAABB;
@@ -71,7 +67,7 @@ public:
     // Move-construct this static model surface from the given vertex- and index array
 	StaticModelSurface(std::vector<ArbitraryMeshVertex>&& vertices, std::vector<unsigned int>&& indices);
 
-	// Copy-constructor.
+	// Copy-constructor. All vertices and indices will be copied from 'other'.
 	StaticModelSurface(const StaticModelSurface& other);
 
 	~StaticModelSurface();
