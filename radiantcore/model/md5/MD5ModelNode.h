@@ -24,9 +24,10 @@ class MD5ModelNode :
     // The renderable surfaces attached to the shaders
     std::vector<model::RenderableModelSurface::Ptr> _renderableSurfaces;
 
+    bool _attachedToShaders;
+
 public:
 	MD5ModelNode(const MD5ModelPtr& model);
-	virtual ~MD5ModelNode();
 
     void onInsertIntoScene(scene::IMapRootNode& root) override;
     void onRemoveFromScene(scene::IMapRootNode& root) override;
@@ -54,6 +55,7 @@ public:
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
 	// Renderable implementation
+    void onPreRender(const VolumeTest& volume) override;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
@@ -68,9 +70,16 @@ public:
 	virtual std::string getSkin() const override;
 	void skinChanged(const std::string& newSkinName) override;
 
+protected:
+    void onVisibilityChanged(bool isVisibleNow) override;
+
 private:
+    void attachToShaders();
+    void detachFromShaders();
+#if 0
 	void render(IRenderableCollector& collector, const VolumeTest& volume,
 				const Matrix4& localToWorld, const IRenderEntity& entity) const;
+#endif
 };
 typedef std::shared_ptr<MD5ModelNode> MD5ModelNodePtr;
 
