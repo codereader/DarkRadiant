@@ -353,28 +353,6 @@ void StaticGeometryNode::onPreRender(const VolumeTest& volume)
     }
 }
 
-void StaticGeometryNode::renderCommon(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-    // Render curves always relative to the absolute map origin
-    static Matrix4 identity = Matrix4::getIdentity();
-    _nurbsEditInstance.renderComponentsSelected(collector, volume, identity);
-    _catmullRomEditInstance.renderComponentsSelected(collector, volume, identity);
-}
-
-void StaticGeometryNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-	EntityNode::renderSolid(collector, volume);
-    
-    renderCommon(collector, volume);
-}
-
-void StaticGeometryNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-	EntityNode::renderWireframe(collector, volume);
- 
-    renderCommon(collector, volume);
-}
-
 void StaticGeometryNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     m_curveNURBS.renderHighlights(collector, volume);
@@ -404,24 +382,15 @@ void StaticGeometryNode::setRenderSystem(const RenderSystemPtr& renderSystem)
         _curveCtrlPointShader.reset();
     }
 
-	_nurbsEditInstance.setRenderSystem(renderSystem);
-	_catmullRomEditInstance.setRenderSystem(renderSystem);
-
 	_originInstance.setRenderSystem(renderSystem);
 }
 
 void StaticGeometryNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
+	if (!isModel() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
 	{
-		_nurbsEditInstance.renderComponents(collector, volume, Matrix4::getIdentity());
-
-		_catmullRomEditInstance.renderComponents(collector, volume, Matrix4::getIdentity());
-
 		// Register the renderable with OpenGL
-		if (!isModel()) {
-			_originInstance.render(collector, volume, localToWorld());
-		}
+		_originInstance.render(collector, volume, localToWorld());
 	}
 }
 
