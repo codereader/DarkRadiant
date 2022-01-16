@@ -90,11 +90,6 @@ private:
     void onModelAnimationUpdated();
     void attachToShaders();
     void detachFromShaders();
-#if 0
-	void render(IRenderableCollector& collector, const VolumeTest& volume,
-				const Matrix4& localToWorld, const IRenderEntity& entity) const;
-#endif
 };
-typedef std::shared_ptr<MD5ModelNode> MD5ModelNodePtr;
 
-} // namespace md5
+} // namespace

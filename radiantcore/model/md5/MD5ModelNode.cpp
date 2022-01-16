@@ -184,39 +184,6 @@ void MD5ModelNode::attachToShaders()
     _attachedToShaders = true;
 }
 
-#if 0
-void MD5ModelNode::render(IRenderableCollector& collector, const VolumeTest& volume,
-        const Matrix4& localToWorld, const IRenderEntity& entity) const
-{
-    // Do some rough culling (per model, not per surface)
-    if (volume.TestAABB(localAABB(), localToWorld) == VOLUME_OUTSIDE)
-    {
-        return;
-    }
-
-    // greebo: Iterate over all MD5 surfaces and render them
-    for (auto i = _model->begin(); i != _model->end(); ++i)
-    {
-        assert(i->shader);
-
-        // Get the Material to test the shader name against the filter system
-        const MaterialPtr& surfaceShader = i->shader->getMaterial();
-        if (surfaceShader && surfaceShader->isVisible())
-        {
-            collector.addRenderable(
-                collector.supportsFullMaterials() ? *i->shader
-                                                  : *entity.getWireShader(),
-                *i->surface, localToWorld, this, &entity
-            );
-        }
-    }
-
-    // Uncomment to render the skeleton
-    //collector.SetState(entity.getWireShader(), RenderableCollector::eFullMaterials);
-    //collector.addRenderable(_model->getRenderableSkeleton(), localToWorld, entity);
-}
-#endif
-
 std::string MD5ModelNode::getSkin() const
 {
     return _skin;
