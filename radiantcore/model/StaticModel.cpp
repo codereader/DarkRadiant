@@ -84,6 +84,7 @@ void StaticModel::renderSolid(IRenderableCollector& rend,
                               const IRenderEntity& entity,
                               const LitObject& litObject) const
 {
+#if 0
     // Submit renderables from each surface
     foreachVisibleSurface([&](const Surface& s)
     {
@@ -91,12 +92,14 @@ void StaticModel::renderSolid(IRenderableCollector& rend,
         rend.addRenderable(*s.shader, *s.surface, localToWorld,
                            &litObject, &entity);
     });
+#endif
 }
 
 void StaticModel::renderWireframe(IRenderableCollector& rend,
                                   const Matrix4& localToWorld,
                                   const IRenderEntity& entity) const
 {
+#if 0
     // Submit renderables from each surface
     foreachVisibleSurface([&](const Surface& s)
     {
@@ -104,6 +107,7 @@ void StaticModel::renderWireframe(IRenderableCollector& rend,
         rend.addRenderable(*entity.getWireShader(), *s.surface, localToWorld,
                            nullptr, &entity);
     });
+#endif
 }
 
 void StaticModel::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -130,6 +134,7 @@ void StaticModel::render(const RenderInfo& info) const
     }
 #endif
 
+#if 0
     // Iterate over the surfaces, calling the render function on each one
     for (SurfaceList::const_iterator i = _surfVec.begin();
          i != _surfVec.end();
@@ -151,6 +156,7 @@ void StaticModel::render(const RenderInfo& info) const
         i->surface->render(info.getFlags());
 #endif
     }
+#endif
 }
 
 std::string StaticModel::getFilename() const 

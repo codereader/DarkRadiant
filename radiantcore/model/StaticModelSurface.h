@@ -1,11 +1,9 @@
 #pragma once
 
-#include "GLProgramAttributes.h"
-#include "render.h"
-#include "math/AABB.h"
-
-#include "ishaders.h"
 #include "imodelsurface.h"
+#include "ishaders.h"
+
+#include "math/AABB.h"
 
 /* FORWARD DECLS */
 class ModelSkin;
@@ -27,8 +25,7 @@ namespace model
  * create a renderable static mesh.
  */
 class StaticModelSurface final :
-	public IIndexedModelSurface,
-	public OpenGLRenderable
+	public IIndexedModelSurface
 {
 private:
 	// Name of the material this surface is using by default (without any skins)
@@ -50,18 +47,9 @@ private:
 	// The AABB containing this surface, in local object space.
 	AABB _localAABB;
 
-	// The GL display lists for this surface's geometry
-	GLuint _dlRegular;
-	GLuint _dlProgramVcol;
-    GLuint _dlProgramNoVCol;
-
 private:
 	// Calculate tangent and bitangent vectors for all vertices.
 	void calculateTangents();
-
-	// Create the display lists
-    GLuint compileProgramList(bool includeColour);
-	void createDisplayLists();
 
 public:
     // Move-construct this static model surface from the given vertex- and index array
@@ -69,13 +57,6 @@ public:
 
 	// Copy-constructor. All vertices and indices will be copied from 'other'.
 	StaticModelSurface(const StaticModelSurface& other);
-
-	~StaticModelSurface();
-
-	/**
-	 * Render function from OpenGLRenderable
-	 */
-	void render(const RenderInfo& info) const;
 
 	/** Get the containing AABB for this surface.
 	 */
