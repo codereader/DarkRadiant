@@ -32,10 +32,9 @@ namespace ui
 namespace
 {
     const char* LIGHTINSPECTOR_TITLE = N_("Light properties");
-
     const std::string RKEY_WINDOW_STATE = "user/ui/lightInspector/window";
-
     const char* LIGHT_PREFIX_XPATH = "/light/texture//prefix";
+    const char* COLOR_KEY = "_color";
 
     /** greebo: Loads the prefixes from the registry and creates a
      *          comma-separated list string
@@ -139,14 +138,20 @@ void LightInspector::setupLightShapeOptions()
 
     // Start/end checkbox
     wxControl* startEnd = findNamedObject<wxCheckBox>(this, "LightInspectorStartEnd");
-    startEnd->Connect(
-        wxEVT_CHECKBOX, wxCommandEventHandler(LightInspector::_onOptionsToggle),
-        NULL, this
+    startEnd->Bind(
+        wxEVT_CHECKBOX, [=](auto) { writeToAllEntities(); }
     );
     startEnd->Enable(false);
 }
 
-// Connect the options checkboxes
+void LightInspector::bindSpawnargToCheckbox(std::string spawnarg, std::string checkbox)
+{
+    findNamedObject<wxCheckBox>(this, checkbox)->Bind(wxEVT_CHECKBOX, [=](wxCommandEvent&) {
+        if (_updateActive) return; // avoid callback loops
+        writeToAllEntities({{spawnarg, checkboxValue(checkbox)}});
+    });
+}
+
 void LightInspector::setupOptionsPanel()
 {
     // Colour and brightness
@@ -155,7 +160,7 @@ void LightInspector::setupOptionsPanel()
     );
     _brightnessSlider->Bind( // drag in progress
         wxEVT_SCROLL_THUMBTRACK,
-        [=](wxScrollEvent&) {
+        [=](auto) {
             if (!_adjustingBrightness && !GlobalUndoSystem().operationStarted())
             {
                 GlobalUndoSystem().start();
@@ -166,7 +171,7 @@ void LightInspector::setupOptionsPanel()
     );
     _brightnessSlider->Bind( // drag finished
         wxEVT_SCROLL_CHANGED,
-        [=](wxScrollEvent&) {
+        [=](auto) {
             if (_adjustingBrightness) {
                 GlobalUndoSystem().finish("Adjust light brightness");
                 _adjustingBrightness = false;
@@ -175,18 +180,18 @@ void LightInspector::setupOptionsPanel()
         }
     );
 
-    findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
-    findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
-    findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
-    findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
+    // Connect light option checkboxes
+    bindSpawnargToCheckbox("parallel", "LightInspectorParallel");
+    bindSpawnargToCheckbox("noshadows", "LightInspectorNoShadows");
+    bindSpawnargToCheckbox("nospecular", "LightInspectorSkipSpecular");
+    bindSpawnargToCheckbox("nodiffuse", "LightInspectorSkipDiffuse");
 
-    if (_supportsAiSee)
-    {
+    // Show and connect the AI See checkbox if the game supports the feature
+    if (_supportsAiSee) {
         findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Show();
-        findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Bind(wxEVT_CHECKBOX, &LightInspector::_onOptionsToggle, this);
+        bindSpawnargToCheckbox("ai_see", "LightInspectorAiSee");
     }
-    else
-    {
+    else {
         findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->Hide();
     }
 }
@@ -361,7 +366,7 @@ namespace
     {
         // If the light has no colour key, use a default of white rather than
         // the Vector3 default of black (0, 0, 0).
-        std::string colString = entity.getKeyValue("_color");
+        std::string colString = entity.getKeyValue(COLOR_KEY);
         if (colString.empty())
         {
             colString = "1.0 1.0 1.0";
@@ -381,13 +386,15 @@ namespace
         }
     }
 
-    // Set colour on entity
-    void setEntityColour(Entity* entity, const Vector3& col)
+    std::string colourToKeyValue(const Vector3& col)
     {
-        setEntityValueIfDifferent(
-            entity, "_color",
-            fmt::format("{:.3f} {:.3f} {:.3f}", col.x(), col.y(), col.z())
-        );
+        return fmt::format("{:.3f} {:.3f} {:.3f}", col.x(), col.y(), col.z());
+    }
+
+    // Set colour on entity
+    void setEntityColour(Entity& entity, const Vector3& col)
+    {
+        setEntityValueIfDifferent(&entity, COLOR_KEY, colourToKeyValue(col));
     }
 
     // Convert Vector3 colour to wxColour
@@ -558,22 +565,38 @@ void LightInspector::adjustBrightness() const
             newColour = Vector3(newHighest, newHighest, newHighest);
         }
 
-        setEntityColour(light, newColour);
+        setEntityColour(*light, newColour);
     }
 
     // Update camera immediately to provide user feedback
     GlobalCameraManager().getActiveView().queueDraw();
 }
 
+std::string LightInspector::checkboxValue(std::string cbName) const
+{
+	return findNamedObject<wxCheckBox>(this, cbName)->GetValue() ? "1" : "0";
+}
+
 // Write to all entities
-void LightInspector::writeToAllEntities()
+void LightInspector::writeToAllEntities(StringMap newValues)
 {
 	UndoableCommand command("setLightProperties");
 
     for (auto entity : _lightEntities)
     {
-        setValuesOnEntity(entity);
+        if (!newValues.empty()) {
+            // Set all values from the map
+            for (auto [k, v]: newValues)
+                setEntityValueIfDifferent(entity, k, v);
+        }
+        else {
+            // Set all values from dialog elements
+            setLightVectorsOnEntity(entity);
+        }
     }
+
+    // Whatever we changed probably requires a redraw
+    GlobalCameraManager().getActiveView().queueDraw();
 }
 
 // Set a given key value on all light entities
@@ -587,14 +610,8 @@ void LightInspector::setKeyValueAllLights(const std::string& key,
 }
 
 // Set the keyvalues on the entity from the dialog widgets
-void LightInspector::setValuesOnEntity(Entity* entity)
+void LightInspector::setLightVectorsOnEntity(Entity* entity)
 {
-    // Set the "_color" keyvalue
-    wxColour col = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour")->GetColour();
-    Vector3 colFloat(col.Red() / 255.0f, col.Green() / 255.0f,
-                     col.Blue() / 255.0f);
-    setEntityColour(entity, colFloat);
-
     // Write out all vectors to the entity
 	for (const auto& pair : _valueMap)
 	{
@@ -627,34 +644,19 @@ void LightInspector::setValuesOnEntity(Entity* entity)
 		setEntityValueIfDifferent(entity, "light_start", "");
 		setEntityValueIfDifferent(entity, "light_end", "");
 	}
-
-	// Write the texture key
-	setEntityValueIfDifferent(entity, "texture", _texSelector->getSelection());
-
-	// Write the options
-	setEntityValueIfDifferent(entity, "parallel", findNamedObject<wxCheckBox>(this, "LightInspectorParallel")->GetValue() ? "1" : "0");
-	setEntityValueIfDifferent(entity, "nospecular", findNamedObject<wxCheckBox>(this, "LightInspectorSkipSpecular")->GetValue() ? "1" : "0");
-	setEntityValueIfDifferent(entity, "nodiffuse", findNamedObject<wxCheckBox>(this, "LightInspectorSkipDiffuse")->GetValue() ? "1" : "0");
-	setEntityValueIfDifferent(entity, "noshadows", findNamedObject<wxCheckBox>(this, "LightInspectorNoShadows")->GetValue() ? "1" : "0");
-
-    if (_supportsAiSee)
-    {
-        setEntityValueIfDifferent(entity, "ai_see", findNamedObject<wxCheckBox>(this, "LightInspectorAiSee")->GetValue() ? "1" : "0");
-    }
-}
-
-void LightInspector::_onOptionsToggle(wxCommandEvent& ev)
-{
-    if (_updateActive) return; // avoid callback loops
-
-    writeToAllEntities();
 }
 
 void LightInspector::_onColourChange(wxColourPickerEvent& ev)
 {
     if (_updateActive) return; // avoid callback loops
 
-    writeToAllEntities();
+    // Convert colour from the wxColourPicker into the floating-point format
+    // required for the spawnarg
+    auto picker = findNamedObject<wxColourPickerCtrl>(this, "LightInspectorColour");
+    auto col = picker->GetColour();
+    Vector3 colFloat(col.Red() / 255.0f, col.Green() / 255.0f, col.Blue() / 255.0f);
+
+    writeToAllEntities({{COLOR_KEY, colourToKeyValue(colFloat)}});
 }
 
 } // namespace ui

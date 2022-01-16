@@ -60,20 +60,17 @@ protected:
 		return findNamedObject<wxPanel>(parent, name);
 	}
 
-	// Find a named panel among the parent's children
-	template<typename ObjectClass>
-	ObjectClass* findNamedObject(wxWindow* parent, const std::string& name)
-	{
-		wxString wxName(name);
+	// Find a named object among the parent's children
+    template <typename ObjectClass>
+    ObjectClass* findNamedObject(const wxWindow* parent, const std::string& name) const
+    {
+        auto* named = dynamic_cast<ObjectClass*>(parent->FindWindow(wxString(name)));
+        wxASSERT_MSG(named, "findNamedObject() failed (child not found)");
 
-		ObjectClass* named = dynamic_cast<ObjectClass*>(parent->FindWindow(name));
+        return named;
+    }
 
-		assert(named != NULL);
-
-		return named;
-	}
-
-	// Find a named panel among the parent's children, doesn't throw when the item is not found
+    // Find a named panel among the parent's children, doesn't throw when the item is not found
 	template<typename ObjectClass>
 	ObjectClass* tryGetNamedObject(wxWindow* parent, const std::string& name)
 	{
@@ -117,7 +114,7 @@ protected:
         spinCtrlDouble->SetIncrement(increment);
 
         replaceControl(oldCtrl, spinCtrlDouble);
-        
+
         return spinCtrlDouble;
     }
 };

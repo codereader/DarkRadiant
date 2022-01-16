@@ -5,6 +5,7 @@
 #include "string/convert.h"
 
 #include <functional>
+#include <sigc++/bind.h>
 
 namespace entity
 {
@@ -12,17 +13,9 @@ namespace entity
 ShaderParms::ShaderParms(KeyObserverMap& keyObserverMap, ColourKey& colourKey) :
 	_keyObserverMap(keyObserverMap),
 	_colourKey(colourKey),
-	_shaderParmObservers(MAX_ENTITY_SHADERPARMS),
 	_parmValues(MAX_ENTITY_SHADERPARMS, 0.0f)
 {
 	_parmValues[3] = 1.0f; // parm3 = alpha, defaults to 1.0f
-
-	// Set the callbacks for the key observers
-	for (std::size_t i = MIN_SHADERPARM_NUM_TO_OBSERVE; i < MAX_ENTITY_SHADERPARMS; ++i)
-	{
-		_shaderParmObservers[i].setCallback(
-			std::bind(&ShaderParms::onShaderParmKeyValueChanged, this, i, std::placeholders::_1));
-	}
 }
 
 float ShaderParms::getParmValue(int parmNum) const
@@ -37,16 +30,11 @@ void ShaderParms::addKeyObservers()
 {
 	for (std::size_t i = MIN_SHADERPARM_NUM_TO_OBSERVE; i < MAX_ENTITY_SHADERPARMS; ++i)
 	{
-		_keyObserverMap.insert("shaderParm" + string::to_string(i), _shaderParmObservers[i]);
-	}
-}
-
-void ShaderParms::removeKeyObservers()
-{
-	for (std::size_t i = MIN_SHADERPARM_NUM_TO_OBSERVE; i < MAX_ENTITY_SHADERPARMS; ++i)
-	{
-		_keyObserverMap.erase(_shaderParmObservers[i]);
-	}
+        _keyObserverMap.observeKey(
+            "shaderParm" + string::to_string(i),
+            sigc::bind<0>(sigc::mem_fun(this, &ShaderParms::onShaderParmKeyValueChanged), i)
+        );
+    }
 }
 
 void ShaderParms::onShaderParmKeyValueChanged(std::size_t parm, const std::string& value)

@@ -73,14 +73,17 @@ private:
 
     // Widget construction functions
     void setupLightShapeOptions();
+    void bindSpawnargToCheckbox(std::string spawnarg, std::string checkbox);
     void setupOptionsPanel();
     void setupTextureWidgets();
 
     // Callbacks
     void _onProjToggle(wxCommandEvent& ev);
     void _onColourChange(wxColourPickerEvent& ev);
-    void _onOptionsToggle(wxCommandEvent& ev);
     void adjustBrightness() const;
+
+    // Get value of a checkbox as a spawnarg string (1 or 0)
+	std::string checkboxValue(std::string cbName) const;
 
     void updateColourPicker();
     void updateColourWidgets();
@@ -93,10 +96,12 @@ private:
     void getValuesFromEntity();
 
     // Write the widget contents to the given entity
-    void setValuesOnEntity(Entity* entity);
+    void setLightVectorsOnEntity(Entity* entity);
 
-    // Write contents to all light entities
-    void writeToAllEntities();
+    // Write contents to all light entities. Pass a string map containing
+    // explicit values to set, or an empty map to call setLightVectorsOnEntity() for
+    // each entity.
+    void writeToAllEntities(StringMap newValues = {});
 
     // Set the given key/value pair on ALL entities in the list of lights
     void setKeyValueAllLights(const std::string& k, const std::string& v);
