@@ -31,7 +31,6 @@ class LightNode :
     public ComponentEditable,
     public ComponentSnappable,
     public PlaneSelectable,
-    public OpenGLRenderable,
     public RendererLight
 {
 	OriginKey m_originKey;
@@ -204,6 +203,7 @@ public:
 
     void onEntitySettingsChanged() override;
 
+    // Is this light projected or omni?
     bool isProjected() const;
 
     // Returns the frustum structure (calling this on point lights will throw)
@@ -256,14 +256,14 @@ private:
 	void destroy();
 
 	// Renderable submission functions
-	void renderWireframe(RenderableCollector& collector,
+	void renderWireframe(IRenderableCollector& collector,
 						 const VolumeTest& volume,
 						 const Matrix4& localToWorld,
 						 bool selected) const;
 
 	// Adds the light centre renderable to the given collector
-	void renderLightCentre(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderProjectionPoints(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderLightCentre(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+	void renderProjectionPoints(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Returns a reference to the member class Doom3LightRadius (used to set colours)
 	Doom3LightRadius& getDoom3Radius();
@@ -286,9 +286,6 @@ private:
 	void transformLightRadius(const Matrix4& transform);
 	void revertLightTransform();
 	void freezeLightTransform();
-
-    // Is this light projected or omni?
-    bool isProjected() const;
 
     // Set the projection-changed flag
 	void projectionChanged();

@@ -145,30 +145,25 @@ void LightNode::construct()
     m_shader.valueChanged(_spawnArgs.getKeyValue("texture"));
 }
 
-bool LightNode::isProjected() const
-{
-    return _light.isProjected();
-}
-
 const Frustum& LightNode::getLightFrustum() const
 {
-    if (!_light.isProjected()) throw std::logic_error("getLightFrustum can be called on projected lights only");
+    if (!isProjected()) throw std::logic_error("getLightFrustum can be called on projected lights only");
 
-    return _light._frustum;
+    return _frustum;
 }
 
 const Vector3& LightNode::getLightStart() const
 {
-    if (!_light.isProjected()) throw std::logic_error("getLightStart can be called on projected lights only");
+    if (!isProjected()) throw std::logic_error("getLightStart can be called on projected lights only");
 
-    return _light._projVectors.transformed.start;
+    return _projVectors.transformed.start;
 }
 
 const Vector3& LightNode::getLightRadius() const
 {
-    if (_light.isProjected()) throw std::logic_error("getLightRadius can be called on point lights only");
+    if (isProjected()) throw std::logic_error("getLightRadius can be called on point lights only");
 
-    return _light.m_doom3Radius.m_radiusTransformed;
+    return m_doom3Radius.m_radiusTransformed;
 }
 
 AABB LightNode::getSelectAABB() const
@@ -380,7 +375,7 @@ void LightNode::onPreRender(const VolumeTest& volume)
     {
         if (isProjected())
         {
-            _light.updateProjection();
+            updateProjection();
         }
 
         _renderableLightVolume.update(colourShader);
@@ -417,8 +412,6 @@ void LightNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
     collector.addHighlightRenderable(_renderableOctagon, Matrix4::getIdentity());
     collector.addHighlightRenderable(_renderableLightVolume, Matrix4::getIdentity());
 
-        if (isProjected())
-            updateProjection();
     EntityNode::renderHighlights(collector, volume);
 }
 
@@ -973,13 +966,13 @@ Doom3LightRadius& LightNode::getDoom3Radius() {
     return m_doom3Radius;
 }
 
-void LightNode::renderProjectionPoints(RenderableCollector& collector,
+void LightNode::renderProjectionPoints(IRenderableCollector& collector,
                                    const VolumeTest& volume,
                                    const Matrix4& localToWorld) const
 {
     // Add the renderable light target
-    collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-    collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+    collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
+    collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
 
 	collector.addRenderable(*_rRight.getShader(), _rRight, localToWorld);
 	collector.addRenderable(*_rUp.getShader(), _rUp, localToWorld);
@@ -997,7 +990,7 @@ void LightNode::renderProjectionPoints(RenderableCollector& collector,
 }
 
 // Adds the light centre renderable to the given collector
-void LightNode::renderLightCentre(RenderableCollector& collector, const VolumeTest& volume,
+void LightNode::renderLightCentre(IRenderableCollector& collector, const VolumeTest& volume,
                                   const Matrix4& localToWorld) const
 {
 	collector.addRenderable(*_rCentre.getShader(), _rCentre, localToWorld);
