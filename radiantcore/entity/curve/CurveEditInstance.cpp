@@ -170,17 +170,21 @@ void CurveEditInstance::updateSelected() const {
 void CurveEditInstance::renderComponents(IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
+#if 0
 	collector.addRenderable(*_shaders.controlsShader, m_controlsRender, localToWorld);
+#endif
 }
 
 void CurveEditInstance::renderComponentsSelected(IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
+#if 0
     updateSelected();
     if(!m_selectedRender.empty())
     {
 	  collector.addRenderable(*_shaders.selectedShader, m_selectedRender, localToWorld);
     }
+#endif
 }
 
 void CurveEditInstance::curveChanged() {
@@ -207,6 +211,18 @@ void CurveEditInstance::forEachSelected(ControlPointFunctor& functor) {
     		functor(*transformed, *original);
   		}
 	}
+}
+
+void CurveEditInstance::forEachControlPoint(const std::function<void(const Vector3&, bool)>& functor) const
+{
+    ASSERT_MESSAGE(_controlPointsTransformed.size() == _selectables.size(), "curve instance mismatch");
+
+    auto transformed = _controlPointsTransformed.begin();
+
+    for (auto i = _selectables.begin(); i != _selectables.end(); ++i, ++transformed)
+    {
+        functor(*transformed, i->isSelected());
+    }
 }
 
 void CurveEditInstance::forEachSelected(ControlPointConstFunctor& functor) const {

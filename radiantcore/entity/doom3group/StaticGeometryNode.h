@@ -10,6 +10,7 @@
 #include "../curve/CurveEditInstance.h"
 #include "../curve/CurveNURBS.h"
 #include "../curve/CurveCatmullRom.h"
+#include "../curve/RenderableCurveVertices.h"
 #include "../VertexInstance.h"
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
@@ -67,6 +68,10 @@ class StaticGeometryNode :
 	VertexInstance _originInstance;
 
     ShaderPtr _pivotShader;
+    ShaderPtr _curveCtrlPointShader;
+
+    RenderableCurveVertices _nurbsVertices;
+    RenderableCurveVertices _catmullRomVertices;
 
 private:
 	// Constructor

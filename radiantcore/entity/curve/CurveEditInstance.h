@@ -61,6 +61,10 @@ public:
 
 	// Traversal functions, these cycle through all (selected) control points
 	void forEach(ControlPointFunctor& functor);
+
+    // Iterate all (transformed) control points and their selection status
+	void forEachControlPoint(const std::function<void(const Vector3&, bool)>& functor) const;
+
 	void forEachSelected(ControlPointFunctor& functor);
 	void forEachSelected(ControlPointConstFunctor& functor) const;
 

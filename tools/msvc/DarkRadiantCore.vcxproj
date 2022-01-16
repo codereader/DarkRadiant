@@ -763,6 +763,7 @@
     <ClInclude Include="..\..\radiantcore\entity\curve\CurveEditInstance.h" />
     <ClInclude Include="..\..\radiantcore\entity\curve\CurveNURBS.h" />
     <ClInclude Include="..\..\radiantcore\entity\curve\RenderableCurve.h" />
+    <ClInclude Include="..\..\radiantcore\entity\curve\RenderableCurveVertices.h" />
     <ClInclude Include="..\..\radiantcore\entity\doom3group\StaticGeometryNode.h" />
     <ClInclude Include="..\..\radiantcore\entity\eclassmodel\EclassModelNode.h" />
     <ClInclude Include="..\..\radiantcore\entity\EntityModule.h" />

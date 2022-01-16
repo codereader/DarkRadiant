@@ -2271,5 +2271,8 @@
     <ClInclude Include="..\..\radiantcore\model\RenderableModelSurface.h">
       <Filter>src\model</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\curve\RenderableCurveVertices.h">
+      <Filter>src\entity\curve</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

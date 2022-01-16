@@ -21,7 +21,9 @@ StaticGeometryNode::StaticGeometryNode(const IEntityClassPtr& eclass) :
 				 std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
 	_catmullRomEditInstance(m_curveCatmullRom,
 					  std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
-	_originInstance(VertexInstance(getOrigin(), std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)))
+	_originInstance(VertexInstance(getOrigin(), std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1))),
+    _nurbsVertices(m_curveNURBS, _nurbsEditInstance),
+    _catmullRomVertices(m_curveCatmullRom, _catmullRomEditInstance)
 {}
 
 StaticGeometryNode::StaticGeometryNode(const StaticGeometryNode& other) :
@@ -43,7 +45,9 @@ StaticGeometryNode::StaticGeometryNode(const StaticGeometryNode& other) :
 				 std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
 	_catmullRomEditInstance(m_curveCatmullRom,
 					  std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
-	_originInstance(VertexInstance(getOrigin(), std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)))
+	_originInstance(VertexInstance(getOrigin(), std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1))),
+    _nurbsVertices(m_curveNURBS, _nurbsEditInstance),
+    _catmullRomVertices(m_curveCatmullRom, _catmullRomEditInstance)
 {
 	// greebo: Don't call construct() here, this should be invoked by the
 	// clone() method
@@ -101,11 +105,15 @@ void StaticGeometryNode::onVisibilityChanged(bool isVisibleNow)
     {
         m_curveNURBS.updateRenderable();
         m_curveCatmullRom.updateRenderable();
+        _nurbsVertices.queueUpdate();
+        _catmullRomVertices.queueUpdate();
     }
     else
     {
         m_curveNURBS.clearRenderable();
         m_curveCatmullRom.clearRenderable();
+        _nurbsVertices.clear();
+        _catmullRomVertices.clear();
     }
 }
 
@@ -116,10 +124,14 @@ void StaticGeometryNode::onSelectionStatusChange(bool changeGroupStatus)
     if (isSelected())
     {
         _renderOrigin.queueUpdate();
+        _nurbsVertices.queueUpdate();
+        _catmullRomVertices.queueUpdate();
     }
     else
     {
         _renderOrigin.clear();
+        _nurbsVertices.clear();
+        _catmullRomVertices.clear();
     }
 }
 
@@ -194,8 +206,12 @@ void StaticGeometryNode::removeOriginFromChildren()
 	}
 }
 
-void StaticGeometryNode::selectionChangedComponent(const ISelectable& selectable) {
+void StaticGeometryNode::selectionChangedComponent(const ISelectable& selectable)
+{
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
+
+    _nurbsVertices.queueUpdate();
+    _catmullRomVertices.queueUpdate();
 }
 
 bool StaticGeometryNode::isSelectedComponents() const {
@@ -318,6 +334,22 @@ void StaticGeometryNode::onPreRender(const VolumeTest& volume)
     if (isSelected())
     {
         _renderOrigin.update(_pivotShader);
+
+        if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
+        {
+            // Selected patches in component mode render the lattice connecting the control points
+            _nurbsVertices.update(_curveCtrlPointShader);
+            _catmullRomVertices.update(_curveCtrlPointShader);
+        }
+        else
+        {
+            _nurbsVertices.clear();
+            _catmullRomVertices.clear();
+
+            // Queue an update the next time it's rendered
+            _nurbsVertices.queueUpdate();
+            _catmullRomVertices.queueUpdate();
+        }
     }
 }
 
@@ -358,14 +390,18 @@ void StaticGeometryNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     // Clear the geometry from any previous shader
     m_curveNURBS.clearRenderable();
     m_curveCatmullRom.clearRenderable();
+    _nurbsVertices.clear();
+    _catmullRomVertices.clear();
 
     if (renderSystem)
     {
         _pivotShader = renderSystem->capture("$PIVOT");
+        _curveCtrlPointShader = renderSystem->capture("$POINT");
     }
     else
     {
         _pivotShader.reset();
+        _curveCtrlPointShader.reset();
     }
 
 	_nurbsEditInstance.setRenderSystem(renderSystem);
@@ -416,15 +452,20 @@ void StaticGeometryNode::evaluateTransform()
 
 void StaticGeometryNode::transformComponents(const Matrix4& matrix)
 {
-	if (_nurbsEditInstance.isSelected()) {
+	if (_nurbsEditInstance.isSelected())
+    {
 		_nurbsEditInstance.transform(matrix);
+        _nurbsVertices.queueUpdate();
 	}
 
-	if (_catmullRomEditInstance.isSelected()) {
+	if (_catmullRomEditInstance.isSelected())
+    {
 		_catmullRomEditInstance.transform(matrix);
+        _catmullRomVertices.queueUpdate();
 	}
 
-	if (_originInstance.isSelected()) {
+	if (_originInstance.isSelected())
+    {
 		translateOrigin(getTranslation());
 	}
 }
@@ -456,6 +497,8 @@ void StaticGeometryNode::_onTransformationChanged()
 
 	m_curveNURBS.curveChanged();
 	m_curveCatmullRom.curveChanged();
+    _nurbsVertices.queueUpdate();
+    _catmullRomVertices.queueUpdate();
 }
 
 void StaticGeometryNode::_applyTransformation()
