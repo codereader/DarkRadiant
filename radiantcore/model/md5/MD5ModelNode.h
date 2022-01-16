@@ -7,8 +7,13 @@
 #include "scene/Node.h"
 #include "render/VectorLightList.h"
 #include "../RenderableModelSurface.h"
+#include "registry/CachedKey.h"
+#include "RenderableMD5Skeleton.h"
 
-namespace md5 {
+namespace md5
+{
+
+constexpr const char* const RKEY_RENDER_SKELETON = "user/ui/md5/renderSkeleton";
 
 class MD5ModelNode :
 	public scene::Node,
@@ -28,6 +33,10 @@ class MD5ModelNode :
     bool _attachedToShaders;
 
     sigc::connection _animationUpdateConnection;
+
+    registry::CachedKey<bool> _showSkeleton;
+
+    RenderableMD5Skeleton _renderableSkeleton;
 
 public:
 	MD5ModelNode(const MD5ModelPtr& model);

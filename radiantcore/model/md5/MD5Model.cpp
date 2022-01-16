@@ -13,8 +13,7 @@ namespace md5 {
 
 MD5Model::MD5Model() :
 	_polyCount(0),
-	_vertexCount(0),
-	_renderableSkeleton(_skeleton)
+	_vertexCount(0)
 {}
 
 MD5Model::MD5Model(const MD5Model& other) :
@@ -24,8 +23,7 @@ MD5Model::MD5Model(const MD5Model& other) :
 	_polyCount(other._polyCount),
 	_vertexCount(other._vertexCount),
 	_filename(other._filename),
-	_modelPath(other._modelPath),
-	_renderableSkeleton(_skeleton)
+	_modelPath(other._modelPath)
 {
 	// Copy-construct the other model's surfaces, but not its shaders, revert to default
 	for (std::size_t i = 0; i < other._surfaces.size(); ++i)

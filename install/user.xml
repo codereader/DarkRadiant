@@ -54,6 +54,9 @@
       <hideDistantAreas value="0" />
       <hideDistance value="800" />
     </aasViewer>
+    <md5>
+      <renderSkeleton value="0" />
+    </md5>
     <showAllLightRadii value="0"/>
     <alwaysShowLightVertices value="1"/>
     <rotateObjectsIndependently value="0" />

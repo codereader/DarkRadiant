@@ -11,7 +11,9 @@ namespace md5
 
 MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
     _model(new MD5Model(*model)), // create a copy of the incoming model, we need our own instance
-    _attachedToShaders(false)
+    _attachedToShaders(false),
+    _showSkeleton(RKEY_RENDER_SKELETON),
+    _renderableSkeleton(_model->getSkeleton(), localToWorld())
 {
     _animationUpdateConnection = _model->signal_ModelAnimationUpdated().connect(
         sigc::mem_fun(this, &MD5ModelNode::onModelAnimationUpdated)
@@ -105,29 +107,30 @@ void MD5ModelNode::onPreRender(const VolumeTest& volume)
 
     // Attach renderables (or do nothing if everything is up to date)
     attachToShaders();
+
+    if (_showSkeleton.get())
+    {
+        _renderableSkeleton.queueUpdate();
+        _renderableSkeleton.update(_renderEntity->getColourShader());
+    }
+    else
+    {
+        _renderableSkeleton.clear();
+    }
 }
 
 void MD5ModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
-#if 0
-    render(collector, volume, localToWorld(), *_renderEntity);
-#endif
 }
 
 void MD5ModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
-#if 0
-    render(collector, volume, localToWorld(), *_renderEntity);
-#endif
 }
 
 void MD5ModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-#if 0
-    render(collector, volume, localToWorld(), *_renderEntity);
-#endif
     auto identity = Matrix4::getIdentity();
 
     for (const auto& surface : _renderableSurfaces)

@@ -7,7 +7,7 @@
 #include "parser/DefTokeniser.h"
 
 #include "MD5Surface.h"
-#include "RenderableMD5Skeleton.h"
+#include "MD5Skeleton.h"
 
 namespace md5
 {
@@ -65,9 +65,6 @@ private:
 	// The current state of our animated skeleton
 	MD5Skeleton _skeleton;
 
-	// The OpenGLRenderable visualising the MD5Skeleton
-	RenderableMD5Skeleton _renderableSkeleton;
-
 	// We need to keep a reference for skin swapping
 	RenderSystemWeakPtr _renderSystem;
 
@@ -87,10 +84,10 @@ public:
 	 */
 	void parseFromTokens(parser::DefTokeniser& tok);
 
-	RenderableMD5Skeleton& getRenderableSkeleton()
-	{
-		return _renderableSkeleton;
-	}
+    const MD5Skeleton& getSkeleton() const
+    {
+        return _skeleton;
+    }
 
 	void updateAABB();
 

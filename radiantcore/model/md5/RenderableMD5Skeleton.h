@@ -2,77 +2,122 @@
 
 #include "irender.h"
 #include "MD5Skeleton.h"
+#include "render/RenderableGeometry.h"
 
 namespace md5
 {
 
 class RenderableMD5Skeleton :
-	public OpenGLRenderable
+    public render::RenderableGeometry
 {
 private:
 	const MD5Skeleton& _skeleton;
+    const Matrix4& _localToWorld;
+
+    bool _updateNeeded;
 
 public:
-	RenderableMD5Skeleton(const MD5Skeleton& skeleton) :
-		_skeleton(skeleton)
+	RenderableMD5Skeleton(const MD5Skeleton& skeleton, const Matrix4& localToWorld) :
+		_skeleton(skeleton),
+        _localToWorld(localToWorld),
+        _updateNeeded(true)
 	{}
 
-	void render(const RenderInfo& info) const
-	{
-		if (_skeleton.size() == 0) return;
+    void queueUpdate()
+    {
+        _updateNeeded = true;
+    }
 
-		glBegin(GL_LINES);
+protected:
+    void updateGeometry() override
+    {
+        if (!_updateNeeded) return;
 
-		std::size_t numJoints = _skeleton.size();
+        _updateNeeded = false;
 
-		for (std::size_t i = 0; i < _skeleton.size(); ++i)
-		{
-			const IMD5Anim::Key& bone = _skeleton.getKey(i);
-			const Joint& joint = _skeleton.getJoint(i);
-			
-			if (joint.parentId != -1)
-			{
-				const IMD5Anim::Key& parentBone = _skeleton.getKey(joint.parentId);
+        if (_skeleton.size() == 0)
+        {
+            clear();
+            return;
+        }
 
-				glVertex3dv(parentBone.origin);
-				glVertex3dv(bone.origin);
-			}
-			else
-			{
-				glVertex3d(0, 0, 0);
-				glVertex3dv(bone.origin);
-			}
-		}
+        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<unsigned int> indices;
 
-		for (std::size_t i = 0; i < numJoints; ++i)
-		{
-			const IMD5Anim::Key& joint = _skeleton.getKey(i);
-			
-			Vector3 x(2,0,0);
-			Vector3 y(0,2,0);
-			Vector3 z(0,0,2);
+        auto numJoints = _skeleton.size();
 
-			x = joint.orientation.transformPoint(x);
-			y = joint.orientation.transformPoint(y);
-			z = joint.orientation.transformPoint(z);
+        for (auto i = 0; i < numJoints; ++i)
+        {
+            const auto& bone = _skeleton.getKey(i);
+            const auto& joint = _skeleton.getJoint(i);
 
-			Vector3 origin(joint.origin);
+            if (joint.parentId != -1)
+            {
+                const auto& parentBone = _skeleton.getKey(joint.parentId);
 
-			glColor3f(1, 0, 0);
-			glVertex3dv(origin);
-			glVertex3dv(origin + x);
+                indices.push_back(static_cast<unsigned int>(vertices.size()));
+                vertices.push_back(toVertex(parentBone.origin));
 
-			glColor3f(0, 1, 0);
-			glVertex3dv(origin);
-			glVertex3dv(origin + y);
+                indices.push_back(static_cast<unsigned int>(vertices.size()));
+                vertices.push_back(toVertex(bone.origin));
+            }
+            else
+            {
+                indices.push_back(static_cast<unsigned int>(vertices.size()));
+                vertices.push_back(toVertex({ 0, 0, 0 }));
 
-			glColor3f(0, 0, 1);
-			glVertex3dv(origin);
-			glVertex3dv(origin + z);
-		}
+                indices.push_back(static_cast<unsigned int>(vertices.size()));
+                vertices.push_back(toVertex(bone.origin));
+            }
+        }
 
-		glEnd();
-	}
+        for (auto i = 0; i < numJoints; ++i)
+        {
+            const auto& joint = _skeleton.getKey(i);
+
+            Vector3 x(2, 0, 0);
+            Vector3 y(0, 2, 0);
+            Vector3 z(0, 0, 2);
+
+            x = joint.orientation.transformPoint(x);
+            y = joint.orientation.transformPoint(y);
+            z = joint.orientation.transformPoint(z);
+
+            Vector3 origin(joint.origin);
+
+            // x axis
+            indices.push_back(static_cast<unsigned int>(vertices.size()));
+            vertices.push_back(toVertex(origin, { 1, 0, 0, 1 }));
+            indices.push_back(static_cast<unsigned int>(vertices.size()));
+            vertices.push_back(toVertex(origin + x, { 1, 0, 0, 1 }));
+
+            // y axis
+            indices.push_back(static_cast<unsigned int>(vertices.size()));
+            vertices.push_back(toVertex(origin, { 0, 1, 0, 1 }));
+            indices.push_back(static_cast<unsigned int>(vertices.size()));
+            vertices.push_back(toVertex(origin + y, { 0, 1, 0, 1 }));
+
+            // z axis
+            indices.push_back(static_cast<unsigned int>(vertices.size()));
+            vertices.push_back(toVertex(origin, { 0, 0, 1, 1 }));
+            indices.push_back(static_cast<unsigned int>(vertices.size()));
+            vertices.push_back(toVertex(origin + z, { 0, 0, 1, 1 }));
+        }
+
+        // Move the skeleton to world space
+        for (auto& v : vertices)
+        {
+            v.vertex = _localToWorld * v.vertex;
+        }
+
+        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+    }
+
+private:
+    ArbitraryMeshVertex toVertex(const Vector3& vertex, const Vector4& colour = { 1, 1, 1, 1 })
+    {
+        return { vertex, {0, 0, 0}, {1, 0}, colour };
+    }
 };
 
 } // namespace
