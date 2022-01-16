@@ -12,7 +12,16 @@ namespace md5
 MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
     _model(new MD5Model(*model)), // create a copy of the incoming model, we need our own instance
     _attachedToShaders(false)
-{}
+{
+    _animationUpdateConnection = _model->signal_ModelAnimationUpdated().connect(
+        sigc::mem_fun(this, &MD5ModelNode::onModelAnimationUpdated)
+    );
+}
+
+MD5ModelNode::~MD5ModelNode()
+{
+    _animationUpdateConnection.disconnect();
+}
 
 const model::IModel& MD5ModelNode::getIModel() const
 {
@@ -237,6 +246,14 @@ void MD5ModelNode::onVisibilityChanged(bool isVisibleNow)
     else
     {
         detachFromShaders();
+    }
+}
+
+void MD5ModelNode::onModelAnimationUpdated()
+{
+    for (auto& surface : _renderableSurfaces)
+    {
+        surface->queueUpdate();
     }
 }
 

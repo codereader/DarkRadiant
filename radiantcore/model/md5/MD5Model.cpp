@@ -384,6 +384,13 @@ void MD5Model::updateAnim(std::size_t time)
 	{
 		i->surface->updateToSkeleton(_skeleton);
 	}
+
+    signal_ModelAnimationUpdated().emit();
+}
+
+sigc::signal<void>& MD5Model::signal_ModelAnimationUpdated()
+{
+    return _sigModelAnimationUpdated;
 }
 
 } // namespace

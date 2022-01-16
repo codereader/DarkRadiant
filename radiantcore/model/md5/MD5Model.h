@@ -71,6 +71,8 @@ private:
 	// We need to keep a reference for skin swapping
 	RenderSystemWeakPtr _renderSystem;
 
+    sigc::signal<void> _sigModelAnimationUpdated;
+
 public:
 	MD5Model();
 
@@ -146,6 +148,8 @@ public:
 	 * enclosed with parentheses.
 	 */
 	static Vector3 parseVector3(parser::DefTokeniser& tok);
+
+    sigc::signal<void>& signal_ModelAnimationUpdated();
 
 private:
 

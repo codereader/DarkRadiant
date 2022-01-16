@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "MD5Model.h"
 #include "modelskin.h"
 #include "itraceable.h"
@@ -26,8 +27,11 @@ class MD5ModelNode :
 
     bool _attachedToShaders;
 
+    sigc::connection _animationUpdateConnection;
+
 public:
 	MD5ModelNode(const MD5ModelPtr& model);
+    virtual ~MD5ModelNode();
 
     void onInsertIntoScene(scene::IMapRootNode& root) override;
     void onRemoveFromScene(scene::IMapRootNode& root) override;
@@ -74,6 +78,7 @@ protected:
     void onVisibilityChanged(bool isVisibleNow) override;
 
 private:
+    void onModelAnimationUpdated();
     void attachToShaders();
     void detachFromShaders();
 #if 0
