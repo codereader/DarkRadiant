@@ -41,16 +41,12 @@ MD5Model::MD5Model(const MD5Model& other) :
 	updateMaterialList();
 }
 
-MD5Model::const_iterator MD5Model::begin() const {
-	return _surfaces.begin();
-}
-
-MD5Model::const_iterator MD5Model::end() const {
-	return _surfaces.end();
-}
-
-std::size_t MD5Model::size() const {
-	return _surfaces.size();
+void MD5Model::foreachSurface(const std::function<void(const MD5Surface&)>& functor) const
+{
+    for (const auto& surface : _surfaces)
+    {
+        functor(*surface.surface);
+    }
 }
 
 MD5Surface& MD5Model::createNewSurface()
@@ -164,7 +160,7 @@ void MD5Model::applySkin(const ModelSkin& skin)
 
 int MD5Model::getSurfaceCount() const
 {
-	return static_cast<int>(size());
+	return static_cast<int>(_surfaces.size());
 }
 
 int MD5Model::getVertexCount() const
@@ -212,7 +208,7 @@ void MD5Model::captureShaders()
 	}
 }
 
-const model::IModelSurface& MD5Model::getSurface(unsigned surfaceNum) const
+const model::IIndexedModelSurface& MD5Model::getSurface(unsigned surfaceNum) const
 {
 	assert(surfaceNum >= 0 && surfaceNum < _surfaces.size());
 	return *(_surfaces[surfaceNum].surface);

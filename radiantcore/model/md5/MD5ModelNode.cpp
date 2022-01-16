@@ -58,6 +58,26 @@ scene::INode::Type MD5ModelNode::getNodeType() const
     return Type::Model;
 }
 
+void MD5ModelNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    // Renderables will acquire their shaders in onPreRender
+    _model->foreachSurface([&](const MD5Surface& surface)
+    {
+        _renderableSurfaces.emplace_back(
+            std::make_shared<model::RenderableModelSurface>(surface, localToWorld())
+        );
+    });
+
+    Node::onInsertIntoScene(root);
+}
+
+void MD5ModelNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    Node::onRemoveFromScene(root);
+
+    _renderableSurfaces.clear();
+}
+
 void MD5ModelNode::testSelect(Selector& selector, SelectionTest& test) {
     _model->testSelect(selector, test, localToWorld());
 }
@@ -96,6 +116,7 @@ void MD5ModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 void MD5ModelNode::render(IRenderableCollector& collector, const VolumeTest& volume,
         const Matrix4& localToWorld, const IRenderEntity& entity) const
 {
+#if 0
     // Do some rough culling (per model, not per surface)
     if (volume.TestAABB(localAABB(), localToWorld) == VOLUME_OUTSIDE)
     {
@@ -122,6 +143,7 @@ void MD5ModelNode::render(IRenderableCollector& collector, const VolumeTest& vol
     // Uncomment to render the skeleton
     //collector.SetState(entity.getWireShader(), RenderableCollector::eFullMaterials);
     //collector.addRenderable(_model->getRenderableSkeleton(), localToWorld, entity);
+#endif
 }
 
 // Returns the name of the currently active skin

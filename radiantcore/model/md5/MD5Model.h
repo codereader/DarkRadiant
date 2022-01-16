@@ -29,10 +29,7 @@ private:
 	{
 		// The MD5 mesh
 		MD5SurfacePtr surface;
-#if 0
-		// The name of the material with skin applied
-		std::string activeMaterial;
-#endif
+
 		// Mapped shader
 		ShaderPtr shader;
 
@@ -81,12 +78,8 @@ public:
 	// Surfaces are copied and assigned their default material
 	MD5Model(const MD5Model& other);
 
-	typedef SurfaceList::const_iterator const_iterator;
-
-	// Public iterator-related methods
-	const_iterator begin() const;
-	const_iterator end() const;
-	std::size_t size() const;
+	// Const-iterate over all surfaces
+    void foreachSurface(const std::function<void(const MD5Surface&)>& functor) const;
 
 	/** greebo: Reads the model data from the given tokeniser.
 	 */
@@ -109,34 +102,34 @@ public:
 	void setFilename(const std::string& name);
 
 	// IModel implementation
-	virtual std::string getFilename() const;
+	virtual std::string getFilename() const override;
 
-	virtual std::string getModelPath() const;
+	virtual std::string getModelPath() const override;
 	void setModelPath(const std::string& modelPath);
 
-	virtual void applySkin(const ModelSkin& skin);
+	virtual void applySkin(const ModelSkin& skin) override;
 
 	/** Return the number of material surfaces on this model. Each material
 	 * surface consists of a set of polygons sharing the same material.
 	 */
-	virtual int getSurfaceCount() const;
+	virtual int getSurfaceCount() const override;
 
 	/** Return the number of vertices in this model, equal to the sum of the
 	 * vertex count from each surface.
 	 */
-	virtual int getVertexCount() const;
+	virtual int getVertexCount() const override;
 
 	/** Return the number of triangles in this model, equal to the sum of the
 	 * triangle count from each surface.
 	 */
-	virtual int getPolyCount() const;
+	virtual int getPolyCount() const override;
 
 	/** Return a vector of strings listing the active materials used in this
 	 * model, after any skin remaps. The list is owned by the model instance.
 	 */
-	virtual const std::vector<std::string>& getActiveMaterials() const;
+	virtual const std::vector<std::string>& getActiveMaterials() const override;
 
-	const model::IModelSurface& getSurface(unsigned surfaceNum) const;
+	const model::IIndexedModelSurface& getSurface(unsigned surfaceNum) const override;
 
 	// OpenGLRenderable implementation
 	virtual void render(const RenderInfo& info) const;
@@ -144,9 +137,9 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	// IMD5Model implementation
-	virtual void setAnim(const IMD5AnimPtr& anim);
-	virtual const IMD5AnimPtr& getAnim() const;
-	virtual void updateAnim(std::size_t time);
+	virtual void setAnim(const IMD5AnimPtr& anim) override;
+	virtual const IMD5AnimPtr& getAnim() const override;
+	virtual void updateAnim(std::size_t time) override;
 
 	/**
 	 * Helper: Parse an MD5 vector, which consists of three separated numbers

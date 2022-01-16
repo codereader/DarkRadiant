@@ -5,6 +5,7 @@
 #include "itraceable.h"
 #include "scene/Node.h"
 #include "render/VectorLightList.h"
+#include "../RenderableModelSurface.h"
 
 namespace md5 {
 
@@ -20,9 +21,15 @@ class MD5ModelNode :
 	// The name of this model's skin
 	std::string _skin;
 
+    // The renderable surfaces attached to the shaders
+    std::vector<model::RenderableModelSurface::Ptr> _renderableSurfaces;
+
 public:
 	MD5ModelNode(const MD5ModelPtr& model);
 	virtual ~MD5ModelNode();
+
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ModelNode implementation
 	const model::IModel& getIModel() const override;
