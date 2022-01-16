@@ -10,7 +10,7 @@
 #include "render/VectorLightList.h"
 #include "StaticModel.h"
 #include "scene/Node.h"
-#include "RenderableStaticSurface.h"
+#include "RenderableModelSurface.h"
 
 namespace model
 {
@@ -42,7 +42,7 @@ private:
 	std::string _skin;
 
     // The renderable surfaces attached to the shaders
-    std::vector<RenderableStaticSurface::Ptr> _renderableSurfaces;
+    std::vector<RenderableModelSurface::Ptr> _renderableSurfaces;
 
     // We need to keep a reference for skin swapping
     RenderSystemWeakPtr _renderSystem;

@@ -30,7 +30,7 @@ void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
     // Renderables will acquire their shaders in onPreRender
     _model->foreachSurface([&](const StaticModelSurface& surface)
     {
-        _renderableSurfaces.emplace_back(std::make_shared<RenderableStaticSurface>(surface, localToWorld()));
+        _renderableSurfaces.emplace_back(std::make_shared<RenderableModelSurface>(surface, localToWorld()));
     });
 
     Node::onInsertIntoScene(root);

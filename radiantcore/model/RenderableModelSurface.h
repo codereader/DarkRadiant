@@ -6,9 +6,9 @@
 namespace model
 {
 
-// Wraps a StaticModelSurface to implement the IRenderableSurface interface
-// required to draw an oriented mesh in the scene.
-class RenderableStaticSurface final :
+// Wraps an IIndexedModelSurface to implement the IRenderableSurface interface
+// required to draw a composite mesh in the scene.
+class RenderableModelSurface final :
     public render::RenderableSurface
 {
 private:
@@ -16,17 +16,17 @@ private:
     const Matrix4& _localToWorld;
 
 public:
-    using Ptr = std::shared_ptr<RenderableStaticSurface>;
+    using Ptr = std::shared_ptr<RenderableModelSurface>;
 
     // Construct this renderable around the existing surface.
     // The reference to the orientation matrix is stored and needs to remain valid
-    RenderableStaticSurface(const IIndexedModelSurface& surface, const Matrix4& localToWorld) :
+    RenderableModelSurface(const IIndexedModelSurface& surface, const Matrix4& localToWorld) :
         _surface(surface),
         _localToWorld(localToWorld)
     {}
 
-    RenderableStaticSurface(const RenderableStaticSurface& other) = delete;
-    RenderableStaticSurface& operator=(const RenderableStaticSurface& other) = delete;
+    RenderableModelSurface(const RenderableModelSurface& other) = delete;
+    RenderableModelSurface& operator=(const RenderableModelSurface& other) = delete;
 
     const IIndexedModelSurface& getSurface() const
     {
