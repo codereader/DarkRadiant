@@ -55,7 +55,6 @@
     <ClCompile Include="..\..\radiantcore\entity\generic\GenericEntityNode.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\KeyValue.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\KeyValueObserver.cpp" />
-    <ClCompile Include="..\..\radiantcore\entity\light\Light.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\light\LightNode.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\light\Renderables.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\ModelKey.cpp" />
@@ -771,7 +770,6 @@
     <ClInclude Include="..\..\radiantcore\entity\KeyValue.h" />
     <ClInclude Include="..\..\radiantcore\entity\KeyValueObserver.h" />
     <ClInclude Include="..\..\radiantcore\entity\light\Doom3LightRadius.h" />
-    <ClInclude Include="..\..\radiantcore\entity\light\Light.h" />
     <ClInclude Include="..\..\radiantcore\entity\light\LightNode.h" />
     <ClInclude Include="..\..\radiantcore\entity\light\LightShader.h" />
     <ClInclude Include="..\..\radiantcore\entity\light\Renderables.h" />

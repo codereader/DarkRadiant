@@ -433,9 +433,6 @@
     <ClCompile Include="..\..\radiantcore\entity\ShaderParms.cpp">
       <Filter>src\entity</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\entity\light\Light.cpp">
-      <Filter>src\entity\light</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\entity\light\LightNode.cpp">
       <Filter>src\entity\light</Filter>
     </ClCompile>
@@ -1450,9 +1447,6 @@
       <Filter>src\entity</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\light\Doom3LightRadius.h">
-      <Filter>src\entity\light</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\light\Light.h">
       <Filter>src\entity\light</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\light\LightNode.h">
