@@ -107,28 +107,11 @@ void StaticModelNode::onPreRender(const VolumeTest& volume)
 void StaticModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
-
-    const Matrix4& l2w = localToWorld();
-
-    // The space partitioning system will consider this node also if the cell is only partially visible
-    // Do a quick bounds check against the world AABB to cull ourselves if we're not in the view
-    if (volume.TestAABB(worldAABB()) != VOLUME_OUTSIDE)
-    {
-#if 0
-        // Submit the model's geometry
-        _model->renderSolid(collector, l2w, *_renderEntity, *this);
-#endif
-    }
 }
 
 void StaticModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
-
-#if 0
-    // Submit the model's geometry
-    _model->renderWireframe(collector, localToWorld(), *_renderEntity);
-#endif
 }
 
 void StaticModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
@@ -139,16 +122,6 @@ void StaticModelNode::renderHighlights(IRenderableCollector& collector, const Vo
     {
         collector.addHighlightRenderable(*surface, identity);
     }
-#if 0
-    if (collector.supportsFullMaterials())
-    {
-        renderSolid(collector, volume);
-    }
-    else
-    {
-        renderWireframe(collector, volume);
-    }
-#endif
 }
 
 void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)

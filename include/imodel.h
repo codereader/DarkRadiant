@@ -28,9 +28,7 @@ typedef std::vector<std::string> StringList;
  * inherits from OpenGLRenderable to allow model instances to be used for
  * rendering.
  */
-class IModel
-: public OpenGLRenderable,
-  public Bounded
+class IModel : public Bounded
 {
 public:
 	/**

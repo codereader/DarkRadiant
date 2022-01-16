@@ -123,12 +123,6 @@ public:
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	/**
-	 * Back-end render function from OpenGLRenderable.
-	 */
-    void render(const RenderInfo& info) const override 
-    {}
-
-	/**
 	 * Return the number of surfaces in this model.
 	 */
 	int getSurfaceCount() const override

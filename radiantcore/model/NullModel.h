@@ -39,10 +39,6 @@ public:
 	virtual const IModelSurface& getSurface(unsigned surfaceNum) const;
 
 	virtual const std::vector<std::string>& getActiveMaterials() const;
-
-	// OpenGLRenderable implementation
-    void render(const RenderInfo& info) const
-    {}
 };
 typedef std::shared_ptr<NullModel> NullModelPtr;
 
