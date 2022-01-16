@@ -63,7 +63,7 @@ private:
 	typedef std::vector<Surface> SurfaceList;
 
 	// Vector of renderable surfaces for this model
-	SurfaceList _surfVec;
+	SurfaceList _surfaces;
 
 	// The current working scale
 	Vector3 _scaleTransformed;
@@ -120,28 +120,20 @@ public:
 	void connectUndoSystem(IUndoSystem& undoSystem);
 	void disconnectUndoSystem(IUndoSystem& undoSystem);
 
-    // Delegated render methods called by StaticModelNode (not part of any
-    // interface)
-	void renderSolid(IRenderableCollector& rend, const Matrix4& localToWorld,
-                     const IRenderEntity& entity, const LitObject& litObj) const;
-	void renderWireframe(IRenderableCollector& rend, const Matrix4& localToWorld,
-		const IRenderEntity& entity) const;
-
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
 
 	/**
-	 * Back-end render function from OpenGLRenderable. This is called from the
-	 * model selector but not the main renderer, which uses the front-end render
-	 * method.
+	 * Back-end render function from OpenGLRenderable.
 	 */
-	void render(const RenderInfo& info) const override;
+    void render(const RenderInfo& info) const override 
+    {}
 
 	/**
 	 * Return the number of surfaces in this model.
 	 */
 	int getSurfaceCount() const override
     {
-		return static_cast<int>(_surfVec.size());
+		return static_cast<int>(_surfaces.size());
 	}
 
 	/**
