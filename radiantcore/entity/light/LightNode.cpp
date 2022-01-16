@@ -41,8 +41,9 @@ LightNode::LightNode(const IEntityClassPtr& eclass)
   _lightEndInstance(_projVectors.transformed.end,
                     sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
   _dragPlanes(sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
-  _renderableRadius(_lightBox.origin),
-  _renderableFrustum(_lightBox.origin, _projVectors.transformed.start, _frustum),
+    _renderableOctagon(*this),
+    _renderableLightVolume(*this),
+    _showLightVolumeWhenUnselected(EntitySettings::InstancePtr()->getShowAllLightRadii()),
   _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
     m_doom3Radius.m_changed = std::bind(&LightNode::onLightRadiusChanged, this);
@@ -79,8 +80,9 @@ LightNode::LightNode(const LightNode& other)
   _lightEndInstance(_projVectors.transformed.end,
                     std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
   _dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _renderableRadius(_lightBox.origin),
-  _renderableFrustum(_lightBox.origin, _projVectors.transformed.start, _frustum),
+    _renderableOctagon(*this),
+    _renderableLightVolume(*this),
+    _showLightVolumeWhenUnselected(other._showLightVolumeWhenUnselected),
   _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
     m_doom3Radius.m_changed = std::bind(&LightNode::onLightRadiusChanged, this);
@@ -143,6 +145,32 @@ void LightNode::construct()
     m_shader.valueChanged(_spawnArgs.getKeyValue("texture"));
 }
 
+bool LightNode::isProjected() const
+{
+    return _light.isProjected();
+}
+
+const Frustum& LightNode::getLightFrustum() const
+{
+    if (!_light.isProjected()) throw std::logic_error("getLightFrustum can be called on projected lights only");
+
+    return _light._frustum;
+}
+
+const Vector3& LightNode::getLightStart() const
+{
+    if (!_light.isProjected()) throw std::logic_error("getLightStart can be called on projected lights only");
+
+    return _light._projVectors.transformed.start;
+}
+
+const Vector3& LightNode::getLightRadius() const
+{
+    if (_light.isProjected()) throw std::logic_error("getLightRadius can be called on point lights only");
+
+    return _light.m_doom3Radius.m_radiusTransformed;
+}
+
 AABB LightNode::getSelectAABB() const
 {
     // Use the light origin as select AABB centerpoint
@@ -168,6 +196,9 @@ void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 	// De-select all child components as well
 	setSelectedComponents(false, selection::ComponentSelectionMode::Vertex);
 	setSelectedComponents(false, selection::ComponentSelectionMode::Face);
+
+    _renderableOctagon.clear();
+    _renderableLightVolume.clear();
 }
 
 void LightNode::testSelect(Selector& selector, SelectionTest& test)
@@ -338,7 +369,30 @@ void LightNode::selectedChangedComponent(const ISelectable& selectable) {
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
 }
 
-void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void LightNode::onPreRender(const VolumeTest& volume)
+{
+    // Pick the colour shader according to our settings
+    const auto& colourShader = _overrideColKey.get() ? getColourShader() : _colourKey.getColourShader();
+    _renderableOctagon.update(colourShader);
+
+    // Depending on the selected status or the entity settings, we need to update the wireframe volume
+    if (_showLightVolumeWhenUnselected || isSelected())
+    {
+        if (isProjected())
+        {
+            _light.updateProjection();
+        }
+
+        _renderableLightVolume.update(colourShader);
+    }
+    else
+    {
+        // Light volume is not visible, hide it
+        _renderableLightVolume.clear();
+    }
+}
+
+void LightNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     // Submit self to the renderer as an actual light source
     collector.addLight(*this);
@@ -347,62 +401,34 @@ void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& vo
 
     // Render the visible representation of the light entity (origin, bounds etc)
     const bool lightIsSelected = isSelected();
-    renderLightVolume(collector, localToWorld(), lightIsSelected);
     renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
-void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void LightNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     EntityNode::renderWireframe(collector, volume);
 
     const bool lightIsSelected = isSelected();
-    renderLightVolume(collector, localToWorld(), lightIsSelected);
     renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
-void LightNode::renderLightVolume(RenderableCollector& collector,
-                                  const Matrix4& localToWorld,
-                                  bool selected) const
+void LightNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    // Obtain the appropriate Shader for the light volume colour
-    Shader* colourShader = _overrideColKey.get() ? EntityNode::_wireShader.get()
-                                                 : _colourKey.getWireShader();
-    if (!colourShader)
-        return;
+    collector.addHighlightRenderable(_renderableOctagon, Matrix4::getIdentity());
+    collector.addHighlightRenderable(_renderableLightVolume, Matrix4::getIdentity());
 
-    // Main render, submit the diamond that represents the light entity
-    collector.addRenderable(*colourShader, *this, localToWorld);
-
-    // Render bounding box if selected or the showAllLighRadii flag is set
-    if (selected || EntitySettings::InstancePtr()->getShowAllLightRadii())
-    {
         if (isProjected())
-        {
-            // greebo: This is not much of an performance impact as the
-            // projection gets only recalculated when it has actually changed.
             updateProjection();
-            collector.addRenderable(*colourShader, _renderableFrustum, localToWorld);
-        }
-        else
-        {
-            updateRenderableRadius();
-            collector.addRenderable(*colourShader, _renderableRadius, localToWorld);
-        }
-    }
-}
-
-/* greebo: Calculates the corners of the light radii box and rotates them according the rotation matrix.
- */
-void LightNode::updateRenderableRadius() const
-{
-    // greebo: Don't rotate the light radius box, that's done via local2world
-    AABB lightbox(_lightBox.origin, m_doom3Radius.m_radiusTransformed);
-    lightbox.getCorners(_renderableRadius.m_points);
+    EntityNode::renderHighlights(collector, volume);
 }
 
 void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	EntityNode::setRenderSystem(renderSystem);
+
+    // Clear the geometry from any previous shader
+    _renderableOctagon.clear();
+    _renderableLightVolume.clear();
 
 	// The renderable vertices are maintaining shader objects, acquire/free them now
     _rCentre.setRenderSystem(renderSystem);
@@ -423,7 +449,7 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 }
 
 // Renders the components of this light instance
-void LightNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+void LightNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Render the components (light center) as selected/deselected, if we are in the according mode
 	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
@@ -476,7 +502,7 @@ void LightNode::renderComponents(RenderableCollector& collector, const VolumeTes
 	}
 }
 
-void LightNode::renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const
+void LightNode::renderInactiveComponents(IRenderableCollector& collector, const VolumeTest& volume, const bool selected) const
 {
 	// greebo: We are not in component selection mode (and the light is still selected),
 	// check if we should draw the center of the light anyway
@@ -509,43 +535,9 @@ void LightNode::renderInactiveComponents(RenderableCollector& collector, const V
 	}
 }
 
-// Backend render function (GL calls)
-void LightNode::render(const RenderInfo& info) const
+Vector4 LightNode::getEntityColour() const
 {
-    // Revert the light "diamond" to default extents for drawing
-    AABB tempAABB(_lightBox.origin, Vector3(8, 8, 8));
-
-    // Calculate the light vertices of this bounding box and store them into <points>
-    Vector3 max(tempAABB.origin + tempAABB.extents);
-    Vector3 min(tempAABB.origin - tempAABB.extents);
-    Vector3 mid(tempAABB.origin);
-
-    // top, bottom, tleft, tright, bright, bleft
-    Vector3 points[6] =
-    {
-        Vector3(mid[0], mid[1], max[2]),
-        Vector3(mid[0], mid[1], min[2]),
-        Vector3(min[0], max[1], mid[2]),
-        Vector3(max[0], max[1], mid[2]),
-        Vector3(max[0], min[1], mid[2]),
-        Vector3(min[0], min[1], mid[2])
-    };
-
-    // greebo: Draw the small cube representing the light origin.
-    typedef unsigned int index_t;
-    const index_t indices[24] = {
-        0, 2, 3,
-        0, 3, 4,
-        0, 4, 5,
-        0, 5, 2,
-        1, 2, 5,
-        1, 5, 4,
-        1, 4, 3,
-        1, 3, 2
-    };
-
-    glVertexPointer(3, GL_DOUBLE, 0, points);
-    glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(index_t), RenderIndexTypeID, indices);
+    return _overrideColKey.get() ? EntityNode::getEntityColour() : Vector4(_colourKey.getColour(), 1.0);
 }
 
 void LightNode::evaluateTransform()
@@ -644,6 +636,9 @@ void LightNode::_onTransformationChanged()
 	revertLightTransform();
 	evaluateTransform();
 	updateOrigin();
+
+    _renderableOctagon.queueUpdate();
+    _renderableLightVolume.queueUpdate();
 }
 
 void LightNode::_applyTransformation()
@@ -676,6 +671,38 @@ void LightNode::updateOrigin() {
 const Vector3& LightNode::getUntransformedOrigin()
 {
     return m_originKey.get();
+}
+
+void LightNode::onVisibilityChanged(bool isVisibleNow)
+{
+    EntityNode::onVisibilityChanged(isVisibleNow);
+
+    if (isVisibleNow)
+    {
+        _renderableOctagon.queueUpdate();
+        _renderableLightVolume.queueUpdate();
+    }
+    else
+    {
+        _renderableLightVolume.clear();
+        _renderableOctagon.clear();
+    }
+}
+
+void LightNode::onSelectionStatusChange(bool changeGroupStatus)
+{
+    EntityNode::onSelectionStatusChange(changeGroupStatus);
+
+    // Volume renderable is not always prepared for rendering, queue an update
+    _renderableLightVolume.queueUpdate();
+}
+
+void LightNode::onEntitySettingsChanged()
+{
+    EntityNode::onEntitySettingsChanged();
+
+    _showLightVolumeWhenUnselected = EntitySettings::InstancePtr()->getShowAllLightRadii();
+    _renderableLightVolume.queueUpdate();
 }
 
 void LightNode::originChanged()

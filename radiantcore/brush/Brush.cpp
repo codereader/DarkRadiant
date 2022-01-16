@@ -263,7 +263,8 @@ const AABB& Brush::localAABB() const {
     return m_aabb_local;
 }
 
-void Brush::renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector,
+#if 0
+void Brush::renderComponents(selection::ComponentSelectionMode mode, IRenderableCollector& collector,
 	const VolumeTest& volume, const Matrix4& localToWorld) const
 {
     switch (mode)
@@ -281,6 +282,7 @@ void Brush::renderComponents(selection::ComponentSelectionMode mode, RenderableC
             break;
     }
 }
+#endif
 
 void Brush::translate(const Vector3& translation)
 {
@@ -384,15 +386,6 @@ FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2,
 
 void Brush::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-    if (renderSystem)
-    {
-        m_state_point = renderSystem->capture("$POINT");
-    }
-    else
-    {
-        m_state_point.reset();
-    }
-
     for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i)
     {
         (*i)->setRenderSystem(renderSystem);
@@ -581,6 +574,7 @@ void Brush::windingForClipPlane(Winding& winding, const Plane3& plane) const {
     buffer[swap].writeToWinding(winding);
 }
 
+#if 0
 void Brush::update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const
 {
     wire.m_faceVertex.resize(_edgeIndices.size());
@@ -595,6 +589,7 @@ void Brush::update_wireframe(RenderableWireframe& wire, const bool* faces_visibl
         }
     }
 }
+#endif
 
 void Brush::update_faces_wireframe(RenderablePointVector& wire,
                                    const std::size_t* visibleFaceIndices,
@@ -1387,6 +1382,23 @@ void Brush::buildBRep() {
       }
     }
   }
+}
+
+const std::vector<VertexCb>& Brush::getVertices(selection::ComponentSelectionMode mode) const
+{
+    switch (mode)
+    {
+        case selection::ComponentSelectionMode::Vertex: 
+            return _uniqueVertexPoints.getPointVector();
+
+        case selection::ComponentSelectionMode::Edge: 
+            return _uniqueEdgePoints.getPointVector();
+
+        case selection::ComponentSelectionMode::Face: 
+            return _faceCentroidPoints.getPointVector();
+    }
+
+    throw std::runtime_error("Brush::getVertices: Component mode not supported");
 }
 
 // ----------------------------------------------------------------------------

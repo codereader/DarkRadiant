@@ -565,8 +565,11 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 void OpenGLShaderPass::render(OpenGLState& current,
                               unsigned int flagsMask,
                               const Vector3& viewer,
+                              const VolumeTest& view,
                               std::size_t time)
 {
+    if (!_owner.isVisible()) return;
+
     // Reset the texture matrix
     glMatrixMode(GL_TEXTURE);
     glLoadMatrixd(Matrix4::getIdentity());
@@ -575,6 +578,8 @@ void OpenGLShaderPass::render(OpenGLState& current,
 
     // Apply our state to the current state object
     applyState(current, flagsMask, viewer, time, NULL);
+
+    _owner.drawSurfaces(view);
 
     if (!_renderablesWithoutEntity.empty())
     {
@@ -595,9 +600,23 @@ void OpenGLShaderPass::render(OpenGLState& current,
 
         renderAllContained(i->second, current, viewer, time);
     }
+}
 
+void OpenGLShaderPass::clearRenderables()
+{
     _renderablesWithoutEntity.clear();
     _renderables.clear();
+}
+
+bool OpenGLShaderPass::empty()
+{
+    return _renderables.empty() && _renderablesWithoutEntity.empty() && 
+        !_owner.hasSurfaces() && !_owner.hasWindings();
+}
+
+bool OpenGLShaderPass::isApplicableTo(RenderViewType renderViewType) const
+{
+    return _owner.isApplicableTo(renderViewType);
 }
 
 bool OpenGLShaderPass::stateIsActive()

@@ -16,10 +16,9 @@ BrushNode::BrushNode() :
 	scene::SelectableNode(),
 	m_brush(*this),
 	_selectedPoints(GL_POINTS),
-	_faceCentroidPointsCulled(GL_POINTS),
-	m_viewChanged(false),
 	_renderableComponentsNeedUpdate(true),
-    _untransformedOriginChanged(true)
+    _untransformedOriginChanged(true),
+    _renderableVertices(m_brush)
 {
 	m_brush.attach(*this); // BrushObserver
 
@@ -42,10 +41,9 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Transformable(other),
 	m_brush(*this, other.m_brush),
 	_selectedPoints(GL_POINTS),
-	_faceCentroidPointsCulled(GL_POINTS),
-	m_viewChanged(false),
 	_renderableComponentsNeedUpdate(true),
-    _untransformedOriginChanged(true)
+    _untransformedOriginChanged(true),
+    _renderableVertices(m_brush)
 {
 	m_brush.attach(*this); // BrushObserver
 }
@@ -274,6 +272,7 @@ void BrushNode::onInsertIntoScene(scene::IMapRootNode& root)
 
     // Update the origin information needed for transformations
     _untransformedOriginChanged = true;
+    _renderableVertices.queueUpdate();
 
 	SelectableNode::onInsertIntoScene(root);
 }
@@ -290,6 +289,7 @@ void BrushNode::onRemoveFromScene(scene::IMapRootNode& root)
 
 	GlobalCounters().getCounter(counterBrushes).decrement();
     m_brush.disconnectUndoSystem(root.getUndoSystem());
+    _renderableVertices.clear();
 
 	SelectableNode::onRemoveFromScene(root);
 }
@@ -342,39 +342,112 @@ void BrushNode::DEBUG_verify() {
 	ASSERT_MESSAGE(m_faceInstances.size() == m_brush.DEBUG_size(), "FATAL: mismatch");
 }
 
-void BrushNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+void BrushNode::onPreRender(const VolumeTest& volume)
 {
-	m_brush.evaluateBRep();
+    m_brush.evaluateBRep();
 
+    assert(_renderEntity);
+
+    // Every face is asked to run the rendering preparations
+    // to link/unlink their geometry to/from the active shader
+    for (auto& faceInstance : m_faceInstances)
+    {
+        auto& face = faceInstance.getFace();
+
+        if (volume.fill())
+        {
+            face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader(), *_renderEntity);
+        }
+        else
+        {
+            face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader(), *_renderEntity);
+        }
+    }
+
+    if (isSelected() && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent)
+    {
+        _renderableVertices.setComponentMode(GlobalSelectionSystem().ComponentMode());
+        _renderableVertices.update(_pointShader);
+    }
+    else
+    {
+        _renderableVertices.clear();
+        _renderableVertices.queueUpdate();
+    }
+}
+
+void BrushNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
+{
+#if 0
 	const Matrix4& l2w = localToWorld();
 
 	if (volume.fill() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Face)
 	{
-		evaluateViewDependent(volume, l2w);
-		collector.addRenderable(*m_brush.m_state_point, _faceCentroidPointsCulled, l2w);
+        updateFaceCentroidPoints();
+		collector.addRenderable(*_pointShader, _visibleFaceCentroidPoints, l2w);
 	}
+#if 0
 	else
 	{
 		m_brush.renderComponents(GlobalSelectionSystem().ComponentMode(), collector, volume, l2w);
 	}
+#endif
+#endif
 }
 
-void BrushNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void BrushNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	m_brush.evaluateBRep();
-
-	renderClipPlane(collector, volume);
-
+#if 0
 	renderSolid(collector, volume, localToWorld());
+#endif
 }
 
-void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	m_brush.evaluateBRep();
-
-	renderClipPlane(collector, volume);
-
+#if 0
 	renderWireframe(collector, volume, localToWorld());
+#endif
+}
+
+void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    // Check for the override status of this brush
+    bool forceVisible = isForcedVisible();
+    bool wholeBrushSelected = isSelected() || Node_isSelected(getParent());
+
+    collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, wholeBrushSelected);
+
+    // Submit the renderable geometry for each face
+    for (auto& faceInstance : m_faceInstances)
+    {
+        // Skip invisible faces before traversing further
+        if (!forceVisible && !faceInstance.faceIsVisible()) continue;
+
+        Face& face = faceInstance.getFace();
+        if (face.intersectVolume(volume))
+        {
+            bool highlight = wholeBrushSelected || faceInstance.selectedComponents();
+
+            if (!highlight) continue;
+
+            collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
+
+            // Submit the RenderableWinding as reference, it will render the winding in polygon mode
+            collector.addHighlightRenderable(face.getWindingSurfaceSolid(), Matrix4::getIdentity());
+
+            collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
+        }
+    }
+
+    if (wholeBrushSelected && GlobalClipper().clipMode())
+    {
+        collector.addHighlightRenderable(m_clipPlane, Matrix4::getIdentity());
+    }
+
+    collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
+
+    // Render any selected points (vertices, edges, faces)
+    renderSelectedPoints(collector, volume, Matrix4::getIdentity());
 }
 
 void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -383,41 +456,61 @@ void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 	if (renderSystem)
 	{
+        _pointShader = renderSystem->capture("$POINT");
 		m_state_selpoint = renderSystem->capture("$SELPOINT");
+
+        _renderableVertices.queueUpdate();
 	}
 	else
 	{
+        _pointShader.reset();
 		m_state_selpoint.reset();
+
+        _renderableVertices.clear();
 	}
 
 	m_brush.setRenderSystem(renderSystem);
 	m_clipPlane.setRenderSystem(renderSystem);
 }
 
-void BrushNode::renderClipPlane(RenderableCollector& collector, const VolumeTest& volume) const
-{
-	if (GlobalClipper().clipMode() && isSelected())
-	{
-		m_clipPlane.render(collector, volume, localToWorld());
-	}
-}
-
-void BrushNode::viewChanged() const {
-	m_viewChanged = true;
-}
-
 std::size_t BrushNode::getHighlightFlags()
 {
-	if (!isSelected()) return Highlight::NoHighlight;
+	if (!isSelected() && !isSelectedComponents()) return Highlight::NoHighlight;
 
 	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
 }
 
-void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& localToWorld) const
+#if 0
+void BrushNode::updateFaceCentroidPoints() const
 {
-	if (!m_viewChanged) return;
+    if (!_faceCentroidPointsNeedUpdate) return;
 
-	m_viewChanged = false;
+    static const auto& colourSetting = GlobalBrushCreator().getSettings().getVertexColour();
+    const Colour4b vertexColour(
+        static_cast<int>(colourSetting[0] * 255), 
+        static_cast<int>(colourSetting[1] * 255),
+        static_cast<int>(colourSetting[2] * 255), 
+        255);
+
+    _faceCentroidPointsNeedUpdate = false;
+
+    _visibleFaceCentroidPoints.clear();
+
+    for (const auto& faceInstance:  m_faceInstances)
+    {
+        if (faceInstance.faceIsVisible())
+        {
+            _visibleFaceCentroidPoints.emplace_back(faceInstance.centroid(), vertexColour);
+        }
+    }
+}
+#endif
+#if 0
+void BrushNode::updateWireframeVisibility() const
+{
+    if (!_faceCentroidPointsNeedUpdate) return;
+
+    _faceCentroidPointsNeedUpdate = false;
 
 	// Array of booleans to indicate which faces are visible
 	static bool faces_visible[brush::c_brush_maxFaces];
@@ -428,6 +521,8 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 	std::size_t numVisibleFaces(0);
 	bool* j = faces_visible;
 	bool forceVisible = isForcedVisible();
+
+    _visibleFaceCentroidPoints.clear();
 
 	// Iterator to an index of a visible face
 	std::size_t* visibleFaceIter = visibleFaceIndices;
@@ -442,6 +537,8 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
         // Don't cull backfacing planes to make those faces visible in orthoview (#5465)
 		if (forceVisible || i->faceIsVisible())
 		{
+            _visibleFaceCentroidPoints.push_back(i->centroid());
+#if 0
 			*j = true;
 
 			// Store the index of this visible face in the array
@@ -451,23 +548,30 @@ void BrushNode::evaluateViewDependent(const VolumeTest& volume, const Matrix4& l
 		else
 		{
 			*j = false;
+#endif
 		}
 	}
-
+#if 0
 	m_brush.update_wireframe(m_render_wireframe, faces_visible);
-	m_brush.update_faces_wireframe(_faceCentroidPointsCulled, visibleFaceIndices, numVisibleFaces);
+#endif
+#if 0
+	m_brush.update_faces_wireframe(_visibleFaceCentroidPoints, visibleFaceIndices, numVisibleFaces);
+#endif
 }
+#endif
 
-void BrushNode::renderSolid(RenderableCollector& collector,
+#if 0
+void BrushNode::renderSolid(IRenderableCollector& collector,
                             const VolumeTest& volume,
                             const Matrix4& localToWorld) const
 {
 	assert(_renderEntity); // brushes rendered without parent entity - no way!
 
+#if 0 // The faces already sent their geomtry in onPreRender()
 	// Check for the override status of this brush
 	bool forceVisible = isForcedVisible();
 
-    // Submit the lights and renderable geometry for each face
+    // Submit the renderable geometry for each face
     for (const FaceInstance& faceInst : m_faceInstances)
     {
 		// Skip invisible faces before traversing further
@@ -478,62 +582,68 @@ void BrushNode::renderSolid(RenderableCollector& collector,
         {
             bool highlight = faceInst.selectedComponents();
             if (highlight)
-                collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
+                collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
 
+#if 1
             // greebo: BrushNodes have always an identity l2w, don't do any transforms
             collector.addRenderable(
                 *face.getFaceShader().getGLShader(), face.getWinding(),
                 Matrix4::getIdentity(), this, _renderEntity
             );
-
+#endif
             if (highlight)
-                collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
+                collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
         }
     }
-
+#endif
+#if 0
 	renderSelectedPoints(collector, volume, localToWorld);
+#endif
 }
 
-void BrushNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
+void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	//renderCommon(collector, volume);
 
-	evaluateViewDependent(volume, localToWorld);
-
+    //updateWireframeVisibility();
+#if 0
 	if (m_render_wireframe.m_size != 0)
 	{
 		collector.addRenderable(*_renderEntity->getWireShader(), m_render_wireframe, localToWorld);
 	}
-
+#endif
+#if 0
 	renderSelectedPoints(collector, volume, localToWorld);
+#endif
 }
+#endif
 
-void BrushNode::update_selected() const
+void BrushNode::updateSelectedPointsArray() const
 {
-	if (!_renderableComponentsNeedUpdate) return;
+    if (!_renderableComponentsNeedUpdate) return;
 
-	_renderableComponentsNeedUpdate = false;
+    _renderableComponentsNeedUpdate = false;
 
-	_selectedPoints.clear();
+    _selectedPoints.clear();
 
-	for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
-		if (i->getFace().contributes()) {
-			i->iterate_selected(_selectedPoints);
-		}
-	}
+    for (const auto& faceInstance : m_faceInstances)
+    {
+        if (faceInstance.getFace().contributes())
+        {
+            faceInstance.iterate_selected(_selectedPoints);
+        }
+    }
 }
 
-void BrushNode::renderSelectedPoints(RenderableCollector& collector,
+void BrushNode::renderSelectedPoints(IRenderableCollector& collector,
                                      const VolumeTest& volume,
                                      const Matrix4& localToWorld) const
 {
-	m_brush.evaluateBRep();
-
-	update_selected();
+    updateSelectedPointsArray();
 
 	if (!_selectedPoints.empty())
     {
-		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+		collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
 		collector.addRenderable(*m_state_selpoint, _selectedPoints, localToWorld);
 	}
 }
@@ -588,8 +698,12 @@ void BrushNode::transformComponents(const Matrix4& matrix) {
 	}
 }
 
-void BrushNode::setClipPlane(const Plane3& plane) {
-	m_clipPlane.setPlane(m_brush, plane);
+void BrushNode::setClipPlane(const Plane3& plane)
+{
+    if (_renderEntity)
+    {
+        m_clipPlane.setPlane(m_brush, plane, *_renderEntity);
+    }
 }
 
 void BrushNode::forEachFaceInstance(const std::function<void(FaceInstance&)>& functor)
@@ -631,6 +745,7 @@ void BrushNode::_onTransformationChanged()
 {
 	m_brush.transformChanged();
 
+    _renderableVertices.queueUpdate();
 	_renderableComponentsNeedUpdate = true;
 }
 
@@ -641,4 +756,33 @@ void BrushNode::_applyTransformation()
 	m_brush.freezeTransform();
 
     _untransformedOriginChanged = true;
+}
+
+void BrushNode::onVisibilityChanged(bool isVisibleNow)
+{
+    SelectableNode::onVisibilityChanged(isVisibleNow);
+
+    // Let each face know about the change
+    forEachFaceInstance([=](FaceInstance& face)
+    {
+        face.getFace().onBrushVisibilityChanged(isVisibleNow);
+    });
+
+    m_clipPlane.clear();
+    _renderableVertices.clear();
+}
+
+void BrushNode::onSelectionStatusChange(bool changeGroupStatus)
+{
+    SelectableNode::onSelectionStatusChange(changeGroupStatus);
+
+    // In clip mode we need to check if there's an active clip plane defined in the scene
+    if (isSelected() && GlobalClipper().clipMode())
+    {
+        setClipPlane(GlobalClipper().getClipPlane());
+    }
+    else
+    {
+        m_clipPlane.clear();
+    }
 }

@@ -15,10 +15,7 @@ namespace model
 
 StaticModelSurface::StaticModelSurface(std::vector<ArbitraryMeshVertex>&& vertices, std::vector<unsigned int>&& indices) :
     _vertices(vertices),
-    _indices(indices),
-    _dlRegular(0),
-    _dlProgramVcol(0),
-    _dlProgramNoVCol(0)
+    _indices(indices)
 {
     // Expand the local AABB to include all vertices
     for (const auto& vertex : _vertices)
@@ -27,31 +24,15 @@ StaticModelSurface::StaticModelSurface(std::vector<ArbitraryMeshVertex>&& vertic
     }
 
     calculateTangents();
-    createDisplayLists();
 }
 
 StaticModelSurface::StaticModelSurface(const StaticModelSurface& other) :
-	_defaultMaterial(other._defaultMaterial),
-	_vertices(other._vertices),
-	_indices(other._indices),
-	_nIndices(other._nIndices),
-	_localAABB(other._localAABB),
-	_dlRegular(0),
-	_dlProgramVcol(0),
-	_dlProgramNoVCol(0)
-{
-	createDisplayLists();
-}
+    _defaultMaterial(other._defaultMaterial),
+    _vertices(other._vertices),
+    _indices(other._indices),
+    _localAABB(other._localAABB)
+{}
 
-// Destructor. Release the GL display lists.
-StaticModelSurface::~StaticModelSurface()
-{
-	glDeleteLists(_dlRegular, 1);
-	glDeleteLists(_dlProgramNoVCol, 1);
-	glDeleteLists(_dlProgramVcol, 1);
-}
-
-// Tangent calculation
 void StaticModelSurface::calculateTangents()
 {
 	// Calculate the tangents and bitangents using the indices into the vertex
@@ -60,113 +41,20 @@ void StaticModelSurface::calculateTangents()
 		 i != _indices.end();
 		 i += 3)
 	{
-		ArbitraryMeshVertex& a = _vertices[*i];
-		ArbitraryMeshVertex& b = _vertices[*(i + 1)];
-		ArbitraryMeshVertex& c = _vertices[*(i + 2)];
+		auto& a = _vertices[*i];
+		auto& b = _vertices[*(i + 1)];
+		auto& c = _vertices[*(i + 2)];
 
 		// Call the tangent calculation function
 		ArbitraryMeshTriangle_sumTangents(a, b, c);
 	}
 
 	// Normalise all of the tangent and bitangent vectors
-	for (VertexVector::iterator j = _vertices.begin();
-		 j != _vertices.end();
-		 ++j)
+	for (auto& vertex : _vertices)
 	{
-		j->tangent.normalise();
-		j->bitangent.normalise();
+		vertex.tangent.normalise();
+		vertex.bitangent.normalise();
 	}
-}
-
-// Back-end render function
-void StaticModelSurface::render(const RenderInfo& info) const
-{
-	// Invoke appropriate display list
-	if (info.checkFlag(RENDER_PROGRAM))
-    {
-        if (info.checkFlag(RENDER_VERTEX_COLOUR))
-        {
-            glCallList(_dlProgramVcol);
-        }
-        else
-        {
-            glCallList(_dlProgramNoVCol);
-        }
-	}
-	else
-    {
-		glCallList(_dlRegular);
-	}
-}
-
-// Construct a list for GLProgram mode, either with or without vertex colour
-GLuint StaticModelSurface::compileProgramList(bool includeColour)
-{
-    GLuint list = glGenLists(1);
-	assert(list != 0); // check if we run out of display lists
-    glNewList(list, GL_COMPILE);
-
-	glBegin(GL_TRIANGLES);
-	for (Indices::const_iterator i = _indices.begin();
-		 i != _indices.end();
-		 ++i)
-	{
-		// Get the vertex for this index
-		ArbitraryMeshVertex& v = _vertices[*i];
-
-		// Submit the vertex attributes and coordinate
-		if (GLEW_ARB_vertex_program)
-        {
-			glVertexAttrib2dvARB(ATTR_TEXCOORD, v.texcoord);
-			glVertexAttrib3dvARB(ATTR_TANGENT, v.tangent);
-			glVertexAttrib3dvARB(ATTR_BITANGENT, v.bitangent);
-			glVertexAttrib3dvARB(ATTR_NORMAL, v.normal);
-		}
-
-        // Optional vertex colour
-        if (includeColour)
-        {
-            glColor3dv(v.colour);
-        }
-
-        // Submit the vertex itself
-		glVertex3dv(v.vertex);
-	}
-	glEnd();
-
-	glEndList();
-
-    return list;
-}
-
-// Construct the two display lists
-void StaticModelSurface::createDisplayLists()
-{
-	// Generate the lists for lighting mode
-    _dlProgramNoVCol = compileProgramList(false);
-    _dlProgramVcol = compileProgramList(true);
-
-	// Generate the list for flat-shaded (unlit) mode
-	_dlRegular = glGenLists(1);
-	assert(_dlRegular != 0); // check if we run out of display lists
-	glNewList(_dlRegular, GL_COMPILE);
-
-	glBegin(GL_TRIANGLES);
-	for (Indices::const_iterator i = _indices.begin();
-		 i != _indices.end();
-		 ++i)
-	{
-		// Get the vertex for this index
-		ArbitraryMeshVertex& v = _vertices[*i];
-
-		// Submit attributes
-		glNormal3dv(v.normal);
-		glTexCoord2dv(v.texcoord);
-		glVertex3dv(v.vertex);
-	}
-	glEnd();
-
-	glEndList();
 }
 
 // Perform selection test for this surface
@@ -256,6 +144,11 @@ void StaticModelSurface::setActiveMaterial(const std::string& activeMaterial)
 	_activeMaterial = activeMaterial;
 }
 
+const AABB& StaticModelSurface::getSurfaceBounds() const
+{
+    return getAABB();
+}
+
 bool StaticModelSurface::getIntersection(const Ray& ray, Vector3& intersection, const Matrix4& localToWorld)
 {
 	Vector3 bestIntersection = ray.origin;
@@ -322,12 +215,6 @@ void StaticModelSurface::applyScale(const Vector3& scale, const StaticModelSurfa
 	}
 
 	calculateTangents();
-
-	glDeleteLists(_dlRegular, 1);
-	glDeleteLists(_dlProgramNoVCol, 1);
-	glDeleteLists(_dlProgramVcol, 1);
-
-	createDisplayLists();
 }
 
 } // namespace model

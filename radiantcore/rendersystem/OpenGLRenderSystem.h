@@ -62,10 +62,11 @@ public:
     /* RenderSystem implementation */
 
 	ShaderPtr capture(const std::string& name) override;
-	void render(RenderStateFlags globalstate,
-				const Matrix4& modelview,
-				const Matrix4& projection,
-				const Vector3& viewer) override;
+	void render(RenderViewType renderViewType, RenderStateFlags globalstate,
+                const Matrix4& modelview,
+                const Matrix4& projection,
+                const Vector3& viewer,
+                const VolumeTest& view) override;
 	void realise() override;
 	void unrealise() override;
 

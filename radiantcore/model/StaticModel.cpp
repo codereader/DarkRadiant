@@ -22,7 +22,7 @@ StaticModel::StaticModel(const std::vector<StaticModelSurfacePtr>& surfaces) :
 {
     for (const auto& surface : surfaces)
     {
-        auto& inserted = _surfVec.emplace_back(surface);
+        auto& inserted = _surfaces.emplace_back(surface);
 
         // Extend the model AABB to include each surface's AABB
         _localAABB.includeAABB(inserted.surface->getAABB());
@@ -30,7 +30,7 @@ StaticModel::StaticModel(const std::vector<StaticModelSurfacePtr>& surfaces) :
 }
 
 StaticModel::StaticModel(const StaticModel& other) :
-    _surfVec(other._surfVec.size()),
+    _surfaces(other._surfaces.size()),
     _scaleTransformed(other._scaleTransformed),
     _scale(other._scale), // use scale of other model
     _localAABB(other._localAABB),
@@ -39,12 +39,12 @@ StaticModel::StaticModel(const StaticModel& other) :
     _undoStateSaver(nullptr)
 {
     // Copy the other model's surfaces, but not its shaders, revert to default
-    for (std::size_t i = 0; i < other._surfVec.size(); ++i)
+    for (std::size_t i = 0; i < other._surfaces.size(); ++i)
     {
         // Copy-construct the other surface, inheriting any applied scale
-        _surfVec[i].surface = std::make_shared<StaticModelSurface>(*(other._surfVec[i].surface));
-        _surfVec[i].originalSurface = other._surfVec[i].originalSurface;
-        _surfVec[i].surface->setActiveMaterial(_surfVec[i].surface->getDefaultMaterial());
+        _surfaces[i].surface = std::make_shared<StaticModelSurface>(*(other._surfaces[i].surface));
+        _surfaces[i].originalSurface = other._surfaces[i].originalSurface;
+        _surfaces[i].surface->setActiveMaterial(_surfaces[i].surface->getDefaultMaterial());
     }
 }
 
@@ -65,7 +65,7 @@ void StaticModel::disconnectUndoSystem(IUndoSystem& undoSystem)
 
 void StaticModel::foreachVisibleSurface(const std::function<void(const Surface& s)>& func) const
 {
-    for (const Surface& surface : _surfVec)
+    for (const Surface& surface : _surfaces)
     {
         assert(surface.shader);
 
@@ -79,78 +79,11 @@ void StaticModel::foreachVisibleSurface(const std::function<void(const Surface& 
     }
 }
 
-void StaticModel::renderSolid(RenderableCollector& rend,
-                              const Matrix4& localToWorld,
-                              const IRenderEntity& entity,
-                              const LitObject& litObject) const
-{
-    // Submit renderables from each surface
-    foreachVisibleSurface([&](const Surface& s)
-    {
-        // Submit the ordinary shader for material-based rendering
-        rend.addRenderable(*s.shader, *s.surface, localToWorld,
-                           &litObject, &entity);
-    });
-}
-
-void StaticModel::renderWireframe(RenderableCollector& rend,
-                                  const Matrix4& localToWorld,
-                                  const IRenderEntity& entity) const
-{
-    // Submit renderables from each surface
-    foreachVisibleSurface([&](const Surface& s)
-    {
-        // Submit the wireframe shader for non-shaded renderers
-        rend.addRenderable(*entity.getWireShader(), *s.surface, localToWorld,
-                           nullptr, &entity);
-    });
-}
-
 void StaticModel::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     _renderSystem = renderSystem;
 
     captureShaders();
-}
-
-// OpenGL (back-end) render function
-void StaticModel::render(const RenderInfo& info) const
-{
-// greebo: No GL state changes in render methods!
-#if 0
-    // Render options
-    if (info.checkFlag(RENDER_TEXTURE_2D))
-    {
-        glEnable(GL_TEXTURE_2D);
-    }
-
-    if (info.checkFlag(RENDER_SMOOTH))
-    {
-        glShadeModel(GL_SMOOTH);
-    }
-#endif
-
-    // Iterate over the surfaces, calling the render function on each one
-    for (SurfaceList::const_iterator i = _surfVec.begin();
-         i != _surfVec.end();
-         ++i)
-    {
-// greebo: Shader visibility checks have already been performed in the front end pass
-#if 0
-        // Get the Material to test the shader name against the filter system
-        const MaterialPtr& surfaceShader = i->shader->getMaterial();
-
-        if (surfaceShader->isVisible())
-        {
-            // Bind the OpenGL texture and render the surface geometry
-            TexturePtr tex = surfaceShader->getEditorImage();
-            glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
-            i->surface->render(info.getFlags());
-        }
-#else
-        i->surface->render(info.getFlags());
-#endif
-    }
 }
 
 std::string StaticModel::getFilename() const 
@@ -168,7 +101,7 @@ int StaticModel::getVertexCount() const
 {
     int sum = 0;
 
-    for (const Surface& s : _surfVec)
+    for (const Surface& s : _surfaces)
     {
         sum += s.surface->getNumVertices();
     }
@@ -181,7 +114,7 @@ int StaticModel::getPolyCount() const
 {
     int sum = 0;
 
-    for (const Surface& s : _surfVec)
+    for (const Surface& s : _surfaces)
     {
         sum += s.surface->getNumTriangles();
     }
@@ -191,20 +124,18 @@ int StaticModel::getPolyCount() const
 
 const IModelSurface& StaticModel::getSurface(unsigned surfaceNum) const
 {
-    assert(surfaceNum >= 0 && surfaceNum < _surfVec.size());
-    return *(_surfVec[surfaceNum].surface);
+    assert(surfaceNum >= 0 && surfaceNum < _surfaces.size());
+    return *(_surfaces[surfaceNum].surface);
 }
 
 // Apply the given skin to this model
 void StaticModel::applySkin(const ModelSkin& skin)
 {
     // Apply the skin to each surface, then try to capture shaders
-    for (SurfaceList::iterator i = _surfVec.begin();
-         i != _surfVec.end();
-         ++i)
+    for (auto& s : _surfaces)
     {
-        const std::string& defaultMaterial = i->surface->getDefaultMaterial();
-        const std::string& activeMaterial = i->surface->getActiveMaterial();
+        const std::string& defaultMaterial = s.surface->getDefaultMaterial();
+        const std::string& activeMaterial = s.surface->getActiveMaterial();
 
         // Look up the remap for this surface's material name. If there is a remap
         // change the Shader* to point to the new shader.
@@ -213,12 +144,12 @@ void StaticModel::applySkin(const ModelSkin& skin)
         if (!remap.empty() && remap != activeMaterial)
         {
             // Save the remapped shader name
-            i->surface->setActiveMaterial(remap);
+            s.surface->setActiveMaterial(remap);
         }
         else if (remap.empty() && activeMaterial != defaultMaterial)
         {
             // No remap, so reset our shader to the original unskinned shader
-            i->surface->setActiveMaterial(defaultMaterial);
+            s.surface->setActiveMaterial(defaultMaterial);
         }
     }
 
@@ -230,18 +161,18 @@ void StaticModel::applySkin(const ModelSkin& skin)
 
 void StaticModel::captureShaders()
 {
-    RenderSystemPtr renderSystem = _renderSystem.lock();
+    auto renderSystem = _renderSystem.lock();
 
     // Capture or release our shaders
-    for (SurfaceList::iterator i = _surfVec.begin(); i != _surfVec.end(); ++i)
+    for (auto& s : _surfaces)
     {
         if (renderSystem)
         {
-            i->shader = renderSystem->capture(i->surface->getActiveMaterial());
+            s.shader = renderSystem->capture(s.surface->getActiveMaterial());
         }
         else
         {
-            i->shader.reset();
+            s.shader.reset();
         }
     }
 }
@@ -251,7 +182,7 @@ void StaticModel::updateMaterialList() const
 {
     _materialList.clear();
 
-    for (const auto& s : _surfVec)
+    for (const auto& s : _surfaces)
     {
         _materialList.push_back(s.surface->getActiveMaterial());
     }
@@ -275,7 +206,7 @@ void StaticModel::testSelect(Selector& selector, SelectionTest& test, const Matr
     // Perform a volume intersection (AABB) check on each surface. For those
     // that intersect, call the surface's own testSelection method to perform
     // a proper selection test.
-    for (const auto& surface : _surfVec)
+    for (const auto& surface : _surfaces)
     {
         // Check volume intersection
         if (test.getVolume().TestAABB(surface.surface->getAABB(), localToWorld) != VOLUME_OUTSIDE)
@@ -293,7 +224,7 @@ bool StaticModel::getIntersection(const Ray& ray, Vector3& intersection, const M
     Vector3 bestIntersection = ray.origin;
 
     // Test each surface and take the nearest point to the ray origin
-    for (SurfaceList::iterator i = _surfVec.begin(); i != _surfVec.end(); ++i)
+    for (SurfaceList::iterator i = _surfaces.begin(); i != _surfaces.end(); ++i)
     {
         Vector3 surfaceIntersection;
 
@@ -323,7 +254,7 @@ bool StaticModel::getIntersection(const Ray& ray, Vector3& intersection, const M
 
 const StaticModel::SurfaceList& StaticModel::getSurfaces() const
 {
-    return _surfVec;
+    return _surfaces;
 }
 
 std::string StaticModel::getModelPath() const
@@ -353,7 +284,7 @@ void StaticModel::applyScaleToSurfaces()
     _localAABB = AABB();
 
     // Apply the scale to each surface
-    for (Surface& surf : _surfVec)
+    for (Surface& surf : _surfaces)
     {
         // Are we still using the original surface? If yes,
         // it's now time to create a working copy
@@ -407,6 +338,14 @@ void StaticModel::importState(const IUndoMementoPtr& state)
 const Vector3& StaticModel::getScale() const
 {
     return _scale;
+}
+
+void StaticModel::foreachSurface(const std::function<void(const StaticModelSurface&)>& func) const
+{
+    for (const Surface& surf : _surfaces)
+    {
+        func(*surf.surface);
+    }
 }
 
 } // namespace

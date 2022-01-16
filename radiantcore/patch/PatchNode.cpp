@@ -11,9 +11,12 @@
 PatchNode::PatchNode(patch::PatchDefType type) :
 	scene::SelectableNode(),
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
-	m_render_selected(GL_POINTS),
 	m_patch(*this),
-    _untransformedOriginChanged(true)
+    _untransformedOriginChanged(true),
+    _renderableSurfaceSolid(m_patch.getTesselation(), true),
+    _renderableSurfaceWireframe(m_patch.getTesselation(), false),
+    _renderableCtrlLattice(m_patch, m_ctrl_instances),
+    _renderableCtrlPoints(m_patch, m_ctrl_instances)
 {
 	m_patch.setFixedSubdivisions(type == patch::PatchDefType::Def3, Subdivisions(m_patch.getSubdivisions()));
 }
@@ -31,14 +34,14 @@ PatchNode::PatchNode(const PatchNode& other) :
 	PlaneSelectable(other),
 	Transformable(other),
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
-	m_render_selected(GL_POINTS),
 	m_patch(other.m_patch, *this), // create the patch out of the <other> one
-    _untransformedOriginChanged(true)
+    _untransformedOriginChanged(true),
+    _renderableSurfaceSolid(m_patch.getTesselation(), true),
+    _renderableSurfaceWireframe(m_patch.getTesselation(), false),
+    _renderableCtrlLattice(m_patch, m_ctrl_instances),
+    _renderableCtrlPoints(m_patch, m_ctrl_instances)
 {
 }
-
-PatchNode::~PatchNode()
-{}
 
 scene::INode::Type PatchNode::getNodeType() const
 {
@@ -81,19 +84,23 @@ std::string PatchNode::getFingerprint()
     return hash;
 }
 
-void PatchNode::allocate(std::size_t size) {
+void PatchNode::updateSelectableControls()
+{
 	// Clear the control instance vector and reserve <size> memory
 	m_ctrl_instances.clear();
-	m_ctrl_instances.reserve(size);
+
+    // We link the instances to the working control point set
+    auto& ctrlPoints = m_patch.getControlPointsTransformed();
+
+	m_ctrl_instances.reserve(ctrlPoints.size());
 
 	// greebo: Cycle through the patch's control vertices and add them as PatchControlInstance to the vector
 	// The PatchControlInstance constructor takes a pointer to a PatchControl and the SelectionChanged callback
 	// The passed callback points back to this class (the member method selectedChangedComponent() is called).
-	for(PatchControlIter i = m_patch.begin(); i != m_patch.end(); ++i)
+	for(auto& ctrl : ctrlPoints)
 	{
-		m_ctrl_instances.push_back(
-			PatchControlInstance(*i, std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1))
-		);
+		m_ctrl_instances.emplace_back(ctrl, 
+            std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1));
 	}
 }
 
@@ -210,15 +217,18 @@ void PatchNode::invertSelectedComponents(selection::ComponentSelectionMode mode)
 	}
 }
 
-void PatchNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) {
+void PatchNode::testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode)
+{
 	test.BeginMesh(localToWorld());
 
 	// Only react to eVertex selection mode
 	switch(mode) {
-        case selection::ComponentSelectionMode::Vertex: {
+        case selection::ComponentSelectionMode::Vertex:
+        {
 			// Cycle through all the control instances and test them for selection
-			for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
-				i->testSelect(selector, test);
+			for (auto& i : m_ctrl_instances)
+            {
+				i.testSelect(selector, test);
 			}
 		}
 		break;
@@ -251,7 +261,11 @@ bool PatchNode::hasVisibleMaterial() const
 	return m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible();
 }
 
-void PatchNode::selectedChangedComponent(const ISelectable& selectable) {
+void PatchNode::selectedChangedComponent(const ISelectable& selectable)
+{
+    // We need to update our vertex colours next time we render them
+    _renderableCtrlPoints.queueUpdate();
+
 	// Notify the selection system that this PatchNode was selected. The RadiantSelectionSystem adds
 	// this to its internal list of selected nodes.
 	GlobalSelectionSystem().onComponentSelection(SelectableNode::getSelf(), selectable);
@@ -267,6 +281,14 @@ void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     // Mark the GL shader as used from now on, this is used by the TextureBrowser's filtering
     m_patch.getSurfaceShader().setInUse(true);
+
+    // When inserting a patch into the scene, it gets a parent entity assigned
+    // The colour of that entity will influence the tesselation's vertex colours
+    m_patch.queueTesselationUpdate();
+
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
+    _renderableCtrlLattice.queueUpdate();
 
 	m_patch.connectUndoSystem(root.getUndoSystem());
 	GlobalCounters().getCounter(counterPatches).increment();
@@ -289,6 +311,9 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 
 	m_patch.disconnectUndoSystem(root.getUndoSystem());
 
+    _renderableSurfaceSolid.clear();
+    _renderableSurfaceWireframe.clear();
+    _renderableCtrlLattice.clear();
     m_patch.getSurfaceShader().setInUse(false);
 
 	SelectableNode::onRemoveFromScene(root);
@@ -299,43 +324,83 @@ bool PatchNode::getIntersection(const Ray& ray, Vector3& intersection)
 	return m_patch.getIntersection(ray, intersection);
 }
 
-void PatchNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void PatchNode::onPreRender(const VolumeTest& volume)
 {
-	// Don't render invisible shaders
-	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
+    // Don't do anything when invisible
+    if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
     // Defer the tesselation calculation to the last minute
-	const_cast<Patch&>(m_patch).evaluateTransform();
-    const_cast<Patch&>(m_patch).updateTesselation();
+    m_patch.evaluateTransform();
+    m_patch.updateTesselation();
 
-	assert(_renderEntity); // patches rendered without parent - no way!
+    if (volume.fill())
+    {
+        _renderableSurfaceSolid.update(m_patch._shader.getGLShader());
+    }
+    else
+    {
+        _renderableSurfaceWireframe.update(_renderEntity->getWireShader());
+    }
 
+    if (isSelected() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
+    {
+        // Selected patches in component mode render the lattice connecting the control points
+        _renderableCtrlLattice.update(_ctrlLatticeShader);
+        _renderableCtrlPoints.update(_ctrlPointShader);
+    }
+    else
+    {
+        _renderableCtrlPoints.clear();
+        _renderableCtrlLattice.clear();
+
+        // Queue an update the next time it's rendered
+        _renderableCtrlPoints.queueUpdate();
+        _renderableCtrlLattice.queueUpdate();
+    }
+}
+
+void PatchNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
+{
+	// Don't render invisible patches
+	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
+
+    assert(_renderEntity); // patches rendered without parent - no way!
+
+#if 0
     // Render the patch itself
     collector.addRenderable(
         *m_patch._shader.getGLShader(), m_patch._solidRenderable,
         localToWorld(), this, _renderEntity
     );
-
+#endif
 #if DEBUG_PATCH_NTB_VECTORS
     m_patch._renderableVectors.render(collector, volume, localToWorld());
 #endif
-
-	// Render the selected components
-	renderComponentsSelected(collector, volume);
 }
 
-void PatchNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
 	// Don't render invisible shaders
 	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
 
+#if 0
 	const_cast<Patch&>(m_patch).evaluateTransform();
+#endif
 
-	// Pass the call to the patch instance, it adds the renderable
-	m_patch.renderWireframe(collector, volume, localToWorld(), *_renderEntity);
-
+#if 0
 	// Render the selected components
 	renderComponentsSelected(collector, volume);
+#endif
+}
+
+void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    // Overlay the selected node with the quadrangulated wireframe
+    collector.addHighlightRenderable(_renderableSurfaceWireframe, localToWorld());
+#if 0
+    // Render the selected components
+    renderComponentsSelected(collector, volume);
+#endif
 }
 
 void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -343,20 +408,27 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	SelectableNode::setRenderSystem(renderSystem);
 
 	m_patch.setRenderSystem(renderSystem);
+    _renderableSurfaceSolid.clear();
+    _renderableSurfaceWireframe.clear();
+    _renderableCtrlLattice.clear();
+    _renderableCtrlPoints.clear();
 
 	if (renderSystem)
 	{
-		m_state_selpoint = renderSystem->capture("$SELPOINT");
+        _ctrlPointShader = renderSystem->capture("$POINT");
+        _ctrlLatticeShader = renderSystem->capture("$LATTICE");
 	}
 	else
 	{
-		m_state_selpoint.reset();
+        _ctrlPointShader.reset();
+        _ctrlLatticeShader.reset();
 	}
 }
 
 // Renders the components of this patch instance
-void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
+void PatchNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
+#if 0
 	// Don't render invisible shaders
 	if (!m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible()) return;
 
@@ -367,42 +439,26 @@ void PatchNode::renderComponents(RenderableCollector& collector, const VolumeTes
 	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
     {
 		m_patch.submitRenderablePoints(collector, volume, localToWorld());
-	}
+    }
+#endif
 }
 
-void PatchNode::update_selected() const {
-	// Clear the renderable point vector that represents the selection
-	m_render_selected.clear();
-
-	// Cycle through the transformed patch vertices and set the colour of all selected control vertices to BLUE (hardcoded)
-	PatchControlConstIter ctrl = m_patch.getControlPointsTransformed().begin();
-
-	for (PatchControlInstances::const_iterator i = m_ctrl_instances.begin();
-		 i != m_ctrl_instances.end(); ++i, ++ctrl)
-	{
-		if (i->isSelected()) {
-			const Colour4b colour_selected(0, 0, 0, 255);
-			// Add this patch control instance to the render list
-			m_render_selected.push_back(VertexCb(reinterpret_cast<const Vertex3f&>(ctrl->vertex), colour_selected));
-		}
-	}
-}
-
-void PatchNode::renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume) const
+#if 0
+void PatchNode::renderComponentsSelected(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	// greebo: Don't know yet, what evaluateTransform() is really doing
 	const_cast<Patch&>(m_patch).evaluateTransform();
 
 	// Rebuild the array of selected control vertices
-	update_selected();
+    updateSelectedControlVertices();
 
 	// If there are any selected components, add them to the collector
 	if (!m_render_selected.empty())
     {
-		collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+		collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
 		collector.addRenderable(*m_state_selpoint, m_render_selected, localToWorld());
 	}
 }
+#endif
 
 std::size_t PatchNode::getHighlightFlags()
 {
@@ -462,6 +518,10 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 void PatchNode::_onTransformationChanged()
 {
 	m_patch.transformChanged();
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
+    _renderableCtrlLattice.queueUpdate();
+    _renderableCtrlPoints.queueUpdate();
 }
 
 void PatchNode::_applyTransformation()
@@ -483,4 +543,48 @@ const Vector3& PatchNode::getUntransformedOrigin()
     }
 
     return _untransformedOrigin;
+}
+
+void PatchNode::onTesselationChanged()
+{
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
+    _renderableCtrlLattice.queueUpdate();
+    _renderableCtrlPoints.queueUpdate();
+}
+
+void PatchNode::onControlPointsChanged()
+{
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
+    _renderableCtrlLattice.queueUpdate();
+    _renderableCtrlPoints.queueUpdate();
+}
+
+void PatchNode::onMaterialChanged()
+{
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
+}
+
+void PatchNode::onVisibilityChanged(bool visible)
+{
+    SelectableNode::onVisibilityChanged(visible);
+
+    if (!visible)
+    {
+        // Disconnect our renderable when the node is hidden
+        _renderableSurfaceSolid.clear();
+        _renderableSurfaceWireframe.clear();
+        _renderableCtrlLattice.clear();
+        _renderableCtrlPoints.clear();
+    }
+    else
+    {
+        // Update the vertex buffers next time we need to render
+        _renderableSurfaceSolid.queueUpdate();
+        _renderableSurfaceWireframe.queueUpdate();
+        _renderableCtrlLattice.queueUpdate();
+        _renderableCtrlPoints.queueUpdate();
+    }
 }

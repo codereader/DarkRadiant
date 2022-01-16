@@ -11,23 +11,27 @@
 #include "generic/callback.h"
 #include <functional>
 
-namespace model {
+namespace model
+{
 
-// greebo: Construct a new StaticModel instance, we re-use the surfaces only
 StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
     _model(new StaticModel(*picoModel)),
-    _name(picoModel->getFilename())
+    _name(picoModel->getFilename()),
+    _attachedToShaders(false)
 {
     // Update the skin
     skinChanged("");
 }
 
-StaticModelNode::~StaticModelNode()
-{}
-
 void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     _model->connectUndoSystem(root.getUndoSystem());
+
+    // Renderables will acquire their shaders in onPreRender
+    _model->foreachSurface([&](const StaticModelSurface& surface)
+    {
+        _renderableSurfaces.emplace_back(std::make_shared<RenderableModelSurface>(surface, localToWorld()));
+    });
 
     Node::onInsertIntoScene(root);
 }
@@ -35,6 +39,8 @@ void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 void StaticModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     _model->disconnectUndoSystem(root.getUndoSystem());
+
+    _renderableSurfaces.clear();
 
     Node::onRemoveFromScene(root);
 }
@@ -85,32 +91,36 @@ void StaticModelNode::setModel(const StaticModelPtr& model) {
     _model = model;
 }
 
-void StaticModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+bool StaticModelNode::isOriented() const
 {
-    assert(_renderEntity);
-
-    const Matrix4& l2w = localToWorld();
-
-    // Test the model's intersection volume, if it intersects pass on the
-    // render call
-    if (volume.TestAABB(_model->localAABB(), l2w) != VOLUME_OUTSIDE)
-    {
-        // Submit the model's geometry
-        _model->renderSolid(collector, l2w, *_renderEntity, *this);
-    }
+    return false;
 }
 
-void StaticModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void StaticModelNode::onPreRender(const VolumeTest& volume)
 {
     assert(_renderEntity);
 
-    // Test the model's intersection volume, if it intersects pass on the render call
-    const Matrix4& l2w = localToWorld();
+    // Attach renderables (or do nothing if everything is up to date)
+    attachToShaders();
+}
 
-    if (volume.TestAABB(_model->localAABB(), l2w) != VOLUME_OUTSIDE)
+void StaticModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
+{
+    assert(_renderEntity);
+}
+
+void StaticModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
+{
+    assert(_renderEntity);
+}
+
+void StaticModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    auto identity = Matrix4::getIdentity();
+
+    for (const auto& surface : _renderableSurfaces)
     {
-        // Submit the model's geometry
-        _model->renderWireframe(collector, l2w, *_renderEntity);
+        collector.addHighlightRenderable(*surface, identity);
     }
 }
 
@@ -118,7 +128,55 @@ void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     Node::setRenderSystem(renderSystem);
 
+    _renderSystem = renderSystem;
+    
+    // Detach renderables on render system change
+    detachFromShaders();
+
     _model->setRenderSystem(renderSystem);
+}
+
+void StaticModelNode::detachFromShaders()
+{
+    // Detach any existing surfaces. In case we need them again,
+    // the node will re-attach in the next pre-render phase
+    for (auto& surface : _renderableSurfaces)
+    {
+        surface->clear();
+    }
+
+    _attachedToShaders = false;
+}
+
+void StaticModelNode::attachToShaders()
+{
+    if (_attachedToShaders) return;
+
+    auto renderSystem = _renderSystem.lock();
+
+    if (!renderSystem) return;
+
+    for (auto& surface : _renderableSurfaces)
+    {
+        auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
+        surface->attachToShader(shader);
+
+        // For orthoview rendering we need the entity's wireframe shader
+        if (_renderEntity)
+        {
+            surface->attachToShader(_renderEntity->getWireShader());
+        }
+    }
+
+    _attachedToShaders = true;
+}
+
+void StaticModelNode::queueRenderableUpdate()
+{
+    for (auto& surface : _renderableSurfaces)
+    {
+        surface->queueUpdate();
+    }
 }
 
 // Traceable implementation
@@ -138,6 +196,9 @@ void StaticModelNode::skinChanged(const std::string& newSkinName)
     ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
     _model->applySkin(skin);
 
+    // Detach from existing shaders, re-acquire them in onPreRender
+    detachFromShaders();
+
     // Refresh the scene (TODO: get rid of that)
     GlobalSceneGraph().sceneChanged();
 }
@@ -155,6 +216,7 @@ void StaticModelNode::_onTransformationChanged()
     {
         _model->revertScale();
         _model->evaluateScale(getScale());
+        queueRenderableUpdate();
     }
     else if (getTransformationType() == TransformationType::NoTransform)
     {
@@ -162,6 +224,7 @@ void StaticModelNode::_onTransformationChanged()
         // so the reason we got here is a cancelTransform() call, revert everything
         _model->revertScale();
         _model->evaluateScale(Vector3(1,1,1));
+        queueRenderableUpdate();
     }
 }
 
@@ -172,6 +235,18 @@ void StaticModelNode::_applyTransformation()
         _model->revertScale();
         _model->evaluateScale(getScale());
         _model->freezeScale();
+    }
+}
+
+void StaticModelNode::onVisibilityChanged(bool isVisibleNow)
+{
+    if (isVisibleNow)
+    {
+        attachToShaders();
+    }
+    else
+    {
+        detachFromShaders();
     }
 }
 

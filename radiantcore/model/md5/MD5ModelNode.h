@@ -1,12 +1,19 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "MD5Model.h"
 #include "modelskin.h"
 #include "itraceable.h"
 #include "scene/Node.h"
 #include "render/VectorLightList.h"
+#include "../RenderableModelSurface.h"
+#include "registry/CachedKey.h"
+#include "RenderableMD5Skeleton.h"
 
-namespace md5 {
+namespace md5
+{
+
+constexpr const char* const RKEY_RENDER_SKELETON = "user/ui/md5/renderSkeleton";
 
 class MD5ModelNode :
 	public scene::Node,
@@ -20,9 +27,23 @@ class MD5ModelNode :
 	// The name of this model's skin
 	std::string _skin;
 
+    // The renderable surfaces attached to the shaders
+    std::vector<model::RenderableModelSurface::Ptr> _renderableSurfaces;
+
+    bool _attachedToShaders;
+
+    sigc::connection _animationUpdateConnection;
+
+    registry::CachedKey<bool> _showSkeleton;
+
+    RenderableMD5Skeleton _renderableSkeleton;
+
 public:
 	MD5ModelNode(const MD5ModelPtr& model);
-	virtual ~MD5ModelNode();
+    virtual ~MD5ModelNode();
+
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ModelNode implementation
 	const model::IModel& getIModel() const override;
@@ -47,8 +68,10 @@ public:
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void onPreRender(const VolumeTest& volume) override;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	std::size_t getHighlightFlags() override
@@ -60,10 +83,13 @@ public:
 	virtual std::string getSkin() const override;
 	void skinChanged(const std::string& newSkinName) override;
 
-private:
-	void render(RenderableCollector& collector, const VolumeTest& volume,
-				const Matrix4& localToWorld, const IRenderEntity& entity) const;
-};
-typedef std::shared_ptr<MD5ModelNode> MD5ModelNodePtr;
+protected:
+    void onVisibilityChanged(bool isVisibleNow) override;
 
-} // namespace md5
+private:
+    void onModelAnimationUpdated();
+    void attachToShaders();
+    void detachFromShaders();
+};
+
+} // namespace

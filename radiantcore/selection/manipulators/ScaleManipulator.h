@@ -44,7 +44,7 @@ public:
 
 	void UpdateColours();
 
-	void render(RenderableCollector& collector, const VolumeTest& volume) override;
+	void render(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void testSelect(SelectionTest& test, const Matrix4& pivot2world) override;
 	Component* getActiveComponent() override;
 

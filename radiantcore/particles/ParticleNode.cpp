@@ -59,18 +59,28 @@ Matrix4 ParticleNode::localToParent() const
 	return _local2Parent;
 }
 
-void ParticleNode::renderSolid(RenderableCollector& collector,
+void ParticleNode::onPreRender(const VolumeTest& volume)
+{
+    if (!_renderableParticle) return;
+
+    // Update the particle system before rendering
+    update(volume);
+}
+
+void ParticleNode::renderSolid(IRenderableCollector& collector,
 							   const VolumeTest& volume) const
 {
+#if 0
 	if (!_renderableParticle) return;
 
 	// Update the particle system before rendering
 	update(volume);
 
 	_renderableParticle->renderSolid(collector, volume, localToWorld(), _renderEntity);
+#endif
 }
 
-void ParticleNode::renderWireframe(RenderableCollector& collector,
+void ParticleNode::renderWireframe(IRenderableCollector& collector,
 								   const VolumeTest& volume) const
 {
 	// greebo: For now, don't draw particles in ortho views they are too distracting
@@ -81,6 +91,15 @@ void ParticleNode::renderWireframe(RenderableCollector& collector,
 	update(volume);
 
 	_renderableParticle->renderWireframe(collector, volume, localToWorld(), _renderEntity.get());
+#endif
+}
+
+void ParticleNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+#if 0
+    if (!collector.supportsFullMaterials()) return;
+
+    renderSolid(collector, volume);
 #endif
 }
 
@@ -107,7 +126,7 @@ void ParticleNode::update(const VolumeTest& viewVolume) const
 	_renderableParticle->setEntityColour(Vector3(
 		_renderEntity->getShaderParm(0), _renderEntity->getShaderParm(1), _renderEntity->getShaderParm(2)));
 
-	_renderableParticle->update(viewRotation);
+	_renderableParticle->update(viewRotation, localToWorld());
 }
 
 } // namespace

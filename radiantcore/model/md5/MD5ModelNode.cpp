@@ -10,15 +10,28 @@ namespace md5
 {
 
 MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
-    _model(new MD5Model(*model)) // create a copy of the incoming model, we need our own instance
+    _model(new MD5Model(*model)), // create a copy of the incoming model, we need our own instance
+    _attachedToShaders(false),
+    _showSkeleton(RKEY_RENDER_SKELETON),
+    _renderableSkeleton(_model->getSkeleton(), localToWorld())
 {
+    _animationUpdateConnection = _model->signal_ModelAnimationUpdated().connect(
+        sigc::mem_fun(this, &MD5ModelNode::onModelAnimationUpdated)
+    );
 }
 
-const model::IModel& MD5ModelNode::getIModel() const {
+MD5ModelNode::~MD5ModelNode()
+{
+    _animationUpdateConnection.disconnect();
+}
+
+const model::IModel& MD5ModelNode::getIModel() const
+{
     return *_model;
 }
 
-model::IModel& MD5ModelNode::getIModel() {
+model::IModel& MD5ModelNode::getIModel()
+{
     return *_model;
 }
 
@@ -32,24 +45,24 @@ Vector3 MD5ModelNode::getModelScale()
 	return Vector3(1, 1, 1); // not supported
 }
 
-MD5ModelNode::~MD5ModelNode()
+void MD5ModelNode::setModel(const MD5ModelPtr& model)
 {
-}
-
-void MD5ModelNode::setModel(const MD5ModelPtr& model) {
     _model = model;
 }
 
-const MD5ModelPtr& MD5ModelNode::getModel() const {
+const MD5ModelPtr& MD5ModelNode::getModel() const
+{
     return _model;
 }
 
 // Bounded implementation
-const AABB& MD5ModelNode::localAABB() const {
+const AABB& MD5ModelNode::localAABB() const
+{
     return _model->localAABB();
 }
 
-std::string MD5ModelNode::name() const {
+std::string MD5ModelNode::name() const
+{
     return _model->getFilename();
 }
 
@@ -58,7 +71,28 @@ scene::INode::Type MD5ModelNode::getNodeType() const
     return Type::Model;
 }
 
-void MD5ModelNode::testSelect(Selector& selector, SelectionTest& test) {
+void MD5ModelNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    // Renderables will acquire their shaders in onPreRender
+    _model->foreachSurface([&](const MD5Surface& surface)
+    {
+        _renderableSurfaces.emplace_back(
+            std::make_shared<model::RenderableModelSurface>(surface, localToWorld())
+        );
+    });
+
+    Node::onInsertIntoScene(root);
+}
+
+void MD5ModelNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    Node::onRemoveFromScene(root);
+
+    _renderableSurfaces.clear();
+}
+
+void MD5ModelNode::testSelect(Selector& selector, SelectionTest& test)
+{
     _model->testSelect(selector, test, localToWorld());
 }
 
@@ -67,60 +101,91 @@ bool MD5ModelNode::getIntersection(const Ray& ray, Vector3& intersection)
     return _model->getIntersection(ray, intersection, localToWorld());
 }
 
-void MD5ModelNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void MD5ModelNode::onPreRender(const VolumeTest& volume)
 {
     assert(_renderEntity);
 
-    render(collector, volume, localToWorld(), *_renderEntity);
+    // Attach renderables (or do nothing if everything is up to date)
+    attachToShaders();
+
+    if (_showSkeleton.get())
+    {
+        _renderableSkeleton.queueUpdate();
+        _renderableSkeleton.update(_renderEntity->getColourShader());
+    }
+    else
+    {
+        _renderableSkeleton.clear();
+    }
 }
 
-void MD5ModelNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void MD5ModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
     assert(_renderEntity);
+}
 
-    render(collector, volume, localToWorld(), *_renderEntity);
+void MD5ModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
+{
+    assert(_renderEntity);
+}
+
+void MD5ModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    auto identity = Matrix4::getIdentity();
+
+    for (const auto& surface : _renderableSurfaces)
+    {
+        collector.addHighlightRenderable(*surface, identity);
+    }
 }
 
 void MD5ModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     Node::setRenderSystem(renderSystem);
 
+    // Detach renderables on render system change
+    detachFromShaders();
+
     _model->setRenderSystem(renderSystem);
 }
 
-void MD5ModelNode::render(RenderableCollector& collector, const VolumeTest& volume,
-        const Matrix4& localToWorld, const IRenderEntity& entity) const
+void MD5ModelNode::detachFromShaders()
 {
-    // Do some rough culling (per model, not per surface)
-    if (volume.TestAABB(localAABB(), localToWorld) == VOLUME_OUTSIDE)
+    // Detach any existing surfaces. In case we need them again,
+    // the node will re-attach in the next pre-render phase
+    for (auto& surface : _renderableSurfaces)
     {
-        return;
+        surface->clear();
     }
 
-    // greebo: Iterate over all MD5 surfaces and render them
-    for (auto i = _model->begin(); i != _model->end(); ++i)
-    {
-        assert(i->shader);
+    _attachedToShaders = false;
+}
 
-        // Get the Material to test the shader name against the filter system
-        const MaterialPtr& surfaceShader = i->shader->getMaterial();
-        if (surfaceShader && surfaceShader->isVisible())
+void MD5ModelNode::attachToShaders()
+{
+    if (_attachedToShaders) return;
+
+    auto renderSystem = _renderSystem.lock();
+
+    if (!renderSystem) return;
+
+    for (auto& surface : _renderableSurfaces)
+    {
+        auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
+        surface->attachToShader(shader);
+
+        // For orthoview rendering we need the entity's wireframe shader
+        if (_renderEntity)
         {
-            collector.addRenderable(
-                collector.supportsFullMaterials() ? *i->shader
-                                                  : *entity.getWireShader(),
-                *i->surface, localToWorld, this, &entity
-            );
+            surface->attachToShader(_renderEntity->getWireShader());
         }
     }
 
-    // Uncomment to render the skeleton
-    //collector.SetState(entity.getWireShader(), RenderableCollector::eFullMaterials);
-    //collector.addRenderable(_model->getRenderableSkeleton(), localToWorld, entity);
+    _attachedToShaders = true;
 }
 
-// Returns the name of the currently active skin
-std::string MD5ModelNode::getSkin() const {
+std::string MD5ModelNode::getSkin() const
+{
     return _skin;
 }
 
@@ -135,8 +200,31 @@ void MD5ModelNode::skinChanged(const std::string& newSkinName)
 
     _model->applySkin(skin);
 
+    // Detach from existing shaders, re-acquire them in onPreRender
+    detachFromShaders();
+
     // Refresh the scene
     GlobalSceneGraph().sceneChanged();
+}
+
+void MD5ModelNode::onVisibilityChanged(bool isVisibleNow)
+{
+    if (isVisibleNow)
+    {
+        attachToShaders();
+    }
+    else
+    {
+        detachFromShaders();
+    }
+}
+
+void MD5ModelNode::onModelAnimationUpdated()
+{
+    for (auto& surface : _renderableSurfaces)
+    {
+        surface->queueUpdate();
+    }
 }
 
 } // namespace md5

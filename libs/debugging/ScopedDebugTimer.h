@@ -91,10 +91,8 @@ public:
 	ScopedDebugTimer(const std::string& name, bool showFps = false)
 	: _op(name), _fps(showFps)
 	{
-#ifndef NDEBUG
 		// Save start time
 		gettimeofday(&_s, NULL);
-#endif
 	}
 
 	/**
@@ -102,7 +100,6 @@ public:
 	 */
 	~ScopedDebugTimer()
     {
-#ifndef NDEBUG
 		// Get the current time
 		timeval end;
 		gettimeofday(&end, NULL);
@@ -121,6 +118,5 @@ public:
 		}
 
         stream << std::endl;
-#endif
 	}
 };

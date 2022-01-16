@@ -6,11 +6,12 @@
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"
 #include "Translatable.h"
+#include "render/VertexCb.h"
 
 #include <sigc++/signal.h>
 #include "util/Noncopyable.h"
 
-class RenderableCollector;
+class IRenderableCollector;
 class Ray;
 
 /// \brief Returns true if 'self' takes priority when building brush b-rep.
@@ -142,10 +143,6 @@ public:
 		DetailFlag _detailFlag;
 	};
 
-	// static data
-	ShaderPtr m_state_point;
-	// ----
-
 	static double m_maxWorldCoord;
 
 	// Constructors
@@ -211,7 +208,9 @@ public:
 
 	const AABB& localAABB() const override;
 
-	void renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+#if 0
+	void renderComponents(selection::ComponentSelectionMode mode, IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
+#endif
 
 	void transform(const Matrix4& matrix);
 
@@ -270,7 +269,9 @@ public:
 	/// \brief Constructs \p winding from the intersection of \p plane with the other planes of the brush.
 	void windingForClipPlane(Winding& winding, const Plane3& plane) const;
 
+#if 0
 	void update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const;
+#endif
 
 	void update_faces_wireframe(RenderablePointVector& wire,
 								const std::size_t* visibleFaceIndices,
@@ -296,6 +297,8 @@ public:
 
 	// Signal for external code to get notified each time any face of any brush changes
 	static sigc::signal<void>& signal_faceShaderChanged();
+
+    const std::vector<VertexCb>& getVertices(selection::ComponentSelectionMode mode) const;
 
 private:
 	void edge_push_back(FaceVertexId faceVertex);

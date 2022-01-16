@@ -3,30 +3,67 @@
 #include <vector>
 #include "irenderable.h"
 #include "render.h"
+#include "render/RenderableGeometry.h"
 
 namespace entity 
 {
 
 class RenderableCurve :
-	public OpenGLRenderable
+    public render::RenderableGeometry
 {
+private:
+    const IEntityNode& _entity;
+    bool _needsUpdate;
+
 public:
 	std::vector<VertexCb> m_vertices;
 
-	void render(const RenderInfo& info) const
-    {
-        if (info.checkFlag(RENDER_VERTEX_COLOUR))
-        {
-            glEnableClientState(GL_COLOR_ARRAY);
-        }
-		pointvertex_gl_array(&m_vertices.front());
-		glDrawArrays(GL_LINE_STRIP, 0, GLsizei(m_vertices.size()));
+    RenderableCurve(const IEntityNode& entity) :
+        _entity(entity),
+        _needsUpdate(true)
+    {}
 
-		if (info.checkFlag(RENDER_VERTEX_COLOUR))
-		{
-			glDisableClientState(GL_COLOR_ARRAY);
-		}
-	}
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+protected:
+    void updateGeometry() override
+    {
+        if (!_needsUpdate) return;
+
+        _needsUpdate = false;
+
+        if (m_vertices.size() < 2)
+        {
+            clear();
+            return;
+        }
+
+        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<unsigned int> indices;
+
+        vertices.reserve(m_vertices.size());
+        indices.reserve(m_vertices.size() << 1);
+
+        unsigned int index = 0;
+
+        auto colour = _entity.getEntityColour();
+
+        for (const auto& v : m_vertices)
+        {
+            vertices.push_back(ArbitraryMeshVertex(v.vertex, { 0,0,1 }, { 0,0 }, colour));
+            indices.push_back(index);
+            indices.push_back(++index);
+        };
+
+        // Remove the last two superfluous indices
+        indices.pop_back();
+        indices.pop_back();
+
+        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+    }
 };
 
 } // namespace entity

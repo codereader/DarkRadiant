@@ -35,7 +35,9 @@ Face::Face(Brush& owner) :
     _owner(owner),
     _shader(texdef_name_default(), _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
-    _faceIsVisible(true)
+    _faceIsVisible(true),
+    _windingSurfaceSolid(m_winding),
+    _windingSurfaceWireframe(m_winding)
 {
     setupSurfaceShader();
 
@@ -58,7 +60,9 @@ Face::Face(
     _shader(shader, _owner.getBrushNode().getRenderSystem()),
     _texdef(projection),
     _undoStateSaver(nullptr),
-    _faceIsVisible(true)
+    _faceIsVisible(true),
+    _windingSurfaceSolid(m_winding),
+    _windingSurfaceWireframe(m_winding)
 {
     setupSurfaceShader();
     m_plane.initialiseFromPoints(p0, p1, p2);
@@ -70,7 +74,9 @@ Face::Face(Brush& owner, const Plane3& plane) :
     _owner(owner),
     _shader("", _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
-    _faceIsVisible(true)
+    _faceIsVisible(true),
+    _windingSurfaceSolid(m_winding),
+    _windingSurfaceWireframe(m_winding)
 {
     setupSurfaceShader();
     m_plane.setPlane(plane);
@@ -82,7 +88,9 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix3& textureProjection, 
     _owner(owner),
     _shader(material, _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
-    _faceIsVisible(true)
+    _faceIsVisible(true),
+    _windingSurfaceSolid(m_winding),
+    _windingSurfaceWireframe(m_winding)
 {
     setupSurfaceShader();
     m_plane.setPlane(plane);
@@ -101,7 +109,9 @@ Face::Face(Brush& owner, const Face& other) :
     _shader(other._shader.getMaterialName(), _owner.getBrushNode().getRenderSystem()),
     _texdef(other.getProjection()),
     _undoStateSaver(nullptr),
-    _faceIsVisible(other._faceIsVisible)
+    _faceIsVisible(other._faceIsVisible),
+    _windingSurfaceSolid(m_winding),
+    _windingSurfaceWireframe(m_winding)
 {
     setupSurfaceShader();
     planepts_assign(m_move_planepts, other.m_move_planepts);
@@ -113,6 +123,10 @@ Face::~Face()
     _surfaceShaderRealised.disconnect();
     _sigDestroyed.emit();
     _sigDestroyed.clear();
+
+    // Deallocate the winding surface
+    _windingSurfaceSolid.clear();
+    _windingSurfaceWireframe.clear();
 }
 
 sigc::signal<void>& Face::signal_faceDestroyed()
@@ -144,6 +158,9 @@ Brush& Face::getBrushInternal()
 
 void Face::planeChanged()
 {
+    _windingSurfaceSolid.queueUpdate();
+    _windingSurfaceWireframe.queueUpdate();
+
     revertTransform();
     _owner.onFacePlaneChanged();
 }
@@ -159,6 +176,8 @@ void Face::connectUndoSystem(IUndoSystem& undoSystem)
 
     _shader.setInUse(true);
 
+    _windingSurfaceSolid.queueUpdate();
+    _windingSurfaceWireframe.queueUpdate();
     _undoStateSaver = undoSystem.getStateSaver(*this);
 }
 
@@ -168,6 +187,9 @@ void Face::disconnectUndoSystem(IUndoSystem& undoSystem)
     _undoStateSaver = nullptr;
     undoSystem.releaseStateSaver(*this);
 
+    // Disconnect the renderable winding vertices from the scene
+    _windingSurfaceSolid.clear();
+    _windingSurfaceWireframe.clear();
     _shader.setInUse(false);
 }
 
@@ -233,13 +255,6 @@ bool Face::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld
     }
 }
 
-void Face::renderWireframe(RenderableCollector& collector, const Matrix4& localToWorld,
-    const IRenderEntity& entity) const
-{
-    collector.addRenderable(*entity.getWireShader(), m_winding, localToWorld,
-                            nullptr, &entity);
-}
-
 void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     _shader.setRenderSystem(renderSystem);
@@ -247,14 +262,10 @@ void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
     // Update the visibility flag, we might have switched shaders
     const ShaderPtr& shader = _shader.getGLShader();
 
-    if (shader)
-    {
-        _faceIsVisible = shader->getMaterial()->isVisible();
-    }
-    else
-    {
-        _faceIsVisible = false; // no shader => not visible
-    }
+    _faceIsVisible = shader && shader->getMaterial()->isVisible();
+
+    _windingSurfaceSolid.clear();
+    _windingSurfaceWireframe.clear();
 }
 
 void Face::transformTexDefLocked(const Matrix4& transform)
@@ -337,7 +348,10 @@ void Face::freezeTransform()
     updateWinding();
 }
 
-void Face::updateWinding() {
+void Face::updateWinding()
+{
+    _windingSurfaceSolid.queueUpdate();
+    _windingSurfaceWireframe.queueUpdate();
     m_winding.updateNormals(m_plane.getPlane().normal());
 }
 
@@ -385,16 +399,10 @@ void Face::shaderChanged()
 
     // Update the visibility flag, but leave out the contributes() check
     const ShaderPtr& shader = getFaceShader().getGLShader();
+    _faceIsVisible = shader && shader->getMaterial()->isVisible();
 
-    if (shader)
-    {
-        _faceIsVisible = shader->getMaterial()->isVisible();
-    }
-    else
-    {
-        _faceIsVisible = false; // no shader => not visible
-    }
-
+    _windingSurfaceSolid.queueUpdate();
+    _windingSurfaceWireframe.queueUpdate();
     planeChanged();
     SceneChangeNotify();
 }
@@ -681,6 +689,16 @@ Winding& Face::getWinding() {
     return m_winding;
 }
 
+render::RenderableWinding& Face::getWindingSurfaceSolid()
+{
+    return _windingSurfaceSolid;
+}
+
+render::RenderableWinding& Face::getWindingSurfaceWireframe()
+{
+    return _windingSurfaceWireframe;
+}
+
 const Plane3& Face::plane3() const
 {
     _owner.onFaceEvaluateTransform();
@@ -729,9 +747,31 @@ bool Face::isVisible() const
     return _faceIsVisible;
 }
 
+void Face::onBrushVisibilityChanged(bool visible)
+{
+    if (!visible)
+    {
+        // Disconnect our renderable when the owning brush goes invisible
+        _windingSurfaceSolid.clear();
+        _windingSurfaceWireframe.clear();
+    }
+    else
+    {
+        // Update the vertex buffers next time we need to render
+        _windingSurfaceSolid.queueUpdate();
+        _windingSurfaceWireframe.queueUpdate();
+    }
+}
+
 void Face::updateFaceVisibility()
 {
-    _faceIsVisible = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();
+    auto newValue = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();
+    
+    // Notify the owning brush if the value changes
+    if (newValue != _faceIsVisible)
+    {
+        _faceIsVisible = newValue;
+    }
 }
 
 sigc::signal<void>& Face::signal_texdefChanged()

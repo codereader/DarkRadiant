@@ -1,11 +1,9 @@
 #pragma once
 
-#include "GLProgramAttributes.h"
-#include "render.h"
-#include "math/AABB.h"
-
-#include "ishaders.h"
 #include "imodelsurface.h"
+#include "ishaders.h"
+
+#include "math/AABB.h"
 
 /* FORWARD DECLS */
 class ModelSkin;
@@ -20,15 +18,14 @@ namespace model
 
 /**
  * \brief
- * Renderable class containing a series of polygons textured with the same
- * material.
+ * A static surface contains a series of triangles textured with the same
+ * material. The number of vertices and indices of a surface never changes.
  *
  * StaticModelSurface objects are composited into a StaticModel object to
  * create a renderable static mesh.
  */
-class StaticModelSurface :
-	public IIndexedModelSurface,
-	public OpenGLRenderable
+class StaticModelSurface final :
+	public IIndexedModelSurface
 {
 private:
 	// Name of the material this surface is using by default (without any skins)
@@ -47,39 +44,19 @@ private:
 	typedef std::vector<unsigned int> Indices;
 	Indices _indices;
 
-	// Keep track of the number of indices to iterate over, since vector::size()
-	// may not be fast
-	unsigned int _nIndices;
-
 	// The AABB containing this surface, in local object space.
 	AABB _localAABB;
-
-	// The GL display lists for this surface's geometry
-	GLuint _dlRegular;
-	GLuint _dlProgramVcol;
-    GLuint _dlProgramNoVCol;
 
 private:
 	// Calculate tangent and bitangent vectors for all vertices.
 	void calculateTangents();
 
-	// Create the display lists
-    GLuint compileProgramList(bool includeColour);
-	void createDisplayLists();
-
 public:
     // Move-construct this static model surface from the given vertex- and index array
 	StaticModelSurface(std::vector<ArbitraryMeshVertex>&& vertices, std::vector<unsigned int>&& indices);
 
-	// Copy-constructor.
+	// Copy-constructor. All vertices and indices will be copied from 'other'.
 	StaticModelSurface(const StaticModelSurface& other);
-
-	~StaticModelSurface();
-
-	/**
-	 * Render function from OpenGLRenderable
-	 */
-	void render(const RenderInfo& info) const;
 
 	/** Get the containing AABB for this surface.
 	 */
@@ -108,6 +85,8 @@ public:
 
 	const std::string& getActiveMaterial() const override;
 	void setActiveMaterial(const std::string& activeMaterial);
+
+    const AABB& getSurfaceBounds() const override;
 
 	// Returns true if the given ray intersects this surface geometry and fills in
 	// the exact point in the given Vector3, returns false if no intersection was found.

@@ -5,6 +5,10 @@
 #include "irender.h"
 #include "ishaders.h"
 #include "string/string.h"
+#include "render/IndexedVertexBuffer.h"
+#include "render/WindingRenderer.h"
+#include "GeometryRenderer.h"
+#include "SurfaceRenderer.h"
 
 #include <list>
 #include <sigc++/connection.h>
@@ -17,7 +21,7 @@ class OpenGLRenderSystem;
 /**
  * Implementation of the Shader class.
  */
-class OpenGLShader final : 
+class OpenGLShader final :
 	public Shader
 {
 private:
@@ -44,6 +48,15 @@ private:
 	typedef std::set<Observer*> Observers;
 	Observers _observers;
 
+    std::unique_ptr<render::IndexedVertexBuffer<ArbitraryMeshVertex>> _vertexBuffer;
+
+    std::unique_ptr<IBackendWindingRenderer> _windingRenderer;
+    GeometryRenderer _geometryRenderer;
+    SurfaceRenderer _surfaceRenderer;
+
+    // Each shader can be used by either camera or orthoview, or both 
+    std::size_t _enabledViewTypes;
+
 private:
 
     // Start point for constructing shader passes from the shader name
@@ -52,6 +65,8 @@ private:
     // Construct shader passes from a regular shader (as opposed to a special
     // built-in shader)
     void constructNormalShader();
+
+    void constructFromMaterial(const MaterialPtr& material);
 
     // Shader pass construction helpers
     void appendBlendLayer(const IShaderLayer::Ptr& layer);
@@ -95,6 +110,29 @@ public:
 					   const Matrix4& modelview,
 					   const LightSources* lights,
                        const IRenderEntity* entity) override;
+
+    //void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
+    bool hasSurfaces() const;
+    void drawSurfaces(const VolumeTest& view);
+
+    IGeometryRenderer::Slot addGeometry(GeometryType indexType,
+        const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
+    void removeGeometry(IGeometryRenderer::Slot slot) override;
+    void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+        const std::vector<unsigned int>& indices) override;
+    void renderGeometry(IGeometryRenderer::Slot slot) override;
+
+    ISurfaceRenderer::Slot addSurface(IRenderableSurface& surface) override;
+    void removeSurface(ISurfaceRenderer::Slot slot) override;
+    void updateSurface(ISurfaceRenderer::Slot slot) override;
+    void renderSurface(ISurfaceRenderer::Slot slot) override;
+
+    IWindingRenderer::Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override;
+    void removeWinding(IWindingRenderer::Slot slot) override;
+    void updateWinding(IWindingRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override;
+    bool hasWindings() const;
+    void renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot) override;
+
     void setVisible(bool visible) override;
     bool isVisible() const override;
     void incrementUsed() override;
@@ -116,6 +154,9 @@ public:
     const MaterialPtr& getMaterial() const override;
 
     unsigned int getFlags() const override;
+
+    bool isApplicableTo(RenderViewType renderViewType) const;
+    void enableViewType(RenderViewType renderViewType);
 };
 
 typedef std::shared_ptr<OpenGLShader> OpenGLShaderPtr;

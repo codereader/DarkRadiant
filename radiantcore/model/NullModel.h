@@ -1,5 +1,4 @@
-#ifndef _NULLMODEL_H_
-#define _NULLMODEL_H_
+#pragma once
 
 #include "imodel.h"
 #include "math/AABB.h"
@@ -23,9 +22,6 @@ public:
 
 	const AABB& localAABB() const;
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
 	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
 
 	// IModel implementation
@@ -43,12 +39,7 @@ public:
 	virtual const IModelSurface& getSurface(unsigned surfaceNum) const;
 
 	virtual const std::vector<std::string>& getActiveMaterials() const;
-
-	// OpenGLRenderable implementation
-	void render(const RenderInfo& info) const;
 };
 typedef std::shared_ptr<NullModel> NullModelPtr;
 
 } // namespace model
-
-#endif /* _NULLMODEL_H_ */

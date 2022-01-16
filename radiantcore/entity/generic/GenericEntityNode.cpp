@@ -13,11 +13,9 @@ GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	m_angleKey(std::bind(&GenericEntityNode::angleChanged, this)),
 	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
-	m_arrow(m_ray),
-	m_aabb_solid(m_aabb_local),
-	m_aabb_wire(m_aabb_local),
-	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1"),
-    _solidAABBRenderMode(SolidBoxes)
+    _renderableArrow(*this),
+    _renderableBox(*this, localAABB(), worldAABB().getOrigin()),
+	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1")
 {}
 
 GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
@@ -28,20 +26,18 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	m_angleKey(std::bind(&GenericEntityNode::angleChanged, this)),
 	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
-	m_arrow(m_ray),
-	m_aabb_solid(m_aabb_local),
-	m_aabb_wire(m_aabb_local),
-	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1"),
-    _solidAABBRenderMode(other._solidAABBRenderMode)
+    _renderableArrow(*this),
+    _renderableBox(*this, localAABB(), worldAABB().getOrigin()),
+	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1")
 {}
 
 GenericEntityNode::~GenericEntityNode()
 {
 }
 
-GenericEntityNodePtr GenericEntityNode::Create(const IEntityClassPtr& eclass)
+std::shared_ptr<GenericEntityNode> GenericEntityNode::Create(const IEntityClassPtr& eclass)
 {
-	GenericEntityNodePtr instance(new GenericEntityNode(eclass));
+	auto instance = std::make_shared<GenericEntityNode>(eclass);
 	instance->construct();
 
 	return instance;
@@ -100,44 +96,36 @@ void GenericEntityNode::testSelect(Selector& selector, SelectionTest& test)
 
 scene::INodePtr GenericEntityNode::clone() const
 {
-	GenericEntityNodePtr node(new GenericEntityNode(*this));
+	auto node = std::shared_ptr<GenericEntityNode>(new GenericEntityNode(*this));
 	node->construct();
     node->constructClone(*this);
 
 	return node;
 }
 
-GenericEntityNode::SolidAAABBRenderMode GenericEntityNode::getSolidAABBRenderMode() const
+void GenericEntityNode::onPreRender(const VolumeTest& volume)
 {
-    return _solidAABBRenderMode;
+    EntityNode::onPreRender(volume);
+
+    _renderableBox.update(getColourShader());
+    _renderableArrow.update(getColourShader());
 }
 
-void GenericEntityNode::renderArrow(const ShaderPtr& shader, RenderableCollector& collector,
-	const VolumeTest& volume, const Matrix4& localToWorld) const
+void GenericEntityNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-	if (EntitySettings::InstancePtr()->getShowEntityAngles())
-	{
-		collector.addRenderable(*shader, m_arrow, localToWorld);
-	}
+    EntityNode::renderHighlights(collector, volume);
+
+    collector.addHighlightRenderable(_renderableArrow, Matrix4::getIdentity());
+    collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());
 }
 
-void GenericEntityNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void GenericEntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-	EntityNode::renderSolid(collector, volume);
+    EntityNode::setRenderSystem(renderSystem);
 
-	const ShaderPtr& shader = getSolidAABBRenderMode() == GenericEntityNode::WireFrameOnly ?
-		getWireShader() : getFillShader();
-
-	collector.addRenderable(*shader, m_aabb_solid, localToWorld());
-	renderArrow(shader, collector, volume, localToWorld());
-}
-
-void GenericEntityNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
-{
-	EntityNode::renderWireframe(collector, volume);
-
-	collector.addRenderable(*getWireShader(), m_aabb_wire, localToWorld());
-	renderArrow(getWireShader(), collector, volume, localToWorld());
+    // Clear the geometry from any previous shader
+    _renderableBox.clear();
+    _renderableArrow.clear();
 }
 
 const Vector3& GenericEntityNode::getDirection() const
@@ -203,6 +191,8 @@ void GenericEntityNode::updateTransform()
                                   .transformDirection(Vector3(1, 0, 0));
     }
 
+    _renderableBox.queueUpdate();
+    _renderableArrow.queueUpdate();
 	transformChanged();
 }
 
@@ -241,7 +231,7 @@ void GenericEntityNode::onChildAdded(const scene::INodePtr& child)
 {
     EntityNode::onChildAdded(child);
 
-    _solidAABBRenderMode = SolidBoxes;
+    _renderableBox.setFillMode(true);
 
     // Check if this node has any actual models/particles as children
     Node::foreachNode([&](const scene::INodePtr& node)
@@ -249,7 +239,7 @@ void GenericEntityNode::onChildAdded(const scene::INodePtr& child)
         // We consider all non-path-connection childnodes as "models"
         if (child->getNodeType() != scene::INode::Type::EntityConnection)
         {
-            _solidAABBRenderMode = WireFrameOnly;
+            _renderableBox.setFillMode(false);
             return false; // stop traversal
         }
 
@@ -261,7 +251,7 @@ void GenericEntityNode::onChildRemoved(const scene::INodePtr& child)
 {
     EntityNode::onChildRemoved(child);
 
-    _solidAABBRenderMode = SolidBoxes;
+    _renderableBox.setFillMode(true);
 
     // Check if this node has any actual models/particles as children
     Node::foreachNode([&](const scene::INodePtr& node)
@@ -270,12 +260,46 @@ void GenericEntityNode::onChildRemoved(const scene::INodePtr& child)
         // Ignore the child itself as this event is raised before the node is actually removed.
         if (node != child && child->getNodeType() != scene::INode::Type::EntityConnection)
         {
-            _solidAABBRenderMode = WireFrameOnly;
+            _renderableBox.setFillMode(false);
             return false; // stop traversal
         }
 
         return true;
     });
+}
+
+void GenericEntityNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    // Call the base class first
+    EntityNode::onInsertIntoScene(root);
+
+    _renderableBox.queueUpdate();
+    _renderableArrow.queueUpdate();
+}
+
+void GenericEntityNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    // Call the base class first
+    EntityNode::onRemoveFromScene(root);
+
+    _renderableBox.clear();
+    _renderableArrow.clear();
+}
+
+void GenericEntityNode::onVisibilityChanged(bool isVisibleNow)
+{
+    EntityNode::onVisibilityChanged(isVisibleNow);
+
+    if (isVisibleNow)
+    {
+        _renderableBox.queueUpdate();
+        _renderableArrow.queueUpdate();
+    }
+    else
+    {
+        _renderableBox.clear();
+        _renderableArrow.clear();
+    }
 }
 
 void GenericEntityNode::originChanged()

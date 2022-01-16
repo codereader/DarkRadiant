@@ -37,7 +37,7 @@ public:
 		_spacePartition = spacePartition;
 	}
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override
 	{
 		if (_shader != NULL)
 		{
@@ -45,13 +45,16 @@ public:
 		}
 	}
 
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override
 	{
 		if (_shader != NULL)
 		{
 			collector.addRenderable(*_shader, *this, Matrix4::getIdentity());
 		}
 	}
+
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override
+    {}
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override
 	{

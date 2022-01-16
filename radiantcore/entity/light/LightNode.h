@@ -14,6 +14,7 @@
 #include "../EntityNode.h"
 #include "../OriginKey.h"
 #include "../RotationKey.h"
+#include "Renderables.h"
 
 namespace entity
 {
@@ -107,8 +108,10 @@ class LightNode :
     selection::DragPlanes _dragPlanes;
 
 	// Renderable components of this light
-	RenderLightRadiiBox _renderableRadius;
-    RenderLightProjection _renderableFrustum;
+    RenderableLightOctagon _renderableOctagon;
+    RenderableLightVolume _renderableLightVolume;
+
+    bool _showLightVolumeWhenUnselected;
 
 	// a temporary variable for calculating the AABB of all (selected) components
 	mutable AABB m_aabb_component;
@@ -182,18 +185,40 @@ public:
 	void selectedChangedComponent(const ISelectable& selectable);
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void onPreRender(const VolumeTest& volume) override;
+	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
 
-    // OpenGLRenderable implementation
-    void render(const RenderInfo& info) const override;
+    bool isOriented() const override
+    {
+        return false; // light wireframe stuff is rendered in world coordinates
+    }
 
 	const Matrix4& rotation() const;
 
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
+
+    void onEntitySettingsChanged() override;
+
+    bool isProjected() const;
+
+    // Returns the frustum structure (calling this on point lights will throw)
+    const Frustum& getLightFrustum() const;
+
+    // Returns the relative start point used by projected lights to cut off
+    // the upper part of the projection cone to form the frustum
+    // Calling this on point lights will throw.
+    const Vector3& getLightStart() const;
+
+    // Returns the light radius for point lights
+    // Calling this on projected lights will throw
+    const Vector3& getLightRadius() const;
+
+    virtual Vector4 getEntityColour() const override;
 
 protected:
 	// Gets called by the Transformable implementation whenever
@@ -207,16 +232,12 @@ protected:
 	// Override EntityNode::construct()
 	void construct() override;
 
+    void onVisibilityChanged(bool isVisibleNow) override;
+    void onSelectionStatusChange(bool changeGroupStatus) override;
+
 private:
-    void renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
+    void renderInactiveComponents(IRenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
     void evaluateTransform();
-
-    // Render the light volume including bounds and origin
-    void renderLightVolume(RenderableCollector& collector,
-                           const Matrix4& localToWorld, bool selected) const;
-
-    // Update the bounds of the renderable radius box
-    void updateRenderableRadius() const;
 
     // Ensure the start and end points are set to sensible values
 	void checkStartEnd();
@@ -284,6 +305,6 @@ private:
 
 	bool useStartEnd() const;
 
-}; // class LightNode
+};
 
 } // namespace entity

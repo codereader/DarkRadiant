@@ -15,7 +15,7 @@ namespace model
 	class StaticModelSurface;
 	typedef std::shared_ptr<StaticModelSurface> StaticModelSurfacePtr;
 }
-class RenderableCollector;
+class IRenderableCollector;
 class RendererLight;
 class SelectionTest;
 class Selector;
@@ -63,7 +63,7 @@ private:
 	typedef std::vector<Surface> SurfaceList;
 
 	// Vector of renderable surfaces for this model
-	SurfaceList _surfVec;
+	SurfaceList _surfaces;
 
 	// The current working scale
 	Vector3 _scaleTransformed;
@@ -120,28 +120,14 @@ public:
 	void connectUndoSystem(IUndoSystem& undoSystem);
 	void disconnectUndoSystem(IUndoSystem& undoSystem);
 
-    // Delegated render methods called by StaticModelNode (not part of any
-    // interface)
-	void renderSolid(RenderableCollector& rend, const Matrix4& localToWorld,
-                     const IRenderEntity& entity, const LitObject& litObj) const;
-	void renderWireframe(RenderableCollector& rend, const Matrix4& localToWorld,
-		const IRenderEntity& entity) const;
-
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
-
-	/**
-	 * Back-end render function from OpenGLRenderable. This is called from the
-	 * model selector but not the main renderer, which uses the front-end render
-	 * method.
-	 */
-	void render(const RenderInfo& info) const override;
 
 	/**
 	 * Return the number of surfaces in this model.
 	 */
 	int getSurfaceCount() const override
     {
-		return static_cast<int>(_surfVec.size());
+		return static_cast<int>(_surfaces.size());
 	}
 
 	/**
@@ -226,6 +212,8 @@ public:
 
 	// Returns the current base scale of this model
 	const Vector3& getScale() const;
+
+    void foreachSurface(const std::function<void(const StaticModelSurface&)>& func) const;
 };
 typedef std::shared_ptr<StaticModel> StaticModelPtr;
 

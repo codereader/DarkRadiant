@@ -13,8 +13,7 @@ namespace md5 {
 
 MD5Model::MD5Model() :
 	_polyCount(0),
-	_vertexCount(0),
-	_renderableSkeleton(_skeleton)
+	_vertexCount(0)
 {}
 
 MD5Model::MD5Model(const MD5Model& other) :
@@ -24,8 +23,7 @@ MD5Model::MD5Model(const MD5Model& other) :
 	_polyCount(other._polyCount),
 	_vertexCount(other._vertexCount),
 	_filename(other._filename),
-	_modelPath(other._modelPath),
-	_renderableSkeleton(_skeleton)
+	_modelPath(other._modelPath)
 {
 	// Copy-construct the other model's surfaces, but not its shaders, revert to default
 	for (std::size_t i = 0; i < other._surfaces.size(); ++i)
@@ -41,16 +39,12 @@ MD5Model::MD5Model(const MD5Model& other) :
 	updateMaterialList();
 }
 
-MD5Model::const_iterator MD5Model::begin() const {
-	return _surfaces.begin();
-}
-
-MD5Model::const_iterator MD5Model::end() const {
-	return _surfaces.end();
-}
-
-std::size_t MD5Model::size() const {
-	return _surfaces.size();
+void MD5Model::foreachSurface(const std::function<void(const MD5Surface&)>& functor) const
+{
+    for (const auto& surface : _surfaces)
+    {
+        functor(*surface.surface);
+    }
 }
 
 MD5Surface& MD5Model::createNewSurface()
@@ -164,7 +158,7 @@ void MD5Model::applySkin(const ModelSkin& skin)
 
 int MD5Model::getSurfaceCount() const
 {
-	return static_cast<int>(size());
+	return static_cast<int>(_surfaces.size());
 }
 
 int MD5Model::getVertexCount() const
@@ -212,7 +206,7 @@ void MD5Model::captureShaders()
 	}
 }
 
-const model::IModelSurface& MD5Model::getSurface(unsigned surfaceNum) const
+const model::IIndexedModelSurface& MD5Model::getSurface(unsigned surfaceNum) const
 {
 	assert(surfaceNum >= 0 && surfaceNum < _surfaces.size());
 	return *(_surfaces[surfaceNum].surface);
@@ -388,6 +382,13 @@ void MD5Model::updateAnim(std::size_t time)
 	{
 		i->surface->updateToSkeleton(_skeleton);
 	}
+
+    signal_ModelAnimationUpdated().emit();
+}
+
+sigc::signal<void>& MD5Model::signal_ModelAnimationUpdated()
+{
+    return _sigModelAnimationUpdated;
 }
 
 } // namespace

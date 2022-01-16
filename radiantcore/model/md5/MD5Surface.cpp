@@ -277,6 +277,11 @@ void MD5Surface::setActiveMaterial(const std::string& activeMaterial)
 	_activeMaterial = activeMaterial;
 }
 
+const AABB& MD5Surface::getSurfaceBounds() const
+{
+    return _aabb_local;
+}
+
 void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 {
 	if (_vertices.size() != _mesh->vertices.size())

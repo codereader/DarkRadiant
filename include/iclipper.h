@@ -3,6 +3,7 @@
 #include "imodule.h"
 #include "iorthoview.h"
 #include "math/Vector3.h"
+#include "math/Plane3.h"
 
 // The possible split modes
 enum EBrushSplit {
@@ -68,6 +69,9 @@ public:
 
 	// Updates the clip plane information
 	virtual void update() = 0;
+
+    // Returns the currently active clip plane (might be invalid)
+    virtual const Plane3& getClipPlane() = 0;
 };
 
 // The accessor for the clipper module

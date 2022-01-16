@@ -15,7 +15,7 @@ class CurveNURBS :
 	NURBSWeights _weights;
 	Knots _knots;
 public:
-	CurveNURBS(const Callback& callback);
+	CurveNURBS(const IEntityNode& entity, const Callback& callback);
 
 	// Subdivides the segments between the control points
 	virtual void tesselate();

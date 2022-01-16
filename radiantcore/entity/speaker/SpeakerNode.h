@@ -14,6 +14,7 @@
 #include "dragplanes.h"
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
+#include "../RenderableEntityBox.h"
 
 namespace entity
 {
@@ -22,7 +23,7 @@ class SpeakerNode;
 typedef std::shared_ptr<SpeakerNode> SpeakerNodePtr;
 
 /// Entity node representing a speaker
-class SpeakerNode :
+class SpeakerNode final :
     public EntityNode,
     public Snappable,
     public PlaneSelectable,
@@ -40,8 +41,14 @@ class SpeakerNode :
     // The default radii as defined on the currently active sound shader
     SoundRadii _defaultRadii;
 
+    // The small entity box
+    RenderableEntityBox _renderableBox;
+
     // Renderable speaker radii
-    RenderableSpeakerRadii _renderableRadii;
+    RenderableSpeakerRadiiWireframe _renderableRadiiWireframe;
+    RenderableSpeakerRadiiFill _renderableRadiiFill;
+
+    bool _showRadiiWhenUnselected;
 
     bool m_useSpeakerRadii = true;
     bool m_minIsSet = false;
@@ -52,9 +59,6 @@ class SpeakerNode :
     // the AABB that determines the rendering area
     AABB m_aabb_border;
 
-    RenderableSolidAABB m_aabb_solid;
-    RenderableWireframeAABB m_aabb_wire;
-
     // dragplanes for resizing using mousedrag
     selection::DragPlanes _dragPlanes;
 
@@ -62,7 +66,6 @@ private:
     SpeakerNode(const IEntityClassPtr& eclass);
     SpeakerNode(const SpeakerNode& other);
     void translate(const Vector3& translation);
-    void rotate(const Quaternion& rotation);
     void revertTransform() override;
     void freezeTransform() override;
     void updateTransform();
@@ -107,10 +110,23 @@ public:
     scene::INodePtr clone() const override;
 
     // Renderable implementation
-    void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-    void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void onPreRender(const VolumeTest& volume);
+    void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+    void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume);
+    void setRenderSystem(const RenderSystemPtr& renderSystem) override;
+
+    bool isOriented() const override
+    {
+        return false; // speaker representation is rendered in world coordinates
+    }
 
     void selectedChangedComponent(const ISelectable& selectable);
+
+    void onEntitySettingsChanged() override;
+
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 protected:
     // Gets called by the Transformable implementation whenever
@@ -124,8 +140,10 @@ protected:
     // Called after the constructor is done, overrides EntityNode
     void construct() override;
 
+    void onSelectionStatusChange(bool changeGroupStatus) override;
+
 private:
     void evaluateTransform();
 };
 
-} // namespace entity
+} // namespace

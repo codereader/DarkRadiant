@@ -12,6 +12,7 @@ add_library(radiantcore MODULE
             brush/FaceInstance.cpp
             brush/FacePlane.cpp
             brush/FixedWinding.cpp
+            brush/RenderableBrushVertices.cpp
             brush/TextureMatrix.cpp
             brush/TextureProjection.cpp
             brush/Winding.cpp
@@ -46,6 +47,8 @@ add_library(radiantcore MODULE
             entity/ModelKey.cpp
             entity/NameKeyObserver.cpp
             entity/NamespaceManager.cpp
+            entity/RenderableArrow.cpp
+            entity/RenderableEntityBox.cpp
             entity/RotationKey.cpp
             entity/RotationMatrix.cpp
             entity/ShaderParms.cpp

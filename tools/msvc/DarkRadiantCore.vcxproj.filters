@@ -1105,6 +1105,15 @@
     <ClCompile Include="..\..\radiantcore\undo\UndoSystemFactory.cpp">
       <Filter>src\undo</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\entity\RenderableEntityBox.cpp">
+      <Filter>src\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\entity\RenderableArrow.cpp">
+      <Filter>src\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\brush\RenderableBrushVertices.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -1462,9 +1471,6 @@
       <Filter>src\entity\light</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\generic\GenericEntityNode.h">
-      <Filter>src\entity\generic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\generic\RenderableArrow.h">
       <Filter>src\entity\generic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\curve\Curve.h">
@@ -2243,6 +2249,27 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Texturing.h">
       <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\brush\RenderableWinding.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\GeometryRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\RenderableEntityBox.h">
+      <Filter>src\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\RenderableArrow.h">
+      <Filter>src\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\SurfaceRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\brush\RenderableBrushVertices.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\RenderableModelSurface.h">
+      <Filter>src\model</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

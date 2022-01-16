@@ -19,6 +19,7 @@ private:
     std::vector<ArbitraryMeshVertex> _vertices;
     std::vector<unsigned int> _indices;
     std::string _materialName;
+    AABB _bounds;
 
 public:
     PatchSurface(const std::string& materialName, PatchMesh& mesh);
@@ -34,6 +35,8 @@ public:
 
     const std::vector<ArbitraryMeshVertex>& getVertexArray() const override;
     const std::vector<unsigned int>& getIndexArray() const override;
+
+    const AABB& getSurfaceBounds() const override;
 };
 
 }

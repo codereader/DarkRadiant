@@ -10,8 +10,10 @@
 #include "render/VectorLightList.h"
 #include "StaticModel.h"
 #include "scene/Node.h"
+#include "RenderableModelSurface.h"
 
-namespace model {
+namespace model
+{
 
 /**
  * \brief Scenegraph node representing a static model loaded from a file (e.g.
@@ -22,7 +24,7 @@ namespace model {
  * StaticGeometryNode). It is normally created by the ModelCache in response to
  * a particular entity gaining a "model" spawnarg.
  */
-class StaticModelNode :
+class StaticModelNode final :
 	public scene::Node,
 	public ModelNode,
 	public SelectionTestable,
@@ -30,6 +32,7 @@ class StaticModelNode :
 	public ITraceable,
     public Transformable
 {
+private:
 	// The actual model
 	StaticModelPtr _model;
 
@@ -38,17 +41,22 @@ class StaticModelNode :
 	// The name of this model's skin
 	std::string _skin;
 
+    // The renderable surfaces attached to the shaders
+    std::vector<RenderableModelSurface::Ptr> _renderableSurfaces;
+
+    // We need to keep a reference for skin swapping
+    RenderSystemWeakPtr _renderSystem;
+
+    bool _attachedToShaders;
+
 public:
     typedef std::shared_ptr<StaticModelNode> Ptr;
 
-	/** Construct a StaticModelNode with a reference to the loaded picoModel.
-	 */
+	// Construct a StaticModelNode with a reference to the loaded StaticModel.
 	StaticModelNode(const StaticModelPtr& picoModel);
 
-	virtual ~StaticModelNode();
-
-	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
-	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
+	void onInsertIntoScene(scene::IMapRootNode& root) override;
+	void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ModelNode implementation
 	const IModel& getIModel() const override;
@@ -63,20 +71,23 @@ public:
 	std::string getSkin() const override;
 
 	// Bounded implementation
-	virtual const AABB& localAABB() const override;
+	const AABB& localAABB() const override;
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test) override;
 
-	virtual std::string name() const override;
+	std::string name() const override;
 	Type getNodeType() const override;
 
 	const StaticModelPtr& getModel() const;
 	void setModel(const StaticModelPtr& model);
 
 	// Renderable implementation
-  	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    bool isOriented() const override;
+  	void onPreRender(const VolumeTest& volume) override;
+  	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
+	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	std::size_t getHighlightFlags() override
@@ -88,8 +99,14 @@ public:
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
 protected:
-	virtual void _onTransformationChanged() override;
-	virtual void _applyTransformation() override;
+	void _onTransformationChanged() override;
+	void _applyTransformation() override;
+    void onVisibilityChanged(bool isVisibleNow) override;
+
+private:
+    void attachToShaders();
+    void detachFromShaders();
+    void queueRenderableUpdate();
 };
 
 } // namespace model

@@ -137,8 +137,14 @@ void Clipper::getPlanePoints(Vector3 planepts[3], const AABB& bounds) const {
 	}
 }
 
+const Plane3& Clipper::getClipPlane()
+{
+    return _clipPlane;
+}
+
 void Clipper::setClipPlane(const Plane3& plane) 
 {
+    _clipPlane = plane;
 	algorithm::setBrushClipPlane(plane);
 }
 

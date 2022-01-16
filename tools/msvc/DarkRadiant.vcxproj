@@ -290,7 +290,6 @@
     <ClCompile Include="..\..\radiant\ui\common\CommandEntry.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\EntityChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MapPreview.cpp" />
-    <ClCompile Include="..\..\radiant\ui\common\RenderableAABB.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ShaderChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ShaderSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\TexturePreviewCombo.cpp" />
@@ -500,7 +499,6 @@
     <ClInclude Include="..\..\radiant\ui\common\CommandEntry.h" />
     <ClInclude Include="..\..\radiant\ui\common\EntityChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\MapPreview.h" />
-    <ClInclude Include="..\..\radiant\ui\common\RenderableAABB.h" />
     <ClInclude Include="..\..\radiant\ui\common\ShaderChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\ShaderSelector.h" />
     <ClInclude Include="..\..\radiant\ui\common\TexturePreviewCombo.h" />

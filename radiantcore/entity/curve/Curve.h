@@ -36,7 +36,7 @@ protected:
     sigc::signal<void> _sigCurveChanged;
 
 public:
-	Curve(const Callback& boundsChanged);
+	Curve(const IEntityNode& entity, const Callback& boundsChanged);
 
 	virtual ~Curve() {}
 
@@ -79,9 +79,9 @@ public:
 	// which writes the points to the spawnargs
 	virtual void saveToEntity(Entity& target) = 0;
 
-	// Front-end render method
-	void submitRenderables(const ShaderPtr& shader, RenderableCollector& collector, 
-		const VolumeTest& volume, const Matrix4& localToWorld) const;
+	// Render methods
+    void onPreRender(const ShaderPtr& shader, const VolumeTest& volume);
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume);
 
 	// Performs a selection test on the point vertices of this curve
 	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);
@@ -92,6 +92,9 @@ public:
 
 	// Returns the string representation of this curve to store it into entity spawnargs
 	std::string getEntityKeyValue();
+
+    void clearRenderable();
+    void updateRenderable();
 
 protected:
 	// Clears the control points and other associated elements

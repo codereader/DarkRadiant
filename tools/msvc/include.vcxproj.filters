@@ -162,6 +162,9 @@
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\imapfilechangetracker.h" />
+    <ClInclude Include="..\..\include\iwindingrenderer.h" />
+    <ClInclude Include="..\..\include\igeometryrenderer.h" />
+    <ClInclude Include="..\..\include\isurfacerenderer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ui">
