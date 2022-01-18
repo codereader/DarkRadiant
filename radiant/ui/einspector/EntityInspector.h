@@ -214,7 +214,7 @@ private:
     void onKeyAdded(const std::string& key, const std::string& value);
     void onKeyRemoved(const std::string& key);
     void onKeyValueSetChanged(const std::string& key, const std::string& uniqueValue);
-    
+
     // Routines shared by onKeyAdded, onKeyRemoved and onKeyValueSetChanged
     void onKeyUpdatedCommon(const std::string& key);
 
@@ -264,23 +264,24 @@ private:
 
 protected:
     // Called when the app is idle
-    void onIdle();
+    void onIdle() override;
 
 public:
 	// Constructor
     EntityInspector();
 
 	// Get the main widget for packing
-	wxPanel* getWidget();
+	wxPanel* getWidget() override;
 
 	/** greebo: Gets called by the RadiantSelectionSystem upon selection change.
 	 */
-	void selectionChanged(const scene::INodePtr& node, bool isComponent);
+	void selectionChanged(const scene::INodePtr& node, bool isComponent) override;
 
-	void registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator) override;
-	void unregisterPropertyEditor(const std::string& key) override;
-
-    void registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create) override;
+    void registerPropertyEditor(const std::string& key,
+                                const IPropertyEditor::CreationFunc& creator) override;
+    void unregisterPropertyEditor(const std::string& key) override;
+    void registerPropertyEditorDialog(const std::string& key,
+                                      const IPropertyEditorDialog::CreationFunc& create) override;
     IPropertyEditorDialog::Ptr createDialog(const std::string& key) override;
     void unregisterPropertyEditorDialog(const std::string& key) override;
 
@@ -290,7 +291,7 @@ public:
     void onKeyChange(const std::string& key, const std::string& value, bool isMultiValue = false);
 
 	// greebo: Tells the inspector to reload the window settings from the registry.
-	void restoreSettings();
+	void restoreSettings() override;
 
 	/**
 	 * greebo: Static command target for toggling the Entity Inspector in the GroupDialog.

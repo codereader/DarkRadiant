@@ -43,7 +43,7 @@ namespace
 
 // Constructor.
 
-ModelSelector::ModelSelector() : 
+ModelSelector::ModelSelector() :
 	DialogBase(_(MODELSELECTOR_TITLE)),
 	_dialogPanel(loadNamedPanel(this, "ModelSelectorPanel")),
     _treeView(nullptr),
@@ -66,7 +66,7 @@ ModelSelector::ModelSelector() :
     // allow vertical shrinking)
     _modelPreview->setSize(static_cast<int>(_position.getSize()[0]*0.4f),
                            static_cast<int>(_position.getSize()[1]*0.2f));
-	
+
     wxPanel* leftPanel = findNamedObject<wxPanel>(this, "ModelSelectorLeftPanel");
 
     // Set up view widgets
@@ -267,27 +267,27 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
 // Helper function to create the TreeView
 void ModelSelector::setupTreeView(wxWindow* parent)
 {
-	_treeView = new ModelTreeView(parent);
+    _treeView = new ModelTreeView(parent);
     _treeView->SetMinSize(wxSize(200, 200));
 
-	// Get selection and connect the changed callback
-	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ModelSelector::onSelectionChanged, this);
-	_treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &ModelSelector::onTreeViewPopulationFinished, this);
+    // Get selection and connect the changed callback
+    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ModelSelector::onSelectionChanged, this);
+    _treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED,
+                    &ModelSelector::onTreeViewPopulationFinished, this);
 
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
 
-	parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
-    parent->GetSizer()->Prepend(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
+    parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
+    parent->GetSizer()->Prepend(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT,
+                                6);
     parent->GetSizer()->Layout();
 
-    Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &ModelSelector::_onItemActivated, this );
-}
-
-void ModelSelector::_onItemActivated( wxDataViewEvent& ev ) {
-    std::string modelName = _treeView->GetSelectedModelPath();
-    if ( !modelName.empty() ) {
-        onOK( ev );
-    }
+    // Accept the dialog on double-clicking on a model in the list
+    _treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, [this](wxDataViewEvent& ev) {
+        if (auto modelName = _treeView->GetSelectedModelPath(); !modelName.empty()) {
+            onOK(ev);
+        }
+    });
 }
 
 void ModelSelector::populateModels()
@@ -315,7 +315,7 @@ void ModelSelector::showInfoForSelectedModel()
     // Get the model name, if this is blank we are looking at a directory,
     // so leave the table empty
     std::string modelName = _treeView->GetSelectedModelPath();
-    
+
     if (modelName.empty()) return;
 
     // Get the skin if set

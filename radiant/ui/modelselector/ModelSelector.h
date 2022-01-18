@@ -114,8 +114,6 @@ private:
     void onRescanFolders(wxCommandEvent& ev);
     void onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev);
 
-    void _onItemActivated( wxDataViewEvent& ev );
-
     // Update the info table with information from the currently-selected model, and
 	// update the displayed model.
 	void onSelectionChanged(wxDataViewEvent& ev);
