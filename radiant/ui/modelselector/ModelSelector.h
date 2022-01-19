@@ -28,16 +28,12 @@ namespace ui
  */
 struct ModelSelectorResult
 {
-	// Model and skin strings
-	std::string model;
-	std::string skin;
+    // Model and skin strings
+    std::string model;
+    std::string skin;
 
-	// options
-	bool createClip;
-
-	// Constructor
-	ModelSelectorResult(const std::string& m, const std::string& s, const bool clip)
-	: model(m), skin(s), createClip(clip) {}
+    // Model creation options
+    bool createClip = false;
 };
 
 class ModelPopulator;

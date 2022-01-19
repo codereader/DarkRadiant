@@ -25,6 +25,8 @@
 #include <wx/splitter.h>
 #include <wx/checkbox.h>
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include "wxutil/BitmapToggleButton.h"
+#include "wxutil/Bitmap.h"
 #include "ui/UserInterfaceModule.h"
 
 #include <functional>
@@ -190,29 +192,21 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 
     _showOptions = showOptions;
 
-	// Conditionally hide the options
-	findNamedObject<wxPanel>(this, "ModelSelectorOptionsPanel")->Show(_showOptions);
+    // Conditionally hide the options
+    findNamedObject<wxPanel>(this, "ModelSelectorOptionsPanel")->Show(_showOptions);
 
     // show and enter recursive main loop.
     int returnCode = ShowModal();
 
-	// Remove the model from the preview's scenegraph before returning
-	_modelPreview->setModel("");
+    // Remove the model from the preview's scenegraph before returning
+    _modelPreview->setModel("");
 
+    // Return selected model/skin, or an empty result if the dialog was cancelled
     if (returnCode == wxID_OK)
-    {
-        // Construct the model/skin combo and return it
-        return ModelSelectorResult(
-            _lastModel,
-            _lastSkin,
-            findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue()
-        );
-    }
+        return {_lastModel, _lastSkin,
+                findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue()};
     else
-    {
-        // Return empty result on cancel
-        return ModelSelectorResult("", "", false);
-    }
+        return {};
 }
 
 // Static function to display the instance, and return the selected model to the
@@ -275,7 +269,16 @@ void ModelSelector::setupTreeView(wxWindow* parent)
     _treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED,
                     &ModelSelector::onTreeViewPopulationFinished, this);
 
+    // Set up the top treeview toolbar, including a custom button to enable/disable the showing of
+    // skins in the tree.
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
+    auto* showSkinsBtn = new wxutil::BitmapToggleButton(toolbar,
+                                                        wxutil::GetLocalBitmap("skin16.png"),
+                                                        wxutil::GetLocalBitmap("skin16.png"));
+    showSkinsBtn->SetToolTip(_("Show skins in the tree as children of their associated models"));
+    showSkinsBtn->Bind(wxEVT_TOGGLEBUTTON,
+                       [this](auto& ev) { _treeView->SetShowSkins(ev.IsChecked()); });
+    toolbar->GetRightSizer()->Add(showSkinsBtn, wxSizerFlags().Border(wxLEFT, 6));
 
     parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
     parent->GetSizer()->Prepend(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT,
