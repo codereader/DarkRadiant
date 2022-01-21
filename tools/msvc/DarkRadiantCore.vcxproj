@@ -892,6 +892,7 @@
     <ClInclude Include="..\..\radiantcore\map\PointFile.h" />
     <ClInclude Include="..\..\radiantcore\map\RegionManager.h" />
     <ClInclude Include="..\..\radiantcore\map\RegionWalkers.h" />
+    <ClInclude Include="..\..\radiantcore\map\RenderablePointFile.h" />
     <ClInclude Include="..\..\radiantcore\map\RootNode.h" />
     <ClInclude Include="..\..\radiantcore\map\ShaderBreakdown.h" />
     <ClInclude Include="..\..\radiantcore\map\VcsMapResource.h" />

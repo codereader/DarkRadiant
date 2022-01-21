@@ -30,7 +30,7 @@ PointFileChooser::PointFileChooser(const wxArrayString& files)
 
     // Add dialog buttons
     auto btnSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
-    GetSizer()->Add(btnSizer, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM | wxBOTTOM, 12);
+    GetSizer()->Add(btnSizer, 0, wxALIGN_RIGHT | wxBOTTOM, 12);
 
     Fit();
 }

@@ -96,6 +96,11 @@ public:
 	{
 		return _emptyAABB;
 	}
+
+    RenderSystemPtr getRenderSystem() const override
+    {
+        return Node::getRenderSystem();
+    }
 };
 typedef std::shared_ptr<RootNode> RootNodePtr;
 

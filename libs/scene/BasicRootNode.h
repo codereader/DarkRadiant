@@ -107,6 +107,11 @@ public:
     {
         return Highlight::NoHighlight; // never highlighted
     }
+
+    RenderSystemPtr getRenderSystem() const override
+    {
+        return Node::getRenderSystem();
+    }
 };
 
 }
