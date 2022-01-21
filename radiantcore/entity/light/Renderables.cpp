@@ -227,6 +227,18 @@ void RenderableLightVolume::updateProjectedLightVolume()
     }
 }
 
+namespace detail
+{
+
+inline void addVertex(std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices,
+    const Vector3& vertex, const Vector4& colour)
+{
+    indices.push_back(static_cast<unsigned int>(vertices.size()));
+    vertices.push_back(ArbitraryMeshVertex(vertex, { 0,0,0 }, { 0,0 }, colour));
+}
+
+}
+
 void RenderableLightVertices::updateGeometry()
 {
     if (!_needsUpdate) return;
@@ -243,21 +255,42 @@ void RenderableLightVertices::updateGeometry()
     const auto& colourVertexSelected = settings.getLightVertexColour(LightEditVertexType::Selected);
     const auto& colourVertexDeselected = settings.getLightVertexColour(LightEditVertexType::Deselected);
     const auto& colourVertexInactive = settings.getLightVertexColour(LightEditVertexType::Inactive);
+    const auto& colourStartEndSelected = settings.getLightVertexColour(LightEditVertexType::StartEndSelected);
+    const auto& colourStartEndDeselected = settings.getLightVertexColour(LightEditVertexType::StartEndDeselected);
 
-    unsigned int index = 0;
+    // Local colour evaluation lambdas
+    auto getRegularVertexColour = [&](const VertexInstance& instance)->const Vector3&
+    {
+        return _mode != selection::ComponentSelectionMode::Vertex ? colourVertexInactive :
+            instance.isSelected() ? colourVertexSelected : colourVertexDeselected;
+    };
+
+    auto getStartEndVertexColour = [&](const VertexInstance& instance)->const Vector3&
+    {
+        return _mode != selection::ComponentSelectionMode::Vertex ? colourVertexInactive :
+            instance.isSelected() ? colourStartEndSelected : colourStartEndDeselected;
+    };
 
     if (_light.isProjected())
     {
-        // TODO
+        detail::addVertex(vertices, indices, _instances.target.getVertex(), getRegularVertexColour(_instances.target));
+        detail::addVertex(vertices, indices, _instances.right.getVertex(), getRegularVertexColour(_instances.right));
+        detail::addVertex(vertices, indices, _instances.up.getVertex(), getRegularVertexColour(_instances.up));
+
+        if (_useFlags.start)
+        {
+            detail::addVertex(vertices, indices, _instances.start.getVertex(), getStartEndVertexColour(_instances.start));
+        }
+
+        if (_useFlags.end)
+        {
+            detail::addVertex(vertices, indices, _instances.end.getVertex(), getStartEndVertexColour(_instances.end));
+        }
     }
     else
     {
         // Not a projected light, include just the light centre vertex
-        const auto& colour = _mode != selection::ComponentSelectionMode::Vertex ? colourVertexInactive :
-            _instances.center.isSelected() ? colourVertexSelected : colourVertexDeselected;
-
-        vertices.push_back(ArbitraryMeshVertex(_instances.center.getVertex(), { 0,0,0 }, { 0,0 }, colour));
-        indices.push_back(index++);
+        detail::addVertex(vertices, indices, _instances.center.getVertex(), getRegularVertexColour(_instances.center));
     }
 
     // Apply the local2world transform to all the vertices

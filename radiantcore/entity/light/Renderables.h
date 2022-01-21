@@ -69,14 +69,18 @@ class RenderableLightVertices :
 private:
     const LightNode& _light;
     const LightVertexInstanceSet& _instances;
+    const Projected<bool>& _useFlags;
 
     bool _needsUpdate;
     selection::ComponentSelectionMode _mode;
 
 public:
-    RenderableLightVertices(const LightNode& light, const LightVertexInstanceSet& instances) :
+    RenderableLightVertices(const LightNode& light, 
+                            const LightVertexInstanceSet& instances, 
+                            const Projected<bool>& useFlags) :
         _light(light),
         _instances(instances),
+        _useFlags(useFlags),
         _needsUpdate(true),
         _mode(selection::ComponentSelectionMode::Default)
     {}

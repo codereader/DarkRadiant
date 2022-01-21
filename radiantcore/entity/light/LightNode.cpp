@@ -34,7 +34,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass)
     _dragPlanes(sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
     _renderableOctagon(*this),
     _renderableLightVolume(*this),
-    _renderableVertices(*this, _instances),
+    _renderableVertices(*this, _instances, _projUseFlags),
     _showLightVolumeWhenUnselected(EntitySettings::InstancePtr()->getShowAllLightRadii()),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
@@ -61,7 +61,7 @@ LightNode::LightNode(const LightNode& other)
     _dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
     _renderableOctagon(*this),
     _renderableLightVolume(*this),
-    _renderableVertices(*this, _instances),
+    _renderableVertices(*this, _instances, _projUseFlags),
     _showLightVolumeWhenUnselected(other._showLightVolumeWhenUnselected),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
@@ -1192,6 +1192,9 @@ void LightNode::projectionChanged()
 {
     _projectionChanged = true;
     m_doom3Radius.m_changed();
+
+    _renderableVertices.queueUpdate();
+    _renderableLightVolume.queueUpdate();
 
     SceneChangeNotify();
 }
