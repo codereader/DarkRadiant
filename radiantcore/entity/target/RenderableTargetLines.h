@@ -17,7 +17,7 @@ namespace
 
 /**
  * greebo: This is a helper object owned by the TargetableInstance.
- * It represents a RenderablePointVector which repopulates
+ * It sets up a line-based renderable which repopulates
  * itself each frame with the coordinates of the targeted
  * instances. It provides a render() method.
  *

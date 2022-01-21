@@ -101,9 +101,9 @@ private:
 	// ----
 
 	// cached data compiled from state
-	RenderablePointVector _faceCentroidPoints;
-	RenderablePointVector _uniqueVertexPoints;
-	RenderablePointVector _uniqueEdgePoints;
+    std::vector<Vector3> _faceCentroidPoints;
+    std::vector<Vector3> _uniqueVertexPoints;
+    std::vector<Vector3> _uniqueEdgePoints;
 
 	typedef std::vector<SelectableVertex> SelectableVertices;
 	SelectableVertices m_select_vertices;
@@ -298,7 +298,7 @@ public:
 	// Signal for external code to get notified each time any face of any brush changes
 	static sigc::signal<void>& signal_faceShaderChanged();
 
-    const std::vector<VertexCb>& getVertices(selection::ComponentSelectionMode mode) const;
+    const std::vector<Vector3>& getVertices(selection::ComponentSelectionMode mode) const;
 
 private:
 	void edge_push_back(FaceVertexId faceVertex);

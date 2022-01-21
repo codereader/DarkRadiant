@@ -40,14 +40,14 @@ protected:
 
         if (_points.size() < 2) return;
 
-        for (auto i = 0; i < _points.size(); ++i)
+        for (unsigned int i = 0; i < _points.size(); ++i)
         {
             vertices.push_back(ArbitraryMeshVertex(_points[i].vertex, { 0, 0, 0 }, { 0, 0 }, detail::toVector4(_points[i].colour)));
 
             if (i > 0)
             {
-                indices.push_back(static_cast<unsigned int>(i-1));
-                indices.push_back(static_cast<unsigned int>(i));
+                indices.push_back(i-1);
+                indices.push_back(i);
             }
         }
         

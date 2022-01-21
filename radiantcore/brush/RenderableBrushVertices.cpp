@@ -28,7 +28,7 @@ void RenderableBrushVertices::updateGeometry()
     {
         const auto& vertex = brushVertices[i];
 
-        vertices.push_back(ArbitraryMeshVertex(vertex.vertex, { 0,0,0 }, { 0,0 }, colour));
+        vertices.push_back(ArbitraryMeshVertex(vertex, { 0,0,0 }, { 0,0 }, colour));
         indices.push_back(i);
     }
 

@@ -38,9 +38,6 @@ namespace {
 Brush::Brush(BrushNode& owner) :
     _owner(owner),
     _undoStateSaver(nullptr),
-    _faceCentroidPoints(GL_POINTS),
-    _uniqueVertexPoints(GL_POINTS),
-    _uniqueEdgePoints(GL_POINTS),
     m_planeChanged(false),
     m_transformChanged(false),
 	_detailFlag(Structural)
@@ -53,9 +50,6 @@ Brush::Brush(BrushNode& owner) :
 Brush::Brush(BrushNode& owner, const Brush& other) :
     _owner(owner),
     _undoStateSaver(nullptr),
-    _faceCentroidPoints(GL_POINTS),
-    _uniqueVertexPoints(GL_POINTS),
-    _uniqueEdgePoints(GL_POINTS),
     m_planeChanged(false),
     m_transformChanged(false),
 	_detailFlag(Structural)
@@ -1293,7 +1287,7 @@ void Brush::buildBRep() {
             const Winding& w = m_faces[faceVertex.getFace()]->getWinding();
             Vector3 edge = math::midPoint(w[faceVertex.getVertex()].vertex,
                                           w[w.next(faceVertex.getVertex())].vertex);
-            _uniqueEdgePoints[i] = VertexCb(edge, colour_vertex);
+            _uniqueEdgePoints[i] = edge;
           }
         }
 
@@ -1343,7 +1337,7 @@ void Brush::buildBRep() {
             FaceVertexId faceVertex = faceVertices[ProximalVertexArray_index(vertexRings, uniqueVertices[i])];
 
             const Winding& winding = m_faces[faceVertex.getFace()]->getWinding();
-            _uniqueVertexPoints[i] = VertexCb(winding[faceVertex.getVertex()].vertex, colour_vertex);
+            _uniqueVertexPoints[i] = winding[faceVertex.getVertex()].vertex;
           }
         }
       }
@@ -1378,24 +1372,24 @@ void Brush::buildBRep() {
       for(std::size_t i=0; i<m_faces.size(); ++i)
       {
         m_faces[i]->construct_centroid();
-        _faceCentroidPoints[i] = VertexCb(m_faces[i]->centroid(), colour_vertex);
+        _faceCentroidPoints[i] = m_faces[i]->centroid();
       }
     }
   }
 }
 
-const std::vector<VertexCb>& Brush::getVertices(selection::ComponentSelectionMode mode) const
+const std::vector<Vector3>& Brush::getVertices(selection::ComponentSelectionMode mode) const
 {
     switch (mode)
     {
         case selection::ComponentSelectionMode::Vertex: 
-            return _uniqueVertexPoints.getPointVector();
+            return _uniqueVertexPoints;
 
         case selection::ComponentSelectionMode::Edge: 
-            return _uniqueEdgePoints.getPointVector();
+            return _uniqueEdgePoints;
 
         case selection::ComponentSelectionMode::Face: 
-            return _faceCentroidPoints.getPointVector();
+            return _faceCentroidPoints;
     }
 
     throw std::runtime_error("Brush::getVertices: Component mode not supported");
