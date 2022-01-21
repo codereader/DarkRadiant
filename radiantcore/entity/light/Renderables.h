@@ -1,5 +1,6 @@
 #pragma once
 
+#include "LightVertexInstanceSet.h"
 #include "render/RenderableGeometry.h"
 
 namespace entity
@@ -58,6 +59,43 @@ protected:
 private:
     void updatePointLightVolume();
     void updateProjectedLightVolume();
+};
+
+// All manipulatable vertices, with the colour
+// corresponding to their selection status
+class RenderableLightVertices :
+    public render::RenderableGeometry
+{
+private:
+    const LightNode& _light;
+    const LightVertexInstanceSet& _instances;
+
+    bool _needsUpdate;
+    selection::ComponentSelectionMode _mode;
+
+public:
+    RenderableLightVertices(const LightNode& light, const LightVertexInstanceSet& instances) :
+        _light(light),
+        _instances(instances),
+        _needsUpdate(true),
+        _mode(selection::ComponentSelectionMode::Default)
+    {}
+
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+    void setComponentMode(selection::ComponentSelectionMode mode)
+    {
+        if (_mode == mode) return;
+
+        _mode = mode;
+        queueUpdate();
+    }
+
+protected:
+    void updateGeometry() override;
 };
 
 } // namespace entity

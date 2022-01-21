@@ -29,6 +29,9 @@ struct LightVertexInstanceSet
     VertexInstance start;
     VertexInstance end;
 
+    // The number of vertex member in this struct
+    constexpr static std::size_t NumVertices = 6;
+
     LightVertexInstanceSet(Vector3& center, Projected<Vector3>& projected, 
                            const SelectionChangedSlot& selectionChanged) :
         center(center, selectionChanged),

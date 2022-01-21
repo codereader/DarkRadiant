@@ -1,6 +1,7 @@
 #include "Renderables.h"
 
 #include "LightNode.h"
+#include "../EntitySettings.h"
 
 namespace entity
 {
@@ -224,6 +225,50 @@ void RenderableLightVolume::updateProjectedLightVolume()
 
         RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, Indices);
     }
+}
+
+void RenderableLightVertices::updateGeometry()
+{
+    if (!_needsUpdate) return;
+
+    _needsUpdate = false;
+
+    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<unsigned int> indices;
+
+    vertices.reserve(LightVertexInstanceSet::NumVertices);
+    indices.reserve(LightVertexInstanceSet::NumVertices);
+
+    auto& settings = *EntitySettings::InstancePtr();
+    const auto& colourVertexSelected = settings.getLightVertexColour(LightEditVertexType::Selected);
+    const auto& colourVertexDeselected = settings.getLightVertexColour(LightEditVertexType::Deselected);
+    const auto& colourVertexInactive = settings.getLightVertexColour(LightEditVertexType::Inactive);
+
+    unsigned int index = 0;
+
+    if (_light.isProjected())
+    {
+        // TODO
+    }
+    else
+    {
+        // Not a projected light, include just the light centre vertex
+        const auto& colour = _mode != selection::ComponentSelectionMode::Vertex ? colourVertexInactive :
+            _instances.center.isSelected() ? colourVertexSelected : colourVertexDeselected;
+
+        vertices.push_back(ArbitraryMeshVertex(_instances.center.getVertex(), { 0,0,0 }, { 0,0 }, colour));
+        indices.push_back(index++);
+    }
+
+    // Apply the local2world transform to all the vertices
+    const auto& local2World = _light.localToWorld();
+
+    for (auto& vertex : vertices)
+    {
+        vertex.vertex = local2World * vertex.vertex;
+    }
+
+    RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
 }
 
 } // namespace

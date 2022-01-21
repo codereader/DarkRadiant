@@ -77,6 +77,7 @@ class LightNode :
     mutable bool _projectionChanged;
 
 	LightShader m_shader;
+    ShaderPtr _vertexShader;
 
     // The 8x8 box representing the light object itself
     AABB _lightBox;
@@ -93,6 +94,7 @@ class LightNode :
 	// Renderable components of this light
     RenderableLightOctagon _renderableOctagon;
     RenderableLightVolume _renderableLightVolume;
+    RenderableLightVertices _renderableVertices;
 
     bool _showLightVolumeWhenUnselected;
 

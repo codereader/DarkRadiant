@@ -34,6 +34,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass)
     _dragPlanes(sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
     _renderableOctagon(*this),
     _renderableLightVolume(*this),
+    _renderableVertices(*this, _instances),
     _showLightVolumeWhenUnselected(EntitySettings::InstancePtr()->getShowAllLightRadii()),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
@@ -60,6 +61,7 @@ LightNode::LightNode(const LightNode& other)
     _dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
     _renderableOctagon(*this),
     _renderableLightVolume(*this),
+    _renderableVertices(*this, _instances),
     _showLightVolumeWhenUnselected(other._showLightVolumeWhenUnselected),
     _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
@@ -172,6 +174,7 @@ void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 
     _renderableOctagon.clear();
     _renderableLightVolume.clear();
+    _renderableVertices.clear();
 }
 
 void LightNode::testSelect(Selector& selector, SelectionTest& test)
@@ -337,9 +340,12 @@ scene::INodePtr LightNode::clone() const
 	return node;
 }
 
-void LightNode::selectedChangedComponent(const ISelectable& selectable) {
+void LightNode::selectedChangedComponent(const ISelectable& selectable)
+{
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
+
+    _renderableVertices.queueUpdate();
 }
 
 void LightNode::onPreRender(const VolumeTest& volume)
@@ -348,8 +354,10 @@ void LightNode::onPreRender(const VolumeTest& volume)
     const auto& colourShader = _overrideColKey.get() ? getColourShader() : _colourKey.getColourShader();
     _renderableOctagon.update(colourShader);
 
+    bool lightIsSelected = isSelected();
+
     // Depending on the selected status or the entity settings, we need to update the wireframe volume
-    if (_showLightVolumeWhenUnselected || isSelected())
+    if (_showLightVolumeWhenUnselected || lightIsSelected)
     {
         if (isProjected())
         {
@@ -357,11 +365,23 @@ void LightNode::onPreRender(const VolumeTest& volume)
         }
 
         _renderableLightVolume.update(colourShader);
+
+        // Update vertices when the light is selected
+        if (lightIsSelected)
+        {
+            _renderableVertices.setComponentMode(GlobalSelectionSystem().ComponentMode());
+            _renderableVertices.update(_vertexShader);
+        }
+        else
+        {
+            _renderableVertices.clear();
+        }
     }
     else
     {
         // Light volume is not visible, hide it
         _renderableLightVolume.clear();
+        _renderableVertices.clear();
     }
 }
 
@@ -400,6 +420,7 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     // Clear the geometry from any previous shader
     _renderableOctagon.clear();
     _renderableLightVolume.clear();
+    _renderableVertices.clear();
 
 	// The renderable vertices are maintaining shader objects, acquire/free them now
     _rCentre.setRenderSystem(renderSystem);
@@ -410,6 +431,16 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     _rEnd.setRenderSystem(renderSystem);
 
     m_shader.setRenderSystem(renderSystem);
+
+    if (renderSystem)
+    {
+        _vertexShader = renderSystem->capture("$BIGPOINT");
+        _renderableVertices.queueUpdate();
+    }
+    else
+    {
+        _vertexShader.reset();
+    }
 
 	_instances.center.setRenderSystem(renderSystem);
 	_instances.target.setRenderSystem(renderSystem);
@@ -422,6 +453,7 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 // Renders the components of this light instance
 void LightNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
+#if 0
 	// Render the components (light center) as selected/deselected, if we are in the according mode
 	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
 	{
@@ -471,10 +503,12 @@ void LightNode::renderComponents(IRenderableCollector& collector, const VolumeTe
 			}
 		}
 	}
+#endif
 }
 
 void LightNode::renderInactiveComponents(IRenderableCollector& collector, const VolumeTest& volume, const bool selected) const
 {
+#if 0
 	// greebo: We are not in component selection mode (and the light is still selected),
 	// check if we should draw the center of the light anyway
 	if (selected
@@ -504,6 +538,7 @@ void LightNode::renderInactiveComponents(IRenderableCollector& collector, const 
 			renderLightCentre(collector, volume, localToWorld());
 		}
 	}
+#endif
 }
 
 Vector4 LightNode::getEntityColour() const
@@ -610,6 +645,7 @@ void LightNode::_onTransformationChanged()
 
     _renderableOctagon.queueUpdate();
     _renderableLightVolume.queueUpdate();
+    _renderableVertices.queueUpdate();
 }
 
 void LightNode::_applyTransformation()
@@ -652,11 +688,13 @@ void LightNode::onVisibilityChanged(bool isVisibleNow)
     {
         _renderableOctagon.queueUpdate();
         _renderableLightVolume.queueUpdate();
+        _renderableVertices.queueUpdate();
     }
     else
     {
         _renderableLightVolume.clear();
         _renderableOctagon.clear();
+        _renderableVertices.clear();
     }
 }
 
@@ -666,6 +704,7 @@ void LightNode::onSelectionStatusChange(bool changeGroupStatus)
 
     // Volume renderable is not always prepared for rendering, queue an update
     _renderableLightVolume.queueUpdate();
+    _renderableVertices.queueUpdate();
 }
 
 void LightNode::onEntitySettingsChanged()
