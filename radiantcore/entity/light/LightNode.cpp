@@ -19,14 +19,6 @@ LightNode::LightNode(const IEntityClassPtr& eclass)
     m_originKey(std::bind(&LightNode::originChanged, this)),
     _originTransformed(ORIGINKEY_IDENTITY),
     m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
-    _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
-    _rTarget(_projVectors.transformed.target, _lightBox.origin, _projColours.target),
-    _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin,
-        _projColours.up),
-    _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin,
-            _projColours.right),
-    _rStart(_projVectors.transformed.start, _lightBox.origin, _projColours.start),
-    _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
     m_transformChanged(std::bind(&scene::Node::transformChanged, this)),
     m_boundsChanged(std::bind(&scene::Node::boundsChanged, this)),
     _instances(getDoom3Radius().m_centerTransformed, _projVectors.transformed,
@@ -46,14 +38,6 @@ LightNode::LightNode(const LightNode& other)
     m_originKey(std::bind(&LightNode::originChanged, this)),
     _originTransformed(ORIGINKEY_IDENTITY),
     m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
-    _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
-    _rTarget(_projVectors.transformed.target, _lightBox.origin, _projColours.target),
-    _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin,
-        _projColours.up),
-    _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin,
-            _projColours.right),
-    _rStart(_projVectors.transformed.start, _lightBox.origin, _projColours.start),
-    _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
     m_transformChanged(std::bind(&Node::transformChanged, this)),
     m_boundsChanged(std::bind(&Node::boundsChanged, this)),
     _instances(getDoom3Radius().m_centerTransformed, _projVectors.transformed,
@@ -79,12 +63,6 @@ LightNodePtr LightNode::Create(const IEntityClassPtr& eclass)
 void LightNode::construct()
 {
 	EntityNode::construct();
-
-    _projColours.target = Vector3(255,255,0);
-    _projColours.up = Vector3(255,0,255);
-    _projColours.right = Vector3(255,0,255);
-    _projColours.start = Vector3(0,0,0);
-    _projColours.end = Vector3(0,0,0);
 
     m_rotation.setIdentity();
     _lightBox.origin = Vector3(0, 0, 0);
@@ -115,9 +93,6 @@ void LightNode::construct()
     observeKey("texture", sigc::mem_fun(m_shader, &LightShader::valueChanged));
 
     _projectionChanged = true;
-
-    // set the colours to their default values
-    m_doom3Radius.setCenterColour(_spawnArgs.getEntityClass()->getColour());
 
     _spawnArgs.setIsContainer(true);
 
@@ -391,18 +366,6 @@ void LightNode::renderSolid(IRenderableCollector& collector, const VolumeTest& v
     collector.addLight(*this);
 
     EntityNode::renderSolid(collector, volume);
-
-    // Render the visible representation of the light entity (origin, bounds etc)
-    const bool lightIsSelected = isSelected();
-    renderInactiveComponents(collector, volume, lightIsSelected);
-}
-
-void LightNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-    EntityNode::renderWireframe(collector, volume);
-
-    const bool lightIsSelected = isSelected();
-    renderInactiveComponents(collector, volume, lightIsSelected);
 }
 
 void LightNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
@@ -422,14 +385,6 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     _renderableLightVolume.clear();
     _renderableVertices.clear();
 
-	// The renderable vertices are maintaining shader objects, acquire/free them now
-    _rCentre.setRenderSystem(renderSystem);
-    _rTarget.setRenderSystem(renderSystem);
-    _rUp.setRenderSystem(renderSystem);
-    _rRight.setRenderSystem(renderSystem);
-    _rStart.setRenderSystem(renderSystem);
-    _rEnd.setRenderSystem(renderSystem);
-
     m_shader.setRenderSystem(renderSystem);
 
     if (renderSystem)
@@ -448,97 +403,6 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_instances.up.setRenderSystem(renderSystem);
 	_instances.start.setRenderSystem(renderSystem);
 	_instances.end.setRenderSystem(renderSystem);
-}
-
-// Renders the components of this light instance
-void LightNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-#if 0
-	// Render the components (light center) as selected/deselected, if we are in the according mode
-	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
-	{
-		if (isProjected())
-		{
-			// A projected light
-
-			EntitySettings& settings = *EntitySettings::InstancePtr();
-
-			const Vector3& colourStartEndSelected = settings.getLightVertexColour(LightEditVertexType::StartEndSelected);
-			const Vector3& colourStartEndDeselected = settings.getLightVertexColour(LightEditVertexType::StartEndDeselected);
-			const Vector3& colourVertexSelected = settings.getLightVertexColour(LightEditVertexType::Selected);
-			const Vector3& colourVertexDeselected = settings.getLightVertexColour(LightEditVertexType::Deselected);
-
-			// Update the colour of the light center dot
-            _projColours.target = (_instances.target.isSelected()) ? colourVertexSelected
-                                                                      : colourVertexDeselected;
-            _projColours.right = (_instances.right.isSelected()) ? colourVertexSelected
-                                                                    : colourVertexDeselected;
-            _projColours.up = (_instances.up.isSelected()) ? colourVertexSelected
-                                                              : colourVertexDeselected;
-
-            _projColours.start = (_instances.start.isSelected()) ? colourStartEndSelected
-                                                                    : colourStartEndDeselected;
-            _projColours.end = (_instances.end.isSelected()) ? colourStartEndSelected
-                                                                : colourStartEndDeselected;
-
-            // Render the projection points
-			renderProjectionPoints(collector, volume, localToWorld());
-		}
-		else
-		{
-			// A point light
-
-			// Update the colour of the light center dot
-			if (_instances.center.isSelected())
-			{
-				const_cast<LightNode&>(*this).getDoom3Radius().setCenterColour(
-					EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Selected));
-				renderLightCentre(collector, volume, localToWorld());
-			}
-			else
-			{
-				const_cast<LightNode&>(*this).getDoom3Radius().setCenterColour(
-					EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Deselected));
-				renderLightCentre(collector, volume, localToWorld());
-			}
-		}
-	}
-#endif
-}
-
-void LightNode::renderInactiveComponents(IRenderableCollector& collector, const VolumeTest& volume, const bool selected) const
-{
-#if 0
-	// greebo: We are not in component selection mode (and the light is still selected),
-	// check if we should draw the center of the light anyway
-	if (selected
-		&& GlobalSelectionSystem().ComponentMode() != selection::ComponentSelectionMode::Vertex
-		&& EntitySettings::InstancePtr()->getAlwaysShowLightVertices())
-	{
-		if (isProjected())
-		{
-			EntitySettings& settings = *EntitySettings::InstancePtr();
-			const Vector3& colourStartEndInactive = settings.getLightVertexColour(LightEditVertexType::StartEndDeselected);
-			const Vector3& colourVertexInactive = settings.getLightVertexColour(LightEditVertexType::Deselected);
-
-			_projColours.start = colourStartEndInactive;
-			_projColours.end = colourStartEndInactive;
-			_projColours.target = colourVertexInactive;
-			_projColours.right = colourVertexInactive;
-			_projColours.up = colourVertexInactive;
-
-			// Render the projection points
-			renderProjectionPoints(collector, volume, localToWorld());
-		}
-		else
-		{
-			const Vector3& colourVertexInactive = EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Inactive);
-
-			const_cast<LightNode&>(*this).getDoom3Radius().setCenterColour(colourVertexInactive);
-			renderLightCentre(collector, volume, localToWorld());
-		}
-	}
-#endif
 }
 
 Vector4 LightNode::getEntityColour() const
@@ -981,36 +845,6 @@ void LightNode::freezeLightTransform()
 
 Doom3LightRadius& LightNode::getDoom3Radius() {
     return m_doom3Radius;
-}
-
-void LightNode::renderProjectionPoints(IRenderableCollector& collector,
-                                   const VolumeTest& volume,
-                                   const Matrix4& localToWorld) const
-{
-    // Add the renderable light target
-    collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
-    collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
-
-	collector.addRenderable(*_rRight.getShader(), _rRight, localToWorld);
-	collector.addRenderable(*_rUp.getShader(), _rUp, localToWorld);
-	collector.addRenderable(*_rTarget.getShader(), _rTarget, localToWorld);
-
-    if (_projUseFlags.start)
-	{
-		collector.addRenderable(*_rStart.getShader(), _rStart, localToWorld);
-    }
-
-    if (_projUseFlags.end)
-	{
-		collector.addRenderable(*_rEnd.getShader(), _rEnd, localToWorld);
-    }
-}
-
-// Adds the light centre renderable to the given collector
-void LightNode::renderLightCentre(IRenderableCollector& collector, const VolumeTest& volume,
-                                  const Matrix4& localToWorld) const
-{
-	collector.addRenderable(*_rCentre.getShader(), _rCentre, localToWorld);
 }
 
 void LightNode::translate(const Vector3& translation)

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Doom3LightRadius.h"
-#include "RenderableVertices.h"
 #include "Renderables.h"
 #include "LightShader.h"
 
@@ -43,22 +42,11 @@ class LightNode :
 
 	Doom3LightRadius m_doom3Radius;
 
-	// Renderable components of this light
-	RenderableLightTarget _rCentre;
-	RenderableLightTarget _rTarget;
-	RenderableLightRelative _rUp;
-	RenderableLightRelative _rRight;
-	RenderableLightTarget _rStart;
-	RenderableLightTarget _rEnd;
-
     RotationMatrix m_lightRotation;
     bool m_useLightRotation = false;
 
     // Projected light vectors, both base and transformed
     scene::TransformedCopy<Projected<Vector3>> _projVectors;
-
-    // Projected light vector colours
-    mutable Projected<Vector3> _projColours;
 
     // Projected light use flags
     Projected<bool> _projUseFlags;
@@ -172,10 +160,8 @@ public:
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
 
     bool isOriented() const override
     {
@@ -222,7 +208,6 @@ protected:
     void onSelectionStatusChange(bool changeGroupStatus) override;
 
 private:
-    void renderInactiveComponents(IRenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
     void evaluateTransform();
 
     // Ensure the start and end points are set to sensible values
@@ -235,21 +220,9 @@ private:
 	void lightRightChanged(const std::string& value);
 	void lightStartChanged(const std::string& value);
 	void lightEndChanged(const std::string& value);
-	void writeLightOrigin();
 	void rotationChanged();
 	void lightRotationChanged(const std::string& value);
     void onLightRadiusChanged();
-	void destroy();
-
-	// Renderable submission functions
-	void renderWireframe(IRenderableCollector& collector,
-						 const VolumeTest& volume,
-						 const Matrix4& localToWorld,
-						 bool selected) const;
-
-	// Adds the light centre renderable to the given collector
-	void renderLightCentre(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderProjectionPoints(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Returns a reference to the member class Doom3LightRadius (used to set colours)
 	Doom3LightRadius& getDoom3Radius();

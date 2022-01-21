@@ -22,9 +22,6 @@ public:
     Vector3 m_center;
     Vector3 m_centerTransformed;
 
-    // The colour of the light center point
-    Vector3 _centerColour;
-
     std::function<void()> m_changed;
 
     Doom3LightRadius()
@@ -32,13 +29,8 @@ public:
       m_radius(_defaultRadius),
       m_radiusTransformed(0, 0, 0),
       m_center(0, 0, 0),
-      m_centerTransformed(0, 0, 0),
-      _centerColour(0,0,0)
+      m_centerTransformed(0, 0, 0)
     {
-    }
-
-    void setCenterColour(const Vector3& colour) {
-        _centerColour = colour;
     }
 
     void lightRadiusChanged(const std::string& value)

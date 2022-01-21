@@ -1467,9 +1467,6 @@
     <ClInclude Include="..\..\radiantcore\entity\light\Renderables.h">
       <Filter>src\entity\light</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\light\RenderableVertices.h">
-      <Filter>src\entity\light</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\generic\GenericEntityNode.h">
       <Filter>src\entity\generic</Filter>
     </ClInclude>
