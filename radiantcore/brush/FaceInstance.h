@@ -93,18 +93,6 @@ public:
 
 	void iterate_selected(AABB& aabb) const;
 
-	class RenderablePointVectorPushBack {
-		RenderablePointVector& m_points;
-	public:
-		RenderablePointVectorPushBack(RenderablePointVector& points) : m_points(points) {}
-		void operator()(const Vector3& point) const {
-			const Colour4b colour_selected(0, 0, 255, 255);
-			m_points.push_back(VertexCb(point, colour_selected));
-		}
-	};
-
-	void iterate_selected(RenderablePointVector& points) const;
-
 	bool intersectVolume(const VolumeTest& volume) const;
 	bool intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const;
 

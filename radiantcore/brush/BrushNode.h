@@ -48,11 +48,10 @@ class BrushNode :
 	mutable AABB m_aabb_component;
 	BrushClipPlane m_clipPlane;
 
-	ShaderPtr m_state_selpoint;
 	ShaderPtr _pointShader;
 
 	// TRUE if any of the FaceInstance's component selection got changed or transformed
-	mutable bool _renderableComponentsNeedUpdate;
+	bool _renderableComponentsNeedUpdate;
 
     // For pivoted rotations, we need a copy of this lying around
     Vector3 _untransformedOrigin;
@@ -136,7 +135,6 @@ public:
 
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
-	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
@@ -183,17 +181,7 @@ protected:
 private:
 	void transformComponents(const Matrix4& matrix);
 
-#if 0
-	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-#endif
-
 	void updateSelectedPointsArray();
-	void renderSelectedPoints(IRenderableCollector& collector,
-                              const VolumeTest& volume,
-                              const Matrix4& localToWorld) const;
 
-	void updateFaceCentroidPoints() const;
-
-}; // class BrushNode
+};
 typedef std::shared_ptr<BrushNode> BrushNodePtr;

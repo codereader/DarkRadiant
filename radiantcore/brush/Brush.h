@@ -208,10 +208,6 @@ public:
 
 	const AABB& localAABB() const override;
 
-#if 0
-	void renderComponents(selection::ComponentSelectionMode mode, IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-#endif
-
 	void transform(const Matrix4& matrix);
 
 	void snapto(float snap) override;
@@ -268,14 +264,6 @@ public:
 
 	/// \brief Constructs \p winding from the intersection of \p plane with the other planes of the brush.
 	void windingForClipPlane(Winding& winding, const Plane3& plane) const;
-
-#if 0
-	void update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const;
-#endif
-
-	void update_faces_wireframe(RenderablePointVector& wire,
-								const std::size_t* visibleFaceIndices,
-								std::size_t numVisibleFaces) const;
 
 	/// \brief Makes this brush a deep-copy of the \p other.
 	void copy(const Brush& other);

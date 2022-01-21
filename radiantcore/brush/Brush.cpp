@@ -257,27 +257,6 @@ const AABB& Brush::localAABB() const {
     return m_aabb_local;
 }
 
-#if 0
-void Brush::renderComponents(selection::ComponentSelectionMode mode, IRenderableCollector& collector,
-	const VolumeTest& volume, const Matrix4& localToWorld) const
-{
-    switch (mode)
-	{
-        case selection::ComponentSelectionMode::Vertex:
-            collector.addRenderable(*m_state_point, _uniqueVertexPoints, localToWorld);
-            break;
-        case selection::ComponentSelectionMode::Edge:
-            collector.addRenderable(*m_state_point, _uniqueEdgePoints, localToWorld);
-            break;
-        case selection::ComponentSelectionMode::Face:
-            collector.addRenderable(*m_state_point, _faceCentroidPoints, localToWorld);
-            break;
-        default:
-            break;
-    }
-}
-#endif
-
 void Brush::translate(const Vector3& translation)
 {
     std::for_each(m_faces.begin(), m_faces.end(),
@@ -566,45 +545,6 @@ void Brush::windingForClipPlane(Winding& winding, const Plane3& plane) const {
     }
 
     buffer[swap].writeToWinding(winding);
-}
-
-#if 0
-void Brush::update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const
-{
-    wire.m_faceVertex.resize(_edgeIndices.size());
-    wire.m_vertices = _uniqueVertexPoints.size() > 0 ? &_uniqueVertexPoints.front() : NULL;
-    wire.m_size = 0;
-
-    for (std::size_t i = 0; i < _edgeFaces.size(); ++i)
-    {
-        if (faces_visible[_edgeFaces[i].first] || faces_visible[_edgeFaces[i].second])
-        {
-            wire.m_faceVertex[wire.m_size++] = _edgeIndices[i];
-        }
-    }
-}
-#endif
-
-void Brush::update_faces_wireframe(RenderablePointVector& wire,
-                                   const std::size_t* visibleFaceIndices,
-                                   std::size_t numVisibleFaces) const
-{
-	if (numVisibleFaces > _faceCentroidPoints.size())
-	{
-		wire.clear();
-		return;
-	}
-
-    // Assure that the pointvector can carry as many faces as are visible
-    wire.resize(numVisibleFaces);
-
-    const std::size_t* visibleFaceIter = visibleFaceIndices;
-
-    // Pick all the visible face centroids from the vector
-    for (std::size_t i = 0; i < numVisibleFaces; ++i)
-    {
-        wire[i] = _faceCentroidPoints[*visibleFaceIter++];
-    }
 }
 
 /// \brief Makes this brush a deep-copy of the \p other.

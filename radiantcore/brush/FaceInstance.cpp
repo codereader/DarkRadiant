@@ -155,10 +155,6 @@ void FaceInstance::iterate_selected(AABB& aabb) const {
 	SelectedComponents_foreach(AABBExtendByPoint(aabb));
 }
 
-void FaceInstance::iterate_selected(RenderablePointVector& points) const {
-	SelectedComponents_foreach(RenderablePointVectorPushBack(points));
-}
-
 bool FaceInstance::intersectVolume(const VolumeTest& volume) const
 {
 	return m_face->intersectVolume(volume);

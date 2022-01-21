@@ -12,7 +12,7 @@ namespace detail
 inline void addColouredVertices(const std::vector<Vector3>& sourceVertices, const Vector4& colour, 
     std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices)
 {
-    unsigned int indexOffset = vertices.size();
+    auto indexOffset = static_cast<unsigned int>(vertices.size());
 
     for (unsigned int i = 0; i < sourceVertices.size(); ++i)
     {
