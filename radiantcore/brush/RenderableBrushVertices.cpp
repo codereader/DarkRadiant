@@ -6,6 +6,25 @@
 namespace brush
 {
 
+namespace detail
+{
+
+inline void addColouredVertices(const std::vector<Vector3>& sourceVertices, const Vector4& colour, 
+    std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices)
+{
+    unsigned int indexOffset = vertices.size();
+
+    for (unsigned int i = 0; i < sourceVertices.size(); ++i)
+    {
+        const auto& vertex = sourceVertices[i];
+
+        vertices.push_back(ArbitraryMeshVertex(vertex, { 0,0,0 }, { 0,0 }, colour));
+        indices.push_back(indexOffset + i);
+    }
+}
+
+}
+
 void RenderableBrushVertices::updateGeometry()
 {
     if (!_updateNeeded) return;
@@ -18,19 +37,15 @@ void RenderableBrushVertices::updateGeometry()
     std::vector<ArbitraryMeshVertex> vertices;
     std::vector<unsigned int> indices;
 
-    vertices.reserve(brushVertices.size());
-    indices.reserve(brushVertices.size());
+    auto totalSize = brushVertices.size() + _selectedVertices.size();
+    vertices.reserve(totalSize);
+    indices.reserve(totalSize);
 
     static const Vector3& vertexColour = GlobalBrushCreator().getSettings().getVertexColour();
-    const Vector4 colour(vertexColour, 1);
+    static const Vector3& selectedVertexColour = GlobalBrushCreator().getSettings().getSelectedVertexColour();
 
-    for (auto i = 0; i < brushVertices.size(); ++i)
-    {
-        const auto& vertex = brushVertices[i];
-
-        vertices.push_back(ArbitraryMeshVertex(vertex, { 0,0,0 }, { 0,0 }, colour));
-        indices.push_back(i);
-    }
+    detail::addColouredVertices(brushVertices, { vertexColour, 1 }, vertices, indices);
+    detail::addColouredVertices(_selectedVertices, { selectedVertexColour, 1 }, vertices, indices);
 
     RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
 }

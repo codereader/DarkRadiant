@@ -17,6 +17,7 @@ class RenderableBrushVertices :
 {
 private:
     Brush& _brush;
+    const std::vector<Vector3>& _selectedVertices;
 
     // The mode this renderable has been configured for
     selection::ComponentSelectionMode _mode;
@@ -24,8 +25,9 @@ private:
     bool _updateNeeded;
 
 public:
-    RenderableBrushVertices(Brush& brush) :
+    RenderableBrushVertices(Brush& brush, const std::vector<Vector3>& selectedVertices) :
         _brush(brush),
+        _selectedVertices(selectedVertices),
         _updateNeeded(true)
     {}
 

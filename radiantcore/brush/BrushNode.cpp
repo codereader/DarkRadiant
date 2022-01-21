@@ -15,10 +15,9 @@
 BrushNode::BrushNode() :
 	scene::SelectableNode(),
 	m_brush(*this),
-	_selectedPoints(GL_POINTS),
 	_renderableComponentsNeedUpdate(true),
     _untransformedOriginChanged(true),
-    _renderableVertices(m_brush)
+    _renderableVertices(m_brush, _selectedPoints)
 {
 	m_brush.attach(*this); // BrushObserver
 
@@ -40,10 +39,9 @@ BrushNode::BrushNode(const BrushNode& other) :
 	PlaneSelectable(other),
 	Transformable(other),
 	m_brush(*this, other.m_brush),
-	_selectedPoints(GL_POINTS),
 	_renderableComponentsNeedUpdate(true),
     _untransformedOriginChanged(true),
-    _renderableVertices(m_brush)
+    _renderableVertices(m_brush, _selectedPoints)
 {
 	m_brush.attach(*this); // BrushObserver
 }
@@ -366,6 +364,8 @@ void BrushNode::onPreRender(const VolumeTest& volume)
 
     if (isSelected() && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent)
     {
+        updateSelectedPointsArray();
+
         _renderableVertices.setComponentMode(GlobalSelectionSystem().ComponentMode());
         _renderableVertices.update(_pointShader);
     }
@@ -618,7 +618,7 @@ void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTes
 }
 #endif
 
-void BrushNode::updateSelectedPointsArray() const
+void BrushNode::updateSelectedPointsArray()
 {
     if (!_renderableComponentsNeedUpdate) return;
 
@@ -630,15 +630,21 @@ void BrushNode::updateSelectedPointsArray() const
     {
         if (faceInstance.getFace().contributes())
         {
-            faceInstance.iterate_selected(_selectedPoints);
+            faceInstance.SelectedComponents_foreach([&](const Vector3& vertex)
+            {
+                _selectedPoints.push_back(vertex);
+            });
         }
     }
+
+    _renderableVertices.queueUpdate();
 }
 
 void BrushNode::renderSelectedPoints(IRenderableCollector& collector,
                                      const VolumeTest& volume,
                                      const Matrix4& localToWorld) const
 {
+#if 0
     updateSelectedPointsArray();
 
 	if (!_selectedPoints.empty())
@@ -646,6 +652,7 @@ void BrushNode::renderSelectedPoints(IRenderableCollector& collector,
 		collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
 		collector.addRenderable(*m_state_selpoint, _selectedPoints, localToWorld);
 	}
+#endif
 }
 
 void BrushNode::evaluateTransform()

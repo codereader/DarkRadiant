@@ -42,8 +42,8 @@ class BrushNode :
 	typedef std::vector<brush::VertexInstance> VertexInstances;
 	VertexInstances m_vertexInstances;
 
-    // Renderable array of vertex and edge points
-	mutable RenderablePointVector _selectedPoints;
+    // All selectable points (corner vertices / edge or face centroids)
+	std::vector<Vector3> _selectedPoints;
 
 	mutable AABB m_aabb_component;
 	BrushClipPlane m_clipPlane;
@@ -188,7 +188,7 @@ private:
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 #endif
 
-	void updateSelectedPointsArray() const;
+	void updateSelectedPointsArray();
 	void renderSelectedPoints(IRenderableCollector& collector,
                               const VolumeTest& volume,
                               const Matrix4& localToWorld) const;
