@@ -15,6 +15,7 @@
 #include "../OriginKey.h"
 #include "../RotationKey.h"
 #include "Renderables.h"
+#include "LightVertexInstanceSet.h"
 
 namespace entity
 {
@@ -53,16 +54,6 @@ class LightNode :
     RotationMatrix m_lightRotation;
     bool m_useLightRotation = false;
 
-    // Set of values defining a projected light
-    template<typename T> struct Projected
-    {
-        T target;
-        T up;
-        T right;
-        T start;
-        T end;
-    };
-
     // Projected light vectors, both base and transformed
     scene::TransformedCopy<Projected<Vector3>> _projVectors;
 
@@ -94,14 +85,7 @@ class LightNode :
     Callback m_boundsChanged;
     Callback m_evaluateTransform;
 
-	// The (draggable) light center instance
-	VertexInstance _lightCenterInstance;
-
-	VertexInstance _lightTargetInstance;
-	VertexInstanceRelative _lightRightInstance;
-	VertexInstanceRelative _lightUpInstance;
-	VertexInstance _lightStartInstance;
-	VertexInstance _lightEndInstance;
+    LightVertexInstanceSet _instances;
 
 	// dragplanes for lightresizing using mousedrag
     selection::DragPlanes _dragPlanes;

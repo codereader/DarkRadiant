@@ -779,6 +779,7 @@
     <ClInclude Include="..\..\radiantcore\entity\light\LightShader.h" />
     <ClInclude Include="..\..\radiantcore\entity\light\Renderables.h" />
     <ClInclude Include="..\..\radiantcore\entity\light\RenderableVertices.h" />
+    <ClInclude Include="..\..\radiantcore\entity\light\LightVertexInstanceSet.h" />
     <ClInclude Include="..\..\radiantcore\entity\ModelKey.h" />
     <ClInclude Include="..\..\radiantcore\entity\NameKey.h" />
     <ClInclude Include="..\..\radiantcore\entity\NameKeyObserver.h" />

@@ -2277,5 +2277,8 @@
     <ClInclude Include="..\..\radiantcore\map\RenderablePointFile.h">
       <Filter>src\map</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\light\LightVertexInstanceSet.h">
+      <Filter>src\entity\light</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
