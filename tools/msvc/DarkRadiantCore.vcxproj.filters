@@ -2277,5 +2277,8 @@
     <ClInclude Include="..\..\radiantcore\entity\light\LightVertexInstanceSet.h">
       <Filter>src\entity\light</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\doom3group\RenderableVertex.h">
+      <Filter>src\entity\doom3group</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

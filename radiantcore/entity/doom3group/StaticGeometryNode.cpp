@@ -21,9 +21,10 @@ StaticGeometryNode::StaticGeometryNode(const IEntityClassPtr& eclass) :
 				 std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
 	_catmullRomEditInstance(m_curveCatmullRom,
 					  std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
-	_originInstance(VertexInstance(getOrigin(), std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1))),
+	_originInstance(getOrigin(), std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
     _nurbsVertices(m_curveNURBS, _nurbsEditInstance),
-    _catmullRomVertices(m_curveCatmullRom, _catmullRomEditInstance)
+    _catmullRomVertices(m_curveCatmullRom, _catmullRomEditInstance),
+    _renderableOriginVertex(_originInstance, localToWorld())
 {}
 
 StaticGeometryNode::StaticGeometryNode(const StaticGeometryNode& other) :
@@ -45,9 +46,10 @@ StaticGeometryNode::StaticGeometryNode(const StaticGeometryNode& other) :
 				 std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
 	_catmullRomEditInstance(m_curveCatmullRom,
 					  std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
-	_originInstance(VertexInstance(getOrigin(), std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1))),
+	_originInstance(getOrigin(), std::bind(&StaticGeometryNode::selectionChangedComponent, this, std::placeholders::_1)),
     _nurbsVertices(m_curveNURBS, _nurbsEditInstance),
-    _catmullRomVertices(m_curveCatmullRom, _catmullRomEditInstance)
+    _catmullRomVertices(m_curveCatmullRom, _catmullRomEditInstance),
+    _renderableOriginVertex(_originInstance, localToWorld())
 {
 	// greebo: Don't call construct() here, this should be invoked by the
 	// clone() method
@@ -107,6 +109,7 @@ void StaticGeometryNode::onVisibilityChanged(bool isVisibleNow)
         m_curveCatmullRom.updateRenderable();
         _nurbsVertices.queueUpdate();
         _catmullRomVertices.queueUpdate();
+        _renderableOriginVertex.queueUpdate();
     }
     else
     {
@@ -114,6 +117,7 @@ void StaticGeometryNode::onVisibilityChanged(bool isVisibleNow)
         m_curveCatmullRom.clearRenderable();
         _nurbsVertices.clear();
         _catmullRomVertices.clear();
+        _renderableOriginVertex.clear();
     }
 }
 
@@ -126,12 +130,14 @@ void StaticGeometryNode::onSelectionStatusChange(bool changeGroupStatus)
         _renderOrigin.queueUpdate();
         _nurbsVertices.queueUpdate();
         _catmullRomVertices.queueUpdate();
+        _renderableOriginVertex.queueUpdate();
     }
     else
     {
         _renderOrigin.clear();
         _nurbsVertices.clear();
         _catmullRomVertices.clear();
+        _renderableOriginVertex.clear();
     }
 }
 
@@ -212,6 +218,7 @@ void StaticGeometryNode::selectionChangedComponent(const ISelectable& selectable
 
     _nurbsVertices.queueUpdate();
     _catmullRomVertices.queueUpdate();
+    _renderableOriginVertex.queueUpdate();
 }
 
 bool StaticGeometryNode::isSelectedComponents() const {
@@ -338,17 +345,28 @@ void StaticGeometryNode::onPreRender(const VolumeTest& volume)
         if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
         {
             // Selected patches in component mode render the lattice connecting the control points
-            _nurbsVertices.update(_curveCtrlPointShader);
-            _catmullRomVertices.update(_curveCtrlPointShader);
+            _nurbsVertices.update(_pointShader);
+            _catmullRomVertices.update(_pointShader);
+
+            if (!isModel())
+            {
+                _renderableOriginVertex.update(_pointShader);
+            }
+            else
+            {
+                _renderableOriginVertex.clear();
+            }
         }
         else
         {
             _nurbsVertices.clear();
             _catmullRomVertices.clear();
+            _renderableOriginVertex.clear();
 
             // Queue an update the next time it's rendered
             _nurbsVertices.queueUpdate();
             _catmullRomVertices.queueUpdate();
+            _renderableOriginVertex.queueUpdate();
         }
     }
 }
@@ -370,16 +388,17 @@ void StaticGeometryNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     m_curveCatmullRom.clearRenderable();
     _nurbsVertices.clear();
     _catmullRomVertices.clear();
+    _renderableOriginVertex.clear();
 
     if (renderSystem)
     {
         _pivotShader = renderSystem->capture("$PIVOT");
-        _curveCtrlPointShader = renderSystem->capture("$POINT");
+        _pointShader = renderSystem->capture("$BIGPOINT");
     }
     else
     {
         _pivotShader.reset();
-        _curveCtrlPointShader.reset();
+        _pointShader.reset();
     }
 
 	_originInstance.setRenderSystem(renderSystem);
@@ -387,11 +406,13 @@ void StaticGeometryNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void StaticGeometryNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
 {
+#if 0
 	if (!isModel() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
 	{
 		// Register the renderable with OpenGL
 		_originInstance.render(collector, volume, localToWorld());
 	}
+#endif
 }
 
 void StaticGeometryNode::evaluateTransform()
@@ -436,6 +457,7 @@ void StaticGeometryNode::transformComponents(const Matrix4& matrix)
 	if (_originInstance.isSelected())
     {
 		translateOrigin(getTranslation());
+        _renderableOriginVertex.queueUpdate();
 	}
 }
 
@@ -468,6 +490,7 @@ void StaticGeometryNode::_onTransformationChanged()
 	m_curveCatmullRom.curveChanged();
     _nurbsVertices.queueUpdate();
     _catmullRomVertices.queueUpdate();
+    _renderableOriginVertex.queueUpdate();
 }
 
 void StaticGeometryNode::_applyTransformation()
@@ -758,6 +781,8 @@ void StaticGeometryNode::originChanged()
 	{
 		_renderableName.setOrigin(getOrigin());
 	}
+
+    _renderableOriginVertex.queueUpdate();
     _renderOrigin.queueUpdate();
 }
 

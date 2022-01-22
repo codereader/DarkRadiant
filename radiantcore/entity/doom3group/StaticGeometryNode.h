@@ -16,6 +16,7 @@
 #include "../EntityNode.h"
 #include "../KeyObserverDelegate.h"
 #include "render/RenderablePivot.h"
+#include "RenderableVertex.h"
 
 namespace entity
 {
@@ -68,10 +69,11 @@ class StaticGeometryNode :
 	VertexInstance _originInstance;
 
     ShaderPtr _pivotShader;
-    ShaderPtr _curveCtrlPointShader;
+    ShaderPtr _pointShader;
 
     RenderableCurveVertices _nurbsVertices;
     RenderableCurveVertices _catmullRomVertices;
+    RenderableVertex _renderableOriginVertex;
 
 private:
 	// Constructor
