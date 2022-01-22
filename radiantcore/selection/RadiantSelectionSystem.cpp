@@ -924,6 +924,27 @@ Vector3 RadiantSelectionSystem::getCurrentSelectionCenter()
     return algorithm::getCurrentSelectionCenter();
 }
 
+void RadiantSelectionSystem::onPreRender(const VolumeTest& volume)
+{
+    if (!nothingSelected())
+    {
+        auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+
+        if (renderSystem)
+        {
+            _activeManipulator->onPreRender(renderSystem, volume);
+        }
+        else
+        {
+            _activeManipulator->clearRenderables();
+        }
+    }
+    else
+    {
+        _activeManipulator->clearRenderables();
+    }
+}
+
 /* greebo: Renders the currently active manipulator by setting the render state and
  * calling the manipulator's render method
  */

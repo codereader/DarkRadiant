@@ -13,6 +13,9 @@ class VolumeTest;
 class SelectionTest;
 class IRenderableCollector;
 
+class RenderSystem;
+typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
+
 namespace selection
 {
 
@@ -117,8 +120,14 @@ public:
 
     virtual ~ISceneManipulator() {}
 
+    // Prepares this manipulator for rendering
+    virtual void onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume) = 0;
+
     // Renders the manipulator's visual representation to the scene
     virtual void render(IRenderableCollector& collector, const VolumeTest& volume) = 0;
+
+    // Removes / hides the renderables of this manipulator
+    virtual void clearRenderables() = 0;
 
     // Manipulators should indicate whether component editing is supported or not
     virtual bool supportsComponentManipulation() const = 0;
