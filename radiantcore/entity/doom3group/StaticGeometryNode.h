@@ -137,8 +137,6 @@ public:
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
-
 	void transformComponents(const Matrix4& matrix);
 
     // Returns the original "origin" value

@@ -396,13 +396,6 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     {
         _vertexShader.reset();
     }
-
-	_instances.center.setRenderSystem(renderSystem);
-	_instances.target.setRenderSystem(renderSystem);
-	_instances.right.setRenderSystem(renderSystem);
-	_instances.up.setRenderSystem(renderSystem);
-	_instances.start.setRenderSystem(renderSystem);
-	_instances.end.setRenderSystem(renderSystem);
 }
 
 Vector4 LightNode::getEntityColour() const

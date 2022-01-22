@@ -400,19 +400,6 @@ void StaticGeometryNode::setRenderSystem(const RenderSystemPtr& renderSystem)
         _pivotShader.reset();
         _pointShader.reset();
     }
-
-	_originInstance.setRenderSystem(renderSystem);
-}
-
-void StaticGeometryNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-#if 0
-	if (!isModel() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
-	{
-		// Register the renderable with OpenGL
-		_originInstance.render(collector, volume, localToWorld());
-	}
-#endif
 }
 
 void StaticGeometryNode::evaluateTransform()
