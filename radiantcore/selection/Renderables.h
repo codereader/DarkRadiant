@@ -18,17 +18,6 @@ public:
 	{}
 };
 
-// helper class for rendering a semi-circle
-class RenderableSemiCircle :
-	public RenderablePointVector
-{
-public:
-	// Pass the amount of points to render
-	RenderableSemiCircle(std::size_t size) :
-		RenderablePointVector(GL_LINE_STRIP, size)
-	{}
-};
-
 // Helper class for rendering an arrow (only the line part)
 class RenderableArrowLine :
 	public RenderablePointVector

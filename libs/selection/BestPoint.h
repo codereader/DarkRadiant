@@ -454,12 +454,12 @@ inline std::size_t clipLine(const Matrix4& matrix, const Vector3& p0,
 	return homogenous_clip_line(clipped);
 }
 
-inline void LineStrip_BestPoint(const Matrix4& local2view, const VertexCb* vertices, const std::size_t size, SelectionIntersection& best)
+inline void LineStrip_BestPoint(const Matrix4& local2view, const Vector3* vertices, const std::size_t size, SelectionIntersection& best)
 {
     Vector4 clipped[2];
     for (std::size_t i = 0; (i + 1) < size; ++i)
     {
-        const std::size_t count = clipLine(local2view, vertices[i].vertex, vertices[i + 1].vertex, clipped);
+        const std::size_t count = clipLine(local2view, vertices[i], vertices[i + 1], clipped);
         BestPoint(count, clipped, best, eClipCullNone);
     }
 }

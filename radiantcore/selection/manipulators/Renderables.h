@@ -3,6 +3,7 @@
 #include "math/AABB.h"
 #include "render/RenderableGeometry.h"
 #include "render/RenderableBox.h"
+#include "render.h"
 
 namespace selection
 {
@@ -126,6 +127,110 @@ protected:
         }
 
         RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
+    }
+};
+
+namespace detail
+{
+
+inline void generateQuad(std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices, 
+    double size, const Vector4& colour)
+{
+    unsigned int indexOffset = static_cast<unsigned int>(vertices.size());
+
+    vertices.push_back(ArbitraryMeshVertex({ -size,  size, 0 }, { 0,0,0 }, { 0,0 }, colour));
+    vertices.push_back(ArbitraryMeshVertex({  size,  size, 0 }, { 0,0,0 }, { 0,0 }, colour));
+    vertices.push_back(ArbitraryMeshVertex({  size, -size, 0 }, { 0,0,0 }, { 0,0 }, colour));
+    vertices.push_back(ArbitraryMeshVertex({ -size, -size, 0 }, { 0,0,0 }, { 0,0 }, colour));
+
+    indices.push_back(indexOffset + 0);
+    indices.push_back(indexOffset + 1);
+    indices.push_back(indexOffset + 1);
+    indices.push_back(indexOffset + 2);
+    indices.push_back(indexOffset + 2);
+    indices.push_back(indexOffset + 3);
+    indices.push_back(indexOffset + 3);
+    indices.push_back(indexOffset + 0);
+}
+
+inline Vector4 toVector4(const Colour4b& colour)
+{
+    return
+    {
+        colour.r / 255.0,
+        colour.g / 255.0,
+        colour.b / 255.0,
+        colour.a / 255.0,
+    };
+}
+
+}
+
+template<typename RemapPolicy>
+class RenderableSemiCircle :
+    public render::RenderableGeometry
+{
+private:
+    constexpr static auto Segments = 8;
+    constexpr static auto Radius = 64.0;
+
+    const Matrix4& _localToWorld;
+    bool _needsUpdate;
+    Vector4 _colour;
+
+    std::vector<Vertex3f> _rawPoints;
+
+public:
+    RenderableSemiCircle(const Matrix4& localToWorld) :
+        _localToWorld(localToWorld),
+        _needsUpdate(true),
+        _rawPoints((Segments << 2) + 1)
+    {
+        draw_semicircle<RemapPolicy>(Segments, Radius, _rawPoints);
+    }
+
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+    void setColour(const Colour4b& colour)
+    {
+        _colour = detail::toVector4(colour);
+        queueUpdate();
+    }
+
+    const std::vector<Vertex3f>& getRawPoints() const
+    {
+        return _rawPoints;
+    }
+
+protected:
+    void updateGeometry() override
+    {
+        if (!_needsUpdate) return;
+
+        _needsUpdate = false;
+
+        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<unsigned int> indices;
+
+        unsigned int index = 0;
+
+        for (const auto& vertex : _rawPoints)
+        {
+            vertices.push_back(ArbitraryMeshVertex(_localToWorld * vertex, { 0,0,0 }, { 0,0 }, _colour));
+
+            if (index > 0)
+            {
+                indices.push_back(index - 1);
+                indices.push_back(index);
+            }
+
+            ++index;
+        }
+
+        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
     }
 };
 

@@ -16,24 +16,20 @@ RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segme
     _rotateFree(*this),
     _rotateAxis(*this),
 	_translatePivot(_pivotTranslatable),
-    _circleX((segments << 2) + 1),
-    _circleY((segments << 2) + 1),
-    _circleZ((segments << 2) + 1),
+    _circleX(_local2worldX),
+    _circleY(_local2worldY),
+    _circleZ(_local2worldZ),
     _circleScreen(segments<<3),
     _circleSphere(segments<<3),
 	_pivotPoint(GL_POINTS)
 {
-	draw_semicircle<RemapYZX>(segments, radius, _circleX);
-    draw_semicircle<RemapZXY>(segments, radius, _circleY);
-    draw_semicircle<RemapXYZ>(segments, radius, _circleZ);
-
 	draw_circle<RemapXYZ>(segments, radius * 1.15f, _circleScreen);
     draw_circle<RemapXYZ>(segments, radius, _circleSphere);
 
 	_pivotPoint.push_back(VertexCb(Vertex3f(0,0,0), ManipulatorBase::COLOUR_SPHERE()));
 }
 
-void RotateManipulator::UpdateColours()
+void RotateManipulator::updateColours()
 {
     _circleX.setColour(colourSelected(COLOUR_X(), _selectableX.isSelected()));
 	_circleY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
@@ -89,13 +85,37 @@ void RotateManipulator::updateCircleTransforms()
     }
 }
 
+void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume)
+{
+    if (!renderSystem)
+    {
+        clearRenderables();
+        return;
+    }
+
+    if (!_lineShader)
+    {
+        _lineShader = renderSystem->capture("$WIRE_OVERLAY");
+    }
+
+    _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
+    updateCircleTransforms();
+
+    updateColours();
+
+    _circleX.update(_lineShader);
+    _circleY.update(_lineShader);
+    _circleZ.update(_lineShader);
+}
+
 void RotateManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
 {
+#if 0
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
     updateCircleTransforms();
 
     // temp hack
-    UpdateColours();
+    updateColours();
 
     collector.addRenderable(*_stateOuter, _circleScreen, _pivot2World._viewpointSpace);
     collector.addRenderable(*_stateOuter, _circleSphere, _pivot2World._viewpointSpace);
@@ -116,6 +136,15 @@ void RotateManipulator::render(IRenderableCollector& collector, const VolumeTest
 	collector.addRenderable(*_pivotPointShader, _pivotPoint, _pivot2World._worldSpace);
 
 	collector.addRenderable(*_pivotPointShader, *this, Matrix4::getIdentity());
+#endif
+}
+
+void RotateManipulator::clearRenderables()
+{
+    _circleX.clear();
+    _circleY.clear();
+    _circleZ.clear();
+    _lineShader.reset();
 }
 
 std::string RotateManipulator::getRotationAxisName() const
@@ -162,7 +191,7 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldX));
 
 				SelectionIntersection best;
-				LineStrip_BestPoint(local2view, &_circleX.front(), _circleX.size(), best);
+				LineStrip_BestPoint(local2view, &_circleX.getRawPoints().front(), _circleX.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableX);
 			}
 
@@ -170,7 +199,7 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldY));
 
 				SelectionIntersection best;
-				LineStrip_BestPoint(local2view, &_circleY.front(), _circleY.size(), best);
+				LineStrip_BestPoint(local2view, &_circleY.getRawPoints().front(), _circleY.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableY);
 			}
 
@@ -178,7 +207,7 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldZ));
 
 				SelectionIntersection best;
-				LineStrip_BestPoint(local2view, &_circleZ.front(), _circleZ.size(), best);
+				LineStrip_BestPoint(local2view, &_circleZ.getRawPoints().front(), _circleZ.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableZ);
 			}
 		}

@@ -362,6 +362,12 @@ template<typename VertexContainerT> struct RemappingTraits
 {};
 
 template<>
+struct RemappingTraits<Vertex3f>
+{
+    static Vertex3f& getVertex(Vertex3f& vertex) { return vertex; }
+};
+
+template<>
 struct RemappingTraits<VertexCb>
 {
     static Vertex3f& getVertex(VertexCb& container) { return container.vertex; }

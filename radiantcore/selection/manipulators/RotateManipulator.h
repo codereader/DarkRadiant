@@ -9,6 +9,7 @@
 #include "selection/BasicSelectable.h"
 #include "selection/ManipulationPivot.h"
 #include "render.h"
+#include "Renderables.h"
 
 namespace selection
 {
@@ -32,9 +33,11 @@ private:
 	RotateAxis _rotateAxis;
 	TranslateFree _translatePivot;
 	Vector3 _axisScreen;
-	RenderableSemiCircle _circleX;
-	RenderableSemiCircle _circleY;
-	RenderableSemiCircle _circleZ;
+
+    RenderableSemiCircle<RemapYZX> _circleX;
+    RenderableSemiCircle<RemapZXY> _circleY;
+    RenderableSemiCircle<RemapXYZ> _circleZ;
+
 	RenderableCircle _circleScreen;
 	RenderableCircle _circleSphere;
 	RenderablePointVector _pivotPoint;
@@ -52,6 +55,8 @@ private:
 	bool _circleY_visible;
 	bool _circleZ_visible;
 
+    ShaderPtr _lineShader;
+
 public:
 	static ShaderPtr _stateOuter;
 	static ShaderPtr _pivotPointShader;
@@ -65,11 +70,10 @@ public:
 		return Rotate;
 	}
 
-	void UpdateColours();
-	void updateCircleTransforms();
-
+    void onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume) override;
 	void render(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void render(const RenderInfo& info) const override;
+    void clearRenderables() override;
 
 	void testSelect(SelectionTest& view, const Matrix4& pivot2world) override;
 
@@ -81,6 +85,9 @@ public:
 	void rotate(const Quaternion& rotation) override;
 
 private:
+    void updateColours();
+    void updateCircleTransforms();
+
     std::string getRotationAxisName() const;
 };
 
