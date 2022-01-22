@@ -7,8 +7,14 @@ namespace selection
 
 ModelScaleManipulator::ModelScaleManipulator(ManipulationPivot& pivot) :
 	_pivot(pivot),
+    _renderableAABBs(_aabbs),
 	_renderableCornerPoints(GL_POINTS)
 {
+}
+
+ModelScaleManipulator::~ModelScaleManipulator()
+{
+    clearRenderables();
 }
 
 ModelScaleManipulator::Type ModelScaleManipulator::getType() const
@@ -65,8 +71,45 @@ bool ModelScaleManipulator::isSelected() const
 	return _curManipulatable != nullptr;
 }
 
+void ModelScaleManipulator::onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume)
+{
+    if (!renderSystem)
+    {
+        clearRenderables();
+        _aabbs.clear();
+        return;
+    }
+
+    if (!_lineShader)
+    {
+        _lineShader = renderSystem->capture("$WIRE_OVERLAY");
+    }
+    
+    _aabbs.clear();
+
+    foreachSelectedTransformable([&](const scene::INodePtr& node, Entity* entity)
+    {
+        _aabbs.push_back(node->worldAABB());
+#if 0
+        Vector3 points[8];
+        aabb.getCorners(points);
+
+        bool isSelected = (node == _curManipulatable);
+
+        for (std::size_t i = 0; i < 8; ++i)
+        {
+            _renderableCornerPoints.push_back(VertexCb(points[i], isSelected ? COLOUR_SELECTED() : COLOUR_SCREEN()));
+        }
+#endif
+    });
+
+    _renderableAABBs.queueUpdate();
+    _renderableAABBs.update(_lineShader);
+}
+
 void ModelScaleManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
 {
+#if 0
 	_renderableAabbs.clear();
 	_renderableCornerPoints.clear();
 	
@@ -92,6 +135,13 @@ void ModelScaleManipulator::render(IRenderableCollector& collector, const Volume
 	}
 
 	collector.addRenderable(*_pointShader, _renderableCornerPoints, Matrix4::getIdentity());
+#endif
+}
+
+void ModelScaleManipulator::clearRenderables()
+{
+    _renderableAABBs.clear();
+    _lineShader.reset();
 }
 
 void ModelScaleManipulator::foreachSelectedTransformable(
@@ -108,7 +158,6 @@ void ModelScaleManipulator::foreachSelectedTransformable(
 	});
 }
 
-ShaderPtr ModelScaleManipulator::_lineShader;
 ShaderPtr ModelScaleManipulator::_pointShader;
 
 }

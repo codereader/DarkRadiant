@@ -290,6 +290,12 @@ void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 		return;
 	}
 
+    // Remove any visuals from the previous manipulator
+    if (_activeManipulator)
+    {
+        _activeManipulator->clearRenderables();
+    }
+
 	_activeManipulator = found->second;
 
 	// Release the user lock when switching manipulators
@@ -871,7 +877,6 @@ void RadiantSelectionSystem::captureShaders()
     RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 	RotateManipulator::_pivotPointShader = GlobalRenderSystem().capture("$POINT");
 	RotateManipulator::_glFont = GlobalOpenGL().getFont(manipulatorFontStyle, manipulatorFontSize);
-	ModelScaleManipulator::_lineShader = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 	ModelScaleManipulator::_pointShader = GlobalRenderSystem().capture("$POINT");
 }
 
@@ -882,7 +887,6 @@ void RadiantSelectionSystem::releaseShaders()
     RotateManipulator::_glFont.reset();
 	RotateManipulator::_stateOuter.reset();
 	RotateManipulator::_pivotPointShader.reset();
-    ModelScaleManipulator::_lineShader.reset();
     ModelScaleManipulator::_pointShader.reset();
 }
 
@@ -950,6 +954,7 @@ void RadiantSelectionSystem::onPreRender(const VolumeTest& volume)
  */
 void RadiantSelectionSystem::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
+#if 0
     if (!nothingSelected())
 	{
         collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
@@ -957,6 +962,7 @@ void RadiantSelectionSystem::renderSolid(IRenderableCollector& collector, const 
 
 		_activeManipulator->render(collector, volume);
     }
+#endif
 }
 
 void RadiantSelectionSystem::onSceneBoundsChanged()

@@ -259,7 +259,7 @@ public:
 typedef std::shared_ptr<LitObject> LitObjectPtr;
 
 class Renderable;
-typedef std::function<void(const Renderable&)> RenderableCallback;
+typedef std::function<void(Renderable&)> RenderableCallback;
 
 typedef std::function<void(const RendererLight&)> RendererLightCallback;
 
@@ -589,8 +589,8 @@ public:
     /// Set the shader program to use.
     virtual void setShaderProgram(ShaderProgram prog) = 0;
 
-    virtual void attachRenderable(const Renderable& renderable) = 0;
-    virtual void detachRenderable(const Renderable& renderable) = 0;
+    virtual void attachRenderable(Renderable& renderable) = 0;
+    virtual void detachRenderable(Renderable& renderable) = 0;
     virtual void forEachRenderable(const RenderableCallback& callback) const = 0;
 
   	// Initialises the OpenGL extensions

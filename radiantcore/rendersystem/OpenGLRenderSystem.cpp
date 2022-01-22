@@ -370,13 +370,13 @@ void OpenGLRenderSystem::eraseSortedState(const OpenGLStates::key_type& key) {
 }
 
 // renderables
-void OpenGLRenderSystem::attachRenderable(const Renderable& renderable) {
+void OpenGLRenderSystem::attachRenderable(Renderable& renderable) {
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "attaching renderable during traversal");
     ASSERT_MESSAGE(m_renderables.find(&renderable) == m_renderables.end(), "renderable could not be attached");
     m_renderables.insert(&renderable);
 }
 
-void OpenGLRenderSystem::detachRenderable(const Renderable& renderable) {
+void OpenGLRenderSystem::detachRenderable(Renderable& renderable) {
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "detaching renderable during traversal");
     ASSERT_MESSAGE(m_renderables.find(&renderable) != m_renderables.end(), "renderable could not be detached");
     m_renderables.erase(&renderable);
@@ -385,7 +385,7 @@ void OpenGLRenderSystem::detachRenderable(const Renderable& renderable) {
 void OpenGLRenderSystem::forEachRenderable(const RenderableCallback& callback) const {
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "for-each during traversal");
     m_traverseRenderablesMutex = true;
-    for (Renderables::const_iterator i = m_renderables.begin(); i != m_renderables.end(); ++i) {
+    for (Renderables::iterator i = m_renderables.begin(); i != m_renderables.end(); ++i) {
         callback(*(*i));
     }
     m_traverseRenderablesMutex = false;

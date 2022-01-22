@@ -36,7 +36,7 @@ public:
     virtual ~IRenderableCollector() {}
 
     // Process the given renderable object
-    virtual void processRenderable(const Renderable& renderable, const VolumeTest& volume) = 0;
+    virtual void processRenderable(Renderable& renderable, const VolumeTest& volume) = 0;
 
     /**
      * \brief Submit a renderable object.

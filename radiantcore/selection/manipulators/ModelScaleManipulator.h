@@ -10,13 +10,14 @@
 #include "selection/BasicSelectable.h"
 
 #include "entitylib.h"
+#include "Renderables.h"
 
 class Entity;
 
 namespace selection
 {
 
-class ModelScaleManipulator :
+class ModelScaleManipulator final :
 	public ManipulatorBase
 {
 private:
@@ -25,23 +26,30 @@ private:
 	// Resize component
 	ModelScaleComponent _scaleComponent;
 
-	std::list<RenderableSolidAABB> _renderableAabbs;
+    ShaderPtr _lineShader;
+
+	std::vector<AABB> _aabbs;
+    RenderableBoundingBoxes _renderableAABBs;
 	RenderablePointVector _renderableCornerPoints;
+
+
 
 	scene::INodePtr _curManipulatable;
 	
 public:
-	static ShaderPtr _lineShader;
 	static ShaderPtr _pointShader;
 
 	ModelScaleManipulator(ManipulationPivot& pivot);
+    ~ModelScaleManipulator();
 
 	Type getType() const override;
 	Component* getActiveComponent() override;
 	void testSelect(SelectionTest& test, const Matrix4& pivot2world) override;
 	void setSelected(bool select) override;
 	bool isSelected() const override;
+    void onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume) override;
 	void render(IRenderableCollector& collector, const VolumeTest& volume) override;
+    void clearRenderables() override;
 
 private:
 	void foreachSelectedTransformable(

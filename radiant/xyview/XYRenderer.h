@@ -61,8 +61,9 @@ public:
     // Ortho view never processes lights
     void addLight(const RendererLight&) override {}
 
-    void processRenderable(const Renderable& renderable, const VolumeTest& volume) override
+    void processRenderable(Renderable& renderable, const VolumeTest& volume) override
     {
+        renderable.onPreRender(volume);
         renderable.renderWireframe(*this, volume);
     }
 

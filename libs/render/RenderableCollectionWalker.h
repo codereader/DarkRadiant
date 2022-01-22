@@ -32,7 +32,7 @@ public:
 
         // Submit any renderables that have been directly attached to the RenderSystem
 		// without belonging to an actual scene object
-		GlobalRenderSystem().forEachRenderable([&](const Renderable& renderable)
+		GlobalRenderSystem().forEachRenderable([&](Renderable& renderable)
 		{
 			collector.processRenderable(renderable, volume);
 		});

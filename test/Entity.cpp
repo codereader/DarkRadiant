@@ -491,7 +491,7 @@ namespace
         void setHighlightFlag(Highlight::Flags flags, bool enabled) override
         {}
 
-        void processRenderable(const Renderable& renderable, const VolumeTest& volume) override
+        void processRenderable(Renderable& renderable, const VolumeTest& volume) override
         {
             if (renderSolid)
             {

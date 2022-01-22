@@ -84,7 +84,7 @@ public:
 	bool shaderProgramsAvailable() const override;
 	void setShaderProgramsAvailable(bool available) override;
 
-	typedef std::set<const Renderable*> Renderables;
+	typedef std::set<Renderable*> Renderables;
 	Renderables m_renderables;
 	mutable bool m_traverseRenderablesMutex;
 
@@ -93,8 +93,8 @@ public:
 	void eraseSortedState(const OpenGLStates::key_type& key) override;
 
 	// renderables
-	void attachRenderable(const Renderable& renderable) override;
-	void detachRenderable(const Renderable& renderable) override;
+	void attachRenderable(Renderable& renderable) override;
+	void detachRenderable(Renderable& renderable) override;
 	void forEachRenderable(const RenderableCallback& callback) const override;
 
 	// RegisterableModule implementation

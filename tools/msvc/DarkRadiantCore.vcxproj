@@ -1025,6 +1025,7 @@
     <ClInclude Include="..\..\radiantcore\selection\manipulators\ManipulatorBase.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\ManipulatorComponents.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\ModelScaleManipulator.h" />
+    <ClInclude Include="..\..\radiantcore\selection\manipulators\Renderables.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\RotateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.h" />

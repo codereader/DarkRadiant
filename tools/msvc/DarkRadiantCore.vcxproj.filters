@@ -2280,5 +2280,8 @@
     <ClInclude Include="..\..\radiantcore\entity\doom3group\RenderableVertex.h">
       <Filter>src\entity\doom3group</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\manipulators\Renderables.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

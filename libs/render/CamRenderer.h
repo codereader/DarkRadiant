@@ -197,8 +197,9 @@ public:
         ++_totalLights;
     }
 
-    void processRenderable(const Renderable& renderable, const VolumeTest& volume) override
+    void processRenderable(Renderable& renderable, const VolumeTest& volume) override
     {
+        renderable.onPreRender(volume);
         renderable.renderSolid(*this, volume);
     }
 
