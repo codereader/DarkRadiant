@@ -877,7 +877,6 @@ void RadiantSelectionSystem::captureShaders()
     RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
 	RotateManipulator::_pivotPointShader = GlobalRenderSystem().capture("$POINT");
 	RotateManipulator::_glFont = GlobalOpenGL().getFont(manipulatorFontStyle, manipulatorFontSize);
-	ModelScaleManipulator::_pointShader = GlobalRenderSystem().capture("$POINT");
 }
 
 void RadiantSelectionSystem::releaseShaders()
@@ -887,7 +886,6 @@ void RadiantSelectionSystem::releaseShaders()
     RotateManipulator::_glFont.reset();
 	RotateManipulator::_stateOuter.reset();
 	RotateManipulator::_pivotPointShader.reset();
-    ModelScaleManipulator::_pointShader.reset();
 }
 
 const WorkZone& RadiantSelectionSystem::getWorkZone()

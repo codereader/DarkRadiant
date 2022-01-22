@@ -52,12 +52,9 @@ protected:
 
             auto indexOffset = static_cast<unsigned int>(vertices.size());
 
-            for (const auto& vertex : boxVertices)
-            {
-                vertices.insert(vertices.begin(),
-                    std::make_move_iterator(boxVertices.begin()), 
-                    std::make_move_iterator(boxVertices.end()));
-            }
+            vertices.insert(vertices.begin(),
+                std::make_move_iterator(boxVertices.begin()), 
+                std::make_move_iterator(boxVertices.end()));
 
             for (auto index : WireframeBoxIndices)
             {
@@ -66,6 +63,69 @@ protected:
         }
 
         RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+    }
+};
+
+class RenderableCornerPoints :
+    public render::RenderableGeometry
+{
+private:
+    const std::vector<AABB>& _aabbs;
+    bool _needsUpdate;
+    Vector4 _colour;
+
+public:
+    RenderableCornerPoints(const std::vector<AABB>& aabbs) :
+        _aabbs(aabbs),
+        _needsUpdate(true),
+        _colour({ 1,1,1,1 })
+    {}
+
+    void setColour(const Colour4b& colour)
+    {
+        _colour.x() = colour.r / 255.0;
+        _colour.y() = colour.g / 255.0;
+        _colour.z() = colour.b / 255.0;
+        _colour.w() = colour.a / 255.0;
+    }
+
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+protected:
+    void updateGeometry() override
+    {
+        if (!_needsUpdate) return;
+
+        _needsUpdate = false;
+
+        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<unsigned int> indices;
+
+        // 8 vertices per box
+        vertices.reserve(_aabbs.size() * 8);
+        indices.reserve(_aabbs.size() * 8);
+
+        unsigned int index = 0;
+
+        for (const auto& aabb : _aabbs)
+        {
+            // Calculate the corner vertices of this bounding box
+            Vector3 max(aabb.origin + aabb.extents);
+            Vector3 min(aabb.origin - aabb.extents);
+
+            auto boxVertices = render::detail::getWireframeBoxVertices(min, max, _colour);
+            
+            for (const auto& vertex : boxVertices)
+            {
+                vertices.emplace_back(std::move(vertex));
+                indices.push_back(index++);
+            }
+        }
+
+        RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
     }
 };
 

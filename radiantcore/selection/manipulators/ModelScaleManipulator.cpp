@@ -8,7 +8,7 @@ namespace selection
 ModelScaleManipulator::ModelScaleManipulator(ManipulationPivot& pivot) :
 	_pivot(pivot),
     _renderableAABBs(_aabbs),
-	_renderableCornerPoints(GL_POINTS)
+    _renderableCornerPoints(_aabbs)
 {
 }
 
@@ -84,62 +84,34 @@ void ModelScaleManipulator::onPreRender(const RenderSystemPtr& renderSystem, con
     {
         _lineShader = renderSystem->capture("$WIRE_OVERLAY");
     }
+
+    if (!_pointShader)
+    {
+        _pointShader = renderSystem->capture("$BIGPOINT");
+    }
     
     _aabbs.clear();
 
     foreachSelectedTransformable([&](const scene::INodePtr& node, Entity* entity)
     {
         _aabbs.push_back(node->worldAABB());
-#if 0
-        Vector3 points[8];
-        aabb.getCorners(points);
-
-        bool isSelected = (node == _curManipulatable);
-
-        for (std::size_t i = 0; i < 8; ++i)
-        {
-            _renderableCornerPoints.push_back(VertexCb(points[i], isSelected ? COLOUR_SELECTED() : COLOUR_SCREEN()));
-        }
-#endif
     });
 
+    _renderableCornerPoints.setColour(isSelected() ? COLOUR_SELECTED() : COLOUR_SCREEN());
+    _renderableCornerPoints.queueUpdate();
     _renderableAABBs.queueUpdate();
+
     _renderableAABBs.update(_lineShader);
+    _renderableCornerPoints.update(_pointShader);
 }
 
 void ModelScaleManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
 {
-#if 0
-	_renderableAabbs.clear();
-	_renderableCornerPoints.clear();
-	
-	foreachSelectedTransformable([&](const scene::INodePtr& node, Entity* entity)
-	{
-		const AABB& aabb = node->worldAABB();
-		_renderableAabbs.push_back(RenderableSolidAABB(aabb));
-
-		Vector3 points[8];
-		aabb.getCorners(points);
-
-		bool isSelected = (node == _curManipulatable);
-
-		for (std::size_t i = 0; i < 8; ++i)
-		{
-			_renderableCornerPoints.push_back(VertexCb(points[i], isSelected ? COLOUR_SELECTED() : COLOUR_SCREEN()));
-		}
-	});
-
-	for (const RenderableSolidAABB& aabb : _renderableAabbs)
-	{
-		collector.addRenderable(*_lineShader, aabb, Matrix4::getIdentity());
-	}
-
-	collector.addRenderable(*_pointShader, _renderableCornerPoints, Matrix4::getIdentity());
-#endif
 }
 
 void ModelScaleManipulator::clearRenderables()
 {
+    _renderableCornerPoints.clear();
     _renderableAABBs.clear();
     _lineShader.reset();
 }
@@ -157,8 +129,6 @@ void ModelScaleManipulator::foreachSelectedTransformable(
 		}
 	});
 }
-
-ShaderPtr ModelScaleManipulator::_pointShader;
 
 }
 

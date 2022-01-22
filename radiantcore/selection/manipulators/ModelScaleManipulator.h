@@ -26,19 +26,16 @@ private:
 	// Resize component
 	ModelScaleComponent _scaleComponent;
 
+    ShaderPtr _pointShader;
     ShaderPtr _lineShader;
 
 	std::vector<AABB> _aabbs;
     RenderableBoundingBoxes _renderableAABBs;
-	RenderablePointVector _renderableCornerPoints;
-
-
+    RenderableCornerPoints _renderableCornerPoints;
 
 	scene::INodePtr _curManipulatable;
 	
 public:
-	static ShaderPtr _pointShader;
-
 	ModelScaleManipulator(ManipulationPivot& pivot);
     ~ModelScaleManipulator();
 
