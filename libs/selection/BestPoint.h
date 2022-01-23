@@ -538,14 +538,13 @@ inline void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const Ver
     }
 }
 
-typedef VertexNCb* FlatShadedVertexIterator;
-inline void Triangles_BestPoint(const Matrix4& local2view, clipcull_t cull, FlatShadedVertexIterator first, FlatShadedVertexIterator last, SelectionIntersection& best)
+inline void Triangles_BestPoint(const Matrix4& local2view, clipcull_t cull, const Vertex3f* first, const Vertex3f* last, SelectionIntersection& best)
 {
-    for (FlatShadedVertexIterator x(first), y(first + 1), z(first + 2); x != last; x += 3, y += 3, z += 3)
+    for (auto x(first), y(first + 1), z(first + 2); x != last; x += 3, y += 3, z += 3)
     {
         Vector4 clipped[9];
         BestPoint(
-            clipTriangle(local2view, x->vertex, y->vertex, z->vertex, clipped),
+            clipTriangle(local2view, *x, *y, *z, clipped),
             clipped, best, cull
         );
     }

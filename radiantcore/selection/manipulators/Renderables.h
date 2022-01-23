@@ -265,6 +265,77 @@ public:
     }
 };
 
+// Renders a few flat-shaded triangles as arrow head, offset by a given amount
+class RenderableArrowHead :
+    public render::RenderableGeometry
+{
+protected:
+    Vector3 _offset;
+    Vector3 _normal;
+    double _width;
+    double _height;
+    const Matrix4& _localToWorld;
+    bool _needsUpdate;
+    Vector4 _colour;
+
+    std::vector<Vertex3f> _rawPoints;
+
+public:
+    RenderableArrowHead(const Vector3& offset, const Vector3& normal, double width, double height, const Matrix4& localToWorld) :
+        _offset(offset),
+        _normal(normal),
+        _width(width),
+        _height(height),
+        _localToWorld(localToWorld),
+        _needsUpdate(true),
+        _rawPoints(3)
+    {
+        auto direction = _offset.getNormalised();
+        auto sideWays = _offset.cross(_normal).getNormalised();
+
+        _rawPoints[0] = _offset; // tip
+        _rawPoints[1] = _offset - direction * _height + sideWays * _width;
+        _rawPoints[2] = _offset - direction * _height - sideWays * _width;
+    }
+
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+    void setColour(const Colour4b& colour)
+    {
+        _colour = detail::toVector4(colour);
+        queueUpdate();
+    }
+
+    const std::vector<Vertex3f>& getRawPoints() const
+    {
+        return _rawPoints;
+    }
+
+protected:
+    void updateGeometry() override
+    {
+        if (!_needsUpdate) return;
+
+        _needsUpdate = false;
+
+        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<unsigned int> indices;
+
+        unsigned int index = 0;
+
+        for (const auto& vertex : _rawPoints)
+        {
+            vertices.push_back(ArbitraryMeshVertex(_localToWorld * vertex, _normal, { 0,0 }, _colour));
+            indices.push_back(index++);
+        }
+
+        RenderableGeometry::updateGeometry(render::GeometryType::Triangles, vertices, indices);
+    }
+};
+
 class RenderablePoint :
     public render::RenderableGeometry
 {

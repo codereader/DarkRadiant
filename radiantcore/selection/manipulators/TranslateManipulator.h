@@ -37,12 +37,9 @@ private:
 	Pivot2World _pivot2World;
 
     ShaderPtr _lineShader;
+    ShaderPtr _arrowHeadShader;
 
 public:
-	static ShaderPtr _stateWire;
-	static ShaderPtr _stateFill;
-
-	// Constructor
 	TranslateManipulator(ManipulationPivot& pivot, std::size_t segments, float length);
 
 	Type getType() const override

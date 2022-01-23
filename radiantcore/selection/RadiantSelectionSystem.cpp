@@ -865,18 +865,6 @@ const Matrix4& RadiantSelectionSystem::getPivot2World()
     return _pivot.getMatrix4();
 }
 
-void RadiantSelectionSystem::captureShaders()
-{
-    TranslateManipulator::_stateWire = GlobalRenderSystem().capture("$WIRE_OVERLAY");
-    TranslateManipulator::_stateFill = GlobalRenderSystem().capture("$FLATSHADE_OVERLAY");
-}
-
-void RadiantSelectionSystem::releaseShaders()
-{
-    TranslateManipulator::_stateWire.reset();
-    TranslateManipulator::_stateFill.reset();
-}
-
 const WorkZone& RadiantSelectionSystem::getWorkZone()
 {
     // Check if we should recalculate the workzone
@@ -988,8 +976,6 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	captureShaders();
-
 	_pivot.initialise();
 
 	// Add manipulators
@@ -1080,8 +1066,6 @@ void RadiantSelectionSystem::shutdownModule()
 	_manipulators.clear();
 
     GlobalRenderSystem().detachRenderable(*this);
-
-    releaseShaders();
 }
 
 void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& selectable)

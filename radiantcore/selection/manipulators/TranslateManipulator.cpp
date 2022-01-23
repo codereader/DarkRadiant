@@ -19,13 +19,13 @@ TranslateManipulator::TranslateManipulator(ManipulationPivot& pivot, std::size_t
     _arrowX({ length,0,0 }, _pivot2World._worldSpace),
     _arrowY({ 0,length,0 }, _pivot2World._worldSpace),
     _arrowZ({ 0,0,length }, _pivot2World._worldSpace),
-    _arrowHeadX(3 * 2 * (segments << 3)),
-    _arrowHeadY(3 * 2 * (segments << 3)),
-    _arrowHeadZ(3 * 2 * (segments << 3))
+    _arrowHeadX({ length,0,0 }, { 0,0,1 }, length / 4, length / 3, _pivot2World._worldSpace),
+    _arrowHeadY({ 0,length,0 }, { 1,0,0 }, length / 4, length / 3, _pivot2World._worldSpace),
+    _arrowHeadZ({ 0,0,length }, { 0,1,0 }, length / 4, length / 3, _pivot2World._worldSpace)
 {
-    draw_arrowhead(segments, length, &_arrowHeadX._vertices.front(), TripleRemapXYZ<Vertex3f>(), TripleRemapXYZ<Normal3f>());
-    draw_arrowhead(segments, length, &_arrowHeadY._vertices.front(), TripleRemapYZX<Vertex3f>(), TripleRemapYZX<Normal3f>());
-    draw_arrowhead(segments, length, &_arrowHeadZ._vertices.front(), TripleRemapZXY<Vertex3f>(), TripleRemapZXY<Normal3f>());
+    //draw_arrowhead(segments, length, &_arrowHeadX._vertices.front(), TripleRemapXYZ<Vertex3f>(), TripleRemapXYZ<Normal3f>());
+    //draw_arrowhead(segments, length, &_arrowHeadY._vertices.front(), TripleRemapYZX<Vertex3f>(), TripleRemapYZX<Normal3f>());
+    //draw_arrowhead(segments, length, &_arrowHeadZ._vertices.front(), TripleRemapZXY<Vertex3f>(), TripleRemapZXY<Normal3f>());
 
     draw_quad(16, &_quadScreen.front());
 }
@@ -59,6 +59,11 @@ void TranslateManipulator::onPreRender(const RenderSystemPtr& renderSystem, cons
         _lineShader = renderSystem->capture("$WIRE_OVERLAY");
     }
 
+    if (!_arrowHeadShader)
+    {
+        _arrowHeadShader = renderSystem->capture("$FLATSHADE_OVERLAY");
+    }
+
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
     updateColours();
@@ -70,28 +75,34 @@ void TranslateManipulator::onPreRender(const RenderSystemPtr& renderSystem, cons
     if (axisIsVisible(x))
     {
         _arrowX.update(_lineShader);
+        _arrowHeadX.update(_arrowHeadShader);
     }
     else
     {
         _arrowX.clear();
+        _arrowHeadX.clear();
     }
 
     if (axisIsVisible(y))
     {
         _arrowY.update(_lineShader);
+        _arrowHeadY.update(_arrowHeadShader);
     }
     else
     {
         _arrowY.clear();
+        _arrowHeadY.clear();
     }
 
     if (axisIsVisible(z))
     {
         _arrowZ.update(_lineShader);
+        _arrowHeadZ.update(_arrowHeadShader);
     }
     else
     {
         _arrowZ.clear();
+        _arrowHeadZ.clear();
     }
 }
 
@@ -100,8 +111,12 @@ void TranslateManipulator::clearRenderables()
     _arrowX.clear();
     _arrowY.clear();
     _arrowZ.clear();
+    _arrowHeadX.clear();
+    _arrowHeadY.clear();
+    _arrowHeadZ.clear();
 
     _lineShader.reset();
+    _arrowHeadShader.reset();
 }
 
 void TranslateManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
@@ -187,7 +202,7 @@ void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2
       {
         SelectionIntersection best;
         Line_BestPoint(local2view, &_arrowX.getRawPoints().front(), best);
-        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadX._vertices.front(), &*(_arrowHeadX._vertices.end()-1)+1, best);
+        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadX.getRawPoints().front(), &*(_arrowHeadX.getRawPoints().end()-1)+1, best);
         selector.addSelectable(best, &_selectableX);
       }
 
@@ -195,7 +210,7 @@ void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2
       {
         SelectionIntersection best;
         Line_BestPoint(local2view, &_arrowY.getRawPoints().front(), best);
-        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadY._vertices.front(), &*(_arrowHeadY._vertices.end()-1)+1, best);
+        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadY.getRawPoints().front(), &*(_arrowHeadY.getRawPoints().end()-1)+1, best);
         selector.addSelectable(best, &_selectableY);
       }
 
@@ -203,7 +218,7 @@ void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2
       {
         SelectionIntersection best;
         Line_BestPoint(local2view, &_arrowZ.getRawPoints().front(), best);
-        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadZ._vertices.front(), &*(_arrowHeadZ._vertices.end()-1)+1, best);
+        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadZ.getRawPoints().front(), &*(_arrowHeadZ.getRawPoints().end()-1)+1, best);
         selector.addSelectable(best, &_selectableZ);
       }
     }
@@ -296,9 +311,5 @@ bool TranslateManipulator::isSelected() const
       | _selectableZ.isSelected()
       | _selectableScreen.isSelected();
 }
-
-// Initialise the shaders of this class
-ShaderPtr TranslateManipulator::_stateWire;
-ShaderPtr TranslateManipulator::_stateFill;
 
 }
