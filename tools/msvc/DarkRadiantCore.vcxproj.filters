@@ -2283,5 +2283,8 @@
     <ClInclude Include="..\..\radiantcore\selection\manipulators\Renderables.h">
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\TextRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

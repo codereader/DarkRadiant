@@ -44,6 +44,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _shaderProgramsAvailable(false),
     _glProgramFactory(std::make_shared<GLProgramFactory>()),
     _currentShaderProgram(SHADER_PROGRAM_NONE),
+    _textRenderer(new TextRenderer),
     _time(0),
     m_traverseRenderablesMutex(false)
 {
@@ -84,6 +85,11 @@ OpenGLRenderSystem::~OpenGLRenderSystem()
 {
     _materialDefsLoaded.disconnect();
     _materialDefsUnloaded.disconnect();
+}
+
+ITextRenderer::Ptr OpenGLRenderSystem::captureTextRenderer()
+{
+    return _textRenderer;
 }
 
 ShaderPtr OpenGLRenderSystem::capture(const std::string& name)

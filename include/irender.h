@@ -491,6 +491,39 @@ public:
  */
 typedef std::shared_ptr<Shader> ShaderPtr;
 
+// Defines a piece of text that should be rendered in the scene
+class IRenderableText
+{
+public:
+    // The position in world space where the text needs to be rendered
+    virtual const std::string& getWorldPosition() = 0;
+
+    // The text to be rendered
+    virtual const std::string& getText() = 0;
+
+    // The colour of the text
+    virtual const Vector4& getColour() = 0;
+};
+
+// An ITextRenderer is able to draw one or more IRenderableText
+// instances to the scene
+class ITextRenderer
+{
+public:
+    using Ptr = std::shared_ptr<ITextRenderer>;
+
+    using Slot = std::uint64_t;
+    static constexpr Slot InvalidSlot = std::numeric_limits<Slot>::max();
+
+    // Registers the given text instance for rendering
+    virtual Slot addText(IRenderableText& text) = 0;
+
+    // Removes the text instance in the given Slot
+    // The slot handle is invalidated by this operation and should be 
+    // discarded by the client, by setting it to InvalidSlot
+    virtual void removeText(Slot slot) = 0;
+};
+
 const char* const MODULE_RENDERSYSTEM("ShaderCache");
 
 // Render view type enumeration, is used to select (or leave out)
@@ -515,8 +548,6 @@ public:
      * Capture the given shader, increasing its reference count and
 	 * returning a pointer to the Shader object.
      *
-     * The object must be freed after use by calling release().
-	 *
 	 * @param name
 	 * The name of the shader to capture.
 	 *
@@ -525,6 +556,12 @@ public:
 	 */
 
 	virtual ShaderPtr capture(const std::string& name) = 0;
+
+    /**
+     * Retrieves an ITextRenderer instance that will rasterize text
+     * in a certain colours at a certain positions.
+     */
+    virtual ITextRenderer::Ptr captureTextRenderer() = 0;
 
     /**
      * \brief

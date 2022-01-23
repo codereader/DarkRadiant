@@ -7,6 +7,7 @@
 #include "backend/OpenGLStateManager.h"
 #include "backend/OpenGLShader.h"
 #include "backend/OpenGLStateLess.h"
+#include "backend/TextRenderer.h"
 
 namespace render
 {
@@ -40,6 +41,8 @@ class OpenGLRenderSystem
 	// Map of OpenGLState references, with access functions.
 	OpenGLStates _state_sorted;
 
+    std::shared_ptr<TextRenderer> _textRenderer;
+
 	// Render time
 	std::size_t _time;
 
@@ -60,6 +63,8 @@ public:
 	virtual ~OpenGLRenderSystem();
 
     /* RenderSystem implementation */
+
+    ITextRenderer::Ptr captureTextRenderer() override;
 
 	ShaderPtr capture(const std::string& name) override;
 	void render(RenderViewType renderViewType, RenderStateFlags globalstate,
