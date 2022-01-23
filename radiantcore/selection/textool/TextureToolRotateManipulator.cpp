@@ -100,7 +100,7 @@ constexpr double DefaultCrossHairSize = 10; // in device pixels
 TextureToolRotateManipulator::TextureToolRotateManipulator(TextureToolManipulationPivot& pivot) :
     _pivot(pivot),
     _rotator(std::bind(&TextureToolRotateManipulator::rotateSelected, this, std::placeholders::_1, std::placeholders::_2)),
-    _renderableCircle(CircleSegments << 3),
+    _renderableCircle(GL_LINE_LOOP, CircleSegments << 3),
     _circleRadius(DefaultCircleRadius)
 {
     draw_ellipse<RemapXYZ>(CircleSegments, static_cast<float>(DefaultCircleRadius), static_cast<float>(DefaultCircleRadius), _renderableCircle);

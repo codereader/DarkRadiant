@@ -37,9 +37,8 @@ private:
     RenderableSemiCircle<RemapYZX> _circleX;
     RenderableSemiCircle<RemapZXY> _circleY;
     RenderableSemiCircle<RemapXYZ> _circleZ;
-
-	RenderableCircle _circleScreen;
-	RenderableCircle _circleSphere;
+	RenderableCircle<RemapXYZ> _circleScreen;
+	RenderableCircle<RemapXYZ> _circleSphere;
 	RenderablePointVector _pivotPoint;
 	BasicSelectable _selectableX;
 	BasicSelectable _selectableY;
@@ -58,7 +57,6 @@ private:
     ShaderPtr _lineShader;
 
 public:
-	static ShaderPtr _stateOuter;
 	static ShaderPtr _pivotPointShader;
     static IGLFont::Ptr _glFont;
 

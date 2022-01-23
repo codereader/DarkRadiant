@@ -3,20 +3,9 @@
 #include "render.h"
 #include "render/VertexNCb.h"
 
-/* greebo: This contains the renderables (rectangles, arrows, circles, semicircles) to represent
+/* greebo: This contains the renderables (rectangles, arrows) to represent
  * the manipulators of the selected items
  */
-
-// helper class for rendering a circle
-class RenderableCircle :
-	public RenderablePointVector
-{
-public:
-	// Pass the amount of points to render
-	RenderableCircle(std::size_t size) :
-		RenderablePointVector(GL_LINE_LOOP, size)
-	{}
-};
 
 // Helper class for rendering an arrow (only the line part)
 class RenderableArrowLine :

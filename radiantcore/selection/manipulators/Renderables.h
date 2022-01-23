@@ -166,14 +166,11 @@ inline Vector4 toVector4(const Colour4b& colour)
 
 }
 
-template<typename RemapPolicy>
-class RenderableSemiCircle :
+// Renders a fixed size point array as line strip
+class RenderableLineStrip :
     public render::RenderableGeometry
 {
-private:
-    constexpr static auto Segments = 8;
-    constexpr static auto Radius = 64.0;
-
+protected:
     const Matrix4& _localToWorld;
     bool _needsUpdate;
     Vector4 _colour;
@@ -181,14 +178,6 @@ private:
     std::vector<Vertex3f> _rawPoints;
 
 public:
-    RenderableSemiCircle(const Matrix4& localToWorld) :
-        _localToWorld(localToWorld),
-        _needsUpdate(true),
-        _rawPoints((Segments << 2) + 1)
-    {
-        draw_semicircle<RemapPolicy>(Segments, Radius, _rawPoints);
-    }
-
     void queueUpdate()
     {
         _needsUpdate = true;
@@ -206,6 +195,12 @@ public:
     }
 
 protected:
+    RenderableLineStrip(std::size_t numPoints, const Matrix4& localToWorld) :
+        _localToWorld(localToWorld),
+        _needsUpdate(true),
+        _rawPoints(numPoints)
+    {}
+
     void updateGeometry() override
     {
         if (!_needsUpdate) return;
@@ -231,6 +226,30 @@ protected:
         }
 
         RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+    }
+};
+
+template<typename RemapPolicy>
+class RenderableSemiCircle :
+    public RenderableLineStrip
+{
+public:
+    RenderableSemiCircle(std::size_t segments, double radius, const Matrix4& localToWorld) :
+        RenderableLineStrip((segments << 2) + 1, localToWorld)
+    {
+        draw_semicircle<RemapPolicy>(segments, radius, _rawPoints);
+    }
+};
+
+template<typename RemapPolicy>
+class RenderableCircle :
+    public RenderableLineStrip
+{
+public:
+    RenderableCircle(std::size_t segments, double radius, const Matrix4& localToWorld) :
+        RenderableLineStrip(segments << 3, localToWorld)
+    {
+        draw_circle<RemapPolicy>(segments, radius, _rawPoints);
     }
 };
 

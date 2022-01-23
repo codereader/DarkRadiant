@@ -9,6 +9,12 @@
 namespace selection
 {
 
+namespace
+{
+    constexpr static auto CircleSegments = 8;
+    constexpr static auto CircleRadius = 64.0;
+}
+
 // Constructor
 RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius) :
 	_pivot(pivot),
@@ -16,16 +22,13 @@ RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segme
     _rotateFree(*this),
     _rotateAxis(*this),
 	_translatePivot(_pivotTranslatable),
-    _circleX(_local2worldX),
-    _circleY(_local2worldY),
-    _circleZ(_local2worldZ),
-    _circleScreen(segments<<3),
-    _circleSphere(segments<<3),
+    _circleX(CircleSegments, CircleRadius, _local2worldX),
+    _circleY(CircleSegments, CircleRadius, _local2worldY),
+    _circleZ(CircleSegments, CircleRadius, _local2worldZ),
+    _circleScreen(CircleSegments, CircleRadius * 1.15, _pivot2World._viewpointSpace),
+    _circleSphere(CircleSegments, CircleRadius, _pivot2World._viewpointSpace),
 	_pivotPoint(GL_POINTS)
 {
-	draw_circle<RemapXYZ>(segments, radius * 1.15f, _circleScreen);
-    draw_circle<RemapXYZ>(segments, radius, _circleSphere);
-
 	_pivotPoint.push_back(VertexCb(Vertex3f(0,0,0), ManipulatorBase::COLOUR_SPHERE()));
 }
 
@@ -34,9 +37,9 @@ void RotateManipulator::updateColours()
     _circleX.setColour(colourSelected(COLOUR_X(), _selectableX.isSelected()));
 	_circleY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
 	_circleZ.setColour(colourSelected(COLOUR_Z(), _selectableZ.isSelected()));
-    _circleScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
-    _circleSphere.setColour(colourSelected(ManipulatorBase::COLOUR_SPHERE(), false));
-	_pivotPoint.setColour(colourSelected(ManipulatorBase::COLOUR_SPHERE(), _selectablePivotPoint.isSelected()));
+    _circleScreen.setColour(colourSelected(COLOUR_SCREEN(), _selectableScreen.isSelected()));
+    _circleSphere.setColour(colourSelected(COLOUR_SPHERE(), false));
+	_pivotPoint.setColour(colourSelected(COLOUR_SPHERE(), _selectablePivotPoint.isSelected()));
 }
 
 void RotateManipulator::updateCircleTransforms()
@@ -106,6 +109,8 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
     _circleX.update(_lineShader);
     _circleY.update(_lineShader);
     _circleZ.update(_lineShader);
+    _circleScreen.update(_lineShader);
+    _circleSphere.update(_lineShader);
 }
 
 void RotateManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
@@ -144,6 +149,8 @@ void RotateManipulator::clearRenderables()
     _circleX.clear();
     _circleY.clear();
     _circleZ.clear();
+    _circleScreen.clear();
+    _circleSphere.clear();
     _lineShader.reset();
 }
 
@@ -217,13 +224,13 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 
 			{
 				SelectionIntersection best;
-				LineLoop_BestPoint(local2view, &_circleScreen.front(), _circleScreen.size(), best);
+				LineLoop_BestPoint(local2view, &_circleScreen.getRawPoints().front(), _circleScreen.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableScreen);
 			}
 
 			{
 				SelectionIntersection best;
-				Circle_BestPoint(local2view, eClipCullCW, &_circleSphere.front(), _circleSphere.size(), best);
+				Circle_BestPoint(local2view, eClipCullCW, &_circleSphere.getRawPoints().front(), _circleSphere.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableSphere);
 			}
 		}
@@ -306,7 +313,6 @@ void RotateManipulator::rotate(const Quaternion& rotation)
 }
 
 // Static members
-ShaderPtr RotateManipulator::_stateOuter;
 ShaderPtr RotateManipulator::_pivotPointShader;
 IGLFont::Ptr RotateManipulator::_glFont;
 

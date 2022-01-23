@@ -54,7 +54,7 @@ private:
 
     selection::BasicSelectable _selectableZ;
     TextureRotator _rotator;
-    RenderableCircle _renderableCircle;
+    RenderablePointVector _renderableCircle;
 
     ShaderPtr _shader;
     IGLFont::Ptr _glFont;

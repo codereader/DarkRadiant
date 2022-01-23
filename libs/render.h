@@ -417,7 +417,7 @@ public:
 
 // VertexArray must expose a value_type typedef and implement an index operator[], like std::vector
 template<typename remap_policy, typename VertexArray>
-inline void draw_ellipse(const std::size_t numSegments, const float radiusX, const float radiusY, VertexArray& vertices, std::size_t firstVertex = 0)
+inline void draw_ellipse(const std::size_t numSegments, const double radiusX, const double radiusY, VertexArray& vertices, std::size_t firstVertex = 0)
 {
     // Per half circle we push in (Segments x 4) vertices (the caller made room for that)
     const auto numVerticesPerHalf = numSegments << 2;
@@ -436,13 +436,13 @@ inline void draw_ellipse(const std::size_t numSegments, const float radiusX, con
 }
 
 template<typename remap_policy, typename VertexArray>
-inline void draw_semicircle(const std::size_t segments, const float radius, VertexArray& vertices)
+inline void draw_semicircle(const std::size_t segments, const double radius, VertexArray& vertices)
 {
     const double increment = math::PI / double(segments << 2);
 
     std::size_t count = 0;
-    float x = radius;
-    float y = 0;
+    double x = radius;
+    double y = 0;
     remap_policy::set(vertices[segments << 2], -radius, 0, 0);
 
     while (count < segments)
@@ -460,8 +460,8 @@ inline void draw_semicircle(const std::size_t segments, const float radius, Vert
 
         {
             const double theta = increment * count;
-            x = static_cast<float>(radius * cos(theta));
-            y = static_cast<float>(radius * sin(theta));
+            x = radius * cos(theta);
+            y = radius * sin(theta);
         }
 
         remap_policy::set(j, y, -x, 0);
@@ -470,7 +470,7 @@ inline void draw_semicircle(const std::size_t segments, const float radius, Vert
 }
 
 template<typename remap_policy, typename VertexArray>
-inline void draw_circle(const std::size_t segments, const float radius, VertexArray& vertices, std::size_t firstVertex = 0)
+inline void draw_circle(const std::size_t segments, const double radius, VertexArray& vertices, std::size_t firstVertex = 0)
 {
     draw_ellipse<remap_policy>(segments, radius, radius, vertices, firstVertex);
 }
