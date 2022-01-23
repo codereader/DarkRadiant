@@ -248,7 +248,6 @@ add_library(radiantcore MODULE
             selection/manipulators/ManipulatorComponents.cpp
             selection/manipulators/ModelScaleManipulator.cpp
             selection/manipulators/RotateManipulator.cpp
-            selection/manipulators/ScaleManipulator.cpp
             selection/manipulators/TranslateManipulator.cpp
             selection/RadiantSelectionSystem.cpp
             selection/SelectedNodeList.cpp

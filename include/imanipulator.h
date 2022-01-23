@@ -38,7 +38,6 @@ public:
 		Drag,
 		Translate,
 		Rotate,
-		Scale,
 		Clip,
 		ModelScale,
 		Custom

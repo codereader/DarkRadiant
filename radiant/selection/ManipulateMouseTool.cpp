@@ -197,10 +197,6 @@ void ManipulateMouseTool::endMove()
 		{
 			command << "rotateTool";
 		}
-		else if (activeManipulator->getType() == selection::IManipulator::Scale)
-		{
-			command << "scaleTool";
-		}
 		else if (activeManipulator->getType() == selection::IManipulator::Drag)
 		{
 			command << "dragTool";

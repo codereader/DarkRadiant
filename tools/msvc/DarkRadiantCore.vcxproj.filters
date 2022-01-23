@@ -874,9 +874,6 @@
     <ClCompile Include="..\..\radiantcore\selection\manipulators\RotateManipulator.cpp">
       <Filter>src\selection\manipulators</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.cpp">
-      <Filter>src\selection\manipulators</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.cpp">
       <Filter>src\selection\manipulators</Filter>
     </ClCompile>
@@ -1978,9 +1975,6 @@
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\manipulators\RotateManipulator.h">
-      <Filter>src\selection\manipulators</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.h">
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.h">
