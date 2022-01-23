@@ -6,6 +6,7 @@
 #include "selection/BasicSelectable.h"
 #include "selection/ManipulationPivot.h"
 #include "Renderables.h"
+#include "registry/CachedKey.h"
 
 namespace selection
 {
@@ -29,14 +30,16 @@ private:
 	RenderableArrowHead _arrowHeadY;
 	RenderableArrowHead _arrowHeadZ;
 	RenderableQuad _quadScreen;
-	selection::BasicSelectable _selectableX;
-	selection::BasicSelectable _selectableY;
-	selection::BasicSelectable _selectableZ;
-	selection::BasicSelectable _selectableScreen;
+	BasicSelectable _selectableX;
+	BasicSelectable _selectableY;
+	BasicSelectable _selectableZ;
+	BasicSelectable _selectableScreen;
 	Pivot2World _pivot2World;
 
     ShaderPtr _lineShader;
     ShaderPtr _arrowHeadShader;
+
+    registry::CachedKey<bool> _translateConstrained;
 
 public:
 	TranslateManipulator(ManipulationPivot& pivot, std::size_t segments, float length);

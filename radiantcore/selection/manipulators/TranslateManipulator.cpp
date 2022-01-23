@@ -3,12 +3,10 @@
 #include "selection/SelectionPool.h"
 #include "selection/BestPoint.h"
 
-#include "registry/registry.h"
-
 namespace selection
 {
 
-const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
+constexpr const char* const RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
 
 TranslateManipulator::TranslateManipulator(ManipulationPivot& pivot, std::size_t segments, float length) :
 	_pivot(pivot),
@@ -21,7 +19,8 @@ TranslateManipulator::TranslateManipulator(ManipulationPivot& pivot, std::size_t
     _arrowHeadX({ length,0,0 }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
     _arrowHeadY({ 0,length,0 }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
     _arrowHeadZ({ 0,0,length }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
-    _quadScreen(16, _pivot2World._viewplaneSpace)
+    _quadScreen(16, _pivot2World._viewplaneSpace),
+    _translateConstrained(RKEY_TRANSLATE_CONSTRAINED)
 {}
 
 void TranslateManipulator::updateColours()
@@ -182,7 +181,8 @@ void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2
     {
     	ISelectable* selectable = nullptr;
 
-    	if (registry::getValue<bool>(RKEY_TRANSLATE_CONSTRAINED)) {
+    	if (_translateConstrained.get())
+        {
 	    	// None of the shown arrows (or quad) has been selected, select an axis based on the precedence
 	    	Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._worldSpace));
 
@@ -256,10 +256,8 @@ void TranslateManipulator::setSelected(bool select)
 
 bool TranslateManipulator::isSelected() const
 {
-    return _selectableX.isSelected()
-      | _selectableY.isSelected()
-      | _selectableZ.isSelected()
-      | _selectableScreen.isSelected();
+    return _selectableX.isSelected() || _selectableY.isSelected()
+        || _selectableZ.isSelected() || _selectableScreen.isSelected();
 }
 
 }
