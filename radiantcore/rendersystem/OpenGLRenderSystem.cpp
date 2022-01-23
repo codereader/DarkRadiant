@@ -227,6 +227,9 @@ void OpenGLRenderSystem::render(RenderViewType renderViewType,
         pair.second->clearRenderables();
     }
 
+    // Render any text
+    _textRenderer->render();
+
     glPopAttrib();
 }
 

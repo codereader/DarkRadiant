@@ -1,5 +1,6 @@
 #pragma once
 
+#include "igl.h"
 #include "irender.h"
 
 namespace render
@@ -9,19 +10,11 @@ class TextRenderer final :
     public ITextRenderer
 {
 private:
-    struct TextInfo
-    {
-        bool occupied;
-        std::reference_wrapper<IRenderableText> text;
-
-        TextInfo(IRenderableText& text_) :
-            text(text_),
-            occupied(true)
-        {}
-    };
-    std::map<Slot, TextInfo> _slots;
+    std::map<Slot, std::reference_wrapper<IRenderableText>> _slots;
 
     Slot _freeSlotMappingHint;
+
+    IGLFont::Ptr _glFont;
 
 public:
     TextRenderer() :
@@ -51,7 +44,24 @@ public:
 
     void render()
     {
-        // TODO
+        if (!_glFont)
+        {
+            // TODO: make size and style configurable
+            _glFont = GlobalOpenGL().getFont(IGLFont::Style::Sans, 14);
+        }
+
+        for (const auto& [_, ref] : _slots)
+        {
+            auto& renderable = ref.get();
+            const auto& text = renderable.getText();
+
+            if (text.empty()) continue;
+
+            glColor4dv(renderable.getColour());
+            glRasterPos3dv(renderable.getWorldPosition());
+
+            _glFont->drawString(text);
+        }
     }
 
 private:

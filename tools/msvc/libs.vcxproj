@@ -221,6 +221,7 @@
     <ClInclude Include="..\..\libs\render\RenderablePivot.h" />
     <ClInclude Include="..\..\libs\render\RenderableSpacePartition.h" />
     <ClInclude Include="..\..\libs\render\RenderableSurface.h" />
+    <ClInclude Include="..\..\libs\render\RenderableText.h" />
     <ClInclude Include="..\..\libs\render\SceneRenderWalker.h" />
     <ClInclude Include="..\..\libs\render\TexCoord2f.h" />
     <ClInclude Include="..\..\libs\render\TextureToolView.h" />

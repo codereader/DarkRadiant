@@ -496,7 +496,7 @@ class IRenderableText
 {
 public:
     // The position in world space where the text needs to be rendered
-    virtual const std::string& getWorldPosition() = 0;
+    virtual const Vector3& getWorldPosition() = 0;
 
     // The text to be rendered
     virtual const std::string& getText() = 0;

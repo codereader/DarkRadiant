@@ -353,6 +353,9 @@
     <ClInclude Include="..\..\libs\render\RenderableSurface.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableText.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

@@ -13,6 +13,7 @@ namespace
 {
     constexpr static auto CircleSegments = 8;
     constexpr static auto CircleRadius = 64.0;
+    const Vector4 AngleTextColour(0.75, 0, 0, 1);
 }
 
 RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius) :
@@ -27,7 +28,8 @@ RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segme
     _circleZ(CircleSegments, CircleRadius, _local2worldZ),
     _circleScreen(CircleSegments, CircleRadius * 1.15, _pivot2World._viewpointSpace),
     _circleSphere(CircleSegments, CircleRadius, _pivot2World._viewpointSpace),
-	_pivotPoint(_localPivotPoint, _pivot2World._worldSpace)
+	_pivotPoint(_localPivotPoint, _pivot2World._worldSpace),
+    _angleText(AngleTextColour)
 {}
 
 void RotateManipulator::updateColours()
@@ -104,10 +106,19 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
         _pivotPointShader = renderSystem->capture("$BIGPOINT");
     }
 
-    _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
-    updateCircleTransforms();
+    if (!_textRenderer)
+    {
+        /*auto manipulatorFontStyle = registry::getValue<std::string>(RKEY_MANIPULATOR_FONTSTYLE) == "Sans" ?
+            IGLFont::Style::Sans : IGLFont::Style::Mono;
+        auto manipulatorFontSize = registry::getValue<int>(RKEY_MANIPULATOR_FONTSIZE);*/
+        _textRenderer = renderSystem->captureTextRenderer();
+    }
 
+    _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
+    
+    updateCircleTransforms();
     updateColours();
+    updateAngleText();
 
     _circleX.update(_lineShader);
     _circleY.update(_lineShader);
@@ -115,37 +126,7 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
     _circleScreen.update(_lineShader);
     _circleSphere.update(_lineShader);
     _pivotPoint.update(_pivotPointShader);
-}
-
-void RotateManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
-{
-#if 0
-    _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
-    updateCircleTransforms();
-
-    // temp hack
-    updateColours();
-
-    collector.addRenderable(*_stateOuter, _circleScreen, _pivot2World._viewpointSpace);
-    collector.addRenderable(*_stateOuter, _circleSphere, _pivot2World._viewpointSpace);
-
-    if(_circleX_visible)
-    {
-      collector.addRenderable(*_stateOuter, _circleX, _local2worldX);
-    }
-    if(_circleY_visible)
-    {
-      collector.addRenderable(*_stateOuter, _circleY, _local2worldY);
-    }
-    if(_circleZ_visible)
-    {
-      collector.addRenderable(*_stateOuter, _circleZ, _local2worldZ);
-    }
-
-	collector.addRenderable(*_pivotPointShader, _pivotPoint, _pivot2World._worldSpace);
-
-	collector.addRenderable(*_pivotPointShader, *this, Matrix4::getIdentity());
-#endif
+    _angleText.update(_textRenderer);
 }
 
 void RotateManipulator::clearRenderables()
@@ -156,8 +137,10 @@ void RotateManipulator::clearRenderables()
     _circleScreen.clear();
     _circleSphere.clear();
     _pivotPoint.clear();
+    _angleText.clear();
     _lineShader.reset();
     _pivotPointShader.reset();
+    _textRenderer.reset();
 }
 
 std::string RotateManipulator::getRotationAxisName() const
@@ -169,20 +152,21 @@ std::string RotateManipulator::getRotationAxisName() const
     return std::string();
 }
 
-void RotateManipulator::render(const RenderInfo& info) const
+void RotateManipulator::updateAngleText()
 {
     if (_selectableX.isSelected() || _selectableY.isSelected() ||
         _selectableZ.isSelected() || _selectableScreen.isSelected())
-	{
-		glColor3d(0.75, 0, 0);
-
-		glRasterPos3dv(_pivot2World._worldSpace.translation() - Vector3(10, 10, 10));
-
-		double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
+    {
+        double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
         auto rotationAxisName = getRotationAxisName();
 
-        _glFont->drawString(fmt::format("Rotate: {0:3.2f} degrees {1}", angle, rotationAxisName));
-	}
+        _angleText.setText(fmt::format("Rotate: {0:3.2f} degrees {1}", angle, rotationAxisName));
+        _angleText.setWorldPosition(_pivot2World._worldSpace.translation() - Vector3(10, 10, 10));
+    }
+    else
+    {
+        _angleText.setText("");
+    }
 }
 
 void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
@@ -317,8 +301,5 @@ void RotateManipulator::rotate(const Quaternion& rotation)
 
 	SceneChangeNotify();
 }
-
-// Static members
-IGLFont::Ptr RotateManipulator::_glFont;
 
 }
