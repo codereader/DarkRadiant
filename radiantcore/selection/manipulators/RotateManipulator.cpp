@@ -15,22 +15,20 @@ namespace
     constexpr static auto CircleRadius = 64.0;
 }
 
-// Constructor
 RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius) :
 	_pivot(pivot),
 	_pivotTranslatable(_pivot),
     _rotateFree(*this),
     _rotateAxis(*this),
 	_translatePivot(_pivotTranslatable),
+    _localPivotPoint(0,0,0),
     _circleX(CircleSegments, CircleRadius, _local2worldX),
     _circleY(CircleSegments, CircleRadius, _local2worldY),
     _circleZ(CircleSegments, CircleRadius, _local2worldZ),
     _circleScreen(CircleSegments, CircleRadius * 1.15, _pivot2World._viewpointSpace),
     _circleSphere(CircleSegments, CircleRadius, _pivot2World._viewpointSpace),
-	_pivotPoint(GL_POINTS)
-{
-	_pivotPoint.push_back(VertexCb(Vertex3f(0,0,0), ManipulatorBase::COLOUR_SPHERE()));
-}
+	_pivotPoint(_localPivotPoint, _pivot2World._worldSpace)
+{}
 
 void RotateManipulator::updateColours()
 {
@@ -101,6 +99,11 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
         _lineShader = renderSystem->capture("$WIRE_OVERLAY");
     }
 
+    if (!_pivotPointShader)
+    {
+        _pivotPointShader = renderSystem->capture("$BIGPOINT");
+    }
+
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
     updateCircleTransforms();
 
@@ -111,6 +114,7 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
     _circleZ.update(_lineShader);
     _circleScreen.update(_lineShader);
     _circleSphere.update(_lineShader);
+    _pivotPoint.update(_pivotPointShader);
 }
 
 void RotateManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
@@ -151,7 +155,9 @@ void RotateManipulator::clearRenderables()
     _circleZ.clear();
     _circleScreen.clear();
     _circleSphere.clear();
+    _pivotPoint.clear();
     _lineShader.reset();
+    _pivotPointShader.reset();
 }
 
 std::string RotateManipulator::getRotationAxisName() const
@@ -313,7 +319,6 @@ void RotateManipulator::rotate(const Quaternion& rotation)
 }
 
 // Static members
-ShaderPtr RotateManipulator::_pivotPointShader;
 IGLFont::Ptr RotateManipulator::_glFont;
 
 }

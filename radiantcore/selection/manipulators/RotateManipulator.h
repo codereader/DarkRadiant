@@ -33,13 +33,14 @@ private:
 	RotateAxis _rotateAxis;
 	TranslateFree _translatePivot;
 	Vector3 _axisScreen;
+    Vertex3f _localPivotPoint;
 
     RenderableSemiCircle<RemapYZX> _circleX;
     RenderableSemiCircle<RemapZXY> _circleY;
     RenderableSemiCircle<RemapXYZ> _circleZ;
 	RenderableCircle<RemapXYZ> _circleScreen;
 	RenderableCircle<RemapXYZ> _circleSphere;
-	RenderablePointVector _pivotPoint;
+    RenderablePoint _pivotPoint;
 	BasicSelectable _selectableX;
 	BasicSelectable _selectableY;
 	BasicSelectable _selectableZ;
@@ -55,9 +56,9 @@ private:
 	bool _circleZ_visible;
 
     ShaderPtr _lineShader;
+    ShaderPtr _pivotPointShader;
 
 public:
-	static ShaderPtr _pivotPointShader;
     static IGLFont::Ptr _glFont;
 
 	// Constructor

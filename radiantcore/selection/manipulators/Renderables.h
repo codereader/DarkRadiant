@@ -253,4 +253,48 @@ public:
     }
 };
 
+class RenderablePoint :
+    public render::RenderableGeometry
+{
+protected:
+    const Vertex3f& _point;
+    const Matrix4& _localToWorld;
+    bool _needsUpdate;
+    Vector4 _colour;
+
+public:
+    RenderablePoint(const Vertex3f& point, const Matrix4& localToWorld) :
+        _point(point),
+        _localToWorld(localToWorld),
+        _needsUpdate(true)
+    {}
+
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+    void setColour(const Colour4b& colour)
+    {
+        _colour = detail::toVector4(colour);
+        queueUpdate();
+    }
+
+protected:
+    void updateGeometry() override
+    {
+        if (!_needsUpdate) return;
+
+        _needsUpdate = false;
+
+        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<unsigned int> indices;
+
+        vertices.push_back(ArbitraryMeshVertex(_localToWorld * _point, { 0,0,0 }, { 0,0 }, _colour));
+        indices.push_back(0);
+
+        RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
+    }
+};
+
 }
