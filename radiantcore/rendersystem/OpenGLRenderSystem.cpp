@@ -44,7 +44,6 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _shaderProgramsAvailable(false),
     _glProgramFactory(std::make_shared<GLProgramFactory>()),
     _currentShaderProgram(SHADER_PROGRAM_NONE),
-    _textRenderer(new TextRenderer),
     _time(0),
     m_traverseRenderablesMutex(false)
 {
@@ -87,9 +86,20 @@ OpenGLRenderSystem::~OpenGLRenderSystem()
     _materialDefsUnloaded.disconnect();
 }
 
-ITextRenderer::Ptr OpenGLRenderSystem::captureTextRenderer()
+ITextRenderer::Ptr OpenGLRenderSystem::captureTextRenderer(IGLFont::Style style, std::size_t size)
 {
-    return _textRenderer;
+    // Try to find an existing text renderer with this combination
+    auto fontKey = std::make_pair(style, size);
+
+    auto existing = _textRenderers.find(fontKey);
+
+    if (existing == _textRenderers.end())
+    {
+        auto font = GlobalOpenGL().getFont(fontKey.first, fontKey.second);
+        existing = _textRenderers.emplace(fontKey, std::make_shared<TextRenderer>(font)).first;
+    }
+
+    return existing->second;
 }
 
 ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
@@ -227,8 +237,11 @@ void OpenGLRenderSystem::render(RenderViewType renderViewType,
         pair.second->clearRenderables();
     }
 
-    // Render any text
-    _textRenderer->render();
+    // Render all text
+    for (const auto& [_, textRenderer] : _textRenderers)
+    {
+        textRenderer->render();
+    }
 
     glPopAttrib();
 }
@@ -409,13 +422,11 @@ const std::string& OpenGLRenderSystem::getName() const
 
 const StringSet& OpenGLRenderSystem::getDependencies() const
 {
-    static StringSet _dependencies;
-
-	if (_dependencies.empty()) 
-	{
-		_dependencies.insert(MODULE_SHADERSYSTEM);
-		_dependencies.insert(MODULE_SHARED_GL_CONTEXT);
-	}
+    static StringSet _dependencies
+    {
+        MODULE_SHADERSYSTEM,
+        MODULE_SHARED_GL_CONTEXT,
+    };
 
     return _dependencies;
 }
@@ -446,6 +457,8 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 
 void OpenGLRenderSystem::shutdownModule()
 {
+    _textRenderers.clear();
+
     _sharedContextCreated.disconnect();
     _sharedContextDestroyed.disconnect();
 	_materialDefsLoaded.disconnect();

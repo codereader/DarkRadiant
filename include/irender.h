@@ -558,10 +558,11 @@ public:
 	virtual ShaderPtr capture(const std::string& name) = 0;
 
     /**
-     * Retrieves an ITextRenderer instance that will rasterize text
-     * in a certain colours at a certain positions.
+     * Retrieves an ITextRenderer instance with the given font style and size.
+     * This renderer will accept IRenderableText instances which define
+     * the actual text, colour and position.
      */
-    virtual ITextRenderer::Ptr captureTextRenderer() = 0;
+    virtual ITextRenderer::Ptr captureTextRenderer(IGLFont::Style style, std::size_t size) = 0;
 
     /**
      * \brief

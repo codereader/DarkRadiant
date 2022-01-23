@@ -41,7 +41,8 @@ class OpenGLRenderSystem
 	// Map of OpenGLState references, with access functions.
 	OpenGLStates _state_sorted;
 
-    std::shared_ptr<TextRenderer> _textRenderer;
+    using FontKey = std::pair<IGLFont::Style, std::size_t>;
+    std::map<FontKey, std::shared_ptr<TextRenderer>> _textRenderers;
 
 	// Render time
 	std::size_t _time;
@@ -64,7 +65,7 @@ public:
 
     /* RenderSystem implementation */
 
-    ITextRenderer::Ptr captureTextRenderer() override;
+    ITextRenderer::Ptr captureTextRenderer(IGLFont::Style style, std::size_t size) override;
 
 	ShaderPtr capture(const std::string& name) override;
 	void render(RenderViewType renderViewType, RenderStateFlags globalstate,

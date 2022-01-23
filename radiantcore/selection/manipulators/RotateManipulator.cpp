@@ -108,10 +108,11 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
 
     if (!_textRenderer)
     {
-        /*auto manipulatorFontStyle = registry::getValue<std::string>(RKEY_MANIPULATOR_FONTSTYLE) == "Sans" ?
+        auto fontStyle = registry::getValue<std::string>(RKEY_MANIPULATOR_FONTSTYLE) == "Sans" ?
             IGLFont::Style::Sans : IGLFont::Style::Mono;
-        auto manipulatorFontSize = registry::getValue<int>(RKEY_MANIPULATOR_FONTSIZE);*/
-        _textRenderer = renderSystem->captureTextRenderer();
+        auto fontSize = registry::getValue<int>(RKEY_MANIPULATOR_FONTSIZE);
+
+        _textRenderer = renderSystem->captureTextRenderer(fontStyle, fontSize);
     }
 
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());

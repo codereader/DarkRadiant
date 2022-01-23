@@ -14,12 +14,15 @@ private:
 
     Slot _freeSlotMappingHint;
 
-    IGLFont::Ptr _glFont;
+    IGLFont::Ptr _font;
 
 public:
-    TextRenderer() :
+    TextRenderer(const IGLFont::Ptr& font) :
+        _font(font),
         _freeSlotMappingHint(0)
-    {}
+    {
+        assert(_font);
+    }
 
     Slot addText(IRenderableText& text) override
     {
@@ -44,12 +47,6 @@ public:
 
     void render()
     {
-        if (!_glFont)
-        {
-            // TODO: make size and style configurable
-            _glFont = GlobalOpenGL().getFont(IGLFont::Style::Sans, 14);
-        }
-
         for (const auto& [_, ref] : _slots)
         {
             auto& renderable = ref.get();
@@ -60,7 +57,7 @@ public:
             glColor4dv(renderable.getColour());
             glRasterPos3dv(renderable.getWorldPosition());
 
-            _glFont->drawString(text);
+            _font->drawString(text);
         }
     }
 
