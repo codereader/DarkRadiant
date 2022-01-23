@@ -253,6 +253,18 @@ public:
     }
 };
 
+class RenderableArrowLine :
+    public RenderableLineStrip
+{
+public:
+    RenderableArrowLine(const Vector3& direction, const Matrix4& localToWorld) :
+        RenderableLineStrip(2, localToWorld)
+    {
+        _rawPoints[0] = Vector3(0, 0, 0);
+        _rawPoints[1] = direction;
+    }
+};
+
 class RenderablePoint :
     public render::RenderableGeometry
 {

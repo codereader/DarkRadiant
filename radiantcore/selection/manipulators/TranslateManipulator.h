@@ -6,6 +6,7 @@
 #include "ManipulatorComponents.h"
 #include "selection/BasicSelectable.h"
 #include "selection/ManipulationPivot.h"
+#include "Renderables.h"
 
 namespace selection
 {
@@ -34,6 +35,9 @@ private:
 	selection::BasicSelectable _selectableZ;
 	selection::BasicSelectable _selectableScreen;
 	Pivot2World _pivot2World;
+
+    ShaderPtr _lineShader;
+
 public:
 	static ShaderPtr _stateWire;
 	static ShaderPtr _stateFill;
@@ -46,15 +50,19 @@ public:
 		return Translate;
 	}
 
-	void UpdateColours();
-	bool manipulator_show_axis(const Pivot2World& pivot, const Vector3& axis);
-
+    void onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume) override;
 	void render(IRenderableCollector& collector, const VolumeTest& volume) override;
+    void clearRenderables() override;
+
 	void testSelect(SelectionTest& test, const Matrix4& pivot2world) override;
 	Component* getActiveComponent() override;
 
 	void setSelected(bool select) override;
 	bool isSelected() const override;
+
+private:
+    void updateColours();
+    bool axisIsVisible(const Vector3& axis) const;
 };
 
 }

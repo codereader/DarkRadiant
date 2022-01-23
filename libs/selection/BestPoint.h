@@ -474,10 +474,10 @@ inline void LineLoop_BestPoint(const Matrix4& local2view, const Vertex3f* vertic
     }
 }
 
-inline void Line_BestPoint(const Matrix4& local2view, const VertexCb vertices[2], SelectionIntersection& best)
+inline void Line_BestPoint(const Matrix4& local2view, const Vertex3f vertices[2], SelectionIntersection& best)
 {
     Vector4 clipped[2];
-    const std::size_t count = clipLine(local2view, vertices[0].vertex, vertices[1].vertex, clipped);
+    const std::size_t count = clipLine(local2view, vertices[0], vertices[1], clipped);
     BestPoint(count, clipped, best, eClipCullNone);
 }
 

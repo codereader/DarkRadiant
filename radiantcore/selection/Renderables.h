@@ -7,17 +7,6 @@
  * the manipulators of the selected items
  */
 
-// Helper class for rendering an arrow (only the line part)
-class RenderableArrowLine :
-	public RenderablePointVector
-{
-public:
-	// Constructor instantiates a renderable array of size 2
-	RenderableArrowLine() :
-		RenderablePointVector(GL_LINES, 2)
-	{}
-};
-
 // Helper class for rendering an arrow (only the head part)
 class RenderableArrowHead :
 	public OpenGLRenderable
