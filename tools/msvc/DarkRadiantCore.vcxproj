@@ -1029,7 +1029,6 @@
     <ClInclude Include="..\..\radiantcore\selection\manipulators\RotateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\RadiantSelectionSystem.h" />
-    <ClInclude Include="..\..\radiantcore\selection\Remap.h" />
     <ClInclude Include="..\..\radiantcore\selection\Renderables.h" />
     <ClInclude Include="..\..\radiantcore\selection\SceneManipulationPivot.h" />
     <ClInclude Include="..\..\radiantcore\selection\SceneWalkers.h" />

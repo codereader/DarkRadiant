@@ -1899,9 +1899,6 @@
     <ClInclude Include="..\..\radiantcore\selection\RadiantSelectionSystem.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\Remap.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\Renderables.h">
       <Filter>src\selection</Filter>
     </ClInclude>

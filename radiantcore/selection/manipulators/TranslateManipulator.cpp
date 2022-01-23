@@ -1,6 +1,5 @@
 #include "TranslateManipulator.h"
 
-#include "../Remap.h"
 #include "selection/SelectionPool.h"
 #include "selection/BestPoint.h"
 
@@ -19,14 +18,10 @@ TranslateManipulator::TranslateManipulator(ManipulationPivot& pivot, std::size_t
     _arrowX({ length,0,0 }, _pivot2World._worldSpace),
     _arrowY({ 0,length,0 }, _pivot2World._worldSpace),
     _arrowZ({ 0,0,length }, _pivot2World._worldSpace),
-    _arrowHeadX({ length,0,0 }, { 0,0,1 }, length / 4, length / 3, _pivot2World._worldSpace),
-    _arrowHeadY({ 0,length,0 }, { 1,0,0 }, length / 4, length / 3, _pivot2World._worldSpace),
-    _arrowHeadZ({ 0,0,length }, { 0,1,0 }, length / 4, length / 3, _pivot2World._worldSpace)
+    _arrowHeadX({ length,0,0 }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
+    _arrowHeadY({ 0,length,0 }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
+    _arrowHeadZ({ 0,0,length }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace)
 {
-    //draw_arrowhead(segments, length, &_arrowHeadX._vertices.front(), TripleRemapXYZ<Vertex3f>(), TripleRemapXYZ<Normal3f>());
-    //draw_arrowhead(segments, length, &_arrowHeadY._vertices.front(), TripleRemapYZX<Vertex3f>(), TripleRemapYZX<Normal3f>());
-    //draw_arrowhead(segments, length, &_arrowHeadZ._vertices.front(), TripleRemapZXY<Vertex3f>(), TripleRemapZXY<Normal3f>());
-
     draw_quad(16, &_quadScreen.front());
 }
 

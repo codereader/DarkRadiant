@@ -271,7 +271,7 @@ class RenderableArrowHead :
 {
 protected:
     Vector3 _offset;
-    Vector3 _normal;
+    const Vector3& _screenAxis;
     double _width;
     double _height;
     const Matrix4& _localToWorld;
@@ -281,22 +281,15 @@ protected:
     std::vector<Vertex3f> _rawPoints;
 
 public:
-    RenderableArrowHead(const Vector3& offset, const Vector3& normal, double width, double height, const Matrix4& localToWorld) :
+    RenderableArrowHead(const Vector3& offset, const Vector3& screenAxis, double width, double height, const Matrix4& localToWorld) :
         _offset(offset),
-        _normal(normal),
+        _screenAxis(screenAxis),
         _width(width),
         _height(height),
         _localToWorld(localToWorld),
         _needsUpdate(true),
         _rawPoints(3)
-    {
-        auto direction = _offset.getNormalised();
-        auto sideWays = _offset.cross(_normal).getNormalised();
-
-        _rawPoints[0] = _offset; // tip
-        _rawPoints[1] = _offset - direction * _height + sideWays * _width;
-        _rawPoints[2] = _offset - direction * _height - sideWays * _width;
-    }
+    {}
 
     void queueUpdate()
     {
@@ -324,11 +317,18 @@ protected:
         std::vector<ArbitraryMeshVertex> vertices;
         std::vector<unsigned int> indices;
 
+        auto direction = _offset.getNormalised();
+        auto sideWays = _offset.cross(_screenAxis).getNormalised();
+
+        _rawPoints[0] = _offset; // tip
+        _rawPoints[1] = _offset - direction * _height + sideWays * _width;
+        _rawPoints[2] = _offset - direction * _height - sideWays * _width;
+
         unsigned int index = 0;
 
         for (const auto& vertex : _rawPoints)
         {
-            vertices.push_back(ArbitraryMeshVertex(_localToWorld * vertex, _normal, { 0,0 }, _colour));
+            vertices.push_back(ArbitraryMeshVertex(_localToWorld * vertex, _screenAxis, { 0,0 }, _colour));
             indices.push_back(index++);
         }
 
