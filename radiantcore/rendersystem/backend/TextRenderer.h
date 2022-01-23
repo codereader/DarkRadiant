@@ -1,11 +1,18 @@
 #pragma once
 
+#include <map>
 #include "igl.h"
 #include "irender.h"
 
 namespace render
 {
 
+/**
+ * Text renderer implementation drawing the attached IRenderableText
+ * instances to the scene. Does not change any GL state/matrices.
+ * 
+ * Requires a valid IGLFont reference at construction time.
+ */
 class TextRenderer final :
     public ITextRenderer
 {

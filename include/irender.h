@@ -498,7 +498,7 @@ public:
     // The position in world space where the text needs to be rendered
     virtual const Vector3& getWorldPosition() = 0;
 
-    // The text to be rendered
+    // The text to be rendered. Returning an empty text will skip this renderable.
     virtual const std::string& getText() = 0;
 
     // The colour of the text

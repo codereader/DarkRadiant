@@ -139,6 +139,7 @@ void RotateManipulator::clearRenderables()
     _circleSphere.clear();
     _pivotPoint.clear();
     _angleText.clear();
+
     _lineShader.reset();
     _pivotPointShader.reset();
     _textRenderer.reset();
