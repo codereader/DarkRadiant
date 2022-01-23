@@ -525,15 +525,15 @@ inline void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const V
     }
 }
 
-inline void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const VertexCb* vertices, SelectionIntersection& best)
+inline void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const Vertex3f* vertices, SelectionIntersection& best)
 {
     Vector4 clipped[9];
     {
-        const std::size_t count = clipTriangle(local2view, vertices[0].vertex, vertices[1].vertex, vertices[3].vertex, clipped);
+        const std::size_t count = clipTriangle(local2view, vertices[0], vertices[1], vertices[3], clipped);
         BestPoint(count, clipped, best, cull);
     }
     {
-        const std::size_t count = clipTriangle(local2view, vertices[1].vertex, vertices[2].vertex, vertices[3].vertex, clipped);
+        const std::size_t count = clipTriangle(local2view, vertices[1], vertices[2], vertices[3], clipped);
         BestPoint(count, clipped, best, cull);
     }
 }

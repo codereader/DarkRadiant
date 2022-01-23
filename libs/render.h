@@ -474,10 +474,3 @@ inline void draw_circle(const std::size_t segments, const double radius, VertexA
 {
     draw_ellipse<remap_policy>(segments, radius, radius, vertices, firstVertex);
 }
-
-inline void draw_quad(const float radius, VertexCb* quad) {
-	(*quad++).vertex = Vertex3f(-radius, radius, 0);
-	(*quad++).vertex = Vertex3f(radius, radius, 0);
-	(*quad++).vertex = Vertex3f(radius, -radius, 0);
-	(*quad++).vertex = Vertex3f(-radius, -radius, 0);
-}

@@ -20,10 +20,9 @@ TranslateManipulator::TranslateManipulator(ManipulationPivot& pivot, std::size_t
     _arrowZ({ 0,0,length }, _pivot2World._worldSpace),
     _arrowHeadX({ length,0,0 }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
     _arrowHeadY({ 0,length,0 }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
-    _arrowHeadZ({ 0,0,length }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace)
-{
-    draw_quad(16, &_quadScreen.front());
-}
+    _arrowHeadZ({ 0,0,length }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
+    _quadScreen(16, _pivot2World._viewplaneSpace)
+{}
 
 void TranslateManipulator::updateColours()
 {
@@ -99,6 +98,8 @@ void TranslateManipulator::onPreRender(const RenderSystemPtr& renderSystem, cons
         _arrowZ.clear();
         _arrowHeadZ.clear();
     }
+
+    _quadScreen.update(_lineShader);
 }
 
 void TranslateManipulator::clearRenderables()
@@ -109,56 +110,10 @@ void TranslateManipulator::clearRenderables()
     _arrowHeadX.clear();
     _arrowHeadY.clear();
     _arrowHeadZ.clear();
+    _quadScreen.clear();
 
     _lineShader.reset();
     _arrowHeadShader.reset();
-}
-
-void TranslateManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
-{
-#if 0
-    _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
-
-    // temp hack
-    updateColours();
-
-    Vector3 x = _pivot2World._worldSpace.xCol3().getNormalised();
-    bool show_x = manipulator_show_axis(_pivot2World, x);
-
-    Vector3 y = _pivot2World._worldSpace.yCol3().getNormalised();
-    bool show_y = manipulator_show_axis(_pivot2World, y);
-
-    Vector3 z = _pivot2World._worldSpace.zCol3().getNormalised();
-    bool show_z = manipulator_show_axis(_pivot2World, z);
-
-    if(show_x)
-    {
-      collector.addRenderable(*_stateWire, _arrowX, _pivot2World._worldSpace);
-    }
-    if(show_y)
-    {
-      collector.addRenderable(*_stateWire, _arrowY, _pivot2World._worldSpace);
-    }
-    if(show_z)
-    {
-      collector.addRenderable(*_stateWire, _arrowZ, _pivot2World._worldSpace);
-    }
-
-    collector.addRenderable(*_stateWire, _quadScreen, _pivot2World._viewplaneSpace);
-
-    if(show_x)
-    {
-      collector.addRenderable(*_stateFill, _arrowHeadX, _pivot2World._worldSpace);
-    }
-    if(show_y)
-    {
-      collector.addRenderable(*_stateFill, _arrowHeadY, _pivot2World._worldSpace);
-    }
-    if(show_z)
-    {
-      collector.addRenderable(*_stateFill, _arrowHeadZ, _pivot2World._worldSpace);
-    }
-#endif
 }
 
 void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
@@ -181,7 +136,7 @@ void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2
 
       {
         SelectionIntersection best;
-        Quad_BestPoint(local2view, eClipCullCW, &_quadScreen.front(), best);
+        Quad_BestPoint(local2view, eClipCullCW, &_quadScreen.getRawPoints().front(), best);
         if(best.isValid())
         {
           best = SelectionIntersection(0, 0);

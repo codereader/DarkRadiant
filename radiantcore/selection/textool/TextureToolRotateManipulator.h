@@ -3,7 +3,6 @@
 #include "imanipulator.h"
 #include "../BasicSelectable.h"
 #include "selection/manipulators/ManipulatorComponents.h"
-#include "../Renderables.h"
 #include "selection/textool/TextureToolManipulationPivot.h"
 
 namespace textool

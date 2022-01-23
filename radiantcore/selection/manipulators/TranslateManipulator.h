@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ManipulatorBase.h"
-#include "selection/Renderables.h"
 #include "selection/Pivot2World.h"
 #include "ManipulatorComponents.h"
 #include "selection/BasicSelectable.h"
@@ -48,7 +47,6 @@ public:
 	}
 
     void onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume) override;
-	void render(IRenderableCollector& collector, const VolumeTest& volume) override;
     void clearRenderables() override;
 
 	void testSelect(SelectionTest& test, const Matrix4& pivot2world) override;

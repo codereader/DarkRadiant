@@ -265,6 +265,20 @@ public:
     }
 };
 
+class RenderableQuad :
+    public RenderableLineStrip
+{
+public:
+    RenderableQuad(double edgeLength, const Matrix4& localToWorld) :
+        RenderableLineStrip(4, localToWorld)
+    {
+        _rawPoints[0] = Vector3(edgeLength, edgeLength, 0);
+        _rawPoints[1] = Vector3(edgeLength, -edgeLength, 0);
+        _rawPoints[2] = Vector3(-edgeLength, -edgeLength, 0);
+        _rawPoints[3] = Vector3(-edgeLength, edgeLength, 0);
+    }
+};
+
 // Renders a few flat-shaded triangles as arrow head, offset by a given amount
 class RenderableArrowHead :
     public render::RenderableGeometry

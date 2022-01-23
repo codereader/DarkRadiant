@@ -4,7 +4,6 @@
 #include "ManipulatorBase.h"
 #include "ManipulatorComponents.h"
 
-#include "selection/Renderables.h"
 #include "selection/ManipulationPivot.h"
 #include "selection/Pivot2World.h"
 #include "selection/BasicSelectable.h"
