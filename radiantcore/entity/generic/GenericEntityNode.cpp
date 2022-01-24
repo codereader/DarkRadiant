@@ -227,6 +227,11 @@ const Vector3& GenericEntityNode::getUntransformedOrigin()
     return m_originKey.get();
 }
 
+const Vector3& GenericEntityNode::getWorldPosition() const
+{
+    return m_origin;
+}
+
 void GenericEntityNode::onChildAdded(const scene::INodePtr& child)
 {
     EntityNode::onChildAdded(child);

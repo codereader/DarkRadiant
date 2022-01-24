@@ -7,36 +7,26 @@
 namespace entity
 {
 
+class EntityNode;
+
 class RenderableEntityName :
     public render::RenderableTextBase
 {
 private:
+    const EntityNode& _entity;
     const NameKey& _nameKey;
 
-    // The origin in world coordinates
-    const Vector3& _entityOrigin;
-
 public:
-    RenderableEntityName(const NameKey& nameKey, const Vector3& entityOrigin) :
-        _nameKey(nameKey),
-        _entityOrigin(entityOrigin)
+    RenderableEntityName(const EntityNode& entity, const NameKey& nameKey) :
+        _entity(entity),
+        _nameKey(nameKey)
     {}
 
-    const Vector3& getWorldPosition() override
-    {
-        return _entityOrigin;
-    }
+    const Vector3& getWorldPosition() override;
 
-    const std::string& getText() override
-    {
-        return _nameKey.getName();
-    }
+    const std::string& getText() override;
 
-    const Vector4& getColour() override
-    {
-        static Vector4 colour(1, 1, 1, 1);
-        return colour;
-    }
+    const Vector4& getColour() override;
 };
 
 }

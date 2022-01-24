@@ -103,6 +103,8 @@ public:
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
 
+    const Vector3& getWorldPosition() const override;
+
     void onChildAdded(const scene::INodePtr& child) override;
 	void onChildRemoved(const scene::INodePtr& child) override;
 

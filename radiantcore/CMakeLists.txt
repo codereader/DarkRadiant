@@ -49,6 +49,7 @@ add_library(radiantcore MODULE
             entity/NamespaceManager.cpp
             entity/RenderableArrow.cpp
             entity/RenderableEntityBox.cpp
+            entity/RenderableEntityName.cpp
             entity/RotationKey.cpp
             entity/RotationMatrix.cpp
             entity/ShaderParms.cpp

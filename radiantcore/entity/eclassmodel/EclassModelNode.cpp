@@ -156,6 +156,11 @@ const Vector3& EclassModelNode::getUntransformedOrigin()
     return _originKey.get();
 }
 
+const Vector3& EclassModelNode::getWorldPosition() const
+{
+    return _origin;
+}
+
 void EclassModelNode::updateTransform()
 {
     _renderOrigin.queueUpdate();

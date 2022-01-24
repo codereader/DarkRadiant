@@ -63,6 +63,7 @@
     <ClCompile Include="..\..\radiantcore\entity\NamespaceManager.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\RenderableArrow.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\RenderableEntityBox.cpp" />
+    <ClCompile Include="..\..\radiantcore\entity\RenderableEntityName.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\RotationKey.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\RotationMatrix.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\ShaderParms.cpp" />

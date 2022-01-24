@@ -325,6 +325,8 @@ void LightNode::selectedChangedComponent(const ISelectable& selectable)
 
 void LightNode::onPreRender(const VolumeTest& volume)
 {
+    EntityNode::onPreRender(volume);
+
     // Pick the colour shader according to our settings
     const auto& colourShader = _overrideColKey.get() ? getColourShader() : _colourKey.getColourShader();
     _renderableOctagon.update(colourShader);
@@ -535,6 +537,11 @@ void LightNode::updateOrigin() {
 const Vector3& LightNode::getUntransformedOrigin()
 {
     return m_originKey.get();
+}
+
+const Vector3& LightNode::getWorldPosition() const
+{
+    return _originTransformed;
 }
 
 void LightNode::onVisibilityChanged(bool isVisibleNow)

@@ -486,4 +486,9 @@ void SpeakerNode::onRemoveFromScene(scene::IMapRootNode& root)
     _renderableRadiiFill.clear();
 }
 
+const Vector3& SpeakerNode::getWorldPosition() const
+{
+    return m_origin;
+}
+
 } // namespace entity

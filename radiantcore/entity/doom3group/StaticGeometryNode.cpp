@@ -512,6 +512,11 @@ const Vector3& StaticGeometryNode::getUntransformedOrigin()
     return m_originKey.get();
 }
 
+const Vector3& StaticGeometryNode::getWorldPosition() const
+{
+    return m_origin;
+}
+
 const AABB& StaticGeometryNode::localAABB() const {
 	m_curveBounds = m_curveNURBS.getBounds();
 	m_curveBounds.includeAABB(m_curveCatmullRom.getBounds());

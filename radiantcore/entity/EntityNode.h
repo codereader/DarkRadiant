@@ -54,6 +54,10 @@ protected:
     // Observes the "origin" keyvalue
     OriginKey _originKey;
 
+    // Points to the origin value of this entity, is also kept up to date
+    // during transformations. Used to render the entity name at the correct position.
+    Vector3 _originTransformed;
+
 	// A helper class observing the "name" keyvalue
 	// Used for rendering the name and as Nameable implementation
 	NameKey _nameKey;
@@ -174,6 +178,9 @@ public:
 
     // Optional implementation: gets invoked by the EntityModule when the settings are changing
     virtual void onEntitySettingsChanged();
+
+    // Returns the current world origin of this entity (also up to date during transformations)
+    virtual const Vector3& getWorldPosition() const = 0;
 
 protected:
 	virtual void onModelKeyChanged(const std::string& value);

@@ -72,6 +72,8 @@ public:
 
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
+    
+    const Vector3& getWorldPosition() const override;
 
 protected:
 	// Gets called by the Transformable implementation whenever

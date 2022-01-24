@@ -173,6 +173,8 @@ public:
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
 
+    const Vector3& getWorldPosition() const override;
+
     void onEntitySettingsChanged() override;
 
     // Is this light projected or omni?

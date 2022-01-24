@@ -1111,6 +1111,9 @@
     <ClCompile Include="..\..\radiantcore\brush\RenderableBrushVertices.cpp">
       <Filter>src\brush</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\entity\RenderableEntityName.cpp">
+      <Filter>src\entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
