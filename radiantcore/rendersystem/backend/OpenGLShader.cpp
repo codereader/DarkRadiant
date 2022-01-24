@@ -79,7 +79,6 @@ OpenGLRenderSystem& OpenGLShader::getRenderSystem()
 void OpenGLShader::destroy()
 {
     _enabledViewTypes = 0;
-    _vertexBuffer.reset();
     _materialChanged.disconnect();
     _material.reset();
     _shaderPasses.clear();
@@ -141,7 +140,7 @@ void OpenGLShader::drawSurfaces(const VolumeTest& view)
 
 bool OpenGLShader::hasSurfaces() const
 {
-    return !_geometryRenderer.empty() || !_surfaceRenderer.empty() || _vertexBuffer && _vertexBuffer->getNumVertices() > 0;
+    return !_geometryRenderer.empty() || !_surfaceRenderer.empty();
 }
 
 IGeometryRenderer::Slot OpenGLShader::addGeometry(GeometryType indexType,

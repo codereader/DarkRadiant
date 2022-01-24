@@ -8,6 +8,7 @@
 #include "math/Matrix4.h"
 #include "module/StaticModule.h"
 #include "backend/GLProgramFactory.h"
+#include "backend/BuiltInShader.h"
 #include "debugging/debugging.h"
 
 #include <functional>
@@ -102,7 +103,7 @@ ITextRenderer::Ptr OpenGLRenderSystem::captureTextRenderer(IGLFont::Style style,
     return existing->second;
 }
 
-ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
+ShaderPtr OpenGLRenderSystem::capture(const std::string& name, const std::function<OpenGLShaderPtr()>& createShader)
 {
     // Usual ritual, check cache and return if found, otherwise create/
     // insert/return.
@@ -115,18 +116,37 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 
     // Either the shader was not found, or the weak pointer failed to lock
     // because the shader had been deleted. Either way, create a new shader
-    // and insert into the cache.
-    auto shd = std::make_shared<OpenGLShader>(name, *this);
-    _shaders[name] = shd;
+    // using the given factory functor and insert into the cache.
+    auto shader = createShader();
+    _shaders[name] = shader;
 
     // Realise the shader if the cache is realised
     if (_realised)
     {
-        shd->realise();
+        shader->realise();
     }
 
-    // Return the new shader
-    return shd;
+    return shader;
+}
+
+ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
+{
+    // Forward to the method accepting our factory method
+    return capture(name, [&]()
+    { 
+        return std::make_shared<OpenGLShader>(name, *this); 
+    });
+}
+
+ShaderPtr OpenGLRenderSystem::capture(BuiltInShaderType type)
+{
+    // Forward to the method accepting our factory method
+    auto name = BuiltInShader::GetNameForType(type);
+
+    return capture(name, [&]()
+    {
+        return std::make_shared<BuiltInShader>(type, *this);
+    });
 }
 
 /*
@@ -262,13 +282,10 @@ void OpenGLRenderSystem::realise()
         _glProgramFactory->realise();
     }
 
-    // Realise the OpenGLShader objects
-    for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); ++i)
+    // Realise all shaders
+    for (auto& [_, shader] : _shaders)
     {
-        OpenGLShaderPtr sp = i->second;
-        assert(sp);
-
-        sp->realise();
+        shader->realise();
     }
 }
 
@@ -280,13 +297,10 @@ void OpenGLRenderSystem::unrealise()
 
     _realised = false;
 
-    // Unrealise the OpenGLShader objects
-    for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); ++i)
+    // Unrealise all OpenGLShader objects
+    for (auto& [_, shader] : _shaders)
     {
-        OpenGLShaderPtr sp = i->second;
-        assert(sp);
-
-        sp->unrealise();
+        shader->unrealise();
     }
 
 	if (GlobalOpenGLContext().getSharedContext() && 

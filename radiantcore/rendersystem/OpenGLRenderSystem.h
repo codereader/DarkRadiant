@@ -24,8 +24,7 @@ class OpenGLRenderSystem
   public OpenGLStateManager
 {
 	// Map of named Shader objects
-	typedef std::map<std::string, OpenGLShaderPtr> ShaderMap;
-	ShaderMap _shaders;
+    std::map<std::string, OpenGLShaderPtr> _shaders;
 
 	// whether this module has been realised
 	bool _realised;
@@ -68,6 +67,7 @@ public:
     ITextRenderer::Ptr captureTextRenderer(IGLFont::Style style, std::size_t size) override;
 
 	ShaderPtr capture(const std::string& name) override;
+    ShaderPtr capture(BuiltInShaderType type) override;
 	void render(RenderViewType renderViewType, RenderStateFlags globalstate,
                 const Matrix4& modelview,
                 const Matrix4& projection,
@@ -108,6 +108,9 @@ public:
     virtual const StringSet& getDependencies() const override;
     virtual void initialiseModule(const IApplicationContext& ctx) override;
     virtual void shutdownModule() override;
+
+private:
+    ShaderPtr capture(const std::string& name, const std::function<OpenGLShaderPtr()>& createShader);
 };
 typedef std::shared_ptr<OpenGLRenderSystem> OpenGLRenderSystemPtr;
 

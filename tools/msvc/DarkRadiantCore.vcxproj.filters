@@ -1114,6 +1114,9 @@
     <ClCompile Include="..\..\radiantcore\entity\RenderableEntityName.cpp">
       <Filter>src\entity</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\BuiltInShader.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2279,6 +2282,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\RenderableEntityName.h">
       <Filter>src\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\BuiltInShader.h">
+      <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -5,7 +5,6 @@
 #include "irender.h"
 #include "ishaders.h"
 #include "string/string.h"
-#include "render/IndexedVertexBuffer.h"
 #include "render/WindingRenderer.h"
 #include "GeometryRenderer.h"
 #include "SurfaceRenderer.h"
@@ -21,7 +20,7 @@ class OpenGLRenderSystem;
 /**
  * Implementation of the Shader class.
  */
-class OpenGLShader final :
+class OpenGLShader :
 	public Shader
 {
 private:
@@ -47,8 +46,6 @@ private:
 	// Observers attached to this Shader
 	typedef std::set<Observer*> Observers;
 	Observers _observers;
-
-    std::unique_ptr<render::IndexedVertexBuffer<ArbitraryMeshVertex>> _vertexBuffer;
 
     std::unique_ptr<IBackendWindingRenderer> _windingRenderer;
     GeometryRenderer _geometryRenderer;
@@ -99,7 +96,7 @@ public:
     /// Construct and initialise
     OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSystem);
 
-    ~OpenGLShader();
+    virtual ~OpenGLShader();
 
     // Returns the owning render system
     OpenGLRenderSystem& getRenderSystem();
@@ -111,7 +108,6 @@ public:
 					   const LightSources* lights,
                        const IRenderEntity* entity) override;
 
-    //void addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
     bool hasSurfaces() const;
     void drawSurfaces(const VolumeTest& view);
 
@@ -143,11 +139,7 @@ public:
 
 	bool isRealised() override;
 
-	/**
-	 * Realise this shader
-	 */
 	void realise();
-
 	void unrealise();
 
 	// Return the Material used by this shader
