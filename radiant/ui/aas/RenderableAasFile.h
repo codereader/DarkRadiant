@@ -1,13 +1,12 @@
 #pragma once
 
-#include <list>
+#include <map>
 #include <sigc++/trackable.h>
 
 #include "irenderable.h"
 #include "irender.h"
 #include "iaasfile.h"
 
-#include "entitylib.h"
 #include "render/RenderableBoundingBoxes.h"
 #include "render/RenderableText.h"
 
@@ -30,7 +29,6 @@ private:
 	ShaderPtr _normalShader;
     ITextRenderer::Ptr _textRenderer;
 
-    std::list<RenderableSolidAABB> _renderableAabbs;
     std::vector<AABB> _areas;
     std::vector<AABB> _visibleAreas;
 

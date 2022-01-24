@@ -138,7 +138,6 @@ void RenderableAasFile::prepare()
 
 void RenderableAasFile::constructRenderables()
 {
-	_renderableAabbs.clear();
     _areas.clear();
     _renderableNumbers.clear();
 
@@ -146,7 +145,6 @@ void RenderableAasFile::constructRenderables()
 	{
 		const IAasFile::Area& area = _aasFile->getArea(static_cast<int>(areaNum));
 
-		_renderableAabbs.push_back(RenderableSolidAABB(area.bounds));
 		_areas.push_back(area.bounds);
 
         // Allocate a new RenderableNumber for eeach area
