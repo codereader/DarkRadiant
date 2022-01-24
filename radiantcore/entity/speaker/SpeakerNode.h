@@ -111,8 +111,6 @@ public:
 
     // Renderable implementation
     void onPreRender(const VolumeTest& volume);
-    void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
-    void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume);
     void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 

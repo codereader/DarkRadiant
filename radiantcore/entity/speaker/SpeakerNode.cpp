@@ -245,33 +245,6 @@ void SpeakerNode::onPreRender(const VolumeTest& volume)
     }
 }
 
-void SpeakerNode::renderSolid(IRenderableCollector& collector,
-                              const VolumeTest& volume) const
-{
-	EntityNode::renderSolid(collector, volume);
-#if 0
-    // Submit the speaker radius if we are selected or the "show all speaker
-    // radii" option is set
-	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
-    {
-		collector.addRenderable(*getFillShader(), _renderableRadiiWireframe, localToWorld());
-    }
-#endif
-}
-void SpeakerNode::renderWireframe(IRenderableCollector& collector,
-                                  const VolumeTest& volume) const
-{
-	EntityNode::renderWireframe(collector, volume);
-#if 0
-    // Submit the speaker radius if we are selected or the "show all speaker
-    // radii" option is set
-	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
-    {
-		collector.addRenderable(*getWireShader(), _renderableRadiiWireframe, localToWorld());
-    }
-#endif
-}
-
 void SpeakerNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());
