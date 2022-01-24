@@ -62,6 +62,9 @@ public:
         {
             _slot = _renderer->addText(*this);
         }
+
+        // Subclasses should get a chance to update the data now
+        onUpdate();
     }
 
     void clear()
@@ -101,6 +104,11 @@ public:
     {
         _colour = colour;
     }
+
+protected:
+    // Optional update routine to be implemented by subclasses, invoked at the end of the public update()
+    virtual void onUpdate()
+    {}
 
 private:
     // Removes the text from the attached renderer. Does nothing if no text has been added.

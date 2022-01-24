@@ -15,8 +15,10 @@
 #include "ColourKey.h"
 #include "ModelKey.h"
 #include "ShaderParms.h"
+#include "OriginKey.h"
 
 #include "KeyObserverMap.h"
+#include "RenderableEntityName.h"
 
 namespace entity
 {
@@ -49,12 +51,15 @@ protected:
 	// The class taking care of all the namespace-relevant stuff
 	NamespaceManager _namespaceManager;
 
+    // Observes the "origin" keyvalue
+    OriginKey _originKey;
+
 	// A helper class observing the "name" keyvalue
 	// Used for rendering the name and as Nameable implementation
 	NameKey _nameKey;
 
-	// The OpenGLRenderable, using the NameKey helper class to retrieve the name
-	RenderableNameKey _renderableName;
+	// The renderable, using the NameKey helper class to retrieve the name
+	RenderableEntityName _renderableName;
 
 	// The keyobserver watching over the "_color" keyvalue
 	ColourKey _colourKey;
@@ -76,6 +81,7 @@ protected:
 	ShaderPtr _fillShader; // cam only
 	ShaderPtr _wireShader; // ortho only
 	ShaderPtr _colourShader; // cam+ortho view
+	ITextRenderer::Ptr _textRenderer; // for name rendering
 
 	sigc::connection _eclassChangedConn;
 
@@ -145,6 +151,7 @@ public:
 
 	// Renderable implementation, can be overridden by subclasses
     virtual bool isOriented() const override;
+	virtual void onPreRender(const VolumeTest& volume) override;
 	virtual void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	virtual void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	virtual void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
@@ -166,8 +173,7 @@ public:
 	virtual void onPostRedo() override;
 
     // Optional implementation: gets invoked by the EntityModule when the settings are changing
-    virtual void onEntitySettingsChanged()
-    {}
+    virtual void onEntitySettingsChanged();
 
 protected:
 	virtual void onModelKeyChanged(const std::string& value);
@@ -195,6 +201,7 @@ private:
 
 	// Private function target - wraps to virtual protected signal
 	void _modelKeyChanged(const std::string& value);
+    void _originKeyChanged();
 
     void acquireShaders();
     void acquireShaders(const RenderSystemPtr& renderSystem);

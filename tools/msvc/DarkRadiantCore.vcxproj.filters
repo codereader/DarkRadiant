@@ -2274,5 +2274,8 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\TextRenderer.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\RenderableEntityName.h">
+      <Filter>src\entity</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

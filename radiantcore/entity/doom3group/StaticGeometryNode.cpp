@@ -461,9 +461,6 @@ void StaticGeometryNode::_onTransformationChanged()
         revertTransformInternal();
 
 		evaluateTransform();
-
-		// Update the origin when we're in "child primitive" mode
-		_renderableName.setOrigin(getOrigin());
 	}
 	else
 	{
@@ -485,12 +482,6 @@ void StaticGeometryNode::_applyTransformation()
 	revertTransformInternal();
 	evaluateTransform();
 	freezeTransformInternal();
-
-	if (!isModel())
-	{
-		// Update the origin when we're in "child primitive" mode
-		_renderableName.setOrigin(getOrigin());
-	}
 }
 
 void StaticGeometryNode::onModelKeyChanged(const std::string& value)
@@ -696,16 +687,10 @@ void StaticGeometryNode::updateIsModel()
 	if (m_modelKey != m_name && !_spawnArgs.isWorldspawn())
 	{
 		setIsModel(true);
-
-		// Set the renderable name back to 0,0,0
-		_renderableName.setOrigin(Vector3(0,0,0));
 	}
 	else
 	{
 		setIsModel(false);
-
-		// Update the renderable name
-		_renderableName.setOrigin(getOrigin());
 	}
 }
 
@@ -762,12 +747,6 @@ void StaticGeometryNode::originChanged()
 {
 	m_origin = m_originKey.get();
 	updateTransform();
-
-	// Only non-models should have their origin different than <0,0,0>
-	if (!isModel())
-	{
-		_renderableName.setOrigin(getOrigin());
-	}
 
     _renderableOriginVertex.queueUpdate();
     _renderOrigin.queueUpdate();

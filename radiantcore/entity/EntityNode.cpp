@@ -19,8 +19,9 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_eclass(eclass),
 	_spawnArgs(_eclass),
 	_namespaceManager(_spawnArgs),
+    _originKey(std::bind(&EntityNode::_originKeyChanged, this)),
 	_nameKey(_spawnArgs),
-	_renderableName(_nameKey),
+	_renderableName(_nameKey, _originKey.get()),
 	_modelKey(*this),
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
@@ -39,8 +40,9 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_spawnArgs(other._spawnArgs),
     _localToParent(other._localToParent),
 	_namespaceManager(_spawnArgs),
+    _originKey(std::bind(&EntityNode::_originKeyChanged, this)),
 	_nameKey(_spawnArgs),
-	_renderableName(_nameKey),
+	_renderableName(_nameKey, _originKey.get()),
 	_modelKey(*this),
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
@@ -63,14 +65,16 @@ void EntityNode::construct()
 	TargetableNode::construct();
 
     // Observe basic keys
-    static_assert(std::is_base_of<sigc::trackable, NameKey>::value);
-    static_assert(std::is_base_of<sigc::trackable, ColourKey>::value);
+    static_assert(std::is_base_of_v<sigc::trackable, NameKey>);
+    static_assert(std::is_base_of_v<sigc::trackable, ColourKey>);
+    static_assert(std::is_base_of_v<sigc::trackable, OriginKey>);
+    observeKey("origin", sigc::mem_fun(_originKey, &OriginKey::onKeyValueChanged));
 	observeKey("name", sigc::mem_fun(_nameKey, &NameKey::onKeyValueChanged));
 	observeKey("_color", sigc::mem_fun(_colourKey, &ColourKey::onKeyValueChanged));
 
     // Observe model-related keys
-    static_assert(std::is_base_of<sigc::trackable, EntityNode>::value);
-    static_assert(std::is_base_of<sigc::trackable, ModelKey>::value);
+    static_assert(std::is_base_of_v<sigc::trackable, EntityNode>);
+    static_assert(std::is_base_of_v<sigc::trackable, ModelKey>);
 	observeKey("model", sigc::mem_fun(this, &EntityNode::_modelKeyChanged));
 	observeKey("skin", sigc::mem_fun(_modelKey, &ModelKey::skinChanged));
 
@@ -333,7 +337,7 @@ void EntityNode::onChildRemoved(const scene::INodePtr& child)
 
 std::string EntityNode::name() const
 {
-	return _nameKey.name();
+	return _nameKey.getName();
 }
 
 scene::INode::Type EntityNode::getNodeType() const
@@ -344,6 +348,18 @@ scene::INode::Type EntityNode::getNodeType() const
 bool EntityNode::isOriented() const
 {
     return true;
+}
+
+void EntityNode::onPreRender(const VolumeTest& volume)
+{
+    if (EntitySettings::InstancePtr()->getRenderEntityNames())
+    {
+        _renderableName.update(_textRenderer);
+    }
+    else
+    {
+        _renderableName.clear();
+    }
 }
 
 void EntityNode::renderSolid(IRenderableCollector& collector,
@@ -358,13 +374,6 @@ void EntityNode::renderSolid(IRenderableCollector& collector,
 void EntityNode::renderWireframe(IRenderableCollector& collector,
                                  const VolumeTest& volume) const
 {
-	// Submit renderable text name if required
-	if (EntitySettings::InstancePtr()->getRenderEntityNames())
-    {
-        collector.addRenderable(*getWireShader(), _renderableName,
-                                localToWorld());
-    }
-
     // Render any attached entities
     renderAttachments(
         [&](const scene::INodePtr& n) { n->renderWireframe(collector, volume); }
@@ -395,12 +404,14 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
         _fillShader = renderSystem->capture(_spawnArgs.getEntityClass()->getFillShader());
         _wireShader = renderSystem->capture(_spawnArgs.getEntityClass()->getWireShader());
         _colourShader = renderSystem->capture(_spawnArgs.getEntityClass()->getColourShader());
+        _textRenderer = renderSystem->captureTextRenderer(IGLFont::Style::Sans, 14);
     }
     else
     {
         _fillShader.reset();
         _wireShader.reset();
         _colourShader.reset();
+        _textRenderer.reset();
     }
 }
 
@@ -450,6 +461,11 @@ void EntityNode::_modelKeyChanged(const std::string& value)
 	onModelKeyChanged(value);
 }
 
+void EntityNode::_originKeyChanged()
+{
+    _renderableName.queueUpdate();
+}
+
 const ShaderPtr& EntityNode::getWireShader() const
 {
 	return _wireShader;
@@ -490,6 +506,18 @@ void EntityNode::onPostRedo()
 		child->setRenderEntity(this);
 		return true;
 	});
+}
+
+void EntityNode::onEntitySettingsChanged()
+{
+    if (EntitySettings::InstancePtr()->getRenderEntityNames())
+    {
+        _renderableName.queueUpdate();
+    }
+    else
+    {
+        _renderableName.clear();
+    }
 }
 
 } // namespace entity
