@@ -924,21 +924,8 @@ void RadiantSelectionSystem::onPreRender(const VolumeTest& volume)
     }
 }
 
-/* greebo: Renders the currently active manipulator by setting the render state and
- * calling the manipulator's render method
- */
 void RadiantSelectionSystem::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-#if 0
-    if (!nothingSelected())
-	{
-        collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
-        collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
-
-		_activeManipulator->render(collector, volume);
-    }
-#endif
-}
+{}
 
 void RadiantSelectionSystem::onSceneBoundsChanged()
 {
