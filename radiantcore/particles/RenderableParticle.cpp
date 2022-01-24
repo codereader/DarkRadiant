@@ -43,6 +43,12 @@ void RenderableParticle::update(const Matrix4& viewRotation, const Matrix4& loca
 	{
 		for (const auto& stage : pair.second.stages)
 		{
+            if (!stage->getDef().isVisible())
+            {
+                stage->clear();
+                continue;
+            }
+
             // Update the particle geometry
             stage->update(time, invViewRotation);
 
@@ -58,43 +64,23 @@ void RenderableParticle::renderSolid(IRenderableCollector& collector,
                                      const Matrix4& localToWorld,
                                      const IRenderEntity* entity) const
 {
-	for (const ShaderMap::value_type& pair : _shaderMap)
-	{
-		assert(pair.second.shader); // ensure we're realised
-
-        // For each stage using this shader
-        for (const RenderableParticleStagePtr& stage : pair.second.stages)
-		{
-			// Skip invisible stages
-			if (!stage->getDef().isVisible()) continue;
-
-            collector.addRenderable(*pair.second.shader, *stage, localToWorld,
-                                    nullptr, entity);
-		}
-	}
 }
 
 void RenderableParticle::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	renderSolid(collector, volume, Matrix4::getIdentity(), nullptr);
 }
 
 void RenderableParticle::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, 
 	const Matrix4& localToWorld, const IRenderEntity* entity) const
 {
-	// Does the same thing as renderSolid
-	renderSolid(collector, volume, localToWorld, entity);
 }
 
 void RenderableParticle::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	// Does the same thing as renderSolid
-	renderSolid(collector, volume);
 }
 
 void RenderableParticle::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    renderSolid(collector, volume);
 }
 
 void RenderableParticle::setRenderSystem(const RenderSystemPtr& renderSystem)
