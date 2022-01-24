@@ -21,11 +21,15 @@ private:
     ITextRenderer::Ptr _renderer;
     ITextRenderer::Slot _slot;
 
+    bool _visible;
+
 public:
-    RenderableText(const Vector4& colour = { 0,0,0,1 }) :
+    RenderableText(const std::string& text = "", const Vector4& colour = {0,0,0,1}) :
         _worldPosition(0,0,0),
         _colour(colour),
-        _slot(ITextRenderer::InvalidSlot)
+        _text(text),
+        _slot(ITextRenderer::InvalidSlot),
+        _visible(true)
     {}
 
     // Noncopyable
@@ -35,6 +39,11 @@ public:
     virtual ~RenderableText()
     {
         clear();
+    }
+
+    void setVisible(bool isVisible)
+    {
+        _visible = isVisible;
     }
 
     void update(const ITextRenderer::Ptr& renderer)
@@ -73,7 +82,9 @@ public:
 
     const std::string& getText() override
     {
-        return _text;
+        // Return an empty text if this renderable is invisible
+        static std::string EmptyText;
+        return _visible ? _text : EmptyText;
     }
 
     void setText(const std::string& text)
@@ -84,6 +95,11 @@ public:
     const Vector4& getColour() override
     {
         return _colour;
+    }
+
+    void setColour(const Vector4& colour)
+    {
+        _colour = colour;
     }
 
 private:

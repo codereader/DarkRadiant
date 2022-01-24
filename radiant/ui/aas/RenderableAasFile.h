@@ -9,6 +9,7 @@
 
 #include "entitylib.h"
 #include "render/RenderableBoundingBoxes.h"
+#include "render/RenderableText.h"
 
 namespace map
 {
@@ -21,13 +22,13 @@ const char* const RKEY_AAS_AREA_HIDE_DISTANCE = "user/ui/aasViewer/hideDistance"
 // optionally showing the area numbers too
 class RenderableAasFile :
     public Renderable,
-	public OpenGLRenderable,
 	public sigc::trackable
 {
 private:
     IAasFilePtr _aasFile;
 
 	ShaderPtr _normalShader;
+    ITextRenderer::Ptr _textRenderer;
 
     std::list<RenderableSolidAABB> _renderableAabbs;
     std::vector<AABB> _areas;
@@ -38,6 +39,7 @@ private:
 	float _hideDistanceSquared;
 
     render::RenderableBoundingBoxes _renderableAreas;
+    std::map<int, render::RenderableText> _renderableNumbers;
 
 public:
 	RenderableAasFile();
@@ -54,8 +56,6 @@ public:
 	std::size_t getHighlightFlags() override;
 
 	void setAasFile(const IAasFilePtr& aasFile);
-
-	void render(const RenderInfo& info) const override;
 
 private:
 	void prepare();

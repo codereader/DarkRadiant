@@ -238,6 +238,8 @@ void OpenGLRenderSystem::render(RenderViewType renderViewType,
     }
 
     // Render all text
+    glDisable(GL_DEPTH_TEST);
+
     for (const auto& [_, textRenderer] : _textRenderers)
     {
         textRenderer->render();

@@ -29,7 +29,7 @@ RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segme
     _circleScreen(CircleSegments, CircleRadius * 1.15, _pivot2World._viewpointSpace),
     _circleSphere(CircleSegments, CircleRadius, _pivot2World._viewpointSpace),
 	_pivotPoint(_localPivotPoint, _pivot2World._worldSpace),
-    _angleText(AngleTextColour)
+    _angleText("", AngleTextColour)
 {}
 
 void RotateManipulator::updateColours()
