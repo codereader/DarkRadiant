@@ -50,6 +50,7 @@ public:
     const AABB& localAABB() const override;
     const Matrix4& localToWorld() const override;
 
+    void onPreRender(const VolumeTest& volume) override;
     void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
     void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
