@@ -58,12 +58,6 @@ class Patch :
 
     RenderablePatchVectorsNTB _renderableNTBVectors;
 
-	// greebo: The vertex list of the control points
-    std::vector<VertexCb> _ctrl_vertices;
-
-	// The lattice indices and their renderable
-	IndexBuffer _latticeIndices;
-
 	bool _transformChanged;
 
 	// TRUE if the patch tesselation needs an update

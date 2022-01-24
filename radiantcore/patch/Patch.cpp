@@ -492,9 +492,6 @@ void Patch::updateTesselation(bool force)
 
     _tesselationChanged = false;
 
-    _ctrl_vertices.clear();
-    _latticeIndices.clear();
-
     if (!isValid())
     {
         _mesh.clear();
@@ -506,32 +503,6 @@ void Patch::updateTesselation(bool force)
     _mesh.generate(_width, _height, _ctrlTransformed, subdivisionsFixed(), getSubdivisions(), _node.getRenderEntity());
 
     updateAABB();
-
-    // Generate the indices for the coloured control points and the lines in between
-    IndexBuffer ctrl_indices;
-
-    _latticeIndices.reserve(((_width * (_height - 1)) + (_height * (_width - 1))) << 1);
-    ctrl_indices.reserve(_ctrlTransformed.size());
-
-    UniqueVertexBuffer<VertexCb> inserter(_ctrl_vertices);
-    for (PatchControlIter i = _ctrlTransformed.begin(); i != _ctrlTransformed.end(); ++i)
-    {
-        ctrl_indices.push_back(inserter.insert(pointvertex_quantised(VertexCb(i->vertex, colour_for_index(i - _ctrlTransformed.begin(), _width)))));
-    }
-
-    for(IndexBuffer::iterator i = ctrl_indices.begin(); i != ctrl_indices.end(); ++i)
-    {
-        if(std::size_t(i - ctrl_indices.begin()) % _width)
-        {
-            _latticeIndices.push_back(*(i - 1));
-            _latticeIndices.push_back(*i);
-        }
-        if(std::size_t(i - ctrl_indices.begin()) >= _width)
-        {
-            _latticeIndices.push_back(*(i - _width));
-            _latticeIndices.push_back(*i);
-        }
-    }
 
     _node.onTesselationChanged();
 }
