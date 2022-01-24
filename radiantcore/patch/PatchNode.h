@@ -155,6 +155,8 @@ protected:
 private:
 	// Transforms the patch components with the given transformation matrix
 	void transformComponents(const Matrix4& matrix);
+
+    void updateAllRenderables();
+    void clearAllRenderables();
 };
 typedef std::shared_ptr<PatchNode> PatchNodePtr;
-typedef std::weak_ptr<PatchNode> PatchNodeWeakPtr;

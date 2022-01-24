@@ -7,7 +7,6 @@
 #include "math/Frustum.h"
 #include "math/Hash.h"
 
-// Construct a PatchNode with no arguments
 PatchNode::PatchNode(patch::PatchDefType type) :
 	scene::SelectableNode(),
 	m_dragPlanes(std::bind(&PatchNode::selectedChangedComponent, this, std::placeholders::_1)),
@@ -21,7 +20,6 @@ PatchNode::PatchNode(patch::PatchDefType type) :
 	m_patch.setFixedSubdivisions(type == patch::PatchDefType::Def3, Subdivisions(m_patch.getSubdivisions()));
 }
 
-// Copy Constructor
 PatchNode::PatchNode(const PatchNode& other) :
 	scene::SelectableNode(other),
 	scene::Cloneable(other),
@@ -277,6 +275,22 @@ scene::INodePtr PatchNode::clone() const
 	return std::make_shared<PatchNode>(*this);
 }
 
+void PatchNode::updateAllRenderables()
+{
+    _renderableSurfaceSolid.queueUpdate();
+    _renderableSurfaceWireframe.queueUpdate();
+    _renderableCtrlLattice.queueUpdate();
+    _renderableCtrlPoints.queueUpdate();
+}
+
+void PatchNode::clearAllRenderables()
+{
+    _renderableSurfaceSolid.clear();
+    _renderableSurfaceWireframe.clear();
+    _renderableCtrlLattice.clear();
+    _renderableCtrlPoints.clear();
+}
+
 void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     // Mark the GL shader as used from now on, this is used by the TextureBrowser's filtering
@@ -286,9 +300,7 @@ void PatchNode::onInsertIntoScene(scene::IMapRootNode& root)
     // The colour of that entity will influence the tesselation's vertex colours
     m_patch.queueTesselationUpdate();
 
-    _renderableSurfaceSolid.queueUpdate();
-    _renderableSurfaceWireframe.queueUpdate();
-    _renderableCtrlLattice.queueUpdate();
+    updateAllRenderables();
 
 	m_patch.connectUndoSystem(root.getUndoSystem());
 	GlobalCounters().getCounter(counterPatches).increment();
@@ -311,10 +323,8 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
 
 	m_patch.disconnectUndoSystem(root.getUndoSystem());
 
-    _renderableSurfaceSolid.clear();
-    _renderableSurfaceWireframe.clear();
-    _renderableCtrlLattice.clear();
-    _renderableCtrlPoints.clear();
+    clearAllRenderables();
+
     m_patch.getSurfaceShader().setInUse(false);
 
 	SelectableNode::onRemoveFromScene(root);
@@ -379,12 +389,10 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	SelectableNode::setRenderSystem(renderSystem);
 
 	m_patch.setRenderSystem(renderSystem);
-    _renderableSurfaceSolid.clear();
-    _renderableSurfaceWireframe.clear();
-    _renderableCtrlLattice.clear();
-    _renderableCtrlPoints.clear();
 
-	if (renderSystem)
+    clearAllRenderables();
+
+    if (renderSystem)
 	{
         _ctrlPointShader = renderSystem->capture("$POINT");
         _ctrlLatticeShader = renderSystem->capture("$LATTICE");
@@ -454,10 +462,8 @@ void PatchNode::transformComponents(const Matrix4& matrix) {
 void PatchNode::_onTransformationChanged()
 {
 	m_patch.transformChanged();
-    _renderableSurfaceSolid.queueUpdate();
-    _renderableSurfaceWireframe.queueUpdate();
-    _renderableCtrlLattice.queueUpdate();
-    _renderableCtrlPoints.queueUpdate();
+
+    updateAllRenderables();
 }
 
 void PatchNode::_applyTransformation()
@@ -483,18 +489,12 @@ const Vector3& PatchNode::getUntransformedOrigin()
 
 void PatchNode::onTesselationChanged()
 {
-    _renderableSurfaceSolid.queueUpdate();
-    _renderableSurfaceWireframe.queueUpdate();
-    _renderableCtrlLattice.queueUpdate();
-    _renderableCtrlPoints.queueUpdate();
+    updateAllRenderables();
 }
 
 void PatchNode::onControlPointsChanged()
 {
-    _renderableSurfaceSolid.queueUpdate();
-    _renderableSurfaceWireframe.queueUpdate();
-    _renderableCtrlLattice.queueUpdate();
-    _renderableCtrlPoints.queueUpdate();
+    updateAllRenderables();
 }
 
 void PatchNode::onMaterialChanged()
@@ -510,17 +510,11 @@ void PatchNode::onVisibilityChanged(bool visible)
     if (!visible)
     {
         // Disconnect our renderable when the node is hidden
-        _renderableSurfaceSolid.clear();
-        _renderableSurfaceWireframe.clear();
-        _renderableCtrlLattice.clear();
-        _renderableCtrlPoints.clear();
+        clearAllRenderables();
     }
     else
     {
         // Update the vertex buffers next time we need to render
-        _renderableSurfaceSolid.queueUpdate();
-        _renderableSurfaceWireframe.queueUpdate();
-        _renderableCtrlLattice.queueUpdate();
-        _renderableCtrlPoints.queueUpdate();
+        updateAllRenderables();
     }
 }
