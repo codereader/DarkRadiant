@@ -154,10 +154,7 @@ public:
 	Type getNodeType() const override;
 
 	// Renderable implementation, can be overridden by subclasses
-    virtual bool isOriented() const override;
 	virtual void onPreRender(const VolumeTest& volume) override;
-	virtual void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
-	virtual void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	virtual void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	virtual void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 	virtual std::size_t getHighlightFlags() override;

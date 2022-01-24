@@ -105,12 +105,6 @@ void RenderableAasFile::onPreRender(const VolumeTest& volume)
     _renderableAreas.update(_normalShader);
 }
 
-void RenderableAasFile::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{}
-
-void RenderableAasFile::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{}
-
 std::size_t RenderableAasFile::getHighlightFlags()
 {
 	return Highlight::NoHighlight;

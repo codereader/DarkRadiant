@@ -376,14 +376,6 @@ void BrushNode::onPreRender(const VolumeTest& volume)
     }
 }
 
-void BrushNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-}
-
-void BrushNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-}
-
 void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     // Check for the override status of this brush

@@ -370,14 +370,6 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     }
 }
 
-void PatchNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-}
-
-void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-}
-
 void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     // Overlay the selected node with the quadrangulated wireframe

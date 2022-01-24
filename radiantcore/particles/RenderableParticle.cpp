@@ -58,26 +58,9 @@ void RenderableParticle::update(const Matrix4& viewRotation, const Matrix4& loca
 	}
 }
 
-// Front-end render methods
-void RenderableParticle::renderSolid(IRenderableCollector& collector,
-                                     const VolumeTest& volume,
-                                     const Matrix4& localToWorld,
-                                     const IRenderEntity* entity) const
-{
-}
+void RenderableParticle::onPreRender(const VolumeTest& volume)
+{}
 
-void RenderableParticle::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-}
-
-void RenderableParticle::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume, 
-	const Matrix4& localToWorld, const IRenderEntity* entity) const
-{
-}
-
-void RenderableParticle::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-}
 
 void RenderableParticle::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {

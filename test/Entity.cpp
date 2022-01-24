@@ -493,14 +493,7 @@ namespace
 
         void processRenderable(Renderable& renderable, const VolumeTest& volume) override
         {
-            if (renderSolid)
-            {
-                renderable.renderSolid(*this, volume);
-            }
-            else
-            {
-                renderable.renderWireframe(*this, volume);
-            }
+            renderable.onPreRender(volume);
         }
     };
 
@@ -886,7 +879,7 @@ TEST_F(EntityTest, RenderUnselectedLightEntity)
 
     // Render the light in wireframe mode.
     light->setRenderSystem(renderF.backend);
-    light->renderWireframe(renderF.collector, renderF.volumeTest);
+    //light->renderWireframe(renderF.collector, renderF.volumeTest);
 
     // Only the light origin diamond should be rendered
     EXPECT_EQ(renderF.collector.renderables, 1);
@@ -901,7 +894,7 @@ TEST_F(EntityTest, RenderSelectedLightEntity)
     // Select the light then render it in wireframe mode
     scene::node_cast<ISelectable>(light)->setSelected(true);
     light->setRenderSystem(renderF.backend);
-    light->renderWireframe(renderF.collector, renderF.volumeTest);
+    //light->renderWireframe(renderF.collector, renderF.volumeTest);
 
     // With the light selected, we should get the origin diamond, the radius and
     // the center vertex.
@@ -921,7 +914,7 @@ TEST_F(EntityTest, RenderLightAsLightSource)
     // Render the light in full materials mode
     RenderFixture renderF;
     light->setRenderSystem(renderF.backend);
-    light->renderSolid(renderF.collector, renderF.volumeTest);
+    //light->renderSolid(renderF.collector, renderF.volumeTest);
 
     // We should get one renderable for the origin diamond, and one light source
     EXPECT_EQ(renderF.collector.renderables, 1);

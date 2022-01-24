@@ -115,22 +115,6 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     }
 }
 
-#if 0
-void OpenGLShader::addSurface(const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
-{
-    if (!_vertexBuffer)
-    {
-        _vertexBuffer = std::make_unique<IndexedVertexBuffer<ArbitraryMeshVertex>>();
-    }
-
-    // Offset all incoming vertices with a given offset
-    auto indexOffset = static_cast<unsigned int>(_vertexBuffer->getNumVertices());
-
-    // Pump the data to the VBO
-    _vertexBuffer->addVertices(vertices.begin(), vertices.end());
-    _vertexBuffer->addIndicesToLastBatch(indices.begin(), indices.size(), indexOffset);
-}
-#endif
 void OpenGLShader::drawSurfaces(const VolumeTest& view)
 {
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -143,31 +127,8 @@ void OpenGLShader::drawSurfaces(const VolumeTest& view)
 
     if (hasSurfaces())
     {
-        //_vertexBuffer->renderAllBatches(GL_TRIANGLES, false);
-
         _geometryRenderer.render();
         _surfaceRenderer.render(view);
-#if 0
-        // Render all triangles
-
-        glBindBuffer(GL_VERTEX_ARRAY, _vbo);
-
-        // Set the vertex pointer first
-        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
-        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
-        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
-        //glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
-        //glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().tangent);
-        //glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().bitangent);
-
-        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_indices.size()), GL_UNSIGNED_INT, _indices.data());
-
-        //glDisableClientState(GL_NORMAL_ARRAY);
-        //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        //glDisableClientState(GL_VERTEX_ARRAY);
-
-        glBindBuffer(GL_VERTEX_ARRAY, 0);
-#endif
     }
 
     // Render all windings

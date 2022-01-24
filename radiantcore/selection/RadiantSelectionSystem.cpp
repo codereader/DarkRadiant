@@ -855,11 +855,6 @@ void RadiantSelectionSystem::onManipulationCancelled()
     pivotChanged();
 }
 
-void RadiantSelectionSystem::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-    renderSolid(collector, volume);
-}
-
 const Matrix4& RadiantSelectionSystem::getPivot2World()
 {
     return _pivot.getMatrix4();
@@ -923,9 +918,6 @@ void RadiantSelectionSystem::onPreRender(const VolumeTest& volume)
         _activeManipulator->clearRenderables();
     }
 }
-
-void RadiantSelectionSystem::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{}
 
 void RadiantSelectionSystem::onSceneBoundsChanged()
 {

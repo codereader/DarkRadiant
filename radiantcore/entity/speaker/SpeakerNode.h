@@ -114,11 +114,6 @@ public:
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume);
     void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-    bool isOriented() const override
-    {
-        return false; // speaker representation is rendered in world coordinates
-    }
-
     void selectedChangedComponent(const ISelectable& selectable);
 
     void onEntitySettingsChanged() override;

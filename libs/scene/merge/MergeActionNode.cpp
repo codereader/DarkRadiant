@@ -108,26 +108,6 @@ void MergeActionNodeBase::onPreRender(const VolumeTest& volume)
     });
 }
 
-void MergeActionNodeBase::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-    _affectedNode->renderSolid(collector, volume);
-    _affectedNode->foreachNode([&](const INodePtr& child)
-    {
-        child->renderSolid(collector, volume);
-        return true;
-    });
-}
-
-void MergeActionNodeBase::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-    _affectedNode->renderWireframe(collector, volume);
-    _affectedNode->foreachNode([&](const INodePtr& child)
-    {
-        child->renderWireframe(collector, volume);
-        return true;
-    });
-}
-
 void MergeActionNodeBase::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     _affectedNode->renderHighlights(collector, volume);

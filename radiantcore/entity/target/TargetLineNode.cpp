@@ -56,14 +56,6 @@ void TargetLineNode::onPreRender(const VolumeTest& volume)
     _targetLines.update(_owner.getColourShader(), getOwnerPosition());
 }
 
-void TargetLineNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-}
-
-void TargetLineNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-}
-
 void TargetLineNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     collector.addHighlightRenderable(_targetLines, Matrix4::getIdentity());

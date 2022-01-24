@@ -345,11 +345,6 @@ scene::INode::Type EntityNode::getNodeType() const
 	return Type::Entity;
 }
 
-bool EntityNode::isOriented() const
-{
-    return true;
-}
-
 void EntityNode::onPreRender(const VolumeTest& volume)
 {
     if (EntitySettings::InstancePtr()->getRenderEntityNames())
@@ -364,24 +359,6 @@ void EntityNode::onPreRender(const VolumeTest& volume)
     // Render any attached entities
     renderAttachments(
         [&](const scene::INodePtr& n) { n->onPreRender(volume); }
-    );
-}
-
-void EntityNode::renderSolid(IRenderableCollector& collector,
-                             const VolumeTest& volume) const
-{
-    // Render any attached entities
-    renderAttachments(
-        [&](const scene::INodePtr& n) { n->renderSolid(collector, volume); }
-    );
-}
-
-void EntityNode::renderWireframe(IRenderableCollector& collector,
-                                 const VolumeTest& volume) const
-{
-    // Render any attached entities
-    renderAttachments(
-        [&](const scene::INodePtr& n) { n->renderWireframe(collector, volume); }
     );
 }
 

@@ -67,40 +67,8 @@ void ParticleNode::onPreRender(const VolumeTest& volume)
     update(volume);
 }
 
-void ParticleNode::renderSolid(IRenderableCollector& collector,
-							   const VolumeTest& volume) const
-{
-#if 0
-	if (!_renderableParticle) return;
-
-	// Update the particle system before rendering
-	update(volume);
-
-	_renderableParticle->renderSolid(collector, volume, localToWorld(), _renderEntity);
-#endif
-}
-
-void ParticleNode::renderWireframe(IRenderableCollector& collector,
-								   const VolumeTest& volume) const
-{
-	// greebo: For now, don't draw particles in ortho views they are too distracting
-#if 0
-	if (!_renderableParticle) return;
-
-	// Update the particle system before rendering
-	update(volume);
-
-	_renderableParticle->renderWireframe(collector, volume, localToWorld(), _renderEntity.get());
-#endif
-}
-
 void ParticleNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-#if 0
-    if (!collector.supportsFullMaterials()) return;
-
-    renderSolid(collector, volume);
-#endif
 }
 
 void ParticleNode::setRenderSystem(const RenderSystemPtr& renderSystem)

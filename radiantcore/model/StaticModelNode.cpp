@@ -91,27 +91,12 @@ void StaticModelNode::setModel(const StaticModelPtr& model) {
     _model = model;
 }
 
-bool StaticModelNode::isOriented() const
-{
-    return false;
-}
-
 void StaticModelNode::onPreRender(const VolumeTest& volume)
 {
     assert(_renderEntity);
 
     // Attach renderables (or do nothing if everything is up to date)
     attachToShaders();
-}
-
-void StaticModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-    assert(_renderEntity);
-}
-
-void StaticModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-    assert(_renderEntity);
 }
 
 void StaticModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)

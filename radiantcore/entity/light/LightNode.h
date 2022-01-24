@@ -161,14 +161,8 @@ public:
 
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
-	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-
-    bool isOriented() const override
-    {
-        return false; // light wireframe stuff is rendered in world coordinates
-    }
 
 	const Matrix4& rotation() const;
 

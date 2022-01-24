@@ -371,14 +371,6 @@ void LightNode::onPreRender(const VolumeTest& volume)
     }
 }
 
-void LightNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-    // Submit self to the renderer as an actual light source
-    collector.addLight(*this);
-
-    EntityNode::renderSolid(collector, volume);
-}
-
 void LightNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     collector.addHighlightRenderable(_renderableOctagon, Matrix4::getIdentity());

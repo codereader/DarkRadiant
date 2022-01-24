@@ -119,16 +119,6 @@ void MD5ModelNode::onPreRender(const VolumeTest& volume)
     }
 }
 
-void MD5ModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-    assert(_renderEntity);
-}
-
-void MD5ModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-    assert(_renderEntity);
-}
-
 void MD5ModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     auto identity = Matrix4::getIdentity();

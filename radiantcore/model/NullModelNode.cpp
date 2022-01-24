@@ -50,14 +50,6 @@ void NullModelNode::testSelect(Selector& selector, SelectionTest& test)
 	_nullModel->testSelect(selector, test, localToWorld());
 }
 
-void NullModelNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-}
-
-void NullModelNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-}
-
 void NullModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());

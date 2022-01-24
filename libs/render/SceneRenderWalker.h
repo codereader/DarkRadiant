@@ -16,15 +16,6 @@ class SceneRenderWalker :
 	// The view we're using for culling
 	const VolumeTest& _volume;
 
-private:
-	void render(const Renderable& renderable) const
-	{
-	    if (_collector.supportsFullMaterials())
-			renderable.renderSolid(_collector, _volume);
-        else
-			renderable.renderWireframe(_collector, _volume);
-	}
-
 public:
 
     /// Initialise with a RenderableCollector to populate and a view volume
@@ -33,13 +24,10 @@ public:
 		_volume(volume)
 	{}
 
-	// scene::Graph::Walker implementation, tells each node to submit its OpenGLRenderables
-	bool visit(const scene::INodePtr& node)
+	// scene::Graph::Walker implementation
+	bool visit(const scene::INodePtr& node) override
 	{
         node->onPreRender(_volume);
-
-		render(*node);
-
 		return true;
 	}
 };

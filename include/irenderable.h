@@ -148,32 +148,14 @@ public:
      */
     virtual void setRenderSystem(const RenderSystemPtr& renderSystem) = 0;
 
-    // Called in preparation of rendering this node
-    virtual void onPreRender(const VolumeTest& volume)
-    {}
-
-    // Returns true if this renderable makes use of a non-identity model matrix,
-    // or submit their geometry in final world coordinates.
-    // Geometry of renderables returning true will not be streamlined into a larger buffer
-    virtual bool isOriented() const
-    {
-        return false; // by default, renderables render in world coordinates
-    }
-
-    /// Submit renderable geometry when rendering in Solid mode.
-    virtual void renderSolid(IRenderableCollector& collector,
-                             const VolumeTest& volume) const = 0;
-
-    /// Submit renderable geometry when rendering in Wireframe mode.
-    virtual void renderWireframe(IRenderableCollector& collector,
-                                 const VolumeTest& volume) const = 0;
+    /** 
+     * Front-end rendering / preparation phase. The node prepares for rendering
+     * by attaching their geometry or surface data to the necessary shader instances.
+     **/
+    virtual void onPreRender(const VolumeTest& volume) = 0;
 
     // Submit renderable geometry for highlighting the object
-    virtual void renderHighlights(IRenderableCollector& collector,
-        const VolumeTest& volume) = 0;
-
-    virtual void renderComponents(IRenderableCollector&, const VolumeTest&) const
-    { }
+    virtual void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) = 0;
 
     struct Highlight
     {

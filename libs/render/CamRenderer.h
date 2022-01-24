@@ -200,7 +200,6 @@ public:
     void processRenderable(Renderable& renderable, const VolumeTest& volume) override
     {
         renderable.onPreRender(volume);
-        renderable.renderSolid(*this, volume);
     }
 
     void addRenderable(Shader& shader,

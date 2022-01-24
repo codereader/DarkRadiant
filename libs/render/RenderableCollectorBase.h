@@ -97,7 +97,6 @@ public:
             else
             {
                 setHighlightFlag(Highlight::Faces, false);
-                node->renderComponents(*this, volume);
             }
 
             setHighlightFlag(Highlight::Primitives, true);
@@ -117,13 +116,6 @@ public:
             setHighlightFlag(Highlight::Primitives, false);
             setHighlightFlag(Highlight::Faces, false);
             setHighlightFlag(Highlight::GroupMember, false);
-        }
-
-        // Oriented nodes are submitting every frame. The ones without parent matrix
-        // like Brushes and Patches are maintaining their geometry in the shader, on their own
-        if (node->isOriented())
-        {
-            processRenderable(*node, volume);
         }
 
         // If this node should be highlighted, ask it to submit the corresponding geometry
