@@ -8,6 +8,7 @@
 #include "iaasfile.h"
 
 #include "entitylib.h"
+#include "render/RenderableBoundingBoxes.h"
 
 namespace map
 {
@@ -24,22 +25,27 @@ class RenderableAasFile :
 	public sigc::trackable
 {
 private:
-    RenderSystemPtr _renderSystem;
-
     IAasFilePtr _aasFile;
 
 	ShaderPtr _normalShader;
 
     std::list<RenderableSolidAABB> _renderableAabbs;
+    std::vector<AABB> _areas;
+    std::vector<AABB> _visibleAreas;
 
 	bool _renderNumbers;
 	bool _hideDistantAreas;
 	float _hideDistanceSquared;
 
+    render::RenderableBoundingBoxes _renderableAreas;
+
 public:
 	RenderableAasFile();
 
-	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
+   void clear();
+
+    void setRenderSystem(const RenderSystemPtr& renderSystem) override {}
+    void onPreRender(const VolumeTest& volume) override;
 	void renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const override;
 	void renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const override;
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override
@@ -54,6 +60,8 @@ public:
 private:
 	void prepare();
 	void constructRenderables();
+    void onHideDistantAreasChanged();
+    void onShowAreaNumbersChanged();
 };
 
 } // namespace

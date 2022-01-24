@@ -10,6 +10,7 @@
 
 #include "entitylib.h"
 #include "Renderables.h"
+#include "render/RenderableBoundingBoxes.h"
 
 class Entity;
 
@@ -29,7 +30,7 @@ private:
     ShaderPtr _lineShader;
 
 	std::vector<AABB> _aabbs;
-    RenderableBoundingBoxes _renderableAABBs;
+    render::RenderableBoundingBoxes _renderableAABBs;
     RenderableCornerPoints _renderableCornerPoints;
 
 	scene::INodePtr _curManipulatable;

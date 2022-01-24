@@ -44,6 +44,7 @@ AasControl::~AasControl()
     // Detach before destruction
     if (_toggle->GetValue())
     {
+        _renderable.clear();
         GlobalRenderSystem().detachRenderable(_renderable);
     }
 }
@@ -91,11 +92,14 @@ void AasControl::onToggle(wxCommandEvent& ev)
     if (_toggle->GetValue())
     {
         ensureAasFileLoaded();
+
+        _renderable.setAasFile(_aasFile);
         GlobalRenderSystem().attachRenderable(_renderable);
     }
     else
     {
         // Disable rendering
+        _renderable.clear();
         GlobalRenderSystem().detachRenderable(_renderable);
     }
 
@@ -106,6 +110,7 @@ void AasControl::onRefresh(wxCommandEvent& ev)
 {
     // Detach renderable
     _aasFile.reset();
+    _renderable.clear();
 
     if (_toggle->GetValue())
     {
