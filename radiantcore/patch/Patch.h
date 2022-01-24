@@ -56,8 +56,6 @@ class Patch :
 	// The tesselation for this patch
 	PatchTesselation _mesh;
 
-    RenderablePatchVectorsNTB _renderableNTBVectors;
-
 	bool _transformChanged;
 
 	// TRUE if the patch tesselation needs an update

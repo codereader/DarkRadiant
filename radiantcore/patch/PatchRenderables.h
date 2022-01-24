@@ -6,63 +6,10 @@
 #pragma once
 
 #include <iterator>
-#include "igl.h"
-#include "imodelsurface.h"
-
 #include "PatchTesselation.h"
 #include "PatchControlInstance.h"
 
-#include "render/VertexBuffer.h"
-#include "render/IndexedVertexBuffer.h"
 #include "render/RenderableGeometry.h"
-
-#if 0
-/// Helper class to render a PatchTesselation in solid mode
-class RenderablePatchSolid :
-	public OpenGLRenderable
-{
-    // Geometry source
-	PatchTesselation& _tess;
-
-    // VertexBuffer for rendering
-    typedef render::IndexedVertexBuffer<ArbitraryMeshVertex> VertexBuffer_T;
-    mutable VertexBuffer_T _vertexBuf;
-
-    mutable bool _needsUpdate;
-
-    // The render indices to render the mesh vertices as QUADS
-    std::vector<unsigned int> _indices;
-
-public:
-	RenderablePatchSolid(PatchTesselation& tess);
-
-	void render(const RenderInfo& info) const;
-
-    void queueUpdate();
-};
-#endif
-
-// Renders a vertex' normal/tangent/bitangent vector (for debugging purposes)
-class RenderablePatchVectorsNTB :
-	public OpenGLRenderable
-{
-private:
-    std::vector<VertexCb> _vertices;
-	const PatchTesselation& _tess;
-
-	ShaderPtr _shader;
-
-public:
-	const ShaderPtr& getShader() const;
-
-	RenderablePatchVectorsNTB(const PatchTesselation& tess);
-
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
-
-	void render(const RenderInfo& info) const;
-
-	void render(IRenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-};
 
 class ITesselationIndexer
 {

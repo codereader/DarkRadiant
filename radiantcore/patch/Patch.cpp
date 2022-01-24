@@ -48,7 +48,6 @@ inline bool double_valid(double f) {
 Patch::Patch(PatchNode& node) :
     _node(node),
     _undoStateSaver(nullptr),
-    _renderableNTBVectors(_mesh),
     _transformChanged(false),
     _tesselationChanged(true),
     _shader(texdef_name_default())
@@ -64,7 +63,6 @@ Patch::Patch(const Patch& other, PatchNode& node) :
     IUndoable(other),
     _node(node),
     _undoStateSaver(nullptr),
-    _renderableNTBVectors(_mesh),
     _transformChanged(false),
     _tesselationChanged(true),
     _shader(other._shader.getMaterialName())
