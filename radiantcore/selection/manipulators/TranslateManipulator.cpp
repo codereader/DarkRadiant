@@ -54,7 +54,7 @@ void TranslateManipulator::onPreRender(const RenderSystemPtr& renderSystem, cons
 
     if (!_arrowHeadShader)
     {
-        _arrowHeadShader = renderSystem->capture("$FLATSHADE_OVERLAY");
+        _arrowHeadShader = renderSystem->capture(BuiltInShaderType::FlatshadeOverlay);
     }
 
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());

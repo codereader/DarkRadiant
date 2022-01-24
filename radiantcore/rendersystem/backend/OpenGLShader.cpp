@@ -749,7 +749,6 @@ void OpenGLShader::constructFromMaterial(const MaterialPtr& material)
     }
 }
 
-// Main shader construction entry point
 void OpenGLShader::construct()
 {
 	// Retrieve the highlight colour from the colourschemes (once)

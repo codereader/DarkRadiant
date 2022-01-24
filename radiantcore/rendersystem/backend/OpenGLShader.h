@@ -56,9 +56,6 @@ private:
 
 private:
 
-    // Start point for constructing shader passes from the shader name
-	void construct();
-
     // Construct shader passes from a regular shader (as opposed to a special
     // built-in shader)
     void constructNormalShader();
@@ -80,9 +77,7 @@ private:
     // Destroy internal data
 	void destroy();
 
-    // Add a shader pass to the end of the list, and return its state object
-	OpenGLState& appendDefaultPass();
-	OpenGLState& appendDepthFillPass();
+    OpenGLState& appendDepthFillPass();
 
     // Test if we can render using lighting mode
     bool canUseLightingMode() const;
@@ -149,6 +144,13 @@ public:
 
     bool isApplicableTo(RenderViewType renderViewType) const;
     void enableViewType(RenderViewType renderViewType);
+
+protected:
+    // Start point for constructing shader passes from the shader name
+    virtual void construct();
+
+    // Add a shader pass to the end of the list, and return its state object
+    OpenGLState& appendDefaultPass();
 };
 
 typedef std::shared_ptr<OpenGLShader> OpenGLShaderPtr;

@@ -112,7 +112,5 @@ public:
 private:
     ShaderPtr capture(const std::string& name, const std::function<OpenGLShaderPtr()>& createShader);
 };
-typedef std::shared_ptr<OpenGLRenderSystem> OpenGLRenderSystemPtr;
 
-} // namespace render
-
+} // namespace
