@@ -23,7 +23,7 @@ public:
 		_entity(entity)
 	{}
 
-	std::string getName() const
+	const std::string& getName() const
 	{
 		if (_name.empty())
         {

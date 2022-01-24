@@ -463,7 +463,7 @@ void EntityNode::_modelKeyChanged(const std::string& value)
 
 void EntityNode::_originKeyChanged()
 {
-    _renderableName.queueUpdate();
+    // TODO: add virtual callout for subclasses
 }
 
 const ShaderPtr& EntityNode::getWireShader() const
@@ -510,11 +510,7 @@ void EntityNode::onPostRedo()
 
 void EntityNode::onEntitySettingsChanged()
 {
-    if (EntitySettings::InstancePtr()->getRenderEntityNames())
-    {
-        _renderableName.queueUpdate();
-    }
-    else
+    if (!EntitySettings::InstancePtr()->getRenderEntityNames())
     {
         _renderableName.clear();
     }

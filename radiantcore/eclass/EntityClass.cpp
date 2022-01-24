@@ -37,7 +37,7 @@ EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo,
   _blockChangeSignal(false)
 {}
 
-std::string EntityClass::getName() const
+const std::string& EntityClass::getName() const
 {
     return _name;
 }

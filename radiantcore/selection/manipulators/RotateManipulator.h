@@ -9,7 +9,7 @@
 #include "selection/ManipulationPivot.h"
 #include "render.h"
 #include "Renderables.h"
-#include "render/RenderableText.h"
+#include "render/StaticRenderableText.h"
 
 namespace selection
 {
@@ -40,7 +40,7 @@ private:
 	RenderableCircle<RemapXYZ> _circleScreen;
 	RenderableCircle<RemapXYZ> _circleSphere;
     RenderablePoint _pivotPoint;
-    render::RenderableText _angleText;
+    render::StaticRenderableText _angleText;
 
 	BasicSelectable _selectableX;
 	BasicSelectable _selectableY;

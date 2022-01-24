@@ -147,10 +147,8 @@ void RenderableAasFile::constructRenderables()
 
 		_areas.push_back(area.bounds);
 
-        // Allocate a new RenderableNumber for eeach area
-        auto& text = _renderableNumbers.emplace(areaNum, string::to_string(areaNum)).first->second;
-        text.setWorldPosition(area.center);
-        text.setColour({ 1,1,1,1 });
+        // Allocate a new RenderableNumber for each area
+        _renderableNumbers.try_emplace(areaNum, string::to_string(areaNum), area.center, Vector4(1, 1, 1, 1));
 	}
 
     if (!_hideDistantAreas)

@@ -8,7 +8,7 @@
 #include "iaasfile.h"
 
 #include "render/RenderableBoundingBoxes.h"
-#include "render/RenderableText.h"
+#include "render/StaticRenderableText.h"
 
 namespace map
 {
@@ -37,7 +37,7 @@ private:
 	float _hideDistanceSquared;
 
     render::RenderableBoundingBoxes _renderableAreas;
-    std::map<int, render::RenderableText> _renderableNumbers;
+    std::map<std::size_t, render::StaticRenderableText> _renderableNumbers;
 
 public:
 	RenderableAasFile();

@@ -137,7 +137,7 @@ public:
     void emplaceAttribute(EntityClassAttribute&& attribute);
 
     // IEntityClass implementation
-    std::string getName() const override;
+    const std::string& getName() const override;
     const IEntityClass* getParent() const override;
     sigc::signal<void>& changedSignal() override;
     bool isFixedSize() const override;

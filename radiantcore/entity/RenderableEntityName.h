@@ -1,51 +1,41 @@
 #pragma once
 
-#include <sigc++/trackable.h>
-#include <sigc++/functors/mem_fun.h>
 #include "math/Matrix4.h"
-#include "render/RenderableText.h"
+#include "render/RenderableTextBase.h"
 #include "NameKey.h"
 
 namespace entity
 {
 
 class RenderableEntityName :
-    public render::RenderableText,
-    public sigc::trackable
+    public render::RenderableTextBase
 {
-    NameKey& _nameKey;
+private:
+    const NameKey& _nameKey;
 
     // The origin in world coordinates
     const Vector3& _entityOrigin;
 
-    bool _needsUpdate;
-
 public:
-    RenderableEntityName(NameKey& nameKey, const Vector3& entityOrigin) :
+    RenderableEntityName(const NameKey& nameKey, const Vector3& entityOrigin) :
         _nameKey(nameKey),
-        _entityOrigin(entityOrigin),
-        _needsUpdate(true)
+        _entityOrigin(entityOrigin)
+    {}
+
+    const Vector3& getWorldPosition() override
     {
-        // Queue an update once the name changes
-        _nameKey.signal_nameChanged().connect(
-            sigc::mem_fun(*this, &RenderableEntityName::queueUpdate)
-        );
+        return _entityOrigin;
     }
 
-    void queueUpdate()
+    const std::string& getText() override
     {
-        _needsUpdate = true;
+        return _nameKey.getName();
     }
 
-protected:
-    void onUpdate() override
+    const Vector4& getColour() override
     {
-        if (!_needsUpdate) return;
-
-        _needsUpdate = false;
-
-        setText(_nameKey.getName());
-        setWorldPosition(_entityOrigin);
+        static Vector4 colour(1, 1, 1, 1);
+        return colour;
     }
 };
 

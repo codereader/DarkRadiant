@@ -353,10 +353,13 @@
     <ClInclude Include="..\..\libs\render\RenderableSurface.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\render\RenderableText.h">
+    <ClInclude Include="..\..\libs\render\RenderableBoundingBoxes.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\render\RenderableBoundingBoxes.h">
+    <ClInclude Include="..\..\libs\render\StaticRenderableText.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableTextBase.h">
       <Filter>render</Filter>
     </ClInclude>
   </ItemGroup>

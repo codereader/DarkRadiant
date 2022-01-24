@@ -148,7 +148,7 @@ public:
     virtual sigc::signal<void>& changedSignal() = 0;
 
     /// Get the name of this entity class
-    virtual std::string getName() const = 0;
+    virtual const std::string& getName() const = 0;
 
     /// Get the parent entity class or NULL if there is no parent
     virtual const IEntityClass* getParent() const = 0;
