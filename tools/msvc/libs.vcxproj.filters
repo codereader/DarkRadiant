@@ -362,6 +362,9 @@
     <ClInclude Include="..\..\libs\render\RenderableTextBase.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableColouredBoundingBoxes.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

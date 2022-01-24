@@ -30,6 +30,11 @@ public:
     }
 
 protected:
+    virtual Vector4 getBoxColour(std::size_t boxIndex)
+    {
+        return _colour;
+    }
+
     void updateGeometry() override
     {
         if (!_needsUpdate) return;
@@ -44,13 +49,15 @@ protected:
         vertices.reserve(_aabbs.size() * 8); // 8 vertices per box
         indices.reserve(WireframeBoxIndices.size() * _aabbs.size()); // indices per box * boxes
 
-        for (const auto& aabb : _aabbs)
+        for (auto i = 0; i < _aabbs.size(); ++i)
         {
+            const auto& aabb = _aabbs.at(i);
+
             // Calculate the corner vertices of this bounding box
             Vector3 max(aabb.origin + aabb.extents);
             Vector3 min(aabb.origin - aabb.extents);
 
-            auto boxVertices = render::detail::getWireframeBoxVertices(min, max, _colour);
+            auto boxVertices = render::detail::getWireframeBoxVertices(min, max, getBoxColour(i));
 
             auto indexOffset = static_cast<unsigned int>(vertices.size());
 
