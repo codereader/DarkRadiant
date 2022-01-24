@@ -130,9 +130,6 @@ public:
 	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	// Renders the components of this patch instance, makes use of the Patch::render_component() method
-	void renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const override;
-
 	void evaluateTransform();
 	std::size_t getHighlightFlags() override;
 
@@ -158,11 +155,6 @@ protected:
 private:
 	// Transforms the patch components with the given transformation matrix
 	void transformComponents(const Matrix4& matrix);
-
-#if 0
-	// greebo: Renders the selected components. This is called by the above two render functions
-	void renderComponentsSelected(IRenderableCollector& collector, const VolumeTest& volume) const;
-#endif
 };
 typedef std::shared_ptr<PatchNode> PatchNodePtr;
 typedef std::weak_ptr<PatchNode> PatchNodeWeakPtr;

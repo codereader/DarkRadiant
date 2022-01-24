@@ -183,10 +183,6 @@ void Patch::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     _renderSystem = renderSystem;
     _shader.setRenderSystem(renderSystem);
-
-#if DEBUG_PATCH_NTB_VECTORS
-    _renderableNTBVectors.setRenderSystem(renderSystem);
-#endif
 }
 
 // Implementation of the abstract method of SelectionTestable

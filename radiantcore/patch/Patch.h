@@ -16,9 +16,6 @@
 #include "brush/Face.h"
 #include <sigc++/signal.h>
 
-// Enable to render the vertex normal/tangent/bitangent vectors in the cam view
-#define DEBUG_PATCH_NTB_VECTORS 0
-
 class PatchNode;
 class Ray;
 

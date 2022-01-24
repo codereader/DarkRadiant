@@ -314,6 +314,7 @@ void PatchNode::onRemoveFromScene(scene::IMapRootNode& root)
     _renderableSurfaceSolid.clear();
     _renderableSurfaceWireframe.clear();
     _renderableCtrlLattice.clear();
+    _renderableCtrlPoints.clear();
     m_patch.getSurfaceShader().setInUse(false);
 
 	SelectableNode::onRemoveFromScene(root);
@@ -361,46 +362,16 @@ void PatchNode::onPreRender(const VolumeTest& volume)
 
 void PatchNode::renderSolid(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	// Don't render invisible patches
-	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
-
-    assert(_renderEntity); // patches rendered without parent - no way!
-
-#if 0
-    // Render the patch itself
-    collector.addRenderable(
-        *m_patch._shader.getGLShader(), m_patch._solidRenderable,
-        localToWorld(), this, _renderEntity
-    );
-#endif
-#if DEBUG_PATCH_NTB_VECTORS
-    m_patch._renderableVectors.render(collector, volume, localToWorld());
-#endif
 }
 
 void PatchNode::renderWireframe(IRenderableCollector& collector, const VolumeTest& volume) const
 {
-	// Don't render invisible shaders
-	if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
-
-#if 0
-	const_cast<Patch&>(m_patch).evaluateTransform();
-#endif
-
-#if 0
-	// Render the selected components
-	renderComponentsSelected(collector, volume);
-#endif
 }
 
 void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     // Overlay the selected node with the quadrangulated wireframe
     collector.addHighlightRenderable(_renderableSurfaceWireframe, localToWorld());
-#if 0
-    // Render the selected components
-    renderComponentsSelected(collector, volume);
-#endif
 }
 
 void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -424,41 +395,6 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
         _ctrlLatticeShader.reset();
 	}
 }
-
-// Renders the components of this patch instance
-void PatchNode::renderComponents(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-#if 0
-	// Don't render invisible shaders
-	if (!m_patch.getSurfaceShader().getGLShader()->getMaterial()->isVisible()) return;
-
-	// greebo: Don't know yet, what evaluateTransform() is really doing
-	const_cast<Patch&>(m_patch).evaluateTransform();
-
-	// Only render the components, if we are in the according ComponentMode
-	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
-    {
-		m_patch.submitRenderablePoints(collector, volume, localToWorld());
-    }
-#endif
-}
-
-#if 0
-void PatchNode::renderComponentsSelected(IRenderableCollector& collector, const VolumeTest& volume) const
-{
-	const_cast<Patch&>(m_patch).evaluateTransform();
-
-	// Rebuild the array of selected control vertices
-    updateSelectedControlVertices();
-
-	// If there are any selected components, add them to the collector
-	if (!m_render_selected.empty())
-    {
-		collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
-		collector.addRenderable(*m_state_selpoint, m_render_selected, localToWorld());
-	}
-}
-#endif
 
 std::size_t PatchNode::getHighlightFlags()
 {
