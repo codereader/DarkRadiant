@@ -298,66 +298,6 @@ public:
     }
 };
 
-
-/// A renderable wrapper for a collection of vertices stored elsewhere
-class RenderableVertexBuffer : public OpenGLRenderable
-{
-	const GLenum _mode;
-	const std::vector<VertexCb>& m_vertices;
-public:
-	RenderableVertexBuffer(GLenum mode, const std::vector<VertexCb>& vertices)
-			: _mode(mode), m_vertices(vertices) {}
-
-	void render(const RenderInfo& info) const
-    {
-		bool enableColours = info.checkFlag(RENDER_VERTEX_COLOUR)
-			|| (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS);
-
-		if (enableColours)
-        {
-            glEnableClientState(GL_COLOR_ARRAY);
-        }
-
-		pointvertex_gl_array(m_vertices.data());
-		glDrawArrays(_mode, 0, static_cast<GLsizei>(m_vertices.size()));
-
-		if (enableColours)
-		{
-			glDisableClientState(GL_COLOR_ARRAY);
-		}
-	}
-};
-
-/// Renderable wrapper for a set of vertices and indices stored in other arrays
-class RenderableIndexBuffer : public OpenGLRenderable
-{
-	const GLenum _mode;
-	const IndexBuffer& m_indices;
-	const std::vector<VertexCb>& m_vertices;
-public:
-	RenderableIndexBuffer(GLenum mode, const IndexBuffer& indices, const std::vector<VertexCb>& vertices)
-			: _mode(mode), m_indices(indices), m_vertices(vertices) {}
-
-	void render(const RenderInfo& info) const
-    {
-		bool enableColours = info.checkFlag(RENDER_VERTEX_COLOUR)
-			|| (info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS);
-
-        if (enableColours)
-        {
-            glEnableClientState(GL_COLOR_ARRAY);
-        }
-
-		pointvertex_gl_array(m_vertices.data());
-		glDrawElements(_mode, GLsizei(m_indices.size()), RenderIndexTypeID, m_indices.data());
-
-		if (enableColours)
-		{
-			glDisableClientState(GL_COLOR_ARRAY);
-		}
-	}
-};
-
 template<typename VertexContainerT> struct RemappingTraits
 {};
 

@@ -49,8 +49,6 @@ Patch::Patch(PatchNode& node) :
     _node(node),
     _undoStateSaver(nullptr),
     _renderableNTBVectors(_mesh),
-    _renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
-    _renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
     _transformChanged(false),
     _tesselationChanged(true),
     _shader(texdef_name_default())
@@ -67,8 +65,6 @@ Patch::Patch(const Patch& other, PatchNode& node) :
     _node(node),
     _undoStateSaver(nullptr),
     _renderableNTBVectors(_mesh),
-    _renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
-    _renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
     _transformChanged(false),
     _tesselationChanged(true),
     _shader(other._shader.getMaterialName())
@@ -180,18 +176,6 @@ const AABB& Patch::localAABB() const
     return _localAABB;
 }
 
-// greebo: This renders the patch components, namely the lattice and the corner controls
-void Patch::submitRenderablePoints(IRenderableCollector& collector,
-                                   const VolumeTest& volume,
-                                   const Matrix4& localToWorld) const
-{
-    // Defer the tesselation calculation to the last minute
-    const_cast<Patch&>(*this).updateTesselation();
-
-    collector.addRenderable(*_latticeShader, _renderableLattice, localToWorld);
-    collector.addRenderable(*_pointShader, _renderableCtrlPoints, localToWorld);
-}
-
 RenderSystemPtr Patch::getRenderSystem() const
 {
     return _renderSystem.lock();
@@ -205,17 +189,6 @@ void Patch::setRenderSystem(const RenderSystemPtr& renderSystem)
 #if DEBUG_PATCH_NTB_VECTORS
     _renderableNTBVectors.setRenderSystem(renderSystem);
 #endif
-
-    if (renderSystem)
-    {
-        _pointShader = renderSystem->capture("$POINT");
-        _latticeShader = renderSystem->capture("$LATTICE");
-    }
-    else
-    {
-        _pointShader.reset();
-        _latticeShader.reset();
-    }
 }
 
 // Implementation of the abstract method of SelectionTestable
@@ -462,10 +435,6 @@ Patch::~Patch()
     {
         (*i++)->onPatchDestruction();
     }
-
-    // Release the shaders
-    _pointShader.reset();
-    _latticeShader.reset();
 }
 
 bool Patch::isValid() const

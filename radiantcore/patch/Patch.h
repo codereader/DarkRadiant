@@ -58,18 +58,11 @@ class Patch :
 
     RenderablePatchVectorsNTB _renderableNTBVectors;
 
-	// The shader states for the control points and the lattice
-	ShaderPtr _pointShader;
-	ShaderPtr _latticeShader;
-
-	// greebo: The vertex list of the control points, can be passed to the RenderableVertexBuffer
+	// greebo: The vertex list of the control points
     std::vector<VertexCb> _ctrl_vertices;
-	// The renderable of the control points
-	RenderableVertexBuffer _renderableCtrlPoints;
 
 	// The lattice indices and their renderable
 	IndexBuffer _latticeIndices;
-	RenderableIndexBuffer _renderableLattice;
 
 	bool _transformChanged;
 
@@ -109,11 +102,6 @@ public:
     void disconnectUndoSystem(IUndoSystem& undoSystem);
 
 	const AABB& localAABB() const override;
-
-    /// Submit renderable edge and face points
-	void submitRenderablePoints(IRenderableCollector& collector,
-                                const VolumeTest& volume,
-                                const Matrix4& localToWorld) const;
 
     RenderSystemPtr getRenderSystem() const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
