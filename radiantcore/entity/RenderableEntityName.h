@@ -15,6 +15,7 @@ class RenderableEntityName :
 private:
     const EntityNode& _entity;
     const NameKey& _nameKey;
+    Vector4 _colour;
 
 public:
     RenderableEntityName(const EntityNode& entity, const NameKey& nameKey) :

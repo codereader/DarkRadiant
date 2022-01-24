@@ -16,8 +16,10 @@ const std::string& RenderableEntityName::getText()
 
 const Vector4& RenderableEntityName::getColour()
 {
-    static Vector4 colour(1, 1, 1, 1);
-    return colour;
+    // Keep the local copy up to date by querying the owning entity every time
+    _colour = _entity.getEntityColour();
+
+    return _colour;
 }
 
 }
