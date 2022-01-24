@@ -115,7 +115,7 @@ public:
 	// IEntityNode implementation
 	Entity& getEntity() override;
 	virtual void refreshModel() override;
-    void transformChanged() override;
+    virtual void transformChanged() override;
 
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const override;

@@ -133,6 +133,15 @@ void LightNode::onLightRadiusChanged()
     boundsChanged();
 }
 
+void LightNode::transformChanged()
+{
+    EntityNode::transformChanged();
+
+    _renderableOctagon.queueUpdate();
+    _renderableLightVolume.queueUpdate();
+    _renderableVertices.queueUpdate();
+}
+
 float LightNode::getShaderParm(int parmNum) const
 {
 	return EntityNode::getShaderParm(parmNum);

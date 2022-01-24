@@ -106,6 +106,8 @@ public:
     // ILightNode implementation
     const RendererLight& getRendererLight() const override { return *this; }
 
+    void transformChanged() override;
+
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const override;
 

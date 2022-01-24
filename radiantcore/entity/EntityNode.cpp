@@ -360,6 +360,11 @@ void EntityNode::onPreRender(const VolumeTest& volume)
     {
         _renderableName.clear();
     }
+
+    // Render any attached entities
+    renderAttachments(
+        [&](const scene::INodePtr& n) { n->onPreRender(volume); }
+    );
 }
 
 void EntityNode::renderSolid(IRenderableCollector& collector,
@@ -382,14 +387,9 @@ void EntityNode::renderWireframe(IRenderableCollector& collector,
 
 void EntityNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    if (collector.supportsFullMaterials())
-    {
-        renderSolid(collector, volume);
-    }
-    else
-    {
-        renderWireframe(collector, volume);
-    }
+    renderAttachments(
+        [&](const scene::INodePtr& n) { n->renderHighlights(collector, volume); }
+    );
 }
 
 void EntityNode::acquireShaders()
