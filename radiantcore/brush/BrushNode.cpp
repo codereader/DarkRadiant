@@ -420,7 +420,7 @@ void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 	if (renderSystem)
 	{
-        _pointShader = renderSystem->capture("$POINT");
+        _pointShader = renderSystem->capture(BuiltInShaderType::Point);
         _renderableVertices.queueUpdate();
 	}
 	else

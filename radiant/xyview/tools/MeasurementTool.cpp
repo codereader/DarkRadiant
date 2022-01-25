@@ -158,7 +158,7 @@ void MeasurementTool::ensureShaders(RenderSystem& renderSystem)
 
 	if (!_pointShader)
 	{
-		_pointShader = renderSystem.capture("$POINT");
+		_pointShader = renderSystem.capture(BuiltInShaderType::Point);
 	}
 }
 

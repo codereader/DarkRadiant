@@ -203,9 +203,33 @@ void BuiltInShader::construct()
         break;
     }
 
+    case BuiltInShaderType::Point:
+    {
+        constructPointShader(pass, 4, OpenGLState::SORT_POINT_FIRST);
+        break;
+    }
+
+    case BuiltInShaderType::BigPoint:
+    {
+        constructPointShader(pass, 6, OpenGLState::SORT_POINT_FIRST);
+        break;
+    }
+
     default:
         throw std::runtime_error("Cannot construct this shader: " + getName());
     }
+}
+
+void BuiltInShader::constructPointShader(OpenGLState& pass, float pointSize, OpenGLState::SortPosition sort)
+{
+    pass.setRenderFlag(RENDER_POINT_COLOUR);
+    pass.setRenderFlag(RENDER_DEPTHWRITE);
+
+    pass.setSortPosition(sort);
+    pass.m_pointsize = pointSize;
+
+    enableViewType(RenderViewType::Camera);
+    enableViewType(RenderViewType::OrthoView);
 }
 
 void BuiltInShader::constructWireframeSelectionOverlay(OpenGLState& pass, const std::string& schemeColourKey)

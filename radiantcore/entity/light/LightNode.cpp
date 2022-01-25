@@ -392,7 +392,7 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     if (renderSystem)
     {
-        _vertexShader = renderSystem->capture("$BIGPOINT");
+        _vertexShader = renderSystem->capture(BuiltInShaderType::BigPoint);
         _renderableVertices.queueUpdate();
     }
     else

@@ -18,6 +18,7 @@ public:
 
 protected:
     void construct() override;
+    void constructPointShader(OpenGLState& pass, float pointSize, OpenGLState::SortPosition sort);
     void constructWireframeSelectionOverlay(OpenGLState& pass, const std::string& schemeColourKey);
 };
 

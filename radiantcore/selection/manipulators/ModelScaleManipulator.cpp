@@ -87,7 +87,7 @@ void ModelScaleManipulator::onPreRender(const RenderSystemPtr& renderSystem, con
 
     if (!_pointShader)
     {
-        _pointShader = renderSystem->capture("$BIGPOINT");
+        _pointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
     }
     
     _aabbs.clear();

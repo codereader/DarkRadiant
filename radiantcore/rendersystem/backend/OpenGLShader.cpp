@@ -858,6 +858,7 @@ void OpenGLShader::construct()
             OpenGLState& state = appendDefaultPass();
 			state.setName(_name);
 
+#if 0
             if (_name == "$POINT")
             {
               state.setRenderFlag(RENDER_POINT_COLOUR);
@@ -869,7 +870,9 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
-            else if (_name == "$SELPOINT")
+            else
+#endif
+            if (_name == "$SELPOINT")
             {
               state.setRenderFlag(RENDER_POINT_COLOUR);
               state.setRenderFlag(RENDER_DEPTHWRITE);
@@ -880,6 +883,7 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+#if 0
             else if (_name == "$BIGPOINT")
             {
               state.setRenderFlag(RENDER_POINT_COLOUR);
@@ -891,6 +895,7 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+#endif
             else if (_name == "$PIVOT")
             {
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);

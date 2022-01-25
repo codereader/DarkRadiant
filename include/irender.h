@@ -536,6 +536,12 @@ enum class RenderViewType
 
 enum class BuiltInShaderType
 {
+    // A medium-sized point
+    Point,
+
+    // A bigger version of "Point"
+    BigPoint,
+
     WireframeOverlay,
     FlatshadeOverlay,
     AasAreaBounds,

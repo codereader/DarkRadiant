@@ -103,7 +103,7 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
 
     if (!_pivotPointShader)
     {
-        _pivotPointShader = renderSystem->capture("$BIGPOINT");
+        _pivotPointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
     }
 
     if (!_textRenderer)
