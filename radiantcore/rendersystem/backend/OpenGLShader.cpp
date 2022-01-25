@@ -751,62 +751,24 @@ void OpenGLShader::constructFromMaterial(const MaterialPtr& material)
 
 void OpenGLShader::construct()
 {
-    // Check the first character of the name to see if this is a special built-in shader
     switch (_name[0])
     {
-#if 1
-        // I'll leave these here to catch my attention
-        case '(': // fill shader
-        case '[':
-        case '<': // wireframe shader
-        case '{': // cam + wireframe shader
-        {
-            rWarning() << "Legacy shader request encountered" << std::endl;
-            assert(false);
-            break;
-        }
-#endif
+    // greebo: For a small amount of commits, I'll leave these here to catch my attention
+    case '(': // fill shader
+    case '[':
+    case '<': // wireframe shader
+    case '{': // cam + wireframe shader
+    case '$': // hardcoded legacy stuff
+    {
+        rWarning() << "Legacy shader request encountered" << std::endl;
+        assert(false);
+        return;
+    }
+    }
 
-        case '$':
-        {
-            OpenGLState& state = appendDefaultPass();
-			state.setName(_name);
-
-            if (_name == "$XY_INACTIVE_NODE")
-            {
-                Colour4 colour(0, 0, 0, 0.05f);
-                state.setColour(static_cast<float>(colour[0]),
-                    static_cast<float>(colour[1]),
-                    static_cast<float>(colour[2]),
-                    static_cast<float>(colour[3]));
-
-                state.m_blend_src = GL_SRC_ALPHA;
-                state.m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
-
-                state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE | RENDER_BLEND);
-                state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-                state.setDepthFunc(GL_LESS);
-
-                state.m_linewidth = 1;
-                state.m_pointsize = 1;
-
-                enableViewType(RenderViewType::OrthoView);
-            }
-            else
-            {
-                assert(false);
-            }
-            break;
-        } // case '$'
-
-        default:
-        {
-            // This is not a hard-coded shader, construct from the shader system
-            constructNormalShader();
-
-            enableViewType(RenderViewType::Camera);
-        }
-    } // switch (name[0])
+    // Construct the shader from the material definition
+    constructNormalShader();
+    enableViewType(RenderViewType::Camera);
 }
 
 void OpenGLShader::onMaterialChanged()

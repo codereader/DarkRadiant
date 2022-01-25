@@ -230,7 +230,6 @@ void XYWnd::captureStates()
     _highlightShaders.mergeActionShaderChange = GlobalRenderSystem().capture(BuiltInShaderType::OrthoMergeActionOverlayChange);
     _highlightShaders.mergeActionShaderRemove = GlobalRenderSystem().capture(BuiltInShaderType::OrthoMergeActionOverlayRemove);
     _highlightShaders.mergeActionShaderConflict = GlobalRenderSystem().capture(BuiltInShaderType::OrthoMergeActionOverlayConflict);
-    _highlightShaders.nonMergeActionNodeShader = GlobalRenderSystem().capture("$XY_INACTIVE_NODE");
 }
 
 void XYWnd::releaseStates()
@@ -241,7 +240,6 @@ void XYWnd::releaseStates()
     _highlightShaders.mergeActionShaderChange.reset();
     _highlightShaders.mergeActionShaderRemove.reset();
     _highlightShaders.mergeActionShaderConflict.reset();
-    _highlightShaders.nonMergeActionNodeShader.reset();
 }
 
 void XYWnd::ensureFont()

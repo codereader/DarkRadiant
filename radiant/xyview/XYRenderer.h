@@ -17,7 +17,6 @@ public:
         ShaderPtr mergeActionShaderChange;
         ShaderPtr mergeActionShaderRemove;
         ShaderPtr mergeActionShaderConflict;
-        ShaderPtr nonMergeActionNodeShader;
     };
 
 private:
@@ -92,11 +91,6 @@ public:
                 {
                     mergeShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
                 }
-            }
-            else
-            {
-                // Everything else is using the shader for non-merge-affected nodes
-                _shaders.nonMergeActionNodeShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
             }
 
             // Elements can still be selected in merge mode
