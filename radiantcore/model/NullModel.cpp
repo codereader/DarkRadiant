@@ -1,75 +1,66 @@
 #include "NullModel.h"
 
-#include "math/Frustum.h"
-#include "irenderable.h"
 #include <stdexcept>
 
-namespace model {
+namespace model
+{
 
 NullModel::NullModel() :
-	_aabbLocal(Vector3(0, 0, 0), Vector3(8, 8, 8)),
-	_aabbSolid(_aabbLocal),
-	_aabbWire(_aabbLocal)
+	_aabbLocal(Vector3(0, 0, 0), Vector3(8, 8, 8))
 {}
 
-NullModel::~NullModel() {
-	_state = ShaderPtr();
-}
-
-const AABB& NullModel::localAABB() const {
+const AABB& NullModel::localAABB() const
+{
 	return _aabbLocal;
 }
 
-void NullModel::testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld)
+std::string NullModel::getFilename() const
 {
-	test.BeginMesh(localToWorld);
-
-	SelectionIntersection best;
-	aabb_testselect(_aabbLocal, test, best);
-
-	if(best.isValid()) {
-		selector.addIntersection(best);
-	}
-}
-
-std::string NullModel::getFilename() const {
 	return _filename;
 }
 
-void NullModel::setFilename(const std::string& filename) {
+void NullModel::setFilename(const std::string& filename)
+{
 	_filename = filename;
 }
 
-std::string NullModel::getModelPath() const {
+std::string NullModel::getModelPath() const
+{
 	return _modelPath;
 }
 
-void NullModel::setModelPath(const std::string& modelPath) {
+void NullModel::setModelPath(const std::string& modelPath)
+{
 	_modelPath = modelPath;
 }
 
-void NullModel::applySkin(const ModelSkin& skin) {
+void NullModel::applySkin(const ModelSkin& skin)
+{
 	// do nothing
 }
 
-int NullModel::getSurfaceCount() const {
+int NullModel::getSurfaceCount() const
+{
 	return 0;
 }
 
-int NullModel::getVertexCount() const {
+int NullModel::getVertexCount() const
+{
 	return 0;
 }
 
-int NullModel::getPolyCount() const {
+int NullModel::getPolyCount() const
+{
 	return 0;
 }
 
 const IModelSurface& NullModel::getSurface(unsigned surfaceNum) const
 {
-	throw new std::runtime_error("NullModel::getSurface: invalid call, no surfaces.");
+	throw std::runtime_error("NullModel::getSurface: invalid call, no surfaces.");
 }
 
-const StringList& NullModel::getActiveMaterials() const {
+const StringList& NullModel::getActiveMaterials() const
+{
 	static std::vector<std::string> _dummyMaterials;
 	return _dummyMaterials;
 }

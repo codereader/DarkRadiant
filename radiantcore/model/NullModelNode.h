@@ -3,10 +3,12 @@
 #include "Bounded.h"
 #include "irenderable.h"
 
+#include "scene/Node.h"
 #include "NullModel.h"
 #include "render/RenderableBox.h"
 
-namespace model {
+namespace model
+{
 
 class NullModelNode;
 typedef std::shared_ptr<NullModelNode> NullModelNodePtr;

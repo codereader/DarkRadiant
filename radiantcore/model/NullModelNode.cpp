@@ -1,6 +1,7 @@
 #include "NullModelNode.h"
 
 #include "math/Frustum.h"
+#include "entitylib.h"
 
 namespace model
 {
@@ -47,7 +48,15 @@ Vector3 NullModelNode::getModelScale()
 
 void NullModelNode::testSelect(Selector& selector, SelectionTest& test)
 {
-	_nullModel->testSelect(selector, test, localToWorld());
+    test.BeginMesh(localToWorld());
+
+    SelectionIntersection best;
+    aabb_testselect(_nullModel->localAABB(), test, best);
+
+    if (best.isValid())
+    {
+        selector.addIntersection(best);
+    }
 }
 
 void NullModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
