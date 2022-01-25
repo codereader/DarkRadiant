@@ -51,6 +51,7 @@ class ModelSelector: public wxutil::DialogBase, private wxutil::XmlResourceBased
 
     // Main tree view with model hierarchy
 	ModelTreeView* _treeView;
+    wxToggleButton* _showSkinsBtn = nullptr;
 
     // Key/value table for model information
     wxutil::KeyValueTable* _infoTable;

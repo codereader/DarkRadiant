@@ -28,6 +28,7 @@
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/Bitmap.h"
 #include "ui/UserInterfaceModule.h"
+#include "registry/Widgets.h"
 
 #include <functional>
 
@@ -41,6 +42,7 @@ namespace
 
     const std::string RKEY_BASE = "user/ui/modelSelector/";
     const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
+    const std::string RKEY_SHOW_SKINS = RKEY_BASE + "showSkinsInTree";
 }
 
 // Constructor.
@@ -185,9 +187,17 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
                                                 bool showOptions,
                                                 bool showSkins)
 {
-    _treeView->SetShowSkins(showSkins);
-    _treeView->SetSelectedFullname(curModel);
+    // Hide the Show Skins button if skins should not be shown for this invocation
+    if (showSkins) {
+        _showSkinsBtn->Show();
+        _treeView->SetShowSkins(_showSkinsBtn->GetValue());
+    }
+    else {
+        _showSkinsBtn->Hide();
+        _treeView->SetShowSkins(false);
+    }
 
+    _treeView->SetSelectedFullname(curModel);
     showInfoForSelectedModel();
 
     _showOptions = showOptions;
@@ -263,13 +273,14 @@ wxWindow* ModelSelector::setupTreeViewToolbar(wxWindow* parent)
     // Set up the top treeview toolbar, including a custom button to enable/disable the showing of
     // skins in the tree.
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
-    auto* showSkinsBtn = new wxBitmapToggleButton(toolbar, wxID_ANY,
-                                                  wxutil::GetLocalBitmap("skin16.png"));
-    showSkinsBtn->SetValue(true);
-    showSkinsBtn->SetToolTip(_("List model skins in the tree underneath their associated models"));
-    showSkinsBtn->Bind(wxEVT_TOGGLEBUTTON,
+    _showSkinsBtn = new wxBitmapToggleButton(toolbar, wxID_ANY,
+                                             wxutil::GetLocalBitmap("skin16.png"));
+    _showSkinsBtn->SetValue(true);
+    _showSkinsBtn->SetToolTip(_("List model skins in the tree underneath their associated models"));
+    _showSkinsBtn->Bind(wxEVT_TOGGLEBUTTON,
                        [this](auto& ev) { _treeView->SetShowSkins(ev.IsChecked()); });
-    toolbar->GetRightSizer()->Add(showSkinsBtn, wxSizerFlags().Border(wxLEFT, 6));
+    registry::bindWidget(_showSkinsBtn, RKEY_SHOW_SKINS);
+    toolbar->GetRightSizer()->Add(_showSkinsBtn, wxSizerFlags().Border(wxLEFT, 6));
 
     return toolbar;
 }
