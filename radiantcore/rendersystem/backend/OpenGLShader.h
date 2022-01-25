@@ -31,8 +31,7 @@ private:
     OpenGLRenderSystem& _renderSystem;
 
     // List of shader passes for this shader
-	typedef std::list<OpenGLShaderPassPtr> Passes;
-	Passes _shaderPasses;
+    std::list<OpenGLShaderPassPtr> _shaderPasses;
 
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;
@@ -53,6 +52,8 @@ private:
 
     // Each shader can be used by either camera or orthoview, or both 
     std::size_t _enabledViewTypes;
+
+    bool _mergeModeActive;
 
 private:
 
@@ -81,9 +82,6 @@ private:
 
     // Test if we can render using lighting mode
     bool canUseLightingMode() const;
-
-    void insertPasses();
-    void removePasses();
 
     void onMaterialChanged();
     
@@ -145,6 +143,9 @@ public:
     bool isApplicableTo(RenderViewType renderViewType) const;
     void enableViewType(RenderViewType renderViewType);
 
+    bool isMergeModeEnabled() const;
+    void setMergeModeEnabled(bool enabled);
+
 protected:
     // Start point for constructing shader passes from the shader name
     virtual void construct();
@@ -152,8 +153,23 @@ protected:
     // Add a shader pass to the end of the list, and return its state object
     OpenGLState& appendDefaultPass();
 
+    const IBackendWindingRenderer& getWindingRenderer() const;
+
     // Assign a new winding renderer to this shader (renderer will be move-assigned)
     void setWindingRenderer(std::unique_ptr<IBackendWindingRenderer> renderer);
+
+    // Called when setMergeModeEnabled() switches the flag
+    virtual void onMergeModeChanged()
+    {}
+
+    // Attaches all passes to the rendersystem
+    void insertPasses();
+
+    // Detaches all passes from the rendersystem
+    void removePasses();
+
+    // Deletes all passes from this shader
+    void clearPasses();
 };
 
 typedef std::shared_ptr<OpenGLShader> OpenGLShaderPtr;

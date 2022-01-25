@@ -441,6 +441,14 @@ void OpenGLRenderSystem::forEachRenderable(const RenderableCallback& callback) c
     m_traverseRenderablesMutex = false;
 }
 
+void OpenGLRenderSystem::setMergeModeEnabled(bool enabled)
+{
+    for (auto& [_, shader] : _shaders)
+    {
+        shader->setMergeModeEnabled(enabled);
+    }
+}
+
 // RegisterableModule implementation
 const std::string& OpenGLRenderSystem::getName() const
 {

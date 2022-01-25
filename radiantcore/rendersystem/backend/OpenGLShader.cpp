@@ -61,7 +61,8 @@ OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSy
     _renderSystem(renderSystem),
     _isVisible(true),
     _useCount(0),
-    _enabledViewTypes(0)
+    _enabledViewTypes(0),
+    _mergeModeActive(false)
 {
     _windingRenderer.reset(new WindingRenderer<WindingIndexer_Triangles>());
 }
@@ -81,7 +82,7 @@ void OpenGLShader::destroy()
     _enabledViewTypes = 0;
     _materialChanged.disconnect();
     _material.reset();
-    _shaderPasses.clear();
+    clearPasses();
 }
 
 void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
@@ -307,25 +308,24 @@ void OpenGLShader::realise()
 void OpenGLShader::insertPasses()
 {
     // Insert all shader passes into the GL state manager
-    for (Passes::iterator i = _shaderPasses.begin();
-         i != _shaderPasses.end();
-          ++i)
+    for (auto& shaderPass : _shaderPasses)
     {
-    	_renderSystem.insertSortedState(
-            OpenGLStates::value_type((*i)->statePtr(), *i)
-        );
+    	_renderSystem.insertSortedState(std::make_pair(shaderPass->statePtr(), shaderPass));
     }
 }
 
 void OpenGLShader::removePasses()
 {
     // Remove shader passes from the GL state manager
-    for (Passes::iterator i = _shaderPasses.begin();
-         i != _shaderPasses.end();
-         ++i)
+    for (auto& shaderPass : _shaderPasses)
 	{
-        _renderSystem.eraseSortedState((*i)->statePtr());
+        _renderSystem.eraseSortedState(shaderPass->statePtr());
     }
+}
+
+void OpenGLShader::clearPasses()
+{
+    _shaderPasses.clear();
 }
 
 void OpenGLShader::unrealise()
@@ -831,9 +831,28 @@ void OpenGLShader::enableViewType(RenderViewType renderViewType)
     _enabledViewTypes |= static_cast<std::size_t>(renderViewType);
 }
 
+const IBackendWindingRenderer& OpenGLShader::getWindingRenderer() const
+{
+    return *_windingRenderer;
+}
+
 void OpenGLShader::setWindingRenderer(std::unique_ptr<IBackendWindingRenderer> renderer)
 {
     _windingRenderer = std::move(renderer);
+}
+
+bool OpenGLShader::isMergeModeEnabled() const
+{
+    return _mergeModeActive;
+}
+
+void OpenGLShader::setMergeModeEnabled(bool enabled)
+{
+    if (_mergeModeActive == enabled) return;
+
+    _mergeModeActive = enabled;
+
+    onMergeModeChanged();
 }
 
 }

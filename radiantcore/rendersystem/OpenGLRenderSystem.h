@@ -19,7 +19,7 @@ typedef std::shared_ptr<GLProgramFactory> GLProgramFactoryPtr;
  * \brief
  * Implementation of RenderSystem.
  */
-class OpenGLRenderSystem
+class OpenGLRenderSystem final
 : public RenderSystem,
   public OpenGLStateManager
 {
@@ -54,13 +54,9 @@ class OpenGLRenderSystem
 	sigc::connection _sharedContextDestroyed;
 
 public:
-
-	/**
-	 * Main constructor.
-	 */
 	OpenGLRenderSystem();
 
-	virtual ~OpenGLRenderSystem();
+	~OpenGLRenderSystem();
 
     /* RenderSystem implementation */
 
@@ -104,11 +100,13 @@ public:
 	void detachRenderable(Renderable& renderable) override;
 	void forEachRenderable(const RenderableCallback& callback) const override;
 
+    void setMergeModeEnabled(bool enabled) override;
+
 	// RegisterableModule implementation
-    virtual const std::string& getName() const override;
-    virtual const StringSet& getDependencies() const override;
-    virtual void initialiseModule(const IApplicationContext& ctx) override;
-    virtual void shutdownModule() override;
+    const std::string& getName() const override;
+    const StringSet& getDependencies() const override;
+    void initialiseModule(const IApplicationContext& ctx) override;
+    void shutdownModule() override;
 
 private:
     ShaderPtr capture(const std::string& name, const std::function<OpenGLShaderPtr()>& createShader);

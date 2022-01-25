@@ -13,22 +13,28 @@ ColourShader::ColourShader(ColourShaderType type, const Colour4& colour, OpenGLR
     _colour(colour)
 {}
 
+ColourShaderType ColourShader::getType() const
+{
+    return _type;
+}
+
 void ColourShader::construct()
 {
+    OpenGLState& state = appendDefaultPass();
+    state.setName(getName());
+
+    // Set the colour to non-transparent by default
+    state.setColour(
+        static_cast<float>(_colour.x()),
+        static_cast<float>(_colour.y()),
+        static_cast<float>(_colour.z()),
+        1.0f
+    );
+
     switch (_type)
     {
     case ColourShaderType::CameraSolid:
     {
-        OpenGLState& state = appendDefaultPass();
-        state.setName(getName());
-
-        state.setColour(
-            static_cast<float>(_colour.x()),
-            static_cast<float>(_colour.y()),
-            static_cast<float>(_colour.z()),
-            1.0f
-        );
-
         state.setRenderFlag(RENDER_FILL);
         state.setRenderFlag(RENDER_LIGHTING);
         state.setRenderFlag(RENDER_DEPTHTEST);
@@ -42,9 +48,6 @@ void ColourShader::construct()
 
     case ColourShaderType::CameraTranslucent:
     {
-        OpenGLState& state = appendDefaultPass();
-        state.setName(getName());
-
         state.setColour(
             static_cast<float>(_colour.x()),
             static_cast<float>(_colour.y()),
@@ -67,19 +70,25 @@ void ColourShader::construct()
     case ColourShaderType::OrthoviewSolid:
     {
         // Wireframe renderer is using GL_LINES to display each winding
-        setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>());
-
-        OpenGLState& state = appendDefaultPass();
-        state.setName(getName());
-
-        state.setColour(
-            static_cast<float>(_colour.x()),
-            static_cast<float>(_colour.y()),
-            static_cast<float>(_colour.z()),
-            1.0f
-        );
+        // Don't touch a renderer that is not empty, this will break any client connections
+        if (getWindingRenderer().empty())
+        {
+            setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>());
+        }
 
         state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
+
+        if (isMergeModeEnabled())
+        {
+            // merge mode, switch to transparent grey rendering
+            state.setColour({ 0, 0, 0, 0.05f });
+
+            state.m_blend_src = GL_SRC_ALPHA;
+            state.m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
+
+            state.setRenderFlags(RENDER_BLEND);
+        }
+
         state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
         state.setDepthFunc(GL_LESS);
         state.m_linewidth = 1;
@@ -91,16 +100,6 @@ void ColourShader::construct()
 
     case ColourShaderType::CameraAndOrthoview:
     {
-        OpenGLState& state = appendDefaultPass();
-        state.setName(getName());
-
-        state.setColour(
-            static_cast<float>(_colour.x()),
-            static_cast<float>(_colour.y()),
-            static_cast<float>(_colour.z()),
-            1.0f
-        );
-
         state.setRenderFlag(RENDER_FILL);
         state.setRenderFlag(RENDER_LIGHTING);
         state.setRenderFlag(RENDER_DEPTHTEST);
@@ -121,6 +120,18 @@ void ColourShader::construct()
     default:
         throw std::runtime_error("Cannot construct colour shader type: " + string::to_string(static_cast<int>(_type)));
     }
+}
+
+void ColourShader::onMergeModeChanged()
+{
+    // Only the wireframe shader is reacting to this
+    if (_type != ColourShaderType::OrthoviewSolid) return;
+    
+    // Rebuild the shader, the construct() method will react to the state
+    removePasses();
+    clearPasses();
+    construct();
+    insertPasses();
 }
 
 std::string ColourShader::ConstructName(ColourShaderType type, const Colour4& colour)

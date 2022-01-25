@@ -734,6 +734,9 @@ public:
     // Sets the flag whether shader programs are available.
     virtual void setShaderProgramsAvailable(bool available) = 0;
 
+    // Activates or deactivates the merge render mode
+    virtual void setMergeModeEnabled(bool enabled) = 0;
+
 	// Subscription to get notified as soon as the openGL extensions have been initialised
 	virtual sigc::signal<void> signal_extensionsInitialised() = 0;
 };
