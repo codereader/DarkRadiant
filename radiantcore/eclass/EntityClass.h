@@ -49,17 +49,6 @@ private:
     Vector4 _colour;
     bool _colourTransparent;
 
-    // Default shader names, in case we don't get any from the parent or otherwise
-    static const std::string DefaultWireShader;
-    static const std::string DefaultFillShader;
-    static const std::string DefaultColourShader;
-    static const Vector3 DefaultEntityColour;
-
-    // Shader versions of the colour
-    std::string _fillShader;
-    std::string _wireShader;
-    std::string _colourShader;
-
     // Does this entity have a fixed size?
     bool _fixedSize;
 
@@ -148,11 +137,6 @@ public:
     void setColour(const Vector4& colour) override;
     // Resets the colour to the value defined in the attributes
     void resetColour();
-#if 0
-    const std::string& getWireShader() const override;
-    const std::string& getFillShader() const override;
-    const std::string& getColourShader() const override;
-#endif
     EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) override;
     const EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) const override;
     const std::string& getAttributeType(const std::string& name) const override;

@@ -6,18 +6,18 @@
 #include "string/convert.h"
 
 #include "string/predicate.h"
-#include <fmt/format.h>
 #include <functional>
 
 namespace eclass
 {
 
-const std::string EntityClass::DefaultWireShader("<0.3 0.3 1>");
-const std::string EntityClass::DefaultFillShader("(0.3 0.3 1)");
-const std::string EntityClass::DefaultColourShader("{0.3 0.3 1}");
-const Vector3 EntityClass::DefaultEntityColour(0.3, 0.3, 1);
+namespace
+{
+    const Vector3 DefaultEntityColour(0.3, 0.3, 1);
+    const Vector4 UndefinedColour(-1, -1, -1, -1);
+}
+
 const EntityClassAttribute EntityClass::_emptyAttribute("", "", "");
-const Vector4 UndefinedColour(-1, -1, -1, -1);
 
 EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo) :
     EntityClass(name, fileInfo, false)
@@ -103,14 +103,6 @@ void EntityClass::setColour(const Vector4& colour)
         _colour = DefaultEntityColour;
     }
 
-    // Define fill and wire versions of the entity colour
-    _fillShader = _colourTransparent ?
-        fmt::format("[{0:f} {1:f} {2:f}]", _colour[0], _colour[1], _colour[2]) :
-        fmt::format("({0:f} {1:f} {2:f})", _colour[0], _colour[1], _colour[2]);
-
-    _wireShader = fmt::format("<{0:f} {1:f} {2:f}>", _colour[0], _colour[1], _colour[2]);
-    _colourShader = fmt::format("{{{0:f} {1:f} {2:f}}}", _colour[0], _colour[1], _colour[2]);
-
     emitChangedSignal();
 }
 
@@ -145,25 +137,7 @@ const Vector4& EntityClass::getColour() const
 {
     return _colour;
 }
-#if 0
-const std::string& EntityClass::getWireShader() const
-{
-    // Use a fallback shader colour in case we don't have anything
-    return !_wireShader.empty() ? _wireShader : DefaultWireShader;
-}
 
-const std::string& EntityClass::getFillShader() const
-{
-    // Use a fallback shader colour in case we don't have anything
-    return !_fillShader.empty() ? _fillShader : DefaultFillShader;
-}
-
-const std::string& EntityClass::getColourShader() const
-{
-    // Use a fallback shader colour in case we don't have anything
-    return !_colourShader.empty() ? _colourShader : DefaultColourShader;
-}
-#endif
 /* ATTRIBUTES */
 
 /**

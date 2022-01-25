@@ -9,7 +9,6 @@
 #include "ModResource.h"
 
 #include "imodule.h"
-#include "math/Vector3.h"
 #include "math/Vector4.h"
 
 #include <vector>
@@ -158,16 +157,6 @@ public:
 
     // Overrides the colour defined in the .def files
     virtual void setColour(const Vector4& colour) = 0;
-
-    /// Get the shader used for rendering this entity class in wireframe mode.
-    //virtual const std::string& getWireShader() const = 0;
-    //
-    ///// Get the shader used for rendering this entity class in filled mode.
-    //virtual const std::string& getFillShader() const = 0;
-    //
-    //// Get the shader name used for rendering coloured primitives in both cam and ortho
-    //virtual const std::string& getColourShader() const = 0;
-
 
     /* ENTITY CLASS ATTRIBUTES */
 
