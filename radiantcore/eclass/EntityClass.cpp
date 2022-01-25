@@ -228,12 +228,15 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
     // Lookup the parent name and return if it is not set. Also return if the
     // parent name is the same as our own classname, to avoid infinite
     // recursion.
-    std::string parName = getAttribute("inherit").getValue();
-    if (parName.empty() || parName == _name)
+    std::string parentName = getAttribute("inherit").getValue();
+    if (parentName.empty() || parentName == _name)
+    {
+        resetColour();
         return;
+    }
 
     // Find the parent entity class
-    EntityClasses::iterator pIter = classmap.find(parName);
+    auto pIter = classmap.find(parentName);
     if (pIter != classmap.end())
     {
         // Recursively resolve inheritance of parent
@@ -246,7 +249,7 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
     {
         rWarning() << "[eclassmgr] Entity class "
                               << _name << " specifies unknown parent class "
-                              << parName << std::endl;
+                              << parentName << std::endl;
     }
 
     // Set the resolved flag

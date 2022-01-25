@@ -710,6 +710,16 @@ TEST_F(EntityTest, OverrideEClassColour)
     EXPECT_EQ(torchCls->getColour(), YELLOW);
 }
 
+TEST_F(EntityTest, DefaultEclassColourIsValid)
+{
+    auto eclass = GlobalEntityClassManager().findClass("dr:entity_using_modeldef");
+
+    EXPECT_FALSE(eclass->getParent()) << "Entity Class is not supposed to have a parent, please adjust the test data";
+    EXPECT_EQ(eclass->getAttribute("editor_color", true).getValue(), "") << "Entity Class shouldn't have an editor_color in this test";
+    
+    EXPECT_EQ(eclass->getColour(), Vector4(0.3, 0.3, 1, 1)) << "The entity class should have the same value as in EntityClass.cpp:DefaultEntityColour";
+}
+
 TEST_F(EntityTest, FuncStaticLocalToWorld)
 {
     auto funcStatic = createByClassName("func_static");
