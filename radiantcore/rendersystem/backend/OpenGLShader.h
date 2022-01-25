@@ -151,6 +151,9 @@ protected:
 
     // Add a shader pass to the end of the list, and return its state object
     OpenGLState& appendDefaultPass();
+
+    // Assign a new winding renderer to this shader (renderer will be move-assigned)
+    void setWindingRenderer(std::unique_ptr<IBackendWindingRenderer> renderer);
 };
 
 typedef std::shared_ptr<OpenGLShader> OpenGLShaderPtr;

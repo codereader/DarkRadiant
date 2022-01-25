@@ -17,6 +17,7 @@ const std::string EntityClass::DefaultFillShader("(0.3 0.3 1)");
 const std::string EntityClass::DefaultColourShader("{0.3 0.3 1}");
 const Vector3 EntityClass::DefaultEntityColour(0.3, 0.3, 1);
 const EntityClassAttribute EntityClass::_emptyAttribute("", "", "");
+const Vector4 UndefinedColour(-1, -1, -1, -1);
 
 EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo) :
     EntityClass(name, fileInfo, false)
@@ -26,7 +27,7 @@ EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo,
 : _name(name),
   _fileInfo(fileInfo),
   _isLight(false),
-  _colour(-1, -1, -1),
+  _colour(UndefinedColour),
   _colourTransparent(false),
   _fixedSize(fixedSize),
   _model(""),
@@ -92,12 +93,12 @@ void EntityClass::setIsLight(bool val)
         _fixedSize = true;
 }
 
-void EntityClass::setColour(const Vector3& colour)
+void EntityClass::setColour(const Vector4& colour)
 {
     _colour = colour;
 
     // Set the entity colour to default, if none was specified
-    if (_colour == Vector3(-1, -1, -1))
+    if (_colour == UndefinedColour)
     {
         _colour = DefaultEntityColour;
     }
@@ -123,7 +124,13 @@ void EntityClass::resetColour()
     // Look for an editor_color on this class only
     const EntityClassAttribute& attr = getAttribute("editor_color", false);
     if (!attr.getValue().empty())
-        return setColour(string::convert<Vector3>(attr.getValue()));
+    {
+        // Set alpha to 0.5 if editor_transparent is set
+        Vector4 colour(string::convert<Vector3>(attr.getValue()),
+            _colourTransparent ? 0.5f : 1.0f);
+        setColour(colour);
+        return;
+    }
 
     // If there is a parent, inherit its getColour() directly, which takes into
     // account any EClassColourManager overrides at the parent level.
@@ -134,10 +141,11 @@ void EntityClass::resetColour()
     setColour(DefaultEntityColour);
 }
 
-const Vector3& EntityClass::getColour() const {
+const Vector4& EntityClass::getColour() const
+{
     return _colour;
 }
-
+#if 0
 const std::string& EntityClass::getWireShader() const
 {
     // Use a fallback shader colour in case we don't have anything
@@ -155,7 +163,7 @@ const std::string& EntityClass::getColourShader() const
     // Use a fallback shader colour in case we don't have anything
     return !_colourShader.empty() ? _colourShader : DefaultColourShader;
 }
-
+#endif
 /* ATTRIBUTES */
 
 /**
@@ -388,7 +396,7 @@ void EntityClass::clear()
     // Don't clear the name
     _isLight = false;
 
-    _colour = Vector3(-1,-1,-1);
+    _colour = UndefinedColour;
     _colourTransparent = false;
 
     _fixedSize = false;

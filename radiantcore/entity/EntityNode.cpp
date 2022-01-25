@@ -378,9 +378,10 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
 {
     if (renderSystem)
     {
-        _fillShader = renderSystem->capture(_spawnArgs.getEntityClass()->getFillShader());
-        _wireShader = renderSystem->capture(_spawnArgs.getEntityClass()->getWireShader());
-        _colourShader = renderSystem->capture(_spawnArgs.getEntityClass()->getColourShader());
+        const auto& colour = _spawnArgs.getEntityClass()->getColour();
+        _fillShader = renderSystem->capture(ColourShaderType::CameraSolid, colour);
+        _wireShader = renderSystem->capture(ColourShaderType::OrthoviewSolid, colour);
+        _colourShader = renderSystem->capture(ColourShaderType::CameraAndOrthoview, colour);
         _textRenderer = renderSystem->captureTextRenderer(IGLFont::Style::Sans, 14);
     }
     else
@@ -460,7 +461,7 @@ const ShaderPtr& EntityNode::getFillShader() const
 
 Vector4 EntityNode::getEntityColour() const
 {
-    return Vector4(_spawnArgs.getEntityClass()->getColour(), 1.0);
+    return _spawnArgs.getEntityClass()->getColour();
 }
 
 void EntityNode::onPostUndo()

@@ -10,6 +10,7 @@
 
 #include "math/Vector3.h"
 #include "math/Vector4.h"
+#include "render/Colour4.h"
 #include "math/AABB.h"
 #include "render/ArbitraryMeshVertex.h"
 
@@ -597,6 +598,24 @@ enum class BuiltInShaderType
     OrthoMergeActionOverlayConflict,
 };
 
+// Available types of colour shaders. These areused 
+// to draw map items in the ortho view, or to render
+// connection lines, light volumes in both camera and ortho.
+enum class ColourShaderType
+{
+    // Fill shader, non-transparent
+    CameraSolid,
+
+    // Fill shader with transparency
+    CameraTranslucent,
+
+    // Solid lines used for ortho view rendering
+    OrthoviewSolid,
+
+    // Items drawn in both camera and ortho views
+    CameraAndOrthoview,
+};
+
 /**
  * \brief
  * The main interface for the backend renderer.
@@ -632,6 +651,12 @@ public:
      * things like connectors, lines, points and overlays.
      */
     virtual ShaderPtr capture(BuiltInShaderType type) = 0;
+
+    /**
+     * Capture a colour shader, there are various types available
+     * for rendering in ortho views, camera or both.
+     */
+    virtual ShaderPtr capture(ColourShaderType type, const Colour4& colour) = 0;
 
     /**
      * \brief

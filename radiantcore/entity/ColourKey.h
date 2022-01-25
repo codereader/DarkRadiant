@@ -15,7 +15,7 @@ class ColourKey :
 	public KeyObserver
 {
 private:
-	ShaderPtr _wireShader;
+	ShaderPtr _colourShader;
 	Vector3 _colour;
 
 	RenderSystemWeakPtr _renderSystem;
@@ -59,23 +59,22 @@ public:
     /// Return a (possibly empty) reference to the Shader
     const ShaderPtr& getColourShader() const
     {
-        return _wireShader;
+        return _colourShader;
     }
 
 private:
 
 	void captureShader()
 	{
-		RenderSystemPtr renderSystem = _renderSystem.lock();
+		auto renderSystem = _renderSystem.lock();
 
 		if (renderSystem)
 		{
-			auto wireCol = fmt::format("{{{0:f} {1:f} {2:f}}}", _colour[0], _colour[1], _colour[2]);
-			_wireShader = renderSystem->capture(wireCol);
+			_colourShader = renderSystem->capture(ColourShaderType::CameraAndOrthoview, _colour);
 		}
 		else
 		{
-			_wireShader.reset();
+			_colourShader.reset();
 		}
 	}
 };

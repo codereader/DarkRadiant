@@ -60,7 +60,7 @@ void NullModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     if (renderSystem)
     {
         _fillShader = renderSystem->capture(BuiltInShaderType::MissingModel);
-        _wireShader = renderSystem->capture("<1.0 0 0>");
+        _wireShader = renderSystem->capture(ColourShaderType::OrthoviewSolid, { 1.0f, 0, 0, 1});
 
         _renderableBox.clear();
         _renderableBox.attachToShader(_fillShader);

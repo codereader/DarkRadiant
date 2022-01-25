@@ -1117,6 +1117,9 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\BuiltInShader.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\ColourShader.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2284,6 +2287,9 @@
       <Filter>src\entity</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\BuiltInShader.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\ColourShader.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
   </ItemGroup>

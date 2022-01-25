@@ -751,16 +751,10 @@ void OpenGLShader::constructFromMaterial(const MaterialPtr& material)
 
 void OpenGLShader::construct()
 {
-#if 0
-	// Retrieve the highlight colour from the colourschemes (once)
-	const static Colour4 highLightColour(
-        GlobalColourSchemeManager().getColour("selected_brush_camera"), 0.3f
-    );
-#endif
-    // Check the first character of the name to see if this is a special built-in
-    // shader
+    // Check the first character of the name to see if this is a special built-in shader
     switch (_name[0])
     {
+#if 0
         case '(': // fill shader
         {
             OpenGLState& state = appendDefaultPass();
@@ -803,7 +797,6 @@ void OpenGLShader::construct()
             enableViewType(RenderViewType::Camera);
             break;
         }
-
         case '<': // wireframe shader
         {
             // Wireframe renderer is using GL_LINES to display each winding
@@ -853,256 +846,13 @@ void OpenGLShader::construct()
             enableViewType(RenderViewType::Camera);
             break;
         }
+#endif
 
         case '$':
         {
             OpenGLState& state = appendDefaultPass();
 			state.setName(_name);
 
-#if 0
-            if (_name == "$POINT")
-            {
-              state.setRenderFlag(RENDER_POINT_COLOUR);
-              state.setRenderFlag(RENDER_DEPTHWRITE);
-
-              state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
-              state.m_pointsize = 4;
-
-              enableViewType(RenderViewType::Camera);
-              enableViewType(RenderViewType::OrthoView);
-            }
-            else
-#endif
-#if 0
-            if (_name == "$SELPOINT")
-            {
-              state.setRenderFlag(RENDER_POINT_COLOUR);
-              state.setRenderFlag(RENDER_DEPTHWRITE);
-
-              state.setSortPosition(OpenGLState::SORT_POINT_LAST);
-              state.m_pointsize = 4;
-
-              enableViewType(RenderViewType::Camera);
-              enableViewType(RenderViewType::OrthoView);
-            }
-#endif
-#if 0
-            else if (_name == "$BIGPOINT")
-            {
-              state.setRenderFlag(RENDER_POINT_COLOUR);
-              state.setRenderFlag(RENDER_DEPTHWRITE);
-
-              state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
-              state.m_pointsize = 6;
-
-              enableViewType(RenderViewType::Camera);
-              enableViewType(RenderViewType::OrthoView);
-            }
-            else 
-#endif
-#if 0
-            if (_name == "$PIVOT")
-            {
-              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
-              state.setSortPosition(OpenGLState::SORT_GUI0);
-              state.m_linewidth = 2;
-              state.setDepthFunc(GL_LEQUAL);
-
-              OpenGLState& hiddenLine = appendDefaultPass();
-			  hiddenLine.setName(_name + "_Hidden");
-              hiddenLine.setRenderFlags(RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
-              hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
-              hiddenLine.m_linewidth = 2;
-              hiddenLine.setDepthFunc(GL_GREATER);
-
-              enableViewType(RenderViewType::Camera);
-              enableViewType(RenderViewType::OrthoView);
-            }
-            else 
-#endif
-#if 0
-            if (_name == "$LATTICE")
-            {
-              state.setColour(1, 0.5, 0, 1);
-              state.setRenderFlag(RENDER_DEPTHWRITE);
-              state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
-
-              enableViewType(RenderViewType::Camera);
-              enableViewType(RenderViewType::OrthoView);
-            }
-#endif
-#if 0
-            else if (_name == "$WIREFRAME")
-            {
-              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
-              state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-            }
-#endif
-#if 0
-            else if (_name == "$CAM_HIGHLIGHT")
-            {
-				// This is the shader drawing a coloured overlay
-				// over faces/polys. Its colour is configurable,
-				// and it has depth test activated.
-				state.setRenderFlag(RENDER_FILL);
-				state.setRenderFlag(RENDER_DEPTHTEST);
-				state.setRenderFlag(RENDER_CULLFACE);
-				state.setRenderFlag(RENDER_BLEND);
-
-				state.setColour(highLightColour);
-				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
-				state.polygonOffset = 0.5f;
-				state.setDepthFunc(GL_LEQUAL);
-
-                enableViewType(RenderViewType::Camera);
-            }
-#endif
-#if 0
-            else if (_name == "$CAM_OVERLAY")
-            {
-				// This is the shader drawing a solid line to outline
-				// a selected item. The first pass has its depth test
-				// activated using GL_LESS, whereas the second pass
-				// draws the hidden lines in stippled appearance
-				// with its depth test using GL_GREATER.
-				state.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST);
-				state.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
-
-				// Second pass for hidden lines
-				OpenGLState& hiddenLine = appendDefaultPass();
-				hiddenLine.setColour(0.75, 0.75, 0.75, 1);
-				hiddenLine.setRenderFlags(RENDER_CULLFACE
-					| RENDER_DEPTHTEST
-					| RENDER_OFFSETLINE
-					| RENDER_LINESTIPPLE);
-				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
-				hiddenLine.setDepthFunc(GL_GREATER);
-				hiddenLine.m_linestipple_factor = 2;
-
-                enableViewType(RenderViewType::Camera);
-            }
-            else
-#endif
-#if 0
-            if (string::starts_with(_name, "$MERGE_ACTION_"))
-            {
-                Colour4 colour;
-                auto sortPosition = OpenGLState::SORT_OVERLAY_FIRST;
-                auto lineSortPosition = OpenGLState::SORT_OVERLAY_LAST;
-
-                if (string::ends_with(_name, "_ADD"))
-                {
-                    colour = Colour4(0, 0.9f, 0, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_THIRD; // render additions over removals
-                }
-                else if (string::ends_with(_name, "_REMOVE"))
-                {
-                    colour = Colour4(0.6f, 0.1f, 0, 0.5f);
-                    lineSortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
-                }
-                else if (string::ends_with(_name, "_CHANGE"))
-                {
-                    colour = Colour4(0, 0.4f, 0.9f, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_SECOND;
-                }
-                else if (string::ends_with(_name, "_CONFLICT"))
-                {
-                    colour = Colour4(0.9f, 0.5f, 0.0f, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
-                }
-
-                // This is the shader drawing a coloured overlay
-                // over faces/polys. Its colour is configurable,
-                // and it has depth test activated.
-                state.setRenderFlag(RENDER_FILL);
-                state.setRenderFlag(RENDER_DEPTHTEST);
-                state.setRenderFlag(RENDER_CULLFACE);
-                state.setRenderFlag(RENDER_BLEND);
-
-                state.setColour(colour);
-                state.setSortPosition(sortPosition);
-                state.polygonOffset = 0.5f;
-                state.setDepthFunc(GL_LEQUAL);
-
-                // This is the outline pass
-                auto& linesOverlay = appendDefaultPass();
-                colour[3] = 0.78f;
-                linesOverlay.setColour(colour);
-                linesOverlay.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST | RENDER_BLEND);
-                linesOverlay.setSortPosition(lineSortPosition);
-
-                enableViewType(RenderViewType::Camera);
-            }
-#endif
-#if 0
-            else if (_name == "$XY_OVERLAY")
-            {
-              Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_brush");
-              state.setColour(static_cast<float>(colorSelBrushes[0]),
-                              static_cast<float>(colorSelBrushes[1]),
-                              static_cast<float>(colorSelBrushes[2]),
-                              static_cast<float>(1));
-              state.setRenderFlag(RENDER_LINESTIPPLE);
-              state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
-              state.m_linewidth = 2;
-              state.m_linestipple_factor = 3;
-
-              enableViewType(RenderViewType::OrthoView);
-            }
-#endif
-#if 0
-			else if (_name == "$XY_OVERLAY_GROUP")
-			{
-				Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_group_items");
-                state.setColour(static_cast<float>(colorSelBrushes[0]),
-                    static_cast<float>(colorSelBrushes[1]),
-                    static_cast<float>(colorSelBrushes[2]),
-                    static_cast<float>(1));
-				state.setRenderFlag(RENDER_LINESTIPPLE);
-				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
-				state.m_linewidth = 2;
-				state.m_linestipple_factor = 3;
-
-                enableViewType(RenderViewType::OrthoView);
-			}
-            else
-#endif
-#if 0
-            if (string::starts_with(_name, "$XY_MERGE_ACTION_"))
-            {
-                Colour4 colour;
-                auto sortPosition = OpenGLState::SORT_OVERLAY_FIRST;
-                auto lineSortPosition = OpenGLState::SORT_OVERLAY_LAST;
-
-                if (string::ends_with(_name, "_ADD"))
-                {
-                    colour = Colour4(0, 0.5f, 0, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_THIRD; // render additions over removals
-                }
-                else if (string::ends_with(_name, "_REMOVE"))
-                {
-                    colour = Colour4(0.6f, 0.1f, 0, 0.5f);
-                    lineSortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
-                }
-                else if (string::ends_with(_name, "_CHANGE"))
-                {
-                    colour = Colour4(0, 0.4f, 0.9f, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_SECOND;
-                }
-                else if (string::ends_with(_name, "_CONFLICT"))
-                {
-                    colour = Colour4(0.9f, 0.5f, 0.0f, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
-                }
-
-                state.setColour(colour);
-                state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
-                state.m_linewidth = 2;
-
-                enableViewType(RenderViewType::OrthoView);
-            }
-            else
-#endif
             if (_name == "$XY_INACTIVE_NODE")
             {
                 Colour4 colour(0, 0, 0, 0.05f);
@@ -1123,142 +873,6 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::OrthoView);
             }
-#if 0
-            else if (_name == "$DEBUG_CLIPPED")
-            {
-              state.setRenderFlag(RENDER_DEPTHWRITE);
-              state.setSortPosition(OpenGLState::SORT_LAST);
-            }
-#endif
-#if 0
-            else if (_name == "$POINTFILE")
-            {
-              state.setColour(1, 0, 0, 1);
-              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
-              state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-              state.m_linewidth = 4;
-
-              enableViewType(RenderViewType::Camera);
-              enableViewType(RenderViewType::OrthoView);
-            }
-#endif
-#if 0
-            else if (_name == "$WIRE_OVERLAY")
-            {
-              state.setRenderFlags(RENDER_DEPTHWRITE
-                                 | RENDER_DEPTHTEST
-                                 | RENDER_OVERRIDE
-								 | RENDER_VERTEX_COLOUR);
-              state.setSortPosition(OpenGLState::SORT_GUI1);
-              state.setDepthFunc(GL_LEQUAL);
-
-              OpenGLState& hiddenLine = appendDefaultPass();
-			  hiddenLine.setName(_name + "_Hidden");
-              hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
-                                      | RENDER_DEPTHTEST
-                                      | RENDER_OVERRIDE
-                                      | RENDER_LINESTIPPLE
-									  | RENDER_VERTEX_COLOUR);
-              hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
-              hiddenLine.setDepthFunc(GL_GREATER);
-
-              enableViewType(RenderViewType::Camera);
-              enableViewType(RenderViewType::OrthoView);
-            }
-#endif
-#if 0
-            else if (_name == "$FLATSHADE_OVERLAY")
-            {
-              state.setRenderFlags(RENDER_CULLFACE
-                                 | RENDER_LIGHTING
-                                 | RENDER_SMOOTH
-                                 | RENDER_SCALED
-                                 | RENDER_FILL
-                                 | RENDER_DEPTHWRITE
-                                 | RENDER_DEPTHTEST
-                                 | RENDER_OVERRIDE);
-              state.setSortPosition(OpenGLState::SORT_GUI1);
-              state.setDepthFunc(GL_LEQUAL);
-
-              OpenGLState& hiddenLine = appendDefaultPass();
-			  hiddenLine.setName(_name + "_Hidden");
-              hiddenLine.setRenderFlags(RENDER_CULLFACE
-                                      | RENDER_LIGHTING
-                                      | RENDER_SMOOTH
-                                      | RENDER_SCALED
-                                      | RENDER_FILL
-                                      | RENDER_DEPTHWRITE
-                                      | RENDER_DEPTHTEST
-                                      | RENDER_OVERRIDE
-                                      | RENDER_POLYGONSTIPPLE);
-              hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
-              hiddenLine.setDepthFunc(GL_GREATER);
-
-              enableViewType(RenderViewType::Camera);
-              enableViewType(RenderViewType::OrthoView);
-            }
-#endif
-#if 0
-            else if (_name == "$CLIPPER_OVERLAY")
-            {
-              state.setColour(GlobalColourSchemeManager().getColour("clipper"));
-              state.setRenderFlags(RENDER_CULLFACE
-                                 | RENDER_DEPTHWRITE
-                                 | RENDER_FILL
-                                 | RENDER_POLYGONSTIPPLE);
-              state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
-
-              enableViewType(RenderViewType::Camera);
-              enableViewType(RenderViewType::OrthoView);
-            }
-#endif
-#if 0
-            else if (_name == "$AAS_AREA")
-            {
-				state.setColour(1, 1, 1, 1);
-				state.setRenderFlags(RENDER_DEPTHWRITE
-					| RENDER_DEPTHTEST
-					| RENDER_OVERRIDE);
-				state.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
-				state.setDepthFunc(GL_LEQUAL);
-
-				OpenGLState& hiddenLine = appendDefaultPass();
-				hiddenLine.setColour(1, 1, 1, 1);
-				hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
-					| RENDER_DEPTHTEST
-					| RENDER_OVERRIDE
-					| RENDER_LINESTIPPLE);
-				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
-				hiddenLine.setDepthFunc(GL_GREATER);
-
-                enableViewType(RenderViewType::Camera);
-            }
-#endif
-#if 0
-            else if (_name == "$MISSING_MODEL")
-            {
-                // Render a custom texture
-                auto imgPath = module::GlobalModuleRegistry().getApplicationContext().getBitmapsPath();
-                imgPath += "missing_model.tga";
-
-                auto editorTex = GlobalMaterialManager().loadTextureFromFile(imgPath);
-                state.texture0 = editorTex ? editorTex->getGLTexNum() : 0;
-
-                state.setRenderFlag(RENDER_FILL);
-                state.setRenderFlag(RENDER_TEXTURE_2D);
-                state.setRenderFlag(RENDER_DEPTHTEST);
-                state.setRenderFlag(RENDER_LIGHTING);
-                state.setRenderFlag(RENDER_SMOOTH);
-                state.setRenderFlag(RENDER_DEPTHWRITE);
-                state.setRenderFlag(RENDER_CULLFACE);
-                
-                // Set the GL color to white
-                state.setColour(Colour4::WHITE());
-                state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-
-                enableViewType(RenderViewType::Camera);
-            }
-#endif
             else
             {
                 assert(false);
@@ -1296,6 +910,11 @@ bool OpenGLShader::isApplicableTo(RenderViewType renderViewType) const
 void OpenGLShader::enableViewType(RenderViewType renderViewType)
 {
     _enabledViewTypes |= static_cast<std::size_t>(renderViewType);
+}
+
+void OpenGLShader::setWindingRenderer(std::unique_ptr<IBackendWindingRenderer> renderer)
+{
+    _windingRenderer = std::move(renderer);
 }
 
 }

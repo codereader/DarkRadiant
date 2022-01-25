@@ -9,6 +9,7 @@
 #include "module/StaticModule.h"
 #include "backend/GLProgramFactory.h"
 #include "backend/BuiltInShader.h"
+#include "backend/ColourShader.h"
 #include "debugging/debugging.h"
 
 #include <functional>
@@ -131,7 +132,7 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name, const std::functi
 
 ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 {
-    // Forward to the method accepting our factory method
+    // Forward to the method accepting our factory function
     return capture(name, [&]()
     { 
         return std::make_shared<OpenGLShader>(name, *this); 
@@ -140,12 +141,23 @@ ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
 
 ShaderPtr OpenGLRenderSystem::capture(BuiltInShaderType type)
 {
-    // Forward to the method accepting our factory method
+    // Forward to the method accepting our factory function
     auto name = BuiltInShader::GetNameForType(type);
 
     return capture(name, [&]()
     {
         return std::make_shared<BuiltInShader>(type, *this);
+    });
+}
+
+ShaderPtr OpenGLRenderSystem::capture(ColourShaderType type, const Colour4& colour)
+{
+    // Forward to the method accepting our factory function
+    auto name = ColourShader::ConstructName(type, colour);
+
+    return capture(name, [&]()
+    {
+        return std::make_shared<ColourShader>(type, colour, *this);
     });
 }
 

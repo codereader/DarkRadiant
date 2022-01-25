@@ -1,24 +1,3 @@
-/*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
 /**
  * \defgroup eclass Entity class manager
  * \file ieclass.h
@@ -31,6 +10,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "imodule.h"
 #include "math/Vector3.h"
+#include "math/Vector4.h"
 
 #include <vector>
 #include <list>
@@ -174,19 +154,19 @@ public:
     /* ENTITY CLASS COLOURS */
 
     /// Return the display colour of this entity class
-    virtual const Vector3& getColour() const = 0;
+    virtual const Vector4& getColour() const = 0;
 
     // Overrides the colour defined in the .def files
-    virtual void setColour(const Vector3& colour) = 0;
+    virtual void setColour(const Vector4& colour) = 0;
 
     /// Get the shader used for rendering this entity class in wireframe mode.
-    virtual const std::string& getWireShader() const = 0;
-
-    /// Get the shader used for rendering this entity class in filled mode.
-    virtual const std::string& getFillShader() const = 0;
-
-    // Get the shader name used for rendering coloured primitives in both cam and ortho
-    virtual const std::string& getColourShader() const = 0;
+    //virtual const std::string& getWireShader() const = 0;
+    //
+    ///// Get the shader used for rendering this entity class in filled mode.
+    //virtual const std::string& getFillShader() const = 0;
+    //
+    //// Get the shader name used for rendering coloured primitives in both cam and ortho
+    //virtual const std::string& getColourShader() const = 0;
 
 
     /* ENTITY CLASS ATTRIBUTES */

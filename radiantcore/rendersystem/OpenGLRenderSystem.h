@@ -68,6 +68,7 @@ public:
 
 	ShaderPtr capture(const std::string& name) override;
     ShaderPtr capture(BuiltInShaderType type) override;
+    ShaderPtr capture(ColourShaderType type, const Colour4& colour) override;
 	void render(RenderViewType renderViewType, RenderStateFlags globalstate,
                 const Matrix4& modelview,
                 const Matrix4& projection,
