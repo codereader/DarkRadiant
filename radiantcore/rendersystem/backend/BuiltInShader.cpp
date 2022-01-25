@@ -234,9 +234,77 @@ void BuiltInShader::construct()
         break;
     }
 
+    case BuiltInShaderType::PatchLattice:
+    {
+        pass.setColour(1, 0.5, 0, 1);
+        pass.setRenderFlag(RENDER_DEPTHWRITE);
+        pass.setSortPosition(OpenGLState::SORT_POINT_FIRST);
+
+        enableViewType(RenderViewType::Camera);
+        enableViewType(RenderViewType::OrthoView);
+        break;
+    }
+
+    case BuiltInShaderType::CameraMergeActionOverlayAdd:
+    {
+        // render additions over removals
+        constructCameraMergeActionOverlay(pass, { 0, 0.9f, 0, 0.5f },
+            OpenGLState::SORT_OVERLAY_THIRD, OpenGLState::SORT_OVERLAY_LAST);
+        break;
+    }
+
+    case BuiltInShaderType::CameraMergeActionOverlayRemove:
+    {
+        constructCameraMergeActionOverlay(pass, { 0.6f, 0.1f, 0, 0.5f },
+            OpenGLState::SORT_OVERLAY_FIRST, OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST);
+        break;
+    }
+
+    case BuiltInShaderType::CameraMergeActionOverlayChange:
+    {
+        constructCameraMergeActionOverlay(pass, { 0, 0.4f, 0.9f, 0.5f },
+            OpenGLState::SORT_OVERLAY_SECOND, OpenGLState::SORT_OVERLAY_LAST);
+        break;
+    }
+
+    case BuiltInShaderType::CameraMergeActionOverlayConflict:
+    {
+        constructCameraMergeActionOverlay(pass, { 0.9f, 0.5f, 0.0f, 0.5f },
+            OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST, OpenGLState::SORT_OVERLAY_LAST);
+        break;
+    }
+
     default:
         throw std::runtime_error("Cannot construct this shader: " + getName());
     }
+}
+
+void BuiltInShader::constructCameraMergeActionOverlay(OpenGLState& pass, const Colour4& colour, 
+    OpenGLState::SortPosition sortPosition, OpenGLState::SortPosition lineSortPosition)
+{
+    // This is a pass drawing a coloured overlay
+    // over faces/polys. Its colour is configurable,
+    // and it has depth test activated.
+    pass.setRenderFlag(RENDER_FILL);
+    pass.setRenderFlag(RENDER_DEPTHTEST);
+    pass.setRenderFlag(RENDER_CULLFACE);
+    pass.setRenderFlag(RENDER_BLEND);
+
+    pass.setColour(colour);
+    pass.setSortPosition(sortPosition);
+    pass.polygonOffset = 0.5f;
+    pass.setDepthFunc(GL_LEQUAL);
+
+    // This is the outline pass
+    auto& linesOverlay = appendDefaultPass();
+    auto lineOverlayColour = colour;
+    lineOverlayColour[3] = 0.78f;
+
+    linesOverlay.setColour(lineOverlayColour);
+    linesOverlay.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST | RENDER_BLEND);
+    linesOverlay.setSortPosition(lineSortPosition);
+
+    enableViewType(RenderViewType::Camera);
 }
 
 void BuiltInShader::constructPointShader(OpenGLState& pass, float pointSize, OpenGLState::SortPosition sort)

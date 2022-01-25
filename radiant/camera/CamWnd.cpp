@@ -971,10 +971,10 @@ void CamWnd::captureStates()
 {
     _shaders.faceHighlightShader = GlobalRenderSystem().capture(BuiltInShaderType::ColouredPolygonOverlay);
     _shaders.primitiveHighlightShader = GlobalRenderSystem().capture(BuiltInShaderType::HighlightedPolygonOutline);
-    _shaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$MERGE_ACTION_ADD");
-    _shaders.mergeActionShaderChange = GlobalRenderSystem().capture("$MERGE_ACTION_CHANGE");
-    _shaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$MERGE_ACTION_REMOVE");
-    _shaders.mergeActionShaderConflict = GlobalRenderSystem().capture("$MERGE_ACTION_CONFLICT");
+    _shaders.mergeActionShaderAdd = GlobalRenderSystem().capture(BuiltInShaderType::CameraMergeActionOverlayAdd);
+    _shaders.mergeActionShaderChange = GlobalRenderSystem().capture(BuiltInShaderType::CameraMergeActionOverlayChange);
+    _shaders.mergeActionShaderRemove = GlobalRenderSystem().capture(BuiltInShaderType::CameraMergeActionOverlayRemove);
+    _shaders.mergeActionShaderConflict = GlobalRenderSystem().capture(BuiltInShaderType::CameraMergeActionOverlayConflict);
 }
 
 void CamWnd::releaseStates() 

@@ -542,6 +542,9 @@ enum class BuiltInShaderType
     // A bigger version of "Point"
     BigPoint,
 
+    // Lines connecting the patch control points
+    PatchLattice,
+
     // Line shader drawing above regular things
     WireframeOverlay,
 
@@ -580,6 +583,14 @@ enum class BuiltInShaderType
 
     // Line shader used for drawing the three axes at entity origins
     Pivot,
+
+    // Coloured merge action highlights (camera)
+    CameraMergeActionOverlayAdd,
+    CameraMergeActionOverlayRemove,
+    CameraMergeActionOverlayChange,
+    CameraMergeActionOverlayConflict,
+
+
 };
 
 /**

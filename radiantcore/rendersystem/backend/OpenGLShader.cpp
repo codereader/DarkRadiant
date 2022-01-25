@@ -919,6 +919,7 @@ void OpenGLShader::construct()
             }
             else 
 #endif
+#if 0
             if (_name == "$LATTICE")
             {
               state.setColour(1, 0.5, 0, 1);
@@ -928,6 +929,7 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+#endif
 #if 0
             else if (_name == "$WIREFRAME")
             {
@@ -978,8 +980,10 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::Camera);
             }
+            else
 #endif
-            else if (string::starts_with(_name, "$MERGE_ACTION_"))
+#if 0
+            if (string::starts_with(_name, "$MERGE_ACTION_"))
             {
                 Colour4 colour;
                 auto sortPosition = OpenGLState::SORT_OVERLAY_FIRST;
@@ -1028,6 +1032,7 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::Camera);
             }
+#endif
 #if 0
             else if (_name == "$XY_OVERLAY")
             {
@@ -1059,8 +1064,9 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::OrthoView);
 			}
+            else
 #endif
-            else if (string::starts_with(_name, "$XY_MERGE_ACTION_"))
+            if (string::starts_with(_name, "$XY_MERGE_ACTION_"))
             {
                 Colour4 colour;
                 auto sortPosition = OpenGLState::SORT_OVERLAY_FIRST;
