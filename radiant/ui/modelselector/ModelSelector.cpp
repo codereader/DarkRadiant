@@ -258,7 +258,23 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
     _materialsList->updateFromModel(model);
 }
 
-// Helper function to create the TreeView
+wxWindow* ModelSelector::setupTreeViewToolbar(wxWindow* parent)
+{
+    // Set up the top treeview toolbar, including a custom button to enable/disable the showing of
+    // skins in the tree.
+    auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
+    auto* showSkinsBtn = new wxutil::BitmapToggleButton(toolbar,
+                                                        wxutil::GetLocalBitmap("skin16.png"),
+                                                        wxutil::GetLocalBitmap("skin16.png"));
+    showSkinsBtn->SetValue(true);
+    showSkinsBtn->SetToolTip(_("List model skins in the tree underneath their associated models"));
+    showSkinsBtn->Bind(wxEVT_TOGGLEBUTTON,
+                       [this](auto& ev) { _treeView->SetShowSkins(ev.IsChecked()); });
+    toolbar->GetRightSizer()->Add(showSkinsBtn, wxSizerFlags().Border(wxLEFT, 6));
+
+    return toolbar;
+}
+
 void ModelSelector::setupTreeView(wxWindow* parent)
 {
     _treeView = new ModelTreeView(parent);
@@ -269,20 +285,10 @@ void ModelSelector::setupTreeView(wxWindow* parent)
     _treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED,
                     &ModelSelector::onTreeViewPopulationFinished, this);
 
-    // Set up the top treeview toolbar, including a custom button to enable/disable the showing of
-    // skins in the tree.
-    auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
-    auto* showSkinsBtn = new wxutil::BitmapToggleButton(toolbar,
-                                                        wxutil::GetLocalBitmap("skin16.png"),
-                                                        wxutil::GetLocalBitmap("skin16.png"));
-    showSkinsBtn->SetToolTip(_("Show skins in the tree as children of their associated models"));
-    showSkinsBtn->Bind(wxEVT_TOGGLEBUTTON,
-                       [this](auto& ev) { _treeView->SetShowSkins(ev.IsChecked()); });
-    toolbar->GetRightSizer()->Add(showSkinsBtn, wxSizerFlags().Border(wxLEFT, 6));
-
+    // Pack in tree view and its toolbar
     parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
-    parent->GetSizer()->Prepend(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT,
-                                6);
+    parent->GetSizer()->Prepend(setupTreeViewToolbar(parent), 0,
+                                wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
     parent->GetSizer()->Layout();
 
     // Accept the dialog on double-clicking on a model in the list

@@ -42,11 +42,8 @@ class ModelSelector;
 typedef std::shared_ptr<ModelSelector> ModelSelectorPtr;
 
 /// Dialog for browsing and selecting a model and/or skin
-class ModelSelector :
-	public wxutil::DialogBase,
-    private wxutil::XmlResourceBasedWidget
+class ModelSelector: public wxutil::DialogBase, private wxutil::XmlResourceBasedWidget
 {
-private:
 	wxPanel* _dialogPanel;
 
 	// Model preview widget
@@ -94,6 +91,7 @@ private:
 	// Helper functions to configure GUI components
     void setupAdvancedPanel(wxWindow* parent);
     void setupTreeView(wxWindow* parent);
+    wxWindow* setupTreeViewToolbar(wxWindow* parent);
 
 	// Populate the tree view with models
 	void populateModels();
