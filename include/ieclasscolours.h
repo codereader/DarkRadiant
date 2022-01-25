@@ -25,7 +25,7 @@ public:
     // defined in the entityDef block.
     // Adding an override for an entity class will replace any existing overrides.
     // The colour is given in RGB values with each component in the interval [0..1].
-    virtual void addOverrideColour(const std::string& eclass, const Vector3& colour) = 0;
+    virtual void addOverrideColour(const std::string& eclass, const Vector4& colour) = 0;
 
     /**
      * \brief Applies a possible colour override to the given entity class.
@@ -38,7 +38,7 @@ public:
     virtual bool applyColours(IEntityClass& eclass) = 0;
 
     // Visit each override definition with the given functor
-    virtual void foreachOverrideColour(const std::function<void(const std::string&, const Vector3&)>& functor) = 0;
+    virtual void foreachOverrideColour(const std::function<void(const std::string&, const Vector4&)>& functor) = 0;
 
     // Removes the override colour for the given entity class
     virtual void removeOverrideColour(const std::string& eclass) = 0;

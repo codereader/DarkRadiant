@@ -6,7 +6,7 @@
 namespace eclass
 {
 
-void EClassColourManager::addOverrideColour(const std::string& eclass, const Vector3& colour)
+void EClassColourManager::addOverrideColour(const std::string& eclass, const Vector4& colour)
 {
     _overrides[eclass] = colour;
     _overrideChangedSignal.emit(eclass, false); // false ==> colour added
@@ -24,7 +24,7 @@ bool EClassColourManager::applyColours(IEntityClass& eclass)
 }
 
 void EClassColourManager::foreachOverrideColour(
-    const std::function<void(const std::string&, const Vector3&)>& functor)
+    const std::function<void(const std::string&, const Vector4&)>& functor)
 {
     for (const auto& pair : _overrides)
     {

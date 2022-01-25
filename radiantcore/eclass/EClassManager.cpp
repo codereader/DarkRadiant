@@ -204,7 +204,7 @@ void EClassManager::loadDefAndResolveInheritance()
 
 void EClassManager::applyColours()
 {
-    GlobalEclassColourManager().foreachOverrideColour([&](const std::string& eclass, const Vector3& colour)
+    GlobalEclassColourManager().foreachOverrideColour([&](const std::string& eclass, const Vector4& colour)
     {
         auto foundEclass = _entityClasses.find(string::to_lower_copy(eclass));
         if (foundEclass != _entityClasses.end())
