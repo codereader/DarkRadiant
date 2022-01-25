@@ -21,11 +21,11 @@
 #include "string/convert.h"
 
 #include <wx/button.h>
+#include <wx/tglbtn.h>
 #include <wx/panel.h>
 #include <wx/splitter.h>
 #include <wx/checkbox.h>
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
-#include "wxutil/BitmapToggleButton.h"
 #include "wxutil/Bitmap.h"
 #include "ui/UserInterfaceModule.h"
 
@@ -263,9 +263,8 @@ wxWindow* ModelSelector::setupTreeViewToolbar(wxWindow* parent)
     // Set up the top treeview toolbar, including a custom button to enable/disable the showing of
     // skins in the tree.
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
-    auto* showSkinsBtn = new wxutil::BitmapToggleButton(toolbar,
-                                                        wxutil::GetLocalBitmap("skin16.png"),
-                                                        wxutil::GetLocalBitmap("skin16.png"));
+    auto* showSkinsBtn = new wxBitmapToggleButton(toolbar, wxID_ANY,
+                                                  wxutil::GetLocalBitmap("skin16.png"));
     showSkinsBtn->SetValue(true);
     showSkinsBtn->SetToolTip(_("List model skins in the tree underneath their associated models"));
     showSkinsBtn->Bind(wxEVT_TOGGLEBUTTON,
