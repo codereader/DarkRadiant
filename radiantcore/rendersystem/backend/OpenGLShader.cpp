@@ -754,96 +754,15 @@ void OpenGLShader::construct()
     // Check the first character of the name to see if this is a special built-in shader
     switch (_name[0])
     {
-#if 0
+#if 1
+        // I'll leave these here to catch my attention
         case '(': // fill shader
-        {
-            OpenGLState& state = appendDefaultPass();
-			state.setName(_name);
-
-            Colour4 colour;
-            sscanf(_name.c_str(), "(%f %f %f)", &colour[0], &colour[1], &colour[2]);
-            colour[3] = 1.0f;
-            state.setColour(colour);
-
-            state.setRenderFlag(RENDER_FILL);
-            state.setRenderFlag(RENDER_LIGHTING);
-            state.setRenderFlag(RENDER_DEPTHTEST);
-            state.setRenderFlag(RENDER_CULLFACE);
-            state.setRenderFlag(RENDER_DEPTHWRITE);
-            state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-
-            enableViewType(RenderViewType::Camera);
-            break;
-        }
-
         case '[':
-        {
-            OpenGLState& state = appendDefaultPass();
-			state.setName(_name);
-
-            Colour4 colour;
-            sscanf(_name.c_str(), "[%f %f %f]", &colour[0], &colour[1], &colour[2]);
-            colour[3] = 0.5f;
-            state.setColour(colour);
-
-            state.setRenderFlag(RENDER_FILL);
-            state.setRenderFlag(RENDER_LIGHTING);
-            state.setRenderFlag(RENDER_DEPTHTEST);
-            state.setRenderFlag(RENDER_CULLFACE);
-            state.setRenderFlag(RENDER_DEPTHWRITE);
-            state.setRenderFlag(RENDER_BLEND);
-            state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
-
-            enableViewType(RenderViewType::Camera);
-            break;
-        }
         case '<': // wireframe shader
-        {
-            // Wireframe renderer is using GL_LINES to display each winding
-            _windingRenderer.reset(new WindingRenderer<WindingIndexer_Lines>());
-
-            OpenGLState& state = appendDefaultPass();
-			state.setName(_name);
-
-            Colour4 colour;
-            sscanf(_name.c_str(), "<%f %f %f>", &colour[0], &colour[1], &colour[2]);
-            colour[3] = 1;
-            state.setColour(colour);
-
-            state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
-            state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-            state.setDepthFunc(GL_LESS);
-            state.m_linewidth = 1;
-            state.m_pointsize = 1;
-
-            enableViewType(RenderViewType::OrthoView);
-            break;
-        }
-
         case '{': // cam + wireframe shader
         {
-            OpenGLState& state = appendDefaultPass();
-            state.setName(_name);
-
-            Colour4 colour;
-            sscanf(_name.c_str(), "{%f %f %f}", &colour[0], &colour[1], &colour[2]);
-            colour[3] = 1;
-            state.setColour(colour);
-
-            state.setRenderFlag(RENDER_FILL);
-            state.setRenderFlag(RENDER_LIGHTING);
-            state.setRenderFlag(RENDER_DEPTHTEST);
-            state.setRenderFlag(RENDER_CULLFACE);
-            state.setRenderFlag(RENDER_DEPTHWRITE);
-            state.setRenderFlag(RENDER_BLEND);
-            state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
-            state.setDepthFunc(GL_LESS);
-            state.m_linewidth = 1;
-            state.m_pointsize = 1;
-
-            // Applicable to both views
-            enableViewType(RenderViewType::OrthoView);
-            enableViewType(RenderViewType::Camera);
+            rWarning() << "Legacy shader request encountered" << std::endl;
+            assert(false);
             break;
         }
 #endif
