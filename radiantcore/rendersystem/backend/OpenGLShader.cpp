@@ -115,7 +115,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     }
 }
 
-void OpenGLShader::drawSurfaces(const VolumeTest& view)
+void OpenGLShader::drawSurfaces(const VolumeTest& view, const RenderInfo& info)
 {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -127,12 +127,12 @@ void OpenGLShader::drawSurfaces(const VolumeTest& view)
 
     if (hasSurfaces())
     {
-        _geometryRenderer.render();
-        _surfaceRenderer.render(view);
+        _geometryRenderer.render(info);
+        _surfaceRenderer.render(view, info);
     }
 
     // Render all windings
-    _windingRenderer->renderAllWindings();
+    _windingRenderer->renderAllWindings(info);
 
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);

@@ -579,7 +579,8 @@ void OpenGLShaderPass::render(OpenGLState& current,
     // Apply our state to the current state object
     applyState(current, flagsMask, viewer, time, NULL);
 
-    _owner.drawSurfaces(view);
+    RenderInfo info(current.getRenderFlags(), viewer, current.cubeMapMode);
+    _owner.drawSurfaces(view, info);
 
     if (!_renderablesWithoutEntity.empty())
     {

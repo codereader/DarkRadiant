@@ -1,5 +1,6 @@
 #pragma once
 
+#include "irender.h"
 #include "igeometryrenderer.h"
 
 namespace render
@@ -32,14 +33,25 @@ private:
             _indices.clear();
         }
 
-        void render() const
+        void render(bool renderBump) const
         {
             if (_indices.empty()) return;
 
             glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
-            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
-            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
             glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().colour);
+
+            if (renderBump)
+            {
+                glVertexAttribPointer(ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
+                glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
+                glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().tangent);
+                glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().bitangent);
+            }
+            else
+            {
+                glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
+                glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
+            }
 
             glDrawElements(_mode, static_cast<GLsizei>(_indices.size()), GL_UNSIGNED_INT, &_indices.front());
         }
@@ -163,7 +175,7 @@ public:
         _surfaces.at(slot).surfaceDataChanged = true;
     }
 
-    void render(const VolumeTest& view)
+    void render(const VolumeTest& view, const RenderInfo& info)
     {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -176,7 +188,7 @@ public:
 
         for (auto& surface : _surfaces)
         {
-            renderSlot(surface.second, &view);
+            renderSlot(surface.second, &view, info.checkFlag(RENDER_BUMP));
         }
 
         glDisableClientState(GL_NORMAL_ARRAY);
@@ -201,7 +213,7 @@ public:
     }
 
 private:
-    void renderSlot(SurfaceInfo& slot, const VolumeTest* view = nullptr)
+    void renderSlot(SurfaceInfo& slot, const VolumeTest* view = nullptr, bool renderBump = false)
     {
         auto& surface = slot.surface.get();
 
@@ -230,7 +242,7 @@ private:
 
         glMultMatrixd(surface.getSurfaceTransform());
 
-        slot.buffer.render();
+        slot.buffer.render(renderBump);
 
         glPopMatrix();
     }

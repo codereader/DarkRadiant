@@ -26,14 +26,25 @@ private:
             return _indices.empty();
         }
 
-        void render() const
+        void render(bool renderBump) const
         {
             if (_indices.empty()) return;
 
             glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
-            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
-            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
             glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().colour);
+
+            if (renderBump)
+            {
+                glVertexAttribPointer(ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
+                glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
+                glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().tangent);
+                glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().bitangent);
+            }
+            else
+            {
+                glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
+                glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
+            }
 
             glDrawElements(_mode, static_cast<GLsizei>(_indices.size()), GL_UNSIGNED_INT, &_indices.front());
         }
@@ -216,7 +227,7 @@ public:
         bucket.updateSurface(slotInfo.firstVertex, slotInfo.firstIndex, vertices, indices);
     }
 
-    void render()
+    void render(const RenderInfo& info)
     {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -227,7 +238,7 @@ public:
 
         for (auto& buffer : _buffers)
         {
-            buffer.render();
+            buffer.render(info.checkFlag(RENDER_BUMP));
         }
 
         glDisableClientState(GL_NORMAL_ARRAY);

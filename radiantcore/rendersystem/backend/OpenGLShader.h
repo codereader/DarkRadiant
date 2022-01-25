@@ -102,7 +102,7 @@ public:
                        const IRenderEntity* entity) override;
 
     bool hasSurfaces() const;
-    void drawSurfaces(const VolumeTest& view);
+    void drawSurfaces(const VolumeTest& view, const RenderInfo& info);
 
     IGeometryRenderer::Slot addGeometry(GeometryType indexType,
         const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "igl.h"
+#include "irender.h"
 #include <limits>
 #include "iwindingrenderer.h"
 #include "CompactWindingVertexBuffer.h"
@@ -20,7 +21,7 @@ public:
     virtual bool empty() const = 0;
 
     // Issues the openGL calls to render the vertex buffers
-    virtual void renderAllWindings() = 0;
+    virtual void renderAllWindings(const RenderInfo& info) = 0;
 };
 
 // Traits class to retrieve the GLenum render mode based on the indexer type
@@ -185,7 +186,7 @@ public:
         bucket.buffer.replaceWinding(slotMapping.slotNumber, vertices);
     }
 
-    void renderAllWindings() override
+    void renderAllWindings(const RenderInfo& info) override
     {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -205,8 +206,19 @@ public:
             const auto& indices = bucket.buffer.getIndices();
 
             glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
-            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
-            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
+
+            if (info.checkFlag(RENDER_BUMP))
+            {
+                glVertexAttribPointer(ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
+                glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
+                glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().tangent);
+                glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().bitangent);
+            }
+            else
+            {
+                glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
+                glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
+            }
             
             auto primitiveMode = RenderingTraits<WindingIndexerT>::Mode();
             glDrawElements(primitiveMode, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, &indices.front());
