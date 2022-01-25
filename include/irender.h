@@ -590,7 +590,11 @@ enum class BuiltInShaderType
     CameraMergeActionOverlayChange,
     CameraMergeActionOverlayConflict,
 
-
+    // Coloured merge action highlights (ortho)
+    OrthoMergeActionOverlayAdd,
+    OrthoMergeActionOverlayRemove,
+    OrthoMergeActionOverlayChange,
+    OrthoMergeActionOverlayConflict,
 };
 
 /**

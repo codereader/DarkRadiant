@@ -22,6 +22,8 @@ protected:
     void constructWireframeSelectionOverlay(OpenGLState& pass, const std::string& schemeColourKey);
     void constructCameraMergeActionOverlay(OpenGLState& pass, const Colour4& colour, 
         OpenGLState::SortPosition sortPosition, OpenGLState::SortPosition lineSortPosition);
+    void constructOrthoMergeActionOverlay(OpenGLState& pass, const Colour4& colour,
+        OpenGLState::SortPosition sortPosition);
 };
 
 }

@@ -274,12 +274,47 @@ void BuiltInShader::construct()
         break;
     }
 
+    case BuiltInShaderType::OrthoMergeActionOverlayAdd:
+    {
+        // render additions over removals
+        constructOrthoMergeActionOverlay(pass, { 0, 0.5f, 0, 0.5f }, OpenGLState::SORT_OVERLAY_THIRD);
+        break;
+    }
+
+    case BuiltInShaderType::OrthoMergeActionOverlayRemove:
+    {
+        constructOrthoMergeActionOverlay(pass, { 0.6f, 0.1f, 0, 0.5f }, OpenGLState::SORT_OVERLAY_FIRST);
+        break;
+    }
+
+    case BuiltInShaderType::OrthoMergeActionOverlayChange:
+    {
+        constructOrthoMergeActionOverlay(pass, { 0, 0.4f, 0.9f, 0.5f }, OpenGLState::SORT_OVERLAY_SECOND);
+        break;
+    }
+
+    case BuiltInShaderType::OrthoMergeActionOverlayConflict:
+    {
+        constructOrthoMergeActionOverlay(pass, { 0.9f, 0.5f, 0.0f, 0.5f }, OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST);
+        break;
+    }
+
     default:
         throw std::runtime_error("Cannot construct this shader: " + getName());
     }
 }
 
-void BuiltInShader::constructCameraMergeActionOverlay(OpenGLState& pass, const Colour4& colour, 
+void BuiltInShader::constructOrthoMergeActionOverlay(OpenGLState& pass, const Colour4& colour,
+    OpenGLState::SortPosition sortPosition)
+{
+    pass.setColour(colour);
+    pass.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
+    pass.m_linewidth = 2;
+
+    enableViewType(RenderViewType::OrthoView);
+}
+
+void BuiltInShader::constructCameraMergeActionOverlay(OpenGLState& pass, const Colour4& colour,
     OpenGLState::SortPosition sortPosition, OpenGLState::SortPosition lineSortPosition)
 {
     // This is a pass drawing a coloured overlay

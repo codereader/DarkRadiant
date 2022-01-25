@@ -751,11 +751,12 @@ void OpenGLShader::constructFromMaterial(const MaterialPtr& material)
 
 void OpenGLShader::construct()
 {
+#if 0
 	// Retrieve the highlight colour from the colourschemes (once)
 	const static Colour4 highLightColour(
         GlobalColourSchemeManager().getColour("selected_brush_camera"), 0.3f
     );
-
+#endif
     // Check the first character of the name to see if this is a special built-in
     // shader
     switch (_name[0])
@@ -1066,6 +1067,7 @@ void OpenGLShader::construct()
 			}
             else
 #endif
+#if 0
             if (string::starts_with(_name, "$XY_MERGE_ACTION_"))
             {
                 Colour4 colour;
@@ -1099,7 +1101,9 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::OrthoView);
             }
-            else if (_name == "$XY_INACTIVE_NODE")
+            else
+#endif
+            if (_name == "$XY_INACTIVE_NODE")
             {
                 Colour4 colour(0, 0, 0, 0.05f);
                 state.setColour(static_cast<float>(colour[0]),
