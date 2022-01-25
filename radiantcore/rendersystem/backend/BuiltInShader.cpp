@@ -48,6 +48,54 @@ void BuiltInShader::construct()
         enableViewType(RenderViewType::OrthoView);
         break;
     }
+
+    case BuiltInShaderType::AasAreaBounds:
+    {
+        pass.setColour(1, 1, 1, 1);
+        pass.setRenderFlags(RENDER_DEPTHWRITE
+            | RENDER_DEPTHTEST
+            | RENDER_OVERRIDE);
+        pass.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
+        pass.setDepthFunc(GL_LEQUAL);
+
+        OpenGLState& hiddenLine = appendDefaultPass();
+        hiddenLine.setColour(1, 1, 1, 1);
+        hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
+            | RENDER_DEPTHTEST
+            | RENDER_OVERRIDE
+            | RENDER_LINESTIPPLE);
+        hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
+        hiddenLine.setDepthFunc(GL_GREATER);
+
+        enableViewType(RenderViewType::Camera);
+        break;
+    }
+
+    case BuiltInShaderType::MissingModel:
+    {
+        // Render a custom texture
+        auto imgPath = module::GlobalModuleRegistry().getApplicationContext().getBitmapsPath();
+        imgPath += "missing_model.tga";
+
+        auto editorTex = GlobalMaterialManager().loadTextureFromFile(imgPath);
+        pass.texture0 = editorTex ? editorTex->getGLTexNum() : 0;
+
+        pass.setRenderFlag(RENDER_FILL);
+        pass.setRenderFlag(RENDER_TEXTURE_2D);
+        pass.setRenderFlag(RENDER_DEPTHTEST);
+        pass.setRenderFlag(RENDER_LIGHTING);
+        pass.setRenderFlag(RENDER_SMOOTH);
+        pass.setRenderFlag(RENDER_DEPTHWRITE);
+        pass.setRenderFlag(RENDER_CULLFACE);
+
+        // Set the GL color to white
+        pass.setColour(Colour4::WHITE());
+        pass.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+
+        enableViewType(RenderViewType::Camera);
+        break;
+    }
+
     default:
         throw std::runtime_error("Cannot construct this shader: " + getName());
     }

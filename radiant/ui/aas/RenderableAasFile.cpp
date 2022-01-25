@@ -58,7 +58,7 @@ void RenderableAasFile::onPreRender(const VolumeTest& volume)
 
     if (!_normalShader)
     {
-        _normalShader = renderSystem->capture("$AAS_AREA");
+        _normalShader = renderSystem->capture(BuiltInShaderType::AasAreaBounds);
     }
 
     if (!_textRenderer)

@@ -537,6 +537,8 @@ enum class RenderViewType
 enum class BuiltInShaderType
 {
     FlatshadeOverlay,
+    AasAreaBounds,
+    MissingModel,
 };
 
 /**

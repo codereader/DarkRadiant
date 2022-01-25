@@ -1133,6 +1133,7 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+#if 0
             else if (_name == "$FLATSHADE_OVERLAY")
             {
               state.setRenderFlags(RENDER_CULLFACE
@@ -1163,6 +1164,7 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+#endif
             else if (_name == "$CLIPPER_OVERLAY")
             {
               state.setColour(GlobalColourSchemeManager().getColour("clipper"));
@@ -1175,6 +1177,7 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+#if 0
             else if (_name == "$AAS_AREA")
             {
 				state.setColour(1, 1, 1, 1);
@@ -1195,6 +1198,8 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::Camera);
             }
+#endif
+#if 0
             else if (_name == "$MISSING_MODEL")
             {
                 // Render a custom texture
@@ -1218,6 +1223,7 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::Camera);
             }
+#endif
             else
             {
                 assert(false);
