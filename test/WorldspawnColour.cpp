@@ -116,7 +116,7 @@ TEST_F(RadiantTest, SchemeBrushColourChange)
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
 
     // The eclass wire shader should match the colour defined in the scheme
-    const auto& schemeColour = GlobalColourSchemeManager().getActiveScheme().getColour("default_brush").getColour();
+    auto schemeColour = GlobalColourSchemeManager().getActiveScheme().getColour("default_brush").getColour();
     EXPECT_EQ(Node_getEntity(worldspawn)->getEntityClass()->getColour(), Vector4(schemeColour, 1));
 
     // Modify the brush colour
@@ -138,13 +138,11 @@ TEST_F(RadiantTest, SchemeBrushColourRevert)
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
 
     // The eclass wire shader should match the colour defined in the scheme
-    const auto& schemeColour = GlobalColourSchemeManager().getActiveScheme().getColour("default_brush").getColour();
+    auto schemeColour = GlobalColourSchemeManager().getActiveScheme().getColour("default_brush").getColour();
     EXPECT_EQ(Node_getEntity(worldspawn)->getEntityClass()->getColour(), Vector4(schemeColour, 1));
 
     // Modify the brush colour
     Vector3 changedColour(0.25, 0.9, 0.99);
-    auto changedWireShader = fmt::format("<{0:f} {1:f} {2:f}>", changedColour[0], changedColour[1], changedColour[2]);
-
     GlobalColourSchemeManager().getActiveScheme().getColour("default_brush").getColour() = changedColour;
 
     // This in itself doesn't affect the entity yet

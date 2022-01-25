@@ -301,12 +301,14 @@ TEST_F(TextureToolTest, PatchNodeBounds)
     {
         for (auto row = 0; row < 3; ++row)
         {
-            auto& ctrl = patch->ctrlAt(row, col);
+            auto& ctrl = patch->getTransformedCtrlAt(row, col);
 
             ctrl.texcoord = Vector2(origin.x() + step * col, origin.y() + step * row);
             checkedBounds.includePoint({ ctrl.texcoord.x(), ctrl.texcoord.y(), 0 });
         }
     }
+
+    patch->freezeTransform();
 
     scene::addNodeToContainer(patchNode, worldspawn);
     Node_setSelected(patchNode, true);
