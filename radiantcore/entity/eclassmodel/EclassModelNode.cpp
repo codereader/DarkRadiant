@@ -81,7 +81,7 @@ void EclassModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     if (renderSystem)
     {
-        _pivotShader = renderSystem->capture("$PIVOT");
+        _pivotShader = renderSystem->capture(BuiltInShaderType::Pivot);
     }
     else
     {

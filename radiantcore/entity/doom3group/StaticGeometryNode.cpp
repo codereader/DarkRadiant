@@ -392,7 +392,7 @@ void StaticGeometryNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     if (renderSystem)
     {
-        _pivotShader = renderSystem->capture("$PIVOT");
+        _pivotShader = renderSystem->capture(BuiltInShaderType::Pivot);
         _pointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
     }
     else

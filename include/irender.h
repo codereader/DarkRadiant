@@ -542,11 +542,22 @@ enum class BuiltInShaderType
     // A bigger version of "Point"
     BigPoint,
 
+    // Line shader drawing above regular things
     WireframeOverlay,
+
+    // Fill shader drawing above regular things
     FlatshadeOverlay,
+
+    // Line shader used for drawing AAS area bounds
     AasAreaBounds,
+
+    // Shader used for the boxes marking missing models
     MissingModel,
+
+    // The polygon showing the clip plane intersecting brushes
     BrushClipPlane,
+
+    // Line shader connecting the leak point trace
     PointTraceLines,
 
     // This is the shader drawing a coloured overlay
@@ -566,6 +577,9 @@ enum class BuiltInShaderType
 
     // Coloured line stipple overlay of selected grouped items (ortho)
     WireframeSelectionOverlayOfGroups,
+
+    // Line shader used for drawing the three axes at entity origins
+    Pivot,
 };
 
 /**

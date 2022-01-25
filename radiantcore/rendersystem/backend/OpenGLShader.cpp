@@ -872,6 +872,7 @@ void OpenGLShader::construct()
             }
             else
 #endif
+#if 0
             if (_name == "$SELPOINT")
             {
               state.setRenderFlag(RENDER_POINT_COLOUR);
@@ -883,6 +884,7 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+#endif
 #if 0
             else if (_name == "$BIGPOINT")
             {
@@ -895,8 +897,10 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+            else 
 #endif
-            else if (_name == "$PIVOT")
+#if 0
+            if (_name == "$PIVOT")
             {
               state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
               state.setSortPosition(OpenGLState::SORT_GUI0);
@@ -913,7 +917,9 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
-            else if (_name == "$LATTICE")
+            else 
+#endif
+            if (_name == "$LATTICE")
             {
               state.setColour(1, 0.5, 0, 1);
               state.setRenderFlag(RENDER_DEPTHWRITE);

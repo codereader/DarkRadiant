@@ -215,6 +215,25 @@ void BuiltInShader::construct()
         break;
     }
 
+    case BuiltInShaderType::Pivot:
+    {
+        pass.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
+        pass.setSortPosition(OpenGLState::SORT_GUI0);
+        pass.m_linewidth = 2;
+        pass.setDepthFunc(GL_LEQUAL);
+
+        OpenGLState& hiddenLine = appendDefaultPass();
+        hiddenLine.setName(getName() + "_Hidden");
+        hiddenLine.setRenderFlags(RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
+        hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
+        hiddenLine.m_linewidth = 2;
+        hiddenLine.setDepthFunc(GL_GREATER);
+
+        enableViewType(RenderViewType::Camera);
+        enableViewType(RenderViewType::OrthoView);
+        break;
+    }
+
     default:
         throw std::runtime_error("Cannot construct this shader: " + getName());
     }
