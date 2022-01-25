@@ -224,8 +224,8 @@ int XYWnd::getDeviceHeight() const
 
 void XYWnd::captureStates()
 {
-    _highlightShaders.selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
-    _highlightShaders.selectedShaderGroup = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
+    _highlightShaders.selectedShader = GlobalRenderSystem().capture(BuiltInShaderType::WireframeSelectionOverlay);
+    _highlightShaders.selectedShaderGroup = GlobalRenderSystem().capture(BuiltInShaderType::WireframeSelectionOverlayOfGroups);
     _highlightShaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$XY_MERGE_ACTION_ADD");
     _highlightShaders.mergeActionShaderChange = GlobalRenderSystem().capture("$XY_MERGE_ACTION_CHANGE");
     _highlightShaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$XY_MERGE_ACTION_REMOVE");

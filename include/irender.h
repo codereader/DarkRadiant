@@ -536,9 +536,30 @@ enum class RenderViewType
 
 enum class BuiltInShaderType
 {
+    WireframeOverlay,
     FlatshadeOverlay,
     AasAreaBounds,
     MissingModel,
+    BrushClipPlane,
+    PointTraceLines,
+
+    // This is the shader drawing a coloured overlay
+    // over faces/polys. Its colour is configurable,
+    // and it has depth test activated (camera).
+    ColouredPolygonOverlay,
+
+    // This is the shader drawing a solid line to outline
+    // a selected item. The first pass has its depth test
+    // activated using GL_LESS, whereas the second pass
+    // draws the hidden lines in stippled appearance
+    // with its depth test using GL_GREATER (camera).
+    HighlightedPolygonOutline,
+
+    // Coloured line stipple overlay of selected items (ortho)
+    WireframeSelectionOverlay,
+
+    // Coloured line stipple overlay of selected grouped items (ortho)
+    WireframeSelectionOverlayOfGroups,
 };
 
 /**

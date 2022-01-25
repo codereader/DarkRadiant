@@ -924,6 +924,7 @@ void OpenGLShader::construct()
               state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
             }
 #endif
+#if 0
             else if (_name == "$CAM_HIGHLIGHT")
             {
 				// This is the shader drawing a coloured overlay
@@ -941,6 +942,8 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::Camera);
             }
+#endif
+#if 0
             else if (_name == "$CAM_OVERLAY")
             {
 				// This is the shader drawing a solid line to outline
@@ -964,6 +967,7 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::Camera);
             }
+#endif
             else if (string::starts_with(_name, "$MERGE_ACTION_"))
             {
                 Colour4 colour;
@@ -1013,6 +1017,7 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::Camera);
             }
+#if 0
             else if (_name == "$XY_OVERLAY")
             {
               Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_brush");
@@ -1027,6 +1032,8 @@ void OpenGLShader::construct()
 
               enableViewType(RenderViewType::OrthoView);
             }
+#endif
+#if 0
 			else if (_name == "$XY_OVERLAY_GROUP")
 			{
 				Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_group_items");
@@ -1041,6 +1048,7 @@ void OpenGLShader::construct()
 
                 enableViewType(RenderViewType::OrthoView);
 			}
+#endif
             else if (string::starts_with(_name, "$XY_MERGE_ACTION_"))
             {
                 Colour4 colour;
@@ -1101,6 +1109,7 @@ void OpenGLShader::construct()
               state.setSortPosition(OpenGLState::SORT_LAST);
             }
 #endif
+#if 0
             else if (_name == "$POINTFILE")
             {
               state.setColour(1, 0, 0, 1);
@@ -1111,6 +1120,8 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+#endif
+#if 0
             else if (_name == "$WIRE_OVERLAY")
             {
               state.setRenderFlags(RENDER_DEPTHWRITE
@@ -1133,6 +1144,7 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+#endif
 #if 0
             else if (_name == "$FLATSHADE_OVERLAY")
             {
@@ -1165,6 +1177,7 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::OrthoView);
             }
 #endif
+#if 0
             else if (_name == "$CLIPPER_OVERLAY")
             {
               state.setColour(GlobalColourSchemeManager().getColour("clipper"));
@@ -1177,6 +1190,7 @@ void OpenGLShader::construct()
               enableViewType(RenderViewType::Camera);
               enableViewType(RenderViewType::OrthoView);
             }
+#endif
 #if 0
             else if (_name == "$AAS_AREA")
             {

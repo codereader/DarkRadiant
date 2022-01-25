@@ -49,7 +49,7 @@ void TranslateManipulator::onPreRender(const RenderSystemPtr& renderSystem, cons
 
     if (!_lineShader)
     {
-        _lineShader = renderSystem->capture("$WIRE_OVERLAY");
+        _lineShader = renderSystem->capture(BuiltInShaderType::WireframeOverlay);
     }
 
     if (!_arrowHeadShader)

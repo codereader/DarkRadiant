@@ -82,7 +82,7 @@ void ModelScaleManipulator::onPreRender(const RenderSystemPtr& renderSystem, con
 
     if (!_lineShader)
     {
-        _lineShader = renderSystem->capture("$WIRE_OVERLAY");
+        _lineShader = renderSystem->capture(BuiltInShaderType::WireframeOverlay);
     }
 
     if (!_pointShader)

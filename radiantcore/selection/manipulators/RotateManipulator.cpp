@@ -98,7 +98,7 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
 
     if (!_lineShader)
     {
-        _lineShader = renderSystem->capture("$WIRE_OVERLAY");
+        _lineShader = renderSystem->capture(BuiltInShaderType::WireframeOverlay);
     }
 
     if (!_pivotPointShader)

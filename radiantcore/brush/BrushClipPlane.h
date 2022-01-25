@@ -41,7 +41,7 @@ public:
 	{
 		if (renderSystem)
 		{
-			_shader = renderSystem->capture("$CLIPPER_OVERLAY");
+			_shader = renderSystem->capture(BuiltInShaderType::BrushClipPlane);
 		}
 		else
 		{

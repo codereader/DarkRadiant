@@ -18,6 +18,7 @@ public:
 
 protected:
     void construct() override;
+    void constructWireframeSelectionOverlay(OpenGLState& pass, const std::string& schemeColourKey);
 };
 
 }

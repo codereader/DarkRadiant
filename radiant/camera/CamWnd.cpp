@@ -969,8 +969,8 @@ camera::ICameraView& CamWnd::getCamera()
 
 void CamWnd::captureStates()
 {
-    _shaders.faceHighlightShader = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
-    _shaders.primitiveHighlightShader = GlobalRenderSystem().capture("$CAM_OVERLAY");
+    _shaders.faceHighlightShader = GlobalRenderSystem().capture(BuiltInShaderType::ColouredPolygonOverlay);
+    _shaders.primitiveHighlightShader = GlobalRenderSystem().capture(BuiltInShaderType::HighlightedPolygonOutline);
     _shaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$MERGE_ACTION_ADD");
     _shaders.mergeActionShaderChange = GlobalRenderSystem().capture("$MERGE_ACTION_CHANGE");
     _shaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$MERGE_ACTION_REMOVE");

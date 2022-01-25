@@ -69,7 +69,7 @@ void PointFile::show(const fs::path& pointfile)
 
         if (renderSystem)
         {
-            _renderable.update(renderSystem->capture("$POINTFILE"));
+            _renderable.update(renderSystem->capture(BuiltInShaderType::PointTraceLines));
         }
 	}
 	else if (isVisible())
