@@ -20,7 +20,7 @@ public:
     RenderableCornerPoints(const std::vector<AABB>& aabbs) :
         _aabbs(aabbs),
         _needsUpdate(true),
-        _colour({ 1,1,1,1 })
+        _colour(1, 1, 1, 1)
     {}
 
     void setColour(const Colour4b& colour)
