@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "iundo.h"
 #include "igrid.h"
-#include "igl.h"
 #include "iselectiongroup.h"
 #include "iradiant.h"
 #include "ipreferencesystem.h"

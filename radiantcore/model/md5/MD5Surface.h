@@ -19,7 +19,7 @@ namespace md5
 
 class MD5Skeleton;
 
-class MD5Surface :
+class MD5Surface final :
 	public model::IIndexedModelSurface,
 	public OpenGLRenderable
 {
@@ -90,9 +90,6 @@ public:
 
 	// Updates this mesh to the state of the given skeleton
 	void updateToSkeleton(const MD5Skeleton& skeleton);
-
-	// Applies the given Skin to this surface.
-	void applySkin(const ModelSkin& skin);
 
     // Back-end render function
     void render(const RenderInfo& info) const;

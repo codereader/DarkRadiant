@@ -135,8 +135,6 @@ void MD5ModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     // Detach renderables on render system change
     detachFromShaders();
-
-    _model->setRenderSystem(renderSystem);
 }
 
 void MD5ModelNode::detachFromShaders()
