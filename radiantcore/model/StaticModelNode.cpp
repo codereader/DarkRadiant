@@ -40,6 +40,14 @@ void StaticModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     _model->disconnectUndoSystem(root.getUndoSystem());
 
+    if (_renderEntity)
+    {
+        for (auto& surface : _renderableSurfaces)
+        {
+            _renderEntity->removeSurface(surface);
+        }
+    }
+
     _renderableSurfaces.clear();
 
     Node::onRemoveFromScene(root);
@@ -128,6 +136,11 @@ void StaticModelNode::detachFromShaders()
     for (auto& surface : _renderableSurfaces)
     {
         surface->detach();
+
+        if (_renderEntity)
+        {
+            _renderEntity->removeSurface(surface);
+        }
     }
 
     _attachedToShaders = false;
@@ -147,10 +160,13 @@ void StaticModelNode::attachToShaders()
         auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
         
         // Solid mode
-        surface->attachToShader(shader, _renderEntity);
+        surface->attachToShader(shader);
 
         // For orthoview rendering we need the entity's wireframe shader
-        surface->attachToShader(_renderEntity->getWireShader(), _renderEntity);
+        surface->attachToShader(_renderEntity->getWireShader());
+
+        // Attach to the render entity for lighting mode rendering
+        _renderEntity->addSurface(surface);
     }
 
     _attachedToShaders = true;

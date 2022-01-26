@@ -200,6 +200,16 @@ const Vector3& EntityNode::getDirection() const
 	return _direction;
 }
 
+void EntityNode::addSurface(const render::IRenderableSurface::Ptr& surface)
+{
+    // TODO
+}
+
+void EntityNode::removeSurface(const render::IRenderableSurface::Ptr& surface)
+{
+    // TODO
+}
+
 std::string EntityNode::getFingerprint()
 {
     std::map<std::string, std::string> sortedKeyValues;

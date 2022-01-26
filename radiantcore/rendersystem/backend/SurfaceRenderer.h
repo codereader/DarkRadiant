@@ -149,7 +149,7 @@ public:
         return _surfaces.empty();
     }
 
-    Slot addSurface(IRenderableSurface& surface, IRenderEntity* entity) override
+    Slot addSurface(IRenderableSurface& surface) override
     {
         // Find a free slot
         auto newSlotIndex = getNextFreeSlotIndex();

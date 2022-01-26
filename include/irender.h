@@ -168,6 +168,17 @@ public:
      * wireframe representation.
      */
     virtual Vector4 getEntityColour() const = 0;
+
+    /**
+     * Associates the given surface with this entity.
+     * It will be processed during the following lighting mode rendering passes.
+     */
+    virtual void addSurface(const render::IRenderableSurface::Ptr& surface) = 0;
+
+    /**
+     * Removes the surface from this entity.
+     */
+    virtual void removeSurface(const render::IRenderableSurface::Ptr& surface) = 0;
 };
 typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;

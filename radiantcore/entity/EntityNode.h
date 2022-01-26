@@ -124,6 +124,9 @@ public:
 	virtual float getShaderParm(int parmNum) const override;
 	virtual const Vector3& getDirection() const override;
 
+    virtual void addSurface(const render::IRenderableSurface::Ptr& surface) override;
+    virtual void removeSurface(const render::IRenderableSurface::Ptr& surface) override;
+
     // IMatrixTransform implementation
     Matrix4 localToParent() const override { return _localToParent; }
     Matrix4& localToParent() override { return _localToParent; }

@@ -24,12 +24,8 @@ private:
     using ShaderMapping = std::map<ShaderPtr, ISurfaceRenderer::Slot>;
     ShaderMapping _shaders;
 
-    // Keep track of the last entity we associated this surface to
-    IRenderEntity* _entity;
-
 protected:
-    RenderableSurface() :
-        _entity(nullptr)
+    RenderableSurface()
     {}
 
 public:
@@ -45,21 +41,14 @@ public:
     // (Non-virtual) update method handling any possible shader change
     // The surface is withdrawn from the given shader if it turns out
     // to be different from the last update.
-    void attachToShader(const ShaderPtr& shader, IRenderEntity* entity)
+    void attachToShader(const ShaderPtr& shader)
     {
-        if (entity && _entity != entity)
-        {
-            // Detach if the render entity is changing
-            detach();
-        }
-
         if (_shaders.count(shader) > 0)
         {
             return; // already attached
         }
 
-        _entity = entity;
-        _shaders[shader] = shader->addSurface(*this, entity);
+        _shaders[shader] = shader->addSurface(*this);
     }
 
     // Notifies all the attached shaders that the surface geometry changed
@@ -78,8 +67,6 @@ public:
         {
             detachFromShader(_shaders.begin());
         }
-
-        _entity = nullptr;
     }
 
     // Renders the surface stored in our single slot

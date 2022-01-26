@@ -101,8 +101,8 @@ void NullModelNode::attachToShaders()
 
     if (!renderSystem) return;
 
-    _renderableBox.attachToShader(_fillShader, _renderEntity);
-    _renderableBox.attachToShader(_wireShader, _renderEntity);
+    _renderableBox.attachToShader(_fillShader);
+    _renderableBox.attachToShader(_wireShader);
 
     _attachedToShaders = true;
 }
@@ -116,21 +116,6 @@ void NullModelNode::detachFromShaders()
 const AABB& NullModelNode::localAABB() const
 {
 	return _nullModel->localAABB();
-}
-
-void NullModelNode::onInsertIntoScene(scene::IMapRootNode& root)
-{
-    Node::onInsertIntoScene(root);
-
-    if (_fillShader)
-    {
-        _fillShader->addSurface(_renderableBox, _renderEntity);
-    }
-
-    if (_wireShader)
-    {
-        _wireShader->addSurface(_renderableBox, _renderEntity);
-    }
 }
 
 void NullModelNode::onRemoveFromScene(scene::IMapRootNode& root)

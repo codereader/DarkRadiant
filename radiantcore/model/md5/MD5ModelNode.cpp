@@ -160,10 +160,10 @@ void MD5ModelNode::attachToShaders()
     for (auto& surface : _renderableSurfaces)
     {
         auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
-        surface->attachToShader(shader, _renderEntity);
+        surface->attachToShader(shader);
 
         // For orthoview rendering we need the entity's wireframe shader
-        surface->attachToShader(_renderEntity->getWireShader(), _renderEntity);
+        surface->attachToShader(_renderEntity->getWireShader());
     }
 
     _attachedToShaders = true;

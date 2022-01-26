@@ -111,7 +111,7 @@ public:
         const std::vector<unsigned int>& indices) override;
     void renderGeometry(IGeometryRenderer::Slot slot) override;
 
-    ISurfaceRenderer::Slot addSurface(IRenderableSurface& surface, IRenderEntity* entity) override;
+    ISurfaceRenderer::Slot addSurface(IRenderableSurface& surface) override;
     void removeSurface(ISurfaceRenderer::Slot slot) override;
     void updateSurface(ISurfaceRenderer::Slot slot) override;
     void renderSurface(ISurfaceRenderer::Slot slot) override;
