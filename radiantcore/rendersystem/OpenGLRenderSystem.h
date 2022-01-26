@@ -26,6 +26,9 @@ class OpenGLRenderSystem final
 	// Map of named Shader objects
     std::map<std::string, OpenGLShaderPtr> _shaders;
 
+    // The set of registered render entities
+    std::set<IRenderEntityPtr> _entities;
+
 	// whether this module has been realised
 	bool _realised;
 
@@ -91,8 +94,8 @@ public:
 	Renderables m_renderables;
 	mutable bool m_traverseRenderablesMutex;
 
-    std::size_t addEntity(const IRenderEntityPtr& renderEntity) override;
-    void removeEntity(std::size_t renderEntityId) override;
+    void addEntity(const IRenderEntityPtr& renderEntity) override;
+    void removeEntity(const IRenderEntityPtr& renderEntity) override;
     void foreachEntity(const std::function<void(const IRenderEntityPtr&)>& functor) override;
 
     /* OpenGLStateManager implementation */

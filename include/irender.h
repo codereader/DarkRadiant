@@ -660,15 +660,14 @@ public:
 
     /**
      * Register the given entity to be considered during rendering.
-     * This returns an ID which can be used to deregister this entity later.
      */
-    virtual std::size_t addEntity(const IRenderEntityPtr& renderEntity) = 0;
+    virtual void addEntity(const IRenderEntityPtr& renderEntity) = 0;
 
     /**
      * Detaches this entity from this rendersystem, it won't be 
      * affected by any rendering after this call.
      */
-    virtual void removeEntity(std::size_t renderEntityId) = 0;
+    virtual void removeEntity(const IRenderEntityPtr& renderEntity) = 0;
 
     /**
      * Enumerates all known render entities in this system, invoking

@@ -102,6 +102,9 @@ protected:
     using AttachedEntities = std::list<IEntityNodePtr>;
     AttachedEntities _attachedEnts;
 
+    // Whether this entity has registered itself to a render system
+    bool _isAttachedToRenderSystem;
+
   protected:
 	// The Constructor needs the eclass
 	EntityNode(const IEntityClassPtr& eclass);
@@ -239,6 +242,8 @@ private:
         }
     }
 
-    };
+    void attachToRenderSystem();
+    void detachFromRenderSystem();
+};
 
 } // namespace entity

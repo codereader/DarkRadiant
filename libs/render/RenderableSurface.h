@@ -49,7 +49,7 @@ public:
     {
         if (entity && _entity != entity)
         {
-            // Detach if the render entity is changin
+            // Detach if the render entity is changing
             detach();
         }
 
@@ -61,18 +61,6 @@ public:
         _entity = entity;
         _shaders[shader] = shader->addSurface(*this, entity);
     }
-
-#if 0 // seems to be unneeded
-    void detachFromShader(const ShaderPtr& shader)
-    {
-        auto handle = _shaders.find(shader);
-
-        if (handle != _shaders.end())
-        {
-            detachFromShader(handle);
-        }
-    }
-#endif
 
     // Notifies all the attached shaders that the surface geometry changed
     void queueUpdate()

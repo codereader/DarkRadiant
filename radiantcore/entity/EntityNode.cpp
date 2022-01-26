@@ -25,7 +25,8 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_modelKey(*this),
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
-	_direction(1,0,0)
+	_direction(1,0,0),
+    _isAttachedToRenderSystem(false)
 {
 }
 
@@ -46,7 +47,8 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_modelKey(*this),
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
-	_direction(1,0,0)
+	_direction(1,0,0),
+    _isAttachedToRenderSystem(false)
 {
 }
 
@@ -292,6 +294,8 @@ void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 	_spawnArgs.connectUndoSystem(root.getUndoSystem());
 	_modelKey.connectUndoSystem(root.getUndoSystem());
 
+    attachToRenderSystem();
+
 	SelectableNode::onInsertIntoScene(root);
     TargetableNode::onInsertIntoScene(root);
 }
@@ -300,6 +304,8 @@ void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     TargetableNode::onRemoveFromScene(root);
 	SelectableNode::onRemoveFromScene(root);
+
+    detachFromRenderSystem();
 
 	_modelKey.disconnectUndoSystem(root.getUndoSystem());
 	_spawnArgs.disconnectUndoSystem(root.getUndoSystem());
@@ -395,7 +401,15 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
 
 void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
+    // Detach from any existing render system first
+    detachFromRenderSystem();
+
 	SelectableNode::setRenderSystem(renderSystem);
+
+    if (renderSystem)
+    {
+        attachToRenderSystem();
+    }
 
     acquireShaders(renderSystem);
 
@@ -491,6 +505,32 @@ void EntityNode::onEntitySettingsChanged()
     if (!EntitySettings::InstancePtr()->getRenderEntityNames())
     {
         _renderableName.clear();
+    }
+}
+
+void EntityNode::attachToRenderSystem()
+{
+    if (_isAttachedToRenderSystem) return;
+
+    auto renderSystem = getRenderSystem();
+
+    if (renderSystem)
+    {
+        renderSystem->addEntity(std::dynamic_pointer_cast<IRenderEntity>(shared_from_this()));
+        _isAttachedToRenderSystem = true;
+    }
+}
+
+void EntityNode::detachFromRenderSystem()
+{
+    if (!_isAttachedToRenderSystem) return;
+
+    auto renderSystem = getRenderSystem();
+
+    if (renderSystem)
+    {
+        renderSystem->removeEntity(std::dynamic_pointer_cast<IRenderEntity>(shared_from_this()));
+        _isAttachedToRenderSystem = false;
     }
 }
 

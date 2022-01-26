@@ -287,11 +287,22 @@ TEST_F(RenderSystemTest, EntityRegistration)
     EXPECT_EQ(getEntityCount(renderSystem), 0) << "Rendersystem should be pristine";
 
     auto entity = createByClassName("func_static");
-    scene::addNodeToContainer(entity, rootNode);
+    auto entity2 = createByClassName("func_static");
 
+    scene::addNodeToContainer(entity, rootNode);
     EXPECT_EQ(getEntityCount(renderSystem), 1) << "Rendersystem should contain one entity now";
+
+    scene::addNodeToContainer(entity2, rootNode);
+    EXPECT_EQ(getEntityCount(renderSystem), 2) << "Rendersystem should contain two entities now";
     
     scene::removeNodeFromParent(entity);
+    EXPECT_EQ(getEntityCount(renderSystem), 1) << "Rendersystem should contain one entity now";
+
+    scene::addNodeToContainer(entity, rootNode);
+    EXPECT_EQ(getEntityCount(renderSystem), 2) << "Rendersystem should contain two entities now";
+
+    scene::removeNodeFromParent(entity);
+    scene::removeNodeFromParent(entity2);
     EXPECT_EQ(getEntityCount(renderSystem), 0) << "Rendersystem should be empty again";
 }
 
@@ -315,15 +326,15 @@ TEST_F(RenderSystemTest, DuplicateEntityDeregistration)
 
     auto entity = createByClassName("func_static");
 
-    auto handle = renderSystem->addEntity(entity);
+    renderSystem->addEntity(entity);
     EXPECT_EQ(getEntityCount(renderSystem), 1) << "Rendersystem should contain one entity now";
 
-    // Manually try to remove the entity by this handle
-    renderSystem->removeEntity(handle);
+    // Manually try to remove the entity
+    renderSystem->removeEntity(entity);
     EXPECT_EQ(getEntityCount(renderSystem), 0) << "Rendersystem should be empty now";
 
     // Same call again should trigger an exception
-    EXPECT_THROW(renderSystem->removeEntity(handle), std::logic_error);
+    EXPECT_THROW(renderSystem->removeEntity(entity), std::logic_error);
 }
 
 TEST_F(RenderSystemTest, EntityEnumeration)

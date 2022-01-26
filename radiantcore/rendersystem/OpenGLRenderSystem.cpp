@@ -501,19 +501,27 @@ void OpenGLRenderSystem::shutdownModule()
 	_materialDefsUnloaded.disconnect();
 }
 
-std::size_t OpenGLRenderSystem::addEntity(const IRenderEntityPtr& renderEntity)
+void OpenGLRenderSystem::addEntity(const IRenderEntityPtr& renderEntity)
 {
-    return 0;
+    assert(renderEntity);
+
+    if (!_entities.insert(renderEntity).second)
+    {
+        throw std::logic_error("Duplicate entity registration.");
+    }
 }
 
-void OpenGLRenderSystem::removeEntity(std::size_t renderEntityId)
+void OpenGLRenderSystem::removeEntity(const IRenderEntityPtr& renderEntity)
 {
-
+    if (_entities.erase(renderEntity) == 0)
+    {
+        throw std::logic_error("Entity has not been registered.");
+    }
 }
 
 void OpenGLRenderSystem::foreachEntity(const std::function<void(const IRenderEntityPtr&)>& functor)
 {
-
+    std::for_each(_entities.begin(), _entities.end(), functor);
 }
 
 // Define the static OpenGLRenderSystem module
