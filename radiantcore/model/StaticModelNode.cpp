@@ -135,7 +135,8 @@ void StaticModelNode::detachFromShaders()
 
 void StaticModelNode::attachToShaders()
 {
-    if (_attachedToShaders) return;
+    // Refuse to attach without a render entity
+    if (_attachedToShaders || !_renderEntity) return;
 
     auto renderSystem = _renderSystem.lock();
 
@@ -144,13 +145,12 @@ void StaticModelNode::attachToShaders()
     for (auto& surface : _renderableSurfaces)
     {
         auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
-        surface->attachToShader(shader);
+        
+        // Solid mode
+        surface->attachToShader(shader, _renderEntity);
 
         // For orthoview rendering we need the entity's wireframe shader
-        if (_renderEntity)
-        {
-            surface->attachToShader(_renderEntity->getWireShader());
-        }
+        surface->attachToShader(_renderEntity->getWireShader(), _renderEntity);
     }
 
     _attachedToShaders = true;

@@ -22,6 +22,8 @@ private:
     NullModelPtr _nullModel;
     render::RenderableBoxSurface _renderableBox;
 
+    bool _attachedToShaders;
+
     ShaderPtr _fillShader;
     ShaderPtr _wireShader;
 
@@ -42,9 +44,7 @@ public:
 
     void testSelect(Selector& selector, SelectionTest& test) override;
 
-    void onPreRender(const VolumeTest& volume) override
-    {}
-
+    void onPreRender(const VolumeTest& volume) override;
 	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
@@ -61,6 +61,9 @@ public:
 
 protected:
     void onVisibilityChanged(bool isVisibleNow) override;
+
+    void attachToShaders();
+    void detachFromShaders();
 };
 
 } // namespace model

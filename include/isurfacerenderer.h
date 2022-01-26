@@ -6,6 +6,8 @@
 #include "render/ArbitraryMeshVertex.h"
 #include "math/Matrix4.h"
 
+class IRenderEntity;
+
 namespace render
 {
 
@@ -52,7 +54,9 @@ public:
 
     // Allocate a slot to hold the given surface data, indexed to render triangles.
     // Returns the handle which can be used to update or deallocate the data later
-    virtual Slot addSurface(IRenderableSurface& surface) = 0;
+    // The surface will be associated to the given render entity. Changing the entity
+    // at a later point will require to remove and re-add the surface.
+    virtual Slot addSurface(IRenderableSurface& surface, IRenderEntity* entity) = 0;
 
     // Releases a previously allocated slot. This invalidates the handle.
     virtual void removeSurface(Slot slot) = 0;

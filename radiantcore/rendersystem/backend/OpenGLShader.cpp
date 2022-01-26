@@ -166,9 +166,9 @@ void OpenGLShader::renderGeometry(IGeometryRenderer::Slot slot)
     _geometryRenderer.renderGeometry(slot);
 }
 
-ISurfaceRenderer::Slot OpenGLShader::addSurface(IRenderableSurface& surface)
+ISurfaceRenderer::Slot OpenGLShader::addSurface(IRenderableSurface& surface, IRenderEntity* entity)
 {
-    return _surfaceRenderer.addSurface(surface);
+    return _surfaceRenderer.addSurface(surface, entity);
 }
 
 void OpenGLShader::removeSurface(ISurfaceRenderer::Slot slot)

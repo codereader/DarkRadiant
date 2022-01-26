@@ -8,12 +8,14 @@ namespace model
 
 NullModelNode::NullModelNode() :
 	_nullModel(new NullModel),
-    _renderableBox(localAABB(), localToWorld())
+    _renderableBox(localAABB(), localToWorld()),
+    _attachedToShaders(false)
 {}
 
 NullModelNode::NullModelNode(const NullModelPtr& nullModel) :
 	_nullModel(nullModel),
-    _renderableBox(localAABB(), localToWorld())
+    _renderableBox(localAABB(), localToWorld()),
+    _attachedToShaders(false)
 {}
 
 std::string NullModelNode::name() const
@@ -59,6 +61,14 @@ void NullModelNode::testSelect(Selector& selector, SelectionTest& test)
     }
 }
 
+void NullModelNode::onPreRender(const VolumeTest& volume)
+{
+    assert(_renderEntity);
+
+    // Attach renderables (or do nothing if everything is up to date)
+    attachToShaders();
+}
+
 void NullModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());
@@ -66,21 +76,48 @@ void NullModelNode::renderHighlights(IRenderableCollector& collector, const Volu
 
 void NullModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
+    Node::setRenderSystem(renderSystem);
+
+    // Detach renderables on render system change
+    detachFromShaders();
+
     if (renderSystem)
     {
         _fillShader = renderSystem->capture(BuiltInShaderType::MissingModel);
         _wireShader = renderSystem->capture(ColourShaderType::OrthoviewSolid, { 1.0f, 0, 0, 1});
-
-        _renderableBox.clear();
-        _renderableBox.attachToShader(_fillShader);
-        _renderableBox.attachToShader(_wireShader);
     }
     else
     {
-        _renderableBox.clear();
         _fillShader.reset();
         _wireShader.reset();
     }
+}
+
+void NullModelNode::attachToShaders()
+{
+    if (_attachedToShaders || !_renderEntity) return;
+
+    auto renderSystem = _renderSystem.lock();
+
+    if (!renderSystem) return;
+
+    if (_fillShader)
+    {
+        _fillShader->addSurface(_renderableBox, _renderEntity);
+    }
+
+    if (_wireShader)
+    {
+        _wireShader->addSurface(_renderableBox, _renderEntity);
+    }
+
+    _attachedToShaders = true;
+}
+
+void NullModelNode::detachFromShaders()
+{
+    _renderableBox.clear();
+    _attachedToShaders = false;
 }
 
 const AABB& NullModelNode::localAABB() const
@@ -94,12 +131,12 @@ void NullModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 
     if (_fillShader)
     {
-        _fillShader->addSurface(_renderableBox);
+        _fillShader->addSurface(_renderableBox, _renderEntity);
     }
 
     if (_wireShader)
     {
-        _wireShader->addSurface(_renderableBox);
+        _wireShader->addSurface(_renderableBox, _renderEntity);
     }
 }
 
@@ -116,19 +153,11 @@ void NullModelNode::onVisibilityChanged(bool isVisibleNow)
 
     if (isVisibleNow)
     {
-        if (_fillShader)
-        {
-            _fillShader->addSurface(_renderableBox);
-        }
-
-        if (_wireShader)
-        {
-            _wireShader->addSurface(_renderableBox);
-        }
+        attachToShaders();
     }
     else
     {
-        _renderableBox.clear();
+        detachFromShaders();
     }
 }
 
