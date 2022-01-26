@@ -135,6 +135,7 @@ protected:
     // Called after the constructor is done, overrides EntityNode
     void construct() override;
 
+    void onVisibilityChanged(bool isVisibleNow) override;
     void onSelectionStatusChange(bool changeGroupStatus) override;
 
 private:

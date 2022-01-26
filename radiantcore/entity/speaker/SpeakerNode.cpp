@@ -459,6 +459,24 @@ void SpeakerNode::onRemoveFromScene(scene::IMapRootNode& root)
     _renderableRadiiFill.clear();
 }
 
+void SpeakerNode::onVisibilityChanged(bool isVisibleNow)
+{
+    EntityNode::onVisibilityChanged(isVisibleNow);
+
+    if (isVisibleNow)
+    {
+        _renderableBox.queueUpdate();
+        _renderableRadiiWireframe.queueUpdate();
+        _renderableRadiiFill.queueUpdate();
+    }
+    else
+    {
+        _renderableBox.clear();
+        _renderableRadiiWireframe.clear();
+        _renderableRadiiFill.clear();
+    }
+}
+
 const Vector3& SpeakerNode::getWorldPosition() const
 {
     return m_origin;
