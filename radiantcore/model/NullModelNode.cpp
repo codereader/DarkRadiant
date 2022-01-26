@@ -101,22 +101,15 @@ void NullModelNode::attachToShaders()
 
     if (!renderSystem) return;
 
-    if (_fillShader)
-    {
-        _fillShader->addSurface(_renderableBox, _renderEntity);
-    }
-
-    if (_wireShader)
-    {
-        _wireShader->addSurface(_renderableBox, _renderEntity);
-    }
+    _renderableBox.attachToShader(_fillShader, _renderEntity);
+    _renderableBox.attachToShader(_wireShader, _renderEntity);
 
     _attachedToShaders = true;
 }
 
 void NullModelNode::detachFromShaders()
 {
-    _renderableBox.clear();
+    _renderableBox.detach();
     _attachedToShaders = false;
 }
 
@@ -144,7 +137,7 @@ void NullModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     Node::onRemoveFromScene(root);
 
-    _renderableBox.clear();
+    _renderableBox.detach();
 }
 
 void NullModelNode::onVisibilityChanged(bool isVisibleNow)

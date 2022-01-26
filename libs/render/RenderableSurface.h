@@ -39,7 +39,7 @@ public:
 
     virtual ~RenderableSurface()
     {
-        clear();
+        detach();
     }
 
     // (Non-virtual) update method handling any possible shader change
@@ -47,14 +47,22 @@ public:
     // to be different from the last update.
     void attachToShader(const ShaderPtr& shader, IRenderEntity* entity)
     {
+        if (entity && _entity != entity)
+        {
+            // Detach if the render entity is changin
+            detach();
+        }
+
         if (_shaders.count(shader) > 0)
         {
             return; // already attached
         }
 
+        _entity = entity;
         _shaders[shader] = shader->addSurface(*this, entity);
     }
 
+#if 0 // seems to be unneeded
     void detachFromShader(const ShaderPtr& shader)
     {
         auto handle = _shaders.find(shader);
@@ -64,6 +72,7 @@ public:
             detachFromShader(handle);
         }
     }
+#endif
 
     // Notifies all the attached shaders that the surface geometry changed
     void queueUpdate()
@@ -75,7 +84,7 @@ public:
     }
 
     // Removes the surface from all shaders
-    void clear()
+    void detach()
     {
         while (!_shaders.empty())
         {

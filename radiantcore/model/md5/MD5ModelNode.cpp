@@ -143,7 +143,7 @@ void MD5ModelNode::detachFromShaders()
     // the node will re-attach in the next pre-render phase
     for (auto& surface : _renderableSurfaces)
     {
-        surface->clear();
+        surface->detach();
     }
 
     _attachedToShaders = false;
