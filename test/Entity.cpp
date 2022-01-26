@@ -1035,16 +1035,14 @@ TEST_F(EntityTest, CreateAttachedLightEntity)
 
 TEST_F(EntityTest, RenderAttachedLightEntity)
 {
-    auto torch = createByClassName("atdm:torch_brazier");
-    ASSERT_TRUE(torch);
+    auto torch = TestEntity::create("atdm:torch_brazier");
 
     // Confirm that def has the right model
-    auto& spawnArgs = torch->getEntity();
-    EXPECT_EQ(spawnArgs.getKeyValue("model"), "models/torch.lwo");
+    EXPECT_EQ(torch.args().getKeyValue("model"), "models/torch.lwo");
 
     // We must render in solid mode to get the light source
     RenderFixture rf(true /* solid mode */);
-    rf.renderSubGraph(torch);
+    rf.renderSubGraph(torch.node);
 
     // There should be 3 renderables from the torch (because the entity has a
     // shadowmesh and a collision mesh as well as the main model) and one from
@@ -1079,6 +1077,30 @@ TEST_F(EntityTest, AttachedLightAtCorrectPosition)
     ASSERT_TRUE(rLight);
 
     // Check the light source's position
+    EXPECT_EQ(rLight->getLightOrigin(), ORIGIN + EXPECTED_OFFSET);
+    EXPECT_EQ(rLight->lightAABB().origin, ORIGIN + EXPECTED_OFFSET);
+}
+
+TEST_F(EntityTest, ReloadDefsDoesNotChangeAttachPos)
+{
+    const Vector3 ORIGIN(-10, 25, 320);
+    const Vector3 EXPECTED_OFFSET(0, 0, 10);
+
+    // Create a torch node at the origin
+    auto torch = createByClassName("atdm:torch_brazier");
+    torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+
+    // Reload all entity defs
+    GlobalEntityClassManager().reloadDefs();
+
+    // Render the torch
+    RenderFixture rf(true /* solid mode */);
+    rf.renderSubGraph(torch);
+    ASSERT_FALSE(rf.collector.lightPtrs.empty());
+    const RendererLight* rLight = rf.collector.lightPtrs.front();
+    ASSERT_TRUE(rLight);
+
+    // The light source should still have the expected offset
     EXPECT_EQ(rLight->getLightOrigin(), ORIGIN + EXPECTED_OFFSET);
     EXPECT_EQ(rLight->lightAABB().origin, ORIGIN + EXPECTED_OFFSET);
 }
