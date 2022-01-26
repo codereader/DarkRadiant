@@ -91,6 +91,10 @@ public:
 	Renderables m_renderables;
 	mutable bool m_traverseRenderablesMutex;
 
+    std::size_t addEntity(const IRenderEntityPtr& renderEntity) override;
+    void removeEntity(std::size_t renderEntityId) override;
+    void foreachEntity(const std::function<void(const IRenderEntityPtr&)>& functor) override;
+
     /* OpenGLStateManager implementation */
 	void insertSortedState(const OpenGLStates::value_type& val) override;
 	void eraseSortedState(const OpenGLStates::key_type& key) override;

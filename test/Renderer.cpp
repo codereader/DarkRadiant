@@ -2,13 +2,16 @@
 
 #include "ieclass.h"
 #include "ientity.h"
+#include "irender.h"
 #include "ilightnode.h"
 #include "math/Matrix4.h"
+#include "scenelib.h"
 
 namespace test
 {
 
 using RendererTest = RadiantTest;
+using RenderSystemTest = RadiantTest;
 
 IEntityNodePtr createByClassName(const std::string& className)
 {
@@ -255,6 +258,90 @@ TEST_F(RendererTest, RotatedProjectedLight)
     // World space target should be [16, 0, 0], not [0, 0, -32], due to the
     // rotation
     EXPECT_EQ(mat * V4(16, 0, 0, 1), V4(0.5, 0.5, 1, 1));
+}
+
+namespace
+{
+
+std::size_t getEntityCount(RenderSystemPtr& renderSystem)
+{
+    std::size_t count = 0;
+
+    renderSystem->foreachEntity([&](const IRenderEntityPtr&)
+    {
+        ++count;
+    });
+
+    return count;
+}
+
+}
+
+// Ensure that any entity in the scene is connected to the rendersystem
+TEST_F(RenderSystemTest, EntityRegistration)
+{
+    auto rootNode = GlobalMapModule().getRoot();
+    auto renderSystem = rootNode->getRenderSystem();
+
+    EXPECT_TRUE(renderSystem);
+    EXPECT_EQ(getEntityCount(renderSystem), 0) << "Rendersystem should be pristine";
+
+    auto entity = createByClassName("func_static");
+    scene::addNodeToContainer(entity, rootNode);
+
+    EXPECT_EQ(getEntityCount(renderSystem), 1) << "Rendersystem should contain one entity now";
+    
+    scene::removeNodeFromParent(entity);
+    EXPECT_EQ(getEntityCount(renderSystem), 0) << "Rendersystem should be empty again";
+}
+
+TEST_F(RenderSystemTest, DuplicateEntityRegistration)
+{
+    auto rootNode = GlobalMapModule().getRoot();
+    auto renderSystem = rootNode->getRenderSystem();
+
+    auto entity = createByClassName("func_static");
+    scene::addNodeToContainer(entity, rootNode);
+    EXPECT_EQ(getEntityCount(renderSystem), 1) << "Rendersystem should contain one entity now";
+
+    // Manually try to register the same entity twice
+    EXPECT_THROW(renderSystem->addEntity(entity), std::logic_error);
+}
+
+TEST_F(RenderSystemTest, DuplicateEntityDeregistration)
+{
+    auto rootNode = GlobalMapModule().getRoot();
+    auto renderSystem = rootNode->getRenderSystem();
+
+    auto entity = createByClassName("func_static");
+
+    auto handle = renderSystem->addEntity(entity);
+    EXPECT_EQ(getEntityCount(renderSystem), 1) << "Rendersystem should contain one entity now";
+
+    // Manually try to remove the entity by this handle
+    renderSystem->removeEntity(handle);
+    EXPECT_EQ(getEntityCount(renderSystem), 0) << "Rendersystem should be empty now";
+
+    // Same call again should trigger an exception
+    EXPECT_THROW(renderSystem->removeEntity(handle), std::logic_error);
+}
+
+TEST_F(RenderSystemTest, EntityEnumeration)
+{
+    auto rootNode = GlobalMapModule().getRoot();
+    auto renderSystem = rootNode->getRenderSystem();
+    
+    auto entity = createByClassName("func_static");
+    scene::addNodeToContainer(entity, rootNode);
+
+    std::vector<IRenderEntityPtr> visitedEntities;
+    renderSystem->foreachEntity([&](const IRenderEntityPtr& entity)
+    {
+        visitedEntities.push_back(entity);
+    });
+
+    EXPECT_EQ(visitedEntities.size(), 1) << "We should've hit one entity";
+    EXPECT_EQ(visitedEntities.front(), entity) << "We should've hit our known entity";
 }
 
 }

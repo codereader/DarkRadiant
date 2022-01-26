@@ -501,6 +501,21 @@ void OpenGLRenderSystem::shutdownModule()
 	_materialDefsUnloaded.disconnect();
 }
 
+std::size_t OpenGLRenderSystem::addEntity(const IRenderEntityPtr& renderEntity)
+{
+    return 0;
+}
+
+void OpenGLRenderSystem::removeEntity(std::size_t renderEntityId)
+{
+
+}
+
+void OpenGLRenderSystem::foreachEntity(const std::function<void(const IRenderEntityPtr&)>& functor)
+{
+
+}
+
 // Define the static OpenGLRenderSystem module
 module::StaticModule<OpenGLRenderSystem> openGLRenderSystemModule;
 
