@@ -212,4 +212,14 @@ void MD5ModelNode::onModelAnimationUpdated()
     }
 }
 
+void MD5ModelNode::transformChangedLocal()
+{
+    Node::transformChangedLocal();
+
+    for (auto& surface : _renderableSurfaces)
+    {
+        surface->boundsChanged();
+    }
+}
+
 } // namespace md5

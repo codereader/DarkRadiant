@@ -81,6 +81,8 @@ public:
 	virtual std::string getSkin() const override;
 	void skinChanged(const std::string& newSkinName) override;
 
+    void transformChangedLocal() override;
+
 protected:
     void onVisibilityChanged(bool isVisibleNow) override;
 

@@ -57,6 +57,7 @@ public:
 	const AABB& localAABB() const override;
 
     void onRemoveFromScene(scene::IMapRootNode& root) override;
+    void transformChangedLocal() override;
 
 protected:
     void onVisibilityChanged(bool isVisibleNow) override;

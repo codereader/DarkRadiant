@@ -24,6 +24,8 @@ private:
     using ShaderMapping = std::map<ShaderPtr, ISurfaceRenderer::Slot>;
     ShaderMapping _shaders;
 
+    sigc::signal<void> _sigBoundsChanged;
+
 protected:
     RenderableSurface()
     {}
@@ -52,12 +54,20 @@ public:
     }
 
     // Notifies all the attached shaders that the surface geometry changed
+    // Also fires the bounds changed signal
     void queueUpdate()
     {
         for (auto& [shader, slot] : _shaders)
         {
             shader->updateSurface(slot);
         }
+
+        boundsChanged();
+    }
+
+    void boundsChanged()
+    {
+        _sigBoundsChanged.emit();
     }
 
     // Removes the surface from all shaders
@@ -76,6 +86,11 @@ public:
 
         auto& [shader, slot] = *_shaders.begin();
         shader->renderSurface(slot);
+    }
+
+    sigc::signal<void>& signal_boundsChanged() override
+    {
+        return _sigBoundsChanged;
     }
 
 private:

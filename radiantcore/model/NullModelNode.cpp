@@ -125,6 +125,13 @@ void NullModelNode::onRemoveFromScene(scene::IMapRootNode& root)
     _renderableBox.detach();
 }
 
+void NullModelNode::transformChangedLocal()
+{
+    Node::transformChangedLocal();
+
+    _renderableBox.boundsChanged();
+}
+
 void NullModelNode::onVisibilityChanged(bool isVisibleNow)
 {
     Node::onVisibilityChanged(isVisibleNow);

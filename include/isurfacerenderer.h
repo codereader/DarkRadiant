@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/signal.h>
 #include <vector>
 #include <limits>
 #include <cstdint>
@@ -33,6 +34,10 @@ public:
 
     // The surface bounds in local coordinates
     virtual const AABB& getSurfaceBounds() = 0;
+
+    // Emitted when the surface bounds have changed,
+    // because it has been either moved or resized.
+    virtual sigc::signal<void>& signal_boundsChanged() = 0;
 };
 
 /**

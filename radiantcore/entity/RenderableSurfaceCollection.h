@@ -1,18 +1,23 @@
 #pragma once
 
-#include <set>
+#include <map>
+#include <sigc++/connection.h>
+#include <sigc++/trackable.h>
+#include <sigc++/functors/mem_fun.h>
 #include "irender.h"
+#include "itextstream.h"
 
 namespace entity
 {
 
-class RenderableSurfaceCollection
+class RenderableSurfaceCollection :
+    public sigc::trackable
 {
 private:
     AABB _collectionBounds;
     bool _collectionBoundsNeedUpdate;
 
-    std::set<render::IRenderableSurface::Ptr> _surfaces;
+    std::map<render::IRenderableSurface::Ptr, sigc::connection> _surfaces;
 
 public:
     RenderableSurfaceCollection() :
@@ -21,13 +26,34 @@ public:
 
     void addSurface(const render::IRenderableSurface::Ptr& surface)
     {
-        _surfaces.insert(surface);
+        sigc::connection subscription = surface->signal_boundsChanged().connect(
+            sigc::mem_fun(*this, &RenderableSurfaceCollection::onSurfaceBoundsChanged));
+        
+        if (!_surfaces.try_emplace(surface, subscription).second)
+        {
+            // We've already been subscribed to this one
+            subscription.disconnect();
+            rWarning() << "Renderable surface has already been attached to entity" << std::endl;
+            return;
+        }
+
         _collectionBoundsNeedUpdate = true;
     }
 
     void removeSurface(const render::IRenderableSurface::Ptr& surface)
     {
-        _surfaces.erase(surface);
+        auto mapping = _surfaces.find(surface);
+
+        if (mapping != _surfaces.end())
+        {
+            mapping->second.disconnect();
+            _surfaces.erase(mapping);
+        }
+        else
+        {
+            rWarning() << "Renderable surface has not been attached to entity" << std::endl;
+        }
+
         _collectionBoundsNeedUpdate = true;
     }
 
@@ -39,10 +65,9 @@ public:
         ensureBoundsUpToDate();
 
         // If the whole collection doesn't intersect, quit early
-        // TODO: bounds not updated when surface changes
-        //if (!_collectionBounds.intersects(bounds)) return;
+        if (!_collectionBounds.intersects(bounds)) return;
         
-        for (const auto& surface : _surfaces)
+        for (const auto& [surface, _] : _surfaces)
         {
             auto orientedBounds = AABB::createFromOrientedAABBSafe(
                 surface->getSurfaceBounds(), surface->getSurfaceTransform());
@@ -55,6 +80,11 @@ public:
     }
 
 private:
+    void onSurfaceBoundsChanged()
+    {
+        _collectionBoundsNeedUpdate = true;
+    }
+
     void ensureBoundsUpToDate()
     {
         if (!_collectionBoundsNeedUpdate) return;
@@ -63,7 +93,7 @@ private:
 
         _collectionBounds = AABB();
 
-        for (const auto& surface : _surfaces)
+        for (const auto& [surface, _] : _surfaces)
         {
             _collectionBounds.includeAABB(AABB::createFromOrientedAABBSafe(
                 surface->getSurfaceBounds(), surface->getSurfaceTransform()));

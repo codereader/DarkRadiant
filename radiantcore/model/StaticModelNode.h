@@ -95,6 +95,8 @@ public:
 	// Traceable implementation
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
+    void transformChangedLocal() override;
+
 protected:
 	void _onTransformationChanged() override;
 	void _applyTransformation() override;
