@@ -2295,5 +2295,8 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\LightingModeRenderResult.h">
       <Filter>src\rendersystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\RenderableSurfaceCollection.h">
+      <Filter>src\entity</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

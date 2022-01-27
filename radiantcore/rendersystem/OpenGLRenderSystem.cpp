@@ -302,7 +302,9 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
     // Gather all visible lights and render the surfaces touched by them
     for (const auto& light : _lights)
     {
-        if (view.TestAABB(light->lightAABB()) == VOLUME_OUTSIDE)
+        auto lightBounds = light->lightAABB();
+
+        if (view.TestAABB(lightBounds) == VOLUME_OUTSIDE)
         {
             result->skippedLights++;
             continue;
@@ -315,7 +317,7 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
         {
             auto entitySurfaceCount = 0;
 
-            entity->foreachSurfaceTouchingBounds(light->lightAABB(),
+            entity->foreachSurfaceTouchingBounds(lightBounds,
                 [&](const render::IRenderableSurface::Ptr& surface)
             {
                 entitySurfaceCount++;

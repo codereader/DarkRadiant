@@ -19,6 +19,7 @@
 
 #include "KeyObserverMap.h"
 #include "RenderableEntityName.h"
+#include "RenderableSurfaceCollection.h"
 
 namespace entity
 {
@@ -104,6 +105,10 @@ protected:
 
     // Whether this entity has registered itself to a render system
     bool _isAttachedToRenderSystem;
+
+    // The list of surfaces attached to this IRenderEntity
+    // Used in lighting render mode to enumerate surfaces by entity
+    RenderableSurfaceCollection _renderSurfaces;
 
   protected:
 	// The Constructor needs the eclass

@@ -202,18 +202,18 @@ const Vector3& EntityNode::getDirection() const
 
 void EntityNode::addSurface(const render::IRenderableSurface::Ptr& surface)
 {
-    // TODO
+    _renderSurfaces.addSurface(surface);
 }
 
 void EntityNode::removeSurface(const render::IRenderableSurface::Ptr& surface)
 {
-    // TODO
+    _renderSurfaces.removeSurface(surface);
 }
 
 void EntityNode::foreachSurfaceTouchingBounds(const AABB& bounds,
     const std::function<void(const render::IRenderableSurface::Ptr&)>& functor)
 {
-    // TODO
+    _renderSurfaces.foreachSurfaceTouchingBounds(bounds, functor);
 }
 
 std::string EntityNode::getFingerprint()

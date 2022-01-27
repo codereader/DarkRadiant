@@ -790,6 +790,7 @@
     <ClInclude Include="..\..\radiantcore\entity\RenderableArrow.h" />
     <ClInclude Include="..\..\radiantcore\entity\RenderableEntityBox.h" />
     <ClInclude Include="..\..\radiantcore\entity\RenderableEntityName.h" />
+    <ClInclude Include="..\..\radiantcore\entity\RenderableSurfaceCollection.h" />
     <ClInclude Include="..\..\radiantcore\entity\RotationKey.h" />
     <ClInclude Include="..\..\radiantcore\entity\RotationMatrix.h" />
     <ClInclude Include="..\..\radiantcore\entity\ShaderParms.h" />
