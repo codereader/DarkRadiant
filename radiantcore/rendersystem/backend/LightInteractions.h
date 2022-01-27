@@ -1,0 +1,45 @@
+#pragma once
+
+#include <map>
+#include <vector>
+#include "irender.h"
+#include "isurfacerenderer.h"
+#include "irenderview.h"
+
+namespace render
+{
+
+class OpenGLShader;
+
+/**
+ * Defines interactions between a light and one or more entity surfaces
+ * It only lives through the course of a single render pass, therefore direct
+ * references without ref-counting are used.
+ * 
+ * Surfaces are grouped by entity, then by shader.
+ */
+class LightInteractions
+{
+private:
+    RendererLight& _light;
+
+    // A flat list of surfaces
+    using SurfaceList = std::vector<std::reference_wrapper<IRenderableSurface>>;
+
+    // All surfaces, grouped by material
+    using SurfacesByMaterial = std::map<OpenGLShader*, SurfaceList>;
+
+    // SurfaceLists, grouped by entity
+    std::map<IRenderEntity*, SurfacesByMaterial> _surfacesByEntity;
+
+public:
+    LightInteractions(RendererLight& light) :
+        _light(light)
+    {}
+
+    void addSurface(IRenderableSurface& surface, IRenderEntity& entity, OpenGLShader& shader);
+
+    void render(OpenGLState& state, RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t renderTime);
+};
+
+}

@@ -10,9 +10,9 @@
 #include "backend/GLProgramFactory.h"
 #include "backend/BuiltInShader.h"
 #include "backend/ColourShader.h"
+#include "backend/LightInteractions.h"
 #include "debugging/debugging.h"
 #include "LightingModeRenderResult.h"
-#include "LightInteraction.h"
 
 #include <functional>
 
@@ -299,7 +299,8 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
     setupViewMatrices(view.GetModelview(), view.GetProjection());
 
     std::size_t visibleLights = 0;
-    std::vector<LightInteractionList> interactionLists;
+    std::vector<LightInteractions> interactionLists;
+    interactionLists.reserve(_lights.size());
 
     // Gather all visible lights and render the surfaces touched by them
     for (const auto& light : _lights)

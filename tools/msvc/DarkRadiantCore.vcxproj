@@ -631,6 +631,7 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillAlphaProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLProgramBase.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\LightInteractions.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShader.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.cpp" />
@@ -992,6 +993,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillAlphaProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLProgramBase.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightInteractions.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLShader.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateLess.h" />
@@ -1001,7 +1003,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\GLFont.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\LightingModeRenderResult.h" />
-    <ClInclude Include="..\..\radiantcore\rendersystem\LightInteraction.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLModule.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\RenderSystemFactory.h" />

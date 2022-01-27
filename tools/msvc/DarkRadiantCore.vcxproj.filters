@@ -1120,6 +1120,9 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\ColourShader.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\LightInteractions.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2298,8 +2301,8 @@
     <ClInclude Include="..\..\radiantcore\entity\RenderableSurfaceCollection.h">
       <Filter>src\entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\LightInteraction.h">
-      <Filter>src\rendersystem</Filter>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightInteractions.h">
+      <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
