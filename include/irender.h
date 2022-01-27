@@ -671,6 +671,8 @@ public:
 
     /**
      * Register the given entity to be considered during rendering.
+     * If this entity is a light it will be automatically recognised 
+     * and inserted into the set of lights.
      */
     virtual void addEntity(const IRenderEntityPtr& renderEntity) = 0;
 
@@ -685,6 +687,12 @@ public:
      * the functor for each of them.
      */
     virtual void foreachEntity(const std::function<void(const IRenderEntityPtr&)>& functor) = 0;
+
+    /**
+     * Enumerates all known render lights in this system, invoking
+     * the functor for each of them
+     */
+    virtual void foreachLight(const std::function<void(const RendererLightPtr&)>& functor) = 0;
 
     /**
      * \brief

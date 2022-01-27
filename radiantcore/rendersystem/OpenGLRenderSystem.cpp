@@ -509,6 +509,15 @@ void OpenGLRenderSystem::addEntity(const IRenderEntityPtr& renderEntity)
     {
         throw std::logic_error("Duplicate entity registration.");
     }
+
+    auto light = std::dynamic_pointer_cast<RendererLight>(renderEntity);
+
+    if (!light) return;
+     
+    if (!_lights.insert(light).second)
+    {
+        throw std::logic_error("Duplicate light registration.");
+    }
 }
 
 void OpenGLRenderSystem::removeEntity(const IRenderEntityPtr& renderEntity)
@@ -517,11 +526,25 @@ void OpenGLRenderSystem::removeEntity(const IRenderEntityPtr& renderEntity)
     {
         throw std::logic_error("Entity has not been registered.");
     }
+
+    auto light = std::dynamic_pointer_cast<RendererLight>(renderEntity);
+
+    if (!light) return;
+
+    if (_lights.erase(light) == 0)
+    {
+        throw std::logic_error("Light has not been registered.");
+    }
 }
 
 void OpenGLRenderSystem::foreachEntity(const std::function<void(const IRenderEntityPtr&)>& functor)
 {
     std::for_each(_entities.begin(), _entities.end(), functor);
+}
+
+void OpenGLRenderSystem::foreachLight(const std::function<void(const RendererLightPtr&)>& functor)
+{
+    std::for_each(_lights.begin(), _lights.end(), functor);
 }
 
 // Define the static OpenGLRenderSystem module

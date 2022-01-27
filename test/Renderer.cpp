@@ -275,6 +275,18 @@ std::size_t getEntityCount(RenderSystemPtr& renderSystem)
     return count;
 }
 
+std::size_t getLightCount(RenderSystemPtr& renderSystem)
+{
+    std::size_t count = 0;
+
+    renderSystem->foreachLight([&](const RendererLightPtr&)
+    {
+        ++count;
+    });
+
+    return count;
+}
+
 }
 
 // Ensure that any entity in the scene is connected to the rendersystem
@@ -353,6 +365,31 @@ TEST_F(RenderSystemTest, EntityEnumeration)
 
     EXPECT_EQ(visitedEntities.size(), 1) << "We should've hit one entity";
     EXPECT_EQ(visitedEntities.front(), entity) << "We should've hit our known entity";
+}
+
+TEST_F(RenderSystemTest, LightRegistration)
+{
+    auto rootNode = GlobalMapModule().getRoot();
+    auto renderSystem = rootNode->getRenderSystem();
+
+    EXPECT_TRUE(renderSystem);
+    EXPECT_EQ(getEntityCount(renderSystem), 0) << "Rendersystem should be pristine";
+    EXPECT_EQ(getLightCount(renderSystem), 0) << "Rendersystem should be pristine";
+
+    auto light = createByClassName("atdm:light_base");
+    auto entity = createByClassName("func_static");
+
+    scene::addNodeToContainer(entity, rootNode);
+    EXPECT_EQ(getLightCount(renderSystem), 0) << "Rendersystem should still be empty";
+
+    scene::addNodeToContainer(light, rootNode);
+    EXPECT_EQ(getLightCount(renderSystem), 1) << "Rendersystem should contain one light now";
+
+    scene::removeNodeFromParent(entity);
+    EXPECT_EQ(getLightCount(renderSystem), 1) << "Rendersystem should still contain one light";
+
+    scene::removeNodeFromParent(light);
+    EXPECT_EQ(getLightCount(renderSystem), 0) << "Rendersystem should be empty now";
 }
 
 }

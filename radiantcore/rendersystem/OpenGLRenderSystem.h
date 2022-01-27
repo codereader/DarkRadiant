@@ -29,6 +29,9 @@ class OpenGLRenderSystem final
     // The set of registered render entities
     std::set<IRenderEntityPtr> _entities;
 
+    // The set of registered render lights
+    std::set<RendererLightPtr> _lights;
+
 	// whether this module has been realised
 	bool _realised;
 
@@ -97,6 +100,7 @@ public:
     void addEntity(const IRenderEntityPtr& renderEntity) override;
     void removeEntity(const IRenderEntityPtr& renderEntity) override;
     void foreachEntity(const std::function<void(const IRenderEntityPtr&)>& functor) override;
+    void foreachLight(const std::function<void(const RendererLightPtr&)>& functor) override;
 
     /* OpenGLStateManager implementation */
 	void insertSortedState(const OpenGLStates::value_type& val) override;
