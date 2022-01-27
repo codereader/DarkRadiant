@@ -17,19 +17,25 @@ private:
     AABB _collectionBounds;
     bool _collectionBoundsNeedUpdate;
 
-    std::map<render::IRenderableSurface::Ptr, sigc::connection> _surfaces;
+    struct SurfaceData
+    {
+        ShaderPtr shader;
+        sigc::connection boundsChangedConnection;
+    };
+
+    std::map<render::IRenderableSurface::Ptr, SurfaceData> _surfaces;
 
 public:
     RenderableSurfaceCollection() :
         _collectionBoundsNeedUpdate(true)
     {}
 
-    void addSurface(const render::IRenderableSurface::Ptr& surface)
+    void addSurface(const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader)
     {
         sigc::connection subscription = surface->signal_boundsChanged().connect(
             sigc::mem_fun(*this, &RenderableSurfaceCollection::onSurfaceBoundsChanged));
         
-        if (!_surfaces.try_emplace(surface, subscription).second)
+        if (!_surfaces.try_emplace(surface, SurfaceData{ shader, subscription }).second)
         {
             // We've already been subscribed to this one
             subscription.disconnect();
@@ -46,7 +52,7 @@ public:
 
         if (mapping != _surfaces.end())
         {
-            mapping->second.disconnect();
+            mapping->second.boundsChangedConnection.disconnect();
             _surfaces.erase(mapping);
         }
         else
@@ -58,7 +64,7 @@ public:
     }
 
     void foreachSurfaceTouchingBounds(const AABB& bounds,
-        const std::function<void(const render::IRenderableSurface::Ptr&)>& functor)
+        const IRenderEntity::SurfaceVisitFunction& functor)
     {
         if (_surfaces.empty()) return;
 
@@ -67,14 +73,14 @@ public:
         // If the whole collection doesn't intersect, quit early
         if (!_collectionBounds.intersects(bounds)) return;
         
-        for (const auto& [surface, _] : _surfaces)
+        for (const auto& [surface, surfaceData] : _surfaces)
         {
             auto orientedBounds = AABB::createFromOrientedAABBSafe(
                 surface->getSurfaceBounds(), surface->getSurfaceTransform());
 
             if (bounds.intersects(orientedBounds))
             {
-                functor(surface);
+                functor(surface, surfaceData.shader);
             }
         }
     }

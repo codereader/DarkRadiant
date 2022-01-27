@@ -129,10 +129,10 @@ public:
 	virtual float getShaderParm(int parmNum) const override;
 	virtual const Vector3& getDirection() const override;
 
-    virtual void addSurface(const render::IRenderableSurface::Ptr& surface) override;
+    virtual void addSurface(const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader) override;
     virtual void removeSurface(const render::IRenderableSurface::Ptr& surface) override;
     virtual void foreachSurfaceTouchingBounds(const AABB& bounds,
-        const std::function<void(const render::IRenderableSurface::Ptr&)>& functor) override;
+        const SurfaceVisitFunction& functor) override;
 
     // IMatrixTransform implementation
     Matrix4 localToParent() const override { return _localToParent; }

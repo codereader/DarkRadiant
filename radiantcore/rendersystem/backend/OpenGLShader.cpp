@@ -817,5 +817,13 @@ void OpenGLShader::setMergeModeEnabled(bool enabled)
     onMergeModeChanged();
 }
 
+void OpenGLShader::foreachPass(const std::function<void(OpenGLShaderPass&)>& functor)
+{
+    for (auto& pass : _shaderPasses)
+    {
+        functor(*pass);
+    }
+}
+
 }
 

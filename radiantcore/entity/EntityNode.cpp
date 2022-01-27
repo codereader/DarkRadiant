@@ -200,9 +200,9 @@ const Vector3& EntityNode::getDirection() const
 	return _direction;
 }
 
-void EntityNode::addSurface(const render::IRenderableSurface::Ptr& surface)
+void EntityNode::addSurface(const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader)
 {
-    _renderSurfaces.addSurface(surface);
+    _renderSurfaces.addSurface(surface, shader);
 }
 
 void EntityNode::removeSurface(const render::IRenderableSurface::Ptr& surface)
@@ -211,7 +211,7 @@ void EntityNode::removeSurface(const render::IRenderableSurface::Ptr& surface)
 }
 
 void EntityNode::foreachSurfaceTouchingBounds(const AABB& bounds,
-    const std::function<void(const render::IRenderableSurface::Ptr&)>& functor)
+    const IRenderEntity::SurfaceVisitFunction& functor)
 {
     _renderSurfaces.foreachSurfaceTouchingBounds(bounds, functor);
 }

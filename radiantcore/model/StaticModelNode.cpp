@@ -166,7 +166,7 @@ void StaticModelNode::attachToShaders()
         surface->attachToShader(_renderEntity->getWireShader());
 
         // Attach to the render entity for lighting mode rendering
-        _renderEntity->addSurface(surface);
+        _renderEntity->addSurface(surface, shader);
     }
 
     _attachedToShaders = true;

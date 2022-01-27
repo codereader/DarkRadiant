@@ -12,6 +12,7 @@
 #include "backend/ColourShader.h"
 #include "debugging/debugging.h"
 #include "LightingModeRenderResult.h"
+#include "LightInteraction.h"
 
 #include <functional>
 
@@ -298,6 +299,7 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
     setupViewMatrices(view.GetModelview(), view.GetProjection());
 
     std::size_t visibleLights = 0;
+    std::vector<LightInteractionList> interactionLists;
 
     // Gather all visible lights and render the surfaces touched by them
     for (const auto& light : _lights)
@@ -312,15 +314,28 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
 
         result->visibleLights++;
 
+        // Allocate an interaction list for this light
+        auto& interactionList = interactionLists.emplace_back(*light);
+
         // Now check all the entities intersecting with this light
         for (const auto& entity : _entities)
         {
             auto entitySurfaceCount = 0;
 
             entity->foreachSurfaceTouchingBounds(lightBounds,
-                [&](const render::IRenderableSurface::Ptr& surface)
+                [&](const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader)
             {
+                auto glShader = static_cast<OpenGLShader*>(shader.get());
+
+                // We only consider materials designated for camera rendering
+                if (!glShader->isApplicableTo(RenderViewType::Camera))
+                {
+                    return;
+                }
+
                 entitySurfaceCount++;
+
+                interactionList.addSurface(*surface, *entity, *glShader);
             });
 
             if (entitySurfaceCount > 0)
@@ -330,6 +345,14 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
             }
         }
     }
+
+    // Draw the surfaces per light and material
+    for (auto& interactionList : interactionLists)
+    {
+        interactionList.render(current, globalFlagsMask, view, _time);
+    }
+
+    renderText();
 
     finishRendering();
 

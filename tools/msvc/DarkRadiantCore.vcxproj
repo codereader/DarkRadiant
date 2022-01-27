@@ -1001,6 +1001,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\GLFont.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\LightingModeRenderResult.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\LightInteraction.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLModule.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\OpenGLRenderSystem.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\RenderSystemFactory.h" />

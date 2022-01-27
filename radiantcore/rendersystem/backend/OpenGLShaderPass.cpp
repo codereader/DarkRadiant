@@ -633,7 +633,8 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
                                                 const RendererLight* light,
                                                 const Vector3& viewer,
                                                 const Matrix4& objTransform,
-                                                std::size_t time)
+                                                std::size_t time,
+                                                bool invertVertexColour)
 {
     // Get the light shader and examine its first (and only valid) layer
     assert(light);
@@ -678,7 +679,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
         light->getLightOrigin(), layer->getColour(), world2light
     );
     parms.isAmbientLight = lightMat->isAmbientLight();
-    parms.invertVertexColour = _glState.isColourInverted();
+    parms.invertVertexColour = invertVertexColour;
 
     assert(current.glProgram);
     current.glProgram->applyRenderParams(osViewer, objTransform, parms);
@@ -724,7 +725,7 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
         const RendererLight* light = r.light;
         if (current.glProgram && light)
         {
-            setUpLightingCalculation(current, light, viewer, *transform, time);
+            setUpLightingCalculation(current, light, viewer, *transform, time, _glState.isColourInverted());
         }
 
         // Render the renderable

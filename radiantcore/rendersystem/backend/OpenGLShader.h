@@ -146,6 +146,8 @@ public:
     bool isMergeModeEnabled() const;
     void setMergeModeEnabled(bool enabled);
 
+    void foreachPass(const std::function<void(OpenGLShaderPass&)>& functor);
+
 protected:
     // Start point for constructing shader passes from the shader name
     virtual void construct();

@@ -2298,5 +2298,8 @@
     <ClInclude Include="..\..\radiantcore\entity\RenderableSurfaceCollection.h">
       <Filter>src\entity</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\LightInteraction.h">
+      <Filter>src\rendersystem</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
