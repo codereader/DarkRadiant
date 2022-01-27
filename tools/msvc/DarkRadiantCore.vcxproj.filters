@@ -2292,5 +2292,8 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\ColourShader.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\LightingModeRenderResult.h">
+      <Filter>src\rendersystem</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

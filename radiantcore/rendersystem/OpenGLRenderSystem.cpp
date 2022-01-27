@@ -11,6 +11,7 @@
 #include "backend/BuiltInShader.h"
 #include "backend/ColourShader.h"
 #include "debugging/debugging.h"
+#include "LightingModeRenderResult.h"
 
 #include <functional>
 
@@ -161,25 +162,9 @@ ShaderPtr OpenGLRenderSystem::capture(ColourShaderType type, const Colour4& colo
     });
 }
 
-/*
- * Render all states in the ShaderCache along with their renderables. This
- * is where the actual OpenGL rendering starts.
- */
-void OpenGLRenderSystem::render(RenderViewType renderViewType, 
-                                RenderStateFlags globalstate,
-                                const Matrix4& modelview,
-                                const Matrix4& projection,
-                                const Vector3& viewer,
-                                const VolumeTest& view)
+void OpenGLRenderSystem::beginRendering(OpenGLState& state)
 {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
-
-    // Set the projection and modelview matrices
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixd(projection);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixd(modelview);
 
     // global settings that are not set in renderstates
     glFrontFace(GL_CW);
@@ -204,18 +189,13 @@ void OpenGLRenderSystem::render(RenderViewType renderViewType,
         glDisableVertexAttribArrayARB(c_attr_Binormal);
     }
 
-    if (globalstate & RENDER_TEXTURE_2D) {
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }
-
-    // Construct default OpenGL state
-    OpenGLState current;
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // Set up initial GL state. This MUST MATCH the defaults in the OpenGLState
     // object, otherwise required state changes may not occur.
-    glLineStipple(current.m_linestipple_factor,
-                  current.m_linestipple_pattern);
+    glLineStipple(state.m_linestipple_factor,
+        state.m_linestipple_pattern);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
@@ -243,14 +223,47 @@ void OpenGLRenderSystem::render(RenderViewType renderViewType,
     glDisable(GL_POLYGON_OFFSET_FILL); // greebo: otherwise tiny gap lines between brushes are visible
 
     glBindTexture(GL_TEXTURE_2D, 0);
-    glColor4f(1,1,1,1);
-    glDepthFunc(current.getDepthFunc());
+    glColor4f(1, 1, 1, 1);
+    glDepthFunc(state.getDepthFunc());
     glAlphaFunc(GL_ALWAYS, 0);
     glLineWidth(1);
     glPointSize(1);
 
     glHint(GL_FOG_HINT, GL_NICEST);
     glDisable(GL_FOG);
+}
+
+void OpenGLRenderSystem::setupViewMatrices(const Matrix4& modelview, const Matrix4& projection)
+{
+    // Set the projection and modelview matrices
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixd(projection);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixd(modelview);
+}
+
+void OpenGLRenderSystem::finishRendering()
+{
+    glPopAttrib();
+}
+
+/*
+ * Render all states in the ShaderCache along with their renderables. This
+ * is where the actual OpenGL rendering starts.
+ */
+void OpenGLRenderSystem::render(RenderViewType renderViewType, 
+                                RenderStateFlags globalstate,
+                                const Matrix4& modelview,
+                                const Matrix4& projection,
+                                const Vector3& viewer,
+                                const VolumeTest& view)
+{
+    // Construct default OpenGL state
+    OpenGLState current;
+    beginRendering(current);
+
+    setupViewMatrices(modelview, projection);
 
     // Iterate over the sorted mapping between OpenGLStates and their
     // OpenGLShaderPasses (containing the renderable geometry), and render the
@@ -269,6 +282,44 @@ void OpenGLRenderSystem::render(RenderViewType renderViewType,
         pair.second->clearRenderables();
     }
 
+    renderText();
+
+    finishRendering();
+}
+
+IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFlagsMask,
+    const IRenderView& view)
+{
+    auto result = std::make_shared<LightingModeRenderResult>();
+
+    // Construct default OpenGL state
+    OpenGLState current;
+    beginRendering(current);
+    setupViewMatrices(view.GetModelview(), view.GetProjection());
+
+    std::size_t visibleLights = 0;
+
+    // Gather all visible lights and render the surfaces touched by them
+    for (const auto& light : _lights)
+    {
+        if (view.TestAABB(light->lightAABB()) == VOLUME_OUTSIDE)
+        {
+            result->skippedLights++;
+            continue;
+        }
+
+        result->visibleLights++;
+
+        // TODO: Insert rendering code here
+    }
+
+    finishRendering();
+
+    return result;
+}
+
+void OpenGLRenderSystem::renderText()
+{
     // Render all text
     glDisable(GL_DEPTH_TEST);
 
@@ -276,8 +327,6 @@ void OpenGLRenderSystem::render(RenderViewType renderViewType,
     {
         textRenderer->render();
     }
-
-    glPopAttrib();
 }
 
 void OpenGLRenderSystem::realise()

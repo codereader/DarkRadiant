@@ -784,6 +784,8 @@ void CamWnd::Cam_Draw()
                             | RENDER_POLYGONSTIPPLE;
     }
 
+    IRenderResult::Ptr result;
+
     // Main scene render
     {
         _renderer->prepare();
@@ -802,12 +804,20 @@ void CamWnd::Cam_Draw()
             i.second->render(GlobalRenderSystem(), *_renderer, _view);
         }
 
-        // Back end (submit to shaders and do the actual render)
-        _renderer->submitToShaders(
-            getCameraSettings()->getRenderMode() == RENDER_MODE_LIGHTING
-        );
-        GlobalRenderSystem().render(RenderViewType::Camera, allowedRenderFlags, 
-            _camera->getModelView(), _camera->getProjection(), _view.getViewer(), _view);
+        if (getCameraSettings()->getRenderMode() == RENDER_MODE_LIGHTING)
+        {
+            // Lit mode
+            result = GlobalRenderSystem().renderLitScene(allowedRenderFlags, _view);
+        }
+        else
+        {
+            // Back end (submit to shaders and do the actual render)
+            _renderer->submitToShaders(
+                getCameraSettings()->getRenderMode() == RENDER_MODE_LIGHTING
+            );
+            GlobalRenderSystem().render(RenderViewType::Camera, allowedRenderFlags,
+                _camera->getModelView(), _camera->getProjection(), _view.getViewer(), _view);
+        }
 
         _renderer->cleanup();
     }
@@ -876,11 +886,19 @@ void CamWnd::Cam_Draw()
     // Render the stats and timing text. This may include culling stats in
     // debug builds.
     glRasterPos3f(4.0f, static_cast<float>(_camera->getDeviceHeight()) - 4.0f, 0.0f);
-    std::string statString = _view.getCullStats();
-    if (!statString.empty())
-        statString += " | ";
-    statString += _renderStats.getStatString();
-    _glFont->drawString(statString);
+
+    if (result)
+    {
+        _glFont->drawString(result->toString());
+    }
+    else
+    {
+        std::string statString = _view.getCullStats();
+        if (!statString.empty())
+            statString += " | ";
+        statString += _renderStats.getStatString();
+        _glFont->drawString(statString);
+    }
 
     drawTime();
 

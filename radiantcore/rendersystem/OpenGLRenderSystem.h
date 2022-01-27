@@ -76,6 +76,8 @@ public:
                 const Matrix4& projection,
                 const Vector3& viewer,
                 const VolumeTest& view) override;
+    IRenderResult::Ptr renderLitScene(RenderStateFlags globalFlagsMask,
+        const IRenderView& view) override;
 	void realise() override;
 	void unrealise() override;
 
@@ -120,6 +122,15 @@ public:
     void shutdownModule() override;
 
 private:
+    // Set up initial GL states, will push all attrib states
+    void beginRendering(OpenGLState& state);
+
+    // Will pop attrib states
+    void finishRendering();
+
+    void setupViewMatrices(const Matrix4& modelview, const Matrix4& projection);
+    void renderText();
+
     ShaderPtr capture(const std::string& name, const std::function<OpenGLShaderPtr()>& createShader);
 };
 

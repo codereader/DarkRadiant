@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 #include "ivolumetest.h"
+#include "irenderview.h"
 #include "iwindingrenderer.h"
 #include "igeometryrenderer.h"
 #include "isurfacerenderer.h"
@@ -627,6 +628,16 @@ enum class ColourShaderType
     CameraAndOrthoview,
 };
 
+class IRenderResult
+{
+public:
+    using Ptr = std::shared_ptr<IRenderResult>;
+
+    virtual ~IRenderResult() {}
+
+    virtual std::string toString() = 0;
+};
+
 /**
  * \brief
  * The main interface for the backend renderer.
@@ -725,6 +736,21 @@ public:
                         const Matrix4& projection,
                         const Vector3& viewer,
                         const VolumeTest& volume) = 0;
+
+    /**
+     * Render the scene based on the light-entity interactions.
+     * All the active lights and entities must have added themselves
+     * to this rendersystem at this point, using addEntity().
+     * 
+     * \param globalFlagsMask
+     * The mask of render flags which are permitted during this render pass. Any
+     * render flag which is 0 in this mask will not be enabled during rendering,
+     * even if the particular shader requests it.
+     * 
+     * \returns A result object which can be used to display a statistics summary.
+     */
+    virtual IRenderResult::Ptr renderLitScene(RenderStateFlags globalFlagsMask, 
+        const render::IRenderView& view) = 0;
 
     virtual void realise() = 0;
     virtual void unrealise() = 0;
