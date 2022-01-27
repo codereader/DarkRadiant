@@ -126,6 +126,8 @@ public:
 
     virtual void addSurface(const render::IRenderableSurface::Ptr& surface) override;
     virtual void removeSurface(const render::IRenderableSurface::Ptr& surface) override;
+    virtual void foreachSurfaceTouchingBounds(const AABB& bounds,
+        const std::function<void(const render::IRenderableSurface::Ptr&)>& functor) override;
 
     // IMatrixTransform implementation
     Matrix4 localToParent() const override { return _localToParent; }

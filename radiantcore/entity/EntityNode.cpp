@@ -210,6 +210,12 @@ void EntityNode::removeSurface(const render::IRenderableSurface::Ptr& surface)
     // TODO
 }
 
+void EntityNode::foreachSurfaceTouchingBounds(const AABB& bounds,
+    const std::function<void(const render::IRenderableSurface::Ptr&)>& functor)
+{
+    // TODO
+}
+
 std::string EntityNode::getFingerprint()
 {
     std::map<std::string, std::string> sortedKeyValues;

@@ -310,7 +310,23 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
 
         result->visibleLights++;
 
-        // TODO: Insert rendering code here
+        // Now check all the entities intersecting with this light
+        for (const auto& entity : _entities)
+        {
+            auto entitySurfaceCount = 0;
+
+            entity->foreachSurfaceTouchingBounds(light->lightAABB(),
+                [&](const render::IRenderableSurface::Ptr& surface)
+            {
+                entitySurfaceCount++;
+            });
+
+            if (entitySurfaceCount > 0)
+            {
+                result->surfaces += entitySurfaceCount;
+                result->entities++;
+            }
+        }
     }
 
     finishRendering();

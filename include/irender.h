@@ -180,6 +180,13 @@ public:
      * Removes the surface from this entity.
      */
     virtual void removeSurface(const render::IRenderableSurface::Ptr& surface) = 0;
+
+    /**
+     * Enumerate all entity surfaces (partially) intersecting with the given bounds.
+     * The bounds are specified in world coordinates.
+     */
+    virtual void foreachSurfaceTouchingBounds(const AABB& bounds,
+        const std::function<void(const render::IRenderableSurface::Ptr&)>& functor) = 0;
 };
 typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;
