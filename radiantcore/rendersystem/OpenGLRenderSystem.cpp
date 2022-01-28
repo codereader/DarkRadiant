@@ -326,6 +326,9 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
             entity->foreachSurfaceTouchingBounds(lightBounds,
                 [&](const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader)
             {
+                // Skip empty surfaces
+                if (surface->getIndices().empty()) return;
+
                 auto glShader = static_cast<OpenGLShader*>(shader.get());
 
                 // We only consider materials designated for camera rendering

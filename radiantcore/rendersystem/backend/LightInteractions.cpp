@@ -28,7 +28,6 @@ inline void submitSurface(IRenderableSurface& surface)
     const auto& indices = surface.getIndices();
 
     glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
-    glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().colour);
 
     glVertexAttribPointer(ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
     glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
@@ -57,10 +56,10 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
     const IRenderView& view, std::size_t renderTime)
 {
     glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
-    // Render surfaces without any vertex colours(?)
+
     glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
 
     for (auto& pair : _surfacesByEntity)
     {
@@ -97,18 +96,15 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
     }
 
     glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t renderTime)
 {
     glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState(GL_NORMAL_ARRAY);
 
-    // Render surfaces without any vertex colours(?)
     glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
 
     for (auto& pair : _surfacesByEntity)
     {
@@ -149,8 +145,6 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
     }
 
     glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
 }
 
 }
