@@ -722,6 +722,14 @@ TEST_F(EntityTest, DefaultEclassColourIsValid)
     EXPECT_EQ(eclass->getColour(), Vector4(0.3, 0.3, 1, 1)) << "The entity class should have the same value as in EntityClass.cpp:DefaultEntityColour";
 }
 
+TEST_F(EntityTest, MissingEclassColourIsValid)
+{
+    auto eclass = GlobalEntityClassManager().findOrInsert("___nonexistingeclass___", true);
+
+    EXPECT_EQ(eclass->getAttribute("editor_color", true).getValue(), "") << "Entity Class shouldn't have an editor_color in this test";
+    EXPECT_EQ(eclass->getColour(), Vector4(0.3, 0.3, 1, 1)) << "The entity class should have the same value as in EntityClass.cpp:DefaultEntityColour";
+}
+
 TEST_F(EntityTest, FuncStaticLocalToWorld)
 {
     auto funcStatic = createByClassName("func_static");
