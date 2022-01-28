@@ -8,13 +8,13 @@ namespace model
 
 NullModelNode::NullModelNode() :
 	_nullModel(new NullModel),
-    _renderableBox(localAABB(), localToWorld()),
+    _renderableBox(std::make_shared<render::RenderableBoxSurface>(localAABB(), localToWorld())),
     _attachedToShaders(false)
 {}
 
 NullModelNode::NullModelNode(const NullModelPtr& nullModel) :
 	_nullModel(nullModel),
-    _renderableBox(localAABB(), localToWorld()),
+    _renderableBox(std::make_shared<render::RenderableBoxSurface>(localAABB(), localToWorld())),
     _attachedToShaders(false)
 {}
 
@@ -71,7 +71,7 @@ void NullModelNode::onPreRender(const VolumeTest& volume)
 
 void NullModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());
+    collector.addHighlightRenderable(*_renderableBox, Matrix4::getIdentity());
 }
 
 void NullModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -101,15 +101,26 @@ void NullModelNode::attachToShaders()
 
     if (!renderSystem) return;
 
-    _renderableBox.attachToShader(_fillShader);
-    _renderableBox.attachToShader(_wireShader);
+    _renderableBox->attachToShader(_fillShader);
+    _renderableBox->attachToShader(_wireShader);
+
+    if (_renderEntity)
+    {
+        _renderEntity->addSurface(_renderableBox, _fillShader);
+    }
 
     _attachedToShaders = true;
 }
 
 void NullModelNode::detachFromShaders()
 {
-    _renderableBox.detach();
+    _renderableBox->detach();
+
+    if (_renderEntity)
+    {
+        _renderEntity->removeSurface(_renderableBox);
+    }
+
     _attachedToShaders = false;
 }
 
@@ -122,14 +133,14 @@ void NullModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     Node::onRemoveFromScene(root);
 
-    _renderableBox.detach();
+    _renderableBox->detach();
 }
 
 void NullModelNode::transformChangedLocal()
 {
     Node::transformChangedLocal();
 
-    _renderableBox.boundsChanged();
+    _renderableBox->boundsChanged();
 }
 
 void NullModelNode::onVisibilityChanged(bool isVisibleNow)

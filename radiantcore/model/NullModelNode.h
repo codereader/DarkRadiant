@@ -20,7 +20,7 @@ class NullModelNode final :
 {
 private:
     NullModelPtr _nullModel;
-    render::RenderableBoxSurface _renderableBox;
+    std::shared_ptr<render::RenderableBoxSurface> _renderableBox;
 
     bool _attachedToShaders;
 
