@@ -32,10 +32,18 @@ private:
     // SurfaceLists, grouped by entity
     std::map<IRenderEntity*, SurfacesByMaterial> _surfacesByEntity;
 
+    std::size_t _drawCalls;
+
 public:
     LightInteractions(RendererLight& light) :
-        _light(light)
+        _light(light),
+        _drawCalls(0)
     {}
+
+    std::size_t getDrawCalls() const
+    {
+        return _drawCalls;
+    }
 
     void addSurface(IRenderableSurface& surface, IRenderEntity& entity, OpenGLShader& shader);
 

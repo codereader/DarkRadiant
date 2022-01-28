@@ -360,6 +360,7 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
     for (auto& interactionList : interactionLists)
     {
         interactionList.render(current, globalFlagsMask, view, _time);
+        result->drawCalls += interactionList.getDrawCalls();
     }
 
     renderText();

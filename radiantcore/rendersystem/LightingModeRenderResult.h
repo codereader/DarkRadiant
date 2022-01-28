@@ -16,9 +16,12 @@ public:
     std::size_t entities = 0;
     std::size_t surfaces = 0;
 
+    std::size_t drawCalls = 0;
+
     std::string toString() override
     {
-        return fmt::format("Lights: {0} of {1} | Entities: {2} | Surfaces: {3}", visibleLights, skippedLights, entities, surfaces);
+        return fmt::format("Lights: {0} of {1} | Entities: {2} | Surfs: {3} | Draws: {4}", 
+            visibleLights, visibleLights + skippedLights, entities, surfaces, drawCalls);
     }
 };
 

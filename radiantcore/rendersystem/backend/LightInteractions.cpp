@@ -91,6 +91,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             for (auto surface : surfaceList)
             {
                 detail::submitSurface(surface.get());
+                ++_drawCalls;
             }
         }
     }
@@ -139,6 +140,7 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
                     }
 
                     detail::submitSurface(surface.get());
+                    ++_drawCalls;
                 }
             });
         }
