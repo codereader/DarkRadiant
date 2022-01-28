@@ -50,6 +50,37 @@ void LightInteractions::addSurface(IRenderableSurface& surface, IRenderEntity& e
         &shader, SurfaceList{}).first->second;
 
     surfaces.emplace_back(std::ref(surface));
+
+    ++_surfaceCount;
+}
+
+bool LightInteractions::isInView(const IRenderView& view)
+{
+    return view.TestAABB(_lightBounds) != VOLUME_OUTSIDE;
+}
+
+void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entities)
+{
+    // Now check all the entities intersecting with this light
+    for (const auto& entity : entities)
+    {
+        entity->foreachSurfaceTouchingBounds(_lightBounds,
+            [&](const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader)
+        {
+            // Skip empty surfaces
+            if (surface->getIndices().empty()) return;
+
+            auto glShader = static_cast<OpenGLShader*>(shader.get());
+
+            // We only consider materials designated for camera rendering
+            if (!glShader->isApplicableTo(RenderViewType::Camera))
+            {
+                return;
+            }
+
+            addSurface(*surface, *entity, *glShader);
+        });
+    }
 }
 
 void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags globalFlagsMask, 
@@ -101,6 +132,8 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
 
 void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t renderTime)
 {
+    auto worldToLight = _light.getLightTextureTransformation();
+
     glEnableClientState(GL_VERTEX_ARRAY);
 
     glDisableClientState(GL_COLOR_ARRAY);
@@ -140,7 +173,7 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
                 {
                     if (state.glProgram)
                     {
-                        OpenGLShaderPass::setUpLightingCalculation(state, &_light, _worldToLight,
+                        OpenGLShaderPass::setUpLightingCalculation(state, &_light, worldToLight,
                             view.getViewer(), surface.get().getSurfaceTransform(), renderTime, state.isColourInverted());
                     }
 

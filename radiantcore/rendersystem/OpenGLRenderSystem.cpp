@@ -246,6 +246,11 @@ void OpenGLRenderSystem::setupViewMatrices(const Matrix4& modelview, const Matri
 
 void OpenGLRenderSystem::finishRendering()
 {
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+
     glPopAttrib();
 }
 
@@ -305,9 +310,9 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
     // Gather all visible lights and render the surfaces touched by them
     for (const auto& light : _lights)
     {
-        auto lightBounds = light->lightAABB();
+        LightInteractions interaction(*light);
 
-        if (view.TestAABB(lightBounds) == VOLUME_OUTSIDE)
+        if (!interaction.isInView(view))
         {
             result->skippedLights++;
             continue;
@@ -315,39 +320,13 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
 
         result->visibleLights++;
 
-        // Allocate an interaction list for this light
-        auto& interactionList = interactionLists.emplace_back(*light);
+        // Check all the surfaces that are touching this light
+        interaction.collectSurfaces(_entities);
 
-        // Now check all the entities intersecting with this light
-        for (const auto& entity : _entities)
-        {
-            auto entitySurfaceCount = 0;
+        result->surfaces += interaction.getSurfaceCount();
+        result->entities += interaction.getEntityCount();
 
-            entity->foreachSurfaceTouchingBounds(lightBounds,
-                [&](const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader)
-            {
-                // Skip empty surfaces
-                if (surface->getIndices().empty()) return;
-
-                auto glShader = static_cast<OpenGLShader*>(shader.get());
-
-                // We only consider materials designated for camera rendering
-                if (!glShader->isApplicableTo(RenderViewType::Camera))
-                {
-                    return;
-                }
-
-                entitySurfaceCount++;
-
-                interactionList.addSurface(*surface, *entity, *glShader);
-            });
-
-            if (entitySurfaceCount > 0)
-            {
-                result->surfaces += entitySurfaceCount;
-                result->entities++;
-            }
-        }
+        interactionLists.emplace_back(std::move(interaction));
     }
 
     // Run the depth fill pass
