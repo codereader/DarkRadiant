@@ -631,6 +631,7 @@ bool OpenGLShaderPass::stateIsActive()
 // Setup lighting
 void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
                                                 const RendererLight* light,
+                                                const Matrix4& worldToLight,
                                                 const Vector3& viewer,
                                                 const Matrix4& objTransform,
                                                 std::size_t time,
@@ -671,12 +672,9 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-    // Get the world-space to light-space transformation matrix
-    Matrix4 world2light = light->getLightTextureTransformation();
-
     // Set the GL program parameters
     GLProgram::Params parms(
-        light->getLightOrigin(), layer->getColour(), world2light
+        light->getLightOrigin(), layer->getColour(), worldToLight
     );
     parms.isAmbientLight = lightMat->isAmbientLight();
     parms.invertVertexColour = invertVertexColour;
@@ -725,7 +723,8 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
         const RendererLight* light = r.light;
         if (current.glProgram && light)
         {
-            setUpLightingCalculation(current, light, viewer, *transform, time, _glState.isColourInverted());
+            setUpLightingCalculation(current, light, light->getLightTextureTransformation(),
+                viewer, *transform, time, _glState.isColourInverted());
         }
 
         // Render the renderable

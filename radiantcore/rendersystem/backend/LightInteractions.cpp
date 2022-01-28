@@ -120,6 +120,11 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
 
             shader->foreachPassWithoutDepthPass([&](OpenGLShaderPass& pass)
             {
+                if (!pass.stateIsActive())
+                {
+                    return;
+                }
+
                 // Reset the texture matrix
                 glMatrixMode(GL_TEXTURE);
                 glLoadMatrixd(Matrix4::getIdentity());
@@ -135,7 +140,7 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
                 {
                     if (state.glProgram)
                     {
-                        OpenGLShaderPass::setUpLightingCalculation(state, &_light,
+                        OpenGLShaderPass::setUpLightingCalculation(state, &_light, _worldToLight,
                             view.getViewer(), surface.get().getSurfaceTransform(), renderTime, state.isColourInverted());
                     }
 

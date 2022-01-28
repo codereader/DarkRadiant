@@ -22,6 +22,7 @@ class LightInteractions
 {
 private:
     RendererLight& _light;
+    Matrix4 _worldToLight;
 
     // A flat list of surfaces
     using SurfaceList = std::vector<std::reference_wrapper<IRenderableSurface>>;
@@ -37,6 +38,7 @@ private:
 public:
     LightInteractions(RendererLight& light) :
         _light(light),
+        _worldToLight(light.getLightTextureTransformation()),
         _drawCalls(0)
     {}
 

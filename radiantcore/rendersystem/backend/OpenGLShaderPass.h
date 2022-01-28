@@ -72,10 +72,7 @@ protected:
 
 protected:
 
-    // Returns true if the stage associated to this pass is active and should be rendered
-	bool stateIsActive();
-
-	void setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage);
+    void setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage);
 
 	// Render all of the given TransformedRenderables
 	void renderAllContained(const Renderables& renderables,
@@ -112,6 +109,9 @@ public:
 	OpenGLShaderPass(OpenGLShader& owner) :
 		_owner(owner)
 	{}
+
+    // Returns true if the stage associated to this pass is active and should be rendered
+    bool stateIsActive();
 
 	/**
      * \brief
@@ -190,6 +190,7 @@ public:
     // Set up lighting calculation
     static void setUpLightingCalculation(OpenGLState& current,
         const RendererLight* light,
+        const Matrix4& worldToLight,
         const Vector3& viewer,
         const Matrix4& objTransform,
         std::size_t time,
