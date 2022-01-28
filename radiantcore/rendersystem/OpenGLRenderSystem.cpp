@@ -246,6 +246,11 @@ void OpenGLRenderSystem::setupViewMatrices(const Matrix4& modelview, const Matri
 
 void OpenGLRenderSystem::finishRendering()
 {
+    if (GLEW_ARB_shader_objects)
+    {
+        glUseProgramObjectARB(0);
+    }
+
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);

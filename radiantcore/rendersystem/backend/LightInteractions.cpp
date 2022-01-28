@@ -105,7 +105,10 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             auto& surfaceList = pair.second;
 
             // Skip translucent materials
-            if (shader->getMaterial()->getCoverage() == Material::MC_TRANSLUCENT) continue;
+            if (shader->getMaterial() && shader->getMaterial()->getCoverage() == Material::MC_TRANSLUCENT)
+            {
+                continue;
+            }
 
             if (!shader->getDepthFillPass()) continue;
 
