@@ -144,6 +144,11 @@ void MD5ModelNode::detachFromShaders()
     for (auto& surface : _renderableSurfaces)
     {
         surface->detach();
+
+        if (_renderEntity)
+        {
+            _renderEntity->removeSurface(surface);
+        }
     }
 
     _attachedToShaders = false;
@@ -164,6 +169,9 @@ void MD5ModelNode::attachToShaders()
 
         // For orthoview rendering we need the entity's wireframe shader
         surface->attachToShader(_renderEntity->getWireShader());
+
+        // Attach to the render entity for lighting mode rendering
+        _renderEntity->addSurface(surface, shader);
     }
 
     _attachedToShaders = true;
