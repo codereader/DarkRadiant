@@ -70,6 +70,9 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
             // Skip empty surfaces
             if (surface->getIndices().empty()) return;
 
+            // Don't collect invisible shaders
+            if (!shader->isVisible()) return;
+
             auto glShader = static_cast<OpenGLShader*>(shader.get());
 
             // We only consider materials designated for camera rendering
@@ -100,8 +103,6 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
         {
             auto shader = pair.first;
             auto& surfaceList = pair.second;
-
-            if (!shader->isVisible()) continue;
 
             // Skip translucent materials
             if (shader->getMaterial()->getCoverage() == Material::MC_TRANSLUCENT) continue;
