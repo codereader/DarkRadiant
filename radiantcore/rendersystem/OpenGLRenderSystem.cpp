@@ -347,6 +347,12 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
         }
     }
 
+    // Run the depth fill pass
+    for (auto& interactionList : interactionLists)
+    {
+        interactionList.fillDepthBuffer(current, globalFlagsMask, view, _time);
+    }
+    
     // Draw the surfaces per light and material
     for (auto& interactionList : interactionLists)
     {

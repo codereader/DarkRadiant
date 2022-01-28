@@ -325,6 +325,7 @@ void OpenGLShader::removePasses()
 
 void OpenGLShader::clearPasses()
 {
+    _depthFillPass.reset();
     _shaderPasses.clear();
 }
 
@@ -360,8 +361,8 @@ OpenGLState& OpenGLShader::appendDefaultPass()
 
 OpenGLState& OpenGLShader::appendDepthFillPass()
 {
-    auto& pass = _shaderPasses.emplace_back(std::make_shared<DepthFillPass>(*this, _renderSystem));
-    return pass->state();
+    _depthFillPass = _shaderPasses.emplace_back(std::make_shared<DepthFillPass>(*this, _renderSystem));
+    return _depthFillPass->state();
 }
 
 // Test if we can render in bump map mode
@@ -823,6 +824,22 @@ void OpenGLShader::foreachPass(const std::function<void(OpenGLShaderPass&)>& fun
     {
         functor(*pass);
     }
+}
+
+void OpenGLShader::foreachPassWithoutDepthPass(const std::function<void(OpenGLShaderPass&)>& functor)
+{
+    for (auto& pass : _shaderPasses)
+    {
+        if (pass != _depthFillPass)
+        {
+            functor(*pass);
+        }
+    }
+}
+
+OpenGLShaderPass* OpenGLShader::getDepthFillPass() const
+{
+    return _depthFillPass.get();
 }
 
 }

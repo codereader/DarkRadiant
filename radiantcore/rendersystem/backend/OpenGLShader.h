@@ -33,6 +33,10 @@ private:
     // List of shader passes for this shader
     std::list<OpenGLShaderPassPtr> _shaderPasses;
 
+    // The depth fill pass of this shader (can be empty).
+    // Lighting mode needs to have quick access to this pass
+    OpenGLShaderPassPtr _depthFillPass;
+
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;
     sigc::connection _materialChanged;
@@ -147,6 +151,10 @@ public:
     void setMergeModeEnabled(bool enabled);
 
     void foreachPass(const std::function<void(OpenGLShaderPass&)>& functor);
+    void foreachPassWithoutDepthPass(const std::function<void(OpenGLShaderPass&)>& functor);
+
+    // Returns the depth fill pass of this shader, or null if this shader doesn't have one
+    OpenGLShaderPass* getDepthFillPass() const;
 
 protected:
     // Start point for constructing shader passes from the shader name

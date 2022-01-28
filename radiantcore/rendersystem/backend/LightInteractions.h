@@ -39,7 +39,11 @@ public:
 
     void addSurface(IRenderableSurface& surface, IRenderEntity& entity, OpenGLShader& shader);
 
-    void render(OpenGLState& state, RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t renderTime);
+    void fillDepthBuffer(OpenGLState& current, RenderStateFlags globalFlagsMask, 
+        const IRenderView& view, std::size_t renderTime);
+
+    void render(OpenGLState& state, RenderStateFlags globalFlagsMask, 
+        const IRenderView& view, std::size_t renderTime);
 };
 
 }
