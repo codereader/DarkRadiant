@@ -8,6 +8,7 @@
 #include "backend/OpenGLShader.h"
 #include "backend/OpenGLStateLess.h"
 #include "backend/TextRenderer.h"
+#include "backend/GeometryStore.h"
 
 namespace render
 {
@@ -58,6 +59,8 @@ class OpenGLRenderSystem final
 	sigc::connection _materialDefsUnloaded;
 	sigc::connection _sharedContextCreated;
 	sigc::connection _sharedContextDestroyed;
+
+    GeometryStore _geometryStore;
 
 public:
 	OpenGLRenderSystem();
