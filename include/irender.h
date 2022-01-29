@@ -171,23 +171,23 @@ public:
     virtual Vector4 getEntityColour() const = 0;
 
     /**
-     * Associates the given surface with this entity and the given shader.
+     * Associates the given object with this entity and the given shader.
      * It will be processed during the following lighting mode rendering passes.
      */
-    virtual void addSurface(const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader) = 0;
+    virtual void addRenderable(const render::IRenderableObject::Ptr& object, const ShaderPtr& shader) = 0;
 
     /**
-     * Removes the surface from this entity.
+     * Removes the object from this entity.
      */
-    virtual void removeSurface(const render::IRenderableSurface::Ptr& surface) = 0;
+    virtual void removeRenderable(const render::IRenderableObject::Ptr& object) = 0;
 
-    using SurfaceVisitFunction = std::function<void(const render::IRenderableSurface::Ptr&, const ShaderPtr&)>;
+    using ObjectVisitFunction = std::function<void(const render::IRenderableObject::Ptr&, const ShaderPtr&)>;
 
     /**
-     * Enumerate all entity surfaces (partially) intersecting with the given bounds.
+     * Enumerate all entity object (partially) intersecting with the given bounds.
      * The bounds are specified in world coordinates.
      */
-    virtual void foreachSurfaceTouchingBounds(const AABB& bounds, const SurfaceVisitFunction& functor) = 0;
+    virtual void foreachRenderableTouchingBounds(const AABB& bounds, const ObjectVisitFunction& functor) = 0;
 };
 typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;

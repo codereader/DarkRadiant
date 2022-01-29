@@ -165,6 +165,7 @@
     <ClInclude Include="..\..\include\iwindingrenderer.h" />
     <ClInclude Include="..\..\include\igeometryrenderer.h" />
     <ClInclude Include="..\..\include\isurfacerenderer.h" />
+    <ClInclude Include="..\..\include\irenderableobject.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ui">

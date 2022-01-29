@@ -225,6 +225,11 @@ public:
         _indices = detail::generateTriangleBoxIndices();
     }
 
+    bool isVisible() override
+    {
+        return !_indices.empty();
+    }
+
     const std::vector<ArbitraryMeshVertex>& getVertices() override
     {
         return _vertices;
@@ -235,12 +240,12 @@ public:
         return _indices;
     }
 
-    const Matrix4& getSurfaceTransform() override
+    const Matrix4& getObjectTransform() override
     {
         return _orientation;
     }
 
-    const AABB& getSurfaceBounds() override
+    const AABB& getObjectBounds() override
     {
         return _bounds;
     }

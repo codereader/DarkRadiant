@@ -1,6 +1,7 @@
 #pragma once
 
-#include <sigc++/signal.h>
+#include "irenderableobject.h"
+
 #include <vector>
 #include <limits>
 #include <cstdint>
@@ -16,7 +17,8 @@ namespace render
  * The ISurfaceRenderer will reacquire the transformation matrix each frame,
  * whereas the vertices and indices won't be requested every time.
  */
-class IRenderableSurface
+class IRenderableSurface :
+    public IRenderableObject
 {
 public:
     using Ptr = std::shared_ptr<IRenderableSurface>;
@@ -28,16 +30,6 @@ public:
 
     // Returns the indices to render the triangle primitives
     virtual const std::vector<unsigned int>& getIndices() = 0;
-
-    // The model view matrix used to render this surface
-    virtual const Matrix4& getSurfaceTransform() = 0;
-
-    // The surface bounds in local coordinates
-    virtual const AABB& getSurfaceBounds() = 0;
-
-    // Emitted when the surface bounds have changed,
-    // because it has been either moved or resized.
-    virtual sigc::signal<void>& signal_boundsChanged() = 0;
 };
 
 /**

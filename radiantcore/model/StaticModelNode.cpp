@@ -44,7 +44,7 @@ void StaticModelNode::onRemoveFromScene(scene::IMapRootNode& root)
     {
         for (auto& surface : _renderableSurfaces)
         {
-            _renderEntity->removeSurface(surface);
+            _renderEntity->removeRenderable(surface);
         }
     }
 
@@ -139,7 +139,7 @@ void StaticModelNode::detachFromShaders()
 
         if (_renderEntity)
         {
-            _renderEntity->removeSurface(surface);
+            _renderEntity->removeRenderable(surface);
         }
     }
 
@@ -166,7 +166,7 @@ void StaticModelNode::attachToShaders()
         surface->attachToShader(_renderEntity->getWireShader());
 
         // Attach to the render entity for lighting mode rendering
-        _renderEntity->addSurface(surface, shader);
+        _renderEntity->addRenderable(surface, shader);
     }
 
     _attachedToShaders = true;

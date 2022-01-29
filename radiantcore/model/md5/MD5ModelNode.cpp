@@ -147,7 +147,7 @@ void MD5ModelNode::detachFromShaders()
 
         if (_renderEntity)
         {
-            _renderEntity->removeSurface(surface);
+            _renderEntity->removeRenderable(surface);
         }
     }
 
@@ -171,7 +171,7 @@ void MD5ModelNode::attachToShaders()
         surface->attachToShader(_renderEntity->getWireShader());
 
         // Attach to the render entity for lighting mode rendering
-        _renderEntity->addSurface(surface, shader);
+        _renderEntity->addRenderable(surface, shader);
     }
 
     _attachedToShaders = true;

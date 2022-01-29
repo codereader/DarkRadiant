@@ -33,6 +33,11 @@ public:
         return _surface;
     }
 
+    bool isVisible() override
+    {
+        return !_surface.getIndexArray().empty();
+    }
+
     const std::vector<ArbitraryMeshVertex>& getVertices() override
     {
         return _surface.getVertexArray();
@@ -43,12 +48,12 @@ public:
         return _surface.getIndexArray();
     }
 
-    const Matrix4& getSurfaceTransform() override
+    const Matrix4& getObjectTransform() override
     {
         return _localToWorld;
     }
 
-    const AABB& getSurfaceBounds() override
+    const AABB& getObjectBounds() override
     {
         return _surface.getSurfaceBounds();
     }

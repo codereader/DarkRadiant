@@ -2298,11 +2298,11 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\LightingModeRenderResult.h">
       <Filter>src\rendersystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\RenderableSurfaceCollection.h">
-      <Filter>src\entity</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightInteractions.h">
       <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\RenderableObjectCollection.h">
+      <Filter>src\entity</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

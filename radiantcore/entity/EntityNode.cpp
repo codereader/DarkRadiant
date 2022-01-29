@@ -200,20 +200,20 @@ const Vector3& EntityNode::getDirection() const
 	return _direction;
 }
 
-void EntityNode::addSurface(const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader)
+void EntityNode::addRenderable(const render::IRenderableObject::Ptr& object, const ShaderPtr& shader)
 {
-    _renderSurfaces.addSurface(surface, shader);
+    _renderObjects.addRenderable(object, shader);
 }
 
-void EntityNode::removeSurface(const render::IRenderableSurface::Ptr& surface)
+void EntityNode::removeRenderable(const render::IRenderableObject::Ptr& object)
 {
-    _renderSurfaces.removeSurface(surface);
+    _renderObjects.removeRenderable(object);
 }
 
-void EntityNode::foreachSurfaceTouchingBounds(const AABB& bounds,
-    const IRenderEntity::SurfaceVisitFunction& functor)
+void EntityNode::foreachRenderableTouchingBounds(const AABB& bounds,
+    const IRenderEntity::ObjectVisitFunction& functor)
 {
-    _renderSurfaces.foreachSurfaceTouchingBounds(bounds, functor);
+    _renderObjects.foreachRenderableTouchingBounds(bounds, functor);
 }
 
 std::string EntityNode::getFingerprint()

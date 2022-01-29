@@ -172,6 +172,7 @@
     <ClInclude Include="..\..\include\iregistry.h" />
     <ClInclude Include="..\..\include\irender.h" />
     <ClInclude Include="..\..\include\irenderable.h" />
+    <ClInclude Include="..\..\include\irenderableobject.h" />
     <ClInclude Include="..\..\include\irendersystemfactory.h" />
     <ClInclude Include="..\..\include\irenderview.h" />
     <ClInclude Include="..\..\include\iscenegraph.h" />

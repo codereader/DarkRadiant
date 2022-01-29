@@ -5,88 +5,89 @@
 #include <sigc++/trackable.h>
 #include <sigc++/functors/mem_fun.h>
 #include "irender.h"
+#include "irenderableobject.h"
 #include "itextstream.h"
 
 namespace entity
 {
 
-class RenderableSurfaceCollection :
+class RenderableObjectCollection :
     public sigc::trackable
 {
 private:
     AABB _collectionBounds;
     bool _collectionBoundsNeedUpdate;
 
-    struct SurfaceData
+    struct ObjectData
     {
         ShaderPtr shader;
         sigc::connection boundsChangedConnection;
     };
 
-    std::map<render::IRenderableSurface::Ptr, SurfaceData> _surfaces;
+    std::map<render::IRenderableObject::Ptr, ObjectData> _objects;
 
 public:
-    RenderableSurfaceCollection() :
+    RenderableObjectCollection() :
         _collectionBoundsNeedUpdate(true)
     {}
 
-    void addSurface(const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader)
+    void addRenderable(const render::IRenderableObject::Ptr& object, const ShaderPtr& shader)
     {
-        sigc::connection subscription = surface->signal_boundsChanged().connect(
-            sigc::mem_fun(*this, &RenderableSurfaceCollection::onSurfaceBoundsChanged));
+        sigc::connection subscription = object->signal_boundsChanged().connect(
+            sigc::mem_fun(*this, &RenderableObjectCollection::onObjectBoundsChanged));
         
-        if (!_surfaces.try_emplace(surface, SurfaceData{ shader, subscription }).second)
+        if (!_objects.try_emplace(object, ObjectData{ shader, subscription }).second)
         {
             // We've already been subscribed to this one
             subscription.disconnect();
-            rWarning() << "Renderable surface has already been attached to entity" << std::endl;
+            rWarning() << "Renderable has already been attached to entity" << std::endl;
             return;
         }
 
         _collectionBoundsNeedUpdate = true;
     }
 
-    void removeSurface(const render::IRenderableSurface::Ptr& surface)
+    void removeRenderable(const render::IRenderableObject::Ptr& object)
     {
-        auto mapping = _surfaces.find(surface);
+        auto mapping = _objects.find(object);
 
-        if (mapping != _surfaces.end())
+        if (mapping != _objects.end())
         {
             mapping->second.boundsChangedConnection.disconnect();
-            _surfaces.erase(mapping);
+            _objects.erase(mapping);
         }
         else
         {
-            rWarning() << "Renderable surface has not been attached to entity" << std::endl;
+            rWarning() << "Renderable has not been attached to entity" << std::endl;
         }
 
         _collectionBoundsNeedUpdate = true;
     }
 
-    void foreachSurfaceTouchingBounds(const AABB& bounds,
-        const IRenderEntity::SurfaceVisitFunction& functor)
+    void foreachRenderableTouchingBounds(const AABB& bounds,
+        const IRenderEntity::ObjectVisitFunction& functor)
     {
-        if (_surfaces.empty()) return;
+        if (_objects.empty()) return;
 
         ensureBoundsUpToDate();
 
         // If the whole collection doesn't intersect, quit early
         if (!_collectionBounds.intersects(bounds)) return;
         
-        for (const auto& [surface, surfaceData] : _surfaces)
+        for (const auto& [object, objectData] : _objects)
         {
             auto orientedBounds = AABB::createFromOrientedAABBSafe(
-                surface->getSurfaceBounds(), surface->getSurfaceTransform());
+                object->getObjectBounds(), object->getObjectTransform());
 
             if (bounds.intersects(orientedBounds))
             {
-                functor(surface, surfaceData.shader);
+                functor(object, objectData.shader);
             }
         }
     }
 
 private:
-    void onSurfaceBoundsChanged()
+    void onObjectBoundsChanged()
     {
         _collectionBoundsNeedUpdate = true;
     }
@@ -99,10 +100,10 @@ private:
 
         _collectionBounds = AABB();
 
-        for (const auto& [surface, _] : _surfaces)
+        for (const auto& [object, _] : _objects)
         {
             _collectionBounds.includeAABB(AABB::createFromOrientedAABBSafe(
-                surface->getSurfaceBounds(), surface->getSurfaceTransform()));
+                object->getObjectBounds(), object->getObjectTransform()));
         }
     }
 };

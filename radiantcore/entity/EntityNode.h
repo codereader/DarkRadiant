@@ -19,7 +19,7 @@
 
 #include "KeyObserverMap.h"
 #include "RenderableEntityName.h"
-#include "RenderableSurfaceCollection.h"
+#include "RenderableObjectCollection.h"
 
 namespace entity
 {
@@ -106,9 +106,9 @@ protected:
     // Whether this entity has registered itself to a render system
     bool _isAttachedToRenderSystem;
 
-    // The list of surfaces attached to this IRenderEntity
+    // The list of renderable objects attached to this IRenderEntity
     // Used in lighting render mode to enumerate surfaces by entity
-    RenderableSurfaceCollection _renderSurfaces;
+    RenderableObjectCollection _renderObjects;
 
   protected:
 	// The Constructor needs the eclass
@@ -129,10 +129,10 @@ public:
 	virtual float getShaderParm(int parmNum) const override;
 	virtual const Vector3& getDirection() const override;
 
-    virtual void addSurface(const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader) override;
-    virtual void removeSurface(const render::IRenderableSurface::Ptr& surface) override;
-    virtual void foreachSurfaceTouchingBounds(const AABB& bounds,
-        const SurfaceVisitFunction& functor) override;
+    virtual void addRenderable(const render::IRenderableObject::Ptr& object, const ShaderPtr& shader) override;
+    virtual void removeRenderable(const render::IRenderableObject::Ptr& object) override;
+    virtual void foreachRenderableTouchingBounds(const AABB& bounds,
+        const ObjectVisitFunction& functor) override;
 
     // IMatrixTransform implementation
     Matrix4 localToParent() const override { return _localToParent; }

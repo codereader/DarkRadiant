@@ -328,9 +328,9 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
         // Check all the surfaces that are touching this light
         interaction.collectSurfaces(_entities);
 
-        result->surfaces += interaction.getSurfaceCount();
+        result->objects += interaction.getObjectCount();
         result->entities += interaction.getEntityCount();
-
+        
         interactionLists.emplace_back(std::move(interaction));
     }
 

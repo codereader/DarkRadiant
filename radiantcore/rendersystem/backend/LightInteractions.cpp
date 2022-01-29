@@ -8,9 +8,9 @@ namespace render
 namespace detail
 {
 
-inline void submitSurface(IRenderableSurface& surface)
+inline void submitObject(IRenderableObject& object)
 {
-    if (surface.getSurfaceTransform().getHandedness() == Matrix4::RIGHTHANDED)
+    if (object.getObjectTransform().getHandedness() == Matrix4::RIGHTHANDED)
     {
         glFrontFace(GL_CW);
     }
@@ -20,38 +20,47 @@ inline void submitSurface(IRenderableSurface& surface)
     }
 
     glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
 
-    glMultMatrixd(surface.getSurfaceTransform());
+    auto surface = dynamic_cast<IRenderableSurface*>(&object);
 
-    const auto& vertices = surface.getVertices();
-    const auto& indices = surface.getIndices();
+    if (surface)
+    {
+        glPushMatrix();
 
-    glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
+        glMultMatrixd(surface->getObjectTransform());
 
-    glVertexAttribPointer(ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
-    glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
-    glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().tangent);
-    glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().bitangent);
+        const auto& vertices = surface->getVertices();
+        const auto& indices = surface->getIndices();
 
-    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, &indices.front());
+        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
 
-    glPopMatrix();
+        glVertexAttribPointer(ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
+        glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
+        glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().tangent);
+        glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().bitangent);
+
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, &indices.front());
+        
+        glPopMatrix();
+        return;
+    }
+
+    // TODO
 }
 
 }
 
-void LightInteractions::addSurface(IRenderableSurface& surface, IRenderEntity& entity, OpenGLShader& shader)
+void LightInteractions::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader& shader)
 {
-    auto& surfacesByMaterial = _surfacesByEntity.emplace(
-        &entity, SurfacesByMaterial{}).first->second;
+    auto& objectsByMaterial = _objectsByEntity.emplace(
+        &entity, ObjectsByMaterial{}).first->second;
 
-    auto& surfaces = surfacesByMaterial.emplace(
-        &shader, SurfaceList{}).first->second;
+    auto& surfaces = objectsByMaterial.emplace(
+        &shader, ObjectList{}).first->second;
 
-    surfaces.emplace_back(std::ref(surface));
+    surfaces.emplace_back(std::ref(object));
 
-    ++_surfaceCount;
+    ++_objectCount;
 }
 
 bool LightInteractions::isInView(const IRenderView& view)
@@ -64,11 +73,11 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
     // Now check all the entities intersecting with this light
     for (const auto& entity : entities)
     {
-        entity->foreachSurfaceTouchingBounds(_lightBounds,
-            [&](const render::IRenderableSurface::Ptr& surface, const ShaderPtr& shader)
+        entity->foreachRenderableTouchingBounds(_lightBounds,
+            [&](const render::IRenderableObject::Ptr& object, const ShaderPtr& shader)
         {
-            // Skip empty surfaces
-            if (surface->getIndices().empty()) return;
+            // Skip empty objects
+            if (!object->isVisible()) return;
 
             // Don't collect invisible shaders
             if (!shader->isVisible()) return;
@@ -81,7 +90,7 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
                 return;
             }
 
-            addSurface(*surface, *entity, *glShader);
+            addObject(*object, *entity, *glShader);
         });
     }
 }
@@ -95,14 +104,14 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 
-    for (auto& pair : _surfacesByEntity)
+    for (auto& pair : _objectsByEntity)
     {
         auto entity = pair.first;
 
         for (auto& pair : pair.second)
         {
             auto shader = pair.first;
-            auto& surfaceList = pair.second;
+            auto& objectList = pair.second;
 
             // Skip translucent materials
             if (shader->getMaterial() && shader->getMaterial()->getCoverage() == Material::MC_TRANSLUCENT)
@@ -123,9 +132,9 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
 
             RenderInfo info(state.getRenderFlags(), view.getViewer(), state.cubeMapMode);
             
-            for (auto surface : surfaceList)
+            for (auto object : objectList)
             {
-                detail::submitSurface(surface.get());
+                detail::submitObject(object.get());
                 ++_drawCalls;
             }
         }
@@ -144,14 +153,14 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 
-    for (auto& pair : _surfacesByEntity)
+    for (auto& pair : _objectsByEntity)
     {
         auto entity = pair.first;
 
         for (auto& pair : pair.second)
         {
             auto shader = pair.first;
-            auto& surfaceList = pair.second;
+            auto& objectList = pair.second;
 
             if (!shader->isVisible()) continue;
 
@@ -173,15 +182,15 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
 
                 RenderInfo info(state.getRenderFlags(), view.getViewer(), state.cubeMapMode);
 
-                for (auto surface : surfaceList)
+                for (auto object : objectList)
                 {
                     if (state.glProgram)
                     {
                         OpenGLShaderPass::setUpLightingCalculation(state, &_light, worldToLight,
-                            view.getViewer(), surface.get().getSurfaceTransform(), renderTime, state.isColourInverted());
+                            view.getViewer(), object.get().getObjectTransform(), renderTime, state.isColourInverted());
                     }
 
-                    detail::submitSurface(surface.get());
+                    detail::submitObject(object.get());
                     ++_drawCalls;
                 }
             });

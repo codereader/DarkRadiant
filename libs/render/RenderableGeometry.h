@@ -2,6 +2,8 @@
 
 #include <vector>
 #include "igeometryrenderer.h"
+#include "isurfacerenderer.h"
+#include "irenderableobject.h"
 #include "irender.h"
 
 namespace render
@@ -25,11 +27,59 @@ private:
     std::size_t _lastVertexSize; // To detect size changes when updating geometry
     std::size_t _lastIndexSize; // To detect size changes when updating geometry
 
+    class RenderAdapter final :
+        public IRenderableObject
+    {
+    private:
+        RenderableGeometry& _owner;
+        AABB _bounds;
+        sigc::signal<void> _sigBoundsChanged;
+
+    public:
+        RenderAdapter(RenderableGeometry& owner) :
+            _owner(owner)
+        {}
+
+        bool isVisible() override
+        {
+            return _owner._surfaceSlot != IGeometryRenderer::InvalidSlot;
+        }
+
+        const Matrix4& getObjectTransform() override
+        {
+            static Matrix4 _identity = Matrix4::getIdentity();
+            return _identity;
+        }
+
+        const AABB& getObjectBounds() override
+        {
+            return _bounds;
+        }
+
+        sigc::signal<void>& signal_boundsChanged() override
+        {
+            return _sigBoundsChanged;
+        }
+
+        void setBounds(const AABB& bounds)
+        {
+            _bounds = bounds;
+            signal_boundsChanged().emit();
+        }
+    };
+
+    // Adapater suitable to be attached to an IRenderEntity
+    std::shared_ptr<RenderAdapter> _renderAdapter;
+
+    // The render entity the adapter is attached to
+    IRenderEntity* _renderEntity;
+
 protected:
     RenderableGeometry() :
         _surfaceSlot(IGeometryRenderer::InvalidSlot),
         _lastVertexSize(0),
-        _lastIndexSize(0)
+        _lastIndexSize(0),
+        _renderEntity(nullptr)
     {}
 
 public:
@@ -67,6 +117,9 @@ public:
     // Removes the geometry and clears the shader reference
     void clear()
     {
+        // Detach from the render entity when being cleared
+        detachFromEntity();
+
         removeGeometry();
 
         _shader.reset();
@@ -79,6 +132,52 @@ public:
         {
             _shader->renderGeometry(_surfaceSlot);
         }
+    }
+
+    // Attach this geometry to the given render entity.
+    // This call is only valid if this Geometry instance has been attached to a shader
+    // Does nothing if already attached to the given render entity.
+    void attachToEntity(IRenderEntity* entity)
+    {
+        if (_renderEntity == entity) return; // nothing to do
+
+        if (!_shader)
+        {
+            throw std::logic_error("Cannot attach geometry without any shader");
+        }
+
+        if (_renderEntity && entity != _renderEntity)
+        {
+            detachFromEntity();
+        }
+
+        _renderEntity = entity;
+        _renderEntity->addRenderable(getRenderAdapter(), _shader);
+    }
+
+    void detachFromEntity()
+    {
+        if (_renderEntity)
+        {
+            _renderEntity->removeRenderable(_renderAdapter);
+            _renderEntity = nullptr;
+        }
+    }
+
+    /**
+     * Returns the adapter class suitable to attach this geometry as surface to a render entity
+     * The surface will have an identity transform (all vertices specified in world coords).
+     * This adapter will be valid as long as this geometry is attached to the IGeometryRenderer,
+     * otherwise no access to the stored vertices/indices is possible.
+     */
+    const IRenderableObject::Ptr& getRenderAdapter()
+    {
+        if (!_renderAdapter)
+        {
+            _renderAdapter = std::make_shared<RenderAdapter>(*this);
+        }
+
+        return _renderAdapter;
     }
 
 protected:
@@ -121,6 +220,19 @@ protected:
         else
         {
             _shader->updateGeometry(_surfaceSlot, vertices, indices);
+        }
+
+        // Fire the bounds changed signal (after submitting the changed vertices)
+        if (_renderAdapter)
+        {
+            AABB bounds;
+
+            for (const auto& vertex : vertices)
+            {
+                bounds.includePoint(vertex.vertex);
+            }
+
+            _renderAdapter->setBounds(bounds);
         }
     }
 };

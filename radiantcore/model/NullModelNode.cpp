@@ -106,7 +106,7 @@ void NullModelNode::attachToShaders()
 
     if (_renderEntity)
     {
-        _renderEntity->addSurface(_renderableBox, _fillShader);
+        _renderEntity->addRenderable(_renderableBox, _fillShader);
     }
 
     _attachedToShaders = true;
@@ -118,7 +118,7 @@ void NullModelNode::detachFromShaders()
 
     if (_renderEntity)
     {
-        _renderEntity->removeSurface(_renderableBox);
+        _renderEntity->removeRenderable(_renderableBox);
     }
 
     _attachedToShaders = false;

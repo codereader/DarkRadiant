@@ -232,7 +232,7 @@ private:
         }
 
         // Check if this surface is in view
-        if (view && view->TestAABB(surface.getSurfaceBounds(), surface.getSurfaceTransform()) == VOLUME_OUTSIDE)
+        if (view && view->TestAABB(surface.getObjectBounds(), surface.getObjectTransform()) == VOLUME_OUTSIDE)
         {
             return;
         }
@@ -240,7 +240,7 @@ private:
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
 
-        glMultMatrixd(surface.getSurfaceTransform());
+        glMultMatrixd(surface.getObjectTransform());
 
         slot.buffer.render(renderBump);
 
