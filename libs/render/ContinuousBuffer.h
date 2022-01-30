@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <stack>
 #include <limits>
 #include <vector>
 
@@ -35,7 +36,7 @@ private:
         std::size_t Offset; // The index to the first element within the buffer
         std::size_t Size;   // Number of allocated elements
 
-        SlotInfo(bool occupied, std::size_t offset, std::size_t size) :
+        SlotInfo(std::size_t offset, std::size_t size, bool occupied) :
             Occupied(occupied),
             Offset(offset),
             Size(size)
@@ -44,6 +45,9 @@ private:
 
     std::vector<SlotInfo> _slots;
 
+    // A stack of slots that can be re-used instead
+    std::stack<Handle> _emptySlots;
+
 public:
     ContinuousBuffer(std::size_t initialSize = DefaultInitialSize)
     {
@@ -51,7 +55,7 @@ public:
         _buffer.resize(initialSize == 0 ? 16 : initialSize);
 
         // The initial slot info which is going to be cut into pieces
-        _slots.emplace_back(SlotInfo{ false, 0, _buffer.size() });
+        createSlotInfo(0, _buffer.size());
     }
 
     Handle allocate(std::size_t requiredSize)
@@ -100,9 +104,10 @@ public:
             releasedSlot.Offset = slotToMerge.Offset;
             releasedSlot.Size += slotToMerge.Size;
 
-            // The merged handle goes to waste, block it against future use
+            // The merged handle goes to recycling, block it against future use
             slotToMerge.Size = 0;
             slotToMerge.Occupied = true;
+            _emptySlots.push(slotIndexToMerge);
         }
 
         // Try to find an adjacent free slot to the right
@@ -112,9 +117,10 @@ public:
 
             releasedSlot.Size += slotToMerge.Size;
 
-            // The merged handle goes to waste, block it against future use
+            // The merged handle goes to recycling, block it against future use
             slotToMerge.Size = 0;
             slotToMerge.Occupied = true;
+            _emptySlots.push(slotIndexToMerge);
         }
     }
 
@@ -187,12 +193,7 @@ private:
             if (remainingSize > 0)
             {
                 // Allocate a new free slot with the remaining space
-                _slots.emplace_back(SlotInfo
-                {
-                    false,
-                    slot.Offset + requiredSize,
-                    remainingSize,
-                });
+                createSlotInfo(slot.Offset + requiredSize, remainingSize);
             }
 
             return slotIndex;
@@ -212,14 +213,27 @@ private:
         rightmostFreeSlot.Occupied = true;
         rightmostFreeSlot.Size = requiredSize;
 
-        _slots.emplace_back(SlotInfo
-        {
-            false,
-            rightmostFreeSlot.Offset + rightmostFreeSlot.Size,
-            remainingSize,
-        });
+        createSlotInfo(rightmostFreeSlot.Offset + rightmostFreeSlot.Size, remainingSize);
 
         return rightmostFreeSlotIndex;
+    }
+
+    SlotInfo& createSlotInfo(std::size_t offset, std::size_t size, bool occupied = false)
+    {
+        if (_emptySlots.empty())
+        {
+            return _slots.emplace_back(offset, size, occupied);
+        }
+
+        // Re-use an old slot
+        auto& slot = _slots.at(_emptySlots.top());
+        _emptySlots.pop();
+
+        slot.Occupied = occupied;
+        slot.Offset = offset;
+        slot.Size = size;
+
+        return slot;
     }
 };
 
