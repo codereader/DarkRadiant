@@ -24,6 +24,7 @@ class LightInteractions
 {
 private:
     RendererLight& _light;
+    IGeometryStore& _store;
     AABB _lightBounds;
 
     // A flat list of renderables
@@ -39,8 +40,9 @@ private:
     std::size_t _objectCount;
 
 public:
-    LightInteractions(RendererLight& light) :
+    LightInteractions(RendererLight& light, IGeometryStore& store) :
         _light(light),
+        _store(store),
         _lightBounds(light.lightAABB()),
         _drawCalls(0),
         _objectCount(0)

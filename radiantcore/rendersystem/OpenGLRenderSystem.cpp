@@ -315,7 +315,7 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
     // Gather all visible lights and render the surfaces touched by them
     for (const auto& light : _lights)
     {
-        LightInteractions interaction(*light);
+        LightInteractions interaction(*light, _geometryStore);
 
         if (!interaction.isInView(view))
         {
