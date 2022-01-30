@@ -5,6 +5,7 @@ add_executable(drtest
                Brush.cpp
                Camera.cpp
                ColourSchemes.cpp
+               ContinuousBuffer.cpp
                CSG.cpp
                Entity.cpp
                Favourites.cpp

@@ -54,6 +54,7 @@
     <ClCompile Include="..\..\..\test\UndoRedo.cpp" />
     <ClCompile Include="..\..\..\test\WindingRendering.cpp" />
     <ClCompile Include="..\..\..\test\SceneNode.cpp" />
+    <ClCompile Include="..\..\..\test\ContinuousBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

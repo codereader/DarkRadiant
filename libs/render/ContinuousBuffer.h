@@ -51,11 +51,7 @@ public:
         _buffer.resize(initialSize == 0 ? 16 : initialSize);
 
         // The initial slot info which is going to be cut into pieces
-        _slots.emplace_back(SlotInfo{
-            false,
-            0,
-            _buffer.size()
-            });
+        _slots.emplace_back(SlotInfo{ false, 0, _buffer.size() });
     }
 
     Handle allocate(std::size_t requiredSize)
@@ -92,7 +88,7 @@ public:
 
     void deallocate(Handle handle)
     {
-        auto releasedSlot = _slots[handle];
+        auto& releasedSlot = _slots[handle];
         releasedSlot.Occupied = false;
 
         // Check if the slot can merge with an adjacent one
@@ -139,17 +135,20 @@ private:
 
             if (slot.Size < requiredSize) continue; // this slot is no use for us
 
-            // Take it
+            // Calculate the remaining size before assignment
+            auto remainingSize = slot.Size - requiredSize;
+            slot.Size = requiredSize;
             slot.Occupied = true;
 
-            if (slot.Size > requiredSize)
+            if (remainingSize > 0)
             {
-                // Allocate a new free slot with the rest
-                _slots.emplace_back(SlotInfo{
+                // Allocate a new free slot with the remaining space
+                _slots.emplace_back(SlotInfo
+                {
                     false,
                     slot.Offset + requiredSize,
-                    slot.Size - requiredSize,
-                    });
+                    remainingSize,
+                });
             }
 
             return slotIndex;
@@ -170,11 +169,11 @@ private:
         rightmostFreeSlot.Size = requiredSize;
 
         _slots.emplace_back(SlotInfo
-            {
-                false,
-                rightmostFreeSlot.Offset + rightmostFreeSlot.Size,
-                remainingSize,
-            });
+        {
+            false,
+            rightmostFreeSlot.Offset + rightmostFreeSlot.Size,
+            remainingSize,
+        });
 
         return rightmostFreeSlotIndex;
     }
