@@ -3,6 +3,7 @@
 #include <vector>
 #include <limits>
 #include <cstdint>
+#include "igeometrystore.h"
 #include "render/ArbitraryMeshVertex.h"
 #include "math/Matrix4.h"
 
@@ -50,6 +51,9 @@ public:
 
     // Submits the geometry of a single slot to GL
     virtual void renderGeometry(Slot slot) = 0;
+
+    // Returns the storage handle to enable the backend renderer to get hold of the indexed vertex data
+    virtual IGeometryStore::Slot getStorageLocation(Slot slot) = 0;
 };
 
 }

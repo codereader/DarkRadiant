@@ -1,6 +1,7 @@
 #pragma once
 
 #include "igeometryrenderer.h"
+#include "igeometrystore.h"
 
 namespace render
 {
@@ -12,6 +13,7 @@ private:
     class VertexBuffer
     {
     private:
+        IGeometryStore& _store;
         GLenum _mode;
 
         std::vector<ArbitraryMeshVertex> _vertices;
@@ -24,7 +26,8 @@ private:
         std::vector<GLint> _firstVertices;
 
     public:
-        VertexBuffer(GLenum mode) :
+        VertexBuffer(IGeometryStore& store, GLenum mode) :
+            _store(store),
             _mode(mode)
         {}
 
@@ -160,10 +163,11 @@ private:
     // This is enough information to access, replace or remove the data at a later point.
     struct SlotInfo
     {
-        std::uint8_t bucketIndex;
+        std::uint8_t bufferIndex;
         std::size_t surfaceIndex;
         std::size_t numVertices;
         std::size_t numIndices;
+        IGeometryStore::Slot storageHandle;
     };
     std::vector<SlotInfo> _slots;
 
@@ -171,13 +175,13 @@ private:
     std::size_t _freeSlotMappingHint;
 
 public:
-    GeometryRenderer() :
+    GeometryRenderer(IGeometryStore& store) :
         _freeSlotMappingHint(InvalidSlotMapping)
     {
-        _buffers.emplace_back(GL_TRIANGLES);
-        _buffers.emplace_back(GL_QUADS);
-        _buffers.emplace_back(GL_LINES);
-        _buffers.emplace_back(GL_POINTS);
+        _buffers.emplace_back(store, GL_TRIANGLES);
+        _buffers.emplace_back(store, GL_QUADS);
+        _buffers.emplace_back(store, GL_LINES);
+        _buffers.emplace_back(store, GL_POINTS);
     }
 
     bool empty() const
@@ -193,8 +197,8 @@ public:
     Slot addGeometry(GeometryType indexType, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {
-        auto bufferIndex = GetBucketIndexForIndexType(indexType);
-        auto& buffer = getBucketByIndex(bufferIndex);
+        auto bufferIndex = GetBufferIndexForIndexType(indexType);
+        auto& buffer = getBufferByIndex(bufferIndex);
 
         // Allocate a slot
         auto newSlotIndex = getNextFreeSlotMapping();
@@ -202,7 +206,7 @@ public:
 
         slot.surfaceIndex = buffer.addSurface(vertices, indices);
 
-        slot.bucketIndex = bufferIndex;
+        slot.bufferIndex = bufferIndex;
         slot.numVertices = vertices.size();
         slot.numIndices = indices.size();
 
@@ -212,14 +216,14 @@ public:
     void removeGeometry(Slot slot) override
     {
         auto& slotInfo = _slots.at(slot);
-        auto& bucket = getBucketByIndex(slotInfo.bucketIndex);
+        auto& bucket = getBufferByIndex(slotInfo.bufferIndex);
 
         bucket.removeSurface(slotInfo.surfaceIndex, slotInfo.numVertices);
 
         // Adjust all offsets in other slots pointing to the same bucket
         for (auto& slot : _slots)
         {
-            if (slot.bucketIndex == slotInfo.bucketIndex && 
+            if (slot.bufferIndex == slotInfo.bufferIndex && 
                 slot.surfaceIndex > slotInfo.surfaceIndex &&
                 slot.surfaceIndex != InvalidSurfaceIndex)
             {
@@ -249,7 +253,7 @@ public:
             throw std::logic_error("updateGeometry: Data size mismatch");
         }
 
-        auto& bucket = getBucketByIndex(slotInfo.bucketIndex);
+        auto& bucket = getBufferByIndex(slotInfo.bufferIndex);
 
         bucket.updateSurface(slotInfo.surfaceIndex, vertices, indices);
     }
@@ -285,7 +289,7 @@ public:
         glFrontFace(GL_CW);
 
         auto& slotInfo = _slots.at(slot);
-        auto& buffer = getBucketByIndex(slotInfo.bucketIndex);
+        auto& buffer = getBufferByIndex(slotInfo.bufferIndex);
 
         buffer.renderSurface(slotInfo.surfaceIndex);
 
@@ -293,15 +297,20 @@ public:
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
+    IGeometryStore::Slot getStorageLocation(Slot slot) override
+    {
+        return _slots.at(slot).storageHandle;
+    }
+
 private:
-    constexpr static std::uint8_t GetBucketIndexForIndexType(GeometryType indexType)
+    constexpr static std::uint8_t GetBufferIndexForIndexType(GeometryType indexType)
     {
         return static_cast<std::uint8_t>(indexType);
     }
 
-    VertexBuffer& getBucketByIndex(std::uint8_t bucketIndex)
+    VertexBuffer& getBufferByIndex(std::uint8_t bufferIndex)
     {
-        return _buffers[bucketIndex];
+        return _buffers[bufferIndex];
     }
 
     Slot getNextFreeSlotMapping()

@@ -632,6 +632,11 @@ void OpenGLRenderSystem::foreachLight(const std::function<void(const RendererLig
     std::for_each(_lights.begin(), _lights.end(), functor);
 }
 
+IGeometryStore& OpenGLRenderSystem::getGeometryStore()
+{
+    return _geometryStore;
+}
+
 // Define the static OpenGLRenderSystem module
 module::StaticModule<OpenGLRenderSystem> openGLRenderSystemModule;
 

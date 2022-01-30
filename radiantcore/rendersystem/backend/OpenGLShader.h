@@ -2,6 +2,7 @@
 
 #include "OpenGLShaderPass.h"
 
+#include "igeometrystore.h"
 #include "irender.h"
 #include "ishaders.h"
 #include "string/string.h"
@@ -114,6 +115,7 @@ public:
     void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
     void renderGeometry(IGeometryRenderer::Slot slot) override;
+    IGeometryStore::Slot getStorageLocation(IGeometryRenderer::Slot slot) override;
 
     ISurfaceRenderer::Slot addSurface(IRenderableSurface& surface) override;
     void removeSurface(ISurfaceRenderer::Slot slot) override;

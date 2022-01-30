@@ -1,29 +1,15 @@
 #pragma once
 
 #include <stdexcept>
-#include <vector>
 #include <limits>
-#include "render/ArbitraryMeshVertex.h"
+#include "igeometrystore.h"
 #include "render/ContinuousBuffer.h"
 
 namespace render
 {
 
-/**
- * Storage container for indexed vertex data.
- * 
- * Client code will allocate fixed-size blocks of continuous
- * memory for vertex and index data.
- * 
- * The Block handle will remain valid until relasing it,
- * though the underlying memory location is subject to change.
- * 
- * Blocks cannot be resized after allocation.
- * 
- * All the vertex data will is guaranteed to belong to the same continuous
- * large block of memory, making it suitable for openGL multi draw calls.
- */
-class GeometryStore
+class GeometryStore :
+    public IGeometryStore
 {
 public:
     // Slot ID handed out to client code
@@ -34,11 +20,8 @@ private:
     ContinuousBuffer<unsigned int> _indexBuffer;
 
 public:
-    GeometryStore()
-    {}
-
     Slot allocateSlot(const std::vector<ArbitraryMeshVertex>& vertices,
-        const std::vector<unsigned int>& indices)
+        const std::vector<unsigned int>& indices) override
     {
         assert(!vertices.empty());
         assert(!indices.empty());
@@ -52,7 +35,7 @@ public:
         return GetSlot(vertexSlot, indexSlot);
     }
 
-    void deallocateSlot(Slot slot)
+    void deallocateSlot(Slot slot) override
     {
         _vertexBuffer.deallocate(GetVertexSlot(slot));
         _indexBuffer.deallocate(GetIndexSlot(slot));

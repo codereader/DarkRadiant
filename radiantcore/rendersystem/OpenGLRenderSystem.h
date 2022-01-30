@@ -124,6 +124,8 @@ public:
     void initialiseModule(const IApplicationContext& ctx) override;
     void shutdownModule() override;
 
+    IGeometryStore& getGeometryStore();
+
 private:
     // Set up initial GL states, will push all attrib states
     void beginRendering(OpenGLState& state);
