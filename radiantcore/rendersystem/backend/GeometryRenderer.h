@@ -6,28 +6,25 @@
 namespace render
 {
 
+/**
+ * Maintains all surfaces grouped by the GeometryType (Triangles, Lines, etc.)
+ * Stores the vertex data in the IGeometryStore provided by the render backend.
+ */
 class GeometryRenderer :
     public IGeometryRenderer
 {
 private:
-    class VertexBuffer
+    // Manages all surfaces drawn in a certain GL mode like GL_TRIANGLES, GL_QUADS, etc.
+    class SurfaceGroup
     {
     private:
         IGeometryStore& _store;
         GLenum _mode;
 
         std::set<IGeometryStore::Slot> _surfaces;
-        
-#if 0
-        // The input arrays used for glMultiDrawElementsBaseVertex
-        // when drawing the entire buffer at once (non-lit mode)
-        std::vector<GLsizei> _sizes;
-        std::vector<void*> _firstIndices;
-        std::vector<GLint> _firstVertices;
-#endif
 
     public:
-        VertexBuffer(IGeometryStore& store, GLenum mode) :
+        SurfaceGroup(IGeometryStore& store, GLenum mode) :
             _store(store),
             _mode(mode)
         {}
@@ -43,7 +40,7 @@ private:
 
             if (surfaceCount == 0) return;
 
-            // Build the indices and offsets used for glMultiDraw
+            // Build the indices and offsets used for the glMulti draw call
             std::vector<GLsizei> sizes;
             std::vector<void*> firstIndices;
             std::vector<GLint> firstVertices;
@@ -107,28 +104,6 @@ private:
             _surfaces.insert(slot);
 
             return slot;
-#if 0
-            _sizes.push_back(static_cast<GLsizei>(indices.size()));
-            _firstVertices.push_back(static_cast<GLint>(_vertices.size()));
-
-
-            std::copy(vertices.begin(), vertices.end(), std::back_inserter(_vertices));
-            std::copy(indices.begin(), indices.end(), std::back_inserter(_indices));
-
-            // Rebuild the index array to point at the (most likely) new memory locations
-            auto numSurfaces = _sizes.size();
-            _firstIndices.resize(numSurfaces);
-
-            auto currentLocation = const_cast<unsigned int*>(&_indices.front());
-
-            for (auto i = 0; i < numSurfaces; ++i)
-            {
-                _firstIndices[i] = currentLocation;
-                currentLocation += _sizes[i];
-            }
-
-            return numSurfaces - 1;
-#endif
         }
 
         void updateSurface(IGeometryStore::Slot slot,
@@ -136,67 +111,16 @@ private:
             const std::vector<unsigned int>& indices)
         {
             _store.updateData(slot, vertices, indices);
-#if 0
-            auto firstVertex = _firstVertices.at(surfaceIndex);
-
-            // Calculate the distance within the index buffer from the pointer difference
-            auto* surfaceStartIndex = static_cast<unsigned int*>(_firstIndices.at(surfaceIndex));
-            auto firstIndex = surfaceStartIndex - &_indices.front();
-
-            // Copy the data to the correct slot in the array
-            std::copy(vertices.begin(), vertices.end(), _vertices.begin() + firstVertex);
-            std::copy(indices.begin(), indices.end(), _indices.begin() + firstIndex);
-#endif
         }
 
         void removeSurface(IGeometryStore::Slot slot)
         {
             _store.deallocateSlot(slot);
             _surfaces.erase(slot);
-#if 0
-            auto firstVertex = _firstVertices.at(surfaceIndex);
-
-            // Cut out the vertices
-            auto firstVertexToRemove = _vertices.begin() + firstVertex;
-            _vertices.erase(firstVertexToRemove, firstVertexToRemove + numVertices);
-
-            // Cut out the indices
-            auto* surfaceStartIndex = static_cast<unsigned int*>(_firstIndices.at(surfaceIndex));
-            auto firstIndex = surfaceStartIndex - &_indices.front();
-
-            auto firstIndexToRemove = _indices.begin() + firstIndex;
-            _indices.erase(firstIndexToRemove, firstIndexToRemove + _sizes.at(surfaceIndex));
-
-            // Adjust the metadata needed for glMultiDrawElementsBaseVertex
-            
-            // Shift the vertex starts by the amount of removed vertices
-            auto firstVertexToAdjust = _firstVertices.begin() + surfaceIndex;
-
-            while (++firstVertexToAdjust != _firstVertices.end())
-            {
-                *firstVertexToAdjust -= static_cast<GLint>(numVertices);
-            }
-
-            _firstVertices.erase(_firstVertices.begin() + surfaceIndex);
-
-            // Shift the index start pointers, assuming that the buffer has not been reallocated
-            auto firstIndexToAdjust = _firstIndices.begin() + surfaceIndex;
-            auto numIndicesRemoved = _sizes.at(surfaceIndex);
-
-            while (++firstIndexToAdjust != _firstIndices.end())
-            {
-                *firstIndexToAdjust = static_cast<unsigned int*>(*firstIndexToAdjust) - numIndicesRemoved;
-            }
-
-            _firstIndices.erase(_firstIndices.begin() + surfaceIndex);
-
-            // Index size is reduced by one
-            _sizes.erase(_sizes.begin() + surfaceIndex);
-#endif
         }
     };
 
-    std::vector<VertexBuffer> _buffers;
+    std::vector<SurfaceGroup> _groups;
 
     static constexpr IGeometryStore::Slot InvalidStorageHandle = std::numeric_limits<IGeometryStore::Slot>::max();
 
@@ -205,9 +129,7 @@ private:
     // This is enough information to access, replace or remove the data at a later point.
     struct SlotInfo
     {
-        std::uint8_t bufferIndex;
-        std::size_t numVertices;
-        std::size_t numIndices;
+        std::uint8_t groupIndex;
         IGeometryStore::Slot storageHandle;
     };
     std::vector<SlotInfo> _slots;
@@ -219,15 +141,15 @@ public:
     GeometryRenderer(IGeometryStore& store) :
         _freeSlotMappingHint(InvalidSlotMapping)
     {
-        _buffers.emplace_back(store, GL_TRIANGLES);
-        _buffers.emplace_back(store, GL_QUADS);
-        _buffers.emplace_back(store, GL_LINES);
-        _buffers.emplace_back(store, GL_POINTS);
+        _groups.emplace_back(store, GL_TRIANGLES);
+        _groups.emplace_back(store, GL_QUADS);
+        _groups.emplace_back(store, GL_LINES);
+        _groups.emplace_back(store, GL_POINTS);
     }
 
     bool empty() const
     {
-        for (const auto& buffer : _buffers)
+        for (const auto& buffer : _groups)
         {
             if (!buffer.empty()) return false;
         }
@@ -238,18 +160,15 @@ public:
     Slot addGeometry(GeometryType indexType, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {
-        auto bufferIndex = GetBufferIndexForIndexType(indexType);
-        auto& buffer = getBufferByIndex(bufferIndex);
+        auto groupIndex = GetGroupIndexForIndexType(indexType);
+        auto& buffer = getGroupByIndex(groupIndex);
 
         // Allocate a slot
         auto newSlotIndex = getNextFreeSlotMapping();
         auto& slot = _slots.at(newSlotIndex);
 
         slot.storageHandle = buffer.addSurface(vertices, indices);
-
-        slot.bufferIndex = bufferIndex;
-        slot.numVertices = vertices.size();
-        slot.numIndices = indices.size();
+        slot.groupIndex = groupIndex;
 
         return newSlotIndex;
     }
@@ -257,26 +176,12 @@ public:
     void removeGeometry(Slot slot) override
     {
         auto& slotInfo = _slots.at(slot);
-        auto& buffer = getBufferByIndex(slotInfo.bufferIndex);
+        auto& buffer = getGroupByIndex(slotInfo.groupIndex);
 
         buffer.removeSurface(slotInfo.storageHandle);
 
-#if 0
-        // Adjust all offsets in other slots pointing to the same bucket
-        for (auto& slot : _slots)
-        {
-            if (slot.bufferIndex == slotInfo.bufferIndex && 
-                slot.surfaceIndex > slotInfo.surfaceIndex &&
-                slot.surfaceIndex != InvalidSurfaceIndex)
-            {
-                --slot.surfaceIndex;
-            }
-        }
-#endif
         // Invalidate the slot
-        slotInfo.numVertices = 0;
         slotInfo.storageHandle = InvalidStorageHandle;
-        slotInfo.numIndices = 0;
         
         if (slot < _freeSlotMappingHint)
         {
@@ -288,14 +193,7 @@ public:
         const std::vector<unsigned int>& indices) override
     {
         auto& slotInfo = _slots.at(slot);
-
-        if (slotInfo.numVertices != vertices.size() ||
-            slotInfo.numIndices != indices.size())
-        {
-            throw std::logic_error("updateGeometry: Data size mismatch");
-        }
-
-        auto& buffer = getBufferByIndex(slotInfo.bufferIndex);
+        auto& buffer = getGroupByIndex(slotInfo.groupIndex);
 
         buffer.updateSurface(slotInfo.storageHandle, vertices, indices);
     }
@@ -309,7 +207,7 @@ public:
 
         glFrontFace(GL_CW);
 
-        for (auto& buffer : _buffers)
+        for (auto& buffer : _groups)
         {
             buffer.renderAll(info.checkFlag(RENDER_BUMP));
         }
@@ -331,7 +229,7 @@ public:
         glFrontFace(GL_CW);
 
         auto& slotInfo = _slots.at(slot);
-        auto& buffer = getBufferByIndex(slotInfo.bufferIndex);
+        auto& buffer = getGroupByIndex(slotInfo.groupIndex);
 
         buffer.renderSurface(slotInfo.storageHandle);
 
@@ -345,14 +243,14 @@ public:
     }
 
 private:
-    constexpr static std::uint8_t GetBufferIndexForIndexType(GeometryType indexType)
+    constexpr static std::uint8_t GetGroupIndexForIndexType(GeometryType indexType)
     {
         return static_cast<std::uint8_t>(indexType);
     }
 
-    VertexBuffer& getBufferByIndex(std::uint8_t bufferIndex)
+    SurfaceGroup& getGroupByIndex(std::uint8_t groupIndex)
     {
-        return _buffers[bufferIndex];
+        return _groups[groupIndex];
     }
 
     Slot getNextFreeSlotMapping()
