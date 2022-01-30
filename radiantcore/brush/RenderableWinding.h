@@ -33,11 +33,14 @@ public:
 
     void update(const ShaderPtr& shader, const IRenderEntity& entity)
     {
-        bool shaderChanged = _shader != shader;
-
-        if (!_needsUpdate && !shaderChanged) return;
+        if (!_needsUpdate) return;
 
         _needsUpdate = false;
+
+        if (_shader != shader)
+        {
+            clear();
+        }
 
         auto numPoints = _winding.size();
 
@@ -58,7 +61,7 @@ public:
             vertices.emplace_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, vertex.texcoord, entityColour));
         }
 
-        if (_shader && _slot != IWindingRenderer::InvalidSlot && (shaderChanged || numPoints != _windingSize))
+        if (_shader && _slot != IWindingRenderer::InvalidSlot && numPoints != _windingSize)
         {
             _shader->removeWinding(_slot);
             _slot = IWindingRenderer::InvalidSlot;
