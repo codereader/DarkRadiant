@@ -88,6 +88,11 @@ void MD5ModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     Node::onRemoveFromScene(root);
 
+    for (auto& surface : _renderableSurfaces)
+    {
+        surface->detach();
+    }
+
     _renderableSurfaces.clear();
 }
 
@@ -144,11 +149,6 @@ void MD5ModelNode::detachFromShaders()
     for (auto& surface : _renderableSurfaces)
     {
         surface->detach();
-
-        if (_renderEntity)
-        {
-            _renderEntity->removeRenderable(surface);
-        }
     }
 
     _attachedToShaders = false;
@@ -171,7 +171,7 @@ void MD5ModelNode::attachToShaders()
         surface->attachToShader(_renderEntity->getWireShader());
 
         // Attach to the render entity for lighting mode rendering
-        _renderEntity->addRenderable(surface, shader);
+        surface->attachToEntity(_renderEntity, shader);
     }
 
     _attachedToShaders = true;
