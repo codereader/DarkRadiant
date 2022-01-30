@@ -66,6 +66,16 @@ private:
             _bounds = bounds;
             signal_boundsChanged().emit();
         }
+
+        IGeometryStore::Slot getStorageLocation() override
+        {
+            if (_owner._surfaceSlot == IGeometryRenderer::InvalidSlot)
+            {
+                throw std::logic_error("Cannot access storage of unattached RenderableGeometry");
+            }
+
+            return _owner._shader->getGeometryStorageLocation(_owner._surfaceSlot);
+        }
     };
 
     // Adapater suitable to be attached to an IRenderEntity

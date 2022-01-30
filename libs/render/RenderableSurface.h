@@ -18,7 +18,8 @@ namespace render
  */
 class RenderableSurface :
     public IRenderableSurface,
-    public OpenGLRenderable
+    public OpenGLRenderable,
+    public std::enable_shared_from_this<RenderableSurface>
 {
 private:
     using ShaderMapping = std::map<ShaderPtr, ISurfaceRenderer::Slot>;
@@ -26,8 +27,16 @@ private:
 
     sigc::signal<void> _sigBoundsChanged;
 
+    // The render entity the adapter is attached to
+    IRenderEntity* _renderEntity;
+
+    // When attached to an entity, this is the backend storage handle
+    IGeometryStore::Slot _storageLocation;
+
 protected:
-    RenderableSurface()
+    RenderableSurface() :
+        _renderEntity(nullptr),
+        _storageLocation(std::numeric_limits<IGeometryStore::Slot>::max())
     {}
 
 public:
@@ -73,10 +82,32 @@ public:
     // Removes the surface from all shaders
     void detach()
     {
+        // Detach from the render entity when being cleared
+        detachFromEntity();
+
         while (!_shaders.empty())
         {
             detachFromShader(_shaders.begin());
         }
+    }
+
+    // Attach this geometry to the given render entity.
+    // This call is only valid if this instance has been attached to the shader first
+    // Does nothing if already attached to the given render entity.
+    void attachToEntity(IRenderEntity* entity, const ShaderPtr& shader)
+    {
+        assert(_shaders.count(shader) > 0);
+
+        if (_renderEntity == entity) return; // nothing to do
+
+        if (_renderEntity && entity != _renderEntity)
+        {
+            detachFromEntity();
+        }
+
+        _renderEntity = entity;
+        _renderEntity->addRenderable(shared_from_this(), shader);
+        _storageLocation = shader->getSurfaceStorageLocation(_shaders[shader]);
     }
 
     // Renders the surface stored in our single slot
@@ -93,7 +124,24 @@ public:
         return _sigBoundsChanged;
     }
 
+    IGeometryStore::Slot getStorageLocation() override
+    {
+        assert(_storageLocation != std::numeric_limits<IGeometryStore::Slot>::max());
+        return _storageLocation;
+    }
+
 private:
+    void detachFromEntity()
+    {
+        if (_renderEntity)
+        {
+            _renderEntity->removeRenderable(shared_from_this());
+            _renderEntity = nullptr;
+        }
+
+        _storageLocation = std::numeric_limits<IGeometryStore::Slot>::max();
+    }
+
     void detachFromShader(const ShaderMapping::iterator& iter)
     {
         iter->first->removeSurface(iter->second);

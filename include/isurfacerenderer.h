@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irenderableobject.h"
+#include "igeometrystore.h"
 
 #include <vector>
 #include <limits>
@@ -61,6 +62,9 @@ public:
 
     // Submits the surface of a single slot to GL
     virtual void renderSurface(Slot slot) = 0;
+
+    // Get the key to access the vertex data of this surface within the renderer's backend geometry store
+    virtual IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) = 0;
 };
 
 }

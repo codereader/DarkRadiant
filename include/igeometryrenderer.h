@@ -53,7 +53,7 @@ public:
     virtual void renderGeometry(Slot slot) = 0;
 
     // Returns the storage handle to enable the backend renderer to get hold of the indexed vertex data
-    virtual IGeometryStore::Slot getStorageLocation(Slot slot) = 0;
+    virtual IGeometryStore::Slot getGeometryStorageLocation(Slot slot) = 0;
 };
 
 }

@@ -115,12 +115,13 @@ public:
     void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
     void renderGeometry(IGeometryRenderer::Slot slot) override;
-    IGeometryStore::Slot getStorageLocation(IGeometryRenderer::Slot slot) override;
+    IGeometryStore::Slot getGeometryStorageLocation(IGeometryRenderer::Slot slot) override;
 
     ISurfaceRenderer::Slot addSurface(IRenderableSurface& surface) override;
     void removeSurface(ISurfaceRenderer::Slot slot) override;
     void updateSurface(ISurfaceRenderer::Slot slot) override;
     void renderSurface(ISurfaceRenderer::Slot slot) override;
+    IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override;
 
     IWindingRenderer::Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override;
     void removeWinding(IWindingRenderer::Slot slot) override;

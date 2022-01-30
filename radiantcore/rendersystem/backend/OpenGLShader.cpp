@@ -167,9 +167,9 @@ void OpenGLShader::renderGeometry(IGeometryRenderer::Slot slot)
     _geometryRenderer.renderGeometry(slot);
 }
 
-IGeometryStore::Slot OpenGLShader::getStorageLocation(IGeometryRenderer::Slot slot)
+IGeometryStore::Slot OpenGLShader::getGeometryStorageLocation(IGeometryRenderer::Slot slot)
 {
-    return _geometryRenderer.getStorageLocation(slot);
+    return _geometryRenderer.getGeometryStorageLocation(slot);
 }
 
 ISurfaceRenderer::Slot OpenGLShader::addSurface(IRenderableSurface& surface)
@@ -190,6 +190,11 @@ void OpenGLShader::updateSurface(ISurfaceRenderer::Slot slot)
 void OpenGLShader::renderSurface(ISurfaceRenderer::Slot slot)
 {
     _surfaceRenderer.renderSurface(slot);
+}
+
+IGeometryStore::Slot OpenGLShader::getSurfaceStorageLocation(ISurfaceRenderer::Slot slot)
+{
+    return _surfaceRenderer.getSurfaceStorageLocation(slot);
 }
 
 IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices)

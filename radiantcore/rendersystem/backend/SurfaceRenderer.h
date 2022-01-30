@@ -128,11 +128,13 @@ private:
         std::reference_wrapper<IRenderableSurface> surface;
         bool surfaceDataChanged;
         VertexBuffer buffer;
+        IGeometryStore::Slot storageHandle;
 
         SurfaceInfo(IRenderableSurface& surface_) :
             surface(surface_),
             buffer(GL_TRIANGLES),
-            surfaceDataChanged(true)
+            surfaceDataChanged(true),
+            storageHandle(std::numeric_limits<IGeometryStore::Slot>::max())
         {}
     };
     std::map<Slot, SurfaceInfo> _surfaces;
@@ -210,6 +212,11 @@ public:
 
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    }
+
+    IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override
+    {
+        return _surfaces.at(slot).storageHandle;
     }
 
 private:

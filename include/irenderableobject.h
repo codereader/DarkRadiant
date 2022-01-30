@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <sigc++/signal.h>
+#include "igeometrystore.h"
 #include "math/AABB.h"
 #include "math/Matrix4.h"
 
@@ -27,6 +28,9 @@ public:
     // Emitted when the object bounds have changed,
     // because it has been either moved or resized.
     virtual sigc::signal<void>& signal_boundsChanged() = 0;
+
+    // Returns the key to access the vertex data in the renderer's geometry store
+    virtual IGeometryStore::Slot getStorageLocation() = 0;
 };
 
 }

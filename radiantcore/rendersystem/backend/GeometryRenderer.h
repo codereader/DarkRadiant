@@ -297,7 +297,7 @@ public:
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
-    IGeometryStore::Slot getStorageLocation(Slot slot) override
+    IGeometryStore::Slot getGeometryStorageLocation(Slot slot) override
     {
         return _slots.at(slot).storageHandle;
     }
