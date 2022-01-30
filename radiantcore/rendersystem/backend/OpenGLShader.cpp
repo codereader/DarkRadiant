@@ -62,6 +62,7 @@ OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSy
     _isVisible(true),
     _useCount(0),
     _geometryRenderer(renderSystem.getGeometryStore()),
+    _surfaceRenderer(renderSystem.getGeometryStore()),
     _enabledViewTypes(0),
     _mergeModeActive(false)
 {

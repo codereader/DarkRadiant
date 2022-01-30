@@ -2,6 +2,7 @@
 
 #include "irender.h"
 #include "igeometryrenderer.h"
+#include "igeometrystore.h"
 
 namespace render
 {
@@ -10,131 +11,20 @@ class SurfaceRenderer :
     public ISurfaceRenderer
 {
 private:
-    class VertexBuffer
-    {
-    private:
-        GLenum _mode;
+    IGeometryStore& _store;
 
-        std::vector<ArbitraryMeshVertex> _vertices;
-        std::vector<unsigned int> _indices;
-    public:
-        VertexBuffer(GLenum mode) :
-            _mode(mode)
-        {}
-
-        bool empty() const
-        {
-            return _indices.empty();
-        }
-
-        void clear()
-        {
-            _vertices.clear();
-            _indices.clear();
-        }
-
-        void render(bool renderBump) const
-        {
-            if (_indices.empty()) return;
-
-            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
-            glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().colour);
-
-            if (renderBump)
-            {
-                glVertexAttribPointer(ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
-                glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
-                glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().tangent);
-                glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().bitangent);
-            }
-            else
-            {
-                glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
-                glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
-            }
-
-            glDrawElements(_mode, static_cast<GLsizei>(_indices.size()), GL_UNSIGNED_INT, &_indices.front());
-        }
-
-        void renderIndexRange(std::size_t firstIndex, std::size_t numIndices) const
-        {
-            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
-            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
-            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
-
-            glDrawElements(_mode, static_cast<GLsizei>(numIndices), GL_UNSIGNED_INT, &_indices[firstIndex]);
-        }
-
-        // Returns the vertex and index offsets in this buffer
-        std::pair<std::size_t, std::size_t> addSurface(const std::vector<ArbitraryMeshVertex>& vertices,
-            const std::vector<unsigned int>& indices)
-        {
-            auto vertexOffset = _vertices.size();
-            auto indexOffset = _indices.size();
-
-            std::copy(vertices.begin(), vertices.end(), std::back_inserter(_vertices));
-
-            for (auto index : indices)
-            {
-                _indices.push_back(index + static_cast<unsigned int>(vertexOffset));
-            }
-
-            return { vertexOffset, indexOffset };
-        }
-
-        void updateSurface(std::size_t firstVertex, std::size_t firstIndex,
-            const std::vector<ArbitraryMeshVertex>& vertices,
-            const std::vector<unsigned int>& indices)
-        {
-            // Copy the data to the correct slot in the array
-            std::copy(vertices.begin(), vertices.end(), _vertices.begin() + firstVertex);
-
-            // Before assignment, the indices need to be shifted to match the array offset of the vertices
-            auto targetIndex = _indices.begin() + firstIndex;
-            auto indexShift = static_cast<unsigned int>(firstVertex);
-
-            for (auto index : indices)
-            {
-                *targetIndex++ = index + indexShift;
-            }
-        }
-
-        // Cuts out the vertices and indices, adjusts all indices located to the right of the cut
-        void removeSurface(std::size_t firstVertex, std::size_t numVertices, std::size_t firstIndex, std::size_t numIndices)
-        {
-            // Cut out the vertices
-            auto firstVertexToRemove = _vertices.begin() + firstVertex;
-            _vertices.erase(firstVertexToRemove, firstVertexToRemove + numVertices);
-
-            // Shift all indices to the left, offsetting their values by the number of removed vertices
-            auto offsetToApply = -static_cast<int>(numVertices);
-
-            auto targetIndex = _indices.begin() + firstIndex;
-            auto indexToMove = targetIndex + numIndices;
-
-            auto indexEnd = _indices.end();
-            while (indexToMove != indexEnd)
-            {
-                *targetIndex++ = *indexToMove++ + offsetToApply;
-            }
-
-            // Cut off the tail of the indices
-            _indices.resize(_indices.size() - numIndices);
-        }
-    };
+    static constexpr IGeometryStore::Slot InvalidStorageSlot = std::numeric_limits<IGeometryStore::Slot>::max();
 
     struct SurfaceInfo
     {
         std::reference_wrapper<IRenderableSurface> surface;
         bool surfaceDataChanged;
-        VertexBuffer buffer;
         IGeometryStore::Slot storageHandle;
 
-        SurfaceInfo(IRenderableSurface& surface_) :
+        SurfaceInfo(IRenderableSurface& surface_, IGeometryStore::Slot slot) :
             surface(surface_),
-            buffer(GL_TRIANGLES),
-            surfaceDataChanged(true),
-            storageHandle(std::numeric_limits<IGeometryStore::Slot>::max())
+            surfaceDataChanged(false),
+            storageHandle(slot)
         {}
     };
     std::map<Slot, SurfaceInfo> _surfaces;
@@ -142,7 +32,8 @@ private:
     Slot _freeSlotMappingHint;
 
 public:
-    SurfaceRenderer() :
+    SurfaceRenderer(IGeometryStore& store) :
+        _store(store),
         _freeSlotMappingHint(0)
     {}
 
@@ -156,15 +47,20 @@ public:
         // Find a free slot
         auto newSlotIndex = getNextFreeSlotIndex();
 
-        _surfaces.emplace(newSlotIndex, surface);
+        auto slot = _store.allocateSlot(surface.getVertices(), surface.getIndices());
+        _surfaces.emplace(newSlotIndex, SurfaceInfo(surface, slot));
 
         return newSlotIndex;
     }
 
     void removeSurface(Slot slot) override
     {
-        // Remove the surface
-        _surfaces.erase(slot);
+        auto surface = _surfaces.find(slot);
+        assert(surface != _surfaces.end());
+
+        // Deallocate the storage
+        _store.deallocateSlot(surface->second.storageHandle);
+        _surfaces.erase(surface);
 
         if (slot < _freeSlotMappingHint)
         {
@@ -224,24 +120,18 @@ private:
     {
         auto& surface = slot.surface.get();
 
+        // Check if this surface is in view
+        if (view && view->TestAABB(surface.getObjectBounds(), surface.getObjectTransform()) == VOLUME_OUTSIDE)
+        {
+            return;
+        }
+
         // Update the vertex data now if necessary
         if (slot.surfaceDataChanged)
         {
             slot.surfaceDataChanged = false;
 
-            slot.buffer.clear();
-            slot.buffer.addSurface(surface.getVertices(), surface.getIndices());
-        }
-
-        if (slot.buffer.empty())
-        {
-            return;
-        }
-
-        // Check if this surface is in view
-        if (view && view->TestAABB(surface.getObjectBounds(), surface.getObjectTransform()) == VOLUME_OUTSIDE)
-        {
-            return;
+            _store.updateData(slot.storageHandle, surface.getVertices(), surface.getIndices());
         }
 
         glMatrixMode(GL_MODELVIEW);
@@ -249,7 +139,26 @@ private:
 
         glMultMatrixd(surface.getObjectTransform());
 
-        slot.buffer.render(renderBump);
+        auto renderParams = _store.getRenderParameters(slot.storageHandle);
+
+        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
+        glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->colour);
+
+        if (renderBump)
+        {
+            glVertexAttribPointer(ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->normal);
+            glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->texcoord);
+            glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->tangent);
+            glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->bitangent);
+        }
+        else
+        {
+            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->texcoord);
+            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->normal);
+        }
+
+        glDrawElementsBaseVertex(GL_TRIANGLES, static_cast<GLsizei>(renderParams.indexCount), 
+            GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
 
         glPopMatrix();
     }
