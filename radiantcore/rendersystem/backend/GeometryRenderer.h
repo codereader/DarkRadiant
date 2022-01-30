@@ -16,14 +16,15 @@ private:
         IGeometryStore& _store;
         GLenum _mode;
 
-        std::vector<ArbitraryMeshVertex> _vertices;
-        std::vector<unsigned int> _indices;
+        std::set<IGeometryStore::Slot> _surfaces;
         
+#if 0
         // The input arrays used for glMultiDrawElementsBaseVertex
         // when drawing the entire buffer at once (non-lit mode)
         std::vector<GLsizei> _sizes;
         std::vector<void*> _firstIndices;
         std::vector<GLint> _firstVertices;
+#endif
 
     public:
         VertexBuffer(IGeometryStore& store, GLenum mode) :
@@ -33,49 +34,83 @@ private:
 
         bool empty() const
         {
-            return _indices.empty();
+            return _surfaces.empty();
         }
 
-        void render(bool renderBump)
+        void renderAll(bool renderBump)
         {
-            if (_indices.empty()) return;
+            auto surfaceCount = _surfaces.size();
 
-            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
-            glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().colour);
+            if (surfaceCount == 0) return;
+
+            // Build the indices and offsets used for glMultiDraw
+            std::vector<GLsizei> sizes;
+            std::vector<void*> firstIndices;
+            std::vector<GLint> firstVertices;
+
+            sizes.reserve(surfaceCount);
+            firstIndices.reserve(surfaceCount);
+            firstVertices.reserve(surfaceCount);
+
+            ArbitraryMeshVertex* bufferStart = nullptr;
+
+            for (const auto slot : _surfaces)
+            {
+                auto renderParams = _store.getRenderParameters(slot);
+
+                sizes.push_back(static_cast<GLsizei>(renderParams.indexCount));
+                firstVertices.push_back(static_cast<GLint>(renderParams.firstVertex));
+                firstIndices.push_back(renderParams.firstIndex);
+
+                bufferStart = renderParams.bufferStart;
+            }
+
+            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->vertex);
+            glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->colour);
 
             if (renderBump)
             {
-                glVertexAttribPointer(ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
-                glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
-                glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().tangent);
-                glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &_vertices.front().bitangent);
+                glVertexAttribPointer(ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->normal);
+                glVertexAttribPointer(ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->texcoord);
+                glVertexAttribPointer(ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->tangent);
+                glVertexAttribPointer(ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->bitangent);
             }
             else
             {
-                glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
-                glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
+                glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->texcoord);
+                glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->normal);
             }
 
-            glMultiDrawElementsBaseVertex(_mode, _sizes.data(), GL_UNSIGNED_INT,
-                &_firstIndices.front(), static_cast<GLsizei>(_sizes.size()), &_firstVertices.front());
+            glMultiDrawElementsBaseVertex(_mode, sizes.data(), GL_UNSIGNED_INT,
+                &firstIndices.front(), static_cast<GLsizei>(sizes.size()), &firstVertices.front());
         }
 
-        void renderSurface(std::size_t surfaceIndex) const
+        void renderSurface(IGeometryStore::Slot slot) const
         {
-            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().vertex);
-            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().texcoord);
-            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &_vertices.front().normal);
+            auto renderParams = _store.getRenderParameters(slot);
 
-            glDrawElementsBaseVertex(_mode, _sizes[surfaceIndex], GL_UNSIGNED_INT,
-                _firstIndices[surfaceIndex], _firstVertices[surfaceIndex]);
+            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
+            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->texcoord);
+            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->normal);
+
+            glDrawElementsBaseVertex(_mode, static_cast<GLsizei>(renderParams.indexCount), GL_UNSIGNED_INT,
+                renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
         }
 
         // Returns the surface index within this buffer
-        std::size_t addSurface(const std::vector<ArbitraryMeshVertex>& vertices,
+        IGeometryStore::Slot addSurface(const std::vector<ArbitraryMeshVertex>& vertices,
             const std::vector<unsigned int>& indices)
         {
+            // Save the data into the backend storage
+            auto slot = _store.allocateSlot(vertices, indices);
+
+            _surfaces.insert(slot);
+
+            return slot;
+#if 0
             _sizes.push_back(static_cast<GLsizei>(indices.size()));
             _firstVertices.push_back(static_cast<GLint>(_vertices.size()));
+
 
             std::copy(vertices.begin(), vertices.end(), std::back_inserter(_vertices));
             std::copy(indices.begin(), indices.end(), std::back_inserter(_indices));
@@ -93,12 +128,15 @@ private:
             }
 
             return numSurfaces - 1;
+#endif
         }
 
-        void updateSurface(std::size_t surfaceIndex,
+        void updateSurface(IGeometryStore::Slot slot,
             const std::vector<ArbitraryMeshVertex>& vertices,
             const std::vector<unsigned int>& indices)
         {
+            _store.updateData(slot, vertices, indices);
+#if 0
             auto firstVertex = _firstVertices.at(surfaceIndex);
 
             // Calculate the distance within the index buffer from the pointer difference
@@ -108,11 +146,14 @@ private:
             // Copy the data to the correct slot in the array
             std::copy(vertices.begin(), vertices.end(), _vertices.begin() + firstVertex);
             std::copy(indices.begin(), indices.end(), _indices.begin() + firstIndex);
+#endif
         }
 
-        // Cuts out the vertices and indices, adjusts all metadata
-        void removeSurface(std::size_t surfaceIndex, std::size_t numVertices)
+        void removeSurface(IGeometryStore::Slot slot)
         {
+            _store.deallocateSlot(slot);
+            _surfaces.erase(slot);
+#if 0
             auto firstVertex = _firstVertices.at(surfaceIndex);
 
             // Cut out the vertices
@@ -151,12 +192,13 @@ private:
 
             // Index size is reduced by one
             _sizes.erase(_sizes.begin() + surfaceIndex);
+#endif
         }
     };
 
     std::vector<VertexBuffer> _buffers;
 
-    static constexpr std::size_t InvalidSurfaceIndex = std::numeric_limits<std::size_t>::max();
+    static constexpr IGeometryStore::Slot InvalidStorageHandle = std::numeric_limits<IGeometryStore::Slot>::max();
 
     // Internal information about where the chunk of indexed vertex data is located:
     // Which buffer they're in, and the data offset and count within the buffer.
@@ -164,7 +206,6 @@ private:
     struct SlotInfo
     {
         std::uint8_t bufferIndex;
-        std::size_t surfaceIndex;
         std::size_t numVertices;
         std::size_t numIndices;
         IGeometryStore::Slot storageHandle;
@@ -204,7 +245,7 @@ public:
         auto newSlotIndex = getNextFreeSlotMapping();
         auto& slot = _slots.at(newSlotIndex);
 
-        slot.surfaceIndex = buffer.addSurface(vertices, indices);
+        slot.storageHandle = buffer.addSurface(vertices, indices);
 
         slot.bufferIndex = bufferIndex;
         slot.numVertices = vertices.size();
@@ -216,10 +257,11 @@ public:
     void removeGeometry(Slot slot) override
     {
         auto& slotInfo = _slots.at(slot);
-        auto& bucket = getBufferByIndex(slotInfo.bufferIndex);
+        auto& buffer = getBufferByIndex(slotInfo.bufferIndex);
 
-        bucket.removeSurface(slotInfo.surfaceIndex, slotInfo.numVertices);
+        buffer.removeSurface(slotInfo.storageHandle);
 
+#if 0
         // Adjust all offsets in other slots pointing to the same bucket
         for (auto& slot : _slots)
         {
@@ -230,10 +272,10 @@ public:
                 --slot.surfaceIndex;
             }
         }
-
+#endif
         // Invalidate the slot
         slotInfo.numVertices = 0;
-        slotInfo.surfaceIndex = InvalidSurfaceIndex;
+        slotInfo.storageHandle = InvalidStorageHandle;
         slotInfo.numIndices = 0;
         
         if (slot < _freeSlotMappingHint)
@@ -253,9 +295,9 @@ public:
             throw std::logic_error("updateGeometry: Data size mismatch");
         }
 
-        auto& bucket = getBufferByIndex(slotInfo.bufferIndex);
+        auto& buffer = getBufferByIndex(slotInfo.bufferIndex);
 
-        bucket.updateSurface(slotInfo.surfaceIndex, vertices, indices);
+        buffer.updateSurface(slotInfo.storageHandle, vertices, indices);
     }
 
     void render(const RenderInfo& info)
@@ -269,7 +311,7 @@ public:
 
         for (auto& buffer : _buffers)
         {
-            buffer.render(info.checkFlag(RENDER_BUMP));
+            buffer.renderAll(info.checkFlag(RENDER_BUMP));
         }
 
         glDisableClientState(GL_COLOR_ARRAY);
@@ -291,7 +333,7 @@ public:
         auto& slotInfo = _slots.at(slot);
         auto& buffer = getBufferByIndex(slotInfo.bufferIndex);
 
-        buffer.renderSurface(slotInfo.surfaceIndex);
+        buffer.renderSurface(slotInfo.storageHandle);
 
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -319,7 +361,7 @@ private:
 
         for (auto i = _freeSlotMappingHint; i < numSlots; ++i)
         {
-            if (_slots[i].surfaceIndex == InvalidSurfaceIndex)
+            if (_slots[i].storageHandle == InvalidStorageHandle)
             {
                 _freeSlotMappingHint = i + 1; // start searching here next time
                 return i;

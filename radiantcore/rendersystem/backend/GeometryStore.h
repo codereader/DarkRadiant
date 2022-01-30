@@ -35,10 +35,34 @@ public:
         return GetSlot(vertexSlot, indexSlot);
     }
 
+    void updateData(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+        const std::vector<unsigned int>& indices) override
+    {
+        assert(!vertices.empty());
+        assert(!indices.empty());
+
+        _vertexBuffer.setData(GetVertexSlot(slot), vertices);
+        _indexBuffer.setData(GetIndexSlot(slot), indices);
+    }
+
     void deallocateSlot(Slot slot) override
     {
         _vertexBuffer.deallocate(GetVertexSlot(slot));
         _indexBuffer.deallocate(GetIndexSlot(slot));
+    }
+
+    RenderParameters getRenderParameters(Slot slot) override
+    {
+        auto vertexSlot = GetVertexSlot(slot);
+        auto indexSlot = GetIndexSlot(slot);
+
+        return RenderParameters
+        {
+            _vertexBuffer.getBufferStart(),
+            _indexBuffer.getBufferStart() + _indexBuffer.getOffset(indexSlot), // pointer to first index
+            _indexBuffer.getSize(indexSlot), // index count of the given geometry
+            _vertexBuffer.getOffset(vertexSlot) // offset to the first vertex
+        };
     }
 
 private:
