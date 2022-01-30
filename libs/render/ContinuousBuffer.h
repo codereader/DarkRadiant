@@ -92,28 +92,72 @@ public:
         releasedSlot.Occupied = false;
 
         // Check if the slot can merge with an adjacent one
-        if (handle > 0 && !_slots[handle - 1].Occupied)
+        Handle slotIndexToMerge = std::numeric_limits<Handle>::max();
+        if (findLeftFreeSlot(releasedSlot, slotIndexToMerge))
         {
-            // Merge the slot before the released one
-            _slots[handle - 1].Size += releasedSlot.Size;
+            auto& slotToMerge = _slots[slotIndexToMerge];
+            
+            releasedSlot.Offset = slotToMerge.Offset;
+            releasedSlot.Size += slotToMerge.Size;
 
-            // The released handle goes to waste, block it
-            releasedSlot.Occupied = true;
-            releasedSlot.Size = 0;
+            // The merged handle goes to waste, block it against future use
+            slotToMerge.Size = 0;
+            slotToMerge.Occupied = true;
         }
-        else if (handle < _slots.size() - 1 && !_slots[handle + 1].Occupied)
+
+        // Try to find an adjacent free slot to the right
+        if (findRightFreeSlot(releasedSlot, slotIndexToMerge))
         {
-            auto& nextSlot = _slots[handle + 1];
+            auto& slotToMerge = _slots[slotIndexToMerge];
 
-            releasedSlot.Size += nextSlot.Size;
+            releasedSlot.Size += slotToMerge.Size;
 
-            // The next slot will go to waste, never use that again
-            nextSlot.Occupied = true;
-            nextSlot.Size = 0;
+            // The merged handle goes to waste, block it against future use
+            slotToMerge.Size = 0;
+            slotToMerge.Occupied = true;
         }
     }
 
 private:
+    bool findLeftFreeSlot(const SlotInfo& slotToTouch, Handle& found)
+    {
+        auto numSlots = _slots.size();
+
+        for (Handle slotIndex = 0; slotIndex < numSlots; ++slotIndex)
+        {
+            const auto& candidate = _slots[slotIndex];
+
+            if (candidate.Offset + candidate.Size == slotToTouch.Offset)
+            {
+                // The slot coordinates match, return true if this block is free
+                found = slotIndex;
+                return !candidate.Occupied;
+            }
+        }
+
+        return false;
+    }
+
+    bool findRightFreeSlot(const SlotInfo& slotToTouch, Handle& found)
+    {
+        auto numSlots = _slots.size();
+        auto offsetToMatch = slotToTouch.Offset + slotToTouch.Size;
+
+        for (Handle slotIndex = 0; slotIndex < numSlots; ++slotIndex)
+        {
+            const auto& candidate = _slots[slotIndex];
+
+            if (candidate.Offset == offsetToMatch)
+            {
+                // The slot coordinates match, return true if this block is free
+                found = slotIndex;
+                return !candidate.Occupied;
+            }
+        }
+
+        return false;
+    }
+
     Handle getNextFreeSlotForSize(std::size_t requiredSize)
     {
         auto numSlots = _slots.size();
