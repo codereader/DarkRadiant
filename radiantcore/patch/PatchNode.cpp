@@ -347,6 +347,7 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     if (volume.fill())
     {
         _renderableSurfaceSolid.update(m_patch._shader.getGLShader());
+        _renderableSurfaceSolid.attachToEntity(_renderEntity);
     }
     else
     {

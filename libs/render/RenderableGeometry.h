@@ -162,7 +162,8 @@ public:
         }
 
         _renderEntity = entity;
-        _renderEntity->addRenderable(getRenderAdapter(), _shader);
+        ensureRenderAdapter();
+        _renderEntity->addRenderable(_renderAdapter, _shader);
     }
 
     void detachFromEntity()
@@ -174,23 +175,22 @@ public:
         }
     }
 
+protected:
+
     /**
-     * Returns the adapter class suitable to attach this geometry as surface to a render entity
+     * Creates the adapter class suitable to attach this geometry as surface to a render entity
      * The surface will have an identity transform (all vertices specified in world coords).
      * This adapter will be valid as long as this geometry is attached to the IGeometryRenderer,
      * otherwise no access to the stored vertices/indices is possible.
      */
-    const IRenderableObject::Ptr& getRenderAdapter()
+    void ensureRenderAdapter()
     {
         if (!_renderAdapter)
         {
             _renderAdapter = std::make_shared<RenderAdapter>(*this);
         }
-
-        return _renderAdapter;
     }
 
-protected:
     // Removes the geometry from the attached shader. Does nothing if no geometry has been added.
     void removeGeometry()
     {
