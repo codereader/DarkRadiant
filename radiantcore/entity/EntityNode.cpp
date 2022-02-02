@@ -137,7 +137,7 @@ void EntityNode::createAttachedEntities()
             // Construct and store the attached entity
             auto attachedEnt = GlobalEntityModule().createEntity(cls);
             assert(attachedEnt);
-            _attachedEnts.push_back(attachedEnt);
+            _attachedEnts.push_back({attachedEnt, a.offset});
 
             // Set ourselves as the parent of the attached entity (for
             // localToParent transforms)
@@ -156,8 +156,8 @@ void EntityNode::transformChanged()
 
     // Broadcast transformChanged to all attached entities so they can update
     // their position
-    for (auto attached: _attachedEnts)
-        attached->transformChanged();
+    for (auto [node, offset]: _attachedEnts)
+        node->transformChanged();
 }
 
 void EntityNode::onEntityClassChanged()
@@ -395,7 +395,7 @@ void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_colourKey.setRenderSystem(renderSystem);
 
     // Make sure any attached entities have a render system too
-    for (IEntityNodePtr node: _attachedEnts)
+    for (auto [node, offset]: _attachedEnts)
         node->setRenderSystem(renderSystem);
 }
 
