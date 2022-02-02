@@ -145,7 +145,7 @@ void EntityNode::createAttachedEntities()
 
             // Set the attached entity's transform matrix according to the
             // required offset
-            attachedEnt->localToParent() = Matrix4::getTranslation(a.offset);
+            attachedEnt->setLocalToParent(Matrix4::getTranslation(a.offset));
         }
     );
 }

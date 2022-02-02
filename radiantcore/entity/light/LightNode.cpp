@@ -663,9 +663,7 @@ void LightNode::updateOrigin() {
         projectionChanged();
 
     // Update the transformation matrix
-    localToParent() = Matrix4::getIdentity();
-    localToParent().translateBy(_originTransformed);
-    localToParent().multiplyBy(m_rotation.getMatrix4());
+    setLocalToParent(Matrix4::getTranslation(_originTransformed) * m_rotation.getMatrix4());
 
     // Notify all child nodes
     m_transformChanged();
@@ -794,9 +792,7 @@ void LightNode::rotationChanged()
     m_rotation = m_useLightRotation ? m_lightRotation : m_rotationKey.m_rotation;
 
     // Update the transformation matrix
-    localToParent() = Matrix4::getIdentity();
-    localToParent().translateBy(_originTransformed);
-    localToParent().multiplyBy(m_rotation.getMatrix4());
+    setLocalToParent(Matrix4::getTranslation(_originTransformed) * m_rotation.getMatrix4());
 
     // Notify owner about this
     m_transformChanged();

@@ -20,6 +20,6 @@ class IMatrixTransform: public ITransformNode
 {
 public:
 
-    /// Return a modifiable reference to a contained transformation matrix
-	virtual Matrix4& localToParent() = 0;
+    /// Set the value of the contained transformation matrix
+	virtual void setLocalToParent(const Matrix4& localToParent) = 0;
 };

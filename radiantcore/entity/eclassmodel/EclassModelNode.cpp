@@ -159,10 +159,7 @@ const Vector3& EclassModelNode::getUntransformedOrigin()
 
 void EclassModelNode::updateTransform()
 {
-	localToParent() = Matrix4::getIdentity();
-	localToParent().translateBy(_origin);
-
-	localToParent().multiplyBy(_rotation.getMatrix4());
+    setLocalToParent(Matrix4::getTranslation(_origin) * _rotation.getMatrix4());
 
 	EntityNode::transformChanged();
 }

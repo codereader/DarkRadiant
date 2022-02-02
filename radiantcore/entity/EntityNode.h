@@ -111,7 +111,10 @@ public:
 
     // IMatrixTransform implementation
     Matrix4 localToParent() const override { return _localToParent; }
-    Matrix4& localToParent() override { return _localToParent; }
+    void setLocalToParent(const Matrix4& localToParent) override
+    {
+        _localToParent = localToParent;
+    }
 
     // IComparableNode implementation
     std::string getFingerprint() override;
