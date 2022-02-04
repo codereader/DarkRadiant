@@ -578,6 +578,9 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 
 void OpenGLRenderSystem::shutdownModule()
 {
+    _entities.clear();
+    _lights.clear();
+
     _textRenderers.clear();
 
     _sharedContextCreated.disconnect();
