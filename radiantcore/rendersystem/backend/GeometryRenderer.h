@@ -118,6 +118,11 @@ private:
             _store.deallocateSlot(slot);
             _surfaces.erase(slot);
         }
+
+        AABB getSurfaceBounds(IGeometryStore::Slot slot)
+        {
+            return _store.getBounds(slot);
+        }
     };
 
     std::vector<SurfaceGroup> _groups;
@@ -196,6 +201,14 @@ public:
         auto& buffer = getGroupByIndex(slotInfo.groupIndex);
 
         buffer.updateSurface(slotInfo.storageHandle, vertices, indices);
+    }
+
+    AABB getGeometryBounds(Slot slot) override
+    {
+        auto& slotInfo = _slots.at(slot);
+        auto& group = getGroupByIndex(slotInfo.groupIndex);
+
+        return group.getSurfaceBounds(slotInfo.storageHandle);
     }
 
     void render(const RenderInfo& info)

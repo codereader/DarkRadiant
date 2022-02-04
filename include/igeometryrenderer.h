@@ -6,6 +6,7 @@
 #include "igeometrystore.h"
 #include "render/ArbitraryMeshVertex.h"
 #include "math/Matrix4.h"
+#include "math/AABB.h"
 
 namespace render
 {
@@ -51,6 +52,9 @@ public:
 
     // Submits the geometry of a single slot to GL
     virtual void renderGeometry(Slot slot) = 0;
+
+    // Returns the bounding box of the geometry stored in the given slot
+    virtual AABB getGeometryBounds(Slot slot) = 0;
 
     // Returns the storage handle to enable the backend renderer to get hold of the indexed vertex data
     virtual IGeometryStore::Slot getGeometryStorageLocation(Slot slot) = 0;

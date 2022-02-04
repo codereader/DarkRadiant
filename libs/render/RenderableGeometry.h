@@ -33,11 +33,13 @@ private:
     private:
         RenderableGeometry& _owner;
         AABB _bounds;
+        bool _boundsNeedRecalculation;
         sigc::signal<void> _sigBoundsChanged;
 
     public:
         RenderAdapter(RenderableGeometry& owner) :
-            _owner(owner)
+            _owner(owner),
+            _boundsNeedRecalculation(true)
         {}
 
         bool isVisible() override
@@ -53,18 +55,26 @@ private:
 
         const AABB& getObjectBounds() override
         {
+            if (_boundsNeedRecalculation)
+            {
+                _boundsNeedRecalculation = false;
+                _bounds = _owner._shader->getGeometryBounds(_owner._surfaceSlot);
+            }
+
             return _bounds;
+        }
+
+        // Will recalculate the geometry bounds next time getObjectBounds() is called
+        // Also emits the signal to the observing entity
+        void boundsChanged()
+        {
+            _boundsNeedRecalculation = true;
+            signal_boundsChanged().emit();
         }
 
         sigc::signal<void>& signal_boundsChanged() override
         {
             return _sigBoundsChanged;
-        }
-
-        void setBounds(const AABB& bounds)
-        {
-            _bounds = bounds;
-            signal_boundsChanged().emit();
         }
 
         IGeometryStore::Slot getStorageLocation() override
@@ -235,14 +245,7 @@ protected:
         // Fire the bounds changed signal (after submitting the changed vertices)
         if (_renderAdapter)
         {
-            AABB bounds;
-
-            for (const auto& vertex : vertices)
-            {
-                bounds.includePoint(vertex.vertex);
-            }
-
-            _renderAdapter->setBounds(bounds);
+            _renderAdapter->boundsChanged();
         }
     }
 };

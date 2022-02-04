@@ -65,6 +65,23 @@ public:
         };
     }
 
+    AABB getBounds(Slot slot) override
+    {
+        auto vertexSlot = GetVertexSlot(slot);
+
+        auto vertex = _vertexBuffer.getBufferStart() + _vertexBuffer.getOffset(vertexSlot);
+        auto numVertices = _vertexBuffer.getSize(vertexSlot);
+
+        AABB bounds;
+
+        for (auto i = 0; i < numVertices; ++i, ++vertex)
+        {
+            bounds.includePoint(vertex->vertex);
+        }
+
+        return bounds;
+    }
+
 private:
     // Higher 4 bytes will hold the vertex buffer slot
     static Slot GetSlot(std::uint32_t vertexSlot, std::uint32_t indexSlot)

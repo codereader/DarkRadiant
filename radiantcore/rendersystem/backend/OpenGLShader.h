@@ -115,6 +115,7 @@ public:
     void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
     void renderGeometry(IGeometryRenderer::Slot slot) override;
+    AABB getGeometryBounds(IGeometryRenderer::Slot slot) override;
     IGeometryStore::Slot getGeometryStorageLocation(IGeometryRenderer::Slot slot) override;
 
     ISurfaceRenderer::Slot addSurface(IRenderableSurface& surface) override;

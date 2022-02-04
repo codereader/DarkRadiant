@@ -168,6 +168,11 @@ void OpenGLShader::renderGeometry(IGeometryRenderer::Slot slot)
     _geometryRenderer.renderGeometry(slot);
 }
 
+AABB OpenGLShader::getGeometryBounds(IGeometryRenderer::Slot slot)
+{
+    return _geometryRenderer.getGeometryBounds(slot);
+}
+
 IGeometryStore::Slot OpenGLShader::getGeometryStorageLocation(IGeometryRenderer::Slot slot)
 {
     return _geometryRenderer.getGeometryStorageLocation(slot);
