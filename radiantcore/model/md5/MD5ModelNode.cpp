@@ -76,6 +76,11 @@ void MD5ModelNode::onInsertIntoScene(scene::IMapRootNode& root)
     // Renderables will acquire their shaders in onPreRender
     _model->foreachSurface([&](const MD5Surface& surface)
     {
+        if (surface.getVertexArray().empty() || surface.getIndexArray().empty())
+        {
+            return; // don't handle empty surfaces
+        }
+
         _renderableSurfaces.emplace_back(
             std::make_shared<model::RenderableModelSurface>(surface, localToWorld())
         );
