@@ -142,7 +142,8 @@ protected:
         for (const auto& vertex : _tess.vertices)
         {
             // Copy vertex data, but set the colour to 1,1,1,1
-            vertices.push_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, vertex.texcoord, { 1, 1, 1, 1 }));
+            vertices.push_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, 
+                vertex.texcoord, { 1, 1, 1, 1 }, vertex.tangent, vertex.bitangent));
         }
 
         return vertices;
