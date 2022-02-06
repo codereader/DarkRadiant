@@ -105,6 +105,10 @@ private:
         bool _boundsNeedUpdate;
 
         IGeometryStore::Slot _geometrySlot;
+        std::size_t _pushedVertexCount;
+        std::size_t _pushedIndexCount;
+
+        static constexpr auto InvalidGeometrySlot = std::numeric_limits<IGeometryStore::Slot>::max();
 
         sigc::signal<void> _sigBoundsChanged;
     public:
@@ -112,7 +116,9 @@ private:
             _owner(owner),
             _surfaceNeedsRebuild(true),
             _boundsNeedUpdate(true),
-            _geometrySlot(std::numeric_limits<IGeometryStore::Slot>::max())
+            _geometrySlot(InvalidGeometrySlot),
+            _pushedVertexCount(0),
+            _pushedIndexCount(0)
         {}
 
         void addWinding(std::size_t slotMappingIndex)
@@ -153,7 +159,62 @@ private:
 
         const AABB& getObjectBounds() override
         {
-            if (_surfaceNeedsRebuild || _boundsNeedUpdate)
+            if (_surfaceNeedsRebuild)
+            {
+                _boundsNeedUpdate = true;
+                _surfaceNeedsRebuild = false;
+
+                std::vector<ArbitraryMeshVertex> vertices;
+                vertices.reserve(_slotIndices.size() * 6); // reserve 6 vertices per winding
+
+                std::vector<unsigned int> indices;
+                indices.reserve(_slotIndices.size() * 6); // reserve 6 indices per winding
+
+                auto indexInserter = std::back_inserter(indices);
+                auto vertexInserter = std::back_inserter(vertices);
+
+                // Rebuild the whole surface
+                for (auto slotIndex : _slotIndices)
+                {
+                    const auto& slot = _owner._slots[slotIndex];
+                    auto& buffer = _owner._buckets[slot.bucketIndex];
+                    
+                    auto firstVertex = static_cast<unsigned int>(vertices.size());
+                    auto windingSize = buffer.buffer.getWindingSize();
+
+                    WindingIndexer_Triangles::GenerateAndAssignIndices(
+                        indexInserter, windingSize, firstVertex);
+
+                    auto sourceVertices = buffer.buffer.getVertices().begin() + (slot.slotNumber * windingSize);
+                    std::copy(sourceVertices, sourceVertices + windingSize, vertexInserter);
+                }
+
+                auto sizeDiffers = _pushedVertexCount != vertices.size() || _pushedIndexCount != indices.size();
+
+                if (_geometrySlot != InvalidGeometrySlot && sizeDiffers)
+                {
+                    _owner._geometryStore.deallocateSlot(_geometrySlot);
+                    _geometrySlot = InvalidGeometrySlot;
+                    _pushedVertexCount = 0;
+                    _pushedIndexCount = 0;
+                }
+
+                if (!indices.empty())
+                {
+                    if (!sizeDiffers && _geometrySlot != InvalidGeometrySlot)
+                    {
+                        _owner._geometryStore.updateData(_geometrySlot, vertices, indices);
+                    }
+                    else
+                    {
+                        _geometrySlot = _owner._geometryStore.allocateSlot(vertices, indices);
+                        _pushedVertexCount = vertices.size();
+                        _pushedIndexCount = indices.size();
+                    }
+                }
+            }
+
+            if (_boundsNeedUpdate)
             {
                 _boundsNeedUpdate = false;
                 _bounds = _owner._geometryStore.getBounds(_geometrySlot);
@@ -192,7 +253,7 @@ private:
             // Find or create a surface for the entity
             auto existing = _windingsByEntity.find(slot.renderEntity);
             
-            if (existing != _windingsByEntity.end())
+            if (existing == _windingsByEntity.end())
             {
                 existing = _windingsByEntity.emplace(slot.renderEntity, 
                     std::make_shared<WindingGroup>(_owner)).first;
