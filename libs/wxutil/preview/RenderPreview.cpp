@@ -149,6 +149,8 @@ void RenderPreview::connectToolbarSignals()
 
 RenderPreview::~RenderPreview()
 {
+    _scene.reset();
+    _renderSystem.reset();
 	_timer.Stop();
 }
 
