@@ -13,6 +13,7 @@ class RenderableWinding :
 private:
     const Winding& _winding;
     ShaderPtr _shader;
+    IRenderEntity* _entity;
     bool _needsUpdate;
 
     IWindingRenderer::Slot _slot;
@@ -21,6 +22,7 @@ private:
 public:
     RenderableWinding(const Winding& winding) :
         _winding(winding),
+        _entity(nullptr),
         _needsUpdate(true),
         _slot(IWindingRenderer::InvalidSlot),
         _windingSize(0)
@@ -31,13 +33,13 @@ public:
         _needsUpdate = true;
     }
 
-    void update(const ShaderPtr& shader, const IRenderEntity& entity)
+    void update(const ShaderPtr& shader, IRenderEntity& entity)
     {
         if (!_needsUpdate) return;
 
         _needsUpdate = false;
 
-        if (_shader != shader)
+        if (_shader != shader || &entity != _entity)
         {
             clear();
         }
@@ -73,7 +75,7 @@ public:
 
         if (_slot == IWindingRenderer::InvalidSlot)
         {
-            _slot = shader->addWinding(vertices);
+            _slot = shader->addWinding(vertices, &entity);
         }
         else
         {

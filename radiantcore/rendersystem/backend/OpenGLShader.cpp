@@ -66,7 +66,7 @@ OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSy
     _enabledViewTypes(0),
     _mergeModeActive(false)
 {
-    _windingRenderer.reset(new WindingRenderer<WindingIndexer_Triangles>());
+    _windingRenderer.reset(new WindingRenderer<WindingIndexer_Triangles>(renderSystem.getGeometryStore(), this));
 }
 
 OpenGLShader::~OpenGLShader()
@@ -203,9 +203,9 @@ IGeometryStore::Slot OpenGLShader::getSurfaceStorageLocation(ISurfaceRenderer::S
     return _surfaceRenderer.getSurfaceStorageLocation(slot);
 }
 
-IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices)
+IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices, IRenderEntity* entity)
 {
-    return _windingRenderer->addWinding(vertices);
+    return _windingRenderer->addWinding(vertices, entity);
 }
 
 void OpenGLShader::removeWinding(IWindingRenderer::Slot slot)

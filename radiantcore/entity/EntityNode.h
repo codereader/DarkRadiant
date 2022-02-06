@@ -129,7 +129,7 @@ public:
 	virtual float getShaderParm(int parmNum) const override;
 	virtual const Vector3& getDirection() const override;
 
-    virtual void addRenderable(const render::IRenderableObject::Ptr& object, const ShaderPtr& shader) override;
+    virtual void addRenderable(const render::IRenderableObject::Ptr& object, Shader* shader) override;
     virtual void removeRenderable(const render::IRenderableObject::Ptr& object) override;
     virtual void foreachRenderableTouchingBounds(const AABB& bounds,
         const ObjectVisitFunction& functor) override;

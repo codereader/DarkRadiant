@@ -106,7 +106,7 @@ public:
         }
 
         _renderEntity = entity;
-        _renderEntity->addRenderable(shared_from_this(), shader);
+        _renderEntity->addRenderable(shared_from_this(), shader.get());
         _storageLocation = shader->getSurfaceStorageLocation(_shaders[shader]);
     }
 

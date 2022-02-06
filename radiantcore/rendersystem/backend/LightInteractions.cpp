@@ -42,13 +42,13 @@ inline void submitObject(IRenderableObject& object, IGeometryStore& store)
 
 }
 
-void LightInteractions::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader& shader)
+void LightInteractions::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader)
 {
     auto& objectsByMaterial = _objectsByEntity.emplace(
         &entity, ObjectsByMaterial{}).first->second;
 
     auto& surfaces = objectsByMaterial.emplace(
-        &shader, ObjectList{}).first->second;
+        shader, ObjectList{}).first->second;
 
     surfaces.emplace_back(std::ref(object));
 
@@ -66,7 +66,7 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
     for (const auto& entity : entities)
     {
         entity->foreachRenderableTouchingBounds(_lightBounds,
-            [&](const render::IRenderableObject::Ptr& object, const ShaderPtr& shader)
+            [&](const render::IRenderableObject::Ptr& object, Shader* shader)
         {
             // Skip empty objects
             if (!object->isVisible()) return;
@@ -74,7 +74,7 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
             // Don't collect invisible shaders
             if (!shader->isVisible()) return;
 
-            auto glShader = static_cast<OpenGLShader*>(shader.get());
+            auto glShader = static_cast<OpenGLShader*>(shader);
 
             // We only consider materials designated for camera rendering
             if (!glShader->isApplicableTo(RenderViewType::Camera))
@@ -82,7 +82,7 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
                 return;
             }
 
-            addObject(*object, *entity, *glShader);
+            addObject(*object, *entity, glShader);
         });
     }
 }

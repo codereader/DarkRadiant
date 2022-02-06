@@ -5,6 +5,8 @@
 #include <cstdint>
 #include "render/ArbitraryMeshVertex.h"
 
+class IRenderEntity;
+
 namespace render
 {
 
@@ -27,14 +29,17 @@ public:
     using Slot = std::uint64_t;
     static constexpr Slot InvalidSlot = std::numeric_limits<Slot>::max();
 
-    // Allocate a slot to hold the vertex data of a winding of the given size
+    // Allocate a slot to hold the vertex data of a winding of the given size.
+    // The winding will be associated to the given render entity (causing it to be grouped internally
+    // by the render entities when the surfaces are processed in lit render views).
     // Returns the handle which can be used to update or deallocate the data later
-    virtual Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) = 0;
+    virtual Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices, IRenderEntity* entity) = 0;
 
     // Releases a previously allocated winding slot. This invalidates the handle.
     virtual void removeWinding(Slot slot) = 0;
 
-    // Sets the winding data
+    // Updates the winding data. An IRenderEntity change is not supported through updateWinding(), in case the
+    // winding has to be associated to a different entity, call removeWinding() first.
     virtual void updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) = 0;
 
     // Mode used to specify how to render a single winding

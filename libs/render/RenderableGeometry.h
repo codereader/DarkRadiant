@@ -173,7 +173,7 @@ public:
 
         _renderEntity = entity;
         ensureRenderAdapter();
-        _renderEntity->addRenderable(_renderAdapter, _shader);
+        _renderEntity->addRenderable(_renderAdapter, _shader.get());
     }
 
     void detachFromEntity()

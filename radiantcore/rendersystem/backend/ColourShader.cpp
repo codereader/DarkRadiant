@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include "string/convert.h"
 #include "fmt/format.h"
+#include "../OpenGLRenderSystem.h"
 
 namespace render
 {
@@ -73,7 +74,7 @@ void ColourShader::construct()
         // Don't touch a renderer that is not empty, this will break any client connections
         if (getWindingRenderer().empty())
         {
-            setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>());
+            setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>(getRenderSystem().getGeometryStore(), this));
         }
 
         state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);

@@ -63,7 +63,7 @@ public:
         return _objectsByEntity.size();
     }
 
-    void addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader& shader);
+    void addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader);
 
     bool isInView(const IRenderView& view);
 

@@ -200,7 +200,7 @@ const Vector3& EntityNode::getDirection() const
 	return _direction;
 }
 
-void EntityNode::addRenderable(const render::IRenderableObject::Ptr& object, const ShaderPtr& shader)
+void EntityNode::addRenderable(const render::IRenderableObject::Ptr& object, Shader* shader)
 {
     _renderObjects.addRenderable(object, shader);
 }

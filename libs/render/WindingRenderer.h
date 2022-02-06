@@ -32,18 +32,24 @@ template<>
 struct RenderingTraits<WindingIndexer_Lines>
 {
     constexpr static GLenum Mode() { return GL_LINES; }
+
+    constexpr static bool SupportsEntitySurfaces() { return false; }
 };
 
 template<>
 struct RenderingTraits<WindingIndexer_Triangles>
 {
     constexpr static GLenum Mode() { return GL_TRIANGLES; }
+
+    constexpr static bool SupportsEntitySurfaces() { return true; }
 };
 
 template<>
 struct RenderingTraits<WindingIndexer_Polygon>
 {
     constexpr static GLenum Mode() { return GL_POLYGON; }
+
+    constexpr static bool SupportsEntitySurfaces() { return false; }
 };
 
 template<class WindingIndexerT>
@@ -63,6 +69,9 @@ private:
         std::vector<typename VertexBuffer::Slot> pendingDeletions;
     };
 
+    IGeometryStore& _geometryStore;
+    Shader* _owningShader;
+
     // Maintain one bucket per winding size, allocated on demand
     std::vector<Bucket> _buckets;
 
@@ -75,26 +84,168 @@ private:
     {
         BucketIndex bucketIndex = InvalidBucketIndex;
         typename VertexBuffer::Slot slotNumber = InvalidVertexBufferSlot;
+        IRenderEntity* renderEntity = nullptr;
     };
 
     std::vector<SlotMapping> _slots;
     static constexpr std::size_t InvalidSlotMapping = std::numeric_limits<std::size_t>::max();
     std::size_t _freeSlotMappingHint;
 
-    std::size_t _windings;
+    std::size_t _windingCount;
+
+    class WindingGroup :
+        public IRenderableObject
+    {
+    private:
+        WindingRenderer& _owner;
+
+        std::set<std::size_t> _slotIndices;
+        bool _surfaceNeedsRebuild;
+        AABB _bounds;
+        bool _boundsNeedUpdate;
+
+        IGeometryStore::Slot _geometrySlot;
+
+        sigc::signal<void> _sigBoundsChanged;
+    public:
+        WindingGroup(WindingRenderer& owner) :
+            _owner(owner),
+            _surfaceNeedsRebuild(true),
+            _boundsNeedUpdate(true),
+            _geometrySlot(std::numeric_limits<IGeometryStore::Slot>::max())
+        {}
+
+        void addWinding(std::size_t slotMappingIndex)
+        {
+            _slotIndices.insert(slotMappingIndex);
+            _surfaceNeedsRebuild = true;
+            _sigBoundsChanged.emit();
+        }
+
+        void updateWinding(std::size_t slotMappingIndex)
+        {
+            _surfaceNeedsRebuild = true;
+            _sigBoundsChanged.emit();
+        }
+
+        void removeWinding(std::size_t slotMappingIndex)
+        {
+            _slotIndices.erase(slotMappingIndex);
+            _surfaceNeedsRebuild = true;
+            _sigBoundsChanged.emit();
+        }
+
+        bool empty() const
+        {
+            return _slotIndices.empty();
+        }
+
+        bool isVisible() override
+        {
+            return !empty();
+        }
+
+        const Matrix4& getObjectTransform() override
+        {
+            static Matrix4 _identity = Matrix4::getIdentity();
+            return _identity;
+        }
+
+        const AABB& getObjectBounds() override
+        {
+            if (_surfaceNeedsRebuild || _boundsNeedUpdate)
+            {
+                _boundsNeedUpdate = false;
+                _bounds = _owner._geometryStore.getBounds(_geometrySlot);
+            }
+
+            return _bounds;
+        }
+
+        sigc::signal<void>& signal_boundsChanged() override 
+        {
+            return _sigBoundsChanged;
+        }
+
+        IGeometryStore::Slot getStorageLocation() override
+        {
+            return _geometrySlot;
+        }
+    };
+
+    class EntityWindings
+    {
+    private:
+        WindingRenderer& _owner;
+
+        std::map<IRenderEntity*, std::shared_ptr<WindingGroup>> _windingsByEntity;
+
+    public:
+        EntityWindings(WindingRenderer& owner) :
+            _owner(owner)
+        {}
+
+        void addWinding(std::size_t slotMappingIndex)
+        {
+            const auto& slot = _owner._slots[slotMappingIndex];
+
+            // Find or create a surface for the entity
+            auto existing = _windingsByEntity.find(slot.renderEntity);
+            
+            if (existing != _windingsByEntity.end())
+            {
+                existing = _windingsByEntity.emplace(slot.renderEntity, 
+                    std::make_shared<WindingGroup>(_owner)).first;
+
+                // New surface, register this with the entity
+                slot.renderEntity->addRenderable(existing->second, _owner._owningShader);
+            }
+
+            existing->second->addWinding(slotMappingIndex);
+        }
+
+        void updateWinding(std::size_t slotMappingIndex)
+        {
+            const auto& slot = _owner._slots[slotMappingIndex];
+            _windingsByEntity[slot.renderEntity]->updateWinding(slotMappingIndex);
+        }
+
+        void removeWinding(std::size_t slotMappingIndex)
+        {
+            const auto& slot = _owner._slots[slotMappingIndex];
+
+            auto& group = _windingsByEntity[slot.renderEntity];
+            group->removeWinding(slotMappingIndex);
+            
+            if (group->empty())
+            {
+                slot.renderEntity->removeRenderable(group);
+                _windingsByEntity.erase(slot.renderEntity);
+            }
+        }
+    };
+
+    std::unique_ptr<EntityWindings> _entitySurfaces;
 
 public:
-    WindingRenderer() :
-        _windings(0),
+    WindingRenderer(IGeometryStore& geometryStore, Shader* owningShader) :
+        _geometryStore(geometryStore),
+        _owningShader(owningShader),
+        _windingCount(0),
         _freeSlotMappingHint(InvalidSlotMapping)
-    {}
+    {
+        if (RenderingTraits<WindingIndexerT>::SupportsEntitySurfaces())
+        {
+            _entitySurfaces.reset(new EntityWindings(*this));
+        }
+    }
 
     bool empty() const
     {
-        return _windings == 0;
+        return _windingCount == 0;
     }
 
-    Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override
+    Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices, IRenderEntity* entity) override
     {
         auto windingSize = vertices.size();
 
@@ -125,7 +276,15 @@ public:
             slotMapping.slotNumber = bucket.buffer.pushWinding(vertices);
         }
 
-        ++_windings;
+        ++_windingCount;
+
+        if (RenderingTraits<WindingIndexerT>::SupportsEntitySurfaces())
+        {
+            slotMapping.renderEntity = entity;
+
+            // Add this winding to the surface associated to the render entity
+            _entitySurfaces->addWinding(slotMappingIndex);
+        }
 
         return slotMappingIndex;
     }
@@ -138,27 +297,18 @@ public:
         auto bucketIndex = slotMapping.bucketIndex;
         assert(bucketIndex != InvalidBucketIndex);
 
-#if 1
+        if (RenderingTraits<WindingIndexerT>::SupportsEntitySurfaces())
+        {
+            _entitySurfaces->removeWinding(slot);
+        }
+
         // Mark this winding slot as pending for deletion
         _buckets[bucketIndex].pendingDeletions.push_back(slotMapping.slotNumber);
-#else
-        // Remove the winding from the bucket
-        _buckets[bucketIndex].removeWinding(slotMapping.slotNumber);
-
-        // Update the value in other slot mappings, now that the bucket shrunk
-        for (auto& mapping : _slots)
-        {
-            // Every index in the same bucket beyond the removed winding needs to be shifted to left
-            if (mapping.bucketIndex == bucketIndex && mapping.slotNumber > slotMapping.slotNumber)
-            {
-                --mapping.slotNumber;
-            }
-        }
-#endif
 
         // Invalidate the slot mapping
         slotMapping.bucketIndex = InvalidBucketIndex;
         slotMapping.slotNumber = InvalidVertexBufferSlot;
+        slotMapping.renderEntity = nullptr;
 
         // Update the free slot hint, for the next round we allocate one
         if (slot < _freeSlotMappingHint)
@@ -166,7 +316,7 @@ public:
             _freeSlotMappingHint = slot;
         }
 
-        --_windings;
+        --_windingCount;
     }
 
     void updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override
@@ -184,6 +334,11 @@ public:
         }
 
         bucket.buffer.replaceWinding(slotMapping.slotNumber, vertices);
+
+        if (RenderingTraits<WindingIndexerT>::SupportsEntitySurfaces())
+        {
+            _entitySurfaces->updateWinding(slot);
+        }
     }
 
     void renderAllWindings(const RenderInfo& info) override
@@ -276,7 +431,6 @@ private:
 
         std::sort(bucket.pendingDeletions.begin(), bucket.pendingDeletions.end());
 
-#if 1
         // Remove the winding from the bucket
         bucket.buffer.removeWindings(bucket.pendingDeletions);
 
@@ -311,25 +465,7 @@ private:
                 mapping.slotNumber -= maxOffsetToApply;
             }
         }
-#else
-        for (auto s = bucket.pendingDeletions.rbegin(); s != bucket.pendingDeletions.rend(); ++s)
-        {
-            auto slotNumber = *s;
 
-            // Remove the winding from the bucket
-            bucket.buffer.removeWinding(slotNumber);
-
-            // Update the value in other slot mappings, now that the bucket shrank
-            for (auto& mapping : _slots)
-            {
-                // Every index in the same bucket beyond the removed winding needs to be shifted to left
-                if (mapping.bucketIndex == bucketIndex && mapping.slotNumber > slotNumber)
-                {
-                    --mapping.slotNumber;
-                }
-            }
-        }
-#endif
         bucket.pendingDeletions.clear();
     }
 

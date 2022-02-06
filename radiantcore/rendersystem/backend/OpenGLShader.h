@@ -124,7 +124,7 @@ public:
     void renderSurface(ISurfaceRenderer::Slot slot) override;
     IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override;
 
-    IWindingRenderer::Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices) override;
+    IWindingRenderer::Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices, IRenderEntity* entity) override;
     void removeWinding(IWindingRenderer::Slot slot) override;
     void updateWinding(IWindingRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override;
     bool hasWindings() const;

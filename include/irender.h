@@ -174,14 +174,14 @@ public:
      * Associates the given object with this entity and the given shader.
      * It will be processed during the following lighting mode rendering passes.
      */
-    virtual void addRenderable(const render::IRenderableObject::Ptr& object, const ShaderPtr& shader) = 0;
+    virtual void addRenderable(const render::IRenderableObject::Ptr& object, Shader* shader) = 0;
 
     /**
      * Removes the object from this entity.
      */
     virtual void removeRenderable(const render::IRenderableObject::Ptr& object) = 0;
 
-    using ObjectVisitFunction = std::function<void(const render::IRenderableObject::Ptr&, const ShaderPtr&)>;
+    using ObjectVisitFunction = std::function<void(const render::IRenderableObject::Ptr&, Shader*)>;
 
     /**
      * Enumerate all entity object (partially) intersecting with the given bounds.

@@ -20,7 +20,7 @@ private:
 
     struct ObjectData
     {
-        ShaderPtr shader;
+        Shader* shader;
         sigc::connection boundsChangedConnection;
     };
 
@@ -31,7 +31,7 @@ public:
         _collectionBoundsNeedUpdate(true)
     {}
 
-    void addRenderable(const render::IRenderableObject::Ptr& object, const ShaderPtr& shader)
+    void addRenderable(const render::IRenderableObject::Ptr& object, Shader* shader)
     {
         sigc::connection subscription = object->signal_boundsChanged().connect(
             sigc::mem_fun(*this, &RenderableObjectCollection::onObjectBoundsChanged));
