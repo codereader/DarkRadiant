@@ -60,7 +60,8 @@ public:
 
         for (const auto& vertex : _winding)
         {
-            vertices.emplace_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, vertex.texcoord, entityColour));
+            vertices.emplace_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, 
+                vertex.texcoord, entityColour, vertex.tangent, vertex.bitangent));
         }
 
         if (_shader && _slot != IWindingRenderer::InvalidSlot && numPoints != _windingSize)
