@@ -209,6 +209,8 @@ protected:
             _shader->removeGeometry(_surfaceSlot);
         }
 
+        _lastVertexSize = 0;
+        _lastIndexSize = 0;
         _surfaceSlot = IGeometryRenderer::InvalidSlot;
     }
 
@@ -231,6 +233,12 @@ protected:
 
             _lastVertexSize = vertices.size();
             _lastIndexSize = indices.size();
+        }
+
+        if (vertices.empty() || indices.empty())
+        {
+            clear();
+            return;
         }
 
         if (_surfaceSlot == IGeometryRenderer::InvalidSlot)
