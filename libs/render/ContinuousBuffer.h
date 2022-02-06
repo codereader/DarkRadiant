@@ -167,10 +167,11 @@ private:
     Handle getNextFreeSlotForSize(std::size_t requiredSize)
     {
         auto numSlots = _slots.size();
-        Handle rightmostFreeSlotIndex = 0;
+        Handle rightmostFreeSlotIndex = static_cast<Handle>(numSlots);
         std::size_t rightmostFreeOffset = 0;
+        Handle slotIndex = 0;
 
-        for (Handle slotIndex = 0; slotIndex < numSlots; ++slotIndex)
+        for (slotIndex = 0; slotIndex < numSlots; ++slotIndex)
         {
             auto& slot = _slots[slotIndex];
 
@@ -200,6 +201,16 @@ private:
         }
 
         // No space wherever, we need to expand the buffer
+
+        // Check if we have any free slots, otherwise allocate a new one
+        if (rightmostFreeSlotIndex == numSlots)
+        {
+            // Create a free slot with 0 size,
+            // rightMostFreeSlotIndex is now within the valid range
+            _slots.emplace_back(_buffer.size(), 0, false);
+        }
+
+        // Allocate more memory
         auto additionalSize = std::max(_buffer.size() * GrowthRate, requiredSize);
         _buffer.resize(_buffer.size() + additionalSize);
 

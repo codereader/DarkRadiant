@@ -245,4 +245,27 @@ TEST(ContinuousBufferTest, GapMerging)
     EXPECT_TRUE(checkContinuousData(buffer, handle7, { sixteen }));
 }
 
+// Buffer will be tightly filled with no space left, allocation must succeed in this case
+TEST(ContinuousBufferTest, ExpandFullBuffer)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto four = std::vector<int>({ 10,11,12,13 });
+
+    render::ContinuousBuffer<int> buffer(eight.size() + four.size()); // Allocate a buffer that matches exactly
+
+    auto handle1 = buffer.allocate(eight.size());
+    auto handle2 = buffer.allocate(four.size());
+
+    buffer.setData(handle1, eight);
+    buffer.setData(handle2, four);
+
+    EXPECT_TRUE(checkContinuousData(buffer, handle1, { eight, four}));
+
+    // Allocate another piece of memory
+    auto handle3 = buffer.allocate(eight.size());
+    buffer.setData(handle3, eight);
+
+    EXPECT_TRUE(checkContinuousData(buffer, handle1, { eight, four, eight }));
+}
+
 }
