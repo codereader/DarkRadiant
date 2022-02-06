@@ -409,8 +409,6 @@ public:
         glEnableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
 
-        glFrontFace(GL_CCW);
-
         for (auto bucketIndex = 0; bucketIndex < _buckets.size(); ++bucketIndex)
         {
             auto& bucket = _buckets[bucketIndex];
@@ -463,8 +461,6 @@ public:
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         glEnableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
-
-        glFrontFace(GL_CCW);
 
         glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
         glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);

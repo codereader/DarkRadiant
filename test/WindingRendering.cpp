@@ -294,8 +294,8 @@ TEST(CompactWindingVertexBuffer, TriangleIndexerSize3) // Winding size == 3
     EXPECT_EQ(indices.size(), buffer.getNumIndicesPerWinding()) << "Wrong number of indices generated";
 
     EXPECT_EQ(indices[0], 80) << "Index 0 mismatch";
-    EXPECT_EQ(indices[1], 82) << "Index 1 mismatch";
-    EXPECT_EQ(indices[2], 81) << "Index 2 mismatch";
+    EXPECT_EQ(indices[1], 81) << "Index 1 mismatch";
+    EXPECT_EQ(indices[2], 82) << "Index 2 mismatch";
 }
 
 TEST(CompactWindingVertexBuffer, TriangleIndexerSize4) // Winding size == 4
@@ -311,12 +311,12 @@ TEST(CompactWindingVertexBuffer, TriangleIndexerSize4) // Winding size == 4
     EXPECT_EQ(indices.size(), buffer.getNumIndicesPerWinding()) << "Wrong number of indices generated";
 
     EXPECT_EQ(indices[0], 80) << "Index 0 mismatch";
-    EXPECT_EQ(indices[1], 83) << "Index 1 mismatch";
-    EXPECT_EQ(indices[2], 82) << "Index 2 mismatch";
+    EXPECT_EQ(indices[1], 82) << "Index 1 mismatch";
+    EXPECT_EQ(indices[2], 83) << "Index 2 mismatch";
 
     EXPECT_EQ(indices[3], 80) << "Index 3 mismatch";
-    EXPECT_EQ(indices[4], 82) << "Index 4 mismatch";
-    EXPECT_EQ(indices[5], 81) << "Index 5 mismatch";
+    EXPECT_EQ(indices[4], 81) << "Index 4 mismatch";
+    EXPECT_EQ(indices[5], 82) << "Index 5 mismatch";
 }
 
 TEST(CompactWindingVertexBuffer, TriangleIndexerSize5) // Winding size == 5
@@ -332,16 +332,16 @@ TEST(CompactWindingVertexBuffer, TriangleIndexerSize5) // Winding size == 5
     EXPECT_EQ(indices.size(), buffer.getNumIndicesPerWinding()) << "Wrong number of indices generated";
 
     EXPECT_EQ(indices[0], 80) << "Index 0 mismatch";
-    EXPECT_EQ(indices[1], 84) << "Index 1 mismatch";
-    EXPECT_EQ(indices[2], 83) << "Index 2 mismatch";
+    EXPECT_EQ(indices[1], 83) << "Index 1 mismatch";
+    EXPECT_EQ(indices[2], 84) << "Index 2 mismatch";
 
     EXPECT_EQ(indices[3], 80) << "Index 3 mismatch";
-    EXPECT_EQ(indices[4], 83) << "Index 4 mismatch";
-    EXPECT_EQ(indices[5], 82) << "Index 5 mismatch";
+    EXPECT_EQ(indices[4], 82) << "Index 4 mismatch";
+    EXPECT_EQ(indices[5], 83) << "Index 5 mismatch";
 
     EXPECT_EQ(indices[6], 80) << "Index 6 mismatch";
-    EXPECT_EQ(indices[7], 82) << "Index 7 mismatch";
-    EXPECT_EQ(indices[8], 81) << "Index 8 mismatch";
+    EXPECT_EQ(indices[7], 81) << "Index 7 mismatch";
+    EXPECT_EQ(indices[8], 82) << "Index 8 mismatch";
 }
 
 TEST(CompactWindingVertexBuffer, LineIndexerSize3) // Winding size == 3
@@ -417,6 +417,25 @@ TEST(CompactWindingVertexBuffer, LineIndexerSize5) // Winding size == 5
 
     EXPECT_EQ(indices[8], 84) << "Index 8 mismatch";
     EXPECT_EQ(indices[9], 80) << "Index 9 mismatch";
+}
+
+TEST(CompactWindingVertexBuffer, PolygonIndexerSize5) // Winding size == 5
+{
+    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Polygon> buffer(5);
+
+    EXPECT_EQ(buffer.getNumIndicesPerWinding(), 5);
+
+    // Generate winding indices and check the result
+    std::vector<unsigned int> indices;
+    render::WindingIndexer_Polygon::GenerateAndAssignIndices(std::back_inserter(indices), buffer.getWindingSize(), 80);
+
+    EXPECT_EQ(indices.size(), buffer.getNumIndicesPerWinding()) << "Wrong number of indices generated";
+
+    EXPECT_EQ(indices[0], 80) << "Index 0 mismatch";
+    EXPECT_EQ(indices[1], 81) << "Index 1 mismatch";
+    EXPECT_EQ(indices[2], 82) << "Index 2 mismatch";
+    EXPECT_EQ(indices[3], 83) << "Index 3 mismatch";
+    EXPECT_EQ(indices[4], 84) << "Index 4 mismatch";
 }
 
 }
