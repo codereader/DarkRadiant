@@ -49,6 +49,6 @@ void PreferenceSystem::initialiseModule(const IApplicationContext& ctx)
 }
 
 // Define the static PreferenceSystem module
-module::StaticModule<PreferenceSystem> preferenceSystemModule;
+module::StaticModuleRegistration<PreferenceSystem> preferenceSystemModule;
 
 }

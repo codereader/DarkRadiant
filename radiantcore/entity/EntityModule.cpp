@@ -306,6 +306,6 @@ void Doom3EntityModule::shutdownModule()
 }
 
 // Static module instance
-module::StaticModule<Doom3EntityModule> entityModule;
+module::StaticModuleRegistration<Doom3EntityModule> entityModule;
 
 } // namespace entity

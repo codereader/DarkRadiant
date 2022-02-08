@@ -113,7 +113,7 @@ void FavouritesManager::initialiseModule(const IApplicationContext&)
 {
     // Up to version 2.10.0, the MediaBrowser favourites were stored in this path
     _favouritesByType[Type::Material].loadFromRegistry(RKEY_MEDIABROWSER_LEGACY_ROOT);
-    
+
     // Get rid of this old key after importing its data
     GlobalRegistry().deleteXPath(RKEY_MEDIABROWSER_LEGACY_ROOT);
 
@@ -145,6 +145,6 @@ void FavouritesManager::shutdownModule()
     }
 }
 
-module::StaticModule<FavouritesManager> favouritesManagerModule;
+module::StaticModuleRegistration<FavouritesManager> favouritesManagerModule;
 
 }

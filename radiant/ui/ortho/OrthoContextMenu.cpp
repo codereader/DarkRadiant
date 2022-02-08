@@ -70,7 +70,7 @@ namespace {
 }
 
 // Define the static OrthoContextMenu module
-module::StaticModule<OrthoContextMenu> orthoContextMenuModule;
+module::StaticModuleRegistration<OrthoContextMenu> orthoContextMenuModule;
 
 OrthoContextMenu& OrthoContextMenu::Instance()
 {
@@ -248,7 +248,7 @@ void OrthoContextMenu::addEntity()
     // Display the chooser to select an entity classname
     std::string cName = wxutil::EntityClassChooser::chooseEntityClass();
 
-    if (!cName.empty()) 
+    if (!cName.empty())
     {
         UndoableCommand command("createEntity");
 
@@ -274,7 +274,7 @@ void OrthoContextMenu::callbackAddLight()
 {
     UndoableCommand command("addLight");
 
-    try 
+    try
 	{
         GlobalEntityModule().createEntityFromSelection(LIGHT_CLASSNAME, _lastPoint);
     }
@@ -291,7 +291,7 @@ void OrthoContextMenu::callbackAddPrefab()
     if (!result.prefabPath.empty())
     {
         // Pass the call to the map algorithm and give the lastPoint coordinate as argument
-        GlobalCommandSystem().executeCommand(LOAD_PREFAB_AT_CMD, 
+        GlobalCommandSystem().executeCommand(LOAD_PREFAB_AT_CMD,
             result.prefabPath, _lastPoint, result.insertAsGroup);
     }
 }

@@ -113,6 +113,6 @@ void CameraManager::setActiveCameraAngles(const cmd::ArgumentList& args)
 	}
 }
 
-module::StaticModule<CameraManager> cameraManagerModule;
+module::StaticModuleRegistration<CameraManager> cameraManagerModule;
 
 }

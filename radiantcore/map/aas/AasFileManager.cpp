@@ -49,7 +49,7 @@ IAasFileLoaderPtr AasFileManager::getLoaderForStream(std::istream& stream)
 
 	// Rewind the stream when we're done
 	stream.seekg(0, std::ios_base::beg);
-    
+
     return loader;
 }
 
@@ -161,6 +161,6 @@ void AasFileManager::initialiseModule(const IApplicationContext& ctx)
 }
 
 // Define the static AasFileManager module
-module::StaticModule<AasFileManager> aasFileManagerModule;
+module::StaticModuleRegistration<AasFileManager> aasFileManagerModule;
 
 }

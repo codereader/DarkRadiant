@@ -3,7 +3,7 @@
 #include "Map.h"
 
 // Creates the static module instance
-module::StaticModule<map::Map> staticMapModule;
+module::StaticModuleRegistration<map::Map> staticMapModule;
 
 // Accessor method containing the singleton Map instance
 map::Map& GlobalMap()

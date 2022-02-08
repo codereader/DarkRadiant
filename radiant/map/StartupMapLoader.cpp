@@ -16,7 +16,7 @@
 #include "os/file.h"
 #include "registry/registry.h"
 
-namespace map 
+namespace map
 {
 
 void StartupMapLoader::onMainFrameReady()
@@ -29,7 +29,7 @@ void StartupMapLoader::onMainFrameReady()
 
     for (const std::string& candidate : args)
     {
-		if (os::getExtension(candidate) != "map" && 
+		if (os::getExtension(candidate) != "map" &&
 			os::getExtension(candidate) != "mapx") continue;
 
 		// We have a map file, check if it exists (and where)
@@ -115,6 +115,6 @@ void StartupMapLoader::initialiseModule(const IApplicationContext& ctx)
 	);
 }
 
-module::StaticModule<StartupMapLoader> startupMapLoader;
+module::StaticModuleRegistration<StartupMapLoader> startupMapLoader;
 
 } // namespace map

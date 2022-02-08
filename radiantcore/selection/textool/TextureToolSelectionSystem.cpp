@@ -23,7 +23,7 @@ const std::string& TextureToolSelectionSystem::getName() const
 
 const StringSet& TextureToolSelectionSystem::getDependencies() const
 {
-    static StringSet _dependencies{ MODULE_TEXTOOL_SCENEGRAPH, 
+    static StringSet _dependencies{ MODULE_TEXTOOL_SCENEGRAPH,
         MODULE_COMMANDSYSTEM, MODULE_RADIANT_CORE };
     return _dependencies;
 }
@@ -47,13 +47,13 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
     GlobalCommandSystem().addCommand("ToggleTextureToolSelectionMode",
         std::bind(&TextureToolSelectionSystem::toggleSelectionModeCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING });
-    GlobalCommandSystem().addCommand("TexToolSelectRelated", 
+    GlobalCommandSystem().addCommand("TexToolSelectRelated",
         std::bind(&TextureToolSelectionSystem::selectRelatedCmd, this, std::placeholders::_1));
-    GlobalCommandSystem().addCommand("TexToolSnapToGrid", 
+    GlobalCommandSystem().addCommand("TexToolSnapToGrid",
         std::bind(&TextureToolSelectionSystem::snapSelectionToGridCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("TexToolNormaliseItems",
         std::bind(&TextureToolSelectionSystem::normaliseSelectionCmd, this, std::placeholders::_1));
-    GlobalCommandSystem().addCommand("TexToolMergeItems", 
+    GlobalCommandSystem().addCommand("TexToolMergeItems",
         std::bind(&TextureToolSelectionSystem::mergeSelectionCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_VECTOR2 | cmd::ARGTYPE_OPTIONAL });
 
@@ -67,9 +67,9 @@ void TextureToolSelectionSystem::initialiseModule(const IApplicationContext& ctx
         std::bind(&TextureToolSelectionSystem::rotateSelectionCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_DOUBLE });
 
-    GlobalCommandSystem().addCommand("TexToolFlipS", 
+    GlobalCommandSystem().addCommand("TexToolFlipS",
         std::bind(&TextureToolSelectionSystem::flipHorizontallyCmd, this, std::placeholders::_1));
-    GlobalCommandSystem().addCommand("TexToolFlipT", 
+    GlobalCommandSystem().addCommand("TexToolFlipT",
         std::bind(&TextureToolSelectionSystem::flipVerticallyCmd, this, std::placeholders::_1));
 
     _unselectListener = GlobalRadiantCore().getMessageBus().addListener(
@@ -684,7 +684,7 @@ void TextureToolSelectionSystem::mergeSelectionCmd(const cmd::ArgumentList& args
             node->commitTransformation();
             return true;
         });
-        
+
         radiant::TextureChangedMessage::Send();
     }
 }
@@ -853,6 +853,6 @@ void TextureToolSelectionSystem::rotateSelectionCmd(const cmd::ArgumentList& arg
     foreachSelectedNode(rotator);
 }
 
-module::StaticModule<TextureToolSelectionSystem> _textureToolSelectionSystemModule;
+module::StaticModuleRegistration<TextureToolSelectionSystem> _textureToolSelectionSystemModule;
 
 }

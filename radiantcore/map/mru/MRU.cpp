@@ -178,6 +178,6 @@ void MRU::shutdownModule()
 	saveRecentFiles();
 }
 
-module::StaticModule<MRU> mruModule;
+module::StaticModuleRegistration<MRU> mruModule;
 
 } // namespace

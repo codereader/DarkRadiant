@@ -143,6 +143,6 @@ FontInfoPtr FontManager::findOrCreateFontInfo(const std::string& name)
 }
 
 // Static module instance
-module::StaticModule<FontManager> fontManagerModule;
+module::StaticModuleRegistration<FontManager> fontManagerModule;
 
 } // namespace fonts

@@ -84,7 +84,7 @@ bool Quake4MapFormat::canLoad(std::istream& stream) const
 		// Require a "Version" token
 		tok.assertNextToken("Version");
 
-		// Require specific version, return true on success 
+		// Require specific version, return true on success
 		return (std::stof(tok.nextToken()) == MAP_VERSION_Q4);
 	}
 	catch (parser::ParseException&)
@@ -95,6 +95,6 @@ bool Quake4MapFormat::canLoad(std::istream& stream) const
 	return false;
 }
 
-module::StaticModule<Quake4MapFormat> q4MapModule;
+module::StaticModuleRegistration<Quake4MapFormat> q4MapModule;
 
 } // namespace map

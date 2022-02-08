@@ -5,6 +5,6 @@ namespace vfs
 {
 
 // Static module instance
-module::StaticModule<Doom3FileSystem> doom3FileSystemModule;
+module::StaticModuleRegistration<Doom3FileSystem> doom3FileSystemModule;
 
 }

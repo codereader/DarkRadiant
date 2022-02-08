@@ -1709,6 +1709,6 @@ void EntityInspector::toggle(const cmd::ArgumentList& args)
 }
 
 // Define the static EntityInspector module
-module::StaticModule<EntityInspector> entityInspectorModule;
+module::StaticModuleRegistration<EntityInspector> entityInspectorModule;
 
 } // namespace ui

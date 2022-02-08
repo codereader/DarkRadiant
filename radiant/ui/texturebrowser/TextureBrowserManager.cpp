@@ -136,7 +136,7 @@ void TextureBrowserManager::onShaderClipboardSourceChanged()
 }
 
 // Define the static module
-module::StaticModule<TextureBrowserManager> texBrowserManagerModule;
+module::StaticModuleRegistration<TextureBrowserManager> texBrowserManagerModule;
 
 TextureBrowserManager& TextureBrowserManager::Instance()
 {

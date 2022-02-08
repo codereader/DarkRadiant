@@ -30,7 +30,7 @@ ModelSkin& Doom3SkinCache::capture(const std::string& name)
 	return i != _namedSkins.end() ? *(i->second) : _nullSkin;
 }
 
-const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model) 
+const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model)
 {
     ensureDefsLoaded();
     return _modelSkins[model];
@@ -62,7 +62,7 @@ sigc::signal<void> Doom3SkinCache::signal_skinsReloaded()
 // Realise the skin cache
 void Doom3SkinCache::ensureDefsLoaded()
 {
-    // The worker function contained in the def loader will 
+    // The worker function contained in the def loader will
     // fill the local structures when it's done
     _defLoader.ensureFinished();
 }
@@ -85,7 +85,7 @@ void Doom3SkinCache::loadSkinFiles()
 
                 std::istream is(&(file->getInputStream()));
 
-                try 
+                try
                 {
                     // Pass the contents back to the SkinCache module for parsing
                     parseFile(is, fileInfo.name);
@@ -128,7 +128,7 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 			auto found = _namedSkins.find(skinName);
 
 			// Is this already defined?
-			if (found != _namedSkins.end()) 
+			if (found != _namedSkins.end())
             {
                 rWarning() << "[skins] in " << filename << ": skin " + skinName +
 						     " previously defined in " +
@@ -151,7 +151,7 @@ void Doom3SkinCache::parseFile(std::istream& contents, const std::string& filena
 }
 
 // Parse an individual skin declaration
-Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok) 
+Doom3ModelSkinPtr Doom3SkinCache::parseSkin(parser::DefTokeniser& tok)
 {
 	// [ "skin" ] <name> "{"
 	//			[ "model" <modelname> ]
@@ -209,7 +209,7 @@ const std::string& Doom3SkinCache::getName() const
 	return _name;
 }
 
-const StringSet& Doom3SkinCache::getDependencies() const 
+const StringSet& Doom3SkinCache::getDependencies() const
 {
 	static StringSet _dependencies;
 
@@ -241,6 +241,6 @@ void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
 }
 
 // Module instance
-module::StaticModule<Doom3SkinCache> skinCacheModule;
+module::StaticModuleRegistration<Doom3SkinCache> skinCacheModule;
 
 } // namespace skins

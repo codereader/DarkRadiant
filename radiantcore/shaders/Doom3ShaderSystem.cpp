@@ -511,8 +511,8 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
     // Update the template in our library
     // Re-acquire the vfs::FileInfo structure which might still be empty for a newly created material
     _library->replaceDefinition(material->getName(), ShaderDefinition
-    { 
-        material->getTemplate(), 
+    {
+        material->getTemplate(),
         GlobalFileSystem().getFileInfo(material->getShaderFileInfo().fullPath())
     });
 }
@@ -745,6 +745,6 @@ GLTextureManager& GetTextureManager()
 }
 
 // Static module instance
-module::StaticModule<Doom3ShaderSystem> d3ShaderSystemModule;
+module::StaticModuleRegistration<Doom3ShaderSystem> d3ShaderSystemModule;
 
 } // namespace shaders

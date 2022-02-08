@@ -93,7 +93,7 @@ void TextureToolSceneGraph::ensureSceneIsAnalysed()
     }
 
     if (!_selectionNeedsRescan) return;
-    
+
     _selectionNeedsRescan = false;
     clearFaceObservers();
     _nodes.clear();
@@ -160,6 +160,6 @@ void TextureToolSceneGraph::onTextureChanged(radiant::TextureChangedMessage& msg
     _activeMaterialNeedsRescan = true;
 }
 
-module::StaticModule<TextureToolSceneGraph> _textureToolSceneGraphModule;
+module::StaticModuleRegistration<TextureToolSceneGraph> _textureToolSceneGraphModule;
 
 }

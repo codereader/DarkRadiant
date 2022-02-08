@@ -20,7 +20,7 @@ namespace map
 namespace
 {
 	const int TIMER_INTERVAL_SECS = 1;
-	
+
 	const char* const MAP_PROPERTY_KEY = "EditTimeInSeconds";
 }
 
@@ -109,7 +109,7 @@ void EditingStopwatch::onMapEvent(IMap::MapEvent ev)
 		readFromMapProperties();
 		start();
 		break;
-		
+
 	// When a map is unloaded, we reset the value to 0 again
 	// to prevent leaving stuff behind.
 	case IMap::MapUnloaded:
@@ -126,7 +126,7 @@ void EditingStopwatch::onMapEvent(IMap::MapEvent ev)
 	case IMap::MapSaved:
 		start();
 		break;
-		
+
 	default:
 		break;
 	};
@@ -163,7 +163,7 @@ unsigned long EditingStopwatch::getTotalSecondsEdited()
 void EditingStopwatch::setTotalSecondsEdited(unsigned long newValue)
 {
 	std::lock_guard<std::recursive_mutex> lock(_timingMutex);
-	
+
 	_secondsEdited = newValue;
 	_sigTimerChanged.emit();
 }
@@ -196,6 +196,6 @@ void EditingStopwatch::writeToMapProperties(const scene::IMapRootNodePtr& root)
 }
 
 // Static module registration
-module::StaticModule<EditingStopwatch> _stopwatchModule;
+module::StaticModuleRegistration<EditingStopwatch> _stopwatchModule;
 
 }

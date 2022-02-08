@@ -93,6 +93,6 @@ void MainFrameLayoutManager::shutdownModule() {
 }
 
 // Define the static MainFrameLayoutManager module
-module::StaticModule<MainFrameLayoutManager> mainFrameLayoutManagerModule;
+module::StaticModuleRegistration<MainFrameLayoutManager> mainFrameLayoutManagerModule;
 
 } // namespace ui

@@ -520,6 +520,6 @@ void EClassManager::onDefLoadingCompleted()
 }
 
 // Static module instance
-module::StaticModule<EClassManager> eclassModule;
+module::StaticModuleRegistration<EClassManager> eclassModule;
 
 } // namespace eclass

@@ -96,7 +96,7 @@ void GridManager::populateGridItems()
 	for (int size = GRID_0125; size <= GRID_256; size++)
 	{
 		_gridItems.emplace_back(
-			grid::getStringForSize(static_cast<GridSize>(size)), 
+			grid::getStringForSize(static_cast<GridSize>(size)),
 			GridItem(static_cast<GridSize>(size), *this)
 		);
 	}
@@ -188,7 +188,7 @@ void GridManager::setGridCmd(const cmd::ArgumentList& args)
 	rError() << "Unknown grid size: " << gridStr << std::endl;
 }
 
-void GridManager::gridDownCmd(const cmd::ArgumentList& args) 
+void GridManager::gridDownCmd(const cmd::ArgumentList& args)
 {
 	gridDown();
 }
@@ -210,7 +210,7 @@ void GridManager::gridUpCmd(const cmd::ArgumentList& args)
 
 void GridManager::gridUp()
 {
-	if (_activeGridSize < GRID_256) 
+	if (_activeGridSize < GRID_256)
 	{
 		int _activeGridIndex = static_cast<int>(_activeGridSize);
 		_activeGridIndex++;
@@ -218,7 +218,7 @@ void GridManager::gridUp()
 	}
 }
 
-void GridManager::setGridSize(GridSize gridSize) 
+void GridManager::setGridSize(GridSize gridSize)
 {
     if (_activeGridSize != gridSize)
     {
@@ -274,6 +274,6 @@ GridLook GridManager::getMinorLook() const
 	return getLookFromNumber(registry::getValue<int>(RKEY_GRID_LOOK_MINOR));
 }
 
-module::StaticModule<GridManager> staticGridManagerModule;
+module::StaticModuleRegistration<GridManager> staticGridManagerModule;
 
 }

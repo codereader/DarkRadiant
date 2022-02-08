@@ -46,6 +46,6 @@ private:
 };
 
 // Static module instance
-module::StaticModule<UndoSystemFactory> _undoSystemFactoryModule;
+module::StaticModuleRegistration<UndoSystemFactory> _undoSystemFactoryModule;
 
 }

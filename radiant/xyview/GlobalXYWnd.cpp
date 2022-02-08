@@ -159,7 +159,7 @@ void XYWndManager::destroyViews()
 	_activeXY = XYWndPtr();
 }
 
-void XYWndManager::registerCommands() 
+void XYWndManager::registerCommands()
 {
 	GlobalCommandSystem().addCommand("NewOrthoView", std::bind(&XYWndManager::createXYFloatingOrthoView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("NextView", std::bind(&XYWndManager::toggleActiveView, this, std::placeholders::_1));
@@ -314,7 +314,7 @@ void XYWndManager::updateAllViews(bool force)
         {
             i.second->forceRedraw();
         }
-        else 
+        else
         {
             i.second->queueDraw();
         }
@@ -349,7 +349,7 @@ void XYWndManager::setOrigin(const Vector3& origin) {
 
 Vector3 XYWndManager::getActiveViewOrigin()
 {
-	if (!_activeXY) 
+	if (!_activeXY)
 	{
 		throw std::runtime_error("No active view found");
 	}
@@ -377,7 +377,7 @@ IOrthoView& XYWndManager::getViewByType(EViewType viewType)
 			return *pair.second;
 		}
 	}
-	
+
 	throw std::runtime_error("No matching view found");
 }
 
@@ -641,7 +641,7 @@ Vector3 XYWndManager::getFocusPosition()
 {
 	Vector3 position(0,0,0);
 
-	if (GlobalSelectionSystem().countSelected() != 0) 
+	if (GlobalSelectionSystem().countSelected() != 0)
 	{
 		position = GlobalSelectionSystem().getCurrentSelectionCenter();
 	}
@@ -759,7 +759,7 @@ void XYWndManager::foreachMouseTool(const std::function<void(const MouseToolPtr&
 }
 
 // Define the static GlobalXYWnd module
-module::StaticModule<XYWndManager> xyWndModule;
+module::StaticModuleRegistration<XYWndManager> xyWndModule;
 
 } // namespace
 

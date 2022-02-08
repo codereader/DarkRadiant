@@ -166,12 +166,12 @@ void BasicFilterSystem::initialiseModule(const IApplicationContext& ctx)
 	addFiltersFromXML(userFilters, false);
 
 	// Add the (de-)activate all commands
-	GlobalCommandSystem().addCommand("SetAllFilterStates", 
+	GlobalCommandSystem().addCommand("SetAllFilterStates",
 		std::bind(&BasicFilterSystem::setAllFilterStatesCmd, this, std::placeholders::_1), { cmd::ARGTYPE_INT });
 
 	// Command to activate/deactivate a named filter
 	GlobalCommandSystem().addCommand("SetFilterState",
-		std::bind(&BasicFilterSystem::setFilterStateCmd, this, std::placeholders::_1), 
+		std::bind(&BasicFilterSystem::setFilterStateCmd, this, std::placeholders::_1),
 		{ cmd::ARGTYPE_STRING, cmd::ARGTYPE_INT });
 
 	// Command to toggle a named filter's state
@@ -190,7 +190,7 @@ void BasicFilterSystem::initialiseModule(const IApplicationContext& ctx)
 		std::bind(&BasicFilterSystem::deselectObjectsByFilterCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
 }
 
-void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readOnly) 
+void BasicFilterSystem::addFiltersFromXML(const xml::NodeList& nodes, bool readOnly)
 {
 	// Load the list of active filter names from the user tree. There is no
 	// guarantee that these are actually valid filters in the .game file
@@ -262,14 +262,14 @@ XmlFilterEventAdapter::Ptr BasicFilterSystem::ensureEventAdapter(XMLFilter& filt
 		return existing->second;
 	}
 
-	auto result = _eventAdapters.emplace(filter.getName(), 
+	auto result = _eventAdapters.emplace(filter.getName(),
 		std::make_shared<XmlFilterEventAdapter>(filter));
 
 	return result.first->second;
 }
 
 // Shut down the Filters module, saving active filters to registry
-void BasicFilterSystem::shutdownModule() 
+void BasicFilterSystem::shutdownModule()
 {
 	// Remove the existing set of active filter nodes
 	GlobalRegistry().deleteXPath(RKEY_USER_ACTIVE_FILTERS);
@@ -310,8 +310,8 @@ void BasicFilterSystem::shutdownModule()
 			case FilterRule::TYPE_TEXTURE: typeStr = "texture"; break;
 			case FilterRule::TYPE_OBJECT: typeStr = "object"; break;
 			case FilterRule::TYPE_ENTITYCLASS: typeStr = "entityclass"; break;
-			case FilterRule::TYPE_ENTITYKEYVALUE: 
-				typeStr = "entitykeyvalue"; 
+			case FilterRule::TYPE_ENTITYKEYVALUE:
+				typeStr = "entitykeyvalue";
 				criterion.setAttributeValue("key", rule.entityKey);
 				break;
 			default: continue;
@@ -360,7 +360,7 @@ void BasicFilterSystem::forEachFilter(const std::function<void(const std::string
 	}
 }
 
-std::string BasicFilterSystem::getFilterEventName(const std::string& filter) 
+std::string BasicFilterSystem::getFilterEventName(const std::string& filter)
 {
 	auto f = _availableFilters.find(filter);
 
@@ -373,16 +373,16 @@ bool BasicFilterSystem::getFilterState(const std::string& filter)
 }
 
 // Change the state of a named filter
-void BasicFilterSystem::setFilterState(const std::string& filter, bool state) 
+void BasicFilterSystem::setFilterState(const std::string& filter, bool state)
 {
 	assert(!_availableFilters.empty());
-	
-	if (state) 
+
+	if (state)
 	{
 		// Copy the filter to the active filters list
 		_activeFilters.emplace(filter, _availableFilters.find(filter)->second);
 	}
-	else 
+	else
 	{
 		assert(!_activeFilters.empty());
 		// Remove filter from active filters list
@@ -402,7 +402,7 @@ void BasicFilterSystem::setFilterState(const std::string& filter, bool state)
 	GlobalSceneGraph().sceneChanged();
 }
 
-bool BasicFilterSystem::filterIsReadOnly(const std::string& filter) 
+bool BasicFilterSystem::filterIsReadOnly(const std::string& filter)
 {
 	auto f = _availableFilters.find(filter);
 
@@ -414,7 +414,7 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 {
 	auto f = _availableFilters.find(filterName);
 
-	if (f != _availableFilters.end()) 
+	if (f != _availableFilters.end())
 	{
 		return false; // already exists
 	}
@@ -433,7 +433,7 @@ bool BasicFilterSystem::addFilter(const std::string& filterName, const FilterRul
 	return true;
 }
 
-bool BasicFilterSystem::removeFilter(const std::string& filter) 
+bool BasicFilterSystem::removeFilter(const std::string& filter)
 {
 	auto f = _availableFilters.find(filter);
 
@@ -477,7 +477,7 @@ bool BasicFilterSystem::renameFilter(const std::string& oldFilterName, const std
 	// Check if the new name is already used
 	auto c = _availableFilters.find(newFilterName);
 
-	if (c != _availableFilters.end()) 
+	if (c != _availableFilters.end())
 	{
 		// Can't rename, name is already in use
 		return false;
@@ -541,7 +541,7 @@ bool BasicFilterSystem::isVisible(const FilterRule::Type type, const std::string
 	// Check if this item is in the visibility cache, returning
 	// its cached value if found
 	auto cacheIter = _visibilityCache.find(name);
-	
+
 	if (cacheIter != _visibilityCache.end())
 	{
 		return cacheIter->second;
@@ -619,7 +619,7 @@ bool BasicFilterSystem::setFilterRules(const std::string& filter, const FilterRu
 	return false; // not found or readonly
 }
 
-void BasicFilterSystem::updateSubgraph(const scene::INodePtr& root) 
+void BasicFilterSystem::updateSubgraph(const scene::INodePtr& root)
 {
 	// Construct an InstanceUpdateWalker and traverse the scenegraph to update
 	// all instances
@@ -628,14 +628,14 @@ void BasicFilterSystem::updateSubgraph(const scene::INodePtr& root)
 }
 
 // Update scenegraph instances with filtered status
-void BasicFilterSystem::updateScene() 
+void BasicFilterSystem::updateScene()
 {
 	// pass scenegraph root to specialised routine
 	updateSubgraph(GlobalSceneGraph().root());
 }
 
 // Update scenegraph instances with filtered status
-void BasicFilterSystem::updateShaders() 
+void BasicFilterSystem::updateShaders()
 {
 	// Construct a ShaderVisitor to traverse the shaders
     GlobalMaterialManager().foreachMaterial([this] (const MaterialPtr& material)
@@ -648,13 +648,13 @@ void BasicFilterSystem::updateShaders()
 }
 
 // RegisterableModule implementation
-const std::string& BasicFilterSystem::getName() const 
+const std::string& BasicFilterSystem::getName() const
 {
 	static std::string _name(MODULE_FILTERSYSTEM);
 	return _name;
 }
 
-const StringSet& BasicFilterSystem::getDependencies() const 
+const StringSet& BasicFilterSystem::getDependencies() const
 {
 	static StringSet _dependencies;
 
@@ -669,6 +669,6 @@ const StringSet& BasicFilterSystem::getDependencies() const
 }
 
 // Module instance
-module::StaticModule<BasicFilterSystem> filterSystemModule;
+module::StaticModuleRegistration<BasicFilterSystem> filterSystemModule;
 
 }

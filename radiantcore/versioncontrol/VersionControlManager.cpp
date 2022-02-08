@@ -45,6 +45,6 @@ void VersionControlManager::initialiseModule(const IApplicationContext& ctx)
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
-module::StaticModule<VersionControlManager> versionControlManagerModule;
+module::StaticModuleRegistration<VersionControlManager> versionControlManagerModule;
 
 }

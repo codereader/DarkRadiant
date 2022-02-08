@@ -86,7 +86,7 @@ void Doom3AasFileLoader::parseVersion(parser::DefTokeniser& tok) const
     // Require a "Version" token
     tok.assertNextToken("DewmAAS");
 
-	// Require specific version, return true on success 
+	// Require specific version, return true on success
     if (std::stof(tok.nextToken()) != DEWM3_AAS_VERSION)
     {
         throw parser::ParseException("AAS File version mismatch");
@@ -126,6 +126,6 @@ void Doom3AasFileLoader::shutdownModule()
 }
 
 // Static module instances
-module::StaticModule<Doom3AasFileLoader> d3AasModule;
+module::StaticModuleRegistration<Doom3AasFileLoader> d3AasModule;
 
 }

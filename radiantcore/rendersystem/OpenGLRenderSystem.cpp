@@ -60,7 +60,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 
         if (GlobalMaterialManager().isRealised())
         {
-            // Hold back with the realise() call until we know whether we can call 
+            // Hold back with the realise() call until we know whether we can call
             // extensionsInitialised() below - this should happen before realise()
             shouldRealise = true;
         }
@@ -261,8 +261,8 @@ void OpenGLRenderSystem::unrealise()
         sp->unrealise();
     }
 
-	if (GlobalOpenGLContext().getSharedContext() && 
-        shaderProgramsAvailable() && 
+	if (GlobalOpenGLContext().getSharedContext() &&
+        shaderProgramsAvailable() &&
         getCurrentShaderProgram() != SHADER_PROGRAM_NONE)
     {
         // Unrealise the GLPrograms
@@ -398,7 +398,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 {
     static StringSet _dependencies;
 
-	if (_dependencies.empty()) 
+	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_SHADERSYSTEM);
 		_dependencies.insert(MODULE_SHARED_GL_CONTEXT);
@@ -440,6 +440,6 @@ void OpenGLRenderSystem::shutdownModule()
 }
 
 // Define the static OpenGLRenderSystem module
-module::StaticModule<OpenGLRenderSystem> openGLRenderSystemModule;
+module::StaticModuleRegistration<OpenGLRenderSystem> openGLRenderSystemModule;
 
 } // namespace render

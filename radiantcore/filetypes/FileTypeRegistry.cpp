@@ -91,4 +91,4 @@ void FileTypeRegistry::initialiseModule(const IApplicationContext& ctx)
 }
 
 // Static module instance
-module::StaticModule<FileTypeRegistry> fileTypesModule;
+module::StaticModuleRegistration<FileTypeRegistry> fileTypesModule;

@@ -31,6 +31,6 @@ void RenderSystemFactory::initialiseModule(const IApplicationContext& ctx)
 }
 
 // Define the static RenderSystemFactory module
-module::StaticModule<RenderSystemFactory> renderSystemFactory;
+module::StaticModuleRegistration<RenderSystemFactory> renderSystemFactory;
 
 } // namespace

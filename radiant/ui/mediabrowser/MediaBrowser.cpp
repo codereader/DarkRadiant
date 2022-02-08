@@ -35,7 +35,7 @@ namespace ui
 {
 
 // Constructor
-MediaBrowser::MediaBrowser() : 
+MediaBrowser::MediaBrowser() :
 	_tempParent(nullptr),
 	_mainWidget(nullptr),
 	_treeView(nullptr),
@@ -53,7 +53,7 @@ void MediaBrowser::construct()
 	_tempParent = new wxFrame(nullptr, wxID_ANY, "");
 	_tempParent->Hide();
 
-	_mainWidget = new wxPanel(_tempParent, wxID_ANY); 
+	_mainWidget = new wxPanel(_tempParent, wxID_ANY);
 	_mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	_treeView = new MediaBrowserTreeView(_mainWidget);
@@ -70,11 +70,11 @@ void MediaBrowser::construct()
 	_mainWidget->GetSizer()->Add(_preview, 0, wxEXPAND);
 
 	// When destroying the main widget clear out the held references.
-	// The dying populator thread might have posted a finished message which 
+	// The dying populator thread might have posted a finished message which
 	// runs into problems when the _treeView is still valid
 	_mainWidget->Bind(wxEVT_DESTROY, [&](wxWindowDestroyEvent& ev)
 	{
-		// In wxGTK the destroy event might bubble from a child window 
+		// In wxGTK the destroy event might bubble from a child window
 		// like the search popup, so check the event object
 		if (ev.GetEventObject() == _mainWidget)
 		{
@@ -241,6 +241,6 @@ void MediaBrowser::onShaderClipboardSourceChanged()
 }
 
 // Static module
-module::StaticModule<MediaBrowser> mediaBrowserModule;
+module::StaticModuleRegistration<MediaBrowser> mediaBrowserModule;
 
 } // namespace

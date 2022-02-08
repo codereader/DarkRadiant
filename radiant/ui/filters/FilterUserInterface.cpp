@@ -111,6 +111,6 @@ void FilterUserInterface::toggleFilter(const std::string& filterName, bool newSt
 	GlobalFilterSystem().setFilterState(filterName, newState);
 }
 
-module::StaticModule<FilterUserInterface> filterUserInterfaceModule;
+module::StaticModuleRegistration<FilterUserInterface> filterUserInterfaceModule;
 
 }

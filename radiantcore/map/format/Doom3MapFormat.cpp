@@ -83,7 +83,7 @@ bool Doom3MapFormat::canLoad(std::istream& stream) const
 		// Require a "Version" token
 		tok.assertNextToken("Version");
 
-		// Require specific version, return true on success 
+		// Require specific version, return true on success
 		return (std::stof(tok.nextToken()) == MAP_VERSION_D3);
 	}
 	catch (parser::ParseException&)
@@ -94,6 +94,6 @@ bool Doom3MapFormat::canLoad(std::istream& stream) const
 	return false;
 }
 
-module::StaticModule<Doom3MapFormat> d3MapModule;
+module::StaticModuleRegistration<Doom3MapFormat> d3MapModule;
 
 } // namespace map

@@ -62,6 +62,6 @@ void InfoFileManager::shutdownModule()
 }
 
 // Define the static InfoFileManager module
-module::StaticModule<InfoFileManager> infoFileManagerModule;
+module::StaticModuleRegistration<InfoFileManager> infoFileManagerModule;
 
 }

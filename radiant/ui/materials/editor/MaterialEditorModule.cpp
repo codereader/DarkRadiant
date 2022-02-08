@@ -48,6 +48,6 @@ public:
     }
 };
 
-module::StaticModule<MaterialEditorModule> materialEditorModule;
+module::StaticModuleRegistration<MaterialEditorModule> materialEditorModule;
 
 }

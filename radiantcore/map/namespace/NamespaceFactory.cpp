@@ -29,4 +29,4 @@ void NamespaceFactory::initialiseModule(const IApplicationContext& ctx)
 }
 
 // Define the static NamespaceFactoryModule
-module::StaticModule<NamespaceFactory> namespaceFactoryModule;
+module::StaticModuleRegistration<NamespaceFactory> namespaceFactoryModule;

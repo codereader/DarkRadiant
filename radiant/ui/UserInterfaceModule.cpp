@@ -450,7 +450,7 @@ void UserInterfaceModule::registerUICommands()
 }
 
 // Static module registration
-module::StaticModule<UserInterfaceModule> userInterfaceModule;
+module::StaticModuleRegistration<UserInterfaceModule> userInterfaceModule;
 
 UserInterfaceModule& GetUserInterfaceModule()
 {

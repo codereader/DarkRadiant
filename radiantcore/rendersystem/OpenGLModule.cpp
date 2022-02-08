@@ -12,7 +12,7 @@ OpenGLModule::OpenGLModule() :
 {}
 
 #ifdef ENABLE_KHR_DEBUG_EXTENSION
-void OpenGLModule::onGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, 
+void OpenGLModule::onGLDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length,
     const GLchar* message, const void* userParam)
 {
     rError() << "OpenGL says: " << message << std::endl;
@@ -49,7 +49,7 @@ IGLFont::Ptr OpenGLModule::getFont(IGLFont::Style style, std::size_t size)
     if (cachedFont != _fontCache.end())
     {
         auto locked = cachedFont->second.lock();
-        
+
         if (locked)
         {
             return locked;
@@ -60,7 +60,7 @@ IGLFont::Ptr OpenGLModule::getFont(IGLFont::Style style, std::size_t size)
     auto font = std::make_shared<gl::GLFont>(style, static_cast<unsigned int>(size));
 
     _fontCache[cacheKey] = font;
-    
+
     return font;
 }
 
@@ -72,7 +72,7 @@ void OpenGLModule::drawString(const std::string& string) const
     }
 }
 
-int OpenGLModule::getFontHeight() 
+int OpenGLModule::getFontHeight()
 {
 	return _font ? static_cast<int>(_font->getLineHeight()) : 0;
 }
@@ -114,4 +114,4 @@ void OpenGLModule::shutdownModule()
 }
 
 // Define the static OpenGLModule module
-module::StaticModule<OpenGLModule> openGLModule;
+module::StaticModuleRegistration<OpenGLModule> openGLModule;

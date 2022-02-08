@@ -155,6 +155,6 @@ void ImageLoader::initialiseModule(const IApplicationContext&)
 }
 
 // Static module instance
-module::StaticModule<ImageLoader> imageLoaderModule;
+module::StaticModuleRegistration<ImageLoader> imageLoaderModule;
 
 } // namespace shaders
