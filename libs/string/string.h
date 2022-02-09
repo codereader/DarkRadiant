@@ -8,16 +8,20 @@
 namespace string
 {
 
-/// \brief Returns <0 if \p string is lexicographically less than \p other after converting both to lower-case.
-/// Returns >0 if \p string is lexicographically greater than \p other after converting both to lower-case.
-/// Returns 0 if \p string is lexicographically equal to \p other after converting both to lower-case.
-/// O(n)
-inline int icmp(const char* string, const char* other)
+/**
+ * @brief Case-insensitive string comparison.
+ *
+ * Behaves like the standard strcmp() but ignores case.
+ *
+ * @return A negative integer if lhs is lexicographically less than rhs (ignoring case), 0 if both
+ * are equal, or a positive integer if lhs is greater than rhs.
+ */
+inline int icmp(const char* lhs, const char* rhs)
 {
 #ifdef WIN32
-  return _stricmp(string, other);
+  return _stricmp(lhs, rhs);
 #else
-  return strcasecmp(string, other);
+  return strcasecmp(lhs, rhs);
 #endif
 }
 

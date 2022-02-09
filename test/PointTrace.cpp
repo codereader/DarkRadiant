@@ -64,9 +64,10 @@ TEST_F(PointTraceTest, IdentifyMapPointfiles)
 
     // Check the pointfiles for this map
     auto pfs = pointfiles();
-    ASSERT_EQ(pfs.size(), 2);
-    EXPECT_EQ(pfs[0].filename(), "altar.lin");
-    EXPECT_EQ(pfs[1].filename(), "altar_portalL_544_64_112.lin");
+    ASSERT_EQ(pfs.size(), 3);
+    EXPECT_EQ(pfs[0].filename(), "ALTAr.lin");
+    EXPECT_EQ(pfs[1].filename(), "altar.lin");
+    EXPECT_EQ(pfs[2].filename(), "altar_portalL_544_64_112.lin");
 }
 
 TEST_F(PointTraceTest, PointFilesAssociatedWithCorrectMap)
