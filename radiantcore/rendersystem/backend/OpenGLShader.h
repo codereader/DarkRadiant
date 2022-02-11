@@ -83,11 +83,6 @@ private:
     // Destroy internal data
 	void destroy();
 
-    OpenGLState& appendDepthFillPass();
-
-    // Test if we can render using lighting mode
-    bool canUseLightingMode() const;
-
     void onMaterialChanged();
     
 public:
@@ -164,6 +159,9 @@ protected:
     // Start point for constructing shader passes from the shader name
     virtual void construct();
 
+    // Test if we can render using lighting mode
+    bool canUseLightingMode() const;
+
     // Add a shader pass to the end of the list, and return its state object
     OpenGLState& appendDefaultPass();
 
@@ -184,6 +182,8 @@ protected:
 
     // Deletes all passes from this shader
     void clearPasses();
+
+    OpenGLState& appendDepthFillPass();
 };
 
 typedef std::shared_ptr<OpenGLShader> OpenGLShaderPtr;

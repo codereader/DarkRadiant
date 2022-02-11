@@ -79,19 +79,53 @@ void BuiltInShader::construct()
         imgPath += "missing_model.tga";
 
         auto editorTex = GlobalMaterialManager().loadTextureFromFile(imgPath);
-        pass.texture0 = editorTex ? editorTex->getGLTexNum() : 0;
 
-        pass.setRenderFlag(RENDER_FILL);
-        pass.setRenderFlag(RENDER_TEXTURE_2D);
-        pass.setRenderFlag(RENDER_DEPTHTEST);
-        pass.setRenderFlag(RENDER_LIGHTING);
-        pass.setRenderFlag(RENDER_SMOOTH);
-        pass.setRenderFlag(RENDER_DEPTHWRITE);
-        pass.setRenderFlag(RENDER_CULLFACE);
+        if (canUseLightingMode())
+        {
+            appendDepthFillPass();
 
-        // Set the GL color to white
-        pass.setColour(Colour4::WHITE());
-        pass.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+            // Append a blend layer
+            OpenGLState& state = appendDefaultPass();
+            state.setRenderFlag(RENDER_FILL);
+            state.setRenderFlag(RENDER_BLEND);
+            state.setRenderFlag(RENDER_DEPTHTEST);
+            state.setDepthFunc(GL_LEQUAL);
+
+            // Remember the stage for later evaluation of shader expressions
+            state.stage0 = nullptr;
+
+            // Set the texture
+            pass.texture0 = editorTex ? editorTex->getGLTexNum() : 0;
+
+            // Set the blend ADD function
+            state.m_blend_src = GL_ONE;
+            state.m_blend_dst = GL_ONE;
+
+            state.setRenderFlag(RENDER_DEPTHWRITE);
+            state.setRenderFlag(RENDER_TEXTURE_2D);
+
+            // Colour modulation
+            state.setColour(Colour4::WHITE());
+
+            // Sort position
+            state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+        }
+        else
+        {
+            pass.texture0 = editorTex ? editorTex->getGLTexNum() : 0;
+
+            pass.setRenderFlag(RENDER_FILL);
+            pass.setRenderFlag(RENDER_TEXTURE_2D);
+            pass.setRenderFlag(RENDER_DEPTHTEST);
+            pass.setRenderFlag(RENDER_LIGHTING);
+            pass.setRenderFlag(RENDER_SMOOTH);
+            pass.setRenderFlag(RENDER_DEPTHWRITE);
+            pass.setRenderFlag(RENDER_CULLFACE);
+
+            // Set the GL color to white
+            pass.setColour(Colour4::WHITE());
+            pass.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+        }
 
         enableViewType(RenderViewType::Camera);
         break;
