@@ -312,8 +312,6 @@ void OpenGLRenderSystem::endFrame()
 IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFlagsMask,
     const IRenderView& view)
 {
-    //rMessage() << "Start rendering frame" << std::endl;
-
     auto result = std::make_shared<LightingModeRenderResult>();
 
     // Construct default OpenGL state
@@ -347,16 +345,12 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
         interactionLists.emplace_back(std::move(interaction));
     }
 
-    //rMessage() << " Start Depth Buffer Filling" << std::endl;
-
     // Run the depth fill pass
     for (auto& interactionList : interactionLists)
     {
         interactionList.fillDepthBuffer(current, globalFlagsMask, view, _time);
     }
 
-    //rMessage() << " Finished Depth Buffer Filling" << std::endl;
-    
     // Draw the surfaces per light and material
     for (auto& interactionList : interactionLists)
     {
@@ -364,13 +358,9 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
         result->drawCalls += interactionList.getDrawCalls();
     }
 
-    //rMessage() << " Finished Interaction Pass" << std::endl;
-
     renderText();
 
     finishRendering();
-
-    //rMessage() << "Rendering done" << std::endl;
 
     return result;
 }

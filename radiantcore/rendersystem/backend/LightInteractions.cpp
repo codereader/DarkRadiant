@@ -1,7 +1,6 @@
 #include "LightInteractions.h"
 
 #include "OpenGLShader.h"
-#include "registry/CachedKey.h"
 
 namespace render
 {
@@ -101,8 +100,6 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
     {
         auto entity = pair.first;
 
-        //rMessage() << "Depth Fill Pass: " << entity->getEntityName() << std::endl;
-
         for (auto& pair : pair.second)
         {
             auto shader = pair.first;
@@ -148,22 +145,9 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 
-    static auto MaxObjects = 10;
-    static registry::CachedKey<int> key("user/ui/maxRenderEntities");
-    auto objectCount = 0;
-    auto entityCount = 0;
-
     for (auto& pair : _objectsByEntity)
     {
-        if (entityCount++ == key.get())
-        {
-            rMessage() << "Skipped: " << pair.first->getEntityName() << std::endl;
-            break;
-        }
-
         auto entity = pair.first;
-
-        rMessage() << "Interaction Pass: " << entity->getEntityName() << std::endl;
 
         for (auto& pair : pair.second)
         {
@@ -190,16 +174,8 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
 
                 RenderInfo info(state.getRenderFlags(), view.getViewer(), state.cubeMapMode);
 
-                objectCount = 0;
-
                 for (auto object : objectList)
                 {
-                    if (objectCount++ == MaxObjects)
-                    {
-                        glDisableClientState(GL_VERTEX_ARRAY);
-                        return;
-                    }
-
                     if (state.glProgram)
                     {
                         OpenGLShaderPass::setUpLightingCalculation(state, &_light, worldToLight,

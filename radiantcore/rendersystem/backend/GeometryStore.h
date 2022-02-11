@@ -16,7 +16,7 @@ public:
     using Slot = std::uint64_t;
 
 private:
-    static constexpr auto NumFrameBuffers = 3;
+    static constexpr auto NumFrameBuffers = 2;
 
     // Represents the storage for a single frame
     struct FrameBuffer
@@ -46,10 +46,8 @@ public:
     void onFrameStart()
     {
         // Switch to the next frame
-#if 1
         auto& previous = getCurrentBuffer();
         _currentBuffer = (_currentBuffer + 1) % NumFrameBuffers;
-#endif
         auto& current = getCurrentBuffer();
 
         // Wait for this buffer to become available
@@ -70,11 +68,10 @@ public:
             glDeleteSync(current.syncObject);
             current.syncObject = nullptr;
         }
-#if 1
+
         // Copy data to current
         current.vertices = previous.vertices;
         current.indices = previous.indices;
-#endif
     }
 
     // Completes the currently writing frame, creates sync objects

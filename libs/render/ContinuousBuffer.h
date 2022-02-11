@@ -29,7 +29,6 @@ private:
     static constexpr std::size_t GrowthRate = 1; // 100% growth each time
 
     std::vector<ElementType> _buffer;
-    std::vector<ElementType> _inactiveBuffer;
 
     struct SlotInfo
     {
@@ -239,11 +238,6 @@ private:
         // Allocate more memory
         auto additionalSize = std::max(_buffer.size() * GrowthRate, requiredSize);
         auto newSize = _buffer.size() + additionalSize;
-#if 0
-        // Park the old data in the inactive buffer, some GL thread might still access it
-        _inactiveBuffer = std::move(_buffer);
-        _buffer = _inactiveBuffer;
-#endif
         _buffer.resize(newSize);
 
         // Use the right most slot for our requirement, then cut up the rest of the space
