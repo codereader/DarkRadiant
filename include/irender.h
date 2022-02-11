@@ -140,6 +140,8 @@ struct RenderableGeometry;
 class IRenderEntity
 {
 public:
+    // Returns the name of this entity (mainly for debugging purposes)
+    virtual std::string getEntityName() const = 0;
 
 	/**
 	 * Get the value of this entity's shader parm with the given index.
@@ -744,6 +746,9 @@ public:
                         const Matrix4& projection,
                         const Vector3& viewer,
                         const VolumeTest& volume) = 0;
+
+    virtual void startFrame() = 0;
+    virtual void endFrame() = 0;
 
     /**
      * Render the scene based on the light-entity interactions.

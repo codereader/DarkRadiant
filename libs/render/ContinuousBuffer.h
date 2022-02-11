@@ -37,6 +37,12 @@ private:
         std::size_t Offset; // The index to the first element within the buffer
         std::size_t Size;   // Number of allocated elements
 
+        SlotInfo() :
+            Occupied(false),
+            Offset(0),
+            Size(0)
+        {}
+
         SlotInfo(std::size_t offset, std::size_t size, bool occupied) :
             Occupied(occupied),
             Offset(offset),
@@ -57,6 +63,25 @@ public:
 
         // The initial slot info which is going to be cut into pieces
         createSlotInfo(0, _buffer.size());
+    }
+
+    ContinuousBuffer(const ContinuousBuffer& other)
+    {
+        *this = other;
+    }
+
+    // Custom assignment operator
+    ContinuousBuffer<ElementType>& operator=(const ContinuousBuffer<ElementType>& other)
+    {
+        _buffer.resize(other._buffer.size());
+        memcpy(_buffer.data(), other._buffer.data(), other._buffer.size() * sizeof(ElementType));
+
+        _slots.resize(other._slots.size());
+        memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
+
+        _emptySlots = other._emptySlots;
+
+        return *this;
     }
 
     Handle allocate(std::size_t requiredSize)
@@ -214,11 +239,11 @@ private:
         // Allocate more memory
         auto additionalSize = std::max(_buffer.size() * GrowthRate, requiredSize);
         auto newSize = _buffer.size() + additionalSize;
-        
+#if 0
         // Park the old data in the inactive buffer, some GL thread might still access it
         _inactiveBuffer = std::move(_buffer);
-
         _buffer = _inactiveBuffer;
+#endif
         _buffer.resize(newSize);
 
         // Use the right most slot for our requirement, then cut up the rest of the space

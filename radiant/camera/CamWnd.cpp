@@ -788,6 +788,8 @@ void CamWnd::Cam_Draw()
 
     // Main scene render
     {
+        GlobalRenderSystem().startFrame();
+
         _renderer->prepare();
 
         // Front end (renderable collection from scene)
@@ -820,6 +822,8 @@ void CamWnd::Cam_Draw()
         }
 
         _renderer->cleanup();
+
+        GlobalRenderSystem().endFrame();
     }
 
     // greebo: Draw the clipper's points (skipping the depth-test)

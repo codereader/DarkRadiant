@@ -100,6 +100,8 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
     {
         auto entity = pair.first;
 
+        //rMessage() << "Depth Fill Pass: " << entity->getEntityName() << std::endl;
+
         for (auto& pair : pair.second)
         {
             auto shader = pair.first;
@@ -148,6 +150,12 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
     for (auto& pair : _objectsByEntity)
     {
         auto entity = pair.first;
+
+        //rMessage() << "Interaction Pass: " << entity->getEntityName() << std::endl;
+        if (entity->getEntityName().find("dresser_drawer") != std::string::npos)
+        {
+            int i = 6;
+        }
 
         for (auto& pair : pair.second)
         {

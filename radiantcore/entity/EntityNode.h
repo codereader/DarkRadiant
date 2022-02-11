@@ -126,6 +126,7 @@ public:
     virtual void transformChanged() override;
 
 	// RenderEntity implementation
+    virtual std::string getEntityName() const override;
 	virtual float getShaderParm(int parmNum) const override;
 	virtual const Vector3& getDirection() const override;
 

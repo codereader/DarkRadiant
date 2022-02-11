@@ -190,6 +190,11 @@ void EntityNode::refreshModel()
 	_modelKey.refreshModel();
 }
 
+std::string EntityNode::getEntityName() const
+{
+    return getName();
+}
+
 float EntityNode::getShaderParm(int parmNum) const
 {
 	return _shaderParms.getParmValue(parmNum);
