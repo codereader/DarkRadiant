@@ -870,7 +870,6 @@ TEST_F(EntityTest, ForeachAttachment)
     EXPECT_EQ(attachmentCount, 1) << "No attachment found on entity " << torch->name();
 }
 
-#if 0 // Disabled since renderables don't all pass through the IRenderableCollector
 TEST_F(EntityTest, LightTransformedByParent)
 {
     // Parent a light to another entity (this isn't currently how the attachment
@@ -878,7 +877,8 @@ TEST_F(EntityTest, LightTransformedByParent)
     // inherit the transformation of its parent).
     auto light = createByClassName("light");
     auto parentModel = createByClassName("func_static");
-    parentModel->addChildNode(light);
+    scene::addNodeToContainer(light, parentModel);
+    scene::addNodeToContainer(parentModel, GlobalMapModule().getRoot());
 
     // Parenting should automatically set the parent pointer of the child
     EXPECT_EQ(light->getParent(), parentModel);
@@ -895,20 +895,24 @@ TEST_F(EntityTest, LightTransformedByParent)
     // the method is localToWorld not localToParent).
     EXPECT_EQ(light->localToWorld(), Matrix4::getTranslation(ORIGIN));
 
-    // Render the light to obtain the RendererLight pointer
-    RenderFixture renderF(true /* solid */);
-    renderF.renderSubGraph(parentModel);
-    EXPECT_EQ(renderF.nodesVisited, 2);
-    EXPECT_EQ(renderF.collector.lights, 1);
-    ASSERT_FALSE(renderF.collector.lightPtrs.empty());
+    // Get the first light in the render system
+    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+    
+    int lightCount = 0;
+    
+    renderSystem->foreachLight([&](const RendererLightPtr& rLight)
+    {
+        lightCount++;
 
-    // Check the rendered light's geometry
-    const RendererLight* rLight = renderF.collector.lightPtrs.front();
-    EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
-    EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
-    EXPECT_EQ(rLight->lightAABB().extents, Vector3(320, 320, 320));
+        EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
+        EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
+        EXPECT_EQ(rLight->lightAABB().extents, Vector3(320, 320, 320));
+    });
+
+    EXPECT_EQ(lightCount, 1) << "No light registered in the render system";
 }
 
+#if 0
 TEST_F(EntityTest, RenderUnselectedLightEntity)
 {
     auto light = createByClassName("light");
