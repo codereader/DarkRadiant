@@ -317,6 +317,11 @@ void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 
     attachToRenderSystem();
 
+    for (const auto& attachment : _attachedEnts)
+    {
+        attachment->onInsertIntoScene(root);
+    }
+
 	SelectableNode::onInsertIntoScene(root);
     TargetableNode::onInsertIntoScene(root);
 }
@@ -327,6 +332,11 @@ void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
 	SelectableNode::onRemoveFromScene(root);
 
     detachFromRenderSystem();
+
+    for (const auto& attachment : _attachedEnts)
+    {
+        attachment->onRemoveFromScene(root);
+    }
 
 	_modelKey.disconnectUndoSystem(root.getUndoSystem());
 	_spawnArgs.disconnectUndoSystem(root.getUndoSystem());
@@ -449,6 +459,23 @@ std::size_t EntityNode::getHighlightFlags()
 	if (!isSelected()) return Highlight::NoHighlight;
 
 	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
+}
+
+void EntityNode::onVisibilityChanged(bool isVisibleNow)
+{
+    SelectableNode::onVisibilityChanged(isVisibleNow);
+
+    for (const auto& node : _attachedEnts)
+    {
+        if (isVisibleNow)
+        {
+            scene::showSubgraph(node);
+        }
+        else
+        {
+            scene::hideSubgraph(node);
+        }
+    }
 }
 
 ModelKey& EntityNode::getModelKey()

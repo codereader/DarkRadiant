@@ -190,6 +190,8 @@ public:
     // Optional implementation: gets invoked by the EntityModule when the settings are changing
     virtual void onEntitySettingsChanged();
 
+    void onVisibilityChanged(bool isVisibleNow) override;
+
     // Returns the current world origin of this entity (also up to date during transformations)
     virtual const Vector3& getWorldPosition() const = 0;
 
