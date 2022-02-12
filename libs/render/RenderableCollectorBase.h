@@ -18,7 +18,39 @@ namespace render
 class RenderableCollectorBase :
     public IRenderableCollector
 {
+protected:
+    std::size_t _flags;
+
 public:
+    RenderableCollectorBase() :
+        _flags(Highlight::Flags::NoHighlight)
+    {}
+
+    virtual ~RenderableCollectorBase()
+    {}
+
+    virtual bool hasHighlightFlags() const override
+    {
+        return _flags != 0;
+    }
+
+    virtual void setHighlightFlag(Highlight::Flags flags, bool enabled) override
+    {
+        if (enabled)
+        {
+            _flags |= flags;
+        }
+        else
+        {
+            _flags &= ~flags;
+        }
+    }
+
+    virtual void processRenderable(Renderable& renderable, const VolumeTest& volume) override
+    {
+        renderable.onPreRender(volume);
+    }
+
     virtual void processNode(const scene::INodePtr& node, const VolumeTest& volume)
     {
         node->onPreRender(volume);

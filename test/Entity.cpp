@@ -9,6 +9,7 @@
 #include "ishaders.h"
 #include "icolourscheme.h"
 #include "ieclasscolours.h"
+#include "render/RenderableCollectionWalker.h"
 
 #include "render/NopVolumeTest.h"
 #include "string/convert.h"
@@ -446,7 +447,7 @@ namespace
 {
     // A simple RenderableCollector which just logs/stores whatever is submitted
     struct TestRenderableCollector : 
-        public IRenderableCollector
+        public render::RenderableCollectorBase
     {
         TestRenderableCollector(bool solid) :
             renderSolid(solid)
@@ -456,6 +457,7 @@ namespace
 
         // Count of submitted renderables and lights
         int renderables = 0;
+        int highlightRenderables = 0;
         int lights = 0;
 
         // List of actual RendererLight objects
@@ -463,6 +465,8 @@ namespace
 
         // List of renderables and their shaders
         std::vector< std::pair<const Shader*, const OpenGLRenderable*> > renderablePtrs;
+
+        std::vector<const OpenGLRenderable*> highlightRenderablePtrs;
 
         void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
                            const Matrix4& localToWorld,
@@ -475,7 +479,10 @@ namespace
 
         void addHighlightRenderable(const OpenGLRenderable& renderable,
             const Matrix4& localToWorld) override
-        {}
+        {
+            ++highlightRenderables;
+            highlightRenderablePtrs.push_back(&renderable);
+        }
 
         void addLight(const RendererLight& light) override
         {
@@ -484,17 +491,6 @@ namespace
         }
 
         bool supportsFullMaterials() const override { return true; }
-        bool hasHighlightFlags() const override
-        {
-            return true;
-        }
-        void setHighlightFlag(Highlight::Flags flags, bool enabled) override
-        {}
-
-        void processRenderable(Renderable& renderable, const VolumeTest& volume) override
-        {
-            renderable.onPreRender(volume);
-        }
     };
 
     // Collection of objects needed for rendering. Since not all tests require
@@ -912,37 +908,41 @@ TEST_F(EntityTest, LightTransformedByParent)
     EXPECT_EQ(lightCount, 1) << "No light registered in the render system";
 }
 
-#if 0
 TEST_F(EntityTest, RenderUnselectedLightEntity)
 {
-    auto light = createByClassName("light");
-    RenderFixture renderF;
+    RenderFixture fixture;
 
-    // Render the light in wireframe mode.
-    light->setRenderSystem(renderF.backend);
-    //light->renderWireframe(renderF.collector, renderF.volumeTest);
+    auto light = createByClassName("light");
+    scene::addNodeToContainer(light, GlobalMapModule().getRoot());
+
+    // Run the front-end collector through the scene
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
     // Only the light origin diamond should be rendered
-    EXPECT_EQ(renderF.collector.renderables, 1);
-    EXPECT_EQ(renderF.collector.lights, 0);
+    EXPECT_EQ(fixture.collector.highlightRenderables, 0);
+    EXPECT_EQ(fixture.collector.lights, 0);
 }
 
 TEST_F(EntityTest, RenderSelectedLightEntity)
 {
-    auto light = createByClassName("light");
-    RenderFixture renderF;
+    RenderFixture fixture;
 
-    // Select the light then render it in wireframe mode
-    scene::node_cast<ISelectable>(light)->setSelected(true);
-    light->setRenderSystem(renderF.backend);
-    //light->renderWireframe(renderF.collector, renderF.volumeTest);
+    auto light = createByClassName("light");
+    scene::addNodeToContainer(light, GlobalMapModule().getRoot());
+
+    // Select the light then render it
+    Node_setSelected(light, true);
+
+    // Run the front-end collector through the scene
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
     // With the light selected, we should get the origin diamond, the radius and
     // the center vertex.
-    EXPECT_EQ(renderF.collector.renderables, 3);
-    EXPECT_EQ(renderF.collector.lights, 0);
+    EXPECT_EQ(fixture.collector.highlightRenderables, 2);
+    EXPECT_EQ(fixture.collector.lights, 0);
 }
 
+#if 0
 TEST_F(EntityTest, RenderLightAsLightSource)
 {
     auto light = createByClassName("light_torchflame_small");

@@ -20,7 +20,6 @@ public:
     };
 
 private:
-    std::size_t _flags;
     RenderStateFlags _globalstate;
 
     IMap::EditMode _editMode;
@@ -29,7 +28,6 @@ private:
 
 public:
     XYRenderer(RenderStateFlags globalstate, const HighlightShaders& shaders) :
-        _flags(Highlight::Flags::NoHighlight),
         _globalstate(globalstate),
         _editMode(GlobalMapModule().getEditMode()),
         _shaders(shaders)
@@ -40,30 +38,8 @@ public:
         return false;
     }
 
-    bool hasHighlightFlags() const override
-    {
-        return _flags != 0;
-    }
-
-    void setHighlightFlag(Highlight::Flags flags, bool enabled) override
-    {
-        if (enabled)
-        {
-            _flags |= flags;
-        }
-        else
-        {
-            _flags &= ~flags;
-        }
-    }
-
     // Ortho view never processes lights
     void addLight(const RendererLight&) override {}
-
-    void processRenderable(Renderable& renderable, const VolumeTest& volume) override
-    {
-        renderable.onPreRender(volume);
-    }
 
     void addRenderable(Shader& shader,
                        const OpenGLRenderable& renderable,

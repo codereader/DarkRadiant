@@ -36,9 +36,6 @@ private:
     int _totalLights = 0;
     int _visibleLights = 0;
 
-    // Highlight state
-    std::size_t _flags = Highlight::Flags::NoHighlight;
-
     const HighlightShaders& _shaders;
 
     // All lights we have received from the scene
@@ -163,23 +160,6 @@ public:
 
     bool supportsFullMaterials() const override { return true; }
 
-    bool hasHighlightFlags() const override
-    {
-        return _flags != 0;
-    }
-
-    void setHighlightFlag(Highlight::Flags flags, bool enabled) override
-    {
-        if (enabled)
-        {
-            _flags |= flags;
-        }
-        else
-        {
-            _flags &= ~flags;
-        }
-    }
-
     void addLight(const RendererLight& light) override
     {
         // Determine if this light is visible within the view frustum
@@ -195,11 +175,6 @@ public:
 
         // Count total lights
         ++_totalLights;
-    }
-
-    void processRenderable(Renderable& renderable, const VolumeTest& volume) override
-    {
-        renderable.onPreRender(volume);
     }
 
     void addRenderable(Shader& shader,
