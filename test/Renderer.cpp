@@ -392,4 +392,27 @@ TEST_F(RenderSystemTest, LightRegistration)
     EXPECT_EQ(getLightCount(renderSystem), 0) << "Rendersystem should be empty now";
 }
 
+TEST_F(RenderSystemTest, AttachmentIsRegisteredAsLight)
+{
+    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+
+    EXPECT_EQ(getLightCount(renderSystem), 0) << "Rendersystem should be empty at first";
+
+    auto light = createByClassName("light");
+    scene::addNodeToContainer(light, GlobalMapModule().getRoot());
+
+    EXPECT_EQ(getLightCount(renderSystem), 1) << "Rendersystem should know of 1 light now";
+
+    // Insert a static entity with an attached light to the scene
+    auto torch = createByClassName("atdm:torch_brazier");
+    scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
+
+    EXPECT_EQ(getLightCount(renderSystem), 2) << "Rendersystem should know of 2 lights now";
+
+    // Remove the static entity again
+    scene::removeNodeFromParent(torch);
+
+    EXPECT_EQ(getLightCount(renderSystem), 1) << "Rendersystem should know of 1 light after removing the torch";
+}
+
 }
