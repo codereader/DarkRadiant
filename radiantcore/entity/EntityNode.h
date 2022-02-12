@@ -175,6 +175,7 @@ public:
 
 	// IEntityNode implementation
     void observeKey(const std::string& key, KeyObserverFunc func) override;
+    void foreachAttachment(const std::function<void(const IEntityNodePtr&)>& functor) override;
 
 	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme
     const ModelKey& getModelKey() const;

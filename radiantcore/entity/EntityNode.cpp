@@ -180,6 +180,11 @@ void EntityNode::observeKey(const std::string& key, KeyObserverFunc func)
     _keyObservers.observeKey(key, func);
 }
 
+void EntityNode::foreachAttachment(const std::function<void(const IEntityNodePtr&)>& functor)
+{
+    std::for_each(_attachedEnts.begin(), _attachedEnts.end(), functor);
+}
+
 Entity& EntityNode::getEntity()
 {
 	return _spawnArgs;

@@ -854,6 +854,22 @@ TEST_F(EntityTest, TranslateLightAfterRotation)
     EXPECT_EQ(light.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
 }
 
+TEST_F(EntityTest, ForeachAttachment)
+{
+    // Insert a static entity with an attached light to the scene
+    auto torch = createByClassName("atdm:torch_brazier");
+    scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
+
+    int attachmentCount = 0;
+    torch->foreachAttachment([&](const IEntityNodePtr& attachment)
+    {
+        attachmentCount++;
+        EXPECT_TRUE(attachment->getEntity().isOfType("light_cageflame_small"));
+    });
+
+    EXPECT_EQ(attachmentCount, 1) << "No attachment found on entity " << torch->name();
+}
+
 #if 0 // Disabled since renderables don't all pass through the IRenderableCollector
 TEST_F(EntityTest, LightTransformedByParent)
 {
