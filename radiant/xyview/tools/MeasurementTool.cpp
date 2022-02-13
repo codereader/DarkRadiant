@@ -118,6 +118,7 @@ MeasurementTool::Result MeasurementTool::onCancel(IInteractiveView& view)
 	_vertices.clear();
     _line.clear();
     _points.clear();
+    _texts.clear();
 
     return Result::Finished;
 }
@@ -155,25 +156,40 @@ void MeasurementTool::ensureShaders(RenderSystem& renderSystem)
 	{
 		_pointShader = renderSystem.capture(BuiltInShaderType::Point);
 	}
+
+    if (!_textRenderer)
+    {
+        _textRenderer = renderSystem.captureTextRenderer(IGLFont::Style::Mono, 14);
+    }
 }
 
 void MeasurementTool::render(RenderSystem& renderSystem, IRenderableCollector& collector, const VolumeTest& volume)
 {
-	ensureShaders(renderSystem);
+    ensureShaders(renderSystem);
 
     _points.update(_pointShader);
     _line.update(_wireShader);
+    
+    _texts.resize(_vertices.size() - 1);
 
-	// Render distance string
-	for (std::size_t i = 1; i < _vertices.size(); ++i)
-	{
-		const auto& a = _vertices[i - 1];
-		const auto& b = _vertices[i];
+    // Render distance string
+    for (std::size_t i = 1; i < _vertices.size(); ++i)
+    {
+        auto& text = _texts.at(i - 1);
 
-		glColor4fv(_colour);
-		glRasterPos3dv((a+b)*0.5);
-		GlobalOpenGL().drawString(string::to_string((a-b).getLength()));
-	}
+        if (!text)
+        {
+            text.reset(new render::StaticRenderableText("", { 0,0,0 }, _colour));
+            text->update(_textRenderer);
+        }
+
+        const auto& a = _vertices[i - 1];
+        const auto& b = _vertices[i];
+
+        text->setColour(_colour);
+        text->setText(string::to_string((a - b).getLength()));
+        text->setWorldPosition((a + b) * 0.5);
+    }
 }
 
 } // namespace
