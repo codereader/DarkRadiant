@@ -1240,6 +1240,32 @@ TEST_F(EntityTest, AttachedLightMovesWithEntity)
     EXPECT_EQ(rLight->lightAABB().origin, NEW_ORIGIN + EXPECTED_OFFSET);
 }
 
+TEST_F(EntityTest, ReloadDefsDoesNotChangeAttachPos)
+{
+    const Vector3 ORIGIN(-10, 25, 320);
+    const Vector3 EXPECTED_OFFSET(0, 0, 10);
+
+    // Create a torch node at the origin
+    auto torch = createByClassName("atdm:torch_brazier");
+    torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+    scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
+
+    // Reload all entity defs
+    GlobalEntityClassManager().reloadDefs();
+
+    // Render the torch
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
+
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Attached light not registered";
+    auto rLight = *lights.begin();
+
+    // The light source should still have the expected offset
+    EXPECT_EQ(rLight->getLightOrigin(), ORIGIN + EXPECTED_OFFSET);
+    EXPECT_EQ(rLight->lightAABB().origin, ORIGIN + EXPECTED_OFFSET);
+}
+
 TEST_F(EntityTest, CreateAIEntity)
 {
     auto guard = createByClassName("atdm:ai_builder_guard");
