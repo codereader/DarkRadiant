@@ -230,7 +230,6 @@
     <ClInclude Include="..\..\libs\render\TexCoord2f.h" />
     <ClInclude Include="..\..\libs\render\TextureToolView.h" />
     <ClInclude Include="..\..\libs\render\VBO.h" />
-    <ClInclude Include="..\..\libs\render\VectorLightList.h" />
     <ClInclude Include="..\..\libs\render\Vertex3f.h" />
     <ClInclude Include="..\..\libs\render\VertexCb.h" />
     <ClInclude Include="..\..\libs\render\VertexHashing.h" />

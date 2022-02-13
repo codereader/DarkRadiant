@@ -3,7 +3,6 @@
 #include "math/Plane3.h"
 #include "math/Line.h"
 #include "render.h"
-#include "render/VectorLightList.h"
 #include "ObservedSelectable.h"
 
 #include "SelectableComponents.h"

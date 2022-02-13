@@ -5,7 +5,6 @@
 #include "modelskin.h"
 #include "itraceable.h"
 #include "scene/Node.h"
-#include "render/VectorLightList.h"
 #include "../RenderableModelSurface.h"
 #include "registry/CachedKey.h"
 #include "RenderableMD5Skeleton.h"

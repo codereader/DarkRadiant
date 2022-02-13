@@ -7,7 +7,6 @@
 #include "modelskin.h"
 #include "irenderable.h"
 #include "pivot.h"
-#include "render/VectorLightList.h"
 #include "StaticModel.h"
 #include "scene/Node.h"
 #include "RenderableModelSurface.h"

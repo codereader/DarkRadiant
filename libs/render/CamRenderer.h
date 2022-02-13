@@ -4,8 +4,6 @@
 #include "imap.h"
 #include "ivolumetest.h"
 
-#include "VectorLightList.h"
-
 namespace render
 {
 

@@ -78,9 +78,6 @@
     <ClInclude Include="..\..\libs\render\TexCoord2f.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\render\VectorLightList.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\render\Vertex3f.h">
       <Filter>render</Filter>
     </ClInclude>

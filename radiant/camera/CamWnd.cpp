@@ -33,7 +33,6 @@
 #include "CameraSettings.h"
 #include <functional>
 #include <sigc++/retype_return.h>
-#include "render/VectorLightList.h"
 #include "render/CamRenderer.h"
 
 namespace ui
