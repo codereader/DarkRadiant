@@ -89,7 +89,6 @@ void OpenGLShader::destroy()
 
 void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
 								 const Matrix4& modelview,
-								 const LightSources* lights,
                                  const IRenderEntity* entity)
 {
     if (!_isVisible) return;
@@ -97,23 +96,8 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     // Add the renderable to all of our shader passes
     for (const OpenGLShaderPassPtr& pass : _shaderPasses)
     {
-        // If the shader pass cares about lighting, submit the renderable once
-        // for each incident light
-		if (pass->state().testRenderFlag(RENDER_BUMP))
-		{
-            if (lights)
-			{
-                lights->forEachLight([&](const RendererLight& light)
-                {
-                    pass->addRenderable(renderable, modelview, &light, entity);
-                });
-			}
-		}
-		else
-		{
-            // No lighting, submit the renderable once
-			pass->addRenderable(renderable, modelview, nullptr, entity);
-		}
+        // Submit the renderable to each pass
+		pass->addRenderable(renderable, modelview, nullptr, entity);
     }
 }
 

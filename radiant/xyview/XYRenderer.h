@@ -46,7 +46,7 @@ public:
     {
         addHighlightRenderable(renderable, localToWorld);
 
-        shader.addRenderable(renderable, localToWorld, nullptr, entity);
+        shader.addRenderable(renderable, localToWorld, entity);
     }
 
     void addHighlightRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld) override
@@ -62,14 +62,14 @@ public:
 
                 if (mergeShader)
                 {
-                    mergeShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
+                    mergeShader->addRenderable(renderable, localToWorld, nullptr);
                 }
             }
 
             // Elements can still be selected in merge mode
             if ((_flags & Highlight::Flags::Primitives) != 0)
             {
-                _shaders.selectedShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
+                _shaders.selectedShader->addRenderable(renderable, localToWorld, nullptr);
             }
 
             return;
@@ -80,11 +80,11 @@ public:
         {
             if ((_flags & Highlight::Flags::GroupMember) != 0)
             {
-                _shaders.selectedShaderGroup->addRenderable(renderable, localToWorld, nullptr, nullptr);
+                _shaders.selectedShaderGroup->addRenderable(renderable, localToWorld, nullptr);
             }
             else
             {
-                _shaders.selectedShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
+                _shaders.selectedShader->addRenderable(renderable, localToWorld, nullptr);
             }
         }
     }

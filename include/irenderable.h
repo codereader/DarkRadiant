@@ -11,7 +11,6 @@ class RenderSystem;
 typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
 
 class OpenGLRenderable;
-class LightSources;
 class Matrix4;
 class IRenderEntity;
 class RendererLight;

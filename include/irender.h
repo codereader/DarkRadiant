@@ -286,51 +286,6 @@ typedef std::function<void(Renderable&)> RenderableCallback;
 
 typedef std::function<void(const RendererLight&)> RendererLightCallback;
 
-/**
- * \brief
- * Simple container of light sources
- *
- * This is a storage class used to represent all light sources which fall upon
- * a particular object. It is passed to the RenderSystem at render time to
- * provide the list of lights which intersect the Renderable being submitted.
- */
-class LightSources
-{
-public:
-
-    /// Invoke a callback on all contained lights.
-    virtual void forEachLight(const RendererLightCallback& callback) const = 0;
-};
-
-/// Debug stream insertion for LightSources
-inline std::ostream& operator<< (std::ostream& s, const LightSources& ls)
-{
-    s << "LightSources(";
-
-    // Insert comma-separated list of RendererLights
-    bool addComma = false;
-    ls.forEachLight(
-        [&](const RendererLight& l)
-        {
-            if (addComma)
-                s << ", ";
-            s << l;
-            addComma = true;
-        }
-    );
-
-    return s << ")";
-}
-
-/// Debug stream insertion for possibly null LightSources pointer
-inline std::ostream& operator<< (std::ostream& s, const LightSources* ls)
-{
-    if (ls)
-        return s << *ls;
-    else
-        return s << "[no lightsources]";
-}
-
 const int c_attr_TexCoord0 = 1;
 const int c_attr_Tangent = 3;
 const int c_attr_Binormal = 4;
@@ -460,16 +415,11 @@ public:
 	 * \param modelview
 	 * The modelview transform for this object.
 	 *
-	 * \param lights
-     * Optional LightSources containing all of the lights which illuminate this
-     * object.
-     *
      * \param entity
      * Optional IRenderEntity exposing entity-related render parameters.
 	 */
 	virtual void addRenderable(const OpenGLRenderable& renderable,
 							   const Matrix4& modelview,
-							   const LightSources* lights = nullptr,
                                const IRenderEntity* entity = nullptr) = 0;
 
     /**

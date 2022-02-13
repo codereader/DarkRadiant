@@ -98,7 +98,6 @@ public:
     std::string getName() const override { return _name; }
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
-					   const LightSources* lights,
                        const IRenderEntity* entity) override;
 
     bool hasSurfaces() const;
