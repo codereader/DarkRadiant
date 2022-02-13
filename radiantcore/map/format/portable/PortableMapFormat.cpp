@@ -82,7 +82,7 @@ bool PortableMapFormat::canLoad(std::istream& stream) const
 	return PortableMapReader::CanLoad(stream);
 }
 
-module::StaticModule<PortableMapFormat> portableMapModule;
+module::StaticModuleRegistration<PortableMapFormat> portableMapModule;
 
 }
 

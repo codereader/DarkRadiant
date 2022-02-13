@@ -265,7 +265,7 @@ void SpeakerNode::translate(const Vector3& translation)
 
 void SpeakerNode::updateTransform()
 {
-	localToParent() = Matrix4::getTranslation(m_origin);
+	setLocalToParent(Matrix4::getTranslation(m_origin));
 	transformChanged();
 }
 

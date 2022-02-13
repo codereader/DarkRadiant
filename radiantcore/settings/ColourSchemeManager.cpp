@@ -48,7 +48,7 @@ void ColourSchemeManager::setActive(const std::string& name)
 	}
 }
 
-void ColourSchemeManager::restoreColourSchemes() 
+void ColourSchemeManager::restoreColourSchemes()
 {
 	// Clear the whole colourScheme map and reload it from the registry
 	_colourSchemes.clear();
@@ -87,7 +87,7 @@ void ColourSchemeManager::saveScheme(const std::string& name)
 	}
 
 	// Set the active attribute, if this is the active scheme
-	if (name == _activeScheme) 
+	if (name == _activeScheme)
 	{
 		schemeNode.setAttributeValue("active", "1");
 	}
@@ -237,6 +237,6 @@ void ColourSchemeManager::emitEclassOverrides()
     colourManager.addOverrideColour("light", activeScheme.getColour("light_volumes").getColour());
 }
 
-module::StaticModule<ColourSchemeManager> colourSchemeManagerModule;
+module::StaticModuleRegistration<ColourSchemeManager> colourSchemeManagerModule;
 
 } // namespace ui

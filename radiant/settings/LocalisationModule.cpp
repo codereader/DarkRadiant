@@ -59,6 +59,6 @@ void LocalisationModule::shutdownModule()
 	LocalisationProvider::Instance()->saveLanguageSetting();
 }
 
-module::StaticModule<LocalisationModule> localisationModule;
+module::StaticModuleRegistration<LocalisationModule> localisationModule;
 
 }

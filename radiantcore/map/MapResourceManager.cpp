@@ -65,7 +65,7 @@ void MapResourceManager::initialiseModule(const IApplicationContext& ctx)
 }
 
 // Define the MapResourceManager registerable module
-module::StaticModule<MapResourceManager> mapResourceManagerModule;
+module::StaticModuleRegistration<MapResourceManager> mapResourceManagerModule;
 
 } // namespace
 

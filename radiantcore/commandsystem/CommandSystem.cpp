@@ -417,6 +417,6 @@ AutoCompletionInfo CommandSystem::getAutoCompletionInfo(const std::string& prefi
 }
 
 // Static module instance
-module::StaticModule<CommandSystem> commandSystemModule;
+module::StaticModuleRegistration<CommandSystem> commandSystemModule;
 
 } // namespace cmd

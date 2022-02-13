@@ -87,7 +87,8 @@ protected:
     // sure that everything will play nicely with entities as children of other
     // entities, and (2) storing entity node pointers instead of generic node
     // pointers avoids some extra dynamic_casting.
-    using AttachedEntities = std::list<IEntityNodePtr>;
+    using AttachedEntity = std::pair<IEntityNodePtr, Vector3 /* offset */>;
+    using AttachedEntities = std::list<AttachedEntity>;
     AttachedEntities _attachedEnts;
 
   protected:
@@ -111,7 +112,10 @@ public:
 
     // IMatrixTransform implementation
     Matrix4 localToParent() const override { return _localToParent; }
-    Matrix4& localToParent() override { return _localToParent; }
+    void setLocalToParent(const Matrix4& localToParent) override
+    {
+        _localToParent = localToParent;
+    }
 
     // IComparableNode implementation
     std::string getFingerprint() override;
@@ -195,8 +199,11 @@ private:
     // Render all attached entities
     template <typename RenderFunc> void renderAttachments(RenderFunc func) const
     {
-        for (const IEntityNodePtr& ent: _attachedEnts)
+        for (auto [entityNode, offset]: _attachedEnts)
         {
+            // Before rendering the attached entity, ensure its offset is correct
+            entityNode->setLocalToParent(Matrix4::getTranslation(offset));
+
             // Attached entities might themselves have child nodes (e.g. func_static
             // which has its model as a child node), so we must traverse() the
             // attached entities, not just render them alone
@@ -212,9 +219,8 @@ private:
                     return true;
                 }
             };
-
             ChildRenderer cr(func);
-            ent->traverse(cr);
+            entityNode->traverse(cr);
         }
     }
 

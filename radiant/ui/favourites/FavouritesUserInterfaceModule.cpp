@@ -76,6 +76,6 @@ private:
     }
 };
 
-module::StaticModule<FavouritesUserInterfaceModule> favouritesUserInterfaceModule;
+module::StaticModuleRegistration<FavouritesUserInterfaceModule> favouritesUserInterfaceModule;
 
 }

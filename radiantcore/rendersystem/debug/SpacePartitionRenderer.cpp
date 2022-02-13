@@ -85,7 +85,7 @@ void SpacePartitionRenderer::uninstallRenderer()
 
 #ifdef _DEBUG
 // The module is only active in debug builds
-module::StaticModule<SpacePartitionRenderer> spacePartitionModule;
+module::StaticModuleRegistration<SpacePartitionRenderer> spacePartitionModule;
 #endif
 
 } // namespace render

@@ -48,11 +48,11 @@ const std::string& Manager::getName() const
 	return _name;
 }
 
-const StringSet& Manager::getDependencies() const 
+const StringSet& Manager::getDependencies() const
 {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) 
+	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
@@ -89,7 +89,7 @@ void Manager::initialiseModule(const IApplicationContext& ctx)
 				rMessage() << "Found fs_game command line argument, overriding existing mod path." << std::endl;
 
 				// Remove starting slash from argument and convert to standard paths
-				config.modPath = os::standardPathWithSlash(config.enginePath) + 
+				config.modPath = os::standardPathWithSlash(config.enginePath) +
 					os::standardPath(string::trim_left_copy(arg.substr(8), "/"));
 
 				registry::setValue(RKEY_MOD_PATH, config.modPath);
@@ -107,7 +107,7 @@ void Manager::initialiseModule(const IApplicationContext& ctx)
 		}
 	}
 
-	// Check validity of the saved game configuration 
+	// Check validity of the saved game configuration
 	// and invoke the UI if it's not a valid one.
 	if (GameConfigUtil::PathsValid(config))
 	{
@@ -186,7 +186,7 @@ void Manager::initialiseGameType()
     {
 		rMessage() << "GameManager: Selected game type: " << _config.gameType << std::endl;
 	}
-	else 
+	else
 	{
 		// No game type selected, bail out, the program would crash anyway on module load
 		throw std::runtime_error(_("No game type selected."));
@@ -269,7 +269,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
       mapFolder = "maps/";
    }
 
-   if (_config.modPath.empty() && _config.modBasePath.empty()) 
+   if (_config.modPath.empty() && _config.modBasePath.empty())
    {
 	   _mapPath = baseGamePath + mapFolder;
    }
@@ -278,7 +278,7 @@ void Manager::setMapAndPrefabPaths(const std::string& baseGamePath)
 	   _mapPath = _config.modPath + mapFolder;
    }
    else // _config.modBasePath is not empty
-   { 
+   {
 	   _mapPath = _config.modBasePath + mapFolder;
    }
 
@@ -309,7 +309,7 @@ void Manager::initialiseVfs()
     for (const auto& extension : extensions)
     {
         auto extLower = string::to_lower_copy(extension);
-        GlobalFiletypes().registerPattern(filetype::TYPE_PAK, 
+        GlobalFiletypes().registerPattern(filetype::TYPE_PAK,
             FileTypePattern(fmt::format(_("{0} File"), string::to_upper_copy(extension)), extLower, "*." + extLower, PAK_ICON));
     }
 
@@ -363,7 +363,7 @@ void Manager::initialiseVfs()
 	GlobalFileSystem().initialise(vfsSearchPaths, extensions);
 }
 
-const Manager::PathList& Manager::getVFSSearchPaths() const 
+const Manager::PathList& Manager::getVFSSearchPaths() const
 {
 	return GlobalFileSystem().getVfsSearchPaths();
 }
@@ -390,7 +390,7 @@ void Manager::loadGameFiles(const std::string& appPath)
 
     try
     {
-		// Invoke a functor on every file in the games/ dir, 
+		// Invoke a functor on every file in the games/ dir,
 		// function gets called with the file (without path)
 		os::foreachItemInDirectory(gamePath, [&](const fs::path& file)
 		{
@@ -420,7 +420,7 @@ void Manager::loadGameFiles(const std::string& appPath)
 
 		// Populate the sorted games list
 		_sortedGames.clear();
-		
+
 		// Sort the games by their index
 		std::multimap<int, GamePtr> sortedGameMap;
 
@@ -444,6 +444,6 @@ void Manager::loadGameFiles(const std::string& appPath)
 }
 
 // The static module definition (self-registers)
-module::StaticModule<Manager> gameManagerModule;
+module::StaticModuleRegistration<Manager> gameManagerModule;
 
 } // namespace game

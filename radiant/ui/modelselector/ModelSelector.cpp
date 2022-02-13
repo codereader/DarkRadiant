@@ -21,11 +21,14 @@
 #include "string/convert.h"
 
 #include <wx/button.h>
+#include <wx/tglbtn.h>
 #include <wx/panel.h>
 #include <wx/splitter.h>
 #include <wx/checkbox.h>
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include "wxutil/Bitmap.h"
 #include "ui/UserInterfaceModule.h"
+#include "registry/Widgets.h"
 
 #include <functional>
 
@@ -39,11 +42,12 @@ namespace
 
     const std::string RKEY_BASE = "user/ui/modelSelector/";
     const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
+    const std::string RKEY_SHOW_SKINS = RKEY_BASE + "showSkinsInTree";
 }
 
 // Constructor.
 
-ModelSelector::ModelSelector() : 
+ModelSelector::ModelSelector() :
 	DialogBase(_(MODELSELECTOR_TITLE)),
 	_dialogPanel(loadNamedPanel(this, "ModelSelectorPanel")),
     _treeView(nullptr),
@@ -66,7 +70,7 @@ ModelSelector::ModelSelector() :
     // allow vertical shrinking)
     _modelPreview->setSize(static_cast<int>(_position.getSize()[0]*0.4f),
                            static_cast<int>(_position.getSize()[1]*0.2f));
-	
+
     wxPanel* leftPanel = findNamedObject<wxPanel>(this, "ModelSelectorLeftPanel");
 
     // Set up view widgets
@@ -183,36 +187,36 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
                                                 bool showOptions,
                                                 bool showSkins)
 {
-    _treeView->SetShowSkins(showSkins);
-    _treeView->SetSelectedFullname(curModel);
+    // Hide the Show Skins button if skins should not be shown for this invocation
+    if (showSkins) {
+        _showSkinsBtn->Show();
+        _treeView->SetShowSkins(_showSkinsBtn->GetValue());
+    }
+    else {
+        _showSkinsBtn->Hide();
+        _treeView->SetShowSkins(false);
+    }
 
+    _treeView->SetSelectedFullname(curModel);
     showInfoForSelectedModel();
 
     _showOptions = showOptions;
 
-	// Conditionally hide the options
-	findNamedObject<wxPanel>(this, "ModelSelectorOptionsPanel")->Show(_showOptions);
+    // Conditionally hide the options
+    findNamedObject<wxPanel>(this, "ModelSelectorOptionsPanel")->Show(_showOptions);
 
     // show and enter recursive main loop.
     int returnCode = ShowModal();
 
-	// Remove the model from the preview's scenegraph before returning
-	_modelPreview->setModel("");
+    // Remove the model from the preview's scenegraph before returning
+    _modelPreview->setModel("");
 
+    // Return selected model/skin, or an empty result if the dialog was cancelled
     if (returnCode == wxID_OK)
-    {
-        // Construct the model/skin combo and return it
-        return ModelSelectorResult(
-            _lastModel,
-            _lastSkin,
-            findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue()
-        );
-    }
+        return {_lastModel, _lastSkin,
+                findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue()};
     else
-    {
-        // Return empty result on cancel
-        return ModelSelectorResult("", "", false);
-    }
+        return {};
 }
 
 // Static function to display the instance, and return the selected model to the
@@ -264,30 +268,45 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
     _materialsList->updateFromModel(model);
 }
 
-// Helper function to create the TreeView
-void ModelSelector::setupTreeView(wxWindow* parent)
+wxWindow* ModelSelector::setupTreeViewToolbar(wxWindow* parent)
 {
-	_treeView = new ModelTreeView(parent);
-    _treeView->SetMinSize(wxSize(200, 200));
-
-	// Get selection and connect the changed callback
-	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ModelSelector::onSelectionChanged, this);
-	_treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &ModelSelector::onTreeViewPopulationFinished, this);
-
+    // Set up the top treeview toolbar, including a custom button to enable/disable the showing of
+    // skins in the tree.
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(parent, _treeView);
+    _showSkinsBtn = new wxBitmapToggleButton(toolbar, wxID_ANY,
+                                             wxutil::GetLocalBitmap("skin16.png"));
+    _showSkinsBtn->SetValue(true);
+    _showSkinsBtn->SetToolTip(_("List model skins in the tree underneath their associated models"));
+    _showSkinsBtn->Bind(wxEVT_TOGGLEBUTTON,
+                       [this](auto& ev) { _treeView->SetShowSkins(ev.IsChecked()); });
+    registry::bindWidget(_showSkinsBtn, RKEY_SHOW_SKINS);
+    toolbar->GetRightSizer()->Add(_showSkinsBtn, wxSizerFlags().Border(wxLEFT, 6));
 
-	parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
-    parent->GetSizer()->Prepend(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
-    parent->GetSizer()->Layout();
-
-    Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &ModelSelector::_onItemActivated, this );
+    return toolbar;
 }
 
-void ModelSelector::_onItemActivated( wxDataViewEvent& ev ) {
-    std::string modelName = _treeView->GetSelectedModelPath();
-    if ( !modelName.empty() ) {
-        onOK( ev );
-    }
+void ModelSelector::setupTreeView(wxWindow* parent)
+{
+    _treeView = new ModelTreeView(parent);
+    _treeView->SetMinSize(wxSize(200, 200));
+
+    // Get selection and connect the changed callback
+    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ModelSelector::onSelectionChanged, this);
+    _treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED,
+                    &ModelSelector::onTreeViewPopulationFinished, this);
+
+    // Pack in tree view and its toolbar
+    parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
+    parent->GetSizer()->Prepend(setupTreeViewToolbar(parent), 0,
+                                wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
+    parent->GetSizer()->Layout();
+
+    // Accept the dialog on double-clicking on a model in the list
+    _treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, [this](wxDataViewEvent& ev) {
+        if (auto modelName = _treeView->GetSelectedModelPath(); !modelName.empty()) {
+            onOK(ev);
+        }
+    });
 }
 
 void ModelSelector::populateModels()
@@ -315,7 +334,7 @@ void ModelSelector::showInfoForSelectedModel()
     // Get the model name, if this is blank we are looking at a directory,
     // so leave the table empty
     std::string modelName = _treeView->GetSelectedModelPath();
-    
+
     if (modelName.empty()) return;
 
     // Get the skin if set

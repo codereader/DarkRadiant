@@ -119,7 +119,7 @@ void EventManager::resetAcceleratorBindings()
 	loadAcceleratorFromList(shortcutList);
 }
 
-IEventPtr EventManager::findEvent(const std::string& name) 
+IEventPtr EventManager::findEvent(const std::string& name)
 {
 	// Try to lookup the command
 	auto found = _events.find(name);
@@ -162,7 +162,7 @@ bool EventManager::alreadyRegistered(const std::string& eventName)
 	{
 		return false;
 	}
-	
+
 	rWarning() << "EventManager: Event " << eventName << " already registered!" << std::endl;
 	return true;
 }
@@ -190,7 +190,7 @@ IEventPtr EventManager::addKeyEvent(const std::string& name, const KeyStateChang
 	{
 		return _emptyEvent;
 	}
-	
+
 	IEventPtr event = std::make_shared<KeyEvent>(keyStateChangeCallback);
 
 	// Add the new keyevent to the list
@@ -206,7 +206,7 @@ IEventPtr EventManager::addWidgetToggle(const std::string& name) {
 	{
 		return _emptyEvent;
 	}
-	
+
 	IEventPtr event = std::make_shared<WidgetToggle>();
 
 	// Add the command to the list
@@ -224,10 +224,10 @@ IEventPtr EventManager::addRegistryToggle(const std::string& name, const std::st
 	}
 
 	IEventPtr event = std::make_shared<RegistryToggle>(registryKey);
-		
-	// Add the command to the list 
+
+	// Add the command to the list
 	_events[name] = event;
-	
+
 	// Return the pointer to the newly created event
 	return event;
 }
@@ -264,7 +264,7 @@ void EventManager::registerMenuItem(const std::string& eventName, wxMenuItem* it
 
 	// Set the accelerator of this menu item
 	auto& accelerator = findAccelerator(eventName);
-	
+
 	Event::setMenuItemAccelerator(item, accelerator);
 
 	// Check if we have an event object corresponding to this event name
@@ -282,7 +282,7 @@ void EventManager::registerMenuItem(const std::string& eventName, wxMenuItem* it
 
 void EventManager::unregisterMenuItem(const std::string& eventName, wxMenuItem* item)
 {
-	for (auto it = _menuItems.lower_bound(eventName); 
+	for (auto it = _menuItems.lower_bound(eventName);
 		 it != _menuItems.end() && it != _menuItems.upper_bound(eventName); ++it)
 	{
 		if (it->second != item) continue;
@@ -418,7 +418,7 @@ void EventManager::connectAccelerator(wxKeyEvent& keyEvent, const std::string& c
 	connectAccelerator(keyCode, modifierFlags, command);
 }
 
-void EventManager::disconnectAccelerator(const std::string& command) 
+void EventManager::disconnectAccelerator(const std::string& command)
 {
 	auto existing = _accelerators.find(command);
 
@@ -439,7 +439,7 @@ void EventManager::disconnectAccelerator(const std::string& command)
 
 void EventManager::setToolItemAccelerator(const std::string& command, const std::string& acceleratorStr)
 {
-	for (auto it = _toolItems.lower_bound(command); 
+	for (auto it = _toolItems.lower_bound(command);
 		 it != _toolItems.end() && it != _toolItems.upper_bound(command); ++it)
 	{
 		Event::setToolItemAccelerator(it->second, acceleratorStr);
@@ -448,19 +448,19 @@ void EventManager::setToolItemAccelerator(const std::string& command, const std:
 
 void EventManager::setMenuItemAccelerator(const std::string& command, const std::string& acceleratorStr)
 {
-	for (auto it = _menuItems.lower_bound(command); 
+	for (auto it = _menuItems.lower_bound(command);
 		 it != _menuItems.end() && it != _menuItems.upper_bound(command); ++it)
 	{
 		Event::setMenuItemAccelerator(it->second, acceleratorStr);
 	}
 }
 
-void EventManager::disableEvent(const std::string& eventName) 
+void EventManager::disableEvent(const std::string& eventName)
 {
 	findEvent(eventName)->setEnabled(false);
 }
 
-void EventManager::enableEvent(const std::string& eventName) 
+void EventManager::enableEvent(const std::string& eventName)
 {
 	findEvent(eventName)->setEnabled(true);
 }
@@ -480,7 +480,7 @@ void EventManager::renameEvent(const std::string& oldEventName, const std::strin
 	_events.insert(std::make_pair(newEventName, existingEvent));
 }
 
-void EventManager::removeEvent(const std::string& eventName) 
+void EventManager::removeEvent(const std::string& eventName)
 {
 	// Try to lookup the command
 	auto found = _events.find(eventName);
@@ -543,7 +543,7 @@ void EventManager::loadAcceleratorFromList(const xml::NodeList& shortcutList)
 
 		if (replacement != commandRemap.end())
 		{
-			rMessage() << "Mapping shortcut of legacy command " << replacement->first << 
+			rMessage() << "Mapping shortcut of legacy command " << replacement->first <<
 				" to " << replacement->second << std::endl;
 			cmd = replacement->second;
 		}
@@ -579,7 +579,7 @@ void EventManager::foreachEvent(IEventVisitor& eventVisitor)
 	for (const auto& pair : _events)
 	{
 		auto accel = _accelerators.find(pair.first);
-		eventVisitor.visit(pair.first, 
+		eventVisitor.visit(pair.first,
 			accel != _accelerators.end() ? *accel->second : _emptyAccelerator);
 	}
 
@@ -596,7 +596,7 @@ void EventManager::foreachEvent(IEventVisitor& eventVisitor)
 		if (signatureIsEmptyOrOptional(signature))
 		{
 			auto accel = _accelerators.find(command);
-			eventVisitor.visit(command, 
+			eventVisitor.visit(command,
 				accel != _accelerators.end() ? *accel->second : _emptyAccelerator);
 		}
 	});
@@ -655,7 +655,7 @@ EventManager::AcceleratorMap::iterator EventManager::findAccelerator(unsigned in
 Accelerator& EventManager::findAccelerator(wxKeyEvent& ev)
 {
 	int keyval = ev.GetKeyCode(); // is always uppercase
-	
+
 	auto it = findAccelerator(keyval, wxutil::Modifier::GetStateForKeyEvent(ev));
 
 	return it != _accelerators.end() ? *it->second : _emptyAccelerator;
@@ -756,6 +756,6 @@ std::string EventManager::getEventStr(wxKeyEvent& ev)
 }
 
 // Static module registration
-module::StaticModule<EventManager> eventManagerModule;
+module::StaticModuleRegistration<EventManager> eventManagerModule;
 
 }

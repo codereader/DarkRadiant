@@ -69,6 +69,6 @@ private:
 	}
 };
 
-module::StaticModule<SelectionSetModule> selectionSetModule;
+module::StaticModuleRegistration<SelectionSetModule> selectionSetModule;
 
 }

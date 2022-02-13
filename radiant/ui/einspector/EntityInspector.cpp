@@ -159,7 +159,7 @@ void EntityInspector::construct()
 
     // Stimulate initial redraw to get the correct status
     requestIdleCallback();
-    
+
     _defsReloadedHandler = GlobalEntityClassManager().defsReloadedSignal().connect(
         sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
     );
@@ -362,6 +362,8 @@ void EntityInspector::applyMergeActionStyle(const std::string& key, wxDataViewIt
             break;
         case scene::merge::ActionType::RemoveKeyValue:
             wxutil::TreeViewItemStyle::ApplyKeyValueRemovedStyle(style);
+            break;
+        default:
             break;
         }
     }
@@ -800,7 +802,7 @@ void EntityInspector::updatePrimitiveNumber()
             rWarning() << ex.what() << std::endl;
         }
     }
-    
+
     _primitiveNumLabel->SetLabelText("");
 }
 
@@ -813,7 +815,7 @@ void EntityInspector::onIdle()
         // Fire the selection update. This will invoke onKeyAdded/onKeyChanged etc.
         // on ourselves for every spawnarg that should be listed or removed
         _entitySelection->update();
-        
+
         // After selection rescan, trigger an update of the key types
         // of all listed key/value pairs. Not all information is fully available
         // during the above update
@@ -1171,7 +1173,7 @@ void EntityInspector::_onRejectMergeAction()
         wxutil::TreeModel::Row row(item, *_kvStore);
 
         auto key = row[_columns.name].getString().ToStdString();
-        
+
         auto conflict = _conflictActions.find(key);
 
         if (conflict != _conflictActions.end())
@@ -1182,7 +1184,7 @@ void EntityInspector::_onRejectMergeAction()
         }
 
         auto action = _mergeActions.find(key);
-        
+
         if (action != _mergeActions.end())
         {
             action->second->deactivate();
@@ -1386,7 +1388,7 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
 
     // Check the entityclass (which will return blank if not found)
     auto eclass = _entitySelection->getSingleSharedEntityClass();
-    
+
     if (!eclass)
     {
         setHelpText("");
@@ -1591,8 +1593,8 @@ void EntityInspector::addClassProperties()
     }
 
     // Visit the entity class
-    eclass->forEachAttribute([&] (const EntityClassAttribute& a, bool) 
-    { 
+    eclass->forEachAttribute([&] (const EntityClassAttribute& a, bool)
+    {
         addClassAttribute(a);
     });
 }
@@ -1707,6 +1709,6 @@ void EntityInspector::toggle(const cmd::ArgumentList& args)
 }
 
 // Define the static EntityInspector module
-module::StaticModule<EntityInspector> entityInspectorModule;
+module::StaticModuleRegistration<EntityInspector> entityInspectorModule;
 
 } // namespace ui

@@ -97,7 +97,7 @@ wxWindow* StatusBarManager::getElement(const std::string& name)
 	return found != _elements.end() ? found->second->toplevel : nullptr;
 }
 
-void StatusBarManager::addTextElement(const std::string& name, const std::string& icon, 
+void StatusBarManager::addTextElement(const std::string& name, const std::string& icon,
 	int pos, const std::string& description)
 {
 	// Get a free position
@@ -192,7 +192,7 @@ void StatusBarManager::onIdle()
         }
     });
 
-    // Post a size event 
+    // Post a size event
 	_statusBar->PostSizeEvent();
 }
 
@@ -243,7 +243,7 @@ void StatusBarManager::rebuildStatusBar()
 
 		// The first and the last status bar widget get a smaller left/right border
         auto spacing = col == 0 || col == _positions.size() - 1 ? 6 : 24;
-      
+
         // A few default elements don't need to use 1 as proportion
         auto proportion = i->first == StandardPosition::MapStatistics || i->first == StandardPosition::GridSize ||
             i->first == StandardPosition::MapEditStopwatch || i->first == StandardPosition::OrthoViewPosition ||
@@ -266,7 +266,7 @@ void StatusBarManager::onMainFrameShuttingDown()
     _tempParent = nullptr;
 }
 
-module::StaticModule<StatusBarManager> statusBarManagerModule;
+module::StaticModuleRegistration<StatusBarManager> statusBarManagerModule;
 
 } // namespace
 

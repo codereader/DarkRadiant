@@ -6,6 +6,6 @@ namespace model
 {
 
 // Static module instance
-module::StaticModule<PicoModelModule> picoModelModule;
+module::StaticModuleRegistration<PicoModelModule> picoModelModule;
 
 }

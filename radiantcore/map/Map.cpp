@@ -312,20 +312,15 @@ bool Map::isUnnamed() const {
 
 namespace
 {
-    bool pointfileNameMatch(const std::string& candidate,
-                            const std::string& mapStem)
-    {
-        // A matching point file either has an identical stem to the map file,
-        // or the map file stem with an underscore suffix (e.g.
-        // "mapfile_portal_123_456.lin")
-        if (candidate == mapStem)
-            return true;
-        else if (candidate.rfind(mapStem + "_", 0) == 0)
-            return true;
-        else
-            return false;
-    }
+
+bool pointfileNameMatch(const std::string& candidate, const std::string& mapStem)
+{
+    // A matching point file either has an identical stem to the map file, or the map file stem
+    // with an underscore suffix (e.g. "mapfile_portal_123_456.lin")
+    return string::iequals(candidate, mapStem) || string::istarts_with(candidate, mapStem + "_");
 }
+
+} // namespace
 
 void Map::forEachPointfile(PointfileFunctor func) const
 {
@@ -597,7 +592,7 @@ bool Map::save(const MapFormatPtr& mapFormat)
     }
 
     // Check if the map file has been modified in the meantime
-    if (_resource->fileOnDiskHasBeenModifiedSinceLastSave() && 
+    if (_resource->fileOnDiskHasBeenModifiedSinceLastSave() &&
         !radiant::FileOverwriteConfirmation::SendAndReceiveAnswer(
             fmt::format(_("The file {0} has been modified since it was last saved,\nperhaps by another application. "
                 "Do you really want to overwrite the file?"), _mapName), _("File modification detected")))
@@ -964,11 +959,11 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
-    GlobalCommandSystem().addCommand("StartMergeOperation", std::bind(&Map::startMergeOperationCmd, this, std::placeholders::_1), 
+    GlobalCommandSystem().addCommand("StartMergeOperation", std::bind(&Map::startMergeOperationCmd, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("AbortMergeOperation", std::bind(&Map::abortMergeOperationCmd, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("FinishMergeOperation", std::bind(&Map::finishMergeOperationCmd, this, std::placeholders::_1));
-    GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1), 
+    GlobalCommandSystem().addCommand(LOAD_PREFAB_AT_CMD, std::bind(&Map::loadPrefabAt, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING, cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_INT|cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("SaveSelectedAsPrefab", Map::saveSelectedAsPrefab);
     GlobalCommandSystem().addCommand("SaveMap", std::bind(&Map::saveMapCmd, this, std::placeholders::_1));

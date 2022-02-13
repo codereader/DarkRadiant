@@ -28,16 +28,12 @@ namespace ui
  */
 struct ModelSelectorResult
 {
-	// Model and skin strings
-	std::string model;
-	std::string skin;
+    // Model and skin strings
+    std::string model;
+    std::string skin;
 
-	// options
-	bool createClip;
-
-	// Constructor
-	ModelSelectorResult(const std::string& m, const std::string& s, const bool clip)
-	: model(m), skin(s), createClip(clip) {}
+    // Model creation options
+    bool createClip = false;
 };
 
 class ModelPopulator;
@@ -46,11 +42,8 @@ class ModelSelector;
 typedef std::shared_ptr<ModelSelector> ModelSelectorPtr;
 
 /// Dialog for browsing and selecting a model and/or skin
-class ModelSelector :
-	public wxutil::DialogBase,
-    private wxutil::XmlResourceBasedWidget
+class ModelSelector: public wxutil::DialogBase, private wxutil::XmlResourceBasedWidget
 {
-private:
 	wxPanel* _dialogPanel;
 
 	// Model preview widget
@@ -58,6 +51,7 @@ private:
 
     // Main tree view with model hierarchy
 	ModelTreeView* _treeView;
+    wxToggleButton* _showSkinsBtn = nullptr;
 
     // Key/value table for model information
     wxutil::KeyValueTable* _infoTable;
@@ -98,6 +92,7 @@ private:
 	// Helper functions to configure GUI components
     void setupAdvancedPanel(wxWindow* parent);
     void setupTreeView(wxWindow* parent);
+    wxWindow* setupTreeViewToolbar(wxWindow* parent);
 
 	// Populate the tree view with models
 	void populateModels();
@@ -113,8 +108,6 @@ private:
 	void onReloadSkins(wxCommandEvent& ev);
     void onRescanFolders(wxCommandEvent& ev);
     void onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev);
-
-    void _onItemActivated( wxDataViewEvent& ev );
 
     // Update the info table with information from the currently-selected model, and
 	// update the displayed model.

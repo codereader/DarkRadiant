@@ -15,7 +15,7 @@
 #include "module/StaticModule.h"
 #include "../clipboard/Clipboard.h"
 
-namespace selection 
+namespace selection
 {
 
 namespace
@@ -57,7 +57,7 @@ void ShaderClipboard::sourceChanged()
 	_signalSourceChanged.emit();
 }
 
-void ShaderClipboard::clear() 
+void ShaderClipboard::clear()
 {
 	if (_updatesDisabled) return;
 
@@ -141,7 +141,7 @@ void ShaderClipboard::setSource(Patch& sourcePatch)
 	sourceChanged();
 }
 
-void ShaderClipboard::setSource(Face& sourceFace) 
+void ShaderClipboard::setSource(Face& sourceFace)
 {
 	if (_updatesDisabled) return; // loopback guard
 
@@ -184,7 +184,7 @@ void ShaderClipboard::onMapEvent(IMap::MapEvent ev)
 		if (GlobalMapModule().getRoot())
 		{
 			auto shader = GlobalMapModule().getRoot()->getProperty(LAST_USED_MATERIAL_KEY);
-			
+
 			if (!shader.empty())
 			{
 				setSourceShader(shader);
@@ -263,6 +263,6 @@ void ShaderClipboard::onSystemClipboardContentsChanged()
 }
 
 // Define the static module
-module::StaticModule<ShaderClipboard> shaderClipboardModule;
+module::StaticModuleRegistration<ShaderClipboard> shaderClipboardModule;
 
 } // namespace

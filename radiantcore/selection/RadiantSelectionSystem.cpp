@@ -1431,6 +1431,6 @@ void RadiantSelectionSystem::onMapEvent(IMap::MapEvent ev)
 }
 
 // Define the static SelectionSystem module
-module::StaticModule<RadiantSelectionSystem> radiantSelectionSystemModule;
+module::StaticModuleRegistration<RadiantSelectionSystem> radiantSelectionSystemModule;
 
 }

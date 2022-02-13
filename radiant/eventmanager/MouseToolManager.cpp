@@ -281,6 +281,6 @@ void MouseToolManager::onCloseTimerIntervalReached(wxTimerEvent& ev)
     }
 }
 
-module::StaticModule<MouseToolManager> mouseToolManagerModule;
+module::StaticModuleRegistration<MouseToolManager> mouseToolManagerModule;
 
 } // namespace

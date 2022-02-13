@@ -92,6 +92,6 @@ private:
 	}
 };
 
-module::StaticModule<ScriptUserInterfaceModule> scriptUserInterfaceModule;
+module::StaticModuleRegistration<ScriptUserInterfaceModule> scriptUserInterfaceModule;
 
 }

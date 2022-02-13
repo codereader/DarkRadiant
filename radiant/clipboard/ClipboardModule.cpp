@@ -104,6 +104,6 @@ void ClipboardModule::onAppActivated(wxActivateEvent& ev)
     ev.Skip();
 }
 
-module::StaticModule<ClipboardModule> clipboardModule;
+module::StaticModuleRegistration<ClipboardModule> clipboardModule;
 
 }

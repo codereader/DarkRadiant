@@ -11,14 +11,12 @@ namespace wxutil
 {
 
 /**
- * \brief
- * Base class for many DarkRadiant dialogs.
+ * \brief Base class for many DarkRadiant dialogs.
  *
  * It comes with a panel/sizer combination pre-populated, use the _mainPanel
  * member to add more stuff.
  */
-class DialogBase :
-    public wxDialog
+class DialogBase: public wxDialog
 {
 public:
     /// Construct and initialise

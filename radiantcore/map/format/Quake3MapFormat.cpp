@@ -60,7 +60,7 @@ bool Quake3MapFormatBase::canLoad(std::istream& stream) const
 	{
 		// Require the opening brace of the first entity as first token
 		tok.assertNextToken("{");
-		
+
 		// That's it for the moment being
 		return true;
 	}
@@ -118,7 +118,7 @@ IMapWriterPtr Quake3AlternateMapFormat::getMapWriter() const
     return std::make_shared<Quake3AlternateMapWriter>();
 }
 
-module::StaticModule<Quake3MapFormat> q3MapModule;
-module::StaticModule<Quake3AlternateMapFormat> q3AlternateMapModule;
+module::StaticModuleRegistration<Quake3MapFormat> q3MapModule;
+module::StaticModuleRegistration<Quake3AlternateMapFormat> q3AlternateMapModule;
 
 } // namespace map

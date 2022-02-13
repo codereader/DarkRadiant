@@ -107,6 +107,6 @@ private:
     }
 };
 
-module::StaticModule<ColourSchemeManager> _textureToolColourSchemeManager;
+module::StaticModuleRegistration<ColourSchemeManager> _textureToolColourSchemeManager;
 
 }

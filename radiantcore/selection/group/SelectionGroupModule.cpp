@@ -70,7 +70,7 @@ private:
 	}
 };
 
-module::StaticModule<SelectionGroupModule> selGroupModule;
+module::StaticModuleRegistration<SelectionGroupModule> selGroupModule;
 
 }
 

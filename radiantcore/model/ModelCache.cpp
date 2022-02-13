@@ -17,7 +17,7 @@
 
 #include "map/algorithm/Models.h"
 
-namespace model 
+namespace model
 {
 
 ModelCache::ModelCache() :
@@ -186,17 +186,17 @@ sigc::signal<void> ModelCache::signal_modelsReloaded()
 }
 
 // RegisterableModule implementation
-const std::string& ModelCache::getName() const 
+const std::string& ModelCache::getName() const
 {
 	static std::string _name(MODULE_MODELCACHE);
 	return _name;
 }
 
-const StringSet& ModelCache::getDependencies() const 
+const StringSet& ModelCache::getDependencies() const
 {
 	static StringSet _dependencies;
 
-	if (_dependencies.empty()) 
+	if (_dependencies.empty())
 	{
 		_dependencies.insert(MODULE_MODELFORMATMANAGER);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
@@ -209,9 +209,9 @@ void ModelCache::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	GlobalCommandSystem().addCommand("RefreshModels", 
+	GlobalCommandSystem().addCommand("RefreshModels",
 		std::bind(&ModelCache::refreshModelsCmd, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("RefreshSelectedModels", 
+	GlobalCommandSystem().addCommand("RefreshSelectedModels",
 		std::bind(&ModelCache::refreshSelectedModelsCmd, this, std::placeholders::_1));
 }
 
@@ -241,6 +241,6 @@ void ModelCache::refreshSelectedModelsCmd(const cmd::ArgumentList& args)
 }
 
 // The static module
-module::StaticModule<ModelCache> modelCacheModule;
+module::StaticModuleRegistration<ModelCache> modelCacheModule;
 
 } // namespace model

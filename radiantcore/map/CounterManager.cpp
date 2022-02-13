@@ -75,6 +75,6 @@ void CounterManager::initialiseModule(const IApplicationContext& ctx)
 }
 
 // Register the counter module in the registry
-module::StaticModule<CounterManager> counterManagerModule;
+module::StaticModuleRegistration<CounterManager> counterManagerModule;
 
 } // namespace map

@@ -190,7 +190,7 @@ void GenericEntityNode::_freezeTransform()
 
 void GenericEntityNode::updateTransform()
 {
-	localToParent() = Matrix4::getTranslation(m_origin);
+	setLocalToParent(Matrix4::getTranslation(m_origin));
 
 	if (_allow3Drotations)
 	{

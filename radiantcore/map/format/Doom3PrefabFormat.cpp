@@ -39,6 +39,6 @@ bool Doom3PrefabFormat::allowInfoFileCreation() const
 	return false;
 }
 
-module::StaticModule<Doom3PrefabFormat> d3PrefabModule;
+module::StaticModuleRegistration<Doom3PrefabFormat> d3PrefabModule;
 
 } // namespace

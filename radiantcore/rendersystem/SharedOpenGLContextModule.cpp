@@ -73,6 +73,6 @@ void SharedOpenGLContextModule::shutdownModule()
 	_sharedContext.reset();
 }
 
-module::StaticModule<SharedOpenGLContextModule> sharedContextModule;
+module::StaticModuleRegistration<SharedOpenGLContextModule> sharedContextModule;
 
 }

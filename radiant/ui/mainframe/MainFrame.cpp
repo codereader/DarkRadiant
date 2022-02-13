@@ -154,7 +154,7 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
     );
 
     GlobalEntityClassManager().defsLoadedSignal().connect([this]()
-        { 
+        {
             _defLoadingBlocksUpdates = false;
         }
     );
@@ -606,6 +606,6 @@ sigc::signal<void>& MainFrame::signal_MainFrameShuttingDown()
 }
 
 // Define the static MainFrame module
-module::StaticModule<MainFrame> mainFrameModule;
+module::StaticModuleRegistration<MainFrame> mainFrameModule;
 
 } // namespace ui

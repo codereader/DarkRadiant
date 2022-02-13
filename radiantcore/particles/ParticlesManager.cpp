@@ -257,7 +257,7 @@ void ParticlesManager::reloadParticleDefs()
             if (file != NULL)
             {
                 // File is open, so parse the tokens
-                try 
+                try
                 {
                     std::istream is(&(file->getInputStream()));
                     parseStream(is, fileInfo.name);
@@ -303,7 +303,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	{
 		targetPath = GlobalGameManager().getUserEnginePath();
 
-		rMessage() << "No mod base path found, falling back to user engine path to save particle file: " << 
+		rMessage() << "No mod base path found, falling back to user engine path to save particle file: " <<
 			targetPath.string() << std::endl;
 	}
 
@@ -397,6 +397,6 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	tempStream.closeAndReplaceTargetFile();
 }
 
-module::StaticModule<ParticlesManager> particlesManagerModule;
+module::StaticModuleRegistration<ParticlesManager> particlesManagerModule;
 
 } // namespace particles

@@ -38,7 +38,7 @@ public:
 };
 
 // Static module instances
-module::StaticModule<md5::MD5Module> md5Module;
-module::StaticModule<md5::MD5AnimationCache> md5AnimationCache;
+module::StaticModuleRegistration<md5::MD5Module> md5Module;
+module::StaticModuleRegistration<md5::MD5AnimationCache> md5AnimationCache;
 
 }

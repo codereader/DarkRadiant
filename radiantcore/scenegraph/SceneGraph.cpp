@@ -32,9 +32,9 @@ SceneGraph::~SceneGraph()
 	}
 }
 
-void SceneGraph::addSceneObserver(Graph::Observer* observer) 
+void SceneGraph::addSceneObserver(Graph::Observer* observer)
 {
-	if (observer != nullptr) 
+	if (observer != nullptr)
     {
 		// Add the passed observer to the list
 		_sceneObservers.push_back(observer);
@@ -96,7 +96,7 @@ void SceneGraph::setRoot(const IMapRootNodePtr& newRoot)
 		GraphPtr self = shared_from_this();
 		InstanceSubgraphWalker instanceWalker(self);
 		_root->traverse(instanceWalker);
-        
+
         _undoEventHandler = _root->getUndoSystem().signal_undoEvent().connect(
             sigc::mem_fun(this, &SceneGraph::onUndoEvent)
         );
@@ -269,20 +269,20 @@ void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, const INode::Visi
 void SceneGraph::foreachNodeInVolume(const VolumeTest& volume, Walker& walker)
 {
 	// Use a small adaptor lambda to dispatch calls to the walker
-	foreachNodeInVolume(volume, 
-		[&] (const INodePtr& node) { return walker.visit(node); }, 
+	foreachNodeInVolume(volume,
+		[&] (const INodePtr& node) { return walker.visit(node); },
 		true); // visit hidden
 }
 
 void SceneGraph::foreachVisibleNodeInVolume(const VolumeTest& volume, Walker& walker)
 {
 	// Use a small adaptor lambda to dispatch calls to the walker
-	foreachNodeInVolume(volume, 
-		[&] (const INodePtr& node) { return walker.visit(node); }, 
+	foreachNodeInVolume(volume,
+		[&] (const INodePtr& node) { return walker.visit(node); },
 		false); // don't visit hidden
 }
 
-bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume, 
+bool SceneGraph::foreachNodeInVolume_r(const ISPNode& node, const VolumeTest& volume,
 									   const INode::VisitorFunc& functor, bool visitHidden)
 {
 	_visitedSPNodes++;
@@ -376,7 +376,7 @@ void SceneGraphModule::initialiseModule(const IApplicationContext& ctx)
 }
 
 // Static module instances
-module::StaticModule<SceneGraphModule> sceneGraphModule;
-module::StaticModule<SceneGraphFactory> sceneGraphFactory;
+module::StaticModuleRegistration<SceneGraphModule> sceneGraphModule;
+module::StaticModuleRegistration<SceneGraphFactory> sceneGraphFactory;
 
 } // namespace scene

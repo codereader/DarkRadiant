@@ -55,6 +55,6 @@ void WxGLWidgetManager::shutdownModule()
 	_wxGLWidgets.clear();
 }
 
-module::StaticModule<WxGLWidgetManager> wxGLWidgetManagerModule;
+module::StaticModuleRegistration<WxGLWidgetManager> wxGLWidgetManagerModule;
 
 }

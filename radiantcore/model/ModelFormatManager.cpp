@@ -76,7 +76,7 @@ void ModelFormatManager::postModuleInitialisation()
 			std::string extLower = string::to_lower_copy(pair.second->getExtension());
 
 			GlobalFiletypes().registerPattern(filetype::TYPE_MODEL_EXPORT, FileTypePattern(
-				pair.second->getDisplayName(), 
+				pair.second->getDisplayName(),
 				extLower,
 				"*." + extLower));
 		}
@@ -235,6 +235,6 @@ void ModelFormatManager::convertModelCmd(const cmd::ArgumentList& args)
     }
 }
 
-module::StaticModule<ModelFormatManager> _staticModelFormatManagerModule;
+module::StaticModuleRegistration<ModelFormatManager> _staticModelFormatManagerModule;
 
 }

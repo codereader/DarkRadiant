@@ -674,16 +674,13 @@ void StaticGeometryNode::modelChanged(const std::string& value)
 
 void StaticGeometryNode::updateTransform()
 {
-	localToParent() = Matrix4::getIdentity();
+    if (isModel())
+        setLocalToParent(Matrix4::getTranslation(m_origin) * m_rotation.getMatrix4());
+    else
+        setLocalToParent(Matrix4::getIdentity());
 
-	if (isModel())
-	{
-		localToParent().translateBy(m_origin);
-		localToParent().multiplyBy(m_rotation.getMatrix4());
-	}
-
-	// Notify the Node about this transformation change	to update the local2World matrix
-	transformChanged();
+    // Notify the Node about this transformation change	to update the local2World matrix
+    transformChanged();
 }
 
 void StaticGeometryNode::translateChildren(const Vector3& childTranslation)

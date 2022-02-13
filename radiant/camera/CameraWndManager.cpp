@@ -163,7 +163,7 @@ FloatingCamWndPtr CameraWndManager::createFloatingWindow()
 
 void CameraWndManager::resetCameraAngles(const cmd::ArgumentList& args)
 {
-	doWithActiveCamWnd([](CamWnd& camWnd) 
+	doWithActiveCamWnd([](CamWnd& camWnd)
 	{
 		Vector3 angles;
 		angles[camera::CAMERA_ROLL] = angles[camera::CAMERA_PITCH] = 0;
@@ -196,7 +196,7 @@ void CameraWndManager::decreaseCameraSpeed(const cmd::ArgumentList& args) {
 	registry::setValue(RKEY_MOVEMENT_SPEED, movementSpeed);
 }
 
-void CameraWndManager::benchmark() 
+void CameraWndManager::benchmark()
 {
 	doWithActiveCamWnd([](CamWnd& camWnd) { camWnd.benchmark(); });
 }
@@ -274,19 +274,19 @@ void CameraWndManager::moveCameraCmd(const cmd::ArgumentList& args)
 		return;
 	}
 
-	if (arg == "up") 
+	if (arg == "up")
 	{
 		camWnd->moveUpDiscrete(amount);
 	}
-	else if (arg == "down") 
+	else if (arg == "down")
 	{
 		camWnd->moveDownDiscrete(amount);
 	}
-	else if (arg == "left") 
+	else if (arg == "left")
 	{
 		camWnd->moveLeftDiscrete(amount);
 	}
-	if (arg == "right") 
+	if (arg == "right")
 	{
 		camWnd->moveRightDiscrete(amount);
 	}
@@ -316,7 +316,7 @@ void CameraWndManager::foreachCamWnd(const std::function<void(CamWnd&)>& action)
             _cameras.erase(i++);
             continue;
         }
-         
+
         ++i;
         action(*cam);
     }
@@ -325,7 +325,7 @@ void CameraWndManager::foreachCamWnd(const std::function<void(CamWnd&)>& action)
 void CameraWndManager::doWithActiveCamWnd(const std::function<void(CamWnd&)>& action)
 {
 	auto camWnd = getActiveCamWnd();
-	
+
 	if (camWnd)
 	{
 		action(*camWnd);
@@ -437,7 +437,7 @@ void CameraWndManager::loadCameraStrafeDefinitions()
 }
 
 // RegisterableModule implementation
-const std::string& CameraWndManager::getName() const 
+const std::string& CameraWndManager::getName() const
 {
 	static std::string _name("CameraWndManager");
 	return _name;
@@ -497,7 +497,7 @@ void CameraWndManager::shutdownModule()
 }
 
 // Define the static Camera module
-module::StaticModule<CameraWndManager> cameraWndManagerModule;
+module::StaticModuleRegistration<CameraWndManager> cameraWndManagerModule;
 
 } // namespace
 

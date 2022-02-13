@@ -31,7 +31,7 @@ void MapFormatManager::unregisterMapFormat(const MapFormatPtr& mapFormat)
 	}
 }
 
-MapFormatPtr MapFormatManager::getMapFormatByName(const std::string& mapFormatName) 
+MapFormatPtr MapFormatManager::getMapFormatByName(const std::string& mapFormatName)
 {
 	for (const auto& pair : _mapFormats)
 	{
@@ -44,7 +44,7 @@ MapFormatPtr MapFormatManager::getMapFormatByName(const std::string& mapFormatNa
 	return MapFormatPtr(); // nothing found
 }
 
-MapFormatPtr MapFormatManager::getMapFormatForGameType(const std::string& gameType, 
+MapFormatPtr MapFormatManager::getMapFormatForGameType(const std::string& gameType,
 													   const std::string& extension)
 {
 	std::string extLower = string::to_lower_copy(extension);
@@ -76,12 +76,12 @@ MapFormatPtr MapFormatManager::getMapFormatForFilename(const std::string& filena
 std::set<MapFormatPtr> MapFormatManager::getAllMapFormats()
 {
 	std::set<MapFormatPtr> set;
-	
+
 	for (const auto& fmt : _mapFormats)
 	{
 		set.insert(fmt.second);
 	}
-	
+
 	return set;
 }
 
@@ -119,6 +119,6 @@ void MapFormatManager::initialiseModule(const IApplicationContext& ctx)
 }
 
 // Creates the static module instance
-module::StaticModule<MapFormatManager> staticMapFormatManagerModule;
+module::StaticModuleRegistration<MapFormatManager> staticMapFormatManagerModule;
 
 }

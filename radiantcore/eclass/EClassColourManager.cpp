@@ -76,6 +76,6 @@ void EClassColourManager::initialiseModule(const IApplicationContext& ctx)
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
-module::StaticModule<EClassColourManager> eclassColourManagerModule;
+module::StaticModuleRegistration<EClassColourManager> eclassColourManagerModule;
 
 }

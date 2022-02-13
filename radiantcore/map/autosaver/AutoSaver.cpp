@@ -30,10 +30,10 @@
 
 #include <fmt/format.h>
 
-namespace map 
+namespace map
 {
 
-namespace 
+namespace
 {
 	// Registry key names
 	const char* GKEY_MAP_EXTENSION = "/mapFormat/fileExtension";
@@ -70,7 +70,7 @@ void AutoMapSaver::clearChanges()
     _savedChangeCount = 0;
 }
 
-void AutoMapSaver::saveSnapshot() 
+void AutoMapSaver::saveSnapshot()
 {
 	// Original GtkRadiant comments:
 	// we need to do the following
@@ -108,14 +108,14 @@ void AutoMapSaver::saveSnapshot()
 
 		handleSnapshotSizeLimit(existingSnapshots, snapshotPath, mapName);
 	}
-	else 
+	else
 	{
 		rError() << "Snapshot save failed.. unable to create directory";
 		rError() << snapshotPath << std::endl;
 	}
 }
 
-void AutoMapSaver::handleSnapshotSizeLimit(const std::map<int, std::string>& existingSnapshots, 
+void AutoMapSaver::handleSnapshotSizeLimit(const std::map<int, std::string>& existingSnapshots,
 	const fs::path& snapshotPath, const std::string& mapName)
 {
 	std::size_t maxSnapshotFolderSize =
@@ -160,7 +160,7 @@ void AutoMapSaver::handleSnapshotSizeLimit(const std::map<int, std::string>& exi
 			return;
 		}
 
-		rMessage() << "AutoSaver: The snapshot files in " << snapshotPath << 
+		rMessage() << "AutoSaver: The snapshot files in " << snapshotPath <<
 			" take up more than " << maxSnapshotFolderSize << " MB. You might consider cleaning it up." << std::endl;
 
 		// Notify the user
@@ -175,7 +175,7 @@ void AutoMapSaver::handleSnapshotSizeLimit(const std::map<int, std::string>& exi
 	}
 }
 
-void AutoMapSaver::collectExistingSnapshots(std::map<int, std::string>& existingSnapshots, 
+void AutoMapSaver::collectExistingSnapshots(std::map<int, std::string>& existingSnapshots,
 	const fs::path& snapshotPath, const std::string& mapName)
 {
 	for (int num = 0; num < INT_MAX; num++)
@@ -348,6 +348,6 @@ void AutoMapSaver::shutdownModule()
 	_signalConnections.clear();
 }
 
-module::StaticModule<AutoMapSaver> staticAutoSaverModule;
+module::StaticModuleRegistration<AutoMapSaver> staticAutoSaverModule;
 
 } // namespace map

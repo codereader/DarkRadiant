@@ -9,13 +9,13 @@
 #include "MenuRootElement.h"
 #include "module/StaticModule.h"
 
-namespace ui 
+namespace ui
 {
 
 namespace menu
 {
 
-namespace 
+namespace
 {
 	// The menu root key in the registry
 	const char* const RKEY_MENU_ROOT = "user/ui/menu";
@@ -42,12 +42,12 @@ void MenuManager::loadFromRegistry()
 		for (const xml::Node& menuNode : menuNodes)
 		{
 			MenuElementPtr menubar = MenuElement::CreateFromNode(menuNode);
-			
+
 			// Add the menubar as child of the root
 			_root->addChild(menubar);
 		}
 	}
-	else 
+	else
 	{
 		rError() << "MenuManager: Could not find menu root in registry." << std::endl;
 	}
@@ -79,14 +79,14 @@ wxMenuBar* MenuManager::getMenuBar(const std::string& name)
 	if (!_root) return nullptr; // root has already been removed
 
 	MenuElementPtr menuBar = _root->find(name);
-	
+
 	if (menuBar)
 	{
 		assert(std::dynamic_pointer_cast<MenuBar>(menuBar));
 
 		return std::static_pointer_cast<MenuBar>(menuBar)->getMenuBar();
 	}
-	
+
 	rError() << "MenuManager: Warning: Menubar with name " << name << " not found!" << std::endl;
 	return nullptr;
 }
@@ -133,7 +133,7 @@ void MenuManager::insert(const std::string& insertPath,
 
 	if (!insertBefore || !insertBefore->getParent())
 	{
-		rWarning() << "Cannot insert before non-existent item or item doesn't have a parent" 
+		rWarning() << "Cannot insert before non-existent item or item doesn't have a parent"
 			<< insertPath << std::endl;
 		return;
 	}
@@ -279,7 +279,7 @@ void MenuManager::shutdownModule()
     clear();
 }
 
-module::StaticModule<MenuManager> menuManagerModule;
+module::StaticModuleRegistration<MenuManager> menuManagerModule;
 
 } // namespace ui
 

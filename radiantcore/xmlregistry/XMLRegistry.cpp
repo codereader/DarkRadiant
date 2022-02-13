@@ -39,7 +39,7 @@ void XMLRegistry::saveToDisk()
     {
         return;
     }
-    
+
     std::lock_guard<std::mutex> lock(_writeLock);
 
     // Make a deep copy of the user tree by copy-constructing it
@@ -118,7 +118,7 @@ bool XMLRegistry::keyExists(const std::string& key)
     return !result.empty();
 }
 
-void XMLRegistry::deleteXPath(const std::string& path) 
+void XMLRegistry::deleteXPath(const std::string& path)
 {
     std::lock_guard<std::mutex> lock(_writeLock);
 
@@ -203,11 +203,11 @@ std::string XMLRegistry::get(const std::string& key)
         // Convert the UTF-8 string back to locale and return
         return string::utf8_to_mb(nodeList[0].getAttributeValue("value"));
     }
-    
+
     return std::string();
 }
 
-void XMLRegistry::set(const std::string& key, const std::string& value) 
+void XMLRegistry::set(const std::string& key, const std::string& value)
 {
     {
         std::lock_guard<std::mutex> lock(_writeLock);
@@ -231,7 +231,7 @@ void XMLRegistry::import(const std::string& importFilePath, const std::string& p
 
     assert(!_shutdown);
 
-    switch (tree) 
+    switch (tree)
     {
         case treeUser:
             _userTree.importFromFile(importFilePath, parentKey);
@@ -277,7 +277,7 @@ void XMLRegistry::loadUserFileFromSettingsPath(const IApplicationContext& ctx,
     }
     else
     {
-        rMessage() << "XMLRegistry: file " << filename << " not present in " 
+        rMessage() << "XMLRegistry: file " << filename << " not present in "
             << ctx.getSettingsPath() << std::endl;
     }
 }
@@ -314,7 +314,7 @@ void XMLRegistry::initialiseModule(const IApplicationContext& ctx)
         import(base + "commandsystem.xml", "user/ui", Registry::treeStandard);
 
         // Load the debug.xml file only if the relevant key is set in user.xml
-        if (get("user/debug") == "1") 
+        if (get("user/debug") == "1")
         {
             import(base + "debug.xml", "", Registry::treeStandard);
         }
@@ -325,7 +325,7 @@ void XMLRegistry::initialiseModule(const IApplicationContext& ctx)
     }
 
     // Load user preferences, these overwrite any values that have defined before
-    
+
     loadUserFileFromSettingsPath(ctx, "user.xml", "");
     loadUserFileFromSettingsPath(ctx, "colours.xml", "user/ui");
     loadUserFileFromSettingsPath(ctx, "input.xml", "user/ui");
@@ -337,7 +337,7 @@ void XMLRegistry::initialiseModule(const IApplicationContext& ctx)
 
     _autosaveTimer.reset(new util::Timer(2000,
         sigc::mem_fun(this, &XMLRegistry::onAutoSaveTimerIntervalReached)));
-    
+
     module::GlobalModuleRegistry().signal_allModulesInitialised().connect([this]()
     {
         _autosaveTimer->start();
@@ -366,6 +366,6 @@ void XMLRegistry::onAutoSaveTimerIntervalReached()
 }
 
 // Static module instance
-module::StaticModule<XMLRegistry> xmlRegistryModule;
+module::StaticModuleRegistration<XMLRegistry> xmlRegistryModule;
 
 }

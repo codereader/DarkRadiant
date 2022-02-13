@@ -72,7 +72,7 @@ public:
 		GlobalCommandSystem().addCommand(COMMAND_MOVETOLAYER,
 			std::bind(&LayerModule::moveSelectionToLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
-        
+
         GlobalCommandSystem().addCommand(COMMAND_REMOVEFROMLAYER,
 			std::bind(&LayerModule::removeSelectionFromLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });
@@ -241,6 +241,6 @@ private:
 	}
 };
 
-module::StaticModule<LayerModule> layerManagerFactoryModule;
+module::StaticModuleRegistration<LayerModule> layerManagerFactoryModule;
 
 }

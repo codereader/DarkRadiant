@@ -72,7 +72,7 @@ wxToolBar* ToolbarManager::createToolbar(const std::string& toolbarName, wxWindo
         rError() << "ToolbarManager: Critical: Could not instantiate " << toolbarName << std::endl;
 	    return nullptr;
 	}
-		
+
 	return createToolbarFromNode(toolbarList[0], parent);
 }
 
@@ -100,19 +100,19 @@ wxToolBarToolBase* ToolbarManager::createToolItem(wxToolBar* toolbar, const xml:
         {
             name.clear();
         }
-        
+
 		if (nodeName == "toolbutton")
 		{
 			// Create a new ToolButton and assign the right callback
 			toolItem = toolbar->AddTool(_nextToolItemId++, name,
-				wxutil::GetLocalBitmap(icon), 
+				wxutil::GetLocalBitmap(icon),
 				tooltip);
 		}
 		else
 		{
 			// Create a new ToggleToolButton and assign the right callback
 			toolItem = toolbar->AddTool(_nextToolItemId++, name,
-				wxutil::GetLocalBitmap(icon), 
+				wxutil::GetLocalBitmap(icon),
 				tooltip, wxITEM_CHECK);
 		}
 
@@ -139,11 +139,11 @@ wxToolBar* ToolbarManager::createToolbarFromNode(xml::Node& node, wxWindow* pare
 	auto align = node.getAttributeValue("align");
 
 	// Create a new toolbar
-	toolbar = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
+	toolbar = new wxToolBar(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
 		align == "vertical" ? wxTB_VERTICAL : wxTB_HORIZONTAL,
 		node.getAttributeValue("name"));
 
-    // Adjust the toolbar bitmap size to add some padding - despite its name 
+    // Adjust the toolbar bitmap size to add some padding - despite its name
     // this will not resize the actual icons, just the buttons
     toolbar->SetToolBitmapSize(wxSize(20, 20));
 
@@ -215,6 +215,6 @@ void ToolbarManager::loadToolbars()
 	}
 }
 
-module::StaticModule<ToolbarManager> toolbarManagerModule;
+module::StaticModuleRegistration<ToolbarManager> toolbarManagerModule;
 
 } // namespace ui

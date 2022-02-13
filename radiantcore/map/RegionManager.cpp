@@ -45,7 +45,7 @@ RegionManager::RegionManager() :
     _active(false)
 {}
 
-bool RegionManager::isEnabled() const 
+bool RegionManager::isEnabled() const
 {
     return _active;
 }
@@ -231,7 +231,7 @@ void RegionManager::constructRegionBrushes(scene::INodePtr brushes[6], const Vec
 			Vector3 mins(region_mins[0]-THICKNESS, region_mins[1]-THICKNESS, region_mins[2]-THICKNESS);
 			mins[i] = region_maxs[i];
 			Brush& brush = *Node_getBrush(brushes[i+3]);
-	  
+
 			brush.constructCuboid(AABB::createFromMinMax(mins, maxs),
       							texdef_name_default());
 		}
@@ -315,7 +315,7 @@ void RegionManager::setRegionFromBrush(const cmd::ArgumentList& args)
 
         SceneChangeNotify();
     }
-    else 
+    else
     {
         disable();
         throw cmd::ExecutionFailure(_("Could not set Region: please select a single Brush."));
@@ -465,7 +465,7 @@ void RegionManager::onMapEvent(IMap::MapEvent ev)
 	}
 	else if (ev == IMap::MapLoaded)
 	{
-		// Disable when a new map has been loaded 
+		// Disable when a new map has been loaded
 		disable();
 	}
 }
@@ -487,6 +487,6 @@ AABB RegionManager::getVisibleBounds()
 	return returnValue;
 }
 
-module::StaticModule<RegionManager> staticRegionManagerModule;
+module::StaticModuleRegistration<RegionManager> staticRegionManagerModule;
 
 } // namespace

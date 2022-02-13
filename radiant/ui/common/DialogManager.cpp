@@ -119,6 +119,6 @@ IAnimationChooser* DialogManager::createAnimationChooser(wxWindow* parent)
 	return new MD5AnimationChooser(parent);
 }
 
-module::StaticModule<DialogManager> dialogManagerModule;
+module::StaticModuleRegistration<DialogManager> dialogManagerModule;
 
 } // namespace ui
