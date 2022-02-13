@@ -37,45 +37,6 @@ public:
     virtual void processRenderable(Renderable& renderable, const VolumeTest& volume) = 0;
 
     /**
-     * \brief Submit a renderable object.
-     *
-     * This method allows renderable geometry to be submitted under the control
-     * of a LitObject which will determine whether and how the renderable is
-     * illuminated by scene lights. Each objected submitted with this method
-     * will be considered for lighting by the lights which are submitted to the
-     * same RenderableCollector using addLight().
-     *
-     * Objects may be submitted without a LitObject if they are not affected by
-     * scene lights.
-     *
-     * \param shader
-     * The Shader object this Renderable will be attached to.
-     *
-     * \param renderable
-     * The renderable object to submit.
-     *
-     * \param localToWorld
-     * The local to world transform that should be applied to this object when
-     * it is rendered.
-     *
-     * \param entity
-     * Optional IRenderEntity exposing parameters which affect the rendering of
-     * this Renderable.
-     *
-     * \param litObject
-     * Optional LitObject determining lighting interactions for this
-     * renderable. This may or may not be the same actual object as the
-     * OpenGLRenderable, depending on how the object class hierarchy is set up.
-     * If a single LitObject contains multiple renderables, a separate call to
-     * this method must be made for each renderable (with the same litObject
-     * parameter).
-     */
-    virtual void addRenderable(Shader& shader,
-                               const OpenGLRenderable& renderable,
-                               const Matrix4& localToWorld,
-                               const IRenderEntity* entity = nullptr) = 0;
-
-    /**
      * Submits a renderable object that is used for highlighting an object.
      * Depending on the view, this might be a coloured, transparent overlay
      * or a wireframe outline.

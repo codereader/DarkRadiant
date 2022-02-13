@@ -456,12 +456,8 @@ namespace
         bool renderSolid;
 
         // Count of submitted and processed renderables, and lights
-        int renderables = 0;
         int processedNodes = 0;
         int highlightRenderables = 0;
-
-        // List of renderables and their shaders
-        std::vector< std::pair<const Shader*, const OpenGLRenderable*> > renderablePtrs;
 
         std::vector<const OpenGLRenderable*> highlightRenderablePtrs;
 
@@ -469,14 +465,6 @@ namespace
         {
             RenderableCollectorBase::processNode(node, volume);
             ++processedNodes;
-        }
-
-        void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
-                           const Matrix4& localToWorld,
-                           const IRenderEntity* entity = nullptr) override
-        {
-            ++renderables;
-            renderablePtrs.push_back(std::make_pair(&shader, &renderable));
         }
 
         void addHighlightRenderable(const OpenGLRenderable& renderable,
@@ -1019,7 +1007,6 @@ TEST_F(EntityTest, RenderEmptyFuncStatic)
     RenderFixture rf;
     rf.renderSubGraph(funcStatic);
     EXPECT_EQ(rf.nodesVisited, 1);
-    EXPECT_EQ(rf.collector.renderables, 0);
 }
 
 TEST_F(EntityTest, RenderFuncStaticWithModel)

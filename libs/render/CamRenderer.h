@@ -52,14 +52,6 @@ public:
 
     bool supportsFullMaterials() const override { return true; }
 
-    void addRenderable(Shader& shader,
-                       const OpenGLRenderable& renderable,
-                       const Matrix4& localToWorld,
-                       const IRenderEntity* entity = nullptr) override
-    {
-        addHighlightRenderable(renderable, localToWorld);
-    }
-
     void addHighlightRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld) override
     {
         if (_editMode == IMap::EditMode::Merge && (_flags & Highlight::Flags::MergeAction) != 0)

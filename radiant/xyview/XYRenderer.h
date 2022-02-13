@@ -38,16 +38,6 @@ public:
         return false;
     }
 
-    void addRenderable(Shader& shader,
-                       const OpenGLRenderable& renderable,
-                       const Matrix4& localToWorld,
-                       const IRenderEntity* entity = nullptr) override
-    {
-        addHighlightRenderable(renderable, localToWorld);
-
-        shader.addRenderable(renderable, localToWorld, entity);
-    }
-
     void addHighlightRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld) override
     {
         if (_editMode == IMap::EditMode::Merge)
