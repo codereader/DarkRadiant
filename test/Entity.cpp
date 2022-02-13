@@ -455,8 +455,9 @@ namespace
 
         bool renderSolid;
 
-        // Count of submitted renderables and lights
+        // Count of submitted and processed renderables, and lights
         int renderables = 0;
+        int processedNodes = 0;
         int highlightRenderables = 0;
         int lights = 0;
 
@@ -467,6 +468,12 @@ namespace
         std::vector< std::pair<const Shader*, const OpenGLRenderable*> > renderablePtrs;
 
         std::vector<const OpenGLRenderable*> highlightRenderablePtrs;
+
+        void processNode(const scene::INodePtr& node, const VolumeTest& volume) override
+        {
+            RenderableCollectorBase::processNode(node, volume);
+            ++processedNodes;
+        }
 
         void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
                            const Matrix4& localToWorld,
@@ -942,39 +949,42 @@ TEST_F(EntityTest, RenderSelectedLightEntity)
     EXPECT_EQ(fixture.collector.lights, 0);
 }
 
-#if 0
-TEST_F(EntityTest, RenderLightAsLightSource)
+TEST_F(EntityTest, RenderLightProperties)
 {
     auto light = createByClassName("light_torchflame_small");
+    scene::addNodeToContainer(light, GlobalMapModule().getRoot());
+
     auto& spawnArgs = light->getEntity();
 
     // Set a non-default origin for the light
     static const Vector3 ORIGIN(-64, 128, 963);
     spawnArgs.setKeyValue("origin", string::to_string(ORIGIN));
 
-    // Render the light in full materials mode
-    RenderFixture renderF;
-    light->setRenderSystem(renderF.backend);
-    //light->renderSolid(renderF.collector, renderF.volumeTest);
+    RenderFixture fixture;
 
-    // We should get one renderable for the origin diamond, and one light source
-    EXPECT_EQ(renderF.collector.renderables, 1);
-    EXPECT_EQ(renderF.collector.lights, 1);
+    // Run the front-end collector through the scene
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
-    // Confirm properties of the submitted RendererLight
-    ASSERT_EQ(renderF.collector.lightPtrs.size(), 1);
-    const RendererLight* rLight = renderF.collector.lightPtrs.front();
-    ASSERT_TRUE(rLight);
-    EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
-    EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
+    // Confirm properties of the registered RendererLight
+    int lightCount = 0;
 
-    // Default light properties from the entitydef
-    EXPECT_EQ(rLight->lightAABB().extents, Vector3(240, 240, 240));
-    ASSERT_TRUE(rLight->getShader() && rLight->getShader()->getMaterial());
-    EXPECT_EQ(rLight->getShader()->getMaterial()->getName(),
-              "lights/biground_torchflicker");
+    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+    renderSystem->foreachLight([&](const RendererLightPtr& rLight)
+    {
+        lightCount++;
+
+        EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
+        EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
+        // Default light properties from the entitydef
+        EXPECT_EQ(rLight->lightAABB().extents, Vector3(240, 240, 240));
+        ASSERT_TRUE(rLight->getShader() && rLight->getShader()->getMaterial());
+        EXPECT_EQ(rLight->getShader()->getMaterial()->getName(),
+            "lights/biground_torchflicker");
+    });
+
+    EXPECT_EQ(lightCount, 1) << "No light registered in the render system";
 }
-#endif
+
 TEST_F(EntityTest, RenderEmptyFuncStatic)
 {
     auto funcStatic = createByClassName("func_static");
@@ -987,24 +997,68 @@ TEST_F(EntityTest, RenderEmptyFuncStatic)
     EXPECT_EQ(rf.collector.renderables, 0);
 }
 
-#if 0 // Disabled since renderables don't all pass through the IRenderableCollector
+namespace detail
+{
+
+// Returns the first render entity registered in the rendersystem, matching the given predicate
+inline IRenderEntityPtr getFirstRenderEntity(std::function<bool(IRenderEntityPtr)> predicate)
+{
+    IRenderEntityPtr result;
+
+    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+    renderSystem->foreachEntity([&](const IRenderEntityPtr& entity)
+    {
+        if (!result && predicate(entity))
+        {
+            result = entity;
+        }
+    });
+
+    return result;
+}
+
+inline std::set<render::IRenderableObject::Ptr> getAllObjects(IRenderEntityPtr entity)
+{
+    std::set<render::IRenderableObject::Ptr> result;
+
+    AABB hugeBounds({ 0,0,0 }, { 65536, 65536, 65536 });
+
+    entity->foreachRenderableTouchingBounds(hugeBounds, [&](const render::IRenderableObject::Ptr& object, Shader*)
+    {
+        result.insert(object);
+    });
+
+    return result;
+}
+
+}
+
 TEST_F(EntityTest, RenderFuncStaticWithModel)
 {
     // Create a func_static with a model key
     auto funcStatic = createByClassName("func_static");
     funcStatic->getEntity().setKeyValue("model", "models/moss_patch.ase");
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
 
-    RenderFixture rf;
-    rf.renderSubGraph(funcStatic);
+    // Run the front-end collector through the scene
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
     // The entity node itself does not render the model; it is a parent node
     // with the model as a child (e.g. as a StaticModelNode). Therefore we
-    // should have visited two nodes in total: the entity and its model child.
-    EXPECT_EQ(rf.nodesVisited, 2);
+    // should have called onPreRender on three nodes in total: the root, the entity and its model child.
+    EXPECT_EQ(fixture.collector.processedNodes, 3);
 
-    // Only one of the nodes should have submitted renderables
-    EXPECT_EQ(rf.collector.lights, 0);
-    EXPECT_EQ(rf.collector.renderables, 1);
+    // Get the first render entity
+    auto entity = detail::getFirstRenderEntity([&](IRenderEntityPtr candidate)
+    { 
+        return candidate == funcStatic;
+    });
+    EXPECT_TRUE(entity);
+    
+    // Check the renderables attached to this entity
+    auto objects = detail::getAllObjects(entity);
+    EXPECT_EQ(objects.size(), 1) << "Expected one renderable object attached to the func_static";
 }
 
 TEST_F(EntityTest, RenderFuncStaticWithMultiSurfaceModel)
@@ -1012,14 +1066,26 @@ TEST_F(EntityTest, RenderFuncStaticWithMultiSurfaceModel)
     // Create a func_static with a model key
     auto funcStatic = createByClassName("func_static");
     funcStatic->getEntity().setKeyValue("model", "models/torch.lwo");
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+
+    // Run the front-end collector through the scene
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
+
+    // Get the first render entity
+    auto entity = detail::getFirstRenderEntity([&](IRenderEntityPtr candidate)
+    {
+        return candidate == funcStatic;
+    });
+    EXPECT_TRUE(entity);
+
+    // Check the renderables attached to this entity
+    auto objects = detail::getAllObjects(entity);
 
     // This torch model has 3 renderable surfaces
-    RenderFixture rf;
-    rf.renderSubGraph(funcStatic);
-    EXPECT_EQ(rf.collector.lights, 0);
-    EXPECT_EQ(rf.collector.renderables, 3);
+    EXPECT_EQ(objects.size(), 3) << "Expected one renderable object attached to the func_static";
 }
-#endif
+
 TEST_F(EntityTest, EntityNodeRGBShaderParms)
 {
     auto funcStatic = TestEntity::create("func_static");
