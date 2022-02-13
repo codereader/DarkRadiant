@@ -30,11 +30,11 @@ public:
             return true;
         });
 
-        // Submit any renderables that have been directly attached to the RenderSystem
+        // Prepare any renderables that have been directly attached to the RenderSystem
 		// without belonging to an actual scene object
 		GlobalRenderSystem().forEachRenderable([&](Renderable& renderable)
 		{
-			collector.processRenderable(renderable, volume);
+            renderable.onPreRender(volume);
 		});
     }
 };

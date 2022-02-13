@@ -46,11 +46,6 @@ public:
         }
     }
 
-    virtual void processRenderable(Renderable& renderable, const VolumeTest& volume) override
-    {
-        renderable.onPreRender(volume);
-    }
-
     virtual void processNode(const scene::INodePtr& node, const VolumeTest& volume)
     {
         node->onPreRender(volume);

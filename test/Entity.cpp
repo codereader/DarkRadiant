@@ -511,7 +511,7 @@ namespace
             ++nodesVisited;
 
             // Render the node in appropriate mode
-            collector.processRenderable(*node, volumeTest);
+            node->onPreRender(volumeTest);
 
             // Continue traversing
             return true;

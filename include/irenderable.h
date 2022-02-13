@@ -18,23 +18,19 @@ class Renderable;
 class VolumeTest;
 
 /**
- * \brief Class which accepts OpenGLRenderable objects during the first pass of
- * rendering.
- *
- * Each Renderable in the scenegraph is passed a reference to an
- * IRenderableCollector, to which the Renderable submits its OpenGLRenderable(s)
- * for later rendering. A single Renderable may submit more than one
- * OpenGLRenderable, with different options each time -- for instance a
- * Renderable model class may submit each of its material surfaces separately
- * with different shaders.
+ * \brief Class used during the front-end render pass.
+ * 
+ * Each node in the scenegraph is visited and is asked to get ready for rendering
+ * by calling Renderable.onPreRender() method.
+ * 
+ * If a node's highlight flags (which combined with their parents flags) indicates
+ * that the node needs to render special visual aids like selection overlays,
+ * the node's Renderable::renderHighlights() method is invoked.
  */
 class IRenderableCollector
 {
 public:
     virtual ~IRenderableCollector() {}
-
-    // Process the given renderable object
-    virtual void processRenderable(Renderable& renderable, const VolumeTest& volume) = 0;
 
     /**
      * Submits a renderable object that is used for highlighting an object.
