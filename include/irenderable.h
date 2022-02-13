@@ -86,16 +86,6 @@ public:
     virtual void addHighlightRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld) = 0;
 
     /**
-     * \brief Submit a light source for the render operation.
-     *
-     * This is the entry point for lights into the render front-end. Each light
-     * in the scene graph must be submitted through this method in order to
-     * provide light for the final render. If the render is in wireframe mode,
-     * light sources can still be submitted but they will not have any effect.
-     */
-    virtual void addLight(const RendererLight& light) = 0;
-
-    /**
      * \brief Determine if this RenderableCollector can accept renderables for
      * full materials rendering, or just wireframe rendering.
      *

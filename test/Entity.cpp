@@ -459,10 +459,6 @@ namespace
         int renderables = 0;
         int processedNodes = 0;
         int highlightRenderables = 0;
-        int lights = 0;
-
-        // List of actual RendererLight objects
-        std::list<const RendererLight*> lightPtrs;
 
         // List of renderables and their shaders
         std::vector< std::pair<const Shader*, const OpenGLRenderable*> > renderablePtrs;
@@ -489,12 +485,6 @@ namespace
         {
             ++highlightRenderables;
             highlightRenderablePtrs.push_back(&renderable);
-        }
-
-        void addLight(const RendererLight& light) override
-        {
-            ++lights;
-            lightPtrs.push_back(&light);
         }
 
         bool supportsFullMaterials() const override { return true; }
@@ -972,7 +962,6 @@ TEST_F(EntityTest, RenderUnselectedLightEntity)
 
     // Only the light origin diamond should be rendered
     EXPECT_EQ(fixture.collector.highlightRenderables, 0);
-    EXPECT_EQ(fixture.collector.lights, 0);
 }
 
 TEST_F(EntityTest, RenderSelectedLightEntity)
@@ -991,7 +980,6 @@ TEST_F(EntityTest, RenderSelectedLightEntity)
     // With the light selected, we should get the origin diamond, the radius and
     // the center vertex.
     EXPECT_EQ(fixture.collector.highlightRenderables, 2);
-    EXPECT_EQ(fixture.collector.lights, 0);
 }
 
 TEST_F(EntityTest, RenderLightProperties)
@@ -1032,7 +1020,6 @@ TEST_F(EntityTest, RenderEmptyFuncStatic)
     RenderFixture rf;
     rf.renderSubGraph(funcStatic);
     EXPECT_EQ(rf.nodesVisited, 1);
-    EXPECT_EQ(rf.collector.lights, 0);
     EXPECT_EQ(rf.collector.renderables, 0);
 }
 

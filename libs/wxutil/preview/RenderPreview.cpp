@@ -501,7 +501,6 @@ bool RenderPreview::drawPreview()
     RenderStateFlags flags = getRenderFlagsFill();
 
     // Launch the back end rendering
-    renderer.submitToShaders();
     _renderSystem->render(RenderViewType::Camera, flags, _volumeTest.GetModelview(), projection, _viewOrigin, _volumeTest);
 
     // Give subclasses an opportunity to render their own on-screen stuff
@@ -526,7 +525,6 @@ void RenderPreview::renderWireFrame()
     getScene()->foreachVisibleNodeInVolume(_volumeTest, sceneWalker);
 
     // Launch the back end rendering
-    renderer.submitToShaders();
     _renderSystem->render(RenderViewType::Camera, flags, _volumeTest.GetModelview(), projection, _viewOrigin, _volumeTest);
 }
 

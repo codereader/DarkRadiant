@@ -796,8 +796,6 @@ void CamWnd::Cam_Draw()
         render::RenderableCollectionWalker::CollectRenderablesInScene(*_renderer, _view);
 
         // Accumulate render statistics
-        _renderStats.setLightCount(_renderer->getVisibleLights(),
-                                   _renderer->getTotalLights());
         _renderStats.frontEndComplete();
 
         // Render any active mousetools
@@ -813,10 +811,6 @@ void CamWnd::Cam_Draw()
         }
         else
         {
-            // Back end (submit to shaders and do the actual render)
-            _renderer->submitToShaders(
-                getCameraSettings()->getRenderMode() == RENDER_MODE_LIGHTING
-            );
             GlobalRenderSystem().render(RenderViewType::Camera, allowedRenderFlags,
                 _camera->getModelView(), _camera->getProjection(), _view.getViewer(), _view);
         }

@@ -38,9 +38,6 @@ public:
         return false;
     }
 
-    // Ortho view never processes lights
-    void addLight(const RendererLight&) override {}
-
     void addRenderable(Shader& shader,
                        const OpenGLRenderable& renderable,
                        const Matrix4& localToWorld,
