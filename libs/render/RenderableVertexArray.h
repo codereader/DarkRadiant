@@ -21,7 +21,7 @@ struct LineIndexer
         }
     }
 
-    static constexpr GeometryType GeometryType()
+    static constexpr GeometryType GetGeometryType()
     {
         return GeometryType::Lines;
     }
@@ -38,7 +38,7 @@ struct PointIndexer
         }
     }
 
-    static constexpr GeometryType GeometryType()
+    static constexpr GeometryType GetGeometryType()
     {
         return GeometryType::Points;
     }
@@ -91,7 +91,7 @@ public:
         std::vector<unsigned int> indices;
         Indexer::GenerateIndices(indices, _vertices.size());
 
-        RenderableGeometry::updateGeometry(Indexer::GeometryType(), vertices, indices);
+        RenderableGeometry::updateGeometry(Indexer::GetGeometryType(), vertices, indices);
     }
 };
 
