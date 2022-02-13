@@ -183,15 +183,21 @@ void OpenGLRenderSystem::beginRendering(OpenGLState& state)
         glClientActiveTexture(GL_TEXTURE0);
     }
 
-    if (GLEW_ARB_shader_objects) {
+    if (GLEW_ARB_shader_objects)
+    {
         glUseProgramObjectARB(0);
         glDisableVertexAttribArrayARB(c_attr_TexCoord0);
         glDisableVertexAttribArrayARB(c_attr_Tangent);
         glDisableVertexAttribArrayARB(c_attr_Binormal);
     }
 
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glDisableVertexAttribArrayARB(ATTR_TEXCOORD);
+    glDisableVertexAttribArrayARB(ATTR_TANGENT);
+    glDisableVertexAttribArrayARB(ATTR_BITANGENT);
+    glDisableVertexAttribArrayARB(ATTR_NORMAL);
+
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     // Set up initial GL state. This MUST MATCH the defaults in the OpenGLState
     // object, otherwise required state changes may not occur.
