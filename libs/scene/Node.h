@@ -18,7 +18,7 @@ class Graph;
 typedef std::weak_ptr<Graph> GraphWeakPtr;
 
 /// Main implementation of INode
-class Node: public LitObject, public virtual INode, public std::enable_shared_from_this<Node>
+class Node : public virtual INode, public std::enable_shared_from_this<Node>
 {
 public:
 	enum {
@@ -193,12 +193,6 @@ public:
 	// Base renderable implementation
 	virtual RenderSystemPtr getRenderSystem() const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-
-    // Default LitObject::intersectsLight implementation, does a simple
-    // intersection check between this node's worldAABB and the light's
-    // lightAABB. Subclasses may override to provide more precise intersection
-    // tests if appropriate.
-    bool intersectsLight(const RendererLight& light) const override;
 
 protected:
     // Set the "forced visible" flag, only to be used internally by subclasses

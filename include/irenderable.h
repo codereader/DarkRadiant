@@ -14,7 +14,6 @@ class OpenGLRenderable;
 class Matrix4;
 class IRenderEntity;
 class RendererLight;
-class LitObject;
 class Renderable;
 class VolumeTest;
 
@@ -74,7 +73,6 @@ public:
     virtual void addRenderable(Shader& shader,
                                const OpenGLRenderable& renderable,
                                const Matrix4& localToWorld,
-                               const LitObject* litObject = nullptr,
                                const IRenderEntity* entity = nullptr) = 0;
 
     /**

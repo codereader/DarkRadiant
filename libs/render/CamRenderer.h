@@ -55,7 +55,6 @@ public:
     void addRenderable(Shader& shader,
                        const OpenGLRenderable& renderable,
                        const Matrix4& localToWorld,
-                       const LitObject* litObject = nullptr,
                        const IRenderEntity* entity = nullptr) override
     {
         addHighlightRenderable(renderable, localToWorld);
