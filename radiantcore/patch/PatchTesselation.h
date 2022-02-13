@@ -46,7 +46,7 @@ public:
 
 	// Generates the tesselated mesh based on the input parameters
 	void generate(std::size_t width, std::size_t height, const PatchControlArray& controlPoints, 
-		bool subdivionsFixed, const Subdivisions& subdivs);
+		bool subdivionsFixed, const Subdivisions& subdivs, IRenderEntity* renderEntity);
 
 private:
 	// Private methods used for tesselation, modeled after the patch subdivision code found in idTech4

@@ -224,13 +224,12 @@ int XYWnd::getDeviceHeight() const
 
 void XYWnd::captureStates()
 {
-    _highlightShaders.selectedShader = GlobalRenderSystem().capture("$XY_OVERLAY");
-    _highlightShaders.selectedShaderGroup = GlobalRenderSystem().capture("$XY_OVERLAY_GROUP");
-    _highlightShaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$XY_MERGE_ACTION_ADD");
-    _highlightShaders.mergeActionShaderChange = GlobalRenderSystem().capture("$XY_MERGE_ACTION_CHANGE");
-    _highlightShaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$XY_MERGE_ACTION_REMOVE");
-    _highlightShaders.mergeActionShaderConflict = GlobalRenderSystem().capture("$XY_MERGE_ACTION_CONFLICT");
-    _highlightShaders.nonMergeActionNodeShader = GlobalRenderSystem().capture("$XY_INACTIVE_NODE");
+    _highlightShaders.selectedShader = GlobalRenderSystem().capture(BuiltInShaderType::WireframeSelectionOverlay);
+    _highlightShaders.selectedShaderGroup = GlobalRenderSystem().capture(BuiltInShaderType::WireframeSelectionOverlayOfGroups);
+    _highlightShaders.mergeActionShaderAdd = GlobalRenderSystem().capture(BuiltInShaderType::OrthoMergeActionOverlayAdd);
+    _highlightShaders.mergeActionShaderChange = GlobalRenderSystem().capture(BuiltInShaderType::OrthoMergeActionOverlayChange);
+    _highlightShaders.mergeActionShaderRemove = GlobalRenderSystem().capture(BuiltInShaderType::OrthoMergeActionOverlayRemove);
+    _highlightShaders.mergeActionShaderConflict = GlobalRenderSystem().capture(BuiltInShaderType::OrthoMergeActionOverlayConflict);
 }
 
 void XYWnd::releaseStates()
@@ -241,7 +240,6 @@ void XYWnd::releaseStates()
     _highlightShaders.mergeActionShaderChange.reset();
     _highlightShaders.mergeActionShaderRemove.reset();
     _highlightShaders.mergeActionShaderConflict.reset();
-    _highlightShaders.nonMergeActionNodeShader.reset();
 }
 
 void XYWnd::ensureFont()
@@ -1389,7 +1387,7 @@ void XYWnd::draw()
 		}
 
         // Second pass (GL calls)
-        renderer.render(_modelView, _projection);
+        renderer.render(_modelView, _projection, _view);
     }
 
     glDepthMask(GL_FALSE);

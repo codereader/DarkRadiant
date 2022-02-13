@@ -91,6 +91,9 @@ public:
 
     // The UndoSystem of this map
     virtual IUndoSystem& getUndoSystem() = 0;
+
+    // Returns the render system of this map root (may be empty)
+    virtual RenderSystemPtr getRenderSystem() const = 0;
 };
 typedef std::shared_ptr<IMapRootNode> IMapRootNodePtr;
 

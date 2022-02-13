@@ -59,29 +59,16 @@ Matrix4 ParticleNode::localToParent() const
 	return _local2Parent;
 }
 
-void ParticleNode::renderSolid(RenderableCollector& collector,
-							   const VolumeTest& volume) const
+void ParticleNode::onPreRender(const VolumeTest& volume)
 {
-	if (!_renderableParticle) return;
+    if (!_renderableParticle) return;
 
-	// Update the particle system before rendering
-	update(volume);
-
-	_renderableParticle->renderSolid(collector, volume, localToWorld(), _renderEntity);
+    // Update the particle system before rendering
+    update(volume);
 }
 
-void ParticleNode::renderWireframe(RenderableCollector& collector,
-								   const VolumeTest& volume) const
+void ParticleNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-	// greebo: For now, don't draw particles in ortho views they are too distracting
-#if 0
-	if (!_renderableParticle) return;
-
-	// Update the particle system before rendering
-	update(volume);
-
-	_renderableParticle->renderWireframe(collector, volume, localToWorld(), _renderEntity.get());
-#endif
 }
 
 void ParticleNode::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -107,7 +94,7 @@ void ParticleNode::update(const VolumeTest& viewVolume) const
 	_renderableParticle->setEntityColour(Vector3(
 		_renderEntity->getShaderParm(0), _renderEntity->getShaderParm(1), _renderEntity->getShaderParm(2)));
 
-	_renderableParticle->update(viewRotation);
+	_renderableParticle->update(viewRotation, localToWorld());
 }
 
 } // namespace

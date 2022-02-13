@@ -3,7 +3,6 @@
 #include "imanipulator.h"
 #include "../BasicSelectable.h"
 #include "selection/manipulators/ManipulatorComponents.h"
-#include "../Renderables.h"
 #include "selection/textool/TextureToolManipulationPivot.h"
 
 namespace textool
@@ -54,7 +53,7 @@ private:
 
     selection::BasicSelectable _selectableZ;
     TextureRotator _rotator;
-    RenderableCircle _renderableCircle;
+    RenderablePointVector _renderableCircle;
 
     ShaderPtr _shader;
     IGLFont::Ptr _glFont;

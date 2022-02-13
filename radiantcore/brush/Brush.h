@@ -6,11 +6,12 @@
 #include "SelectableComponents.h"
 #include "RenderableWireFrame.h"
 #include "Translatable.h"
+#include "render/VertexCb.h"
 
 #include <sigc++/signal.h>
 #include "util/Noncopyable.h"
 
-class RenderableCollector;
+class IRenderableCollector;
 class Ray;
 
 /// \brief Returns true if 'self' takes priority when building brush b-rep.
@@ -100,9 +101,9 @@ private:
 	// ----
 
 	// cached data compiled from state
-	RenderablePointVector _faceCentroidPoints;
-	RenderablePointVector _uniqueVertexPoints;
-	RenderablePointVector _uniqueEdgePoints;
+    std::vector<Vector3> _faceCentroidPoints;
+    std::vector<Vector3> _uniqueVertexPoints;
+    std::vector<Vector3> _uniqueEdgePoints;
 
 	typedef std::vector<SelectableVertex> SelectableVertices;
 	SelectableVertices m_select_vertices;
@@ -141,10 +142,6 @@ public:
 		Faces _faces;
 		DetailFlag _detailFlag;
 	};
-
-	// static data
-	ShaderPtr m_state_point;
-	// ----
 
 	static double m_maxWorldCoord;
 
@@ -211,8 +208,6 @@ public:
 
 	const AABB& localAABB() const override;
 
-	void renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-
 	void transform(const Matrix4& matrix);
 
 	void snapto(float snap) override;
@@ -270,12 +265,6 @@ public:
 	/// \brief Constructs \p winding from the intersection of \p plane with the other planes of the brush.
 	void windingForClipPlane(Winding& winding, const Plane3& plane) const;
 
-	void update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const;
-
-	void update_faces_wireframe(RenderablePointVector& wire,
-								const std::size_t* visibleFaceIndices,
-								std::size_t numVisibleFaces) const;
-
 	/// \brief Makes this brush a deep-copy of the \p other.
 	void copy(const Brush& other);
 
@@ -296,6 +285,8 @@ public:
 
 	// Signal for external code to get notified each time any face of any brush changes
 	static sigc::signal<void>& signal_faceShaderChanged();
+
+    const std::vector<Vector3>& getVertices(selection::ComponentSelectionMode mode) const;
 
 private:
 	void edge_push_back(FaceVertexId faceVertex);

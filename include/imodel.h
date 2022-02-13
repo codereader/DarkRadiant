@@ -24,13 +24,9 @@ typedef std::vector<std::string> StringList;
  * Interface for static models.
  *
  * This interface provides functions for obtaining information about a LWO or
- * ASE model, such as its bounding box or poly count. The interface also
- * inherits from OpenGLRenderable to allow model instances to be used for
- * rendering.
+ * ASE model, such as its bounding box or poly count. 
  */
-class IModel
-: public OpenGLRenderable,
-  public Bounded
+class IModel : public Bounded
 {
 public:
 	/**

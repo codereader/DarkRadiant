@@ -327,6 +327,13 @@ public:
      *         a "skin changed" event.
      */
     virtual void refreshModel() = 0;
+
+    /**
+     * Invokes the given function object for each attached entity.
+     * At this point attachment entities are not accessible through the node's children,
+     * they have to be accessed through this method instead.
+     */
+    virtual void foreachAttachment(const std::function<void(const IEntityNodePtr&)>& functor) = 0;
 };
 typedef std::shared_ptr<IEntityNode> IEntityNodePtr;
 

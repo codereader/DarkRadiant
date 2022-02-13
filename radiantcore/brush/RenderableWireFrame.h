@@ -17,6 +17,7 @@ struct EdgeRenderIndices
 	{}
 };
 
+#if 0
 class RenderableWireframe :
 	public OpenGLRenderable
 {
@@ -48,5 +49,6 @@ public:
 
 	virtual ~RenderableWireframe() {}
 };
+#endif
 
 #endif /*RENDERABLEWIREFRAME_H_*/

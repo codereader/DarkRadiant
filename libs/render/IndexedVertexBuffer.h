@@ -1,6 +1,8 @@
 #pragma once
 
+#include "render.h"
 #include <GL/glew.h>
+#include "render/VBO.h"
 
 #include "GLProgramAttributes.h"
 
@@ -17,7 +19,7 @@ namespace render
  * raw vertex geometry.
  */
 template<typename Vertex_T>
-class IndexedVertexBuffer
+class IndexedVertexBuffer final
 {
 public:
     typedef std::vector<Vertex_T> Vertices;
@@ -80,6 +82,11 @@ public:
         std::copy(begin, end, std::back_inserter(_vertices));
     }
 
+    typename Vertices::size_type getNumVertices() const
+    {
+        return _vertices.size();
+    }
+
     /// Add a batch of indices
     template<typename Iter_T>
     void addIndexBatch(Iter_T begin, std::size_t count)
@@ -99,6 +106,37 @@ public:
         {
             _indices.push_back(*i);
         }
+    }
+
+    /// Add a batch of indices
+    template<typename Iter_T>
+    void addIndicesToLastBatch(Iter_T begin, std::size_t count, Indices::value_type offset = 0)
+    {
+        if (_batches.empty())
+        {
+            addIndexBatch(begin, count);
+            return;
+        }
+
+        if (count < 1)
+        {
+            throw std::logic_error("Batch must contain at least one index");
+        }
+
+        auto& batch = *_batches.rbegin();
+        batch.size += count;
+
+        // Append the indices
+        _indices.reserve(_indices.size() + count);
+
+        for (Iter_T i = begin; i < begin + count; ++i)
+        {
+            _indices.push_back(*i + offset);
+        }
+
+        // Invalidate the vertex and index buffers
+        deleteVBO(_vertexVBO);
+        deleteVBO(_indexVBO);
     }
 
     /**

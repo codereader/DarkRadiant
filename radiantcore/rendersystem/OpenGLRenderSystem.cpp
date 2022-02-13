@@ -8,7 +8,11 @@
 #include "math/Matrix4.h"
 #include "module/StaticModule.h"
 #include "backend/GLProgramFactory.h"
+#include "backend/BuiltInShader.h"
+#include "backend/ColourShader.h"
+#include "backend/LightInteractions.h"
 #include "debugging/debugging.h"
+#include "LightingModeRenderResult.h"
 
 #include <functional>
 
@@ -86,50 +90,82 @@ OpenGLRenderSystem::~OpenGLRenderSystem()
     _materialDefsUnloaded.disconnect();
 }
 
-ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
+ITextRenderer::Ptr OpenGLRenderSystem::captureTextRenderer(IGLFont::Style style, std::size_t size)
+{
+    // Try to find an existing text renderer with this combination
+    auto fontKey = std::make_pair(style, size);
+
+    auto existing = _textRenderers.find(fontKey);
+
+    if (existing == _textRenderers.end())
+    {
+        auto font = GlobalOpenGL().getFont(fontKey.first, fontKey.second);
+        existing = _textRenderers.emplace(fontKey, std::make_shared<TextRenderer>(font)).first;
+    }
+
+    return existing->second;
+}
+
+ShaderPtr OpenGLRenderSystem::capture(const std::string& name, const std::function<OpenGLShaderPtr()>& createShader)
 {
     // Usual ritual, check cache and return if found, otherwise create/
     // insert/return.
-    ShaderMap::const_iterator i = _shaders.find(name);
+    auto existing = _shaders.find(name);
 
-    if (i != _shaders.end())
+    if (existing != _shaders.end())
     {
-        return i->second;
+        return existing->second;
     }
 
     // Either the shader was not found, or the weak pointer failed to lock
     // because the shader had been deleted. Either way, create a new shader
-    // and insert into the cache.
-    OpenGLShaderPtr shd(new OpenGLShader(name, *this));
-    _shaders[name] = shd;
+    // using the given factory functor and insert into the cache.
+    auto shader = createShader();
+    _shaders[name] = shader;
 
     // Realise the shader if the cache is realised
     if (_realised)
     {
-        shd->realise();
+        shader->realise();
     }
 
-    // Return the new shader
-    return shd;
+    return shader;
 }
 
-/*
- * Render all states in the ShaderCache along with their renderables. This
- * is where the actual OpenGL rendering starts.
- */
-void OpenGLRenderSystem::render(RenderStateFlags globalstate,
-                               const Matrix4& modelview,
-                               const Matrix4& projection,
-                               const Vector3& viewer)
+ShaderPtr OpenGLRenderSystem::capture(const std::string& name)
+{
+    // Forward to the method accepting our factory function
+    return capture(name, [&]()
+    { 
+        return std::make_shared<OpenGLShader>(name, *this); 
+    });
+}
+
+ShaderPtr OpenGLRenderSystem::capture(BuiltInShaderType type)
+{
+    // Forward to the method accepting our factory function
+    auto name = BuiltInShader::GetNameForType(type);
+
+    return capture(name, [&]()
+    {
+        return std::make_shared<BuiltInShader>(type, *this);
+    });
+}
+
+ShaderPtr OpenGLRenderSystem::capture(ColourShaderType type, const Colour4& colour)
+{
+    // Forward to the method accepting our factory function
+    auto name = ColourShader::ConstructName(type, colour);
+
+    return capture(name, [&]()
+    {
+        return std::make_shared<ColourShader>(type, colour, *this);
+    });
+}
+
+void OpenGLRenderSystem::beginRendering(OpenGLState& state)
 {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
-
-    // Set the projection and modelview matrices
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixd(projection);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixd(modelview);
 
     // global settings that are not set in renderstates
     glFrontFace(GL_CW);
@@ -154,18 +190,13 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
         glDisableVertexAttribArrayARB(c_attr_Binormal);
     }
 
-    if (globalstate & RENDER_TEXTURE_2D) {
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    }
-
-    // Construct default OpenGL state
-    OpenGLState current;
 
     // Set up initial GL state. This MUST MATCH the defaults in the OpenGLState
     // object, otherwise required state changes may not occur.
-    glLineStipple(current.m_linestipple_factor,
-                  current.m_linestipple_pattern);
+    glLineStipple(state.m_linestipple_factor,
+        state.m_linestipple_pattern);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
@@ -194,30 +225,155 @@ void OpenGLRenderSystem::render(RenderStateFlags globalstate,
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glColor4f(1,1,1,1);
-    glDepthFunc(current.getDepthFunc());
+    glDepthFunc(state.getDepthFunc());
     glAlphaFunc(GL_ALWAYS, 0);
     glLineWidth(1);
     glPointSize(1);
 
     glHint(GL_FOG_HINT, GL_NICEST);
     glDisable(GL_FOG);
+}
+
+void OpenGLRenderSystem::setupViewMatrices(const Matrix4& modelview, const Matrix4& projection)
+{
+    // Set the projection and modelview matrices
+    glMatrixMode(GL_PROJECTION);
+    glLoadMatrixd(projection);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadMatrixd(modelview);
+}
+
+void OpenGLRenderSystem::finishRendering()
+{
+    if (GLEW_ARB_shader_objects)
+    {
+        glUseProgramObjectARB(0);
+    }
+
+    glDisableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glDisableClientState(GL_NORMAL_ARRAY);
+
+    glPopAttrib();
+}
+
+/*
+ * Render all states in the ShaderCache along with their renderables. This
+ * is where the actual OpenGL rendering starts.
+ */
+void OpenGLRenderSystem::render(RenderViewType renderViewType, 
+                                RenderStateFlags globalstate,
+                                const Matrix4& modelview,
+                                const Matrix4& projection,
+                                const Vector3& viewer,
+                                const VolumeTest& view)
+{
+    // Construct default OpenGL state
+    OpenGLState current;
+    beginRendering(current);
+
+    setupViewMatrices(modelview, projection);
 
     // Iterate over the sorted mapping between OpenGLStates and their
     // OpenGLShaderPasses (containing the renderable geometry), and render the
     // contents of each bucket. Each pass is passed a reference to the "current"
     // state, which it can change.
-    for (OpenGLStates::iterator i = _state_sorted.begin();
-        i != _state_sorted.end();
-        ++i)
+    for (const auto& pair : _state_sorted)
     {
         // Render the OpenGLShaderPass
-        if (!i->second->empty())
+        if (pair.second->empty()) continue;
+
+        if (pair.second->isApplicableTo(renderViewType))
         {
-            i->second->render(current, globalstate, viewer, _time);
+            pair.second->render(current, globalstate, viewer, view, _time);
         }
+
+        pair.second->clearRenderables();
     }
 
-    glPopAttrib();
+    renderText();
+
+    finishRendering();
+}
+
+void OpenGLRenderSystem::startFrame()
+{
+    // Prepare the storage objects
+    _geometryStore.onFrameStart();
+}
+
+void OpenGLRenderSystem::endFrame()
+{
+    _geometryStore.onFrameFinished();
+}
+
+IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFlagsMask,
+    const IRenderView& view)
+{
+    auto result = std::make_shared<LightingModeRenderResult>();
+
+    // Construct default OpenGL state
+    OpenGLState current;
+    beginRendering(current);
+    setupViewMatrices(view.GetModelview(), view.GetProjection());
+
+    std::size_t visibleLights = 0;
+    std::vector<LightInteractions> interactionLists;
+    interactionLists.reserve(_lights.size());
+
+    // Gather all visible lights and render the surfaces touched by them
+    for (const auto& light : _lights)
+    {
+        LightInteractions interaction(*light, _geometryStore);
+
+        if (!interaction.isInView(view))
+        {
+            result->skippedLights++;
+            continue;
+        }
+
+        result->visibleLights++;
+
+        // Check all the surfaces that are touching this light
+        interaction.collectSurfaces(_entities);
+
+        result->objects += interaction.getObjectCount();
+        result->entities += interaction.getEntityCount();
+        
+        interactionLists.emplace_back(std::move(interaction));
+    }
+
+    // Run the depth fill pass
+    for (auto& interactionList : interactionLists)
+    {
+        interactionList.fillDepthBuffer(current, globalFlagsMask, view, _time);
+    }
+
+    // Draw the surfaces per light and material
+    for (auto& interactionList : interactionLists)
+    {
+        interactionList.render(current, globalFlagsMask, view, _time);
+        result->drawCalls += interactionList.getDrawCalls();
+    }
+
+    renderText();
+
+    finishRendering();
+
+    return result;
+}
+
+void OpenGLRenderSystem::renderText()
+{
+    // Render all text
+    glDisable(GL_DEPTH_TEST);
+
+    for (const auto& [_, textRenderer] : _textRenderers)
+    {
+        textRenderer->render();
+    }
 }
 
 void OpenGLRenderSystem::realise()
@@ -234,13 +390,10 @@ void OpenGLRenderSystem::realise()
         _glProgramFactory->realise();
     }
 
-    // Realise the OpenGLShader objects
-    for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); ++i)
+    // Realise all shaders
+    for (auto& [_, shader] : _shaders)
     {
-        OpenGLShaderPtr sp = i->second;
-        assert(sp);
-
-        sp->realise();
+        shader->realise();
     }
 }
 
@@ -252,13 +405,10 @@ void OpenGLRenderSystem::unrealise()
 
     _realised = false;
 
-    // Unrealise the OpenGLShader objects
-    for (ShaderMap::iterator i = _shaders.begin(); i != _shaders.end(); ++i)
+    // Unrealise all OpenGLShader objects
+    for (auto& [_, shader] : _shaders)
     {
-        OpenGLShaderPtr sp = i->second;
-        assert(sp);
-
-        sp->unrealise();
+        shader->unrealise();
     }
 
 	if (GlobalOpenGLContext().getSharedContext() &&
@@ -366,13 +516,13 @@ void OpenGLRenderSystem::eraseSortedState(const OpenGLStates::key_type& key) {
 }
 
 // renderables
-void OpenGLRenderSystem::attachRenderable(const Renderable& renderable) {
+void OpenGLRenderSystem::attachRenderable(Renderable& renderable) {
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "attaching renderable during traversal");
     ASSERT_MESSAGE(m_renderables.find(&renderable) == m_renderables.end(), "renderable could not be attached");
     m_renderables.insert(&renderable);
 }
 
-void OpenGLRenderSystem::detachRenderable(const Renderable& renderable) {
+void OpenGLRenderSystem::detachRenderable(Renderable& renderable) {
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "detaching renderable during traversal");
     ASSERT_MESSAGE(m_renderables.find(&renderable) != m_renderables.end(), "renderable could not be detached");
     m_renderables.erase(&renderable);
@@ -381,10 +531,18 @@ void OpenGLRenderSystem::detachRenderable(const Renderable& renderable) {
 void OpenGLRenderSystem::forEachRenderable(const RenderableCallback& callback) const {
     ASSERT_MESSAGE(!m_traverseRenderablesMutex, "for-each during traversal");
     m_traverseRenderablesMutex = true;
-    for (Renderables::const_iterator i = m_renderables.begin(); i != m_renderables.end(); ++i) {
+    for (Renderables::iterator i = m_renderables.begin(); i != m_renderables.end(); ++i) {
         callback(*(*i));
     }
     m_traverseRenderablesMutex = false;
+}
+
+void OpenGLRenderSystem::setMergeModeEnabled(bool enabled)
+{
+    for (auto& [_, shader] : _shaders)
+    {
+        shader->setMergeModeEnabled(enabled);
+    }
 }
 
 // RegisterableModule implementation
@@ -396,13 +554,11 @@ const std::string& OpenGLRenderSystem::getName() const
 
 const StringSet& OpenGLRenderSystem::getDependencies() const
 {
-    static StringSet _dependencies;
-
-	if (_dependencies.empty())
+    static StringSet _dependencies
 	{
-		_dependencies.insert(MODULE_SHADERSYSTEM);
-		_dependencies.insert(MODULE_SHARED_GL_CONTEXT);
-	}
+        MODULE_SHADERSYSTEM,
+        MODULE_SHARED_GL_CONTEXT,
+    };
 
     return _dependencies;
 }
@@ -433,10 +589,66 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 
 void OpenGLRenderSystem::shutdownModule()
 {
+    _entities.clear();
+    _lights.clear();
+
+    _textRenderers.clear();
+
     _sharedContextCreated.disconnect();
     _sharedContextDestroyed.disconnect();
 	_materialDefsLoaded.disconnect();
 	_materialDefsUnloaded.disconnect();
+}
+
+void OpenGLRenderSystem::addEntity(const IRenderEntityPtr& renderEntity)
+{
+    assert(renderEntity);
+
+    if (!_entities.insert(renderEntity).second)
+    {
+        throw std::logic_error("Duplicate entity registration.");
+    }
+
+    auto light = std::dynamic_pointer_cast<RendererLight>(renderEntity);
+
+    if (!light) return;
+     
+    if (!_lights.insert(light).second)
+    {
+        throw std::logic_error("Duplicate light registration.");
+    }
+}
+
+void OpenGLRenderSystem::removeEntity(const IRenderEntityPtr& renderEntity)
+{
+    if (_entities.erase(renderEntity) == 0)
+    {
+        throw std::logic_error("Entity has not been registered.");
+    }
+
+    auto light = std::dynamic_pointer_cast<RendererLight>(renderEntity);
+
+    if (!light) return;
+
+    if (_lights.erase(light) == 0)
+    {
+        throw std::logic_error("Light has not been registered.");
+    }
+}
+
+void OpenGLRenderSystem::foreachEntity(const std::function<void(const IRenderEntityPtr&)>& functor)
+{
+    std::for_each(_entities.begin(), _entities.end(), functor);
+}
+
+void OpenGLRenderSystem::foreachLight(const std::function<void(const RendererLightPtr&)>& functor)
+{
+    std::for_each(_lights.begin(), _lights.end(), functor);
+}
+
+IGeometryStore& OpenGLRenderSystem::getGeometryStore()
+{
+    return _geometryStore;
 }
 
 // Define the static OpenGLRenderSystem module

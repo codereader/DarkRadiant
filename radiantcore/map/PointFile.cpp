@@ -1,10 +1,10 @@
 #include "PointFile.h"
 
 #include "i18n.h"
-#include "igl.h"
 #include "iscenegraph.h"
 #include "itextstream.h"
 #include "icameraview.h"
+#include "imap.h"
 #include "iorthoview.h"
 #include <fstream>
 #include <iostream>
@@ -28,8 +28,8 @@ namespace
 
 // Constructor
 PointFile::PointFile() :
-	_points(GL_LINE_STRIP),
-	_curPos(0)
+	_curPos(0),
+    _renderable(_points)
 {
     GlobalCommandSystem().addCommand(
         "NextLeakSpot", sigc::mem_fun(*this, &PointFile::nextLeakSpot)
@@ -65,14 +65,17 @@ void PointFile::show(const fs::path& pointfile)
 		parse(pointfile);
 
         // Construct shader if needed, and activate rendering
-        if (!_shader)
-            _shader = GlobalRenderSystem().capture("$POINTFILE");
-        GlobalRenderSystem().attachRenderable(*this);
+        auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+
+        if (renderSystem)
+        {
+            _renderable.update(renderSystem->capture(BuiltInShaderType::PointTraceLines));
+        }
 	}
 	else if (isVisible())
     {
         _points.clear();
-        GlobalRenderSystem().detachRenderable(*this);
+        _renderable.clear();
 	}
 
 	// Regardless whether hide or show, we reset the current position
@@ -82,20 +85,6 @@ void PointFile::show(const fs::path& pointfile)
 	SceneChangeNotify();
 }
 
-void PointFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
-{
-	if (isVisible())
-	{
-		collector.addRenderable(*_shader, _points, Matrix4::getIdentity());
-	}
-}
-
-void PointFile::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
-{
-	renderSolid(collector, volume);
-}
-
-// Parse the current pointfile and read the vectors into the point list
 void PointFile::parse(const fs::path& pointfile)
 {
     // Open the first pointfile and get its input stream if possible
@@ -110,7 +99,9 @@ void PointFile::parse(const fs::path& pointfile)
     // Construct vertices from parsed point data
     PointTrace trace(inFile);
     for (auto pos: trace.points())
-		_points.push_back(VertexCb(pos, RED));
+    {
+        _points.emplace_back(pos, RED);
+    }
 }
 
 // advance camera to previous point

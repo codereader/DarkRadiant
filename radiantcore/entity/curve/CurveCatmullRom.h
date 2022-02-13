@@ -13,7 +13,7 @@ class CurveCatmullRom :
 	public Curve
 {
 public:
-	CurveCatmullRom(const Callback& callback);
+	CurveCatmullRom(const IEntityNode& entity, const Callback& callback);
 
 	// Subdivides the segments between the control points
 	virtual void tesselate();

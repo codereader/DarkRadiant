@@ -20,6 +20,7 @@
 #include "tools/CameraMoveTool.h"
 #include "tools/MoveViewTool.h"
 #include "tools/MeasurementTool.h"
+#include "debugging/ScopedDebugTimer.h"
 
 #include <functional>
 
@@ -171,6 +172,8 @@ void XYWndManager::registerCommands()
 	GlobalCommandSystem().addCommand("CenterXYViews", std::bind(&XYWndManager::splitViewFocus, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CenterXYView", std::bind(&XYWndManager::focusActiveView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("Zoom100", std::bind(&XYWndManager::zoom100, this, std::placeholders::_1));
+	GlobalCommandSystem().addCommand("RunBenchmark", std::bind(&XYWndManager::runBenchmark, this, std::placeholders::_1), 
+        { cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
 
 	GlobalEventManager().addRegistryToggle("ToggleCrosshairs", RKEY_SHOW_CROSSHAIRS);
 	GlobalEventManager().addRegistryToggle("ToggleGrid", RKEY_SHOW_GRID);
@@ -756,6 +759,22 @@ MouseToolStack XYWndManager::getMouseToolsForEvent(wxMouseEvent& ev)
 void XYWndManager::foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func)
 {
     GlobalMouseToolManager().getGroup(IMouseToolGroup::Type::OrthoView).foreachMouseTool(func);
+}
+
+void XYWndManager::runBenchmark(const cmd::ArgumentList& args)
+{
+    auto cam = GlobalCamera().getActiveCamWnd();
+
+    cam->getCamera().setCameraOrigin({ 2517, -4511, 713 });
+    cam->getCamera().setCameraAngles({ -2.1, 123.91, 0 });
+
+    int numRuns = args.empty() ? 1 : args[0].getInt();
+
+    ScopedDebugTimer timer("Camera refresh, " + string::to_string(numRuns) + " runs");
+    for (int i = 0; i < numRuns; ++i)
+    {
+        cam->getCamera().forceRedraw();
+    }
 }
 
 // Define the static GlobalXYWnd module

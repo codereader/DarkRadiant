@@ -1,93 +1,118 @@
 #include "TranslateManipulator.h"
 
-#include "../Remap.h"
 #include "selection/SelectionPool.h"
 #include "selection/BestPoint.h"
-
-#include "registry/registry.h"
 
 namespace selection
 {
 
-const std::string RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
+constexpr const char* const RKEY_TRANSLATE_CONSTRAINED = "user/ui/xyview/translateConstrained";
 
-// Constructor
 TranslateManipulator::TranslateManipulator(ManipulationPivot& pivot, std::size_t segments, float length) :
 	_pivot(pivot),
 	_translator(std::bind(&ManipulationPivot::applyTranslation, &_pivot, std::placeholders::_1)),
     _translateFree(_translator),
     _translateAxis(_translator),
-    _arrowHeadX(3 * 2 * (segments << 3)),
-    _arrowHeadY(3 * 2 * (segments << 3)),
-    _arrowHeadZ(3 * 2 * (segments << 3))
+    _arrowX({ length,0,0 }, _pivot2World._worldSpace),
+    _arrowY({ 0,length,0 }, _pivot2World._worldSpace),
+    _arrowZ({ 0,0,length }, _pivot2World._worldSpace),
+    _arrowHeadX({ length,0,0 }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
+    _arrowHeadY({ 0,length,0 }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
+    _arrowHeadZ({ 0,0,length }, _pivot2World._axisScreen, length / 8, length / 3, _pivot2World._worldSpace),
+    _quadScreen(16, _pivot2World._viewplaneSpace),
+    _translateConstrained(RKEY_TRANSLATE_CONSTRAINED)
+{}
+
+void TranslateManipulator::updateColours()
 {
-    draw_arrowline(length, &_arrowX.front(), 0);
-    draw_arrowhead(segments, length, &_arrowHeadX._vertices.front(), TripleRemapXYZ<Vertex3f>(), TripleRemapXYZ<Normal3f>());
-    draw_arrowline(length, &_arrowY.front(), 1);
-    draw_arrowhead(segments, length, &_arrowHeadY._vertices.front(), TripleRemapYZX<Vertex3f>(), TripleRemapYZX<Normal3f>());
-    draw_arrowline(length, &_arrowZ.front(), 2);
-    draw_arrowhead(segments, length, &_arrowHeadZ._vertices.front(), TripleRemapZXY<Vertex3f>(), TripleRemapZXY<Normal3f>());
-
-    draw_quad(16, &_quadScreen.front());
-}
-
-void TranslateManipulator::UpdateColours() {
     _arrowX.setColour(colourSelected(COLOUR_X(), _selectableX.isSelected()));
     _arrowHeadX.setColour(colourSelected(COLOUR_X(), _selectableX.isSelected()));
     _arrowY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
     _arrowHeadY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
     _arrowZ.setColour(colourSelected(COLOUR_Z(), _selectableZ.isSelected()));
     _arrowHeadZ.setColour(colourSelected(COLOUR_Z(), _selectableZ.isSelected()));
-    _quadScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
+    _quadScreen.setColour(colourSelected(COLOUR_SCREEN(), _selectableScreen.isSelected()));
 }
 
-bool TranslateManipulator::manipulator_show_axis(const Pivot2World& pivot, const Vector3& axis) {
-    return fabs(pivot._axisScreen.dot(axis)) < 0.95;
-}
-
-void TranslateManipulator::render(RenderableCollector& collector, const VolumeTest& volume)
+bool TranslateManipulator::axisIsVisible(const Vector3& axis) const
 {
+    return fabs(_pivot2World._axisScreen.dot(axis)) < 0.95;
+}
+
+void TranslateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume)
+{
+    if (!renderSystem)
+    {
+        clearRenderables();
+        return;
+    }
+
+    if (!_lineShader)
+    {
+        _lineShader = renderSystem->capture(BuiltInShaderType::WireframeOverlay);
+    }
+
+    if (!_arrowHeadShader)
+    {
+        _arrowHeadShader = renderSystem->capture(BuiltInShaderType::FlatshadeOverlay);
+    }
+
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
 
-    // temp hack
-    UpdateColours();
+    updateColours();
 
-    Vector3 x = _pivot2World._worldSpace.xCol3().getNormalised();
-    bool show_x = manipulator_show_axis(_pivot2World, x);
+    auto x = _pivot2World._worldSpace.xCol3().getNormalised();
+    auto y = _pivot2World._worldSpace.yCol3().getNormalised();
+    auto z = _pivot2World._worldSpace.zCol3().getNormalised();
 
-    Vector3 y = _pivot2World._worldSpace.yCol3().getNormalised();
-    bool show_y = manipulator_show_axis(_pivot2World, y);
-
-    Vector3 z = _pivot2World._worldSpace.zCol3().getNormalised();
-    bool show_z = manipulator_show_axis(_pivot2World, z);
-
-    if(show_x)
+    if (axisIsVisible(x))
     {
-      collector.addRenderable(*_stateWire, _arrowX, _pivot2World._worldSpace);
+        _arrowX.update(_lineShader);
+        _arrowHeadX.update(_arrowHeadShader);
     }
-    if(show_y)
+    else
     {
-      collector.addRenderable(*_stateWire, _arrowY, _pivot2World._worldSpace);
-    }
-    if(show_z)
-    {
-      collector.addRenderable(*_stateWire, _arrowZ, _pivot2World._worldSpace);
+        _arrowX.clear();
+        _arrowHeadX.clear();
     }
 
-    collector.addRenderable(*_stateWire, _quadScreen, _pivot2World._viewplaneSpace);
+    if (axisIsVisible(y))
+    {
+        _arrowY.update(_lineShader);
+        _arrowHeadY.update(_arrowHeadShader);
+    }
+    else
+    {
+        _arrowY.clear();
+        _arrowHeadY.clear();
+    }
 
-    if(show_x)
+    if (axisIsVisible(z))
     {
-      collector.addRenderable(*_stateFill, _arrowHeadX, _pivot2World._worldSpace);
+        _arrowZ.update(_lineShader);
+        _arrowHeadZ.update(_arrowHeadShader);
     }
-    if(show_y)
+    else
     {
-      collector.addRenderable(*_stateFill, _arrowHeadY, _pivot2World._worldSpace);
+        _arrowZ.clear();
+        _arrowHeadZ.clear();
     }
-    if(show_z)
-    {
-      collector.addRenderable(*_stateFill, _arrowHeadZ, _pivot2World._worldSpace);
-    }
+
+    _quadScreen.update(_lineShader);
+}
+
+void TranslateManipulator::clearRenderables()
+{
+    _arrowX.clear();
+    _arrowY.clear();
+    _arrowZ.clear();
+    _arrowHeadX.clear();
+    _arrowHeadY.clear();
+    _arrowHeadZ.clear();
+    _quadScreen.clear();
+
+    _lineShader.reset();
+    _arrowHeadShader.reset();
 }
 
 void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
@@ -97,21 +122,20 @@ void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2
 
     SelectionPool selector;
 
-    Vector3 x = _pivot2World._worldSpace.xCol3().getNormalised();
-    bool show_x = manipulator_show_axis(_pivot2World, x);
+    auto x = _pivot2World._worldSpace.xCol3().getNormalised();
+    auto y = _pivot2World._worldSpace.yCol3().getNormalised();
+    auto z = _pivot2World._worldSpace.zCol3().getNormalised();
 
-    Vector3 y = _pivot2World._worldSpace.yCol3().getNormalised();
-    bool show_y = manipulator_show_axis(_pivot2World, y);
-
-    Vector3 z = _pivot2World._worldSpace.zCol3().getNormalised();
-    bool show_z = manipulator_show_axis(_pivot2World, z);
+    bool show_x = axisIsVisible(x);
+    bool show_y = axisIsVisible(y);
+    bool show_z = axisIsVisible(z);
 
     {
 		Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._viewpointSpace));
 
       {
         SelectionIntersection best;
-        Quad_BestPoint(local2view, eClipCullCW, &_quadScreen.front(), best);
+        Quad_BestPoint(local2view, eClipCullCW, &_quadScreen.getRawPoints().front(), best);
         if(best.isValid())
         {
           best = SelectionIntersection(0, 0);
@@ -126,35 +150,39 @@ void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2
       if(show_x)
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, &_arrowX.front(), best);
-        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadX._vertices.front(), &*(_arrowHeadX._vertices.end()-1)+1, best);
+        Line_BestPoint(local2view, &_arrowX.getRawPoints().front(), best);
+        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadX.getRawPoints().front(), &*(_arrowHeadX.getRawPoints().end()-1)+1, best);
         selector.addSelectable(best, &_selectableX);
       }
 
       if(show_y)
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, &_arrowY.front(), best);
-        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadY._vertices.front(), &*(_arrowHeadY._vertices.end()-1)+1, best);
+        Line_BestPoint(local2view, &_arrowY.getRawPoints().front(), best);
+        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadY.getRawPoints().front(), &*(_arrowHeadY.getRawPoints().end()-1)+1, best);
         selector.addSelectable(best, &_selectableY);
       }
 
       if(show_z)
       {
         SelectionIntersection best;
-        Line_BestPoint(local2view, &_arrowZ.front(), best);
-        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadZ._vertices.front(), &*(_arrowHeadZ._vertices.end()-1)+1, best);
+        Line_BestPoint(local2view, &_arrowZ.getRawPoints().front(), best);
+        Triangles_BestPoint(local2view, eClipCullCW, &_arrowHeadZ.getRawPoints().front(), &*(_arrowHeadZ.getRawPoints().end()-1)+1, best);
         selector.addSelectable(best, &_selectableZ);
       }
     }
 
 	// greebo: If any of the above arrows could be selected, select the first in the SelectionPool
-    if(!selector.empty()) {
-      (*selector.begin()).second->setSelected(true);
-    } else {
-    	ISelectable* selectable = NULL;
+    if(!selector.empty())
+    {
+        selector.begin()->second->setSelected(true);
+    }
+    else
+    {
+    	ISelectable* selectable = nullptr;
 
-    	if (registry::getValue<bool>(RKEY_TRANSLATE_CONSTRAINED)) {
+    	if (_translateConstrained.get())
+        {
 	    	// None of the shown arrows (or quad) has been selected, select an axis based on the precedence
 	    	Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._worldSpace));
 
@@ -187,7 +215,8 @@ void TranslateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2
     	}
 
 		// If everything went ok, there is a selectable available, add it
-    	if (selectable != NULL) {
+    	if (selectable)
+        {
     		selector.addSelectable(SelectionIntersection(0,0), selectable);
     		selectable->setSelected(true);
     	}
@@ -227,14 +256,8 @@ void TranslateManipulator::setSelected(bool select)
 
 bool TranslateManipulator::isSelected() const
 {
-    return _selectableX.isSelected()
-      | _selectableY.isSelected()
-      | _selectableZ.isSelected()
-      | _selectableScreen.isSelected();
+    return _selectableX.isSelected() || _selectableY.isSelected()
+        || _selectableZ.isSelected() || _selectableScreen.isSelected();
 }
-
-// Initialise the shaders of this class
-ShaderPtr TranslateManipulator::_stateWire;
-ShaderPtr TranslateManipulator::_stateFill;
 
 }

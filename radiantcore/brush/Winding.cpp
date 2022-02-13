@@ -1,26 +1,5 @@
-/*
-Copyright (C) 1999-2006 Id Software, Inc. and contributors.
-For a list of contributors, see the accompanying CONTRIBUTORS file.
-
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
 #include "Winding.h"
-#include "igl.h"
+
 #include "itextstream.h"
 #include <algorithm>
 #include "FixedWinding.h"
@@ -28,10 +7,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "math/Plane3.h"
 #include "texturelib.h"
 #include "Brush.h"
-
-#include "GLProgramAttributes.h"
-
-#include "debugging/render.h"
 
 namespace {
 	struct indexremap_t {
@@ -52,89 +27,6 @@ namespace {
 				return indexremap_t(0, 1, 2);
 		}
 	}
-}
-
-void Winding::drawWireframe() const
-{
-	if (!empty())
-	{
-		glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &front().vertex);
-		glDrawArrays(GL_LINE_LOOP, 0, GLsizei(size()));
-	}
-}
-
-void Winding::render(const RenderInfo& info) const
-{
-    // Do not render if there are no points
-	if (empty())
-    {
-		return;
-	}
-
-    // Our vertex colours are always white, if requested
-    glDisableClientState(GL_COLOR_ARRAY);
-    if (info.checkFlag(RENDER_VERTEX_COLOUR))
-    {
-        glColor3f(1, 1, 1);
-    }
-
-	// A shortcut pointer to the first array element to avoid
-	// massive calls to std::vector<>::begin()
-	const WindingVertex& firstElement = front();
-
-	// Set the vertex pointer first
-	glVertexPointer(3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex);
-
-    // Check render flags. Multiple flags may be set, so the order matters.
-    if (info.checkFlag(RENDER_TEXTURE_CUBEMAP))
-    {
-        // In cube-map mode, we submit the vertex coordinate as the texture
-        // coordinate. The RenderSystem will set the appropriate texture matrix
-        // etc.
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glTexCoordPointer(
-            3, GL_DOUBLE, sizeof(WindingVertex), &firstElement.vertex
-        );
-    }
-	else if (info.checkFlag(RENDER_BUMP))
-    {
-        // Lighting mode, submit normals, tangents and texcoords to the shader
-        // program.
-		glVertexAttribPointer(
-            ATTR_NORMAL, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.normal
-        );
-		glVertexAttribPointer(
-            ATTR_TEXCOORD, 2, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.texcoord
-        );
-		glVertexAttribPointer(
-            ATTR_TANGENT, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.tangent
-        );
-		glVertexAttribPointer(
-            ATTR_BITANGENT, 3, GL_DOUBLE, 0, sizeof(WindingVertex), &firstElement.bitangent
-        );
-	}
-	else
-    {
-        // Submit normals in lighting mode
-		if (info.checkFlag(RENDER_LIGHTING))
-        {
-			glNormalPointer(GL_DOUBLE, sizeof(WindingVertex), &firstElement.normal);
-		}
-
-        // Set texture coordinates in 2D texture mode
-		if (info.checkFlag(RENDER_TEXTURE_2D))
-        {
-            glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-            glTexCoordPointer(
-                2, GL_DOUBLE, sizeof(WindingVertex), &firstElement.texcoord
-            );
-		}
-	}
-
-    // Submit all data to OpenGL
-	glDrawArrays(GL_POLYGON, 0, GLsizei(size()));
-
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 }
 
 void Winding::testSelect(SelectionTest& test, SelectionIntersection& best)

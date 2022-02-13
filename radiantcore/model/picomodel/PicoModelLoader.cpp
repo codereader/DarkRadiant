@@ -25,14 +25,14 @@ namespace
 	}
 
     // Convert byte pointers to colour vector
-    inline Vector3 getColourVector(unsigned char* array)
+    inline Vector4 getColourVector(unsigned char* array)
     {
         if (array)
         {
-            return Vector3(array[0] / 255.0f, array[1] / 255.0f, array[2] / 255.0f);
+            return Vector4(array[0] / 255.0f, array[1] / 255.0f, array[2] / 255.0f, array[3] / 255.0f);
         }
         
-        return Vector3(1.0f, 1.0f, 1.0f); // white
+        return Vector4(1.0, 1.0, 1.0, 1.0); // white
     }
 } // namespace
 

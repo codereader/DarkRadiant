@@ -46,17 +46,8 @@ private:
     bool _isLight;
 
     // Colour of this entity and flag to indicate it has been specified
-    Vector3 _colour;
+    Vector4 _colour;
     bool _colourTransparent;
-
-    // Default shader names, in case we don't get any from the parent or otherwise
-    static const std::string DefaultWireShader;
-    static const std::string DefaultFillShader;
-    static const Vector3 DefaultEntityColour;
-
-    // Shader versions of the colour
-    std::string _fillShader;
-    std::string _wireShader;
 
     // Does this entity have a fixed size?
     bool _fixedSize;
@@ -135,19 +126,17 @@ public:
     void emplaceAttribute(EntityClassAttribute&& attribute);
 
     // IEntityClass implementation
-    std::string getName() const override;
+    const std::string& getName() const override;
     const IEntityClass* getParent() const override;
     sigc::signal<void>& changedSignal() override;
     bool isFixedSize() const override;
     AABB getBounds() const override;
     bool isLight() const override;
-    const Vector3& getColour() const override;
+    const Vector4& getColour() const override;
     /// Set the display colour
-    void setColour(const Vector3& colour) override;
+    void setColour(const Vector4& colour) override;
     // Resets the colour to the value defined in the attributes
     void resetColour();
-    const std::string& getWireShader() const override;
-    const std::string& getFillShader() const override;
     EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) override;
     const EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) const override;
     const std::string& getAttributeType(const std::string& name) const override;

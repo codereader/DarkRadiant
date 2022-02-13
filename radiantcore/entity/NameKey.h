@@ -1,52 +1,33 @@
-/*
-Copyright (C) 2001-2006, William Joseph.
-All Rights Reserved.
+#pragma once
 
-This file is part of GtkRadiant.
-
-GtkRadiant is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
-
-GtkRadiant is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with GtkRadiant; if not, write to the Free Software
-Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
-
-#if !defined(INCLUDED_NAMEDENTITY_H)
-#define INCLUDED_NAMEDENTITY_H
-
-#include "entitylib.h"
-
+#include "ieclass.h"
+#include "ientity.h"
 #include "SpawnArgs.h"
 
-namespace entity {
+namespace entity 
+{
 
 class NameKey :
 	public KeyObserver
 {
 	// The reference to the spawnarg structure
-	SpawnArgs& m_entity;
+	SpawnArgs& _entity;
 
 	// Cached "name" keyvalue
 	std::string _name;
 
+    sigc::signal<void> _sigNameChanged;
+
 public:
-	NameKey(SpawnArgs& entity) :
-		m_entity(entity)
+    NameKey(SpawnArgs& entity) :
+		_entity(entity)
 	{}
 
-	std::string name() const
+	const std::string& getName() const
 	{
 		if (_name.empty())
         {
-			return m_entity.getEntityClass()->getName();
+			return _entity.getEntityClass()->getName();
 		}
 		return _name;
 	}
@@ -54,36 +35,14 @@ public:
 	void onKeyValueChanged(const std::string& value)
 	{
 		_name = value;
+
+        _sigNameChanged.emit();
 	}
+
+    sigc::signal<void>& signal_nameChanged()
+    {
+        return _sigNameChanged;
+    }
 };
 
-class RenderableNameKey :
-	public OpenGLRenderable
-{
-	const NameKey& _nameKey;
-
-	// The origin (local entity coordinates)
-	Vector3 _origin;
-
-public:
-	RenderableNameKey(const NameKey& nameKey) :
-		_nameKey(nameKey),
-		_origin(0,0,0)
-	{}
-
-	// We render in local coordinates of the owning entity node
-	void render(const RenderInfo& info) const
-	{
-		glRasterPos3dv(_origin);
-		GlobalOpenGL().drawString(_nameKey.name());
-	}
-
-	void setOrigin(const Vector3& origin)
-	{
-		_origin = origin;
-	}
-};
-
-} // namespace entity
-
-#endif
+} // namespace

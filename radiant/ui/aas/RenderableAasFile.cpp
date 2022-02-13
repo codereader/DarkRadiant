@@ -12,57 +12,97 @@ namespace map
 RenderableAasFile::RenderableAasFile() :
 	_renderNumbers(registry::getValue<bool>(RKEY_SHOW_AAS_AREA_NUMBERS)),
 	_hideDistantAreas(registry::getValue<bool>(RKEY_HIDE_DISTANT_AAS_AREAS)),
-	_hideDistanceSquared(registry::getValue<float>(RKEY_AAS_AREA_HIDE_DISTANCE))
+	_hideDistanceSquared(registry::getValue<float>(RKEY_AAS_AREA_HIDE_DISTANCE)),
+    _renderableAreas(_visibleAreas, { 1,1,1,1 })
 {
 	_hideDistanceSquared *= _hideDistanceSquared;
 
-	GlobalRegistry().signalForKey(RKEY_SHOW_AAS_AREA_NUMBERS).connect([this]()
-	{
-		_renderNumbers = registry::getValue<bool>(RKEY_SHOW_AAS_AREA_NUMBERS);
-		GlobalMainFrame().updateAllWindows();
-	});
+	GlobalRegistry().signalForKey(RKEY_SHOW_AAS_AREA_NUMBERS).connect(
+        sigc::mem_fun(*this, &RenderableAasFile::onShowAreaNumbersChanged));
 
-	GlobalRegistry().signalForKey(RKEY_HIDE_DISTANT_AAS_AREAS).connect([this]()
-	{
-		_hideDistantAreas = registry::getValue<bool>(RKEY_HIDE_DISTANT_AAS_AREAS);
-		_hideDistanceSquared = registry::getValue<float>(RKEY_AAS_AREA_HIDE_DISTANCE);
-		_hideDistanceSquared *= _hideDistanceSquared;
-		GlobalMainFrame().updateAllWindows();
-	});
+	GlobalRegistry().signalForKey(RKEY_HIDE_DISTANT_AAS_AREAS).connect(
+        sigc::mem_fun(*this, &RenderableAasFile::onHideDistantAreasChanged));
 }
 
-void RenderableAasFile::setRenderSystem(const RenderSystemPtr& renderSystem)
+void RenderableAasFile::onShowAreaNumbersChanged()
 {
-	_renderSystem = renderSystem;
+    _renderNumbers = registry::getValue<bool>(RKEY_SHOW_AAS_AREA_NUMBERS);
+    GlobalMainFrame().updateAllWindows();
 }
 
-void RenderableAasFile::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void RenderableAasFile::onHideDistantAreasChanged()
 {
-	if (!_aasFile) return;
+    _hideDistantAreas = registry::getValue<bool>(RKEY_HIDE_DISTANT_AAS_AREAS);
+    _hideDistanceSquared = registry::getValue<float>(RKEY_AAS_AREA_HIDE_DISTANCE);
+    _hideDistanceSquared *= _hideDistanceSquared;
 
-	// Get the camera position for distance clipping
-	Matrix4 invModelView = volume.GetModelview().getFullInverse();
-	Vector3 viewPos = invModelView.tCol().getProjected();
+    if (!_hideDistantAreas)
+    {
+        _visibleAreas = _areas;
+    }
 
-	for (const RenderableSolidAABB& aabb : _renderableAabbs)
-	{
-		if (_hideDistantAreas && (aabb.getAABB().getOrigin() - viewPos).getLengthSquared() > _hideDistanceSquared)
-		{
-			continue;
-		}
-
-		collector.addRenderable(*_normalShader, aabb, Matrix4::getIdentity());
-	}
-
-	if (_renderNumbers)
-	{
-		collector.addRenderable(*_normalShader, *this, Matrix4::getIdentity());
-	}
+    _renderableAreas.queueUpdate();
+    GlobalMainFrame().updateAllWindows();
 }
 
-void RenderableAasFile::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void RenderableAasFile::onPreRender(const VolumeTest& volume)
 {
-	// Do nothing in wireframe mode
+    if (!_aasFile || !volume.fill()) return; // only react to camera views
+
+    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+
+    if (!renderSystem)
+    {
+        return;
+    }
+
+    if (!_normalShader)
+    {
+        _normalShader = renderSystem->capture(BuiltInShaderType::AasAreaBounds);
+    }
+
+    if (!_textRenderer)
+    {
+        _textRenderer = renderSystem->captureTextRenderer(IGLFont::Style::Sans, 14);
+    }
+
+    if (_hideDistantAreas)
+    {
+        // Get the camera position for distance clipping
+        auto invModelView = volume.GetModelview().getFullInverse();
+        auto viewPos = invModelView.tCol().getProjected();
+
+        _visibleAreas.clear();
+
+        for (const auto& area : _areas)
+        {
+            if ((area.getOrigin() - viewPos).getLengthSquared() > _hideDistanceSquared)
+            {
+                continue;
+            }
+
+            _visibleAreas.push_back(area);
+        }
+
+        for (auto& [areaNum, text] : _renderableNumbers)
+        {
+            text.setVisible(_renderNumbers && 
+                (_aasFile->getArea(areaNum).center - viewPos).getLengthSquared() <= _hideDistanceSquared);
+            text.update(_textRenderer);
+        }
+
+        _renderableAreas.queueUpdate();
+    }
+    else
+    {
+        for (auto& [_, text] : _renderableNumbers)
+        {
+            text.setVisible(_renderNumbers);
+            text.update(_textRenderer);
+        }
+    }
+
+    _renderableAreas.update(_normalShader);
 }
 
 std::size_t RenderableAasFile::getHighlightFlags()
@@ -72,48 +112,56 @@ std::size_t RenderableAasFile::getHighlightFlags()
 
 void RenderableAasFile::setAasFile(const IAasFilePtr& aasFile)
 {
-	_aasFile = aasFile;
+    clear();
+
+    _aasFile = aasFile;
 
 	prepare();
 }
 
-void RenderableAasFile::render(const RenderInfo& info) const
-{
-	// draw label
-	// Render the area numbers
-	for (std::size_t areaNum = 0; areaNum < _aasFile->getNumAreas(); ++areaNum)
-	{
-		const IAasFile::Area& area = _aasFile->getArea(static_cast<int>(areaNum));
-
-		if (_hideDistantAreas && (area.center - info.getViewerLocation()).getLengthSquared() > _hideDistanceSquared)
-		{
-			continue;
-		}
-
-		glRasterPos3dv(area.center);
-		GlobalOpenGL().drawString(string::to_string(areaNum));
-	}
-}
-
 void RenderableAasFile::prepare()
 {
-	if (!_aasFile) return;
-
-	_normalShader = GlobalRenderSystem().capture("$AAS_AREA");
+    if (!_aasFile)
+    {
+        clear();
+        return;
+    }
 
 	constructRenderables();
 }
 
 void RenderableAasFile::constructRenderables()
 {
-	_renderableAabbs.clear();
+    _areas.clear();
+    _renderableNumbers.clear();
 
 	for (std::size_t areaNum = 0; areaNum < _aasFile->getNumAreas(); ++areaNum)
 	{
 		const IAasFile::Area& area = _aasFile->getArea(static_cast<int>(areaNum));
 
-		_renderableAabbs.push_back(RenderableSolidAABB(area.bounds));
+		_areas.push_back(area.bounds);
+
+        // Allocate a new RenderableNumber for each area
+        _renderableNumbers.try_emplace(areaNum, string::to_string(areaNum), area.center, Vector4(1, 1, 1, 1));
 	}
+
+    if (!_hideDistantAreas)
+    {
+        _visibleAreas = _areas;
+    }
+
+    _renderableAreas.queueUpdate();
+}
+
+void RenderableAasFile::clear()
+{
+    _aasFile.reset();
+    _renderableAreas.clear();
+    _areas.clear();
+    _visibleAreas.clear();
+    _renderableNumbers.clear();
+    _normalShader.reset();
+    _textRenderer.reset();
 }
 
 } // namespace

@@ -93,16 +93,20 @@ public:
         return Type::MapRoot;
     }
 
-    // Renderable implementation (empty)
-    void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
+    void onPreRender(const VolumeTest& volume) override
     {}
 
-    void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override
     {}
 
 	std::size_t getHighlightFlags() override
     {
         return Highlight::NoHighlight; // never highlighted
+    }
+
+    RenderSystemPtr getRenderSystem() const override
+    {
+        return Node::getRenderSystem();
     }
 };
 

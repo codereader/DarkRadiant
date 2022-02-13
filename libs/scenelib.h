@@ -235,6 +235,55 @@ inline bool Node_hasSelectedChildNodes(const scene::INodePtr& node)
 namespace scene
 {
 
+inline void setNodeHidden(const INodePtr& node, bool hide)
+{
+    if (!node->supportsStateFlag(Node::eHidden))
+    {
+        return;
+    }
+
+    if (hide)
+    {
+        node->enable(Node::eHidden);
+    }
+    else
+    {
+        node->disable(Node::eHidden);
+    }
+}
+
+inline void showNode(const INodePtr& node)
+{
+    setNodeHidden(node, false);
+}
+
+inline void showSubgraph(const INodePtr& node)
+{
+    showNode(node);
+
+    node->foreachNode([&](const INodePtr& child)
+    {
+        showNode(child);
+        return true;
+    });
+}
+
+inline void hideNode(const INodePtr& node)
+{
+    setNodeHidden(node, true);
+}
+
+inline void hideSubgraph(const INodePtr& node)
+{
+    hideNode(node);
+
+    node->foreachNode([&](const INodePtr& child)
+    {
+        hideNode(child);
+        return true;
+    });
+}
+
 /**
  * greebo: This walker removes all encountered child nodes without
  * traversing each node's children. This deselects all removed nodes as well.

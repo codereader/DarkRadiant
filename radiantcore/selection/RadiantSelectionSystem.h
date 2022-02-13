@@ -152,8 +152,9 @@ public:
 	const WorkZone& getWorkZone() override;
 	Vector3 getCurrentSelectionCenter() override;
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void onPreRender(const VolumeTest& volume) override;
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override
+    {}
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override
 	{}
@@ -164,9 +165,6 @@ public:
 	}
 
 	const Matrix4& getPivot2World() override;
-
-	static void captureShaders();
-	static void releaseShaders();
 
 	// RegisterableModule implementation
 	virtual const std::string& getName() const override;

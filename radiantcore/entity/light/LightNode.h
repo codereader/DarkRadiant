@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Doom3LightRadius.h"
-#include "RenderableVertices.h"
 #include "Renderables.h"
 #include "LightShader.h"
 
@@ -14,6 +13,8 @@
 #include "../EntityNode.h"
 #include "../OriginKey.h"
 #include "../RotationKey.h"
+#include "Renderables.h"
+#include "LightVertexInstanceSet.h"
 
 namespace entity
 {
@@ -30,7 +31,6 @@ class LightNode :
     public ComponentEditable,
     public ComponentSnappable,
     public PlaneSelectable,
-    public OpenGLRenderable,
     public RendererLight
 {
 	OriginKey m_originKey;
@@ -42,32 +42,11 @@ class LightNode :
 
 	Doom3LightRadius m_doom3Radius;
 
-	// Renderable components of this light
-	RenderableLightTarget _rCentre;
-	RenderableLightTarget _rTarget;
-	RenderableLightRelative _rUp;
-	RenderableLightRelative _rRight;
-	RenderableLightTarget _rStart;
-	RenderableLightTarget _rEnd;
-
     RotationMatrix m_lightRotation;
     bool m_useLightRotation = false;
 
-    // Set of values defining a projected light
-    template<typename T> struct Projected
-    {
-        T target;
-        T up;
-        T right;
-        T start;
-        T end;
-    };
-
     // Projected light vectors, both base and transformed
     scene::TransformedCopy<Projected<Vector3>> _projVectors;
-
-    // Projected light vector colours
-    mutable Projected<Vector3> _projColours;
 
     // Projected light use flags
     Projected<bool> _projUseFlags;
@@ -86,6 +65,7 @@ class LightNode :
     mutable bool _projectionChanged;
 
 	LightShader m_shader;
+    ShaderPtr _vertexShader;
 
     // The 8x8 box representing the light object itself
     AABB _lightBox;
@@ -94,21 +74,17 @@ class LightNode :
     Callback m_boundsChanged;
     Callback m_evaluateTransform;
 
-	// The (draggable) light center instance
-	VertexInstance _lightCenterInstance;
-
-	VertexInstance _lightTargetInstance;
-	VertexInstanceRelative _lightRightInstance;
-	VertexInstanceRelative _lightUpInstance;
-	VertexInstance _lightStartInstance;
-	VertexInstance _lightEndInstance;
+    LightVertexInstanceSet _instances;
 
 	// dragplanes for lightresizing using mousedrag
     selection::DragPlanes _dragPlanes;
 
 	// Renderable components of this light
-	RenderLightRadiiBox _renderableRadius;
-    RenderLightProjection _renderableFrustum;
+    RenderableLightOctagon _renderableOctagon;
+    RenderableLightVolume _renderableLightVolume;
+    RenderableLightVertices _renderableVertices;
+
+    bool _showLightVolumeWhenUnselected;
 
 	// a temporary variable for calculating the AABB of all (selected) components
 	mutable AABB m_aabb_component;
@@ -129,6 +105,8 @@ public:
 
     // ILightNode implementation
     const RendererLight& getRendererLight() const override { return *this; }
+
+    void transformChanged() override;
 
 	// RenderEntity implementation
 	virtual float getShaderParm(int parmNum) const override;
@@ -182,18 +160,35 @@ public:
 	void selectedChangedComponent(const ISelectable& selectable);
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void onPreRender(const VolumeTest& volume) override;
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
-
-    // OpenGLRenderable implementation
-    void render(const RenderInfo& info) const override;
 
 	const Matrix4& rotation() const;
 
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
+
+    const Vector3& getWorldPosition() const override;
+
+    void onEntitySettingsChanged() override;
+
+    // Is this light projected or omni?
+    bool isProjected() const;
+
+    // Returns the frustum structure (calling this on point lights will throw)
+    const Frustum& getLightFrustum() const;
+
+    // Returns the relative start point used by projected lights to cut off
+    // the upper part of the projection cone to form the frustum
+    // Calling this on point lights will throw.
+    const Vector3& getLightStart() const;
+
+    // Returns the light radius for point lights
+    // Calling this on projected lights will throw
+    const Vector3& getLightRadius() const;
+
+    virtual Vector4 getEntityColour() const override;
 
 protected:
 	// Gets called by the Transformable implementation whenever
@@ -207,16 +202,11 @@ protected:
 	// Override EntityNode::construct()
 	void construct() override;
 
+    void onVisibilityChanged(bool isVisibleNow) override;
+    void onSelectionStatusChange(bool changeGroupStatus) override;
+
 private:
-    void renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const;
     void evaluateTransform();
-
-    // Render the light volume including bounds and origin
-    void renderLightVolume(RenderableCollector& collector,
-                           const Matrix4& localToWorld, bool selected) const;
-
-    // Update the bounds of the renderable radius box
-    void updateRenderableRadius() const;
 
     // Ensure the start and end points are set to sensible values
 	void checkStartEnd();
@@ -228,21 +218,9 @@ private:
 	void lightRightChanged(const std::string& value);
 	void lightStartChanged(const std::string& value);
 	void lightEndChanged(const std::string& value);
-	void writeLightOrigin();
 	void rotationChanged();
 	void lightRotationChanged(const std::string& value);
     void onLightRadiusChanged();
-	void destroy();
-
-	// Renderable submission functions
-	void renderWireframe(RenderableCollector& collector,
-						 const VolumeTest& volume,
-						 const Matrix4& localToWorld,
-						 bool selected) const;
-
-	// Adds the light centre renderable to the given collector
-	void renderLightCentre(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderProjectionPoints(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	// Returns a reference to the member class Doom3LightRadius (used to set colours)
 	Doom3LightRadius& getDoom3Radius();
@@ -266,9 +244,6 @@ private:
 	void revertLightTransform();
 	void freezeLightTransform();
 
-    // Is this light projected or omni?
-    bool isProjected() const;
-
     // Set the projection-changed flag
 	void projectionChanged();
 
@@ -284,6 +259,6 @@ private:
 
 	bool useStartEnd() const;
 
-}; // class LightNode
+};
 
 } // namespace entity

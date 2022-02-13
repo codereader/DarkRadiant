@@ -38,6 +38,15 @@ public:
                alpha)
     {}
 
+    /// Construct a Colour4 from a Vector4
+    template<typename U>
+    Colour4(const BasicVector4<U>& vec)
+        : Vector4f(static_cast<ElementType>(vec.x()),
+            static_cast<ElementType>(vec.y()),
+            static_cast<ElementType>(vec.z()),
+            static_cast<ElementType>(vec.w()))
+    {}
+
     /// Return true if this colour contains valid component values
     bool isValid() const
     {

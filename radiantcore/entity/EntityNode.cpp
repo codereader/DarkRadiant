@@ -19,12 +19,14 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_eclass(eclass),
 	_spawnArgs(_eclass),
 	_namespaceManager(_spawnArgs),
+    _originKey(std::bind(&EntityNode::_originKeyChanged, this)),
 	_nameKey(_spawnArgs),
-	_renderableName(_nameKey),
+	_renderableName(*this, _nameKey),
 	_modelKey(*this),
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
-	_direction(1,0,0)
+	_direction(1,0,0),
+    _isAttachedToRenderSystem(false)
 {
 }
 
@@ -39,12 +41,14 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_spawnArgs(other._spawnArgs),
     _localToParent(other._localToParent),
 	_namespaceManager(_spawnArgs),
+    _originKey(std::bind(&EntityNode::_originKeyChanged, this)),
 	_nameKey(_spawnArgs),
-	_renderableName(_nameKey),
+	_renderableName(*this, _nameKey),
 	_modelKey(*this),
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
-	_direction(1,0,0)
+	_direction(1,0,0),
+    _isAttachedToRenderSystem(false)
 {
 }
 
@@ -63,14 +67,16 @@ void EntityNode::construct()
 	TargetableNode::construct();
 
     // Observe basic keys
-    static_assert(std::is_base_of<sigc::trackable, NameKey>::value);
-    static_assert(std::is_base_of<sigc::trackable, ColourKey>::value);
+    static_assert(std::is_base_of_v<sigc::trackable, NameKey>);
+    static_assert(std::is_base_of_v<sigc::trackable, ColourKey>);
+    static_assert(std::is_base_of_v<sigc::trackable, OriginKey>);
+    observeKey("origin", sigc::mem_fun(_originKey, &OriginKey::onKeyValueChanged));
 	observeKey("name", sigc::mem_fun(_nameKey, &NameKey::onKeyValueChanged));
 	observeKey("_color", sigc::mem_fun(_colourKey, &ColourKey::onKeyValueChanged));
 
     // Observe model-related keys
-    static_assert(std::is_base_of<sigc::trackable, EntityNode>::value);
-    static_assert(std::is_base_of<sigc::trackable, ModelKey>::value);
+    static_assert(std::is_base_of_v<sigc::trackable, EntityNode>);
+    static_assert(std::is_base_of_v<sigc::trackable, ModelKey>);
 	observeKey("model", sigc::mem_fun(this, &EntityNode::_modelKeyChanged));
 	observeKey("skin", sigc::mem_fun(_modelKey, &ModelKey::skinChanged));
 
@@ -174,6 +180,14 @@ void EntityNode::observeKey(const std::string& key, KeyObserverFunc func)
     _keyObservers.observeKey(key, func);
 }
 
+void EntityNode::foreachAttachment(const std::function<void(const IEntityNodePtr&)>& functor)
+{
+    for (const auto& [node, _] : _attachedEnts)
+    {
+        functor(node);
+    }
+}
+
 Entity& EntityNode::getEntity()
 {
 	return _spawnArgs;
@@ -184,6 +198,11 @@ void EntityNode::refreshModel()
 	_modelKey.refreshModel();
 }
 
+std::string EntityNode::getEntityName() const
+{
+    return getName();
+}
+
 float EntityNode::getShaderParm(int parmNum) const
 {
 	return _shaderParms.getParmValue(parmNum);
@@ -192,6 +211,22 @@ float EntityNode::getShaderParm(int parmNum) const
 const Vector3& EntityNode::getDirection() const
 {
 	return _direction;
+}
+
+void EntityNode::addRenderable(const render::IRenderableObject::Ptr& object, Shader* shader)
+{
+    _renderObjects.addRenderable(object, shader);
+}
+
+void EntityNode::removeRenderable(const render::IRenderableObject::Ptr& object)
+{
+    _renderObjects.removeRenderable(object);
+}
+
+void EntityNode::foreachRenderableTouchingBounds(const AABB& bounds,
+    const IRenderEntity::ObjectVisitFunction& functor)
+{
+    _renderObjects.foreachRenderableTouchingBounds(bounds, functor);
 }
 
 std::string EntityNode::getFingerprint()
@@ -288,6 +323,13 @@ void EntityNode::onInsertIntoScene(scene::IMapRootNode& root)
 	_spawnArgs.connectUndoSystem(root.getUndoSystem());
 	_modelKey.connectUndoSystem(root.getUndoSystem());
 
+    attachToRenderSystem();
+
+    for (const auto& [node, _] : _attachedEnts)
+    {
+        node->onInsertIntoScene(root);
+    }
+
 	SelectableNode::onInsertIntoScene(root);
     TargetableNode::onInsertIntoScene(root);
 }
@@ -296,6 +338,13 @@ void EntityNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     TargetableNode::onRemoveFromScene(root);
 	SelectableNode::onRemoveFromScene(root);
+
+    detachFromRenderSystem();
+
+    for (const auto& [node, _] : _attachedEnts)
+    {
+        node->onRemoveFromScene(root);
+    }
 
 	_modelKey.disconnectUndoSystem(root.getUndoSystem());
 	_spawnArgs.disconnectUndoSystem(root.getUndoSystem());
@@ -333,7 +382,7 @@ void EntityNode::onChildRemoved(const scene::INodePtr& child)
 
 std::string EntityNode::name() const
 {
-	return _nameKey.name();
+	return _nameKey.getName();
 }
 
 scene::INode::Type EntityNode::getNodeType() const
@@ -341,28 +390,27 @@ scene::INode::Type EntityNode::getNodeType() const
 	return Type::Entity;
 }
 
-void EntityNode::renderSolid(RenderableCollector& collector,
-                             const VolumeTest& volume) const
+void EntityNode::onPreRender(const VolumeTest& volume)
 {
-    // Render any attached entities
-    renderAttachments(
-        [&](const scene::INodePtr& n) { n->renderSolid(collector, volume); }
-    );
-}
-
-void EntityNode::renderWireframe(RenderableCollector& collector,
-                                 const VolumeTest& volume) const
-{
-	// Submit renderable text name if required
-	if (EntitySettings::InstancePtr()->getRenderEntityNames())
+    if (EntitySettings::InstancePtr()->getRenderEntityNames())
     {
-        collector.addRenderable(*getWireShader(), _renderableName,
-                                localToWorld());
+        _renderableName.update(_textRenderer);
+    }
+    else
+    {
+        _renderableName.clear();
     }
 
     // Render any attached entities
     renderAttachments(
-        [&](const scene::INodePtr& n) { n->renderWireframe(collector, volume); }
+        [&](const scene::INodePtr& n) { n->onPreRender(volume); }
+    );
+}
+
+void EntityNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    renderAttachments(
+        [&](const scene::INodePtr& n) { n->renderHighlights(collector, volume); }
     );
 }
 
@@ -375,19 +423,32 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
 {
     if (renderSystem)
     {
-        _fillShader = renderSystem->capture(_spawnArgs.getEntityClass()->getFillShader());
-        _wireShader = renderSystem->capture(_spawnArgs.getEntityClass()->getWireShader());
+        const auto& colour = _spawnArgs.getEntityClass()->getColour();
+        _fillShader = renderSystem->capture(ColourShaderType::CameraSolid, colour);
+        _wireShader = renderSystem->capture(ColourShaderType::OrthoviewSolid, colour);
+        _colourShader = renderSystem->capture(ColourShaderType::CameraAndOrthoview, colour);
+        _textRenderer = renderSystem->captureTextRenderer(IGLFont::Style::Sans, 14);
     }
     else
     {
         _fillShader.reset();
         _wireShader.reset();
+        _colourShader.reset();
+        _textRenderer.reset();
     }
 }
 
 void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
+    // Detach from any existing render system first
+    detachFromRenderSystem();
+
 	SelectableNode::setRenderSystem(renderSystem);
+
+    if (renderSystem)
+    {
+        attachToRenderSystem();
+    }
 
     acquireShaders(renderSystem);
 
@@ -397,6 +458,8 @@ void EntityNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     // Make sure any attached entities have a render system too
     for (auto [node, offset]: _attachedEnts)
         node->setRenderSystem(renderSystem);
+
+	TargetableNode::onRenderSystemChanged();
 }
 
 std::size_t EntityNode::getHighlightFlags()
@@ -404,6 +467,23 @@ std::size_t EntityNode::getHighlightFlags()
 	if (!isSelected()) return Highlight::NoHighlight;
 
 	return isGroupMember() ? (Highlight::Selected | Highlight::GroupMember) : Highlight::Selected;
+}
+
+void EntityNode::onVisibilityChanged(bool isVisibleNow)
+{
+    SelectableNode::onVisibilityChanged(isVisibleNow);
+
+    for (const auto& [node, _] : _attachedEnts)
+    {
+        if (isVisibleNow)
+        {
+            scene::showSubgraph(node);
+        }
+        else
+        {
+            scene::hideSubgraph(node);
+        }
+    }
 }
 
 ModelKey& EntityNode::getModelKey()
@@ -429,14 +509,29 @@ void EntityNode::_modelKeyChanged(const std::string& value)
 	onModelKeyChanged(value);
 }
 
+void EntityNode::_originKeyChanged()
+{
+    // TODO: add virtual callout for subclasses
+}
+
 const ShaderPtr& EntityNode::getWireShader() const
 {
 	return _wireShader;
 }
 
+const ShaderPtr& EntityNode::getColourShader() const
+{
+	return _colourShader;
+}
+
 const ShaderPtr& EntityNode::getFillShader() const
 {
 	return _fillShader;
+}
+
+Vector4 EntityNode::getEntityColour() const
+{
+    return _spawnArgs.getEntityClass()->getColour();
 }
 
 void EntityNode::onPostUndo()
@@ -459,6 +554,40 @@ void EntityNode::onPostRedo()
 		child->setRenderEntity(this);
 		return true;
 	});
+}
+
+void EntityNode::onEntitySettingsChanged()
+{
+    if (!EntitySettings::InstancePtr()->getRenderEntityNames())
+    {
+        _renderableName.clear();
+    }
+}
+
+void EntityNode::attachToRenderSystem()
+{
+    if (_isAttachedToRenderSystem) return;
+
+    auto renderSystem = getRenderSystem();
+
+    if (renderSystem)
+    {
+        renderSystem->addEntity(std::dynamic_pointer_cast<IRenderEntity>(shared_from_this()));
+        _isAttachedToRenderSystem = true;
+    }
+}
+
+void EntityNode::detachFromRenderSystem()
+{
+    if (!_isAttachedToRenderSystem) return;
+
+    auto renderSystem = getRenderSystem();
+
+    if (renderSystem)
+    {
+        renderSystem->removeEntity(std::dynamic_pointer_cast<IRenderEntity>(shared_from_this()));
+        _isAttachedToRenderSystem = false;
+    }
 }
 
 } // namespace entity

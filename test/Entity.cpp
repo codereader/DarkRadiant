@@ -9,6 +9,7 @@
 #include "ishaders.h"
 #include "icolourscheme.h"
 #include "ieclasscolours.h"
+#include "render/RenderableCollectionWalker.h"
 
 #include "render/NopVolumeTest.h"
 #include "string/convert.h"
@@ -445,10 +446,19 @@ TEST_F(EntityTest, DestroySelectedEntity)
 namespace
 {
     // A simple RenderableCollector which just logs/stores whatever is submitted
-    struct TestRenderableCollector: public RenderableCollector
+    struct TestRenderableCollector : 
+        public render::RenderableCollectorBase
     {
-        // Count of submitted renderables and lights
+        TestRenderableCollector(bool solid) :
+            renderSolid(solid)
+        {}
+
+        bool renderSolid;
+
+        // Count of submitted and processed renderables, and lights
         int renderables = 0;
+        int processedNodes = 0;
+        int highlightRenderables = 0;
         int lights = 0;
 
         // List of actual RendererLight objects
@@ -456,6 +466,14 @@ namespace
 
         // List of renderables and their shaders
         std::vector< std::pair<const Shader*, const OpenGLRenderable*> > renderablePtrs;
+
+        std::vector<const OpenGLRenderable*> highlightRenderablePtrs;
+
+        void processNode(const scene::INodePtr& node, const VolumeTest& volume) override
+        {
+            RenderableCollectorBase::processNode(node, volume);
+            ++processedNodes;
+        }
 
         void addRenderable(Shader& shader, const OpenGLRenderable& renderable,
                            const Matrix4& localToWorld,
@@ -466,6 +484,13 @@ namespace
             renderablePtrs.push_back(std::make_pair(&shader, &renderable));
         }
 
+        void addHighlightRenderable(const OpenGLRenderable& renderable,
+            const Matrix4& localToWorld) override
+        {
+            ++highlightRenderables;
+            highlightRenderablePtrs.push_back(&renderable);
+        }
+
         void addLight(const RendererLight& light) override
         {
             ++lights;
@@ -473,8 +498,6 @@ namespace
         }
 
         bool supportsFullMaterials() const override { return true; }
-        void setHighlightFlag(Highlight::Flags flags, bool enabled) override
-        {}
     };
 
     // Collection of objects needed for rendering. Since not all tests require
@@ -488,14 +511,12 @@ namespace
         render::NopVolumeTest volumeTest;
         TestRenderableCollector collector;
 
-        // Whether to render solid or wireframe
-        const bool renderSolid;
-
         // Keep track of nodes visited
         int nodesVisited = 0;
 
         // Construct
-        RenderFixture(bool solid = false): renderSolid(solid)
+        RenderFixture(bool solid = false) :
+            collector(solid)
         {}
 
         // Convenience method to set render backend and traverse a node and its
@@ -513,10 +534,7 @@ namespace
             ++nodesVisited;
 
             // Render the node in appropriate mode
-            if (renderSolid)
-                node->renderSolid(collector, volumeTest);
-            else
-                node->renderWireframe(collector, volumeTest);
+            collector.processRenderable(*node, volumeTest);
 
             // Continue traversing
             return true;
@@ -594,6 +612,9 @@ TEST_F(EntityTest, LightWireframeShader)
     EXPECT_EQ(newWireSh->getName(), "<0.000000 1.000000 0.000000>");
 }
 
+// Disabled test, since the Shader implementation currently offers no public interface
+// to enumerate or inspect the submitted geometry - needs more thought
+#if 0 
 TEST_F(EntityTest, LightVolumeColorFromColorKey)
 {
     // Create a default light
@@ -669,6 +690,7 @@ TEST_F(EntityTest, OverrideLightVolumeColour)
     registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, true);
     registry::setValue(colours::RKEY_OVERRIDE_LIGHTCOL, false);
 }
+#endif
 
 TEST_F(EntityTest, OverrideEClassColour)
 {
@@ -677,8 +699,8 @@ TEST_F(EntityTest, OverrideEClassColour)
     auto lightCls = light->getEntity().getEntityClass();
     auto torchCls = torch->getEntity().getEntityClass();
 
-    static const Vector3 GREEN(0, 1, 0);
-    static const Vector3 YELLOW(1, 0, 1);
+    static const Vector4 GREEN(0, 1, 0, 1);
+    static const Vector4 YELLOW(1, 0, 1, 1);
 
     // Light has an explicit green editor_color
     EXPECT_EQ(lightCls->getColour(), GREEN);
@@ -693,6 +715,24 @@ TEST_F(EntityTest, OverrideEClassColour)
     // Both 'light' and its subclasses should have the new colour
     EXPECT_EQ(lightCls->getColour(), YELLOW);
     EXPECT_EQ(torchCls->getColour(), YELLOW);
+}
+
+TEST_F(EntityTest, DefaultEclassColourIsValid)
+{
+    auto eclass = GlobalEntityClassManager().findClass("dr:entity_using_modeldef");
+
+    EXPECT_FALSE(eclass->getParent()) << "Entity Class is not supposed to have a parent, please adjust the test data";
+    EXPECT_EQ(eclass->getAttribute("editor_color", true).getValue(), "") << "Entity Class shouldn't have an editor_color in this test";
+    
+    EXPECT_EQ(eclass->getColour(), Vector4(0.3, 0.3, 1, 1)) << "The entity class should have the same value as in EntityClass.cpp:DefaultEntityColour";
+}
+
+TEST_F(EntityTest, MissingEclassColourIsValid)
+{
+    auto eclass = GlobalEntityClassManager().findOrInsert("___nonexistingeclass___", true);
+
+    EXPECT_EQ(eclass->getAttribute("editor_color", true).getValue(), "") << "Entity Class shouldn't have an editor_color in this test";
+    EXPECT_EQ(eclass->getColour(), Vector4(0.3, 0.3, 1, 1)) << "The entity class should have the same value as in EntityClass.cpp:DefaultEntityColour";
 }
 
 TEST_F(EntityTest, FuncStaticLocalToWorld)
@@ -819,6 +859,71 @@ TEST_F(EntityTest, TranslateLightAfterRotation)
     EXPECT_EQ(light.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
 }
 
+namespace detail
+{
+
+// Returns the first render entity registered in the rendersystem, matching the given predicate
+inline IRenderEntityPtr getFirstRenderEntity(std::function<bool(IRenderEntityPtr)> predicate)
+{
+    IRenderEntityPtr result;
+
+    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+    renderSystem->foreachEntity([&](const IRenderEntityPtr& entity)
+    {
+        if (!result && predicate(entity))
+        {
+            result = entity;
+        }
+    });
+
+    return result;
+}
+
+inline std::set<RendererLightPtr> getAllRenderLights()
+{
+    std::set<RendererLightPtr> result;
+
+    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+    renderSystem->foreachLight([&](const RendererLightPtr& light)
+    {
+        result.insert(light);
+    });
+
+    return result;
+}
+
+inline std::set<render::IRenderableObject::Ptr> getAllObjects(IRenderEntityPtr entity)
+{
+    std::set<render::IRenderableObject::Ptr> result;
+
+    AABB hugeBounds({ 0,0,0 }, { 65536, 65536, 65536 });
+
+    entity->foreachRenderableTouchingBounds(hugeBounds, [&](const render::IRenderableObject::Ptr& object, Shader*)
+    {
+        result.insert(object);
+    });
+
+    return result;
+}
+
+}
+
+TEST_F(EntityTest, ForeachAttachment)
+{
+    // Insert a static entity with an attached light to the scene
+    auto torch = createByClassName("atdm:torch_brazier");
+    scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
+
+    int attachmentCount = 0;
+    torch->foreachAttachment([&](const IEntityNodePtr& attachment)
+    {
+        attachmentCount++;
+        EXPECT_TRUE(attachment->getEntity().isOfType("light_cageflame_small"));
+    });
+
+    EXPECT_EQ(attachmentCount, 1) << "No attachment found on entity " << torch->name();
+}
+
 TEST_F(EntityTest, LightTransformedByParent)
 {
     // Parent a light to another entity (this isn't currently how the attachment
@@ -826,7 +931,8 @@ TEST_F(EntityTest, LightTransformedByParent)
     // inherit the transformation of its parent).
     auto light = createByClassName("light");
     auto parentModel = createByClassName("func_static");
-    parentModel->addChildNode(light);
+    scene::addNodeToContainer(light, parentModel);
+    scene::addNodeToContainer(parentModel, GlobalMapModule().getRoot());
 
     // Parenting should automatically set the parent pointer of the child
     EXPECT_EQ(light->getParent(), parentModel);
@@ -843,15 +949,12 @@ TEST_F(EntityTest, LightTransformedByParent)
     // the method is localToWorld not localToParent).
     EXPECT_EQ(light->localToWorld(), Matrix4::getTranslation(ORIGIN));
 
-    // Render the light to obtain the RendererLight pointer
-    RenderFixture renderF(true /* solid */);
-    renderF.renderSubGraph(parentModel);
-    EXPECT_EQ(renderF.nodesVisited, 2);
-    EXPECT_EQ(renderF.collector.lights, 1);
-    ASSERT_FALSE(renderF.collector.lightPtrs.empty());
+    // Get the first light in the render system
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Expected 1 light registered in the render system";
 
-    // Check the rendered light's geometry
-    const RendererLight* rLight = renderF.collector.lightPtrs.front();
+    auto rLight = *lights.begin();
+
     EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
     EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
     EXPECT_EQ(rLight->lightAABB().extents, Vector3(320, 320, 320));
@@ -859,59 +962,61 @@ TEST_F(EntityTest, LightTransformedByParent)
 
 TEST_F(EntityTest, RenderUnselectedLightEntity)
 {
-    auto light = createByClassName("light");
-    RenderFixture renderF;
+    RenderFixture fixture;
 
-    // Render the light in wireframe mode.
-    light->setRenderSystem(renderF.backend);
-    light->renderWireframe(renderF.collector, renderF.volumeTest);
+    auto light = createByClassName("light");
+    scene::addNodeToContainer(light, GlobalMapModule().getRoot());
+
+    // Run the front-end collector through the scene
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
     // Only the light origin diamond should be rendered
-    EXPECT_EQ(renderF.collector.renderables, 1);
-    EXPECT_EQ(renderF.collector.lights, 0);
+    EXPECT_EQ(fixture.collector.highlightRenderables, 0);
+    EXPECT_EQ(fixture.collector.lights, 0);
 }
 
 TEST_F(EntityTest, RenderSelectedLightEntity)
 {
-    auto light = createByClassName("light");
-    RenderFixture renderF;
+    RenderFixture fixture;
 
-    // Select the light then render it in wireframe mode
-    scene::node_cast<ISelectable>(light)->setSelected(true);
-    light->setRenderSystem(renderF.backend);
-    light->renderWireframe(renderF.collector, renderF.volumeTest);
+    auto light = createByClassName("light");
+    scene::addNodeToContainer(light, GlobalMapModule().getRoot());
+
+    // Select the light then render it
+    Node_setSelected(light, true);
+
+    // Run the front-end collector through the scene
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
     // With the light selected, we should get the origin diamond, the radius and
     // the center vertex.
-    EXPECT_EQ(renderF.collector.renderables, 3);
-    EXPECT_EQ(renderF.collector.lights, 0);
+    EXPECT_EQ(fixture.collector.highlightRenderables, 2);
+    EXPECT_EQ(fixture.collector.lights, 0);
 }
 
-TEST_F(EntityTest, RenderLightAsLightSource)
+TEST_F(EntityTest, RenderLightProperties)
 {
     auto light = createByClassName("light_torchflame_small");
+    scene::addNodeToContainer(light, GlobalMapModule().getRoot());
+
     auto& spawnArgs = light->getEntity();
 
     // Set a non-default origin for the light
     static const Vector3 ORIGIN(-64, 128, 963);
     spawnArgs.setKeyValue("origin", string::to_string(ORIGIN));
 
-    // Render the light in full materials mode
-    RenderFixture renderF;
-    light->setRenderSystem(renderF.backend);
-    light->renderSolid(renderF.collector, renderF.volumeTest);
+    RenderFixture fixture;
 
-    // We should get one renderable for the origin diamond, and one light source
-    EXPECT_EQ(renderF.collector.renderables, 1);
-    EXPECT_EQ(renderF.collector.lights, 1);
+    // Run the front-end collector through the scene
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
-    // Confirm properties of the submitted RendererLight
-    ASSERT_EQ(renderF.collector.lightPtrs.size(), 1);
-    const RendererLight* rLight = renderF.collector.lightPtrs.front();
-    ASSERT_TRUE(rLight);
+    // Confirm properties of the registered RendererLight
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Expected 1 light registered in the render system";
+
+    auto rLight = *lights.begin();
     EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
     EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
-
     // Default light properties from the entitydef
     EXPECT_EQ(rLight->lightAABB().extents, Vector3(240, 240, 240));
     ASSERT_TRUE(rLight->getShader() && rLight->getShader()->getMaterial());
@@ -936,18 +1041,27 @@ TEST_F(EntityTest, RenderFuncStaticWithModel)
     // Create a func_static with a model key
     auto funcStatic = createByClassName("func_static");
     funcStatic->getEntity().setKeyValue("model", "models/moss_patch.ase");
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
 
-    RenderFixture rf;
-    rf.renderSubGraph(funcStatic);
+    // Run the front-end collector through the scene
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
     // The entity node itself does not render the model; it is a parent node
     // with the model as a child (e.g. as a StaticModelNode). Therefore we
-    // should have visited two nodes in total: the entity and its model child.
-    EXPECT_EQ(rf.nodesVisited, 2);
+    // should have called onPreRender on three nodes in total: the root, the entity and its model child.
+    EXPECT_EQ(fixture.collector.processedNodes, 3);
 
-    // Only one of the nodes should have submitted renderables
-    EXPECT_EQ(rf.collector.lights, 0);
-    EXPECT_EQ(rf.collector.renderables, 1);
+    // Get the first render entity
+    auto entity = detail::getFirstRenderEntity([&](IRenderEntityPtr candidate)
+    { 
+        return candidate == funcStatic;
+    });
+    EXPECT_TRUE(entity);
+    
+    // Check the renderables attached to this entity
+    auto objects = detail::getAllObjects(entity);
+    EXPECT_EQ(objects.size(), 1) << "Expected one renderable object attached to the func_static";
 }
 
 TEST_F(EntityTest, RenderFuncStaticWithMultiSurfaceModel)
@@ -955,12 +1069,24 @@ TEST_F(EntityTest, RenderFuncStaticWithMultiSurfaceModel)
     // Create a func_static with a model key
     auto funcStatic = createByClassName("func_static");
     funcStatic->getEntity().setKeyValue("model", "models/torch.lwo");
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+
+    // Run the front-end collector through the scene
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
+
+    // Get the first render entity
+    auto entity = detail::getFirstRenderEntity([&](IRenderEntityPtr candidate)
+    {
+        return candidate == funcStatic;
+    });
+    EXPECT_TRUE(entity);
+
+    // Check the renderables attached to this entity
+    auto objects = detail::getAllObjects(entity);
 
     // This torch model has 3 renderable surfaces
-    RenderFixture rf;
-    rf.renderSubGraph(funcStatic);
-    EXPECT_EQ(rf.collector.lights, 0);
-    EXPECT_EQ(rf.collector.renderables, 3);
+    EXPECT_EQ(objects.size(), 3) << "Expected one renderable object attached to the func_static";
 }
 
 TEST_F(EntityTest, EntityNodeRGBShaderParms)
@@ -1040,20 +1166,16 @@ TEST_F(EntityTest, RenderAttachedLightEntity)
     // Confirm that def has the right model
     EXPECT_EQ(torch.args().getKeyValue("model"), "models/torch.lwo");
 
-    // We must render in solid mode to get the light source
-    RenderFixture rf(true /* solid mode */);
-    rf.renderSubGraph(torch.node);
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
-    // There should be 3 renderables from the torch (because the entity has a
-    // shadowmesh and a collision mesh as well as the main model) and one from
-    // the light (the origin diamond).
-    EXPECT_EQ(rf.collector.renderables, 4);
+    EXPECT_EQ(fixture.collector.processedNodes, 3);
 
-    // The attached light should have been submitted as a light source
-    EXPECT_EQ(rf.collector.lights, 1);
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Attached light not registered";
 
     // The submitted light should be fully realised with a light shader
-    const RendererLight* rLight = rf.collector.lightPtrs.front();
+    auto rLight = *lights.begin();
     ASSERT_TRUE(rLight);
     EXPECT_TRUE(rLight->getShader());
 }
@@ -1066,15 +1188,15 @@ TEST_F(EntityTest, AttachedLightAtCorrectPosition)
     // Create a torch node and set a non-zero origin
     auto torch = createByClassName("atdm:torch_brazier");
     torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+    scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
 
     // Render the torch
-    RenderFixture rf(true /* solid mode */);
-    rf.renderSubGraph(torch);
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
-    // Access the submitted light source
-    ASSERT_FALSE(rf.collector.lightPtrs.empty());
-    const RendererLight* rLight = rf.collector.lightPtrs.front();
-    ASSERT_TRUE(rLight);
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Attached light not registered";
+    auto rLight = *lights.begin();
 
     // Check the light source's position
     EXPECT_EQ(rLight->getLightOrigin(), ORIGIN + EXPECTED_OFFSET);
@@ -1087,18 +1209,19 @@ TEST_F(EntityTest, ReloadDefsDoesNotChangeAttachPos)
     const Vector3 EXPECTED_OFFSET(0, 0, 10);
 
     // Create a torch node at the origin
-    auto torch = createByClassName("atdm:torch_brazier");
-    torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+    auto torch = TestEntity::create("atdm:torch_brazier");
+    torch.args().setKeyValue("origin", string::to_string(ORIGIN));
 
     // Reload all entity defs
     GlobalEntityClassManager().reloadDefs();
 
     // Render the torch
-    RenderFixture rf(true /* solid mode */);
-    rf.renderSubGraph(torch);
-    ASSERT_FALSE(rf.collector.lightPtrs.empty());
-    const RendererLight* rLight = rf.collector.lightPtrs.front();
-    ASSERT_TRUE(rLight);
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
+
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Attached light not registered";
+    auto rLight = *lights.begin();
 
     // The light source should still have the expected offset
     EXPECT_EQ(rLight->getLightOrigin(), ORIGIN + EXPECTED_OFFSET);
@@ -1113,11 +1236,12 @@ TEST_F(EntityTest, AttachedLightMovesWithEntity)
     // Create a torch node and set a non-zero origin
     auto torch = createByClassName("atdm:torch_brazier");
     torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+    scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
 
     // First render
     {
-        RenderFixture rf(true /* solid mode */);
-        rf.renderSubGraph(torch);
+        RenderFixture fixture;
+        render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
     }
 
     // Move the torch
@@ -1125,13 +1249,13 @@ TEST_F(EntityTest, AttachedLightMovesWithEntity)
     torch->getEntity().setKeyValue("origin", string::to_string(NEW_ORIGIN));
 
     // Render again to get positions
-    RenderFixture rf(true /* solid mode */);
-    rf.renderSubGraph(torch);
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
     // Access the submitted light source
-    ASSERT_FALSE(rf.collector.lightPtrs.empty());
-    const RendererLight* rLight = rf.collector.lightPtrs.front();
-    ASSERT_TRUE(rLight);
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Attached light not registered";
+    auto rLight = *lights.begin();
 
     // Check the light source's position
     EXPECT_EQ(rLight->getLightOrigin(), NEW_ORIGIN + EXPECTED_OFFSET);

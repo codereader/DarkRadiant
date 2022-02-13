@@ -138,17 +138,19 @@ public:
 	 */
 	virtual void setFiltered(bool filtered) override
     {
-		if (filtered) {
-			_state |= eFiltered;
+		if (filtered)
+        {
+			enable(eFiltered);
 		}
-		else {
-			_state &= ~eFiltered;
+		else
+        {
+			disable(eFiltered);
 		}
 	}
 
 	const Matrix4& localToWorld() const override;
 
-	void transformChangedLocal() override;
+	virtual void transformChangedLocal() override;
 
 	void transformChanged() override;
 
@@ -200,10 +202,14 @@ public:
 
 protected:
     // Set the "forced visible" flag, only to be used internally by subclasses
-	void setForcedVisibility(bool forceVisible, bool includeChildren) override;
+	virtual void setForcedVisibility(bool forceVisible, bool includeChildren) override;
 
 	// Method for subclasses to check whether this node is forcedly visible
 	bool isForcedVisible() const;
+
+    // Overridable method to get notified on visibility changes of this node
+    virtual void onVisibilityChanged(bool isVisibleNow)
+    {}
 
 	// Fills in the ancestors and self (in this order) into the given targetPath.
 	void getPathRecursively(scene::Path& targetPath);

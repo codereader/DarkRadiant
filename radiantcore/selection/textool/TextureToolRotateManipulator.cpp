@@ -100,10 +100,10 @@ constexpr double DefaultCrossHairSize = 10; // in device pixels
 TextureToolRotateManipulator::TextureToolRotateManipulator(TextureToolManipulationPivot& pivot) :
     _pivot(pivot),
     _rotator(std::bind(&TextureToolRotateManipulator::rotateSelected, this, std::placeholders::_1, std::placeholders::_2)),
-    _renderableCircle(CircleSegments << 3),
+    _renderableCircle(GL_LINE_LOOP, CircleSegments << 3),
     _circleRadius(DefaultCircleRadius)
 {
-    draw_ellipse(CircleSegments, static_cast<float>(DefaultCircleRadius), static_cast<float>(DefaultCircleRadius), &_renderableCircle.front(), RemapXYZ());
+    draw_ellipse<RemapXYZ>(CircleSegments, static_cast<float>(DefaultCircleRadius), static_cast<float>(DefaultCircleRadius), _renderableCircle);
     _renderableCircle.setColour(Colour4b(200, 200, 200, 200));
 }
 
@@ -161,7 +161,7 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
 {
     if (!_shader)
     {
-        _shader = GlobalRenderSystem().capture("$WIRE_OVERLAY");
+        _shader = GlobalRenderSystem().capture(BuiltInShaderType::WireframeOverlay);
 
         auto manipulatorFontStyle = registry::getValue<std::string>(selection::RKEY_MANIPULATOR_FONTSTYLE) == "Sans" ?
             IGLFont::Style::Sans : IGLFont::Style::Mono;
@@ -181,7 +181,7 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
 
     // Recalculate the circle radius based on the view
     // Raw circle is R=DefaultCircleRadius centered around origin
-    draw_ellipse(CircleSegments, DefaultCircleRadius, DefaultCircleRadius, &_renderableCircle.front(), RemapXYZ());
+    draw_ellipse<RemapXYZ>(CircleSegments, DefaultCircleRadius, DefaultCircleRadius, _renderableCircle);
 
     auto deselectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::Manipulator);
     auto selectedColour = GlobalTextureToolColourSchemeManager().getColour(SchemeElement::SelectedManipulator);

@@ -15,73 +15,39 @@ std::string LightShader::m_defaultShader = "";
 // --------- LightNode implementation ------------------------------------
 
 LightNode::LightNode(const IEntityClassPtr& eclass)
-: EntityNode(eclass), m_originKey(std::bind(&LightNode::originChanged, this)),
-  _originTransformed(ORIGINKEY_IDENTITY),
-  m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
-  _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
-  _rTarget(_projVectors.transformed.target, _lightBox.origin, _projColours.target),
-  _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin,
-       _projColours.up),
-  _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin,
-          _projColours.right),
-  _rStart(_projVectors.transformed.start, _lightBox.origin, _projColours.start),
-  _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
-  m_transformChanged(std::bind(&scene::Node::transformChanged, this)),
-  m_boundsChanged(std::bind(&scene::Node::boundsChanged, this)),
-  _lightCenterInstance(getDoom3Radius().m_centerTransformed,
-                       sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
-  _lightTargetInstance(_projVectors.transformed.target,
-                       sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
-  _lightRightInstance(_projVectors.transformed.right, _projVectors.transformed.target,
-                      sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
-  _lightUpInstance(_projVectors.transformed.up, _projVectors.transformed.target,
-                   sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
-  _lightStartInstance(_projVectors.transformed.start,
-                      sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
-  _lightEndInstance(_projVectors.transformed.end,
-                    sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
-  _dragPlanes(sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
-  _renderableRadius(_lightBox.origin),
-  _renderableFrustum(_lightBox.origin, _projVectors.transformed.start, _frustum),
-  _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
+: EntityNode(eclass), 
+    m_originKey(std::bind(&LightNode::originChanged, this)),
+    _originTransformed(ORIGINKEY_IDENTITY),
+    m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
+    m_transformChanged(std::bind(&scene::Node::transformChanged, this)),
+    m_boundsChanged(std::bind(&scene::Node::boundsChanged, this)),
+    _instances(getDoom3Radius().m_centerTransformed, _projVectors.transformed,
+               sigc::mem_fun(*this, &LightNode::selectedChangedComponent)),
+    _dragPlanes(sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
+    _renderableOctagon(*this),
+    _renderableLightVolume(*this),
+    _renderableVertices(*this, _instances, _projUseFlags),
+    _showLightVolumeWhenUnselected(EntitySettings::InstancePtr()->getShowAllLightRadii()),
+    _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
     m_doom3Radius.m_changed = std::bind(&LightNode::onLightRadiusChanged, this);
 }
 
 LightNode::LightNode(const LightNode& other)
-: EntityNode(other), ILightNode(other), m_originKey(std::bind(&LightNode::originChanged, this)),
-  _originTransformed(ORIGINKEY_IDENTITY),
-  m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
-  _rCentre(m_doom3Radius.m_centerTransformed, _lightBox.origin, m_doom3Radius._centerColour),
-  _rTarget(_projVectors.transformed.target, _lightBox.origin, _projColours.target),
-  _rUp(_projVectors.transformed.up, _projVectors.transformed.target, _lightBox.origin,
-       _projColours.up),
-  _rRight(_projVectors.transformed.right, _projVectors.transformed.target, _lightBox.origin,
-          _projColours.right),
-  _rStart(_projVectors.transformed.start, _lightBox.origin, _projColours.start),
-  _rEnd(_projVectors.transformed.end, _lightBox.origin, _projColours.end),
-  m_transformChanged(std::bind(&Node::transformChanged, this)),
-  m_boundsChanged(std::bind(&Node::boundsChanged, this)),
-  _lightCenterInstance(
-      getDoom3Radius().m_centerTransformed,
-      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _lightTargetInstance(
-      _projVectors.transformed.target,
-      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _lightRightInstance(
-      _projVectors.transformed.right, _projVectors.transformed.target,
-      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _lightUpInstance(_projVectors.transformed.up, _projVectors.transformed.target,
-                   std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _lightStartInstance(
-      _projVectors.transformed.start,
-      std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _lightEndInstance(_projVectors.transformed.end,
-                    std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-  _renderableRadius(_lightBox.origin),
-  _renderableFrustum(_lightBox.origin, _projVectors.transformed.start, _frustum),
-  _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
+: EntityNode(other), ILightNode(other), 
+    m_originKey(std::bind(&LightNode::originChanged, this)),
+    _originTransformed(ORIGINKEY_IDENTITY),
+    m_rotationKey(std::bind(&LightNode::rotationChanged, this)),
+    m_transformChanged(std::bind(&Node::transformChanged, this)),
+    m_boundsChanged(std::bind(&Node::boundsChanged, this)),
+    _instances(getDoom3Radius().m_centerTransformed, _projVectors.transformed,
+        sigc::mem_fun(*this, &LightNode::selectedChangedComponent)),
+    _dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
+    _renderableOctagon(*this),
+    _renderableLightVolume(*this),
+    _renderableVertices(*this, _instances, _projUseFlags),
+    _showLightVolumeWhenUnselected(other._showLightVolumeWhenUnselected),
+    _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
     m_doom3Radius.m_changed = std::bind(&LightNode::onLightRadiusChanged, this);
 }
@@ -97,12 +63,6 @@ LightNodePtr LightNode::Create(const IEntityClassPtr& eclass)
 void LightNode::construct()
 {
 	EntityNode::construct();
-
-    _projColours.target = Vector3(255,255,0);
-    _projColours.up = Vector3(255,0,255);
-    _projColours.right = Vector3(255,0,255);
-    _projColours.start = Vector3(0,0,0);
-    _projColours.end = Vector3(0,0,0);
 
     m_rotation.setIdentity();
     _lightBox.origin = Vector3(0, 0, 0);
@@ -134,13 +94,31 @@ void LightNode::construct()
 
     _projectionChanged = true;
 
-    // set the colours to their default values
-    m_doom3Radius.setCenterColour(_spawnArgs.getEntityClass()->getColour());
-
     _spawnArgs.setIsContainer(true);
 
     // Load the light colour (might be inherited)
     m_shader.valueChanged(_spawnArgs.getKeyValue("texture"));
+}
+
+const Frustum& LightNode::getLightFrustum() const
+{
+    if (!isProjected()) throw std::logic_error("getLightFrustum can be called on projected lights only");
+
+    return _frustum;
+}
+
+const Vector3& LightNode::getLightStart() const
+{
+    if (!isProjected()) throw std::logic_error("getLightStart can be called on projected lights only");
+
+    return _projVectors.transformed.start;
+}
+
+const Vector3& LightNode::getLightRadius() const
+{
+    if (isProjected()) throw std::logic_error("getLightRadius can be called on point lights only");
+
+    return m_doom3Radius.m_radiusTransformed;
 }
 
 AABB LightNode::getSelectAABB() const
@@ -153,6 +131,15 @@ void LightNode::onLightRadiusChanged()
 {
     // Light radius changed, mark bounds as dirty
     boundsChanged();
+}
+
+void LightNode::transformChanged()
+{
+    EntityNode::transformChanged();
+
+    _renderableOctagon.queueUpdate();
+    _renderableLightVolume.queueUpdate();
+    _renderableVertices.queueUpdate();
 }
 
 float LightNode::getShaderParm(int parmNum) const
@@ -168,6 +155,10 @@ void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 	// De-select all child components as well
 	setSelectedComponents(false, selection::ComponentSelectionMode::Vertex);
 	setSelectedComponents(false, selection::ComponentSelectionMode::Face);
+
+    _renderableOctagon.clear();
+    _renderableLightVolume.clear();
+    _renderableVertices.clear();
 }
 
 void LightNode::testSelect(Selector& selector, SelectionTest& test)
@@ -187,10 +178,10 @@ void LightNode::testSelect(Selector& selector, SelectionTest& test)
 
 // greebo: Returns true if drag planes or one or more light vertices are selected
 bool LightNode::isSelectedComponents() const {
-	return (_dragPlanes.isSelected() || _lightCenterInstance.isSelected() ||
-			_lightTargetInstance.isSelected() || _lightRightInstance.isSelected() ||
-			_lightUpInstance.isSelected() || _lightStartInstance.isSelected() ||
-			_lightEndInstance.isSelected() );
+	return (_dragPlanes.isSelected() || _instances.center.isSelected() ||
+			_instances.target.isSelected() || _instances.right.isSelected() ||
+			_instances.up.isSelected() || _instances.start.isSelected() ||
+			_instances.end.isSelected() );
 }
 
 // greebo: Selects/deselects all components, depending on the chosen componentmode
@@ -201,12 +192,12 @@ void LightNode::setSelectedComponents(bool select, selection::ComponentSelection
 	}
 
 	if (mode == selection::ComponentSelectionMode::Vertex) {
-		_lightCenterInstance.setSelected(false);
-		_lightTargetInstance.setSelected(false);
-		_lightRightInstance.setSelected(false);
-		_lightUpInstance.setSelected(false);
-		_lightStartInstance.setSelected(false);
-		_lightEndInstance.setSelected(false);
+		_instances.center.setSelected(false);
+		_instances.target.setSelected(false);
+		_instances.right.setSelected(false);
+		_instances.up.setSelected(false);
+		_instances.start.setSelected(false);
+		_instances.end.setSelected(false);
 	}
 }
 
@@ -214,12 +205,12 @@ void LightNode::invertSelectedComponents(selection::ComponentSelectionMode mode)
 {
 	if (mode == selection::ComponentSelectionMode::Vertex)
 	{
-		_lightCenterInstance.invertSelected();
-		_lightTargetInstance.invertSelected();
-		_lightRightInstance.invertSelected();
-		_lightUpInstance.invertSelected();
-		_lightStartInstance.invertSelected();
-		_lightEndInstance.invertSelected();
+		_instances.center.invertSelected();
+		_instances.target.invertSelected();
+		_instances.right.invertSelected();
+		_instances.up.invertSelected();
+		_instances.start.invertSelected();
+		_instances.end.invertSelected();
 	}
 }
 
@@ -233,16 +224,16 @@ void LightNode::testSelectComponents(Selector& selector, SelectionTest& test, se
 		if (isProjected())
         {
 			// Test the projection components for selection
-			_lightTargetInstance.testSelect(selector, test);
-			_lightRightInstance.testSelect(selector, test);
-			_lightUpInstance.testSelect(selector, test);
-			_lightStartInstance.testSelect(selector, test);
-			_lightEndInstance.testSelect(selector, test);
+			_instances.target.testSelect(selector, test);
+			_instances.right.testSelect(selector, test);
+			_instances.up.testSelect(selector, test);
+			_instances.start.testSelect(selector, test);
+			_instances.end.testSelect(selector, test);
 		}
 		else
         {
 			// Test if the light center is hit by the click
-			_lightCenterInstance.testSelect(selector, test);
+			_instances.center.testSelect(selector, test);
 		}
 	}
 }
@@ -253,15 +244,15 @@ const AABB& LightNode::getSelectedComponentsBounds() const {
 
 	if (isProjected()) {
 		// Include the according vertices in the AABB
-		m_aabb_component.includePoint(_lightTargetInstance.getVertex());
-		m_aabb_component.includePoint(_lightRightInstance.getVertex());
-		m_aabb_component.includePoint(_lightUpInstance.getVertex());
-		m_aabb_component.includePoint(_lightStartInstance.getVertex());
-		m_aabb_component.includePoint(_lightEndInstance.getVertex());
+		m_aabb_component.includePoint(_instances.target.getVertex());
+		m_aabb_component.includePoint(_instances.right.getVertex());
+		m_aabb_component.includePoint(_instances.up.getVertex());
+		m_aabb_component.includePoint(_instances.start.getVertex());
+		m_aabb_component.includePoint(_instances.end.getVertex());
 	}
 	else {
 		// Just include the light center, this is the only vertex that may be out of the light volume
-		m_aabb_component.includePoint(_lightCenterInstance.getVertex());
+		m_aabb_component.includePoint(_instances.center.getVertex());
 	}
 
 	return m_aabb_component;
@@ -271,22 +262,22 @@ void LightNode::snapComponents(float snap) {
 	if (isProjected()) {
 		// Check, if any components are selected and snap the selected ones to the grid
 		if (isSelectedComponents()) {
-			if (_lightTargetInstance.isSelected()) {
+			if (_instances.target.isSelected()) {
 				_projVectors.transformed.target.snap(snap);
 			}
-			if (_lightRightInstance.isSelected()) {
+			if (_instances.right.isSelected()) {
 				_projVectors.transformed.right.snap(snap);
 			}
-			if (_lightUpInstance.isSelected()) {
+			if (_instances.up.isSelected()) {
 				_projVectors.transformed.up.snap(snap);
 			}
 
 			if (useStartEnd()) {
-				if (_lightEndInstance.isSelected()) {
+				if (_instances.end.isSelected()) {
 					_projVectors.transformed.end.snap(snap);
 				}
 
-				if (_lightStartInstance.isSelected()) {
+				if (_instances.start.isSelected()) {
 					_projVectors.transformed.start.snap(snap);
 				}
 			}
@@ -333,219 +324,86 @@ scene::INodePtr LightNode::clone() const
 	return node;
 }
 
-void LightNode::selectedChangedComponent(const ISelectable& selectable) {
+void LightNode::selectedChangedComponent(const ISelectable& selectable)
+{
 	// add the selectable to the list of selected components (see RadiantSelectionSystem::onComponentSelection)
 	GlobalSelectionSystem().onComponentSelection(Node::getSelf(), selectable);
+
+    _renderableVertices.queueUpdate();
 }
 
-void LightNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void LightNode::onPreRender(const VolumeTest& volume)
 {
-    // Submit self to the renderer as an actual light source
-    collector.addLight(*this);
+    EntityNode::onPreRender(volume);
 
-    EntityNode::renderSolid(collector, volume);
+    // Pick the colour shader according to our settings
+    const auto& colourShader = _overrideColKey.get() ? getColourShader() : _colourKey.getColourShader();
+    _renderableOctagon.update(colourShader);
 
-    // Render the visible representation of the light entity (origin, bounds etc)
-    const bool lightIsSelected = isSelected();
-    renderLightVolume(collector, localToWorld(), lightIsSelected);
-    renderInactiveComponents(collector, volume, lightIsSelected);
-}
+    bool lightIsSelected = isSelected();
 
-void LightNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
-{
-    EntityNode::renderWireframe(collector, volume);
-
-    const bool lightIsSelected = isSelected();
-    renderLightVolume(collector, localToWorld(), lightIsSelected);
-    renderInactiveComponents(collector, volume, lightIsSelected);
-}
-
-void LightNode::renderLightVolume(RenderableCollector& collector,
-                                  const Matrix4& localToWorld,
-                                  bool selected) const
-{
-    // Obtain the appropriate Shader for the light volume colour
-    Shader* colourShader = _overrideColKey.get() ? EntityNode::_wireShader.get()
-                                                 : _colourKey.getWireShader();
-    if (!colourShader)
-        return;
-
-    // Main render, submit the diamond that represents the light entity
-    collector.addRenderable(*colourShader, *this, localToWorld);
-
-    // Render bounding box if selected or the showAllLighRadii flag is set
-    if (selected || EntitySettings::InstancePtr()->getShowAllLightRadii())
+    // Depending on the selected status or the entity settings, we need to update the wireframe volume
+    if (_showLightVolumeWhenUnselected || lightIsSelected)
     {
         if (isProjected())
         {
-            // greebo: This is not much of an performance impact as the
-            // projection gets only recalculated when it has actually changed.
             updateProjection();
-            collector.addRenderable(*colourShader, _renderableFrustum, localToWorld);
+        }
+
+        _renderableLightVolume.update(colourShader);
+
+        // Update vertices when the light is selected
+        if (lightIsSelected)
+        {
+            _renderableVertices.setComponentMode(GlobalSelectionSystem().ComponentMode());
+            _renderableVertices.update(_vertexShader);
         }
         else
         {
-            updateRenderableRadius();
-            collector.addRenderable(*colourShader, _renderableRadius, localToWorld);
+            _renderableVertices.clear();
         }
+    }
+    else
+    {
+        // Light volume is not visible, hide it
+        _renderableLightVolume.clear();
+        _renderableVertices.clear();
     }
 }
 
-/* greebo: Calculates the corners of the light radii box and rotates them according the rotation matrix.
- */
-void LightNode::updateRenderableRadius() const
+void LightNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    // greebo: Don't rotate the light radius box, that's done via local2world
-    AABB lightbox(_lightBox.origin, m_doom3Radius.m_radiusTransformed);
-    lightbox.getCorners(_renderableRadius.m_points);
+    collector.addHighlightRenderable(_renderableOctagon, Matrix4::getIdentity());
+    collector.addHighlightRenderable(_renderableLightVolume, Matrix4::getIdentity());
+
+    EntityNode::renderHighlights(collector, volume);
 }
 
 void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
 	EntityNode::setRenderSystem(renderSystem);
 
-	// The renderable vertices are maintaining shader objects, acquire/free them now
-    _rCentre.setRenderSystem(renderSystem);
-    _rTarget.setRenderSystem(renderSystem);
-    _rUp.setRenderSystem(renderSystem);
-    _rRight.setRenderSystem(renderSystem);
-    _rStart.setRenderSystem(renderSystem);
-    _rEnd.setRenderSystem(renderSystem);
+    // Clear the geometry from any previous shader
+    _renderableOctagon.clear();
+    _renderableLightVolume.clear();
+    _renderableVertices.clear();
 
     m_shader.setRenderSystem(renderSystem);
 
-	_lightCenterInstance.setRenderSystem(renderSystem);
-	_lightTargetInstance.setRenderSystem(renderSystem);
-	_lightRightInstance.setRenderSystem(renderSystem);
-	_lightUpInstance.setRenderSystem(renderSystem);
-	_lightStartInstance.setRenderSystem(renderSystem);
-	_lightEndInstance.setRenderSystem(renderSystem);
-}
-
-// Renders the components of this light instance
-void LightNode::renderComponents(RenderableCollector& collector, const VolumeTest& volume) const
-{
-	// Render the components (light center) as selected/deselected, if we are in the according mode
-	if (GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
-	{
-		if (isProjected())
-		{
-			// A projected light
-
-			EntitySettings& settings = *EntitySettings::InstancePtr();
-
-			const Vector3& colourStartEndSelected = settings.getLightVertexColour(LightEditVertexType::StartEndSelected);
-			const Vector3& colourStartEndDeselected = settings.getLightVertexColour(LightEditVertexType::StartEndDeselected);
-			const Vector3& colourVertexSelected = settings.getLightVertexColour(LightEditVertexType::Selected);
-			const Vector3& colourVertexDeselected = settings.getLightVertexColour(LightEditVertexType::Deselected);
-
-			// Update the colour of the light center dot
-            _projColours.target = (_lightTargetInstance.isSelected()) ? colourVertexSelected
-                                                                      : colourVertexDeselected;
-            _projColours.right = (_lightRightInstance.isSelected()) ? colourVertexSelected
-                                                                    : colourVertexDeselected;
-            _projColours.up = (_lightUpInstance.isSelected()) ? colourVertexSelected
-                                                              : colourVertexDeselected;
-
-            _projColours.start = (_lightStartInstance.isSelected()) ? colourStartEndSelected
-                                                                    : colourStartEndDeselected;
-            _projColours.end = (_lightEndInstance.isSelected()) ? colourStartEndSelected
-                                                                : colourStartEndDeselected;
-
-            // Render the projection points
-			renderProjectionPoints(collector, volume, localToWorld());
-		}
-		else
-		{
-			// A point light
-
-			// Update the colour of the light center dot
-			if (_lightCenterInstance.isSelected())
-			{
-				const_cast<LightNode&>(*this).getDoom3Radius().setCenterColour(
-					EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Selected));
-				renderLightCentre(collector, volume, localToWorld());
-			}
-			else
-			{
-				const_cast<LightNode&>(*this).getDoom3Radius().setCenterColour(
-					EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Deselected));
-				renderLightCentre(collector, volume, localToWorld());
-			}
-		}
-	}
-}
-
-void LightNode::renderInactiveComponents(RenderableCollector& collector, const VolumeTest& volume, const bool selected) const
-{
-	// greebo: We are not in component selection mode (and the light is still selected),
-	// check if we should draw the center of the light anyway
-	if (selected
-		&& GlobalSelectionSystem().ComponentMode() != selection::ComponentSelectionMode::Vertex
-		&& EntitySettings::InstancePtr()->getAlwaysShowLightVertices())
-	{
-		if (isProjected())
-		{
-			EntitySettings& settings = *EntitySettings::InstancePtr();
-			const Vector3& colourStartEndInactive = settings.getLightVertexColour(LightEditVertexType::StartEndDeselected);
-			const Vector3& colourVertexInactive = settings.getLightVertexColour(LightEditVertexType::Deselected);
-
-			_projColours.start = colourStartEndInactive;
-			_projColours.end = colourStartEndInactive;
-			_projColours.target = colourVertexInactive;
-			_projColours.right = colourVertexInactive;
-			_projColours.up = colourVertexInactive;
-
-			// Render the projection points
-			renderProjectionPoints(collector, volume, localToWorld());
-		}
-		else
-		{
-			const Vector3& colourVertexInactive = EntitySettings::InstancePtr()->getLightVertexColour(LightEditVertexType::Inactive);
-
-			const_cast<LightNode&>(*this).getDoom3Radius().setCenterColour(colourVertexInactive);
-			renderLightCentre(collector, volume, localToWorld());
-		}
-	}
-}
-
-// Backend render function (GL calls)
-void LightNode::render(const RenderInfo& info) const
-{
-    // Revert the light "diamond" to default extents for drawing
-    AABB tempAABB(_lightBox.origin, Vector3(8, 8, 8));
-
-    // Calculate the light vertices of this bounding box and store them into <points>
-    Vector3 max(tempAABB.origin + tempAABB.extents);
-    Vector3 min(tempAABB.origin - tempAABB.extents);
-    Vector3 mid(tempAABB.origin);
-
-    // top, bottom, tleft, tright, bright, bleft
-    Vector3 points[6] =
+    if (renderSystem)
     {
-        Vector3(mid[0], mid[1], max[2]),
-        Vector3(mid[0], mid[1], min[2]),
-        Vector3(min[0], max[1], mid[2]),
-        Vector3(max[0], max[1], mid[2]),
-        Vector3(max[0], min[1], mid[2]),
-        Vector3(min[0], min[1], mid[2])
-    };
+        _vertexShader = renderSystem->capture(BuiltInShaderType::BigPoint);
+        _renderableVertices.queueUpdate();
+    }
+    else
+    {
+        _vertexShader.reset();
+    }
+}
 
-    // greebo: Draw the small cube representing the light origin.
-    typedef unsigned int index_t;
-    const index_t indices[24] = {
-        0, 2, 3,
-        0, 3, 4,
-        0, 4, 5,
-        0, 5, 2,
-        1, 2, 5,
-        1, 5, 4,
-        1, 4, 3,
-        1, 3, 2
-    };
-
-    glVertexPointer(3, GL_DOUBLE, 0, points);
-    glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(index_t), RenderIndexTypeID, indices);
+Vector4 LightNode::getEntityColour() const
+{
+    return _overrideColKey.get() ? EntityNode::getEntityColour() : Vector4(_colourKey.getColour(), 1.0);
 }
 
 void LightNode::evaluateTransform()
@@ -566,20 +424,20 @@ void LightNode::evaluateTransform()
             // we have to calculate the new position in world space first and then transform
             // the point back into local space.
 
-            if (_lightCenterInstance.isSelected())
+            if (_instances.center.isSelected())
             {
                 // Retrieve the translation and apply it to the temporary light center variable
                 Vector3 newWorldPos = localToWorld().transformPoint(getDoom3Radius().m_center) + getTranslation();
                 getDoom3Radius().m_centerTransformed = localToWorld().getFullInverse().transformPoint(newWorldPos);
             }
 
-			if (_lightTargetInstance.isSelected())
+			if (_instances.target.isSelected())
             {
                 Vector3 newWorldPos = localToWorld().transformPoint(_projVectors.base.target) + getTranslation();
                 _projVectors.transformed.target = localToWorld().getFullInverse().transformPoint(newWorldPos);
 			}
 
-            if (_lightStartInstance.isSelected())
+            if (_instances.start.isSelected())
             {
                 Vector3 newWorldPos = localToWorld().transformPoint(_projVectors.base.start) + getTranslation();
                 Vector3 newLightStart = localToWorld().getFullInverse().transformPoint(newWorldPos);
@@ -588,7 +446,7 @@ void LightNode::evaluateTransform()
                 setLightStart(newLightStart);
             }
 
-            if (_lightEndInstance.isSelected())
+            if (_instances.end.isSelected())
             {
                 Vector3 newWorldPos = localToWorld().transformPoint(_projVectors.base.end) + getTranslation();
                 _projVectors.transformed.end = localToWorld().getFullInverse().transformPoint(newWorldPos);
@@ -604,13 +462,13 @@ void LightNode::evaluateTransform()
             local2World.translateBy(_projVectors.base.target);
             Matrix4 world2Local = local2World.getFullInverse();
 
-			if (_lightRightInstance.isSelected())
+			if (_instances.right.isSelected())
             {
                 Vector3 newWorldPos = local2World.transformPoint(_projVectors.base.right) + getTranslation();
                 _projVectors.transformed.right = world2Local.transformPoint(newWorldPos);
 			}
 
-			if (_lightUpInstance.isSelected())
+			if (_instances.up.isSelected())
             {
                 Vector3 newWorldPos = local2World.transformPoint(_projVectors.base.up) + getTranslation();
                 _projVectors.transformed.up = world2Local.transformPoint(newWorldPos);
@@ -644,6 +502,10 @@ void LightNode::_onTransformationChanged()
 	revertLightTransform();
 	evaluateTransform();
 	updateOrigin();
+
+    _renderableOctagon.queueUpdate();
+    _renderableLightVolume.queueUpdate();
+    _renderableVertices.queueUpdate();
 }
 
 void LightNode::_applyTransformation()
@@ -674,6 +536,46 @@ void LightNode::updateOrigin() {
 const Vector3& LightNode::getUntransformedOrigin()
 {
     return m_originKey.get();
+}
+
+const Vector3& LightNode::getWorldPosition() const
+{
+    return _originTransformed;
+}
+
+void LightNode::onVisibilityChanged(bool isVisibleNow)
+{
+    EntityNode::onVisibilityChanged(isVisibleNow);
+
+    if (isVisibleNow)
+    {
+        _renderableOctagon.queueUpdate();
+        _renderableLightVolume.queueUpdate();
+        _renderableVertices.queueUpdate();
+    }
+    else
+    {
+        _renderableLightVolume.clear();
+        _renderableOctagon.clear();
+        _renderableVertices.clear();
+    }
+}
+
+void LightNode::onSelectionStatusChange(bool changeGroupStatus)
+{
+    EntityNode::onSelectionStatusChange(changeGroupStatus);
+
+    // Volume renderable is not always prepared for rendering, queue an update
+    _renderableLightVolume.queueUpdate();
+    _renderableVertices.queueUpdate();
+}
+
+void LightNode::onEntitySettingsChanged()
+{
+    EntityNode::onEntitySettingsChanged();
+
+    _showLightVolumeWhenUnselected = EntitySettings::InstancePtr()->getShowAllLightRadii();
+    _renderableLightVolume.queueUpdate();
 }
 
 void LightNode::originChanged()
@@ -942,36 +844,6 @@ Doom3LightRadius& LightNode::getDoom3Radius() {
     return m_doom3Radius;
 }
 
-void LightNode::renderProjectionPoints(RenderableCollector& collector,
-                                   const VolumeTest& volume,
-                                   const Matrix4& localToWorld) const
-{
-    // Add the renderable light target
-    collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-    collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-
-	collector.addRenderable(*_rRight.getShader(), _rRight, localToWorld);
-	collector.addRenderable(*_rUp.getShader(), _rUp, localToWorld);
-	collector.addRenderable(*_rTarget.getShader(), _rTarget, localToWorld);
-
-    if (_projUseFlags.start)
-	{
-		collector.addRenderable(*_rStart.getShader(), _rStart, localToWorld);
-    }
-
-    if (_projUseFlags.end)
-	{
-		collector.addRenderable(*_rEnd.getShader(), _rEnd, localToWorld);
-    }
-}
-
-// Adds the light centre renderable to the given collector
-void LightNode::renderLightCentre(RenderableCollector& collector, const VolumeTest& volume,
-                                  const Matrix4& localToWorld) const
-{
-	collector.addRenderable(*_rCentre.getShader(), _rCentre, localToWorld);
-}
-
 void LightNode::translate(const Vector3& translation)
 {
     _originTransformed += translation;
@@ -1151,6 +1023,9 @@ void LightNode::projectionChanged()
 {
     _projectionChanged = true;
     m_doom3Radius.m_changed();
+
+    _renderableVertices.queueUpdate();
+    _renderableLightVolume.queueUpdate();
 
     SceneChangeNotify();
 }

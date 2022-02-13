@@ -4,24 +4,23 @@
 #include "irender.h"
 #include "imap.h"
 #include "icommandsystem.h"
-#include "irenderable.h"
 #include "math/Vector3.h"
-#include "render.h"
+#include "render/VertexCb.h"
+#include "RenderablePointFile.h"
 
 namespace map
 {
 
 /// Renderable point trace to identify leak positions
-class PointFile: public Renderable
+class PointFile
 {
 	// Vector of point coordinates
-	RenderablePointVector _points;
+	std::vector<VertexCb> _points;
 
 	// Holds the current position in the point file chain
 	std::size_t _curPos;
 
-    // The shader for rendering the line
-	ShaderPtr _shader;
+    RenderablePointFile _renderable;
 
 public:
 	// Constructor
@@ -32,24 +31,6 @@ public:
 
 	// Query whether the point path is currently visible
 	bool isVisible() const;
-
-  	/*
-	 * Solid renderable submission function (front-end)
-	 */
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-
-	/*
-	 * Wireframe renderable submission function (front-end).
-	 */
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
-
-	void setRenderSystem(const RenderSystemPtr& renderSystem) override
-	{}
-
-	std::size_t getHighlightFlags() override
-	{
-		return Highlight::NoHighlight;
-	}
 
 	void onMapEvent(IMap::MapEvent ev);
 

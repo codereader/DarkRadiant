@@ -19,7 +19,7 @@ namespace particles
 #define MS2SEC(x) ((x)*0.001f)
 
 /// A single bunch of particles, consisting of a renderable set of quads
-class RenderableParticleBunch : public OpenGLRenderable
+class RenderableParticleBunch
 {
 	// The bunch index
 	std::size_t _index;
@@ -73,7 +73,9 @@ public:
 	// Time is specified in stage time without offset,in msecs.
 	void update(std::size_t time);
 
-	void render(const RenderInfo& info) const;
+    // Add the renderable geometry to the given arrays
+    void addVertexData(std::vector<ArbitraryMeshVertex>& vertices, 
+        std::vector<unsigned int>& indices, const Matrix4& localToWorld);
 
 	const AABB& getBounds();
 

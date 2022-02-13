@@ -39,7 +39,6 @@ add_executable(darkradiant
                ui/common/ImageFilePopulator.cpp
                ui/common/ImageFileSelector.cpp
                ui/common/MapPreview.cpp
-               ui/common/RenderableAABB.cpp
                ui/common/ShaderChooser.cpp
                ui/common/ShaderSelector.cpp
                ui/common/SoundShaderDefinitionView.cpp

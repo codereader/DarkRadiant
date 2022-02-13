@@ -98,26 +98,22 @@ const Matrix4& MergeActionNodeBase::localToWorld() const
     return identity;
 }
 
-void MergeActionNodeBase::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void MergeActionNodeBase::onPreRender(const VolumeTest& volume)
 {
-    _affectedNode->viewChanged();
-    _affectedNode->renderSolid(collector, volume);
+    _affectedNode->onPreRender(volume);
     _affectedNode->foreachNode([&](const INodePtr& child)
     {
-        child->viewChanged();
-        child->renderSolid(collector, volume);
+        child->onPreRender(volume);
         return true;
     });
 }
 
-void MergeActionNodeBase::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void MergeActionNodeBase::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    _affectedNode->viewChanged();
-    _affectedNode->renderWireframe(collector, volume);
+    _affectedNode->renderHighlights(collector, volume);
     _affectedNode->foreachNode([&](const INodePtr& child)
     {
-        child->viewChanged();
-        child->renderWireframe(collector, volume);
+        child->renderHighlights(collector, volume);
         return true;
     });
 }

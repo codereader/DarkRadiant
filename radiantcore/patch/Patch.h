@@ -16,9 +16,6 @@
 #include "brush/Face.h"
 #include <sigc++/signal.h>
 
-// Enable to render the vertex normal/tangent/bitangent vectors in the cam view
-#define DEBUG_PATCH_NTB_VECTORS 0
-
 class PatchNode;
 class Ray;
 
@@ -55,25 +52,6 @@ class Patch :
 
 	// The tesselation for this patch
 	PatchTesselation _mesh;
-
-	// The OpenGL renderables for three rendering modes
-	RenderablePatchSolid _solidRenderable;
-	RenderablePatchWireframe _wireframeRenderable;
-	RenderablePatchFixedWireframe _fixedWireframeRenderable;
-    RenderablePatchVectorsNTB _renderableNTBVectors;
-
-	// The shader states for the control points and the lattice
-	ShaderPtr _pointShader;
-	ShaderPtr _latticeShader;
-
-	// greebo: The vertex list of the control points, can be passed to the RenderableVertexBuffer
-    std::vector<VertexCb> _ctrl_vertices;
-	// The renderable of the control points
-	RenderableVertexBuffer _renderableCtrlPoints;
-
-	// The lattice indices and their renderable
-	IndexBuffer _latticeIndices;
-	RenderableIndexBuffer _renderableLattice;
 
 	bool _transformChanged;
 
@@ -112,20 +90,7 @@ public:
 	void connectUndoSystem(IUndoSystem& undoSystem);
     void disconnectUndoSystem(IUndoSystem& undoSystem);
 
-	// Allocate callback: pass the allocate call to all the observers
-	void onAllocate(std::size_t size);
-
-	// Return the interally stored AABB
 	const AABB& localAABB() const override;
-
-	// Render functions: wireframe mode and components
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
-		const Matrix4& localToWorld, const IRenderEntity& entity) const;
-
-    /// Submit renderable edge and face points
-	void submitRenderablePoints(RenderableCollector& collector,
-                                const VolumeTest& volume,
-                                const Matrix4& localToWorld) const;
 
     RenderSystemPtr getRenderSystem() const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
@@ -362,6 +327,7 @@ public:
 	static sigc::signal<void>& signal_patchTextureChanged();
 
     void updateTesselation(bool force = false) override;
+    void queueTesselationUpdate();
 
 private:
 	// This notifies the surfaceinspector/patchinspector about the texture change

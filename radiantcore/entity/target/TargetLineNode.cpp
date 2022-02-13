@@ -9,13 +9,13 @@ namespace entity
 TargetLineNode::TargetLineNode(EntityNode& owner) :
     scene::Node(),
     _owner(owner),
-    _targetLines(_owner.getTargetKeys())
+    _targetLines(_owner, _owner.getTargetKeys())
 {}
 
 TargetLineNode::TargetLineNode(TargetLineNode& other) :
     scene::Node(other),
     _owner(other._owner),
-    _targetLines(_owner.getTargetKeys())
+    _targetLines(_owner, _owner.getTargetKeys())
 {}
 
 scene::INode::Type TargetLineNode::getNodeType() const
@@ -25,20 +25,58 @@ scene::INode::Type TargetLineNode::getNodeType() const
 
 const AABB& TargetLineNode::localAABB() const
 {
+    static AABB _aabb;
     return _aabb;
 }
 
-void TargetLineNode::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void TargetLineNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
-    renderWireframe(collector, volume);
+    Node::onInsertIntoScene(root);
+
+    _targetLines.clear();
 }
 
-void TargetLineNode::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
+void TargetLineNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    Node::onRemoveFromScene(root);
+
+    _targetLines.clear();
+}
+
+void TargetLineNode::onPreRender(const VolumeTest& volume)
 {
     // If the owner is hidden, the lines are hidden too
-    if (!_targetLines.hasTargets() || !_owner.visible()) return;
+    if (!_targetLines.hasTargets() || !_owner.visible())
+    {
+        // Hide ourselves
+        _targetLines.clear();
+        return;
+    }
 
-	_targetLines.render(_owner.getWireShader(), collector, volume, getOwnerPosition());
+    _targetLines.update(_owner.getColourShader(), getOwnerPosition());
+}
+
+void TargetLineNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
+{
+    collector.addHighlightRenderable(_targetLines, Matrix4::getIdentity());
+}
+
+void TargetLineNode::onRenderSystemChanged()
+{
+    _targetLines.clear();
+}
+
+void TargetLineNode::onVisibilityChanged(bool visible)
+{
+    Node::onVisibilityChanged(visible);
+
+    if (!visible)
+    {
+        // Disconnect our renderable when the node is hidden
+        // Once this node is shown again, the onPreRender method will
+        // call RenderableTargetLines::update()
+        _targetLines.clear();
+    }
 }
 
 std::size_t TargetLineNode::getHighlightFlags()

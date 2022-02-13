@@ -3,7 +3,6 @@
 #include "ivolumetest.h"
 #include "math/Matrix4.h"
 #include "irenderable.h"
-#include "render.h"
 
 inline void billboard_viewplaneOriented(Matrix4& rotation,
                                         const Matrix4& world2screen)

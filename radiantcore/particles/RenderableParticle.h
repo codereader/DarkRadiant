@@ -60,16 +60,10 @@ public:
 	~RenderableParticle();
 
 	// Time is in msecs
-	void update(const Matrix4& viewRotation) override;
+	void update(const Matrix4& viewRotation, const Matrix4& localToWorld) override;
 
-	// Front-end render methods
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, 
-					 const Matrix4& localToWorld, const IRenderEntity* entity) const;
-
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
-						 const Matrix4& localToWorld, const IRenderEntity* entity) const;
+    void onPreRender(const VolumeTest& volume) override;
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 

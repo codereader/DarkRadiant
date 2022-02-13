@@ -151,22 +151,35 @@ void RenderableParticleBunch::update(std::size_t time)
     }
 }
 
-void RenderableParticleBunch::render(const RenderInfo& info) const
+void RenderableParticleBunch::addVertexData(std::vector<ArbitraryMeshVertex>& vertices, 
+    std::vector<unsigned int>& indices, const Matrix4& localToWorld)
 {
     if (_quads.empty()) return;
 
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
+    auto firstIndex = static_cast<unsigned int>(vertices.size());
 
-    glVertexPointer(3, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].vertex));
-    glTexCoordPointer(2, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].texcoord));
-    glNormalPointer(GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].normal));
-    glColorPointer(4, GL_DOUBLE, sizeof(ParticleQuad::Vertex), &(_quads.front().verts[0].colour));
+    vertices.reserve(vertices.size() + _quads.size() * 4);
+    indices.reserve(indices.size() + _quads.size() * 4);
 
-    glDrawArrays(GL_QUADS, 0, static_cast<GLsizei>(_quads.size())*4);
+    for (const auto& quad : _quads)
+    {
+        for (auto i = 0; i < 4; ++i)
+        {
+            auto worldVertex = localToWorld * quad.verts[i].vertex;
 
-	glDisableClientState(GL_COLOR_ARRAY);
-	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+            vertices.push_back(ArbitraryMeshVertex(
+                worldVertex,
+                quad.verts[i].normal, 
+                quad.verts[i].texcoord, 
+                quad.verts[i].colour)
+            );
+        }
+
+        indices.push_back(firstIndex++);
+        indices.push_back(firstIndex++);
+        indices.push_back(firstIndex++);
+        indices.push_back(firstIndex++);
+    }
 }
 
 const AABB& RenderableParticleBunch::getBounds()

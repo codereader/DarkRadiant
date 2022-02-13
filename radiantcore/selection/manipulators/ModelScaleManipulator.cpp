@@ -7,8 +7,14 @@ namespace selection
 
 ModelScaleManipulator::ModelScaleManipulator(ManipulationPivot& pivot) :
 	_pivot(pivot),
-	_renderableCornerPoints(GL_POINTS)
+    _renderableAABBs(_aabbs),
+    _renderableCornerPoints(_aabbs)
 {
+}
+
+ModelScaleManipulator::~ModelScaleManipulator()
+{
+    clearRenderables();
 }
 
 ModelScaleManipulator::Type ModelScaleManipulator::getType() const
@@ -65,33 +71,49 @@ bool ModelScaleManipulator::isSelected() const
 	return _curManipulatable != nullptr;
 }
 
-void ModelScaleManipulator::render(RenderableCollector& collector, const VolumeTest& volume)
+void ModelScaleManipulator::onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume)
 {
-	_renderableAabbs.clear();
-	_renderableCornerPoints.clear();
-	
-	foreachSelectedTransformable([&](const scene::INodePtr& node, Entity* entity)
-	{
-		const AABB& aabb = node->worldAABB();
-		_renderableAabbs.push_back(RenderableSolidAABB(aabb));
+    if (!renderSystem)
+    {
+        clearRenderables();
+        _aabbs.clear();
+        return;
+    }
 
-		Vector3 points[8];
-		aabb.getCorners(points);
+    if (!_lineShader)
+    {
+        _lineShader = renderSystem->capture(BuiltInShaderType::WireframeOverlay);
+    }
 
-		bool isSelected = (node == _curManipulatable);
+    if (!_pointShader)
+    {
+        _pointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
+    }
+    
+    _aabbs.clear();
 
-		for (std::size_t i = 0; i < 8; ++i)
-		{
-			_renderableCornerPoints.push_back(VertexCb(points[i], isSelected ? COLOUR_SELECTED() : COLOUR_SCREEN()));
-		}
-	});
+    foreachSelectedTransformable([&](const scene::INodePtr& node, Entity* entity)
+    {
+        _aabbs.push_back(node->worldAABB());
+    });
 
-	for (const RenderableSolidAABB& aabb : _renderableAabbs)
-	{
-		collector.addRenderable(*_lineShader, aabb, Matrix4::getIdentity());
-	}
+    _renderableCornerPoints.setColour(isSelected() ? COLOUR_SELECTED() : COLOUR_SCREEN());
+    _renderableCornerPoints.queueUpdate();
+    _renderableAABBs.queueUpdate();
 
-	collector.addRenderable(*_pointShader, _renderableCornerPoints, Matrix4::getIdentity());
+    _renderableAABBs.update(_lineShader);
+    _renderableCornerPoints.update(_pointShader);
+}
+
+void ModelScaleManipulator::render(IRenderableCollector& collector, const VolumeTest& volume)
+{
+}
+
+void ModelScaleManipulator::clearRenderables()
+{
+    _renderableCornerPoints.clear();
+    _renderableAABBs.clear();
+    _lineShader.reset();
 }
 
 void ModelScaleManipulator::foreachSelectedTransformable(
@@ -107,9 +129,6 @@ void ModelScaleManipulator::foreachSelectedTransformable(
 		}
 	});
 }
-
-ShaderPtr ModelScaleManipulator::_lineShader;
-ShaderPtr ModelScaleManipulator::_pointShader;
 
 }
 

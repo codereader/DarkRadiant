@@ -1,5 +1,4 @@
-#ifndef _RENDERABLE_SPACE_PARTITION_H_
-#define _RENDERABLE_SPACE_PARTITION_H_
+#pragma once
 
 #include "ispacepartition.h"
 #include "irender.h"
@@ -7,6 +6,7 @@
 
 #include "math/Matrix4.h"
 #include "math/AABB.h"
+#include "render/RenderableColouredBoundingBoxes.h"
 
 namespace render
 {
@@ -21,8 +21,7 @@ namespace render
  * This object can be directly attached to the GlobalRenderSystem().
  */
 class RenderableSpacePartition :
-	public Renderable,
-	public OpenGLRenderable
+	public Renderable
 {
 private:
 	// The shader we're using
@@ -31,30 +30,46 @@ private:
 	// The space partition to render
 	scene::ISpacePartitionSystemPtr _spacePartition;
 
+    std::vector<AABB> _spacePartitionNodes;
+    std::vector<Vector4> _nodeColours;
+    RenderableColouredBoundingBoxes _renderableBoxes;
+
 public:
+    RenderableSpacePartition() :
+        _renderableBoxes(_spacePartitionNodes, _nodeColours)
+    {}
+
 	void setSpacePartition(const scene::ISpacePartitionSystemPtr& spacePartition)
 	{
 		_spacePartition = spacePartition;
 	}
 
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
-	{
-		if (_shader != NULL)
-		{
-			collector.addRenderable(*_shader, *this, Matrix4::getIdentity());
-		}
-	}
+    void onPreRender(const VolumeTest& volume) override
+    {
+        if (!_spacePartition)
+        {
+            _renderableBoxes.clear();
+            return;
+        }
 
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
-	{
-		if (_shader != NULL)
-		{
-			collector.addRenderable(*_shader, *this, Matrix4::getIdentity());
-		}
-	}
+        // Accumulate the bounding boxes to render
+        _spacePartitionNodes.clear();
+        _nodeColours.clear();
+
+        accumulateBoundingBoxes(_spacePartition->getRoot());
+
+        // Update the renderable every frame
+        _renderableBoxes.queueUpdate();
+        _renderableBoxes.update(_shader);
+    }
+
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override
+    {}
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override
 	{
+        _renderableBoxes.clear();
+
 		if (renderSystem)
 		{
 			_shader = renderSystem->capture("[1 0 0]");
@@ -70,74 +85,27 @@ public:
 		return Highlight::NoHighlight; // never highlighted
 	}
 
-	void renderNode(const scene::ISPNodePtr& node) const
+private:
+	void accumulateBoundingBoxes(const scene::ISPNodePtr& node)
 	{
-		const scene::ISPNode::MemberList& members = node->getMembers();
+		const auto& members = node->getMembers();
 
-		float numItems = members.size() > 2 ? 1 : (members.size() > 0 ? 0.6f : 0);
-		glColor3f(numItems, numItems, numItems);
+		float shade = members.size() > 2 ? 1 : (members.size() > 0 ? 0.6f : 0);
+
+        _nodeColours.emplace_back(shade, shade, shade, 1);
 
 		AABB rb(node->getBounds());
 
 		// Extend the renderbounds *slightly* so that the lines don't overlap
 		rb.extents *= 1.02f;
 
-		// Wireframe cuboid
-		glBegin(GL_LINES);
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
+        _spacePartitionNodes.push_back(rb);
 
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
-
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
-
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + rb.extents.z());
-
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + rb.extents.z());
-
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
-
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
-
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + rb.extents.z());
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + rb.extents.z());
-
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + rb.extents.z());
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
-
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + rb.extents.z());
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + rb.extents.y(), rb.origin.z() + -rb.extents.z());
-
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() +  rb.extents.z());
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
-
-			glVertex3d(rb.origin.x() + rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
-			glVertex3d(rb.origin.x() + -rb.extents.x(), rb.origin.y() + -rb.extents.y(), rb.origin.z() + -rb.extents.z());
-		glEnd();
-
-		const scene::ISPNode::NodeList& children = node->getChildNodes();
-
-		for (scene::ISPNode::NodeList::const_iterator i = children.begin(); i != children.end(); ++i)
+		for (auto child : node->getChildNodes())
 		{
-			renderNode(*i);
-		}
-	}
-
-	void render(const RenderInfo& info) const override
-	{
-		if (_spacePartition != NULL)
-		{
-			renderNode(_spacePartition->getRoot());
+			accumulateBoundingBoxes(child);
 		}
 	}
 };
 
-} // namespace render
-
-#endif /* _RENDERABLE_SPACE_PARTITION_H_ */
+} // namespace

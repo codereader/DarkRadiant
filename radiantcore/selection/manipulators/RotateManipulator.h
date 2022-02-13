@@ -4,11 +4,12 @@
 #include "Rotatable.h"
 #include "ManipulatorBase.h"
 #include "ManipulatorComponents.h"
-#include "selection/Renderables.h"
 #include "selection/Pivot2World.h"
 #include "selection/BasicSelectable.h"
 #include "selection/ManipulationPivot.h"
 #include "render.h"
+#include "Renderables.h"
+#include "render/StaticRenderableText.h"
 
 namespace selection
 {
@@ -21,8 +22,7 @@ namespace selection
  */
 class RotateManipulator : 
 	public ManipulatorBase,
-	public Rotatable,
-	public OpenGLRenderable
+	public Rotatable
 {
 private:
 	ManipulationPivot& _pivot;
@@ -32,12 +32,16 @@ private:
 	RotateAxis _rotateAxis;
 	TranslateFree _translatePivot;
 	Vector3 _axisScreen;
-	RenderableSemiCircle _circleX;
-	RenderableSemiCircle _circleY;
-	RenderableSemiCircle _circleZ;
-	RenderableCircle _circleScreen;
-	RenderableCircle _circleSphere;
-	RenderablePointVector _pivotPoint;
+    Vertex3f _localPivotPoint;
+
+    RenderableSemiCircle<RemapYZX> _circleX;
+    RenderableSemiCircle<RemapZXY> _circleY;
+    RenderableSemiCircle<RemapXYZ> _circleZ;
+	RenderableCircle<RemapXYZ> _circleScreen;
+	RenderableCircle<RemapXYZ> _circleSphere;
+    RenderablePoint _pivotPoint;
+    render::StaticRenderableText _angleText;
+
 	BasicSelectable _selectableX;
 	BasicSelectable _selectableY;
 	BasicSelectable _selectableZ;
@@ -52,12 +56,11 @@ private:
 	bool _circleY_visible;
 	bool _circleZ_visible;
 
-public:
-	static ShaderPtr _stateOuter;
-	static ShaderPtr _pivotPointShader;
-    static IGLFont::Ptr _glFont;
+    ShaderPtr _lineShader;
+    ShaderPtr _pivotPointShader;
+    ITextRenderer::Ptr _textRenderer;
 
-	// Constructor
+public:
 	RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius);
 
 	Type getType() const override
@@ -65,11 +68,8 @@ public:
 		return Rotate;
 	}
 
-	void UpdateColours();
-	void updateCircleTransforms();
-
-	void render(RenderableCollector& collector, const VolumeTest& volume) override;
-	void render(const RenderInfo& info) const override;
+    void onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume) override;
+    void clearRenderables() override;
 
 	void testSelect(SelectionTest& view, const Matrix4& pivot2world) override;
 
@@ -81,6 +81,10 @@ public:
 	void rotate(const Quaternion& rotation) override;
 
 private:
+    void updateColours();
+    void updateCircleTransforms();
+    void updateAngleText();
+
     std::string getRotationAxisName() const;
 };
 

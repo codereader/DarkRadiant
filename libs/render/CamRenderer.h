@@ -1,19 +1,19 @@
 #pragma once
 
-#include "irenderable.h"
+#include "render/RenderableCollectorBase.h"
 #include "imap.h"
 #include "ivolumetest.h"
 
 #include "VectorLightList.h"
 
-#include <map>
+#include <unordered_map>
 
 namespace render
 {
 
 /// RenderableCollector for use with 3D camera views or preview widgets
 class CamRenderer : 
-    public RenderableCollector
+    public RenderableCollectorBase
 {
 public:
     struct HighlightShaders
@@ -35,9 +35,6 @@ private:
     // Render statistics
     int _totalLights = 0;
     int _visibleLights = 0;
-
-    // Highlight state
-    std::size_t _flags = Highlight::Flags::NoHighlight;
 
     const HighlightShaders& _shaders;
 
@@ -62,7 +59,7 @@ private:
     // Renderables added with addLitObject() need to be stored until their
     // light lists can be calculated, which can't happen until all the lights
     // are submitted too.
-    std::map<Shader*, LitRenderables> _litRenderables;
+    std::unordered_map<Shader*, LitRenderables> _litRenderables;
 
     // Intersect all received renderables wiith lights
     void calculateLightIntersections()
@@ -93,6 +90,33 @@ public:
       _shaders(shaders)
     {}
 
+    void prepare()
+    {
+        _totalLights = 0;
+        _visibleLights = 0;
+        _editMode = GlobalMapModule().getEditMode();
+    }
+
+    void cleanup()
+    {
+        // Keep the shader map intact, but clear the renderables vectors,
+        // so that we don't have to re-allocate the whole memory every frame
+        // Purge the ones that have not been used in this render round
+        for (auto i = _litRenderables.begin(); i != _litRenderables.end();)
+        {
+            if (i->second.empty())
+            {
+                // This shader has not been used at all in the last frame, free the memory
+                _litRenderables.erase(i++);
+                continue;
+            }
+
+            (i++)->second.clear();
+        }
+
+        _sceneLights.clear();
+    }
+
     /**
      * \brief
      * Instruct the CamRenderer to push its sorted renderables to their
@@ -113,13 +137,12 @@ public:
         }
 
         // Render objects with calculated light lists
-        for (auto i = _litRenderables.begin(); i != _litRenderables.end(); ++i)
+        for (const auto& pair : _litRenderables)
         {
-            Shader* shader = i->first;
-            wxASSERT(shader);
-            for (auto j = i->second.begin(); j != i->second.end(); ++j)
+            Shader* shader = pair.first;
+            assert(shader);
+            for (const LitRenderable& lr : pair.second)
             {
-                const LitRenderable& lr = *j;
                 shader->addRenderable(lr.renderable, lr.local2World,
                                       useLights ? &lr.lights : nullptr,
                                       lr.entity);
@@ -136,18 +159,6 @@ public:
     // RenderableCollector implementation
 
     bool supportsFullMaterials() const override { return true; }
-
-    void setHighlightFlag(Highlight::Flags flags, bool enabled) override
-    {
-        if (enabled)
-        {
-            _flags |= flags;
-        }
-        else
-        {
-            _flags &= ~flags;
-        }
-    }
 
     void addLight(const RendererLight& light) override
     {
@@ -172,27 +183,7 @@ public:
                        const LitObject* litObject = nullptr,
                        const IRenderEntity* entity = nullptr) override
     {
-        if (_editMode == IMap::EditMode::Merge && (_flags & Highlight::Flags::MergeAction) != 0)
-        {
-            const auto& mergeShader = (_flags & Highlight::Flags::MergeActionAdd) != 0 ? _shaders.mergeActionShaderAdd :
-                (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove : 
-                (_flags & Highlight::Flags::MergeActionConflict) != 0 ? _shaders.mergeActionShaderConflict : _shaders.mergeActionShaderChange;
-            
-            if (mergeShader)
-            {
-                mergeShader->addRenderable(renderable, localToWorld, nullptr, entity);
-            }
-        }
-
-        if ((_flags & Highlight::Flags::Primitives) != 0 && _shaders.primitiveHighlightShader)
-        {
-            _shaders.primitiveHighlightShader->addRenderable(renderable, localToWorld, nullptr, entity);
-        }
-
-        if ((_flags & Highlight::Flags::Faces) != 0 && _shaders.faceHighlightShader)
-        {
-            _shaders.faceHighlightShader->addRenderable(renderable, localToWorld, nullptr, entity);
-        }
+        addHighlightRenderable(renderable, localToWorld);
 
         // Construct an entry for this shader in the map if it is the first
         // time we've seen it
@@ -204,18 +195,41 @@ public:
             LitRenderables emptyList;
             emptyList.reserve(1024);
 
-            auto result = _litRenderables.insert(
-                std::make_pair(&shader, std::move(emptyList))
-            );
-            wxASSERT(result.second);
+            auto result = _litRenderables.emplace(&shader, std::move(emptyList));
+            assert(result.second);
             iter = result.first;
         }
-        wxASSERT(iter != _litRenderables.end());
-        wxASSERT(iter->first == &shader);
+        assert(iter != _litRenderables.end());
+        assert(iter->first == &shader);
 
         // Store a LitRenderable object for this renderable
         LitRenderable lr { renderable, litObject, localToWorld, entity };
-        iter->second.push_back(std::move(lr));
+        iter->second.emplace_back(std::move(lr));
+    }
+
+    void addHighlightRenderable(const OpenGLRenderable& renderable, const Matrix4& localToWorld) override
+    {
+        if (_editMode == IMap::EditMode::Merge && (_flags & Highlight::Flags::MergeAction) != 0)
+        {
+            const auto& mergeShader = (_flags & Highlight::Flags::MergeActionAdd) != 0 ? _shaders.mergeActionShaderAdd :
+                (_flags & Highlight::Flags::MergeActionRemove) != 0 ? _shaders.mergeActionShaderRemove :
+                (_flags & Highlight::Flags::MergeActionConflict) != 0 ? _shaders.mergeActionShaderConflict : _shaders.mergeActionShaderChange;
+
+            if (mergeShader)
+            {
+                mergeShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
+            }
+        }
+
+        if ((_flags & Highlight::Flags::Primitives) != 0 && _shaders.primitiveHighlightShader)
+        {
+            _shaders.primitiveHighlightShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
+        }
+
+        if ((_flags & Highlight::Flags::Faces) != 0 && _shaders.faceHighlightShader)
+        {
+            _shaders.faceHighlightShader->addRenderable(renderable, localToWorld, nullptr, nullptr);
+        }
     }
 };
 

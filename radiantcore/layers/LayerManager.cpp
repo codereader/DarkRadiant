@@ -393,7 +393,7 @@ bool LayerManager::updateNodeVisibility(const scene::INodePtr& node)
 	const auto& layers = node->getLayers();
 
 	// We start with the assumption that a node is hidden
-	node->enable(Node::eLayered);
+    bool isHidden = true;
 
 	// Cycle through the Node's layers, and show the node as soon as
 	// a visible layer is found.
@@ -402,13 +402,22 @@ bool LayerManager::updateNodeVisibility(const scene::INodePtr& node)
 		if (_layerVisibility[layerId])
 		{
 			// The layer is visible, set the visibility to true and quit
-			node->disable(Node::eLayered);
-			return true;
+            isHidden = false;
+			break;
 		}
 	}
 
-	// Node is hidden, return FALSE
-	return false;
+    if (isHidden)
+    {
+        node->enable(Node::eLayered);
+    }
+    else
+    {
+        node->disable(Node::eLayered);
+    }
+
+	// If node is hidden, return FALSE
+	return !isHidden;
 }
 
 void LayerManager::setSelected(int layerID, bool selected)

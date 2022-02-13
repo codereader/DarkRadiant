@@ -10,11 +10,13 @@
 #include "../curve/CurveEditInstance.h"
 #include "../curve/CurveNURBS.h"
 #include "../curve/CurveCatmullRom.h"
+#include "../curve/RenderableCurveVertices.h"
 #include "../VertexInstance.h"
 #include "../target/TargetableNode.h"
 #include "../EntityNode.h"
 #include "../KeyObserverDelegate.h"
 #include "render/RenderablePivot.h"
+#include "RenderableVertex.h"
 
 namespace entity
 {
@@ -40,13 +42,10 @@ class StaticGeometryNode :
 	OriginKey m_originKey;
 	Vector3 m_origin;
 
-	// A separate origin for the renderable pivot points
-	Vector3 m_nameOrigin;
-
 	RotationKey m_rotationKey;
 	RotationMatrix m_rotation;
 
-	render::RenderablePivot m_renderOrigin;
+	render::RenderablePivot _renderOrigin;
 
 	mutable AABB m_curveBounds;
 
@@ -61,15 +60,20 @@ class StaticGeometryNode :
 	bool m_isModel;
 
 	CurveNURBS m_curveNURBS;
-	std::size_t m_curveNURBSChanged;
 	CurveCatmullRom m_curveCatmullRom;
-	std::size_t m_curveCatmullRomChanged;
 
 	CurveEditInstance _nurbsEditInstance;
 	CurveEditInstance _catmullRomEditInstance;
 	mutable AABB m_aabb_component;
 
 	VertexInstance _originInstance;
+
+    ShaderPtr _pivotShader;
+    ShaderPtr _pointShader;
+
+    RenderableCurveVertices _nurbsVertices;
+    RenderableCurveVertices _catmullRomVertices;
+    RenderableVertex _renderableOriginVertex;
 
 private:
 	// Constructor
@@ -106,7 +110,7 @@ public:
 	void invertSelectedComponents(selection::ComponentSelectionMode mode) override;
 	void testSelectComponents(Selector& selector, SelectionTest& test, selection::ComponentSelectionMode mode) override;
 
-	// override scene::Inode::onRemoveFromScene to deselect the child components
+	virtual void onInsertIntoScene(scene::IMapRootNode& root) override;
 	virtual void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ComponentEditable implementation
@@ -129,16 +133,16 @@ public:
 	void removeOriginFromChildren() override;
 
 	// Renderable implementation
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+    void onPreRender(const VolumeTest& volume) override;
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume) const override;
 
 	void transformComponents(const Matrix4& matrix);
 
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
+
+    const Vector3& getWorldPosition() const override;
 
 protected:
 	// Gets called by the Transformable implementation whenever
@@ -155,6 +159,10 @@ protected:
 	// Override EntityNode::construct()
 	virtual void construct() override;
 
+    void onVisibilityChanged(bool isVisibleNow) override;
+
+    void onSelectionStatusChange(bool changeGroupStatus) override;
+
 private:
 	void evaluateTransform();
 
@@ -163,7 +171,6 @@ private:
 
 	void destroy();
 	void setIsModel(bool newValue);
-    void renderCommon(RenderableCollector& collector, const VolumeTest& volume) const;
 
 	/** Determine if this Doom3Group is a model (func_static) or a
 	 * brush-containing entity. If the "model" key is equal to the
@@ -174,7 +181,6 @@ private:
 	void updateIsModel();
 
 	Vector3& getOrigin();
-	void testSelect(Selector& selector, SelectionTest& test, SelectionIntersection& best);
 	void translate(const Vector3& translation);
 	void rotate(const Quaternion& rotation);
 	void scale(const Vector3& scale);

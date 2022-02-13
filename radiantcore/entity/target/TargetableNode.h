@@ -72,6 +72,8 @@ public:
 
     // Invoked by the TargetKeyCollection when the number of observed has changed
     void onTargetKeyCollectionChanged();
+
+    void onRenderSystemChanged();
 };
 
 } // namespace entity

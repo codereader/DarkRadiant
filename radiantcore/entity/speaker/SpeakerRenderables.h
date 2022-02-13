@@ -1,71 +1,75 @@
-#ifndef SPEAKERRENDERABLES_H_
-#define SPEAKERRENDERABLES_H_
+#pragma once
 
-#include "math/Vector3.h"
-#include "math/Vector4.h"
-#include "math/Line.h"
-#include "math/Frustum.h"
-#include "entitylib.h"
-#include "igl.h"
 #include "isound.h"
+#include "math/Vector3.h"
+#include "render/RenderableGeometry.h"
 
-// the drawing functions
-void sphereDrawFill(const Vector3& origin, float radius, int sides);
-void sphereDrawWire(const Vector3& origin, float radius, int sides);
-void speakerDrawRadiiWire(const Vector3& origin, const float envelope[2]);
-void speakerDrawRadiiFill(const Vector3& origin, const float envelope[2]);
+namespace entity
+{
 
-namespace entity {
+class RenderableSpeakerRadiiBase :
+    public render::RenderableGeometry
+{
+protected:
+    bool _needsUpdate;
+
+    const IEntityNode& _entity;
+
+    const Vector3& _origin;
+
+    // SoundRadii reference containing min and max radius values
+    // (the actual instance resides in the SpeakerNode)
+    const SoundRadii& _radii;
+
+protected:
+    RenderableSpeakerRadiiBase(const IEntityNode& entity, const Vector3& origin, const SoundRadii& radii) :
+        _entity(entity),
+        _origin(origin),
+        _radii(radii)
+    {}
+
+public:
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+};
 
 /**
  * \brief
- * Renderable speaker radius class.
- *
- * This OpenGLRenderable renders the two spherical radii of a speaker,
- * representing the s_min and s_max values.
+ * Renderable speaker radius class (wireframe mode).
+ * Draws 3 axis-aligned circles per radius.
  */
-class RenderableSpeakerRadii
-: public OpenGLRenderable
+class RenderableSpeakerRadiiWireframe :
+    public RenderableSpeakerRadiiBase
 {
-	const Vector3& m_origin;
-	AABB m_aabb_local;
-
-    // SoundRadii reference containing min and max radius values
-	// (the actual instance resides in the Speaker class)
-	const SoundRadii& m_radii;
-
 public:
-
-    /**
-     * \brief
-     * Construct a RenderableSpeakerRadii with the given origin.
-     */
-	RenderableSpeakerRadii(const Vector3& origin, const SoundRadii& radii) :
-		m_origin(origin),
-		m_radii(radii)
+    // Construct an instance with the given origin and radius.
+    RenderableSpeakerRadiiWireframe(const IEntityNode& entity, const Vector3& origin, const SoundRadii& radii) :
+        RenderableSpeakerRadiiBase(entity, origin, radii)
     {}
 
-    /**
-     * \brief
-     * Set the minimum radius to render.
-     */
-    //void setMin(float min, bool inMetres = false);
+    void updateGeometry() override;
+};
 
-    /**
-     * \brief
-     * Set the maximum radius to render.
-     */
-    //void setMax(float max, bool inMetres = false);
+/**
+ * \brief
+ * Renderable speaker radius class (camera mode).
+ * Draws a quad-based sphere with a fixed number of subdivisions.
+ */
+class RenderableSpeakerRadiiFill :
+    public RenderableSpeakerRadiiBase
+{
+public:
+    // Construct an instance with the given origin and radius.
+    RenderableSpeakerRadiiFill(const IEntityNode& entity, const Vector3& origin, const SoundRadii& radii) :
+        RenderableSpeakerRadiiBase(entity, origin, radii)
+    {}
 
-	// Gets the minimum/maximum values to render
-	float getMin();
-	float getMax();
+    void updateGeometry() override;
 
-	void render(const RenderInfo& info) const;
-	const AABB& localAABB();
+private:
+    void generateSphereVertices(std::vector<ArbitraryMeshVertex>& vertices, double radius);
+};
 
-}; // class RenderSpeakerRadii
-
-} // namespace entity
-
-#endif /*SPEAKERRENDERABLES_H_*/
+} // namespace

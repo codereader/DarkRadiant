@@ -23,8 +23,10 @@ public:
 	virtual ~IBrushSettings() {}
 
 	virtual const Vector3& getVertexColour() const = 0;
-
 	virtual void setVertexColour(const Vector3& colour) = 0;
+
+	virtual const Vector3& getSelectedVertexColour() const = 0;
+	virtual void setSelectedVertexColour(const Vector3& colour) = 0;
 
 	virtual sigc::signal<void>& signal_settingsChanged() = 0;
 };

@@ -1,39 +1,105 @@
-#ifndef RENDERABLES_H_
-#define RENDERABLES_H_
+#pragma once
 
-#include "math/Vector3.h"
-#include "math/Vector4.h"
-#include "math/Line.h"
-#include "math/Frustum.h"
-#include "entitylib.h"
-#include "igl.h"
+#include "LightVertexInstanceSet.h"
+#include "render/RenderableGeometry.h"
 
-void light_draw_box_lines(const Vector3& origin, const Vector3 points[8]);
+namespace entity
+{
 
-namespace entity {
+class LightNode;
 
-class RenderLightRadiiBox : public OpenGLRenderable {
-	const Vector3& m_origin;
+// The small diamond representing at the light's origin
+// This is using the Triangle geometry type such that we can see 
+// the half-transparent (red) overlay when the light is selected
+class RenderableLightOctagon :
+    public render::RenderableGeometry
+{
+private:
+    const LightNode& _light;
+    bool _needsUpdate;
+
 public:
-	mutable Vector3 m_points[8];
-	static ShaderPtr m_state;
+    RenderableLightOctagon(const LightNode& light) :
+        _light(light),
+        _needsUpdate(true)
+    {}
 
-	RenderLightRadiiBox(const Vector3& origin) : m_origin(origin) {}
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
 
-	void render(const RenderInfo& info) const;
-}; // class RenderLightRadiiBox
+protected:
+    void updateGeometry() override;
+};
 
-class RenderLightProjection : public OpenGLRenderable {
-	const Vector3& _origin;
-	const Vector3& _start;
-	const Frustum& _frustum;
+// The wireframe showing the light volume of the light
+// which is either a box (point light) or a frustum/cone (projected)
+class RenderableLightVolume :
+    public render::RenderableGeometry
+{
+private:
+    const LightNode& _light;
+    bool _needsUpdate;
+
 public:
-	RenderLightProjection(const Vector3& origin, const Vector3& start, const Frustum& frustum);
+    RenderableLightVolume(const LightNode& light) :
+        _light(light),
+        _needsUpdate(true)
+    {}
 
-	// greebo: Renders the light cone of a projected light (may also be a frustum, when light_start / light_end are set)
-	void render(const RenderInfo& info) const;
-}; // class RenderLightProjection
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+protected:
+    void updateGeometry() override;
+
+private:
+    void updatePointLightVolume();
+    void updateProjectedLightVolume();
+};
+
+// All manipulatable vertices, with the colour
+// corresponding to their selection status
+class RenderableLightVertices :
+    public render::RenderableGeometry
+{
+private:
+    const LightNode& _light;
+    const LightVertexInstanceSet& _instances;
+    const Projected<bool>& _useFlags;
+
+    bool _needsUpdate;
+    selection::ComponentSelectionMode _mode;
+
+public:
+    RenderableLightVertices(const LightNode& light, 
+                            const LightVertexInstanceSet& instances, 
+                            const Projected<bool>& useFlags) :
+        _light(light),
+        _instances(instances),
+        _useFlags(useFlags),
+        _needsUpdate(true),
+        _mode(selection::ComponentSelectionMode::Default)
+    {}
+
+    void queueUpdate()
+    {
+        _needsUpdate = true;
+    }
+
+    void setComponentMode(selection::ComponentSelectionMode mode)
+    {
+        if (_mode == mode) return;
+
+        _mode = mode;
+        queueUpdate();
+    }
+
+protected:
+    void updateGeometry() override;
+};
 
 } // namespace entity
-
-#endif /*RENDERABLES_H_*/

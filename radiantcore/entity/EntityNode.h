@@ -15,8 +15,11 @@
 #include "ColourKey.h"
 #include "ModelKey.h"
 #include "ShaderParms.h"
+#include "OriginKey.h"
 
 #include "KeyObserverMap.h"
+#include "RenderableEntityName.h"
+#include "RenderableObjectCollection.h"
 
 namespace entity
 {
@@ -49,12 +52,19 @@ protected:
 	// The class taking care of all the namespace-relevant stuff
 	NamespaceManager _namespaceManager;
 
+    // Observes the "origin" keyvalue
+    OriginKey _originKey;
+
+    // Points to the origin value of this entity, is also kept up to date
+    // during transformations. Used to render the entity name at the correct position.
+    Vector3 _originTransformed;
+
 	// A helper class observing the "name" keyvalue
 	// Used for rendering the name and as Nameable implementation
 	NameKey _nameKey;
 
-	// The OpenGLRenderable, using the NameKey helper class to retrieve the name
-	RenderableNameKey _renderableName;
+	// The renderable, using the NameKey helper class to retrieve the name
+	RenderableEntityName _renderableName;
 
 	// The keyobserver watching over the "_color" keyvalue
 	ColourKey _colourKey;
@@ -71,9 +81,12 @@ protected:
 	// This entity's main direction, usually determined by the angle/rotation keys
 	Vector3 _direction;
 
-	// The wireframe / solid shaders as determined by the entityclass
-	ShaderPtr _fillShader;
-	ShaderPtr _wireShader;
+	// The coloured shaders as determined by the entityclass
+
+	ShaderPtr _fillShader; // cam only
+	ShaderPtr _wireShader; // ortho only
+	ShaderPtr _colourShader; // cam+ortho view
+	ITextRenderer::Ptr _textRenderer; // for name rendering
 
 	sigc::connection _eclassChangedConn;
 
@@ -91,6 +104,13 @@ protected:
     using AttachedEntities = std::list<AttachedEntity>;
     AttachedEntities _attachedEnts;
 
+    // Whether this entity has registered itself to a render system
+    bool _isAttachedToRenderSystem;
+
+    // The list of renderable objects attached to this IRenderEntity
+    // Used in lighting render mode to enumerate surfaces by entity
+    RenderableObjectCollection _renderObjects;
+
   protected:
 	// The Constructor needs the eclass
 	EntityNode(const IEntityClassPtr& eclass);
@@ -104,11 +124,17 @@ public:
 	// IEntityNode implementation
 	Entity& getEntity() override;
 	virtual void refreshModel() override;
-    void transformChanged() override;
+    virtual void transformChanged() override;
 
 	// RenderEntity implementation
+    virtual std::string getEntityName() const override;
 	virtual float getShaderParm(int parmNum) const override;
 	virtual const Vector3& getDirection() const override;
+
+    virtual void addRenderable(const render::IRenderableObject::Ptr& object, Shader* shader) override;
+    virtual void removeRenderable(const render::IRenderableObject::Ptr& object) override;
+    virtual void foreachRenderableTouchingBounds(const AABB& bounds,
+        const ObjectVisitFunction& functor) override;
 
     // IMatrixTransform implementation
     Matrix4 localToParent() const override { return _localToParent; }
@@ -146,22 +172,33 @@ public:
 	Type getNodeType() const override;
 
 	// Renderable implementation, can be overridden by subclasses
-	virtual void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	virtual void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
+	virtual void onPreRender(const VolumeTest& volume) override;
+	virtual void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	virtual void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 	virtual std::size_t getHighlightFlags() override;
 
 	// IEntityNode implementation
     void observeKey(const std::string& key, KeyObserverFunc func) override;
+    void foreachAttachment(const std::function<void(const IEntityNodePtr&)>& functor) override;
 
 	ModelKey& getModelKey(); // needed by the Doom3Group class, could be a fixme
     const ModelKey& getModelKey() const;
 
 	const ShaderPtr& getWireShader() const override;
+	const ShaderPtr& getColourShader() const override;
 	const ShaderPtr& getFillShader() const;
+    virtual Vector4 getEntityColour() const override;
 
 	virtual void onPostUndo() override;
 	virtual void onPostRedo() override;
+
+    // Optional implementation: gets invoked by the EntityModule when the settings are changing
+    virtual void onEntitySettingsChanged();
+
+    void onVisibilityChanged(bool isVisibleNow) override;
+
+    // Returns the current world origin of this entity (also up to date during transformations)
+    virtual const Vector3& getWorldPosition() const = 0;
 
 protected:
 	virtual void onModelKeyChanged(const std::string& value);
@@ -189,6 +226,7 @@ private:
 
 	// Private function target - wraps to virtual protected signal
 	void _modelKeyChanged(const std::string& value);
+    void _originKeyChanged();
 
     void acquireShaders();
     void acquireShaders(const RenderSystemPtr& renderSystem);
@@ -197,9 +235,9 @@ private:
     void createAttachedEntities();
 
     // Render all attached entities
-    template <typename RenderFunc> void renderAttachments(RenderFunc func) const
+    template <typename RenderFunc> void renderAttachments(const RenderFunc& func) const
     {
-        for (auto [entityNode, offset]: _attachedEnts)
+        for (auto& [entityNode, offset]: _attachedEnts)
         {
             // Before rendering the attached entity, ensure its offset is correct
             entityNode->setLocalToParent(Matrix4::getTranslation(offset));
@@ -210,7 +248,7 @@ private:
             struct ChildRenderer : public scene::NodeVisitor
             {
                 RenderFunc _func;
-                ChildRenderer(RenderFunc f): _func(f)
+                ChildRenderer(const RenderFunc& f): _func(f)
                 {}
 
                 bool pre(const scene::INodePtr& node)
@@ -224,6 +262,8 @@ private:
         }
     }
 
-    };
+    void attachToRenderSystem();
+    void detachFromRenderSystem();
+};
 
 } // namespace entity

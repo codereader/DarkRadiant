@@ -127,6 +127,8 @@ CamWnd::CamWnd(wxWindow* parent) :
         radiant::IMessage::Type::TextureChanged,
         radiant::TypeListener<radiant::TextureChangedMessage>(
             sigc::mem_fun(this, &CamWnd::handleTextureChanged)));
+
+    _renderer.reset(new render::CamRenderer(_view, _shaders));
 }
 
 wxWindow* CamWnd::getMainWidget() const
@@ -782,29 +784,46 @@ void CamWnd::Cam_Draw()
                             | RENDER_POLYGONSTIPPLE;
     }
 
+    IRenderResult::Ptr result;
+
     // Main scene render
     {
+        GlobalRenderSystem().startFrame();
+
+        _renderer->prepare();
+
         // Front end (renderable collection from scene)
-        render::CamRenderer renderer(_view, _shaders);
-        render::RenderableCollectionWalker::CollectRenderablesInScene(renderer, _view);
+        render::RenderableCollectionWalker::CollectRenderablesInScene(*_renderer, _view);
 
         // Accumulate render statistics
-        _renderStats.setLightCount(renderer.getVisibleLights(),
-                                   renderer.getTotalLights());
+        _renderStats.setLightCount(_renderer->getVisibleLights(),
+                                   _renderer->getTotalLights());
         _renderStats.frontEndComplete();
 
         // Render any active mousetools
         for (const ActiveMouseTools::value_type& i : _activeMouseTools)
         {
-            i.second->render(GlobalRenderSystem(), renderer, _view);
+            i.second->render(GlobalRenderSystem(), *_renderer, _view);
         }
 
-        // Back end (submit to shaders and do the actual render)
-        renderer.submitToShaders(
-            getCameraSettings()->getRenderMode() == RENDER_MODE_LIGHTING
-        );
-        GlobalRenderSystem().render(allowedRenderFlags, _camera->getModelView(),
-                                    _camera->getProjection(), _view.getViewer());
+        if (getCameraSettings()->getRenderMode() == RENDER_MODE_LIGHTING)
+        {
+            // Lit mode
+            result = GlobalRenderSystem().renderLitScene(allowedRenderFlags, _view);
+        }
+        else
+        {
+            // Back end (submit to shaders and do the actual render)
+            _renderer->submitToShaders(
+                getCameraSettings()->getRenderMode() == RENDER_MODE_LIGHTING
+            );
+            GlobalRenderSystem().render(RenderViewType::Camera, allowedRenderFlags,
+                _camera->getModelView(), _camera->getProjection(), _view.getViewer(), _view);
+        }
+
+        _renderer->cleanup();
+
+        GlobalRenderSystem().endFrame();
     }
 
     // greebo: Draw the clipper's points (skipping the depth-test)
@@ -871,11 +890,19 @@ void CamWnd::Cam_Draw()
     // Render the stats and timing text. This may include culling stats in
     // debug builds.
     glRasterPos3f(4.0f, static_cast<float>(_camera->getDeviceHeight()) - 4.0f, 0.0f);
-    std::string statString = _view.getCullStats();
-    if (!statString.empty())
-        statString += " | ";
-    statString += _renderStats.getStatString();
-    _glFont->drawString(statString);
+
+    if (result)
+    {
+        _glFont->drawString(result->toString());
+    }
+    else
+    {
+        std::string statString = _view.getCullStats();
+        if (!statString.empty())
+            statString += " | ";
+        statString += _renderStats.getStatString();
+        _glFont->drawString(statString);
+    }
 
     drawTime();
 
@@ -964,12 +991,12 @@ camera::ICameraView& CamWnd::getCamera()
 
 void CamWnd::captureStates()
 {
-    _shaders.faceHighlightShader = GlobalRenderSystem().capture("$CAM_HIGHLIGHT");
-    _shaders.primitiveHighlightShader = GlobalRenderSystem().capture("$CAM_OVERLAY");
-    _shaders.mergeActionShaderAdd = GlobalRenderSystem().capture("$MERGE_ACTION_ADD");
-    _shaders.mergeActionShaderChange = GlobalRenderSystem().capture("$MERGE_ACTION_CHANGE");
-    _shaders.mergeActionShaderRemove = GlobalRenderSystem().capture("$MERGE_ACTION_REMOVE");
-    _shaders.mergeActionShaderConflict = GlobalRenderSystem().capture("$MERGE_ACTION_CONFLICT");
+    _shaders.faceHighlightShader = GlobalRenderSystem().capture(BuiltInShaderType::ColouredPolygonOverlay);
+    _shaders.primitiveHighlightShader = GlobalRenderSystem().capture(BuiltInShaderType::HighlightedPolygonOutline);
+    _shaders.mergeActionShaderAdd = GlobalRenderSystem().capture(BuiltInShaderType::CameraMergeActionOverlayAdd);
+    _shaders.mergeActionShaderChange = GlobalRenderSystem().capture(BuiltInShaderType::CameraMergeActionOverlayChange);
+    _shaders.mergeActionShaderRemove = GlobalRenderSystem().capture(BuiltInShaderType::CameraMergeActionOverlayRemove);
+    _shaders.mergeActionShaderConflict = GlobalRenderSystem().capture(BuiltInShaderType::CameraMergeActionOverlayConflict);
 }
 
 void CamWnd::releaseStates() 

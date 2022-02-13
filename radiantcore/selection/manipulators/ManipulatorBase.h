@@ -24,9 +24,15 @@ public:
 		return true;
 	}
 
+    virtual void onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume) override
+    {}
+
 	// No visual representation by default
-	virtual void render(RenderableCollector& collector, const VolumeTest& volume) override
+	virtual void render(IRenderableCollector& collector, const VolumeTest& volume) override
 	{}
+
+    virtual void clearRenderables() override
+    {}
 
 public:
 	std::size_t getId() const override

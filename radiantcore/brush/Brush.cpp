@@ -38,9 +38,6 @@ namespace {
 Brush::Brush(BrushNode& owner) :
     _owner(owner),
     _undoStateSaver(nullptr),
-    _faceCentroidPoints(GL_POINTS),
-    _uniqueVertexPoints(GL_POINTS),
-    _uniqueEdgePoints(GL_POINTS),
     m_planeChanged(false),
     m_transformChanged(false),
 	_detailFlag(Structural)
@@ -53,9 +50,6 @@ Brush::Brush(BrushNode& owner) :
 Brush::Brush(BrushNode& owner, const Brush& other) :
     _owner(owner),
     _undoStateSaver(nullptr),
-    _faceCentroidPoints(GL_POINTS),
-    _uniqueVertexPoints(GL_POINTS),
-    _uniqueEdgePoints(GL_POINTS),
     m_planeChanged(false),
     m_transformChanged(false),
 	_detailFlag(Structural)
@@ -263,25 +257,6 @@ const AABB& Brush::localAABB() const {
     return m_aabb_local;
 }
 
-void Brush::renderComponents(selection::ComponentSelectionMode mode, RenderableCollector& collector,
-	const VolumeTest& volume, const Matrix4& localToWorld) const
-{
-    switch (mode)
-	{
-        case selection::ComponentSelectionMode::Vertex:
-            collector.addRenderable(*m_state_point, _uniqueVertexPoints, localToWorld);
-            break;
-        case selection::ComponentSelectionMode::Edge:
-            collector.addRenderable(*m_state_point, _uniqueEdgePoints, localToWorld);
-            break;
-        case selection::ComponentSelectionMode::Face:
-            collector.addRenderable(*m_state_point, _faceCentroidPoints, localToWorld);
-            break;
-        default:
-            break;
-    }
-}
-
 void Brush::translate(const Vector3& translation)
 {
     std::for_each(m_faces.begin(), m_faces.end(),
@@ -384,15 +359,6 @@ FacePtr Brush::addPlane(const Vector3& p0, const Vector3& p1, const Vector3& p2,
 
 void Brush::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-    if (renderSystem)
-    {
-        m_state_point = renderSystem->capture("$POINT");
-    }
-    else
-    {
-        m_state_point.reset();
-    }
-
     for (Faces::iterator i = m_faces.begin(); i != m_faces.end(); ++i)
     {
         (*i)->setRenderSystem(renderSystem);
@@ -579,43 +545,6 @@ void Brush::windingForClipPlane(Winding& winding, const Plane3& plane) const {
     }
 
     buffer[swap].writeToWinding(winding);
-}
-
-void Brush::update_wireframe(RenderableWireframe& wire, const bool* faces_visible) const
-{
-    wire.m_faceVertex.resize(_edgeIndices.size());
-    wire.m_vertices = _uniqueVertexPoints.size() > 0 ? &_uniqueVertexPoints.front() : NULL;
-    wire.m_size = 0;
-
-    for (std::size_t i = 0; i < _edgeFaces.size(); ++i)
-    {
-        if (faces_visible[_edgeFaces[i].first] || faces_visible[_edgeFaces[i].second])
-        {
-            wire.m_faceVertex[wire.m_size++] = _edgeIndices[i];
-        }
-    }
-}
-
-void Brush::update_faces_wireframe(RenderablePointVector& wire,
-                                   const std::size_t* visibleFaceIndices,
-                                   std::size_t numVisibleFaces) const
-{
-	if (numVisibleFaces > _faceCentroidPoints.size())
-	{
-		wire.clear();
-		return;
-	}
-
-    // Assure that the pointvector can carry as many faces as are visible
-    wire.resize(numVisibleFaces);
-
-    const std::size_t* visibleFaceIter = visibleFaceIndices;
-
-    // Pick all the visible face centroids from the vector
-    for (std::size_t i = 0; i < numVisibleFaces; ++i)
-    {
-        wire[i] = _faceCentroidPoints[*visibleFaceIter++];
-    }
 }
 
 /// \brief Makes this brush a deep-copy of the \p other.
@@ -1298,7 +1227,7 @@ void Brush::buildBRep() {
             const Winding& w = m_faces[faceVertex.getFace()]->getWinding();
             Vector3 edge = math::midPoint(w[faceVertex.getVertex()].vertex,
                                           w[w.next(faceVertex.getVertex())].vertex);
-            _uniqueEdgePoints[i] = VertexCb(edge, colour_vertex);
+            _uniqueEdgePoints[i] = edge;
           }
         }
 
@@ -1348,7 +1277,7 @@ void Brush::buildBRep() {
             FaceVertexId faceVertex = faceVertices[ProximalVertexArray_index(vertexRings, uniqueVertices[i])];
 
             const Winding& winding = m_faces[faceVertex.getFace()]->getWinding();
-            _uniqueVertexPoints[i] = VertexCb(winding[faceVertex.getVertex()].vertex, colour_vertex);
+            _uniqueVertexPoints[i] = winding[faceVertex.getVertex()].vertex;
           }
         }
       }
@@ -1383,10 +1312,27 @@ void Brush::buildBRep() {
       for(std::size_t i=0; i<m_faces.size(); ++i)
       {
         m_faces[i]->construct_centroid();
-        _faceCentroidPoints[i] = VertexCb(m_faces[i]->centroid(), colour_vertex);
+        _faceCentroidPoints[i] = m_faces[i]->centroid();
       }
     }
   }
+}
+
+const std::vector<Vector3>& Brush::getVertices(selection::ComponentSelectionMode mode) const
+{
+    switch (mode)
+    {
+        case selection::ComponentSelectionMode::Vertex: 
+            return _uniqueVertexPoints;
+
+        case selection::ComponentSelectionMode::Edge: 
+            return _uniqueEdgePoints;
+
+        case selection::ComponentSelectionMode::Face: 
+            return _faceCentroidPoints;
+    }
+
+    throw std::runtime_error("Brush::getVertices: Component mode not supported");
 }
 
 // ----------------------------------------------------------------------------

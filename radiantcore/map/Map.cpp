@@ -395,10 +395,20 @@ void Map::setEditMode(EditMode mode)
     {
         GlobalSelectionSystem().setSelectedAll(false);
         GlobalSelectionSystem().SetMode(selection::SelectionSystem::eMergeAction);
+
+        if (getRoot())
+        {
+            getRoot()->getRenderSystem()->setMergeModeEnabled(true);
+        }
     }
     else
     {
         GlobalSelectionSystem().SetMode(selection::SelectionSystem::ePrimitive);
+
+        if (getRoot())
+        {
+            getRoot()->getRenderSystem()->setMergeModeEnabled(false);
+        }
     }
 
     signal_editModeChanged().emit(_editMode);

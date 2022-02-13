@@ -329,6 +329,45 @@
     <ClInclude Include="..\..\libs\messages\MapOperationMessage.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\WindingRenderer.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\CompactWindingVertexBuffer.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\VBO.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\IndexedVertexBuffer.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableCollectorBase.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableGeometry.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableBox.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableSurface.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableBoundingBoxes.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\StaticRenderableText.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableTextBase.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableColouredBoundingBoxes.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\ContinuousBuffer.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

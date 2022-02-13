@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "iundo.h"
 #include "igrid.h"
-#include "igl.h"
 #include "iselectiongroup.h"
 #include "iradiant.h"
 #include "ipreferencesystem.h"
@@ -24,7 +23,6 @@
 #include "manipulators/DragManipulator.h"
 #include "manipulators/ClipManipulator.h"
 #include "manipulators/RotateManipulator.h"
-#include "manipulators/ScaleManipulator.h"
 #include "manipulators/TranslateManipulator.h"
 #include "manipulators/ModelScaleManipulator.h"
 
@@ -289,6 +287,12 @@ void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 		rError() << "Cannot activate non-existent manipulator ID " << manipulatorId << std::endl;
 		return;
 	}
+
+    // Remove any visuals from the previous manipulator
+    if (_activeManipulator)
+    {
+        _activeManipulator->clearRenderables();
+    }
 
 	_activeManipulator = found->second;
 
@@ -850,40 +854,9 @@ void RadiantSelectionSystem::onManipulationCancelled()
     pivotChanged();
 }
 
-void RadiantSelectionSystem::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
-{
-    renderSolid(collector, volume);
-}
-
 const Matrix4& RadiantSelectionSystem::getPivot2World()
 {
     return _pivot.getMatrix4();
-}
-
-void RadiantSelectionSystem::captureShaders()
-{
-    auto manipulatorFontStyle = registry::getValue<std::string>(RKEY_MANIPULATOR_FONTSTYLE) == "Sans" ?
-        IGLFont::Style::Sans : IGLFont::Style::Mono;
-    auto manipulatorFontSize = registry::getValue<int>(RKEY_MANIPULATOR_FONTSIZE);
-
-    TranslateManipulator::_stateWire = GlobalRenderSystem().capture("$WIRE_OVERLAY");
-    TranslateManipulator::_stateFill = GlobalRenderSystem().capture("$FLATSHADE_OVERLAY");
-    RotateManipulator::_stateOuter = GlobalRenderSystem().capture("$WIRE_OVERLAY");
-	RotateManipulator::_pivotPointShader = GlobalRenderSystem().capture("$POINT");
-	RotateManipulator::_glFont = GlobalOpenGL().getFont(manipulatorFontStyle, manipulatorFontSize);
-	ModelScaleManipulator::_lineShader = GlobalRenderSystem().capture("$WIRE_OVERLAY");
-	ModelScaleManipulator::_pointShader = GlobalRenderSystem().capture("$POINT");
-}
-
-void RadiantSelectionSystem::releaseShaders()
-{
-    TranslateManipulator::_stateWire.reset();
-    TranslateManipulator::_stateFill.reset();
-    RotateManipulator::_glFont.reset();
-	RotateManipulator::_stateOuter.reset();
-	RotateManipulator::_pivotPointShader.reset();
-    ModelScaleManipulator::_lineShader.reset();
-    ModelScaleManipulator::_pointShader.reset();
 }
 
 const WorkZone& RadiantSelectionSystem::getWorkZone()
@@ -924,17 +897,24 @@ Vector3 RadiantSelectionSystem::getCurrentSelectionCenter()
     return algorithm::getCurrentSelectionCenter();
 }
 
-/* greebo: Renders the currently active manipulator by setting the render state and
- * calling the manipulator's render method
- */
-void RadiantSelectionSystem::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
+void RadiantSelectionSystem::onPreRender(const VolumeTest& volume)
 {
     if (!nothingSelected())
-	{
-        collector.setHighlightFlag(RenderableCollector::Highlight::Faces, false);
-        collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
+    {
+        auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
 
-		_activeManipulator->render(collector, volume);
+        if (renderSystem)
+        {
+            _activeManipulator->onPreRender(renderSystem, volume);
+        }
+        else
+        {
+            _activeManipulator->clearRenderables();
+        }
+    }
+    else
+    {
+        _activeManipulator->clearRenderables();
     }
 }
 
@@ -974,15 +954,12 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-	captureShaders();
-
 	_pivot.initialise();
 
 	// Add manipulators
 	registerManipulator(std::make_shared<DragManipulator>(_pivot));
 	registerManipulator(std::make_shared<ClipManipulator>());
 	registerManipulator(std::make_shared<TranslateManipulator>(_pivot, 2, 64.0f));
-	registerManipulator(std::make_shared<ScaleManipulator>(_pivot, 0, 64.0f));
 	registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64.0f));
 	registerManipulator(std::make_shared<ModelScaleManipulator>(_pivot));
 
@@ -1067,8 +1044,6 @@ void RadiantSelectionSystem::shutdownModule()
 	_manipulators.clear();
 
     GlobalRenderSystem().detachRenderable(*this);
-
-    releaseShaders();
 }
 
 void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& selectable)
@@ -1138,7 +1113,6 @@ void RadiantSelectionSystem::toggleManipulatorModeCmd(const cmd::ArgumentList& a
         rWarning() << "      Drag" << std::endl;
         rWarning() << "      Translate" << std::endl;
         rWarning() << "      Rotate" << std::endl;
-        rWarning() << "      Scale" << std::endl;
         rWarning() << "      Clip" << std::endl;
         rWarning() << "      ModelScale" << std::endl;
         return;
@@ -1158,10 +1132,6 @@ void RadiantSelectionSystem::toggleManipulatorModeCmd(const cmd::ArgumentList& a
     else if (manip == "rotate")
     {
         type = IManipulator::Rotate;
-    }
-    else if (manip == "scale")
-    {
-        type = IManipulator::Drag;
     }
     else if (manip == "clip")
     {

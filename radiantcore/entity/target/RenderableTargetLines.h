@@ -5,18 +5,19 @@
 #include "irenderable.h"
 #include "ivolumetest.h"
 #include "math/Segment.h"
+#include "render/RenderableGeometry.h"
 
 namespace entity 
 {
 
 namespace
 {
-    const double TARGET_MAX_ARROW_LENGTH = 10;
+    constexpr const double TARGET_MAX_ARROW_LENGTH = 10;
 }
 
 /**
  * greebo: This is a helper object owned by the TargetableInstance.
- * It represents a RenderablePointVector which repopulates
+ * It sets up a line-based renderable which repopulates
  * itself each frame with the coordinates of the targeted
  * instances. It provides a render() method.
  *
@@ -24,58 +25,69 @@ namespace
  * frontend render pass.
  */
 class RenderableTargetLines :
-	public RenderablePointVector
+    public render::RenderableGeometry
 {
-	const TargetKeyCollection& _targetKeys;
+private:
+    const IEntityNode& _entity;
+    const TargetKeyCollection& _targetKeys;
+
+    Vector3 _worldPosition;
 
 public:
-	RenderableTargetLines(const TargetKeyCollection& targetKeys) :
-		RenderablePointVector(GL_LINES),
-		_targetKeys(targetKeys)
-	{}
+    RenderableTargetLines(const IEntityNode& entity, const TargetKeyCollection& targetKeys) :
+        _entity(entity),
+        _targetKeys(targetKeys)
+    {}
 
     bool hasTargets() const
     {
         return !_targetKeys.empty();
     }
 
-	void render(const ShaderPtr& shader, RenderableCollector& collector, const VolumeTest& volume, const Vector3& worldPosition)
-	{
-		if (_targetKeys.empty())
-		{
-			return;
-		}
+    void update(const ShaderPtr& shader, const Vector3& worldPosition)
+    {
+        // Store the new world position for use in updateGeometry()
+        _worldPosition = worldPosition;
 
-		// Clear the vector
-		clear();
+        // Tell the base class to run the rest of the update routine
+        RenderableGeometry::update(shader);
+    }
 
-		// Populate the RenderablePointVector with all target coordinates
-        _targetKeys.forEachTarget([&] (const TargetPtr& target)
+protected:
+    void updateGeometry() override
+    {
+        // Target lines are visible if both their start and end entities are visible
+        // This is hard to track in the scope of this class, so we fall back to doing 
+        // an update on the renderable geometry every time we're asked to
+
+        // Collect vertex and index data
+        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<unsigned int> indices;
+        auto maxTargets = _targetKeys.getNumTargets();
+
+        vertices.reserve(6 * maxTargets);
+        indices.reserve(6 * maxTargets);
+
+        _targetKeys.forEachTarget([&](const TargetPtr& target)
         {
             if (!target || target->isEmpty() || !target->isVisible())
             {
                 return;
             }
 
-            Vector3 targetPosition = target->getPosition();
+            auto targetPosition = target->getPosition();
 
-            if (volume.TestLine(Segment::createForStartEnd(worldPosition, targetPosition)))
-            {
-                addTargetLine(worldPosition, targetPosition);
-            }
+            addTargetLine(_worldPosition, targetPosition, vertices, indices);
         });
 
-		// If we hold any objects now, add us as renderable
-		if (!empty())
-        {
-			collector.addRenderable(*shader, *this, Matrix4::getIdentity());
-		}
-	}
+        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+    }
 
 private:
     // Adds points to the vector, defining a line from start to end, with arrow indicators
     // in the XY plane (located at the midpoint between start/end).
-    void addTargetLine(const Vector3& startPosition, const Vector3& endPosition)
+    void addTargetLine(const Vector3& startPosition, const Vector3& endPosition,
+        std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices)
     {
         // Take the mid-point
         Vector3 mid((startPosition + endPosition) * 0.5f);
@@ -109,16 +121,27 @@ private:
         Vector3 xyPoint1 = arrowBase + xyDir;
         Vector3 xyPoint2 = arrowBase - xyDir;
 
+        auto colour = _entity.getEntityColour();
+
+        auto indexOffset = static_cast<unsigned int>(vertices.size());
+
         // The line from this to the other entity
-        push_back(VertexCb(startPosition));
-        push_back(VertexCb(endPosition));
+        vertices.push_back(ArbitraryMeshVertex(startPosition, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(ArbitraryMeshVertex(endPosition, { 1,0,0 }, { 0, 0 }, colour));
 
         // The "arrow indicators" in the xy plane
-        push_back(VertexCb(mid));
-        push_back(VertexCb(xyPoint1));
+        vertices.push_back(ArbitraryMeshVertex(mid, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(ArbitraryMeshVertex(xyPoint1, { 1,0,0 }, { 0, 0 }, colour));
 
-        push_back(VertexCb(mid));
-        push_back(VertexCb(xyPoint2));
+        vertices.push_back(ArbitraryMeshVertex(mid, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(ArbitraryMeshVertex(xyPoint2, { 1,0,0 }, { 0, 0 }, colour));
+
+        indices.push_back(indexOffset + 0);
+        indices.push_back(indexOffset + 1);
+        indices.push_back(indexOffset + 2);
+        indices.push_back(indexOffset + 3);
+        indices.push_back(indexOffset + 4);
+        indices.push_back(indexOffset + 5);
     }
 };
 

@@ -17,9 +17,10 @@ namespace
 SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
 	EntityNode(eclass),
 	m_originKey(std::bind(&SpeakerNode::originChanged, this)),
-	_renderableRadii(m_origin, _radiiTransformed),
-	m_aabb_solid(m_aabb_local),
-	m_aabb_wire(m_aabb_local),
+    _renderableBox(*this, m_aabb_local, worldAABB().getOrigin()),
+    _renderableRadiiWireframe(*this, m_origin, _radiiTransformed),
+    _renderableRadiiFill(*this, m_origin, _radiiTransformed),
+    _showRadiiWhenUnselected(EntitySettings::InstancePtr()->getShowAllSpeakerRadii()),
 	_dragPlanes(std::bind(&SpeakerNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
 
@@ -27,9 +28,10 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
 	EntityNode(other),
 	Snappable(other),
 	m_originKey(std::bind(&SpeakerNode::originChanged, this)),
-	_renderableRadii(m_origin, _radiiTransformed),
-	m_aabb_solid(m_aabb_local),
-	m_aabb_wire(m_aabb_local),
+    _renderableBox(*this, m_aabb_local, worldAABB().getOrigin()),
+    _renderableRadiiWireframe(*this, m_origin, _radiiTransformed),
+    _renderableRadiiFill(*this, m_origin, _radiiTransformed),
+    _showRadiiWhenUnselected(EntitySettings::InstancePtr()->getShowAllSpeakerRadii()),
 	_dragPlanes(std::bind(&SpeakerNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
 
@@ -146,14 +148,12 @@ void SpeakerNode::sMaxChanged(const std::string& value)
 	updateAABB();
 }
 
-// Snappable implementation
 void SpeakerNode::snapto(float snap)
 {
 	m_originKey.snap(snap);
 	m_originKey.write(_spawnArgs);
 }
 
-// Bounded implementation
 const AABB& SpeakerNode::localAABB() const
 {
 	return m_aabb_border;
@@ -227,35 +227,48 @@ scene::INodePtr SpeakerNode::clone() const
 	return node;
 }
 
-/* Renderable implementation */
-
-void SpeakerNode::renderSolid(RenderableCollector& collector,
-                              const VolumeTest& volume) const
+void SpeakerNode::onPreRender(const VolumeTest& volume)
 {
-	EntityNode::renderSolid(collector, volume);
+    EntityNode::onPreRender(volume);
 
-	collector.addRenderable(*getFillShader(), m_aabb_solid, localToWorld());
+    _renderableBox.update(getColourShader());
 
-    // Submit the speaker radius if we are selected or the "show all speaker
-    // radii" option is set
-	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
+    if (_showRadiiWhenUnselected || isSelected())
     {
-		collector.addRenderable(*getFillShader(), _renderableRadii, localToWorld());
+        _renderableRadiiWireframe.update(getWireShader());
+        _renderableRadiiFill.update(getFillShader());
+    }
+    else
+    {
+        _renderableRadiiWireframe.clear();
+        _renderableRadiiFill.clear();
     }
 }
-void SpeakerNode::renderWireframe(RenderableCollector& collector,
-                                  const VolumeTest& volume) const
+
+void SpeakerNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-	EntityNode::renderWireframe(collector, volume);
+    collector.addHighlightRenderable(_renderableBox, Matrix4::getIdentity());
 
-	collector.addRenderable(*getWireShader(), m_aabb_wire, localToWorld());
-
-    // Submit the speaker radius if we are selected or the "show all speaker
-    // radii" option is set
-	if (isSelected() || EntitySettings::InstancePtr()->getShowAllSpeakerRadii())
+    if (!collector.supportsFullMaterials())
     {
-		collector.addRenderable(*getWireShader(), _renderableRadii, localToWorld());
+        collector.addHighlightRenderable(_renderableRadiiWireframe, Matrix4::getIdentity());
     }
+    else
+    {
+        collector.addHighlightRenderable(_renderableRadiiFill, Matrix4::getIdentity());
+    }
+
+    EntityNode::renderHighlights(collector, volume);
+}
+
+void SpeakerNode::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+    EntityNode::setRenderSystem(renderSystem);
+
+    // Clear the geometry from any previous shader
+    _renderableBox.clear();
+    _renderableRadiiWireframe.clear();
+    _renderableRadiiFill.clear();
 }
 
 void SpeakerNode::translate(const Vector3& translation)
@@ -267,6 +280,10 @@ void SpeakerNode::updateTransform()
 {
 	setLocalToParent(Matrix4::getTranslation(m_origin));
 	transformChanged();
+
+    _renderableBox.queueUpdate();
+    _renderableRadiiWireframe.queueUpdate();
+    _renderableRadiiFill.queueUpdate();
 }
 
 void SpeakerNode::updateAABB()
@@ -403,6 +420,66 @@ void SpeakerNode::_applyTransformation()
 	revertTransform();
 	evaluateTransform();
 	freezeTransform();
+}
+
+void SpeakerNode::onSelectionStatusChange(bool changeGroupStatus)
+{
+    EntityNode::onSelectionStatusChange(changeGroupStatus);
+
+    // Radius renderable is not always prepared for rendering, queue an update
+    _renderableRadiiWireframe.queueUpdate();
+    _renderableRadiiFill.queueUpdate();
+}
+
+
+void SpeakerNode::onEntitySettingsChanged()
+{
+    EntityNode::onEntitySettingsChanged();
+
+    _showRadiiWhenUnselected = EntitySettings::InstancePtr()->getShowAllSpeakerRadii();
+    _renderableRadiiWireframe.queueUpdate();
+    _renderableRadiiFill.queueUpdate();
+}
+
+void SpeakerNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    EntityNode::onInsertIntoScene(root);
+
+    _renderableBox.queueUpdate();
+    _renderableRadiiWireframe.queueUpdate();
+    _renderableRadiiFill.queueUpdate();
+}
+
+void SpeakerNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    EntityNode::onRemoveFromScene(root);
+
+    _renderableBox.clear();
+    _renderableRadiiWireframe.clear();
+    _renderableRadiiFill.clear();
+}
+
+void SpeakerNode::onVisibilityChanged(bool isVisibleNow)
+{
+    EntityNode::onVisibilityChanged(isVisibleNow);
+
+    if (isVisibleNow)
+    {
+        _renderableBox.queueUpdate();
+        _renderableRadiiWireframe.queueUpdate();
+        _renderableRadiiFill.queueUpdate();
+    }
+    else
+    {
+        _renderableBox.clear();
+        _renderableRadiiWireframe.clear();
+        _renderableRadiiFill.clear();
+    }
+}
+
+const Vector3& SpeakerNode::getWorldPosition() const
+{
+    return m_origin;
 }
 
 } // namespace entity

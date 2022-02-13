@@ -1,159 +1,49 @@
 #include "PatchRenderables.h"
 
-void RenderablePatchWireframe::render(const RenderInfo& info) const
+namespace detail
 {
-    // No colour changing
-    glDisableClientState(GL_COLOR_ARRAY);
-    if (info.checkFlag(RENDER_VERTEX_COLOUR))
-    {
-        glColor3f(1, 1, 1);
-    }
 
-    if (_tess.vertices.empty()) return;
+inline Vector4 getControlPointVertexColour(std::size_t i, std::size_t width)
+{
+    static const Vector3& cornerColourVec = GlobalPatchModule().getSettings().getVertexColour(patch::PatchEditVertexType::Corners);
+    static const Vector3& insideColourVec = GlobalPatchModule().getSettings().getVertexColour(patch::PatchEditVertexType::Inside);
 
-    if (_needsUpdate)
-    {
-        _needsUpdate = false;
-
-        // Create a VBO and add the vertex data
-        VertexBuffer_T currentVBuf;
-        currentVBuf.addVertices(_tess.vertices.begin(), _tess.vertices.end());
-
-        // Submit index batches
-        const RenderIndex* strip_indices = &_tess.indices.front();
-        for (std::size_t i = 0;
-            i < _tess.numStrips;
-            i++, strip_indices += _tess.lenStrips)
-        {
-            currentVBuf.addIndexBatch(strip_indices, _tess.lenStrips);
-        }
-
-        // Render all index batches
-        _vertexBuf.replaceData(currentVBuf);
-    }
-
-    _vertexBuf.renderAllBatches(GL_QUAD_STRIP);
+    return (i % 2 || (i / width) % 2) ? cornerColourVec : insideColourVec;
 }
 
-void RenderablePatchWireframe::queueUpdate()
-{
-    _needsUpdate = true;
 }
 
-RenderablePatchSolid::RenderablePatchSolid(PatchTesselation& tess) :
-    _tess(tess),
+RenderablePatchControlPoints::RenderablePatchControlPoints(const IPatch& patch, 
+    const std::vector<PatchControlInstance>& controlPoints) :
+    _patch(patch),
+    _controlPoints(controlPoints),
     _needsUpdate(true)
 {}
 
-void RenderablePatchSolid::render(const RenderInfo& info) const
+void RenderablePatchControlPoints::updateGeometry()
 {
-    if (_tess.vertices.empty() || _tess.indices.empty()) return;
+    if (!_needsUpdate) return;
 
-    if (!info.checkFlag(RENDER_BUMP))
+    _needsUpdate = false;
+
+    // Generate the new point vector
+    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<unsigned int> indices;
+
+    vertices.reserve(_controlPoints.size());
+    indices.reserve(_controlPoints.size());
+
+    static const Vector4 SelectedColour(0, 0, 0, 1);
+    auto width = _patch.getWidth();
+
+    for (std::size_t i = 0; i < _controlPoints.size(); ++i)
     {
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        const auto& ctrl = _controlPoints[i];
+
+        vertices.push_back(ArbitraryMeshVertex(ctrl.control.vertex, { 0, 0, 0 }, { 0, 0 },
+            ctrl.isSelected() ? SelectedColour : detail::getControlPointVertexColour(i, width)));
+        indices.push_back(static_cast<unsigned int>(i));
     }
 
-    // No colour changing
-    glDisableClientState(GL_COLOR_ARRAY);
-
-    if (info.checkFlag(RENDER_VERTEX_COLOUR))
-    {
-        glColor3f(1, 1, 1);
-    }
-
-    if (_needsUpdate)
-    {
-        _needsUpdate = false;
-
-        // Add vertex geometry to vertex buffer
-        VertexBuffer_T currentVBuf;
-        currentVBuf.addVertices(_tess.vertices.begin(), _tess.vertices.end());
-
-        // Submit indices
-        const RenderIndex* strip_indices = &_tess.indices.front();
-        for (std::size_t i = 0;
-            i < _tess.numStrips;
-            i++, strip_indices += _tess.lenStrips)
-        {
-            currentVBuf.addIndexBatch(strip_indices, _tess.lenStrips);
-        }
-
-        // Render all batches
-        _vertexBuf.replaceData(currentVBuf);
-    }
-
-    _vertexBuf.renderAllBatches(GL_QUAD_STRIP, info.checkFlag(RENDER_BUMP));
-
-	if (!info.checkFlag(RENDER_BUMP))
-	{
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
-}
-
-void RenderablePatchSolid::queueUpdate()
-{
-    _needsUpdate = true;
-}
-
-const ShaderPtr& RenderablePatchVectorsNTB::getShader() const
-{
-	return _shader;
-}
-
-RenderablePatchVectorsNTB::RenderablePatchVectorsNTB(const PatchTesselation& tess) :
-	_tess(tess)
-{}
-
-void RenderablePatchVectorsNTB::setRenderSystem(const RenderSystemPtr& renderSystem)
-{
-	if (renderSystem)
-	{
-		_shader = renderSystem->capture("$PIVOT");
-	}
-	else
-	{
-		_shader.reset();
-	}
-}
-
-#define	VectorMA( v, s, b, o )		((o)[0]=(v)[0]+(b)[0]*(s),(o)[1]=(v)[1]+(b)[1]*(s),(o)[2]=(v)[2]+(b)[2]*(s))
-
-void RenderablePatchVectorsNTB::render(const RenderInfo& info) const
-{
-	if (_tess.vertices.empty()) return;
-
-	glBegin(GL_LINES);
-
-	for (const ArbitraryMeshVertex& v : _tess.vertices)
-	{
-		Vector3 end;
-
-		glColor3f(0, 0, 1);
-		glVertex3dv(v.vertex);
-		VectorMA(v.vertex, 5, v.normal, end);
-		glVertex3dv(end);
-
-		glColor3f(1, 0, 0);
-		glVertex3dv(v.vertex);
-		VectorMA(v.vertex, 5, v.tangent, end);
-		glVertex3dv(end);
-
-		glColor3f(0, 1, 0);
-		glVertex3dv(v.vertex);
-		VectorMA(v.vertex, 5, v.bitangent, end);
-		glVertex3dv(end);
-
-		glColor3f(1, 1, 1);
-		glVertex3dv(v.vertex);
-		glVertex3dv(v.vertex);
-	}
-
-	glEnd();
-}
-
-void RenderablePatchVectorsNTB::render(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const
-{
-	collector.setHighlightFlag(RenderableCollector::Highlight::Primitives, false);
-	collector.addRenderable(*_shader, *this, localToWorld);
+    RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
 }

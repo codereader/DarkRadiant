@@ -16,17 +16,17 @@ RenderableParticle::RenderableParticle(const IParticleDefPtr& particleDef) :
 RenderableParticle::~RenderableParticle()
 {
 	// Clear the particle def reference (remove this class as observer)
-	setParticleDef(IParticleDefPtr());
+    setParticleDef({});
 }
 
 // Time is in msecs
-void RenderableParticle::update(const Matrix4& viewRotation)
+void RenderableParticle::update(const Matrix4& viewRotation, const Matrix4& localToWorld)
 {
-	RenderSystemPtr renderSystem = _renderSystem.lock();
+	auto renderSystem = _renderSystem.lock();
 
 	if (!renderSystem) return; // no rendersystem there yet
 
-	std::size_t time = renderSystem->getTime();
+	auto time = renderSystem->getTime();
 
 	// Invalidate our bounds information
 	_bounds = AABB();
@@ -36,57 +36,34 @@ void RenderableParticle::update(const Matrix4& viewRotation)
 
 	// greebo: Use the inverse matrix of the incoming matrix, this is enough to compensate
 	// the camera rotation.
-	Matrix4 invViewRotation = viewRotation.getInverse();
+	auto invViewRotation = viewRotation.getInverse();
 
 	// Traverse the stages and call update
-	for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
+	for (const auto& pair : _shaderMap)
 	{
-		for (RenderableParticleStageList::const_iterator stage = i->second.stages.begin();
-			 stage != i->second.stages.end(); ++stage)
+		for (const auto& stage : pair.second.stages)
 		{
-			(*stage)->update(time, invViewRotation);
+            if (!stage->getDef().isVisible())
+            {
+                stage->clear();
+                continue;
+            }
+
+            // Update the particle geometry
+            stage->update(time, invViewRotation);
+
+            // Attach the geometry to the shader
+            stage->submitGeometry(pair.second.shader, localToWorld);
 		}
 	}
 }
 
-// Front-end render methods
-void RenderableParticle::renderSolid(RenderableCollector& collector,
-                                     const VolumeTest& volume,
-                                     const Matrix4& localToWorld,
-                                     const IRenderEntity* entity) const
+void RenderableParticle::onPreRender(const VolumeTest& volume)
+{}
+
+
+void RenderableParticle::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-	for (const ShaderMap::value_type& pair : _shaderMap)
-	{
-		assert(pair.second.shader); // ensure we're realised
-
-        // For each stage using this shader
-        for (const RenderableParticleStagePtr& stage : pair.second.stages)
-		{
-			// Skip invisible stages
-			if (!stage->getDef().isVisible()) continue;
-
-            collector.addRenderable(*pair.second.shader, *stage, localToWorld,
-                                    nullptr, entity);
-		}
-	}
-}
-
-void RenderableParticle::renderSolid(RenderableCollector& collector, const VolumeTest& volume) const
-{
-	renderSolid(collector, volume, Matrix4::getIdentity(), nullptr);
-}
-
-void RenderableParticle::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, 
-	const Matrix4& localToWorld, const IRenderEntity* entity) const
-{
-	// Does the same thing as renderSolid
-	renderSolid(collector, volume, localToWorld, entity);
-}
-
-void RenderableParticle::renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const
-{
-	// Does the same thing as renderSolid
-	renderSolid(collector, volume);
 }
 
 void RenderableParticle::setRenderSystem(const RenderSystemPtr& renderSystem)
@@ -132,7 +109,7 @@ void RenderableParticle::setEntityColour(const Vector3& colour)
 {
 	_entityColour = colour;
 
-	// The particle stages hold a const-reference to _direction
+	// The particle stages hold a const-reference to _entityColour
 	// so no further update is needed
 }
 
@@ -149,12 +126,11 @@ const AABB& RenderableParticle::getBounds()
 
 void RenderableParticle::calculateBounds()
 {
-	for (ShaderMap::const_iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
+	for (const auto& pair : _shaderMap)
 	{
-		for (RenderableParticleStageList::const_iterator stage = i->second.stages.begin();
-			 stage != i->second.stages.end(); ++stage)
+		for (const auto& stage : pair.second.stages)
 		{
-			_bounds.includeAABB((*stage)->getBounds());
+			_bounds.includeAABB(stage->getBounds());
 		}
 	}
 }
@@ -164,33 +140,32 @@ void RenderableParticle::setupStages()
 {
 	_shaderMap.clear();
 
-	if (_particleDef == NULL) return; // nothing to do.
+	if (!_particleDef) return; // nothing to do.
 
 	for (std::size_t i = 0; i < _particleDef->getNumStages(); ++i)
 	{
-		const IStageDef& stage = _particleDef->getStage(i);
-
-		const std::string& materialName = stage.getMaterialName();
+		const auto& stage = _particleDef->getStage(i);
+		const auto& materialName = stage.getMaterialName();
 
 		if (_shaderMap.find(materialName) == _shaderMap.end())
 		{
-			_shaderMap.insert(ShaderMap::value_type(materialName, ParticleStageGroup()));
+			_shaderMap.emplace(materialName, ParticleStageGroup());
 		}
 
 		// Create a new renderable stage and add it to the shader
-		RenderableParticleStagePtr renderableStage(new RenderableParticleStage(stage, _random, _direction, _entityColour));
-		_shaderMap[materialName].stages.push_back(renderableStage);
+		auto renderableStage = std::make_shared<RenderableParticleStage>(stage, _random, _direction, _entityColour);
+		_shaderMap[materialName].stages.emplace_back(std::move(renderableStage));
 	}
 }
 
 // Capture all shaders, if necessary
 void RenderableParticle::ensureShaders(RenderSystem& renderSystem)
 {
-	for (ShaderMap::iterator i = _shaderMap.begin(); i != _shaderMap.end(); ++i)
+	for (auto& pair : _shaderMap)
 	{
-		if (i->second.shader == NULL)
+		if (!pair.second.shader)
 		{
-			i->second.shader = renderSystem.capture(i->first);
+			pair.second.shader = renderSystem.capture(pair.first);
 		}
 	}
 }

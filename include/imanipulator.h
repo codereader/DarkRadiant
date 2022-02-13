@@ -11,7 +11,10 @@ typedef BasicVector2<double> Vector2;
 class Matrix4;
 class VolumeTest;
 class SelectionTest;
-class RenderableCollector;
+class IRenderableCollector;
+
+class RenderSystem;
+typedef std::shared_ptr<RenderSystem> RenderSystemPtr;
 
 namespace selection
 {
@@ -35,7 +38,6 @@ public:
 		Drag,
 		Translate,
 		Rotate,
-		Scale,
 		Clip,
 		ModelScale,
 		Custom
@@ -117,8 +119,14 @@ public:
 
     virtual ~ISceneManipulator() {}
 
+    // Prepares this manipulator for rendering
+    virtual void onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume) = 0;
+
     // Renders the manipulator's visual representation to the scene
-    virtual void render(RenderableCollector& collector, const VolumeTest& volume) = 0;
+    virtual void render(IRenderableCollector& collector, const VolumeTest& volume) = 0;
+
+    // Removes / hides the renderables of this manipulator
+    virtual void clearRenderables() = 0;
 
     // Manipulators should indicate whether component editing is supported or not
     virtual bool supportsComponentManipulation() const = 0;

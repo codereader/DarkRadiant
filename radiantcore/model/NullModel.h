@@ -1,54 +1,39 @@
-#ifndef _NULLMODEL_H_
-#define _NULLMODEL_H_
+#pragma once
 
 #include "imodel.h"
 #include "math/AABB.h"
-#include "entitylib.h"
 
-namespace model {
+namespace model
+{
 
-class NullModel :
+class NullModel final :
 	public IModel
 {
-	ShaderPtr _state;
 	AABB _aabbLocal;
-	RenderableSolidAABB _aabbSolid;
-	RenderableWireframeAABB _aabbWire;
 
 	std::string _filename;
 	std::string _modelPath;
 public:
 	NullModel();
-	virtual ~NullModel();
 
-	const AABB& localAABB() const;
-
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
-	void testSelect(Selector& selector, SelectionTest& test, const Matrix4& localToWorld);
+	const AABB& localAABB() const override;
 
 	// IModel implementation
-	virtual std::string getFilename() const;
+	std::string getFilename() const override;
 	void setFilename(const std::string& filename);
 
-	virtual std::string getModelPath() const;
+	std::string getModelPath() const override;
 	void setModelPath(const std::string& modelPath);
 
-	virtual void applySkin(const ModelSkin& skin);
+	void applySkin(const ModelSkin& skin) override;
 
-	virtual int getSurfaceCount() const;
-	virtual int getVertexCount() const;
-	virtual int getPolyCount() const;
-	virtual const IModelSurface& getSurface(unsigned surfaceNum) const;
+	int getSurfaceCount() const override;
+    int getVertexCount() const override;
+	int getPolyCount() const override;
+	const IModelSurface& getSurface(unsigned surfaceNum) const override;
 
-	virtual const std::vector<std::string>& getActiveMaterials() const;
-
-	// OpenGLRenderable implementation
-	void render(const RenderInfo& info) const;
+	const std::vector<std::string>& getActiveMaterials() const override;
 };
 typedef std::shared_ptr<NullModel> NullModelPtr;
 
 } // namespace model
-
-#endif /* _NULLMODEL_H_ */

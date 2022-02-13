@@ -125,6 +125,8 @@
     <ClInclude Include="..\..\include\ifilter.h" />
     <ClInclude Include="..\..\include\ifonts.h" />
     <ClInclude Include="..\..\include\igame.h" />
+    <ClInclude Include="..\..\include\igeometryrenderer.h" />
+    <ClInclude Include="..\..\include\igeometrystore.h" />
     <ClInclude Include="..\..\include\igl.h" />
     <ClInclude Include="..\..\include\iglprogram.h" />
     <ClInclude Include="..\..\include\iglrender.h" />
@@ -171,6 +173,7 @@
     <ClInclude Include="..\..\include\iregistry.h" />
     <ClInclude Include="..\..\include\irender.h" />
     <ClInclude Include="..\..\include\irenderable.h" />
+    <ClInclude Include="..\..\include\irenderableobject.h" />
     <ClInclude Include="..\..\include\irendersystemfactory.h" />
     <ClInclude Include="..\..\include\irenderview.h" />
     <ClInclude Include="..\..\include\iscenegraph.h" />
@@ -188,6 +191,7 @@
     <ClInclude Include="..\..\include\isound.h" />
     <ClInclude Include="..\..\include\ispacepartition.h" />
     <ClInclude Include="..\..\include\ispeakernode.h" />
+    <ClInclude Include="..\..\include\isurfacerenderer.h" />
     <ClInclude Include="..\..\include\itexturetoolcolours.h" />
     <ClInclude Include="..\..\include\itextstream.h" />
     <ClInclude Include="..\..\include\itexturetoolmodel.h" />
@@ -197,6 +201,7 @@
     <ClInclude Include="..\..\include\iundo.h" />
     <ClInclude Include="..\..\include\iversioncontrol.h" />
     <ClInclude Include="..\..\include\ivolumetest.h" />
+    <ClInclude Include="..\..\include\iwindingrenderer.h" />
     <ClInclude Include="..\..\include\modelskin.h" />
     <ClInclude Include="..\..\include\ModResource.h" />
     <ClInclude Include="..\..\include\precompiled_interfaces.h" />

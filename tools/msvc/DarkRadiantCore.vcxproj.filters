@@ -874,9 +874,6 @@
     <ClCompile Include="..\..\radiantcore\selection\manipulators\RotateManipulator.cpp">
       <Filter>src\selection\manipulators</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.cpp">
-      <Filter>src\selection\manipulators</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.cpp">
       <Filter>src\selection\manipulators</Filter>
     </ClCompile>
@@ -1104,6 +1101,27 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\undo\UndoSystemFactory.cpp">
       <Filter>src\undo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\entity\RenderableEntityBox.cpp">
+      <Filter>src\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\entity\RenderableArrow.cpp">
+      <Filter>src\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\brush\RenderableBrushVertices.cpp">
+      <Filter>src\brush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\entity\RenderableEntityName.cpp">
+      <Filter>src\entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\BuiltInShader.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\ColourShader.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\LightInteractions.cpp">
+      <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1458,13 +1476,7 @@
     <ClInclude Include="..\..\radiantcore\entity\light\Renderables.h">
       <Filter>src\entity\light</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\light\RenderableVertices.h">
-      <Filter>src\entity\light</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\generic\GenericEntityNode.h">
-      <Filter>src\entity\generic</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\entity\generic\RenderableArrow.h">
       <Filter>src\entity\generic</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\curve\Curve.h">
@@ -1899,12 +1911,6 @@
     <ClInclude Include="..\..\radiantcore\selection\RadiantSelectionSystem.h">
       <Filter>src\selection</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\Remap.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\Renderables.h">
-      <Filter>src\selection</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\SceneWalkers.h">
       <Filter>src\selection</Filter>
     </ClInclude>
@@ -1975,9 +1981,6 @@
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\manipulators\RotateManipulator.h">
-      <Filter>src\selection\manipulators</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\selection\manipulators\ScaleManipulator.h">
       <Filter>src\selection\manipulators</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.h">
@@ -2243,6 +2246,66 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\selection\algorithm\Texturing.h">
       <Filter>src\selection\algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\brush\RenderableWinding.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\GeometryRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\RenderableEntityBox.h">
+      <Filter>src\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\RenderableArrow.h">
+      <Filter>src\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\SurfaceRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\brush\RenderableBrushVertices.h">
+      <Filter>src\brush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\RenderableModelSurface.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\curve\RenderableCurveVertices.h">
+      <Filter>src\entity\curve</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\map\RenderablePointFile.h">
+      <Filter>src\map</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\light\LightVertexInstanceSet.h">
+      <Filter>src\entity\light</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\doom3group\RenderableVertex.h">
+      <Filter>src\entity\doom3group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\manipulators\Renderables.h">
+      <Filter>src\selection\manipulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\TextRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\RenderableEntityName.h">
+      <Filter>src\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\BuiltInShader.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\ColourShader.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\LightingModeRenderResult.h">
+      <Filter>src\rendersystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightInteractions.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\entity\RenderableObjectCollection.h">
+      <Filter>src\entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\GeometryStore.h">
+      <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

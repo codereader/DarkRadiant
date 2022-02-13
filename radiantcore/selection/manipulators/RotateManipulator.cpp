@@ -9,85 +9,37 @@
 namespace selection
 {
 
-template<typename remap_policy>
-inline void draw_semicircle(const std::size_t segments, const float radius, VertexCb* vertices, remap_policy remap) {
-  const double increment = math::PI / double(segments << 2);
-
-  std::size_t count = 0;
-  float x = radius;
-  float y = 0;
-  remap_policy::set(vertices[segments << 2].vertex, -radius, 0, 0);
-  while(count < segments)
-  {
-    VertexCb* i = vertices + count;
-    VertexCb* j = vertices + ((segments << 1) - (count + 1));
-
-    VertexCb* k = i + (segments << 1);
-    VertexCb* l = j + (segments << 1);
-
-#if 0
-    VertexCb* m = i + (segments << 2);
-    VertexCb* n = j + (segments << 2);
-    VertexCb* o = k + (segments << 2);
-    VertexCb* p = l + (segments << 2);
-#endif
-
-    remap_policy::set(i->vertex, x,-y, 0);
-    remap_policy::set(k->vertex,-y,-x, 0);
-#if 0
-    remap_policy::set(m->vertex,-x, y, 0);
-    remap_policy::set(o->vertex, y, x, 0);
-#endif
-
-    ++count;
-
-    {
-      const double theta = increment * count;
-      x = static_cast<float>(radius * cos(theta));
-      y = static_cast<float>(radius * sin(theta));
-    }
-
-    remap_policy::set(j->vertex, y,-x, 0);
-    remap_policy::set(l->vertex,-x,-y, 0);
-#if 0
-    remap_policy::set(n->vertex,-y, x, 0);
-    remap_policy::set(p->vertex, x, y, 0);
-#endif
-  }
+namespace
+{
+    constexpr static auto CircleSegments = 8;
+    constexpr static auto CircleRadius = 64.0;
+    const Vector4 AngleTextColour(0.75, 0, 0, 1);
 }
 
-// Constructor
 RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius) :
 	_pivot(pivot),
 	_pivotTranslatable(_pivot),
     _rotateFree(*this),
     _rotateAxis(*this),
 	_translatePivot(_pivotTranslatable),
-    _circleX((segments << 2) + 1),
-    _circleY((segments << 2) + 1),
-    _circleZ((segments << 2) + 1),
-    _circleScreen(segments<<3),
-    _circleSphere(segments<<3),
-	_pivotPoint(GL_POINTS)
-{
-	draw_semicircle(segments, radius, &_circleX.front(), RemapYZX());
-    draw_semicircle(segments, radius, &_circleY.front(), RemapZXY());
-    draw_semicircle(segments, radius, &_circleZ.front(), RemapXYZ());
+    _localPivotPoint(0,0,0),
+    _circleX(CircleSegments, CircleRadius, _local2worldX),
+    _circleY(CircleSegments, CircleRadius, _local2worldY),
+    _circleZ(CircleSegments, CircleRadius, _local2worldZ),
+    _circleScreen(CircleSegments, CircleRadius * 1.15, _pivot2World._viewpointSpace),
+    _circleSphere(CircleSegments, CircleRadius, _pivot2World._viewpointSpace),
+	_pivotPoint(_localPivotPoint, _pivot2World._worldSpace),
+    _angleText("", { 0,0,0 }, AngleTextColour)
+{}
 
-	draw_circle(segments, radius * 1.15f, &_circleScreen.front(), RemapXYZ());
-    draw_circle(segments, radius, &_circleSphere.front(), RemapXYZ());
-
-	_pivotPoint.push_back(VertexCb(Vertex3f(0,0,0), ManipulatorBase::COLOUR_SPHERE()));
-}
-
-void RotateManipulator::UpdateColours()
+void RotateManipulator::updateColours()
 {
     _circleX.setColour(colourSelected(COLOUR_X(), _selectableX.isSelected()));
 	_circleY.setColour(colourSelected(COLOUR_Y(), _selectableY.isSelected()));
 	_circleZ.setColour(colourSelected(COLOUR_Z(), _selectableZ.isSelected()));
-    _circleScreen.setColour(colourSelected(ManipulatorBase::COLOUR_SCREEN(), _selectableScreen.isSelected()));
-    _circleSphere.setColour(colourSelected(ManipulatorBase::COLOUR_SPHERE(), false));
-	_pivotPoint.setColour(colourSelected(ManipulatorBase::COLOUR_SPHERE(), _selectablePivotPoint.isSelected()));
+    _circleScreen.setColour(colourSelected(COLOUR_SCREEN(), _selectableScreen.isSelected()));
+    _circleSphere.setColour(colourSelected(COLOUR_SPHERE(), false));
+	_pivotPoint.setColour(colourSelected(COLOUR_SPHERE(), _selectablePivotPoint.isSelected()));
 }
 
 void RotateManipulator::updateCircleTransforms()
@@ -136,33 +88,61 @@ void RotateManipulator::updateCircleTransforms()
     }
 }
 
-void RotateManipulator::render(RenderableCollector& collector, const VolumeTest& volume)
+void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const VolumeTest& volume)
 {
+    if (!renderSystem)
+    {
+        clearRenderables();
+        return;
+    }
+
+    if (!_lineShader)
+    {
+        _lineShader = renderSystem->capture(BuiltInShaderType::WireframeOverlay);
+    }
+
+    if (!_pivotPointShader)
+    {
+        _pivotPointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
+    }
+
+    if (!_textRenderer)
+    {
+        auto fontStyle = registry::getValue<std::string>(RKEY_MANIPULATOR_FONTSTYLE) == "Sans" ?
+            IGLFont::Style::Sans : IGLFont::Style::Mono;
+        auto fontSize = registry::getValue<int>(RKEY_MANIPULATOR_FONTSIZE);
+
+        _textRenderer = renderSystem->captureTextRenderer(fontStyle, fontSize);
+    }
+
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
+    
     updateCircleTransforms();
+    updateColours();
+    updateAngleText();
 
-    // temp hack
-    UpdateColours();
+    _circleX.update(_lineShader);
+    _circleY.update(_lineShader);
+    _circleZ.update(_lineShader);
+    _circleScreen.update(_lineShader);
+    _circleSphere.update(_lineShader);
+    _pivotPoint.update(_pivotPointShader);
+    _angleText.update(_textRenderer);
+}
 
-    collector.addRenderable(*_stateOuter, _circleScreen, _pivot2World._viewpointSpace);
-    collector.addRenderable(*_stateOuter, _circleSphere, _pivot2World._viewpointSpace);
+void RotateManipulator::clearRenderables()
+{
+    _circleX.clear();
+    _circleY.clear();
+    _circleZ.clear();
+    _circleScreen.clear();
+    _circleSphere.clear();
+    _pivotPoint.clear();
+    _angleText.clear();
 
-    if(_circleX_visible)
-    {
-      collector.addRenderable(*_stateOuter, _circleX, _local2worldX);
-    }
-    if(_circleY_visible)
-    {
-      collector.addRenderable(*_stateOuter, _circleY, _local2worldY);
-    }
-    if(_circleZ_visible)
-    {
-      collector.addRenderable(*_stateOuter, _circleZ, _local2worldZ);
-    }
-
-	collector.addRenderable(*_pivotPointShader, _pivotPoint, _pivot2World._worldSpace);
-
-	collector.addRenderable(*_pivotPointShader, *this, Matrix4::getIdentity());
+    _lineShader.reset();
+    _pivotPointShader.reset();
+    _textRenderer.reset();
 }
 
 std::string RotateManipulator::getRotationAxisName() const
@@ -174,20 +154,21 @@ std::string RotateManipulator::getRotationAxisName() const
     return std::string();
 }
 
-void RotateManipulator::render(const RenderInfo& info) const
+void RotateManipulator::updateAngleText()
 {
     if (_selectableX.isSelected() || _selectableY.isSelected() ||
         _selectableZ.isSelected() || _selectableScreen.isSelected())
-	{
-		glColor3d(0.75, 0, 0);
-
-		glRasterPos3dv(_pivot2World._worldSpace.translation() - Vector3(10, 10, 10));
-
-		double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
+    {
+        double angle = static_cast<double>(c_RAD2DEGMULT * _rotateAxis.getCurAngle());
         auto rotationAxisName = getRotationAxisName();
 
-        _glFont->drawString(fmt::format("Rotate: {0:3.2f} degrees {1}", angle, rotationAxisName));
-	}
+        _angleText.setText(fmt::format("Rotate: {0:3.2f} degrees {1}", angle, rotationAxisName));
+        _angleText.setWorldPosition(_pivot2World._worldSpace.translation() - Vector3(10, 10, 10));
+    }
+    else
+    {
+        _angleText.setText("");
+    }
 }
 
 void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world)
@@ -209,7 +190,7 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldX));
 
 				SelectionIntersection best;
-				LineStrip_BestPoint(local2view, &_circleX.front(), _circleX.size(), best);
+				LineStrip_BestPoint(local2view, &_circleX.getRawPoints().front(), _circleX.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableX);
 			}
 
@@ -217,7 +198,7 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldY));
 
 				SelectionIntersection best;
-				LineStrip_BestPoint(local2view, &_circleY.front(), _circleY.size(), best);
+				LineStrip_BestPoint(local2view, &_circleY.getRawPoints().front(), _circleY.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableY);
 			}
 
@@ -225,7 +206,7 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldZ));
 
 				SelectionIntersection best;
-				LineStrip_BestPoint(local2view, &_circleZ.front(), _circleZ.size(), best);
+				LineStrip_BestPoint(local2view, &_circleZ.getRawPoints().front(), _circleZ.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableZ);
 			}
 		}
@@ -235,13 +216,13 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 
 			{
 				SelectionIntersection best;
-				LineLoop_BestPoint(local2view, &_circleScreen.front(), _circleScreen.size(), best);
+				LineLoop_BestPoint(local2view, &_circleScreen.getRawPoints().front(), _circleScreen.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableScreen);
 			}
 
 			{
 				SelectionIntersection best;
-				Circle_BestPoint(local2view, eClipCullCW, &_circleSphere.front(), _circleSphere.size(), best);
+				Circle_BestPoint(local2view, eClipCullCW, &_circleSphere.getRawPoints().front(), _circleSphere.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableSphere);
 			}
 		}
@@ -322,10 +303,5 @@ void RotateManipulator::rotate(const Quaternion& rotation)
 
 	SceneChangeNotify();
 }
-
-// Static members
-ShaderPtr RotateManipulator::_stateOuter;
-ShaderPtr RotateManipulator::_pivotPointShader;
-IGLFont::Ptr RotateManipulator::_glFont;
 
 }

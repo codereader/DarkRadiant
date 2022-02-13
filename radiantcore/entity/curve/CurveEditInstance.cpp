@@ -10,9 +10,7 @@ CurveEditInstance::CurveEditInstance(Curve& curve, const SelectionChangedSlot& s
 	_curve(curve),
     _selectionChanged(selectionChanged),
     _controlPointsTransformed(_curve.getTransformedControlPoints()),
-    _controlPoints(_curve.getControlPoints()),
-    m_controlsRender(GL_POINTS),
-    m_selectedRender(GL_POINTS)
+    _controlPoints(_curve.getControlPoints())
 {}
 
 void CurveEditInstance::testSelect(Selector& selector, SelectionTest& test)
@@ -30,20 +28,6 @@ void CurveEditInstance::testSelect(Selector& selector, SelectionTest& test)
 			Selector_add(selector, *i, best);
 		}
     }
-}
-
-void CurveEditInstance::setRenderSystem(const RenderSystemPtr& renderSystem)
-{
-	if (renderSystem)
-	{
-		_shaders.controlsShader = renderSystem->capture("$POINT");
-		_shaders.selectedShader = renderSystem->capture("$SELPOINT");
-	}
-	else
-	{
-		_shaders.controlsShader.reset();
-		_shaders.selectedShader.reset();
-	}
 }
 
 bool CurveEditInstance::isSelected() const {
@@ -161,37 +145,9 @@ void CurveEditInstance::snapto(float snap) {
     forEachSelected(snapper);
 }
 
-void CurveEditInstance::updateSelected() const {
-    m_selectedRender.clear();
-    ControlPointAdder adder(m_selectedRender, colour_selected);
-    forEachSelected(adder);
-}
-
-void CurveEditInstance::renderComponents(RenderableCollector& collector,
-	const VolumeTest& volume, const Matrix4& localToWorld) const
+void CurveEditInstance::curveChanged()
 {
-	collector.addRenderable(*_shaders.controlsShader, m_controlsRender, localToWorld);
-}
-
-void CurveEditInstance::renderComponentsSelected(RenderableCollector& collector,
-	const VolumeTest& volume, const Matrix4& localToWorld) const
-{
-    updateSelected();
-    if(!m_selectedRender.empty())
-    {
-	  collector.addRenderable(*_shaders.selectedShader, m_selectedRender, localToWorld);
-    }
-}
-
-void CurveEditInstance::curveChanged() {
     _selectables.resize(_controlPointsTransformed.size(), _selectionChanged);
-
-    m_controlsRender.clear();
-    m_controlsRender.reserve(_controlPointsTransformed.size());
-    ControlPointAdder adder(m_controlsRender);
-    forEach(adder);
-
-    m_selectedRender.reserve(_controlPointsTransformed.size());
 }
 
 void CurveEditInstance::forEachSelected(ControlPointFunctor& functor) {
@@ -207,6 +163,18 @@ void CurveEditInstance::forEachSelected(ControlPointFunctor& functor) {
     		functor(*transformed, *original);
   		}
 	}
+}
+
+void CurveEditInstance::forEachControlPoint(const std::function<void(const Vector3&, bool)>& functor) const
+{
+    ASSERT_MESSAGE(_controlPointsTransformed.size() == _selectables.size(), "curve instance mismatch");
+
+    auto transformed = _controlPointsTransformed.begin();
+
+    for (auto i = _selectables.begin(); i != _selectables.end(); ++i, ++transformed)
+    {
+        functor(*transformed, i->isSelected());
+    }
 }
 
 void CurveEditInstance::forEachSelected(ControlPointConstFunctor& functor) const {

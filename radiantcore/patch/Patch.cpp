@@ -48,12 +48,6 @@ inline bool double_valid(double f) {
 Patch::Patch(PatchNode& node) :
     _node(node),
     _undoStateSaver(nullptr),
-    _solidRenderable(_mesh),
-    _wireframeRenderable(_mesh),
-    _fixedWireframeRenderable(_mesh),
-    _renderableNTBVectors(_mesh),
-    _renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
-    _renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
     _transformChanged(false),
     _tesselationChanged(true),
     _shader(texdef_name_default())
@@ -69,12 +63,6 @@ Patch::Patch(const Patch& other, PatchNode& node) :
     IUndoable(other),
     _node(node),
     _undoStateSaver(nullptr),
-    _solidRenderable(_mesh),
-    _wireframeRenderable(_mesh),
-    _fixedWireframeRenderable(_mesh),
-    _renderableNTBVectors(_mesh),
-    _renderableCtrlPoints(GL_POINTS, _ctrl_vertices),
-    _renderableLattice(GL_LINES, _latticeIndices, _ctrl_vertices),
     _transformChanged(false),
     _tesselationChanged(true),
     _shader(other._shader.getMaterialName())
@@ -147,14 +135,15 @@ void Patch::setDims(std::size_t w, std::size_t h)
   else if(h < MIN_PATCH_HEIGHT)
     h = MIN_PATCH_HEIGHT;
 
-  _width = w;
-  _height = h;
+    _width = w;
+    _height = h;
 
-  if(_width * _height != _ctrl.size())
-  {
-    _ctrl.resize(_width * _height);
-    onAllocate(_ctrl.size());
-  }
+    if(_width * _height != _ctrl.size())
+    {
+        _ctrl.resize(_width * _height);
+        _ctrlTransformed.resize(_ctrl.size());
+        _node.updateSelectableControls();
+    }
 }
 
 PatchNode& Patch::getPatchNode()
@@ -179,37 +168,10 @@ void Patch::disconnectUndoSystem(IUndoSystem& undoSystem)
     undoSystem.releaseStateSaver(*this);
 }
 
-// Allocate callback: pass the allocate call to all the observers
-void Patch::onAllocate(std::size_t size)
-{
-    _node.allocate(size);
-}
-
 // Return the interally stored AABB
 const AABB& Patch::localAABB() const
 {
     return _localAABB;
-}
-
-void Patch::renderWireframe(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld, const IRenderEntity& entity) const
-{
-    // Defer the tesselation calculation to the last minute
-    const_cast<Patch&>(*this).updateTesselation();
-
-    collector.addRenderable(*entity.getWireShader(),
-        _patchDef3 ? _fixedWireframeRenderable : _wireframeRenderable, localToWorld);
-}
-
-// greebo: This renders the patch components, namely the lattice and the corner controls
-void Patch::submitRenderablePoints(RenderableCollector& collector,
-                                   const VolumeTest& volume,
-                                   const Matrix4& localToWorld) const
-{
-    // Defer the tesselation calculation to the last minute
-    const_cast<Patch&>(*this).updateTesselation();
-
-    collector.addRenderable(*_latticeShader, _renderableLattice, localToWorld);
-    collector.addRenderable(*_pointShader, _renderableCtrlPoints, localToWorld);
 }
 
 RenderSystemPtr Patch::getRenderSystem() const
@@ -221,21 +183,6 @@ void Patch::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     _renderSystem = renderSystem;
     _shader.setRenderSystem(renderSystem);
-
-#if DEBUG_PATCH_NTB_VECTORS
-    _renderableNTBVectors.setRenderSystem(renderSystem);
-#endif
-
-    if (renderSystem)
-    {
-        _pointShader = renderSystem->capture("$POINT");
-        _latticeShader = renderSystem->capture("$LATTICE");
-    }
-    else
-    {
-        _pointShader.reset();
-        _latticeShader.reset();
-    }
 }
 
 // Implementation of the abstract method of SelectionTestable
@@ -332,6 +279,7 @@ void Patch::controlPointsChanged()
     transformChanged();
     evaluateTransform();
     updateTesselation();
+    _node.onControlPointsChanged();
 
     for (Observers::iterator i = _observers.begin(); i != _observers.end();)
     {
@@ -452,7 +400,8 @@ void Patch::importState(const IUndoMementoPtr& state)
         _width = other.m_width;
         _height = other.m_height;
         _ctrl = other.m_ctrl;
-        onAllocate(_ctrl.size());
+        _ctrlTransformed = _ctrl;
+        _node.updateSelectableControls();
         _patchDef3 = other.m_patchDef3;
         _subDivisions = Subdivisions(other.m_subdivisions_x, other.m_subdivisions_y);
         _shader.setMaterialName(other._materialName);
@@ -480,10 +429,6 @@ Patch::~Patch()
     {
         (*i++)->onPatchDestruction();
     }
-
-    // Release the shaders
-    _pointShader.reset();
-    _latticeShader.reset();
 }
 
 bool Patch::isValid() const
@@ -541,9 +486,6 @@ void Patch::updateTesselation(bool force)
 
     _tesselationChanged = false;
 
-    _ctrl_vertices.clear();
-    _latticeIndices.clear();
-
     if (!isValid())
     {
         _mesh.clear();
@@ -552,46 +494,11 @@ void Patch::updateTesselation(bool force)
     }
 
     // Run the tesselation code
-    _mesh.generate(_width, _height, _ctrlTransformed, subdivisionsFixed(), getSubdivisions());
+    _mesh.generate(_width, _height, _ctrlTransformed, subdivisionsFixed(), getSubdivisions(), _node.getRenderEntity());
 
     updateAABB();
 
-    // Generate the indices for the coloured control points and the lines in between
-    IndexBuffer ctrl_indices;
-
-    _latticeIndices.reserve(((_width * (_height - 1)) + (_height * (_width - 1))) << 1);
-    ctrl_indices.reserve(_ctrlTransformed.size());
-
-    UniqueVertexBuffer<VertexCb> inserter(_ctrl_vertices);
-    for (PatchControlIter i = _ctrlTransformed.begin(); i != _ctrlTransformed.end(); ++i)
-    {
-        ctrl_indices.push_back(inserter.insert(pointvertex_quantised(VertexCb(i->vertex, colour_for_index(i - _ctrlTransformed.begin(), _width)))));
-    }
-
-    for(IndexBuffer::iterator i = ctrl_indices.begin(); i != ctrl_indices.end(); ++i)
-    {
-        if(std::size_t(i - ctrl_indices.begin()) % _width)
-        {
-            _latticeIndices.push_back(*(i - 1));
-            _latticeIndices.push_back(*i);
-        }
-        if(std::size_t(i - ctrl_indices.begin()) >= _width)
-        {
-            _latticeIndices.push_back(*(i - _width));
-            _latticeIndices.push_back(*i);
-        }
-    }
-
-    _solidRenderable.queueUpdate();
-
-    if (_patchDef3)
-    {
-        _fixedWireframeRenderable.queueUpdate();
-    }
-    else
-    {
-        _wireframeRenderable.queueUpdate();
-    }
+    _node.onTesselationChanged();
 }
 
 void Patch::invertMatrix()
@@ -2698,7 +2605,9 @@ bool Patch::getIntersection(const Ray& ray, Vector3& intersection)
 
 void Patch::textureChanged()
 {
-    for (Observers::iterator i = _observers.begin(); i != _observers.end();)
+    _node.onMaterialChanged();
+
+    for (auto i = _observers.begin(); i != _observers.end();)
     {
         (*i++)->onPatchTextureChanged();
     }
@@ -2720,4 +2629,9 @@ sigc::signal<void>& Patch::signal_patchTextureChanged()
 {
     static sigc::signal<void> _sigPatchTextureChanged;
     return _sigPatchTextureChanged;
+}
+
+void Patch::queueTesselationUpdate()
+{
+    _tesselationChanged = true;
 }

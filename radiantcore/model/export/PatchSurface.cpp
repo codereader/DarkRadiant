@@ -27,6 +27,14 @@ PatchSurface::PatchSurface(const std::string& materialName, PatchMesh& mesh) :
     std::transform(mesh.vertices.begin(), mesh.vertices.end(),
         std::back_inserter(_vertices), convertPatchVertex);
 
+    _bounds = AABB();
+
+    // Accumulate the bounds
+    for (const auto& vertex : _vertices)
+    {
+        _bounds.includePoint(vertex);
+    }
+
     // Generate the indices to define the triangles in clockwise order
     for (std::size_t h = 0; h < mesh.height - 1; ++h)
     {
@@ -92,6 +100,11 @@ const std::vector<ArbitraryMeshVertex>& PatchSurface::getVertexArray() const
 const std::vector<unsigned int>& PatchSurface::getIndexArray() const
 {
     return _indices;
+}
+
+const AABB& PatchSurface::getSurfaceBounds() const
+{
+    return _bounds;
 }
 
 }

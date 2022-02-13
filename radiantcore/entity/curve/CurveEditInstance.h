@@ -3,16 +3,12 @@
 #include "Curve.h"
 #include "ObservedSelectable.h"
 
-namespace entity {
-
-	namespace
-	{
-		const Colour4b colour_vertex(0, 255, 0, 255);
-		const Colour4b colour_selected(0, 0, 255, 255);
-	}
+namespace entity
+{
 
 /** greebo: This class is wrapped around a Curve class to manage
- * 			all the selection and transformation operations.
+ * the selection and transformation operations. 
+ * This should be merged with the Curve class.
  */
 class CurveEditInstance: public sigc::trackable
 {
@@ -41,26 +37,16 @@ private:
 	typedef std::vector<selection::ObservedSelectable> Selectables;
 	Selectables _selectables;
 
-	RenderablePointVector m_controlsRender;
-	mutable RenderablePointVector m_selectedRender;
-
-	struct CurveShaders
-	{
-		ShaderPtr controlsShader;
-		ShaderPtr selectedShader;
-	};
-
-	CurveShaders _shaders;
-
 public:
 
 	// Constructor
 	CurveEditInstance(Curve& curve, const SelectionChangedSlot& selectionChanged);
-
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
-
 	// Traversal functions, these cycle through all (selected) control points
 	void forEach(ControlPointFunctor& functor);
+
+    // Iterate all (transformed) control points and their selection status
+	void forEachControlPoint(const std::function<void(const Vector3&, bool)>& functor) const;
+
 	void forEachSelected(ControlPointFunctor& functor);
 	void forEachSelected(ControlPointConstFunctor& functor) const;
 
@@ -78,12 +64,6 @@ public:
 
 	// Snaps the selected control points to the grid
 	void snapto(float snap);
-
-	void updateSelected() const;
-
-	void renderComponents(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
-
-	void renderComponentsSelected(RenderableCollector& collector, const VolumeTest& volume, const Matrix4& localToWorld) const;
 
 	void curveChanged();
 

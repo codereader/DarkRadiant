@@ -60,8 +60,14 @@ OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSy
     _name(name),
     _renderSystem(renderSystem),
     _isVisible(true),
-    _useCount(0)
-{}
+    _useCount(0),
+    _geometryRenderer(renderSystem.getGeometryStore()),
+    _surfaceRenderer(renderSystem.getGeometryStore()),
+    _enabledViewTypes(0),
+    _mergeModeActive(false)
+{
+    _windingRenderer.reset(new WindingRenderer<WindingIndexer_Triangles>(renderSystem.getGeometryStore(), this));
+}
 
 OpenGLShader::~OpenGLShader()
 {
@@ -75,9 +81,10 @@ OpenGLRenderSystem& OpenGLShader::getRenderSystem()
 
 void OpenGLShader::destroy()
 {
+    _enabledViewTypes = 0;
     _materialChanged.disconnect();
     _material.reset();
-    _shaderPasses.clear();
+    clearPasses();
 }
 
 void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
@@ -110,6 +117,117 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     }
 }
 
+void OpenGLShader::drawSurfaces(const VolumeTest& view, const RenderInfo& info)
+{
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    
+    // Surfaces are using CW culling
+    glFrontFace(GL_CW);
+
+    if (hasSurfaces())
+    {
+        _geometryRenderer.render(info);
+        _surfaceRenderer.render(view, info);
+    }
+
+    // Render all windings
+    _windingRenderer->renderAllWindings(info);
+
+    glDisableClientState(GL_NORMAL_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+}
+
+bool OpenGLShader::hasSurfaces() const
+{
+    return !_geometryRenderer.empty() || !_surfaceRenderer.empty();
+}
+
+IGeometryRenderer::Slot OpenGLShader::addGeometry(GeometryType indexType,
+    const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
+{
+    return _geometryRenderer.addGeometry(indexType, vertices, indices);
+}
+
+void OpenGLShader::removeGeometry(IGeometryRenderer::Slot slot)
+{
+    _geometryRenderer.removeGeometry(slot);
+}
+
+void OpenGLShader::updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    const std::vector<unsigned int>& indices)
+{
+    _geometryRenderer.updateGeometry(slot, vertices, indices);
+}
+
+void OpenGLShader::renderGeometry(IGeometryRenderer::Slot slot)
+{
+    _geometryRenderer.renderGeometry(slot);
+}
+
+AABB OpenGLShader::getGeometryBounds(IGeometryRenderer::Slot slot)
+{
+    return _geometryRenderer.getGeometryBounds(slot);
+}
+
+IGeometryStore::Slot OpenGLShader::getGeometryStorageLocation(IGeometryRenderer::Slot slot)
+{
+    return _geometryRenderer.getGeometryStorageLocation(slot);
+}
+
+ISurfaceRenderer::Slot OpenGLShader::addSurface(IRenderableSurface& surface)
+{
+    return _surfaceRenderer.addSurface(surface);
+}
+
+void OpenGLShader::removeSurface(ISurfaceRenderer::Slot slot)
+{
+    _surfaceRenderer.removeSurface(slot);
+}
+
+void OpenGLShader::updateSurface(ISurfaceRenderer::Slot slot)
+{
+    _surfaceRenderer.updateSurface(slot);
+}
+
+void OpenGLShader::renderSurface(ISurfaceRenderer::Slot slot)
+{
+    _surfaceRenderer.renderSurface(slot);
+}
+
+IGeometryStore::Slot OpenGLShader::getSurfaceStorageLocation(ISurfaceRenderer::Slot slot)
+{
+    return _surfaceRenderer.getSurfaceStorageLocation(slot);
+}
+
+IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices, IRenderEntity* entity)
+{
+    return _windingRenderer->addWinding(vertices, entity);
+}
+
+void OpenGLShader::removeWinding(IWindingRenderer::Slot slot)
+{
+    _windingRenderer->removeWinding(slot);
+}
+
+void OpenGLShader::updateWinding(IWindingRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices)
+{
+    _windingRenderer->updateWinding(slot, vertices);
+}
+
+bool OpenGLShader::hasWindings() const
+{
+    return !_windingRenderer->empty();
+}
+
+void OpenGLShader::renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot)
+{
+    _windingRenderer->renderWinding(mode, slot);
+}
+
 void OpenGLShader::setVisible(bool visible)
 {
     // Control visibility by inserting or removing our shader passes from the GL
@@ -128,7 +246,7 @@ void OpenGLShader::setVisible(bool visible)
 
 bool OpenGLShader::isVisible() const
 {
-    return _isVisible;
+    return _isVisible && (!_material || _material->isVisible());
 }
 
 void OpenGLShader::incrementUsed()
@@ -207,25 +325,25 @@ void OpenGLShader::realise()
 void OpenGLShader::insertPasses()
 {
     // Insert all shader passes into the GL state manager
-    for (Passes::iterator i = _shaderPasses.begin();
-         i != _shaderPasses.end();
-          ++i)
+    for (auto& shaderPass : _shaderPasses)
     {
-    	_renderSystem.insertSortedState(
-            OpenGLStates::value_type((*i)->statePtr(), *i)
-        );
+    	_renderSystem.insertSortedState(std::make_pair(shaderPass->statePtr(), shaderPass));
     }
 }
 
 void OpenGLShader::removePasses()
 {
     // Remove shader passes from the GL state manager
-    for (Passes::iterator i = _shaderPasses.begin();
-         i != _shaderPasses.end();
-         ++i)
+    for (auto& shaderPass : _shaderPasses)
 	{
-        _renderSystem.eraseSortedState((*i)->statePtr());
+        _renderSystem.eraseSortedState(shaderPass->statePtr());
     }
+}
+
+void OpenGLShader::clearPasses()
+{
+    _depthFillPass.reset();
+    _shaderPasses.clear();
 }
 
 void OpenGLShader::unrealise()
@@ -260,8 +378,8 @@ OpenGLState& OpenGLShader::appendDefaultPass()
 
 OpenGLState& OpenGLShader::appendDepthFillPass()
 {
-    auto& pass = _shaderPasses.emplace_back(std::make_shared<DepthFillPass>(*this, _renderSystem));
-    return pass->state();
+    _depthFillPass = _shaderPasses.emplace_back(std::make_shared<DepthFillPass>(*this, _renderSystem));
+    return _depthFillPass->state();
 }
 
 // Test if we can render in bump map mode
@@ -623,9 +741,14 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
 // Construct a normal shader
 void OpenGLShader::constructNormalShader()
 {
-    // Obtain the Material
-    _material = GlobalMaterialManager().getMaterial(_name);
-    assert(_material);
+    constructFromMaterial(GlobalMaterialManager().getMaterial(_name));
+}
+
+void OpenGLShader::constructFromMaterial(const MaterialPtr& material)
+{
+    assert(material);
+
+    _material = material;
 
     _materialChanged = _material->sig_materialChanged().connect(
         sigc::mem_fun(this, &OpenGLShader::onMaterialChanged));
@@ -644,383 +767,26 @@ void OpenGLShader::constructNormalShader()
     }
 }
 
-// Main shader construction entry point
 void OpenGLShader::construct()
 {
-	// Retrieve the highlight colour from the colourschemes (once)
-	const static Colour4 highLightColour(
-        GlobalColourSchemeManager().getColour("selected_brush_camera"), 0.3f
-    );
-
-    // Check the first character of the name to see if this is a special built-in
-    // shader
     switch (_name[0])
     {
-        case '(': // fill shader
-        {
-            OpenGLState& state = appendDefaultPass();
-			state.setName(_name);
+    // greebo: For a small amount of commits, I'll leave these here to catch my attention
+    case '(': // fill shader
+    case '[':
+    case '<': // wireframe shader
+    case '{': // cam + wireframe shader
+    case '$': // hardcoded legacy stuff
+    {
+        rWarning() << "Legacy shader request encountered" << std::endl;
+        assert(false);
+        return;
+    }
+    }
 
-            Colour4 colour;
-            sscanf(_name.c_str(), "(%f %f %f)", &colour[0], &colour[1], &colour[2]);
-            colour[3] = 1.0f;
-            state.setColour(colour);
-
-            state.setRenderFlag(RENDER_FILL);
-            state.setRenderFlag(RENDER_LIGHTING);
-            state.setRenderFlag(RENDER_DEPTHTEST);
-            state.setRenderFlag(RENDER_CULLFACE);
-            state.setRenderFlag(RENDER_DEPTHWRITE);
-            state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-            break;
-        }
-
-        case '[':
-        {
-            OpenGLState& state = appendDefaultPass();
-			state.setName(_name);
-
-            Colour4 colour;
-            sscanf(_name.c_str(), "[%f %f %f]", &colour[0], &colour[1], &colour[2]);
-            colour[3] = 0.5f;
-            state.setColour(colour);
-
-            state.setRenderFlag(RENDER_FILL);
-            state.setRenderFlag(RENDER_LIGHTING);
-            state.setRenderFlag(RENDER_DEPTHTEST);
-            state.setRenderFlag(RENDER_CULLFACE);
-            state.setRenderFlag(RENDER_DEPTHWRITE);
-            state.setRenderFlag(RENDER_BLEND);
-            state.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
-            break;
-        }
-
-        case '<': // wireframe shader
-        {
-            OpenGLState& state = appendDefaultPass();
-			state.setName(_name);
-
-            Colour4 colour;
-            sscanf(_name.c_str(), "<%f %f %f>", &colour[0], &colour[1], &colour[2]);
-            colour[3] = 1;
-            state.setColour(colour);
-
-            state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
-            state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-            state.setDepthFunc(GL_LESS);
-            state.m_linewidth = 1;
-            state.m_pointsize = 1;
-            break;
-        }
-
-        case '$':
-        {
-            OpenGLState& state = appendDefaultPass();
-			state.setName(_name);
-
-            if (_name == "$POINT")
-            {
-              state.setRenderFlag(RENDER_POINT_COLOUR);
-              state.setRenderFlag(RENDER_DEPTHWRITE);
-
-              state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
-              state.m_pointsize = 4;
-            }
-            else if (_name == "$SELPOINT")
-            {
-              state.setRenderFlag(RENDER_POINT_COLOUR);
-              state.setRenderFlag(RENDER_DEPTHWRITE);
-
-              state.setSortPosition(OpenGLState::SORT_POINT_LAST);
-              state.m_pointsize = 4;
-            }
-            else if (_name == "$BIGPOINT")
-            {
-              state.setRenderFlag(RENDER_POINT_COLOUR);
-              state.setRenderFlag(RENDER_DEPTHWRITE);
-
-              state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
-              state.m_pointsize = 6;
-            }
-            else if (_name == "$PIVOT")
-            {
-              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
-              state.setSortPosition(OpenGLState::SORT_GUI0);
-              state.m_linewidth = 2;
-              state.setDepthFunc(GL_LEQUAL);
-
-              OpenGLState& hiddenLine = appendDefaultPass();
-			  hiddenLine.setName(_name + "_Hidden");
-              hiddenLine.setRenderFlags(RENDER_DEPTHTEST | RENDER_LINESTIPPLE);
-              hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
-              hiddenLine.m_linewidth = 2;
-              hiddenLine.setDepthFunc(GL_GREATER);
-            }
-            else if (_name == "$LATTICE")
-            {
-              state.setColour(1, 0.5, 0, 1);
-              state.setRenderFlag(RENDER_DEPTHWRITE);
-              state.setSortPosition(OpenGLState::SORT_POINT_FIRST);
-            }
-            else if (_name == "$WIREFRAME")
-            {
-              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
-              state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-            }
-            else if (_name == "$CAM_HIGHLIGHT")
-            {
-				// This is the shader drawing a coloured overlay
-				// over faces/polys. Its colour is configurable,
-				// and it has depth test activated.
-				state.setRenderFlag(RENDER_FILL);
-				state.setRenderFlag(RENDER_DEPTHTEST);
-				state.setRenderFlag(RENDER_CULLFACE);
-				state.setRenderFlag(RENDER_BLEND);
-
-				state.setColour(highLightColour);
-				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
-				state.polygonOffset = 0.5f;
-				state.setDepthFunc(GL_LEQUAL);
-            }
-            else if (_name == "$CAM_OVERLAY")
-            {
-				// This is the shader drawing a solid line to outline
-				// a selected item. The first pass has its depth test
-				// activated using GL_LESS, whereas the second pass
-				// draws the hidden lines in stippled appearance
-				// with its depth test using GL_GREATER.
-				state.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST);
-				state.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
-
-				// Second pass for hidden lines
-				OpenGLState& hiddenLine = appendDefaultPass();
-				hiddenLine.setColour(0.75, 0.75, 0.75, 1);
-				hiddenLine.setRenderFlags(RENDER_CULLFACE
-					| RENDER_DEPTHTEST
-					| RENDER_OFFSETLINE
-					| RENDER_LINESTIPPLE);
-				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
-				hiddenLine.setDepthFunc(GL_GREATER);
-				hiddenLine.m_linestipple_factor = 2;
-            }
-            else if (string::starts_with(_name, "$MERGE_ACTION_"))
-            {
-                Colour4 colour;
-                auto sortPosition = OpenGLState::SORT_OVERLAY_FIRST;
-                auto lineSortPosition = OpenGLState::SORT_OVERLAY_LAST;
-
-                if (string::ends_with(_name, "_ADD"))
-                {
-                    colour = Colour4(0, 0.9f, 0, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_THIRD; // render additions over removals
-                }
-                else if (string::ends_with(_name, "_REMOVE"))
-                {
-                    colour = Colour4(0.6f, 0.1f, 0, 0.5f);
-                    lineSortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
-                }
-                else if (string::ends_with(_name, "_CHANGE"))
-                {
-                    colour = Colour4(0, 0.4f, 0.9f, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_SECOND;
-                }
-                else if (string::ends_with(_name, "_CONFLICT"))
-                {
-                    colour = Colour4(0.9f, 0.5f, 0.0f, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
-                }
-
-                // This is the shader drawing a coloured overlay
-                // over faces/polys. Its colour is configurable,
-                // and it has depth test activated.
-                state.setRenderFlag(RENDER_FILL);
-                state.setRenderFlag(RENDER_DEPTHTEST);
-                state.setRenderFlag(RENDER_CULLFACE);
-                state.setRenderFlag(RENDER_BLEND);
-
-                state.setColour(colour);
-                state.setSortPosition(sortPosition);
-                state.polygonOffset = 0.5f;
-                state.setDepthFunc(GL_LEQUAL);
-
-                // This is the outline pass
-                auto& linesOverlay = appendDefaultPass();
-                colour[3] = 0.78f;
-                linesOverlay.setColour(colour);
-                linesOverlay.setRenderFlags(RENDER_OFFSETLINE | RENDER_DEPTHTEST | RENDER_BLEND);
-                linesOverlay.setSortPosition(lineSortPosition);
-            }
-            else if (_name == "$XY_OVERLAY")
-            {
-              Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_brush");
-              state.setColour(static_cast<float>(colorSelBrushes[0]),
-                              static_cast<float>(colorSelBrushes[1]),
-                              static_cast<float>(colorSelBrushes[2]),
-                              static_cast<float>(1));
-              state.setRenderFlag(RENDER_LINESTIPPLE);
-              state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
-              state.m_linewidth = 2;
-              state.m_linestipple_factor = 3;
-            }
-			else if (_name == "$XY_OVERLAY_GROUP")
-			{
-				Vector3 colorSelBrushes = GlobalColourSchemeManager().getColour("selected_group_items");
-                state.setColour(static_cast<float>(colorSelBrushes[0]),
-                    static_cast<float>(colorSelBrushes[1]),
-                    static_cast<float>(colorSelBrushes[2]),
-                    static_cast<float>(1));
-				state.setRenderFlag(RENDER_LINESTIPPLE);
-				state.setSortPosition(OpenGLState::SORT_HIGHLIGHT);
-				state.m_linewidth = 2;
-				state.m_linestipple_factor = 3;
-			}
-            else if (string::starts_with(_name, "$XY_MERGE_ACTION_"))
-            {
-                Colour4 colour;
-                auto sortPosition = OpenGLState::SORT_OVERLAY_FIRST;
-                auto lineSortPosition = OpenGLState::SORT_OVERLAY_LAST;
-
-                if (string::ends_with(_name, "_ADD"))
-                {
-                    colour = Colour4(0, 0.5f, 0, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_THIRD; // render additions over removals
-                }
-                else if (string::ends_with(_name, "_REMOVE"))
-                {
-                    colour = Colour4(0.6f, 0.1f, 0, 0.5f);
-                    lineSortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
-                }
-                else if (string::ends_with(_name, "_CHANGE"))
-                {
-                    colour = Colour4(0, 0.4f, 0.9f, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_SECOND;
-                }
-                else if (string::ends_with(_name, "_CONFLICT"))
-                {
-                    colour = Colour4(0.9f, 0.5f, 0.0f, 0.5f);
-                    sortPosition = OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST;
-                }
-
-                state.setColour(colour);
-                state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
-                state.m_linewidth = 2;
-            }
-            else if (_name == "$XY_INACTIVE_NODE")
-            {
-                Colour4 colour(0, 0, 0, 0.05f);
-                state.setColour(static_cast<float>(colour[0]),
-                    static_cast<float>(colour[1]),
-                    static_cast<float>(colour[2]),
-                    static_cast<float>(colour[3]));
-
-                state.m_blend_src = GL_SRC_ALPHA;
-                state.m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
-
-                state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE | RENDER_BLEND);
-                state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-                state.setDepthFunc(GL_LESS);
-
-                state.m_linewidth = 1;
-                state.m_pointsize = 1;
-            }
-            else if (_name == "$DEBUG_CLIPPED")
-            {
-              state.setRenderFlag(RENDER_DEPTHWRITE);
-              state.setSortPosition(OpenGLState::SORT_LAST);
-            }
-            else if (_name == "$POINTFILE")
-            {
-              state.setColour(1, 0, 0, 1);
-              state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
-              state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
-              state.m_linewidth = 4;
-            }
-            else if (_name == "$WIRE_OVERLAY")
-            {
-              state.setRenderFlags(RENDER_DEPTHWRITE
-                                 | RENDER_DEPTHTEST
-                                 | RENDER_OVERRIDE
-								 | RENDER_VERTEX_COLOUR);
-              state.setSortPosition(OpenGLState::SORT_GUI1);
-              state.setDepthFunc(GL_LEQUAL);
-
-              OpenGLState& hiddenLine = appendDefaultPass();
-			  hiddenLine.setName(_name + "_Hidden");
-              hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
-                                      | RENDER_DEPTHTEST
-                                      | RENDER_OVERRIDE
-                                      | RENDER_LINESTIPPLE
-									  | RENDER_VERTEX_COLOUR);
-              hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
-              hiddenLine.setDepthFunc(GL_GREATER);
-            }
-            else if (_name == "$FLATSHADE_OVERLAY")
-            {
-              state.setRenderFlags(RENDER_CULLFACE
-                                 | RENDER_LIGHTING
-                                 | RENDER_SMOOTH
-                                 | RENDER_SCALED
-                                 | RENDER_FILL
-                                 | RENDER_DEPTHWRITE
-                                 | RENDER_DEPTHTEST
-                                 | RENDER_OVERRIDE);
-              state.setSortPosition(OpenGLState::SORT_GUI1);
-              state.setDepthFunc(GL_LEQUAL);
-
-              OpenGLState& hiddenLine = appendDefaultPass();
-			  hiddenLine.setName(_name + "_Hidden");
-              hiddenLine.setRenderFlags(RENDER_CULLFACE
-                                      | RENDER_LIGHTING
-                                      | RENDER_SMOOTH
-                                      | RENDER_SCALED
-                                      | RENDER_FILL
-                                      | RENDER_DEPTHWRITE
-                                      | RENDER_DEPTHTEST
-                                      | RENDER_OVERRIDE
-                                      | RENDER_POLYGONSTIPPLE);
-              hiddenLine.setSortPosition(OpenGLState::SORT_GUI0);
-              hiddenLine.setDepthFunc(GL_GREATER);
-            }
-            else if (_name == "$CLIPPER_OVERLAY")
-            {
-              state.setColour(GlobalColourSchemeManager().getColour("clipper"));
-              state.setRenderFlags(RENDER_CULLFACE
-                                 | RENDER_DEPTHWRITE
-                                 | RENDER_FILL
-                                 | RENDER_POLYGONSTIPPLE);
-              state.setSortPosition(OpenGLState::SORT_OVERLAY_FIRST);
-            }
-            else if (_name == "$AAS_AREA")
-            {
-				state.setColour(1, 1, 1, 1);
-				state.setRenderFlags(RENDER_DEPTHWRITE
-					| RENDER_DEPTHTEST
-					| RENDER_OVERRIDE);
-				state.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
-				state.setDepthFunc(GL_LEQUAL);
-
-				OpenGLState& hiddenLine = appendDefaultPass();
-				hiddenLine.setColour(1, 1, 1, 1);
-				hiddenLine.setRenderFlags(RENDER_DEPTHWRITE
-					| RENDER_DEPTHTEST
-					| RENDER_OVERRIDE
-					| RENDER_LINESTIPPLE);
-				hiddenLine.setSortPosition(OpenGLState::SORT_OVERLAY_LAST);
-				hiddenLine.setDepthFunc(GL_GREATER);
-            }
-            else
-            {
-                assert(false);
-            }
-            break;
-        } // case '$'
-
-        default:
-        {
-            // This is not a hard-coded shader, construct from the shader system
-            constructNormalShader();
-        }
-    } // switch (name[0])
+    // Construct the shader from the material definition
+    constructNormalShader();
+    enableViewType(RenderViewType::Camera);
 }
 
 void OpenGLShader::onMaterialChanged()
@@ -1033,6 +799,64 @@ void OpenGLShader::onMaterialChanged()
 
     unrealise();
     realise();
+}
+
+bool OpenGLShader::isApplicableTo(RenderViewType renderViewType) const
+{
+    return (_enabledViewTypes & static_cast<std::size_t>(renderViewType)) != 0;
+}
+
+void OpenGLShader::enableViewType(RenderViewType renderViewType)
+{
+    _enabledViewTypes |= static_cast<std::size_t>(renderViewType);
+}
+
+const IBackendWindingRenderer& OpenGLShader::getWindingRenderer() const
+{
+    return *_windingRenderer;
+}
+
+void OpenGLShader::setWindingRenderer(std::unique_ptr<IBackendWindingRenderer> renderer)
+{
+    _windingRenderer = std::move(renderer);
+}
+
+bool OpenGLShader::isMergeModeEnabled() const
+{
+    return _mergeModeActive;
+}
+
+void OpenGLShader::setMergeModeEnabled(bool enabled)
+{
+    if (_mergeModeActive == enabled) return;
+
+    _mergeModeActive = enabled;
+
+    onMergeModeChanged();
+}
+
+void OpenGLShader::foreachPass(const std::function<void(OpenGLShaderPass&)>& functor)
+{
+    for (auto& pass : _shaderPasses)
+    {
+        functor(*pass);
+    }
+}
+
+void OpenGLShader::foreachPassWithoutDepthPass(const std::function<void(OpenGLShaderPass&)>& functor)
+{
+    for (auto& pass : _shaderPasses)
+    {
+        if (pass != _depthFillPass)
+        {
+            functor(*pass);
+        }
+    }
+}
+
+OpenGLShaderPass* OpenGLShader::getDepthFillPass() const
+{
+    return _depthFillPass.get();
 }
 
 }

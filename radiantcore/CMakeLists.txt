@@ -12,6 +12,7 @@ add_library(radiantcore MODULE
             brush/FaceInstance.cpp
             brush/FacePlane.cpp
             brush/FixedWinding.cpp
+            brush/RenderableBrushVertices.cpp
             brush/TextureMatrix.cpp
             brush/TextureProjection.cpp
             brush/Winding.cpp
@@ -46,6 +47,9 @@ add_library(radiantcore MODULE
             entity/ModelKey.cpp
             entity/NameKeyObserver.cpp
             entity/NamespaceManager.cpp
+            entity/RenderableArrow.cpp
+            entity/RenderableEntityBox.cpp
+            entity/RenderableEntityName.cpp
             entity/RotationKey.cpp
             entity/RotationMatrix.cpp
             entity/ShaderParms.cpp
@@ -211,6 +215,9 @@ add_library(radiantcore MODULE
             rendersystem/backend/glprogram/GLSLBumpProgram.cpp
             rendersystem/backend/glprogram/GLSLDepthFillProgram.cpp
             rendersystem/backend/glprogram/GLSLDepthFillAlphaProgram.cpp
+            rendersystem/backend/BuiltInShader.cpp
+            rendersystem/backend/ColourShader.cpp
+            rendersystem/backend/LightInteractions.cpp
             rendersystem/backend/OpenGLShader.cpp
             rendersystem/backend/OpenGLShaderPass.cpp
             rendersystem/backend/DepthFillPass.cpp
@@ -245,7 +252,6 @@ add_library(radiantcore MODULE
             selection/manipulators/ManipulatorComponents.cpp
             selection/manipulators/ModelScaleManipulator.cpp
             selection/manipulators/RotateManipulator.cpp
-            selection/manipulators/ScaleManipulator.cpp
             selection/manipulators/TranslateManipulator.cpp
             selection/RadiantSelectionSystem.cpp
             selection/SelectedNodeList.cpp

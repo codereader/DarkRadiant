@@ -78,6 +78,7 @@
     <ClCompile Include="..\..\..\test\Brush.cpp" />
     <ClCompile Include="..\..\..\test\Camera.cpp" />
     <ClCompile Include="..\..\..\test\ColourSchemes.cpp" />
+    <ClCompile Include="..\..\..\test\ContinuousBuffer.cpp" />
     <ClCompile Include="..\..\..\test\CSG.cpp" />
     <ClCompile Include="..\..\..\test\Entity.cpp" />
     <ClCompile Include="..\..\..\test\EntityInspector.cpp" />
@@ -107,6 +108,7 @@
     <ClCompile Include="..\..\..\test\PointTrace.cpp" />
     <ClCompile Include="..\..\..\test\Prefabs.cpp" />
     <ClCompile Include="..\..\..\test\Renderer.cpp" />
+    <ClCompile Include="..\..\..\test\SceneNode.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\TextureManipulation.cpp" />
@@ -114,6 +116,7 @@
     <ClCompile Include="..\..\..\test\Transformation.cpp" />
     <ClCompile Include="..\..\..\test\UndoRedo.cpp" />
     <ClCompile Include="..\..\..\test\VFS.cpp" />
+    <ClCompile Include="..\..\..\test\WindingRendering.cpp" />
     <ClCompile Include="..\..\..\test\WorldspawnColour.cpp" />
   </ItemGroup>
   <ItemGroup>

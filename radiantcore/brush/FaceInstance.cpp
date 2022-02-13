@@ -155,10 +155,6 @@ void FaceInstance::iterate_selected(AABB& aabb) const {
 	SelectedComponents_foreach(AABBExtendByPoint(aabb));
 }
 
-void FaceInstance::iterate_selected(RenderablePointVector& points) const {
-	SelectedComponents_foreach(RenderablePointVectorPushBack(points));
-}
-
 bool FaceInstance::intersectVolume(const VolumeTest& volume) const
 {
 	return m_face->intersectVolume(volume);
@@ -167,20 +163,6 @@ bool FaceInstance::intersectVolume(const VolumeTest& volume) const
 bool FaceInstance::intersectVolume(const VolumeTest& volume, const Matrix4& localToWorld) const
 {
 	return m_face->intersectVolume(volume, localToWorld);
-}
-
-void FaceInstance::renderWireframe(RenderableCollector& collector, const VolumeTest& volume,
-	const IRenderEntity& entity) const
-{
-	if (m_face->intersectVolume(volume))
-	{
-		if (selectedComponents())
-		{
-			collector.setHighlightFlag(RenderableCollector::Highlight::Faces, true);
-		}
-
-		m_face->renderWireframe(collector, Matrix4::getIdentity(), entity);
-	}
 }
 
 void FaceInstance::testSelect(SelectionTest& test, SelectionIntersection& best) {

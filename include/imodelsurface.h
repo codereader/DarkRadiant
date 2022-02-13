@@ -46,6 +46,9 @@ public:
 	 * respecting the applied skin.
 	 */
 	virtual const std::string& getActiveMaterial() const = 0;
+
+    // Returns the local bounds of this surface
+    virtual const AABB& getSurfaceBounds() const = 0;
 };
 
 /**

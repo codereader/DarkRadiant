@@ -204,7 +204,7 @@ void EClassManager::loadDefAndResolveInheritance()
 
 void EClassManager::applyColours()
 {
-    GlobalEclassColourManager().foreachOverrideColour([&](const std::string& eclass, const Vector3& colour)
+    GlobalEclassColourManager().foreachOverrideColour([&](const std::string& eclass, const Vector4& colour)
     {
         auto foundEclass = _entityClasses.find(string::to_lower_copy(eclass));
         if (foundEclass != _entityClasses.end())
@@ -286,6 +286,13 @@ void EClassManager::forEachModelDef(const std::function<void(const IModelDefPtr&
 
 void EClassManager::reloadDefs()
 {
+    // Block load signals until inheritance of all classes has been completed
+    // we can't have eclass changed signals emitted before we have that sorted out
+    for (const auto& eclass : _entityClasses)
+    {
+        eclass.second->blockChangedSignal(true);
+    }
+
 	// greebo: Leave all current entityclasses as they are, just invoke the
 	// FileLoader again. It will parse the files again, and look up
 	// the eclass names in the existing map. If found, the eclass
@@ -296,6 +303,13 @@ void EClassManager::reloadDefs()
 
 	// Resolve the eclass inheritance again
 	resolveInheritance();
+
+    // Release the lock and emit the signal
+    for (const auto& eclass : _entityClasses)
+    {
+        eclass.second->blockChangedSignal(false);
+        eclass.second->emitChangedSignal();
+    }
 
     _defsReloadedSignal.emit();
 }

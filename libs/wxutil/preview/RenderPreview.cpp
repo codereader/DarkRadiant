@@ -149,6 +149,8 @@ void RenderPreview::connectToolbarSignals()
 
 RenderPreview::~RenderPreview()
 {
+    _scene.reset();
+    _renderSystem.reset();
 	_timer.Stop();
 }
 
@@ -500,7 +502,7 @@ bool RenderPreview::drawPreview()
 
     // Launch the back end rendering
     renderer.submitToShaders();
-    _renderSystem->render(flags, _volumeTest.GetModelview(), projection, _viewOrigin);
+    _renderSystem->render(RenderViewType::Camera, flags, _volumeTest.GetModelview(), projection, _viewOrigin, _volumeTest);
 
     // Give subclasses an opportunity to render their own on-screen stuff
     onPostRender();
@@ -525,7 +527,7 @@ void RenderPreview::renderWireFrame()
 
     // Launch the back end rendering
     renderer.submitToShaders();
-    _renderSystem->render(flags, _volumeTest.GetModelview(), projection, _viewOrigin);
+    _renderSystem->render(RenderViewType::Camera, flags, _volumeTest.GetModelview(), projection, _viewOrigin, _volumeTest);
 }
 
 void RenderPreview::onGLMouseClick(wxMouseEvent& ev)

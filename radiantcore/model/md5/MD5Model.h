@@ -7,7 +7,7 @@
 #include "parser/DefTokeniser.h"
 
 #include "MD5Surface.h"
-#include "RenderableMD5Skeleton.h"
+#include "MD5Skeleton.h"
 
 namespace md5
 {
@@ -25,27 +25,7 @@ class MD5Model :
 private:
 	MD5Joints _joints;
 
-	struct Surface
-	{
-		// The MD5 mesh
-		MD5SurfacePtr surface;
-#if 0
-		// The name of the material with skin applied
-		std::string activeMaterial;
-#endif
-		// Mapped shader
-		ShaderPtr shader;
-
-		Surface()
-		{}
-
-		Surface(const MD5SurfacePtr& surface_) :
-			surface(surface_)
-		{}
-	};
-
-	typedef std::vector<Surface> SurfaceList;
-	SurfaceList _surfaces;
+    std::vector<MD5SurfacePtr> _surfaces;
 
 	AABB _aabb_local;
 
@@ -68,11 +48,7 @@ private:
 	// The current state of our animated skeleton
 	MD5Skeleton _skeleton;
 
-	// The OpenGLRenderable visualising the MD5Skeleton
-	RenderableMD5Skeleton _renderableSkeleton;
-
-	// We need to keep a reference for skin swapping
-	RenderSystemWeakPtr _renderSystem;
+    sigc::signal<void> _sigModelAnimationUpdated;
 
 public:
 	MD5Model();
@@ -81,21 +57,17 @@ public:
 	// Surfaces are copied and assigned their default material
 	MD5Model(const MD5Model& other);
 
-	typedef SurfaceList::const_iterator const_iterator;
-
-	// Public iterator-related methods
-	const_iterator begin() const;
-	const_iterator end() const;
-	std::size_t size() const;
+	// Const-iterate over all surfaces
+    void foreachSurface(const std::function<void(const MD5Surface&)>& functor) const;
 
 	/** greebo: Reads the model data from the given tokeniser.
 	 */
 	void parseFromTokens(parser::DefTokeniser& tok);
 
-	RenderableMD5Skeleton& getRenderableSkeleton()
-	{
-		return _renderableSkeleton;
-	}
+    const MD5Skeleton& getSkeleton() const
+    {
+        return _skeleton;
+    }
 
 	void updateAABB();
 
@@ -109,50 +81,47 @@ public:
 	void setFilename(const std::string& name);
 
 	// IModel implementation
-	virtual std::string getFilename() const;
+	virtual std::string getFilename() const override;
 
-	virtual std::string getModelPath() const;
+	virtual std::string getModelPath() const override;
 	void setModelPath(const std::string& modelPath);
 
-	virtual void applySkin(const ModelSkin& skin);
+	virtual void applySkin(const ModelSkin& skin) override;
 
 	/** Return the number of material surfaces on this model. Each material
 	 * surface consists of a set of polygons sharing the same material.
 	 */
-	virtual int getSurfaceCount() const;
+	virtual int getSurfaceCount() const override;
 
 	/** Return the number of vertices in this model, equal to the sum of the
 	 * vertex count from each surface.
 	 */
-	virtual int getVertexCount() const;
+	virtual int getVertexCount() const override;
 
 	/** Return the number of triangles in this model, equal to the sum of the
 	 * triangle count from each surface.
 	 */
-	virtual int getPolyCount() const;
+	virtual int getPolyCount() const override;
 
 	/** Return a vector of strings listing the active materials used in this
 	 * model, after any skin remaps. The list is owned by the model instance.
 	 */
-	virtual const std::vector<std::string>& getActiveMaterials() const;
+	virtual const std::vector<std::string>& getActiveMaterials() const override;
 
-	const model::IModelSurface& getSurface(unsigned surfaceNum) const;
-
-	// OpenGLRenderable implementation
-	virtual void render(const RenderInfo& info) const;
-
-	void setRenderSystem(const RenderSystemPtr& renderSystem);
+	const model::IIndexedModelSurface& getSurface(unsigned surfaceNum) const override;
 
 	// IMD5Model implementation
-	virtual void setAnim(const IMD5AnimPtr& anim);
-	virtual const IMD5AnimPtr& getAnim() const;
-	virtual void updateAnim(std::size_t time);
+	virtual void setAnim(const IMD5AnimPtr& anim) override;
+	virtual const IMD5AnimPtr& getAnim() const override;
+	virtual void updateAnim(std::size_t time) override;
 
 	/**
 	 * Helper: Parse an MD5 vector, which consists of three separated numbers
 	 * enclosed with parentheses.
 	 */
 	static Vector3 parseVector3(parser::DefTokeniser& tok);
+
+    sigc::signal<void>& signal_ModelAnimationUpdated();
 
 private:
 
@@ -161,8 +130,6 @@ private:
 
 	// Re-populates the list of active shader names
 	void updateMaterialList();
-
-	void captureShaders();
 };
 typedef std::shared_ptr<MD5Model> MD5ModelPtr;
 

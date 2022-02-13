@@ -37,6 +37,8 @@ const int CAMWND_MINSIZE_Y = 200;
 
 class SelectionTest;
 
+namespace render { class CamRenderer; };
+
 namespace ui
 {
 
@@ -63,6 +65,7 @@ class CamWnd :
     // The contained camera
     camera::ICameraView::Ptr _camera;
 
+    std::unique_ptr<render::CamRenderer> _renderer;
     static render::CamRenderer::HighlightShaders _shaders;
 
     wxutil::FreezePointer _freezePointer;

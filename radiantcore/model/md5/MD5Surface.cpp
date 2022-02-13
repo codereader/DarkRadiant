@@ -1,7 +1,6 @@
 #include "MD5Surface.h"
 
 #include "ivolumetest.h"
-#include "GLProgramAttributes.h"
 #include "string/convert.h"
 #include "MD5Model.h"
 #include "math/Ray.h"
@@ -17,144 +16,43 @@ inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex
 // Constructor
 MD5Surface::MD5Surface() :
 	_originalShaderName(""),
-	_mesh(new MD5Mesh),
-	_normalList(0),
-	_lightingList(0)
+	_mesh(new MD5Mesh)
 {}
 
 MD5Surface::MD5Surface(const MD5Surface& other) :
 	_aabb_local(other._aabb_local),
 	_originalShaderName(other._originalShaderName),
-	_mesh(other._mesh),
-	_normalList(0),
-	_lightingList(0)
+	_mesh(other._mesh)
 {}
-
-// Destructor
-MD5Surface::~MD5Surface()
-{
-    releaseDisplayLists();
-}
 
 // Update geometry
 void MD5Surface::updateGeometry()
 {
 	_aabb_local = AABB();
 
-	for (Vertices::const_iterator i = _vertices.begin(); i != _vertices.end(); ++i)
+	for (const auto& vertex : _vertices)
 	{
-		_aabb_local.includePoint(i->vertex);
+		_aabb_local.includePoint(vertex.vertex);
 	}
 
 	for (Indices::iterator i = _indices.begin();
 		 i != _indices.end();
 		 i += 3)
 	{
-		ArbitraryMeshVertex& a = _vertices[*(i + 0)];
-		ArbitraryMeshVertex& b = _vertices[*(i + 1)];
-		ArbitraryMeshVertex& c = _vertices[*(i + 2)];
+		auto& a = _vertices[*(i + 0)];
+		auto& b = _vertices[*(i + 1)];
+		auto& c = _vertices[*(i + 2)];
 
 		ArbitraryMeshTriangle_sumTangents(a, b, c);
 	}
 
-	for (Vertices::iterator i = _vertices.begin();
-		 i != _vertices.end();
-		 ++i)
+	for (auto& vertex : _vertices)
 	{
-		i->tangent.normalise();
-		i->bitangent.normalise();
-	}
-
-	// Build the display lists
-	createDisplayLists();
-}
-
-// Back-end render
-void MD5Surface::render(const RenderInfo& info) const
-{
-	if (info.checkFlag(RENDER_BUMP))
-    {
-		glCallList(_lightingList);
-	}
-	else
-    {
-		glCallList(_normalList);
+		vertex.tangent.normalise();
+		vertex.bitangent.normalise();
 	}
 }
 
-// Construct the display lists
-void MD5Surface::createDisplayLists()
-{
-    // Release old display lists first
-    releaseDisplayLists();
-
-	// Create the list for lighting mode
-	_lightingList = glGenLists(1);
-	assert(_lightingList != 0);
-	glNewList(_lightingList, GL_COMPILE);
-
-	glBegin(GL_TRIANGLES);
-	for (Indices::const_iterator i = _indices.begin();
-		 i != _indices.end();
-		 ++i)
-	{
-		// Get the vertex for this index
-		ArbitraryMeshVertex& v = _vertices[*i];
-
-		// Submit the vertex attributes and coordinate
-		if (GLEW_ARB_vertex_program) {
-			// Submit the vertex attributes and coordinate
-			glVertexAttrib2dvARB(ATTR_TEXCOORD, v.texcoord);
-			glVertexAttrib3dvARB(ATTR_TANGENT, v.tangent);
-			glVertexAttrib3dvARB(ATTR_BITANGENT, v.bitangent);
-			glVertexAttrib3dvARB(ATTR_NORMAL, v.normal);
-		}
-		glVertex3dv(v.vertex);
-	}
-	glEnd();
-
-	glEndList();
-
-	// Generate the list for flat-shaded (unlit) mode
-	_normalList = glGenLists(1);
-	assert(_normalList != 0);
-	glNewList(_normalList, GL_COMPILE);
-
-	glBegin(GL_TRIANGLES);
-	for (Indices::const_iterator i = _indices.begin();
-		 i != _indices.end();
-		 ++i)
-	{
-		// Get the vertex for this index
-		ArbitraryMeshVertex& v = _vertices[*i];
-
-		// Submit attributes
-		glNormal3dv(v.normal);
-		glTexCoord2dv(v.texcoord);
-		glVertex3dv(v.vertex);
-	}
-	glEnd();
-
-	glEndList();
-}
-
-void MD5Surface::releaseDisplayLists()
-{
-    // Release GL display lists if applicable
-    if (_normalList != 0)
-    {
-        glDeleteLists(_normalList, 1);
-        _normalList = 0;
-    }
-
-    if (_lightingList != 0)
-    {
-        glDeleteLists(_lightingList, 1);
-        _lightingList = 0;
-    }
-}
-
-// Selection test
 void MD5Surface::testSelect(Selector& selector,
 							SelectionTest& test,
 							const Matrix4& localToWorld)
@@ -183,9 +81,9 @@ bool MD5Surface::getIntersection(const Ray& ray, Vector3& intersection, const Ma
 		 i += 3)
 	{
 		// Get the vertices for this triangle
-		const ArbitraryMeshVertex& p1 = _vertices[*(i)];
-		const ArbitraryMeshVertex& p2 = _vertices[*(i+1)];
-		const ArbitraryMeshVertex& p3 = _vertices[*(i+2)];
+		const auto& p1 = _vertices[*(i)];
+		const auto& p2 = _vertices[*(i+1)];
+		const auto& p3 = _vertices[*(i+2)];
 
 		if (ray.intersectTriangle(localToWorld.transformPoint(p1.vertex),
 			localToWorld.transformPoint(p2.vertex), localToWorld.transformPoint(p3.vertex), triIntersection))
@@ -277,6 +175,11 @@ void MD5Surface::setActiveMaterial(const std::string& activeMaterial)
 	_activeMaterial = activeMaterial;
 }
 
+const AABB& MD5Surface::getSurfaceBounds() const
+{
+    return _aabb_local;
+}
+
 void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 {
 	if (_vertices.size() != _mesh->vertices.size())
@@ -360,9 +263,9 @@ void MD5Surface::buildVertexNormals()
 {
 	for (Indices::iterator j = _indices.begin(); j != _indices.end(); j += 3)
 	{
-		ArbitraryMeshVertex& a = _vertices[*(j + 0)];
-		ArbitraryMeshVertex& b = _vertices[*(j + 1)];
-		ArbitraryMeshVertex& c = _vertices[*(j + 2)];
+		auto& a = _vertices[*(j + 0)];
+		auto& b = _vertices[*(j + 1)];
+		auto& c = _vertices[*(j + 2)];
 
 		Vector3 weightedNormal((c.vertex - a.vertex).cross(b.vertex - a.vertex));
 
@@ -372,9 +275,9 @@ void MD5Surface::buildVertexNormals()
 	}
 
 	// Normalise all normal vectors
-	for (Vertices::iterator j = _vertices.begin(); j != _vertices.end(); ++j)
+	for (auto& vertex : _vertices)
 	{
-		j->normal = Normal3f(j->normal.getNormalised());
+        vertex.normal.normalise();
 	}
 }
 
@@ -383,10 +286,8 @@ void MD5Surface::buildIndexArray()
 	_indices.clear();
 
 	// Build the indices based on the triangle information
-	for (MD5Tris::const_iterator j = _mesh->triangles.begin(); j != _mesh->triangles.end(); ++j)
+	for (const auto& tri : _mesh->triangles)
 	{
-		const MD5Tri& tri = (*j);
-
 		_indices.push_back(static_cast<RenderIndex>(tri.a));
 		_indices.push_back(static_cast<RenderIndex>(tri.b));
 		_indices.push_back(static_cast<RenderIndex>(tri.c));
@@ -489,4 +390,4 @@ void MD5Surface::parseFromTokens(parser::DefTokeniser& tok)
 	tok.assertNextToken("}");
 }
 
-} // namespace md5
+} // namespace

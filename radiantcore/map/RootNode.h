@@ -71,11 +71,10 @@ public:
     IUndoSystem& getUndoSystem() override;
 
 	// Renderable implementation (empty)
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override
-	{}
-
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override
-	{}
+    void onPreRender(const VolumeTest& volume) override
+    {}
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override
+    {}
 
 	std::size_t getHighlightFlags() override
 	{
@@ -93,6 +92,11 @@ public:
 	{
 		return _emptyAABB;
 	}
+
+    RenderSystemPtr getRenderSystem() const override
+    {
+        return Node::getRenderSystem();
+    }
 };
 typedef std::shared_ptr<RootNode> RootNodePtr;
 

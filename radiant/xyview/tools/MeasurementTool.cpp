@@ -153,16 +153,16 @@ void MeasurementTool::ensureShaders(RenderSystem& renderSystem)
 		_colour.z() = colour.z();
 		_colour.w() = 1;
 
-		_wireShader = renderSystem.capture(fmt::format("<{0:f} {1:f} {2:f}>", _colour[0], _colour[1], _colour[2]));
+		_wireShader = renderSystem.capture(ColourShaderType::OrthoviewSolid, _colour);
 	}
 
 	if (!_pointShader)
 	{
-		_pointShader = renderSystem.capture("$POINT");
+		_pointShader = renderSystem.capture(BuiltInShaderType::Point);
 	}
 }
 
-void MeasurementTool::render(RenderSystem& renderSystem, RenderableCollector& collector, const VolumeTest& volume)
+void MeasurementTool::render(RenderSystem& renderSystem, IRenderableCollector& collector, const VolumeTest& volume)
 {
 	ensureShaders(renderSystem);
 

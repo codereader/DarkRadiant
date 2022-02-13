@@ -16,13 +16,11 @@
 #include "../SpawnArgs.h"
 #include "../KeyObserverDelegate.h"
 
-#include "RenderableArrow.h"
+#include "../RenderableArrow.h"
+#include "../RenderableEntityBox.h"
 
 namespace entity
 {
-
-class GenericEntityNode;
-typedef std::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
 
 
 /**
@@ -34,7 +32,7 @@ typedef std::shared_ptr<GenericEntityNode> GenericEntityNodePtr;
  * They are rendered as boxes with an angle/rotation arrow. Common generic
  * entities include "info_playerstart" and "info_location".
  */
-class GenericEntityNode: public EntityNode, public Snappable
+class GenericEntityNode final : public EntityNode, public Snappable
 {
 	OriginKey m_originKey;
 	Vector3 m_origin;
@@ -54,22 +52,12 @@ class GenericEntityNode: public EntityNode, public Snappable
 	AABB m_aabb_local;
 	Ray m_ray;
 
-	RenderableArrow m_arrow;
-	RenderableSolidAABB m_aabb_solid;
-	RenderableWireframeAABB m_aabb_wire;
+	RenderableArrow _renderableArrow;
+    RenderableEntityBox _renderableBox;
 
 	// TRUE if this entity's arrow can be rotated in all directions,
 	// FALSE if the arrow is caught in the xy plane
 	bool _allow3Drotations;
-
-    // Whether to draw a solid/shaded box in full material render mode or just the wireframe
-    enum SolidAAABBRenderMode
-    {
-        SolidBoxes,
-        WireFrameOnly,
-    };
-
-    SolidAAABBRenderMode _solidAABBRenderMode;
 
 public:
 	GenericEntityNode(const IEntityClassPtr& eclass);
@@ -91,7 +79,7 @@ private:
 	void rotationChanged();
 
 public:
-	static GenericEntityNodePtr Create(const IEntityClassPtr& eclass);
+	static std::shared_ptr<GenericEntityNode> Create(const IEntityClassPtr& eclass);
 
 	// Snappable implementation
 	void snapto(float snap) override;
@@ -105,12 +93,9 @@ public:
 	scene::INodePtr clone() const override;
 
 	// Renderable implementation
-	void renderArrow(const ShaderPtr& shader, RenderableCollector& collector,
-                     const VolumeTest& volume, const Matrix4& localToWorld) const;
-	void renderSolid(RenderableCollector& collector, const VolumeTest& volume) const override;
-	void renderWireframe(RenderableCollector& collector, const VolumeTest& volume) const override;
-
-    SolidAAABBRenderMode getSolidAABBRenderMode() const;
+    void onPreRender(const VolumeTest& volume) override;
+    void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
+	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	// Override EntityNode::getDirection()
 	const Vector3& getDirection() const override;
@@ -118,8 +103,13 @@ public:
     // Returns the original "origin" value
     const Vector3& getUntransformedOrigin() override;
 
+    const Vector3& getWorldPosition() const override;
+
     void onChildAdded(const scene::INodePtr& child) override;
 	void onChildRemoved(const scene::INodePtr& child) override;
+
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 protected:
 	// Gets called by the Transformable implementation whenever
@@ -132,6 +122,8 @@ protected:
 
 	// Override EntityNode::construct()
 	void construct() override;
+
+    void onVisibilityChanged(bool isVisibleNow) override;
 };
 
 } // namespace entity

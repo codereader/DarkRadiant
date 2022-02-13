@@ -2,7 +2,6 @@
 
 #include "irender.h"
 #include "render.h"
-#include "irenderable.h"
 #include "math/AABB.h"
 #include "math/Frustum.h"
 #include "iselectiontest.h"
@@ -19,9 +18,8 @@ namespace md5
 
 class MD5Skeleton;
 
-class MD5Surface :
-	public model::IIndexedModelSurface,
-	public OpenGLRenderable
+class MD5Surface final :
+	public model::IIndexedModelSurface
 {
 public:
 	typedef std::vector<ArbitraryMeshVertex> Vertices;
@@ -44,37 +42,12 @@ private:
 	Vertices _vertices;
 	Indices _indices;
 
-	// The GL display lists for this surface's geometry
-	GLuint _normalList;
-	GLuint _lightingList;
-
-private:
-
-	// Create the display lists
-	void createDisplayLists();
-
-    // Frees any display list in use
-    void releaseDisplayLists();
-
-	// Re-calculate the normal vectors
-	void buildVertexNormals();
-
 public:
 
-	/**
-	 * Constructor.
-	 */
 	MD5Surface();
 
-	/**
-	 * Copy constructor, re-uses the MD5Mesh of <other>.
-	 */
+	// Copy constructor, re-uses the MD5Mesh of <other>.
 	MD5Surface(const MD5Surface& other);
-
-	/**
-	 * Destructor.
-	 */
-	~MD5Surface();
 
 	// Set/get the shader name
 	void setDefaultMaterial(const std::string& name);
@@ -90,12 +63,6 @@ public:
 
 	// Updates this mesh to the state of the given skeleton
 	void updateToSkeleton(const MD5Skeleton& skeleton);
-
-	// Applies the given Skin to this surface.
-	void applySkin(const ModelSkin& skin);
-
-    // Back-end render function
-    void render(const RenderInfo& info) const;
 
 	const AABB& localAABB() const;
 
@@ -120,10 +87,16 @@ public:
 	const std::string& getActiveMaterial() const override;
 	void setActiveMaterial(const std::string& activeMaterial);
 
+    const AABB& getSurfaceBounds() const override;
+
 	void parseFromTokens(parser::DefTokeniser& tok);
 
 	// Rebuild the render index array - usually needs to be called only once
 	void buildIndexArray();
+
+private:
+    // Re-calculate the normal vectors
+    void buildVertexNormals();
 };
 typedef std::shared_ptr<MD5Surface> MD5SurfacePtr;
 
