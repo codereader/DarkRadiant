@@ -612,7 +612,9 @@ TEST_F(EntityTest, LightWireframeShader)
     EXPECT_EQ(newWireSh->getName(), "<0.000000 1.000000 0.000000>");
 }
 
-#if 0 // Disabled since renderables don't all pass through the IRenderableCollector
+// Disabled test, since the Shader implementation currently offers no public interface
+// to enumerate or inspect the submitted geometry - needs more thought
+#if 0 
 TEST_F(EntityTest, LightVolumeColorFromColorKey)
 {
     // Create a default light
@@ -857,6 +859,55 @@ TEST_F(EntityTest, TranslateLightAfterRotation)
     EXPECT_EQ(light.args().getKeyValue("rotation"), "0 1 0 -1 0 0 0 0 1");
 }
 
+namespace detail
+{
+
+// Returns the first render entity registered in the rendersystem, matching the given predicate
+inline IRenderEntityPtr getFirstRenderEntity(std::function<bool(IRenderEntityPtr)> predicate)
+{
+    IRenderEntityPtr result;
+
+    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+    renderSystem->foreachEntity([&](const IRenderEntityPtr& entity)
+    {
+        if (!result && predicate(entity))
+        {
+            result = entity;
+        }
+    });
+
+    return result;
+}
+
+inline std::set<RendererLightPtr> getAllRenderLights()
+{
+    std::set<RendererLightPtr> result;
+
+    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
+    renderSystem->foreachLight([&](const RendererLightPtr& light)
+    {
+        result.insert(light);
+    });
+
+    return result;
+}
+
+inline std::set<render::IRenderableObject::Ptr> getAllObjects(IRenderEntityPtr entity)
+{
+    std::set<render::IRenderableObject::Ptr> result;
+
+    AABB hugeBounds({ 0,0,0 }, { 65536, 65536, 65536 });
+
+    entity->foreachRenderableTouchingBounds(hugeBounds, [&](const render::IRenderableObject::Ptr& object, Shader*)
+    {
+        result.insert(object);
+    });
+
+    return result;
+}
+
+}
+
 TEST_F(EntityTest, ForeachAttachment)
 {
     // Insert a static entity with an attached light to the scene
@@ -899,20 +950,14 @@ TEST_F(EntityTest, LightTransformedByParent)
     EXPECT_EQ(light->localToWorld(), Matrix4::getTranslation(ORIGIN));
 
     // Get the first light in the render system
-    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
-    
-    int lightCount = 0;
-    
-    renderSystem->foreachLight([&](const RendererLightPtr& rLight)
-    {
-        lightCount++;
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Expected 1 light registered in the render system";
 
-        EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
-        EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
-        EXPECT_EQ(rLight->lightAABB().extents, Vector3(320, 320, 320));
-    });
+    auto rLight = *lights.begin();
 
-    EXPECT_EQ(lightCount, 1) << "No light registered in the render system";
+    EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
+    EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
+    EXPECT_EQ(rLight->lightAABB().extents, Vector3(320, 320, 320));
 }
 
 TEST_F(EntityTest, RenderUnselectedLightEntity)
@@ -966,23 +1011,17 @@ TEST_F(EntityTest, RenderLightProperties)
     render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
     // Confirm properties of the registered RendererLight
-    int lightCount = 0;
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Expected 1 light registered in the render system";
 
-    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
-    renderSystem->foreachLight([&](const RendererLightPtr& rLight)
-    {
-        lightCount++;
-
-        EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
-        EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
-        // Default light properties from the entitydef
-        EXPECT_EQ(rLight->lightAABB().extents, Vector3(240, 240, 240));
-        ASSERT_TRUE(rLight->getShader() && rLight->getShader()->getMaterial());
-        EXPECT_EQ(rLight->getShader()->getMaterial()->getName(),
-            "lights/biground_torchflicker");
-    });
-
-    EXPECT_EQ(lightCount, 1) << "No light registered in the render system";
+    auto rLight = *lights.begin();
+    EXPECT_EQ(rLight->getLightOrigin(), ORIGIN);
+    EXPECT_EQ(rLight->lightAABB().origin, ORIGIN);
+    // Default light properties from the entitydef
+    EXPECT_EQ(rLight->lightAABB().extents, Vector3(240, 240, 240));
+    ASSERT_TRUE(rLight->getShader() && rLight->getShader()->getMaterial());
+    EXPECT_EQ(rLight->getShader()->getMaterial()->getName(),
+        "lights/biground_torchflicker");
 }
 
 TEST_F(EntityTest, RenderEmptyFuncStatic)
@@ -995,42 +1034,6 @@ TEST_F(EntityTest, RenderEmptyFuncStatic)
     EXPECT_EQ(rf.nodesVisited, 1);
     EXPECT_EQ(rf.collector.lights, 0);
     EXPECT_EQ(rf.collector.renderables, 0);
-}
-
-namespace detail
-{
-
-// Returns the first render entity registered in the rendersystem, matching the given predicate
-inline IRenderEntityPtr getFirstRenderEntity(std::function<bool(IRenderEntityPtr)> predicate)
-{
-    IRenderEntityPtr result;
-
-    auto renderSystem = GlobalMapModule().getRoot()->getRenderSystem();
-    renderSystem->foreachEntity([&](const IRenderEntityPtr& entity)
-    {
-        if (!result && predicate(entity))
-        {
-            result = entity;
-        }
-    });
-
-    return result;
-}
-
-inline std::set<render::IRenderableObject::Ptr> getAllObjects(IRenderEntityPtr entity)
-{
-    std::set<render::IRenderableObject::Ptr> result;
-
-    AABB hugeBounds({ 0,0,0 }, { 65536, 65536, 65536 });
-
-    entity->foreachRenderableTouchingBounds(hugeBounds, [&](const render::IRenderableObject::Ptr& object, Shader*)
-    {
-        result.insert(object);
-    });
-
-    return result;
-}
-
 }
 
 TEST_F(EntityTest, RenderFuncStaticWithModel)
@@ -1156,30 +1159,26 @@ TEST_F(EntityTest, CreateAttachedLightEntity)
     EXPECT_EQ(attachment.offset, Vector3(0, 0, 10));
 }
 
-#if 0 // Disabled since renderables don't all pass through the IRenderableCollector
 TEST_F(EntityTest, RenderAttachedLightEntity)
 {
     auto torch = createByClassName("atdm:torch_brazier");
     ASSERT_TRUE(torch);
+    scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
 
     // Confirm that def has the right model
     auto& spawnArgs = torch->getEntity();
     EXPECT_EQ(spawnArgs.getKeyValue("model"), "models/torch.lwo");
 
-    // We must render in solid mode to get the light source
-    RenderFixture rf(true /* solid mode */);
-    rf.renderSubGraph(torch);
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
-    // There should be 3 renderables from the torch (because the entity has a
-    // shadowmesh and a collision mesh as well as the main model) and one from
-    // the light (the origin diamond).
-    EXPECT_EQ(rf.collector.renderables, 4);
-
-    // The attached light should have been submitted as a light source
-    EXPECT_EQ(rf.collector.lights, 1);
+    EXPECT_EQ(fixture.collector.processedNodes, 3);
+    
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Attached light not registered";
 
     // The submitted light should be fully realised with a light shader
-    const RendererLight* rLight = rf.collector.lightPtrs.front();
+    auto rLight = *lights.begin();
     ASSERT_TRUE(rLight);
     EXPECT_TRUE(rLight->getShader());
 }
@@ -1192,15 +1191,15 @@ TEST_F(EntityTest, AttachedLightAtCorrectPosition)
     // Create a torch node and set a non-zero origin
     auto torch = createByClassName("atdm:torch_brazier");
     torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+    scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
 
     // Render the torch
-    RenderFixture rf(true /* solid mode */);
-    rf.renderSubGraph(torch);
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
-    // Access the submitted light source
-    ASSERT_FALSE(rf.collector.lightPtrs.empty());
-    const RendererLight* rLight = rf.collector.lightPtrs.front();
-    ASSERT_TRUE(rLight);
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Attached light not registered";
+    auto rLight = *lights.begin();
 
     // Check the light source's position
     EXPECT_EQ(rLight->getLightOrigin(), ORIGIN + EXPECTED_OFFSET);
@@ -1215,11 +1214,12 @@ TEST_F(EntityTest, AttachedLightMovesWithEntity)
     // Create a torch node and set a non-zero origin
     auto torch = createByClassName("atdm:torch_brazier");
     torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
+    scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
 
     // First render
     {
-        RenderFixture rf(true /* solid mode */);
-        rf.renderSubGraph(torch);
+        RenderFixture fixture;
+        render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
     }
 
     // Move the torch
@@ -1227,13 +1227,13 @@ TEST_F(EntityTest, AttachedLightMovesWithEntity)
     torch->getEntity().setKeyValue("origin", string::to_string(NEW_ORIGIN));
 
     // Render again to get positions
-    RenderFixture rf(true /* solid mode */);
-    rf.renderSubGraph(torch);
+    RenderFixture fixture;
+    render::RenderableCollectionWalker::CollectRenderablesInScene(fixture.collector, fixture.volumeTest);
 
     // Access the submitted light source
-    ASSERT_FALSE(rf.collector.lightPtrs.empty());
-    const RendererLight* rLight = rf.collector.lightPtrs.front();
-    ASSERT_TRUE(rLight);
+    auto lights = detail::getAllRenderLights();
+    EXPECT_EQ(lights.size(), 1) << "Attached light not registered";
+    auto rLight = *lights.begin();
 
     // Check the light source's position
     EXPECT_EQ(rLight->getLightOrigin(), NEW_ORIGIN + EXPECTED_OFFSET);
@@ -1252,7 +1252,6 @@ TEST_F(EntityTest, CreateAIEntity)
     EXPECT_EQ(attachments.front().offset, Vector3(14, -6, -6));
     EXPECT_EQ(attachments.front().joint, "Spine2");
 }
-#endif
 
 namespace
 {
