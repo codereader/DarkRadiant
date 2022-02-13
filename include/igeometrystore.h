@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <vector>
+#include "math/AABB.h"
 #include "render/ArbitraryMeshVertex.h"
 
 namespace render

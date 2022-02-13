@@ -4,9 +4,28 @@
 #include <stack>
 #include <limits>
 #include <vector>
+#include "igeometrystore.h"
 
 namespace render
 {
+
+namespace detail
+{
+
+struct BufferTransaction
+{
+    enum class Type
+    {
+        Allocate,
+        Deallocate,
+        Update,
+    };
+
+    IGeometryStore::Slot slot;
+    Type type;
+};
+
+}
 
 /**
  * Buffer object managing allocations within a continuous block of memory.
@@ -147,6 +166,30 @@ public:
             slotToMerge.Occupied = true;
             _emptySlots.push(slotIndexToMerge);
         }
+    }
+
+    void applyTransactions(const std::vector<detail::BufferTransaction>& transactions, const ContinuousBuffer<ElementType>& other,
+        const std::function<std::uint32_t(IGeometryStore::Slot)>& getHandle)
+    {
+        // Ensure the buffer is the same size
+        _buffer.resize(other._buffer.size());
+
+        for (const auto& transaction : transactions)
+        {
+            if (transaction.type == detail::BufferTransaction::Type::Allocate ||
+                transaction.type == detail::BufferTransaction::Type::Update)
+            {
+                auto handle = getHandle(transaction.slot);
+                auto& otherSlot = other._slots[handle];
+                
+                memcpy(_buffer.data() + otherSlot.Offset, other._buffer.data() + otherSlot.Offset, otherSlot.Size * sizeof(ElementType));
+            }
+        }
+
+        _slots.resize(other._slots.size());
+        memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
+
+        _emptySlots = other._emptySlots;
     }
 
 private:

@@ -18,6 +18,9 @@ public:
 private:
     static constexpr auto NumFrameBuffers = 2;
 
+    // Keep track of modified slots as long as a single buffer is in use
+    std::vector<detail::BufferTransaction> _transactionLog;
+
     // Represents the storage for a single frame
     struct FrameBuffer
     {
@@ -29,6 +32,12 @@ private:
         FrameBuffer() :
             syncObject(nullptr)
         {}
+
+        void applyTransactions(const std::vector<detail::BufferTransaction>& transactions, const FrameBuffer& other)
+        {
+            vertices.applyTransactions(transactions, other.vertices, GetVertexSlot);
+            indices.applyTransactions(transactions, other.indices, GetIndexSlot);
+        }
     };
 
     // We keep a fixed number of frame buffers
@@ -47,6 +56,7 @@ public:
     {
         // Switch to the next frame
         auto& previous = getCurrentBuffer();
+
         _currentBuffer = (_currentBuffer + 1) % NumFrameBuffers;
         auto& current = getCurrentBuffer();
 
@@ -69,9 +79,9 @@ public:
             current.syncObject = nullptr;
         }
 
-        // Copy data to current
-        current.vertices = previous.vertices;
-        current.indices = previous.indices;
+        // Replay any modifications to the new buffer
+        current.applyTransactions(_transactionLog, previous);
+        _transactionLog.clear();
     }
 
     // Completes the currently writing frame, creates sync objects
@@ -95,7 +105,13 @@ public:
         auto indexSlot = current.indices.allocate(indices.size());
         current.indices.setData(indexSlot, indices);
 
-        return GetSlot(vertexSlot, indexSlot);
+        auto slot = GetSlot(vertexSlot, indexSlot);
+
+        _transactionLog.emplace_back(detail::BufferTransaction{
+            slot, detail::BufferTransaction::Type::Allocate
+        });
+
+        return slot;
     }
 
     void updateData(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
@@ -107,6 +123,10 @@ public:
         auto& current = getCurrentBuffer();
         current.vertices.setData(GetVertexSlot(slot), vertices);
         current.indices.setData(GetIndexSlot(slot), indices);
+
+        _transactionLog.emplace_back(detail::BufferTransaction{
+            slot, detail::BufferTransaction::Type::Update
+        });
     }
 
     void deallocateSlot(Slot slot) override
@@ -114,6 +134,10 @@ public:
         auto& current = getCurrentBuffer();
         current.vertices.deallocate(GetVertexSlot(slot));
         current.indices.deallocate(GetIndexSlot(slot));
+
+        _transactionLog.emplace_back(detail::BufferTransaction{
+            slot, detail::BufferTransaction::Type::Deallocate
+        });
     }
 
     RenderParameters getRenderParameters(Slot slot) override
