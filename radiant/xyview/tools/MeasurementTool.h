@@ -5,6 +5,7 @@
 #include "math/Vector3.h"
 #include "render.h"
 #include "render/Colour4.h"
+#include "render/RenderableVertexArray.h"
 
 namespace ui
 {
@@ -17,8 +18,9 @@ class MeasurementTool :
 	public MouseTool
 {
 private:
-	RenderablePointVector _points;
-	RenderablePointVector _lines;
+    std::vector<Vertex3f> _vertices;
+    render::RenderablePoints _points;
+	render::RenderableLine _line;
 
 	ShaderPtr _pointShader;
 	ShaderPtr _wireShader;

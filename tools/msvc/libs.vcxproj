@@ -221,6 +221,7 @@
     <ClInclude Include="..\..\libs\render\RenderableCollectorBase.h" />
     <ClInclude Include="..\..\libs\render\RenderableColouredBoundingBoxes.h" />
     <ClInclude Include="..\..\libs\render\RenderableGeometry.h" />
+    <ClInclude Include="..\..\libs\render\RenderableVertexArray.h" />
     <ClInclude Include="..\..\libs\render\RenderablePivot.h" />
     <ClInclude Include="..\..\libs\render\RenderableSpacePartition.h" />
     <ClInclude Include="..\..\libs\render\RenderableSurface.h" />

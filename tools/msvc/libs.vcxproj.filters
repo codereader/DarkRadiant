@@ -365,6 +365,9 @@
     <ClInclude Include="..\..\libs\render\ContinuousBuffer.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderableVertexArray.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
