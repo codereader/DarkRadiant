@@ -343,8 +343,11 @@ public:
 
 // ==========================================================================================
 
-// A 2-element vector stored in double-precision floating-point.
-typedef BasicVector2<double> Vector2;
+/// A 2-element vector stored in double-precision floating-point.
+using Vector2 = BasicVector2<double>;
+
+/// 2-element vector of signed integer
+using Vector2i = BasicVector2<int>;
 
 // Stream insertion operator for a BasicVector2
 template<typename T>
