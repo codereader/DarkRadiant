@@ -509,7 +509,11 @@ void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 
         // If the user moved the pointer away from the point the RMB was pressed, this is a drag
         // not a context menu event
-        static const int DIST_THRESHOLD_SQ = 64;
+        static const std::string RKEY_THRESHOLD = std::string(RKEY_XYVIEW_ROOT)
+                                                + "/contextMenuThreshold";
+        static const int DIST_THRESHOLD_SQ = std::pow(
+            registry::getValue<int>(RKEY_THRESHOLD, 15), 2
+        );
         auto distanceVec = _rightClickPos->current - _rightClickPos->initial;
         if (distanceVec.getLengthSquared() > DIST_THRESHOLD_SQ)
             _rightClickPos.reset();
