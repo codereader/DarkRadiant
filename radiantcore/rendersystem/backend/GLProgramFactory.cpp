@@ -2,6 +2,7 @@
 
 #include "glprogram/GLSLDepthFillProgram.h"
 #include "glprogram/GLSLDepthFillAlphaProgram.h"
+#include "glprogram/GLSLCubeMapProgram.h"
 #include "glprogram/GLSLBumpProgram.h"
 #include "glprogram/GenericVFPProgram.h"
 
@@ -21,22 +22,23 @@ namespace render
 // Constructor, populates map with GLProgram instances
 GLProgramFactory::GLProgramFactory()
 {
-    _builtInPrograms["depthFill"] = std::make_shared<GLSLDepthFillProgram>();
-    _builtInPrograms["depthFillAlpha"] = std::make_shared<GLSLDepthFillAlphaProgram>();
-    _builtInPrograms["bumpMap"] = std::make_shared<GLSLBumpProgram>();
+    _builtInPrograms[ShaderProgram::DepthFill] = std::make_shared<GLSLDepthFillProgram>();
+    _builtInPrograms[ShaderProgram::DepthFillAlpha] = std::make_shared<GLSLDepthFillAlphaProgram>();
+    _builtInPrograms[ShaderProgram::Interaction] = std::make_shared<GLSLBumpProgram>();
+    _builtInPrograms[ShaderProgram::CubeMap] = std::make_shared<GLSLCubeMapProgram>();
 }
 
-GLProgram* GLProgramFactory::getBuiltInProgram(const std::string& name)
+GLProgram* GLProgramFactory::getBuiltInProgram(ShaderProgram builtInProgram)
 {
 	// Lookup the program, if not found throw an exception
-	ProgramMap::iterator i = _builtInPrograms.find(name);
+	auto i = _builtInPrograms.find(builtInProgram);
 
     if (i != _builtInPrograms.end())
     {
         return i->second.get();
     }
 
-	throw std::runtime_error("GLProgramFactory: failed to find program " + name);
+	throw std::runtime_error("GLProgramFactory: failed to find program " + string::to_string((int)builtInProgram));
 }
 
 GLProgram* GLProgramFactory::getProgram(const std::string& vertexProgramFilename,

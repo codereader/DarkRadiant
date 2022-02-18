@@ -13,13 +13,21 @@ namespace render
  */
 typedef std::shared_ptr<GLProgram> GLProgramPtr;
 
+enum class ShaderProgram
+{
+    DepthFill,
+    DepthFillAlpha,
+    Interaction,
+    CubeMap,
+};
+
 /**
  * Factory class reponsible for creating GLProgam instances addressed by name.
  */
 class GLProgramFactory
 {
 	// Internal map of string names to GLProgram subclasses
-	typedef std::map<std::string, GLProgramPtr> ProgramMap;
+	typedef std::map<ShaderProgram, GLProgramPtr> ProgramMap;
 	ProgramMap _builtInPrograms;
 
     // Game-specific programs are referenced as pair
@@ -62,7 +70,7 @@ public:
      * Returns a raw pointer which is owned by the GLProgramFactory and should
      * never be deleted.
      */
-	GLProgram* getBuiltInProgram(const std::string& name);
+	GLProgram* getBuiltInProgram(ShaderProgram builtInProgram);
 
     /**
      * Gets or creates the GL program for the given V/F program filenames.

@@ -1123,6 +1123,9 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\LightInteractions.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLCubeMapProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2306,6 +2309,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GeometryStore.h">
       <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLCubeMapProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

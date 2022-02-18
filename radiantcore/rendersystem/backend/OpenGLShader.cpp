@@ -452,7 +452,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     dbsPass.setRenderFlag(RENDER_BUMP);
     dbsPass.setRenderFlag(RENDER_PROGRAM);
 
-    dbsPass.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram("bumpMap");
+    dbsPass.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::Interaction);
 
     if (vcolMode != IShaderLayer::VERTEX_COLOUR_NONE)
     {
@@ -678,6 +678,8 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
     state.cubeMapMode = layer->getCubeMapMode();
     if (state.cubeMapMode == IShaderLayer::CUBE_MAP_CAMERA)
     {
+        state.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::CubeMap);
+
         state.setRenderFlag(RENDER_TEXTURE_CUBEMAP);
     }
     else

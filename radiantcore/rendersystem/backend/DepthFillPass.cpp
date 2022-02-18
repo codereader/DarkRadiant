@@ -30,7 +30,7 @@ DepthFillPass::DepthFillPass(OpenGLShader& owner, OpenGLRenderSystem& renderSyst
     _glState.setSortPosition(OpenGLState::SORT_ZFILL);
 
     // Load the GLSL program tailored for this pass
-    _glState.glProgram = renderSystem.getGLProgramFactory().getBuiltInProgram("depthFillAlpha");
+    _glState.glProgram = renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::DepthFillAlpha);
     assert(dynamic_cast<GLSLDepthFillAlphaProgram*>(_glState.glProgram));
 }
 
