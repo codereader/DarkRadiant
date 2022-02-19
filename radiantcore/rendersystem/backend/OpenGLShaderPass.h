@@ -44,21 +44,11 @@ protected:
     	// The modelview transform for this renderable
     	const Matrix4 transform;
 
-		// The light falling on this obejct
-    	const RendererLight* light;
-
-		// The entity attached to this renderable
-		const IRenderEntity* entity;
-
 		// Constructor
 		TransformedRenderable(const OpenGLRenderable& r,
-							  const Matrix4& t,
-							  const RendererLight* l,
-							  const IRenderEntity* e)
+							  const Matrix4& t)
 		: renderable(&r),
-		  transform(t),
-		  light(l),
-		  entity(e)
+		  transform(t)
 		{}
 	};
 
@@ -116,8 +106,7 @@ public:
      * renderable will be submitted once for each light).
 	 */
 	void addRenderable(const OpenGLRenderable& renderable,
-					   const Matrix4& modelview,
-					   const RendererLight* light = nullptr);
+					   const Matrix4& modelview);
 
 	/**
 	 * Return the OpenGL state associated with this bucket.

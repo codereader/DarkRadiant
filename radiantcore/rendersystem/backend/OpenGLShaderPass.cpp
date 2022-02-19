@@ -504,12 +504,9 @@ void OpenGLShaderPass::deactivateShaderProgram(OpenGLState& current)
 
 // Add a Renderable to this bucket
 void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
-                                     const Matrix4& modelview,
-                                     const RendererLight* light)
+                                     const Matrix4& modelview)
 {
-    _renderablesWithoutEntity.push_back(
-        TransformedRenderable(renderable, modelview, light, nullptr)
-    );
+    _renderablesWithoutEntity.emplace_back(renderable, modelview);
 }
 
 // Render the bucket contents
@@ -629,7 +626,7 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
     glPushMatrix();
 
     // Iterate over each transformed renderable in the vector
-    for (const TransformedRenderable& r : renderables)
+    for (const auto& r : renderables)
     {
         // If the current iteration's transform matrix was different from the
         // last, apply it and store for the next iteration
@@ -650,15 +647,6 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
             {
                 glFrontFace(GL_CCW);
             }
-        }
-
-        // If we are using a lighting program and this renderable is lit, set
-        // up the lighting calculation
-        const RendererLight* light = r.light;
-        if (current.glProgram && light)
-        {
-            setUpLightingCalculation(current, light, light->getLightTextureTransformation(),
-                viewer, *transform, time, _glState.isColourInverted());
         }
 
         // Render the renderable

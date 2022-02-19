@@ -96,7 +96,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     for (const OpenGLShaderPassPtr& pass : _shaderPasses)
     {
         // Submit the renderable to each pass
-		pass->addRenderable(renderable, modelview, nullptr);
+		pass->addRenderable(renderable, modelview);
     }
 }
 
