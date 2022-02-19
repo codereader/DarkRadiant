@@ -679,7 +679,7 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
     if (state.cubeMapMode == IShaderLayer::CUBE_MAP_CAMERA)
     {
         state.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::CubeMap);
-
+        state.setRenderFlag(RENDER_PROGRAM);
         state.setRenderFlag(RENDER_TEXTURE_CUBEMAP);
     }
     else

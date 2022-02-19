@@ -11,14 +11,12 @@ class GLSLCubeMapProgram :
 {
 private:
     // Uniform/program-local parameter IDs.
-    int _locLightOrigin;
-    int _locLightColour;
-    int _locViewOrigin;
-    int _locLightScale;
-    int _locAmbientLight;
-    int _locInvertVCol;
+    GLint _locViewOrigin;
 
 public:
+    GLSLCubeMapProgram() :
+        _locViewOrigin(-1)
+    {}
 
     /* GLProgram implementation */
     void create() override;

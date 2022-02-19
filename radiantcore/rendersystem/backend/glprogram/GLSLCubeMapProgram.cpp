@@ -10,11 +10,9 @@ namespace render
 
 namespace
 {
-
     // Filenames of shader code
     const char* const VP_FILENAME = "cubemap_vp.glsl";
     const char* const FP_FILENAME = "cubemap_fp.glsl";
-
 }
 
 void GLSLCubeMapProgram::create()
@@ -25,24 +23,33 @@ void GLSLCubeMapProgram::create()
     _programObj = GLProgramFactory::createGLSLProgram(VP_FILENAME, FP_FILENAME);
 
     // Bind vertex attribute locations and link the program
-    glBindAttribLocation(_programObj, ATTR_TEXCOORD, "attr_TexCoord0");
-    glBindAttribLocation(_programObj, ATTR_TANGENT, "attr_Tangent");
-    glBindAttribLocation(_programObj, ATTR_BITANGENT, "attr_Bitangent");
-    glBindAttribLocation(_programObj, ATTR_NORMAL, "attr_Normal");
+    glBindAttribLocation(_programObj, GLProgramAttribute::Position, "attr_Position");
+    glBindAttribLocation(_programObj, GLProgramAttribute::TexCoord, "attr_TexCoord0");
+    glBindAttribLocation(_programObj, GLProgramAttribute::Tangent, "attr_Tangent");
+    glBindAttribLocation(_programObj, GLProgramAttribute::Bitangent, "attr_Bitangent");
+    glBindAttribLocation(_programObj, GLProgramAttribute::Normal, "attr_Normal");
+
     glLinkProgram(_programObj);
     debug::assertNoGlErrors();
 
-
+    _locViewOrigin = glGetUniformLocation(_programObj, "u_viewOrigin");
 }
 
 void GLSLCubeMapProgram::enable()
 {
     GLSLProgramBase::enable();
 
-    glEnableVertexAttribArrayARB(ATTR_TEXCOORD);
-    glEnableVertexAttribArrayARB(ATTR_TANGENT);
-    glEnableVertexAttribArrayARB(ATTR_BITANGENT);
-    glEnableVertexAttribArrayARB(ATTR_NORMAL);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::Position);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::Tangent);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::Normal);
+
+    glUniform3f(_locViewOrigin,
+        0,
+        0,
+        0
+    );
 
     debug::assertNoGlErrors();
 }
@@ -51,10 +58,11 @@ void GLSLCubeMapProgram::disable()
 {
     GLSLProgramBase::disable();
 
-    glDisableVertexAttribArrayARB(ATTR_TEXCOORD);
-    glDisableVertexAttribArrayARB(ATTR_TANGENT);
-    glDisableVertexAttribArrayARB(ATTR_BITANGENT);
-    glDisableVertexAttribArrayARB(ATTR_NORMAL);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Position);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
 
     debug::assertNoGlErrors();
 }

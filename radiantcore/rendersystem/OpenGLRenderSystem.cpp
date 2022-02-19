@@ -191,10 +191,10 @@ void OpenGLRenderSystem::beginRendering(OpenGLState& state)
         glDisableVertexAttribArrayARB(c_attr_Binormal);
     }
 
-    glDisableVertexAttribArrayARB(ATTR_TEXCOORD);
-    glDisableVertexAttribArrayARB(ATTR_TANGENT);
-    glDisableVertexAttribArrayARB(ATTR_BITANGENT);
-    glDisableVertexAttribArrayARB(ATTR_NORMAL);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);

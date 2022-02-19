@@ -24,7 +24,7 @@ void GLSLDepthFillAlphaProgram::create()
         DEPTHFILL_ALPHA_VP_FILENAME, DEPTHFILL_ALPHA_FP_FILENAME
     );
 
-    glBindAttribLocation(_programObj, ATTR_TEXCOORD, "attr_TexCoord0");
+    glBindAttribLocation(_programObj, GLProgramAttribute::TexCoord, "attr_TexCoord0");
 
     glLinkProgram(_programObj);
 
@@ -45,14 +45,14 @@ void GLSLDepthFillAlphaProgram::enable()
 {
     GLSLProgramBase::enable();
 
-    glEnableVertexAttribArrayARB(ATTR_TEXCOORD);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
 }
 
 void GLSLDepthFillAlphaProgram::disable()
 {
     GLSLProgramBase::disable();
 
-    glDisableVertexAttribArrayARB(ATTR_TEXCOORD);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
 }
 
 void GLSLDepthFillAlphaProgram::applyAlphaTest(float alphaTest)
