@@ -64,6 +64,16 @@ public:
         _collectionBoundsNeedUpdate = true;
     }
 
+    void foreachRenderable(const IRenderEntity::ObjectVisitFunction& functor)
+    {
+        ensureBoundsUpToDate();
+
+        for (const auto& [object, objectData] : _objects)
+        {
+            functor(object, objectData.shader);
+        }
+    }
+
     void foreachRenderableTouchingBounds(const AABB& bounds,
         const IRenderEntity::ObjectVisitFunction& functor)
     {

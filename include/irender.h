@@ -186,6 +186,11 @@ public:
     using ObjectVisitFunction = std::function<void(const render::IRenderableObject::Ptr&, Shader*)>;
 
     /**
+     * Enumerate all entity object, unconditionally.
+     */
+    virtual void foreachRenderable(const ObjectVisitFunction& functor) = 0;
+
+    /**
      * Enumerate all entity object (partially) intersecting with the given bounds.
      * The bounds are specified in world coordinates.
      */

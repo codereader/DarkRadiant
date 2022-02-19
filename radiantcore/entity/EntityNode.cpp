@@ -223,6 +223,11 @@ void EntityNode::removeRenderable(const render::IRenderableObject::Ptr& object)
     _renderObjects.removeRenderable(object);
 }
 
+void EntityNode::foreachRenderable(const IRenderEntity::ObjectVisitFunction& functor)
+{
+    _renderObjects.foreachRenderable(functor);
+}
+
 void EntityNode::foreachRenderableTouchingBounds(const AABB& bounds,
     const IRenderEntity::ObjectVisitFunction& functor)
 {

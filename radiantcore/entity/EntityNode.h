@@ -133,6 +133,7 @@ public:
 
     virtual void addRenderable(const render::IRenderableObject::Ptr& object, Shader* shader) override;
     virtual void removeRenderable(const render::IRenderableObject::Ptr& object) override;
+    virtual void foreachRenderable(const ObjectVisitFunction& functor) override;
     virtual void foreachRenderableTouchingBounds(const AABB& bounds,
         const ObjectVisitFunction& functor) override;
 
