@@ -1,21 +1,17 @@
 
-attribute vec4		attr_TexCoord0;
-attribute vec3		attr_Tangent;
-attribute vec3		attr_Bitangent;
-attribute vec3      attr_Normal;
+// The view origin as set by the C++ code
+uniform vec3    u_view_origin;
 
-uniform vec3		u_view_origin;
+// The texture coordinate for this vertex, will be used in the fragment shader
+varying vec3    var_cubeMapTexCoord;
 
-varying vec3		var_dummy;
-
-void	main()
+void main()
 {
-    var_dummy = gl_Vertex.xyz - u_view_origin;
+    var_cubeMapTexCoord = gl_Vertex.xyz - u_view_origin;
 
-	// transform vertex position into homogenous clip-space
-	gl_Position = ftransform();
+    // transform vertex position into homogenous clip-space
+    gl_Position = ftransform();
 
     // Pass through vertex colour
     gl_FrontColor = gl_Color;
 }
-

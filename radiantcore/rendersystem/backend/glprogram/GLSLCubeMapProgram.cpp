@@ -31,31 +31,14 @@ void GLSLCubeMapProgram::create()
     glLinkProgram(_programObj);
     debug::assertNoGlErrors();
 
-    // Set the uniform locations to the correct bound values
+    // Get a grip of the uniform declared in the fragment shader
     _locViewOrigin = glGetUniformLocation(_programObj, "u_view_origin");
 
     glUseProgram(_programObj);
     debug::assertNoGlErrors();
 
-    GLint samplerLoc;
-
-    //samplerLoc = glGetUniformLocation(_programObj, "u_diffusemap");
-    //glUniform1i(samplerLoc, 0);
-    //
-    //samplerLoc = glGetUniformLocation(_programObj, "u_bumpmap");
-    //glUniform1i(samplerLoc, 1);
-    //
-    //samplerLoc = glGetUniformLocation(_programObj, "u_specularmap");
-    //glUniform1i(samplerLoc, 2);
-    //
-    //samplerLoc = glGetUniformLocation(_programObj, "u_attenuationmap_xy");
-    //glUniform1i(samplerLoc, 3);
-    //
-    //samplerLoc = glGetUniformLocation(_programObj, "u_attenuationmap_z");
-    //glUniform1i(samplerLoc, 4);
-    
-    // Texture 0 => cubemap
-    samplerLoc = glGetUniformLocation(_programObj, "u_cubemap");
+    // Set the cube map sampler to texture unit 0
+    auto samplerLoc = glGetUniformLocation(_programObj, "u_cubemap");
     glUniform1i(samplerLoc, 0);
 
     debug::assertNoGlErrors();
@@ -88,44 +71,15 @@ void GLSLCubeMapProgram::disable()
     debug::assertNoGlErrors();
 }
 
-void GLSLCubeMapProgram::applyRenderParams(const Vector3& viewer,
-    const Matrix4& objectToWorld,
-    const Params& parms)
+void GLSLCubeMapProgram::applyRenderParams(const Vector3& viewer, const Matrix4&, const Params&)
 {
-#if 0
-    debug::assertNoGlErrors();
-
-    Matrix4 worldToObject(objectToWorld);
-    worldToObject.invert();
-
-    // Calculate the light origin in object space
-    Vector3 localLight = worldToObject.transformPoint(parms.lightOrigin);
-
-    Matrix4 local2light(parms.world2Light);
-    local2light.multiplyBy(objectToWorld); // local->world->light
-#endif
-    // Set lighting parameters in the shader
+    // Pass the current viewer origin to the shader
     glUniform3f(_locViewOrigin,
         static_cast<float>(viewer.x()),
         static_cast<float>(viewer.y()),
         static_cast<float>(viewer.z())
     );
     debug::assertNoGlErrors();
-#if 0
-    glUniform1i(_locAmbientLight, parms.isAmbientLight);
-
-    // Set vertex colour parameters
-    glUniform1i(_locInvertVCol, parms.invertVertexColour);
-
-    glActiveTexture(GL_TEXTURE3);
-    glClientActiveTexture(GL_TEXTURE3);
-
-    glMatrixMode(GL_TEXTURE);
-    glLoadMatrixd(local2light);
-    glMatrixMode(GL_MODELVIEW);
-
-    debug::assertNoGlErrors();
-#endif
 }
 
 }

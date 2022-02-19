@@ -216,35 +216,6 @@ void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
     }
 }
 
-// Set up cube map
-void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
-                                             unsigned requiredState,
-                                             const Vector3& viewer)
-{
-#if 0
-    if (requiredState & RENDER_TEXTURE_CUBEMAP)
-    {
-        // Copy cubemap mode enum to current state object
-        current.cubeMapMode = _glState.cubeMapMode;
-
-        // Apply axis transformation (swap Y and Z coordinates)
-        Matrix4 transform = Matrix4::byRows(
-            1, 0, 0, 0,
-            0, 0, 1, 0,
-            0, 1, 0, 0,
-            0, 0, 0, 1
-        );
-
-        // Subtract the viewer position
-        transform.translateBy(-viewer);
-        // Apply to the texture matrix
-        glMatrixMode(GL_TEXTURE);
-        glLoadMatrixd(transform);
-        glMatrixMode(GL_MODELVIEW);
-    }
-#endif
-}
-
 // Apply own state to current state object
 void OpenGLShaderPass::applyState(OpenGLState& current,
                                   unsigned int globalStateMask,
@@ -472,9 +443,6 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     glColor4fv(_glState.getColour());
     current.setColour(_glState.getColour());
     debug::assertNoGlErrors();
-
-    // Set up the cubemap and texgen parameters
-    setUpCubeMapAndTexGen(current, requiredState, viewer);
 
   if(requiredState & RENDER_BLEND
     && (_glState.m_blend_src != current.m_blend_src || _glState.m_blend_dst != current.m_blend_dst))

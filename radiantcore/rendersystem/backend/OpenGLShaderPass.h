@@ -96,11 +96,6 @@ protected:
     // Apply all OpenGLState textures to texture units
     void applyAllTextures(OpenGLState& current, unsigned requiredState);
 
-    // Set up the cube map texture matrix if necessary
-    void setUpCubeMapAndTexGen(OpenGLState& current,
-                               unsigned requiredState,
-                               const Vector3& viewer);
-
     virtual void activateShaderProgram(OpenGLState& current);
     virtual void deactivateShaderProgram(OpenGLState& current);
 
