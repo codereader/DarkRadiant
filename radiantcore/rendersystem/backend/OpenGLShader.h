@@ -38,6 +38,9 @@ private:
     // Lighting mode needs to have quick access to this pass
     OpenGLShaderPassPtr _depthFillPass;
 
+    // Interaction pass used by lighting mode
+    OpenGLShaderPassPtr _interactionPass;
+
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;
     sigc::connection _materialChanged;
@@ -153,6 +156,9 @@ public:
     // Returns the depth fill pass of this shader, or null if this shader doesn't have one
     OpenGLShaderPass* getDepthFillPass() const;
 
+    // Returns the interaction pass of this shader, or null if this shader doesn't have one
+    OpenGLShaderPass* getInteractionPass() const;
+
 protected:
     // Start point for constructing shader passes from the shader name
     virtual void construct();
@@ -182,6 +188,7 @@ protected:
     void clearPasses();
 
     OpenGLState& appendDepthFillPass();
+    OpenGLState& appendInteractionPass();
 };
 
 typedef std::shared_ptr<OpenGLShader> OpenGLShaderPtr;

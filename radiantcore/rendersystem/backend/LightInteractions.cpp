@@ -83,6 +83,11 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
                 return;
             }
 
+            if (!glShader->getInteractionPass())
+            {
+                return; // This material doesn't interact with lighting
+            }
+
             addObject(*object, *entity, glShader);
         });
     }

@@ -3,6 +3,7 @@
 #include "GLProgramFactory.h"
 #include "../OpenGLRenderSystem.h"
 #include "DepthFillPass.h"
+#include "InteractionPass.h"
 
 #include "icolourscheme.h"
 #include "ishaders.h"
@@ -325,6 +326,7 @@ void OpenGLShader::removePasses()
 
 void OpenGLShader::clearPasses()
 {
+    _interactionPass.reset();
     _depthFillPass.reset();
     _shaderPasses.clear();
 }
@@ -363,6 +365,12 @@ OpenGLState& OpenGLShader::appendDepthFillPass()
 {
     _depthFillPass = _shaderPasses.emplace_back(std::make_shared<DepthFillPass>(*this, _renderSystem));
     return _depthFillPass->state();
+}
+
+OpenGLState& OpenGLShader::appendInteractionPass()
+{
+    _interactionPass = _shaderPasses.emplace_back(std::make_shared<InteractionPass>(*this, _renderSystem));
+    return _interactionPass->state();
 }
 
 // Test if we can render in bump map mode
@@ -425,7 +433,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     if (triplet.needDepthFill && triplet.diffuse)
     {
         // Create depth-buffer fill pass with alpha test
-        OpenGLState& zPass = appendDepthFillPass();
+        auto& zPass = appendDepthFillPass();
 
         // Store the alpha test value
         zPass.alphaThreshold = static_cast<GLfloat>(alphaTest);
@@ -436,22 +444,10 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     }
 
     // Add the DBS pass
-    OpenGLState& dbsPass = appendDefaultPass();
+    auto& dbsPass = appendInteractionPass();
 
     // Populate the textures and remember the stage reference
     setGLTexturesFromTriplet(dbsPass, triplet);
-
-    // Set render flags
-    dbsPass.setRenderFlag(RENDER_BLEND);
-    dbsPass.setRenderFlag(RENDER_FILL);
-    dbsPass.setRenderFlag(RENDER_TEXTURE_2D);
-    dbsPass.setRenderFlag(RENDER_CULLFACE);
-    dbsPass.setRenderFlag(RENDER_DEPTHTEST);
-    dbsPass.setRenderFlag(RENDER_SMOOTH);
-    dbsPass.setRenderFlag(RENDER_BUMP);
-    dbsPass.setRenderFlag(RENDER_PROGRAM);
-
-    dbsPass.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::Interaction);
 
     if (vcolMode != IShaderLayer::VERTEX_COLOUR_NONE)
     {
@@ -471,13 +467,7 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 	if (triplet.diffuse)
 	{
 		dbsPass.setColour(triplet.diffuse->getColour());
-	}
-
-    dbsPass.setDepthFunc(GL_LEQUAL);
-    dbsPass.polygonOffset = 0.5f;
-    dbsPass.setSortPosition(OpenGLState::SORT_INTERACTION);
-    dbsPass.m_blend_src = GL_ONE;
-    dbsPass.m_blend_dst = GL_ONE;
+	} 
 }
 
 void OpenGLShader::applyAlphaTestToPass(OpenGLState& pass, double alphaTest)
@@ -843,6 +833,11 @@ void OpenGLShader::foreachPassWithoutDepthPass(const std::function<void(OpenGLSh
 OpenGLShaderPass* OpenGLShader::getDepthFillPass() const
 {
     return _depthFillPass.get();
+}
+
+OpenGLShaderPass* OpenGLShader::getInteractionPass() const
+{
+    return _interactionPass.get();
 }
 
 }

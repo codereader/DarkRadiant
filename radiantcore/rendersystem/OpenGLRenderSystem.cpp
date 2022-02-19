@@ -364,6 +364,9 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
         result->drawCalls += interactionList.getDrawCalls();
     }
 
+    // Draw non-interaction passes (like skyboxes or blend stages)
+    // TODO
+
     renderText();
 
     finishRendering();
