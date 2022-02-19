@@ -62,18 +62,18 @@ public:
 
             if (mergeShader)
             {
-                mergeShader->addRenderable(renderable, localToWorld, nullptr);
+                mergeShader->addRenderable(renderable, localToWorld);
             }
         }
 
         if ((_flags & Highlight::Flags::Primitives) != 0 && _shaders.primitiveHighlightShader)
         {
-            _shaders.primitiveHighlightShader->addRenderable(renderable, localToWorld, nullptr);
+            _shaders.primitiveHighlightShader->addRenderable(renderable, localToWorld);
         }
 
         if ((_flags & Highlight::Flags::Faces) != 0 && _shaders.faceHighlightShader)
         {
-            _shaders.faceHighlightShader->addRenderable(renderable, localToWorld, nullptr);
+            _shaders.faceHighlightShader->addRenderable(renderable, localToWorld);
         }
     }
 };

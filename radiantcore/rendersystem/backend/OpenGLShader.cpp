@@ -88,8 +88,7 @@ void OpenGLShader::destroy()
 }
 
 void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
-								 const Matrix4& modelview,
-                                 const IRenderEntity* entity)
+								 const Matrix4& modelview)
 {
     if (!_isVisible) return;
 
@@ -97,7 +96,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     for (const OpenGLShaderPassPtr& pass : _shaderPasses)
     {
         // Submit the renderable to each pass
-		pass->addRenderable(renderable, modelview, nullptr, entity);
+		pass->addRenderable(renderable, modelview, nullptr);
     }
 }
 

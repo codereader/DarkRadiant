@@ -397,13 +397,9 @@ public:
 	 *
 	 * \param modelview
 	 * The modelview transform for this object.
-	 *
-     * \param entity
-     * Optional IRenderEntity exposing entity-related render parameters.
 	 */
 	virtual void addRenderable(const OpenGLRenderable& renderable,
-							   const Matrix4& modelview,
-                               const IRenderEntity* entity = nullptr) = 0;
+							   const Matrix4& modelview) = 0;
 
     /**
      * \brief

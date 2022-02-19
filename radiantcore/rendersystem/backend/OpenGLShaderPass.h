@@ -66,10 +66,6 @@ protected:
 	typedef std::vector<TransformedRenderable> Renderables;
 	Renderables _renderablesWithoutEntity;
 
-	// Renderables sorted by RenderEntity
-	typedef std::map<const IRenderEntity*, Renderables> RenderablesByEntity;
-	RenderablesByEntity _renderables;
-
 protected:
 
     void setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage);
@@ -121,8 +117,7 @@ public:
 	 */
 	void addRenderable(const OpenGLRenderable& renderable,
 					   const Matrix4& modelview,
-					   const RendererLight* light = nullptr,
-                       const IRenderEntity* entity = nullptr);
+					   const RendererLight* light = nullptr);
 
 	/**
 	 * Return the OpenGL state associated with this bucket.

@@ -505,29 +505,11 @@ void OpenGLShaderPass::deactivateShaderProgram(OpenGLState& current)
 // Add a Renderable to this bucket
 void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
                                      const Matrix4& modelview,
-                                     const RendererLight* light,
-                                     const IRenderEntity* entity)
+                                     const RendererLight* light)
 {
-    if (entity)
-    {
-        // Find or insert the render entity in our map
-        auto i = _renderables.find(entity);
-        if (i == _renderables.end())
-        {
-            i = _renderables.insert(std::make_pair(entity, Renderables())).first;
-        }
-
-        // Add this renderable to the list of renderables associated with the entity
-        i->second.push_back(
-            TransformedRenderable(renderable, modelview, light, entity)
-        );
-    }
-    else
-    {
-        _renderablesWithoutEntity.push_back(
-            TransformedRenderable(renderable, modelview, light, nullptr)
-        );
-    }
+    _renderablesWithoutEntity.push_back(
+        TransformedRenderable(renderable, modelview, light, nullptr)
+    );
 }
 
 // Render the bucket contents
@@ -555,33 +537,16 @@ void OpenGLShaderPass::render(OpenGLState& current,
     {
         renderAllContained(_renderablesWithoutEntity, current, viewer, time);
     }
-
-    for (RenderablesByEntity::const_iterator i = _renderables.begin();
-         i != _renderables.end();
-         ++i)
-    {
-        // Apply our state to the current state object
-        applyState(current, flagsMask, viewer, time, i->first);
-
-        if (!stateIsActive())
-        {
-            continue;
-        }
-
-        renderAllContained(i->second, current, viewer, time);
-    }
 }
 
 void OpenGLShaderPass::clearRenderables()
 {
     _renderablesWithoutEntity.clear();
-    _renderables.clear();
 }
 
 bool OpenGLShaderPass::empty()
 {
-    return _renderables.empty() && _renderablesWithoutEntity.empty() && 
-        !_owner.hasSurfaces() && !_owner.hasWindings();
+    return _renderablesWithoutEntity.empty() && !_owner.hasSurfaces() && !_owner.hasWindings();
 }
 
 bool OpenGLShaderPass::isApplicableTo(RenderViewType renderViewType) const

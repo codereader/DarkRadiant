@@ -51,14 +51,14 @@ public:
 
                 if (mergeShader)
                 {
-                    mergeShader->addRenderable(renderable, localToWorld, nullptr);
+                    mergeShader->addRenderable(renderable, localToWorld);
                 }
             }
 
             // Elements can still be selected in merge mode
             if ((_flags & Highlight::Flags::Primitives) != 0)
             {
-                _shaders.selectedShader->addRenderable(renderable, localToWorld, nullptr);
+                _shaders.selectedShader->addRenderable(renderable, localToWorld);
             }
 
             return;
@@ -69,11 +69,11 @@ public:
         {
             if ((_flags & Highlight::Flags::GroupMember) != 0)
             {
-                _shaders.selectedShaderGroup->addRenderable(renderable, localToWorld, nullptr);
+                _shaders.selectedShaderGroup->addRenderable(renderable, localToWorld);
             }
             else
             {
-                _shaders.selectedShader->addRenderable(renderable, localToWorld, nullptr);
+                _shaders.selectedShader->addRenderable(renderable, localToWorld);
             }
         }
     }

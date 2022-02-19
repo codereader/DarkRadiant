@@ -97,8 +97,7 @@ public:
     // Shader implementation
     std::string getName() const override { return _name; }
 	void addRenderable(const OpenGLRenderable& renderable,
-					   const Matrix4& modelview,
-                       const IRenderEntity* entity) override;
+					   const Matrix4& modelview) override;
 
     bool hasSurfaces() const;
     void drawSurfaces(const VolumeTest& view, const RenderInfo& info);
