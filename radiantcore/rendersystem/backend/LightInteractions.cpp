@@ -177,7 +177,7 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
 
                 for (auto object : objectList)
                 {
-                    if (state.glProgram && !state.testRenderFlag(RENDER_TEXTURE_CUBEMAP))
+                    if (state.glProgram)
                     {
                         OpenGLShaderPass::setUpLightingCalculation(state, &_light, worldToLight,
                             view.getViewer(), object.get().getObjectTransform(), renderTime, state.isColourInverted());

@@ -1,21 +1,21 @@
-#version 120
 
-// vertex attributes
-attribute vec4 attr_Position;
-attribute vec4 attr_TexCoord0;
-attribute vec3 attr_Tangent;
-attribute vec3 attr_Bitangent;
-attribute vec3 attr_Normal;
+attribute vec4		attr_TexCoord0;
+attribute vec3		attr_Tangent;
+attribute vec3		attr_Bitangent;
+attribute vec3      attr_Normal;
 
-uniform vec3 u_viewOrigin;
+uniform vec3		u_view_origin;
 
-varying vec4 var_TexCoord0;
+varying vec3		var_dummy;
 
-void main()
+void	main()
 {
-    //var_TexCoord0 = attr_Position - vec4(u_viewOrigin, 1);
-    var_TexCoord0 = attr_TexCoord0;
+    var_dummy = gl_Vertex.xyz - u_view_origin;
 
-    gl_Position = attr_Position;
-    gl_FrontColor = gl_Color; // Pass through vertex colour
+	// transform vertex position into homogenous clip-space
+	gl_Position = ftransform();
+
+    // Pass through vertex colour
+    gl_FrontColor = gl_Color;
 }
+

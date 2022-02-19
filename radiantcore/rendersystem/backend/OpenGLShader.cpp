@@ -681,6 +681,7 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
         state.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::CubeMap);
         state.setRenderFlag(RENDER_PROGRAM);
         state.setRenderFlag(RENDER_TEXTURE_CUBEMAP);
+        state.clearRenderFlag(RENDER_TEXTURE_2D);
     }
     else
     {

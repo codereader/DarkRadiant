@@ -221,6 +221,7 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
                                              unsigned requiredState,
                                              const Vector3& viewer)
 {
+#if 0
     if (requiredState & RENDER_TEXTURE_CUBEMAP)
     {
         // Copy cubemap mode enum to current state object
@@ -236,12 +237,12 @@ void OpenGLShaderPass::setUpCubeMapAndTexGen(OpenGLState& current,
 
         // Subtract the viewer position
         transform.translateBy(-viewer);
-
         // Apply to the texture matrix
         glMatrixMode(GL_TEXTURE);
         glLoadMatrixd(transform);
         glMatrixMode(GL_MODELVIEW);
     }
+#endif
 }
 
 // Apply own state to current state object
@@ -658,7 +659,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     GLuint attenuation_z = lightMat->lightFalloffImage()->getGLTexNum();
 
     // Bind the falloff textures
-    assert(current.testRenderFlag(RENDER_TEXTURE_2D));
+    //assert(current.testRenderFlag(RENDER_TEXTURE_2D));
 
     setTextureState(
         current.texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D
