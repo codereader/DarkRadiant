@@ -98,8 +98,6 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 
     _viewType = XY;
 
-    _contextMenu = false;
-
 	_wxGLWidget->SetCanFocus(false);
 	// Don't set a minimum size, to allow for cam window maximisation
 	//_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
@@ -173,7 +171,7 @@ void XYWnd::destroyXYView()
     _wxGLWidget = nullptr;
 }
 
-void XYWnd::setScale(float f) 
+void XYWnd::setScale(float f)
 {
     _scale = f;
     updateProjection();
@@ -468,7 +466,7 @@ void XYWnd::onContextMenu()
 {
 	// Get the click point in 3D space
 	Vector3 point;
-	mouseToPoint(_contextMenu_x, _contextMenu_y, point);
+	mouseToPoint(_rightClickPos->initial.x(), _rightClickPos->initial.y(), point);
 
 	// Display the menu, passing the coordinates for creation
 	OrthoContextMenu::Instance().Show(_wxGLWidget, point);
@@ -500,27 +498,23 @@ EViewType XYWnd::getViewType() const {
 void XYWnd::handleGLMouseMotion(int x, int y, unsigned int state, bool isDelta)
 {
     // Context menu handling
-    if (state == wxutil::MouseButton::RIGHT) // Only RMB, nothing else
+    if (state == wxutil::MouseButton::RIGHT && _rightClickPos) // Only RMB, nothing else
     {
-        if (_contextMenu)
-        {
-            if (isDelta)
-            {
-                if (x != 0 || y != 0) // x,y are deltas
-                {
-                    // The user moved the pointer away from the point the RMB was pressed
-                    _contextMenu = false;
-                }
-            }
-            else
-            {
-                if (_contextMenu_x != x || _contextMenu_y != y)
-                {
-                    // The user moved the pointer away from the point the RMB was pressed
-                    _contextMenu = false;
-                }
-            }
-        }
+        if (isDelta)
+            _rightClickPos->current += Vector2i{x, y};
+        else
+            _rightClickPos->current = {x, y};
+
+        // If the user moved the pointer away from the point the RMB was pressed, this is a drag
+        // not a context menu event
+        static const std::string RKEY_THRESHOLD = std::string(RKEY_XYVIEW_ROOT)
+                                                + "/contextMenuThreshold";
+        static const int DIST_THRESHOLD_SQ = std::pow(
+            registry::getValue<int>(RKEY_THRESHOLD, 15), 2
+        );
+        auto distanceVec = _rightClickPos->current - _rightClickPos->initial;
+        if (distanceVec.getLengthSquared() > DIST_THRESHOLD_SQ)
+            _rightClickPos.reset();
     }
 
     _mousePosition = convertXYToWorld(x, y);
@@ -1582,7 +1576,7 @@ void XYWnd::zoomInOn(wxPoint cursor, int zoom)
     int dim2 = _viewType == XY ? 1 : 2;
 
     // worldPos = origin + devicePos * device2WorldScale
-    // devicePos and worldPos should remain constant. device2WorldScale is known before 
+    // devicePos and worldPos should remain constant. device2WorldScale is known before
     // and after zooming, so the origin delta can be calculated from what we have
     auto scaleAdjustment = (1 / _scale - 1 / newScale);
 
@@ -1674,9 +1668,8 @@ void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
     if (ev.RightDown() && !ev.HasAnyModifiers())
     {
         // Remember the RMB coordinates for use in the mouseup event
-        _contextMenu = true;
-        _contextMenu_x = ev.GetX();
-        _contextMenu_y = ev.GetY();
+        Vector2i clickPos{ev.GetX(), ev.GetY()};
+        _rightClickPos = { clickPos, clickPos };
     }
 
     // Send the event to the mouse tool handler
@@ -1688,7 +1681,7 @@ void XYWnd::onGLMouseButtonPress(wxMouseEvent& ev)
 void XYWnd::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
 	// Do the context menu handling first
-    if (ev.RightUp() && !ev.HasAnyModifiers() && _contextMenu)
+    if (ev.RightUp() && !ev.HasAnyModifiers() && _rightClickPos)
     {
         // The user just pressed and released the RMB in the same place
         onContextMenu();

@@ -52,8 +52,6 @@ class TextureBrowser :
     public wxPanel,
     public sigc::trackable
 {
-    typedef BasicVector2<int> Vector2i;
-
     class TextureTile;
     typedef std::list<TextureTile> TextureTiles;
     TextureTiles _tiles;

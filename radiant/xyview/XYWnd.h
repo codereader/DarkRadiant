@@ -64,9 +64,16 @@ protected:
 
     EViewType _viewType;
 
-    int _contextMenu_x;
-    int _contextMenu_y;
-    bool _contextMenu;
+    // Context menu handling. Because we use right-click for both context menu and panning
+    // (probably a bad design choice, but we're stuck with it), we need to distinguish between a
+    // click-and-release (context menu) and drag (pan). For this we record the initial click
+    // position and the current position, and show the context menu only if the difference is small
+    // at the point of mouse release.
+    struct ContextMenuClick {
+        Vector2i initial;
+        Vector2i current;
+    };
+    std::optional<ContextMenuClick> _rightClickPos;
 
     wxutil::KeyEventFilterPtr _escapeListener;
 
