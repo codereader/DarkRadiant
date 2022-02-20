@@ -11,6 +11,7 @@
 #include "wxutil/event/KeyEventFilter.h"
 #include "wxutil/GLWidget.h"
 
+#include <optional>
 #include <wx/cursor.h>
 #include <wx/stopwatch.h>
 #include <sigc++/connection.h>
