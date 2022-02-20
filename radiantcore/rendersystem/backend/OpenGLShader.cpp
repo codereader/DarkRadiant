@@ -819,11 +819,11 @@ void OpenGLShader::foreachPass(const std::function<void(OpenGLShaderPass&)>& fun
     }
 }
 
-void OpenGLShader::foreachPassWithoutDepthPass(const std::function<void(OpenGLShaderPass&)>& functor)
+void OpenGLShader::foreachNonInteractionPass(const std::function<void(OpenGLShaderPass&)>& functor)
 {
     for (auto& pass : _shaderPasses)
     {
-        if (pass != _depthFillPass)
+        if (pass != _depthFillPass && pass != _interactionPass)
         {
             functor(*pass);
         }

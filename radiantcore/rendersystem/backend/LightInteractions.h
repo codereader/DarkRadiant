@@ -74,6 +74,8 @@ public:
 
     void render(OpenGLState& state, RenderStateFlags globalFlagsMask, 
         const IRenderView& view, std::size_t renderTime);
+
+    static void SubmitObject(IRenderableObject& object, IGeometryStore& store);
 };
 
 }

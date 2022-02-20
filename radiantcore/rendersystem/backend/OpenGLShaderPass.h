@@ -175,6 +175,8 @@ public:
         std::size_t time,
         bool invertVertexColour);
 
+    static void SetUpNonInteractionProgram(OpenGLState& current, const Vector3& viewer, const Matrix4& objTransform);
+
     static void setTextureState(GLint& current,
         const GLint& texture,
         GLenum textureUnit,

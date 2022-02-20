@@ -151,7 +151,9 @@ public:
     void setMergeModeEnabled(bool enabled);
 
     void foreachPass(const std::function<void(OpenGLShaderPass&)>& functor);
-    void foreachPassWithoutDepthPass(const std::function<void(OpenGLShaderPass&)>& functor);
+
+    // All non-interaction, non-depth fill passes are forwarded to the functor
+    void foreachNonInteractionPass(const std::function<void(OpenGLShaderPass&)>& functor);
 
     // Returns the depth fill pass of this shader, or null if this shader doesn't have one
     OpenGLShaderPass* getDepthFillPass() const;

@@ -5,44 +5,6 @@
 namespace render
 {
 
-namespace detail
-{
-
-inline void submitObject(IRenderableObject& object, IGeometryStore& store)
-{
-    if (object.getObjectTransform().getHandedness() == Matrix4::RIGHTHANDED)
-    {
-        glFrontFace(GL_CW);
-    }
-    else
-    {
-        glFrontFace(GL_CCW);
-    }
-
-    glMatrixMode(GL_MODELVIEW);
-
-    auto renderParams = store.getRenderParameters(object.getStorageLocation());
-
-    glPushMatrix();
-
-    glMultMatrixd(object.getObjectTransform());
-
-    glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
-
-    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
-    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->normal);
-    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->texcoord);
-    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->tangent);
-    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->bitangent);
-
-    glDrawElementsBaseVertex(GL_TRIANGLES, static_cast<GLsizei>(renderParams.indexCount), 
-        GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
-        
-    glPopMatrix();
-}
-
-}
-
 void LightInteractions::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader)
 {
     auto& objectsByMaterial = _objectsByEntity.emplace(
@@ -132,7 +94,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             
             for (auto object : objectList)
             {
-                detail::submitObject(object.get(), _store);
+                SubmitObject(object.get(), _store);
                 ++_drawCalls;
             }
         }
@@ -162,9 +124,11 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
 
             if (!shader->isVisible()) continue;
 
-            shader->foreachPassWithoutDepthPass([&](OpenGLShaderPass& pass)
+            auto pass = shader->getInteractionPass();
+
+            if (pass)
             {
-                if (!pass.stateIsActive())
+                if (!pass->stateIsActive())
                 {
                     return;
                 }
@@ -176,7 +140,7 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
                 glMatrixMode(GL_MODELVIEW);
 
                 // Apply our state to the current state object
-                pass.applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
+                pass->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
 
                 RenderInfo info(state.getRenderFlags(), view.getViewer(), state.cubeMapMode);
 
@@ -188,14 +152,47 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
                             view.getViewer(), object.get().getObjectTransform(), renderTime, state.isColourInverted());
                     }
 
-                    detail::submitObject(object.get(), _store);
+                    SubmitObject(object.get(), _store);
                     ++_drawCalls;
                 }
-            });
+            }
         }
     }
 
     glDisableClientState(GL_VERTEX_ARRAY);
+}
+
+void LightInteractions::SubmitObject(IRenderableObject& object, IGeometryStore& store)
+{
+    if (object.getObjectTransform().getHandedness() == Matrix4::RIGHTHANDED)
+    {
+        glFrontFace(GL_CW);
+    }
+    else
+    {
+        glFrontFace(GL_CCW);
+    }
+
+    glMatrixMode(GL_MODELVIEW);
+
+    auto renderParams = store.getRenderParameters(object.getStorageLocation());
+
+    glPushMatrix();
+
+    glMultMatrixd(object.getObjectTransform());
+
+    glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
+
+    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
+    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->normal);
+    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->texcoord);
+    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->tangent);
+    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->bitangent);
+
+    glDrawElementsBaseVertex(GL_TRIANGLES, static_cast<GLsizei>(renderParams.indexCount),
+        GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
+
+    glPopMatrix();
 }
 
 }

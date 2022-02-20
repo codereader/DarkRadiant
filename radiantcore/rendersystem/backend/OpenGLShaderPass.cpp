@@ -589,7 +589,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     GLuint attenuation_z = lightMat->lightFalloffImage()->getGLTexNum();
 
     // Bind the falloff textures
-    //assert(current.testRenderFlag(RENDER_TEXTURE_2D));
+    assert(current.testRenderFlag(RENDER_TEXTURE_2D));
 
     setTextureState(
         current.texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D
@@ -612,6 +612,14 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
 
     assert(current.glProgram);
     current.glProgram->applyRenderParams(osViewer, objTransform, parms);
+}
+
+void OpenGLShaderPass::SetUpNonInteractionProgram(OpenGLState& current, const Vector3& viewer, const Matrix4& objTransform)
+{
+    static GLProgram::Params parms({ 0,0,0 }, { 0,0,0,0 }, Matrix4::getIdentity());
+
+    assert(current.glProgram);
+    current.glProgram->applyRenderParams(viewer, objTransform, parms);
 }
 
 // Flush renderables

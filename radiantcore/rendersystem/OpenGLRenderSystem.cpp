@@ -350,7 +350,7 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
         
         interactionLists.emplace_back(std::move(interaction));
     }
-
+    
     // Run the depth fill pass
     for (auto& interactionList : interactionLists)
     {
@@ -364,8 +364,56 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
         result->drawCalls += interactionList.getDrawCalls();
     }
 
+    glEnableClientState(GL_VERTEX_ARRAY);
+
     // Draw non-interaction passes (like skyboxes or blend stages)
-    // TODO
+    for (const auto& entity : _entities)
+    {
+        entity->foreachRenderable([&](const render::IRenderableObject::Ptr& object, Shader* shader)
+        {
+            // Skip empty objects
+            if (!object->isVisible()) return;
+
+            // Don't collect invisible shaders
+            if (!shader->isVisible()) return;
+
+            auto glShader = static_cast<OpenGLShader*>(shader);
+
+            // We only consider materials designated for camera rendering
+            if (!glShader->isApplicableTo(RenderViewType::Camera))
+            {
+                return;
+            }
+
+            // For each pass except for the depth fill and interaction passes, draw the geometry
+            glShader->foreachNonInteractionPass([&](OpenGLShaderPass& pass)
+            {
+                if (!pass.stateIsActive())
+                {
+                    return;
+                }
+
+                // Reset the texture matrix
+                glMatrixMode(GL_TEXTURE);
+                glLoadMatrixd(Matrix4::getIdentity());
+
+                glMatrixMode(GL_MODELVIEW);
+
+                // Apply our state to the current state object
+                pass.applyState(current, globalFlagsMask, view.getViewer(), _time, entity.get());
+
+                RenderInfo info(current.getRenderFlags(), view.getViewer(), current.cubeMapMode);
+
+                if (current.glProgram)
+                {
+                    OpenGLShaderPass::SetUpNonInteractionProgram(current, view.getViewer(), object->getObjectTransform());
+                }
+
+                LightInteractions::SubmitObject(*object, _geometryStore);
+                result->drawCalls++;
+            });
+        });
+    }
 
     renderText();
 
