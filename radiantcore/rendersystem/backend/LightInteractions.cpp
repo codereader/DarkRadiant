@@ -130,7 +130,7 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
             {
                 if (!pass->stateIsActive())
                 {
-                    return;
+                    continue;
                 }
 
                 // Reset the texture matrix
