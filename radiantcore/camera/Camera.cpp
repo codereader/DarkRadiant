@@ -24,7 +24,7 @@ Camera::Camera(render::IRenderView& view, const std::function<void(bool)>& reque
 	_origin(_prevOrigin), // Use previous origin for camera position
 	_angles(_prevAngles),
 	_requestRedraw(requestRedraw),
-	_fieldOfView(75.0f),
+	_fieldOfView(90.0f),
 	_farClipPlane(32768),
 	_farClipPlaneEnabled(true),
 	_width(0),
