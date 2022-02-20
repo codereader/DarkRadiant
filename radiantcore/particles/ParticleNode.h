@@ -43,6 +43,8 @@ public:
 	// ITransformNode
 	Matrix4 localToParent() const override;
 
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
+
 private:
 	void update(const VolumeTest& viewVolume) const;
 };

@@ -125,7 +125,7 @@ void ParticlePreview::setParticle(const std::string& name)
         stopPlayback();
 
         // Call update(0) once to enable the bounds calculation
-        _particleNode->getParticle()->update(_modelView, _particleNode->localToWorld());
+        _particleNode->getParticle()->update(_modelView, _particleNode->localToWorld(), _entity->getRenderEntity());
 
         // Reset the model rotation
         resetModelRotation();

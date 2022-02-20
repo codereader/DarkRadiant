@@ -120,8 +120,9 @@ public:
 	 *
 	 * @viewRotation: the matrix to orient themselves to the viewer.
      * @localToWorld: the combined transform of local to world coordinates
+     * @entity: the parent entity
 	 */
-	virtual void update(const Matrix4& viewRotation, const Matrix4& localToWorld) = 0;
+	virtual void update(const Matrix4& viewRotation, const Matrix4& localToWorld, IRenderEntity* entity) = 0;
 		
 	/**
 	 * Get the particle definition used by this renderable.

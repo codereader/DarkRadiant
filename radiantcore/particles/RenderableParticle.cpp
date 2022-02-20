@@ -20,7 +20,7 @@ RenderableParticle::~RenderableParticle()
 }
 
 // Time is in msecs
-void RenderableParticle::update(const Matrix4& viewRotation, const Matrix4& localToWorld)
+void RenderableParticle::update(const Matrix4& viewRotation, const Matrix4& localToWorld, IRenderEntity* entity)
 {
 	auto renderSystem = _renderSystem.lock();
 
@@ -54,8 +54,22 @@ void RenderableParticle::update(const Matrix4& viewRotation, const Matrix4& loca
 
             // Attach the geometry to the shader
             stage->submitGeometry(pair.second.shader, localToWorld);
+
+            // Attach to the parent entity for lighting mode
+            stage->attachToEntity(entity);
 		}
 	}
+}
+
+void RenderableParticle::clearRenderables()
+{
+    for (const auto& pair : _shaderMap)
+    {
+        for (const auto& stage : pair.second.stages)
+        {
+            stage->clear();
+        }
+    }
 }
 
 void RenderableParticle::onPreRender(const VolumeTest& volume)
