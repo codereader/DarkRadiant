@@ -7,10 +7,13 @@ varying vec3    var_cubeMapTexCoord;
 
 void main()
 {
-    var_cubeMapTexCoord = gl_Vertex.xyz - u_view_origin;
+    vec3 texcoord = gl_Vertex.xyz - u_view_origin;
+
+    // Rotate the skybox 90 degrees about the z axis to match what the TDM engine is displaying
+    var_cubeMapTexCoord = vec3(-texcoord.y, texcoord.x, texcoord.z);
 
     // transform vertex position into homogenous clip-space
-    gl_Position = ftransform();
+    gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 
     // Pass through vertex colour
     gl_FrontColor = gl_Color;
