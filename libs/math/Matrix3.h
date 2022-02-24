@@ -12,7 +12,7 @@
  * | xx  yx  zx |
  * | xy  yy  zy |
  * | xz  yz  zz |
- * 
+ *
  */
 class Matrix3
 {
@@ -30,7 +30,7 @@ public:
     Matrix3() { }
 
     /// Construct from Eigen transform
-    explicit Matrix3(const Eigen::Projective2d& t) : 
+    explicit Matrix3(const Eigen::Projective2d& t) :
         _transform(t)
     {}
 
@@ -64,38 +64,6 @@ public:
     const double& zy() const { return _transform.matrix()(1, 2); }
     double& zz() { return _transform.matrix()(2, 2); }
     const double& zz() const { return _transform.matrix()(2, 2); }
-    /**
-     * \}
-     */
-
-     /**
-      * Return columns of the matrix as vectors.
-      * \{
-      */
-    Vector3& xCol()
-    {
-        return reinterpret_cast<Vector3&>(xx());
-    }
-    const Vector3& xCol() const
-    {
-        return reinterpret_cast<const Vector3&>(xx());
-    }
-    Vector3& yCol()
-    {
-        return reinterpret_cast<Vector3&>(yx());
-    }
-    const Vector3& yCol() const
-    {
-        return reinterpret_cast<const Vector3&>(yx());
-    }
-    Vector3& zCol()
-    {
-        return reinterpret_cast<Vector3&>(zx());
-    }
-    const Vector3& zCol() const
-    {
-        return reinterpret_cast<const Vector3&>(zx());
-    }
     /**
      * \}
      */

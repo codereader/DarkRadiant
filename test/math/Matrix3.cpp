@@ -34,8 +34,8 @@ TEST(Matrix3Test, AssignMatrixComponents)
 
 TEST(Matrix3Test, ConstructMatrixByRows)
 {
-    auto m = Matrix3::byRows(1, 2.5, 3, 
-        0.34, 51, -6, 
+    auto m = Matrix3::byRows(1, 2.5, 3,
+        0.34, 51, -6,
         7, 9, 17);
 
     // Check individual values
@@ -50,26 +50,6 @@ TEST(Matrix3Test, ConstructMatrixByRows)
     EXPECT_EQ(m.zx(), 3);
     EXPECT_EQ(m.zy(), -6);
     EXPECT_EQ(m.zz(), 17);
-}
-
-TEST(Matrix3Test, AccessMatrixColumnVectors)
-{
-    Matrix3 m = Matrix3::byRows(1, 4, 8, 
-        2, 9, 7,
-        11, -2, 10);
-
-    // Read column values
-    EXPECT_EQ(m.xCol(), Vector3(1, 2, 11));
-    EXPECT_EQ(m.yCol(), Vector3(4, 9, -2));
-    EXPECT_EQ(m.zCol(), Vector3(8, 7, 10));
-
-    // Write column values
-    m.xCol() = Vector3(0.1, 0.2, 0.3);
-    m.yCol() = Vector3(0.5, 0.6, 0.7);
-    m.zCol() = Vector3(0.9, 1.0, 1.1);
-    EXPECT_EQ(m, Matrix3::byColumns(0.1, 0.2, 0.3,
-        0.5, 0.6, 0.7,
-        0.9, 1.0, 1.1));
 }
 
 TEST(Matrix3Test, MatrixEquality)
@@ -159,10 +139,7 @@ TEST(Matrix3Test, ConstructTranslationMatrix)
     const Vector2 translation(1.5, -2939);
     auto tm = Matrix3::getTranslation(translation);
 
-    EXPECT_EQ(tm, Matrix3::byRows(1, 0, translation.x(),
-        0, 1, translation.y(),
-        0, 0, 1));
-    EXPECT_EQ(tm.zCol(), Vector3(translation.x(), translation.y(), 1));
+    EXPECT_EQ(tm, Matrix3::byRows(1, 0, translation.x(), 0, 1, translation.y(), 0, 0, 1));
 }
 
 TEST(Matrix3Test, ConstructRotationMatrix)
