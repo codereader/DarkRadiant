@@ -656,9 +656,14 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
     state.m_blend_src = blendFunc.src;
     state.m_blend_dst = blendFunc.dest;
 
+    if (_material->getCoverage() == Material::MC_TRANSLUCENT)
+    {
+        // Material is blending with the background, don't write to the depth buffer
+        state.clearRenderFlag(RENDER_DEPTHWRITE);
+    }
 	// Alpha-tested stages or one-over-zero blends should use the depth buffer
-    if (state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA ||
-		(state.m_blend_src == GL_ONE && state.m_blend_dst == GL_ZERO))
+    else if (state.m_blend_src == GL_SRC_ALPHA || state.m_blend_dst == GL_SRC_ALPHA ||
+		     (state.m_blend_src == GL_ONE && state.m_blend_dst == GL_ZERO))
     {
 		state.setRenderFlag(RENDER_DEPTHWRITE);
     }
