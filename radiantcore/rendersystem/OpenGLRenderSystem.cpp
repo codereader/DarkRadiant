@@ -257,6 +257,12 @@ void OpenGLRenderSystem::finishRendering()
         glUseProgramObjectARB(0);
     }
 
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Position);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
+
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -350,7 +356,7 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
         
         interactionLists.emplace_back(std::move(interaction));
     }
-    
+
     // Run the depth fill pass
     for (auto& interactionList : interactionLists)
     {
@@ -364,7 +370,20 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
         result->drawCalls += interactionList.getDrawCalls();
     }
 
+    glUseProgram(0);
+    glActiveTexture(GL_TEXTURE0);
+    glClientActiveTexture(GL_TEXTURE0);
+    
     glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+
+    glEnableVertexAttribArrayARB(GLProgramAttribute::Position);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::Tangent);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::Normal);
 
     // Draw non-interaction passes (like skyboxes or blend stages)
     for (const auto& entity : _entities)

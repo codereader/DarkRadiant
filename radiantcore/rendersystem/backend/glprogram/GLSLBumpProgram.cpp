@@ -113,6 +113,10 @@ void GLSLBumpProgram::disable()
     glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
     glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
 
+    // Switch back to texture unit 0
+    glActiveTexture(GL_TEXTURE0);
+    glClientActiveTexture(GL_TEXTURE0);
+
     debug::assertNoGlErrors();
 }
 
