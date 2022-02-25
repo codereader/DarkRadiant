@@ -6,7 +6,7 @@
 namespace render
 {
 
-class FullBrightRenderer :
+class FullBrightRenderer final :
     public SceneRenderer
 {
 private:
@@ -19,7 +19,7 @@ public:
         _sortedStates(sortedStates)
     {}
 
-    void render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time);
+    IRenderResult::Ptr render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time);
 };
 
 }

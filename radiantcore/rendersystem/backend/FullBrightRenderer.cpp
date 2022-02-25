@@ -5,7 +5,29 @@
 namespace render
 {
 
-void FullBrightRenderer::render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time)
+namespace
+{
+
+class FullBrightRenderResult : 
+    public IRenderResult
+{
+private:
+    std::string _statistics;
+
+public:
+    FullBrightRenderResult(const std::string& statistics) :
+        _statistics(statistics)
+    {}
+
+    std::string toString() override
+    {
+        return _statistics;
+    }
+};
+
+}
+
+IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time)
 {
     // Construct default OpenGL state
     OpenGLState current;
@@ -31,6 +53,8 @@ void FullBrightRenderer::render(RenderStateFlags globalstate, const IRenderView&
     }
 
     cleanupState();
+
+    return std::make_shared<FullBrightRenderResult>(view.getCullStats());
 }
 
 }

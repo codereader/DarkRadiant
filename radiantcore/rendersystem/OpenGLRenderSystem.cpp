@@ -144,15 +144,17 @@ ShaderPtr OpenGLRenderSystem::capture(ColourShaderType type, const Colour4& colo
     });
 }
 
-void OpenGLRenderSystem::render(RenderViewType renderViewType, 
+IRenderResult::Ptr OpenGLRenderSystem::renderFullBrightScene(RenderViewType renderViewType,
                                 RenderStateFlags globalFlagsMask,
                                 const IRenderView& view)
 {
     FullBrightRenderer renderer(renderViewType, _state_sorted);
 
-    renderer.render(globalFlagsMask, view, _time);
+    auto result = renderer.render(globalFlagsMask, view, _time);
 
     renderText();
+
+    return result;
 }
 
 void OpenGLRenderSystem::startFrame()

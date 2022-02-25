@@ -665,7 +665,7 @@ public:
      * * \param view
      * The view used to setup the projection, modelview and lighting calculations.
      */
-    virtual void render(RenderViewType renderViewType,
+    virtual IRenderResult::Ptr renderFullBrightScene(RenderViewType renderViewType,
                         RenderStateFlags globalFlagsMask,
                         const render::IRenderView& view) = 0;
 

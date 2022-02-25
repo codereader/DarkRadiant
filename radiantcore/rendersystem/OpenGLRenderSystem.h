@@ -78,7 +78,7 @@ public:
     void startFrame() override;
     void endFrame() override;
 
-	void render(RenderViewType renderViewType, RenderStateFlags globalstate, const IRenderView& view) override;
+    IRenderResult::Ptr renderFullBrightScene(RenderViewType renderViewType, RenderStateFlags globalstate, const IRenderView& view) override;
     IRenderResult::Ptr renderLitScene(RenderStateFlags globalFlagsMask, const IRenderView& view) override;
 	void realise() override;
 	void unrealise() override;

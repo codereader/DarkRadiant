@@ -500,7 +500,7 @@ bool RenderPreview::drawPreview()
     RenderStateFlags flags = getRenderFlagsFill();
 
     // Launch the back end rendering
-    _renderSystem->render(RenderViewType::Camera, flags, _view);
+    _renderSystem->renderFullBrightScene(RenderViewType::Camera, flags, _view);
 
     // Give subclasses an opportunity to render their own on-screen stuff
     onPostRender();
@@ -524,7 +524,7 @@ void RenderPreview::renderWireFrame()
     getScene()->foreachVisibleNodeInVolume(_view, sceneWalker);
 
     // Launch the back end rendering
-    _renderSystem->render(RenderViewType::Camera, flags, _view);
+    _renderSystem->renderFullBrightScene(RenderViewType::Camera, flags, _view);
 }
 
 void RenderPreview::onGLMouseClick(wxMouseEvent& ev)

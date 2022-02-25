@@ -8,7 +8,7 @@
 namespace render
 {
 
-class LightingModeRenderer :
+class LightingModeRenderer final :
     public SceneRenderer
 {
 private:

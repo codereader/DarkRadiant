@@ -1372,6 +1372,8 @@ void XYWnd::draw()
     }
 
     {
+        GlobalRenderSystem().startFrame();
+
         // Construct the renderer and render the scene
         XYRenderer renderer(flagsMask, _highlightShaders);
 
@@ -1388,6 +1390,8 @@ void XYWnd::draw()
 
         // Second pass (GL calls)
         renderer.render(_modelView, _projection, _view);
+
+        GlobalRenderSystem().endFrame();
     }
 
     glDepthMask(GL_FALSE);
