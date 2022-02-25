@@ -80,6 +80,11 @@ void ParticleNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void ParticleNode::update(const VolumeTest& viewVolume) const
 {
+    if (!viewVolume.fill())
+    {
+        return;
+    }
+
 	// Get the view rotation and cancel out the translation part
 	Matrix4 viewRotation = viewVolume.GetModelview();
 	viewRotation.tx() = 0;
@@ -94,7 +99,14 @@ void ParticleNode::update(const VolumeTest& viewVolume) const
 	_renderableParticle->setEntityColour(Vector3(
 		_renderEntity->getShaderParm(0), _renderEntity->getShaderParm(1), _renderEntity->getShaderParm(2)));
 
-	_renderableParticle->update(viewRotation, localToWorld());
+	_renderableParticle->update(viewRotation, localToWorld(), _renderEntity);
+}
+
+void ParticleNode::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    _renderableParticle->clearRenderables();
+
+    Node::onRemoveFromScene(root);
 }
 
 } // namespace

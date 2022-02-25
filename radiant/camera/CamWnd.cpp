@@ -810,8 +810,7 @@ void CamWnd::Cam_Draw()
         }
         else
         {
-            GlobalRenderSystem().render(RenderViewType::Camera, allowedRenderFlags,
-                _camera->getModelView(), _camera->getProjection(), _view.getViewer(), _view);
+            result = GlobalRenderSystem().renderFullBrightScene(RenderViewType::Camera, allowedRenderFlags, _view);
         }
 
         _renderer->cleanup();
@@ -884,18 +883,15 @@ void CamWnd::Cam_Draw()
     // debug builds.
     glRasterPos3f(4.0f, static_cast<float>(_camera->getDeviceHeight()) - 4.0f, 0.0f);
 
-    if (result)
+    auto statString = result->toString();
+
+    if (getCameraSettings()->getRenderMode() != RENDER_MODE_LIGHTING)
     {
-        _glFont->drawString(result->toString());
-    }
-    else
-    {
-        std::string statString = _view.getCullStats();
-        if (!statString.empty())
-            statString += " | ";
+        statString += " | ";
         statString += _renderStats.getStatString();
-        _glFont->drawString(statString);
     }
+
+    _glFont->drawString(statString);
 
     drawTime();
 

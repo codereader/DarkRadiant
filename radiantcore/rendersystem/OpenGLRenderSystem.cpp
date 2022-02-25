@@ -11,34 +11,15 @@
 #include "backend/BuiltInShader.h"
 #include "backend/ColourShader.h"
 #include "backend/LightInteractions.h"
+#include "backend/LightingModeRenderer.h"
+#include "backend/FullBrightRenderer.h"
+#include "backend/ObjectRenderer.h"
 #include "debugging/debugging.h"
-#include "LightingModeRenderResult.h"
 
 #include <functional>
 
-namespace render {
-
-namespace {
-    // Polygon stipple pattern
-    const GLubyte POLYGON_STIPPLE_PATTERN[132] = {
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55,
-          0xAA, 0xAA, 0xAA, 0xAA, 0x55, 0x55, 0x55, 0x55
-    };
-}
+namespace render
+{
 
 /**
  * Main constructor.
@@ -49,6 +30,9 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _glProgramFactory(std::make_shared<GLProgramFactory>()),
     _currentShaderProgram(SHADER_PROGRAM_NONE),
     _time(0),
+    _orthoRenderer(new FullBrightRenderer(RenderViewType::OrthoView, _state_sorted)),
+    _editorPreviewRenderer(new FullBrightRenderer(RenderViewType::Camera, _state_sorted)),
+    _lightingModeRenderer(new LightingModeRenderer(_geometryStore, _lights, _entities)),
     m_traverseRenderablesMutex(false)
 {
     bool shouldRealise = false;
@@ -163,145 +147,29 @@ ShaderPtr OpenGLRenderSystem::capture(ColourShaderType type, const Colour4& colo
     });
 }
 
-void OpenGLRenderSystem::beginRendering(OpenGLState& state)
+IRenderResult::Ptr OpenGLRenderSystem::renderFullBrightScene(RenderViewType renderViewType,
+                                RenderStateFlags globalFlagsMask,
+                                const IRenderView& view)
 {
-    glPushAttrib(GL_ALL_ATTRIB_BITS);
+    // Pick the requested renderer
+    auto& renderer = renderViewType == RenderViewType::Camera ? *_editorPreviewRenderer : *_orthoRenderer;
 
-    // global settings that are not set in renderstates
-    glFrontFace(GL_CW);
-    glCullFace(GL_BACK);
-    glPolygonOffset(-1, 1);
-
-    // Set polygon stipple pattern from constant
-    glPolygonStipple(POLYGON_STIPPLE_PATTERN);
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-
-    if (GLEW_VERSION_1_3) {
-        glActiveTexture(GL_TEXTURE0);
-        glClientActiveTexture(GL_TEXTURE0);
-    }
-
-    if (GLEW_ARB_shader_objects)
-    {
-        glUseProgramObjectARB(0);
-        glDisableVertexAttribArrayARB(c_attr_TexCoord0);
-        glDisableVertexAttribArrayARB(c_attr_Tangent);
-        glDisableVertexAttribArrayARB(c_attr_Binormal);
-    }
-
-    glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
-
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-    // Set up initial GL state. This MUST MATCH the defaults in the OpenGLState
-    // object, otherwise required state changes may not occur.
-    glLineStipple(state.m_linestipple_factor,
-        state.m_linestipple_pattern);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    glDisable(GL_LIGHTING);
-    glDisable(GL_TEXTURE_2D);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-    glDisable(GL_BLEND);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glDisable(GL_CULL_FACE);
-    glShadeModel(GL_FLAT);
-    glDisable(GL_DEPTH_TEST);
-
-    // RENDER_DEPTHWRITE defaults to 0
-    glDepthMask(GL_FALSE);
-
-    // RENDER_MASKCOLOUR defaults to 0
-    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-
-    glDisable(GL_ALPHA_TEST);
-
-    glDisable(GL_LINE_STIPPLE);
-    glDisable(GL_POLYGON_STIPPLE);
-    glDisable(GL_POLYGON_OFFSET_LINE);
-    glDisable(GL_POLYGON_OFFSET_FILL); // greebo: otherwise tiny gap lines between brushes are visible
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-    glColor4f(1,1,1,1);
-    glDepthFunc(state.getDepthFunc());
-    glAlphaFunc(GL_ALWAYS, 0);
-    glLineWidth(1);
-    glPointSize(1);
-
-    glHint(GL_FOG_HINT, GL_NICEST);
-    glDisable(GL_FOG);
+    return render(renderer, globalFlagsMask, view);
 }
 
-void OpenGLRenderSystem::setupViewMatrices(const Matrix4& modelview, const Matrix4& projection)
+IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFlagsMask,
+    const IRenderView& view)
 {
-    // Set the projection and modelview matrices
-    glMatrixMode(GL_PROJECTION);
-    glLoadMatrixd(projection);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadMatrixd(modelview);
+    return render(*_lightingModeRenderer, globalFlagsMask, view);
 }
 
-void OpenGLRenderSystem::finishRendering()
+IRenderResult::Ptr OpenGLRenderSystem::render(SceneRenderer& renderer, RenderStateFlags globalFlagsMask, const IRenderView& view)
 {
-    if (GLEW_ARB_shader_objects)
-    {
-        glUseProgramObjectARB(0);
-    }
-
-    glDisableClientState(GL_VERTEX_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-
-    glPopAttrib();
-}
-
-/*
- * Render all states in the ShaderCache along with their renderables. This
- * is where the actual OpenGL rendering starts.
- */
-void OpenGLRenderSystem::render(RenderViewType renderViewType, 
-                                RenderStateFlags globalstate,
-                                const Matrix4& modelview,
-                                const Matrix4& projection,
-                                const Vector3& viewer,
-                                const VolumeTest& view)
-{
-    // Construct default OpenGL state
-    OpenGLState current;
-    beginRendering(current);
-
-    setupViewMatrices(modelview, projection);
-
-    // Iterate over the sorted mapping between OpenGLStates and their
-    // OpenGLShaderPasses (containing the renderable geometry), and render the
-    // contents of each bucket. Each pass is passed a reference to the "current"
-    // state, which it can change.
-    for (const auto& pair : _state_sorted)
-    {
-        // Render the OpenGLShaderPass
-        if (pair.second->empty()) continue;
-
-        if (pair.second->isApplicableTo(renderViewType))
-        {
-            pair.second->render(current, globalstate, viewer, view, _time);
-        }
-
-        pair.second->clearRenderables();
-    }
+    auto result = renderer.render(globalFlagsMask, view, _time);
 
     renderText();
 
-    finishRendering();
+    return result;
 }
 
 void OpenGLRenderSystem::startFrame()
@@ -313,113 +181,6 @@ void OpenGLRenderSystem::startFrame()
 void OpenGLRenderSystem::endFrame()
 {
     _geometryStore.onFrameFinished();
-}
-
-IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFlagsMask,
-    const IRenderView& view)
-{
-    auto result = std::make_shared<LightingModeRenderResult>();
-
-    // Construct default OpenGL state
-    OpenGLState current;
-    beginRendering(current);
-    setupViewMatrices(view.GetModelview(), view.GetProjection());
-
-    std::size_t visibleLights = 0;
-    std::vector<LightInteractions> interactionLists;
-    interactionLists.reserve(_lights.size());
-
-    // Gather all visible lights and render the surfaces touched by them
-    for (const auto& light : _lights)
-    {
-        LightInteractions interaction(*light, _geometryStore);
-
-        if (!interaction.isInView(view))
-        {
-            result->skippedLights++;
-            continue;
-        }
-
-        result->visibleLights++;
-
-        // Check all the surfaces that are touching this light
-        interaction.collectSurfaces(_entities);
-
-        result->objects += interaction.getObjectCount();
-        result->entities += interaction.getEntityCount();
-        
-        interactionLists.emplace_back(std::move(interaction));
-    }
-    
-    // Run the depth fill pass
-    for (auto& interactionList : interactionLists)
-    {
-        interactionList.fillDepthBuffer(current, globalFlagsMask, view, _time);
-    }
-
-    // Draw the surfaces per light and material
-    for (auto& interactionList : interactionLists)
-    {
-        interactionList.render(current, globalFlagsMask, view, _time);
-        result->drawCalls += interactionList.getDrawCalls();
-    }
-
-    glEnableClientState(GL_VERTEX_ARRAY);
-
-    // Draw non-interaction passes (like skyboxes or blend stages)
-    for (const auto& entity : _entities)
-    {
-        entity->foreachRenderable([&](const render::IRenderableObject::Ptr& object, Shader* shader)
-        {
-            // Skip empty objects
-            if (!object->isVisible()) return;
-
-            // Don't collect invisible shaders
-            if (!shader->isVisible()) return;
-
-            auto glShader = static_cast<OpenGLShader*>(shader);
-
-            // We only consider materials designated for camera rendering
-            if (!glShader->isApplicableTo(RenderViewType::Camera))
-            {
-                return;
-            }
-
-            // For each pass except for the depth fill and interaction passes, draw the geometry
-            glShader->foreachNonInteractionPass([&](OpenGLShaderPass& pass)
-            {
-                if (!pass.stateIsActive())
-                {
-                    return;
-                }
-
-                // Reset the texture matrix
-                glMatrixMode(GL_TEXTURE);
-                glLoadMatrixd(Matrix4::getIdentity());
-
-                glMatrixMode(GL_MODELVIEW);
-
-                // Apply our state to the current state object
-                pass.applyState(current, globalFlagsMask, view.getViewer(), _time, entity.get());
-
-                RenderInfo info(current.getRenderFlags(), view.getViewer(), current.cubeMapMode);
-
-                if (current.glProgram)
-                {
-                    OpenGLShaderPass::SetUpNonInteractionProgram(current, view.getViewer(), object->getObjectTransform());
-                }
-
-                LightInteractions::SubmitObject(*object, _geometryStore);
-                result->drawCalls++;
-            });
-        });
-    }
-
-    renderText();
-
-    finishRendering();
-
-    return result;
 }
 
 void OpenGLRenderSystem::renderText()

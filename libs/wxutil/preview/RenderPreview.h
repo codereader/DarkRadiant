@@ -12,7 +12,7 @@
 #include "irender.h"
 
 #include "../FreezePointer.h"
-#include "render/NopVolumeTest.h"
+#include "render/NopRenderView.h"
 #include "render/CamRenderer.h"
 
 class wxToolBarToolBase;
@@ -94,8 +94,8 @@ protected:
     // The backend rendersystem instance
     RenderSystemPtr _renderSystem;
 
-    // Dummy VolumeTest
-    render::NopVolumeTest _volumeTest;
+    // Uses a dummy VolumeTest implementation
+    render::NopRenderView _view;
 
     // Current viewer position and view angles
     Vector3 _viewOrigin;

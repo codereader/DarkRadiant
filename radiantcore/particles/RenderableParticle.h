@@ -59,8 +59,10 @@ public:
 
 	~RenderableParticle();
 
+    void clearRenderables();
+
 	// Time is in msecs
-	void update(const Matrix4& viewRotation, const Matrix4& localToWorld) override;
+	void update(const Matrix4& viewRotation, const Matrix4& localToWorld, IRenderEntity* entity) override;
 
     void onPreRender(const VolumeTest& volume) override;
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;

@@ -478,15 +478,14 @@ bool RenderPreview::drawPreview()
     Matrix4 projection = camera::calculateProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Keep the modelview matrix in the volumetest class up to date
-    _volumeTest.setModelView(getModelViewMatrix());
-    _volumeTest.setProjection(projection);
+    _view.construct(projection, getModelViewMatrix(), _previewWidth, _previewHeight);
 
 	// Set the projection and modelview matrices
 	glMatrixMode(GL_PROJECTION);
 	glLoadMatrixd(projection);
 
 	glMatrixMode(GL_MODELVIEW);
-	glLoadMatrixd(_volumeTest.GetModelview());
+	glLoadMatrixd(_view.GetModelview());
 
 	if (_renderGrid && canDrawGrid())
 	{
@@ -494,14 +493,14 @@ bool RenderPreview::drawPreview()
 	}
 
 	// Front-end render phase, collect OpenGLRenderable objects from the scene
-    render::CamRenderer renderer(_volumeTest, _shaders);
-    render::SceneRenderWalker sceneWalker(renderer, _volumeTest);
-    getScene()->foreachVisibleNodeInVolume(_volumeTest, sceneWalker);
+    render::CamRenderer renderer(_view, _shaders);
+    render::SceneRenderWalker sceneWalker(renderer, _view);
+    getScene()->foreachVisibleNodeInVolume(_view, sceneWalker);
 
     RenderStateFlags flags = getRenderFlagsFill();
 
     // Launch the back end rendering
-    _renderSystem->render(RenderViewType::Camera, flags, _volumeTest.GetModelview(), projection, _viewOrigin, _volumeTest);
+    _renderSystem->renderFullBrightScene(RenderViewType::Camera, flags, _view);
 
     // Give subclasses an opportunity to render their own on-screen stuff
     onPostRender();
@@ -520,12 +519,12 @@ void RenderPreview::renderWireFrame()
     Matrix4 projection = camera::calculateProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Front-end render phase, collect OpenGLRenderable objects from the scene
-    render::CamRenderer renderer(_volumeTest, _shaders);
-    render::SceneRenderWalker sceneWalker(renderer, _volumeTest);
-    getScene()->foreachVisibleNodeInVolume(_volumeTest, sceneWalker);
+    render::CamRenderer renderer(_view, _shaders);
+    render::SceneRenderWalker sceneWalker(renderer, _view);
+    getScene()->foreachVisibleNodeInVolume(_view, sceneWalker);
 
     // Launch the back end rendering
-    _renderSystem->render(RenderViewType::Camera, flags, _volumeTest.GetModelview(), projection, _viewOrigin, _volumeTest);
+    _renderSystem->renderFullBrightScene(RenderViewType::Camera, flags, _view);
 }
 
 void RenderPreview::onGLMouseClick(wxMouseEvent& ev)

@@ -9,6 +9,7 @@
 #include "backend/OpenGLStateLess.h"
 #include "backend/TextRenderer.h"
 #include "backend/GeometryStore.h"
+#include "backend/SceneRenderer.h"
 
 namespace render
 {
@@ -62,6 +63,12 @@ class OpenGLRenderSystem final
 
     GeometryStore _geometryStore;
 
+    // Renderer implementations, one for each view type/purpose
+
+    std::unique_ptr<SceneRenderer> _orthoRenderer;
+    std::unique_ptr<SceneRenderer> _editorPreviewRenderer;
+    std::unique_ptr<SceneRenderer> _lightingModeRenderer;
+
 public:
 	OpenGLRenderSystem();
 
@@ -78,13 +85,8 @@ public:
     void startFrame() override;
     void endFrame() override;
 
-	void render(RenderViewType renderViewType, RenderStateFlags globalstate,
-                const Matrix4& modelview,
-                const Matrix4& projection,
-                const Vector3& viewer,
-                const VolumeTest& view) override;
-    IRenderResult::Ptr renderLitScene(RenderStateFlags globalFlagsMask,
-        const IRenderView& view) override;
+    IRenderResult::Ptr renderFullBrightScene(RenderViewType renderViewType, RenderStateFlags globalstate, const IRenderView& view) override;
+    IRenderResult::Ptr renderLitScene(RenderStateFlags globalFlagsMask, const IRenderView& view) override;
 	void realise() override;
 	void unrealise() override;
 
@@ -131,13 +133,8 @@ public:
     IGeometryStore& getGeometryStore();
 
 private:
-    // Set up initial GL states, will push all attrib states
-    void beginRendering(OpenGLState& state);
+    IRenderResult::Ptr render(SceneRenderer& renderer, RenderStateFlags globalFlagsMask, const IRenderView& view);
 
-    // Will pop attrib states
-    void finishRendering();
-
-    void setupViewMatrices(const Matrix4& modelview, const Matrix4& projection);
     void renderText();
 
     ShaderPtr capture(const std::string& name, const std::function<OpenGLShaderPtr()>& createShader);

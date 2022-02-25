@@ -78,8 +78,8 @@ public:
         }
     }
 
-    void render(const Matrix4& modelview, const Matrix4& projection, const VolumeTest& view)
+    void render(const Matrix4& modelview, const Matrix4& projection, const render::IRenderView& view)
     {
-        GlobalRenderSystem().render(RenderViewType::OrthoView, _globalstate, modelview, projection, Vector3(0,0,0), view);
+        GlobalRenderSystem().renderFullBrightScene(RenderViewType::OrthoView, _globalstate, view);
     }
 }; // class XYRenderer

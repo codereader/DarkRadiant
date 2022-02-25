@@ -158,8 +158,7 @@ void RenderableParticleBunch::addVertexData(std::vector<ArbitraryMeshVertex>& ve
 
     auto firstIndex = static_cast<unsigned int>(vertices.size());
 
-    vertices.reserve(vertices.size() + _quads.size() * 4);
-    indices.reserve(indices.size() + _quads.size() * 4);
+    auto quadIndex = 0;
 
     for (const auto& quad : _quads)
     {
@@ -175,10 +174,17 @@ void RenderableParticleBunch::addVertexData(std::vector<ArbitraryMeshVertex>& ve
             );
         }
 
-        indices.push_back(firstIndex++);
-        indices.push_back(firstIndex++);
-        indices.push_back(firstIndex++);
-        indices.push_back(firstIndex++);
+        auto index = firstIndex + quadIndex * 4;
+
+        indices.push_back(index + 0);
+        indices.push_back(index + 1);
+        indices.push_back(index + 2);
+
+        indices.push_back(index + 0);
+        indices.push_back(index + 2);
+        indices.push_back(index + 3);
+
+        quadIndex++;
     }
 }
 
