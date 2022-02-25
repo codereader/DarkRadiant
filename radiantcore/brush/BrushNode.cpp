@@ -352,11 +352,13 @@ void BrushNode::onPreRender(const VolumeTest& volume)
     {
         auto& face = faceInstance.getFace();
 
-        if (volume.fill())
+        // A selected brush needs to update the solid renderable since that is used to render highlights
+        if (volume.fill() || isSelected())
         {
             face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader(), *_renderEntity);
         }
-        else
+
+        if (!volume.fill())
         {
             face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader(), *_renderEntity);
         }
