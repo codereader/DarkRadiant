@@ -39,7 +39,7 @@ void SceneRenderer::setupViewMatrices(const IRenderView& view)
     glLoadMatrixd(view.GetModelview());
 }
 
-void SceneRenderer::beginRendering(OpenGLState& state)
+void SceneRenderer::setupState(OpenGLState& state)
 {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
 
@@ -116,7 +116,7 @@ void SceneRenderer::beginRendering(OpenGLState& state)
     glDisable(GL_FOG);
 }
 
-void SceneRenderer::finishRendering()
+void SceneRenderer::cleanupState()
 {
     if (GLEW_ARB_shader_objects)
     {

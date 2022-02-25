@@ -5,12 +5,11 @@
 namespace render
 {
 
-void FullBrightRenderer::render(RenderViewType renderViewType, RenderStateFlags globalstate, 
-    const IRenderView& view, std::size_t time)
+void FullBrightRenderer::render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time)
 {
     // Construct default OpenGL state
     OpenGLState current;
-    beginRendering(current);
+    setupState(current);
 
     setupViewMatrices(view);
 
@@ -23,7 +22,7 @@ void FullBrightRenderer::render(RenderViewType renderViewType, RenderStateFlags 
         // Render the OpenGLShaderPass
         if (pair.second->empty()) continue;
 
-        if (pair.second->isApplicableTo(renderViewType))
+        if (pair.second->isApplicableTo(_renderViewType))
         {
             pair.second->render(current, globalstate, view.getViewer(), view, time);
         }
@@ -31,7 +30,7 @@ void FullBrightRenderer::render(RenderViewType renderViewType, RenderStateFlags 
         pair.second->clearRenderables();
     }
 
-    finishRendering();
+    cleanupState();
 }
 
 }

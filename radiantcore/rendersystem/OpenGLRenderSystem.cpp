@@ -145,12 +145,12 @@ ShaderPtr OpenGLRenderSystem::capture(ColourShaderType type, const Colour4& colo
 }
 
 void OpenGLRenderSystem::render(RenderViewType renderViewType, 
-                                RenderStateFlags globalstate,
+                                RenderStateFlags globalFlagsMask,
                                 const IRenderView& view)
 {
-    FullBrightRenderer renderer(_state_sorted);
+    FullBrightRenderer renderer(renderViewType, _state_sorted);
 
-    renderer.render(renderViewType, globalstate, view, _time);
+    renderer.render(globalFlagsMask, view, _time);
 
     renderText();
 }

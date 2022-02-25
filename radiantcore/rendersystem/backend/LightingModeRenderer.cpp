@@ -16,7 +16,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 
     // Construct default OpenGL state
     OpenGLState current;
-    beginRendering(current);
+    setupState(current);
     setupViewMatrices(view);
 
     std::size_t visibleLights = 0;
@@ -122,7 +122,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
         });
     }
 
-    finishRendering();
+    cleanupState();
 
     return result;
 }

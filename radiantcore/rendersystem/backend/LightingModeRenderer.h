@@ -21,15 +21,15 @@ private:
     const std::set<IRenderEntityPtr>& _entities;
 
 public:
-    LightingModeRenderer(IGeometryStore& store, const std::set<RendererLightPtr>& lights,
-        const std::set<IRenderEntityPtr>& entities) :
+    LightingModeRenderer(IGeometryStore& store, 
+                         const std::set<RendererLightPtr>& lights,
+                         const std::set<IRenderEntityPtr>& entities) :
+        _geometryStore(store),
         _lights(lights),
-        _entities(entities),
-        _geometryStore(store)
+        _entities(entities)
     {}
 
-    IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view,
-        std::size_t time);
+    IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time);
 };
 
 }

@@ -27,8 +27,8 @@ protected:
     // Set the projection and modelview matrices
     void setupViewMatrices(const IRenderView& view);
 
-    void beginRendering(OpenGLState& state);
-    void finishRendering();
+    void setupState(OpenGLState& state);
+    void cleanupState();
 };
 
 }

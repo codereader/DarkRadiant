@@ -10,15 +10,16 @@ class FullBrightRenderer :
     public SceneRenderer
 {
 private:
+    RenderViewType _renderViewType;
     const OpenGLStates& _sortedStates;
 
 public:
-    FullBrightRenderer(const OpenGLStates& sortedStates) :
+    FullBrightRenderer(RenderViewType renderViewType, const OpenGLStates& sortedStates) :
+        _renderViewType(renderViewType),
         _sortedStates(sortedStates)
     {}
 
-    void render(RenderViewType renderViewType, RenderStateFlags globalstate, 
-        const IRenderView& view, std::size_t time);
+    void render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time);
 };
 
 }
