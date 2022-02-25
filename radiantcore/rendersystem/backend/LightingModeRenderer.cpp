@@ -97,8 +97,6 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
                 // Apply our state to the current state object
                 pass.applyState(current, globalFlagsMask, view.getViewer(), time, entity.get());
 
-                RenderInfo info(current.getRenderFlags(), view.getViewer(), current.cubeMapMode);
-
                 if (current.glProgram)
                 {
                     OpenGLShaderPass::SetUpNonInteractionProgram(current, view.getViewer(), object->getObjectTransform());

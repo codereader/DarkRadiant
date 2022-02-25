@@ -85,8 +85,6 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             // Apply our state to the current state object
             shader->getDepthFillPass()->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
 
-            RenderInfo info(state.getRenderFlags(), view.getViewer(), state.cubeMapMode);
-            
             for (auto object : objectList)
             {
                 ObjectRenderer::SubmitObject(object.get(), _store);
@@ -109,25 +107,17 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
         for (auto& pair : pair.second)
         {
             auto shader = pair.first;
-            auto& objectList = pair.second;
 
             if (!shader->isVisible()) continue;
 
             auto pass = shader->getInteractionPass();
 
-            if (pass)
+            if (pass && pass->stateIsActive())
             {
-                if (!pass->stateIsActive())
-                {
-                    continue;
-                }
-
                 // Apply our state to the current state object
                 pass->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
 
-                RenderInfo info(state.getRenderFlags(), view.getViewer(), state.cubeMapMode);
-
-                for (auto object : objectList)
+                for (auto object : pair.second)
                 {
                     if (state.glProgram)
                     {
