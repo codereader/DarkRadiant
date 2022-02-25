@@ -61,17 +61,11 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     glUseProgram(0);
     glActiveTexture(GL_TEXTURE0);
     glClientActiveTexture(GL_TEXTURE0);
-
+    
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
-
-    glEnableVertexAttribArrayARB(GLProgramAttribute::Position);
-    glEnableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
-    glEnableVertexAttribArrayARB(GLProgramAttribute::Tangent);
-    glEnableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
-    glEnableVertexAttribArrayARB(GLProgramAttribute::Normal);
 
     // Draw non-interaction passes (like skyboxes or blend stages)
     for (const auto& entity : _entities)

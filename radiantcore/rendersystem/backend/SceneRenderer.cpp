@@ -51,10 +51,16 @@ void SceneRenderer::setupState(OpenGLState& state)
     // Set polygon stipple pattern from constant
     glPolygonStipple(POLYGON_STIPPLE_PATTERN);
 
+    // Vertex Arrays stay enabled throughout the pass
     glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    glEnableClientState(GL_NORMAL_ARRAY);
+
     glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 
-    if (GLEW_VERSION_1_3) {
+    if (GLEW_VERSION_1_3)
+    {
         glActiveTexture(GL_TEXTURE0);
         glClientActiveTexture(GL_TEXTURE0);
     }
@@ -82,9 +88,6 @@ void SceneRenderer::setupState(OpenGLState& state)
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     glDisable(GL_LIGHTING);
     glDisable(GL_TEXTURE_2D);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
     glDisable(GL_BLEND);
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

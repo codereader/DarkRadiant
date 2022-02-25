@@ -96,6 +96,7 @@ void GLSLBumpProgram::enable()
 {
     GLSLProgramBase::enable();
 
+    glEnableVertexAttribArrayARB(GLProgramAttribute::Position);
     glEnableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
     glEnableVertexAttribArrayARB(GLProgramAttribute::Tangent);
     glEnableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
@@ -108,6 +109,7 @@ void GLSLBumpProgram::disable()
 {
     GLSLProgramBase::disable();
 
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Position);
     glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
     glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
     glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);

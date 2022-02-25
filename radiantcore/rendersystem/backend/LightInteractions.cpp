@@ -102,12 +102,6 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
 {
     auto worldToLight = _light.getLightTextureTransformation();
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-
     for (auto& pair : _objectsByEntity)
     {
         auto entity = pair.first;
@@ -147,8 +141,6 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
             }
         }
     }
-
-    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 }
