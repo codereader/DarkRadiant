@@ -30,6 +30,9 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _glProgramFactory(std::make_shared<GLProgramFactory>()),
     _currentShaderProgram(SHADER_PROGRAM_NONE),
     _time(0),
+    _orthoRenderer(new FullBrightRenderer(RenderViewType::OrthoView, _state_sorted)),
+    _editorPreviewRenderer(new FullBrightRenderer(RenderViewType::Camera, _state_sorted)),
+    _lightingModeRenderer(new LightingModeRenderer(_geometryStore, _lights, _entities)),
     m_traverseRenderablesMutex(false)
 {
     bool shouldRealise = false;
@@ -148,8 +151,20 @@ IRenderResult::Ptr OpenGLRenderSystem::renderFullBrightScene(RenderViewType rend
                                 RenderStateFlags globalFlagsMask,
                                 const IRenderView& view)
 {
-    FullBrightRenderer renderer(renderViewType, _state_sorted);
+    // Pick the requested renderer
+    auto& renderer = renderViewType == RenderViewType::Camera ? *_editorPreviewRenderer : *_orthoRenderer;
 
+    return render(renderer, globalFlagsMask, view);
+}
+
+IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFlagsMask,
+    const IRenderView& view)
+{
+    return render(*_lightingModeRenderer, globalFlagsMask, view);
+}
+
+IRenderResult::Ptr OpenGLRenderSystem::render(SceneRenderer& renderer, RenderStateFlags globalFlagsMask, const IRenderView& view)
+{
     auto result = renderer.render(globalFlagsMask, view, _time);
 
     renderText();
@@ -166,18 +181,6 @@ void OpenGLRenderSystem::startFrame()
 void OpenGLRenderSystem::endFrame()
 {
     _geometryStore.onFrameFinished();
-}
-
-IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFlagsMask,
-    const IRenderView& view)
-{
-    LightingModeRenderer renderer(_geometryStore, _lights, _entities);
-
-    auto result = renderer.render(globalFlagsMask, view, _time);
-
-    renderText();
-
-    return result;
 }
 
 void OpenGLRenderSystem::renderText()

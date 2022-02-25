@@ -19,7 +19,7 @@ public:
         _sortedStates(sortedStates)
     {}
 
-    IRenderResult::Ptr render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time);
+    IRenderResult::Ptr render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time) override;
 };
 
 }

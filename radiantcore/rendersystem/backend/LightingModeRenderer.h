@@ -29,7 +29,7 @@ public:
         _entities(entities)
     {}
 
-    IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time);
+    IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;
 };
 
 }

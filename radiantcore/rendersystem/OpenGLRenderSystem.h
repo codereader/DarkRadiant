@@ -9,6 +9,7 @@
 #include "backend/OpenGLStateLess.h"
 #include "backend/TextRenderer.h"
 #include "backend/GeometryStore.h"
+#include "backend/SceneRenderer.h"
 
 namespace render
 {
@@ -61,6 +62,12 @@ class OpenGLRenderSystem final
 	sigc::connection _sharedContextDestroyed;
 
     GeometryStore _geometryStore;
+
+    // Renderer implementations, one for each view type/purpose
+
+    std::unique_ptr<SceneRenderer> _orthoRenderer;
+    std::unique_ptr<SceneRenderer> _editorPreviewRenderer;
+    std::unique_ptr<SceneRenderer> _lightingModeRenderer;
 
 public:
 	OpenGLRenderSystem();
@@ -126,11 +133,7 @@ public:
     IGeometryStore& getGeometryStore();
 
 private:
-    // Set up initial GL states, will push all attrib states
-    void beginRendering(OpenGLState& state);
-
-    // Will pop attrib states
-    void finishRendering();
+    IRenderResult::Ptr render(SceneRenderer& renderer, RenderStateFlags globalFlagsMask, const IRenderView& view);
 
     void renderText();
 
