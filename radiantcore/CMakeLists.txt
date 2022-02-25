@@ -219,6 +219,7 @@ add_library(radiantcore MODULE
             rendersystem/backend/BuiltInShader.cpp
             rendersystem/backend/ColourShader.cpp
             rendersystem/backend/LightInteractions.cpp
+            rendersystem/backend/ObjectRenderer.cpp
             rendersystem/backend/OpenGLShader.cpp
             rendersystem/backend/OpenGLShaderPass.cpp
             rendersystem/backend/DepthFillPass.cpp

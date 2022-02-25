@@ -11,6 +11,7 @@
 #include "backend/BuiltInShader.h"
 #include "backend/ColourShader.h"
 #include "backend/LightInteractions.h"
+#include "backend/ObjectRenderer.h"
 #include "debugging/debugging.h"
 #include "LightingModeRenderResult.h"
 
@@ -428,7 +429,7 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
                     OpenGLShaderPass::SetUpNonInteractionProgram(current, view.getViewer(), object->getObjectTransform());
                 }
 
-                LightInteractions::SubmitObject(*object, _geometryStore);
+                ObjectRenderer::SubmitObject(*object, _geometryStore);
                 result->drawCalls++;
             });
         });
