@@ -79,6 +79,11 @@ public:
 
 	const AABB& getBounds();
 
+    std::size_t getNumQuads() const
+    {
+        return _quads.size();
+    }
+
 private:
 	// Time is measured in seconds!
 	float integrate(const IParticleParameter& param, float time)

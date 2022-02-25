@@ -80,6 +80,11 @@ void ParticleNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void ParticleNode::update(const VolumeTest& viewVolume) const
 {
+    if (!viewVolume.fill())
+    {
+        return;
+    }
+
 	// Get the view rotation and cancel out the translation part
 	Matrix4 viewRotation = viewVolume.GetModelview();
 	viewRotation.tx() = 0;
