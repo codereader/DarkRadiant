@@ -82,12 +82,6 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
 
             if (!shader->getDepthFillPass()) continue;
 
-            // Reset the texture matrix
-            glMatrixMode(GL_TEXTURE);
-            glLoadMatrixd(Matrix4::getIdentity());
-
-            glMatrixMode(GL_MODELVIEW);
-
             // Apply our state to the current state object
             shader->getDepthFillPass()->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
 
@@ -133,12 +127,6 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
                 {
                     continue;
                 }
-
-                // Reset the texture matrix
-                glMatrixMode(GL_TEXTURE);
-                glLoadMatrixd(Matrix4::getIdentity());
-
-                glMatrixMode(GL_MODELVIEW);
 
                 // Apply our state to the current state object
                 pass->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);

@@ -100,12 +100,6 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
                     return;
                 }
 
-                // Reset the texture matrix
-                glMatrixMode(GL_TEXTURE);
-                glLoadMatrixd(Matrix4::getIdentity());
-
-                glMatrixMode(GL_MODELVIEW);
-
                 // Apply our state to the current state object
                 pass.applyState(current, globalFlagsMask, view.getViewer(), time, entity.get());
 
