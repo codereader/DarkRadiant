@@ -810,8 +810,7 @@ void CamWnd::Cam_Draw()
         }
         else
         {
-            GlobalRenderSystem().render(RenderViewType::Camera, allowedRenderFlags,
-                _camera->getModelView(), _camera->getProjection(), _view.getViewer(), _view);
+            GlobalRenderSystem().render(RenderViewType::Camera, allowedRenderFlags, _view);
         }
 
         _renderer->cleanup();

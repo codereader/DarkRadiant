@@ -214,6 +214,7 @@
     <ClInclude Include="..\..\libs\render\CompactWindingVertexBuffer.h" />
     <ClInclude Include="..\..\libs\render\ContinuousBuffer.h" />
     <ClInclude Include="..\..\libs\render\IndexedVertexBuffer.h" />
+    <ClInclude Include="..\..\libs\render\NopRenderView.h" />
     <ClInclude Include="..\..\libs\render\NopVolumeTest.h" />
     <ClInclude Include="..\..\libs\render\RenderableBoundingBoxes.h" />
     <ClInclude Include="..\..\libs\render\RenderableBox.h" />

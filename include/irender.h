@@ -662,24 +662,12 @@ public:
      * render flag which is 0 in this mask will not be enabled during rendering,
      * even if the particular shader requests it.
      *
-     * \param modelview
-     * The modelview transformation matrix to apply before rendering.
-     *
-     * \param projection
-     * The view projection matrix to apply before rendering.
-     *
-     * \param viewer
-     * Location of the viewer in world space.
-     * 
-     * * \param volume
-     * The volume structure that can be used for culling.
+     * * \param view
+     * The view used to setup the projection, modelview and lighting calculations.
      */
     virtual void render(RenderViewType renderViewType,
                         RenderStateFlags globalFlagsMask,
-                        const Matrix4& modelview,
-                        const Matrix4& projection,
-                        const Vector3& viewer,
-                        const VolumeTest& volume) = 0;
+                        const render::IRenderView& view) = 0;
 
     virtual void startFrame() = 0;
     virtual void endFrame() = 0;

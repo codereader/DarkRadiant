@@ -78,13 +78,8 @@ public:
     void startFrame() override;
     void endFrame() override;
 
-	void render(RenderViewType renderViewType, RenderStateFlags globalstate,
-                const Matrix4& modelview,
-                const Matrix4& projection,
-                const Vector3& viewer,
-                const VolumeTest& view) override;
-    IRenderResult::Ptr renderLitScene(RenderStateFlags globalFlagsMask,
-        const IRenderView& view) override;
+	void render(RenderViewType renderViewType, RenderStateFlags globalstate, const IRenderView& view) override;
+    IRenderResult::Ptr renderLitScene(RenderStateFlags globalFlagsMask, const IRenderView& view) override;
 	void realise() override;
 	void unrealise() override;
 
@@ -137,7 +132,6 @@ private:
     // Will pop attrib states
     void finishRendering();
 
-    void setupViewMatrices(const Matrix4& modelview, const Matrix4& projection);
     void renderText();
 
     ShaderPtr capture(const std::string& name, const std::function<OpenGLShaderPtr()>& createShader);

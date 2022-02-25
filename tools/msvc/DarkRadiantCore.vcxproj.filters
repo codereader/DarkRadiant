@@ -1132,6 +1132,15 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\ObjectRenderer.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\LightingModeRenderer.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\SceneRenderer.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2323,6 +2332,15 @@
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\ObjectRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightingModeRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\SceneRenderer.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
   </ItemGroup>

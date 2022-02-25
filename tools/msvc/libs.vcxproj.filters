@@ -368,6 +368,9 @@
     <ClInclude Include="..\..\libs\render\RenderableVertexArray.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\NopRenderView.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
