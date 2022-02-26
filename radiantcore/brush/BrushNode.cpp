@@ -346,6 +346,9 @@ void BrushNode::onPreRender(const VolumeTest& volume)
 
     assert(_renderEntity);
 
+    auto brushIsSelected = isSelected();
+    auto isCameraView = volume.fill();
+
     // Every face is asked to run the rendering preparations
     // to link/unlink their geometry to/from the active shader
     for (auto& faceInstance : m_faceInstances)
@@ -353,18 +356,18 @@ void BrushNode::onPreRender(const VolumeTest& volume)
         auto& face = faceInstance.getFace();
 
         // A selected brush needs to update the solid renderable since that is used to render highlights
-        if (volume.fill() || isSelected())
+        if (isCameraView || brushIsSelected)
         {
             face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader(), *_renderEntity);
         }
 
-        if (!volume.fill())
+        if (!isCameraView)
         {
             face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader(), *_renderEntity);
         }
     }
 
-    if (isSelected() && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent)
+    if (brushIsSelected && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent)
     {
         updateSelectedPointsArray();
 

@@ -232,4 +232,6 @@ private:
     // to keep the texture coordinates of the winding unaltered by the transform
     void transformTexDefLocked(const Matrix4& transform);
 
-}; // class Face
+    void clearRenderables();
+    void updateRenderables();
+};

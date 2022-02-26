@@ -125,8 +125,7 @@ Face::~Face()
     _sigDestroyed.clear();
 
     // Deallocate the winding surface
-    _windingSurfaceSolid.clear();
-    _windingSurfaceWireframe.clear();
+    clearRenderables();
 }
 
 sigc::signal<void>& Face::signal_faceDestroyed()
@@ -158,8 +157,7 @@ Brush& Face::getBrushInternal()
 
 void Face::planeChanged()
 {
-    _windingSurfaceSolid.queueUpdate();
-    _windingSurfaceWireframe.queueUpdate();
+    updateRenderables();
 
     revertTransform();
     _owner.onFacePlaneChanged();
@@ -176,8 +174,8 @@ void Face::connectUndoSystem(IUndoSystem& undoSystem)
 
     _shader.setInUse(true);
 
-    _windingSurfaceSolid.queueUpdate();
-    _windingSurfaceWireframe.queueUpdate();
+    updateRenderables();
+
     _undoStateSaver = undoSystem.getStateSaver(*this);
 }
 
@@ -188,8 +186,8 @@ void Face::disconnectUndoSystem(IUndoSystem& undoSystem)
     undoSystem.releaseStateSaver(*this);
 
     // Disconnect the renderable winding vertices from the scene
-    _windingSurfaceSolid.clear();
-    _windingSurfaceWireframe.clear();
+    clearRenderables();
+
     _shader.setInUse(false);
 }
 
@@ -264,8 +262,7 @@ void Face::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     _faceIsVisible = shader && shader->getMaterial()->isVisible();
 
-    _windingSurfaceSolid.clear();
-    _windingSurfaceWireframe.clear();
+    clearRenderables();
 }
 
 void Face::transformTexDefLocked(const Matrix4& transform)
@@ -348,10 +345,21 @@ void Face::freezeTransform()
     updateWinding();
 }
 
-void Face::updateWinding()
+void Face::clearRenderables()
+{
+    _windingSurfaceSolid.clear();
+    _windingSurfaceWireframe.clear();
+}
+
+void Face::updateRenderables()
 {
     _windingSurfaceSolid.queueUpdate();
     _windingSurfaceWireframe.queueUpdate();
+}
+
+void Face::updateWinding()
+{
+    updateRenderables();
     m_winding.updateNormals(m_plane.getPlane().normal());
 }
 
@@ -401,9 +409,7 @@ void Face::shaderChanged()
     const ShaderPtr& shader = getFaceShader().getGLShader();
     _faceIsVisible = shader && shader->getMaterial()->isVisible();
 
-    _windingSurfaceSolid.queueUpdate();
-    _windingSurfaceWireframe.queueUpdate();
-    planeChanged();
+    planeChanged(); // updates renderables too
     SceneChangeNotify();
 }
 
@@ -440,6 +446,7 @@ void Face::texdefChanged()
 {
     revertTexdef();
     emitTextureCoordinates();
+    updateRenderables();
 
     // Fire the signal to update the Texture Tools
     signal_texdefChanged().emit();
@@ -752,14 +759,12 @@ void Face::onBrushVisibilityChanged(bool visible)
     if (!visible)
     {
         // Disconnect our renderable when the owning brush goes invisible
-        _windingSurfaceSolid.clear();
-        _windingSurfaceWireframe.clear();
+        clearRenderables();
     }
     else
     {
         // Update the vertex buffers next time we need to render
-        _windingSurfaceSolid.queueUpdate();
-        _windingSurfaceWireframe.queueUpdate();
+        updateRenderables();
     }
 }
 
