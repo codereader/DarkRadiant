@@ -867,13 +867,13 @@ void EntityInspector::onIdle()
 
         _showInheritedCheckbox->Enable(canShowInheritedKeys);
 
+        // We might be switching from one single selected entity to another
+        // Avoid the old set of inherited key values from sticking around
+        removeClassProperties();
+
         if (canShowInheritedKeys && _showInheritedCheckbox->IsChecked())
         {
             addClassProperties();
-        }
-        else
-        {
-            removeClassProperties();
         }
     }
 
