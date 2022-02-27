@@ -718,6 +718,7 @@ void TextureBrowser::performUpdate()
     });
 
     updateScroll();
+    clampOriginY(); // scroll value might be out of range after the update
 }
 
 void TextureBrowser::onActiveShadersChanged()
