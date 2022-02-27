@@ -86,13 +86,15 @@ void AutoMapSaver::saveSnapshot()
         fullPath = GlobalFileSystem().findFile(fullPath.string()) + fullPath.string();
     }
 
-	// Append the the snapshot folder to the path
+	// Assemble the absolute path to the snapshot folder
 	fs::path snapshotPath = fullPath;
 	snapshotPath.remove_filename();
+
+    // If the snapshots folder in the registry is absolute, operator/= will use the absolute one
 	snapshotPath /= GlobalRegistry().get(RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
 
 	// Retrieve the mapname
-	std::string mapName = fullPath.filename().string();
+	auto mapName = fullPath.filename().string();
 
 	// Check if the folder exists and create it if necessary
 	if (os::fileOrDirExists(snapshotPath.string()) || os::makeDirectory(snapshotPath.string()))
@@ -115,8 +117,7 @@ void AutoMapSaver::saveSnapshot()
 	}
 	else
 	{
-		rError() << "Snapshot save failed.. unable to create directory";
-		rError() << snapshotPath << std::endl;
+		rError() << "Snapshot save failed, unable to create directory " << snapshotPath << std::endl;
 	}
 }
 

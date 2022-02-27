@@ -1312,6 +1312,35 @@ TEST_F(MapSavingTest, AutoSaveSnapshotsSupportRelativePaths)
     }
 }
 
+TEST_F(MapSavingTest, AutoSaveSnapshotsSupportAbsolutePaths)
+{
+    std::string modRelativePath = "maps/altar.map";
+    GlobalCommandSystem().executeCommand("OpenMap", modRelativePath);
+    checkAltarScene();
+
+    // Set this to an absolute path
+    auto snapshotFolder = _context.getTemporaryDataPath() + "customsnapshots/";
+    registry::setValue(map::RKEY_AUTOSAVE_SNAPSHOTS_ENABLED, true);
+    registry::setValue(map::RKEY_AUTOSAVE_SNAPSHOTS_FOLDER, snapshotFolder);
+
+    // We expect the file to end up there
+    std::string expectedSnapshotPath = snapshotFolder + "altar.0.map";
+
+    EXPECT_FALSE(GlobalFileSystem().openTextFileInAbsolutePath(expectedSnapshotPath)) << "Snapshot already exists in " << expectedSnapshotPath;
+
+    // Trigger an auto save now
+    GlobalAutoSaver().performAutosave();
+
+    EXPECT_TRUE(GlobalFileSystem().openTextFileInAbsolutePath(expectedSnapshotPath)) << "Snapshot should now exist in " << expectedSnapshotPath;
+
+    // Load and confirm the saved scene
+    GlobalCommandSystem().executeCommand("OpenMap", expectedSnapshotPath);
+    checkAltarScene();
+
+    fs::remove(os::replaceExtension(expectedSnapshotPath, "darkradiant"));
+    fs::remove(expectedSnapshotPath);
+}
+
 namespace
 {
 
