@@ -279,8 +279,8 @@ void AutoMapSaver::constructPreferences()
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Autosave"));
 
 	page.appendCheckBox(_("Save Snapshots"), RKEY_AUTOSAVE_SNAPSHOTS_ENABLED);
-	page.appendEntry(_("Snapshot folder (relative to map folder)"), RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
-	page.appendEntry(_("Max total Snapshot size per map (MB)"), RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
+	page.appendEntry(_("Snapshot Folder (absolute, or relative to Map Folder)"), RKEY_AUTOSAVE_SNAPSHOTS_FOLDER);
+	page.appendEntry(_("Max total Snapshot size per Map (MB)"), RKEY_AUTOSAVE_MAX_SNAPSHOT_FOLDER_SIZE);
 }
 
 void AutoMapSaver::onMapEvent(IMap::MapEvent ev)
