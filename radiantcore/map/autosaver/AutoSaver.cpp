@@ -43,7 +43,7 @@ namespace
 		std::string mapExt = game::current::getValue<std::string>(GKEY_MAP_EXTENSION);
 
 		// Construct the base name without numbered extension
-		std::string filename = (snapshotPath / mapName).string();
+		std::string filename = (snapshotPath / mapName).replace_extension().string();
 
 		// Now append the number and the map extension to the map name
 		filename += ".";
@@ -81,6 +81,11 @@ void AutoMapSaver::saveSnapshot()
 	// Construct the fs::path class out of the full map path (throws on fail)
 	fs::path fullPath = GlobalMapModule().getMapName();
 
+    if (!fullPath.is_absolute())
+    {
+        fullPath = GlobalFileSystem().findFile(fullPath.string()) + fullPath.string();
+    }
+
 	// Append the the snapshot folder to the path
 	fs::path snapshotPath = fullPath;
 	snapshotPath.remove_filename();
@@ -89,12 +94,12 @@ void AutoMapSaver::saveSnapshot()
 	// Retrieve the mapname
 	std::string mapName = fullPath.filename().string();
 
-	// Map existing snapshots (snapshot num => path)
-	std::map<int, std::string> existingSnapshots;
-
 	// Check if the folder exists and create it if necessary
 	if (os::fileOrDirExists(snapshotPath.string()) || os::makeDirectory(snapshotPath.string()))
 	{
+        // Map existing snapshots (snapshot num => path)
+        std::map<int, std::string> existingSnapshots;
+
 		collectExistingSnapshots(existingSnapshots, snapshotPath, mapName);
 
 		int highestNum = existingSnapshots.empty() ? 0 : existingSnapshots.rbegin()->first + 1;
