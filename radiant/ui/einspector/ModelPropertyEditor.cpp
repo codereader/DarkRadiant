@@ -108,7 +108,14 @@ void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
 
 void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
 {
-    auto model = _entities.getSharedKeyValue("model", true);
+    // Check the key this model property editor is attached to first
+    auto model = _entities.getSharedKeyValue(_key, true);
+
+    // Fall back to "model" if nothing found
+    if (model.empty())
+    {
+        model = _entities.getSharedKeyValue("model", true);
+    }
 
     if (model.empty())
     {
