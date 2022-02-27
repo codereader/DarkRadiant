@@ -2,6 +2,7 @@
 
 #include "itextstream.h"
 #include "i18n.h"
+#include "version.h"
 #include "ui/imenumanager.h"
 #include "ui/istatusbarmanager.h"
 #include "ui/itoolbarmanager.h"
@@ -35,8 +36,18 @@ TopLevelFrame::TopLevelFrame() :
 	{
 		_toolbars[IMainFrame::Toolbar::TOP] = viewToolbar;
 
-		// Pack it into the main window
-		_topLevelContainer->Add(_toolbars[IMainFrame::Toolbar::TOP].get(), 0, wxEXPAND);
+        // Add a version label to the right
+        auto versionToolbar = new wxToolBar(this, wxID_ANY);
+        auto versionLabel = new wxStaticText(versionToolbar, wxID_ANY, std::string(RADIANT_VERSION) + " ");
+        versionToolbar->AddControl(versionLabel);
+        versionToolbar->Realize();
+
+        auto sizer = new wxBoxSizer(wxHORIZONTAL);
+        
+        sizer->Add(_toolbars[IMainFrame::Toolbar::TOP].get(), 1);
+        sizer->Add(versionToolbar, 0, wxEXPAND);
+
+		_topLevelContainer->Add(sizer, 0, wxEXPAND);
 	}
 	else
 	{
