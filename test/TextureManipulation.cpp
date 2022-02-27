@@ -799,4 +799,45 @@ TEST_F(TextureManipulationTest, FaceGetShiftScaleRotation)
     EXPECT_NEAR(ssr.rotate, 75, 0.01) << "Brush B: Rotation Value is off";
 }
 
+// #5846: Rotating a func_static brush 90 degress messes up the face textures
+TEST_F(TextureManipulationTest, RotateFuncStaticBrush90)
+{
+    std::string mapPath = "maps/rotate_with_texlock.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+
+    auto brushNode = algorithm::getNthChild(funcStatic, 0);
+    auto brush = Node_getIBrush(brushNode);
+
+    auto& faceBefore = *algorithm::findBrushFaceWithNormal(brush, { 1, 0, 0 });
+    
+    // Record the texture coordinates of this face
+    std::vector<WindingVertex> oldVertices;
+    for (const auto& vertex : faceBefore.getWinding())
+    {
+        oldVertices.push_back(vertex);
+    }
+
+    // Select and rotate that func_static
+    Node_setSelected(funcStatic, true);
+    GlobalCommandSystem().executeCommand("RotateSelectionZ");
+
+    // Trigger bounds evalation which will make the brush evaluate the plane intersections
+    // Same happens when rendering the scene after the brush evaluation
+    funcStatic->worldAABB();
+
+    auto& faceAfter = *algorithm::findBrushFaceWithNormal(brush, { 1, 0, 0 });
+
+    auto old = oldVertices.begin();
+    for (const auto& vertex : faceAfter.getWinding())
+    {
+        // Assume the 3D coordinates have changed
+        EXPECT_FALSE(math::isNear(vertex.vertex, old->vertex, 0.01));
+
+        // The texture coordinates should remain unchanged (due to texture lock)
+        EXPECT_TRUE(math::isNear(vertex.texcoord, old->texcoord, 0.01));
+    }
+}
+
 }

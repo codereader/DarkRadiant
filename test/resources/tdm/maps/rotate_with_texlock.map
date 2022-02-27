@@ -1,0 +1,36 @@
+Version 2
+// entity 0
+{
+"classname" "worldspawn"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 16 ) ( ( 0.015625 0 0 ) ( 0 0.03125 2 ) ) "textures/common/caulk" 0 0 0
+( 0 1 0 -64 ) ( ( 0.03125 0 127 ) ( 0 0.0078125 127.875 ) ) "textures/common/caulk" 0 0 0
+( 1 0 0 32 ) ( ( 0.015625 0 0 ) ( 0 0.0078125 127.875 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 -144 ) ( ( 0.015625 0 0 ) ( 0 0.03125 127 ) ) "textures/common/caulk" 0 0 0
+( 0 -1 0 0 ) ( ( 0.03125 0 2 ) ( 0 0.0078125 127.875 ) ) "textures/common/caulk" 0 0 0
+( -1 0 0 -64 ) ( ( 0.015625 0 1 ) ( 0 0.0078125 127.875 ) ) "textures/common/caulk" 0 0 0
+}
+}
+}
+// entity 1
+{
+"classname" "func_static"
+"name" "func_static_1"
+"model" "func_static_1"
+"origin" "-144 32 -56"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -40 ) ( ( 0.015625 0 0 ) ( 0 0.03125 5 ) ) "textures/common/clip" 0 0 0
+( 0 1 0 -32 ) ( ( 0.03125 0 124 ) ( 0 0.0078125 127.875 ) ) "textures/common/clip" 0 0 0
+( 1 0 0 -16 ) ( ( 0.015625 0 0 ) ( 0 0.0078125 127.875 ) ) "textures/common/caulk" 0 0 0
+( 0 0 -1 -88 ) ( ( 0.015625 0 0 ) ( 0 0.03125 124 ) ) "textures/common/clip" 0 0 0
+( 0 -1 0 -32 ) ( ( 0.03125 0 5 ) ( 0 0.0078125 127.875 ) ) "textures/common/clip" 0 0 0
+( -1 0 0 -16 ) ( ( 0.015625 0 1 ) ( 0 0.0078125 127.875 ) ) "textures/common/clip" 0 0 0
+}
+}
+}
