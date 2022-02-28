@@ -53,6 +53,7 @@ protected:
     void setupSceneGraph() override;
 
     bool onPreRender() override;
+    std::string getInfoText() override;
 
 	void clearModel();
 

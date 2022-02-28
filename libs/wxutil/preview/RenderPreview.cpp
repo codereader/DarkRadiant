@@ -369,6 +369,8 @@ void RenderPreview::startPlayback()
 
 	toolbar->EnableTool(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(), true);
 	toolbar->EnableTool(getToolBarToolByLabel(toolbar, "stopTimeButton")->GetId(), true);
+
+    updateFrameSelector();
 }
 
 void RenderPreview::stopPlayback()
@@ -380,6 +382,8 @@ void RenderPreview::stopPlayback()
 
 	toolbar->EnableTool(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(), false);
 	toolbar->EnableTool(getToolBarToolByLabel(toolbar, "stopTimeButton")->GetId(), false);
+
+    updateFrameSelector();
 
     queueDraw();
 }
@@ -471,7 +475,7 @@ bool RenderPreview::drawPreview()
 	if (!onPreRender())
 	{
 		// a return value of false means to cancel rendering
-		drawTime();
+		drawInfoText();
 		return true; // swap buffers
 	}
 
@@ -507,7 +511,7 @@ bool RenderPreview::drawPreview()
     onPostRender();
 
     // Draw the render time
-    drawTime();
+    drawInfoText();
 
     return true;
 }
@@ -715,6 +719,7 @@ void RenderPreview::onStepForwardClick(wxCommandEvent& ev)
     }
 
     _renderSystem->setTime(_renderSystem->getTime() + MSEC_PER_FRAME);
+    updateFrameSelector();
     queueDraw();
 }
 
@@ -732,6 +737,7 @@ void RenderPreview::onStepBackClick(wxCommandEvent& ev)
     if (_renderSystem->getTime() > 0)
     {
         _renderSystem->setTime(_renderSystem->getTime() - MSEC_PER_FRAME);
+        updateFrameSelector();
     }
 
     queueDraw();
@@ -816,7 +822,7 @@ void RenderPreview::drawGrid()
     glPopMatrix();
 }
 
-void RenderPreview::drawTime()
+void RenderPreview::drawInfoText()
 {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -848,7 +854,12 @@ void RenderPreview::drawTime()
 
     glRasterPos3f(1.0f, static_cast<float>(_previewHeight) - 1.0f, 0.0f);
 
-    _glFont->drawString(fmt::format("{0:.3f} sec.", (_renderSystem->getTime() * 0.001f)));
+    _glFont->drawString(getInfoText());
+}
+
+std::string RenderPreview::getInfoText()
+{
+    return fmt::format("{0:.3f} sec.", (_renderSystem->getTime() * 0.001f));
 }
 
 void RenderPreview::onGLKeyPress(wxKeyEvent& ev)

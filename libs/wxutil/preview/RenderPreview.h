@@ -63,7 +63,7 @@ private:
     void onRenderModeChanged(wxCommandEvent& ev);
 	void onGridButtonClick(wxCommandEvent& ev);
 
-    void drawTime();
+    void drawInfoText();
 	void drawGrid();
 
     // Called each frame by wxTimer
@@ -177,6 +177,10 @@ protected:
 
     // Can be overridden by subclasses to update their scene/models
     virtual void onRenderModeChanged() {}
+
+    // Returns the info text that is rendered in the lower left corner of the preview. 
+    // Shows the render time by default, but can be overridden by subclasses.
+    virtual std::string getInfoText();
 
     /**
      * \brief

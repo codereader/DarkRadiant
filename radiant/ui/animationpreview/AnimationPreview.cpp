@@ -8,6 +8,7 @@
 #include "itextstream.h"
 #include "math/AABB.h"
 #include "scene/BasicRootNode.h"
+#include <fmt/format.h>
 
 #include "wxutil/GLWidget.h"
 
@@ -123,6 +124,27 @@ bool AnimationPreview::onPreRender()
 	dynamic_cast<md5::IMD5Model&>(model->getIModel()).updateAnim(_renderSystem->getTime());
 
 	return true;
+}
+
+std::string AnimationPreview::getInfoText()
+{
+    auto text = RenderPreview::getInfoText();
+
+    if (_model)
+    {
+        // Set the animation to play
+        auto model = Node_getModel(_model);
+        auto anim = dynamic_cast<md5::IMD5Model&>(model->getIModel()).getAnim();
+
+        if (anim)
+        {
+            auto numFrames = anim->getNumFrames();
+            auto currentFrame = (_renderSystem->getTime() / MSEC_PER_FRAME) % numFrames;
+            return fmt::format(_("{0} | Frame {1} of {2}."), text, currentFrame, numFrames);
+        }
+    }
+
+    return text;
 }
 
 RenderStateFlags AnimationPreview::getRenderFlagsFill()
