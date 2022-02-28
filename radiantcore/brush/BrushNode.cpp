@@ -486,7 +486,12 @@ void BrushNode::evaluateTransform()
         }
         else
         {
-            m_brush.transform(calculateTransform());
+            auto transform = calculateTransform();
+
+            if (transform != Matrix4::getIdentity())
+            {
+                m_brush.transform(transform);
+            }
         }
 	}
 	else
@@ -562,7 +567,7 @@ void BrushNode::onPostRedo()
 
 void BrushNode::_onTransformationChanged()
 {
-	m_brush.transformChanged();
+    m_brush.transformChanged();
 
     _renderableVertices.queueUpdate();
 	_renderableComponentsNeedUpdate = true;

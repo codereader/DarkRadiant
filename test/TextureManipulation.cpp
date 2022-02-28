@@ -1,5 +1,6 @@
 #include "RadiantTest.h"
 
+#include <optional>
 #include "itransformable.h"
 #include "ishaders.h"
 #include "ishaderclipboard.h"
@@ -829,14 +830,26 @@ TEST_F(TextureManipulationTest, RotateFuncStaticBrush90)
 
     auto& faceAfter = *algorithm::findBrushFaceWithNormal(brush, { 1, 0, 0 });
 
+    std::optional<Vector2> distance;
     auto old = oldVertices.begin();
     for (const auto& vertex : faceAfter.getWinding())
     {
         // Assume the 3D coordinates have changed
         EXPECT_FALSE(math::isNear(vertex.vertex, old->vertex, 0.01));
 
-        // The texture coordinates should remain unchanged (due to texture lock)
-        EXPECT_TRUE(math::isNear(vertex.texcoord, old->texcoord, 0.01));
+        // The texture coordinates should remain equivalent (due to texture lock)
+        // The absolute coordinates in UV space might be off by some integer number
+        // We expect the distance to the previous coordinates to be the same
+        if (distance.has_value())
+        {
+            EXPECT_TRUE(math::isNear(distance.value(), vertex.texcoord - old->texcoord, 0.01));
+        }
+        else
+        {
+            distance = vertex.texcoord - old->texcoord;
+        }
+
+        ++old;
     }
 }
 
