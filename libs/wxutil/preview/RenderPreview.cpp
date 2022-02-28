@@ -18,6 +18,7 @@
 #include <wx/sizer.h>
 #include <wx/menu.h>
 #include <wx/dcclient.h>
+#include <wx/textctrl.h>
 #include "../Bitmap.h"
 
 #include <fmt/format.h>
