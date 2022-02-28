@@ -53,6 +53,10 @@ private:
 	void onPausePlaybackClick(wxCommandEvent& ev);
     void onStepForwardClick(wxCommandEvent& ev);
     void onStepBackClick(wxCommandEvent& ev);
+    void onFrameSelected(wxSpinEvent& ev);
+    void onFrameConfirmed(wxCommandEvent& ev);
+    void jumpToSelectedFrame(wxSpinCtrl* spinCtrl);
+    void updateFrameSelector();
 
     void onSizeAllocate(wxSizeEvent& ev);
     void onFilterConfigChanged();

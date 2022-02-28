@@ -134,17 +134,18 @@ void RenderPreview::connectToolbarSignals()
 {
 	wxToolBar* toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
 
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "startTimeButton")->GetId(),
-		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStartPlaybackClick), NULL, this);
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId(),
-		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onPausePlaybackClick), NULL, this);
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "stopTimeButton")->GetId(),
-		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStopPlaybackClick), NULL, this);
+	toolbar->Bind(wxEVT_TOOL, &RenderPreview::onStartPlaybackClick, this, getToolBarToolByLabel(toolbar, "startTimeButton")->GetId());
+	toolbar->Bind(wxEVT_TOOL, &RenderPreview::onPausePlaybackClick, this, getToolBarToolByLabel(toolbar, "pauseTimeButton")->GetId());
+	toolbar->Bind(wxEVT_TOOL, &RenderPreview::onStopPlaybackClick, this, getToolBarToolByLabel(toolbar, "stopTimeButton")->GetId());
 
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "prevButton")->GetId(),
-		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepBackClick), NULL, this);
-	toolbar->Connect(getToolBarToolByLabel(toolbar, "nextButton")->GetId(),
-		wxEVT_TOOL, wxCommandEventHandler(RenderPreview::onStepForwardClick), NULL, this);
+	toolbar->Bind(wxEVT_TOOL, &RenderPreview::onStepBackClick, this, getToolBarToolByLabel(toolbar, "prevButton")->GetId());
+	toolbar->Bind(wxEVT_TOOL, &RenderPreview::onStepForwardClick, this, getToolBarToolByLabel(toolbar, "nextButton")->GetId());
+
+    // Connect the frame selector
+    auto frameSelector = getToolBarControlByName(toolbar, "FrameSelector")->GetControl();
+    frameSelector->SetWindowStyleFlag(wxTE_PROCESS_ENTER);
+    frameSelector->Bind(wxEVT_SPINCTRL, &RenderPreview::onFrameSelected, this);
+    frameSelector->Bind(wxEVT_TEXT_ENTER, &RenderPreview::onFrameConfirmed, this);
 }
 
 RenderPreview::~RenderPreview()
@@ -736,6 +737,34 @@ void RenderPreview::onStepBackClick(wxCommandEvent& ev)
     queueDraw();
 }
 
+void RenderPreview::onFrameSelected(wxSpinEvent& ev)
+{
+    jumpToSelectedFrame(static_cast<wxSpinCtrl*>(ev.GetEventObject()));
+}
+
+void RenderPreview::onFrameConfirmed(wxCommandEvent& ev)
+{
+    jumpToSelectedFrame(static_cast<wxSpinCtrl*>(ev.GetEventObject()));
+}
+
+void RenderPreview::jumpToSelectedFrame(wxSpinCtrl* spinCtrl)
+{
+    if (_timer.IsRunning())
+    {
+        _timer.Stop();
+    }
+
+    _renderSystem->setTime(spinCtrl->GetValue() * MSEC_PER_FRAME);
+    queueDraw();
+}
+
+void RenderPreview::updateFrameSelector()
+{
+    auto toolbar = findNamedObject<wxToolBar>(_mainPanel, "RenderPreviewAnimToolbar");
+    auto frameSelector = static_cast<wxSpinCtrl*>(getToolBarControlByName(toolbar, "FrameSelector")->GetControl());
+    frameSelector->SetValue(_renderSystem->getTime() / MSEC_PER_FRAME);
+}
+
 void RenderPreview::onSizeAllocate(wxSizeEvent& ev)
 {
 	_previewWidth = ev.GetSize().GetWidth();
@@ -867,6 +896,7 @@ void RenderPreview::_onFrame(wxTimerEvent& ev)
     if (!_renderingInProgress)
     {
         _renderSystem->setTime(_renderSystem->getTime() + MSEC_PER_FRAME);
+        updateFrameSelector();
         queueDraw();
     }
 }

@@ -41,8 +41,26 @@ protected:
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
+
+    // Tries to find the toolbar item hosting the named control
+    static const wxToolBarToolBase* getToolBarControlByName(wxToolBarBase* toolbar, const std::string& name)
+    {
+        wxString wxName(name);
+
+        for (unsigned int i = 0; i < toolbar->GetToolsCount(); i++)
+        {
+            const wxToolBarToolBase* candidate = toolbar->GetToolByPos(i);
+
+            if (candidate->IsControl() && candidate->GetControl()->GetName() == name)
+            {
+                return candidate;
+            }
+        }
+
+        return nullptr;
+    }
 
     /// Look up a toolbar tool by label and return its ID
     static int getToolID(wxToolBarBase* toolbar, const std::string& label)

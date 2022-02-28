@@ -46,6 +46,14 @@
 								<longhelp></longhelp>
 								<bitmap stock_id="wxART_GO_BACK" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 							</object>
+							<object class="wxSpinCtrl" name="FrameSelector">
+								<style>wxALIGN_RIGHT|wxSP_ARROW_KEYS</style>
+								<size>80,-1</size>
+								<tooltip>Select/Jump to Frame</tooltip>
+								<value>0</value>
+								<min>0</min>
+								<max>9999999</max>
+							</object>
 							<object class="tool" name="nextButton">
 								<label>nextButton</label>
 								<tooltip>Next Frame</tooltip>
@@ -56,8 +64,8 @@
 					</object>
 					<object class="sizeritem">
 						<option>0</option>
-						<flag>wxEXPAND</flag>
-						<border>5</border>
+						<flag>wxEXPAND|wxTOP</flag>
+						<border>3</border>
 						<object class="wxToolBar" name="RenderPreviewFilterToolbar">
 							<style>wxTB_HORIZONTAL|wxTB_HORZ_TEXT|wxTB_NODIVIDER</style>
 							<bitmapsize></bitmapsize>
