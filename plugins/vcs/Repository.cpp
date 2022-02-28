@@ -213,10 +213,10 @@ RefSyncStatus Repository::getSyncStatusOfBranch(const Reference& reference)
     git_oid id;
     while (!git_revwalk_next(&id, walker))
     {
-        rMessage() << Reference::OidToString(&id) << " => ";
+        //rMessage() << Reference::OidToString(&id) << " => ";
         ++status.remoteCommitsAhead;
     }
-    rMessage() << std::endl;
+    //rMessage() << std::endl;
 
     git_revwalk_free(walker);
 
@@ -228,10 +228,10 @@ RefSyncStatus Repository::getSyncStatusOfBranch(const Reference& reference)
 
     while (!git_revwalk_next(&id, walker))
     {
-        rMessage() << Reference::OidToString(&id) << " => ";
+        //rMessage() << Reference::OidToString(&id) << " => ";
         ++status.localCommitsAhead;
     }
-    rMessage() << std::endl;
+    //rMessage() << std::endl;
 
     git_revwalk_free(walker);
 
