@@ -58,7 +58,7 @@ inline RemoteStatus analyseRemoteStatus(const std::shared_ptr<Repository>& repos
 {
     auto mapPath = repository->getRepositoryRelativePath(GlobalMapModule().getMapName());
 
-    if (mapPath.empty())
+    if (mapPath.empty() || !repository->getHead())
     {
         return RemoteStatus{ 0, 0, _("-") };
     }

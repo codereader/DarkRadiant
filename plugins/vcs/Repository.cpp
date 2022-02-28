@@ -326,15 +326,19 @@ void Repository::createCommit(const CommitMetadata& metadata, const Reference::P
 
     auto tree = index->writeTree(*this);
 
-    git_oid headOid;
-    error = git_reference_name_to_id(&headOid, _repository, head->getName().c_str());
-    GitException::ThrowOnError(error);
-
-    auto parentCommit = Commit::LookupFromOid(_repository, &headOid);
-
     std::vector<const git_commit*> parentCommits;
-    parentCommits.push_back(parentCommit->_get());
 
+    // It's possible that there is no HEAD yet (first commit in the repo)
+    if (head)
+    {
+        git_oid headOid;
+        error = git_reference_name_to_id(&headOid, _repository, head->getName().c_str());
+        GitException::ThrowOnError(error);
+        
+        auto parentCommit = Commit::LookupFromOid(_repository, &headOid);
+        parentCommits.push_back(parentCommit->_get());
+    }
+    
     // Check if we have an additional parent
     if (additionalParent)
     {
@@ -349,7 +353,7 @@ void Repository::createCommit(const CommitMetadata& metadata, const Reference::P
 
     git_oid commitOid;
     error = git_commit_create(&commitOid,
-        _repository, head->getName().c_str(),
+        _repository, head ? head->getName().c_str() : "HEAD",
         signature, signature,
         nullptr, metadata.message.c_str(),
         tree->_get(),
