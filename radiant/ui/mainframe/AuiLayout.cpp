@@ -130,10 +130,16 @@ void AuiLayout::activate()
     GlobalMenuManager().setVisibility("main/view/cameraview", false);
     // Hide the console/texture browser toggles for non-floating/non-split views
     GlobalMenuManager().setVisibility("main/view/textureBrowser", false);
+
+    // Restore all floating XY views
+    GlobalXYWnd().restoreState();
 }
 
 void AuiLayout::deactivate()
 {
+    // Save all floating XYWnd states
+    GlobalXYWnd().saveState();
+
     // Store perspective
     GlobalRegistry().set(RKEY_ROOT, _auiMgr.SavePerspective().ToStdString());
 

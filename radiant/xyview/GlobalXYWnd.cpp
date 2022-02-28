@@ -72,49 +72,38 @@ XYWndManager::XYWndManager() :
  */
 void XYWndManager::restoreState()
 {
-	xml::NodeList views = GlobalRegistry().findXPath(RKEY_XYVIEW_ROOT + "//views");
+	auto views = GlobalRegistry().findXPath(RKEY_XYVIEW_ROOT + "//views");
 
-	if (!views.empty())
+    if (views.empty()) return;
+
+	// Find all <view> tags under the first found <views> tag
+	auto viewList = views[0].getNamedChildren("view");
+
+	for (const auto& node : viewList)
 	{
-		// Find all <view> tags under the first found <views> tag
-		xml::NodeList viewList = views[0].getNamedChildren("view");
+		// Assemble the XPath for the viewstate
+		std::string path = RKEY_XYVIEW_ROOT +
+			"/views/view[@name='" + node.getAttributeValue("name") + "']";
 
-		for (xml::NodeList::const_iterator i = viewList.begin();
-			 i != viewList.end();
-			 ++i)
+		const std::string typeStr = node.getAttributeValue("type");
+
+		EViewType type = XY;
+
+		if (typeStr == "YZ")
 		{
-			// Assemble the XPath for the viewstate
-			std::string path = RKEY_XYVIEW_ROOT +
-				"/views/view[@name='" + i->getAttributeValue("name") + "']";
-
-			const std::string typeStr = i->getAttributeValue("type");
-
-			EViewType type = XY;
-
-			if (typeStr == "YZ")
-			{
-				type = YZ;
-			}
-			else if (typeStr == "XZ")
-			{
-				type = XZ;
-			}
-			else
-			{
-				type = XY;
-			}
-
-			// Create the view and restore the size
-			XYWndPtr newWnd = createFloatingOrthoView(type);
+			type = YZ;
 		}
-	}
-	else
-	{
-		// Create at least one XYView, if no view info is found
-		rMessage() << "XYWndManager: No xywindow information found in XMLRegistry, creating default view.\n";
+		else if (typeStr == "XZ")
+		{
+			type = XZ;
+		}
+		else
+		{
+			type = XY;
+		}
 
-		// Create a default OrthoView
-		createFloatingOrthoView(XY);
+		// Create the view and restore the size
+		createFloatingOrthoView(type);
 	}
 }
 
@@ -126,10 +115,10 @@ void XYWndManager::saveState()
 	// Create a new node
 	std::string rootNodePath(RKEY_XYVIEW_ROOT + "/views");
 
-	for (XYWndMap::iterator i = _xyWnds.begin(); i != _xyWnds.end(); ++i)
+	for (auto& [_, view] : _xyWnds)
 	{
 		// Save each XYView state to the registry
-		FloatingOrthoViewPtr floatingView = std::dynamic_pointer_cast<FloatingOrthoView>(i->second);
+		auto floatingView = std::dynamic_pointer_cast<FloatingOrthoView>(view);
 
 		if (floatingView)
 		{
@@ -138,11 +127,10 @@ void XYWndManager::saveState()
 	}
 }
 
-// Free the allocated XYViews from the heap
 void XYWndManager::destroyViews()
 {
 	// Discard the whole list
-	for (XYWndMap::iterator i = _xyWnds.begin(); i != _xyWnds.end(); /* in-loop incr.*/)
+	for (auto i = _xyWnds.begin(); i != _xyWnds.end(); /* in-loop incr.*/)
 	{
 		// Extract the pointer to prevent the destructor from firing
 		XYWndPtr candidate = i->second;
