@@ -41,13 +41,9 @@ public:
 
         git_fetch_options options = GIT_FETCH_OPTIONS_INIT;
 
-        auto credentials = getCredentialsForRemote(url);
-
-        if (credentials != nullptr)
-        {
-            options.callbacks.credentials = AcquireCredentials;
-            options.callbacks.payload = credentials;
-        }
+        // We will be asked for credentials when the server asks libgit
+        options.callbacks.credentials = AcquireCredentials;
+        options.callbacks.payload = this;
 
         auto remoteName = git_remote_name(_remote);
 
@@ -71,13 +67,10 @@ public:
         };
 
         auto url = wxURI(git_remote_url(_remote));
-        auto credentials = getCredentialsForRemote(url);
 
-        if (credentials != nullptr)
-        {
-            options.callbacks.credentials = AcquireCredentials;
-            options.callbacks.payload = credentials;
-        }
+        // We will be asked for credentials when the server asks libgit
+        options.callbacks.credentials = AcquireCredentials;
+        options.callbacks.payload = this;
 
         auto remoteName = git_remote_name(_remote);
         rMessage() << "Pushing to remote " << remoteName << std::endl;
@@ -109,14 +102,16 @@ private:
 
     static int AcquireCredentials(git_cred** out, const char* url, const char* username_from_url, unsigned int allowed_types, void* payload)
     {
-        *out = reinterpret_cast<git_credential*>(payload);
-        return 0;
+        *out = GetCredentialsForRemote(url);
+        return *out == nullptr ? GIT_PASSTHROUGH : 0;
     }
 
-    git_credential* getCredentialsForRemote(const wxURI& url)
+    static git_credential* GetCredentialsForRemote(const std::string& remoteUrl)
     {
+        wxURI uri(remoteUrl);
+
         // Create the git:scheme://server string to query the credential manager
-        auto credentialResource = fmt::format("git:{0}://{1}", url.GetScheme().ToStdString(), url.GetServer().ToStdString());
+        auto credentialResource = fmt::format("git:{0}://{1}", uri.GetScheme().ToStdString(), uri.GetServer().ToStdString());
 
         auto userAndPass = CredentialManager::RetrievePassword(credentialResource);
 
