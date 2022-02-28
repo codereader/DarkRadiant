@@ -63,6 +63,11 @@ inline RemoteStatus analyseRemoteStatus(const std::shared_ptr<Repository>& repos
         return RemoteStatus{ 0, 0, _("-") };
     }
 
+    if (!repository->getHead()->getUpstream())
+    {
+        return RemoteStatus{ 0, 0, _("No tracked remote"), RequiredMergeStrategy::NoMergeRequired };
+    }
+
     auto status = repository->getSyncStatusOfBranch(*repository->getHead());
 
     if (repository->mergeIsInProgress())
