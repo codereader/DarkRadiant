@@ -221,6 +221,7 @@
 		<property match="s_omni" category="Sound" type="bool" />
 		<property match="s_volume" category="Sound" type="text" />
 		<property match="s_global" category="Sound" type="bool" />
+		<property match="sprS_.+" category="Sound" type="classname" />
 		<property match="_color_.+" category="Basic" type="colour" hidden="1" />
 		<property match="model_.+" category="Model" type="model" hidden="1" />
 		<property match="skin_.+" category="Model" type="skin" hidden="1" />
