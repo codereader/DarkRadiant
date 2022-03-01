@@ -25,8 +25,6 @@ void MissionInfoGuiView::setGLViewPort()
 		height = width / aspectRatio;
 	}
 
-	SetSize(static_cast<int>(width), -1);
-
 	glViewport(0, 0, static_cast<GLsizei>(width), static_cast<GLsizei>(height));
 }
 

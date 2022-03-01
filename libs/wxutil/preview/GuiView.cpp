@@ -127,8 +127,7 @@ void GuiView::onSizeAllocate(wxSizeEvent& ev)
 	// Store the window dimensions for later calculations
 	_windowDims = Vector2(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
 
-	// Queue an expose event
-	Refresh();
+    ev.Skip();
 }
 
 } // namespace
