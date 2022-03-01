@@ -166,6 +166,8 @@ void exportSelectedAsModel(const ModelExportOptions& options)
                     newEntity->setKeyValue(key, value);
                 });
             }
+
+            Node_setSelected(modelNode, true);
         }
         catch (cmd::ExecutionFailure& ex)
         {
