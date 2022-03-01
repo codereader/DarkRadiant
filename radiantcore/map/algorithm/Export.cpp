@@ -15,6 +15,7 @@
 #include "selection/algorithm/General.h"
 #include "string/convert.h"
 #include "string/case_conv.h"
+#include "scenelib.h"
 #include "model/export/ModelExporter.h"
 #include "registry/registry.h"
 #include "scene/Traverse.h"
@@ -125,12 +126,13 @@ void exportSelectedAsModel(const ModelExportOptions& options)
         // Remember the last selected entity to preserve spawnargs
         auto lastSelectedNode = GlobalSelectionSystem().ultimateSelected();
         auto lastSelectedEntity = Node_getEntity(lastSelectedNode);
+        auto root = lastSelectedNode->getRootNode();
 
         // Remove the selection, but remember its layers first
         auto previousLayerSet = getAllLayersOfSelection();
         selection::algorithm::deleteSelection();
 
-        // Create a func_static in its place
+        // Create an entity of the same class in its place
         try
         {
             // Place the model in the world origin, unless we set "center objects" to true
@@ -141,10 +143,14 @@ void exportSelectedAsModel(const ModelExportOptions& options)
                 modelPos = -exporter.getCenterTransform().translation();
             }
 
-            auto modelNode = GlobalEntityModule().createEntityFromSelection("func_static", modelPos);
+            auto className = lastSelectedEntity ? lastSelectedEntity->getKeyValue("classname") : "func_static";
+            auto eclass = GlobalEntityClassManager().findOrInsert(className, false);
+            auto modelNode = GlobalEntityModule().createEntity(eclass);
+            scene::addNodeToContainer(modelNode, root);
 
             auto newEntity = Node_getEntity(modelNode);
             newEntity->setKeyValue("model", relativeModelPath);
+            newEntity->setKeyValue("origin", string::to_string(modelPos));
             modelNode->assignToLayers(previousLayerSet);
 
             if (lastSelectedEntity)
