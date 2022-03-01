@@ -1,5 +1,6 @@
 #include "MouseToolManager.h"
 
+#include <stdexcept>
 #include "iradiant.h"
 #include "iregistry.h"
 #include "itextstream.h"
@@ -20,6 +21,18 @@ namespace ui
 namespace
 {
     constexpr int HINT_POPUP_CLOSE_TIMEOUT_MSECS = 1000;
+
+    inline std::string getToolGroupName(IMouseToolGroup::Type group)
+    {
+        switch (group)
+        {
+        case IMouseToolGroup::Type::OrthoView: return "OrthoView";
+        case IMouseToolGroup::Type::CameraView: return "CameraView";
+        case IMouseToolGroup::Type::TextureTool: return "TextureTool";
+        default: 
+            throw std::logic_error("Tool group name not resolvable: " + string::to_string(static_cast<int>(group)));
+        }
+    }
 }
 
 MouseToolManager::MouseToolManager() :
@@ -124,21 +137,20 @@ void MouseToolManager::saveToolMappings()
 {
     GlobalRegistry().deleteXPath("user/ui/input//mouseToolMappings[@name='user']");
 
-    xml::Node mappingsRoot = GlobalRegistry().createKeyWithName("user/ui/input", "mouseToolMappings", "user");
+    auto mappingsRoot = GlobalRegistry().createKeyWithName("user/ui/input", "mouseToolMappings", "user");
 
     foreachGroup([&] (IMouseToolGroup& g)
     {
-        MouseToolGroup& group = static_cast<MouseToolGroup&>(g);
-        std::string groupName = group.getType() == IMouseToolGroup::Type::OrthoView ? "OrthoView" : "CameraView";
+        auto& group = static_cast<MouseToolGroup&>(g);
 
-        xml::Node mappingNode = mappingsRoot.createChild("mouseToolMapping");
-        mappingNode.setAttributeValue("name", groupName);
+        auto mappingNode = mappingsRoot.createChild("mouseToolMapping");
+        mappingNode.setAttributeValue("name", getToolGroupName(group.getType()));
         mappingNode.setAttributeValue("id", string::to_string(static_cast<int>(group.getType())));
 
         // e.g. <tool name="CameraMoveTool" button="MMB" modifiers="CONTROL" />
         group.foreachMapping([&](unsigned int state, const MouseToolPtr& tool)
         {
-            xml::Node toolNode = mappingNode.createChild("tool");
+            auto toolNode = mappingNode.createChild("tool");
 
             toolNode.setAttributeValue("name", tool->getName());
             wxutil::MouseButton::SaveToNode(state, toolNode);
