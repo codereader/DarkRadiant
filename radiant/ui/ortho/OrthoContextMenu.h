@@ -7,6 +7,7 @@
 #include <list>
 #include "math/Vector3.h"
 #include <wx/event.h>
+#include "wxutil/menu/MenuItem.h"
 
 class wxMenu;
 class wxWindow;
@@ -35,6 +36,8 @@ class OrthoContextMenu :
 	// The menu sections, distinguished by section number
 	typedef std::map<int, MenuItems> MenuSections;
 	MenuSections _sections;
+
+    wxutil::MenuItemPtr _createEntityItem;
 
 	struct ExtendedSelectionInfo
 	{

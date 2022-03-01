@@ -12,7 +12,7 @@ class IconTextMenuItem :
 public:
 	// Use a local bitmap as found in the application's bitmaps folder.
 	IconTextMenuItem(const std::string& text, const std::string& localBitmapFilename) :
-		wxMenuItem(NULL, wxID_ANY, text, "")
+		wxMenuItem(nullptr, wxID_ANY, text, "")
 	{
 		SetBitmap(wxutil::GetLocalBitmap(localBitmapFilename));
 	}

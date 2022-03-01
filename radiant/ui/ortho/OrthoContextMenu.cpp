@@ -43,25 +43,26 @@ namespace {
     const char* MODEL_CLASSNAME_STATIC = "func_static";
     const char* PLAYERSTART_CLASSNAME = "info_player_start";
 
-    const char* ADD_ENTITY_TEXT = N_("Create entity...");
+    const char* ADD_ENTITY_TEXT = N_("Create Entity...");
+    const char* CONVERT_TO_ENTITY_TEXT = N_("Convert to Entity...");
     const char* ADD_ENTITY_ICON = "cmenu_add_entity.png";
     const char* PLACE_PLAYERSTART_TEXT = N_("Place Player Start here");
     const char* PLACE_PLAYERSTART_ICON = "player_start16.png";
-    const char* ADD_MODEL_TEXT = N_("Create model...");
+    const char* ADD_MODEL_TEXT = N_("Create Model...");
     const char* ADD_MODEL_ICON = "cmenu_add_model.png";
-    const char* ADD_MONSTERCLIP_TEXT = N_("Surround with monsterclip");
+    const char* ADD_MONSTERCLIP_TEXT = N_("Surround with Monsterclip");
     const char* ADD_MONSTERCLIP_ICON = "monsterclip16.png";
-    const char* ADD_LIGHT_TEXT = N_("Create light...");
+    const char* ADD_LIGHT_TEXT = N_("Create Light...");
     const char* ADD_LIGHT_ICON = "cmenu_add_light.png";
-    const char* ADD_PREFAB_TEXT = N_("Insert prefab...");
+    const char* ADD_PREFAB_TEXT = N_("Insert Prefab...");
     const char* ADD_PREFAB_ICON = "cmenu_add_prefab.png";
-    const char* ADD_SPEAKER_TEXT = N_("Create speaker...");
+    const char* ADD_SPEAKER_TEXT = N_("Create Speaker...");
     const char* ADD_SPEAKER_ICON = "icon_sound.png";
     const char* CONVERT_TO_STATIC_TEXT = N_("Convert to func_static");
     const char* CONVERT_TO_STATIC_ICON = "cmenu_convert_static.png";
-    const char* REPARENT_PRIMITIVES_TEXT = N_("Reparent primitives");
-    const char* REVERT_TO_WORLDSPAWN_TEXT = N_("Revert to worldspawn");
-    const char* REVERT_TO_WORLDSPAWN_PARTIAL_TEXT = N_("Revert part to worldspawn");
+    const char* REPARENT_PRIMITIVES_TEXT = N_("Reparent Primitives");
+    const char* REVERT_TO_WORLDSPAWN_TEXT = N_("Revert to Worldspawn");
+    const char* REVERT_TO_WORLDSPAWN_PARTIAL_TEXT = N_("Revert Part to Worldspawn");
     const char* REVERT_TO_WORLDSPAWN_ICON = "cmenu_revert_worldspawn.png";
     const char* MERGE_ENTITIES_ICON = "cmenu_merge_entities.png";
     const char* MERGE_ENTITIES_TEXT = N_("Merge Entities");
@@ -91,29 +92,31 @@ void OrthoContextMenu::Show(wxWindow* parent, const Vector3& point)
     analyseSelection();
 
     // Perform the visibility/sensitivity tests
-    for (MenuSections::const_iterator sec = _sections.begin(); sec != _sections.end(); ++sec)
+    for (const auto& [_, section] : _sections)
     {
-        for (MenuItems::const_iterator i = sec->second.begin(); i != sec->second.end(); ++i)
+        for (const auto& item : section)
         {
-            ui::IMenuItem& item = *(*i);
-
-            bool visible = item.isVisible();
+            bool visible = item->isVisible();
 
             if (visible)
             {
                 // Visibility check passed
                 // Run the preshow command
-                item.preShow();
+                item->preShow();
 
-                item.getMenuItem()->Enable(item.isSensitive());
+                item->getMenuItem()->Enable(item->isSensitive());
             }
             else
             {
                 // Visibility check failed, skip sensitivity check
-                item.getMenuItem()->Enable(false);
+                item->getMenuItem()->Enable(false);
             }
         }
     }
+
+    // Adjust the Create Entity label, it's Convert to Entity if anything is selected
+    _createEntityItem->getMenuItem()->SetItemLabel(
+        _selectionInfo.anythingSelected ? CONVERT_TO_ENTITY_TEXT : ADD_ENTITY_TEXT);
 
 	parent->PopupMenu(_widget.get());
 }
@@ -374,12 +377,10 @@ void OrthoContextMenu::callbackAddModel()
 
 void OrthoContextMenu::registerDefaultItems()
 {
-    wxutil::MenuItemPtr addEntity(
-        new wxutil::MenuItem(
-            new wxutil::IconTextMenuItem(_(ADD_ENTITY_TEXT), ADD_ENTITY_ICON),
-            std::bind(&OrthoContextMenu::addEntity, this),
-            std::bind(&OrthoContextMenu::checkAddEntity, this))
-    );
+    _createEntityItem = std::make_shared<wxutil::MenuItem>(
+        new wxutil::IconTextMenuItem(_(ADD_ENTITY_TEXT), ADD_ENTITY_ICON),
+        std::bind(&OrthoContextMenu::addEntity, this),
+        std::bind(&OrthoContextMenu::checkAddEntity, this));
 
     wxutil::MenuItemPtr addLight(
         new wxutil::MenuItem(
@@ -468,7 +469,7 @@ void OrthoContextMenu::registerDefaultItems()
     );
 
     // Register all constructed items
-    addItem(addEntity, SECTION_CREATE);
+    addItem(_createEntityItem, SECTION_CREATE);
     addItem(addModel, SECTION_CREATE);
     addItem(addLight, SECTION_CREATE);
     addItem(addSpeaker, SECTION_CREATE);
