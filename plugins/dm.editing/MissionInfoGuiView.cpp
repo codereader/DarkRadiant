@@ -89,7 +89,11 @@ void DarkmodTxtGuiView::updateGuiState()
 	gui->findWindowDef("modCompletedValue")->text.setValue("2017-11-26");
 	gui->findWindowDef("modSizeTitle")->text.setValue("Space used:");
 	gui->findWindowDef("modSizeValue")->text.setValue("123 MB");
-	gui->findWindowDef("modSizeEraseFromDiskAction")->text.setValue("[Erase from disk]");
+
+    if (gui->findWindowDef("modSizeEraseFromDiskAction"))
+    {
+	    gui->findWindowDef("modSizeEraseFromDiskAction")->text.setValue("[Erase from disk]");
+    }
 
 	gui->findWindowDef("modLoadN")->text.setValue("Install Mission");
 	gui->findWindowDef("modLoadH")->text.setValue("Install Mission");

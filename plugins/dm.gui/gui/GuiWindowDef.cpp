@@ -326,7 +326,7 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 
 			// TODO
 		}
-		else if (token == "onesc")
+		else if (token == "onesc" || token == "onactivate")
 		{
 			GuiScriptPtr script(new GuiScript(*this));
 			script->constructFromTokens(tokeniser);
@@ -425,6 +425,10 @@ void GuiWindowDef::constructFromTokens(parser::DefTokeniser& tokeniser)
 			rWarning() << "'choiceType' token encountered in windowDef block in " << name << std::endl;
 			tokeniser.nextToken(); // the choicetype value
 		}
+        else if (token == "matscalex" || token == "matscaley")
+        {
+            tokeniser.nextToken(); // value
+        }
 		else if (token == "}")
 		{
 			break;
