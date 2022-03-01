@@ -355,11 +355,8 @@ void BrushNode::onPreRender(const VolumeTest& volume)
     {
         auto& face = faceInstance.getFace();
 
-        // A selected brush needs to update the solid renderable since that is used to render highlights
-        if (isCameraView || brushIsSelected)
-        {
-            face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader(), *_renderEntity);
-        }
+        // Always update the solid renderables, even in ortho rendering, since we need the solid renderable for highlighting
+        face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader(), *_renderEntity);
 
         if (!isCameraView)
         {
