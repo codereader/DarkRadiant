@@ -249,22 +249,25 @@ std::string OrthoContextMenu::getRegistryKeyWithDefault(
 void OrthoContextMenu::addEntity()
 {
     // Display the chooser to select an entity classname
-    std::string cName = wxutil::EntityClassChooser::chooseEntityClass();
+    auto purpose = _selectionInfo.anythingSelected ?
+        wxutil::EntityClassChooser::Purpose::ConvertEntity :
+        wxutil::EntityClassChooser::Purpose::AddEntity;
 
-    if (!cName.empty())
+    auto className = wxutil::EntityClassChooser::ChooseEntityClass(purpose);
+
+    if (className.empty()) return;
+
+    UndoableCommand command(_selectionInfo.anythingSelected ? "convertToEntity" : "createEntity");
+
+    // Create the entity. We might get an EntityCreationException if the
+    // wrong number of brushes is selected.
+    try
     {
-        UndoableCommand command("createEntity");
-
-        // Create the entity. We might get an EntityCreationException if the
-        // wrong number of brushes is selected.
-        try
-		{
-            GlobalEntityModule().createEntityFromSelection(cName, _lastPoint);
-        }
-        catch (cmd::ExecutionFailure& e)
-		{
-            wxutil::Messagebox::ShowError(e.what());
-        }
+        GlobalEntityModule().createEntityFromSelection(className, _lastPoint);
+    }
+    catch (cmd::ExecutionFailure& e)
+    {
+        wxutil::Messagebox::ShowError(e.what());
     }
 }
 

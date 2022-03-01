@@ -23,7 +23,7 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelect
 : PropertyEditor(entities),
   _key(name)
 {
-	constructBrowseButtonPanel(parent, _("Choose entity class..."),
+	constructBrowseButtonPanel(parent, _("Choose Entity Class..."),
 		PropertyEditorFactory::getBitmapFor("classname"));
 }
 
@@ -32,7 +32,8 @@ void ClassnamePropertyEditor::onBrowseButtonClick()
 	std::string currentEclass = _entities.getSharedKeyValue(_key, false);
 
 	// Use the EntityClassChooser dialog to get a selection from the user
-	std::string selection = wxutil::EntityClassChooser::chooseEntityClass(currentEclass);
+	std::string selection = wxutil::EntityClassChooser::ChooseEntityClass(
+        wxutil::EntityClassChooser::Purpose::SelectClassname, currentEclass);
 
 	// Only apply if the classname has actually changed
 	if (!selection.empty() && selection != currentEclass)

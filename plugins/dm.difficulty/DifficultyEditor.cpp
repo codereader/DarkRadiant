@@ -98,11 +98,14 @@ void DifficultyEditor::populateWindow()
 void DifficultyEditor::chooseEntityClass()
 {
     // Show dialog and set the entry box text with the chosen entity class
-    std::string chosenEntity = wxutil::EntityClassChooser::chooseEntityClass(
-        _classEntry->GetValue().ToStdString()
+    auto chosenEntity = wxutil::EntityClassChooser::ChooseEntityClass(
+        wxutil::EntityClassChooser::Purpose::SelectClassname, _classEntry->GetValue().ToStdString()
     );
+
     if (!chosenEntity.empty())
+    {
         _classEntry->SetValue(chosenEntity);
+    }
 }
 
 int DifficultyEditor::getSelectedSettingId()

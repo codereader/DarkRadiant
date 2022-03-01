@@ -1,5 +1,6 @@
 #include "EntityClassChooser.h"
 
+#include <stdexcept>
 #include "dataview/TreeModel.h"
 #include "dataview/TreeViewItemStyle.h"
 #include "dataview/ThreadedResourceTreePopulator.h"
@@ -26,7 +27,9 @@ namespace wxutil
 
 namespace
 {
-    const char* const ECLASS_CHOOSER_TITLE = N_("Create entity");
+    const char* const TITLE_ADD_ENTITY = N_("Create Entity");
+    const char* const TITLE_CONVERT_TO_ENTITY = N_("Convert to Entity");
+    const char* const TITLE_SELECT_ENTITY = N_("Select Entity Class");
     const char* const RKEY_SPLIT_POS = "user/ui/entityClassChooser/splitPos";
     const char* const RKEY_WINDOW_STATE = "user/ui/entityClassChooser/window";
     const char* const RKEY_LAST_SELECTED_ECLASS = "user/ui/entityClassChooser/lastSelectedEclass";
@@ -36,6 +39,18 @@ namespace
 
     // Registry XPath to lookup key that specifies the display folder
     const char* const FOLDER_KEY_PATH = "/entityChooser/displayFolderKey";
+
+    std::string getDialogTitle(EntityClassChooser::Purpose purpose)
+    {
+        switch (purpose)
+        {
+        case EntityClassChooser::Purpose::AddEntity: return _(TITLE_ADD_ENTITY);
+        case EntityClassChooser::Purpose::ConvertEntity: return _(TITLE_CONVERT_TO_ENTITY);
+        case EntityClassChooser::Purpose::SelectClassname: return _(TITLE_SELECT_ENTITY);
+        default:
+            throw std::logic_error("Unknown entity class chooser purpose");
+        }
+    }
 }
 
 /*
@@ -146,18 +161,31 @@ public:
 };
 
 // Main constructor
-EntityClassChooser::EntityClassChooser() :
-    DialogBase(_(ECLASS_CHOOSER_TITLE)),
+EntityClassChooser::EntityClassChooser(Purpose purpose) :
+    DialogBase(getDialogTitle(purpose)),
     _treeView(nullptr),
     _selectedName("")
 {
     loadNamedPanel(this, "EntityClassChooserMainPanel");
 
     // Connect button signals
-    findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Bind(
-        wxEVT_BUTTON, &EntityClassChooser::onOK, this);
-    findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->SetBitmap(
-        wxArtProvider::GetBitmap(wxART_PLUS));
+    auto confirmButton = findNamedObject<wxButton>(this, "EntityClassChooserAddButton");
+    confirmButton->Bind(wxEVT_BUTTON, &EntityClassChooser::onOK, this);
+
+    switch (purpose)
+    {
+    case EntityClassChooser::Purpose::AddEntity: 
+        confirmButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
+        break;
+    case EntityClassChooser::Purpose::ConvertEntity:
+        confirmButton->SetLabelText(_("Convert"));
+        break;
+    case EntityClassChooser::Purpose::SelectClassname:
+        confirmButton->SetLabelText(_("Select"));
+        break;
+    default:
+        throw std::logic_error("Unknown entity class chooser purpose");
+    }
 
     findNamedObject<wxButton>(this, "EntityClassChooserCancelButton")->Bind(
         wxEVT_BUTTON, &EntityClassChooser::onCancel, this);
@@ -208,9 +236,9 @@ EntityClassChooser::~EntityClassChooser()
 }
 
 // Display the singleton instance
-std::string EntityClassChooser::chooseEntityClass(const std::string& eclassToSelect)
+std::string EntityClassChooser::ChooseEntityClass(Purpose purpose, const std::string& eclassToSelect)
 {
-    EntityClassChooser instance;
+    EntityClassChooser instance{ purpose };
 
     // Fall back to the value we saved in the registry if we didn't get any other instructions
     auto preselectEclass = !eclassToSelect.empty() ? eclassToSelect : 

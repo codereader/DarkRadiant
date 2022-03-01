@@ -309,7 +309,8 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
     getControl<wxButton>("MaterialPreviewLightChooseClassnameButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
     {
         auto textCtrl = getControl<wxTextCtrl>("MaterialPreviewLightClassname");
-        auto newClassName = wxutil::EntityClassChooser::chooseEntityClass(textCtrl->GetValue().ToStdString());
+        auto newClassName = wxutil::EntityClassChooser::ChooseEntityClass(
+            wxutil::EntityClassChooser::Purpose::SelectClassname, textCtrl->GetValue().ToStdString());
         textCtrl->SetValue(newClassName);
     });
     
