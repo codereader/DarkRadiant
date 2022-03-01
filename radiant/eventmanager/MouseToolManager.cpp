@@ -6,6 +6,7 @@
 #include "itextstream.h"
 #include "ui/imainframe.h"
 
+#include "xmlutil/Node.h"
 #include "string/convert.h"
 #include "string/join.h"
 #include "wxutil/MouseButton.h"
@@ -13,6 +14,7 @@
 #include "module/StaticModule.h"
 #include "ModifierHintPopup.h"
 
+#include <fmt/format.h>
 #include <wx/frame.h>
 
 namespace ui
@@ -32,6 +34,12 @@ namespace
         default: 
             throw std::logic_error("Tool group name not resolvable: " + string::to_string(static_cast<int>(group)));
         }
+    }
+
+    inline std::string getMappingPath(bool userMappings, MouseToolGroup::Type group)
+    {
+        return fmt::format("user/ui/input/mouseToolMappings[@name='{0}']//mouseToolMapping[@id={1}]//tool",
+            userMappings ? "user" : "default", static_cast<int>(group));
     }
 }
 
@@ -69,54 +77,43 @@ void MouseToolManager::initialiseModule(const IApplicationContext& ctx)
         sigc::mem_fun(this, &MouseToolManager::onMainFrameConstructed));
 }
 
-void MouseToolManager::loadGroupMapping(MouseToolGroup::Type type, const xml::NodeList& userMappings, const xml::NodeList& defaultMappings)
+void MouseToolManager::loadGroupMapping(MouseToolGroup::Type type)
 {
 	MouseToolGroup& group = getGroup(type);
+
+    // User-defined mapping take precedence, add them first
+    auto mappings = GlobalRegistry().findXPath(getMappingPath(true, type));
+
+    // Append the default mappings at the end of the list
+    auto defaultMappings = GlobalRegistry().findXPath(getMappingPath(false, type));
+    mappings.insert(mappings.end(), defaultMappings.begin(), defaultMappings.end());
 
 	group.clearToolMappings();
 
 	group.foreachMouseTool([&] (const MouseToolPtr& tool)
 	{
-		// First, look in the userMappings if we have a user-defined setting
-		for (const xml::Node& node : userMappings)
+		for (const auto& node : mappings)
 		{
-			if (node.getAttributeValue("name") == tool->getName())
-			{
-				// Load the condition
-				unsigned int state = wxutil::MouseButton::LoadFromNode(node) | wxutil::Modifier::LoadFromNode(node);
-				group.addToolMapping(state, tool);
+            if (node.getAttributeValue("name") != tool->getName())
+            {
+                continue;
+            }
 
-				return; // done here
-			}
+			// Found it, load the modifier+button combination
+			auto state = wxutil::MouseButton::LoadFromNode(node) | wxutil::Modifier::LoadFromNode(node);
+			group.addToolMapping(state, tool);
+
+			break; // done here
 		}
-
-		// nothing found in the user mapping, fall back to default
-		for (const xml::Node& node : defaultMappings)
-		{
-			if (node.getAttributeValue("name") == tool->getName())
-			{
-				// Load the condition
-				unsigned int state = wxutil::MouseButton::LoadFromNode(node) | wxutil::Modifier::LoadFromNode(node);
-				group.addToolMapping(state, tool);
-
-				return; // done here
-			}
-		}
-
-		// No mapping for this tool
 	});
 }
 
 void MouseToolManager::loadToolMappings()
 {
     // All modules have registered their stuff, now load the mapping
-    // Try the user-defined mapping first
-    xml::NodeList userMappings = GlobalRegistry().findXPath("user/ui/input/mouseToolMappings[@name='user']//mouseToolMapping//tool");
-	xml::NodeList defaultMappings = GlobalRegistry().findXPath("user/ui/input/mouseToolMappings[@name='default']//mouseToolMapping//tool");
-
-	loadGroupMapping(MouseToolGroup::Type::CameraView, userMappings, defaultMappings);
-	loadGroupMapping(MouseToolGroup::Type::OrthoView, userMappings, defaultMappings);
-	loadGroupMapping(MouseToolGroup::Type::TextureTool, userMappings, defaultMappings);
+    loadGroupMapping(MouseToolGroup::Type::CameraView);
+	loadGroupMapping(MouseToolGroup::Type::OrthoView);
+	loadGroupMapping(MouseToolGroup::Type::TextureTool);
 }
 
 void MouseToolManager::resetBindingsToDefault()

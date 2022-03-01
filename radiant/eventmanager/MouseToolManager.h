@@ -3,7 +3,6 @@
 #include <map>
 #include "imousetool.h"
 #include "imousetoolmanager.h"
-#include "xmlutil/Node.h"
 #include "MouseToolGroup.h"
 #include <wx/event.h>
 #include <wx/timer.h>
@@ -62,7 +61,7 @@ private:
     void onMainFrameConstructed();
 
     void loadToolMappings();
-	void loadGroupMapping(MouseToolGroup::Type type, const xml::NodeList& userMappings, const xml::NodeList& defaultMappings);
+	void loadGroupMapping(MouseToolGroup::Type type);
 
     void saveToolMappings();
 
