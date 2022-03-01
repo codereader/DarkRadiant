@@ -487,6 +487,7 @@ bool RenderPreview::drawPreview()
 
     // Keep the modelview matrix in the volumetest class up to date
     _view.construct(projection, getModelViewMatrix(), _previewWidth, _previewHeight);
+    _view.setViewer(_viewOrigin);
 
 	// Set the projection and modelview matrices
 	glMatrixMode(GL_PROJECTION);
@@ -507,8 +508,15 @@ bool RenderPreview::drawPreview()
 
     RenderStateFlags flags = getRenderFlagsFill();
 
-    // Launch the back end rendering
-    _renderSystem->renderFullBrightScene(RenderViewType::Camera, flags, _view);
+    // Start back end render phase
+    if (getLightingModeEnabled())
+    {
+        _renderSystem->renderLitScene(flags, _view);
+    }
+    else
+    {
+        _renderSystem->renderFullBrightScene(RenderViewType::Camera, flags, _view);
+    }
 
     // Give subclasses an opportunity to render their own on-screen stuff
     onPostRender();

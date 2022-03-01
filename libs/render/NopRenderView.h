@@ -53,6 +53,11 @@ public:
         return _viewer.getVector3();
     }
 
+    void setViewer(const Vector3& viewer)
+    {
+        _viewer = Vector4(viewer, 1.0);
+    }
+
     const Frustum& getFrustum() const override
     {
         return _frustum;
