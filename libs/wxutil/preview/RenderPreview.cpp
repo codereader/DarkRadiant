@@ -448,6 +448,8 @@ bool RenderPreview::drawPreview()
 
     util::ScopedBoolLock lock(_renderingInProgress);
 
+    _renderSystem->startFrame();
+
     if (!_glFont)
     {
         auto fontSize = registry::getValue<int>(RKEY_RENDERPREVIEW_FONTSIZE);
@@ -513,6 +515,8 @@ bool RenderPreview::drawPreview()
 
     // Draw the render time
     drawInfoText();
+
+    _renderSystem->endFrame();
 
     return true;
 }

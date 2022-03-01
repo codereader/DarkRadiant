@@ -4,6 +4,8 @@
 #include "igeometryrenderer.h"
 #include "igeometrystore.h"
 
+#include "ObjectRenderer.h"
+
 namespace render
 {
 
@@ -82,8 +84,6 @@ public:
         // Render this slot without any vertex colours
         glDisableClientState(GL_COLOR_ARRAY);
 
-        glFrontFace(GL_CW);
-
         for (auto& surface : _surfaces)
         {
             renderSlot(surface.second, &view, info.checkFlag(RENDER_BUMP));
@@ -101,8 +101,6 @@ public:
 
         // Render this slot without any vertex colours
         glDisableClientState(GL_COLOR_ARRAY);
-
-        glFrontFace(GL_CW);
 
         renderSlot(_surfaces.at(slot));
 
@@ -134,33 +132,7 @@ private:
             _store.updateData(slot.storageHandle, surface.getVertices(), surface.getIndices());
         }
 
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-
-        glMultMatrixd(surface.getObjectTransform());
-
-        auto renderParams = _store.getRenderParameters(slot.storageHandle);
-
-        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
-        glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->colour);
-
-        if (renderBump)
-        {
-            glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->normal);
-            glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->texcoord);
-            glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->tangent);
-            glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->bitangent);
-        }
-        else
-        {
-            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->texcoord);
-            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->normal);
-        }
-
-        glDrawElementsBaseVertex(GL_TRIANGLES, static_cast<GLsizei>(renderParams.indexCount), 
-            GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
-
-        glPopMatrix();
+        ObjectRenderer::SubmitObject(surface, _store);
     }
 
     Slot getNextFreeSlotIndex()

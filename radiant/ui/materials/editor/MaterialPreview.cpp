@@ -13,6 +13,7 @@
 #include <wx/toolbar.h>
 #include "entitylib.h"
 #include "gamelib.h"
+#include "scenelib.h"
 
 namespace ui
 {
@@ -246,7 +247,7 @@ void MaterialPreview::setupSceneGraph()
         Node_getEntity(_light)->setKeyValue("light_radius", "750 750 750");
         Node_getEntity(_light)->setKeyValue("origin", "150 150 150");
 
-        _rootNode->addChildNode(_light);
+        scene::addNodeToContainer(_light, _rootNode);
 
         // Reset the default view, facing down to the model from diagonally above the bounding box
         double distance = _model->localAABB().getRadius() * _defaultCamDistanceFactor;
@@ -281,7 +282,7 @@ void MaterialPreview::setupTestModel()
 {
     if (_entity && _model)
     {
-        _entity->removeChildNode(_model);
+        scene::removeNodeFromParent(_model);
         _model.reset();
     }
 
@@ -300,7 +301,7 @@ void MaterialPreview::setupTestModel()
     }
 
     // The test model is a child of this entity
-    _entity->addChildNode(_model);
+    scene::addNodeToContainer(_model, _entity);
 
     updateModelSkin();
 }
