@@ -19,6 +19,8 @@
 namespace render
 {
 
+using CharBufPtr = std::shared_ptr<std::vector<char>>;
+
 // Constructor, populates map with GLProgram instances
 GLProgramFactory::GLProgramFactory()
 {
@@ -81,38 +83,41 @@ void GLProgramFactory::unrealise()
 	}
 }
 
+namespace
+{
+
+// Get the path of a GL program file
+std::string getBuiltInGLProgramPath(const std::string& progName)
+{
+    // Append the requested filename with the "gl/" directory.
+    return module::GlobalModuleRegistry().getApplicationContext().getRuntimeDataPath()
+         + "gl/" + progName;
+}
+
 // Get file as a char buffer
-GLProgramFactory::CharBufPtr
-GLProgramFactory::getFileAsBuffer(const std::string& filename,
-                                  bool nullTerminated)
+CharBufPtr getFileAsBuffer(const std::string& filename)
 {
     // Get absolute path from filename
     std::string absFileName = getBuiltInGLProgramPath(filename);
 
     // Open the file
-	std::size_t size = os::getFileSize(absFileName);
-	std::ifstream file(absFileName.c_str());
+    std::size_t size = os::getFileSize(absFileName);
+    std::ifstream file(absFileName.c_str());
 
     // Throw an exception if the file could not be found
-	if (!file.is_open())
-    {
-        throw std::runtime_error(
-            "GLProgramFactory: failed to open file: " + absFileName
-        );
+    if (!file.is_open()) {
+        throw std::runtime_error("GLProgramFactory: failed to open file: " + absFileName);
     }
 
     // Read the file data into a buffer, adding a NULL terminator if required
-    std::size_t bufSize = (nullTerminated ? size + 1 : size);
-	CharBufPtr buffer(new std::vector<char>(bufSize, 0));
-	file.read(&buffer->front(), size);
+    std::size_t bufSize = size + 1;
+    CharBufPtr buffer(new std::vector<char>(bufSize, 0));
+    file.read(&buffer->front(), size);
 
     // Close file and return buffer
     file.close();
     return buffer;
 }
-
-namespace
-{
 
 void assertShaderCompiled(GLuint shader, const std::string& filename)
 {
@@ -200,8 +205,8 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
 
     // Load the source files as NULL-terminated strings and pass the text to
     // OpenGL
-    CharBufPtr vertexSrc = getFileAsBuffer(vFile, true);
-    CharBufPtr fragSrc = getFileAsBuffer(fFile, true);
+    CharBufPtr vertexSrc = getFileAsBuffer(vFile);
+    CharBufPtr fragSrc = getFileAsBuffer(fFile);
 
     const char* csVertex = &vertexSrc->front();
     const char* csFragment = &fragSrc->front();
@@ -231,16 +236,6 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
 
     // Return the linked program
     return program;
-}
-
-// Get the path of a GL program file
-std::string GLProgramFactory::getBuiltInGLProgramPath(const std::string& progName)
-{
-    // Append the requested filename with the "gl/" directory.
-    return module::GlobalModuleRegistry()
-            .getApplicationContext()
-                .getRuntimeDataPath()
-                    + "gl/" + progName;
 }
 
 } // namespace render

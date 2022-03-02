@@ -37,19 +37,6 @@ class GLProgramFactory
     // Using GLSL flag
     bool _usingGLSL;
 
-private:
-    /*
-     * Convenience method to return the full path of a given GL program file on
-     * disk, taking account of platform-dependent differences.
-     */
-    static std::string getBuiltInGLProgramPath(const std::string& progName);
-
-    // Get a vector of chars containing file contents, with optional
-    // NULL-termination
-    typedef std::shared_ptr<std::vector<char> > CharBufPtr;
-    static CharBufPtr getFileAsBuffer(const std::string& filename,
-                                      bool nullTerminated);
-
 public:
     // Constructor, populates internal map
     GLProgramFactory();

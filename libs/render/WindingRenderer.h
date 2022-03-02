@@ -14,7 +14,7 @@ class IBackendWindingRenderer :
     public IWindingRenderer
 {
 public:
-    virtual ~IBackendWindingRenderer() 
+    virtual ~IBackendWindingRenderer()
     {}
 
     // Returns true if the vertex buffers are empty
@@ -178,7 +178,7 @@ private:
                 {
                     const auto& slot = _owner._slots[slotIndex];
                     auto& buffer = _owner._buckets[slot.bucketIndex];
-                    
+
                     auto firstVertex = static_cast<unsigned int>(vertices.size());
                     auto windingSize = buffer.buffer.getWindingSize();
 
@@ -223,7 +223,7 @@ private:
             return _bounds;
         }
 
-        sigc::signal<void>& signal_boundsChanged() override 
+        sigc::signal<void>& signal_boundsChanged() override
         {
             return _sigBoundsChanged;
         }
@@ -252,10 +252,10 @@ private:
 
             // Find or create a surface for the entity
             auto existing = _windingsByEntity.find(slot.renderEntity);
-            
+
             if (existing == _windingsByEntity.end())
             {
-                existing = _windingsByEntity.emplace(slot.renderEntity, 
+                existing = _windingsByEntity.emplace(slot.renderEntity,
                     std::make_shared<WindingGroup>(_owner)).first;
 
                 // New surface, register this with the entity
@@ -277,7 +277,7 @@ private:
 
             auto& group = _windingsByEntity[slot.renderEntity];
             group->removeWinding(slotMappingIndex);
-            
+
             if (group->empty())
             {
                 slot.renderEntity->removeRenderable(group);
@@ -301,7 +301,7 @@ public:
         }
     }
 
-    bool empty() const
+    bool empty() const override
     {
         return _windingCount == 0;
     }
@@ -433,7 +433,7 @@ public:
                 glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
                 glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
             }
-            
+
             auto primitiveMode = RenderingTraits<WindingIndexerT>::Mode();
             glDrawElements(primitiveMode, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, &indices.front());
 
