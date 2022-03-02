@@ -72,7 +72,7 @@ void GLProgramFactory::realise()
 }
 
 // Unrealise the program factory.
-void GLProgramFactory::unrealise() 
+void GLProgramFactory::unrealise()
 {
 	// Destroy each GLProgram in the map
     for (ProgramMap::value_type& pair : _builtInPrograms)
@@ -111,7 +111,10 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename,
     return buffer;
 }
 
-void GLProgramFactory::assertShaderCompiled(GLuint shader)
+namespace
+{
+
+void assertShaderCompiled(GLuint shader)
 {
     // Get compile status
     GLint compileStatus;
@@ -136,7 +139,7 @@ void GLProgramFactory::assertShaderCompiled(GLuint shader)
     }
 }
 
-std::string GLProgramFactory::getProgramInfoLog(GLuint program)
+std::string getProgramInfoLog(GLuint program)
 {
     // Get log length
     int logLength;
@@ -151,7 +154,7 @@ std::string GLProgramFactory::getProgramInfoLog(GLuint program)
     return logStr;
 }
 
-void GLProgramFactory::assertProgramLinked(GLuint program)
+void assertProgramLinked(GLuint program)
 {
     // Check the link status
     GLint linkStatus;
@@ -182,6 +185,8 @@ void GLProgramFactory::assertProgramLinked(GLuint program)
 
 #endif
 }
+
+} // namespace
 
 GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
                                            const std::string& fFile)
