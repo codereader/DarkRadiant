@@ -1501,4 +1501,22 @@ TEST_F(MaterialsTest, MaterialFrobStageRemoval)
     checkFrobStageRemoval("textures/parsertest/frobstage_missing5");
 }
 
+// #5853: Two files define the same material:
+// 1) in VFS: materials/z_precedence.mtr
+// 2) in PK4: tdm_example_mtrs.pk4/materials/precedence.mtr
+// Even though the filesystem folder has higher priority, the file
+// in the PK4 should be parsed first, since the lexicographical order
+// is considered when looking for .mtr files. That's why the
+// declaration in the filesystem should not take effect.
+TEST_F(MaterialsTest, MaterialFilenamePrecedence)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/precedencecheck");
+
+    EXPECT_TRUE(material) << "Could not find the material textures/precedencecheck";
+
+    // The material in the PK4 should be processed first, the one in the filesystem just produces a warning
+    EXPECT_EQ(material->getDescription(), "Defined in precedence.mtr") 
+        << "Description does not match what is defined in the PK4 .mtr";
+}
+
 }
