@@ -371,6 +371,9 @@
     <ClInclude Include="..\..\libs\render\NopRenderView.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\parser\ThreadedDeclParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

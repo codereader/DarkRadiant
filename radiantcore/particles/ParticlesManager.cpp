@@ -43,9 +43,11 @@ namespace
 }
 
 ParticlesManager::ParticlesManager() :
-    _defLoader(std::bind(&ParticlesManager::findOrInsertParticleDefInternal, this, std::placeholders::_1),
-               std::bind(&ParticlesManager::onParticlesLoaded, this))
-{}
+    _defLoader(std::bind(&ParticlesManager::findOrInsertParticleDefInternal, this, std::placeholders::_1))
+{
+    _defLoader.signal_finished().connect(
+        sigc::mem_fun(this, &ParticlesManager::onParticlesLoaded));
+}
 
 sigc::signal<void> ParticlesManager::signal_particlesReloaded() const
 {
@@ -162,14 +164,12 @@ const std::string& ParticlesManager::getName() const
 
 const StringSet& ParticlesManager::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_FILETYPES);
-	}
+    static StringSet _dependencies
+    {
+        MODULE_VIRTUALFILESYSTEM,
+        MODULE_COMMANDSYSTEM,
+        MODULE_FILETYPES,
+    };
 
 	return _dependencies;
 }

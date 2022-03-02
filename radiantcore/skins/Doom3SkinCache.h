@@ -9,7 +9,7 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "ThreadedDefLoader.h"
+#include "parser/ThreadedDeclParser.h"
 
 namespace skins
 {
@@ -33,7 +33,7 @@ class Doom3SkinCache :
 	ModelSkinMap _modelSkins;
 
     // Helper which will invoke loadSkinFiles() in a separate thread
-    util::ThreadedDefLoader<void> _defLoader;
+    parser::ThreadedDeclParser<void> _defLoader;
 
 	// Empty Doom3ModelSkin to return if a named skin is not found
 	Doom3ModelSkin _nullSkin;

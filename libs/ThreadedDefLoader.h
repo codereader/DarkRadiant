@@ -3,8 +3,8 @@
 #include <future>
 #include <functional>
 #include <algorithm>
+#include <sigc++/signal.h>
 #include <vector>
-#include "ifilesystem.h"
 
 namespace util
 {
@@ -19,22 +19,17 @@ namespace util
  *
  * Client code (even from multiple threads) can retrieve (and wait for) the result 
  * by calling the get() method.
- * 
- * The loader will invoke the functor passed to the constructor for each encountered 
- * def file, in the same order as the idTech4/TDM engine (alphabetically).
  */
 template <typename ReturnType>
 class ThreadedDefLoader
 {
+public:
+    using LoadFunction = std::function<ReturnType()>;
+    using FinishedSignal = sigc::signal<void>;
+
 private:
-    std::string _baseDir;
-    std::string _extension;
-    std::size_t _depth;
-
-    typedef std::function<ReturnType()> LoadFunction;
-
     LoadFunction _loadFunc;
-    std::function<void()> _finishedFunc;
+    FinishedSignal _finishedSignal;
 
     std::shared_future<ReturnType> _result;
     std::shared_future<void> _finisher;
@@ -43,25 +38,12 @@ private:
     bool _loadingStarted;
 
 public:
-    ThreadedDefLoader(const std::string& baseDir, const std::string& extension, const LoadFunction& loadFunc) :
-        ThreadedDefLoader(baseDir, extension, 0, loadFunc)
-    {}
-    
-    ThreadedDefLoader(const std::string& baseDir, const std::string& extension, std::size_t depth, const LoadFunction& loadFunc) :
-        ThreadedDefLoader(baseDir, extension, depth, loadFunc, std::function<void()>())
-    {}
-
-    ThreadedDefLoader(const std::string& baseDir, const std::string& extension, std::size_t depth,
-                      const LoadFunction& loadFunc, const std::function<void()>& finishedFunc) :
-        _baseDir(baseDir),
-        _extension(extension),
-        _depth(depth),
+    ThreadedDefLoader(const LoadFunction& loadFunc) :
         _loadFunc(loadFunc),
-        _finishedFunc(finishedFunc),
         _loadingStarted(false)
     {}
-
-    ~ThreadedDefLoader()
+    
+    virtual ~ThreadedDefLoader()
     {
         // wait for any worker thread to finish
         reset();
@@ -120,50 +102,25 @@ public:
         }
     }
 
-protected:
-    void loadFiles(const vfs::VirtualFileSystem::VisitorFunc& visitor)
+    FinishedSignal& signal_finished()
     {
-        loadFiles(GlobalFileSystem(), visitor);
-    }
-
-    void loadFiles(vfs::VirtualFileSystem& vfs, const vfs::VirtualFileSystem::VisitorFunc& visitor)
-    {
-        // Accumulate all the files and sort them before calling the visitor
-        std::vector<vfs::FileInfo> _incomingFiles;
-        _incomingFiles.reserve(200);
-
-        vfs.forEachFile(_baseDir, _extension, [&](const vfs::FileInfo& info)
-        {
-            _incomingFiles.push_back(info);
-        }, _depth);
-
-        // Sort the files by name
-        std::sort(_incomingFiles.begin(), _incomingFiles.end(), [](const vfs::FileInfo& a, const vfs::FileInfo& b)
-        {
-            return a.name < b.name;
-        });
-
-        // Dispatch the sorted list to the visitor
-        std::for_each(_incomingFiles.begin(), _incomingFiles.end(), visitor);
+        return _finishedSignal;
     }
 
 private:
-    struct FinishFunctionCaller
+    struct FinishSignalEmitter
     {
-        std::function<void()> _function;
+        FinishedSignal& _signal;
         std::shared_future<void>& _targetFuture;
 
-        FinishFunctionCaller(const std::function<void()>& function, std::shared_future<void>& targetFuture) :
-            _function(function),
+        FinishSignalEmitter(FinishedSignal& signal, std::shared_future<void>& targetFuture) :
+            _signal(signal),
             _targetFuture(targetFuture)
         {}
 
-        ~FinishFunctionCaller()
+        ~FinishSignalEmitter()
         {
-            if (_function)
-            {
-                _targetFuture = std::async(std::launch::async, _function);
-            }
+            _targetFuture = std::async(std::launch::async, std::bind(&FinishedSignal::emit, _signal));
         }
     };
 
@@ -176,8 +133,8 @@ private:
             _loadingStarted = true;
             _result = std::async(std::launch::async, [&]()
             {
-                // When going out of scope, this instance invokes the finished callback in a separate thread
-                FinishFunctionCaller finisher(_finishedFunc, _finisher);
+                // When going out of scope, this instance invokes the finished signal in a separate thread
+                FinishSignalEmitter finisher(_finishedSignal, _finisher);
                 return _loadFunc();
             });
         }

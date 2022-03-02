@@ -24,10 +24,13 @@ namespace eclass {
 // Constructor
 EClassManager::EClassManager() :
     _realised(false),
-    _defLoader("def/", "def", 1, std::bind(&EClassManager::loadDefAndResolveInheritance, this),
-               std::bind(&EClassManager::onDefLoadingCompleted, this)),
+    _defLoader("def/", "def", 1, std::bind(&EClassManager::loadDefAndResolveInheritance, this)),
 	_curParseStamp(0)
-{}
+{
+    _defLoader.signal_finished().connect(
+        sigc::mem_fun(this, &EClassManager::onDefLoadingCompleted)
+    );
+}
 
 sigc::signal<void> EClassManager::defsLoadingSignal() const
 {

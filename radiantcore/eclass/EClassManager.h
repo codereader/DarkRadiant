@@ -1,11 +1,12 @@
 #pragma once
 
 #include <sigc++/connection.h>
+#include <sigc++/trackable.h>
 #include "ieclass.h"
 #include "icommandsystem.h"
 #include "ifilesystem.h"
 #include "itextstream.h"
-#include "ThreadedDefLoader.h"
+#include "parser/ThreadedDeclParser.h"
 
 #include "EntityClass.h"
 #include "Doom3ModelDef.h"
@@ -30,7 +31,8 @@ namespace eclass
  */
 class EClassManager :
     public IEntityClassManager,
-    public vfs::VirtualFileSystem::Observer
+    public vfs::VirtualFileSystem::Observer,
+    public sigc::trackable
 {
     // Whether the entity classes have been realised
     bool _realised;
@@ -43,7 +45,7 @@ class EClassManager :
     Models _models;
 
     // The worker thread loading the eclasses will be managed by this
-    util::ThreadedDefLoader<void> _defLoader;
+    parser::ThreadedDeclParser<void> _defLoader;
 
 	// A unique parse pass identifier, used to check when existing
 	// definitions have been parsed

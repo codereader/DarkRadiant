@@ -11,8 +11,8 @@
 #include "ShaderLibrary.h"
 
 #include "parser/DefBlockTokeniser.h"
+#include "parser/ThreadedDeclParser.h"
 #include "materials/ParseLib.h"
-#include "ThreadedDefLoader.h"
 #include "string/replace.h"
 #include "string/predicate.h"
 #include "debugging/ScopedDebugTimer.h"
@@ -22,7 +22,7 @@ namespace shaders
 
 // VFS functor class which loads material (mtr) files.
 class ShaderFileLoader : 
-    public util::ThreadedDefLoader<ShaderLibraryPtr>
+    public parser::ThreadedDeclParser<ShaderLibraryPtr>
 {
     // The VFS module to provide shader files
     vfs::VirtualFileSystem& _vfs;
@@ -105,7 +105,7 @@ public:
 
     /// Construct and initialise the ShaderFileLoader
     ShaderFileLoader(vfs::VirtualFileSystem& fs) :
-        util::ThreadedDefLoader<ShaderLibraryPtr>(getMaterialsFolderName(), getMaterialFileExtension(),
+        parser::ThreadedDeclParser<ShaderLibraryPtr>(getMaterialsFolderName(), getMaterialFileExtension(),
             std::bind(&ShaderFileLoader::loadMaterialFiles, this)),
         _vfs(fs)
     {}

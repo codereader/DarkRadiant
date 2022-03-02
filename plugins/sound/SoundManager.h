@@ -6,7 +6,7 @@
 #include "isound.h"
 #include "icommandsystem.h"
 
-#include "ThreadedDefLoader.h"
+#include "parser/ThreadedDeclParser.h"
 #include <map>
 
 namespace sound {
@@ -26,7 +26,7 @@ private: /* FIELDS */
 
     // Shaders are loaded asynchronically, this loader
     // takes care of the worker thread
-    util::ThreadedDefLoader<void> _defLoader;
+    parser::ThreadedDeclParser<void> _defLoader;
 
 	SoundShader::Ptr _emptyShader;
 
