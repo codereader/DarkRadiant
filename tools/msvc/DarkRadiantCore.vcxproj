@@ -592,6 +592,7 @@
     <ClCompile Include="..\..\radiantcore\model\StaticModelNode.cpp" />
     <ClCompile Include="..\..\radiantcore\model\StaticModelSurface.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleDef.cpp" />
+    <ClCompile Include="..\..\radiantcore\particles\ParticleLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleNode.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleParameter.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticlesManager.cpp" />
@@ -948,6 +949,7 @@
     <ClInclude Include="..\..\radiantcore\model\StaticModelNode.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModelSurface.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleDef.h" />
+    <ClInclude Include="..\..\radiantcore\particles\ParticleLoader.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleNode.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleParameter.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleQuad.h" />

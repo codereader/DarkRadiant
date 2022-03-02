@@ -24,7 +24,7 @@ namespace eclass {
 // Constructor
 EClassManager::EClassManager() :
     _realised(false),
-    _defLoader(std::bind(&EClassManager::loadDefAndResolveInheritance, this),
+    _defLoader("def/", "def", 1, std::bind(&EClassManager::loadDefAndResolveInheritance, this),
                std::bind(&EClassManager::onDefLoadingCompleted, this)),
 	_curParseStamp(0)
 {}

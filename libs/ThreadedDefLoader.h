@@ -2,6 +2,9 @@
 
 #include <future>
 #include <functional>
+#include <algorithm>
+#include <vector>
+#include "ifilesystem.h"
 
 namespace util
 {
@@ -16,10 +19,18 @@ namespace util
  *
  * Client code (even from multiple threads) can retrieve (and wait for) the result 
  * by calling the get() method.
+ * 
+ * The loader will invoke the functor passed to the constructor for each encountered 
+ * def file, in the same order as the idTech4/TDM engine (alphabetically).
  */
 template <typename ReturnType>
 class ThreadedDefLoader
 {
+private:
+    std::string _baseDir;
+    std::string _extension;
+    std::size_t _depth;
+
     typedef std::function<ReturnType()> LoadFunction;
 
     LoadFunction _loadFunc;
@@ -32,11 +43,19 @@ class ThreadedDefLoader
     bool _loadingStarted;
 
 public:
-    ThreadedDefLoader(const LoadFunction& loadFunc) :
-        ThreadedDefLoader(loadFunc, std::function<void()>())
+    ThreadedDefLoader(const std::string& baseDir, const std::string& extension, const LoadFunction& loadFunc) :
+        ThreadedDefLoader(baseDir, extension, 0, loadFunc)
+    {}
+    
+    ThreadedDefLoader(const std::string& baseDir, const std::string& extension, std::size_t depth, const LoadFunction& loadFunc) :
+        ThreadedDefLoader(baseDir, extension, depth, loadFunc, std::function<void()>())
     {}
 
-    ThreadedDefLoader(const LoadFunction& loadFunc, const std::function<void()>& finishedFunc) :
+    ThreadedDefLoader(const std::string& baseDir, const std::string& extension, std::size_t depth,
+                      const LoadFunction& loadFunc, const std::function<void()>& finishedFunc) :
+        _baseDir(baseDir),
+        _extension(extension),
+        _depth(depth),
         _loadFunc(loadFunc),
         _finishedFunc(finishedFunc),
         _loadingStarted(false)
@@ -99,6 +118,33 @@ public:
             _result = std::shared_future<ReturnType>();
             _finisher = std::shared_future<void>();
         }
+    }
+
+protected:
+    void loadFiles(const vfs::VirtualFileSystem::VisitorFunc& visitor)
+    {
+        loadFiles(GlobalFileSystem(), visitor);
+    }
+
+    void loadFiles(vfs::VirtualFileSystem& vfs, const vfs::VirtualFileSystem::VisitorFunc& visitor)
+    {
+        // Accumulate all the files and sort them before calling the visitor
+        std::vector<vfs::FileInfo> _incomingFiles;
+        _incomingFiles.reserve(200);
+
+        vfs.forEachFile(_baseDir, _extension, [&](const vfs::FileInfo& info)
+        {
+            _incomingFiles.push_back(info);
+        }, _depth);
+
+        // Sort the files by name
+        std::sort(_incomingFiles.begin(), _incomingFiles.end(), [](const vfs::FileInfo& a, const vfs::FileInfo& b)
+        {
+            return a.name < b.name;
+        });
+
+        // Dispatch the sorted list to the visitor
+        std::for_each(_incomingFiles.begin(), _incomingFiles.end(), visitor);
     }
 
 private:

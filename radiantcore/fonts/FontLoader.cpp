@@ -11,10 +11,10 @@
 namespace fonts
 {
 
-void FontLoader::operator()(const vfs::FileInfo& fileInfo)
+void FontLoader::loadFont(const vfs::FileInfo& fileInfo)
 {
 	// Construct the full VFS path
-	std::string fullPath = os::standardPath(_basePath + fileInfo.name);
+	std::string fullPath = fileInfo.fullPath();
 
 	std::regex expr("^/?(.*)/.*_(\\d{2})\\.dat$", std::regex::icase);
 	std::smatch matches;
@@ -45,7 +45,7 @@ void FontLoader::operator()(const vfs::FileInfo& fileInfo)
 		if (resolution != NumResolutions)
 		{
 			// Create the font (if not done yet), acquire the info structure
-			FontInfoPtr font = _manager.findOrCreateFontInfo(fontname);
+			auto font = _manager.findOrCreateFontInfo(fontname);
 
 			// Load the DAT file and create the glyph info
 			font->glyphSets[resolution] = GlyphSet::createFromDatFile(
@@ -57,6 +57,13 @@ void FontLoader::operator()(const vfs::FileInfo& fileInfo)
 			rWarning() << "FontLoader: ignoring DAT: " << fileInfo.name << std::endl;
 		}
 	}
+}
+
+void FontLoader::loadFonts()
+{
+    loadFiles(std::bind(&FontLoader::loadFont, this, std::placeholders::_1));
+
+    rMessage() << _manager.getNumFonts() << " fonts registered." << std::endl;
 }
 
 } // namespace fonts

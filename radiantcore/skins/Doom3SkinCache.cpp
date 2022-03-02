@@ -17,7 +17,7 @@ namespace
 }
 
 Doom3SkinCache::Doom3SkinCache() :
-    _defLoader(std::bind(&Doom3SkinCache::loadSkinFiles, this)),
+    _defLoader(SKINS_FOLDER, "skin", 1, std::bind(&Doom3SkinCache::loadSkinFiles, this)),
     _nullSkin("")
 {}
 

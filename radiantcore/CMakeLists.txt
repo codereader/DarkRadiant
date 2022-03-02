@@ -194,6 +194,7 @@ add_library(radiantcore MODULE
             modulesystem/ModuleLoader.cpp
             modulesystem/ModuleRegistry.cpp
             particles/ParticleDef.cpp
+            particles/ParticleLoader.cpp
             particles/ParticleNode.cpp
             particles/ParticleParameter.cpp
             particles/ParticlesManager.cpp

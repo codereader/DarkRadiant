@@ -8,28 +8,28 @@
 #include "TableDefinition.h"
 #include "ShaderTemplate.h"
 #include "ShaderDefinition.h"
+#include "ShaderLibrary.h"
 
 #include "parser/DefBlockTokeniser.h"
+#include "materials/ParseLib.h"
+#include "ThreadedDefLoader.h"
 #include "string/replace.h"
 #include "string/predicate.h"
+#include "debugging/ScopedDebugTimer.h"
 
 namespace shaders
 {
 
 // VFS functor class which loads material (mtr) files.
-template<typename ShaderLibrary_T> class ShaderFileLoader
+class ShaderFileLoader : 
+    public util::ThreadedDefLoader<ShaderLibraryPtr>
 {
     // The VFS module to provide shader files
     vfs::VirtualFileSystem& _vfs;
 
-    ShaderLibrary_T& _library;
-
-    // List of shader definition files to parse
-    std::vector<vfs::FileInfo> _files;
-
 private:
 
-    bool parseTable(const parser::BlockTokeniser::Block& block, const vfs::FileInfo& fileInfo)
+    bool parseTable(const parser::BlockTokeniser::Block& block, const vfs::FileInfo& fileInfo, ShaderLibrary& library)
     {
         if (block.name.length() <= 5 || !string::starts_with(block.name, "table"))
         {
@@ -47,7 +47,7 @@ private:
 
             auto table = std::make_shared<TableDefinition>(tableName, block.contents);
 
-            if (!_library.addTableDefinition(table))
+            if (!library.addTableDefinition(table))
             {
                 rError() << "[shaders] " << fileInfo.name << ": table " << tableName << " already defined." << std::endl;
             }
@@ -59,7 +59,7 @@ private:
     }
 
     // Parse a shader file with the given contents and filename
-    void parseShaderFile(std::istream& inStr, const vfs::FileInfo& fileInfo)
+    void parseShaderFile(std::istream& inStr, const vfs::FileInfo& fileInfo, ShaderLibrary& library)
     {
         // Parse the file with a blocktokeniser, the actual block contents
         // will be parsed separately.
@@ -71,7 +71,7 @@ private:
             parser::BlockTokeniser::Block block = tokeniser.nextBlock();
 
             // Try to parse tables
-            if (parseTable(block, fileInfo))
+            if (parseTable(block, fileInfo, library))
             {
                 continue; // table successfully parsed
             }
@@ -94,7 +94,7 @@ private:
             ShaderDefinition def(shaderTemplate, fileInfo);
 
             // Insert into the definitions map, if not already present
-            if (!_library.addDefinition(block.name, def))
+            if (!library.addDefinition(block.name, def))
             {
                 rError() << "[shaders] " << fileInfo.name << ": shader " << block.name << " already defined." << std::endl;
             }
@@ -104,38 +104,38 @@ private:
 public:
 
     /// Construct and initialise the ShaderFileLoader
-    ShaderFileLoader(vfs::VirtualFileSystem& fs, ShaderLibrary_T& library,
-                     const std::string& basedir,
-                     const std::string& extension = "mtr")
-    : _vfs(fs), _library(library)
-    {
-        _files.reserve(200);
+    ShaderFileLoader(vfs::VirtualFileSystem& fs) :
+        util::ThreadedDefLoader<ShaderLibraryPtr>(getMaterialsFolderName(), getMaterialFileExtension(),
+            std::bind(&ShaderFileLoader::loadMaterialFiles, this)),
+        _vfs(fs)
+    {}
 
-        // Walk the VFS and populate our files list
-        _vfs.forEachFile(
-            basedir, extension,
-            [this](const vfs::FileInfo& fi) { _files.push_back(fi); },
-            0
-        );
-    }
-
-    void parseFiles()
+private:
+    ShaderLibraryPtr loadMaterialFiles()
     {
-        for (const vfs::FileInfo& fileInfo: _files)
+        // Load the shader files from the VFS into a fresh library
+        auto library = std::make_shared<ShaderLibrary>();
+
         {
-            // Open the file
-            auto file = _vfs.openTextFile(fileInfo.fullPath());
+            ScopedDebugTimer timer("ShaderFiles parsed: ");
+            loadFiles(_vfs, [&](const vfs::FileInfo& fileInfo)
+            {
+                // Open the file
+                auto file = _vfs.openTextFile(fileInfo.fullPath());
 
-            if (file)
-            {
+                if (!file)
+                {
+                    throw std::runtime_error("Unable to read shaderfile: " + fileInfo.name);
+                }
+
                 std::istream is(&(file->getInputStream()));
-                parseShaderFile(is, fileInfo);
-            }
-            else
-            {
-                throw std::runtime_error("Unable to read shaderfile: " + fileInfo.name);
-            }
+                parseShaderFile(is, fileInfo, *library);
+            });
         }
+
+        rMessage() << library->getNumDefinitions() << " shader definitions found." << std::endl;
+
+        return library;
     }
 };
 

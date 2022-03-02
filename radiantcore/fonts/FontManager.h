@@ -7,7 +7,7 @@
 #include <map>
 
 #include "FontInfo.h"
-#include "ThreadedDefLoader.h"
+#include "FontLoader.h"
 
 namespace fonts
 {
@@ -16,12 +16,12 @@ class FontManager :
 	public IFontManager
 {
 private:
+	std::string _curLanguage;
+
 	typedef std::map<std::string, FontInfoPtr> FontMap;
 	FontMap _fonts;
 
-    util::ThreadedDefLoader<void> _loader;
-
-	std::string _curLanguage;
+    std::unique_ptr<FontLoader> _loader;
 
 public:
 	FontManager();
@@ -43,11 +43,15 @@ public:
 	// Returns the current language (e.g. "english")
 	const std::string& getCurLanguage();
 
+    std::size_t getNumFonts();
+
 private:
     void ensureFontsLoaded();
 
-    void loadFonts();
 	void reloadFonts();
+
+    std::string getFontPath();
+    std::string getFontExtension();
 };
 typedef std::shared_ptr<FontManager> FontManagerPtr;
 
