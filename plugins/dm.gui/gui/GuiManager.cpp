@@ -11,7 +11,7 @@ namespace gui
 {
 
 GuiManager::GuiManager() :
-    _guiLoader(GUI_DIR, GUI_EXT, std::bind(&GuiManager::findGuis, this))
+    _guiLoader(std::bind(&GuiManager::findGuis, this))
 {}
 
 void GuiManager::registerGui(const std::string& guiPath)

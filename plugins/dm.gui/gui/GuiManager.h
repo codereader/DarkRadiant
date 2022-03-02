@@ -5,7 +5,7 @@
 #include <map>
 #include "ifilesystem.h"
 #include "string/string.h"
-#include "parser/ThreadedDeclParser.h"
+#include "ThreadedDefLoader.h"
 
 namespace gui
 {
@@ -50,7 +50,7 @@ private:
 	typedef std::map<std::string, GuiInfo> GuiInfoMap;
 	GuiInfoMap _guis;
 
-    parser::ThreadedDeclParser<void> _guiLoader;
+    util::ThreadedDefLoader<void> _guiLoader;
 
 	// A List of all the errors occuring lastly.
 	StringList _errorList;
