@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include "ieclass.h"
 #include "parser/ThreadedDeclParser.h"
 
 #include "EntityClass.h"
@@ -9,14 +10,16 @@
 namespace eclass
 {
 
-class EClassManager;
-
-// Loads all entity classes in a worker thread
+/**
+ * The EClassParser is the loader for all entity classes and modelDefs. 
+ * It loads all entityDef declarations from the .def files in the VFS.
+ * Loading can take place synchronously or in a worker thread.
+ */
 class EClassParser final :
     public parser::ThreadedDeclParser<void>
 {
 private:
-    EClassManager& _owner;
+    IEntityClassManager& _owner;
     std::map<std::string, EntityClass::Ptr>& _entityClasses;
     std::map<std::string, Doom3ModelDef::Ptr>& _modelDefs;
 
@@ -25,7 +28,7 @@ private:
     std::size_t _curParseStamp;
 
 public:
-    EClassParser(EClassManager& owner, 
+    EClassParser(IEntityClassManager& owner,
                  std::map<std::string, EntityClass::Ptr>& entityClasses, 
                  std::map<std::string, Doom3ModelDef::Ptr>& modelDefs) :
         ThreadedDeclParser<void>(decl::Type::EntityDef, "def/", "def", 1),

@@ -18,7 +18,6 @@ private:
 	FontManager& _manager;
 
 public:
-	// Constructor. Set the base path of the search.
 	FontLoader(FontManager& manager) :
         util::ThreadedDefLoader<void>(std::bind(&FontLoader::loadFonts, this)),
 		_manager(manager)

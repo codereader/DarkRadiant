@@ -2,8 +2,9 @@
 
 #include "ieclasscolours.h"
 #include "itextstream.h"
-#include "EClassManager.h"
+
 #include "string/case_conv.h"
+#include "parser/DefTokeniser.h"
 
 namespace eclass
 {
@@ -19,8 +20,8 @@ void EClassParser::onBeginParsing()
     {
         eclass.second->blockChangedSignal(true);
     }
-
-    _owner.onBeginParsing();
+    
+    _owner.defsLoadingSignal().emit();
 }
 
 void EClassParser::parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir)
@@ -119,7 +120,7 @@ void EClassParser::onFinishParsing()
         eclass.second->emitChangedSignal();
     }
 
-    _owner.onFinishParsing();
+    _owner.defsLoadedSignal().emit();
 }
 
 void EClassParser::resolveModelInheritance(const std::string& name, const Doom3ModelDef::Ptr& model)
