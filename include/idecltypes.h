@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stdexcept>
+#include <string>
+
 namespace decl
 {
 
@@ -13,5 +16,20 @@ enum class Type
     Model,
     Particle,
 };
+
+inline std::string getTypeName(Type type)
+{
+    switch (type)
+    {
+    case Type::None: return "None";
+    case Type::Material: return "Material";
+    case Type::EntityDef: return "EntityDef";
+    case Type::SoundShader: return "SoundShader";
+    case Type::Model: return "Model";
+    case Type::Particle: return "Particle";
+    default:
+        throw std::runtime_error("Unhandled decl type");
+    }
+}
 
 }

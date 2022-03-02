@@ -1,7 +1,10 @@
 #pragma once
 
 #include "ifilesystem.h"
+#include "itextstream.h"
+#include "idecltypes.h"
 #include "ThreadedDefLoader.h"
+#include "debugging/ScopedDebugTimer.h"
 
 namespace parser
 {
@@ -18,16 +21,30 @@ public:
     using LoadFunction = util::ThreadedDefLoader<ReturnType>::LoadFunction;
 
 private:
+    decl::Type _declType;
     std::string _baseDir;
     std::string _extension;
     std::size_t _depth;
 
+protected:
+    // Construct a parser traversing all files matching the given extension in the given VFS path
+    // Subclasses need to implement the parse(std::istream) overload for this scenario
+    ThreadedDeclParser(decl::Type declType, const std::string& baseDir, const std::string& extension, std::size_t depth = 1) :
+        util::ThreadedDefLoader<typename ReturnType>(std::bind(&ThreadedDeclParser::doParse, this)),
+        _baseDir(baseDir),
+        _extension(extension),
+        _depth(depth),
+        _declType(declType)
+    {}
+
 public:
+    // Legacy constructor
     ThreadedDeclParser(const std::string& baseDir, const std::string& extension, 
                        const LoadFunction& loadFunc) :
         ThreadedDeclParser(baseDir, extension, 0, loadFunc)
     {}
 
+    // Legacy constructor
     ThreadedDeclParser(const std::string& baseDir, const std::string& extension, std::size_t depth,
                        const LoadFunction& loadFunc) :
         util::ThreadedDefLoader<typename ReturnType>(loadFunc),
@@ -39,19 +56,39 @@ public:
     virtual ~ThreadedDeclParser()
     {}
 
-protected:
-    void loadFiles(const vfs::VirtualFileSystem::VisitorFunc& visitor)
+    // Bypass the threading, and just perform the parse routine
+    ReturnType parseSynchronously()
     {
-        loadFiles(GlobalFileSystem(), visitor);
+        return doParse();
     }
 
-    void loadFiles(vfs::VirtualFileSystem& vfs, const vfs::VirtualFileSystem::VisitorFunc& visitor)
+protected:
+    virtual void onBeginParsing() {}
+    virtual ReturnType onFinishParsing() { return ReturnType(); }
+
+    // Main parse entry point, process all files
+    ReturnType doParse()
     {
-        // Accumulate all the files and sort them before calling the visitor
+        onBeginParsing();
+
+        processFiles();
+
+        return onFinishParsing();
+    }
+
+    // Parse all decls found in the given stream. To be implemented by subclasses
+    virtual void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir)
+    {}
+
+    void processFiles()
+    {
+        ScopedDebugTimer timer("[DeclParser] Parsed " + decl::getTypeName(_declType) + " declarations");
+
+        // Accumulate all the files and sort them before calling the protected parse() method
         std::vector<vfs::FileInfo> _incomingFiles;
         _incomingFiles.reserve(200);
 
-        vfs.forEachFile(_baseDir, _extension, [&](const vfs::FileInfo& info)
+        GlobalFileSystem().forEachFile(_baseDir, _extension, [&](const vfs::FileInfo& info)
         {
             _incomingFiles.push_back(info);
         }, _depth);
@@ -62,8 +99,25 @@ protected:
             return a.name < b.name;
         });
 
-        // Dispatch the sorted list to the visitor
-        std::for_each(_incomingFiles.begin(), _incomingFiles.end(), visitor);
+        // Dispatch the sorted list to the protected parse() method
+        for (const auto& fileInfo : _incomingFiles)
+        {
+            auto file = GlobalFileSystem().openTextFile(fileInfo.fullPath());
+
+            if (!file) continue;
+
+            try
+            {
+                // Parse entity defs from the file
+                std::istream stream(&file->getInputStream());
+                parse(stream, fileInfo, file->getModName());
+            }
+            catch (ParseException& e)
+            {
+                rError() << "[DeclParser] Failed to parse " << fileInfo.fullPath()
+                    << " (" << e.what() << ")" << std::endl;
+            }
+        }
     }
 };
 

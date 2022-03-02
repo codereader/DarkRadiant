@@ -9,6 +9,7 @@
 #include "parser/ThreadedDeclParser.h"
 
 #include "EntityClass.h"
+#include "EClassParser.h"
 #include "Doom3ModelDef.h"
 
 namespace eclass
@@ -31,9 +32,9 @@ namespace eclass
  */
 class EClassManager :
     public IEntityClassManager,
-    public vfs::VirtualFileSystem::Observer,
-    public sigc::trackable
+    public vfs::VirtualFileSystem::Observer
 {
+private:
     // Whether the entity classes have been realised
     bool _realised;
 
@@ -45,11 +46,13 @@ class EClassManager :
     Models _models;
 
     // The worker thread loading the eclasses will be managed by this
-    parser::ThreadedDeclParser<void> _defLoader;
+    EClassParser _defLoader;
 
+#if 0
 	// A unique parse pass identifier, used to check when existing
 	// definitions have been parsed
 	std::size_t _curParseStamp;
+#endif
 
     sigc::signal<void> _defsLoadingSignal;
     sigc::signal<void> _defsLoadedSignal;
@@ -89,6 +92,10 @@ public:
     const StringSet& getDependencies() const override;
     void initialiseModule(const IApplicationContext& ctx) override;
     void shutdownModule() override;
+
+    // Parser interface
+    void onBeginParsing();
+    void onFinishParsing();
 
 private:
 	// Method loading the DEF files

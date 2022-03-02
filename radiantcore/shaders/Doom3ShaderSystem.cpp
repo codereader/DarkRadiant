@@ -56,7 +56,7 @@ Doom3ShaderSystem::Doom3ShaderSystem() :
 
 void Doom3ShaderSystem::construct()
 {
-    _defLoader = std::make_unique<ShaderFileLoader>(GlobalFileSystem());
+    _defLoader = std::make_unique<ShaderFileLoader>();
     _library = std::make_shared<ShaderLibrary>();
     _textureManager = std::make_shared<GLTextureManager>();
 

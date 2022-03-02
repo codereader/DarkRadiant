@@ -24,12 +24,13 @@ namespace eclass {
 // Constructor
 EClassManager::EClassManager() :
     _realised(false),
-    _defLoader("def/", "def", 1, std::bind(&EClassManager::loadDefAndResolveInheritance, this)),
-	_curParseStamp(0)
+    _defLoader(*this, _entityClasses, _models)
 {
+#if 0
     _defLoader.signal_finished().connect(
         sigc::mem_fun(this, &EClassManager::onDefLoadingCompleted)
     );
+#endif
 }
 
 sigc::signal<void> EClassManager::defsLoadingSignal() const
@@ -135,8 +136,43 @@ void EClassManager::resolveModelInheritance(const std::string& name, const Doom3
 	}
 }
 
+void EClassManager::onBeginParsing()
+{
+    _defsLoadingSignal.emit();
+
+#if 0
+    // Block load signals until inheritance of all classes has been completed
+    // we can't have eclass changed signals emitted before we have that sorted out
+    for (const auto& eclass : _entityClasses)
+    {
+        eclass.second->blockChangedSignal(true);
+    }
+
+    // Increase the parse stamp for this run
+    _curParseStamp++;
+#endif
+}
+
+void EClassManager::onFinishParsing()
+{
+#if 0
+    // All defs parsed, resolve inheritance
+    resolveInheritance();
+    applyColours();
+
+    for (const auto& eclass : _entityClasses)
+    {
+        eclass.second->blockChangedSignal(false);
+        eclass.second->emitChangedSignal();
+    }
+#endif
+
+    _defsLoadedSignal.emit();
+}
+
 void EClassManager::parseDefFiles()
 {
+#if 0
 	rMessage() << "searching vfs directory 'def' for *.def\n";
 
 	// Increase the parse stamp for this run
@@ -149,10 +185,12 @@ void EClassManager::parseDefFiles()
             [&](const vfs::FileInfo& fileInfo) { parseFile(fileInfo); }
         );
 	}
+#endif
 }
 
 void EClassManager::resolveInheritance()
 {
+#if 0
 	// Resolve inheritance on the model classes
     for (Models::value_type& pair : _models)
     {
@@ -181,6 +219,7 @@ void EClassManager::resolveInheritance()
             }
         }
     }
+#endif
 }
 
 void EClassManager::ensureDefsLoaded()
@@ -190,6 +229,7 @@ void EClassManager::ensureDefsLoaded()
 
 void EClassManager::loadDefAndResolveInheritance()
 {
+#if 0
     _defsLoadingSignal.emit();
 
     // Hold back all changed signals
@@ -203,16 +243,19 @@ void EClassManager::loadDefAndResolveInheritance()
     applyColours();
 
     // The loaded signal will be invoked in the onDefLoadingCompleted() method
+#endif
 }
 
 void EClassManager::applyColours()
 {
+#if 0
     GlobalEclassColourManager().foreachOverrideColour([&](const std::string& eclass, const Vector4& colour)
     {
         auto foundEclass = _entityClasses.find(string::to_lower_copy(eclass));
         if (foundEclass != _entityClasses.end())
             foundEclass->second->setColour(colour);
     });
+#endif
 }
 
 void EClassManager::realise()
@@ -289,58 +332,41 @@ void EClassManager::forEachModelDef(const std::function<void(const IModelDefPtr&
 
 void EClassManager::reloadDefs()
 {
-    // Block load signals until inheritance of all classes has been completed
-    // we can't have eclass changed signals emitted before we have that sorted out
-    for (const auto& eclass : _entityClasses)
-    {
-        eclass.second->blockChangedSignal(true);
-    }
-
 	// greebo: Leave all current entityclasses as they are, just invoke the
 	// FileLoader again. It will parse the files again, and look up
 	// the eclass names in the existing map. If found, the eclass
 	// will be asked to clear itself and re-parse from the tokens.
 	// This is to assure that any IEntityClassPtrs remain intact during
 	// the process, only the class contents change.
-	parseDefFiles();
+    _defLoader.parseSynchronously();
 
-	// Resolve the eclass inheritance again
-	resolveInheritance();
-
-    // Release the lock and emit the signal
-    for (const auto& eclass : _entityClasses)
-    {
-        eclass.second->blockChangedSignal(false);
-        eclass.second->emitChangedSignal();
-    }
-
+    // On top of the "loaded" signal, emit the "reloaded" signal
     _defsReloadedSignal.emit();
 }
 
 // RegisterableModule implementation
-const std::string& EClassManager::getName() const {
+const std::string& EClassManager::getName() const
+{
 	static std::string _name(MODULE_ECLASSMANAGER);
 	return _name;
 }
 
 const StringSet& EClassManager::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_ECLASS_COLOUR_MANAGER);
-	}
+    static StringSet _dependencies
+    {
+        MODULE_VIRTUALFILESYSTEM,
+        MODULE_XMLREGISTRY,
+        MODULE_COMMANDSYSTEM,
+        MODULE_ECLASS_COLOUR_MANAGER
+    };
 
 	return _dependencies;
 }
 
 void EClassManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << "EntityClassDoom3::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	GlobalFileSystem().addObserver(*this);
 
@@ -423,92 +449,12 @@ void EClassManager::onFileSystemShutdown()
 // Extract all entitydefs and create objects accordingly.
 void EClassManager::parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo, const std::string& modDir)
 {
-	// Construct a tokeniser for the stream
-	std::istream is(&inStr);
-    parser::BasicDefTokeniser<std::istream> tokeniser(is);
-
-    while (tokeniser.hasMoreTokens())
-	{
-        std::string blockType = tokeniser.nextToken();
-        string::to_lower(blockType);
-
-        if (blockType == "entitydef")
-		{
-			// Get the (lowercase) entity name
-			const std::string sName =
-    			string::to_lower_copy(tokeniser.nextToken());
-
-			// Ensure that an Entity class with this name already exists
-			// When reloading entityDef declarations, most names will already be registered
-			auto i = _entityClasses.find(sName);
-
-			if (i == _entityClasses.end())
-			{
-				// Not existing yet, allocate a new class
-				auto result = _entityClasses.emplace(sName, std::make_shared<EntityClass>(sName, fileInfo));
-
-				i = result.first;
-			}
-			else
-			{
-				// EntityDef already exists, compare the parse stamp
-				if (i->second->getParseStamp() == _curParseStamp)
-				{
-					rWarning() << "[eclassmgr]: EntityDef "
-						<< sName << " redefined" << std::endl;
-				}
-			}
-
-			// At this point, i is pointing to a valid entityclass
-			i->second->setParseStamp(_curParseStamp);
-
-        	// Parse the contents of the eclass (excluding name)
-			i->second->parseFromTokens(tokeniser);
-
-			// Set the mod directory
-        	i->second->setModName(modDir);
-        }
-        else if (blockType == "model")
-		{
-			// Read the name
-			std::string modelDefName = tokeniser.nextToken();
-
-			// Ensure that an Entity class with this name already exists
-			// When reloading entityDef declarations, most names will already be registered
-			auto foundModel = _models.find(modelDefName);
-
-			if (foundModel == _models.end())
-			{
-				// Does not exist yet, allocate a new one
-
-				// Allocate an empty ModelDef
-        		auto model = std::make_shared<Doom3ModelDef>(modelDefName);
-
-                foundModel = _models.emplace(modelDefName, model).first;
-			}
-			else
-			{
-				// Model already exists, compare the parse stamp
-				if (foundModel->second->getParseStamp() == _curParseStamp)
-				{
-					rWarning() << "[eclassmgr]: Model "
-						<< modelDefName << " redefined" << std::endl;
-				}
-			}
-
-			// Model structure is allocated and in the map,
-            // invoke the parser routine
-            foundModel->second->setParseStamp(_curParseStamp);
-
-            foundModel->second->parseFromTokens(tokeniser);
-            foundModel->second->setModName(modDir);
-            foundModel->second->defFilename = fileInfo.fullPath();
-        }
-    }
+	
 }
 
 void EClassManager::parseFile(const vfs::FileInfo& fileInfo)
 {
+#if 0
 	auto file = GlobalFileSystem().openTextFile(fileInfo.fullPath());
 
 	if (!file) return;
@@ -523,10 +469,12 @@ void EClassManager::parseFile(const vfs::FileInfo& fileInfo)
 		rError() << "[eclassmgr] failed to parse " << fileInfo.fullPath()
 				 << " (" << e.what() << ")" << std::endl;
 	}
+#endif
 }
 
 void EClassManager::onDefLoadingCompleted()
 {
+#if 0
     for (const auto& eclass : _entityClasses)
     {
         eclass.second->blockChangedSignal(false);
@@ -534,6 +482,7 @@ void EClassManager::onDefLoadingCompleted()
     }
 
     _defsLoadedSignal.emit();
+#endif
 }
 
 // Static module instance

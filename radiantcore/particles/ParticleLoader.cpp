@@ -49,45 +49,15 @@ void ParticleLoader::parseParticleDef(parser::DefTokeniser& tok, const std::stri
     def->parseFromTokens(tok);
 }
 
-void ParticleLoader::parseStream(std::istream& contents, const std::string& filename)
+void ParticleLoader::parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir)
 {
     // Usual ritual, get a parser::DefTokeniser and start tokenising the DEFs
-    parser::BasicDefTokeniser<std::istream> tok(contents);
+    parser::BasicDefTokeniser<std::istream> tok(stream);
 
     while (tok.hasMoreTokens())
     {
-        parseParticleDef(tok, filename);
+        parseParticleDef(tok, fileInfo.name);
     }
-}
-
-void ParticleLoader::load()
-{
-    ScopedDebugTimer timer("Particle definitions parsed: ");
-
-    loadFiles([&](const vfs::FileInfo& fileInfo)
-    {
-        // Attempt to open the file in text mode
-        auto file = GlobalFileSystem().openTextFile(PARTICLES_DIR + fileInfo.name);
-
-        if (file)
-        {
-            // File is open, so parse the tokens
-            try
-            {
-                std::istream is(&(file->getInputStream()));
-                parseStream(is, fileInfo.name);
-            }
-            catch (parser::ParseException& e)
-            {
-                rError() << "[particles] Failed to parse " << fileInfo.name
-                    << ": " << e.what() << std::endl;
-            }
-        }
-        else
-        {
-            rError() << "[particles] Unable to open " << fileInfo.name << std::endl;
-        }
-    });
 }
 
 }

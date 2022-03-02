@@ -1144,6 +1144,9 @@
     <ClCompile Include="..\..\radiantcore\particles\ParticleLoader.cpp">
       <Filter>src\particles</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\eclass\EClassParser.cpp">
+      <Filter>src\eclass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2348,6 +2351,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\particles\ParticleLoader.h">
       <Filter>src\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\eclass\EClassParser.h">
+      <Filter>src\eclass</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

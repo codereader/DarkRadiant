@@ -24,12 +24,78 @@ namespace shaders
 class ShaderFileLoader : 
     public parser::ThreadedDeclParser<ShaderLibraryPtr>
 {
-    // The VFS module to provide shader files
-    vfs::VirtualFileSystem& _vfs;
+private:
+    ShaderLibraryPtr _library;
+
+public:
+    /// Construct and initialise the ShaderFileLoader
+    ShaderFileLoader() :
+        parser::ThreadedDeclParser<ShaderLibraryPtr>(decl::Type::Material, 
+            getMaterialsFolderName(), getMaterialFileExtension(), 1)
+    {}
+
+protected:
+    void onBeginParsing() override
+    {
+        // Load the shader files from the VFS into a fresh library
+        _library = std::make_shared<ShaderLibrary>();
+    }
+
+    void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir) override
+    {
+        // Parse the file with a blocktokeniser, the actual block contents
+        // will be parsed separately.
+        parser::BasicDefBlockTokeniser<std::istream> tokeniser(stream);
+
+        while (tokeniser.hasMoreBlocks())
+        {
+            // Get the next block
+            parser::BlockTokeniser::Block block = tokeniser.nextBlock();
+
+            // Try to parse tables
+            if (parseTable(block, fileInfo))
+            {
+                continue; // table successfully parsed
+            }
+
+            if (block.name.substr(0, 5) == "skin ")
+            {
+                continue; // skip skin definition
+            }
+
+            if (block.name.substr(0, 9) == "particle ")
+            {
+                continue; // skip particle definition
+            }
+
+            string::replace_all(block.name, "\\", "/"); // use forward slashes
+
+            auto shaderTemplate = std::make_shared<ShaderTemplate>(block.name, block.contents);
+
+            // Construct the ShaderDefinition wrapper class
+            ShaderDefinition def(shaderTemplate, fileInfo);
+
+            // Insert into the definitions map, if not already present
+            if (!_library->addDefinition(block.name, def))
+            {
+                rError() << "[shaders] " << fileInfo.name << ": shader " << block.name << " already defined." << std::endl;
+            }
+        }
+    }
+
+    ShaderLibraryPtr onFinishParsing() override
+    {
+        rMessage() << _library->getNumDefinitions() << " shader definitions found." << std::endl;
+
+        // Move the working copy of our library instance
+        auto library = _library;
+        _library.reset();
+
+        return library;
+    }
 
 private:
-
-    bool parseTable(const parser::BlockTokeniser::Block& block, const vfs::FileInfo& fileInfo, ShaderLibrary& library)
+    bool parseTable(const parser::BlockTokeniser::Block& block, const vfs::FileInfo& fileInfo)
     {
         if (block.name.length() <= 5 || !string::starts_with(block.name, "table"))
         {
@@ -47,7 +113,7 @@ private:
 
             auto table = std::make_shared<TableDefinition>(tableName, block.contents);
 
-            if (!library.addTableDefinition(table))
+            if (!_library->addTableDefinition(table))
             {
                 rError() << "[shaders] " << fileInfo.name << ": table " << tableName << " already defined." << std::endl;
             }
@@ -56,86 +122,6 @@ private:
         }
 
         return false;
-    }
-
-    // Parse a shader file with the given contents and filename
-    void parseShaderFile(std::istream& inStr, const vfs::FileInfo& fileInfo, ShaderLibrary& library)
-    {
-        // Parse the file with a blocktokeniser, the actual block contents
-        // will be parsed separately.
-        parser::BasicDefBlockTokeniser<std::istream> tokeniser(inStr);
-
-        while (tokeniser.hasMoreBlocks())
-        {
-            // Get the next block
-            parser::BlockTokeniser::Block block = tokeniser.nextBlock();
-
-            // Try to parse tables
-            if (parseTable(block, fileInfo, library))
-            {
-                continue; // table successfully parsed
-            }
-            
-            if (block.name.substr(0, 5) == "skin ")
-            {
-                continue; // skip skin definition
-            }
-            
-            if (block.name.substr(0, 9) == "particle ")
-            {
-                continue; // skip particle definition
-            }
-
-            string::replace_all(block.name, "\\", "/"); // use forward slashes
-
-            auto shaderTemplate = std::make_shared<ShaderTemplate>(block.name, block.contents);
-
-            // Construct the ShaderDefinition wrapper class
-            ShaderDefinition def(shaderTemplate, fileInfo);
-
-            // Insert into the definitions map, if not already present
-            if (!library.addDefinition(block.name, def))
-            {
-                rError() << "[shaders] " << fileInfo.name << ": shader " << block.name << " already defined." << std::endl;
-            }
-        }
-    }
-
-public:
-
-    /// Construct and initialise the ShaderFileLoader
-    ShaderFileLoader(vfs::VirtualFileSystem& fs) :
-        parser::ThreadedDeclParser<ShaderLibraryPtr>(getMaterialsFolderName(), getMaterialFileExtension(),
-            std::bind(&ShaderFileLoader::loadMaterialFiles, this)),
-        _vfs(fs)
-    {}
-
-private:
-    ShaderLibraryPtr loadMaterialFiles()
-    {
-        // Load the shader files from the VFS into a fresh library
-        auto library = std::make_shared<ShaderLibrary>();
-
-        {
-            ScopedDebugTimer timer("ShaderFiles parsed: ");
-            loadFiles(_vfs, [&](const vfs::FileInfo& fileInfo)
-            {
-                // Open the file
-                auto file = _vfs.openTextFile(fileInfo.fullPath());
-
-                if (!file)
-                {
-                    throw std::runtime_error("Unable to read shaderfile: " + fileInfo.name);
-                }
-
-                std::istream is(&(file->getInputStream()));
-                parseShaderFile(is, fileInfo, *library);
-            });
-        }
-
-        rMessage() << library->getNumDefinitions() << " shader definitions found." << std::endl;
-
-        return library;
     }
 };
 

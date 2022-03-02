@@ -92,7 +92,7 @@ public:
 	: _op(name), _fps(showFps)
 	{
 		// Save start time
-		gettimeofday(&_s, NULL);
+		gettimeofday(&_s, nullptr);
 	}
 
 	/**
@@ -102,15 +102,14 @@ public:
     {
 		// Get the current time
 		timeval end;
-		gettimeofday(&end, NULL);
+		gettimeofday(&end, nullptr);
 
 		// Calculate duration
 		double duration = end - _s;
 
-        TemporaryThreadsafeStream stream = rMessage();
+        auto stream = rMessage();
 
-        stream << "[ScopedDebugTimer] \"" << _op << "\" in "
-                             << duration << " seconds";
+        stream << _op << " in " << duration << " seconds";
 
 		if (_fps)
         {
