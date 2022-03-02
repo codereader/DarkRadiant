@@ -30,8 +30,8 @@ inline ArbitraryMeshVertex ConstructMeshVertex(const ofbx::Geometry& geometry, i
     auto colours = geometry.getColors();
 
     return ArbitraryMeshVertex(
-        Vertex3f(vertices[index].x, vertices[index].y, vertices[index].z),
-        normals != nullptr ? Normal3f(normals[index].x, normals[index].y, normals[index].z) : Normal3f(1, 0, 0),
+        Vertex3(vertices[index].x, vertices[index].y, vertices[index].z),
+        normals != nullptr ? Normal3(normals[index].x, normals[index].y, normals[index].z) : Normal3(1, 0, 0),
         uvs != nullptr ? TexCoord2f(uvs[index].x, 1.0 - uvs[index].y) : TexCoord2f(0, 0), // invert v
         colours != nullptr ? Vector3(colours[index].x, colours[index].y, colours[index].z) : Vector3(1, 1, 1)
     );

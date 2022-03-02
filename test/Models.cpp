@@ -139,7 +139,7 @@ TEST_F(AseImportTest, TriangleWindingCW)
 
     EXPECT_NO_THROW(dynamic_cast<const model::IIndexedModelSurface&>(model->getSurface(0)));
     const auto& surface = static_cast<const model::IIndexedModelSurface&>(model->getSurface(0));
-    
+
     const auto& vertices = surface.getVertexArray();
     const auto& indices = surface.getIndexArray();
     EXPECT_EQ(vertices.size(), 3);
@@ -151,9 +151,9 @@ TEST_F(AseImportTest, TriangleWindingCW)
     const auto& c = vertices[indices[2]].vertex;
 
     auto normal = (b - a).cross(c - b).getNormalised();
-    
-    // We know the triangle in the ASE file is facing upwards, 
-    // For CW order, the cross-product will point in the opposite direction 
+
+    // We know the triangle in the ASE file is facing upwards,
+    // For CW order, the cross-product will point in the opposite direction
     // of the normal, i.e. downwards
     EXPECT_NEAR(normal.z(), -1.0, 1e-4);
 }
@@ -227,7 +227,7 @@ TEST_F(AseImportTest, UVAngleKeyword)
     EXPECT_NEAR(model->getSurface(0).getVertex(2).texcoord.y(), 1 * -sinValue + 1 * cosValue, 1e-5);
 }
 
-bool surfaceHasVertexWith(const model::IModelSurface& surface, 
+bool surfaceHasVertexWith(const model::IModelSurface& surface,
     const std::function<bool(const ArbitraryMeshVertex& vertex)>& predicate)
 {
     bool found = false;
@@ -244,7 +244,7 @@ bool surfaceHasVertexWith(const model::IModelSurface& surface,
     return found;
 }
 
-void expectVertexWithNormal(const model::IModelSurface& surface, const Vertex3f& vertex, const Normal3f& normal)
+void expectVertexWithNormal(const model::IModelSurface& surface, const Vertex3& vertex, const Normal3& normal)
 {
     EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
     {
@@ -258,32 +258,32 @@ TEST_F(AseImportTest, VertexNormals)
     EXPECT_EQ(model->getSurfaceCount(), 1);
 
     // Check for a few specific vertex/normal combinations
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, -16, 16), Normal3f(-1, 0, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, -16, -16), Normal3f(-1, 0, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, -16), Normal3f(-1, 0, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-16, -16, 16), Normal3(-1, 0, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-16, -16, -16), Normal3(-1, 0, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-16, 16, -16), Normal3(-1, 0, 0));
 
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, 16), Normal3f(0, 1, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, -16), Normal3f(0, 1, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, -16), Normal3f(0, 1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-16, 16, 16), Normal3(0, 1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-16, 16, -16), Normal3(0, 1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(16, 16, -16), Normal3(0, 1, 0));
 
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, 16), Normal3f(1, 0, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, -16), Normal3f(1, 0, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, -16, -16), Normal3f(1, 0, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(16, 16, 16), Normal3(1, 0, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(16, 16, -16), Normal3(1, 0, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(16, -16, -16), Normal3(1, 0, 0));
 
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, -16, 16), Normal3f(0, -1, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, -16, -16), Normal3f(0, -1, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, -16, -16), Normal3f(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(16, -16, 16), Normal3(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(16, -16, -16), Normal3(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-16, -16, -16), Normal3(0, -1, 0));
 
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, -16), Normal3f(0, 0, -1));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, -16), Normal3f(0, 0, -1));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, -16, -16), Normal3f(0, 0, -1));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(16, 16, -16), Normal3(0, 0, -1));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-16, 16, -16), Normal3(0, 0, -1));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-16, -16, -16), Normal3(0, 0, -1));
 
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-16, 16, 16), Normal3f(0, 0, 1));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, 16, 16), Normal3f(0, 0, 1));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(16, -16, 16), Normal3f(0, 0, 1));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-16, 16, 16), Normal3(0, 0, 1));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(16, 16, 16), Normal3(0, 0, 1));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(16, -16, 16), Normal3(0, 0, 1));
 }
 
-void expectVertexWithColour(const model::IModelSurface& surface, const Vertex3f& vertex, const Vector4& colour)
+void expectVertexWithColour(const model::IModelSurface& surface, const Vertex3& vertex, const Vector4& colour)
 {
     EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
     {
@@ -297,17 +297,17 @@ TEST_F(AseImportTest, VertexColours)
     EXPECT_EQ(model->getSurfaceCount(), 1);
 
     // Check for a few specific vertex/colour combinations
-    expectVertexWithColour(model->getSurface(0), Vertex3f(56, 56, 2), Vector4(0, 0, 0, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(56, 18, 2), Vector4(0, 0, 0, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(19, 18, 2), Vector4(0.9882, 0.9882, 0.9882, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(19, 56, 2), Vector4(1, 1, 1, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(-19, -19, 2), Vector4(0, 0, 0, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(19, -19, 2), Vector4(0, 0, 0, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(-19, 56, 2), Vector4(0, 0, 0, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(19, 56, 2), Vector4(1, 1, 1, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(-19, 18, 2), Vector4(0.9216, 0.9216, 0.9216, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(56, -19, 2), Vector4(0.7373, 0.7373, 0.7373, 1));
-    expectVertexWithColour(model->getSurface(0), Vertex3f(19, -19, 2), Vector4(0, 0, 0, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(56, 56, 2), Vector4(0, 0, 0, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(56, 18, 2), Vector4(0, 0, 0, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(19, 18, 2), Vector4(0.9882, 0.9882, 0.9882, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(19, 56, 2), Vector4(1, 1, 1, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(-19, -19, 2), Vector4(0, 0, 0, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(19, -19, 2), Vector4(0, 0, 0, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(-19, 56, 2), Vector4(0, 0, 0, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(19, 56, 2), Vector4(1, 1, 1, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(-19, 18, 2), Vector4(0.9216, 0.9216, 0.9216, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(56, -19, 2), Vector4(0.7373, 0.7373, 0.7373, 1));
+    expectVertexWithColour(model->getSurface(0), Vertex3(19, -19, 2), Vector4(0, 0, 0, 1));
 }
 
 // Tests the NODE_TM transform application to vertex normals
@@ -317,34 +317,34 @@ TEST_F(AseImportTest, VertexNormalTransformation)
     EXPECT_EQ(model->getSurfaceCount(), 1);
 
     // Check for a few specific vertex/colour combinations (values taken directly from the TDM parse result)
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.140799999, -0.745599985, 0.125799999), Normal3f(0, -1, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.188199997, -0.745599985, 0.125900000), Normal3f(0, -1, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.0364999995, -0.745599985, 0.0203000009), Normal3f(0, -1, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.0839999989, -0.745599985, 0.0203000009), Normal3f(0, -1, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.140900001, -0.745599985, 0.331900001), Normal3f(0.000499708927, -0.999999583, 0.000800181471));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.188199997, -0.745599985, 0.331999987), Normal3f(-3.27272573e-07, -0.999999583, 0.000899999577));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.0218000002, -0.744899988, 2.23850012), Normal3f(0.0139053408, -0.999789357, -0.0150947841));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.0679000020, -0.742100000, 2.23850012), Normal3f(0.0298263635, -0.996775806, -0.0744873509));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.133800000, -0.745599985, 2.29660010), Normal3f(1.23635652e-06, -0.999994278, -0.00339998049));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.179800004, -0.745599985, 2.29670000), Normal3f(0.00370575022, -0.999861956, -0.0161980372));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(0.0229000002, -0.745599985, 2.69810009), Normal3f(0, -1, 0));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.0218000002, -0.744899988, 2.23850012), Normal3f(-0.869799972, 0.00000000, -0.493404597));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.133800000, -0.745599985, 2.29660010), Normal3f(-0.460478902, 0.00000000, -0.887670696));
-    expectVertexWithNormal(model->getSurface(0), Vertex3f(-0.140900001, -0.745599985, 0.331900001), Normal3f(-0.998054981, -0.00000000, 0.0623391047));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-0.140799999, -0.745599985, 0.125799999), Normal3(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(0.188199997, -0.745599985, 0.125900000), Normal3(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-0.0364999995, -0.745599985, 0.0203000009), Normal3(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(0.0839999989, -0.745599985, 0.0203000009), Normal3(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-0.140900001, -0.745599985, 0.331900001), Normal3(0.000499708927, -0.999999583, 0.000800181471));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(0.188199997, -0.745599985, 0.331999987), Normal3(-3.27272573e-07, -0.999999583, 0.000899999577));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-0.0218000002, -0.744899988, 2.23850012), Normal3(0.0139053408, -0.999789357, -0.0150947841));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(0.0679000020, -0.742100000, 2.23850012), Normal3(0.0298263635, -0.996775806, -0.0744873509));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-0.133800000, -0.745599985, 2.29660010), Normal3(1.23635652e-06, -0.999994278, -0.00339998049));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(0.179800004, -0.745599985, 2.29670000), Normal3(0.00370575022, -0.999861956, -0.0161980372));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(0.0229000002, -0.745599985, 2.69810009), Normal3(0, -1, 0));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-0.0218000002, -0.744899988, 2.23850012), Normal3(-0.869799972, 0.00000000, -0.493404597));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-0.133800000, -0.745599985, 2.29660010), Normal3(-0.460478902, 0.00000000, -0.887670696));
+    expectVertexWithNormal(model->getSurface(0), Vertex3(-0.140900001, -0.745599985, 0.331900001), Normal3(-0.998054981, -0.00000000, 0.0623391047));
 }
 
 
 TEST_F(AseImportTest, VertexHashFunction)
 {
     // Construct two mesh vertices which should be considered equal
-    ArbitraryMeshVertex vertex1(Vertex3f(-0.0218, -0.7449, 2.2385), Normal3f(-0.8698, 0, -0.493405), 
+    ArbitraryMeshVertex vertex1(Vertex3(-0.0218, -0.7449, 2.2385), Normal3(-0.8698, 0, -0.493405),
         TexCoord2f(0.9808, 0.8198), Vector3(1, 1, 1));
 
-    ArbitraryMeshVertex vertex2(Vertex3f(-0.0218, -0.7434, 2.2385), Normal3f(-0.872, 0, -0.489505), 
+    ArbitraryMeshVertex vertex2(Vertex3(-0.0218, -0.7434, 2.2385), Normal3(-0.872, 0, -0.489505),
         TexCoord2f(0.9808, 0.8198), Vector3(1, 1, 1));
 
     // Construct a that is differing in the normal part
-    ArbitraryMeshVertex vertex3(Vertex3f(-0.0218, -0.7434, 2.2385), Normal3f(-1, 0, 0),
+    ArbitraryMeshVertex vertex3(Vertex3(-0.0218, -0.7434, 2.2385), Normal3(-1, 0, 0),
         TexCoord2f(0.9808, 0.8198), Vector3(1, 1, 1));
 
     // Check the hash behaviour

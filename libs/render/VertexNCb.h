@@ -6,9 +6,9 @@
 /// 3-element vertex with a 4-byte colour and a normal vector
 struct VertexNCb
 {
-	Vertex3f vertex;
+	Vertex3 vertex;
 	Colour4b colour;
-	Normal3f normal;
+	Normal3 normal;
 };
 
 

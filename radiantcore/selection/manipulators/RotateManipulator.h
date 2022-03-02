@@ -32,7 +32,7 @@ private:
 	RotateAxis _rotateAxis;
 	TranslateFree _translatePivot;
 	Vector3 _axisScreen;
-    Vertex3f _localPivotPoint;
+    Vertex3 _localPivotPoint;
 
     RenderableSemiCircle<RemapYZX> _circleX;
     RenderableSemiCircle<RemapZXY> _circleY;

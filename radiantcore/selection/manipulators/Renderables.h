@@ -116,7 +116,7 @@ protected:
     bool _needsUpdate;
     Vector4 _colour;
 
-    std::vector<Vertex3f> _rawPoints;
+    std::vector<Vertex3> _rawPoints;
 
 public:
     void queueUpdate()
@@ -130,7 +130,7 @@ public:
         queueUpdate();
     }
 
-    const std::vector<Vertex3f>& getRawPoints() const
+    const std::vector<Vertex3>& getRawPoints() const
     {
         return _rawPoints;
     }
@@ -233,7 +233,7 @@ protected:
     bool _needsUpdate;
     Vector4 _colour;
 
-    std::vector<Vertex3f> _rawPoints;
+    std::vector<Vertex3> _rawPoints;
 
 public:
     RenderableArrowHead(const Vector3& offset, const Vector3& screenAxis, double width, double height, const Matrix4& localToWorld) :
@@ -257,7 +257,7 @@ public:
         queueUpdate();
     }
 
-    const std::vector<Vertex3f>& getRawPoints() const
+    const std::vector<Vertex3>& getRawPoints() const
     {
         return _rawPoints;
     }
@@ -295,13 +295,13 @@ class RenderablePoint :
     public render::RenderableGeometry
 {
 protected:
-    const Vertex3f& _point;
+    const Vertex3& _point;
     const Matrix4& _localToWorld;
     bool _needsUpdate;
     Vector4 _colour;
 
 public:
-    RenderablePoint(const Vertex3f& point, const Matrix4& localToWorld) :
+    RenderablePoint(const Vertex3& point, const Matrix4& localToWorld) :
         _point(point),
         _localToWorld(localToWorld),
         _needsUpdate(true)

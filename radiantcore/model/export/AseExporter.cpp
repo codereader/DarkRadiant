@@ -155,7 +155,7 @@ void AseExporter::exportToStream(std::ostream& stream)
 
 		for (std::size_t v = 0; v < surface.vertices.size(); ++v)
 		{
-			const Vertex3f& vert = surface.vertices[v].vertex;
+			const Vertex3& vert = surface.vertices[v].vertex;
 
 			stream << "\t\t\t*MESH_VERTEX " << v << "\t" << vert.x() << "\t" << vert.y() << "\t" << vert.z() << std::endl;
 		}
@@ -182,13 +182,13 @@ void AseExporter::exportToStream(std::ostream& stream)
 		for (std::size_t v = 0; v < surface.vertices.size(); ++v)
 		{
 			const TexCoord2f& tex = surface.vertices[v].texcoord;
-			
+
 			// Invert the T coordinate
 			stream << "\t\t\t*MESH_TVERT " << v << "\t" << tex.x() << "\t" << (-tex.y()) << "\t0.0000" << std::endl;
 		}
 
 		stream << "\t\t}" << std::endl;
-		
+
 		// TFaces
 		stream << "\t\t*MESH_NUMTVFACES " << (surface.indices.size() / 3) << std::endl;
 		stream << "\t\t*MESH_TFACELIST {" << std::endl;
@@ -230,16 +230,16 @@ void AseExporter::exportToStream(std::ostream& stream)
 		}
 
 		stream << "\t\t}" << std::endl;
-		
+
 		stream << "\t\t*MESH_NORMALS { " << std::endl;
 
 		for (std::size_t i = 0; i + 2 < surface.indices.size(); i += 3)
 		{
 			std::size_t faceNum = i / 3;
 
-			const Normal3f& normal1 = surface.vertices[surface.indices[i]].normal;
-			const Normal3f& normal2 = surface.vertices[surface.indices[i+1]].normal;
-			const Normal3f& normal3 = surface.vertices[surface.indices[i+2]].normal;
+			const Normal3& normal1 = surface.vertices[surface.indices[i]].normal;
+			const Normal3& normal2 = surface.vertices[surface.indices[i+1]].normal;
+			const Normal3& normal3 = surface.vertices[surface.indices[i+2]].normal;
 
 			stream << "\t\t\t*MESH_FACENORMAL " << faceNum << "\t" << normal1.x() << "\t" << normal1.y() << "\t" << normal1.z() << std::endl;
 

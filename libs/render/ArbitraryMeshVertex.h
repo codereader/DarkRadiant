@@ -15,10 +15,10 @@ class ArbitraryMeshVertex
 {
 public:
 	TexCoord2f	texcoord;
-	Normal3f	normal;
-	Vertex3f	vertex;
-	Normal3f	tangent;
-	Normal3f	bitangent;
+	Normal3	normal;
+	Vertex3	vertex;
+	Normal3	tangent;
+	Normal3	bitangent;
 
 	// Vertex colour
 	Vector4		colour;
@@ -31,19 +31,19 @@ public:
 	{}
 
 	/// Initialising constructor, leaves colour at 1,1,1,1 and tangent vectors at 0,0,0
-	ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t) : 
+	ArbitraryMeshVertex(const Vertex3& v, const Normal3& n, const TexCoord2f& t) :
         ArbitraryMeshVertex(v, n, t, { 1.0, 1.0, 1.0, 1.0 })
     {}
 
 	/// Initialising constructor, leaves tangent vectors at 0,0,0
-    ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t, const Vector4& c) : 
+    ArbitraryMeshVertex(const Vertex3& v, const Normal3& n, const TexCoord2f& t, const Vector4& c) :
         ArbitraryMeshVertex(v, n, t, c, { 0, 0, 0 }, { 0, 0, 0 })
     {}
 
     // Initialises all attributes of this vertex
-    ArbitraryMeshVertex(const Vertex3f& vertex_, const Normal3f& normal_, 
-                        const TexCoord2f& texcoord_, const Vector4& colour_, 
-                        const Normal3f& tangent_, const Normal3f& bitangent_) :
+    ArbitraryMeshVertex(const Vertex3& vertex_, const Normal3& normal_,
+                        const TexCoord2f& texcoord_, const Vector4& colour_,
+                        const Normal3& tangent_, const Normal3& bitangent_) :
         texcoord(texcoord_),
         normal(normal_),
         vertex(vertex_),
@@ -52,8 +52,8 @@ public:
         colour(colour_)
     {}
 
-    /// Cast to simple Vertex3f, throwing away other components
-    operator Vertex3f() const
+    /// Cast to simple Vertex3, throwing away other components
+    operator Vertex3() const
     {
         return vertex;
     }

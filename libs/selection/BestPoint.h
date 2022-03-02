@@ -454,7 +454,7 @@ inline std::size_t clipLine(const Matrix4& matrix, const Vector3& p0,
 	return homogenous_clip_line(clipped);
 }
 
-inline void LineStrip_BestPoint(const Matrix4& local2view, const Vertex3f* vertices, const std::size_t size, SelectionIntersection& best)
+inline void LineStrip_BestPoint(const Matrix4& local2view, const Vertex3* vertices, const std::size_t size, SelectionIntersection& best)
 {
     Vector4 clipped[2];
     for (std::size_t i = 0; (i + 1) < size; ++i)
@@ -464,7 +464,7 @@ inline void LineStrip_BestPoint(const Matrix4& local2view, const Vertex3f* verti
     }
 }
 
-inline void LineLoop_BestPoint(const Matrix4& local2view, const Vertex3f* vertices, const std::size_t size, SelectionIntersection& best)
+inline void LineLoop_BestPoint(const Matrix4& local2view, const Vertex3* vertices, const std::size_t size, SelectionIntersection& best)
 {
     Vector4 clipped[2];
     for (std::size_t i = 0; i < size; ++i)
@@ -474,7 +474,7 @@ inline void LineLoop_BestPoint(const Matrix4& local2view, const Vertex3f* vertic
     }
 }
 
-inline void Line_BestPoint(const Matrix4& local2view, const Vertex3f vertices[2], SelectionIntersection& best)
+inline void Line_BestPoint(const Matrix4& local2view, const Vertex3 vertices[2], SelectionIntersection& best)
 {
     Vector4 clipped[2];
     const std::size_t count = clipLine(local2view, vertices[0], vertices[1], clipped);
@@ -512,7 +512,7 @@ inline std::size_t clipTriangle(const Matrix4& matrix, const Vector3& p0,
 	return homogenous_clip_triangle(clipped);
 }
 
-inline void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const Vertex3f* vertices, const std::size_t size, SelectionIntersection& best)
+inline void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const Vertex3* vertices, const std::size_t size, SelectionIntersection& best)
 {
     Vector4 clipped[9];
     for (std::size_t i = 0; i < size; ++i)
@@ -525,7 +525,7 @@ inline void Circle_BestPoint(const Matrix4& local2view, clipcull_t cull, const V
     }
 }
 
-inline void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const Vertex3f* vertices, SelectionIntersection& best)
+inline void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const Vertex3* vertices, SelectionIntersection& best)
 {
     Vector4 clipped[9];
     {
@@ -538,7 +538,7 @@ inline void Quad_BestPoint(const Matrix4& local2view, clipcull_t cull, const Ver
     }
 }
 
-inline void Triangles_BestPoint(const Matrix4& local2view, clipcull_t cull, const Vertex3f* first, const Vertex3f* last, SelectionIntersection& best)
+inline void Triangles_BestPoint(const Matrix4& local2view, clipcull_t cull, const Vertex3* first, const Vertex3* last, SelectionIntersection& best)
 {
     for (auto x(first), y(first + 1), z(first + 2); x != last; x += 3, y += 3, z += 3)
     {

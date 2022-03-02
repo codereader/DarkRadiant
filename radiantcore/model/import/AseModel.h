@@ -29,8 +29,8 @@ private:
 
     struct Mesh
     {
-        std::vector<Vertex3f> vertices;
-        std::vector<Normal3f> normals;
+        std::vector<Vertex3> vertices;
+        std::vector<Normal3> normals;
         std::vector<Face> faces;
         std::vector<TexCoord2f> texcoords;
         std::vector<Vector3> colours;
