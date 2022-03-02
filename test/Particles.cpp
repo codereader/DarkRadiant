@@ -26,4 +26,14 @@ TEST_F(ParticlesTest, ParticleFilenamePrecedence)
         << "The particle using the caulk texture should have taken precedence";
 }
 
+// Prove that the ignored, duplicate particleDef is not stopping the parser from processing the rest of the file
+TEST_F(ParticlesTest, ParticleBelowDuplicatedIsParsed)
+{
+    auto decl = GlobalParticlesManager().getDefByName("particle_after_precedencecheck");
+
+    EXPECT_TRUE(decl) << "Could not locate the particleDef that should go below the precedencecheck in z_precedence.prt";
+    EXPECT_EQ(decl->getStage(0).getMaterialName(), "textures/common/nodraw")
+        << "The particle using the caulk texture should have taken precedence";
+}
+
 }

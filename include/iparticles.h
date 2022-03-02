@@ -89,7 +89,7 @@ public:
 	virtual void swapParticleStages(std::size_t index, std::size_t index2) = 0;
 
     /// Signal emitted when some aspect of the particle def has changed
-    virtual sigc::signal<void> signal_changed() const = 0;
+    virtual sigc::signal<void>& signal_changed() = 0;
 
 	// Comparison operators - particle defs are considered equal if all properties (except the name!),
 	// number of stages and stage contents are the equal
@@ -176,7 +176,7 @@ class IParticlesManager :
 public:
 
     /// Signal emitted when particle definitions are reloaded
-    virtual sigc::signal<void> signal_particlesReloaded() const = 0;
+    virtual sigc::signal<void>& signal_particlesReloaded() = 0;
 
 	/// Enumerate each particle def.
 	virtual void forEachParticleDef(const ParticleDefVisitor&) = 0;

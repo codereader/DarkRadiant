@@ -40,13 +40,30 @@ void ParticleLoader::parseParticleDef(parser::DefTokeniser& tok, const std::stri
     auto name = tok.nextToken();
     tok.assertNextToken("{");
 
-    // Find the particle def (use the non-blocking, internal lookup)
-    auto def = _findOrInsert(name);
+    // Find any existing particle def
+    auto existing = _particles.try_emplace(name, std::make_shared<ParticleDef>(name));
 
-    def->setFilename(filename);
+    if (!existing.second && existing.first->second->getParseStamp() == _curParseStamp)
+    {
+        rWarning() << "Particle " << name << " already defined in " <<
+            existing.first->second->getFilename() <<
+            ", ignoring definition in " << filename << std::endl;
+
+        // Use a dummy particle def to consume the rest of this block
+        ParticleDef("").parseFromTokens(tok);
+        return;
+    }
+
+    existing.first->second->setParseStamp(_curParseStamp);
+    existing.first->second->setFilename(filename);
 
     // Let the particle construct itself from the token stream
-    def->parseFromTokens(tok);
+    existing.first->second->parseFromTokens(tok);
+}
+
+void ParticleLoader::onBeginParsing()
+{
+    ++_curParseStamp;
 }
 
 void ParticleLoader::parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir)
@@ -58,6 +75,11 @@ void ParticleLoader::parse(std::istream& stream, const vfs::FileInfo& fileInfo, 
     {
         parseParticleDef(tok, fileInfo.name);
     }
+}
+
+void ParticleLoader::onFinishParsing()
+{
+    rMessage() << "Found " << _particles.size() << " particle definitions." << std::endl;
 }
 
 }

@@ -43,13 +43,13 @@ namespace
 }
 
 ParticlesManager::ParticlesManager() :
-    _defLoader(std::bind(&ParticlesManager::findOrInsertParticleDefInternal, this, std::placeholders::_1))
+    _defLoader(_particleDefs)
 {
     _defLoader.signal_finished().connect(
         sigc::mem_fun(this, &ParticlesManager::onParticlesLoaded));
 }
 
-sigc::signal<void> ParticlesManager::signal_particlesReloaded() const
+sigc::signal<void>& ParticlesManager::signal_particlesReloaded()
 {
     return _particlesReloadedSignal;
 }
@@ -199,8 +199,6 @@ void ParticlesManager::reloadParticleDefs()
 
 void ParticlesManager::onParticlesLoaded()
 {
-    rMessage() << "Found " << _particleDefs.size() << " particle definitions." << std::endl;
-
     // Notify observers about this event
     _particlesReloadedSignal.emit();
 }

@@ -9,24 +9,31 @@
 namespace particles
 {
 
+using ParticleDefMap = std::map<std::string, ParticleDefPtr>;
+
 class ParticleLoader :
     public parser::ThreadedDeclParser<void>
 {
 private:
-    std::function<ParticleDefPtr(const std::string&)> _findOrInsert;
+    ParticleDefMap& _particles;
+
+    // A unique parse pass identifier, used to check when existing
+    // definitions have been parsed
+    std::size_t _curParseStamp;
 
 public:
-    ParticleLoader(const std::function<ParticleDefPtr(const std::string&)>& findOrInsert) :
+    ParticleLoader(ParticleDefMap& particles) :
         parser::ThreadedDeclParser<void>(decl::Type::Particle, PARTICLES_DIR, PARTICLES_EXT, 1),
-        _findOrInsert(findOrInsert)
+        _particles(particles),
+        _curParseStamp(0)
     {}
 
 protected:
+    void onBeginParsing() override;
     void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir) override;
+    void onFinishParsing() override;
 
 private:
-    // Accept a stream containing particle definitions to parse and add to the list.
-    void parseStream(std::istream& contents, const std::string& filename);
     void parseParticleDef(parser::DefTokeniser& tok, const std::string& filename);
 };
 

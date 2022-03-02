@@ -15,9 +15,7 @@ namespace particles
 class ParticlesManager :
 	public IParticlesManager
 {
-	// Map of named particle defs
-	typedef std::map<std::string, ParticleDefPtr> ParticleDefMap;
-
+private:
 	ParticleDefMap _particleDefs;
 
     ParticleLoader _defLoader;
@@ -29,7 +27,7 @@ public:
     ParticlesManager();
 
 	// IParticlesManager implementation
-    sigc::signal<void> signal_particlesReloaded() const override;
+    sigc::signal<void>& signal_particlesReloaded() override;
 
     void forEachParticleDef(const ParticleDefVisitor& visitor) override;
 
