@@ -114,7 +114,7 @@ GLProgramFactory::getFileAsBuffer(const std::string& filename,
 namespace
 {
 
-void assertShaderCompiled(GLuint shader)
+void assertShaderCompiled(GLuint shader, const std::string& filename)
 {
     // Get compile status
     GLint compileStatus;
@@ -133,7 +133,7 @@ void assertShaderCompiled(GLuint shader)
         // Convert to string and throw exception
         std::string logStr = std::string(&logBuf.front());
         throw std::runtime_error(
-            "Failed to compile GLSL shader:\n"
+            "Failed to compile GLSL shader \"" + filename + "\":\n"
             + logStr
         );
     }
@@ -212,10 +212,10 @@ GLuint GLProgramFactory::createGLSLProgram(const std::string& vFile,
 
     // Compile the shaders
     glCompileShader(vertexShader);
-    assertShaderCompiled(vertexShader);
+    assertShaderCompiled(vertexShader, vFile);
 
     glCompileShader(fragmentShader);
-    assertShaderCompiled(fragmentShader);
+    assertShaderCompiled(fragmentShader, fFile);
 
     debug::assertNoGlErrors();
 
