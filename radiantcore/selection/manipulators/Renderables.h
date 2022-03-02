@@ -59,7 +59,7 @@ protected:
             Vector3 min(aabb.origin - aabb.extents);
 
             auto boxVertices = render::detail::getWireframeBoxVertices(min, max, _colour);
-            
+
             for (const auto& vertex : boxVertices)
             {
                 vertices.emplace_back(std::move(vertex));
@@ -74,7 +74,7 @@ protected:
 namespace detail
 {
 
-inline void generateQuad(std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices, 
+inline void generateQuad(std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices,
     double size, const Vector4& colour)
 {
     unsigned int indexOffset = static_cast<unsigned int>(vertices.size());
@@ -182,15 +182,14 @@ public:
     }
 };
 
-template<typename RemapPolicy>
-class RenderableCircle :
-    public RenderableLineStrip
+/// Line strip in the shape of a full circle
+class RenderableCircle: public RenderableLineStrip
 {
 public:
     RenderableCircle(std::size_t segments, double radius, const Matrix4& localToWorld) :
         RenderableLineStrip(segments << 3, localToWorld)
     {
-        draw_circle<RemapPolicy>(segments, radius, _rawPoints);
+        draw_circle<RemapXYZ>(segments, radius, _rawPoints);
     }
 };
 
