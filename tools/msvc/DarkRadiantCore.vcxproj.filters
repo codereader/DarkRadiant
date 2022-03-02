@@ -2355,5 +2355,8 @@
     <ClInclude Include="..\..\radiantcore\eclass\EClassParser.h">
       <Filter>src\eclass</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\skins\SkinDeclParser.h">
+      <Filter>src\skins</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

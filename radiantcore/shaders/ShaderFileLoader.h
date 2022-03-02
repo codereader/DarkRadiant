@@ -87,11 +87,8 @@ protected:
     {
         rMessage() << _library->getNumDefinitions() << " shader definitions found." << std::endl;
 
-        // Move the working copy of our library instance
-        auto library = _library;
-        _library.reset();
-
-        return library;
+        // Move the resource contained in the local shared_ptr
+        return std::move(_library);
     }
 
 private:

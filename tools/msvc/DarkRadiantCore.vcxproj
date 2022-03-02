@@ -1108,6 +1108,7 @@
     <ClInclude Include="..\..\radiantcore\shaders\VideoMapExpression.h" />
     <ClInclude Include="..\..\radiantcore\skins\Doom3ModelSkin.h" />
     <ClInclude Include="..\..\radiantcore\skins\Doom3SkinCache.h" />
+    <ClInclude Include="..\..\radiantcore\skins\SkinDeclParser.h" />
     <ClInclude Include="..\..\radiantcore\undo\Operation.h" />
     <ClInclude Include="..\..\radiantcore\undo\Stack.h" />
     <ClInclude Include="..\..\radiantcore\undo\StackFiller.h" />

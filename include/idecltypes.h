@@ -15,6 +15,7 @@ enum class Type
     SoundShader,
     Model,
     Particle,
+    Skin,
 };
 
 inline std::string getTypeName(Type type)
@@ -27,6 +28,7 @@ inline std::string getTypeName(Type type)
     case Type::SoundShader: return "SoundShader";
     case Type::Model: return "Model";
     case Type::Particle: return "Particle";
+    case Type::Skin: return "Skin";
     default:
         throw std::runtime_error("Unhandled decl type");
     }
