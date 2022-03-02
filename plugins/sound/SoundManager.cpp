@@ -140,7 +140,7 @@ void SoundManager::ensureShadersLoaded()
 {
     if (_shaders.empty())
     {
-        _shaders = std::move(*_defLoader.get());
+        _shaders = _defLoader.get();
     }
 }
 

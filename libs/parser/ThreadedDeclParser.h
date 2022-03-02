@@ -5,6 +5,7 @@
 #include "idecltypes.h"
 #include "ThreadedDefLoader.h"
 #include "debugging/ScopedDebugTimer.h"
+#include "parser/ParseException.h"
 
 namespace parser
 {
@@ -18,7 +19,7 @@ class ThreadedDeclParser :
     public util::ThreadedDefLoader<ReturnType>
 {
 public:
-    using LoadFunction = util::ThreadedDefLoader<ReturnType>::LoadFunction;
+    using LoadFunction = util::ThreadedDefLoader<typename ReturnType>::LoadFunction;
 
 private:
     decl::Type _declType;

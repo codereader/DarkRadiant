@@ -28,22 +28,22 @@ using ShaderMap = std::map<std::string, SoundShader::Ptr>;
  * Threaded parser class loading the sndshd files
  */
 class SoundFileLoader final :
-    public parser::ThreadedDeclParser<std::shared_ptr<ShaderMap>>
+    public parser::ThreadedDeclParser<ShaderMap>
 {
 private:
     // Shader map to populate
-    std::shared_ptr<ShaderMap> _shaders;
+    ShaderMap _shaders;
 
 public:
     SoundFileLoader() :
-        parser::ThreadedDeclParser<std::shared_ptr<ShaderMap>>(
+        parser::ThreadedDeclParser<ShaderMap>(
             decl::Type::SoundShader, SOUND_FOLDER, SOUND_FILE_EXTENSION, 99)
     {}
 
 protected:
     void onBeginParsing() override
     {
-        _shaders = std::make_shared<ShaderMap>();
+        _shaders.clear();
     }
 
     void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir) override
@@ -57,7 +57,7 @@ protected:
             parser::BlockTokeniser::Block block = tok.nextBlock();
 
             // Create a new shader with this name
-            auto result = _shaders->emplace(block.name,
+            auto result = _shaders.emplace(block.name,
                 std::make_shared<SoundShader>(block.name, block.contents, fileInfo, modDir)
             );
 
@@ -69,9 +69,9 @@ protected:
         }
     }
 
-    std::shared_ptr<ShaderMap> onFinishParsing() override
+    ShaderMap onFinishParsing() override
     {
-        rMessage() << _shaders->size() << " sound shaders found." << std::endl;
+        rMessage() << _shaders.size() << " sound shaders found." << std::endl;
 
         return std::move(_shaders);
     }
