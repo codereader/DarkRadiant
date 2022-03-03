@@ -19,13 +19,20 @@ void ObjectRenderer::SubmitObject(IRenderableObject& object, IGeometryStore& sto
         glFrontFace(GL_CCW);
     }
 
+    // Orient the object
     glMatrixMode(GL_MODELVIEW);
-
-    auto renderParams = store.getRenderParameters(object.getStorageLocation());
-
     glPushMatrix();
-
     glMultMatrixd(object.getObjectTransform());
+
+    // Submit the geometry of this single slot
+    SubmitGeometry(object.getStorageLocation(), store);
+
+    glPopMatrix();
+}
+
+void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, IGeometryStore& store)
+{
+    auto renderParams = store.getRenderParameters(slot);
 
     glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
     glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->colour);
@@ -40,8 +47,6 @@ void ObjectRenderer::SubmitObject(IRenderableObject& object, IGeometryStore& sto
 
     glDrawElementsBaseVertex(GL_TRIANGLES, static_cast<GLsizei>(renderParams.indexCount),
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
-
-    glPopMatrix();
 }
 
 }
