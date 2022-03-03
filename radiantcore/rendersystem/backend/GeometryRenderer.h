@@ -47,10 +47,17 @@ public:
         _store(store),
         _freeSlotMappingHint(InvalidSlotMapping)
     {
+        // Must be the same order as in render::GeometryType
         _groups.emplace_back(GL_TRIANGLES);
         _groups.emplace_back(GL_QUADS);
         _groups.emplace_back(GL_LINES);
         _groups.emplace_back(GL_POINTS);
+
+        // Check we're getting the order right
+        assert(getGroupByIndex(GetGroupIndexForIndexType(GeometryType::Triangles)).primitiveMode == GL_TRIANGLES);
+        assert(getGroupByIndex(GetGroupIndexForIndexType(GeometryType::Quads)).primitiveMode == GL_QUADS);
+        assert(getGroupByIndex(GetGroupIndexForIndexType(GeometryType::Lines)).primitiveMode == GL_LINES);
+        assert(getGroupByIndex(GetGroupIndexForIndexType(GeometryType::Points)).primitiveMode == GL_POINTS);
     }
 
     bool empty() const
@@ -128,22 +135,10 @@ public:
 
     void renderGeometry(Slot slot) override
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
-
-        // Render this slot without any vertex colours
-        glDisableClientState(GL_COLOR_ARRAY);
-
-        glFrontFace(GL_CW);
-
         auto& slotInfo = _slots.at(slot);
         auto& group = getGroupByIndex(slotInfo.groupIndex);
 
         ObjectRenderer::SubmitGeometry(slotInfo.storageHandle, group.primitiveMode, _store);
-
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     IGeometryStore::Slot getGeometryStorageLocation(Slot slot) override
