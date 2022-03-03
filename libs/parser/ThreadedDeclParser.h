@@ -19,7 +19,7 @@ class ThreadedDeclParser :
     public util::ThreadedDefLoader<ReturnType>
 {
 public:
-    using LoadFunction = util::ThreadedDefLoader<typename ReturnType>::LoadFunction;
+    using LoadFunction = typename util::ThreadedDefLoader<ReturnType>::LoadFunction;
 
 private:
     decl::Type _declType;
@@ -31,7 +31,7 @@ protected:
     // Construct a parser traversing all files matching the given extension in the given VFS path
     // Subclasses need to implement the parse(std::istream) overload for this scenario
     ThreadedDeclParser(decl::Type declType, const std::string& baseDir, const std::string& extension, std::size_t depth = 1) :
-        util::ThreadedDefLoader<typename ReturnType>(std::bind(&ThreadedDeclParser::doParse, this)),
+        util::ThreadedDefLoader<ReturnType>(std::bind(&ThreadedDeclParser::doParse, this)),
         _baseDir(baseDir),
         _extension(extension),
         _depth(depth),
@@ -40,7 +40,7 @@ protected:
 
 public:
     // Legacy constructor
-    ThreadedDeclParser(const std::string& baseDir, const std::string& extension, 
+    ThreadedDeclParser(const std::string& baseDir, const std::string& extension,
                        const LoadFunction& loadFunc) :
         ThreadedDeclParser(baseDir, extension, 0, loadFunc)
     {}
@@ -48,7 +48,7 @@ public:
     // Legacy constructor
     ThreadedDeclParser(const std::string& baseDir, const std::string& extension, std::size_t depth,
                        const LoadFunction& loadFunc) :
-        util::ThreadedDefLoader<typename ReturnType>(loadFunc),
+        util::ThreadedDefLoader<ReturnType>(loadFunc),
         _baseDir(baseDir),
         _extension(extension),
         _depth(depth)
