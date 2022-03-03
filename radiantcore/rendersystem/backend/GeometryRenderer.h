@@ -120,21 +120,10 @@ public:
 
     void render()
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-
-        glFrontFace(GL_CW);
-
         for (auto& group : _groups)
         {
             ObjectRenderer::SubmitGeometry(group.storageHandles, group.primitiveMode, _store);
         }
-
-        glDisableClientState(GL_COLOR_ARRAY);
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     void renderGeometry(Slot slot) override
