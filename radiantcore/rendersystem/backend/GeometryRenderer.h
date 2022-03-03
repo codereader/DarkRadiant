@@ -2,6 +2,7 @@
 
 #include "igeometryrenderer.h"
 #include "igeometrystore.h"
+#include "ObjectRenderer.h"
 
 namespace render
 {
@@ -84,6 +85,8 @@ private:
 
         void renderSurface(IGeometryStore::Slot slot) const
         {
+            ObjectRenderer::SubmitGeometry(slot, _mode, _store);
+#if 0
             auto renderParams = _store.getRenderParameters(slot);
 
             glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
@@ -92,6 +95,7 @@ private:
 
             glDrawElementsBaseVertex(_mode, static_cast<GLsizei>(renderParams.indexCount), GL_UNSIGNED_INT,
                 renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
+#endif
         }
 
         // Returns the surface index within this buffer

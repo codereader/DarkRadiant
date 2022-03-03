@@ -14,8 +14,8 @@ public:
     // Draws the given object, sets up transform and submits geometry
     static void SubmitObject(IRenderableObject& object, IGeometryStore& store);
 
-    // Draws the geometry of the given slot, no transforms
-    static void SubmitGeometry(IGeometryStore::Slot slot, IGeometryStore& store);
+    // Draws the geometry of the given slot in the given primitive mode, no transforms
+    static void SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode, IGeometryStore& store);
 };
 
 }

@@ -24,13 +24,13 @@ void ObjectRenderer::SubmitObject(IRenderableObject& object, IGeometryStore& sto
     glPushMatrix();
     glMultMatrixd(object.getObjectTransform());
 
-    // Submit the geometry of this single slot
-    SubmitGeometry(object.getStorageLocation(), store);
+    // Submit the geometry of this single slot (objects are using triangle primitives)
+    SubmitGeometry(object.getStorageLocation(), GL_TRIANGLES, store);
 
     glPopMatrix();
 }
 
-void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, IGeometryStore& store)
+void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode, IGeometryStore& store)
 {
     auto renderParams = store.getRenderParameters(slot);
 
@@ -45,7 +45,7 @@ void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, IGeometryStore& s
     glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->tangent);
     glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->bitangent);
 
-    glDrawElementsBaseVertex(GL_TRIANGLES, static_cast<GLsizei>(renderParams.indexCount),
+    glDrawElementsBaseVertex(primitiveMode, static_cast<GLsizei>(renderParams.indexCount),
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
 }
 
