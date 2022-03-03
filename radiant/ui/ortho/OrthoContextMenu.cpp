@@ -578,6 +578,7 @@ void OrthoContextMenu::initialiseModule(const IApplicationContext& ctx)
 
 void OrthoContextMenu::shutdownModule()
 {
+    _createEntityItem.reset();
 	_sections.clear();
     _widget.reset();
 }
