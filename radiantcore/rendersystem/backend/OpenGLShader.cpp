@@ -108,13 +108,17 @@ void OpenGLShader::drawSurfaces(const VolumeTest& view, const RenderInfo& info)
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     
-    // Surfaces are using CW culling
+    // Always using CW culling by default
     glFrontFace(GL_CW);
 
     if (hasSurfaces())
     {
         _geometryRenderer.render();
-        _surfaceRenderer.render(view, info);
+
+        // Surfaces are not allowed to render vertex colours (for now)
+        // otherwise they don't show up in their parent entity's colour
+        glDisableClientState(GL_COLOR_ARRAY);
+        _surfaceRenderer.render(view);
     }
 
     // Render all windings

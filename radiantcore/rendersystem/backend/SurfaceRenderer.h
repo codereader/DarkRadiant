@@ -75,22 +75,12 @@ public:
         _surfaces.at(slot).surfaceDataChanged = true;
     }
 
-    void render(const VolumeTest& view, const RenderInfo& info)
+    void render(const VolumeTest& view)
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
-
-        // Render this slot without any vertex colours
-        glDisableClientState(GL_COLOR_ARRAY);
-
         for (auto& surface : _surfaces)
         {
-            renderSlot(surface.second, &view, info.checkFlag(RENDER_BUMP));
+            renderSlot(surface.second, &view);
         }
-
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     void renderSurface(Slot slot) override
@@ -114,7 +104,7 @@ public:
     }
 
 private:
-    void renderSlot(SurfaceInfo& slot, const VolumeTest* view = nullptr, bool renderBump = false)
+    void renderSlot(SurfaceInfo& slot, const VolumeTest* view = nullptr)
     {
         auto& surface = slot.surface.get();
 
