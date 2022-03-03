@@ -15,74 +15,23 @@ class GeometryRenderer :
     public IGeometryRenderer
 {
 private:
-    // Manages all surfaces drawn in a certain GL mode like GL_TRIANGLES, GL_QUADS, etc.
-    class SurfaceGroup
+    // Contains all geometry sharing the same GL primitive mode like GL_TRIANGLES, GL_QUADS, etc.
+    struct SurfaceGroup
     {
-    private:
-        IGeometryStore& _store;
-        GLenum _mode;
-
-        std::set<IGeometryStore::Slot> _surfaces;
-
-    public:
-        SurfaceGroup(IGeometryStore& store, GLenum mode) :
-            _store(store),
-            _mode(mode)
+        GLenum primitiveMode;
+        std::set<IGeometryStore::Slot> storageHandles;
+        
+        SurfaceGroup(GLenum mode) :
+            primitiveMode(mode)
         {}
-
-        bool empty() const
-        {
-            return _surfaces.empty();
-        }
-
-        void renderAll()
-        {
-            ObjectRenderer::SubmitGeometry(_surfaces, _mode, _store);
-        }
-
-        void renderSurface(IGeometryStore::Slot slot) const
-        {
-            ObjectRenderer::SubmitGeometry(slot, _mode, _store);
-        }
-
-        // Returns the surface index within this buffer
-        IGeometryStore::Slot addSurface(const std::vector<ArbitraryMeshVertex>& vertices,
-            const std::vector<unsigned int>& indices)
-        {
-            // Save the data into the backend storage
-            auto slot = _store.allocateSlot(vertices, indices);
-
-            _surfaces.insert(slot);
-
-            return slot;
-        }
-
-        void updateSurface(IGeometryStore::Slot slot,
-            const std::vector<ArbitraryMeshVertex>& vertices,
-            const std::vector<unsigned int>& indices)
-        {
-            _store.updateData(slot, vertices, indices);
-        }
-
-        void removeSurface(IGeometryStore::Slot slot)
-        {
-            _store.deallocateSlot(slot);
-            _surfaces.erase(slot);
-        }
-
-        AABB getSurfaceBounds(IGeometryStore::Slot slot)
-        {
-            return _store.getBounds(slot);
-        }
     };
 
+    IGeometryStore& _store;
     std::vector<SurfaceGroup> _groups;
 
     static constexpr IGeometryStore::Slot InvalidStorageHandle = std::numeric_limits<IGeometryStore::Slot>::max();
 
-    // Internal information about where the chunk of indexed vertex data is located:
-    // Which buffer they're in, and the data offset and count within the buffer.
-    // This is enough information to access, replace or remove the data at a later point.
+    // Internal mapping to the respective group and the storage location
     struct SlotInfo
     {
         std::uint8_t groupIndex;
@@ -95,19 +44,20 @@ private:
 
 public:
     GeometryRenderer(IGeometryStore& store) :
+        _store(store),
         _freeSlotMappingHint(InvalidSlotMapping)
     {
-        _groups.emplace_back(store, GL_TRIANGLES);
-        _groups.emplace_back(store, GL_QUADS);
-        _groups.emplace_back(store, GL_LINES);
-        _groups.emplace_back(store, GL_POINTS);
+        _groups.emplace_back(GL_TRIANGLES);
+        _groups.emplace_back(GL_QUADS);
+        _groups.emplace_back(GL_LINES);
+        _groups.emplace_back(GL_POINTS);
     }
 
     bool empty() const
     {
-        for (const auto& buffer : _groups)
+        for (const auto& group : _groups)
         {
-            if (!buffer.empty()) return false;
+            if (!group.storageHandles.empty()) return false;
         }
 
         return true;
@@ -117,13 +67,16 @@ public:
         const std::vector<unsigned int>& indices) override
     {
         auto groupIndex = GetGroupIndexForIndexType(indexType);
-        auto& buffer = getGroupByIndex(groupIndex);
+        auto& group = getGroupByIndex(groupIndex);
 
         // Allocate a slot
         auto newSlotIndex = getNextFreeSlotMapping();
         auto& slot = _slots.at(newSlotIndex);
 
-        slot.storageHandle = buffer.addSurface(vertices, indices);
+        // Save the data into the backend storage
+        slot.storageHandle = _store.allocateSlot(vertices, indices);
+        group.storageHandles.insert(slot.storageHandle);
+
         slot.groupIndex = groupIndex;
 
         return newSlotIndex;
@@ -132,9 +85,13 @@ public:
     void removeGeometry(Slot slot) override
     {
         auto& slotInfo = _slots.at(slot);
-        auto& buffer = getGroupByIndex(slotInfo.groupIndex);
+        auto& group = getGroupByIndex(slotInfo.groupIndex);
 
-        buffer.removeSurface(slotInfo.storageHandle);
+        // Release the memory in the geometry store
+        _store.deallocateSlot(slotInfo.storageHandle);
+
+        // Remove the geometry from its group
+        group.storageHandles.erase(slotInfo.storageHandle);
 
         // Invalidate the slot
         slotInfo.storageHandle = InvalidStorageHandle;
@@ -149,17 +106,16 @@ public:
         const std::vector<unsigned int>& indices) override
     {
         auto& slotInfo = _slots.at(slot);
-        auto& buffer = getGroupByIndex(slotInfo.groupIndex);
 
-        buffer.updateSurface(slotInfo.storageHandle, vertices, indices);
+        // Upload the new vertex and index data
+        _store.updateData(slotInfo.storageHandle, vertices, indices);
     }
 
     AABB getGeometryBounds(Slot slot) override
     {
         auto& slotInfo = _slots.at(slot);
-        auto& group = getGroupByIndex(slotInfo.groupIndex);
 
-        return group.getSurfaceBounds(slotInfo.storageHandle);
+        return _store.getBounds(slotInfo.storageHandle);
     }
 
     void render()
@@ -171,9 +127,9 @@ public:
 
         glFrontFace(GL_CW);
 
-        for (auto& buffer : _groups)
+        for (auto& group : _groups)
         {
-            buffer.renderAll();
+            ObjectRenderer::SubmitGeometry(group.storageHandles, group.primitiveMode, _store);
         }
 
         glDisableClientState(GL_COLOR_ARRAY);
@@ -193,9 +149,9 @@ public:
         glFrontFace(GL_CW);
 
         auto& slotInfo = _slots.at(slot);
-        auto& buffer = getGroupByIndex(slotInfo.groupIndex);
+        auto& group = getGroupByIndex(slotInfo.groupIndex);
 
-        buffer.renderSurface(slotInfo.storageHandle);
+        ObjectRenderer::SubmitGeometry(slotInfo.storageHandle, group.primitiveMode, _store);
 
         glDisableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
