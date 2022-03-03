@@ -113,7 +113,7 @@ void OpenGLShader::drawSurfaces(const VolumeTest& view, const RenderInfo& info)
 
     if (hasSurfaces())
     {
-        _geometryRenderer.render(info);
+        _geometryRenderer.render();
         _surfaceRenderer.render(view, info);
     }
 

@@ -35,67 +35,14 @@ private:
             return _surfaces.empty();
         }
 
-        void renderAll(bool renderBump)
+        void renderAll()
         {
-            auto surfaceCount = _surfaces.size();
-
-            if (surfaceCount == 0) return;
-
-            // Build the indices and offsets used for the glMulti draw call
-            std::vector<GLsizei> sizes;
-            std::vector<void*> firstIndices;
-            std::vector<GLint> firstVertices;
-
-            sizes.reserve(surfaceCount);
-            firstIndices.reserve(surfaceCount);
-            firstVertices.reserve(surfaceCount);
-
-            ArbitraryMeshVertex* bufferStart = nullptr;
-
-            for (const auto slot : _surfaces)
-            {
-                auto renderParams = _store.getRenderParameters(slot);
-
-                sizes.push_back(static_cast<GLsizei>(renderParams.indexCount));
-                firstVertices.push_back(static_cast<GLint>(renderParams.firstVertex));
-                firstIndices.push_back(renderParams.firstIndex);
-
-                bufferStart = renderParams.bufferStart;
-            }
-
-            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->vertex);
-            glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->colour);
-
-            if (renderBump)
-            {
-                glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->normal);
-                glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->texcoord);
-                glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->tangent);
-                glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->bitangent);
-            }
-            else
-            {
-                glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->texcoord);
-                glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->normal);
-            }
-
-            glMultiDrawElementsBaseVertex(_mode, sizes.data(), GL_UNSIGNED_INT,
-                &firstIndices.front(), static_cast<GLsizei>(sizes.size()), &firstVertices.front());
+            ObjectRenderer::SubmitGeometry(_surfaces, _mode, _store);
         }
 
         void renderSurface(IGeometryStore::Slot slot) const
         {
             ObjectRenderer::SubmitGeometry(slot, _mode, _store);
-#if 0
-            auto renderParams = _store.getRenderParameters(slot);
-
-            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
-            glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->texcoord);
-            glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->normal);
-
-            glDrawElementsBaseVertex(_mode, static_cast<GLsizei>(renderParams.indexCount), GL_UNSIGNED_INT,
-                renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
-#endif
         }
 
         // Returns the surface index within this buffer
@@ -215,7 +162,7 @@ public:
         return group.getSurfaceBounds(slotInfo.storageHandle);
     }
 
-    void render(const RenderInfo& info)
+    void render()
     {
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -226,7 +173,7 @@ public:
 
         for (auto& buffer : _groups)
         {
-            buffer.renderAll(info.checkFlag(RENDER_BUMP));
+            buffer.renderAll();
         }
 
         glDisableClientState(GL_COLOR_ARRAY);
