@@ -30,20 +30,31 @@ void ObjectRenderer::SubmitObject(IRenderableObject& object, IGeometryStore& sto
     glPopMatrix();
 }
 
+namespace
+{
+
+// Prepare a glDraw call by setting the glVertex(Attrib)Pointers to the given starting vertex
+inline void setupAttributePointers(ArbitraryMeshVertex* startVertex)
+{
+    glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &startVertex->vertex);
+    glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &startVertex->colour);
+    glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &startVertex->texcoord);
+    glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &startVertex->normal);
+
+    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &startVertex->vertex);
+    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &startVertex->normal);
+    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &startVertex->texcoord);
+    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &startVertex->tangent);
+    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &startVertex->bitangent);
+}
+
+}
+
 void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode, IGeometryStore& store)
 {
     auto renderParams = store.getRenderParameters(slot);
 
-    glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
-    glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->colour);
-    glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->normal);
-    glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->texcoord);
-
-    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->vertex);
-    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->normal);
-    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->texcoord);
-    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->tangent);
-    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &renderParams.bufferStart->bitangent);
+    setupAttributePointers(renderParams.bufferStart);
 
     glDrawElementsBaseVertex(primitiveMode, static_cast<GLsizei>(renderParams.indexCount),
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
@@ -77,19 +88,10 @@ void ObjectRenderer::SubmitGeometry(const std::set<IGeometryStore::Slot>& slots,
         bufferStart = renderParams.bufferStart;
     }
 
-    glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->vertex);
-    glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->colour);
-    glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->texcoord);
-    glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &bufferStart->normal);
-
-    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->vertex);
-    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->normal);
-    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->texcoord);
-    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->tangent);
-    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &bufferStart->bitangent);
+    setupAttributePointers(bufferStart);
 
     glMultiDrawElementsBaseVertex(primitiveMode, sizes.data(), GL_UNSIGNED_INT,
-        &firstIndices.front(), static_cast<GLsizei>(sizes.size()), &firstVertices.front());
+        firstIndices.data(), static_cast<GLsizei>(sizes.size()), firstVertices.data());
 }
 
 }
