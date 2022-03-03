@@ -18,9 +18,6 @@ template <typename ReturnType>
 class ThreadedDeclParser :
     public util::ThreadedDefLoader<ReturnType>
 {
-public:
-    using LoadFunction = typename util::ThreadedDefLoader<ReturnType>::LoadFunction;
-
 private:
     decl::Type _declType;
     std::string _baseDir;
@@ -39,21 +36,6 @@ protected:
     {}
 
 public:
-    // Legacy constructor
-    ThreadedDeclParser(const std::string& baseDir, const std::string& extension,
-                       const LoadFunction& loadFunc) :
-        ThreadedDeclParser(baseDir, extension, 0, loadFunc)
-    {}
-
-    // Legacy constructor
-    ThreadedDeclParser(const std::string& baseDir, const std::string& extension, std::size_t depth,
-                       const LoadFunction& loadFunc) :
-        util::ThreadedDefLoader<ReturnType>(loadFunc),
-        _baseDir(baseDir),
-        _extension(extension),
-        _depth(depth)
-    {}
-
     virtual ~ThreadedDeclParser()
     {}
 
@@ -77,9 +59,8 @@ protected:
         return onFinishParsing();
     }
 
-    // Parse all decls found in the given stream. To be implemented by subclasses
-    virtual void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir)
-    {}
+    // Parse all decls found in the given stream, to be implemented by subclasses
+    virtual void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir) = 0;
 
     void processFiles()
     {
