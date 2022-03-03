@@ -1,7 +1,9 @@
 #pragma once
 
+#include <map>
+#include <stdexcept>
 #include "irender.h"
-#include "igeometryrenderer.h"
+#include "isurfacerenderer.h"
 #include "igeometrystore.h"
 
 #include "ObjectRenderer.h"
@@ -14,8 +16,6 @@ class SurfaceRenderer :
 {
 private:
     IGeometryStore& _store;
-
-    static constexpr IGeometryStore::Slot InvalidStorageSlot = std::numeric_limits<IGeometryStore::Slot>::max();
 
     struct SurfaceInfo
     {
@@ -85,17 +85,7 @@ public:
 
     void renderSurface(Slot slot) override
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
-
-        // Render this slot without any vertex colours
-        glDisableClientState(GL_COLOR_ARRAY);
-
         renderSlot(_surfaces.at(slot));
-
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override
