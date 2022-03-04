@@ -353,14 +353,10 @@ void BrushNode::onPreRender(const VolumeTest& volume)
 
     assert(_renderEntity);
 
-    auto brushIsSelected = isSelected();
-
     // Run the face updates only if requested
     if (_facesNeedRenderableUpdate)
     {
         _facesNeedRenderableUpdate = false;
-
-        auto isCameraView = volume.fill();
 
         // Every face is asked to run the rendering preparations
         // to link/unlink their geometry to/from the active shader
@@ -368,17 +364,12 @@ void BrushNode::onPreRender(const VolumeTest& volume)
         {
             auto& face = faceInstance.getFace();
 
-            // Always update the solid renderables, even in ortho rendering, since we need the solid renderable for highlighting
             face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader(), *_renderEntity);
-
-            if (!isCameraView)
-            {
-                face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader(), *_renderEntity);
-            }
+            face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader(), *_renderEntity);
         }
     }
 
-    if (brushIsSelected && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent)
+    if (isSelected() && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent)
     {
         updateSelectedPointsArray();
 
