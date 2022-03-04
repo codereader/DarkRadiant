@@ -94,7 +94,7 @@ public:
         _windingSize = 0;
     }
 
-    void render(const RenderInfo& info) const override
+    void render() const override
     {
         if (_slot != render::IWindingRenderer::InvalidSlot && _shader)
         {

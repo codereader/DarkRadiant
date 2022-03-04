@@ -146,7 +146,7 @@ public:
     }
 
     // Renders the geometry stored in our single slot
-    void render(const RenderInfo& info) const override
+    void render() const override
     {
         if (_surfaceSlot != IGeometryRenderer::InvalidSlot && _shader)
         {

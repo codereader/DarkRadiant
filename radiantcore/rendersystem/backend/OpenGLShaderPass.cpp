@@ -656,9 +656,7 @@ void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
             }
         }
 
-        // Render the renderable
-        RenderInfo info(current.getRenderFlags(), viewer, current.cubeMapMode);
-        r.renderable->render(info);
+        r.renderable->render();
     }
 
     // Cleanup

@@ -65,13 +65,7 @@ void SceneRenderer::setupState(OpenGLState& state)
         glClientActiveTexture(GL_TEXTURE0);
     }
 
-    if (GLEW_ARB_shader_objects)
-    {
-        glUseProgram(0);
-        glDisableVertexAttribArrayARB(c_attr_TexCoord0);
-        glDisableVertexAttribArrayARB(c_attr_Tangent);
-        glDisableVertexAttribArrayARB(c_attr_Binormal);
-    }
+    glUseProgram(0);
 
     glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
     glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);

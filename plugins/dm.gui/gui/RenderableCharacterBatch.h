@@ -40,7 +40,6 @@ public:
 
 	void compile();
 
-	// OpenGLRenderable implementation
 	void render() const;
 };
 typedef std::shared_ptr<RenderableCharacterBatch> RenderableCharacterBatchPtr;
