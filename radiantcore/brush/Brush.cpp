@@ -196,6 +196,11 @@ void Brush::updateFaceVisibility()
     _owner.updateFaceVisibility();
 }
 
+void Brush::onFaceNeedsRenderableUpdate()
+{
+    _owner.onFaceNeedsRenderableUpdate();
+}
+
 Brush::DetailFlag Brush::getDetailFlag() const
 {
 	return _detailFlag;

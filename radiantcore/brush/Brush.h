@@ -181,6 +181,7 @@ public:
 	void onFaceShaderChanged();
     void onFaceConnectivityChanged();
     void onFaceEvaluateTransform();
+    void onFaceNeedsRenderableUpdate();
 
 	// Sets the shader of all faces to the given name
 	void setShader(const std::string& newShader) override;

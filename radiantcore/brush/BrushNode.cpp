@@ -17,7 +17,8 @@ BrushNode::BrushNode() :
 	m_brush(*this),
 	_renderableComponentsNeedUpdate(true),
     _untransformedOriginChanged(true),
-    _renderableVertices(m_brush, _selectedPoints)
+    _renderableVertices(m_brush, _selectedPoints),
+    _facesNeedRenderableUpdate(true)
 {
 	m_brush.attach(*this); // BrushObserver
 
@@ -41,7 +42,8 @@ BrushNode::BrushNode(const BrushNode& other) :
 	m_brush(*this, other.m_brush),
 	_renderableComponentsNeedUpdate(true),
     _untransformedOriginChanged(true),
-    _renderableVertices(m_brush, _selectedPoints)
+    _renderableVertices(m_brush, _selectedPoints),
+    _facesNeedRenderableUpdate(true)
 {
 	m_brush.attach(*this); // BrushObserver
 }
@@ -340,6 +342,11 @@ void BrushNode::DEBUG_verify() {
 	ASSERT_MESSAGE(m_faceInstances.size() == m_brush.DEBUG_size(), "FATAL: mismatch");
 }
 
+void BrushNode::onFaceNeedsRenderableUpdate()
+{
+    _facesNeedRenderableUpdate = true;
+}
+
 void BrushNode::onPreRender(const VolumeTest& volume)
 {
     m_brush.evaluateBRep();
@@ -347,20 +354,27 @@ void BrushNode::onPreRender(const VolumeTest& volume)
     assert(_renderEntity);
 
     auto brushIsSelected = isSelected();
-    auto isCameraView = volume.fill();
 
-    // Every face is asked to run the rendering preparations
-    // to link/unlink their geometry to/from the active shader
-    for (auto& faceInstance : m_faceInstances)
+    // Run the face updates only if requested
+    if (_facesNeedRenderableUpdate)
     {
-        auto& face = faceInstance.getFace();
+        _facesNeedRenderableUpdate = false;
 
-        // Always update the solid renderables, even in ortho rendering, since we need the solid renderable for highlighting
-        face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader(), *_renderEntity);
+        auto isCameraView = volume.fill();
 
-        if (!isCameraView)
+        // Every face is asked to run the rendering preparations
+        // to link/unlink their geometry to/from the active shader
+        for (auto& faceInstance : m_faceInstances)
         {
-            face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader(), *_renderEntity);
+            auto& face = faceInstance.getFace();
+
+            // Always update the solid renderables, even in ortho rendering, since we need the solid renderable for highlighting
+            face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader(), *_renderEntity);
+
+            if (!isCameraView)
+            {
+                face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader(), *_renderEntity);
+            }
         }
     }
 

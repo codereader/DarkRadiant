@@ -355,6 +355,8 @@ void Face::updateRenderables()
 {
     _windingSurfaceSolid.queueUpdate();
     _windingSurfaceWireframe.queueUpdate();
+
+    _owner.onFaceNeedsRenderableUpdate();
 }
 
 void Face::updateWinding()
