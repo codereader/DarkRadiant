@@ -4,8 +4,8 @@
 
 #include "Face.h"
 #include "SelectableComponents.h"
-#include "RenderableWireFrame.h"
 #include "Translatable.h"
+#include "render.h"
 #include "render/VertexCb.h"
 
 #include <sigc++/signal.h>
@@ -110,6 +110,20 @@ private:
 
 	typedef std::vector<SelectableEdge> SelectableEdges;
 	SelectableEdges m_select_edges;
+
+    struct EdgeRenderIndices
+    {
+        RenderIndex first;
+        RenderIndex second;
+
+        EdgeRenderIndices()
+            : first(0), second(0)
+        {}
+
+        EdgeRenderIndices(const RenderIndex _first, const RenderIndex _second)
+            : first(_first), second(_second)
+        {}
+    };
 
 	// A list of all edge render indices, one for each unique edge
 	std::vector<EdgeRenderIndices> _edgeIndices;

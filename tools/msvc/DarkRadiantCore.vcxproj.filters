@@ -1845,9 +1845,6 @@
     <ClInclude Include="..\..\radiantcore\brush\PlanePoints.h">
       <Filter>src\brush</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\brush\RenderableWireFrame.h">
-      <Filter>src\brush</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\brush\SelectableComponents.h">
       <Filter>src\brush</Filter>
     </ClInclude>
