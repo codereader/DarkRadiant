@@ -53,20 +53,33 @@ struct RenderingTraits<WindingIndexer_Polygon>
 };
 
 template<class WindingIndexerT>
-class WindingRenderer :
+class WindingRenderer final :
     public IBackendWindingRenderer
 {
 private:
     using VertexBuffer = CompactWindingVertexBuffer<ArbitraryMeshVertex, WindingIndexerT>;
-
+    static constexpr typename VertexBuffer::Slot InvalidVertexBufferSlot = std::numeric_limits<typename VertexBuffer::Slot>::max();
+    static constexpr IGeometryStore::Slot InvalidStorageHandle = std::numeric_limits<IGeometryStore::Slot>::max();
     struct Bucket
     {
         Bucket(std::size_t size) :
-            buffer(size)
+            buffer(size),
+            storageHandle(InvalidStorageHandle),
+            storageCapacity(0),
+            modifiedSlotRange(InvalidVertexBufferSlot, 0)
         {}
 
         VertexBuffer buffer;
         std::vector<typename VertexBuffer::Slot> pendingDeletions;
+
+        // The memory chunk in the central storage
+        IGeometryStore::Slot storageHandle;
+
+        // The maximum number of windings we can load in the geometry store
+        std::size_t storageCapacity;
+
+        // The lowest and highest slot numbers that have been modified since the last sync
+        std::pair<typename VertexBuffer::Slot, typename VertexBuffer::Slot> modifiedSlotRange;
     };
 
     IGeometryStore& _geometryStore;
@@ -77,7 +90,6 @@ private:
 
     using BucketIndex = std::uint16_t;
     static constexpr BucketIndex InvalidBucketIndex = std::numeric_limits<BucketIndex>::max();
-    static constexpr typename VertexBuffer::Slot InvalidVertexBufferSlot = std::numeric_limits<typename VertexBuffer::Slot>::max();
 
     // Stores the indices to a winding slot into a bucket, client code receives an index to a SlotMapping
     struct SlotMapping
@@ -302,6 +314,19 @@ public:
         }
     }
 
+    ~WindingRenderer()
+    {
+        // Release all storage allocations
+        for (auto& bucket : _buckets)
+        {
+            if (bucket.storageHandle != InvalidStorageHandle)
+            {
+                _geometryStore.deallocateSlot(bucket.storageHandle);
+                bucket.storageHandle = InvalidStorageHandle;
+            }
+        }
+    }
+
     bool empty() const
     {
         return _windingCount == 0;
@@ -338,6 +363,8 @@ public:
             slotMapping.slotNumber = bucket.buffer.pushWinding(vertices);
         }
 
+        updateModifiedRange(bucket, slotMapping.slotNumber);
+
         ++_windingCount;
 
         if (RenderingTraits<WindingIndexerT>::SupportsEntitySurfaces())
@@ -365,7 +392,10 @@ public:
         }
 
         // Mark this winding slot as pending for deletion
-        _buckets[bucketIndex].pendingDeletions.push_back(slotMapping.slotNumber);
+        auto& bucket = _buckets.at(bucketIndex);
+        bucket.pendingDeletions.push_back(slotMapping.slotNumber);
+
+        updateModifiedRange(bucket, slotMapping.slotNumber);
 
         // Invalidate the slot mapping
         slotMapping.bucketIndex = InvalidBucketIndex;
@@ -397,6 +427,8 @@ public:
 
         bucket.buffer.replaceWinding(slotMapping.slotNumber, vertices);
 
+        updateModifiedRange(bucket, slotMapping.slotNumber);
+
         if (RenderingTraits<WindingIndexerT>::SupportsEntitySurfaces())
         {
             _entitySurfaces->updateWinding(slot);
@@ -409,6 +441,7 @@ public:
         {
             auto& bucket = _buckets[bucketIndex];
             commitDeletions(bucketIndex);
+            syncWithGeometryStore(bucket);
 
             if (bucket.buffer.getVertices().empty()) continue;
 
@@ -446,6 +479,7 @@ public:
         auto& bucket = _buckets[slotMapping.bucketIndex];
 
         commitDeletions(slotMapping.bucketIndex);
+        syncWithGeometryStore(bucket);
 
         const auto& vertices = bucket.buffer.getVertices();
         const auto& indices = bucket.buffer.getIndices();
@@ -467,6 +501,97 @@ public:
     }
 
 private:
+    void updateModifiedRange(Bucket& bucket, typename VertexBuffer::Slot modifiedSlot)
+    {
+        // Update the modified range
+        bucket.modifiedSlotRange.first = std::min(bucket.modifiedSlotRange.first, modifiedSlot);
+        bucket.modifiedSlotRange.second = std::max(bucket.modifiedSlotRange.second, modifiedSlot);
+    }
+    
+    // Commit all local buffer changes to the geometry store
+    void syncWithGeometryStore(Bucket& bucket)
+    {
+        if (bucket.modifiedSlotRange.first == InvalidVertexBufferSlot)
+        {
+            return; // no changes
+        }
+
+        auto numberOfStoredWindings = bucket.buffer.getNumberOfStoredWindings();
+
+        if (numberOfStoredWindings == 0)
+        {
+            // Empty, deallocate the storage
+            if (bucket.storageHandle != InvalidStorageHandle)
+            {
+                _geometryStore.deallocateSlot(bucket.storageHandle);
+                bucket.storageHandle = InvalidStorageHandle;
+            }
+
+            bucket.modifiedSlotRange.first = InvalidVertexBufferSlot;
+            bucket.modifiedSlotRange.second = 0;
+            return;
+        }
+
+        // Constrain modified range to actual bounds of our vertex storage
+        if (bucket.modifiedSlotRange.first >= numberOfStoredWindings)
+        {
+            bucket.modifiedSlotRange.first = numberOfStoredWindings;
+        }
+
+        if (bucket.modifiedSlotRange.second >= numberOfStoredWindings)
+        {
+            bucket.modifiedSlotRange.second = numberOfStoredWindings;
+        }
+
+        const auto& vertices = bucket.buffer.getVertices();
+        const auto& indices = bucket.buffer.getIndices();
+
+        // Ensure our storage allocation is large enough
+        if (bucket.storageCapacity < bucket.buffer.getNumberOfStoredWindings())
+        {
+            // (Re-)allocate a chunk that is large enough
+            // Release the old one first
+            if (bucket.storageHandle != InvalidStorageHandle)
+            {
+                _geometryStore.deallocateSlot(bucket.storageHandle);
+                bucket.storageHandle = InvalidStorageHandle;
+            }
+            
+            bucket.storageHandle = _geometryStore.allocateSlot(vertices.size(), indices.size());
+            _geometryStore.updateData(bucket.storageHandle, vertices, indices);
+        }
+        else
+        {
+            // Copy the modified range to the store
+            // We need to set up a local copy here, this could be optimised
+            // if the GeometryStore accepted iterator ranges
+            std::vector<ArbitraryMeshVertex> vertexSubData;
+
+            auto firstVertex = bucket.modifiedSlotRange.first * bucket.buffer.getWindingSize();
+            auto highestVertex = bucket.modifiedSlotRange.second * bucket.buffer.getWindingSize();
+            vertexSubData.reserve(highestVertex - firstVertex);
+            
+            std::copy(vertices.begin() + firstVertex, vertices.begin() + highestVertex, std::back_inserter(vertexSubData));
+
+            std::vector<unsigned int> indexSubData;
+            auto firstIndex = bucket.modifiedSlotRange.first * bucket.buffer.getNumIndicesPerWinding();
+            auto highestIndex = bucket.modifiedSlotRange.second * bucket.buffer.getNumIndicesPerWinding();
+            indexSubData.reserve(highestIndex - firstIndex);
+
+            std::copy(indices.begin() + firstIndex, indices.begin() + highestIndex, std::back_inserter(indexSubData));
+
+            // Upload just this subset
+            _geometryStore.updateSubData(bucket.storageHandle, firstVertex, vertexSubData, firstIndex, indexSubData);
+
+            // Shrink the storage to what we actually use
+            _geometryStore.resizeData(bucket.storageHandle, vertices.size(), indices.size());
+        }
+
+        // Mark the bucket as unmodified
+        bucket.modifiedSlotRange.first = InvalidVertexBufferSlot;
+        bucket.modifiedSlotRange.second = 0;
+    }
+
     void commitDeletions(std::size_t bucketIndex)
     {
         auto& bucket = _buckets[bucketIndex];

@@ -158,6 +158,18 @@ public:
         slot.Used = std::max(slot.Used, elementOffset + numElements);
     }
 
+    void resizeData(Handle handle, std::size_t elementCount)
+    {
+        auto& slot = _slots[handle];
+
+        if (elementCount > slot.Size)
+        {
+            throw std::logic_error("Cannot resize to a large amount than allocated in GeometryStore::Buffer::resizeData");
+        }
+
+        slot.Used = elementCount;
+    }
+
     void deallocate(Handle handle)
     {
         auto& releasedSlot = _slots[handle];

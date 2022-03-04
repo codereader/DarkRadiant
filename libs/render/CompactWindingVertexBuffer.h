@@ -114,6 +114,11 @@ public:
         return WindingIndexerT::GetNumberOfIndicesPerWinding(_size);
     }
 
+    std::size_t getNumberOfStoredWindings() const
+    {
+        return _vertices.size() / _size;
+    }
+
     const std::vector<VertexT>& getVertices() const
     {
         return _vertices;

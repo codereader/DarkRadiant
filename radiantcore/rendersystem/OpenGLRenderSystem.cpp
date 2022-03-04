@@ -72,6 +72,12 @@ OpenGLRenderSystem::~OpenGLRenderSystem()
 {
     _materialDefsLoaded.disconnect();
     _materialDefsUnloaded.disconnect();
+
+    // Destruct the shaders before the geometry store is destroyed
+    _shaders.clear();
+    _entities.clear();
+    _lights.clear();
+    _state_sorted.clear();
 }
 
 ITextRenderer::Ptr OpenGLRenderSystem::captureTextRenderer(IGLFont::Style style, std::size_t size)
