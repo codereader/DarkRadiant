@@ -132,6 +132,82 @@ TEST(ContinuousBufferTest, ReplaceDataOverflow)
     EXPECT_THROW(buffer.setData(handle, eight), std::logic_error);
 }
 
+TEST(ContinuousBufferTest, ReplaceSubData)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto five = std::vector<int>({ 8,9,10,11,12 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto handle = buffer.allocate(eight.size());
+    buffer.setData(handle, eight);
+
+    EXPECT_TRUE(checkData(buffer, handle, eight));
+
+    EXPECT_EQ(buffer.getSize(handle), eight.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
+
+    // Update the data portion at various offsets
+    buffer.setSubData(handle, 0, five);
+    EXPECT_TRUE(checkData(buffer, handle, { 8,9,10,11,12, 5,6,7 }));
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 8);
+
+    buffer.setSubData(handle, 1, five);
+    EXPECT_TRUE(checkData(buffer, handle, { 8, 8,9,10,11,12, 6,7 }));
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 8);
+
+    buffer.setSubData(handle, 2, five);
+    EXPECT_TRUE(checkData(buffer, handle, { 8,8, 8,9,10,11,12, 7 }));
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 8);
+
+    buffer.setSubData(handle, 3, five);
+    EXPECT_TRUE(checkData(buffer, handle, { 8,8,8, 8,9,10,11,12 }));
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 8);
+}
+
+// In a chunk of memory that is only partially used, calling setSubData
+// can increase that amount of used elements
+TEST(ContinuousBufferTest, ReplaceSubDataIncreasesUsedSize)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto five = std::vector<int>({ 8,9,10,11,12 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    // Allocate 6 more elements than needed
+    auto allocationSize = eight.size() + 6;
+    auto handle = buffer.allocate(allocationSize);
+    buffer.setData(handle, eight);
+
+    EXPECT_TRUE(checkData(buffer, handle, eight));
+
+    EXPECT_EQ(buffer.getSize(handle), allocationSize);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
+
+    // Update the data portion at an offset that increases the fill rate
+    buffer.setSubData(handle, 4, five);
+    EXPECT_TRUE(checkData(buffer, handle, { 0,1,2,3,8,9,10,11,12 }));
+    EXPECT_EQ(buffer.getSize(handle), allocationSize);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 9) << "Should have increased use count to 9";
+}
+
+// Tests that subdata is still respecting the allocation bounds
+TEST(ContinuousBufferTest, ReplaceSubDataOverflow)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto five = std::vector<int>({ 8,9,10,11,12 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto handle = buffer.allocate(eight.size());
+    buffer.setData(handle, eight);
+
+    EXPECT_TRUE(checkData(buffer, handle, eight));
+
+    // Update the data portion at an invalid offset, exceeding the allocated slot size
+    EXPECT_THROW(buffer.setSubData(handle, 4, five), std::logic_error);
+}
+
 TEST(ContinuousBufferTest, BufferGrowth)
 {
     auto sixteen = std::vector<int>({ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 });

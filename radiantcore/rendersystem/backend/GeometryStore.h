@@ -125,6 +125,22 @@ public:
         });
     }
 
+    void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<ArbitraryMeshVertex>& vertices,
+        std::size_t indexOffset, const std::vector<unsigned int>& indices) override
+    {
+        assert(!vertices.empty());
+        assert(!indices.empty());
+
+        auto& current = getCurrentBuffer();
+
+        current.vertices.setSubData(GetVertexSlot(slot), vertexOffset, vertices);
+        current.indices.setSubData(GetIndexSlot(slot), indexOffset, indices);
+
+        _transactionLog.emplace_back(detail::BufferTransaction{
+            slot, detail::BufferTransaction::Type::Update
+        });
+    }
+
     void deallocateSlot(Slot slot) override
     {
         auto& current = getCurrentBuffer();

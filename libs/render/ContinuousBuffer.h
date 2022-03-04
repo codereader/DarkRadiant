@@ -144,6 +144,20 @@ public:
         slot.Used = numElements;
     }
 
+    void setSubData(Handle handle, std::size_t elementOffset, const std::vector<ElementType>& elements)
+    {
+        auto& slot = _slots[handle];
+
+        auto numElements = elements.size();
+        if (elementOffset + numElements > slot.Size)
+        {
+            throw std::logic_error("Cannot store more data than allocated in GeometryStore::Buffer::setSubData");
+        }
+
+        std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset + elementOffset);
+        slot.Used = std::max(slot.Used, elementOffset + numElements);
+    }
+
     void deallocate(Handle handle)
     {
         auto& releasedSlot = _slots[handle];
