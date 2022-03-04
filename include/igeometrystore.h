@@ -53,6 +53,11 @@ public:
     virtual void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<ArbitraryMeshVertex>& vertices,
         std::size_t indexOffset, const std::vector<unsigned int>& indices) = 0;
 
+    /**
+     * Called in case the stored data in the given slot should just be cut off at the end.
+     */
+    virtual void resizeData(Slot slot, std::size_t vertexSize, std::size_t indexSize) = 0;
+
     virtual void deallocateSlot(Slot slot) = 0;
 
     // The render parameters suitable for rendering surfaces using gl(Multi)DrawElements

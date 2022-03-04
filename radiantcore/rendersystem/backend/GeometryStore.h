@@ -141,6 +141,18 @@ public:
         });
     }
 
+    void resizeData(Slot slot, std::size_t vertexSize, std::size_t indexSize) override
+    {
+        auto& current = getCurrentBuffer();
+
+        current.vertices.resizeData(GetVertexSlot(slot), vertexSize);
+        current.indices.resizeData(GetIndexSlot(slot), indexSize);
+
+        _transactionLog.emplace_back(detail::BufferTransaction{
+            slot, detail::BufferTransaction::Type::Update
+        });
+    }
+
     void deallocateSlot(Slot slot) override
     {
         auto& current = getCurrentBuffer();

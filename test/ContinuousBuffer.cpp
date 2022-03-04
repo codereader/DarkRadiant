@@ -208,6 +208,36 @@ TEST(ContinuousBufferTest, ReplaceSubDataOverflow)
     EXPECT_THROW(buffer.setSubData(handle, 4, five), std::logic_error);
 }
 
+TEST(ContinuousBufferTest, ResizeData)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto handle = buffer.allocate(eight.size());
+    buffer.setData(handle, eight);
+
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
+
+    buffer.resizeData(handle, 5);
+    EXPECT_TRUE(checkData(buffer, handle, eight)) << "Data should not have changed";
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 5) << "Used Element Count should be 5 now";
+}
+
+TEST(ContinuousBufferTest, ResizeDataOverflow)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto handle = buffer.allocate(eight.size());
+    buffer.setData(handle, eight);
+    
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
+
+    EXPECT_THROW(buffer.resizeData(handle, eight.size() + 1), std::logic_error);
+}
+
 TEST(ContinuousBufferTest, BufferGrowth)
 {
     auto sixteen = std::vector<int>({ 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15 });
