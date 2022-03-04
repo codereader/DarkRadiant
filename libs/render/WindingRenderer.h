@@ -21,7 +21,7 @@ public:
     virtual bool empty() const = 0;
 
     // Issues the openGL calls to render the vertex buffers
-    virtual void renderAllWindings(const RenderInfo& info) = 0;
+    virtual void renderAllWindings(bool renderBump) = 0;
 };
 
 // Traits class to retrieve the GLenum render mode based on the indexer type
@@ -402,13 +402,8 @@ public:
         }
     }
 
-    void renderAllWindings(const RenderInfo& info) override
+    void renderAllWindings(bool renderBump) override
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_COLOR_ARRAY);
-
         for (auto bucketIndex = 0; bucketIndex < _buckets.size(); ++bucketIndex)
         {
             auto& bucket = _buckets[bucketIndex];
@@ -421,7 +416,7 @@ public:
 
             glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
 
-            if (info.checkFlag(RENDER_BUMP))
+            if (renderBump)
             {
                 glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
                 glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
@@ -439,9 +434,6 @@ public:
 
             debug::checkGLErrors();
         }
-
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        glDisableClientState(GL_NORMAL_ARRAY);
     }
 
     void renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot) override
@@ -457,9 +449,6 @@ public:
         const auto& vertices = bucket.buffer.getVertices();
         const auto& indices = bucket.buffer.getIndices();
 
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
         glDisableClientState(GL_COLOR_ARRAY);
 
         glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
@@ -474,9 +463,6 @@ public:
         {
             renderElements<WindingIndexer_Polygon>(bucket.buffer, slotMapping.slotNumber);
         }
-
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
 private:

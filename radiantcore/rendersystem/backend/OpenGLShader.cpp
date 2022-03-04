@@ -121,8 +121,9 @@ void OpenGLShader::drawSurfaces(const VolumeTest& view, const RenderInfo& info)
         _surfaceRenderer.render(view);
     }
 
-    // Render all windings
-    _windingRenderer->renderAllWindings(info);
+    // Render all windings (without vertex colours)
+    glDisableClientState(GL_COLOR_ARRAY);
+    _windingRenderer->renderAllWindings(info.checkFlag(RENDER_BUMP));
 
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
