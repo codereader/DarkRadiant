@@ -189,8 +189,7 @@ inline void pointvertex_gl_array(const VertexCb* array)
 }
 
 /// A renderable collection of coloured vertices
-class RenderablePointVector :
-	public OpenGLRenderable
+class RenderablePointVector
 {
 public:
 	typedef std::vector<VertexCb> PointVertexVector;
@@ -215,28 +214,6 @@ public:
     {
         return _vector;
     }
-
-	void render(const RenderInfo& info) const
-	{
-		if (_vector.empty()) return;
-
-        // Enable point colours if required
-		bool enablePointColours = info.checkFlag(RENDER_VERTEX_COLOUR) ||
-			(info.checkFlag(RENDER_POINT_COLOUR) && _mode == GL_POINTS);
-
-        if (enablePointColours)
-        {
-            glEnableClientState(GL_COLOR_ARRAY);
-        }
-
-		pointvertex_gl_array(&_vector.front());
-		glDrawArrays(_mode, 0, static_cast<GLsizei>(_vector.size()));
-
-		if (enablePointColours)
-		{
-			glDisableClientState(GL_COLOR_ARRAY);
-		}
-	}
 
 	// Convenience method to set the colour of the whole array
 	void setColour(const Colour4b& colour)
