@@ -6,7 +6,7 @@
 #include "irender.h"
 #include "ishaders.h"
 #include "string/string.h"
-#include "render/WindingRenderer.h"
+#include "WindingRenderer.h"
 #include "GeometryRenderer.h"
 #include "SurfaceRenderer.h"
 

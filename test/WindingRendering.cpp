@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
 #include "render/ArbitraryMeshVertex.h"
-#include "render/WindingRenderer.h"
 #include "render/CompactWindingVertexBuffer.h"
 
 namespace test

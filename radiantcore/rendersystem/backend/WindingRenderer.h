@@ -4,7 +4,8 @@
 #include "irender.h"
 #include <limits>
 #include "iwindingrenderer.h"
-#include "CompactWindingVertexBuffer.h"
+#include "ObjectRenderer.h"
+#include "render/CompactWindingVertexBuffer.h"
 #include "debugging/gl.h"
 
 namespace render
@@ -323,6 +324,7 @@ public:
             {
                 _geometryStore.deallocateSlot(bucket.storageHandle);
                 bucket.storageHandle = InvalidStorageHandle;
+                bucket.storageCapacity = 0;
             }
         }
     }
@@ -443,6 +445,7 @@ public:
             commitDeletions(bucketIndex);
             syncWithGeometryStore(bucket);
 
+#if 0
             if (bucket.buffer.getVertices().empty()) continue;
 
             const auto& vertices = bucket.buffer.getVertices();
@@ -467,6 +470,12 @@ public:
             glDrawElements(primitiveMode, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, &indices.front());
 
             debug::checkGLErrors();
+#else
+            if (bucket.storageHandle == InvalidStorageHandle) continue; // nothing here
+
+            auto primitiveMode = RenderingTraits<WindingIndexerT>::Mode();
+            ObjectRenderer::SubmitGeometry(bucket.storageHandle, primitiveMode, _geometryStore);
+#endif
         }
     }
 
@@ -516,7 +525,7 @@ private:
             return; // no changes
         }
 
-        auto numberOfStoredWindings = bucket.buffer.getNumberOfStoredWindings();
+        auto numberOfStoredWindings = static_cast<typename VertexBuffer::Slot>(bucket.buffer.getNumberOfStoredWindings());
 
         if (numberOfStoredWindings == 0)
         {
@@ -525,6 +534,7 @@ private:
             {
                 _geometryStore.deallocateSlot(bucket.storageHandle);
                 bucket.storageHandle = InvalidStorageHandle;
+                bucket.storageCapacity = 0;
             }
 
             bucket.modifiedSlotRange.first = InvalidVertexBufferSlot;
@@ -535,19 +545,19 @@ private:
         // Constrain modified range to actual bounds of our vertex storage
         if (bucket.modifiedSlotRange.first >= numberOfStoredWindings)
         {
-            bucket.modifiedSlotRange.first = numberOfStoredWindings;
+            bucket.modifiedSlotRange.first = numberOfStoredWindings - 1;
         }
 
         if (bucket.modifiedSlotRange.second >= numberOfStoredWindings)
         {
-            bucket.modifiedSlotRange.second = numberOfStoredWindings;
+            bucket.modifiedSlotRange.second = numberOfStoredWindings - 1;
         }
 
         const auto& vertices = bucket.buffer.getVertices();
         const auto& indices = bucket.buffer.getIndices();
 
         // Ensure our storage allocation is large enough
-        if (bucket.storageCapacity < bucket.buffer.getNumberOfStoredWindings())
+        if (bucket.storageCapacity < numberOfStoredWindings)
         {
             // (Re-)allocate a chunk that is large enough
             // Release the old one first
@@ -555,9 +565,12 @@ private:
             {
                 _geometryStore.deallocateSlot(bucket.storageHandle);
                 bucket.storageHandle = InvalidStorageHandle;
+                bucket.storageCapacity = 0;
             }
             
             bucket.storageHandle = _geometryStore.allocateSlot(vertices.size(), indices.size());
+            bucket.storageCapacity = numberOfStoredWindings;
+            
             _geometryStore.updateData(bucket.storageHandle, vertices, indices);
         }
         else
@@ -568,14 +581,14 @@ private:
             std::vector<ArbitraryMeshVertex> vertexSubData;
 
             auto firstVertex = bucket.modifiedSlotRange.first * bucket.buffer.getWindingSize();
-            auto highestVertex = bucket.modifiedSlotRange.second * bucket.buffer.getWindingSize();
+            auto highestVertex = (bucket.modifiedSlotRange.second + 1) * bucket.buffer.getWindingSize();
             vertexSubData.reserve(highestVertex - firstVertex);
             
             std::copy(vertices.begin() + firstVertex, vertices.begin() + highestVertex, std::back_inserter(vertexSubData));
 
             std::vector<unsigned int> indexSubData;
             auto firstIndex = bucket.modifiedSlotRange.first * bucket.buffer.getNumIndicesPerWinding();
-            auto highestIndex = bucket.modifiedSlotRange.second * bucket.buffer.getNumIndicesPerWinding();
+            auto highestIndex = (bucket.modifiedSlotRange.second + 1) * bucket.buffer.getNumIndicesPerWinding();
             indexSubData.reserve(highestIndex - firstIndex);
 
             std::copy(indices.begin() + firstIndex, indices.begin() + highestIndex, std::back_inserter(indexSubData));
