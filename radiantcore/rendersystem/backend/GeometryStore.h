@@ -147,7 +147,7 @@ public:
         {
             current.vertices.getBufferStart(),
             current.indices.getBufferStart() + current.indices.getOffset(indexSlot), // pointer to first index
-            current.indices.getSize(indexSlot), // index count of the given geometry
+            current.indices.getNumUsedElements(indexSlot), // index count of the given geometry
             current.vertices.getOffset(vertexSlot) // offset to the first vertex
         };
     }
