@@ -525,10 +525,9 @@ void OpenGLShaderPass::render(OpenGLState& current,
     glMatrixMode(GL_MODELVIEW);
 
     // Apply our state to the current state object
-    applyState(current, flagsMask, viewer, time, NULL);
+    applyState(current, flagsMask, viewer, time, nullptr);
 
-    RenderInfo info(current.getRenderFlags(), viewer, current.cubeMapMode);
-    _owner.drawSurfaces(view, info);
+    _owner.drawSurfaces(view);
 
     if (!_renderablesWithoutEntity.empty())
     {

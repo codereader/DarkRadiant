@@ -21,8 +21,8 @@ public:
     // Returns true if the vertex buffers are empty
     virtual bool empty() const = 0;
 
-    // Issues the openGL calls to render the vertex buffers
-    virtual void renderAllWindings(bool renderBump) = 0;
+    // Submit the geometry of all windings in this renderer
+    virtual void renderAllWindings() = 0;
 };
 
 // Traits class to retrieve the GLenum render mode based on the indexer type
@@ -437,45 +437,19 @@ public:
         }
     }
 
-    void renderAllWindings(bool renderBump) override
+    void renderAllWindings() override
     {
         for (auto bucketIndex = 0; bucketIndex < _buckets.size(); ++bucketIndex)
         {
             auto& bucket = _buckets[bucketIndex];
+
             commitDeletions(bucketIndex);
             syncWithGeometryStore(bucket);
 
-#if 0
-            if (bucket.buffer.getVertices().empty()) continue;
-
-            const auto& vertices = bucket.buffer.getVertices();
-            const auto& indices = bucket.buffer.getIndices();
-
-            glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
-
-            if (renderBump)
-            {
-                glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
-                glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
-                glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().tangent);
-                glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &vertices.front().bitangent);
-            }
-            else
-            {
-                glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
-                glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
-            }
-            
-            auto primitiveMode = RenderingTraits<WindingIndexerT>::Mode();
-            glDrawElements(primitiveMode, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, &indices.front());
-
-            debug::checkGLErrors();
-#else
             if (bucket.storageHandle == InvalidStorageHandle) continue; // nothing here
 
             auto primitiveMode = RenderingTraits<WindingIndexerT>::Mode();
             ObjectRenderer::SubmitGeometry(bucket.storageHandle, primitiveMode, _geometryStore);
-#endif
         }
     }
 
@@ -501,11 +475,11 @@ public:
 
         if (mode == IWindingRenderer::RenderMode::Triangles)
         {
-            renderElements<WindingIndexer_Triangles>(bucket.buffer, slotMapping.slotNumber);
+            renderSingleWinding<WindingIndexer_Triangles>(bucket.buffer, slotMapping.slotNumber);
         }
         else if (mode == IWindingRenderer::RenderMode::Polygon)
         {
-            renderElements<WindingIndexer_Polygon>(bucket.buffer, slotMapping.slotNumber);
+            renderSingleWinding<WindingIndexer_Polygon>(bucket.buffer, slotMapping.slotNumber);
         }
     }
 
@@ -605,7 +579,7 @@ private:
         bucket.modifiedSlotRange.second = 0;
     }
 
-    void commitDeletions(std::size_t bucketIndex)
+    void commitDeletions(BucketIndex bucketIndex)
     {
         auto& bucket = _buckets[bucketIndex];
 
@@ -652,7 +626,7 @@ private:
     }
 
     template<class CustomWindingIndexerT>
-    void renderElements(const VertexBuffer& buffer, typename VertexBuffer::Slot slotNumber) const
+    void renderSingleWinding(const VertexBuffer& buffer, typename VertexBuffer::Slot slotNumber) const
     {
         std::vector<unsigned int> indices;
         indices.reserve(CustomWindingIndexerT::GetNumberOfIndicesPerWinding(buffer.getWindingSize()));

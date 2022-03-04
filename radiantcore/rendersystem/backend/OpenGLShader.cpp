@@ -101,7 +101,7 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     }
 }
 
-void OpenGLShader::drawSurfaces(const VolumeTest& view, const RenderInfo& info)
+void OpenGLShader::drawSurfaces(const VolumeTest& view)
 {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -123,7 +123,7 @@ void OpenGLShader::drawSurfaces(const VolumeTest& view, const RenderInfo& info)
 
     // Render all windings (without vertex colours)
     glDisableClientState(GL_COLOR_ARRAY);
-    _windingRenderer->renderAllWindings(info.checkFlag(RENDER_BUMP));
+    _windingRenderer->renderAllWindings();
 
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);

@@ -103,7 +103,7 @@ public:
 					   const Matrix4& modelview) override;
 
     bool hasSurfaces() const;
-    void drawSurfaces(const VolumeTest& view, const RenderInfo& info);
+    void drawSurfaces(const VolumeTest& view);
 
     IGeometryRenderer::Slot addGeometry(GeometryType indexType,
         const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
