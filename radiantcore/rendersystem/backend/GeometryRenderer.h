@@ -81,7 +81,8 @@ public:
         auto& slot = _slots.at(newSlotIndex);
 
         // Save the data into the backend storage
-        slot.storageHandle = _store.allocateSlot(vertices, indices);
+        slot.storageHandle = _store.allocateSlot(vertices.size(), indices.size());
+        _store.updateData(slot.storageHandle, vertices, indices);
         group.storageHandles.insert(slot.storageHandle);
 
         slot.groupIndex = groupIndex;

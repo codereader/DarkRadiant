@@ -91,19 +91,15 @@ public:
         current.syncObject = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
     }
 
-    Slot allocateSlot(const std::vector<ArbitraryMeshVertex>& vertices,
-        const std::vector<unsigned int>& indices) override
+    Slot allocateSlot(std::size_t numVertices, std::size_t numIndices) override
     {
-        assert(!vertices.empty());
-        assert(!indices.empty());
+        assert(numVertices > 0);
+        assert(numIndices > 0);
 
         auto& current = getCurrentBuffer();
 
-        auto vertexSlot = current.vertices.allocate(vertices.size());
-        current.vertices.setData(vertexSlot, vertices);
-
-        auto indexSlot = current.indices.allocate(indices.size());
-        current.indices.setData(indexSlot, indices);
+        auto vertexSlot = current.vertices.allocate(numVertices);
+        auto indexSlot = current.indices.allocate(numIndices);
 
         auto slot = GetSlot(vertexSlot, indexSlot);
 

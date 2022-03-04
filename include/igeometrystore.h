@@ -28,9 +28,20 @@ public:
     // Slot ID handed out to client code
     using Slot = std::uint64_t;
 
-    virtual Slot allocateSlot(const std::vector<ArbitraryMeshVertex>& vertices,
-        const std::vector<unsigned int>& indices) = 0;
+    /**
+     * Allocate memory blocks, one for vertices and one for indices, of the given size.
+     * The block can be populated using updateData(), where it's possible to
+     * fill the entire block or just a portion of it.
+     * Returns a handle as reference to the block for use in later calls.
+     * The allocated block cannot be resized later.
+     */
+    virtual Slot allocateSlot(std::size_t numVertices, std::size_t numIndices) = 0;
 
+    /**
+     * Load vertex and index data into the specified block. The given vertex and
+     * index arrays must not be larger than what has been allocated earlier, 
+     * but they're allowed to be smaller.
+     */
     virtual void updateData(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
 

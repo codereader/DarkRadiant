@@ -207,7 +207,8 @@ private:
                     }
                     else
                     {
-                        _geometrySlot = _owner._geometryStore.allocateSlot(vertices, indices);
+                        _geometrySlot = _owner._geometryStore.allocateSlot(vertices.size(), indices.size());
+                        _owner._geometryStore.updateData(_geometrySlot, vertices, indices);
                         _pushedVertexCount = vertices.size();
                         _pushedIndexCount = indices.size();
                     }

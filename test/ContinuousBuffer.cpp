@@ -62,7 +62,9 @@ TEST(ContinuousBufferTest, AllocateAndDeallocate)
     render::ContinuousBuffer<int> buffer(24);
     
     auto handle = buffer.allocate(sixteen.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 0) << "Allocated storage should be unused";
     buffer.setData(handle, sixteen);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), sixteen.size()) << "Used element count should be 16 now";
 
     EXPECT_EQ(buffer.getOffset(handle), 0) << "Data should be located at offset 0";
     EXPECT_TRUE(checkData(buffer, handle, sixteen));
@@ -71,7 +73,9 @@ TEST(ContinuousBufferTest, AllocateAndDeallocate)
 
     // Re-allocate
     handle = buffer.allocate(sixteen.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 0) << "Allocated storage should be unused";
     buffer.setData(handle, sixteen);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), sixteen.size()) << "Used element count should be 16 now";
 
     EXPECT_EQ(buffer.getOffset(handle), 0) << "Data should be located at offset 0";
     EXPECT_TRUE(checkData(buffer, handle, sixteen));
@@ -88,9 +92,44 @@ TEST(ContinuousBufferTest, ReplaceData)
     buffer.setData(handle, eight);
 
     EXPECT_TRUE(checkData(buffer, handle, eight));
+    EXPECT_EQ(buffer.getSize(handle), eight.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
 
     buffer.setData(handle, eightAlt);
     EXPECT_TRUE(checkData(buffer, handle, eightAlt));
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eightAlt.size());
+}
+
+TEST(ContinuousBufferTest, ReplaceDataPartially)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto ten = std::vector<int>({ 8,9,10,11,12,13,14,15,16,17 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto allocatedSize = eight.size() + 6; // 6 extra elements
+    auto handle = buffer.allocate(allocatedSize);
+    buffer.setData(handle, eight);
+
+    EXPECT_TRUE(checkData(buffer, handle, eight));
+    EXPECT_EQ(buffer.getSize(handle), allocatedSize);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
+
+    buffer.setData(handle, ten);
+    EXPECT_TRUE(checkData(buffer, handle, ten));
+    EXPECT_EQ(buffer.getSize(handle), allocatedSize);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), ten.size());
+}
+
+TEST(ContinuousBufferTest, ReplaceDataOverflow)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto handle = buffer.allocate(eight.size() - 3); // too little space
+
+    EXPECT_THROW(buffer.setData(handle, eight), std::logic_error);
 }
 
 TEST(ContinuousBufferTest, BufferGrowth)
@@ -153,7 +192,9 @@ TEST(ContinuousBufferTest, BlockReuse)
     buffer.deallocate(handle2);
     
     handle2 = buffer.allocate(eightFrom6.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle2), 0);
     buffer.setData(handle2, eightFrom6);
+    EXPECT_EQ(buffer.getNumUsedElements(handle2), eightFrom6.size());
 
     EXPECT_TRUE(checkContinuousData(buffer, handle1, { sixteen, eightFrom6, eight }));
 
@@ -173,8 +214,14 @@ TEST(ContinuousBufferTest, BlockReuseTightlyFit)
     auto handle1 = buffer.allocate(eight.size());
     auto handle2 = buffer.allocate(sixteen.size());
 
+    EXPECT_EQ(buffer.getNumUsedElements(handle1), 0);
+    EXPECT_EQ(buffer.getNumUsedElements(handle2), 0);
+
     buffer.setData(handle1, eight);
     buffer.setData(handle2, sixteen);
+
+    EXPECT_EQ(buffer.getNumUsedElements(handle1), eight.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle2), sixteen.size());
 
     EXPECT_TRUE(checkContinuousData(buffer, handle1, { eight, sixteen }));
 

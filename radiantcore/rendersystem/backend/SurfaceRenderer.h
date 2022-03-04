@@ -49,7 +49,12 @@ public:
         // Find a free slot
         auto newSlotIndex = getNextFreeSlotIndex();
 
-        auto slot = _store.allocateSlot(surface.getVertices(), surface.getIndices());
+        const auto& vertices = surface.getVertices();
+        const auto& indices = surface.getIndices();
+
+        auto slot = _store.allocateSlot(vertices.size(), indices.size());
+        _store.updateData(slot, vertices, indices);
+
         _surfaces.emplace(newSlotIndex, SurfaceInfo(surface, slot));
 
         return newSlotIndex;

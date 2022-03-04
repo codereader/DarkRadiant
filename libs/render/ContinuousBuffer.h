@@ -54,17 +54,20 @@ private:
         bool Occupied;      // whether this slot is free
         std::size_t Offset; // The index to the first element within the buffer
         std::size_t Size;   // Number of allocated elements
+        std::size_t Used;   // Number of used elements
 
         SlotInfo() :
             Occupied(false),
             Offset(0),
-            Size(0)
+            Size(0),
+            Used(0)
         {}
 
         SlotInfo(std::size_t offset, std::size_t size, bool occupied) :
             Occupied(occupied),
             Offset(offset),
-            Size(size)
+            Size(size),
+            Used(0)
         {}
     };
 
@@ -117,6 +120,11 @@ public:
         return _slots[handle].Size;
     }
 
+    std::size_t getNumUsedElements(Handle handle) const
+    {
+        return _slots[handle].Used;
+    }
+
     std::size_t getOffset(Handle handle) const
     {
         return _slots[handle].Offset;
@@ -124,20 +132,23 @@ public:
 
     void setData(Handle handle, const std::vector<ElementType>& elements)
     {
-        const auto& slot = _slots[handle];
+        auto& slot = _slots[handle];
 
-        if (elements.size() != slot.Size)
+        auto numElements = elements.size();
+        if (numElements > slot.Size)
         {
-            throw std::logic_error("Allocation size mismatch in GeometryStore::Buffer::setData");
+            throw std::logic_error("Cannot store more data than allocated in GeometryStore::Buffer::setData");
         }
 
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset);
+        slot.Used = numElements;
     }
 
     void deallocate(Handle handle)
     {
         auto& releasedSlot = _slots[handle];
         releasedSlot.Occupied = false;
+        releasedSlot.Used = 0;
 
         // Check if the slot can merge with an adjacent one
         Handle slotIndexToMerge = std::numeric_limits<Handle>::max();
@@ -150,6 +161,7 @@ public:
 
             // The merged handle goes to recycling, block it against future use
             slotToMerge.Size = 0;
+            slotToMerge.Used = 0;
             slotToMerge.Occupied = true;
             _emptySlots.push(slotIndexToMerge);
         }
@@ -163,6 +175,7 @@ public:
 
             // The merged handle goes to recycling, block it against future use
             slotToMerge.Size = 0;
+            slotToMerge.Used = 0;
             slotToMerge.Occupied = true;
             _emptySlots.push(slotIndexToMerge);
         }
@@ -312,6 +325,7 @@ private:
         slot.Occupied = occupied;
         slot.Offset = offset;
         slot.Size = size;
+        slot.Used = 0;
 
         return slot;
     }
