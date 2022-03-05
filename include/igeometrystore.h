@@ -8,6 +8,29 @@
 namespace render
 {
 
+// A sync object guarding a single frame buffer (glFenceSync)
+class ISyncObject
+{
+public:
+    using Ptr = std::shared_ptr<ISyncObject>;
+
+    virtual ~ISyncObject() {}
+
+    // Blocks until the guarded buffer is no longer in use
+    virtual void wait() = 0;
+};
+
+// Creates sync objects to safely switch between frame buffers
+// An implementation of this interface may be required to construct an IGeometryStore
+class ISyncObjectProvider
+{
+public:
+    virtual ~ISyncObjectProvider() {}
+
+    // Create a sync object (fence)
+    virtual ISyncObject::Ptr createSyncObject() = 0;
+};
+
 /**
  * Storage container for indexed vertex data.
  *

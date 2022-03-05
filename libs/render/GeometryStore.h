@@ -2,7 +2,6 @@
 
 #include <stdexcept>
 #include <limits>
-#include "igl.h"
 #include "igeometrystore.h"
 #include "ContinuousBuffer.h"
 
@@ -28,11 +27,7 @@ private:
         ContinuousBuffer<MeshVertex> vertices;
         ContinuousBuffer<unsigned int> indices;
 
-        GLsync syncObject;
-
-        FrameBuffer() :
-            syncObject(nullptr)
-        {}
+        ISyncObject::Ptr syncObject;
 
         void applyTransactions(const std::vector<detail::BufferTransaction>& transactions, const FrameBuffer& other)
         {
@@ -45,9 +40,12 @@ private:
     std::vector<FrameBuffer> _frameBuffers;
     unsigned int _currentBuffer;
 
+    ISyncObjectProvider& _syncObjectProvider;
+
 public:
-    GeometryStore() :
-        _currentBuffer(0)
+    GeometryStore(ISyncObjectProvider& syncObjectProvider) :
+        _currentBuffer(0),
+        _syncObjectProvider(syncObjectProvider)
     {
         _frameBuffers.resize(NumFrameBuffers);
     }
@@ -62,22 +60,10 @@ public:
         auto& current = getCurrentBuffer();
 
         // Wait for this buffer to become available
-        if (current.syncObject != nullptr)
+        if (current.syncObject)
         {
-            auto result = glClientWaitSync(current.syncObject, 0, GL_TIMEOUT_IGNORED);
-
-            while (result != GL_ALREADY_SIGNALED && result != GL_CONDITION_SATISFIED)
-            {
-                result = glClientWaitSync(current.syncObject, 0, GL_TIMEOUT_IGNORED);
-
-                if (result == GL_WAIT_FAILED)
-                {
-                    throw std::runtime_error("Could not acquire frame buffer lock");
-                }
-            }
-
-            glDeleteSync(current.syncObject);
-            current.syncObject = nullptr;
+            current.syncObject->wait();
+            current.syncObject.reset();
         }
 
         // Replay any modifications to the new buffer
@@ -89,7 +75,7 @@ public:
     void onFrameFinished()
     {
         auto& current = getCurrentBuffer();
-        current.syncObject = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+        current.syncObject = _syncObjectProvider.createSyncObject();
     }
 
     Slot allocateSlot(std::size_t numVertices, std::size_t numIndices) override

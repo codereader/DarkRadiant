@@ -30,6 +30,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _glProgramFactory(std::make_shared<GLProgramFactory>()),
     _currentShaderProgram(SHADER_PROGRAM_NONE),
     _time(0),
+    _geometryStore(_syncObjectProvider),
     _orthoRenderer(new FullBrightRenderer(RenderViewType::OrthoView, _state_sorted)),
     _editorPreviewRenderer(new FullBrightRenderer(RenderViewType::Camera, _state_sorted)),
     _lightingModeRenderer(new LightingModeRenderer(_geometryStore, _lights, _entities)),
