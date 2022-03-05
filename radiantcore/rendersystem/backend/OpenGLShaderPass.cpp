@@ -502,11 +502,10 @@ void OpenGLShaderPass::deactivateShaderProgram(OpenGLState& current)
     current.glProgram = nullptr;
 }
 
-// Add a Renderable to this bucket
 void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
                                      const Matrix4& modelview)
 {
-    _renderablesWithoutEntity.emplace_back(renderable, modelview);
+    _transformedRenderables.emplace_back(renderable, modelview);
 }
 
 // Render the bucket contents
@@ -529,20 +528,17 @@ void OpenGLShaderPass::render(OpenGLState& current,
 
     _owner.drawSurfaces(view);
 
-    if (!_renderablesWithoutEntity.empty())
-    {
-        renderAllContained(_renderablesWithoutEntity, current, viewer, time);
-    }
+    drawRenderables(current);
 }
 
 void OpenGLShaderPass::clearRenderables()
 {
-    _renderablesWithoutEntity.clear();
+    _transformedRenderables.clear();
 }
 
 bool OpenGLShaderPass::empty()
 {
-    return _renderablesWithoutEntity.empty() && !_owner.hasSurfaces() && !_owner.hasWindings();
+    return _transformedRenderables.empty() && !_owner.hasSurfaces() && !_owner.hasWindings();
 }
 
 bool OpenGLShaderPass::isApplicableTo(RenderViewType renderViewType) const
@@ -621,19 +617,17 @@ void OpenGLShaderPass::SetUpNonInteractionProgram(OpenGLState& current, const Ve
     current.glProgram->applyRenderParams(viewer, objTransform, parms);
 }
 
-// Flush renderables
-void OpenGLShaderPass::renderAllContained(const Renderables& renderables,
-                                          OpenGLState& current,
-                                          const Vector3& viewer,
-                                          std::size_t time)
+void OpenGLShaderPass::drawRenderables(OpenGLState& current)
 {
+    if (_transformedRenderables.empty()) return;
+
     // Keep a pointer to the last transform matrix used
     const Matrix4* transform = nullptr;
 
     glPushMatrix();
 
     // Iterate over each transformed renderable in the vector
-    for (const auto& r : renderables)
+    for (const auto& r : _transformedRenderables)
     {
         // If the current iteration's transform matrix was different from the
         // last, apply it and store for the next iteration

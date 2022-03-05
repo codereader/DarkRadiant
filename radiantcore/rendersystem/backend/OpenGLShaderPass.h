@@ -53,18 +53,14 @@ protected:
 	};
 
 	// Vector of transformed renderables using this state
-	typedef std::vector<TransformedRenderable> Renderables;
-	Renderables _renderablesWithoutEntity;
+    std::vector<TransformedRenderable> _transformedRenderables;
 
 protected:
 
     void setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage);
 
 	// Render all of the given TransformedRenderables
-	void renderAllContained(const Renderables& renderables,
-                            OpenGLState& current,
-                            const Vector3& viewer,
-                            std::size_t time);
+	void drawRenderables(OpenGLState& current);
 
     /* Helper functions to enable/disable particular GL states */
 

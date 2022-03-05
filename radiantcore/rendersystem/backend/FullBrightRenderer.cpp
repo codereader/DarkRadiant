@@ -39,17 +39,17 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
     // OpenGLShaderPasses (containing the renderable geometry), and render the
     // contents of each bucket. Each pass is passed a reference to the "current"
     // state, which it can change.
-    for (const auto& pair : _sortedStates)
+    for (const auto& [_, pass] : _sortedStates)
     {
         // Render the OpenGLShaderPass
-        if (pair.second->empty()) continue;
+        if (pass->empty()) continue;
 
-        if (pair.second->isApplicableTo(_renderViewType))
+        if (pass->isApplicableTo(_renderViewType))
         {
-            pair.second->render(current, globalstate, view.getViewer(), view, time);
+            pass->render(current, globalstate, view.getViewer(), view, time);
         }
 
-        pair.second->clearRenderables();
+        pass->clearRenderables();
     }
 
     cleanupState();
