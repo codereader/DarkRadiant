@@ -16,6 +16,12 @@ public:
     using Slot = std::uint64_t;
 
 private:
+    enum class SlotType
+    {
+        Regular = 0,
+        IndexRemap = 1,
+    };
+
     static constexpr auto NumFrameBuffers = 2;
 
     // Keep track of modified slots as long as a single buffer is in use
@@ -88,7 +94,7 @@ public:
         auto vertexSlot = current.vertices.allocate(numVertices);
         auto indexSlot = current.indices.allocate(numIndices);
 
-        auto slot = GetSlot(vertexSlot, indexSlot);
+        auto slot = GetSlot(SlotType::Regular, vertexSlot, indexSlot);
 
         _transactionLog.emplace_back(detail::BufferTransaction{
             slot, detail::BufferTransaction::Type::Allocate
@@ -99,17 +105,44 @@ public:
 
     Slot allocateIndexSlot(Slot slotContainingVertexData, std::size_t numIndices) override
     {
-        return std::numeric_limits<Slot>::max();
+        assert(numIndices > 0);
+
+        auto& current = getCurrentBuffer();
+
+        // Check the primary slot, it must be one containing vertex data
+        if (GetSlotType(slotContainingVertexData) != SlotType::Regular)
+        {
+            throw std::logic_error("The given slot doesn't contain any vertex data and cannot be used as index remap base");
+        }
+
+        auto indexSlot = current.indices.allocate(numIndices);
+
+        // In an IndexRemap slot, the vertex slot ID refers to the one containing the vertices
+        auto slot = GetSlot(SlotType::IndexRemap, GetVertexSlot(slotContainingVertexData), indexSlot);
+
+        _transactionLog.emplace_back(detail::BufferTransaction{
+            slot, detail::BufferTransaction::Type::Allocate
+        });
+
+        return slot;
     }
 
     void updateData(Slot slot, const std::vector<MeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {
-        assert(!vertices.empty());
-        assert(!indices.empty());
-
         auto& current = getCurrentBuffer();
-        current.vertices.setData(GetVertexSlot(slot), vertices);
+
+        if (GetSlotType(slot) == SlotType::Regular)
+        {
+            assert(!vertices.empty());
+            current.vertices.setData(GetVertexSlot(slot), vertices);
+        }
+        else if (!vertices.empty()) // index slots cannot resize vertex data
+        {
+            throw std::logic_error("This is an index remap slot, cannot update vertex data");
+        }
+         
+        assert(!indices.empty());
         current.indices.setData(GetIndexSlot(slot), indices);
 
         _transactionLog.emplace_back(detail::BufferTransaction{
@@ -120,12 +153,19 @@ public:
     void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<MeshVertex>& vertices,
         std::size_t indexOffset, const std::vector<unsigned int>& indices) override
     {
-        assert(!vertices.empty());
-        assert(!indices.empty());
-
         auto& current = getCurrentBuffer();
 
-        current.vertices.setSubData(GetVertexSlot(slot), vertexOffset, vertices);
+        if (GetSlotType(slot) == SlotType::Regular)
+        {
+            assert(!vertices.empty());
+            current.vertices.setSubData(GetVertexSlot(slot), vertexOffset, vertices);
+        }
+        else if (!vertices.empty()) // index slots cannot resize vertex data
+        {
+            throw std::logic_error("This is an index remap slot, cannot update vertex data");
+        }
+
+        assert(!indices.empty());
         current.indices.setSubData(GetIndexSlot(slot), indexOffset, indices);
 
         _transactionLog.emplace_back(detail::BufferTransaction{
@@ -137,7 +177,15 @@ public:
     {
         auto& current = getCurrentBuffer();
 
-        current.vertices.resizeData(GetVertexSlot(slot), vertexSize);
+        if (GetSlotType(slot) == SlotType::Regular)
+        {
+            current.vertices.resizeData(GetVertexSlot(slot), vertexSize);
+        }
+        else if (vertexSize > 0)
+        {
+            throw std::logic_error("This is an index remap slot, cannot resize vertex data");
+        }
+
         current.indices.resizeData(GetIndexSlot(slot), indexSize);
 
         _transactionLog.emplace_back(detail::BufferTransaction{
@@ -148,7 +196,14 @@ public:
     void deallocateSlot(Slot slot) override
     {
         auto& current = getCurrentBuffer();
-        current.vertices.deallocate(GetVertexSlot(slot));
+
+        // Release the vertex data only for regular slot
+        // IndexRemap slots leave the referenced primary slot alone
+        if (GetSlotType(slot) == SlotType::Regular)
+        {
+            current.vertices.deallocate(GetVertexSlot(slot));
+        }
+
         current.indices.deallocate(GetIndexSlot(slot));
 
         _transactionLog.emplace_back(detail::BufferTransaction{
@@ -196,20 +251,28 @@ private:
         return _frameBuffers[_currentBuffer];
     }
 
-    // Higher 4 bytes will hold the vertex buffer slot
-    static Slot GetSlot(std::uint32_t vertexSlot, std::uint32_t indexSlot)
+    // Highest 2 bits define the type, then 2x 31 bits are used for the vertex and index slot IDs
+    static Slot GetSlot(SlotType slotType, std::uint32_t vertexSlot, std::uint32_t indexSlot)
     {
-        return (static_cast<Slot>(vertexSlot) << 32) + indexSlot;
+        // Remove the highest bit from vertex and index slot numbers, then assign the highest two
+        return (static_cast<Slot>(vertexSlot & 0x7FFFFFFF) << 31) | 
+               (static_cast<Slot>(indexSlot & 0x7FFFFFFF)) |
+               (static_cast<Slot>(slotType) << 62);
+    }
+
+    static SlotType GetSlotType(Slot slot)
+    {
+        return static_cast<SlotType>(slot >> 62);
     }
 
     static std::uint32_t GetVertexSlot(Slot slot)
     {
-        return static_cast<std::uint32_t>(slot >> 32);
+        return static_cast<std::uint32_t>(slot >> 31) & 0x7FFFFFFF; // Clear the highest bit
     }
 
     static std::uint32_t GetIndexSlot(Slot slot)
     {
-        return static_cast<std::uint32_t>((slot << 32) >> 32);
+        return static_cast<std::uint32_t>(slot) & 0x7FFFFFFF; // Clear the highest bit
     }
 };
 

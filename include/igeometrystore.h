@@ -115,6 +115,14 @@ public:
     virtual void resizeData(Slot slot, std::size_t vertexSize, std::size_t indexSize) = 0;
 
     /**
+     * Resize the index data in an index slot. Equivalent to calling resizeData() with vertexSize == 0.
+     */
+    virtual void resizeIndexData(Slot slot, std::size_t indexSize)
+    {
+        resizeData(slot, 0, indexSize);
+    }
+
+    /**
      * Releases the memory allocated by the given slot.
      * The Slot ID is invalidated by this operation and should no longer be used.
      */

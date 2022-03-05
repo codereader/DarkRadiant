@@ -504,9 +504,6 @@ TEST(GeometryStore, AllocateInvalidIndexRemap)
 
     // This call is not valid and should throw, since the secondary slot cannot be re-used
     EXPECT_THROW(store.allocateIndexSlot(secondarySlot, 10), std::logic_error);
-
-    // Trying to reference a non-existing slot should throw as well
-    EXPECT_THROW(store.allocateIndexSlot(56756756, 10), std::logic_error);
 }
 
 TEST(GeometryStore, UpdateIndexRemapData)
@@ -587,6 +584,47 @@ TEST(GeometryStore, UpdateIndexRemapSubData)
 
     // We expect boundaries to be respected, this should be out of range
     EXPECT_THROW(store.updateIndexSubData(secondarySlot, remap.size() - 1, indexSubset), std::logic_error);
+}
+
+TEST(GeometryStore, ResizeIndexRemapData)
+{
+    render::GeometryStore store(NullSyncObjectProvider::Instance());
+
+    // Allocate a slot to hold indexed vertices
+    auto vertices = generateVertices(3, 15 * 20);
+    auto indices = generateIndices(vertices);
+
+    auto primarySlot = store.allocateSlot(vertices.size(), indices.size());
+    EXPECT_NE(primarySlot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+    EXPECT_NO_THROW(store.updateData(primarySlot, vertices, indices));
+
+    // Now allocate an index remapping slot, containing a straight, sequential set of indices 0..n-1
+    std::vector<unsigned int> remap;
+    remap.resize(vertices.size());
+    std::iota(remap.begin(), remap.end(), 0);
+
+    auto secondarySlot = store.allocateIndexSlot(primarySlot, remap.size());
+    store.updateIndexData(secondarySlot, remap);
+
+    verifyAllocation(store, secondarySlot, vertices, remap);
+
+    // Cut off a few remap indices
+    remap.resize(remap.size() - remap.size() / 3);
+    EXPECT_NO_THROW(store.resizeData(secondarySlot, 0, remap.size()));
+
+    // Verify this has taken effect
+    verifyAllocation(store, secondarySlot, vertices, remap);
+
+    // Cut off more indices, use the dedicated method this time
+    remap.resize(remap.size() - remap.size() / 2);
+    EXPECT_NO_THROW(store.resizeIndexData(secondarySlot, remap.size()));
+    verifyAllocation(store, secondarySlot, vertices, remap);
+
+    // We expect an exception if the index size is out of bounds
+    EXPECT_THROW(store.resizeIndexData(secondarySlot, remap.size() * 20), std::logic_error);
+
+    // And we cannot set the vertex size of an index remap slot
+    EXPECT_THROW(store.resizeData(secondarySlot, 6, remap.size()), std::logic_error);
 }
 
 }
