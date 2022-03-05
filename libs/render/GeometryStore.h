@@ -97,6 +97,11 @@ public:
         return slot;
     }
 
+    Slot allocateIndexSlot(Slot slotContainingVertexData, std::size_t numIndices) override
+    {
+        return std::numeric_limits<Slot>::max();
+    }
+
     void updateData(Slot slot, const std::vector<MeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {

@@ -61,12 +61,36 @@ public:
     virtual Slot allocateSlot(std::size_t numVertices, std::size_t numIndices) = 0;
 
     /**
+     * Allocate memory to store an alternative set of indices referencing
+     * an existing set of vertices. When rendering this re-mapped geometry, it will
+     * re-use the vertices of that other slot with the indices defined in this slot.
+     *
+     * With the returned handle, user code can invoke the update[Sub]Data() methods
+     * to upload the indices, but the passed vertex set has to be empty.
+     *
+     * Use the regular deallocate() method to release this slot.
+     *
+     * The index remap slot is depending on the one containing the vertex data, if the latter
+     * is removed, this slot becomes invalid and behaviour is undefined.
+     */
+    virtual Slot allocateIndexSlot(Slot slotContainingVertexData, std::size_t numIndices) = 0;
+
+    /**
      * Load vertex and index data into the specified block. The given vertex and
      * index arrays must not be larger than what has been allocated earlier, 
      * but they're allowed to be smaller.
      */
     virtual void updateData(Slot slot, const std::vector<MeshVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
+
+    /**
+     * Updates the data of an index slot. Equivalent to calling updateData() with
+     * an empty set of vertices.
+     */
+    virtual void updateIndexData(Slot slot, const std::vector<unsigned int>& indices)
+    {
+        updateData(slot, {}, indices);
+    }
 
     /**
      * Load a chunk of vertex and index data into the specified range, starting
@@ -77,10 +101,23 @@ public:
         std::size_t indexOffset, const std::vector<unsigned int>& indices) = 0;
 
     /**
+     * Updates a portion of index data in an index slot. Equivalent to calling updateSubData() with
+     * an empty set of vertices.
+     */
+    virtual void updateIndexSubData(Slot slot, std::size_t indexOffset, const std::vector<unsigned int>& indices)
+    {
+        updateSubData(slot, 0, {}, indexOffset, indices);
+    }
+
+    /**
      * Called in case the stored data in the given slot should just be cut off at the end.
      */
     virtual void resizeData(Slot slot, std::size_t vertexSize, std::size_t indexSize) = 0;
 
+    /**
+     * Releases the memory allocated by the given slot.
+     * The Slot ID is invalidated by this operation and should no longer be used.
+     */
     virtual void deallocateSlot(Slot slot) = 0;
 
     // The render parameters suitable for rendering surfaces using gl(Multi)DrawElements

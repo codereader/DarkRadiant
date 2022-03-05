@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include <limits>
+#include <numeric>
 #include <random>
 #include "render/GeometryStore.h"
 
@@ -463,6 +464,129 @@ TEST(GeometryStore, SyncObjectAcquisition)
 
     EXPECT_EQ(NullSyncObjectProvider::Instance().invocationCount, 5) <<
         "GeometryStore should have performed 5 frame buffer switches";
+}
+
+TEST(GeometryStore, AllocateIndexRemap)
+{
+    render::GeometryStore store(NullSyncObjectProvider::Instance());
+
+    // Allocate a slot to hold indexed vertices
+    auto vertices = generateVertices(3, 15 * 20);
+    auto indices = generateIndices(vertices);
+
+    auto primarySlot = store.allocateSlot(vertices.size(), indices.size());
+    EXPECT_NE(primarySlot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+
+    // Uploading the data should succeed
+    EXPECT_NO_THROW(store.updateData(primarySlot, vertices, indices));
+
+    auto secondarySlot = store.allocateIndexSlot(primarySlot, 20);
+    EXPECT_NE(secondarySlot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+
+    // Deallocation through the regular method should succeed
+    EXPECT_NO_THROW(store.deallocateSlot(secondarySlot));
+}
+
+TEST(GeometryStore, AllocateInvalidIndexRemap)
+{
+    render::GeometryStore store(NullSyncObjectProvider::Instance());
+
+    // Allocate a slot to hold indexed vertices
+    auto vertices = generateVertices(3, 15 * 20);
+    auto indices = generateIndices(vertices);
+
+    auto primarySlot = store.allocateSlot(vertices.size(), indices.size());
+    EXPECT_NE(primarySlot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+
+    // This allocation is valid and will be a remap type
+    auto secondarySlot = store.allocateIndexSlot(primarySlot, 20);
+    EXPECT_NE(secondarySlot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+
+    // This call is not valid and should throw, since the secondary slot cannot be re-used
+    EXPECT_THROW(store.allocateIndexSlot(secondarySlot, 10), std::logic_error);
+
+    // Trying to reference a non-existing slot should throw as well
+    EXPECT_THROW(store.allocateIndexSlot(56756756, 10), std::logic_error);
+}
+
+TEST(GeometryStore, UpdateIndexRemapData)
+{
+    render::GeometryStore store(NullSyncObjectProvider::Instance());
+
+    // Allocate a slot to hold indexed vertices
+    auto vertices = generateVertices(3, 15 * 20);
+    auto indices = generateIndices(vertices);
+
+    auto primarySlot = store.allocateSlot(vertices.size(), indices.size());
+    EXPECT_NE(primarySlot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+    EXPECT_NO_THROW(store.updateData(primarySlot, vertices, indices));
+
+    // Now allocate an index remapping slot, containing a straight, sequential set of indices 0..n-1
+    std::vector<unsigned int> remap;
+    remap.resize(vertices.size());
+    std::iota(remap.begin(), remap.end(), 0);
+
+    auto secondarySlot = store.allocateIndexSlot(primarySlot, remap.size());
+    EXPECT_NE(secondarySlot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+
+    // Update the index data through updateData()
+    EXPECT_NO_THROW(store.updateData(secondarySlot, {}, remap));
+
+    // The render params should effectively point us the re-used vertices, in remapped order
+    verifyAllocation(store, secondarySlot, vertices, remap);
+
+    // Reverse the index order for testing the second way of uploading data
+    std::reverse(remap.begin(), remap.end());
+    EXPECT_NO_THROW(store.updateIndexData(secondarySlot, remap));
+
+    verifyAllocation(store, secondarySlot, vertices, remap);
+
+    // We expect an exception when trying to store vertex data
+    EXPECT_THROW(store.updateData(secondarySlot, vertices, remap), std::logic_error);
+}
+
+TEST(GeometryStore, UpdateIndexRemapSubData)
+{
+    render::GeometryStore store(NullSyncObjectProvider::Instance());
+
+    // Allocate a slot to hold indexed vertices
+    auto vertices = generateVertices(3, 15 * 20);
+    auto indices = generateIndices(vertices);
+
+    auto primarySlot = store.allocateSlot(vertices.size(), indices.size());
+    EXPECT_NE(primarySlot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+    EXPECT_NO_THROW(store.updateData(primarySlot, vertices, indices));
+
+    // Now allocate an index remapping slot, containing a straight, sequential set of indices 0..n-1
+    std::vector<unsigned int> remap;
+    remap.resize(vertices.size());
+    std::iota(remap.begin(), remap.end(), 0);
+
+    auto secondarySlot = store.allocateIndexSlot(primarySlot, remap.size());
+    EXPECT_NE(secondarySlot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+
+    // Upload the sequential set of indices
+    EXPECT_NO_THROW(store.updateIndexData(secondarySlot, remap));
+    verifyAllocation(store, secondarySlot, vertices, remap);
+
+    // Generate a new set of indices, and make it half as large than the original remap
+    std::vector<unsigned int> indexSubset;
+    indexSubset.resize(remap.size() / 2);
+    std::iota(indexSubset.begin(), indexSubset.end(), 0); // [0..N-1]
+    std::reverse(indexSubset.begin(), indexSubset.end()); // make it [N-1...0]
+
+    // Apply the subset to the local remap copy
+    auto offset = indexSubset.size() / 4;
+    std::copy(indexSubset.begin(), indexSubset.end(), remap.begin() + offset);
+
+    // Apply the subset to the data in the store
+    EXPECT_NO_THROW(store.updateIndexSubData(secondarySlot, offset, indexSubset));
+
+    // The new subset should now be used when effective
+    verifyAllocation(store, secondarySlot, vertices, remap);
+
+    // We expect boundaries to be respected, this should be out of range
+    EXPECT_THROW(store.updateIndexSubData(secondarySlot, remap.size() - 1, indexSubset), std::logic_error);
 }
 
 }
