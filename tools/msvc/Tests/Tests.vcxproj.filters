@@ -56,6 +56,7 @@
     <ClCompile Include="..\..\..\test\SceneNode.cpp" />
     <ClCompile Include="..\..\..\test\ContinuousBuffer.cpp" />
     <ClCompile Include="..\..\..\test\Particles.cpp" />
+    <ClCompile Include="..\..\..\test\GeometryStore.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
