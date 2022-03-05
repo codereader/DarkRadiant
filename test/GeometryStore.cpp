@@ -25,6 +25,9 @@ public:
     }
 };
 
+namespace
+{
+
 inline MeshVertex createNthVertex(int n, int id, std::size_t size)
 {
     auto offset = static_cast<double>(n + size * id);
@@ -92,6 +95,19 @@ inline void verifyAllocation(render::IGeometryStore& store, render::IGeometrySto
     }
 }
 
+struct Allocation
+{
+    render::IGeometryStore::Slot slot;
+    std::vector<MeshVertex> vertices;
+    std::vector<unsigned int> indices;
+
+    bool operator<(const Allocation& other) const
+    {
+        return slot < other.slot;
+    }
+};
+
+}
 
 TEST(GeometryStore, AllocateAndDeallocate)
 {
@@ -114,21 +130,9 @@ TEST(GeometryStore, AllocateAndDeallocate)
     }
 }
 
-TEST(GeometryStore, SetData)
+TEST(GeometryStore, UpdateData)
 {
     render::GeometryStore store(NullSyncObjectProvider::Instance());
-
-    struct Allocation
-    {
-        render::IGeometryStore::Slot slot;
-        std::vector<MeshVertex> vertices;
-        std::vector<unsigned int> indices;
-
-        bool operator<(const Allocation& other) const
-        {
-            return slot < other.slot;
-        }
-    };
 
     std::set<Allocation> allocations;
 
@@ -172,6 +176,120 @@ TEST(GeometryStore, SetData)
         {
             verifyAllocation(store, allocation.slot, allocation.vertices, allocation.indices);
         }
+    }
+}
+
+TEST(GeometryStore, UpdateSubData)
+{
+    render::GeometryStore store(NullSyncObjectProvider::Instance());
+
+    std::set<Allocation> allocations;
+
+    // Allocate 10 slots of various sizes, store some data in there
+    auto margin = 13;
+
+    for (auto i = 0; i < 10; ++i)
+    {
+        auto vertices = generateVertices(13, 17 * 20);
+        auto indices = generateIndices(vertices);
+
+        auto slot = store.allocateSlot(vertices.size() + margin, indices.size() + margin);
+        EXPECT_NE(slot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+
+        // We locally keep track of what the data should look like in the store
+        std::vector<MeshVertex> localVertexCopy(vertices.size());
+        std::vector<unsigned int> localIndexCopy(indices.size());
+
+        // Upload part of the data (with some increasing offset)
+        for (auto offset = 0; offset < margin; ++offset)
+        {
+            EXPECT_NO_THROW(store.updateSubData(slot, offset, vertices, offset, indices));
+
+            // Update our local copy accordingly
+            localVertexCopy.resize(vertices.size() + offset);
+            localIndexCopy.resize(indices.size() + offset);
+
+            std::copy(vertices.begin(), vertices.end(), localVertexCopy.begin() + offset);
+            std::copy(indices.begin(), indices.end(), localIndexCopy.begin() + offset);
+
+            verifyAllocation(store, slot, localVertexCopy, localIndexCopy);
+        }
+
+        // Finally, upload the whole data
+        store.updateData(slot, vertices, indices);
+
+        allocations.emplace(Allocation{ slot, vertices, indices });
+
+        // Verify the data after each round, it should not affect the other data
+        for (auto allocation : allocations)
+        {
+            verifyAllocation(store, allocation.slot, allocation.vertices, allocation.indices);
+        }
+    }
+
+    // Verify the data
+    for (auto allocation : allocations)
+    {
+        verifyAllocation(store, allocation.slot, allocation.vertices, allocation.indices);
+    }
+
+    // Now de-allocate one slot after the other and verify the remaining ones
+    while (!allocations.empty())
+    {
+        auto slot = allocations.begin()->slot;
+        allocations.erase(allocations.begin());
+
+        EXPECT_NO_THROW(store.deallocateSlot(slot));
+
+        // Verify the remaining slots, they should still be intact
+        for (auto allocation : allocations)
+        {
+            verifyAllocation(store, allocation.slot, allocation.vertices, allocation.indices);
+        }
+    }
+}
+
+TEST(GeometryStore, ResizeData)
+{
+    render::GeometryStore store(NullSyncObjectProvider::Instance());
+
+    // Allocate a few dummy slots
+    store.allocateSlot(17, 27);
+    store.allocateSlot(31, 67);
+    store.allocateSlot(5, 37);
+
+    // Generate an indexed vertex set
+    auto vertices = generateVertices(13, 17 * 20);
+    auto indices = generateIndices(vertices);
+
+    auto slot = store.allocateSlot(vertices.size(), indices.size());
+    EXPECT_NE(slot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+    
+    // Store everything into the buffer
+    store.updateData(slot, vertices, indices);
+
+    // We locally keep track of what the data should look like in the store
+    std::vector<MeshVertex> localVertexCopy = vertices;
+    std::vector<unsigned int> localIndexCopy = indices;
+
+    // Reduce the data in the allocation, step by step
+    auto newVertexSize = localVertexCopy.size();
+    auto newIndexSize = localIndexCopy.size();
+
+    auto steps = std::min(newIndexSize, newVertexSize);
+    EXPECT_GT(steps, 4) << "Too few data elements";
+    steps -= 4;
+
+    for (auto i = 0; i < steps; ++i)
+    {
+        // Cut off one index at the end
+        // Keep the vertex buffer intact, we don't want out-of-bounds errors
+        localIndexCopy.resize(localIndexCopy.size() - 1);
+        --newVertexSize;
+
+        EXPECT_NO_THROW(store.resizeData(slot, newVertexSize, localIndexCopy.size()));
+
+        verifyAllocation(store, slot, localVertexCopy, localIndexCopy);
     }
 }
 
