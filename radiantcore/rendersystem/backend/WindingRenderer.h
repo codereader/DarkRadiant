@@ -61,6 +61,11 @@ private:
     using VertexBuffer = CompactWindingVertexBuffer<ArbitraryMeshVertex, WindingIndexerT>;
     static constexpr typename VertexBuffer::Slot InvalidVertexBufferSlot = std::numeric_limits<typename VertexBuffer::Slot>::max();
     static constexpr IGeometryStore::Slot InvalidStorageHandle = std::numeric_limits<IGeometryStore::Slot>::max();
+
+    IGeometryStore& _geometryStore;
+    Shader* _owningShader;
+
+    // A Bucket holds all windings of a certain size (3,4,5...)
     struct Bucket
     {
         Bucket(std::size_t size) :
@@ -83,16 +88,13 @@ private:
         std::pair<typename VertexBuffer::Slot, typename VertexBuffer::Slot> modifiedSlotRange;
     };
 
-    IGeometryStore& _geometryStore;
-    Shader* _owningShader;
-
     // Maintain one bucket per winding size, allocated on demand
     std::vector<Bucket> _buckets;
 
     using BucketIndex = std::uint16_t;
     static constexpr BucketIndex InvalidBucketIndex = std::numeric_limits<BucketIndex>::max();
 
-    // Stores the indices to a winding slot into a bucket, client code receives an index to a SlotMapping
+    // Stores the offset of a winding slot within a bucket, client code receives an index to a SlotMapping
     struct SlotMapping
     {
         BucketIndex bucketIndex = InvalidBucketIndex;
@@ -106,6 +108,8 @@ private:
 
     std::size_t _windingCount;
 
+    // Represents a group of windings associated to a single entity
+    // A winding is identified by its slot mapping index as used by the parent WindingRenderer
     class WindingGroup :
         public IRenderableObject
     {
@@ -248,6 +252,7 @@ private:
         }
     };
 
+    // Internal helper to groups windings (slots) by entities
     class EntityWindings
     {
     private:
@@ -311,21 +316,18 @@ public:
     {
         if (RenderingTraits<WindingIndexerT>::SupportsEntitySurfaces())
         {
-            _entitySurfaces.reset(new EntityWindings(*this));
+            _entitySurfaces = std::make_unique<EntityWindings>(*this);
         }
     }
 
     ~WindingRenderer()
     {
+        _entitySurfaces.reset();
+
         // Release all storage allocations
         for (auto& bucket : _buckets)
         {
-            if (bucket.storageHandle != InvalidStorageHandle)
-            {
-                _geometryStore.deallocateSlot(bucket.storageHandle);
-                bucket.storageHandle = InvalidStorageHandle;
-                bucket.storageCapacity = 0;
-            }
+            deallocateStorage(bucket);
         }
     }
 
@@ -504,12 +506,7 @@ private:
         if (numberOfStoredWindings == 0)
         {
             // Empty, deallocate the storage
-            if (bucket.storageHandle != InvalidStorageHandle)
-            {
-                _geometryStore.deallocateSlot(bucket.storageHandle);
-                bucket.storageHandle = InvalidStorageHandle;
-                bucket.storageCapacity = 0;
-            }
+            deallocateStorage(bucket);
 
             bucket.modifiedSlotRange.first = InvalidVertexBufferSlot;
             bucket.modifiedSlotRange.second = 0;
@@ -535,12 +532,7 @@ private:
         {
             // (Re-)allocate a chunk that is large enough
             // Release the old one first
-            if (bucket.storageHandle != InvalidStorageHandle)
-            {
-                _geometryStore.deallocateSlot(bucket.storageHandle);
-                bucket.storageHandle = InvalidStorageHandle;
-                bucket.storageCapacity = 0;
-            }
+            deallocateStorage(bucket);
             
             bucket.storageHandle = _geometryStore.allocateSlot(vertices.size(), indices.size());
             bucket.storageCapacity = numberOfStoredWindings;
@@ -577,6 +569,15 @@ private:
         // Mark the bucket as unmodified
         bucket.modifiedSlotRange.first = InvalidVertexBufferSlot;
         bucket.modifiedSlotRange.second = 0;
+    }
+
+    void deallocateStorage(Bucket& bucket)
+    {
+        if (bucket.storageHandle == InvalidStorageHandle) return;
+
+        _geometryStore.deallocateSlot(bucket.storageHandle);
+        bucket.storageHandle = InvalidStorageHandle;
+        bucket.storageCapacity = 0;
     }
 
     void commitDeletions(BucketIndex bucketIndex)
