@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 
 #include <limits>
+#include <random>
 #include "render/GeometryStore.h"
 
 namespace test
@@ -106,6 +107,14 @@ struct Allocation
         return slot < other.slot;
     }
 };
+
+inline void verifyAllAllocations(render::IGeometryStore& store, const std::vector<Allocation>& allocations)
+{
+    for (auto allocation : allocations)
+    {
+        verifyAllocation(store, allocation.slot, allocation.vertices, allocation.indices);
+    }
+}
 
 }
 
@@ -293,15 +302,167 @@ TEST(GeometryStore, ResizeData)
     }
 }
 
-TEST(GeometryStore, SyncObjectAcquisition)
+TEST(GeometryStore, FrameBufferSwitching)
 {
     render::GeometryStore store(NullSyncObjectProvider::Instance());
 
     store.onFrameStart();
+
+    std::vector<Allocation> allocations;
+
+    // Allocate 10 slots of various sizes, store some data in there
+    for (auto i = 0; i < 10; ++i)
+    {
+        auto vertices = generateVertices(i, (i + 5) * 20);
+        auto indices = generateIndices(vertices);
+
+        auto slot = store.allocateSlot(vertices.size(), indices.size());
+        EXPECT_NE(slot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+
+        // Uploading the data should succeed
+        EXPECT_NO_THROW(store.updateData(slot, vertices, indices));
+
+        allocations.emplace_back(Allocation{ slot, vertices, indices });
+    }
+
+    // Verify all
+    verifyAllAllocations(store, allocations);
     store.onFrameFinished();
 
-    EXPECT_EQ(NullSyncObjectProvider::Instance().invocationCount, 1) <<
-        "GeometryStore should have acquired one sync object";
+    // Begin a new frame, the data in the new buffer should be up to date
+    store.onFrameStart();
+    verifyAllAllocations(store, allocations);
+    store.onFrameFinished();
+
+    auto dataUpdates = 0;
+    auto subDataUpdates = 0;
+    auto dataResizes = 0;
+    auto allocationCount = 0;
+    auto deallocationCount = 0;
+
+    std::minstd_rand rand(17); // fixed seed
+
+    // Run a few updates
+    for (auto frame = 0; frame < 100; ++frame)
+    {
+        store.onFrameStart();
+
+        // Verify all allocations at the start of every frame
+        verifyAllAllocations(store, allocations);
+
+        // Do something random with every allocation
+        for (auto a = 0; a < allocations.size(); ++a)
+        {
+            auto& allocation = allocations[a];
+
+            // Perform a random action
+            switch (rand() % 7)
+            {
+            case 1: // updateSubData
+            {
+                subDataUpdates++;
+
+                // Update 50% of the data
+                auto newVertices = generateVertices(rand() % 9, allocation.vertices.size() >> 2);
+                auto newIndices = generateIndices(newVertices);
+
+                // Overwrite some of the data
+                std::copy(newVertices.begin(), newVertices.end(), allocation.vertices.begin());
+                std::copy(newIndices.begin(), newIndices.end(), allocation.indices.begin());
+
+                store.updateSubData(allocation.slot, 0, newVertices, 0, newIndices);
+                break;
+            }
+
+            case 2: // updateData
+            {
+                dataUpdates++;
+
+                allocation.vertices = generateVertices(rand() % 9, allocation.vertices.size());
+                allocation.indices = generateIndices(allocation.vertices);
+                store.updateData(allocation.slot, allocation.vertices, allocation.indices);
+                break;
+            }
+
+            case 3: // resize
+            {
+                dataResizes++;
+
+                // Don't touch vertices below a minimum size
+                if (allocation.vertices.size() < 10) break;
+
+                // Allow 10% shrinking of the data
+                auto newSize = allocation.vertices.size() - (rand() % (allocation.vertices.size() / 10));
+
+                allocation.vertices.resize(newSize);
+                allocation.indices = generateIndices(allocation.vertices);
+
+                store.resizeData(allocation.slot, allocation.vertices.size(), allocation.indices.size());
+
+                // after resize, we have to update the data too, unfortunately, otherwise the indices are out of bounds
+                store.updateData(allocation.slot, allocation.vertices, allocation.indices);
+                break;
+            }
+
+            case 4: // allocations
+            {
+                allocationCount++;
+
+                auto vertices = generateVertices(rand() % 9, rand() % 100);
+                auto indices = generateIndices(vertices);
+
+                auto slot = store.allocateSlot(vertices.size(), indices.size());
+                EXPECT_NE(slot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
+
+                EXPECT_NO_THROW(store.updateData(slot, vertices, indices));
+                allocations.emplace_back(Allocation{ slot, vertices, indices });
+                break;
+            }
+
+            case 5: // dellocation
+            {
+                deallocationCount++;
+
+                store.deallocateSlot(allocations[a].slot);
+                allocations.erase(allocations.begin() + a);
+                // We're going to skip one loop iteration, but that's not very important
+                break;
+            }
+            } // switch
+        }
+
+        // Verify all allocations at the end of every frame
+        verifyAllAllocations(store, allocations);
+
+        store.onFrameFinished();
+    }
+
+    // One final check
+    store.onFrameStart();
+    verifyAllAllocations(store, allocations);
+    store.onFrameFinished();
+
+    EXPECT_GT(dataUpdates, 0) << "No data update operations performed";
+    EXPECT_GT(subDataUpdates, 0) << "No sub data update operations performed";
+    EXPECT_GT(dataResizes, 0) << "No resize operations performed";
+    EXPECT_GT(allocationCount, 0) << "No allocation operations performed";
+    EXPECT_GT(deallocationCount, 0) << "No deallocation operations performed";
+}
+
+TEST(GeometryStore, SyncObjectAcquisition)
+{
+    render::GeometryStore store(NullSyncObjectProvider::Instance());
+
+    NullSyncObjectProvider::Instance().invocationCount = 0;
+
+    for (int i = 0; i < 5; ++i)
+    {
+        store.onFrameStart();
+        store.onFrameFinished();
+    }
+
+    EXPECT_EQ(NullSyncObjectProvider::Instance().invocationCount, 5) <<
+        "GeometryStore should have performed 5 frame buffer switches";
 }
 
 }
