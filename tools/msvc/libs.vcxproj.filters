@@ -371,6 +371,9 @@
     <ClInclude Include="..\..\libs\render\MeshVertex.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\GeometryStore.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

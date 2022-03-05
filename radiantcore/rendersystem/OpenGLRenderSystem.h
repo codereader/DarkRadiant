@@ -8,8 +8,8 @@
 #include "backend/OpenGLShader.h"
 #include "backend/OpenGLStateLess.h"
 #include "backend/TextRenderer.h"
-#include "backend/GeometryStore.h"
 #include "backend/SceneRenderer.h"
+#include "render/GeometryStore.h"
 
 namespace render
 {

@@ -213,6 +213,7 @@
     <ClInclude Include="..\..\libs\render\Colour4b.h" />
     <ClInclude Include="..\..\libs\render\CompactWindingVertexBuffer.h" />
     <ClInclude Include="..\..\libs\render\ContinuousBuffer.h" />
+    <ClInclude Include="..\..\libs\render\GeometryStore.h" />
     <ClInclude Include="..\..\libs\render\IndexedVertexBuffer.h" />
     <ClInclude Include="..\..\libs\render\MeshVertex.h" />
     <ClInclude Include="..\..\libs\render\NopRenderView.h" />

@@ -2,8 +2,9 @@
 
 #include <stdexcept>
 #include <limits>
+#include "igl.h"
 #include "igeometrystore.h"
-#include "render/ContinuousBuffer.h"
+#include "ContinuousBuffer.h"
 
 namespace render
 {

@@ -2325,9 +2325,6 @@
     <ClInclude Include="..\..\radiantcore\entity\RenderableObjectCollection.h">
       <Filter>src\entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\GeometryStore.h">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLCubeMapProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
