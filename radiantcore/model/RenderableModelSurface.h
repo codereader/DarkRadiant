@@ -38,7 +38,7 @@ public:
         return !_surface.getIndexArray().empty();
     }
 
-    const std::vector<ArbitraryMeshVertex>& getVertices() override
+    const std::vector<MeshVertex>& getVertices() override
     {
         return _surface.getVertexArray();
     }

@@ -81,11 +81,11 @@ public:
 
         _needsUpdate = false;
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
 
         for (const auto& vertex : _vertices)
         {
-            vertices.push_back(ArbitraryMeshVertex(vertex, { 0,0,0 }, { 0,0 }, _colour));
+            vertices.push_back(MeshVertex(vertex, { 0,0,0 }, { 0,0 }, _colour));
         }
 
         std::vector<unsigned int> indices;

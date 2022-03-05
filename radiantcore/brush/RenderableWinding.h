@@ -52,7 +52,7 @@ public:
             return;
         }
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         vertices.reserve(numPoints);
 
         // Use the colour defined by the entity as vertex colour
@@ -60,7 +60,7 @@ public:
 
         for (const auto& vertex : _winding)
         {
-            vertices.emplace_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, 
+            vertices.emplace_back(MeshVertex(vertex.vertex, vertex.normal, 
                 vertex.texcoord, entityColour, vertex.tangent, vertex.bitangent));
         }
 

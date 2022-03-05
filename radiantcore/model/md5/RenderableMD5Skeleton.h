@@ -41,7 +41,7 @@ protected:
             return;
         }
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         std::vector<unsigned int> indices;
 
         auto numJoints = _skeleton.size();
@@ -114,7 +114,7 @@ protected:
     }
 
 private:
-    ArbitraryMeshVertex toVertex(const Vector3& vertex, const Vector4& colour = { 1, 1, 1, 1 })
+    MeshVertex toVertex(const Vector3& vertex, const Vector4& colour = { 1, 1, 1, 1 })
     {
         return { vertex, {0, 0, 0}, {1, 0}, colour };
     }

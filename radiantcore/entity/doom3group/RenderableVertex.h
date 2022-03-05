@@ -35,14 +35,14 @@ protected:
 
         _needsUpdate = false;
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         static std::vector<unsigned int> Indices = { 0 };
 
         auto colour = entity::EntitySettings::InstancePtr()->getLightVertexColour(
             _instance.isSelected() ? LightEditVertexType::Selected : LightEditVertexType::Deselected
         );
 
-        vertices.push_back(ArbitraryMeshVertex(_localToWorld * _instance.getVertex(), { 0,0,0 }, { 0,0 }, colour));
+        vertices.push_back(MeshVertex(_localToWorld * _instance.getVertex(), { 0,0,0 }, { 0,0 }, colour));
 
         RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, Indices);
     }

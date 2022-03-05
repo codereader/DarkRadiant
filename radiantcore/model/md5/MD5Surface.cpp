@@ -8,9 +8,9 @@
 namespace md5
 {
 
-inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex* array)
+inline VertexPointer vertexpointer_Meshvertex(const MeshVertex* array)
 {
-  return VertexPointer(&array->vertex, sizeof(ArbitraryMeshVertex));
+  return VertexPointer(&array->vertex, sizeof(MeshVertex));
 }
 
 // Constructor
@@ -43,7 +43,7 @@ void MD5Surface::updateGeometry()
 		auto& b = _vertices[*(i + 1)];
 		auto& c = _vertices[*(i + 2)];
 
-		ArbitraryMeshTriangle_sumTangents(a, b, c);
+		MeshTriangle_sumTangents(a, b, c);
 	}
 
 	for (auto& vertex : _vertices)
@@ -61,7 +61,7 @@ void MD5Surface::testSelect(Selector& selector,
 
 	SelectionIntersection best;
 	test.TestTriangles(
-	  vertexpointer_arbitrarymeshvertex(_vertices.data()),
+	  vertexpointer_Meshvertex(_vertices.data()),
 	  IndexPointer(_indices.data(), IndexPointer::index_type(_indices.size())),
 	  best
 	);
@@ -131,7 +131,7 @@ int MD5Surface::getNumTriangles() const
 	return static_cast<int>(_indices.size() / 3);
 }
 
-const ArbitraryMeshVertex& MD5Surface::getVertex(int vertexIndex) const
+const MeshVertex& MD5Surface::getVertex(int vertexIndex) const
 {
 	assert(vertexIndex >= 0 && vertexIndex < static_cast<int>(_vertices.size()));
 	return _vertices[vertexIndex];
@@ -150,7 +150,7 @@ model::ModelPolygon MD5Surface::getPolygon(int polygonIndex) const
 	return poly;
 }
 
-const std::vector<ArbitraryMeshVertex>& MD5Surface::getVertexArray() const
+const std::vector<MeshVertex>& MD5Surface::getVertexArray() const
 {
 	return _vertices;
 }

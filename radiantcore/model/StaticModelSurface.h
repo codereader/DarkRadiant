@@ -34,9 +34,9 @@ private:
 	// Name of the material with skin remaps applied
 	std::string _activeMaterial;
 
-	// Vector of ArbitraryMeshVertex structures, containing the coordinates,
+	// Vector of MeshVertex structures, containing the coordinates,
 	// normals, tangents and texture coordinates of the component vertices
-	typedef std::vector<ArbitraryMeshVertex> VertexVector;
+	typedef std::vector<MeshVertex> VertexVector;
 	VertexVector _vertices;
 
 	// Vector of render indices, representing the groups of vertices to be
@@ -53,7 +53,7 @@ private:
 
 public:
     // Move-construct this static model surface from the given vertex- and index array
-	StaticModelSurface(std::vector<ArbitraryMeshVertex>&& vertices, std::vector<unsigned int>&& indices);
+	StaticModelSurface(std::vector<MeshVertex>&& vertices, std::vector<unsigned int>&& indices);
 
 	// Copy-constructor. All vertices and indices will be copied from 'other'.
 	StaticModelSurface(const StaticModelSurface& other);
@@ -74,10 +74,10 @@ public:
 	int getNumVertices() const override;
 	int getNumTriangles() const override;
 
-	const ArbitraryMeshVertex& getVertex(int vertexIndex) const override;
+	const MeshVertex& getVertex(int vertexIndex) const override;
 	ModelPolygon getPolygon(int polygonIndex) const override;
 
-	const std::vector<ArbitraryMeshVertex>& getVertexArray() const override;
+	const std::vector<MeshVertex>& getVertexArray() const override;
 	const std::vector<unsigned int>& getIndexArray() const override;
 
 	const std::string& getDefaultMaterial() const override;

@@ -43,7 +43,7 @@ protected:
 
         _needsUpdate = false;
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         std::vector<unsigned int> indices;
 
         // 8 vertices per box
@@ -74,15 +74,15 @@ protected:
 namespace detail
 {
 
-inline void generateQuad(std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices, 
+inline void generateQuad(std::vector<MeshVertex>& vertices, std::vector<unsigned int>& indices, 
     double size, const Vector4& colour)
 {
     unsigned int indexOffset = static_cast<unsigned int>(vertices.size());
 
-    vertices.push_back(ArbitraryMeshVertex({ -size,  size, 0 }, { 0,0,0 }, { 0,0 }, colour));
-    vertices.push_back(ArbitraryMeshVertex({  size,  size, 0 }, { 0,0,0 }, { 0,0 }, colour));
-    vertices.push_back(ArbitraryMeshVertex({  size, -size, 0 }, { 0,0,0 }, { 0,0 }, colour));
-    vertices.push_back(ArbitraryMeshVertex({ -size, -size, 0 }, { 0,0,0 }, { 0,0 }, colour));
+    vertices.push_back(MeshVertex({ -size,  size, 0 }, { 0,0,0 }, { 0,0 }, colour));
+    vertices.push_back(MeshVertex({  size,  size, 0 }, { 0,0,0 }, { 0,0 }, colour));
+    vertices.push_back(MeshVertex({  size, -size, 0 }, { 0,0,0 }, { 0,0 }, colour));
+    vertices.push_back(MeshVertex({ -size, -size, 0 }, { 0,0,0 }, { 0,0 }, colour));
 
     indices.push_back(indexOffset + 0);
     indices.push_back(indexOffset + 1);
@@ -148,14 +148,14 @@ protected:
 
         _needsUpdate = false;
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         std::vector<unsigned int> indices;
 
         unsigned int index = 0;
 
         for (const auto& vertex : _rawPoints)
         {
-            vertices.push_back(ArbitraryMeshVertex(_localToWorld * vertex, { 0,0,0 }, { 0,0 }, _colour));
+            vertices.push_back(MeshVertex(_localToWorld * vertex, { 0,0,0 }, { 0,0 }, _colour));
 
             if (index > 0)
             {
@@ -270,7 +270,7 @@ protected:
 
         _needsUpdate = false;
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         std::vector<unsigned int> indices;
 
         auto direction = _offset.getNormalised();
@@ -284,7 +284,7 @@ protected:
 
         for (const auto& vertex : _rawPoints)
         {
-            vertices.push_back(ArbitraryMeshVertex(_localToWorld * vertex, _screenAxis, { 0,0 }, _colour));
+            vertices.push_back(MeshVertex(_localToWorld * vertex, _screenAxis, { 0,0 }, _colour));
             indices.push_back(index++);
         }
 
@@ -326,10 +326,10 @@ protected:
 
         _needsUpdate = false;
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         std::vector<unsigned int> indices;
 
-        vertices.push_back(ArbitraryMeshVertex(_localToWorld * _point, { 0,0,0 }, { 0,0 }, _colour));
+        vertices.push_back(MeshVertex(_localToWorld * _point, { 0,0,0 }, { 0,0 }, _colour));
         indices.push_back(0);
 
         RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);

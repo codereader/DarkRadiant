@@ -61,7 +61,7 @@ protected:
         // an update on the renderable geometry every time we're asked to
 
         // Collect vertex and index data
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         std::vector<unsigned int> indices;
         auto maxTargets = _targetKeys.getNumTargets();
 
@@ -87,7 +87,7 @@ private:
     // Adds points to the vector, defining a line from start to end, with arrow indicators
     // in the XY plane (located at the midpoint between start/end).
     void addTargetLine(const Vector3& startPosition, const Vector3& endPosition,
-        std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices)
+        std::vector<MeshVertex>& vertices, std::vector<unsigned int>& indices)
     {
         // Take the mid-point
         Vector3 mid((startPosition + endPosition) * 0.5f);
@@ -126,15 +126,15 @@ private:
         auto indexOffset = static_cast<unsigned int>(vertices.size());
 
         // The line from this to the other entity
-        vertices.push_back(ArbitraryMeshVertex(startPosition, { 1,0,0 }, { 0, 0 }, colour));
-        vertices.push_back(ArbitraryMeshVertex(endPosition, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(MeshVertex(startPosition, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(MeshVertex(endPosition, { 1,0,0 }, { 0, 0 }, colour));
 
         // The "arrow indicators" in the xy plane
-        vertices.push_back(ArbitraryMeshVertex(mid, { 1,0,0 }, { 0, 0 }, colour));
-        vertices.push_back(ArbitraryMeshVertex(xyPoint1, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(MeshVertex(mid, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(MeshVertex(xyPoint1, { 1,0,0 }, { 0, 0 }, colour));
 
-        vertices.push_back(ArbitraryMeshVertex(mid, { 1,0,0 }, { 0, 0 }, colour));
-        vertices.push_back(ArbitraryMeshVertex(xyPoint2, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(MeshVertex(mid, { 1,0,0 }, { 0, 0 }, colour));
+        vertices.push_back(MeshVertex(xyPoint2, { 1,0,0 }, { 0, 0 }, colour));
 
         indices.push_back(indexOffset + 0);
         indices.push_back(indexOffset + 1);

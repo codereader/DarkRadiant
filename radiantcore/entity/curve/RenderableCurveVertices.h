@@ -40,7 +40,7 @@ protected:
             return;
         }
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         std::vector<unsigned int> indices;
 
         static const Vector4 SelectedColour(0, 0, 0, 1);
@@ -50,7 +50,7 @@ protected:
 
         _instance.forEachControlPoint([&](const Vector3& position, bool isSelected)
         {
-            vertices.push_back(ArbitraryMeshVertex(position, { 0, 0, 0 }, { 0, 0 },
+            vertices.push_back(MeshVertex(position, { 0, 0, 0 }, { 0, 0 },
                 isSelected ? SelectedColour : DeselectedColour));
             indices.push_back(static_cast<unsigned int>(i++));
         });

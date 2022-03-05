@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include "math/AABB.h"
-#include "render/ArbitraryMeshVertex.h"
+#include "render/MeshVertex.h"
 
 namespace render
 {
@@ -42,7 +42,7 @@ public:
      * index arrays must not be larger than what has been allocated earlier, 
      * but they're allowed to be smaller.
      */
-    virtual void updateData(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    virtual void updateData(Slot slot, const std::vector<MeshVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
 
     /**
@@ -50,7 +50,7 @@ public:
      * from vertexOffset/indexOffset respectively. The affected range must not be out of bounds
      * of the allocated slot.
      */
-    virtual void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<ArbitraryMeshVertex>& vertices,
+    virtual void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<MeshVertex>& vertices,
         std::size_t indexOffset, const std::vector<unsigned int>& indices) = 0;
 
     /**
@@ -63,7 +63,7 @@ public:
     // The render parameters suitable for rendering surfaces using gl(Multi)DrawElements
     struct RenderParameters
     {
-        ArbitraryMeshVertex* bufferStart;   // start of buffer (to pass to gl*Pointer)
+        MeshVertex* bufferStart;   // start of buffer (to pass to gl*Pointer)
         unsigned int* firstIndex;           // first index location of the given geometry
         std::size_t indexCount;             // index count of the given geometry
         std::size_t firstVertex;            // offset to the first vertex of this surface

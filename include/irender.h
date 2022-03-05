@@ -13,7 +13,7 @@
 #include "math/Vector4.h"
 #include "render/Colour4.h"
 #include "math/AABB.h"
-#include "render/ArbitraryMeshVertex.h"
+#include "render/MeshVertex.h"
 
 #include "ishaderlayer.h"
 #include <sigc++/signal.h>

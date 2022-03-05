@@ -11,7 +11,7 @@
 /**
  * Data structure representing a mesh vertex.
  */
-class ArbitraryMeshVertex
+class MeshVertex
 {
 public:
 	TexCoord2f	texcoord;
@@ -24,24 +24,24 @@ public:
 	Vector4		colour;
 
 	/// Default constructor.
-	ArbitraryMeshVertex()
+	MeshVertex()
 	: tangent(0, 0, 0),
 	  bitangent(0, 0, 0),
 	  colour(1.0, 1.0, 1.0, 1.0)
 	{}
 
 	/// Initialising constructor, leaves colour at 1,1,1,1 and tangent vectors at 0,0,0
-	ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t) : 
-        ArbitraryMeshVertex(v, n, t, { 1.0, 1.0, 1.0, 1.0 })
+	MeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t) : 
+        MeshVertex(v, n, t, { 1.0, 1.0, 1.0, 1.0 })
     {}
 
 	/// Initialising constructor, leaves tangent vectors at 0,0,0
-    ArbitraryMeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t, const Vector4& c) : 
-        ArbitraryMeshVertex(v, n, t, c, { 0, 0, 0 }, { 0, 0, 0 })
+    MeshVertex(const Vertex3f& v, const Normal3f& n, const TexCoord2f& t, const Vector4& c) : 
+        MeshVertex(v, n, t, c, { 0, 0, 0 }, { 0, 0, 0 })
     {}
 
     // Initialises all attributes of this vertex
-    ArbitraryMeshVertex(const Vertex3f& vertex_, const Normal3f& normal_, 
+    MeshVertex(const Vertex3f& vertex_, const Normal3f& normal_, 
                         const TexCoord2f& texcoord_, const Vector4& colour_, 
                         const Normal3f& tangent_, const Normal3f& bitangent_) :
         texcoord(texcoord_),
@@ -59,9 +59,9 @@ public:
     }
 };
 
-/// Less-than comparison for ArbitraryMeshVertex
-inline bool operator<(const ArbitraryMeshVertex& first,
-                      const ArbitraryMeshVertex& other)
+/// Less-than comparison for MeshVertex
+inline bool operator<(const MeshVertex& first,
+                      const MeshVertex& other)
 {
     if (first.texcoord != other.texcoord)
     {
@@ -81,18 +81,18 @@ inline bool operator<(const ArbitraryMeshVertex& first,
     return false;
 }
 
-/// Equality comparison for ArbitraryMeshVertex
-inline bool operator==(const ArbitraryMeshVertex& first,
-                       const ArbitraryMeshVertex& other)
+/// Equality comparison for MeshVertex
+inline bool operator==(const MeshVertex& first,
+                       const MeshVertex& other)
 {
     return first.texcoord == other.texcoord
         && first.normal == other.normal
         && first.vertex == other.vertex;
 }
 
-/// Inequality comparison for ArbitraryMeshVertex
-inline bool operator!=(const ArbitraryMeshVertex& first,
-                       const ArbitraryMeshVertex& other)
+/// Inequality comparison for MeshVertex
+inline bool operator!=(const MeshVertex& first,
+                       const MeshVertex& other)
 {
     return !(first == other);
 }
@@ -100,14 +100,14 @@ inline bool operator!=(const ArbitraryMeshVertex& first,
 namespace render
 {
 
-/// VertexTraits specialisation for ArbitraryMeshVertex
-template<> class VertexTraits<ArbitraryMeshVertex>
+/// VertexTraits specialisation for MeshVertex
+template<> class VertexTraits<MeshVertex>
 {
 public:
     static const void* VERTEX_OFFSET()
     {
         return reinterpret_cast<const void*>(
-            offsetof(ArbitraryMeshVertex, vertex)
+            offsetof(MeshVertex, vertex)
         );
     }
 
@@ -115,7 +115,7 @@ public:
     static const void* NORMAL_OFFSET()
     {
         return reinterpret_cast<const void*>(
-            offsetof(ArbitraryMeshVertex, normal)
+            offsetof(MeshVertex, normal)
         );
     }
 
@@ -123,7 +123,7 @@ public:
     static const void* TEXCOORD_OFFSET()
     {
         return reinterpret_cast<const void*>(
-            offsetof(ArbitraryMeshVertex, texcoord)
+            offsetof(MeshVertex, texcoord)
         );
     }
 
@@ -131,13 +131,13 @@ public:
     static const void* TANGENT_OFFSET()
     {
         return reinterpret_cast<const void*>(
-            offsetof(ArbitraryMeshVertex, tangent)
+            offsetof(MeshVertex, tangent)
         );
     }
     static const void* BITANGENT_OFFSET()
     {
         return reinterpret_cast<const void*>(
-            offsetof(ArbitraryMeshVertex, bitangent)
+            offsetof(MeshVertex, bitangent)
         );
     }
 };
@@ -145,11 +145,11 @@ public:
 }
 
 /**
- * String output for ArbitraryMeshVertex.
+ * String output for MeshVertex.
  */
-inline std::ostream& operator<< (std::ostream& os, const ArbitraryMeshVertex& v)
+inline std::ostream& operator<< (std::ostream& os, const MeshVertex& v)
 {
-	os << "ArbitraryMeshVertex { "
+	os << "MeshVertex { "
 	   << " vertex = " << v.vertex << ", normal = " << v.normal
 	   << ", texcoord = " << v.texcoord << ", colour = " << v.colour
 	   << " }";
@@ -158,8 +158,8 @@ inline std::ostream& operator<< (std::ostream& os, const ArbitraryMeshVertex& v)
 }
 
 /// \brief Calculates the tangent vectors for a triangle \p a, \p b, \p c and stores the tangent in \p s and the bitangent in \p t.
-inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a,
-   const ArbitraryMeshVertex& b, const ArbitraryMeshVertex& c,
+inline void MeshTriangle_calcTangents(const MeshVertex& a,
+   const MeshVertex& b, const MeshVertex& c,
    Vector3& s, Vector3& t)
 {
 	s = Vector3(0, 0, 0);
@@ -215,11 +215,11 @@ inline void ArbitraryMeshTriangle_calcTangents(const ArbitraryMeshVertex& a,
 	}
 }
 
-inline void ArbitraryMeshTriangle_sumTangents(ArbitraryMeshVertex& a, ArbitraryMeshVertex& b, ArbitraryMeshVertex& c)
+inline void MeshTriangle_sumTangents(MeshVertex& a, MeshVertex& b, MeshVertex& c)
 {
 	Vector3 s, t;
 
-	ArbitraryMeshTriangle_calcTangents(a, b, c, s, t);
+	MeshTriangle_calcTangents(a, b, c, s, t);
 
 	a.tangent += s;
 	b.tangent += s;

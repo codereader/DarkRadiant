@@ -7,11 +7,11 @@ namespace model
 
 namespace
 {
-    // Adapter method to convert patch vertices to ArbitraryMeshVertex type
-    inline ArbitraryMeshVertex convertPatchVertex(const VertexNT& in)
+    // Adapter method to convert patch vertices to MeshVertex type
+    inline MeshVertex convertPatchVertex(const VertexNT& in)
     {
         // Colour will be set to 1,1,1 by the constructor
-        return ArbitraryMeshVertex(in.vertex, in.normal, in.texcoord);
+        return MeshVertex(in.vertex, in.normal, in.texcoord);
     }
 }
 
@@ -64,7 +64,7 @@ int PatchSurface::getNumTriangles() const
     return static_cast<int>(_indices.size() / 3); // 3 indices per triangle
 }
 
-const ArbitraryMeshVertex& PatchSurface::getVertex(int vertexNum) const
+const MeshVertex& PatchSurface::getVertex(int vertexNum) const
 {
     return _vertices[vertexNum];
 }
@@ -92,7 +92,7 @@ const std::string& PatchSurface::getActiveMaterial() const
     return _materialName;
 }
 
-const std::vector<ArbitraryMeshVertex>& PatchSurface::getVertexArray() const
+const std::vector<MeshVertex>& PatchSurface::getVertexArray() const
 {
     return _vertices;
 }

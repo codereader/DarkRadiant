@@ -134,15 +134,15 @@ protected:
             _whiteVertexColour ? getColouredVertices() : _tess.vertices, indices);
     }
 
-    std::vector<ArbitraryMeshVertex> getColouredVertices()
+    std::vector<MeshVertex> getColouredVertices()
     {
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         vertices.reserve(_tess.vertices.size());
 
         for (const auto& vertex : _tess.vertices)
         {
             // Copy vertex data, but set the colour to 1,1,1,1
-            vertices.push_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, 
+            vertices.push_back(MeshVertex(vertex.vertex, vertex.normal, 
                 vertex.texcoord, { 1, 1, 1, 1 }, vertex.tangent, vertex.bitangent));
         }
 
@@ -182,12 +182,12 @@ protected:
         auto height = _patch.getHeight();
         assert(width * height == _controlPoints.size());
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         vertices.reserve(_controlPoints.size());
 
         for (const auto& ctrl : _controlPoints)
         {
-            vertices.push_back(ArbitraryMeshVertex(ctrl.control.vertex, { 0, 0, 1 }, ctrl.control.texcoord, { 1, 0.5, 0, 1 }));
+            vertices.push_back(MeshVertex(ctrl.control.vertex, { 0, 0, 1 }, ctrl.control.texcoord, { 1, 0.5, 0, 1 }));
         }
 
         // Generate the index array

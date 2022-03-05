@@ -89,7 +89,7 @@ TEST_F(ModelExportTest, ExportFolderNotExisting)
     EXPECT_TRUE(fs::exists(outputPath)) << "Exporter didn't create the file " << outputPath;
 }
 
-inline bool surfaceHasVertex(const model::IModelSurface& surface, const std::function<bool(const ArbitraryMeshVertex&)>& functor)
+inline bool surfaceHasVertex(const model::IModelSurface& surface, const std::function<bool(const MeshVertex&)>& functor)
 {
     for (int i = 0; i < surface.getNumVertices(); ++i)
     {
@@ -160,15 +160,15 @@ inline void checkVertexColoursOfExportedModel(const model::IModelExporterPtr& ex
         EXPECT_EQ(surface.getNumVertices(), 3);
 
         // The three colours we exported need to be present in the mesh
-        EXPECT_TRUE(surfaceHasVertex(surface, [&](const ArbitraryMeshVertex& vertex)
+        EXPECT_TRUE(surfaceHasVertex(surface, [&](const MeshVertex& vertex)
         {
             return math::isNear(vertex.colour, VertexColour1, 0.01);
         }));
-        EXPECT_TRUE(surfaceHasVertex(surface, [&](const ArbitraryMeshVertex& vertex)
+        EXPECT_TRUE(surfaceHasVertex(surface, [&](const MeshVertex& vertex)
         {
             return math::isNear(vertex.colour, VertexColour2, 0.01);
         }));
-        EXPECT_TRUE(surfaceHasVertex(surface, [&](const ArbitraryMeshVertex& vertex)
+        EXPECT_TRUE(surfaceHasVertex(surface, [&](const MeshVertex& vertex)
         {
             return math::isNear(vertex.colour, VertexColour3, 0.01);
         }));
@@ -193,9 +193,9 @@ TEST_F(ModelExportTest, LwoVertexColoursAddedByPolygon)
 
     polys.emplace_back(model::ModelPolygon
     {
-        ArbitraryMeshVertex(Vertex3f(1,0,0), Normal3f(1,0,0), TexCoord2f(1,0), VertexColour1),
-        ArbitraryMeshVertex(Vertex3f(0,1,0), Normal3f(1,0,0), TexCoord2f(0,0), VertexColour2),
-        ArbitraryMeshVertex(Vertex3f(1,1,0), Normal3f(1,0,0), TexCoord2f(1,0), VertexColour3)
+        MeshVertex(Vertex3f(1,0,0), Normal3f(1,0,0), TexCoord2f(1,0), VertexColour1),
+        MeshVertex(Vertex3f(0,1,0), Normal3f(1,0,0), TexCoord2f(0,0), VertexColour2),
+        MeshVertex(Vertex3f(1,1,0), Normal3f(1,0,0), TexCoord2f(1,0), VertexColour3)
     });
 
     exporter->addPolygons(CustomMaterialName, polys, Matrix4::getIdentity());
@@ -207,7 +207,7 @@ class TestModelSurface :
     public model::IIndexedModelSurface
 {
 public:
-    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<MeshVertex> vertices;
     std::vector<unsigned int> indices;
 
     int getNumVertices() const override
@@ -220,7 +220,7 @@ public:
         return static_cast<int>(indices.size() / 3);
     }
 
-    const ArbitraryMeshVertex& getVertex(int vertexNum) const override
+    const MeshVertex& getVertex(int vertexNum) const override
     {
         return vertices[vertexNum];
     }
@@ -245,7 +245,7 @@ public:
         return getDefaultMaterial();
     }
     
-    const std::vector<ArbitraryMeshVertex>& getVertexArray() const override
+    const std::vector<MeshVertex>& getVertexArray() const override
     {
         return vertices;
     }

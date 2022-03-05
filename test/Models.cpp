@@ -228,7 +228,7 @@ TEST_F(AseImportTest, UVAngleKeyword)
 }
 
 bool surfaceHasVertexWith(const model::IModelSurface& surface, 
-    const std::function<bool(const ArbitraryMeshVertex& vertex)>& predicate)
+    const std::function<bool(const MeshVertex& vertex)>& predicate)
 {
     bool found = false;
 
@@ -246,7 +246,7 @@ bool surfaceHasVertexWith(const model::IModelSurface& surface,
 
 void expectVertexWithNormal(const model::IModelSurface& surface, const Vertex3f& vertex, const Normal3f& normal)
 {
-    EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
+    EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const MeshVertex& v)->bool
     {
         return math::isNear(v.vertex, vertex, render::VertexEpsilon) && v.normal.dot(normal) > 1.0 - render::NormalEpsilon;
     })) << "Could not find a vertex with xyz = " << vertex << " and normal " << normal;
@@ -285,7 +285,7 @@ TEST_F(AseImportTest, VertexNormals)
 
 void expectVertexWithColour(const model::IModelSurface& surface, const Vertex3f& vertex, const Vector4& colour)
 {
-    EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const ArbitraryMeshVertex& v)->bool
+    EXPECT_TRUE(surfaceHasVertexWith(surface, [&](const MeshVertex& v)->bool
     {
         return math::isNear(v.vertex, vertex, render::VertexEpsilon) && math::isNear(v.colour, colour, render::VertexEpsilon);
     })) << "Could not find a vertex with xyz = " << vertex << " and colour " << colour;
@@ -337,27 +337,27 @@ TEST_F(AseImportTest, VertexNormalTransformation)
 TEST_F(AseImportTest, VertexHashFunction)
 {
     // Construct two mesh vertices which should be considered equal
-    ArbitraryMeshVertex vertex1(Vertex3f(-0.0218, -0.7449, 2.2385), Normal3f(-0.8698, 0, -0.493405), 
+    MeshVertex vertex1(Vertex3f(-0.0218, -0.7449, 2.2385), Normal3f(-0.8698, 0, -0.493405), 
         TexCoord2f(0.9808, 0.8198), Vector3(1, 1, 1));
 
-    ArbitraryMeshVertex vertex2(Vertex3f(-0.0218, -0.7434, 2.2385), Normal3f(-0.872, 0, -0.489505), 
+    MeshVertex vertex2(Vertex3f(-0.0218, -0.7434, 2.2385), Normal3f(-0.872, 0, -0.489505), 
         TexCoord2f(0.9808, 0.8198), Vector3(1, 1, 1));
 
     // Construct a that is differing in the normal part
-    ArbitraryMeshVertex vertex3(Vertex3f(-0.0218, -0.7434, 2.2385), Normal3f(-1, 0, 0),
+    MeshVertex vertex3(Vertex3f(-0.0218, -0.7434, 2.2385), Normal3f(-1, 0, 0),
         TexCoord2f(0.9808, 0.8198), Vector3(1, 1, 1));
 
     // Check the hash behaviour
-    std::hash<ArbitraryMeshVertex> hasher;
+    std::hash<MeshVertex> hasher;
     EXPECT_EQ(hasher(vertex1), hasher(vertex2));
     EXPECT_EQ(hasher(vertex1), hasher(vertex3));
 
-    std::equal_to<ArbitraryMeshVertex> equalityComparer;
+    std::equal_to<MeshVertex> equalityComparer;
     EXPECT_TRUE(equalityComparer(vertex1, vertex2));
     EXPECT_FALSE(equalityComparer(vertex1, vertex3));
 
     // With the included hash specialisations from render/VertexHashing.h, the two vertices should be considered equal
-    std::unordered_set<ArbitraryMeshVertex> set;
+    std::unordered_set<MeshVertex> set;
 
     // Insert the first vertex
     EXPECT_TRUE(set.insert(vertex1).second);

@@ -77,7 +77,7 @@ void RenderableParticleStage::submitGeometry(const ShaderPtr& shader, const Matr
 
 void RenderableParticleStage::updateGeometry()
 {
-    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<MeshVertex> vertices;
     std::vector<unsigned int> indices;
 
     auto numQuads = (_bunches[0] ? _bunches[0]->getNumQuads() : 0) + 

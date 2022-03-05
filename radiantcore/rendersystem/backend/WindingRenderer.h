@@ -58,7 +58,7 @@ class WindingRenderer final :
     public IBackendWindingRenderer
 {
 private:
-    using VertexBuffer = CompactWindingVertexBuffer<ArbitraryMeshVertex, WindingIndexerT>;
+    using VertexBuffer = CompactWindingVertexBuffer<MeshVertex, WindingIndexerT>;
     static constexpr typename VertexBuffer::Slot InvalidVertexBufferSlot = std::numeric_limits<typename VertexBuffer::Slot>::max();
     static constexpr IGeometryStore::Slot InvalidStorageHandle = std::numeric_limits<IGeometryStore::Slot>::max();
 
@@ -181,7 +181,7 @@ private:
                 _boundsNeedUpdate = true;
                 _surfaceNeedsRebuild = false;
 
-                std::vector<ArbitraryMeshVertex> vertices;
+                std::vector<MeshVertex> vertices;
                 vertices.reserve(_slotIndices.size() * 6); // reserve 6 vertices per winding
 
                 std::vector<unsigned int> indices;
@@ -336,7 +336,7 @@ public:
         return _windingCount == 0;
     }
 
-    Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices, IRenderEntity* entity) override
+    Slot addWinding(const std::vector<MeshVertex>& vertices, IRenderEntity* entity) override
     {
         auto windingSize = vertices.size();
 
@@ -415,7 +415,7 @@ public:
         --_windingCount;
     }
 
-    void updateWinding(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override
+    void updateWinding(Slot slot, const std::vector<MeshVertex>& vertices) override
     {
         assert(slot < _slots.size());
         auto& slotMapping = _slots[slot];
@@ -471,9 +471,9 @@ public:
 
         glDisableClientState(GL_COLOR_ARRAY);
 
-        glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().vertex);
-        glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().texcoord);
-        glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &vertices.front().normal);
+        glVertexPointer(3, GL_DOUBLE, sizeof(MeshVertex), &vertices.front().vertex);
+        glTexCoordPointer(2, GL_DOUBLE, sizeof(MeshVertex), &vertices.front().texcoord);
+        glNormalPointer(GL_DOUBLE, sizeof(MeshVertex), &vertices.front().normal);
 
         if (mode == IWindingRenderer::RenderMode::Triangles)
         {
@@ -544,7 +544,7 @@ private:
             // Copy the modified range to the store
             // We need to set up a local copy here, this could be optimised
             // if the GeometryStore accepted iterator ranges
-            std::vector<ArbitraryMeshVertex> vertexSubData;
+            std::vector<MeshVertex> vertexSubData;
 
             auto firstVertex = bucket.modifiedSlotRange.first * bucket.buffer.getWindingSize();
             auto highestVertex = (bucket.modifiedSlotRange.second + 1) * bucket.buffer.getWindingSize();

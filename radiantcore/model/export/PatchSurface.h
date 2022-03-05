@@ -16,7 +16,7 @@ class PatchSurface :
     public IIndexedModelSurface
 {
 private:
-    std::vector<ArbitraryMeshVertex> _vertices;
+    std::vector<MeshVertex> _vertices;
     std::vector<unsigned int> _indices;
     std::string _materialName;
     AABB _bounds;
@@ -27,13 +27,13 @@ public:
     int getNumVertices() const override;
     int getNumTriangles() const override;
 
-    const ArbitraryMeshVertex& getVertex(int vertexNum) const override;
+    const MeshVertex& getVertex(int vertexNum) const override;
     ModelPolygon getPolygon(int polygonIndex) const override;
 
     const std::string& getDefaultMaterial() const override;
     const std::string& getActiveMaterial() const override;
 
-    const std::vector<ArbitraryMeshVertex>& getVertexArray() const override;
+    const std::vector<MeshVertex>& getVertexArray() const override;
     const std::vector<unsigned int>& getIndexArray() const override;
 
     const AABB& getSurfaceBounds() const override;

@@ -38,7 +38,7 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
     // Generate the three circles in axis-aligned planes
     constexpr std::size_t NumSegments = 2;
 
-    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<MeshVertex> vertices;
 
     // Allocate space for 6 circles, one per radius, each radius has NumSegments * 8 vertices
     constexpr std::size_t NumVerticesPerCircle = NumSegments << 3;
@@ -147,7 +147,7 @@ inline std::vector<unsigned int> generateSphereIndices()
 
 }
 
-void RenderableSpeakerRadiiFill::generateSphereVertices(std::vector<ArbitraryMeshVertex>& vertices, double radius)
+void RenderableSpeakerRadiiFill::generateSphereVertices(std::vector<MeshVertex>& vertices, double radius)
 {
     auto colour = _entity.getEntityColour();
 
@@ -166,13 +166,13 @@ void RenderableSpeakerRadiiFill::generateSphereVertices(std::vector<ArbitraryMes
             auto unit = Vector3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 
             // Move the points to their world position
-            vertices.push_back(ArbitraryMeshVertex(unit * radius + _origin, unit, { 0, 0 }, colour));
+            vertices.push_back(MeshVertex(unit * radius + _origin, unit, { 0, 0 }, colour));
         }
     }
 
     // The north and south pole vertices
-    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, radius) + _origin, { 0,0,1 }, { 0,0 }, colour));
-    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, -radius) + _origin, { 0,0,-1 }, { 0,0 }, colour));
+    vertices.push_back(MeshVertex(Vector3(0, 0, radius) + _origin, { 0,0,1 }, { 0,0 }, colour));
+    vertices.push_back(MeshVertex(Vector3(0, 0, -radius) + _origin, { 0,0,-1 }, { 0,0 }, colour));
 }
 
 void RenderableSpeakerRadiiFill::updateGeometry()
@@ -181,7 +181,7 @@ void RenderableSpeakerRadiiFill::updateGeometry()
 
     _needsUpdate = false;
 
-    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<MeshVertex> vertices;
 
     // Make space for two spheres
     vertices.reserve(NumVerticesPerSphere << 1);

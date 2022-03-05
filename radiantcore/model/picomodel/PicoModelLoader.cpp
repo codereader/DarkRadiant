@@ -220,7 +220,7 @@ StaticModelSurfacePtr PicoModelLoader::CreateSurface(picoSurface_t* picoSurface,
 
     {
         // Allocate the vectors that will be moved to the surface at end of scope
-        std::vector<ArbitraryMeshVertex> vertices(numVertices);
+        std::vector<MeshVertex> vertices(numVertices);
         std::vector<unsigned int> indices(numIndices);
 
         // Stream in the vertex data from the raw struct, expanding the local AABB

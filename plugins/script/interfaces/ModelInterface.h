@@ -6,7 +6,7 @@
 #include "imodel.h"
 #include "SceneGraphInterface.h"
 
-class ArbitraryMeshVertex;
+class MeshVertex;
 namespace model { struct ModelPolygon; }
 
 namespace script
@@ -23,7 +23,7 @@ public:
 
 	int getNumVertices() const;
 	int getNumTriangles() const;
-	const ArbitraryMeshVertex& getVertex(int vertexIndex) const;
+	const MeshVertex& getVertex(int vertexIndex) const;
 	model::ModelPolygon getPolygon(int polygonIndex) const;
 	std::string getDefaultMaterial() const;
 	std::string getActiveMaterial() const;

@@ -70,7 +70,7 @@ public:
         return true;
     }
 
-    Slot addGeometry(GeometryType indexType, const std::vector<ArbitraryMeshVertex>& vertices,
+    Slot addGeometry(GeometryType indexType, const std::vector<MeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {
         auto groupIndex = GetGroupIndexForIndexType(indexType);
@@ -110,7 +110,7 @@ public:
         }
     }
 
-    void updateGeometry(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    void updateGeometry(Slot slot, const std::vector<MeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {
         auto& slotInfo = _slots.at(slot);

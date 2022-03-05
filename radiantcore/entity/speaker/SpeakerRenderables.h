@@ -69,7 +69,7 @@ public:
     void updateGeometry() override;
 
 private:
-    void generateSphereVertices(std::vector<ArbitraryMeshVertex>& vertices, double radius);
+    void generateSphereVertices(std::vector<MeshVertex>& vertices, double radius);
 };
 
 } // namespace

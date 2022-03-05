@@ -207,7 +207,6 @@
     <ClInclude Include="..\..\libs\registry\registry.h" />
     <ClInclude Include="..\..\libs\registry\Widgets.h" />
     <ClInclude Include="..\..\libs\render.h" />
-    <ClInclude Include="..\..\libs\render\ArbitraryMeshVertex.h" />
     <ClInclude Include="..\..\libs\render\CameraView.h" />
     <ClInclude Include="..\..\libs\render\CamRenderer.h" />
     <ClInclude Include="..\..\libs\render\Colour4.h" />
@@ -215,6 +214,7 @@
     <ClInclude Include="..\..\libs\render\CompactWindingVertexBuffer.h" />
     <ClInclude Include="..\..\libs\render\ContinuousBuffer.h" />
     <ClInclude Include="..\..\libs\render\IndexedVertexBuffer.h" />
+    <ClInclude Include="..\..\libs\render\MeshVertex.h" />
     <ClInclude Include="..\..\libs\render\NopRenderView.h" />
     <ClInclude Include="..\..\libs\render\NopVolumeTest.h" />
     <ClInclude Include="..\..\libs\render\RenderableBoundingBoxes.h" />

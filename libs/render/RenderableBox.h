@@ -10,65 +10,65 @@ namespace render
 namespace detail
 {
 
-inline std::vector<ArbitraryMeshVertex> getFillBoxVertices(const Vector3& min, const Vector3& max, const Vector4& colour)
+inline std::vector<MeshVertex> getFillBoxVertices(const Vector3& min, const Vector3& max, const Vector4& colour)
 {
     // Load the 6 times 4 = 24 corner points, each with the correct face normal
     return
     {
         // Bottom quad
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,0,-1}, {0,1}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,0,-1}, {1,1}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,0,-1}, {1,0}, colour),
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,0,-1}, {0,0}, colour),
+        MeshVertex({ min[0], max[1], min[2] }, {0,0,-1}, {0,1}, colour),
+        MeshVertex({ max[0], max[1], min[2] }, {0,0,-1}, {1,1}, colour),
+        MeshVertex({ max[0], min[1], min[2] }, {0,0,-1}, {1,0}, colour),
+        MeshVertex({ min[0], min[1], min[2] }, {0,0,-1}, {0,0}, colour),
 
         // Top quad
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,0,+1}, {0,1}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,0,+1}, {1,1}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,0,+1}, {1,0}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,0,+1}, {0,0}, colour),
+        MeshVertex({ min[0], min[1], max[2] }, {0,0,+1}, {0,1}, colour),
+        MeshVertex({ max[0], min[1], max[2] }, {0,0,+1}, {1,1}, colour),
+        MeshVertex({ max[0], max[1], max[2] }, {0,0,+1}, {1,0}, colour),
+        MeshVertex({ min[0], max[1], max[2] }, {0,0,+1}, {0,0}, colour),
 
         // Front quad
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,-1,0}, {0,1}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,-1,0}, {1,1}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,-1,0}, {1,0}, colour),
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,-1,0}, {0,0}, colour),
+        MeshVertex({ min[0], min[1], min[2] }, {0,-1,0}, {0,1}, colour),
+        MeshVertex({ max[0], min[1], min[2] }, {0,-1,0}, {1,1}, colour),
+        MeshVertex({ max[0], min[1], max[2] }, {0,-1,0}, {1,0}, colour),
+        MeshVertex({ min[0], min[1], max[2] }, {0,-1,0}, {0,0}, colour),
 
         // Back quad
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,+1,0}, {1,1}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,+1,0}, {1,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,+1,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,+1,0}, {0,1}, colour),
+        MeshVertex({ min[0], max[1], min[2] }, {0,+1,0}, {1,1}, colour),
+        MeshVertex({ min[0], max[1], max[2] }, {0,+1,0}, {1,0}, colour),
+        MeshVertex({ max[0], max[1], max[2] }, {0,+1,0}, {0,0}, colour),
+        MeshVertex({ max[0], max[1], min[2] }, {0,+1,0}, {0,1}, colour),
 
         // Right quad
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {+1,0,0}, {1,1}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {+1,0,0}, {1,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {+1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {+1,0,0}, {0,1}, colour),
+        MeshVertex({ max[0], max[1], min[2] }, {+1,0,0}, {1,1}, colour),
+        MeshVertex({ max[0], max[1], max[2] }, {+1,0,0}, {1,0}, colour),
+        MeshVertex({ max[0], min[1], max[2] }, {+1,0,0}, {0,0}, colour),
+        MeshVertex({ max[0], min[1], min[2] }, {+1,0,0}, {0,1}, colour),
 
         // Left quad
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {-1,0,0}, {0,1}, colour),
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {-1,0,0}, {1,1}, colour),
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {-1,0,0}, {1,0}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {-1,0,0}, {0,0}, colour),
+        MeshVertex({ min[0], max[1], min[2] }, {-1,0,0}, {0,1}, colour),
+        MeshVertex({ min[0], min[1], min[2] }, {-1,0,0}, {1,1}, colour),
+        MeshVertex({ min[0], min[1], max[2] }, {-1,0,0}, {1,0}, colour),
+        MeshVertex({ min[0], max[1], max[2] }, {-1,0,0}, {0,0}, colour),
     };
 }
 
-inline std::vector<ArbitraryMeshVertex> getWireframeBoxVertices(const Vector3& min, const Vector3& max, const Vector4& colour)
+inline std::vector<MeshVertex> getWireframeBoxVertices(const Vector3& min, const Vector3& max, const Vector4& colour)
 {
     // Load the 8 corner points
     return
     {
         // Bottom quad
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {0,0,1}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {0,0,1}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {0,0,1}, {0,0}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {0,0,1}, {0,0}, colour),
+        MeshVertex({ min[0], min[1], min[2] }, {0,0,1}, {0,0}, colour),
+        MeshVertex({ max[0], min[1], min[2] }, {0,0,1}, {0,0}, colour),
+        MeshVertex({ max[0], max[1], min[2] }, {0,0,1}, {0,0}, colour),
+        MeshVertex({ min[0], max[1], min[2] }, {0,0,1}, {0,0}, colour),
 
         // Top quad
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {0,0,1}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {0,0,1}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {0,0,1}, {0,0}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {0,0,1}, {0,0}, colour),
+        MeshVertex({ min[0], min[1], max[2] }, {0,0,1}, {0,0}, colour),
+        MeshVertex({ max[0], min[1], max[2] }, {0,0,1}, {0,0}, colour),
+        MeshVertex({ max[0], max[1], max[2] }, {0,0,1}, {0,0}, colour),
+        MeshVertex({ min[0], max[1], max[2] }, {0,0,1}, {0,0}, colour),
     };
 }
 
@@ -207,7 +207,7 @@ private:
     const AABB& _bounds;
     const Matrix4& _orientation;
 
-    std::vector<ArbitraryMeshVertex> _vertices;
+    std::vector<MeshVertex> _vertices;
     std::vector<unsigned int> _indices;
 
 public:
@@ -230,7 +230,7 @@ public:
         return !_indices.empty();
     }
 
-    const std::vector<ArbitraryMeshVertex>& getVertices() override
+    const std::vector<MeshVertex>& getVertices() override
     {
         return _vertices;
     }

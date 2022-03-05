@@ -13,7 +13,7 @@
 namespace model
 {
 
-StaticModelSurface::StaticModelSurface(std::vector<ArbitraryMeshVertex>&& vertices, std::vector<unsigned int>&& indices) :
+StaticModelSurface::StaticModelSurface(std::vector<MeshVertex>&& vertices, std::vector<unsigned int>&& indices) :
     _vertices(vertices),
     _indices(indices)
 {
@@ -46,7 +46,7 @@ void StaticModelSurface::calculateTangents()
 		auto& c = _vertices[*(i + 2)];
 
 		// Call the tangent calculation function
-		ArbitraryMeshTriangle_sumTangents(a, b, c);
+		MeshTriangle_sumTangents(a, b, c);
 	}
 
 	// Normalise all of the tangent and bitangent vectors
@@ -68,7 +68,7 @@ void StaticModelSurface::testSelect(Selector& selector, SelectionTest& test,
 		SelectionIntersection result;
 
 		test.TestTriangles(
-			VertexPointer(&_vertices[0].vertex, sizeof(ArbitraryMeshVertex)),
+			VertexPointer(&_vertices[0].vertex, sizeof(MeshVertex)),
       		IndexPointer(&_indices[0],
       					 IndexPointer::index_type(_indices.size())),
 			result
@@ -91,7 +91,7 @@ int StaticModelSurface::getNumTriangles() const
 	return static_cast<int>(_indices.size() / 3); // 3 indices per triangle
 }
 
-const ArbitraryMeshVertex& StaticModelSurface::getVertex(int vertexIndex) const
+const MeshVertex& StaticModelSurface::getVertex(int vertexIndex) const
 {
 	assert(vertexIndex >= 0 && vertexIndex < static_cast<int>(_vertices.size()));
 	return _vertices[vertexIndex];
@@ -114,7 +114,7 @@ ModelPolygon StaticModelSurface::getPolygon(int polygonIndex) const
 	return poly;
 }
 
-const std::vector<ArbitraryMeshVertex>& StaticModelSurface::getVertexArray() const
+const std::vector<MeshVertex>& StaticModelSurface::getVertexArray() const
 {
 	return _vertices;
 }
@@ -159,9 +159,9 @@ bool StaticModelSurface::getIntersection(const Ray& ray, Vector3& intersection, 
 		 i += 3)
 	{
 		// Get the vertices for this triangle
-		const ArbitraryMeshVertex& p1 = _vertices[*(i)];
-		const ArbitraryMeshVertex& p2 = _vertices[*(i+1)];
-		const ArbitraryMeshVertex& p3 = _vertices[*(i+2)];
+		const MeshVertex& p1 = _vertices[*(i)];
+		const MeshVertex& p2 = _vertices[*(i+1)];
+		const MeshVertex& p3 = _vertices[*(i+2)];
 
 		if (ray.intersectTriangle(localToWorld.transformPoint(p1.vertex), 
 			localToWorld.transformPoint(p2.vertex), localToWorld.transformPoint(p3.vertex), triIntersection))

@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \file
 /// \brief High-level constructs for efficient OpenGL rendering.
 
-#include "render/ArbitraryMeshVertex.h"
+#include "render/MeshVertex.h"
 #include "render/Vertex3f.h"
 #include "render/TexCoord2f.h"
 #include "render/VertexCb.h"
@@ -291,9 +291,9 @@ struct RemappingTraits<VertexCb>
 };
 
 template<>
-struct RemappingTraits<ArbitraryMeshVertex>
+struct RemappingTraits<MeshVertex>
 {
-    static Vertex3f& getVertex(ArbitraryMeshVertex& container) { return container.vertex; }
+    static Vertex3f& getVertex(MeshVertex& container) { return container.vertex; }
 };
 
 class RemapXYZ

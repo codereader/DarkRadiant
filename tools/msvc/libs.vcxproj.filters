@@ -90,9 +90,6 @@
     <ClInclude Include="..\..\libs\render\VertexNT.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\render\ArbitraryMeshVertex.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\render\Colour4.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -370,6 +367,9 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\parser\ThreadedDeclParser.h">
       <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\MeshVertex.h">
+      <Filter>render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -3,7 +3,7 @@
 #include "igl.h"
 #include "math/Matrix4.h"
 #include "igeometrystore.h"
-#include "render/ArbitraryMeshVertex.h"
+#include "render/MeshVertex.h"
 
 namespace render
 {
@@ -34,18 +34,18 @@ namespace
 {
 
 // Prepare a glDraw call by setting the glVertex(Attrib)Pointers to the given starting vertex
-inline void setupAttributePointers(ArbitraryMeshVertex* startVertex)
+inline void setupAttributePointers(MeshVertex* startVertex)
 {
-    glVertexPointer(3, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &startVertex->vertex);
-    glColorPointer(4, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &startVertex->colour);
-    glTexCoordPointer(2, GL_DOUBLE, sizeof(ArbitraryMeshVertex), &startVertex->texcoord);
-    glNormalPointer(GL_DOUBLE, sizeof(ArbitraryMeshVertex), &startVertex->normal);
+    glVertexPointer(3, GL_DOUBLE, sizeof(MeshVertex), &startVertex->vertex);
+    glColorPointer(4, GL_DOUBLE, sizeof(MeshVertex), &startVertex->colour);
+    glTexCoordPointer(2, GL_DOUBLE, sizeof(MeshVertex), &startVertex->texcoord);
+    glNormalPointer(GL_DOUBLE, sizeof(MeshVertex), &startVertex->normal);
 
-    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &startVertex->vertex);
-    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &startVertex->normal);
-    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &startVertex->texcoord);
-    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &startVertex->tangent);
-    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(ArbitraryMeshVertex), &startVertex->bitangent);
+    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &startVertex->vertex);
+    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &startVertex->normal);
+    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(MeshVertex), &startVertex->texcoord);
+    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &startVertex->tangent);
+    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &startVertex->bitangent);
 }
 
 }
@@ -75,7 +75,7 @@ void ObjectRenderer::SubmitGeometry(const std::set<IGeometryStore::Slot>& slots,
     firstIndices.reserve(surfaceCount);
     firstVertices.reserve(surfaceCount);
 
-    ArbitraryMeshVertex* bufferStart = nullptr;
+    MeshVertex* bufferStart = nullptr;
 
     for (const auto slot : slots)
     {

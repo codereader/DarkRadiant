@@ -41,7 +41,7 @@ protected:
 
         _needsUpdate = false;
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         std::vector<unsigned int> indices;
 
         static auto WireframeBoxIndices = render::detail::generateWireframeBoxIndices();

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "math/Vector3.h"
-#include "render/ArbitraryMeshVertex.h"
+#include "render/MeshVertex.h"
 #include "math/Hash.h"
 
 /**
@@ -17,9 +17,9 @@
 * 
 * The hash functors below aim to reproduce this behaviour without fully re-implementing
 * those custom containers in the engine code, designed to be used in a std::unordered_map
-* with ArbitraryMeshVertex used as Key type.
+* with MeshVertex used as Key type.
 * 
-* The ArbitraryMeshVertex hash functions is deliberately coarse and will produce lots of
+* The MeshVertex hash functions is deliberately coarse and will produce lots of
 * collisions for vertices in a certain vicinity, only provide a fast way of looking up 
 * duplicates in meshes with many verts. Each "colliding" vertex will then be compared
 * in-depth by the std::equal_to<> specialisation, where the epsilon-comparison is performed.
@@ -47,25 +47,25 @@ struct std::hash<Vector3>
     }
 };
 
-// Hash specialisation such that ArbitraryMeshVertex can be used as key type in std::unordered_map<>
+// Hash specialisation such that MeshVertex can be used as key type in std::unordered_map<>
 // Only the 3D coordinates (the vertex member) will be considered for hash calculation,
 // to intentionally produce hash collisions for vectors that are within a certain VertexEpsilon.
 template<>
-struct std::hash<ArbitraryMeshVertex>
+struct std::hash<MeshVertex>
 {
-    size_t operator()(const ArbitraryMeshVertex& v) const
+    size_t operator()(const MeshVertex& v) const
     {
         // We just hash the vertex
         return std::hash<Vector3>()(v.vertex);
     }
 };
 
-// Assumes equality of two ArbitraryMeshVertices if all of (vertex, normal, texcoord, colour) 
+// Assumes equality of two MeshVertices if all of (vertex, normal, texcoord, colour) 
 // are equal within defined epsilons (VertexEpsilon, NormalEpsilon, TexCoordEpsilon)
 template<>
-struct std::equal_to<ArbitraryMeshVertex>
+struct std::equal_to<MeshVertex>
 {
-    bool operator()(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b) const
+    bool operator()(const MeshVertex& a, const MeshVertex& b) const
     {
         return math::isNear(a.vertex, b.vertex, render::VertexEpsilon) &&
             a.normal.dot(b.normal) > (1.0 - render::NormalEpsilon) &&

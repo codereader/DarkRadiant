@@ -1,7 +1,7 @@
 #pragma once
 
 // Math/Vertex classes
-#include "render/ArbitraryMeshVertex.h"
+#include "render/MeshVertex.h"
 
 namespace model
 {
@@ -9,9 +9,9 @@ namespace model
 // A Polygon (Triangle) which is part of a model surface
 struct ModelPolygon
 {
-	ArbitraryMeshVertex a;
-	ArbitraryMeshVertex b;
-	ArbitraryMeshVertex c;
+	MeshVertex a;
+	MeshVertex b;
+	MeshVertex c;
 };
 
 // Abstract definition of a model surface
@@ -25,7 +25,7 @@ public:
 	virtual int getNumTriangles() const = 0;
 
 	// Get a specific vertex of this surface
-	virtual const ArbitraryMeshVertex& getVertex(int vertexNum) const = 0;
+	virtual const MeshVertex& getVertex(int vertexNum) const = 0;
 
 	/**
 	 * greebo: Returns a specific polygon from this model surface.
@@ -61,7 +61,7 @@ class IIndexedModelSurface :
 {
 public:
 	// Const access to the vertices used in this surface.
-	virtual const std::vector<ArbitraryMeshVertex>& getVertexArray() const = 0;
+	virtual const std::vector<MeshVertex>& getVertexArray() const = 0;
 
 	// Const access to the index array connecting the vertices.
 	virtual const std::vector<unsigned int>& getIndexArray() const = 0;

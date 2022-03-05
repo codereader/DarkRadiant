@@ -24,7 +24,7 @@ private:
     // Represents the storage for a single frame
     struct FrameBuffer
     {
-        ContinuousBuffer<ArbitraryMeshVertex> vertices;
+        ContinuousBuffer<MeshVertex> vertices;
         ContinuousBuffer<unsigned int> indices;
 
         GLsync syncObject;
@@ -110,7 +110,7 @@ public:
         return slot;
     }
 
-    void updateData(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    void updateData(Slot slot, const std::vector<MeshVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {
         assert(!vertices.empty());
@@ -125,7 +125,7 @@ public:
         });
     }
 
-    void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<ArbitraryMeshVertex>& vertices,
+    void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<MeshVertex>& vertices,
         std::size_t indexOffset, const std::vector<unsigned int>& indices) override
     {
         assert(!vertices.empty());

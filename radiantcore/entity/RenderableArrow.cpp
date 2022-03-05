@@ -35,14 +35,14 @@ void RenderableArrow::updateGeometry()
     Vector3 tip3(endpoint + direction * (-8.0) + left * (-4.0));
     Vector3 tip4(tip3 + left * 8.0);
 
-    std::vector<ArbitraryMeshVertex> vertices
+    std::vector<MeshVertex> vertices
     {
-        ArbitraryMeshVertex(origin, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex(endpoint, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex(tip1, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex(tip2, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex(tip3, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex(tip4, {1,0,0}, {0,0}, colour),
+        MeshVertex(origin, {1,0,0}, {0,0}, colour),
+        MeshVertex(endpoint, {1,0,0}, {0,0}, colour),
+        MeshVertex(tip1, {1,0,0}, {0,0}, colour),
+        MeshVertex(tip2, {1,0,0}, {0,0}, colour),
+        MeshVertex(tip3, {1,0,0}, {0,0}, colour),
+        MeshVertex(tip4, {1,0,0}, {0,0}, colour),
     };
 
     // Indices are always the same, therefore constant

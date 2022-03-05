@@ -78,7 +78,7 @@ void WavefrontExporter::writeObjFile(std::ostream& stream, const std::string& mt
 		std::stringstream texCoordBuf;
 		std::stringstream polyBuf;
 
-		for (const ArbitraryMeshVertex& meshVertex : surface.vertices)
+		for (const MeshVertex& meshVertex : surface.vertices)
 		{
 			// Write coordinates into the export buffers
 			const Vector3& vert = meshVertex.vertex;

@@ -21,10 +21,10 @@ namespace model
 namespace
 {
 
-// Adapter methods to convert brush vertices to ArbitraryMeshVertex type
-ArbitraryMeshVertex convertWindingVertex(const WindingVertex& in)
+// Adapter methods to convert brush vertices to MeshVertex type
+MeshVertex convertWindingVertex(const WindingVertex& in)
 {
-	ArbitraryMeshVertex out;
+	MeshVertex out;
 
 	out.vertex = in.vertex;
 	out.normal = in.normal;

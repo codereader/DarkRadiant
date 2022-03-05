@@ -223,7 +223,7 @@ protected:
     // This method is supposed to be called from within updateGeometry()
     // to ensure that the _shader reference is already up to date.
     void updateGeometry(GeometryType type,
-        const std::vector<ArbitraryMeshVertex>& vertices,
+        const std::vector<MeshVertex>& vertices,
         const std::vector<unsigned int>& indices)
     {
         // Size changes require removal of the geometry before update
