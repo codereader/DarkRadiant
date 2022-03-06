@@ -66,6 +66,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
     glDisableClientState(GL_NORMAL_ARRAY);
 
     std::vector<IGeometryStore::Slot> untransformedObjects;
+    untransformedObjects.reserve(10000);
 
     for (auto& pair : _objectsByEntity)
     {
@@ -118,6 +119,9 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
 {
     auto worldToLight = _light.getLightTextureTransformation();
 
+    std::vector<IGeometryStore::Slot> untransformedObjects;
+    untransformedObjects.reserve(10000);
+
     for (auto& pair : _objectsByEntity)
     {
         auto entity = pair.first;
@@ -125,8 +129,6 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
         for (auto& pair : pair.second)
         {
             auto shader = pair.first;
-
-            if (!shader->isVisible()) continue;
 
             auto pass = shader->getInteractionPass();
 
@@ -137,14 +139,29 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
 
                 for (auto object : pair.second)
                 {
-                    if (state.glProgram)
+                    // We submit all objects with an identity matrix in a single multi draw call
+                    if (!object.get().isOriented())
                     {
-                        OpenGLShaderPass::setUpLightingCalculation(state, &_light, worldToLight,
-                            view.getViewer(), object.get().getObjectTransform(), renderTime, state.isColourInverted());
+                        untransformedObjects.push_back(object.get().getStorageLocation());
+                        continue;
                     }
+
+                    OpenGLShaderPass::setUpLightingCalculation(state, &_light, worldToLight,
+                        view.getViewer(), object.get().getObjectTransform(), renderTime, state.isColourInverted());
 
                     ObjectRenderer::SubmitObject(object.get(), _store);
                     ++_drawCalls;
+                }
+
+                if (!untransformedObjects.empty())
+                {
+                    OpenGLShaderPass::setUpLightingCalculation(state, &_light, worldToLight,
+                        view.getViewer(), Matrix4::getIdentity(), renderTime, state.isColourInverted());
+
+                    ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
+                    ++_drawCalls;
+
+                    untransformedObjects.clear();
                 }
             }
         }
