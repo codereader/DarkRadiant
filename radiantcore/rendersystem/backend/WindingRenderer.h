@@ -448,7 +448,14 @@ public:
             _freeSlotMappingHint = slot;
         }
 
-        --_windingCount;
+        if (--_windingCount == 0)
+        {
+            // This was the last winding in the entire renderer, run a cleanup round
+            for (auto& bucket : _buckets)
+            {
+                ensureBucketIsReady(bucket);
+            }
+        }
     }
 
     void updateWinding(Slot slot, const std::vector<MeshVertex>& vertices) override
