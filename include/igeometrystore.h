@@ -142,7 +142,11 @@ public:
     // for a certain amount of time, at the latest until allocateSlot or deallocateSlot are invoked.
     virtual RenderParameters getRenderParameters(Slot slot) = 0;
 
-    // Returns the bounds of the geometry stored in the given slot
+    /**
+     * Returns the bounds of the geometry stored in the given slot.
+     * Note that this will only take those vertices into account 
+     * that are actually referenced by any index in the slot.
+     */ 
     virtual AABB getBounds(Slot slot) = 0;
 };
 

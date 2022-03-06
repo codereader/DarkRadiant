@@ -229,17 +229,22 @@ public:
 
     AABB getBounds(Slot slot) override
     {
-        auto vertexSlot = GetVertexSlot(slot);
         auto& current = getCurrentBuffer();
 
+        // Acquire the slot containing the vertices
+        auto vertexSlot = GetVertexSlot(slot);
         auto vertex = current.vertices.getBufferStart() + current.vertices.getOffset(vertexSlot);
-        auto numVertices = current.vertices.getSize(vertexSlot);
+
+        // Get the indices and use them to iterate over the vertices
+        auto indexSlot = GetIndexSlot(slot); 
+        auto indexPointer = current.indices.getBufferStart() + current.indices.getOffset(indexSlot);
+        auto numIndices = current.indices.getNumUsedElements(indexSlot);
 
         AABB bounds;
 
-        for (auto i = 0; i < numVertices; ++i, ++vertex)
+        for (auto i = 0; i < numIndices; ++i, ++indexPointer)
         {
-            bounds.includePoint(vertex->vertex);
+            bounds.includePoint(vertex[*indexPointer].vertex);
         }
 
         return bounds;

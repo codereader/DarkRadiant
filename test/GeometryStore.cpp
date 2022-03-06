@@ -627,4 +627,81 @@ TEST(GeometryStore, ResizeIndexRemapData)
     EXPECT_THROW(store.resizeData(secondarySlot, 6, remap.size()), std::logic_error);
 }
 
+TEST(GeometryStore, RegularSlotBounds)
+{
+    render::GeometryStore store(NullSyncObjectProvider::Instance());
+
+    // Allocate a slot to hold indexed vertices
+    auto vertices = generateVertices(3, 15 * 20);
+    auto indices = generateIndices(vertices);
+
+    auto slot = store.allocateSlot(vertices.size(), indices.size());
+    store.updateData(slot, vertices, indices);
+
+    // This slot's indices are referencing all vertices, so the bounds
+    // calculated should match the bounds of the entire vertex set.
+    AABB localBounds;
+    for (const auto& vertex : vertices)
+    {
+        localBounds.includePoint(vertex.vertex);
+    }
+
+    auto slotBounds = store.getBounds(slot);
+
+    EXPECT_TRUE(math::isNear(slotBounds.getOrigin(), localBounds.getOrigin(), 0.01)) << "Bounds origin mismatch";
+    EXPECT_TRUE(math::isNear(slotBounds.getExtents(), localBounds.getExtents(), 0.01)) << "Bounds extents mismatch";
+
+    // Store a new set of indices in this slot that is just using every second vertex
+    std::vector<unsigned int> newIndices;
+    for (auto i = 0; i < vertices.size(); i += 2)
+    {
+        newIndices.push_back(i);
+    }
+
+    store.updateData(slot, vertices, newIndices);
+
+    localBounds = AABB();
+    for (auto index : newIndices)
+    {
+        localBounds.includePoint(vertices[index].vertex);
+    }
+
+    slotBounds = store.getBounds(slot);
+
+    EXPECT_TRUE(math::isNear(slotBounds.getOrigin(), localBounds.getOrigin(), 0.01)) << "Bounds origin mismatch";
+    EXPECT_TRUE(math::isNear(slotBounds.getExtents(), localBounds.getExtents(), 0.01)) << "Bounds extents mismatch";
+}
+
+TEST(GeometryStore, IndexRemappingSlotBounds)
+{
+    render::GeometryStore store(NullSyncObjectProvider::Instance());
+
+    // Allocate a slot to hold indexed vertices
+    auto vertices = generateVertices(3, 15 * 20);
+    auto indices = generateIndices(vertices);
+
+    auto primarySlot = store.allocateSlot(vertices.size(), indices.size());
+    store.updateData(primarySlot, vertices, indices);
+
+    // Set up a remapping slot with a smaller set of indices referencing the primary slot vertices
+    std::vector<unsigned int> newIndices(vertices.size() / 4);
+    std::iota(newIndices.begin(), newIndices.end(), 0);
+
+    auto indexSlot = store.allocateIndexSlot(primarySlot, newIndices.size());
+    store.updateIndexData(indexSlot, newIndices);
+
+    // Calculate the bounds of our offline mapping
+    AABB localBounds;
+    for (auto index : newIndices)
+    {
+        localBounds.includePoint(vertices[index].vertex);
+    }
+
+    // Query the bounds of this index slot, it should be the same
+    auto slotBounds = store.getBounds(indexSlot);
+
+    EXPECT_TRUE(math::isNear(slotBounds.getOrigin(), localBounds.getOrigin(), 0.01)) << "Bounds origin mismatch";
+    EXPECT_TRUE(math::isNear(slotBounds.getExtents(), localBounds.getExtents(), 0.01)) << "Bounds extents mismatch";
+}
+
 }
