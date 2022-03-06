@@ -60,7 +60,8 @@ void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveM
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
 }
 
-void ObjectRenderer::SubmitGeometry(const std::set<IGeometryStore::Slot>& slots, GLenum primitiveMode, IGeometryStore& store)
+template<typename ContainerT>
+void SubmitGeometryInternal(const ContainerT& slots, GLenum primitiveMode, IGeometryStore& store)
 {
     auto surfaceCount = slots.size();
 
@@ -92,6 +93,16 @@ void ObjectRenderer::SubmitGeometry(const std::set<IGeometryStore::Slot>& slots,
 
     glMultiDrawElementsBaseVertex(primitiveMode, sizes.data(), GL_UNSIGNED_INT,
         firstIndices.data(), static_cast<GLsizei>(sizes.size()), firstVertices.data());
+}
+
+void ObjectRenderer::SubmitGeometry(const std::set<IGeometryStore::Slot>& slots, GLenum primitiveMode, IGeometryStore& store)
+{
+    SubmitGeometryInternal(slots, primitiveMode, store);
+}
+
+void ObjectRenderer::SubmitGeometry(const std::vector<IGeometryStore::Slot>& slots, GLenum primitiveMode, IGeometryStore& store)
+{
+    SubmitGeometryInternal(slots, primitiveMode, store);
 }
 
 }

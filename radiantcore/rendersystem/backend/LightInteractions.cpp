@@ -65,6 +65,8 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
 
+    std::vector<IGeometryStore::Slot> untransformedObjects;
+
     for (auto& pair : _objectsByEntity)
     {
         auto entity = pair.first;
@@ -83,17 +85,15 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             
             auto& objectList = pair.second;
 
-            // We submit all objects with an identity matrix in a single multi draw call
-            std::set<IGeometryStore::Slot> untransformedObjects;
-
             // Apply our state to the current state object
             shader->getDepthFillPass()->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
 
             for (auto object : objectList)
             {
+                // We submit all objects with an identity matrix in a single multi draw call
                 if (!object.get().isOriented())
                 {
-                    untransformedObjects.insert(object.get().getStorageLocation());
+                    untransformedObjects.push_back(object.get().getStorageLocation());
                     continue;
                 }
 
@@ -105,6 +105,8 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             {
                 ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
                 ++_drawCalls;
+
+                untransformedObjects.clear();
             }
         }
     }
