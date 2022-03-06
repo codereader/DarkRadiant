@@ -1,6 +1,7 @@
 #include "FullBrightRenderer.h"
 
 #include "OpenGLShaderPass.h"
+#include "OpenGLShader.h"
 
 namespace render
 {
@@ -29,6 +30,12 @@ public:
 
 IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time)
 {
+    // Make sure all the geometry is ready for rendering
+    for (const auto& [_, pass] : _sortedStates)
+    {
+        pass->getShader().prepareForRendering();
+    }
+
     // Construct default OpenGL state
     OpenGLState current;
     setupState(current);

@@ -135,6 +135,13 @@ bool OpenGLShader::hasSurfaces() const
     return !_geometryRenderer.empty() || !_surfaceRenderer.empty();
 }
 
+void OpenGLShader::prepareForRendering()
+{
+    _surfaceRenderer.prepareForRendering();
+    _windingRenderer->prepareForRendering();
+    // _geometryRenderer doesn't need to prepare at this point
+}
+
 IGeometryRenderer::Slot OpenGLShader::addGeometry(GeometryType indexType,
     const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices)
 {

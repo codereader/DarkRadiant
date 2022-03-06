@@ -104,6 +104,7 @@ public:
 
     bool hasSurfaces() const;
     void drawSurfaces(const VolumeTest& view);
+    void prepareForRendering();
 
     IGeometryRenderer::Slot addGeometry(GeometryType indexType,
         const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices) override;

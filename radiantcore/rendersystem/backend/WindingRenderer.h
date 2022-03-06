@@ -23,6 +23,9 @@ public:
 
     // Submit the geometry of all windings in this renderer
     virtual void renderAllWindings() = 0;
+
+    // Ensures that everything in the IGeometryStore is up to date
+    virtual void prepareForRendering() = 0;
 };
 
 // Traits class to retrieve the GLenum render mode based on the indexer type
@@ -343,12 +346,15 @@ private:
 
     std::unique_ptr<EntityWindings> _entitySurfaces;
 
+    bool _geometryUpdatePending;
+
 public:
     WindingRenderer(IGeometryStore& geometryStore, Shader* owningShader) :
         _geometryStore(geometryStore),
         _owningShader(owningShader),
         _windingCount(0),
-        _freeSlotMappingHint(InvalidSlotMapping)
+        _freeSlotMappingHint(InvalidSlotMapping),
+        _geometryUpdatePending(false)
     {
         if (RenderingTraits<WindingIndexerT>::SupportsEntitySurfaces())
         {
@@ -484,12 +490,10 @@ public:
 
     void renderAllWindings() override
     {
-        for (auto bucketIndex = 0; bucketIndex < _buckets.size(); ++bucketIndex)
+        assert(!_geometryUpdatePending); // prepareForRendering should have been called
+
+        for (auto& bucket : _buckets)
         {
-            auto& bucket = _buckets[bucketIndex];
-
-            ensureBucketIsReady(bucket);
-
             if (bucket.storageHandle == InvalidStorageHandle) continue; // nothing here
 
             auto primitiveMode = RenderingTraits<WindingIndexerT>::Mode();
@@ -499,13 +503,13 @@ public:
 
     void renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot) override
     {
+        assert(!_geometryUpdatePending); // prepareForRendering should have been called
+
         assert(slot < _slots.size());
         auto& slotMapping = _slots[slot];
 
         assert(slotMapping.bucketIndex != InvalidBucketIndex);
         auto& bucket = _buckets[slotMapping.bucketIndex];
-
-        ensureBucketIsReady(bucket);
 
         const auto& vertices = bucket.buffer.getVertices();
         const auto& indices = bucket.buffer.getIndices();
@@ -526,6 +530,19 @@ public:
         }
     }
 
+    // Ensure all data is written to the IGeometryStore
+    void prepareForRendering()
+    {
+        if (!_geometryUpdatePending) return;
+
+        _geometryUpdatePending = false;
+
+        for (auto& bucket : _buckets)
+        {
+            ensureBucketIsReady(bucket);
+        }
+    }
+
 private:
     void ensureBucketIsReady(BucketIndex bucketIndex)
     {
@@ -543,6 +560,7 @@ private:
         // Update the modified range
         bucket.modifiedSlotRange.first = std::min(bucket.modifiedSlotRange.first, modifiedSlot);
         bucket.modifiedSlotRange.second = std::max(bucket.modifiedSlotRange.second, modifiedSlot);
+        _geometryUpdatePending = true;
     }
     
     // Commit all local buffer changes to the geometry store

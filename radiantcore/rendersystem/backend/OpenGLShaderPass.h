@@ -87,6 +87,11 @@ public:
 		_owner(owner)
 	{}
 
+    OpenGLShader& getShader()
+    {
+        return _owner;
+    }
+
     // Returns true if the stage associated to this pass is active and should be rendered
     bool stateIsActive();
 

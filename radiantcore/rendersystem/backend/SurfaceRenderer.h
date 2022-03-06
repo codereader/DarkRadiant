@@ -33,10 +33,14 @@ private:
 
     Slot _freeSlotMappingHint;
 
+    std::vector<Slot> _surfacesNeedingUpdate;
+    bool _surfacesNeedUpdate;
+
 public:
     SurfaceRenderer(IGeometryStore& store) :
         _store(store),
-        _freeSlotMappingHint(0)
+        _freeSlotMappingHint(0),
+        _surfacesNeedUpdate(false)
     {}
 
     bool empty() const
@@ -78,6 +82,8 @@ public:
     void updateSurface(Slot slot) override
     {
         _surfaces.at(slot).surfaceDataChanged = true;
+        _surfacesNeedingUpdate.push_back(slot);
+        _surfacesNeedUpdate = true;
     }
 
     void render(const VolumeTest& view)
@@ -96,6 +102,27 @@ public:
     IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override
     {
         return _surfaces.at(slot).storageHandle;
+    }
+
+    // Ensures the data in the IGeometryStore is up to date
+    void prepareForRendering()
+    {
+        if (!_surfacesNeedUpdate) return;
+
+        _surfacesNeedUpdate = false;
+
+        for (auto slotIndex : _surfacesNeedingUpdate)
+        {
+            auto& surfaceInfo = _surfaces.at(slotIndex);
+
+            if (surfaceInfo.surfaceDataChanged)
+            {
+                surfaceInfo.surfaceDataChanged = false;
+
+                auto& surface = surfaceInfo.surface.get();
+                _store.updateData(surfaceInfo.storageHandle, surface.getVertices(), surface.getIndices());
+            }
+        }
     }
 
 private:

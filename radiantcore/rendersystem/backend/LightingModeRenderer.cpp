@@ -45,6 +45,8 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
         interactionLists.emplace_back(std::move(interaction));
     }
 
+    // Past this point, everything in the geometry store is up to date
+
     // Run the depth fill pass
     for (auto& interactionList : interactionLists)
     {
