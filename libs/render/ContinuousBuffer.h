@@ -215,8 +215,8 @@ public:
 
         for (const auto& transaction : transactions)
         {
-            if (transaction.type == detail::BufferTransaction::Type::Allocate ||
-                transaction.type == detail::BufferTransaction::Type::Update)
+            // Only the updated slots will actually have altered any data
+            if (transaction.type == detail::BufferTransaction::Type::Update)
             {
                 auto handle = getHandle(transaction.slot);
                 auto& otherSlot = other._slots[handle];
@@ -225,6 +225,7 @@ public:
             }
         }
 
+        // Replicate the slot allocation data
         _slots.resize(other._slots.size());
         memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
 
