@@ -73,10 +73,11 @@ public:
 
         _shader = shader;
         _windingSize = numPoints;
+        _entity = &entity; // remember this renderentity, to detect colour changes
 
         if (_slot == IWindingRenderer::InvalidSlot)
         {
-            _slot = shader->addWinding(vertices, &entity);
+            _slot = shader->addWinding(vertices, _entity);
         }
         else
         {
