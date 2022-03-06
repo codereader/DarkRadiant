@@ -240,6 +240,11 @@ public:
         return _indices;
     }
 
+    bool isOriented() override
+    {
+        return true;
+    }
+
     const Matrix4& getObjectTransform() override
     {
         return _orientation;

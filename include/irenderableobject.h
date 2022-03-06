@@ -19,6 +19,9 @@ public:
     // Returns true if this object is not empty and should be rendered
     virtual bool isVisible() = 0;
 
+    // Returns true if this object has a non-identity transformation matrix
+    virtual bool isOriented() = 0;
+
     // The model view matrix used to render this object
     virtual const Matrix4& getObjectTransform() = 0;
 

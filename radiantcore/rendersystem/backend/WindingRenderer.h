@@ -178,6 +178,11 @@ private:
             return !empty();
         }
 
+        bool isOriented() override
+        {
+            return false;
+        }
+
         const Matrix4& getObjectTransform() override
         {
             static Matrix4 _identity = Matrix4::getIdentity();
