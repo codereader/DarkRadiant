@@ -72,22 +72,38 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
         for (auto& pair : pair.second)
         {
             auto shader = pair.first;
-            auto& objectList = pair.second;
+
+            if (!shader->getDepthFillPass()) continue;
 
             // Skip translucent materials
             if (shader->getMaterial() && shader->getMaterial()->getCoverage() == Material::MC_TRANSLUCENT)
             {
                 continue;
             }
+            
+            auto& objectList = pair.second;
 
-            if (!shader->getDepthFillPass()) continue;
+            // We submit all objects with an identity matrix in a single multi draw call
+            std::set<IGeometryStore::Slot> untransformedObjects;
 
             // Apply our state to the current state object
             shader->getDepthFillPass()->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
 
             for (auto object : objectList)
             {
+                if (!object.get().isOriented())
+                {
+                    untransformedObjects.insert(object.get().getStorageLocation());
+                    continue;
+                }
+
                 ObjectRenderer::SubmitObject(object.get(), _store);
+                ++_drawCalls;
+            }
+
+            if (!untransformedObjects.empty())
+            {
+                ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
                 ++_drawCalls;
             }
         }
