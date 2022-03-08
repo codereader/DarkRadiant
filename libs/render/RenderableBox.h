@@ -176,8 +176,8 @@ public:
 
         auto colour = getVertexColour();
 
-        auto vertices = _filledBox ? 
-            detail::getFillBoxVertices(min, max, colour) : 
+        auto vertices = _filledBox ?
+            detail::getFillBoxVertices(min, max, colour) :
             detail::getWireframeBoxVertices(min, max, colour);
 
         // Move the points to their world position
@@ -191,11 +191,13 @@ public:
 
         if (_filledBox)
         {
-            RenderableGeometry::updateGeometry(render::GeometryType::Quads, vertices, FillBoxIndices);
+            RenderableGeometry::updateGeometryWithData(render::GeometryType::Quads, vertices,
+                                                       FillBoxIndices);
         }
         else
         {
-            RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, WireframeBoxIndices);
+            RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices,
+                                                       WireframeBoxIndices);
         }
     }
 };

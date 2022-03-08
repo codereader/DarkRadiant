@@ -56,7 +56,7 @@ protected:
             4, 5
         };
 
-        RenderableGeometry::updateGeometry(GeometryType::Lines, vertices, Indices);
+        RenderableGeometry::updateGeometryWithData(GeometryType::Lines, vertices, Indices);
     }
 };
 

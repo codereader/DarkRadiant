@@ -10,9 +10,9 @@ namespace render
 {
 
 /**
- * Geometry base type, handling vertex data updates in combination 
+ * Geometry base type, handling vertex data updates in combination
  * with an IGeometryRenderer instance.
- * 
+ *
  * It implements the OpenGLRenderable interface which will instruct
  * the shader to render just the geometry batch managed by this object.
  * This is used to render highlights (such as selection overlays).
@@ -214,17 +214,29 @@ protected:
         _surfaceSlot = IGeometryRenderer::InvalidSlot;
     }
 
-    // Sub-class specific geometry update. Should check whether any of the vertex data 
-    // needs to be added or updated to the shader, in which case the implementation 
+    // Sub-class specific geometry update. Should check whether any of the vertex data
+    // needs to be added or updated to the shader, in which case the implementation
     // should invoke the updateGeometry(type, vertices, indices) overload below
     virtual void updateGeometry() = 0;
 
-    // Submits the given geometry to the known _shader reference
-    // This method is supposed to be called from within updateGeometry()
-    // to ensure that the _shader reference is already up to date.
-    void updateGeometry(GeometryType type,
-        const std::vector<ArbitraryMeshVertex>& vertices,
-        const std::vector<unsigned int>& indices)
+    /**
+     * @brief Submits the given geometry to the known _shader reference.
+     *
+     * This method is supposed to be called from within updateGeometry() to ensure that the _shader
+     * reference is already up to date.
+     *
+     * @param type
+     * Type of primitives to render (quads, lines etc)
+     *
+     * @param vertices
+     * Vector of vertex data.
+     *
+     * @param indices
+     * Indices of vertices to join together into primitives.
+     */
+    void updateGeometryWithData(GeometryType type,
+                                const std::vector<ArbitraryMeshVertex>& vertices,
+                                const std::vector<unsigned int>& indices)
     {
         // Size changes require removal of the geometry before update
         if (_lastVertexSize != vertices.size() || _lastIndexSize != indices.size())

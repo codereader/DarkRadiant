@@ -9,7 +9,7 @@ namespace brush
 namespace detail
 {
 
-inline void addColouredVertices(const std::vector<Vector3>& sourceVertices, const Vector4& colour, 
+inline void addColouredVertices(const std::vector<Vector3>& sourceVertices, const Vector4& colour,
     std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices)
 {
     auto indexOffset = static_cast<unsigned int>(vertices.size());
@@ -47,7 +47,7 @@ void RenderableBrushVertices::updateGeometry()
     detail::addColouredVertices(brushVertices, { vertexColour, 1 }, vertices, indices);
     detail::addColouredVertices(_selectedVertices, { selectedVertexColour, 1 }, vertices, indices);
 
-    RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
+    RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
 }
 
 }

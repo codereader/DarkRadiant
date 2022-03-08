@@ -5,7 +5,7 @@
 #include "render.h"
 #include "render/RenderableGeometry.h"
 
-namespace entity 
+namespace entity
 {
 
 class RenderableCurve :
@@ -62,7 +62,7 @@ protected:
         indices.pop_back();
         indices.pop_back();
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 };
 
