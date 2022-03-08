@@ -376,40 +376,6 @@ inline void draw_ellipse(const std::size_t numSegments, const double radiusX, co
 }
 
 template<typename remap_policy, typename VertexArray>
-inline void draw_semicircle(const std::size_t segments, const double radius, VertexArray& vertices)
-{
-    const double increment = math::PI / double(segments << 2);
-
-    std::size_t count = 0;
-    double x = radius;
-    double y = 0;
-    remap_policy::set(vertices[segments << 2], -radius, 0, 0);
-
-    while (count < segments)
-    {
-        auto& i = vertices[count];
-        auto& j = vertices[(segments << 1) - (count + 1)];
-
-        auto& k = vertices[count + (segments << 1)];
-        auto& l = vertices[(segments << 1) - (count + 1) + (segments << 1)];
-
-        remap_policy::set(i, x, -y, 0);
-        remap_policy::set(k, -y, -x, 0);
-
-        ++count;
-
-        {
-            const double theta = increment * count;
-            x = radius * cos(theta);
-            y = radius * sin(theta);
-        }
-
-        remap_policy::set(j, y, -x, 0);
-        remap_policy::set(l, -x, -y, 0);
-    }
-}
-
-template<typename remap_policy, typename VertexArray>
 inline void draw_circle(const std::size_t segments, const double radius, VertexArray& vertices, std::size_t firstVertex = 0)
 {
     draw_ellipse<remap_policy>(segments, radius, radius, vertices, firstVertex);
