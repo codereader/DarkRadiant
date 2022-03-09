@@ -36,8 +36,9 @@ private:
     // The name of this entity class
     std::string _name;
 
-    // Source file information
-    vfs::FileInfo _fileInfo;
+    // Source file information. May not exist if the entity class was created in code rather than
+    // loaded from a .def file.
+    std::optional<vfs::FileInfo> _fileInfo;
 
     // Parent class pointer (or NULL)
     EntityClass* _parent = nullptr;
@@ -91,27 +92,15 @@ private:
                                   bool editorKeys) const;
 
 public:
-    /**
-     * Static function to create a default entity class.
-     *
-     * @param name
-     * The name of the entity class to create.
-     *
-     * @param brushes
-     * Whether the entity contains brushes or not.
-     */
-    static EntityClass::Ptr create(const std::string& name, bool brushes);
 
-    /**
-     * Constructor.
-     *
-     * @param name
-     * Entity class name.
-     *
-     * @param fixedSize
-     * Whether this entity has a fixed size.
-     */
+    /// Construct an EntityClass with no FileInfo.
+    EntityClass(const std::string& name, bool isFixedSize = false);
+
+    /// Construct an EntityClass with a given FileInfo.
     EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize = false);
+
+    /// Create a heap-allocated default/empty EntityClass
+    static EntityClass::Ptr createDefault(const std::string& name, bool brushes);
 
     void emplaceAttribute(EntityClassAttribute&& attribute);
 
