@@ -43,11 +43,11 @@ private:
     EntityClass* _parent = nullptr;
 
     // Should this entity type be treated as a light?
-    bool _isLight;
+    bool _isLight = false;
 
     // Colour of this entity and flag to indicate it has been specified
     Vector4 _colour;
-    bool _colourTransparent;
+    bool _colourTransparent = false;
 
     // Does this entity have a fixed size?
     bool _fixedSize;
@@ -64,20 +64,20 @@ private:
     // Flag to indicate inheritance resolved. An EntityClass resolves its
     // inheritance by copying all values from the parent onto the child,
     // after recursively instructing the parent to resolve its own inheritance.
-    bool _inheritanceResolved;
+    bool _inheritanceResolved = false;
 
     // Name of the mod owning this class
-    std::string _modName;
+    std::string _modName = "base";
 
     // The empty attribute
     static const EntityClassAttribute _emptyAttribute;
 
     // The time this def has been parsed
-    std::size_t _parseStamp;
+    std::size_t _parseStamp = 0;
 
     // Emitted when contents are reloaded
     sigc::signal<void> _changedSignal;
-    bool _blockChangeSignal;
+    bool _blockChangeSignal = false;
 
 private:
     // Clear all contents (done before parsing from tokens)
@@ -108,20 +108,10 @@ public:
      * @param name
      * Entity class name.
      *
-     * This eclass will have isFixedSize set to false.
-     */
-    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo);
-
-    /**
-     * Constructor.
-     *
-     * @param name
-     * Entity class name.
-     *
      * @param fixedSize
-     * whether this entity has a fixed size.
+     * Whether this entity has a fixed size.
      */
-    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
+    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize = false);
 
     void emplaceAttribute(EntityClassAttribute&& attribute);
 

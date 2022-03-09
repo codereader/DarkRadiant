@@ -19,23 +19,11 @@ namespace
 
 const EntityClassAttribute EntityClass::_emptyAttribute("", "", "");
 
-EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo) :
-    EntityClass(name, fileInfo, false)
-{}
-
 EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize)
 : _name(name),
   _fileInfo(fileInfo),
-  _isLight(false),
   _colour(UndefinedColour),
-  _colourTransparent(false),
-  _fixedSize(fixedSize),
-  _model(""),
-  _skin(""),
-  _inheritanceResolved(false),
-  _modName("base"),
-  _parseStamp(0),
-  _blockChangeSignal(false)
+  _fixedSize(fixedSize)
 {}
 
 const std::string& EntityClass::getName() const
@@ -469,7 +457,7 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         if (attribute.getType().empty())
         {
             // Type is empty, attribute does not exist, add it.
-            // 
+            //
             // Following key-specific processing, add the keyvalue to the eclass
             // The type is an empty string, it will be set to a non-type as soon as we encounter it
             emplaceAttribute(EntityClassAttribute("", key, value, ""));
