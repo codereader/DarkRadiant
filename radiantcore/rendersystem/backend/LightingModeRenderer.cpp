@@ -46,6 +46,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     }
 
     // Past this point, everything in the geometry store is up to date
+    _geometryStore.syncToBufferObjects();
 
     // Run the depth fill pass
     for (auto& interactionList : interactionLists)

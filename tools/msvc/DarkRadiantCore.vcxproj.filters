@@ -2358,5 +2358,8 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FenceSyncProvider.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\BufferObjectProvider.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

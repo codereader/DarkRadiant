@@ -27,6 +27,22 @@ public:
     }
 };
 
+class NullBufferObjectProvider final :
+    public render::IBufferObjectProvider
+{
+public:
+    render::IBufferObject::Ptr createBufferObject() override
+    {
+        return {};
+    }
+
+    static NullBufferObjectProvider& Instance()
+    {
+        static NullBufferObjectProvider _instance;
+        return _instance;
+    }
+};
+
 namespace
 {
 
@@ -121,7 +137,7 @@ inline void verifyAllAllocations(render::IGeometryStore& store, const std::vecto
 
 TEST(GeometryStore, AllocateAndDeallocate)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     std::vector<render::IGeometryStore::Slot> allocatedSlots;
 
@@ -142,7 +158,7 @@ TEST(GeometryStore, AllocateAndDeallocate)
 
 TEST(GeometryStore, UpdateData)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     std::set<Allocation> allocations;
 
@@ -191,7 +207,7 @@ TEST(GeometryStore, UpdateData)
 
 TEST(GeometryStore, UpdateSubData)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     std::set<Allocation> allocations;
 
@@ -261,7 +277,7 @@ TEST(GeometryStore, UpdateSubData)
 
 TEST(GeometryStore, ResizeData)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     // Allocate a few dummy slots
     store.allocateSlot(17, 27);
@@ -305,7 +321,7 @@ TEST(GeometryStore, ResizeData)
 
 TEST(GeometryStore, FrameBufferSwitching)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     store.onFrameStart();
 
@@ -452,7 +468,7 @@ TEST(GeometryStore, FrameBufferSwitching)
 
 TEST(GeometryStore, SyncObjectAcquisition)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     NullSyncObjectProvider::Instance().invocationCount = 0;
 
@@ -468,7 +484,7 @@ TEST(GeometryStore, SyncObjectAcquisition)
 
 TEST(GeometryStore, AllocateIndexRemap)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     // Allocate a slot to hold indexed vertices
     auto vertices = generateVertices(3, 15 * 20);
@@ -489,7 +505,7 @@ TEST(GeometryStore, AllocateIndexRemap)
 
 TEST(GeometryStore, AllocateInvalidIndexRemap)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     // Allocate a slot to hold indexed vertices
     auto vertices = generateVertices(3, 15 * 20);
@@ -508,7 +524,7 @@ TEST(GeometryStore, AllocateInvalidIndexRemap)
 
 TEST(GeometryStore, UpdateIndexRemapData)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     // Allocate a slot to hold indexed vertices
     auto vertices = generateVertices(3, 15 * 20);
@@ -544,7 +560,7 @@ TEST(GeometryStore, UpdateIndexRemapData)
 
 TEST(GeometryStore, UpdateIndexRemapSubData)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     // Allocate a slot to hold indexed vertices
     auto vertices = generateVertices(3, 15 * 20);
@@ -588,7 +604,7 @@ TEST(GeometryStore, UpdateIndexRemapSubData)
 
 TEST(GeometryStore, ResizeIndexRemapData)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     // Allocate a slot to hold indexed vertices
     auto vertices = generateVertices(3, 15 * 20);
@@ -629,7 +645,7 @@ TEST(GeometryStore, ResizeIndexRemapData)
 
 TEST(GeometryStore, RegularSlotBounds)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     // Allocate a slot to hold indexed vertices
     auto vertices = generateVertices(3, 15 * 20);
@@ -674,7 +690,7 @@ TEST(GeometryStore, RegularSlotBounds)
 
 TEST(GeometryStore, IndexRemappingSlotBounds)
 {
-    render::GeometryStore store(NullSyncObjectProvider::Instance());
+    render::GeometryStore store(NullSyncObjectProvider::Instance(), NullBufferObjectProvider::Instance());
 
     // Allocate a slot to hold indexed vertices
     auto vertices = generateVertices(3, 15 * 20);

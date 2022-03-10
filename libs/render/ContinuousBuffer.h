@@ -76,8 +76,14 @@ private:
     // A stack of slots that can be re-used instead
     std::stack<Handle> _emptySlots;
 
+    // The offset and size of memory (in elements) that has been modified since the last sync call
+    std::pair<std::size_t, std::size_t> _modifiedRange;
+    std::size_t _lastSyncedBufferSize;
+
 public:
-    ContinuousBuffer(std::size_t initialSize = DefaultInitialSize)
+    ContinuousBuffer(std::size_t initialSize = DefaultInitialSize) :
+        _modifiedRange(0, 0),
+        _lastSyncedBufferSize(0)
     {
         // Pre-allocate some memory, but don't go all the way down to zero
         _buffer.resize(initialSize == 0 ? 16 : initialSize);
@@ -101,6 +107,7 @@ public:
         memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
 
         _emptySlots = other._emptySlots;
+        _modifiedRange = other._modifiedRange;
 
         return *this;
     }
@@ -230,6 +237,40 @@ public:
         memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
 
         _emptySlots = other._emptySlots;
+    }
+
+    // Copies the modified chunk of memory to the given buffer object
+    void syncModificationsToBufferObject(const IBufferObject::Ptr& buffer)
+    {
+        if (_modifiedRange.second - _modifiedRange.first == 0)
+        {
+            return; // nothing to do
+        }
+
+        auto currentBufferSize = _buffer.size();
+
+        if (_lastSyncedBufferSize != currentBufferSize)
+        {
+            // Resize the memory in the buffer object
+            buffer->resize(currentBufferSize);
+            _lastSyncedBufferSize = currentBufferSize;
+
+            // Re-upload everything
+            buffer->setData(0, reinterpret_cast<unsigned char*>(_buffer.data()),
+                _buffer.size() * sizeof(ElementType));
+        }
+        else
+        {
+            auto startBytes = _modifiedRange.first * sizeof(ElementType);
+            auto endBytes = _modifiedRange.second * sizeof(ElementType);
+            auto firstElement = _buffer.data() + _modifiedRange.first;
+
+            // Upload the chunk of modified memory
+            buffer->setData(startBytes, reinterpret_cast<unsigned char*>(firstElement), 
+                endBytes - startBytes);
+        }
+        
+        _modifiedRange.first = _modifiedRange.second = 0;
     }
 
 private:

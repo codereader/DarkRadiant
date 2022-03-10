@@ -31,6 +31,33 @@ public:
     virtual ISyncObject::Ptr createSyncObject() = 0;
 };
 
+// Represents a buffer object as provided by the openGL implementation
+// Operates on byte (unsigned char) data types.
+class IBufferObject
+{
+public:
+    virtual ~IBufferObject() {}
+
+    using Ptr = std::shared_ptr<IBufferObject>;
+
+    // Uploads the given data to the buffer, starting at the given offset
+    virtual void setData(std::size_t offset, const unsigned char* firstElement, std::size_t numBytes) = 0;
+
+    // Re-allocates the memory of this buffer, does not transfer the data 
+    // from the old internal buffer to the new one.
+    virtual void resize(std::size_t newSize) = 0;
+};
+
+// Factory class creating new buffer objects
+class IBufferObjectProvider
+{
+public:
+    virtual ~IBufferObjectProvider() {}
+
+    // Creates a new, empty buffer object of 0 size. Has to be resized before use.
+    virtual IBufferObject::Ptr createBufferObject() = 0;
+};
+
 /**
  * Storage container for indexed vertex data.
  *
@@ -148,6 +175,9 @@ public:
      * that are actually referenced by any index in the slot.
      */ 
     virtual AABB getBounds(Slot slot) = 0;
+
+    // Synchronises the data in the currently active framebuffer to the attached IBufferObjects
+    virtual void syncToBufferObjects() = 0;
 };
 
 }

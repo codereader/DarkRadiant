@@ -35,10 +35,19 @@ private:
 
         ISyncObject::Ptr syncObject;
 
+        IBufferObject::Ptr vertexBufferObject;
+        IBufferObject::Ptr indexBufferObject;
+
         void applyTransactions(const std::vector<detail::BufferTransaction>& transactions, const FrameBuffer& other)
         {
             vertices.applyTransactions(transactions, other.vertices, GetVertexSlot);
             indices.applyTransactions(transactions, other.indices, GetIndexSlot);
+        }
+
+        void syncToBufferObjects()
+        {
+            vertices.syncModificationsToBufferObject(vertexBufferObject);
+            indices.syncModificationsToBufferObject(indexBufferObject);
         }
     };
 
@@ -49,11 +58,18 @@ private:
     ISyncObjectProvider& _syncObjectProvider;
 
 public:
-    GeometryStore(ISyncObjectProvider& syncObjectProvider) :
+    GeometryStore(ISyncObjectProvider& syncObjectProvider, IBufferObjectProvider& bufferObjectProvider) :
         _currentBuffer(0),
         _syncObjectProvider(syncObjectProvider)
     {
         _frameBuffers.resize(NumFrameBuffers);
+
+        // Assign (empty) buffer objects to the frames
+        for (auto& frameBuffer : _frameBuffers)
+        {
+            frameBuffer.vertexBufferObject = bufferObjectProvider.createBufferObject();
+            frameBuffer.indexBufferObject = bufferObjectProvider.createBufferObject();
+        }
     }
 
     // Marks the beginning of a frame, switches to the next writing buffers 
@@ -75,6 +91,12 @@ public:
         // Replay any modifications to the new buffer
         current.applyTransactions(_transactionLog, previous);
         _transactionLog.clear();
+    }
+
+    void syncToBufferObjects()
+    {
+        auto& current = getCurrentBuffer();
+        current.syncToBufferObjects();
     }
 
     // Completes the currently writing frame, creates sync objects

@@ -36,6 +36,9 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
         pass->getShader().prepareForRendering();
     }
 
+    // Make sure all the data is uploaded
+    _geometryStore.syncToBufferObjects();
+
     // Construct default OpenGL state
     OpenGLState current;
     setupState(current);
