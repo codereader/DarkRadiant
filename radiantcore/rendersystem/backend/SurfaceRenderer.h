@@ -136,12 +136,9 @@ private:
             return;
         }
 
-        // Update the vertex data now if necessary
         if (slot.surfaceDataChanged)
         {
-            slot.surfaceDataChanged = false;
-
-            _store.updateData(slot.storageHandle, surface.getVertices(), surface.getIndices());
+            throw std::logic_error("Cannot render unprepared slot, ensure calling SurfaceRenderer::prepareForRendering first");
         }
 
         ObjectRenderer::SubmitObject(surface, _store);

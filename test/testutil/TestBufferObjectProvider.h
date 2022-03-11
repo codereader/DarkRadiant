@@ -14,6 +14,8 @@ public:
     std::size_t lastUsedOffset;
     std::size_t lastUsedByteCount;
 
+    void bind() override {}
+
     void setData(std::size_t offset, const unsigned char* firstElement, std::size_t numBytes) override
     {
         lastUsedOffset = offset;

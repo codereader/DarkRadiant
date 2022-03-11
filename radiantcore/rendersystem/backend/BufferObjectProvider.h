@@ -32,6 +32,11 @@ private:
             _buffer = 0;
         }
 
+        void bind() override
+        {
+            glBindBuffer(_target, _buffer);
+        }
+
         void setData(std::size_t offset, const unsigned char* firstElement, std::size_t numBytes) override
         {
             glBindBuffer(_target, _buffer);

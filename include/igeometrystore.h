@@ -46,6 +46,9 @@ public:
 
     using Ptr = std::shared_ptr<IBufferObject>;
 
+    // Binds this object
+    virtual void bind() = 0;
+
     // Uploads the given data to the buffer, starting at the given offset
     virtual void setData(std::size_t offset, const unsigned char* firstElement, std::size_t numBytes) = 0;
 

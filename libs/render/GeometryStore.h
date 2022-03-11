@@ -240,10 +240,13 @@ public:
 
         auto& current = getCurrentBuffer();
 
+        current.vertexBufferObject->bind();
+        current.indexBufferObject->bind();
+
         return RenderParameters
         {
-            current.vertices.getBufferStart(),
-            current.indices.getBufferStart() + current.indices.getOffset(indexSlot), // pointer to first index
+            nullptr,
+            static_cast<unsigned int*>(nullptr) + current.indices.getOffset(indexSlot), // pointer to first index
             current.indices.getNumUsedElements(indexSlot), // index count of the given geometry
             current.vertices.getOffset(vertexSlot) // offset to the first vertex
         };

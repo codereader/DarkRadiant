@@ -514,6 +514,9 @@ public:
         const auto& vertices = bucket.buffer.getVertices();
         const auto& indices = bucket.buffer.getIndices();
 
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
         glDisableClientState(GL_COLOR_ARRAY);
 
         glVertexPointer(3, GL_DOUBLE, sizeof(MeshVertex), &vertices.front().vertex);
