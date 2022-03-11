@@ -46,8 +46,11 @@ public:
 
     using Ptr = std::shared_ptr<IBufferObject>;
 
-    // Binds this object
+    // Binds this object (glBindBuffer)
     virtual void bind() = 0;
+
+    // Release the binding, aka glBindBuffer(0)
+    virtual void unbind() = 0;
 
     // Uploads the given data to the buffer, starting at the given offset
     virtual void setData(std::size_t offset, const unsigned char* firstElement, std::size_t numBytes) = 0;
@@ -184,6 +187,9 @@ public:
      * that are actually referenced by any index in the slot.
      */ 
     virtual AABB getBounds(Slot slot) = 0;
+
+    // Return the buffer objects of the current frame
+    virtual std::pair<IBufferObject::Ptr, IBufferObject::Ptr> getBufferObjects() = 0;
 
     // Synchronises the data in the currently active framebuffer to the attached IBufferObjects
     virtual void syncToBufferObjects() = 0;

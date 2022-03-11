@@ -509,14 +509,12 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 }
 
 // Render the bucket contents
-void OpenGLShaderPass::render(OpenGLState& current,
+void OpenGLShaderPass::submitSurfaces(OpenGLState& current,
                               unsigned int flagsMask,
                               const Vector3& viewer,
                               const VolumeTest& view,
                               std::size_t time)
 {
-    if (!_owner.isVisible()) return;
-
     // Reset the texture matrix
     glMatrixMode(GL_TEXTURE);
     glLoadMatrixd(Matrix4::getIdentity());
@@ -527,6 +525,22 @@ void OpenGLShaderPass::render(OpenGLState& current,
     applyState(current, flagsMask, viewer, time, nullptr);
 
     _owner.drawSurfaces(view);
+}
+
+void OpenGLShaderPass::submitRenderables(OpenGLState& current,
+    unsigned int flagsMask,
+    const Vector3& viewer,
+    const VolumeTest& view,
+    std::size_t time)
+{
+    // Reset the texture matrix
+    glMatrixMode(GL_TEXTURE);
+    glLoadMatrixd(Matrix4::getIdentity());
+
+    glMatrixMode(GL_MODELVIEW);
+
+    // Apply our state to the current state object
+    applyState(current, flagsMask, viewer, time, nullptr);
 
     drawRenderables(current);
 }
@@ -539,6 +553,11 @@ void OpenGLShaderPass::clearRenderables()
 bool OpenGLShaderPass::empty()
 {
     return _transformedRenderables.empty() && !_owner.hasSurfaces() && !_owner.hasWindings();
+}
+
+bool OpenGLShaderPass::hasRenderables() const
+{
+    return !_transformedRenderables.empty();
 }
 
 bool OpenGLShaderPass::isApplicableTo(RenderViewType renderViewType) const

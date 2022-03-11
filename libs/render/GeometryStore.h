@@ -93,7 +93,13 @@ public:
         _transactionLog.clear();
     }
 
-    void syncToBufferObjects()
+    std::pair<IBufferObject::Ptr, IBufferObject::Ptr> getBufferObjects() override
+    {
+        auto& current = getCurrentBuffer();
+        return { current.vertexBufferObject, current.indexBufferObject };
+    }
+
+    void syncToBufferObjects() override
     {
         auto& current = getCurrentBuffer();
         current.syncToBufferObjects();
@@ -239,9 +245,6 @@ public:
         auto indexSlot = GetIndexSlot(slot);
 
         auto& current = getCurrentBuffer();
-
-        current.vertexBufferObject->bind();
-        current.indexBufferObject->bind();
 
         return RenderParameters
         {

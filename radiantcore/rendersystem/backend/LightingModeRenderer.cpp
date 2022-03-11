@@ -48,6 +48,14 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     // Past this point, everything in the geometry store is up to date
     _geometryStore.syncToBufferObjects();
 
+    auto [vertexBuffer, indexBuffer] = _geometryStore.getBufferObjects();
+
+    vertexBuffer->bind();
+    indexBuffer->bind();
+
+    // Set the vertex attribute pointers
+    ObjectRenderer::InitAttributePointers();
+
     // Run the depth fill pass
     for (auto& interactionList : interactionLists)
     {

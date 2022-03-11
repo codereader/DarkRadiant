@@ -13,6 +13,9 @@ class IRenderableObject;
 class ObjectRenderer
 {
 public:
+    // Initialise the vertex attribute pointers using the given start address (can be nullptr)
+    static void InitAttributePointers(MeshVertex* bufferStart = nullptr);
+
     // Draws the given object, sets up transform and submits geometry
     static void SubmitObject(IRenderableObject& object, IGeometryStore& store);
 

@@ -90,13 +90,13 @@ public:
     {
         for (auto& surface : _surfaces)
         {
-            renderSlot(surface.second, &view);
+            renderSlot(surface.second, false, &view);
         }
     }
 
     void renderSurface(Slot slot) override
     {
-        renderSlot(_surfaces.at(slot));
+        renderSlot(_surfaces.at(slot), true);
     }
 
     IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override
@@ -126,7 +126,7 @@ public:
     }
 
 private:
-    void renderSlot(SurfaceInfo& slot, const VolumeTest* view = nullptr)
+    void renderSlot(SurfaceInfo& slot, bool bindBuffer, const VolumeTest* view = nullptr)
     {
         auto& surface = slot.surface.get();
 
@@ -141,7 +141,24 @@ private:
             throw std::logic_error("Cannot render unprepared slot, ensure calling SurfaceRenderer::prepareForRendering first");
         }
 
-        ObjectRenderer::SubmitObject(surface, _store);
+        if (bindBuffer)
+        {
+            auto renderParams = _store.getRenderParameters(surface.getStorageLocation());
+
+            auto [vertexBuffer, indexBuffer] = _store.getBufferObjects();
+            vertexBuffer->bind();
+            indexBuffer->bind();
+
+            ObjectRenderer::InitAttributePointers(renderParams.bufferStart);
+            ObjectRenderer::SubmitObject(surface, _store);
+
+            vertexBuffer->unbind();
+            indexBuffer->unbind();
+        }
+        else
+        {
+            ObjectRenderer::SubmitObject(surface, _store);
+        }
     }
 
     Slot getNextFreeSlotIndex()

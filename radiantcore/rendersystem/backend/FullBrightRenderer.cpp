@@ -45,6 +45,15 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
 
     setupViewMatrices(view);
 
+    // Bind the vertex and index buffer object before drawing geometry
+    auto [vertexBuffer, indexBuffer] = _geometryStore.getBufferObjects();
+
+    vertexBuffer->bind();
+    indexBuffer->bind();
+
+    // Set the attribute pointers
+    ObjectRenderer::InitAttributePointers();
+
     // Iterate over the sorted mapping between OpenGLStates and their
     // OpenGLShaderPasses (containing the renderable geometry), and render the
     // contents of each bucket. Each pass is passed a reference to the "current"
@@ -52,11 +61,27 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
     for (const auto& [_, pass] : _sortedStates)
     {
         // Render the OpenGLShaderPass
-        if (pass->empty()) continue;
+        if (pass->empty() || pass->hasRenderables()) continue;
 
-        if (pass->isApplicableTo(_renderViewType))
+        if (pass->getShader().isVisible() && pass->isApplicableTo(_renderViewType))
         {
-            pass->render(current, globalstate, view.getViewer(), view, time);
+            pass->submitSurfaces(current, globalstate, view.getViewer(), view, time);
+        }
+    }
+
+    // Unbind the geometry buffer and draw the rest of the renderables
+    vertexBuffer->unbind();
+    indexBuffer->unbind();
+
+    // Run all the passes with OpenGLRenderables
+    for (const auto& [_, pass] : _sortedStates)
+    {
+        // Render the OpenGLShaderPass
+        if (pass->empty() || !pass->hasRenderables()) continue;
+
+        if (pass->getShader().isVisible() && pass->isApplicableTo(_renderViewType))
+        {
+            pass->submitRenderables(current, globalstate, view.getViewer(), view, time);
         }
 
         pass->clearRenderables();

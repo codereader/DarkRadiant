@@ -30,37 +30,26 @@ void ObjectRenderer::SubmitObject(IRenderableObject& object, IGeometryStore& sto
     glPopMatrix();
 }
 
-namespace
+void ObjectRenderer::InitAttributePointers(MeshVertex* bufferStart)
 {
+    glVertexPointer(3, GL_DOUBLE, sizeof(MeshVertex), &bufferStart->vertex);
+    glColorPointer(4, GL_DOUBLE, sizeof(MeshVertex), &bufferStart->colour);
+    glTexCoordPointer(2, GL_DOUBLE, sizeof(MeshVertex), &bufferStart->texcoord);
+    glNormalPointer(GL_DOUBLE, sizeof(MeshVertex), &bufferStart->normal);
 
-// Prepare a glDraw call by setting the glVertex(Attrib)Pointers to the given starting vertex
-inline void setupAttributePointers(MeshVertex* startVertex)
-{
-    glVertexPointer(3, GL_DOUBLE, sizeof(MeshVertex), &startVertex->vertex);
-    glColorPointer(4, GL_DOUBLE, sizeof(MeshVertex), &startVertex->colour);
-    glTexCoordPointer(2, GL_DOUBLE, sizeof(MeshVertex), &startVertex->texcoord);
-    glNormalPointer(GL_DOUBLE, sizeof(MeshVertex), &startVertex->normal);
-
-    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &startVertex->vertex);
-    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &startVertex->normal);
-    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(MeshVertex), &startVertex->texcoord);
-    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &startVertex->tangent);
-    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &startVertex->bitangent);
-}
-
+    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->vertex);
+    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->normal);
+    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->texcoord);
+    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->tangent);
+    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->bitangent);
 }
 
 void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode, IGeometryStore& store)
 {
     auto renderParams = store.getRenderParameters(slot);
 
-    setupAttributePointers(renderParams.bufferStart);
-
     glDrawElementsBaseVertex(primitiveMode, static_cast<GLsizei>(renderParams.indexCount),
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 template<typename ContainerT>
@@ -79,8 +68,6 @@ void SubmitGeometryInternal(const ContainerT& slots, GLenum primitiveMode, IGeom
     firstIndices.reserve(surfaceCount);
     firstVertices.reserve(surfaceCount);
 
-    MeshVertex* bufferStart = nullptr;
-
     for (const auto slot : slots)
     {
         auto renderParams = store.getRenderParameters(slot);
@@ -88,11 +75,7 @@ void SubmitGeometryInternal(const ContainerT& slots, GLenum primitiveMode, IGeom
         sizes.push_back(static_cast<GLsizei>(renderParams.indexCount));
         firstVertices.push_back(static_cast<GLint>(renderParams.firstVertex));
         firstIndices.push_back(renderParams.firstIndex);
-
-        bufferStart = renderParams.bufferStart;
     }
-
-    setupAttributePointers(bufferStart);
 
     glMultiDrawElementsBaseVertex(primitiveMode, sizes.data(), GL_UNSIGNED_INT,
         firstIndices.data(), static_cast<GLsizei>(sizes.size()), firstVertices.data());

@@ -141,16 +141,30 @@ public:
      * Viewer location in world space.
      *
      */
-	void render(OpenGLState& current,
+	void submitSurfaces(OpenGLState& current,
                 unsigned int flagsMask,
                 const Vector3& viewer,
                 const VolumeTest& view,
                 std::size_t time);
 
+    /**
+     * \brief
+     * Render the renderables attached to this shader pass.
+     * Their geometry might not be stored in the central buffer objects.
+     */
+    void submitRenderables(OpenGLState& current,
+        unsigned int flagsMask,
+        const Vector3& viewer,
+        const VolumeTest& view,
+        std::size_t time);
+
 	/**
 	 * Returns true if this shaderpass doesn't have anything to render.
 	 */
     bool empty();
+
+    // True if this shader pass has OpenGLRenderables attached
+    bool hasRenderables() const;
 
     // Clear out all renderable references accumulated during this frame
     void clearRenderables();
