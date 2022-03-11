@@ -10,15 +10,6 @@ namespace render
 
 void ObjectRenderer::SubmitObject(IRenderableObject& object, IGeometryStore& store)
 {
-    if (object.getObjectTransform().getHandedness() == Matrix4::RIGHTHANDED)
-    {
-        glFrontFace(GL_CW);
-    }
-    else
-    {
-        glFrontFace(GL_CCW);
-    }
-
     // Orient the object
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
