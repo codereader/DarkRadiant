@@ -76,15 +76,14 @@ private:
     // A stack of slots that can be re-used instead
     std::stack<Handle> _emptySlots;
 
-    // The offset and size of memory (in elements) that has been modified since the last sync call
-    std::pair<std::size_t, std::size_t> _modifiedRange;
+    // Last data size that was synced to the buffer object
     std::size_t _lastSyncedBufferSize;
 
-    std::vector<Handle> _modifiedSlots;
+    // The slots that have been modified in between syncs
+    std::vector<Handle> _unsyncedSlots;
 
 public:
     ContinuousBuffer(std::size_t initialSize = DefaultInitialSize) :
-        _modifiedRange(std::numeric_limits<std::size_t>::max(), 0),
         _lastSyncedBufferSize(0)
     {
         // Pre-allocate some memory, but don't go all the way down to zero
@@ -109,8 +108,7 @@ public:
         memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
 
         _emptySlots = other._emptySlots;
-        _modifiedRange = other._modifiedRange;
-        _modifiedSlots = other._modifiedSlots;
+        _unsyncedSlots = other._unsyncedSlots;
 
         return *this;
     }
@@ -153,10 +151,7 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset);
         slot.Used = numElements;
 
-        _modifiedSlots.push_back(handle);
-
-        _modifiedRange.first = std::min(slot.Offset, _modifiedRange.first);
-        _modifiedRange.second = std::max(slot.Offset + numElements, _modifiedRange.second);
+        _unsyncedSlots.push_back(handle);
     }
 
     void setSubData(Handle handle, std::size_t elementOffset, const std::vector<ElementType>& elements)
@@ -172,11 +167,7 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset + elementOffset);
         slot.Used = std::max(slot.Used, elementOffset + numElements);
 
-        _modifiedSlots.push_back(handle);
-
-        auto modificationStart = slot.Offset + elementOffset;
-        _modifiedRange.first = std::min(modificationStart, _modifiedRange.first);
-        _modifiedRange.second = std::max(modificationStart + numElements, _modifiedRange.second);
+        _unsyncedSlots.push_back(handle);
     }
 
     void resizeData(Handle handle, std::size_t elementCount)
@@ -190,7 +181,7 @@ public:
 
         slot.Used = elementCount;
 
-        _modifiedSlots.push_back(handle);
+        _unsyncedSlots.push_back(handle);
     }
 
     void deallocate(Handle handle)
@@ -244,13 +235,10 @@ public:
                 auto handle = getHandle(transaction.slot);
                 auto& otherSlot = other._slots[handle];
 
-                // Expand the modified range
-                _modifiedRange.first = std::min(otherSlot.Offset, _modifiedRange.first);
-                _modifiedRange.second = std::max(otherSlot.Offset + otherSlot.Size, _modifiedRange.second);
-                
                 memcpy(_buffer.data() + otherSlot.Offset, other._buffer.data() + otherSlot.Offset, otherSlot.Size * sizeof(ElementType));
 
-                _modifiedSlots.push_back(handle);
+                // Remember this slot to be synced to the GPU
+                _unsyncedSlots.push_back(handle);
             }
         }
 
@@ -280,7 +268,7 @@ public:
         else
         {
             // Size is the same, apply the updates to the GPU buffer
-            for (auto handle : _modifiedSlots)
+            for (auto handle : _unsyncedSlots)
             {
                 auto& slot = _slots[handle];
 
@@ -291,7 +279,7 @@ public:
             }
         }
 
-        _modifiedSlots.clear();
+        _unsyncedSlots.clear();
 
 #if 0
         if (_modifiedRange.first == std::numeric_limits<std::size_t>::max() ||
