@@ -484,4 +484,93 @@ TEST(ContinuousBufferTest, SyncToBufferObject)
     EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
 }
 
+TEST(ContinuousBufferTest, SyncToBufferAfterSubDataUpdate)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto four = std::vector<int>({ 10,11,12,13 });
+
+    render::ContinuousBuffer<int> buffer(eight.size());
+
+    auto bufferObject = std::make_shared<TestBufferObject>();
+
+    // Allocate and fill in the eight bytes
+    auto handle1 = buffer.allocate(eight.size());
+    auto handle2 = buffer.allocate(eight.size());
+    buffer.setData(handle1, eight);
+    buffer.setData(handle2, eight);
+
+    buffer.syncModificationsToBufferObject(bufferObject);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
+
+    // Modify a portion of the second slot
+    buffer.setSubData(handle2, 3, four);
+
+    // Sync it should modify a subset of the buffer object only
+    buffer.syncModificationsToBufferObject(bufferObject);
+
+    // Check the offsets used to update the buffer object
+    EXPECT_EQ(bufferObject->lastUsedOffset, (buffer.getOffset(handle2) + 3) * sizeof(int)) 
+        << "Sync offset should at the 3 bytes after the start of the slot";
+    EXPECT_EQ(bufferObject->lastUsedByteCount, four.size() * sizeof(int)) << "Sync amount should be 4 unsigned ints";
+
+    // First slot should still contain the 8 bytes
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
+
+    // Second slot should contain the 8 bytes, with 4 bytes overwritten at offset <modificationOffset>
+    std::vector<int> modifiedSecondSlot = eight;
+    std::copy(four.begin(), four.end(), modifiedSecondSlot.begin() + 3);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, modifiedSecondSlot)) << "Data sync unsuccessful";
+}
+
+// Checks that the partial update after applying a transaction log is working
+TEST(ContinuousBufferTest, SyncToBufferAfterApplyingTransaction)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto four = std::vector<int>({ 10,11,12,13 });
+
+    render::ContinuousBuffer<int> buffer(eight.size());
+
+    auto bufferObject = std::make_shared<TestBufferObject>();
+
+    // Allocate and fill in the eight bytes
+    auto handle1 = buffer.allocate(eight.size());
+    auto handle2 = buffer.allocate(eight.size());
+    buffer.setData(handle1, eight);
+    buffer.setData(handle2, eight);
+
+    buffer.syncModificationsToBufferObject(bufferObject);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
+
+    // Copy this to a second buffer and change some data there
+    auto buffer2 = buffer;
+    auto modificationOffset = 3;
+    buffer2.setSubData(handle2, modificationOffset, four);
+
+    // Define the transaction
+    std::vector<render::detail::BufferTransaction> transactionLog;
+    transactionLog.emplace_back(render::detail::BufferTransaction{
+        handle2, render::detail::BufferTransaction::Type::Update
+    });
+
+    // Apply this transaction to the first buffer
+    buffer.applyTransactions(transactionLog, buffer2, [&](render::IGeometryStore::Slot slot) { return slot; });
+
+    // Sync it should modify a subset of the buffer object only
+    buffer.syncModificationsToBufferObject(bufferObject);
+
+    // Check the offsets used to update the buffer object
+    EXPECT_EQ(bufferObject->lastUsedOffset, buffer.getOffset(handle2) * sizeof(int)) << "Sync offset should at the start of the slot";
+    EXPECT_EQ(bufferObject->lastUsedByteCount, buffer.getSize(handle2) * sizeof(int)) << "Sync amount should be 8 unsigned ints";
+
+    // First slot should contain the 8 bytes
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
+
+    // Second slot should contain the 8 bytes, with 4 bytes overwritten at offset <modificationOffset>
+    std::vector<int> modifiedSecondSlot = eight;
+    std::copy(four.begin(), four.end(), modifiedSecondSlot.begin() + modificationOffset);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
+}
+
 }

@@ -11,8 +11,14 @@ class TestBufferObject final :
 public:
     std::vector<unsigned char> buffer;
 
+    std::size_t lastUsedOffset;
+    std::size_t lastUsedByteCount;
+
     void setData(std::size_t offset, const unsigned char* firstElement, std::size_t numBytes) override
     {
+        lastUsedOffset = offset;
+        lastUsedByteCount = numBytes;
+
         auto current = firstElement;
         for (auto i = 0; i < numBytes; ++i)
         {
