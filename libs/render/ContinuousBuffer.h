@@ -80,6 +80,8 @@ private:
     std::pair<std::size_t, std::size_t> _modifiedRange;
     std::size_t _lastSyncedBufferSize;
 
+    std::vector<Handle> _modifiedSlots;
+
 public:
     ContinuousBuffer(std::size_t initialSize = DefaultInitialSize) :
         _modifiedRange(std::numeric_limits<std::size_t>::max(), 0),
@@ -108,6 +110,7 @@ public:
 
         _emptySlots = other._emptySlots;
         _modifiedRange = other._modifiedRange;
+        _modifiedSlots = other._modifiedSlots;
 
         return *this;
     }
@@ -150,6 +153,8 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset);
         slot.Used = numElements;
 
+        _modifiedSlots.push_back(handle);
+
         _modifiedRange.first = std::min(slot.Offset, _modifiedRange.first);
         _modifiedRange.second = std::max(slot.Offset + numElements, _modifiedRange.second);
     }
@@ -167,6 +172,8 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset + elementOffset);
         slot.Used = std::max(slot.Used, elementOffset + numElements);
 
+        _modifiedSlots.push_back(handle);
+
         auto modificationStart = slot.Offset + elementOffset;
         _modifiedRange.first = std::min(modificationStart, _modifiedRange.first);
         _modifiedRange.second = std::max(modificationStart + numElements, _modifiedRange.second);
@@ -182,6 +189,8 @@ public:
         }
 
         slot.Used = elementCount;
+
+        _modifiedSlots.push_back(handle);
     }
 
     void deallocate(Handle handle)
@@ -240,6 +249,8 @@ public:
                 _modifiedRange.second = std::max(otherSlot.Offset + otherSlot.Size, _modifiedRange.second);
                 
                 memcpy(_buffer.data() + otherSlot.Offset, other._buffer.data() + otherSlot.Offset, otherSlot.Size * sizeof(ElementType));
+
+                _modifiedSlots.push_back(handle);
             }
         }
 
@@ -250,9 +261,39 @@ public:
         _emptySlots = other._emptySlots;
     }
 
-    // Copies the modified chunk of memory to the given buffer object
+    // Copies the updated memory to the given buffer object
     void syncModificationsToBufferObject(const IBufferObject::Ptr& buffer)
     {
+        auto currentBufferSize = _buffer.size() * sizeof(ElementType);
+
+        // On size change we upload everything
+        if (_lastSyncedBufferSize != currentBufferSize)
+        {
+            // Resize the memory in the buffer object
+            buffer->resize(currentBufferSize);
+            _lastSyncedBufferSize = currentBufferSize;
+
+            // Re-upload everything
+            buffer->setData(0, reinterpret_cast<unsigned char*>(_buffer.data()),
+                _buffer.size() * sizeof(ElementType));
+        }
+        else
+        {
+            // Size is the same, apply the updates to the GPU buffer
+            for (auto handle : _modifiedSlots)
+            {
+                auto& slot = _slots[handle];
+
+                // Upload the chunk of modified memory
+                buffer->setData(slot.Offset * sizeof(ElementType),
+                    reinterpret_cast<unsigned char*>(_buffer.data() + slot.Offset),
+                    slot.Used * sizeof(ElementType));
+            }
+        }
+
+        _modifiedSlots.clear();
+
+#if 0
         if (_modifiedRange.first == std::numeric_limits<std::size_t>::max() ||
             _modifiedRange.second - _modifiedRange.first == 0 || !buffer)
         {
@@ -284,6 +325,7 @@ public:
         
         _modifiedRange.first = std::numeric_limits<std::size_t>::max();
         _modifiedRange.second = 0;
+#endif
     }
 
 private:

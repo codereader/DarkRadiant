@@ -498,7 +498,7 @@ TEST(ContinuousBufferTest, SyncToBufferAfterSubDataUpdate)
     auto handle2 = buffer.allocate(eight.size());
     buffer.setData(handle1, eight);
     buffer.setData(handle2, eight);
-
+ 
     buffer.syncModificationsToBufferObject(bufferObject);
     EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
     EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
@@ -510,9 +510,9 @@ TEST(ContinuousBufferTest, SyncToBufferAfterSubDataUpdate)
     buffer.syncModificationsToBufferObject(bufferObject);
 
     // Check the offsets used to update the buffer object
-    EXPECT_EQ(bufferObject->lastUsedOffset, (buffer.getOffset(handle2) + 3) * sizeof(int)) 
-        << "Sync offset should at the 3 bytes after the start of the slot";
-    EXPECT_EQ(bufferObject->lastUsedByteCount, four.size() * sizeof(int)) << "Sync amount should be 4 unsigned ints";
+    EXPECT_EQ(bufferObject->lastUsedOffset, buffer.getOffset(handle2) * sizeof(int)) 
+        << "Sync offset should point at the start of the slot";
+    EXPECT_EQ(bufferObject->lastUsedByteCount, buffer.getSize(handle2)* sizeof(int)) << "The whole slot should be synced";
 
     // First slot should still contain the 8 bytes
     EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
