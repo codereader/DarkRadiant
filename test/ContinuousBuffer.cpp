@@ -1,9 +1,17 @@
 #include "gtest/gtest.h"
 
 #include "render/ContinuousBuffer.h"
+#include "testutil/TestBufferObjectProvider.h"
 
 namespace test
 {
+
+namespace
+{
+
+TestBufferObjectProvider _testBufferObjectProvider;
+
+}
 
 template<typename T>
 bool checkData(render::ContinuousBuffer<T>& buffer, typename render::ContinuousBuffer<T>::Handle handle, const std::vector<T>& data)
@@ -36,6 +44,27 @@ bool checkContinuousData(render::ContinuousBuffer<T>& buffer, typename render::C
     auto result = checkData(buffer, handle, fullData);
 
     EXPECT_TRUE(result) << "Data not continuously stored";
+
+    return result;
+}
+
+template<typename T>
+bool checkDataInBufferObject(render::ContinuousBuffer<T>& buffer, typename render::ContinuousBuffer<T>::Handle handle, 
+    TestBufferObject& bufferObject, const std::vector<T>& data)
+{
+    // Data start in ContinuousBuffer
+    auto current = buffer.getBufferStart() + buffer.getOffset(handle);
+
+    // Data start in the BufferObject
+    auto dataInBuffer = reinterpret_cast<const T*>(bufferObject.buffer.data()) + buffer.getOffset(handle);
+
+    bool result = true;
+
+    for (auto i = 0; i < data.size(); ++i)
+    {
+        EXPECT_EQ(dataInBuffer[i], current[i]) << "Buffer data mismatch at index " << i;
+        result &= dataInBuffer[i] == current[i];
+    }
 
     return result;
 }
@@ -419,6 +448,40 @@ TEST(ContinuousBufferTest, ExpandFullBuffer)
     buffer.setData(handle3, eight);
 
     EXPECT_TRUE(checkContinuousData(buffer, handle1, { eight, four, eight }));
+}
+
+TEST(ContinuousBufferTest, SyncToBufferObject)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto four = std::vector<int>({ 10,11,12,13 });
+
+    render::ContinuousBuffer<int> buffer(eight.size()); // Allocate a buffer that matches exactly
+    auto bufferObject = std::make_shared<TestBufferObject>();
+
+    // Allocate and fill in the eight bytes
+    auto handle1 = buffer.allocate(eight.size());
+    buffer.setData(handle1, eight);
+
+    // Sync, it should then contain the 8 numbers
+    auto modifiedData = eight;
+    buffer.syncModificationsToBufferObject(bufferObject);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, modifiedData)) << "Data sync unsuccessful";
+
+    // Upload the buffer partially
+    buffer.setSubData(handle1, 3, four);
+    std::copy(four.begin(), four.end(), modifiedData.begin() + 3);
+
+    // Sync the buffer, it should now reflect the partially modified array
+    buffer.syncModificationsToBufferObject(bufferObject);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, modifiedData)) << "Data sync unsuccessful";
+
+    // Resize the buffer and sync again
+    auto handle2 = buffer.allocate(eight.size());
+    buffer.setData(handle2, eight);
+
+    buffer.syncModificationsToBufferObject(bufferObject);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, modifiedData)) << "Data sync unsuccessful";
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
 }
 
 }
