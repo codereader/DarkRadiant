@@ -31,7 +31,7 @@ class NullBufferObjectProvider final :
     public render::IBufferObjectProvider
 {
 public:
-    render::IBufferObject::Ptr createBufferObject() override
+    render::IBufferObject::Ptr createBufferObject(render::IBufferObject::Type type) override
     {
         return {};
     }

@@ -82,7 +82,7 @@ private:
 
 public:
     ContinuousBuffer(std::size_t initialSize = DefaultInitialSize) :
-        _modifiedRange(0, 0),
+        _modifiedRange(std::numeric_limits<std::size_t>::max(), 0),
         _lastSyncedBufferSize(0)
     {
         // Pre-allocate some memory, but don't go all the way down to zero
@@ -149,6 +149,9 @@ public:
 
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset);
         slot.Used = numElements;
+
+        _modifiedRange.first = std::min(slot.Offset, _modifiedRange.first);
+        _modifiedRange.second = std::max(slot.Offset + numElements, _modifiedRange.second);
     }
 
     void setSubData(Handle handle, std::size_t elementOffset, const std::vector<ElementType>& elements)
@@ -163,6 +166,10 @@ public:
 
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset + elementOffset);
         slot.Used = std::max(slot.Used, elementOffset + numElements);
+
+        auto modificationStart = slot.Offset + elementOffset;
+        _modifiedRange.first = std::min(modificationStart, _modifiedRange.first);
+        _modifiedRange.second = std::max(modificationStart + numElements, _modifiedRange.second);
     }
 
     void resizeData(Handle handle, std::size_t elementCount)
@@ -227,6 +234,10 @@ public:
             {
                 auto handle = getHandle(transaction.slot);
                 auto& otherSlot = other._slots[handle];
+
+                // Expand the modified range
+                _modifiedRange.first = std::min(otherSlot.Offset, _modifiedRange.first);
+                _modifiedRange.second = std::max(otherSlot.Offset + otherSlot.Size, _modifiedRange.second);
                 
                 memcpy(_buffer.data() + otherSlot.Offset, other._buffer.data() + otherSlot.Offset, otherSlot.Size * sizeof(ElementType));
             }
@@ -242,12 +253,13 @@ public:
     // Copies the modified chunk of memory to the given buffer object
     void syncModificationsToBufferObject(const IBufferObject::Ptr& buffer)
     {
-        if (_modifiedRange.second - _modifiedRange.first == 0)
+        if (_modifiedRange.first == std::numeric_limits<std::size_t>::max() ||
+            _modifiedRange.second - _modifiedRange.first == 0 || !buffer)
         {
             return; // nothing to do
         }
 
-        auto currentBufferSize = _buffer.size();
+        auto currentBufferSize = _buffer.size() * sizeof(ElementType);
 
         if (_lastSyncedBufferSize != currentBufferSize)
         {
@@ -270,7 +282,8 @@ public:
                 endBytes - startBytes);
         }
         
-        _modifiedRange.first = _modifiedRange.second = 0;
+        _modifiedRange.first = std::numeric_limits<std::size_t>::max();
+        _modifiedRange.second = 0;
     }
 
 private:

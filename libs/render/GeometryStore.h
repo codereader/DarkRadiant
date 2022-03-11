@@ -67,8 +67,8 @@ public:
         // Assign (empty) buffer objects to the frames
         for (auto& frameBuffer : _frameBuffers)
         {
-            frameBuffer.vertexBufferObject = bufferObjectProvider.createBufferObject();
-            frameBuffer.indexBufferObject = bufferObjectProvider.createBufferObject();
+            frameBuffer.vertexBufferObject = bufferObjectProvider.createBufferObject(IBufferObject::Type::Vertex);
+            frameBuffer.indexBufferObject = bufferObjectProvider.createBufferObject(IBufferObject::Type::Index);
         }
     }
 

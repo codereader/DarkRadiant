@@ -38,6 +38,12 @@ class IBufferObject
 public:
     virtual ~IBufferObject() {}
 
+    enum class Type
+    {
+        Vertex, // vertex buffer
+        Index   // index buffer
+    };
+
     using Ptr = std::shared_ptr<IBufferObject>;
 
     // Uploads the given data to the buffer, starting at the given offset
@@ -55,7 +61,7 @@ public:
     virtual ~IBufferObjectProvider() {}
 
     // Creates a new, empty buffer object of 0 size. Has to be resized before use.
-    virtual IBufferObject::Ptr createBufferObject() = 0;
+    virtual IBufferObject::Ptr createBufferObject(IBufferObject::Type type) = 0;
 };
 
 /**
