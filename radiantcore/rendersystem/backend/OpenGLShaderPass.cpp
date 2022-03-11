@@ -515,12 +515,6 @@ void OpenGLShaderPass::submitSurfaces(OpenGLState& current,
                               const VolumeTest& view,
                               std::size_t time)
 {
-    // Reset the texture matrix
-    glMatrixMode(GL_TEXTURE);
-    glLoadMatrixd(Matrix4::getIdentity());
-
-    glMatrixMode(GL_MODELVIEW);
-
     // Apply our state to the current state object
     applyState(current, flagsMask, viewer, time, nullptr);
 
@@ -533,12 +527,6 @@ void OpenGLShaderPass::submitRenderables(OpenGLState& current,
     const VolumeTest& view,
     std::size_t time)
 {
-    // Reset the texture matrix
-    glMatrixMode(GL_TEXTURE);
-    glLoadMatrixd(Matrix4::getIdentity());
-
-    glMatrixMode(GL_MODELVIEW);
-
     // Apply our state to the current state object
     applyState(current, flagsMask, viewer, time, nullptr);
 
