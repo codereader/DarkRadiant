@@ -16,6 +16,7 @@ struct GLProgramAttribute
         Tangent = 9,
         Bitangent = 10,
         Normal = 11,
+        Colour = 12,
     };
 };
 

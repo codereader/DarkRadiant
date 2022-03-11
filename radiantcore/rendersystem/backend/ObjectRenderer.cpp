@@ -33,6 +33,7 @@ void ObjectRenderer::InitAttributePointers(MeshVertex* bufferStart)
     glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->texcoord);
     glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->tangent);
     glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->bitangent);
+    glVertexAttribPointer(GLProgramAttribute::Colour, 4, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->colour);
 }
 
 void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode, IGeometryStore& store)

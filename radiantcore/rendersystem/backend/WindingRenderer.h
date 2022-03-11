@@ -534,7 +534,7 @@ public:
     }
 
     // Ensure all data is written to the IGeometryStore
-    void prepareForRendering()
+    void prepareForRendering() override
     {
         if (!_geometryUpdatePending) return;
 

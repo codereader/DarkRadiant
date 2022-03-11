@@ -47,6 +47,7 @@ void GLSLBumpProgram::create()
     glBindAttribLocation(_programObj, GLProgramAttribute::Tangent, "attr_Tangent");
     glBindAttribLocation(_programObj, GLProgramAttribute::Bitangent, "attr_Bitangent");
     glBindAttribLocation(_programObj, GLProgramAttribute::Normal, "attr_Normal");
+    glBindAttribLocation(_programObj, GLProgramAttribute::Colour, "attr_Colour");
     glLinkProgram(_programObj);
     debug::assertNoGlErrors();
 
@@ -101,6 +102,7 @@ void GLSLBumpProgram::enable()
     glEnableVertexAttribArrayARB(GLProgramAttribute::Tangent);
     glEnableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
     glEnableVertexAttribArrayARB(GLProgramAttribute::Normal);
+    glEnableVertexAttribArrayARB(GLProgramAttribute::Colour);
 
     debug::assertNoGlErrors();
 }
@@ -114,6 +116,7 @@ void GLSLBumpProgram::disable()
     glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
     glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
     glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Colour);
 
     // Switch back to texture unit 0
     glActiveTexture(GL_TEXTURE0);

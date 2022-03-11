@@ -24,6 +24,7 @@ attribute vec4		attr_TexCoord0;
 attribute vec3		attr_Tangent;
 attribute vec3		attr_Bitangent;
 attribute vec3      attr_Normal;
+attribute vec4      attr_Colour;
 
 varying vec3		var_vertex;
 varying vec4		var_tex_diffuse_bump;
@@ -59,6 +60,6 @@ void	main()
     );
 
     // Pass through vertex colour
-    gl_FrontColor = gl_Color;
+    gl_FrontColor = attr_Colour;
 }
 
