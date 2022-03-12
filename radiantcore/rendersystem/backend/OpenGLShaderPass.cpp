@@ -469,6 +469,16 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     current.m_pointsize = _glState.m_pointsize;
   }
 
+    // Propagate the invert vertex colour flag
+    if (requiredState & RENDER_VERTEX_COLOUR)
+    {
+        current.setColourInverted(_glState.isColourInverted());
+    }
+    else
+    {
+        current.setColourInverted(false);
+    }
+
   current.setRenderFlags(requiredState);
 
   debug::assertNoGlErrors();

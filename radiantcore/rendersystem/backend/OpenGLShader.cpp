@@ -501,7 +501,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
     // least one DBS layer then reach the end of the layers.
 
     DBSTriplet triplet;
-    const IShaderLayerVector allLayers = _material->getAllLayers();
+    const IShaderLayerVector& allLayers = _material->getAllLayers();
 
     for (const auto& layer : allLayers)
     {
