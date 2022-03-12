@@ -37,6 +37,19 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 /maxcpucount:4 /nodeReuse:false /p:UseSharedConfiguration=false ${{env.SOLUTION_FILE_PATH}}
       
+    - name: Install Mesa openGL Drivers
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      env:
+        UNIT_TEST_MESA_DRIVER_URL: https://github.com/codereader/DarkRadiant_WinDeps/releases/download/2.14.0/unit_test_mesa_driver-x64-20.1.8.7z
+      run: |
+        Write-Host ("Downloading Mesa driver package from {0}..." -f $env:UNIT_TEST_MESA_DRIVER_URL)
+        $outFile = ".\install\unit_test_mesa_driver-x64.7z"
+        Invoke-WebRequest $env:UNIT_TEST_MESA_DRIVER_URL -OutFile $outFile
+        Write-Host ("Unpacking {0}..." -f $outFile)
+        & .\tools\7z\7za.exe x $outFile -o".\install\"
+        Get-ChildItem .\install\OpenGL32.dll
+      shell: powershell
+      
     - name: Setup VSTest.console.exe
       uses: darenm/Setup-VSTest@v1
 
