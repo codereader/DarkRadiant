@@ -15,7 +15,7 @@ private:
 
 public:
     BrushClipPlane() :
-        RenderableWinding(_winding)
+        RenderableWinding(_winding, false)
     {}
 
 	void setPlane(const Brush& brush, const Plane3& plane, IRenderEntity& entity)
