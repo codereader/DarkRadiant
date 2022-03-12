@@ -189,14 +189,7 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
 
 void GLSLBumpProgram::setObjectTransform(const Matrix4& transform)
 {
-    float values[16];
-
-    for (auto i = 0; i < 16; ++i)
-    {
-        values[i] = static_cast<float>(transform[i]);
-    }
-
-    glUniformMatrix4fv(_locObjectTransform, 1, GL_FALSE, values);
+    loadMatrixUniform(_locObjectTransform, transform);
 }
 
 }
