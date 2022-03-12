@@ -59,12 +59,6 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
 void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags globalFlagsMask, 
     const IRenderView& view, std::size_t renderTime)
 {
-    glEnableClientState(GL_VERTEX_ARRAY);
-
-    glDisableClientState(GL_COLOR_ARRAY);
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_NORMAL_ARRAY);
-
     std::vector<IGeometryStore::Slot> untransformedObjects;
     untransformedObjects.reserve(10000);
 
@@ -105,8 +99,6 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             }
         }
     }
-
-    glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t renderTime)

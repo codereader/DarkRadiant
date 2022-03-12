@@ -92,12 +92,12 @@ void GLSLBumpProgram::enable()
 {
     GLSLProgramBase::enable();
 
-    glEnableVertexAttribArrayARB(GLProgramAttribute::Position);
-    glEnableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
-    glEnableVertexAttribArrayARB(GLProgramAttribute::Tangent);
-    glEnableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
-    glEnableVertexAttribArrayARB(GLProgramAttribute::Normal);
-    glEnableVertexAttribArrayARB(GLProgramAttribute::Colour);
+    glEnableVertexAttribArray(GLProgramAttribute::Position);
+    glEnableVertexAttribArray(GLProgramAttribute::TexCoord);
+    glEnableVertexAttribArray(GLProgramAttribute::Tangent);
+    glEnableVertexAttribArray(GLProgramAttribute::Bitangent);
+    glEnableVertexAttribArray(GLProgramAttribute::Normal);
+    glEnableVertexAttribArray(GLProgramAttribute::Colour);
 
     debug::assertNoGlErrors();
 }
@@ -106,12 +106,12 @@ void GLSLBumpProgram::disable()
 {
     GLSLProgramBase::disable();
 
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Position);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Colour);
+    glDisableVertexAttribArray(GLProgramAttribute::Position);
+    glDisableVertexAttribArray(GLProgramAttribute::TexCoord);
+    glDisableVertexAttribArray(GLProgramAttribute::Tangent);
+    glDisableVertexAttribArray(GLProgramAttribute::Bitangent);
+    glDisableVertexAttribArray(GLProgramAttribute::Normal);
+    glDisableVertexAttribArray(GLProgramAttribute::Colour);
 
     // Switch back to texture unit 0
     glActiveTexture(GL_TEXTURE0);

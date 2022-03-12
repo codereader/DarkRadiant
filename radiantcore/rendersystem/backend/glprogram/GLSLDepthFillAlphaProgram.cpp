@@ -45,14 +45,16 @@ void GLSLDepthFillAlphaProgram::enable()
 {
     GLSLProgramBase::enable();
 
-    glEnableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
+    glEnableVertexAttribArray(GLProgramAttribute::Position);
+    glEnableVertexAttribArray(GLProgramAttribute::TexCoord);
 }
 
 void GLSLDepthFillAlphaProgram::disable()
 {
     GLSLProgramBase::disable();
 
-    glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
+    glDisableVertexAttribArray(GLProgramAttribute::Position);
+    glDisableVertexAttribArray(GLProgramAttribute::TexCoord);
 }
 
 void GLSLDepthFillAlphaProgram::applyAlphaTest(float alphaTest)

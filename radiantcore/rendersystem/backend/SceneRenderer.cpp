@@ -67,10 +67,12 @@ void SceneRenderer::setupState(OpenGLState& state)
 
     glUseProgram(0);
 
-    glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
+    glDisableVertexAttribArray(GLProgramAttribute::Position);
+    glDisableVertexAttribArray(GLProgramAttribute::TexCoord);
+    glDisableVertexAttribArray(GLProgramAttribute::Tangent);
+    glDisableVertexAttribArray(GLProgramAttribute::Bitangent);
+    glDisableVertexAttribArray(GLProgramAttribute::Normal);
+    glDisableVertexAttribArray(GLProgramAttribute::Colour);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -125,6 +127,7 @@ void SceneRenderer::cleanupState()
     glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
     glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
     glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Colour);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
