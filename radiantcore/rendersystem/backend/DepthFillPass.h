@@ -1,6 +1,7 @@
 #pragma once
 
 #include "OpenGLShaderPass.h"
+#include "glprogram/GLSLDepthFillAlphaProgram.h"
 
 namespace render
 {
@@ -16,6 +17,11 @@ class DepthFillPass :
 {
 public:
     DepthFillPass(OpenGLShader& owner, OpenGLRenderSystem& renderSystem);
+
+    GLSLDepthFillAlphaProgram& getDepthFillProgram()
+    {
+        return *static_cast<GLSLDepthFillAlphaProgram*>(_glState.glProgram);
+    }
 
 protected:
     virtual void activateShaderProgram(OpenGLState& current) override;

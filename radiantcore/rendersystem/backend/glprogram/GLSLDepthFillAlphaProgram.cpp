@@ -30,7 +30,8 @@ void GLSLDepthFillAlphaProgram::create()
 
     debug::assertNoGlErrors();
 
-    _locAlphaTest = glGetUniformLocation(_programObj, "u_alpha_test");
+    _locAlphaTest = glGetUniformLocation(_programObj, "u_alphaTest");
+    _locObjectTransform = glGetUniformLocation(_programObj, "u_objectTransform");
 
     glUseProgram(_programObj);
     debug::assertNoGlErrors();
@@ -70,6 +71,18 @@ void GLSLDepthFillAlphaProgram::applyAlphaTest(float alphaTest)
     glLoadIdentity();
     
     debug::assertNoGlErrors();
+}
+
+void GLSLDepthFillAlphaProgram::setObjectTransform(const Matrix4& transform)
+{
+    float values[16];
+
+    for (auto i = 0; i < 16; ++i)
+    {
+        values[i] = static_cast<float>(transform[i]);
+    }
+
+    glUniformMatrix4fv(_locObjectTransform, 1, GL_FALSE, values);
 }
 
 }

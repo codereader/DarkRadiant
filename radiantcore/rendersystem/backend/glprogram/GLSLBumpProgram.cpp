@@ -53,6 +53,7 @@ void GLSLBumpProgram::create()
     _locAmbientLight = glGetUniformLocation(_programObj, "uAmbientLight");
     _locColourModulation = glGetUniformLocation(_programObj, "u_colourModulation");
     _locColourAddition = glGetUniformLocation(_programObj, "u_colourAddition");
+    _locObjectTransform = glGetUniformLocation(_programObj, "u_objectTransform");
 
     // Set up the texture uniforms. The renderer uses fixed texture units for
     // particular textures, so make sure they are correct here.
@@ -184,6 +185,18 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
     glMatrixMode(GL_MODELVIEW);
 
     debug::assertNoGlErrors();
+}
+
+void GLSLBumpProgram::setObjectTransform(const Matrix4& transform)
+{
+    float values[16];
+
+    for (auto i = 0; i < 16; ++i)
+    {
+        values[i] = static_cast<float>(transform[i]);
+    }
+
+    glUniformMatrix4fv(_locObjectTransform, 1, GL_FALSE, values);
 }
 
 }

@@ -21,6 +21,7 @@ private:
     int _locAmbientLight;
     int _locColourModulation;
     int _locColourAddition;
+    int _locObjectTransform;
 
 public:
 
@@ -28,6 +29,8 @@ public:
     void create() override;
     void enable() override;
     void disable() override;
+
+    void setObjectTransform(const Matrix4& transform);
 
     void applyRenderParams(const Vector3& viewer,
                            const Matrix4& localToWorld,

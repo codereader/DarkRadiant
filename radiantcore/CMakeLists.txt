@@ -216,7 +216,6 @@ add_library(radiantcore MODULE
             rendersystem/backend/glprogram/GLSLProgramBase.cpp
             rendersystem/backend/glprogram/GLSLBumpProgram.cpp
             rendersystem/backend/glprogram/GLSLCubeMapProgram.cpp
-            rendersystem/backend/glprogram/GLSLDepthFillProgram.cpp
             rendersystem/backend/glprogram/GLSLDepthFillAlphaProgram.cpp
             rendersystem/backend/BuiltInShader.cpp
             rendersystem/backend/ColourShader.cpp

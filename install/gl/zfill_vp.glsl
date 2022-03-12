@@ -22,10 +22,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 attribute vec4		attr_TexCoord0;
 
+uniform mat4        u_objectTransform;
+
 varying vec2		var_tex_diffuse;
 
 void	main()
 {
+    // Apply the supplied object transform to the incoming vertex
+    gl_Vertex = u_objectTransform * gl_Vertex;
+
 	// transform vertex position into homogenous clip-space
 	gl_Position = ftransform();
 

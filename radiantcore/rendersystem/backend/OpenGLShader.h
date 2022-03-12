@@ -9,6 +9,8 @@
 #include "WindingRenderer.h"
 #include "GeometryRenderer.h"
 #include "SurfaceRenderer.h"
+#include "DepthFillPass.h"
+#include "InteractionPass.h"
 
 #include <list>
 #include <sigc++/connection.h>
@@ -36,10 +38,10 @@ private:
 
     // The depth fill pass of this shader (can be empty).
     // Lighting mode needs to have quick access to this pass
-    OpenGLShaderPassPtr _depthFillPass;
+    std::shared_ptr<DepthFillPass> _depthFillPass;
 
     // Interaction pass used by lighting mode
-    OpenGLShaderPassPtr _interactionPass;
+    std::shared_ptr<InteractionPass> _interactionPass;
 
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;
@@ -157,10 +159,10 @@ public:
     void foreachNonInteractionPass(const std::function<void(OpenGLShaderPass&)>& functor);
 
     // Returns the depth fill pass of this shader, or null if this shader doesn't have one
-    OpenGLShaderPass* getDepthFillPass() const;
+    DepthFillPass* getDepthFillPass() const;
 
     // Returns the interaction pass of this shader, or null if this shader doesn't have one
-    OpenGLShaderPass* getInteractionPass() const;
+    InteractionPass* getInteractionPass() const;
 
 protected:
     // Start point for constructing shader passes from the shader name

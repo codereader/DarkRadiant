@@ -66,7 +66,9 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
     {
         for (const auto& [shader, objects] : objectsByShader)
         {
-            if (!shader->getDepthFillPass()) continue;
+            auto depthFillPass = shader->getDepthFillPass();
+
+            if (!depthFillPass) continue;
 
             // Skip translucent materials
             if (shader->getMaterial() && shader->getMaterial()->getCoverage() == Material::MC_TRANSLUCENT)
@@ -75,7 +77,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             }
             
             // Apply our state to the current state object
-            shader->getDepthFillPass()->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
+            depthFillPass->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
 
             for (const auto& object : objects)
             {
@@ -86,12 +88,16 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
                     continue;
                 }
 
-                ObjectRenderer::SubmitObject(object.get(), _store);
+                depthFillPass->getDepthFillProgram().setObjectTransform(object.get().getObjectTransform());
+
+                ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
                 ++_drawCalls;
             }
 
             if (!untransformedObjects.empty())
             {
+                depthFillPass->getDepthFillProgram().setObjectTransform(Matrix4::getIdentity());
+
                 ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
                 ++_drawCalls;
 
@@ -131,7 +137,9 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
                     OpenGLShaderPass::SetUpLightingCalculation(state, &_light, worldToLight,
                         view.getViewer(), object.get().getObjectTransform(), renderTime);
 
-                    ObjectRenderer::SubmitObject(object.get(), _store);
+                    pass->getProgram().setObjectTransform(object.get().getObjectTransform());
+
+                    ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
                     ++_drawCalls;
                 }
 
@@ -139,6 +147,8 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
                 {
                     OpenGLShaderPass::SetUpLightingCalculation(state, &_light, worldToLight,
                         view.getViewer(), Matrix4::getIdentity(), renderTime);
+
+                    pass->getProgram().setObjectTransform(Matrix4::getIdentity());
 
                     ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
                     ++_drawCalls;

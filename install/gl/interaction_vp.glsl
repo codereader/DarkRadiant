@@ -26,8 +26,9 @@ attribute vec3		attr_Bitangent;
 attribute vec3      attr_Normal;
 attribute vec4      attr_Colour;
 
-uniform vec4		u_colourModulation;
-uniform vec4		u_colourAddition;
+uniform vec4        u_colourModulation;
+uniform vec4        u_colourAddition;
+uniform mat4        u_objectTransform;
 
 varying vec3		var_vertex;
 varying vec4		var_tex_diffuse_bump;
@@ -38,6 +39,10 @@ varying vec4		var_Colour; // colour to be multiplied on the final fragment
 
 void	main()
 {
+    vec4 untransformedVertex = gl_Vertex;
+
+    gl_Vertex = u_objectTransform * gl_Vertex;
+
 	// transform vertex position into homogenous clip-space
 	gl_Position = ftransform();
 
@@ -54,7 +59,7 @@ void	main()
 	var_tex_specular = (gl_TextureMatrix[2] * attr_TexCoord0).st;
 
 	// calc light xy,z attenuation in light space
-	var_tex_atten_xy_z = gl_TextureMatrix[3] * gl_Vertex;
+	var_tex_atten_xy_z = gl_TextureMatrix[3] * untransformedVertex;
 
 	// construct object-space-to-tangent-space 3x3 matrix
 	var_mat_os2ts = mat3(

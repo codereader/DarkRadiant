@@ -391,9 +391,6 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillProgram.cpp">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.cpp">
       <Filter>src\rendersystem\debug</Filter>
     </ClCompile>
@@ -1426,9 +1423,6 @@
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.h">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.h">

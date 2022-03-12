@@ -24,7 +24,6 @@ using CharBufPtr = std::shared_ptr<std::vector<char>>;
 // Constructor, populates map with GLProgram instances
 GLProgramFactory::GLProgramFactory()
 {
-    _builtInPrograms[ShaderProgram::DepthFill] = std::make_shared<GLSLDepthFillProgram>();
     _builtInPrograms[ShaderProgram::DepthFillAlpha] = std::make_shared<GLSLDepthFillAlphaProgram>();
     _builtInPrograms[ShaderProgram::Interaction] = std::make_shared<GLSLBumpProgram>();
     _builtInPrograms[ShaderProgram::CubeMap] = std::make_shared<GLSLCubeMapProgram>();

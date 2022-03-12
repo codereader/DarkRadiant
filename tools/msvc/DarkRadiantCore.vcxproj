@@ -633,7 +633,6 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLCubeMapProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillAlphaProgram.cpp" />
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLProgramBase.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractionPass.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\LightingModeRenderer.cpp" />
@@ -1004,7 +1003,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLCubeMapProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillAlphaProgram.h" />
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLProgramBase.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractionPass.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightingModeRenderer.h" />

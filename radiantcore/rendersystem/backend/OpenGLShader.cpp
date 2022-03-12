@@ -379,13 +379,17 @@ OpenGLState& OpenGLShader::appendDefaultPass()
 
 OpenGLState& OpenGLShader::appendDepthFillPass()
 {
-    _depthFillPass = _shaderPasses.emplace_back(std::make_shared<DepthFillPass>(*this, _renderSystem));
+    _depthFillPass = std::make_shared<DepthFillPass>(*this, _renderSystem);
+    _shaderPasses.push_back(_depthFillPass);
+
     return _depthFillPass->state();
 }
 
 OpenGLState& OpenGLShader::appendInteractionPass()
 {
-    _interactionPass = _shaderPasses.emplace_back(std::make_shared<InteractionPass>(*this, _renderSystem));
+    _interactionPass = std::make_shared<InteractionPass>(*this, _renderSystem);
+    _shaderPasses.push_back(_interactionPass);
+
     return _interactionPass->state();
 }
 
@@ -847,12 +851,12 @@ void OpenGLShader::foreachNonInteractionPass(const std::function<void(OpenGLShad
     }
 }
 
-OpenGLShaderPass* OpenGLShader::getDepthFillPass() const
+DepthFillPass* OpenGLShader::getDepthFillPass() const
 {
     return _depthFillPass.get();
 }
 
-OpenGLShaderPass* OpenGLShader::getInteractionPass() const
+InteractionPass* OpenGLShader::getInteractionPass() const
 {
     return _interactionPass.get();
 }
