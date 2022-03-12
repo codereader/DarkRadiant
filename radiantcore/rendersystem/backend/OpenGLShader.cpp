@@ -323,6 +323,8 @@ void OpenGLShader::insertPasses()
     // Insert all shader passes into the GL state manager
     for (auto& shaderPass : _shaderPasses)
     {
+        if (shaderPass == _depthFillPass) continue; // don't insert the depth fill pass
+
     	_renderSystem.insertSortedState(std::make_pair(shaderPass->statePtr(), shaderPass));
     }
 }
@@ -332,6 +334,8 @@ void OpenGLShader::removePasses()
     // Remove shader passes from the GL state manager
     for (auto& shaderPass : _shaderPasses)
 	{
+        if (shaderPass == _depthFillPass) continue; // don't handle the depth fill pass
+
         _renderSystem.eraseSortedState(shaderPass->statePtr());
     }
 }
