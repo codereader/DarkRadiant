@@ -59,7 +59,7 @@ void RenderableArrow::updateGeometry()
         5, 2, // tip4 to tip1
     };
 
-    RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, Indices);
+    RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, Indices);
 }
 
 }

@@ -159,8 +159,8 @@ public:
 };
 
 
-// A Normal3f is just another Vertex3f (Vector3)
-typedef Vertex3f Normal3f;
+// A Normal3 is just another Vertex3 (Vector3)
+typedef Vertex3 Normal3;
 
 /// \brief Returns a double-precision \p component quantised to \p precision.
 inline double double_quantise(double component, double precision)
@@ -169,9 +169,9 @@ inline double double_quantise(double component, double precision)
 }
 
 /// \brief Returns a \p vertex quantised to \p precision.
-inline Vertex3f vertex3f_quantised(const Vertex3f& vertex, double precision)
+inline Vertex3 vertex3f_quantised(const Vertex3& vertex, double precision)
 {
-	return Vertex3f(double_quantise(vertex.x(), precision), double_quantise(vertex.y(), precision), double_quantise(vertex.z(), precision));
+	return Vertex3(double_quantise(vertex.x(), precision), double_quantise(vertex.y(), precision), double_quantise(vertex.z(), precision));
 }
 
 const float c_quantise_vertex = 1.f / static_cast<float>(1 << 3);
@@ -279,28 +279,28 @@ template<typename VertexContainerT> struct RemappingTraits
 {};
 
 template<>
-struct RemappingTraits<Vertex3f>
+struct RemappingTraits<Vertex3>
 {
-    static Vertex3f& getVertex(Vertex3f& vertex) { return vertex; }
+    static Vertex3& getVertex(Vertex3& vertex) { return vertex; }
 };
 
 template<>
 struct RemappingTraits<VertexCb>
 {
-    static Vertex3f& getVertex(VertexCb& container) { return container.vertex; }
+    static Vertex3& getVertex(VertexCb& container) { return container.vertex; }
 };
 
 template<>
 struct RemappingTraits<MeshVertex>
 {
-    static Vertex3f& getVertex(MeshVertex& container) { return container.vertex; }
+    static Vertex3& getVertex(MeshVertex& container) { return container.vertex; }
 };
 
 class RemapXYZ
 {
 public:
     template<typename VertexContainerT>
-	static void set(VertexContainerT& container, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
+	static void set(VertexContainerT& container, Vertex3::ElementType x, Vertex3::ElementType y, Vertex3::ElementType z)
     {
         RemappingTraits<VertexContainerT>::getVertex(container).x() = x;
 		RemappingTraits<VertexContainerT>::getVertex(container).y() = y;
@@ -312,7 +312,7 @@ class RemapYZX
 {
 public:
     template<typename VertexContainerT>
-	static void set(VertexContainerT& container, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
+	static void set(VertexContainerT& container, Vertex3::ElementType x, Vertex3::ElementType y, Vertex3::ElementType z)
     {
         RemappingTraits<VertexContainerT>::getVertex(container).x() = z;
         RemappingTraits<VertexContainerT>::getVertex(container).y() = x;
@@ -324,7 +324,7 @@ class RemapZXY
 {
 public:
     template<typename VertexContainerT>
-	static void set(VertexContainerT& container, Vertex3f::ElementType x, Vertex3f::ElementType y, Vertex3f::ElementType z)
+	static void set(VertexContainerT& container, Vertex3::ElementType x, Vertex3::ElementType y, Vertex3::ElementType z)
     {
         RemappingTraits<VertexContainerT>::getVertex(container).x() = y;
         RemappingTraits<VertexContainerT>::getVertex(container).y() = z;
@@ -349,40 +349,6 @@ inline void draw_ellipse(const std::size_t numSegments, const double radiusX, co
 
         remap_policy::set(vertices[firstVertex + curSegment], x, y, 0);
         remap_policy::set(vertices[firstVertex + curSegment + numVerticesPerHalf], -x, -y, 0);
-    }
-}
-
-template<typename remap_policy, typename VertexArray>
-inline void draw_semicircle(const std::size_t segments, const double radius, VertexArray& vertices)
-{
-    const double increment = math::PI / double(segments << 2);
-
-    std::size_t count = 0;
-    double x = radius;
-    double y = 0;
-    remap_policy::set(vertices[segments << 2], -radius, 0, 0);
-
-    while (count < segments)
-    {
-        auto& i = vertices[count];
-        auto& j = vertices[(segments << 1) - (count + 1)];
-
-        auto& k = vertices[count + (segments << 1)];
-        auto& l = vertices[(segments << 1) - (count + 1) + (segments << 1)];
-
-        remap_policy::set(i, x, -y, 0);
-        remap_policy::set(k, -y, -x, 0);
-
-        ++count;
-
-        {
-            const double theta = increment * count;
-            x = radius * cos(theta);
-            y = radius * sin(theta);
-        }
-
-        remap_policy::set(j, y, -x, 0);
-        remap_policy::set(l, -x, -y, 0);
     }
 }
 

@@ -19,7 +19,7 @@ class MeasurementTool :
 	public MouseTool
 {
 private:
-    std::vector<Vertex3f> _vertices;
+    std::vector<Vertex3> _vertices;
     render::RenderablePoints _points;
 	render::RenderableLine _line;
     ITextRenderer::Ptr _textRenderer;

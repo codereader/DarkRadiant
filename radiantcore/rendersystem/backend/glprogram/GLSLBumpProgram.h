@@ -6,7 +6,7 @@
 namespace render
 {
 
-class GLSLBumpProgram : 
+class GLSLBumpProgram :
     public GLSLProgramBase
 {
 private:
@@ -31,7 +31,7 @@ public:
 
     void applyRenderParams(const Vector3& viewer,
                            const Matrix4& localToWorld,
-                           const Params&);
+                           const Params&) override;
 };
 
 } // namespace render

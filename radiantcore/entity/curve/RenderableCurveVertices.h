@@ -45,7 +45,7 @@ protected:
 
         static const Vector4 SelectedColour(0, 0, 0, 1);
         static const Vector4 DeselectedColour(0, 1, 0, 1);
-        
+
         auto i = 0;
 
         _instance.forEachControlPoint([&](const Vector3& position, bool isSelected)
@@ -55,7 +55,7 @@ protected:
             indices.push_back(static_cast<unsigned int>(i++));
         });
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
     }
 };
 

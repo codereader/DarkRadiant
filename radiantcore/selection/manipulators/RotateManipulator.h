@@ -20,7 +20,7 @@ namespace selection
  * Draws circles for rotation around individual axes, plus a circle for free
  * rotation.
  */
-class RotateManipulator : 
+class RotateManipulator :
 	public ManipulatorBase,
 	public Rotatable
 {
@@ -32,13 +32,13 @@ private:
 	RotateAxis _rotateAxis;
 	TranslateFree _translatePivot;
 	Vector3 _axisScreen;
-    Vertex3f _localPivotPoint;
+    Vertex3 _localPivotPoint;
 
     RenderableSemiCircle<RemapYZX> _circleX;
     RenderableSemiCircle<RemapZXY> _circleY;
     RenderableSemiCircle<RemapXYZ> _circleZ;
-	RenderableCircle<RemapXYZ> _circleScreen;
-	RenderableCircle<RemapXYZ> _circleSphere;
+	RenderableCircle _circleScreen;
+	RenderableCircle _circleSphere;
     RenderablePoint _pivotPoint;
     render::StaticRenderableText _angleText;
 

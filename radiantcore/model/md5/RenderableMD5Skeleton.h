@@ -110,7 +110,7 @@ protected:
             v.vertex = _localToWorld * v.vertex;
         }
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 
 private:

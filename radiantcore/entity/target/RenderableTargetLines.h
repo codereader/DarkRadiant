@@ -7,7 +7,7 @@
 #include "math/Segment.h"
 #include "render/RenderableGeometry.h"
 
-namespace entity 
+namespace entity
 {
 
 namespace
@@ -57,7 +57,7 @@ protected:
     void updateGeometry() override
     {
         // Target lines are visible if both their start and end entities are visible
-        // This is hard to track in the scope of this class, so we fall back to doing 
+        // This is hard to track in the scope of this class, so we fall back to doing
         // an update on the renderable geometry every time we're asked to
 
         // Collect vertex and index data
@@ -80,7 +80,7 @@ protected:
             addTargetLine(_worldPosition, targetPosition, vertices, indices);
         });
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 
 private:

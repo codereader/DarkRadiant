@@ -15,7 +15,7 @@ class IBackendWindingRenderer :
     public IWindingRenderer
 {
 public:
-    virtual ~IBackendWindingRenderer() 
+    virtual ~IBackendWindingRenderer()
     {}
 
     // Returns true if the vertex buffers are empty
@@ -373,7 +373,7 @@ public:
         }
     }
 
-    bool empty() const
+    bool empty() const override
     {
         return _windingCount == 0;
     }

@@ -44,7 +44,7 @@ MouseTool::Result MeasurementTool::onMouseDown(Event& ev)
 		Vector3 clickPos = xyEvent.getWorldPos();
 		xyEvent.getView().snapToGrid(clickPos);
 
-		Vertex3f clickVertex(clickPos);
+		Vertex3 clickVertex(clickPos);
 
 		if (_vertices.empty())
 		{
@@ -169,7 +169,7 @@ void MeasurementTool::render(RenderSystem& renderSystem, IRenderableCollector& c
 
     _points.update(_pointShader);
     _line.update(_wireShader);
-    
+
     _texts.resize(_vertices.size() - 1);
 
     // Render distance string

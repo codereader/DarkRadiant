@@ -8,13 +8,13 @@ class VertexCb
 {
 public:
 	Colour4b colour;
-	Vertex3f vertex;
+	Vertex3 vertex;
 
     /// Default constructor, leaves all values uninitialised
     VertexCb() { }
 
     /// Initialise with position and colour
-	VertexCb(const Vertex3f& _vertex, const Colour4b& _colour) :
+	VertexCb(const Vertex3& _vertex, const Colour4b& _colour) :
 		colour(_colour),
 		vertex(_vertex)
 	{}

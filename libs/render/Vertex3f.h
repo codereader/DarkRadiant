@@ -4,14 +4,14 @@
 
 #include "math/Vector3.h"
 
-using Vertex3f = Vector3;
-using Normal3f = Vertex3f;
+using Vertex3 = Vector3;
+using Normal3 = Vertex3;
 
 namespace render
 {
 
-/// VertexTraits for Vertex3f
-template<> class VertexTraits<Vertex3f>
+/// VertexTraits for Vertex3
+template<> class VertexTraits<Vertex3>
 {
 public:
     static const void* VERTEX_OFFSET()

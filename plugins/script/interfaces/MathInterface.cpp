@@ -44,8 +44,8 @@ void MathInterface::registerInterface(py::module& scope, py::dict& globals)
 			" " + string::to_string(vec.z()) + ")";
 	});
 
-	// Register Vertex3f, which is an alias of Vector3
-    scope.add_object("Vertex3f", vec3);
+	// Register Vertex3, which is an alias of Vector3
+    scope.add_object("Vertex3", vec3);
 
 	// Add the Vector2 class
 	py::class_<Vector2> vec2(scope, "Vector2");

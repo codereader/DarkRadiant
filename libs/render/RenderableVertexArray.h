@@ -53,7 +53,7 @@ class RenderableVertexArray :
     public RenderableGeometry
 {
 protected:
-    const std::vector<Vertex3f>& _vertices;
+    const std::vector<Vertex3>& _vertices;
     bool _needsUpdate;
     Vector4 _colour;
 
@@ -70,7 +70,7 @@ public:
     }
 
 public:
-    RenderableVertexArray(const std::vector<Vertex3f>& vertices) :
+    RenderableVertexArray(const std::vector<Vertex3>& vertices) :
         _vertices(vertices),
         _needsUpdate(true)
     {}
@@ -91,7 +91,7 @@ public:
         std::vector<unsigned int> indices;
         Indexer::GenerateIndices(indices, _vertices.size());
 
-        RenderableGeometry::updateGeometry(Indexer::GetGeometryType(), vertices, indices);
+        RenderableGeometry::updateGeometryWithData(Indexer::GetGeometryType(), vertices, indices);
     }
 };
 

@@ -59,7 +59,7 @@ protected:
             Vector3 min(aabb.origin - aabb.extents);
 
             auto boxVertices = render::detail::getWireframeBoxVertices(min, max, _colour);
-            
+
             for (const auto& vertex : boxVertices)
             {
                 vertices.emplace_back(std::move(vertex));
@@ -67,14 +67,14 @@ protected:
             }
         }
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
     }
 };
 
 namespace detail
 {
 
-inline void generateQuad(std::vector<MeshVertex>& vertices, std::vector<unsigned int>& indices, 
+inline void generateQuad(std::vector<MeshVertex>& vertices, std::vector<unsigned int>& indices,
     double size, const Vector4& colour)
 {
     unsigned int indexOffset = static_cast<unsigned int>(vertices.size());
@@ -116,7 +116,7 @@ protected:
     bool _needsUpdate;
     Vector4 _colour;
 
-    std::vector<Vertex3f> _rawPoints;
+    std::vector<Vertex3> _rawPoints;
 
 public:
     void queueUpdate()
@@ -130,7 +130,7 @@ public:
         queueUpdate();
     }
 
-    const std::vector<Vertex3f>& getRawPoints() const
+    const std::vector<Vertex3>& getRawPoints() const
     {
         return _rawPoints;
     }
@@ -166,10 +166,11 @@ protected:
             ++index;
         }
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 };
 
+/// Line strip in the shape of a semicircle
 template<typename RemapPolicy>
 class RenderableSemiCircle :
     public RenderableLineStrip
@@ -178,19 +179,43 @@ public:
     RenderableSemiCircle(std::size_t segments, double radius, const Matrix4& localToWorld) :
         RenderableLineStrip((segments << 2) + 1, localToWorld)
     {
-        draw_semicircle<RemapPolicy>(segments, radius, _rawPoints);
+        const double increment = math::PI / double(segments << 2);
+
+        std::size_t count = 0;
+        double x = radius;
+        double y = 0;
+        RemapPolicy::set(_rawPoints[segments << 2], -radius, 0, 0);
+
+        while (count < segments) {
+            auto& i = _rawPoints[count];
+            auto& j = _rawPoints[(segments << 1) - (count + 1)];
+
+            auto& k = _rawPoints[count + (segments << 1)];
+            auto& l = _rawPoints[(segments << 1) - (count + 1) + (segments << 1)];
+
+            RemapPolicy::set(i, x, -y, 0);
+            RemapPolicy::set(k, -y, -x, 0);
+
+            ++count;
+
+            const double theta = increment * count;
+            x = radius * cos(theta);
+            y = radius * sin(theta);
+
+            RemapPolicy::set(j, y, -x, 0);
+            RemapPolicy::set(l, -x, -y, 0);
+        }
     }
 };
 
-template<typename RemapPolicy>
-class RenderableCircle :
-    public RenderableLineStrip
+/// Line strip in the shape of a full circle
+class RenderableCircle: public RenderableLineStrip
 {
 public:
     RenderableCircle(std::size_t segments, double radius, const Matrix4& localToWorld) :
         RenderableLineStrip(segments << 3, localToWorld)
     {
-        draw_circle<RemapPolicy>(segments, radius, _rawPoints);
+        draw_circle<RemapXYZ>(segments, radius, _rawPoints);
     }
 };
 
@@ -234,7 +259,7 @@ protected:
     bool _needsUpdate;
     Vector4 _colour;
 
-    std::vector<Vertex3f> _rawPoints;
+    std::vector<Vertex3> _rawPoints;
 
 public:
     RenderableArrowHead(const Vector3& offset, const Vector3& screenAxis, double width, double height, const Matrix4& localToWorld) :
@@ -258,7 +283,7 @@ public:
         queueUpdate();
     }
 
-    const std::vector<Vertex3f>& getRawPoints() const
+    const std::vector<Vertex3>& getRawPoints() const
     {
         return _rawPoints;
     }
@@ -288,7 +313,7 @@ protected:
             indices.push_back(index++);
         }
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Triangles, vertices, indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Triangles, vertices, indices);
     }
 };
 
@@ -296,13 +321,13 @@ class RenderablePoint :
     public render::RenderableGeometry
 {
 protected:
-    const Vertex3f& _point;
+    const Vertex3& _point;
     const Matrix4& _localToWorld;
     bool _needsUpdate;
     Vector4 _colour;
 
 public:
-    RenderablePoint(const Vertex3f& point, const Matrix4& localToWorld) :
+    RenderablePoint(const Vertex3& point, const Matrix4& localToWorld) :
         _point(point),
         _localToWorld(localToWorld),
         _needsUpdate(true)
@@ -332,7 +357,7 @@ protected:
         vertices.push_back(MeshVertex(_localToWorld * _point, { 0,0,0 }, { 0,0 }, _colour));
         indices.push_back(0);
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
     }
 };
 

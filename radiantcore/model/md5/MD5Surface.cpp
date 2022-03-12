@@ -204,7 +204,7 @@ void MD5Surface::updateToDefaultPose(const MD5Joints& joints)
 
 		_vertices[j].vertex = skinned;
 		_vertices[j].texcoord = TexCoord2f(vert.u, vert.v);
-		_vertices[j].normal = Normal3f(0,0,0);
+		_vertices[j].normal = Normal3(0,0,0);
 	}
 
 	// Ensure the index array is ok
@@ -245,7 +245,7 @@ void MD5Surface::updateToSkeleton(const MD5Skeleton& skeleton)
 
 		_vertices[j].vertex = skinned;
 		_vertices[j].texcoord = TexCoord2f(vert.u, vert.v);
-		_vertices[j].normal = Normal3f(0,0,0);
+		_vertices[j].normal = Normal3(0,0,0);
 	}
 
 	// Ensure the index array is ok

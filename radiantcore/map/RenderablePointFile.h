@@ -50,8 +50,8 @@ protected:
                 indices.push_back(i);
             }
         }
-        
-        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 };
 

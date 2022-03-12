@@ -1,3 +1,4 @@
+#version 130
 
 // Sampler bound to texture unit 0
 uniform samplerCube u_cubemap;

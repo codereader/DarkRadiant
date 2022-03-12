@@ -38,7 +38,7 @@ MeshVertex convertWindingVertex(const WindingVertex& in)
 
 // Create a polygon out of 3 vertices defined in counter-clockwise winding
 // Only the normal will be calculated, texcoord, tangent and bitangents will be zero
-model::ModelPolygon createPolyCCW(const Vertex3f& a, const Vertex3f& b, const Vertex3f& c)
+model::ModelPolygon createPolyCCW(const Vertex3& a, const Vertex3& b, const Vertex3& c)
 {
 	model::ModelPolygon poly;
 
@@ -240,12 +240,12 @@ void ModelExporter::processLight(const scene::INodePtr& node)
 	static const double EXTENTS = 8.0;
 	std::vector<model::ModelPolygon> polys;
 
-	Vertex3f up(0, 0, EXTENTS);
-	Vertex3f down(0, 0, -EXTENTS);
-	Vertex3f north(0, EXTENTS, 0);
-	Vertex3f south(0, -EXTENTS, 0);
-	Vertex3f east(EXTENTS, 0, 0);
-	Vertex3f west(-EXTENTS, 0, 0);
+	Vertex3 up(0, 0, EXTENTS);
+	Vertex3 down(0, 0, -EXTENTS);
+	Vertex3 north(0, EXTENTS, 0);
+	Vertex3 south(0, -EXTENTS, 0);
+	Vertex3 east(EXTENTS, 0, 0);
+	Vertex3 west(-EXTENTS, 0, 0);
 
 	// Upper semi-diamond
 	polys.push_back(createPolyCCW(up, south, east));

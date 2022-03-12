@@ -23,9 +23,8 @@ public:
     void enable() override;
     void disable() override;
 
-    void applyRenderParams(const Vector3& viewer,
-        const Matrix4& localToWorld,
-        const Params&);
+    void applyRenderParams(const Vector3& viewer, const Matrix4& localToWorld,
+                           const Params&) override;
 };
 
 } // namespace render

@@ -38,16 +38,16 @@ void CurveCatmullRom::tesselate() {
 	if (!_controlPointsTransformed.empty()) {
 		const std::size_t numSegments = (_controlPointsTransformed.size() - 1) * 16;
 		_renderCurve.m_vertices.resize(numSegments + 1);
-		_renderCurve.m_vertices[0].vertex = Vertex3f(_controlPointsTransformed[0]);
+		_renderCurve.m_vertices[0].vertex = Vertex3(_controlPointsTransformed[0]);
 
 		for(std::size_t i = 1; i < numSegments; ++i) {
-			_renderCurve.m_vertices[i].vertex = Vertex3f(
+			_renderCurve.m_vertices[i].vertex = Vertex3(
 				CatmullRom_evaluate(_controlPointsTransformed,
 									(1.0 / double(numSegments)) * double(i)
 				)
 			);
 		}
-		_renderCurve.m_vertices[numSegments].vertex = Vertex3f(
+		_renderCurve.m_vertices[numSegments].vertex = Vertex3(
 			_controlPointsTransformed[_controlPointsTransformed.size() - 1]
 		);
 	}

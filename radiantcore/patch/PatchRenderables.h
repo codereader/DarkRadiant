@@ -51,7 +51,7 @@ public:
                 outputIt = static_cast<unsigned int>(rowOffset + w + tess.width);
                 outputIt = static_cast<unsigned int>(rowOffset + w + 1);
                 outputIt = static_cast<unsigned int>(rowOffset + w);
-                
+
                 outputIt = static_cast<unsigned int>(rowOffset + w + tess.width);
                 outputIt = static_cast<unsigned int>(rowOffset + w + tess.width + 1);
                 outputIt = static_cast<unsigned int>(rowOffset + w + 1);
@@ -111,7 +111,7 @@ public:
         _needsUpdate(true),
         _whiteVertexColour(whiteVertexColour)
     {}
-    
+
     void queueUpdate()
     {
         _needsUpdate = true;
@@ -130,7 +130,7 @@ protected:
 
         _indexer.generateIndices(_tess, std::back_inserter(indices));
 
-        RenderableGeometry::updateGeometry(_indexer.getType(), 
+        RenderableGeometry::updateGeometryWithData(_indexer.getType(),
             _whiteVertexColour ? getColouredVertices() : _tess.vertices, indices);
     }
 
@@ -142,7 +142,7 @@ protected:
         for (const auto& vertex : _tess.vertices)
         {
             // Copy vertex data, but set the colour to 1,1,1,1
-            vertices.push_back(MeshVertex(vertex.vertex, vertex.normal, 
+            vertices.push_back(MeshVertex(vertex.vertex, vertex.normal,
                 vertex.texcoord, { 1, 1, 1, 1 }, vertex.tangent, vertex.bitangent));
         }
 
@@ -221,7 +221,7 @@ protected:
 
         assert(indices.size() == ((width * (height - 1)) + (height * (width - 1))) << 1);
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 };
 

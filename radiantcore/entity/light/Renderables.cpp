@@ -63,7 +63,7 @@ void RenderableLightOctagon::updateGeometry()
         1, 3, 2
     };
 
-    RenderableGeometry::updateGeometry(render::GeometryType::Triangles, vertices, Indices);
+    RenderableGeometry::updateGeometryWithData(render::GeometryType::Triangles, vertices, Indices);
 }
 
 void RenderableLightVolume::updateGeometry()
@@ -134,7 +134,7 @@ void RenderableLightVolume::updatePointLightVolume()
         3, 5, //
     };
 
-    RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, Indices);
+    RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, Indices);
 }
 
 void RenderableLightVolume::updateProjectedLightVolume()
@@ -192,7 +192,7 @@ void RenderableLightVolume::updateProjectedLightVolume()
             7, 4, // bottom up left to bottom up right
         };
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, Indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, Indices);
     }
     else
     {
@@ -223,7 +223,7 @@ void RenderableLightVolume::updateProjectedLightVolume()
           4, 1, // fourth to first
         };
 
-        RenderableGeometry::updateGeometry(render::GeometryType::Lines, vertices, Indices);
+        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, Indices);
     }
 }
 
@@ -301,7 +301,7 @@ void RenderableLightVertices::updateGeometry()
         vertex.vertex = local2World * vertex.vertex;
     }
 
-    RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
+    RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
 }
 
 } // namespace

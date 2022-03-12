@@ -13,7 +13,7 @@ inline Vector4 getControlPointVertexColour(std::size_t i, std::size_t width)
 
 }
 
-RenderablePatchControlPoints::RenderablePatchControlPoints(const IPatch& patch, 
+RenderablePatchControlPoints::RenderablePatchControlPoints(const IPatch& patch,
     const std::vector<PatchControlInstance>& controlPoints) :
     _patch(patch),
     _controlPoints(controlPoints),
@@ -45,5 +45,5 @@ void RenderablePatchControlPoints::updateGeometry()
         indices.push_back(static_cast<unsigned int>(i));
     }
 
-    RenderableGeometry::updateGeometry(render::GeometryType::Points, vertices, indices);
+    RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
 }
