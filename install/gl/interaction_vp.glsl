@@ -39,15 +39,13 @@ varying vec4		var_Colour; // colour to be multiplied on the final fragment
 
 void	main()
 {
-    vec4 untransformedVertex = gl_Vertex;
-
-    gl_Vertex = u_objectTransform * gl_Vertex;
+    vec4 worldVertex = u_objectTransform * gl_Vertex;
 
 	// transform vertex position into homogenous clip-space
-	gl_Position = ftransform();
+	gl_Position = gl_ModelViewProjectionMatrix * worldVertex;
 
 	// assign position in object space
-	var_vertex = gl_Vertex.xyz;
+	var_vertex = worldVertex.xyz;
 
 	// transform texcoords into diffusemap texture space
 	var_tex_diffuse_bump.st = (gl_TextureMatrix[0] * attr_TexCoord0).st;
@@ -59,7 +57,7 @@ void	main()
 	var_tex_specular = (gl_TextureMatrix[2] * attr_TexCoord0).st;
 
 	// calc light xy,z attenuation in light space
-	var_tex_atten_xy_z = gl_TextureMatrix[3] * untransformedVertex;
+	var_tex_atten_xy_z = gl_TextureMatrix[3] * gl_Vertex;
 
 	// construct object-space-to-tangent-space 3x3 matrix
 	var_mat_os2ts = mat3(

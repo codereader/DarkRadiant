@@ -29,10 +29,8 @@ varying vec2		var_tex_diffuse;
 void	main()
 {
     // Apply the supplied object transform to the incoming vertex
-    gl_Vertex = u_objectTransform * gl_Vertex;
-
 	// transform vertex position into homogenous clip-space
-	gl_Position = ftransform();
+	gl_Position = gl_ModelViewProjectionMatrix * u_objectTransform * gl_Vertex;
 
 	// transform texcoords
 	var_tex_diffuse = (gl_TextureMatrix[0] * attr_TexCoord0).st;
