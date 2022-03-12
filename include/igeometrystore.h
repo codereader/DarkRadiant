@@ -170,10 +170,12 @@ public:
     // The render parameters suitable for rendering surfaces using gl(Multi)DrawElements
     struct RenderParameters
     {
-        MeshVertex* bufferStart;   // start of buffer (to pass to gl*Pointer)
-        unsigned int* firstIndex;           // first index location of the given geometry
-        std::size_t indexCount;             // index count of the given geometry
-        std::size_t firstVertex;            // offset to the first vertex of this surface
+        MeshVertex* bufferStart;        // start of buffer (to pass to gl*Pointer, usually nullptr)
+        MeshVertex* clientBufferStart;  // start of buffer in client memory
+        unsigned int* firstIndex;       // first index location of the given geometry (to pass to glDraw*)
+        unsigned int* clientFirstIndex; // first index location of the given geometry in client memory
+        std::size_t indexCount;         // index count of the given geometry
+        std::size_t firstVertex;        // offset to the first vertex of this surface
     };
 
     // Returns the information necessary to render the given slot

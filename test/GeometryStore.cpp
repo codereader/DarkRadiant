@@ -77,11 +77,11 @@ inline void verifyAllocation(render::IGeometryStore& store, render::IGeometrySto
     auto renderParms = store.getRenderParameters(slot);
 
     auto expectedIndex = indices.begin();
-    auto firstVertex = renderParms.bufferStart + renderParms.firstVertex;
+    auto firstVertex = renderParms.clientBufferStart + renderParms.firstVertex;
 
     EXPECT_EQ(renderParms.indexCount, indices.size()) << "Index count mismatch";
 
-    for (auto idxPtr = renderParms.firstIndex; idxPtr < renderParms.firstIndex + renderParms.indexCount; ++idxPtr)
+    for (auto idxPtr = renderParms.clientFirstIndex; idxPtr < renderParms.clientFirstIndex + renderParms.indexCount; ++idxPtr)
     {
         auto index = *idxPtr;
         EXPECT_EQ(index, *expectedIndex) << "Index disorder";

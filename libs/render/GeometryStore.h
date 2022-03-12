@@ -246,10 +246,14 @@ public:
 
         auto& current = getCurrentBuffer();
 
+        auto indexOffset = current.indices.getOffset(indexSlot);
+
         return RenderParameters
         {
-            nullptr,
-            static_cast<unsigned int*>(nullptr) + current.indices.getOffset(indexSlot), // pointer to first index
+            nullptr,                            // VBO buffer start
+            current.vertices.getBufferStart(),  // client buffer start
+            static_cast<unsigned int*>(nullptr) + indexOffset,  // pointer to first index
+            current.indices.getBufferStart() + indexOffset,     // pointer to first index in client memory
             current.indices.getNumUsedElements(indexSlot), // index count of the given geometry
             current.vertices.getOffset(vertexSlot) // offset to the first vertex
         };
