@@ -30,7 +30,7 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
     for (const auto& entity : entities)
     {
         entity->foreachRenderableTouchingBounds(_lightBounds,
-            [&](const render::IRenderableObject::Ptr& object, Shader* shader)
+            [&](const IRenderableObject::Ptr& object, Shader* shader)
         {
             // Skip empty objects
             if (!object->isVisible()) return;
@@ -68,14 +68,10 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
     std::vector<IGeometryStore::Slot> untransformedObjects;
     untransformedObjects.reserve(10000);
 
-    for (auto& pair : _objectsByEntity)
+    for (const auto& [entity, objectsByShader] : _objectsByEntity)
     {
-        auto entity = pair.first;
-
-        for (auto& pair : pair.second)
+        for (const auto& [shader, objects] : objectsByShader)
         {
-            auto shader = pair.first;
-
             if (!shader->getDepthFillPass()) continue;
 
             // Skip translucent materials
@@ -84,12 +80,10 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
                 continue;
             }
             
-            auto& objectList = pair.second;
-
             // Apply our state to the current state object
             shader->getDepthFillPass()->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
 
-            for (auto object : objectList)
+            for (const auto& object : objects)
             {
                 // We submit all objects with an identity matrix in a single multi draw call
                 if (!object.get().isOriented())
@@ -122,22 +116,18 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
     std::vector<IGeometryStore::Slot> untransformedObjects;
     untransformedObjects.reserve(10000);
 
-    for (auto& pair : _objectsByEntity)
+    for (const auto& [entity, objectsByShader] : _objectsByEntity)
     {
-        auto entity = pair.first;
-
-        for (auto& pair : pair.second)
+        for (const auto& [shader, objects] : objectsByShader)
         {
-            auto shader = pair.first;
-
-            auto pass = shader->getInteractionPass();
+            const auto pass = shader->getInteractionPass();
 
             if (pass && pass->stateIsActive())
             {
                 // Apply our state to the current state object
                 pass->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
 
-                for (auto object : pair.second)
+                for (const auto& object : objects)
                 {
                     // We submit all objects with an identity matrix in a single multi draw call
                     if (!object.get().isOriented())
