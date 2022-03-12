@@ -136,8 +136,8 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
                         continue;
                     }
 
-                    OpenGLShaderPass::setUpLightingCalculation(state, &_light, worldToLight,
-                        view.getViewer(), object.get().getObjectTransform(), renderTime, state.isColourInverted());
+                    OpenGLShaderPass::SetUpLightingCalculation(state, &_light, worldToLight,
+                        view.getViewer(), object.get().getObjectTransform(), renderTime);
 
                     ObjectRenderer::SubmitObject(object.get(), _store);
                     ++_drawCalls;
@@ -145,8 +145,8 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
 
                 if (!untransformedObjects.empty())
                 {
-                    OpenGLShaderPass::setUpLightingCalculation(state, &_light, worldToLight,
-                        view.getViewer(), Matrix4::getIdentity(), renderTime, state.isColourInverted());
+                    OpenGLShaderPass::SetUpLightingCalculation(state, &_light, worldToLight,
+                        view.getViewer(), Matrix4::getIdentity(), renderTime);
 
                     ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
                     ++_drawCalls;

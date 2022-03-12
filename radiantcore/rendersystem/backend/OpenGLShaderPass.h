@@ -182,13 +182,12 @@ public:
         const IRenderEntity* entity);
 
     // Set up lighting calculation
-    static void setUpLightingCalculation(OpenGLState& current,
+    static void SetUpLightingCalculation(OpenGLState& current,
         const RendererLight* light,
         const Matrix4& worldToLight,
         const Vector3& viewer,
         const Matrix4& objTransform,
-        std::size_t time,
-        bool invertVertexColour);
+        std::size_t time);
 
     static void SetUpNonInteractionProgram(OpenGLState& current, const Vector3& viewer, const Matrix4& objTransform);
 

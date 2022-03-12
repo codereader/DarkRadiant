@@ -19,7 +19,8 @@ private:
     int _locViewOrigin;
     int _locLightScale;
     int _locAmbientLight;
-    int _locInvertVCol;
+    int _locColourModulation;
+    int _locColourAddition;
 
 public:
 

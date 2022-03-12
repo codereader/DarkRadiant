@@ -472,11 +472,11 @@ void OpenGLShaderPass::applyState(OpenGLState& current,
     // Propagate the invert vertex colour flag
     if (requiredState & RENDER_VERTEX_COLOUR)
     {
-        current.setColourInverted(_glState.isColourInverted());
+        current.setVertexColourMode(_glState.getVertexColourMode());
     }
     else
     {
-        current.setColourInverted(false);
+        current.setVertexColourMode(IShaderLayer::VERTEX_COLOUR_NONE);
     }
 
   current.setRenderFlags(requiredState);
@@ -572,17 +572,16 @@ bool OpenGLShaderPass::stateIsActive()
 }
 
 // Setup lighting
-void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
+void OpenGLShaderPass::SetUpLightingCalculation(OpenGLState& current,
                                                 const RendererLight* light,
                                                 const Matrix4& worldToLight,
                                                 const Vector3& viewer,
                                                 const Matrix4& objTransform,
-                                                std::size_t time,
-                                                bool invertVertexColour)
+                                                std::size_t time)
 {
     // Get the light shader and examine its first (and only valid) layer
     assert(light);
-    ShaderPtr shader = light->getShader();
+    const auto& shader = light->getShader();
     assert(shader);
 
     const MaterialPtr& lightMat = shader->getMaterial();
@@ -590,15 +589,15 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
     if (!layer) return;
 
     // Calculate viewer location in object space
-    Matrix4 inverseObjTransform = objTransform.getInverse();
-    Vector3 osViewer = inverseObjTransform.transformPoint(viewer);
+    auto inverseObjTransform = objTransform.getInverse();
+    auto osViewer = inverseObjTransform.transformPoint(viewer);
 
     // Calculate all dynamic values in the layer
     layer->evaluateExpressions(time, light->getLightEntity());
 
     // Get the XY and Z falloff texture numbers.
-    GLuint attenuation_xy = layer->getTexture()->getGLTexNum();
-    GLuint attenuation_z = lightMat->lightFalloffImage()->getGLTexNum();
+    auto attenuation_xy = layer->getTexture()->getGLTexNum();
+    auto attenuation_z = lightMat->lightFalloffImage()->getGLTexNum();
 
     // Bind the falloff textures
     assert(current.testRenderFlag(RENDER_TEXTURE_2D));
@@ -617,10 +616,13 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
 
     // Set the GL program parameters
     GLProgram::Params parms(
-        light->getLightOrigin(), layer->getColour(), worldToLight
+        current.getVertexColourMode(),
+        current.getColour(),
+        light->getLightOrigin(),
+        layer->getColour(),
+        worldToLight
     );
     parms.isAmbientLight = lightMat->isAmbientLight();
-    parms.invertVertexColour = invertVertexColour;
 
     assert(current.glProgram);
     current.glProgram->applyRenderParams(osViewer, objTransform, parms);
@@ -628,7 +630,7 @@ void OpenGLShaderPass::setUpLightingCalculation(OpenGLState& current,
 
 void OpenGLShaderPass::SetUpNonInteractionProgram(OpenGLState& current, const Vector3& viewer, const Matrix4& objTransform)
 {
-    static GLProgram::Params parms({ 0,0,0 }, { 0,0,0,0 }, Matrix4::getIdentity());
+    static GLProgram::Params parms(IShaderLayer::VERTEX_COLOUR_NONE, { 1, 1, 1, 1 }, { 0, 0, 0 }, { 0,0,0,0 }, Matrix4::getIdentity());
 
     assert(current.glProgram);
     current.glProgram->applyRenderParams(viewer, objTransform, parms);

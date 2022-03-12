@@ -461,16 +461,12 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     // Populate the textures and remember the stage reference
     setGLTexturesFromTriplet(dbsPass, triplet);
 
+    dbsPass.setVertexColourMode(vcolMode);
+
     if (vcolMode != IShaderLayer::VERTEX_COLOUR_NONE)
     {
         // Vertex colours allowed
         dbsPass.setRenderFlag(RENDER_VERTEX_COLOUR);
-
-        if (vcolMode == IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
-        {
-            // Vertex colours are inverted
-            dbsPass.setColourInverted(true);
-        }
     }
 
     applyAlphaTestToPass(dbsPass, alphaTest);

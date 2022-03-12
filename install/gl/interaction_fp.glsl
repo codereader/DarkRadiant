@@ -29,9 +29,8 @@ uniform vec3		u_view_origin;
 uniform vec3		u_light_origin;
 uniform vec3		u_light_color;
 uniform float		u_light_scale;
-
-// Invert vertex colour
-uniform bool uInvertVCol;
+uniform vec4		u_colourModulation;
+uniform vec4		u_colourAddition;
 
 // Activate ambient light mode (brightness unaffected by direction)
 uniform bool uAmbientLight;
@@ -41,6 +40,7 @@ varying vec4		var_tex_diffuse_bump;
 varying vec2		var_tex_specular;
 varying vec4		var_tex_atten_xy_z;
 varying mat3		var_mat_os2ts;
+varying vec4		var_Colour; // colour to be multiplied on the final fragment
 
 void	main()
 {
@@ -84,7 +84,7 @@ void	main()
     ).rgb;
 
 	// compute final color
-    gl_FragColor = diffuse * (uInvertVCol ? vec4(1.0, 1.0, 1.0, 1.0) - gl_Color : gl_Color);
+    gl_FragColor = diffuse * var_Colour;
     if (!uAmbientLight)
         gl_FragColor.rgb += specular;
 	gl_FragColor.rgb *= attenuation_xy;

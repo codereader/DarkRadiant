@@ -56,7 +56,7 @@ private:
     Colour4 _colour;
 
     // Colour inversion flag
-    bool _invertColour;
+    IShaderLayer::VertexColourMode _vertexColourMode;
 
     // Set of RENDER_XXX flags
     unsigned _renderFlags;
@@ -100,11 +100,15 @@ public:
         setColour(Colour4(r, g, b, a));
     }
 
-    /// Set this state to invert colour values
-    void setColourInverted(bool inverted) { _invertColour = inverted; }
+    IShaderLayer::VertexColourMode getVertexColourMode() const
+	{
+        return _vertexColourMode;
+	}
 
-    /// Test whether this state is inverting colour values
-    bool isColourInverted() const         { return _invertColour; }
+    void setVertexColourMode(IShaderLayer::VertexColourMode mode)
+	{
+        _vertexColourMode = mode;
+	}
 
     /// \name Render flag operations
     ///@{
@@ -219,7 +223,7 @@ public:
     /// Default constructor
     OpenGLState()
     : _colour(Colour4::WHITE()),
-      _invertColour(false),
+      _vertexColourMode(IShaderLayer::VERTEX_COLOUR_NONE),
       _renderFlags(0),
       _glDepthFunc(GL_LESS),
       _sortPos(SORT_FIRST),

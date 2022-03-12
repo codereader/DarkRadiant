@@ -25,15 +25,9 @@ namespace
 void GLSLBumpProgram::create()
 {
 	// Initialise the lightScale value
-    game::IGamePtr currentGame = GlobalGameManager().currentGame();
-    xml::NodeList scaleList = currentGame->getLocalXPath(LOCAL_RKEY_LIGHTSCALE);
-	if (!scaleList.empty())
-    {
-		_lightScale = string::convert<float>(scaleList[0].getContent());
-	}
-	else {
-		_lightScale = 1.0f;
-	}
+    auto currentGame = GlobalGameManager().currentGame();
+    auto scaleList = currentGame->getLocalXPath(LOCAL_RKEY_LIGHTSCALE);
+    _lightScale = !scaleList.empty() ? string::convert<float>(scaleList[0].getContent()) : 1.0f;
 
     // Create the program object
     rMessage() << "[renderer] Creating GLSL bump program" << std::endl;
@@ -56,8 +50,9 @@ void GLSLBumpProgram::create()
     _locLightColour = glGetUniformLocation(_programObj, "u_light_color");
     _locViewOrigin = glGetUniformLocation(_programObj, "u_view_origin");
     _locLightScale = glGetUniformLocation(_programObj, "u_light_scale");
-    _locInvertVCol = glGetUniformLocation(_programObj, "uInvertVCol");
     _locAmbientLight = glGetUniformLocation(_programObj, "uAmbientLight");
+    _locColourModulation = glGetUniformLocation(_programObj, "u_colourModulation");
+    _locColourAddition = glGetUniformLocation(_programObj, "u_colourAddition");
 
     // Set up the texture uniforms. The renderer uses fixed texture units for
     // particular textures, so make sure they are correct here.
@@ -155,8 +150,31 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
     glUniform1f(_locLightScale, _lightScale);
     glUniform1i(_locAmbientLight, parms.isAmbientLight);
 
-    // Set vertex colour parameters
-    glUniform1i(_locInvertVCol, parms.invertVertexColour);
+    // Define the colour factors to blend into the final fragment
+    switch (parms.vertexColourMode)
+    {
+    case IShaderLayer::VERTEX_COLOUR_NONE:
+        // Nullify the vertex colour, add the stage colour as additive constant
+        glUniform4f(_locColourModulation, 0, 0, 0, 0);
+        glUniform4f(_locColourAddition,
+            static_cast<float>(parms.stageColour.x()),
+            static_cast<float>(parms.stageColour.y()),
+            static_cast<float>(parms.stageColour.z()),
+            static_cast<float>(parms.stageColour.w()));
+        break;
+
+    case IShaderLayer::VERTEX_COLOUR_MULTIPLY:
+        // Multiply the fragment with 1*vertexColour
+        glUniform4f(_locColourModulation, 1, 1, 1, 1);
+        glUniform4f(_locColourAddition, 0, 0, 0, 0);
+        break;
+
+    case IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY:
+        // Multiply the fragment with (1 - vertexColour)
+        glUniform4f(_locColourModulation, -1, -1, -1, -1);
+        glUniform4f(_locColourAddition, 1, 1, 1, 1);
+        break;
+    }
 
     glActiveTexture(GL_TEXTURE3);
     glClientActiveTexture(GL_TEXTURE3);

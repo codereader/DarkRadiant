@@ -26,11 +26,15 @@ attribute vec3		attr_Bitangent;
 attribute vec3      attr_Normal;
 attribute vec4      attr_Colour;
 
+uniform vec4		u_colourModulation;
+uniform vec4		u_colourAddition;
+
 varying vec3		var_vertex;
 varying vec4		var_tex_diffuse_bump;
 varying vec2		var_tex_specular;
 varying vec4		var_tex_atten_xy_z;
 varying mat3		var_mat_os2ts;
+varying vec4		var_Colour; // colour to be multiplied on the final fragment
 
 void	main()
 {
@@ -59,7 +63,7 @@ void	main()
          attr_Tangent.z, attr_Bitangent.z, attr_Normal.z
     );
 
-    // Pass through vertex colour
-    gl_FrontColor = attr_Colour;
+    // Vertex colour factor
+    var_Colour = (attr_Colour * u_colourModulation + u_colourAddition);
 }
 
