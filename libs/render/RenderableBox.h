@@ -191,13 +191,11 @@ public:
 
         if (_filledBox)
         {
-            RenderableGeometry::updateGeometryWithData(render::GeometryType::Quads, vertices,
-                                                       FillBoxIndices);
+            updateGeometryWithData(render::GeometryType::Quads, vertices, FillBoxIndices);
         }
         else
         {
-            RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices,
-                                                       WireframeBoxIndices);
+            updateGeometryWithData(render::GeometryType::Lines, vertices, WireframeBoxIndices);
         }
     }
 };

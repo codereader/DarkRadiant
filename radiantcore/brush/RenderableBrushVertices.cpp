@@ -47,7 +47,7 @@ void RenderableBrushVertices::updateGeometry()
     detail::addColouredVertices(brushVertices, { vertexColour, 1 }, vertices, indices);
     detail::addColouredVertices(_selectedVertices, { selectedVertexColour, 1 }, vertices, indices);
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
+    updateGeometryWithData(render::GeometryType::Points, vertices, indices);
 }
 
 }

@@ -85,7 +85,7 @@ void RenderableParticleStage::updateGeometry()
 
     if (numQuads == 0)
     {
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Triangles, vertices,
+        updateGeometryWithData(render::GeometryType::Triangles, vertices,
                                                    indices);
         return;
     }
@@ -103,7 +103,7 @@ void RenderableParticleStage::updateGeometry()
         _bunches[1]->addVertexData(vertices, indices, _localToWorld);
     }
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Triangles, vertices, indices);
+    updateGeometryWithData(render::GeometryType::Triangles, vertices, indices);
 }
 
 const AABB& RenderableParticleStage::getBounds()

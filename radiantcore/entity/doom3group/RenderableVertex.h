@@ -44,7 +44,7 @@ protected:
 
         vertices.push_back(MeshVertex(_localToWorld * _instance.getVertex(), { 0,0,0 }, { 0,0 }, colour));
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, Indices);
+        updateGeometryWithData(render::GeometryType::Points, vertices, Indices);
     }
 };
 

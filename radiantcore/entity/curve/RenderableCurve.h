@@ -62,7 +62,7 @@ protected:
         indices.pop_back();
         indices.pop_back();
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
+        updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 };
 

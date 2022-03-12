@@ -91,7 +91,7 @@ public:
         std::vector<unsigned int> indices;
         Indexer::GenerateIndices(indices, _vertices.size());
 
-        RenderableGeometry::updateGeometryWithData(Indexer::GetGeometryType(), vertices, indices);
+        updateGeometryWithData(Indexer::GetGeometryType(), vertices, indices);
     }
 };
 

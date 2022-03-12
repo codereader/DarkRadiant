@@ -67,7 +67,7 @@ protected:
             }
         }
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
+        updateGeometryWithData(render::GeometryType::Points, vertices, indices);
     }
 };
 
@@ -166,7 +166,7 @@ protected:
             ++index;
         }
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
+        updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 };
 
@@ -313,7 +313,7 @@ protected:
             indices.push_back(index++);
         }
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Triangles, vertices, indices);
+        updateGeometryWithData(render::GeometryType::Triangles, vertices, indices);
     }
 };
 
@@ -357,7 +357,7 @@ protected:
         vertices.push_back(MeshVertex(_localToWorld * _point, { 0,0,0 }, { 0,0 }, _colour));
         indices.push_back(0);
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
+        updateGeometryWithData(render::GeometryType::Points, vertices, indices);
     }
 };
 

@@ -45,5 +45,5 @@ void RenderablePatchControlPoints::updateGeometry()
         indices.push_back(static_cast<unsigned int>(i));
     }
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
+    updateGeometryWithData(render::GeometryType::Points, vertices, indices);
 }

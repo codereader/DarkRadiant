@@ -69,7 +69,7 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
         vertex.colour = colour;
     }
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, CircleIndices);
+    updateGeometryWithData(render::GeometryType::Lines, vertices, CircleIndices);
 }
 
 // ---- Fill Variant ----
@@ -192,7 +192,7 @@ void RenderableSpeakerRadiiFill::updateGeometry()
     // Generate the quad indices for two spheres
     static auto SphereIndices = generateSphereIndices();
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Quads, vertices, SphereIndices);
+    updateGeometryWithData(render::GeometryType::Quads, vertices, SphereIndices);
 }
 
 } // namespace

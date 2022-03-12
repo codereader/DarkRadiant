@@ -130,7 +130,7 @@ protected:
 
         _indexer.generateIndices(_tess, std::back_inserter(indices));
 
-        RenderableGeometry::updateGeometryWithData(_indexer.getType(),
+        updateGeometryWithData(_indexer.getType(),
             _whiteVertexColour ? getColouredVertices() : _tess.vertices, indices);
     }
 
@@ -221,7 +221,7 @@ protected:
 
         assert(indices.size() == ((width * (height - 1)) + (height * (width - 1))) << 1);
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
+        updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 };
 
