@@ -28,10 +28,16 @@ in vec4 attr_Bitangent; // bound to attribute 10 in source
 in vec4 attr_Normal;    // bound to attribute 11 in source
 in vec4 attr_Colour;    // bound to attribute 12 in source
 
-uniform vec4 u_colourModulation;    // vertex colour weight
-uniform vec4 u_colourAddition;      // constant additive vertex colour value
+uniform vec4 u_ColourModulation;    // vertex colour weight
+uniform vec4 u_ColourAddition;      // constant additive vertex colour value
 uniform mat4 u_ModelViewProjection; // combined modelview and projection matrix
 uniform mat4 u_ObjectTransform;     // object to world
+
+// Texture Matrices (the two top rows of each)
+uniform vec4 u_DiffuseTextureMatrix[2];
+
+// Calculated texture coords
+varying vec2 var_TexDiffuse;
 
 varying vec3		var_vertex;
 varying vec4		var_tex_diffuse_bump;
@@ -49,6 +55,10 @@ void main()
 
 	// assign position in world space
 	var_vertex = worldVertex.xyz;
+
+    // Apply the texture matrix to get the texture coords for this vertex
+    var_TexDiffuse.x = dot(u_DiffuseTextureMatrix[0], attr_TexCoord);
+    var_TexDiffuse.y = dot(u_DiffuseTextureMatrix[1], attr_TexCoord);
 
 	// transform texcoords into diffusemap texture space
 	var_tex_diffuse_bump.st = (gl_TextureMatrix[0] * attr_TexCoord).st;
@@ -70,6 +80,6 @@ void main()
     );
 
     // Vertex colour factor
-    var_Colour = (attr_Colour * u_colourModulation + u_colourAddition);
+    var_Colour = (attr_Colour * u_ColourModulation + u_ColourAddition);
 }
 

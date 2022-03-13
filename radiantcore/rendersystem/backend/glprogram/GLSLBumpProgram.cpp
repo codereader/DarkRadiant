@@ -52,10 +52,12 @@ void GLSLBumpProgram::create()
     _locViewOrigin = glGetUniformLocation(_programObj, "u_view_origin");
     _locLightScale = glGetUniformLocation(_programObj, "u_light_scale");
     _locAmbientLight = glGetUniformLocation(_programObj, "uAmbientLight");
-    _locColourModulation = glGetUniformLocation(_programObj, "u_colourModulation");
-    _locColourAddition = glGetUniformLocation(_programObj, "u_colourAddition");
+    _locColourModulation = glGetUniformLocation(_programObj, "u_ColourModulation");
+    _locColourAddition = glGetUniformLocation(_programObj, "u_ColourAddition");
     _locModelViewProjection = glGetUniformLocation(_programObj, "u_ModelViewProjection");
     _locObjectTransform = glGetUniformLocation(_programObj, "u_ObjectTransform");
+
+    _locDiffuseTextureMatrix = glGetUniformLocation(_programObj, "u_DiffuseTextureMatrix");
 
     // Set up the texture uniforms. The renderer uses fixed texture units for
     // particular textures, so make sure they are correct here.
@@ -197,6 +199,11 @@ void GLSLBumpProgram::setModelViewProjection(const Matrix4& modelViewProjection)
 void GLSLBumpProgram::setObjectTransform(const Matrix4& transform)
 {
     loadMatrixUniform(_locObjectTransform, transform);
+}
+
+void GLSLBumpProgram::setDiffuseTextureTransform(const Matrix4& transform)
+{
+    loadTextureMatrixUniform(_locDiffuseTextureMatrix, transform);
 }
 
 }

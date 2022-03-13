@@ -140,6 +140,9 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
             // Apply our state to the current state object
             pass->evaluateStagesAndApplyState(state, globalFlagsMask, renderTime, entity);
 
+            // Load stage texture matrices
+            program.setDiffuseTextureTransform(pass->getDiffuseTextureTransform());
+
             for (const auto& object : objects)
             {
                 // We submit all objects with an identity matrix in a single multi draw call

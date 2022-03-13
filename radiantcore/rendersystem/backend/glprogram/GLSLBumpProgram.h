@@ -24,6 +24,8 @@ private:
     int _locModelViewProjection;
     int _locObjectTransform;
 
+    int _locDiffuseTextureMatrix;
+
 public:
 
     /* GLProgram implementation */
@@ -33,6 +35,8 @@ public:
 
     void setModelViewProjection(const Matrix4& modelViewProjection);
     void setObjectTransform(const Matrix4& transform);
+
+    void setDiffuseTextureTransform(const Matrix4& transform);
 
     void applyRenderParams(const Vector3& viewer,
                            const Matrix4& localToWorld,

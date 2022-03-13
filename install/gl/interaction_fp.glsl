@@ -29,11 +29,14 @@ uniform vec3		u_view_origin;
 uniform vec3		u_light_origin;
 uniform vec3		u_light_color;
 uniform float		u_light_scale;
-uniform vec4		u_colourModulation;
-uniform vec4		u_colourAddition;
+uniform vec4		u_ColourModulation;
+uniform vec4		u_ColourAddition;
 
 // Activate ambient light mode (brightness unaffected by direction)
 uniform bool uAmbientLight;
+
+// Texture coords as calculated by the vertex program
+varying vec2 var_TexDiffuse;
 
 varying vec3		var_vertex;
 varying vec4		var_tex_diffuse_bump;
@@ -60,7 +63,7 @@ void	main()
 	N = normalize(N);
 
 	// compute the diffuse term
-	vec4 diffuse = texture2D(u_diffusemap, var_tex_diffuse_bump.st);
+	vec4 diffuse = texture2D(u_diffusemap, var_TexDiffuse);
     float lightBrightness = uAmbientLight ? 1.0 : clamp(dot(N, L), 0.0, 1.0);
 	diffuse.rgb *= u_light_color * u_light_scale * lightBrightness;
 
