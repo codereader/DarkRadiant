@@ -57,30 +57,34 @@ protected:
 
 protected:
 
+#if 0
     void setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage);
-
+#endif
 	// Render all of the given TransformedRenderables
 	void drawRenderables(OpenGLState& current);
 
     /* Helper functions to enable/disable particular GL states */
 
+#if 0
     void setTexture0();
 
     void enableTexture2D();
     void disableTexture2D();
-
+#endif
+#if 0
     void enableTextureCubeMap();
     void disableTextureCubeMap();
 
     void enableRenderBlend();
     void disableRenderBlend();
-
     // Apply all OpenGLState textures to texture units
     void applyAllTextures(OpenGLState& current, unsigned requiredState);
+#endif
 
+#if 0
     virtual void activateShaderProgram(OpenGLState& current);
     virtual void deactivateShaderProgram(OpenGLState& current);
-
+#endif
 public:
 
 	OpenGLShaderPass(OpenGLShader& owner) :

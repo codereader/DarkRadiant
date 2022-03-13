@@ -34,6 +34,7 @@ DepthFillPass::DepthFillPass(OpenGLShader& owner, OpenGLRenderSystem& renderSyst
     assert(dynamic_cast<GLSLDepthFillAlphaProgram*>(_glState.glProgram));
 }
 
+#if 0
 void DepthFillPass::activateShaderProgram(OpenGLState& current)
 {
     // We need a program, it is set up in the constructor
@@ -42,12 +43,15 @@ void DepthFillPass::activateShaderProgram(OpenGLState& current)
     // Let the base class enable the program
     OpenGLShaderPass::activateShaderProgram(current);
 
+#if 0 // TODO: Migrate to LightInteractions::depthFill
     auto zFillAlphaProgram = static_cast<GLSLDepthFillAlphaProgram*>(current.glProgram);
 
     zFillAlphaProgram->applyAlphaTest(_glState.alphaThreshold);
 
     setTextureState(current.texture0, _glState.texture0, GL_TEXTURE0, GL_TEXTURE_2D);
     setupTextureMatrix(GL_TEXTURE0, _glState.stage0);
+#endif
 }
+#endif
 
 }

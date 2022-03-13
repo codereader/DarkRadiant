@@ -4,6 +4,7 @@
 #include "ishaders.h"
 #include "ishaderlayer.h"
 
+#include "debugging/gl.h"
 #include "render/Colour4.h"
 
 // Full declaration in iglprogram.h
@@ -244,6 +245,395 @@ public:
       glProgram(nullptr),
       cubeMapMode(IShaderLayer::CUBE_MAP_NONE)
     { }
+
+    // Determines the difference between this state and the target (current) state.
+    // Issues the state calls required by this state and updates the target state
+    // to reflect the changes.
+    // The given globalStateMask controls which state changes are allowed in the first place.
+    void applyTo(OpenGLState& current, unsigned int globalStateMask)
+    {
+        // Apply the global state mask to our own desired render flags to determine
+        // the final set of flags that allow and require changing
+        const unsigned requiredState = _renderFlags & globalStateMask;
+
+        // Construct a mask containing all the flags that will be changing between
+        // the current state and the required state. This avoids performing
+        // unnecessary GL calls to set the state to its existing value.
+        const unsigned changingBitsMask = requiredState ^ current.getRenderFlags();
+
+        // Set the GLProgram if required
+        if (requiredState & RENDER_PROGRAM)
+        {
+            activateShaderProgram(current);
+        }
+        else
+        {
+            deactivateShaderProgram(current);
+        }
+
+        // State changes. Only perform these if changingBitsMask > 0, since if there are
+        // no changes required we don't want a whole load of unnecessary bit operations.
+        if (changingBitsMask != 0)
+        {
+            if (changingBitsMask & requiredState & RENDER_FILL)
+            {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+                debug::assertNoGlErrors();
+            }
+            else if (changingBitsMask & ~requiredState & RENDER_FILL)
+            {
+                glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+                debug::assertNoGlErrors();
+            }
+
+            setState(requiredState, changingBitsMask, RENDER_OFFSETLINE, GL_POLYGON_OFFSET_LINE);
+
+            if (changingBitsMask & requiredState & RENDER_LIGHTING)
+            {
+                glEnable(GL_LIGHTING);
+                glEnable(GL_COLOR_MATERIAL);
+                glEnableClientState(GL_NORMAL_ARRAY);
+                debug::assertNoGlErrors();
+            }
+            else if (changingBitsMask & ~requiredState & RENDER_LIGHTING)
+            {
+                glDisable(GL_LIGHTING);
+                glDisable(GL_COLOR_MATERIAL);
+                glDisableClientState(GL_NORMAL_ARRAY);
+                debug::assertNoGlErrors();
+            }
+
+            // RENDER_TEXTURE_CUBEMAP
+            if (changingBitsMask & requiredState & RENDER_TEXTURE_CUBEMAP)
+            {
+                setTexture0();
+                glEnable(GL_TEXTURE_CUBE_MAP);
+                debug::assertNoGlErrors();
+            }
+            else if (changingBitsMask & ~requiredState & RENDER_TEXTURE_CUBEMAP)
+            {
+                setTexture0();
+                glDisable(GL_TEXTURE_CUBE_MAP);
+                glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+                debug::assertNoGlErrors();
+            }
+
+            // RENDER_TEXTURE_2D
+            if (changingBitsMask & requiredState & RENDER_TEXTURE_2D)
+            {
+                setTexture0();
+                glEnable(GL_TEXTURE_2D);
+                debug::assertNoGlErrors();
+            }
+            else if (changingBitsMask & ~requiredState & RENDER_TEXTURE_2D)
+            {
+                setTexture0();
+                glDisable(GL_TEXTURE_2D);
+                glBindTexture(GL_TEXTURE_2D, 0);
+                debug::assertNoGlErrors();
+            }
+
+            // RENDER_BLEND
+            if (changingBitsMask & requiredState & RENDER_BLEND)
+            {
+                glEnable(GL_BLEND);
+                setTexture0();
+                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+                debug::assertNoGlErrors();
+            }
+            else if (changingBitsMask & ~requiredState & RENDER_BLEND)
+            {
+                glDisable(GL_BLEND);
+                setTexture0();
+                glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+                debug::assertNoGlErrors();
+            }
+
+            setState(requiredState, changingBitsMask, RENDER_CULLFACE, GL_CULL_FACE);
+
+            if (changingBitsMask & requiredState & RENDER_SMOOTH)
+            {
+                glShadeModel(GL_SMOOTH);
+                debug::assertNoGlErrors();
+            }
+            else if (changingBitsMask & ~requiredState & RENDER_SMOOTH)
+            {
+                glShadeModel(GL_FLAT);
+                debug::assertNoGlErrors();
+            }
+
+            setState(requiredState, changingBitsMask, RENDER_SCALED, GL_NORMALIZE); // not GL_RESCALE_NORMAL
+            setState(requiredState, changingBitsMask, RENDER_DEPTHTEST, GL_DEPTH_TEST);
+
+            if (changingBitsMask & requiredState & RENDER_DEPTHWRITE)
+            {
+                glDepthMask(GL_TRUE);
+                debug::assertNoGlErrors();
+            }
+            else if (changingBitsMask & ~requiredState & RENDER_DEPTHWRITE)
+            {
+                glDepthMask(GL_FALSE);
+                debug::assertNoGlErrors();
+            }
+
+            // Disable colour buffer writes if required
+            if (changingBitsMask & requiredState & RENDER_MASKCOLOUR)
+            {
+                glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+                debug::assertNoGlErrors();
+            }
+            else if (changingBitsMask & ~requiredState & RENDER_MASKCOLOUR)
+            {
+                glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+                debug::assertNoGlErrors();
+            }
+
+            setState(requiredState, changingBitsMask, RENDER_ALPHATEST, GL_ALPHA_TEST);
+
+            // Set GL states corresponding to RENDER_ flags
+            setState(requiredState, changingBitsMask, RENDER_LINESTIPPLE, GL_LINE_STIPPLE);
+            setState(requiredState, changingBitsMask, RENDER_POLYGONSTIPPLE, GL_POLYGON_STIPPLE);
+
+        } // end of changingBitsMask-dependent changes
+
+        // Set depth function
+        if (requiredState & RENDER_DEPTHTEST && getDepthFunc() != current.getDepthFunc())
+        {
+            glDepthFunc(getDepthFunc());
+            debug::assertNoGlErrors();
+            current.setDepthFunc(getDepthFunc());
+        }
+
+        if (requiredState & RENDER_LINESTIPPLE
+            && (m_linestipple_factor != current.m_linestipple_factor
+                || m_linestipple_pattern != current.m_linestipple_pattern))
+        {
+            glLineStipple(m_linestipple_factor, m_linestipple_pattern);
+            debug::assertNoGlErrors();
+            current.m_linestipple_factor = m_linestipple_factor;
+            current.m_linestipple_pattern = m_linestipple_pattern;
+        }
+
+        // Set up the alpha test parameters
+        if (requiredState & RENDER_ALPHATEST && 
+            (alphaFunc != current.alphaFunc || alphaThreshold != current.alphaThreshold))
+        {
+            // Set alpha function in GL
+            glAlphaFunc(alphaFunc, alphaThreshold);
+            debug::assertNoGlErrors();
+
+            // Store state values
+            current.alphaFunc = alphaFunc;
+            current.alphaThreshold = alphaThreshold;
+        }
+
+        // Apply polygon offset
+        if (polygonOffset != current.polygonOffset)
+        {
+            current.polygonOffset = polygonOffset;
+
+            if (current.polygonOffset > 0.0f)
+            {
+                glEnable(GL_POLYGON_OFFSET_FILL);
+                glPolygonOffset(-1, -1 * polygonOffset);
+            }
+            else
+            {
+                glDisable(GL_POLYGON_OFFSET_FILL);
+            }
+        }
+
+        // Apply the GL textures
+        applyAllTextures(current, requiredState);
+
+        // Set the GL colour. Do this unconditionally, since setting glColor is
+        // cheap and it avoids problems with leaked colour states.
+        if (stage0)
+        {
+            setColour(stage0->getColour());
+        }
+        glColor4fv(getColour());
+        current.setColour(getColour());
+        debug::assertNoGlErrors();
+
+        if (requiredState & RENDER_BLEND
+            && (m_blend_src != current.m_blend_src || m_blend_dst != current.m_blend_dst))
+        {
+            glBlendFunc(m_blend_src, m_blend_dst);
+            debug::assertNoGlErrors();
+            current.m_blend_src = m_blend_src;
+            current.m_blend_dst = m_blend_dst;
+        }
+
+        if (!(requiredState & RENDER_FILL) && m_linewidth != current.m_linewidth)
+        {
+            glLineWidth(m_linewidth);
+            debug::assertNoGlErrors();
+            current.m_linewidth = m_linewidth;
+        }
+
+        if (!(requiredState & RENDER_FILL) && m_pointsize != current.m_pointsize)
+        {
+            glPointSize(m_pointsize);
+            debug::assertNoGlErrors();
+            current.m_pointsize = m_pointsize;
+        }
+
+        // Propagate the invert vertex colour flag
+        if (requiredState & RENDER_VERTEX_COLOUR)
+        {
+            current.setVertexColourMode(getVertexColourMode());
+        }
+        else
+        {
+            current.setVertexColourMode(IShaderLayer::VERTEX_COLOUR_NONE);
+        }
+
+        current.setRenderFlags(requiredState);
+
+        debug::assertNoGlErrors();
+    }
+
+private:
+    void setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage)
+    {
+        // Set the texture matrix for the given unit
+        glActiveTexture(textureUnit);
+        glClientActiveTexture(textureUnit);
+
+        if (stage)
+        {
+            auto tex = stage->getTextureTransform();
+            glLoadMatrixd(tex);
+        }
+        else
+        {
+            glLoadIdentity();
+        }
+    }
+
+    // Bind the given texture to the texture unit, if it is different from the
+    // current state, then set the current state to the new texture.
+    void setTextureState(GLint& current, const GLint& texture, GLenum textureUnit, GLenum textureMode)
+    {
+        if (texture != current)
+        {
+            glActiveTexture(textureUnit);
+            glClientActiveTexture(textureUnit);
+            glBindTexture(textureMode, texture);
+            debug::assertNoGlErrors();
+            current = texture;
+        }
+    }
+
+    void setTextureState(GLint& current, const GLint& texture, GLenum textureMode)
+    {
+        if (texture != current)
+        {
+            glBindTexture(textureMode, texture);
+            debug::assertNoGlErrors();
+            current = texture;
+        }
+    }
+
+    // Apply all textures to texture units
+    void applyAllTextures(OpenGLState& current, unsigned requiredState)
+    {
+        // Set the texture dimensionality from render flags. There is only a global
+        // mode for all textures, we can't have texture1 as 2D and texture2 as
+        // CUBE_MAP for example.
+        GLenum textureMode = 0;
+
+        if (requiredState & RENDER_TEXTURE_CUBEMAP) // cube map has priority
+        {
+            textureMode = GL_TEXTURE_CUBE_MAP;
+        }
+        else if (requiredState & RENDER_TEXTURE_2D)
+        {
+            textureMode = GL_TEXTURE_2D;
+        }
+
+        // Apply our texture numbers to the current state
+        if (textureMode != 0) // only if one of the RENDER_TEXTURE options
+        {
+            glMatrixMode(GL_TEXTURE);
+
+            if (GLEW_VERSION_1_3)
+            {
+                setTextureState(current.texture0, texture0, GL_TEXTURE0, textureMode);
+                setupTextureMatrix(GL_TEXTURE0, stage0);
+
+                setTextureState(current.texture1, texture1, GL_TEXTURE1, textureMode);
+                setupTextureMatrix(GL_TEXTURE1, stage1);
+
+                setTextureState(current.texture2, texture2, GL_TEXTURE2, textureMode);
+                setupTextureMatrix(GL_TEXTURE2, stage2);
+
+                setTextureState(current.texture3, texture2, GL_TEXTURE2, textureMode);
+                setTextureState(current.texture4, texture2, GL_TEXTURE2, textureMode);
+
+                glActiveTexture(GL_TEXTURE0);
+                glClientActiveTexture(GL_TEXTURE0);
+            }
+            else
+            {
+                setTextureState(current.texture0, texture0, textureMode);
+                setupTextureMatrix(GL_TEXTURE0, stage0);
+            }
+
+            glMatrixMode(GL_MODELVIEW);
+        }
+    }
+
+    void setTexture0()
+    {
+        if (GLEW_VERSION_1_3)
+        {
+            glActiveTexture(GL_TEXTURE0);
+            glClientActiveTexture(GL_TEXTURE0);
+        }
+    }
+
+    // Utility function to toggle an OpenGL state flag
+    void setState(unsigned int state, unsigned int delta, unsigned int flag, GLenum glflag)
+    {
+        if (delta & state & flag)
+        {
+            glEnable(glflag);
+            debug::assertNoGlErrors();
+        }
+        else if (delta & ~state & flag)
+        {
+            glDisable(glflag);
+            debug::assertNoGlErrors();
+        }
+    }
+
+    void activateShaderProgram(OpenGLState& current)
+    {
+        if (current.glProgram == glProgram)
+        {
+            // nothing to do
+            return;
+        }
+
+        // Deactivate the previous program first
+        deactivateShaderProgram(current);
+
+        if (glProgram != nullptr)
+        {
+            current.glProgram = glProgram;
+            current.glProgram->enable();
+        }
+    }
+
+    void deactivateShaderProgram(OpenGLState& current)
+    {
+        if (current.glProgram == nullptr) return;
+
+        current.glProgram->disable();
+        current.glProgram = nullptr;
+    }
 };
 
 }

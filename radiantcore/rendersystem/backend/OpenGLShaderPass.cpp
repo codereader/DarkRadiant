@@ -49,6 +49,7 @@ void OpenGLShaderPass::setTextureState(GLint& current,
 namespace
 {
 
+#if 0
 // Utility function to toggle an OpenGL state flag
 inline void setState(unsigned int state,
                      unsigned int delta,
@@ -66,7 +67,7 @@ inline void setState(unsigned int state,
         debug::assertNoGlErrors();
     }
 }
-
+#endif
 inline void evaluateStage(const IShaderLayer::Ptr& stage, std::size_t time, const IRenderEntity* entity)
 {
     if (!stage) return;
@@ -85,6 +86,7 @@ inline void evaluateStage(const IShaderLayer::Ptr& stage, std::size_t time, cons
 
 // GL state enabling/disabling helpers
 
+#if 0
 void OpenGLShaderPass::setTexture0()
 {
     if (GLEW_VERSION_1_3)
@@ -112,7 +114,6 @@ void OpenGLShaderPass::disableTexture2D()
 
     debug::assertNoGlErrors();
 }
-
 // Enable cubemap texturing and texcoord array
 void OpenGLShaderPass::enableTextureCubeMap()
 {
@@ -132,6 +133,8 @@ void OpenGLShaderPass::disableTextureCubeMap()
     debug::assertNoGlErrors();
 }
 
+#endif
+#if 0
 void OpenGLShaderPass::enableRenderBlend()
 {
     glEnable(GL_BLEND);
@@ -147,7 +150,9 @@ void OpenGLShaderPass::disableRenderBlend()
     glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
     debug::assertNoGlErrors();
 }
+#endif
 
+#if 0
 void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage)
 {
     // Set the texture matrix for the given unit
@@ -164,7 +169,8 @@ void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const IShaderLayer
         glLoadIdentity();
     }
 }
-
+#endif
+#if 0
 // Apply all textures to texture units
 void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
                                         unsigned requiredState)
@@ -214,6 +220,7 @@ void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
         glMatrixMode(GL_MODELVIEW);
     }
 }
+#endif
 
 void OpenGLShaderPass::evaluateShaderStages(std::size_t time, const IRenderEntity* entity)
 {
@@ -249,6 +256,11 @@ void OpenGLShaderPass::applyState(OpenGLState& current, unsigned int globalState
         globalStateMask |= RENDER_FILL | RENDER_DEPTHWRITE;
     }
 
+    // Calculate the difference between this state and the current one
+    // and apply the changes required to match our required flags.
+    _glState.applyTo(current, globalStateMask);
+
+#if 0
     // Apply the global state mask to our own desired render flags to determine
     // the final set of flags that must bet set
     const unsigned requiredState = _glState.getRenderFlags() & globalStateMask;
@@ -482,8 +494,10 @@ void OpenGLShaderPass::applyState(OpenGLState& current, unsigned int globalState
   current.setRenderFlags(requiredState);
 
   debug::assertNoGlErrors();
+#endif
 }
 
+#if 0
 void OpenGLShaderPass::activateShaderProgram(OpenGLState& current)
 {
     if (current.glProgram == _glState.glProgram)
@@ -511,6 +525,7 @@ void OpenGLShaderPass::deactivateShaderProgram(OpenGLState& current)
 
     current.glProgram = nullptr;
 }
+#endif
 
 void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
                                      const Matrix4& modelview)
