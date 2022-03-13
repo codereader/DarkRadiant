@@ -5,7 +5,6 @@
 #include "OpenGLState.h"
 
 #include <vector>
-#include <map>
 
 /* FORWARD DECLS */
 class Matrix4;
@@ -57,34 +56,9 @@ protected:
 
 protected:
 
-#if 0
-    void setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage);
-#endif
 	// Render all of the given TransformedRenderables
 	void drawRenderables(OpenGLState& current);
 
-    /* Helper functions to enable/disable particular GL states */
-
-#if 0
-    void setTexture0();
-
-    void enableTexture2D();
-    void disableTexture2D();
-#endif
-#if 0
-    void enableTextureCubeMap();
-    void disableTextureCubeMap();
-
-    void enableRenderBlend();
-    void disableRenderBlend();
-    // Apply all OpenGLState textures to texture units
-    void applyAllTextures(OpenGLState& current, unsigned requiredState);
-#endif
-
-#if 0
-    virtual void activateShaderProgram(OpenGLState& current);
-    virtual void deactivateShaderProgram(OpenGLState& current);
-#endif
 public:
 
 	OpenGLShaderPass(OpenGLShader& owner) :
@@ -101,17 +75,9 @@ public:
 
 	/**
      * \brief
-     * Add a renderable to this shader pass the given object transform matrix
-     * and light.
-     *
-     * \param light
-     * Single light illuminating this renderable. When Shader::addRenderable
-     * accepts a LIST of lights, this list is then broken up into individual
-     * lights which are submitted to the shader passes one by one (so the same
-     * renderable will be submitted once for each light).
+     * Add a renderable to this shader pass the given object transform matrix.
 	 */
-	void addRenderable(const OpenGLRenderable& renderable,
-					   const Matrix4& modelview);
+	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& modelview);
 
 	/**
 	 * Return the OpenGL state associated with this bucket.
@@ -188,15 +154,6 @@ public:
         std::size_t time);
 
     static void SetUpNonInteractionProgram(OpenGLState& current, const Vector3& viewer, const Matrix4& objTransform);
-
-    static void setTextureState(GLint& current,
-        const GLint& texture,
-        GLenum textureUnit,
-        GLenum textureMode);
-
-    static void setTextureState(GLint& current,
-        const GLint& texture,
-        GLenum textureMode);
 
 	friend std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
 };

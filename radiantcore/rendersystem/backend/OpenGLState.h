@@ -494,6 +494,19 @@ public:
         debug::assertNoGlErrors();
     }
 
+    // Bind the given texture to the texture unit, if it is different from the
+    // current state, then set the current state to the new texture.
+    static void SetTextureState(GLint& current, const GLint texture, GLenum textureUnit, GLenum textureMode)
+    {
+        if (texture == current) return;
+
+        glActiveTexture(textureUnit);
+        glClientActiveTexture(textureUnit);
+        glBindTexture(textureMode, texture);
+        debug::assertNoGlErrors();
+        current = texture;
+    }
+
 private:
     void setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage)
     {
@@ -509,19 +522,6 @@ private:
 
         auto tex = stage->getTextureTransform();
         glLoadMatrixd(tex);
-    }
-
-    // Bind the given texture to the texture unit, if it is different from the
-    // current state, then set the current state to the new texture.
-    void setTextureState(GLint& current, const GLint texture, GLenum textureUnit, GLenum textureMode)
-    {
-        if (texture == current) return;
-
-        glActiveTexture(textureUnit);
-        glClientActiveTexture(textureUnit);
-        glBindTexture(textureMode, texture);
-        debug::assertNoGlErrors();
-        current = texture;
     }
 
     void setTextureState(GLint& current, const GLint texture, GLenum textureMode)
@@ -557,17 +557,17 @@ private:
 
             if (GLEW_VERSION_1_3)
             {
-                setTextureState(current.texture0, texture0, GL_TEXTURE0, textureMode);
+                SetTextureState(current.texture0, texture0, GL_TEXTURE0, textureMode);
                 setupTextureMatrix(GL_TEXTURE0, stage0);
 
-                setTextureState(current.texture1, texture1, GL_TEXTURE1, textureMode);
+                SetTextureState(current.texture1, texture1, GL_TEXTURE1, textureMode);
                 setupTextureMatrix(GL_TEXTURE1, stage1);
 
-                setTextureState(current.texture2, texture2, GL_TEXTURE2, textureMode);
+                SetTextureState(current.texture2, texture2, GL_TEXTURE2, textureMode);
                 setupTextureMatrix(GL_TEXTURE2, stage2);
 
-                setTextureState(current.texture3, texture2, GL_TEXTURE2, textureMode);
-                setTextureState(current.texture4, texture2, GL_TEXTURE2, textureMode);
+                SetTextureState(current.texture3, texture2, GL_TEXTURE2, textureMode);
+                SetTextureState(current.texture4, texture2, GL_TEXTURE2, textureMode);
 
                 glActiveTexture(GL_TEXTURE0);
                 glClientActiveTexture(GL_TEXTURE0);
