@@ -4,7 +4,7 @@ uniform sampler2D   u_diffuse;
 uniform float       u_alphaTest;
 uniform mat4        u_objectTransform;
 
-varying vec2        var_tex_diffuse;
+varying vec2 var_TexDiffuse;
 
 void main()
 {
@@ -15,7 +15,7 @@ void main()
     }
     else
     {
-        vec4 tex = texture2D(u_diffuse, var_tex_diffuse);
+        vec4 tex = texture2D(u_diffuse, var_TexDiffuse);
 
         if (tex.a <= u_alphaTest)
         {

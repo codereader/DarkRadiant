@@ -24,7 +24,8 @@ void GLSLDepthFillAlphaProgram::create()
         DEPTHFILL_ALPHA_VP_FILENAME, DEPTHFILL_ALPHA_FP_FILENAME
     );
 
-    glBindAttribLocation(_programObj, GLProgramAttribute::TexCoord, "attr_TexCoord0");
+    glBindAttribLocation(_programObj, GLProgramAttribute::Position, "attr_Position");
+    glBindAttribLocation(_programObj, GLProgramAttribute::TexCoord, "attr_TexCoord");
 
     glLinkProgram(_programObj);
 

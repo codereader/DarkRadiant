@@ -1,40 +1,21 @@
-/// ============================================================================
-/*
-Copyright (C) 2004 Robert Beckebans <trebor_7@users.sourceforge.net>
-Please see the file "CONTRIBUTORS" for a list of contributors
+#version 120
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+in vec4 attr_Position; // bound to attribute 0 in source, in object space
+in vec4 attr_TexCoord; // bound to attribute 8 in source
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+uniform mat4 u_objectTransform; // object transform (object2world)
 
-See the GNU Lesser General Public License for more details.
+varying vec2 var_TexDiffuse;
 
-You should have received a copy of the GNU Lesser General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-/// ============================================================================
-
-attribute vec4		attr_TexCoord0;
-
-uniform mat4        u_objectTransform;
-
-varying vec2		var_tex_diffuse;
-
-void	main()
+void main()
 {
     // Apply the supplied object transform to the incoming vertex
-	// transform vertex position into homogenous clip-space
-	gl_Position = gl_ModelViewProjectionMatrix * u_objectTransform * gl_Vertex;
+    // transform vertex position into homogenous clip-space
+    gl_Position = gl_ModelViewProjectionMatrix * u_objectTransform * attr_Position;
 
-	// transform texcoords
-	var_tex_diffuse = (gl_TextureMatrix[0] * attr_TexCoord0).st;
+    // transform texcoords
+    var_TexDiffuse = (gl_TextureMatrix[0] * attr_TexCoord).st;
 
-	// assign color
-	gl_FrontColor = gl_Color;
+    // assign color
+    gl_FrontColor = gl_Color;
 }
