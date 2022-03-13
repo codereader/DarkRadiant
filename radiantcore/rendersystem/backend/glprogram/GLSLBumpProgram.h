@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GLProgramAttributes.h"
 #include "GLSLProgramBase.h"
 
 namespace render

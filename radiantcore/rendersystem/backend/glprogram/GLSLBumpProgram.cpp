@@ -1,6 +1,7 @@
 #include "GLSLBumpProgram.h"
 #include "../GLProgramFactory.h"
 
+#include "GLProgramAttributes.h"
 #include "itextstream.h"
 #include "igame.h"
 #include "string/convert.h"

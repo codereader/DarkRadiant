@@ -137,8 +137,24 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
 
             if (!pass || !pass->stateIsActive()) continue;
 
-            // Apply our state to the current state object
-            pass->evaluateStagesAndApplyState(state, globalFlagsMask, renderTime, entity);
+            // Evaluate the expressions in the material stages
+            pass->evaluateShaderStages(renderTime, entity);
+
+            // Enable alphatest if required
+            if (pass->state().stage0 && pass->state().stage0->hasAlphaTest())
+            {
+                glEnable(GL_ALPHA_TEST);
+                glAlphaFunc(GL_GEQUAL, pass->state().stage0->getAlphaTest());
+            }
+            else
+            {
+                glDisable(GL_ALPHA_TEST);
+            }
+
+            // Bind textures
+            OpenGLState::SetTextureState(state.texture0, pass->state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
+            OpenGLState::SetTextureState(state.texture1, pass->state().texture1, GL_TEXTURE1, GL_TEXTURE_2D);
+            OpenGLState::SetTextureState(state.texture2, pass->state().texture2, GL_TEXTURE2, GL_TEXTURE_2D);
 
             // Load stage texture matrices
             program.setDiffuseTextureTransform(pass->getDiffuseTextureTransform());
