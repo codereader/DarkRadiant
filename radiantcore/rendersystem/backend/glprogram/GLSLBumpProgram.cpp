@@ -37,7 +37,8 @@ void GLSLBumpProgram::create()
     );
 
     // Bind vertex attribute locations and link the program
-    glBindAttribLocation(_programObj, GLProgramAttribute::TexCoord, "attr_TexCoord0");
+    glBindAttribLocation(_programObj, GLProgramAttribute::Position, "attr_Position");
+    glBindAttribLocation(_programObj, GLProgramAttribute::TexCoord, "attr_TexCoord");
     glBindAttribLocation(_programObj, GLProgramAttribute::Tangent, "attr_Tangent");
     glBindAttribLocation(_programObj, GLProgramAttribute::Bitangent, "attr_Bitangent");
     glBindAttribLocation(_programObj, GLProgramAttribute::Normal, "attr_Normal");
@@ -53,7 +54,8 @@ void GLSLBumpProgram::create()
     _locAmbientLight = glGetUniformLocation(_programObj, "uAmbientLight");
     _locColourModulation = glGetUniformLocation(_programObj, "u_colourModulation");
     _locColourAddition = glGetUniformLocation(_programObj, "u_colourAddition");
-    _locObjectTransform = glGetUniformLocation(_programObj, "u_objectTransform");
+    _locModelViewProjection = glGetUniformLocation(_programObj, "u_ModelViewProjection");
+    _locObjectTransform = glGetUniformLocation(_programObj, "u_ObjectTransform");
 
     // Set up the texture uniforms. The renderer uses fixed texture units for
     // particular textures, so make sure they are correct here.
@@ -185,6 +187,11 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
     glMatrixMode(GL_MODELVIEW);
 
     debug::assertNoGlErrors();
+}
+
+void GLSLBumpProgram::setModelViewProjection(const Matrix4& modelViewProjection)
+{
+    loadMatrixUniform(_locModelViewProjection, modelViewProjection);
 }
 
 void GLSLBumpProgram::setObjectTransform(const Matrix4& transform)

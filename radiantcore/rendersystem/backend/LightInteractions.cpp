@@ -127,47 +127,48 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
     std::vector<IGeometryStore::Slot> untransformedObjects;
     untransformedObjects.reserve(10000);
 
+    program.setModelViewProjection(view.GetViewProjection());
+
     for (const auto& [entity, objectsByShader] : _objectsByEntity)
     {
         for (const auto& [shader, objects] : objectsByShader)
         {
             const auto pass = shader->getInteractionPass();
 
-            if (pass && pass->stateIsActive())
+            if (!pass || !pass->stateIsActive()) continue;
+
+            // Apply our state to the current state object
+            pass->evaluateStagesAndApplyState(state, globalFlagsMask, renderTime, entity);
+
+            for (const auto& object : objects)
             {
-                // Apply our state to the current state object
-                pass->evaluateStagesAndApplyState(state, globalFlagsMask, renderTime, entity);
-
-                for (const auto& object : objects)
+                // We submit all objects with an identity matrix in a single multi draw call
+                if (!object.get().isOriented())
                 {
-                    // We submit all objects with an identity matrix in a single multi draw call
-                    if (!object.get().isOriented())
-                    {
-                        untransformedObjects.push_back(object.get().getStorageLocation());
-                        continue;
-                    }
-
-                    OpenGLShaderPass::SetUpLightingCalculation(state, &_light, worldToLight,
-                        view.getViewer(), object.get().getObjectTransform(), renderTime);
-
-                    pass->getProgram().setObjectTransform(object.get().getObjectTransform());
-
-                    ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
-                    ++_drawCalls;
+                    untransformedObjects.push_back(object.get().getStorageLocation());
+                    continue;
                 }
 
-                if (!untransformedObjects.empty())
-                {
-                    OpenGLShaderPass::SetUpLightingCalculation(state, &_light, worldToLight,
-                        view.getViewer(), Matrix4::getIdentity(), renderTime);
+                OpenGLShaderPass::SetUpLightingCalculation(state, &_light, worldToLight,
+                    view.getViewer(), object.get().getObjectTransform(), renderTime);
 
-                    pass->getProgram().setObjectTransform(Matrix4::getIdentity());
+                pass->getProgram().setObjectTransform(object.get().getObjectTransform());
 
-                    ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
-                    ++_drawCalls;
+                ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
+                ++_drawCalls;
+            }
 
-                    untransformedObjects.clear();
-                }
+            if (!untransformedObjects.empty())
+            {
+                OpenGLShaderPass::SetUpLightingCalculation(state, &_light, worldToLight,
+                    view.getViewer(), Matrix4::getIdentity(), renderTime);
+
+                pass->getProgram().setObjectTransform(Matrix4::getIdentity());
+
+                ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
+                ++_drawCalls;
+
+                untransformedObjects.clear();
             }
         }
     }

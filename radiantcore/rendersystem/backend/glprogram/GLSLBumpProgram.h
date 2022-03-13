@@ -21,6 +21,7 @@ private:
     int _locAmbientLight;
     int _locColourModulation;
     int _locColourAddition;
+    int _locModelViewProjection;
     int _locObjectTransform;
 
 public:
@@ -30,6 +31,7 @@ public:
     void enable() override;
     void disable() override;
 
+    void setModelViewProjection(const Matrix4& modelViewProjection);
     void setObjectTransform(const Matrix4& transform);
 
     void applyRenderParams(const Vector3& viewer,
