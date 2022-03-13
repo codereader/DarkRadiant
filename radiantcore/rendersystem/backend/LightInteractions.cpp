@@ -142,6 +142,8 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
 
             // Load stage texture matrices
             program.setDiffuseTextureTransform(pass->getDiffuseTextureTransform());
+            program.setBumpTextureTransform(pass->getBumpTextureTransform());
+            program.setSpecularTextureTransform(pass->getSpecularTextureTransform());
 
             for (const auto& object : objects)
             {

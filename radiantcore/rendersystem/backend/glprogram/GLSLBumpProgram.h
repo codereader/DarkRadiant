@@ -25,6 +25,8 @@ private:
     int _locObjectTransform;
 
     int _locDiffuseTextureMatrix;
+    int _locBumpTextureMatrix;
+    int _locSpecularTextureMatrix;
 
 public:
 
@@ -37,6 +39,8 @@ public:
     void setObjectTransform(const Matrix4& transform);
 
     void setDiffuseTextureTransform(const Matrix4& transform);
+    void setBumpTextureTransform(const Matrix4& transform);
+    void setSpecularTextureTransform(const Matrix4& transform);
 
     void applyRenderParams(const Vector3& viewer,
                            const Matrix4& localToWorld,

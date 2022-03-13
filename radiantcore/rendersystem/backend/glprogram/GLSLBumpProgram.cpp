@@ -58,6 +58,8 @@ void GLSLBumpProgram::create()
     _locObjectTransform = glGetUniformLocation(_programObj, "u_ObjectTransform");
 
     _locDiffuseTextureMatrix = glGetUniformLocation(_programObj, "u_DiffuseTextureMatrix");
+    _locBumpTextureMatrix = glGetUniformLocation(_programObj, "u_BumpTextureMatrix");
+    _locSpecularTextureMatrix = glGetUniformLocation(_programObj, "u_SpecularTextureMatrix");
 
     // Set up the texture uniforms. The renderer uses fixed texture units for
     // particular textures, so make sure they are correct here.
@@ -72,13 +74,13 @@ void GLSLBumpProgram::create()
 
     GLint samplerLoc;
 
-    samplerLoc = glGetUniformLocation(_programObj, "u_diffusemap");
+    samplerLoc = glGetUniformLocation(_programObj, "u_Diffusemap");
     glUniform1i(samplerLoc, 0);
 
-    samplerLoc = glGetUniformLocation(_programObj, "u_bumpmap");
+    samplerLoc = glGetUniformLocation(_programObj, "u_Bumpmap");
     glUniform1i(samplerLoc, 1);
 
-    samplerLoc = glGetUniformLocation(_programObj, "u_specularmap");
+    samplerLoc = glGetUniformLocation(_programObj, "u_Specularmap");
     glUniform1i(samplerLoc, 2);
 
     samplerLoc = glGetUniformLocation(_programObj, "u_attenuationmap_xy");
@@ -204,6 +206,16 @@ void GLSLBumpProgram::setObjectTransform(const Matrix4& transform)
 void GLSLBumpProgram::setDiffuseTextureTransform(const Matrix4& transform)
 {
     loadTextureMatrixUniform(_locDiffuseTextureMatrix, transform);
+}
+
+void GLSLBumpProgram::setBumpTextureTransform(const Matrix4& transform)
+{
+    loadTextureMatrixUniform(_locBumpTextureMatrix, transform);
+}
+
+void GLSLBumpProgram::setSpecularTextureTransform(const Matrix4& transform)
+{
+    loadTextureMatrixUniform(_locSpecularTextureMatrix, transform);
 }
 
 }

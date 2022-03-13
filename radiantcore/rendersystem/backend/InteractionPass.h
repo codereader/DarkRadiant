@@ -25,12 +25,27 @@ public:
 
     Matrix4 getDiffuseTextureTransform() const
     {
-        const auto& diffuse = state().stage0;
-        return diffuse ? diffuse->getTextureTransform() : Matrix4::getIdentity();
+        return GetTextureTransformFromStage(state().stage0);
+    }
+
+    Matrix4 getBumpTextureTransform() const
+    {
+        return GetTextureTransformFromStage(state().stage1);
+    }
+
+    Matrix4 getSpecularTextureTransform() const
+    {
+        return GetTextureTransformFromStage(state().stage2);
     }
 
     // Generates the state with all the required flags for drawing interaction passes
     static OpenGLState GenerateInteractionState(GLProgramFactory& programFactory);
+
+private:
+    inline static Matrix4 GetTextureTransformFromStage(const IShaderLayer::Ptr& stage)
+    {
+        return stage ? stage->getTextureTransform() : Matrix4::getIdentity();
+    }
 };
 
 }
