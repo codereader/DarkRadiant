@@ -501,39 +501,36 @@ private:
         glActiveTexture(textureUnit);
         glClientActiveTexture(textureUnit);
 
-        if (stage)
-        {
-            auto tex = stage->getTextureTransform();
-            glLoadMatrixd(tex);
-        }
-        else
+        if (!stage)
         {
             glLoadIdentity();
+            return;
         }
+
+        auto tex = stage->getTextureTransform();
+        glLoadMatrixd(tex);
     }
 
     // Bind the given texture to the texture unit, if it is different from the
     // current state, then set the current state to the new texture.
-    void setTextureState(GLint& current, const GLint& texture, GLenum textureUnit, GLenum textureMode)
+    void setTextureState(GLint& current, const GLint texture, GLenum textureUnit, GLenum textureMode)
     {
-        if (texture != current)
-        {
-            glActiveTexture(textureUnit);
-            glClientActiveTexture(textureUnit);
-            glBindTexture(textureMode, texture);
-            debug::assertNoGlErrors();
-            current = texture;
-        }
+        if (texture == current) return;
+
+        glActiveTexture(textureUnit);
+        glClientActiveTexture(textureUnit);
+        glBindTexture(textureMode, texture);
+        debug::assertNoGlErrors();
+        current = texture;
     }
 
-    void setTextureState(GLint& current, const GLint& texture, GLenum textureMode)
+    void setTextureState(GLint& current, const GLint texture, GLenum textureMode)
     {
-        if (texture != current)
-        {
-            glBindTexture(textureMode, texture);
-            debug::assertNoGlErrors();
-            current = texture;
-        }
+        if (texture == current) return;
+
+        glBindTexture(textureMode, texture);
+        debug::assertNoGlErrors();
+        current = texture;
     }
 
     // Apply all textures to texture units
@@ -587,11 +584,8 @@ private:
 
     void setTexture0()
     {
-        if (GLEW_VERSION_1_3)
-        {
-            glActiveTexture(GL_TEXTURE0);
-            glClientActiveTexture(GL_TEXTURE0);
-        }
+        glActiveTexture(GL_TEXTURE0);
+        glClientActiveTexture(GL_TEXTURE0);
     }
 
     // Utility function to toggle an OpenGL state flag
