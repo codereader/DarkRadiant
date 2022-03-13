@@ -1,7 +1,7 @@
 #include "SceneRenderer.h"
 
 #include "igl.h"
-#include "iglrender.h"
+#include "OpenGLState.h"
 
 namespace render
 {

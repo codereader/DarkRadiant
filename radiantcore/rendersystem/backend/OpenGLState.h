@@ -1,16 +1,16 @@
 #pragma once
 
 #include "igl.h"
-#include "imodule.h"
 #include "ishaders.h"
 #include "ishaderlayer.h"
 
-#include "math/Vector4.h"
-
-#include <vector>
+#include "render/Colour4.h"
 
 // Full declaration in iglprogram.h
 class GLProgram;
+
+namespace render
+{
 
 /**
  * \brief
@@ -241,7 +241,9 @@ public:
       m_pointsize(1),
       m_linestipple_factor(1),
       m_linestipple_pattern(0xAAAA),
-      glProgram(NULL),
+      glProgram(nullptr),
       cubeMapMode(IShaderLayer::CUBE_MAP_NONE)
     { }
 };
+
+}

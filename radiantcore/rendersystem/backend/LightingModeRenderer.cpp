@@ -5,6 +5,7 @@
 #include "OpenGLShaderPass.h"
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
+#include "OpenGLState.h"
 
 namespace render
 {

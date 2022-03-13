@@ -1,9 +1,8 @@
 #pragma once
 
-#include "iglrender.h"
-
 #include <map>
 #include <memory>
+#include "igl.h"
 
 namespace render
 {

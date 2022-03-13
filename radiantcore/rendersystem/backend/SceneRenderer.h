@@ -1,10 +1,11 @@
 #pragma once
 
-class OpenGLState;
+#include "irender.h"
 
 namespace render
 {
 
+class OpenGLState;
 class IRenderView;
 
 /**

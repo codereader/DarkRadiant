@@ -11,6 +11,7 @@
 namespace render
 {
 
+class OpenGLState;
 class OpenGLShader;
 
 /**

@@ -1010,6 +1010,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\ObjectRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLShader.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLState.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateLess.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateManager.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\SceneRenderer.h" />
