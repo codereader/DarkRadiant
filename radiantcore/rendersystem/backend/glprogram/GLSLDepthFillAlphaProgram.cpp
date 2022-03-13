@@ -61,19 +61,9 @@ void GLSLDepthFillAlphaProgram::disable()
     glDisableVertexAttribArray(GLProgramAttribute::TexCoord);
 }
 
-void GLSLDepthFillAlphaProgram::applyAlphaTest(float alphaTest)
+void GLSLDepthFillAlphaProgram::setAlphaTest(float alphaTest)
 {
     glUniform1f(_locAlphaTest, alphaTest);
-
-    debug::assertNoGlErrors();
-
-    glActiveTexture(GL_TEXTURE0);
-    glClientActiveTexture(GL_TEXTURE0);
-
-    glMatrixMode(GL_TEXTURE);
-    glLoadIdentity();
-    
-    debug::assertNoGlErrors();
 }
 
 void GLSLDepthFillAlphaProgram::setModelViewProjection(const Matrix4& modelViewProjection)

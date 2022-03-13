@@ -23,7 +23,7 @@ public:
     void setObjectTransform(const Matrix4& transform);
     void setDiffuseTextureTransform(const Matrix4& transform);
 
-    void applyAlphaTest(float alphaTest);
+    void setAlphaTest(float alphaTest);
 };
 
 }

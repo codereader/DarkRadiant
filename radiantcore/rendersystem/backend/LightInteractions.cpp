@@ -75,11 +75,17 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             {
                 continue;
             }
-            
+
+            // Evaluate the shader stages of this material
+            depthFillPass->evaluateShaderStages(renderTime, entity);
+
             // Apply our state to the current state object
-            depthFillPass->evaluateStagesAndApplyState(state, globalFlagsMask, renderTime, entity);
+            depthFillPass->applyState(state, globalFlagsMask);
 
             auto depthFillProgram = depthFillPass->getDepthFillProgram();
+
+            // Apply the evaluated alpha test value
+            depthFillProgram.setAlphaTest(state.alphaThreshold);
 
             // Set the modelview and projection matrix
             depthFillProgram.setModelViewProjection(view.GetViewProjection());

@@ -22,11 +22,6 @@ public:
     {
         return *static_cast<GLSLDepthFillAlphaProgram*>(_glState.glProgram);
     }
-
-#if 0
-protected:
-    virtual void activateShaderProgram(OpenGLState& current) override;
-#endif
 };
 
 }
