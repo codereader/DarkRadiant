@@ -163,13 +163,17 @@ public:
     // Whether this shader pass is suitable for the give view type
     bool isApplicableTo(RenderViewType renderViewType) const;
 
+    // Evaluates all stages and invokes applyState
+    void evaluateStagesAndApplyState(OpenGLState& current, unsigned int globalStateMask,
+        std::size_t time, const IRenderEntity* entity);
+
     // Apply own state to the "current" state object passed in as a reference,
     // in combination with the global state mask, as well as setting
     // relevant GL parameters directly.
-    void applyState(OpenGLState& current,
-        unsigned int globalStateMask,
-        std::size_t time,
-        const IRenderEntity* entity);
+    void applyState(OpenGLState& current, unsigned int globalStateMask);
+
+    // Evaluates the time- and entity-dependent expressions in the shader stages
+    void evaluateShaderStages(std::size_t time, const IRenderEntity* entity);
 
     // Set up lighting calculation
     static void SetUpLightingCalculation(OpenGLState& current,

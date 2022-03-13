@@ -69,16 +69,15 @@ inline void setState(unsigned int state,
 
 inline void evaluateStage(const IShaderLayer::Ptr& stage, std::size_t time, const IRenderEntity* entity)
 {
-    if (stage)
+    if (!stage) return;
+
+    if (entity)
     {
-        if (entity)
-        {
-            stage->evaluateExpressions(time, *entity);
-        }
-        else
-        {
-            stage->evaluateExpressions(time);
-        }
+        stage->evaluateExpressions(time, *entity);
+    }
+    else
+    {
+        stage->evaluateExpressions(time);
     }
 }
 
@@ -162,7 +161,7 @@ void OpenGLShaderPass::setupTextureMatrix(GLenum textureUnit, const IShaderLayer
     }
     else
     {
-        glLoadMatrixd(Matrix4::getIdentity());
+        glLoadIdentity();
     }
 }
 
@@ -216,32 +215,34 @@ void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
     }
 }
 
-// Apply own state to current state object
-void OpenGLShaderPass::applyState(OpenGLState& current,
-                                  unsigned int globalStateMask,
-                                  std::size_t time,
-                                  const IRenderEntity* entity)
+void OpenGLShaderPass::evaluateShaderStages(std::size_t time, const IRenderEntity* entity)
 {
-    // Evaluate any shader expressions
-    if (_glState.stage0)
+    // Evaluate shader expressions in all stages
+    evaluateStage(_glState.stage0, time, entity);
+    evaluateStage(_glState.stage1, time, entity);
+    evaluateStage(_glState.stage2, time, entity);
+    evaluateStage(_glState.stage3, time, entity);
+    evaluateStage(_glState.stage4, time, entity);
+}
+
+void OpenGLShaderPass::evaluateStagesAndApplyState(OpenGLState& current,
+    unsigned int globalStateMask, std::size_t time, const IRenderEntity* entity)
+{
+    evaluateShaderStages(time, entity);
+    applyState(current, globalStateMask);
+}
+
+void OpenGLShaderPass::applyState(OpenGLState& current, unsigned int globalStateMask)
+{
+    // The alpha test value might change over time
+    if (_glState.stage0 && _glState.stage0->getAlphaTest() > 0)
     {
-        evaluateStage(_glState.stage0, time, entity);
-
-        // The alpha test value might change over time
-        if (_glState.stage0->getAlphaTest() > 0)
-        {
-            _glState.setRenderFlag(RENDER_ALPHATEST);
-        }
-        else
-        {
-            _glState.clearRenderFlag(RENDER_ALPHATEST);
-        }
+        _glState.setRenderFlag(RENDER_ALPHATEST);
     }
-
-    if (_glState.stage1) evaluateStage(_glState.stage1, time, entity);
-    if (_glState.stage2) evaluateStage(_glState.stage2, time, entity);
-    if (_glState.stage3) evaluateStage(_glState.stage3, time, entity);
-    if (_glState.stage4) evaluateStage(_glState.stage4, time, entity);
+    else
+    {
+        _glState.clearRenderFlag(RENDER_ALPHATEST);
+    }
 
     if (_glState.testRenderFlag(RENDER_OVERRIDE))
     {
@@ -524,7 +525,7 @@ void OpenGLShaderPass::submitSurfaces(OpenGLState& current,
                               std::size_t time)
 {
     // Apply our state to the current state object
-    applyState(current, flagsMask, time, nullptr);
+    evaluateStagesAndApplyState(current, flagsMask, time, nullptr);
 
     _owner.drawSurfaces(view);
 }
@@ -532,7 +533,7 @@ void OpenGLShaderPass::submitSurfaces(OpenGLState& current,
 void OpenGLShaderPass::submitRenderables(OpenGLState& current, unsigned int flagsMask, std::size_t time)
 {
     // Apply our state to the current state object
-    applyState(current, flagsMask, time, nullptr);
+    evaluateStagesAndApplyState(current, flagsMask, time, nullptr);
 
     drawRenderables(current);
 }
