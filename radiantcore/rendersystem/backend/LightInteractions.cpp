@@ -119,7 +119,8 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
     }
 }
 
-void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t renderTime)
+void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& program, 
+    RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t renderTime)
 {
     auto worldToLight = _light.getLightTextureTransformation();
 

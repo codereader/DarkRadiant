@@ -7,6 +7,7 @@ namespace render
 {
 
 class OpenGLRenderSystem;
+class GLProgramFactory;
 
 /**
  * Lighting Interaction pass (Diffuse/Bump/Specular).
@@ -21,6 +22,9 @@ public:
     {
         return *static_cast<GLSLBumpProgram*>(_glState.glProgram);
     }
+
+    // Generates the state with all the required flags for drawing interaction passes
+    static OpenGLState GenerateInteractionState(GLProgramFactory& programFactory);
 };
 
 }

@@ -7,6 +7,7 @@
 #include "ObjectRenderer.h"
 #include "OpenGLState.h"
 #include "glprogram/GLSLDepthFillAlphaProgram.h"
+#include "glprogram/GLSLBumpProgram.h"
 
 namespace render
 {
@@ -72,9 +73,17 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     }
 
     // Draw the surfaces per light and material
+    auto interactionState = InteractionPass::GenerateInteractionState(_programFactory);
+
+    // Prepare the current state for drawing
+    interactionState.applyTo(current, globalFlagsMask);
+
+    auto interactionProgram = dynamic_cast<GLSLBumpProgram*>(current.glProgram);
+    assert(interactionProgram);
+
     for (auto& interactionList : interactionLists)
     {
-        interactionList.render(current, globalFlagsMask, view, time);
+        interactionList.drawInteractions(current, *interactionProgram, globalFlagsMask, view, time);
         result->drawCalls += interactionList.getDrawCalls();
     }
 

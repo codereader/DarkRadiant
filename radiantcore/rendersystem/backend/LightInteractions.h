@@ -14,6 +14,7 @@ namespace render
 class OpenGLState;
 class OpenGLShader;
 class GLSLDepthFillAlphaProgram;
+class GLSLBumpProgram;
 
 /**
  * Defines interactions between a light and one or more entity renderables
@@ -74,7 +75,7 @@ public:
     void fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
         const IRenderView& view, std::size_t renderTime);
 
-    void render(OpenGLState& state, RenderStateFlags globalFlagsMask, 
+    void drawInteractions(OpenGLState& state, GLSLBumpProgram& program, RenderStateFlags globalFlagsMask,
         const IRenderView& view, std::size_t renderTime);
 };
 
