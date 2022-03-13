@@ -33,7 +33,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _geometryStore(_syncObjectProvider, _bufferObjectProvider),
     _orthoRenderer(new FullBrightRenderer(RenderViewType::OrthoView, _state_sorted, _geometryStore)),
     _editorPreviewRenderer(new FullBrightRenderer(RenderViewType::Camera, _state_sorted, _geometryStore)),
-    _lightingModeRenderer(new LightingModeRenderer(_geometryStore, _lights, _entities)),
+    _lightingModeRenderer(new LightingModeRenderer(*_glProgramFactory, _geometryStore, _lights, _entities)),
     m_traverseRenderablesMutex(false)
 {
     bool shouldRealise = false;

@@ -7,31 +7,50 @@
 namespace render
 {
 
+namespace
+{
+
+inline void setDepthFillStateFlags(OpenGLState& state, GLProgramFactory& programFactory)
+{
+    // Mask colour => we only write to the depth buffer
+    state.setRenderFlag(RENDER_MASKCOLOUR);
+
+    state.setRenderFlag(RENDER_FILL);
+    state.setRenderFlag(RENDER_CULLFACE);
+    state.setRenderFlag(RENDER_DEPTHTEST);
+    state.setRenderFlag(RENDER_DEPTHWRITE);
+    state.setRenderFlag(RENDER_PROGRAM);
+
+    // Our shader will discard any fragments not passing the alphatest (if active)
+    state.setRenderFlag(RENDER_ALPHATEST);
+
+    // We need texture coords and the full vertex attribute stack
+    state.setRenderFlag(RENDER_TEXTURE_2D);
+    state.setRenderFlag(RENDER_BUMP);
+
+    // ZFILL will make this pass pretty much top priority
+    state.setSortPosition(OpenGLState::SORT_ZFILL);
+
+    // Load the GLSL program tailored for this pass
+    state.glProgram = programFactory.getBuiltInProgram(ShaderProgram::DepthFillAlpha);
+    assert(dynamic_cast<GLSLDepthFillAlphaProgram*>(state.glProgram));
+}
+
+}
+
 DepthFillPass::DepthFillPass(OpenGLShader& owner, OpenGLRenderSystem& renderSystem) :
     OpenGLShaderPass(owner)
 {
-    // Mask colour => we only write to the depth buffer
-    _glState.setRenderFlag(RENDER_MASKCOLOUR);
+    setDepthFillStateFlags(_glState, renderSystem.getGLProgramFactory());
+}
 
-    _glState.setRenderFlag(RENDER_FILL);
-    _glState.setRenderFlag(RENDER_CULLFACE);
-    _glState.setRenderFlag(RENDER_DEPTHTEST);
-    _glState.setRenderFlag(RENDER_DEPTHWRITE);
-    _glState.setRenderFlag(RENDER_PROGRAM);
-    
-    // Our shader will discard any fragments not passing the alphatest (if active)
-    _glState.setRenderFlag(RENDER_ALPHATEST);
-    
-    // We need texture coords and the full vertex attribute stack
-    _glState.setRenderFlag(RENDER_TEXTURE_2D);
-    _glState.setRenderFlag(RENDER_BUMP);
+OpenGLState DepthFillPass::GenerateDepthFillState(GLProgramFactory& programFactory)
+{
+    OpenGLState state;
 
-    // ZFILL will make this pass pretty much top priority
-    _glState.setSortPosition(OpenGLState::SORT_ZFILL);
+    setDepthFillStateFlags(state, programFactory);
 
-    // Load the GLSL program tailored for this pass
-    _glState.glProgram = renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::DepthFillAlpha);
-    assert(dynamic_cast<GLSLDepthFillAlphaProgram*>(_glState.glProgram));
+    return state;
 }
 
 }

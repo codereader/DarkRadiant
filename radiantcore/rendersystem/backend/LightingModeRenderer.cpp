@@ -6,6 +6,7 @@
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
 #include "OpenGLState.h"
+#include "glprogram/GLSLDepthFillAlphaProgram.h"
 
 namespace render
 {
@@ -57,9 +58,17 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     ObjectRenderer::InitAttributePointers();
 
     // Run the depth fill pass
+    auto depthFillState = DepthFillPass::GenerateDepthFillState(_programFactory);
+
+    // Prepare the current state for depth filling
+    depthFillState.applyTo(current, globalFlagsMask);
+
+    auto depthFillProgram = dynamic_cast<GLSLDepthFillAlphaProgram*>(current.glProgram);
+    assert(depthFillProgram);
+
     for (auto& interactionList : interactionLists)
     {
-        interactionList.fillDepthBuffer(current, globalFlagsMask, view, time);
+        interactionList.fillDepthBuffer(current, *depthFillProgram, view, time);
     }
 
     // Draw the surfaces per light and material

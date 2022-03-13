@@ -2,6 +2,7 @@
 
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
+#include "glprogram/GLSLDepthFillAlphaProgram.h"
 
 namespace render
 {
@@ -56,11 +57,13 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
     }
 }
 
-void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags globalFlagsMask, 
-    const IRenderView& view, std::size_t renderTime)
+void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, const IRenderView& view, std::size_t renderTime)
 {
     std::vector<IGeometryStore::Slot> untransformedObjects;
     untransformedObjects.reserve(10000);
+
+    // Set the modelview and projection matrix
+    program.setModelViewProjection(view.GetViewProjection());
 
     for (const auto& [entity, objectsByShader] : _objectsByEntity)
     {
@@ -79,28 +82,14 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             // Evaluate the shader stages of this material
             depthFillPass->evaluateShaderStages(renderTime, entity);
 
-            // Apply our state to the current state object
-            depthFillPass->applyState(state, globalFlagsMask);
+            // Apply the alpha test value, it might be affected by time and entity parms
+            program.setAlphaTest(depthFillPass->getAlphaTestValue());
 
-            auto depthFillProgram = depthFillPass->getDepthFillProgram();
+            // If there's a diffuse stage, apply the correct texture
+            OpenGLState::SetTextureState(state.texture0, depthFillPass->state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
 
-            // Apply the evaluated alpha test value
-            depthFillProgram.setAlphaTest(state.alphaThreshold);
-
-            // Set the modelview and projection matrix
-            depthFillProgram.setModelViewProjection(view.GetViewProjection());
-
-            // Set the stage texture transformation matrix to the GLSL uniform
-            // Since the texture matrix just needs 6 active components, we use two vec3
-            if (depthFillPass->state().stage0)
-            {
-                auto textureMatrix = depthFillPass->state().stage0->getTextureTransform();
-                depthFillProgram.setDiffuseTextureTransform(textureMatrix);
-            }
-            else
-            {
-                depthFillProgram.setDiffuseTextureTransform(Matrix4::getIdentity());
-            }
+            // Set evaluated stage texture transformation matrix to the GLSL uniform
+            program.setDiffuseTextureTransform(depthFillPass->getDiffuseTextureTransform());
 
             for (const auto& object : objects)
             {
@@ -111,7 +100,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
                     continue;
                 }
 
-                depthFillProgram.setObjectTransform(object.get().getObjectTransform());
+                program.setObjectTransform(object.get().getObjectTransform());
 
                 ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
                 ++_drawCalls;
@@ -119,7 +108,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
 
             if (!untransformedObjects.empty())
             {
-                depthFillProgram.setObjectTransform(Matrix4::getIdentity());
+                program.setObjectTransform(Matrix4::getIdentity());
 
                 ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
                 ++_drawCalls;

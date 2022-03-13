@@ -13,6 +13,7 @@ namespace render
 
 class OpenGLState;
 class OpenGLShader;
+class GLSLDepthFillAlphaProgram;
 
 /**
  * Defines interactions between a light and one or more entity renderables
@@ -70,7 +71,7 @@ public:
 
     void collectSurfaces(const std::set<IRenderEntityPtr>& entities);
 
-    void fillDepthBuffer(OpenGLState& current, RenderStateFlags globalFlagsMask, 
+    void fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
         const IRenderView& view, std::size_t renderTime);
 
     void render(OpenGLState& state, RenderStateFlags globalFlagsMask, 

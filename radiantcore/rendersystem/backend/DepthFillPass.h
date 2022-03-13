@@ -7,6 +7,7 @@ namespace render
 {
 
 class OpenGLRenderSystem;
+class GLProgramFactory;
 
 /**
  * Special render pass filling the depth buffer. 
@@ -18,10 +19,21 @@ class DepthFillPass :
 public:
     DepthFillPass(OpenGLShader& owner, OpenGLRenderSystem& renderSystem);
 
-    GLSLDepthFillAlphaProgram& getDepthFillProgram()
+    // Returns the alpha test value of the diffuse stage, or -1.0f if none defined
+    float getAlphaTestValue() const
     {
-        return *static_cast<GLSLDepthFillAlphaProgram*>(_glState.glProgram);
+        const auto& diffuse = state().stage0;
+        return diffuse && diffuse->hasAlphaTest() ? diffuse->getAlphaTest() : -1.0f;
     }
+
+    Matrix4 getDiffuseTextureTransform() const
+    {
+        const auto& diffuse = state().stage0;
+        return diffuse ? diffuse->getTextureTransform() : Matrix4::getIdentity();
+    }
+
+    // Generates the state with all the required flags for depth filling
+    static OpenGLState GenerateDepthFillState(GLProgramFactory& programFactory);
 };
 
 }
