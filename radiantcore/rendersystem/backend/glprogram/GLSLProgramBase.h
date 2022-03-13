@@ -25,6 +25,7 @@ public:
 
 protected:
     void loadMatrixUniform(GLuint location, const Matrix4& matrix);
+    void loadTextureMatrixUniform(GLuint location, const Matrix4& matrix);
 };
 
 }

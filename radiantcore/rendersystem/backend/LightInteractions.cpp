@@ -79,6 +79,20 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             // Apply our state to the current state object
             depthFillPass->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
 
+            auto depthFillProgram = depthFillPass->getDepthFillProgram();
+
+            // Set the stage texture transformation matrix to the GLSL uniform
+            // Since the texture matrix just needs 6 active components, we use two vec3
+            if (depthFillPass->state().stage0)
+            {
+                auto textureMatrix = depthFillPass->state().stage0->getTextureTransform();
+                depthFillProgram.setDiffuseTextureTransform(textureMatrix);
+            }
+            else
+            {
+                depthFillProgram.setDiffuseTextureTransform(Matrix4::getIdentity());
+            }
+
             for (const auto& object : objects)
             {
                 // We submit all objects with an identity matrix in a single multi draw call
@@ -88,7 +102,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
                     continue;
                 }
 
-                depthFillPass->getDepthFillProgram().setObjectTransform(object.get().getObjectTransform());
+                depthFillProgram.setObjectTransform(object.get().getObjectTransform());
 
                 ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
                 ++_drawCalls;
@@ -96,7 +110,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
 
             if (!untransformedObjects.empty())
             {
-                depthFillPass->getDepthFillProgram().setObjectTransform(Matrix4::getIdentity());
+                depthFillProgram.setObjectTransform(Matrix4::getIdentity());
 
                 ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
                 ++_drawCalls;

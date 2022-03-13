@@ -31,13 +31,14 @@ void GLSLDepthFillAlphaProgram::create()
 
     debug::assertNoGlErrors();
 
-    _locAlphaTest = glGetUniformLocation(_programObj, "u_alphaTest");
-    _locObjectTransform = glGetUniformLocation(_programObj, "u_objectTransform");
+    _locAlphaTest = glGetUniformLocation(_programObj, "u_AlphaTest");
+    _locObjectTransform = glGetUniformLocation(_programObj, "u_ObjectTransform");
+    _locDiffuseTextureMatrix = glGetUniformLocation(_programObj, "u_DiffuseTextureMatrix");
 
     glUseProgram(_programObj);
     debug::assertNoGlErrors();
 
-    GLint samplerLoc = glGetUniformLocation(_programObj, "u_diffuse");
+    auto samplerLoc = glGetUniformLocation(_programObj, "u_Diffuse");
     glUniform1i(samplerLoc, 0);
 
     debug::assertNoGlErrors();
@@ -77,6 +78,11 @@ void GLSLDepthFillAlphaProgram::applyAlphaTest(float alphaTest)
 void GLSLDepthFillAlphaProgram::setObjectTransform(const Matrix4& transform)
 {
     loadMatrixUniform(_locObjectTransform, transform);
+}
+
+void GLSLDepthFillAlphaProgram::setDiffuseTextureTransform(const Matrix4& transform)
+{
+    loadTextureMatrixUniform(_locDiffuseTextureMatrix, transform);
 }
 
 }

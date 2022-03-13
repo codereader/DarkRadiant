@@ -11,6 +11,7 @@ class GLSLDepthFillAlphaProgram :
 private:
     GLint _locAlphaTest;
     GLint _locObjectTransform;
+    GLint _locDiffuseTextureMatrix;
     
 public:
     void create() override;
@@ -18,6 +19,7 @@ public:
     void disable() override;
 
     void setObjectTransform(const Matrix4& transform);
+    void setDiffuseTextureTransform(const Matrix4& transform);
 
     void applyAlphaTest(float alphaTest);
 };
