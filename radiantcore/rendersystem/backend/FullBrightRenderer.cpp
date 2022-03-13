@@ -65,7 +65,7 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
 
         if (pass->getShader().isVisible() && pass->isApplicableTo(_renderViewType))
         {
-            pass->submitSurfaces(current, globalstate, view.getViewer(), view, time);
+            pass->submitSurfaces(current, globalstate, view, time);
         }
     }
 
@@ -81,7 +81,7 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
 
         if (pass->getShader().isVisible() && pass->isApplicableTo(_renderViewType))
         {
-            pass->submitRenderables(current, globalstate, view.getViewer(), view, time);
+            pass->submitRenderables(current, globalstate, time);
         }
 
         pass->clearRenderables();

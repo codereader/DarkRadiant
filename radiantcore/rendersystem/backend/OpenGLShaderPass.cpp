@@ -219,7 +219,6 @@ void OpenGLShaderPass::applyAllTextures(OpenGLState& current,
 // Apply own state to current state object
 void OpenGLShaderPass::applyState(OpenGLState& current,
                                   unsigned int globalStateMask,
-                                  const Vector3& viewer,
                                   std::size_t time,
                                   const IRenderEntity* entity)
 {
@@ -521,24 +520,19 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
 // Render the bucket contents
 void OpenGLShaderPass::submitSurfaces(OpenGLState& current,
                               unsigned int flagsMask,
-                              const Vector3& viewer,
                               const VolumeTest& view,
                               std::size_t time)
 {
     // Apply our state to the current state object
-    applyState(current, flagsMask, viewer, time, nullptr);
+    applyState(current, flagsMask, time, nullptr);
 
     _owner.drawSurfaces(view);
 }
 
-void OpenGLShaderPass::submitRenderables(OpenGLState& current,
-    unsigned int flagsMask,
-    const Vector3& viewer,
-    const VolumeTest& view,
-    std::size_t time)
+void OpenGLShaderPass::submitRenderables(OpenGLState& current, unsigned int flagsMask, std::size_t time)
 {
     // Apply our state to the current state object
-    applyState(current, flagsMask, viewer, time, nullptr);
+    applyState(current, flagsMask, time, nullptr);
 
     drawRenderables(current);
 }

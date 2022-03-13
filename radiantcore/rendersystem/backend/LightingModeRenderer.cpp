@@ -106,7 +106,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
                 }
 
                 // Apply our state to the current state object
-                pass.applyState(current, globalFlagsMask, view.getViewer(), time, entity.get());
+                pass.applyState(current, globalFlagsMask, time, entity.get());
 
                 if (current.glProgram)
                 {

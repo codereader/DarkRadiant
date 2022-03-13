@@ -136,14 +136,9 @@ public:
      *
      * \param flagsMask
      * Mask of allowed render flags.
-     *
-     * \param viewer
-     * Viewer location in world space.
-     *
      */
 	void submitSurfaces(OpenGLState& current,
                 unsigned int flagsMask,
-                const Vector3& viewer,
                 const VolumeTest& view,
                 std::size_t time);
 
@@ -152,11 +147,7 @@ public:
      * Render the renderables attached to this shader pass.
      * Their geometry might not be stored in the central buffer objects.
      */
-    void submitRenderables(OpenGLState& current,
-        unsigned int flagsMask,
-        const Vector3& viewer,
-        const VolumeTest& view,
-        std::size_t time);
+    void submitRenderables(OpenGLState& current, unsigned int flagsMask, std::size_t time);
 
 	/**
 	 * Returns true if this shaderpass doesn't have anything to render.
@@ -177,7 +168,6 @@ public:
     // relevant GL parameters directly.
     void applyState(OpenGLState& current,
         unsigned int globalStateMask,
-        const Vector3& viewer,
         std::size_t time,
         const IRenderEntity* entity);
 

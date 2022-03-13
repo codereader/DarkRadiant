@@ -77,7 +77,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
             }
             
             // Apply our state to the current state object
-            depthFillPass->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
+            depthFillPass->applyState(state, globalFlagsMask, renderTime, entity);
 
             auto depthFillProgram = depthFillPass->getDepthFillProgram();
 
@@ -140,7 +140,7 @@ void LightInteractions::render(OpenGLState& state, RenderStateFlags globalFlagsM
             if (pass && pass->stateIsActive())
             {
                 // Apply our state to the current state object
-                pass->applyState(state, globalFlagsMask, view.getViewer(), renderTime, entity);
+                pass->applyState(state, globalFlagsMask, renderTime, entity);
 
                 for (const auto& object : objects)
                 {
