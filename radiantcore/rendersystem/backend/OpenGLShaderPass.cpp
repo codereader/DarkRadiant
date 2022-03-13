@@ -80,23 +80,13 @@ void OpenGLShaderPass::addRenderable(const OpenGLRenderable& renderable,
     _transformedRenderables.emplace_back(renderable, modelview);
 }
 
-// Render the bucket contents
-void OpenGLShaderPass::submitSurfaces(OpenGLState& current,
-                              unsigned int flagsMask,
-                              const VolumeTest& view,
-                              std::size_t time)
+void OpenGLShaderPass::submitSurfaces(const VolumeTest& view)
 {
-    // Apply our state to the current state object
-    evaluateStagesAndApplyState(current, flagsMask, time, nullptr);
-
     _owner.drawSurfaces(view);
 }
 
-void OpenGLShaderPass::submitRenderables(OpenGLState& current, unsigned int flagsMask, std::size_t time)
+void OpenGLShaderPass::submitRenderables(OpenGLState& current)
 {
-    // Apply our state to the current state object
-    evaluateStagesAndApplyState(current, flagsMask, time, nullptr);
-
     drawRenderables(current);
 }
 

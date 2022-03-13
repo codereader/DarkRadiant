@@ -101,23 +101,17 @@ public:
 	 * \brief
      * Render the renderables attached to this shader pass.
      *
-     * \param current
-     * The current OpenGL state variables.
-     *
-     * \param flagsMask
-     * Mask of allowed render flags.
+     * \param view
+     * The render view used to cull surfaces
      */
-	void submitSurfaces(OpenGLState& current,
-                unsigned int flagsMask,
-                const VolumeTest& view,
-                std::size_t time);
+	void submitSurfaces(const VolumeTest& view);
 
     /**
      * \brief
      * Render the renderables attached to this shader pass.
      * Their geometry might not be stored in the central buffer objects.
      */
-    void submitRenderables(OpenGLState& current, unsigned int flagsMask, std::size_t time);
+    void submitRenderables(OpenGLState& current);
 
 	/**
 	 * Returns true if this shaderpass doesn't have anything to render.
