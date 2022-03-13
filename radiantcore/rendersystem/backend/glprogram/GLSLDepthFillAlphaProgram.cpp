@@ -33,6 +33,7 @@ void GLSLDepthFillAlphaProgram::create()
 
     _locAlphaTest = glGetUniformLocation(_programObj, "u_AlphaTest");
     _locObjectTransform = glGetUniformLocation(_programObj, "u_ObjectTransform");
+    _locModelViewProjection = glGetUniformLocation(_programObj, "u_ModelViewProjection");
     _locDiffuseTextureMatrix = glGetUniformLocation(_programObj, "u_DiffuseTextureMatrix");
 
     glUseProgram(_programObj);
@@ -73,6 +74,11 @@ void GLSLDepthFillAlphaProgram::applyAlphaTest(float alphaTest)
     glLoadIdentity();
     
     debug::assertNoGlErrors();
+}
+
+void GLSLDepthFillAlphaProgram::setModelViewProjection(const Matrix4& modelViewProjection)
+{
+    loadMatrixUniform(_locModelViewProjection, modelViewProjection);
 }
 
 void GLSLDepthFillAlphaProgram::setObjectTransform(const Matrix4& transform)

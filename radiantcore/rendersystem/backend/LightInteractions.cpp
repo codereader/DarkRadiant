@@ -81,6 +81,9 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, RenderStateFlags glo
 
             auto depthFillProgram = depthFillPass->getDepthFillProgram();
 
+            // Set the modelview and projection matrix
+            depthFillProgram.setModelViewProjection(view.GetViewProjection());
+
             // Set the stage texture transformation matrix to the GLSL uniform
             // Since the texture matrix just needs 6 active components, we use two vec3
             if (depthFillPass->state().stage0)
