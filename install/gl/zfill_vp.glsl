@@ -20,7 +20,4 @@ void main()
     // Apply the stage texture transform to the incoming tex coord, component wise
     var_TexDiffuse.x = dot(u_DiffuseTextureMatrix[0], attr_TexCoord);
     var_TexDiffuse.y = dot(u_DiffuseTextureMatrix[1], attr_TexCoord);
-
-    // assign color
-    gl_FrontColor = gl_Color;
 }
