@@ -20,7 +20,6 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     setupState(current);
     setupViewMatrices(view);
 
-    std::size_t visibleLights = 0;
     std::vector<LightInteractions> interactionLists;
     interactionLists.reserve(_lights.size());
 
@@ -70,10 +69,22 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
         result->drawCalls += interactionList.getDrawCalls();
     }
 
+    result->drawCalls += drawNonInteractionPasses(current, globalFlagsMask, view, time);
+
+    cleanupState();
+
+    return result;
+}
+
+std::size_t LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, RenderStateFlags globalFlagsMask, 
+    const IRenderView& view, std::size_t time)
+{
+    std::size_t drawCalls = 0;
+
     glUseProgram(0);
     glActiveTexture(GL_TEXTURE0);
     glClientActiveTexture(GL_TEXTURE0);
-    
+
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -115,14 +126,12 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
                 }
 
                 ObjectRenderer::SubmitObject(*object, _geometryStore);
-                result->drawCalls++;
+                drawCalls++;
             });
         });
     }
 
-    cleanupState();
-
-    return result;
+    return drawCalls;
 }
 
 }

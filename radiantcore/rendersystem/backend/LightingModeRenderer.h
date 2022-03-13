@@ -30,6 +30,10 @@ public:
     {}
 
     IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;
+
+private:
+    std::size_t drawNonInteractionPasses(OpenGLState& current, RenderStateFlags globalFlagsMask, 
+        const IRenderView& view, std::size_t time);
 };
 
 }
