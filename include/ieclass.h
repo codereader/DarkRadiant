@@ -117,7 +117,7 @@ typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
  *
  * \ingroup eclass
  */
-class IEntityClass : 
+class IEntityClass :
     public ModResource
 {
 public:
@@ -174,12 +174,21 @@ public:
      * A reference to the named EntityClassAttribute. If the named attribute is
      * not found, an empty EntityClassAttribute is returned.
      */
-    virtual EntityClassAttribute& getAttribute(const std::string& name, 
+    virtual EntityClassAttribute& getAttribute(const std::string& name,
         bool includeInherited = true) = 0;
 
     /// Get a const EntityClassAttribute reference by name
     virtual const EntityClassAttribute& getAttribute(const std::string& name,
                  bool includeInherited = true) const = 0;
+
+    /**
+     * @brief Get the value of a specified attribute.
+     *
+     * @return std::string containing the attribute value, or an empty string if the attribute was
+     * not found.
+     */
+    virtual std::string getAttributeValue(const std::string& name,
+                                          bool includeInherited = true) const = 0;
 
     // Returns the attribute type string for the given name.
     // This method will walk up the inheritance hierarchy until it encounters a type definition.

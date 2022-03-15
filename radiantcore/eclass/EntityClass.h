@@ -31,7 +31,6 @@ public:
     using Ptr = std::shared_ptr<EntityClass>;
 
 private:
-    typedef std::shared_ptr<std::string> StringPtr;
 
     // The name of this entity class
     std::string _name;
@@ -118,6 +117,7 @@ public:
     void resetColour();
     EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) override;
     const EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) const override;
+    std::string getAttributeValue(const std::string&, bool includeInherited = true) const override;
     const std::string& getAttributeType(const std::string& name) const override;
     const std::string& getAttributeDescription(const std::string& name) const override;
     void forEachAttribute(AttributeVisitor, bool) const override;

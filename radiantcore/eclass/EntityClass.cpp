@@ -54,8 +54,8 @@ bool EntityClass::isFixedSize() const
     else {
         // Check for the existence of editor_mins/maxs attributes, and that
         // they do not contain only a question mark
-        return (getAttribute("editor_mins").getValue().size() > 1
-                && getAttribute("editor_maxs").getValue().size() > 1);
+        return (getAttributeValue("editor_mins").size() > 1
+                && getAttributeValue("editor_maxs").size() > 1);
     }
 }
 
@@ -64,8 +64,8 @@ AABB EntityClass::getBounds() const
     if (isFixedSize())
     {
         return AABB::createFromMinMax(
-            string::convert<Vector3>(getAttribute("editor_mins").getValue()),
-            string::convert<Vector3>(getAttribute("editor_maxs").getValue())
+            string::convert<Vector3>(getAttributeValue("editor_mins")),
+            string::convert<Vector3>(getAttributeValue("editor_maxs"))
         );
     }
     else
@@ -225,7 +225,7 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
     // Lookup the parent name and return if it is not set. Also return if the
     // parent name is the same as our own classname, to avoid infinite
     // recursion.
-    std::string parentName = getAttribute("inherit").getValue();
+    std::string parentName = getAttributeValue("inherit");
     if (parentName.empty() || parentName == _name)
     {
         resetColour();
@@ -252,19 +252,19 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
     // Set the resolved flag
     _inheritanceResolved = true;
 
-    if (!getAttribute("model").getValue().empty())
+    if (!getAttributeValue("model").empty())
     {
         // We have a model path (probably an inherited one)
-        setModelPath(getAttribute("model").getValue());
+        setModelPath(getAttributeValue("model"));
     }
 
-    if (getAttribute("editor_light").getValue() == "1" || getAttribute("spawnclass").getValue() == "idLight")
+    if (getAttributeValue("editor_light") == "1" || getAttributeValue("spawnclass") == "idLight")
     {
         // We have a light
         setIsLight(true);
     }
 
-    if (getAttribute("editor_transparent").getValue() == "1")
+    if (getAttributeValue("editor_transparent") == "1")
     {
         _colourTransparent = true;
     }
@@ -325,6 +325,11 @@ const EntityClassAttribute& EntityClass::getAttribute(const std::string& name, b
     // Otherwise delegate to the parent (which will recurse until an attribute
     // is found or a null parent ends the process)
     return _parent->getAttribute(name);
+}
+
+std::string EntityClass::getAttributeValue(const std::string& name, bool includeInherited) const
+{
+    return getAttribute(name, includeInherited).getValue();
 }
 
 const std::string& EntityClass::getAttributeType(const std::string& name) const

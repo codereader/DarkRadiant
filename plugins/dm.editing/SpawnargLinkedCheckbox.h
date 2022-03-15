@@ -98,7 +98,7 @@ protected:
 			}
 
 			// Check if the new value conincides with an inherited one
-			if (_entity->getEntityClass()->getAttribute(_propertyName).getValue() == newValue)
+			if (_entity->getEntityClass()->getAttributeValue(_propertyName) == newValue)
 			{
 				// in which case the property just gets removed from the entity
 				newValue = "";

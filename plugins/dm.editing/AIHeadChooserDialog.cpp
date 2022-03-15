@@ -125,8 +125,8 @@ void AIHeadChooserDialog::handleSelectionChanged()
 
         if (ecls)
         {
-            _preview->setModel(ecls->getAttribute("model").getValue());
-            _preview->setSkin(ecls->getAttribute("skin").getValue());
+            _preview->setModel(ecls->getAttributeValue("model"));
+            _preview->setSkin(ecls->getAttributeValue("skin"));
 
             // Update the usage panel
             _description->SetValue(eclass::getUsage(*ecls));
@@ -178,7 +178,7 @@ public:
 
     void visit(const IEntityClassPtr& eclass)
     {
-        if (eclass->getAttribute("editor_head").getValue() == "1")
+        if (eclass->getAttributeValue("editor_head") == "1")
         {
             _list.insert(eclass->getName());
         }

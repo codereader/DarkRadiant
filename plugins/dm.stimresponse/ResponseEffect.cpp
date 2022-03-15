@@ -138,7 +138,7 @@ void ResponseEffect::setArgument(unsigned int index, const std::string& value, b
 
 std::string ResponseEffect::getCaption() const {
 	return (_eclass != NULL)
-		   ? _eclass->getAttribute("editor_caption").getValue()
+		   ? _eclass->getAttributeValue("editor_caption")
 		   : "";
 }
 
@@ -194,7 +194,7 @@ std::string ResponseEffect::getArgumentStr()
 {
 	if (_eclass == NULL) return _("Error: eclass pointer invalid.");
 
-	std::string returnValue = _eclass->getAttribute("editor_argString").getValue();
+	std::string returnValue = _eclass->getAttributeValue("editor_argString");
 	returnValue = removeMarkup(returnValue);
 
 	for (ArgumentList::iterator i = _args.begin(); i != _args.end(); i++) {

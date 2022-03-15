@@ -199,7 +199,7 @@ public:
 
 	void visit(const IEntityClassPtr& eclass)
 	{
-		if (eclass->getAttribute("editor_vocal_set").getValue() == "1")
+		if (eclass->getAttributeValue("editor_vocal_set") == "1")
 		{
 			_list.insert(eclass->getName());
 		}

@@ -95,7 +95,7 @@ public:
     // EntityClassVisitor implementation
     void visit(const IEntityClassPtr& eclass)
     {
-        std::string folderPath = eclass->getAttribute(_folderKey).getValue();
+        std::string folderPath = eclass->getAttributeValue(_folderKey);
 
         if (!folderPath.empty())
         {
@@ -383,8 +383,8 @@ void EntityClassChooser::updateSelection()
 
             if (eclass)
             {
-                _modelPreview->setModel(eclass->getAttribute("model").getValue());
-                _modelPreview->setSkin(eclass->getAttribute("skin").getValue());
+                _modelPreview->setModel(eclass->getAttributeValue("model"));
+                _modelPreview->setSkin(eclass->getAttributeValue("skin"));
                 defFileName->SetLabel(eclass->getDefFileName());
                 return; // success
             }
