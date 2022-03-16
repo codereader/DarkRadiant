@@ -160,23 +160,6 @@ public:
 
     /* ENTITY CLASS ATTRIBUTES */
 
-    /**
-     * Return a single named EntityClassAttribute from this EntityClass.
-     *
-     * \param name
-     * The name of the EntityClassAttribute to find, interpreted case-insensitively.
-     *
-     * \param includeInherited
-     * true if attributes inherited from parent entity classes should be
-     * considered, false otherwise.
-     *
-     * \return
-     * A reference to the named EntityClassAttribute. If the named attribute is
-     * not found, an empty EntityClassAttribute is returned.
-     */
-    virtual EntityClassAttribute& getAttribute(const std::string& name,
-        bool includeInherited = true) = 0;
-
     /// Get a const EntityClassAttribute reference by name
     virtual const EntityClassAttribute& getAttribute(const std::string& name,
                  bool includeInherited = true) const = 0;

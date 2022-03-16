@@ -90,6 +90,9 @@ private:
     void forEachAttributeInternal(InternalAttrVisitor visitor,
                                   bool editorKeys) const;
 
+    // Non-const attribute access
+    EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true);
+
 public:
 
     /// Construct an EntityClass with no FileInfo.
@@ -115,7 +118,6 @@ public:
     void setColour(const Vector4& colour) override;
     // Resets the colour to the value defined in the attributes
     void resetColour();
-    EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) override;
     const EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) const override;
     std::string getAttributeValue(const std::string&, bool includeInherited = true) const override;
     const std::string& getAttributeType(const std::string& name) const override;
