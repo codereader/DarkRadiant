@@ -33,7 +33,7 @@ void main()
     vec4 fresnelParms2 = vec4(.2, .023, 120.0, 4.0);
     vec4 lightParms = vec4(.7, 1.8, 10.0, 30.0);
 
-    vec3 diffuse = texture2D(u_Diffusemap, var_TexDiffuse).rgb;
+    vec4 diffuse = texture2D(u_Diffusemap, var_TexDiffuse);
     vec3 specular = texture2D(u_Specularmap, var_TexSpecular).rgb;
 
     // compute view direction in tangent space
@@ -58,7 +58,7 @@ void main()
 	float specularCoeff = pow(NdotH, specularPower) * fresnelParms2.z;
 	float fresnelCoeff = fresnelTerm * fresnelParms.y + fresnelParms2.y;
 
-	vec3 specularColor = specularCoeff * fresnelCoeff * specular * (diffuse * 0.25 + vec3(0.75));
+	vec3 specularColor = specularCoeff * fresnelCoeff * specular * (diffuse.rgb * 0.25 + vec3(0.75));
 	float R2f = clamp(localL.z * 4.0, 0.0, 1.0);
 
 	float NdotL_adjusted = NdotL;
@@ -76,8 +76,9 @@ void main()
         u_attenuationmap_z, vec2(var_tex_atten_xy_z.z, 0.5)
     ).rgb;
 
-	vec3 totalColor = (specularColor * u_light_color * R2f + diffuse) * light * attenuation_xy * attenuation_z * var_Colour.rgb;
+	vec3 totalColor = (specularColor * u_light_color * R2f + diffuse.rgb) * light * attenuation_xy * attenuation_z * var_Colour.rgb;
 
 	gl_FragColor.rgb = totalColor;
+	gl_FragColor.a = diffuse.a;
 }
 
