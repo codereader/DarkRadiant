@@ -74,13 +74,10 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
             const auto& material = shader->getMaterial();
             assert(material);
 
-            // Skip translucent materials
-            if (material->getCoverage() == Material::MC_TRANSLUCENT)
-            {
-                continue;
-            }
-
             auto coverage = material->getCoverage();
+
+            // Skip translucent materials
+            if (coverage == Material::MC_TRANSLUCENT) continue;
 
             if (coverage == Material::MC_PERFORATED)
             {
@@ -149,13 +146,10 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
         return;
     }
 
-    auto worldToLight = _light.getLightTextureTransformation();
     auto worldLightOrigin = _light.getLightOrigin();
 
     std::vector<IGeometryStore::Slot> untransformedObjects;
     untransformedObjects.reserve(10000);
-
-    program.setModelViewProjection(view.GetViewProjection());
 
     // Set up textures used by this light
     program.setupLightParameters(state, _light, renderTime);
@@ -205,8 +199,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
                     continue;
                 }
 
-                program.setUpObjectLighting(worldLightOrigin, worldToLight,
-                    view.getViewer(), object.get().getObjectTransform(), 
+                program.setUpObjectLighting(worldLightOrigin, view.getViewer(), 
                     object.get().getObjectTransform().getInverse());
 
                 pass->getProgram().setObjectTransform(object.get().getObjectTransform());
@@ -217,8 +210,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
 
             if (!untransformedObjects.empty())
             {
-                program.setUpObjectLighting(worldLightOrigin, worldToLight,
-                    view.getViewer(), Matrix4::getIdentity(), Matrix4::getIdentity());
+                program.setUpObjectLighting(worldLightOrigin, view.getViewer(), Matrix4::getIdentity());
 
                 pass->getProgram().setObjectTransform(Matrix4::getIdentity());
 

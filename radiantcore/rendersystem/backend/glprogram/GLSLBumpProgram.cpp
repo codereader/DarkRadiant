@@ -216,12 +216,13 @@ void GLSLBumpProgram::setupLightParameters(OpenGLState& state, const RendererLig
 
     glUniform1i(_locAmbientLight, lightMat->isAmbientLight());
     glUniform3fv(_locLightColour, 1, layer->getColour());
+
+    // Send the light texture transform
+    loadMatrixUniform(_locLightTextureMatrix, light.getLightTextureTransformation());
 }
 
 void GLSLBumpProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
-    const Matrix4& worldToLight,
     const Vector3& viewer,
-    const Matrix4& objectTransform,
     const Matrix4& inverseObjectTransform)
 {
     debug::assertNoGlErrors();
@@ -230,9 +231,6 @@ void GLSLBumpProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
 
     // Calculate the light origin in object space
     Vector3 localLight = worldToObject.transformPoint(worldLightOrigin);
-
-    Matrix4 local2light(worldToLight);
-    local2light.multiplyBy(objectTransform); // local->world->light
 
     // Calculate viewer location in object space
     auto osViewer = inverseObjectTransform.transformPoint(viewer);
@@ -248,9 +246,6 @@ void GLSLBumpProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
         static_cast<float>(localLight.y()),
         static_cast<float>(localLight.z())
     );
-
-    // Load the light texture transform
-    loadMatrixUniform(_locLightTextureMatrix, local2light);
 
     debug::assertNoGlErrors();
 }

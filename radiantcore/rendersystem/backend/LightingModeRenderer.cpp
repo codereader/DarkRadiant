@@ -69,6 +69,8 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     auto interactionProgram = dynamic_cast<GLSLBumpProgram*>(current.glProgram);
     assert(interactionProgram);
 
+    interactionProgram->setModelViewProjection(view.GetViewProjection());
+
     for (auto& interactionList : interactionLists)
     {
         interactionList.drawInteractions(current, *interactionProgram, view, time);

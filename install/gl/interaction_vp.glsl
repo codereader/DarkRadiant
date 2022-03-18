@@ -51,7 +51,7 @@ void main()
     var_TexSpecular.y = dot(u_SpecularTextureMatrix[1], attr_TexCoord);
 
 	// calc light xy,z attenuation in light space
-	var_tex_atten_xy_z = u_LightTextureMatrix * attr_Position;
+	var_tex_atten_xy_z = u_LightTextureMatrix * worldVertex;
 
 	// construct object-space-to-tangent-space 3x3 matrix
 	var_mat_os2ts = mat3(

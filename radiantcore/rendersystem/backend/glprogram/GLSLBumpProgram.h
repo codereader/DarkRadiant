@@ -55,9 +55,7 @@ public:
     void setupLightParameters(OpenGLState& state, const RendererLight& light, std::size_t renderTime);
 
     void setUpObjectLighting(const Vector3& worldLightOrigin,
-        const Matrix4& worldToLight,
         const Vector3& viewer,
-        const Matrix4& objectTransform,
         const Matrix4& inverseObjectTransform);
 };
 
