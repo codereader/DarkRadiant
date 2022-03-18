@@ -60,7 +60,9 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
 void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, const IRenderView& view, std::size_t renderTime)
 {
     std::vector<IGeometryStore::Slot> untransformedObjects;
-    untransformedObjects.reserve(10000);
+    std::vector<IGeometryStore::Slot> untransformedObjectsWithoutAlphaTest;
+    untransformedObjects.reserve(1000);
+    untransformedObjectsWithoutAlphaTest.reserve(10000);
 
     // Set the modelview and projection matrix
     program.setModelViewProjection(view.GetViewProjection());
@@ -82,7 +84,9 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
                 continue;
             }
 
-            if (material->getCoverage() == Material::MC_PERFORATED)
+            auto coverage = material->getCoverage();
+
+            if (coverage == Material::MC_PERFORATED)
             {
                 // Evaluate the shader stages of this material
                 depthFillPass->evaluateShaderStages(renderTime, entity);
@@ -108,7 +112,16 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
                 // We submit all objects with an identity matrix in a single multi draw call
                 if (!object.get().isOriented())
                 {
-                    untransformedObjects.push_back(object.get().getStorageLocation());
+                    if (coverage == Material::MC_PERFORATED)
+                    {
+                        untransformedObjects.push_back(object.get().getStorageLocation());
+                    }
+                    else
+                    {
+                        // Put it on the huge pile of non-alphatest materials
+                        untransformedObjectsWithoutAlphaTest.push_back(object.get().getStorageLocation());
+                    }
+
                     continue;
                 }
 
@@ -118,6 +131,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
                 ++_drawCalls;
             }
 
+            // All alpha-tested materials without transform need to be submitted now
             if (!untransformedObjects.empty())
             {
                 program.setObjectTransform(Matrix4::getIdentity());
@@ -128,6 +142,17 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
                 untransformedObjects.clear();
             }
         }
+    }
+
+    // All objects without alpha test or transformation matrix go into one final drawcall
+    if (!untransformedObjectsWithoutAlphaTest.empty())
+    {
+        program.setObjectTransform(Matrix4::getIdentity());
+
+        ObjectRenderer::SubmitGeometry(untransformedObjectsWithoutAlphaTest, GL_TRIANGLES, _store);
+        ++_drawCalls;
+
+        untransformedObjectsWithoutAlphaTest.clear();
     }
 }
 
