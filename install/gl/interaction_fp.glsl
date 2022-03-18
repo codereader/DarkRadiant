@@ -20,41 +20,51 @@ varying vec2 var_TexDiffuse;
 varying vec2 var_TexBump;
 varying vec2 var_TexSpecular;
 
-varying vec3		var_vertex;
-varying vec4		var_tex_atten_xy_z;
-varying mat3		var_mat_os2ts;
-varying vec4		var_Colour; // colour to be multiplied on the final fragment
+varying vec3 var_vertex; // in world space
+varying vec4 var_tex_atten_xy_z;
+varying mat3 var_mat_os2ts;
+varying vec4 var_Colour; // colour to be multiplied on the final fragment
 
-void	main()
+void main()
 {
-	// compute view direction in tangent space
-	vec3 V = normalize(var_mat_os2ts * (u_view_origin - var_vertex));
+    // Ported from TDM interaction.common.fs.glsl
 
-	// compute light direction in tangent space
-	vec3 L = normalize(var_mat_os2ts * (u_light_origin - var_vertex));
+    vec4 fresnelParms = vec4(1.0, .23, .5, 1.0);
+    vec4 fresnelParms2 = vec4(.2, .023, 120.0, 4.0);
+    vec4 lightParms = vec4(.7, 1.8, 10.0, 30.0);
 
-	// compute half angle in tangent space
-	vec3 H = normalize(L + V);
+    vec3 diffuse = texture2D(u_Diffusemap, var_TexDiffuse).rgb;
+    vec3 specular = texture2D(u_Specularmap, var_TexSpecular).rgb;
 
-	// compute normal in tangent space from bumpmap
-    vec2 normalRG = texture2D(u_Bumpmap, var_TexBump).rg;
-    float normalB = sqrt(1.0 - pow(normalRG.r, 2.0) - pow(normalRG.g, 2.0));
-	vec3 N = 2.0 * (vec3(normalRG, normalB) - 0.5);
-	N = normalize(N);
+    // compute view direction in tangent space
+	vec3 localV = normalize(var_mat_os2ts * (u_view_origin - var_vertex));
+	
+    // compute light direction in tangent space
+	vec3 localL = normalize(var_mat_os2ts * (u_light_origin - var_vertex));
 
-	// compute the diffuse term
-	vec4 diffuse = texture2D(u_Diffusemap, var_TexDiffuse);
-    float lightBrightness = uAmbientLight ? 1.0 : clamp(dot(N, L), 0.0, 1.0);
-	diffuse.rgb *= u_light_color * u_light_scale * lightBrightness;
+    vec4 bumpTexel = texture2D(u_Bumpmap, var_TexBump) * 2. - 1.;
+	vec3 RawN = normalize( bumpTexel.xyz ); 
+	vec3 N = var_mat_os2ts * RawN;
 
-	// compute the specular term
-    float specIntensity = clamp(dot(N, H), 0.0, 1.0);
-    specIntensity = pow(specIntensity, 32.0);
-	vec3 specular = texture2D(u_Specularmap, var_TexSpecular).rgb
-                    * u_light_color
-                    * specIntensity;
+	//must be done in tangent space, otherwise smoothing will suffer (see #4958)
+	float NdotL = clamp(dot(RawN, localL), 0.0, 1.0);
+	float NdotV = clamp(dot(RawN, localV), 0.0, 1.0);
+	float NdotH = clamp(dot(RawN, normalize(localV + localL)), 0.0, 1.0);
 
-	// compute attenuation
+	// fresnel part
+	float fresnelTerm = pow(1.0 - NdotV, fresnelParms2.w);
+	float rimLight = fresnelTerm * clamp(NdotL - 0.3, 0.0, fresnelParms.z) * lightParms.y;
+	float specularPower = mix(lightParms.z, lightParms.w, specular.z);
+	float specularCoeff = pow(NdotH, specularPower) * fresnelParms2.z;
+	float fresnelCoeff = fresnelTerm * fresnelParms.y + fresnelParms2.y;
+
+	vec3 specularColor = specularCoeff * fresnelCoeff * specular * (diffuse * 0.25 + vec3(0.75));
+	float R2f = clamp(localL.z * 4.0, 0.0, 1.0);
+
+	float NdotL_adjusted = NdotL;
+	float light = rimLight * R2f + NdotL_adjusted;
+
+    // compute attenuation
     vec3 attenuation_xy = vec3(0.0, 0.0, 0.0);
     if (var_tex_atten_xy_z.w > 0.0)
         attenuation_xy	= texture2DProj(
@@ -66,11 +76,8 @@ void	main()
         u_attenuationmap_z, vec2(var_tex_atten_xy_z.z, 0.5)
     ).rgb;
 
-	// compute final color
-    gl_FragColor = diffuse * var_Colour;
-    if (!uAmbientLight)
-        gl_FragColor.rgb += specular;
-	gl_FragColor.rgb *= attenuation_xy;
-	gl_FragColor.rgb *= attenuation_z;
+	vec3 totalColor = (specularColor * u_light_color * R2f + diffuse) * light * attenuation_xy * attenuation_z * var_Colour.rgb;
+
+	gl_FragColor.rgb = totalColor;
 }
 
