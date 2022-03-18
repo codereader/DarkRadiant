@@ -120,7 +120,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
 }
 
 void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& program, 
-    RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t renderTime)
+    const IRenderView& view, std::size_t renderTime)
 {
     if (_objectsByEntity.empty())
     {

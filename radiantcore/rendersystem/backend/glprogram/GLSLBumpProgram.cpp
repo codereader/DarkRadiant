@@ -63,6 +63,7 @@ void GLSLBumpProgram::create()
     _locDiffuseTextureMatrix = glGetUniformLocation(_programObj, "u_DiffuseTextureMatrix");
     _locBumpTextureMatrix = glGetUniformLocation(_programObj, "u_BumpTextureMatrix");
     _locSpecularTextureMatrix = glGetUniformLocation(_programObj, "u_SpecularTextureMatrix");
+    _locLightTextureMatrix = glGetUniformLocation(_programObj, "u_LightTextureMatrix");
 
     // Set up the texture uniforms. The renderer uses fixed texture units for
     // particular textures, so make sure they are correct here.
@@ -248,12 +249,8 @@ void GLSLBumpProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
         static_cast<float>(localLight.z())
     );
 
-    glActiveTexture(GL_TEXTURE3);
-    glClientActiveTexture(GL_TEXTURE3);
-
-    glMatrixMode(GL_TEXTURE);
-    glLoadMatrixd(local2light);
-    glMatrixMode(GL_MODELVIEW);
+    // Load the light texture transform
+    loadMatrixUniform(_locLightTextureMatrix, local2light);
 
     debug::assertNoGlErrors();
 }

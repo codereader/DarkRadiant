@@ -1,4 +1,4 @@
-#version 120
+#version 140
 
 in vec4 attr_Position;  // bound to attribute 0 in source, in object space
 in vec4 attr_TexCoord;  // bound to attribute 8 in source
@@ -16,6 +16,9 @@ uniform mat4 u_ObjectTransform;     // object to world
 uniform vec4 u_DiffuseTextureMatrix[2];
 uniform vec4 u_BumpTextureMatrix[2];
 uniform vec4 u_SpecularTextureMatrix[2];
+
+// Light Texture Transformation
+uniform mat4 u_LightTextureMatrix;
 
 // Calculated texture coords
 varying vec2 var_TexDiffuse;
@@ -48,7 +51,7 @@ void main()
     var_TexSpecular.y = dot(u_SpecularTextureMatrix[1], attr_TexCoord);
 
 	// calc light xy,z attenuation in light space
-	var_tex_atten_xy_z = gl_TextureMatrix[3] * attr_Position;
+	var_tex_atten_xy_z = u_LightTextureMatrix * attr_Position;
 
 	// construct object-space-to-tangent-space 3x3 matrix
 	var_mat_os2ts = mat3(

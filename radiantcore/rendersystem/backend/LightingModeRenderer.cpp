@@ -83,7 +83,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 
     for (auto& interactionList : interactionLists)
     {
-        interactionList.drawInteractions(current, *interactionProgram, globalFlagsMask, view, time);
+        interactionList.drawInteractions(current, *interactionProgram, view, time);
         result->drawCalls += interactionList.getDrawCalls();
     }
 

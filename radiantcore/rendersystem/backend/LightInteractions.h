@@ -75,8 +75,7 @@ public:
     void fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
         const IRenderView& view, std::size_t renderTime);
 
-    void drawInteractions(OpenGLState& state, GLSLBumpProgram& program, RenderStateFlags globalFlagsMask,
-        const IRenderView& view, std::size_t renderTime);
+    void drawInteractions(OpenGLState& state, GLSLBumpProgram& program, const IRenderView& view, std::size_t renderTime);
 };
 
 }

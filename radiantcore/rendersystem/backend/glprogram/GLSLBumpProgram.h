@@ -28,6 +28,7 @@ private:
     int _locDiffuseTextureMatrix;
     int _locBumpTextureMatrix;
     int _locSpecularTextureMatrix;
+    int _locLightTextureMatrix;
 
 public:
 
