@@ -136,36 +136,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
     program.setModelViewProjection(view.GetViewProjection());
 
     // Set up textures used by this light
-    {
-        // Get the light shader and examine its first (and only valid) layer
-        const auto& shader = _light.getShader();
-        assert(shader);
-
-        const auto& lightMat = shader->getMaterial();
-        auto* layer = lightMat ? lightMat->firstLayer() : nullptr;
-        if (!layer) return;
-
-        // Calculate all dynamic values in the layer
-        layer->evaluateExpressions(renderTime, _light.getLightEntity());
-
-        // Get the XY and Z falloff texture numbers.
-        auto attenuation_xy = layer->getTexture()->getGLTexNum();
-        auto attenuation_z = lightMat->lightFalloffImage()->getGLTexNum();
-
-        // Bind the falloff textures
-        assert(state.testRenderFlag(RENDER_TEXTURE_2D));
-
-        OpenGLState::SetTextureState(state.texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-        OpenGLState::SetTextureState(state.texture4, attenuation_z, GL_TEXTURE4, GL_TEXTURE_2D);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-        program.setIsAmbientLight(lightMat->isAmbientLight());
-        program.setLightColour(layer->getColour());
-    }
+    program.setupLightParameters(state, _light, renderTime);
 
     for (const auto& [entity, objectsByShader] : _objectsByEntity)
     {
@@ -212,7 +183,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
                     continue;
                 }
 
-                program.setUpLightingCalculation(worldLightOrigin, worldToLight,
+                program.setUpObjectLighting(worldLightOrigin, worldToLight,
                     view.getViewer(), object.get().getObjectTransform(), 
                     object.get().getObjectTransform().getInverse());
 
@@ -224,7 +195,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
 
             if (!untransformedObjects.empty())
             {
-                program.setUpLightingCalculation(worldLightOrigin, worldToLight,
+                program.setUpObjectLighting(worldLightOrigin, worldToLight,
                     view.getViewer(), Matrix4::getIdentity(), Matrix4::getIdentity());
 
                 pass->getProgram().setObjectTransform(Matrix4::getIdentity());
@@ -236,6 +207,10 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
             }
         }
     }
+
+    // Unbind the light textures
+    OpenGLState::SetTextureState(state.texture3, 0, GL_TEXTURE3, GL_TEXTURE_2D);
+    OpenGLState::SetTextureState(state.texture4, 0, GL_TEXTURE4, GL_TEXTURE_2D);
 }
 
 }

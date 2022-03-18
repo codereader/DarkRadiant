@@ -4,9 +4,11 @@
 #include "GLProgramAttributes.h"
 #include "itextstream.h"
 #include "igame.h"
+#include "ishaders.h"
 #include "string/convert.h"
 #include "debugging/gl.h"
 #include "math/Matrix4.h"
+#include "../OpenGLState.h"
 
 namespace render
 {
@@ -131,16 +133,6 @@ void GLSLBumpProgram::disable()
     debug::assertNoGlErrors();
 }
 
-void GLSLBumpProgram::setIsAmbientLight(bool isAmbientLight)
-{
-    glUniform1i(_locAmbientLight, isAmbientLight);
-}
-
-void GLSLBumpProgram::setLightColour(const Colour4& lightColour)
-{
-    glUniform3fv(_locLightColour, 1, lightColour);
-}
-
 void GLSLBumpProgram::setStageVertexColour(IShaderLayer::VertexColourMode vertexColourMode, const Colour4& stageColour)
 {
     // Define the colour factors to blend into the final fragment
@@ -195,7 +187,37 @@ void GLSLBumpProgram::setSpecularTextureTransform(const Matrix4& transform)
     loadTextureMatrixUniform(_locSpecularTextureMatrix, transform);
 }
 
-void GLSLBumpProgram::setUpLightingCalculation(const Vector3& worldLightOrigin,
+void GLSLBumpProgram::setupLightParameters(OpenGLState& state, const RendererLight& light, std::size_t renderTime)
+{
+    // Get the light shader and examine its first (and only valid) layer
+    const auto & shader = light.getShader();
+    assert(shader);
+
+    const auto& lightMat = shader->getMaterial();
+    auto* layer = lightMat ? lightMat->firstLayer() : nullptr;
+    if (!layer) return;
+
+    // Calculate all dynamic values in the layer
+    layer->evaluateExpressions(renderTime, light.getLightEntity());
+
+    // Get the XY and Z falloff texture numbers.
+    auto attenuation_xy = layer->getTexture()->getGLTexNum();
+    auto attenuation_z = lightMat->lightFalloffImage()->getGLTexNum();
+
+    // Bind the falloff textures
+    OpenGLState::SetTextureState(state.texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+    OpenGLState::SetTextureState(state.texture4, attenuation_z, GL_TEXTURE4, GL_TEXTURE_2D);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+    glUniform1i(_locAmbientLight, lightMat->isAmbientLight());
+    glUniform3fv(_locLightColour, 1, layer->getColour());
+}
+
+void GLSLBumpProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
     const Matrix4& worldToLight,
     const Vector3& viewer,
     const Matrix4& objectTransform,
@@ -225,37 +247,6 @@ void GLSLBumpProgram::setUpLightingCalculation(const Vector3& worldLightOrigin,
         static_cast<float>(localLight.y()),
         static_cast<float>(localLight.z())
     );
-#if 0
-    glUniform3fv(_locLightColour, 1, parms.lightColour);
-    glUniform1f(_locLightScale, _lightScale);
-    glUniform1i(_locAmbientLight, parms.isAmbientLight);
-
-    // Define the colour factors to blend into the final fragment
-    switch (parms.vertexColourMode)
-    {
-    case IShaderLayer::VERTEX_COLOUR_NONE:
-        // Nullify the vertex colour, add the stage colour as additive constant
-        glUniform4f(_locColourModulation, 0, 0, 0, 0);
-        glUniform4f(_locColourAddition,
-            static_cast<float>(parms.stageColour.x()),
-            static_cast<float>(parms.stageColour.y()),
-            static_cast<float>(parms.stageColour.z()),
-            static_cast<float>(parms.stageColour.w()));
-        break;
-
-    case IShaderLayer::VERTEX_COLOUR_MULTIPLY:
-        // Multiply the fragment with 1*vertexColour
-        glUniform4f(_locColourModulation, 1, 1, 1, 1);
-        glUniform4f(_locColourAddition, 0, 0, 0, 0);
-        break;
-
-    case IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY:
-        // Multiply the fragment with (1 - vertexColour)
-        glUniform4f(_locColourModulation, -1, -1, -1, -1);
-        glUniform4f(_locColourAddition, 1, 1, 1, 1);
-        break;
-    }
-#endif
 
     glActiveTexture(GL_TEXTURE3);
     glClientActiveTexture(GL_TEXTURE3);

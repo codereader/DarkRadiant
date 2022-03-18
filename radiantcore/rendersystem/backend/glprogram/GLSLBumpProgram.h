@@ -5,6 +5,8 @@
 namespace render
 {
 
+class OpenGLState;
+
 class GLSLBumpProgram :
     public GLSLProgramBase
 {
@@ -41,9 +43,6 @@ public:
     void setBumpTextureTransform(const Matrix4& transform);
     void setSpecularTextureTransform(const Matrix4& transform);
 
-    void setIsAmbientLight(bool isAmbientLight);
-    void setLightColour(const Colour4& lightColour);
-
     // The stage's vertex colour mode and colour as defined by the rgba registers
     void setStageVertexColour(IShaderLayer::VertexColourMode vertexColourMode, const Colour4& stageColour);
 
@@ -52,7 +51,9 @@ public:
         const Params& lightParms) override
     { }
 
-    void setUpLightingCalculation(const Vector3& worldLightOrigin,
+    void setupLightParameters(OpenGLState& state, const RendererLight& light, std::size_t renderTime);
+
+    void setUpObjectLighting(const Vector3& worldLightOrigin,
         const Matrix4& worldToLight,
         const Vector3& viewer,
         const Matrix4& objectTransform,
