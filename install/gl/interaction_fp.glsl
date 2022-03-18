@@ -76,7 +76,7 @@ void main()
         u_attenuationmap_z, vec2(var_tex_atten_xy_z.z, 0.5)
     ).rgb;
 
-	vec3 totalColor = (specularColor * u_light_color * R2f + diffuse.rgb) * light * attenuation_xy * attenuation_z * var_Colour.rgb;
+	vec3 totalColor = (specularColor * u_light_color * R2f + diffuse.rgb) * light * (u_light_color * u_light_scale) * attenuation_xy * attenuation_z * var_Colour.rgb;
 
 	gl_FragColor.rgb = totalColor;
 	gl_FragColor.a = diffuse.a;
