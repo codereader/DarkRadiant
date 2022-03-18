@@ -94,6 +94,9 @@ void GLSLBumpProgram::create()
     glUseProgram(0);
 
     debug::assertNoGlErrors();
+
+    // Light scale is constant at this point
+    glUniform1f(_locLightScale, _lightScale);
 }
 
 void GLSLBumpProgram::enable()
@@ -128,20 +131,59 @@ void GLSLBumpProgram::disable()
     debug::assertNoGlErrors();
 }
 
+void GLSLBumpProgram::setIsAmbientLight(bool isAmbientLight)
+{
+    glUniform1i(_locAmbientLight, isAmbientLight);
+}
+
+void GLSLBumpProgram::setLightColour(const Colour4& lightColour)
+{
+    glUniform3fv(_locLightColour, 1, lightColour);
+}
+
+void GLSLBumpProgram::setStageVertexColour(IShaderLayer::VertexColourMode vertexColourMode, const Colour4& stageColour)
+{
+    // Define the colour factors to blend into the final fragment
+    switch (vertexColourMode)
+    {
+    case IShaderLayer::VERTEX_COLOUR_NONE:
+        // Nullify the vertex colour, add the stage colour as additive constant
+        glUniform4f(_locColourModulation, 0, 0, 0, 0);
+        glUniform4f(_locColourAddition,
+            static_cast<float>(stageColour.x()),
+            static_cast<float>(stageColour.y()),
+            static_cast<float>(stageColour.z()),
+            static_cast<float>(stageColour.w()));
+        break;
+
+    case IShaderLayer::VERTEX_COLOUR_MULTIPLY:
+        // Multiply the fragment with 1*vertexColour
+        glUniform4f(_locColourModulation, 1, 1, 1, 1);
+        glUniform4f(_locColourAddition, 0, 0, 0, 0);
+        break;
+
+    case IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY:
+        // Multiply the fragment with (1 - vertexColour)
+        glUniform4f(_locColourModulation, -1, -1, -1, -1);
+        glUniform4f(_locColourAddition, 1, 1, 1, 1);
+        break;
+    }
+}
+
 void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
-                                        const Matrix4& objectToWorld,
+                                        const Matrix4& objectTransform,
+                                        const Matrix4& inverseObjectTransform,
                                         const Params& parms)
 {
     debug::assertNoGlErrors();
 
-    Matrix4 worldToObject(objectToWorld);
-    worldToObject.invert();
+    const auto& worldToObject = inverseObjectTransform;
 
     // Calculate the light origin in object space
     Vector3 localLight = worldToObject.transformPoint(parms.lightOrigin);
 
     Matrix4 local2light(parms.world2Light);
-    local2light.multiplyBy(objectToWorld); // local->world->light
+    local2light.multiplyBy(objectTransform); // local->world->light
 
     // Set lighting parameters in the shader
     glUniform3f(_locViewOrigin,
@@ -154,6 +196,7 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
         static_cast<float>(localLight.y()),
         static_cast<float>(localLight.z())
     );
+#if 0
     glUniform3fv(_locLightColour, 1, parms.lightColour);
     glUniform1f(_locLightScale, _lightScale);
     glUniform1i(_locAmbientLight, parms.isAmbientLight);
@@ -183,6 +226,7 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
         glUniform4f(_locColourAddition, 1, 1, 1, 1);
         break;
     }
+#endif
 
     glActiveTexture(GL_TEXTURE3);
     glClientActiveTexture(GL_TEXTURE3);

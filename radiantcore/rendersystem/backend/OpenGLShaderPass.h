@@ -15,6 +15,7 @@ namespace render
 {
 
 class OpenGLShader;
+class GLSLBumpProgram;
 
 /**
  * @brief A single component pass of an OpenGL shader.
@@ -140,12 +141,12 @@ public:
     void evaluateShaderStages(std::size_t time, const IRenderEntity* entity);
 
     // Set up lighting calculation
-    static void SetUpLightingCalculation(OpenGLState& current,
+    static void SetUpLightingCalculation(GLSLBumpProgram& program,
         const RendererLight* light,
         const Matrix4& worldToLight,
         const Vector3& viewer,
-        const Matrix4& objTransform,
-        std::size_t time);
+        const Matrix4& objectTransform,
+        const Matrix4& inverseObjectTransform);
 
     static void SetUpNonInteractionProgram(OpenGLState& current, const Vector3& viewer, const Matrix4& objTransform);
 

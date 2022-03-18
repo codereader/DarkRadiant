@@ -40,32 +40,33 @@ public:
     /// Data structure containing rendering parameters
     struct Params
     {
+#if 0
         IShaderLayer::VertexColourMode vertexColourMode;
 
         // Colour defined by the stage's rgba registers
         Colour4 stageColour;
-
+#endif
         /// Light origin in world space
         Vector3 lightOrigin;
 
         /// Light colour
-        Colour4 lightColour;
+        //Colour4 lightColour;
 
         /// Transformation from world space into light space
         Matrix4 world2Light;
-
+#if 0
         /// True if this is an ambient light, false for a directional light
         bool isAmbientLight = false;
-
-        Params(IShaderLayer::VertexColourMode vertexColourMode_,
-               const Colour4& stageColour_,
+#endif
+        Params(/*IShaderLayer::VertexColourMode vertexColourMode_,
+               const Colour4& stageColour_,*/
                const Vector3& lightOrigin_,
-               const Colour4& lightColour_,
+               //const Colour4& lightColour_,
                const Matrix4& world2Light_)
-        : vertexColourMode(vertexColourMode_),
-          stageColour(stageColour_),
+        : /*vertexColourMode(vertexColourMode_),
+          stageColour(stageColour_),*/
           lightOrigin(lightOrigin_),
-          lightColour(lightColour_),
+          //lightColour(lightColour_),
           world2Light(world2Light_)
         {}
     };

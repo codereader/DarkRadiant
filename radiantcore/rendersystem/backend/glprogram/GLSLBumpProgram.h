@@ -41,9 +41,21 @@ public:
     void setBumpTextureTransform(const Matrix4& transform);
     void setSpecularTextureTransform(const Matrix4& transform);
 
+    void setIsAmbientLight(bool isAmbientLight);
+    void setLightColour(const Colour4& lightColour);
+
+    // The stage's vertex colour mode and colour as defined by the rgba registers
+    void setStageVertexColour(IShaderLayer::VertexColourMode vertexColourMode, const Colour4& stageColour);
+
     void applyRenderParams(const Vector3& viewer,
-                           const Matrix4& localToWorld,
-                           const Params&) override;
+                           const Matrix4& objectTransform,
+                           const Matrix4& inverseObjectTransform,
+                           const Params&);
+
+    void applyRenderParams(const Vector3& viewer,
+        const Matrix4& localToWorld,
+        const Params& lightParms) override
+    { }
 };
 
 } // namespace render
