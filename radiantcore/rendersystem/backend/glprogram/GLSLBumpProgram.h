@@ -48,14 +48,15 @@ public:
     void setStageVertexColour(IShaderLayer::VertexColourMode vertexColourMode, const Colour4& stageColour);
 
     void applyRenderParams(const Vector3& viewer,
-                           const Matrix4& objectTransform,
-                           const Matrix4& inverseObjectTransform,
-                           const Params&);
-
-    void applyRenderParams(const Vector3& viewer,
         const Matrix4& localToWorld,
         const Params& lightParms) override
     { }
+
+    void setUpLightingCalculation(const Vector3& worldLightOrigin,
+        const Matrix4& worldToLight,
+        const Vector3& viewer,
+        const Matrix4& objectTransform,
+        const Matrix4& inverseObjectTransform);
 };
 
 } // namespace render

@@ -90,13 +90,13 @@ void GLSLBumpProgram::create()
     samplerLoc = glGetUniformLocation(_programObj, "u_attenuationmap_z");
     glUniform1i(samplerLoc, 4);
 
+    // Light scale is constant at this point
+    glUniform1f(_locLightScale, _lightScale);
+
     debug::assertNoGlErrors();
     glUseProgram(0);
 
     debug::assertNoGlErrors();
-
-    // Light scale is constant at this point
-    glUniform1f(_locLightScale, _lightScale);
 }
 
 void GLSLBumpProgram::enable()
@@ -170,26 +170,55 @@ void GLSLBumpProgram::setStageVertexColour(IShaderLayer::VertexColourMode vertex
     }
 }
 
-void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
-                                        const Matrix4& objectTransform,
-                                        const Matrix4& inverseObjectTransform,
-                                        const Params& parms)
+void GLSLBumpProgram::setModelViewProjection(const Matrix4& modelViewProjection)
+{
+    loadMatrixUniform(_locModelViewProjection, modelViewProjection);
+}
+
+void GLSLBumpProgram::setObjectTransform(const Matrix4& transform)
+{
+    loadMatrixUniform(_locObjectTransform, transform);
+}
+
+void GLSLBumpProgram::setDiffuseTextureTransform(const Matrix4& transform)
+{
+    loadTextureMatrixUniform(_locDiffuseTextureMatrix, transform);
+}
+
+void GLSLBumpProgram::setBumpTextureTransform(const Matrix4& transform)
+{
+    loadTextureMatrixUniform(_locBumpTextureMatrix, transform);
+}
+
+void GLSLBumpProgram::setSpecularTextureTransform(const Matrix4& transform)
+{
+    loadTextureMatrixUniform(_locSpecularTextureMatrix, transform);
+}
+
+void GLSLBumpProgram::setUpLightingCalculation(const Vector3& worldLightOrigin,
+    const Matrix4& worldToLight,
+    const Vector3& viewer,
+    const Matrix4& objectTransform,
+    const Matrix4& inverseObjectTransform)
 {
     debug::assertNoGlErrors();
 
     const auto& worldToObject = inverseObjectTransform;
 
     // Calculate the light origin in object space
-    Vector3 localLight = worldToObject.transformPoint(parms.lightOrigin);
+    Vector3 localLight = worldToObject.transformPoint(worldLightOrigin);
 
-    Matrix4 local2light(parms.world2Light);
+    Matrix4 local2light(worldToLight);
     local2light.multiplyBy(objectTransform); // local->world->light
+
+    // Calculate viewer location in object space
+    auto osViewer = inverseObjectTransform.transformPoint(viewer);
 
     // Set lighting parameters in the shader
     glUniform3f(_locViewOrigin,
-        static_cast<float>(viewer.x()),
-        static_cast<float>(viewer.y()),
-        static_cast<float>(viewer.z())
+        static_cast<float>(osViewer.x()),
+        static_cast<float>(osViewer.y()),
+        static_cast<float>(osViewer.z())
     );
     glUniform3f(_locLightOrigin,
         static_cast<float>(localLight.x()),
@@ -236,31 +265,6 @@ void GLSLBumpProgram::applyRenderParams(const Vector3& viewer,
     glMatrixMode(GL_MODELVIEW);
 
     debug::assertNoGlErrors();
-}
-
-void GLSLBumpProgram::setModelViewProjection(const Matrix4& modelViewProjection)
-{
-    loadMatrixUniform(_locModelViewProjection, modelViewProjection);
-}
-
-void GLSLBumpProgram::setObjectTransform(const Matrix4& transform)
-{
-    loadMatrixUniform(_locObjectTransform, transform);
-}
-
-void GLSLBumpProgram::setDiffuseTextureTransform(const Matrix4& transform)
-{
-    loadTextureMatrixUniform(_locDiffuseTextureMatrix, transform);
-}
-
-void GLSLBumpProgram::setBumpTextureTransform(const Matrix4& transform)
-{
-    loadTextureMatrixUniform(_locBumpTextureMatrix, transform);
-}
-
-void GLSLBumpProgram::setSpecularTextureTransform(const Matrix4& transform)
-{
-    loadTextureMatrixUniform(_locSpecularTextureMatrix, transform);
 }
 
 }

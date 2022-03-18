@@ -128,6 +128,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
     }
 
     auto worldToLight = _light.getLightTextureTransformation();
+    auto worldLightOrigin = _light.getLightOrigin();
 
     std::vector<IGeometryStore::Slot> untransformedObjects;
     untransformedObjects.reserve(10000);
@@ -211,8 +212,9 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
                     continue;
                 }
 
-                OpenGLShaderPass::SetUpLightingCalculation(program, &_light, worldToLight,
-                    view.getViewer(), object.get().getObjectTransform(), object.get().getObjectTransform().getInverse());
+                program.setUpLightingCalculation(worldLightOrigin, worldToLight,
+                    view.getViewer(), object.get().getObjectTransform(), 
+                    object.get().getObjectTransform().getInverse());
 
                 pass->getProgram().setObjectTransform(object.get().getObjectTransform());
 
@@ -222,7 +224,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
 
             if (!untransformedObjects.empty())
             {
-                OpenGLShaderPass::SetUpLightingCalculation(program, &_light, worldToLight,
+                program.setUpLightingCalculation(worldLightOrigin, worldToLight,
                     view.getViewer(), Matrix4::getIdentity(), Matrix4::getIdentity());
 
                 pass->getProgram().setObjectTransform(Matrix4::getIdentity());

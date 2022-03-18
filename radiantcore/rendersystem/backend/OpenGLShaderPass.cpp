@@ -118,59 +118,6 @@ bool OpenGLShaderPass::stateIsActive()
             (_glState.stage3 == NULL || _glState.stage3->isVisible()));
 }
 
-// Setup lighting
-void OpenGLShaderPass::SetUpLightingCalculation(GLSLBumpProgram& program,
-                                                const RendererLight* light,
-                                                const Matrix4& worldToLight,
-                                                const Vector3& viewer,
-                                                const Matrix4& objectTransform,
-                                                const Matrix4& inverseObjectTransform)
-{
-#if 0
-    // Get the light shader and examine its first (and only valid) layer
-    assert(light);
-    const auto& shader = light->getShader();
-    assert(shader);
-
-    const MaterialPtr& lightMat = shader->getMaterial();
-    IShaderLayer* layer = lightMat ? lightMat->firstLayer() : nullptr;
-    if (!layer) return;
-#endif
-    // Calculate viewer location in object space
-    auto osViewer = inverseObjectTransform.transformPoint(viewer);
-#if 0
-    // Calculate all dynamic values in the layer
-    layer->evaluateExpressions(time, light->getLightEntity());
-
-    // Get the XY and Z falloff texture numbers.
-    auto attenuation_xy = layer->getTexture()->getGLTexNum();
-    auto attenuation_z = lightMat->lightFalloffImage()->getGLTexNum();
-    // Bind the falloff textures
-    assert(current.testRenderFlag(RENDER_TEXTURE_2D));
-
-    OpenGLState::SetTextureState(current.texture3, attenuation_xy, GL_TEXTURE3, GL_TEXTURE_2D);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
-    OpenGLState::SetTextureState(current.texture4, attenuation_z, GL_TEXTURE4, GL_TEXTURE_2D);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-#endif
-
-    // Set the GL program parameters
-    GLProgram::Params parms(
-        //current.getVertexColourMode(),
-        //current.getColour(),
-        light->getLightOrigin(),
-        //layer->getColour(),
-        worldToLight
-    );
-#if 0
-    parms.isAmbientLight = lightMat->isAmbientLight();
-#endif
-    program.applyRenderParams(osViewer, objectTransform, inverseObjectTransform, parms);
-}
-
 void OpenGLShaderPass::SetUpNonInteractionProgram(OpenGLState& current, const Vector3& viewer, const Matrix4& objTransform)
 {
     static GLProgram::Params parms({ 0, 0, 0 }, Matrix4::getIdentity());
