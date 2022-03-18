@@ -58,19 +58,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     // Set the vertex attribute pointers
     ObjectRenderer::InitAttributePointers();
 
-    // Run the depth fill pass
-    auto depthFillState = DepthFillPass::GenerateDepthFillState(_programFactory);
-
-    // Prepare the current state for depth filling
-    depthFillState.applyTo(current, globalFlagsMask);
-
-    auto depthFillProgram = dynamic_cast<GLSLDepthFillAlphaProgram*>(current.glProgram);
-    assert(depthFillProgram);
-
-    for (auto& interactionList : interactionLists)
-    {
-        interactionList.fillDepthBuffer(current, *depthFillProgram, view, time);
-    }
+    result->depthDrawCalls += drawDepthFillPass(current, globalFlagsMask, interactionLists, view, time);
 
     // Draw the surfaces per light and material
     auto interactionState = InteractionPass::GenerateInteractionState(_programFactory);
@@ -84,14 +72,55 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     for (auto& interactionList : interactionLists)
     {
         interactionList.drawInteractions(current, *interactionProgram, view, time);
-        result->drawCalls += interactionList.getDrawCalls();
+        result->interactionDrawCalls += interactionList.getInteractionDrawCalls();
     }
 
-    result->drawCalls += drawNonInteractionPasses(current, globalFlagsMask, view, time);
+    result->nonInteractionDrawCalls += drawNonInteractionPasses(current, globalFlagsMask, view, time);
 
     cleanupState();
 
     return result;
+}
+
+std::size_t LightingModeRenderer::drawDepthFillPass(OpenGLState& current, RenderStateFlags globalFlagsMask,
+    std::vector<LightInteractions>& interactionLists, const IRenderView& view, std::size_t renderTime)
+{
+    std::size_t drawCalls = 0;
+
+    // Run the depth fill pass
+    auto depthFillState = DepthFillPass::GenerateDepthFillState(_programFactory);
+
+    // Prepare the current state for depth filling
+    depthFillState.applyTo(current, globalFlagsMask);
+
+    auto depthFillProgram = dynamic_cast<GLSLDepthFillAlphaProgram*>(current.glProgram);
+    assert(depthFillProgram);
+
+    // Set the modelview and projection matrix
+    depthFillProgram->setModelViewProjection(view.GetViewProjection());
+
+    for (auto& interactionList : interactionLists)
+    {
+        interactionList.fillDepthBuffer(current, *depthFillProgram, view, renderTime, _untransformedObjectsWithoutAlphaTest);
+        drawCalls += interactionList.getDepthDrawCalls();
+    }
+
+    // Unbind the diffuse texture
+    OpenGLState::SetTextureState(current.texture0, 0, GL_TEXTURE0, GL_TEXTURE_2D);
+
+    // All objects without alpha test or transformation matrix go into one final drawcall
+    if (!_untransformedObjectsWithoutAlphaTest.empty())
+    {
+        depthFillProgram->setObjectTransform(Matrix4::getIdentity());
+        depthFillProgram->setAlphaTest(-1);
+
+        ObjectRenderer::SubmitGeometry(_untransformedObjectsWithoutAlphaTest, GL_TRIANGLES, _geometryStore);
+        drawCalls++;
+
+        _untransformedObjectsWithoutAlphaTest.clear();
+    }
+
+    return drawCalls;
 }
 
 std::size_t LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, RenderStateFlags globalFlagsMask, 

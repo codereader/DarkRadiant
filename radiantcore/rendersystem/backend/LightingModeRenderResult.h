@@ -16,12 +16,14 @@ public:
     std::size_t entities = 0;
     std::size_t objects = 0;
 
-    std::size_t drawCalls = 0;
+    std::size_t depthDrawCalls = 0;
+    std::size_t interactionDrawCalls = 0;
+    std::size_t nonInteractionDrawCalls = 0;
 
     std::string toString() override
     {
-        return fmt::format("Lights: {0} of {1} | Entities: {2} | Objects: {3} | Draws: {4}", 
-            visibleLights, visibleLights + skippedLights, entities, objects, drawCalls);
+        return fmt::format("Lights: {0}/{1} | Ents: {2} | Objs: {3} | Draws: D={4}|Int={5}|Blend={6}", 
+            visibleLights, visibleLights + skippedLights, entities, objects, depthDrawCalls, interactionDrawCalls, nonInteractionDrawCalls);
     }
 };
 

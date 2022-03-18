@@ -57,15 +57,11 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
     }
 }
 
-void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, const IRenderView& view, std::size_t renderTime)
+void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
+    const IRenderView& view, std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest)
 {
     std::vector<IGeometryStore::Slot> untransformedObjects;
-    std::vector<IGeometryStore::Slot> untransformedObjectsWithoutAlphaTest;
     untransformedObjects.reserve(1000);
-    untransformedObjectsWithoutAlphaTest.reserve(10000);
-
-    // Set the modelview and projection matrix
-    program.setModelViewProjection(view.GetViewProjection());
 
     for (const auto& [entity, objectsByShader] : _objectsByEntity)
     {
@@ -128,7 +124,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
                 program.setObjectTransform(object.get().getObjectTransform());
 
                 ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
-                ++_drawCalls;
+                ++_depthDrawCalls;
             }
 
             // All alpha-tested materials without transform need to be submitted now
@@ -137,22 +133,11 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
                 program.setObjectTransform(Matrix4::getIdentity());
 
                 ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
-                ++_drawCalls;
+                ++_depthDrawCalls;
 
                 untransformedObjects.clear();
             }
         }
-    }
-
-    // All objects without alpha test or transformation matrix go into one final drawcall
-    if (!untransformedObjectsWithoutAlphaTest.empty())
-    {
-        program.setObjectTransform(Matrix4::getIdentity());
-
-        ObjectRenderer::SubmitGeometry(untransformedObjectsWithoutAlphaTest, GL_TRIANGLES, _store);
-        ++_drawCalls;
-
-        untransformedObjectsWithoutAlphaTest.clear();
     }
 }
 
@@ -227,7 +212,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
                 pass->getProgram().setObjectTransform(object.get().getObjectTransform());
 
                 ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
-                ++_drawCalls;
+                ++_interactionDrawCalls;
             }
 
             if (!untransformedObjects.empty())
@@ -238,7 +223,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
                 pass->getProgram().setObjectTransform(Matrix4::getIdentity());
 
                 ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
-                ++_drawCalls;
+                ++_interactionDrawCalls;
 
                 untransformedObjects.clear();
             }
