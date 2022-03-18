@@ -73,23 +73,35 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
 
             if (!depthFillPass) continue;
 
+            const auto& material = shader->getMaterial();
+            assert(material);
+
             // Skip translucent materials
-            if (shader->getMaterial() && shader->getMaterial()->getCoverage() == Material::MC_TRANSLUCENT)
+            if (material->getCoverage() == Material::MC_TRANSLUCENT)
             {
                 continue;
             }
 
-            // Evaluate the shader stages of this material
-            depthFillPass->evaluateShaderStages(renderTime, entity);
+            if (material->getCoverage() == Material::MC_PERFORATED)
+            {
+                // Evaluate the shader stages of this material
+                depthFillPass->evaluateShaderStages(renderTime, entity);
 
-            // Apply the alpha test value, it might be affected by time and entity parms
-            program.setAlphaTest(depthFillPass->getAlphaTestValue());
+                // Apply the alpha test value, it might be affected by time and entity parms
+                program.setAlphaTest(depthFillPass->getAlphaTestValue());
 
-            // If there's a diffuse stage, apply the correct texture
-            OpenGLState::SetTextureState(state.texture0, depthFillPass->state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
+                // If there's a diffuse stage, apply the correct texture
+                OpenGLState::SetTextureState(state.texture0, depthFillPass->state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
 
-            // Set evaluated stage texture transformation matrix to the GLSL uniform
-            program.setDiffuseTextureTransform(depthFillPass->getDiffuseTextureTransform());
+                // Set evaluated stage texture transformation matrix to the GLSL uniform
+                program.setDiffuseTextureTransform(depthFillPass->getDiffuseTextureTransform());
+            }
+            else
+            {
+                // No alpha test on this material, pass -1 to deactivate texture sampling
+                // in the GLSL program
+                program.setAlphaTest(-1);
+            }
 
             for (const auto& object : objects)
             {
