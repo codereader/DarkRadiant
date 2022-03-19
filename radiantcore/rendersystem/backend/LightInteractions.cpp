@@ -25,7 +25,7 @@ bool LightInteractions::isInView(const IRenderView& view)
     return view.TestAABB(_lightBounds) != VOLUME_OUTSIDE;
 }
 
-void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entities)
+void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
 {
     // Now check all the entities intersecting with this light
     for (const auto& entity : entities)
@@ -38,6 +38,18 @@ void LightInteractions::collectSurfaces(const std::set<IRenderEntityPtr>& entiti
 
             // Don't collect invisible shaders
             if (!shader->isVisible()) return;
+
+            if (object->isOriented())
+            {
+                if (view.TestAABB(object->getObjectBounds(), object->getObjectTransform()) == VOLUME_OUTSIDE)
+                {
+                    return;
+                }
+            }
+            else if (view.TestAABB(object->getObjectBounds()) == VOLUME_OUTSIDE) // non-oriented AABB test
+            {
+                return;
+            }
 
             auto glShader = static_cast<OpenGLShader*>(shader);
 

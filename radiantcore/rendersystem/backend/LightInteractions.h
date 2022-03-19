@@ -77,7 +77,7 @@ public:
 
     bool isInView(const IRenderView& view);
 
-    void collectSurfaces(const std::set<IRenderEntityPtr>& entities);
+    void collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities);
 
     void fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
         const IRenderView& view, std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest);

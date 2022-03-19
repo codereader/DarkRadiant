@@ -39,7 +39,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
         result->visibleLights++;
 
         // Check all the surfaces that are touching this light
-        interaction.collectSurfaces(_entities);
+        interaction.collectSurfaces(view, _entities);
 
         result->objects += interaction.getObjectCount();
         result->entities += interaction.getEntityCount();
