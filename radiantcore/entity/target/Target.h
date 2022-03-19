@@ -5,6 +5,7 @@
 #include "ilightnode.h"
 #include "math/Vector3.h"
 #include "math/AABB.h"
+#include <sigc++/signal.h>
 
 namespace entity {
 
@@ -28,31 +29,39 @@ class Target :
 	// The actual node this Target refers to (can be NULL)
 	const scene::INode* _node;
 
+    sigc::signal<void> _sigPositionChanged;
+
 public:
-	Target()
+	Target() :
+        _node(nullptr)
 	{}
 
 	Target(const scene::INode& node) :
 		_node(&node)
 	{}
 
-	const scene::INode* getNode() const override {
+	const scene::INode* getNode() const override
+    {
 		return _node;
 	}
 
-	void setNode(const scene::INode& node) {
+	void setNode(const scene::INode& node)
+    {
 		_node = &node;
 	}
 
-	bool isEmpty() const override {
+	bool isEmpty() const override
+    {
 		return _node == nullptr;
 	}
 
-	bool isVisible() const {
+	bool isVisible() const
+    {
         return _node != nullptr && _node->visible();
 	}
 
-	void clear() {
+	void clear()
+    {
         _node = nullptr;
 	}
 
@@ -75,6 +84,17 @@ public:
 		}
 		
 		return node->worldAABB().getOrigin();
+	}
+
+    // Invoked by the TargetManager when an entity's position changed
+    void onPositionChanged()
+	{
+        signal_PositionChanged().emit();
+	}
+
+    sigc::signal<void>& signal_PositionChanged()
+	{
+        return _sigPositionChanged;
 	}
 };
 typedef std::shared_ptr<Target> TargetPtr;

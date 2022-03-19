@@ -33,11 +33,19 @@ private:
 
     Vector3 _worldPosition;
 
+    bool _updateNeeded;
+
 public:
     RenderableTargetLines(const IEntityNode& entity, const TargetKeyCollection& targetKeys) :
         _entity(entity),
-        _targetKeys(targetKeys)
+        _targetKeys(targetKeys),
+        _updateNeeded(true)
     {}
+
+    void queueUpdate()
+    {
+        _updateNeeded = true;
+    }
 
     bool hasTargets() const
     {
@@ -46,6 +54,13 @@ public:
 
     void update(const ShaderPtr& shader, const Vector3& worldPosition)
     {
+        // Force an update on position change
+        _updateNeeded |= worldPosition != _worldPosition;
+
+        if (!_updateNeeded) return;
+        
+        _updateNeeded = false;
+
         // Store the new world position for use in updateGeometry()
         _worldPosition = worldPosition;
 

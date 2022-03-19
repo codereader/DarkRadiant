@@ -159,6 +159,7 @@ void EntityNode::createAttachedEntities()
 void EntityNode::transformChanged()
 {
     Node::transformChanged();
+    TargetableNode::onTransformationChanged();
 
     // Broadcast transformChanged to all attached entities so they can update
     // their position

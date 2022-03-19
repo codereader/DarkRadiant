@@ -35,7 +35,7 @@ void TargetableNode::destruct()
 	_d3entity.detachObserver(this);
 }
 
-const TargetKeyCollection& TargetableNode::getTargetKeys() const
+TargetKeyCollection& TargetableNode::getTargetKeys()
 {
     return _targetKeys;
 }
@@ -75,6 +75,24 @@ void TargetableNode::onKeyInsert(const std::string& key, EntityKeyValue& value)
 		// Subscribe to this keyvalue to get notified about "name" changes
 		value.attach(*this);
 	}
+}
+
+void TargetableNode::onTransformationChanged()
+{
+    if (_targetManager)
+    {
+        // Notify the target manager that our position has changed
+        _targetManager->onTargetPositionChanged(_targetName, _node);
+    }
+}
+
+void TargetableNode::onKeyChange(const std::string& key, const std::string& value)
+{
+    if (_targetManager && key == "origin")
+    {
+        // Notify the target manager that our position has changed
+        _targetManager->onTargetPositionChanged(_targetName, _node);
+    }
 }
 
 // Entity::Observer implementation, gets called on key erase
@@ -131,6 +149,8 @@ void TargetableNode::onTargetKeyCollectionChanged()
 			// this also updates its layer visibility flags
             scene::addNodeToContainer(_targetLineNode, _node.shared_from_this());
         }
+
+        _targetLineNode->queueRenderableUpdate();
     }
     else // No more targets
     {
