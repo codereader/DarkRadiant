@@ -55,7 +55,7 @@ public:
             return;
         }
 
-        std::vector<MeshVertex> vertices;
+        std::vector<RenderVertex> vertices;
         vertices.reserve(numPoints);
 
         // Either use the colour defined by the entity as vertex colour, or use plain white
@@ -63,7 +63,7 @@ public:
 
         for (const auto& vertex : _winding)
         {
-            vertices.emplace_back(MeshVertex(vertex.vertex, vertex.normal, 
+            vertices.emplace_back(RenderVertex(vertex.vertex, vertex.normal, 
                 vertex.texcoord, entityColour, vertex.tangent, vertex.bitangent));
         }
 

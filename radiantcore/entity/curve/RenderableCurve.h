@@ -41,7 +41,7 @@ protected:
             return;
         }
 
-        std::vector<MeshVertex> vertices;
+        std::vector<render::RenderVertex> vertices;
         std::vector<unsigned int> indices;
 
         vertices.reserve(m_vertices.size());
@@ -53,7 +53,7 @@ protected:
 
         for (const auto& v : m_vertices)
         {
-            vertices.push_back(MeshVertex(v.vertex, { 0,0,1 }, { 0,0 }, colour));
+            vertices.push_back(render::RenderVertex(v.vertex, { 0,0,1 }, { 0,0 }, colour));
             indices.push_back(index);
             indices.push_back(++index);
         };

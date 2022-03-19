@@ -33,20 +33,20 @@ namespace
 
 TestBufferObjectProvider _testBufferObjectProvider;
 
-inline MeshVertex createNthVertex(int n, int id, std::size_t size)
+inline render::RenderVertex createNthVertex(int n, int id, std::size_t size)
 {
-    auto offset = static_cast<double>(n + size * id);
+    auto offset = static_cast<float>(n + size * id);
 
-    return MeshVertex(
-        { offset + 0.0, offset + 0.5, offset + 0.3 },
-        { 0, 0, offset + 0.0 },
-        { offset + 0.0, -offset + 0.0 }
+    return render::RenderVertex(
+        { offset + 0.0f, offset + 0.5f, offset + 0.3f },
+        { 0, 0, offset + 0.0f },
+        { offset + 0.0f, -offset + 0.0f }
     );
 }
 
-inline std::vector<MeshVertex> generateVertices(int id, std::size_t size)
+inline std::vector<render::RenderVertex> generateVertices(int id, std::size_t size)
 {
-    std::vector<MeshVertex> vertices;
+    std::vector<render::RenderVertex> vertices;
 
     for (int i = 0; i < size; ++i)
     {
@@ -57,7 +57,7 @@ inline std::vector<MeshVertex> generateVertices(int id, std::size_t size)
 }
 
 // Generates 3 indices per vertex, without any special meaning
-inline std::vector<unsigned int> generateIndices(const std::vector<MeshVertex>& vertices)
+inline std::vector<unsigned int> generateIndices(const std::vector<render::RenderVertex>& vertices)
 {
     std::vector<unsigned int> indices;
 
@@ -72,7 +72,7 @@ inline std::vector<unsigned int> generateIndices(const std::vector<MeshVertex>& 
 }
 
 inline void verifyAllocation(render::IGeometryStore& store, render::IGeometryStore::Slot slot,
-    const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices)
+    const std::vector<render::RenderVertex>& vertices, const std::vector<unsigned int>& indices)
 {
     auto renderParms = store.getRenderParameters(slot);
 
@@ -103,7 +103,7 @@ inline void verifyAllocation(render::IGeometryStore& store, render::IGeometrySto
 struct Allocation
 {
     render::IGeometryStore::Slot slot;
-    std::vector<MeshVertex> vertices;
+    std::vector<render::RenderVertex> vertices;
     std::vector<unsigned int> indices;
 
     bool operator<(const Allocation& other) const
@@ -210,7 +210,7 @@ TEST(GeometryStore, UpdateSubData)
         EXPECT_NE(slot, std::numeric_limits<render::IGeometryStore::Slot>::max()) << "Invalid slot";
 
         // We locally keep track of what the data should look like in the store
-        std::vector<MeshVertex> localVertexCopy(vertices.size());
+        std::vector<render::RenderVertex> localVertexCopy(vertices.size());
         std::vector<unsigned int> localIndexCopy(indices.size());
 
         // Upload part of the data (with some increasing offset)
@@ -282,7 +282,7 @@ TEST(GeometryStore, ResizeData)
     store.updateData(slot, vertices, indices);
 
     // We locally keep track of what the data should look like in the store
-    std::vector<MeshVertex> localVertexCopy = vertices;
+    std::vector<render::RenderVertex> localVertexCopy = vertices;
     std::vector<unsigned int> localIndexCopy = indices;
 
     // Reduce the data in the allocation, step by step
@@ -646,7 +646,8 @@ TEST(GeometryStore, RegularSlotBounds)
     AABB localBounds;
     for (const auto& vertex : vertices)
     {
-        localBounds.includePoint(vertex.vertex);
+        const auto& v = vertex.vertex;
+        localBounds.includePoint({ v.x(), v.y(), v.z() });
     }
 
     auto slotBounds = store.getBounds(slot);
@@ -666,7 +667,8 @@ TEST(GeometryStore, RegularSlotBounds)
     localBounds = AABB();
     for (auto index : newIndices)
     {
-        localBounds.includePoint(vertices[index].vertex);
+        const auto& v = vertices[index].vertex;
+        localBounds.includePoint({ v.x(), v.y(), v.z() });
     }
 
     slotBounds = store.getBounds(slot);
@@ -697,7 +699,8 @@ TEST(GeometryStore, IndexRemappingSlotBounds)
     AABB localBounds;
     for (auto index : newIndices)
     {
-        localBounds.includePoint(vertices[index].vertex);
+        const auto& v = vertices[index].vertex;
+        localBounds.includePoint({ v.x(), v.y(), v.z() });
     }
 
     // Query the bounds of this index slot, it should be the same

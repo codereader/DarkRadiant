@@ -57,7 +57,9 @@ public:
         const auto& indices = surface.getIndices();
 
         auto slot = _store.allocateSlot(vertices.size(), indices.size());
-        _store.updateData(slot, vertices, indices);
+
+        // Transform the vertices to single precision
+        _store.updateData(slot, ConvertToRenderVertices(vertices), indices);
 
         _surfaces.emplace(newSlotIndex, SurfaceInfo(surface, slot));
 
@@ -120,12 +122,26 @@ public:
                 surfaceInfo.surfaceDataChanged = false;
 
                 auto& surface = surfaceInfo.surface.get();
-                _store.updateData(surfaceInfo.storageHandle, surface.getVertices(), surface.getIndices());
+                _store.updateData(surfaceInfo.storageHandle, ConvertToRenderVertices(surface.getVertices()), surface.getIndices());
             }
         }
     }
 
 private:
+    std::vector<RenderVertex> ConvertToRenderVertices(const std::vector<MeshVertex>& vertices)
+    {
+        std::vector<RenderVertex> transformedVertices;
+        transformedVertices.reserve(vertices.size());
+
+        for (const auto& vertex : vertices)
+        {
+            transformedVertices.push_back(RenderVertex(vertex.vertex, vertex.normal, vertex.texcoord,
+                vertex.colour, vertex.tangent, vertex.bitangent));
+        }
+
+        return transformedVertices;
+    }
+
     void renderSlot(SurfaceInfo& slot, bool bindBuffer, const VolumeTest* view = nullptr)
     {
         auto& surface = slot.surface.get();

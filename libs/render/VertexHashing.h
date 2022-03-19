@@ -2,6 +2,7 @@
 
 #include "math/Vector3.h"
 #include "render/MeshVertex.h"
+#include "render/RenderVertex.h"
 #include "math/Hash.h"
 
 /**
@@ -47,6 +48,21 @@ struct std::hash<Vector3>
     }
 };
 
+// Coarse hash of the 3-component float vector
+// This is rounding the doubles to the SignificantVertexDigits defined above, 
+// so any two vectors with their components only differing after the few significant digits
+// will produce the same hash.
+template<>
+struct std::hash<Vector3f>
+{
+    static constexpr std::size_t SignificantVertexDigits = 2;
+
+    size_t operator()(const Vector3f& v) const
+    {
+        return math::hashVector3(v, SignificantVertexDigits);
+    }
+};
+
 // Hash specialisation such that MeshVertex can be used as key type in std::unordered_map<>
 // Only the 3D coordinates (the vertex member) will be considered for hash calculation,
 // to intentionally produce hash collisions for vectors that are within a certain VertexEpsilon.
@@ -66,6 +82,33 @@ template<>
 struct std::equal_to<MeshVertex>
 {
     bool operator()(const MeshVertex& a, const MeshVertex& b) const
+    {
+        return math::isNear(a.vertex, b.vertex, render::VertexEpsilon) &&
+            a.normal.dot(b.normal) > (1.0 - render::NormalEpsilon) &&
+            math::isNear(a.texcoord, b.texcoord, render::TexCoordEpsilon) &&
+            math::isNear(a.colour, b.colour, render::VertexEpsilon);
+    }
+};
+
+// Hash specialisation such that MeshVertex can be used as key type in std::unordered_map<>
+// Only the 3D coordinates (the vertex member) will be considered for hash calculation,
+// to intentionally produce hash collisions for vectors that are within a certain VertexEpsilon.
+template<>
+struct std::hash<render::RenderVertex>
+{
+    size_t operator()(const render::RenderVertex& v) const
+    {
+        // We just hash the vertex
+        return std::hash<Vector3f>()(v.vertex);
+    }
+};
+
+// Assumes equality of two MeshVertices if all of (vertex, normal, texcoord, colour) 
+// are equal within defined epsilons (VertexEpsilon, NormalEpsilon, TexCoordEpsilon)
+template<>
+struct std::equal_to<render::RenderVertex>
+{
+    bool operator()(const render::RenderVertex& a, const render::RenderVertex& b) const
     {
         return math::isNear(a.vertex, b.vertex, render::VertexEpsilon) &&
             a.normal.dot(b.normal) > (1.0 - render::NormalEpsilon) &&

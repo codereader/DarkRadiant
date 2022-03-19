@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 /// \brief High-level constructs for efficient OpenGL rendering.
 
 #include "render/MeshVertex.h"
+#include "render/RenderVertex.h"
 #include "render/Vertex3f.h"
 #include "render/TexCoord2f.h"
 #include "render/VertexCb.h"
@@ -281,19 +282,29 @@ template<typename VertexContainerT> struct RemappingTraits
 template<>
 struct RemappingTraits<Vertex3>
 {
+    using ElementType = Vertex3::ElementType;
     static Vertex3& getVertex(Vertex3& vertex) { return vertex; }
 };
 
 template<>
 struct RemappingTraits<VertexCb>
 {
+    using ElementType = Vertex3::ElementType;
     static Vertex3& getVertex(VertexCb& container) { return container.vertex; }
 };
 
 template<>
 struct RemappingTraits<MeshVertex>
 {
+    using ElementType = Vertex3::ElementType;
     static Vertex3& getVertex(MeshVertex& container) { return container.vertex; }
+};
+
+template<>
+struct RemappingTraits<render::RenderVertex>
+{
+    using ElementType = Vector3f::ElementType;
+    static Vector3f& getVertex(render::RenderVertex& container) { return container.vertex; }
 };
 
 class RemapXYZ
@@ -302,9 +313,9 @@ public:
     template<typename VertexContainerT>
 	static void set(VertexContainerT& container, Vertex3::ElementType x, Vertex3::ElementType y, Vertex3::ElementType z)
     {
-        RemappingTraits<VertexContainerT>::getVertex(container).x() = x;
-		RemappingTraits<VertexContainerT>::getVertex(container).y() = y;
-		RemappingTraits<VertexContainerT>::getVertex(container).z() = z;
+        RemappingTraits<VertexContainerT>::getVertex(container).x() = static_cast<typename RemappingTraits<VertexContainerT>::ElementType>(x);
+		RemappingTraits<VertexContainerT>::getVertex(container).y() = static_cast<typename RemappingTraits<VertexContainerT>::ElementType>(y);
+		RemappingTraits<VertexContainerT>::getVertex(container).z() = static_cast<typename RemappingTraits<VertexContainerT>::ElementType>(z);
 	}
 };
 
@@ -314,9 +325,9 @@ public:
     template<typename VertexContainerT>
 	static void set(VertexContainerT& container, Vertex3::ElementType x, Vertex3::ElementType y, Vertex3::ElementType z)
     {
-        RemappingTraits<VertexContainerT>::getVertex(container).x() = z;
-        RemappingTraits<VertexContainerT>::getVertex(container).y() = x;
-        RemappingTraits<VertexContainerT>::getVertex(container).z() = y;
+        RemappingTraits<VertexContainerT>::getVertex(container).x() = static_cast<typename RemappingTraits<VertexContainerT>::ElementType>(z);
+        RemappingTraits<VertexContainerT>::getVertex(container).y() = static_cast<typename RemappingTraits<VertexContainerT>::ElementType>(x);
+        RemappingTraits<VertexContainerT>::getVertex(container).z() = static_cast<typename RemappingTraits<VertexContainerT>::ElementType>(y);
 	}
 };
 
@@ -326,9 +337,9 @@ public:
     template<typename VertexContainerT>
 	static void set(VertexContainerT& container, Vertex3::ElementType x, Vertex3::ElementType y, Vertex3::ElementType z)
     {
-        RemappingTraits<VertexContainerT>::getVertex(container).x() = y;
-        RemappingTraits<VertexContainerT>::getVertex(container).y() = z;
-        RemappingTraits<VertexContainerT>::getVertex(container).z() = x;
+        RemappingTraits<VertexContainerT>::getVertex(container).x() = static_cast<typename RemappingTraits<VertexContainerT>::ElementType>(y);
+        RemappingTraits<VertexContainerT>::getVertex(container).y() = static_cast<typename RemappingTraits<VertexContainerT>::ElementType>(z);
+        RemappingTraits<VertexContainerT>::getVertex(container).z() = static_cast<typename RemappingTraits<VertexContainerT>::ElementType>(x);
 	}
 };
 

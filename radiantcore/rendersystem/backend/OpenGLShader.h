@@ -109,9 +109,9 @@ public:
     void prepareForRendering();
 
     IGeometryRenderer::Slot addGeometry(GeometryType indexType,
-        const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
+        const std::vector<RenderVertex>& vertices, const std::vector<unsigned int>& indices) override;
     void removeGeometry(IGeometryRenderer::Slot slot) override;
-    void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<MeshVertex>& vertices,
+    void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<RenderVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
     void renderGeometry(IGeometryRenderer::Slot slot) override;
     AABB getGeometryBounds(IGeometryRenderer::Slot slot) override;
@@ -123,9 +123,9 @@ public:
     void renderSurface(ISurfaceRenderer::Slot slot) override;
     IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override;
 
-    IWindingRenderer::Slot addWinding(const std::vector<MeshVertex>& vertices, IRenderEntity* entity) override;
+    IWindingRenderer::Slot addWinding(const std::vector<RenderVertex>& vertices, IRenderEntity* entity) override;
     void removeWinding(IWindingRenderer::Slot slot) override;
-    void updateWinding(IWindingRenderer::Slot slot, const std::vector<MeshVertex>& vertices) override;
+    void updateWinding(IWindingRenderer::Slot slot, const std::vector<RenderVertex>& vertices) override;
     bool hasWindings() const;
     void renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot) override;
 

@@ -61,7 +61,7 @@ class WindingRenderer final :
     public IBackendWindingRenderer
 {
 private:
-    using VertexBuffer = CompactWindingVertexBuffer<MeshVertex, WindingIndexerT>;
+    using VertexBuffer = CompactWindingVertexBuffer<RenderVertex, WindingIndexerT>;
     static constexpr typename VertexBuffer::Slot InvalidVertexBufferSlot = std::numeric_limits<typename VertexBuffer::Slot>::max();
     static constexpr IGeometryStore::Slot InvalidStorageHandle = std::numeric_limits<IGeometryStore::Slot>::max();
 
@@ -378,7 +378,7 @@ public:
         return _windingCount == 0;
     }
 
-    Slot addWinding(const std::vector<MeshVertex>& vertices, IRenderEntity* entity) override
+    Slot addWinding(const std::vector<RenderVertex>& vertices, IRenderEntity* entity) override
     {
         auto windingSize = vertices.size();
 
@@ -464,7 +464,7 @@ public:
         }
     }
 
-    void updateWinding(Slot slot, const std::vector<MeshVertex>& vertices) override
+    void updateWinding(Slot slot, const std::vector<RenderVertex>& vertices) override
     {
         assert(slot < _slots.size());
         auto& slotMapping = _slots[slot];
@@ -519,9 +519,9 @@ public:
 
         glDisableClientState(GL_COLOR_ARRAY);
 
-        glVertexPointer(3, GL_DOUBLE, sizeof(MeshVertex), &vertices.front().vertex);
-        glTexCoordPointer(2, GL_DOUBLE, sizeof(MeshVertex), &vertices.front().texcoord);
-        glNormalPointer(GL_DOUBLE, sizeof(MeshVertex), &vertices.front().normal);
+        glVertexPointer(3, GL_FLOAT, sizeof(RenderVertex), &vertices.front().vertex);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(RenderVertex), &vertices.front().texcoord);
+        glNormalPointer(GL_FLOAT, sizeof(RenderVertex), &vertices.front().normal);
 
         if (mode == IWindingRenderer::RenderMode::Triangles)
         {
@@ -617,7 +617,7 @@ private:
             // Copy the modified range to the store
             // We need to set up a local copy here, this could be optimised
             // if the GeometryStore accepted iterator ranges
-            std::vector<MeshVertex> vertexSubData;
+            std::vector<RenderVertex> vertexSubData;
 
             auto firstVertex = bucket.modifiedSlotRange.first * bucket.buffer.getWindingSize();
             auto highestVertex = (bucket.modifiedSlotRange.second + 1) * bucket.buffer.getWindingSize();

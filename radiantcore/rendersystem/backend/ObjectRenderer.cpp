@@ -3,7 +3,7 @@
 #include "igl.h"
 #include "math/Matrix4.h"
 #include "igeometrystore.h"
-#include "render/MeshVertex.h"
+#include "render/RenderVertex.h"
 
 namespace render
 {
@@ -21,19 +21,19 @@ void ObjectRenderer::SubmitObject(IRenderableObject& object, IGeometryStore& sto
     glPopMatrix();
 }
 
-void ObjectRenderer::InitAttributePointers(MeshVertex* bufferStart)
+void ObjectRenderer::InitAttributePointers(RenderVertex* bufferStart)
 {
-    glVertexPointer(3, GL_DOUBLE, sizeof(MeshVertex), &bufferStart->vertex);
-    glColorPointer(4, GL_DOUBLE, sizeof(MeshVertex), &bufferStart->colour);
-    glTexCoordPointer(2, GL_DOUBLE, sizeof(MeshVertex), &bufferStart->texcoord);
-    glNormalPointer(GL_DOUBLE, sizeof(MeshVertex), &bufferStart->normal);
+    glVertexPointer(3, GL_FLOAT, sizeof(RenderVertex), &bufferStart->vertex);
+    glColorPointer(4, GL_FLOAT, sizeof(RenderVertex), &bufferStart->colour);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(RenderVertex), &bufferStart->texcoord);
+    glNormalPointer(GL_FLOAT, sizeof(RenderVertex), &bufferStart->normal);
 
-    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->vertex);
-    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->normal);
-    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->texcoord);
-    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->tangent);
-    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->bitangent);
-    glVertexAttribPointer(GLProgramAttribute::Colour, 4, GL_DOUBLE, 0, sizeof(MeshVertex), &bufferStart->colour);
+    glVertexAttribPointer(GLProgramAttribute::Position, 3, GL_FLOAT, 0, sizeof(RenderVertex), &bufferStart->vertex);
+    glVertexAttribPointer(GLProgramAttribute::Normal, 3, GL_FLOAT, 0, sizeof(RenderVertex), &bufferStart->normal);
+    glVertexAttribPointer(GLProgramAttribute::TexCoord, 2, GL_FLOAT, 0, sizeof(RenderVertex), &bufferStart->texcoord);
+    glVertexAttribPointer(GLProgramAttribute::Tangent, 3, GL_FLOAT, 0, sizeof(RenderVertex), &bufferStart->tangent);
+    glVertexAttribPointer(GLProgramAttribute::Bitangent, 3, GL_FLOAT, 0, sizeof(RenderVertex), &bufferStart->bitangent);
+    glVertexAttribPointer(GLProgramAttribute::Colour, 4, GL_FLOAT, 0, sizeof(RenderVertex), &bufferStart->colour);
 }
 
 void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode, IGeometryStore& store)

@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <vector>
 #include "math/AABB.h"
-#include "render/MeshVertex.h"
+#include "render/RenderVertex.h"
 
 namespace render
 {
@@ -119,7 +119,7 @@ public:
      * index arrays must not be larger than what has been allocated earlier, 
      * but they're allowed to be smaller.
      */
-    virtual void updateData(Slot slot, const std::vector<MeshVertex>& vertices,
+    virtual void updateData(Slot slot, const std::vector<RenderVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
 
     /**
@@ -136,7 +136,7 @@ public:
      * from vertexOffset/indexOffset respectively. The affected range must not be out of bounds
      * of the allocated slot.
      */
-    virtual void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<MeshVertex>& vertices,
+    virtual void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<RenderVertex>& vertices,
         std::size_t indexOffset, const std::vector<unsigned int>& indices) = 0;
 
     /**
@@ -170,12 +170,12 @@ public:
     // The render parameters suitable for rendering surfaces using gl(Multi)DrawElements
     struct RenderParameters
     {
-        MeshVertex* bufferStart;        // start of buffer (to pass to gl*Pointer, usually nullptr)
-        MeshVertex* clientBufferStart;  // start of buffer in client memory
-        unsigned int* firstIndex;       // first index location of the given geometry (to pass to glDraw*)
-        unsigned int* clientFirstIndex; // first index location of the given geometry in client memory
-        std::size_t indexCount;         // index count of the given geometry
-        std::size_t firstVertex;        // offset to the first vertex of this surface
+        RenderVertex* bufferStart;        // start of buffer (to pass to gl*Pointer, usually nullptr)
+        RenderVertex* clientBufferStart;  // start of buffer in client memory
+        unsigned int* firstIndex;         // first index location of the given geometry (to pass to glDraw*)
+        unsigned int* clientFirstIndex;   // first index location of the given geometry in client memory
+        std::size_t indexCount;           // index count of the given geometry
+        std::size_t firstVertex;          // offset to the first vertex of this surface
     };
 
     // Returns the information necessary to render the given slot

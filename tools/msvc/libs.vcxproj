@@ -229,6 +229,7 @@
     <ClInclude Include="..\..\libs\render\RenderableSpacePartition.h" />
     <ClInclude Include="..\..\libs\render\RenderableSurface.h" />
     <ClInclude Include="..\..\libs\render\RenderableTextBase.h" />
+    <ClInclude Include="..\..\libs\render\RenderVertex.h" />
     <ClInclude Include="..\..\libs\render\SceneRenderWalker.h" />
     <ClInclude Include="..\..\libs\render\StaticRenderableText.h" />
     <ClInclude Include="..\..\libs\render\TexCoord2f.h" />

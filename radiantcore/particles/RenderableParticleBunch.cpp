@@ -151,7 +151,7 @@ void RenderableParticleBunch::update(std::size_t time)
     }
 }
 
-void RenderableParticleBunch::addVertexData(std::vector<MeshVertex>& vertices, 
+void RenderableParticleBunch::addVertexData(std::vector<render::RenderVertex>& vertices, 
     std::vector<unsigned int>& indices, const Matrix4& localToWorld)
 {
     if (_quads.empty()) return;
@@ -166,7 +166,7 @@ void RenderableParticleBunch::addVertexData(std::vector<MeshVertex>& vertices,
         {
             auto worldVertex = localToWorld * quad.verts[i].vertex;
 
-            vertices.push_back(MeshVertex(
+            vertices.push_back(render::RenderVertex(
                 worldVertex,
                 quad.verts[i].normal, 
                 quad.verts[i].texcoord, 

@@ -30,7 +30,7 @@ private:
     // Represents the storage for a single frame
     struct FrameBuffer
     {
-        ContinuousBuffer<MeshVertex> vertices;
+        ContinuousBuffer<RenderVertex> vertices;
         ContinuousBuffer<unsigned int> indices;
 
         ISyncObject::Ptr syncObject;
@@ -155,7 +155,7 @@ public:
         return slot;
     }
 
-    void updateData(Slot slot, const std::vector<MeshVertex>& vertices,
+    void updateData(Slot slot, const std::vector<RenderVertex>& vertices,
         const std::vector<unsigned int>& indices) override
     {
         auto& current = getCurrentBuffer();
@@ -178,7 +178,7 @@ public:
         });
     }
 
-    void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<MeshVertex>& vertices,
+    void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<RenderVertex>& vertices,
         std::size_t indexOffset, const std::vector<unsigned int>& indices) override
     {
         auto& current = getCurrentBuffer();
@@ -276,7 +276,8 @@ public:
 
         for (auto i = 0; i < numIndices; ++i, ++indexPointer)
         {
-            bounds.includePoint(vertex[*indexPointer].vertex);
+            const auto& v = vertex[*indexPointer].vertex;
+            bounds.includePoint({ v.x(), v.y(), v.z() });
         }
 
         return bounds;

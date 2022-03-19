@@ -10,7 +10,7 @@ namespace detail
 {
 
 inline void addColouredVertices(const std::vector<Vector3>& sourceVertices, const Vector4& colour,
-    std::vector<MeshVertex>& vertices, std::vector<unsigned int>& indices)
+    std::vector<render::RenderVertex>& vertices, std::vector<unsigned int>& indices)
 {
     auto indexOffset = static_cast<unsigned int>(vertices.size());
 
@@ -18,7 +18,7 @@ inline void addColouredVertices(const std::vector<Vector3>& sourceVertices, cons
     {
         const auto& vertex = sourceVertices[i];
 
-        vertices.push_back(MeshVertex(vertex, { 0,0,0 }, { 0,0 }, colour));
+        vertices.push_back(render::RenderVertex(vertex, { 0,0,0 }, { 0,0 }, colour));
         indices.push_back(indexOffset + i);
     }
 }
@@ -34,7 +34,7 @@ void RenderableBrushVertices::updateGeometry()
     // Get the vertices for our given mode
     const auto& brushVertices = _brush.getVertices(_mode);
 
-    std::vector<MeshVertex> vertices;
+    std::vector<render::RenderVertex> vertices;
     std::vector<unsigned int> indices;
 
     auto totalSize = brushVertices.size() + _selectedVertices.size();

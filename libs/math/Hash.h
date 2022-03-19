@@ -28,7 +28,8 @@ inline std::size_t hashDouble(double value, std::size_t significantDigits)
     return static_cast<std::size_t>(value * detail::RoundingFactor(significantDigits));
 }
 
-inline std::size_t hashVector3(const Vector3& v, std::size_t significantDigits)
+template<typename ElementType>
+inline std::size_t hashVector3(const BasicVector3<ElementType>& v, std::size_t significantDigits)
 {
     auto xHash = math::hashDouble(v.x(), significantDigits);
     auto yHash = math::hashDouble(v.y(), significantDigits);
@@ -64,7 +65,8 @@ public:
         addSizet(intValue);
     }
 
-    void addVector3(const Vector3& v, std::size_t significantDigits)
+    template<typename ElementType>
+    void addVector3(const BasicVector3<ElementType>& v, std::size_t significantDigits)
     {
         std::size_t components[3] =
         {

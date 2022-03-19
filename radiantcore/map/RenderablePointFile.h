@@ -1,6 +1,8 @@
 #pragma once
 
 #include "render/RenderableGeometry.h"
+#include "render/VertexCb.h"
+#include "render/Colour4b.h"
 
 namespace map
 {
@@ -35,14 +37,14 @@ public:
 protected:
     void updateGeometry() override
     {
-        std::vector<MeshVertex> vertices;
+        std::vector<render::RenderVertex> vertices;
         std::vector<unsigned int> indices;
 
         if (_points.size() < 2) return;
 
         for (unsigned int i = 0; i < _points.size(); ++i)
         {
-            vertices.push_back(MeshVertex(_points[i].vertex, { 0, 0, 0 }, { 0, 0 }, detail::toVector4(_points[i].colour)));
+            vertices.push_back(render::RenderVertex(_points[i].vertex, { 0, 0, 0 }, { 0, 0 }, detail::toVector4(_points[i].colour)));
 
             if (i > 0)
             {

@@ -143,7 +143,7 @@ void OpenGLShader::prepareForRendering()
 }
 
 IGeometryRenderer::Slot OpenGLShader::addGeometry(GeometryType indexType,
-    const std::vector<MeshVertex>& vertices, const std::vector<unsigned int>& indices)
+    const std::vector<RenderVertex>& vertices, const std::vector<unsigned int>& indices)
 {
     return _geometryRenderer.addGeometry(indexType, vertices, indices);
 }
@@ -153,7 +153,7 @@ void OpenGLShader::removeGeometry(IGeometryRenderer::Slot slot)
     _geometryRenderer.removeGeometry(slot);
 }
 
-void OpenGLShader::updateGeometry(IGeometryRenderer::Slot slot, const std::vector<MeshVertex>& vertices,
+void OpenGLShader::updateGeometry(IGeometryRenderer::Slot slot, const std::vector<RenderVertex>& vertices,
     const std::vector<unsigned int>& indices)
 {
     _geometryRenderer.updateGeometry(slot, vertices, indices);
@@ -199,7 +199,7 @@ IGeometryStore::Slot OpenGLShader::getSurfaceStorageLocation(ISurfaceRenderer::S
     return _surfaceRenderer.getSurfaceStorageLocation(slot);
 }
 
-IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<MeshVertex>& vertices, IRenderEntity* entity)
+IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<RenderVertex>& vertices, IRenderEntity* entity)
 {
     return _windingRenderer->addWinding(vertices, entity);
 }
@@ -209,7 +209,7 @@ void OpenGLShader::removeWinding(IWindingRenderer::Slot slot)
     _windingRenderer->removeWinding(slot);
 }
 
-void OpenGLShader::updateWinding(IWindingRenderer::Slot slot, const std::vector<MeshVertex>& vertices)
+void OpenGLShader::updateWinding(IWindingRenderer::Slot slot, const std::vector<RenderVertex>& vertices)
 {
     _windingRenderer->updateWinding(slot, vertices);
 }

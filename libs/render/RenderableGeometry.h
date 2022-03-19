@@ -240,7 +240,7 @@ protected:
      * Indices of vertices to join together into primitives.
      */
     void updateGeometryWithData(GeometryType type,
-                                const std::vector<MeshVertex>& vertices,
+                                const std::vector<RenderVertex>& vertices,
                                 const std::vector<unsigned int>& indices)
     {
         // Size changes require removal of the geometry before update
