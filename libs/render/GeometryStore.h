@@ -22,10 +22,7 @@ private:
         IndexRemap = 1,
     };
 
-    static constexpr auto NumFrameBuffers = 2;
-
-    // Keep track of modified slots as long as a single buffer is in use
-    std::vector<detail::BufferTransaction> _transactionLog;
+    static constexpr auto NumFrameBuffers = 3;
 
     // Represents the storage for a single frame
     struct FrameBuffer
@@ -38,10 +35,13 @@ private:
         IBufferObject::Ptr vertexBufferObject;
         IBufferObject::Ptr indexBufferObject;
 
-        void applyTransactions(const std::vector<detail::BufferTransaction>& transactions, const FrameBuffer& other)
+        // Keep track of modified slots as long as this buffer is in use
+        std::vector<detail::BufferTransaction> transactionLog;
+
+        void applyTransactions(const FrameBuffer& other)
         {
-            vertices.applyTransactions(transactions, other.vertices, GetVertexSlot);
-            indices.applyTransactions(transactions, other.indices, GetIndexSlot);
+            vertices.applyTransactions(other.transactionLog, other.vertices, GetVertexSlot);
+            indices.applyTransactions(other.transactionLog, other.indices, GetIndexSlot);
         }
 
         void syncToBufferObjects()
@@ -75,9 +75,6 @@ public:
     // Marks the beginning of a frame, switches to the next writing buffers 
     void onFrameStart()
     {
-        // Switch to the next frame
-        auto& previous = getCurrentBuffer();
-
         _currentBuffer = (_currentBuffer + 1) % NumFrameBuffers;
         auto& current = getCurrentBuffer();
 
@@ -88,9 +85,17 @@ public:
             current.syncObject.reset();
         }
 
-        // Replay any modifications to the new buffer
-        current.applyTransactions(_transactionLog, previous);
-        _transactionLog.clear();
+        // Replay any modifications of all other buffers onto this one,
+        // in the order they are switched through
+        for (auto bufferIndex = (_currentBuffer + 1) % NumFrameBuffers; 
+             bufferIndex != _currentBuffer; 
+             bufferIndex = (bufferIndex + 1) % NumFrameBuffers)
+        {
+            current.applyTransactions(_frameBuffers[bufferIndex]);
+        }
+
+        // This buffer is in sync now, we can clear its log
+        current.transactionLog.clear();
     }
 
     std::pair<IBufferObject::Ptr, IBufferObject::Ptr> getBufferObjects() override
@@ -124,7 +129,7 @@ public:
 
         auto slot = GetSlot(SlotType::Regular, vertexSlot, indexSlot);
 
-        _transactionLog.emplace_back(detail::BufferTransaction{
+        current.transactionLog.emplace_back(detail::BufferTransaction{
             slot, detail::BufferTransaction::Type::Allocate
         });
 
@@ -148,7 +153,7 @@ public:
         // In an IndexRemap slot, the vertex slot ID refers to the one containing the vertices
         auto slot = GetSlot(SlotType::IndexRemap, GetVertexSlot(slotContainingVertexData), indexSlot);
 
-        _transactionLog.emplace_back(detail::BufferTransaction{
+        current.transactionLog.emplace_back(detail::BufferTransaction{
             slot, detail::BufferTransaction::Type::Allocate
         });
 
@@ -173,7 +178,7 @@ public:
         assert(!indices.empty());
         current.indices.setData(GetIndexSlot(slot), indices);
 
-        _transactionLog.emplace_back(detail::BufferTransaction{
+        current.transactionLog.emplace_back(detail::BufferTransaction{
             slot, detail::BufferTransaction::Type::Update
         });
     }
@@ -196,7 +201,7 @@ public:
         assert(!indices.empty());
         current.indices.setSubData(GetIndexSlot(slot), indexOffset, indices);
 
-        _transactionLog.emplace_back(detail::BufferTransaction{
+        current.transactionLog.emplace_back(detail::BufferTransaction{
             slot, detail::BufferTransaction::Type::Update
         });
     }
@@ -216,7 +221,7 @@ public:
 
         current.indices.resizeData(GetIndexSlot(slot), indexSize);
 
-        _transactionLog.emplace_back(detail::BufferTransaction{
+        current.transactionLog.emplace_back(detail::BufferTransaction{
             slot, detail::BufferTransaction::Type::Update
         });
     }
@@ -234,7 +239,7 @@ public:
 
         current.indices.deallocate(GetIndexSlot(slot));
 
-        _transactionLog.emplace_back(detail::BufferTransaction{
+        current.transactionLog.emplace_back(detail::BufferTransaction{
             slot, detail::BufferTransaction::Type::Deallocate
         });
     }

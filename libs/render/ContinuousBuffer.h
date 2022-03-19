@@ -224,8 +224,13 @@ public:
     void applyTransactions(const std::vector<detail::BufferTransaction>& transactions, const ContinuousBuffer<ElementType>& other,
         const std::function<std::uint32_t(IGeometryStore::Slot)>& getHandle)
     {
-        // Ensure the buffer is the same size
-        _buffer.resize(other._buffer.size());
+        // Ensure the buffer is at least the same size
+        auto otherSize = other._buffer.size();
+
+        if (otherSize > _buffer.size())
+        {
+            _buffer.resize(otherSize);
+        }
 
         for (const auto& transaction : transactions)
         {
