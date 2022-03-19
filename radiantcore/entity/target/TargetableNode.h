@@ -69,6 +69,8 @@ public:
     void onInsertIntoScene(scene::IMapRootNode& root);
     void onRemoveFromScene(scene::IMapRootNode& root);
 
+    void onVisibilityChanged(bool isVisibleNow);
+
     // Invoked by the TargetKeyCollection when the number of observed has changed
     void onTargetKeyCollectionChanged();
 

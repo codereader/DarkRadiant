@@ -433,6 +433,9 @@ public:
      */
     virtual void associateTarget(const std::string& name, const scene::INode& node) = 0;
 
+    // Will be called by a TargetableNode to notify about visibility changes
+    virtual void onTargetVisibilityChanged(const std::string& name, const scene::INode& node) = 0;
+
     // Will be called by a TargetableNode to notify about a position change
     virtual void onTargetPositionChanged(const std::string& name, const scene::INode& node) = 0;
 

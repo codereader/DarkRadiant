@@ -478,6 +478,7 @@ std::size_t EntityNode::getHighlightFlags()
 void EntityNode::onVisibilityChanged(bool isVisibleNow)
 {
     SelectableNode::onVisibilityChanged(isVisibleNow);
+    TargetableNode::onVisibilityChanged(isVisibleNow);
 
     for (const auto& [node, _] : _attachedEnts)
     {

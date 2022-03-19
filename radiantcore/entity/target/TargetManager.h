@@ -40,6 +40,9 @@ public:
 	 */
     void associateTarget(const std::string& name, const scene::INode& node) override;
 
+    // Is called by the TargetableNode to notify about visibility changes
+    void onTargetVisibilityChanged(const std::string& name, const scene::INode& node) override;
+
     // Is called by the TargetableNode to notify about a position change
     void onTargetPositionChanged(const std::string& name, const scene::INode& node) override;
 

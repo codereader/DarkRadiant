@@ -62,6 +62,8 @@ public:
 
 	void clear()
     {
+        // Notify any watchers on scene removal
+        signal_TargetChanged().emit();
         _node = nullptr;
 	}
 
@@ -89,10 +91,16 @@ public:
     // Invoked by the TargetManager when an entity's position changed
     void onPositionChanged()
 	{
-        signal_PositionChanged().emit();
+        signal_TargetChanged().emit();
 	}
 
-    sigc::signal<void>& signal_PositionChanged()
+    // Invoked by the TargetManager when an entity's visibility has changed
+    void onVisibilityChanged()
+	{
+        signal_TargetChanged().emit();
+	}
+
+    sigc::signal<void>& signal_TargetChanged()
 	{
         return _sigPositionChanged;
 	}

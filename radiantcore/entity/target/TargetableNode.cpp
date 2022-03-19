@@ -133,6 +133,14 @@ void TargetableNode::onRemoveFromScene(scene::IMapRootNode& root)
     _targetKeys.onTargetManagerChanged();
 }
 
+void TargetableNode::onVisibilityChanged(bool isVisibleNow)
+{
+    if (!_targetManager) return;
+
+    // Notify the target manager that our position has changed
+    _targetManager->onTargetVisibilityChanged(_targetName, _node);
+}
+
 void TargetableNode::onTargetKeyCollectionChanged()
 {
     if (!_targetKeys.empty())

@@ -23,7 +23,7 @@ void TargetKey::onTargetManagerChanged()
     _target = std::static_pointer_cast<Target>(manager->getTarget(_curValue));
     assert(_target);
 
-    _target->signal_PositionChanged().connect(sigc::mem_fun(this, &TargetKey::onTargetPositionChanged));
+    _target->signal_TargetChanged().connect(sigc::mem_fun(this, &TargetKey::onTargetPositionChanged));
 }
 
 const TargetPtr& TargetKey::getTarget() const
@@ -58,7 +58,7 @@ void TargetKey::onKeyValueChanged(const std::string& newValue)
         _target = std::static_pointer_cast<Target>(targetManager->getTarget(_curValue));
         assert(_target);
 
-        _target->signal_PositionChanged().connect(sigc::mem_fun(this, &TargetKey::onTargetPositionChanged));
+        _target->signal_TargetChanged().connect(sigc::mem_fun(this, &TargetKey::onTargetPositionChanged));
     }
 }
 

@@ -36,6 +36,18 @@ ITargetableObjectPtr TargetManager::getTarget(const std::string& name)
 	return target;
 }
 
+void TargetManager::onTargetVisibilityChanged(const std::string& name, const scene::INode& node)
+{
+    if (name.empty()) return;
+
+    auto existing = _targets.find(name);
+
+    if (existing != _targets.end())
+    {
+        existing->second->onVisibilityChanged();
+    }
+}
+
 void TargetManager::onTargetPositionChanged(const std::string& name, const scene::INode& node)
 {
     if (name.empty()) return;
@@ -63,6 +75,8 @@ void TargetManager::associateTarget(const std::string& name, const scene::INode&
         {
 			// Already registered, but empty => associate it
 			found->second->setNode(node);
+            // Trigger a visibility changed signal
+            found->second->onVisibilityChanged();
 		}
 		else {
 			// Non-empty target!
