@@ -453,6 +453,9 @@ void StaticGeometryNode::_onTransformationChanged()
 	// If this is a container, pass the call to the children and leave the entity unharmed
 	if (!isModel())
 	{
+        // Notify, any targeting nodes need to update their arrows pointing at us
+        TargetableNode::onTransformationChanged();
+
 		scene::forEachTransformable(*this, [] (ITransformable& child)
 		{
 			child.revertTransform();
