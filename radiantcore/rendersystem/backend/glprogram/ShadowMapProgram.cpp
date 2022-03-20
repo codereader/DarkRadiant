@@ -11,7 +11,7 @@ namespace render
 
 namespace
 {
-    constexpr const char* const SHADOWMAP_VP_FILENAME = "shadowmap_vs.glsl";
+    constexpr const char* const SHADOWMAP_VP_FILENAME = "shadowmap_vp.glsl";
     constexpr const char* const SHADOWMAP_FP_FILENAME = "shadowmap_fp.glsl";
 }
 
@@ -32,6 +32,7 @@ void ShadowMapProgram::create()
     debug::assertNoGlErrors();
 
     _locAlphaTest = glGetUniformLocation(_programObj, "u_AlphaTest");
+    _locLightOrigin = glGetUniformLocation(_programObj, "u_LightOrigin");
     _locObjectTransform = glGetUniformLocation(_programObj, "u_ObjectTransform");
     _locDiffuseTextureMatrix = glGetUniformLocation(_programObj, "u_DiffuseTextureMatrix");
 
@@ -63,6 +64,18 @@ void ShadowMapProgram::disable()
 void ShadowMapProgram::setAlphaTest(float alphaTest)
 {
     glUniform1f(_locAlphaTest, alphaTest);
+
+    debug::assertNoGlErrors();
+}
+
+void ShadowMapProgram::setLightOrigin(const Vector3& lightOrigin)
+{
+    glUniform3f(_locLightOrigin,
+        static_cast<GLfloat>(lightOrigin.x()), 
+        static_cast<GLfloat>(lightOrigin.y()), 
+        static_cast<GLfloat>(lightOrigin.z()));
+
+    debug::assertNoGlErrors();
 }
 
 void ShadowMapProgram::setObjectTransform(const Matrix4& transform)

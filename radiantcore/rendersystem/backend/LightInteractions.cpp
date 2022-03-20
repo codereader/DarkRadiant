@@ -174,6 +174,11 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
 
     // No alpha test for now
     program.setAlphaTest(-1);
+    
+    program.setLightOrigin(_light.getLightOrigin());
+
+    // Set evaluated stage texture transformation matrix to the GLSL uniform
+    program.setDiffuseTextureTransform(Matrix4::getIdentity());
 
     // Render all the objects that have a depth filling stage
     for (const auto& [entity, objectsByShader] : _objectsByEntity)
@@ -241,6 +246,8 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
             }
         }
     }
+
+    debug::assertNoGlErrors();
 }
 
 void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& program, 

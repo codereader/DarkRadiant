@@ -10,6 +10,7 @@ class ShadowMapProgram :
 {
 private:
     GLint _locAlphaTest;
+    GLint _locLightOrigin;
     GLint _locObjectTransform;
     GLint _locDiffuseTextureMatrix;
 
@@ -22,6 +23,7 @@ public:
 
     void setDiffuseTextureTransform(const Matrix4& transform);
     void setAlphaTest(float alphaTest);
+    void setLightOrigin(const Vector3& lightOrigin);
 };
 
 }

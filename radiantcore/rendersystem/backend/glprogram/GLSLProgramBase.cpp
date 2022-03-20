@@ -40,6 +40,8 @@ void GLSLProgramBase::loadMatrixUniform(GLuint location, const Matrix4& matrix)
     }
 
     glUniformMatrix4fv(location, 1, GL_FALSE, values);
+
+    debug::assertNoGlErrors();
 }
 
 void GLSLProgramBase::loadTextureMatrixUniform(GLuint location, const Matrix4& matrix)
@@ -68,6 +70,8 @@ void GLSLProgramBase::loadTextureMatrixUniform(GLuint location, const Matrix4& m
 
     // Load two 4-component vectors into the uniform location
     glUniform4fv(location, 2, values);
+
+    debug::assertNoGlErrors();
 }
 
 }

@@ -82,12 +82,12 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 
     result->depthDrawCalls += drawDepthFillPass(current, globalFlagsMask, interactionLists, view, time);
 
-    _shadowMapProgram->enable();
-    _shadowMapFbo->bind();
-
     // save viewport
     GLint previousViewport[4];
     glGetIntegerv(GL_VIEWPORT, previousViewport);
+
+    _shadowMapProgram->enable();
+    _shadowMapFbo->bind();
 
     // Render a single light to the shadow map buffer
     for (auto& interactionList : interactionLists)
@@ -99,8 +99,8 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
         break;
     }
 
-    _shadowMapProgram->disable();
     _shadowMapFbo->unbind();
+    _shadowMapProgram->disable();
 
     // Restore view port
     glViewport(previousViewport[0], previousViewport[1], previousViewport[2], previousViewport[3]);
