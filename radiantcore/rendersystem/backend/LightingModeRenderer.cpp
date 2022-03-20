@@ -22,7 +22,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     {
         _shadowMapFbo = FrameBuffer::CreateShadowMapBuffer();
         // Define the shadow atlas
-        _shadowMapAtlas.resize(4);
+        _shadowMapAtlas.resize(6);
 
         for (int i = 0; i < 6; ++i)
         {
@@ -82,6 +82,13 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 
     result->depthDrawCalls += drawDepthFillPass(current, globalFlagsMask, interactionLists, view, time);
 
+    _shadowMapProgram->enable();
+    _shadowMapFbo->bind();
+
+    // save viewport
+    GLint previousViewport[4];
+    glGetIntegerv(GL_VIEWPORT, previousViewport);
+
     // Render a single light to the shadow map buffer
     for (auto& interactionList : interactionLists)
     {
@@ -91,6 +98,12 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
         result->shadowDrawCalls += interactionList.getShadowMapDrawCalls();
         break;
     }
+
+    _shadowMapProgram->disable();
+    _shadowMapFbo->unbind();
+
+    // Restore view port
+    glViewport(previousViewport[0], previousViewport[1], previousViewport[2], previousViewport[3]);
 
     // Draw the surfaces per light and material
     auto interactionState = InteractionPass::GenerateInteractionState(_programFactory);

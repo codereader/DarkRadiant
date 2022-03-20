@@ -48,15 +48,6 @@ public:
         _untransformedObjectsWithoutAlphaTest.reserve(10000);
     }
 
-    ~LightingModeRenderer()
-    {
-        if (_shadowMapProgram)
-        {
-            _shadowMapProgram->destroy();
-            _shadowMapProgram = nullptr;
-        }
-    }
-
     IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;
 
 private:

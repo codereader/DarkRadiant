@@ -1,6 +1,7 @@
 #pragma once
 
 #include "igl.h"
+#include "debugging/gl.h"
 
 namespace render
 {
@@ -31,7 +32,7 @@ public:
         glDeleteTextures(1, &_textureNumber);
         _textureNumber = 0;
 
-        glDeleteBuffers(1, &_fbo);
+        glDeleteFramebuffers(1, &_fbo);
         _fbo = 0;
     }
 
@@ -48,11 +49,13 @@ public:
     void bind()
     {
         glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+        debug::assertNoGlErrors();
     }
 
     void unbind()
     {
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        debug::assertNoGlErrors();
     }
 
     static Ptr CreateShadowMapBuffer(std::size_t size = DefaultShadowMapSize)
@@ -60,25 +63,38 @@ public:
         Ptr buffer(new FrameBuffer);
 
         // Generate an FBO and an image to attach to it
-        glGenBuffers(1, &buffer->_fbo);
+        glGenFramebuffers(1, &buffer->_fbo);
         glGenTextures(1, &buffer->_textureNumber);
 
+        debug::assertNoGlErrors();
+
         glBindTexture(GL_TEXTURE_2D, buffer->_textureNumber);
+
+        debug::assertNoGlErrors();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+        debug::assertNoGlErrors();
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32F, 
             static_cast<GLsizei>(size), static_cast<GLsizei>(size),
             0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 
+        debug::assertNoGlErrors();
+
         // Attach the texture to the FBO
+        buffer->bind();
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buffer->_textureNumber, 0);
+
+        debug::assertNoGlErrors();
 
         buffer->_width = size;
         buffer->_height = size;
+
+        buffer->unbind();
 
         return buffer;
     }
