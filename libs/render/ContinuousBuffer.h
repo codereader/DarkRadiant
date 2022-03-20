@@ -272,53 +272,29 @@ public:
         }
         else
         {
+            std::size_t minimumOffset = std::numeric_limits<std::size_t>::max();
+            std::size_t maximumOffset = 0;
+
             // Size is the same, apply the updates to the GPU buffer
+            // Determine the modified memory range
             for (auto handle : _unsyncedSlots)
             {
                 auto& slot = _slots[handle];
 
-                // Upload the chunk of modified memory
-                buffer->setData(slot.Offset * sizeof(ElementType),
-                    reinterpret_cast<unsigned char*>(_buffer.data() + slot.Offset),
-                    slot.Used * sizeof(ElementType));
+                minimumOffset = std::min(slot.Offset, minimumOffset);
+                maximumOffset = std::max(slot.Offset + slot.Used, maximumOffset);
+            }
+
+            // Copy the data in one single operation
+            if (!_unsyncedSlots.empty())
+            {
+                buffer->setData(minimumOffset * sizeof(ElementType),
+                    reinterpret_cast<unsigned char*>(_buffer.data() + minimumOffset),
+                    (maximumOffset - minimumOffset) * sizeof(ElementType));
             }
         }
 
         _unsyncedSlots.clear();
-
-#if 0
-        if (_modifiedRange.first == std::numeric_limits<std::size_t>::max() ||
-            _modifiedRange.second - _modifiedRange.first == 0 || !buffer)
-        {
-            return; // nothing to do
-        }
-
-        auto currentBufferSize = _buffer.size() * sizeof(ElementType);
-
-        if (_lastSyncedBufferSize != currentBufferSize)
-        {
-            // Resize the memory in the buffer object
-            buffer->resize(currentBufferSize);
-            _lastSyncedBufferSize = currentBufferSize;
-
-            // Re-upload everything
-            buffer->setData(0, reinterpret_cast<unsigned char*>(_buffer.data()),
-                _buffer.size() * sizeof(ElementType));
-        }
-        else
-        {
-            auto startBytes = _modifiedRange.first * sizeof(ElementType);
-            auto endBytes = _modifiedRange.second * sizeof(ElementType);
-            auto firstElement = _buffer.data() + _modifiedRange.first;
-
-            // Upload the chunk of modified memory
-            buffer->setData(startBytes, reinterpret_cast<unsigned char*>(firstElement), 
-                endBytes - startBytes);
-        }
-        
-        _modifiedRange.first = std::numeric_limits<std::size_t>::max();
-        _modifiedRange.second = 0;
-#endif
     }
 
 private:
