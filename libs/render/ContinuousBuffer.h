@@ -82,9 +82,12 @@ private:
     // The slots that have been modified in between syncs
     std::vector<Handle> _unsyncedSlots;
 
+    std::size_t _allocatedElements;
+
 public:
     ContinuousBuffer(std::size_t initialSize = DefaultInitialSize) :
-        _lastSyncedBufferSize(0)
+        _lastSyncedBufferSize(0),
+        _allocatedElements(0)
     {
         // Pre-allocate some memory, but don't go all the way down to zero
         _buffer.resize(initialSize == 0 ? 16 : initialSize);
@@ -109,13 +112,18 @@ public:
 
         _emptySlots = other._emptySlots;
         _unsyncedSlots = other._unsyncedSlots;
+        _allocatedElements = other._allocatedElements;
 
         return *this;
     }
 
     Handle allocate(std::size_t requiredSize)
     {
-        return getNextFreeSlotForSize(requiredSize);
+        auto handle = getNextFreeSlotForSize(requiredSize);
+
+        _allocatedElements += requiredSize;
+
+        return handle;
     }
 
     ElementType* getBufferStart()
@@ -136,6 +144,11 @@ public:
     std::size_t getOffset(Handle handle) const
     {
         return _slots[handle].Offset;
+    }
+
+    std::size_t getNumAllocatedElements() const
+    {
+        return _allocatedElements;
     }
 
     void setData(Handle handle, const std::vector<ElementType>& elements)
@@ -189,6 +202,8 @@ public:
         auto& releasedSlot = _slots[handle];
         releasedSlot.Occupied = false;
         releasedSlot.Used = 0;
+
+        _allocatedElements -= releasedSlot.Size;
 
         // Check if the slot can merge with an adjacent one
         Handle slotIndexToMerge = std::numeric_limits<Handle>::max();
@@ -251,6 +266,7 @@ public:
         _slots.resize(other._slots.size());
         memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
 
+        _allocatedElements = other._allocatedElements;
         _emptySlots = other._emptySlots;
     }
 
