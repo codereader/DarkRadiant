@@ -1144,6 +1144,9 @@
     <ClCompile Include="..\..\radiantcore\eclass\EClassParser.cpp">
       <Filter>src\eclass</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2360,6 +2363,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FrameBuffer.h">
       <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,6 +7,7 @@
 #include "isurfacerenderer.h"
 #include "irenderableobject.h"
 #include "irenderview.h"
+#include "render/Rectangle.h"
 
 namespace render
 {
@@ -15,6 +16,7 @@ class OpenGLState;
 class OpenGLShader;
 class GLSLDepthFillAlphaProgram;
 class GLSLBumpProgram;
+class ShadowMapProgram;
 
 /**
  * Defines interactions between a light and one or more entity renderables
@@ -91,7 +93,7 @@ public:
     void fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
         const IRenderView& view, std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest);
 
-    void drawShadowMap(OpenGLState& state);
+    void drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program);
 
     void drawInteractions(OpenGLState& state, GLSLBumpProgram& program, const IRenderView& view, std::size_t renderTime);
 };

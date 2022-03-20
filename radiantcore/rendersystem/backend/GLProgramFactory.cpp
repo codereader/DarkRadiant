@@ -5,6 +5,7 @@
 #include "glprogram/GLSLCubeMapProgram.h"
 #include "glprogram/GLSLBumpProgram.h"
 #include "glprogram/GenericVFPProgram.h"
+#include "glprogram/ShadowMapProgram.h"
 
 #include "itextstream.h"
 #include "iregistry.h"
@@ -27,6 +28,7 @@ GLProgramFactory::GLProgramFactory()
     _builtInPrograms[ShaderProgram::DepthFillAlpha] = std::make_shared<GLSLDepthFillAlphaProgram>();
     _builtInPrograms[ShaderProgram::Interaction] = std::make_shared<GLSLBumpProgram>();
     _builtInPrograms[ShaderProgram::CubeMap] = std::make_shared<GLSLCubeMapProgram>();
+    _builtInPrograms[ShaderProgram::ShadowMap] = std::make_shared<ShadowMapProgram>();
 }
 
 GLProgram* GLProgramFactory::getBuiltInProgram(ShaderProgram builtInProgram)

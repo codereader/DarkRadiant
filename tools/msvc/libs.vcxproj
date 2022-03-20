@@ -218,6 +218,7 @@
     <ClInclude Include="..\..\libs\render\MeshVertex.h" />
     <ClInclude Include="..\..\libs\render\NopRenderView.h" />
     <ClInclude Include="..\..\libs\render\NopVolumeTest.h" />
+    <ClInclude Include="..\..\libs\render\Rectangle.h" />
     <ClInclude Include="..\..\libs\render\RenderableBoundingBoxes.h" />
     <ClInclude Include="..\..\libs\render\RenderableBox.h" />
     <ClInclude Include="..\..\libs\render\RenderableCollectionWalker.h" />

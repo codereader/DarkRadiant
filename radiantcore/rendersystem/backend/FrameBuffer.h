@@ -11,11 +11,13 @@ class FrameBuffer
 private:
     GLuint _fbo;
     std::size_t _width;
+    std::size_t _height;
     GLuint _textureNumber;
 
     FrameBuffer() :
         _fbo(0),
         _width(0),
+        _height(0),
         _textureNumber(0)
     {}
 
@@ -31,6 +33,16 @@ public:
 
         glDeleteBuffers(1, &_fbo);
         _fbo = 0;
+    }
+
+    std::size_t getWidth() const
+    {
+        return _width;
+    }
+
+    std::size_t getHeight() const
+    {
+        return _height;
     }
 
     void bind()
@@ -62,7 +74,11 @@ public:
             static_cast<GLsizei>(size), static_cast<GLsizei>(size),
             0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 
+        // Attach the texture to the FBO
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, buffer->_textureNumber, 0);
+
         buffer->_width = size;
+        buffer->_height = size;
 
         return buffer;
     }

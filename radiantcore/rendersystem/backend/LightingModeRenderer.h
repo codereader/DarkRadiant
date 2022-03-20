@@ -5,6 +5,8 @@
 #include "SceneRenderer.h"
 #include "igeometrystore.h"
 #include "FrameBuffer.h"
+#include "render/Rectangle.h"
+#include "glprogram/ShadowMapProgram.h"
 
 namespace render
 {
@@ -29,6 +31,8 @@ private:
     std::vector<IGeometryStore::Slot> _untransformedObjectsWithoutAlphaTest;
 
     FrameBuffer::Ptr _shadowMapFbo;
+    std::vector<Rectangle> _shadowMapAtlas;
+    ShadowMapProgram* _shadowMapProgram;
 
 public:
     LightingModeRenderer(GLProgramFactory& programFactory, 
@@ -38,9 +42,19 @@ public:
         _programFactory(programFactory),
         _geometryStore(store),
         _lights(lights),
-        _entities(entities)
+        _entities(entities),
+        _shadowMapProgram(nullptr)
     {
         _untransformedObjectsWithoutAlphaTest.reserve(10000);
+    }
+
+    ~LightingModeRenderer()
+    {
+        if (_shadowMapProgram)
+        {
+            _shadowMapProgram->destroy();
+            _shadowMapProgram = nullptr;
+        }
     }
 
     IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;

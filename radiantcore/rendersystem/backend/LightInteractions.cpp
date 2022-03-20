@@ -3,6 +3,7 @@
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
 #include "glprogram/GLSLDepthFillAlphaProgram.h"
+#include "glprogram/ShadowMapProgram.h"
 
 namespace render
 {
@@ -155,9 +156,91 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
     }
 }
 
-void LightInteractions::drawShadowMap(OpenGLState& state)
+void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program)
 {
-    
+    // Enable GL state and save to state
+    glDepthMask(true);
+    state.setRenderFlag(RENDER_DEPTHWRITE);
+
+    glDepthFunc(GL_LEQUAL);
+    state.setDepthFunc(GL_LEQUAL);
+
+    // Set up the viewport to write to a specific area within the shadow map texture
+    glViewport(rectangle.x, rectangle.y, 6 * rectangle.width, rectangle.width);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    std::vector<IGeometryStore::Slot> untransformedObjects;
+    untransformedObjects.reserve(1000);
+
+    // No alpha test for now
+    program.setAlphaTest(-1);
+
+    // Render all the objects that have a depth filling stage
+    for (const auto& [entity, objectsByShader] : _objectsByEntity)
+    {
+        for (const auto& [shader, objects] : objectsByShader)
+        {
+            auto depthFillPass = shader->getDepthFillPass();
+
+            if (!depthFillPass) continue;
+
+#if 0
+            const auto& material = shader->getMaterial();
+            assert(material);
+
+            auto coverage = material->getCoverage();
+
+            // Skip translucent materials
+            if (coverage == Material::MC_TRANSLUCENT) continue;
+
+            if (coverage == Material::MC_PERFORATED)
+            {
+                // Evaluate the shader stages of this material
+                depthFillPass->evaluateShaderStages(renderTime, entity);
+
+                // Apply the alpha test value, it might be affected by time and entity parms
+                program.setAlphaTest(depthFillPass->getAlphaTestValue());
+
+                // If there's a diffuse stage, apply the correct texture
+                OpenGLState::SetTextureState(state.texture0, depthFillPass->state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
+
+                // Set evaluated stage texture transformation matrix to the GLSL uniform
+                program.setDiffuseTextureTransform(depthFillPass->getDiffuseTextureTransform());
+            }
+            else
+            {
+                // No alpha test on this material, pass -1 to deactivate texture sampling
+                // in the GLSL program
+                program.setAlphaTest(-1);
+            }
+#endif
+
+            for (const auto& object : objects)
+            {
+                // We submit all objects with an identity matrix in a single multi draw call
+                if (!object.get().isOriented())
+                {
+                    untransformedObjects.push_back(object.get().getStorageLocation());
+                    continue;
+                }
+
+                program.setObjectTransform(object.get().getObjectTransform());
+
+                ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
+                ++_depthDrawCalls;
+            }
+
+            if (!untransformedObjects.empty())
+            {
+                program.setObjectTransform(Matrix4::getIdentity());
+
+                ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
+                ++_depthDrawCalls;
+
+                untransformedObjects.clear();
+            }
+        }
+    }
 }
 
 void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& program, 

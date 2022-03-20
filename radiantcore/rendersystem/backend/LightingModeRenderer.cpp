@@ -1,5 +1,6 @@
 #include "LightingModeRenderer.h"
 
+#include "GLProgramFactory.h"
 #include "LightingModeRenderResult.h"
 #include "LightInteractions.h"
 #include "OpenGLShaderPass.h"
@@ -20,6 +21,22 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     if (!_shadowMapFbo)
     {
         _shadowMapFbo = FrameBuffer::CreateShadowMapBuffer();
+        // Define the shadow atlas
+        _shadowMapAtlas.resize(4);
+
+        for (int i = 0; i < 6; ++i)
+        {
+            _shadowMapAtlas[i].x = 0;
+            _shadowMapAtlas[i].y = static_cast<int>((_shadowMapFbo->getHeight() / 6) * i);
+            _shadowMapAtlas[i].width = static_cast<int>(_shadowMapFbo->getWidth() / 6);
+            _shadowMapAtlas[i].height = static_cast<int>(_shadowMapFbo->getHeight() / 6);
+        }
+    }
+
+    if (!_shadowMapProgram)
+    {
+        _shadowMapProgram = dynamic_cast<ShadowMapProgram*>(_programFactory.getBuiltInProgram(ShaderProgram::ShadowMap));
+        assert(_shadowMapProgram);
     }
 
     // Construct default OpenGL state
@@ -70,7 +87,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     {
         if (!interactionList.castsShadows()) continue;
 
-        interactionList.drawShadowMap(current);
+        interactionList.drawShadowMap(current, _shadowMapAtlas[0], *_shadowMapProgram);
         result->shadowDrawCalls += interactionList.getShadowMapDrawCalls();
         break;
     }

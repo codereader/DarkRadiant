@@ -18,6 +18,7 @@ enum class ShaderProgram
     DepthFillAlpha,
     Interaction,
     CubeMap,
+    ShadowMap,
 };
 
 /**
