@@ -25,6 +25,11 @@ bool LightInteractions::isInView(const IRenderView& view)
     return view.TestAABB(_lightBounds) != VOLUME_OUTSIDE;
 }
 
+bool LightInteractions::castsShadows()
+{
+    return _light.getLightEntity().getEntityName() == "light_1";
+}
+
 void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
 {
     // Now check all the entities intersecting with this light
@@ -148,6 +153,11 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
             }
         }
     }
+}
+
+void LightInteractions::drawShadowMap(OpenGLState& state)
+{
+    
 }
 
 void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& program, 

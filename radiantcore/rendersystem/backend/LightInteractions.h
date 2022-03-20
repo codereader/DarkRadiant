@@ -42,6 +42,7 @@ private:
     std::size_t _interactionDrawCalls;
     std::size_t _depthDrawCalls;
     std::size_t _objectCount;
+    std::size_t _shadowMapDrawCalls;
 
 public:
     LightInteractions(RendererLight& light, IGeometryStore& store) :
@@ -50,7 +51,8 @@ public:
         _lightBounds(light.lightAABB()),
         _interactionDrawCalls(0),
         _depthDrawCalls(0),
-        _objectCount(0)
+        _objectCount(0),
+        _shadowMapDrawCalls(0)
     {}
 
     std::size_t getInteractionDrawCalls() const
@@ -61,6 +63,11 @@ public:
     std::size_t getDepthDrawCalls() const
     {
         return _depthDrawCalls;
+    }
+
+    std::size_t getShadowMapDrawCalls() const
+    {
+        return _shadowMapDrawCalls;
     }
 
     std::size_t getObjectCount() const
@@ -77,10 +84,14 @@ public:
 
     bool isInView(const IRenderView& view);
 
+    bool castsShadows();
+
     void collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities);
 
     void fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
         const IRenderView& view, std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest);
+
+    void drawShadowMap(OpenGLState& state);
 
     void drawInteractions(OpenGLState& state, GLSLBumpProgram& program, const IRenderView& view, std::size_t renderTime);
 };

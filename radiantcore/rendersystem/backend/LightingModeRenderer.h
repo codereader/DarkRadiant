@@ -4,6 +4,7 @@
 #include "irenderview.h"
 #include "SceneRenderer.h"
 #include "igeometrystore.h"
+#include "FrameBuffer.h"
 
 namespace render
 {
@@ -26,6 +27,8 @@ private:
     const std::set<IRenderEntityPtr>& _entities;
 
     std::vector<IGeometryStore::Slot> _untransformedObjectsWithoutAlphaTest;
+
+    FrameBuffer::Ptr _shadowMapFbo;
 
 public:
     LightingModeRenderer(GLProgramFactory& programFactory, 

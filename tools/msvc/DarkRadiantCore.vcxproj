@@ -996,6 +996,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\ColourShader.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FenceSyncProvider.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\FrameBuffer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GeometryRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.h" />

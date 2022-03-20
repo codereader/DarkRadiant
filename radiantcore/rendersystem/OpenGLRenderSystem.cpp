@@ -414,6 +414,10 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 
 void OpenGLRenderSystem::shutdownModule()
 {
+    _orthoRenderer.reset();
+    _editorPreviewRenderer.reset();
+    _lightingModeRenderer.reset();
+
     _entities.clear();
     _lights.clear();
 

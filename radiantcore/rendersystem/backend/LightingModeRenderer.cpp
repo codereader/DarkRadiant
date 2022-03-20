@@ -17,6 +17,11 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 {
     auto result = std::make_shared<LightingModeRenderResult>();
 
+    if (!_shadowMapFbo)
+    {
+        _shadowMapFbo = FrameBuffer::CreateShadowMapBuffer();
+    }
+
     // Construct default OpenGL state
     OpenGLState current;
     setupState(current);
@@ -59,6 +64,16 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     ObjectRenderer::InitAttributePointers();
 
     result->depthDrawCalls += drawDepthFillPass(current, globalFlagsMask, interactionLists, view, time);
+
+    // Render a single light to the shadow map buffer
+    for (auto& interactionList : interactionLists)
+    {
+        if (!interactionList.castsShadows()) continue;
+
+        interactionList.drawShadowMap(current);
+        result->shadowDrawCalls += interactionList.getShadowMapDrawCalls();
+        break;
+    }
 
     // Draw the surfaces per light and material
     auto interactionState = InteractionPass::GenerateInteractionState(_programFactory);

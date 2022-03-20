@@ -2358,5 +2358,8 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLState.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\FrameBuffer.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
