@@ -118,7 +118,7 @@ public:
     void setColour(const Vector4& colour) override;
     // Resets the colour to the value defined in the attributes
     void resetColour();
-    const EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) const override;
+    const EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) const;
     std::string getAttributeValue(const std::string&, bool includeInherited = true) const override;
     const std::string& getAttributeType(const std::string& name) const override;
     const std::string& getAttributeDescription(const std::string& name) const override;

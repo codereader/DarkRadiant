@@ -160,10 +160,6 @@ public:
 
     /* ENTITY CLASS ATTRIBUTES */
 
-    /// Get a const EntityClassAttribute reference by name
-    virtual const EntityClassAttribute& getAttribute(const std::string& name,
-                 bool includeInherited = true) const = 0;
-
     /**
      * @brief Get the value of a specified attribute.
      *
