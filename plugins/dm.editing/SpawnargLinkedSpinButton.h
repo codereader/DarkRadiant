@@ -81,8 +81,9 @@ public:
 			return;
 		}
 
-		std::string desc = _propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription();
-		_spinCtrl->SetToolTip(desc);
+        std::string desc = _propertyName + ": "
+                         + _entity->getEntityClass()->getAttributeDescription(_propertyName);
+        _spinCtrl->SetToolTip(desc);
 
 		if (_updateLock) return;
 
@@ -107,9 +108,8 @@ protected:
 			std::string newValue = fmt::format("{0:." + string::to_string(_spinCtrl->GetDigits()) + "f}", floatVal);
 
 			// Check if the new value conincides with an inherited one
-			const EntityClassAttribute& attr = _entity->getEntityClass()->getAttribute(_propertyName);
-
-			if (!attr.getValue().empty() && string::to_float(attr.getValue()) == floatVal)
+			const std::string attr = _entity->getEntityClass()->getAttributeValue(_propertyName);
+			if (!attr.empty() && string::to_float(attr) == floatVal)
 			{
 				// in which case the property just gets removed from the entity
 				newValue = "";

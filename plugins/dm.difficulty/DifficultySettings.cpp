@@ -232,14 +232,10 @@ std::string DifficultySettings::getParentClass(const std::string& className)
 {
     // Get the parent eclass
     IEntityClassPtr eclass = GlobalEntityClassManager().findClass(className);
-
-    if (eclass == NULL)
-	{
+    if (!eclass)
         return ""; // Invalid!
-    }
 
-    EntityClassAttribute inheritAttr = eclass->getAttribute("inherit");
-    return inheritAttr.getValue();
+    return eclass->getAttributeValue("inherit");
 }
 
 wxDataViewItem DifficultySettings::findOrInsertClassname(const std::string& className)
@@ -359,12 +355,11 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def)
         // Get the index from the string's tail
         std::string indexStr = attr.getName().substr(prefix.length());
 
-        const EntityClassAttribute& classAttr = def->getAttribute(diffPrefix + "class_" + indexStr);
-        const EntityClassAttribute& argAttr = def->getAttribute(diffPrefix + "arg_" + indexStr);
-
-        SettingPtr setting = createSetting(classAttr.getValue());
+        SettingPtr setting = createSetting(
+            def->getAttributeValue(diffPrefix + "class_" + indexStr)
+        );
         setting->spawnArg = attr.getValue();
-        setting->argument = argAttr.getValue();
+        setting->argument = def->getAttributeValue(diffPrefix + "arg_" + indexStr);
 
         // This has been parsed from the default entityDef
         setting->isDefault = true;

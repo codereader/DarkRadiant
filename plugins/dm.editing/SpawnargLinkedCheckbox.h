@@ -59,9 +59,10 @@ public:
 			return;
 		}
 
-		SetToolTip(_propertyName + ": " + _entity->getEntityClass()->getAttribute(_propertyName).getDescription());
+        SetToolTip(_propertyName + ": "
+                   + _entity->getEntityClass()->getAttributeDescription(_propertyName));
 
-		std::string keyValue = _entity->getKeyValue(_propertyName);
+        std::string keyValue = _entity->getKeyValue(_propertyName);
 
 		bool value = _entity->getKeyValue(_propertyName) == "1";
 

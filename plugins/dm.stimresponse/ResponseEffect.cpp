@@ -154,10 +154,10 @@ void ResponseEffect::buildArgumentList() {
 	if (_eclass == NULL) return;
 
 	for (int i = 1; i < 1000; i++) {
-		std::string argType = _eclass->getAttribute("editor_argType" + string::to_string(i)).getValue();
-		std::string argDesc = _eclass->getAttribute("editor_argDesc" + string::to_string(i)).getValue();
-		std::string argTitle = _eclass->getAttribute("editor_argTitle" + string::to_string(i)).getValue();
-		std::string optional = _eclass->getAttribute("editor_argOptional" + string::to_string(i)).getValue();
+		std::string argType = _eclass->getAttributeValue("editor_argType" + string::to_string(i));
+		std::string argDesc = _eclass->getAttributeValue("editor_argDesc" + string::to_string(i));
+		std::string argTitle = _eclass->getAttributeValue("editor_argTitle" + string::to_string(i));
+		std::string optional = _eclass->getAttributeValue("editor_argOptional" + string::to_string(i));
 
 		if (argType != "") {
 			// Check if the argument exists
