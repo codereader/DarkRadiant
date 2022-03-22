@@ -332,7 +332,7 @@ std::string EntityClass::getAttributeValue(const std::string& name, bool include
         return "";
 }
 
-const std::string& EntityClass::getAttributeType(const std::string& name) const
+std::string EntityClass::getAttributeType(const std::string& name) const
 {
     // Check the attributes on this class
     const auto& attribute = _attributes.find(name);
@@ -351,7 +351,7 @@ const std::string& EntityClass::getAttributeType(const std::string& name) const
     return _parent ? _parent->getAttributeType(name) : "";
 }
 
-const std::string& EntityClass::getAttributeDescription(const std::string& name) const
+std::string EntityClass::getAttributeDescription(const std::string& name) const
 {
     // Check the attributes on this class first
     const auto& attribute = _attributes.find(name);

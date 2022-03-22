@@ -172,11 +172,11 @@ public:
     // Returns the attribute type string for the given name.
     // This method will walk up the inheritance hierarchy until it encounters a type definition.
     // If no type is found, an empty string will be returned.
-    virtual const std::string& getAttributeType(const std::string& name) const = 0;
+    virtual std::string getAttributeType(const std::string& name) const = 0;
 
     // Returns the attribute description string for the given name.
     // This method will walk up the inheritance hierarchy until it encounters a non-empty description.
-    virtual const std::string& getAttributeDescription(const std::string& name) const = 0;
+    virtual std::string getAttributeDescription(const std::string& name) const = 0;
 
     /**
      * Function that will be invoked by forEachAttribute.
@@ -198,8 +198,7 @@ public:
      * true if editor keys (those which start with "editor_") should be passed
      * to the visitor, false if they should be skipped.
      */
-    virtual void forEachAttribute(AttributeVisitor visitor,
-                                  bool editorKeys = false) const = 0;
+    virtual void forEachAttribute(AttributeVisitor visitor, bool editorKeys = false) const = 0;
 
     /* MODEL AND SKIN */
 
