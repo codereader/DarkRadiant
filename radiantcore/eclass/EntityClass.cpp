@@ -17,8 +17,6 @@ namespace
     const Vector4 UndefinedColour(-1, -1, -1, -1);
 }
 
-const EntityClassAttribute EntityClass::_emptyAttribute("", "", "");
-
 EntityClass::EntityClass(const std::string& name, bool fixedSize)
 : _name(name),
   _colour(UndefinedColour),
@@ -107,12 +105,11 @@ void EntityClass::resetColour()
         return;
 
     // Look for an editor_color on this class only
-    const EntityClassAttribute& attr = getAttribute("editor_color", false);
-    if (!attr.getValue().empty())
+    const std::string colStr = getAttributeValue("editor_color", false);
+    if (!colStr.empty())
     {
         // Set alpha to 0.5 if editor_transparent is set
-        Vector4 colour(string::convert<Vector3>(attr.getValue()),
-            _colourTransparent ? 0.5f : 1.0f);
+        Vector4 colour(string::convert<Vector3>(colStr), _colourTransparent ? 0.5f : 1.0f);
         setColour(colour);
         return;
     }
@@ -301,26 +298,26 @@ std::string EntityClass::getDefFileName()
 }
 
 // Find a single attribute
-EntityClassAttribute& EntityClass::getAttribute(const std::string& name,
+EntityClassAttribute* EntityClass::getAttribute(const std::string& name,
                                                 bool includeInherited)
 {
-    return const_cast<EntityClassAttribute&>(
+    return const_cast<EntityClassAttribute*>(
         std::as_const(*this).getAttribute(name, includeInherited)
     );
 }
 
 // Find a single attribute
-const EntityClassAttribute& EntityClass::getAttribute(const std::string& name, bool includeInherited) const
+const EntityClassAttribute* EntityClass::getAttribute(const std::string& name, bool includeInherited) const
 {
     // First look up the attribute on this class; if found, we can simply return it
     auto f = _attributes.find(name);
     if (f != _attributes.end())
-        return f->second;
+        return &f->second;
 
     // If there is no parent or we have been instructed to ignore inheritance,
-    // this is the end of the line: return an empty attribute
+    // this is the end of the line: return nothing
     if (!_parent || !includeInherited)
-        return _emptyAttribute;
+        return nullptr;
 
     // Otherwise delegate to the parent (which will recurse until an attribute
     // is found or a null parent ends the process)
@@ -329,7 +326,10 @@ const EntityClassAttribute& EntityClass::getAttribute(const std::string& name, b
 
 std::string EntityClass::getAttributeValue(const std::string& name, bool includeInherited) const
 {
-    return getAttribute(name, includeInherited).getValue();
+    if (auto* attr = getAttribute(name, includeInherited); attr)
+        return attr->getValue();
+    else
+        return "";
 }
 
 const std::string& EntityClass::getAttributeType(const std::string& name) const
@@ -348,7 +348,7 @@ const std::string& EntityClass::getAttributeType(const std::string& name) const
     }
 
     // Walk up the inheritance tree until we spot a non-empty type
-    return _parent ? _parent->getAttributeType(name) : _emptyAttribute.getType();
+    return _parent ? _parent->getAttributeType(name) : "";
 }
 
 const std::string& EntityClass::getAttributeDescription(const std::string& name) const
@@ -367,7 +367,7 @@ const std::string& EntityClass::getAttributeDescription(const std::string& name)
     }
 
     // Walk up the inheritance tree until we spot a non-empty description
-    return _parent ? _parent->getAttributeDescription(name) : _emptyAttribute.getDescription();
+    return _parent ? _parent->getAttributeDescription(name) : "";
 }
 
 void EntityClass::clear()
@@ -460,21 +460,21 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         }
 
         // We're only interested in non-inherited key/values when parsing
-        auto& attribute = getAttribute(key, false);
+        auto* attribute = getAttribute(key, false);
 
         // Add the EntityClassAttribute for this key/val
-        if (attribute.getType().empty())
+        if (!attribute)
         {
-            // Type is empty, attribute does not exist, add it.
+            // Attribute does not exist, add it.
             //
             // Following key-specific processing, add the keyvalue to the eclass
             // The type is an empty string, it will be set to a non-type as soon as we encounter it
             emplaceAttribute(EntityClassAttribute("", key, value, ""));
         }
-        else if (attribute.getValue().empty())
+        else if (attribute->getValue().empty())
         {
             // Attribute type is set, but value is empty, set the value.
-            attribute.setValue(value);
+            attribute->setValue(value);
         }
         else
         {

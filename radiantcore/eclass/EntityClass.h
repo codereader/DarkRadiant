@@ -69,9 +69,6 @@ private:
     // Name of the mod owning this class
     std::string _modName = "base";
 
-    // The empty attribute
-    static const EntityClassAttribute _emptyAttribute;
-
     // The time this def has been parsed
     std::size_t _parseStamp = 0;
 
@@ -90,8 +87,9 @@ private:
     void forEachAttributeInternal(InternalAttrVisitor visitor,
                                   bool editorKeys) const;
 
-    // Non-const attribute access
-    EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true);
+    // Return attribute if found, possibly checking parents
+    EntityClassAttribute* getAttribute(const std::string&, bool includeInherited = true);
+    const EntityClassAttribute* getAttribute(const std::string&, bool includeInherited = true) const;
 
 public:
 
@@ -118,7 +116,6 @@ public:
     void setColour(const Vector4& colour) override;
     // Resets the colour to the value defined in the attributes
     void resetColour();
-    const EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) const;
     std::string getAttributeValue(const std::string&, bool includeInherited = true) const override;
     const std::string& getAttributeType(const std::string& name) const override;
     const std::string& getAttributeDescription(const std::string& name) const override;
