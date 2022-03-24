@@ -165,11 +165,12 @@ public:
      * \{
      */
 
-    GLint texture0;
-    GLint texture1;
-    GLint texture2;
-    GLint texture3;
-    GLint texture4;
+    GLint texture0; // diffuse
+    GLint texture1; // bump
+    GLint texture2; // specular
+    GLint texture3; // light texture
+    GLint texture4; // light falloff
+    GLint texture5; // shadow map
 
     /**
      * \}

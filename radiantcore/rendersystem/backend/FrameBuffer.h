@@ -58,6 +58,11 @@ public:
         debug::assertNoGlErrors();
     }
 
+    GLuint getTextureNumber() const
+    {
+        return _textureNumber;
+    }
+
     static Ptr CreateShadowMapBuffer(std::size_t size = DefaultShadowMapSize)
     {
         Ptr buffer(new FrameBuffer);

@@ -9,6 +9,7 @@
 #include "debugging/gl.h"
 #include "math/Matrix4.h"
 #include "../OpenGLState.h"
+#include "render/Rectangle.h"
 
 namespace render
 {
@@ -65,6 +66,9 @@ void GLSLBumpProgram::create()
     _locSpecularTextureMatrix = glGetUniformLocation(_programObj, "u_SpecularTextureMatrix");
     _locLightTextureMatrix = glGetUniformLocation(_programObj, "u_LightTextureMatrix");
 
+    _locShadowMapRect = glGetUniformLocation(_programObj, "u_ShadowMapRect");
+    _locUseShadowMap = glGetUniformLocation(_programObj, "u_UseShadowMap");
+
     // Set up the texture uniforms. The renderer uses fixed texture units for
     // particular textures, so make sure they are correct here.
     // Texture 0 - diffuse
@@ -76,9 +80,7 @@ void GLSLBumpProgram::create()
     glUseProgram(_programObj);
     debug::assertNoGlErrors();
 
-    GLint samplerLoc;
-
-    samplerLoc = glGetUniformLocation(_programObj, "u_Diffusemap");
+    GLint samplerLoc = glGetUniformLocation(_programObj, "u_Diffusemap");
     glUniform1i(samplerLoc, 0);
 
     samplerLoc = glGetUniformLocation(_programObj, "u_Bumpmap");
@@ -92,6 +94,9 @@ void GLSLBumpProgram::create()
 
     samplerLoc = glGetUniformLocation(_programObj, "u_attenuationmap_z");
     glUniform1i(samplerLoc, 4);
+
+    samplerLoc = glGetUniformLocation(_programObj, "u_ShadowMap");
+    glUniform1i(samplerLoc, 5);
 
     // Light scale is constant at this point
     glUniform1f(_locLightScale, _lightScale);
@@ -230,7 +235,7 @@ void GLSLBumpProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
     const auto& worldToObject = inverseObjectTransform;
 
     // Calculate the light origin in object space
-    Vector3 localLight = worldToObject.transformPoint(worldLightOrigin);
+    auto localLight = worldToObject.transformPoint(worldLightOrigin);
 
     // Calculate viewer location in object space
     auto osViewer = inverseObjectTransform.transformPoint(viewer);
@@ -247,6 +252,18 @@ void GLSLBumpProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
         static_cast<float>(localLight.z())
     );
 
+    debug::assertNoGlErrors();
+}
+
+void GLSLBumpProgram::enableShadowMapping(bool enable)
+{
+    glUniform1i(_locUseShadowMap, enable ? 1 : 0);
+    debug::assertNoGlErrors();
+}
+
+void GLSLBumpProgram::setShadowMapRectangle(const Rectangle& rectangle)
+{
+    glUniform4i(_locShadowMapRect, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
     debug::assertNoGlErrors();
 }
 

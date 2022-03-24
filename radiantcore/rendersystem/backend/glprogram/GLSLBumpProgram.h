@@ -6,6 +6,7 @@ namespace render
 {
 
 class OpenGLState;
+struct Rectangle;
 
 class GLSLBumpProgram :
     public GLSLProgramBase
@@ -29,6 +30,9 @@ private:
     int _locBumpTextureMatrix;
     int _locSpecularTextureMatrix;
     int _locLightTextureMatrix;
+
+    int _locUseShadowMap;
+    int _locShadowMapRect;
 
 public:
 
@@ -57,6 +61,9 @@ public:
     void setUpObjectLighting(const Vector3& worldLightOrigin,
         const Vector3& viewer,
         const Matrix4& inverseObjectTransform);
+
+    void setShadowMapRectangle(const Rectangle& rectangle);
+    void enableShadowMapping(bool enable);
 };
 
 } // namespace render

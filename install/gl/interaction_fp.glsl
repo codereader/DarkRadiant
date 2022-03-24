@@ -5,12 +5,18 @@ uniform sampler2D	u_Bumpmap;
 uniform sampler2D	u_Specularmap;
 uniform sampler2D	u_attenuationmap_xy;
 uniform sampler2D	u_attenuationmap_z;
+uniform sampler2D	u_ShadowMap;
+
 uniform vec3		u_view_origin;
 uniform vec3		u_light_origin;
 uniform vec3		u_light_color;
 uniform float		u_light_scale;
 uniform vec4		u_ColourModulation;
 uniform vec4		u_ColourAddition;
+
+// Defines the region within the shadow map atlas containing the depth information of the current light
+uniform int         u_ShadowMapRect[4]; // x,y,w,h
+uniform bool        u_UseShadowMap;
 
 // Activate ambient light mode (brightness unaffected by direction)
 uniform bool uAmbientLight;
@@ -77,6 +83,11 @@ void main()
     ).rgb;
 
 	vec3 totalColor = (specularColor * u_light_color * R2f + diffuse.rgb) * light * (u_light_color * u_light_scale) * attenuation_xy * attenuation_z * var_Colour.rgb;
+
+    if (u_UseShadowMap)
+    {
+        totalColor *= 1;
+    }
 
 	gl_FragColor.rgb = totalColor;
 	gl_FragColor.a = diffuse.a;

@@ -116,11 +116,28 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 
     interactionProgram->setModelViewProjection(view.GetViewProjection());
 
+    // Bind the texture containing the shadow maps
+    OpenGLState::SetTextureState(current.texture5, _shadowMapFbo->getTextureNumber(), GL_TEXTURE5, GL_TEXTURE_2D);
+
     for (auto& interactionList : interactionLists)
     {
+        if (interactionList.castsShadows())
+        {
+            // Define which part of the shadow map atlas should be sampled
+            interactionProgram->enableShadowMapping(true);
+            interactionProgram->setShadowMapRectangle(_shadowMapAtlas[0]);
+        }
+        else
+        {
+            interactionProgram->enableShadowMapping(false);
+        }
+
         interactionList.drawInteractions(current, *interactionProgram, view, time);
         result->interactionDrawCalls += interactionList.getInteractionDrawCalls();
     }
+
+    // Unbind the shadow map texture
+    OpenGLState::SetTextureState(current.texture5, 0, GL_TEXTURE5, GL_TEXTURE_2D);
 
     result->nonInteractionDrawCalls += drawNonInteractionPasses(current, globalFlagsMask, view, time);
 
