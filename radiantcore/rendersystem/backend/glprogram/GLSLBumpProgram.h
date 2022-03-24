@@ -17,6 +17,7 @@ private:
 
     // Uniform/program-local parameter IDs.
     int _locLightOrigin;
+    int _locWorldLightOrigin;
     int _locLightColour;
     int _locViewOrigin;
     int _locLightScale;

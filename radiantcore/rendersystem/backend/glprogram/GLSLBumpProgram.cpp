@@ -10,6 +10,7 @@
 #include "math/Matrix4.h"
 #include "../OpenGLState.h"
 #include "render/Rectangle.h"
+#include "rendersystem/backend/FrameBuffer.h"
 
 namespace render
 {
@@ -52,6 +53,7 @@ void GLSLBumpProgram::create()
 
     // Set the uniform locations to the correct bound values
     _locLightOrigin = glGetUniformLocation(_programObj, "u_light_origin");
+    _locWorldLightOrigin = glGetUniformLocation(_programObj, "u_WorldLightOrigin");
     _locLightColour = glGetUniformLocation(_programObj, "u_light_color");
     _locViewOrigin = glGetUniformLocation(_programObj, "u_view_origin");
     _locLightScale = glGetUniformLocation(_programObj, "u_light_scale");
@@ -251,6 +253,11 @@ void GLSLBumpProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
         static_cast<float>(localLight.y()),
         static_cast<float>(localLight.z())
     );
+    glUniform3f(_locWorldLightOrigin,
+        static_cast<float>(worldLightOrigin.x()),
+        static_cast<float>(worldLightOrigin.y()),
+        static_cast<float>(worldLightOrigin.z())
+    );
 
     debug::assertNoGlErrors();
 }
@@ -263,7 +270,11 @@ void GLSLBumpProgram::enableShadowMapping(bool enable)
 
 void GLSLBumpProgram::setShadowMapRectangle(const Rectangle& rectangle)
 {
-    glUniform4i(_locShadowMapRect, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+    // Modeled after the TDM code, which is correcting the rectangle to refer to pixel space coordinates
+    auto position = (Vector2f(rectangle.x, rectangle.y) * 2 + Vector2f(1, 1)) / (2 * FrameBuffer::DefaultShadowMapSize);
+
+    glUniform4f(_locShadowMapRect, position.x(), position.y(),
+        static_cast<float>(rectangle.width), static_cast<float>(rectangle.height) / FrameBuffer::DefaultShadowMapSize);
     debug::assertNoGlErrors();
 }
 

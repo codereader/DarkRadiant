@@ -1,4 +1,4 @@
-#version 120
+#version 130
 
 uniform sampler2D	u_Diffusemap;
 uniform sampler2D	u_Bumpmap;
@@ -15,7 +15,7 @@ uniform vec4		u_ColourModulation;
 uniform vec4		u_ColourAddition;
 
 // Defines the region within the shadow map atlas containing the depth information of the current light
-uniform int         u_ShadowMapRect[4]; // x,y,w,h
+uniform vec4        u_ShadowMapRect; // x,y,w,h
 uniform bool        u_UseShadowMap;
 
 // Activate ambient light mode (brightness unaffected by direction)
@@ -30,6 +30,64 @@ varying vec3 var_vertex; // in world space
 varying vec4 var_tex_atten_xy_z;
 varying mat3 var_mat_os2ts;
 varying vec4 var_Colour; // colour to be multiplied on the final fragment
+varying vec3 var_WorldLightDirection; // direction the light is coming from in world space
+
+// Function ported from TDM tdm_shadowmaps.glsl, determining the cube map face for the given direction
+vec3 CubeMapDirectionToUv(vec3 v, out int faceIdx)
+{
+    vec3 v1 = abs(v);
+
+    float maxV = max(v1.x, max(v1.y, v1.z));
+
+    faceIdx = 0;
+    if(maxV == v.x)
+    {
+        v1 = -v.zyx;
+    }
+    else if(maxV == -v.x)
+    {
+        v1 = v.zyx * vec3(1, -1, 1);
+        faceIdx = 1;
+    }
+    else if(maxV == v.y)
+    {
+        v1 = v.xzy * vec3(1, 1, -1);
+        faceIdx = 2;
+    }
+    else if(maxV == -v.y)
+    {
+       v1 = v.xzy * vec3(1, -1, 1);
+       faceIdx = 3;
+    }
+    else if(maxV == v.z)
+    {
+        v1 = v.xyz * vec3(1, -1, -1);
+        faceIdx = 4;
+    }
+    else //if(maxV == -v.z) {
+    {
+        v1 = v.xyz * vec3(-1, -1, 1);
+        faceIdx = 5;
+    }
+
+    v1.xy /= -v1.z;
+    return v1;
+}
+
+// Function ported from TDM tdm_shadowmaps.glsl, picking the depth value from the shadow map
+float getDepthValueForVector(in sampler2D shadowMapTexture, vec4 shadowRect, vec3 lightVec)
+{
+    // Determine face index and cube map sampling vector
+    int faceIdx;
+    vec3 v1 = CubeMapDirectionToUv(lightVec, faceIdx);
+
+    vec2 texSize = textureSize(shadowMapTexture, 0);
+    vec2 shadow2d = (v1.xy * .5 + vec2(.5) ) * shadowRect.ww + shadowRect.xy;
+    shadow2d.x += (shadowRect.w + 1./texSize.x) * faceIdx;
+
+    float d = textureLod(shadowMapTexture, shadow2d, 0).r;
+    return 1 / (1 - d);
+}
 
 void main()
 {
@@ -86,7 +144,20 @@ void main()
 
     if (u_UseShadowMap)
     {
-        totalColor *= 1;
+        float shadowMapResolution = (textureSize(u_ShadowMap, 0).x * u_ShadowMapRect.w);
+
+        // The light direction is used to sample the shadow map texture
+        vec3 L = normalize(var_WorldLightDirection);
+
+        vec3 absL = abs(var_WorldLightDirection);
+        float maxAbsL = max(absL.x, max(absL.y, absL.z));
+        float centerFragZ = maxAbsL;
+
+        float centerBlockerZ = getDepthValueForVector(u_ShadowMap, u_ShadowMapRect, L);
+        float lit = float(centerBlockerZ >= centerFragZ/* - errorMargin*/);
+        //lit = var_WorldLightDirection.y > 0.2 ? 1 : 0;
+
+        totalColor *= lit;
     }
 
 	gl_FragColor.rgb = totalColor;
