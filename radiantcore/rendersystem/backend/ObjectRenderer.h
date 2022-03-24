@@ -22,10 +22,16 @@ public:
     // Draws the geometry of the given slot in the given primitive mode, no transforms
     static void SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode, IGeometryStore& store);
 
+    // Draws the specified number of instances of the geometry of the given slot in the given primitive mode, no transforms
+    static void SubmitInstancedGeometry(IGeometryStore::Slot slot, int numInstances, GLenum primitiveMode, IGeometryStore& store);
+
     // Draws all geometry as defined by their store IDs in the given mode, no transforms (std::set variant)
     static void SubmitGeometry(const std::set<IGeometryStore::Slot>& slots, GLenum primitiveMode, IGeometryStore& store);
     // Draws all geometry as defined by their store IDs in the given mode, no transforms (std::vector variant)
     static void SubmitGeometry(const std::vector<IGeometryStore::Slot>& slots, GLenum primitiveMode, IGeometryStore& store);
+
+    // Draws all geometry as defined by their store IDs in the given mode, no transforms (std::vector variant)
+    static void SubmitInstancedGeometry(const std::vector<IGeometryStore::Slot>& slots, int numInstances, GLenum primitiveMode, IGeometryStore& store);
 };
 
 }

@@ -231,7 +231,7 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
 
                 program.setObjectTransform(object.get().getObjectTransform());
 
-                ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
+                ObjectRenderer::SubmitInstancedGeometry(object.get().getStorageLocation(), 6, GL_TRIANGLES, _store);
                 ++_shadowMapDrawCalls;
             }
 
@@ -239,7 +239,7 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
             {
                 program.setObjectTransform(Matrix4::getIdentity());
 
-                ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
+                ObjectRenderer::SubmitInstancedGeometry(untransformedObjects, 6, GL_TRIANGLES, _store);
                 ++_shadowMapDrawCalls;
 
                 untransformedObjects.clear();

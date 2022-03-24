@@ -1,4 +1,4 @@
-#version 120
+#version 140
 
 uniform sampler2D   u_Diffuse;
 uniform float       u_AlphaTest;
@@ -11,8 +11,8 @@ void main()
 {
     if (u_AlphaTest < 0)
     {
-        gl_FragColor.a = 1.0;
-        gl_FragColor.rgb = vec3(1.0, 1.0, 0.0);
+        //gl_FragColor.a = 1.0;
+        //gl_FragColor.rgb = vec3(1.0, 1.0, 0.0);
     }
     else
     {
@@ -23,6 +23,6 @@ void main()
             discard;
         }
 
-        gl_FragColor = tex;
+        //gl_FragColor = tex;
     }
 }

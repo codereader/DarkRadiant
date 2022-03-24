@@ -38,10 +38,18 @@ void ObjectRenderer::InitAttributePointers(RenderVertex* bufferStart)
 
 void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode, IGeometryStore& store)
 {
-    auto renderParams = store.getRenderParameters(slot);
+    const auto renderParams = store.getRenderParameters(slot);
 
     glDrawElementsBaseVertex(primitiveMode, static_cast<GLsizei>(renderParams.indexCount),
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
+}
+
+void ObjectRenderer::SubmitInstancedGeometry(IGeometryStore::Slot slot, int numInstances, GLenum primitiveMode, IGeometryStore& store)
+{
+    const auto renderParams = store.getRenderParameters(slot);
+
+    glDrawElementsInstancedBaseVertex(primitiveMode, static_cast<GLsizei>(renderParams.indexCount),
+        GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(numInstances), static_cast<GLint>(renderParams.firstVertex));
 }
 
 template<typename ContainerT>
@@ -81,6 +89,14 @@ void ObjectRenderer::SubmitGeometry(const std::set<IGeometryStore::Slot>& slots,
 void ObjectRenderer::SubmitGeometry(const std::vector<IGeometryStore::Slot>& slots, GLenum primitiveMode, IGeometryStore& store)
 {
     SubmitGeometryInternal(slots, primitiveMode, store);
+}
+
+void ObjectRenderer::SubmitInstancedGeometry(const std::vector<IGeometryStore::Slot>& slots, int numInstances, GLenum primitiveMode, IGeometryStore& store)
+{
+    for (const auto slot : slots)
+    {
+        SubmitInstancedGeometry(slot, numInstances, primitiveMode, store);
+    }
 }
 
 }
