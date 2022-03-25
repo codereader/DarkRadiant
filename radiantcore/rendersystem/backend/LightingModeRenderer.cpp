@@ -84,6 +84,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 
     // Cleanup the data accumulated in this render pass
     _interactingLights.clear();
+    _nearestShadowLights.clear();
 
     return std::move(_result); // move-return our result reference
 }
@@ -120,6 +121,12 @@ void LightingModeRenderer::determineLightInteractions(const IRenderView& view)
             addToShadowLights(moved, view.getViewer());
         }
     }
+
+    // Assign shadow light indices
+    for (auto index = 0; index < _nearestShadowLights.size(); ++index)
+    {
+        _nearestShadowLights[index]->setShadowLightIndex(index);
+    }
 }
 
 void LightingModeRenderer::addToShadowLights(LightInteractions& light, const Vector3& viewer)
@@ -138,6 +145,11 @@ void LightingModeRenderer::addToShadowLights(LightInteractions& light, const Vec
         {
             // Insert here
             _nearestShadowLights.insert(other, &light);
+
+            if (_nearestShadowLights.size() > MaxShadowCastingLights)
+            {
+                _nearestShadowLights.pop_back();
+            }
             return;
         }
     }
@@ -168,11 +180,13 @@ void LightingModeRenderer::drawLightInteractions(OpenGLState& current, RenderSta
 
     for (auto& interactionList : _interactingLights)
     {
-        if (interactionList.isShadowCasting())
+        auto shadowLightIndex = interactionList.getShadowLightIndex();
+
+        if (shadowLightIndex != -1)
         {
             // Define which part of the shadow map atlas should be sampled
             interactionProgram->enableShadowMapping(true);
-            interactionProgram->setShadowMapRectangle(_shadowMapAtlas[3]);
+            interactionProgram->setShadowMapRectangle(_shadowMapAtlas[shadowLightIndex]);
         }
         else
         {
@@ -219,14 +233,14 @@ void LightingModeRenderer::drawShadowMaps(OpenGLState& current,std::size_t rende
     glEnable(GL_CLIP_DISTANCE2);
     glEnable(GL_CLIP_DISTANCE3);
 
-    // Render a single light to the shadow map buffer
-    for (auto& interactionList : _interactingLights)
-    {
-        if (!interactionList.isShadowCasting()) continue;
+    glViewport(0, 0, _shadowMapFbo->getWidth(), _shadowMapFbo->getHeight());
+    glClear(GL_DEPTH_BUFFER_BIT);
 
-        interactionList.drawShadowMap(current, _shadowMapAtlas[3], *_shadowMapProgram, renderTime);
-        _result->shadowDrawCalls += interactionList.getShadowMapDrawCalls();
-        break;
+    // Render shadow casting lights to the shadow map buffer, up to MaxShadowLightCount
+    for (auto light : _nearestShadowLights)
+    {
+        light->drawShadowMap(current, _shadowMapAtlas[light->getShadowLightIndex()], *_shadowMapProgram, renderTime);
+        _result->shadowDrawCalls += light->getShadowMapDrawCalls();
     }
 
     _shadowMapFbo->unbind();

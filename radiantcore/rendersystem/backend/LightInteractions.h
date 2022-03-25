@@ -47,6 +47,8 @@ private:
     std::size_t _objectCount;
     std::size_t _shadowMapDrawCalls;
 
+    int _shadowLightIndex;
+
 public:
     LightInteractions(RendererLight& light, IGeometryStore& store) :
         _light(light),
@@ -55,12 +57,23 @@ public:
         _interactionDrawCalls(0),
         _depthDrawCalls(0),
         _objectCount(0),
-        _shadowMapDrawCalls(0)
+        _shadowMapDrawCalls(0),
+        _shadowLightIndex(-1)
     {}
 
     const Vector3& getBoundsCenter() const
     {
         return _lightBounds.getOrigin();
+    }
+
+    int getShadowLightIndex() const
+    {
+        return _shadowLightIndex;
+    }
+
+    void setShadowLightIndex(int index)
+    {
+        _shadowLightIndex = index;
     }
 
     const RendererLight& getLight() const

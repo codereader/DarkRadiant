@@ -40,8 +40,8 @@ private:
     // Data that is valid during a single render pass only
 
     std::vector<LightInteractions> _interactingLights;
-    std::shared_ptr<LightingModeRenderResult> _result;
     std::vector<LightInteractions*> _nearestShadowLights;
+    std::shared_ptr<LightingModeRenderResult> _result;
 
 public:
     LightingModeRenderer(GLProgramFactory& programFactory, 
@@ -55,7 +55,7 @@ public:
         _shadowMapProgram(nullptr)
     {
         _untransformedObjectsWithoutAlphaTest.reserve(10000);
-        _nearestShadowLights.reserve(MaxShadowCastingLights);
+        _nearestShadowLights.reserve(MaxShadowCastingLights + 1);
     }
 
     IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;
