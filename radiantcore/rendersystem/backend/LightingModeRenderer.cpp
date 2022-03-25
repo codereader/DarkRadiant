@@ -111,7 +111,41 @@ void LightingModeRenderer::determineLightInteractions(const IRenderView& view)
         _result->objects += interaction.getObjectCount();
         _result->entities += interaction.getEntityCount();
 
-        _interactingLights.emplace_back(std::move(interaction));
+        // Move the interaction list into its place
+        auto& moved = _interactingLights.emplace_back(std::move(interaction));
+
+        // Check the distance of shadow casting lights to the viewer
+        if (moved.isShadowCasting())
+        {
+            addToShadowLights(moved, view.getViewer());
+        }
+    }
+}
+
+void LightingModeRenderer::addToShadowLights(LightInteractions& light, const Vector3& viewer)
+{
+    if (_nearestShadowLights.empty())
+    {
+        _nearestShadowLights.push_back(&light);
+        return;
+    }
+
+    auto distance = (light.getBoundsCenter() - viewer).getLengthSquared();
+
+    for (auto other = _nearestShadowLights.begin(); other != _nearestShadowLights.end(); ++other)
+    {
+        if (((*other)->getBoundsCenter() - viewer).getLengthSquared() > distance)
+        {
+            // Insert here
+            _nearestShadowLights.insert(other, &light);
+            return;
+        }
+    }
+
+    // All existing lights are nearer, is there room at the end?
+    if (_nearestShadowLights.size() < MaxShadowCastingLights)
+    {
+        _nearestShadowLights.push_back(&light);
     }
 }
 
@@ -134,7 +168,7 @@ void LightingModeRenderer::drawLightInteractions(OpenGLState& current, RenderSta
 
     for (auto& interactionList : _interactingLights)
     {
-        if (interactionList.castsShadows())
+        if (interactionList.isShadowCasting())
         {
             // Define which part of the shadow map atlas should be sampled
             interactionProgram->enableShadowMapping(true);
@@ -188,7 +222,7 @@ void LightingModeRenderer::drawShadowMaps(OpenGLState& current,std::size_t rende
     // Render a single light to the shadow map buffer
     for (auto& interactionList : _interactingLights)
     {
-        if (!interactionList.castsShadows()) continue;
+        if (!interactionList.isShadowCasting()) continue;
 
         interactionList.drawShadowMap(current, _shadowMapAtlas[3], *_shadowMapProgram, renderTime);
         _result->shadowDrawCalls += interactionList.getShadowMapDrawCalls();

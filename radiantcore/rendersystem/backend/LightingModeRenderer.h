@@ -35,10 +35,13 @@ private:
     std::vector<Rectangle> _shadowMapAtlas;
     ShadowMapProgram* _shadowMapProgram;
 
+    constexpr static std::size_t MaxShadowCastingLights = 6;
+
     // Data that is valid during a single render pass only
 
     std::vector<LightInteractions> _interactingLights;
     std::shared_ptr<LightingModeRenderResult> _result;
+    std::vector<LightInteractions*> _nearestShadowLights;
 
 public:
     LightingModeRenderer(GLProgramFactory& programFactory, 
@@ -52,6 +55,7 @@ public:
         _shadowMapProgram(nullptr)
     {
         _untransformedObjectsWithoutAlphaTest.reserve(10000);
+        _nearestShadowLights.reserve(MaxShadowCastingLights);
     }
 
     IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;
@@ -71,6 +75,8 @@ private:
     void drawShadowMaps(OpenGLState& current, std::size_t renderTime);
 
     void ensureShadowMapSetup();
+
+    void addToShadowLights(LightInteractions& light, const Vector3& viewer);
 };
 
 }

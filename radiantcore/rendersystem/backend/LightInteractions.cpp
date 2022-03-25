@@ -26,14 +26,14 @@ bool LightInteractions::isInView(const IRenderView& view)
     return view.TestAABB(_lightBounds) != VOLUME_OUTSIDE;
 }
 
-bool LightInteractions::castsShadows()
+bool LightInteractions::isShadowCasting()
 {
-    return _light.getLightEntity().getEntityName() == "light_1";
+    return _light.isShadowCasting();
 }
 
 void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
 {
-    bool shadowCasting = castsShadows();
+    bool shadowCasting = isShadowCasting();
 
     // Now check all the entities intersecting with this light
     for (const auto& entity : entities)

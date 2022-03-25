@@ -58,6 +58,16 @@ public:
         _shadowMapDrawCalls(0)
     {}
 
+    const Vector3& getBoundsCenter() const
+    {
+        return _lightBounds.getOrigin();
+    }
+
+    const RendererLight& getLight() const
+    {
+        return _light;
+    }
+
     std::size_t getInteractionDrawCalls() const
     {
         return _interactionDrawCalls;
@@ -87,7 +97,7 @@ public:
 
     bool isInView(const IRenderView& view);
 
-    bool castsShadows();
+    bool isShadowCasting();
 
     void collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities);
 

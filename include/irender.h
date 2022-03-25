@@ -259,6 +259,9 @@ public:
      * pyramid (the same as worldOrigin()).
      */
 	virtual Vector3 getLightOrigin() const = 0;
+
+    // Whether this light is allowed to cast shadows
+    virtual bool isShadowCasting() const = 0;
 };
 typedef std::shared_ptr<RendererLight> RendererLightPtr;
 

@@ -94,6 +94,8 @@ class LightNode :
 
 	mutable Matrix4 m_projectionOrientation;
 
+    bool _isShadowCasting;
+
 public:
 	LightNode(const IEntityClassPtr& eclass);
 
@@ -221,6 +223,7 @@ private:
 	void rotationChanged();
 	void lightRotationChanged(const std::string& value);
     void onLightRadiusChanged();
+    void onNoShadowsChanged(const std::string& value);
 
 	// Returns a reference to the member class Doom3LightRadius (used to set colours)
 	Doom3LightRadius& getDoom3Radius();
@@ -254,6 +257,7 @@ private:
     const IRenderEntity& getLightEntity() const override;
     Matrix4 getLightTextureTransformation() const override;
     Vector3 getLightOrigin() const override;
+    bool isShadowCasting() const override;
     const ShaderPtr& getShader() const override;
 	AABB lightAABB() const override;
 
