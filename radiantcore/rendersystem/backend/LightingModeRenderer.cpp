@@ -18,7 +18,8 @@ void LightingModeRenderer::ensureShadowMapSetup()
     if (!_shadowMapFbo)
     {
         _shadowMapFbo = FrameBuffer::CreateShadowMapBuffer();
-        // Define the shadow atlas
+
+        // Define the shadow atlas regions (supporting 6 lights)
         _shadowMapAtlas.resize(6);
 
         for (int i = 0; i < 6; ++i)
@@ -40,11 +41,11 @@ void LightingModeRenderer::ensureShadowMapSetup()
 IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask, 
     const IRenderView& view, std::size_t time)
 {
-    auto result = std::make_shared<LightingModeRenderResult>();
+    _result = std::make_shared<LightingModeRenderResult>();
 
     ensureShadowMapSetup();
 
-    auto interactionLists = determineLightInteractions(*result, view);
+    determineLightInteractions(view);
 
     // Construct default OpenGL state
     OpenGLState current;
@@ -62,32 +63,34 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     ObjectRenderer::InitAttributePointers();
 
     // Render depth information to the shadow maps
-    result->depthDrawCalls += drawShadowMaps(current, interactionLists, time);
+    drawShadowMaps(current, time);
 
     // Load the model view & projection matrix for the main scene
     setupViewMatrices(view);
 
     // Run the depth fill pass
-    result->depthDrawCalls += drawDepthFillPass(current, globalFlagsMask, interactionLists, view, time);
+    drawDepthFillPass(current, globalFlagsMask, view, time);
 
     // Draw the surfaces per light and material
-    result->interactionDrawCalls += drawLightInteractions(current, globalFlagsMask, interactionLists, view, time);
+    drawLightInteractions(current, globalFlagsMask, view, time);
 
     // Draw any surfaces without any light interactions
-    result->nonInteractionDrawCalls += drawNonInteractionPasses(current, globalFlagsMask, view, time);
+    drawNonInteractionPasses(current, globalFlagsMask, view, time);
 
     vertexBuffer->unbind();
     indexBuffer->unbind();
 
     cleanupState();
 
-    return result;
+    // Cleanup the data accumulated in this render pass
+    _interactingLights.clear();
+
+    return std::move(_result); // move-return our result reference
 }
 
-std::vector<LightInteractions> LightingModeRenderer::determineLightInteractions(LightingModeRenderResult& result, const IRenderView& view)
+void LightingModeRenderer::determineLightInteractions(const IRenderView& view)
 {
-    std::vector<LightInteractions> interactionLists;
-    interactionLists.reserve(_lights.size());
+    _interactingLights.reserve(_lights.size());
 
     // Gather all visible lights and render the surfaces touched by them
     for (const auto& light : _lights)
@@ -96,29 +99,25 @@ std::vector<LightInteractions> LightingModeRenderer::determineLightInteractions(
 
         if (!interaction.isInView(view))
         {
-            result.skippedLights++;
+            _result->skippedLights++;
             continue;
         }
 
-        result.visibleLights++;
+        _result->visibleLights++;
 
         // Check all the surfaces that are touching this light
         interaction.collectSurfaces(view, _entities);
 
-        result.objects += interaction.getObjectCount();
-        result.entities += interaction.getEntityCount();
+        _result->objects += interaction.getObjectCount();
+        _result->entities += interaction.getEntityCount();
 
-        interactionLists.emplace_back(std::move(interaction));
+        _interactingLights.emplace_back(std::move(interaction));
     }
-
-    return interactionLists;
 }
 
-std::size_t LightingModeRenderer::drawLightInteractions(OpenGLState& current, RenderStateFlags globalFlagsMask,
-    std::vector<LightInteractions>& interactionLists, const IRenderView& view, std::size_t renderTime)
+void LightingModeRenderer::drawLightInteractions(OpenGLState& current, RenderStateFlags globalFlagsMask,
+    const IRenderView& view, std::size_t renderTime)
 {
-    std::size_t interactionDrawCalls = 0;
-
     // Draw the surfaces per light and material
     auto interactionState = InteractionPass::GenerateInteractionState(_programFactory);
 
@@ -133,7 +132,7 @@ std::size_t LightingModeRenderer::drawLightInteractions(OpenGLState& current, Re
     // Bind the texture containing the shadow maps
     OpenGLState::SetTextureState(current.texture5, _shadowMapFbo->getTextureNumber(), GL_TEXTURE5, GL_TEXTURE_2D);
 
-    for (auto& interactionList : interactionLists)
+    for (auto& interactionList : _interactingLights)
     {
         if (interactionList.castsShadows())
         {
@@ -147,20 +146,15 @@ std::size_t LightingModeRenderer::drawLightInteractions(OpenGLState& current, Re
         }
 
         interactionList.drawInteractions(current, *interactionProgram, view, renderTime);
-        interactionDrawCalls += interactionList.getInteractionDrawCalls();
+        _result->interactionDrawCalls += interactionList.getInteractionDrawCalls();
     }
 
     // Unbind the shadow map texture
     OpenGLState::SetTextureState(current.texture5, 0, GL_TEXTURE5, GL_TEXTURE_2D);
-
-    return interactionDrawCalls;
 }
 
-std::size_t LightingModeRenderer::drawShadowMaps(OpenGLState& current, std::vector<LightInteractions>& interactionLists,
-    std::size_t renderTime)
+void LightingModeRenderer::drawShadowMaps(OpenGLState& current,std::size_t renderTime)
 {
-    std::size_t drawCalls = 0;
-
     // Draw the shadow maps of each light
     // Save the viewport set up in the camera code
     GLint previousViewport[4];
@@ -192,12 +186,12 @@ std::size_t LightingModeRenderer::drawShadowMaps(OpenGLState& current, std::vect
     glEnable(GL_CLIP_DISTANCE3);
 
     // Render a single light to the shadow map buffer
-    for (auto& interactionList : interactionLists)
+    for (auto& interactionList : _interactingLights)
     {
         if (!interactionList.castsShadows()) continue;
 
         interactionList.drawShadowMap(current, _shadowMapAtlas[3], *_shadowMapProgram, renderTime);
-        drawCalls += interactionList.getShadowMapDrawCalls();
+        _result->shadowDrawCalls += interactionList.getShadowMapDrawCalls();
         break;
     }
 
@@ -216,16 +210,12 @@ std::size_t LightingModeRenderer::drawShadowMaps(OpenGLState& current, std::vect
 
     glDisable(GL_DEPTH_TEST);
     current.clearRenderFlag(RENDER_DEPTHTEST);
-
-    return drawCalls;
 }
 
 
-std::size_t LightingModeRenderer::drawDepthFillPass(OpenGLState& current, RenderStateFlags globalFlagsMask,
-    std::vector<LightInteractions>& interactionLists, const IRenderView& view, std::size_t renderTime)
+void LightingModeRenderer::drawDepthFillPass(OpenGLState& current, RenderStateFlags globalFlagsMask,
+    const IRenderView& view, std::size_t renderTime)
 {
-    std::size_t drawCalls = 0;
-
     // Run the depth fill pass
     auto depthFillState = DepthFillPass::GenerateDepthFillState(_programFactory);
 
@@ -238,10 +228,10 @@ std::size_t LightingModeRenderer::drawDepthFillPass(OpenGLState& current, Render
     // Set the modelview and projection matrix
     depthFillProgram->setModelViewProjection(view.GetViewProjection());
 
-    for (auto& interactionList : interactionLists)
+    for (auto& interactionList : _interactingLights)
     {
         interactionList.fillDepthBuffer(current, *depthFillProgram, renderTime, _untransformedObjectsWithoutAlphaTest);
-        drawCalls += interactionList.getDepthDrawCalls();
+        _result->depthDrawCalls += interactionList.getDepthDrawCalls();
     }
 
     // Unbind the diffuse texture
@@ -254,19 +244,15 @@ std::size_t LightingModeRenderer::drawDepthFillPass(OpenGLState& current, Render
         depthFillProgram->setAlphaTest(-1);
 
         ObjectRenderer::SubmitGeometry(_untransformedObjectsWithoutAlphaTest, GL_TRIANGLES, _geometryStore);
-        drawCalls++;
+        _result->depthDrawCalls++;
 
         _untransformedObjectsWithoutAlphaTest.clear();
     }
-
-    return drawCalls;
 }
 
-std::size_t LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, RenderStateFlags globalFlagsMask, 
+void LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, RenderStateFlags globalFlagsMask, 
     const IRenderView& view, std::size_t time)
 {
-    std::size_t drawCalls = 0;
-
     glUseProgram(0);
     glActiveTexture(GL_TEXTURE0);
     glClientActiveTexture(GL_TEXTURE0);
@@ -312,12 +298,10 @@ std::size_t LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current,
                 }
 
                 ObjectRenderer::SubmitObject(*object, _geometryStore);
-                drawCalls++;
+                _result->nonInteractionDrawCalls++;
             });
         });
     }
-
-    return drawCalls;
 }
 
 }
