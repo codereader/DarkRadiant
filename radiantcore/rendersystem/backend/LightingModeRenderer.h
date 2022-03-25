@@ -13,6 +13,7 @@ namespace render
 
 class GLProgramFactory;
 class LightInteractions;
+class LightingModeRenderResult;
 
 class LightingModeRenderer final :
     public SceneRenderer
@@ -51,11 +52,20 @@ public:
     IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;
 
 private:
+    std::vector<LightInteractions> determineLightInteractions(LightingModeRenderResult& result, const IRenderView& view);
+
+    std::size_t drawLightInteractions(OpenGLState& current, RenderStateFlags globalFlagsMask,
+        std::vector<LightInteractions>& interactionLists, const IRenderView& view, std::size_t renderTime);
+
     std::size_t drawDepthFillPass(OpenGLState& current, RenderStateFlags globalFlagsMask,
         std::vector<LightInteractions>& interactionLists, const IRenderView& view, std::size_t renderTime);
 
     std::size_t drawNonInteractionPasses(OpenGLState& current, RenderStateFlags globalFlagsMask, 
         const IRenderView& view, std::size_t time);
+
+    std::size_t drawShadowMaps(OpenGLState& current, std::vector<LightInteractions>& interactionLists,
+        std::size_t renderTime);
+
 
     void ensureShadowMapSetup();
 };
