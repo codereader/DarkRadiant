@@ -93,3 +93,16 @@ public:
   							       const Params& lightParms)
     { }
 };
+
+// Interface implemented by GLSL programs supporting alpha test
+class ISupportsAlphaTest
+{
+public:
+    virtual ~ISupportsAlphaTest() {}
+
+    // Set the alpha test value uniform
+    virtual void setAlphaTest(float alphaTest) = 0;
+
+    // Set the diffuse texture matrix needed to look up the texel for the alpha test
+    virtual void setDiffuseTextureTransform(const Matrix4& transform) = 0;
+};

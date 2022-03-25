@@ -6,7 +6,8 @@ namespace render
 {
 
 class GLSLDepthFillAlphaProgram :
-    public GLSLProgramBase
+    public GLSLProgramBase,
+    public ISupportsAlphaTest
 {
 private:
     GLint _locAlphaTest;
@@ -21,9 +22,9 @@ public:
 
     void setModelViewProjection(const Matrix4& modelViewProjection);
     void setObjectTransform(const Matrix4& transform);
-    void setDiffuseTextureTransform(const Matrix4& transform);
 
-    void setAlphaTest(float alphaTest);
+    void setAlphaTest(float alphaTest) override;
+    void setDiffuseTextureTransform(const Matrix4& transform) override;
 };
 
 }

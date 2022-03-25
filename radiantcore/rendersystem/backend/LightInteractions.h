@@ -17,6 +17,7 @@ class OpenGLShader;
 class GLSLDepthFillAlphaProgram;
 class GLSLBumpProgram;
 class ShadowMapProgram;
+class DepthFillPass;
 
 /**
  * Defines interactions between a light and one or more entity renderables
@@ -96,6 +97,9 @@ public:
     void drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program, std::size_t renderTime);
 
     void drawInteractions(OpenGLState& state, GLSLBumpProgram& program, const IRenderView& view, std::size_t renderTime);
+
+    void setupAlphaTest(OpenGLState& state, OpenGLShader* shader, DepthFillPass* depthFillPass,
+        ISupportsAlphaTest& alphaTestProgram, std::size_t renderTime, IRenderEntity* entity);
 };
 
 }

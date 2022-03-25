@@ -95,41 +95,14 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
 
             if (!depthFillPass) continue;
 
-            const auto& material = shader->getMaterial();
-            assert(material);
-
-            auto coverage = material->getCoverage();
-
-            // Skip translucent materials
-            if (coverage == Material::MC_TRANSLUCENT) continue;
-
-            if (coverage == Material::MC_PERFORATED)
-            {
-                // Evaluate the shader stages of this material
-                depthFillPass->evaluateShaderStages(renderTime, entity);
-
-                // Apply the alpha test value, it might be affected by time and entity parms
-                program.setAlphaTest(depthFillPass->getAlphaTestValue());
-
-                // If there's a diffuse stage, apply the correct texture
-                OpenGLState::SetTextureState(state.texture0, depthFillPass->state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
-
-                // Set evaluated stage texture transformation matrix to the GLSL uniform
-                program.setDiffuseTextureTransform(depthFillPass->getDiffuseTextureTransform());
-            }
-            else
-            {
-                // No alpha test on this material, pass -1 to deactivate texture sampling
-                // in the GLSL program
-                program.setAlphaTest(-1);
-            }
+            setupAlphaTest(state, shader, depthFillPass, program, renderTime, entity);
 
             for (const auto& object : objects)
             {
                 // We submit all objects with an identity matrix in a single multi draw call
                 if (!object.get().isOriented())
                 {
-                    if (coverage == Material::MC_PERFORATED)
+                    if (shader->getMaterial()->getCoverage() == Material::MC_PERFORATED)
                     {
                         untransformedObjects.push_back(object.get().getStorageLocation());
                     }
@@ -186,34 +159,7 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
 
             if (!depthFillPass) continue;
 
-            const auto& material = shader->getMaterial();
-            assert(material);
-
-            auto coverage = material->getCoverage();
-
-            // Skip translucent materials
-            if (coverage == Material::MC_TRANSLUCENT) continue;
-
-            if (coverage == Material::MC_PERFORATED)
-            {
-                // Evaluate the shader stages of this material
-                depthFillPass->evaluateShaderStages(renderTime, entity);
-
-                // Apply the alpha test value, it might be affected by time and entity parms
-                program.setAlphaTest(depthFillPass->getAlphaTestValue());
-
-                // If there's a diffuse stage, apply the correct texture
-                OpenGLState::SetTextureState(state.texture0, depthFillPass->state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
-
-                // Set evaluated stage texture transformation matrix to the GLSL uniform
-                program.setDiffuseTextureTransform(depthFillPass->getDiffuseTextureTransform());
-            }
-            else
-            {
-                // No alpha test on this material, pass -1 to deactivate texture sampling
-                // in the GLSL program
-                program.setAlphaTest(-1);
-            }
+            setupAlphaTest(state, shader, depthFillPass, program, renderTime, entity);
 
             for (const auto& object : objects)
             {
@@ -332,6 +278,39 @@ void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& pr
     // Unbind the light textures
     OpenGLState::SetTextureState(state.texture3, 0, GL_TEXTURE3, GL_TEXTURE_2D);
     OpenGLState::SetTextureState(state.texture4, 0, GL_TEXTURE4, GL_TEXTURE_2D);
+}
+
+void LightInteractions::setupAlphaTest(OpenGLState& state, OpenGLShader* shader, DepthFillPass* depthFillPass,
+    ISupportsAlphaTest& program, std::size_t renderTime, IRenderEntity* entity)
+{
+    const auto& material = shader->getMaterial();
+    assert(material);
+
+    auto coverage = material->getCoverage();
+
+    // Skip translucent materials
+    if (coverage == Material::MC_TRANSLUCENT) return;
+
+    if (coverage == Material::MC_PERFORATED)
+    {
+        // Evaluate the shader stages of this material
+        depthFillPass->evaluateShaderStages(renderTime, entity);
+
+        // Apply the alpha test value, it might be affected by time and entity parms
+        program.setAlphaTest(depthFillPass->getAlphaTestValue());
+
+        // If there's a diffuse stage, apply the correct texture
+        OpenGLState::SetTextureState(state.texture0, depthFillPass->state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
+
+        // Set evaluated stage texture transformation matrix to the GLSL uniform
+        program.setDiffuseTextureTransform(depthFillPass->getDiffuseTextureTransform());
+    }
+    else
+    {
+        // No alpha test on this material, pass -1 to deactivate texture sampling
+        // in the GLSL program
+        program.setAlphaTest(-1);
+    }
 }
 
 }
