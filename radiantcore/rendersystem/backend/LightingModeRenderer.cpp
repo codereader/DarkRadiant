@@ -119,7 +119,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     {
         if (!interactionList.castsShadows()) continue;
 
-        interactionList.drawShadowMap(current, _shadowMapAtlas[3], *_shadowMapProgram);
+        interactionList.drawShadowMap(current, _shadowMapAtlas[3], *_shadowMapProgram, time);
         result->shadowDrawCalls += interactionList.getShadowMapDrawCalls();
         break;
     }

@@ -74,4 +74,8 @@ void main()
     gl_ClipDistance[1] = dot(fragPos, ClipPlanes[1]);
     gl_ClipDistance[2] = dot(fragPos, ClipPlanes[2]);
     gl_ClipDistance[3] = dot(fragPos, ClipPlanes[3]);
+
+    // Apply the texture matrix, we need the tex coords for alpha-testing
+    var_TexDiffuse.x = dot(u_DiffuseTextureMatrix[0], attr_TexCoord);
+    var_TexDiffuse.y = dot(u_DiffuseTextureMatrix[1], attr_TexCoord);
 }

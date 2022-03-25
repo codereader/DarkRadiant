@@ -162,7 +162,8 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
     }
 }
 
-void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program)
+void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, 
+    ShadowMapProgram& program, std::size_t renderTime)
 {
     // Set up the viewport to write to a specific area within the shadow map texture
     glViewport(rectangle.x, rectangle.y, 6 * rectangle.width, rectangle.width);
@@ -171,9 +172,6 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
     std::vector<IGeometryStore::Slot> untransformedObjects;
     untransformedObjects.reserve(1000);
 
-    // No alpha test for now
-    program.setAlphaTest(-1);
-    
     program.setLightOrigin(_light.getLightOrigin());
 
     // Set evaluated stage texture transformation matrix to the GLSL uniform
@@ -188,7 +186,6 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
 
             if (!depthFillPass) continue;
 
-#if 0
             const auto& material = shader->getMaterial();
             assert(material);
 
@@ -217,7 +214,6 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
                 // in the GLSL program
                 program.setAlphaTest(-1);
             }
-#endif
 
             for (const auto& object : objects)
             {

@@ -93,7 +93,7 @@ public:
     void fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
         std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest);
 
-    void drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program);
+    void drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program, std::size_t renderTime);
 
     void drawInteractions(OpenGLState& state, GLSLBumpProgram& program, const IRenderView& view, std::size_t renderTime);
 };
