@@ -99,16 +99,18 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     glDepthFunc(GL_LEQUAL);
     current.setDepthFunc(GL_LEQUAL);
 
-#if 1
     glEnable(GL_DEPTH_TEST);
     current.setRenderFlag(RENDER_DEPTHTEST);
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     current.setRenderFlag(RENDER_FILL);
-#endif
-#if 0
-    glPolygonOffset(0, 0);
-    glEnable(GL_POLYGON_OFFSET_FILL);
-#endif
+
+    // Enable the 4 clip planes, they are used in the vertex shader
+    glEnable(GL_CLIP_DISTANCE0);
+    glEnable(GL_CLIP_DISTANCE1);
+    glEnable(GL_CLIP_DISTANCE2);
+    glEnable(GL_CLIP_DISTANCE3);
+
     // Render a single light to the shadow map buffer
     for (auto& interactionList : interactionLists)
     {
@@ -122,16 +124,17 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     _shadowMapFbo->unbind();
     _shadowMapProgram->disable();
 
+    glDisable(GL_CLIP_DISTANCE3);
+    glDisable(GL_CLIP_DISTANCE2);
+    glDisable(GL_CLIP_DISTANCE1);
+    glDisable(GL_CLIP_DISTANCE0);
+
     // Restore view port
     glViewport(previousViewport[0], previousViewport[1], previousViewport[2], previousViewport[3]);
 
-#if 0
-    glDisable(GL_POLYGON_OFFSET_FILL);
-#endif
-#if 1
     glDisable(GL_DEPTH_TEST);
     current.clearRenderFlag(RENDER_DEPTHTEST);
-#endif
+
     // Load the model view & projection matrix for the main scene
     setupViewMatrices(view);
 
