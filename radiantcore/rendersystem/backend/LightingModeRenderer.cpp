@@ -105,6 +105,9 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     current.setRenderFlag(RENDER_FILL);
 
+    glPolygonOffset(0, 0);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+
     // Enable the 4 clip planes, they are used in the vertex shader
     glEnable(GL_CLIP_DISTANCE0);
     glEnable(GL_CLIP_DISTANCE1);
@@ -128,6 +131,8 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     glDisable(GL_CLIP_DISTANCE2);
     glDisable(GL_CLIP_DISTANCE1);
     glDisable(GL_CLIP_DISTANCE0);
+
+    glDisable(GL_POLYGON_OFFSET_FILL);
 
     // Restore view port
     glViewport(previousViewport[0], previousViewport[1], previousViewport[2], previousViewport[3]);
@@ -202,7 +207,7 @@ std::size_t LightingModeRenderer::drawDepthFillPass(OpenGLState& current, Render
 
     for (auto& interactionList : interactionLists)
     {
-        interactionList.fillDepthBuffer(current, *depthFillProgram, view, renderTime, _untransformedObjectsWithoutAlphaTest);
+        interactionList.fillDepthBuffer(current, *depthFillProgram, renderTime, _untransformedObjectsWithoutAlphaTest);
         drawCalls += interactionList.getDepthDrawCalls();
     }
 

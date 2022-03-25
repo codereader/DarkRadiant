@@ -91,7 +91,7 @@ public:
     void collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities);
 
     void fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
-        const IRenderView& view, std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest);
+        std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest);
 
     void drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program);
 

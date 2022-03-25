@@ -33,6 +33,8 @@ bool LightInteractions::castsShadows()
 
 void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
 {
+    bool shadowCasting = castsShadows();
+
     // Now check all the entities intersecting with this light
     for (const auto& entity : entities)
     {
@@ -45,16 +47,20 @@ void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<
             // Don't collect invisible shaders
             if (!shader->isVisible()) return;
 
-            if (object->isOriented())
+            // For non-shadow lights we can cull surfaces that are not in view
+            if (!shadowCasting)
             {
-                if (view.TestAABB(object->getObjectBounds(), object->getObjectTransform()) == VOLUME_OUTSIDE)
+                if (object->isOriented())
+                {
+                    if (view.TestAABB(object->getObjectBounds(), object->getObjectTransform()) == VOLUME_OUTSIDE)
+                    {
+                        return;
+                    }
+                }
+                else if (view.TestAABB(object->getObjectBounds()) == VOLUME_OUTSIDE) // non-oriented AABB test
                 {
                     return;
                 }
-            }
-            else if (view.TestAABB(object->getObjectBounds()) == VOLUME_OUTSIDE) // non-oriented AABB test
-            {
-                return;
             }
 
             auto glShader = static_cast<OpenGLShader*>(shader);
@@ -76,7 +82,7 @@ void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<
 }
 
 void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
-    const IRenderView& view, std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest)
+    std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest)
 {
     std::vector<IGeometryStore::Slot> untransformedObjects;
     untransformedObjects.reserve(1000);

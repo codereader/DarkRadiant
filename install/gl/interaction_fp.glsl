@@ -7,12 +7,13 @@ uniform sampler2D	u_attenuationmap_xy;
 uniform sampler2D	u_attenuationmap_z;
 uniform sampler2D	u_ShadowMap;
 
-uniform vec3		u_view_origin;
-uniform vec3		u_light_origin;
-uniform vec3		u_light_color;
-uniform float		u_light_scale;
-uniform vec4		u_ColourModulation;
-uniform vec4		u_ColourAddition;
+uniform vec3    u_view_origin;
+uniform vec3    u_light_origin;
+uniform vec3    u_light_color;
+uniform float   u_light_scale;
+uniform vec4    u_ColourModulation;
+uniform vec4    u_ColourAddition;
+uniform mat4    u_ObjectTransform;     // object to world
 
 // Defines the region within the shadow map atlas containing the depth information of the current light
 uniform vec4        u_ShadowMapRect; // x,y,w,h
@@ -153,9 +154,13 @@ void main()
         float maxAbsL = max(absL.x, max(absL.y, absL.z));
         float centerFragZ = maxAbsL;
 
+        vec3 normal = mat3(u_ObjectTransform) * N;
+
+        float lightFallAngle = -dot(normal, L);
+        float errorMargin = 5.0 * maxAbsL / ( shadowMapResolution * max(lightFallAngle, 0.1) );
+
         float centerBlockerZ = getDepthValueForVector(u_ShadowMap, u_ShadowMapRect, L);
-        float lit = float(centerBlockerZ >= centerFragZ/* - errorMargin*/);
-        //lit = var_WorldLightDirection.y > 0.2 ? 1 : 0;
+        float lit = float(centerBlockerZ >= centerFragZ - errorMargin);
 
         totalColor *= lit;
     }
