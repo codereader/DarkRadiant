@@ -56,6 +56,8 @@ private:
 
     std::size_t drawNonInteractionPasses(OpenGLState& current, RenderStateFlags globalFlagsMask, 
         const IRenderView& view, std::size_t time);
+
+    void ensureShadowMapSetup();
 };
 
 }

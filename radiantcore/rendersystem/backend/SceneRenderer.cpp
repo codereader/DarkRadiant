@@ -43,6 +43,12 @@ void SceneRenderer::setupState(OpenGLState& state)
 {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
     // global settings that are not set in renderstates
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);

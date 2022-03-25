@@ -158,13 +158,6 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaPr
 
 void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program)
 {
-    // Enable GL state and save to state
-    glDepthMask(true);
-    state.setRenderFlag(RENDER_DEPTHWRITE);
-
-    glDepthFunc(GL_LEQUAL);
-    state.setDepthFunc(GL_LEQUAL);
-
     // Set up the viewport to write to a specific area within the shadow map texture
     glViewport(rectangle.x, rectangle.y, 6 * rectangle.width, rectangle.width);
     glClear(GL_DEPTH_BUFFER_BIT);

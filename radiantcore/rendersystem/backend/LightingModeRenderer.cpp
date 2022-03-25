@@ -13,11 +13,8 @@
 namespace render
 {
 
-IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask, 
-    const IRenderView& view, std::size_t time)
+void LightingModeRenderer::ensureShadowMapSetup()
 {
-    auto result = std::make_shared<LightingModeRenderResult>();
-
     if (!_shadowMapFbo)
     {
         _shadowMapFbo = FrameBuffer::CreateShadowMapBuffer();
@@ -38,11 +35,14 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
         _shadowMapProgram = dynamic_cast<ShadowMapProgram*>(_programFactory.getBuiltInProgram(ShaderProgram::ShadowMap));
         assert(_shadowMapProgram);
     }
+}
 
-    // Construct default OpenGL state
-    OpenGLState current;
-    setupState(current);
-    setupViewMatrices(view);
+IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask, 
+    const IRenderView& view, std::size_t time)
+{
+    auto result = std::make_shared<LightingModeRenderResult>();
+
+    ensureShadowMapSetup();
 
     std::vector<LightInteractions> interactionLists;
     interactionLists.reserve(_lights.size());
@@ -69,6 +69,10 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
         interactionLists.emplace_back(std::move(interaction));
     }
 
+    // Construct default OpenGL state
+    OpenGLState current;
+    setupState(current);
+
     // Past this point, everything in the geometry store is up to date
     _geometryStore.syncToBufferObjects();
 
@@ -80,21 +84,37 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     // Set the vertex attribute pointers
     ObjectRenderer::InitAttributePointers();
 
-    result->depthDrawCalls += drawDepthFillPass(current, globalFlagsMask, interactionLists, view, time);
-
-    // save viewport
+    // Draw the shadow maps of each light
+    // Save the viewport set up in the camera code
     GLint previousViewport[4];
     glGetIntegerv(GL_VIEWPORT, previousViewport);
 
     _shadowMapProgram->enable();
     _shadowMapFbo->bind();
 
+    // Enable GL state and save to state
+    glDepthMask(GL_TRUE);
+    current.setRenderFlag(RENDER_DEPTHWRITE);
+
+    glDepthFunc(GL_LEQUAL);
+    current.setDepthFunc(GL_LEQUAL);
+
+#if 1
+    glEnable(GL_DEPTH_TEST);
+    current.setRenderFlag(RENDER_DEPTHTEST);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    current.setRenderFlag(RENDER_FILL);
+#endif
+#if 0
+    glPolygonOffset(0, 0);
+    glEnable(GL_POLYGON_OFFSET_FILL);
+#endif
     // Render a single light to the shadow map buffer
     for (auto& interactionList : interactionLists)
     {
         if (!interactionList.castsShadows()) continue;
 
-        interactionList.drawShadowMap(current, _shadowMapAtlas[0], *_shadowMapProgram);
+        interactionList.drawShadowMap(current, _shadowMapAtlas[3], *_shadowMapProgram);
         result->shadowDrawCalls += interactionList.getShadowMapDrawCalls();
         break;
     }
@@ -104,6 +124,19 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 
     // Restore view port
     glViewport(previousViewport[0], previousViewport[1], previousViewport[2], previousViewport[3]);
+
+#if 0
+    glDisable(GL_POLYGON_OFFSET_FILL);
+#endif
+#if 1
+    glDisable(GL_DEPTH_TEST);
+    current.clearRenderFlag(RENDER_DEPTHTEST);
+#endif
+    // Load the model view & projection matrix for the main scene
+    setupViewMatrices(view);
+
+    // Run the depth fill pass
+    result->depthDrawCalls += drawDepthFillPass(current, globalFlagsMask, interactionLists, view, time);
 
     // Draw the surfaces per light and material
     auto interactionState = InteractionPass::GenerateInteractionState(_programFactory);
@@ -125,7 +158,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
         {
             // Define which part of the shadow map atlas should be sampled
             interactionProgram->enableShadowMapping(true);
-            interactionProgram->setShadowMapRectangle(_shadowMapAtlas[0]);
+            interactionProgram->setShadowMapRectangle(_shadowMapAtlas[3]);
         }
         else
         {
@@ -139,6 +172,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     // Unbind the shadow map texture
     OpenGLState::SetTextureState(current.texture5, 0, GL_TEXTURE5, GL_TEXTURE_2D);
 
+    // Draw any surfaces without any light interactions
     result->nonInteractionDrawCalls += drawNonInteractionPasses(current, globalFlagsMask, view, time);
 
     cleanupState();
