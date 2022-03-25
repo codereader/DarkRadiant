@@ -97,6 +97,11 @@ public:
 	{
 		_modelView = matrix;
 	}
+
+    void setViewProjection(const Matrix4& matrix)
+	{
+        _viewProjection = matrix;
+	}
 };
 
 } // namespace render

@@ -44,6 +44,8 @@ public:
         _volumeTest.setProjection(projection);
         _volumeTest.setModelView(modelview);
 
+        _volumeTest.setViewProjection(projection.getMultipliedBy(modelview));
+
         _frustum = Frustum::createFromViewproj(_volumeTest.GetViewProjection());
         _viewer = Viewer::createFromViewProjection(_volumeTest.GetViewProjection());
     }
