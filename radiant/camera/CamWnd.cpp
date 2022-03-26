@@ -128,6 +128,11 @@ CamWnd::CamWnd(wxWindow* parent) :
             sigc::mem_fun(this, &CamWnd::handleTextureChanged)));
 
     _renderer.reset(new render::CamRenderer(_view, _shaders));
+
+    // Refresh the camera view when shadows are enabled/disabled
+    GlobalRegistry().signalForKey(RKEY_ENABLE_SHADOW_MAPPING).connect(
+        sigc::mem_fun(this, &CamWnd::queueDraw)
+    );
 }
 
 wxWindow* CamWnd::getMainWidget() const

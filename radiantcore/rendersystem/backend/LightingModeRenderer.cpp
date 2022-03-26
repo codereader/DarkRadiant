@@ -30,6 +30,8 @@ LightingModeRenderer::LightingModeRenderer(GLProgramFactory& programFactory,
 
 void LightingModeRenderer::ensureShadowMapSetup()
 {
+    if (!_shadowMappingEnabled.get()) return;
+
     if (!_shadowMapFbo)
     {
         _shadowMapFbo = FrameBuffer::CreateShadowMapBuffer();
@@ -131,7 +133,7 @@ void LightingModeRenderer::determineLightInteractions(const IRenderView& view)
         auto& moved = _interactingLights.emplace_back(std::move(interaction));
 
         // Check the distance of shadow casting lights to the viewer
-        if (moved.isShadowCasting())
+        if (_shadowMappingEnabled.get() && moved.isShadowCasting())
         {
             addToShadowLights(moved, view.getViewer());
         }
@@ -218,6 +220,8 @@ void LightingModeRenderer::drawLightInteractions(OpenGLState& current, RenderSta
 
 void LightingModeRenderer::drawShadowMaps(OpenGLState& current,std::size_t renderTime)
 {
+    if (!_shadowMappingEnabled.get()) return;
+
     // Draw the shadow maps of each light
     // Save the viewport set up in the camera code
     GLint previousViewport[4];

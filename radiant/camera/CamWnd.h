@@ -29,8 +29,8 @@
 #include "render/CamRenderer.h"
 #include "messages/TextureChanged.h"
 
-const int CAMWND_MINSIZE_X = 240;
-const int CAMWND_MINSIZE_Y = 200;
+constexpr int CAMWND_MINSIZE_X = 240;
+constexpr int CAMWND_MINSIZE_Y = 200;
 
 #define SPEED_MOVE 32
 #define SPEED_TURN 22.5
