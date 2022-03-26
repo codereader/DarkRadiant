@@ -1,7 +1,6 @@
 #pragma once
 
 #include "OpenGLShaderPass.h"
-#include "glprogram/DepthFillAlphaProgram.h"
 
 namespace render
 {

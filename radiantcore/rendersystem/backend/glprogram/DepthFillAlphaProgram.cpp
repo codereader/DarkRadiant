@@ -11,7 +11,7 @@ namespace render
 
 namespace
 {
-    const char* DEPTHFILL_ALPHA_VP_FILENAME = "zfill_vp.glsl"; // use the same VP
+    const char* DEPTHFILL_ALPHA_VP_FILENAME = "zfill_alpha_vp.glsl";
     const char* DEPTHFILL_ALPHA_FP_FILENAME = "zfill_alpha_fp.glsl";
 }
 
