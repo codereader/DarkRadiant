@@ -7,6 +7,7 @@
 #include "FrameBuffer.h"
 #include "render/Rectangle.h"
 #include "glprogram/ShadowMapProgram.h"
+#include "registry/CachedKey.h"
 
 namespace render
 {
@@ -37,6 +38,8 @@ private:
 
     constexpr static std::size_t MaxShadowCastingLights = 6;
 
+    registry::CachedKey<bool> _shadowMappingEnabled;
+
     // Data that is valid during a single render pass only
 
     std::vector<LightInteractions> _interactingLights;
@@ -44,19 +47,10 @@ private:
     std::shared_ptr<LightingModeRenderResult> _result;
 
 public:
-    LightingModeRenderer(GLProgramFactory& programFactory, 
-                         IGeometryStore& store,
-                         const std::set<RendererLightPtr>& lights,
-                         const std::set<IRenderEntityPtr>& entities) :
-        _programFactory(programFactory),
-        _geometryStore(store),
-        _lights(lights),
-        _entities(entities),
-        _shadowMapProgram(nullptr)
-    {
-        _untransformedObjectsWithoutAlphaTest.reserve(10000);
-        _nearestShadowLights.reserve(MaxShadowCastingLights + 1);
-    }
+    LightingModeRenderer(GLProgramFactory& programFactory,
+        IGeometryStore& store,
+        const std::set<RendererLightPtr>& lights,
+        const std::set<IRenderEntityPtr>& entities);
 
     IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;
 

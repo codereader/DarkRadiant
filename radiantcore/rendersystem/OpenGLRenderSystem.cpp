@@ -3,6 +3,7 @@
 #include "ishaders.h"
 #include "igl.h"
 #include "itextstream.h"
+#include "iregistry.h"
 #include "iradiant.h"
 
 #include "math/Matrix4.h"
@@ -31,9 +32,6 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _currentShaderProgram(SHADER_PROGRAM_NONE),
     _time(0),
     _geometryStore(_syncObjectProvider, _bufferObjectProvider),
-    _orthoRenderer(new FullBrightRenderer(RenderViewType::OrthoView, _state_sorted, _geometryStore)),
-    _editorPreviewRenderer(new FullBrightRenderer(RenderViewType::Camera, _state_sorted, _geometryStore)),
-    _lightingModeRenderer(new LightingModeRenderer(*_glProgramFactory, _geometryStore, _lights, _entities)),
     m_traverseRenderablesMutex(false)
 {
     bool shouldRealise = false;
@@ -382,6 +380,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
     static StringSet _dependencies
 	{
         MODULE_SHADERSYSTEM,
+        MODULE_XMLREGISTRY,
         MODULE_SHARED_GL_CONTEXT,
     };
 
@@ -410,6 +409,10 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 
     _sharedContextDestroyed = GlobalOpenGLContext().signal_sharedContextDestroyed()
         .connect(sigc::mem_fun(this, &OpenGLRenderSystem::unrealise));
+
+    _orthoRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::OrthoView, _state_sorted, _geometryStore);
+    _editorPreviewRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::Camera, _state_sorted, _geometryStore);
+    _lightingModeRenderer = std::make_unique<LightingModeRenderer>(*_glProgramFactory, _geometryStore, _lights, _entities);
 }
 
 void OpenGLRenderSystem::shutdownModule()

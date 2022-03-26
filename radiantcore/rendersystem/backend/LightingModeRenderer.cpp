@@ -14,6 +14,20 @@
 namespace render
 {
 
+LightingModeRenderer::LightingModeRenderer(GLProgramFactory& programFactory,
+        IGeometryStore& store, const std::set<RendererLightPtr>& lights,
+        const std::set<IRenderEntityPtr>& entities) :
+    _programFactory(programFactory),
+    _geometryStore(store),
+    _lights(lights),
+    _entities(entities),
+    _shadowMapProgram(nullptr),
+    _shadowMappingEnabled(RKEY_ENABLE_SHADOW_MAPPING)
+{
+    _untransformedObjectsWithoutAlphaTest.reserve(10000);
+    _nearestShadowLights.reserve(MaxShadowCastingLights + 1);
+}
+
 void LightingModeRenderer::ensureShadowMapSetup()
 {
     if (!_shadowMapFbo)

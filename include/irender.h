@@ -524,6 +524,8 @@ public:
     virtual std::string toString() = 0;
 };
 
+constexpr const char* const RKEY_ENABLE_SHADOW_MAPPING = "user/ui/renderSystem/enableShadowMapping";
+
 /**
  * \brief
  * The main interface for the backend renderer.
