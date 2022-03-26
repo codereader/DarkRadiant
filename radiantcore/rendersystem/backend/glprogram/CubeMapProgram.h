@@ -5,7 +5,7 @@
 namespace render
 {
 
-class GLSLCubeMapProgram :
+class CubeMapProgram :
     public GLSLProgramBase
 {
 private:
@@ -13,7 +13,7 @@ private:
     GLint _locViewOrigin;
 
 public:
-    GLSLCubeMapProgram() :
+    CubeMapProgram() :
         _locViewOrigin(-1)
     {}
 

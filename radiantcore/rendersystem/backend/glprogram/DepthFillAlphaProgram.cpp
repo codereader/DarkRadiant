@@ -1,4 +1,4 @@
-#include "GLSLDepthFillAlphaProgram.h"
+#include "DepthFillAlphaProgram.h"
 
 #include "GLProgramAttributes.h"
 #include "../GLProgramFactory.h"
@@ -15,7 +15,7 @@ namespace
     const char* DEPTHFILL_ALPHA_FP_FILENAME = "zfill_alpha_fp.glsl";
 }
 
-void GLSLDepthFillAlphaProgram::create()
+void DepthFillAlphaProgram::create()
 {
     // Create the program object
     rMessage() << "[renderer] Creating GLSL depthfill+alpha program" << std::endl;
@@ -45,7 +45,7 @@ void GLSLDepthFillAlphaProgram::create()
     debug::assertNoGlErrors();
 }
 
-void GLSLDepthFillAlphaProgram::enable()
+void DepthFillAlphaProgram::enable()
 {
     GLSLProgramBase::enable();
 
@@ -53,7 +53,7 @@ void GLSLDepthFillAlphaProgram::enable()
     glEnableVertexAttribArray(GLProgramAttribute::TexCoord);
 }
 
-void GLSLDepthFillAlphaProgram::disable()
+void DepthFillAlphaProgram::disable()
 {
     GLSLProgramBase::disable();
 
@@ -61,22 +61,22 @@ void GLSLDepthFillAlphaProgram::disable()
     glDisableVertexAttribArray(GLProgramAttribute::TexCoord);
 }
 
-void GLSLDepthFillAlphaProgram::setAlphaTest(float alphaTest)
+void DepthFillAlphaProgram::setAlphaTest(float alphaTest)
 {
     glUniform1f(_locAlphaTest, alphaTest);
 }
 
-void GLSLDepthFillAlphaProgram::setModelViewProjection(const Matrix4& modelViewProjection)
+void DepthFillAlphaProgram::setModelViewProjection(const Matrix4& modelViewProjection)
 {
     loadMatrixUniform(_locModelViewProjection, modelViewProjection);
 }
 
-void GLSLDepthFillAlphaProgram::setObjectTransform(const Matrix4& transform)
+void DepthFillAlphaProgram::setObjectTransform(const Matrix4& transform)
 {
     loadMatrixUniform(_locObjectTransform, transform);
 }
 
-void GLSLDepthFillAlphaProgram::setDiffuseTextureTransform(const Matrix4& transform)
+void DepthFillAlphaProgram::setDiffuseTextureTransform(const Matrix4& transform)
 {
     loadTextureMatrixUniform(_locDiffuseTextureMatrix, transform);
 }

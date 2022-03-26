@@ -1,4 +1,4 @@
-#include "GLSLCubeMapProgram.h"
+#include "CubeMapProgram.h"
 
 #include "itextstream.h"
 #include "debugging/gl.h"
@@ -15,7 +15,7 @@ namespace
     const char* const FP_FILENAME = "cubemap_fp.glsl";
 }
 
-void GLSLCubeMapProgram::create()
+void CubeMapProgram::create()
 {
     // Create the program object
     rMessage() << "[renderer] Creating GLSL CubeMap program" << std::endl;
@@ -47,7 +47,7 @@ void GLSLCubeMapProgram::create()
     debug::assertNoGlErrors();
 }
 
-void GLSLCubeMapProgram::enable()
+void CubeMapProgram::enable()
 {
     GLSLProgramBase::enable();
 
@@ -59,7 +59,7 @@ void GLSLCubeMapProgram::enable()
     debug::assertNoGlErrors();
 }
 
-void GLSLCubeMapProgram::disable()
+void CubeMapProgram::disable()
 {
     GLSLProgramBase::disable();
 
@@ -71,7 +71,7 @@ void GLSLCubeMapProgram::disable()
     debug::assertNoGlErrors();
 }
 
-void GLSLCubeMapProgram::setViewer(const Vector3& viewer)
+void CubeMapProgram::setViewer(const Vector3& viewer)
 {
     // Pass the current viewer origin to the shader
     glUniform3f(_locViewOrigin,

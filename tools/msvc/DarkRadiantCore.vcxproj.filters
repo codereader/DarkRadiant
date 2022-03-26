@@ -1033,9 +1033,6 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLProgramBase.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillAlphaProgram.cpp">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
@@ -1117,9 +1114,6 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\LightInteractions.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLCubeMapProgram.cpp">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractionPass.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
@@ -1145,6 +1139,12 @@
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\InteractionProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\CubeMapProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2190,9 +2190,6 @@
     <ClInclude Include="..\..\radiantcore\model\import\AseModel.h">
       <Filter>src\model\import</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLDepthFillAlphaProgram.h">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLProgramBase.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
@@ -2319,9 +2316,6 @@
     <ClInclude Include="..\..\radiantcore\entity\RenderableObjectCollection.h">
       <Filter>src\entity</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLCubeMapProgram.h">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractionPass.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
@@ -2365,6 +2359,12 @@
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\InteractionProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\CubeMapProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
   </ItemGroup>

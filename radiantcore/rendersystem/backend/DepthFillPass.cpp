@@ -2,7 +2,7 @@
 
 #include "../OpenGLRenderSystem.h"
 #include "GLProgramFactory.h"
-#include "glprogram/GLSLDepthFillAlphaProgram.h"
+#include "glprogram/DepthFillAlphaProgram.h"
 
 namespace render
 {
@@ -33,7 +33,7 @@ inline void setDepthFillStateFlags(OpenGLState& state, GLProgramFactory& program
 
     // Load the GLSL program tailored for this pass
     state.glProgram = programFactory.getBuiltInProgram(ShaderProgram::DepthFillAlpha);
-    assert(dynamic_cast<GLSLDepthFillAlphaProgram*>(state.glProgram));
+    assert(dynamic_cast<DepthFillAlphaProgram*>(state.glProgram));
 }
 
 }

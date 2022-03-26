@@ -5,7 +5,7 @@
 namespace render
 {
 
-class GLSLDepthFillAlphaProgram :
+class DepthFillAlphaProgram :
     public GLSLProgramBase,
     public ISupportsAlphaTest
 {

@@ -7,8 +7,8 @@
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
 #include "OpenGLState.h"
-#include "glprogram/GLSLCubeMapProgram.h"
-#include "glprogram/GLSLDepthFillAlphaProgram.h"
+#include "glprogram/CubeMapProgram.h"
+#include "glprogram/DepthFillAlphaProgram.h"
 #include "glprogram/InteractionProgram.h"
 
 namespace render
@@ -271,7 +271,7 @@ void LightingModeRenderer::drawDepthFillPass(OpenGLState& current, RenderStateFl
     // Prepare the current state for depth filling
     depthFillState.applyTo(current, globalFlagsMask);
 
-    auto depthFillProgram = dynamic_cast<GLSLDepthFillAlphaProgram*>(current.glProgram);
+    auto depthFillProgram = dynamic_cast<DepthFillAlphaProgram*>(current.glProgram);
     assert(depthFillProgram);
 
     // Set the modelview and projection matrix
@@ -341,9 +341,9 @@ void LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, Render
                 // Apply our state to the current state object
                 pass.evaluateStagesAndApplyState(current, globalFlagsMask, time, entity.get());
 
-                if (dynamic_cast<GLSLCubeMapProgram*>(current.glProgram))
+                if (dynamic_cast<CubeMapProgram*>(current.glProgram))
                 {
-                    static_cast<GLSLCubeMapProgram*>(current.glProgram)->setViewer(view.getViewer());
+                    static_cast<CubeMapProgram*>(current.glProgram)->setViewer(view.getViewer());
                 }
 
                 ObjectRenderer::SubmitObject(*object, _geometryStore);

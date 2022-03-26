@@ -11,7 +11,7 @@
 #include "debugging/render.h"
 #include "debugging/gl.h"
 
-#include "glprogram/GLSLDepthFillAlphaProgram.h"
+#include "glprogram/DepthFillAlphaProgram.h"
 
 namespace render
 {

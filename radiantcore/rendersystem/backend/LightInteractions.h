@@ -14,7 +14,7 @@ namespace render
 
 class OpenGLState;
 class OpenGLShader;
-class GLSLDepthFillAlphaProgram;
+class DepthFillAlphaProgram;
 class InteractionProgram;
 class ShadowMapProgram;
 class DepthFillPass;
@@ -114,7 +114,7 @@ public:
 
     void collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities);
 
-    void fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
+    void fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
         std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest);
 
     void drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program, std::size_t renderTime);

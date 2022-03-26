@@ -2,7 +2,7 @@
 
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
-#include "glprogram/GLSLDepthFillAlphaProgram.h"
+#include "glprogram/DepthFillAlphaProgram.h"
 #include "glprogram/ShadowMapProgram.h"
 
 namespace render
@@ -81,7 +81,7 @@ void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<
     }
 }
 
-void LightInteractions::fillDepthBuffer(OpenGLState& state, GLSLDepthFillAlphaProgram& program, 
+void LightInteractions::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
     std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest)
 {
     std::vector<IGeometryStore::Slot> untransformedObjects;
