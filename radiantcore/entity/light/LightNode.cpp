@@ -28,8 +28,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass)
     _renderableLightVolume(*this),
     _renderableVertices(*this, _instances, _projUseFlags),
     _showLightVolumeWhenUnselected(EntitySettings::InstancePtr()->getShowAllLightRadii()),
-    _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL),
-    _isShadowCasting(false)
+    _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
     m_doom3Radius.m_changed = std::bind(&LightNode::onLightRadiusChanged, this);
 }
@@ -48,8 +47,7 @@ LightNode::LightNode(const LightNode& other)
     _renderableLightVolume(*this),
     _renderableVertices(*this, _instances, _projUseFlags),
     _showLightVolumeWhenUnselected(other._showLightVolumeWhenUnselected),
-    _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL),
-    _isShadowCasting(false)
+    _overrideColKey(colours::RKEY_OVERRIDE_LIGHTCOL)
 {
     m_doom3Radius.m_changed = std::bind(&LightNode::onLightRadiusChanged, this);
 }
@@ -93,7 +91,6 @@ void LightNode::construct()
     observeKey("light_start", sigc::mem_fun(this, &LightNode::lightStartChanged));
     observeKey("light_end", sigc::mem_fun(this, &LightNode::lightEndChanged));
     observeKey("texture", sigc::mem_fun(m_shader, &LightShader::valueChanged));
-    observeKey("noshadows", sigc::mem_fun(this, &LightNode::onNoShadowsChanged));
 
     _projectionChanged = true;
 
@@ -134,11 +131,6 @@ void LightNode::onLightRadiusChanged()
 {
     // Light radius changed, mark bounds as dirty
     boundsChanged();
-}
-
-void LightNode::onNoShadowsChanged(const std::string& noShadowsValue)
-{
-    _isShadowCasting = noShadowsValue != "1";
 }
 
 void LightNode::transformChanged()
@@ -1018,7 +1010,7 @@ Vector3 LightNode::getLightOrigin() const
 
 bool LightNode::isShadowCasting() const
 {
-    return _isShadowCasting;
+    return EntityNode::isShadowCasting();
 }
 
 /* greebo: A light is projected, if the entity keys light_target/light_up/light_right are not empty.

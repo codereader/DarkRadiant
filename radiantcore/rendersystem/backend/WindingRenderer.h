@@ -121,6 +121,7 @@ private:
     {
     private:
         WindingRenderer& _owner;
+        const IRenderEntity* _entity;
         BucketIndex _bucketIndex;
 
         // The winding slot mapping indices, an index into
@@ -137,8 +138,9 @@ private:
 
         sigc::signal<void> _sigBoundsChanged;
     public:
-        WindingGroup(WindingRenderer& owner, BucketIndex bucketIndex) :
+        WindingGroup(WindingRenderer& owner, const IRenderEntity* entity, BucketIndex bucketIndex) :
             _owner(owner),
+            _entity(entity),
             _bucketIndex(bucketIndex),
             _surfaceNeedsRebuild(true),
             _boundsNeedUpdate(true),
@@ -215,6 +217,11 @@ private:
             ensureSurfaceIsBuilt();
 
             return _indexSlot;
+        }
+
+        bool isShadowCasting() override
+        {
+            return _entity->isShadowCasting();
         }
 
     private:
@@ -311,7 +318,7 @@ private:
             if (existing == _windingMap.end())
             {
                 existing = _windingMap.emplace(key,
-                    std::make_shared<WindingGroup>(_owner, slot.bucketIndex)).first;
+                    std::make_shared<WindingGroup>(_owner, slot.renderEntity, slot.bucketIndex)).first;
 
                 // New surface, register this with the entity
                 slot.renderEntity->addRenderable(existing->second, _owner._owningShader);

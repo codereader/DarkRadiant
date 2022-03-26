@@ -34,6 +34,9 @@ public:
 
     // Returns the key to access the vertex data in the renderer's geometry store
     virtual IGeometryStore::Slot getStorageLocation() = 0;
+
+    // Returns true if this surface produces shadows when lit
+    virtual bool isShadowCasting() = 0;
 };
 
 }

@@ -35,7 +35,7 @@ void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
             return; // don't handle empty surfaces
         }
 
-        _renderableSurfaces.emplace_back(std::make_shared<RenderableModelSurface>(surface, localToWorld()));
+        _renderableSurfaces.emplace_back(std::make_shared<RenderableModelSurface>(surface, _renderEntity, localToWorld()));
     });
 
     Node::onInsertIntoScene(root);

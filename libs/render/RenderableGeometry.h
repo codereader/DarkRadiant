@@ -91,6 +91,11 @@ private:
 
             return _owner._shader->getGeometryStorageLocation(_owner._surfaceSlot);
         }
+
+        bool isShadowCasting() override
+        {
+            return _owner._renderEntity->isShadowCasting();
+        }
     };
 
     // Adapater suitable to be attached to an IRenderEntity

@@ -111,7 +111,9 @@ protected:
     // Used in lighting render mode to enumerate surfaces by entity
     RenderableObjectCollection _renderObjects;
 
-  protected:
+    bool _isShadowCasting;
+
+protected:
 	// The Constructor needs the eclass
 	EntityNode(const IEntityClassPtr& eclass);
 
@@ -136,6 +138,7 @@ public:
     virtual void foreachRenderable(const ObjectVisitFunction& functor) override;
     virtual void foreachRenderableTouchingBounds(const AABB& bounds,
         const ObjectVisitFunction& functor) override;
+    virtual bool isShadowCasting() const;
 
     // IMatrixTransform implementation
     Matrix4 localToParent() const override { return _localToParent; }
@@ -228,6 +231,7 @@ private:
 	// Private function target - wraps to virtual protected signal
 	void _modelKeyChanged(const std::string& value);
     void _originKeyChanged();
+    void _onNoShadowsSettingsChanged(const std::string& value);
 
     void acquireShaders();
     void acquireShaders(const RenderSystemPtr& renderSystem);

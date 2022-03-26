@@ -269,6 +269,12 @@ public:
     {
         return _bounds;
     }
+
+    bool isShadowCasting() override
+    {
+        return false;
+    }
+
 private:
     inline Vector3 toVector3(const Vector3f& vector)
     {

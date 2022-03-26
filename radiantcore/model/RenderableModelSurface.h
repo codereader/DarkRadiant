@@ -13,6 +13,7 @@ class RenderableModelSurface final :
 {
 private:
     const IIndexedModelSurface& _surface;
+    const IRenderEntity* _entity;
     const Matrix4& _localToWorld;
 
 public:
@@ -20,8 +21,9 @@ public:
 
     // Construct this renderable around the existing surface.
     // The reference to the orientation matrix is stored and needs to remain valid
-    RenderableModelSurface(const IIndexedModelSurface& surface, const Matrix4& localToWorld) :
+    RenderableModelSurface(const IIndexedModelSurface& surface, const IRenderEntity* entity, const Matrix4& localToWorld) :
         _surface(surface),
+        _entity(entity),
         _localToWorld(localToWorld)
     {}
 
@@ -61,6 +63,11 @@ public:
     const AABB& getObjectBounds() override
     {
         return _surface.getSurfaceBounds();
+    }
+
+    bool isShadowCasting() override
+    {
+        return _entity != nullptr && _entity->isShadowCasting();
     }
 };
 

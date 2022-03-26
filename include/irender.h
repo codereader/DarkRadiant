@@ -195,6 +195,9 @@ public:
      * The bounds are specified in world coordinates.
      */
     virtual void foreachRenderableTouchingBounds(const AABB& bounds, const ObjectVisitFunction& functor) = 0;
+
+    // Returns true if this entity produces shadows when lit (i.e.returns false when the entity has "noshadows" set to 1)
+    virtual bool isShadowCasting() const = 0;
 };
 typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;

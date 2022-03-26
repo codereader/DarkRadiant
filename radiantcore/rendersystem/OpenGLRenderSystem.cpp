@@ -218,6 +218,10 @@ void OpenGLRenderSystem::realise()
     {
         shader->realise();
     }
+
+    _orthoRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::OrthoView, _state_sorted, _geometryStore);
+    _editorPreviewRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::Camera, _state_sorted, _geometryStore);
+    _lightingModeRenderer = std::make_unique<LightingModeRenderer>(*_glProgramFactory, _geometryStore, _lights, _entities);
 }
 
 void OpenGLRenderSystem::unrealise()
@@ -409,10 +413,6 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 
     _sharedContextDestroyed = GlobalOpenGLContext().signal_sharedContextDestroyed()
         .connect(sigc::mem_fun(this, &OpenGLRenderSystem::unrealise));
-
-    _orthoRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::OrthoView, _state_sorted, _geometryStore);
-    _editorPreviewRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::Camera, _state_sorted, _geometryStore);
-    _lightingModeRenderer = std::make_unique<LightingModeRenderer>(*_glProgramFactory, _geometryStore, _lights, _entities);
 }
 
 void OpenGLRenderSystem::shutdownModule()

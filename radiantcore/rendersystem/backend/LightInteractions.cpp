@@ -177,6 +177,9 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
 
             for (const auto& object : objects)
             {
+                // Skip models with "noshadows" set
+                if (!object.get().isShadowCasting()) continue;
+
                 // We submit all objects with an identity matrix in a single multi draw call
                 if (!object.get().isOriented())
                 {

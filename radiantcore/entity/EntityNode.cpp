@@ -26,7 +26,8 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
 	_direction(1,0,0),
-    _isAttachedToRenderSystem(false)
+    _isAttachedToRenderSystem(false),
+    _isShadowCasting(false)
 {
 }
 
@@ -48,7 +49,8 @@ EntityNode::EntityNode(const EntityNode& other) :
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
 	_direction(1,0,0),
-    _isAttachedToRenderSystem(false)
+    _isAttachedToRenderSystem(false),
+    _isShadowCasting(false)
 {
 }
 
@@ -79,6 +81,8 @@ void EntityNode::construct()
     static_assert(std::is_base_of_v<sigc::trackable, ModelKey>);
 	observeKey("model", sigc::mem_fun(this, &EntityNode::_modelKeyChanged));
 	observeKey("skin", sigc::mem_fun(_modelKey, &ModelKey::skinChanged));
+
+    observeKey("noshadows", sigc::mem_fun(this, &EntityNode::_onNoShadowsSettingsChanged));
 
 	_shaderParms.addKeyObservers();
 
@@ -230,9 +234,14 @@ void EntityNode::foreachRenderable(const IRenderEntity::ObjectVisitFunction& fun
 }
 
 void EntityNode::foreachRenderableTouchingBounds(const AABB& bounds,
-    const IRenderEntity::ObjectVisitFunction& functor)
+    const ObjectVisitFunction& functor)
 {
     _renderObjects.foreachRenderableTouchingBounds(bounds, functor);
+}
+
+bool EntityNode::isShadowCasting() const
+{
+    return _isShadowCasting;
 }
 
 std::string EntityNode::getFingerprint()
@@ -519,6 +528,11 @@ void EntityNode::_modelKeyChanged(const std::string& value)
 void EntityNode::_originKeyChanged()
 {
     // TODO: add virtual callout for subclasses
+}
+
+void EntityNode::_onNoShadowsSettingsChanged(const std::string& noShadowsValue)
+{
+    _isShadowCasting = noShadowsValue != "1";
 }
 
 const ShaderPtr& EntityNode::getWireShader() const
