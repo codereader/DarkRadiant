@@ -47,6 +47,8 @@ private:
 
 	AABB _localAABB;
 
+    bool _noShadowsLit;
+
 private:
 	// Constructor
 	EclassModelNode(const IEntityClassPtr& eclass);
@@ -75,6 +77,8 @@ public:
     
     const Vector3& getWorldPosition() const override;
 
+    virtual bool isShadowCasting() const override;
+
 protected:
 	// Gets called by the Transformable implementation whenever
 	// scale, rotation or translation is changed.
@@ -102,6 +106,7 @@ private:
     void originChanged();
     void rotationChanged();
     void angleChanged();
+    void onNoshadowsLitChanged(const std::string& value);
 };
 
 } // namespace

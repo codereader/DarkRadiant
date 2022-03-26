@@ -138,7 +138,7 @@ public:
     virtual void foreachRenderable(const ObjectVisitFunction& functor) override;
     virtual void foreachRenderableTouchingBounds(const AABB& bounds,
         const ObjectVisitFunction& functor) override;
-    virtual bool isShadowCasting() const;
+    virtual bool isShadowCasting() const override;
 
     // IMatrixTransform implementation
     Matrix4 localToParent() const override { return _localToParent; }
