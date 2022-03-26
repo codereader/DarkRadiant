@@ -23,7 +23,7 @@ private:
     {}
 
 public:
-    constexpr static std::size_t DefaultShadowMapSize = 4096;
+    constexpr static std::size_t DefaultShadowMapSize = 1024 * 6;
 
     using Ptr = std::shared_ptr<FrameBuffer>;
 
