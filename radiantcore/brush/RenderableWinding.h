@@ -100,9 +100,9 @@ public:
 
     void render() const override
     {
-        if (_slot != render::IWindingRenderer::InvalidSlot && _shader)
+        if (_slot != IWindingRenderer::InvalidSlot && _shader)
         {
-            _shader->renderWinding(render::IWindingRenderer::RenderMode::Polygon, _slot);
+            _shader->renderWinding(IWindingRenderer::RenderMode::Polygon, _slot);
         }
     }
 };

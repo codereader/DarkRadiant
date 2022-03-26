@@ -407,7 +407,8 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
             collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
 
             // Submit the RenderableWinding as reference, it will render the winding in polygon mode
-            collector.addHighlightRenderable(face.getWindingSurfaceSolid(), Matrix4::getIdentity());
+            collector.addHighlightRenderable(volume.fill() ? 
+                face.getWindingSurfaceSolid() : face.getWindingSurfaceWireframe(), Matrix4::getIdentity());
 
             collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
         }

@@ -33,7 +33,10 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
     // Make sure all the geometry is ready for rendering
     for (const auto& [_, pass] : _sortedStates)
     {
-        pass->getShader().prepareForRendering();
+        if (pass->isApplicableTo(_renderViewType))
+        {
+            pass->getShader().prepareForRendering();
+        }
     }
 
     // Make sure all the data is uploaded
