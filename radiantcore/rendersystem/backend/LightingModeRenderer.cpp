@@ -192,8 +192,11 @@ void LightingModeRenderer::drawLightInteractions(OpenGLState& current, RenderSta
 
     interactionProgram->setModelViewProjection(view.GetViewProjection());
 
-    // Bind the texture containing the shadow maps
-    OpenGLState::SetTextureState(current.texture5, _shadowMapFbo->getTextureNumber(), GL_TEXTURE5, GL_TEXTURE_2D);
+    if (_shadowMappingEnabled.get())
+    {
+        // Bind the texture containing the shadow maps
+        OpenGLState::SetTextureState(current.texture5, _shadowMapFbo->getTextureNumber(), GL_TEXTURE5, GL_TEXTURE_2D);
+    }
 
     for (auto& interactionList : _interactingLights)
     {
@@ -214,8 +217,11 @@ void LightingModeRenderer::drawLightInteractions(OpenGLState& current, RenderSta
         _result->interactionDrawCalls += interactionList.getInteractionDrawCalls();
     }
 
-    // Unbind the shadow map texture
-    OpenGLState::SetTextureState(current.texture5, 0, GL_TEXTURE5, GL_TEXTURE_2D);
+    if (_shadowMappingEnabled.get())
+    {
+        // Unbind the shadow map texture
+        OpenGLState::SetTextureState(current.texture5, 0, GL_TEXTURE5, GL_TEXTURE_2D);
+    }
 }
 
 void LightingModeRenderer::drawShadowMaps(OpenGLState& current,std::size_t renderTime)
