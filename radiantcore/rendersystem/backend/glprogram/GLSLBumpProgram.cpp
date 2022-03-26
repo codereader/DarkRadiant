@@ -271,10 +271,13 @@ void GLSLBumpProgram::enableShadowMapping(bool enable)
 void GLSLBumpProgram::setShadowMapRectangle(const Rectangle& rectangle)
 {
     // Modeled after the TDM code, which is correcting the rectangle to refer to pixel space coordinates
+    // idVec4 v( page.x, page.y, 0, page.width-1 );
+    // v.ToVec2() = (v.ToVec2() * 2 + idVec2(1, 1)) / (2 * 6 * r_shadowMapSize.GetInteger());
+    // v.w /= 6 * r_shadowMapSize.GetFloat();
     auto position = (Vector2f(rectangle.x, rectangle.y) * 2 + Vector2f(1, 1)) / (2 * FrameBuffer::DefaultShadowMapSize);
 
-    glUniform4f(_locShadowMapRect, position.x(), position.y(),
-        static_cast<float>(rectangle.width), static_cast<float>(rectangle.height) / FrameBuffer::DefaultShadowMapSize);
+    glUniform4f(_locShadowMapRect, position.x(), position.y(), 
+        0, (static_cast<float>(rectangle.width) - 1) / FrameBuffer::DefaultShadowMapSize);
     debug::assertNoGlErrors();
 }
 
