@@ -4,7 +4,6 @@
 #include <vector>
 #include <set>
 #include "irender.h"
-#include "isurfacerenderer.h"
 #include "irenderableobject.h"
 #include "irenderview.h"
 #include "render/Rectangle.h"
@@ -48,18 +47,10 @@ private:
     std::size_t _shadowMapDrawCalls;
 
     int _shadowLightIndex;
+    bool _isShadowCasting;
 
 public:
-    LightInteractions(RendererLight& light, IGeometryStore& store) :
-        _light(light),
-        _store(store),
-        _lightBounds(light.lightAABB()),
-        _interactionDrawCalls(0),
-        _depthDrawCalls(0),
-        _objectCount(0),
-        _shadowMapDrawCalls(0),
-        _shadowLightIndex(-1)
-    {}
+    LightInteractions(RendererLight& light, IGeometryStore& store);
 
     const Vector3& getBoundsCenter() const
     {
@@ -110,7 +101,7 @@ public:
 
     bool isInView(const IRenderView& view);
 
-    bool isShadowCasting();
+    bool isShadowCasting() const;
 
     void collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities);
 

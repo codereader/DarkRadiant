@@ -8,6 +8,20 @@
 namespace render
 {
 
+LightInteractions::LightInteractions(RendererLight& light, IGeometryStore& store) :
+    _light(light),
+    _store(store),
+    _lightBounds(light.lightAABB()),
+    _interactionDrawCalls(0),
+    _depthDrawCalls(0),
+    _objectCount(0),
+    _shadowMapDrawCalls(0),
+    _shadowLightIndex(-1)
+{
+    // Consider the "noshadows" flag and the setting of the light material
+    _isShadowCasting = _light.isShadowCasting() && _light.getShader() && _light.getShader()->getMaterial()->lightCastsShadows();
+}
+
 void LightInteractions::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader)
 {
     auto& objectsByMaterial = _objectsByEntity.emplace(
@@ -26,9 +40,9 @@ bool LightInteractions::isInView(const IRenderView& view)
     return view.TestAABB(_lightBounds) != VOLUME_OUTSIDE;
 }
 
-bool LightInteractions::isShadowCasting()
+bool LightInteractions::isShadowCasting() const
 {
-    return _light.isShadowCasting();
+    return _isShadowCasting;
 }
 
 void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
@@ -156,7 +170,8 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
         {
             auto depthFillPass = shader->getDepthFillPass();
 
-            if (!depthFillPass) continue;
+            // Skip shaders not affecting scene depth, and materials not casting any shadow
+            if (!depthFillPass || !shader->getMaterial()->surfaceCastsShadow()) continue;
 
             setupAlphaTest(state, shader, depthFillPass, program, renderTime, entity);
 
