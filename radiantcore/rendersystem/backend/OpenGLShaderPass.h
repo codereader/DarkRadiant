@@ -15,7 +15,7 @@ namespace render
 {
 
 class OpenGLShader;
-class GLSLBumpProgram;
+class InteractionProgram;
 
 /**
  * @brief A single component pass of an OpenGL shader.

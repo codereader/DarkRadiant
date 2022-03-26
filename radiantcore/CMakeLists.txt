@@ -214,7 +214,7 @@ add_library(radiantcore MODULE
             rendersystem/backend/GLProgramFactory.cpp
             rendersystem/backend/glprogram/GenericVFPProgram.cpp
             rendersystem/backend/glprogram/GLSLProgramBase.cpp
-            rendersystem/backend/glprogram/GLSLBumpProgram.cpp
+            rendersystem/backend/glprogram/InteractionProgram.cpp
             rendersystem/backend/glprogram/GLSLCubeMapProgram.cpp
             rendersystem/backend/glprogram/GLSLDepthFillAlphaProgram.cpp
             rendersystem/backend/glprogram/ShadowMapProgram.cpp

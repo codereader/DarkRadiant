@@ -8,7 +8,7 @@ namespace render
 class OpenGLState;
 struct Rectangle;
 
-class GLSLBumpProgram :
+class InteractionProgram :
     public GLSLProgramBase
 {
 private:

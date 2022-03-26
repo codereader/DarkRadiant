@@ -8,7 +8,7 @@
 #include "ObjectRenderer.h"
 #include "OpenGLState.h"
 #include "glprogram/GLSLDepthFillAlphaProgram.h"
-#include "glprogram/GLSLBumpProgram.h"
+#include "glprogram/InteractionProgram.h"
 
 namespace render
 {
@@ -170,7 +170,7 @@ void LightingModeRenderer::drawLightInteractions(OpenGLState& current, RenderSta
     // Prepare the current state for drawing
     interactionState.applyTo(current, globalFlagsMask);
 
-    auto interactionProgram = dynamic_cast<GLSLBumpProgram*>(current.glProgram);
+    auto interactionProgram = dynamic_cast<InteractionProgram*>(current.glProgram);
     assert(interactionProgram);
 
     interactionProgram->setModelViewProjection(view.GetViewProjection());

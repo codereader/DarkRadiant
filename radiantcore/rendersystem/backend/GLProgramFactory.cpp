@@ -3,7 +3,7 @@
 #include "glprogram/GLSLDepthFillProgram.h"
 #include "glprogram/GLSLDepthFillAlphaProgram.h"
 #include "glprogram/GLSLCubeMapProgram.h"
-#include "glprogram/GLSLBumpProgram.h"
+#include "glprogram/InteractionProgram.h"
 #include "glprogram/GenericVFPProgram.h"
 #include "glprogram/ShadowMapProgram.h"
 
@@ -26,7 +26,7 @@ using CharBufPtr = std::shared_ptr<std::vector<char>>;
 GLProgramFactory::GLProgramFactory()
 {
     _builtInPrograms[ShaderProgram::DepthFillAlpha] = std::make_shared<GLSLDepthFillAlphaProgram>();
-    _builtInPrograms[ShaderProgram::Interaction] = std::make_shared<GLSLBumpProgram>();
+    _builtInPrograms[ShaderProgram::Interaction] = std::make_shared<InteractionProgram>();
     _builtInPrograms[ShaderProgram::CubeMap] = std::make_shared<GLSLCubeMapProgram>();
     _builtInPrograms[ShaderProgram::ShadowMap] = std::make_shared<ShadowMapProgram>();
 }

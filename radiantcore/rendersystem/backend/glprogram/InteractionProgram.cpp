@@ -1,4 +1,4 @@
-#include "GLSLBumpProgram.h"
+#include "InteractionProgram.h"
 #include "../GLProgramFactory.h"
 
 #include "GLProgramAttributes.h"
@@ -27,7 +27,7 @@ namespace
 }
 
 // Main construction
-void GLSLBumpProgram::create()
+void InteractionProgram::create()
 {
 	// Initialise the lightScale value
     auto currentGame = GlobalGameManager().currentGame();
@@ -109,7 +109,7 @@ void GLSLBumpProgram::create()
     debug::assertNoGlErrors();
 }
 
-void GLSLBumpProgram::enable()
+void InteractionProgram::enable()
 {
     GLSLProgramBase::enable();
 
@@ -123,7 +123,7 @@ void GLSLBumpProgram::enable()
     debug::assertNoGlErrors();
 }
 
-void GLSLBumpProgram::disable()
+void InteractionProgram::disable()
 {
     GLSLProgramBase::disable();
 
@@ -141,7 +141,7 @@ void GLSLBumpProgram::disable()
     debug::assertNoGlErrors();
 }
 
-void GLSLBumpProgram::setStageVertexColour(IShaderLayer::VertexColourMode vertexColourMode, const Colour4& stageColour)
+void InteractionProgram::setStageVertexColour(IShaderLayer::VertexColourMode vertexColourMode, const Colour4& stageColour)
 {
     // Define the colour factors to blend into the final fragment
     switch (vertexColourMode)
@@ -170,32 +170,32 @@ void GLSLBumpProgram::setStageVertexColour(IShaderLayer::VertexColourMode vertex
     }
 }
 
-void GLSLBumpProgram::setModelViewProjection(const Matrix4& modelViewProjection)
+void InteractionProgram::setModelViewProjection(const Matrix4& modelViewProjection)
 {
     loadMatrixUniform(_locModelViewProjection, modelViewProjection);
 }
 
-void GLSLBumpProgram::setObjectTransform(const Matrix4& transform)
+void InteractionProgram::setObjectTransform(const Matrix4& transform)
 {
     loadMatrixUniform(_locObjectTransform, transform);
 }
 
-void GLSLBumpProgram::setDiffuseTextureTransform(const Matrix4& transform)
+void InteractionProgram::setDiffuseTextureTransform(const Matrix4& transform)
 {
     loadTextureMatrixUniform(_locDiffuseTextureMatrix, transform);
 }
 
-void GLSLBumpProgram::setBumpTextureTransform(const Matrix4& transform)
+void InteractionProgram::setBumpTextureTransform(const Matrix4& transform)
 {
     loadTextureMatrixUniform(_locBumpTextureMatrix, transform);
 }
 
-void GLSLBumpProgram::setSpecularTextureTransform(const Matrix4& transform)
+void InteractionProgram::setSpecularTextureTransform(const Matrix4& transform)
 {
     loadTextureMatrixUniform(_locSpecularTextureMatrix, transform);
 }
 
-void GLSLBumpProgram::setupLightParameters(OpenGLState& state, const RendererLight& light, std::size_t renderTime)
+void InteractionProgram::setupLightParameters(OpenGLState& state, const RendererLight& light, std::size_t renderTime)
 {
     // Get the light shader and examine its first (and only valid) layer
     const auto & shader = light.getShader();
@@ -228,7 +228,7 @@ void GLSLBumpProgram::setupLightParameters(OpenGLState& state, const RendererLig
     loadMatrixUniform(_locLightTextureMatrix, light.getLightTextureTransformation());
 }
 
-void GLSLBumpProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
+void InteractionProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
     const Vector3& viewer,
     const Matrix4& inverseObjectTransform)
 {
@@ -262,13 +262,13 @@ void GLSLBumpProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
     debug::assertNoGlErrors();
 }
 
-void GLSLBumpProgram::enableShadowMapping(bool enable)
+void InteractionProgram::enableShadowMapping(bool enable)
 {
     glUniform1i(_locUseShadowMap, enable ? 1 : 0);
     debug::assertNoGlErrors();
 }
 
-void GLSLBumpProgram::setShadowMapRectangle(const Rectangle& rectangle)
+void InteractionProgram::setShadowMapRectangle(const Rectangle& rectangle)
 {
     // Modeled after the TDM code, which is correcting the rectangle to refer to pixel space coordinates
     // idVec4 v( page.x, page.y, 0, page.width-1 );

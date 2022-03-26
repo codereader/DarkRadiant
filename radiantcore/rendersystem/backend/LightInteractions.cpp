@@ -190,7 +190,7 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
     debug::assertNoGlErrors();
 }
 
-void LightInteractions::drawInteractions(OpenGLState& state, GLSLBumpProgram& program, 
+void LightInteractions::drawInteractions(OpenGLState& state, InteractionProgram& program, 
     const IRenderView& view, std::size_t renderTime)
 {
     if (_objectsByEntity.empty())

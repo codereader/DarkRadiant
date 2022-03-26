@@ -388,9 +388,6 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.cpp">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.cpp">
       <Filter>src\rendersystem\debug</Filter>
     </ClCompile>
@@ -1147,6 +1144,9 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\InteractionProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -1423,9 +1423,6 @@
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.h">
-      <Filter>src\rendersystem\backend\glprogram</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLBumpProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.h">
@@ -2365,6 +2362,9 @@
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\InteractionProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
   </ItemGroup>

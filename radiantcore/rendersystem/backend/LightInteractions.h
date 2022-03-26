@@ -15,7 +15,7 @@ namespace render
 class OpenGLState;
 class OpenGLShader;
 class GLSLDepthFillAlphaProgram;
-class GLSLBumpProgram;
+class InteractionProgram;
 class ShadowMapProgram;
 class DepthFillPass;
 
@@ -119,7 +119,7 @@ public:
 
     void drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program, std::size_t renderTime);
 
-    void drawInteractions(OpenGLState& state, GLSLBumpProgram& program, const IRenderView& view, std::size_t renderTime);
+    void drawInteractions(OpenGLState& state, InteractionProgram& program, const IRenderView& view, std::size_t renderTime);
 
     void setupAlphaTest(OpenGLState& state, OpenGLShader* shader, DepthFillPass* depthFillPass,
         ISupportsAlphaTest& alphaTestProgram, std::size_t renderTime, IRenderEntity* entity);

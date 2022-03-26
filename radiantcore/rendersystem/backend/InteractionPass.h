@@ -1,7 +1,7 @@
 #pragma once
 
 #include "OpenGLShaderPass.h"
-#include "glprogram/GLSLBumpProgram.h"
+#include "glprogram/InteractionProgram.h"
 
 namespace render
 {
@@ -18,9 +18,9 @@ class InteractionPass :
 public:
     InteractionPass(OpenGLShader& owner, OpenGLRenderSystem& renderSystem);
 
-    GLSLBumpProgram& getProgram()
+    InteractionProgram& getProgram()
     {
-        return *static_cast<GLSLBumpProgram*>(_glState.glProgram);
+        return *static_cast<InteractionProgram*>(_glState.glProgram);
     }
 
     Matrix4 getDiffuseTextureTransform() const
