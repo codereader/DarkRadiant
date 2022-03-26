@@ -1,6 +1,5 @@
 #include "GLProgramFactory.h"
 
-#include "glprogram/GLSLDepthFillProgram.h"
 #include "glprogram/DepthFillAlphaProgram.h"
 #include "glprogram/CubeMapProgram.h"
 #include "glprogram/InteractionProgram.h"
