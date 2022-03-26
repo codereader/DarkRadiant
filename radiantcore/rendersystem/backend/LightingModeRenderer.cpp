@@ -7,6 +7,7 @@
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
 #include "OpenGLState.h"
+#include "glprogram/GLSLCubeMapProgram.h"
 #include "glprogram/GLSLDepthFillAlphaProgram.h"
 #include "glprogram/InteractionProgram.h"
 
@@ -233,7 +234,7 @@ void LightingModeRenderer::drawShadowMaps(OpenGLState& current,std::size_t rende
     glEnable(GL_CLIP_DISTANCE2);
     glEnable(GL_CLIP_DISTANCE3);
 
-    glViewport(0, 0, _shadowMapFbo->getWidth(), _shadowMapFbo->getHeight());
+    glViewport(0, 0, static_cast<GLsizei>(_shadowMapFbo->getWidth()), static_cast<GLsizei>(_shadowMapFbo->getHeight()));
     glClear(GL_DEPTH_BUFFER_BIT);
 
     // Render shadow casting lights to the shadow map buffer, up to MaxShadowLightCount
@@ -340,9 +341,9 @@ void LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, Render
                 // Apply our state to the current state object
                 pass.evaluateStagesAndApplyState(current, globalFlagsMask, time, entity.get());
 
-                if (current.glProgram)
+                if (dynamic_cast<GLSLCubeMapProgram*>(current.glProgram))
                 {
-                    OpenGLShaderPass::SetUpNonInteractionProgram(current, view.getViewer(), object->getObjectTransform());
+                    static_cast<GLSLCubeMapProgram*>(current.glProgram)->setViewer(view.getViewer());
                 }
 
                 ObjectRenderer::SubmitObject(*object, _geometryStore);

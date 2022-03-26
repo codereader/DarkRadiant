@@ -52,11 +52,6 @@ public:
     // The stage's vertex colour mode and colour as defined by the rgba registers
     void setStageVertexColour(IShaderLayer::VertexColourMode vertexColourMode, const Colour4& stageColour);
 
-    void applyRenderParams(const Vector3& viewer,
-        const Matrix4& localToWorld,
-        const Params& lightParms) override
-    { }
-
     void setupLightParameters(OpenGLState& state, const RendererLight& light, std::size_t renderTime);
 
     void setUpObjectLighting(const Vector3& worldLightOrigin,

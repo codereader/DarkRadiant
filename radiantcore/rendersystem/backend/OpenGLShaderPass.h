@@ -1,13 +1,11 @@
 #pragma once
 
-#include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "OpenGLState.h"
 
 #include <vector>
 
 /* FORWARD DECLS */
-class Matrix4;
 class OpenGLRenderable;
 class RendererLight;
 
@@ -139,8 +137,6 @@ public:
 
     // Evaluates the time- and entity-dependent expressions in the shader stages
     void evaluateShaderStages(std::size_t time, const IRenderEntity* entity);
-
-    static void SetUpNonInteractionProgram(OpenGLState& current, const Vector3& viewer, const Matrix4& objTransform);
 
 	friend std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
 };

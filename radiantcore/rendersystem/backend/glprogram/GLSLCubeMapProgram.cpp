@@ -71,7 +71,7 @@ void GLSLCubeMapProgram::disable()
     debug::assertNoGlErrors();
 }
 
-void GLSLCubeMapProgram::applyRenderParams(const Vector3& viewer, const Matrix4&, const Params&)
+void GLSLCubeMapProgram::setViewer(const Vector3& viewer)
 {
     // Pass the current viewer origin to the shader
     glUniform3f(_locViewOrigin,
