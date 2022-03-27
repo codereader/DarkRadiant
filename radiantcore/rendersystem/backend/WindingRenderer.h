@@ -448,7 +448,7 @@ public:
         auto& bucket = _buckets.at(bucketIndex);
         bucket.pendingDeletions.push_back(slotMapping.slotNumber);
 
-        updateModifiedRange(bucket, slotMapping.slotNumber);
+        updateModifiedRange(bucket, slotMapping.slotNumber, true); // true => deletion
 
         // Invalidate the slot mapping
         slotMapping.bucketIndex = InvalidBucketIndex;
@@ -565,11 +565,21 @@ private:
         syncWithGeometryStore(bucket);
     }
 
-    void updateModifiedRange(Bucket& bucket, typename VertexBuffer::Slot modifiedSlot)
+    void updateModifiedRange(Bucket& bucket, typename VertexBuffer::Slot modifiedSlot, bool dueToDeletion = false)
     {
         // Update the modified range
         bucket.modifiedSlotRange.first = std::min(bucket.modifiedSlotRange.first, modifiedSlot);
-        bucket.modifiedSlotRange.second = std::max(bucket.modifiedSlotRange.second, modifiedSlot);
+
+        if (!dueToDeletion)
+        {
+            bucket.modifiedSlotRange.second = std::max(bucket.modifiedSlotRange.second, modifiedSlot);
+        }
+        else
+        {
+            // Deletions invalidates all data to the right
+            bucket.modifiedSlotRange.second = static_cast<typename VertexBuffer::Slot>(bucket.buffer.getNumberOfStoredWindings());
+        }
+
         _geometryUpdatePending = true;
     }
     
