@@ -2,11 +2,8 @@
 
 #include <functional>
 #include "imodelcache.h"
-#include "ifiletypes.h"
-#include "scene/Node.h"
 #include "ifilter.h"
 #include "modelskin.h"
-#include "itransformable.h"
 #include "string/replace.h"
 #include "scenelib.h"
 
@@ -21,9 +18,13 @@ const scene::INodePtr& ModelKey::getNode() const
 	return _model.node;
 }
 
-void ModelKey::setActive(bool active)
+void ModelKey::destroy()
 {
-	_active = active;
+    detachModelNode();
+
+    _model.node.reset();
+    _model.path.clear();
+    _active = false;
 }
 
 void ModelKey::refreshModel()
@@ -39,7 +40,7 @@ void ModelKey::modelChanged(const std::string& value)
 	if (!_active) return; // deactivated during parent node destruction
 
 	// Sanitise the keyvalue - must use forward slashes
-	std::string newModelName = string::replace_all_copy(value, "\\", "/");
+	auto newModelName = string::replace_all_copy(value, "\\", "/");
 
 	if (newModelName == _model.path)
 	{
@@ -57,18 +58,11 @@ void ModelKey::modelChanged(const std::string& value)
 
 void ModelKey::attachModelNode()
 {
-	// Remove the old model node first
-	if (_model.node != NULL)
-	{
-		_parentNode.removeChildNode(_model.node);
-	}
+	// Remove the old model node first (this also clears the pointer)
+    detachModelNode();
 
-	if (_model.path.empty())
-	{
-		// Empty "model" spawnarg, clear the pointer and exit
-		_model.node = scene::INodePtr();
-		return;
-	}
+	// If the "model" spawnarg is empty, there's nothing to attach
+    if (_model.path.empty()) return;
 
 	// We have a non-empty model key, send the request to
 	// the model cache to acquire a new child node
@@ -92,6 +86,14 @@ void ModelKey::attachModelNode()
 		// Copy the visibility flags from the parent node (#4141 and #5134)
 		scene::assignVisibilityFlagsFromNode(*_model.node, _parentNode);
 	}
+}
+
+void ModelKey::detachModelNode()
+{
+    if (!_model.node) return; // nothing to do
+
+    _parentNode.removeChildNode(_model.node);
+    _model.node.reset();
 }
 
 void ModelKey::attachModelNodeKeepinSkin()

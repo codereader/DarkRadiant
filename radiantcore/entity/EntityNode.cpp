@@ -117,7 +117,13 @@ void EntityNode::constructClone(const EntityNode& original)
 
 void EntityNode::destruct()
 {
-	_modelKey.setActive(false); // disable callbacks during destruction
+    // Disable model key handling, remove child nodes
+	_modelKey.destroy();
+
+    // Remove any attached entities before this EntityNode is defunct
+    // Particle node attachments might want to remove their renderables from
+    // this entity on destruction.
+    _attachedEnts.clear();
 
 	_eclassChangedConn.disconnect();
 
