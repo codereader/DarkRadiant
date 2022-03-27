@@ -60,6 +60,9 @@ public:
     /// Return the stage definition associated with this renderable
 	const IStageDef& getDef() const;
 
+    // Returns the number of quads in this stage
+    std::size_t getNumQuads() const;
+
 protected:
     void updateGeometry() override;
 

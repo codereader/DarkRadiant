@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "igeometryrenderer.h"
-#include "isurfacerenderer.h"
 #include "irenderableobject.h"
 #include "irender.h"
 
@@ -117,7 +116,7 @@ public:
     RenderableGeometry(const RenderableGeometry& other) = delete;
     RenderableGeometry& operator=(const RenderableGeometry& other) = delete;
 
-    virtual ~RenderableGeometry()
+    virtual ~RenderableGeometry() override
     {
         clear();
     }
@@ -127,9 +126,7 @@ public:
     // to be different from the last update.
     void update(const ShaderPtr& shader)
     {
-        bool shaderChanged = _shader != shader;
-
-        if (shaderChanged)
+        if (_shader != shader)
         {
             clear();
         }

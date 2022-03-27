@@ -75,13 +75,18 @@ void RenderableParticleStage::submitGeometry(const ShaderPtr& shader, const Matr
     RenderableGeometry::update(shader);
 }
 
+std::size_t RenderableParticleStage::getNumQuads() const
+{
+    return (_bunches[0] ? _bunches[0]->getNumQuads() : 0) +
+           (_bunches[1] ? _bunches[1]->getNumQuads() : 0);
+}
+
 void RenderableParticleStage::updateGeometry()
 {
     std::vector<render::RenderVertex> vertices;
     std::vector<unsigned int> indices;
 
-    auto numQuads = (_bunches[0] ? _bunches[0]->getNumQuads() : 0) +
-                    (_bunches[1] ? _bunches[1]->getNumQuads() : 0);
+    auto numQuads = getNumQuads();
 
     if (numQuads == 0)
     {
@@ -169,7 +174,7 @@ void RenderableParticleStage::ensureBunches(std::size_t localTimeMSec)
 	{
 		// This is the only active bunch (the first one), there is no previous cycle
 		// it's possible that this one is already existing.
-		if (_bunches[0] == NULL || _bunches[0]->getIndex() != curCycleIndex)
+		if (!_bunches[0] || _bunches[0]->getIndex() != curCycleIndex)
 		{
 			// First bunch is not matching, re-assign
 			_bunches[0] = createBunch(curCycleIndex);
@@ -194,7 +199,7 @@ void RenderableParticleStage::ensureBunches(std::size_t localTimeMSec)
 			// We've exceeded the maximum number of cycles
 			_bunches[0].reset();
 		}
-		else if (cur != NULL)
+		else if (cur)
 		{
 			_bunches[0] = cur;
 		}
@@ -208,7 +213,7 @@ void RenderableParticleStage::ensureBunches(std::size_t localTimeMSec)
 			// We've exceeded the maximum number of cycles
 			_bunches[1].reset();
 		}
-		else if (prev != NULL)
+		else if (prev)
 		{
 			_bunches[1] = prev;
 		}
@@ -221,8 +226,8 @@ void RenderableParticleStage::ensureBunches(std::size_t localTimeMSec)
 
 RenderableParticleBunchPtr RenderableParticleStage::createBunch(std::size_t cycleIndex)
 {
-	return RenderableParticleBunchPtr(new RenderableParticleBunch(
-		cycleIndex, getSeed(cycleIndex), _stageDef, _viewRotation, _direction, _entityColour));
+	return std::make_shared<RenderableParticleBunch>(cycleIndex, getSeed(cycleIndex), 
+        _stageDef, _viewRotation, _direction, _entityColour);
 }
 
 Rand48::result_type RenderableParticleStage::getSeed(std::size_t cycleIndex)
@@ -232,11 +237,12 @@ Rand48::result_type RenderableParticleStage::getSeed(std::size_t cycleIndex)
 
 RenderableParticleBunchPtr RenderableParticleStage::getExistingBunchByIndex(std::size_t index)
 {
-	if (_bunches[0] != NULL && _bunches[0]->getIndex() == index)
+	if (_bunches[0] && _bunches[0]->getIndex() == index)
 	{
 		return _bunches[0];
 	}
-	else if (_bunches[1] != NULL && _bunches[1]->getIndex() == index)
+
+    if (_bunches[1] && _bunches[1]->getIndex() == index)
 	{
 		return _bunches[1];
 	}
@@ -246,13 +252,13 @@ RenderableParticleBunchPtr RenderableParticleStage::getExistingBunchByIndex(std:
 
 void RenderableParticleStage::calculateBounds()
 {
-	if (_bunches[0] != NULL)
+	if (_bunches[0])
 	{
 		// Get one of our seed values
 		_bounds.includeAABB(_bunches[0]->getBounds());
 	}
 
-	if (_bunches[1] != NULL)
+	if (_bunches[1])
 	{
 		_bounds.includeAABB(_bunches[1]->getBounds());
 	}
