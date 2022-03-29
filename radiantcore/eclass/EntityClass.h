@@ -42,6 +42,9 @@ private:
     // Parent class pointer (or NULL)
     EntityClass* _parent = nullptr;
 
+    // UI visibility of this entity class
+    vfs::Visibility _visibility = vfs::Visibility::NORMAL;
+
     // Should this entity type be treated as a light?
     bool _isLight = false;
 
@@ -107,6 +110,7 @@ public:
     // IEntityClass implementation
     const std::string& getName() const override;
     const IEntityClass* getParent() const override;
+    vfs::Visibility getVisibility() const override;
     sigc::signal<void>& changedSignal() override;
     bool isFixedSize() const override;
     AABB getBounds() const override;

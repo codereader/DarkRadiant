@@ -9,6 +9,7 @@
 #include "ModResource.h"
 
 #include "imodule.h"
+#include "ifilesystem.h"
 #include "math/Vector4.h"
 
 #include <vector>
@@ -131,6 +132,9 @@ public:
 
     /// Get the parent entity class or NULL if there is no parent
     virtual const IEntityClass* getParent() const = 0;
+
+    /// Get the UI visibility of this entity class
+    virtual vfs::Visibility getVisibility() const = 0;
 
     /// Query whether this entity class represents a light.
     virtual bool isLight() const = 0;

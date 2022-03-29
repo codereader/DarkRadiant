@@ -5,6 +5,7 @@
 #include "irendersystemfactory.h"
 #include "iselectable.h"
 #include "iselection.h"
+#include "ifilesystem.h"
 #include "iundo.h"
 #include "ishaders.h"
 #include "icolourscheme.h"
@@ -1984,6 +1985,14 @@ TEST_F(EntityTest, MovePlayerStart)
     // Ensure this action is undoable
     GlobalUndoSystem().undo();
     EXPECT_EQ(Node_getEntity(playerStart)->getKeyValue("origin"), originalPosition) << "Origin change didn't get undone";
+}
+
+TEST_F(EntityTest, GetEClassVisibility)
+{
+    // Normal entity with NORMAL visibility
+    auto eclass = GlobalEntityClassManager().findClass("info_player_start");
+    ASSERT_TRUE(eclass);
+    EXPECT_EQ(eclass->getVisibility(), vfs::Visibility::NORMAL);
 }
 
 TEST_F(EntityTest, GetAttributeValue)

@@ -39,6 +39,11 @@ const IEntityClass* EntityClass::getParent() const
     return _parent;
 }
 
+vfs::Visibility EntityClass::getVisibility() const
+{
+    return _visibility;
+}
+
 sigc::signal<void>& EntityClass::changedSignal()
 {
     return _changedSignal;
