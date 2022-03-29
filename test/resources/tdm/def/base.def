@@ -1,6 +1,7 @@
 entityDef atdm:entity_base
 {
 	"editor_usage"						"Do not use, base class for all TDM entities, mainly there to set common spawnargs and document them."
+	"editor_visibility"					"hidden"
 	"editor_var inherit"				"Entitity inherits all properties from this parent entity"
 	"editor_color editor_color" 		"The entity or model will be drawn in this color inside the editor."
 	"editor_string editor_displayfolder" 	"When selecting entities in the editor to add, they will be shown as a tree and this sets the path inside that tree where to display the entity. Can be used to logically sort them into groups and subgroups."

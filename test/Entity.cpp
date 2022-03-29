@@ -1974,7 +1974,9 @@ TEST_F(EntityTest, MovePlayerStart)
 {
     // Empty map, check prerequisites
     auto originalPosition = "50 30 47";
-    auto playerStart = GlobalEntityModule().createEntity(GlobalEntityClassManager().findOrInsert("info_player_start", false));
+    auto playerStart = GlobalEntityModule().createEntity(
+        GlobalEntityClassManager().findOrInsert("info_player_start", false)
+    );
     scene::addNodeToContainer(playerStart, GlobalMapModule().getRoot());
     Node_getEntity(playerStart)->setKeyValue("origin", originalPosition);
 
@@ -1990,9 +1992,14 @@ TEST_F(EntityTest, MovePlayerStart)
 TEST_F(EntityTest, GetEClassVisibility)
 {
     // Normal entity with NORMAL visibility
-    auto eclass = GlobalEntityClassManager().findClass("info_player_start");
-    ASSERT_TRUE(eclass);
-    EXPECT_EQ(eclass->getVisibility(), vfs::Visibility::NORMAL);
+    auto playerStart = GlobalEntityClassManager().findClass("info_player_start");
+    ASSERT_TRUE(playerStart);
+    EXPECT_EQ(playerStart->getVisibility(), vfs::Visibility::NORMAL);
+
+    // Hidden entity
+    auto entityBase = GlobalEntityClassManager().findClass("atdm:entity_base");
+    ASSERT_TRUE(entityBase);
+    EXPECT_EQ(entityBase->getVisibility(), vfs::Visibility::HIDDEN);
 }
 
 TEST_F(EntityTest, GetAttributeValue)
