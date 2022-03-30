@@ -7,6 +7,7 @@
 #include "math/Vector3.h"
 #include "math/AABB.h"
 #include "string/string.h"
+#include "generic/Lazy.h"
 
 #include "parser/DefTokeniser.h"
 
@@ -43,7 +44,7 @@ private:
     EntityClass* _parent = nullptr;
 
     // UI visibility of this entity class
-    vfs::Visibility _visibility = vfs::Visibility::NORMAL;
+    Lazy<vfs::Visibility> _visibility;
 
     // Should this entity type be treated as a light?
     bool _isLight = false;

@@ -19,6 +19,10 @@ namespace
 
 EntityClass::EntityClass(const std::string& name, bool fixedSize)
 : _name(name),
+  _visibility([this]() {
+      return (getAttributeValue("editor_visibility") == "hidden" ? vfs::Visibility::HIDDEN
+                                                                 : vfs::Visibility::NORMAL);
+  }),
   _colour(UndefinedColour),
   _fixedSize(fixedSize)
 {}
@@ -41,7 +45,7 @@ const IEntityClass* EntityClass::getParent() const
 
 vfs::Visibility EntityClass::getVisibility() const
 {
-    return _visibility;
+    return _visibility.get();
 }
 
 sigc::signal<void>& EntityClass::changedSignal()

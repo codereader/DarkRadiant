@@ -1999,6 +1999,7 @@ TEST_F(EntityTest, GetEClassVisibility)
     // Hidden entity
     auto entityBase = GlobalEntityClassManager().findClass("atdm:entity_base");
     ASSERT_TRUE(entityBase);
+    EXPECT_EQ(entityBase->getAttributeValue("editor_visibility"), "hidden");
     EXPECT_EQ(entityBase->getVisibility(), vfs::Visibility::HIDDEN);
 }
 

@@ -129,18 +129,15 @@ void EClassManager::resolveModelInheritance(const std::string& name, const Doom3
 
 void EClassManager::parseDefFiles()
 {
-	rMessage() << "searching vfs directory 'def' for *.def\n";
+    // Increase the parse stamp for this run
+    _curParseStamp++;
 
-	// Increase the parse stamp for this run
-	_curParseStamp++;
-
-	{
-		ScopedDebugTimer timer("EntityDefs parsed: ");
+    {
+        ScopedDebugTimer timer("EntityDefs parsed: ");
         GlobalFileSystem().forEachFile(
-            "def/", "def",
-            [&](const vfs::FileInfo& fileInfo) { parseFile(fileInfo); }
+            "def/", "def", [&](const vfs::FileInfo& fileInfo) { parseFile(fileInfo); }
         );
-	}
+    }
 }
 
 void EClassManager::resolveInheritance()
