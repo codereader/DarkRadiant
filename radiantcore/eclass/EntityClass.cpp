@@ -20,8 +20,10 @@ namespace
 EntityClass::EntityClass(const std::string& name, bool fixedSize)
 : _name(name),
   _visibility([this]() {
-      return (getAttributeValue("editor_visibility") == "hidden" ? vfs::Visibility::HIDDEN
-                                                                 : vfs::Visibility::NORMAL);
+      // Entity class visibility is NOT inherited -- hiding an abstract base entity from the list
+      // does not imply all of its concrete subclasses should also be hidden.
+      return getAttributeValue("editor_visibility", false) == "hidden" ? vfs::Visibility::HIDDEN
+                                                                       : vfs::Visibility::NORMAL;
   }),
   _colour(UndefinedColour),
   _fixedSize(fixedSize)

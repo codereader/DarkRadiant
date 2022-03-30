@@ -2003,6 +2003,14 @@ TEST_F(EntityTest, GetEClassVisibility)
     EXPECT_EQ(entityBase->getVisibility(), vfs::Visibility::HIDDEN);
 }
 
+TEST_F(EntityTest, EClassVisibilityIsNotInherited)
+{
+    // func_static derives from the hidden atdm:entity_base, but should not in itself be hidden
+    auto funcStatic = GlobalEntityClassManager().findClass("func_static");
+    ASSERT_TRUE(funcStatic);
+    EXPECT_EQ(funcStatic->getVisibility(), vfs::Visibility::NORMAL);
+}
+
 TEST_F(EntityTest, GetAttributeValue)
 {
     auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
