@@ -1,6 +1,8 @@
 #pragma once
 
 #include <string>
+#include <regex>
+#include "string/convert.h"
 
 namespace settings
 {
@@ -15,9 +17,27 @@ private:
 public:
     MajorMinorVersion(const std::string& versionString)
     {
+        const std::regex VersionPattern("(\\d+)\\.(\\d+)\\.[\\w\\d]+");
+
         // Extract the version from the given string
-        _majorVersion = 0;
-        _minorVersion = 0;
+        std::smatch match;
+        if (!std::regex_match(versionString, match, VersionPattern))
+        {
+            throw std::runtime_error("The input string " + versionString + " failed to parse");
+        }
+
+        _majorVersion = string::convert<int>(match[1].str());
+        _minorVersion = string::convert<int>(match[2].str());
+    }
+
+    int getMajorVersion() const
+    {
+        return _majorVersion;
+    }
+
+    int getMinorVersion() const
+    {
+        return _minorVersion;
     }
 
     // Compare this version to the other one, returning true if this is instance is smaller
@@ -36,6 +56,11 @@ public:
 
         // Major version is larger
         return false;
+    }
+
+    std::string toString() const
+    {
+        return string::to_string(_majorVersion) + "." + string::to_string(_minorVersion);
     }
 };
 
