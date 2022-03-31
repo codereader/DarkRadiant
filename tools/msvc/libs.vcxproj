@@ -256,6 +256,8 @@
     <ClInclude Include="..\..\libs\selection\SelectionVolume.h" />
     <ClInclude Include="..\..\libs\selection\SingleItemSelector.h" />
     <ClInclude Include="..\..\libs\SequentialTaskQueue.h" />
+    <ClInclude Include="..\..\libs\settings\MajorMinorVersion.h" />
+    <ClInclude Include="..\..\libs\settings\SettingsManager.h" />
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\stream\BinaryToTextInputStream.h" />
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h" />

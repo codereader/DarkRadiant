@@ -38,6 +38,7 @@ add_executable(drtest
                SceneNode.cpp
                SelectionAlgorithm.cpp
                Selection.cpp
+               Settings.cpp
                TextureManipulation.cpp
                TextureTool.cpp
                Transformation.cpp
