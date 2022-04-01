@@ -15,7 +15,12 @@ private:
     const IApplicationContext& _context;
     MajorMinorVersion _currentVersion;
 
+    // The path where this version writes its settings files to
+    std::string _currentVersionSettingsFolder;
+
 public:
+    // Construct a settings manager for this version of DarkRadiant
+    // Will create the settings path for this version if it's not existing yet.
     SettingsManager(const IApplicationContext& context) :
         SettingsManager(context, RADIANT_VERSION)
     {}
@@ -31,7 +36,12 @@ public:
         _currentVersion(currentVersion)
     {}
 
-    // TODO
+    // Returns the output path where all settings files for the current version can be saved to.
+    // This is usually the same as IApplicationContext::getSettingsPath()/"major.minor"/
+    const std::string& getCurrentVersionSettingsFolder() const
+    {
+        return _currentVersionSettingsFolder;
+    }
 };
 
 }

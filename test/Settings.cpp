@@ -1,6 +1,10 @@
 #include "gtest/gtest.h"
 
 #include "settings/MajorMinorVersion.h"
+#include "settings/SettingsManager.h"
+#include "module/ApplicationContextBase.h"
+#include "os/dir.h"
+#include "os/path.h"
 
 namespace test
 {
@@ -94,6 +98,98 @@ TEST(MajorMinorVersionTest, ToString)
     EXPECT_EQ(settings::MajorMinorVersion("11.100.1").toString(), "11.100");
     EXPECT_EQ(settings::MajorMinorVersion("9.10.3").toString(), "9.10");
     EXPECT_EQ(settings::MajorMinorVersion("11.1.300").toString(), "11.1");
+}
+
+// Application Context providing a settings path in a custom folder in the temp path
+class SettingsTestContext final :
+    public radiant::ApplicationContextBase
+{
+private:
+    std::string _settingsFolder;
+    std::string _tempDataPath;
+
+public:
+    SettingsTestContext()
+    {
+        // Set up the temporary settings folder
+        auto settingsFolder = os::getTemporaryPath() / "settings_tests";
+
+        _settingsFolder = os::standardPathWithSlash(settingsFolder.string());
+
+        os::removeDirectory(_settingsFolder);
+        os::makeDirectory(_settingsFolder);
+
+        auto tempDataFolder = os::getTemporaryPath() / "settings_temp_data";
+
+        _tempDataPath = os::standardPathWithSlash(tempDataFolder.string());
+
+        os::removeDirectory(_tempDataPath);
+        os::makeDirectory(_tempDataPath);
+    }
+
+    ~SettingsTestContext()
+    {
+        if (!_settingsFolder.empty())
+        {
+            os::removeDirectory(_settingsFolder);
+        }
+
+        if (!_tempDataPath.empty())
+        {
+            os::removeDirectory(_tempDataPath);
+        }
+    }
+
+    std::string getSettingsPath() const override
+    {
+        return _settingsFolder;
+    }
+};
+
+namespace
+{
+
+void testSettingsPathCreation(const IApplicationContext& context, const std::string& versionString)
+{
+    // Set up a manager and check if it created the settings output folder
+    auto manager = versionString.empty() ?
+        std::make_unique<settings::SettingsManager>(context) :
+        std::make_unique<settings::SettingsManager>(context, versionString);
+
+    settings::MajorMinorVersion version(versionString.empty() ? RADIANT_VERSION : versionString);
+
+    auto expectedFolder = os::standardPathWithSlash(context.getSettingsPath() + version.toString());
+
+    // Let's assume the folder doesn't exist yet
+    EXPECT_FALSE(fs::is_directory(expectedFolder)) << "The output path " << expectedFolder << " already exists";
+
+    EXPECT_EQ(manager->getCurrentVersionSettingsFolder(), expectedFolder) << "Output folder is not what we expected";
+    EXPECT_TRUE(fs::is_directory(expectedFolder)) << "Manager should have created the path " << expectedFolder;
+
+    fs::remove_all(expectedFolder);
+}
+
+}
+
+// Checks that the output folder for a specific version is created correctly
+TEST(SettingsManager, getSpecificVersionSettingsFolder)
+{
+    SettingsTestContext context;
+
+    testSettingsPathCreation(context, "2.15.0pre1");
+    testSettingsPathCreation(context, "2.15.1");
+    testSettingsPathCreation(context, "3.0.0");
+    testSettingsPathCreation(context, "3.0.2");
+    testSettingsPathCreation(context, "3.1.0");
+    testSettingsPathCreation(context, "3.11.0");
+}
+
+// Checks that the output folder for the current RADIANT_VERSION is created correctly
+TEST(SettingsManager, getCurrentVersionSettingsFolder)
+{
+    // Test with the current radiant version
+    SettingsTestContext context;
+    testSettingsPathCreation(context, std::string());
 }
 
 }
