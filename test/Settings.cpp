@@ -151,11 +151,6 @@ namespace
 
 void testSettingsPathCreation(const IApplicationContext& context, const std::string& versionString)
 {
-    // Set up a manager and check if it created the settings output folder
-    auto manager = versionString.empty() ?
-        std::make_unique<settings::SettingsManager>(context) :
-        std::make_unique<settings::SettingsManager>(context, versionString);
-
     settings::MajorMinorVersion version(versionString.empty() ? RADIANT_VERSION : versionString);
 
     auto expectedFolder = os::standardPathWithSlash(context.getSettingsPath() + version.toString());
@@ -163,10 +158,15 @@ void testSettingsPathCreation(const IApplicationContext& context, const std::str
     // Let's assume the folder doesn't exist yet
     EXPECT_FALSE(fs::is_directory(expectedFolder)) << "The output path " << expectedFolder << " already exists";
 
+    // Set up a manager and check if it created the settings output folder
+    auto manager = versionString.empty() ?
+        std::make_unique<settings::SettingsManager>(context) :
+        std::make_unique<settings::SettingsManager>(context, versionString);
+
     EXPECT_EQ(manager->getCurrentVersionSettingsFolder(), expectedFolder) << "Output folder is not what we expected";
     EXPECT_TRUE(fs::is_directory(expectedFolder)) << "Manager should have created the path " << expectedFolder;
 
-    fs::remove_all(expectedFolder);
+    os::removeDirectory(expectedFolder);
 }
 
 }

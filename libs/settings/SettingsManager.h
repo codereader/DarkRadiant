@@ -5,6 +5,8 @@
 #include "imodule.h"
 
 #include "MajorMinorVersion.h"
+#include "os/dir.h"
+#include "os/path.h"
 
 namespace settings
 {
@@ -34,10 +36,17 @@ public:
     SettingsManager(const IApplicationContext& context, const std::string& currentVersion) :
         _context(context),
         _currentVersion(currentVersion)
-    {}
+    {
+        // Set up the path to the current version
+        _currentVersionSettingsFolder = os::standardPathWithSlash(context.getSettingsPath() + _currentVersion.toString());
 
-    // Returns the output path where all settings files for the current version can be saved to.
-    // This is usually the same as IApplicationContext::getSettingsPath()/"major.minor"/
+        // Make sure the output folder exists
+        os::makeDirectory(_currentVersionSettingsFolder);
+    }
+
+    // Returns the output path (including trailing slash) where all settings files
+    // for the current version can be saved to.
+    // Matches the pattern IApplicationContext::getSettingsPath()/"major.minor"/
     const std::string& getCurrentVersionSettingsFolder() const
     {
         return _currentVersionSettingsFolder;
