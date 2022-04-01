@@ -11,6 +11,26 @@
 namespace settings
 {
 
+/**
+ * Settings file manager, dealing with saving and loading settings files
+ * to the user's settings path. DarkRadiant 2.15+ or higher stores its settings
+ * in folders specific to their major and minor versions:
+ *
+ * $HOME/.config/darkradiant/2.15/
+ * $HOME/.config/darkradiant/3.0/
+ *
+ * When loading settings files, this manager class will search the config folders
+ * of the current version and all previous versions, making it possible to use
+ * or upgrade settings saved by older versions. The most recent versions will
+ * take precedence over older files.
+ * It will ignore any files stored in higher or future version folders.
+ * For backwards compatibility with DarkRadiant versions that have not been
+ * using the version-specific settings folders, files in the base settings path
+ * will be considered too, with the lowest priority.
+ *
+ * When saving settings files, there's only a single target folder, which is
+ * the one corresponding to the current application version.
+ */
 class SettingsManager
 {
 private:
@@ -50,6 +70,27 @@ public:
     const std::string& getCurrentVersionSettingsFolder() const
     {
         return _currentVersionSettingsFolder;
+    }
+
+    /**
+     * Returns the full path to the first matching existing settings file (given by its path
+     * relative to the settings folder).
+     *
+     * This will search any settings folders for the current or any previous
+     * application version, returning the first matching file.
+     * The version folders are searched in descending order, with the current version having
+     * the highest priority. This way the file saved by the most recent known version
+     * will be picked, whereas versions saved by "future" application versions will be ignored.
+     *
+     * For compatibility reasons, files saved in the root settings folder will be
+     * considered too (with the lowest priority), as DarkRadiant versions prior to 2.15
+     * have not been creating version settings folders.
+     *
+     * Will return an empty string if no file was matching.
+     */
+    std::string getExistingSettingsFile(const std::string& relativePath) const
+    {
+        return {};
     }
 };
 

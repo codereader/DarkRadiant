@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include <fstream>
 #include "settings/MajorMinorVersion.h"
 #include "settings/SettingsManager.h"
 #include "module/ApplicationContextBase.h"
@@ -172,7 +173,7 @@ void testSettingsPathCreation(const IApplicationContext& context, const std::str
 }
 
 // Checks that the output folder for a specific version is created correctly
-TEST(SettingsManager, getSpecificVersionSettingsFolder)
+TEST(SettingsManagerTest, getSpecificVersionSettingsFolder)
 {
     SettingsTestContext context;
 
@@ -185,11 +186,95 @@ TEST(SettingsManager, getSpecificVersionSettingsFolder)
 }
 
 // Checks that the output folder for the current RADIANT_VERSION is created correctly
-TEST(SettingsManager, getCurrentVersionSettingsFolder)
+TEST(SettingsManagerTest, getCurrentVersionSettingsFolder)
 {
     // Test with the current radiant version
     SettingsTestContext context;
     testSettingsPathCreation(context, std::string());
+}
+
+// Creates the file in the given version folder, with the full path as file contents. Returns the full path.
+inline std::string createSettingsFile(const IApplicationContext& context, const std::string& versionFolder, const std::string& filename)
+{
+    auto settingsFolder = os::standardPathWithSlash(context.getSettingsPath() + versionFolder);
+    auto fullPath = settingsFolder + filename;
+
+    std::ofstream stream(fullPath);
+
+    stream << fullPath << std::endl;
+    stream.flush();
+    stream.close();
+
+    return fullPath;
+}
+
+inline std::string loadSettingsFile(const IApplicationContext& context, const std::string& applicationVersion, const std::string& relativeFilePath)
+{
+    settings::SettingsManager manager(context, applicationVersion);
+    auto existingFile = manager.getExistingSettingsFile(relativeFilePath);
+
+    if (existingFile.empty()) return {};
+
+    std::ifstream file(existingFile);
+    std::stringstream content;
+    content << file.rdbuf();
+
+    return content.str();
+}
+
+// Checks that the version/base settings folders are respecting the version sort order
+TEST(SettingsManagerTest, SettingsFileVersionPrecedence)
+{
+    SettingsTestContext context;
+
+    // User text is located in the base, 2.13 and 2.14
+    auto userTextInBaseFolder = createSettingsFile(context, "", "user.txt");
+    auto baseTxtInBaseFolder = createSettingsFile(context, "", "base.txt");
+    auto userText213 = createSettingsFile(context, "2.13", "user.txt");
+    auto userText215 = createSettingsFile(context, "2.15", "user.txt");
+    auto customTxt211 = createSettingsFile(context, "2.11", "custom.txt");
+    auto userText30 = createSettingsFile(context, "3.0", "user.txt");
+
+    // Version 2.13 should load the file from the 2.13 folder
+    EXPECT_EQ(loadSettingsFile(context, "2.15.66", "user.txt"), userText215) << "2.15 should load user.txt from the 2.15 folder";
+
+    // Version 2.14 should load the file from the 2.13 folder
+    EXPECT_EQ(loadSettingsFile(context, "2.14.0", "user.txt"), userText213) << "2.14 should load user.txt from the 2.13 folder";
+
+    // Version 2.13 should load the file from the 2.13 folder
+    EXPECT_EQ(loadSettingsFile(context, "2.13.1", "user.txt"), userText213) << "2.13 should load user.txt from the 2.13 folder";
+
+    // Version 2.12 doesn't have any version folder, should load from base
+    EXPECT_EQ(loadSettingsFile(context, "2.12.0", "user.txt"), userTextInBaseFolder) << "2.13 should load user.txt from the base folder";
+
+    // custom.txt only exists in 2.11
+    EXPECT_EQ(loadSettingsFile(context, "2.11.0", "custom.txt"), customTxt211) << "2.15 should load custom.txt from the 2.11 folder";
+    EXPECT_EQ(loadSettingsFile(context, "2.15.2", "custom.txt"), customTxt211) << "2.15 should load custom.txt from the 2.11 folder";
+    EXPECT_EQ(loadSettingsFile(context, "2.16.99", "custom.txt"), customTxt211) << "2.16 should load custom.txt from the 2.11 folder";
+    EXPECT_EQ(loadSettingsFile(context, "3.0.0", "custom.txt"), customTxt211) << "3.0.0 should load custom.txt from the 2.11 folder";
+    EXPECT_EQ(loadSettingsFile(context, "3.99.0", "custom.txt"), customTxt211) << "3.99.0 should load custom.txt from the 2.11 folder";
+
+    // File only exists in base folder
+    EXPECT_EQ(loadSettingsFile(context, "2.15.2", "base.txt"), baseTxtInBaseFolder) << "2.15 should load custom.txt from the base folder";
+    EXPECT_EQ(loadSettingsFile(context, "2.16.99", "base.txt"), baseTxtInBaseFolder) << "2.16 should load custom.txt from the base folder";
+    EXPECT_EQ(loadSettingsFile(context, "3.0.0", "base.txt"), baseTxtInBaseFolder) << "3.0.0 should load custom.txt from the base folder";
+    EXPECT_EQ(loadSettingsFile(context, "3.99.0", "base.txt"), baseTxtInBaseFolder) << "3.99.0 should load custom.txt from the base folder";
+
+    // Version 3.x should use 3.0
+    EXPECT_EQ(loadSettingsFile(context, "3.0.0", "user.txt"), userText30) << "3.0.0 should load user.txt from the 3.0 folder";
+    EXPECT_EQ(loadSettingsFile(context, "3.0.2", "user.txt"), userText30) << "3.0.2 should load user.txt from the 3.0 folder";
+    EXPECT_EQ(loadSettingsFile(context, "3.0.1", "user.txt"), userText30) << "3.0.1 should load user.txt from the 3.0 folder";
+    EXPECT_EQ(loadSettingsFile(context, "3.1.1", "user.txt"), userText30) << "3.1.1 should load user.txt from the 3.0 folder";
+
+    // Nonexisting file should result in empty contents
+    EXPECT_EQ(loadSettingsFile(context, "2.12.3", "nonexistent.txt"), std::string()) << "No content expected for nonexistent file";
+
+    // Check what path is returned for the nonexistent settings file
+    auto nonexistentPath = settings::SettingsManager(context, "2.16.33").getExistingSettingsFile("nonexistent.txt");
+    EXPECT_EQ(nonexistentPath, "") << "No content expected for nonexistent file";
+
+    // Remove the test folders
+    os::removeDirectory(context.getSettingsPath());
 }
 
 }
