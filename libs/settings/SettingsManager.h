@@ -70,6 +70,12 @@ public:
         checkExistingVersionFolders();
     }
 
+    // Returns the base path (non-version specific), which is the same as IApplicationContext::getSettingsPath()
+    std::string getBaseSettingsPath() const
+    {
+        return _context.getSettingsPath();
+    }
+
     // Returns the output path (including trailing slash) where all settings files
     // for the current version can be saved to.
     // Matches the pattern IApplicationContext::getSettingsPath()/"major.minor"/
@@ -105,14 +111,14 @@ public:
 
             if (fs::is_regular_file(fullPath))
             {
-                return fullPath.string(); // found a match
+                return os::standardPath(fullPath.string()); // found a match
             }
         }
 
         // Finally, check the base folder if nothing else has been matching
         auto fullPath = settingsPath / relativePath;
 
-        return fs::is_regular_file(fullPath) ? fullPath.string() : std::string();
+        return fs::is_regular_file(fullPath) ? os::standardPath(fullPath.string()) : std::string();
     }
 
 private:
