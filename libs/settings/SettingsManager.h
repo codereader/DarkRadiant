@@ -40,6 +40,9 @@ private:
     // The path where this version writes its settings files to
     std::string _currentVersionSettingsFolder;
 
+    // All existing version folders found in the settings folder
+    std::set<MajorMinorVersion> _existingVersionFolders;
+
 public:
     // Construct a settings manager for this version of DarkRadiant
     // Will create the settings path for this version if it's not existing yet.
@@ -62,6 +65,9 @@ public:
 
         // Make sure the output folder exists
         os::makeDirectory(_currentVersionSettingsFolder);
+
+        // Create an inventory of the existing version folders
+        checkExistingVersionFolders();
     }
 
     // Returns the output path (including trailing slash) where all settings files
@@ -90,7 +96,51 @@ public:
      */
     std::string getExistingSettingsFile(const std::string& relativePath) const
     {
-        return {};
+        fs::path settingsPath = _context.getSettingsPath();
+
+        // Go through the existing versions, starting from the highest (usually the current version)
+        for (auto v = _existingVersionFolders.rbegin(); v != _existingVersionFolders.rend(); ++v)
+        {
+            auto fullPath = settingsPath / v->toString() / relativePath;
+
+            if (fs::is_regular_file(fullPath))
+            {
+                return fullPath.string(); // found a match
+            }
+        }
+
+        // Finally, check the base folder if nothing else has been matching
+        auto fullPath = settingsPath / relativePath;
+
+        return fs::is_regular_file(fullPath) ? fullPath.string() : std::string();
+    }
+
+private:
+    void checkExistingVersionFolders()
+    {
+        _existingVersionFolders.clear();
+
+        // Enumerate all existing folders and sort them by version
+        os::foreachItemInDirectory(_context.getSettingsPath(), [&](const fs::path& item)
+        {
+            // Skip non-directories
+            if (!fs::is_directory(item)) return;
+
+            try
+            {
+                // Attempt to parse the version from the folder name and insert into the list of
+                // existing versions. Due to operator< they will end up sorted in ascending order
+                MajorMinorVersion version(item.filename().string());
+
+                // Ignore all versions higher than the current one
+                if (_currentVersion < version) return;
+
+                // Sort this into the set
+                _existingVersionFolders.insert(version);
+            }
+            catch (const std::invalid_argument&)
+            {} // ignore invalid folder names
+        });
     }
 };
 

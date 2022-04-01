@@ -15,15 +15,19 @@ private:
     int _minorVersion;
 
 public:
+    // Construct the major/minor version from the given version string,
+    // as used in the RADIANT_VERSION pattern: "major.minor.micro[suffix]"
+    // Throws std::invalid_argument in case of parsing failures
     MajorMinorVersion(const std::string& versionString)
     {
-        const std::regex VersionPattern("(\\d+)\\.(\\d+)\\.[\\w\\d]+");
+        // Major/minor version is mandatory, micro version and suffix are optional
+        const std::regex VersionPattern("(\\d+)\\.(\\d+)(\\.\\d+[\\w\\d_]*)?");
 
         // Extract the version from the given string
         std::smatch match;
         if (!std::regex_match(versionString, match, VersionPattern))
         {
-            throw std::runtime_error("The input string " + versionString + " failed to parse");
+            throw std::invalid_argument("The input string " + versionString + " failed to parse");
         }
 
         _majorVersion = string::convert<int>(match[1].str());
@@ -57,7 +61,7 @@ public:
         // Major version is larger
         return false;
     }
-
+    
     std::string toString() const
     {
         return string::to_string(_majorVersion) + "." + string::to_string(_minorVersion);

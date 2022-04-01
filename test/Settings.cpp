@@ -45,11 +45,11 @@ TEST(MajorMinorVersionTest, ParseFromString)
     EXPECT_EQ(v7.getMinorVersion(), 100);
 
     // Invalid expressions
-    EXPECT_THROW(settings::MajorMinorVersion("11.a100.1"), std::runtime_error);
-    EXPECT_THROW(settings::MajorMinorVersion("11.1"), std::runtime_error);
-    EXPECT_THROW(settings::MajorMinorVersion("x.y"), std::runtime_error);
-    EXPECT_THROW(settings::MajorMinorVersion("2_3_7"), std::runtime_error);
-    EXPECT_THROW(settings::MajorMinorVersion("10.8.9-"), std::runtime_error);
+    EXPECT_THROW(settings::MajorMinorVersion("11.a100.1"), std::invalid_argument);
+    EXPECT_THROW(settings::MajorMinorVersion("11.1"), std::invalid_argument);
+    EXPECT_THROW(settings::MajorMinorVersion("x.y"), std::invalid_argument);
+    EXPECT_THROW(settings::MajorMinorVersion("2_3_7"), std::invalid_argument);
+    EXPECT_THROW(settings::MajorMinorVersion("10.8.9-"), std::invalid_argument);
 }
 
 TEST(MajorMinorVersionTest, LessThanOperator)
@@ -197,11 +197,12 @@ TEST(SettingsManagerTest, getCurrentVersionSettingsFolder)
 inline std::string createSettingsFile(const IApplicationContext& context, const std::string& versionFolder, const std::string& filename)
 {
     auto settingsFolder = os::standardPathWithSlash(context.getSettingsPath() + versionFolder);
+    os::makeDirectory(settingsFolder);
     auto fullPath = settingsFolder + filename;
 
     std::ofstream stream(fullPath);
 
-    stream << fullPath << std::endl;
+    stream << fullPath;
     stream.flush();
     stream.close();
 
@@ -230,12 +231,16 @@ TEST(SettingsManagerTest, SettingsFileVersionPrecedence)
     // User text is located in the base, 2.13 and 2.14
     auto userTextInBaseFolder = createSettingsFile(context, "", "user.txt");
     auto baseTxtInBaseFolder = createSettingsFile(context, "", "base.txt");
+    auto userText21 = createSettingsFile(context, "2.1", "user.txt");
     auto userText213 = createSettingsFile(context, "2.13", "user.txt");
     auto userText215 = createSettingsFile(context, "2.15", "user.txt");
     auto customTxt211 = createSettingsFile(context, "2.11", "custom.txt");
     auto userText30 = createSettingsFile(context, "3.0", "user.txt");
 
-    // Version 2.13 should load the file from the 2.13 folder
+    // Create an unrelated folder, to prove it's not crashing anything
+    os::makeDirectory(context.getSettingsPath() + "unrelatedFolder/");
+
+    // Version 2.15 should load the file from the 2.15 folder
     EXPECT_EQ(loadSettingsFile(context, "2.15.66", "user.txt"), userText215) << "2.15 should load user.txt from the 2.15 folder";
 
     // Version 2.14 should load the file from the 2.13 folder
@@ -244,8 +249,11 @@ TEST(SettingsManagerTest, SettingsFileVersionPrecedence)
     // Version 2.13 should load the file from the 2.13 folder
     EXPECT_EQ(loadSettingsFile(context, "2.13.1", "user.txt"), userText213) << "2.13 should load user.txt from the 2.13 folder";
 
-    // Version 2.12 doesn't have any version folder, should load from base
-    EXPECT_EQ(loadSettingsFile(context, "2.12.0", "user.txt"), userTextInBaseFolder) << "2.13 should load user.txt from the base folder";
+    // Version 2.12 doesn't have any version folder, should load from 2.1
+    EXPECT_EQ(loadSettingsFile(context, "2.12.0", "user.txt"), userText21) << "2.12 should load user.txt from the 2.1 folder";
+
+    // Version 2.0.4 should pick the base
+    EXPECT_EQ(loadSettingsFile(context, "2.0.4", "user.txt"), userTextInBaseFolder) << "2.04 should load user.txt from the base folder";
 
     // custom.txt only exists in 2.11
     EXPECT_EQ(loadSettingsFile(context, "2.11.0", "custom.txt"), customTxt211) << "2.15 should load custom.txt from the 2.11 folder";
