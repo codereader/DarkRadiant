@@ -61,7 +61,10 @@ jobs:
       shell: cmd
     
     - name: Generate Portable Package
-      run: powershell -ExecutionPolicy ByPass .\compile_release_package.ps1 -Platform x64 -SkipBuild -GenerateSetupPackage:$false -GeneratePortablePackage:$false -OutputFolder ..\..\PortablePackage\
+      run: |
+        echo Remove Mesa driver from output folder again
+        del ..\..\install\OpenGL32.dll
+        powershell -ExecutionPolicy ByPass .\compile_release_package.ps1 -Platform x64 -SkipBuild -GenerateSetupPackage:$false -GeneratePortablePackage:$false -OutputFolder ..\..\PortablePackage\
       shell: cmd
       working-directory: .\tools\scripts
 
