@@ -1,3 +1,5 @@
+#pragma once
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #define RADIANT_VERSION PACKAGE_VERSION
