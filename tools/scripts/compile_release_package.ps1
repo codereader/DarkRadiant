@@ -94,13 +94,13 @@ if ($null -eq $vcRedistFolder)
 {
     Write-Host "Trying to guess the VCRedistTools folder location..."
 
-    $candidate = Get-ChildItem -Path "C:\Program Files (x86)\Microsoft Visual Studio\" -Recurse -Filter "Redist" | ? { (Get-ChildItem -Path $_.FullName -Filter "MSVC") }
+    $candidate = Get-ChildItem -Path "C:\Program Files\Microsoft Visual Studio\" -Recurse -Filter "Redist" | ? { (Get-ChildItem -Path $_.FullName -Filter "MSVC") }
 
     if ($null -ne $candidate)
     {
         $candidate = Join-Path $candidate.FullName "MSVC"
         
-        $candidate = Get-ChildItem -Recurse -Path $candidate -Filter $target -Depth 1 | ? { (Get-ChildItem -Path $_.FullName -Filter "Microsoft.VC142.CRT") } | Select -First 1
+        $candidate = Get-ChildItem -Recurse -Path $candidate -Filter $target -Depth 1 | ? { (Get-ChildItem -Path $_.FullName -Filter "Microsoft.VC143.CRT") } | Select -First 1
         
         $vcRedistFolder = $candidate.Parent.FullName
         Write-Host "Guessed this path: $vcRedistFolder"
@@ -112,14 +112,14 @@ if ($target -eq "x86")
     $platform = "Win32"
     $issFile = "..\innosetup\darkradiant.iss"
     $portablePath = "DarkRadiant_install"
-	$redistSource = Join-Path $vcRedistFolder "x86\Microsoft.VC142.CRT"
+	$redistSource = Join-Path $vcRedistFolder "x86\Microsoft.VC143.CRT"
 } 
 else
 {
     $platform = "x64"
     $issFile = "..\innosetup\darkradiant.x64.iss"
     $portablePath = "DarkRadiant_install.x64"
-	$redistSource = Join-Path $vcRedistFolder "x64\Microsoft.VC142.CRT"
+	$redistSource = Join-Path $vcRedistFolder "x64\Microsoft.VC143.CRT"
 }
 
 if (-not $SkipBuild)
