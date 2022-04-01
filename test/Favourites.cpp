@@ -2,6 +2,7 @@
 
 #include "ifavourites.h"
 #include "iregistry.h"
+#include "settings/SettingsManager.h"
 
 namespace test
 {
@@ -19,7 +20,8 @@ protected:
         sourcePath /= "settings/";
         sourcePath /= userXmlFile;
 
-        fs::path targetPath = _context.getSettingsPath();
+        settings::SettingsManager manager(_context);
+        fs::path targetPath = manager.getCurrentVersionSettingsFolder();
         targetPath /= "user.xml";
 
         fs::remove(targetPath);
@@ -157,7 +159,8 @@ TEST_F(FavouritesTest, FavouritesArePersisted)
 
     checkAfterShutdown = [&]()
     {
-        fs::path userXml = _context.getSettingsPath();
+        settings::SettingsManager manager(_context);
+        fs::path userXml = manager.getCurrentVersionSettingsFolder();
         userXml /= "user.xml";
 
         xml::Document doc(userXml.string());

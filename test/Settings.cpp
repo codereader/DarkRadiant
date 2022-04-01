@@ -46,7 +46,9 @@ TEST(MajorMinorVersionTest, ParseFromString)
 
     // Invalid expressions
     EXPECT_THROW(settings::MajorMinorVersion("11.a100.1"), std::invalid_argument);
-    EXPECT_THROW(settings::MajorMinorVersion("11.1"), std::invalid_argument);
+    EXPECT_THROW(settings::MajorMinorVersion("11"), std::invalid_argument);
+    EXPECT_THROW(settings::MajorMinorVersion("11..6"), std::invalid_argument);
+    EXPECT_THROW(settings::MajorMinorVersion("11.a"), std::invalid_argument);
     EXPECT_THROW(settings::MajorMinorVersion("x.y"), std::invalid_argument);
     EXPECT_THROW(settings::MajorMinorVersion("2_3_7"), std::invalid_argument);
     EXPECT_THROW(settings::MajorMinorVersion("10.8.9-"), std::invalid_argument);
