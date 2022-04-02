@@ -180,7 +180,8 @@ static picoModel_t *_iqm_load( PM_PARAMS_LOAD ){
 	iqmHeader_t h;
 	iqmmesh_t m;
 	iqmvertexarray_t a;
-	size_t s, t, j, i;
+	size_t s, j;
+    unsigned int t, i;
 	const char *stringtable;
 	char skinname[512];
 	const unsigned int *tri;
@@ -236,7 +237,7 @@ static picoModel_t *_iqm_load( PM_PARAMS_LOAD ){
 		_pico_unixify( skinname );
 
 		PicoSetSurfaceType( picoSurface, PICO_TRIANGLES );
-		PicoSetSurfaceName( picoSurface, stringtable+m.name );
+		PicoSetSurfaceName( picoSurface, (char*)stringtable + m.name );
 		picoShader = PicoNewShader( picoModel );
 		if ( picoShader == NULL ) {
 			_pico_printf( PICO_ERROR, "Unable to allocate a new model shader" );
@@ -322,10 +323,10 @@ static picoModel_t *_iqm_load( PM_PARAMS_LOAD ){
 					inf = (const float*)((const char *)buffer + a.offset) + m.first_vertex*a.size;
 					for ( i = 0; i < m.num_vertexes; i++, inf += a.size )
 					{
-						color[0] = inf[0]*255;
-						color[1] = inf[1]*255;
-						color[2] = inf[2]*255;
-						color[3] = (a.size>=4)?inf[3]*255:255;
+						color[0] = (picoByte_t)inf[0]*255;
+						color[1] = (picoByte_t)inf[1]*255;
+						color[2] = (picoByte_t)inf[2]*255;
+						color[3] = a.size >= 4 ? (picoByte_t)inf[3]*255 : 255;
 						PicoSetSurfaceColor( picoSurface, 0, i, color );
 					}
 				}
