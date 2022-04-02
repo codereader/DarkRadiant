@@ -108,12 +108,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\libs\xmlutil\Document.cpp" />
     <ClCompile Include="..\..\libs\xmlutil\Node.cpp" />
+    <ClCompile Include="..\..\libs\xmlutil\XmlModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\xmlutil\Document.h" />
     <ClInclude Include="..\..\libs\xmlutil\InvalidNodeException.h" />
     <ClInclude Include="..\..\libs\xmlutil\MissingXMLNodeException.h" />
     <ClInclude Include="..\..\libs\xmlutil\Node.h" />
+    <ClInclude Include="..\..\libs\xmlutil\XmlModule.h" />
     <ClInclude Include="..\..\libs\xmlutil\XPathException.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

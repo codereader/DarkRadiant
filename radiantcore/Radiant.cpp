@@ -14,6 +14,8 @@
 #include "messagebus/MessageBus.h"
 #include "settings/LanguageManager.h"
 
+#include "xmlutil/XmlModule.h"
+
 namespace radiant
 {
 
@@ -26,6 +28,8 @@ Radiant::Radiant(IApplicationContext& context) :
 	_context(context),
 	_messageBus(new MessageBus)
 {
+    xmlutil::initModule();
+
 	// Set the stream references for rMessage(), redirect std::cout, etc.
 	applog::LogStream::InitialiseStreams(getLogWriter());
 
@@ -58,6 +62,9 @@ Radiant::~Radiant()
 	}
 
 	applog::LogStream::ShutdownStreams();
+
+    // Shutdown the libxml2 DLL
+    xmlutil::shutdownModule();
 }
 
 applog::ILogWriter& Radiant::getLogWriter()
