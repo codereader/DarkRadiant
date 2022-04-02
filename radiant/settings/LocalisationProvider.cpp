@@ -91,6 +91,8 @@ std::string LocalisationProvider::loadLanguageSetting()
 		str >> language;
 	}
 
+    str.close();
+
 	return language;
 }
 
