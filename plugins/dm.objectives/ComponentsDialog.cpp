@@ -312,6 +312,7 @@ void ComponentsDialog::changeComponentEditor(Component& compToEdit)
 		// Pack the widget into the containing frame
 		_compEditorPanel->GetSizer()->Add(_componentEditor->getWidget(), 1, wxEXPAND | wxALL, 12);
 
+        _compEditorPanel->Layout();
 		_compEditorPanel->Fit();
 		findNamedObject<wxPanel>(this, "ObjCompMainPanel")->Fit();
 		Fit();
