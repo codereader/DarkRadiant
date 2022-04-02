@@ -102,7 +102,7 @@ void QuerySidesDialog::Show(const cmd::ArgumentList& args)
 			break;
 
 		default:
-			throw cmd::ExecutionFailure(fmt::format(_("Unknown brush type ID: {0}"), type));
+			throw cmd::ExecutionFailure(fmt::format(_("Unknown brush type ID: {0}"), static_cast<int>(type)));
 		};
 
 		auto* dialog = new QuerySidesDialog(minSides, maxSides);
