@@ -29,7 +29,7 @@ namespace shaders
  * }
  */
 
-constexpr const char* const FrobCondition = "(parm11 > 0.0)";
+constexpr const char* const FrobCondition = "(parm11 > 0)";
 constexpr const char* const AdditiveRgbExpression = "0.15 * parm11";
 constexpr const char* const WhiteBlendRgbExpression = "0.4 * parm11";
 constexpr const char* const WhiteBlendFuncSrc = "gl_dst_color";
