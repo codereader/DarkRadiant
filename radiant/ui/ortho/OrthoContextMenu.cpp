@@ -40,7 +40,6 @@ namespace {
     const char* LIGHT_CLASSNAME = "light";
     const char* MODEL_CLASSNAME_ANIMATED = "func_animate";
     const char* MODEL_CLASSNAME_STATIC = "func_static";
-    const char* PARTICLE_EMITTER_CLASSNAME = "func_emitter";
     const char* PLAYERSTART_CLASSNAME = "info_player_start";
 
     const char* ADD_ENTITY_TEXT = N_("Create Entity...");
@@ -370,7 +369,7 @@ void OrthoContextMenu::callbackAddModel()
 
 void OrthoContextMenu::callbackAddParticle()
 {
-    UndoableCommand command("addParticle");
+    UndoableCommand command("Create Particle");
 
     // Display the particle selector and block waiting for a selection (may be empty)
     auto result = ParticleChooserDialog::ChooseParticleAndEmitter();
@@ -381,7 +380,8 @@ void OrthoContextMenu::callbackAddParticle()
     {
         auto node = GlobalEntityModule().createEntityFromSelection(result.selectedClassname, _lastPoint);
 
-        node->getEntity().setKeyValue("model", result.selectedParticle);
+        auto modelSpawnarg = result.selectedClassname == "func_smoke" ? "smoke" : "model";
+        node->getEntity().setKeyValue(modelSpawnarg, result.selectedParticle);
     }
     catch (cmd::ExecutionFailure& e)
     {
