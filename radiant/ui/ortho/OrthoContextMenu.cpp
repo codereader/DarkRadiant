@@ -373,15 +373,15 @@ void OrthoContextMenu::callbackAddParticle()
     UndoableCommand command("addParticle");
 
     // Display the particle selector and block waiting for a selection (may be empty)
-    auto selectedParticle = ParticleChooserDialog::ChooseParticle();
+    auto result = ParticleChooserDialog::ChooseParticleAndEmitter();
 
-    if (selectedParticle.empty()) return;
+    if (result.selectedParticle.empty()) return;
 
     try
     {
-        auto node = GlobalEntityModule().createEntityFromSelection(PARTICLE_EMITTER_CLASSNAME, _lastPoint);
+        auto node = GlobalEntityModule().createEntityFromSelection(result.selectedClassname, _lastPoint);
 
-        node->getEntity().setKeyValue("model", selectedParticle);
+        node->getEntity().setKeyValue("model", result.selectedParticle);
     }
     catch (cmd::ExecutionFailure& e)
     {
