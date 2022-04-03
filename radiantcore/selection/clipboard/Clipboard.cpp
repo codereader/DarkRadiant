@@ -35,6 +35,19 @@ void pasteToMap()
 	map::algorithm::importFromStream(stream);
 }
 
+void copySelectedMapElementsToClipboard()
+{
+    // When exporting to the system clipboard, use the portable format
+    auto format = GlobalMapFormatManager().getMapFormatByName(map::PORTABLE_MAP_FORMAT_NAME);
+
+    // Stream selected objects into a stringstream
+    std::stringstream out;
+    GlobalMap().exportSelected(out, format);
+
+    // Copy the resulting string to the clipboard
+    GlobalClipboard().setString(out.str());
+}
+
 void copy(const cmd::ArgumentList& args)
 {
 	if (FaceInstance::Selection().empty())
@@ -50,16 +63,7 @@ void copy(const cmd::ArgumentList& args)
             return;
         }
 
-		// When exporting to the system clipboard, use the portable format
-		auto format = GlobalMapFormatManager().getMapFormatByName(map::PORTABLE_MAP_FORMAT_NAME);
-
-        // Stream selected objects into a stringstream
-        std::stringstream out;
-        GlobalMap().exportSelected(out, format);
-
-        // Copy the resulting string to the clipboard
-		GlobalClipboard().setString(out.str());
-
+        copySelectedMapElementsToClipboard();
         map::OperationMessage::Send(_("Selection copied to Clipboard"));
 	}
 	else
@@ -67,6 +71,30 @@ void copy(const cmd::ArgumentList& args)
 		algorithm::pickShaderFromSelection(args);
         map::OperationMessage::Send(_("Face Texture copied to Clipboard"));
 	}
+}
+
+void cut(const cmd::ArgumentList& args)
+{
+    if (!module::GlobalModuleRegistry().moduleExists(MODULE_CLIPBOARD))
+    {
+        throw cmd::ExecutionNotPossible(_("No clipboard module attached, cannot perform this action."));
+    }
+
+    if (!FaceInstance::Selection().empty())
+    {
+        throw cmd::ExecutionNotPossible(_("Cannot cut selected Faces."));
+    }
+
+    if (GlobalSelectionSystem().countSelected() == 0)
+    {
+        map::OperationMessage::Send(_("Nothing to cut"));
+        return;
+    }
+
+    UndoableCommand cmd("Cut Selection");
+
+    copySelectedMapElementsToClipboard();
+    algorithm::deleteSelection();
 }
 
 std::string getMaterialNameFromClipboard()
@@ -111,7 +139,7 @@ void paste(const cmd::ArgumentList& args)
         }
 
         // Try to parse the map and apply it
-        UndoableCommand undo("paste");
+        UndoableCommand undo("Paste");
         pasteToMap();
 	}
 	else

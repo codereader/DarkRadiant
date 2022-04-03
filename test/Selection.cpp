@@ -512,6 +512,21 @@ TEST_F(ClipboardTest, CopyEmptySelection)
     EXPECT_TRUE(operationMonitor.messageReceived()) << "Command should have sent out an OperationMessage";
 }
 
+TEST_F(ClipboardTest, CutEmptySelection)
+{
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Should start with an empty selection";
+
+    // Monitor radiant to catch the messages
+    CommandFailureHelper helper;
+    MapOperationMonitor operationMonitor;
+
+    // This should do nothing, and it should not throw any execution failures neither
+    GlobalCommandSystem().executeCommand("Cut");
+
+    EXPECT_FALSE(helper.messageReceived()) << "Command execution shouldn't have failed";
+    EXPECT_TRUE(operationMonitor.messageReceived()) << "Command should have sent out an OperationMessage";
+}
+
 TEST_F(ClipboardTest, CopyNonEmptySelection)
 {
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
@@ -523,7 +538,6 @@ TEST_F(ClipboardTest, CopyNonEmptySelection)
     CommandFailureHelper helper;
     MapOperationMonitor operationMonitor;
 
-    // This should do nothing, and it should not throw any execution failures neither
     GlobalCommandSystem().executeCommand("Copy");
 
     EXPECT_FALSE(helper.messageReceived()) << "Command execution should not have failed";
@@ -531,6 +545,30 @@ TEST_F(ClipboardTest, CopyNonEmptySelection)
 
     // Check the clipboard contents, it should contain a mapx file
     algorithm::assertStringIsMapxFile(GlobalClipboard().getString());
+}
+
+TEST_F(ClipboardTest, CutNonEmptySelection)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn);
+
+    Node_setSelected(brush, true);
+
+    // Monitor radiant to catch the messages
+    CommandFailureHelper helper;
+    MapOperationMonitor operationMonitor;
+
+    GlobalCommandSystem().executeCommand("Cut");
+
+    EXPECT_FALSE(helper.messageReceived()) << "Command execution should not have failed";
+    EXPECT_TRUE(operationMonitor.messageReceived()) << "Command should have sent out an OperationMessage";
+
+    // Check the clipboard contents, it should contain a mapx file
+    algorithm::assertStringIsMapxFile(GlobalClipboard().getString());
+
+    EXPECT_FALSE(Node_isSelected(brush));
+    EXPECT_FALSE(brush->getParent()) << "Brush should have been removed from the map";
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Selection should now be empty";
 }
 
 TEST_F(ClipboardTest, CopyFaceSelection)

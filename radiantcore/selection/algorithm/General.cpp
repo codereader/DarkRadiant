@@ -1007,9 +1007,10 @@ void registerCommands()
 
 	GlobalCommandSystem().addCommand("CreateDecalsForFaces", createDecalsForSelectedFaces);
 
-	GlobalCommandSystem().addCommand("Copy", selection::clipboard::copy);
-	GlobalCommandSystem().addCommand("Paste", selection::clipboard::paste);
-	GlobalCommandSystem().addCommand("PasteToCamera", selection::clipboard::pasteToCamera);
+	GlobalCommandSystem().addCommand("Copy", clipboard::copy);
+	GlobalCommandSystem().addCommand("Cut", clipboard::cut);
+	GlobalCommandSystem().addCommand("Paste", clipboard::paste);
+	GlobalCommandSystem().addCommand("PasteToCamera", clipboard::pasteToCamera);
 
 	GlobalCommandSystem().addCommand("ConnectSelection", connectSelectedEntities);
     GlobalCommandSystem().addCommand("BindSelection", bindEntities);
