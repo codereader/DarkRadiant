@@ -568,7 +568,27 @@ TEST_F(ClipboardTest, CutNonEmptySelection)
 
     EXPECT_FALSE(Node_isSelected(brush));
     EXPECT_FALSE(brush->getParent()) << "Brush should have been removed from the map";
+    EXPECT_FALSE(brush->inScene()) << "Brush should be have been removed from the scene";
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Selection should now be empty";
+}
+
+TEST_F(ClipboardTest, CutIsUndoable)
+{
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn);
+    Node_setSelected(brush, true);
+
+    // Cut and check the clipboard contents, it should contain a mapx file
+    GlobalCommandSystem().executeCommand("Cut");
+    algorithm::assertStringIsMapxFile(GlobalClipboard().getString());
+
+    EXPECT_FALSE(brush->getParent()) << "Brush should have been removed from the map";
+    EXPECT_FALSE(brush->inScene()) << "Brush should be have been removed from the scene";
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Selection should now be empty";
+
+    GlobalCommandSystem().executeCommand("Undo");
+    EXPECT_TRUE(brush->getParent()) << "Brush should be back now";
+    EXPECT_TRUE(brush->inScene()) << "Brush should be back now";
 }
 
 TEST_F(ClipboardTest, CopyFaceSelection)
