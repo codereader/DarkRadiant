@@ -102,11 +102,12 @@ private:
 	bool checkMakeVisportal();
 	bool checkAddMonsterclip();
 	bool checkAddEntity();
-	bool checkAddModel();
+	bool checkAddModelOrParticle();
 
 	void addEntity();
 	void placePlayerStart();
 	void callbackAddModel();
+	void callbackAddParticle();
 	void callbackAddLight();
 	void callbackAddPrefab();
 	void callbackAddSpeaker();
