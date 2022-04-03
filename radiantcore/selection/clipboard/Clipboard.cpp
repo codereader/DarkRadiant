@@ -46,7 +46,7 @@ void copy(const cmd::ArgumentList& args)
 
         if (GlobalSelectionSystem().countSelected() == 0)
         {
-            map::OperationMessage::Send(_("Cannot copy, nothing selected"));
+            map::OperationMessage::Send(_("Nothing copied"));
             return;
         }
 
@@ -65,6 +65,7 @@ void copy(const cmd::ArgumentList& args)
 	else
 	{
 		algorithm::pickShaderFromSelection(args);
+        map::OperationMessage::Send(_("Face Texture copied to Clipboard"));
 	}
 }
 

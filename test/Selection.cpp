@@ -3,6 +3,7 @@
 #include <algorithm>
 #include "ishaders.h"
 #include "imap.h"
+#include "ishaderclipboard.h"
 #include "ifilter.h"
 #include "ilightnode.h"
 #include "ibrush.h"
@@ -530,6 +531,40 @@ TEST_F(ClipboardTest, CopyNonEmptySelection)
 
     // Check the clipboard contents, it should contain a mapx file
     algorithm::assertStringIsMapxFile(GlobalClipboard().getString());
+}
+
+TEST_F(ClipboardTest, CopyFaceSelection)
+{
+    // Create a brush and select a single face
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::createCubicBrush(worldspawn, { 0, 0 ,0 }, "textures/common/caulk");
+
+    render::View view(true);
+    algorithm::constructCameraView(view, brush->worldAABB(), Vector3(0, 0, -1), Vector3(-90, 0, 0));
+
+    auto rectangle = selection::Rectangle::ConstructFromPoint(Vector2(0, 0), Vector2(8.0 / algorithm::DeviceWidth, 8.0 / algorithm::DeviceHeight));
+    ConstructSelectionTest(view, rectangle);
+
+    SelectionVolume test(view);
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eToggle, true);
+
+    EXPECT_EQ(GlobalSelectionSystem().getSelectedFaceCount(), 1) << "One face should be selected now";
+
+    // Monitor radiant to catch the messages
+    CommandFailureHelper helper;
+    MapOperationMonitor operationMonitor;
+
+    GlobalShaderClipboard().clear();
+    EXPECT_NE(GlobalShaderClipboard().getShaderName(), "textures/common/caulk");
+
+    // This should do nothing, and it should not throw any execution failures neither
+    GlobalCommandSystem().executeCommand("Copy");
+
+    EXPECT_FALSE(helper.messageReceived()) << "Command execution should not have failed";
+    EXPECT_TRUE(operationMonitor.messageReceived()) << "Command should have sent out an OperationMessage";
+
+    // Check the shader clipboard, it should contain the material name
+    EXPECT_EQ(GlobalShaderClipboard().getShaderName(), "textures/common/caulk") << "Shaderclipboard should contain the material name now";
 }
 
 }
