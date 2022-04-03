@@ -92,6 +92,7 @@
     <ClInclude Include="..\..\..\test\testutil\CommandFailureHelper.h">
       <Filter>testutil</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\FakeClipboardModule.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="algorithm">

@@ -501,9 +501,10 @@ TEST_F(ClipboardTest, CopyEmptySelection)
     // Monitor radiant to catch the CommandExecutionFailedMessage
     CommandFailureHelper helper;
 
+    // This should do nothing, and it should not throw any execution failures neither
     GlobalCommandSystem().executeCommand("Copy");
 
-    EXPECT_TRUE(helper.messageReceived()) << "Command execution should have failed";
+    EXPECT_FALSE(helper.messageReceived()) << "Command execution should have failed";
 }
 
 }

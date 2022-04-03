@@ -15,6 +15,7 @@
 #include "module/CoreModule.h"
 #include "messages/GameConfigNeededMessage.h"
 #include "messages/NotificationMessage.h"
+#include "FakeClipboardModule.h"
 
 namespace test
 {
@@ -37,6 +38,7 @@ protected:
 	std::size_t _notificationListener;
 
 	std::shared_ptr<gl::HeadlessOpenGLContextModule> _glContextModule;
+	std::shared_ptr<FakeClipboardModule> _fakeClipboard;
 
     std::unique_ptr<TestLogFile> _testLogFile;
 
@@ -82,7 +84,7 @@ protected:
 
 		// Set up the test game environment
 		setupGameFolder();
-		setupOpenGLContext();
+        setupTestModules();
 
 		// Wire up the game-config-needed handler, we need to respond
 		_gameSetupListener = _coreModule->get()->getMessageBus().addListener(
@@ -141,6 +143,8 @@ protected:
 
 		module::shutdownStreams();
 		_coreModule.reset();
+        _fakeClipboard.reset();
+        _glContextModule.reset();
 	}
 
 protected:
@@ -154,10 +158,13 @@ protected:
 	virtual void setupGameFolder()
 	{}
 
-	virtual void setupOpenGLContext()
+	virtual void setupTestModules()
 	{
 		_glContextModule = std::make_shared<gl::HeadlessOpenGLContextModule>();
+		_fakeClipboard = std::make_shared<FakeClipboardModule>();
+
 		_coreModule->get()->getModuleRegistry().registerModule(_glContextModule);
+		_coreModule->get()->getModuleRegistry().registerModule(_fakeClipboard);
 	}
 
 	virtual void loadMap(const std::string& mapsRelativePath)
