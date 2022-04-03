@@ -21,11 +21,13 @@
 #include "Rectangle.h"
 #include "registry/registry.h"
 #include "algorithm/View.h"
+#include "testutil/CommandFailureHelper.h"
 
 namespace test
 {
 
 using SelectionTest = RadiantTest;
+using ClipboardTest = RadiantTest;
 
 TEST_F(SelectionTest, ApplyShadersToForcedVisibleObjects)
 {
@@ -488,6 +490,20 @@ TEST_F(CameraViewSelectionTest, TwosidedModelFacingUpIsSelectable)
     loadMap("twosided_ivy.mapx");
 
     performModelSelectionTest("twosided_ivy_facing_up", true);
+}
+
+// --- Clipboard related tests ---
+
+TEST_F(ClipboardTest, CopyEmptySelection)
+{
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Should start with an empty selection";
+
+    // Monitor radiant to catch the CommandExecutionFailedMessage
+    CommandFailureHelper helper;
+
+    GlobalCommandSystem().executeCommand("Copy");
+
+    EXPECT_TRUE(helper.messageReceived()) << "Command execution should have failed";
 }
 
 }

@@ -89,6 +89,9 @@
     <ClInclude Include="..\..\..\test\testutil\TestBufferObjectProvider.h">
       <Filter>testutil</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\testutil\CommandFailureHelper.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="algorithm">
