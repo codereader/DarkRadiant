@@ -2,7 +2,7 @@
 #include "PropertyEditorFactory.h"
 
 #include "ui/modelselector/ModelSelector.h"
-#include "ui/particles/ParticlesChooser.h"
+#include "ui/particles/ParticleChooserDialog.h"
 
 #include "i18n.h"
 #include "ientity.h"
@@ -98,7 +98,7 @@ void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
 {
 	// Invoke ParticlesChooser
     std::string currentSelection = _entities.getSharedKeyValue(_key, true);
-	std::string particle = ParticlesChooser::ChooseParticle(currentSelection);
+	std::string particle = ParticleChooserDialog::ChooseParticle(currentSelection);
 
 	if (!particle.empty())
 	{

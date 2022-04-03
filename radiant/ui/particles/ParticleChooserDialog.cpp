@@ -1,4 +1,4 @@
-#include "ParticlesChooser.h"
+#include "ParticleChooserDialog.h"
 
 #include "i18n.h"
 
@@ -10,7 +10,7 @@
 namespace ui
 {
 
-ParticlesChooser::ParticlesChooser() :
+ParticleChooserDialog::ParticleChooserDialog() :
 	DialogBase(_("Choose Particle")),
     _selector(new ParticleSelector(this))
 {
@@ -21,17 +21,17 @@ ParticlesChooser::ParticlesChooser() :
 
 	FitToScreen(0.5f, 0.6f);
 
-    _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ParticlesChooser::_onItemActivated, this);
+    _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ParticleChooserDialog::_onItemActivated, this);
 }
 
-void ParticlesChooser::_onItemActivated(wxDataViewEvent& ev)
+void ParticleChooserDialog::_onItemActivated(wxDataViewEvent& ev)
 {
     EndModal(wxID_OK);
 }
 
-std::string ParticlesChooser::ChooseParticle(const std::string& current)
+std::string ParticleChooserDialog::ChooseParticle(const std::string& current)
 {
-    auto* dialog = new ParticlesChooser();
+    auto* dialog = new ParticleChooserDialog();
 	
 	dialog->_selector->setSelectedParticle(current);
 

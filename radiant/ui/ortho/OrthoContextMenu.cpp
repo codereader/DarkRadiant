@@ -17,7 +17,7 @@
 
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/prefabselector/PrefabSelector.h"
-#include "ui/particles/ParticlesChooser.h"
+#include "ui/particles/ParticleChooserDialog.h"
 
 #include "string/convert.h"
 #include "scene/GroupNodeChecker.h"
@@ -373,7 +373,7 @@ void OrthoContextMenu::callbackAddParticle()
     UndoableCommand command("addParticle");
 
     // Display the particle selector and block waiting for a selection (may be empty)
-    auto selectedParticle = ParticlesChooser::ChooseParticle();
+    auto selectedParticle = ParticleChooserDialog::ChooseParticle();
 
     if (selectedParticle.empty()) return;
 

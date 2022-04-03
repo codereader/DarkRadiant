@@ -324,8 +324,8 @@
     <ClCompile Include="..\..\radiant\ui\ortho\OrthoContextMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\overlay\Overlay.cpp" />
     <ClCompile Include="..\..\radiant\ui\overlay\OverlayDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\particles\ParticleChooserDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\particles\ParticleEditor.cpp" />
-    <ClCompile Include="..\..\radiant\ui\particles\ParticlesChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\particles\ParticleSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\BulgePatchDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\CapDialog.cpp" />
@@ -540,9 +540,9 @@
     <ClInclude Include="..\..\radiant\ui\overlay\Overlay.h" />
     <ClInclude Include="..\..\radiant\ui\overlay\OverlayDialog.h" />
     <ClInclude Include="..\..\radiant\ui\overlay\OverlayRegistryKeys.h" />
+    <ClInclude Include="..\..\radiant\ui\particles\ParticleChooserDialog.h" />
     <ClInclude Include="..\..\radiant\ui\particles\ParticleEditor.h" />
     <ClInclude Include="..\..\radiant\ui\particles\ThreadedParticlesLoader.h" />
-    <ClInclude Include="..\..\radiant\ui\particles\ParticlesChooser.h" />
     <ClInclude Include="..\..\radiant\ui\particles\ParticleSelector.h" />
     <ClInclude Include="..\..\radiant\ui\patch\BulgePatchDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\CapDialog.h" />

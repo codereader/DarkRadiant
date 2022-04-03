@@ -17,7 +17,7 @@ namespace ui
  * \brief
  * Chooser dialog for selection and preview of particle systems.
  */
-class ParticlesChooser : 
+class ParticleChooserDialog : 
 	public wxutil::DialogBase,
     public sigc::trackable
 {
@@ -26,14 +26,14 @@ private:
 
 private:
 	// Constructor creates elements
-	ParticlesChooser();
+	ParticleChooserDialog();
 
     void _onItemActivated( wxDataViewEvent& ev );
 
 public:
 
 	/**
-	 * Display the singleton dialog and return the name of the selected
+	 * Display the dialog and return the name of the selected
 	 * particle system, or the empty string if none was selected.
 	 *
 	 * @param currentParticle
