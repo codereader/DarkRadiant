@@ -199,7 +199,7 @@ RefSyncStatus Repository::getSyncStatusOfBranch(const Reference& reference)
 
     if (!trackedBranch) throw GitException(_("The current branch doesn't track a remote, cannot check sync status"));
 
-    git_revwalk* walker;
+    git_revwalk* walker = nullptr;
     git_revwalk_new(&walker, _repository);
 
     // Start from remote
