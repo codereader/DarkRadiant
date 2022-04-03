@@ -540,6 +540,21 @@ void Map::focusViewCmd(const cmd::ArgumentList& args)
     focusViews(args[0].getVector3(), args[1].getVector3());
 }
 
+void Map::focusCameraOnSelectionCmd(const cmd::ArgumentList& args)
+{
+    if (GlobalSelectionSystem().countSelected() == 0)
+    {
+        throw cmd::ExecutionNotPossible(_("Cannot focus, selection is empty"));
+    }
+
+    // Determine the bounds of the current selection
+    const auto& workZone = GlobalSelectionSystem().getWorkZone();
+    auto originAndAngles = scene::getOriginAndAnglesToLookAtBounds(workZone.bounds);
+
+    // Set the camera and the views to the given point
+    GlobalCameraManager().focusAllCameras(originAndAngles.first, originAndAngles.second);
+}
+
 scene::INodePtr Map::findWorldspawn()
 {
 	scene::INodePtr worldspawn;
@@ -986,6 +1001,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
     GlobalCommandSystem().addCommand("FocusViews", std::bind(&Map::focusViewCmd, this, std::placeholders::_1), { cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_VECTOR3 });
+    GlobalCommandSystem().addCommand("FocusCameraOnSelection", std::bind(&Map::focusCameraOnSelectionCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
         { cmd::ARGTYPE_STRING,
           cmd::ARGTYPE_STRING,

@@ -299,6 +299,7 @@ private:
      */
     void focusViews(const Vector3& point, const Vector3& angles);
     void focusViewCmd(const cmd::ArgumentList& args);
+    void focusCameraOnSelectionCmd(const cmd::ArgumentList& args);
 
     void undoCmd(const cmd::ArgumentList& args);
     void redoCmd(const cmd::ArgumentList& args);
