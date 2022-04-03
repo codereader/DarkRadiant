@@ -93,6 +93,9 @@
       <Filter>testutil</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\FakeClipboardModule.h" />
+    <ClInclude Include="..\..\..\test\testutil\MapOperationMonitor.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="algorithm">

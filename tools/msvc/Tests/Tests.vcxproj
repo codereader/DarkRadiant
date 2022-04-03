@@ -73,6 +73,7 @@
     <ClInclude Include="..\..\..\test\TestContext.h" />
     <ClInclude Include="..\..\..\test\TestLogFile.h" />
     <ClInclude Include="..\..\..\test\testutil\CommandFailureHelper.h" />
+    <ClInclude Include="..\..\..\test\testutil\MapOperationMonitor.h" />
     <ClInclude Include="..\..\..\test\testutil\TestBufferObjectProvider.h" />
     <ClInclude Include="..\..\..\test\testutil\FileSelectionHelper.h" />
   </ItemGroup>

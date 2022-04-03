@@ -14,8 +14,9 @@
 #include "map/algorithm/Import.h"
 #include "selection/algorithm/General.h"
 #include "selection/algorithm/Transformation.h"
-#include "command/ExecutionNotPossible.h"
 #include "command/ExecutionFailure.h"
+#include "command/ExecutionNotPossible.h"
+#include "messages/MapOperationMessage.h"
 
 namespace selection
 {
@@ -43,6 +44,12 @@ void copy(const cmd::ArgumentList& args)
 			throw cmd::ExecutionNotPossible(_("No clipboard module attached, cannot perform this action."));
 		}
 
+        if (GlobalSelectionSystem().countSelected() == 0)
+        {
+            map::OperationMessage::Send(_("Cannot copy, nothing selected"));
+            return;
+        }
+
 		// When exporting to the system clipboard, use the portable format
 		auto format = GlobalMapFormatManager().getMapFormatByName(map::PORTABLE_MAP_FORMAT_NAME);
 
@@ -52,6 +59,8 @@ void copy(const cmd::ArgumentList& args)
 
         // Copy the resulting string to the clipboard
 		GlobalClipboard().setString(out.str());
+
+        map::OperationMessage::Send(_("Selection copied to Clipboard"));
 	}
 	else
 	{
