@@ -671,7 +671,7 @@ std::string EntityInspector::getSelectedKey()
 
     wxutil::TreeModel::Row row(item, *_keyValueTreeView->GetModel());
 
-    wxDataViewIconText iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
+    auto iconAndName = static_cast<wxDataViewIconText>(row[_columns.name]);
     return iconAndName.GetText().ToStdString();
 }
 
@@ -732,9 +732,6 @@ void EntityInspector::updateGUIElements()
     {
         _editorFrame->Enable(entityCanBeUpdated);
         _showHelpColumnCheckbox->Enable(true);
-        _keyEntry->Enable(entityCanBeUpdated);
-        _valEntry->Enable(entityCanBeUpdated);
-        _setButton->Enable(entityCanBeUpdated);
         _booleanColumn->GetRenderer()->SetMode(entityCanBeUpdated ? wxDATAVIEW_CELL_ACTIVATABLE : wxDATAVIEW_CELL_INERT);
 
         if (!entityCanBeUpdated)
@@ -751,6 +748,20 @@ void EntityInspector::updateGUIElements()
         _showInheritedCheckbox->Enable(false);
         _showHelpColumnCheckbox->Enable(false);
     }
+
+    updateEntryBoxSensitivity();
+}
+
+void EntityInspector::updateEntryBoxSensitivity()
+{
+    auto entityCanBeUpdated = canUpdateEntity() && !_entitySelection->empty();
+    auto selectedKey = getSelectedKey();
+
+    auto classNameSelected = getSelectedKey() == "classname";
+
+    _keyEntry->Enable(entityCanBeUpdated && !classNameSelected);
+    _valEntry->Enable(entityCanBeUpdated && !classNameSelected);
+    _setButton->Enable(entityCanBeUpdated && !classNameSelected);
 }
 
 void EntityInspector::updatePrimitiveNumber()
@@ -1483,6 +1494,8 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         // When multiple items are selected, clear the property editor
         _currentPropertyEditor.reset();
     }
+
+    updateEntryBoxSensitivity();
 }
 
 EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(const std::string& key)
