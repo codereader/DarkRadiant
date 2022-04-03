@@ -32,6 +32,7 @@
 #include "algorithm/Import.h"
 #include "infofile/InfoFileExporter.h"
 #include "messages/MapFileOperation.h"
+#include "messages/NotificationMessage.h"
 #include "NodeCounter.h"
 #include "MapResourceLoader.h"
 
@@ -354,17 +355,20 @@ stream::MapResourceStream::Ptr MapResource::openMapfileStream()
 
 stream::MapResourceStream::Ptr MapResource::openInfofileStream()
 {
+    auto fullPath = getAbsoluteResourcePath();
+    auto infoFilePath = os::replaceExtension(fullPath, game::current::getInfoFileExtension());
+
     try
     {
-        auto fullpath = getAbsoluteResourcePath();
-        auto infoFilename = fullpath.substr(0, fullpath.rfind('.'));
-        infoFilename += game::current::getInfoFileExtension();
-
-        return openFileStream(infoFilename);
+        return openFileStream(infoFilePath);
     }
     catch (const OperationException& ex)
     {
         // Info file load file does not stop us, just issue a warning
+        radiant::NotificationMessage::SendWarning(
+            fmt::format(_("No existing file named {0} found, could not load any group or layer information. "
+                "A new info file will be created the next time the map is saved."), os::getFilename(infoFilePath)),
+            _("Missing .darkradiant File"));
         rWarning() << ex.what() << std::endl;
         return stream::MapResourceStream::Ptr();
     }

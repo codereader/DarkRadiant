@@ -16,6 +16,7 @@
 #include "messages/FileOverwriteConfirmation.h"
 #include "messages/MapFileOperation.h"
 #include "messages/FileSaveConfirmation.h"
+#include "messages/NotificationMessage.h"
 #include "algorithm/Scene.h"
 #include "algorithm/XmlUtils.h"
 #include "algorithm/Primitives.h"
@@ -1603,6 +1604,57 @@ TEST_F(MapSavingTest, RadiantShutdownCancelWithUnsavedChanges)
     {
         sendShutdownRequest(true); // request should be denied
     });
+}
+
+// Listens for a warning message when loading maps without info file
+class WarningReceiver final
+{
+private:
+    std::size_t _msgSubscription;
+    std::string _receivedMessage;
+
+public:
+    WarningReceiver()
+    {
+        // Subscribe to the event asking for the target path
+        _msgSubscription = GlobalRadiantCore().getMessageBus().addListener(
+            radiant::IMessage::Type::Notification,
+            radiant::TypeListener<radiant::NotificationMessage>(
+                [this](radiant::NotificationMessage& msg)
+                {
+                    _receivedMessage = msg.getMessage();
+                }));
+    }
+
+    std::string getReceivedMessage() const
+    {
+        return _receivedMessage;
+    }
+
+    ~WarningReceiver()
+    {
+        GlobalRadiantCore().getMessageBus().removeListener(_msgSubscription);
+    }
+};
+
+TEST_F(MapLoadingTest, WarningAboutMissingInfoFile)
+{
+    auto mapPath = createMapCopyInTempDataPath("altar.map", "altar_without_info_file.map");
+
+    // Remove the info file
+    auto infoFilePath = mapPath;
+    infoFilePath.replace_extension("darkradiant");
+    fs::remove(infoFilePath);
+
+    // Listen for a warning message
+    WarningReceiver receiver;
+
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath.string());
+
+    // The name of the .darkradiant file should appear in the message
+    auto infoFilename = infoFilePath.filename().string();
+    EXPECT_NE(receiver.getReceivedMessage().find(infoFilename), std::string::npos)
+        << "Didn't receive a warning about the missing .darkradiant file";
 }
 
 }

@@ -966,7 +966,8 @@ void Map::saveAutomaticMapBackup(const cmd::ArgumentList& args)
 void Map::registerCommands()
 {
     GlobalCommandSystem().addCommand("NewMap", Map::newMap);
-    GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("OpenMap", std::bind(&Map::openMapCmd, this, std::placeholders::_1), 
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
     GlobalCommandSystem().addCommand("StartMergeOperation", std::bind(&Map::startMergeOperationCmd, this, std::placeholders::_1),
@@ -1033,9 +1034,9 @@ void Map::newMap(const cmd::ArgumentList& args)
     }
 }
 
-void Map::openMap(const cmd::ArgumentList& args)
+void Map::openMapCmd(const cmd::ArgumentList& args)
 {
-    if (!GlobalMap().askForSave(_("Open Map"))) return;
+    if (!askForSave(_("Open Map"))) return;
 
     std::string candidate;
 
@@ -1046,7 +1047,7 @@ void Map::openMap(const cmd::ArgumentList& args)
     else
     {
         // No arguments passed, get the map file name to load
-        MapFileSelection fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), filetype::TYPE_MAP);
+        auto fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), filetype::TYPE_MAP);
         candidate = fileInfo.fullPath;
     }
 
@@ -1085,8 +1086,8 @@ void Map::openMap(const cmd::ArgumentList& args)
 	{
         GlobalMRU().insert(mapToLoad);
 
-        GlobalMap().freeMap();
-        GlobalMap().load(mapToLoad);
+        freeMap();
+        load(mapToLoad);
     }
 }
 
