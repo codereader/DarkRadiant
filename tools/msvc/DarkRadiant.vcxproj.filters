@@ -712,6 +712,9 @@
     <ClCompile Include="..\..\radiant\ui\statusbar\CommandStatus.cpp">
       <Filter>src\ui\statusbar</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\particles\ParticleSelector.cpp">
+      <Filter>src\ui\particles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1382,6 +1385,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\statusbar\CommandStatus.h">
       <Filter>src\ui\statusbar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\particles\ParticleSelector.h">
+      <Filter>src\ui\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\particles\ThreadedParticlesLoader.h">
+      <Filter>src\ui\particles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

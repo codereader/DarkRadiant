@@ -2,8 +2,7 @@
 
 #include "wxutil/dialog/DialogBase.h"
 
-#include "wxutil/preview/ParticlePreview.h"
-#include "wxutil/dataview/ResourceTreeView.h"
+#include "ParticleSelector.h"
 
 #include "iparticles.h"
 #include <string>
@@ -23,35 +22,13 @@ class ParticlesChooser :
     public sigc::trackable
 {
 private:
-    wxutil::ResourceTreeView::Columns _columns;
-
-	// Tree view listing all the particles
-	wxutil::ResourceTreeView* _treeView;
-
-	// Last selected particle
-	std::string _selectedParticle;
-
-	// The preview widget
-    wxutil::ParticlePreviewPtr _preview;
+    ParticleSelector* _selector;
 
 private:
-	// callbacks
-	void _onSelChanged(wxDataViewEvent& ev);
-
 	// Constructor creates elements
 	ParticlesChooser();
 
-	// WIDGET CONSTRUCTION 
-	wxutil::ResourceTreeView* createTreeView(wxWindow* parent);
-
-	// Populate the list of particles
-	void populateParticleList();
-
-	void setSelectedParticle(const std::string& particleName);
     void _onItemActivated( wxDataViewEvent& ev );
-
-private:
-	void reloadParticles();
 
 public:
 
