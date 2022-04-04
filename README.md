@@ -20,7 +20,7 @@ For The Dark Mod mappers, there are a couple of [Video Tutorials](https://wiki.t
 
 DarkRadiant is built on Windows using *Microsoft Visual Studio*, the free Community Edition can be obtained here:
 
-*VC++ 2019:* https://visualstudio.microsoft.com/downloads/ (Choose Visual Studio Community)
+*VC++ 2022:* https://visualstudio.microsoft.com/downloads/ (Choose Visual Studio Community)
 
 When installing Studio please make sure to enable the "Desktop Development with C++" workload.
 

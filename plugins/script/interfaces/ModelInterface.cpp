@@ -17,7 +17,7 @@ int ScriptModelSurface::getNumTriangles() const
 	return _surface.getNumTriangles();
 }
 
-const ArbitraryMeshVertex& ScriptModelSurface::getVertex(int vertexIndex) const
+const MeshVertex& ScriptModelSurface::getVertex(int vertexIndex) const
 {
 	return _surface.getVertex(vertexIndex);
 }
@@ -143,14 +143,17 @@ ScriptModelNode ScriptModelNode::getModel(const ScriptSceneNode& node) {
 
 void ModelInterface::registerInterface(py::module& scope, py::dict& globals)
 {
-	py::class_<ArbitraryMeshVertex> vertex(scope, "ArbitraryMeshVertex");
+	py::class_<MeshVertex> vertex(scope, "MeshVertex");
 
-	vertex.def_readwrite("texcoord", &ArbitraryMeshVertex::texcoord);
-	vertex.def_readwrite("normal", &ArbitraryMeshVertex::normal);
-	vertex.def_readwrite("vertex", &ArbitraryMeshVertex::vertex);
-	vertex.def_readwrite("tangent", &ArbitraryMeshVertex::tangent);
-	vertex.def_readwrite("bitangent", &ArbitraryMeshVertex::bitangent);
-	vertex.def_readwrite("colour", &ArbitraryMeshVertex::colour);
+	vertex.def_readwrite("texcoord", &MeshVertex::texcoord);
+	vertex.def_readwrite("normal", &MeshVertex::normal);
+	vertex.def_readwrite("vertex", &MeshVertex::vertex);
+	vertex.def_readwrite("tangent", &MeshVertex::tangent);
+	vertex.def_readwrite("bitangent", &MeshVertex::bitangent);
+	vertex.def_readwrite("colour", &MeshVertex::colour);
+
+    // Register the old name as alias to MeshVertex
+    scope.add_object("ArbitraryMeshVertex", vertex);
 
 	py::class_<model::ModelPolygon> poly(scope, "ModelPolygon");
 

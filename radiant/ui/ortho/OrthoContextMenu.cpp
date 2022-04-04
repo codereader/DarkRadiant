@@ -2,12 +2,10 @@
 
 #include "i18n.h"
 #include "selectionlib.h"
-#include "ibrush.h"
 #include "isound.h"
 #include "ui/iresourcechooser.h"
 #include "ui/idialogmanager.h"
 #include "entitylib.h" // EntityFindByClassnameWalker
-#include "selectionlib.h"
 #include "ientity.h" // Node_getEntity()
 #include "iregistry.h"
 #include "ui/imainframe.h"
@@ -19,6 +17,7 @@
 
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/prefabselector/PrefabSelector.h"
+#include "ui/particles/ParticleChooserDialog.h"
 
 #include "string/convert.h"
 #include "scene/GroupNodeChecker.h"
@@ -50,6 +49,8 @@ namespace {
     const char* PLACE_PLAYERSTART_ICON = "player_start16.png";
     const char* ADD_MODEL_TEXT = N_("Create Model...");
     const char* ADD_MODEL_ICON = "cmenu_add_model.png";
+    const char* ADD_PARTICLE_TEXT = N_("Create Particle...");
+    const char* ADD_PARTICLE_ICON = "particle16.png";
     const char* ADD_MONSTERCLIP_TEXT = N_("Surround with Monsterclip");
     const char* ADD_MONSTERCLIP_ICON = "monsterclip16.png";
     const char* ADD_LIGHT_TEXT = N_("Create Light...");
@@ -190,7 +191,7 @@ bool OrthoContextMenu::checkAddEntity()
     return !_selectionInfo.anythingSelected || _selectionInfo.onlyPrimitivesSelected;
 }
 
-bool OrthoContextMenu::checkAddModel()
+bool OrthoContextMenu::checkAddModelOrParticle()
 {
     return !_selectionInfo.anythingSelected;
 }
@@ -331,50 +332,60 @@ void OrthoContextMenu::callbackAddModel()
 {
     UndoableCommand command("addModel");
 
-    const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
+    // Display the model selector and block waiting for a selection (may be empty)
+    ModelSelectorResult ms = ModelSelector::chooseModel("", true, true);
 
-    // To create a model selection must be empty
-    if (info.totalCount == 0)
+    // If a model was selected, create the entity and set its model key
+    if (ms.model.empty())
     {
-        // Display the model selector and block waiting for a selection (may be empty)
-        ModelSelectorResult ms = ui::ModelSelector::chooseModel("", true, true);
+        return;
+    }
 
-        // If a model was selected, create the entity and set its model key
-        if (ms.model.empty())
+    try
+    {
+        auto modelDef = GlobalEntityClassManager().findModel(ms.model);
+
+        auto className = modelDef ? MODEL_CLASSNAME_ANIMATED : MODEL_CLASSNAME_STATIC;
+
+        auto modelNode = GlobalEntityModule().createEntityFromSelection(
+            className, _lastPoint
+        );
+
+        //Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
+        modelNode->getEntity().setKeyValue("model", ms.model);
+        modelNode->getEntity().setKeyValue("skin", ms.skin);
+
+        // If 'createClip' is ticked, create a clip brush
+        if (ms.createClip)
         {
-            return;
-        }
-
-        try
-        {
-            auto modelDef = GlobalEntityClassManager().findModel(ms.model);
-
-            auto className = modelDef ? MODEL_CLASSNAME_ANIMATED : MODEL_CLASSNAME_STATIC;
-
-            auto modelNode = GlobalEntityModule().createEntityFromSelection(
-                className, _lastPoint
-            );
-
-            //Node_getTraversable(GlobalSceneGraph().root())->insert(modelNode);
-            modelNode->getEntity().setKeyValue("model", ms.model);
-            modelNode->getEntity().setKeyValue("skin", ms.skin);
-
-            // If 'createClip' is ticked, create a clip brush
-            if (ms.createClip)
-            {
-                GlobalCommandSystem().execute("SurroundWithMonsterclip");
-            }
-        }
-        catch (cmd::ExecutionFailure& e)
-        {
-            wxutil::Messagebox::ShowError(fmt::format(_("Unable to create model: {0}"), e.what()));
+            GlobalCommandSystem().execute("SurroundWithMonsterclip");
         }
     }
-    else
+    catch (cmd::ExecutionFailure& e)
     {
-        wxutil::Messagebox::ShowError(
-            _("Nothing must be selected for model creation")
-        );
+        wxutil::Messagebox::ShowError(fmt::format(_("Unable to create model: {0}"), e.what()));
+    }
+}
+
+void OrthoContextMenu::callbackAddParticle()
+{
+    UndoableCommand command("Create Particle");
+
+    // Display the particle selector and block waiting for a selection (may be empty)
+    auto result = ParticleChooserDialog::ChooseParticleAndEmitter();
+
+    if (result.selectedParticle.empty()) return;
+
+    try
+    {
+        auto node = GlobalEntityModule().createEntityFromSelection(result.selectedClassname, _lastPoint);
+
+        auto modelSpawnarg = result.selectedClassname == "func_smoke" ? "smoke" : "model";
+        node->getEntity().setKeyValue(modelSpawnarg, result.selectedParticle);
+    }
+    catch (cmd::ExecutionFailure& e)
+    {
+        wxutil::Messagebox::ShowError(fmt::format(_("Unable to create particle entity: {0}"), e.what()));
     }
 }
 
@@ -410,7 +421,14 @@ void OrthoContextMenu::registerDefaultItems()
         new wxutil::MenuItem(
 			new wxutil::IconTextMenuItem(_(ADD_MODEL_TEXT), ADD_MODEL_ICON),
             std::bind(&OrthoContextMenu::callbackAddModel, this),
-            std::bind(&OrthoContextMenu::checkAddModel, this))
+            std::bind(&OrthoContextMenu::checkAddModelOrParticle, this))
+    );
+
+    wxutil::MenuItemPtr addParticle(
+        new wxutil::MenuItem(
+            new wxutil::IconTextMenuItem(_(ADD_PARTICLE_TEXT), ADD_PARTICLE_ICON),
+            std::bind(&OrthoContextMenu::callbackAddParticle, this),
+            std::bind(&OrthoContextMenu::checkAddModelOrParticle, this))
     );
 
     wxutil::CommandMenuItemPtr surroundWithMonsterClip(
@@ -474,6 +492,7 @@ void OrthoContextMenu::registerDefaultItems()
     // Register all constructed items
     addItem(_createEntityItem, SECTION_CREATE);
     addItem(addModel, SECTION_CREATE);
+    addItem(addParticle, SECTION_CREATE);
     addItem(addLight, SECTION_CREATE);
     addItem(addSpeaker, SECTION_CREATE);
     addItem(addPrefab, SECTION_CREATE);
@@ -578,6 +597,7 @@ void OrthoContextMenu::initialiseModule(const IApplicationContext& ctx)
 
 void OrthoContextMenu::shutdownModule()
 {
+    _createEntityItem.reset();
 	_sections.clear();
     _widget.reset();
 }

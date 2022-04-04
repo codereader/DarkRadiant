@@ -19,6 +19,9 @@ public:
     // Returns true if this object is not empty and should be rendered
     virtual bool isVisible() = 0;
 
+    // Returns true if this object has a non-identity transformation matrix
+    virtual bool isOriented() = 0;
+
     // The model view matrix used to render this object
     virtual const Matrix4& getObjectTransform() = 0;
 
@@ -31,6 +34,9 @@ public:
 
     // Returns the key to access the vertex data in the renderer's geometry store
     virtual IGeometryStore::Slot getStorageLocation() = 0;
+
+    // Returns true if this surface produces shadows when lit
+    virtual bool isShadowCasting() = 0;
 };
 
 }

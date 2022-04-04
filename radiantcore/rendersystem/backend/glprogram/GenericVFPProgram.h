@@ -1,6 +1,5 @@
 #pragma once
 
-#include "GLProgramAttributes.h"
 #include "iglprogram.h"
 #include "igl.h"
 
@@ -27,11 +26,6 @@ public:
     void destroy() override;
     void enable() override;
     void disable() override;
-
-    // Set render pass parameters
-    void applyRenderParams(const Vector3& viewer,
-                            const Matrix4& localToWorld,
-                            const Params& lightParams) override;
 };
 
 } // namespace render

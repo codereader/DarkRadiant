@@ -15,12 +15,15 @@ void TargetKey::onTargetManagerChanged()
 
     if (manager == nullptr)
     {
+        _positionChangedSignal.disconnect();
         _target.reset();
         return;
     }
 
     _target = std::static_pointer_cast<Target>(manager->getTarget(_curValue));
     assert(_target);
+
+    _target->signal_TargetChanged().connect(sigc::mem_fun(this, &TargetKey::onTargetPositionChanged));
 }
 
 const TargetPtr& TargetKey::getTarget() const
@@ -50,9 +53,18 @@ void TargetKey::onKeyValueChanged(const std::string& newValue)
     {
         // If we have a target manager, acquire the Target right away
         // Acquire the Target object (will be created if nonexistent)
+        _positionChangedSignal.disconnect();
+
         _target = std::static_pointer_cast<Target>(targetManager->getTarget(_curValue));
         assert(_target);
+
+        _target->signal_TargetChanged().connect(sigc::mem_fun(this, &TargetKey::onTargetPositionChanged));
     }
+}
+
+void TargetKey::onTargetPositionChanged()
+{
+    _owner.onTargetPositionChanged();
 }
 
 } // namespace entity

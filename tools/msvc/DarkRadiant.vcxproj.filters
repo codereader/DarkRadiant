@@ -316,9 +316,6 @@
     <ClCompile Include="..\..\radiant\ui\overlay\OverlayDialog.cpp">
       <Filter>src\ui\overlay</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\particles\ParticlesChooser.cpp">
-      <Filter>src\ui\particles</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\patch\BulgePatchDialog.cpp">
       <Filter>src\ui\patch</Filter>
     </ClCompile>
@@ -712,6 +709,12 @@
     <ClCompile Include="..\..\radiant\ui\statusbar\CommandStatus.cpp">
       <Filter>src\ui\statusbar</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\particles\ParticleSelector.cpp">
+      <Filter>src\ui\particles</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\particles\ParticleChooserDialog.cpp">
+      <Filter>src\ui\particles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -848,9 +851,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\overlay\OverlayRegistryKeys.h">
       <Filter>src\ui\overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\particles\ParticlesChooser.h">
-      <Filter>src\ui\particles</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\patch\BulgePatchDialog.h">
       <Filter>src\ui\patch</Filter>
@@ -1382,6 +1382,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\statusbar\CommandStatus.h">
       <Filter>src\ui\statusbar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\particles\ParticleSelector.h">
+      <Filter>src\ui\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\particles\ThreadedParticlesLoader.h">
+      <Filter>src\ui\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\particles\ParticleChooserDialog.h">
+      <Filter>src\ui\particles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

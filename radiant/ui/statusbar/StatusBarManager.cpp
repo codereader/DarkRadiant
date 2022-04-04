@@ -109,7 +109,7 @@ void StatusBarManager::addTextElement(const std::string& name, const std::string
 
     if (pos == StandardPosition::Commands)
     {
-        textPanel->SetMinSize(wxSize(150, -1));
+        textPanel->SetMinSize(wxSize(250, -1));
     }
 
 	if (!description.empty())

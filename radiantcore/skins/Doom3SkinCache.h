@@ -9,7 +9,7 @@
 #include <map>
 #include <string>
 #include <vector>
-#include "ThreadedDefLoader.h"
+#include "SkinDeclParser.h"
 
 namespace skins
 {
@@ -21,19 +21,17 @@ class Doom3SkinCache :
 	public ModelSkinCache
 {
 	// Table of named skin objects
-	typedef std::map<std::string, ModelSkinPtr> NamedSkinMap;
-	NamedSkinMap _namedSkins;
+    std::map<std::string, ModelSkinPtr> _namedSkins;
 
 	// List of all skins
-	StringList _allSkins;
+	std::vector<std::string> _allSkins;
 
 	// Map between model paths and a vector of names of the associated skins,
 	// which are contained in the main NamedSkinMap.
-	typedef std::map<std::string, std::vector<std::string> > ModelSkinMap;
-	ModelSkinMap _modelSkins;
+    std::map<std::string, std::vector<std::string>> _modelSkins;
 
-    // Helper which will invoke loadSkinFiles() in a separate thread
-    util::ThreadedDefLoader<void> _defLoader;
+    // Helper which will load the skin defs in a separate thread
+    SkinDeclParser _defLoader;
 
 	// Empty Doom3ModelSkin to return if a named skin is not found
 	Doom3ModelSkin _nullSkin;
@@ -41,8 +39,6 @@ class Doom3SkinCache :
 	sigc::signal<void> _sigSkinsReloaded;
 
 public:
-	/* Constructor.
-	 */
     Doom3SkinCache();
 
 	/* Return a specific named skin. If the named skin cannot be found, return

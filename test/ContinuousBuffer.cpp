@@ -1,9 +1,17 @@
 #include "gtest/gtest.h"
 
 #include "render/ContinuousBuffer.h"
+#include "testutil/TestBufferObjectProvider.h"
 
 namespace test
 {
+
+namespace
+{
+
+TestBufferObjectProvider _testBufferObjectProvider;
+
+}
 
 template<typename T>
 bool checkData(render::ContinuousBuffer<T>& buffer, typename render::ContinuousBuffer<T>::Handle handle, const std::vector<T>& data)
@@ -40,6 +48,27 @@ bool checkContinuousData(render::ContinuousBuffer<T>& buffer, typename render::C
     return result;
 }
 
+template<typename T>
+bool checkDataInBufferObject(render::ContinuousBuffer<T>& buffer, typename render::ContinuousBuffer<T>::Handle handle, 
+    TestBufferObject& bufferObject, const std::vector<T>& data)
+{
+    // Data start in ContinuousBuffer
+    auto current = buffer.getBufferStart() + buffer.getOffset(handle);
+
+    // Data start in the BufferObject
+    auto dataInBuffer = reinterpret_cast<const T*>(bufferObject.buffer.data()) + buffer.getOffset(handle);
+
+    bool result = true;
+
+    for (auto i = 0; i < data.size(); ++i)
+    {
+        EXPECT_EQ(dataInBuffer[i], current[i]) << "Buffer data mismatch at index " << i;
+        result &= dataInBuffer[i] == current[i];
+    }
+
+    return result;
+}
+
 TEST(ContinuousBufferTest, InitialSize)
 {
     // Construct a buffer of a certain initial size
@@ -62,7 +91,9 @@ TEST(ContinuousBufferTest, AllocateAndDeallocate)
     render::ContinuousBuffer<int> buffer(24);
     
     auto handle = buffer.allocate(sixteen.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 0) << "Allocated storage should be unused";
     buffer.setData(handle, sixteen);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), sixteen.size()) << "Used element count should be 16 now";
 
     EXPECT_EQ(buffer.getOffset(handle), 0) << "Data should be located at offset 0";
     EXPECT_TRUE(checkData(buffer, handle, sixteen));
@@ -71,7 +102,9 @@ TEST(ContinuousBufferTest, AllocateAndDeallocate)
 
     // Re-allocate
     handle = buffer.allocate(sixteen.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 0) << "Allocated storage should be unused";
     buffer.setData(handle, sixteen);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), sixteen.size()) << "Used element count should be 16 now";
 
     EXPECT_EQ(buffer.getOffset(handle), 0) << "Data should be located at offset 0";
     EXPECT_TRUE(checkData(buffer, handle, sixteen));
@@ -88,9 +121,150 @@ TEST(ContinuousBufferTest, ReplaceData)
     buffer.setData(handle, eight);
 
     EXPECT_TRUE(checkData(buffer, handle, eight));
+    EXPECT_EQ(buffer.getSize(handle), eight.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
 
     buffer.setData(handle, eightAlt);
     EXPECT_TRUE(checkData(buffer, handle, eightAlt));
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eightAlt.size());
+}
+
+TEST(ContinuousBufferTest, ReplaceDataPartially)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto ten = std::vector<int>({ 8,9,10,11,12,13,14,15,16,17 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto allocatedSize = eight.size() + 6; // 6 extra elements
+    auto handle = buffer.allocate(allocatedSize);
+    buffer.setData(handle, eight);
+
+    EXPECT_TRUE(checkData(buffer, handle, eight));
+    EXPECT_EQ(buffer.getSize(handle), allocatedSize);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
+
+    buffer.setData(handle, ten);
+    EXPECT_TRUE(checkData(buffer, handle, ten));
+    EXPECT_EQ(buffer.getSize(handle), allocatedSize);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), ten.size());
+}
+
+TEST(ContinuousBufferTest, ReplaceDataOverflow)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto handle = buffer.allocate(eight.size() - 3); // too little space
+
+    EXPECT_THROW(buffer.setData(handle, eight), std::logic_error);
+}
+
+TEST(ContinuousBufferTest, ReplaceSubData)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto five = std::vector<int>({ 8,9,10,11,12 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto handle = buffer.allocate(eight.size());
+    buffer.setData(handle, eight);
+
+    EXPECT_TRUE(checkData(buffer, handle, eight));
+
+    EXPECT_EQ(buffer.getSize(handle), eight.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
+
+    // Update the data portion at various offsets
+    buffer.setSubData(handle, 0, five);
+    EXPECT_TRUE(checkData(buffer, handle, { 8,9,10,11,12, 5,6,7 }));
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 8);
+
+    buffer.setSubData(handle, 1, five);
+    EXPECT_TRUE(checkData(buffer, handle, { 8, 8,9,10,11,12, 6,7 }));
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 8);
+
+    buffer.setSubData(handle, 2, five);
+    EXPECT_TRUE(checkData(buffer, handle, { 8,8, 8,9,10,11,12, 7 }));
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 8);
+
+    buffer.setSubData(handle, 3, five);
+    EXPECT_TRUE(checkData(buffer, handle, { 8,8,8, 8,9,10,11,12 }));
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 8);
+}
+
+// In a chunk of memory that is only partially used, calling setSubData
+// can increase that amount of used elements
+TEST(ContinuousBufferTest, ReplaceSubDataIncreasesUsedSize)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto five = std::vector<int>({ 8,9,10,11,12 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    // Allocate 6 more elements than needed
+    auto allocationSize = eight.size() + 6;
+    auto handle = buffer.allocate(allocationSize);
+    buffer.setData(handle, eight);
+
+    EXPECT_TRUE(checkData(buffer, handle, eight));
+
+    EXPECT_EQ(buffer.getSize(handle), allocationSize);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
+
+    // Update the data portion at an offset that increases the fill rate
+    buffer.setSubData(handle, 4, five);
+    EXPECT_TRUE(checkData(buffer, handle, { 0,1,2,3,8,9,10,11,12 }));
+    EXPECT_EQ(buffer.getSize(handle), allocationSize);
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 9) << "Should have increased use count to 9";
+}
+
+// Tests that subdata is still respecting the allocation bounds
+TEST(ContinuousBufferTest, ReplaceSubDataOverflow)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto five = std::vector<int>({ 8,9,10,11,12 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto handle = buffer.allocate(eight.size());
+    buffer.setData(handle, eight);
+
+    EXPECT_TRUE(checkData(buffer, handle, eight));
+
+    // Update the data portion at an invalid offset, exceeding the allocated slot size
+    EXPECT_THROW(buffer.setSubData(handle, 4, five), std::logic_error);
+}
+
+TEST(ContinuousBufferTest, ResizeData)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto handle = buffer.allocate(eight.size());
+    buffer.setData(handle, eight);
+
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
+
+    buffer.resizeData(handle, 5);
+    EXPECT_TRUE(checkData(buffer, handle, eight)) << "Data should not have changed";
+    EXPECT_EQ(buffer.getNumUsedElements(handle), 5) << "Used Element Count should be 5 now";
+}
+
+TEST(ContinuousBufferTest, ResizeDataOverflow)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+
+    render::ContinuousBuffer<int> buffer(24);
+
+    auto handle = buffer.allocate(eight.size());
+    buffer.setData(handle, eight);
+    
+    EXPECT_EQ(buffer.getNumUsedElements(handle), eight.size());
+
+    EXPECT_THROW(buffer.resizeData(handle, eight.size() + 1), std::logic_error);
 }
 
 TEST(ContinuousBufferTest, BufferGrowth)
@@ -153,7 +327,9 @@ TEST(ContinuousBufferTest, BlockReuse)
     buffer.deallocate(handle2);
     
     handle2 = buffer.allocate(eightFrom6.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle2), 0);
     buffer.setData(handle2, eightFrom6);
+    EXPECT_EQ(buffer.getNumUsedElements(handle2), eightFrom6.size());
 
     EXPECT_TRUE(checkContinuousData(buffer, handle1, { sixteen, eightFrom6, eight }));
 
@@ -173,8 +349,14 @@ TEST(ContinuousBufferTest, BlockReuseTightlyFit)
     auto handle1 = buffer.allocate(eight.size());
     auto handle2 = buffer.allocate(sixteen.size());
 
+    EXPECT_EQ(buffer.getNumUsedElements(handle1), 0);
+    EXPECT_EQ(buffer.getNumUsedElements(handle2), 0);
+
     buffer.setData(handle1, eight);
     buffer.setData(handle2, sixteen);
+
+    EXPECT_EQ(buffer.getNumUsedElements(handle1), eight.size());
+    EXPECT_EQ(buffer.getNumUsedElements(handle2), sixteen.size());
 
     EXPECT_TRUE(checkContinuousData(buffer, handle1, { eight, sixteen }));
 
@@ -266,6 +448,129 @@ TEST(ContinuousBufferTest, ExpandFullBuffer)
     buffer.setData(handle3, eight);
 
     EXPECT_TRUE(checkContinuousData(buffer, handle1, { eight, four, eight }));
+}
+
+TEST(ContinuousBufferTest, SyncToBufferObject)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto four = std::vector<int>({ 10,11,12,13 });
+
+    render::ContinuousBuffer<int> buffer(eight.size()); // Allocate a buffer that matches exactly
+    auto bufferObject = std::make_shared<TestBufferObject>();
+
+    // Allocate and fill in the eight bytes
+    auto handle1 = buffer.allocate(eight.size());
+    buffer.setData(handle1, eight);
+
+    // Sync, it should then contain the 8 numbers
+    auto modifiedData = eight;
+    buffer.syncModificationsToBufferObject(bufferObject);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, modifiedData)) << "Data sync unsuccessful";
+
+    // Upload the buffer partially
+    buffer.setSubData(handle1, 3, four);
+    std::copy(four.begin(), four.end(), modifiedData.begin() + 3);
+
+    // Sync the buffer, it should now reflect the partially modified array
+    buffer.syncModificationsToBufferObject(bufferObject);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, modifiedData)) << "Data sync unsuccessful";
+
+    // Resize the buffer and sync again
+    auto handle2 = buffer.allocate(eight.size());
+    buffer.setData(handle2, eight);
+
+    buffer.syncModificationsToBufferObject(bufferObject);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, modifiedData)) << "Data sync unsuccessful";
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
+}
+
+TEST(ContinuousBufferTest, SyncToBufferAfterSubDataUpdate)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto four = std::vector<int>({ 10,11,12,13 });
+
+    render::ContinuousBuffer<int> buffer(eight.size());
+
+    auto bufferObject = std::make_shared<TestBufferObject>();
+
+    // Allocate and fill in the eight bytes
+    auto handle1 = buffer.allocate(eight.size());
+    auto handle2 = buffer.allocate(eight.size());
+    buffer.setData(handle1, eight);
+    buffer.setData(handle2, eight);
+ 
+    buffer.syncModificationsToBufferObject(bufferObject);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
+
+    // Modify a portion of the second slot
+    buffer.setSubData(handle2, 3, four);
+
+    // Sync it should modify a subset of the buffer object only
+    buffer.syncModificationsToBufferObject(bufferObject);
+
+    // Check the offsets used to update the buffer object
+    EXPECT_EQ(bufferObject->lastUsedOffset, buffer.getOffset(handle2) * sizeof(int)) 
+        << "Sync offset should point at the start of the slot";
+    EXPECT_EQ(bufferObject->lastUsedByteCount, buffer.getSize(handle2)* sizeof(int)) << "The whole slot should be synced";
+
+    // First slot should still contain the 8 bytes
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
+
+    // Second slot should contain the 8 bytes, with 4 bytes overwritten at offset <modificationOffset>
+    std::vector<int> modifiedSecondSlot = eight;
+    std::copy(four.begin(), four.end(), modifiedSecondSlot.begin() + 3);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, modifiedSecondSlot)) << "Data sync unsuccessful";
+}
+
+// Checks that the partial update after applying a transaction log is working
+TEST(ContinuousBufferTest, SyncToBufferAfterApplyingTransaction)
+{
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+    auto four = std::vector<int>({ 10,11,12,13 });
+
+    render::ContinuousBuffer<int> buffer(eight.size());
+
+    auto bufferObject = std::make_shared<TestBufferObject>();
+
+    // Allocate and fill in the eight bytes
+    auto handle1 = buffer.allocate(eight.size());
+    auto handle2 = buffer.allocate(eight.size());
+    buffer.setData(handle1, eight);
+    buffer.setData(handle2, eight);
+
+    buffer.syncModificationsToBufferObject(bufferObject);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
+
+    // Copy this to a second buffer and change some data there
+    auto buffer2 = buffer;
+    auto modificationOffset = 3;
+    buffer2.setSubData(handle2, modificationOffset, four);
+
+    // Define the transaction
+    std::vector<render::detail::BufferTransaction> transactionLog;
+    transactionLog.emplace_back(render::detail::BufferTransaction{
+        handle2, render::detail::BufferTransaction::Type::Update
+    });
+
+    // Apply this transaction to the first buffer
+    buffer.applyTransactions(transactionLog, buffer2, [&](render::IGeometryStore::Slot slot) { return slot; });
+
+    // Sync it should modify a subset of the buffer object only
+    buffer.syncModificationsToBufferObject(bufferObject);
+
+    // Check the offsets used to update the buffer object
+    EXPECT_EQ(bufferObject->lastUsedOffset, buffer.getOffset(handle2) * sizeof(int)) << "Sync offset should at the start of the slot";
+    EXPECT_EQ(bufferObject->lastUsedByteCount, buffer.getSize(handle2) * sizeof(int)) << "Sync amount should be 8 unsigned ints";
+
+    // First slot should contain the 8 bytes
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
+
+    // Second slot should contain the 8 bytes, with 4 bytes overwritten at offset <modificationOffset>
+    std::vector<int> modifiedSecondSlot = eight;
+    std::copy(four.begin(), four.end(), modifiedSecondSlot.begin() + modificationOffset);
+    EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
 }
 
 }

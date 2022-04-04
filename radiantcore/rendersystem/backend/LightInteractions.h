@@ -4,14 +4,19 @@
 #include <vector>
 #include <set>
 #include "irender.h"
-#include "isurfacerenderer.h"
 #include "irenderableobject.h"
 #include "irenderview.h"
+#include "render/Rectangle.h"
 
 namespace render
 {
 
+class OpenGLState;
 class OpenGLShader;
+class DepthFillAlphaProgram;
+class InteractionProgram;
+class ShadowMapProgram;
+class DepthFillPass;
 
 /**
  * Defines interactions between a light and one or more entity renderables
@@ -36,21 +41,50 @@ private:
     // object mappings, grouped by entity
     std::map<IRenderEntity*, ObjectsByMaterial> _objectsByEntity;
 
-    std::size_t _drawCalls;
+    std::size_t _interactionDrawCalls;
+    std::size_t _depthDrawCalls;
     std::size_t _objectCount;
+    std::size_t _shadowMapDrawCalls;
+
+    int _shadowLightIndex;
+    bool _isShadowCasting;
 
 public:
-    LightInteractions(RendererLight& light, IGeometryStore& store) :
-        _light(light),
-        _store(store),
-        _lightBounds(light.lightAABB()),
-        _drawCalls(0),
-        _objectCount(0)
-    {}
+    LightInteractions(RendererLight& light, IGeometryStore& store);
 
-    std::size_t getDrawCalls() const
+    const Vector3& getBoundsCenter() const
     {
-        return _drawCalls;
+        return _lightBounds.getOrigin();
+    }
+
+    int getShadowLightIndex() const
+    {
+        return _shadowLightIndex;
+    }
+
+    void setShadowLightIndex(int index)
+    {
+        _shadowLightIndex = index;
+    }
+
+    const RendererLight& getLight() const
+    {
+        return _light;
+    }
+
+    std::size_t getInteractionDrawCalls() const
+    {
+        return _interactionDrawCalls;
+    }
+
+    std::size_t getDepthDrawCalls() const
+    {
+        return _depthDrawCalls;
+    }
+
+    std::size_t getShadowMapDrawCalls() const
+    {
+        return _shadowMapDrawCalls;
     }
 
     std::size_t getObjectCount() const
@@ -67,13 +101,19 @@ public:
 
     bool isInView(const IRenderView& view);
 
-    void collectSurfaces(const std::set<IRenderEntityPtr>& entities);
+    bool isShadowCasting() const;
 
-    void fillDepthBuffer(OpenGLState& current, RenderStateFlags globalFlagsMask, 
-        const IRenderView& view, std::size_t renderTime);
+    void collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities);
 
-    void render(OpenGLState& state, RenderStateFlags globalFlagsMask, 
-        const IRenderView& view, std::size_t renderTime);
+    void fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
+        std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest);
+
+    void drawShadowMap(OpenGLState& state, const Rectangle& rectangle, ShadowMapProgram& program, std::size_t renderTime);
+
+    void drawInteractions(OpenGLState& state, InteractionProgram& program, const IRenderView& view, std::size_t renderTime);
+
+    void setupAlphaTest(OpenGLState& state, OpenGLShader* shader, DepthFillPass* depthFillPass,
+        ISupportsAlphaTest& alphaTestProgram, std::size_t renderTime, IRenderEntity* entity);
 };
 
 }

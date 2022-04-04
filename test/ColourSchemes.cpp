@@ -6,6 +6,7 @@
 #include "os/path.h"
 #include "string/convert.h"
 #include "xmlutil/Document.h"
+#include "settings/SettingsManager.h"
 
 namespace test
 {
@@ -29,7 +30,8 @@ protected:
         schemeFilePath /= "settings/";
         schemeFilePath /= schemeFile;
 
-        fs::path targetFile = _context.getSettingsPath();
+        settings::SettingsManager manager(_context);
+        fs::path targetFile = manager.getCurrentVersionSettingsFolder();
         targetFile /= "colours.xml";
 
         fs::remove(targetFile);
@@ -71,7 +73,8 @@ public:
     void preStartup() override
     {
         // Kill any colours.xml file present in the settings folder before regular SetUp
-        fs::path coloursFile = _context.getSettingsPath();
+        settings::SettingsManager manager(_context);
+        fs::path coloursFile = manager.getCurrentVersionSettingsFolder();
         coloursFile /= "colours.xml";
 
         fs::remove(coloursFile);
@@ -182,7 +185,8 @@ TEST_F(ColourSchemeTestWithEmptySettings, ActiveSchemePersisted)
     GlobalRegistry().saveToDisk();
 
     // Check the XML files if the active flag was set
-    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    settings::SettingsManager manager(_context);
+    std::string savedColoursFile = manager.getCurrentVersionSettingsFolder() + "colours.xml";
     EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
 
     xml::Document doc(savedColoursFile);
@@ -216,7 +220,8 @@ TEST_F(ColourSchemeTestWithEmptySettings, SystemThemeColourChangePersisted)
     GlobalRegistry().saveToDisk();
 
     // Check the XML files if the colour was set
-    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    settings::SettingsManager manager(_context);
+    std::string savedColoursFile = manager.getCurrentVersionSettingsFolder() + "colours.xml";
     EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
 
     auto savedScheme = loadSchemeFromXml(SCHEME_DARKRADIANT_DEFAULT, savedColoursFile);
@@ -237,7 +242,8 @@ TEST_F(ColourSchemeTestWithEmptySettings, CopiedSchemePersisted)
     GlobalRegistry().saveToDisk();
 
     // Check the XML files if the colour was set
-    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    settings::SettingsManager manager(_context);
+    std::string savedColoursFile = manager.getCurrentVersionSettingsFolder() + "colours.xml";
     EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
 
     auto savedCopiedScheme = loadSchemeFromXml(newSchemeName, savedColoursFile);
@@ -276,7 +282,8 @@ TEST_F(ColourSchemeTestWithIncompleteScheme, SchemeUpgrade)
     GlobalColourSchemeManager().saveColourSchemes();
     GlobalRegistry().saveToDisk();
 
-    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    settings::SettingsManager manager(_context);
+    std::string savedColoursFile = manager.getCurrentVersionSettingsFolder() + "colours.xml";
     EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
 
     auto savedScheme = loadSchemeFromXml(SCHEME_SUPER_MAL, savedColoursFile);
@@ -331,7 +338,8 @@ TEST_F(ColourSchemeTestWithUserColours, SavedUserSchemesAreNotReadOnly)
     GlobalColourSchemeManager().saveColourSchemes();
     GlobalRegistry().saveToDisk();
 
-    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    settings::SettingsManager manager(_context);
+    std::string savedColoursFile = manager.getCurrentVersionSettingsFolder() + "colours.xml";
     EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
 
     std::set<std::string> readOnlySchemes = {
@@ -369,7 +377,8 @@ TEST_F(ColourSchemeTestWithUserColours, ColourChangePersisted)
     GlobalRegistry().saveToDisk();
 
     // Check the XML files if the colour was set
-    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    settings::SettingsManager manager(_context);
+    std::string savedColoursFile = manager.getCurrentVersionSettingsFolder() + "colours.xml";
     EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
 
     auto savedDefaultScheme = loadSchemeFromXml(SCHEME_DARKRADIANT_DEFAULT, savedColoursFile);
@@ -391,7 +400,8 @@ TEST_F(ColourSchemeTestWithUserColours, DeleteUserTheme)
     GlobalRegistry().saveToDisk();
 
     // Check the XML files if the scheme was actually removed
-    std::string savedColoursFile = _context.getSettingsPath() + "colours.xml";
+    settings::SettingsManager manager(_context);
+    std::string savedColoursFile = manager.getCurrentVersionSettingsFolder() + "colours.xml";
     EXPECT_TRUE(fs::exists(savedColoursFile)) << "Could not find saved colours file: " << savedColoursFile;
 
     xml::Document doc(savedColoursFile);

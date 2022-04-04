@@ -27,7 +27,7 @@ protected:
 		std::string materialName;
 
 		// The vertices of this surface
-		std::vector<ArbitraryMeshVertex> vertices;
+		std::vector<MeshVertex> vertices;
 
 		// The indices connecting the vertices to triangles
 		IndexBuffer indices;

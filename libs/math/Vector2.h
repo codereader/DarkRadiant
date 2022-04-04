@@ -346,6 +346,9 @@ public:
 /// A 2-element vector stored in double-precision floating-point.
 using Vector2 = BasicVector2<double>;
 
+// A 2-element vector stored in single-precision floating point format
+using Vector2f = BasicVector2<float>;
+
 /// 2-element vector of signed integer
 using Vector2i = BasicVector2<int>;
 
@@ -354,4 +357,16 @@ template<typename T>
 std::ostream& operator<<(std::ostream& st, BasicVector2<T> vec) {
 	st << "<" << vec.x() << ", " << vec.y() << ">";
 	return st;
+}
+
+namespace math
+{
+
+template<typename T>
+inline bool isNear(const BasicVector2<T>& v1, const BasicVector2<T>& v2, double epsilon)
+{
+    BasicVector2<T> diff = v1 - v2;
+    return std::abs(diff.x()) < epsilon && std::abs(diff.y()) < epsilon;
+}
+
 }

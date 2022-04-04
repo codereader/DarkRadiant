@@ -219,10 +219,10 @@ public:
 	 */
 	void registerCommands();
 
-	// Static command targets for connection to the EventManager
+	// Command targets for connection to the EventManager
 	static void exportSelection(const cmd::ArgumentList& args);
 	static void newMap(const cmd::ArgumentList& args);
-	static void openMap(const cmd::ArgumentList& args);
+	void openMapCmd(const cmd::ArgumentList& args);
 	static void openMapFromArchive(const cmd::ArgumentList& args);
 	static void importMap(const cmd::ArgumentList& args);
 	void saveMapCmd(const cmd::ArgumentList& args);
@@ -299,6 +299,7 @@ private:
      */
     void focusViews(const Vector3& point, const Vector3& angles);
     void focusViewCmd(const cmd::ArgumentList& args);
+    void focusCameraOnSelectionCmd(const cmd::ArgumentList& args);
 
     void undoCmd(const cmd::ArgumentList& args);
     void redoCmd(const cmd::ArgumentList& args);

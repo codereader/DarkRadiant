@@ -6,7 +6,7 @@
 #include <vector>
 #include <limits>
 #include <cstdint>
-#include "render/ArbitraryMeshVertex.h"
+#include "render/MeshVertex.h"
 #include "math/Matrix4.h"
 
 namespace render
@@ -27,7 +27,7 @@ public:
     virtual ~IRenderableSurface() {}
 
     // Returns the vertex array of this surface
-    virtual const std::vector<ArbitraryMeshVertex>& getVertices() = 0;
+    virtual const std::vector<MeshVertex>& getVertices() = 0;
 
     // Returns the indices to render the triangle primitives
     virtual const std::vector<unsigned int>& getIndices() = 0;

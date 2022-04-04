@@ -5,6 +5,7 @@
 
 #include "itextstream.h"
 #include "registry/registry.h"
+#include "settings/SettingsManager.h"
 
 #include "string/case_conv.h"
 #include "os/path.h"
@@ -40,7 +41,8 @@ LocalisationProvider::LocalisationProvider(IApplicationContext& ctx)
 	wxFileTranslationsLoader::AddCatalogLookupPathPrefix(_i18nPath);
 
 	// Load the persisted language setting
-	_languageSettingFile = ctx.getSettingsPath() + LANGUAGE_SETTING_FILE;
+    settings::SettingsManager manager(ctx);
+	_languageSettingFile = manager.getCurrentVersionSettingsFolder() + LANGUAGE_SETTING_FILE;
 	_curLanguage = loadLanguageSetting();
 
 	rMessage() << "Current language setting: " << _curLanguage << std::endl;
@@ -88,6 +90,8 @@ std::string LocalisationProvider::loadLanguageSetting()
 	{
 		str >> language;
 	}
+
+    str.close();
 
 	return language;
 }

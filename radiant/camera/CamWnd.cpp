@@ -128,6 +128,11 @@ CamWnd::CamWnd(wxWindow* parent) :
             sigc::mem_fun(this, &CamWnd::handleTextureChanged)));
 
     _renderer.reset(new render::CamRenderer(_view, _shaders));
+
+    // Refresh the camera view when shadows are enabled/disabled
+    GlobalRegistry().signalForKey(RKEY_ENABLE_SHADOW_MAPPING).connect(
+        sigc::mem_fun(this, &CamWnd::queueDraw)
+    );
 }
 
 wxWindow* CamWnd::getMainWidget() const
@@ -144,13 +149,18 @@ void CamWnd::constructToolbar()
     const wxToolBarToolBase* flatShadeBtn = getToolBarToolByLabel(_camToolbar, "flatShadeBtn");
     const wxToolBarToolBase* texturedBtn = getToolBarToolByLabel(_camToolbar, "texturedBtn");
     const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(_camToolbar, "lightingBtn");
+    const wxToolBarToolBase* shadowLightingBtn = getToolBarToolByLabel(_camToolbar, "shadowBtn");
     const wxToolBarToolBase* gridButton = getToolBarToolByLabel(_camToolbar, "drawGridButton");
 
     if (!GlobalRenderSystem().shaderProgramsAvailable())
     {
         //lightingBtn->set_sensitive(false);
         _camToolbar->EnableTool(lightingBtn->GetId(), false);
+        _camToolbar->EnableTool(shadowLightingBtn->GetId(), false);
     }
+
+    auto toggleShadowMappingEvent = GlobalEventManager().findEvent("ToggleShadowMapping");
+    GlobalEventManager().registerToolItem("ToggleShadowMapping", shadowLightingBtn);
 
     // Listen for render-mode changes, and set the correct active button to
     // start with.
@@ -217,8 +227,10 @@ void CamWnd::onGLExtensionsInitialised()
 {
     // If lighting is not available, grey out the lighting button
     const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(_camToolbar, "lightingBtn");
+    const wxToolBarToolBase* shadowBtn = getToolBarToolByLabel(_camToolbar, "shadowBtn");
 
     _camToolbar->EnableTool(lightingBtn->GetId(), GlobalRenderSystem().shaderProgramsAvailable());
+    _camToolbar->EnableTool(shadowBtn->GetId(), GlobalRenderSystem().shaderProgramsAvailable());
 }
 
 void CamWnd::setFarClipButtonSensitivity()

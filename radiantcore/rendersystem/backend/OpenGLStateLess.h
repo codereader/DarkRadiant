@@ -1,6 +1,9 @@
 #pragma once
 
-#include "iglrender.h"
+#include "OpenGLState.h"
+
+namespace render
+{
 
 /**
  * Comparison class for OpenGLState objects.
@@ -36,3 +39,5 @@ struct OpenGLStateLess
 	  return self < other;
     }
 };
+
+}

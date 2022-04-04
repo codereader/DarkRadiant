@@ -10,6 +10,7 @@ add_executable(drtest
                Entity.cpp
                Favourites.cpp
                FileTypes.cpp
+               GeometryStore.cpp
                Grid.cpp
                HeadlessOpenGLContext.cpp
                ImageLoading.cpp
@@ -28,6 +29,7 @@ add_executable(drtest
                ModelExport.cpp
                ModelScale.cpp
                Models.cpp
+               Particles.cpp
                PatchIterators.cpp
                PatchWelding.cpp
                PointTrace.cpp
@@ -36,6 +38,7 @@ add_executable(drtest
                SceneNode.cpp
                SelectionAlgorithm.cpp
                Selection.cpp
+               Settings.cpp
                TextureManipulation.cpp
                TextureTool.cpp
                Transformation.cpp

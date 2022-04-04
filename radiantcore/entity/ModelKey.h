@@ -33,7 +33,11 @@ private:
 public:
 	ModelKey(scene::INode& parentNode);
 
-	void setActive(bool active);
+    // Remove any model node from the parent entity
+    // used during Entity destruction to remove any child nodes
+    // before the parent entity node is going out of business.
+    // Disables any further behaviour of this instance, it will no longer be functional
+    void destroy();
 
 	// Refreshes the attached model
 	void refreshModel();
@@ -54,6 +58,8 @@ public:
 private:
 	// Loads the model node and attaches it to the parent node
 	void attachModelNode();
+
+    void detachModelNode();
 
     // Attaches a model node, making sure that the skin setting is kept
     void attachModelNodeKeepinSkin();

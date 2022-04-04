@@ -21,6 +21,12 @@ void pasteToMap();
 void copy(const cmd::ArgumentList& args);
 
 /**
+* Cuts the current map selection to the clipboard (in map format).
+* Only valid for non-component selections.
+*/
+void cut(const cmd::ArgumentList& args);
+
+/**
  * Either pastes the clipboard contents to the current map 
  * or (when faces are selected component-wise) applies the previously
  * copied shader to the selected faces.

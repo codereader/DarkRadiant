@@ -496,11 +496,6 @@ bool RenderPreview::drawPreview()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadMatrixd(_view.GetModelview());
 
-	if (_renderGrid && canDrawGrid())
-	{
-		drawGrid();
-	}
-
 	// Front-end render phase, collect OpenGLRenderable objects from the scene
     render::CamRenderer renderer(_view, _shaders);
     render::SceneRenderWalker sceneWalker(renderer, _view);
@@ -516,6 +511,12 @@ bool RenderPreview::drawPreview()
     else
     {
         _renderSystem->renderFullBrightScene(RenderViewType::Camera, flags, _view);
+    }
+
+    // Grid will be drawn afterwards, with enabled depth test
+    if (_renderGrid && canDrawGrid())
+    {
+        drawGrid();
     }
 
     // Give subclasses an opportunity to render their own on-screen stuff
@@ -802,7 +803,9 @@ void RenderPreview::drawGrid()
 
 	glDisable(GL_TEXTURE_2D);
 	glDisable(GL_TEXTURE_1D);
-	glDisable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
+    glDepthMask(GL_TRUE);
+    glDepthFunc(GL_LEQUAL);
 	glDisable(GL_BLEND);
 
 	glLineWidth(1);

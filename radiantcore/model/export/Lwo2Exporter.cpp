@@ -172,7 +172,7 @@ void Lwo2Exporter::exportToStream(std::ostream& stream)
 
 		for (std::size_t v = 0; v < surface.vertices.size(); ++v)
 		{
-			const ArbitraryMeshVertex& vertex = surface.vertices[v];
+			const MeshVertex& vertex = surface.vertices[v];
 			std::size_t vertNum = vertexIdxStart + v;
 
 			// "The LightWave coordinate system is left-handed, with +X to the right or east, +Y upward, and +Z forward or north."

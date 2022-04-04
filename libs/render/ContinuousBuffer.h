@@ -54,17 +54,20 @@ private:
         bool Occupied;      // whether this slot is free
         std::size_t Offset; // The index to the first element within the buffer
         std::size_t Size;   // Number of allocated elements
+        std::size_t Used;   // Number of used elements
 
         SlotInfo() :
             Occupied(false),
             Offset(0),
-            Size(0)
+            Size(0),
+            Used(0)
         {}
 
         SlotInfo(std::size_t offset, std::size_t size, bool occupied) :
             Occupied(occupied),
             Offset(offset),
-            Size(size)
+            Size(size),
+            Used(0)
         {}
     };
 
@@ -73,8 +76,18 @@ private:
     // A stack of slots that can be re-used instead
     std::stack<Handle> _emptySlots;
 
+    // Last data size that was synced to the buffer object
+    std::size_t _lastSyncedBufferSize;
+
+    // The slots that have been modified in between syncs
+    std::vector<Handle> _unsyncedSlots;
+
+    std::size_t _allocatedElements;
+
 public:
-    ContinuousBuffer(std::size_t initialSize = DefaultInitialSize)
+    ContinuousBuffer(std::size_t initialSize = DefaultInitialSize) :
+        _lastSyncedBufferSize(0),
+        _allocatedElements(0)
     {
         // Pre-allocate some memory, but don't go all the way down to zero
         _buffer.resize(initialSize == 0 ? 16 : initialSize);
@@ -98,13 +111,19 @@ public:
         memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
 
         _emptySlots = other._emptySlots;
+        _unsyncedSlots = other._unsyncedSlots;
+        _allocatedElements = other._allocatedElements;
 
         return *this;
     }
 
     Handle allocate(std::size_t requiredSize)
     {
-        return getNextFreeSlotForSize(requiredSize);
+        auto handle = getNextFreeSlotForSize(requiredSize);
+
+        _allocatedElements += requiredSize;
+
+        return handle;
     }
 
     ElementType* getBufferStart()
@@ -117,27 +136,74 @@ public:
         return _slots[handle].Size;
     }
 
+    std::size_t getNumUsedElements(Handle handle) const
+    {
+        return _slots[handle].Used;
+    }
+
     std::size_t getOffset(Handle handle) const
     {
         return _slots[handle].Offset;
     }
 
+    std::size_t getNumAllocatedElements() const
+    {
+        return _allocatedElements;
+    }
+
     void setData(Handle handle, const std::vector<ElementType>& elements)
     {
-        const auto& slot = _slots[handle];
+        auto& slot = _slots[handle];
 
-        if (elements.size() != slot.Size)
+        auto numElements = elements.size();
+        if (numElements > slot.Size)
         {
-            throw std::logic_error("Allocation size mismatch in GeometryStore::Buffer::setData");
+            throw std::logic_error("Cannot store more data than allocated in GeometryStore::Buffer::setData");
         }
 
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset);
+        slot.Used = numElements;
+
+        _unsyncedSlots.push_back(handle);
+    }
+
+    void setSubData(Handle handle, std::size_t elementOffset, const std::vector<ElementType>& elements)
+    {
+        auto& slot = _slots[handle];
+
+        auto numElements = elements.size();
+        if (elementOffset + numElements > slot.Size)
+        {
+            throw std::logic_error("Cannot store more data than allocated in GeometryStore::Buffer::setSubData");
+        }
+
+        std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset + elementOffset);
+        slot.Used = std::max(slot.Used, elementOffset + numElements);
+
+        _unsyncedSlots.push_back(handle);
+    }
+
+    void resizeData(Handle handle, std::size_t elementCount)
+    {
+        auto& slot = _slots[handle];
+
+        if (elementCount > slot.Size)
+        {
+            throw std::logic_error("Cannot resize to a large amount than allocated in GeometryStore::Buffer::resizeData");
+        }
+
+        slot.Used = elementCount;
+
+        _unsyncedSlots.push_back(handle);
     }
 
     void deallocate(Handle handle)
     {
         auto& releasedSlot = _slots[handle];
         releasedSlot.Occupied = false;
+        releasedSlot.Used = 0;
+
+        _allocatedElements -= releasedSlot.Size;
 
         // Check if the slot can merge with an adjacent one
         Handle slotIndexToMerge = std::numeric_limits<Handle>::max();
@@ -150,6 +216,7 @@ public:
 
             // The merged handle goes to recycling, block it against future use
             slotToMerge.Size = 0;
+            slotToMerge.Used = 0;
             slotToMerge.Occupied = true;
             _emptySlots.push(slotIndexToMerge);
         }
@@ -163,6 +230,7 @@ public:
 
             // The merged handle goes to recycling, block it against future use
             slotToMerge.Size = 0;
+            slotToMerge.Used = 0;
             slotToMerge.Occupied = true;
             _emptySlots.push(slotIndexToMerge);
         }
@@ -171,25 +239,78 @@ public:
     void applyTransactions(const std::vector<detail::BufferTransaction>& transactions, const ContinuousBuffer<ElementType>& other,
         const std::function<std::uint32_t(IGeometryStore::Slot)>& getHandle)
     {
-        // Ensure the buffer is the same size
-        _buffer.resize(other._buffer.size());
+        // Ensure the buffer is at least the same size
+        auto otherSize = other._buffer.size();
+
+        if (otherSize > _buffer.size())
+        {
+            _buffer.resize(otherSize);
+        }
 
         for (const auto& transaction : transactions)
         {
-            if (transaction.type == detail::BufferTransaction::Type::Allocate ||
-                transaction.type == detail::BufferTransaction::Type::Update)
+            // Only the updated slots will actually have altered any data
+            if (transaction.type == detail::BufferTransaction::Type::Update)
             {
                 auto handle = getHandle(transaction.slot);
                 auto& otherSlot = other._slots[handle];
-                
+
                 memcpy(_buffer.data() + otherSlot.Offset, other._buffer.data() + otherSlot.Offset, otherSlot.Size * sizeof(ElementType));
+
+                // Remember this slot to be synced to the GPU
+                _unsyncedSlots.push_back(handle);
             }
         }
 
+        // Replicate the slot allocation data
         _slots.resize(other._slots.size());
         memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
 
+        _allocatedElements = other._allocatedElements;
         _emptySlots = other._emptySlots;
+    }
+
+    // Copies the updated memory to the given buffer object
+    void syncModificationsToBufferObject(const IBufferObject::Ptr& buffer)
+    {
+        auto currentBufferSize = _buffer.size() * sizeof(ElementType);
+
+        // On size change we upload everything
+        if (_lastSyncedBufferSize != currentBufferSize)
+        {
+            // Resize the memory in the buffer object
+            buffer->resize(currentBufferSize);
+            _lastSyncedBufferSize = currentBufferSize;
+
+            // Re-upload everything
+            buffer->setData(0, reinterpret_cast<unsigned char*>(_buffer.data()),
+                _buffer.size() * sizeof(ElementType));
+        }
+        else
+        {
+            std::size_t minimumOffset = std::numeric_limits<std::size_t>::max();
+            std::size_t maximumOffset = 0;
+
+            // Size is the same, apply the updates to the GPU buffer
+            // Determine the modified memory range
+            for (auto handle : _unsyncedSlots)
+            {
+                auto& slot = _slots[handle];
+
+                minimumOffset = std::min(slot.Offset, minimumOffset);
+                maximumOffset = std::max(slot.Offset + slot.Used, maximumOffset);
+            }
+
+            // Copy the data in one single operation
+            if (!_unsyncedSlots.empty())
+            {
+                buffer->setData(minimumOffset * sizeof(ElementType),
+                    reinterpret_cast<unsigned char*>(_buffer.data() + minimumOffset),
+                    (maximumOffset - minimumOffset) * sizeof(ElementType));
+            }
+        }
+
+        _unsyncedSlots.clear();
     }
 
 private:
@@ -312,6 +433,7 @@ private:
         slot.Occupied = occupied;
         slot.Offset = offset;
         slot.Size = size;
+        slot.Used = 0;
 
         return slot;
     }

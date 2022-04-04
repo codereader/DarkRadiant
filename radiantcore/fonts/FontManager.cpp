@@ -8,26 +8,12 @@
 #include "os/path.h"
 #include "module/StaticModule.h"
 
-#include "xmlutil/MissingXMLNodeException.h"
-
 #include "FontLoader.h"
 
 namespace fonts
 {
 
-namespace
-{
-	const char* MISSING_BASEPATH_NODE =
-		"Failed to find \"/game/filesystem/fonts/basepath\" node \
-in game descriptor";
-
-	const char* MISSING_EXTENSION_NODE =
-		"Failed to find \"/game/filesystem/fonts/extension\" node \
-in game descriptor";
-}
-
 FontManager::FontManager() :
-    _loader(std::bind(&FontManager::loadFonts, this)),
 	_curLanguage("english")
 {}
 
@@ -39,15 +25,13 @@ const std::string& FontManager::getName() const
 
 const StringSet& FontManager::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_GAMEMANAGER);
-		_dependencies.insert(MODULE_SHADERSYSTEM);
-	}
+    static StringSet _dependencies
+    {
+        MODULE_VIRTUALFILESYSTEM,
+        MODULE_XMLREGISTRY,
+        MODULE_GAMEMANAGER,
+        MODULE_SHADERSYSTEM,
+    };
 
 	return _dependencies;
 }
@@ -56,13 +40,15 @@ void FontManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
+    _loader = std::make_unique<FontLoader>(*this);
+
 	// Find installed fonts in a new thread
-    _loader.start();
+    _loader->start();
 }
 
 void FontManager::shutdownModule()
 {
-    _loader.reset();
+    _loader->reset();
     _fonts.clear();
 }
 
@@ -73,45 +59,20 @@ const std::string& FontManager::getCurLanguage()
 
 void FontManager::ensureFontsLoaded()
 {
-    _loader.ensureFinished();
+    _loader->ensureFinished();
 }
 
-void FontManager::loadFonts()
+std::size_t FontManager::getNumFonts()
 {
-    _fonts.clear();
-
-	xml::NodeList nlBasePath = GlobalGameManager().currentGame()->getLocalXPath("/filesystem/fonts/basepath");
-
-	if (nlBasePath.empty())
-	{
-		throw xml::MissingXMLNodeException(MISSING_BASEPATH_NODE);
-	}
-
-	xml::NodeList nlExt = GlobalGameManager().currentGame()->getLocalXPath("/filesystem/fonts/extension");
-
-	if (nlExt.empty())
-	{
-		throw xml::MissingXMLNodeException(MISSING_EXTENSION_NODE);
-	}
-
-	// TODO: Get the language from the registry
-	_curLanguage = "english";
-
-	// Load the DAT files from the VFS
-	std::string path = os::standardPathWithSlash(nlBasePath[0].getContent()) + _curLanguage + "/";
-	std::string extension = nlExt[0].getContent();
-
-	// Instantiate a visitor to traverse the VFS
-	FontLoader loader(path, *this);
-	GlobalFileSystem().forEachFile(path, extension, loader, 2);
-
-	rMessage() << _fonts.size() << " fonts registered." << std::endl;
+    return _fonts.size();
 }
 
 void FontManager::reloadFonts()
 {
-    _loader.reset();
-    _loader.start();
+    _fonts.clear();
+
+    _loader->reset();
+    _loader->start();
 }
 
 IFontInfoPtr FontManager::findFontInfo(const std::string& name)

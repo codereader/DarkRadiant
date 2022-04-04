@@ -41,7 +41,7 @@ public:
     {
         std::string material;
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<MeshVertex> vertices;
         std::vector<unsigned int> indices;
     };
 

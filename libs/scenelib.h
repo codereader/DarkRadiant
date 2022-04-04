@@ -332,13 +332,12 @@ inline void assignVisibilityFlagsFromNode(INode& target, const INode& source)
     }
 }
 
-inline std::pair<Vector3, Vector3> getOriginAndAnglesToLookAtNode(const scene::INode& node)
+inline std::pair<Vector3, Vector3> getOriginAndAnglesToLookAtBounds(const AABB& aabb)
 {
-    const AABB& aabb = node.worldAABB();
     Vector3 origin(aabb.origin);
 
     // Move the camera a bit off the AABB origin
-    origin += Vector3(aabb.extents.getLength() * 5, 0, aabb.extents.getLength() * 5);
+    origin += Vector3(aabb.extents.getLength() * 3, 0, aabb.extents.getLength() * 3);
 
     // Rotate the camera a bit towards the "ground"
     Vector3 angles(0, 0, 0);
@@ -346,6 +345,11 @@ inline std::pair<Vector3, Vector3> getOriginAndAnglesToLookAtNode(const scene::I
     angles[camera::CAMERA_YAW] = 180;
 
     return std::make_pair(origin, angles);
+}
+
+inline std::pair<Vector3, Vector3> getOriginAndAnglesToLookAtNode(const scene::INode& node)
+{
+    return getOriginAndAnglesToLookAtBounds(node.worldAABB());
 }
 
 } // namespace scene

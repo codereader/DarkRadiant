@@ -41,10 +41,10 @@ protected:
 
         _needsUpdate = false;
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<RenderVertex> vertices;
         std::vector<unsigned int> indices;
 
-        static auto WireframeBoxIndices = render::detail::generateWireframeBoxIndices();
+        static auto WireframeBoxIndices = detail::generateWireframeBoxIndices();
 
         vertices.reserve(_aabbs.size() * 8); // 8 vertices per box
         indices.reserve(WireframeBoxIndices.size() * _aabbs.size()); // indices per box * boxes
@@ -57,7 +57,7 @@ protected:
             Vector3 max(aabb.origin + aabb.extents);
             Vector3 min(aabb.origin - aabb.extents);
 
-            auto boxVertices = render::detail::getWireframeBoxVertices(min, max, getBoxColour(i));
+            auto boxVertices = detail::getWireframeBoxVertices(min, max, getBoxColour(i));
 
             auto indexOffset = static_cast<unsigned int>(vertices.size());
 
@@ -71,7 +71,7 @@ protected:
             }
         }
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
+        updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 };
 

@@ -13,7 +13,7 @@
 #include "math/Vector4.h"
 #include "render/Colour4.h"
 #include "math/AABB.h"
-#include "render/ArbitraryMeshVertex.h"
+#include "render/MeshVertex.h"
 
 #include "ishaderlayer.h"
 #include <sigc++/signal.h>
@@ -195,6 +195,9 @@ public:
      * The bounds are specified in world coordinates.
      */
     virtual void foreachRenderableTouchingBounds(const AABB& bounds, const ObjectVisitFunction& functor) = 0;
+
+    // Returns true if this entity produces shadows when lit (i.e.returns false when the entity has "noshadows" set to 1)
+    virtual bool isShadowCasting() const = 0;
 };
 typedef std::shared_ptr<IRenderEntity> IRenderEntityPtr;
 typedef std::weak_ptr<IRenderEntity> IRenderEntityWeakPtr;
@@ -259,6 +262,9 @@ public:
      * pyramid (the same as worldOrigin()).
      */
 	virtual Vector3 getLightOrigin() const = 0;
+
+    // Whether this light is allowed to cast shadows
+    virtual bool isShadowCasting() const = 0;
 };
 typedef std::shared_ptr<RendererLight> RendererLightPtr;
 
@@ -274,75 +280,14 @@ typedef std::function<void(Renderable&)> RenderableCallback;
 
 typedef std::function<void(const RendererLight&)> RendererLightCallback;
 
-const int c_attr_TexCoord0 = 1;
-const int c_attr_Tangent = 3;
-const int c_attr_Binormal = 4;
-
-/**
- * \brief
- * Data object passed to the backend OpenGLRenderable::render() method
- * containing information about the render pass which may be of use to
- * renderable objects, including the render flags and various
- * matrices/coordinates.
- */
-class RenderInfo
-{
-    // Render flags
-    RenderStateFlags _flags;
-
-    // Viewer location in 3D space
-    Vector3 _viewerLocation;
-
-    // Cube map mode
-    IShaderLayer::CubeMapMode _cubeMapMode;
-
-public:
-
-    /// Default constructor
-    RenderInfo(RenderStateFlags flags = RENDER_DEFAULT,
-               const Vector3& viewer = Vector3(0, 0, 0),
-               IShaderLayer::CubeMapMode cubeMode = IShaderLayer::CUBE_MAP_NONE)
-    : _flags(flags),
-      _viewerLocation(viewer),
-      _cubeMapMode(cubeMode)
-    { }
-
-    /// Check if a flag is set
-    bool checkFlag(unsigned flag) const
-    {
-        return (_flags & flag) != 0;
-    }
-
-    /// Get the entire flag bitfield.
-    RenderStateFlags getFlags() const
-    {
-        return _flags;
-    }
-
-    /// Get the viewer location.
-    const Vector3& getViewerLocation() const
-    {
-        return _viewerLocation;
-    }
-
-    /// Get the cube map mode.
-    IShaderLayer::CubeMapMode getCubeMapMode() const
-    {
-        return _cubeMapMode;
-    }
-};
-
 /**
  * \brief
  * Interface for objects which can render themselves in OpenGL.
  *
- * This interface is used by the render backend, after renderable objects have
+ * This interface is used for highlight rendering, after renderable objects have
  * first been submitted using the Renderable interface. The backend render()
  * function should contain the OpenGL calls necessary to submit vertex, normal
  * and texture-coordinate data.
- *
- * No GL state changes should occur in render(), other than those specifically
- * allowed by the render flags.
  */
 class OpenGLRenderable
 {
@@ -353,7 +298,7 @@ public:
      * \brief
      * Submit OpenGL render calls.
      */
-    virtual void render(const RenderInfo& info) const = 0;
+    virtual void render() const = 0;
 };
 
 class Matrix4;
@@ -581,6 +526,8 @@ public:
 
     virtual std::string toString() = 0;
 };
+
+constexpr const char* const RKEY_ENABLE_SHADOW_MAPPING = "user/ui/renderSystem/enableShadowMapping";
 
 /**
  * \brief

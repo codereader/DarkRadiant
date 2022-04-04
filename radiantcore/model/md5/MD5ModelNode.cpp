@@ -82,7 +82,7 @@ void MD5ModelNode::onInsertIntoScene(scene::IMapRootNode& root)
         }
 
         _renderableSurfaces.emplace_back(
-            std::make_shared<model::RenderableModelSurface>(surface, localToWorld())
+            std::make_shared<model::RenderableModelSurface>(surface, _renderEntity, localToWorld())
         );
     });
 

@@ -49,15 +49,14 @@ namespace
 namespace shaders
 {
 
-// Constructor
 Doom3ShaderSystem::Doom3ShaderSystem() :
-    _defLoader(std::bind(&Doom3ShaderSystem::loadMaterialFiles, this)),
     _enableActiveUpdates(true),
     _realised(false)
 {}
 
 void Doom3ShaderSystem::construct()
 {
+    _defLoader = std::make_unique<ShaderFileLoader>();
     _library = std::make_shared<ShaderLibrary>();
     _textureManager = std::make_shared<GLTextureManager>();
 
@@ -80,34 +79,12 @@ void Doom3ShaderSystem::destroy()
     // the CShader destructors.
 }
 
-ShaderLibraryPtr Doom3ShaderSystem::loadMaterialFiles()
-{
-    // Get the shaders path and extension from the XML game file
-    auto materialsFolder = getMaterialsFolderName();
-    auto extension = getMaterialFileExtension();
-
-    // Load the shader files from the VFS
-    ShaderLibraryPtr library = std::make_shared<ShaderLibrary>();
-
-    // Load each file from the global filesystem
-    {
-        ScopedDebugTimer timer("ShaderFiles parsed: ");
-        ShaderFileLoader<ShaderLibrary> loader(GlobalFileSystem(), *library,
-            materialsFolder, extension);
-        loader.parseFiles();
-    }
-
-    rMessage() << library->getNumDefinitions() << " shader definitions found." << std::endl;
-
-    return library;
-}
-
 void Doom3ShaderSystem::realise()
 {
     if (!_realised)
     {
         // Start loading defs
-        _defLoader.start();
+        _defLoader->start();
 
         _signalDefsLoaded.emit();
         _realised = true;
@@ -129,7 +106,7 @@ void Doom3ShaderSystem::ensureDefsLoaded()
     // To avoid assigning the pointer everytime, check if the library is empty
     if (_library->getNumDefinitions() == 0)
     {
-        _library = _defLoader.get();
+        _library = _defLoader->get();
     }
 }
 
@@ -145,7 +122,7 @@ void Doom3ShaderSystem::onFileSystemShutdown()
 
 void Doom3ShaderSystem::freeShaders() {
     _library->clear();
-    _defLoader.reset();
+    _defLoader->reset();
     _textureManager->checkBindings();
     activeShadersChangedNotify();
 }

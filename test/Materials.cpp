@@ -570,16 +570,16 @@ TEST_F(MaterialsTest, MaterialParserDeform)
     material = GlobalMaterialManager().getMaterial("textures/parsertest/deform3");
     EXPECT_EQ(material->getDeformType(), Material::DEFORM_MOVE);
     EXPECT_EQ(material->getDeformDeclName(), "");
-    EXPECT_EQ(material->getDeformExpression(0)->getExpressionString(), "(1.7 + time + 4.0 - global3)");
+    EXPECT_EQ(material->getDeformExpression(0)->getExpressionString(), "(1.7 + time + 4 - global3)");
     EXPECT_FALSE(material->getDeformExpression(1));
     EXPECT_FALSE(material->getDeformExpression(2));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/deform4");
     EXPECT_EQ(material->getDeformType(), Material::DEFORM_TURBULENT);
     EXPECT_EQ(material->getDeformDeclName(), "deformtesttable");
-    EXPECT_EQ(material->getDeformExpression(0)->getExpressionString(), "time * 2.0");
-    EXPECT_EQ(material->getDeformExpression(1)->getExpressionString(), "(parm11 - 4.0)");
-    EXPECT_EQ(material->getDeformExpression(2)->getExpressionString(), "-1.0 * global5");
+    EXPECT_EQ(material->getDeformExpression(0)->getExpressionString(), "time * 2");
+    EXPECT_EQ(material->getDeformExpression(1)->getExpressionString(), "(parm11 - 4)");
+    EXPECT_EQ(material->getDeformExpression(2)->getExpressionString(), "-1 * global5");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/deform5");
     EXPECT_EQ(material->getDeformType(), Material::DEFORM_PARTICLE);
@@ -612,8 +612,8 @@ TEST_F(MaterialsTest, MaterialParserStageTranslate)
 
     EXPECT_EQ(stage->getTransformations().size(), 1);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
-    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "3.0");
-    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "parm3 + 5.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "3");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "parm3 + 5");
 
     stage->evaluateExpressions(1000);
     expectNear(stage->getTextureTransform(), Matrix4::getTranslation(Vector3(3.0, 5.0, 0)));
@@ -660,8 +660,8 @@ TEST_F(MaterialsTest, MaterialParserStageScale)
 
     EXPECT_EQ(stage->getTransformations().size(), 1);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Scale);
-    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "4.0");
-    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "4");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "time * 3");
 
     stage->evaluateExpressions(1000);
     expectNear(stage->getTextureTransform(), Matrix4::byRows(
@@ -679,8 +679,8 @@ TEST_F(MaterialsTest, MaterialParserStageCenterScale)
 
     EXPECT_EQ(stage->getTransformations().size(), 1);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::CenterScale);
-    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "4.0");
-    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "4");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "time * 3");
 
     stage->evaluateExpressions(1000);
     expectNear(stage->getTextureTransform(), Matrix4::byRows(
@@ -697,8 +697,8 @@ TEST_F(MaterialsTest, MaterialParserStageShear)
     auto stage = material->getAllLayers().front();
     EXPECT_EQ(stage->getTransformations().size(), 1);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Shear);
-    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "global3 + 5.0");
-    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "4.0");
+    EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "global3 + 5");
+    EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "4");
 
     stage->evaluateExpressions(1000);
     expectNear(stage->getTextureTransform(), Matrix4::byRows(
@@ -765,8 +765,8 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
     EXPECT_EQ(stage->getTransformations().at(4).expression1->getExpressionString(), "0.5");
     EXPECT_EQ(stage->getTransformations().at(4).expression2->getExpressionString(), "0.4");
     EXPECT_EQ(stage->getTransformations().at(5).type, IShaderLayer::TransformType::Translate);
-    EXPECT_EQ(stage->getTransformations().at(5).expression1->getExpressionString(), "1.0");
-    EXPECT_EQ(stage->getTransformations().at(5).expression2->getExpressionString(), "1.0");
+    EXPECT_EQ(stage->getTransformations().at(5).expression1->getExpressionString(), "1");
+    EXPECT_EQ(stage->getTransformations().at(5).expression2->getExpressionString(), "1");
 
     auto time = 750;
     stage->evaluateExpressions(time);
@@ -821,7 +821,7 @@ TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
     EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(0, 3, 0, 1)); // z=0,w=1 implicitly
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3");
     EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[2]);
     EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[3]);
 
@@ -832,7 +832,7 @@ TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
     EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(0, 3, 0, 1)); // w=1 implicitly
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3");
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
     EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[3]);
 
@@ -843,9 +843,9 @@ TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
     EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(1, 3, 0, 2));
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3");
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram5");
     material->getAllLayers().front()->evaluateExpressions(2000); // time = 2 secs
@@ -855,23 +855,23 @@ TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
 
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3");
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2");
 
     EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(1), Vector4(1, 2, 3, 4));
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).index, 1);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[0]->getExpressionString(), "1.0");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[1]->getExpressionString(), "2.0");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[2]->getExpressionString(), "3.0");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[3]->getExpressionString(), "4.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[0]->getExpressionString(), "1");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[1]->getExpressionString(), "2");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[2]->getExpressionString(), "3");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[3]->getExpressionString(), "4");
 
     EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(2), Vector4(5, 6, 7, 8));
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).index, 2);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[0]->getExpressionString(), "5.0");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[1]->getExpressionString(), "6.0");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[2]->getExpressionString(), "7.0");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[3]->getExpressionString(), "8.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[0]->getExpressionString(), "5");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[1]->getExpressionString(), "6");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[2]->getExpressionString(), "7");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[3]->getExpressionString(), "8");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram6");
     material->getAllLayers().front()->evaluateExpressions(2000); // time = 2 secs
@@ -881,9 +881,9 @@ TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
 
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3");
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2");
 
     EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(1), Vector4(0, 0, 0, 0));
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).index, -1); // missing
@@ -894,10 +894,10 @@ TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
 
     EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(2), Vector4(5, 6, 7, 8));
     EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).index, 2);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[0]->getExpressionString(), "5.0");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[1]->getExpressionString(), "6.0");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[2]->getExpressionString(), "7.0");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[3]->getExpressionString(), "8.0");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[0]->getExpressionString(), "5");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[1]->getExpressionString(), "6");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[2]->getExpressionString(), "7");
+    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[3]->getExpressionString(), "8");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram7");
     EXPECT_TRUE(material->getAllLayers().empty()); // failure to parse should end up with an empty material
@@ -977,7 +977,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs*3, 1, 1, 1));
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3");
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
@@ -989,7 +989,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(1, timeSecs*3, 1, 1));
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_RED));
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3");
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
 
@@ -1001,7 +1001,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
     EXPECT_TRUE(diffuse->getColour() == Colour4(1, 1, timeSecs * 3, 1));
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_RED));
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3");
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr4");
@@ -1013,7 +1013,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_RED));
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr5");
 
@@ -1021,9 +1021,9 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 3, timeSecs * 3, 1));
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3");
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr6");
@@ -1032,10 +1032,10 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 3, timeSecs * 3, timeSecs * 3));
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr7");
 
@@ -1043,7 +1043,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, 1, 1, 1)); // second red expression overrules first
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4");
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_GREEN));
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_BLUE));
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
@@ -1054,9 +1054,9 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, timeSecs * 3, timeSecs * 3, 1)); // red overrules rgb
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 3");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3");
     EXPECT_FALSE(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr9");
@@ -1065,10 +1065,10 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 4, timeSecs * 3, timeSecs * 3)); // green overrules rgba
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 4.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 3");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 4");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 3");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 3");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr10");
 
@@ -1076,10 +1076,10 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, timeSecs * 6, timeSecs * 5, timeSecs * 7)); // rgba is overridden
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 6.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 5.0");
-    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 7.0");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "time * 4");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time * 6");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "time * 5");
+    EXPECT_EQ(diffuse->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time * 7");
 }
 
 TEST_F(MaterialsTest, MaterialParserLightfallOff)
@@ -1202,7 +1202,7 @@ TEST_F(MaterialsTest, MaterialParserStageTexGen)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/texgen/wobblesky");
     EXPECT_EQ(material->getAllLayers().front()->getTexGenType(), IShaderLayer::TEXGEN_WOBBLESKY);
-    EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(0)->getExpressionString(), "1.0");
+    EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(0)->getExpressionString(), "1");
     EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(1)->getExpressionString(), "0.5");
     EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(2)->getExpressionString(), "(time * 0.6)");
 }
@@ -1401,7 +1401,7 @@ TEST_F(MaterialsTest, MaterialParserStageCondition)
     material = GlobalMaterialManager().getMaterial("textures/parsertest/condition");
 
     auto layer = material->getAllLayers().at(0);
-    EXPECT_EQ(material->getAllLayers().at(0)->getConditionExpression()->getExpressionString(), "(parm4 > 0.0)");
+    EXPECT_EQ(material->getAllLayers().at(0)->getConditionExpression()->getExpressionString(), "(parm4 > 0)");
 }
 
 TEST_F(MaterialsTest, MaterialFrobStageDetection)
@@ -1499,6 +1499,24 @@ TEST_F(MaterialsTest, MaterialFrobStageRemoval)
     checkFrobStageRemoval("textures/parsertest/frobstage_missing3");
     checkFrobStageRemoval("textures/parsertest/frobstage_missing4");
     checkFrobStageRemoval("textures/parsertest/frobstage_missing5");
+}
+
+// #5853: Two files define the same material:
+// 1) in VFS: materials/z_precedence.mtr
+// 2) in PK4: tdm_example_mtrs.pk4/materials/precedence.mtr
+// Even though the filesystem folder has higher priority, the file
+// in the PK4 should be parsed first, since the lexicographical order
+// is considered when looking for .mtr files. That's why the
+// declaration in the filesystem should not take effect.
+TEST_F(MaterialsTest, MaterialFilenamePrecedence)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/precedencecheck");
+
+    EXPECT_TRUE(material) << "Could not find the material textures/precedencecheck";
+
+    // The material in the PK4 should be processed first, the one in the filesystem just produces a warning
+    EXPECT_EQ(material->getDescription(), "Defined in precedence.mtr") 
+        << "Description does not match what is defined in the PK4 .mtr";
 }
 
 }

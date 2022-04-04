@@ -1,6 +1,5 @@
 #include "gtest/gtest.h"
-#include "render/ArbitraryMeshVertex.h"
-#include "render/WindingRenderer.h"
+#include "render/MeshVertex.h"
 #include "render/CompactWindingVertexBuffer.h"
 
 namespace test
@@ -9,22 +8,22 @@ namespace test
 constexpr int SmallestWindingSize = 3;
 constexpr int LargestWindingSize = 12;
 
-using VertexBuffer = render::CompactWindingVertexBuffer<ArbitraryMeshVertex>;
+using VertexBuffer = render::CompactWindingVertexBuffer<MeshVertex>;
 
-inline ArbitraryMeshVertex createNthVertexOfWinding(int n, int id, std::size_t size)
+inline MeshVertex createNthVertexOfWinding(int n, int id, std::size_t size)
 {
     auto offset = static_cast<double>(n + size * id);
 
-    return ArbitraryMeshVertex(
+    return MeshVertex(
         { offset + 0.0, offset + 0.5, offset + 0.3 },
         { 0, 0, offset + 0.0 },
         { offset + 0.0, -offset + 0.0 }
     );
 }
 
-inline std::vector<ArbitraryMeshVertex> createWinding(int id, std::size_t size)
+inline std::vector<MeshVertex> createWinding(int id, std::size_t size)
 {
-    std::vector<ArbitraryMeshVertex> winding;
+    std::vector<MeshVertex> winding;
 
     for (int i = 0; i < size; ++i)
     {
@@ -283,7 +282,7 @@ TEST(CompactWindingVertexBuffer, RemoveMultipleWindings)
 
 TEST(CompactWindingVertexBuffer, TriangleIndexerSize3) // Winding size == 3
 {
-    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Triangles> buffer(3);
+    render::CompactWindingVertexBuffer<MeshVertex, render::WindingIndexer_Triangles> buffer(3);
 
     EXPECT_EQ(buffer.getNumIndicesPerWinding(), 3);
 
@@ -300,7 +299,7 @@ TEST(CompactWindingVertexBuffer, TriangleIndexerSize3) // Winding size == 3
 
 TEST(CompactWindingVertexBuffer, TriangleIndexerSize4) // Winding size == 4
 {
-    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Triangles> buffer(4);
+    render::CompactWindingVertexBuffer<MeshVertex, render::WindingIndexer_Triangles> buffer(4);
 
     EXPECT_EQ(buffer.getNumIndicesPerWinding(), 6);
 
@@ -321,7 +320,7 @@ TEST(CompactWindingVertexBuffer, TriangleIndexerSize4) // Winding size == 4
 
 TEST(CompactWindingVertexBuffer, TriangleIndexerSize5) // Winding size == 5
 {
-    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Triangles> buffer(5);
+    render::CompactWindingVertexBuffer<MeshVertex, render::WindingIndexer_Triangles> buffer(5);
 
     EXPECT_EQ(buffer.getNumIndicesPerWinding(), 9);
 
@@ -346,7 +345,7 @@ TEST(CompactWindingVertexBuffer, TriangleIndexerSize5) // Winding size == 5
 
 TEST(CompactWindingVertexBuffer, LineIndexerSize3) // Winding size == 3
 {
-    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Lines> buffer(3);
+    render::CompactWindingVertexBuffer<MeshVertex, render::WindingIndexer_Lines> buffer(3);
 
     EXPECT_EQ(buffer.getNumIndicesPerWinding(), 6);
 
@@ -368,7 +367,7 @@ TEST(CompactWindingVertexBuffer, LineIndexerSize3) // Winding size == 3
 
 TEST(CompactWindingVertexBuffer, LineIndexerSize4) // Winding size == 4
 {
-    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Lines> buffer(4);
+    render::CompactWindingVertexBuffer<MeshVertex, render::WindingIndexer_Lines> buffer(4);
 
     EXPECT_EQ(buffer.getNumIndicesPerWinding(), 8);
 
@@ -393,7 +392,7 @@ TEST(CompactWindingVertexBuffer, LineIndexerSize4) // Winding size == 4
 
 TEST(CompactWindingVertexBuffer, LineIndexerSize5) // Winding size == 5
 {
-    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Lines> buffer(5);
+    render::CompactWindingVertexBuffer<MeshVertex, render::WindingIndexer_Lines> buffer(5);
 
     EXPECT_EQ(buffer.getNumIndicesPerWinding(), 10);
 
@@ -421,7 +420,7 @@ TEST(CompactWindingVertexBuffer, LineIndexerSize5) // Winding size == 5
 
 TEST(CompactWindingVertexBuffer, PolygonIndexerSize5) // Winding size == 5
 {
-    render::CompactWindingVertexBuffer<ArbitraryMeshVertex, render::WindingIndexer_Polygon> buffer(5);
+    render::CompactWindingVertexBuffer<MeshVertex, render::WindingIndexer_Polygon> buffer(5);
 
     EXPECT_EQ(buffer.getNumIndicesPerWinding(), 5);
 

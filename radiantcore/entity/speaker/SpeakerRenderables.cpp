@@ -38,7 +38,7 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
     // Generate the three circles in axis-aligned planes
     constexpr std::size_t NumSegments = 2;
 
-    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<render::RenderVertex> vertices;
 
     // Allocate space for 6 circles, one per radius, each radius has NumSegments * 8 vertices
     constexpr std::size_t NumVerticesPerCircle = NumSegments << 3;
@@ -65,11 +65,15 @@ void RenderableSpeakerRadiiWireframe::updateGeometry()
     // Move the points to their world position
     for (auto& vertex : vertices)
     {
-        vertex.vertex += _origin;
-        vertex.colour = colour;
+        vertex.vertex.x() += static_cast<float>(_origin.x());
+        vertex.vertex.y() += static_cast<float>(_origin.y());
+        vertex.vertex.z() += static_cast<float>(_origin.z());
+
+        vertex.colour = Vector4f{ static_cast<float>(colour.x()), static_cast<float>(colour.y()),
+            static_cast<float>(colour.z()), static_cast<float>(colour.w()) };
     }
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, CircleIndices);
+    updateGeometryWithData(render::GeometryType::Lines, vertices, CircleIndices);
 }
 
 // ---- Fill Variant ----
@@ -147,7 +151,7 @@ inline std::vector<unsigned int> generateSphereIndices()
 
 }
 
-void RenderableSpeakerRadiiFill::generateSphereVertices(std::vector<ArbitraryMeshVertex>& vertices, double radius)
+void RenderableSpeakerRadiiFill::generateSphereVertices(std::vector<render::RenderVertex>& vertices, double radius)
 {
     auto colour = _entity.getEntityColour();
 
@@ -166,13 +170,13 @@ void RenderableSpeakerRadiiFill::generateSphereVertices(std::vector<ArbitraryMes
             auto unit = Vector3(cos(phi) * sinTheta, sin(phi) * sinTheta, cosTheta);
 
             // Move the points to their world position
-            vertices.push_back(ArbitraryMeshVertex(unit * radius + _origin, unit, { 0, 0 }, colour));
+            vertices.push_back(render::RenderVertex(unit * radius + _origin, unit, { 0, 0 }, colour));
         }
     }
 
     // The north and south pole vertices
-    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, radius) + _origin, { 0,0,1 }, { 0,0 }, colour));
-    vertices.push_back(ArbitraryMeshVertex(Vector3(0, 0, -radius) + _origin, { 0,0,-1 }, { 0,0 }, colour));
+    vertices.push_back(render::RenderVertex(Vector3(0, 0, radius) + _origin, { 0,0,1 }, { 0,0 }, colour));
+    vertices.push_back(render::RenderVertex(Vector3(0, 0, -radius) + _origin, { 0,0,-1 }, { 0,0 }, colour));
 }
 
 void RenderableSpeakerRadiiFill::updateGeometry()
@@ -181,7 +185,7 @@ void RenderableSpeakerRadiiFill::updateGeometry()
 
     _needsUpdate = false;
 
-    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<render::RenderVertex> vertices;
 
     // Make space for two spheres
     vertices.reserve(NumVerticesPerSphere << 1);
@@ -192,7 +196,7 @@ void RenderableSpeakerRadiiFill::updateGeometry()
     // Generate the quad indices for two spheres
     static auto SphereIndices = generateSphereIndices();
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Quads, vertices, SphereIndices);
+    updateGeometryWithData(render::GeometryType::Quads, vertices, SphereIndices);
 }
 
 } // namespace

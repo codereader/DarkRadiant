@@ -22,7 +22,7 @@ class MD5Surface final :
 	public model::IIndexedModelSurface
 {
 public:
-	typedef std::vector<ArbitraryMeshVertex> Vertices;
+	typedef std::vector<MeshVertex> Vertices;
 	typedef IndexBuffer Indices;
 
 private:
@@ -77,10 +77,10 @@ public:
 	int getNumVertices() const override;
 	int getNumTriangles() const override;
 
-	const ArbitraryMeshVertex& getVertex(int vertexIndex) const override;
+	const MeshVertex& getVertex(int vertexIndex) const override;
 	model::ModelPolygon getPolygon(int polygonIndex) const override;
 
-	const std::vector<ArbitraryMeshVertex>& getVertexArray() const override;
+	const std::vector<MeshVertex>& getVertexArray() const override;
 	const std::vector<unsigned int>& getIndexArray() const override;
 
 	const std::string& getDefaultMaterial() const override;

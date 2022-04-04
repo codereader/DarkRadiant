@@ -303,13 +303,13 @@ class IEntityClassManager :
 {
 public:
     /// Signal emitted when starting to parse DEFs
-    virtual sigc::signal<void> defsLoadingSignal() const = 0;
+    virtual sigc::signal<void>& defsLoadingSignal() = 0;
 
     /// Signal emitted when all DEFs have been loaded (after module initialisation)
-    virtual sigc::signal<void> defsLoadedSignal() const = 0;
+    virtual sigc::signal<void>& defsLoadedSignal() = 0;
 
     /// Signal emitted when all DEFs are reloaded
-    virtual sigc::signal<void> defsReloadedSignal() const = 0;
+    virtual sigc::signal<void>& defsReloadedSignal() = 0;
 
     /**
      * Return the IEntityClass corresponding to the given name, creating it if

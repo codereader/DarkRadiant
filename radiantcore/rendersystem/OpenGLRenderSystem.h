@@ -8,8 +8,10 @@
 #include "backend/OpenGLShader.h"
 #include "backend/OpenGLStateLess.h"
 #include "backend/TextRenderer.h"
-#include "backend/GeometryStore.h"
 #include "backend/SceneRenderer.h"
+#include "backend/FenceSyncProvider.h"
+#include "backend/BufferObjectProvider.h"
+#include "render/GeometryStore.h"
 
 namespace render
 {
@@ -61,6 +63,8 @@ class OpenGLRenderSystem final
 	sigc::connection _sharedContextCreated;
 	sigc::connection _sharedContextDestroyed;
 
+    FenceSyncProvider _syncObjectProvider;
+    BufferObjectProvider _bufferObjectProvider;
     GeometryStore _geometryStore;
 
     // Renderer implementations, one for each view type/purpose

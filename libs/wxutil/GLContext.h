@@ -27,9 +27,10 @@ public:
 			<< reinterpret_cast<const char*>(glGetString(GL_RENDERER)) << std::endl;
 		rMessage() << "GL_VERSION: "
 			<< reinterpret_cast<const char*>(glGetString(GL_VERSION)) << std::endl;
+#if NDEBUG
 		rMessage() << "GL_EXTENSIONS: "
 			<< reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS)) << std::endl;
-
+#endif
 		GLenum err = glewInit();
 
 		if (err != GLEW_OK)

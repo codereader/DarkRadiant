@@ -212,6 +212,9 @@
       <fontSize value="14" />
       <fontStyle value="Sans" />
     </renderPreview>
+    <renderSystem>
+        <enableShadowMapping value="1" />
+    </renderSystem>
     <camera>
       <toggleFreeMove value="1" />
       <enableCubicClipping value="1" />

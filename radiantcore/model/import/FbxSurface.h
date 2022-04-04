@@ -4,7 +4,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "render/ArbitraryMeshVertex.h"
+#include "render/MeshVertex.h"
 #include "render/VertexHashing.h"
 
 namespace model
@@ -14,14 +14,14 @@ class FbxSurface
 {
 private:
 	std::vector<unsigned int> indices;
-	std::vector<ArbitraryMeshVertex> vertices;
+	std::vector<MeshVertex> vertices;
 	std::string material;
 
 	// Hash index to share vertices with the same set of attributes
-	std::unordered_map<ArbitraryMeshVertex, std::size_t> vertexIndices;
+	std::unordered_map<MeshVertex, std::size_t> vertexIndices;
 
 public:
-	std::vector<ArbitraryMeshVertex>& getVertexArray()
+	std::vector<MeshVertex>& getVertexArray()
 	{
 		return vertices;
 	}
@@ -41,7 +41,7 @@ public:
         material = newMaterial;
     }
 
-	void addVertex(const ArbitraryMeshVertex& vertex)
+	void addVertex(const MeshVertex& vertex)
 	{
 		// Try to look up an existing vertex or add a new index
 		auto emplaceResult = vertexIndices.try_emplace(vertex, vertices.size());

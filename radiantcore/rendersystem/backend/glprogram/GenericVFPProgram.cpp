@@ -27,11 +27,4 @@ void GenericVFPProgram::disable()
     // TODO
 }
 
-void GenericVFPProgram::applyRenderParams(const Vector3& viewer,
-                                          const Matrix4& localToWorld,
-                                          const Params& lightParams)
-{
-    // TODO
-}
-
 } // namespace

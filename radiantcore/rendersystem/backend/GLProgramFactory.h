@@ -1,9 +1,8 @@
 #pragma once
 
-#include "iglrender.h"
-
 #include <map>
 #include <memory>
+#include "igl.h"
 
 namespace render
 {
@@ -15,10 +14,10 @@ typedef std::shared_ptr<GLProgram> GLProgramPtr;
 
 enum class ShaderProgram
 {
-    DepthFill,
     DepthFillAlpha,
     Interaction,
     CubeMap,
+    ShadowMap,
 };
 
 /**

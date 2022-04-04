@@ -22,14 +22,14 @@ FbxModelLoader::FbxModelLoader() :
 namespace
 {
 
-inline ArbitraryMeshVertex ConstructMeshVertex(const ofbx::Geometry& geometry, int index)
+inline MeshVertex ConstructMeshVertex(const ofbx::Geometry& geometry, int index)
 {
     auto vertices = geometry.getVertices();
     auto normals = geometry.getNormals();
     auto uvs = geometry.getUVs();
     auto colours = geometry.getColors();
 
-    return ArbitraryMeshVertex(
+    return MeshVertex(
         Vertex3(vertices[index].x, vertices[index].y, vertices[index].z),
         normals != nullptr ? Normal3(normals[index].x, normals[index].y, normals[index].z) : Normal3(1, 0, 0),
         uvs != nullptr ? TexCoord2f(uvs[index].x, 1.0 - uvs[index].y) : TexCoord2f(0, 0), // invert v

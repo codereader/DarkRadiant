@@ -49,8 +49,15 @@ void RenderableParticle::update(const Matrix4& viewRotation, const Matrix4& loca
                 continue;
             }
 
-            // Update the particle geometry
+            // Update the particle quads
             stage->update(time, invViewRotation);
+
+            // Check if the stage is empty, otherwise remove any geometry
+            if (stage->getNumQuads() == 0)
+            {
+                stage->clear();
+                continue;
+            }
 
             // Attach the geometry to the shader
             stage->submitGeometry(pair.second.shader, localToWorld);

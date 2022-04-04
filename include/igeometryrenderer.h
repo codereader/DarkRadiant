@@ -4,8 +4,7 @@
 #include <limits>
 #include <cstdint>
 #include "igeometrystore.h"
-#include "render/ArbitraryMeshVertex.h"
-#include "math/Matrix4.h"
+#include "render/RenderVertex.h"
 #include "math/AABB.h"
 
 namespace render
@@ -39,7 +38,7 @@ public:
     // Returns the handle which can be used to update or deallocate the data later
     // The indexType determines the primitive GLenum that is chosen to render this surface
     virtual Slot addGeometry(GeometryType indexType,
-        const std::vector<ArbitraryMeshVertex>& vertices,
+        const std::vector<RenderVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
 
     // Releases a previously allocated slot. This invalidates the handle.
@@ -47,7 +46,7 @@ public:
 
     // Updates the vertex data. The size of the vertex and index array must be the same
     // as the one passed to addGeometry. To change the size the data needs to be removed and re-added.
-    virtual void updateGeometry(Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    virtual void updateGeometry(Slot slot, const std::vector<RenderVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
 
     // Submits the geometry of a single slot to GL

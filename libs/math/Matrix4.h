@@ -586,6 +586,17 @@ inline std::ostream& operator<<(std::ostream& st, const Matrix4& m)
     return st;
 }
 
+namespace math
+{
+
+inline Vector3f transformVector3f(const Matrix4& transform, const Vector3f& point)
+{
+    auto transformed = transform * Vector3(point.x(), point.y(), point.z());
+    return Vector3f(static_cast<float>(transformed.x()), static_cast<float>(transformed.y()), static_cast<float>(transformed.z()));
+}
+
+}
+
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif

@@ -2,6 +2,9 @@
 
 #include <future>
 #include <functional>
+#include <algorithm>
+#include <sigc++/signal.h>
+#include <vector>
 
 namespace util
 {
@@ -20,10 +23,13 @@ namespace util
 template <typename ReturnType>
 class ThreadedDefLoader
 {
-    typedef std::function<ReturnType()> LoadFunction;
+public:
+    using LoadFunction = std::function<ReturnType()>;
+    using FinishedSignal = sigc::signal<void>;
 
+private:
     LoadFunction _loadFunc;
-    std::function<void()> _finishedFunc;
+    FinishedSignal _finishedSignal;
 
     std::shared_future<ReturnType> _result;
     std::shared_future<void> _finisher;
@@ -33,16 +39,11 @@ class ThreadedDefLoader
 
 public:
     ThreadedDefLoader(const LoadFunction& loadFunc) :
-        ThreadedDefLoader(loadFunc, std::function<void()>())
-    {}
-
-    ThreadedDefLoader(const LoadFunction& loadFunc, const std::function<void()>& finishedFunc) :
         _loadFunc(loadFunc),
-        _finishedFunc(finishedFunc),
         _loadingStarted(false)
     {}
-
-    ~ThreadedDefLoader()
+    
+    virtual ~ThreadedDefLoader()
     {
         // wait for any worker thread to finish
         reset();
@@ -101,23 +102,25 @@ public:
         }
     }
 
-private:
-    struct FinishFunctionCaller
+    FinishedSignal& signal_finished()
     {
-        std::function<void()> _function;
+        return _finishedSignal;
+    }
+
+private:
+    struct FinishSignalEmitter
+    {
+        FinishedSignal& _signal;
         std::shared_future<void>& _targetFuture;
 
-        FinishFunctionCaller(const std::function<void()>& function, std::shared_future<void>& targetFuture) :
-            _function(function),
+        FinishSignalEmitter(FinishedSignal& signal, std::shared_future<void>& targetFuture) :
+            _signal(signal),
             _targetFuture(targetFuture)
         {}
 
-        ~FinishFunctionCaller()
+        ~FinishSignalEmitter()
         {
-            if (_function)
-            {
-                _targetFuture = std::async(std::launch::async, _function);
-            }
+            _targetFuture = std::async(std::launch::async, std::bind(&FinishedSignal::emit, _signal));
         }
     };
 
@@ -130,8 +133,8 @@ private:
             _loadingStarted = true;
             _result = std::async(std::launch::async, [&]()
             {
-                // When going out of scope, this instance invokes the finished callback in a separate thread
-                FinishFunctionCaller finisher(_finishedFunc, _finisher);
+                // When going out of scope, this instance invokes the finished signal in a separate thread
+                FinishSignalEmitter finisher(_finishedSignal, _finisher);
                 return _loadFunc();
             });
         }

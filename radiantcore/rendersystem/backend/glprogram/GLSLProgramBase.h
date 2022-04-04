@@ -22,6 +22,10 @@ public:
     virtual void destroy() override;
     virtual void enable() override;
     virtual void disable() override;
+
+protected:
+    void loadMatrixUniform(GLuint location, const Matrix4& matrix);
+    void loadTextureMatrixUniform(GLuint location, const Matrix4& matrix);
 };
 
 }

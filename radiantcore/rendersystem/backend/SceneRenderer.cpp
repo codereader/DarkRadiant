@@ -1,7 +1,7 @@
 #include "SceneRenderer.h"
 
 #include "igl.h"
-#include "iglrender.h"
+#include "OpenGLState.h"
 
 namespace render
 {
@@ -43,6 +43,12 @@ void SceneRenderer::setupState(OpenGLState& state)
 {
     glPushAttrib(GL_ALL_ATTRIB_BITS);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
     // global settings that are not set in renderstates
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);
@@ -65,18 +71,14 @@ void SceneRenderer::setupState(OpenGLState& state)
         glClientActiveTexture(GL_TEXTURE0);
     }
 
-    if (GLEW_ARB_shader_objects)
-    {
-        glUseProgram(0);
-        glDisableVertexAttribArrayARB(c_attr_TexCoord0);
-        glDisableVertexAttribArrayARB(c_attr_Tangent);
-        glDisableVertexAttribArrayARB(c_attr_Binormal);
-    }
+    glUseProgram(0);
 
-    glDisableVertexAttribArrayARB(GLProgramAttribute::TexCoord);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
-    glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
+    glDisableVertexAttribArray(GLProgramAttribute::Position);
+    glDisableVertexAttribArray(GLProgramAttribute::TexCoord);
+    glDisableVertexAttribArray(GLProgramAttribute::Tangent);
+    glDisableVertexAttribArray(GLProgramAttribute::Bitangent);
+    glDisableVertexAttribArray(GLProgramAttribute::Normal);
+    glDisableVertexAttribArray(GLProgramAttribute::Colour);
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -131,11 +133,15 @@ void SceneRenderer::cleanupState()
     glDisableVertexAttribArrayARB(GLProgramAttribute::Tangent);
     glDisableVertexAttribArrayARB(GLProgramAttribute::Bitangent);
     glDisableVertexAttribArrayARB(GLProgramAttribute::Normal);
+    glDisableVertexAttribArrayARB(GLProgramAttribute::Colour);
 
     glDisableClientState(GL_VERTEX_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     glDisableClientState(GL_NORMAL_ARRAY);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glPopAttrib();
 }

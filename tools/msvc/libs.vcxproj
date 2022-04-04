@@ -27,26 +27,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Utility</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
@@ -195,6 +195,7 @@
     <ClInclude Include="..\..\libs\parser\DefBlockTokeniser.h" />
     <ClInclude Include="..\..\libs\parser\DefTokeniser.h" />
     <ClInclude Include="..\..\libs\parser\ParseException.h" />
+    <ClInclude Include="..\..\libs\parser\ThreadedDeclParser.h" />
     <ClInclude Include="..\..\libs\parser\Tokeniser.h" />
     <ClInclude Include="..\..\libs\patch\PatchIterators.h" />
     <ClInclude Include="..\..\libs\pivot.h" />
@@ -206,16 +207,18 @@
     <ClInclude Include="..\..\libs\registry\registry.h" />
     <ClInclude Include="..\..\libs\registry\Widgets.h" />
     <ClInclude Include="..\..\libs\render.h" />
-    <ClInclude Include="..\..\libs\render\ArbitraryMeshVertex.h" />
     <ClInclude Include="..\..\libs\render\CameraView.h" />
     <ClInclude Include="..\..\libs\render\CamRenderer.h" />
     <ClInclude Include="..\..\libs\render\Colour4.h" />
     <ClInclude Include="..\..\libs\render\Colour4b.h" />
     <ClInclude Include="..\..\libs\render\CompactWindingVertexBuffer.h" />
     <ClInclude Include="..\..\libs\render\ContinuousBuffer.h" />
+    <ClInclude Include="..\..\libs\render\GeometryStore.h" />
     <ClInclude Include="..\..\libs\render\IndexedVertexBuffer.h" />
+    <ClInclude Include="..\..\libs\render\MeshVertex.h" />
     <ClInclude Include="..\..\libs\render\NopRenderView.h" />
     <ClInclude Include="..\..\libs\render\NopVolumeTest.h" />
+    <ClInclude Include="..\..\libs\render\Rectangle.h" />
     <ClInclude Include="..\..\libs\render\RenderableBoundingBoxes.h" />
     <ClInclude Include="..\..\libs\render\RenderableBox.h" />
     <ClInclude Include="..\..\libs\render\RenderableCollectionWalker.h" />
@@ -227,6 +230,7 @@
     <ClInclude Include="..\..\libs\render\RenderableSpacePartition.h" />
     <ClInclude Include="..\..\libs\render\RenderableSurface.h" />
     <ClInclude Include="..\..\libs\render\RenderableTextBase.h" />
+    <ClInclude Include="..\..\libs\render\RenderVertex.h" />
     <ClInclude Include="..\..\libs\render\SceneRenderWalker.h" />
     <ClInclude Include="..\..\libs\render\StaticRenderableText.h" />
     <ClInclude Include="..\..\libs\render\TexCoord2f.h" />
@@ -238,7 +242,6 @@
     <ClInclude Include="..\..\libs\render\VertexNCb.h" />
     <ClInclude Include="..\..\libs\render\VertexNT.h" />
     <ClInclude Include="..\..\libs\render\View.h" />
-    <ClInclude Include="..\..\libs\render\WindingRenderer.h" />
     <ClInclude Include="..\..\libs\RGBAImage.h" />
     <ClInclude Include="..\..\libs\scenelib.h" />
     <ClInclude Include="..\..\libs\selectionlib.h" />
@@ -253,6 +256,8 @@
     <ClInclude Include="..\..\libs\selection\SelectionVolume.h" />
     <ClInclude Include="..\..\libs\selection\SingleItemSelector.h" />
     <ClInclude Include="..\..\libs\SequentialTaskQueue.h" />
+    <ClInclude Include="..\..\libs\settings\MajorMinorVersion.h" />
+    <ClInclude Include="..\..\libs\settings\SettingsManager.h" />
     <ClInclude Include="..\..\libs\shaderlib.h" />
     <ClInclude Include="..\..\libs\stream\BinaryToTextInputStream.h" />
     <ClInclude Include="..\..\libs\stream\BufferInputStream.h" />

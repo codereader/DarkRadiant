@@ -137,7 +137,8 @@ add_executable(darkradiant
                ui/overlay/Overlay.cpp
                ui/overlay/OverlayDialog.cpp
                ui/particles/ParticleEditor.cpp
-               ui/particles/ParticlesChooser.cpp
+               ui/particles/ParticleChooserDialog.cpp
+               ui/particles/ParticleSelector.cpp
                ui/patch/BulgePatchDialog.cpp
                ui/patch/CapDialog.cpp
                ui/patch/PatchCreateDialog.cpp

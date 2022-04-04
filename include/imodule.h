@@ -416,7 +416,7 @@ namespace module
 		{
             auto& registry = GlobalModuleRegistry();
 
-			_instancePtr = std::dynamic_pointer_cast<ModuleType>(registry.getModule(_moduleName)).get();
+            _instancePtr = dynamic_cast<ModuleType*>(registry.getModule(_moduleName).get());
 
             registry.signal_allModulesUninitialised().connect([this]
             {

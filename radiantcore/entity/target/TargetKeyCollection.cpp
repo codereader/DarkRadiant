@@ -55,7 +55,7 @@ void TargetKeyCollection::onKeyInsert(const std::string& key, EntityKeyValue& va
 		return;
 	}
 
-	TargetKeyMap::iterator i = _targetKeys.insert(std::make_pair(key, TargetKey(*this))).first;
+	auto i = _targetKeys.emplace(key, TargetKey(*this)).first;
 
 	i->second.attachToKeyValue(value);
 
@@ -84,6 +84,16 @@ void TargetKeyCollection::onKeyErase(const std::string& key, EntityKeyValue& val
 
     // Notify the owner to destruct the target line node
     _owner.onTargetKeyCollectionChanged();
+}
+
+sigc::signal<void>& TargetKeyCollection::signal_TargetPositionChanged()
+{
+    return _sigTargetPositionChanged;
+}
+
+void TargetKeyCollection::onTargetPositionChanged()
+{
+    _sigTargetPositionChanged.emit();
 }
 
 } // namespace entity

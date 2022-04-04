@@ -3,6 +3,7 @@
 #include "ishaders.h"
 #include "igl.h"
 #include "itextstream.h"
+#include "iregistry.h"
 #include "iradiant.h"
 
 #include "math/Matrix4.h"
@@ -30,9 +31,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _glProgramFactory(std::make_shared<GLProgramFactory>()),
     _currentShaderProgram(SHADER_PROGRAM_NONE),
     _time(0),
-    _orthoRenderer(new FullBrightRenderer(RenderViewType::OrthoView, _state_sorted)),
-    _editorPreviewRenderer(new FullBrightRenderer(RenderViewType::Camera, _state_sorted)),
-    _lightingModeRenderer(new LightingModeRenderer(_geometryStore, _lights, _entities)),
+    _geometryStore(_syncObjectProvider, _bufferObjectProvider),
     m_traverseRenderablesMutex(false)
 {
     bool shouldRealise = false;
@@ -72,6 +71,12 @@ OpenGLRenderSystem::~OpenGLRenderSystem()
 {
     _materialDefsLoaded.disconnect();
     _materialDefsUnloaded.disconnect();
+
+    // Destruct the shaders before the geometry store is destroyed
+    _shaders.clear();
+    _entities.clear();
+    _lights.clear();
+    _state_sorted.clear();
 }
 
 ITextRenderer::Ptr OpenGLRenderSystem::captureTextRenderer(IGLFont::Style style, std::size_t size)
@@ -213,6 +218,10 @@ void OpenGLRenderSystem::realise()
     {
         shader->realise();
     }
+
+    _orthoRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::OrthoView, _state_sorted, _geometryStore);
+    _editorPreviewRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::Camera, _state_sorted, _geometryStore);
+    _lightingModeRenderer = std::make_unique<LightingModeRenderer>(*_glProgramFactory, _geometryStore, _lights, _entities);
 }
 
 void OpenGLRenderSystem::unrealise()
@@ -375,6 +384,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
     static StringSet _dependencies
 	{
         MODULE_SHADERSYSTEM,
+        MODULE_XMLREGISTRY,
         MODULE_SHARED_GL_CONTEXT,
     };
 
@@ -407,6 +417,10 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 
 void OpenGLRenderSystem::shutdownModule()
 {
+    _orthoRenderer.reset();
+    _editorPreviewRenderer.reset();
+    _lightingModeRenderer.reset();
+
     _entities.clear();
     _lights.clear();
 

@@ -26,19 +26,19 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -108,12 +108,14 @@
   <ItemGroup>
     <ClCompile Include="..\..\libs\xmlutil\Document.cpp" />
     <ClCompile Include="..\..\libs\xmlutil\Node.cpp" />
+    <ClCompile Include="..\..\libs\xmlutil\XmlModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\xmlutil\Document.h" />
     <ClInclude Include="..\..\libs\xmlutil\InvalidNodeException.h" />
     <ClInclude Include="..\..\libs\xmlutil\MissingXMLNodeException.h" />
     <ClInclude Include="..\..\libs\xmlutil\Node.h" />
+    <ClInclude Include="..\..\libs\xmlutil\XmlModule.h" />
     <ClInclude Include="..\..\libs\xmlutil\XPathException.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

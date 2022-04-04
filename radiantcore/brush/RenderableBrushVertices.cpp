@@ -10,7 +10,7 @@ namespace detail
 {
 
 inline void addColouredVertices(const std::vector<Vector3>& sourceVertices, const Vector4& colour,
-    std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices)
+    std::vector<render::RenderVertex>& vertices, std::vector<unsigned int>& indices)
 {
     auto indexOffset = static_cast<unsigned int>(vertices.size());
 
@@ -18,7 +18,7 @@ inline void addColouredVertices(const std::vector<Vector3>& sourceVertices, cons
     {
         const auto& vertex = sourceVertices[i];
 
-        vertices.push_back(ArbitraryMeshVertex(vertex, { 0,0,0 }, { 0,0 }, colour));
+        vertices.push_back(render::RenderVertex(vertex, { 0,0,0 }, { 0,0 }, colour));
         indices.push_back(indexOffset + i);
     }
 }
@@ -34,7 +34,7 @@ void RenderableBrushVertices::updateGeometry()
     // Get the vertices for our given mode
     const auto& brushVertices = _brush.getVertices(_mode);
 
-    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<render::RenderVertex> vertices;
     std::vector<unsigned int> indices;
 
     auto totalSize = brushVertices.size() + _selectedVertices.size();
@@ -47,7 +47,7 @@ void RenderableBrushVertices::updateGeometry()
     detail::addColouredVertices(brushVertices, { vertexColour, 1 }, vertices, indices);
     detail::addColouredVertices(_selectedVertices, { selectedVertexColour, 1 }, vertices, indices);
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
+    updateGeometryWithData(render::GeometryType::Points, vertices, indices);
 }
 
 }

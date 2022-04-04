@@ -86,10 +86,7 @@ public:
         
         for (const auto& [object, objectData] : _objects)
         {
-            auto orientedBounds = AABB::createFromOrientedAABBSafe(
-                object->getObjectBounds(), object->getObjectTransform());
-
-            if (bounds.intersects(orientedBounds))
+            if (objectIntersectsBounds(bounds, *object))
             {
                 functor(object, objectData.shader);
             }
@@ -97,6 +94,19 @@ public:
     }
 
 private:
+    bool objectIntersectsBounds(const AABB& bounds, render::IRenderableObject& object)
+    {
+        if (object.isOriented())
+        {
+            return bounds.intersects(AABB::createFromOrientedAABBSafe(
+                object.getObjectBounds(), object.getObjectTransform()));
+        }
+        else
+        {
+            return bounds.intersects(object.getObjectBounds());
+        }
+    }
+
     void onObjectBoundsChanged()
     {
         _collectionBoundsNeedUpdate = true;

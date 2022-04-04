@@ -1,29 +1,34 @@
+#pragma once
+
 #include "ifonts.h"
 
 #include "ifilesystem.h"
+#include "ThreadedDefLoader.h"
 
 namespace fonts
 {
 
 class FontManager;
 
-class FontLoader
+class FontLoader :
+    public util::ThreadedDefLoader<void>
 {
 private:
-	// The base path for the shaders (e.g. "materials/")
-	std::string _basePath;
-
 	// The manager for registering the fonts
 	FontManager& _manager;
 
 public:
-	// Constructor. Set the base path of the search.
-	FontLoader(const std::string& path, FontManager& manager) :
-		_basePath(path),
+	FontLoader(FontManager& manager) :
+        util::ThreadedDefLoader<void>(std::bind(&FontLoader::loadFonts, this)),
 		_manager(manager)
 	{}
 
-	void operator()(const vfs::FileInfo& fileInfo);
+private:
+    void loadFonts();
+    void loadFont(const vfs::FileInfo& fileInfo);
+
+    std::string getFontPath();
+    std::string getFontExtension();
 };
 
 } // namespace fonts

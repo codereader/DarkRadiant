@@ -95,7 +95,7 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix
     double materialCos = cos(material.uvAngle);
 
     // Hash table to provide quick (and coarse) lookup of vertices with similar XYZ coords
-    std::unordered_map<ArbitraryMeshVertex, std::size_t> vertexIndices;
+    std::unordered_map<MeshVertex, std::size_t> vertexIndices;
 
     for (const auto& face : mesh.faces)
     {
@@ -122,7 +122,7 @@ void AseModel::finishSurface(Mesh& mesh, std::size_t materialIndex, const Matrix
 
             const auto& colour = !mesh.colours.empty() ? mesh.colours[face.colourIndices[j]] : White;
             
-            ArbitraryMeshVertex meshVertex(
+            MeshVertex meshVertex(
                 vertex,
                 nodeMatrix.transformDirection(normal).getNormalised(),
                 TexCoord2f(u * materialCos + v * materialSin, u * -materialSin + v * materialCos),

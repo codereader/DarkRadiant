@@ -248,7 +248,7 @@ TEST_F(MaterialExportTest, Deform)
     // Mark the definition as modified by setting the description
     material->setDescription("-");
 
-    expectDefinitionContains(material, "deform move (1.7 + time + 4.0 - global3)");
+    expectDefinitionContains(material, "deform move (1.7 + time + 4 - global3)");
 
     material = GlobalMaterialManager().getMaterial("textures/exporttest/deform4");
     expectDefinitionContains(material, "deform");
@@ -256,7 +256,7 @@ TEST_F(MaterialExportTest, Deform)
     // Mark the definition as modified by setting the description
     material->setDescription("-");
 
-    expectDefinitionContains(material, "deform turbulent deformexporttesttable time * 2.0 (parm11 - 4.0) -1.0 * global5");
+    expectDefinitionContains(material, "deform turbulent deformexporttesttable time * 2 (parm11 - 4) -1 * global5");
 
     material = GlobalMaterialManager().getMaterial("textures/exporttest/deform5");
     expectDefinitionContains(material, "deform");
@@ -603,7 +603,7 @@ TEST_F(MaterialExportTest, TexGen)
     layer->setTexGenExpressionFromString(0, "1");
     layer->setTexGenExpressionFromString(1, "0.5");
     layer->setTexGenExpressionFromString(2, "(time * 0.6)");
-    expectDefinitionContains(material, "texgen wobblesky 1.0 0.5 (time * 0.6)");
+    expectDefinitionContains(material, "texgen wobblesky 1 0.5 (time * 0.6)");
 }
 
 TEST_F(MaterialExportTest, StageClamp)
@@ -737,7 +737,7 @@ TEST_F(MaterialExportTest, StageVertexColours)
     layer->setColourExpressionFromString(IShaderLayer::COMP_RED, "time * 0.1");
     layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "time * 7");
     expectDefinitionContains(material, "red time * 0.1");
-    expectDefinitionContains(material, "green time * 7.0");
+    expectDefinitionContains(material, "green time * 7");
     expectDefinitionDoesNotContainAnyOf(material, { "blue", "alpha", "colored", "color", "rgb ", "rgba" });
 
     material->revertModifications();
@@ -748,7 +748,7 @@ TEST_F(MaterialExportTest, StageVertexColours)
     layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "time * 0.1");
     layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "7");
     expectDefinitionContains(material, "rgb time * 0.1");
-    expectDefinitionContains(material, "alpha 7.0");
+    expectDefinitionContains(material, "alpha 7");
     expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "colored", "color", "rgba" });
 
     material->revertModifications();
@@ -782,7 +782,7 @@ TEST_F(MaterialExportTest, StageVertexColours)
     layer->setColourExpressionFromString(IShaderLayer::COMP_GREEN, "2");
     layer->setColourExpressionFromString(IShaderLayer::COMP_BLUE, "parm2");
     layer->setColourExpressionFromString(IShaderLayer::COMP_ALPHA, "parm3");
-    expectDefinitionContains(material, "color time * 0.1, 2.0, parm2, parm3");
+    expectDefinitionContains(material, "color time * 0.1, 2, parm2, parm3");
     expectDefinitionDoesNotContainAnyOf(material, { "red", "green", "blue", "alpha", "colored", "rgb ", "rgba" });
 
     material->revertModifications();
@@ -853,7 +853,7 @@ TEST_F(MaterialExportTest, StageTransforms)
     layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Scale });
     layer->updateTransformation(0, IShaderLayer::TransformType::Scale, "time", "time % 4");
 
-    expectDefinitionContains(material, "scale time, time % 4.0");
+    expectDefinitionContains(material, "scale time, time % 4");
     expectDefinitionDoesNotContainAnyOf(material, { "centerScale", "scroll", "rotate", "shear", "translate" });
 
     material->revertModifications();
@@ -862,7 +862,7 @@ TEST_F(MaterialExportTest, StageTransforms)
     layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Shear });
     layer->updateTransformation(0, IShaderLayer::TransformType::Shear, "time / 6", "global4");
 
-    expectDefinitionContains(material, "shear time / 6.0, global4");
+    expectDefinitionContains(material, "shear time / 6, global4");
     expectDefinitionDoesNotContainAnyOf(material, { "centerScale", "scroll", "rotate", "scale", "translate" });
 
     material->revertModifications();
@@ -877,9 +877,9 @@ TEST_F(MaterialExportTest, StageTransforms)
     layer->appendTransformation(IShaderLayer::Transformation{ IShaderLayer::TransformType::Rotate });
     layer->updateTransformation(3, IShaderLayer::TransformType::Rotate, "time", "");
 
-    expectDefinitionContains(material, "translate 1.0, 2.0");
-    expectDefinitionContains(material, "scale 1.0, 1.0");
-    expectDefinitionContains(material, "translate time, 1.0");
+    expectDefinitionContains(material, "translate 1, 2");
+    expectDefinitionContains(material, "scale 1, 1");
+    expectDefinitionContains(material, "translate time, 1");
     expectDefinitionContains(material, "rotate time");
     expectDefinitionDoesNotContainAnyOf(material, { "shear", "centerScale", "scroll" });
 }
@@ -916,14 +916,14 @@ TEST_F(MaterialExportTest, StageCondition)
     // Add condition without parentheses
     auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setConditionExpressionFromString("parm5 > 3");
-    expectDefinitionContains(material, "if (parm5 > 3.0)");
+    expectDefinitionContains(material, "if (parm5 > 3)");
 
     material->revertModifications();
 
     // Add condition with parentheses
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setConditionExpressionFromString("(parm5 > 3");
-    expectDefinitionContains(material, "if (parm5 > 3.0)");
+    expectDefinitionContains(material, "if (parm5 > 3)");
 
     material->revertModifications();
 
@@ -949,30 +949,30 @@ TEST_F(MaterialExportTest, VertexPrograms)
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
-    expectDefinitionContains(material, "vertexParm 0 time, 3.0");
+    expectDefinitionContains(material, "vertexParm 0 time, 3");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram3");
     EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
-    expectDefinitionContains(material, "vertexParm 0 time, 3.0, global3");
+    expectDefinitionContains(material, "vertexParm 0 time, 3, global3");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram4");
     EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
-    expectDefinitionContains(material, "vertexParm 0 time, 3.0, global3, time * 2.0");
+    expectDefinitionContains(material, "vertexParm 0 time, 3, global3, time * 2");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram5");
     EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
-    expectDefinitionContains(material, "vertexParm 0 time, 3.0, global3, time * 2.0");
-    expectDefinitionContains(material, "vertexParm 1 1.0, 2.0, 3.0, 4.0");
-    expectDefinitionContains(material, "vertexParm 2 5.0, 6.0, 7.0, 8.0");
+    expectDefinitionContains(material, "vertexParm 0 time, 3, global3, time * 2");
+    expectDefinitionContains(material, "vertexParm 1 1, 2, 3, 4");
+    expectDefinitionContains(material, "vertexParm 2 5, 6, 7, 8");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram6");
     EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
@@ -984,9 +984,9 @@ TEST_F(MaterialExportTest, VertexPrograms)
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
-    expectDefinitionContains(material, "vertexParm 0 time, 3.0, global3, time * 2.0");
+    expectDefinitionContains(material, "vertexParm 0 time, 3, global3, time * 2");
     expectDefinitionDoesNotContain(material, "vertexParm 1"); // should be missing
-    expectDefinitionContains(material, "vertexParm 2 5.0, 6.0, 7.0, 8.0");
+    expectDefinitionContains(material, "vertexParm 2 5, 6, 7, 8");
 }
 
 TEST_F(MaterialExportTest, FragmentPrograms)
@@ -1030,7 +1030,7 @@ TEST_F(MaterialExportTest, AmbientRimColour)
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/withAmbientRimColor");
 
     material->setDescription("-");
-    expectDefinitionContains(material, "ambientRimColor parm1 * 3.0, 0.0, time * 6.0");
+    expectDefinitionContains(material, "ambientRimColor parm1 * 3, 0, time * 6");
 }
 
 TEST_F(MaterialExportTest, BlendShortcuts)

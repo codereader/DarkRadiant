@@ -19,13 +19,16 @@ private:
     IWindingRenderer::Slot _slot;
     Winding::size_type _windingSize;
 
+    bool _useEntityColourAsVertexColour;
 public:
-    RenderableWinding(const Winding& winding) :
+    // Set useEntityColourAsVertexColour to false to set all vertex colours to white
+    RenderableWinding(const Winding& winding, bool useEntityColourAsVertexColour) :
         _winding(winding),
         _entity(nullptr),
         _needsUpdate(true),
         _slot(IWindingRenderer::InvalidSlot),
-        _windingSize(0)
+        _windingSize(0),
+        _useEntityColourAsVertexColour(useEntityColourAsVertexColour)
     {}
 
     void queueUpdate()
@@ -52,15 +55,15 @@ public:
             return;
         }
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<RenderVertex> vertices;
         vertices.reserve(numPoints);
 
-        // Use the colour defined by the entity as vertex colour
-        auto entityColour = entity.getEntityColour();
+        // Either use the colour defined by the entity as vertex colour, or use plain white
+        auto entityColour = _useEntityColourAsVertexColour ? entity.getEntityColour() : Vector4(1,1,1,1);
 
         for (const auto& vertex : _winding)
         {
-            vertices.emplace_back(ArbitraryMeshVertex(vertex.vertex, vertex.normal, 
+            vertices.emplace_back(RenderVertex(vertex.vertex, vertex.normal, 
                 vertex.texcoord, entityColour, vertex.tangent, vertex.bitangent));
         }
 
@@ -73,10 +76,11 @@ public:
 
         _shader = shader;
         _windingSize = numPoints;
+        _entity = &entity; // remember this renderentity, to detect colour changes
 
         if (_slot == IWindingRenderer::InvalidSlot)
         {
-            _slot = shader->addWinding(vertices, &entity);
+            _slot = shader->addWinding(vertices, _entity);
         }
         else
         {
@@ -94,11 +98,11 @@ public:
         _windingSize = 0;
     }
 
-    void render(const RenderInfo& info) const override
+    void render() const override
     {
-        if (_slot != render::IWindingRenderer::InvalidSlot && _shader)
+        if (_slot != IWindingRenderer::InvalidSlot && _shader)
         {
-            _shader->renderWinding(render::IWindingRenderer::RenderMode::Polygon, _slot);
+            _shader->renderWinding(IWindingRenderer::RenderMode::Polygon, _slot);
         }
     }
 };

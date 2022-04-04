@@ -101,7 +101,27 @@ public:
 	/**
 	 * Returns the given point as transformed by this quaternion
 	 */
-	Vector3 transformPoint(const Vector3& point) const;
+	template<typename ElementType>
+    BasicVector3<ElementType> transformPoint(const BasicVector3<ElementType>& point) const
+    {
+        double xx = x() * x();
+        double yy = y() * y();
+        double zz = z() * z();
+        double ww = w() * w();
+
+        double xy2 = x() * y() * 2;
+        double xz2 = x() * z() * 2;
+        double xw2 = x() * w() * 2;
+        double yz2 = y() * z() * 2;
+        double yw2 = y() * w() * 2;
+        double zw2 = z() * w() * 2;
+
+        return BasicVector3<ElementType>(
+            static_cast<ElementType>(ww * point.x() + yw2 * point.z() - zw2 * point.y() + xx * point.x() + xy2 * point.y() + xz2 * point.z() - zz * point.x() - yy * point.x()),
+            static_cast<ElementType>(xy2 * point.x() + yy * point.y() + yz2 * point.z() + zw2 * point.x() - zz * point.y() + ww * point.y() - xw2 * point.z() - xx * point.y()),
+            static_cast<ElementType>(xz2 * point.x() + yz2 * point.y() + zz * point.z() - yw2 * point.x() - yy * point.z() + xw2 * point.y() - xx * point.z() + ww * point.z())
+        );
+    }
 };
 
 inline const Quaternion& Quaternion::Identity()
@@ -197,27 +217,6 @@ inline Quaternion Quaternion::getNormalised() const
 inline void Quaternion::normalise()
 {
 	*this = getNormalised();
-}
-
-inline Vector3 Quaternion::transformPoint(const Vector3& point) const
-{
-	double xx = x() * x();
-	double yy = y() * y();
-	double zz = z() * z();
-	double ww = w() * w();
-
-	double xy2 = x() * y() * 2;
-	double xz2 = x() * z() * 2;
-	double xw2 = x() * w() * 2;
-	double yz2 = y() * z() * 2;
-	double yw2 = y() * w() * 2;
-	double zw2 = z() * w() * 2;
-
-	return Vector3(
-		ww * point.x() + yw2 * point.z() - zw2 * point.y() + xx * point.x() + xy2 * point.y() + xz2 * point.z() - zz * point.x() - yy * point.x(),
-		xy2 * point.x() + yy * point.y() + yz2 * point.z() + zw2 * point.x() - zz * point.y() + ww * point.y() - xw2 * point.z() - xx * point.y(),
-		xz2 * point.x() + yz2 * point.y() + zz * point.z() - yw2 * point.x() - yy * point.z() + xw2 * point.y() - xx * point.z() + ww * point.z()
-	);
 }
 
 const double c_half_sqrt2 = 0.70710678118654752440084436210485;

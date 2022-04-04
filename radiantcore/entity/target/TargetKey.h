@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ientity.h"
+#include <sigc++/connection.h>
 
 #include "Target.h"
 
@@ -30,6 +31,8 @@ private:
 
 	// The target this key is pointing to (can be empty)
 	TargetPtr _target;
+
+    sigc::connection _positionChangedSignal;
 public:
     TargetKey(TargetKeyCollection& owner);
 
@@ -47,6 +50,9 @@ public:
 
 	// This gets called as soon as the "target" key in the spawnargs changes
 	void onKeyValueChanged(const std::string& newValue) override;
+
+private:
+    void onTargetPositionChanged();
 };
 
 } // namespace entity

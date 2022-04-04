@@ -55,24 +55,26 @@ public:
 	// Disconnect this class from the entity
 	void destruct();
 
-    const TargetKeyCollection& getTargetKeys() const;
+    TargetKeyCollection& getTargetKeys();
 
 	// Gets called as soon as the "name" keyvalue changes
-	void onKeyValueChanged(const std::string& name);
+	void onKeyValueChanged(const std::string& name) override;
 
 	// Entity::Observer implementation, gets called on key insert
-	void onKeyInsert(const std::string& key, EntityKeyValue& value);
-
-	// Entity::Observer implementation, gets called on key erase
-	void onKeyErase(const std::string& key, EntityKeyValue& value);
+	void onKeyInsert(const std::string& key, EntityKeyValue& value) override;
+	void onKeyErase(const std::string& key, EntityKeyValue& value) override;
+    void onKeyChange(const std::string& key, const std::string& value) override;
 
     // scene insert/remove handling
     void onInsertIntoScene(scene::IMapRootNode& root);
     void onRemoveFromScene(scene::IMapRootNode& root);
 
+    void onVisibilityChanged(bool isVisibleNow);
+
     // Invoked by the TargetKeyCollection when the number of observed has changed
     void onTargetKeyCollectionChanged();
 
+    void onTransformationChanged();
     void onRenderSystemChanged();
 };
 

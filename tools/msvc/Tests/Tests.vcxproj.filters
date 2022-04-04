@@ -55,6 +55,9 @@
     <ClCompile Include="..\..\..\test\WindingRendering.cpp" />
     <ClCompile Include="..\..\..\test\SceneNode.cpp" />
     <ClCompile Include="..\..\..\test\ContinuousBuffer.cpp" />
+    <ClCompile Include="..\..\..\test\Particles.cpp" />
+    <ClCompile Include="..\..\..\test\GeometryStore.cpp" />
+    <ClCompile Include="..\..\..\test\Settings.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
@@ -82,6 +85,16 @@
     </ClInclude>
     <ClInclude Include="..\..\..\test\algorithm\Entity.h">
       <Filter>algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\testutil\TestBufferObjectProvider.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\testutil\CommandFailureHelper.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\FakeClipboardModule.h" />
+    <ClInclude Include="..\..\..\test\testutil\MapOperationMonitor.h">
+      <Filter>testutil</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

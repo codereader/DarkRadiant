@@ -35,7 +35,7 @@ void TargetableNode::destruct()
 	_d3entity.detachObserver(this);
 }
 
-const TargetKeyCollection& TargetableNode::getTargetKeys() const
+TargetKeyCollection& TargetableNode::getTargetKeys()
 {
     return _targetKeys;
 }
@@ -77,6 +77,24 @@ void TargetableNode::onKeyInsert(const std::string& key, EntityKeyValue& value)
 	}
 }
 
+void TargetableNode::onTransformationChanged()
+{
+    if (_targetManager)
+    {
+        // Notify the target manager that our position has changed
+        _targetManager->onTargetPositionChanged(_targetName, _node);
+    }
+}
+
+void TargetableNode::onKeyChange(const std::string& key, const std::string& value)
+{
+    if (_targetManager && key == "origin")
+    {
+        // Notify the target manager that our position has changed
+        _targetManager->onTargetPositionChanged(_targetName, _node);
+    }
+}
+
 // Entity::Observer implementation, gets called on key erase
 void TargetableNode::onKeyErase(const std::string& key, EntityKeyValue& value)
 {
@@ -115,6 +133,14 @@ void TargetableNode::onRemoveFromScene(scene::IMapRootNode& root)
     _targetKeys.onTargetManagerChanged();
 }
 
+void TargetableNode::onVisibilityChanged(bool isVisibleNow)
+{
+    if (!_targetManager) return;
+
+    // Notify the target manager that our position has changed
+    _targetManager->onTargetVisibilityChanged(_targetName, _node);
+}
+
 void TargetableNode::onTargetKeyCollectionChanged()
 {
     if (!_targetKeys.empty())
@@ -131,6 +157,8 @@ void TargetableNode::onTargetKeyCollectionChanged()
 			// this also updates its layer visibility flags
             scene::addNodeToContainer(_targetLineNode, _node.shared_from_this());
         }
+
+        _targetLineNode->queueRenderableUpdate();
     }
     else // No more targets
     {

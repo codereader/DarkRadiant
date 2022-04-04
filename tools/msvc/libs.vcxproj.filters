@@ -90,9 +90,6 @@
     <ClInclude Include="..\..\libs\render\VertexNT.h">
       <Filter>render</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\render\ArbitraryMeshVertex.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\render\Colour4.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -326,9 +323,6 @@
     <ClInclude Include="..\..\libs\messages\MapOperationMessage.h">
       <Filter>messages</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\render\WindingRenderer.h">
-      <Filter>render</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\render\CompactWindingVertexBuffer.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -370,6 +364,27 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\render\NopRenderView.h">
       <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\parser\ThreadedDeclParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\MeshVertex.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\GeometryStore.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\RenderVertex.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\Rectangle.h">
+      <Filter>render</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\settings\SettingsManager.h">
+      <Filter>settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\settings\MajorMinorVersion.h">
+      <Filter>settings</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -417,6 +432,9 @@
     </Filter>
     <Filter Include="materials">
       <UniqueIdentifier>{60865a71-2a02-47bd-b5e2-8e7ec339d27b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="settings">
+      <UniqueIdentifier>{a23072d3-ab2e-4596-ba32-e785ba12be3a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

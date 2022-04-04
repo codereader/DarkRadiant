@@ -540,6 +540,21 @@ void Map::focusViewCmd(const cmd::ArgumentList& args)
     focusViews(args[0].getVector3(), args[1].getVector3());
 }
 
+void Map::focusCameraOnSelectionCmd(const cmd::ArgumentList& args)
+{
+    if (GlobalSelectionSystem().countSelected() == 0)
+    {
+        throw cmd::ExecutionNotPossible(_("Cannot focus, selection is empty"));
+    }
+
+    // Determine the bounds of the current selection
+    const auto& workZone = GlobalSelectionSystem().getWorkZone();
+    auto originAndAngles = scene::getOriginAndAnglesToLookAtBounds(workZone.bounds);
+
+    // Set the camera and the views to the given point
+    GlobalCameraManager().focusAllCameras(originAndAngles.first, originAndAngles.second);
+}
+
 scene::INodePtr Map::findWorldspawn()
 {
 	scene::INodePtr worldspawn;
@@ -966,7 +981,8 @@ void Map::saveAutomaticMapBackup(const cmd::ArgumentList& args)
 void Map::registerCommands()
 {
     GlobalCommandSystem().addCommand("NewMap", Map::newMap);
-    GlobalCommandSystem().addCommand("OpenMap", Map::openMap, { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
+    GlobalCommandSystem().addCommand("OpenMap", std::bind(&Map::openMapCmd, this, std::placeholders::_1), 
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
     GlobalCommandSystem().addCommand("OpenMapFromArchive", Map::openMapFromArchive, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ImportMap", Map::importMap);
     GlobalCommandSystem().addCommand("StartMergeOperation", std::bind(&Map::startMergeOperationCmd, this, std::placeholders::_1),
@@ -985,6 +1001,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
 	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
     GlobalCommandSystem().addCommand("FocusViews", std::bind(&Map::focusViewCmd, this, std::placeholders::_1), { cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_VECTOR3 });
+    GlobalCommandSystem().addCommand("FocusCameraOnSelection", std::bind(&Map::focusCameraOnSelectionCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
         { cmd::ARGTYPE_STRING,
           cmd::ARGTYPE_STRING,
@@ -1033,9 +1050,9 @@ void Map::newMap(const cmd::ArgumentList& args)
     }
 }
 
-void Map::openMap(const cmd::ArgumentList& args)
+void Map::openMapCmd(const cmd::ArgumentList& args)
 {
-    if (!GlobalMap().askForSave(_("Open Map"))) return;
+    if (!askForSave(_("Open Map"))) return;
 
     std::string candidate;
 
@@ -1046,7 +1063,7 @@ void Map::openMap(const cmd::ArgumentList& args)
     else
     {
         // No arguments passed, get the map file name to load
-        MapFileSelection fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), filetype::TYPE_MAP);
+        auto fileInfo = MapFileManager::getMapFileSelection(true, _("Open map"), filetype::TYPE_MAP);
         candidate = fileInfo.fullPath;
     }
 
@@ -1085,8 +1102,8 @@ void Map::openMap(const cmd::ArgumentList& args)
 	{
         GlobalMRU().insert(mapToLoad);
 
-        GlobalMap().freeMap();
-        GlobalMap().load(mapToLoad);
+        freeMap();
+        load(mapToLoad);
     }
 }
 

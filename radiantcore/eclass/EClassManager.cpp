@@ -7,7 +7,6 @@
 #include "icommandsystem.h"
 #include "iradiant.h"
 #include "ifilesystem.h"
-#include "parser/DefTokeniser.h"
 #include "messages/ScopedLongRunningOperation.h"
 
 #include "EntityClass.h"
@@ -16,30 +15,26 @@
 #include "string/case_conv.h"
 #include <functional>
 
-#include "debugging/ScopedDebugTimer.h"
 #include "module/StaticModule.h"
 
 namespace eclass {
 
-// Constructor
 EClassManager::EClassManager() :
     _realised(false),
-    _defLoader(std::bind(&EClassManager::loadDefAndResolveInheritance, this),
-               std::bind(&EClassManager::onDefLoadingCompleted, this)),
-	_curParseStamp(0)
+    _defLoader(*this, _entityClasses, _models)
 {}
 
-sigc::signal<void> EClassManager::defsLoadingSignal() const
+sigc::signal<void>& EClassManager::defsLoadingSignal()
 {
     return _defsLoadingSignal;
 }
 
-sigc::signal<void> EClassManager::defsLoadedSignal() const
+sigc::signal<void>& EClassManager::defsLoadedSignal()
 {
 	return _defsLoadedSignal;
 }
 
-sigc::signal<void> EClassManager::defsReloadedSignal() const
+sigc::signal<void>& EClassManager::defsReloadedSignal()
 {
     return _defsReloadedSignal;
 }
@@ -90,118 +85,9 @@ EntityClass::Ptr EClassManager::insertUnique(const EntityClass::Ptr& eclass)
     return i.first->second;
 }
 
-void EClassManager::resolveModelInheritance(const std::string& name, const Doom3ModelDef::Ptr& model)
-{
-	if (model->resolved == true) {
-		return; // inheritance already resolved
-	}
-
-	model->resolved = true;
-
-	if (!model->parent.empty())
-	{
-		Models::iterator i = _models.find(model->parent);
-
-		if (i == _models.end()) {
-			rError() << "model " << name
-				<< " inherits unknown model " << model->parent << std::endl;
-		}
-		else {
-			resolveModelInheritance(i->first, i->second);
-
-			// greebo: Only inherit the "mesh" of the parent if the current declaration doesn't have one
-			if (model->mesh.empty())
-			{
-				model->mesh = i->second->mesh;
-			}
-
-			// Only inherit the "skin" of the parent if the current declaration doesn't have one
-			if (model->skin.empty())
-			{
-				model->skin = i->second->skin;
-			}
-
-			// Append all inherited animations, if missing on the child
-			model->anims.insert(i->second->anims.begin(), i->second->anims.end());
-		}
-	}
-}
-
-void EClassManager::parseDefFiles()
-{
-    // Increase the parse stamp for this run
-    _curParseStamp++;
-
-    {
-        ScopedDebugTimer timer("EntityDefs parsed: ");
-        GlobalFileSystem().forEachFile(
-            "def/", "def", [&](const vfs::FileInfo& fileInfo) { parseFile(fileInfo); }
-        );
-    }
-}
-
-void EClassManager::resolveInheritance()
-{
-	// Resolve inheritance on the model classes
-    for (Models::value_type& pair : _models)
-    {
-    	resolveModelInheritance(pair.first, pair.second);
-    }
-
-    // Resolve inheritance for the entities. At this stage the classes
-    // will have the name of their parent, but not an actual pointer to
-    // it
-    for (EntityClasses::value_type& pair : _entityClasses)
-	{
-		// Tell the class to resolve its own inheritance using the given
-		// map as a source for parent lookup
-        pair.second->resolveInheritance(_entityClasses);
-
-        // If the entity has a model path ("model" key), lookup the actual
-        // model and apply its mesh and skin to this entity.
-        if (!pair.second->getModelPath().empty())
-        {
-            Models::iterator j = _models.find(pair.second->getModelPath());
-
-            if (j != _models.end())
-            {
-                pair.second->setModelPath(j->second->mesh);
-                pair.second->setSkin(j->second->skin);
-            }
-        }
-    }
-}
-
 void EClassManager::ensureDefsLoaded()
 {
     _defLoader.ensureFinished();
-}
-
-void EClassManager::loadDefAndResolveInheritance()
-{
-    _defsLoadingSignal.emit();
-
-    // Hold back all changed signals
-    for (const auto& eclass : _entityClasses)
-    {
-        eclass.second->blockChangedSignal(true);
-    }
-
-    parseDefFiles();
-    resolveInheritance();
-    applyColours();
-
-    // The loaded signal will be invoked in the onDefLoadingCompleted() method
-}
-
-void EClassManager::applyColours()
-{
-    GlobalEclassColourManager().foreachOverrideColour([&](const std::string& eclass, const Vector4& colour)
-    {
-        auto foundEclass = _entityClasses.find(string::to_lower_copy(eclass));
-        if (foundEclass != _entityClasses.end())
-            foundEclass->second->setColour(colour);
-    });
 }
 
 void EClassManager::realise()
@@ -216,7 +102,6 @@ void EClassManager::realise()
     _defLoader.start();
 }
 
-// Find an entity class
 IEntityClassPtr EClassManager::findClass(const std::string& className)
 {
     ensureDefsLoaded();
@@ -229,14 +114,13 @@ IEntityClassPtr EClassManager::findClass(const std::string& className)
     return i != _entityClasses.end() ? i->second : IEntityClassPtr();
 }
 
-// Visit each entity class
 void EClassManager::forEachEntityClass(EntityClassVisitor& visitor)
 {
     ensureDefsLoaded();
 
-	for (EntityClasses::value_type& pair : _entityClasses)
+	for (auto& [_, eclass] : _entityClasses)
 	{
-		visitor.visit(pair.second);
+		visitor.visit(eclass);
 	}
 }
 
@@ -254,8 +138,8 @@ IModelDefPtr EClassManager::findModel(const std::string& name)
 {
     ensureDefsLoaded();
 
-	Models::const_iterator found = _models.find(name);
-	return (found != _models.end()) ? found->second : Doom3ModelDef::Ptr();
+	auto found = _models.find(name);
+	return found != _models.end() ? found->second : Doom3ModelDef::Ptr();
 }
 
 void EClassManager::forEachModelDef(ModelDefVisitor& visitor)
@@ -278,58 +162,41 @@ void EClassManager::forEachModelDef(const std::function<void(const IModelDefPtr&
 
 void EClassManager::reloadDefs()
 {
-    // Block load signals until inheritance of all classes has been completed
-    // we can't have eclass changed signals emitted before we have that sorted out
-    for (const auto& eclass : _entityClasses)
-    {
-        eclass.second->blockChangedSignal(true);
-    }
-
 	// greebo: Leave all current entityclasses as they are, just invoke the
 	// FileLoader again. It will parse the files again, and look up
 	// the eclass names in the existing map. If found, the eclass
 	// will be asked to clear itself and re-parse from the tokens.
 	// This is to assure that any IEntityClassPtrs remain intact during
 	// the process, only the class contents change.
-	parseDefFiles();
+    _defLoader.parseSynchronously();
 
-	// Resolve the eclass inheritance again
-	resolveInheritance();
-
-    // Release the lock and emit the signal
-    for (const auto& eclass : _entityClasses)
-    {
-        eclass.second->blockChangedSignal(false);
-        eclass.second->emitChangedSignal();
-    }
-
+    // On top of the "loaded" signal, emit the "reloaded" signal
     _defsReloadedSignal.emit();
 }
 
 // RegisterableModule implementation
-const std::string& EClassManager::getName() const {
+const std::string& EClassManager::getName() const
+{
 	static std::string _name(MODULE_ECLASSMANAGER);
 	return _name;
 }
 
 const StringSet& EClassManager::getDependencies() const
 {
-	static StringSet _dependencies;
-
-	if (_dependencies.empty())
-	{
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-		_dependencies.insert(MODULE_XMLREGISTRY);
-		_dependencies.insert(MODULE_COMMANDSYSTEM);
-		_dependencies.insert(MODULE_ECLASS_COLOUR_MANAGER);
-	}
+    static StringSet _dependencies
+    {
+        MODULE_VIRTUALFILESYSTEM,
+        MODULE_XMLREGISTRY,
+        MODULE_COMMANDSYSTEM,
+        MODULE_ECLASS_COLOUR_MANAGER
+    };
 
 	return _dependencies;
 }
 
 void EClassManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << "EntityClassDoom3::initialiseModule called." << std::endl;
+	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
 	GlobalFileSystem().addObserver(*this);
 
@@ -406,123 +273,6 @@ void EClassManager::onFileSystemInitialise()
 void EClassManager::onFileSystemShutdown()
 {
 	unrealise();
-}
-
-// Parse the provided stream containing the contents of a single .def file.
-// Extract all entitydefs and create objects accordingly.
-void EClassManager::parse(TextInputStream& inStr, const vfs::FileInfo& fileInfo, const std::string& modDir)
-{
-	// Construct a tokeniser for the stream
-	std::istream is(&inStr);
-    parser::BasicDefTokeniser<std::istream> tokeniser(is);
-
-    while (tokeniser.hasMoreTokens())
-	{
-        std::string blockType = tokeniser.nextToken();
-        string::to_lower(blockType);
-
-        if (blockType == "entitydef")
-		{
-			// Get the (lowercase) entity name
-			const std::string sName =
-    			string::to_lower_copy(tokeniser.nextToken());
-
-			// Ensure that an Entity class with this name already exists
-			// When reloading entityDef declarations, most names will already be registered
-			auto i = _entityClasses.find(sName);
-
-			if (i == _entityClasses.end())
-			{
-				// Not existing yet, allocate a new class
-				auto result = _entityClasses.emplace(sName, std::make_shared<EntityClass>(sName, fileInfo));
-
-				i = result.first;
-			}
-			else
-			{
-				// EntityDef already exists, compare the parse stamp
-				if (i->second->getParseStamp() == _curParseStamp)
-				{
-					rWarning() << "[eclassmgr]: EntityDef "
-						<< sName << " redefined" << std::endl;
-				}
-			}
-
-			// At this point, i is pointing to a valid entityclass
-			i->second->setParseStamp(_curParseStamp);
-
-        	// Parse the contents of the eclass (excluding name)
-			i->second->parseFromTokens(tokeniser);
-
-			// Set the mod directory
-        	i->second->setModName(modDir);
-        }
-        else if (blockType == "model")
-		{
-			// Read the name
-			std::string modelDefName = tokeniser.nextToken();
-
-			// Ensure that an Entity class with this name already exists
-			// When reloading entityDef declarations, most names will already be registered
-			auto foundModel = _models.find(modelDefName);
-
-			if (foundModel == _models.end())
-			{
-				// Does not exist yet, allocate a new one
-
-				// Allocate an empty ModelDef
-        		auto model = std::make_shared<Doom3ModelDef>(modelDefName);
-
-                foundModel = _models.emplace(modelDefName, model).first;
-			}
-			else
-			{
-				// Model already exists, compare the parse stamp
-				if (foundModel->second->getParseStamp() == _curParseStamp)
-				{
-					rWarning() << "[eclassmgr]: Model "
-						<< modelDefName << " redefined" << std::endl;
-				}
-			}
-
-			// Model structure is allocated and in the map,
-            // invoke the parser routine
-            foundModel->second->setParseStamp(_curParseStamp);
-
-            foundModel->second->parseFromTokens(tokeniser);
-            foundModel->second->setModName(modDir);
-            foundModel->second->defFilename = fileInfo.fullPath();
-        }
-    }
-}
-
-void EClassManager::parseFile(const vfs::FileInfo& fileInfo)
-{
-	auto file = GlobalFileSystem().openTextFile(fileInfo.fullPath());
-
-	if (!file) return;
-
-	try
-    {
-		// Parse entity defs from the file
-		parse(file->getInputStream(), fileInfo, file->getModName());
-	}
-    catch (parser::ParseException& e)
-    {
-		rError() << "[eclassmgr] failed to parse " << fileInfo.fullPath()
-				 << " (" << e.what() << ")" << std::endl;
-	}
-}
-
-void EClassManager::onDefLoadingCompleted()
-{
-    for (const auto& eclass : _entityClasses)
-    {
-        eclass.second->blockChangedSignal(false);
-        eclass.second->emitChangedSignal();
-    }
-
-    _defsLoadedSignal.emit();
 }
 
 // Static module instance

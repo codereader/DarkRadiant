@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <sigc++/signal.h>
 #include "TargetKey.h"
 
 namespace entity
@@ -17,6 +18,8 @@ private:
 	// greebo: A container mapping "targetN" keys to TargetKey objects
 	typedef std::map<std::string, TargetKey> TargetKeyMap;
 	TargetKeyMap _targetKeys;
+
+    sigc::signal<void> _sigTargetPositionChanged;
 
 public:
     TargetKeyCollection(TargetableNode& owner);
@@ -44,6 +47,12 @@ public:
 
 	// Returns TRUE if there are no "target" keys observed
 	bool empty() const;
+
+    // The TargetLineNode listens to this to reconstructs its renderables
+    sigc::signal<void>& signal_TargetPositionChanged();
+
+    // Invoked by the TargetKey instance if a single Target changes its position
+    void onTargetPositionChanged();
 
 private:
 	// Returns TRUE if the given key matches the pattern for target keys

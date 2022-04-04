@@ -11,6 +11,7 @@
 #include "string/string.h"
 #include "string/encoding.h"
 #include "module/StaticModule.h"
+#include "settings/SettingsManager.h"
 
 namespace registry
 {
@@ -45,8 +46,9 @@ void XMLRegistry::saveToDisk()
     // Make a deep copy of the user tree by copy-constructing it
     RegistryTree copiedTree(_userTree);
 
-    // Application-relative on other OS
-    std::string settingsPath = module::GlobalModuleRegistry().getApplicationContext().getSettingsPath();
+    // Get the version-specific folder we can store our settings files in
+    settings::SettingsManager manager(module::GlobalModuleRegistry().getApplicationContext());
+    auto settingsPath = manager.getCurrentVersionSettingsFolder();
 
     // Replace the version tag and set it to the current DarkRadiant version
     copiedTree.deleteXPath("user//version");
@@ -255,10 +257,10 @@ void XMLRegistry::emitSignalForKey(const std::string& changedKey)
     }
 }
 
-void XMLRegistry::loadUserFileFromSettingsPath(const IApplicationContext& ctx,
+void XMLRegistry::loadUserFileFromSettingsPath(const settings::SettingsManager& settingsManager,
     const std::string& filename, const std::string& baseXPath)
 {
-    std::string userSettingsFile = ctx.getSettingsPath() + filename;
+    auto userSettingsFile = settingsManager.getExistingSettingsFile(filename);
 
     if (os::fileOrDirExists(userSettingsFile))
     {
@@ -278,7 +280,7 @@ void XMLRegistry::loadUserFileFromSettingsPath(const IApplicationContext& ctx,
     else
     {
         rMessage() << "XMLRegistry: file " << filename << " not present in "
-            << ctx.getSettingsPath() << std::endl;
+            << settingsManager.getBaseSettingsPath() << std::endl;
     }
 }
 
@@ -325,11 +327,12 @@ void XMLRegistry::initialiseModule(const IApplicationContext& ctx)
     }
 
     // Load user preferences, these overwrite any values that have defined before
+    settings::SettingsManager manager(ctx);
 
-    loadUserFileFromSettingsPath(ctx, "user.xml", "");
-    loadUserFileFromSettingsPath(ctx, "colours.xml", "user/ui");
-    loadUserFileFromSettingsPath(ctx, "input.xml", "user/ui");
-    loadUserFileFromSettingsPath(ctx, "filters.xml", "user/ui/filtersystem");
+    loadUserFileFromSettingsPath(manager, "user.xml", "");
+    loadUserFileFromSettingsPath(manager, "colours.xml", "user/ui");
+    loadUserFileFromSettingsPath(manager, "input.xml", "user/ui");
+    loadUserFileFromSettingsPath(manager, "filters.xml", "user/ui/filtersystem");
 
     // Subscribe to the post-module-shutdown signal to save changes to disk
     module::GlobalModuleRegistry().signal_allModulesUninitialised().connect(

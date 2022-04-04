@@ -249,16 +249,16 @@ private:
 
     // Update the projected light frustum
     void updateProjection() const;
+	bool useStartEnd() const;
 
+public:
     // RendererLight implementation
     const IRenderEntity& getLightEntity() const override;
     Matrix4 getLightTextureTransformation() const override;
     Vector3 getLightOrigin() const override;
+    bool isShadowCasting() const override;
     const ShaderPtr& getShader() const override;
 	AABB lightAABB() const override;
-
-	bool useStartEnd() const;
-
 };
 
 } // namespace entity

@@ -60,6 +60,8 @@ class BrushNode :
 
     brush::RenderableBrushVertices _renderableVertices;
 
+    bool _facesNeedRenderableUpdate;
+
 public:
 	// Constructor
 	BrushNode();
@@ -138,6 +140,7 @@ public:
 	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 	std::size_t getHighlightFlags() override;
+    void onFaceNeedsRenderableUpdate();
 
 	void evaluateTransform();
 

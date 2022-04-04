@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "igeometryrenderer.h"
-#include "isurfacerenderer.h"
 #include "irenderableobject.h"
 #include "irender.h"
 
@@ -47,6 +46,11 @@ private:
             return _owner._surfaceSlot != IGeometryRenderer::InvalidSlot;
         }
 
+        bool isOriented() override
+        {
+            return false;
+        }
+
         const Matrix4& getObjectTransform() override
         {
             static Matrix4 _identity = Matrix4::getIdentity();
@@ -86,6 +90,11 @@ private:
 
             return _owner._shader->getGeometryStorageLocation(_owner._surfaceSlot);
         }
+
+        bool isShadowCasting() override
+        {
+            return _owner._renderEntity->isShadowCasting();
+        }
     };
 
     // Adapater suitable to be attached to an IRenderEntity
@@ -107,7 +116,7 @@ public:
     RenderableGeometry(const RenderableGeometry& other) = delete;
     RenderableGeometry& operator=(const RenderableGeometry& other) = delete;
 
-    virtual ~RenderableGeometry()
+    virtual ~RenderableGeometry() override
     {
         clear();
     }
@@ -117,9 +126,7 @@ public:
     // to be different from the last update.
     void update(const ShaderPtr& shader)
     {
-        bool shaderChanged = _shader != shader;
-
-        if (shaderChanged)
+        if (_shader != shader)
         {
             clear();
         }
@@ -146,7 +153,7 @@ public:
     }
 
     // Renders the geometry stored in our single slot
-    void render(const RenderInfo& info) const override
+    void render() const override
     {
         if (_surfaceSlot != IGeometryRenderer::InvalidSlot && _shader)
         {
@@ -235,7 +242,7 @@ protected:
      * Indices of vertices to join together into primitives.
      */
     void updateGeometryWithData(GeometryType type,
-                                const std::vector<ArbitraryMeshVertex>& vertices,
+                                const std::vector<RenderVertex>& vertices,
                                 const std::vector<unsigned int>& indices)
     {
         // Size changes require removal of the geometry before update

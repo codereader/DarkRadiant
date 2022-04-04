@@ -38,16 +38,16 @@ protected:
         static const Vector4 ColourY{ 0, 255, 0, 255 };
         static const Vector4 ColourZ{ 0, 0, 255, 255 };
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<RenderVertex> vertices;
 
-        vertices.push_back(ArbitraryMeshVertex(_pivot, { 0, 0, 0 }, { 0, 0 }, ColourX));
-        vertices.push_back(ArbitraryMeshVertex(_pivot + Vector3(16, 0, 0), { 0, 0, 0 }, { 0, 0 }, ColourX));
+        vertices.push_back(RenderVertex(_pivot, { 0, 0, 0 }, { 0, 0 }, ColourX));
+        vertices.push_back(RenderVertex(_pivot + Vector3(16, 0, 0), { 0, 0, 0 }, { 0, 0 }, ColourX));
 
-        vertices.push_back(ArbitraryMeshVertex(_pivot, { 0, 0, 0 }, { 0, 0 }, ColourY));
-        vertices.push_back(ArbitraryMeshVertex(_pivot + Vector3(0, 16, 0), { 0, 0, 0 }, { 0, 0 }, ColourY));
+        vertices.push_back(RenderVertex(_pivot, { 0, 0, 0 }, { 0, 0 }, ColourY));
+        vertices.push_back(RenderVertex(_pivot + Vector3(0, 16, 0), { 0, 0, 0 }, { 0, 0 }, ColourY));
 
-        vertices.push_back(ArbitraryMeshVertex(_pivot, { 0, 0, 0 }, { 0, 0 }, ColourZ));
-        vertices.push_back(ArbitraryMeshVertex(_pivot + Vector3(0, 0, 16), { 0, 0, 0 }, { 0, 0 }, ColourZ));
+        vertices.push_back(RenderVertex(_pivot, { 0, 0, 0 }, { 0, 0 }, ColourZ));
+        vertices.push_back(RenderVertex(_pivot + Vector3(0, 0, 16), { 0, 0, 0 }, { 0, 0 }, ColourZ));
 
         static std::vector<unsigned int> Indices =
         {
@@ -56,7 +56,7 @@ protected:
             4, 5
         };
 
-        RenderableGeometry::updateGeometryWithData(GeometryType::Lines, vertices, Indices);
+        updateGeometryWithData(GeometryType::Lines, vertices, Indices);
     }
 };
 

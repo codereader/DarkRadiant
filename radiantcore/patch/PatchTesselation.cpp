@@ -197,7 +197,7 @@ void PatchTesselation::generateNormals()
 	}
 }
 
-void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex& out) const
+void PatchTesselation::sampleSinglePatchPoint(const MeshVertex ctrl[3][3], float u, float v, MeshVertex& out) const
 {
 	double vCtrl[3][8];
 
@@ -260,10 +260,10 @@ void PatchTesselation::sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][
 	}
 }
 
-void PatchTesselation::sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3],
+void PatchTesselation::sampleSinglePatch(const MeshVertex ctrl[3][3],
 	std::size_t baseCol, std::size_t baseRow,
 	std::size_t w, std::size_t horzSub, std::size_t vertSub,
-	std::vector<ArbitraryMeshVertex>& outVerts) const
+	std::vector<MeshVertex>& outVerts) const
 {
 	horzSub++;
 	vertSub++;
@@ -285,10 +285,10 @@ void PatchTesselation::subdivideMeshFixed(std::size_t subdivX, std::size_t subdi
 	std::size_t outWidth = ((width - 1) / 2 * subdivX) + 1;
 	std::size_t outHeight = ((height - 1) / 2 * subdivY) + 1;
 
-	std::vector<ArbitraryMeshVertex> dv(outWidth * outHeight);
+	std::vector<MeshVertex> dv(outWidth * outHeight);
 
 	std::size_t baseCol = 0;
-	ArbitraryMeshVertex sample[3][3];
+	MeshVertex sample[3][3];
 
 	for (std::size_t i = 0; i + 2 < width; i += 2)
 	{
@@ -375,7 +375,7 @@ void PatchTesselation::resizeExpandedMesh(std::size_t newHeight, std::size_t new
 	_maxWidth = newWidth;
 }
 
-void PatchTesselation::lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out)
+void PatchTesselation::lerpVert(const MeshVertex& a, const MeshVertex& b, MeshVertex&out)
 {
 	out.vertex = math::midPoint(a.vertex, b.vertex);
 	out.normal = math::midPoint(a.normal, b.normal);
@@ -384,7 +384,7 @@ void PatchTesselation::lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMes
 
 void PatchTesselation::putOnCurve()
 {
-	ArbitraryMeshVertex prev, next;
+	MeshVertex prev, next;
 
 	// put all the approximating points on the curve
 	for (std::size_t i = 0; i < width; i++)
@@ -500,7 +500,7 @@ void PatchTesselation::subdivideMesh()
 	static const float DEFAULT_CURVE_MAX_LENGTH = -1.0f;
 
 	Vector3 prevxyz, nextxyz, midxyz;
-	ArbitraryMeshVertex prev, next, mid;
+	MeshVertex prev, next, mid;
 
 	static float maxHorizontalErrorSqr = DEFAULT_CURVE_MAX_ERROR * DEFAULT_CURVE_MAX_ERROR;
 	static float maxVerticalErrorSqr = DEFAULT_CURVE_MAX_ERROR * DEFAULT_CURVE_MAX_ERROR;
@@ -654,7 +654,7 @@ struct FaceTangents
 namespace
 {
 
-void calculateFaceTangent(FaceTangents& ft, const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, const ArbitraryMeshVertex& c)
+void calculateFaceTangent(FaceTangents& ft, const MeshVertex& a, const MeshVertex& b, const MeshVertex& c)
 {
 	double d0[5], d1[5];
 
@@ -759,7 +759,7 @@ void PatchTesselation::deriveTangents()
 
 			for (std::size_t j = 0; j < 3; j++)
 			{
-				ArbitraryMeshVertex& vert = vertices[strip_indices[i + j]];
+				MeshVertex& vert = vertices[strip_indices[i + j]];
 
 				vert.tangent += ft1.tangents[0];
 				vert.bitangent += ft1.tangents[1];
@@ -770,7 +770,7 @@ void PatchTesselation::deriveTangents()
 
 			for (std::size_t j = 0; j < 3; j++)
 			{
-				ArbitraryMeshVertex& vert = vertices[strip_indices[i + j + 1]];
+				MeshVertex& vert = vertices[strip_indices[i + j + 1]];
 
 				vert.tangent += ft2.tangents[0];
 				vert.bitangent += ft2.tangents[1];
@@ -782,7 +782,7 @@ void PatchTesselation::deriveTangents()
 	// and normalize.  The tangent vectors will not necessarily
 	// be orthogonal to each other, but they will be orthogonal
 	// to the surface normal.
-	for (ArbitraryMeshVertex& vert : vertices)
+	for (MeshVertex& vert : vertices)
 	{
 		auto d = vert.tangent.dot(vert.normal);
 		vert.tangent = vert.tangent - vert.normal * d;
@@ -872,7 +872,7 @@ void PatchTesselation::generate(std::size_t patchWidth, std::size_t patchHeight,
     // Final update: assign colours and normalise normals
     auto colour = renderEntity ? renderEntity->getEntityColour() : Vector4(1, 1, 1, 1);
 
-	for (ArbitraryMeshVertex& vertex : vertices)
+	for (MeshVertex& vertex : vertices)
 	{
 	    // normalize all the lerped normals
 		if (vertex.normal.getLengthSquared() > 0)

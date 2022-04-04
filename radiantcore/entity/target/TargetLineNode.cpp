@@ -10,13 +10,21 @@ TargetLineNode::TargetLineNode(EntityNode& owner) :
     scene::Node(),
     _owner(owner),
     _targetLines(_owner, _owner.getTargetKeys())
-{}
+{
+    _owner.getTargetKeys().signal_TargetPositionChanged().connect(
+        sigc::mem_fun(this, &TargetLineNode::queueRenderableUpdate)
+    );
+}
 
 TargetLineNode::TargetLineNode(TargetLineNode& other) :
     scene::Node(other),
     _owner(other._owner),
     _targetLines(_owner, _owner.getTargetKeys())
-{}
+{
+    _owner.getTargetKeys().signal_TargetPositionChanged().connect(
+        sigc::mem_fun(this, &TargetLineNode::queueRenderableUpdate)
+    );
+}
 
 scene::INode::Type TargetLineNode::getNodeType() const
 {
@@ -64,6 +72,7 @@ void TargetLineNode::renderHighlights(IRenderableCollector& collector, const Vol
 void TargetLineNode::onRenderSystemChanged()
 {
     _targetLines.clear();
+    _targetLines.queueUpdate();
 }
 
 void TargetLineNode::onVisibilityChanged(bool visible)
@@ -104,6 +113,11 @@ Vector3 TargetLineNode::getOwnerPosition() const
     }
 
     return light->getSelectAABB().getOrigin();
+}
+
+void TargetLineNode::queueRenderableUpdate()
+{
+    _targetLines.queueUpdate();
 }
 
 }

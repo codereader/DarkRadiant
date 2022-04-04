@@ -1,0 +1,10 @@
+// Material used to check the parsing order of material files
+// This is a duplicate mateiral defined both in the PK4s as well as in the regular filesystem
+// The one defined in the PK4s should take precedence since its filename is alphabetically ordered on top.
+textures/precedencecheck
+{
+	surftype15
+    description "Defined in z_precedence.mtr"
+
+	diffusemap _white
+}

@@ -35,6 +35,9 @@ class ParticleDef
     // Changed signal
     sigc::signal<void> _changedSignal;
 
+    // A unique parse pass identifier
+    std::size_t _parseStamp;
+
 public:
 
 	/**
@@ -71,7 +74,7 @@ public:
 	}
 
     // IParticleDef implementation
-    sigc::signal<void> signal_changed() const override 
+    sigc::signal<void>& signal_changed() override 
 	{ 
 		return _changedSignal;
 	}
@@ -135,6 +138,16 @@ public:
 	void copyFrom(const IParticleDef& other) override;
 
 	void parseFromTokens(parser::DefTokeniser& tok);
+
+    std::size_t getParseStamp() const
+    {
+        return _parseStamp;
+    }
+
+    void setParseStamp(std::size_t stamp)
+    {
+        _parseStamp = stamp;
+    }
 
 	// Stream insertion operator, writing the entire particle def to the given stream
 	friend std::ostream& operator<< (std::ostream& stream, const ParticleDef& def);

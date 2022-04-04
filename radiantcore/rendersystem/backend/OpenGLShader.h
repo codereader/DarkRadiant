@@ -6,9 +6,11 @@
 #include "irender.h"
 #include "ishaders.h"
 #include "string/string.h"
-#include "render/WindingRenderer.h"
+#include "WindingRenderer.h"
 #include "GeometryRenderer.h"
 #include "SurfaceRenderer.h"
+#include "DepthFillPass.h"
+#include "InteractionPass.h"
 
 #include <list>
 #include <sigc++/connection.h>
@@ -36,10 +38,10 @@ private:
 
     // The depth fill pass of this shader (can be empty).
     // Lighting mode needs to have quick access to this pass
-    OpenGLShaderPassPtr _depthFillPass;
+    std::shared_ptr<DepthFillPass> _depthFillPass;
 
     // Interaction pass used by lighting mode
-    OpenGLShaderPassPtr _interactionPass;
+    std::shared_ptr<InteractionPass> _interactionPass;
 
     // The Material corresponding to this OpenGLShader
 	MaterialPtr _material;
@@ -103,12 +105,13 @@ public:
 					   const Matrix4& modelview) override;
 
     bool hasSurfaces() const;
-    void drawSurfaces(const VolumeTest& view, const RenderInfo& info);
+    void drawSurfaces(const VolumeTest& view);
+    void prepareForRendering();
 
     IGeometryRenderer::Slot addGeometry(GeometryType indexType,
-        const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices) override;
+        const std::vector<RenderVertex>& vertices, const std::vector<unsigned int>& indices) override;
     void removeGeometry(IGeometryRenderer::Slot slot) override;
-    void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+    void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<RenderVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
     void renderGeometry(IGeometryRenderer::Slot slot) override;
     AABB getGeometryBounds(IGeometryRenderer::Slot slot) override;
@@ -120,9 +123,9 @@ public:
     void renderSurface(ISurfaceRenderer::Slot slot) override;
     IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override;
 
-    IWindingRenderer::Slot addWinding(const std::vector<ArbitraryMeshVertex>& vertices, IRenderEntity* entity) override;
+    IWindingRenderer::Slot addWinding(const std::vector<RenderVertex>& vertices, IRenderEntity* entity) override;
     void removeWinding(IWindingRenderer::Slot slot) override;
-    void updateWinding(IWindingRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices) override;
+    void updateWinding(IWindingRenderer::Slot slot, const std::vector<RenderVertex>& vertices) override;
     bool hasWindings() const;
     void renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot) override;
 
@@ -156,10 +159,10 @@ public:
     void foreachNonInteractionPass(const std::function<void(OpenGLShaderPass&)>& functor);
 
     // Returns the depth fill pass of this shader, or null if this shader doesn't have one
-    OpenGLShaderPass* getDepthFillPass() const;
+    DepthFillPass* getDepthFillPass() const;
 
     // Returns the interaction pass of this shader, or null if this shader doesn't have one
-    OpenGLShaderPass* getInteractionPass() const;
+    InteractionPass* getInteractionPass() const;
 
 protected:
     // Start point for constructing shader passes from the shader name

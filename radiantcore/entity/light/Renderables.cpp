@@ -9,11 +9,12 @@ namespace entity
 namespace
 {
 
-inline void applyTransform(std::vector<ArbitraryMeshVertex>& vertices, const Matrix4& transform)
+inline void applyTransform(std::vector<render::RenderVertex>& vertices, const Matrix4& transform)
 {
     for (auto& vertex : vertices)
     {
-        vertex.vertex = transform * vertex.vertex;
+        auto transformed = transform * Vector3{ vertex.vertex.x(), vertex.vertex.y(), vertex.vertex.z() };
+        vertex.vertex = { static_cast<float>(transformed.x()), static_cast<float>(transformed.y()), static_cast<float>(transformed.z()) };
     }
 }
 
@@ -37,14 +38,14 @@ void RenderableLightOctagon::updateGeometry()
     auto colour = _light.getEntityColour();
 
     // top, bottom, tleft, tright, bright, bleft
-    std::vector<ArbitraryMeshVertex> vertices
+    std::vector<render::RenderVertex> vertices
     {
-        ArbitraryMeshVertex({ mid[0], mid[1], max[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ mid[0], mid[1], min[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], mid[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], mid[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], mid[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ min[0], min[1], mid[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ mid[0], mid[1], max[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ mid[0], mid[1], min[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ min[0], max[1], mid[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ max[0], max[1], mid[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ max[0], min[1], mid[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ min[0], min[1], mid[2] }, {1,0,0}, {0,0}, colour),
     };
 
     // Orient the points using the transform
@@ -63,7 +64,7 @@ void RenderableLightOctagon::updateGeometry()
         1, 3, 2
     };
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Triangles, vertices, Indices);
+    updateGeometryWithData(render::GeometryType::Triangles, vertices, Indices);
 }
 
 void RenderableLightVolume::updateGeometry()
@@ -95,17 +96,17 @@ void RenderableLightVolume::updatePointLightVolume()
     auto colour = _light.getEntityColour();
 
     // Load the 8 corner points
-    std::vector<ArbitraryMeshVertex> vertices
+    std::vector<render::RenderVertex> vertices
     {
-        ArbitraryMeshVertex({ min[0], min[1], min[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], min[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], min[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], min[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ min[0], min[1], min[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ max[0], min[1], min[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ max[0], max[1], min[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ min[0], max[1], min[2] }, {1,0,0}, {0,0}, colour),
 
-        ArbitraryMeshVertex({ min[0], min[1], max[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], min[1], max[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ max[0], max[1], max[2] }, {1,0,0}, {0,0}, colour),
-        ArbitraryMeshVertex({ min[0], max[1], max[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ min[0], min[1], max[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ max[0], min[1], max[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ max[0], max[1], max[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex({ min[0], max[1], max[2] }, {1,0,0}, {0,0}, colour),
     };
 
     // Orient the points using the transform
@@ -134,7 +135,7 @@ void RenderableLightVolume::updatePointLightVolume()
         3, 5, //
     };
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, Indices);
+    updateGeometryWithData(render::GeometryType::Lines, vertices, Indices);
 }
 
 void RenderableLightVolume::updateProjectedLightVolume()
@@ -159,16 +160,16 @@ void RenderableLightVolume::updateProjectedLightVolume()
         auto frontUpperRight = frustum.getCornerPoint(Frustum::FRONT, Frustum::TOP_RIGHT);
         auto frontLowerRight = frustum.getCornerPoint(Frustum::FRONT, Frustum::BOTTOM_RIGHT);
 
-        std::vector<ArbitraryMeshVertex> vertices
+        std::vector<render::RenderVertex> vertices
         {
-            ArbitraryMeshVertex(frontUpperLeft, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(frontLowerLeft, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(frontLowerRight, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(frontUpperRight, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(backUpperLeft, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(backLowerLeft, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(backLowerRight, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(backUpperRight, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(frontUpperLeft, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(frontLowerLeft, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(frontLowerRight, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(frontUpperRight, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(backUpperLeft, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(backLowerLeft, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(backLowerRight, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(backUpperRight, {1,0,0}, {0,0}, colour),
         };
 
         // Orient the points using the transform
@@ -192,20 +193,20 @@ void RenderableLightVolume::updateProjectedLightVolume()
             7, 4, // bottom up left to bottom up right
         };
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, Indices);
+        updateGeometryWithData(render::GeometryType::Lines, vertices, Indices);
     }
     else
     {
         // no light_start, just use the top vertex (doesn't need to be mirrored)
         auto top = Plane3::intersect(frustum.left, frustum.right, frustum.top);
 
-        std::vector<ArbitraryMeshVertex> vertices
+        std::vector<render::RenderVertex> vertices
         {
-            ArbitraryMeshVertex(top, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(backUpperLeft, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(backLowerLeft, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(backLowerRight, {1,0,0}, {0,0}, colour),
-            ArbitraryMeshVertex(backUpperRight, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(top, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(backUpperLeft, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(backLowerLeft, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(backLowerRight, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(backUpperRight, {1,0,0}, {0,0}, colour),
         };
 
         // Orient the points using the transform
@@ -223,18 +224,18 @@ void RenderableLightVolume::updateProjectedLightVolume()
           4, 1, // fourth to first
         };
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, Indices);
+        updateGeometryWithData(render::GeometryType::Lines, vertices, Indices);
     }
 }
 
 namespace detail
 {
 
-inline void addVertex(std::vector<ArbitraryMeshVertex>& vertices, std::vector<unsigned int>& indices,
+inline void addVertex(std::vector<render::RenderVertex>& vertices, std::vector<unsigned int>& indices,
     const Vector3& vertex, const Vector4& colour)
 {
     indices.push_back(static_cast<unsigned int>(vertices.size()));
-    vertices.push_back(ArbitraryMeshVertex(vertex, { 0,0,0 }, { 0,0 }, colour));
+    vertices.push_back(render::RenderVertex(vertex, { 0,0,0 }, { 0,0 }, colour));
 }
 
 }
@@ -245,7 +246,7 @@ void RenderableLightVertices::updateGeometry()
 
     _needsUpdate = false;
 
-    std::vector<ArbitraryMeshVertex> vertices;
+    std::vector<render::RenderVertex> vertices;
     std::vector<unsigned int> indices;
 
     vertices.reserve(LightVertexInstanceSet::NumVertices);
@@ -296,12 +297,9 @@ void RenderableLightVertices::updateGeometry()
     // Apply the local2world transform to all the vertices
     const auto& local2World = _light.localToWorld();
 
-    for (auto& vertex : vertices)
-    {
-        vertex.vertex = local2World * vertex.vertex;
-    }
+    applyTransform(vertices, local2World);
 
-    RenderableGeometry::updateGeometryWithData(render::GeometryType::Points, vertices, indices);
+    updateGeometryWithData(render::GeometryType::Points, vertices, indices);
 }
 
 } // namespace

@@ -1008,6 +1008,11 @@ Vector3 LightNode::getLightOrigin() const
     }
 }
 
+bool LightNode::isShadowCasting() const
+{
+    return EntityNode::isShadowCasting();
+}
+
 /* greebo: A light is projected, if the entity keys light_target/light_up/light_right are not empty.
  */
 bool LightNode::isProjected() const {

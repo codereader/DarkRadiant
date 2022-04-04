@@ -6,27 +6,24 @@
 #include "isound.h"
 #include "icommandsystem.h"
 
-#include "ThreadedDefLoader.h"
+#include "parser/ThreadedDeclParser.h"
+#include "SoundFileLoader.h"
 #include <map>
 
-namespace sound {
+namespace sound
+{
 
 /// SoundManager implementing class.
-class SoundManager : 
+class SoundManager final :
     public ISoundManager
 {
-public: /* TYPES */
-	// Map of named sound shaders
-	typedef std::map<std::string, SoundShader::Ptr> ShaderMap;
-
-private: /* FIELDS */
-
+private:
     // Master map of shaders
 	ShaderMap _shaders;
 
     // Shaders are loaded asynchronically, this loader
     // takes care of the worker thread
-    util::ThreadedDefLoader<void> _defLoader;
+    SoundFileLoader _defLoader;
 
 	SoundShader::Ptr _emptyShader;
 
@@ -36,7 +33,6 @@ private: /* FIELDS */
     sigc::signal<void> _sigSoundShadersReloaded;
 
 private:
-    void loadShadersFromFilesystem();
     void ensureShadersLoaded();
     void reloadSoundsCmd(const cmd::ArgumentList& args);
 

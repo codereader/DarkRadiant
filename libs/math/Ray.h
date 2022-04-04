@@ -180,24 +180,26 @@ public:
 	 * Note: degenerate triangles will return NO_INTERSECTION.
 	 * Taken and adjusted from http://geomalgorithms.com/a06-_intersect-2.html
 	 */
-	eTriangleIntersectionType intersectTriangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, Vector3& intersection) const
+    template<typename ElementType>
+	eTriangleIntersectionType intersectTriangle(const BasicVector3<ElementType>& p1, const BasicVector3<ElementType>& p2, 
+        const BasicVector3<ElementType>& p3, BasicVector3<ElementType>& intersection) const
 	{
 		// get triangle edge vectors and plane normal
-		Vector3 u = p2 - p1;
-		Vector3 v = p3 - p1;
-		Vector3 n = u.cross(v);
+        auto u = p2 - p1;
+        auto v = p3 - p1;
+        auto n = u.cross(v);
 
 		if (n.getLengthSquared() == 0)
 		{
 			return NO_INTERSECTION;  // triangle is degenerate
 		}
 
-		Vector3 dir = direction; // ray direction vector
+		auto dir = direction; // ray direction vector
 
-		Vector3 w0 = origin - p1;
+		auto w0 = origin - p1;
 
-		double a = -n.dot(w0);
-		double b = n.dot(dir);
+		auto a = -n.dot(w0);
+		auto b = n.dot(dir);
 
 		if (fabs(b) < 0.00001)
 		{
@@ -213,7 +215,7 @@ public:
 		}
 
 		// get intersect point of ray with triangle plane
-		double r = a / b;
+		auto r = a / b;
 
 		if (r < 0.0)                    // ray goes away from triangle
 		{
@@ -224,25 +226,25 @@ public:
 		intersection = origin + direction * r; // // intersect point of ray and plane
 
 		// is I inside T?
-		double uu = u.dot(u);
-		double uv = u.dot(v);
-		double vv = v.dot(v);
+		auto uu = u.dot(u);
+		auto uv = u.dot(v);
+		auto vv = v.dot(v);
 
-		Vector3 w = intersection - p1;
-		double wu = w.dot(u);
-		double wv = w.dot(v);
+		auto w = intersection - p1;
+		auto wu = w.dot(u);
+		auto wv = w.dot(v);
 
-		double D = uv * uv - uu * vv;
+		auto D = uv * uv - uu * vv;
 
 		// get and test parametric coords
-		double s = (uv * wv - vv * wu) / D;
+        auto s = (uv * wv - vv * wu) / D;
 
 		if (s < 0.0 || s > 1.0)
 		{
 			return NO_INTERSECTION; // intersection is outside T
 		}
 
-		double t = (uv * wu - uu * wv) / D;
+        auto t = (uv * wu - uu * wv) / D;
 
 		if (t < 0.0 || (s + t) > 1.0)
 		{

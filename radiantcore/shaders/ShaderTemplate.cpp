@@ -1287,6 +1287,16 @@ void ShaderTemplate::determineCoverage()
         {
             // we have an interaction draw
             _coverage = Material::MC_OPAQUE;
+
+            // Check if we have alpha-tested layers
+            for (const auto& layer : _layers)
+            {
+                if (layer->hasAlphaTest())
+                {
+                    _coverage = Material::MC_PERFORATED;
+                    break;
+                }
+            }
         }
         else
         {

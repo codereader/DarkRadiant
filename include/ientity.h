@@ -425,13 +425,19 @@ public:
      * Returns the Target with the given name.
      * This never returns NULL, an ITargetableObject is created if it doesn't exist yet.
      */
-    virtual ITargetableObjectPtr getTarget(const std::string name) = 0;
+    virtual ITargetableObjectPtr getTarget(const std::string& name) = 0;
 
     /**
      * greebo: Associates the named Target with the given scene::INode.
      * The Target will be created if it doesn't exist yet.
      */
     virtual void associateTarget(const std::string& name, const scene::INode& node) = 0;
+
+    // Will be called by a TargetableNode to notify about visibility changes
+    virtual void onTargetVisibilityChanged(const std::string& name, const scene::INode& node) = 0;
+
+    // Will be called by a TargetableNode to notify about a position change
+    virtual void onTargetPositionChanged(const std::string& name, const scene::INode& node) = 0;
 
     /**
      * greebo: Disassociates the Target from the given name. The node

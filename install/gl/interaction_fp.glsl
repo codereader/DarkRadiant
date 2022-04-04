@@ -1,77 +1,135 @@
-/// ============================================================================
-/*
-Copyright (C) 2004 Robert Beckebans <trebor_7@users.sourceforge.net>
-Please see the file "CONTRIBUTORS" for a list of contributors
+#version 130
 
-This program is free software; you can redistribute it and/or
-modify it under the terms of the GNU Lesser General Public License
-as published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-See the GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
-*/
-/// ============================================================================
-
-uniform sampler2D	u_diffusemap;
-uniform sampler2D	u_bumpmap;
-uniform sampler2D	u_specularmap;
+uniform sampler2D	u_Diffusemap;
+uniform sampler2D	u_Bumpmap;
+uniform sampler2D	u_Specularmap;
 uniform sampler2D	u_attenuationmap_xy;
 uniform sampler2D	u_attenuationmap_z;
-uniform vec3		u_view_origin;
-uniform vec3		u_light_origin;
-uniform vec3		u_light_color;
-uniform float		u_light_scale;
+uniform sampler2D	u_ShadowMap;
 
-// Invert vertex colour
-uniform bool uInvertVCol;
+uniform vec3    u_view_origin;
+uniform vec3    u_light_origin;
+uniform vec3    u_light_color;
+uniform float   u_light_scale;
+uniform vec4    u_ColourModulation;
+uniform vec4    u_ColourAddition;
+uniform mat4    u_ObjectTransform;     // object to world
+
+// Defines the region within the shadow map atlas containing the depth information of the current light
+uniform vec4        u_ShadowMapRect; // x,y,w,h
+uniform bool        u_UseShadowMap;
 
 // Activate ambient light mode (brightness unaffected by direction)
 uniform bool uAmbientLight;
 
-varying vec3		var_vertex;
-varying vec4		var_tex_diffuse_bump;
-varying vec2		var_tex_specular;
-varying vec4		var_tex_atten_xy_z;
-varying mat3		var_mat_os2ts;
+// Texture coords as calculated by the vertex program
+varying vec2 var_TexDiffuse;
+varying vec2 var_TexBump;
+varying vec2 var_TexSpecular;
 
-void	main()
+varying vec3 var_vertex; // in world space
+varying vec4 var_tex_atten_xy_z;
+varying mat3 var_mat_os2ts;
+varying vec4 var_Colour; // colour to be multiplied on the final fragment
+varying vec3 var_WorldLightDirection; // direction the light is coming from in world space
+
+// Function ported from TDM tdm_shadowmaps.glsl, determining the cube map face for the given direction
+vec3 CubeMapDirectionToUv(vec3 v, out int faceIdx)
 {
-	// compute view direction in tangent space
-	vec3 V = normalize(var_mat_os2ts * (u_view_origin - var_vertex));
+    vec3 v1 = abs(v);
 
-	// compute light direction in tangent space
-	vec3 L = normalize(var_mat_os2ts * (u_light_origin - var_vertex));
+    float maxV = max(v1.x, max(v1.y, v1.z));
 
-	// compute half angle in tangent space
-	vec3 H = normalize(L + V);
+    faceIdx = 0;
+    if(maxV == v.x)
+    {
+        v1 = -v.zyx;
+    }
+    else if(maxV == -v.x)
+    {
+        v1 = v.zyx * vec3(1, -1, 1);
+        faceIdx = 1;
+    }
+    else if(maxV == v.y)
+    {
+        v1 = v.xzy * vec3(1, 1, -1);
+        faceIdx = 2;
+    }
+    else if(maxV == -v.y)
+    {
+       v1 = v.xzy * vec3(1, -1, 1);
+       faceIdx = 3;
+    }
+    else if(maxV == v.z)
+    {
+        v1 = v.xyz * vec3(1, -1, -1);
+        faceIdx = 4;
+    }
+    else //if(maxV == -v.z) {
+    {
+        v1 = v.xyz * vec3(-1, -1, 1);
+        faceIdx = 5;
+    }
 
-	// compute normal in tangent space from bumpmap
-    vec2 normalRG = texture2D(u_bumpmap, var_tex_diffuse_bump.pq).rg;
-    float normalB = sqrt(1.0 - pow(normalRG.r, 2.0) - pow(normalRG.g, 2.0));
-	vec3 N = 2.0 * (vec3(normalRG, normalB) - 0.5);
-	N = normalize(N);
+    v1.xy /= -v1.z;
+    return v1;
+}
 
-	// compute the diffuse term
-	vec4 diffuse = texture2D(u_diffusemap, var_tex_diffuse_bump.st);
-    float lightBrightness = uAmbientLight ? 1.0 : clamp(dot(N, L), 0.0, 1.0);
-	diffuse.rgb *= u_light_color * u_light_scale * lightBrightness;
+// Function ported from TDM tdm_shadowmaps.glsl, picking the depth value from the shadow map
+float getDepthValueForVector(in sampler2D shadowMapTexture, vec4 shadowRect, vec3 lightVec)
+{
+    // Determine face index and cube map sampling vector
+    int faceIdx;
+    vec3 v1 = CubeMapDirectionToUv(lightVec, faceIdx);
 
-	// compute the specular term
-    float specIntensity = clamp(dot(N, H), 0.0, 1.0);
-    specIntensity = pow(specIntensity, 32.0);
-	vec3 specular = texture2D(u_specularmap, var_tex_specular.xy).rgb
-                    * u_light_color
-                    * specIntensity;
+    vec2 texSize = textureSize(shadowMapTexture, 0);
+    vec2 shadow2d = (v1.xy * .5 + vec2(.5) ) * shadowRect.ww + shadowRect.xy;
+    shadow2d.x += (shadowRect.w + 1./texSize.x) * faceIdx;
 
-	// compute attenuation
+    float d = textureLod(shadowMapTexture, shadow2d, 0).r;
+    return 1 / (1 - d);
+}
+
+void main()
+{
+    // Ported from TDM interaction.common.fs.glsl
+
+    vec4 fresnelParms = vec4(1.0, .23, .5, 1.0);
+    vec4 fresnelParms2 = vec4(.2, .023, 120.0, 4.0);
+    vec4 lightParms = vec4(.7, 1.8, 10.0, 30.0);
+
+    vec4 diffuse = texture2D(u_Diffusemap, var_TexDiffuse);
+    vec3 specular = texture2D(u_Specularmap, var_TexSpecular).rgb;
+
+    // compute view direction in tangent space
+	vec3 localV = normalize(var_mat_os2ts * (u_view_origin - var_vertex));
+	
+    // compute light direction in tangent space
+	vec3 localL = normalize(var_mat_os2ts * (u_light_origin - var_vertex));
+
+    vec4 bumpTexel = texture2D(u_Bumpmap, var_TexBump) * 2. - 1.;
+	vec3 RawN = normalize( bumpTexel.xyz ); 
+	vec3 N = var_mat_os2ts * RawN;
+
+	//must be done in tangent space, otherwise smoothing will suffer (see #4958)
+	float NdotL = clamp(dot(RawN, localL), 0.0, 1.0);
+	float NdotV = clamp(dot(RawN, localV), 0.0, 1.0);
+	float NdotH = clamp(dot(RawN, normalize(localV + localL)), 0.0, 1.0);
+
+	// fresnel part
+	float fresnelTerm = pow(1.0 - NdotV, fresnelParms2.w);
+	float rimLight = fresnelTerm * clamp(NdotL - 0.3, 0.0, fresnelParms.z) * lightParms.y;
+	float specularPower = mix(lightParms.z, lightParms.w, specular.z);
+	float specularCoeff = pow(NdotH, specularPower) * fresnelParms2.z;
+	float fresnelCoeff = fresnelTerm * fresnelParms.y + fresnelParms2.y;
+
+	vec3 specularColor = specularCoeff * fresnelCoeff * specular * (diffuse.rgb * 0.25 + vec3(0.75));
+	float R2f = clamp(localL.z * 4.0, 0.0, 1.0);
+
+	float NdotL_adjusted = NdotL;
+	float light = rimLight * R2f + NdotL_adjusted;
+
+    // compute attenuation
     vec3 attenuation_xy = vec3(0.0, 0.0, 0.0);
     if (var_tex_atten_xy_z.w > 0.0)
         attenuation_xy	= texture2DProj(
@@ -83,11 +141,31 @@ void	main()
         u_attenuationmap_z, vec2(var_tex_atten_xy_z.z, 0.5)
     ).rgb;
 
-	// compute final color
-    gl_FragColor = diffuse * (uInvertVCol ? vec4(1.0, 1.0, 1.0, 1.0) - gl_Color : gl_Color);
-    if (!uAmbientLight)
-        gl_FragColor.rgb += specular;
-	gl_FragColor.rgb *= attenuation_xy;
-	gl_FragColor.rgb *= attenuation_z;
+	vec3 totalColor = (specularColor * u_light_color * R2f + diffuse.rgb) * light * (u_light_color * u_light_scale) * attenuation_xy * attenuation_z * var_Colour.rgb;
+
+    if (u_UseShadowMap)
+    {
+        float shadowMapResolution = (textureSize(u_ShadowMap, 0).x * u_ShadowMapRect.w);
+
+        // The light direction is used to sample the shadow map texture
+        vec3 L = normalize(var_WorldLightDirection);
+
+        vec3 absL = abs(var_WorldLightDirection);
+        float maxAbsL = max(absL.x, max(absL.y, absL.z));
+        float centerFragZ = maxAbsL;
+
+        vec3 normal = mat3(u_ObjectTransform) * N;
+
+        float lightFallAngle = -dot(normal, L);
+        float errorMargin = 5.0 * maxAbsL / ( shadowMapResolution * max(lightFallAngle, 0.1) );
+
+        float centerBlockerZ = getDepthValueForVector(u_ShadowMap, u_ShadowMapRect, L);
+        float lit = float(centerBlockerZ >= centerFragZ - errorMargin);
+
+        totalColor *= lit;
+    }
+
+	gl_FragColor.rgb = totalColor;
+	gl_FragColor.a = diffuse.a;
 }
 

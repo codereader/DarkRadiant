@@ -36,8 +36,8 @@ Face::Face(Brush& owner) :
     _shader(texdef_name_default(), _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
     _faceIsVisible(true),
-    _windingSurfaceSolid(m_winding),
-    _windingSurfaceWireframe(m_winding)
+    _windingSurfaceSolid(m_winding, false),
+    _windingSurfaceWireframe(m_winding, true)
 {
     setupSurfaceShader();
 
@@ -61,8 +61,8 @@ Face::Face(
     _texdef(projection),
     _undoStateSaver(nullptr),
     _faceIsVisible(true),
-    _windingSurfaceSolid(m_winding),
-    _windingSurfaceWireframe(m_winding)
+    _windingSurfaceSolid(m_winding, false),
+    _windingSurfaceWireframe(m_winding, true)
 {
     setupSurfaceShader();
     m_plane.initialiseFromPoints(p0, p1, p2);
@@ -75,8 +75,8 @@ Face::Face(Brush& owner, const Plane3& plane) :
     _shader("", _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
     _faceIsVisible(true),
-    _windingSurfaceSolid(m_winding),
-    _windingSurfaceWireframe(m_winding)
+    _windingSurfaceSolid(m_winding, false),
+    _windingSurfaceWireframe(m_winding, true)
 {
     setupSurfaceShader();
     m_plane.setPlane(plane);
@@ -89,8 +89,8 @@ Face::Face(Brush& owner, const Plane3& plane, const Matrix3& textureProjection, 
     _shader(material, _owner.getBrushNode().getRenderSystem()),
     _undoStateSaver(nullptr),
     _faceIsVisible(true),
-    _windingSurfaceSolid(m_winding),
-    _windingSurfaceWireframe(m_winding)
+    _windingSurfaceSolid(m_winding, false),
+    _windingSurfaceWireframe(m_winding, true)
 {
     setupSurfaceShader();
     m_plane.setPlane(plane);
@@ -110,8 +110,8 @@ Face::Face(Brush& owner, const Face& other) :
     _texdef(other.getProjection()),
     _undoStateSaver(nullptr),
     _faceIsVisible(other._faceIsVisible),
-    _windingSurfaceSolid(m_winding),
-    _windingSurfaceWireframe(m_winding)
+    _windingSurfaceSolid(m_winding, false),
+    _windingSurfaceWireframe(m_winding, true)
 {
     setupSurfaceShader();
     planepts_assign(m_move_planepts, other.m_move_planepts);
@@ -355,6 +355,8 @@ void Face::updateRenderables()
 {
     _windingSurfaceSolid.queueUpdate();
     _windingSurfaceWireframe.queueUpdate();
+
+    _owner.onFaceNeedsRenderableUpdate();
 }
 
 void Face::updateWinding()

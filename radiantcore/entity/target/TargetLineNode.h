@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/trackable.h>
 #include "scene/Node.h"
 #include "RenderableTargetLines.h"
 
@@ -17,7 +18,8 @@ class EntityNode;
  * get culled by the space partitioning system during rendering.
  */
 class TargetLineNode final :
-    public scene::Node
+    public scene::Node,
+    public sigc::trackable
 {
 private:
     EntityNode& _owner;
@@ -42,6 +44,8 @@ public:
 
     void onInsertIntoScene(scene::IMapRootNode& root) override;
     void onRemoveFromScene(scene::IMapRootNode& root) override;
+
+    void queueRenderableUpdate();
 
 protected:
     void onVisibilityChanged(bool isVisibleNow) override;

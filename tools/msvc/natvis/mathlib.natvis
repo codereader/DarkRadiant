@@ -10,12 +10,33 @@
       <Item Name="Z">(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[2]</Item>
     </Expand>
   </Type>
+    <Type Name="BasicVector3&lt;float&gt;">
+        <DisplayString>
+            {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[0]}
+ {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[1]}
+ {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[2]}
+        </DisplayString>
+        <Expand>
+            <Item Name="X">(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[0]</Item>
+            <Item Name="Y">(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[1]</Item>
+            <Item Name="Z">(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,3,1,0,3,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[2]</Item>
+        </Expand>
+    </Type>
+    <Type Name="BasicVector2&lt;float&gt;">
+        <DisplayString>
+            {_v[0]} {_v[1]}
+        </DisplayString>
+        <Expand>
+            <Item Name="X">_v[0]</Item>
+            <Item Name="Y">_v[1]</Item>
+        </Expand>
+    </Type>
   <Type Name="BasicVector4&lt;double&gt;">
     <DisplayString>
       {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[0]}
-      {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[1]}
-      {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[2]}
-      {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[3]}
+ {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[1]}
+ {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[2]}
+ {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[3]}
     </DisplayString>
     <Expand>
       <Item Name="X">(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;double,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[0]</Item>
@@ -27,9 +48,9 @@
   <Type Name="BasicVector4&lt;float&gt;">
     <DisplayString>
       {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[0]}
-      {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[1]}
-      {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[2]}
-      {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[3]}
+ {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[1]}
+ {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[2]}
+ {(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[3]}
     </DisplayString>
     <Expand>
       <Item Name="X">(*((Eigen::PlainObjectBase&lt;Eigen::Matrix&lt;float,4,1,0,4,1&gt; &gt;*)&amp;_v)).m_storage.m_data.array[0]</Item>
@@ -48,4 +69,17 @@
       </Item>
     </Expand>
   </Type>
+    <Type Name="render::RenderVertex">
+        <DisplayString>
+            V={vertex} N={normal} UV={texcoord} T={tangent} BT={bitangent} C={colour}
+        </DisplayString>
+        <Expand>
+            <Item Name="Vertex">vertex</Item>
+            <Item Name="Normal">normal</Item>
+            <Item Name="Texcoord">texcoord</Item>
+            <Item Name="Tangent">tangent</Item>
+            <Item Name="Bitangent">bitangent</Item>
+            <Item Name="Colour">colour</Item>
+        </Expand>
+    </Type>
 </AutoVisualizer>

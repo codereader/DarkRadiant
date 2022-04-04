@@ -1,7 +1,9 @@
 #pragma once
 
+#include <map>
+#include <stdexcept>
 #include "irender.h"
-#include "igeometryrenderer.h"
+#include "isurfacerenderer.h"
 #include "igeometrystore.h"
 
 #include "ObjectRenderer.h"
@@ -14,8 +16,6 @@ class SurfaceRenderer :
 {
 private:
     IGeometryStore& _store;
-
-    static constexpr IGeometryStore::Slot InvalidStorageSlot = std::numeric_limits<IGeometryStore::Slot>::max();
 
     struct SurfaceInfo
     {
@@ -33,10 +33,14 @@ private:
 
     Slot _freeSlotMappingHint;
 
+    std::vector<Slot> _surfacesNeedingUpdate;
+    bool _surfacesNeedUpdate;
+
 public:
     SurfaceRenderer(IGeometryStore& store) :
         _store(store),
-        _freeSlotMappingHint(0)
+        _freeSlotMappingHint(0),
+        _surfacesNeedUpdate(false)
     {}
 
     bool empty() const
@@ -49,7 +53,14 @@ public:
         // Find a free slot
         auto newSlotIndex = getNextFreeSlotIndex();
 
-        auto slot = _store.allocateSlot(surface.getVertices(), surface.getIndices());
+        const auto& vertices = surface.getVertices();
+        const auto& indices = surface.getIndices();
+
+        auto slot = _store.allocateSlot(vertices.size(), indices.size());
+
+        // Transform the vertices to single precision
+        _store.updateData(slot, ConvertToRenderVertices(vertices), indices);
+
         _surfaces.emplace(newSlotIndex, SurfaceInfo(surface, slot));
 
         return newSlotIndex;
@@ -73,39 +84,21 @@ public:
     void updateSurface(Slot slot) override
     {
         _surfaces.at(slot).surfaceDataChanged = true;
+        _surfacesNeedingUpdate.push_back(slot);
+        _surfacesNeedUpdate = true;
     }
 
-    void render(const VolumeTest& view, const RenderInfo& info)
+    void render(const VolumeTest& view)
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
-
-        // Render this slot without any vertex colours
-        glDisableClientState(GL_COLOR_ARRAY);
-
         for (auto& surface : _surfaces)
         {
-            renderSlot(surface.second, &view, info.checkFlag(RENDER_BUMP));
+            renderSlot(surface.second, false, &view);
         }
-
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
     }
 
     void renderSurface(Slot slot) override
     {
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        glEnableClientState(GL_NORMAL_ARRAY);
-
-        // Render this slot without any vertex colours
-        glDisableClientState(GL_COLOR_ARRAY);
-
-        renderSlot(_surfaces.at(slot));
-
-        glDisableClientState(GL_NORMAL_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        renderSlot(_surfaces.at(slot), true);
     }
 
     IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override
@@ -113,8 +106,43 @@ public:
         return _surfaces.at(slot).storageHandle;
     }
 
+    // Ensures the data in the IGeometryStore is up to date
+    void prepareForRendering()
+    {
+        if (!_surfacesNeedUpdate) return;
+
+        _surfacesNeedUpdate = false;
+
+        for (auto slotIndex : _surfacesNeedingUpdate)
+        {
+            auto& surfaceInfo = _surfaces.at(slotIndex);
+
+            if (surfaceInfo.surfaceDataChanged)
+            {
+                surfaceInfo.surfaceDataChanged = false;
+
+                auto& surface = surfaceInfo.surface.get();
+                _store.updateData(surfaceInfo.storageHandle, ConvertToRenderVertices(surface.getVertices()), surface.getIndices());
+            }
+        }
+    }
+
 private:
-    void renderSlot(SurfaceInfo& slot, const VolumeTest* view = nullptr, bool renderBump = false)
+    std::vector<RenderVertex> ConvertToRenderVertices(const std::vector<MeshVertex>& vertices)
+    {
+        std::vector<RenderVertex> transformedVertices;
+        transformedVertices.reserve(vertices.size());
+
+        for (const auto& vertex : vertices)
+        {
+            transformedVertices.push_back(RenderVertex(vertex.vertex, vertex.normal, vertex.texcoord,
+                vertex.colour, vertex.tangent, vertex.bitangent));
+        }
+
+        return transformedVertices;
+    }
+
+    void renderSlot(SurfaceInfo& slot, bool bindBuffer, const VolumeTest* view = nullptr)
     {
         auto& surface = slot.surface.get();
 
@@ -124,15 +152,29 @@ private:
             return;
         }
 
-        // Update the vertex data now if necessary
         if (slot.surfaceDataChanged)
         {
-            slot.surfaceDataChanged = false;
-
-            _store.updateData(slot.storageHandle, surface.getVertices(), surface.getIndices());
+            throw std::logic_error("Cannot render unprepared slot, ensure calling SurfaceRenderer::prepareForRendering first");
         }
 
-        ObjectRenderer::SubmitObject(surface, _store);
+        if (bindBuffer)
+        {
+            auto renderParams = _store.getRenderParameters(surface.getStorageLocation());
+
+            auto [vertexBuffer, indexBuffer] = _store.getBufferObjects();
+            vertexBuffer->bind();
+            indexBuffer->bind();
+
+            ObjectRenderer::InitAttributePointers(renderParams.bufferStart);
+            ObjectRenderer::SubmitObject(surface, _store);
+
+            vertexBuffer->unbind();
+            indexBuffer->unbind();
+        }
+        else
+        {
+            ObjectRenderer::SubmitObject(surface, _store);
+        }
     }
 
     Slot getNextFreeSlotIndex()

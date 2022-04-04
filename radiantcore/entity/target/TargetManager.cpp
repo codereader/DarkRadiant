@@ -2,9 +2,9 @@
 
 #include "itextstream.h"
 
-namespace entity {
+namespace entity
+{
 
-// Constructor
 TargetManager::TargetManager() :
 	_emptyTarget(new Target)
 {
@@ -12,40 +12,71 @@ TargetManager::TargetManager() :
 	_emptyTarget->clear();
 }
 
-ITargetableObjectPtr TargetManager::getTarget(const std::string name) 
+ITargetableObjectPtr TargetManager::getTarget(const std::string& name) 
 {
-	if (name.empty()) {
+	if (name.empty())
+    {
 		return _emptyTarget;
 	}
 
-	TargetList::iterator found = _targets.find(name);
+	auto found = _targets.find(name);
 
-	if (found != _targets.end()) {
+	if (found != _targets.end())
+    {
 		return found->second;
 	}
 
 	// Doesn't exist yet, create this one
-	TargetPtr target(new Target);
+	auto target = std::make_shared<Target>();
 	target->clear();
 
 	// Insert into the local map and return
-	_targets.insert(TargetList::value_type(name, target));
+	_targets.emplace(name, target);
 
 	return target;
 }
 
+void TargetManager::onTargetVisibilityChanged(const std::string& name, const scene::INode& node)
+{
+    if (name.empty()) return;
+
+    auto existing = _targets.find(name);
+
+    if (existing != _targets.end())
+    {
+        existing->second->onVisibilityChanged();
+    }
+}
+
+void TargetManager::onTargetPositionChanged(const std::string& name, const scene::INode& node)
+{
+    if (name.empty()) return;
+
+    auto existing = _targets.find(name);
+
+    if (existing != _targets.end())
+    {
+        existing->second->onPositionChanged();
+    }
+}
+
 void TargetManager::associateTarget(const std::string& name, const scene::INode& node)
 {
-	if (name.empty()) {
+	if (name.empty())
+    {
 		return; // don't associate empty names
 	}
 
-	TargetList::iterator found = _targets.find(name);
+	auto found = _targets.find(name);
 
-	if (found != _targets.end()) {
-		if (found->second->isEmpty()) {
+	if (found != _targets.end())
+    {
+		if (found->second->isEmpty())
+        {
 			// Already registered, but empty => associate it
 			found->second->setNode(node);
+            // Trigger a visibility changed signal
+            found->second->onVisibilityChanged();
 		}
 		else {
 			// Non-empty target!
@@ -58,22 +89,20 @@ void TargetManager::associateTarget(const std::string& name, const scene::INode&
 	}
 
 	// Doesn't exist yet, create a new target and associate it
-	TargetPtr target(new Target(node));
-
 	// Insert into the local map and return
-	_targets.insert(TargetList::value_type(name, target));
+	_targets.emplace(name, std::make_shared<Target>(node));
 }
 
-void TargetManager::clearTarget(const std::string& name, const scene::INode& node) {
+void TargetManager::clearTarget(const std::string& name, const scene::INode& node)
+{
 	// Locate and clear the named target
-	TargetList::iterator found = _targets.find(name);
+	auto found = _targets.find(name);
 
-	if (found != _targets.end()) {
-		// Found, check the pointer if the request is ok
-		if (found->second->getNode() == &node) {
-			// Yes, the node is matching too, clear the target
-			found->second->clear();
-		}
+	// If found, check the pointer if the request is ok
+	if (found != _targets.end() && found->second->getNode() == &node)
+    {
+		// Yes, the node is matching too, clear the target
+		found->second->clear();
 	}
 }
 

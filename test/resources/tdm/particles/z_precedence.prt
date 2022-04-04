@@ -1,0 +1,54 @@
+// A particle def that is defined both in the PK4s as well as in the filesystem
+// to check the parsing order of .prt files
+// The one in the PK4s (with caulk texture) should take precedence since it is alphabetically sorted first
+particle precedencecheck {
+	{
+		count				1
+		material			textures/common/nodraw
+		time				10.000
+		cycles				1.000
+		bunching			1.000
+		distribution		rect 128.000 128.000 32.000 
+		direction			outward "0.000" 
+		orientation			view 
+		speed				 "1.000"  to "10.000"
+		size				 "200.000" 
+		aspect				 "1.000" 
+		randomDistribution				1
+		boundsExpansion				0.000
+		fadeIn				0.700
+		fadeOut				0.800
+		fadeIndex				0.000
+		color 				1.000 1.000 0.900 0.250
+		fadeColor 			1.000 1.000 1.000 0.000
+		offset 				0.000 0.000 0.000
+		gravity 			world 0.000
+	}
+}
+
+// Just to prove that particleDefs after a duplicate definition are not ignored
+particle particle_after_precedencecheck
+{
+	{
+		count				1
+		material			textures/common/nodraw
+		time				10.000
+		cycles				1.000
+		bunching			1.000
+		distribution		rect 128.000 128.000 32.000 
+		direction			outward "0.000" 
+		orientation			view 
+		speed				 "1.000"  to "10.000"
+		size				 "200.000" 
+		aspect				 "1.000" 
+		randomDistribution				1
+		boundsExpansion				0.000
+		fadeIn				0.700
+		fadeOut				0.800
+		fadeIndex				0.000
+		color 				1.000 1.000 0.900 0.250
+		fadeColor 			1.000 1.000 1.000 0.000
+		offset 				0.000 0.000 0.000
+		gravity 			world 0.000
+	}
+}

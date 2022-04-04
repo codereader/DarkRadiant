@@ -21,9 +21,9 @@
   <PropertyGroup Label="Globals">
     <ProjectGuid>{20c43725-bd6f-4e90-8d8c-5ab2affbf957}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -65,12 +65,16 @@
     <ClInclude Include="..\..\..\test\algorithm\Scene.h" />
     <ClInclude Include="..\..\..\test\algorithm\View.h" />
     <ClInclude Include="..\..\..\test\algorithm\XmlUtils.h" />
+    <ClInclude Include="..\..\..\test\FakeClipboardModule.h" />
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
     <ClInclude Include="..\..\..\test\math\MatrixUtils.h" />
     <ClInclude Include="..\..\..\test\RadiantTest.h" />
     <ClInclude Include="..\..\..\test\TdmMissionSetup.h" />
     <ClInclude Include="..\..\..\test\TestContext.h" />
     <ClInclude Include="..\..\..\test\TestLogFile.h" />
+    <ClInclude Include="..\..\..\test\testutil\CommandFailureHelper.h" />
+    <ClInclude Include="..\..\..\test\testutil\MapOperationMonitor.h" />
+    <ClInclude Include="..\..\..\test\testutil\TestBufferObjectProvider.h" />
     <ClInclude Include="..\..\..\test\testutil\FileSelectionHelper.h" />
   </ItemGroup>
   <ItemGroup>
@@ -84,6 +88,7 @@
     <ClCompile Include="..\..\..\test\EntityInspector.cpp" />
     <ClCompile Include="..\..\..\test\Favourites.cpp" />
     <ClCompile Include="..\..\..\test\FileTypes.cpp" />
+    <ClCompile Include="..\..\..\test\GeometryStore.cpp" />
     <ClCompile Include="..\..\..\test\Grid.cpp" />
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />
     <ClCompile Include="..\..\..\test\ImageLoading.cpp" />
@@ -103,6 +108,7 @@
     <ClCompile Include="..\..\..\test\Models.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
     <ClCompile Include="..\..\..\test\Parsing.cpp" />
+    <ClCompile Include="..\..\..\test\Particles.cpp" />
     <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
     <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
     <ClCompile Include="..\..\..\test\PointTrace.cpp" />
@@ -111,6 +117,7 @@
     <ClCompile Include="..\..\..\test\SceneNode.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
+    <ClCompile Include="..\..\..\test\Settings.cpp" />
     <ClCompile Include="..\..\..\test\TextureManipulation.cpp" />
     <ClCompile Include="..\..\..\test\TextureTool.cpp" />
     <ClCompile Include="..\..\..\test\Transformation.cpp" />
@@ -125,7 +132,7 @@
   <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="..\..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets" Condition="Exists('..\..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" />
+    <Import Project="..\..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.5\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets" Condition="Exists('..\..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.5\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" />
   </ImportGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -197,6 +204,6 @@
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.4\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
+    <Error Condition="!Exists('..\..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.5\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\packages\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.1.5\build\native\Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.targets'))" />
   </Target>
 </Project>

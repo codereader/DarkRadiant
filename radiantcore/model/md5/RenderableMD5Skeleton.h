@@ -41,7 +41,7 @@ protected:
             return;
         }
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<render::RenderVertex> vertices;
         std::vector<unsigned int> indices;
 
         auto numJoints = _skeleton.size();
@@ -83,7 +83,7 @@ protected:
             y = joint.orientation.transformPoint(y);
             z = joint.orientation.transformPoint(z);
 
-            Vector3 origin(joint.origin);
+            const auto& origin = joint.origin;
 
             // x axis
             indices.push_back(static_cast<unsigned int>(vertices.size()));
@@ -107,14 +107,14 @@ protected:
         // Move the skeleton to world space
         for (auto& v : vertices)
         {
-            v.vertex = _localToWorld * v.vertex;
+            v.vertex = math::transformVector3f(_localToWorld, v.vertex);
         }
 
-        RenderableGeometry::updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
+        updateGeometryWithData(render::GeometryType::Lines, vertices, indices);
     }
 
 private:
-    ArbitraryMeshVertex toVertex(const Vector3& vertex, const Vector4& colour = { 1, 1, 1, 1 })
+    render::RenderVertex toVertex(const Vector3& vertex, const Vector4& colour = { 1, 1, 1, 1 })
     {
         return { vertex, {0, 0, 0}, {1, 0}, colour };
     }

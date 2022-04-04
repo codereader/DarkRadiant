@@ -101,24 +101,29 @@ void OpenGLShader::addRenderable(const OpenGLRenderable& renderable,
     }
 }
 
-void OpenGLShader::drawSurfaces(const VolumeTest& view, const RenderInfo& info)
+void OpenGLShader::drawSurfaces(const VolumeTest& view)
 {
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
     
-    // Surfaces are using CW culling
+    // Always using CW culling by default
     glFrontFace(GL_CW);
 
     if (hasSurfaces())
     {
-        _geometryRenderer.render(info);
-        _surfaceRenderer.render(view, info);
+        _geometryRenderer.render();
+
+        // Surfaces are not allowed to render vertex colours (for now)
+        // otherwise they don't show up in their parent entity's colour
+        glDisableClientState(GL_COLOR_ARRAY);
+        _surfaceRenderer.render(view);
     }
 
-    // Render all windings
-    _windingRenderer->renderAllWindings(info);
+    // Render all windings (without vertex colours)
+    glDisableClientState(GL_COLOR_ARRAY);
+    _windingRenderer->renderAllWindings();
 
     glDisableClientState(GL_NORMAL_ARRAY);
     glDisableClientState(GL_COLOR_ARRAY);
@@ -130,8 +135,15 @@ bool OpenGLShader::hasSurfaces() const
     return !_geometryRenderer.empty() || !_surfaceRenderer.empty();
 }
 
+void OpenGLShader::prepareForRendering()
+{
+    _surfaceRenderer.prepareForRendering();
+    _windingRenderer->prepareForRendering();
+    // _geometryRenderer doesn't need to prepare at this point
+}
+
 IGeometryRenderer::Slot OpenGLShader::addGeometry(GeometryType indexType,
-    const std::vector<ArbitraryMeshVertex>& vertices, const std::vector<unsigned int>& indices)
+    const std::vector<RenderVertex>& vertices, const std::vector<unsigned int>& indices)
 {
     return _geometryRenderer.addGeometry(indexType, vertices, indices);
 }
@@ -141,7 +153,7 @@ void OpenGLShader::removeGeometry(IGeometryRenderer::Slot slot)
     _geometryRenderer.removeGeometry(slot);
 }
 
-void OpenGLShader::updateGeometry(IGeometryRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices,
+void OpenGLShader::updateGeometry(IGeometryRenderer::Slot slot, const std::vector<RenderVertex>& vertices,
     const std::vector<unsigned int>& indices)
 {
     _geometryRenderer.updateGeometry(slot, vertices, indices);
@@ -187,7 +199,7 @@ IGeometryStore::Slot OpenGLShader::getSurfaceStorageLocation(ISurfaceRenderer::S
     return _surfaceRenderer.getSurfaceStorageLocation(slot);
 }
 
-IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<ArbitraryMeshVertex>& vertices, IRenderEntity* entity)
+IWindingRenderer::Slot OpenGLShader::addWinding(const std::vector<RenderVertex>& vertices, IRenderEntity* entity)
 {
     return _windingRenderer->addWinding(vertices, entity);
 }
@@ -197,7 +209,7 @@ void OpenGLShader::removeWinding(IWindingRenderer::Slot slot)
     _windingRenderer->removeWinding(slot);
 }
 
-void OpenGLShader::updateWinding(IWindingRenderer::Slot slot, const std::vector<ArbitraryMeshVertex>& vertices)
+void OpenGLShader::updateWinding(IWindingRenderer::Slot slot, const std::vector<RenderVertex>& vertices)
 {
     _windingRenderer->updateWinding(slot, vertices);
 }
@@ -311,6 +323,8 @@ void OpenGLShader::insertPasses()
     // Insert all shader passes into the GL state manager
     for (auto& shaderPass : _shaderPasses)
     {
+        if (shaderPass == _depthFillPass) continue; // don't insert the depth fill pass
+
     	_renderSystem.insertSortedState(std::make_pair(shaderPass->statePtr(), shaderPass));
     }
 }
@@ -320,6 +334,8 @@ void OpenGLShader::removePasses()
     // Remove shader passes from the GL state manager
     for (auto& shaderPass : _shaderPasses)
 	{
+        if (shaderPass == _depthFillPass) continue; // don't handle the depth fill pass
+
         _renderSystem.eraseSortedState(shaderPass->statePtr());
     }
 }
@@ -363,13 +379,17 @@ OpenGLState& OpenGLShader::appendDefaultPass()
 
 OpenGLState& OpenGLShader::appendDepthFillPass()
 {
-    _depthFillPass = _shaderPasses.emplace_back(std::make_shared<DepthFillPass>(*this, _renderSystem));
+    _depthFillPass = std::make_shared<DepthFillPass>(*this, _renderSystem);
+    _shaderPasses.push_back(_depthFillPass);
+
     return _depthFillPass->state();
 }
 
 OpenGLState& OpenGLShader::appendInteractionPass()
 {
-    _interactionPass = _shaderPasses.emplace_back(std::make_shared<InteractionPass>(*this, _renderSystem));
+    _interactionPass = std::make_shared<InteractionPass>(*this, _renderSystem);
+    _shaderPasses.push_back(_interactionPass);
+
     return _interactionPass->state();
 }
 
@@ -449,16 +469,12 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
     // Populate the textures and remember the stage reference
     setGLTexturesFromTriplet(dbsPass, triplet);
 
+    dbsPass.setVertexColourMode(vcolMode);
+
     if (vcolMode != IShaderLayer::VERTEX_COLOUR_NONE)
     {
         // Vertex colours allowed
         dbsPass.setRenderFlag(RENDER_VERTEX_COLOUR);
-
-        if (vcolMode == IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY)
-        {
-            // Vertex colours are inverted
-            dbsPass.setColourInverted(true);
-        }
     }
 
     applyAlphaTestToPass(dbsPass, alphaTest);
@@ -489,7 +505,7 @@ void OpenGLShader::constructLightingPassesFromMaterial()
     // least one DBS layer then reach the end of the layers.
 
     DBSTriplet triplet;
-    const IShaderLayerVector allLayers = _material->getAllLayers();
+    const IShaderLayerVector& allLayers = _material->getAllLayers();
 
     for (const auto& layer : allLayers)
     {
@@ -835,12 +851,12 @@ void OpenGLShader::foreachNonInteractionPass(const std::function<void(OpenGLShad
     }
 }
 
-OpenGLShaderPass* OpenGLShader::getDepthFillPass() const
+DepthFillPass* OpenGLShader::getDepthFillPass() const
 {
     return _depthFillPass.get();
 }
 
-OpenGLShaderPass* OpenGLShader::getInteractionPass() const
+InteractionPass* OpenGLShader::getInteractionPass() const
 {
     return _interactionPass.get();
 }

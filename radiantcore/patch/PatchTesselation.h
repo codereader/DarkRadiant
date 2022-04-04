@@ -10,7 +10,7 @@ class PatchTesselation
 {
 public:
 	// The vertex data, each vertex equipped with texcoord and ntb vectors
-	std::vector<ArbitraryMeshVertex> vertices;
+	std::vector<MeshVertex> vertices;
 
 	// The indices, arranged in the way it's expected by GL_QUAD_STRIPS
 	// The number of indices is (lenStrips*numStrips), which is the same as (width*height)
@@ -60,13 +60,13 @@ private:
 	void putOnCurve();
 	void removeLinearColumnsRows();
 
-	static void lerpVert(const ArbitraryMeshVertex& a, const ArbitraryMeshVertex& b, ArbitraryMeshVertex&out);
+	static void lerpVert(const MeshVertex& a, const MeshVertex& b, MeshVertex&out);
 	static Vector3 projectPointOntoVector(const Vector3& point, const Vector3& vStart, const Vector3& vEnd);
 
-	void sampleSinglePatch(const ArbitraryMeshVertex ctrl[3][3], std::size_t baseCol, std::size_t baseRow, 
+	void sampleSinglePatch(const MeshVertex ctrl[3][3], std::size_t baseCol, std::size_t baseRow, 
 		std::size_t width, std::size_t horzSub, std::size_t vertSub, 
-		std::vector<ArbitraryMeshVertex>& outVerts) const;
-	void sampleSinglePatchPoint(const ArbitraryMeshVertex ctrl[3][3], float u, float v, ArbitraryMeshVertex& out) const;
+		std::vector<MeshVertex>& outVerts) const;
+	void sampleSinglePatchPoint(const MeshVertex ctrl[3][3], float u, float v, MeshVertex& out) const;
 	void deriveTangents();
 	void deriveFaceTangents(std::vector<FaceTangents>& faceTangents);
 };

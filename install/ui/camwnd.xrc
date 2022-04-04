@@ -49,6 +49,13 @@
 								<bitmap stock_id="darkradiant:lightingMode.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
 								<radio>1</radio>
 							</object>
+							<object class="tool" name="shadowBtn">
+								<label>shadowBtn</label>
+								<tooltip>Enable Shadow Mapping</tooltip>
+								<longhelp></longhelp>
+								<bitmap stock_id="darkradiant:lightingModeWithShadows.png" stock_client="wxART_TOOLBAR">undefined.png</bitmap>
+								<toggle>1</toggle>
+							</object>
 							<object class="separator" />
 							<object class="tool" name="startTimeButton">
 								<label>startTimeButton</label>

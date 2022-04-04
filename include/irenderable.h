@@ -3,7 +3,7 @@
 #include <memory>
 #include "math/Vector3.h"
 
-class ArbitraryMeshVertex;
+class MeshVertex;
 class Shader;
 typedef std::shared_ptr<Shader> ShaderPtr;
 

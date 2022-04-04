@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   Windows-Build:
-    runs-on: windows-2019
+    runs-on: windows-latest
 
     env:
       # Path to the solution file relative to the root of the project.
@@ -37,18 +37,34 @@ jobs:
       working-directory: ${{env.GITHUB_WORKSPACE}}
       run: msbuild /m /p:Configuration=${{env.BUILD_CONFIGURATION}} /p:Platform=x64 /maxcpucount:4 /nodeReuse:false /p:UseSharedConfiguration=false ${{env.SOLUTION_FILE_PATH}}
       
+    - name: Install Mesa openGL Drivers
+      working-directory: ${{env.GITHUB_WORKSPACE}}
+      env:
+        UNIT_TEST_MESA_DRIVER_URL: https://github.com/codereader/DarkRadiant_WinDeps/releases/download/2.15.0/unit_test_mesa_driver-x64-20.1.8.7z
+      run: |
+        Write-Host ("Downloading Mesa driver package from {0}..." -f $env:UNIT_TEST_MESA_DRIVER_URL)
+        $outFile = ".\install\unit_test_mesa_driver-x64.7z"
+        Invoke-WebRequest $env:UNIT_TEST_MESA_DRIVER_URL -OutFile $outFile
+        Write-Host ("Unpacking {0}..." -f $outFile)
+        & .\tools\7z\7za.exe x $outFile -o".\install\"
+        Get-ChildItem .\install\OpenGL32.dll
+      shell: powershell
+      
     - name: Setup VSTest.console.exe
       uses: darenm/Setup-VSTest@v1
 
     - name: Run Unit Tests
       run: |
-        FOR /F "tokens=* USEBACKQ" %%g IN (`powershell -Command "(Get-ChildItem -Recurse -Path 'C:\Program Files (x86)\Microsoft Visual Studio\' -Filter "GoogleTestAdapter.TestAdapter.dll" -ErrorAction SilentlyContinue).DirectoryName"`) do (SET "GTEST_ADAPTER_PATH=%%g")
+        FOR /F "tokens=* USEBACKQ" %%g IN (`powershell -Command "(Get-ChildItem -Recurse -Path 'C:\Program Files\Microsoft Visual Studio\' -Filter "GoogleTestAdapter.TestAdapter.dll" -ErrorAction SilentlyContinue).DirectoryName"`) do (SET "GTEST_ADAPTER_PATH=%%g")
         echo Test Adapter Path resolved to: %GTEST_ADAPTER_PATH%
         vstest.console.exe ${{env.TESTS_FILE_PATH}} /Platform:x64 /Logger:trx /TestAdapterPath:"%%GTEST_ADAPTER_PATH%%"
       shell: cmd
     
     - name: Generate Portable Package
-      run: powershell -ExecutionPolicy ByPass .\compile_release_package.ps1 -Platform x64 -SkipBuild -GenerateSetupPackage:$false -GeneratePortablePackage:$false -OutputFolder ..\..\PortablePackage\
+      run: |
+        echo Remove Mesa driver from output folder again
+        del ..\..\install\OpenGL32.dll
+        powershell -ExecutionPolicy ByPass .\compile_release_package.ps1 -Platform x64 -SkipBuild -GenerateSetupPackage:$false -GeneratePortablePackage:$false -OutputFolder ..\..\PortablePackage\
       shell: cmd
       working-directory: .\tools\scripts
 

@@ -81,17 +81,17 @@ public:
 
         _needsUpdate = false;
 
-        std::vector<ArbitraryMeshVertex> vertices;
+        std::vector<RenderVertex> vertices;
 
         for (const auto& vertex : _vertices)
         {
-            vertices.push_back(ArbitraryMeshVertex(vertex, { 0,0,0 }, { 0,0 }, _colour));
+            vertices.push_back(RenderVertex(vertex, { 0,0,0 }, { 0,0 }, _colour));
         }
 
         std::vector<unsigned int> indices;
         Indexer::GenerateIndices(indices, _vertices.size());
 
-        RenderableGeometry::updateGeometryWithData(Indexer::GetGeometryType(), vertices, indices);
+        updateGeometryWithData(Indexer::GetGeometryType(), vertices, indices);
     }
 };
 

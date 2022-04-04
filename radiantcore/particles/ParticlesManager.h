@@ -3,7 +3,7 @@
 #include "ParticleDef.h"
 #include "StageDef.h"
 
-#include "ThreadedDefLoader.h"
+#include "ParticleLoader.h"
 #include "iparticles.h"
 #include "parser/DefTokeniser.h"
 
@@ -15,12 +15,10 @@ namespace particles
 class ParticlesManager :
 	public IParticlesManager
 {
-	// Map of named particle defs
-	typedef std::map<std::string, ParticleDefPtr> ParticleDefMap;
-
+private:
 	ParticleDefMap _particleDefs;
 
-    util::ThreadedDefLoader<void> _defLoader;
+    ParticleLoader _defLoader;
 
     // Reloaded signal
     sigc::signal<void> _particlesReloadedSignal;
@@ -29,7 +27,7 @@ public:
     ParticlesManager();
 
 	// IParticlesManager implementation
-    sigc::signal<void> signal_particlesReloaded() const override;
+    sigc::signal<void>& signal_particlesReloaded() override;
 
     void forEachParticleDef(const ParticleDefVisitor& visitor) override;
 
@@ -65,17 +63,7 @@ private:
     // that it's done loading before accessing any defs.
     void ensureDefsLoaded();
 
-    /**
-    * Accept a stream containing particle definitions to parse and add to the
-    * list.
-    */
-    void parseStream(std::istream& s, const std::string& filename);
-
-	// Recursive-descent parse functions
-	void parseParticleDef(parser::DefTokeniser& tok, const std::string& filename);
-
-	static void stripParticleDefFromStream(std::istream& input, std::ostream& output, const std::string& particleName);
+    void onParticlesLoaded();
 };
-typedef std::shared_ptr<ParticlesManager> ParticlesManagerPtr;
 
 }

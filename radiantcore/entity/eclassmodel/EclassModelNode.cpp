@@ -12,7 +12,8 @@ EclassModelNode::EclassModelNode(const IEntityClassPtr& eclass) :
     _angleKey(std::bind(&EclassModelNode::angleChanged, this)),
 	_angle(AngleKey::IDENTITY),
     _renderOrigin(_origin),
-	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
+	_localAABB(Vector3(0,0,0), Vector3(1,1,1)), // minimal AABB, is determined by child bounds anyway
+    _noShadowsLit(false)
 {}
 
 EclassModelNode::EclassModelNode(const EclassModelNode& other) :
@@ -24,7 +25,8 @@ EclassModelNode::EclassModelNode(const EclassModelNode& other) :
     _angleKey(std::bind(&EclassModelNode::angleChanged, this)),
 	_angle(AngleKey::IDENTITY),
     _renderOrigin(_origin),
-	_localAABB(Vector3(0,0,0), Vector3(1,1,1)) // minimal AABB, is determined by child bounds anyway
+	_localAABB(Vector3(0,0,0), Vector3(1,1,1)), // minimal AABB, is determined by child bounds anyway
+    _noShadowsLit(false)
 {}
 
 EclassModelNode::~EclassModelNode()
@@ -51,6 +53,7 @@ void EclassModelNode::construct()
     observeKey("angle", sigc::mem_fun(_rotationKey, &RotationKey::angleChanged));
 	observeKey("rotation", sigc::mem_fun(_rotationKey, &RotationKey::rotationChanged));
     observeKey("origin", sigc::mem_fun(_originKey, &OriginKey::onKeyValueChanged));
+    observeKey("noshadows_lit", sigc::mem_fun(this, &EclassModelNode::onNoshadowsLitChanged));
 }
 
 // Snappable implementation
@@ -186,6 +189,19 @@ void EclassModelNode::angleChanged()
 {
 	_angle = _angleKey.getValue();
 	updateTransform();
+}
+
+void EclassModelNode::onNoshadowsLitChanged(const std::string& value)
+{
+    _noShadowsLit = value == "1";
+}
+
+bool EclassModelNode::isShadowCasting() const
+{
+    // Both noShadowsLit and noShadows should be false
+    // It's hard to determine whether a compound entity like wall toches are starting
+    // in lit state, so we rather turn off shadow casting for them regardless of their state.
+    return !_noShadowsLit && EntityNode::isShadowCasting();
 }
 
 void EclassModelNode::onSelectionStatusChange(bool changeGroupStatus)

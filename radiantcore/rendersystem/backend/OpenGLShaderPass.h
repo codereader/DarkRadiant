@@ -1,14 +1,11 @@
 #pragma once
 
-#include "math/Vector3.h"
 #include "math/Matrix4.h"
-#include "iglrender.h"
+#include "OpenGLState.h"
 
 #include <vector>
-#include <map>
 
 /* FORWARD DECLS */
-class Matrix4;
 class OpenGLRenderable;
 class RendererLight;
 
@@ -16,6 +13,7 @@ namespace render
 {
 
 class OpenGLShader;
+class InteractionProgram;
 
 /**
  * @brief A single component pass of an OpenGL shader.
@@ -53,37 +51,12 @@ protected:
 	};
 
 	// Vector of transformed renderables using this state
-	typedef std::vector<TransformedRenderable> Renderables;
-	Renderables _renderablesWithoutEntity;
+    std::vector<TransformedRenderable> _transformedRenderables;
 
 protected:
 
-    void setupTextureMatrix(GLenum textureUnit, const IShaderLayer::Ptr& stage);
-
 	// Render all of the given TransformedRenderables
-	void renderAllContained(const Renderables& renderables,
-                            OpenGLState& current,
-                            const Vector3& viewer,
-                            std::size_t time);
-
-    /* Helper functions to enable/disable particular GL states */
-
-    void setTexture0();
-
-    void enableTexture2D();
-    void disableTexture2D();
-
-    void enableTextureCubeMap();
-    void disableTextureCubeMap();
-
-    void enableRenderBlend();
-    void disableRenderBlend();
-
-    // Apply all OpenGLState textures to texture units
-    void applyAllTextures(OpenGLState& current, unsigned requiredState);
-
-    virtual void activateShaderProgram(OpenGLState& current);
-    virtual void deactivateShaderProgram(OpenGLState& current);
+	void drawRenderables(OpenGLState& current);
 
 public:
 
@@ -91,22 +64,19 @@ public:
 		_owner(owner)
 	{}
 
+    OpenGLShader& getShader()
+    {
+        return _owner;
+    }
+
     // Returns true if the stage associated to this pass is active and should be rendered
     bool stateIsActive();
 
 	/**
      * \brief
-     * Add a renderable to this shader pass the given object transform matrix
-     * and light.
-     *
-     * \param light
-     * Single light illuminating this renderable. When Shader::addRenderable
-     * accepts a LIST of lights, this list is then broken up into individual
-     * lights which are submitted to the shader passes one by one (so the same
-     * renderable will be submitted once for each light).
+     * Add a renderable to this shader pass the given object transform matrix.
 	 */
-	void addRenderable(const OpenGLRenderable& renderable,
-					   const Matrix4& modelview);
+	void addRenderable(const OpenGLRenderable& renderable, const Matrix4& modelview);
 
 	/**
 	 * Return the OpenGL state associated with this bucket.
@@ -130,26 +100,25 @@ public:
 	 * \brief
      * Render the renderables attached to this shader pass.
      *
-     * \param current
-     * The current OpenGL state variables.
-     *
-     * \param flagsMask
-     * Mask of allowed render flags.
-     *
-     * \param viewer
-     * Viewer location in world space.
-     *
+     * \param view
+     * The render view used to cull surfaces
      */
-	void render(OpenGLState& current,
-                unsigned int flagsMask,
-                const Vector3& viewer,
-                const VolumeTest& view,
-                std::size_t time);
+	void submitSurfaces(const VolumeTest& view);
+
+    /**
+     * \brief
+     * Render the renderables attached to this shader pass.
+     * Their geometry might not be stored in the central buffer objects.
+     */
+    void submitRenderables(OpenGLState& current);
 
 	/**
 	 * Returns true if this shaderpass doesn't have anything to render.
 	 */
     bool empty();
+
+    // True if this shader pass has OpenGLRenderables attached
+    bool hasRenderables() const;
 
     // Clear out all renderable references accumulated during this frame
     void clearRenderables();
@@ -157,34 +126,17 @@ public:
     // Whether this shader pass is suitable for the give view type
     bool isApplicableTo(RenderViewType renderViewType) const;
 
+    // Evaluates all stages and invokes applyState
+    void evaluateStagesAndApplyState(OpenGLState& current, unsigned int globalStateMask,
+        std::size_t time, const IRenderEntity* entity);
+
     // Apply own state to the "current" state object passed in as a reference,
     // in combination with the global state mask, as well as setting
     // relevant GL parameters directly.
-    void applyState(OpenGLState& current,
-        unsigned int globalStateMask,
-        const Vector3& viewer,
-        std::size_t time,
-        const IRenderEntity* entity);
+    void applyState(OpenGLState& current, unsigned int globalStateMask);
 
-    // Set up lighting calculation
-    static void setUpLightingCalculation(OpenGLState& current,
-        const RendererLight* light,
-        const Matrix4& worldToLight,
-        const Vector3& viewer,
-        const Matrix4& objTransform,
-        std::size_t time,
-        bool invertVertexColour);
-
-    static void SetUpNonInteractionProgram(OpenGLState& current, const Vector3& viewer, const Matrix4& objTransform);
-
-    static void setTextureState(GLint& current,
-        const GLint& texture,
-        GLenum textureUnit,
-        GLenum textureMode);
-
-    static void setTextureState(GLint& current,
-        const GLint& texture,
-        GLenum textureMode);
+    // Evaluates the time- and entity-dependent expressions in the shader stages
+    void evaluateShaderStages(std::size_t time, const IRenderEntity* entity);
 
 	friend std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
 };

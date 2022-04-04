@@ -22,8 +22,8 @@
 
 // ====== Helper Functions ==================================================================
 
-inline VertexPointer vertexpointer_arbitrarymeshvertex(const ArbitraryMeshVertex* array) {
-  return VertexPointer(&array->vertex, sizeof(ArbitraryMeshVertex));
+inline VertexPointer vertexpointer_Meshvertex(const MeshVertex* array) {
+  return VertexPointer(&array->vertex, sizeof(MeshVertex));
 }
 
 inline const Colour4b colour_for_index(std::size_t i, std::size_t width)
@@ -199,7 +199,7 @@ void Patch::testSelect(Selector& selector, SelectionTest& test)
     IndexPointer::index_type* pIndex = &_mesh.indices.front();
 
     for (std::size_t s=0; s<_mesh.numStrips; s++) {
-        test.TestQuadStrip(vertexpointer_arbitrarymeshvertex(&_mesh.vertices.front()), IndexPointer(pIndex, _mesh.lenStrips), best);
+        test.TestQuadStrip(vertexpointer_Meshvertex(&_mesh.vertices.front()), IndexPointer(pIndex, _mesh.lenStrips), best);
         pIndex += _mesh.lenStrips;
     }
 
@@ -1740,7 +1740,7 @@ PatchMesh Patch::getTesselatedPatchMesh() const
     mesh.width = _mesh.width;
     mesh.height = _mesh.height;
 
-    for (std::vector<ArbitraryMeshVertex>::const_iterator i = _mesh.vertices.begin();
+    for (std::vector<MeshVertex>::const_iterator i = _mesh.vertices.begin();
         i != _mesh.vertices.end(); ++i)
     {
         VertexNT v;

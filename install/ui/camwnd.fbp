@@ -167,6 +167,17 @@
                                     <property name="statusbar"></property>
                                     <property name="tooltip">Render in lighting preview mode</property>
                                 </object>
+                                <object class="tool" expanded="1">
+                                    <property name="bitmap">Load From Art Provider; darkradiant:lightingModeWithShadows.png; wxART_TOOLBAR</property>
+                                    <property name="context_menu">0</property>
+                                    <property name="id">wxID_ANY</property>
+                                    <property name="kind">wxITEM_CHECK</property>
+                                    <property name="label">shadowBtn</property>
+                                    <property name="name">shadowBtn</property>
+                                    <property name="permission">protected</property>
+                                    <property name="statusbar"></property>
+                                    <property name="tooltip">Enable Shadow Mapping</property>
+                                </object>
                                 <object class="toolSeparator" expanded="0">
                                     <property name="permission">protected</property>
                                 </object>

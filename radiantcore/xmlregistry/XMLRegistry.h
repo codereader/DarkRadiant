@@ -29,6 +29,8 @@
 #include "RegistryTree.h"
 #include "time/Timer.h"
 
+namespace settings { class SettingsManager; }
+
 namespace registry
 {
 
@@ -129,7 +131,7 @@ public:
 	void shutdownModule() override;
 
 private:
-	void loadUserFileFromSettingsPath(const IApplicationContext& ctx,
+	void loadUserFileFromSettingsPath(const settings::SettingsManager& settingsManager,
 		const std::string& filename, const std::string& baseXPath);
 
 	void emitSignalForKey(const std::string& changedKey);

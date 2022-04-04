@@ -28,22 +28,22 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -324,8 +324,9 @@
     <ClCompile Include="..\..\radiant\ui\ortho\OrthoContextMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\overlay\Overlay.cpp" />
     <ClCompile Include="..\..\radiant\ui\overlay\OverlayDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\particles\ParticleChooserDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\particles\ParticleEditor.cpp" />
-    <ClCompile Include="..\..\radiant\ui\particles\ParticlesChooser.cpp" />
+    <ClCompile Include="..\..\radiant\ui\particles\ParticleSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\BulgePatchDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\CapDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\patch\PatchCreateDialog.cpp" />
@@ -539,8 +540,10 @@
     <ClInclude Include="..\..\radiant\ui\overlay\Overlay.h" />
     <ClInclude Include="..\..\radiant\ui\overlay\OverlayDialog.h" />
     <ClInclude Include="..\..\radiant\ui\overlay\OverlayRegistryKeys.h" />
+    <ClInclude Include="..\..\radiant\ui\particles\ParticleChooserDialog.h" />
     <ClInclude Include="..\..\radiant\ui\particles\ParticleEditor.h" />
-    <ClInclude Include="..\..\radiant\ui\particles\ParticlesChooser.h" />
+    <ClInclude Include="..\..\radiant\ui\particles\ThreadedParticlesLoader.h" />
+    <ClInclude Include="..\..\radiant\ui\particles\ParticleSelector.h" />
     <ClInclude Include="..\..\radiant\ui\patch\BulgePatchDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\CapDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchCreateDialog.h" />

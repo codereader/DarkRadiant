@@ -1,4 +1,7 @@
 #include "AutomationEngine.h"
+
+#include <cassert>
+
 #include "MessageTcp.h"
 #include "clsocket/ActiveSocket.h"
 

@@ -256,6 +256,8 @@ private:
     // Update tree view contents and property editor
     void updateGUIElements();
 
+    void updateEntryBoxSensitivity();
+
     // Release the current entity and rescan the selection
     void refresh();
 
