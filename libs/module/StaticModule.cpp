@@ -19,8 +19,6 @@ void StaticModuleList::RegisterModules()
 	{
 		module::GlobalModuleRegistry().registerModule(creationFunc());
 	}
-
-    Instance().clear(); // clear the static list after dispatching all modules
 }
 
 StaticModuleList& StaticModuleList::Instance()
