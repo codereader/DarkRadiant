@@ -15,7 +15,12 @@ class IRenderView;
 class SceneRenderer
 {
 protected:
-    SceneRenderer()
+    // The view type this renderer is designed for
+    RenderViewType _renderViewType;
+
+protected:
+    SceneRenderer(RenderViewType viewType) :
+        _renderViewType(viewType)
     {}
 
     SceneRenderer(const SceneRenderer& other) = delete;
@@ -26,6 +31,11 @@ public:
     {}
 
     virtual IRenderResult::Ptr render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time) = 0;
+
+    RenderViewType getViewType() const
+    {
+        return _renderViewType;
+    }
 
 protected:
     // Set the projection and modelview matrices

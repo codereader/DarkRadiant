@@ -17,6 +17,7 @@ namespace render
 LightingModeRenderer::LightingModeRenderer(GLProgramFactory& programFactory,
         IGeometryStore& store, const std::set<RendererLightPtr>& lights,
         const std::set<IRenderEntityPtr>& entities) :
+    SceneRenderer(RenderViewType::Camera),
     _programFactory(programFactory),
     _geometryStore(store),
     _lights(lights),
