@@ -735,12 +735,6 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
 #endif
 }
 
-// Construct a normal shader
-void OpenGLShader::constructNormalShader()
-{
-    constructFromMaterial(GlobalMaterialManager().getMaterial(_name));
-}
-
 void OpenGLShader::constructFromMaterial(const MaterialPtr& material)
 {
     assert(material);
@@ -782,7 +776,7 @@ void OpenGLShader::construct()
     }
 
     // Construct the shader from the material definition
-    constructNormalShader();
+    constructFromMaterial(GlobalMaterialManager().getMaterial(_name));
     enableViewType(RenderViewType::Camera);
 }
 
