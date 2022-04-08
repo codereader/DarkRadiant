@@ -85,9 +85,10 @@ void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<
                 return;
             }
 
-            if (!glShader->getInteractionPass())
+            // Collect all interaction surfaces and the ones with forceShadows materials
+            if (!glShader->getInteractionPass() && !shader->getMaterial()->surfaceCastsShadow())
             {
-                return; // This material doesn't interact with lighting
+                return; // This material doesn't interact with this light
             }
 
             addObject(*object, *entity, glShader);
@@ -166,18 +167,22 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
     // Render all the objects that have a depth filling stage
     for (const auto& [entity, objectsByShader] : _objectsByEntity)
     {
+        if (!entity->isShadowCasting()) continue; // skip all entities with "noshadows" set
+
         for (const auto& [shader, objects] : objectsByShader)
         {
-            auto depthFillPass = shader->getDepthFillPass();
+            const auto& material = shader->getMaterial();
 
-            // Skip shaders not affecting scene depth, and materials not casting any shadow
-            if (!depthFillPass || !shader->getMaterial()->surfaceCastsShadow()) continue;
+            // Skip materials not casting any shadow. This includes all
+            // translucent materials, they get the noshadows flag set implicitly
+            if (!material->surfaceCastsShadow()) continue;
 
-            setupAlphaTest(state, shader, depthFillPass, program, renderTime, entity);
+            // Set up alphatest (it's ok to pass a nullptr as depth fill pass)
+            setupAlphaTest(state, shader, shader->getDepthFillPass(), program, renderTime, entity);
 
             for (const auto& object : objects)
             {
-                // Skip models with "noshadows" set
+                // Skip models with "noshadows" set (this might be redundant to the entity check above)
                 if (!object.get().isShadowCasting()) continue;
 
                 // We submit all objects with an identity matrix in a single multi draw call
@@ -308,7 +313,7 @@ void LightInteractions::setupAlphaTest(OpenGLState& state, OpenGLShader* shader,
     // Skip translucent materials
     if (coverage == Material::MC_TRANSLUCENT) return;
 
-    if (coverage == Material::MC_PERFORATED)
+    if (coverage == Material::MC_PERFORATED && depthFillPass != nullptr)
     {
         // Evaluate the shader stages of this material
         depthFillPass->evaluateShaderStages(renderTime, entity);
