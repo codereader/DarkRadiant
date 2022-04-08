@@ -344,15 +344,10 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     m_patch.evaluateTransform();
     m_patch.updateTesselation();
 
-    if (volume.fill())
-    {
-        _renderableSurfaceSolid.update(m_patch._shader.getGLShader());
-        _renderableSurfaceSolid.attachToEntity(_renderEntity);
-    }
-    else
-    {
-        _renderableSurfaceWireframe.update(_renderEntity->getWireShader());
-    }
+    _renderableSurfaceSolid.update(m_patch._shader.getGLShader());
+    _renderableSurfaceWireframe.update(_renderEntity->getWireShader());
+
+    _renderableSurfaceSolid.attachToEntity(_renderEntity);
 
     if (isSelected() && GlobalSelectionSystem().ComponentMode() == selection::ComponentSelectionMode::Vertex)
     {
