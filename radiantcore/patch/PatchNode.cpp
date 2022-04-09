@@ -368,7 +368,17 @@ void PatchNode::onPreRender(const VolumeTest& volume)
 
 void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    // Overlay the selected node with the quadrangulated wireframe
+    if (GlobalSelectionSystem().Mode() != selection::SelectionSystem::eComponent)
+    {
+        // The coloured selection overlay should use the same triangulated surface to avoid z fighting
+        collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);
+        collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, false);
+        collector.addHighlightRenderable(_renderableSurfaceSolid, localToWorld());
+    }
+
+    // The selection outline (wireframe) should use the quadrangulated surface
+    collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, false);
+    collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, true);
     collector.addHighlightRenderable(_renderableSurfaceWireframe, localToWorld());
 }
 
