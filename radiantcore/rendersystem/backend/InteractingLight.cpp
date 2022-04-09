@@ -1,4 +1,4 @@
-#include "LightInteractions.h"
+#include "InteractingLight.h"
 
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
@@ -8,7 +8,7 @@
 namespace render
 {
 
-LightInteractions::LightInteractions(RendererLight& light, IGeometryStore& store) :
+InteractingLight::InteractingLight(RendererLight& light, IGeometryStore& store) :
     _light(light),
     _store(store),
     _lightBounds(light.lightAABB()),
@@ -22,7 +22,7 @@ LightInteractions::LightInteractions(RendererLight& light, IGeometryStore& store
     _isShadowCasting = _light.isShadowCasting() && _light.getShader() && _light.getShader()->getMaterial()->lightCastsShadows();
 }
 
-void LightInteractions::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader)
+void InteractingLight::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader)
 {
     auto& objectsByMaterial = _objectsByEntity.emplace(
         &entity, ObjectsByMaterial{}).first->second;
@@ -35,17 +35,17 @@ void LightInteractions::addObject(IRenderableObject& object, IRenderEntity& enti
     ++_objectCount;
 }
 
-bool LightInteractions::isInView(const IRenderView& view)
+bool InteractingLight::isInView(const IRenderView& view)
 {
     return view.TestAABB(_lightBounds) != VOLUME_OUTSIDE;
 }
 
-bool LightInteractions::isShadowCasting() const
+bool InteractingLight::isShadowCasting() const
 {
     return _isShadowCasting;
 }
 
-void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
+void InteractingLight::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
 {
     bool shadowCasting = isShadowCasting();
 
@@ -96,7 +96,7 @@ void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<
     }
 }
 
-void LightInteractions::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
+void InteractingLight::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
     std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest)
 {
     std::vector<IGeometryStore::Slot> untransformedObjects;
@@ -150,7 +150,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgra
     }
 }
 
-void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, 
+void InteractingLight::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, 
     ShadowMapProgram& program, std::size_t renderTime)
 {
     // Set up the viewport to write to a specific area within the shadow map texture
@@ -213,7 +213,7 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
     debug::assertNoGlErrors();
 }
 
-void LightInteractions::drawInteractions(OpenGLState& state, InteractionProgram& program, 
+void InteractingLight::drawInteractions(OpenGLState& state, InteractionProgram& program, 
     const IRenderView& view, std::size_t renderTime)
 {
     if (_objectsByEntity.empty())
@@ -302,7 +302,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, InteractionProgram&
     OpenGLState::SetTextureState(state.texture4, 0, GL_TEXTURE4, GL_TEXTURE_2D);
 }
 
-void LightInteractions::setupAlphaTest(OpenGLState& state, OpenGLShader* shader, DepthFillPass* depthFillPass,
+void InteractingLight::setupAlphaTest(OpenGLState& state, OpenGLShader* shader, DepthFillPass* depthFillPass,
     ISupportsAlphaTest& program, std::size_t renderTime, IRenderEntity* entity)
 {
     const auto& material = shader->getMaterial();

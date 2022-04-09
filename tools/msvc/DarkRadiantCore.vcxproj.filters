@@ -1111,9 +1111,6 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\ColourShader.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\LightInteractions.cpp">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractionPass.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
@@ -1146,6 +1143,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractingLight.cpp">
+      <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2310,9 +2310,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\LightingModeRenderResult.h">
       <Filter>src\rendersystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightInteractions.h">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\entity\RenderableObjectCollection.h">
       <Filter>src\entity</Filter>
     </ClInclude>
@@ -2366,6 +2363,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractingLight.h">
+      <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

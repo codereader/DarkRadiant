@@ -11,7 +11,6 @@
 #include "backend/GLProgramFactory.h"
 #include "backend/BuiltInShader.h"
 #include "backend/ColourShader.h"
-#include "backend/LightInteractions.h"
 #include "backend/LightingModeRenderer.h"
 #include "backend/FullBrightRenderer.h"
 #include "backend/ObjectRenderer.h"
