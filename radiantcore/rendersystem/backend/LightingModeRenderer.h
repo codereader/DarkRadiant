@@ -57,7 +57,7 @@ public:
 private:
     void determineInteractingLight(const IRenderView& view);
 
-    void drawInteractingLight(OpenGLState& current, RenderStateFlags globalFlagsMask,
+    void drawInteractingLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
         const IRenderView& view, std::size_t renderTime);
 
     void drawDepthFillPass(OpenGLState& current, RenderStateFlags globalFlagsMask,

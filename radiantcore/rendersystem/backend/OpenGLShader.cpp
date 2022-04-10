@@ -695,7 +695,9 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
     }
     else
     {
+        state.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::RegularStage);
         state.setRenderFlag(RENDER_TEXTURE_2D);
+        state.setRenderFlag(RENDER_PROGRAM);
     }
 
     // Colour modulation

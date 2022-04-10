@@ -634,6 +634,7 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLProgramBase.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\InteractionProgram.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractingLight.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractionPass.cpp" />
@@ -1006,6 +1007,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GLSLProgramBase.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\InteractionProgram.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractingLight.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractionPass.h" />

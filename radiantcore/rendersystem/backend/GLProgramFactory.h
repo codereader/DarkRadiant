@@ -18,6 +18,7 @@ enum class ShaderProgram
     Interaction,
     CubeMap,
     ShadowMap,
+    RegularStage,
 };
 
 /**
