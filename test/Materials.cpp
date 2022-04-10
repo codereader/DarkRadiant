@@ -1519,4 +1519,12 @@ TEST_F(MaterialsTest, MaterialFilenamePrecedence)
         << "Description does not match what is defined in the PK4 .mtr";
 }
 
+TEST_F(MaterialsTest, CoverageOfMaterialWithBlendStage)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/coverage1");
+
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/coverage1";
+    EXPECT_EQ(material->getCoverage(), Material::MC_OPAQUE) << "Material should be opaque";
+}
+
 }

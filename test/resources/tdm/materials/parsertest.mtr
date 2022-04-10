@@ -1012,3 +1012,17 @@ textures/parsertest/frobstage_missing5 // mismatching map in additive stage
         rgb         0.15 * parm11
     }
 }
+
+// Test determining the material coverage
+textures/parsertest/coverage1
+{
+    glass
+	noselfshadow
+	qer_editorimage	textures/darkmod/window/largesquare01_softerlit_ed
+	diffusemap _black
+	{
+		blend add
+		map	textures/darkmod/window/largesquare01_softerlit
+		rgb .5
+	}
+}
