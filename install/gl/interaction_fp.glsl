@@ -9,9 +9,9 @@ uniform sampler2D	u_ShadowMap;
 
 uniform vec3    u_LocalViewOrigin;
 uniform vec3    u_WorldUpLocal; // world 0,0,1 direction in local space
-uniform vec3    u_light_origin;
-uniform vec3    u_light_color;
-uniform float   u_light_scale;
+uniform vec3    u_LocalLightOrigin; // Light origin in local space
+uniform vec3    u_LightColour;  // the RGB colour as defined on the light entity
+uniform float   u_LightScale;
 uniform vec4    u_ColourModulation;
 uniform vec4    u_ColourAddition;
 uniform mat4    u_ObjectTransform;     // object to world
@@ -122,7 +122,7 @@ void main()
         vec3 localV = normalize(var_mat_os2ts * (u_LocalViewOrigin - var_vertex));
     
         // compute light direction in tangent space
-        vec3 localL = normalize(var_mat_os2ts * (u_light_origin - var_vertex));
+        vec3 localL = normalize(var_mat_os2ts * (u_LocalLightOrigin - var_vertex));
     
         vec3 RawN = normalize(bumpTexel.xyz);
         vec3 N = var_mat_os2ts * RawN;
@@ -146,7 +146,7 @@ void main()
         float light = rimLight * R2f + NdotL_adjusted;
 
         // Combine everything to get the colour (unshadowed)
-        totalColor = (specularColor * u_light_color * R2f + diffuse.rgb) * light * (u_light_color * u_light_scale) * attenuation_xy * attenuation_z * var_Colour.rgb;
+        totalColor = (specularColor * u_LightColour * R2f + diffuse.rgb) * light * (u_LightColour * u_LightScale) * attenuation_xy * attenuation_z * var_Colour.rgb;
 
         if (u_UseShadowMap)
         {
@@ -173,32 +173,28 @@ void main()
     else
     {
         // Ported from TDM's interaction.ambient.fs
-        vec3 localNormal = vec3(bumpTexel.x, bumpTexel.y, sqrt(max(1. - bumpTexel.x*bumpTexel.x - bumpTexel.y*bumpTexel.y, 0)));
-        vec3 N = normalize(var_mat_os2ts * localNormal);
-
-        vec3 nViewDir = normalize(var_LocalViewerDirection);
-        vec3 reflect = - (nViewDir - 2 * N * dot(N, nViewDir));
-
-        // compute lighting model
-        vec4 color = diffuse * var_Colour;
-        
         vec4 light = vec4(attenuation_xy * attenuation_z, 1);
 
+        vec3 localNormal = vec3(bumpTexel.x, bumpTexel.y, sqrt(max(1. - bumpTexel.x*bumpTexel.x - bumpTexel.y*bumpTexel.y, 0)));
+        vec3 N = normalize(var_mat_os2ts * localNormal);
+        
         vec3 light1 = vec3(.5); // directionless half
         light1 += max(dot(N, u_WorldUpLocal) * (1. - specular) * .5, 0);
+        
+        // Calculate specularity
+        vec3 nViewDir = normalize(var_LocalViewerDirection);
+        vec3 reflect = - (nViewDir - 2 * N * dot(N, nViewDir));
 
         float spec = max(dot(reflect, u_WorldUpLocal), 0);
         float specPow = clamp((spec * spec), 0.0, 1.1);
         light1 += vec3(spec * specPow * specPow) * specular * 1.0;
-
-        // not needed: 
-        // light.a = diffuse.a;
-
-        light1.rgb *= color.rgb;
+        
+        // Apply the light's colour (with light scale) and the vertex colour
+        light1.rgb *= (u_LightColour * u_LightScale) * var_Colour.rgb;
 
         light.rgb *= diffuse.rgb * light1;
 
-        light = max(light, vec4(0));  // avoid negative values, which with floating point render buffers can lead to NaN artefacts
+        light = max(light, vec4(0)); // avoid negative values, which with floating point render buffers can lead to NaN artefacts
     
         totalColor = light.rgb;
     }

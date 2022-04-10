@@ -52,12 +52,12 @@ void InteractionProgram::create()
     debug::assertNoGlErrors();
 
     // Set the uniform locations to the correct bound values
-    _locLightOrigin = glGetUniformLocation(_programObj, "u_light_origin");
+    _locLocalLightOrigin = glGetUniformLocation(_programObj, "u_LocalLightOrigin");
     _locWorldLightOrigin = glGetUniformLocation(_programObj, "u_WorldLightOrigin");
     _locWorldUpLocal = glGetUniformLocation(_programObj, "u_WorldUpLocal");
-    _locLightColour = glGetUniformLocation(_programObj, "u_light_color");
+    _locLightColour = glGetUniformLocation(_programObj, "u_LightColour");
     _locViewOrigin = glGetUniformLocation(_programObj, "u_LocalViewOrigin");
-    _locLightScale = glGetUniformLocation(_programObj, "u_light_scale");
+    _locLightScale = glGetUniformLocation(_programObj, "u_LightScale");
     _locAmbientLight = glGetUniformLocation(_programObj, "u_IsAmbientLight");
     _locColourModulation = glGetUniformLocation(_programObj, "u_ColourModulation");
     _locColourAddition = glGetUniformLocation(_programObj, "u_ColourAddition");
@@ -238,7 +238,7 @@ void InteractionProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
     const auto& worldToObject = inverseObjectTransform;
 
     // Calculate the light origin in object space
-    auto localLight = worldToObject.transformPoint(worldLightOrigin);
+    auto localLightOrigin = worldToObject.transformPoint(worldLightOrigin);
 
     // Calculate world up (0,0,1) in object space
     // This is needed for ambient lights
@@ -253,10 +253,10 @@ void InteractionProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
         static_cast<float>(osViewer.y()),
         static_cast<float>(osViewer.z())
     );
-    glUniform3f(_locLightOrigin,
-        static_cast<float>(localLight.x()),
-        static_cast<float>(localLight.y()),
-        static_cast<float>(localLight.z())
+    glUniform3f(_locLocalLightOrigin,
+        static_cast<float>(localLightOrigin.x()),
+        static_cast<float>(localLightOrigin.y()),
+        static_cast<float>(localLightOrigin.z())
     );
     glUniform3f(_locWorldLightOrigin,
         static_cast<float>(worldLightOrigin.x()),
