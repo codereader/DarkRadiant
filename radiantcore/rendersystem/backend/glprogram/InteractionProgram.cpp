@@ -54,10 +54,11 @@ void InteractionProgram::create()
     // Set the uniform locations to the correct bound values
     _locLightOrigin = glGetUniformLocation(_programObj, "u_light_origin");
     _locWorldLightOrigin = glGetUniformLocation(_programObj, "u_WorldLightOrigin");
+    _locWorldUpLocal = glGetUniformLocation(_programObj, "u_WorldUpLocal");
     _locLightColour = glGetUniformLocation(_programObj, "u_light_color");
-    _locViewOrigin = glGetUniformLocation(_programObj, "u_view_origin");
+    _locViewOrigin = glGetUniformLocation(_programObj, "u_LocalViewOrigin");
     _locLightScale = glGetUniformLocation(_programObj, "u_light_scale");
-    _locAmbientLight = glGetUniformLocation(_programObj, "uAmbientLight");
+    _locAmbientLight = glGetUniformLocation(_programObj, "u_IsAmbientLight");
     _locColourModulation = glGetUniformLocation(_programObj, "u_ColourModulation");
     _locColourAddition = glGetUniformLocation(_programObj, "u_ColourAddition");
     _locModelViewProjection = glGetUniformLocation(_programObj, "u_ModelViewProjection");
@@ -239,6 +240,10 @@ void InteractionProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
     // Calculate the light origin in object space
     auto localLight = worldToObject.transformPoint(worldLightOrigin);
 
+    // Calculate world up (0,0,1) in object space
+    // This is needed for ambient lights
+    auto worldUpLocal = worldToObject.zCol3();
+
     // Calculate viewer location in object space
     auto osViewer = inverseObjectTransform.transformPoint(viewer);
 
@@ -257,6 +262,11 @@ void InteractionProgram::setUpObjectLighting(const Vector3& worldLightOrigin,
         static_cast<float>(worldLightOrigin.x()),
         static_cast<float>(worldLightOrigin.y()),
         static_cast<float>(worldLightOrigin.z())
+    );
+    glUniform3f(_locWorldUpLocal,
+        static_cast<float>(worldUpLocal.x()),
+        static_cast<float>(worldUpLocal.y()),
+        static_cast<float>(worldUpLocal.z())
     );
 
     debug::assertNoGlErrors();
