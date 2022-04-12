@@ -11,7 +11,6 @@
 #include "backend/GLProgramFactory.h"
 #include "backend/BuiltInShader.h"
 #include "backend/ColourShader.h"
-#include "backend/LightInteractions.h"
 #include "backend/LightingModeRenderer.h"
 #include "backend/FullBrightRenderer.h"
 #include "backend/ObjectRenderer.h"
@@ -170,6 +169,17 @@ IRenderResult::Ptr OpenGLRenderSystem::renderLitScene(RenderStateFlags globalFla
 
 IRenderResult::Ptr OpenGLRenderSystem::render(SceneRenderer& renderer, RenderStateFlags globalFlagsMask, const IRenderView& view)
 {
+    const auto viewType = renderer.getViewType();
+
+    // Make sure all shaders are ready for rendering, submitting their data to the store
+    for (const auto& [_, shader] : _shaders)
+    {
+        if (shader->isApplicableTo(viewType))
+        {
+            shader->prepareForRendering();
+        }
+    }
+
     auto result = renderer.render(globalFlagsMask, view, _time);
 
     renderText();

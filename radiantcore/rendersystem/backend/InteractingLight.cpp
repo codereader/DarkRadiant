@@ -1,4 +1,4 @@
-#include "LightInteractions.h"
+#include "InteractingLight.h"
 
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
@@ -8,7 +8,7 @@
 namespace render
 {
 
-LightInteractions::LightInteractions(RendererLight& light, IGeometryStore& store) :
+InteractingLight::InteractingLight(RendererLight& light, IGeometryStore& store) :
     _light(light),
     _store(store),
     _lightBounds(light.lightAABB()),
@@ -22,7 +22,7 @@ LightInteractions::LightInteractions(RendererLight& light, IGeometryStore& store
     _isShadowCasting = _light.isShadowCasting() && _light.getShader() && _light.getShader()->getMaterial()->lightCastsShadows();
 }
 
-void LightInteractions::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader)
+void InteractingLight::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader)
 {
     auto& objectsByMaterial = _objectsByEntity.emplace(
         &entity, ObjectsByMaterial{}).first->second;
@@ -35,17 +35,17 @@ void LightInteractions::addObject(IRenderableObject& object, IRenderEntity& enti
     ++_objectCount;
 }
 
-bool LightInteractions::isInView(const IRenderView& view)
+bool InteractingLight::isInView(const IRenderView& view)
 {
     return view.TestAABB(_lightBounds) != VOLUME_OUTSIDE;
 }
 
-bool LightInteractions::isShadowCasting() const
+bool InteractingLight::isShadowCasting() const
 {
     return _isShadowCasting;
 }
 
-void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
+void InteractingLight::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
 {
     bool shadowCasting = isShadowCasting();
 
@@ -85,9 +85,10 @@ void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<
                 return;
             }
 
-            if (!glShader->getInteractionPass())
+            // Collect all interaction surfaces and the ones with forceShadows materials
+            if (!glShader->getInteractionPass() && !shader->getMaterial()->surfaceCastsShadow())
             {
-                return; // This material doesn't interact with lighting
+                return; // This material doesn't interact with this light
             }
 
             addObject(*object, *entity, glShader);
@@ -95,7 +96,7 @@ void LightInteractions::collectSurfaces(const IRenderView& view, const std::set<
     }
 }
 
-void LightInteractions::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
+void InteractingLight::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
     std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest)
 {
     std::vector<IGeometryStore::Slot> untransformedObjects;
@@ -149,7 +150,7 @@ void LightInteractions::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgra
     }
 }
 
-void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, 
+void InteractingLight::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, 
     ShadowMapProgram& program, std::size_t renderTime)
 {
     // Set up the viewport to write to a specific area within the shadow map texture
@@ -166,18 +167,22 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
     // Render all the objects that have a depth filling stage
     for (const auto& [entity, objectsByShader] : _objectsByEntity)
     {
+        if (!entity->isShadowCasting()) continue; // skip all entities with "noshadows" set
+
         for (const auto& [shader, objects] : objectsByShader)
         {
-            auto depthFillPass = shader->getDepthFillPass();
+            const auto& material = shader->getMaterial();
 
-            // Skip shaders not affecting scene depth, and materials not casting any shadow
-            if (!depthFillPass || !shader->getMaterial()->surfaceCastsShadow()) continue;
+            // Skip materials not casting any shadow. This includes all
+            // translucent materials, they get the noshadows flag set implicitly
+            if (!material->surfaceCastsShadow()) continue;
 
-            setupAlphaTest(state, shader, depthFillPass, program, renderTime, entity);
+            // Set up alphatest (it's ok to pass a nullptr as depth fill pass)
+            setupAlphaTest(state, shader, shader->getDepthFillPass(), program, renderTime, entity);
 
             for (const auto& object : objects)
             {
-                // Skip models with "noshadows" set
+                // Skip models with "noshadows" set (this might be redundant to the entity check above)
                 if (!object.get().isShadowCasting()) continue;
 
                 // We submit all objects with an identity matrix in a single multi draw call
@@ -208,7 +213,7 @@ void LightInteractions::drawShadowMap(OpenGLState& state, const Rectangle& recta
     debug::assertNoGlErrors();
 }
 
-void LightInteractions::drawInteractions(OpenGLState& state, InteractionProgram& program, 
+void InteractingLight::drawInteractions(OpenGLState& state, InteractionProgram& program, 
     const IRenderView& view, std::size_t renderTime)
 {
     if (_objectsByEntity.empty())
@@ -297,7 +302,7 @@ void LightInteractions::drawInteractions(OpenGLState& state, InteractionProgram&
     OpenGLState::SetTextureState(state.texture4, 0, GL_TEXTURE4, GL_TEXTURE_2D);
 }
 
-void LightInteractions::setupAlphaTest(OpenGLState& state, OpenGLShader* shader, DepthFillPass* depthFillPass,
+void InteractingLight::setupAlphaTest(OpenGLState& state, OpenGLShader* shader, DepthFillPass* depthFillPass,
     ISupportsAlphaTest& program, std::size_t renderTime, IRenderEntity* entity)
 {
     const auto& material = shader->getMaterial();
@@ -308,7 +313,7 @@ void LightInteractions::setupAlphaTest(OpenGLState& state, OpenGLShader* shader,
     // Skip translucent materials
     if (coverage == Material::MC_TRANSLUCENT) return;
 
-    if (coverage == Material::MC_PERFORATED)
+    if (coverage == Material::MC_PERFORATED && depthFillPass != nullptr)
     {
         // Evaluate the shader stages of this material
         depthFillPass->evaluateShaderStages(renderTime, entity);

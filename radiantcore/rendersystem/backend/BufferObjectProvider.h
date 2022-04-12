@@ -28,7 +28,11 @@ private:
 
         ~BufferObject()
         {
-            glDeleteBuffers(1, &_buffer);
+            if (_buffer != 0)
+            {
+                glDeleteBuffers(1, &_buffer);
+            }
+            
             _buffer = 0;
         }
 

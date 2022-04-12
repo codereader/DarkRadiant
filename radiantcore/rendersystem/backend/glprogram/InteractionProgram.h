@@ -16,8 +16,9 @@ private:
 	float _lightScale;
 
     // Uniform/program-local parameter IDs.
-    int _locLightOrigin;
+    int _locLocalLightOrigin;
     int _locWorldLightOrigin;
+    int _locWorldUpLocal;
     int _locLightColour;
     int _locViewOrigin;
     int _locLightScale;

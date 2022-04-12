@@ -67,10 +67,6 @@ private:
 
 private:
 
-    // Construct shader passes from a regular shader (as opposed to a special
-    // built-in shader)
-    void constructNormalShader();
-
     void constructFromMaterial(const MaterialPtr& material);
 
     // Shader pass construction helpers

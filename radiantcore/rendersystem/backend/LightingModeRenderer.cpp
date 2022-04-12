@@ -2,7 +2,7 @@
 
 #include "GLProgramFactory.h"
 #include "LightingModeRenderResult.h"
-#include "LightInteractions.h"
+#include "InteractingLight.h"
 #include "OpenGLShaderPass.h"
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
@@ -17,6 +17,7 @@ namespace render
 LightingModeRenderer::LightingModeRenderer(GLProgramFactory& programFactory,
         IGeometryStore& store, const std::set<RendererLightPtr>& lights,
         const std::set<IRenderEntityPtr>& entities) :
+    SceneRenderer(RenderViewType::Camera),
     _programFactory(programFactory),
     _geometryStore(store),
     _lights(lights),
@@ -62,7 +63,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 
     ensureShadowMapSetup();
 
-    determineLightInteractions(view);
+    determineInteractingLight(view);
 
     // Construct default OpenGL state
     OpenGLState current;
@@ -89,7 +90,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     drawDepthFillPass(current, globalFlagsMask, view, time);
 
     // Draw the surfaces per light and material
-    drawLightInteractions(current, globalFlagsMask, view, time);
+    drawInteractingLight(current, globalFlagsMask, view, time);
 
     // Draw any surfaces without any light interactions
     drawNonInteractionPasses(current, globalFlagsMask, view, time);
@@ -106,14 +107,14 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     return std::move(_result); // move-return our result reference
 }
 
-void LightingModeRenderer::determineLightInteractions(const IRenderView& view)
+void LightingModeRenderer::determineInteractingLight(const IRenderView& view)
 {
     _interactingLights.reserve(_lights.size());
 
     // Gather all visible lights and render the surfaces touched by them
     for (const auto& light : _lights)
     {
-        LightInteractions interaction(*light, _geometryStore);
+        InteractingLight interaction(*light, _geometryStore);
 
         if (!interaction.isInView(view))
         {
@@ -146,7 +147,7 @@ void LightingModeRenderer::determineLightInteractions(const IRenderView& view)
     }
 }
 
-void LightingModeRenderer::addToShadowLights(LightInteractions& light, const Vector3& viewer)
+void LightingModeRenderer::addToShadowLights(InteractingLight& light, const Vector3& viewer)
 {
     if (_nearestShadowLights.empty())
     {
@@ -178,7 +179,7 @@ void LightingModeRenderer::addToShadowLights(LightInteractions& light, const Vec
     }
 }
 
-void LightingModeRenderer::drawLightInteractions(OpenGLState& current, RenderStateFlags globalFlagsMask,
+void LightingModeRenderer::drawInteractingLight(OpenGLState& current, RenderStateFlags globalFlagsMask,
     const IRenderView& view, std::size_t renderTime)
 {
     // Draw the surfaces per light and material

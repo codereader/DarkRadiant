@@ -7,13 +7,13 @@
 #include "FrameBuffer.h"
 #include "render/Rectangle.h"
 #include "glprogram/ShadowMapProgram.h"
+#include "InteractingLight.h"
 #include "registry/CachedKey.h"
 
 namespace render
 {
 
 class GLProgramFactory;
-class LightInteractions;
 class LightingModeRenderResult;
 
 class LightingModeRenderer final :
@@ -42,8 +42,8 @@ private:
 
     // Data that is valid during a single render pass only
 
-    std::vector<LightInteractions> _interactingLights;
-    std::vector<LightInteractions*> _nearestShadowLights;
+    std::vector<InteractingLight> _interactingLights;
+    std::vector<InteractingLight*> _nearestShadowLights;
     std::shared_ptr<LightingModeRenderResult> _result;
 
 public:
@@ -55,9 +55,9 @@ public:
     IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;
 
 private:
-    void determineLightInteractions(const IRenderView& view);
+    void determineInteractingLight(const IRenderView& view);
 
-    void drawLightInteractions(OpenGLState& current, RenderStateFlags globalFlagsMask,
+    void drawInteractingLight(OpenGLState& current, RenderStateFlags globalFlagsMask,
         const IRenderView& view, std::size_t renderTime);
 
     void drawDepthFillPass(OpenGLState& current, RenderStateFlags globalFlagsMask,
@@ -70,7 +70,7 @@ private:
 
     void ensureShadowMapSetup();
 
-    void addToShadowLights(LightInteractions& light, const Vector3& viewer);
+    void addToShadowLights(InteractingLight& light, const Vector3& viewer);
 };
 
 }

@@ -25,7 +25,7 @@ class DepthFillPass;
  * 
  * Objects are grouped by entity, then by shader.
  */
-class LightInteractions
+class InteractingLight
 {
 private:
     RendererLight& _light;
@@ -50,7 +50,7 @@ private:
     bool _isShadowCasting;
 
 public:
-    LightInteractions(RendererLight& light, IGeometryStore& store);
+    InteractingLight(RendererLight& light, IGeometryStore& store);
 
     const Vector3& getBoundsCenter() const
     {

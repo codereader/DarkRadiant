@@ -30,15 +30,6 @@ public:
 
 IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, const IRenderView& view, std::size_t time)
 {
-    // Make sure all the geometry is ready for rendering
-    for (const auto& [_, pass] : _sortedStates)
-    {
-        if (pass->isApplicableTo(_renderViewType))
-        {
-            pass->getShader().prepareForRendering();
-        }
-    }
-
     // Make sure all the data is uploaded
     _geometryStore.syncToBufferObjects();
 

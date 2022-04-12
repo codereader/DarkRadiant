@@ -10,13 +10,12 @@ class FullBrightRenderer final :
     public SceneRenderer
 {
 private:
-    RenderViewType _renderViewType;
     const OpenGLStates& _sortedStates;
     IGeometryStore& _geometryStore;
 
 public:
     FullBrightRenderer(RenderViewType renderViewType, const OpenGLStates& sortedStates, IGeometryStore& geometryStore) :
-        _renderViewType(renderViewType),
+        SceneRenderer(renderViewType),
         _sortedStates(sortedStates),
         _geometryStore(geometryStore)
     {}
