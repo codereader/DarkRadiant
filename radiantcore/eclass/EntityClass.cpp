@@ -97,6 +97,7 @@ void EntityClass::setIsLight(bool val)
 
 void EntityClass::setColour(const Vector4& colour)
 {
+    auto origColour = _colour;
     _colour = colour;
 
     // Set the entity colour to default, if none was specified
@@ -105,7 +106,9 @@ void EntityClass::setColour(const Vector4& colour)
         _colour = DefaultEntityColour;
     }
 
-    emitChangedSignal();
+    // Emit the signal if the colour actually changed
+    if (origColour != _colour)
+        emitChangedSignal();
 }
 
 void EntityClass::resetColour()
@@ -282,7 +285,12 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
     resetColour();
     if (_parent)
     {
-        _parent->changedSignal().connect(
+        // resolveInheritance() can be called more than once (e.g. after Reload Defs) so make sure
+        // we only have a single connection to the parent's changed signal.
+        if (_parentChangedConnection) {
+            _parentChangedConnection->disconnect();
+        }
+        _parentChangedConnection = _parent->changedSignal().connect(
             sigc::mem_fun(this, &EntityClass::resetColour)
         );
     }

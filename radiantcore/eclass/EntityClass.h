@@ -14,6 +14,9 @@
 #include <vector>
 #include <map>
 #include <memory>
+#include <optional>
+
+#include <sigc++/connection.h>
 
 /* FORWARD DECLS */
 
@@ -79,6 +82,7 @@ private:
     // Emitted when contents are reloaded
     sigc::signal<void> _changedSignal;
     bool _blockChangeSignal = false;
+    std::optional<sigc::connection> _parentChangedConnection;
 
 private:
     // Clear all contents (done before parsing from tokens)
