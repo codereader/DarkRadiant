@@ -713,8 +713,18 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
         state.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
 	}
 
-    // Polygon offset
-    state.polygonOffset = _material->getPolygonOffset();
+    // Polygon offset: use the one defined on the material if it has one,
+    // otherwise use a sensible default to avoid z-fighting with the depth layer
+    if (_material->getMaterialFlags() & Material::FLAG_POLYGONOFFSET)
+    {
+        state.polygonOffset = _material->getPolygonOffset();
+    }
+    else if (!(state.getRenderFlags() & RENDER_DEPTHWRITE))
+    {
+        // #5938: Blending stages seem to z-fight with the result of the depth-buffer
+        // apply a slight polygon offset to stop that
+        state.polygonOffset = 0.1f;
+    }
 
 #if 0
     if (!layer->getVertexProgram().empty() || !layer->getFragmentProgram().empty())
