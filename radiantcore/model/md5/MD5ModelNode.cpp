@@ -16,7 +16,11 @@ MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
     _renderableSkeleton(_model->getSkeleton(), localToWorld())
 {
     _animationUpdateConnection = _model->signal_ModelAnimationUpdated().connect(
-        sigc::mem_fun(this, &MD5ModelNode::onModelAnimationUpdated)
+        sigc::mem_fun(*this, &MD5ModelNode::onModelAnimationUpdated)
+    );
+
+    _modelShadersChangedConnection = _model->signal_ShadersChanged().connect(
+        sigc::mem_fun(*this, &MD5ModelNode::onModelShadersChanged)
     );
 }
 
@@ -139,14 +143,6 @@ void MD5ModelNode::renderHighlights(IRenderableCollector& collector, const Volum
     }
 }
 
-void MD5ModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
-{
-    Node::setRenderSystem(renderSystem);
-
-    // Detach renderables on render system change
-    detachFromShaders();
-}
-
 void MD5ModelNode::detachFromShaders()
 {
     // Detach any existing surfaces. In case we need them again,
@@ -194,15 +190,19 @@ void MD5ModelNode::skinChanged(const std::string& newSkinName)
 
     // greebo: Acquire the ModelSkin reference from the SkinCache
     // Note: This always returns a valid reference
-    ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
+    auto& skin = GlobalModelSkinCache().capture(_skin);
 
+    // Applying the skin might trigger onModelShadersChanged()
     _model->applySkin(skin);
-
-    // Detach from existing shaders, re-acquire them in onPreRender
-    detachFromShaders();
 
     // Refresh the scene
     GlobalSceneGraph().sceneChanged();
+}
+
+void MD5ModelNode::onModelShadersChanged()
+{
+    // Detach from existing shaders, re-acquire them in onPreRender
+    detachFromShaders();
 }
 
 void MD5ModelNode::onVisibilityChanged(bool isVisibleNow)

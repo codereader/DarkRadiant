@@ -32,6 +32,7 @@ class MD5ModelNode :
     bool _attachedToShaders;
 
     sigc::connection _animationUpdateConnection;
+    sigc::connection _modelShadersChangedConnection;
 
     registry::CachedKey<bool> _showSkeleton;
 
@@ -69,7 +70,6 @@ public:
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
 	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
-	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	std::size_t getHighlightFlags() override
 	{
@@ -89,6 +89,7 @@ private:
     void onModelAnimationUpdated();
     void attachToShaders();
     void detachFromShaders();
+    void onModelShadersChanged();
 };
 
 } // namespace

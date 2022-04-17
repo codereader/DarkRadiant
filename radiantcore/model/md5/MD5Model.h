@@ -50,6 +50,8 @@ private:
 
     sigc::signal<void> _sigModelAnimationUpdated;
 
+    sigc::signal<void> _sigShadersUpdated;
+
 public:
 	MD5Model();
 
@@ -87,6 +89,9 @@ public:
 	void setModelPath(const std::string& modelPath);
 
 	virtual void applySkin(const ModelSkin& skin) override;
+
+    // Signal emitted after the captured shaders have been changed (or cleared)
+    sigc::signal<void>& signal_ShadersChanged();
 
 	/** Return the number of material surfaces on this model. Each material
 	 * surface consists of a set of polygons sharing the same material.
