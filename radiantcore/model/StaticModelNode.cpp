@@ -19,6 +19,8 @@ StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
     _name(picoModel->getFilename()),
     _attachedToShaders(false)
 {
+    _model->signal_ShadersChanged().connect(sigc::mem_fun(*this, &StaticModelNode::onModelShadersChanged));
+
     // Update the skin
     skinChanged("");
 }
@@ -124,10 +126,8 @@ void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     Node::setRenderSystem(renderSystem);
 
     _renderSystem = renderSystem;
-    
-    // Detach renderables on render system change
-    detachFromShaders();
 
+    // This will trigger onModelShadersChanged() to refresh the renderables
     _model->setRenderSystem(renderSystem);
 }
 
@@ -177,6 +177,13 @@ void StaticModelNode::queueRenderableUpdate()
     }
 }
 
+void StaticModelNode::onModelShadersChanged()
+{
+    // Detach renderables on model shader change,
+    // they will be refreshed next time things are rendered
+    detachFromShaders();
+}
+
 // Traceable implementation
 bool StaticModelNode::getIntersection(const Ray& ray, Vector3& intersection)
 {
@@ -201,11 +208,10 @@ void StaticModelNode::skinChanged(const std::string& newSkinName)
 
     // greebo: Acquire the ModelSkin reference from the SkinCache
     // Note: This always returns a valid reference
-    ModelSkin& skin = GlobalModelSkinCache().capture(_skin);
-    _model->applySkin(skin);
+    auto& skin = GlobalModelSkinCache().capture(_skin);
 
-    // Detach from existing shaders, re-acquire them in onPreRender
-    detachFromShaders();
+    // Applying the skin might trigger onModelShadersChanged()
+    _model->applySkin(skin);
 
     // Refresh the scene (TODO: get rid of that)
     GlobalSceneGraph().sceneChanged();

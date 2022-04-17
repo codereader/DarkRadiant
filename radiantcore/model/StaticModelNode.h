@@ -105,6 +105,7 @@ private:
     void attachToShaders();
     void detachFromShaders();
     void queueRenderableUpdate();
+    void onModelShadersChanged();
 };
 
 } // namespace model

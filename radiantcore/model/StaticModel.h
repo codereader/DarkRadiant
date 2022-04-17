@@ -89,6 +89,8 @@ private:
 	// Undoable stuff
 	IUndoStateSaver* _undoStateSaver;
 
+    sigc::signal<void> _sigShadersChanged;
+
 private:
 
 	// Update the list of materials by querying each surface for its current
@@ -121,6 +123,9 @@ public:
 	void disconnectUndoSystem(IUndoSystem& undoSystem);
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
+    // A signal that is emitted after the captured shaders have been changed (or cleared)
+    sigc::signal<void>& signal_ShadersChanged();
 
 	/**
 	 * Return the number of surfaces in this model.

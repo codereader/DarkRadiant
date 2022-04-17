@@ -175,6 +175,13 @@ void StaticModel::captureShaders()
             s.shader.reset();
         }
     }
+
+    _sigShadersChanged.emit();
+}
+
+sigc::signal<void>& StaticModel::signal_ShadersChanged()
+{
+    return _sigShadersChanged;
 }
 
 // Update the list of active materials
