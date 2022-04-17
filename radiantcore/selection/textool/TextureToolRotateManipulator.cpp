@@ -266,13 +266,14 @@ void TextureToolRotateManipulator::renderComponents(const render::IRenderView& v
         glDisable(GL_BLEND);
     }
 
-    // Enable point colours if required
+    glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_COLOR_ARRAY);
 
     pointvertex_gl_array(&_renderableCircle.front());
     glDrawArrays(GL_LINE_LOOP, 0, static_cast<GLsizei>(_renderableCircle.size()));
 
     glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_VERTEX_ARRAY);
 
     if (_selectableZ.isSelected())
     {
