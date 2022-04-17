@@ -43,9 +43,6 @@ private:
     // The renderable surfaces attached to the shaders
     std::vector<RenderableModelSurface::Ptr> _renderableSurfaces;
 
-    // We need to keep a reference for skin swapping
-    RenderSystemWeakPtr _renderSystem;
-
     bool _attachedToShaders;
 
 public:
