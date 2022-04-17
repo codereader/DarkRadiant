@@ -129,10 +129,10 @@ public:
         if (_shader != shader)
         {
             clear();
-        }
 
-        // Update our local shader reference
-        _shader = shader;
+            // Update our local shader reference
+            _shader = shader;
+        }
 
         if (_shader)
         {

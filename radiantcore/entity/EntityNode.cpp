@@ -22,6 +22,7 @@ EntityNode::EntityNode(const IEntityClassPtr& eclass) :
     _originKey(std::bind(&EntityNode::_originKeyChanged, this)),
 	_nameKey(_spawnArgs),
 	_renderableName(*this, _nameKey),
+    _colourKey(std::bind(&EntityNode::_colourKeyChanged, this, std::placeholders::_1)),
 	_modelKey(*this),
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
@@ -45,6 +46,7 @@ EntityNode::EntityNode(const EntityNode& other) :
     _originKey(std::bind(&EntityNode::_originKeyChanged, this)),
 	_nameKey(_spawnArgs),
 	_renderableName(*this, _nameKey),
+    _colourKey(std::bind(&EntityNode::_colourKeyChanged, this, std::placeholders::_1)),
 	_modelKey(*this),
 	_keyObservers(_spawnArgs),
 	_shaderParms(_keyObservers, _colourKey),
@@ -534,6 +536,11 @@ void EntityNode::_modelKeyChanged(const std::string& value)
 void EntityNode::_originKeyChanged()
 {
     // TODO: add virtual callout for subclasses
+}
+
+void EntityNode::_colourKeyChanged(const std::string& value)
+{
+    onColourKeyChanged(value);
 }
 
 void EntityNode::_onNoShadowsSettingsChanged(const std::string& noShadowsValue)

@@ -205,7 +205,11 @@ public:
     virtual const Vector3& getWorldPosition() const = 0;
 
 protected:
-	virtual void onModelKeyChanged(const std::string& value);
+    virtual void onModelKeyChanged(const std::string& value);
+
+    // Invoked when the colour key has changed its value
+    virtual void onColourKeyChanged(const std::string& value)
+    {}
 
 	/**
 	 * greebo: construct() does the necessary setup, connects keyobservers, etc.
@@ -231,6 +235,7 @@ private:
 	// Private function target - wraps to virtual protected signal
 	void _modelKeyChanged(const std::string& value);
     void _originKeyChanged();
+    void _colourKeyChanged(const std::string& value);
     void _onNoShadowsSettingsChanged(const std::string& value);
 
     void acquireShaders();

@@ -1236,4 +1236,10 @@ const IRenderEntity& LightNode::getLightEntity() const
 	return *this;
 }
 
+void LightNode::onColourKeyChanged(const std::string& value)
+{
+    _renderableOctagon.queueUpdate();
+    _renderableLightVolume.queueUpdate();
+}
+
 } // namespace entity

@@ -205,6 +205,8 @@ protected:
     void onVisibilityChanged(bool isVisibleNow) override;
     void onSelectionStatusChange(bool changeGroupStatus) override;
 
+    void onColourKeyChanged(const std::string& value) override;
+
 private:
     void evaluateTransform();
 

@@ -1,8 +1,8 @@
 #pragma once
 
+#include <functional>
 #include "ientity.h"
 #include "irender.h"
-#include <fmt/format.h>
 
 namespace entity
 {
@@ -20,12 +20,16 @@ private:
 
 	RenderSystemWeakPtr _renderSystem;
 
+    std::function<void(const std::string&)> _onColourChanged;
+
 public:
-	ColourKey() :
-		_colour(1,1,1)
-	{
-		captureShader();
-	}
+    // The given callback will be invoked after the _color spawnarg has been changed
+    ColourKey(const std::function<void(const std::string&)>& onColourChanged) :
+        _colour(1,1,1),
+        _onColourChanged(onColourChanged)
+    {
+        captureShader();
+    }
 
 	const Vector3& getColour() const
 	{
@@ -33,7 +37,7 @@ public:
 	}
 
 	// Called when "_color" keyvalue changes
-	void onKeyValueChanged(const std::string& value)
+	void onKeyValueChanged(const std::string& value) override
 	{
 		// Initialise the colour with white, in case the string parse fails
 		_colour[0] = _colour[1] = _colour[2] = 1;
@@ -47,6 +51,11 @@ public:
 		strm >> _colour.z();
 
 		captureShader();
+
+        if (_onColourChanged)
+        {
+            _onColourChanged(value);
+        }
 	}
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem)
