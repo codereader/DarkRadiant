@@ -80,7 +80,7 @@ void AasFileManager::ensureAasTypesLoaded()
                 continue;
             }
 
-            type.fileExtension = aasType->getAttribute("fileExtension").getValue();
+            type.fileExtension = aasType->getAttributeValue("fileExtension");
             _typeList.push_back(type);
         }
     }

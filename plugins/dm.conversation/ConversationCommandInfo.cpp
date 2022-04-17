@@ -13,9 +13,9 @@ void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass
 {
 	assert(eclass != NULL); // don't accept NULL pointers
 
-	name = eclass->getAttribute("editor_cmdName").getValue();
-	waitUntilFinishedAllowed = (eclass->getAttribute("editor_waitUntilFinishedAllowed").getValue() == "1");
-	sentence = eclass->getAttribute("editor_sentence").getValue();
+	name = eclass->getAttributeValue("editor_cmdName");
+	waitUntilFinishedAllowed = (eclass->getAttributeValue("editor_waitUntilFinishedAllowed") == "1");
+	sentence = eclass->getAttributeValue("editor_sentence");
 
 	// Read the arguments
 	// Find all attributes matching "argType", this spawnarg is mandatory
@@ -32,11 +32,11 @@ void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass
 
 		ArgumentInfo info;
 
-		info.required = (eclass->getAttribute("editor_argRequired" + argIndex).getValue() != "0");
-		info.description = eclass->getAttribute("editor_argDesc" + argIndex).getValue();
-		info.title = eclass->getAttribute("editor_argTitle" + argIndex).getValue();
+		info.required = (eclass->getAttributeValue("editor_argRequired" + argIndex) != "0");
+		info.description = eclass->getAttributeValue("editor_argDesc" + argIndex);
+		info.title = eclass->getAttributeValue("editor_argTitle" + argIndex);
 
-		std::string argTypeStr = eclass->getAttribute("editor_argType" + argIndex).getValue();
+		std::string argTypeStr = eclass->getAttributeValue("editor_argType" + argIndex);
 		if (argTypeStr == "float") {
 			info.type = ArgumentInfo::ARGTYPE_FLOAT;
 		}

@@ -99,7 +99,7 @@ void EffectEditor::populateWindow()
 		  i != effectTypes.end(); ++i)
 	{
 		// Store the effect name as client data
-		_effectTypeCombo->Append(i->second->getAttribute("editor_caption").getValue(), 
+		_effectTypeCombo->Append(i->second->getAttributeValue("editor_caption"), 
 			new wxStringClientData(i->first));
 	}
 

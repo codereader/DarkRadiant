@@ -46,25 +46,20 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
 
     // Return an error if no name is given
     if (name.empty())
-    {
         return IEntityClassPtr();
-    }
 
-	// Convert string to lowercase, for case-insensitive lookup
-	std::string lName = string::to_lower_copy(name);
+    // Convert string to lowercase, for case-insensitive lookup
+    std::string lName = string::to_lower_copy(name);
 
     // Find and return if exists
     EntityClass::Ptr eclass = findInternal(lName);
     if (eclass)
-    {
         return eclass;
-    }
 
-    // Otherwise insert the new EntityClass
-    //IEntityClassPtr eclass = eclass::EntityClass::create(lName, has_brushes);
+    // Otherwise insert the new EntityClass.
     // greebo: Changed fallback behaviour when unknown entites are encountered to TRUE
     // so that brushes of unknown entites don't get lost (issue #240)
-    eclass = EntityClass::create(lName, true);
+    eclass = EntityClass::createDefault(lName, true);
 
     // Any overrides should also apply to entityDefs that are crated on the fly
     GlobalEclassColourManager().applyColours(*eclass);

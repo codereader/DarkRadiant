@@ -111,8 +111,7 @@ public:
     {
         if (_menuEclass)
         {
-            EntityClassAttribute attr = _menuEclass->getAttribute(nameKey);
-            std::string rawName = attr.getValue();
+            std::string rawName = _menuEclass->getAttributeValue(nameKey);
             if (!rawName.empty())
             {
                 // Look for a translation, otherwise use the raw name

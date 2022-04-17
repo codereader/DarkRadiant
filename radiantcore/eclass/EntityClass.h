@@ -7,12 +7,16 @@
 #include "math/Vector3.h"
 #include "math/AABB.h"
 #include "string/string.h"
+#include "generic/Lazy.h"
 
 #include "parser/DefTokeniser.h"
 
 #include <vector>
 #include <map>
 #include <memory>
+#include <optional>
+
+#include <sigc++/connection.h>
 
 /* FORWARD DECLS */
 
@@ -31,23 +35,26 @@ public:
     using Ptr = std::shared_ptr<EntityClass>;
 
 private:
-    typedef std::shared_ptr<std::string> StringPtr;
 
     // The name of this entity class
     std::string _name;
 
-    // Source file information
-    vfs::FileInfo _fileInfo;
+    // Source file information. May not exist if the entity class was created in code rather than
+    // loaded from a .def file.
+    std::optional<vfs::FileInfo> _fileInfo;
 
     // Parent class pointer (or NULL)
     EntityClass* _parent = nullptr;
 
+    // UI visibility of this entity class
+    Lazy<vfs::Visibility> _visibility;
+
     // Should this entity type be treated as a light?
-    bool _isLight;
+    bool _isLight = false;
 
     // Colour of this entity and flag to indicate it has been specified
     Vector4 _colour;
-    bool _colourTransparent;
+    bool _colourTransparent = false;
 
     // Does this entity have a fixed size?
     bool _fixedSize;
@@ -64,20 +71,18 @@ private:
     // Flag to indicate inheritance resolved. An EntityClass resolves its
     // inheritance by copying all values from the parent onto the child,
     // after recursively instructing the parent to resolve its own inheritance.
-    bool _inheritanceResolved;
+    bool _inheritanceResolved = false;
 
     // Name of the mod owning this class
-    std::string _modName;
-
-    // The empty attribute
-    static const EntityClassAttribute _emptyAttribute;
+    std::string _modName = "base";
 
     // The time this def has been parsed
-    std::size_t _parseStamp;
+    std::size_t _parseStamp = 0;
 
     // Emitted when contents are reloaded
     sigc::signal<void> _changedSignal;
-    bool _blockChangeSignal;
+    bool _blockChangeSignal = false;
+    std::optional<sigc::connection> _parentChangedConnection;
 
 private:
     // Clear all contents (done before parsing from tokens)
@@ -90,44 +95,27 @@ private:
     void forEachAttributeInternal(InternalAttrVisitor visitor,
                                   bool editorKeys) const;
 
+    // Return attribute if found, possibly checking parents
+    EntityClassAttribute* getAttribute(const std::string&, bool includeInherited = true);
+    const EntityClassAttribute* getAttribute(const std::string&, bool includeInherited = true) const;
+
 public:
-    /**
-     * Static function to create a default entity class.
-     *
-     * @param name
-     * The name of the entity class to create.
-     *
-     * @param brushes
-     * Whether the entity contains brushes or not.
-     */
-    static EntityClass::Ptr create(const std::string& name, bool brushes);
 
-    /**
-     * Constructor.
-     *
-     * @param name
-     * Entity class name.
-     *
-     * This eclass will have isFixedSize set to false.
-     */
-    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo);
+    /// Construct an EntityClass with no FileInfo.
+    EntityClass(const std::string& name, bool isFixedSize = false);
 
-    /**
-     * Constructor.
-     *
-     * @param name
-     * Entity class name.
-     *
-     * @param fixedSize
-     * whether this entity has a fixed size.
-     */
-    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
+    /// Construct an EntityClass with a given FileInfo.
+    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize = false);
+
+    /// Create a heap-allocated default/empty EntityClass
+    static EntityClass::Ptr createDefault(const std::string& name, bool brushes);
 
     void emplaceAttribute(EntityClassAttribute&& attribute);
 
     // IEntityClass implementation
     const std::string& getName() const override;
     const IEntityClass* getParent() const override;
+    vfs::Visibility getVisibility() const override;
     sigc::signal<void>& changedSignal() override;
     bool isFixedSize() const override;
     AABB getBounds() const override;
@@ -137,10 +125,9 @@ public:
     void setColour(const Vector4& colour) override;
     // Resets the colour to the value defined in the attributes
     void resetColour();
-    EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) override;
-    const EntityClassAttribute& getAttribute(const std::string&, bool includeInherited = true) const override;
-    const std::string& getAttributeType(const std::string& name) const override;
-    const std::string& getAttributeDescription(const std::string& name) const override;
+    std::string getAttributeValue(const std::string&, bool includeInherited = true) const override;
+    std::string getAttributeType(const std::string& name) const override;
+    std::string getAttributeDescription(const std::string& name) const override;
     void forEachAttribute(AttributeVisitor, bool) const override;
 
     const std::string& getModelPath() const override { return _model; }

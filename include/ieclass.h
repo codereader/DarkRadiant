@@ -9,6 +9,7 @@
 #include "ModResource.h"
 
 #include "imodule.h"
+#include "ifilesystem.h"
 #include "math/Vector4.h"
 
 #include <vector>
@@ -117,7 +118,7 @@ typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
  *
  * \ingroup eclass
  */
-class IEntityClass : 
+class IEntityClass :
     public ModResource
 {
 public:
@@ -131,6 +132,9 @@ public:
 
     /// Get the parent entity class or NULL if there is no parent
     virtual const IEntityClass* getParent() const = 0;
+
+    /// Get the UI visibility of this entity class
+    virtual vfs::Visibility getVisibility() const = 0;
 
     /// Query whether this entity class represents a light.
     virtual bool isLight() const = 0;
@@ -161,34 +165,22 @@ public:
     /* ENTITY CLASS ATTRIBUTES */
 
     /**
-     * Return a single named EntityClassAttribute from this EntityClass.
+     * @brief Get the value of a specified attribute.
      *
-     * \param name
-     * The name of the EntityClassAttribute to find, interpreted case-insensitively.
-     *
-     * \param includeInherited
-     * true if attributes inherited from parent entity classes should be
-     * considered, false otherwise.
-     *
-     * \return
-     * A reference to the named EntityClassAttribute. If the named attribute is
-     * not found, an empty EntityClassAttribute is returned.
+     * @return std::string containing the attribute value, or an empty string if the attribute was
+     * not found.
      */
-    virtual EntityClassAttribute& getAttribute(const std::string& name, 
-        bool includeInherited = true) = 0;
-
-    /// Get a const EntityClassAttribute reference by name
-    virtual const EntityClassAttribute& getAttribute(const std::string& name,
-                 bool includeInherited = true) const = 0;
+    virtual std::string getAttributeValue(const std::string& name,
+                                          bool includeInherited = true) const = 0;
 
     // Returns the attribute type string for the given name.
     // This method will walk up the inheritance hierarchy until it encounters a type definition.
     // If no type is found, an empty string will be returned.
-    virtual const std::string& getAttributeType(const std::string& name) const = 0;
+    virtual std::string getAttributeType(const std::string& name) const = 0;
 
     // Returns the attribute description string for the given name.
     // This method will walk up the inheritance hierarchy until it encounters a non-empty description.
-    virtual const std::string& getAttributeDescription(const std::string& name) const = 0;
+    virtual std::string getAttributeDescription(const std::string& name) const = 0;
 
     /**
      * Function that will be invoked by forEachAttribute.
@@ -210,8 +202,7 @@ public:
      * true if editor keys (those which start with "editor_") should be passed
      * to the visitor, false if they should be skipped.
      */
-    virtual void forEachAttribute(AttributeVisitor visitor,
-                                  bool editorKeys = false) const = 0;
+    virtual void forEachAttribute(AttributeVisitor visitor, bool editorKeys = false) const = 0;
 
     /* MODEL AND SKIN */
 

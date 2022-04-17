@@ -104,41 +104,32 @@ void EClassTreeBuilder::visit(wxutil::TreeModel& /* store */, wxutil::TreeModel:
 
 std::string EClassTreeBuilder::getInheritancePathRecursive(const IEntityClassPtr& eclass)
 {
-	std::string returnValue;
+    std::string returnValue;
 
-	try
-	{
-        EntityClassAttribute attribute = eclass->getAttribute(
+    try {
+        std::string attribute = eclass->getAttributeValue(
             INHERIT_KEY, false /* includeInherited*/
         );
 
         // Don't use empty "inherit" keys
-		if (!attribute.getValue().empty())
-		{
-			// Get the inherited eclass first and resolve the path
-			IEntityClassPtr parent = GlobalEntityClassManager().findClass(
-				attribute.getValue()
-			);
+        if (!attribute.empty()) {
+            // Get the inherited eclass first and resolve the path
+            IEntityClassPtr parent = GlobalEntityClassManager().findClass(attribute);
+            if (parent) {
+                returnValue += getInheritancePathRecursive(parent);
+            } else {
+                rError() << "EClassTreeBuilder: Cannot resolve inheritance path for "
+                         << eclass->getName() << std::endl;
+            }
 
-			if (parent != NULL)
-			{
-				returnValue += getInheritancePathRecursive(parent);
-			}
-			else
-			{
-				rError() << "EClassTreeBuilder: Cannot resolve inheritance path for "
-					<< eclass->getName() << std::endl;
-			}
+            returnValue += attribute + "/";
+        }
+    }
+    catch (std::runtime_error&) {
+        // no inherit key
+    }
 
-			returnValue += attribute.getValue() + "/";
-		}
-	}
-	catch (std::runtime_error&)
-	{
-		// no inherit key
-	}
-
-	return returnValue;
+    return returnValue;
 }
 
 } // namespace ui

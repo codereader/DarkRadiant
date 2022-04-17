@@ -192,7 +192,7 @@ std::string SpawnArgs::getKeyValue(const std::string& key) const
 	}
 	else
 	{
-		return _eclass->getAttribute(key).getValue();
+		return _eclass->getAttributeValue(key);
 	}
 }
 
@@ -202,7 +202,7 @@ bool SpawnArgs::isInherited(const std::string& key) const
 	bool definedLocally = (find(key) != _keyValues.end());
 
 	// The value is inherited, if it doesn't exist locally and the inherited one is not empty
-	return (!definedLocally && !_eclass->getAttribute(key).getValue().empty());
+	return (!definedLocally && !_eclass->getAttributeValue(key).empty());
 }
 
 void SpawnArgs::forEachAttachment(AttachmentFunc func) const
@@ -306,7 +306,7 @@ void SpawnArgs::insert(const std::string& key, const std::string& value)
 
 		// Allocate a new KeyValue object and insert it into the map
         // Capture the key by value in the lambda
-		insert(key, std::make_shared<KeyValue>(value, _eclass->getAttribute(key).getValue(),
+		insert(key, std::make_shared<KeyValue>(value, _eclass->getAttributeValue(key),
             [key, this](const std::string& value) { notifyChange(key, value); }));
 	}
 }

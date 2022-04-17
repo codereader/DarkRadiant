@@ -17,15 +17,12 @@ private:
 public:
 	void visit(const IEntityClassPtr& eclass)
 	{
-		const EntityClassAttribute& attr = eclass->getAttribute("editor_replacement");
-
-		if (attr.getValue().empty())
-		{
+		const std::string attr = eclass->getAttributeValue("editor_replacement");
+		if (attr.empty())
 			return;
-		}
 
 		// Non-empty editor_replacement, add fixup code
-		_fixupCode += ENTITYDEF_PREFIX + eclass->getName() + " => " + attr.getValue() + "\n";
+		_fixupCode += ENTITYDEF_PREFIX + eclass->getName() + " => " + attr + "\n";
 	}
 
 	const std::string& getFixupCode() const

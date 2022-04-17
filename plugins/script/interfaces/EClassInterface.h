@@ -28,18 +28,16 @@ public:
 		return _eclass;
 	}
 
-	// Returns a specific spawnarg from this entityDef, or "" if not found
-	const EntityClassAttribute& getAttribute(const std::string& name)
-	{
-		if (!_eclass)
-		{
-			return _emptyAttribute;
-		}
+    // Returns a specific spawnarg value from this entityDef, or "" if not found
+    std::string getAttributeValue(const std::string& name)
+    {
+        if (!_eclass)
+            return {};
+        else
+            return _eclass->getAttributeValue(name);
+    }
 
-		return _eclass->getAttribute(name);
-	}
-
-	bool isNull() const
+    bool isNull() const
 	{
 		return !_eclass;
 	}

@@ -78,7 +78,7 @@ IEntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
 		// Variable size entity
 		node = StaticGeometryNode::Create(eclass);
 	}
-	else if (!eclass->getAttribute("model").getValue().empty())
+	else if (!eclass->getAttributeValue("model").empty())
 	{
 		// Fixed size, has model path
 		node = EclassModelNode::Create(eclass);
@@ -191,7 +191,7 @@ IEntityNodePtr Doom3EntityModule::createEntityFromSelection(const std::string& n
 
         // If there is an "editor_material" class attribute, apply this shader
         // to all of the selected primitives before parenting them
-        std::string material = node->getEntity().getEntityClass()->getAttribute("editor_material").getValue();
+        std::string material = node->getEntity().getEntityClass()->getAttributeValue("editor_material");
 
         if (!material.empty())
         {
