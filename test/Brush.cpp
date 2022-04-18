@@ -419,4 +419,31 @@ TEST_F(BrushTest, RotateBrushY90Degrees)
     checkFaceNormalAndShader(brush, 5, {-1, 0, 0 }, "textures/numbers/1");
 }
 
+// #5942: Missing brushes when opening alphalabs1 from vanilla Doom 3
+TEST_F(BrushTest, LoadBrushWithDuplicatePlanes)
+{
+    std::string mapPath = "maps/brush_with_duplicate_planes.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapPath);
+
+    // Check that we have exactly one brush loaded
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brushNode = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/common/caulk");
+    EXPECT_TRUE(brushNode && brushNode->getNodeType() == scene::INode::Type::Brush) << "Couldn't locate the test brush";
+
+    auto brush = Node_getIBrush(brushNode);
+    brush->evaluateBRep();
+
+    EXPECT_TRUE(brush->hasContributingFaces()) << "Brush should not be degenerate";
+    EXPECT_EQ(brush->getNumFaces(), 6) << "Brush should have 6 faces after map loading, even though it has been declared with 9";
+
+    // The second duplicates should have been removed, they were textured with caulk2
+    // Therefore all 6 faces should have the caulk texture exclusively
+    for (auto i = 0; i < brush->getNumFaces(); ++i)
+    {
+        auto& face = brush->getFace(i);
+
+        EXPECT_EQ(face.getShader(), "textures/common/caulk") << "Face " << i << " should be textured with caulk";
+    }
+}
+
 }

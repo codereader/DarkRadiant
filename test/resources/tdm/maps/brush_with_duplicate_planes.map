@@ -1,0 +1,21 @@
+Version 2
+// entity 0
+{
+"classname" "worldspawn"
+"description" "The brush below has 3 redundant planes but different materials than the previously declared planes"
+// primitive 0
+{
+ brushDef3
+ {
+  ( 0 0 1 -128 ) ( ( 0.015625 0 -14 ) ( 0 0.0078130001 0.7460148931 ) ) "textures/common/caulk" 0 0 0
+  ( 0 1 0 -4144 ) ( ( 0.015625 0 -1.5000076294 ) ( 0 0.0078119999 -0.9999359846 ) ) "textures/common/caulk" 0 0 0
+  ( -1 0 0 -136 ) ( ( 0.015625 0 14 ) ( 0 0.0078130001 -1.0000640154 ) ) "textures/common/caulk" 0 0 0
+  ( 0 -1 0 4104 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/common/caulk" 0 0 0
+  ( 1 0 0 128 ) ( ( 0.015625 0 0 ) ( 0 0.0078125 0 ) ) "textures/common/caulk" 0 0 0
+  ( 0 0 -1 -128 ) ( ( 0.015625 0 -14 ) ( 0 0.0078130001 -0.7460148931 ) ) "textures/common/caulk" 0 0 0
+  ( -1 0 0 -136 ) ( ( 0.0104219997 0 43.905040741 ) ( 0 0.0078130001 0.9999360442 ) ) "textures/common/caulk2" 0 0 0
+  ( 1 0 0 128 ) ( ( 0.015625 0 -14 ) ( 0 0.0078130001 -1.0000640154 ) ) "textures/common/caulk2" 0 0 0
+  ( 0 1 0 -4144 ) ( ( 0.015625 0 -1.5000076294 ) ( 0 0.0078119999 -0.9999359846 ) ) "textures/common/caulk2" 0 0 0
+ }
+}
+}
