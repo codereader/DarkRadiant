@@ -269,9 +269,11 @@ void PortableMapReader::readBrush(const xml::Node& brushTag, const scene::INodeP
 		{
 			rError() << "PortableMapReader: Entity " << entity->name() << ", Brush " << 
 				brushTag.getAttributeValue(ATTR_BRUSH_NUMBER) << ": " << ex.what() << std::endl;
-			continue;
 		}
 	}
+
+    // Cleanup redundant face planes
+    brush.removeRedundantFaces();
 
 	_importFilter.addPrimitiveToEntity(node, entity);
 
