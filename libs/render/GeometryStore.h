@@ -8,7 +8,7 @@
 namespace render
 {
 
-class GeometryStore :
+class GeometryStore final :
     public IGeometryStore
 {
 public:
@@ -48,6 +48,11 @@ private:
         {
             vertices.syncModificationsToBufferObject(vertexBufferObject);
             indices.syncModificationsToBufferObject(indexBufferObject);
+        }
+
+        void recordTransaction(Slot slot, detail::BufferTransaction::Type type)
+        {
+            transactionLog.emplace_back(detail::BufferTransaction{ slot, type });
         }
     };
 
@@ -129,9 +134,7 @@ public:
 
         auto slot = GetSlot(SlotType::Regular, vertexSlot, indexSlot);
 
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Allocate
-        });
+        current.recordTransaction(slot, detail::BufferTransaction::Type::Allocate);
 
         return slot;
     }
@@ -153,9 +156,7 @@ public:
         // In an IndexRemap slot, the vertex slot ID refers to the one containing the vertices
         auto slot = GetSlot(SlotType::IndexRemap, GetVertexSlot(slotContainingVertexData), indexSlot);
 
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Allocate
-        });
+        current.recordTransaction(slot, detail::BufferTransaction::Type::Allocate);
 
         return slot;
     }
@@ -178,9 +179,7 @@ public:
         assert(!indices.empty());
         current.indices.setData(GetIndexSlot(slot), indices);
 
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Update
-        });
+        current.recordTransaction(slot, detail::BufferTransaction::Type::Update);
     }
 
     void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<RenderVertex>& vertices,
@@ -201,9 +200,7 @@ public:
         assert(!indices.empty());
         current.indices.setSubData(GetIndexSlot(slot), indexOffset, indices);
 
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Update
-        });
+        current.recordTransaction(slot, detail::BufferTransaction::Type::Update);
     }
 
     void resizeData(Slot slot, std::size_t vertexSize, std::size_t indexSize) override
@@ -221,9 +218,7 @@ public:
 
         current.indices.resizeData(GetIndexSlot(slot), indexSize);
 
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Update
-        });
+        current.recordTransaction(slot, detail::BufferTransaction::Type::Update);
     }
 
     void deallocateSlot(Slot slot) override
@@ -239,9 +234,7 @@ public:
 
         current.indices.deallocate(GetIndexSlot(slot));
 
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Deallocate
-        });
+        current.recordTransaction(slot, detail::BufferTransaction::Type::Deallocate);
     }
 
     RenderParameters getRenderParameters(Slot slot) override

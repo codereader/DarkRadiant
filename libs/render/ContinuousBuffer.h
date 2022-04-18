@@ -239,6 +239,22 @@ public:
     void applyTransactions(const std::vector<detail::BufferTransaction>& transactions, const ContinuousBuffer<ElementType>& other,
         const std::function<std::uint32_t(IGeometryStore::Slot)>& getHandle)
     {
+        // We might reach this point in single-buffer mode, trying to sync with ourselves
+        // in which case we can take the shortcut to just mark the transactions that need to be GPU-synced
+        if (&other == this)
+        {
+            for (const auto& transaction : transactions)
+            {
+                // Only the updated slots will actually have altered any data
+                if (transaction.type == detail::BufferTransaction::Type::Update)
+                {
+                    _unsyncedSlots.push_back(getHandle(transaction.slot));
+                }
+            }
+
+            return;
+        }
+
         // Ensure the buffer is at least the same size
         auto otherSize = other._buffer.size();
 
