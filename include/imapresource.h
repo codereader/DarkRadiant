@@ -47,7 +47,7 @@ public:
         {
             if (!_cancelled)
             {
-                rError() << "MapResource operation failed: " << msg << std::endl;
+                rMessage() << "MapResource Operation: " << msg << std::endl;
             }
         }
 
