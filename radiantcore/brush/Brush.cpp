@@ -500,8 +500,6 @@ bool Brush::hasContributingFaces() const {
     return false;
 }
 
-/// \brief Removes faces that do not contribute to the brush. This is useful for cleaning up after CSG operations on the brush.
-/// Note: removal of empty faces is not performed during direct brush manipulations, because it would make a manipulation irreversible if it created an empty face.
 void Brush::removeEmptyFaces() {
     evaluateBRep();
 
@@ -513,6 +511,23 @@ void Brush::removeEmptyFaces() {
         }
         else {
             ++i;
+        }
+    }
+}
+
+void Brush::removeRedundantFaces()
+{
+    for (std::size_t i = 0; i < m_faces.size(); ++i)
+    {
+        auto& face = *m_faces[i];
+
+        if (face.plane3().isValid() && planeAlreadyDefined(i))
+        {
+            // Encountering a duplicated plane, this is possible after loading legacy maps
+            rWarning() << "Face plane " << face.plane3() << " already defined on this brush, discarding" << std::endl;
+
+            // Remove this face and continue with the same index (decrement to compensate loop increment)
+            erase(i--);
         }
     }
 }
@@ -910,6 +925,19 @@ bool Brush::plane_unique(std::size_t index) const {
     return true;
 }
 
+bool Brush::planeAlreadyDefined(std::size_t index) const
+{
+    for (std::size_t i = 0; index < m_faces.size() && i < index; ++i)
+    {
+        if (!plane3_inside(m_faces[index]->plane3(), m_faces[i]->plane3()))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 /// \brief Removes edges that are smaller than the tolerance used when generating brush windings.
 void Brush::removeDegenerateEdges() {
     for (std::size_t i = 0;  i < m_faces.size(); ++i) {
@@ -1038,40 +1066,42 @@ bool Brush::isBounded() {
     return true;
 }
 
-/// \brief Constructs the polygon windings for each face of the brush. Also updates the brush bounding-box and face texture-coordinates.
-bool Brush::buildWindings() {
+bool Brush::buildWindings()
+{
+    m_aabb_local = AABB();
+
+    for (std::size_t i = 0;  i < m_faces.size(); ++i)
     {
-        m_aabb_local = AABB();
+        auto& face = *m_faces[i];
 
-        for (std::size_t i = 0;  i < m_faces.size(); ++i) {
-            Face& f = *m_faces[i];
-
-            if (!f.plane3().isValid() || !plane_unique(i)) {
-                f.getWinding().resize(0);
-            }
-            else {
-                windingForClipPlane(f.getWinding(), f.plane3());
-
-                // update brush bounds
-                const Winding& winding = f.getWinding();
-
-                for (const WindingVertex& wv : winding)
-				{
-                    m_aabb_local.includePoint(wv.vertex);
-                }
-
-                // update texture coordinates
-                f.emitTextureCoordinates();
-            }
-
-            // greebo: Update the winding, now that it's constructed
-            f.updateWinding();
+        if (!face.plane3().isValid() || !plane_unique(i))
+        {
+            face.getWinding().resize(0);
         }
+        else
+        {
+            windingForClipPlane(face.getWinding(), face.plane3());
+
+            // update brush bounds
+            const auto& winding = face.getWinding();
+
+            for (const auto& vertex : winding)
+			{
+                m_aabb_local.includePoint(vertex.vertex);
+            }
+
+            // update texture coordinates
+            face.emitTextureCoordinates();
+        }
+
+        // greebo: Update the winding, now that it's constructed
+        face.updateWinding();
     }
 
     bool degenerate = !isBounded();
 
-    if (!degenerate) {
+    if (!degenerate)
+    {
         // clean up connectivity information.
         // these cleanups must be applied in a specific order.
         removeDegenerateEdges();
