@@ -80,7 +80,7 @@ private:
     std::size_t _lastSyncedBufferSize;
 
     // The slots that have been modified in between syncs
-    std::vector<Handle> _unsyncedSlots;
+    std::set<Handle> _unsyncedSlots;
 
     std::size_t _allocatedElements;
 
@@ -164,7 +164,7 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset);
         slot.Used = numElements;
 
-        _unsyncedSlots.push_back(handle);
+        _unsyncedSlots.insert(handle);
     }
 
     void setSubData(Handle handle, std::size_t elementOffset, const std::vector<ElementType>& elements)
@@ -180,7 +180,7 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset + elementOffset);
         slot.Used = std::max(slot.Used, elementOffset + numElements);
 
-        _unsyncedSlots.push_back(handle);
+        _unsyncedSlots.insert(handle);
     }
 
     void resizeData(Handle handle, std::size_t elementCount)
@@ -194,7 +194,7 @@ public:
 
         slot.Used = elementCount;
 
-        _unsyncedSlots.push_back(handle);
+        _unsyncedSlots.insert(handle);
     }
 
     void deallocate(Handle handle)
@@ -248,7 +248,7 @@ public:
                 // Only the updated slots will actually have altered any data
                 if (transaction.type == detail::BufferTransaction::Type::Update)
                 {
-                    _unsyncedSlots.push_back(getHandle(transaction.slot));
+                    _unsyncedSlots.insert(getHandle(transaction.slot));
                 }
             }
 
@@ -274,7 +274,7 @@ public:
                 memcpy(_buffer.data() + otherSlot.Offset, other._buffer.data() + otherSlot.Offset, otherSlot.Size * sizeof(ElementType));
 
                 // Remember this slot to be synced to the GPU
-                _unsyncedSlots.push_back(handle);
+                _unsyncedSlots.insert(handle);
             }
         }
 
@@ -299,13 +299,17 @@ public:
             _lastSyncedBufferSize = currentBufferSize;
 
             // Re-upload everything
+            buffer->bind();
             buffer->setData(0, reinterpret_cast<unsigned char*>(_buffer.data()),
                 _buffer.size() * sizeof(ElementType));
+            buffer->unbind();
         }
         else
         {
             std::size_t minimumOffset = std::numeric_limits<std::size_t>::max();
             std::size_t maximumOffset = 0;
+
+            std::size_t elementsToCopy = 0;
 
             // Size is the same, apply the updates to the GPU buffer
             // Determine the modified memory range
@@ -315,14 +319,34 @@ public:
 
                 minimumOffset = std::min(slot.Offset, minimumOffset);
                 maximumOffset = std::max(slot.Offset + slot.Used, maximumOffset);
+                elementsToCopy += slot.Used;
             }
 
-            // Copy the data in one single operation
-            if (!_unsyncedSlots.empty())
+            // Copy the data in one single operation or in multiple, depending on the effort
+            if (elementsToCopy > 0)
             {
-                buffer->setData(minimumOffset * sizeof(ElementType),
-                    reinterpret_cast<unsigned char*>(_buffer.data() + minimumOffset),
-                    (maximumOffset - minimumOffset) * sizeof(ElementType));
+                buffer->bind();
+
+                // Less than a couple of operations will be copied piece by piece
+                if (_unsyncedSlots.size() < 20)
+                {
+                    for (auto handle : _unsyncedSlots)
+                    {
+                        auto& slot = _slots[handle];
+
+                        buffer->setData(slot.Offset * sizeof(ElementType),
+                            reinterpret_cast<unsigned char*>(_buffer.data() + slot.Offset),
+                            slot.Used * sizeof(ElementType));
+                    }
+                }
+                else // copy everything in between minimum and maximum in one operation
+                {
+                    buffer->setData(minimumOffset * sizeof(ElementType),
+                        reinterpret_cast<unsigned char*>(_buffer.data() + minimumOffset),
+                        (maximumOffset - minimumOffset) * sizeof(ElementType));
+                }
+
+                buffer->unbind();
             }
         }
 
