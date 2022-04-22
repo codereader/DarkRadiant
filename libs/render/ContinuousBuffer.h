@@ -14,15 +14,9 @@ namespace detail
 
 struct BufferTransaction
 {
-    enum class Type
-    {
-        Allocate,
-        Deallocate,
-        Update,
-    };
-
     IGeometryStore::Slot slot;
-    Type type;
+    std::size_t offset;
+    std::size_t numChangedElements;
 };
 
 }
@@ -183,7 +177,8 @@ public:
         _unsyncedSlots.insert(handle);
     }
 
-    void resizeData(Handle handle, std::size_t elementCount)
+    // Returns true if the size of this size actually changed
+    bool resizeData(Handle handle, std::size_t elementCount)
     {
         auto& slot = _slots[handle];
 
@@ -192,9 +187,11 @@ public:
             throw std::logic_error("Cannot resize to a large amount than allocated in GeometryStore::Buffer::resizeData");
         }
 
-        slot.Used = elementCount;
+        if (slot.Used == elementCount) return false; // no size change
 
+        slot.Used = elementCount;
         _unsyncedSlots.insert(handle);
+        return true;
     }
 
     void deallocate(Handle handle)
@@ -245,11 +242,7 @@ public:
         {
             for (const auto& transaction : transactions)
             {
-                // Only the updated slots will actually have altered any data
-                if (transaction.type == detail::BufferTransaction::Type::Update)
-                {
-                    _unsyncedSlots.insert(getHandle(transaction.slot));
-                }
+                _unsyncedSlots.insert(getHandle(transaction.slot));
             }
 
             return;
@@ -265,17 +258,15 @@ public:
 
         for (const auto& transaction : transactions)
         {
-            // Only the updated slots will actually have altered any data
-            if (transaction.type == detail::BufferTransaction::Type::Update)
-            {
-                auto handle = getHandle(transaction.slot);
-                auto& otherSlot = other._slots[handle];
+            auto handle = getHandle(transaction.slot);
+            auto& otherSlot = other._slots[handle];
 
-                memcpy(_buffer.data() + otherSlot.Offset, other._buffer.data() + otherSlot.Offset, otherSlot.Size * sizeof(ElementType));
+            memcpy(_buffer.data() + otherSlot.Offset + transaction.offset,
+                other._buffer.data() + otherSlot.Offset + transaction.offset,
+                transaction.numChangedElements * sizeof(ElementType));
 
-                // Remember this slot to be synced to the GPU
-                _unsyncedSlots.insert(handle);
-            }
+            // Remember this slot to be synced to the GPU
+            _unsyncedSlots.insert(handle);
         }
 
         // Replicate the slot allocation data

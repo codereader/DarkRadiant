@@ -545,13 +545,13 @@ TEST(ContinuousBufferTest, SyncToBufferAfterApplyingTransaction)
 
     // Copy this to a second buffer and change some data there
     auto buffer2 = buffer;
-    auto modificationOffset = 3;
+    std::size_t modificationOffset = 3;
     buffer2.setSubData(handle2, modificationOffset, four);
 
     // Define the transaction
     std::vector<render::detail::BufferTransaction> transactionLog;
     transactionLog.emplace_back(render::detail::BufferTransaction{
-        handle2, render::detail::BufferTransaction::Type::Update
+        handle2, modificationOffset, four.size()
     });
 
     // Apply this transaction to the first buffer

@@ -36,12 +36,13 @@ private:
         IBufferObject::Ptr indexBufferObject;
 
         // Keep track of modified slots as long as this buffer is in use
-        std::vector<detail::BufferTransaction> transactionLog;
+        std::vector<detail::BufferTransaction> vertexTransactionLog;
+        std::vector<detail::BufferTransaction> indexTransactionLog;
 
         void applyTransactions(const FrameBuffer& other)
         {
-            vertices.applyTransactions(other.transactionLog, other.vertices, GetVertexSlot);
-            indices.applyTransactions(other.transactionLog, other.indices, GetIndexSlot);
+            vertices.applyTransactions(other.vertexTransactionLog, other.vertices, GetVertexSlot);
+            indices.applyTransactions(other.indexTransactionLog, other.indices, GetIndexSlot);
         }
 
         void syncToBufferObjects()
@@ -50,9 +51,20 @@ private:
             indices.syncModificationsToBufferObject(indexBufferObject);
         }
 
-        void recordTransaction(Slot slot, detail::BufferTransaction::Type type)
+        void recordVertexTransaction(Slot slot, std::size_t offset, std::size_t numChangedElements)
         {
-            transactionLog.emplace_back(detail::BufferTransaction{ slot, type });
+            vertexTransactionLog.emplace_back(detail::BufferTransaction
+            {
+                slot, offset, numChangedElements
+            });
+        }
+
+        void recordIndexTransaction(Slot slot, std::size_t offset, std::size_t numChangedElements)
+        {
+            indexTransactionLog.emplace_back(detail::BufferTransaction
+            {
+                slot, offset, numChangedElements
+            });
         }
     };
 
@@ -100,7 +112,8 @@ public:
         }
 
         // This buffer is in sync now, we can clear its log
-        current.transactionLog.clear();
+        current.vertexTransactionLog.clear();
+        current.indexTransactionLog.clear();
     }
 
     std::pair<IBufferObject::Ptr, IBufferObject::Ptr> getBufferObjects() override
@@ -132,11 +145,7 @@ public:
         auto vertexSlot = current.vertices.allocate(numVertices);
         auto indexSlot = current.indices.allocate(numIndices);
 
-        auto slot = GetSlot(SlotType::Regular, vertexSlot, indexSlot);
-
-        current.recordTransaction(slot, detail::BufferTransaction::Type::Allocate);
-
-        return slot;
+        return GetSlot(SlotType::Regular, vertexSlot, indexSlot);
     }
 
     Slot allocateIndexSlot(Slot slotContainingVertexData, std::size_t numIndices) override
@@ -154,11 +163,7 @@ public:
         auto indexSlot = current.indices.allocate(numIndices);
 
         // In an IndexRemap slot, the vertex slot ID refers to the one containing the vertices
-        auto slot = GetSlot(SlotType::IndexRemap, GetVertexSlot(slotContainingVertexData), indexSlot);
-
-        current.recordTransaction(slot, detail::BufferTransaction::Type::Allocate);
-
-        return slot;
+        return GetSlot(SlotType::IndexRemap, GetVertexSlot(slotContainingVertexData), indexSlot);
     }
 
     void updateData(Slot slot, const std::vector<RenderVertex>& vertices,
@@ -179,7 +184,8 @@ public:
         assert(!indices.empty());
         current.indices.setData(GetIndexSlot(slot), indices);
 
-        current.recordTransaction(slot, detail::BufferTransaction::Type::Update);
+        current.recordVertexTransaction(slot, 0, vertices.size());
+        current.recordIndexTransaction(slot, 0, indices.size());
     }
 
     void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<RenderVertex>& vertices,
@@ -200,7 +206,8 @@ public:
         assert(!indices.empty());
         current.indices.setSubData(GetIndexSlot(slot), indexOffset, indices);
 
-        current.recordTransaction(slot, detail::BufferTransaction::Type::Update);
+        current.recordVertexTransaction(slot, vertexOffset, vertices.size());
+        current.recordIndexTransaction(slot, indexOffset, indices.size());
     }
 
     void resizeData(Slot slot, std::size_t vertexSize, std::size_t indexSize) override
@@ -209,16 +216,20 @@ public:
 
         if (GetSlotType(slot) == SlotType::Regular)
         {
-            current.vertices.resizeData(GetVertexSlot(slot), vertexSize);
+            if (current.vertices.resizeData(GetVertexSlot(slot), vertexSize))
+            {
+                current.recordVertexTransaction(slot, 0, vertexSize);
+            }
         }
         else if (vertexSize > 0)
         {
             throw std::logic_error("This is an index remap slot, cannot resize vertex data");
         }
 
-        current.indices.resizeData(GetIndexSlot(slot), indexSize);
-
-        current.recordTransaction(slot, detail::BufferTransaction::Type::Update);
+        if (current.indices.resizeData(GetIndexSlot(slot), indexSize))
+        {
+            current.recordIndexTransaction(slot, 0, indexSize);
+        }
     }
 
     void deallocateSlot(Slot slot) override
@@ -233,8 +244,6 @@ public:
         }
 
         current.indices.deallocate(GetIndexSlot(slot));
-
-        current.recordTransaction(slot, detail::BufferTransaction::Type::Deallocate);
     }
 
     RenderParameters getRenderParameters(Slot slot) override
