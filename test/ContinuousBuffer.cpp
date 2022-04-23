@@ -504,15 +504,16 @@ TEST(ContinuousBufferTest, SyncToBufferAfterSubDataUpdate)
     EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
 
     // Modify a portion of the second slot
-    buffer.setSubData(handle2, 3, four);
+    std::size_t modificationOffset = 3;
+    buffer.setSubData(handle2, modificationOffset, four);
 
     // Sync it should modify a subset of the buffer object only
     buffer.syncModificationsToBufferObject(bufferObject);
 
     // Check the offsets used to update the buffer object
-    EXPECT_EQ(bufferObject->lastUsedOffset, buffer.getOffset(handle2) * sizeof(int)) 
-        << "Sync offset should point at the start of the slot";
-    EXPECT_EQ(bufferObject->lastUsedByteCount, buffer.getSize(handle2)* sizeof(int)) << "The whole slot should be synced";
+    EXPECT_EQ(bufferObject->lastUsedOffset, (buffer.getOffset(handle2) + modificationOffset) * sizeof(int))
+        << "Sync offset should point at the modification offset";
+    EXPECT_EQ(bufferObject->lastUsedByteCount, four.size() * sizeof(int)) << "Only 4 bytes should have been synced";
 
     // First slot should still contain the 8 bytes
     EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
@@ -561,8 +562,9 @@ TEST(ContinuousBufferTest, SyncToBufferAfterApplyingTransaction)
     buffer.syncModificationsToBufferObject(bufferObject);
 
     // Check the offsets used to update the buffer object
-    EXPECT_EQ(bufferObject->lastUsedOffset, buffer.getOffset(handle2) * sizeof(int)) << "Sync offset should at the start of the slot";
-    EXPECT_EQ(bufferObject->lastUsedByteCount, buffer.getSize(handle2) * sizeof(int)) << "Sync amount should be 8 unsigned ints";
+    EXPECT_EQ(bufferObject->lastUsedOffset, (buffer.getOffset(handle2) + modificationOffset) * sizeof(int))
+    << "Sync offset should at the modification offset";
+    EXPECT_EQ(bufferObject->lastUsedByteCount, four.size() * sizeof(int)) << "Sync amount should be 4 unsigned ints";
 
     // First slot should contain the 8 bytes
     EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";

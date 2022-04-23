@@ -73,8 +73,15 @@ private:
     // Last data size that was synced to the buffer object
     std::size_t _lastSyncedBufferSize;
 
+    struct ModifiedMemoryChunk
+    {
+        Handle handle;
+        std::size_t offset;
+        std::size_t numElements;
+    };
+
     // The slots that have been modified in between syncs
-    std::set<Handle> _unsyncedSlots;
+    std::vector<ModifiedMemoryChunk> _unsyncedModifications;
 
     std::size_t _allocatedElements;
 
@@ -105,7 +112,7 @@ public:
         memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
 
         _emptySlots = other._emptySlots;
-        _unsyncedSlots = other._unsyncedSlots;
+        _unsyncedModifications = other._unsyncedModifications;
         _allocatedElements = other._allocatedElements;
 
         return *this;
@@ -158,7 +165,7 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset);
         slot.Used = numElements;
 
-        _unsyncedSlots.insert(handle);
+        _unsyncedModifications.emplace_back(ModifiedMemoryChunk{ handle, 0, numElements });
     }
 
     void setSubData(Handle handle, std::size_t elementOffset, const std::vector<ElementType>& elements)
@@ -174,7 +181,7 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset + elementOffset);
         slot.Used = std::max(slot.Used, elementOffset + numElements);
 
-        _unsyncedSlots.insert(handle);
+        _unsyncedModifications.emplace_back(ModifiedMemoryChunk{ handle, elementOffset, numElements });
     }
 
     // Returns true if the size of this size actually changed
@@ -190,7 +197,7 @@ public:
         if (slot.Used == elementCount) return false; // no size change
 
         slot.Used = elementCount;
-        _unsyncedSlots.insert(handle);
+        _unsyncedModifications.emplace_back(ModifiedMemoryChunk{ handle, 0, elementCount });
         return true;
     }
 
@@ -242,7 +249,8 @@ public:
         {
             for (const auto& transaction : transactions)
             {
-                _unsyncedSlots.insert(getHandle(transaction.slot));
+                _unsyncedModifications.emplace_back(ModifiedMemoryChunk{
+                    getHandle(transaction.slot), transaction.offset, transaction.numChangedElements });
             }
 
             return;
@@ -266,7 +274,8 @@ public:
                 transaction.numChangedElements * sizeof(ElementType));
 
             // Remember this slot to be synced to the GPU
-            _unsyncedSlots.insert(handle);
+            _unsyncedModifications.emplace_back(ModifiedMemoryChunk{
+                    handle, transaction.offset, transaction.numChangedElements });
         }
 
         // Replicate the slot allocation data
@@ -304,13 +313,13 @@ public:
 
             // Size is the same, apply the updates to the GPU buffer
             // Determine the modified memory range
-            for (auto handle : _unsyncedSlots)
+            for (auto modifiedChunk : _unsyncedModifications)
             {
-                auto& slot = _slots[handle];
+                auto& slot = _slots[modifiedChunk.handle];
 
-                minimumOffset = std::min(slot.Offset, minimumOffset);
-                maximumOffset = std::max(slot.Offset + slot.Used, maximumOffset);
-                elementsToCopy += slot.Used;
+                minimumOffset = std::min(slot.Offset + modifiedChunk.offset, minimumOffset);
+                maximumOffset = std::max(slot.Offset + modifiedChunk.offset + modifiedChunk.numElements, maximumOffset);
+                elementsToCopy += modifiedChunk.numElements;
             }
 
             // Copy the data in one single operation or in multiple, depending on the effort
@@ -319,15 +328,15 @@ public:
                 buffer->bind();
 
                 // Less than a couple of operations will be copied piece by piece
-                if (_unsyncedSlots.size() < 20)
+                if (_unsyncedModifications.size() < 20)
                 {
-                    for (auto handle : _unsyncedSlots)
+                    for (auto modifiedChunk : _unsyncedModifications)
                     {
-                        auto& slot = _slots[handle];
+                        auto& slot = _slots[modifiedChunk.handle];
 
-                        buffer->setData(slot.Offset * sizeof(ElementType),
-                            reinterpret_cast<unsigned char*>(_buffer.data() + slot.Offset),
-                            slot.Used * sizeof(ElementType));
+                        buffer->setData((slot.Offset + modifiedChunk.offset) * sizeof(ElementType),
+                            reinterpret_cast<unsigned char*>(_buffer.data() + slot.Offset + modifiedChunk.offset),
+                            modifiedChunk.numElements * sizeof(ElementType));
                     }
                 }
                 else // copy everything in between minimum and maximum in one operation
@@ -341,7 +350,7 @@ public:
             }
         }
 
-        _unsyncedSlots.clear();
+        _unsyncedModifications.clear();
     }
 
 private:
