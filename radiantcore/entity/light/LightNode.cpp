@@ -24,7 +24,8 @@ LightNode::LightNode(const IEntityClassPtr& eclass)
     _instances(getDoom3Radius().m_centerTransformed, _projVectors.transformed,
                sigc::mem_fun(*this, &LightNode::selectedChangedComponent)),
     _dragPlanes(sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
-    _renderableOctagon(*this),
+    _renderableOctagon(*this, 0.5), // transparent
+    _renderableOctagonOutline(*this, 1.0), // opaque lines
     _renderableLightVolume(*this),
     _renderableVertices(*this, _instances, _projUseFlags),
     _showLightVolumeWhenUnselected(EntitySettings::InstancePtr()->getShowAllLightRadii()),
@@ -43,7 +44,8 @@ LightNode::LightNode(const LightNode& other)
     _instances(getDoom3Radius().m_centerTransformed, _projVectors.transformed,
         sigc::mem_fun(*this, &LightNode::selectedChangedComponent)),
     _dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
-    _renderableOctagon(*this),
+    _renderableOctagon(*this, 0.5), // transparent
+    _renderableOctagonOutline(*this, 1.0), // opaque lines
     _renderableLightVolume(*this),
     _renderableVertices(*this, _instances, _projUseFlags),
     _showLightVolumeWhenUnselected(other._showLightVolumeWhenUnselected),
@@ -138,6 +140,7 @@ void LightNode::transformChanged()
     EntityNode::transformChanged();
 
     _renderableOctagon.queueUpdate();
+    _renderableOctagonOutline.queueUpdate();
     _renderableLightVolume.queueUpdate();
     _renderableVertices.queueUpdate();
 }
@@ -157,6 +160,7 @@ void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 	setSelectedComponents(false, selection::ComponentSelectionMode::Face);
 
     _renderableOctagon.clear();
+    _renderableOctagonOutline.clear();
     _renderableLightVolume.clear();
     _renderableVertices.clear();
 }
@@ -336,9 +340,10 @@ void LightNode::onPreRender(const VolumeTest& volume)
 {
     EntityNode::onPreRender(volume);
 
-    // Pick the colour shader according to our settings
-    const auto& colourShader = _overrideColKey.get() ? getColourShader() : _colourKey.getColourShader();
-    _renderableOctagon.update(colourShader);
+    // Octagon faces (camera only)
+    _renderableOctagon.update(_crystalFillShader);
+    // Octagon outlines (for both camera and ortho)
+    _renderableOctagonOutline.update(_crystalOutlineShader);
 
     bool lightIsSelected = isSelected();
 
@@ -350,7 +355,7 @@ void LightNode::onPreRender(const VolumeTest& volume)
             updateProjection();
         }
 
-        _renderableLightVolume.update(colourShader);
+        _renderableLightVolume.update(_crystalOutlineShader);
 
         // Update vertices when the light is selected
         if (lightIsSelected)
@@ -385,6 +390,7 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     // Clear the geometry from any previous shader
     _renderableOctagon.clear();
+    _renderableOctagonOutline.clear();
     _renderableLightVolume.clear();
     _renderableVertices.clear();
 
@@ -393,16 +399,26 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     if (renderSystem)
     {
         _vertexShader = renderSystem->capture(BuiltInShaderType::BigPoint);
+
+        auto renderColour = getEntityColour();
+        _crystalOutlineShader = renderSystem->capture(ColourShaderType::CameraAndOrthoViewOutline, renderColour);
+
+        // Crystal fill shader is transparent
+        renderColour.w() = 0.3;
+        _crystalFillShader = renderSystem->capture(ColourShaderType::CameraTranslucent, renderColour);
         _renderableVertices.queueUpdate();
     }
     else
     {
+        _crystalFillShader.reset();
+        _crystalOutlineShader.reset();
         _vertexShader.reset();
     }
 }
 
 Vector4 LightNode::getEntityColour() const
 {
+    // Pick the colour shader according to our settings
     return _overrideColKey.get() ? EntityNode::getEntityColour() : Vector4(_colourKey.getColour(), 1.0);
 }
 
@@ -504,6 +520,7 @@ void LightNode::_onTransformationChanged()
 	updateOrigin();
 
     _renderableOctagon.queueUpdate();
+    _renderableOctagonOutline.queueUpdate();
     _renderableLightVolume.queueUpdate();
     _renderableVertices.queueUpdate();
 }
@@ -550,6 +567,7 @@ void LightNode::onVisibilityChanged(bool isVisibleNow)
     if (isVisibleNow)
     {
         _renderableOctagon.queueUpdate();
+        _renderableOctagonOutline.queueUpdate();
         _renderableLightVolume.queueUpdate();
         _renderableVertices.queueUpdate();
     }
@@ -557,6 +575,7 @@ void LightNode::onVisibilityChanged(bool isVisibleNow)
     {
         _renderableLightVolume.clear();
         _renderableOctagon.clear();
+        _renderableOctagonOutline.clear();
         _renderableVertices.clear();
     }
 }
@@ -1239,6 +1258,7 @@ const IRenderEntity& LightNode::getLightEntity() const
 void LightNode::onColourKeyChanged(const std::string& value)
 {
     _renderableOctagon.queueUpdate();
+    _renderableOctagonOutline.queueUpdate();
     _renderableLightVolume.queueUpdate();
 }
 

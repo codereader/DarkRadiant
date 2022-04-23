@@ -36,6 +36,7 @@ void RenderableLightOctagon::updateGeometry()
     Vector3 mid(Origin);
 
     auto colour = _light.getEntityColour();
+    colour.w() = _alpha;
 
     // top, bottom, tleft, tright, bright, bleft
     std::vector<render::RenderVertex> vertices

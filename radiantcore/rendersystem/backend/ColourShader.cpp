@@ -100,8 +100,13 @@ void ColourShader::construct()
     }
 
     case ColourShaderType::CameraAndOrthoview:
+    case ColourShaderType::CameraAndOrthoViewOutline:
     {
-        state.setRenderFlag(RENDER_FILL);
+        if (_type == ColourShaderType::CameraAndOrthoview)
+        {
+            state.setRenderFlag(RENDER_FILL);
+        }
+
         state.setRenderFlag(RENDER_LIGHTING);
         state.setRenderFlag(RENDER_DEPTHTEST);
         state.setRenderFlag(RENDER_CULLFACE);
@@ -151,6 +156,9 @@ std::string ColourShader::ConstructName(ColourShaderType type, const Colour4& co
 
     case ColourShaderType::CameraAndOrthoview:
         return fmt::format("{{{0:f} {1:f} {2:f}}}", colour[0], colour[1], colour[2]);
+
+    case ColourShaderType::CameraAndOrthoViewOutline:
+        return fmt::format("<{{{0:f} {1:f} {2:f}}}>", colour[0], colour[1], colour[2]);
     }
 
     throw std::runtime_error("Unknown colour shader type: " + string::to_string(static_cast<int>(type)));

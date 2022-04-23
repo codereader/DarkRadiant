@@ -66,6 +66,8 @@ class LightNode :
 
 	LightShader m_shader;
     ShaderPtr _vertexShader;
+    ShaderPtr _crystalFillShader;
+    ShaderPtr _crystalOutlineShader;
 
     // The 8x8 box representing the light object itself
     AABB _lightBox;
@@ -81,6 +83,7 @@ class LightNode :
 
 	// Renderable components of this light
     RenderableLightOctagon _renderableOctagon;
+    RenderableLightOctagon _renderableOctagonOutline;
     RenderableLightVolume _renderableLightVolume;
     RenderableLightVertices _renderableVertices;
 
