@@ -256,6 +256,9 @@ private:
     void updateProjection() const;
 	bool useStartEnd() const;
 
+    void updateRenderables();
+    void clearRenderables();
+
 public:
     // RendererLight implementation
     const IRenderEntity& getLightEntity() const override;

@@ -139,10 +139,7 @@ void LightNode::transformChanged()
 {
     EntityNode::transformChanged();
 
-    _renderableOctagon.queueUpdate();
-    _renderableOctagonOutline.queueUpdate();
-    _renderableLightVolume.queueUpdate();
-    _renderableVertices.queueUpdate();
+    updateRenderables();
 }
 
 float LightNode::getShaderParm(int parmNum) const
@@ -159,10 +156,7 @@ void LightNode::onRemoveFromScene(scene::IMapRootNode& root)
 	setSelectedComponents(false, selection::ComponentSelectionMode::Vertex);
 	setSelectedComponents(false, selection::ComponentSelectionMode::Face);
 
-    _renderableOctagon.clear();
-    _renderableOctagonOutline.clear();
-    _renderableLightVolume.clear();
-    _renderableVertices.clear();
+    clearRenderables();
 }
 
 void LightNode::testSelect(Selector& selector, SelectionTest& test)
@@ -389,10 +383,7 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	EntityNode::setRenderSystem(renderSystem);
 
     // Clear the geometry from any previous shader
-    _renderableOctagon.clear();
-    _renderableOctagonOutline.clear();
-    _renderableLightVolume.clear();
-    _renderableVertices.clear();
+    clearRenderables();
 
     m_shader.setRenderSystem(renderSystem);
 
@@ -402,9 +393,6 @@ void LightNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
         auto renderColour = getEntityColour();
         _crystalOutlineShader = renderSystem->capture(ColourShaderType::CameraAndOrthoViewOutline, renderColour);
-
-        // Crystal fill shader is transparent
-        renderColour.w() = 0.3;
         _crystalFillShader = renderSystem->capture(ColourShaderType::CameraTranslucent, renderColour);
         _renderableVertices.queueUpdate();
     }
@@ -519,10 +507,7 @@ void LightNode::_onTransformationChanged()
 	evaluateTransform();
 	updateOrigin();
 
-    _renderableOctagon.queueUpdate();
-    _renderableOctagonOutline.queueUpdate();
-    _renderableLightVolume.queueUpdate();
-    _renderableVertices.queueUpdate();
+    updateRenderables();
 }
 
 void LightNode::_applyTransformation()
@@ -566,17 +551,11 @@ void LightNode::onVisibilityChanged(bool isVisibleNow)
 
     if (isVisibleNow)
     {
-        _renderableOctagon.queueUpdate();
-        _renderableOctagonOutline.queueUpdate();
-        _renderableLightVolume.queueUpdate();
-        _renderableVertices.queueUpdate();
+        updateRenderables();
     }
     else
     {
-        _renderableLightVolume.clear();
-        _renderableOctagon.clear();
-        _renderableOctagonOutline.clear();
-        _renderableVertices.clear();
+        clearRenderables();
     }
 }
 
@@ -1257,9 +1236,23 @@ const IRenderEntity& LightNode::getLightEntity() const
 
 void LightNode::onColourKeyChanged(const std::string& value)
 {
+    updateRenderables();
+}
+
+void LightNode::updateRenderables()
+{
     _renderableOctagon.queueUpdate();
     _renderableOctagonOutline.queueUpdate();
     _renderableLightVolume.queueUpdate();
+    _renderableVertices.queueUpdate();
+}
+
+void LightNode::clearRenderables()
+{
+    _renderableOctagon.clear();
+    _renderableOctagonOutline.clear();
+    _renderableLightVolume.clear();
+    _renderableVertices.clear();
 }
 
 } // namespace entity
