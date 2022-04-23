@@ -126,6 +126,7 @@ void SpeakerNode::sMinChanged(const std::string& value)
 	_radiiTransformed.setMin(_radii.getMin());
 
 	updateAABB();
+    updateRenderables();
 }
 
 void SpeakerNode::sMaxChanged(const std::string& value)
@@ -146,6 +147,7 @@ void SpeakerNode::sMaxChanged(const std::string& value)
 	_radiiTransformed.setMax(_radii.getMax());
 
 	updateAABB();
+    updateRenderables();
 }
 
 void SpeakerNode::snapto(float snap)
@@ -266,9 +268,7 @@ void SpeakerNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     EntityNode::setRenderSystem(renderSystem);
 
     // Clear the geometry from any previous shader
-    _renderableBox.clear();
-    _renderableRadiiWireframe.clear();
-    _renderableRadiiFill.clear();
+    clearRenderables();
 }
 
 void SpeakerNode::translate(const Vector3& translation)
@@ -281,9 +281,7 @@ void SpeakerNode::updateTransform()
 	setLocalToParent(Matrix4::getTranslation(m_origin));
 	transformChanged();
 
-    _renderableBox.queueUpdate();
-    _renderableRadiiWireframe.queueUpdate();
-    _renderableRadiiFill.queueUpdate();
+    updateRenderables();
 }
 
 void SpeakerNode::updateAABB()
@@ -427,8 +425,7 @@ void SpeakerNode::onSelectionStatusChange(bool changeGroupStatus)
     EntityNode::onSelectionStatusChange(changeGroupStatus);
 
     // Radius renderable is not always prepared for rendering, queue an update
-    _renderableRadiiWireframe.queueUpdate();
-    _renderableRadiiFill.queueUpdate();
+    updateRenderables();
 }
 
 
@@ -437,26 +434,21 @@ void SpeakerNode::onEntitySettingsChanged()
     EntityNode::onEntitySettingsChanged();
 
     _showRadiiWhenUnselected = EntitySettings::InstancePtr()->getShowAllSpeakerRadii();
-    _renderableRadiiWireframe.queueUpdate();
-    _renderableRadiiFill.queueUpdate();
+    updateRenderables();
 }
 
 void SpeakerNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     EntityNode::onInsertIntoScene(root);
 
-    _renderableBox.queueUpdate();
-    _renderableRadiiWireframe.queueUpdate();
-    _renderableRadiiFill.queueUpdate();
+    updateRenderables();
 }
 
 void SpeakerNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     EntityNode::onRemoveFromScene(root);
 
-    _renderableBox.clear();
-    _renderableRadiiWireframe.clear();
-    _renderableRadiiFill.clear();
+    clearRenderables();
 }
 
 void SpeakerNode::onVisibilityChanged(bool isVisibleNow)
@@ -465,16 +457,26 @@ void SpeakerNode::onVisibilityChanged(bool isVisibleNow)
 
     if (isVisibleNow)
     {
-        _renderableBox.queueUpdate();
-        _renderableRadiiWireframe.queueUpdate();
-        _renderableRadiiFill.queueUpdate();
+        updateRenderables();
     }
     else
     {
-        _renderableBox.clear();
-        _renderableRadiiWireframe.clear();
-        _renderableRadiiFill.clear();
+        clearRenderables();
     }
+}
+
+void SpeakerNode::updateRenderables()
+{
+    _renderableBox.queueUpdate();
+    _renderableRadiiWireframe.queueUpdate();
+    _renderableRadiiFill.queueUpdate();
+}
+
+void SpeakerNode::clearRenderables()
+{
+    _renderableBox.clear();
+    _renderableRadiiWireframe.clear();
+    _renderableRadiiFill.clear();
 }
 
 const Vector3& SpeakerNode::getWorldPosition() const

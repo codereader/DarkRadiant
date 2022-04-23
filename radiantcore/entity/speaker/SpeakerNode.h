@@ -140,6 +140,8 @@ protected:
 
 private:
     void evaluateTransform();
+    void updateRenderables();
+    void clearRenderables();
 };
 
 } // namespace
