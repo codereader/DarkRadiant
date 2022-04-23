@@ -86,7 +86,7 @@ void InteractingLight::collectSurfaces(const IRenderView& view, const std::set<I
             }
 
             // Collect all interaction surfaces and the ones with forceShadows materials
-            if (!glShader->getInteractionPass() && !shader->getMaterial()->surfaceCastsShadow())
+            if (!glShader->getInteractionPass() && (!shader->getMaterial() || !shader->getMaterial()->surfaceCastsShadow()))
             {
                 return; // This material doesn't interact with this light
             }
