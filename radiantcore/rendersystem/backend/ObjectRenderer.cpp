@@ -52,6 +52,21 @@ void ObjectRenderer::SubmitInstancedGeometry(IGeometryStore::Slot slot, int numI
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(numInstances), static_cast<GLint>(renderParams.firstVertex));
 }
 
+void ObjectRenderer::SubmitGeometryWithCustomIndices(IGeometryStore::Slot slot, GLenum primitiveMode, 
+    IGeometryStore& store, const std::vector<unsigned int>& indices)
+{
+    const auto renderParams = store.getRenderParameters(slot);
+
+    // When using manually generated indices, we need to unbind the index array buffer
+    auto [_, indexBuffer] = store.getBufferObjects();
+    indexBuffer->unbind();
+
+    glDrawElementsBaseVertex(primitiveMode, static_cast<GLsizei>(indices.size()),
+        GL_UNSIGNED_INT, const_cast<unsigned int*>(indices.data()), static_cast<GLint>(renderParams.firstVertex));
+
+    indexBuffer->bind();
+}
+
 template<typename ContainerT>
 void SubmitGeometryInternal(const ContainerT& slots, GLenum primitiveMode, IGeometryStore& store)
 {

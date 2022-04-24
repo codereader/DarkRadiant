@@ -717,20 +717,10 @@ private:
 
         // Calculate the offset to the first vertex of this winding within the slot
         auto windingOffset = static_cast<unsigned int>(windingSize * slotNumber);
-        CustomWindingIndexerT::GenerateAndAssignIndices(std::back_inserter(indices), windingSize, 0);
-
-        // Get the base vertex offset, measured from the start of the whole VBO
-        const auto renderParams = _geometryStore.getRenderParameters(geometrySlot);
-
-        // We need to use manual indices to render the winding, unbind the index array buffer
-        auto [_, indexBuffer] = _geometryStore.getBufferObjects();
-        indexBuffer->unbind();
+        CustomWindingIndexerT::GenerateAndAssignIndices(std::back_inserter(indices), windingSize, windingOffset);
 
         auto mode = RenderingTraits<CustomWindingIndexerT>::Mode();
-        glDrawElementsBaseVertex(mode, static_cast<GLsizei>(indices.size()),
-            GL_UNSIGNED_INT, indices.data(), static_cast<GLint>(renderParams.firstVertex + windingOffset));
-
-        indexBuffer->bind();
+        ObjectRenderer::SubmitGeometryWithCustomIndices(geometrySlot, mode, _geometryStore, indices);
     }
 
     Slot allocateSlotMapping()
