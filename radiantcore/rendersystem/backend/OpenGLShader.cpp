@@ -221,7 +221,7 @@ bool OpenGLShader::hasWindings() const
 
 void OpenGLShader::renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot)
 {
-    _windingRenderer->renderWinding(mode, slot);
+    //_windingRenderer->renderWinding(mode, slot);
 }
 
 void OpenGLShader::setVisible(bool visible)

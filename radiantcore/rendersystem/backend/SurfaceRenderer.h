@@ -98,7 +98,7 @@ public:
 
     void renderSurface(Slot slot) override
     {
-        renderSlot(_surfaces.at(slot), true);
+        renderSlot(_surfaces.at(slot), false);
     }
 
     IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override
@@ -157,6 +157,7 @@ private:
             throw std::logic_error("Cannot render unprepared slot, ensure calling SurfaceRenderer::prepareForRendering first");
         }
 
+#if 0
         if (bindBuffer)
         {
             auto renderParams = _store.getRenderParameters(surface.getStorageLocation());
@@ -172,6 +173,7 @@ private:
             indexBuffer->unbind();
         }
         else
+#endif
         {
             ObjectRenderer::SubmitObject(surface, _store);
         }

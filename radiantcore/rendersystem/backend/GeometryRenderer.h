@@ -139,6 +139,7 @@ public:
         auto& slotInfo = _slots.at(slot);
         auto& group = getGroupByIndex(slotInfo.groupIndex);
 
+#if 0
         auto renderParms = _store.getRenderParameters(slotInfo.storageHandle);
 
         auto [vertexBuffer, indexBuffer] = _store.getBufferObjects();
@@ -146,10 +147,12 @@ public:
         indexBuffer->bind();
 
         ObjectRenderer::InitAttributePointers(renderParms.bufferStart);
+#endif
         ObjectRenderer::SubmitGeometry(slotInfo.storageHandle, group.primitiveMode, _store);
-
+#if 0
         vertexBuffer->unbind();
         indexBuffer->unbind();
+#endif
     }
 
     IGeometryStore::Slot getGeometryStorageLocation(Slot slot) override

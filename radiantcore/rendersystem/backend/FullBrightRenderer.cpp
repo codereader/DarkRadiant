@@ -55,20 +55,33 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
     for (const auto& [_, pass] : _sortedStates)
     {
         // Render the OpenGLShaderPass
-        if (pass->empty() || pass->hasRenderables()) continue;
+        if (pass->empty()) continue;
 
         if (pass->getShader().isVisible() && pass->isApplicableTo(_renderViewType))
         {
             // Apply our state to the current state object
             pass->evaluateStagesAndApplyState(current, globalstate, time, nullptr);
-            pass->submitSurfaces(view);
+            
+            if (!pass->hasRenderables())
+            {
+                // All regular geometry like patches, brushes, meshes, single vertices
+                pass->submitSurfaces(view);
+            }
+            else
+            {
+                // Selection overlays are processed by OpenGLRenderable
+                pass->submitRenderables(current);
+            }
         }
+
+        pass->clearRenderables();
     }
 
     // Unbind the geometry buffer and draw the rest of the renderables
     vertexBuffer->unbind();
     indexBuffer->unbind();
 
+#if 0
     // Run all the passes with OpenGLRenderables
     for (const auto& [_, pass] : _sortedStates)
     {
@@ -84,7 +97,7 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
 
         pass->clearRenderables();
     }
-
+#endif
     cleanupState();
 
     return std::make_shared<FullBrightRenderResult>(view.getCullStats());
