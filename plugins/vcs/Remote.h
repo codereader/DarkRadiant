@@ -124,6 +124,9 @@ private:
             auto error = git_credential_userpass_plaintext_new(&credentials, userAndPass.first.c_str(), userAndPass.second.c_str());
             GitException::ThrowOnError(error);
 
+            // Clear out the password
+            memset(userAndPass.second.data(), '\0', userAndPass.second.length());
+
             return credentials;
         }
 
