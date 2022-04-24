@@ -92,13 +92,13 @@ public:
     {
         for (auto& surface : _surfaces)
         {
-            renderSlot(surface.second, false, &view);
+            renderSlot(surface.second, &view);
         }
     }
 
     void renderSurface(Slot slot) override
     {
-        renderSlot(_surfaces.at(slot), false);
+        renderSlot(_surfaces.at(slot));
     }
 
     IGeometryStore::Slot getSurfaceStorageLocation(ISurfaceRenderer::Slot slot) override
@@ -128,7 +128,7 @@ public:
     }
 
 private:
-    std::vector<RenderVertex> ConvertToRenderVertices(const std::vector<MeshVertex>& vertices)
+    static std::vector<RenderVertex> ConvertToRenderVertices(const std::vector<MeshVertex>& vertices)
     {
         std::vector<RenderVertex> transformedVertices;
         transformedVertices.reserve(vertices.size());
@@ -142,7 +142,7 @@ private:
         return transformedVertices;
     }
 
-    void renderSlot(SurfaceInfo& slot, bool bindBuffer, const VolumeTest* view = nullptr)
+    void renderSlot(SurfaceInfo& slot, const VolumeTest* view = nullptr)
     {
         auto& surface = slot.surface.get();
 
@@ -157,26 +157,7 @@ private:
             throw std::logic_error("Cannot render unprepared slot, ensure calling SurfaceRenderer::prepareForRendering first");
         }
 
-#if 0
-        if (bindBuffer)
-        {
-            auto renderParams = _store.getRenderParameters(surface.getStorageLocation());
-
-            auto [vertexBuffer, indexBuffer] = _store.getBufferObjects();
-            vertexBuffer->bind();
-            indexBuffer->bind();
-
-            ObjectRenderer::InitAttributePointers(renderParams.bufferStart);
-            ObjectRenderer::SubmitObject(surface, _store);
-
-            vertexBuffer->unbind();
-            indexBuffer->unbind();
-        }
-        else
-#endif
-        {
-            ObjectRenderer::SubmitObject(surface, _store);
-        }
+        ObjectRenderer::SubmitObject(surface, _store);
     }
 
     Slot getNextFreeSlotIndex()
