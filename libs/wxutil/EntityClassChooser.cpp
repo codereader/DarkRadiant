@@ -95,8 +95,11 @@ public:
     // EntityClassVisitor implementation
     void visit(const IEntityClassPtr& eclass)
     {
-        std::string folderPath = eclass->getAttributeValue(_folderKey);
+        // Skip hidden entity classes
+        if (eclass->getVisibility() == vfs::Visibility::HIDDEN)
+            return;
 
+        std::string folderPath = eclass->getAttributeValue(_folderKey);
         if (!folderPath.empty())
         {
             folderPath = "/" + folderPath;
