@@ -392,7 +392,7 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     if (renderSystem)
 	{
-        _ctrlPointShader = renderSystem->capture(BuiltInShaderType::Point);
+        _ctrlPointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
         _ctrlLatticeShader = renderSystem->capture(BuiltInShaderType::PatchLattice);
 	}
 	else

@@ -428,7 +428,7 @@ void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 	if (renderSystem)
 	{
-        _pointShader = renderSystem->capture(BuiltInShaderType::Point);
+        _pointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
         _renderableVertices.queueUpdate();
 	}
 	else
