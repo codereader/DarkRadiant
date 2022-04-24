@@ -34,9 +34,13 @@ void ColourShader::construct()
 
     switch (_type)
     {
+    case ColourShaderType::CameraOutline:
     case ColourShaderType::CameraSolid:
     {
-        state.setRenderFlag(RENDER_FILL);
+        if (_type == ColourShaderType::CameraSolid)
+        {
+            state.setRenderFlag(RENDER_FILL);
+        }
         state.setRenderFlag(RENDER_LIGHTING);
         state.setRenderFlag(RENDER_DEPTHTEST);
         state.setRenderFlag(RENDER_CULLFACE);
@@ -144,9 +148,11 @@ std::string ColourShader::ConstructName(ColourShaderType type, const Colour4& co
 {
     switch (type)
     {
+    case ColourShaderType::CameraOutline:
+        return fmt::format("<({0:f} {1:f} {2:f})>", colour[0], colour[1], colour[2]);
+
     case ColourShaderType::CameraSolid:
         return fmt::format("({0:f} {1:f} {2:f})", colour[0], colour[1], colour[2]);
-        break;
 
     case ColourShaderType::CameraTranslucent:
         return fmt::format("[{0:f} {1:f} {2:f}]", colour[0], colour[1], colour[2]);

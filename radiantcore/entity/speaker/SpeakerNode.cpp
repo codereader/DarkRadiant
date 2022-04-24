@@ -20,6 +20,7 @@ SpeakerNode::SpeakerNode(const IEntityClassPtr& eclass) :
     _renderableBox(*this, m_aabb_local, worldAABB().getOrigin()),
     _renderableRadiiWireframe(*this, m_origin, _radiiTransformed),
     _renderableRadiiFill(*this, m_origin, _radiiTransformed),
+    _renderableRadiiFillOutline(*this, m_origin, _radiiTransformed),
     _showRadiiWhenUnselected(EntitySettings::InstancePtr()->getShowAllSpeakerRadii()),
 	_dragPlanes(std::bind(&SpeakerNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
@@ -31,6 +32,7 @@ SpeakerNode::SpeakerNode(const SpeakerNode& other) :
     _renderableBox(*this, m_aabb_local, worldAABB().getOrigin()),
     _renderableRadiiWireframe(*this, m_origin, _radiiTransformed),
     _renderableRadiiFill(*this, m_origin, _radiiTransformed),
+    _renderableRadiiFillOutline(*this, m_origin, _radiiTransformed),
     _showRadiiWhenUnselected(EntitySettings::InstancePtr()->getShowAllSpeakerRadii()),
 	_dragPlanes(std::bind(&SpeakerNode::selectedChangedComponent, this, std::placeholders::_1))
 {}
@@ -238,12 +240,14 @@ void SpeakerNode::onPreRender(const VolumeTest& volume)
     if (_showRadiiWhenUnselected || isSelected())
     {
         _renderableRadiiWireframe.update(getWireShader());
-        _renderableRadiiFill.update(getFillShader());
+        _renderableRadiiFill.update(_radiiFillShader);
+        _renderableRadiiFillOutline.update(_radiiFillOutlineShader);
     }
     else
     {
         _renderableRadiiWireframe.clear();
         _renderableRadiiFill.clear();
+        _renderableRadiiFillOutline.clear();
     }
 }
 
@@ -269,6 +273,18 @@ void SpeakerNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     // Clear the geometry from any previous shader
     clearRenderables();
+
+    if (renderSystem)
+    {
+        auto renderColour = getEntityColour();
+        _radiiFillShader = renderSystem->capture(ColourShaderType::CameraTranslucent, renderColour);
+        _radiiFillOutlineShader = renderSystem->capture(ColourShaderType::CameraOutline, renderColour);
+    }
+    else
+    {
+        _radiiFillShader.reset();
+        _radiiFillOutlineShader.reset();
+    }
 }
 
 void SpeakerNode::translate(const Vector3& translation)
@@ -470,6 +486,7 @@ void SpeakerNode::updateRenderables()
     _renderableBox.queueUpdate();
     _renderableRadiiWireframe.queueUpdate();
     _renderableRadiiFill.queueUpdate();
+    _renderableRadiiFillOutline.queueUpdate();
 }
 
 void SpeakerNode::clearRenderables()
@@ -477,6 +494,7 @@ void SpeakerNode::clearRenderables()
     _renderableBox.clear();
     _renderableRadiiWireframe.clear();
     _renderableRadiiFill.clear();
+    _renderableRadiiFillOutline.clear();
 }
 
 const Vector3& SpeakerNode::getWorldPosition() const

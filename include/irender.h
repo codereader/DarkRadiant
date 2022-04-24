@@ -504,6 +504,9 @@ enum class BuiltInShaderType
 // connection lines, light volumes in both camera and ortho.
 enum class ColourShaderType
 {
+    // Line shader for camera views only
+    CameraOutline,
+
     // Fill shader, non-transparent
     CameraSolid,
 

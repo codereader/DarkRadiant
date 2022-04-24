@@ -154,6 +154,7 @@ inline std::vector<unsigned int> generateSphereIndices()
 void RenderableSpeakerRadiiFill::generateSphereVertices(std::vector<render::RenderVertex>& vertices, double radius)
 {
     auto colour = _entity.getEntityColour();
+    colour.w() = 0.3;
 
     for (auto strip = 0; strip < NumCircles; ++strip)
     {
