@@ -14,6 +14,19 @@ namespace
     constexpr static auto CircleSegments = 8;
     constexpr static auto CircleRadius = 64.0;
     const Vector4 AngleTextColour(0.75, 0, 0, 1);
+
+    static const Matrix4 REMAP_YZX = Matrix4::byRows(
+        0, 0, 1, 0,
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 0, 1
+    );
+    static const Matrix4 REMAP_ZXY = Matrix4::byRows(
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        1, 0, 0, 0,
+        0, 0, 0, 1
+    );
 }
 
 RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segments, float radius) :
@@ -23,9 +36,9 @@ RotateManipulator::RotateManipulator(ManipulationPivot& pivot, std::size_t segme
     _rotateAxis(*this),
 	_translatePivot(_pivotTranslatable),
     _localPivotPoint(0,0,0),
-    _circleX(CircleSegments, CircleRadius, _local2worldX),
-    _circleY(CircleSegments, CircleRadius, _local2worldY),
-    _circleZ(CircleSegments, CircleRadius, _local2worldZ),
+    _circleX(CircleSegments, CircleRadius, _local2worldX, REMAP_YZX),
+    _circleY(CircleSegments, CircleRadius, _local2worldY, REMAP_ZXY),
+    _circleZ(CircleSegments, CircleRadius, _local2worldZ, Matrix4::getIdentity()),
     _circleScreen(CircleSegments, CircleRadius * 1.15, _pivot2World._viewpointSpace),
     _circleSphere(CircleSegments, CircleRadius, _pivot2World._viewpointSpace),
 	_pivotPoint(_localPivotPoint, _pivot2World._worldSpace),
@@ -116,7 +129,7 @@ void RotateManipulator::onPreRender(const RenderSystemPtr& renderSystem, const V
     }
 
     _pivot2World.update(_pivot.getMatrix4(), volume.GetModelview(), volume.GetProjection(), volume.GetViewport());
-    
+
     updateCircleTransforms();
     updateColours();
     updateAngleText();

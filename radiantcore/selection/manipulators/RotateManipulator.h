@@ -34,9 +34,9 @@ private:
 	Vector3 _axisScreen;
     Vertex3 _localPivotPoint;
 
-    RenderableSemiCircle<RemapYZX> _circleX;
-    RenderableSemiCircle<RemapZXY> _circleY;
-    RenderableSemiCircle<RemapXYZ> _circleZ;
+    RenderableSemiCircle _circleX;
+    RenderableSemiCircle _circleY;
+    RenderableSemiCircle _circleZ;
 	RenderableCircle _circleScreen;
 	RenderableCircle _circleSphere;
     RenderablePoint _pivotPoint;
