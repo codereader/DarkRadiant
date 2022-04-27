@@ -57,6 +57,44 @@ TEST_F(RendererTest, ConstructRenderVertex)
         EXPECT_EQ(v.bitangent, Vector3f(0, 0, 0));
         EXPECT_EQ(v.colour, Vector4f(1.0, 0.5, 0.5, 0.6));
     }
+
+    {
+        // Initialise all values
+        RenderVertex v(Vector3f(-275, -0.1, 1.15), Vector3f(0.5, -0.5, 0.8), Vector2f(0.25, 0.37),
+                       Vector4f(1.0, 0.5, 0.5, 0.6), Vector3f(0.75, -16, 320),
+                       Vector3f(200, 800, 1056.6));
+        EXPECT_EQ(v.vertex, Vector3f(-275, -0.1, 1.15));
+        EXPECT_EQ(v.normal, Vector3f(0.5, -0.5, 0.8));
+        EXPECT_EQ(v.texcoord, Vector2f(0.25, 0.37));
+        EXPECT_EQ(v.tangent, Vector3f(0.75, -16, 320));
+        EXPECT_EQ(v.bitangent, Vector3f(200, 800, 1056.6));
+        EXPECT_EQ(v.colour, Vector4f(1.0, 0.5, 0.5, 0.6));
+    }
+
+    {
+        // Initialise with double-precision (no tangents)
+        RenderVertex v(Vector3(350, 8.0002, -19.15), Vector3(0.6, -0.1, 2.5), Vector2(0.15, 0.99),
+                       Vector4(1.5, 16, -72.89, 0.6));
+        EXPECT_EQ(v.vertex, Vector3f(350, 8.0002, -19.15));
+        EXPECT_EQ(v.normal, Vector3f(0.6, -0.1, 2.5));
+        EXPECT_EQ(v.texcoord, Vector2f(0.15, 0.99));
+        EXPECT_EQ(v.tangent, Vector3f(0, 0, 0));
+        EXPECT_EQ(v.bitangent, Vector3f(0, 0, 0));
+        EXPECT_EQ(v.colour, Vector4f(1.5, 16, -72.89, 0.6));
+    }
+
+    {
+        // Initialise all values with double-precision
+        RenderVertex v(Vector3(350, 8.0002, -19.15), Vector3(0.6, -0.1, 2.5), Vector2(0.15, 0.99),
+                       Vector4(1.5, 16, -72.89, 0.6), Vector3(-999, 864.2, 0.001),
+                       Vector3(1, 5, 59));
+        EXPECT_EQ(v.vertex, Vector3f(350, 8.0002, -19.15));
+        EXPECT_EQ(v.normal, Vector3f(0.6, -0.1, 2.5));
+        EXPECT_EQ(v.texcoord, Vector2f(0.15, 0.99));
+        EXPECT_EQ(v.tangent, Vector3f(-999, 864.2, 0.001));
+        EXPECT_EQ(v.bitangent, Vector3f(1, 5, 59));
+        EXPECT_EQ(v.colour, Vector4f(1.5, 16, -72.89, 0.6));
+    }
 }
 
 // Wrapper for a light entity and its respective node interfaces
