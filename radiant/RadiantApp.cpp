@@ -10,6 +10,7 @@
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "module/StaticModule.h"
 #include "settings/LocalisationProvider.h"
+#include "log/PopupErrorHandler.h"
 
 #include <wx/wxprec.h>
 #include <wx/event.h>
@@ -185,6 +186,8 @@ bool RadiantApp::OnExceptionInMainLoop()
 	catch (const std::exception& ex)
 	{
 		rError() << "Unhandled Exception: " << ex.what() << std::endl;
+        radiant::PopupErrorHandler::HandleError(_("Real Hard DarkRadiant Failure"), 
+            std::string(ex.what()) + "\n\n" + _("Break into the debugger?"));
 	}
 
 	return wxApp::OnExceptionInMainLoop();
