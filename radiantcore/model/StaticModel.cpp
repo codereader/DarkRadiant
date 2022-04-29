@@ -274,9 +274,12 @@ void StaticModel::setModelPath(const std::string& modelPath)
     _modelPath = modelPath;
 }
 
-void StaticModel::revertScale()
+bool StaticModel::revertScale()
 {
+    if (_scaleTransformed == _scale) return false;
+
     _scaleTransformed = _scale;
+    return true;
 }
 
 void StaticModel::evaluateScale(const Vector3& scale)

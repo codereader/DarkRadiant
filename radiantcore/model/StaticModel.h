@@ -202,8 +202,8 @@ public:
 	 */
 	const SurfaceList& getSurfaces() const;
 
-	// Revert to base scale
-	void revertScale();
+	// Revert to base scale (returns true if the scale was actually changed by this call)
+	bool revertScale();
 
 	// TransformationChanged, apply the given scale to the "working copy"
 	void evaluateScale(const Vector3& scale);

@@ -234,9 +234,12 @@ void StaticModelNode::_onTransformationChanged()
     {
         // Transformation has been changed but no transform mode is set,
         // so the reason we got here is a cancelTransform() call, revert everything
-        _model->revertScale();
-        _model->evaluateScale(Vector3(1,1,1));
-        queueRenderableUpdate();
+        if (_model->revertScale())
+        {
+            // revertScale returned true, the scale has actually been modified
+            _model->evaluateScale(Vector3(1,1,1));
+            queueRenderableUpdate();
+        }
     }
 }
 
