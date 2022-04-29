@@ -20,6 +20,7 @@ StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
     _attachedToShaders(false)
 {
     _model->signal_ShadersChanged().connect(sigc::mem_fun(*this, &StaticModelNode::onModelShadersChanged));
+    _model->signal_SurfaceScaleApplied().connect(sigc::mem_fun(*this, &StaticModelNode::onModelScaleApplied));
 
     // Update the skin
     skinChanged("");
@@ -228,7 +229,6 @@ void StaticModelNode::_onTransformationChanged()
     {
         _model->revertScale();
         _model->evaluateScale(getScale());
-        queueRenderableUpdate();
     }
     else if (getTransformationType() == TransformationType::NoTransform)
     {
@@ -238,7 +238,6 @@ void StaticModelNode::_onTransformationChanged()
         {
             // revertScale returned true, the scale has actually been modified
             _model->evaluateScale(Vector3(1,1,1));
-            queueRenderableUpdate();
         }
     }
 }
@@ -263,6 +262,11 @@ void StaticModelNode::onVisibilityChanged(bool isVisibleNow)
     {
         detachFromShaders();
     }
+}
+
+void StaticModelNode::onModelScaleApplied()
+{
+    queueRenderableUpdate();
 }
 
 } // namespace model

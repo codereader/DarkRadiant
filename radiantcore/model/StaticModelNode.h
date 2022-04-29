@@ -93,6 +93,10 @@ public:
 
     void transformChangedLocal() override;
 
+    // Called when the contained model has applied the scale to its surfaces
+    // The Node listens to this and queues a renderable update
+    void onModelScaleApplied();
+
 protected:
 	void _onTransformationChanged() override;
 	void _applyTransformation() override;

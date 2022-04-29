@@ -184,6 +184,11 @@ sigc::signal<void>& StaticModel::signal_ShadersChanged()
     return _sigShadersChanged;
 }
 
+sigc::signal<void>& StaticModel::signal_SurfaceScaleApplied()
+{
+    return _sigSurfaceScaleApplied;
+}
+
 // Update the list of active materials
 void StaticModel::updateMaterialList() const
 {
@@ -311,6 +316,9 @@ void StaticModel::applyScaleToSurfaces()
         // Extend the model AABB to include the surface's AABB
         _localAABB.includeAABB(surf.surface->getAABB());
     }
+
+    // Notify the model node to queue a renderable update
+    _sigSurfaceScaleApplied.emit();
 }
 
 // Freeze transform, move the applied scale to the original model
