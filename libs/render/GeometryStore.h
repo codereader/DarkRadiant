@@ -24,7 +24,7 @@ private:
         IndexRemap = 1,
     };
 
-    static constexpr auto NumFrameBuffers = 2;
+    static constexpr auto NumFrameBuffers = 1;
 
     // Represents the storage for a single frame
     struct FrameBuffer
