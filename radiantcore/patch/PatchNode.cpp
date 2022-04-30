@@ -337,9 +337,6 @@ bool PatchNode::getIntersection(const Ray& ray, Vector3& intersection)
 
 void PatchNode::onPreRender(const VolumeTest& volume)
 {
-    // Don't do anything when invisible
-    if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
-
     // Defer the tesselation calculation to the last minute
     m_patch.evaluateTransform();
     m_patch.updateTesselation();
