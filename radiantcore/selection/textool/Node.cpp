@@ -10,7 +10,7 @@ namespace textool
 {
 
 Node::Node() :
-    _selectable(sigc::mem_fun(*this, &Node::onSelectionStatusChanged))
+    _selectable(std::bind(&Node::onSelectionStatusChanged, this, std::placeholders::_1))
 {}
 
 void Node::setSelected(bool select)

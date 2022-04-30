@@ -15,7 +15,7 @@ private:
 
 public:
     SelectableVertex(Vector3& vertex, Vector2& texcoord) :
-        ObservedSelectable(sigc::mem_fun(*this, &SelectableVertex::onSelectionStatusChanged)),
+        ObservedSelectable(std::bind(&SelectableVertex::onSelectionStatusChanged, this, std::placeholders::_1)),
         _vertex(vertex),
         _texcoord(texcoord)
     {}

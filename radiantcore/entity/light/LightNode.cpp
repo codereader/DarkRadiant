@@ -23,7 +23,7 @@ LightNode::LightNode(const IEntityClassPtr& eclass)
     m_boundsChanged(std::bind(&scene::Node::boundsChanged, this)),
     _instances(getDoom3Radius().m_centerTransformed, _projVectors.transformed,
                sigc::mem_fun(*this, &LightNode::selectedChangedComponent)),
-    _dragPlanes(sigc::mem_fun(this, &LightNode::selectedChangedComponent)),
+    _dragPlanes(std::bind(&LightNode::selectedChangedComponent, this, std::placeholders::_1)),
     _renderableOctagon(*this, 0.5), // transparent
     _renderableOctagonOutline(*this, 1.0), // opaque lines
     _renderableLightVolume(*this),
