@@ -28,7 +28,7 @@ class Matrix4;
 class Quaternion;
 
 typedef sigc::signal<void, const ISelectable&> SelectionChangedSignal;
-typedef sigc::slot<void, const ISelectable&> SelectionChangedSlot;
+typedef std::function<void(const ISelectable&)> SelectionChangedSlot;
 
 class SelectionInfo;
 class Face;
