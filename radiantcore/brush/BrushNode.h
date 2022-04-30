@@ -52,6 +52,7 @@ class BrushNode :
 
 	// TRUE if any of the FaceInstance's component selection got changed or transformed
 	bool _renderableComponentsNeedUpdate;
+    std::size_t _numSelectedComponents;
 
     // For pivoted rotations, we need a copy of this lying around
     Vector3 _untransformedOrigin;
