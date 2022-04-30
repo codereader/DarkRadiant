@@ -388,6 +388,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 {
     static StringSet _dependencies
 	{
+        MODULE_COMMANDSYSTEM,
         MODULE_SHADERSYSTEM,
         MODULE_XMLREGISTRY,
         MODULE_SHARED_GL_CONTEXT,
@@ -418,6 +419,9 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 
     _sharedContextDestroyed = GlobalOpenGLContext().signal_sharedContextDestroyed()
         .connect(sigc::mem_fun(this, &OpenGLRenderSystem::unrealise));
+
+    GlobalCommandSystem().addCommand("ShowRenderMemoryStats",
+        sigc::mem_fun(*this, &OpenGLRenderSystem::showMemoryStats));
 }
 
 void OpenGLRenderSystem::shutdownModule()
@@ -486,6 +490,11 @@ void OpenGLRenderSystem::foreachLight(const std::function<void(const RendererLig
 IGeometryStore& OpenGLRenderSystem::getGeometryStore()
 {
     return _geometryStore;
+}
+
+void OpenGLRenderSystem::showMemoryStats(const cmd::ArgumentList& args)
+{
+    _geometryStore.printMemoryStats();
 }
 
 // Define the static OpenGLRenderSystem module

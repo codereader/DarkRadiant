@@ -3,7 +3,9 @@
 #include <stdexcept>
 #include <limits>
 #include "igeometrystore.h"
+#include "itextstream.h"
 #include "ContinuousBuffer.h"
+#include "string/format.h"
 
 namespace render
 {
@@ -22,7 +24,7 @@ private:
         IndexRemap = 1,
     };
 
-    static constexpr auto NumFrameBuffers = 3;
+    static constexpr auto NumFrameBuffers = 2;
 
     // Represents the storage for a single frame
     struct FrameBuffer
@@ -288,6 +290,22 @@ public:
         }
 
         return bounds;
+    }
+
+    void printMemoryStats()
+    {
+        rMessage() << "-- Geometry Store Memory --" << std::endl;
+        rMessage() << "Number of Frame Buffers: " << NumFrameBuffers << std::endl;
+
+        for (auto i = 0; i < NumFrameBuffers; ++i)
+        {
+            rMessage() << "Frame Buffer " << i << std::endl;
+            rMessage() << "  Vertices: " << string::getFormattedByteSize(_frameBuffers[i].vertices.getBufferSizeInBytes()) << std::endl;
+            rMessage() << "  Indices: " << string::getFormattedByteSize(_frameBuffers[i].indices.getBufferSizeInBytes()) << std::endl;
+
+            auto logSize = _frameBuffers[i].vertexTransactionLog.capacity() + _frameBuffers[i].indexTransactionLog.capacity();
+            rMessage() << "  Transaction Logs: " << string::getFormattedByteSize(logSize * sizeof(detail::BufferTransaction)) << std::endl;
+        }
     }
 
 private:

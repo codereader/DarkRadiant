@@ -152,6 +152,20 @@ public:
         return _allocatedElements;
     }
 
+    // The amount of memory used by this instance, in bytes
+    std::size_t getBufferSizeInBytes() const
+    {
+        std::size_t total = 0;
+
+        total += _buffer.capacity() * sizeof(ElementType);
+        total += _slots.capacity() * sizeof(SlotInfo);
+        total += _emptySlots.size() * sizeof(Handle);
+        total += _unsyncedModifications.capacity() * sizeof(ModifiedMemoryChunk);
+        total += sizeof(ContinuousBuffer<ElementType>);
+
+        return total;
+    }
+
     void setData(Handle handle, const std::vector<ElementType>& elements)
     {
         auto& slot = _slots[handle];

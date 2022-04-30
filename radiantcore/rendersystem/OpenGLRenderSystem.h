@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irender.h"
+#include "icommandsystem.h"
 #include <sigc++/connection.h>
 #include <map>
 #include "imodule.h"
@@ -142,6 +143,8 @@ private:
     void renderText();
 
     ShaderPtr capture(const std::string& name, const std::function<OpenGLShaderPtr()>& createShader);
+
+    void showMemoryStats(const cmd::ArgumentList& args);
 };
 
 } // namespace
