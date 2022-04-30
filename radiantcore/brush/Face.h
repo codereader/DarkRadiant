@@ -47,9 +47,6 @@ private:
     // Face shader, stores material name and GL shader object
 	SurfaceShader _shader;
 
-	// Connected to the SurfaceShader signals
-	sigc::connection _surfaceShaderRealised;
-
 	TextureProjection _texdef;
 	TextureProjection m_texdefTransformed;
 

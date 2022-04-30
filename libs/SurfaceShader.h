@@ -31,8 +31,8 @@ private:
     bool _realised;
 
 	// Client signals
-	sigc::signal<void> _signalRealised;
-	sigc::signal<void> _signalUnrealised;
+	std::function<void()> _callbackRealised;
+	std::function<void()> _callbackUnrealised;
 
 public:
     // Constructor. The renderSystem reference will be kept internally as reference
@@ -140,16 +140,16 @@ public:
         captureShader();
     }
 
-	// Get the signal which is fired when this shader is realised
-	sigc::signal<void>& signal_Realised()
+	// Set the functor which is invoked when this shader is realised
+	void setRealisedCallback(const std::function<void()>& callback)
 	{
-		return _signalRealised;
+		_callbackRealised = callback;
 	}
 
-	// Get the signal which is fired when this shader is unrealised
-	sigc::signal<void>& signal_Unrealised()
+	// Set the functor which is invoked when this shader is unrealised
+	void setUnrealisedCallback(const std::function<void()>& callback)
 	{
-		return _signalUnrealised;
+		_callbackUnrealised = callback;
 	}
 
 	// Called when the GL shader is realised
@@ -158,7 +158,10 @@ public:
         assert(!_realised);
         _realised = true;
 
-		signal_Realised().emit();
+        if (_callbackRealised)
+        {
+            _callbackRealised();
+        }
     }
 
 	// Called when the GL shader is unrealised
@@ -166,7 +169,10 @@ public:
     {
         assert(_realised);
 
-		signal_Unrealised().emit();
+        if (_callbackUnrealised)
+        {
+            _callbackUnrealised();
+        }
 
         _realised = false;
     }

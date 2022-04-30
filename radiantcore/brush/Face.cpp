@@ -120,7 +120,7 @@ Face::Face(Brush& owner, const Face& other) :
 
 Face::~Face()
 {
-    _surfaceShaderRealised.disconnect();
+    _shader.setRealisedCallback({});
     _sigDestroyed.emit();
     _sigDestroyed.clear();
 
@@ -135,8 +135,7 @@ sigc::signal<void>& Face::signal_faceDestroyed()
 
 void Face::setupSurfaceShader()
 {
-    _surfaceShaderRealised = _shader.signal_Realised().connect(
-        sigc::mem_fun(*this, &Face::realiseShader));
+    _shader.setRealisedCallback(std::bind(&Face::realiseShader, this));
 
     // If we're already in realised state, call realiseShader right away
     if (_shader.isRealised())
