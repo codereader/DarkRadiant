@@ -81,23 +81,6 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
     vertexBuffer->unbind();
     indexBuffer->unbind();
 
-#if 0
-    // Run all the passes with OpenGLRenderables
-    for (const auto& [_, pass] : _sortedStates)
-    {
-        // Render the OpenGLShaderPass
-        if (pass->empty() || !pass->hasRenderables()) continue;
-
-        if (pass->getShader().isVisible() && pass->isApplicableTo(_renderViewType))
-        {
-            // Apply our state to the current state object
-            pass->evaluateStagesAndApplyState(current, globalstate, time, nullptr);
-            pass->submitRenderables(current);
-        }
-
-        pass->clearRenderables();
-    }
-#endif
     cleanupState();
 
     return std::make_shared<FullBrightRenderResult>(view.getCullStats());
