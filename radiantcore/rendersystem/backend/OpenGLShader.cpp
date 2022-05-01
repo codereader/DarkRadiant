@@ -148,15 +148,25 @@ IGeometryRenderer::Slot OpenGLShader::addGeometry(GeometryType indexType,
     return _geometryRenderer.addGeometry(indexType, vertices, indices);
 }
 
+void OpenGLShader::activateGeometry(IGeometryRenderer::Slot slot)
+{
+    _geometryRenderer.activateGeometry(slot);
+}
+
+void OpenGLShader::deactivateGeometry(IGeometryRenderer::Slot slot)
+{
+    _geometryRenderer.deactivateGeometry(slot);
+}
+
 void OpenGLShader::removeGeometry(IGeometryRenderer::Slot slot)
 {
     _geometryRenderer.removeGeometry(slot);
 }
 
 void OpenGLShader::updateGeometry(IGeometryRenderer::Slot slot, const std::vector<RenderVertex>& vertices,
-    const std::vector<unsigned int>& indices)
+    const std::vector<unsigned int>& indices, bool reactivateSlot)
 {
-    _geometryRenderer.updateGeometry(slot, vertices, indices);
+    _geometryRenderer.updateGeometry(slot, vertices, indices, reactivateSlot);
 }
 
 void OpenGLShader::renderGeometry(IGeometryRenderer::Slot slot)

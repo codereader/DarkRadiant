@@ -90,6 +90,15 @@ public:
         return newSlotIndex;
     }
 
+    void activateGeometry(Slot slot) override
+    {
+    }
+
+    void deactivateGeometry(Slot slot) override
+    {
+        
+    }
+
     void removeGeometry(Slot slot) override
     {
         auto& slotInfo = _slots.at(slot);
@@ -111,7 +120,7 @@ public:
     }
 
     void updateGeometry(Slot slot, const std::vector<RenderVertex>& vertices,
-        const std::vector<unsigned int>& indices) override
+        const std::vector<unsigned int>& indices, bool reactivateSlot) override
     {
         auto& slotInfo = _slots.at(slot);
 
