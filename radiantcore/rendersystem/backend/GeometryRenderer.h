@@ -19,7 +19,7 @@ private:
     struct SurfaceGroup
     {
         GLenum primitiveMode;
-        std::set<IGeometryStore::Slot> storageHandles;
+        std::set<IGeometryStore::Slot> visibleStorageHandles;
         
         SurfaceGroup(GLenum mode) :
             primitiveMode(mode)
@@ -64,7 +64,7 @@ public:
     {
         for (const auto& group : _groups)
         {
-            if (!group.storageHandles.empty()) return false;
+            if (!group.visibleStorageHandles.empty()) return false;
         }
 
         return true;
@@ -83,7 +83,9 @@ public:
         // Save the data into the backend storage
         slot.storageHandle = _store.allocateSlot(vertices.size(), indices.size());
         _store.updateData(slot.storageHandle, vertices, indices);
-        group.storageHandles.insert(slot.storageHandle);
+
+        // New geometry is automatically added to the visible set
+        group.visibleStorageHandles.insert(slot.storageHandle);
 
         slot.groupIndex = groupIndex;
 
@@ -92,11 +94,20 @@ public:
 
     void activateGeometry(Slot slot) override
     {
+        auto& slotInfo = _slots.at(slot);
+        auto& group = getGroupByIndex(slotInfo.groupIndex);
+
+        // Remove the geometry from the visible set
+        group.visibleStorageHandles.insert(slotInfo.storageHandle);
     }
 
     void deactivateGeometry(Slot slot) override
     {
-        
+        auto& slotInfo = _slots.at(slot);
+        auto& group = getGroupByIndex(slotInfo.groupIndex);
+
+        // Remove the geometry from the visible set
+        group.visibleStorageHandles.erase(slotInfo.storageHandle);
     }
 
     void removeGeometry(Slot slot) override
@@ -107,8 +118,8 @@ public:
         // Release the memory in the geometry store
         _store.deallocateSlot(slotInfo.storageHandle);
 
-        // Remove the geometry from its group
-        group.storageHandles.erase(slotInfo.storageHandle);
+        // Remove the geometry from the visible set
+        group.visibleStorageHandles.erase(slotInfo.storageHandle);
 
         // Invalidate the slot
         slotInfo.storageHandle = InvalidStorageHandle;
@@ -139,7 +150,7 @@ public:
     {
         for (auto& group : _groups)
         {
-            ObjectRenderer::SubmitGeometry(group.storageHandles, group.primitiveMode, _store);
+            ObjectRenderer::SubmitGeometry(group.visibleStorageHandles, group.primitiveMode, _store);
         }
     }
 
