@@ -62,12 +62,13 @@ OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSy
     _renderSystem(renderSystem),
     _isVisible(true),
     _useCount(0),
-    _geometryRenderer(renderSystem.getGeometryStore()),
-    _surfaceRenderer(renderSystem.getGeometryStore()),
+    _geometryRenderer(renderSystem.getGeometryStore(), renderSystem.getObjectRenderer()),
+    _surfaceRenderer(renderSystem.getGeometryStore(), renderSystem.getObjectRenderer()),
     _enabledViewTypes(0),
     _mergeModeActive(false)
 {
-    _windingRenderer.reset(new WindingRenderer<WindingIndexer_Triangles>(renderSystem.getGeometryStore(), this));
+    _windingRenderer.reset(new WindingRenderer<WindingIndexer_Triangles>(
+        renderSystem.getGeometryStore(), renderSystem.getObjectRenderer(), this));
 }
 
 OpenGLShader::~OpenGLShader()

@@ -5,8 +5,7 @@
 #include "irender.h"
 #include "isurfacerenderer.h"
 #include "igeometrystore.h"
-
-#include "ObjectRenderer.h"
+#include "iobjectrenderer.h"
 
 namespace render
 {
@@ -16,6 +15,7 @@ class SurfaceRenderer :
 {
 private:
     IGeometryStore& _store;
+    IObjectRenderer& _renderer;
 
     struct SurfaceInfo
     {
@@ -37,8 +37,9 @@ private:
     bool _surfacesNeedUpdate;
 
 public:
-    SurfaceRenderer(IGeometryStore& store) :
+    SurfaceRenderer(IGeometryStore& store, IObjectRenderer& renderer) :
         _store(store),
+        _renderer(renderer),
         _freeSlotMappingHint(0),
         _surfacesNeedUpdate(false)
     {}
@@ -157,7 +158,7 @@ private:
             throw std::logic_error("Cannot render unprepared slot, ensure calling SurfaceRenderer::prepareForRendering first");
         }
 
-        ObjectRenderer::SubmitObject(surface, _store);
+        _renderer.submitObject(surface);
     }
 
     Slot getNextFreeSlotIndex()

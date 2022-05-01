@@ -16,11 +16,13 @@ namespace render
 {
 
 LightingModeRenderer::LightingModeRenderer(GLProgramFactory& programFactory,
-        IGeometryStore& store, const std::set<RendererLightPtr>& lights,
+        IGeometryStore& store, IObjectRenderer& objectRenderer, 
+        const std::set<RendererLightPtr>& lights,
         const std::set<IRenderEntityPtr>& entities) :
     SceneRenderer(RenderViewType::Camera),
     _programFactory(programFactory),
     _geometryStore(store),
+    _objectRenderer(objectRenderer),
     _lights(lights),
     _entities(entities),
     _shadowMapProgram(nullptr),
@@ -79,7 +81,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     indexBuffer->bind();
 
     // Set the vertex attribute pointers
-    ObjectRenderer::InitAttributePointers();
+    _objectRenderer.initAttributePointers();
 
     // Render depth information to the shadow maps
     drawShadowMaps(current, time);
@@ -115,7 +117,7 @@ void LightingModeRenderer::determineInteractingLight(const IRenderView& view)
     // Gather all visible lights and render the surfaces touched by them
     for (const auto& light : _lights)
     {
-        InteractingLight interaction(*light, _geometryStore);
+        InteractingLight interaction(*light, _geometryStore, _objectRenderer);
 
         if (!interaction.isInView(view))
         {
@@ -317,7 +319,7 @@ void LightingModeRenderer::drawDepthFillPass(OpenGLState& current, RenderStateFl
         depthFillProgram->setObjectTransform(Matrix4::getIdentity());
         depthFillProgram->setAlphaTest(-1);
 
-        ObjectRenderer::SubmitGeometry(_untransformedObjectsWithoutAlphaTest, GL_TRIANGLES, _geometryStore);
+        _objectRenderer.submitGeometry(_untransformedObjectsWithoutAlphaTest, GL_TRIANGLES);
         _result->depthDrawCalls++;
 
         _untransformedObjectsWithoutAlphaTest.clear();
@@ -385,7 +387,7 @@ void LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, Render
                     static_cast<CubeMapProgram*>(current.glProgram)->setViewer(view.getViewer());
                 }
 
-                ObjectRenderer::SubmitGeometry(object->getStorageLocation(), GL_TRIANGLES, _geometryStore);
+                _objectRenderer.submitGeometry(object->getStorageLocation(), GL_TRIANGLES);
                 _result->nonInteractionDrawCalls++;
             });
         });

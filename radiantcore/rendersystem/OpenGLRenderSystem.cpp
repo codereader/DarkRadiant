@@ -31,6 +31,7 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
     _currentShaderProgram(SHADER_PROGRAM_NONE),
     _time(0),
     _geometryStore(_syncObjectProvider, _bufferObjectProvider),
+    _objectRenderer(_geometryStore),
     m_traverseRenderablesMutex(false)
 {
     bool shouldRealise = false;
@@ -224,9 +225,9 @@ void OpenGLRenderSystem::realise()
         shader->realise();
     }
 
-    _orthoRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::OrthoView, _state_sorted, _geometryStore);
-    _editorPreviewRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::Camera, _state_sorted, _geometryStore);
-    _lightingModeRenderer = std::make_unique<LightingModeRenderer>(*_glProgramFactory, _geometryStore, _lights, _entities);
+    _orthoRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::OrthoView, _state_sorted, _geometryStore, _objectRenderer);
+    _editorPreviewRenderer = std::make_unique<FullBrightRenderer>(RenderViewType::Camera, _state_sorted, _geometryStore, _objectRenderer);
+    _lightingModeRenderer = std::make_unique<LightingModeRenderer>(*_glProgramFactory, _geometryStore, _objectRenderer, _lights, _entities);
 }
 
 void OpenGLRenderSystem::unrealise()
@@ -490,6 +491,11 @@ void OpenGLRenderSystem::foreachLight(const std::function<void(const RendererLig
 IGeometryStore& OpenGLRenderSystem::getGeometryStore()
 {
     return _geometryStore;
+}
+
+IObjectRenderer& OpenGLRenderSystem::getObjectRenderer()
+{
+    return _objectRenderer;
 }
 
 void OpenGLRenderSystem::showMemoryStats(const cmd::ArgumentList& args)

@@ -2,7 +2,7 @@
 
 #include "igeometryrenderer.h"
 #include "igeometrystore.h"
-#include "ObjectRenderer.h"
+#include "iobjectrenderer.h"
 
 namespace render
 {
@@ -27,6 +27,8 @@ private:
     };
 
     IGeometryStore& _store;
+    IObjectRenderer& _renderer;
+
     std::vector<SurfaceGroup> _groups;
 
     static constexpr IGeometryStore::Slot InvalidStorageHandle = std::numeric_limits<IGeometryStore::Slot>::max();
@@ -43,8 +45,9 @@ private:
     std::size_t _freeSlotMappingHint;
 
 public:
-    GeometryRenderer(IGeometryStore& store) :
+    GeometryRenderer(IGeometryStore& store, IObjectRenderer& renderer) :
         _store(store),
+        _renderer(renderer),
         _freeSlotMappingHint(InvalidSlotMapping)
     {
         // Must be the same order as in render::GeometryType
@@ -150,7 +153,7 @@ public:
     {
         for (auto& group : _groups)
         {
-            ObjectRenderer::SubmitGeometry(group.visibleStorageHandles, group.primitiveMode, _store);
+            _renderer.submitGeometry(group.visibleStorageHandles, group.primitiveMode);
         }
     }
 
@@ -159,7 +162,7 @@ public:
         auto& slotInfo = _slots.at(slot);
         auto& group = getGroupByIndex(slotInfo.groupIndex);
 
-        ObjectRenderer::SubmitGeometry(slotInfo.storageHandle, group.primitiveMode, _store);
+        _renderer.submitGeometry(slotInfo.storageHandle, group.primitiveMode);
     }
 
     IGeometryStore::Slot getGeometryStorageLocation(Slot slot) override

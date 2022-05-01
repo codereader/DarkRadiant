@@ -4,6 +4,7 @@
 #include "irenderview.h"
 #include "SceneRenderer.h"
 #include "igeometrystore.h"
+#include "iobjectrenderer.h"
 #include "FrameBuffer.h"
 #include "render/Rectangle.h"
 #include "glprogram/ShadowMapProgram.h"
@@ -23,6 +24,7 @@ private:
     GLProgramFactory& _programFactory;
 
     IGeometryStore& _geometryStore;
+    IObjectRenderer& _objectRenderer;
 
     // The set of registered render lights
     const std::set<RendererLightPtr>& _lights;
@@ -49,6 +51,7 @@ private:
 public:
     LightingModeRenderer(GLProgramFactory& programFactory,
         IGeometryStore& store,
+        IObjectRenderer& objectRenderer,
         const std::set<RendererLightPtr>& lights,
         const std::set<IRenderEntityPtr>& entities);
 

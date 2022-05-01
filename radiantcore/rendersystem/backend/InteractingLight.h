@@ -5,6 +5,7 @@
 #include <set>
 #include "irender.h"
 #include "irenderableobject.h"
+#include "iobjectrenderer.h"
 #include "irenderview.h"
 #include "render/Rectangle.h"
 
@@ -30,6 +31,7 @@ class InteractingLight
 private:
     RendererLight& _light;
     IGeometryStore& _store;
+    IObjectRenderer& _objectRenderer;
     AABB _lightBounds;
 
     // A flat list of renderables
@@ -50,7 +52,7 @@ private:
     bool _isShadowCasting;
 
 public:
-    InteractingLight(RendererLight& light, IGeometryStore& store);
+    InteractingLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer);
 
     const Vector3& getBoundsCenter() const
     {

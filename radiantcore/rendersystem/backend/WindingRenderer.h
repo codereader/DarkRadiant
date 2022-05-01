@@ -66,6 +66,7 @@ private:
     static constexpr IGeometryStore::Slot InvalidStorageHandle = std::numeric_limits<IGeometryStore::Slot>::max();
 
     IGeometryStore& _geometryStore;
+    IObjectRenderer& _objectRenderer;
     Shader* _owningShader;
 
     using BucketIndex = std::uint16_t;
@@ -356,8 +357,9 @@ private:
     bool _geometryUpdatePending;
 
 public:
-    WindingRenderer(IGeometryStore& geometryStore, Shader* owningShader) :
+    WindingRenderer(IGeometryStore& geometryStore, IObjectRenderer& objectRenderer, Shader* owningShader) :
         _geometryStore(geometryStore),
+        _objectRenderer(objectRenderer),
         _owningShader(owningShader),
         _windingCount(0),
         _freeSlotMappingHint(InvalidSlotMapping),
@@ -504,7 +506,7 @@ public:
             if (bucket.storageHandle == InvalidStorageHandle) continue; // nothing here
 
             auto primitiveMode = RenderingTraits<WindingIndexerT>::Mode();
-            ObjectRenderer::SubmitGeometry(bucket.storageHandle, primitiveMode, _geometryStore);
+            _objectRenderer.submitGeometry(bucket.storageHandle, primitiveMode);
         }
     }
 
@@ -720,7 +722,7 @@ private:
         CustomWindingIndexerT::GenerateAndAssignIndices(std::back_inserter(indices), windingSize, windingOffset);
 
         auto mode = RenderingTraits<CustomWindingIndexerT>::Mode();
-        ObjectRenderer::SubmitGeometryWithCustomIndices(geometrySlot, mode, _geometryStore, indices);
+        _objectRenderer.submitGeometryWithCustomIndices(geometrySlot, mode, indices);
     }
 
     Slot allocateSlotMapping()

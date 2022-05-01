@@ -1,14 +1,16 @@
 #include "ObjectRenderer.h"
 
-#include "igl.h"
 #include "math/Matrix4.h"
-#include "igeometrystore.h"
 #include "render/RenderVertex.h"
 
 namespace render
 {
 
-void ObjectRenderer::SubmitObject(IRenderableObject& object, IGeometryStore& store)
+ObjectRenderer::ObjectRenderer(IGeometryStore& store) :
+    _store(store)
+{}
+
+void ObjectRenderer::submitObject(IRenderableObject& object)
 {
     // Orient the object
     glMatrixMode(GL_MODELVIEW);
@@ -16,13 +18,15 @@ void ObjectRenderer::SubmitObject(IRenderableObject& object, IGeometryStore& sto
     glMultMatrixd(object.getObjectTransform());
 
     // Submit the geometry of this single slot (objects are using triangle primitives)
-    SubmitGeometry(object.getStorageLocation(), GL_TRIANGLES, store);
+    submitGeometry(object.getStorageLocation(), GL_TRIANGLES);
 
     glPopMatrix();
 }
 
-void ObjectRenderer::InitAttributePointers(RenderVertex* bufferStart)
+void ObjectRenderer::initAttributePointers()
 {
+    const RenderVertex* bufferStart = nullptr;
+
     glVertexPointer(3, GL_FLOAT, sizeof(RenderVertex), &bufferStart->vertex);
     glColorPointer(4, GL_FLOAT, sizeof(RenderVertex), &bufferStart->colour);
     glTexCoordPointer(2, GL_FLOAT, sizeof(RenderVertex), &bufferStart->texcoord);
@@ -36,29 +40,29 @@ void ObjectRenderer::InitAttributePointers(RenderVertex* bufferStart)
     glVertexAttribPointer(GLProgramAttribute::Colour, 4, GL_FLOAT, 0, sizeof(RenderVertex), &bufferStart->colour);
 }
 
-void ObjectRenderer::SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode, IGeometryStore& store)
+void ObjectRenderer::submitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode)
 {
-    const auto renderParams = store.getRenderParameters(slot);
+    const auto renderParams = _store.getRenderParameters(slot);
 
     glDrawElementsBaseVertex(primitiveMode, static_cast<GLsizei>(renderParams.indexCount),
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(renderParams.firstVertex));
 }
 
-void ObjectRenderer::SubmitInstancedGeometry(IGeometryStore::Slot slot, int numInstances, GLenum primitiveMode, IGeometryStore& store)
+void ObjectRenderer::submitInstancedGeometry(IGeometryStore::Slot slot, int numInstances, GLenum primitiveMode)
 {
-    const auto renderParams = store.getRenderParameters(slot);
+    const auto renderParams = _store.getRenderParameters(slot);
 
     glDrawElementsInstancedBaseVertex(primitiveMode, static_cast<GLsizei>(renderParams.indexCount),
         GL_UNSIGNED_INT, renderParams.firstIndex, static_cast<GLint>(numInstances), static_cast<GLint>(renderParams.firstVertex));
 }
 
-void ObjectRenderer::SubmitGeometryWithCustomIndices(IGeometryStore::Slot slot, GLenum primitiveMode, 
-    IGeometryStore& store, const std::vector<unsigned int>& indices)
+void ObjectRenderer::submitGeometryWithCustomIndices(IGeometryStore::Slot slot, GLenum primitiveMode, 
+    const std::vector<unsigned int>& indices)
 {
-    const auto renderParams = store.getRenderParameters(slot);
+    const auto renderParams = _store.getRenderParameters(slot);
 
     // When using manually generated indices, we need to unbind the index array buffer
-    auto [_, indexBuffer] = store.getBufferObjects();
+    auto [_, indexBuffer] = _store.getBufferObjects();
     indexBuffer->unbind();
 
     glDrawElementsBaseVertex(primitiveMode, static_cast<GLsizei>(indices.size()),
@@ -96,21 +100,21 @@ void SubmitGeometryInternal(const ContainerT& slots, GLenum primitiveMode, IGeom
         firstIndices.data(), static_cast<GLsizei>(sizes.size()), firstVertices.data());
 }
 
-void ObjectRenderer::SubmitGeometry(const std::set<IGeometryStore::Slot>& slots, GLenum primitiveMode, IGeometryStore& store)
+void ObjectRenderer::submitGeometry(const std::set<IGeometryStore::Slot>& slots, GLenum primitiveMode)
 {
-    SubmitGeometryInternal(slots, primitiveMode, store);
+    SubmitGeometryInternal(slots, primitiveMode, _store);
 }
 
-void ObjectRenderer::SubmitGeometry(const std::vector<IGeometryStore::Slot>& slots, GLenum primitiveMode, IGeometryStore& store)
+void ObjectRenderer::submitGeometry(const std::vector<IGeometryStore::Slot>& slots, GLenum primitiveMode)
 {
-    SubmitGeometryInternal(slots, primitiveMode, store);
+    SubmitGeometryInternal(slots, primitiveMode, _store);
 }
 
-void ObjectRenderer::SubmitInstancedGeometry(const std::vector<IGeometryStore::Slot>& slots, int numInstances, GLenum primitiveMode, IGeometryStore& store)
+void ObjectRenderer::submitInstancedGeometry(const std::vector<IGeometryStore::Slot>& slots, int numInstances, GLenum primitiveMode)
 {
     for (const auto slot : slots)
     {
-        SubmitInstancedGeometry(slot, numInstances, primitiveMode, store);
+        submitInstancedGeometry(slot, numInstances, primitiveMode);
     }
 }
 

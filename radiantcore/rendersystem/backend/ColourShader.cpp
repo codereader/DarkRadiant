@@ -78,7 +78,8 @@ void ColourShader::construct()
         // Don't touch a renderer that is not empty, this will break any client connections
         if (getWindingRenderer().empty())
         {
-            setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>(getRenderSystem().getGeometryStore(), this));
+            setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>(getRenderSystem().getGeometryStore(),
+                getRenderSystem().getObjectRenderer(), this));
         }
 
         state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);

@@ -46,7 +46,7 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
     indexBuffer->bind();
 
     // Set the attribute pointers
-    ObjectRenderer::InitAttributePointers();
+    _objectRenderer.initAttributePointers();
 
     // Iterate over the sorted mapping between OpenGLStates and their
     // OpenGLShaderPasses (containing the renderable geometry), and render the

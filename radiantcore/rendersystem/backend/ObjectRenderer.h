@@ -1,6 +1,7 @@
 #pragma once
 
 #include <set>
+#include "iobjectrenderer.h"
 
 namespace render
 {
@@ -10,32 +11,38 @@ class IRenderableObject;
 
 // Helper object issuing the glDraw calls. Used by all kinds of render passes,
 // be it Depth Fill, Interaction or Blend passes.
-class ObjectRenderer
+class ObjectRenderer :
+    public IObjectRenderer
 {
+private:
+    IGeometryStore& _store;
+
 public:
+    ObjectRenderer(IGeometryStore& store);
+
     // Initialise the vertex attribute pointers using the given start address (can be nullptr)
-    static void InitAttributePointers(RenderVertex* bufferStart = nullptr);
+    void initAttributePointers() override;
 
     // Draws the given object, sets up transform and submits geometry
-    static void SubmitObject(IRenderableObject& object, IGeometryStore& store);
+    void submitObject(IRenderableObject& object) override;
 
     // Draws the geometry of the given slot in the given primitive mode, no transforms
-    static void SubmitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode, IGeometryStore& store);
+    void submitGeometry(IGeometryStore::Slot slot, GLenum primitiveMode) override;
 
     // Draws the specified number of instances of the geometry of the given slot in the given primitive mode, no transforms
-    static void SubmitInstancedGeometry(IGeometryStore::Slot slot, int numInstances, GLenum primitiveMode, IGeometryStore& store);
+    void submitInstancedGeometry(IGeometryStore::Slot slot, int numInstances, GLenum primitiveMode) override;
 
     // Draws the geometry with a custom set of indices
-    static void SubmitGeometryWithCustomIndices(IGeometryStore::Slot slot, GLenum primitiveMode,
-        IGeometryStore& store, const std::vector<unsigned int>& indices);
+    void submitGeometryWithCustomIndices(IGeometryStore::Slot slot, GLenum primitiveMode, 
+        const std::vector<unsigned int>& indices) override;
 
     // Draws all geometry as defined by their store IDs in the given mode, no transforms (std::set variant)
-    static void SubmitGeometry(const std::set<IGeometryStore::Slot>& slots, GLenum primitiveMode, IGeometryStore& store);
+    void submitGeometry(const std::set<IGeometryStore::Slot>& slots, GLenum primitiveMode) override;
     // Draws all geometry as defined by their store IDs in the given mode, no transforms (std::vector variant)
-    static void SubmitGeometry(const std::vector<IGeometryStore::Slot>& slots, GLenum primitiveMode, IGeometryStore& store);
+    void submitGeometry(const std::vector<IGeometryStore::Slot>& slots, GLenum primitiveMode) override;
 
     // Draws all geometry as defined by their store IDs in the given mode, no transforms (std::vector variant)
-    static void SubmitInstancedGeometry(const std::vector<IGeometryStore::Slot>& slots, int numInstances, GLenum primitiveMode, IGeometryStore& store);
+    void submitInstancedGeometry(const std::vector<IGeometryStore::Slot>& slots, int numInstances, GLenum primitiveMode) override;
 };
 
 }

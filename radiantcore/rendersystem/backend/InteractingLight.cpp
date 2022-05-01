@@ -8,9 +8,10 @@
 namespace render
 {
 
-InteractingLight::InteractingLight(RendererLight& light, IGeometryStore& store) :
+InteractingLight::InteractingLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer) :
     _light(light),
     _store(store),
+    _objectRenderer(objectRenderer),
     _lightBounds(light.lightAABB()),
     _interactionDrawCalls(0),
     _depthDrawCalls(0),
@@ -132,7 +133,7 @@ void InteractingLight::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram
 
                 program.setObjectTransform(object.get().getObjectTransform());
 
-                ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
+                _objectRenderer.submitGeometry(object.get().getStorageLocation(), GL_TRIANGLES);
                 ++_depthDrawCalls;
             }
 
@@ -141,7 +142,7 @@ void InteractingLight::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram
             {
                 program.setObjectTransform(Matrix4::getIdentity());
 
-                ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
+                _objectRenderer.submitGeometry(untransformedObjects, GL_TRIANGLES);
                 ++_depthDrawCalls;
 
                 untransformedObjects.clear();
@@ -194,7 +195,7 @@ void InteractingLight::drawShadowMap(OpenGLState& state, const Rectangle& rectan
 
                 program.setObjectTransform(object.get().getObjectTransform());
 
-                ObjectRenderer::SubmitInstancedGeometry(object.get().getStorageLocation(), 6, GL_TRIANGLES, _store);
+                _objectRenderer.submitInstancedGeometry(object.get().getStorageLocation(), 6, GL_TRIANGLES);
                 ++_shadowMapDrawCalls;
             }
 
@@ -202,7 +203,7 @@ void InteractingLight::drawShadowMap(OpenGLState& state, const Rectangle& rectan
             {
                 program.setObjectTransform(Matrix4::getIdentity());
 
-                ObjectRenderer::SubmitInstancedGeometry(untransformedObjects, 6, GL_TRIANGLES, _store);
+                _objectRenderer.submitInstancedGeometry(untransformedObjects, 6, GL_TRIANGLES);
                 ++_shadowMapDrawCalls;
 
                 untransformedObjects.clear();
@@ -279,7 +280,7 @@ void InteractingLight::drawInteractions(OpenGLState& state, InteractionProgram& 
 
                 pass->getProgram().setObjectTransform(object.get().getObjectTransform());
 
-                ObjectRenderer::SubmitGeometry(object.get().getStorageLocation(), GL_TRIANGLES, _store);
+                _objectRenderer.submitGeometry(object.get().getStorageLocation(), GL_TRIANGLES);
                 ++_interactionDrawCalls;
             }
 
@@ -289,7 +290,7 @@ void InteractingLight::drawInteractions(OpenGLState& state, InteractionProgram& 
 
                 pass->getProgram().setObjectTransform(Matrix4::getIdentity());
 
-                ObjectRenderer::SubmitGeometry(untransformedObjects, GL_TRIANGLES, _store);
+                _objectRenderer.submitGeometry(untransformedObjects, GL_TRIANGLES);
                 ++_interactionDrawCalls;
 
                 untransformedObjects.clear();

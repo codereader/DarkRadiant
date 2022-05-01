@@ -67,6 +67,7 @@ class OpenGLRenderSystem final
     FenceSyncProvider _syncObjectProvider;
     BufferObjectProvider _bufferObjectProvider;
     GeometryStore _geometryStore;
+    ObjectRenderer _objectRenderer;
 
     // Renderer implementations, one for each view type/purpose
 
@@ -136,6 +137,7 @@ public:
     void shutdownModule() override;
 
     IGeometryStore& getGeometryStore();
+    IObjectRenderer& getObjectRenderer();
 
 private:
     IRenderResult::Ptr render(SceneRenderer& renderer, RenderStateFlags globalFlagsMask, const IRenderView& view);
