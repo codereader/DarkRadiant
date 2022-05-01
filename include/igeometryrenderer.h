@@ -57,10 +57,11 @@ public:
 
     // Updates the vertex data. The size of the vertex and index array must be the same
     // as the one passed to addGeometry. To change the size the data needs to be removed and re-added.
-    // If the slot has been deactivated before, the reactivateSlot flag indicates whether
-    // the geometry should be re-activated by this call.
     virtual void updateGeometry(Slot slot, const std::vector<RenderVertex>& vertices,
-        const std::vector<unsigned int>& indices, bool reactivateSlot) = 0;
+        const std::vector<unsigned int>& indices) = 0;
+
+    // Submits all active geometry slots to GL
+    virtual void renderAllVisibleGeometry() = 0;
 
     // Submits the geometry of a single slot to GL, regardless of its active state
     virtual void renderGeometry(Slot slot) = 0;

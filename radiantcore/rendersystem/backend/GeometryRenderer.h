@@ -97,7 +97,7 @@ public:
 
     void activateGeometry(Slot slot) override
     {
-        auto& slotInfo = _slots.at(slot);
+        const auto& slotInfo = _slots.at(slot);
         auto& group = getGroupByIndex(slotInfo.groupIndex);
 
         // Remove the geometry from the visible set
@@ -106,7 +106,7 @@ public:
 
     void deactivateGeometry(Slot slot) override
     {
-        auto& slotInfo = _slots.at(slot);
+        const auto& slotInfo = _slots.at(slot);
         auto& group = getGroupByIndex(slotInfo.groupIndex);
 
         // Remove the geometry from the visible set
@@ -134,9 +134,9 @@ public:
     }
 
     void updateGeometry(Slot slot, const std::vector<RenderVertex>& vertices,
-        const std::vector<unsigned int>& indices, bool reactivateSlot) override
+        const std::vector<unsigned int>& indices) override
     {
-        auto& slotInfo = _slots.at(slot);
+        const auto& slotInfo = _slots.at(slot);
 
         // Upload the new vertex and index data
         _store.updateData(slotInfo.storageHandle, vertices, indices);
@@ -144,23 +144,25 @@ public:
 
     AABB getGeometryBounds(Slot slot) override
     {
-        auto& slotInfo = _slots.at(slot);
+        const auto& slotInfo = _slots.at(slot);
 
         return _store.getBounds(slotInfo.storageHandle);
     }
 
-    void render()
+    void renderAllVisibleGeometry() override
     {
         for (auto& group : _groups)
         {
+            if (group.visibleStorageHandles.empty()) continue;
+
             _renderer.submitGeometry(group.visibleStorageHandles, group.primitiveMode);
         }
     }
 
     void renderGeometry(Slot slot) override
     {
-        auto& slotInfo = _slots.at(slot);
-        auto& group = getGroupByIndex(slotInfo.groupIndex);
+        const auto& slotInfo = _slots.at(slot);
+        const auto& group = getGroupByIndex(slotInfo.groupIndex);
 
         _renderer.submitGeometry(slotInfo.storageHandle, group.primitiveMode);
     }

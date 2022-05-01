@@ -311,7 +311,7 @@ protected:
         else
         {
             // In case the slot had been deactivated => reactivate automatically
-            _shader->updateGeometry(_surfaceSlot, vertices, indices, true);
+            _shader->updateGeometry(_surfaceSlot, vertices, indices);
         }
 
         // Fire the bounds changed signal (after submitting the changed vertices)

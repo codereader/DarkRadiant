@@ -114,7 +114,7 @@ void OpenGLShader::drawSurfaces(const VolumeTest& view)
 
     if (hasSurfaces())
     {
-        _geometryRenderer.render();
+        _geometryRenderer.renderAllVisibleGeometry();
 
         // Surfaces are not allowed to render vertex colours (for now)
         // otherwise they don't show up in their parent entity's colour
@@ -165,9 +165,14 @@ void OpenGLShader::removeGeometry(IGeometryRenderer::Slot slot)
 }
 
 void OpenGLShader::updateGeometry(IGeometryRenderer::Slot slot, const std::vector<RenderVertex>& vertices,
-    const std::vector<unsigned int>& indices, bool reactivateSlot)
+    const std::vector<unsigned int>& indices)
 {
-    _geometryRenderer.updateGeometry(slot, vertices, indices, reactivateSlot);
+    _geometryRenderer.updateGeometry(slot, vertices, indices);
+}
+
+void OpenGLShader::renderAllVisibleGeometry()
+{
+    _geometryRenderer.renderAllVisibleGeometry();
 }
 
 void OpenGLShader::renderGeometry(IGeometryRenderer::Slot slot)
