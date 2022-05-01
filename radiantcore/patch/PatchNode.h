@@ -155,6 +155,7 @@ private:
 	void transformComponents(const Matrix4& matrix);
 
     void updateAllRenderables();
+    void hideAllRenderables();
     void clearAllRenderables();
 };
 typedef std::shared_ptr<PatchNode> PatchNodePtr;

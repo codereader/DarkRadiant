@@ -283,6 +283,14 @@ void PatchNode::updateAllRenderables()
     _renderableCtrlPoints.queueUpdate();
 }
 
+void PatchNode::hideAllRenderables()
+{
+    _renderableSurfaceSolid.hide();
+    _renderableSurfaceWireframe.hide();
+    _renderableCtrlLattice.hide();
+    _renderableCtrlPoints.hide();
+}
+
 void PatchNode::clearAllRenderables()
 {
     _renderableSurfaceSolid.clear();
@@ -354,8 +362,8 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     }
     else
     {
-        _renderableCtrlPoints.clear();
-        _renderableCtrlLattice.clear();
+        _renderableCtrlPoints.hide();
+        _renderableCtrlLattice.hide();
 
         // Queue an update the next time it's rendered
         _renderableCtrlPoints.queueUpdate();
@@ -504,12 +512,11 @@ void PatchNode::onVisibilityChanged(bool visible)
 
     if (!visible)
     {
-        // Disconnect our renderable when the node is hidden
-        clearAllRenderables();
+        hideAllRenderables();
     }
     else
     {
-        // Update the vertex buffers next time we need to render
+        // Queue an update, renderables are automatically shown in onPreRender
         updateAllRenderables();
     }
 }
