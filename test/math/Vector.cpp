@@ -77,6 +77,14 @@ TEST(VectorTest, PromoteVector3To4)
     EXPECT_EQ(v4, Vector4(8, 12, -5, 1));
 }
 
+TEST(VectorTest, PromoteVector3To4WithDifferentType)
+{
+    BasicVector3<float> v3(-9, 12, 47);
+    BasicVector4<double> v4(v3);
+
+    EXPECT_EQ(v4, Vector4(-9, 12, 47, 1));
+}
+
 TEST(VectorTest, DemoteVector4To3)
 {
     Vector4 v4(1, -96, 0.125);

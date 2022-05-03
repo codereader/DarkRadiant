@@ -68,6 +68,12 @@ public:
     BasicVector3(const T* array): _v(array[0], array[1], array[2])
     {}
 
+    /// Construct from another BasicVector3 with a compatible element type
+    template<typename U> BasicVector3(const BasicVector3<U>& other)
+    : BasicVector3(other.x(), other.y(), other.z())
+    {
+    }
+
     /**
      * Named constructor, returning a vector on the unit sphere for the given spherical coordinates.
      */
