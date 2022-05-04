@@ -256,9 +256,9 @@ and fully lit by in-game light sources. While the 2D view is the main interface
 for creating and aligning level geometry, the 3D view is a vital tool for tasks
 such as texturing, or configuring light parameters.
 
-IMPORTANT: The fully lit rendering mode in DarkRadiant is very limited, and only
-offers a partial view of what the game engine will ultimately render. In
-particular, there are no shadows or foglights.
+IMPORTANT: The fully lit rendering mode in DarkRadiant is not identical to what
+the game engine will ultimately render. Certain advanced rendering features such
+as reflections and fog lights are not currently supported.
 
 The 3D camera view provides its own toolbar which can be used to configure
 various display settings.
@@ -972,9 +972,12 @@ properties using the light inspector, which is accessed with the *L* key.
 
 image::LightInspector.png[align="center"]
 
+TIP: The light inspector can change the properties of a single light, or
+multiple selected lights simultaneously.
+
 *Light volume (omni vs projected)*:: The majority of lights in a map will be the
-default, omnidirectional shape. An omni light is a simple axis-aligned cuboid
-which emits light in all directions from its center to its edges.
+default, omnidirectional shape. An omni light is a simple cuboid which emits
+light in all directions from its center to its edges.
 +
 A projected light is pyramid-shaped, and emits light from the tip of the pyramid
 towards the base. Projected lights behave more like spotlights in real-life, and
@@ -982,8 +985,11 @@ can be used to highlight particular areas or project images of windows onto the
 floor.
 
 *Colour*:: Use the colour selector button to display a standard colour selection
-dialog, or enter the RGB values directly using the text box. As well as changing
-the hue, the light colour also governs the overall brightness of the light.
+dialog. As well as changing the hue, the light colour also governs the overall
+brightness of the light. You can use the slider below the colour button to
+adjust the brightness of the selected light(s) without changing the hue, with
+realtime feedback displayed in the 3D camera view if lighting preview mode is
+enabled.
 
 *Texture*:: The falloff texture controls the shape of the lit area when rendered
 in-game; the square texture chosen here will be mapped directly onto the
