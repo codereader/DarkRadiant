@@ -827,6 +827,7 @@ needs to align across all of the brushes, regardless of how they are moved or
 resized), you will want to disable *Texture Lock*.
 |===
 
+[[ShaderClipboard]]
 ==== Using the shader clipboard
 
 While constructing a map it will frequently be necessary to apply the same
@@ -1791,6 +1792,16 @@ content into a file and load it later as an actual map fragment.
 
 TIP: To unparent *all* of an entity's primitives and convert them back into
 worldspawn, just right-click in the 2D view and choose *Revert to worldspawn*.
+
+*Merge selected entities*:: Convert two more more selected entities into a
+single entity which contains all of the contained brushes and patches. Only
+works for entities which can contain primitives (e.g. func_static).
+
+*Copy shader*:: Copy the shader from the selected face to the
+<<ShaderClipboard,shader clipboard>>.
+
+*Paste shader*:: Paste the shader currently on the <<ShaderClipboard,shader
+clipboard>> to all selected faces.
 
 == Configuring DarkRadiant
 
