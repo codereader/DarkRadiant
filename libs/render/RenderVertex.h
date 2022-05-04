@@ -28,17 +28,11 @@ public:
         colour(1.0f, 1.0f, 1.0f, 1.0f)
     {}
 
-    /// Initialising constructor, leaves tangent vectors at 0,0,0
-    RenderVertex(const Vector3f& v, const Vector3f& n, const Vector2f& t,
-                 const Vector4f& c = {1.0f, 1.0f, 1.0f, 1.0f})
-    : RenderVertex(v, n, t, c, {0, 0, 0}, {0, 0, 0})
-    {
-    }
-
     /// Construct and initialise all values
-    template <typename U>
+    template <typename U = float, typename ColVector_T = BasicVector4<float>>
     RenderVertex(const BasicVector3<U>& vertex_, const BasicVector3<U>& normal_,
-                 const BasicVector2<U>& texcoord_, const BasicVector4<U>& colour_,
+                 const BasicVector2<U>& texcoord_,
+                 const ColVector_T& colour_ = BasicVector4<float>(1, 1, 1, 1),
                  const BasicVector3<U>& tangent_ = BasicVector3<U>(0, 0, 0),
                  const BasicVector3<U>& bitangent_ = BasicVector3<U>(0, 0, 0))
     : texcoord(texcoord_),
