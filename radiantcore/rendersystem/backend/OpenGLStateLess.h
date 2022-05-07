@@ -8,8 +8,12 @@ namespace render
 // Compare two Colour4 values
 inline bool Colour4_less(const Colour4& a, const Colour4& b)
 {
-    return a.x() * a.x() + a.y() * a.y() + a.z() * a.z() + a.w() * a.w() <
-           b.x() * b.x() + b.y() * b.y() + b.z() * b.z() + b.w() * b.w();
+    if (a.x() != b.x()) return a.x() < b.x();
+    if (a.y() != b.y()) return a.y() < b.y();
+    if (a.z() != b.z()) return a.z() < b.z();
+    if (a.w() != b.w()) return a.w() < b.w();
+
+    return false;
 }
 
 /**
