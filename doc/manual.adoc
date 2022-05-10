@@ -1121,6 +1121,7 @@ which shows a brief explanation of certain properties. If a property has help
 text available, the question mark icon will be shown in the *?* column.
 |===
 
+[[ReparentingPrimitives]]
 === Reparenting primitives
 
 Whenever a new brush or patch is created, it will automatically be made a child
@@ -1145,11 +1146,23 @@ like — into *func_static* entities to improve in-game performance and reduce t
 chances for map compilation problems caused by excessively complex world
 geometry.
 
+The *func_static* entity class is not the only type of entity which can contain
+primitives: there are several other *func_* entities which perform various
+functions, for example *func_rotating* which allows geometry to rotate
+continuously. DarkRadiant offers dedicated commands to convert to/from a
+*func_static* since this is a very common operation, however the ability to
+<<SelectChildPrimitives,select>>, <<AddRemoveChildPrimitives,add and remove>>
+individual primitives behaves the same for all types of primitive-containing
+entity.
+
 ==== Converting primitives into func_static
 
 To convert one or more existing primitives into a *func_static* entity, simply
 select all of the primitives, right-click in the 2D window, and choose *Convert
 to func_static*.
+
+[[SelectChildPrimitives]]
+==== Manipulating individual child primitives
 
 After converting a primitive, a number of changes are noticeable:
 
@@ -1157,22 +1170,16 @@ After converting a primitive, a number of changes are noticeable:
 . The primitive will no longer be resizeable by dragging its boundary with the
 mouse.
 . When the primitive is selected, the *Entity Inspector* will no longer show the
-*worldspawn* entity, but a new entity with a *classname* of `func_static`. You
-can set spawnargs on this entity like any other (including giving it a custom
-name).
-. Selecting any primitive contained by a *func_static* will cause a small X/Y/Z
-axis widget to be drawn at the entity's origin position (which may be inside one
-of the primitives, or outside all of them, depending on their layout).
+*worldspawn* entity, but a new entity with a different *classname* (e.g.
+`func_static`). You can set spawnargs on this entity like any other (including
+giving it a custom name).
+. Selecting any contained primitive will cause a small X/Y/Z axis widget to be
+drawn at the entity's origin position (which may be inside one of the
+primitives, or outside all of them, depending on their layout).
 . If there are multiple primitives contained within a single entity, selecting
 any individual primitive will cause all of the entity's primitives to be
-selected.
-
-==== Selecting individual child primitives
-
-As mentioned in the previous section, selecting any primitive which comprises
-part of a *func_static* will cause the entire entity and all of its child
-primitives to be selected together. This allows you to easily move the entire
-static object by simply dragging any one of its primitives.
+selected. This allows you to easily move the entire static object by simply
+dragging any one of its primitives.
 
 However, it is still possible to perform operations on a single primitive, for
 example resizing a brush, by selecting it with the *TAB* key. Each press of
@@ -1187,6 +1194,7 @@ list of entity properties. If an entire entity is selected, the text will appear
 similar to `Entity&nbsp;1`, whereas with a primitive selected it will read
 `Entity&nbsp;1,&nbsp;Primitive&nbsp;1`.
 
+[[AddRemoveChildPrimitives]]
 ==== Adding or removing primitives
 
 Once you have created a *func_static* or similar entity from a number of
@@ -1803,6 +1811,29 @@ works for entities which can contain primitives (e.g. func_static).
 *Paste shader*:: Paste the shader currently on the <<ShaderClipboard,shader
 clipboard>> to all selected faces.
 
+*Clear selection*:: De-select all selected objects.
+
+*Invert selection*:: De-select all selected objects, and select all unselected
+objects.
+
+*Select complete tall*:: Convert the currently-selected brush into a selection
+volume, selecting all objects which are completely contained within its outline
+in the current 2D view (ignoring the third dimension). See
+<<BrushBasedSelection,brush-based selection>>.
+
+*Select inside*:: Convert the currently-selected brush into a selection volume,
+selecting all objects which are completely contained within it in all three
+dimensions. See <<BrushBasedSelection, brush-based selection>>.
+
+*Select fully inside*:: Like *Select inside*, except that contained brushes
+which touch the boundary of the selection brush will not be selected.
+
+*Select children*:: Select primitives which are children of the
+currently-selected entity. See <<ReparentingPrimitives,reparenting primitives>>.
+
+*Select parent entities*:: Select the parent entity of the currently-selected
+primitive. See <<ReparentingPrimitives,reparenting primitives>>.
+
 == Configuring DarkRadiant
 
 DarkRadiant offers a large number of configurable options which can be used to
@@ -1840,9 +1871,15 @@ The *Camera* page contains options relating to the movement and behaviour of the
  rather than smooth motion.
 
 *Enable far clip plane*:: You can completely disable the <<Using3DCameraView,far
- clip plane>> by unchecking this option. This will avoid the need to manage the
- position of the far clip plane, but may negatively impact rendering performance
- in large or complex maps.
+clip plane>> by unchecking this option. This will avoid the need to manage the
+position of the far clip plane, but may negatively impact rendering performance
+in large or complex maps.
++
+NOTE: Technically it is not actually possible to _disable_ the far clip plane,
+since having a far clip plane is a requirement for 3D rendering to work
+correctly. This command in fact sets the far clip plane to a very high value,
+e.g. 32768. If your map is very large, it is conceivable that you will still see
+some far clipping behaviour.
 
 *Invert mouse vertical axis*:: Enable this option to flip the sense of the
  vertical camera motion when freelook mode is enabled, so that moving the mouse
