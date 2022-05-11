@@ -54,7 +54,7 @@ public:
 		SelectionIntersection best;
 		m_edge->testSelect(test, best);
 		if (best.isValid()) {
-			Selector_add(selector, *this, best);
+			selector.addWithIntersection(*this, best);
 		}
 	}
 };

@@ -70,7 +70,7 @@ void Node::testSelectComponents(Selector& selector, SelectionTest& test)
 
         if (intersection.isValid())
         {
-            Selector_add(selector, vertex);
+            selector.addWithNullIntersection(vertex);
         }
     }
 }

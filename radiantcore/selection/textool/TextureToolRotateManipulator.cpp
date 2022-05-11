@@ -148,7 +148,7 @@ void TextureToolRotateManipulator::testSelect(SelectionTest& test, const Matrix4
 
     if (best.isValid())
     {
-        Selector_add(selector, _selectableZ);
+        selector.addWithNullIntersection(_selectableZ);
     }
 
     if (!selector.empty())

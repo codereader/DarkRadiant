@@ -57,7 +57,7 @@ public:
 		SelectionIntersection best;
 		m_vertex->testSelect(test, best);
 		if (best.isValid()) {
-			Selector_add(selector, *this, best);
+			selector.addWithIntersection(*this, best);
 		}
 	}
 };
