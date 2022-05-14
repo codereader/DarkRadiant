@@ -412,6 +412,7 @@ private:
         auto numSlots = _slots.size();
         Handle rightmostFreeSlotIndex = static_cast<Handle>(numSlots);
         std::size_t rightmostFreeOffset = 0;
+        std::size_t rightmostFreeSize = 0;
         Handle slotIndex = 0;
 
         for (slotIndex = 0; slotIndex < numSlots; ++slotIndex)
@@ -424,6 +425,7 @@ private:
             if (slot.Offset > rightmostFreeOffset)
             {
                 rightmostFreeOffset = slot.Offset;
+                rightmostFreeSize = slot.Size;
                 rightmostFreeSlotIndex = slotIndex;
             }
 
@@ -445,18 +447,21 @@ private:
 
         // No space wherever, we need to expand the buffer
 
-        // Check if we have any free slots, otherwise allocate a new one
-        if (rightmostFreeSlotIndex == numSlots)
-        {
-            // Create a free slot with 0 size,
-            // rightMostFreeSlotIndex is now within the valid range
-            _slots.emplace_back(_buffer.size(), 0, false);
-        }
-
         // Allocate more memory
-        auto additionalSize = std::max(_buffer.size() * GrowthRate, requiredSize);
-        auto newSize = _buffer.size() + additionalSize;
+        auto oldBufferSize = _buffer.size();
+        auto additionalSize = std::max(oldBufferSize * GrowthRate, requiredSize);
+        auto newSize = oldBufferSize + additionalSize;
         _buffer.resize(newSize);
+
+        // Ensure that the rightmost free slot is at the end of the buffer, otherwise allocate a new one
+        if (rightmostFreeSlotIndex == numSlots || rightmostFreeOffset + rightmostFreeSize != oldBufferSize)
+        {
+            // Create a free slot with 0 size at the end of the storage
+            _slots.emplace_back(oldBufferSize, 0, false);
+
+            // Adjust rightMostFreeSlotIndex to always point at this new slot
+            rightmostFreeSlotIndex = static_cast<Handle>(numSlots);
+        }
 
         // Use the right most slot for our requirement, then cut up the rest of the space
         auto& rightmostFreeSlot = _slots[rightmostFreeSlotIndex];
