@@ -381,7 +381,7 @@ TEST(ContinuousBufferTest, BlockReuseTightlyFit)
 
 // Allocates a 10 byte slot when the buffer is tightly fit (no free slot at the end)
 // There are small free slots available in the middle of the buffer (#5959)
-TEST(ContinuousBufferTest, BlockAllocationTightlyFitWithFreeSlot)
+TEST(ContinuousBufferTest, ExpandBufferWithFreeSlotInTheMiddle)
 {
     auto four = std::vector<int>({ 10,11,12,13 });
     auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
@@ -416,6 +416,44 @@ TEST(ContinuousBufferTest, BlockAllocationTightlyFitWithFreeSlot)
     EXPECT_NE(buffer.getOffset(handle), offsetToFreeBlock) << "The 8-sized block should not be at the offset of the 4-sized hole";
 
     // Load some data into the new block, in the case of #5959 this corrupted data of other slots
+    buffer.setData(handle, eight);
+
+    // Compare the buffer contents to what we expect it to look like now (the 8 ints should have been moved to the end)
+    std::copy(eight.begin(), eight.end(), std::back_inserter(expectedData));
+    EXPECT_TRUE(checkContinuousData(buffer, handles.front(), { expectedData }));
+}
+
+TEST(ContinuousBufferTest, ExpandBufferWithFreeSlotInTheEnd)
+{
+    auto four = std::vector<int>({ 10,11,12,13 });
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+
+    render::ContinuousBuffer<int> buffer(38); // Allocate a buffer of size 38
+
+    // Allocate 9 slots of size 4 to fill the buffer, a slot of 2 will remain free
+    std::vector<render::ContinuousBuffer<int>::Handle> handles;
+    std::vector<int> expectedData;
+
+    for (auto i = 0; i < 9; ++i)
+    {
+        handles.push_back(buffer.allocate(four.size()));
+        buffer.setData(handles.back(), four);
+        expectedData.insert(expectedData.end(), four.begin(), four.end());
+    }
+
+    // Check the data, we should have 9 times the same sequence in the buffer
+    EXPECT_TRUE(checkContinuousData(buffer, handles.front(), { expectedData }));
+
+    // Free one block in the middle of the buffer
+    buffer.deallocate(handles[3]);
+
+    // Allocate a block of size 8, it won't fit in the free slot of size 4 and not the one at the end
+    auto handle = buffer.allocate(eight.size());
+
+    // The newly allocated block should be located at the offset of the last free block
+    EXPECT_EQ(buffer.getOffset(handle), expectedData.size()) << "The 8-sized block should have been put at the rightmost free block";
+
+    // Load some data into the new block
     buffer.setData(handle, eight);
 
     // Compare the buffer contents to what we expect it to look like now (the 8 ints should have been moved to the end)
