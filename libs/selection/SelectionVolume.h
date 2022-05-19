@@ -90,18 +90,6 @@ public:
         }
     }
 
-    void TestLines(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) override
-    {
-        if (count == 0)
-            return;
-        Vector4 clipped[9];
-        for (VertexPointer::iterator i = vertices.begin(), end = i + count; i != end; i += 2)
-        {
-            BestPoint(clipLine(_local2view, *i, *(i + 1), clipped), clipped,
-                      best, _cull);
-        }
-    }
-
     void TestTriangles(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) override
     {
         Vector4 clipped[9];

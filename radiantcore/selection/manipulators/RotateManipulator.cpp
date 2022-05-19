@@ -4,6 +4,7 @@
 #include "selection/SelectionPool.h"
 #include "selection/BestPoint.h"
 #include "selection/TransformationVisitors.h"
+#include "registry/registry.h"
 #include <fmt/format.h>
 
 namespace selection
@@ -198,7 +199,6 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 	}
 	else
 	{
-		{
 			{
 				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldX));
 
@@ -222,7 +222,6 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 				LineStrip_BestPoint(local2view, &_circleZ.getRawPoints().front(), _circleZ.getRawPoints().size(), best);
 				selector.addSelectable(best, &_selectableZ);
 			}
-		}
 
 		{
 			Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._viewpointSpace));
