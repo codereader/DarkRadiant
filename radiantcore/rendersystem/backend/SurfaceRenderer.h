@@ -126,6 +126,8 @@ public:
                 _store.updateData(surfaceInfo.storageHandle, ConvertToRenderVertices(surface.getVertices()), surface.getIndices());
             }
         }
+
+        _surfacesNeedingUpdate.clear();
     }
 
 private:
