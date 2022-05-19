@@ -116,7 +116,11 @@ public:
 
         for (auto slotIndex : _surfacesNeedingUpdate)
         {
-            auto& surfaceInfo = _surfaces.at(slotIndex);
+            auto info = _surfaces.find(slotIndex);
+
+            if (info == _surfaces.end()) continue;
+
+            auto& surfaceInfo = info->second;
 
             if (surfaceInfo.surfaceDataChanged)
             {
