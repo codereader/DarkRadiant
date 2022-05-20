@@ -342,7 +342,7 @@ public:
                 buffer->bind();
 
                 // Less than a couple of operations will be copied piece by piece
-                if (_unsyncedModifications.size() < 20)
+                if (_unsyncedModifications.size() < 100)
                 {
                     for (auto modifiedChunk : _unsyncedModifications)
                     {
