@@ -456,7 +456,19 @@ TEST(CompactWindingVertexBuffer, PolygonIndexerSize5) // Winding size == 5
     EXPECT_EQ(indices[4], 84) << "Index 4 mismatch";
 }
 
-TEST_F(WindingRendererTest, WindingGroupCreation)
+inline std::size_t getNumEntitySurfaces(IRenderEntity* entity)
+{
+    std::size_t count = 0;
+
+    entity->foreachRenderable([&](const render::IRenderableObject::Ptr& object, Shader* shader)
+    {
+        ++count;
+    });
+
+    return count;
+}
+
+TEST_F(WindingRendererTest, EntitySurfaceCreation)
 {
     render::GeometryStore geometryStore(syncObjectProvider, bufferObjectProvider);
     auto shader = GlobalRenderSystem().capture("textures/common/caulk");
@@ -466,10 +478,46 @@ TEST_F(WindingRendererTest, WindingGroupCreation)
     // Create a  new triangle WindingRenderer
     render::WindingRenderer<render::WindingIndexer_Triangles> renderer(geometryStore, testObjectRenderer, shader.get());
 
-    // A test winding
-    std::vector<render::RenderVertex> winding = generateVertices(1, 4);
+    // Test windings of various sizes
+    std::vector<render::RenderVertex> winding4 = generateVertices(1, 4);
+    std::vector<render::RenderVertex> winding3 = generateVertices(1, 3);
 
-    renderer.addWinding(winding, entity.get());
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 0) << "Entity should start with no surfaces";
+
+    auto winding4Slot = renderer.addWinding(winding4, entity.get());
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 1) << "Entity should have 1 surface now";
+
+    auto winding3Slot = renderer.addWinding(winding3, entity.get());
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 2) << "Entity should have 2 surfaces now";
+
+    renderer.removeWinding(winding4Slot);
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 1) << "Entity should have 1 surface now";
+
+    renderer.removeWinding(winding3Slot);
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 0) << "Entity should be empty again";
+}
+
+TEST_F(WindingRendererTest, EntitySurfacesRemovedInDestructor)
+{
+    render::GeometryStore geometryStore(syncObjectProvider, bufferObjectProvider);
+    auto shader = GlobalRenderSystem().capture("textures/common/caulk");
+    auto entity = algorithm::createEntityByClassName("func_static");
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // Create a  new triangle WindingRenderer
+    auto renderer = std::make_unique<render::WindingRenderer<render::WindingIndexer_Triangles>>(geometryStore, testObjectRenderer, shader.get());
+
+    // Test windings of various sizes
+    std::vector<render::RenderVertex> winding4 = generateVertices(1, 4);
+    std::vector<render::RenderVertex> winding3 = generateVertices(1, 3);
+
+    renderer->addWinding(winding4, entity.get());
+    renderer->addWinding(winding3, entity.get());
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 2) << "Entity should have 2 surfaces now";
+
+    // All entity surfaces should be removed in the WindingRenderer's destructor
+    renderer.reset();
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 0) << "Entity should be empty again";
 }
 
 }

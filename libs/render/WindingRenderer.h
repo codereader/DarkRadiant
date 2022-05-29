@@ -314,6 +314,15 @@ private:
             _owner(owner)
         {}
 
+        ~EntityWindings()
+        {
+            // Remove all groups from all entities
+            for (auto& [key, group] : _windingMap)
+            {
+                key.first->removeRenderable(group);
+            }
+        }
+
         void addWinding(Slot slotMappingIndex)
         {
             const auto& slot = _owner._slots[slotMappingIndex];
@@ -392,13 +401,14 @@ public:
 
     ~WindingRenderer()
     {
-        _entitySurfaces.reset();
-
         // Release all storage allocations
         for (auto& bucket : _buckets)
         {
             deallocateStorage(bucket);
         }
+
+        // Clear the entities after releasing the buckets
+        _entitySurfaces.reset();
     }
 
     bool empty() const override
