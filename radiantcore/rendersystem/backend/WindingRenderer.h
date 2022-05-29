@@ -225,6 +225,13 @@ private:
             return _entity->isShadowCasting();
         }
 
+        // Called by EntityWindings after the vertex location has moved
+        // in which case this group needs to rebuild its index remap
+        void onVertexGeometryLocationChanged()
+        {
+            _surfaceNeedsRebuild = true;
+        }
+
     private:
         void boundsChanged()
         {
@@ -348,6 +355,19 @@ private:
             {
                 slot.renderEntity->removeRenderable(group);
                 _windingMap.erase(key);
+            }
+        }
+
+        // Called by the WindingRenderer after the vertex location of the given bucket has moved
+        // in which case all affected groups need to rebuild their index remaps
+        void onVertexGeometryLocationChanged(BucketIndex bucketIndex)
+        {
+            for (auto& [key, group] : _windingMap)
+            {
+                if (key.second == bucketIndex)
+                {
+                    group->onVertexGeometryLocationChanged();
+                }
             }
         }
     };
@@ -658,6 +678,12 @@ private:
         _geometryStore.deallocateSlot(bucket.storageHandle);
         bucket.storageHandle = InvalidStorageHandle;
         bucket.storageCapacity = 0;
+
+        // Notify any groups about the changed storage location
+        if (RenderingTraits<WindingIndexerT>::SupportsEntitySurfaces())
+        {
+            _entitySurfaces->onVertexGeometryLocationChanged(bucket.index);
+        }
     }
 
     void commitDeletions(BucketIndex bucketIndex)
