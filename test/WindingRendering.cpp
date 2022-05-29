@@ -1,9 +1,28 @@
 #include "gtest/gtest.h"
+#include "RadiantTest.h"
+#include "scenelib.h"
 #include "render/MeshVertex.h"
 #include "render/CompactWindingVertexBuffer.h"
+#include "render/WindingRenderer.h"
+#include "render/GeometryStore.h"
+#include "testutil/RenderUtils.h"
+#include "testutil/TestBufferObjectProvider.h"
+#include "testutil/TestObjectRenderer.h"
+#include "testutil/TestSyncObjectProvider.h"
+#include "algorithm/Entity.h"
 
 namespace test
 {
+
+using WindingRendererTest = RadiantTest;
+
+// Local test implementations of renderer interfaces
+namespace
+{
+    TestBufferObjectProvider bufferObjectProvider;
+    TestSyncObjectProvider syncObjectProvider;
+    TestObjectRenderer testObjectRenderer;
+}
 
 constexpr int SmallestWindingSize = 3;
 constexpr int LargestWindingSize = 12;
@@ -435,6 +454,22 @@ TEST(CompactWindingVertexBuffer, PolygonIndexerSize5) // Winding size == 5
     EXPECT_EQ(indices[2], 82) << "Index 2 mismatch";
     EXPECT_EQ(indices[3], 83) << "Index 3 mismatch";
     EXPECT_EQ(indices[4], 84) << "Index 4 mismatch";
+}
+
+TEST_F(WindingRendererTest, WindingGroupCreation)
+{
+    render::GeometryStore geometryStore(syncObjectProvider, bufferObjectProvider);
+    auto shader = GlobalRenderSystem().capture("textures/common/caulk");
+    auto entity = algorithm::createEntityByClassName("func_static");
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // Create a  new triangle WindingRenderer
+    render::WindingRenderer<render::WindingIndexer_Triangles> renderer(geometryStore, testObjectRenderer, shader.get());
+
+    // A test winding
+    std::vector<render::RenderVertex> winding = generateVertices(1, 4);
+
+    renderer.addWinding(winding, entity.get());
 }
 
 }

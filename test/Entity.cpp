@@ -30,13 +30,6 @@ using EntityTest = RadiantTest;
 namespace
 {
 
-// Create an entity from a simple classname string
-IEntityNodePtr createByClassName(const std::string& className)
-{
-    auto cls = GlobalEntityClassManager().findClass(className);
-    return GlobalEntityModule().createEntity(cls);
-}
-
 // Container for an entity under test. Stores the entity and adds it to the
 // global map to enable undo.
 struct TestEntity
@@ -48,7 +41,7 @@ struct TestEntity
     static TestEntity create(const std::string& className)
     {
         TestEntity result;
-        result.node = createByClassName(className);
+        result.node = algorithm::createEntityByClassName(className);
         result.spawnArgs = &result.node->getEntity();
 
         // Enable undo
@@ -254,7 +247,7 @@ TEST_F(EntityTest, CreateBasicLightEntity)
 
 TEST_F(EntityTest, EnumerateEntitySpawnargs)
 {
-    auto light = createByClassName("light");
+    auto light = algorithm::createEntityByClassName("light");
     auto& spawnArgs = light->getEntity();
 
     // Visit spawnargs by key and value string
@@ -294,7 +287,7 @@ TEST_F(EntityTest, EnumerateEntitySpawnargs)
 
 TEST_F(EntityTest, EnumerateInheritedSpawnargs)
 {
-    auto light = createByClassName("atdm:light_base");
+    auto light = algorithm::createEntityByClassName("atdm:light_base");
     auto& spawnArgs = light->getEntity();
 
     // Enumerate all keyvalues including the inherited ones
@@ -316,7 +309,7 @@ TEST_F(EntityTest, EnumerateInheritedSpawnargs)
 
 TEST_F(EntityTest, GetKeyValuePairs)
 {
-    auto torch = createByClassName("atdm:torch_brazier");
+    auto torch = algorithm::createEntityByClassName("atdm:torch_brazier");
     auto& spawnArgs = torch->getEntity();
 
     using Pair = Entity::KeyValuePairs::value_type;
@@ -349,7 +342,7 @@ TEST_F(EntityTest, GetKeyValuePairs)
 
 TEST_F(EntityTest, CopySpawnargs)
 {
-    auto light = createByClassName("atdm:light_base");
+    auto light = algorithm::createEntityByClassName("atdm:light_base");
     auto& spawnArgs = light->getEntity();
 
     // Add some custom spawnargs to copy
@@ -420,7 +413,7 @@ TEST_F(EntityTest, UndoRedoSpawnargValueChange)
 
 TEST_F(EntityTest, SelectEntity)
 {
-    auto light = createByClassName("light");
+    auto light = algorithm::createEntityByClassName("light");
 
     // Confirm that setting entity node's selection status propagates to the
     // selection system
@@ -433,7 +426,7 @@ TEST_F(EntityTest, SelectEntity)
 
 TEST_F(EntityTest, DestroySelectedEntity)
 {
-    auto light = createByClassName("light");
+    auto light = algorithm::createEntityByClassName("light");
 
     // Confirm that setting entity node's selection status propagates to the
     // selection system
@@ -547,7 +540,7 @@ TEST_F(EntityTest, ModifyEntityClass)
 
 TEST_F(EntityTest, LightLocalToWorldFromOrigin)
 {
-    auto light = createByClassName("light");
+    auto light = algorithm::createEntityByClassName("light");
 
     // Initial localToWorld should be identity
     EXPECT_EQ(light->localToWorld(), Matrix4::getIdentity());
@@ -568,7 +561,7 @@ TEST_F(EntityTest, LightLocalToWorldFromOrigin)
 
 TEST_F(EntityTest, LightWireframeShader)
 {
-    auto light = createByClassName("light");
+    auto light = algorithm::createEntityByClassName("light");
 
     // Initially there is no shader because there is no rendersystem
     auto wireSh = light->getWireShader();
@@ -596,7 +589,7 @@ TEST_F(EntityTest, LightWireframeShader)
 TEST_F(EntityTest, LightVolumeColorFromColorKey)
 {
     // Create a default light
-    auto light = createByClassName("light");
+    auto light = algorithm::createEntityByClassName("light");
 
     {
         // Render the default light
@@ -630,7 +623,7 @@ TEST_F(EntityTest, LightVolumeColorFromColorKey)
 TEST_F(EntityTest, OverrideLightVolumeColour)
 {
     // Create a light with an arbitrary colour
-    auto light = createByClassName("light");
+    auto light = algorithm::createEntityByClassName("light");
     light->getEntity().setKeyValue("_color", "0.25 0.55 0.9");
 
     // Set the "override light volume colour" key
@@ -672,8 +665,8 @@ TEST_F(EntityTest, OverrideLightVolumeColour)
 
 TEST_F(EntityTest, OverrideEClassColour)
 {
-    auto light = createByClassName("light");
-    auto torch = createByClassName("light_torchflame_small");
+    auto light = algorithm::createEntityByClassName("light");
+    auto torch = algorithm::createEntityByClassName("light_torchflame_small");
     auto lightCls = light->getEntity().getEntityClass();
     auto torchCls = torch->getEntity().getEntityClass();
 
@@ -715,7 +708,7 @@ TEST_F(EntityTest, MissingEclassColourIsValid)
 
 TEST_F(EntityTest, FuncStaticLocalToWorld)
 {
-    auto funcStatic = createByClassName("func_static");
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
     auto& spawnArgs = funcStatic->getEntity();
     spawnArgs.setKeyValue("origin", "0 0 0");
 
@@ -889,7 +882,7 @@ inline std::set<render::IRenderableObject::Ptr> getAllObjects(IRenderEntityPtr e
 TEST_F(EntityTest, ForeachAttachment)
 {
     // Insert a static entity with an attached light to the scene
-    auto torch = createByClassName("atdm:torch_brazier");
+    auto torch = algorithm::createEntityByClassName("atdm:torch_brazier");
     scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
 
     int attachmentCount = 0;
@@ -907,8 +900,8 @@ TEST_F(EntityTest, LightTransformedByParent)
     // Parent a light to another entity (this isn't currently how the attachment
     // system is implemented, but it should validate that a light node can
     // inherit the transformation of its parent).
-    auto light = createByClassName("light");
-    auto parentModel = createByClassName("func_static");
+    auto light = algorithm::createEntityByClassName("light");
+    auto parentModel = algorithm::createEntityByClassName("func_static");
     scene::addNodeToContainer(light, parentModel);
     scene::addNodeToContainer(parentModel, GlobalMapModule().getRoot());
 
@@ -942,7 +935,7 @@ TEST_F(EntityTest, RenderUnselectedLightEntity)
 {
     RenderFixture fixture;
 
-    auto light = createByClassName("light");
+    auto light = algorithm::createEntityByClassName("light");
     scene::addNodeToContainer(light, GlobalMapModule().getRoot());
 
     // Run the front-end collector through the scene
@@ -956,7 +949,7 @@ TEST_F(EntityTest, RenderSelectedLightEntity)
 {
     RenderFixture fixture;
 
-    auto light = createByClassName("light");
+    auto light = algorithm::createEntityByClassName("light");
     scene::addNodeToContainer(light, GlobalMapModule().getRoot());
 
     // Select the light then render it
@@ -972,7 +965,7 @@ TEST_F(EntityTest, RenderSelectedLightEntity)
 
 TEST_F(EntityTest, RenderLightProperties)
 {
-    auto light = createByClassName("light_torchflame_small");
+    auto light = algorithm::createEntityByClassName("light_torchflame_small");
     scene::addNodeToContainer(light, GlobalMapModule().getRoot());
 
     auto& spawnArgs = light->getEntity();
@@ -1002,7 +995,7 @@ TEST_F(EntityTest, RenderLightProperties)
 
 TEST_F(EntityTest, RenderEmptyFuncStatic)
 {
-    auto funcStatic = createByClassName("func_static");
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
 
     // Func static without a model key is empty
     RenderFixture rf;
@@ -1013,7 +1006,7 @@ TEST_F(EntityTest, RenderEmptyFuncStatic)
 TEST_F(EntityTest, RenderFuncStaticWithModel)
 {
     // Create a func_static with a model key
-    auto funcStatic = createByClassName("func_static");
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
     funcStatic->getEntity().setKeyValue("model", "models/moss_patch.ase");
     scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
 
@@ -1041,7 +1034,7 @@ TEST_F(EntityTest, RenderFuncStaticWithModel)
 TEST_F(EntityTest, RenderFuncStaticWithMultiSurfaceModel)
 {
     // Create a func_static with a model key
-    auto funcStatic = createByClassName("func_static");
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
     funcStatic->getEntity().setKeyValue("model", "models/torch.lwo");
     scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
 
@@ -1114,7 +1107,7 @@ TEST_F(EntityTest, EntityNodeGenericShaderParms)
 TEST_F(EntityTest, CreateAttachedLightEntity)
 {
     // Create the torch entity which has an attached light
-    auto torch = createByClassName("atdm:torch_brazier");
+    auto torch = algorithm::createEntityByClassName("atdm:torch_brazier");
     ASSERT_TRUE(torch);
 
     // Check that the attachment spawnargs are present
@@ -1160,7 +1153,7 @@ TEST_F(EntityTest, AttachedLightAtCorrectPosition)
     const Vector3 EXPECTED_OFFSET(0, 0, 10); // attach offset in def
 
     // Create a torch node and set a non-zero origin
-    auto torch = createByClassName("atdm:torch_brazier");
+    auto torch = algorithm::createEntityByClassName("atdm:torch_brazier");
     torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
     scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
 
@@ -1208,7 +1201,7 @@ TEST_F(EntityTest, AttachedLightMovesWithEntity)
     const Vector3 EXPECTED_OFFSET(0, 0, 10); // attach offset in def
 
     // Create a torch node and set a non-zero origin
-    auto torch = createByClassName("atdm:torch_brazier");
+    auto torch = algorithm::createEntityByClassName("atdm:torch_brazier");
     torch->getEntity().setKeyValue("origin", string::to_string(ORIGIN));
     scene::addNodeToContainer(torch, GlobalMapModule().getRoot());
 
@@ -1238,7 +1231,7 @@ TEST_F(EntityTest, AttachedLightMovesWithEntity)
 
 TEST_F(EntityTest, CreateAIEntity)
 {
-    auto guard = createByClassName("atdm:ai_builder_guard");
+    auto guard = algorithm::createEntityByClassName("atdm:ai_builder_guard");
     ASSERT_TRUE(guard);
 
     // Guard should have a hammer attachment
@@ -1376,7 +1369,7 @@ inline void expectKeyValuesAreEquivalent(const std::vector<std::pair<std::string
 
 TEST_F(EntityTest, EntityObserverAttachDetach)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guardNode = algorithm::createEntityByClassName("atdm:ai_builder_guard");
     auto guard = Node_getEntity(guardNode);
 
     TestEntityObserver observer;
@@ -1420,7 +1413,7 @@ TEST_F(EntityTest, EntityObserverAttachDetach)
 
 TEST_F(EntityTest, EntityObserverKeyAddition)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guardNode = algorithm::createEntityByClassName("atdm:ai_builder_guard");
     auto guard = Node_getEntity(guardNode);
 
     TestEntityObserver observer;
@@ -1453,7 +1446,7 @@ TEST_F(EntityTest, EntityObserverKeyAddition)
 
 TEST_F(EntityTest, EntityObserverKeyRemoval)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guardNode = algorithm::createEntityByClassName("atdm:ai_builder_guard");
     auto guard = Node_getEntity(guardNode);
 
     TestEntityObserver observer;
@@ -1489,7 +1482,7 @@ TEST_F(EntityTest, EntityObserverKeyRemoval)
 
 TEST_F(EntityTest, EntityObserverKeyChange)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guardNode = algorithm::createEntityByClassName("atdm:ai_builder_guard");
     auto guard = Node_getEntity(guardNode);
 
     TestEntityObserver observer;
@@ -1697,7 +1690,7 @@ TEST_F(EntityTest, EntityObserverUndoSingleKeyValue)
 
 TEST_F(EntityTest, KeyObserverAttachDetach)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guardNode = algorithm::createEntityByClassName("atdm:ai_builder_guard");
     auto guard = Node_getEntity(guardNode);
 
     constexpr const char* NewKeyName = "New_Unique_Key";
@@ -1727,7 +1720,7 @@ TEST_F(EntityTest, KeyObserverAttachDetach)
 
 TEST_F(EntityTest, KeyObserverValueChange)
 {
-    auto guardNode = createByClassName("atdm:ai_builder_guard");
+    auto guardNode = algorithm::createEntityByClassName("atdm:ai_builder_guard");
     auto guard = Node_getEntity(guardNode);
 
     constexpr const char* NewKeyName = "New_Unique_Key";

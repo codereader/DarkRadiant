@@ -96,6 +96,15 @@
     <ClInclude Include="..\..\..\test\testutil\MapOperationMonitor.h">
       <Filter>testutil</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\testutil\TestSyncObjectProvider.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\testutil\TestObjectRenderer.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\testutil\RenderUtils.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="algorithm">

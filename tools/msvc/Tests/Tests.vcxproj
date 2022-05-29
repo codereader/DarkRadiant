@@ -74,8 +74,11 @@
     <ClInclude Include="..\..\..\test\TestLogFile.h" />
     <ClInclude Include="..\..\..\test\testutil\CommandFailureHelper.h" />
     <ClInclude Include="..\..\..\test\testutil\MapOperationMonitor.h" />
+    <ClInclude Include="..\..\..\test\testutil\RenderUtils.h" />
     <ClInclude Include="..\..\..\test\testutil\TestBufferObjectProvider.h" />
     <ClInclude Include="..\..\..\test\testutil\FileSelectionHelper.h" />
+    <ClInclude Include="..\..\..\test\testutil\TestObjectRenderer.h" />
+    <ClInclude Include="..\..\..\test\testutil\TestSyncObjectProvider.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\Basic.cpp" />
