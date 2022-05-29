@@ -1021,7 +1021,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\SceneRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\SurfaceRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\TextRenderer.h" />
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\WindingRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\GLFont.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\LightingModeRenderResult.h" />

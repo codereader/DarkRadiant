@@ -386,6 +386,9 @@
     <ClInclude Include="..\..\libs\string\format.h">
       <Filter>string</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\render\WindingRenderer.h">
+      <Filter>render</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

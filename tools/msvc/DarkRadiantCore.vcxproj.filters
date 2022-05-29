@@ -2340,9 +2340,6 @@
     <ClInclude Include="..\..\radiantcore\skins\SkinDeclParser.h">
       <Filter>src\skins</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\WindingRenderer.h">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FenceSyncProvider.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
