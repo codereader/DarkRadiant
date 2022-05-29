@@ -12,6 +12,7 @@
 #include "backend/SceneRenderer.h"
 #include "backend/FenceSyncProvider.h"
 #include "backend/BufferObjectProvider.h"
+#include "backend/ObjectRenderer.h"
 #include "render/GeometryStore.h"
 
 namespace render

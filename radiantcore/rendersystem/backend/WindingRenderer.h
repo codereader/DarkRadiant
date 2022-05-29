@@ -4,9 +4,8 @@
 #include "irender.h"
 #include <limits>
 #include "iwindingrenderer.h"
-#include "ObjectRenderer.h"
+#include "iobjectrenderer.h"
 #include "render/CompactWindingVertexBuffer.h"
-#include "debugging/gl.h"
 
 namespace render
 {
