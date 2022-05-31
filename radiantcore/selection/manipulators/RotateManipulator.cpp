@@ -193,59 +193,63 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 
     SelectionPool selector;
 
-	if (test.getVolume().TestPoint(_pivot.getVector3()))
-	{
-		selector.addSelectable(SelectionIntersection(0, 0), &_selectablePivotPoint);
-	}
-	else
-	{
-			{
-				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldX));
+    if (test.getVolume().TestPoint(_pivot.getVector3()))
+    {
+        selector.addSelectable(SelectionIntersection(0, 0), &_selectablePivotPoint);
+    }
+    else
+    {
+        auto viewProj = test.getVolume().GetViewProjection();
+        {
+            Matrix4 local2view = viewProj * _local2worldX;
 
-				SelectionIntersection best;
-				LineStrip_BestPoint(local2view, &_circleX.getRawPoints().front(), _circleX.getRawPoints().size(), best);
-				selector.addSelectable(best, &_selectableX);
-			}
+            SelectionIntersection best;
+            LineStrip_BestPoint(local2view, &_circleX.getRawPoints().front(),
+                                _circleX.getRawPoints().size(), best);
+            selector.addSelectable(best, &_selectableX);
+        }
 
-			{
-				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldY));
+        {
+            Matrix4 local2view = viewProj * _local2worldY;
 
-				SelectionIntersection best;
-				LineStrip_BestPoint(local2view, &_circleY.getRawPoints().front(), _circleY.getRawPoints().size(), best);
-				selector.addSelectable(best, &_selectableY);
-			}
+            SelectionIntersection best;
+            LineStrip_BestPoint(local2view, &_circleY.getRawPoints().front(),
+                                _circleY.getRawPoints().size(), best);
+            selector.addSelectable(best, &_selectableY);
+        }
 
-			{
-				Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_local2worldZ));
+        {
+            Matrix4 local2view = viewProj * _local2worldZ;
 
-				SelectionIntersection best;
-				LineStrip_BestPoint(local2view, &_circleZ.getRawPoints().front(), _circleZ.getRawPoints().size(), best);
-				selector.addSelectable(best, &_selectableZ);
-			}
+            SelectionIntersection best;
+            LineStrip_BestPoint(local2view, &_circleZ.getRawPoints().front(),
+                                _circleZ.getRawPoints().size(), best);
+            selector.addSelectable(best, &_selectableZ);
+        }
 
-		{
-			Matrix4 local2view(test.getVolume().GetViewProjection().getMultipliedBy(_pivot2World._viewpointSpace));
+        {
+            Matrix4 local2view = viewProj * _pivot2World._viewpointSpace;
 
-			{
-				SelectionIntersection best;
-				LineLoop_BestPoint(local2view, &_circleScreen.getRawPoints().front(), _circleScreen.getRawPoints().size(), best);
-				selector.addSelectable(best, &_selectableScreen);
-			}
+            {
+                SelectionIntersection best;
+                auto points = _circleScreen.getRawPoints();
+                LineLoop_BestPoint(local2view, &points.front(), points.size(), best);
+                selector.addSelectable(best, &_selectableScreen);
+            }
 
-			{
-				SelectionIntersection best;
-				Circle_BestPoint(local2view, eClipCullCW, &_circleSphere.getRawPoints().front(), _circleSphere.getRawPoints().size(), best);
-				selector.addSelectable(best, &_selectableSphere);
-			}
-		}
-	}
+            {
+                SelectionIntersection best;
+                auto points = _circleSphere.getRawPoints();
+                Circle_BestPoint(local2view, eClipCullCW, &points.front(), points.size(), best);
+                selector.addSelectable(best, &_selectableSphere);
+            }
+        }
+    }
 
     _axisScreen = _pivot2World._axisScreen;
 
     if (!selector.empty())
-    {
-		selector.begin()->second->setSelected(true);
-    }
+        selector.begin()->second->setSelected(true);
 }
 
 RotateManipulator::Component* RotateManipulator::getActiveComponent()
