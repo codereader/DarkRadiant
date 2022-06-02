@@ -1,0 +1,14 @@
+
+// func_emitter has its "model" key set to "-" after creation
+entityDef func_emitter
+{
+    "inherit"           "func_static"
+
+    "editor_color"      "0 0.5 0.8"
+    "editor_mins"       "-12 -12 -12"
+    "editor_maxs"       "12 12 12"
+
+    "spawnclass"        "idFuncEmitter"
+
+    "editor_setKeyValue model"  "-"
+}

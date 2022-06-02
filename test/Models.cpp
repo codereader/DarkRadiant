@@ -3,6 +3,9 @@
 #include <unordered_set>
 #include "imodelsurface.h"
 #include "imodelcache.h"
+#include "scenelib.h"
+#include "algorithm/Entity.h"
+#include "algorithm/Scene.h"
 
 #include "render/VertexHashing.h"
 
@@ -451,6 +454,28 @@ TEST_F(ModelTest, LoadFbxModel)
     EXPECT_EQ(model->getSurface(0).getDefaultMaterial(), "phong1");
     EXPECT_EQ(model->getVertexCount(), 24);
     EXPECT_EQ(model->getPolyCount(), 12);
+}
+
+// #5964: Model nodes below a func_emitter didn't get rendered at the entity's origin after creating the entity
+TEST_F(ModelTest, NullModelTransformAfterSceneInsertion)
+{
+    auto entityOrigin = Vector3(320, 100, 0);
+    auto funcEmitter = GlobalEntityModule().createEntityFromSelection("func_emitter", entityOrigin);
+
+    EXPECT_EQ(funcEmitter->getEntity().getKeyValue("model"), "-") << "Expected func_emitter to have a model after creation";
+
+    scene::addNodeToContainer(funcEmitter, GlobalMapModule().getRoot());
+
+    // Get the child model node of the func_emitter
+    auto nullModelNode = algorithm::getNthChild(funcEmitter, 0);
+
+    EXPECT_TRUE(nullModelNode) << "func_emitter should have a child node";
+    EXPECT_EQ(nullModelNode->getNodeType(), scene::INode::Type::Model) << "func_emitter should have a model node as child";
+
+    // Check the localToWorld() matrix of the model node, it should be a translation to the entity's origin
+    auto modelTranslation = nullModelNode->localToWorld().tCol().getVector3();
+    EXPECT_TRUE(math::isNear(modelTranslation, entityOrigin, 0.01)) << 
+        "Model node should be at the entity's origin, but was at " << modelTranslation;
 }
 
 }
