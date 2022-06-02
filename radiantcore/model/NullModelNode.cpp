@@ -123,6 +123,14 @@ const AABB& NullModelNode::localAABB() const
 	return _nullModel->localAABB();
 }
 
+void NullModelNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    Node::onInsertIntoScene(root);
+
+    // When inserted into the scene, the localToWorld matrix has to be re-evaluated
+    transformChanged();
+}
+
 void NullModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     Node::onRemoveFromScene(root);

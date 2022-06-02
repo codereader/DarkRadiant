@@ -56,6 +56,7 @@ public:
 	// Bounded implementation
 	const AABB& localAABB() const override;
 
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
     void onRemoveFromScene(scene::IMapRootNode& root) override;
     void transformChangedLocal() override;
 
