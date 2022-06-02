@@ -39,7 +39,7 @@ inline void verifyAllocation(render::IGeometryStore& store, render::IGeometrySto
 
         EXPECT_TRUE(math::isNear(vertex.vertex, expectedVertex.vertex, 0.01)) << "Vertex data mismatch";
         EXPECT_TRUE(math::isNear(vertex.texcoord, expectedVertex.texcoord, 0.01)) << "Texcoord data mismatch";
-        EXPECT_TRUE(math::isNear(vertex.normal, expectedVertex.normal, 0.01)) << "Texcoord data mismatch";
+        EXPECT_TRUE(math::isNear(vertex.normal, expectedVertex.normal, 0.01)) << "Normal data mismatch";
 
         ++expectedIndex;
     }
