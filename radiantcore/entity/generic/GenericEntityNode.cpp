@@ -14,7 +14,7 @@ GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
     _renderableArrow(*this),
-    _renderableBox(*this, localAABB(), worldAABB().getOrigin()),
+    _renderableBox(*this, localAABB(), m_origin),
 	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1")
 {}
 
@@ -27,13 +27,9 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
     _renderableArrow(*this),
-    _renderableBox(*this, localAABB(), worldAABB().getOrigin()),
+    _renderableBox(*this, localAABB(), m_origin),
 	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1")
 {}
-
-GenericEntityNode::~GenericEntityNode()
-{
-}
 
 std::shared_ptr<GenericEntityNode> GenericEntityNode::Create(const IEntityClassPtr& eclass)
 {
@@ -55,18 +51,18 @@ void GenericEntityNode::construct()
 	if (!_allow3Drotations)
 	{
 		// Ordinary rotation (2D around z axis), use angle key observer
-        static_assert(std::is_base_of<sigc::trackable, AngleKey>::value);
+        static_assert(std::is_base_of_v<sigc::trackable, AngleKey>);
 		observeKey("angle", sigc::mem_fun(m_angleKey, &AngleKey::angleChanged));
 	}
 	else
 	{
 		// Full 3D rotations allowed, observe both keys using the rotation key observer
-        static_assert(std::is_base_of<sigc::trackable, RotationKey>::value);
+        static_assert(std::is_base_of_v<sigc::trackable, RotationKey>);
 		observeKey("angle", sigc::mem_fun(m_rotationKey, &RotationKey::angleChanged));
         observeKey("rotation", sigc::mem_fun(m_rotationKey, &RotationKey::rotationChanged));
     }
 
-    static_assert(std::is_base_of<sigc::trackable, OriginKey>::value);
+    static_assert(std::is_base_of_v<sigc::trackable, OriginKey>);
 	observeKey("origin", sigc::mem_fun(m_originKey, &OriginKey::onKeyValueChanged));
 }
 

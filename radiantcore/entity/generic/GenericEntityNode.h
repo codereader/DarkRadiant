@@ -61,7 +61,6 @@ class GenericEntityNode final : public EntityNode, public Snappable
 
 public:
 	GenericEntityNode(const IEntityClassPtr& eclass);
-    ~GenericEntityNode();
 
 private:
 	GenericEntityNode(const GenericEntityNode& other);
