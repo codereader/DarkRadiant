@@ -133,6 +133,7 @@ void LightNode::onLightRadiusChanged()
 {
     // Light radius changed, mark bounds as dirty
     boundsChanged();
+    updateRenderables();
 }
 
 void LightNode::transformChanged()
