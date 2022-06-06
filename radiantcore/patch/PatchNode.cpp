@@ -133,21 +133,24 @@ bool PatchNode::selectedVertices() {
     return false;
 }
 
-void PatchNode::snapComponents(float snap) {
+void PatchNode::snapComponents(float snap)
+{
 	// Are there any selected vertices
-	if (selectedVertices()) {
-		// Tell the patch to save the current undo state
-		m_patch.undoSave();
+    if (!selectedVertices()) return;
 
-		// Cycle through all the selected control instances and snap them to the grid
-		for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
-			if(i->isSelected()) {
-				i->snapto(snap);
-			}
-		}
-		// Tell the patch that control points have changed
-		m_patch.controlPointsChanged();
-	}
+    // Cycle through all the selected control instances and snap them to the grid
+    for (auto& vertex : m_ctrl_instances)
+    {
+	    if (vertex.isSelected())
+        {
+            vertex.snapto(snap);
+	    }
+    }
+
+    // Save the transformed control point array to the real set
+    m_patch.freezeTransform();
+    // Tell the patch that control points have changed
+    m_patch.controlPointsChanged();
 }
 
 // Test the Patch instance for selection
