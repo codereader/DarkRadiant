@@ -14,7 +14,7 @@ GenericEntityNode::GenericEntityNode(const IEntityClassPtr& eclass) :
 	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
     _renderableArrow(*this),
-    _renderableBox(*this, localAABB(), m_origin),
+    _renderableBox(*this, localAABB(), worldAABB().getOrigin()),
 	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1")
 {}
 
@@ -27,7 +27,7 @@ GenericEntityNode::GenericEntityNode(const GenericEntityNode& other) :
 	m_angle(AngleKey::IDENTITY),
 	m_rotationKey(std::bind(&GenericEntityNode::rotationChanged, this)),
     _renderableArrow(*this),
-    _renderableBox(*this, localAABB(), m_origin),
+    _renderableBox(*this, localAABB(), worldAABB().getOrigin()),
 	_allow3Drotations(_spawnArgs.getKeyValue("editor_rotatable") == "1")
 {}
 
