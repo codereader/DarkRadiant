@@ -30,6 +30,7 @@ add_executable(drtest
                ModelScale.cpp
                Models.cpp
                Particles.cpp
+               Patch.cpp
                PatchIterators.cpp
                PatchWelding.cpp
                PointTrace.cpp

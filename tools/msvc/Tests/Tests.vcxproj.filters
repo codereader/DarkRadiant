@@ -58,6 +58,7 @@
     <ClCompile Include="..\..\..\test\Particles.cpp" />
     <ClCompile Include="..\..\..\test\GeometryStore.cpp" />
     <ClCompile Include="..\..\..\test\Settings.cpp" />
+    <ClCompile Include="..\..\..\test\Patch.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

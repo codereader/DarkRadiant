@@ -112,6 +112,7 @@
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
     <ClCompile Include="..\..\..\test\Parsing.cpp" />
     <ClCompile Include="..\..\..\test\Particles.cpp" />
+    <ClCompile Include="..\..\..\test\Patch.cpp" />
     <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
     <ClCompile Include="..\..\..\test\PatchWelding.cpp" />
     <ClCompile Include="..\..\..\test\PointTrace.cpp" />
