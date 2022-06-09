@@ -70,7 +70,7 @@ public:
 
     /// Construct from another BasicVector3 with a compatible element type
     template<typename U> BasicVector3(const BasicVector3<U>& other)
-    : BasicVector3(other.x(), other.y(), other.z())
+    : BasicVector3(static_cast<T>(other.x()), static_cast<T>(other.y()), static_cast<T>(other.z()))
     {
     }
 
