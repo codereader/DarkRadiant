@@ -85,7 +85,7 @@ public:
         if (planes[0].normal().dot(corners[1]) > 0 && planes[0].normal().dot(corners[2]) > 0 &&
             planes[0].normal().dot(corners[5]) > 0 && planes[0].normal().dot(corners[6]) > 0)
         {
-            Selector_add(selector, _selectableRight);
+            selector.addWithNullIntersection(_selectableRight);
             selectedPlaneCallback(planes[0]);
             //rMessage() << "right\n";
         }
@@ -93,7 +93,7 @@ public:
         if (planes[1].normal().dot(corners[0]) > 0 && planes[1].normal().dot(corners[3]) > 0 && 
             planes[1].normal().dot(corners[4]) > 0 && planes[1].normal().dot(corners[7]) > 0)
         {
-            Selector_add(selector, _selectableLeft);
+            selector.addWithNullIntersection(_selectableLeft);
             selectedPlaneCallback(planes[1]);
             //rMessage() << "left\n";
         }
@@ -101,7 +101,7 @@ public:
         if (planes[2].normal().dot(corners[0]) > 0 && planes[2].normal().dot(corners[1]) > 0 && 
             planes[2].normal().dot(corners[4]) > 0 && planes[2].normal().dot(corners[5]) > 0)
         {
-            Selector_add(selector, _selectableFront);
+            selector.addWithNullIntersection(_selectableFront);
             selectedPlaneCallback(planes[2]);
             //rMessage() << "front\n";
         }
@@ -109,7 +109,7 @@ public:
         if (planes[3].normal().dot(corners[2]) > 0 && planes[3].normal().dot(corners[3]) > 0 && 
             planes[3].normal().dot(corners[6]) > 0 && planes[3].normal().dot(corners[7]) > 0)
         {
-            Selector_add(selector, _selectableBack);
+            selector.addWithNullIntersection(_selectableBack);
             selectedPlaneCallback(planes[3]);
             //rMessage() << "back\n";
         }
@@ -117,7 +117,7 @@ public:
         if (planes[4].normal().dot(corners[0]) > 0 && planes[4].normal().dot(corners[1]) > 0 && 
             planes[4].normal().dot(corners[2]) > 0 && planes[4].normal().dot(corners[3]) > 0)
         {
-            Selector_add(selector, _selectableTop);
+            selector.addWithNullIntersection(_selectableTop);
             selectedPlaneCallback(planes[4]);
             //rMessage() << "top\n";
         }
@@ -125,7 +125,7 @@ public:
         if (planes[5].normal().dot(corners[4]) > 0 && planes[5].normal().dot(corners[5]) > 0 && 
             planes[5].normal().dot(corners[6]) > 0 && planes[5].normal().dot(corners[7]) > 0)
         {
-            Selector_add(selector, _selectableBottom);
+            selector.addWithNullIntersection(_selectableBottom);
             selectedPlaneCallback(planes[5]);
             //rMessage() << "bottom\n";
         }
@@ -140,32 +140,32 @@ public:
 
         if (selectedPlanes.contains(-planes[0]))
         {
-            Selector_add(selector, _selectableRight);
+            selector.addWithNullIntersection(_selectableRight);
         }
 
         if (selectedPlanes.contains(-planes[1]))
         {
-            Selector_add(selector, _selectableLeft);
+            selector.addWithNullIntersection(_selectableLeft);
         }
 
         if (selectedPlanes.contains(-planes[2]))
         {
-            Selector_add(selector, _selectableFront);
+            selector.addWithNullIntersection(_selectableFront);
         }
 
         if (selectedPlanes.contains(-planes[3]))
         {
-            Selector_add(selector, _selectableBack);
+            selector.addWithNullIntersection(_selectableBack);
         }
 
         if (selectedPlanes.contains(-planes[4]))
         {
-            Selector_add(selector, _selectableTop);
+            selector.addWithNullIntersection(_selectableTop);
         }
 
         if (selectedPlanes.contains(-planes[5]))
         {
-            Selector_add(selector, _selectableBottom);
+            selector.addWithNullIntersection(_selectableBottom);
         }
     }
 

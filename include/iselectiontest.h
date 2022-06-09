@@ -231,35 +231,62 @@ public:
   virtual void TestPoint(const Vector3& point, SelectionIntersection& best) = 0;
   virtual void TestPolygon(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) = 0;
   virtual void TestLineStrip(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) = 0;
-  virtual void TestLines(const VertexPointer& vertices, std::size_t count, SelectionIntersection& best) = 0;
   virtual void TestTriangles(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0;
   virtual void TestQuads(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0;
   virtual void TestQuadStrip(const VertexPointer& vertices, const IndexPointer& indices, SelectionIntersection& best) = 0;
 };
 typedef std::shared_ptr<SelectionTest> SelectionTestPtr;
 
+/**
+ * @brief Abstract interface for an object which collects possibly-selected
+ * objects, keeping track of the best intersection which typically determines
+ * which candidate object should be selected when more than one is possible.
+ *
+ * This object exposes a stateful interface. A call to pushSelectable() sets the
+ * given ISelectable object as the "current" selectable. Subsequent calls to
+ * addIntersection() apply to this current selectable, replacing the current
+ * intersection if the newly-submitted one is better. The operation is completed
+ * when popSelectable() is called, and the current selectable along with its
+ * best intersection is added to the internal list(s).
+ *
+ * Despite the usage of "push" and "pop" terminology, there is only one current
+ * selectable, and no internal stack.
+ */
 class Selector
 {
 public:
-  virtual ~Selector() {}
-  virtual void pushSelectable(ISelectable& selectable) = 0;
-  virtual void popSelectable() = 0;
-  virtual void addIntersection(const SelectionIntersection& intersection) = 0;
+    virtual ~Selector() {}
+
+    /// Set the given object as the current selectable
+    virtual void pushSelectable(ISelectable& selectable) = 0;
+
+    /// Commit the current selectable, storing it along with its best intersection
+    virtual void popSelectable() = 0;
+
+    /**
+     * @brief Add a candidate intersection for the current selectable.
+     *
+     * The candidate intersection is only stored if it is a better fit than the
+     * best intersection seen so far.
+     */
+    virtual void addIntersection(const SelectionIntersection& intersection) = 0;
+
+    /// Add a selectable object and immediately commit it with a null intersection
+    void addWithNullIntersection(ISelectable& selectable)
+    {
+        pushSelectable(selectable);
+        addIntersection(SelectionIntersection(0, 0));
+        popSelectable();
+    }
+
+    /// Add a selectable object and immediately commit it with the given intersection
+    void addWithIntersection(ISelectable& selectable, const SelectionIntersection& intersection)
+    {
+        pushSelectable(selectable);
+        addIntersection(intersection);
+        popSelectable();
+    }
 };
-
-inline void Selector_add(Selector& selector, ISelectable& selectable)
-{
-  selector.pushSelectable(selectable);
-  selector.addIntersection(SelectionIntersection(0, 0));
-  selector.popSelectable();
-}
-
-inline void Selector_add(Selector& selector, ISelectable& selectable, const SelectionIntersection& intersection)
-{
-  selector.pushSelectable(selectable);
-  selector.addIntersection(intersection);
-  selector.popSelectable();
-}
 
 class VolumeTest;
 class SelectionTestable

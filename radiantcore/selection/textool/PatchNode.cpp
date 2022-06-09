@@ -104,7 +104,7 @@ void PatchNode::testSelect(Selector& selector, SelectionTest& test)
 
     if (best.isValid())
     {
-        Selector_add(selector, *this);
+        selector.addWithNullIntersection(*this);
     }
 }
 

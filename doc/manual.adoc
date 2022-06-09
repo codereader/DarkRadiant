@@ -256,9 +256,9 @@ and fully lit by in-game light sources. While the 2D view is the main interface
 for creating and aligning level geometry, the 3D view is a vital tool for tasks
 such as texturing, or configuring light parameters.
 
-IMPORTANT: The fully lit rendering mode in DarkRadiant is very limited, and only
-offers a partial view of what the game engine will ultimately render. In
-particular, there are no shadows or foglights.
+IMPORTANT: The fully lit rendering mode in DarkRadiant is not identical to what
+the game engine will ultimately render. Certain advanced rendering features such
+as reflections and fog lights are not currently supported.
 
 The 3D camera view provides its own toolbar which can be used to configure
 various display settings.
@@ -827,6 +827,7 @@ needs to align across all of the brushes, regardless of how they are moved or
 resized), you will want to disable *Texture Lock*.
 |===
 
+[[ShaderClipboard]]
 ==== Using the shader clipboard
 
 While constructing a map it will frequently be necessary to apply the same
@@ -972,9 +973,12 @@ properties using the light inspector, which is accessed with the *L* key.
 
 image::LightInspector.png[align="center"]
 
+TIP: The light inspector can change the properties of a single light, or
+multiple selected lights simultaneously.
+
 *Light volume (omni vs projected)*:: The majority of lights in a map will be the
-default, omnidirectional shape. An omni light is a simple axis-aligned cuboid
-which emits light in all directions from its center to its edges.
+default, omnidirectional shape. An omni light is a simple cuboid which emits
+light in all directions from its center to its edges.
 +
 A projected light is pyramid-shaped, and emits light from the tip of the pyramid
 towards the base. Projected lights behave more like spotlights in real-life, and
@@ -982,8 +986,11 @@ can be used to highlight particular areas or project images of windows onto the
 floor.
 
 *Colour*:: Use the colour selector button to display a standard colour selection
-dialog, or enter the RGB values directly using the text box. As well as changing
-the hue, the light colour also governs the overall brightness of the light.
+dialog. As well as changing the hue, the light colour also governs the overall
+brightness of the light. You can use the slider below the colour button to
+adjust the brightness of the selected light(s) without changing the hue, with
+realtime feedback displayed in the 3D camera view if lighting preview mode is
+enabled.
 
 *Texture*:: The falloff texture controls the shape of the lit area when rendered
 in-game; the square texture chosen here will be mapped directly onto the
@@ -1114,6 +1121,7 @@ which shows a brief explanation of certain properties. If a property has help
 text available, the question mark icon will be shown in the *?* column.
 |===
 
+[[ReparentingPrimitives]]
 === Reparenting primitives
 
 Whenever a new brush or patch is created, it will automatically be made a child
@@ -1138,11 +1146,23 @@ like — into *func_static* entities to improve in-game performance and reduce t
 chances for map compilation problems caused by excessively complex world
 geometry.
 
+The *func_static* entity class is not the only type of entity which can contain
+primitives: there are several other *func_* entities which perform various
+functions, for example *func_rotating* which allows geometry to rotate
+continuously. DarkRadiant offers dedicated commands to convert to/from a
+*func_static* since this is a very common operation, however the ability to
+<<SelectChildPrimitives,select>>, <<AddRemoveChildPrimitives,add and remove>>
+individual primitives behaves the same for all types of primitive-containing
+entity.
+
 ==== Converting primitives into func_static
 
 To convert one or more existing primitives into a *func_static* entity, simply
 select all of the primitives, right-click in the 2D window, and choose *Convert
 to func_static*.
+
+[[SelectChildPrimitives]]
+==== Manipulating individual child primitives
 
 After converting a primitive, a number of changes are noticeable:
 
@@ -1150,22 +1170,16 @@ After converting a primitive, a number of changes are noticeable:
 . The primitive will no longer be resizeable by dragging its boundary with the
 mouse.
 . When the primitive is selected, the *Entity Inspector* will no longer show the
-*worldspawn* entity, but a new entity with a *classname* of `func_static`. You
-can set spawnargs on this entity like any other (including giving it a custom
-name).
-. Selecting any primitive contained by a *func_static* will cause a small X/Y/Z
-axis widget to be drawn at the entity's origin position (which may be inside one
-of the primitives, or outside all of them, depending on their layout).
+*worldspawn* entity, but a new entity with a different *classname* (e.g.
+`func_static`). You can set spawnargs on this entity like any other (including
+giving it a custom name).
+. Selecting any contained primitive will cause a small X/Y/Z axis widget to be
+drawn at the entity's origin position (which may be inside one of the
+primitives, or outside all of them, depending on their layout).
 . If there are multiple primitives contained within a single entity, selecting
 any individual primitive will cause all of the entity's primitives to be
-selected.
-
-==== Selecting individual child primitives
-
-As mentioned in the previous section, selecting any primitive which comprises
-part of a *func_static* will cause the entire entity and all of its child
-primitives to be selected together. This allows you to easily move the entire
-static object by simply dragging any one of its primitives.
+selected. This allows you to easily move the entire static object by simply
+dragging any one of its primitives.
 
 However, it is still possible to perform operations on a single primitive, for
 example resizing a brush, by selecting it with the *TAB* key. Each press of
@@ -1180,6 +1194,7 @@ list of entity properties. If an entire entity is selected, the text will appear
 similar to `Entity&nbsp;1`, whereas with a primitive selected it will read
 `Entity&nbsp;1,&nbsp;Primitive&nbsp;1`.
 
+[[AddRemoveChildPrimitives]]
 ==== Adding or removing primitives
 
 Once you have created a *func_static* or similar entity from a number of
@@ -1786,6 +1801,39 @@ content into a file and load it later as an actual map fragment.
 TIP: To unparent *all* of an entity's primitives and convert them back into
 worldspawn, just right-click in the 2D view and choose *Revert to worldspawn*.
 
+*Merge selected entities*:: Convert two more more selected entities into a
+single entity which contains all of the contained brushes and patches. Only
+works for entities which can contain primitives (e.g. func_static).
+
+*Copy shader*:: Copy the shader from the selected face to the
+<<ShaderClipboard,shader clipboard>>.
+
+*Paste shader*:: Paste the shader currently on the <<ShaderClipboard,shader
+clipboard>> to all selected faces.
+
+*Clear selection*:: De-select all selected objects.
+
+*Invert selection*:: De-select all selected objects, and select all unselected
+objects.
+
+*Select complete tall*:: Convert the currently-selected brush into a selection
+volume, selecting all objects which are completely contained within its outline
+in the current 2D view (ignoring the third dimension). See
+<<BrushBasedSelection,brush-based selection>>.
+
+*Select inside*:: Convert the currently-selected brush into a selection volume,
+selecting all objects which are completely contained within it in all three
+dimensions. See <<BrushBasedSelection, brush-based selection>>.
+
+*Select fully inside*:: Like *Select inside*, except that contained brushes
+which touch the boundary of the selection brush will not be selected.
+
+*Select children*:: Select primitives which are children of the
+currently-selected entity. See <<ReparentingPrimitives,reparenting primitives>>.
+
+*Select parent entities*:: Select the parent entity of the currently-selected
+primitive. See <<ReparentingPrimitives,reparenting primitives>>.
+
 == Configuring DarkRadiant
 
 DarkRadiant offers a large number of configurable options which can be used to
@@ -1823,9 +1871,15 @@ The *Camera* page contains options relating to the movement and behaviour of the
  rather than smooth motion.
 
 *Enable far clip plane*:: You can completely disable the <<Using3DCameraView,far
- clip plane>> by unchecking this option. This will avoid the need to manage the
- position of the far clip plane, but may negatively impact rendering performance
- in large or complex maps.
+clip plane>> by unchecking this option. This will avoid the need to manage the
+position of the far clip plane, but may negatively impact rendering performance
+in large or complex maps.
++
+NOTE: Technically it is not actually possible to _disable_ the far clip plane,
+since having a far clip plane is a requirement for 3D rendering to work
+correctly. This command in fact sets the far clip plane to a very high value,
+e.g. 32768. If your map is very large, it is conceivable that you will still see
+some far clipping behaviour.
 
 *Invert mouse vertical axis*:: Enable this option to flip the sense of the
  vertical camera motion when freelook mode is enabled, so that moving the mouse

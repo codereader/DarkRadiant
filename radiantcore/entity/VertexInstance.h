@@ -56,7 +56,7 @@ public:
 
 		if (best.isValid()) {
 			// Add the selectable to the given selector > this should trigger the callbacks
-			Selector_add(selector, *this, best);
+			selector.addWithIntersection(*this, best);
 		}
 	}
 };
@@ -86,7 +86,7 @@ public:
 
 		if (best.isValid()) {
 			// Add the selectable to the given selector > this should trigger the callbacks
-			Selector_add(selector, *this, best);
+			selector.addWithIntersection(*this, best);
 		}
 	}
 };

@@ -171,20 +171,36 @@ protected:
 };
 
 /// Line strip in the shape of a semicircle
-template<typename RemapPolicy>
 class RenderableSemiCircle :
     public RenderableLineStrip
 {
 public:
-    RenderableSemiCircle(std::size_t segments, double radius, const Matrix4& localToWorld) :
-        RenderableLineStrip((segments << 2) + 1, localToWorld)
+
+    /**
+     * @brief Construct a new RenderableSemiCircle object
+     *
+     * @param segments
+     * Number of linear segments to divide the semicircle into.
+     *
+     * @param radius
+     * Radius of the semicircle in world units.
+     *
+     * @param localToWorld
+     * Local space transformation matrix.
+     *
+     * @param axisRemap
+     * Optional matrix to reassign axes, used to orient the semicircle in 3D space.
+     */
+    RenderableSemiCircle(std::size_t segments, double radius, const Matrix4& localToWorld,
+                         const Matrix4& axisRemap)
+    : RenderableLineStrip((segments << 2) + 1, localToWorld)
     {
         const double increment = math::PI / double(segments << 2);
 
         std::size_t count = 0;
         double x = radius;
         double y = 0;
-        RemapPolicy::set(_rawPoints[segments << 2], -radius, 0, 0);
+        _rawPoints[segments << 2] = axisRemap * Vertex3(-radius, 0, 0);
 
         while (count < segments) {
             auto& i = _rawPoints[count];
@@ -193,8 +209,8 @@ public:
             auto& k = _rawPoints[count + (segments << 1)];
             auto& l = _rawPoints[(segments << 1) - (count + 1) + (segments << 1)];
 
-            RemapPolicy::set(i, x, -y, 0);
-            RemapPolicy::set(k, -y, -x, 0);
+            i = axisRemap * Vertex3(x, -y, 0);
+            k = axisRemap * Vertex3(-y, -x, 0);
 
             ++count;
 
@@ -202,8 +218,8 @@ public:
             x = radius * cos(theta);
             y = radius * sin(theta);
 
-            RemapPolicy::set(j, y, -x, 0);
-            RemapPolicy::set(l, -x, -y, 0);
+            j = axisRemap * Vertex3(y, -x, 0);
+            l = axisRemap * Vertex3(-x, -y, 0);
         }
     }
 };

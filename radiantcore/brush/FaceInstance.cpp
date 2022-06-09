@@ -175,7 +175,7 @@ void FaceInstance::testSelect(Selector& selector, SelectionTest& test) {
 	SelectionIntersection best;
 	testSelect(test, best);
 	if (best.isValid()) {
-		Selector_add(selector, m_selectable, best);
+		selector.addWithIntersection(m_selectable, best);
 	}
 }
 
@@ -184,7 +184,7 @@ void FaceInstance::testSelect_centroid(Selector& selector, SelectionTest& test) 
 		SelectionIntersection best;
 		m_face->testSelect_centroid(test, best);
 		if (best.isValid()) {
-			Selector_add(selector, m_selectable, best);
+			selector.addWithIntersection(m_selectable, best);
 		}
 	}
 }
@@ -199,14 +199,14 @@ void FaceInstance::selectPlane(Selector& selector, const Line& line, PlanesItera
 		}
 	}
 
-	Selector_add(selector, m_selectable);
+	selector.addWithNullIntersection(m_selectable);
 
 	selectedPlaneCallback(getFace().plane3());
 }
 
 void FaceInstance::selectReversedPlane(Selector& selector, const SelectedPlanes& selectedPlanes) {
 	if (selectedPlanes.contains(-(getFace().plane3()))) {
-		Selector_add(selector, m_selectable);
+		selector.addWithNullIntersection(m_selectable);
 	}
 }
 

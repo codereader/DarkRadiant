@@ -49,8 +49,14 @@ public:
     : _v(x_, y_, z_, w_)
     {}
 
-    // Construct a BasicVector4 out of a Vector3 plus a W value (default 1)
-    BasicVector4(const BasicVector3<T>& other, T w_ = 1)
+    /// Construct from another BasicVector4 with a compatible element type
+    template<typename U> BasicVector4(const BasicVector4<U>& other)
+    : BasicVector4(other.x(), other.y(), other.z(), other.w())
+    {}
+
+    /// Construct from a BasicVector3 of compatible element type, plus an optional W value
+    template <typename U, typename W = float>
+    BasicVector4(const BasicVector3<U>& other, W w_ = 1.0f)
     {
         _v[0] = other.x();
         _v[1] = other.y();
