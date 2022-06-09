@@ -232,15 +232,15 @@ void RotateManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2wor
 
             {
                 SelectionIntersection best;
-                auto points = _circleScreen.getRawPoints();
+                const auto& points = _circleScreen.getRawPoints();
                 LineLoop_BestPoint(local2view, &points.front(), points.size(), best);
                 selector.addSelectable(best, &_selectableScreen);
             }
 
             {
                 SelectionIntersection best;
-                auto points = _circleSphere.getRawPoints();
-                Circle_BestPoint(local2view, eClipCullCW, &points.front(), points.size(), best);
+                const auto& points = _circleSphere.getRawPoints();
+                Circle_BestPoint(local2view, eClipCullCCW, &points.front(), points.size(), best);
                 selector.addSelectable(best, &_selectableSphere);
             }
         }
