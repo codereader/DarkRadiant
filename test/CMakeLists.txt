@@ -48,8 +48,6 @@ add_executable(drtest
 
 find_package(Threads REQUIRED)
 
-target_compile_options(drtest PUBLIC ${SIGC_CFLAGS})
-
 # Set up the paths such that the drtest executable can find the test resources
 # and the core binary in the build workspace (in install/ and test/resources/)
 get_filename_component(TEST_BASE_PATH "./" ABSOLUTE)

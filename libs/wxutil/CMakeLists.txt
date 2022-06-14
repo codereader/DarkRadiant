@@ -34,7 +34,7 @@ add_library(wxutil
             Splitter.cpp
             WindowPosition.cpp
             window/TransientWindow.cpp)
-target_compile_options(wxutil PUBLIC ${SIGC_CFLAGS} ${FTGL_CFLAGS})
+target_compile_options(wxutil PUBLIC ${FTGL_CFLAGS})
 target_link_libraries(wxutil PUBLIC
                       math
                       scenegraph

@@ -27,7 +27,6 @@ add_library(script MODULE
             ScriptingSystem.cpp
             ScriptModule.cpp)
 set_target_properties(script PROPERTIES CXX_VISIBILITY_PRESET hidden)
-target_compile_options(script PUBLIC ${SIGC_CFLAGS})
 target_include_directories(script SYSTEM PUBLIC
                            ${CMAKE_SOURCE_DIR}/libs/pybind
                            ${Python_INCLUDE_DIRS})

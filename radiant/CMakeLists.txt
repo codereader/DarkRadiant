@@ -174,7 +174,7 @@ add_executable(darkradiant
                xyview/tools/ClipperTool.cpp
                xyview/tools/MeasurementTool.cpp
                xyview/XYWnd.cpp)
-target_compile_options(darkradiant PRIVATE ${SIGC_CFLAGS} ${FREETYPE_CFLAGS} ${GLIB_CFLAGS})
+target_compile_options(darkradiant PRIVATE ${FREETYPE_CFLAGS} ${GLIB_CFLAGS})
 target_include_directories(darkradiant PRIVATE .)
 target_link_libraries(darkradiant PRIVATE
                       math xmlutil scenegraph wxutil module
