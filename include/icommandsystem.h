@@ -224,8 +224,21 @@ struct AutoCompletionInfo
 	Candidates candidates;
 };
 
-class ICommandSystem :
-	public RegisterableModule
+/**
+ * @brief Interface for the CommandSystem module.
+ *
+ * Commands are self-contained blocks of code (function calls or lambdas) which
+ * can be invoked from menu items or from typing string commands in the
+ * DarkRadiant console. They can also be called from Python.
+ *
+ * Commands can be invoked programmatically via the executeCommand() method,
+ * which is sometimes useful if the implementing function isn't exposed via a
+ * suitable module interface. Note however that neither the name of the command
+ * (an arbitrary string) or the types of its arguments are checked at
+ * compile-time, so calling C++ methods directly is generally preferable where
+ * possible.
+ */
+class ICommandSystem: public RegisterableModule
 {
 public:
 

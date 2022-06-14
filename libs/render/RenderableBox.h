@@ -16,40 +16,40 @@ inline std::vector<RenderVertex> getFillBoxVertices(const Vector3& min, const Ve
     return
     {
         // Bottom quad
-        RenderVertex({ min[0], max[1], min[2] }, {0,0,-1}, {0,1}, colour),
-        RenderVertex({ max[0], max[1], min[2] }, {0,0,-1}, {1,1}, colour),
-        RenderVertex({ max[0], min[1], min[2] }, {0,0,-1}, {1,0}, colour),
-        RenderVertex({ min[0], min[1], min[2] }, {0,0,-1}, {0,0}, colour),
+        RenderVertex(Vector3{ min[0], max[1], min[2] }, {0,0,-1}, {0,1}, colour),
+        RenderVertex(Vector3{ max[0], max[1], min[2] }, {0,0,-1}, {1,1}, colour),
+        RenderVertex(Vector3{ max[0], min[1], min[2] }, {0,0,-1}, {1,0}, colour),
+        RenderVertex(Vector3{ min[0], min[1], min[2] }, {0,0,-1}, {0,0}, colour),
 
         // Top quad
-        RenderVertex({ min[0], min[1], max[2] }, {0,0,+1}, {0,1}, colour),
-        RenderVertex({ max[0], min[1], max[2] }, {0,0,+1}, {1,1}, colour),
-        RenderVertex({ max[0], max[1], max[2] }, {0,0,+1}, {1,0}, colour),
-        RenderVertex({ min[0], max[1], max[2] }, {0,0,+1}, {0,0}, colour),
+        RenderVertex(Vector3{ min[0], min[1], max[2] }, {0,0,+1}, {0,1}, colour),
+        RenderVertex(Vector3{ max[0], min[1], max[2] }, {0,0,+1}, {1,1}, colour),
+        RenderVertex(Vector3{ max[0], max[1], max[2] }, {0,0,+1}, {1,0}, colour),
+        RenderVertex(Vector3{ min[0], max[1], max[2] }, {0,0,+1}, {0,0}, colour),
 
         // Front quad
-        RenderVertex({ min[0], min[1], min[2] }, {0,-1,0}, {0,1}, colour),
-        RenderVertex({ max[0], min[1], min[2] }, {0,-1,0}, {1,1}, colour),
-        RenderVertex({ max[0], min[1], max[2] }, {0,-1,0}, {1,0}, colour),
-        RenderVertex({ min[0], min[1], max[2] }, {0,-1,0}, {0,0}, colour),
+        RenderVertex(Vector3{ min[0], min[1], min[2] }, {0,-1,0}, {0,1}, colour),
+        RenderVertex(Vector3{ max[0], min[1], min[2] }, {0,-1,0}, {1,1}, colour),
+        RenderVertex(Vector3{ max[0], min[1], max[2] }, {0,-1,0}, {1,0}, colour),
+        RenderVertex(Vector3{ min[0], min[1], max[2] }, {0,-1,0}, {0,0}, colour),
 
         // Back quad
-        RenderVertex({ min[0], max[1], min[2] }, {0,+1,0}, {1,1}, colour),
-        RenderVertex({ min[0], max[1], max[2] }, {0,+1,0}, {1,0}, colour),
-        RenderVertex({ max[0], max[1], max[2] }, {0,+1,0}, {0,0}, colour),
-        RenderVertex({ max[0], max[1], min[2] }, {0,+1,0}, {0,1}, colour),
+        RenderVertex(Vector3{ min[0], max[1], min[2] }, {0,+1,0}, {1,1}, colour),
+        RenderVertex(Vector3{ min[0], max[1], max[2] }, {0,+1,0}, {1,0}, colour),
+        RenderVertex(Vector3{ max[0], max[1], max[2] }, {0,+1,0}, {0,0}, colour),
+        RenderVertex(Vector3{ max[0], max[1], min[2] }, {0,+1,0}, {0,1}, colour),
 
         // Right quad
-        RenderVertex({ max[0], max[1], min[2] }, {+1,0,0}, {1,1}, colour),
-        RenderVertex({ max[0], max[1], max[2] }, {+1,0,0}, {1,0}, colour),
-        RenderVertex({ max[0], min[1], max[2] }, {+1,0,0}, {0,0}, colour),
-        RenderVertex({ max[0], min[1], min[2] }, {+1,0,0}, {0,1}, colour),
+        RenderVertex(Vector3{ max[0], max[1], min[2] }, {+1,0,0}, {1,1}, colour),
+        RenderVertex(Vector3{ max[0], max[1], max[2] }, {+1,0,0}, {1,0}, colour),
+        RenderVertex(Vector3{ max[0], min[1], max[2] }, {+1,0,0}, {0,0}, colour),
+        RenderVertex(Vector3{ max[0], min[1], min[2] }, {+1,0,0}, {0,1}, colour),
 
         // Left quad
-        RenderVertex({ min[0], max[1], min[2] }, {-1,0,0}, {0,1}, colour),
-        RenderVertex({ min[0], min[1], min[2] }, {-1,0,0}, {1,1}, colour),
-        RenderVertex({ min[0], min[1], max[2] }, {-1,0,0}, {1,0}, colour),
-        RenderVertex({ min[0], max[1], max[2] }, {-1,0,0}, {0,0}, colour),
+        RenderVertex(Vector3{ min[0], max[1], min[2] }, {-1,0,0}, {0,1}, colour),
+        RenderVertex(Vector3{ min[0], min[1], min[2] }, {-1,0,0}, {1,1}, colour),
+        RenderVertex(Vector3{ min[0], min[1], max[2] }, {-1,0,0}, {1,0}, colour),
+        RenderVertex(Vector3{ min[0], max[1], max[2] }, {-1,0,0}, {0,0}, colour),
     };
 }
 
@@ -59,16 +59,16 @@ inline std::vector<RenderVertex> getWireframeBoxVertices(const Vector3& min, con
     return
     {
         // Bottom quad
-        RenderVertex({ min[0], min[1], min[2] }, {0,0,1}, {0,0}, colour),
-        RenderVertex({ max[0], min[1], min[2] }, {0,0,1}, {0,0}, colour),
-        RenderVertex({ max[0], max[1], min[2] }, {0,0,1}, {0,0}, colour),
-        RenderVertex({ min[0], max[1], min[2] }, {0,0,1}, {0,0}, colour),
+        RenderVertex(Vector3{ min[0], min[1], min[2] }, {0,0,1}, {0,0}, colour),
+        RenderVertex(Vector3{ max[0], min[1], min[2] }, {0,0,1}, {0,0}, colour),
+        RenderVertex(Vector3{ max[0], max[1], min[2] }, {0,0,1}, {0,0}, colour),
+        RenderVertex(Vector3{ min[0], max[1], min[2] }, {0,0,1}, {0,0}, colour),
 
         // Top quad
-        RenderVertex({ min[0], min[1], max[2] }, {0,0,1}, {0,0}, colour),
-        RenderVertex({ max[0], min[1], max[2] }, {0,0,1}, {0,0}, colour),
-        RenderVertex({ max[0], max[1], max[2] }, {0,0,1}, {0,0}, colour),
-        RenderVertex({ min[0], max[1], max[2] }, {0,0,1}, {0,0}, colour),
+        RenderVertex(Vector3{ min[0], min[1], max[2] }, {0,0,1}, {0,0}, colour),
+        RenderVertex(Vector3{ max[0], min[1], max[2] }, {0,0,1}, {0,0}, colour),
+        RenderVertex(Vector3{ max[0], max[1], max[2] }, {0,0,1}, {0,0}, colour),
+        RenderVertex(Vector3{ min[0], max[1], max[2] }, {0,0,1}, {0,0}, colour),
     };
 }
 

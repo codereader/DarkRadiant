@@ -31,9 +31,9 @@ void RenderableLightOctagon::updateGeometry()
     static Vector3 Extents(8, 8, 8);
 
     // Calculate the light vertices of this bounding box and store them into <points>
-    Vector3 max(Origin + Extents);
-    Vector3 min(Origin - Extents);
-    Vector3 mid(Origin);
+    Vector3f max(Origin + Extents);
+    Vector3f min(Origin - Extents);
+    Vector3f mid(Origin);
 
     auto colour = _light.getEntityColour();
 
@@ -90,8 +90,8 @@ void RenderableLightVolume::updatePointLightVolume()
     const auto& radius = _light.getLightRadius();
 
     // Calculate the corner vertices of this bounding box, plus the mid-point
-    Vector3 max(Origin + radius);
-    Vector3 min(Origin - radius);
+    Vector3f max(Origin + radius);
+    Vector3f min(Origin - radius);
 
     auto colour = _light.getEntityColour();
 
