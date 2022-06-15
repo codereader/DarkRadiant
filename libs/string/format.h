@@ -2,11 +2,11 @@
 
 #include <fmt/format.h>
 
-namespace os
+namespace string
 {
 
 // Formats the given number in bytes/kB/MB/GB
-inline std::string getFormattedFileSize(std::size_t size)
+inline std::string getFormattedByteSize(std::size_t size)
 {
     if (size > 1024 * 1024 * 1024)
     {

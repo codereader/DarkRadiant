@@ -47,6 +47,7 @@ class SpeakerNode final :
     // Renderable speaker radii
     RenderableSpeakerRadiiWireframe _renderableRadiiWireframe;
     RenderableSpeakerRadiiFill _renderableRadiiFill;
+    RenderableSpeakerRadiiFill _renderableRadiiFillOutline;
 
     bool _showRadiiWhenUnselected;
 
@@ -61,6 +62,9 @@ class SpeakerNode final :
 
     // dragplanes for resizing using mousedrag
     selection::DragPlanes _dragPlanes;
+
+    ShaderPtr _radiiFillShader;
+    ShaderPtr _radiiFillOutlineShader;
 
 private:
     SpeakerNode(const IEntityClassPtr& eclass);
@@ -140,6 +144,8 @@ protected:
 
 private:
     void evaluateTransform();
+    void updateRenderables();
+    void clearRenderables();
 };
 
 } // namespace

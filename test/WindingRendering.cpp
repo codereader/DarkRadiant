@@ -1,9 +1,28 @@
 #include "gtest/gtest.h"
+#include "RadiantTest.h"
+#include "scenelib.h"
 #include "render/MeshVertex.h"
 #include "render/CompactWindingVertexBuffer.h"
+#include "render/WindingRenderer.h"
+#include "render/GeometryStore.h"
+#include "testutil/RenderUtils.h"
+#include "testutil/TestBufferObjectProvider.h"
+#include "testutil/TestObjectRenderer.h"
+#include "testutil/TestSyncObjectProvider.h"
+#include "algorithm/Entity.h"
 
 namespace test
 {
+
+using WindingRendererTest = RadiantTest;
+
+// Local test implementations of renderer interfaces
+namespace
+{
+    TestBufferObjectProvider bufferObjectProvider;
+    TestSyncObjectProvider syncObjectProvider;
+    TestObjectRenderer testObjectRenderer;
+}
 
 constexpr int SmallestWindingSize = 3;
 constexpr int LargestWindingSize = 12;
@@ -435,6 +454,179 @@ TEST(CompactWindingVertexBuffer, PolygonIndexerSize5) // Winding size == 5
     EXPECT_EQ(indices[2], 82) << "Index 2 mismatch";
     EXPECT_EQ(indices[3], 83) << "Index 3 mismatch";
     EXPECT_EQ(indices[4], 84) << "Index 4 mismatch";
+}
+
+inline std::size_t getNumEntitySurfaces(IRenderEntity* entity)
+{
+    std::size_t count = 0;
+
+    entity->foreachRenderable([&](const render::IRenderableObject::Ptr& object, Shader* shader)
+    {
+        ++count;
+    });
+
+    return count;
+}
+
+inline render::IRenderableObject::Ptr getNthEntitySurface(IRenderEntity* entity, std::size_t index)
+{
+    std::size_t count = 0;
+    render::IRenderableObject::Ptr foundObject;
+
+    entity->foreachRenderable([&](const render::IRenderableObject::Ptr& object, Shader* _)
+    {
+        if (count++ == index)
+        {
+            foundObject = object;
+        }
+    });
+
+    return foundObject;
+}
+
+TEST_F(WindingRendererTest, EntitySurfaceCreation)
+{
+    render::GeometryStore geometryStore(syncObjectProvider, bufferObjectProvider);
+    auto shader = GlobalRenderSystem().capture("textures/common/caulk");
+    auto entity = algorithm::createEntityByClassName("func_static");
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // Create a  new triangle WindingRenderer
+    render::WindingRenderer<render::WindingIndexer_Triangles> renderer(geometryStore, testObjectRenderer, shader.get());
+
+    // Test windings of various sizes
+    std::vector<render::RenderVertex> winding4 = generateVertices(1, 4);
+    std::vector<render::RenderVertex> winding3 = generateVertices(1, 3);
+
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 0) << "Entity should start with no surfaces";
+
+    auto winding4Slot = renderer.addWinding(winding4, entity.get());
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 1) << "Entity should have 1 surface now";
+
+    auto winding3Slot = renderer.addWinding(winding3, entity.get());
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 2) << "Entity should have 2 surfaces now";
+
+    renderer.removeWinding(winding4Slot);
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 1) << "Entity should have 1 surface now";
+
+    renderer.removeWinding(winding3Slot);
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 0) << "Entity should be empty again";
+}
+
+TEST_F(WindingRendererTest, EntitySurfacesRemovedInDestructor)
+{
+    render::GeometryStore geometryStore(syncObjectProvider, bufferObjectProvider);
+    auto shader = GlobalRenderSystem().capture("textures/common/caulk");
+    auto entity = algorithm::createEntityByClassName("func_static");
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // Create a  new triangle WindingRenderer
+    auto renderer = std::make_unique<render::WindingRenderer<render::WindingIndexer_Triangles>>(geometryStore, testObjectRenderer, shader.get());
+
+    // Test windings of various sizes
+    std::vector<render::RenderVertex> winding4 = generateVertices(1, 4);
+    std::vector<render::RenderVertex> winding3 = generateVertices(1, 3);
+
+    renderer->addWinding(winding4, entity.get());
+    renderer->addWinding(winding3, entity.get());
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 2) << "Entity should have 2 surfaces now";
+
+    // All entity surfaces should be removed in the WindingRenderer's destructor
+    renderer.reset();
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 0) << "Entity should be empty again";
+}
+
+// Checks that the given vertex slot contains the given set of vertices
+void verifyVertexSlot(render::IGeometryStore& store, render::IGeometryStore::Slot slot, 
+    const std::vector<render::RenderVertex>& vertices)
+{
+    auto renderParms = store.getRenderParameters(slot);
+
+    auto expectedVertex = vertices.begin();
+
+    for (auto vertex = renderParms.clientBufferStart + renderParms.firstVertex; 
+         expectedVertex != vertices.end();
+         ++vertex, ++expectedVertex)
+    {
+        EXPECT_TRUE(math::isNear(vertex->vertex, expectedVertex->vertex, 0.01)) << "Vertex data mismatch";
+        EXPECT_TRUE(math::isNear(vertex->texcoord, expectedVertex->texcoord, 0.01)) << "Texcoord data mismatch";
+        EXPECT_TRUE(math::isNear(vertex->normal, expectedVertex->normal, 0.01)) << "Normal data mismatch";
+    }
+}
+
+// #5963: Entity surface IndexRemap slots not updated after moving the CompactWindingVertexBuffer to a different vertex geometry slot
+TEST_F(WindingRendererTest, IndexRemapsUpdatedAfterReallocation)
+{
+    render::GeometryStore geometryStore(syncObjectProvider, bufferObjectProvider);
+    auto shader = GlobalRenderSystem().capture("textures/common/caulk");
+    auto entity = algorithm::createEntityByClassName("func_static");
+    auto entity2 = algorithm::createEntityByClassName("func_static");
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+    scene::addNodeToContainer(entity2, GlobalMapModule().getRoot());
+
+    // Create a  new triangle WindingRenderer
+    auto renderer = std::make_unique<render::WindingRenderer<render::WindingIndexer_Triangles>>(geometryStore, testObjectRenderer, shader.get());
+
+    // Generate a couple of windings
+    std::vector<render::RenderVertex> entity1Windings;
+    for (int i = 0; i < 3; ++i)
+    {
+        std::vector<render::RenderVertex> winding4 = generateVertices(i, 4);
+        renderer->addWinding(winding4, entity.get());
+        std::copy(winding4.begin(), winding4.end(), std::back_inserter(entity1Windings));
+    }
+
+    // Make sure the windings are stored in the geometry store
+    renderer->prepareForRendering();
+
+    // Acquire a few unrelated blocks in the geometry store to simulate other objects allocating memory
+    geometryStore.allocateSlot(15, 24);
+    geometryStore.allocateSlot(50, 60);
+    geometryStore.allocateSlot(5, 12);
+    geometryStore.allocateSlot(100, 150);
+
+    EXPECT_EQ(getNumEntitySurfaces(entity.get()), 1) << "Entity should have 1 surface now";
+
+    auto surfaceEntity1 = getNthEntitySurface(entity.get(), 0);
+    EXPECT_TRUE(surfaceEntity1) << "Entity Surface not found";
+
+    // Verify the winding geometry in the given slot
+    verifyVertexSlot(geometryStore, surfaceEntity1->getStorageLocation(), entity1Windings);
+
+    // Remember the offset of the first vertex
+    auto firstVertexOffsetBeforeMove = geometryStore.getRenderParameters(surfaceEntity1->getStorageLocation()).firstVertex;
+
+    // Now add a few more windings for the second entity, this should invalidate all
+    // the entity surfaces of the renderer (it failed to do so before #5963).
+    // The WindingRenderer will have to reallocate its geometry slot, so the vertices
+    // will be located at a different memory location. Since we added unrelated blocks, we force the
+    // larger allocation to be moved to the end of the geometry store
+    std::vector<render::RenderVertex> entity2Windings;
+    for (int i = 0; i < 5; ++i)
+    {
+        std::vector<render::RenderVertex> winding4 = generateVertices(i + 10, 4);
+        renderer->addWinding(winding4, entity2.get());
+        std::copy(winding4.begin(), winding4.end(), std::back_inserter(entity2Windings));
+    }
+
+    // Force another geometry store update
+    renderer->prepareForRendering();
+
+    // Get the surface again
+    surfaceEntity1 = getNthEntitySurface(entity.get(), 0);
+    auto surfaceEntity2 = getNthEntitySurface(entity2.get(), 0);
+
+    // Now check the connection of the IndexRemap slots of entity 1's surface,
+    // it should be correctly referring to the moved vertex slot
+    verifyVertexSlot(geometryStore, surfaceEntity1->getStorageLocation(), entity1Windings);
+
+    // The first vertex' offset of entity 1's surface ought to be different now
+    auto firstVertexOffsetAfterMove = geometryStore.getRenderParameters(surfaceEntity1->getStorageLocation()).firstVertex;
+    EXPECT_NE(firstVertexOffsetAfterMove, firstVertexOffsetBeforeMove) << "First vertex offset didn't change, this is very suspicious";
+
+    // Compare the vertex offset of entity1's surface to that of entity2, they should match
+    auto entity2VertexOffset = geometryStore.getRenderParameters(surfaceEntity2->getStorageLocation()).firstVertex;
+    EXPECT_EQ(entity2VertexOffset, firstVertexOffsetAfterMove) << "First vertex offset of both entities should match";
 }
 
 }

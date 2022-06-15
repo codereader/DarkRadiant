@@ -1,6 +1,7 @@
 #pragma once
 
 #include "irender.h"
+#include "icommandsystem.h"
 #include <sigc++/connection.h>
 #include <map>
 #include "imodule.h"
@@ -11,6 +12,7 @@
 #include "backend/SceneRenderer.h"
 #include "backend/FenceSyncProvider.h"
 #include "backend/BufferObjectProvider.h"
+#include "backend/ObjectRenderer.h"
 #include "render/GeometryStore.h"
 
 namespace render
@@ -66,6 +68,7 @@ class OpenGLRenderSystem final
     FenceSyncProvider _syncObjectProvider;
     BufferObjectProvider _bufferObjectProvider;
     GeometryStore _geometryStore;
+    ObjectRenderer _objectRenderer;
 
     // Renderer implementations, one for each view type/purpose
 
@@ -135,6 +138,7 @@ public:
     void shutdownModule() override;
 
     IGeometryStore& getGeometryStore();
+    IObjectRenderer& getObjectRenderer();
 
 private:
     IRenderResult::Ptr render(SceneRenderer& renderer, RenderStateFlags globalFlagsMask, const IRenderView& view);
@@ -142,6 +146,8 @@ private:
     void renderText();
 
     ShaderPtr capture(const std::string& name, const std::function<OpenGLShaderPtr()>& createShader);
+
+    void showMemoryStats(const cmd::ArgumentList& args);
 };
 
 } // namespace

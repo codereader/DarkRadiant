@@ -35,17 +35,17 @@ stream::MapResourceStream::Ptr ArchivedMapResource::openInfofileStream()
 {
     ensureArchiveOpened();
 
+    auto infoFilename = _filePathWithinArchive.substr(0, _filePathWithinArchive.rfind('.'));
+    infoFilename += game::current::getInfoFileExtension();
+
     try
     {
-        auto infoFilename = _filePathWithinArchive.substr(0, _filePathWithinArchive.rfind('.'));
-        infoFilename += game::current::getInfoFileExtension();
-
         return openFileInArchive(infoFilename);
     }
     catch (const OperationException& ex)
     {
         // Info file load file does not stop us, just issue a warning
-        rWarning() << ex.what() << std::endl;
+        rWarning() << "Could not locate info file " << infoFilename << ": " << ex.what() << std::endl;
         return stream::MapResourceStream::Ptr();
     }
 }

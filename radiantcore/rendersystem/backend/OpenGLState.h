@@ -235,6 +235,7 @@ public:
       texture2(0),
       texture3(0),
       texture4(0),
+      texture5(0),
       m_blend_src(GL_SRC_ALPHA),
       m_blend_dst(GL_ONE_MINUS_SRC_ALPHA),
       alphaFunc(GL_ALWAYS),

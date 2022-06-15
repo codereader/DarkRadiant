@@ -36,16 +36,17 @@ void RenderableLightOctagon::updateGeometry()
     Vector3f mid(Origin);
 
     auto colour = _light.getEntityColour();
+    colour.w() = _alpha;
 
     // top, bottom, tleft, tright, bright, bleft
     std::vector<render::RenderVertex> vertices
     {
-        render::RenderVertex({ mid[0], mid[1], max[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ mid[0], mid[1], min[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ min[0], max[1], mid[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ max[0], max[1], mid[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ max[0], min[1], mid[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ min[0], min[1], mid[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ mid[0], mid[1], max[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ mid[0], mid[1], min[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ min[0], max[1], mid[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ max[0], max[1], mid[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ max[0], min[1], mid[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ min[0], min[1], mid[2] }, {0,0,0}, {0,0}, colour),
     };
 
     // Orient the points using the transform
@@ -98,15 +99,15 @@ void RenderableLightVolume::updatePointLightVolume()
     // Load the 8 corner points
     std::vector<render::RenderVertex> vertices
     {
-        render::RenderVertex({ min[0], min[1], min[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ max[0], min[1], min[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ max[0], max[1], min[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ min[0], max[1], min[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ min[0], min[1], min[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ max[0], min[1], min[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ max[0], max[1], min[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ min[0], max[1], min[2] }, {0,0,0}, {0,0}, colour),
 
-        render::RenderVertex({ min[0], min[1], max[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ max[0], min[1], max[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ max[0], max[1], max[2] }, {1,0,0}, {0,0}, colour),
-        render::RenderVertex({ min[0], max[1], max[2] }, {1,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ min[0], min[1], max[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ max[0], min[1], max[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ max[0], max[1], max[2] }, {0,0,0}, {0,0}, colour),
+        render::RenderVertex(Vector3{ min[0], max[1], max[2] }, {0,0,0}, {0,0}, colour),
     };
 
     // Orient the points using the transform
@@ -162,14 +163,14 @@ void RenderableLightVolume::updateProjectedLightVolume()
 
         std::vector<render::RenderVertex> vertices
         {
-            render::RenderVertex(frontUpperLeft, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(frontLowerLeft, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(frontLowerRight, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(frontUpperRight, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(backUpperLeft, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(backLowerLeft, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(backLowerRight, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(backUpperRight, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(frontUpperLeft, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(frontLowerLeft, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(frontLowerRight, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(frontUpperRight, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(backUpperLeft, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(backLowerLeft, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(backLowerRight, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(backUpperRight, {0,0,0}, {0,0}, colour),
         };
 
         // Orient the points using the transform
@@ -202,11 +203,11 @@ void RenderableLightVolume::updateProjectedLightVolume()
 
         std::vector<render::RenderVertex> vertices
         {
-            render::RenderVertex(top, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(backUpperLeft, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(backLowerLeft, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(backLowerRight, {1,0,0}, {0,0}, colour),
-            render::RenderVertex(backUpperRight, {1,0,0}, {0,0}, colour),
+            render::RenderVertex(top, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(backUpperLeft, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(backLowerLeft, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(backLowerRight, {0,0,0}, {0,0}, colour),
+            render::RenderVertex(backUpperRight, {0,0,0}, {0,0}, colour),
         };
 
         // Orient the points using the transform

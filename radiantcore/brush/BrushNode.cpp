@@ -16,6 +16,7 @@ BrushNode::BrushNode() :
 	scene::SelectableNode(),
 	m_brush(*this),
 	_renderableComponentsNeedUpdate(true),
+    _numSelectedComponents(0),
     _untransformedOriginChanged(true),
     _renderableVertices(m_brush, _selectedPoints),
     _facesNeedRenderableUpdate(true)
@@ -41,6 +42,7 @@ BrushNode::BrushNode(const BrushNode& other) :
 	Transformable(other),
 	m_brush(*this, other.m_brush),
 	_renderableComponentsNeedUpdate(true),
+    _numSelectedComponents(0),
     _untransformedOriginChanged(true),
     _renderableVertices(m_brush, _selectedPoints),
     _facesNeedRenderableUpdate(true)
@@ -130,13 +132,34 @@ void BrushNode::testSelect(Selector& selector, SelectionTest& test)
 	}
 }
 
-bool BrushNode::isSelectedComponents() const {
+inline bool checkFaceInstancesForSelectedComponents(const FaceInstances& instances)
+{
+    for (const auto& face :  instances)
+    {
+        if (face.selectedComponents())
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool BrushNode::isSelectedComponents() const
+{
+    // Debug builds check whether the _numSelectedComponents counter is providing the
+    // same result as the old code it replaced below.
+    assert(_numSelectedComponents > 0 == checkFaceInstancesForSelectedComponents(m_faceInstances));
+
+    return _numSelectedComponents > 0;
+#if 0
 	for (FaceInstances::const_iterator i = m_faceInstances.begin(); i != m_faceInstances.end(); ++i) {
 		if (i->selectedComponents()) {
 			return true;
 		}
 	}
 	return false;
+#endif
 }
 
 void BrushNode::setSelectedComponents(bool select, selection::ComponentSelectionMode mode)
@@ -243,6 +266,16 @@ void BrushNode::selectReversedPlanes(Selector& selector, const SelectedPlanes& s
 void BrushNode::selectedChangedComponent(const ISelectable& selectable)
 {
 	_renderableComponentsNeedUpdate = true;
+
+    if (selectable.isSelected())
+    {
+        ++_numSelectedComponents;
+    }
+    else
+    {
+        assert(_numSelectedComponents > 0);
+        --_numSelectedComponents;
+    }
 
 	GlobalSelectionSystem().onComponentSelection(SelectableNode::getSelf(), selectable);
 }
@@ -428,7 +461,7 @@ void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 	if (renderSystem)
 	{
-        _pointShader = renderSystem->capture(BuiltInShaderType::Point);
+        _pointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
         _renderableVertices.queueUpdate();
 	}
 	else

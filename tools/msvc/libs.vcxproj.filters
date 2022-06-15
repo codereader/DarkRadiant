@@ -255,9 +255,6 @@
     <ClInclude Include="..\..\libs\stream\ExportStream.h">
       <Filter>stream</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\os\filesize.h">
-      <Filter>os</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\libs\stream\MapResourceStream.h">
       <Filter>stream</Filter>
     </ClInclude>
@@ -385,6 +382,12 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\settings\MajorMinorVersion.h">
       <Filter>settings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\string\format.h">
+      <Filter>string</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\render\WindingRenderer.h">
+      <Filter>render</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

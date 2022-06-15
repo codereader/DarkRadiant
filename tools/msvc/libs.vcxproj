@@ -188,7 +188,6 @@
     <ClInclude Include="..\..\libs\ObservedUndoable.h" />
     <ClInclude Include="..\..\libs\os\dir.h" />
     <ClInclude Include="..\..\libs\os\file.h" />
-    <ClInclude Include="..\..\libs\os\filesize.h" />
     <ClInclude Include="..\..\libs\os\fs.h" />
     <ClInclude Include="..\..\libs\os\path.h" />
     <ClInclude Include="..\..\libs\parser\CodeTokeniser.h" />
@@ -242,6 +241,7 @@
     <ClInclude Include="..\..\libs\render\VertexNCb.h" />
     <ClInclude Include="..\..\libs\render\VertexNT.h" />
     <ClInclude Include="..\..\libs\render\View.h" />
+    <ClInclude Include="..\..\libs\render\WindingRenderer.h" />
     <ClInclude Include="..\..\libs\RGBAImage.h" />
     <ClInclude Include="..\..\libs\scenelib.h" />
     <ClInclude Include="..\..\libs\selectionlib.h" />
@@ -273,6 +273,7 @@
     <ClInclude Include="..\..\libs\string\case_conv.h" />
     <ClInclude Include="..\..\libs\string\convert.h" />
     <ClInclude Include="..\..\libs\string\encoding.h" />
+    <ClInclude Include="..\..\libs\string\format.h" />
     <ClInclude Include="..\..\libs\string\join.h" />
     <ClInclude Include="..\..\libs\string\predicate.h" />
     <ClInclude Include="..\..\libs\string\replace.h" />

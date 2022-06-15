@@ -4,9 +4,8 @@
 #include "irender.h"
 #include <limits>
 #include "iwindingrenderer.h"
-#include "ObjectRenderer.h"
+#include "iobjectrenderer.h"
 #include "render/CompactWindingVertexBuffer.h"
-#include "debugging/gl.h"
 
 namespace render
 {
@@ -66,6 +65,7 @@ private:
     static constexpr IGeometryStore::Slot InvalidStorageHandle = std::numeric_limits<IGeometryStore::Slot>::max();
 
     IGeometryStore& _geometryStore;
+    IObjectRenderer& _objectRenderer;
     Shader* _owningShader;
 
     using BucketIndex = std::uint16_t;
@@ -224,6 +224,13 @@ private:
             return _entity->isShadowCasting();
         }
 
+        // Called by EntityWindings after the vertex location has moved
+        // in which case this group needs to rebuild its index remap
+        void onVertexGeometryLocationChanged()
+        {
+            _surfaceNeedsRebuild = true;
+        }
+
     private:
         void boundsChanged()
         {
@@ -307,6 +314,15 @@ private:
             _owner(owner)
         {}
 
+        ~EntityWindings()
+        {
+            // Remove all groups from all entities
+            for (auto& [key, group] : _windingMap)
+            {
+                key.first->removeRenderable(group);
+            }
+        }
+
         void addWinding(Slot slotMappingIndex)
         {
             const auto& slot = _owner._slots[slotMappingIndex];
@@ -349,6 +365,19 @@ private:
                 _windingMap.erase(key);
             }
         }
+
+        // Called by the WindingRenderer after the vertex location of the given bucket has moved
+        // in which case all affected groups need to rebuild their index remaps
+        void onVertexGeometryLocationChanged(BucketIndex bucketIndex)
+        {
+            for (auto& [key, group] : _windingMap)
+            {
+                if (key.second == bucketIndex)
+                {
+                    group->onVertexGeometryLocationChanged();
+                }
+            }
+        }
     };
 
     std::unique_ptr<EntityWindings> _entitySurfaces;
@@ -356,8 +385,9 @@ private:
     bool _geometryUpdatePending;
 
 public:
-    WindingRenderer(IGeometryStore& geometryStore, Shader* owningShader) :
+    WindingRenderer(IGeometryStore& geometryStore, IObjectRenderer& objectRenderer, Shader* owningShader) :
         _geometryStore(geometryStore),
+        _objectRenderer(objectRenderer),
         _owningShader(owningShader),
         _windingCount(0),
         _freeSlotMappingHint(InvalidSlotMapping),
@@ -371,13 +401,14 @@ public:
 
     ~WindingRenderer()
     {
-        _entitySurfaces.reset();
-
         // Release all storage allocations
         for (auto& bucket : _buckets)
         {
             deallocateStorage(bucket);
         }
+
+        // Clear the entities after releasing the buckets
+        _entitySurfaces.reset();
     }
 
     bool empty() const override
@@ -392,7 +423,7 @@ public:
         if (windingSize >= std::numeric_limits<BucketIndex>::max()) throw std::logic_error("Winding too large");
 
         // Get the Bucket this Slot is referring to
-        auto bucketIndex = getBucketIndexForWindingSize(windingSize);
+        auto bucketIndex = GetBucketIndexForWindingSize(windingSize);
         auto& bucket = ensureBucketForWindingSize(windingSize);
 
         // Allocate a new slot descriptor, we can't hand out absolute indices to clients
@@ -504,11 +535,11 @@ public:
             if (bucket.storageHandle == InvalidStorageHandle) continue; // nothing here
 
             auto primitiveMode = RenderingTraits<WindingIndexerT>::Mode();
-            ObjectRenderer::SubmitGeometry(bucket.storageHandle, primitiveMode, _geometryStore);
+            _objectRenderer.submitGeometry(bucket.storageHandle, primitiveMode);
         }
     }
 
-    void renderWinding(IWindingRenderer::RenderMode mode, IWindingRenderer::Slot slot) override
+    void renderWinding(RenderMode mode, Slot slot) override
     {
         assert(!_geometryUpdatePending); // prepareForRendering should have been called
 
@@ -518,25 +549,13 @@ public:
         assert(slotMapping.bucketIndex != InvalidBucketIndex);
         auto& bucket = _buckets[slotMapping.bucketIndex];
 
-        const auto& vertices = bucket.buffer.getVertices();
-        const auto& indices = bucket.buffer.getIndices();
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-        glDisableClientState(GL_COLOR_ARRAY);
-
-        glVertexPointer(3, GL_FLOAT, sizeof(RenderVertex), &vertices.front().vertex);
-        glTexCoordPointer(2, GL_FLOAT, sizeof(RenderVertex), &vertices.front().texcoord);
-        glNormalPointer(GL_FLOAT, sizeof(RenderVertex), &vertices.front().normal);
-
-        if (mode == IWindingRenderer::RenderMode::Triangles)
+        if (mode == RenderMode::Polygon)
         {
-            renderSingleWinding<WindingIndexer_Triangles>(bucket.buffer, slotMapping.slotNumber);
+            renderSingleWinding<WindingIndexer_Polygon>(bucket.buffer, bucket.storageHandle, slotMapping.slotNumber);
         }
-        else if (mode == IWindingRenderer::RenderMode::Polygon)
+        else if (mode == RenderMode::Triangles)
         {
-            renderSingleWinding<WindingIndexer_Polygon>(bucket.buffer, slotMapping.slotNumber);
+            renderSingleWinding<WindingIndexer_Triangles>(bucket.buffer, bucket.storageHandle, slotMapping.slotNumber);
         }
     }
 
@@ -668,6 +687,12 @@ private:
         _geometryStore.deallocateSlot(bucket.storageHandle);
         bucket.storageHandle = InvalidStorageHandle;
         bucket.storageCapacity = 0;
+
+        // Notify any groups about the changed storage location
+        if (RenderingTraits<WindingIndexerT>::SupportsEntitySurfaces())
+        {
+            _entitySurfaces->onVertexGeometryLocationChanged(bucket.index);
+        }
     }
 
     void commitDeletions(BucketIndex bucketIndex)
@@ -720,21 +745,24 @@ private:
     }
 
     template<class CustomWindingIndexerT>
-    void renderSingleWinding(const VertexBuffer& buffer, typename VertexBuffer::Slot slotNumber) const
+    void renderSingleWinding(const VertexBuffer& buffer, IGeometryStore::Slot geometrySlot, typename VertexBuffer::Slot slotNumber) const
     {
+        auto windingSize = buffer.getWindingSize();
+
         std::vector<unsigned int> indices;
-        indices.reserve(CustomWindingIndexerT::GetNumberOfIndicesPerWinding(buffer.getWindingSize()));
+        indices.reserve(CustomWindingIndexerT::GetNumberOfIndicesPerWinding(windingSize));
 
-        auto firstVertex = static_cast<unsigned int>(buffer.getWindingSize() * slotNumber);
-        CustomWindingIndexerT::GenerateAndAssignIndices(std::back_inserter(indices), buffer.getWindingSize(), firstVertex);
+        // Calculate the offset to the first vertex of this winding within the slot
+        auto windingOffset = static_cast<unsigned int>(windingSize * slotNumber);
+        CustomWindingIndexerT::GenerateAndAssignIndices(std::back_inserter(indices), windingSize, windingOffset);
+
         auto mode = RenderingTraits<CustomWindingIndexerT>::Mode();
-
-        glDrawElements(mode, static_cast<GLsizei>(indices.size()), GL_UNSIGNED_INT, &indices.front());
+        _objectRenderer.submitGeometryWithCustomIndices(geometrySlot, mode, indices);
     }
 
-    IWindingRenderer::Slot allocateSlotMapping()
+    Slot allocateSlotMapping()
     {
-        auto numSlots = static_cast<IWindingRenderer::Slot>(_slots.size());
+        auto numSlots = static_cast<Slot>(_slots.size());
 
         for (auto i = _freeSlotMappingHint; i < numSlots; ++i)
         {
@@ -749,7 +777,7 @@ private:
         return numSlots; // == the size before we emplaced the new slot
     }
 
-    inline static BucketIndex getBucketIndexForWindingSize(std::size_t windingSize)
+    inline static BucketIndex GetBucketIndexForWindingSize(std::size_t windingSize)
     {
         // Since there are no windings with sizes 0, 1, 2, we can deduct 3 to get the bucket index
         if (windingSize < 3) throw std::logic_error("No winding sizes < 3 are supported");
@@ -759,13 +787,13 @@ private:
 
     Bucket& ensureBucketForWindingSize(std::size_t windingSize)
     {
-        auto bucketIndex = getBucketIndexForWindingSize(windingSize);
+        auto bucketIndex = GetBucketIndexForWindingSize(windingSize);
 
         // Keep adding buckets until we have the matching one
         while (bucketIndex >= _buckets.size())
         {
             auto nextWindingSize = _buckets.size() + 3;
-            _buckets.emplace_back(getBucketIndexForWindingSize(nextWindingSize), nextWindingSize);
+            _buckets.emplace_back(GetBucketIndexForWindingSize(nextWindingSize), nextWindingSize);
         }
 
         return _buckets.at(bucketIndex);

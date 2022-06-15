@@ -1147,6 +1147,9 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractingLight.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2337,9 +2340,6 @@
     <ClInclude Include="..\..\radiantcore\skins\SkinDeclParser.h">
       <Filter>src\skins</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\WindingRenderer.h">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FenceSyncProvider.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
@@ -2366,6 +2366,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractingLight.h">
       <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

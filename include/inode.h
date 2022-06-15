@@ -263,9 +263,9 @@ public:
 
 /// Cast an INode to a particular interface
 template<typename Interface>
-std::shared_ptr<Interface> node_cast(INodePtr nodeP)
+std::shared_ptr<Interface> node_cast(const INodePtr& node)
 {
-    return std::dynamic_pointer_cast<Interface>(nodeP);
+    return std::dynamic_pointer_cast<Interface>(node);
 }
 
 } // namespace scene

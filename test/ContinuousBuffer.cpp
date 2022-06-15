@@ -379,6 +379,88 @@ TEST(ContinuousBufferTest, BlockReuseTightlyFit)
     buffer.deallocate(handle5);
 }
 
+// Allocates a 10 byte slot when the buffer is tightly fit (no free slot at the end)
+// There are small free slots available in the middle of the buffer (#5959)
+TEST(ContinuousBufferTest, ExpandBufferWithFreeSlotInTheMiddle)
+{
+    auto four = std::vector<int>({ 10,11,12,13 });
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+
+    render::ContinuousBuffer<int> buffer(36); // Allocate a buffer of size 36
+
+    // Allocate 9 slots of size 4 to fill the buffer, no space is left
+    std::vector<render::ContinuousBuffer<int>::Handle> handles;
+    std::vector<int> expectedData;
+
+    for (auto i = 0; i < 9; ++i)
+    {
+        handles.push_back(buffer.allocate(four.size()));
+        buffer.setData(handles.back(), four);
+        expectedData.insert(expectedData.end(), four.begin(), four.end());
+    }
+
+    // Check the data, we should have 9 times the same sequence in the buffer
+    EXPECT_TRUE(checkContinuousData(buffer, handles.front(), { expectedData }));
+
+    // Free one block in the middle of the buffer
+    auto freedHandle = handles[3];
+    auto offsetToFreeBlock = buffer.getOffset(freedHandle);
+    EXPECT_EQ(offsetToFreeBlock, 3 * four.size()) << "Wrong offset, expected free slot at 3*4 elements";
+    buffer.deallocate(freedHandle);
+
+    // Allocate a block of size 8, it won't fit in the free slot of size 4
+    auto handle = buffer.allocate(eight.size());
+
+    // The newly allocated block should not be located at the offset of that small free block
+    // as it is too small - we expect it to be located somewhere more to the right.
+    EXPECT_NE(buffer.getOffset(handle), offsetToFreeBlock) << "The 8-sized block should not be at the offset of the 4-sized hole";
+
+    // Load some data into the new block, in the case of #5959 this corrupted data of other slots
+    buffer.setData(handle, eight);
+
+    // Compare the buffer contents to what we expect it to look like now (the 8 ints should have been moved to the end)
+    std::copy(eight.begin(), eight.end(), std::back_inserter(expectedData));
+    EXPECT_TRUE(checkContinuousData(buffer, handles.front(), { expectedData }));
+}
+
+TEST(ContinuousBufferTest, ExpandBufferWithFreeSlotInTheEnd)
+{
+    auto four = std::vector<int>({ 10,11,12,13 });
+    auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
+
+    render::ContinuousBuffer<int> buffer(38); // Allocate a buffer of size 38
+
+    // Allocate 9 slots of size 4 to fill the buffer, a slot of 2 will remain free
+    std::vector<render::ContinuousBuffer<int>::Handle> handles;
+    std::vector<int> expectedData;
+
+    for (auto i = 0; i < 9; ++i)
+    {
+        handles.push_back(buffer.allocate(four.size()));
+        buffer.setData(handles.back(), four);
+        expectedData.insert(expectedData.end(), four.begin(), four.end());
+    }
+
+    // Check the data, we should have 9 times the same sequence in the buffer
+    EXPECT_TRUE(checkContinuousData(buffer, handles.front(), { expectedData }));
+
+    // Free one block in the middle of the buffer
+    buffer.deallocate(handles[3]);
+
+    // Allocate a block of size 8, it won't fit in the free slot of size 4 and not the one at the end
+    auto handle = buffer.allocate(eight.size());
+
+    // The newly allocated block should be located at the offset of the last free block
+    EXPECT_EQ(buffer.getOffset(handle), expectedData.size()) << "The 8-sized block should have been put at the rightmost free block";
+
+    // Load some data into the new block
+    buffer.setData(handle, eight);
+
+    // Compare the buffer contents to what we expect it to look like now (the 8 ints should have been moved to the end)
+    std::copy(eight.begin(), eight.end(), std::back_inserter(expectedData));
+    EXPECT_TRUE(checkContinuousData(buffer, handles.front(), { expectedData }));
+}
+
 TEST(ContinuousBufferTest, GapMerging)
 {
     auto eight = std::vector<int>({ 0,1,2,3,4,5,6,7 });
@@ -504,15 +586,16 @@ TEST(ContinuousBufferTest, SyncToBufferAfterSubDataUpdate)
     EXPECT_TRUE(checkDataInBufferObject(buffer, handle2, *bufferObject, eight)) << "Data sync unsuccessful";
 
     // Modify a portion of the second slot
-    buffer.setSubData(handle2, 3, four);
+    std::size_t modificationOffset = 3;
+    buffer.setSubData(handle2, modificationOffset, four);
 
     // Sync it should modify a subset of the buffer object only
     buffer.syncModificationsToBufferObject(bufferObject);
 
     // Check the offsets used to update the buffer object
-    EXPECT_EQ(bufferObject->lastUsedOffset, buffer.getOffset(handle2) * sizeof(int)) 
-        << "Sync offset should point at the start of the slot";
-    EXPECT_EQ(bufferObject->lastUsedByteCount, buffer.getSize(handle2)* sizeof(int)) << "The whole slot should be synced";
+    EXPECT_EQ(bufferObject->lastUsedOffset, (buffer.getOffset(handle2) + modificationOffset) * sizeof(int))
+        << "Sync offset should point at the modification offset";
+    EXPECT_EQ(bufferObject->lastUsedByteCount, four.size() * sizeof(int)) << "Only 4 bytes should have been synced";
 
     // First slot should still contain the 8 bytes
     EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";
@@ -545,13 +628,13 @@ TEST(ContinuousBufferTest, SyncToBufferAfterApplyingTransaction)
 
     // Copy this to a second buffer and change some data there
     auto buffer2 = buffer;
-    auto modificationOffset = 3;
+    std::size_t modificationOffset = 3;
     buffer2.setSubData(handle2, modificationOffset, four);
 
     // Define the transaction
     std::vector<render::detail::BufferTransaction> transactionLog;
     transactionLog.emplace_back(render::detail::BufferTransaction{
-        handle2, render::detail::BufferTransaction::Type::Update
+        handle2, modificationOffset, four.size()
     });
 
     // Apply this transaction to the first buffer
@@ -561,8 +644,9 @@ TEST(ContinuousBufferTest, SyncToBufferAfterApplyingTransaction)
     buffer.syncModificationsToBufferObject(bufferObject);
 
     // Check the offsets used to update the buffer object
-    EXPECT_EQ(bufferObject->lastUsedOffset, buffer.getOffset(handle2) * sizeof(int)) << "Sync offset should at the start of the slot";
-    EXPECT_EQ(bufferObject->lastUsedByteCount, buffer.getSize(handle2) * sizeof(int)) << "Sync amount should be 8 unsigned ints";
+    EXPECT_EQ(bufferObject->lastUsedOffset, (buffer.getOffset(handle2) + modificationOffset) * sizeof(int))
+    << "Sync offset should at the modification offset";
+    EXPECT_EQ(bufferObject->lastUsedByteCount, four.size() * sizeof(int)) << "Sync amount should be 4 unsigned ints";
 
     // First slot should contain the 8 bytes
     EXPECT_TRUE(checkDataInBufferObject(buffer, handle1, *bufferObject, eight)) << "Data sync unsuccessful";

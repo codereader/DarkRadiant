@@ -133,21 +133,24 @@ bool PatchNode::selectedVertices() {
     return false;
 }
 
-void PatchNode::snapComponents(float snap) {
+void PatchNode::snapComponents(float snap)
+{
 	// Are there any selected vertices
-	if (selectedVertices()) {
-		// Tell the patch to save the current undo state
-		m_patch.undoSave();
+    if (!selectedVertices()) return;
 
-		// Cycle through all the selected control instances and snap them to the grid
-		for (PatchControlInstances::iterator i = m_ctrl_instances.begin(); i != m_ctrl_instances.end(); ++i) {
-			if(i->isSelected()) {
-				i->snapto(snap);
-			}
-		}
-		// Tell the patch that control points have changed
-		m_patch.controlPointsChanged();
-	}
+    // Cycle through all the selected control instances and snap them to the grid
+    for (auto& vertex : m_ctrl_instances)
+    {
+	    if (vertex.isSelected())
+        {
+            vertex.snapto(snap);
+	    }
+    }
+
+    // Save the transformed control point array to the real set
+    m_patch.freezeTransform();
+    // Tell the patch that control points have changed
+    m_patch.controlPointsChanged();
 }
 
 // Test the Patch instance for selection
@@ -283,6 +286,14 @@ void PatchNode::updateAllRenderables()
     _renderableCtrlPoints.queueUpdate();
 }
 
+void PatchNode::hideAllRenderables()
+{
+    _renderableSurfaceSolid.hide();
+    _renderableSurfaceWireframe.hide();
+    _renderableCtrlLattice.hide();
+    _renderableCtrlPoints.hide();
+}
+
 void PatchNode::clearAllRenderables()
 {
     _renderableSurfaceSolid.clear();
@@ -337,9 +348,6 @@ bool PatchNode::getIntersection(const Ray& ray, Vector3& intersection)
 
 void PatchNode::onPreRender(const VolumeTest& volume)
 {
-    // Don't do anything when invisible
-    if (!isForcedVisible() && !m_patch.hasVisibleMaterial()) return;
-
     // Defer the tesselation calculation to the last minute
     m_patch.evaluateTransform();
     m_patch.updateTesselation();
@@ -357,8 +365,8 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     }
     else
     {
-        _renderableCtrlPoints.clear();
-        _renderableCtrlLattice.clear();
+        _renderableCtrlPoints.hide();
+        _renderableCtrlLattice.hide();
 
         // Queue an update the next time it's rendered
         _renderableCtrlPoints.queueUpdate();
@@ -392,7 +400,7 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     if (renderSystem)
 	{
-        _ctrlPointShader = renderSystem->capture(BuiltInShaderType::Point);
+        _ctrlPointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
         _ctrlLatticeShader = renderSystem->capture(BuiltInShaderType::PatchLattice);
 	}
 	else
@@ -507,12 +515,11 @@ void PatchNode::onVisibilityChanged(bool visible)
 
     if (!visible)
     {
-        // Disconnect our renderable when the node is hidden
-        clearAllRenderables();
+        hideAllRenderables();
     }
     else
     {
-        // Update the vertex buffers next time we need to render
+        // Queue an update, renderables are automatically shown in onPreRender
         updateAllRenderables();
     }
 }

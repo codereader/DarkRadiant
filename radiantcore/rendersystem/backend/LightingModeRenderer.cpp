@@ -10,16 +10,19 @@
 #include "glprogram/CubeMapProgram.h"
 #include "glprogram/DepthFillAlphaProgram.h"
 #include "glprogram/InteractionProgram.h"
+#include "glprogram/RegularStageProgram.h"
 
 namespace render
 {
 
 LightingModeRenderer::LightingModeRenderer(GLProgramFactory& programFactory,
-        IGeometryStore& store, const std::set<RendererLightPtr>& lights,
+        IGeometryStore& store, IObjectRenderer& objectRenderer, 
+        const std::set<RendererLightPtr>& lights,
         const std::set<IRenderEntityPtr>& entities) :
     SceneRenderer(RenderViewType::Camera),
     _programFactory(programFactory),
     _geometryStore(store),
+    _objectRenderer(objectRenderer),
     _lights(lights),
     _entities(entities),
     _shadowMapProgram(nullptr),
@@ -78,7 +81,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     indexBuffer->bind();
 
     // Set the vertex attribute pointers
-    ObjectRenderer::InitAttributePointers();
+    _objectRenderer.initAttributePointers();
 
     // Render depth information to the shadow maps
     drawShadowMaps(current, time);
@@ -90,7 +93,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     drawDepthFillPass(current, globalFlagsMask, view, time);
 
     // Draw the surfaces per light and material
-    drawInteractingLight(current, globalFlagsMask, view, time);
+    drawInteractingLights(current, globalFlagsMask, view, time);
 
     // Draw any surfaces without any light interactions
     drawNonInteractionPasses(current, globalFlagsMask, view, time);
@@ -114,7 +117,7 @@ void LightingModeRenderer::determineInteractingLight(const IRenderView& view)
     // Gather all visible lights and render the surfaces touched by them
     for (const auto& light : _lights)
     {
-        InteractingLight interaction(*light, _geometryStore);
+        InteractingLight interaction(*light, _geometryStore, _objectRenderer);
 
         if (!interaction.isInView(view))
         {
@@ -179,7 +182,7 @@ void LightingModeRenderer::addToShadowLights(InteractingLight& light, const Vect
     }
 }
 
-void LightingModeRenderer::drawInteractingLight(OpenGLState& current, RenderStateFlags globalFlagsMask,
+void LightingModeRenderer::drawInteractingLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
     const IRenderView& view, std::size_t renderTime)
 {
     // Draw the surfaces per light and material
@@ -286,7 +289,6 @@ void LightingModeRenderer::drawShadowMaps(OpenGLState& current,std::size_t rende
     current.clearRenderFlag(RENDER_DEPTHTEST);
 }
 
-
 void LightingModeRenderer::drawDepthFillPass(OpenGLState& current, RenderStateFlags globalFlagsMask,
     const IRenderView& view, std::size_t renderTime)
 {
@@ -317,7 +319,7 @@ void LightingModeRenderer::drawDepthFillPass(OpenGLState& current, RenderStateFl
         depthFillProgram->setObjectTransform(Matrix4::getIdentity());
         depthFillProgram->setAlphaTest(-1);
 
-        ObjectRenderer::SubmitGeometry(_untransformedObjectsWithoutAlphaTest, GL_TRIANGLES, _geometryStore);
+        _objectRenderer.submitGeometry(_untransformedObjectsWithoutAlphaTest, GL_TRIANGLES);
         _result->depthDrawCalls++;
 
         _untransformedObjectsWithoutAlphaTest.clear();
@@ -339,7 +341,7 @@ void LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, Render
     // Draw non-interaction passes (like skyboxes or blend stages)
     for (const auto& entity : _entities)
     {
-        entity->foreachRenderable([&](const render::IRenderableObject::Ptr& object, Shader* shader)
+        entity->foreachRenderable([&](const IRenderableObject::Ptr& object, Shader* shader)
         {
             // Skip empty objects
             if (!object->isVisible()) return;
@@ -366,16 +368,32 @@ void LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, Render
                 // Apply our state to the current state object
                 pass.evaluateStagesAndApplyState(current, globalFlagsMask, time, entity.get());
 
-                if (dynamic_cast<CubeMapProgram*>(current.glProgram))
+                // Bind textures
+                OpenGLState::SetTextureState(current.texture0, pass.state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
+
+                if (dynamic_cast<RegularStageProgram*>(current.glProgram))
+                {
+                    auto program = static_cast<RegularStageProgram*>(current.glProgram);
+
+                    program->setModelViewProjection(view.GetViewProjection());
+                    program->setObjectTransform(object->getObjectTransform());
+                    program->setStageVertexColour(pass.state().getVertexColourMode(), pass.state().getColour());
+
+                    const auto& diffuse = pass.state().stage0;
+                    program->setDiffuseTextureTransform(diffuse ? diffuse->getTextureTransform() : Matrix4::getIdentity());
+                }
+                else if (dynamic_cast<CubeMapProgram*>(current.glProgram))
                 {
                     static_cast<CubeMapProgram*>(current.glProgram)->setViewer(view.getViewer());
                 }
 
-                ObjectRenderer::SubmitObject(*object, _geometryStore);
+                _objectRenderer.submitGeometry(object->getStorageLocation(), GL_TRIANGLES);
                 _result->nonInteractionDrawCalls++;
             });
         });
     }
+
+    OpenGLState::SetTextureState(current.texture0, 0, GL_TEXTURE0, GL_TEXTURE_2D);
 }
 
 }

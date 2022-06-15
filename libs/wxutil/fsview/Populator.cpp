@@ -5,7 +5,7 @@
 #include "iarchive.h"
 #include "os/path.h"
 #include "string/case_conv.h"
-#include "os/filesize.h"
+#include "string/format.h"
 #include "gamelib.h"
 
 #include "wxutil/Bitmap.h"
@@ -84,7 +84,7 @@ void Populator::visitFile(const vfs::FileInfo& fileInfo)
             bool isPhysical = fileInfo.getIsPhysicalFile();
             auto archivePath = fileInfo.getArchivePath();
 
-            row[_columns.size] = os::getFormattedFileSize(fileInfo.getSize());
+            row[_columns.size] = string::getFormattedByteSize(fileInfo.getSize());
             row[_columns.isPhysical] = isPhysical;
             row[_columns.archivePath] = archivePath;
 

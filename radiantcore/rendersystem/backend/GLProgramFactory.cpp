@@ -5,6 +5,7 @@
 #include "glprogram/InteractionProgram.h"
 #include "glprogram/GenericVFPProgram.h"
 #include "glprogram/ShadowMapProgram.h"
+#include "glprogram/RegularStageProgram.h"
 
 #include "itextstream.h"
 #include "iregistry.h"
@@ -28,6 +29,7 @@ GLProgramFactory::GLProgramFactory()
     _builtInPrograms[ShaderProgram::Interaction] = std::make_shared<InteractionProgram>();
     _builtInPrograms[ShaderProgram::CubeMap] = std::make_shared<CubeMapProgram>();
     _builtInPrograms[ShaderProgram::ShadowMap] = std::make_shared<ShadowMapProgram>();
+    _builtInPrograms[ShaderProgram::RegularStage] = std::make_shared<RegularStageProgram>();
 }
 
 GLProgram* GLProgramFactory::getBuiltInProgram(ShaderProgram builtInProgram)

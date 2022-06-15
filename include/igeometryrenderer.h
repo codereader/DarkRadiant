@@ -37,9 +37,20 @@ public:
     // Allocate a slot to hold the given indexed vertex data.
     // Returns the handle which can be used to update or deallocate the data later
     // The indexType determines the primitive GLenum that is chosen to render this surface
+    // Added geometry is active by default.
     virtual Slot addGeometry(GeometryType indexType,
         const std::vector<RenderVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
+
+    // Re-activates a previously deactivated geometry slot.
+    virtual void activateGeometry(Slot slot) = 0;
+
+    // Suspends the geometry in the given slot - it won't be rendered anymore.
+    // Doesn't remove any of the vertex or index data (use removeGeometry() for that).
+    // The slot handle will remain valid.
+    // Inactive geometry can automatically be re-activated by updateGeometry(),
+    // or an explicit activateGeometry() call.
+    virtual void deactivateGeometry(Slot slot) = 0;
 
     // Releases a previously allocated slot. This invalidates the handle.
     virtual void removeGeometry(Slot slot) = 0;
@@ -49,7 +60,10 @@ public:
     virtual void updateGeometry(Slot slot, const std::vector<RenderVertex>& vertices,
         const std::vector<unsigned int>& indices) = 0;
 
-    // Submits the geometry of a single slot to GL
+    // Submits all active geometry slots to GL
+    virtual void renderAllVisibleGeometry() = 0;
+
+    // Submits the geometry of a single slot to GL, regardless of its active state
     virtual void renderGeometry(Slot slot) = 0;
 
     // Returns the bounding box of the geometry stored in the given slot

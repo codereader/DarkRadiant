@@ -109,7 +109,7 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 			tok.skipTokens(2);
 
 			// Finally, add the new face to the brush
-			/*IFace& face = */brush.addFace(plane, texdef, shader);
+			brush.addFace(plane, texdef, shader);
 		}
 		else {
 			std::string text = fmt::format(_("BrushDef3Parser: invalid token '{0}'"), token);
@@ -119,6 +119,9 @@ scene::INodePtr BrushDef3Parser::parse(parser::DefTokeniser& tok) const
 
 	// Final outer "}"
 	tok.assertNextToken("}");
+
+    // Cleanup redundant face planes
+    brush.removeRedundantFaces();
 
 	return node;
 }
@@ -180,7 +183,7 @@ scene::INodePtr BrushDef3ParserQuake4::parse(parser::DefTokeniser& tok) const
 			std::string shader = tok.nextToken();
 
 			// Finally, add the new face to the brush
-			/*IFace& face = */brush.addFace(plane, texdef, shader);
+			brush.addFace(plane, texdef, shader);
 		}
 		else {
 			std::string text = fmt::format(_("BrushDef3ParserQuake4: invalid token '{0}'"), token);
@@ -190,6 +193,9 @@ scene::INodePtr BrushDef3ParserQuake4::parse(parser::DefTokeniser& tok) const
 
 	// Final outer "}"
 	tok.assertNextToken("}");
+
+    // Cleanup redundant face planes
+    brush.removeRedundantFaces();
 
 	return node;
 }

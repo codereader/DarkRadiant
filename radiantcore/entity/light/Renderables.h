@@ -17,11 +17,13 @@ class RenderableLightOctagon :
 private:
     const LightNode& _light;
     bool _needsUpdate;
+    float _alpha;
 
 public:
-    RenderableLightOctagon(const LightNode& light) :
+    RenderableLightOctagon(const LightNode& light, float alpha) :
         _light(light),
-        _needsUpdate(true)
+        _needsUpdate(true),
+        _alpha(alpha)
     {}
 
     void queueUpdate()

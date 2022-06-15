@@ -51,17 +51,17 @@ public:
 
     /// Construct from another BasicVector4 with a compatible element type
     template<typename U> BasicVector4(const BasicVector4<U>& other)
-    : BasicVector4(other.x(), other.y(), other.z(), other.w())
+    : BasicVector4(static_cast<T>(other.x()), static_cast<T>(other.y()), static_cast<T>(other.z()), static_cast<T>(other.w()))
     {}
 
     /// Construct from a BasicVector3 of compatible element type, plus an optional W value
     template <typename U, typename W = float>
     BasicVector4(const BasicVector3<U>& other, W w_ = 1.0f)
     {
-        _v[0] = other.x();
-        _v[1] = other.y();
-        _v[2] = other.z();
-        _v[3] = w_;
+        _v[0] = static_cast<T>(other.x());
+        _v[1] = static_cast<T>(other.y());
+        _v[2] = static_cast<T>(other.z());
+        _v[3] = static_cast<T>(w_);
     }
 
     /// Construct directly from Eigen type

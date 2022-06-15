@@ -153,6 +153,13 @@ void MD5Model::applySkin(const ModelSkin& skin)
 	}
 
 	updateMaterialList();
+
+    _sigShadersUpdated.emit();
+}
+
+sigc::signal<void>& MD5Model::signal_ShadersChanged()
+{
+    return _sigShadersUpdated;
 }
 
 int MD5Model::getSurfaceCount() const

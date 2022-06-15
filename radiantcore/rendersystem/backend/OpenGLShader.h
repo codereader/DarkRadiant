@@ -6,7 +6,7 @@
 #include "irender.h"
 #include "ishaders.h"
 #include "string/string.h"
-#include "WindingRenderer.h"
+#include "render/WindingRenderer.h"
 #include "GeometryRenderer.h"
 #include "SurfaceRenderer.h"
 #include "DepthFillPass.h"
@@ -106,9 +106,12 @@ public:
 
     IGeometryRenderer::Slot addGeometry(GeometryType indexType,
         const std::vector<RenderVertex>& vertices, const std::vector<unsigned int>& indices) override;
+    void activateGeometry(IGeometryRenderer::Slot slot) override;
+    void deactivateGeometry(IGeometryRenderer::Slot slot) override;
     void removeGeometry(IGeometryRenderer::Slot slot) override;
     void updateGeometry(IGeometryRenderer::Slot slot, const std::vector<RenderVertex>& vertices,
         const std::vector<unsigned int>& indices) override;
+    void renderAllVisibleGeometry() override;
     void renderGeometry(IGeometryRenderer::Slot slot) override;
     AABB getGeometryBounds(IGeometryRenderer::Slot slot) override;
     IGeometryStore::Slot getGeometryStorageLocation(IGeometryRenderer::Slot slot) override;

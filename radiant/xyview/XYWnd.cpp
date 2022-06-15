@@ -1523,8 +1523,6 @@ void XYWnd::draw()
     // Reset the depth mask to its initial value (enabled)
     glDepthMask(GL_TRUE);
     debug::assertNoGlErrors();
-
-    glFinish();
 }
 
 void XYWnd::mouseToPoint(int x, int y, Vector3& point)

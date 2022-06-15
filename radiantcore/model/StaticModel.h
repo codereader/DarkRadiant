@@ -89,6 +89,9 @@ private:
 	// Undoable stuff
 	IUndoStateSaver* _undoStateSaver;
 
+    sigc::signal<void> _sigShadersChanged;
+    sigc::signal<void> _sigSurfaceScaleApplied;
+
 private:
 
 	// Update the list of materials by querying each surface for its current
@@ -121,6 +124,12 @@ public:
 	void disconnectUndoSystem(IUndoSystem& undoSystem);
 
 	void setRenderSystem(const RenderSystemPtr& renderSystem);
+
+    // A signal that is emitted after the captured shaders have been changed (or cleared)
+    sigc::signal<void>& signal_ShadersChanged();
+
+    // Signal emitted when any surface scale has been changed
+    sigc::signal<void>& signal_SurfaceScaleApplied();
 
 	/**
 	 * Return the number of surfaces in this model.
@@ -197,8 +206,8 @@ public:
 	 */
 	const SurfaceList& getSurfaces() const;
 
-	// Revert to base scale
-	void revertScale();
+	// Revert to base scale (returns true if the scale was actually changed by this call)
+	bool revertScale();
 
 	// TransformationChanged, apply the given scale to the "working copy"
 	void evaluateScale(const Vector3& scale);

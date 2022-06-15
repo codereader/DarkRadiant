@@ -34,9 +34,13 @@ void ColourShader::construct()
 
     switch (_type)
     {
+    case ColourShaderType::CameraOutline:
     case ColourShaderType::CameraSolid:
     {
-        state.setRenderFlag(RENDER_FILL);
+        if (_type == ColourShaderType::CameraSolid)
+        {
+            state.setRenderFlag(RENDER_FILL);
+        }
         state.setRenderFlag(RENDER_LIGHTING);
         state.setRenderFlag(RENDER_DEPTHTEST);
         state.setRenderFlag(RENDER_CULLFACE);
@@ -74,7 +78,8 @@ void ColourShader::construct()
         // Don't touch a renderer that is not empty, this will break any client connections
         if (getWindingRenderer().empty())
         {
-            setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>(getRenderSystem().getGeometryStore(), this));
+            setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>(getRenderSystem().getGeometryStore(),
+                getRenderSystem().getObjectRenderer(), this));
         }
 
         state.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
@@ -100,8 +105,13 @@ void ColourShader::construct()
     }
 
     case ColourShaderType::CameraAndOrthoview:
+    case ColourShaderType::CameraAndOrthoViewOutline:
     {
-        state.setRenderFlag(RENDER_FILL);
+        if (_type == ColourShaderType::CameraAndOrthoview)
+        {
+            state.setRenderFlag(RENDER_FILL);
+        }
+
         state.setRenderFlag(RENDER_LIGHTING);
         state.setRenderFlag(RENDER_DEPTHTEST);
         state.setRenderFlag(RENDER_CULLFACE);
@@ -139,9 +149,11 @@ std::string ColourShader::ConstructName(ColourShaderType type, const Colour4& co
 {
     switch (type)
     {
+    case ColourShaderType::CameraOutline:
+        return fmt::format("<({0:f} {1:f} {2:f})>", colour[0], colour[1], colour[2]);
+
     case ColourShaderType::CameraSolid:
         return fmt::format("({0:f} {1:f} {2:f})", colour[0], colour[1], colour[2]);
-        break;
 
     case ColourShaderType::CameraTranslucent:
         return fmt::format("[{0:f} {1:f} {2:f}]", colour[0], colour[1], colour[2]);
@@ -151,6 +163,9 @@ std::string ColourShader::ConstructName(ColourShaderType type, const Colour4& co
 
     case ColourShaderType::CameraAndOrthoview:
         return fmt::format("{{{0:f} {1:f} {2:f}}}", colour[0], colour[1], colour[2]);
+
+    case ColourShaderType::CameraAndOrthoViewOutline:
+        return fmt::format("<{{{0:f} {1:f} {2:f}}}>", colour[0], colour[1], colour[2]);
     }
 
     throw std::runtime_error("Unknown colour shader type: " + string::to_string(static_cast<int>(type)));

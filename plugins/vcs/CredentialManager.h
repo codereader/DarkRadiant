@@ -25,7 +25,7 @@ public:
     {
 #ifdef _MSC_VER
         PCREDENTIALW pcred;
-        BOOL ok = ::CredReadW(accountName.c_str(), CRED_TYPE_GENERIC, 0, &pcred);
+        auto ok = ::CredReadW(accountName.c_str(), CRED_TYPE_GENERIC, 0, &pcred);
 
         if (!ok)
         {
@@ -33,11 +33,20 @@ public:
         }
 
         auto user = string::unicode_to_utf8(pcred->UserName);
-        auto pw = string::unicode_to_utf8((const wchar_t*)pcred->CredentialBlob);
+
+        // Extract N characters from the credential blob
+        std::wstring blob;
+        blob.assign(reinterpret_cast<wchar_t*>(pcred->CredentialBlob), pcred->CredentialBlobSize / sizeof(wchar_t));
+
+        auto pw = string::unicode_to_utf8(blob);
+
+        // Clear out the temporary string
+        memset(blob.data(), '\0', blob.size() * sizeof(wchar_t));
 
         ::CredFree(pcred);
 
-        return std::make_pair(user, pw);
+        // Move-return the result
+        return std::make_pair(std::move(user), std::move(pw));
 #else
         return { "", "" };
 #endif

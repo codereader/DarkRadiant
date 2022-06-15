@@ -43,7 +43,7 @@ private:
 
         bool isVisible() override
         {
-            return _owner._surfaceSlot != IGeometryRenderer::InvalidSlot;
+            return _owner._isVisible && _owner._surfaceSlot != IGeometryRenderer::InvalidSlot;
         }
 
         bool isOriented() override
@@ -103,12 +103,16 @@ private:
     // The render entity the adapter is attached to
     IRenderEntity* _renderEntity;
 
+    // Whether the geometry slot is set to active
+    bool _isVisible;
+
 protected:
     RenderableGeometry() :
         _surfaceSlot(IGeometryRenderer::InvalidSlot),
         _lastVertexSize(0),
         _lastIndexSize(0),
-        _renderEntity(nullptr)
+        _renderEntity(nullptr),
+        _isVisible(true)
     {}
 
 public:
@@ -116,32 +120,70 @@ public:
     RenderableGeometry(const RenderableGeometry& other) = delete;
     RenderableGeometry& operator=(const RenderableGeometry& other) = delete;
 
-    virtual ~RenderableGeometry() override
+    ~RenderableGeometry() override
     {
         clear();
     }
 
-    // (Non-virtual) update method handling any possible shader change
-    // The geometry is withdrawn from the given shader if it turns out
-    // to be different from the last update.
+    // (Non-virtual) update method handling any possible shader and geometry changes.
+    // The geometry is withdrawn from any previous shader if the given one
+    // turns out to be different from the last update.
+    // If the geometry has been hidden before, it will be automatically
+    // set to visible again.
     void update(const ShaderPtr& shader)
     {
         if (_shader != shader)
         {
             clear();
-        }
 
-        // Update our local shader reference
-        _shader = shader;
+            // Update our local shader reference
+            _shader = shader;
+        }
 
         if (_shader)
         {
             // Invoke the virtual method to run needed updates in the subclass
             updateGeometry();
         }
+
+        if (!_isVisible)
+        {
+            show();
+        }
+    }
+
+    // Un-hide the geometry, such that it can be rendered again.
+    // Also re-enables the renderable object that might be attached to an entity.
+    // Note that calling update() will implicitly show this geometry if it has been hidden.
+    void show()
+    {
+        if (_isVisible) return;
+
+        _isVisible = true;
+
+        if (_shader && _surfaceSlot != IGeometryRenderer::InvalidSlot)
+        {
+            _shader->activateGeometry(_surfaceSlot);
+        }
+    }
+
+    // Hide the geometry to skip it during rendering. If the geometry has been
+    // previously attached to an entity, it will be set to invisible.
+    void hide()
+    {
+        if (!_isVisible) return;
+
+        // Set the flag to false, the render adapter will be respecting this
+        _isVisible = false;
+
+        if (_shader && _surfaceSlot != IGeometryRenderer::InvalidSlot)
+        {
+            _shader->deactivateGeometry(_surfaceSlot);
+        }
     }
 
     // Removes the geometry and clears the shader reference
+    // Resets this geometry's visibility to true.
     void clear()
     {
         // Detach from the render entity when being cleared
@@ -150,6 +192,8 @@ public:
         removeGeometry();
 
         _shader.reset();
+
+        _isVisible = true;
     }
 
     // Renders the geometry stored in our single slot
@@ -266,6 +310,7 @@ protected:
         }
         else
         {
+            // In case the slot had been deactivated => reactivate automatically
             _shader->updateGeometry(_surfaceSlot, vertices, indices);
         }
 

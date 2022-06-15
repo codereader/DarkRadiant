@@ -264,6 +264,11 @@ public:
 	// Returns true if any face of the brush contributes to the final B-Rep.
 	virtual bool hasContributingFaces() const = 0;
 
+    // Remove any faces from this brush that are not contributing anything to the resulting polyehdron
+    // These are planes that have the same normal as an existing face and are superceded by them
+    // This method is meant to be used during map loading to remove redundancy parsed from legacy maps
+    virtual void removeRedundantFaces() = 0;
+
 	// Removes faces that do not contribute to the brush.
 	// This is useful for cleaning up after CSG operations on the brush.
 	// Note: removal of empty faces is not performed during direct brush manipulations,

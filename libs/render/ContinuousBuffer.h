@@ -14,15 +14,9 @@ namespace detail
 
 struct BufferTransaction
 {
-    enum class Type
-    {
-        Allocate,
-        Deallocate,
-        Update,
-    };
-
     IGeometryStore::Slot slot;
-    Type type;
+    std::size_t offset;
+    std::size_t numChangedElements;
 };
 
 }
@@ -79,8 +73,15 @@ private:
     // Last data size that was synced to the buffer object
     std::size_t _lastSyncedBufferSize;
 
+    struct ModifiedMemoryChunk
+    {
+        Handle handle;
+        std::size_t offset;
+        std::size_t numElements;
+    };
+
     // The slots that have been modified in between syncs
-    std::vector<Handle> _unsyncedSlots;
+    std::vector<ModifiedMemoryChunk> _unsyncedModifications;
 
     std::size_t _allocatedElements;
 
@@ -111,7 +112,7 @@ public:
         memcpy(_slots.data(), other._slots.data(), other._slots.size() * sizeof(SlotInfo));
 
         _emptySlots = other._emptySlots;
-        _unsyncedSlots = other._unsyncedSlots;
+        _unsyncedModifications = other._unsyncedModifications;
         _allocatedElements = other._allocatedElements;
 
         return *this;
@@ -151,6 +152,20 @@ public:
         return _allocatedElements;
     }
 
+    // The amount of memory used by this instance, in bytes
+    std::size_t getBufferSizeInBytes() const
+    {
+        std::size_t total = 0;
+
+        total += _buffer.capacity() * sizeof(ElementType);
+        total += _slots.capacity() * sizeof(SlotInfo);
+        total += _emptySlots.size() * sizeof(Handle);
+        total += _unsyncedModifications.capacity() * sizeof(ModifiedMemoryChunk);
+        total += sizeof(ContinuousBuffer<ElementType>);
+
+        return total;
+    }
+
     void setData(Handle handle, const std::vector<ElementType>& elements)
     {
         auto& slot = _slots[handle];
@@ -164,7 +179,7 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset);
         slot.Used = numElements;
 
-        _unsyncedSlots.push_back(handle);
+        _unsyncedModifications.emplace_back(ModifiedMemoryChunk{ handle, 0, numElements });
     }
 
     void setSubData(Handle handle, std::size_t elementOffset, const std::vector<ElementType>& elements)
@@ -180,10 +195,11 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset + elementOffset);
         slot.Used = std::max(slot.Used, elementOffset + numElements);
 
-        _unsyncedSlots.push_back(handle);
+        _unsyncedModifications.emplace_back(ModifiedMemoryChunk{ handle, elementOffset, numElements });
     }
 
-    void resizeData(Handle handle, std::size_t elementCount)
+    // Returns true if the size of this size actually changed
+    bool resizeData(Handle handle, std::size_t elementCount)
     {
         auto& slot = _slots[handle];
 
@@ -192,9 +208,11 @@ public:
             throw std::logic_error("Cannot resize to a large amount than allocated in GeometryStore::Buffer::resizeData");
         }
 
-        slot.Used = elementCount;
+        if (slot.Used == elementCount) return false; // no size change
 
-        _unsyncedSlots.push_back(handle);
+        slot.Used = elementCount;
+        _unsyncedModifications.emplace_back(ModifiedMemoryChunk{ handle, 0, elementCount });
+        return true;
     }
 
     void deallocate(Handle handle)
@@ -239,6 +257,19 @@ public:
     void applyTransactions(const std::vector<detail::BufferTransaction>& transactions, const ContinuousBuffer<ElementType>& other,
         const std::function<std::uint32_t(IGeometryStore::Slot)>& getHandle)
     {
+        // We might reach this point in single-buffer mode, trying to sync with ourselves
+        // in which case we can take the shortcut to just mark the transactions that need to be GPU-synced
+        if (&other == this)
+        {
+            for (const auto& transaction : transactions)
+            {
+                _unsyncedModifications.emplace_back(ModifiedMemoryChunk{
+                    getHandle(transaction.slot), transaction.offset, transaction.numChangedElements });
+            }
+
+            return;
+        }
+
         // Ensure the buffer is at least the same size
         auto otherSize = other._buffer.size();
 
@@ -249,17 +280,16 @@ public:
 
         for (const auto& transaction : transactions)
         {
-            // Only the updated slots will actually have altered any data
-            if (transaction.type == detail::BufferTransaction::Type::Update)
-            {
-                auto handle = getHandle(transaction.slot);
-                auto& otherSlot = other._slots[handle];
+            auto handle = getHandle(transaction.slot);
+            auto& otherSlot = other._slots[handle];
 
-                memcpy(_buffer.data() + otherSlot.Offset, other._buffer.data() + otherSlot.Offset, otherSlot.Size * sizeof(ElementType));
+            memcpy(_buffer.data() + otherSlot.Offset + transaction.offset,
+                other._buffer.data() + otherSlot.Offset + transaction.offset,
+                transaction.numChangedElements * sizeof(ElementType));
 
-                // Remember this slot to be synced to the GPU
-                _unsyncedSlots.push_back(handle);
-            }
+            // Remember this slot to be synced to the GPU
+            _unsyncedModifications.emplace_back(ModifiedMemoryChunk{
+                    handle, transaction.offset, transaction.numChangedElements });
         }
 
         // Replicate the slot allocation data
@@ -283,34 +313,58 @@ public:
             _lastSyncedBufferSize = currentBufferSize;
 
             // Re-upload everything
+            buffer->bind();
             buffer->setData(0, reinterpret_cast<unsigned char*>(_buffer.data()),
                 _buffer.size() * sizeof(ElementType));
+            buffer->unbind();
         }
         else
         {
             std::size_t minimumOffset = std::numeric_limits<std::size_t>::max();
             std::size_t maximumOffset = 0;
 
+            std::size_t elementsToCopy = 0;
+
             // Size is the same, apply the updates to the GPU buffer
             // Determine the modified memory range
-            for (auto handle : _unsyncedSlots)
+            for (auto modifiedChunk : _unsyncedModifications)
             {
-                auto& slot = _slots[handle];
+                auto& slot = _slots[modifiedChunk.handle];
 
-                minimumOffset = std::min(slot.Offset, minimumOffset);
-                maximumOffset = std::max(slot.Offset + slot.Used, maximumOffset);
+                minimumOffset = std::min(slot.Offset + modifiedChunk.offset, minimumOffset);
+                maximumOffset = std::max(slot.Offset + modifiedChunk.offset + modifiedChunk.numElements, maximumOffset);
+                elementsToCopy += modifiedChunk.numElements;
             }
 
-            // Copy the data in one single operation
-            if (!_unsyncedSlots.empty())
+            // Copy the data in one single operation or in multiple, depending on the effort
+            if (elementsToCopy > 0)
             {
-                buffer->setData(minimumOffset * sizeof(ElementType),
-                    reinterpret_cast<unsigned char*>(_buffer.data() + minimumOffset),
-                    (maximumOffset - minimumOffset) * sizeof(ElementType));
+                buffer->bind();
+
+                // Less than a couple of operations will be copied piece by piece
+                if (_unsyncedModifications.size() < 100)
+                {
+                    for (auto modifiedChunk : _unsyncedModifications)
+                    {
+                        auto& slot = _slots[modifiedChunk.handle];
+
+                        buffer->setData((slot.Offset + modifiedChunk.offset) * sizeof(ElementType),
+                            reinterpret_cast<unsigned char*>(_buffer.data() + slot.Offset + modifiedChunk.offset),
+                            modifiedChunk.numElements * sizeof(ElementType));
+                    }
+                }
+                else // copy everything in between minimum and maximum in one operation
+                {
+                    buffer->setData(minimumOffset * sizeof(ElementType),
+                        reinterpret_cast<unsigned char*>(_buffer.data() + minimumOffset),
+                        (maximumOffset - minimumOffset) * sizeof(ElementType));
+                }
+
+                buffer->unbind();
             }
         }
 
-        _unsyncedSlots.clear();
+        _unsyncedModifications.clear();
     }
 
 private:
@@ -358,6 +412,7 @@ private:
         auto numSlots = _slots.size();
         Handle rightmostFreeSlotIndex = static_cast<Handle>(numSlots);
         std::size_t rightmostFreeOffset = 0;
+        std::size_t rightmostFreeSize = 0;
         Handle slotIndex = 0;
 
         for (slotIndex = 0; slotIndex < numSlots; ++slotIndex)
@@ -370,6 +425,7 @@ private:
             if (slot.Offset > rightmostFreeOffset)
             {
                 rightmostFreeOffset = slot.Offset;
+                rightmostFreeSize = slot.Size;
                 rightmostFreeSlotIndex = slotIndex;
             }
 
@@ -391,18 +447,21 @@ private:
 
         // No space wherever, we need to expand the buffer
 
-        // Check if we have any free slots, otherwise allocate a new one
-        if (rightmostFreeSlotIndex == numSlots)
-        {
-            // Create a free slot with 0 size,
-            // rightMostFreeSlotIndex is now within the valid range
-            _slots.emplace_back(_buffer.size(), 0, false);
-        }
-
         // Allocate more memory
-        auto additionalSize = std::max(_buffer.size() * GrowthRate, requiredSize);
-        auto newSize = _buffer.size() + additionalSize;
+        auto oldBufferSize = _buffer.size();
+        auto additionalSize = std::max(oldBufferSize * GrowthRate, requiredSize);
+        auto newSize = oldBufferSize + additionalSize;
         _buffer.resize(newSize);
+
+        // Ensure that the rightmost free slot is at the end of the buffer, otherwise allocate a new one
+        if (rightmostFreeSlotIndex == numSlots || rightmostFreeOffset + rightmostFreeSize != oldBufferSize)
+        {
+            // Create a free slot with 0 size at the end of the storage
+            _slots.emplace_back(oldBufferSize, 0, false);
+
+            // Adjust rightMostFreeSlotIndex to always point at this new slot
+            rightmostFreeSlotIndex = static_cast<Handle>(numSlots);
+        }
 
         // Use the right most slot for our requirement, then cut up the rest of the space
         auto& rightmostFreeSlot = _slots[rightmostFreeSlotIndex];

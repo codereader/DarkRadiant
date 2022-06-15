@@ -87,6 +87,8 @@ public:
 class IGeometryStore
 {
 public:
+    virtual ~IGeometryStore() {}
+
     // Slot ID handed out to client code
     using Slot = std::uint64_t;
 

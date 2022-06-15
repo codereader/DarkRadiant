@@ -277,6 +277,9 @@ public:
 	/// Note: removal of empty faces is not performed during direct brush manipulations, because it would make a manipulation irreversible if it created an empty face.
 	void removeEmptyFaces() override;
 
+    // See IBrush::removeRedundantFaces
+	void removeRedundantFaces() override;
+
 	/// \brief Constructs \p winding from the intersection of \p plane with the other planes of the brush.
 	void windingForClipPlane(Winding& winding, const Plane3& plane) const;
 
@@ -314,6 +317,9 @@ private:
 
 	/// \brief Returns true if the face identified by \p index is preceded by another plane that takes priority over it.
 	bool plane_unique(std::size_t index) const;
+
+    // Returns true if the plane with the given index has already been defined. Only faces in the range [0..i-1) will be checked
+	bool planeAlreadyDefined(std::size_t index) const;
 
 	/// \brief Removes edges that are smaller than the tolerance used when generating brush windings.
 	void removeDegenerateEdges();

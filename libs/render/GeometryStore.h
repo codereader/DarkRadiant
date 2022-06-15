@@ -3,12 +3,14 @@
 #include <stdexcept>
 #include <limits>
 #include "igeometrystore.h"
+#include "itextstream.h"
 #include "ContinuousBuffer.h"
+#include "string/format.h"
 
 namespace render
 {
 
-class GeometryStore :
+class GeometryStore final :
     public IGeometryStore
 {
 public:
@@ -22,7 +24,7 @@ private:
         IndexRemap = 1,
     };
 
-    static constexpr auto NumFrameBuffers = 3;
+    static constexpr auto NumFrameBuffers = 1;
 
     // Represents the storage for a single frame
     struct FrameBuffer
@@ -36,18 +38,35 @@ private:
         IBufferObject::Ptr indexBufferObject;
 
         // Keep track of modified slots as long as this buffer is in use
-        std::vector<detail::BufferTransaction> transactionLog;
+        std::vector<detail::BufferTransaction> vertexTransactionLog;
+        std::vector<detail::BufferTransaction> indexTransactionLog;
 
         void applyTransactions(const FrameBuffer& other)
         {
-            vertices.applyTransactions(other.transactionLog, other.vertices, GetVertexSlot);
-            indices.applyTransactions(other.transactionLog, other.indices, GetIndexSlot);
+            vertices.applyTransactions(other.vertexTransactionLog, other.vertices, GetVertexSlot);
+            indices.applyTransactions(other.indexTransactionLog, other.indices, GetIndexSlot);
         }
 
         void syncToBufferObjects()
         {
             vertices.syncModificationsToBufferObject(vertexBufferObject);
             indices.syncModificationsToBufferObject(indexBufferObject);
+        }
+
+        void recordVertexTransaction(Slot slot, std::size_t offset, std::size_t numChangedElements)
+        {
+            vertexTransactionLog.emplace_back(detail::BufferTransaction
+            {
+                slot, offset, numChangedElements
+            });
+        }
+
+        void recordIndexTransaction(Slot slot, std::size_t offset, std::size_t numChangedElements)
+        {
+            indexTransactionLog.emplace_back(detail::BufferTransaction
+            {
+                slot, offset, numChangedElements
+            });
         }
     };
 
@@ -95,7 +114,8 @@ public:
         }
 
         // This buffer is in sync now, we can clear its log
-        current.transactionLog.clear();
+        current.vertexTransactionLog.clear();
+        current.indexTransactionLog.clear();
     }
 
     std::pair<IBufferObject::Ptr, IBufferObject::Ptr> getBufferObjects() override
@@ -127,13 +147,7 @@ public:
         auto vertexSlot = current.vertices.allocate(numVertices);
         auto indexSlot = current.indices.allocate(numIndices);
 
-        auto slot = GetSlot(SlotType::Regular, vertexSlot, indexSlot);
-
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Allocate
-        });
-
-        return slot;
+        return GetSlot(SlotType::Regular, vertexSlot, indexSlot);
     }
 
     Slot allocateIndexSlot(Slot slotContainingVertexData, std::size_t numIndices) override
@@ -151,13 +165,7 @@ public:
         auto indexSlot = current.indices.allocate(numIndices);
 
         // In an IndexRemap slot, the vertex slot ID refers to the one containing the vertices
-        auto slot = GetSlot(SlotType::IndexRemap, GetVertexSlot(slotContainingVertexData), indexSlot);
-
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Allocate
-        });
-
-        return slot;
+        return GetSlot(SlotType::IndexRemap, GetVertexSlot(slotContainingVertexData), indexSlot);
     }
 
     void updateData(Slot slot, const std::vector<RenderVertex>& vertices,
@@ -178,9 +186,8 @@ public:
         assert(!indices.empty());
         current.indices.setData(GetIndexSlot(slot), indices);
 
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Update
-        });
+        current.recordVertexTransaction(slot, 0, vertices.size());
+        current.recordIndexTransaction(slot, 0, indices.size());
     }
 
     void updateSubData(Slot slot, std::size_t vertexOffset, const std::vector<RenderVertex>& vertices,
@@ -201,9 +208,8 @@ public:
         assert(!indices.empty());
         current.indices.setSubData(GetIndexSlot(slot), indexOffset, indices);
 
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Update
-        });
+        current.recordVertexTransaction(slot, vertexOffset, vertices.size());
+        current.recordIndexTransaction(slot, indexOffset, indices.size());
     }
 
     void resizeData(Slot slot, std::size_t vertexSize, std::size_t indexSize) override
@@ -212,18 +218,20 @@ public:
 
         if (GetSlotType(slot) == SlotType::Regular)
         {
-            current.vertices.resizeData(GetVertexSlot(slot), vertexSize);
+            if (current.vertices.resizeData(GetVertexSlot(slot), vertexSize))
+            {
+                current.recordVertexTransaction(slot, 0, vertexSize);
+            }
         }
         else if (vertexSize > 0)
         {
             throw std::logic_error("This is an index remap slot, cannot resize vertex data");
         }
 
-        current.indices.resizeData(GetIndexSlot(slot), indexSize);
-
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Update
-        });
+        if (current.indices.resizeData(GetIndexSlot(slot), indexSize))
+        {
+            current.recordIndexTransaction(slot, 0, indexSize);
+        }
     }
 
     void deallocateSlot(Slot slot) override
@@ -238,10 +246,6 @@ public:
         }
 
         current.indices.deallocate(GetIndexSlot(slot));
-
-        current.transactionLog.emplace_back(detail::BufferTransaction{
-            slot, detail::BufferTransaction::Type::Deallocate
-        });
     }
 
     RenderParameters getRenderParameters(Slot slot) override
@@ -286,6 +290,22 @@ public:
         }
 
         return bounds;
+    }
+
+    void printMemoryStats()
+    {
+        rMessage() << "-- Geometry Store Memory --" << std::endl;
+        rMessage() << "Number of Frame Buffers: " << NumFrameBuffers << std::endl;
+
+        for (auto i = 0; i < NumFrameBuffers; ++i)
+        {
+            rMessage() << "Frame Buffer " << i << std::endl;
+            rMessage() << "  Vertices: " << string::getFormattedByteSize(_frameBuffers[i].vertices.getBufferSizeInBytes()) << std::endl;
+            rMessage() << "  Indices: " << string::getFormattedByteSize(_frameBuffers[i].indices.getBufferSizeInBytes()) << std::endl;
+
+            auto logSize = _frameBuffers[i].vertexTransactionLog.capacity() + _frameBuffers[i].indexTransactionLog.capacity();
+            rMessage() << "  Transaction Logs: " << string::getFormattedByteSize(logSize * sizeof(detail::BufferTransaction)) << std::endl;
+        }
     }
 
 private:

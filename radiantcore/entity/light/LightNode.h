@@ -68,6 +68,8 @@ class LightNode :
 
 	LightShader m_shader;
     ShaderPtr _vertexShader;
+    ShaderPtr _crystalFillShader;
+    ShaderPtr _crystalOutlineShader;
 
     // The 8x8 box representing the light object itself
     AABB _lightBox;
@@ -83,6 +85,7 @@ class LightNode :
 
 	// Renderable components of this light
     RenderableLightOctagon _renderableOctagon;
+    RenderableLightOctagon _renderableOctagonOutline;
     RenderableLightVolume _renderableLightVolume;
     RenderableLightVertices _renderableVertices;
 
@@ -207,6 +210,8 @@ protected:
     void onVisibilityChanged(bool isVisibleNow) override;
     void onSelectionStatusChange(bool changeGroupStatus) override;
 
+    void onColourKeyChanged(const std::string& value) override;
+
 private:
     void evaluateTransform();
 
@@ -252,6 +257,9 @@ private:
     // Update the projected light frustum
     void updateProjection() const;
 	bool useStartEnd() const;
+
+    void updateRenderables();
+    void clearRenderables();
 
 public:
     // RendererLight implementation

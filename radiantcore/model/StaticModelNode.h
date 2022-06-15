@@ -43,9 +43,6 @@ private:
     // The renderable surfaces attached to the shaders
     std::vector<RenderableModelSurface::Ptr> _renderableSurfaces;
 
-    // We need to keep a reference for skin swapping
-    RenderSystemWeakPtr _renderSystem;
-
     bool _attachedToShaders;
 
 public:
@@ -96,6 +93,10 @@ public:
 
     void transformChangedLocal() override;
 
+    // Called when the contained model has applied the scale to its surfaces
+    // The Node listens to this and queues a renderable update
+    void onModelScaleApplied();
+
 protected:
 	void _onTransformationChanged() override;
 	void _applyTransformation() override;
@@ -105,6 +106,7 @@ private:
     void attachToShaders();
     void detachFromShaders();
     void queueRenderableUpdate();
+    void onModelShadersChanged();
 };
 
 } // namespace model

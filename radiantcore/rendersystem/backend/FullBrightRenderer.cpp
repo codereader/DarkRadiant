@@ -46,7 +46,7 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
     indexBuffer->bind();
 
     // Set the attribute pointers
-    ObjectRenderer::InitAttributePointers();
+    _objectRenderer.initAttributePointers();
 
     // Iterate over the sorted mapping between OpenGLStates and their
     // OpenGLShaderPasses (containing the renderable geometry), and render the
@@ -55,35 +55,31 @@ IRenderResult::Ptr FullBrightRenderer::render(RenderStateFlags globalstate, cons
     for (const auto& [_, pass] : _sortedStates)
     {
         // Render the OpenGLShaderPass
-        if (pass->empty() || pass->hasRenderables()) continue;
+        if (pass->empty()) continue;
 
         if (pass->getShader().isVisible() && pass->isApplicableTo(_renderViewType))
         {
             // Apply our state to the current state object
             pass->evaluateStagesAndApplyState(current, globalstate, time, nullptr);
-            pass->submitSurfaces(view);
+            
+            if (!pass->hasRenderables())
+            {
+                // All regular geometry like patches, brushes, meshes, single vertices
+                pass->submitSurfaces(view);
+            }
+            else
+            {
+                // Selection overlays are processed by OpenGLRenderable
+                pass->submitRenderables(current);
+            }
         }
+
+        pass->clearRenderables();
     }
 
     // Unbind the geometry buffer and draw the rest of the renderables
     vertexBuffer->unbind();
     indexBuffer->unbind();
-
-    // Run all the passes with OpenGLRenderables
-    for (const auto& [_, pass] : _sortedStates)
-    {
-        // Render the OpenGLShaderPass
-        if (pass->empty() || !pass->hasRenderables()) continue;
-
-        if (pass->getShader().isVisible() && pass->isApplicableTo(_renderViewType))
-        {
-            // Apply our state to the current state object
-            pass->evaluateStagesAndApplyState(current, globalstate, time, nullptr);
-            pass->submitRenderables(current);
-        }
-
-        pass->clearRenderables();
-    }
 
     cleanupState();
 
