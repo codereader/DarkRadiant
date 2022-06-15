@@ -1,3 +1,12 @@
+darkradiant (3.0.0~focal1) focal; urgency=medium
+
+  * New major release on all platforms
+  * Significant improvements to performance and functionality of renderer,
+    including shadow support.
+  * Numerous small fixes and improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Wed, 15 Jun 2022 20:39:03 +0100
+
 darkradiant (2.14.0~focal2) focal; urgency=medium
 
   * New major release on all platforms.
