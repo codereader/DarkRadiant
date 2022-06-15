@@ -13,6 +13,7 @@
 #include "Statement.h"
 
 #include <functional>
+#include <memory>
 #include "string/trim.h"
 #include "string/predicate.h"
 #include "module/StaticModule.h"
@@ -190,24 +191,38 @@ void CommandSystem::foreachCommand(const std::function<void(const std::string&)>
 	}
 }
 
+void CommandSystem::addCommandObject(const std::string& name, CommandPtr cmd)
+{
+	if (auto result = _commands.emplace(name, cmd); !result.second) {
+        rError() << "Cannot register command " << name << ", this command is already registered."
+                 << std::endl;
+    }
+}
+
 void CommandSystem::addCommand(const std::string& name, Function func,
 	const Signature& signature)
 {
-	// Create a new command
-	auto cmd = std::make_shared<Command>(func, signature);
+	addCommandObject(name, std::make_shared<Command>(func, signature));
+}
 
-	auto result = _commands.emplace(name, cmd);
-
-	if (!result.second)
-	{
-		rError() << "Cannot register command " << name
-			<< ", this command is already registered." << std::endl;
-	}
+void CommandSystem::addWithCheck(const std::string& name, Function func, CheckFunction check)
+{
+	addCommandObject(name, std::make_shared<Command>(func, Signature(), check));
 }
 
 bool CommandSystem::commandExists(const std::string& name)
 {
 	return _commands.find(name) != _commands.end();
+}
+
+bool CommandSystem::canExecute(const std::string& name) const
+{
+	if (auto i = _commands.find(name); i != _commands.end()) {
+		return i->second->canExecute();
+	}
+
+	// A non-existent command cannot execute
+	return false;
 }
 
 void CommandSystem::removeCommand(const std::string& name)

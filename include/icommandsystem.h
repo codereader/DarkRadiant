@@ -119,7 +119,7 @@ public:
 		return _type;
 	}
 
-	std::string getString() const 
+	std::string getString() const
 	{
 		return _strValue;
 	}
@@ -160,7 +160,7 @@ private:
 		}
 		catch (std::logic_error&) {}
 
-		try 
+		try
 		{
 			_doubleValue = std::stod(_strValue);
 			// cast succeeded
@@ -206,6 +206,12 @@ typedef std::vector<Argument> ArgumentList;
  * This can be both a free function and a member function.
  */
 typedef std::function<void (const ArgumentList&)> Function;
+
+/**
+ * @brief Signature for a function which can test if a particular command should
+ * be enabled.
+ */
+using CheckFunction = std::function<bool()>;
 
 // A command signature consists just of arguments, return type is always void
 typedef std::vector<std::size_t> Signature;
@@ -254,8 +260,32 @@ public:
 	virtual void addCommand(const std::string& name, Function func,
 							const Signature& signature = Signature()) = 0;
 
-	// Returns true if the named command exists
-	virtual bool commandExists(const std::string& name) = 0;
+    /**
+     * @brief Add a new command with a check function which can test if the
+     * command is currently runnable.
+     *
+     * This is aimed at commands which are not always available, e.g. because
+     * they require one or more objects to be selected. If the command is not
+     * currently available, the UI might choose to disable the button or menu
+     * item which invokes it.
+     *
+     * @param name
+     * Name of the command.
+     *
+     * @param func
+     * Function to call when the command is invoked.
+     *
+     * @param check
+     * Function to check whether the command should be enabled based on current
+     * application state.
+     */
+    virtual void addWithCheck(const std::string& name, Function func, CheckFunction check) = 0;
+
+    /// Returns true if the named command exists
+    virtual bool commandExists(const std::string& name) = 0;
+
+    /// Return true if the named command is currently able to execute
+    virtual bool canExecute(const std::string& name) const = 0;
 
 	/**
 	 * Remove a named command.

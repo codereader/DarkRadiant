@@ -89,6 +89,11 @@ void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom)
 	scene::removeNodeFromParent(sourceBrush);
 }
 
+bool haveSelectedBrushes()
+{
+	return !selection::algorithm::getSelectedBrushes().empty();
+}
+
 void hollowSelectedBrushes(const cmd::ArgumentList& args) {
 	UndoableCommand undo("hollowSelectedBrushes");
 
@@ -493,10 +498,11 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 
 void registerCommands()
 {
-	GlobalCommandSystem().addCommand("CSGSubtract", subtractBrushesFromUnselected);
-	GlobalCommandSystem().addCommand("CSGMerge", mergeSelectedBrushes);
-	GlobalCommandSystem().addCommand("CSGHollow", hollowSelectedBrushes);
-	GlobalCommandSystem().addCommand("CSGRoom", makeRoomForSelectedBrushes);
+    GlobalCommandSystem().addWithCheck("CSGSubtract", subtractBrushesFromUnselected,
+                                       haveSelectedBrushes);
+    GlobalCommandSystem().addWithCheck("CSGMerge", mergeSelectedBrushes, haveSelectedBrushes);
+    GlobalCommandSystem().addWithCheck("CSGHollow", hollowSelectedBrushes, haveSelectedBrushes);
+    GlobalCommandSystem().addWithCheck("CSGRoom", makeRoomForSelectedBrushes, haveSelectedBrushes);
 }
 
 } // namespace algorithm
