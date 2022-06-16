@@ -6,6 +6,7 @@
 #include <memory>
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dataview/TreeView.h"
+#include "wxutil/DeclFileInfo.h"
 #include "SequentialTaskQueue.h"
 
 #include <wx/panel.h>
@@ -35,9 +36,7 @@ private:
 	wxButton* _stopButton;
 	wxStaticText* _statusLabel;
 
-	wxSizer* _shaderDescriptionSizer;
-	wxStaticText* _shaderNameLabel;
-	wxStaticText* _shaderFileLabel;
+    wxutil::DeclFileInfo* _shaderFileInfo;
 
 	// The currently "previewed" soundshader
 	std::string _soundShader;

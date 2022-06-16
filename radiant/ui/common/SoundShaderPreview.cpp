@@ -45,21 +45,10 @@ SoundShaderPreview::SoundShaderPreview(wxWindow* parent) :
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundShaderPreview::onSelectionChanged, this);
 	_treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &SoundShaderPreview::onItemActivated, this);
 
-	_shaderFileLabel = new wxStaticText(this, wxID_ANY, "");
-	_shaderFileLabel->SetFont(_shaderFileLabel->GetFont().Bold());
-
-	_shaderNameLabel = new wxStaticText(this, wxID_ANY, "");
-	_shaderNameLabel->SetFont(_shaderNameLabel->GetFont().Bold());
-
-	_shaderDescriptionSizer = new wxBoxSizer(wxHORIZONTAL);
-
-	_shaderDescriptionSizer->Add(new wxStaticText(this, wxID_ANY, _("Sound Shader ")), 0, wxALIGN_CENTER_VERTICAL, 0);
-	_shaderDescriptionSizer->Add(_shaderNameLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
-	_shaderDescriptionSizer->Add(new wxStaticText(this, wxID_ANY, _(" defined in ")), 0, wxALIGN_CENTER_VERTICAL, 0);
-	_shaderDescriptionSizer->Add(_shaderFileLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
+    _shaderFileInfo = new wxutil::DeclFileInfo(this, decl::Type::SoundShader);
 
 	auto* vbox = new wxBoxSizer(wxVERTICAL);
-	vbox->Add(_shaderDescriptionSizer, 0, wxEXPAND|wxTOP|wxBOTTOM, 6);
+	vbox->Add(_shaderFileInfo, 0, wxEXPAND|wxTOP|wxBOTTOM, 6);
 	vbox->Add(_treeView, 1, wxEXPAND);
 
 	GetSizer()->Add(vbox, 1, wxEXPAND);
@@ -179,9 +168,8 @@ void SoundShaderPreview::update()
 				}
 			}
 
-			_shaderNameLabel->SetLabel(shader->getName());
-			_shaderFileLabel->SetLabel(shader->getShaderFilePath());
-			_shaderDescriptionSizer->Layout();
+            _shaderFileInfo->setName(shader->getName());
+            _shaderFileInfo->setPath(shader->getShaderFilePath());
 
 			handleSelectionChange();
 		}
@@ -190,9 +178,8 @@ void SoundShaderPreview::update()
 			// Not a valid soundshader, switch to inactive
 			Enable(false);
 
-			_shaderNameLabel->SetLabel("-");
-			_shaderFileLabel->SetLabel("-");
-			_shaderDescriptionSizer->Layout();
+            _shaderFileInfo->setName("-");
+            _shaderFileInfo->setPath("-");
 		}
 	}
     else
