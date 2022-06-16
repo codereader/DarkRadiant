@@ -10,6 +10,35 @@
 namespace textool
 {
 
+namespace detail
+{
+
+// Constrains the vector as defined by the given set of flags
+Vector2 getConstrainedDelta(const Vector2& vector, unsigned int constraintFlags)
+{
+    auto diff = vector;
+
+    // Axis constraints
+    if (constraintFlags & selection::IManipulator::Component::Constraint::Type1)
+    {
+        // Locate the index of the component carrying the largest abs value
+        // Zero out the other component
+        diff[fabs(diff.y()) > fabs(diff.x()) ? 0 : 1] = 0;
+    }
+
+    // Grid constraint
+    if (constraintFlags & selection::IManipulator::Component::Constraint::Grid)
+    {
+        auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
+        diff.x() = float_snapped(diff.x(), gridSize);
+        diff.y() = float_snapped(diff.y(), gridSize);
+    }
+
+    return diff;
+}
+
+}
+
 void TextureTranslator::beginTransformation(const Matrix4& pivot2world, 
     const VolumeTest& view, const Vector2& devicePoint)
 {
@@ -25,22 +54,7 @@ void TextureTranslator::transform(const Matrix4& pivot2world, const VolumeTest& 
     auto current3D = device2Pivot.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
     Vector2 current(current3D.x(), current3D.y());
 
-    auto diff = current - _start;
-
-    if (constraintFlags & Constraint::Type1)
-    {
-        // Locate the index of the component carrying the largest abs value
-        // Zero out the other component
-        diff[fabs(diff.y()) > fabs(diff.x()) ? 0 : 1] = 0;
-    }
-
-    // Snap to grid if the constraint flag is set
-    if (constraintFlags & Constraint::Grid)
-    {
-        auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
-        diff.x() = float_snapped(diff.x(), gridSize);
-        diff.y() = float_snapped(diff.y(), gridSize);
-    }
+    auto diff = detail::getConstrainedDelta(current - _start, constraintFlags);
 
     _translateFunctor(diff);
 }
@@ -104,23 +118,7 @@ void TextureDragResizer::transform(const Matrix4& pivot2world, const VolumeTest&
     auto currentWorldPoint = device2World.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
     auto current = Vector2(currentWorldPoint.x(), currentWorldPoint.y());
 
-    auto diff = current - _start;
-
-    // Axis constraints
-    if (constraintFlags & Constraint::Type1)
-    {
-        // Locate the index of the component carrying the largest abs value
-        // Zero out the other component
-        diff[fabs(diff.y()) > fabs(diff.x()) ? 0 : 1] = 0;
-    }
-
-    // Grid constraint
-    if (constraintFlags & Constraint::Grid)
-    {
-        auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
-        diff.x() = float_snapped(diff.x(), gridSize);
-        diff.y() = float_snapped(diff.y(), gridSize);
-    }
+    auto diff = detail::getConstrainedDelta(current - _start, constraintFlags);
 
     // Consider the side of the pivot we're moving the mouse
     auto factor = Vector2(
