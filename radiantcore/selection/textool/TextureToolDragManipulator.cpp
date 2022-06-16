@@ -96,7 +96,7 @@ Vector2 TextureDragResizer::FindFarthestCorner(const AABB& bounds, const Vector2
     return result;
 }
 
-void TextureDragResizer::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraints)
+void TextureDragResizer::transform(const Matrix4& pivot2world, const VolumeTest& view, const Vector2& devicePoint, unsigned int constraintFlags)
 {
     auto device2World = constructDevice2Pivot(pivot2world, view).getPremultipliedBy(pivot2world);
 
@@ -104,7 +104,23 @@ void TextureDragResizer::transform(const Matrix4& pivot2world, const VolumeTest&
     auto currentWorldPoint = device2World.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
     auto current = Vector2(currentWorldPoint.x(), currentWorldPoint.y());
 
-    auto distanceToStart = current - _start;
+    auto diff = current - _start;
+
+    // Axis constraints
+    if (constraintFlags & Constraint::Type1)
+    {
+        // Locate the index of the component carrying the largest abs value
+        // Zero out the other component
+        diff[fabs(diff.y()) > fabs(diff.x()) ? 0 : 1] = 0;
+    }
+
+    // Grid constraint
+    if (constraintFlags & Constraint::Grid)
+    {
+        auto gridSize = GlobalGrid().getGridSize(grid::Space::Texture);
+        diff.x() = float_snapped(diff.x(), gridSize);
+        diff.y() = float_snapped(diff.y(), gridSize);
+    }
 
     // Consider the side of the pivot we're moving the mouse
     auto factor = Vector2(
@@ -114,7 +130,7 @@ void TextureDragResizer::transform(const Matrix4& pivot2world, const VolumeTest&
 
     // Calculate how much the selection bounds should grow (in UV coordinates)
     // The extents are only covering half of the bounds, so cut the distance in half to compensate
-    auto scale = (_startingBoundsExtents + factor * distanceToStart * 0.5) / _startingBoundsExtents;
+    auto scale = (_startingBoundsExtents + factor * diff * 0.5) / _startingBoundsExtents;
 
     // Set those components we don't scale to 1.0
     Vector2 constrainedScale(
