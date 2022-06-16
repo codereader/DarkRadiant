@@ -101,7 +101,7 @@ inline scene::INodePtr findFirstPatchWithMaterial(const scene::INodePtr& parent,
 }
 
 inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
-    const std::function<bool(IEntityNode&)>& predicate)
+    const std::function<bool(const IEntityNodePtr&)>& predicate)
 {
     IEntityNodePtr candidate;
 
@@ -109,7 +109,7 @@ inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
     {
         auto entity = std::dynamic_pointer_cast<IEntityNode>(node);
 
-        if (entity && predicate(*entity))
+        if (entity && predicate(entity))
         {
             candidate = entity;
             return false;
@@ -123,17 +123,17 @@ inline scene::INodePtr findFirstEntity(const scene::INodePtr& parent,
 
 inline scene::INodePtr findWorldspawn(const scene::INodePtr& root)
 {
-    return findFirstEntity(root, [&](IEntityNode& entity)
+    return findFirstEntity(root, [&](const IEntityNodePtr& entity)
     {
-        return entity.getEntity().isWorldspawn();
+        return entity->getEntity().isWorldspawn();
     });
 }
 
 inline scene::INodePtr getEntityByName(const scene::INodePtr& parent, const std::string& name)
 {
-    return findFirstEntity(parent, [&](IEntityNode& entity)
+    return findFirstEntity(parent, [&](const IEntityNodePtr& entity)
     {
-        return entity.getEntity().getKeyValue("name") == name;
+        return entity->getEntity().getKeyValue("name") == name;
     });
 }
 

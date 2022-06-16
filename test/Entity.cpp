@@ -1928,15 +1928,15 @@ TEST_F(EntityTest, EntityNodeObserveKeyAutoDisconnect)
     spawnArgs->setKeyValue(TEST_KEY, "whatever");
 }
 
-inline Entity* findPlayerStartEntity()
+inline IEntityNodePtr findPlayerStartEntity()
 {
-    Entity* found = nullptr;
+    IEntityNodePtr found;
 
-    algorithm::findFirstEntity(GlobalMapModule().getRoot(), [&](IEntityNode& entityNode)
+    algorithm::findFirstEntity(GlobalMapModule().getRoot(), [&](const IEntityNodePtr& entity)
     {
-        if (entityNode.getEntity().getEntityClass()->getName() == "info_player_start")
+        if (entity->getEntity().getEntityClass()->getName() == "info_player_start")
         {
-            found = &entityNode.getEntity();
+            found = entity;
         }
 
         return found == nullptr;
@@ -1956,7 +1956,9 @@ TEST_F(EntityTest, AddPlayerStart)
     auto playerStart = findPlayerStartEntity();
     EXPECT_TRUE(playerStart) << "Couldn't find the player start entity after placing it";
 
-    EXPECT_EQ(playerStart->getKeyValue("origin"), string::to_string(position)) << "Origin has the wrong value";
+    EXPECT_EQ(playerStart->getEntity().getKeyValue("origin"), string::to_string(position)) << "Origin has the wrong value";
+
+    EXPECT_TRUE(Node_isSelected(playerStart)) << "Player start should be selected after placement";
 
     // Ensure this action is undoable
     GlobalUndoSystem().undo();
@@ -1976,6 +1978,8 @@ TEST_F(EntityTest, MovePlayerStart)
     Vector3 position(7, 2, -4);
     GlobalCommandSystem().executeCommand("PlacePlayerStart", cmd::Argument(position));
     EXPECT_EQ(Node_getEntity(playerStart)->getKeyValue("origin"), string::to_string(position)) << "Origin didn't get updated";
+
+    EXPECT_TRUE(Node_isSelected(playerStart)) << "Player start should be selected after placement";
 
     // Ensure this action is undoable
     GlobalUndoSystem().undo();
