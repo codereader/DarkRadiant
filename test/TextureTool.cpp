@@ -1107,6 +1107,9 @@ void dragManipulateSelectionTowardsLowerRight(const Vector2& startTexcoord, cons
     render::View scissored(view);
     ConstructSelectionTest(scissored, selection::Rectangle::ConstructFromPoint(devicePoint, Vector2(0.05, 0.05)));
 
+    SelectionVolume test(scissored);
+    manipulator->testSelect(test, GlobalTextureToolSelectionSystem().getPivot2World());
+
     auto manipComponent = manipulator->getActiveComponent();
     auto pivot2World = GlobalTextureToolSelectionSystem().getPivot2World();
     manipComponent->beginTransformation(pivot2World, scissored, devicePoint);
