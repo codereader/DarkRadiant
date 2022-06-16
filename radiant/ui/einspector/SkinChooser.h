@@ -8,6 +8,7 @@
 
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/preview/ModelPreview.h"
+#include "wxutil/DeclFileInfo.h"
 #include <string>
 
 #include "wxutil/dataview/TreeModel.h"
@@ -51,6 +52,8 @@ private:
 	wxutil::TreeModel::Ptr _treeStore;
 	wxutil::TreeView* _treeView;
     MaterialsList* _materialsList;
+
+    wxutil::DeclFileInfo* _fileInfo;
 
 	// The model name to use for skin matching
 	std::string _model;

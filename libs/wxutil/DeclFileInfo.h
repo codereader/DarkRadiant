@@ -30,7 +30,7 @@ public:
 
         auto sizer = new wxBoxSizer(wxHORIZONTAL);
 
-        sizer->Add(new wxStaticText(this, wxID_ANY, decl::getTypeName(declType)), 0, wxALIGN_CENTER_VERTICAL, 0);
+        sizer->Add(new wxStaticText(this, wxID_ANY, decl::getTypeName(declType) + " "), 0, wxALIGN_CENTER_VERTICAL, 0);
         sizer->Add(_nameLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
         sizer->Add(new wxStaticText(this, wxID_ANY, _(" defined in ")), 0, wxALIGN_CENTER_VERTICAL, 0);
         sizer->Add(_fileLabel, 0, wxALIGN_CENTER_VERTICAL, 0);

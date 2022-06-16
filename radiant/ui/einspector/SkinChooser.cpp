@@ -31,6 +31,7 @@ SkinChooser::SkinChooser() :
 	_treeStore(new wxutil::TreeModel(_columns)),
 	_treeView(nullptr),
     _materialsList(nullptr),
+    _fileInfo(nullptr),
 	_lastSkin("")
 {
 	FitToScreen(0.6f, 0.6f);
@@ -100,13 +101,16 @@ void SkinChooser::populateWindow()
         sigc::mem_fun(*_preview, &wxutil::ModelPreview::queueDraw)
     );
 
+    _fileInfo = new wxutil::DeclFileInfo(leftPanel, decl::Type::Skin);
+
     leftPanel->GetSizer()->Add(_treeView, 1, wxEXPAND);
+    leftPanel->GetSizer()->Add(_fileInfo, 0, wxEXPAND | wxTOP, 6);
     leftPanel->GetSizer()->Add(_materialsList, 0, wxEXPAND | wxTOP, 6);
 
 	// Pack treeview and preview
     splitter->SplitVertically(leftPanel, _preview->getWidget());
 
-    FitToScreen(0.6f, 0.8f);
+    FitToScreen(0.8f, 0.8f);
 
     // Set the default size of the window
     splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.3f));
@@ -224,7 +228,7 @@ void SkinChooser::populateSkins()
 
             row[_columns.displayName] = wxVariant(wxDataViewIconText(displayPath,
                 !isFolder ? skinIcon : folderIcon));
-            row[_columns.fullName] = leafName;
+            row[_columns.fullName] = path;
             row[_columns.isFolder] = isFolder;
         });
 	}
@@ -303,9 +307,23 @@ void SkinChooser::onMainFrameShuttingDown()
 
 void SkinChooser::handleSelectionChange()
 {
+    auto selectedSkin = getSelectedSkin();
+
     // Set the model preview to show the model with the selected skin
     _preview->setModel(_model);
-    _preview->setSkin(getSelectedSkin());
+    _preview->setSkin(selectedSkin);
+
+    if (!selectedSkin.empty())
+    {
+        _fileInfo->setName(selectedSkin);
+        auto& skin = GlobalModelSkinCache().capture(selectedSkin);
+        _fileInfo->setPath(skin.getSkinFileName());
+    }
+    else
+    {
+        _fileInfo->setName("-");
+        _fileInfo->setPath("-");
+    }
 
     updateMaterialsList();
 }
