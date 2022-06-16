@@ -39,6 +39,8 @@ private:
     // Every scaled dimension has 1.0 in the corresponding component
     Vector2 _scaleMask;
 
+    Vector2 _startingBoundsExtents;
+
     std::function<void(const Vector2&, const Vector2&)> _scaleFunctor;
 
 public:

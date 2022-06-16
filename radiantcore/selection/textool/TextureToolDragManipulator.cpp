@@ -69,6 +69,8 @@ void TextureDragResizer::beginTransformation(const Matrix4& pivot2world, const V
         _start.x() > boundsMax.x() || _start.x() < boundsMin.x() ? 1 : 0,
         _start.y() > boundsMax.y() || _start.y() < boundsMin.y() ? 1 : 0
     );
+
+    _startingBoundsExtents = Vector2(bounds.getExtents().x(), bounds.getExtents().y());
 }
 
 Vector2 TextureDragResizer::FindFarthestCorner(const AABB& bounds, const Vector2& start)
@@ -102,10 +104,25 @@ void TextureDragResizer::transform(const Matrix4& pivot2world, const VolumeTest&
     auto currentWorldPoint = device2World.transformPoint(Vector3(devicePoint.x(), devicePoint.y(), 0));
     auto current = Vector2(currentWorldPoint.x(), currentWorldPoint.y());
 
-    // TODO: calculate correct scale
-    auto scale = Vector2(1, 1) + (current - _start) * _scaleMask;
+    auto distanceToStart = current - _start;
 
-    _scaleFunctor(scale, _scalePivot);
+    // Consider the side of the pivot we're moving the mouse
+    auto factor = Vector2(
+        _scalePivot.x() > _start.x() ? -1.0 : 1.0,
+        _scalePivot.y() > _start.y() ? -1.0 : 1.0
+    );
+
+    // Calculate how much the selection bounds should grow (in UV coordinates)
+    // The extents are only covering half of the bounds, so cut the distance in half to compensate
+    auto scale = (_startingBoundsExtents + factor * distanceToStart * 0.5) / _startingBoundsExtents;
+
+    // Set those components we don't scale to 1.0
+    Vector2 constrainedScale(
+        _scaleMask.x() > 0 ? fabs(scale.x()) : 1.0,
+        _scaleMask.y() > 0 ? fabs(scale.y()) : 1.0
+    );
+
+    _scaleFunctor(constrainedScale, _scalePivot);
 }
 
 TextureToolDragManipulator::TextureToolDragManipulator() :
@@ -223,11 +240,19 @@ void TextureToolDragManipulator::translateSelected(const Vector2& translation)
 
 void TextureToolDragManipulator::scaleSelected(const Vector2& scale, const Vector2& pivot)
 {
-    if (GlobalTextureToolSelectionSystem().getSelectionMode() == SelectionMode::Surface)
+    if (GlobalTextureToolSelectionSystem().getSelectionMode() != SelectionMode::Surface)
     {
-        selection::algorithm::TextureScaler scaler(pivot, scale);
-        GlobalTextureToolSelectionSystem().foreachSelectedNode(scaler);
+        return;
     }
+
+    selection::algorithm::TextureScaler scaler(pivot, scale);
+
+    GlobalTextureToolSelectionSystem().foreachSelectedNode([&](const INode::Ptr& node)
+    {
+        node->revertTransformation();
+        node->transform(scaler.getTransform());
+        return true;
+    });
 }
 
 void TextureToolDragManipulator::testSelectDragResize(SelectionTest& test, const Matrix4& pivot2world)
