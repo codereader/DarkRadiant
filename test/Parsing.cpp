@@ -28,6 +28,56 @@ inline void parseBlock(const std::string& testString,
     parseBlock(testString, { std::make_pair(expectedName, needleToFindInBlockContents) });
 }
 
+TEST(DefBlockTokeniser, TypedBlock)
+{
+    std::string testString = R"(entityDef atdm:target_base
+{
+	"inherit"				"atdm:entity_base"
+
+	"editor_displayFolder"	"Targets"
+	"nodraw"				"1"
+})";
+
+    parseBlock(testString, "entityDef atdm:target_base", "\"atdm:entity_base\"");
+}
+
+TEST(DefBlockTokeniser, TypedBlockWithWhitespace)
+{
+    std::string testString = R"(	entityDef	atdm:target_base  		
+{
+	"inherit"				"atdm:entity_base"
+
+	"editor_displayFolder"	"Inner opening { and closing } braces to confuse the parser"
+	"nodraw"				"1"
+})";
+
+    parseBlock(testString, "entityDef atdm:target_base", "\"atdm:entity_base\"");
+}
+
+TEST(DefBlockTokeniser, TypedBlockWithCurlyBracesInContent)
+{
+    std::string testString = R"(	entityDef	atdm:target_base  		
+{
+	"editor_displayFolder"	"Inner opening { and closing } braces to confuse the parser"
+	"nodraw"				"1"
+})";
+
+    parseBlock(testString, "entityDef atdm:target_base", "Inner opening { and closing } braces to confuse the parser");
+}
+
+TEST(DefBlockTokeniser, NestedBlock)
+{
+    std::string testString = R"(textures/darkmod/test  		
+{
+    {
+        blend diffusemap
+        map _white
+    }
+})";
+
+    parseBlock(testString, "textures/darkmod/test", "blend diffusemap");
+}
+
 TEST(DefBlockTokeniser, NameAndBlockInSeparateLines)
 {
     std::string testString = R"(textures/parsing_test/variant1
