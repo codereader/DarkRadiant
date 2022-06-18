@@ -7,6 +7,7 @@ add_executable(drtest
                ColourSchemes.cpp
                ContinuousBuffer.cpp
                CSG.cpp
+               DeclManager.cpp
                Entity.cpp
                Favourites.cpp
                FileTypes.cpp
