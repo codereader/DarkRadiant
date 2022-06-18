@@ -110,7 +110,7 @@ namespace
 
 void SurfaceInspector::ManipulatorRow::setValue(double v)
 {
-    value->SetValue(fmt::format("{}", v));
+    value->SetValue(fmt::format("{0:g}", v));
 }
 
 void SurfaceInspector::FitTextureWidgets::enable(bool enabled)
