@@ -178,11 +178,28 @@ TEST_F(DeclManagerTest, DeclTypeParserRegistration)
 }
 
 // Test that a parser coming late to the party is immediately fed with the buffered decl blocks
-TEST_F(DeclManagerTest, LateDeclTypeRegistration)
+TEST_F(DeclManagerTest, LateParserRegistration)
 {
     auto parser = std::make_shared<TestDeclarationParser>();
 
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationParser>());
 
+    // Parse this folder, it contains decls of type testdecl and testdecl2 in the .decl files
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    // Let the testdecl parser finish its work
+    getAllDeclNames(decl::Type::Material);
+
+    auto foundTestDecl2Names = getAllDeclNames(decl::Type::Model);
+    EXPECT_FALSE(foundTestDecl2Names.count("decltable1") > 0);
+    EXPECT_FALSE(foundTestDecl2Names.count("decltable2") > 0);
+    EXPECT_FALSE(foundTestDecl2Names.count("decltable3") > 0);
+
+    // Register the testdecl2 parser now, it should be used by the decl manager to parse the missing pieces
+    GlobalDeclarationManager().registerDeclType("testdecl2", std::make_shared<TestDeclaration2Parser>());
+
+    // Everything should be registered now
+    checkKnownTestDecl2Names();
 }
 
 }

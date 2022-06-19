@@ -77,13 +77,7 @@ void DeclarationParser::parseBlock(IDeclarationParser& parser, const Declaration
     auto& declMap = _parsedDecls.try_emplace(parser.getDeclType(), NamedDeclarations()).first->second;
 
     // Insert into map, emit a warning on duplicates
-    auto result = declMap.try_emplace(declaration->getName(), std::move(declaration));
-
-    if (!result.second)
-    {
-        rWarning() << "[DeclParser]: " << getTypeName(parser.getDeclType()) << " " << 
-            result.first->second->getName() << " has already been declared" << std::endl;
-    }
+    DeclarationManager::InsertDeclaration(declMap, std::move(declaration));
 }
 
 IDeclarationParser::Ptr DeclarationParser::getParserByType(Type declType) const

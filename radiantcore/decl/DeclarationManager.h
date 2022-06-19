@@ -4,7 +4,6 @@
 #include <map>
 #include <vector>
 #include <memory>
-#include <thread>
 
 namespace decl
 {
@@ -39,7 +38,7 @@ private:
     std::map<Type, Declarations> _declarationsByType;
     std::mutex _declarationLock;
 
-    std::vector<DeclarationBlockSyntax> _unrecognisedBlocks;
+    std::list<DeclarationBlockSyntax> _unrecognisedBlocks;
     std::mutex _unrecognisedBlockLock;
 
 public:
@@ -56,6 +55,11 @@ public:
     // Invoked once a parser thread has finished. It will move its data over to here.
     void onParserFinished(std::map<Type, NamedDeclarations>&& parsedDecls, 
         std::vector<DeclarationBlockSyntax>&& unrecognisedBlocks);
+
+    static void InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration);
+
+private:
+    void handleUnrecognisedBlocks();
 };
 
 }

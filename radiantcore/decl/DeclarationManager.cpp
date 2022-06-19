@@ -18,6 +18,9 @@ void DeclarationManager::registerDeclType(const std::string& typeName, const IDe
     }
 
     _parsersByTypename.emplace(typeName, parser);
+
+    // A new parser might be able to parse some of the unrecognised blocks
+    handleUnrecognisedBlocks();
 }
 
 void DeclarationManager::unregisterDeclType(const std::string& typeName)
@@ -95,6 +98,49 @@ void DeclarationManager::onParserFinished(std::map<Type, NamedDeclarations>&& pa
         // Move all blocks into this one
         _unrecognisedBlocks.insert(_unrecognisedBlocks.end(),
             std::make_move_iterator(unrecognisedBlocks.begin()), std::make_move_iterator(unrecognisedBlocks.end()));
+    }
+
+    // We might have received a parser in the meantime
+    handleUnrecognisedBlocks();
+}
+
+void DeclarationManager::handleUnrecognisedBlocks()
+{
+    std::lock_guard<std::mutex> lock(_unrecognisedBlockLock);
+
+    // Check each of the unrecognised blocks
+    for (auto b = _unrecognisedBlocks.begin(); b != _unrecognisedBlocks.end();)
+    {
+        auto parser = _parsersByTypename.find(b->typeName);
+
+        if (parser == _parsersByTypename.end())
+        {
+            ++b;
+            continue; // still not recognised
+        }
+
+        // We found a parser, handle it now
+        auto declaration = parser->second->parseFromBlock(*b);
+        _unrecognisedBlocks.erase(b++);
+
+        // Insert into our main library
+        std::lock_guard<std::mutex> declLock(_declarationLock);
+
+        auto& namedDecls = _declarationsByType.try_emplace(declaration->getType(), Declarations()).first->second.decls;
+
+        InsertDeclaration(namedDecls, std::move(declaration));
+    }
+}
+
+void DeclarationManager::InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration)
+{
+    auto type = declaration->getType();
+    auto result = map.try_emplace(declaration->getName(), std::move(declaration));
+
+    if (!result.second)
+    {
+        rWarning() << "[DeclParser]: " << getTypeName(type) << " " <<
+            result.first->second->getName() << " has already been declared" << std::endl;
     }
 }
 
