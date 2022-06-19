@@ -35,6 +35,8 @@ class TestDeclarationParser :
     public decl::IDeclarationParser
 {
 public:
+    bool blockProcessing = false;
+
     // Returns the declaration type this parser can handle
     decl::Type getDeclType() const override
     {
@@ -44,6 +46,12 @@ public:
     // Create a new declaration instance from the given block
     decl::IDeclaration::Ptr parseFromBlock(const decl::DeclarationBlockSyntax& block) override
     {
+        while (blockProcessing)
+        {
+            using namespace std::chrono_literals;
+            std::this_thread::sleep_for(20ms);
+        }
+
         return std::make_shared<TestDeclaration>(getDeclType(), block.name);
     }
 };
@@ -197,6 +205,36 @@ TEST_F(DeclManagerTest, LateParserRegistration)
 
     // Register the testdecl2 parser now, it should be used by the decl manager to parse the missing pieces
     GlobalDeclarationManager().registerDeclType("testdecl2", std::make_shared<TestDeclaration2Parser>());
+
+    // Everything should be registered now
+    checkKnownTestDecl2Names();
+}
+
+TEST_F(DeclManagerTest, ParserRegistrationDuringRunningThread)
+{
+    auto parser = std::make_shared<TestDeclarationParser>();
+
+    // Hold back this parser until we let it go in this fixture
+    parser->blockProcessing = true;
+
+    GlobalDeclarationManager().registerDeclType("testdecl", parser);
+
+    // Parse this folder, it contains decls of type testdecl and testdecl2 in the .decl files
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    auto foundTestDecl2Names = getAllDeclNames(decl::Type::Model);
+    EXPECT_FALSE(foundTestDecl2Names.count("decltable1") > 0);
+
+    // Register the testdecl2 parser now, it should be used by the decl manager to parse the missing pieces
+    GlobalDeclarationManager().registerDeclType("testdecl2", std::make_shared<TestDeclaration2Parser>());
+
+    // The first thread is still running, so we didn't get any unrecognised decls reported
+    foundTestDecl2Names = getAllDeclNames(decl::Type::Model);
+    EXPECT_FALSE(foundTestDecl2Names.count("decltable1") > 0);
+
+    // Let the testdecl parser finish its work
+    parser->blockProcessing = false;
+    getAllDeclNames(decl::Type::Material);
 
     // Everything should be registered now
     checkKnownTestDecl2Names();
