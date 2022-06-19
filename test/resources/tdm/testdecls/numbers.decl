@@ -1,0 +1,18 @@
+// Test declarations used for some DeclarationManager unit tests
+
+decl/numbers/0
+{
+    diffusemap textures/numbers/0
+}
+
+decl/numbers/1
+{
+    diffusemap textures/numbers/1
+}
+
+testdecl decl/numbers/2
+{
+    diffusemap textures/numbers/2
+}
+
+testdecl2 decltable1 { { 0, 0, 0, 0, 1, 1 } }
