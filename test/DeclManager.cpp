@@ -264,4 +264,13 @@ TEST_F(DeclManagerTest, DeclsReloadedSignal)
     EXPECT_FALSE(modelSignalFired) << "Model-type Signal should not have been fired";
 }
 
+TEST_F(DeclManagerTest, FindDeclaration)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationParser>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    EXPECT_TRUE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/exporttest/guisurf1"));
+    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/nonexistent"));
+}
+
 }

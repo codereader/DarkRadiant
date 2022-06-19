@@ -51,8 +51,37 @@ void DeclarationManager::registerDeclFolder(Type defaultType, const std::string&
     decls.parser->start();
 }
 
+IDeclaration::Ptr DeclarationManager::findDeclaration(Type type, const std::string& name)
+{
+    IDeclaration::Ptr returnValue;
+
+    doWithDeclarations(type, [&](const NamedDeclarations& decls)
+    {
+        auto decl = decls.find(name);
+
+        if (decl != decls.end())
+        {
+            returnValue = decl->second;
+        }
+    });
+
+    return returnValue;
+}
+
 void DeclarationManager::foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor)
 {
+    doWithDeclarations(type, [&](const NamedDeclarations& decls)
+    {
+        for (const auto& [_, decl] : decls)
+        {
+            functor(*decl);
+        }
+    });
+}
+
+void DeclarationManager::doWithDeclarations(Type type, const std::function<void(const NamedDeclarations&)>& action)
+{
+    // Find type dictionary
     auto declLock = std::make_unique<std::lock_guard<std::mutex>>(_declarationLock);
 
     auto decls = _declarationsByType.find(type);
@@ -71,10 +100,7 @@ void DeclarationManager::foreachDeclaration(Type type, const std::function<void(
         declLock = std::make_unique<std::lock_guard<std::mutex>>(_declarationLock);
     }
 
-    for (const auto& [_, decl] : decls->second.decls)
-    {
-        functor(*decl);
-    }
+    action(decls->second.decls);
 }
 
 sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)

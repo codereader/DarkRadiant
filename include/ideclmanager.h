@@ -96,6 +96,10 @@ public:
     // Registering a folder will immediately trigger parsing of all contained files matching the criteria.
     virtual void registerDeclFolder(Type defaultType, const std::string& vfsFolder, const std::string& extension) = 0;
 
+    // Find the declaration with the given type and name
+    // Returns an empty reference if no declaration with that name could be found
+    virtual IDeclaration::Ptr findDeclaration(Type type, const std::string& name) = 0;
+
     // Iterate over all known declarations, using the given visitor
     virtual void foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor) = 0;
 

@@ -47,6 +47,7 @@ public:
     void registerDeclType(const std::string& typeName, const IDeclarationParser::Ptr& parser) override;
     void unregisterDeclType(const std::string& typeName) override;
     void registerDeclFolder(Type defaultType, const std::string& inputFolder, const std::string& inputExtension) override;
+    IDeclaration::Ptr findDeclaration(Type type, const std::string& name) override;
     void foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor) override;
     sigc::signal<void>& signal_DeclsReloaded(Type type) override;
 
@@ -62,6 +63,7 @@ public:
     static void InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration);
 
 private:
+    void doWithDeclarations(Type type, const std::function<void(const NamedDeclarations&)>& action);
     void handleUnrecognisedBlocks();
 };
 

@@ -18,9 +18,6 @@ class SoundManager final :
     public ISoundManager
 {
 private:
-    // Master map of shaders
-	ShaderMap _shaders;
-
 	SoundShader::Ptr _emptyShader;
 
 	// The helper class for playing the sounds

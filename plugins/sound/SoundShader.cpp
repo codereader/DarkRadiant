@@ -20,14 +20,11 @@ struct SoundShader::ParsedContents
 	std::string displayFolder;
 };
 
-SoundShader::SoundShader(const std::string& name,
-                         const std::string& blockContents,
-                         const vfs::FileInfo& fileInfo,
-                         const std::string& modName)
-:	_name(name),
-    _blockContents(blockContents),
-	_fileInfo(fileInfo),
-    _modName(modName)
+SoundShader::SoundShader(const decl::DeclarationBlockSyntax& block)
+:	_name(block.name),
+    _blockContents(block.contents),
+	_fileInfo(block.fileInfo),
+    _modName(block.getModName())
 { }
 
 // Destructor must be defined with ParsedContents definition visible, otherwise

@@ -34,11 +34,7 @@ private:
 public:
 	using Ptr = std::shared_ptr<SoundShader>;
 
-	/// Constructor.
-	SoundShader(const std::string& name,
-				const std::string& blockContents,
-				const vfs::FileInfo& fileInfo,
-				const std::string& modName = "base");
+	SoundShader(const decl::DeclarationBlockSyntax& block);
 
     virtual ~SoundShader();
 
