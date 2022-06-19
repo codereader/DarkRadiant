@@ -119,6 +119,27 @@ void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
+void DeclarationManager::shutdownModule()
+{
+    auto declLock = std::make_unique<std::lock_guard<std::mutex>>(_declarationLock);
+    std::vector<std::unique_ptr<DeclarationParser>> parsersToFinish;
+
+    for (auto& [_, decl] : _declarationsByType)
+    {
+        if (decl.parser)
+        {
+            parsersToFinish.emplace_back(std::move(decl.parser));
+        }
+    }
+
+    // Release the lock, destruct all parsers
+    declLock.reset();
+    parsersToFinish.clear(); // might block if parsers are running
+
+    // All parsers have finished, clear the structure, no need to lock anything
+    _declarationsByType.clear();
+}
+
 module::StaticModuleRegistration<DeclarationManager> _declManagerModule;
 
 }

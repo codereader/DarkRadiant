@@ -51,6 +51,7 @@ public:
     const std::string& getName() const override;
     const StringSet& getDependencies() const override;
     void initialiseModule(const IApplicationContext& ctx) override;
+    void shutdownModule() override;
 
     // Invoked once a parser thread has finished. It will move its data over to here.
     void onParserFinished(std::map<Type, NamedDeclarations>&& parsedDecls, 
