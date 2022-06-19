@@ -9,7 +9,7 @@ namespace sound
 /**
  * Declaration parser capable of dealing with sound shader blocks
  */
-class SoundFileLoader final :
+class SoundShaderParser final :
     public decl::IDeclarationParser
 {
 public:

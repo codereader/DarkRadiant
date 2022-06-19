@@ -10,9 +10,6 @@
     <ClInclude Include="..\..\plugins\sound\OggFileStream.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\sound\SoundFileLoader.h">
-      <Filter>src</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\plugins\sound\SoundManager.h">
       <Filter>src</Filter>
     </ClInclude>
@@ -26,6 +23,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\..\plugins\sound\OggFileLoader.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\plugins\sound\SoundShaderParser.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

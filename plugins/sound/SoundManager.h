@@ -7,7 +7,7 @@
 #include "icommandsystem.h"
 
 #include "parser/ThreadedDeclParser.h"
-#include "SoundFileLoader.h"
+#include "SoundShaderParser.h"
 #include <map>
 
 namespace sound

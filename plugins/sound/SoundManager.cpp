@@ -153,7 +153,7 @@ void SoundManager::initialiseModule(const IApplicationContext& ctx)
     }
 
     // Register the parser capable of loading shaders and point the decl manager to the sound folder
-    GlobalDeclarationManager().registerDeclType("sound", std::make_shared<SoundFileLoader>());
+    GlobalDeclarationManager().registerDeclType("sound", std::make_shared<SoundShaderParser>());
     GlobalDeclarationManager().registerDeclFolder(decl::Type::SoundShader, SOUND_FOLDER, SOUND_FILE_EXTENSION);
 
     // Route the decls reloaded signal to the local signal
