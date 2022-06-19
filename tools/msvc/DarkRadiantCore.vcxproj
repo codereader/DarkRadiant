@@ -39,6 +39,7 @@
     <ClCompile Include="..\..\radiantcore\clipper\ClipPoint.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\SplitAlgorithm.cpp" />
     <ClCompile Include="..\..\radiantcore\decl\DeclarationManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\decl\DeclarationParser.cpp" />
     <ClCompile Include="..\..\radiantcore\decl\FavouritesManager.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp" />
@@ -759,6 +760,8 @@
     <ClInclude Include="..\..\radiantcore\clipper\Clipper.h" />
     <ClInclude Include="..\..\radiantcore\clipper\ClipPoint.h" />
     <ClInclude Include="..\..\radiantcore\clipper\SplitAlgorithm.h" />
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationManager.h" />
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationParser.h" />
     <ClInclude Include="..\..\radiantcore\decl\FavouriteSet.h" />
     <ClInclude Include="..\..\radiantcore\decl\FavouritesManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h" />

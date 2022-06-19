@@ -1153,6 +1153,9 @@
     <ClCompile Include="..\..\radiantcore\decl\DeclarationManager.cpp">
       <Filter>src\decl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\decl\DeclarationParser.cpp">
+      <Filter>src\decl</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2372,6 +2375,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationManager.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationParser.h">
+      <Filter>src\decl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

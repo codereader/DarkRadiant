@@ -37,6 +37,8 @@ public:
     virtual Type getType() const = 0;
 };
 
+using NamedDeclarations = std::map<std::string, IDeclaration::Ptr>;
+
 // Interface of a parser that can handle a single declaration type
 class IDeclarationParser
 {
@@ -71,13 +73,17 @@ public:
     // Unregisters the given typename and the associated parser
     virtual void unregisterDeclType(const std::string& typeName) = 0;
 
-    // Associates the given VFS folder path to a certain declaration type
-    // all files matching the given file extension will be searched and parsed.
+    // Associates the given VFS folder (with trailing slash) to a certain declaration type
+    // all files matching the given file extension (without dot) will be searched and parsed.
     // The folder will not be recursively searched for files, only immediate children will be parsed.
     // Any untyped declaration blocks found in the files will be assumed to be of the given defaultType.
     // All explicitly typed resources will be processed using the parser that has been previously
     // associated in registerDeclType()
+    // Registering a folder will immediately trigger parsing of all contained files matching the criteria.
     virtual void registerDeclFolder(Type defaultType, const std::string& vfsFolder, const std::string& extension) = 0;
+
+    // Iterate over all known declarations, using the given visitor
+    virtual void foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor) = 0;
 };
 
 }

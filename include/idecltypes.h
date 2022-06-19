@@ -10,13 +10,14 @@ namespace decl
 // Enumeration of declaration types supported by DarkRadiant
 enum class Type
 {
-    None,
-    Material,
+    None = -1,
+    Material = 0,
     EntityDef,
     SoundShader,
     Model,
     Particle,
     Skin,
+    NumDeclarationTypes,
 };
 
 inline std::string getTypeName(Type type)

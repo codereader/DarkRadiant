@@ -1,63 +1,123 @@
-#include "ideclmanager.h"
+#include <future>
 
-#include <map>
+#include "DeclarationManager.h"
+
+#include "ifilesystem.h"
 #include "module/StaticModule.h"
+#include "string/trim.h"
+#include "DeclarationParser.h"
 
 namespace decl
 {
 
-class DeclarationManager :
-    public IDeclarationManager
+void DeclarationManager::registerDeclType(const std::string& typeName, const IDeclarationParser::Ptr& parser)
 {
-private:
-    std::map<std::string, IDeclarationParser::Ptr> _parsersByTypename;
-
-public:
-    void registerDeclType(const std::string& typeName, const IDeclarationParser::Ptr& parser) override
+    if (_parsersByTypename.count(typeName) > 0)
     {
-        if (_parsersByTypename.count(typeName) > 0)
+        throw std::logic_error("Type name " + typeName + " has already been registered");
+    }
+
+    _parsersByTypename.emplace(typeName, parser);
+}
+
+void DeclarationManager::unregisterDeclType(const std::string& typeName)
+{
+    auto existing = _parsersByTypename.find(typeName);
+
+    if (existing == _parsersByTypename.end())
+    {
+        throw std::logic_error("Type name " + typeName + " has not been registered");
+    }
+
+    _parsersByTypename.erase(existing);
+}
+
+void DeclarationManager::registerDeclFolder(Type defaultType, const std::string& inputFolder, const std::string& inputExtension)
+{
+    // Sanitise input strings
+    auto vfsPath = os::standardPathWithSlash(inputFolder);
+    auto extension = string::trim_left_copy(inputExtension, ".");
+
+    _registeredFolders.emplace_back(RegisteredFolder{ vfsPath, extension, defaultType });
+
+    std::lock_guard<std::mutex> declLock(_declarationLock);
+    auto& decls = _declarationsByType.try_emplace(defaultType, Declarations()).first->second;
+
+    // Start the parser thread
+    decls.parser = std::make_unique<DeclarationParser>(*this, defaultType, vfsPath, extension, _parsersByTypename);
+    decls.parser->start();
+}
+
+void DeclarationManager::foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor)
+{
+    auto declLock = std::make_unique<std::lock_guard<std::mutex>>(_declarationLock);
+
+    auto decls = _declarationsByType.find(type);
+
+    if (decls == _declarationsByType.end()) return;
+
+    // Ensure the parser is done
+    if (decls->second.parser)
+    {
+        // Release the lock to give the thread a chance to finish
+        declLock.reset();
+
+        decls->second.parser->ensureFinished(); // blocks
+        decls->second.parser.reset();
+
+        declLock = std::make_unique<std::lock_guard<std::mutex>>(_declarationLock);
+    }
+
+    for (const auto& [_, decl] : decls->second.decls)
+    {
+        functor(*decl);
+    }
+}
+
+void DeclarationManager::onParserFinished(std::map<Type, NamedDeclarations>&& parsedDecls,
+    std::vector<DeclarationBlockSyntax>&& unrecognisedBlocks)
+{
+    {
+        std::lock_guard<std::mutex> declLock(_declarationLock);
+
+        // Coming back from a parser thread, sort the parsed decls into the main dictionary
+        for (auto& pair : parsedDecls)
         {
-            throw std::logic_error("Type name " + typeName + " has already been registered");
+            auto& map = _declarationsByType.try_emplace(pair.first, Declarations()).first->second.decls;
+
+            map.merge(pair.second);
         }
-
-        _parsersByTypename.emplace(typeName, parser);
     }
 
-    void unregisterDeclType(const std::string& typeName) override
     {
-        auto existing = _parsersByTypename.find(typeName);
+        std::lock_guard<std::mutex> lock(_unrecognisedBlockLock);
 
-        if (existing == _parsersByTypename.end())
-        {
-            throw std::logic_error("Type name " + typeName + " has not been registered");
-        }
-
-        _parsersByTypename.erase(existing);
+        // Move all blocks into this one
+        _unrecognisedBlocks.insert(_unrecognisedBlocks.end(),
+            std::make_move_iterator(unrecognisedBlocks.begin()), std::make_move_iterator(unrecognisedBlocks.end()));
     }
+}
 
-    void registerDeclFolder(Type defaultType, const std::string& vfsFolder, const std::string& extension) override
+const std::string& DeclarationManager::getName() const
+{
+    static std::string _name(MODULE_DECLMANAGER);
+    return _name;
+}
+
+const StringSet& DeclarationManager::getDependencies() const
+{
+    static StringSet _dependencies
     {
+        MODULE_VIRTUALFILESYSTEM
+    };
 
-    }
+    return _dependencies;
+}
 
-    const std::string& getName() const override
-    {
-        static std::string _name(MODULE_DECLMANAGER);
-        return _name;
-    }
-
-    const StringSet& getDependencies() const override
-    {
-        static StringSet _dependencies{};
-
-        return _dependencies;
-    }
-
-    void initialiseModule(const IApplicationContext& ctx) override
-    {
-        rMessage() << getName() << "::initialiseModule called." << std::endl;
-    }
-};
+void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
+{
+    rMessage() << getName() << "::initialiseModule called." << std::endl;
+}
 
 module::StaticModuleRegistration<DeclarationManager> _declManagerModule;
 
