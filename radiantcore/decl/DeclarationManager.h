@@ -50,6 +50,7 @@ public:
     IDeclaration::Ptr findDeclaration(Type type, const std::string& name) override;
     void foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor) override;
     sigc::signal<void>& signal_DeclsReloaded(Type type) override;
+    void reloadDecarations() override;
 
     const std::string& getName() const override;
     const StringSet& getDependencies() const override;

@@ -194,8 +194,7 @@ float SoundManager::getSoundFileDuration(const std::string& vfsPath)
 
 void SoundManager::reloadSounds()
 {
-    // TODO _defLoader.reset();
-    // TODO _defLoader.start();
+    GlobalDeclarationManager().reloadDecarations();
 }
 
 void SoundManager::reloadSoundsCmd(const cmd::ArgumentList& args)

@@ -103,6 +103,11 @@ void DeclarationManager::doWithDeclarations(Type type, const std::function<void(
     action(decls->second.decls);
 }
 
+void DeclarationManager::reloadDecarations()
+{
+    // TODO
+}
+
 sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
 {
     return _declsReloadedSignals.try_emplace(type).first->second;
@@ -217,7 +222,11 @@ void DeclarationManager::shutdownModule()
     parsersToFinish.clear(); // might block if parsers are running
 
     // All parsers have finished, clear the structure, no need to lock anything
+    _registeredFolders.clear();
+    _unrecognisedBlocks.clear();
     _declarationsByType.clear();
+    _parsersByTypename.clear();
+    _declsReloadedSignals.clear();
 }
 
 module::StaticModuleRegistration<DeclarationManager> _declManagerModule;

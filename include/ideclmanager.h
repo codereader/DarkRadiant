@@ -103,6 +103,9 @@ public:
     // Iterate over all known declarations, using the given visitor
     virtual void foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor) = 0;
 
+    // Re-load all declarations from any changed files
+    virtual void reloadDecarations() = 0;
+
     // Signal emitted when the decls of the given type have been (re-)loaded
     virtual sigc::signal<void>& signal_DeclsReloaded(Type type) = 0;
 };
