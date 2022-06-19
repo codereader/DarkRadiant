@@ -34,7 +34,7 @@ bool SoundShaderDefinitionView::isEmpty() const
 
 std::string SoundShaderDefinitionView::getDeclName()
 {
-	return _shader ? _shader->getName() : std::string();
+	return _shader ? _shader->getDeclName() : std::string();
 }
 
 std::string SoundShaderDefinitionView::getDeclFileName()

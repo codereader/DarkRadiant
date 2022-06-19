@@ -146,7 +146,7 @@ void SoundShaderPreview::update()
 		// Get the list of sound files associated to this shader
 		const auto& shader = GlobalSoundManager().getSoundShader(_soundShader);
 
-		if (!shader->getName().empty())
+		if (!shader->getDeclName().empty())
 		{
 			// Retrieve the list of associated filenames (VFS paths)
 			auto list = shader->getSoundFileList();
@@ -168,7 +168,7 @@ void SoundShaderPreview::update()
 				}
 			}
 
-            _shaderFileInfo->setName(shader->getName());
+            _shaderFileInfo->setName(shader->getDeclName());
             _shaderFileInfo->setPath(shader->getShaderFilePath());
 
 			handleSelectionChange();

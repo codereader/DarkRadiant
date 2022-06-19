@@ -76,7 +76,7 @@ public:
         std::string displayFolder = shader.getDisplayFolder();
 
         // Some shaders contain backslashes, sort them in the tree by replacing the backslashes
-        std::string shaderNameForwardSlashes = shader.getName();
+        std::string shaderNameForwardSlashes = shader.getDeclName();
         std::replace(shaderNameForwardSlashes.begin(), shaderNameForwardSlashes.end(), '\\', '/');
 
         std::string fullPath = !displayFolder.empty() ?
@@ -91,7 +91,7 @@ public:
 
             row[_columns.iconAndName] = wxVariant(
                 wxDataViewIconText(leafName, isFolder ? _folderIcon : _shaderIcon));
-            row[_columns.leafName] = shader.getName();
+            row[_columns.leafName] = shader.getDeclName();
             row[_columns.fullName] = path;
             row[_columns.isFolder] = isFolder;
             row[_columns.isFavourite] = isFavourite;

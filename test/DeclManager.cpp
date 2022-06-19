@@ -20,12 +20,12 @@ public:
         _name(name)
     {}
 
-    const std::string& getName() const override
+    const std::string& getDeclName() const override
     {
         return _name;
     }
 
-    decl::Type getType() const override
+    decl::Type getDeclType() const override
     {
         return _type;
     }
@@ -35,7 +35,7 @@ class TestDeclarationParser :
     public decl::IDeclarationParser
 {
 public:
-    bool blockProcessing = false;
+    bool processingDisabled = false;
 
     // Returns the declaration type this parser can handle
     decl::Type getDeclType() const override
@@ -46,7 +46,7 @@ public:
     // Create a new declaration instance from the given block
     decl::IDeclaration::Ptr parseFromBlock(const decl::DeclarationBlockSyntax& block) override
     {
-        while (blockProcessing)
+        while (processingDisabled)
         {
             using namespace std::chrono_literals;
             std::this_thread::sleep_for(20ms);
@@ -105,7 +105,7 @@ inline std::set<std::string> getAllDeclNames(decl::Type type)
 
     GlobalDeclarationManager().foreachDeclaration(type, [&](const decl::IDeclaration& declaration)
     {
-        foundNames.insert(declaration.getName());
+        foundNames.insert(declaration.getDeclName());
     });
 
     return foundNames;
@@ -215,7 +215,7 @@ TEST_F(DeclManagerTest, ParserRegistrationDuringRunningThread)
     auto parser = std::make_shared<TestDeclarationParser>();
 
     // Hold back this parser until we let it go in this fixture
-    parser->blockProcessing = true;
+    parser->processingDisabled = true;
 
     GlobalDeclarationManager().registerDeclType("testdecl", parser);
 
@@ -233,11 +233,35 @@ TEST_F(DeclManagerTest, ParserRegistrationDuringRunningThread)
     EXPECT_FALSE(foundTestDecl2Names.count("decltable1") > 0);
 
     // Let the testdecl parser finish its work
-    parser->blockProcessing = false;
+    parser->processingDisabled = false;
     getAllDeclNames(decl::Type::Material);
 
     // Everything should be registered now
     checkKnownTestDecl2Names();
+}
+
+TEST_F(DeclManagerTest, DeclsReloadedSignal)
+{
+    auto parser = std::make_shared<TestDeclarationParser>();
+    GlobalDeclarationManager().registerDeclType("testdecl", parser);
+
+    bool materialSignalFired = false;
+    bool modelSignalFired = false;
+    GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material).connect(
+        [&]() { materialSignalFired = true; }
+    );
+    GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Model).connect(
+        [&]() { modelSignalFired = true; }
+    );
+
+    // Parse this folder, it contains decls of type testdecl and testdecl2 in the .decl files
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    // Force the thread to be finished
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::Material, [](const decl::IDeclaration&) {});
+
+    EXPECT_TRUE(materialSignalFired) << "Material signal should have fired by the time parsing has finished";
+    EXPECT_FALSE(modelSignalFired) << "Model-type Signal should not have been fired";
 }
 
 }

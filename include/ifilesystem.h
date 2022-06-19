@@ -82,7 +82,9 @@ public:
     }
 
     FileInfo(const FileInfo& other) = default;
+    FileInfo(FileInfo&& other) = default;
     FileInfo& operator=(const FileInfo& other) = default;
+    FileInfo& operator=(FileInfo&& other) = default;
 
     /// Top-level directory (if any), e.g. "def" or "models"
     std::string topDir;

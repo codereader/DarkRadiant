@@ -9,7 +9,7 @@ namespace sound
 {
 
 /// Representation of a single sound shader.
-class SoundShader : 
+class SoundShader :
 	public ISoundShader
 {
 	// Name of the shader
@@ -44,7 +44,8 @@ public:
 
     // ISoundShader implementation
 	SoundRadii getRadii() const override;
-	std::string getName() const override { return _name; }
+	const std::string& getDeclName() const override { return _name; }
+	decl::Type getDeclType() const override { return decl::Type::SoundShader; }
 	SoundFileList getSoundFileList() const override;
 	std::string getModName() const override { return _modName; }
 	const std::string& getDisplayFolder() const override;

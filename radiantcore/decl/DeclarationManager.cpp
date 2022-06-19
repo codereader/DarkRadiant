@@ -77,7 +77,12 @@ void DeclarationManager::foreachDeclaration(Type type, const std::function<void(
     }
 }
 
-void DeclarationManager::onParserFinished(std::map<Type, NamedDeclarations>&& parsedDecls,
+sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
+{
+    return _declsReloadedSignals.try_emplace(type).first->second;
+}
+
+void DeclarationManager::onParserFinished(Type parserType, std::map<Type, NamedDeclarations>&& parsedDecls,
     std::vector<DeclarationBlockSyntax>&& unrecognisedBlocks)
 {
     {
@@ -102,6 +107,9 @@ void DeclarationManager::onParserFinished(std::map<Type, NamedDeclarations>&& pa
 
     // We might have received a parser in the meantime
     handleUnrecognisedBlocks();
+
+    // Invoke the declsReloaded singal for this type
+    signal_DeclsReloaded(parserType).emit();
 }
 
 void DeclarationManager::handleUnrecognisedBlocks()
@@ -126,7 +134,7 @@ void DeclarationManager::handleUnrecognisedBlocks()
         // Insert into our main library
         std::lock_guard<std::mutex> declLock(_declarationLock);
 
-        auto& namedDecls = _declarationsByType.try_emplace(declaration->getType(), Declarations()).first->second.decls;
+        auto& namedDecls = _declarationsByType.try_emplace(declaration->getDeclType(), Declarations()).first->second.decls;
 
         InsertDeclaration(namedDecls, std::move(declaration));
     }
@@ -134,13 +142,13 @@ void DeclarationManager::handleUnrecognisedBlocks()
 
 void DeclarationManager::InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration)
 {
-    auto type = declaration->getType();
-    auto result = map.try_emplace(declaration->getName(), std::move(declaration));
+    auto type = declaration->getDeclType();
+    auto result = map.try_emplace(declaration->getDeclName(), std::move(declaration));
 
     if (!result.second)
     {
         rWarning() << "[DeclParser]: " << getTypeName(type) << " " <<
-            result.first->second->getName() << " has already been declared" << std::endl;
+            result.first->second->getDeclName() << " has already been declared" << std::endl;
     }
 }
 

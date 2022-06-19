@@ -5,16 +5,20 @@
 namespace decl
 {
 
-inline DeclarationBlockSyntax createBlock(const parser::BlockTokeniser::Block& block)
+inline DeclarationBlockSyntax createBlock(const parser::BlockTokeniser::Block& block, 
+    const vfs::FileInfo& fileInfo, const std::string& modName)
 {
     auto spacePos = block.name.find(' ');
 
-    return DeclarationBlockSyntax
-    {
-        spacePos != std::string::npos ? block.name.substr(0, spacePos) : std::string(), // type
-        spacePos != std::string::npos ? block.name.substr(spacePos + 1) : block.name, // name
-        block.contents
-    };
+    DeclarationBlockSyntax syntax;
+
+    syntax.typeName = spacePos != std::string::npos ? block.name.substr(0, spacePos) : std::string();
+    syntax.name = spacePos != std::string::npos ? block.name.substr(spacePos + 1) : block.name;
+    syntax.contents = block.contents;
+    syntax.modName = modName;
+    syntax.fileInfo = fileInfo;
+
+    return syntax;
 }
 
 DeclarationParser::DeclarationParser(DeclarationManager& owner, Type declType, 
@@ -22,6 +26,7 @@ DeclarationParser::DeclarationParser(DeclarationManager& owner, Type declType,
     const std::map<std::string, IDeclarationParser::Ptr>& parsersByTypename) :
     ThreadedDeclParser<void>(declType, baseDir, extension, 1),
     _owner(owner),
+    _defaultDeclType(declType),
     _parsersByTypename(parsersByTypename)
 {
     _defaultTypeParser = getParserByType(declType);
@@ -39,7 +44,7 @@ void DeclarationParser::parse(std::istream& stream, const vfs::FileInfo& fileInf
         auto block = tokeniser.nextBlock();
 
         // Convert the incoming block to a DeclarationBlockSyntax
-        auto blockSyntax = createBlock(block);
+        auto blockSyntax = createBlock(block, fileInfo, modDir);
 
         auto spacePos = block.name.find(' ');
 
@@ -67,7 +72,7 @@ void DeclarationParser::parse(std::istream& stream, const vfs::FileInfo& fileInf
 void DeclarationParser::onFinishParsing()
 {
     // Submit all parsed declarations to the decl manager
-    _owner.onParserFinished(std::move(_parsedDecls), std::move(_unrecognisedBlocks));
+    _owner.onParserFinished(_defaultDeclType, std::move(_parsedDecls), std::move(_unrecognisedBlocks));
 }
 
 void DeclarationParser::parseBlock(IDeclarationParser& parser, const DeclarationBlockSyntax& block)

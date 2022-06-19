@@ -21,10 +21,6 @@ private:
     // Master map of shaders
 	ShaderMap _shaders;
 
-    // Shaders are loaded asynchronically, this loader
-    // takes care of the worker thread
-    SoundFileLoader _defLoader;
-
 	SoundShader::Ptr _emptyShader;
 
 	// The helper class for playing the sounds
@@ -33,7 +29,6 @@ private:
     sigc::signal<void> _sigSoundShadersReloaded;
 
 private:
-    void ensureShadersLoaded();
     void reloadSoundsCmd(const cmd::ArgumentList& args);
 
 public:

@@ -15,6 +15,7 @@ class DeclarationParser :
 {
 private:
     DeclarationManager& _owner;
+    Type _defaultDeclType;
 
     std::map<std::string, IDeclarationParser::Ptr> _parsersByTypename;
     IDeclarationParser::Ptr _defaultTypeParser;

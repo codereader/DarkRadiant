@@ -1,6 +1,7 @@
 #pragma once
 
 #include "imodule.h"
+#include "ideclmanager.h"
 #include "ModResource.h"
 
 #include <vector>
@@ -59,13 +60,11 @@ class SoundRadii {
 
 /// Representation of a single sound or sound shader.
 class ISoundShader :
+    public decl::IDeclaration,
     public ModResource
 {
 public:
     virtual ~ISoundShader() {}
-
-    /// Get the name of the shader
-    virtual std::string getName() const = 0;
 
     /// Get the min and max radii of the shader
     virtual SoundRadii getRadii() const = 0;

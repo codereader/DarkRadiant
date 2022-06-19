@@ -1,6 +1,9 @@
 #pragma once
 
+#include <map>
 #include "imodule.h"
+#include "ifilesystem.h"
+#include "ModResource.h"
 #include "idecltypes.h"
 
 namespace decl
@@ -9,7 +12,7 @@ namespace decl
 // Represents a declaration block as found in the various decl files
 // Holds the name of the block, its typename and the raw block contents
 // including whitespace and comments but exluding the outermost brace pair
-struct DeclarationBlockSyntax
+struct DeclarationBlockSyntax : ModResource
 {
     // The type name of this block (e.g. "table")
     std::string typeName;
@@ -19,6 +22,17 @@ struct DeclarationBlockSyntax
 
     // The block contents (excluding braces)
     std::string contents;
+
+    // The mod this syntax has been defined in
+    std::string modName;
+
+    // The VFS info of the file this syntax is located
+    vfs::FileInfo fileInfo;
+
+    std::string getModName() const override
+    {
+        return modName;
+    }
 };
 
 // Common interface shared by all the declarations supported by a certain game type
@@ -31,10 +45,10 @@ public:
     using Ptr = std::shared_ptr<IDeclaration>;
 
     // The full name of this declaration, e.g. "textures/common/caulk"
-    virtual const std::string& getName() const = 0;
+    virtual const std::string& getDeclName() const = 0;
 
     // The type of this declaration
-    virtual Type getType() const = 0;
+    virtual Type getDeclType() const = 0;
 };
 
 using NamedDeclarations = std::map<std::string, IDeclaration::Ptr>;
@@ -84,6 +98,9 @@ public:
 
     // Iterate over all known declarations, using the given visitor
     virtual void foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor) = 0;
+
+    // Signal emitted when the decls of the given type have been (re-)loaded
+    virtual sigc::signal<void>& signal_DeclsReloaded(Type type) = 0;
 };
 
 }

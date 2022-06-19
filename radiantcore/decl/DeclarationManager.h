@@ -41,11 +41,14 @@ private:
     std::list<DeclarationBlockSyntax> _unrecognisedBlocks;
     std::mutex _unrecognisedBlockLock;
 
+    std::map<Type, sigc::signal<void>> _declsReloadedSignals;
+
 public:
     void registerDeclType(const std::string& typeName, const IDeclarationParser::Ptr& parser) override;
     void unregisterDeclType(const std::string& typeName) override;
     void registerDeclFolder(Type defaultType, const std::string& inputFolder, const std::string& inputExtension) override;
     void foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor) override;
+    sigc::signal<void>& signal_DeclsReloaded(Type type) override;
 
     const std::string& getName() const override;
     const StringSet& getDependencies() const override;
@@ -53,7 +56,7 @@ public:
     void shutdownModule() override;
 
     // Invoked once a parser thread has finished. It will move its data over to here.
-    void onParserFinished(std::map<Type, NamedDeclarations>&& parsedDecls, 
+    void onParserFinished(Type parserType, std::map<Type, NamedDeclarations>&& parsedDecls,
         std::vector<DeclarationBlockSyntax>&& unrecognisedBlocks);
 
     static void InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration);

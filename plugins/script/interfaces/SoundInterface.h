@@ -62,7 +62,7 @@ public:
 
 	std::string getName()
 	{
-		return _shader ? _shader->getName() : "";
+		return _shader ? _shader->getDeclName() : "";
 	}
 
 	ScriptSoundRadii getRadii()

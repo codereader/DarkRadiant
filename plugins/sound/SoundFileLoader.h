@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include "ideclmanager.h"
 #include "SoundManager.h"
 
 #include "parser/DefBlockTokeniser.h"
@@ -19,28 +20,33 @@ namespace
 {
     /// Sound directory name
     constexpr const char* const SOUND_FOLDER = "sound/";
-    constexpr const char* const SOUND_FILE_EXTENSION = "sndshd";
+    constexpr const char* const SOUND_FILE_EXTENSION = ".sndshd";
 }
 
 using ShaderMap = std::map<std::string, SoundShader::Ptr>;
 
 /**
- * Threaded parser class loading the sndshd files
+ * Declaration parser capable of dealing with sound shader blocks
  */
 class SoundFileLoader final :
-    public parser::ThreadedDeclParser<ShaderMap>
+    public decl::IDeclarationParser
 {
 private:
     // Shader map to populate
     ShaderMap _shaders;
 
 public:
-    SoundFileLoader() :
-        parser::ThreadedDeclParser<ShaderMap>(
-            decl::Type::SoundShader, SOUND_FOLDER, SOUND_FILE_EXTENSION, 99)
-    {}
+    decl::Type getDeclType() const override
+    {
+        return decl::Type::SoundShader;
+    }
 
-protected:
+    // Create a new declaration instance from the given block
+    decl::IDeclaration::Ptr parseFromBlock(const decl::DeclarationBlockSyntax& block) override
+    {
+        return std::make_shared<SoundShader>(block.name, block.contents, block.fileInfo, block.getModName());
+    }
+#if 0
     void onBeginParsing() override
     {
         _shaders.clear();
@@ -75,6 +81,7 @@ protected:
 
         return std::move(_shaders);
     }
+#endif
 };
 
 }
