@@ -117,6 +117,7 @@ private:
 	bool isModifier(wxKeyEvent& ev);
 	void onToolItemClicked(wxCommandEvent& ev);
 	void onMenuItemClicked(wxCommandEvent& ev);
+    void aboutToOpenMenu(wxMenu& ev);
 };
 
 }

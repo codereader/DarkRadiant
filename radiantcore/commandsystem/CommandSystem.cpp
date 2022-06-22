@@ -221,8 +221,9 @@ bool CommandSystem::canExecute(const std::string& name) const
 		return i->second->canExecute();
 	}
 
-	// A non-existent command cannot execute
-	return false;
+	// We only return false if we know that a command cannot run; if the command
+	// was not found at all, return true by default.
+	return true;
 }
 
 void CommandSystem::removeCommand(const std::string& name)

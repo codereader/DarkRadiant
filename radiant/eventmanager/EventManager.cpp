@@ -273,10 +273,14 @@ void EventManager::registerMenuItem(const std::string& eventName, wxMenuItem* it
     // Check if we have an event object corresponding to this event name
     auto evt = findEvent(eventName);
 
-    if (!evt->empty())
+    if (!evt->empty()) {
         evt->connectMenuItem(item);
-    else
+    }
+    else {
+        item->GetMenu()->Bind(wxEVT_MENU_OPEN,
+                              [this](wxMenuEvent& e) { aboutToOpenMenu(*e.GetMenu()); });
         item->GetMenu()->Bind(wxEVT_MENU, &EventManager::onMenuItemClicked, this, item->GetId());
+    }
 }
 
 void EventManager::unregisterMenuItem(const std::string& eventName, wxMenuItem* item)
@@ -374,6 +378,17 @@ void EventManager::onMenuItemClicked(wxCommandEvent& ev)
         GlobalCommandSystem().execute(i->second);
     else
         wxFAIL_MSG("onMenuItemClicked(): no command for menu ID");
+}
+
+void EventManager::aboutToOpenMenu(wxMenu& menu)
+{
+    // Grey out any menu items which cannot currently be run
+    for (wxMenuItem* item: menu.GetMenuItems()) {
+        // Not everything in the menu may have a command ID (e.g. separators)
+        if (auto i = _commandsByMenuID.find(item->GetId()); i != _commandsByMenuID.end()) {
+            item->Enable(GlobalCommandSystem().canExecute(i->second));
+        }
+    }
 }
 
 Accelerator& EventManager::connectAccelerator(int keyCode, unsigned int modifierFlags, const std::string& command)
