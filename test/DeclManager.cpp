@@ -1,6 +1,7 @@
 #include "RadiantTest.h"
 
 #include "ideclmanager.h"
+#include "testutil/TemporaryFile.h"
 
 namespace test
 {
@@ -13,11 +14,13 @@ class TestDeclaration :
 private:
     decl::Type _type;
     std::string _name;
+    decl::DeclarationBlockSyntax _block;
 
 public:
-    TestDeclaration(decl::Type type, const std::string& name) :
+    TestDeclaration(decl::Type type, const decl::DeclarationBlockSyntax& block) :
         _type(type),
-        _name(name)
+        _block(block),
+        _name(block.name)
     {}
 
     const std::string& getDeclName() const override
@@ -28,6 +31,11 @@ public:
     decl::Type getDeclType() const override
     {
         return _type;
+    }
+
+    const decl::DeclarationBlockSyntax& getBlockSyntax() const override
+    {
+        return _block;
     }
 };
 
@@ -52,7 +60,7 @@ public:
             std::this_thread::sleep_for(20ms);
         }
 
-        return std::make_shared<TestDeclaration>(getDeclType(), block.name);
+        return std::make_shared<TestDeclaration>(getDeclType(), block);
     }
 };
 
@@ -69,7 +77,7 @@ public:
     // Create a new declaration instance from the given block
     decl::IDeclaration::Ptr parseFromBlock(const decl::DeclarationBlockSyntax& block) override
     {
-        return std::make_shared<TestDeclaration>(getDeclType(), block.name);
+        return std::make_shared<TestDeclaration>(getDeclType(), block);
     }
 };
 
@@ -271,6 +279,66 @@ TEST_F(DeclManagerTest, FindDeclaration)
 
     EXPECT_TRUE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/exporttest/guisurf1"));
     EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/nonexistent"));
+}
+
+TEST_F(DeclManagerTest, ReloadDeclarationWithChangedFile)
+{
+    TemporaryFile tempFile(_context.getTestProjectPath() + "testdecls/temp_file.decl");
+    tempFile.setContents(R"(
+
+decl/temporary/11
+{
+    diffusemap textures/temporary/11
+}
+
+decl/temporary/12
+{
+    diffusemap textures/temporary/12
+}
+
+)");
+
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationParser>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    auto temp12 = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/12");
+    EXPECT_TRUE(temp12) << "Couldn't find the declaration decl/temporary/12";
+
+    auto temp11 = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/11");
+    EXPECT_TRUE(temp11) << "Couldn't find the declaration decl/temporary/11";
+
+    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/13"))
+        << "decl/temporary/13 should not be present";
+
+    EXPECT_NE(temp12->getBlockSyntax().contents.find("diffusemap textures/temporary/12"), std::string::npos) <<
+        "Didn't find the expected contents in the decl block";
+
+    // Change the file, change temp12, remove temp11 and add temp13 instead
+    tempFile.setContents(R"(
+
+decl/temporary/12
+{
+    diffusemap textures/changed_temporary/12
+}
+
+decl/temporary/13
+{
+    diffusemap textures/temporary/13
+}
+
+)");
+
+    // Check the change sin temp12
+    temp12 = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/12");
+    EXPECT_TRUE(temp12) << "Couldn't find the declaration decl/temporary/12";
+
+    EXPECT_NE(temp12->getBlockSyntax().contents.find("diffusemap textures/changed_temporary/12"), std::string::npos) <<
+        "Couldn't find the changed contents in the decl block";
+
+    EXPECT_TRUE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/13"))
+        << "decl/temporary/13 should be present now";
+    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/11"))
+        << "decl/temporary/11 should be gone now";
 }
 
 }

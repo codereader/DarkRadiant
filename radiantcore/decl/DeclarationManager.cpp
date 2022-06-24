@@ -124,7 +124,10 @@ void DeclarationManager::onParserFinished(Type parserType, std::map<Type, NamedD
         {
             auto& map = _declarationsByType.try_emplace(pair.first, Declarations()).first->second.decls;
 
-            map.merge(pair.second);
+            for (auto& parsedDecl : pair.second)
+            {
+                InsertDeclaration(map, std::move(parsedDecl.second));
+            }
         }
     }
 
@@ -139,7 +142,7 @@ void DeclarationManager::onParserFinished(Type parserType, std::map<Type, NamedD
     // We might have received a parser in the meantime
     handleUnrecognisedBlocks();
 
-    // Invoke the declsReloaded singal for this type
+    // Invoke the declsReloaded signal for this type
     signal_DeclsReloaded(parserType).emit();
 }
 

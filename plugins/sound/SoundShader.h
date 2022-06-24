@@ -9,14 +9,14 @@ namespace sound
 {
 
 /// Representation of a single sound shader.
-class SoundShader :
+class SoundShader final :
 	public ISoundShader
 {
 	// Name of the shader
 	std::string _name;
 
 	// The raw unparsed definition block
-	std::string _blockContents;
+    decl::DeclarationBlockSyntax _declBlock;
 
     // Information we have parsed on demand
     struct ParsedContents;
@@ -36,7 +36,7 @@ public:
 
 	SoundShader(const decl::DeclarationBlockSyntax& block);
 
-    virtual ~SoundShader();
+    ~SoundShader();
 
     // ISoundShader implementation
 	SoundRadii getRadii() const override;
@@ -47,6 +47,8 @@ public:
 	const std::string& getDisplayFolder() const override;
 	std::string getShaderFilePath() const override;
 	std::string getDefinition() const override;
+
+    const decl::DeclarationBlockSyntax& getBlockSyntax() const override;
 };
 
 }

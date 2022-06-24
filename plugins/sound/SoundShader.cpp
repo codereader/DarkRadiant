@@ -22,7 +22,7 @@ struct SoundShader::ParsedContents
 
 SoundShader::SoundShader(const decl::DeclarationBlockSyntax& block)
 :	_name(block.name),
-    _blockContents(block.contents),
+    _declBlock(block),
 	_fileInfo(block.fileInfo),
     _modName(block.getModName())
 { }
@@ -37,7 +37,7 @@ void SoundShader::parseDefinition() const
 	_contents.reset(new ParsedContents);
 
 	// Get a new tokeniser and parse the block
-	parser::BasicDefTokeniser<std::string> tok(_blockContents);
+	parser::BasicDefTokeniser<std::string> tok(_declBlock.contents);
 
 	while (tok.hasMoreTokens())
     {
@@ -97,7 +97,12 @@ std::string SoundShader::getShaderFilePath() const
 
 std::string SoundShader::getDefinition() const
 {
-	return _blockContents;
+	return _declBlock.contents;
+}
+
+const decl::DeclarationBlockSyntax& SoundShader::getBlockSyntax() const
+{
+    return _declBlock;
 }
 
 } // namespace sound

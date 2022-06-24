@@ -49,6 +49,9 @@ public:
 
     // The type of this declaration
     virtual Type getDeclType() const = 0;
+
+    // The raw syntax block (without the outer curly braces) used to construct this decl
+    virtual const DeclarationBlockSyntax& getBlockSyntax() const = 0;
 };
 
 using NamedDeclarations = std::map<std::string, IDeclaration::Ptr>;
