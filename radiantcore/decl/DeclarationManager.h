@@ -2,19 +2,23 @@
 
 #include "ideclmanager.h"
 #include <map>
+#include <set>
 #include <vector>
 #include <memory>
+
+#include "DeclarationFile.h"
 
 namespace decl
 {
 
-class DeclarationParser;
+class DeclarationFolderParser;
 
 class DeclarationManager :
     public IDeclarationManager
 {
 private:
     std::map<std::string, IDeclarationParser::Ptr> _parsersByTypename;
+    std::mutex _parserLock;
 
     struct RegisteredFolder
     {
@@ -25,13 +29,16 @@ private:
 
     std::vector<RegisteredFolder> _registeredFolders;
 
+    std::map<decl::Type, std::set<DeclarationFile>> _parsedFilesByDefaultType;
+    std::mutex _parsedFileLock;
+
     struct Declarations
     {
         // The decl library
         NamedDeclarations decls;
 
         // If not empty, holds the running parser
-        std::unique_ptr<DeclarationParser> parser;
+        std::unique_ptr<DeclarationFolderParser> parser;
     };
 
     // One entry for each decl
@@ -58,8 +65,8 @@ public:
     void shutdownModule() override;
 
     // Invoked once a parser thread has finished. It will move its data over to here.
-    void onParserFinished(Type parserType, std::map<Type, NamedDeclarations>&& parsedDecls,
-        std::vector<DeclarationBlockSyntax>&& unrecognisedBlocks);
+    void onParserFinished(Type parserType, std::map<Type, NamedDeclarations>& parsedDecls,
+        const std::vector<DeclarationBlockSyntax>& unrecognisedBlocks, const std::set<DeclarationFile>& parsedFiles);
 
     static void InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration);
 

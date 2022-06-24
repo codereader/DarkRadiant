@@ -23,7 +23,8 @@ add_library(radiantcore MODULE
             clipper/ClipPoint.cpp
             clipper/SplitAlgorithm.cpp
             commandsystem/CommandSystem.cpp
-            decl/DeclarationParser.cpp
+            decl/DeclarationFileParser.cpp
+            decl/DeclarationFolderParser.cpp
             decl/DeclarationManager.cpp
             decl/FavouritesManager.cpp
             eclass/EntityClass.cpp

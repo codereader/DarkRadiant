@@ -2,16 +2,18 @@
 
 #include "DeclarationManager.h"
 
+#include "DeclarationFolderParser.h"
 #include "ifilesystem.h"
 #include "module/StaticModule.h"
 #include "string/trim.h"
-#include "DeclarationParser.h"
 
 namespace decl
 {
 
 void DeclarationManager::registerDeclType(const std::string& typeName, const IDeclarationParser::Ptr& parser)
 {
+    std::lock_guard<std::mutex> parserLock(_parserLock);
+
     if (_parsersByTypename.count(typeName) > 0)
     {
         throw std::logic_error("Type name " + typeName + " has already been registered");
@@ -25,6 +27,8 @@ void DeclarationManager::registerDeclType(const std::string& typeName, const IDe
 
 void DeclarationManager::unregisterDeclType(const std::string& typeName)
 {
+    std::lock_guard<std::mutex> parserLock(_parserLock);
+
     auto existing = _parsersByTypename.find(typeName);
 
     if (existing == _parsersByTypename.end())
@@ -47,7 +51,7 @@ void DeclarationManager::registerDeclFolder(Type defaultType, const std::string&
     auto& decls = _declarationsByType.try_emplace(defaultType, Declarations()).first->second;
 
     // Start the parser thread
-    decls.parser = std::make_unique<DeclarationParser>(*this, defaultType, vfsPath, extension, _parsersByTypename);
+    decls.parser = std::make_unique<DeclarationFolderParser>(*this, defaultType, vfsPath, extension, _parsersByTypename);
     decls.parser->start();
 }
 
@@ -105,7 +109,25 @@ void DeclarationManager::doWithDeclarations(Type type, const std::function<void(
 
 void DeclarationManager::reloadDecarations()
 {
-    // TODO
+    std::lock_guard<std::mutex> fileLock(_parsedFileLock);
+    std::lock_guard<std::mutex> parserLock(_parserLock);
+
+    for (const auto& [type, files] : _parsedFilesByDefaultType)
+    {
+        DeclarationFileParser parser(type, _parsersByTypename);
+
+        for (const auto& file : files)
+        {
+            auto vfsFile = GlobalFileSystem().openTextFile(file.fullPath);
+
+            if (!vfsFile) continue;
+
+            // TODO
+        }
+
+        // Submit the changes
+        // TODO
+    }
 }
 
 sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
@@ -113,8 +135,8 @@ sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
     return _declsReloadedSignals.try_emplace(type).first->second;
 }
 
-void DeclarationManager::onParserFinished(Type parserType, std::map<Type, NamedDeclarations>&& parsedDecls,
-    std::vector<DeclarationBlockSyntax>&& unrecognisedBlocks)
+void DeclarationManager::onParserFinished(Type parserType, std::map<Type, NamedDeclarations>& parsedDecls,
+    const std::vector<DeclarationBlockSyntax>& unrecognisedBlocks, const std::set<DeclarationFile>& parsedFiles)
 {
     {
         std::lock_guard<std::mutex> declLock(_declarationLock);
@@ -137,6 +159,18 @@ void DeclarationManager::onParserFinished(Type parserType, std::map<Type, NamedD
         // Move all blocks into this one
         _unrecognisedBlocks.insert(_unrecognisedBlocks.end(),
             std::make_move_iterator(unrecognisedBlocks.begin()), std::make_move_iterator(unrecognisedBlocks.end()));
+    }
+
+    {
+        std::lock_guard<std::mutex> lock(_parsedFileLock);
+
+        // Merge all parsed files into the main set
+        for (const auto& parsedFile : parsedFiles)
+        {
+            auto& fileSet = _parsedFilesByDefaultType.try_emplace(parsedFile.defaultDeclType, std::set<DeclarationFile>()).first->second;
+
+            fileSet.emplace(parsedFile);
+        }
     }
 
     // We might have received a parser in the meantime
@@ -210,7 +244,7 @@ void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
 void DeclarationManager::shutdownModule()
 {
     auto declLock = std::make_unique<std::lock_guard<std::mutex>>(_declarationLock);
-    std::vector<std::unique_ptr<DeclarationParser>> parsersToFinish;
+    std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
 
     for (auto& [_, decl] : _declarationsByType)
     {
@@ -226,6 +260,7 @@ void DeclarationManager::shutdownModule()
 
     // All parsers have finished, clear the structure, no need to lock anything
     _registeredFolders.clear();
+    _parsedFilesByDefaultType.clear();
     _unrecognisedBlocks.clear();
     _declarationsByType.clear();
     _parsersByTypename.clear();
