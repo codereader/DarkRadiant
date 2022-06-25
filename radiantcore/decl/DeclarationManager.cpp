@@ -10,16 +10,20 @@
 namespace decl
 {
 
-void DeclarationManager::registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& parser)
+void DeclarationManager::registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& creator)
 {
-    std::lock_guard<std::mutex> parserLock(_creatorLock);
-
-    if (_creatorsByTypename.count(typeName) > 0)
     {
-        throw std::logic_error("Type name " + typeName + " has already been registered");
-    }
+        std::lock_guard<std::mutex> creatorLock(_creatorLock);
 
-    _creatorsByTypename.emplace(typeName, parser);
+        if (_creatorsByTypename.count(typeName) > 0 || _creatorsByType.count(creator->getDeclType()) > 0)
+        {
+            throw std::logic_error("Type name " + typeName + " and/or type " +
+                getTypeName(creator->getDeclType()) + " has already been registered");
+        }
+
+        _creatorsByTypename.emplace(typeName, creator);
+        _creatorsByType.emplace(creator->getDeclType(), creator);
+    }
 
     // A new parser might be able to parse some of the unrecognised blocks
     handleUnrecognisedBlocks();
@@ -51,8 +55,22 @@ void DeclarationManager::registerDeclFolder(Type defaultType, const std::string&
     auto& decls = _declarationsByType.try_emplace(defaultType, Declarations()).first->second;
 
     // Start the parser thread
-    decls.parser = std::make_unique<DeclarationFolderParser>(*this, defaultType, vfsPath, extension, _creatorsByTypename);
+    decls.parser = std::make_unique<DeclarationFolderParser>(*this, defaultType, vfsPath, extension, getTypenameMapping());
     decls.parser->start();
+}
+
+std::map<std::string, Type> DeclarationManager::getTypenameMapping()
+{
+    std::map<std::string, Type> result;
+
+    std::lock_guard<std::mutex> creatorLock(_creatorLock);
+
+    for (const auto& [name, creator] : _creatorsByTypename)
+    {
+        result[name] = creator->getDeclType();
+    }
+
+    return result;
 }
 
 IDeclaration::Ptr DeclarationManager::findDeclaration(Type type, const std::string& name)
@@ -114,6 +132,7 @@ void DeclarationManager::reloadDecarations()
 
     for (const auto& [type, files] : _parsedFilesByDefaultType)
     {
+#if 0
         DeclarationFileParser parser(type, _creatorsByTypename);
 
         for (const auto& file : files)
@@ -127,6 +146,7 @@ void DeclarationManager::reloadDecarations()
 
         // Submit the changes
         // TODO
+#endif
     }
 }
 
@@ -135,32 +155,11 @@ sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
     return _declsReloadedSignals.try_emplace(type).first->second;
 }
 
-void DeclarationManager::onParserFinished(Type parserType, std::map<Type, NamedDeclarations>& parsedDecls,
-    const std::vector<DeclarationBlockSyntax>& unrecognisedBlocks, const std::set<DeclarationFile>& parsedFiles)
+void DeclarationManager::onParserFinished(Type parserType, 
+    std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks,
+    const std::set<DeclarationFile>& parsedFiles)
 {
-    {
-        std::lock_guard<std::mutex> declLock(_declarationLock);
-
-        // Coming back from a parser thread, sort the parsed decls into the main dictionary
-        for (auto& pair : parsedDecls)
-        {
-            auto& map = _declarationsByType.try_emplace(pair.first, Declarations()).first->second.decls;
-
-            for (auto& parsedDecl : pair.second)
-            {
-                InsertDeclaration(map, std::move(parsedDecl.second));
-            }
-        }
-    }
-
-    {
-        std::lock_guard<std::mutex> lock(_unrecognisedBlockLock);
-
-        // Move all blocks into this one
-        _unrecognisedBlocks.insert(_unrecognisedBlocks.end(),
-            std::make_move_iterator(unrecognisedBlocks.begin()), std::make_move_iterator(unrecognisedBlocks.end()));
-    }
-
+    // Sort all parsed files into the large list
     {
         std::lock_guard<std::mutex> lock(_parsedFileLock);
 
@@ -173,38 +172,104 @@ void DeclarationManager::onParserFinished(Type parserType, std::map<Type, NamedD
         }
     }
 
-    // We might have received a parser in the meantime
+    // Sort all parsed blocks into our main dictionary
+    // unrecognised blocks will be pushed to _unrecognisedBlocks
+    processParsedBlocks(parsedBlocks);
+
+    // Process the list of unrecognised blocks (from this and any previous run)
     handleUnrecognisedBlocks();
 
     // Invoke the declsReloaded signal for this type
     signal_DeclsReloaded(parserType).emit();
 }
 
+void DeclarationManager::processParsedBlocks(const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)
+{
+    std::lock_guard<std::mutex> declLock(_declarationLock);
+    std::lock_guard<std::mutex> creatorLock(_creatorLock);
+
+    // Coming back from a parser thread, sort the parsed decls into the main dictionary
+    for (auto& pair : parsedBlocks)
+    {
+        auto type = pair.first;
+
+        for (const auto& block : pair.second)
+        {
+            if (type == Type::Undetermined)
+            {
+                // Block type unknown, put it on the pile, it will be processed later
+                std::lock_guard<std::mutex> lock(_unrecognisedBlockLock);
+                _unrecognisedBlocks.emplace_back(std::move(block));
+                continue;
+            }
+
+            createOrUpdateDeclaration(type, block);
+        }
+    }
+}
+
+bool DeclarationManager::tryDetermineBlockType(const DeclarationBlockSyntax& block, Type& type)
+{
+    type = Type::Undetermined;
+
+    if (block.typeName.empty())
+    {
+        return false;
+    }
+
+    auto creator = _creatorsByTypename.find(block.typeName);
+
+    if (creator == _creatorsByTypename.end())
+    {
+        return false;
+    }
+
+    // Found a creator that can handle this type
+    type = creator->second->getDeclType();
+    return true;
+}
+
+void DeclarationManager::createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block)
+{
+    // Get the mapping for this decl type
+    auto& map = _declarationsByType.try_emplace(type, Declarations()).first->second.decls;
+
+    // See if this decl is already in use
+    auto existing = map.find(block.name);
+
+    // Create declaration if not existing
+    if (existing == map.end())
+    {
+        auto creator = _creatorsByType.at(type);
+        existing = map.emplace(block.name, creator->createDeclaration(block.name)).first;
+    }
+    else
+    {
+        // TODO: Compare parse stamps to see if this decl has duplicates
+    }
+
+    // Assign the block to the declaration instance
+    existing->second->setBlockSyntax(block);
+}
+
 void DeclarationManager::handleUnrecognisedBlocks()
 {
     std::lock_guard<std::mutex> lock(_unrecognisedBlockLock);
 
-    // Check each of the unrecognised blocks
+    if (_unrecognisedBlocks.empty()) return;
+
     for (auto block = _unrecognisedBlocks.begin(); block != _unrecognisedBlocks.end();)
     {
-        auto parser = _creatorsByTypename.find(block->typeName);
+        auto type = Type::Undetermined;
 
-        if (parser == _creatorsByTypename.end())
+        if (!tryDetermineBlockType(*block, type))
         {
             ++block;
-            continue; // still not recognised
+            continue;
         }
 
-        // We found a parser, handle it now
-        auto declaration = parser->second->createDeclaration(block->name);
+        createOrUpdateDeclaration(type, *block);
         _unrecognisedBlocks.erase(block++);
-
-        // Insert into our main library
-        std::lock_guard<std::mutex> declLock(_declarationLock);
-
-        auto& namedDecls = _declarationsByType.try_emplace(declaration->getDeclType(), Declarations()).first->second.decls;
-
-        InsertDeclaration(namedDecls, std::move(declaration));
     }
 }
 

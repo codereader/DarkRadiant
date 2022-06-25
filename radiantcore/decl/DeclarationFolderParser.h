@@ -25,7 +25,7 @@ private:
 public:
     DeclarationFolderParser(DeclarationManager& owner, Type declType,
         const std::string& baseDir, const std::string& extension,
-        const std::map<std::string, IDeclarationCreator::Ptr>& creatorsByTypename);
+        const std::map<std::string, Type>& typeMapping);
 
 protected:
     void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir) override;

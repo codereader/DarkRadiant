@@ -10,6 +10,7 @@ namespace decl
 // Enumeration of declaration types supported by DarkRadiant
 enum class Type
 {
+    Undetermined = -2,
     None = -1,
     Material = 0,
     EntityDef,
@@ -17,13 +18,13 @@ enum class Type
     Model,
     Particle,
     Skin,
-    NumDeclarationTypes,
 };
 
 inline std::string getTypeName(Type type)
 {
     switch (type)
     {
+    case Type::Undetermined: return _("Undetermined");
     case Type::None: return _("None");
     case Type::Material: return _("Material");
     case Type::EntityDef: return _("EntityDef");

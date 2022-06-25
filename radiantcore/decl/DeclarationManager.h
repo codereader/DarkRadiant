@@ -18,6 +18,7 @@ class DeclarationManager :
 {
 private:
     std::map<std::string, IDeclarationCreator::Ptr> _creatorsByTypename;
+    std::map<Type, IDeclarationCreator::Ptr> _creatorsByType;
     std::mutex _creatorLock;
 
     struct RegisteredFolder
@@ -65,12 +66,19 @@ public:
     void shutdownModule() override;
 
     // Invoked once a parser thread has finished. It will move its data over to here.
-    void onParserFinished(Type parserType, std::map<Type, NamedDeclarations>& parsedDecls,
-        const std::vector<DeclarationBlockSyntax>& unrecognisedBlocks, const std::set<DeclarationFile>& parsedFiles);
+    void onParserFinished(Type parserType,
+        std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks,
+        const std::set<DeclarationFile>& parsedFiles);
 
     static void InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration);
 
 private:
+    // Attempts to resolve the block type of the given block, returns true on success, false otherwise.
+    // Stores the determined type in the given reference.
+    std::map<std::string, Type> getTypenameMapping();
+    bool tryDetermineBlockType(const DeclarationBlockSyntax& block, Type& type);
+    void processParsedBlocks(const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks);
+    void createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block);
     void doWithDeclarations(Type type, const std::function<void(const NamedDeclarations&)>& action);
     void handleUnrecognisedBlocks();
 };
