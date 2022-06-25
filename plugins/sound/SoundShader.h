@@ -49,7 +49,7 @@ public:
 	std::string getDefinition() const override;
 
     const decl::DeclarationBlockSyntax& getBlockSyntax() const override;
-    void parseFromBlock(const decl::DeclarationBlockSyntax& block) override;
+    void setBlockSyntax(const decl::DeclarationBlockSyntax& block) override;
 };
 
 }

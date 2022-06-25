@@ -94,7 +94,7 @@ void DeclarationFileParser::processBlock(IDeclarationCreator& creator, const Dec
 {
     auto declaration = creator.createDeclaration(block.name);
 
-    declaration->parseFromBlock(block);
+    declaration->setBlockSyntax(block);
 
     auto& declMap = _parsedDecls.try_emplace(creator.getDeclType(), NamedDeclarations()).first->second;
 

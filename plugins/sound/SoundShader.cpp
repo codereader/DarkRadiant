@@ -102,11 +102,13 @@ const decl::DeclarationBlockSyntax& SoundShader::getBlockSyntax() const
     return _declBlock;
 }
 
-void SoundShader::parseFromBlock(const decl::DeclarationBlockSyntax& block)
+void SoundShader::setBlockSyntax(const decl::DeclarationBlockSyntax& block)
 {
     _declBlock = block;
     _fileInfo = block.fileInfo;
     _modName = block.getModName();
+
+    // Reset any contents, we reparse as soon as any property is accessed
     _contents.reset();
 }
 

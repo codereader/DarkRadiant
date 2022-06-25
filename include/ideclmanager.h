@@ -53,8 +53,9 @@ public:
     // The raw syntax block (without the outer curly braces) used to construct this decl
     virtual const DeclarationBlockSyntax& getBlockSyntax() const = 0;
 
-    // Parse (or reparse) the declaration contents from the given block syntax
-    virtual void parseFromBlock(const DeclarationBlockSyntax& block) = 0;
+    // Set the block contents of this declaration.
+    // Implementations are free to either (re-)parse immediately or deferred.
+    virtual void setBlockSyntax(const DeclarationBlockSyntax& block) = 0;
 };
 
 using NamedDeclarations = std::map<std::string, IDeclaration::Ptr>;

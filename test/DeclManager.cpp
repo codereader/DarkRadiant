@@ -37,7 +37,7 @@ public:
         return _block;
     }
 
-    void parseFromBlock(const decl::DeclarationBlockSyntax& block) override
+    void setBlockSyntax(const decl::DeclarationBlockSyntax& block) override
     {
         _block = block;
     }
