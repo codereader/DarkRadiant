@@ -56,6 +56,12 @@ public:
     // Set the block contents of this declaration.
     // Implementations are free to either (re-)parse immediately or deferred.
     virtual void setBlockSyntax(const DeclarationBlockSyntax& block) = 0;
+
+    // Returns the value of the internally used parse epoch counter
+    virtual std::size_t getParseStamp() const = 0;
+
+    // Sets the internally used parse epoch counter 
+    virtual void setParseStamp(std::size_t parseStamp) = 0;
 };
 
 using NamedDeclarations = std::map<std::string, IDeclaration::Ptr>;

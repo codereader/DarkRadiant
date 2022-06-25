@@ -27,6 +27,8 @@ class SoundShader final :
 	// The modname (ModResource implementation)
 	std::string _modName;
 
+    std::size_t _parseStamp;
+
 private:
 	// Parses the definition block
 	void parseDefinition() const;
@@ -50,6 +52,9 @@ public:
 
     const decl::DeclarationBlockSyntax& getBlockSyntax() const override;
     void setBlockSyntax(const decl::DeclarationBlockSyntax& block) override;
+
+    std::size_t getParseStamp() const override;
+    void setParseStamp(std::size_t parseStamp) override;
 };
 
 }

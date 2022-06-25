@@ -21,7 +21,8 @@ struct SoundShader::ParsedContents
 };
 
 SoundShader::SoundShader(const std::string& name)
-:	_name(name)
+:	_name(name),
+    _parseStamp(0)
 { }
 
 // Destructor must be defined with ParsedContents definition visible, otherwise
@@ -110,6 +111,16 @@ void SoundShader::setBlockSyntax(const decl::DeclarationBlockSyntax& block)
 
     // Reset any contents, we reparse as soon as any property is accessed
     _contents.reset();
+}
+
+std::size_t SoundShader::getParseStamp() const
+{
+    return _parseStamp;
+}
+
+void SoundShader::setParseStamp(std::size_t parseStamp)
+{
+    _parseStamp = parseStamp;
 }
 
 } // namespace sound

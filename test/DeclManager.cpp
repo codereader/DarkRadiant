@@ -15,6 +15,7 @@ private:
     decl::Type _type;
     std::string _name;
     decl::DeclarationBlockSyntax _block;
+    std::size_t _parseStamp;
 
 public:
     TestDeclaration(decl::Type type, const std::string& name) :
@@ -40,6 +41,16 @@ public:
     void setBlockSyntax(const decl::DeclarationBlockSyntax& block) override
     {
         _block = block;
+    }
+
+    std::size_t getParseStamp() const override
+    {
+        return _parseStamp;
+    }
+
+    void setParseStamp(std::size_t parseStamp) override
+    {
+        _parseStamp = parseStamp;
     }
 };
 
@@ -341,6 +352,24 @@ decl/temporary/13
         << "decl/temporary/13 should be present now";
     EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/11"))
         << "decl/temporary/11 should be gone now";
+}
+
+TEST_F(DeclManagerTest, ReloadDeclarationsIncreasesParseStamp)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/exporttest/guisurf1");
+    EXPECT_TRUE(decl) << "Couldn't find the declaration decl/exporttest/guisurf1";
+
+    auto firstParseStamp = decl->getParseStamp();
+
+    GlobalDeclarationManager().reloadDecarations();
+
+    decl = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/exporttest/guisurf1");
+    EXPECT_TRUE(decl) << "Couldn't find the declaration decl/exporttest/guisurf1";
+
+    EXPECT_NE(decl->getParseStamp(), firstParseStamp) << "Parse stamp should have changed on reload";
 }
 
 }
