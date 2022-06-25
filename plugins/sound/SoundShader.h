@@ -34,7 +34,7 @@ private:
 public:
 	using Ptr = std::shared_ptr<SoundShader>;
 
-	SoundShader(const decl::DeclarationBlockSyntax& block);
+	SoundShader(const std::string& name);
 
     ~SoundShader();
 
@@ -49,6 +49,7 @@ public:
 	std::string getDefinition() const override;
 
     const decl::DeclarationBlockSyntax& getBlockSyntax() const override;
+    void parseFromBlock(const decl::DeclarationBlockSyntax& block) override;
 };
 
 }

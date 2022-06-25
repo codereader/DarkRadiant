@@ -10,16 +10,16 @@
 namespace decl
 {
 
-void DeclarationManager::registerDeclType(const std::string& typeName, const IDeclarationParser::Ptr& parser)
+void DeclarationManager::registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& parser)
 {
-    std::lock_guard<std::mutex> parserLock(_parserLock);
+    std::lock_guard<std::mutex> parserLock(_creatorLock);
 
-    if (_parsersByTypename.count(typeName) > 0)
+    if (_creatorsByTypename.count(typeName) > 0)
     {
         throw std::logic_error("Type name " + typeName + " has already been registered");
     }
 
-    _parsersByTypename.emplace(typeName, parser);
+    _creatorsByTypename.emplace(typeName, parser);
 
     // A new parser might be able to parse some of the unrecognised blocks
     handleUnrecognisedBlocks();
@@ -27,16 +27,16 @@ void DeclarationManager::registerDeclType(const std::string& typeName, const IDe
 
 void DeclarationManager::unregisterDeclType(const std::string& typeName)
 {
-    std::lock_guard<std::mutex> parserLock(_parserLock);
+    std::lock_guard<std::mutex> parserLock(_creatorLock);
 
-    auto existing = _parsersByTypename.find(typeName);
+    auto existing = _creatorsByTypename.find(typeName);
 
-    if (existing == _parsersByTypename.end())
+    if (existing == _creatorsByTypename.end())
     {
         throw std::logic_error("Type name " + typeName + " has not been registered");
     }
 
-    _parsersByTypename.erase(existing);
+    _creatorsByTypename.erase(existing);
 }
 
 void DeclarationManager::registerDeclFolder(Type defaultType, const std::string& inputFolder, const std::string& inputExtension)
@@ -51,7 +51,7 @@ void DeclarationManager::registerDeclFolder(Type defaultType, const std::string&
     auto& decls = _declarationsByType.try_emplace(defaultType, Declarations()).first->second;
 
     // Start the parser thread
-    decls.parser = std::make_unique<DeclarationFolderParser>(*this, defaultType, vfsPath, extension, _parsersByTypename);
+    decls.parser = std::make_unique<DeclarationFolderParser>(*this, defaultType, vfsPath, extension, _creatorsByTypename);
     decls.parser->start();
 }
 
@@ -110,11 +110,11 @@ void DeclarationManager::doWithDeclarations(Type type, const std::function<void(
 void DeclarationManager::reloadDecarations()
 {
     std::lock_guard<std::mutex> fileLock(_parsedFileLock);
-    std::lock_guard<std::mutex> parserLock(_parserLock);
+    std::lock_guard<std::mutex> parserLock(_creatorLock);
 
     for (const auto& [type, files] : _parsedFilesByDefaultType)
     {
-        DeclarationFileParser parser(type, _parsersByTypename);
+        DeclarationFileParser parser(type, _creatorsByTypename);
 
         for (const auto& file : files)
         {
@@ -185,19 +185,19 @@ void DeclarationManager::handleUnrecognisedBlocks()
     std::lock_guard<std::mutex> lock(_unrecognisedBlockLock);
 
     // Check each of the unrecognised blocks
-    for (auto b = _unrecognisedBlocks.begin(); b != _unrecognisedBlocks.end();)
+    for (auto block = _unrecognisedBlocks.begin(); block != _unrecognisedBlocks.end();)
     {
-        auto parser = _parsersByTypename.find(b->typeName);
+        auto parser = _creatorsByTypename.find(block->typeName);
 
-        if (parser == _parsersByTypename.end())
+        if (parser == _creatorsByTypename.end())
         {
-            ++b;
+            ++block;
             continue; // still not recognised
         }
 
         // We found a parser, handle it now
-        auto declaration = parser->second->parseFromBlock(*b);
-        _unrecognisedBlocks.erase(b++);
+        auto declaration = parser->second->createDeclaration(block->name);
+        _unrecognisedBlocks.erase(block++);
 
         // Insert into our main library
         std::lock_guard<std::mutex> declLock(_declarationLock);
@@ -263,7 +263,7 @@ void DeclarationManager::shutdownModule()
     _parsedFilesByDefaultType.clear();
     _unrecognisedBlocks.clear();
     _declarationsByType.clear();
-    _parsersByTypename.clear();
+    _creatorsByTypename.clear();
     _declsReloadedSignals.clear();
 }
 

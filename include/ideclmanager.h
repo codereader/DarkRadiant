@@ -52,24 +52,27 @@ public:
 
     // The raw syntax block (without the outer curly braces) used to construct this decl
     virtual const DeclarationBlockSyntax& getBlockSyntax() const = 0;
+
+    // Parse (or reparse) the declaration contents from the given block syntax
+    virtual void parseFromBlock(const DeclarationBlockSyntax& block) = 0;
 };
 
 using NamedDeclarations = std::map<std::string, IDeclaration::Ptr>;
 
-// Interface of a parser that can handle a single declaration type
-class IDeclarationParser
+// Factory interface being able to create a single declaration type
+class IDeclarationCreator
 {
 public:
-    virtual ~IDeclarationParser()
+    virtual ~IDeclarationCreator()
     {}
 
-    using Ptr = std::shared_ptr<IDeclarationParser>;
+    using Ptr = std::shared_ptr<IDeclarationCreator>;
 
-    // Returns the declaration type this parser can handle
+    // Returns the declaration type this creator can handle
     virtual Type getDeclType() const = 0;
 
-    // Create a new declaration instance from the given block
-    virtual IDeclaration::Ptr parseFromBlock(const DeclarationBlockSyntax& block) = 0;
+    // Creates an empty declaration with the given name
+    virtual IDeclaration::Ptr createDeclaration(const std::string& name) = 0;
 };
 
 // Central service class holding all the declarations in the active game,
@@ -83,16 +86,16 @@ public:
     virtual ~IDeclarationManager() override
     {}
 
-    // Registers the declaration typename (e.g. "material") and associates it with the given parser
-    // It's not allowed to register more than one parser for a single typename
-    virtual void registerDeclType(const std::string& typeName, const IDeclarationParser::Ptr& parser) = 0;
+    // Registers the declaration typename (e.g. "material") and associates it with the given creator
+    // It's not allowed to register more than one creator for a single typename
+    virtual void registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& creator) = 0;
 
-    // Unregisters the given typename and the associated parser
+    // Unregisters the given typename and the associated creator
     virtual void unregisterDeclType(const std::string& typeName) = 0;
 
     // Associates the given VFS folder (with trailing slash) to a certain declaration type
     // all files matching the given file extension (without dot) will be searched and parsed.
-    // The folder will not be recursively searched for files, only immediate children will be parsed.
+    // The folder will not be recursively searched for files, only immediate children will be processed.
     // Any untyped declaration blocks found in the files will be assumed to be of the given defaultType.
     // All explicitly typed resources will be processed using the parser that has been previously
     // associated in registerDeclType()

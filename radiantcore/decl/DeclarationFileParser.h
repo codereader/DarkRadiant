@@ -13,8 +13,8 @@ class DeclarationFileParser
 private:
     Type _defaultDeclType;
 
-    std::map<std::string, IDeclarationParser::Ptr> _parsersByTypename;
-    IDeclarationParser::Ptr _defaultTypeParser;
+    std::map<std::string, IDeclarationCreator::Ptr> _creatorsByTypename;
+    IDeclarationCreator::Ptr _defaultTypeCreator;
 
     std::set<DeclarationFile> _parsedFiles;
     std::map<Type, NamedDeclarations> _parsedDecls;
@@ -22,7 +22,7 @@ private:
     std::vector<DeclarationBlockSyntax> _unrecognisedBlocks;
 
 public:
-    DeclarationFileParser(Type declType, const std::map<std::string, IDeclarationParser::Ptr>& parsersByTypename);
+    DeclarationFileParser(Type declType, const std::map<std::string, IDeclarationCreator::Ptr>& creatorsByTypename);
 
     void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir);
 
@@ -31,8 +31,8 @@ public:
     const std::vector<DeclarationBlockSyntax>& getUnrecognisedBlocks() const;
 
 private:
-    void parseBlock(IDeclarationParser& parser, const DeclarationBlockSyntax& block);
-    IDeclarationParser::Ptr getParserByType(Type declType) const;
+    void processBlock(IDeclarationCreator& creator, const DeclarationBlockSyntax& block);
+    IDeclarationCreator::Ptr getCreatorByType(Type declType) const;
 };
 
 }

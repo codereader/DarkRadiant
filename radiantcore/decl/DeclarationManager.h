@@ -17,8 +17,8 @@ class DeclarationManager :
     public IDeclarationManager
 {
 private:
-    std::map<std::string, IDeclarationParser::Ptr> _parsersByTypename;
-    std::mutex _parserLock;
+    std::map<std::string, IDeclarationCreator::Ptr> _creatorsByTypename;
+    std::mutex _creatorLock;
 
     struct RegisteredFolder
     {
@@ -51,7 +51,7 @@ private:
     std::map<Type, sigc::signal<void>> _declsReloadedSignals;
 
 public:
-    void registerDeclType(const std::string& typeName, const IDeclarationParser::Ptr& parser) override;
+    void registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& parser) override;
     void unregisterDeclType(const std::string& typeName) override;
     void registerDeclFolder(Type defaultType, const std::string& inputFolder, const std::string& inputExtension) override;
     IDeclaration::Ptr findDeclaration(Type type, const std::string& name) override;

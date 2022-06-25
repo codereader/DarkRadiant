@@ -20,11 +20,8 @@ struct SoundShader::ParsedContents
 	std::string displayFolder;
 };
 
-SoundShader::SoundShader(const decl::DeclarationBlockSyntax& block)
-:	_name(block.name),
-    _declBlock(block),
-	_fileInfo(block.fileInfo),
-    _modName(block.getModName())
+SoundShader::SoundShader(const std::string& name)
+:	_name(name)
 { }
 
 // Destructor must be defined with ParsedContents definition visible, otherwise
@@ -34,7 +31,7 @@ SoundShader::~SoundShader()
 
 void SoundShader::parseDefinition() const
 {
-	_contents.reset(new ParsedContents);
+	_contents = std::make_unique<ParsedContents>();
 
 	// Get a new tokeniser and parse the block
 	parser::BasicDefTokeniser<std::string> tok(_declBlock.contents);
@@ -103,6 +100,14 @@ std::string SoundShader::getDefinition() const
 const decl::DeclarationBlockSyntax& SoundShader::getBlockSyntax() const
 {
     return _declBlock;
+}
+
+void SoundShader::parseFromBlock(const decl::DeclarationBlockSyntax& block)
+{
+    _declBlock = block;
+    _fileInfo = block.fileInfo;
+    _modName = block.getModName();
+    _contents.reset();
 }
 
 } // namespace sound

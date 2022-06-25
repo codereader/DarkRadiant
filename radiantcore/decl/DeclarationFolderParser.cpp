@@ -7,10 +7,10 @@ namespace decl
 
 DeclarationFolderParser::DeclarationFolderParser(DeclarationManager& owner, Type declType, 
     const std::string& baseDir, const std::string& extension,
-    const std::map<std::string, IDeclarationParser::Ptr>& parsersByTypename) :
+    const std::map<std::string, IDeclarationCreator::Ptr>& creatorsByTypename) :
     ThreadedDeclParser<void>(declType, baseDir, extension, 1),
     _owner(owner),
-    _fileParser(declType, parsersByTypename),
+    _fileParser(declType, creatorsByTypename),
     _defaultDeclType(declType)
 {}
 

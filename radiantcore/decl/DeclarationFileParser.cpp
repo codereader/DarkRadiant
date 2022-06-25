@@ -26,15 +26,15 @@ namespace
 }
 
 DeclarationFileParser::DeclarationFileParser(Type declType,
-    const std::map<std::string, IDeclarationParser::Ptr>& parsersByTypename) :
+    const std::map<std::string, IDeclarationCreator::Ptr>& creatorsByTypename) :
     _defaultDeclType(declType),
-    _parsersByTypename(parsersByTypename)
+    _creatorsByTypename(creatorsByTypename)
 {
-    _defaultTypeParser = getParserByType(declType);
+    _defaultTypeCreator = getCreatorByType(declType);
 
-    if (!_defaultTypeParser)
+    if (!_defaultTypeCreator)
     {
-        throw std::invalid_argument("No parser has been associated to the default type " + getTypeName(declType));
+        throw std::invalid_argument("No creator has been associated to the default type " + getTypeName(declType));
     }
 }
 
@@ -71,17 +71,17 @@ void DeclarationFileParser::parse(std::istream& stream, const vfs::FileInfo& fil
 
         if (spacePos == std::string::npos)
         {
-            // No type specified, use the default type parser
-            parseBlock(*_defaultTypeParser, blockSyntax);
+            // No type specified, use the default type creator
+            processBlock(*_defaultTypeCreator, blockSyntax);
             continue;
         }
 
-        // Locate a parser capable of handling that block
-        auto parser = _parsersByTypename.find(block.name.substr(0, spacePos));
+        // Locate a creator capable of handling that block
+        auto creator = _creatorsByTypename.find(block.name.substr(0, spacePos));
 
-        if (parser != _parsersByTypename.end())
+        if (creator != _creatorsByTypename.end())
         {
-            parseBlock(*parser->second, blockSyntax);
+            processBlock(*creator->second, blockSyntax);
             continue;
         }
 
@@ -90,20 +90,22 @@ void DeclarationFileParser::parse(std::istream& stream, const vfs::FileInfo& fil
     }
 }
 
-void DeclarationFileParser::parseBlock(IDeclarationParser& parser, const DeclarationBlockSyntax& block)
+void DeclarationFileParser::processBlock(IDeclarationCreator& creator, const DeclarationBlockSyntax& block)
 {
-    auto declaration = parser.parseFromBlock(block);
+    auto declaration = creator.createDeclaration(block.name);
 
-    auto& declMap = _parsedDecls.try_emplace(parser.getDeclType(), NamedDeclarations()).first->second;
+    declaration->parseFromBlock(block);
+
+    auto& declMap = _parsedDecls.try_emplace(creator.getDeclType(), NamedDeclarations()).first->second;
 
     // Insert into map, emit a warning on duplicates
     DeclarationManager::InsertDeclaration(declMap, std::move(declaration));
 }
 
-IDeclarationParser::Ptr DeclarationFileParser::getParserByType(Type declType) const
+IDeclarationCreator::Ptr DeclarationFileParser::getCreatorByType(Type declType) const
 {
-    // Get the default type parser
-    for (const auto& pair : _parsersByTypename)
+    // Get the default type creator
+    for (const auto& pair : _creatorsByTypename)
     {
         if (pair.second->getDeclType() == declType)
         {

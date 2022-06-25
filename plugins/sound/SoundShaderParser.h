@@ -7,10 +7,10 @@ namespace sound
 {
 
 /**
- * Declaration parser capable of dealing with sound shader blocks
+ * Declaration creator capable of dealing with sound shader blocks
  */
 class SoundShaderParser final :
-    public decl::IDeclarationParser
+    public decl::IDeclarationCreator
 {
 public:
     decl::Type getDeclType() const override
@@ -18,9 +18,9 @@ public:
         return decl::Type::SoundShader;
     }
 
-    decl::IDeclaration::Ptr parseFromBlock(const decl::DeclarationBlockSyntax& block) override
+    decl::IDeclaration::Ptr createDeclaration(const std::string& name) override
     {
-        return std::make_shared<SoundShader>(block);
+        return std::make_shared<SoundShader>(name);
     }
 };
 
