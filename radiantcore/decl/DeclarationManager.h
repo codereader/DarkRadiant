@@ -19,7 +19,7 @@ class DeclarationManager :
 private:
     std::map<std::string, IDeclarationCreator::Ptr> _creatorsByTypename;
     std::map<Type, IDeclarationCreator::Ptr> _creatorsByType;
-    std::mutex _creatorLock;
+    std::recursive_mutex _creatorLock;
 
     struct RegisteredFolder
     {
@@ -31,7 +31,7 @@ private:
     std::vector<RegisteredFolder> _registeredFolders;
 
     std::map<decl::Type, std::set<DeclarationFile>> _parsedFilesByDefaultType;
-    std::mutex _parsedFileLock;
+    std::recursive_mutex _parsedFileLock;
 
     struct Declarations
     {
@@ -44,10 +44,10 @@ private:
 
     // One entry for each decl
     std::map<Type, Declarations> _declarationsByType;
-    std::mutex _declarationLock;
+    std::recursive_mutex _declarationLock;
 
     std::list<DeclarationBlockSyntax> _unrecognisedBlocks;
-    std::mutex _unrecognisedBlockLock;
+    std::recursive_mutex _unrecognisedBlockLock;
 
     std::map<Type, sigc::signal<void>> _declsReloadedSignals;
 
@@ -67,7 +67,7 @@ public:
 
     // Invoked once a parser thread has finished. It will move its data over to here.
     void onParserFinished(Type parserType,
-        std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks,
+        const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks,
         const std::set<DeclarationFile>& parsedFiles);
 
     static void InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration);

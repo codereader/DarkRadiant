@@ -26,7 +26,6 @@ namespace
         DeclarationBlockSyntax syntax;
 
         syntax.typeName = getBlockTypeName(block.name);
-
         syntax.name = spacePos != std::string::npos ? block.name.substr(spacePos + 1) : block.name;
         syntax.contents = block.contents;
         syntax.modName = modName;
@@ -39,16 +38,7 @@ namespace
 DeclarationFileParser::DeclarationFileParser(Type defaultDeclType, const std::map<std::string, Type>& typeMapping) :
     _defaultDeclType(defaultDeclType),
     _typeMapping(typeMapping)
-{
-#if 0
-    _defaultTypeCreator = getCreatorByType(declType);
-
-    if (!_defaultTypeCreator)
-    {
-        throw std::invalid_argument("No creator has been associated to the default type " + getTypeName(declType));
-    }
-#endif
-}
+{}
 
 std::map<Type, std::vector<DeclarationBlockSyntax>>& DeclarationFileParser::getParsedBlocks()
 {
@@ -78,28 +68,6 @@ void DeclarationFileParser::parse(std::istream& stream, const vfs::FileInfo& fil
         auto declType = determineBlockType(blockSyntax);
         auto& blockList = _parsedBlocks.try_emplace(declType).first->second;
         blockList.emplace_back(std::move(blockSyntax));
-#if 0
-        auto spacePos = block.name.find(' ');
-
-        if (spacePos == std::string::npos)
-        {
-            // No type specified, use the default type creator
-            processBlock(*_defaultTypeCreator, blockSyntax);
-            continue;
-        }
-
-        // Locate a creator capable of handling that block
-        auto creator = _creatorsByTypename.find(block.name.substr(0, spacePos));
-
-        if (creator != _creatorsByTypename.end())
-        {
-            processBlock(*creator->second, blockSyntax);
-            continue;
-        }
-
-        // Unknown block type, move to buffer
-        _unrecognisedBlocks.emplace_back(std::move(blockSyntax));
-#endif
     }
 }
 
@@ -114,34 +82,5 @@ Type DeclarationFileParser::determineBlockType(const DeclarationBlockSyntax& blo
 
     return foundType != _typeMapping.end() ? foundType->second : Type::Undetermined;
 }
-
-
-#if 0
-void DeclarationFileParser::processBlock(IDeclarationCreator& creator, const DeclarationBlockSyntax& block)
-{
-    auto declaration = creator.createDeclaration(block.name);
-
-    declaration->setBlockSyntax(block);
-
-    auto& declMap = _parsedDecls.try_emplace(creator.getDeclType(), NamedDeclarations()).first->second;
-
-    // Insert into map, emit a warning on duplicates
-    DeclarationManager::InsertDeclaration(declMap, std::move(declaration));
-}
-
-IDeclarationCreator::Ptr DeclarationFileParser::getCreatorByType(Type declType) const
-{
-    // Get the default type creator
-    for (const auto& pair : _creatorsByTypename)
-    {
-        if (pair.second->getDeclType() == declType)
-        {
-            return pair.second;
-        }
-    }
-
-    return {};
-}
-#endif
 
 }

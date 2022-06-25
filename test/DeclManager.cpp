@@ -328,6 +328,8 @@ decl/temporary/13
 
 )");
 
+    GlobalDeclarationManager().reloadDecarations();
+
     // Check the change sin temp12
     temp12 = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/12");
     EXPECT_TRUE(temp12) << "Couldn't find the declaration decl/temporary/12";
