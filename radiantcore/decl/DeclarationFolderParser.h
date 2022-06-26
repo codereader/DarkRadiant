@@ -2,7 +2,6 @@
 
 #include "DeclarationFile.h"
 #include "DeclarationFileParser.h"
-#include "ideclmanager.h"
 
 #include "parser/ThreadedDeclParser.h"
 

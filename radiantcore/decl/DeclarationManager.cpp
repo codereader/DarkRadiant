@@ -129,6 +129,10 @@ void DeclarationManager::doWithDeclarations(Type type, const std::function<void(
 
 void DeclarationManager::reloadDecarations()
 {
+    // Don't allow reloadDecls to be run before the startup phase is complete
+    waitForTypedParsersToFinish();
+
+    // Don't allow more than one simultaneous reloadDecls run
     if (_reparseInProgress) return;
 
     util::ScopedBoolLock reparseLock(_reparseInProgress);
@@ -166,47 +170,6 @@ void DeclarationManager::reloadDecarations()
             }
         }
     }
-#if 0
-    std::lock_guard fileLock(_parsedFileLock);
-    std::lock_guard parserLock(_creatorLock);
-
-    for (auto& [type, files] : _parsedFilesByDefaultType)
-    {
-        DeclarationFileParser parser(type, getTypenameMapping());
-
-        for (auto& file : files)
-        {
-            auto vfsFile = GlobalFileSystem().openTextFile(file.fullPath);
-
-            if (!vfsFile) continue;
-
-            auto fileInfo = GlobalFileSystem().getFileInfo(file.fullPath);
-
-            try
-            {
-                // Parse entity defs from the file
-                std::istream stream(&vfsFile->getInputStream());
-                parser.parse(stream, fileInfo, vfsFile->getModName());
-            }
-            catch (parser::ParseException& e)
-            {
-                rError() << "[DeclParser] Failed to parse " << fileInfo.fullPath()
-                    << " (" << e.what() << ")" << std::endl;
-            }
-
-            const auto& newlyParsedFile = parser.getParsedFiles().find(file.fullPath);
-
-            // Invalidate all declarations that have been removed from the file
-            handleMissingDecls(file, newlyParsedFile);
-        }
-
-        // Submit the changes
-        processParsedBlocks(parser.getParsedBlocks());
-    }
-
-    // Process the list of unrecognised blocks (from this and any previous run)
-    handleUnrecognisedBlocks();
-#endif
 
     std::lock_guard folderLock(_registeredFoldersLock);
 
@@ -214,6 +177,24 @@ void DeclarationManager::reloadDecarations()
     for (const auto& folder : _registeredFolders)
     {
         signal_DeclsReloaded(folder.defaultType).emit();
+    }
+}
+
+void DeclarationManager::waitForTypedParsersToFinish()
+{
+    auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationLock);
+
+    for (auto& [_, decls] : _declarationsByType)
+    {
+        if (!decls.parser) continue;
+
+        // Release the lock to give the thread a chance to finish
+        declLock.reset();
+
+        decls.parser->ensureFinished(); // blocks
+        decls.parser.reset();
+
+        declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationLock);
     }
 }
 
@@ -246,24 +227,8 @@ sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
 }
 
 void DeclarationManager::onParserFinished(Type parserType, 
-    const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)
+    std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)
 {
-#if 0
-    // Sort all parsed files into the large list
-    {
-        std::lock_guard lock(_parsedFileLock);
-
-        // Merge all parsed files into the main set
-        for (const auto& [_, parsedFile] : parsedFiles)
-        {
-            auto& fileSet = _parsedFilesByDefaultType.try_emplace(
-                parsedFile.defaultDeclType, std::vector<DeclarationFile>()).first->second;
-
-            fileSet.emplace(parsedFile);
-        }
-    }
-#endif
-
     // Sort all parsed blocks into our main dictionary
     // unrecognised blocks will be pushed to _unrecognisedBlocks
     processParsedBlocks(parsedBlocks);
@@ -275,17 +240,15 @@ void DeclarationManager::onParserFinished(Type parserType,
     signal_DeclsReloaded(parserType).emit();
 }
 
-void DeclarationManager::processParsedBlocks(const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)
+void DeclarationManager::processParsedBlocks(std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)
 {
     std::lock_guard declLock(_declarationLock);
     std::lock_guard creatorLock(_creatorLock);
 
     // Coming back from a parser thread, sort the parsed decls into the main dictionary
-    for (auto& pair : parsedBlocks)
+    for (auto& [type, blocks] : parsedBlocks)
     {
-        auto type = pair.first;
-
-        for (const auto& block : pair.second)
+        for (auto& block : blocks)
         {
             if (type == Type::Undetermined)
             {
@@ -369,18 +332,6 @@ void DeclarationManager::handleUnrecognisedBlocks()
     }
 }
 
-void DeclarationManager::InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration)
-{
-    auto type = declaration->getDeclType();
-    auto result = map.try_emplace(declaration->getDeclName(), std::move(declaration));
-
-    if (!result.second)
-    {
-        rWarning() << "[DeclParser]: " << getTypeName(type) << " " <<
-            result.first->second->getDeclName() << " has already been declared" << std::endl;
-    }
-}
-
 const std::string& DeclarationManager::getName() const
 {
     static std::string _name(MODULE_DECLMANAGER);
@@ -425,9 +376,6 @@ void DeclarationManager::shutdownModule()
 
     // All parsers have finished, clear the structure, no need to lock anything
     _registeredFolders.clear();
-#if 0
-    _parsedFilesByDefaultType.clear();
-#endif
     _unrecognisedBlocks.clear();
     _declarationsByType.clear();
     _creatorsByTypename.clear();

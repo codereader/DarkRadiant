@@ -9,7 +9,7 @@ namespace decl
 
 namespace
 {
-    inline std::string getBlockTypeName(const std::string& declaration)
+    std::string getBlockTypeName(const std::string& declaration)
     {
         auto spacePos = declaration.find(' ');
 
@@ -18,7 +18,7 @@ namespace
         return string::trim_copy(declaration.substr(0, spacePos), " \t"); // remove all tabs and spaces
     }
 
-    inline DeclarationBlockSyntax createBlock(const parser::BlockTokeniser::Block& block,
+    DeclarationBlockSyntax createBlock(const parser::BlockTokeniser::Block& block,
         const vfs::FileInfo& fileInfo, const std::string& modName)
     {
         auto spacePos = block.name.find(' ');
@@ -47,9 +47,6 @@ std::map<Type, std::vector<DeclarationBlockSyntax>>& DeclarationFileParser::getP
 
 void DeclarationFileParser::parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir)
 {
-#if 0
-    auto& declFile = _parsedFiles.emplace_back(DeclarationFile{ fileInfo.fullPath(), _defaultDeclType });
-#endif
     // Cut the incoming stream into declaration blocks
     parser::BasicDefBlockTokeniser<std::istream> tokeniser(stream);
 
@@ -64,10 +61,6 @@ void DeclarationFileParser::parse(std::istream& stream, const vfs::FileInfo& fil
         auto declType = determineBlockType(blockSyntax);
         auto& blockList = _parsedBlocks.try_emplace(declType).first->second;
         blockList.emplace_back(std::move(blockSyntax));
-#if 0
-        // Add this declaration to the parsed file
-        //declFile.declarations.emplace_back(declType, block.name);
-#endif
     }
 }
 

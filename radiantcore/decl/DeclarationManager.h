@@ -31,11 +31,6 @@ private:
     std::vector<RegisteredFolder> _registeredFolders;
     std::recursive_mutex _registeredFoldersLock;
 
-#if 0
-    std::map<Type, std::set<DeclarationFile>> _parsedFilesByDefaultType;
-    std::recursive_mutex _parsedFileLock;
-#endif
-
     struct Declarations
     {
         // The decl library
@@ -73,17 +68,17 @@ public:
 
     // Invoked once a parser thread has finished. It will move its data over to here.
     void onParserFinished(Type parserType,
-        const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks);
-
-    static void InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration);
+        std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks);
 
 private:
     void runParsersForAllFolders();
+    void waitForTypedParsersToFinish();
+
     // Attempts to resolve the block type of the given block, returns true on success, false otherwise.
     // Stores the determined type in the given reference.
     std::map<std::string, Type> getTypenameMapping();
     bool tryDetermineBlockType(const DeclarationBlockSyntax& block, Type& type);
-    void processParsedBlocks(const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks);
+    void processParsedBlocks(std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks);
     void createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block);
     void doWithDeclarations(Type type, const std::function<void(const NamedDeclarations&)>& action);
     void handleUnrecognisedBlocks();
