@@ -5,6 +5,7 @@
 #include "ideclmanager.h"
 
 #include "os/path.h"
+#include "os/fs.h"
 #include "string/case_conv.h"
 
 #include <algorithm>
@@ -12,6 +13,7 @@
 
 #include "WavFileLoader.h"
 #include "OggFileLoader.h"
+#include "SoundShaderParser.h"
 
 namespace sound
 {
@@ -26,11 +28,8 @@ constexpr const char* const SOUND_FILE_EXTENSION = ".sndshd";
 // Load the given file, trying different extensions (first OGG, then WAV) as fallback
 ArchiveFilePtr openSoundFile(const std::string& fileName)
 {
-    // Make a copy of the filename
-    std::string name = fileName;
-
     // Try to open the file as it is
-    auto file = GlobalFileSystem().openFile(name);
+    auto file = GlobalFileSystem().openFile(fileName);
 
     if (file)
     {
@@ -38,18 +37,7 @@ ArchiveFilePtr openSoundFile(const std::string& fileName)
         return file;
     }
 
-    std::string root = name;
-
-    // File not found, try to strip the extension
-    if (name.rfind(".") != std::string::npos)
-    {
-        root = name.substr(0, name.rfind("."));
-    }
-
-    // Try to open the .ogg variant
-    name = root + ".ogg";
-
-    file = GlobalFileSystem().openFile(name);
+    file = GlobalFileSystem().openFile(os::replaceExtension(fileName, ".ogg"));
 
     if (file)
     {
@@ -57,9 +45,7 @@ ArchiveFilePtr openSoundFile(const std::string& fileName)
     }
 
     // Try to open the file with .wav extension
-    name = root + ".wav";
-
-    return GlobalFileSystem().openFile(name);
+    return GlobalFileSystem().openFile(os::replaceExtension(fileName, ".wav"));
 }
 
 }
@@ -139,8 +125,8 @@ const StringSet& SoundManager::getDependencies() const
 
 void SoundManager::initialiseModule(const IApplicationContext& ctx)
 {
-    GlobalCommandSystem().addCommand("ReloadSounds", 
-        std::bind(&SoundManager::reloadSoundsCmd, this, std::placeholders::_1));
+    // For now, redirect reloadSounds to the generic reloadDecls
+    GlobalCommandSystem().addStatement("ReloadSounds", "ReloadDecls", false);
 
     // Create the SoundPlayer if sound is not disabled
     const auto& args = ctx.getCmdLineArgs();
@@ -198,11 +184,6 @@ float SoundManager::getSoundFileDuration(const std::string& vfsPath)
 void SoundManager::reloadSounds()
 {
     GlobalDeclarationManager().reloadDecarations();
-}
-
-void SoundManager::reloadSoundsCmd(const cmd::ArgumentList& args)
-{
-    reloadSounds();
 }
 
 } // namespace sound

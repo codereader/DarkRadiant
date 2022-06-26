@@ -6,10 +6,6 @@
 #include "isound.h"
 #include "icommandsystem.h"
 
-#include "parser/ThreadedDeclParser.h"
-#include "SoundShaderParser.h"
-#include <map>
-
 namespace sound
 {
 
@@ -24,9 +20,6 @@ private:
 	std::unique_ptr<SoundPlayer> _soundPlayer;
 
     sigc::signal<void> _sigSoundShadersReloaded;
-
-private:
-    void reloadSoundsCmd(const cmd::ArgumentList& args);
 
 public:
 	SoundManager();
