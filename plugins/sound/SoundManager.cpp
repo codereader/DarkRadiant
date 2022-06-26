@@ -112,9 +112,11 @@ sigc::signal<void>& SoundManager::signal_soundShadersReloaded()
 
 ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName)
 {
-    return std::static_pointer_cast<ISoundShader>(
+    auto found = std::static_pointer_cast<ISoundShader>(
         GlobalDeclarationManager().findDeclaration(decl::Type::SoundShader, shaderName)
     );
+
+    return found ? found : _emptyShader;
 }
 
 const std::string& SoundManager::getName() const
