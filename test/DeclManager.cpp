@@ -292,7 +292,36 @@ TEST_F(DeclManagerTest, FindDeclaration)
     EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/nonexistent"));
 }
 
-TEST_F(DeclManagerTest, ReloadDeclarationWithChangedFile)
+inline void expectMaterialIsPresent(decl::Type type, const std::string& declName)
+{
+    EXPECT_TRUE(GlobalDeclarationManager().findDeclaration(type, declName))
+        << declName << " should be present";
+}
+
+inline void expectMaterialIsNotPresent(decl::Type type, const std::string& declName)
+{
+    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(type, declName))
+        << declName << " should not be present";
+}
+
+inline void expectMaterialContains(decl::Type type, const std::string& declName, const std::string& expectedContents)
+{
+    auto decl = GlobalDeclarationManager().findDeclaration(type, declName);
+    EXPECT_TRUE(decl) << declName << " should be present";
+    EXPECT_NE(decl->getBlockSyntax().contents.find(expectedContents), std::string::npos)
+        << declName << " should contain the expected contents " << expectedContents;
+}
+
+// Material must still be present, but not contain the given string
+inline void expectMaterialDoesNotContain(decl::Type type, const std::string& declName, const std::string& contents)
+{
+    auto decl = GlobalDeclarationManager().findDeclaration(type, declName);
+    EXPECT_TRUE(decl) << declName << " should be present";
+    EXPECT_EQ(decl->getBlockSyntax().contents.find(contents), std::string::npos)
+        << declName << " should NOT contain " << contents;
+}
+
+TEST_F(DeclManagerTest, ReloadDeclarationDetectsChangedFile)
 {
     TemporaryFile tempFile(_context.getTestProjectPath() + "testdecls/temp_file.decl");
     tempFile.setContents(R"(
@@ -312,17 +341,9 @@ decl/temporary/12
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
 
-    auto temp12 = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/12");
-    EXPECT_TRUE(temp12) << "Couldn't find the declaration decl/temporary/12";
-
-    auto temp11 = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/11");
-    EXPECT_TRUE(temp11) << "Couldn't find the declaration decl/temporary/11";
-
-    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/13"))
-        << "decl/temporary/13 should not be present";
-
-    EXPECT_NE(temp12->getBlockSyntax().contents.find("diffusemap textures/temporary/12"), std::string::npos) <<
-        "Didn't find the expected contents in the decl block";
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/11");
+    expectMaterialContains(decl::Type::Material, "decl/temporary/12", "diffusemap textures/temporary/12");
+    expectMaterialIsNotPresent(decl::Type::Material, "decl/temporary/13");
 
     // Change the file, change temp12, remove temp11 and add temp13 instead
     tempFile.setContents(R"(
@@ -332,7 +353,7 @@ decl/temporary/12
     diffusemap textures/changed_temporary/12
 }
 
-decl/temporary/13
+testdecl decl/temporary/13
 {
     diffusemap textures/temporary/13
 }
@@ -341,17 +362,114 @@ decl/temporary/13
 
     GlobalDeclarationManager().reloadDecarations();
 
-    // Check the change sin temp12
-    temp12 = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/12");
-    EXPECT_TRUE(temp12) << "Couldn't find the declaration decl/temporary/12";
+    // Check the changes in temp12
+    expectMaterialContains(decl::Type::Material, "decl/temporary/12", "diffusemap textures/changed_temporary/12");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/13");
+    expectMaterialDoesNotContain(decl::Type::Material, "decl/temporary/11", "diffusemap textures/temporary/11");
+}
 
-    EXPECT_NE(temp12->getBlockSyntax().contents.find("diffusemap textures/changed_temporary/12"), std::string::npos) <<
-        "Couldn't find the changed contents in the decl block";
+TEST_F(DeclManagerTest, ReloadDeclarationDetectsNewFile)
+{
+    TemporaryFile tempFile(_context.getTestProjectPath() + "testdecls/temp_file.decl");
 
-    EXPECT_TRUE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/13"))
-        << "decl/temporary/13 should be present now";
-    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/temporary/11"))
-        << "decl/temporary/11 should be gone now";
+    tempFile.setContents(R"(
+testdecl   decl/temporary/11 { diffusemap textures/temporary/11 }
+testdecl    decl/temporary/12 { diffusemap textures/temporary/12 }
+)");
+
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/12");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/11");
+    expectMaterialIsNotPresent(decl::Type::Material, "decl/temporary/13");
+
+    // Create a new file and reload decls
+    TemporaryFile tempFile2(_context.getTestProjectPath() + "testdecls/temp_file2.decl");
+    tempFile2.setContents(R"(
+testdecl   decl/temporary/13 { diffusemap textures/temporary/13 }
+testdecl    decl/temporary/14 { diffusemap textures/temporary/14 }
+)");
+
+    GlobalDeclarationManager().reloadDecarations();
+
+    // All the decls should be present now
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/11");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/12");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/13");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/14");
+}
+
+TEST_F(DeclManagerTest, ReloadDeclarationDetectsRemovedFile)
+{
+    TemporaryFile tempFile(_context.getTestProjectPath() + "testdecls/temp_file.decl");
+    tempFile.setContents(R"(
+testdecl   decl/temporary/11 { diffusemap textures/temporary/11 }
+testdecl    decl/temporary/12 { diffusemap textures/temporary/12 }
+)");
+
+    auto tempFile2 = std::make_shared<TemporaryFile>(_context.getTestProjectPath() + "testdecls/temp_file2.decl");
+    tempFile2->setContents(R"(
+testdecl   decl/temporary/13 { diffusemap textures/temporary/13 }
+testdecl    decl/temporary/14 { diffusemap textures/temporary/14 }
+)");
+
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/11");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/12");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/13");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/14");
+
+    // Remove one file and reload decls
+    tempFile2.reset();
+    GlobalDeclarationManager().reloadDecarations();
+
+    // All decls should still be present
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/11");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/12");
+    expectMaterialDoesNotContain(decl::Type::Material, "decl/temporary/13", "diffusemap textures/temporary/13");
+    expectMaterialDoesNotContain(decl::Type::Material, "decl/temporary/14", "diffusemap textures/temporary/14");
+}
+
+// Have one declaration moved from one existing file to another
+TEST_F(DeclManagerTest, ReloadDeclarationDetectsMovedDecl)
+{
+    TemporaryFile tempFile(_context.getTestProjectPath() + "testdecls/temp_file.decl");
+    TemporaryFile tempFile2(_context.getTestProjectPath() + "testdecls/temp_file2.decl");
+
+    tempFile.setContents(R"(
+testdecl   decl/temporary/11 { diffusemap textures/temporary/11 }
+testdecl    decl/temporary/12 { diffusemap textures/temporary/12 }
+)");
+
+    tempFile2.setContents(R"(
+testdecl   decl/temporary/13 { diffusemap textures/temporary/13 }
+)");
+
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/12");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/13");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/14");
+
+    // Move a decl from the first file to the second
+    tempFile.setContents(R"(
+testdecl   decl/temporary/11 { diffusemap textures/temporary/11 }
+)");
+    tempFile2.setContents(R"(
+testdecl   decl/temporary/13 { diffusemap textures/temporary/13 }
+testdecl    decl/temporary/12 { diffusemap textures/changed_temporary/12 } // changed the decl
+)");
+
+    GlobalDeclarationManager().reloadDecarations();
+
+    // All decls should still be present, contents of 12 should have changed
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/11");
+    expectMaterialContains(decl::Type::Material, "decl/temporary/12", "diffusemap textures/changed_temporary/12");
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/13");
 }
 
 TEST_F(DeclManagerTest, ReloadDeclarationsIncreasesParseStamp)
