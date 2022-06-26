@@ -1,7 +1,6 @@
 #pragma once
 
 #include "DeclarationFile.h"
-#include "DeclarationFileParser.h"
 
 #include "parser/ThreadedDeclParser.h"
 
@@ -18,7 +17,13 @@ class DeclarationFolderParser :
 private:
     DeclarationManager& _owner;
 
-    DeclarationFileParser _fileParser;
+    // Maps typename string ("material") to Type enum (Type::Material)
+    std::map<std::string, Type> _typeMapping;
+
+    // Holds all the identified blocks of all visited files
+    std::map<Type, std::vector<DeclarationBlockSyntax>> _parsedBlocks;
+
+    // The default type to assign to untyped blocks
     Type _defaultDeclType;
 
 public:
@@ -29,6 +34,9 @@ public:
 protected:
     void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir) override;
     void onFinishParsing() override;
+
+private:
+    Type determineBlockType(const DeclarationBlockSyntax& block);
 };
 
 }

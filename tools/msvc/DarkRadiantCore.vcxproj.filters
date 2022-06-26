@@ -1156,9 +1156,6 @@
     <ClCompile Include="..\..\radiantcore\decl\DeclarationFolderParser.cpp">
       <Filter>src\decl</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\decl\DeclarationFileParser.cpp">
-      <Filter>src\decl</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2389,9 +2386,6 @@
       <Filter>src\decl</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\decl\DeclarationFolderParser.h">
-      <Filter>src\decl</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\decl\DeclarationFileParser.h">
       <Filter>src\decl</Filter>
     </ClInclude>
   </ItemGroup>

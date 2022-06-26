@@ -38,7 +38,6 @@
     <ClCompile Include="..\..\radiantcore\clipper\Clipper.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\ClipPoint.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\SplitAlgorithm.cpp" />
-    <ClCompile Include="..\..\radiantcore\decl\DeclarationFileParser.cpp" />
     <ClCompile Include="..\..\radiantcore\decl\DeclarationFolderParser.cpp" />
     <ClCompile Include="..\..\radiantcore\decl\DeclarationManager.cpp" />
     <ClCompile Include="..\..\radiantcore\decl\FavouritesManager.cpp" />
@@ -762,7 +761,6 @@
     <ClInclude Include="..\..\radiantcore\clipper\ClipPoint.h" />
     <ClInclude Include="..\..\radiantcore\clipper\SplitAlgorithm.h" />
     <ClInclude Include="..\..\radiantcore\decl\DeclarationFile.h" />
-    <ClInclude Include="..\..\radiantcore\decl\DeclarationFileParser.h" />
     <ClInclude Include="..\..\radiantcore\decl\DeclarationFolderParser.h" />
     <ClInclude Include="..\..\radiantcore\decl\DeclarationManager.h" />
     <ClInclude Include="..\..\radiantcore\decl\DeclarationStreamParser.h" />
