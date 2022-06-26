@@ -171,12 +171,12 @@ void DeclarationManager::reloadDecarations()
         }
     }
 
-    std::lock_guard folderLock(_registeredFoldersLock);
-
     // Invoke the declsReloaded signal for all types
-    for (const auto& folder : _registeredFolders)
+    std::lock_guard declLock(_declarationLock);
+
+    for (const auto& [type, _] : _declarationsByType)
     {
-        signal_DeclsReloaded(folder.defaultType).emit();
+        signal_DeclsReloaded(type).emit();
     }
 }
 
@@ -204,11 +204,13 @@ void DeclarationManager::runParsersForAllFolders()
 
     std::lock_guard folderLock(_registeredFoldersLock);
 
+    auto typeMapping = getTypenameMapping();
+
     // Start a parser for each known folder
     for (const auto& folder : _registeredFolders)
     {
         auto& parser = parsers.emplace_back(
-            std::make_unique<DeclarationFolderParser>(*this, folder.defaultType, folder.folder, folder.extension, getTypenameMapping())
+            std::make_unique<DeclarationFolderParser>(*this, folder.defaultType, folder.folder, folder.extension, typeMapping)
         );
         parser->start();
     }

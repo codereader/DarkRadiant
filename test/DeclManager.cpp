@@ -259,7 +259,7 @@ TEST_F(DeclManagerTest, CreatorRegistrationDuringRunningThread)
     checkKnownTestDecl2Names();
 }
 
-TEST_F(DeclManagerTest, DeclsReloadedSignal)
+TEST_F(DeclManagerTest, DeclsReloadedSignalAfterInitialParse)
 {
     auto creator = std::make_shared<TestDeclarationCreator>();
     GlobalDeclarationManager().registerDeclType("testdecl", creator);
@@ -281,6 +281,31 @@ TEST_F(DeclManagerTest, DeclsReloadedSignal)
 
     EXPECT_TRUE(materialSignalFired) << "Material signal should have fired by the time parsing has finished";
     EXPECT_FALSE(modelSignalFired) << "Model-type Signal should not have been fired";
+}
+
+TEST_F(DeclManagerTest, DeclsReloadedSignal)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclType("testdecl2", std::make_shared<TestDeclaration2Creator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    // Force the threads to be finished
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::Material, [](const decl::IDeclaration&) {});
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::Model, [](const decl::IDeclaration&) {});
+
+    bool materialSignalFired = false;
+    bool modelSignalFired = false;
+    GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material).connect(
+        [&]() { materialSignalFired = true; }
+    );
+    GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Model).connect(
+        [&]() { modelSignalFired = true; }
+    );
+
+    GlobalDeclarationManager().reloadDecarations();
+
+    EXPECT_TRUE(materialSignalFired) << "Material signal should have fired after reloadDecls";
+    EXPECT_TRUE(modelSignalFired) << "Model signal should have fired after reloadDecls";
 }
 
 TEST_F(DeclManagerTest, FindDeclaration)
