@@ -16,6 +16,9 @@ public:
     // declarations without explicitly declared type
     decl::Type defaultDeclType;
 
+    // All declarations (type+name) declared in this file
+    std::vector<std::pair<Type, std::string>> declarations;
+
     bool operator< (const DeclarationFile& other) const
     {
         if (defaultDeclType < other.defaultDeclType)

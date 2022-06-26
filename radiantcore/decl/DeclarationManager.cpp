@@ -6,6 +6,7 @@
 #include "ifilesystem.h"
 #include "module/StaticModule.h"
 #include "string/trim.h"
+#include "util/ScopedBoolLock.h"
 
 namespace decl
 {
@@ -13,7 +14,7 @@ namespace decl
 void DeclarationManager::registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& creator)
 {
     {
-        std::lock_guard<std::recursive_mutex> creatorLock(_creatorLock);
+        std::lock_guard creatorLock(_creatorLock);
 
         if (_creatorsByTypename.count(typeName) > 0 || _creatorsByType.count(creator->getDeclType()) > 0)
         {
@@ -31,7 +32,7 @@ void DeclarationManager::registerDeclType(const std::string& typeName, const IDe
 
 void DeclarationManager::unregisterDeclType(const std::string& typeName)
 {
-    std::lock_guard<std::recursive_mutex> parserLock(_creatorLock);
+    std::lock_guard parserLock(_creatorLock);
 
     auto existing = _creatorsByTypename.find(typeName);
 
@@ -49,9 +50,10 @@ void DeclarationManager::registerDeclFolder(Type defaultType, const std::string&
     auto vfsPath = os::standardPathWithSlash(inputFolder);
     auto extension = string::trim_left_copy(inputExtension, ".");
 
+    std::lock_guard folderLock(_registeredFoldersLock);
     _registeredFolders.emplace_back(RegisteredFolder{ vfsPath, extension, defaultType });
 
-    std::lock_guard<std::recursive_mutex> declLock(_declarationLock);
+    std::lock_guard declLock(_declarationLock);
     auto& decls = _declarationsByType.try_emplace(defaultType, Declarations()).first->second;
 
     // Start the parser thread
@@ -63,7 +65,7 @@ std::map<std::string, Type> DeclarationManager::getTypenameMapping()
 {
     std::map<std::string, Type> result;
 
-    std::lock_guard<std::recursive_mutex> creatorLock(_creatorLock);
+    std::lock_guard creatorLock(_creatorLock);
 
     for (const auto& [name, creator] : _creatorsByTypename)
     {
@@ -127,14 +129,52 @@ void DeclarationManager::doWithDeclarations(Type type, const std::function<void(
 
 void DeclarationManager::reloadDecarations()
 {
-    std::lock_guard<std::recursive_mutex> fileLock(_parsedFileLock);
-    std::lock_guard<std::recursive_mutex> parserLock(_creatorLock);
+    if (_reparseInProgress) return;
 
-    for (const auto& [type, files] : _parsedFilesByDefaultType)
+    util::ScopedBoolLock reparseLock(_reparseInProgress);
+
+    _parseStamp++;
+
+    // Remove all unrecognised blocks from previous runs
+    {
+        std::lock_guard lock(_unrecognisedBlockLock);
+        _unrecognisedBlocks.clear();
+    }
+
+    runParsersForAllFolders();
+
+    // Empty all declarations that haven't been touched during this reparse run
+    {
+        std::lock_guard declLock(_declarationLock);
+
+        for (const auto& [_, namedDecls] : _declarationsByType)
+        {
+            for (const auto& [name, decl] : namedDecls.decls)
+            {
+                if (decl->getParseStamp() < _parseStamp)
+                {
+                    rMessage() << "Declaration no longer present after reloadDecls: " << name << std::endl;
+
+                    auto syntax = decl->getBlockSyntax();
+
+                    // Clear name and file info
+                    syntax.contents.clear();
+                    syntax.fileInfo = vfs::FileInfo();
+
+                    decl->setBlockSyntax(syntax);
+                }
+            }
+        }
+    }
+#if 0
+    std::lock_guard fileLock(_parsedFileLock);
+    std::lock_guard parserLock(_creatorLock);
+
+    for (auto& [type, files] : _parsedFilesByDefaultType)
     {
         DeclarationFileParser parser(type, getTypenameMapping());
 
-        for (const auto& file : files)
+        for (auto& file : files)
         {
             auto vfsFile = GlobalFileSystem().openTextFile(file.fullPath);
 
@@ -153,6 +193,11 @@ void DeclarationManager::reloadDecarations()
                 rError() << "[DeclParser] Failed to parse " << fileInfo.fullPath()
                     << " (" << e.what() << ")" << std::endl;
             }
+
+            const auto& newlyParsedFile = parser.getParsedFiles().find(file.fullPath);
+
+            // Invalidate all declarations that have been removed from the file
+            handleMissingDecls(file, newlyParsedFile);
         }
 
         // Submit the changes
@@ -161,11 +206,37 @@ void DeclarationManager::reloadDecarations()
 
     // Process the list of unrecognised blocks (from this and any previous run)
     handleUnrecognisedBlocks();
+#endif
+
+    std::lock_guard folderLock(_registeredFoldersLock);
 
     // Invoke the declsReloaded signal for all types
-    for (const auto& [type, files] : _parsedFilesByDefaultType)
+    for (const auto& folder : _registeredFolders)
     {
-        signal_DeclsReloaded(type).emit();
+        signal_DeclsReloaded(folder.defaultType).emit();
+    }
+}
+
+void DeclarationManager::runParsersForAllFolders()
+{
+    std::vector<std::unique_ptr<DeclarationFolderParser>> parsers;
+
+    std::lock_guard folderLock(_registeredFoldersLock);
+
+    // Start a parser for each known folder
+    for (const auto& folder : _registeredFolders)
+    {
+        auto& parser = parsers.emplace_back(
+            std::make_unique<DeclarationFolderParser>(*this, folder.defaultType, folder.folder, folder.extension, getTypenameMapping())
+        );
+        parser->start();
+    }
+
+    // Wait for all parsers to complete
+    while (!parsers.empty())
+    {
+        parsers.back()->ensureFinished();
+        parsers.pop_back();
     }
 }
 
@@ -175,21 +246,23 @@ sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
 }
 
 void DeclarationManager::onParserFinished(Type parserType, 
-    const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks,
-    const std::set<DeclarationFile>& parsedFiles)
+    const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)
 {
+#if 0
     // Sort all parsed files into the large list
     {
-        std::lock_guard<std::recursive_mutex> lock(_parsedFileLock);
+        std::lock_guard lock(_parsedFileLock);
 
         // Merge all parsed files into the main set
-        for (const auto& parsedFile : parsedFiles)
+        for (const auto& [_, parsedFile] : parsedFiles)
         {
-            auto& fileSet = _parsedFilesByDefaultType.try_emplace(parsedFile.defaultDeclType, std::set<DeclarationFile>()).first->second;
+            auto& fileSet = _parsedFilesByDefaultType.try_emplace(
+                parsedFile.defaultDeclType, std::vector<DeclarationFile>()).first->second;
 
             fileSet.emplace(parsedFile);
         }
     }
+#endif
 
     // Sort all parsed blocks into our main dictionary
     // unrecognised blocks will be pushed to _unrecognisedBlocks
@@ -204,8 +277,8 @@ void DeclarationManager::onParserFinished(Type parserType,
 
 void DeclarationManager::processParsedBlocks(const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)
 {
-    std::lock_guard<std::recursive_mutex> declLock(_declarationLock);
-    std::lock_guard<std::recursive_mutex> creatorLock(_creatorLock);
+    std::lock_guard declLock(_declarationLock);
+    std::lock_guard creatorLock(_creatorLock);
 
     // Coming back from a parser thread, sort the parsed decls into the main dictionary
     for (auto& pair : parsedBlocks)
@@ -217,7 +290,7 @@ void DeclarationManager::processParsedBlocks(const std::map<Type, std::vector<De
             if (type == Type::Undetermined)
             {
                 // Block type unknown, put it on the pile, it will be processed later
-                std::lock_guard<std::recursive_mutex> lock(_unrecognisedBlockLock);
+                std::lock_guard lock(_unrecognisedBlockLock);
                 _unrecognisedBlocks.emplace_back(std::move(block));
                 continue;
             }
@@ -262,18 +335,22 @@ void DeclarationManager::createOrUpdateDeclaration(Type type, const DeclarationB
         auto creator = _creatorsByType.at(type);
         existing = map.emplace(block.name, creator->createDeclaration(block.name)).first;
     }
-    else
+    else if (existing->second->getParseStamp() == _parseStamp)
     {
-        // TODO: Compare parse stamps to see if this decl has duplicates
+        rWarning() << "[DeclParser]: " << getTypeName(type) << " " <<
+            existing->second->getDeclName() << " has already been declared" << std::endl;
     }
 
     // Assign the block to the declaration instance
     existing->second->setBlockSyntax(block);
+
+    // Update the parse stamp for this instance
+    existing->second->setParseStamp(_parseStamp);
 }
 
 void DeclarationManager::handleUnrecognisedBlocks()
 {
-    std::lock_guard<std::recursive_mutex> lock(_unrecognisedBlockLock);
+    std::lock_guard lock(_unrecognisedBlockLock);
 
     if (_unrecognisedBlocks.empty()) return;
 
@@ -323,6 +400,10 @@ const StringSet& DeclarationManager::getDependencies() const
 void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+    // After the initial parsing, all decls will have a parseStamp of 0
+    _parseStamp = 0;
+    _reparseInProgress = false;
 }
 
 void DeclarationManager::shutdownModule()
@@ -344,7 +425,9 @@ void DeclarationManager::shutdownModule()
 
     // All parsers have finished, clear the structure, no need to lock anything
     _registeredFolders.clear();
+#if 0
     _parsedFilesByDefaultType.clear();
+#endif
     _unrecognisedBlocks.clear();
     _declarationsByType.clear();
     _creatorsByTypename.clear();

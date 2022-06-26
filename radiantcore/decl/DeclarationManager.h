@@ -29,9 +29,12 @@ private:
     };
 
     std::vector<RegisteredFolder> _registeredFolders;
+    std::recursive_mutex _registeredFoldersLock;
 
-    std::map<decl::Type, std::set<DeclarationFile>> _parsedFilesByDefaultType;
+#if 0
+    std::map<Type, std::set<DeclarationFile>> _parsedFilesByDefaultType;
     std::recursive_mutex _parsedFileLock;
+#endif
 
     struct Declarations
     {
@@ -51,6 +54,9 @@ private:
 
     std::map<Type, sigc::signal<void>> _declsReloadedSignals;
 
+    std::size_t _parseStamp;
+    bool _reparseInProgress;
+
 public:
     void registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& parser) override;
     void unregisterDeclType(const std::string& typeName) override;
@@ -67,12 +73,12 @@ public:
 
     // Invoked once a parser thread has finished. It will move its data over to here.
     void onParserFinished(Type parserType,
-        const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks,
-        const std::set<DeclarationFile>& parsedFiles);
+        const std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks);
 
     static void InsertDeclaration(NamedDeclarations& map, IDeclaration::Ptr&& declaration);
 
 private:
+    void runParsersForAllFolders();
     // Attempts to resolve the block type of the given block, returns true on success, false otherwise.
     // Stores the determined type in the given reference.
     std::map<std::string, Type> getTypenameMapping();

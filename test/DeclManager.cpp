@@ -451,9 +451,9 @@ testdecl   decl/temporary/13 { diffusemap textures/temporary/13 }
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
 
+    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/11");
     expectMaterialIsPresent(decl::Type::Material, "decl/temporary/12");
     expectMaterialIsPresent(decl::Type::Material, "decl/temporary/13");
-    expectMaterialIsPresent(decl::Type::Material, "decl/temporary/14");
 
     // Move a decl from the first file to the second
     tempFile.setContents(R"(

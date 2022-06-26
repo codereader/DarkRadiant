@@ -15,7 +15,9 @@ private:
 
     std::map<std::string, Type> _typeMapping;
 
-    std::set<DeclarationFile> _parsedFiles;
+#if 0
+    std::map<std::string, DeclarationFile> _parsedFiles;
+#endif
     std::map<Type, std::vector<DeclarationBlockSyntax>> _parsedBlocks;
 
 public:
@@ -24,7 +26,9 @@ public:
     void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir);
 
     std::map<Type, std::vector<DeclarationBlockSyntax>>& getParsedBlocks();
-    const std::set<DeclarationFile>& getParsedFiles() const;
+#if 0
+    const std::map<std::string, DeclarationFile>& getParsedFiles() const;
+#endif
 
 private:
     Type determineBlockType(const DeclarationBlockSyntax& block);

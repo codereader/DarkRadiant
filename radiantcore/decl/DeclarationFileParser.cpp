@@ -45,15 +45,11 @@ std::map<Type, std::vector<DeclarationBlockSyntax>>& DeclarationFileParser::getP
     return _parsedBlocks;
 }
 
-const std::set<DeclarationFile>& DeclarationFileParser::getParsedFiles() const
-{
-    return _parsedFiles;
-}
-
 void DeclarationFileParser::parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir)
 {
-    _parsedFiles.emplace(DeclarationFile{ fileInfo.fullPath(), _defaultDeclType });
-
+#if 0
+    auto& declFile = _parsedFiles.emplace_back(DeclarationFile{ fileInfo.fullPath(), _defaultDeclType });
+#endif
     // Cut the incoming stream into declaration blocks
     parser::BasicDefBlockTokeniser<std::istream> tokeniser(stream);
 
@@ -68,6 +64,10 @@ void DeclarationFileParser::parse(std::istream& stream, const vfs::FileInfo& fil
         auto declType = determineBlockType(blockSyntax);
         auto& blockList = _parsedBlocks.try_emplace(declType).first->second;
         blockList.emplace_back(std::move(blockSyntax));
+#if 0
+        // Add this declaration to the parsed file
+        //declFile.declarations.emplace_back(declType, block.name);
+#endif
     }
 }
 
