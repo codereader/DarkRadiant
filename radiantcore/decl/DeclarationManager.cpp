@@ -157,7 +157,8 @@ void DeclarationManager::reloadDecarations()
             {
                 if (decl->getParseStamp() < _parseStamp)
                 {
-                    rMessage() << "Declaration no longer present after reloadDecls: " << name << std::endl;
+                    rMessage() << "[DeclManager] " << getTypeName(decl->getDeclType()) << " " << 
+                        name << " no longer present after reloadDecls" << std::endl;
 
                     auto syntax = decl->getBlockSyntax();
 
@@ -304,6 +305,9 @@ void DeclarationManager::createOrUpdateDeclaration(Type type, const DeclarationB
     {
         rWarning() << "[DeclParser]: " << getTypeName(type) << " " <<
             existing->second->getDeclName() << " has already been declared" << std::endl;
+
+        // Any declaration following after the first is ignored
+        return;
     }
 
     // Assign the block to the declaration instance
