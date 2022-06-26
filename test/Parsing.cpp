@@ -163,6 +163,52 @@ TEST(DefBlockTokeniser, BlockSeparation)
     });
 }
 
+// The tokeniser normalises the whitespace between type and name to a single space
+TEST(DefBlockTokeniser, WhitespaceAfterTypename)
+{
+    std::string testString = R"(textures/parsing_test/block1 {
+        diffusemap _white
+    }
+
+    // Add a tab in between type name and block name
+    sound	textures/parsing_test/block1a {
+        diffusemap _white
+    }
+
+    // spaces after the typename, and some tabs after the name
+    sound    textures/parsing_test/block1b		{
+        diffusemap _white
+    }
+
+    // Tabs before and after the name
+    sound	  	  	textures/parsing_test/block1c
+    {
+        diffusemap _white
+    }
+
+    textures/parsing_test/block2 {
+        diffusemap _white
+    } sound textures/parsing_test/block3 {
+        diffusemap _white
+    }
+    sound textures/parsing_test/block4 {
+        diffusemap _white
+    }sound textures/parsing_test/block5 {
+        diffusemap _white
+    })";
+
+    parseBlock(testString, {
+        std::make_pair("textures/parsing_test/block1", "_white"),
+        std::make_pair("sound textures/parsing_test/block1a", "_white"),
+        std::make_pair("sound textures/parsing_test/block1b", "_white"),
+        std::make_pair("sound textures/parsing_test/block1c", "_white"),
+        std::make_pair("textures/parsing_test/block2", "_white"),
+        std::make_pair("sound textures/parsing_test/block3", "_white"),
+        std::make_pair("sound textures/parsing_test/block4", "_white"),
+        std::make_pair("sound textures/parsing_test/block5", "_white"),
+    });
+}
+
 using SoundShaderParsingTests = RadiantTest;
 
 TEST_F(SoundShaderParsingTests, ShaderParsing)
