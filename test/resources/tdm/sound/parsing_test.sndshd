@@ -10,6 +10,7 @@ parsing_test_case1
     looping
 
     sound/nonexistent.ogg
+    sound/nonexistent2.ogg
 }
 
 // Opening brace in the same line

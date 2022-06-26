@@ -8,6 +8,7 @@ add_executable(drtest
                ContinuousBuffer.cpp
                CSG.cpp
                DeclManager.cpp
+               DefBlockTokeniser.cpp
                Entity.cpp
                Favourites.cpp
                FileTypes.cpp
@@ -41,6 +42,7 @@ add_executable(drtest
                SelectionAlgorithm.cpp
                Selection.cpp
                Settings.cpp
+               SoundManager.cpp
                TextureManipulation.cpp
                TextureTool.cpp
                Transformation.cpp
