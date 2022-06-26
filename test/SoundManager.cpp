@@ -84,4 +84,15 @@ TEST_F(SoundManagerTest, GetWaveSoundFileDuration)
     EXPECT_NEAR(duration, 0.096, 0.001) << "WAV file duration incorrect";
 }
 
+TEST_F(SoundManagerTest, GetSoundFileDurationWithoutExtension)
+{
+    auto oggDuration = GlobalSoundManager().getSoundFileDuration("sound/test/jorge.ogg");
+    auto wavDuration = GlobalSoundManager().getSoundFileDuration("sound/test/jorge.wav");
+    EXPECT_GT(fabs(wavDuration - oggDuration), 0.05) << "The OGG file should have a different duration than the WAV file";
+
+    // This should find jorge.ogg before it falls back to jorge.wav
+    auto duration = GlobalSoundManager().getSoundFileDuration("sound/test/jorge");
+    EXPECT_NEAR(duration, oggDuration, 0.001) << "The OGG file should have been found, not the wav file";
+}
+
 }
