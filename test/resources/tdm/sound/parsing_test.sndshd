@@ -41,3 +41,12 @@ parsing_test_case6
 {
 	sound/nonexistent.ogg
 }
+
+sound test/jorge
+{
+    editor_displayFolder	test
+
+    volume -7
+
+    sound/test/jorge.ogg
+}

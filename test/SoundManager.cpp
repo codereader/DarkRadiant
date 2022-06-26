@@ -43,6 +43,24 @@ TEST_F(SoundManagerTest, GetExistingSoundShader)
         << "Didn't find the expected contents";
 }
 
+TEST_F(SoundManagerTest, ForEachSoundShader)
+{
+    std::set<std::string> visitedNames;
+
+    GlobalSoundManager().forEachShader([&] (const ISoundShader& shader)
+    {
+        visitedNames.insert(shader.getDeclName());
+    });
+
+    EXPECT_EQ(visitedNames.count("parsing_test_case1"), 1) << "Expected shader not visited";
+    EXPECT_EQ(visitedNames.count("parsing_test_case2"), 1) << "Expected shader not visited";
+    EXPECT_EQ(visitedNames.count("parsing_test_case3"), 1) << "Expected shader not visited";
+    EXPECT_EQ(visitedNames.count("parsing_test_case4"), 1) << "Expected shader not visited";
+    EXPECT_EQ(visitedNames.count("parsing_test_case5"), 1) << "Expected shader not visited";
+    EXPECT_EQ(visitedNames.count("parsing_test_case6"), 1) << "Expected shader not visited";
+    EXPECT_EQ(visitedNames.count("test/jorge"), 1) << "Expected shader not visited";
+}
+
 TEST_F(SoundManagerTest, GetNonExistingSoundShader)
 {
     // This shader is defined nowhere
@@ -52,6 +70,18 @@ TEST_F(SoundManagerTest, GetNonExistingSoundShader)
         << "Non-existing shader's VFS visibility should be hidden";
     EXPECT_TRUE(nonexisting->getBlockSyntax().contents.empty())
         << "Non-existing shader's content should be empty";
+}
+
+TEST_F(SoundManagerTest, GetOggSoundFileDuration)
+{
+    auto duration = GlobalSoundManager().getSoundFileDuration("sound/test/jorge.ogg");
+    EXPECT_NEAR(duration, 0.293, 0.001) << "OGG file duration incorrect";
+}
+
+TEST_F(SoundManagerTest, GetWaveSoundFileDuration)
+{
+    auto duration = GlobalSoundManager().getSoundFileDuration("sound/test/jorge.wav");
+    EXPECT_NEAR(duration, 0.096, 0.001) << "WAV file duration incorrect";
 }
 
 }
