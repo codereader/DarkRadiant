@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ideclmanager.h"
+#include "icommandsystem.h"
 #include <map>
 #include <set>
 #include <vector>
@@ -59,7 +60,7 @@ public:
     IDeclaration::Ptr findDeclaration(Type type, const std::string& name) override;
     void foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor) override;
     sigc::signal<void>& signal_DeclsReloaded(Type type) override;
-    void reloadDecarations() override;
+    void reloadDeclarations() override;
 
     const std::string& getName() const override;
     const StringSet& getDependencies() const override;
@@ -82,6 +83,7 @@ private:
     void createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block);
     void doWithDeclarations(Type type, const std::function<void(const NamedDeclarations&)>& action);
     void handleUnrecognisedBlocks();
+    void reloadDeclsCmd(const cmd::ArgumentList& args);
 };
 
 }

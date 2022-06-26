@@ -6,13 +6,12 @@
 
 #include <vector>
 #include <functional>
-#include <sigc++/signal.h>
 
 // A list of sound files associated to a shader
 typedef std::vector<std::string> SoundFileList;
 
-const float METERS_PER_UNIT = 0.0254f;
-const float UNITS_PER_METER = 1/METERS_PER_UNIT;
+constexpr float METERS_PER_UNIT = 0.0254f;
+constexpr float UNITS_PER_METER = 1/METERS_PER_UNIT;
 
 // The min and max radii of a sound shader
 class SoundRadii {
@@ -84,7 +83,7 @@ public:
 };
 typedef std::shared_ptr<ISoundShader> ISoundShaderPtr;
 
-const char* const MODULE_SOUNDMANAGER("SoundManager");
+constexpr const char* const MODULE_SOUNDMANAGER("SoundManager");
 
 /// Sound manager interface.
 class ISoundManager :
@@ -126,13 +125,9 @@ public:
 
     // Reloads all sound shader definitions from the VFS
     virtual void reloadSounds() = 0;
-
-    // Fired after the sound shaders have been (re-)parsed from disk
-    virtual sigc::signal<void>& signal_soundShadersReloaded() = 0;
 };
 
-// Accessor method
-inline ISoundManager& GlobalSoundManager() 
+inline ISoundManager& GlobalSoundManager()
 {
     static module::InstanceReference<ISoundManager> _reference(MODULE_SOUNDMANAGER);
     return _reference;

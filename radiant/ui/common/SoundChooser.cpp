@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "isound.h"
+#include "ideclmanager.h"
 #include "ui/imainframe.h"
 #include "ifavourites.h"
 #include "registry/registry.h"
@@ -285,7 +286,7 @@ int SoundChooser::ShowModal()
 {
     _windowPosition.applyPosition();
 
-    _shadersReloaded = GlobalSoundManager().signal_soundShadersReloaded()
+    _shadersReloaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::SoundShader)
         .connect(sigc::mem_fun(this, &SoundChooser::onShadersReloaded));
 
 	int returnCode = DialogBase::ShowModal();

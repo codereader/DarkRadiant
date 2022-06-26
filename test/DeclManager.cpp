@@ -302,7 +302,7 @@ TEST_F(DeclManagerTest, DeclsReloadedSignal)
         [&]() { modelSignalFired = true; }
     );
 
-    GlobalDeclarationManager().reloadDecarations();
+    GlobalDeclarationManager().reloadDeclarations();
 
     EXPECT_TRUE(materialSignalFired) << "Material signal should have fired after reloadDecls";
     EXPECT_TRUE(modelSignalFired) << "Model signal should have fired after reloadDecls";
@@ -385,7 +385,7 @@ testdecl decl/temporary/13
 
 )");
 
-    GlobalDeclarationManager().reloadDecarations();
+    GlobalDeclarationManager().reloadDeclarations();
 
     // Check the changes in temp12
     expectMaterialContains(decl::Type::Material, "decl/temporary/12", "diffusemap textures/changed_temporary/12");
@@ -416,7 +416,7 @@ testdecl   decl/temporary/13 { diffusemap textures/temporary/13 }
 testdecl    decl/temporary/14 { diffusemap textures/temporary/14 }
 )");
 
-    GlobalDeclarationManager().reloadDecarations();
+    GlobalDeclarationManager().reloadDeclarations();
 
     // All the decls should be present now
     expectMaterialIsPresent(decl::Type::Material, "decl/temporary/11");
@@ -449,7 +449,7 @@ testdecl    decl/temporary/14 { diffusemap textures/temporary/14 }
 
     // Remove one file and reload decls
     tempFile2.reset();
-    GlobalDeclarationManager().reloadDecarations();
+    GlobalDeclarationManager().reloadDeclarations();
 
     // All decls should still be present
     expectMaterialIsPresent(decl::Type::Material, "decl/temporary/11");
@@ -489,7 +489,7 @@ testdecl   decl/temporary/13 { diffusemap textures/temporary/13 }
 testdecl    decl/temporary/12 { diffusemap textures/changed_temporary/12 } // changed the decl
 )");
 
-    GlobalDeclarationManager().reloadDecarations();
+    GlobalDeclarationManager().reloadDeclarations();
 
     // All decls should still be present, contents of 12 should have changed
     expectMaterialIsPresent(decl::Type::Material, "decl/temporary/11");
@@ -507,7 +507,7 @@ TEST_F(DeclManagerTest, ReloadDeclarationsIncreasesParseStamp)
 
     auto firstParseStamp = decl->getParseStamp();
 
-    GlobalDeclarationManager().reloadDecarations();
+    GlobalDeclarationManager().reloadDeclarations();
 
     decl = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/exporttest/guisurf1");
     EXPECT_TRUE(decl) << "Couldn't find the declaration decl/exporttest/guisurf1";

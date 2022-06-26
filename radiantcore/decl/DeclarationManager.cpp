@@ -127,7 +127,7 @@ void DeclarationManager::doWithDeclarations(Type type, const std::function<void(
     action(decls->second.decls);
 }
 
-void DeclarationManager::reloadDecarations()
+void DeclarationManager::reloadDeclarations()
 {
     // Don't allow reloadDecls to be run before the startup phase is complete
     waitForTypedParsersToFinish();
@@ -348,7 +348,8 @@ const StringSet& DeclarationManager::getDependencies() const
 {
     static StringSet _dependencies
     {
-        MODULE_VIRTUALFILESYSTEM
+        MODULE_VIRTUALFILESYSTEM,
+        MODULE_COMMANDSYSTEM,
     };
 
     return _dependencies;
@@ -357,6 +358,9 @@ const StringSet& DeclarationManager::getDependencies() const
 void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+    GlobalCommandSystem().addCommand("ReloadDecls",
+        std::bind(&DeclarationManager::reloadDeclsCmd, this, std::placeholders::_1));
 
     // After the initial parsing, all decls will have a parseStamp of 0
     _parseStamp = 0;
@@ -386,6 +390,11 @@ void DeclarationManager::shutdownModule()
     _declarationsByType.clear();
     _creatorsByTypename.clear();
     _declsReloadedSignals.clear();
+}
+
+void DeclarationManager::reloadDeclsCmd(const cmd::ArgumentList& _)
+{
+    reloadDeclarations();
 }
 
 module::StaticModuleRegistration<DeclarationManager> _declManagerModule;

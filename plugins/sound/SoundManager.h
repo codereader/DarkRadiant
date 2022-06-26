@@ -32,7 +32,6 @@ public:
 	void stopSound() override;
     void reloadSounds() override;
     float getSoundFileDuration(const std::string& vfsPath) override;
-    sigc::signal<void>& signal_soundShadersReloaded() override;
 
 	// RegisterableModule implementation
 	const std::string& getName() const override;
