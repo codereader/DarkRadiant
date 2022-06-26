@@ -21,9 +21,8 @@ struct SoundShader::ParsedContents
 };
 
 SoundShader::SoundShader(const std::string& name)
-:	_name(name),
-    _parseStamp(0)
-{ }
+:	_name(name)
+{}
 
 // Destructor must be defined with ParsedContents definition visible, otherwise
 // the scoped_ptr destructor will not compile
@@ -98,14 +97,10 @@ std::string SoundShader::getDefinition() const
 	return _declBlock.contents;
 }
 
-const decl::DeclarationBlockSyntax& SoundShader::getBlockSyntax() const
-{
-    return _declBlock;
-}
-
 void SoundShader::setBlockSyntax(const decl::DeclarationBlockSyntax& block)
 {
-    _declBlock = block;
+    DeclarationBase<ISoundShader>::setBlockSyntax(block);
+
     _fileInfo = block.fileInfo;
     _modName = block.getModName();
 
@@ -113,14 +108,4 @@ void SoundShader::setBlockSyntax(const decl::DeclarationBlockSyntax& block)
     _contents.reset();
 }
 
-std::size_t SoundShader::getParseStamp() const
-{
-    return _parseStamp;
-}
-
-void SoundShader::setParseStamp(std::size_t parseStamp)
-{
-    _parseStamp = parseStamp;
-}
-
-} // namespace sound
+} // namespace

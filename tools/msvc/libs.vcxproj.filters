@@ -389,6 +389,7 @@
     <ClInclude Include="..\..\libs\render\WindingRenderer.h">
       <Filter>render</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\DeclarationBase.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

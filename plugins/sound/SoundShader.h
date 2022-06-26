@@ -4,13 +4,14 @@
 
 #include "isound.h"
 #include "ifilesystem.h"
+#include "DeclarationBase.h"
 
 namespace sound
 {
 
 /// Representation of a single sound shader.
 class SoundShader final :
-	public ISoundShader
+	public decl::DeclarationBase<ISoundShader>
 {
 	// Name of the shader
 	std::string _name;
@@ -26,8 +27,6 @@ class SoundShader final :
 
 	// The modname (ModResource implementation)
 	std::string _modName;
-
-    std::size_t _parseStamp;
 
 private:
 	// Parses the definition block
@@ -50,11 +49,7 @@ public:
 	std::string getShaderFilePath() const override;
 	std::string getDefinition() const override;
 
-    const decl::DeclarationBlockSyntax& getBlockSyntax() const override;
     void setBlockSyntax(const decl::DeclarationBlockSyntax& block) override;
-
-    std::size_t getParseStamp() const override;
-    void setParseStamp(std::size_t parseStamp) override;
 };
 
 }
