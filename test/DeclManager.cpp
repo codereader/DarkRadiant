@@ -515,4 +515,16 @@ TEST_F(DeclManagerTest, ReloadDeclarationsIncreasesParseStamp)
     EXPECT_NE(decl->getParseStamp(), firstParseStamp) << "Parse stamp should have changed on reload";
 }
 
+TEST_F(DeclManagerTest, DeclarationPrecedence)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    expectMaterialIsPresent(decl::Type::Material, "decl/precedence_test/1");
+
+    // The first decl in the file precedence_test1.decl takes precedence over any decls
+    // declared in the same file or other files sorted after precedence_test1.decl
+    expectMaterialContains(decl::Type::Material, "decl/precedence_test/1", "diffusemap textures/numbers/1");
+}
+
 }

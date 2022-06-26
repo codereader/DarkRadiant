@@ -1,0 +1,14 @@
+// Test declarations used for precedence tests
+
+// This first decl makes the cut
+// all following decls with the same type and name are ignored and warned about
+decl/precedence_test/1
+{
+    diffusemap textures/numbers/1
+}
+
+decl/precedence_test/1
+{
+    diffusemap textures/numbers/2
+}
+
