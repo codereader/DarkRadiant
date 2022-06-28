@@ -22,7 +22,8 @@ public:
 
     void addCommand(const std::string& name, Function func,
                     const Signature& signature = Signature()) override;
-    void addWithCheck(const std::string& name, Function func, CheckFunction check) override;
+    void addWithCheck(const std::string& name, Function func, CheckFunction check,
+                      const Signature& signature) override;
     bool commandExists(const std::string& name) override;
     bool canExecute(const std::string& name) const override;
     void removeCommand(const std::string& name) override;

@@ -87,16 +87,16 @@ void CommandSystem::loadBinds() {
 		xml::Node& node = nodeList[i];
 
 		std::string name = node.getAttributeValue("name");
-		std::string statement = node.getAttributeValue("value");
+		std::string statementStr = node.getAttributeValue("value");
 
 		// remove all whitespace from the front and the tail
-		string::trim(statement);
+		string::trim(statementStr);
 
 		// Create a new statement
-		StatementPtr st(new Statement(
-			statement,
+		auto st = std::make_shared<Statement>(
+			statementStr,
 			(node.getAttributeValue("readonly") == "1")
-		));
+		);
 
 		std::pair<CommandMap::iterator, bool> result = _commands.insert(
 			CommandMap::value_type(name, st)
@@ -205,25 +205,15 @@ void CommandSystem::addCommand(const std::string& name, Function func,
 	addCommandObject(name, std::make_shared<Command>(func, signature));
 }
 
-void CommandSystem::addWithCheck(const std::string& name, Function func, CheckFunction check)
+void CommandSystem::addWithCheck(const std::string& name, Function func, CheckFunction check,
+                                 const Signature& sig)
 {
-	addCommandObject(name, std::make_shared<Command>(func, Signature(), check));
+	addCommandObject(name, std::make_shared<Command>(func, sig, check));
 }
 
 bool CommandSystem::commandExists(const std::string& name)
 {
 	return _commands.find(name) != _commands.end();
-}
-
-bool CommandSystem::canExecute(const std::string& name) const
-{
-	if (auto i = _commands.find(name); i != _commands.end()) {
-		return i->second->canExecute();
-	}
-
-	// We only return false if we know that a command cannot run; if the command
-	// was not found at all, return true by default.
-	return true;
 }
 
 void CommandSystem::removeCommand(const std::string& name)
@@ -291,16 +281,18 @@ namespace local
 	};
 }
 
-void CommandSystem::execute(const std::string& input)
+using StatementVec = std::vector<local::Statement>;
+
+StatementVec parseCommandString(const std::string& input)
 {
+	StatementVec statements;
+
 	// Instantiate a CommandTokeniser to analyse the given input string
 	CommandTokeniser tokeniser(input);
 
-	if (!tokeniser.hasMoreTokens()) return; // nothing to do!
+	if (!tokeniser.hasMoreTokens()) return statements;
 
-	std::vector<local::Statement> statements;
 	local::Statement curStatement;
-
 	while (tokeniser.hasMoreTokens())
 	{
 		// Inspect the next token
@@ -339,12 +331,39 @@ void CommandSystem::execute(const std::string& input)
 		statements.push_back(curStatement);
 	}
 
-	// Now execute the statements
-	for (const auto& statement : statements)
-	{
-		// Attempt ordinary command execution
-		executeCommand(statement.command, statement.args);
-	}
+    return statements;
+}
+
+bool CommandSystem::canExecute(const std::string& input) const
+{
+    // String could contain a command with arguments, so extract the main command
+    auto statements = parseCommandString(input);
+    if (!statements.empty()) {
+        // Check the first command, ignoring arguments or subsequent commands.
+        // For now we discount the possibility that the specific arguments could
+        // change whether a command can be run, although in theory this could be
+        // possible.
+        auto commandName = statements[0].command;
+        if (auto i = _commands.find(commandName); i != _commands.end()) {
+            return i->second->canExecute();
+        }
+    }
+
+    // We only return false if we know that a command cannot run; if the command
+    // was not found at all, return true by default.
+    return true;
+}
+
+void CommandSystem::execute(const std::string& input)
+{
+    // Parse the string into statement(s)
+    auto statements = parseCommandString(input);
+
+    // Now execute the statements
+    for (const auto& statement : statements) {
+        // Attempt ordinary command execution
+        executeCommand(statement.command, statement.args);
+    }
 }
 
 void CommandSystem::executeCommand(const std::string& name)

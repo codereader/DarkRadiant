@@ -21,12 +21,16 @@ public:
 		_isReadOnly(isReadOnly)
 	{}
 
-	virtual void execute(const ArgumentList& args) {
+	void execute(const ArgumentList& args) override {
 		// Execution means parsing another string
 		GlobalCommandSystem().execute(_string);
 	}
 
-	Signature getSignature() {
+    bool canExecute() const override {
+        return GlobalCommandSystem().canExecute(_string);
+    }
+
+	Signature getSignature() override {
 		return Signature(); // signature is always empty
 	}
 

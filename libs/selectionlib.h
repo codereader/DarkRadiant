@@ -79,7 +79,7 @@ public:
 	{}
 };
 
-/** 
+/**
  * greebo: Helper objects that compares each object passed
  * into it, throwing an AmbiguousShaderException as soon as
  * at least two different non-empty shader names are found.
@@ -125,7 +125,7 @@ private:
 		{
 			// No shader encountered yet, take this one
 			_shader = foundShader;
-		} 
+		}
 		else if (_shader != foundShader)
 		{
 			throw AmbiguousShaderException(foundShader);
@@ -137,7 +137,7 @@ private:
 
 }
 
-/** 
+/**
  * greebo: Retrieves the shader name from the current selection.
  * @returns: the name of the shader that is shared by every selected instance or
  * the empty string "" otherwise.
@@ -147,7 +147,7 @@ inline std::string getShaderFromSelection()
 	try
 	{
 		detail::UniqueShaderFinder finder;
-		
+
 		if (GlobalSelectionSystem().countSelectedComponents() > 0)
 		{
 			// Check each selected face
@@ -227,12 +227,12 @@ inline bool curSelectionIsSuitableForReparent()
 inline void assignNodeToSelectionGroups(const scene::INodePtr& node, const IGroupSelectable::GroupIds& groups)
 {
     auto groupSelectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
-    
+
     if (!groupSelectable)
     {
         return;
     }
-    
+
     const auto& groupIds = groupSelectable->getGroupIds();
 
     auto previousGroups = groupSelectable->getGroupIds();
@@ -246,6 +246,16 @@ inline void assignNodeToSelectionGroups(const scene::INodePtr& node, const IGrou
     for (auto id : groupIds)
     {
         groupSelectable->addToGroup(id);
+    }
+}
+
+/// Selection predicates (e.g. for testing if a command should be runnable)
+namespace pred
+{
+    /// Return true if there is at least one selected brush
+    inline bool haveSelectedBrush()
+    {
+        return GlobalSelectionSystem().getSelectionInfo().brushCount > 0;
     }
 }
 

@@ -11,6 +11,7 @@
 
 #include "scenelib.h"
 #include "shaderlib.h"
+#include "selectionlib.h"
 
 #include "registry/registry.h"
 #include "brush/Face.h"
@@ -87,11 +88,6 @@ void hollowBrush(const BrushNodePtr& sourceBrush, bool makeRoom)
 
 	// Now unselect and remove the source brush from the scene
 	scene::removeNodeFromParent(sourceBrush);
-}
-
-bool haveSelectedBrushes()
-{
-	return !selection::algorithm::getSelectedBrushes().empty();
 }
 
 void hollowSelectedBrushes(const cmd::ArgumentList& args) {
@@ -498,11 +494,13 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 
 void registerCommands()
 {
+    using selection::pred::haveSelectedBrush;
+
     GlobalCommandSystem().addWithCheck("CSGSubtract", subtractBrushesFromUnselected,
-                                       haveSelectedBrushes);
-    GlobalCommandSystem().addWithCheck("CSGMerge", mergeSelectedBrushes, haveSelectedBrushes);
-    GlobalCommandSystem().addWithCheck("CSGHollow", hollowSelectedBrushes, haveSelectedBrushes);
-    GlobalCommandSystem().addWithCheck("CSGRoom", makeRoomForSelectedBrushes, haveSelectedBrushes);
+                                       haveSelectedBrush);
+    GlobalCommandSystem().addWithCheck("CSGMerge", mergeSelectedBrushes, haveSelectedBrush);
+    GlobalCommandSystem().addWithCheck("CSGHollow", hollowSelectedBrushes, haveSelectedBrush);
+    GlobalCommandSystem().addWithCheck("CSGRoom", makeRoomForSelectedBrushes, haveSelectedBrush);
 }
 
 } // namespace algorithm

@@ -279,7 +279,8 @@ public:
      * Function to check whether the command should be enabled based on current
      * application state.
      */
-    virtual void addWithCheck(const std::string& name, Function func, CheckFunction check) = 0;
+    virtual void addWithCheck(const std::string& name, Function func, CheckFunction check,
+                              const Signature& = {}) = 0;
 
     /// Returns true if the named command exists
     virtual bool commandExists(const std::string& name) = 0;

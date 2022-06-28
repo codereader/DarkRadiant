@@ -17,7 +17,7 @@ public:
 	virtual void execute(const ArgumentList& args) = 0;
 
 	/// Test if this Executable can currently run
-	virtual bool canExecute() const { return true; }
+	virtual bool canExecute() const = 0;
 
 	/// Returns the function signature (argumen types) of this executable.
 	virtual Signature getSignature() = 0;
