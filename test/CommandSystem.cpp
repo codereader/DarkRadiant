@@ -13,19 +13,45 @@ TEST_F(CommandSystemTest, GetCommandSystem)
 
 TEST_F(CommandSystemTest, AddAndRunCommand)
 {
+    const char* COMMAND_NAME = "testRunCount";
     int runCount = 0;
 
     // Add a command which just logs the number of times it is called
-    ASSERT_FALSE(GlobalCommandSystem().commandExists("testRunCount"));
-    GlobalCommandSystem().addCommand("testRunCount",
-                                     [&](const cmd::ArgumentList&) { ++runCount; });
-    EXPECT_TRUE(GlobalCommandSystem().commandExists("testRunCount"));
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(COMMAND_NAME));
+    GlobalCommandSystem().addCommand(COMMAND_NAME, [&](const cmd::ArgumentList&) { ++runCount; });
+    EXPECT_TRUE(GlobalCommandSystem().commandExists(COMMAND_NAME));
 
     // Ensure that the call happens when we run the command
-    GlobalCommandSystem().executeCommand("testRunCount");
+    GlobalCommandSystem().executeCommand(COMMAND_NAME);
     EXPECT_EQ(runCount, 1);
-    GlobalCommandSystem().executeCommand("testRunCount");
+    GlobalCommandSystem().executeCommand(COMMAND_NAME);
     EXPECT_EQ(runCount, 2);
+}
+
+TEST_F(CommandSystemTest, RunCommandSequence)
+{
+    const char* FIRST_COMMAND = "firstRunCountCommand";
+    int firstRunCount = 0;
+    const char* SECOND_COMMAND = "secondRunCountCommand";
+    int secondRunCount = 0;
+
+    // Register a command for each run count
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(FIRST_COMMAND));
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(SECOND_COMMAND));
+    GlobalCommandSystem().addCommand(FIRST_COMMAND,
+                                     [&](const cmd::ArgumentList&) { ++firstRunCount; });
+    GlobalCommandSystem().addCommand(SECOND_COMMAND,
+                                     [&](const cmd::ArgumentList&) { ++secondRunCount; });
+
+    // Run a semicolon-separated sequence of both commands
+    GlobalCommandSystem().execute("firstRunCountCommand; secondRunCountCommand");
+    EXPECT_EQ(firstRunCount, 1);
+    EXPECT_EQ(secondRunCount, 1);
+    GlobalCommandSystem().execute("  secondRunCountCommand  ; firstRunCountCommand  ");
+    EXPECT_EQ(firstRunCount, 2);
+    EXPECT_EQ(secondRunCount, 2);
+    GlobalCommandSystem().execute("secondRunCountCommand ;secondRunCountCommand");
+    EXPECT_EQ(secondRunCount, 4);
 }
 
 TEST_F(CommandSystemTest, AddCheckedCommand)
