@@ -285,7 +285,14 @@ public:
     /// Returns true if the named command exists
     virtual bool commandExists(const std::string& name) = 0;
 
-    /// Return true if the named command is currently able to execute
+    /**
+     * @brief Check if the named command is currently runnable.
+     *
+     * This is just a signal to the UI that a command should be disabled; the
+     * command system does NOT guarantee that a command for which canExecute()
+     * returns false won't actually be invoked by a subsequent call to
+     * executeCommand().
+     */
     virtual bool canExecute(const std::string& name) const = 0;
 
 	/**
