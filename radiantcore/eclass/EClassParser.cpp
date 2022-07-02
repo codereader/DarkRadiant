@@ -70,6 +70,7 @@ void EClassParser::parse(std::istream& stream, const vfs::FileInfo& fileInfo, co
             // Set the mod directory
             i->second->setModName(modDir);
         }
+#if 0
         else if (blockType == "model")
         {
             // Read the name
@@ -106,6 +107,7 @@ void EClassParser::parse(std::istream& stream, const vfs::FileInfo& fileInfo, co
             foundModel->second->setModName(modDir);
             foundModel->second->defFilename = fileInfo.fullPath();
         }
+#endif
     }
 }
 

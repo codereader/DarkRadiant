@@ -56,48 +56,50 @@ public:
 	{
 		clear();
 
-	    tokeniser.assertNextToken("{");
-
 	    // State enum
 	    enum {
 	        NONE,   // usual state
 	        ANIM    // parsed anim, may get a { ... } block with further info
 	    } state = NONE;
 
-	    while (true)
+	    while (tokeniser.hasMoreTokens())
 		{
-	        const std::string parameter = tokeniser.nextToken();
+	        auto parameter = tokeniser.nextToken();
 
-	        if (parameter == "}") {
-	            break;
-	        }
-
-	        if (parameter == "inherit") {
+	        if (parameter == "inherit")
+            {
 	            parent = tokeniser.nextToken();
 	        }
-	        else if (parameter == "mesh") {
+	        else if (parameter == "mesh")
+            {
 	            mesh = tokeniser.nextToken();
 	        }
-	        else if (parameter == "skin") {
+	        else if (parameter == "skin")
+            {
 	            skin = tokeniser.nextToken();
 	        }
-	        else if (parameter == "offset") {
+	        else if (parameter == "offset")
+            {
 	            tokeniser.skipTokens(5);
 	        }
-	        else if (parameter == "channel") {
+	        else if (parameter == "channel")
+            {
 	            // SYNTAX: "channel" <name> "(" <blah> [ <blah> ... ] ")"
 	            tokeniser.skipTokens(2);
 	            while (tokeniser.nextToken() != ")");
 	        }
-	        else if (parameter == "anim") {
+	        else if (parameter == "anim")
+            {
 	            // SYNTAX: "anim" <name> <md5file> [ "{" <blah> [ <blah> ... ] "}" ]
-	            std::string animName = tokeniser.nextToken();
-	            std::string file = tokeniser.nextToken();
+	            auto animName = tokeniser.nextToken();
+	            auto file = tokeniser.nextToken();
 
-	            anims.insert(Anims::value_type(animName, file));
+	            anims.emplace(animName, file);
 	            state = ANIM; // check for the braces on the next iteration
 	        }
-	        else if (state == ANIM && parameter == "{") { // anim braces
+	        else if (state == ANIM && parameter == "{")
+            {
+	            // anim braces
 	            while (tokeniser.nextToken() != "}");
 	            state = NONE;
 	        }
