@@ -6,6 +6,7 @@
  */
 #pragma once
 
+#include "ideclmanager.h"
 #include "ModResource.h"
 
 #include "imodule.h"
@@ -119,6 +120,7 @@ typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
  * \ingroup eclass
  */
 class IEntityClass :
+    public decl::IDeclaration,
     public ModResource
 {
 public:
@@ -233,6 +235,7 @@ public:
  * \ingroup eclass
  */
 class IModelDef :
+    public decl::IDeclaration,
     public ModResource
 {
 public:
@@ -258,7 +261,7 @@ public:
         modName("base")
     {}
 
-    std::string getModName() const
+    std::string getModName() const override
     {
         return modName;
     }
@@ -277,19 +280,7 @@ public:
     virtual void visit(const IEntityClassPtr& eclass) = 0;
 };
 
-/**
- * ModelDef visitor interface.
- *
- * \ingroup eclass
- */
-class ModelDefVisitor
-{
-public:
-    virtual ~ModelDefVisitor() {}
-    virtual void visit(const IModelDefPtr& modelDef) = 0;
-};
-
-const char* const MODULE_ECLASSMANAGER("EntityClassManager");
+constexpr const char* const MODULE_ECLASSMANAGER("EntityClassManager");
 
 /**
  * EntityClassManager interface. The entity class manager is responsible for
@@ -352,11 +343,6 @@ public:
      * greebo: Finds the model def with the given name. Might return NULL if not found.
      */
     virtual IModelDefPtr findModel(const std::string& name) = 0;
-
-    /**
-     * Iterate over each ModelDef using the given visitor class.
-     */
-    virtual void forEachModelDef(ModelDefVisitor& visitor) = 0;
 
     /**
      * Iterate over each ModelDef using the given function object.

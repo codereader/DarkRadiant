@@ -15,7 +15,6 @@ namespace ui
 
 class MD5AnimationViewer :
 	public wxutil::DialogBase,
-	public ModelDefVisitor,
 	public wxutil::VFSTreePopulator::Visitor
 {
 public:

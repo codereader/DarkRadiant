@@ -1,41 +1,37 @@
 #pragma once
 
 #include "ieclass.h"
-#include "ifilesystem.h"
 #include "parser/DefTokeniser.h"
+#include "DeclarationBase.h"
 
 namespace eclass
 {
 
 class Doom3ModelDef :
-	public IModelDef
+    public decl::DeclarationBase<IModelDef>
 {
-private:
-	std::size_t _parseStamp;
-
 public:
     using Ptr = std::shared_ptr<Doom3ModelDef>;
 
-	Doom3ModelDef(const std::string& modelDefName) :
-		_parseStamp(0)
+	Doom3ModelDef(const std::string& modelDefName)
 	{
 		name = modelDefName;
-	}
-
-	std::size_t getParseStamp() const
-	{
-		return _parseStamp;
-	}
-
-	void setParseStamp(std::size_t parseStamp)
-	{
-		_parseStamp = parseStamp;
 	}
 
 	void setModName(const std::string& newModName)
 	{
 		modName = newModName;
 	}
+
+    const std::string& getDeclName() const override
+    {
+        return name;
+    }
+
+    decl::Type getDeclType() const override
+    {
+        return decl::Type::ModelDef;
+    }
 
 	void clear()
 	{
@@ -48,6 +44,12 @@ public:
 		modName = "base";
         defFilename.clear();
 	}
+
+    void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block) override
+    {
+        parser::BasicDefTokeniser<std::string> tokeniser(block.contents);
+        parseFromTokens(tokeniser);
+    }
 
 	// Reads the data from the given tokens into the member variables
 	void parseFromTokens(parser::DefTokeniser& tokeniser)

@@ -122,9 +122,9 @@ inline std::set<std::string> getAllDeclNames(decl::Type type)
     // Iterate over all decls and collect the names
     std::set<std::string> foundNames;
 
-    GlobalDeclarationManager().foreachDeclaration(type, [&](const decl::IDeclaration& declaration)
+    GlobalDeclarationManager().foreachDeclaration(type, [&](const decl::IDeclaration::Ptr& declaration)
     {
-        foundNames.insert(declaration.getDeclName());
+        foundNames.insert(declaration->getDeclName());
     });
 
     return foundNames;
@@ -277,7 +277,7 @@ TEST_F(DeclManagerTest, DeclsReloadedSignalAfterInitialParse)
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
 
     // Force the thread to be finished
-    GlobalDeclarationManager().foreachDeclaration(decl::Type::Material, [](const decl::IDeclaration&) {});
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::Material, [](const decl::IDeclaration::Ptr&) {});
 
     EXPECT_TRUE(materialSignalFired) << "Material signal should have fired by the time parsing has finished";
     EXPECT_FALSE(modelSignalFired) << "Model-type Signal should not have been fired";
@@ -290,8 +290,8 @@ TEST_F(DeclManagerTest, DeclsReloadedSignal)
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
 
     // Force the threads to be finished
-    GlobalDeclarationManager().foreachDeclaration(decl::Type::Material, [](const decl::IDeclaration&) {});
-    GlobalDeclarationManager().foreachDeclaration(decl::Type::Model, [](const decl::IDeclaration&) {});
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::Material, [](const decl::IDeclaration::Ptr&) {});
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::Model, [](const decl::IDeclaration::Ptr&) {});
 
     bool materialSignalFired = false;
     bool modelSignalFired = false;

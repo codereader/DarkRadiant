@@ -97,10 +97,8 @@ std::string SoundShader::getDefinition() const
 	return _declBlock.contents;
 }
 
-void SoundShader::setBlockSyntax(const decl::DeclarationBlockSyntax& block)
+void SoundShader::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
 {
-    DeclarationBase<ISoundShader>::setBlockSyntax(block);
-
     _fileInfo = block.fileInfo;
     _modName = block.getModName();
 

@@ -1,6 +1,7 @@
 #include "EClassManager.h"
 
 #include "iarchive.h"
+#include "ideclmanager.h"
 #include "ieclasscolours.h"
 #include "i18n.h"
 #include "iregistry.h"
@@ -11,6 +12,7 @@
 
 #include "EntityClass.h"
 #include "Doom3ModelDef.h"
+#include "DefCreators.h"
 
 #include "string/case_conv.h"
 #include <functional>
@@ -136,28 +138,25 @@ void EClassManager::unrealise()
 
 IModelDefPtr EClassManager::findModel(const std::string& name)
 {
-    ensureDefsLoaded();
-
-	auto found = _models.find(name);
-	return found != _models.end() ? found->second : Doom3ModelDef::Ptr();
-}
-
-void EClassManager::forEachModelDef(ModelDefVisitor& visitor)
-{
-    forEachModelDef([&](const IModelDefPtr& def)
-    {
-        visitor.visit(def);
-    });
+    return std::static_pointer_cast<IModelDef>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::ModelDef, name)
+    );
 }
 
 void EClassManager::forEachModelDef(const std::function<void(const IModelDefPtr&)>& functor)
 {
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::ModelDef, [&](const decl::IDeclaration::Ptr& decl)
+    {
+        functor(std::static_pointer_cast<IModelDef>(decl));
+    });
+#if 0
     ensureDefsLoaded();
 
     for (const auto& pair : _models)
     {
         functor(pair.second);
     }
+#endif
 }
 
 void EClassManager::reloadDefs()
@@ -185,10 +184,11 @@ const StringSet& EClassManager::getDependencies() const
 {
     static StringSet _dependencies
     {
+        MODULE_DECLMANAGER,
         MODULE_VIRTUALFILESYSTEM,
         MODULE_XMLREGISTRY,
         MODULE_COMMANDSYSTEM,
-        MODULE_ECLASS_COLOUR_MANAGER
+        MODULE_ECLASS_COLOUR_MANAGER,
     };
 
 	return _dependencies;
@@ -197,6 +197,10 @@ const StringSet& EClassManager::getDependencies() const
 void EClassManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
+
+    GlobalDeclarationManager().registerDeclType("entityDef", std::make_shared<EntityDefCreator>());
+    GlobalDeclarationManager().registerDeclType("model", std::make_shared<ModelDefCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::EntityDef, "def/", ".def");
 
 	GlobalFileSystem().addObserver(*this);
 
@@ -213,7 +217,7 @@ void EClassManager::initialiseModule(const IApplicationContext& ctx)
 
 void EClassManager::shutdownModule()
 {
-	rMessage() << "EntityClassDoom3::shutdownModule called." << std::endl;
+	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
     _eclassColoursChanged.disconnect();
 

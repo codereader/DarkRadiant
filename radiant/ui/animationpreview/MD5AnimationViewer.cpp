@@ -271,11 +271,6 @@ void MD5AnimationViewer::handleAnimSelectionChange()
 	_preview->setAnim(anim);
 }
 
-void MD5AnimationViewer::visit(const IModelDefPtr& modelDef)
-{
-	_modelPopulator.addPath(modelDef->getModName() + "/" + modelDef->name);
-}
-
 void MD5AnimationViewer::visit(wxutil::TreeModel& /* store */,
 	wxutil::TreeModel::Row& row, const std::string& path, bool isExplicit)
 {
@@ -289,7 +284,10 @@ void MD5AnimationViewer::populateModelList()
 {
 	_modelList->Clear();
 
-	GlobalEntityClassManager().forEachModelDef(*this);
+	GlobalEntityClassManager().forEachModelDef([&] (const IModelDefPtr& modelDef)
+	{
+        _modelPopulator.addPath(modelDef->getModName() + "/" + modelDef->name);
+	});
 
 	_modelPopulator.forEachNode(*this);
 

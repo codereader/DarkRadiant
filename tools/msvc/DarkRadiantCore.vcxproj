@@ -771,6 +771,7 @@
     <ClInclude Include="..\..\radiantcore\eclass\EClassParser.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EntityClass.h" />
+    <ClInclude Include="..\..\radiantcore\eclass\DefCreators.h" />
     <ClInclude Include="..\..\radiantcore\entity\algorithm\Speaker.h" />
     <ClInclude Include="..\..\radiantcore\entity\AngleKey.h" />
     <ClInclude Include="..\..\radiantcore\entity\AttachmentData.h" />

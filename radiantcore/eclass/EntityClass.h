@@ -10,6 +10,7 @@
 #include "generic/Lazy.h"
 
 #include "parser/DefTokeniser.h"
+#include "DeclarationBase.h"
 
 #include <vector>
 #include <map>
@@ -26,8 +27,8 @@ namespace eclass
 {
 
 /// Implementation of the IEntityClass interface.
-class EntityClass
-: public IEntityClass
+class EntityClass :
+    public decl::DeclarationBase<IEntityClass>
 {
 public:
 
@@ -76,9 +77,6 @@ private:
     // Name of the mod owning this class
     std::string _modName = "base";
 
-    // The time this def has been parsed
-    std::size_t _parseStamp = 0;
-
     // Emitted when contents are reloaded
     sigc::signal<void> _changedSignal;
     bool _blockChangeSignal = false;
@@ -109,6 +107,16 @@ public:
 
     /// Create a heap-allocated default/empty EntityClass
     static EntityClass::Ptr createDefault(const std::string& name, bool brushes);
+
+    const std::string& getDeclName() const override
+    {
+        return getName();
+    }
+
+    decl::Type getDeclType() const override
+    {
+        return decl::Type::EntityDef;
+    }
 
     void emplaceAttribute(EntityClassAttribute&& attribute);
 
@@ -172,16 +180,6 @@ public:
 
     // Initialises this class from the given tokens
     void parseFromTokens(parser::DefTokeniser& tokeniser);
-
-    void setParseStamp(std::size_t parseStamp)
-    {
-        _parseStamp = parseStamp;
-    }
-
-    std::size_t getParseStamp() const
-    {
-        return _parseStamp;
-    }
 
     void emitChangedSignal()
     {

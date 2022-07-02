@@ -58,7 +58,7 @@ public:
     void unregisterDeclType(const std::string& typeName) override;
     void registerDeclFolder(Type defaultType, const std::string& inputFolder, const std::string& inputExtension) override;
     IDeclaration::Ptr findDeclaration(Type type, const std::string& name) override;
-    void foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor) override;
+    void foreachDeclaration(Type type, const std::function<void(const IDeclaration::Ptr&)>& functor) override;
     sigc::signal<void>& signal_DeclsReloaded(Type type) override;
     void reloadDeclarations() override;
 

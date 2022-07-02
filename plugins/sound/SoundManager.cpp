@@ -62,9 +62,9 @@ SoundManager::SoundManager()
 void SoundManager::forEachShader(std::function<void(const ISoundShader&)> functor)
 {
     GlobalDeclarationManager().foreachDeclaration(decl::Type::SoundShader,
-        [&](const decl::IDeclaration& soundShader)
+        [&](const decl::IDeclaration::Ptr& soundShader)
         {
-            functor(static_cast<const ISoundShader&>(soundShader));
+            functor(*std::static_pointer_cast<ISoundShader>(soundShader));
         });
 }
 

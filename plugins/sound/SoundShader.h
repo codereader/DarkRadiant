@@ -49,7 +49,8 @@ public:
 	std::string getShaderFilePath() const override;
 	std::string getDefinition() const override;
 
-    void setBlockSyntax(const decl::DeclarationBlockSyntax& block) override;
+protected:
+    void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block) override;
 };
 
 }

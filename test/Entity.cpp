@@ -2103,4 +2103,28 @@ TEST_F(EntityTest, GetVariousAttributeTypes)
     EXPECT_EQ(eclass->getAttributeType("a_hurk"), "hurk");
 }
 
+TEST_F(EntityTest, FindModelDef)
+{
+    auto model = GlobalEntityClassManager().findModel("just_a_model");
+    EXPECT_TRUE(model) << "ModelDef lookup failed";
+    EXPECT_EQ(model->mesh, "just_an_md5.md5mesh");
+
+    EXPECT_TRUE(GlobalEntityClassManager().findModel("some_other_model"));
+    EXPECT_TRUE(GlobalEntityClassManager().findModel("a_cooler_model"));
+}
+
+TEST_F(EntityTest, ForeachModelDef)
+{
+    std::set<std::string> visitedModels;
+
+    GlobalEntityClassManager().forEachModelDef([&] (const IModelDefPtr& model)
+    {
+        visitedModels.insert(model->getDeclName());
+    });
+
+    EXPECT_GT(visitedModels.count("just_a_model"), 0) << "ModelDef visit failed";
+    EXPECT_GT(visitedModels.count("some_other_model"), 0) << "ModelDef visit failed";
+    EXPECT_GT(visitedModels.count("a_cooler_model"), 0) << "ModelDef visit failed";
+}
+
 }

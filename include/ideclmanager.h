@@ -114,7 +114,7 @@ public:
     virtual IDeclaration::Ptr findDeclaration(Type type, const std::string& name) = 0;
 
     // Iterate over all known declarations, using the given visitor
-    virtual void foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor) = 0;
+    virtual void foreachDeclaration(Type type, const std::function<void(const IDeclaration::Ptr&)>& functor) = 0;
 
     // Re-load all declarations.
     // All declaration references will stay intact, only their contents will be refreshed

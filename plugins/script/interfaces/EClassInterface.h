@@ -53,6 +53,28 @@ public:
 	}
 };
 
+class ScriptModelDef
+{
+public:
+    ScriptModelDef()
+    {}
+
+    ScriptModelDef(IModelDef& modelDef)
+    {
+        name = modelDef.name;
+        mesh = modelDef.mesh;
+        skin = modelDef.skin;
+        parent = modelDef.parent;
+        anims = modelDef.anims;
+    }
+
+    std::string name;
+    std::string mesh;
+    std::string skin;
+    std::string parent;
+    IModelDef::Anims anims;
+};
+
 // Wrap around the EntityClassVisitor interface
 class EntityClassVisitorWrapper :
 	public EntityClassVisitor
@@ -68,6 +90,13 @@ public:
 			ScriptEntityClass(eclass) /* Argument(s) */
 		);
 	}
+};
+
+class ModelDefVisitor
+{
+public:
+    virtual ~ModelDefVisitor() {}
+    virtual void visit(const IModelDefPtr& modelDef) = 0;
 };
 
 // Wrap around the ModelDefVisitor interface
@@ -93,12 +122,12 @@ public:
 class EClassManagerInterface :
 	public IScriptInterface
 {
-	IModelDef _emptyModelDef;
+	ScriptModelDef _emptyModelDef;
 
 public:
 	ScriptEntityClass findClass(const std::string& name);
 
-	IModelDef findModel(const std::string& name);
+    ScriptModelDef findModel(const std::string& name);
 
 	void forEachEntityClass(EntityClassVisitor& visitor);
 	void forEachModelDef(ModelDefVisitor& visitor);

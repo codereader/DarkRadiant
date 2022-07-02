@@ -39,9 +39,10 @@ public:
         return _declBlock;
     }
 
-    void setBlockSyntax(const DeclarationBlockSyntax& block) override
+    void setBlockSyntax(const DeclarationBlockSyntax& block) final
     {
         _declBlock = block;
+        onSyntaxBlockAssigned(_declBlock);
     }
 
     std::size_t getParseStamp() const final
@@ -53,6 +54,12 @@ public:
     {
         _parseStamp = parseStamp;
     }
+
+protected:
+    // Invoked after a new syntax block has been assigned
+    // Allows subclasses to either reparse immediately or schedule a later parse
+    virtual void onSyntaxBlockAssigned(const DeclarationBlockSyntax& block)
+    {}
 };
 
 }

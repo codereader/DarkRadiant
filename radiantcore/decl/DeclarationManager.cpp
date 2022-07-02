@@ -92,13 +92,13 @@ IDeclaration::Ptr DeclarationManager::findDeclaration(Type type, const std::stri
     return returnValue;
 }
 
-void DeclarationManager::foreachDeclaration(Type type, const std::function<void(const IDeclaration&)>& functor)
+void DeclarationManager::foreachDeclaration(Type type, const std::function<void(const IDeclaration::Ptr&)>& functor)
 {
     doWithDeclarations(type, [&](const NamedDeclarations& decls)
     {
         for (const auto& [_, decl] : decls)
         {
-            functor(*decl);
+            functor(decl);
         }
     });
 }
