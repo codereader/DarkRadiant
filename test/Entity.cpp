@@ -80,6 +80,9 @@ TEST_F(EntityTest, LookupEntityClass)
     // Real entity class should return a valid pointer
     auto lightCls = GlobalEntityClassManager().findClass("light");
     EXPECT_TRUE(lightCls);
+
+    EXPECT_EQ(GlobalEntityClassManager().findClass("light"),
+        GlobalEntityClassManager().findClass("LiGHT")) << "Lookup should be case-insensitive";
 }
 
 TEST_F(EntityTest, LightEntitiesRecognisedAsLights)
@@ -2108,9 +2111,13 @@ TEST_F(EntityTest, FindModelDef)
     auto model = GlobalEntityClassManager().findModel("just_a_model");
     EXPECT_TRUE(model) << "ModelDef lookup failed";
     EXPECT_EQ(model->getMesh(), "just_an_md5.md5mesh");
+    EXPECT_EQ(model->getBlockSyntax().fileInfo.fullPath(), "def/entity_with_model.def");
 
     EXPECT_TRUE(GlobalEntityClassManager().findModel("some_other_model"));
     EXPECT_TRUE(GlobalEntityClassManager().findModel("a_cooler_model"));
+
+    EXPECT_EQ(GlobalEntityClassManager().findModel("just_a_model"),
+        GlobalEntityClassManager().findModel("Just_a_MODEl")) << "Lookup should be case-insensitive";
 }
 
 TEST_F(EntityTest, ForeachModelDef)

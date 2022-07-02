@@ -315,6 +315,10 @@ TEST_F(DeclManagerTest, FindDeclaration)
 
     EXPECT_TRUE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/exporttest/guisurf1"));
     EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/nonexistent"));
+
+    // Find declaration is case-insensitive
+    EXPECT_EQ(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/exporttest/guisurf1"),
+              GlobalDeclarationManager().findDeclaration(decl::Type::Material, "Decl/eXporTTest/gUISURF1"));
 }
 
 inline void expectMaterialIsPresent(decl::Type type, const std::string& declName)

@@ -70,44 +70,6 @@ void EClassParser::parse(std::istream& stream, const vfs::FileInfo& fileInfo, co
             // Set the mod directory
             i->second->setModName(modDir);
         }
-#if 0
-        else if (blockType == "model")
-        {
-            // Read the name
-            std::string modelDefName = tokeniser.nextToken();
-
-            // Ensure that an Entity class with this name already exists
-            // When reloading entityDef declarations, most names will already be registered
-            auto foundModel = _modelDefs.find(modelDefName);
-
-            if (foundModel == _modelDefs.end())
-            {
-                // Does not exist yet, allocate a new one
-
-                // Allocate an empty ModelDef
-                auto model = std::make_shared<Doom3ModelDef>(modelDefName);
-
-                foundModel = _modelDefs.emplace(modelDefName, model).first;
-            }
-            else
-            {
-                // Model already exists, compare the parse stamp
-                if (foundModel->second->getParseStamp() == _curParseStamp)
-                {
-                    rWarning() << "[eclassmgr]: Model "
-                        << modelDefName << " redefined" << std::endl;
-                }
-            }
-
-            // Model structure is allocated and in the map,
-            // invoke the parser routine
-            foundModel->second->setParseStamp(_curParseStamp);
-
-            foundModel->second->parseFromTokens(tokeniser);
-            foundModel->second->setModName(modDir);
-            foundModel->second->defFilename = fileInfo.fullPath();
-        }
-#endif
     }
 }
 
@@ -125,51 +87,8 @@ void EClassParser::onFinishParsing()
     _owner.defsLoadedSignal().emit();
 }
 
-#if 0
-void EClassParser::resolveModelInheritance(const std::string& name, const Doom3ModelDef::Ptr& model)
-{
-    if (model->resolved == true) return; // inheritance already resolved
-
-    model->resolved = true;
-
-    if (model->parent.empty()) return;
-
-    auto i = _modelDefs.find(model->parent);
-
-    if (i == _modelDefs.end())
-    {
-        rError() << "model " << name << " inherits unknown model " << model->parent << std::endl;
-        return;
-    }
-
-    resolveModelInheritance(i->first, i->second);
-
-    // greebo: Only inherit the "mesh" of the parent if the current declaration doesn't have one
-    if (model->mesh.empty())
-    {
-        model->mesh = i->second->mesh;
-    }
-
-    // Only inherit the "skin" of the parent if the current declaration doesn't have one
-    if (model->skin.empty())
-    {
-        model->skin = i->second->skin;
-    }
-
-    // Append all inherited animations, if missing on the child
-    model->anims.insert(i->second->anims.begin(), i->second->anims.end());
-}
-#endif
-
 void EClassParser::resolveInheritance()
 {
-#if 0
-    // Resolve inheritance on the model classes
-    for (auto& pair : _modelDefs)
-    {
-        resolveModelInheritance(pair.first, pair.second);
-    }
-#endif
     // Resolve inheritance for the entities. At this stage the classes
     // will have the name of their parent, but not an actual pointer to it
     for (auto& pair : _entityClasses)
