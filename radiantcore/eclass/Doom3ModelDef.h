@@ -47,7 +47,6 @@ public:
     const std::string& getMesh() override
 	{
         ensureParsed();
-
         return _mesh;
 	}
 
@@ -74,7 +73,6 @@ public:
     const Anims& getAnims() override
 	{
         ensureParsed();
-
         return _anims;
 	}
 
@@ -96,10 +94,9 @@ private:
         parseFromTokens(tokeniser);
     }
 
-    void clear()
+    void clearContents()
     {
         // Don't clear the name
-        _parsed = false;
         _mesh.clear();
         _skin.clear();
         _parent.reset();
@@ -109,7 +106,7 @@ private:
     // Reads the data from the given tokens into the member variables
     void parseFromTokens(parser::DefTokeniser& tokeniser)
     {
-        clear();
+        clearContents();
 
         // State enum
         enum
@@ -124,7 +121,7 @@ private:
 
             if (parameter == "inherit")
             {
-                auto parentName = tokeniser.nextToken();
+                inheritFrom(tokeniser.nextToken());
             }
             else if (parameter == "mesh")
             {
@@ -150,7 +147,8 @@ private:
                 auto animName = tokeniser.nextToken();
                 auto file = tokeniser.nextToken();
 
-                _anims.emplace(animName, file);
+                // Overwrite any existing animation with the same key
+                _anims[animName] = file;
                 state = ANIM; // check for the braces on the next iteration
             }
             else if (state == ANIM && parameter == "{")
@@ -160,6 +158,35 @@ private:
                 state = NONE;
             }
         }
+    }
+
+    void inheritFrom(const std::string& parentName)
+    {
+        auto parent = GlobalEntityClassManager().findModel(parentName);
+
+        if (!parent)
+        {
+            rWarning() << "ModelDef " << getDeclName() << " inherits from unknown parent: " << parentName << std::endl;
+            return;
+        }
+
+        _parent = parent;
+
+        // greebo: Only inherit the "mesh" of the parent if the current declaration doesn't have one
+        if (_mesh.empty())
+        {
+            _mesh = parent->getMesh();
+        }
+
+        // Only inherit the "skin" of the parent if the current declaration doesn't have one
+        if (_skin.empty())
+        {
+            _skin = parent->getSkin();
+        }
+
+        // Append all inherited animations, if missing on the child
+        const auto& parentAnims = parent->getAnims();
+        _anims.insert(parentAnims.begin(), parentAnims.end());
     }
 };
 
