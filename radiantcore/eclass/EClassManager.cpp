@@ -136,27 +136,19 @@ void EClassManager::unrealise()
     }
 }
 
-IModelDefPtr EClassManager::findModel(const std::string& name)
+IModelDef::Ptr EClassManager::findModel(const std::string& name)
 {
     return std::static_pointer_cast<IModelDef>(
         GlobalDeclarationManager().findDeclaration(decl::Type::ModelDef, name)
     );
 }
 
-void EClassManager::forEachModelDef(const std::function<void(const IModelDefPtr&)>& functor)
+void EClassManager::forEachModelDef(const std::function<void(const IModelDef::Ptr&)>& functor)
 {
     GlobalDeclarationManager().foreachDeclaration(decl::Type::ModelDef, [&](const decl::IDeclaration::Ptr& decl)
     {
         functor(std::static_pointer_cast<IModelDef>(decl));
     });
-#if 0
-    ensureDefsLoaded();
-
-    for (const auto& pair : _models)
-    {
-        functor(pair.second);
-    }
-#endif
 }
 
 void EClassManager::reloadDefs()

@@ -239,34 +239,24 @@ class IModelDef :
     public ModResource
 {
 public:
-    bool resolved;
+    using Ptr = std::shared_ptr<IModelDef>;
 
-    std::string name;
+    // The def this model is inheriting from (empty if there's no parent)
+    virtual const Ptr& getParent() = 0;
 
-    std::string mesh;
-    std::string skin;
+    // The MD5 mesh used by this modelDef
+    virtual const std::string& getMesh() = 0;
 
-    std::string parent;
+    // The named skin
+    virtual const std::string& getSkin() = 0;
 
-    typedef std::map<std::string, std::string> Anims;
-    Anims anims;
+    // The md5anim file name for the given anim key (e.g. "idle" or "af_pose")
+    virtual std::string getAnim(const std::string& animKey) = 0;
 
-    std::string modName;
-
-    // The mod-relative path to the file this DEF was declared in
-    std::string defFilename;
-
-    IModelDef() :
-        resolved(false),
-        modName("base")
-    {}
-
-    std::string getModName() const override
-    {
-        return modName;
-    }
+    // Returns a dictionary of all the animations declared on this model def
+    using Anims = std::map<std::string, std::string>;
+    virtual const Anims& getAnims() = 0;
 };
-typedef std::shared_ptr<IModelDef> IModelDefPtr;
 
 /**
  * EntityClass visitor interface.
@@ -342,12 +332,12 @@ public:
     /**
      * greebo: Finds the model def with the given name. Might return NULL if not found.
      */
-    virtual IModelDefPtr findModel(const std::string& name) = 0;
+    virtual IModelDef::Ptr findModel(const std::string& name) = 0;
 
     /**
      * Iterate over each ModelDef using the given function object.
      */
-    virtual void forEachModelDef(const std::function<void(const IModelDefPtr&)>& functor) = 0;
+    virtual void forEachModelDef(const std::function<void(const IModelDef::Ptr&)>& functor) = 0;
 };
 
 /**

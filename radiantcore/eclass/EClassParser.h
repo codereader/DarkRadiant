@@ -49,7 +49,6 @@ protected:
 
 private:
     void resolveInheritance();
-    void resolveModelInheritance(const std::string& name, const Doom3ModelDef::Ptr& model);
     void applyColours();
 };
 

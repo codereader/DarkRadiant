@@ -61,11 +61,11 @@ public:
 
     ScriptModelDef(IModelDef& modelDef)
     {
-        name = modelDef.name;
-        mesh = modelDef.mesh;
-        skin = modelDef.skin;
-        parent = modelDef.parent;
-        anims = modelDef.anims;
+        name = modelDef.getDeclName();
+        mesh = modelDef.getMesh();
+        skin = modelDef.getSkin();
+        parent = modelDef.getParent() ? modelDef.getParent()->getDeclName() : std::string();
+        anims = modelDef.getAnims();
     }
 
     std::string name;
@@ -96,7 +96,7 @@ class ModelDefVisitor
 {
 public:
     virtual ~ModelDefVisitor() {}
-    virtual void visit(const IModelDefPtr& modelDef) = 0;
+    virtual void visit(const IModelDef::Ptr& modelDef) = 0;
 };
 
 // Wrap around the ModelDefVisitor interface
@@ -104,7 +104,7 @@ class ModelDefVisitorWrapper :
 	public ModelDefVisitor
 {
 public:
-    void visit(const IModelDefPtr& modelDef) override
+    void visit(const IModelDef::Ptr& modelDef) override
 	{
 		// Wrap this method to python
 		PYBIND11_OVERLOAD_PURE(

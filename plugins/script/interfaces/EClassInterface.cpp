@@ -13,8 +13,8 @@ ScriptEntityClass EClassManagerInterface::findClass(const std::string& name)
 
 ScriptModelDef EClassManagerInterface::findModel(const std::string& name)
 {
-	IModelDefPtr modelDef = GlobalEntityClassManager().findModel(name);
-	return (modelDef != NULL) ? ScriptModelDef(*modelDef) : _emptyModelDef;
+	auto modelDef = GlobalEntityClassManager().findModel(name);
+	return modelDef ? ScriptModelDef(*modelDef) : _emptyModelDef;
 }
 
 void EClassManagerInterface::forEachEntityClass(EntityClassVisitor& visitor)
@@ -24,7 +24,7 @@ void EClassManagerInterface::forEachEntityClass(EntityClassVisitor& visitor)
 
 void EClassManagerInterface::forEachModelDef(ModelDefVisitor& visitor)
 {
-    GlobalEntityClassManager().forEachModelDef([&](const IModelDefPtr& model)
+    GlobalEntityClassManager().forEachModelDef([&](const IModelDef::Ptr& model)
     {
         visitor.visit(model);
     });

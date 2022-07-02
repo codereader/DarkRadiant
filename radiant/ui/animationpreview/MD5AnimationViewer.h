@@ -76,12 +76,10 @@ protected:
 public:
 	static void Show(const cmd::ArgumentList& args);
 
-	void visit(const IModelDefPtr& modelDef);
-
 	void visit(wxutil::TreeModel& store,
 				wxutil::TreeModel::Row& row,
 				const std::string& path,
-				bool isExplicit);
+				bool isExplicit) override;
 
 	std::string getSelectedModel();
 	void setSelectedModel(const std::string& model);
@@ -105,7 +103,7 @@ private:
 	void populateModelList();
 	void populateAnimationList();
 
-	IModelDefPtr getSelectedModelDef();
+	IModelDef::Ptr getSelectedModelDef();
 };
 
 }

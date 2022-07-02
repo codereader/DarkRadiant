@@ -110,10 +110,10 @@ protected:
 
         wxutil::VFSTreePopulator modelDefPopulator(model, modelDefs.getItem());
 
-        GlobalEntityClassManager().forEachModelDef([&](const IModelDefPtr& def)
+        GlobalEntityClassManager().forEachModelDef([&](const IModelDef::Ptr& def)
         {
             ThrowIfCancellationRequested();
-            modelDefPopulator.addPath(def->name);
+            modelDefPopulator.addPath(def->getDeclName());
         });
 
         modelDefPopulator.forEachNode(inserterSkins);

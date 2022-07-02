@@ -27,7 +27,7 @@ ModelCache::ModelCache() :
 scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 {
 	// Check if we have a reference to a modeldef
-	IModelDefPtr modelDef = GlobalEntityClassManager().findModel(modelPath);
+	auto modelDef = GlobalEntityClassManager().findModel(modelPath);
 
 	// The actual model path (is usually the same as the incoming modelPath)
 	std::string actualModelPath(modelPath);
@@ -35,7 +35,7 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 	if (modelDef)
 	{
 		// We have a valid modelDef, override the model path
-		actualModelPath = modelDef->mesh;
+		actualModelPath = modelDef->getMesh();
 	}
 
 	// Get the extension of this model
@@ -71,12 +71,12 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 				md5::IMD5Model& md5model = dynamic_cast<md5::IMD5Model&>(modelNode->getIModel());
 
 				// Look up the "idle" anim if there is one
-				IModelDef::Anims::const_iterator found = modelDef->anims.find("idle");
+				auto found = modelDef->getAnim("idle");
 
-				if (found != modelDef->anims.end())
+				if (!found.empty())
 				{
 					// Load the anim
-					md5::IMD5AnimPtr anim = GlobalAnimationCache().getAnim(found->second);
+					auto anim = GlobalAnimationCache().getAnim(found);
 
 					if (anim)
 					{

@@ -2107,7 +2107,7 @@ TEST_F(EntityTest, FindModelDef)
 {
     auto model = GlobalEntityClassManager().findModel("just_a_model");
     EXPECT_TRUE(model) << "ModelDef lookup failed";
-    EXPECT_EQ(model->mesh, "just_an_md5.md5mesh");
+    EXPECT_EQ(model->getMesh(), "just_an_md5.md5mesh");
 
     EXPECT_TRUE(GlobalEntityClassManager().findModel("some_other_model"));
     EXPECT_TRUE(GlobalEntityClassManager().findModel("a_cooler_model"));
@@ -2117,7 +2117,7 @@ TEST_F(EntityTest, ForeachModelDef)
 {
     std::set<std::string> visitedModels;
 
-    GlobalEntityClassManager().forEachModelDef([&] (const IModelDefPtr& model)
+    GlobalEntityClassManager().forEachModelDef([&] (const IModelDef::Ptr& model)
     {
         visitedModels.insert(model->getDeclName());
     });
@@ -2132,54 +2132,54 @@ TEST_F(EntityTest, CyclicInheritance)
     auto model = GlobalEntityClassManager().findModel("recursive_inheritance");
 
     EXPECT_TRUE(model) << "ModelDef lookup failed";
-    EXPECT_EQ(model->parent, "recursive_inheritance3");
+    EXPECT_EQ(model->getParent()->getDeclName(), "recursive_inheritance3");
 
     model = GlobalEntityClassManager().findModel("recursive_inheritance2");
     EXPECT_TRUE(model) << "ModelDef lookup failed";
-    EXPECT_EQ(model->parent, "recursive_inheritance");
+    EXPECT_EQ(model->getParent()->getDeclName(), "recursive_inheritance");
 
     model = GlobalEntityClassManager().findModel("recursive_inheritance3");
     EXPECT_TRUE(model) << "ModelDef lookup failed";
-    EXPECT_EQ(model->parent, "recursive_inheritance2");
+    EXPECT_EQ(model->getParent()->getDeclName(), "recursive_inheritance2");
 }
 
 TEST_F(EntityTest, MeshInheritance)
 {
     auto just_a_model = GlobalEntityClassManager().findModel("just_a_model");
 
-    EXPECT_EQ(just_a_model->mesh, "just_an_md5.md5mesh");
+    EXPECT_EQ(just_a_model->getMesh(), "just_an_md5.md5mesh");
 
     auto some_other_model = GlobalEntityClassManager().findModel("some_other_model");
 
     // some_other_model inherits the mesh from just_a_model
-    EXPECT_EQ(some_other_model->mesh, just_a_model->mesh);
+    EXPECT_EQ(some_other_model->getMesh(), just_a_model->getMesh());
 
     auto a_cooler_model = GlobalEntityClassManager().findModel("a_cooler_model");
 
     // a_cooler_model defines its own mesh
-    EXPECT_EQ(a_cooler_model->mesh, "an_overridden_mesh.md5mesh");
+    EXPECT_EQ(a_cooler_model->getMesh(), "an_overridden_mesh.md5mesh");
 }
 
 TEST_F(EntityTest, AnimInheritance)
 {
     auto just_a_model = GlobalEntityClassManager().findModel("just_a_model");
 
-    EXPECT_EQ(just_a_model->anims["af_pose"], "models/md5/af_pose.md5anim");
-    EXPECT_EQ(just_a_model->anims["idle"], "models/md5/idle.md5anim");
+    EXPECT_EQ(just_a_model->getAnim("af_pose"), "models/md5/af_pose.md5anim");
+    EXPECT_EQ(just_a_model->getAnim("idle"), "models/md5/idle.md5anim");
 
     auto some_other_model = GlobalEntityClassManager().findModel("some_other_model");
 
     // some_other_model inherits idle, redefines af_pose, introduces new_anim
-    EXPECT_EQ(some_other_model->anims["af_pose"], "models/md5/some_other_af_pose.md5anim");
-    EXPECT_EQ(some_other_model->anims["idle"], just_a_model->anims["idle"]);
-    EXPECT_EQ(some_other_model->anims["new_anim"], "models/md5/new_anim.md5anim");
+    EXPECT_EQ(some_other_model->getAnim("af_pose"), "models/md5/some_other_af_pose.md5anim");
+    EXPECT_EQ(some_other_model->getAnim("idle"), just_a_model->getAnim("idle"));
+    EXPECT_EQ(some_other_model->getAnim("new_anim"), "models/md5/new_anim.md5anim");
 
     auto a_cooler_model = GlobalEntityClassManager().findModel("a_cooler_model");
 
     // a_cooler_model overrides idle, inherits the rest
-    EXPECT_EQ(a_cooler_model->anims["af_pose"], some_other_model->anims["af_pose"]);
-    EXPECT_EQ(a_cooler_model->anims["idle"], "models/md5/a_cooler_idle.md5anim");
-    EXPECT_EQ(a_cooler_model->anims["new_anim"], some_other_model->anims["new_anim"]);
+    EXPECT_EQ(a_cooler_model->getAnim("af_pose"), some_other_model->getAnim("af_pose"));
+    EXPECT_EQ(a_cooler_model->getAnim("idle"), "models/md5/a_cooler_idle.md5anim");
+    EXPECT_EQ(a_cooler_model->getAnim("new_anim"), some_other_model->getAnim("new_anim"));
 }
 
 }

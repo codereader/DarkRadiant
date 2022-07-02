@@ -71,8 +71,8 @@ public:
     void onFileSystemShutdown() override;
 
     // Find the modeldef with the given name
-    IModelDefPtr findModel(const std::string& name) override;
-    void forEachModelDef(const std::function<void(const IModelDefPtr&)>& functor) override;
+    IModelDef::Ptr findModel(const std::string& name) override;
+    void forEachModelDef(const std::function<void(const IModelDef::Ptr&)>& functor) override;
 
 	// Reloads all entityDefs/modelDefs
     void reloadDefs() override;

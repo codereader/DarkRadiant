@@ -125,6 +125,7 @@ void EClassParser::onFinishParsing()
     _owner.defsLoadedSignal().emit();
 }
 
+#if 0
 void EClassParser::resolveModelInheritance(const std::string& name, const Doom3ModelDef::Ptr& model)
 {
     if (model->resolved == true) return; // inheritance already resolved
@@ -158,15 +159,17 @@ void EClassParser::resolveModelInheritance(const std::string& name, const Doom3M
     // Append all inherited animations, if missing on the child
     model->anims.insert(i->second->anims.begin(), i->second->anims.end());
 }
+#endif
 
 void EClassParser::resolveInheritance()
 {
+#if 0
     // Resolve inheritance on the model classes
     for (auto& pair : _modelDefs)
     {
         resolveModelInheritance(pair.first, pair.second);
     }
-
+#endif
     // Resolve inheritance for the entities. At this stage the classes
     // will have the name of their parent, but not an actual pointer to it
     for (auto& pair : _entityClasses)
@@ -183,8 +186,8 @@ void EClassParser::resolveInheritance()
 
             if (j != _modelDefs.end())
             {
-                pair.second->setModelPath(j->second->mesh);
-                pair.second->setSkin(j->second->skin);
+                pair.second->setModelPath(j->second->getMesh());
+                pair.second->setSkin(j->second->getSkin());
             }
         }
     }
