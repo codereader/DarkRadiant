@@ -666,29 +666,87 @@ TEST_F(EntityTest, OverrideLightVolumeColour)
 }
 #endif
 
+static const Vector4 GREEN(0, 1, 0, 1);
+static const Vector4 YELLOW(1, 0, 1, 1);
+
+void expectEntityClassColour(const IEntityClassPtr& eclass, const Vector4& expectedColour)
+{
+    EXPECT_EQ(eclass->getColour(), expectedColour) << "Expected colour mismatch on class " << eclass->getDeclName();
+}
+
 TEST_F(EntityTest, OverrideEClassColour)
 {
-    auto light = algorithm::createEntityByClassName("light");
-    auto torch = algorithm::createEntityByClassName("light_torchflame_small");
-    auto lightCls = light->getEntity().getEntityClass();
-    auto torchCls = torch->getEntity().getEntityClass();
-
-    static const Vector4 GREEN(0, 1, 0, 1);
-    static const Vector4 YELLOW(1, 0, 1, 1);
+    auto lightCls = algorithm::createEntityByClassName("light")->getEntity().getEntityClass();
+    auto torchCls = algorithm::createEntityByClassName("light_torchflame_small")->getEntity().getEntityClass();
 
     // Light has an explicit green editor_color
-    EXPECT_EQ(lightCls->getColour(), GREEN);
+    expectEntityClassColour(lightCls, GREEN);
 
     // This class does not have an explicit editor_color value, but should
     // inherit the one from 'light'.
-    EXPECT_EQ(torchCls->getColour(), GREEN);
+    expectEntityClassColour(torchCls, GREEN);
 
     // Set an override for the 'light' class
     GlobalEclassColourManager().addOverrideColour("light", YELLOW);
 
     // Both 'light' and its subclasses should have the new colour
-    EXPECT_EQ(lightCls->getColour(), YELLOW);
-    EXPECT_EQ(torchCls->getColour(), YELLOW);
+    EXPECT_EQ(lightCls->getColour(), YELLOW) << "Eclass colour override not working";
+    EXPECT_EQ(torchCls->getColour(), YELLOW) << "Eclass colour override not working";
+}
+
+// Provided an override colour is set before the eclass is requested, it should still be effective
+TEST_F(EntityTest, OverrideEClassColourSetBeforeRequest)
+{
+    // Set an override for the 'light' class
+    GlobalEclassColourManager().addOverrideColour("light", YELLOW);
+
+    auto lightCls = algorithm::createEntityByClassName("light")->getEntity().getEntityClass();
+    auto torchCls = algorithm::createEntityByClassName("light_torchflame_small")->getEntity().getEntityClass();
+
+    // Both 'light' and its subclasses should have the overridden colour
+    EXPECT_EQ(lightCls->getColour(), YELLOW) << "Eclass colour override not working";
+    EXPECT_EQ(torchCls->getColour(), YELLOW) << "Eclass colour override not working";
+}
+
+// Reload decls should keep the override intact
+TEST_F(EntityTest, OverrideEClassColourAfterReload)
+{
+    auto lightCls = algorithm::createEntityByClassName("light")->getEntity().getEntityClass();
+    auto torchCls = algorithm::createEntityByClassName("light_torchflame_small")->getEntity().getEntityClass();
+
+    EXPECT_EQ(lightCls->getColour(), GREEN); // explicitly set
+    EXPECT_EQ(torchCls->getColour(), GREEN); // inherited
+
+    // Set an override for the 'light' class
+    GlobalEclassColourManager().addOverrideColour("light", YELLOW);
+
+    // Both 'light' and its subclasses should have the new colour
+    EXPECT_EQ(lightCls->getColour(), YELLOW) << "Eclass colour override not working";
+    EXPECT_EQ(torchCls->getColour(), YELLOW) << "Eclass colour override not working";
+
+    GlobalDeclarationManager().reloadDeclarations();
+
+    EXPECT_EQ(lightCls->getColour(), YELLOW) << "Eclass colour wrong after reloadDecls";
+    EXPECT_EQ(torchCls->getColour(), YELLOW) << "Eclass colour wrong after reloadDecls";
+}
+
+// Removing an override should revert to defaults
+TEST_F(EntityTest, OverrideEClassColourRemoval)
+{
+    auto lightCls = algorithm::createEntityByClassName("light")->getEntity().getEntityClass();
+    auto torchCls = algorithm::createEntityByClassName("light_torchflame_small")->getEntity().getEntityClass();
+
+    GlobalEclassColourManager().addOverrideColour("light", YELLOW);
+
+    EXPECT_EQ(lightCls->getColour(), YELLOW) << "Eclass colour override not working";
+    EXPECT_EQ(torchCls->getColour(), YELLOW) << "Eclass colour override not working";
+
+    // Remove the override
+    GlobalEclassColourManager().removeOverrideColour("light");
+
+    // We should now be back at the defaults
+    EXPECT_EQ(lightCls->getColour(), GREEN); // explicitly set
+    EXPECT_EQ(torchCls->getColour(), GREEN); // inherited
 }
 
 TEST_F(EntityTest, DefaultEclassColourIsValid)
