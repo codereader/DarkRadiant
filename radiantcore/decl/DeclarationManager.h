@@ -6,6 +6,7 @@
 #include <set>
 #include <vector>
 #include <memory>
+#include "string/string.h"
 
 #include "DeclarationFile.h"
 
@@ -18,6 +19,9 @@ class DeclarationManager :
     public IDeclarationManager
 {
 private:
+    // Declaration names are compared case-insensitively
+    using NamedDeclarations = std::map<std::string, IDeclaration::Ptr, string::ILess>;
+
     std::map<std::string, IDeclarationCreator::Ptr> _creatorsByTypename;
     std::map<Type, IDeclarationCreator::Ptr> _creatorsByType;
     std::recursive_mutex _creatorLock;

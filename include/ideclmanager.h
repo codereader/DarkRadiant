@@ -64,8 +64,6 @@ public:
     virtual void setParseStamp(std::size_t parseStamp) = 0;
 };
 
-using NamedDeclarations = std::map<std::string, IDeclaration::Ptr>;
-
 // Factory interface being able to create a single declaration type
 class IDeclarationCreator
 {
