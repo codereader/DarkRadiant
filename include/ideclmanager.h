@@ -111,6 +111,11 @@ public:
     // Returns an empty reference if no declaration with that name could be found
     virtual IDeclaration::Ptr findDeclaration(Type type, const std::string& name) = 0;
 
+    // Find the declaration with the given type and name, or creates a default declaration
+    // of the given type if nothing was found. Will always return a non-empty reference.
+    // Throws std::invalid_argument exception of the type has not even been registered
+    virtual IDeclaration::Ptr findOrCreateDeclaration(Type type, const std::string& name) = 0;
+
     // Iterate over all known declarations, using the given visitor
     virtual void foreachDeclaration(Type type, const std::function<void(const IDeclaration::Ptr&)>& functor) = 0;
 

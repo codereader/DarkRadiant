@@ -62,6 +62,7 @@ public:
     void unregisterDeclType(const std::string& typeName) override;
     void registerDeclFolder(Type defaultType, const std::string& inputFolder, const std::string& inputExtension) override;
     IDeclaration::Ptr findDeclaration(Type type, const std::string& name) override;
+    IDeclaration::Ptr findOrCreateDeclaration(Type type, const std::string& name) override;
     void foreachDeclaration(Type type, const std::function<void(const IDeclaration::Ptr&)>& functor) override;
     sigc::signal<void>& signal_DeclsReloaded(Type type) override;
     void reloadDeclarations() override;
@@ -84,10 +85,15 @@ private:
     std::map<std::string, Type> getTypenameMapping();
     bool tryDetermineBlockType(const DeclarationBlockSyntax& block, Type& type);
     void processParsedBlocks(std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks);
-    void createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block);
+
+    // Requires the creatorsMutex and the declarationMutex to be locked
+    const IDeclaration::Ptr& createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block);
     void doWithDeclarations(Type type, const std::function<void(const NamedDeclarations&)>& action);
     void handleUnrecognisedBlocks();
     void reloadDeclsCmd(const cmd::ArgumentList& args);
+
+    // Requires the creatorsMutex to be locked
+    std::string getTypenameByType(Type type);
 };
 
 }

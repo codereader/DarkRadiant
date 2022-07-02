@@ -92,6 +92,46 @@ IDeclaration::Ptr DeclarationManager::findDeclaration(Type type, const std::stri
     return returnValue;
 }
 
+IDeclaration::Ptr DeclarationManager::findOrCreateDeclaration(Type type, const std::string& name)
+{
+    IDeclaration::Ptr returnValue;
+
+    doWithDeclarations(type, [&](const NamedDeclarations& decls)
+    {
+        auto decl = decls.find(name);
+
+        if (decl != decls.end())
+        {
+            returnValue = decl->second;
+        }
+
+        // Nothing found, acquire the lock to create the new decl
+        std::lock_guard creatorLock(_creatorLock);
+
+        // Check if we even know that type, otherwise throw
+        if (_creatorsByType.count(type) == 0)
+        {
+            throw std::invalid_argument("Unregistered type " + getTypeName(type));
+        }
+
+        // Construct the default block
+        DeclarationBlockSyntax syntax;
+
+        syntax.typeName = getTypenameByType(type);
+        syntax.name = name;
+
+        returnValue = createOrUpdateDeclaration(type, syntax);
+    });
+
+    // If the value is still empty at this point, throw
+    if (!returnValue)
+    {
+        throw std::invalid_argument("Unregistered type " + getTypeName(type));
+    }
+
+    return returnValue;
+}
+
 void DeclarationManager::foreachDeclaration(Type type, const std::function<void(const IDeclaration::Ptr&)>& functor)
 {
     doWithDeclarations(type, [&](const NamedDeclarations& decls)
@@ -287,7 +327,7 @@ bool DeclarationManager::tryDetermineBlockType(const DeclarationBlockSyntax& blo
     return true;
 }
 
-void DeclarationManager::createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block)
+const IDeclaration::Ptr& DeclarationManager::createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block)
 {
     // Get the mapping for this decl type
     auto& map = _declarationsByType.try_emplace(type, Declarations()).first->second.decls;
@@ -307,7 +347,7 @@ void DeclarationManager::createOrUpdateDeclaration(Type type, const DeclarationB
             existing->second->getDeclName() << " has already been declared" << std::endl;
 
         // Any declaration following after the first is ignored
-        return;
+        return existing->second;
     }
 
     // Assign the block to the declaration instance
@@ -315,6 +355,8 @@ void DeclarationManager::createOrUpdateDeclaration(Type type, const DeclarationB
 
     // Update the parse stamp for this instance
     existing->second->setParseStamp(_parseStamp);
+
+    return existing->second;
 }
 
 void DeclarationManager::handleUnrecognisedBlocks()
@@ -336,6 +378,21 @@ void DeclarationManager::handleUnrecognisedBlocks()
         createOrUpdateDeclaration(type, *block);
         _unrecognisedBlocks.erase(block++);
     }
+}
+
+std::string DeclarationManager::getTypenameByType(Type type)
+{
+    auto creator = _creatorsByType.at(type);
+
+    for (const auto& [typeName, candidate] : _creatorsByTypename)
+    {
+        if (candidate == creator)
+        {
+            return typeName;
+        }
+    }
+
+    throw std::invalid_argument("Unregistered type: " + getTypeName(type));
 }
 
 const std::string& DeclarationManager::getName() const

@@ -321,6 +321,36 @@ TEST_F(DeclManagerTest, FindDeclaration)
               GlobalDeclarationManager().findDeclaration(decl::Type::Material, "Decl/eXporTTest/gUISURF1"));
 }
 
+TEST_F(DeclManagerTest, FindOrCreateDeclaration)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    EXPECT_TRUE(GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Material, "decl/exporttest/guisurf1"));
+    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/nonexistent")) <<
+        "decl/nonexistent should not be present in this test setup";
+
+    auto defaultDecl = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Material, "decl/nonexistent");
+    EXPECT_TRUE(defaultDecl) << "Declaration manager didn't create a defaulted declaration";
+
+    EXPECT_EQ(defaultDecl->getDeclType(), decl::Type::Material);
+    EXPECT_EQ(defaultDecl->getDeclName(), "decl/nonexistent");
+    EXPECT_EQ(defaultDecl->getBlockSyntax().contents, std::string());
+    EXPECT_EQ(defaultDecl->getBlockSyntax().fileInfo.visibility, vfs::Visibility::HIDDEN);
+
+    EXPECT_EQ(GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Material, "decl/nonexistent"), defaultDecl)
+        << "We expect the created declaration to be persistent";
+    EXPECT_EQ(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/nonexistent"), defaultDecl)
+        << "We expect the created declaration to be persistent";
+}
+
+TEST_F(DeclManagerTest, FindOrCreateUnknownDeclarationType)
+{
+    // Unknown types should yield an exception
+    EXPECT_THROW(GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::None, "decl/nonexistent"), std::invalid_argument);
+    EXPECT_THROW(GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Undetermined, "decl/nonexistent"), std::invalid_argument);
+}
+
 inline void expectMaterialIsPresent(decl::Type type, const std::string& declName)
 {
     EXPECT_TRUE(GlobalDeclarationManager().findDeclaration(type, declName))
