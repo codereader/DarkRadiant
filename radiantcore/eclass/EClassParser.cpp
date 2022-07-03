@@ -96,19 +96,6 @@ void EClassParser::resolveInheritance()
         // Tell the class to resolve its own inheritance using the given
         // map as a source for parent lookup
         pair.second->resolveInheritance(_entityClasses);
-
-        // If the entity has a model path ("model" key), lookup the actual
-        // model and apply its mesh and skin to this entity.
-        if (!pair.second->getModelPath().empty())
-        {
-            auto j = _modelDefs.find(pair.second->getModelPath());
-
-            if (j != _modelDefs.end())
-            {
-                pair.second->setModelPath(j->second->getMesh());
-                pair.second->setSkin(j->second->getSkin());
-            }
-        }
     }
 }
 

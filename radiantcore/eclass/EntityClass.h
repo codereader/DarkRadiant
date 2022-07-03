@@ -65,10 +65,6 @@ private:
     using EntityAttributeMap = std::map<std::string, EntityClassAttribute, string::ILess>;
     EntityAttributeMap _attributes;
 
-    // The model and skin for this entity class (if it has one)
-    std::string _model;
-    std::string _skin;
-
     // Flag to indicate inheritance resolved. An EntityClass resolves its
     // inheritance by copying all values from the parent onto the child,
     // after recursively instructing the parent to resolve its own inheritance.
@@ -141,21 +137,9 @@ public:
     std::string getAttributeDescription(const std::string& name) const override;
     void forEachAttribute(AttributeVisitor, bool) const override;
 
-    const std::string& getModelPath() const { return _model; }
-    const std::string& getSkin() const { return _skin; }
-
 	bool isOfType(const std::string& className) override;
 
     std::string getDefFileName() override;
-
-    /// Set a model on this entity class.
-    void setModelPath(const std::string& path) {
-        _fixedSize = true;
-        _model = path;
-    }
-
-    /// Set the skin.
-    void setSkin(const std::string& skin) { _skin = skin; }
 
     /**
      * Resolve inheritance for this class.

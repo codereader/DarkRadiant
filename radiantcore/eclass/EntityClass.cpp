@@ -299,18 +299,17 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
     }
     else
     {
-        rWarning() << "[eclassmgr] Entity class "
-                              << _name << " specifies unknown parent class "
-                              << parentName << std::endl;
+        rWarning() << "[eclassmgr] Entity class " << _name
+            << " specifies unknown parent class " << parentName << std::endl;
     }
 
     // Set the resolved flag
     _inheritanceResolved = true;
 
-    if (!getAttributeValue("model").empty())
+    if (!_fixedSize && !getAttributeValue("model").empty())
     {
-        // We have a model path (probably an inherited one)
-        setModelPath(getAttributeValue("model"));
+        // We have a model path (probably an inherited one), so this is treated as fixed-size class
+        _fixedSize = true;
     }
 
     if (getAttributeValue("editor_light") == "1" || getAttributeValue("spawnclass") == "idLight")
@@ -442,8 +441,6 @@ void EntityClass::clear()
     _fixedSize = false;
 
     _attributes.clear();
-    _model.clear();
-    _skin.clear();
     _inheritanceResolved = false;
 
     _modName = "base";
@@ -500,7 +497,7 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         // Handle some keys specially
         if (key == "model")
         {
-            setModelPath(os::standardPath(value));
+            _fixedSize = true;
         }
         else if (key == "editor_color")
         {
