@@ -230,7 +230,7 @@ IEntityNodePtr Doom3EntityModule::createEntityFromSelection(const std::string& n
     // Check for auto-setting key values. TODO: use forEachAttribute
     // directly here.
     eclass::AttributeList list = eclass::getSpawnargsWithPrefix(
-        *entityClass, "editor_setKeyValue"
+        entityClass, "editor_setKeyValue"
     );
 
     if (!list.empty())

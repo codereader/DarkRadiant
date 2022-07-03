@@ -20,7 +20,7 @@ void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass
 	// Read the arguments
 	// Find all attributes matching "argType", this spawnarg is mandatory
     eclass::AttributeList argTypes = eclass::getSpawnargsWithPrefix(
-        *eclass, "editor_argType"
+        eclass, "editor_argType"
     );
 
 	for (eclass::AttributeList::const_iterator i = argTypes.begin();

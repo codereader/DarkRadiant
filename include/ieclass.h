@@ -146,18 +146,18 @@ public:
     virtual const std::string& getName() const = 0;
 
     /// Get the parent entity class or NULL if there is no parent
-    virtual const IEntityClass* getParent() const = 0;
+    virtual IEntityClass* getParent() = 0;
 
     /// Get the UI visibility of this entity class
-    virtual vfs::Visibility getVisibility() const = 0;
+    virtual vfs::Visibility getVisibility() = 0;
 
     /// Query whether this entity class represents a light.
-    virtual bool isLight() const = 0;
+    virtual bool isLight() = 0;
 
     /* ENTITY CLASS SIZE */
 
     /// Query whether this entity has a fixed size.
-    virtual bool isFixedSize() const = 0;
+    virtual bool isFixedSize() = 0;
 
     /**
      * Return an AABB representing the declared size of this entity. This is
@@ -167,12 +167,12 @@ public:
      * AABB enclosing the "editor_mins" and "editor_maxs" points defined in the
      * entityDef.
      */
-    virtual AABB getBounds() const = 0;
+    virtual AABB getBounds() = 0;
 
     /* ENTITY CLASS COLOURS */
 
     /// Return the display colour of this entity class
-    virtual const Vector4& getColour() const = 0;
+    virtual const Vector4& getColour() = 0;
 
     // Overrides the colour defined in the .def files
     virtual void setColour(const Vector4& colour) = 0;
@@ -186,16 +186,16 @@ public:
      * not found.
      */
     virtual std::string getAttributeValue(const std::string& name,
-                                          bool includeInherited = true) const = 0;
+                                          bool includeInherited = true) = 0;
 
     // Returns the attribute type string for the given name.
     // This method will walk up the inheritance hierarchy until it encounters a type definition.
     // If no type is found, an empty string will be returned.
-    virtual std::string getAttributeType(const std::string& name) const = 0;
+    virtual std::string getAttributeType(const std::string& name) = 0;
 
     // Returns the attribute description string for the given name.
     // This method will walk up the inheritance hierarchy until it encounters a non-empty description.
-    virtual std::string getAttributeDescription(const std::string& name) const = 0;
+    virtual std::string getAttributeDescription(const std::string& name) = 0;
 
     /**
      * Function that will be invoked by forEachAttribute.
@@ -217,7 +217,7 @@ public:
      * true if editor keys (those which start with "editor_") should be passed
      * to the visitor, false if they should be skipped.
      */
-    virtual void forEachAttribute(AttributeVisitor visitor, bool editorKeys = false) const = 0;
+    virtual void forEachAttribute(AttributeVisitor visitor, bool editorKeys = false) = 0;
 
 	/**
 	 * Returns true if this entity is of type or inherits from the

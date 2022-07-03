@@ -64,7 +64,7 @@ void AasFileManager::ensureAasTypesLoaded()
 
     if (aasTypesClass)
     {
-        eclass::AttributeList list = eclass::getSpawnargsWithPrefix(*aasTypesClass, "type");
+        eclass::AttributeList list = eclass::getSpawnargsWithPrefix(aasTypesClass, "type");
 
         for (const EntityClassAttribute& attr : list)
         {

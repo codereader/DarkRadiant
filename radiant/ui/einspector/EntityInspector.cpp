@@ -1409,7 +1409,7 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
     if (selectedKey == "classname")
     {
         // #5621: Show the editor_usage string when the classname is selected
-        setHelpText(eclass::getUsage(*eclass));
+        setHelpText(eclass::getUsage(eclass));
         return;
     }
 

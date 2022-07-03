@@ -356,7 +356,7 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass)
 
     // Set the usage panel to the IEntityClass' usage information string
     auto* usageText = findNamedObject<wxTextCtrl>(this, "EntityClassChooserUsageText");
-    usageText->SetValue(e ? eclass::getUsage(*e) : "");
+    usageText->SetValue(e ? eclass::getUsage(e) : "");
 }
 
 void EntityClassChooser::updateSelection()

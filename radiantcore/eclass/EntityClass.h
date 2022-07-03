@@ -81,6 +81,8 @@ private:
     bool _parsed;
 
 private:
+    void ensureParsed();
+
     // Clear all contents (done before parsing from tokens)
     void clear();
     void parseEditorSpawnarg(const std::string& key, const std::string& value);
@@ -107,35 +109,28 @@ public:
 
     Type getClassType() override;
 
-    const std::string& getDeclName() const override
-    {
-        return getName();
-    }
-
-    decl::Type getDeclType() const override
-    {
-        return decl::Type::EntityDef;
-    }
+    const std::string& getDeclName() const override;
+    decl::Type getDeclType() const override;
 
     void emplaceAttribute(EntityClassAttribute&& attribute);
 
     // IEntityClass implementation
     const std::string& getName() const override;
-    const IEntityClass* getParent() const override;
-    vfs::Visibility getVisibility() const override;
+    IEntityClass* getParent() override;
+    vfs::Visibility getVisibility() override;
     sigc::signal<void>& changedSignal() override;
-    bool isFixedSize() const override;
-    AABB getBounds() const override;
-    bool isLight() const override;
-    const Vector4& getColour() const override;
+    bool isFixedSize() override;
+    AABB getBounds() override;
+    bool isLight() override;
+    const Vector4& getColour() override;
     /// Set the display colour
     void setColour(const Vector4& colour) override;
     // Resets the colour to the value defined in the attributes
     void resetColour();
-    std::string getAttributeValue(const std::string&, bool includeInherited = true) const override;
-    std::string getAttributeType(const std::string& name) const override;
-    std::string getAttributeDescription(const std::string& name) const override;
-    void forEachAttribute(AttributeVisitor, bool) const override;
+    std::string getAttributeValue(const std::string&, bool includeInherited = true) override;
+    std::string getAttributeType(const std::string& name) override;
+    std::string getAttributeDescription(const std::string& name) override;
+    void forEachAttribute(AttributeVisitor, bool) override;
 
 	bool isOfType(const std::string& className) override;
 

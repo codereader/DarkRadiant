@@ -206,7 +206,7 @@ TEST_F(EntityClassTest, MultiLineEditorUsage)
     EXPECT_NE(eclass->getAttributeValue("editor_usage1"), "");
     EXPECT_NE(eclass->getAttributeValue("editor_usage2"), "");
 
-    auto editor_usage = eclass::getUsage(*eclass);
+    auto editor_usage = eclass::getUsage(eclass);
 
     std::vector<std::string> singleAttributes =
     {

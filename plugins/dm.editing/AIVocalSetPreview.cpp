@@ -67,7 +67,7 @@ void AIVocalSetPreview::update()
 	if (_vocalSetDef != NULL)
 	{
         eclass::AttributeList sndAttrs = eclass::getSpawnargsWithPrefix(
-            *_vocalSetDef, "snd_"
+            _vocalSetDef, "snd_"
         );
 
 		for (eclass::AttributeList::const_iterator i = sndAttrs.begin();

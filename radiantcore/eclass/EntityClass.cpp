@@ -38,17 +38,27 @@ EntityClass::~EntityClass()
     _parentChangedConnection.disconnect();
 }
 
-const std::string& EntityClass::getName() const
+const std::string& EntityClass::getDeclName() const
 {
     return _name;
 }
 
-const IEntityClass* EntityClass::getParent() const
+decl::Type EntityClass::getDeclType() const
+{
+    return decl::Type::EntityDef;
+}
+
+const std::string& EntityClass::getName() const
+{
+    return getDeclName();
+}
+
+IEntityClass* EntityClass::getParent()
 {
     return _parent;
 }
 
-vfs::Visibility EntityClass::getVisibility() const
+vfs::Visibility EntityClass::getVisibility()
 {
     return _visibility.get();
 }
@@ -72,7 +82,7 @@ void EntityClass::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& bloc
     }
 }
 
-bool EntityClass::isFixedSize() const
+bool EntityClass::isFixedSize()
 {
     if (_fixedSize) {
         return true;
@@ -85,7 +95,7 @@ bool EntityClass::isFixedSize() const
     }
 }
 
-AABB EntityClass::getBounds() const
+AABB EntityClass::getBounds()
 {
     if (isFixedSize())
     {
@@ -127,7 +137,7 @@ EntityClass::Type EntityClass::getClassType()
     return Type::Generic;
 }
 
-bool EntityClass::isLight() const
+bool EntityClass::isLight()
 {
     return _isLight;
 }
@@ -181,7 +191,7 @@ void EntityClass::resetColour()
     setColour(DefaultEntityColour);
 }
 
-const Vector4& EntityClass::getColour() const
+const Vector4& EntityClass::getColour()
 {
     return _colour;
 }
@@ -245,7 +255,7 @@ void EntityClass::forEachAttributeInternal(InternalAttrVisitor visitor,
 }
 
 void EntityClass::forEachAttribute(AttributeVisitor visitor,
-                                   bool editorKeys) const
+                                   bool editorKeys)
 {
     // First compile a map of all attributes we need to pass to the visitor,
     // ensuring that there is only one attribute per name (i.e. we don't want to
@@ -339,8 +349,8 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
 
 bool EntityClass::isOfType(const std::string& className)
 {
-	for (const IEntityClass* currentClass = this;
-         currentClass != NULL;
+	for (IEntityClass* currentClass = this;
+         currentClass != nullptr;
          currentClass = currentClass->getParent())
     {
         if (currentClass->getName() == className)
@@ -384,7 +394,7 @@ const EntityClassAttribute* EntityClass::getAttribute(const std::string& name, b
     return _parent->getAttribute(name);
 }
 
-std::string EntityClass::getAttributeValue(const std::string& name, bool includeInherited) const
+std::string EntityClass::getAttributeValue(const std::string& name, bool includeInherited)
 {
     if (auto* attr = getAttribute(name, includeInherited); attr)
         return attr->getValue();
@@ -392,7 +402,7 @@ std::string EntityClass::getAttributeValue(const std::string& name, bool include
         return "";
 }
 
-std::string EntityClass::getAttributeType(const std::string& name) const
+std::string EntityClass::getAttributeType(const std::string& name)
 {
     // Check the attributes on this class
     const auto& attribute = _attributes.find(name);
@@ -411,7 +421,7 @@ std::string EntityClass::getAttributeType(const std::string& name) const
     return _parent ? _parent->getAttributeType(name) : "";
 }
 
-std::string EntityClass::getAttributeDescription(const std::string& name) const
+std::string EntityClass::getAttributeDescription(const std::string& name) 
 {
     // Check the attributes on this class first
     const auto& attribute = _attributes.find(name);
@@ -428,6 +438,16 @@ std::string EntityClass::getAttributeDescription(const std::string& name) const
 
     // Walk up the inheritance tree until we spot a non-empty description
     return _parent ? _parent->getAttributeDescription(name) : "";
+}
+
+void EntityClass::ensureParsed()
+{
+    if (_parsed) return;
+
+    _parsed = true;
+
+    parser::BasicDefTokeniser<std::string> tokeniser(getBlockSyntax().contents);
+    parseFromTokens(tokeniser);
 }
 
 void EntityClass::clear()
