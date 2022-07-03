@@ -10,6 +10,7 @@ add_executable(drtest
                DeclManager.cpp
                DefBlockTokeniser.cpp
                Entity.cpp
+               EntityClass.cpp
                Favourites.cpp
                FileTypes.cpp
                GeometryStore.cpp

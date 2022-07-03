@@ -91,6 +91,7 @@
     <ClCompile Include="..\..\..\test\DeclManager.cpp" />
     <ClCompile Include="..\..\..\test\DefBlockTokeniser.cpp" />
     <ClCompile Include="..\..\..\test\Entity.cpp" />
+    <ClCompile Include="..\..\..\test\EntityClass.cpp" />
     <ClCompile Include="..\..\..\test\EntityInspector.cpp" />
     <ClCompile Include="..\..\..\test\Favourites.cpp" />
     <ClCompile Include="..\..\..\test\FileTypes.cpp" />

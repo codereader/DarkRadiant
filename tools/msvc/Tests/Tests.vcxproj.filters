@@ -61,6 +61,7 @@
     <ClCompile Include="..\..\..\test\DeclManager.cpp" />
     <ClCompile Include="..\..\..\test\SoundManager.cpp" />
     <ClCompile Include="..\..\..\test\DefBlockTokeniser.cpp" />
+    <ClCompile Include="..\..\..\test\EntityClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
