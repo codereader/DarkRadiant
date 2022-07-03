@@ -19,9 +19,7 @@ public:
 
     decl::IDeclaration::Ptr createDeclaration(const std::string& name) override
     {
-        // greebo: Changed fallback behaviour when unknown entites are encountered to isFixedSize == FALSE
-        // so that brushes of unknown entites don't get lost (issue #240)
-        return EntityClass::CreateDefault(name, false);
+        return EntityClass::CreateDefault(name);
     }
 };
 

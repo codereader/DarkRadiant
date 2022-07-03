@@ -187,9 +187,11 @@ void EntityClass::emplaceAttribute(EntityClassAttribute&& attribute)
     }
 }
 
-EntityClass::Ptr EntityClass::CreateDefault(const std::string& name, bool fixedSize)
+EntityClass::Ptr EntityClass::CreateDefault(const std::string& name)
 {
-    auto eclass = std::make_shared<EntityClass>(name, vfs::FileInfo(), fixedSize);
+    // greebo: Changed fallback behaviour when unknown entites are encountered to isFixedSize == FALSE
+    // so that brushes of unknown entites don't get lost (issue #240)
+    auto eclass = std::make_shared<EntityClass>(name, vfs::FileInfo(), false);
 
     // Force the entity class colour to default
     eclass->setColour(UndefinedColour);

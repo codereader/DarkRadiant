@@ -108,7 +108,7 @@ public:
     ~EntityClass();
 
     /// Create a heap-allocated default/empty EntityClass
-    static Ptr CreateDefault(const std::string& name, bool fixedSize);
+    static Ptr CreateDefault(const std::string& name);
 
     const std::string& getDeclName() const override
     {
