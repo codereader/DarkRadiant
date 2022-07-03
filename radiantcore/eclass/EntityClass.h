@@ -53,8 +53,9 @@ private:
     // Should this entity type be treated as a light?
     bool _isLight = false;
 
-    // Colour of this entity and flag to indicate it has been specified
+    // Colour of this entity
     Vector4 _colour;
+
     bool _colourTransparent = false;
 
     // Does this entity have a fixed size?
@@ -62,7 +63,7 @@ private:
 
     // Map of named EntityAttribute structures. EntityAttributes are picked
     // up from the DEF file during parsing. Ignores key case.
-    typedef std::map<std::string, EntityClassAttribute, string::ILess> EntityAttributeMap;
+    using EntityAttributeMap = std::map<std::string, EntityClassAttribute, string::ILess>;
     EntityAttributeMap _attributes;
 
     // The model and skin for this entity class (if it has one)
@@ -80,7 +81,9 @@ private:
     // Emitted when contents are reloaded
     sigc::signal<void> _changedSignal;
     bool _blockChangeSignal = false;
-    std::optional<sigc::connection> _parentChangedConnection;
+    sigc::connection _parentChangedConnection;
+
+    bool _parsed;
 
 private:
     // Clear all contents (done before parsing from tokens)
@@ -105,8 +108,10 @@ public:
     /// Construct an EntityClass with a given FileInfo.
     EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize = false);
 
+    ~EntityClass();
+
     /// Create a heap-allocated default/empty EntityClass
-    static EntityClass::Ptr createDefault(const std::string& name, bool brushes);
+    static Ptr createDefault(const std::string& name, bool brushes);
 
     const std::string& getDeclName() const override
     {
@@ -138,8 +143,10 @@ public:
     std::string getAttributeDescription(const std::string& name) const override;
     void forEachAttribute(AttributeVisitor, bool) const override;
 
+#if 0
     const std::string& getModelPath() const override { return _model; }
     const std::string& getSkin() const override { return _skin; }
+#endif
 
 	bool isOfType(const std::string& className) override;
 
@@ -161,7 +168,7 @@ public:
      * A reference to the global map of entity classes, which should be searched
      * for the parent entity.
      */
-    typedef std::map<std::string, EntityClass::Ptr> EntityClasses;
+    typedef std::map<std::string, Ptr> EntityClasses;
     void resolveInheritance(EntityClasses& classmap);
 
     /**
@@ -193,6 +200,9 @@ public:
     {
         _blockChangeSignal = block;
     }
+
+protected:
+    void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block) override;
 };
 
 }

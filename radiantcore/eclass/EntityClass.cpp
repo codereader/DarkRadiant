@@ -26,13 +26,19 @@ EntityClass::EntityClass(const std::string& name, bool fixedSize)
                                                                        : vfs::Visibility::NORMAL;
   }),
   _colour(UndefinedColour),
-  _fixedSize(fixedSize)
+  _fixedSize(fixedSize),
+  _parsed(false)
 {}
 
 EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize)
 : EntityClass(name, fixedSize)
 {
     _fileInfo = fileInfo;
+}
+
+EntityClass::~EntityClass()
+{
+    _parentChangedConnection.disconnect();
 }
 
 const std::string& EntityClass::getName() const
@@ -53,6 +59,20 @@ vfs::Visibility EntityClass::getVisibility() const
 sigc::signal<void>& EntityClass::changedSignal()
 {
     return _changedSignal;
+}
+
+void EntityClass::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
+{
+    bool hasBeenInUse = _parsed;
+
+    _parsed = false;
+    clear();
+
+    // Unparsed eclasses aren't really referenced, no need to notify
+    if (hasBeenInUse)
+    {
+        emitChangedSignal();
+    }
 }
 
 bool EntityClass::isFixedSize() const
@@ -287,9 +307,7 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
     {
         // resolveInheritance() can be called more than once (e.g. after Reload Defs) so make sure
         // we only have a single connection to the parent's changed signal.
-        if (_parentChangedConnection) {
-            _parentChangedConnection->disconnect();
-        }
+        _parentChangedConnection.disconnect();
         _parentChangedConnection = _parent->changedSignal().connect(
             sigc::mem_fun(this, &EntityClass::resetColour)
         );
@@ -407,8 +425,7 @@ void EntityClass::clear()
     _modName = "base";
 }
 
-void EntityClass::parseEditorSpawnarg(const std::string& key,
-                                           const std::string& value)
+void EntityClass::parseEditorSpawnarg(const std::string& key, const std::string& value)
 {
     // "editor_yyy" represents an attribute that may be set on this
     // entity. Construct a value-less EntityClassAttribute to add to

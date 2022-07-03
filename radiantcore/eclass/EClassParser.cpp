@@ -97,6 +97,7 @@ void EClassParser::resolveInheritance()
         // map as a source for parent lookup
         pair.second->resolveInheritance(_entityClasses);
 
+#if 0
         // If the entity has a model path ("model" key), lookup the actual
         // model and apply its mesh and skin to this entity.
         if (!pair.second->getModelPath().empty())
@@ -109,6 +110,7 @@ void EClassParser::resolveInheritance()
                 pair.second->setSkin(j->second->getSkin());
             }
         }
+#endif
     }
 }
 

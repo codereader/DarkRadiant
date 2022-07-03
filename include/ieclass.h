@@ -207,7 +207,7 @@ public:
     virtual void forEachAttribute(AttributeVisitor visitor, bool editorKeys = false) const = 0;
 
     /* MODEL AND SKIN */
-
+#if 0
     /** Retrieve the model path for this entity.
      *
      * @returns
@@ -217,7 +217,7 @@ public:
 
     /// Get the model skin, or the empty string if there is no skin.
     virtual const std::string& getSkin() const = 0;
-
+#endif
 	/**
 	 * Returns true if this entity is of type or inherits from the
 	 * given entity class name. className is treated case-sensitively.
