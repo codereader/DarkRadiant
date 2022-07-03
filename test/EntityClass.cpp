@@ -8,6 +8,8 @@
 #include "string/join.h"
 
 #include "algorithm/Entity.h"
+#include "algorithm/FileUtils.h"
+#include "algorithm/Scene.h"
 
 namespace test
 {
@@ -485,6 +487,29 @@ TEST_F(EntityClassTest, AnimInheritance)
     EXPECT_EQ(a_cooler_model->getAnim("af_pose"), some_other_model->getAnim("af_pose"));
     EXPECT_EQ(a_cooler_model->getAnim("idle"), "models/md5/a_cooler_idle.md5anim");
     EXPECT_EQ(a_cooler_model->getAnim("new_anim"), some_other_model->getAnim("new_anim"));
+}
+
+// Loading an entity of unknown class shouldn't dismiss any primitives
+TEST_F(EntityClassTest, MissingEntityClassPreservesPrimitives)
+{
+    std::string mapName = "missing_entitydef.map";
+    GlobalCommandSystem().executeCommand("OpenMap", mapName);
+
+    auto mapTextBeforeSaving = algorithm::loadTextFromVfsFile("maps/" + mapName);
+
+    // Find the entity whose class is unknown
+    auto entity = algorithm::getEntityByName(GlobalMapModule().getRoot(), "missing_entityclass_1");
+    EXPECT_TRUE(entity) << "Couldn't find the entity 'missing_entityclass_1' in this map";
+
+    EXPECT_EQ(algorithm::getChildCount(entity, algorithm::brushHasMaterial("textures/common/caulk")), 2)
+        << "Expected 2 brushes to carry the caulk material";
+    EXPECT_EQ(algorithm::getChildCount(entity, algorithm::patchHasMaterial("textures/common/caulk")), 1)
+        << "Expected 1 patch to carry the caulk material";
+
+    GlobalCommandSystem().executeCommand("SaveMap");
+
+    EXPECT_EQ(algorithm::loadTextFromVfsFile("maps/" + mapName), mapTextBeforeSaving)
+        << "Map file contents are different after saving the map with the missing entityDef reference";
 }
 
 }

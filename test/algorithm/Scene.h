@@ -60,6 +60,11 @@ inline std::function<bool(const scene::INodePtr&)> brushHasMaterial(const std::s
     return [material](const scene::INodePtr& node) { return Node_isBrush(node) && Node_getIBrush(node)->hasShader(material); };
 }
 
+inline std::function<bool(const scene::INodePtr&)> patchHasMaterial(const std::string& material)
+{
+    return [material](const scene::INodePtr& node) { return Node_isPatch(node) && Node_getIPatch(node)->getShader() == material; };
+}
+
 // Finds the first matching child brush of the given parent node, with any of the brush's faces matching the given material
 inline scene::INodePtr findFirstBrushWithMaterial(const scene::INodePtr& parent, const std::string& material)
 {

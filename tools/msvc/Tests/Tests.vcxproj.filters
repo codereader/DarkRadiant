@@ -112,6 +112,9 @@
     <ClInclude Include="..\..\..\test\testutil\TemporaryFile.h">
       <Filter>testutil</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\algorithm\FileUtils.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="algorithm">
