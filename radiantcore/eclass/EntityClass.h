@@ -102,16 +102,13 @@ private:
 
 public:
 
-    /// Construct an EntityClass with no FileInfo.
-    EntityClass(const std::string& name, bool isFixedSize = false);
-
     /// Construct an EntityClass with a given FileInfo.
-    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize = false);
+    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
 
     ~EntityClass();
 
     /// Create a heap-allocated default/empty EntityClass
-    static Ptr createDefault(const std::string& name, bool brushes);
+    static Ptr CreateDefault(const std::string& name, bool fixedSize);
 
     const std::string& getDeclName() const override
     {

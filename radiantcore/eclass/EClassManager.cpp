@@ -59,9 +59,9 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
         return eclass;
 
     // Otherwise insert the new EntityClass.
-    // greebo: Changed fallback behaviour when unknown entites are encountered to TRUE
+    // greebo: Changed fallback behaviour when unknown entites are encountered to isFixedSize == FALSE
     // so that brushes of unknown entites don't get lost (issue #240)
-    eclass = EntityClass::createDefault(lName, true);
+    eclass = EntityClass::CreateDefault(lName, false);
 
     // Any overrides should also apply to entityDefs that are crated on the fly
     GlobalEclassColourManager().applyColours(*eclass);

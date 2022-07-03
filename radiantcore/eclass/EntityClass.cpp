@@ -17,8 +17,9 @@ namespace
     const Vector4 UndefinedColour(-1, -1, -1, -1);
 }
 
-EntityClass::EntityClass(const std::string& name, bool fixedSize)
+EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize)
 : _name(name),
+  _fileInfo(fileInfo),
   _visibility([this]() {
       // Entity class visibility is NOT inherited -- hiding an abstract base entity from the list
       // does not imply all of its concrete subclasses should also be hidden.
@@ -29,12 +30,6 @@ EntityClass::EntityClass(const std::string& name, bool fixedSize)
   _fixedSize(fixedSize),
   _parsed(false)
 {}
-
-EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize)
-: EntityClass(name, fixedSize)
-{
-    _fileInfo = fileInfo;
-}
 
 EntityClass::~EntityClass()
 {
@@ -192,9 +187,9 @@ void EntityClass::emplaceAttribute(EntityClassAttribute&& attribute)
     }
 }
 
-EntityClass::Ptr EntityClass::createDefault(const std::string& name, bool brushes)
+EntityClass::Ptr EntityClass::CreateDefault(const std::string& name, bool fixedSize)
 {
-    auto eclass = std::make_shared<EntityClass>(name, !brushes);
+    auto eclass = std::make_shared<EntityClass>(name, vfs::FileInfo(), fixedSize);
 
     // Force the entity class colour to default
     eclass->setColour(UndefinedColour);
