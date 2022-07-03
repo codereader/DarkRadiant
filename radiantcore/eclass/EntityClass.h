@@ -140,10 +140,8 @@ public:
     std::string getAttributeDescription(const std::string& name) const override;
     void forEachAttribute(AttributeVisitor, bool) const override;
 
-#if 0
-    const std::string& getModelPath() const override { return _model; }
-    const std::string& getSkin() const override { return _skin; }
-#endif
+    const std::string& getModelPath() const { return _model; }
+    const std::string& getSkin() const { return _skin; }
 
 	bool isOfType(const std::string& className) override;
 
