@@ -60,40 +60,32 @@ IEntityNodePtr createNodeForEntity(const IEntityClassPtr& eclass)
 	if (!eclass)
 	{
 		throw std::runtime_error(
-			_("createNodeForEntity(): "
-			  "cannot create entity for NULL entityclass.")
+			_("createNodeForEntity(): cannot create entity for NULL entityclass.")
 		);
 	}
 
-	// Otherwise create the correct entity subclass based on the entity class
-	// parameters.
-	EntityNodePtr node;
+    // Otherwise create the correct entity subclass based on the entity class parameters.
+    switch (eclass->getClassType())
+    {
+    case IEntityClass::Type::Light:
+        return LightNode::Create(eclass);
 
-	if (eclass->isLight())
-	{
-		node = LightNode::Create(eclass);
-	}
-	else if (!eclass->isFixedSize())
-	{
-		// Variable size entity
-		node = StaticGeometryNode::Create(eclass);
-	}
-	else if (!eclass->getAttributeValue("model").empty())
-	{
-		// Fixed size, has model path
-		node = EclassModelNode::Create(eclass);
-	}
-	else if (eclass->getName() == "speaker")
-	{
-		node = SpeakerNode::create(eclass);
-	}
-	else
-	{
-		// Fixed size, no model path
-		node = GenericEntityNode::Create(eclass);
-	}
+    case IEntityClass::Type::StaticGeometry:
+        return StaticGeometryNode::Create(eclass); // Variable size entity
 
-	return node;
+    case IEntityClass::Type::EntityClassModel:
+        return EclassModelNode::Create(eclass); // Fixed size, has model path
+
+    case IEntityClass::Type::Speaker:
+        return SpeakerNode::create(eclass);
+
+    case IEntityClass::Type::Generic:
+        return GenericEntityNode::Create(eclass); // Fixed size, no model path
+
+	default:
+        throw std::invalid_argument("Entity class type " + 
+            string::to_string(static_cast<int>(eclass->getClassType())) + " is not supported");
+    }
 }
 
 IEntityNodePtr Doom3EntityModule::createEntity(const IEntityClassPtr& eclass)
