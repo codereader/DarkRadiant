@@ -100,6 +100,33 @@ AABB EntityClass::getBounds() const
     }
 }
 
+EntityClass::Type EntityClass::getClassType()
+{
+    if (isLight())
+    {
+        return Type::Light;
+    }
+
+    if (!isFixedSize())
+    {
+        // Variable size entity
+        return Type::StaticGeometry;
+    }
+    
+    if (!getAttributeValue("model").empty())
+    {
+        // Fixed size, has model path
+        return Type::EntityClassModel;
+    }
+    
+    if (getName() == "speaker")
+    {
+        return Type::Speaker;
+    }
+
+    return Type::Generic;
+}
+
 bool EntityClass::isLight() const
 {
     return _isLight;

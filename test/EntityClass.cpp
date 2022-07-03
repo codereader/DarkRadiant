@@ -30,29 +30,122 @@ TEST_F(EntityClassTest, LookupEntityClass)
         GlobalEntityClassManager().findClass("LiGHT")) << "Lookup should be case-insensitive";
 }
 
-TEST_F(EntityClassTest, LightEntitiesRecognisedAsLights)
+TEST_F(EntityClassTest, LightEntityRecognition)
 {
     // The 'light' class should be recognised as an actual light
     auto lightCls = GlobalEntityClassManager().findClass("light");
     EXPECT_TRUE(lightCls->isLight());
+    EXPECT_EQ(lightCls->getClassType(), IEntityClass::Type::Light);
 
     // Things which are not lights should also be correctly identified
     auto notLightCls = GlobalEntityClassManager().findClass("dr:entity_using_modeldef");
     EXPECT_TRUE(notLightCls);
     EXPECT_FALSE(notLightCls->isLight());
+    EXPECT_NE(notLightCls->getClassType(), IEntityClass::Type::Light);
 
     // Anything deriving from the light class should also be a light
     auto derived1 = GlobalEntityClassManager().findClass("atdm:light_base");
     EXPECT_TRUE(derived1->isLight());
+    EXPECT_EQ(derived1->getClassType(), IEntityClass::Type::Light);
 
     // Second level derivations too
     auto derived2 = GlobalEntityClassManager().findClass("light_extinguishable");
     EXPECT_TRUE(derived2->isLight());
+    EXPECT_EQ(derived2->getClassType(), IEntityClass::Type::Light);
 
     // torch_brazier is not a light itself, but has a light attached, so it
     // should not have isLight() == true
     auto brazier = GlobalEntityClassManager().findClass("atdm:torch_brazier");
     EXPECT_FALSE(brazier->isLight());
+    EXPECT_NE(brazier->getClassType(), IEntityClass::Type::Light);
+}
+
+TEST_F(EntityClassTest, SpeakerEntityRecognition)
+{
+    // The 'speaker' class should be recognised as speaker
+    auto speakerClass = GlobalEntityClassManager().findClass("speaker");
+    EXPECT_TRUE(speakerClass) << "Couldn't find the speaker eclass";
+    EXPECT_EQ(speakerClass->getClassType(), IEntityClass::Type::Speaker);
+}
+
+TEST_F(EntityClassTest, EclassModelEntityRecognition)
+{
+    // Any eclass with a "model" spawnarg qualifies, as long as it's "fixed size"
+
+    auto modelClass = GlobalEntityClassManager().findClass("dr:entity_using_modeldef");
+
+    EXPECT_TRUE(modelClass) << "Couldn't find the dr:entity_using_modeldef eclass";
+    EXPECT_EQ(modelClass->getClassType(), IEntityClass::Type::EntityClassModel);
+    EXPECT_TRUE(modelClass->isFixedSize());
+
+    // "model" key set explicitly
+    auto bucket = GlobalEntityClassManager().findClass("bucket_metal");
+
+    // Deriving the "model" key also makes this an eclass model
+    auto bucket2 = GlobalEntityClassManager().findClass("bucket_metal2");
+
+    EXPECT_NE(bucket->getAttributeValue("model"), "") << "bucket_metal should have a model";
+    EXPECT_NE(bucket2->getAttributeValue("model"), "") << "bucket_metal2 should have an inherited model key";
+    EXPECT_EQ(bucket2->getAttributeValue("model", false), "") << "bucket_metal2 should not have a model key set explicitly";
+
+    EXPECT_EQ(bucket->getClassType(), IEntityClass::Type::EntityClassModel);
+    EXPECT_TRUE(bucket->isFixedSize());
+
+    EXPECT_EQ(bucket2->getClassType(), IEntityClass::Type::EntityClassModel);
+    EXPECT_TRUE(bucket2->isFixedSize());
+}
+
+TEST_F(EntityClassTest, GenericEntityRecognition)
+{
+    // Any fixed-size eclass without "model" spawnarg, and neither a speaker or light
+
+    auto playerStart = GlobalEntityClassManager().findClass("info_player_start");
+    EXPECT_TRUE(playerStart) << "Couldn't find the info_player_start eclass";
+    EXPECT_EQ(playerStart->getClassType(), IEntityClass::Type::Generic);
+    EXPECT_TRUE(playerStart->isFixedSize());
+    EXPECT_EQ(playerStart->getAttributeValue("editor_mins", false), "-16 -16 0") << "editor_mins should be set to a vector";
+    EXPECT_EQ(playerStart->getAttributeValue("editor_maxs", false), "16 16 64") << "editor_maxs should be set to a vector";
+
+    // Deriving the editor_mins/maxs should work too
+    auto derived = GlobalEntityClassManager().findClass("derived_from_info_player_start");
+    EXPECT_TRUE(derived) << "Couldn't find the derived_from_info_player_start eclass";
+    EXPECT_EQ(derived->getClassType(), IEntityClass::Type::Generic);
+    EXPECT_TRUE(derived->isFixedSize());
+    EXPECT_EQ(derived->getAttributeValue("editor_mins", false), "") << "editor_mins should not be set explicitly";
+    EXPECT_EQ(derived->getAttributeValue("editor_maxs", false), "") << "editor_maxs should not be set explicitly";
+}
+
+TEST_F(EntityClassTest, StaticGeometryEntityRecognition)
+{
+    // Any variable-sized eclass (no editor_mins/maxs or them set to "?")
+    auto variableSized = GlobalEntityClassManager().findClass("variable_size_entity");
+    EXPECT_TRUE(variableSized) << "Couldn't find the variable_size_entity eclass";
+    EXPECT_EQ(variableSized->getAttributeValue("editor_mins", false), "?") << "Expected editor_mins to be set explicitly";
+    EXPECT_EQ(variableSized->getAttributeValue("editor_maxs", false), "?") << "Expected editor_maxs to be set explicitly";
+    EXPECT_EQ(variableSized->getClassType(), IEntityClass::Type::StaticGeometry);
+    EXPECT_FALSE(variableSized->isFixedSize());
+
+    // Deriving the "?" editor_mins/maxs should work too
+    auto derived = GlobalEntityClassManager().findClass("derived_from_variable_size_entity");
+    EXPECT_TRUE(derived) << "Couldn't find the derived_from_variable_size_entity eclass";
+    EXPECT_EQ(derived->getAttributeValue("editor_mins", false), "") << "Didn't expect editor_mins to be set explicitly";
+    EXPECT_EQ(derived->getAttributeValue("editor_maxs", false), "") << "Didn't expect editor_maxs to be set explicitly";
+    EXPECT_EQ(derived->getClassType(), IEntityClass::Type::StaticGeometry);
+    EXPECT_FALSE(derived->isFixedSize());
+
+    auto func_static = GlobalEntityClassManager().findClass("func_static");
+    EXPECT_TRUE(func_static) << "Couldn't find the func_static eclass";
+    EXPECT_EQ(func_static->getClassType(), IEntityClass::Type::StaticGeometry);
+    EXPECT_FALSE(func_static->isFixedSize());
+}
+
+TEST_F(EntityClassTest, UnknownEntityClassIsStaticGeometry)
+{
+    // When inserting an unknown entity, we expect to receive a variable-sized entity class
+    auto nonExistent = GlobalEntityClassManager().findOrInsert("some_non_existent_entity_class", true);
+    EXPECT_TRUE(nonExistent) << "Couldn't create the some_non_existent_entity_class eclass";
+    EXPECT_EQ(nonExistent->getClassType(), IEntityClass::Type::StaticGeometry);
+    EXPECT_FALSE(nonExistent->isFixedSize());
 }
 
 TEST_F(EntityClassTest, EntityClassInheritsAttributes)

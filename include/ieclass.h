@@ -126,6 +126,19 @@ class IEntityClass :
 public:
     virtual ~IEntityClass() {}
 
+    // Enumeration of types DarkRadiant is capable of distinguishing when creating entities
+    enum class Type
+    {
+        Generic,            // fixed-size, coloured boxes with and without arrow
+        StaticGeometry,     // func_* entities supporting primitives (like worldspawn)
+        EntityClassModel,   // non-fixed size entities with a non-empty "model" key set
+        Light,              // all classes with editor_light/idLight or inheriting from them
+        Speaker,            // special class used for "speaker" entityDefs
+    };
+
+    // Returns the type of this entity class (as determined after parsing)
+    virtual Type getClassType() = 0;
+
     /// Signal emitted when entity class contents are changed or reloaded
     virtual sigc::signal<void>& changedSignal() = 0;
 

@@ -36,7 +36,6 @@ public:
     using Ptr = std::shared_ptr<EntityClass>;
 
 private:
-
     // The name of this entity class
     std::string _name;
 
@@ -109,6 +108,8 @@ public:
 
     /// Create a heap-allocated default/empty EntityClass
     static Ptr CreateDefault(const std::string& name);
+
+    Type getClassType() override;
 
     const std::string& getDeclName() const override
     {
