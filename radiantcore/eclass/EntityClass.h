@@ -102,8 +102,8 @@ private:
 
 public:
 
-    /// Construct an EntityClass with a given FileInfo.
-    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize);
+    /// Construct an EntityClass with a given FileInfo
+    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo);
 
     ~EntityClass();
 

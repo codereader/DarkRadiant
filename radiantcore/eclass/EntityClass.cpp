@@ -17,7 +17,7 @@ namespace
     const Vector4 UndefinedColour(-1, -1, -1, -1);
 }
 
-EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize)
+EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo)
 : _name(name),
   _fileInfo(fileInfo),
   _visibility([this]() {
@@ -27,7 +27,9 @@ EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo,
                                                                        : vfs::Visibility::NORMAL;
   }),
   _colour(UndefinedColour),
-  _fixedSize(fixedSize),
+  // greebo: Changed default behaviour when unknown entites are encountered to isFixedSize == FALSE
+  // so that brushes of unknown classes don't get lost (issue #240)
+  _fixedSize(false),
   _parsed(false)
 {}
 
@@ -189,9 +191,7 @@ void EntityClass::emplaceAttribute(EntityClassAttribute&& attribute)
 
 EntityClass::Ptr EntityClass::CreateDefault(const std::string& name)
 {
-    // greebo: Changed fallback behaviour when unknown entites are encountered to isFixedSize == FALSE
-    // so that brushes of unknown entites don't get lost (issue #240)
-    auto eclass = std::make_shared<EntityClass>(name, vfs::FileInfo(), false);
+    auto eclass = std::make_shared<EntityClass>(name, vfs::FileInfo());
 
     // Force the entity class colour to default
     eclass->setColour(UndefinedColour);
