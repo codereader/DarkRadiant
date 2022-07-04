@@ -95,7 +95,6 @@ private:
 
     // Return attribute if found, possibly checking parents
     EntityClassAttribute* getAttribute(const std::string&, bool includeInherited = true);
-    const EntityClassAttribute* getAttribute(const std::string&, bool includeInherited = true) const;
 
 public:
 

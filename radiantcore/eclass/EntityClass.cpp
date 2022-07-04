@@ -55,6 +55,8 @@ const std::string& EntityClass::getName() const
 
 IEntityClass* EntityClass::getParent()
 {
+    ensureParsed();
+
     return _parent;
 }
 
@@ -84,6 +86,8 @@ void EntityClass::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& bloc
 
 bool EntityClass::isFixedSize()
 {
+    ensureParsed();
+
     if (_fixedSize) {
         return true;
     }
@@ -97,6 +101,8 @@ bool EntityClass::isFixedSize()
 
 AABB EntityClass::getBounds()
 {
+    ensureParsed();
+
     if (isFixedSize())
     {
         return AABB::createFromMinMax(
@@ -104,14 +110,14 @@ AABB EntityClass::getBounds()
             string::convert<Vector3>(getAttributeValue("editor_maxs"))
         );
     }
-    else
-    {
-        return AABB(); // null AABB
-    }
+
+    return AABB(); // null AABB
 }
 
 EntityClass::Type EntityClass::getClassType()
 {
+    ensureParsed();
+
     if (isLight())
     {
         return Type::Light;
@@ -139,6 +145,8 @@ EntityClass::Type EntityClass::getClassType()
 
 bool EntityClass::isLight()
 {
+    ensureParsed();
+
     return _isLight;
 }
 
@@ -151,6 +159,8 @@ void EntityClass::setIsLight(bool val)
 
 void EntityClass::setColour(const Vector4& colour)
 {
+    ensureParsed();
+
     auto origColour = _colour;
     _colour = colour;
 
@@ -167,6 +177,8 @@ void EntityClass::setColour(const Vector4& colour)
 
 void EntityClass::resetColour()
 {
+    ensureParsed();
+
     // An override colour which matches this exact class is final, and overrides
     // everything else
     if (GlobalEclassColourManager().applyColours(*this))
@@ -193,6 +205,8 @@ void EntityClass::resetColour()
 
 const Vector4& EntityClass::getColour()
 {
+    ensureParsed();
+
     return _colour;
 }
 
@@ -257,6 +271,8 @@ void EntityClass::forEachAttributeInternal(InternalAttrVisitor visitor,
 void EntityClass::forEachAttribute(AttributeVisitor visitor,
                                    bool editorKeys)
 {
+    ensureParsed();
+
     // First compile a map of all attributes we need to pass to the visitor,
     // ensuring that there is only one attribute per name (i.e. we don't want to
     // visit the same-named attribute on both a child and one of its ancestors)
@@ -349,6 +365,8 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
 
 bool EntityClass::isOfType(const std::string& className)
 {
+    ensureParsed();
+
 	for (IEntityClass* currentClass = this;
          currentClass != nullptr;
          currentClass = currentClass->getParent())
@@ -368,17 +386,10 @@ std::string EntityClass::getDefFileName()
 }
 
 // Find a single attribute
-EntityClassAttribute* EntityClass::getAttribute(const std::string& name,
-                                                bool includeInherited)
+EntityClassAttribute* EntityClass::getAttribute(const std::string& name, bool includeInherited)
 {
-    return const_cast<EntityClassAttribute*>(
-        std::as_const(*this).getAttribute(name, includeInherited)
-    );
-}
+    ensureParsed();
 
-// Find a single attribute
-const EntityClassAttribute* EntityClass::getAttribute(const std::string& name, bool includeInherited) const
-{
     // First look up the attribute on this class; if found, we can simply return it
     auto f = _attributes.find(name);
     if (f != _attributes.end())
@@ -404,6 +415,8 @@ std::string EntityClass::getAttributeValue(const std::string& name, bool include
 
 std::string EntityClass::getAttributeType(const std::string& name)
 {
+    ensureParsed();
+
     // Check the attributes on this class
     const auto& attribute = _attributes.find(name);
 
@@ -423,6 +436,8 @@ std::string EntityClass::getAttributeType(const std::string& name)
 
 std::string EntityClass::getAttributeDescription(const std::string& name) 
 {
+    ensureParsed();
+
     // Check the attributes on this class first
     const auto& attribute = _attributes.find(name);
 
