@@ -297,7 +297,7 @@ void EntityClass::forEachAttribute(AttributeVisitor visitor,
 }
 
 // Resolve inheritance for this class
-void EntityClass::resolveInheritance(EntityClasses& classmap)
+void EntityClass::resolveInheritance()
 {
     // If we have already resolved inheritance, do nothing
     if (_inheritanceResolved)
@@ -314,14 +314,12 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
     }
 
     // Find the parent entity class
-    auto pIter = classmap.find(parentName);
-    if (pIter != classmap.end())
-    {
-        // Recursively resolve inheritance of parent
-        pIter->second->resolveInheritance(classmap);
+    auto parentClass = GlobalEntityClassManager().findClass(parentName);
 
+    if (parentClass)
+    {
         // Set our parent pointer
-        _parent = pIter->second.get();
+        _parent = static_cast<EntityClass*>(parentClass.get());
     }
     else
     {
@@ -520,14 +518,11 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
     // Clear this structure first, we might be "refreshing" ourselves from tokens
     clear();
 
-    // Required open brace (the name has already been parsed by the EClassManager)
-    tokeniser.assertNextToken("{");
-
     // Loop over all of the keys in this entitydef
-    std::string key;
-    while ((key = tokeniser.nextToken()) != "}")
+    while (tokeniser.hasMoreTokens())
     {
-        const std::string value = tokeniser.nextToken();
+        auto key = tokeniser.nextToken();
+        auto value = tokeniser.nextToken();
 
         // Handle some keys specially
         if (key == "model")
@@ -558,7 +553,6 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         if (!attribute)
         {
             // Attribute does not exist, add it.
-            //
             // Following key-specific processing, add the keyvalue to the eclass
             // The type is an empty string, it will be set to a non-type as soon as we encounter it
             emplaceAttribute(EntityClassAttribute("", key, value, ""));
@@ -574,7 +568,9 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
             rWarning() << "[eclassmgr] attribute " << key
                 << " already set on entityclass " << _name << std::endl;
         }
-    } // while true
+    }
+
+    resolveInheritance();
 
     // Notify the observers
     emitChangedSignal();

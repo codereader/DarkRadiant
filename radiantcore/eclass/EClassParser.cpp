@@ -89,6 +89,7 @@ void EClassParser::onFinishParsing()
 
 void EClassParser::resolveInheritance()
 {
+#if 0
     // Resolve inheritance for the entities. At this stage the classes
     // will have the name of their parent, but not an actual pointer to it
     for (auto& pair : _entityClasses)
@@ -97,6 +98,7 @@ void EClassParser::resolveInheritance()
         // map as a source for parent lookup
         pair.second->resolveInheritance(_entityClasses);
     }
+#endif
 }
 
 void EClassParser::applyColours()

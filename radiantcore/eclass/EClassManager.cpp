@@ -22,8 +22,8 @@
 namespace eclass {
 
 EClassManager::EClassManager() :
-    _realised(false),
-    _defLoader(*this, _entityClasses, _models)
+    _realised(false)/*,
+    _defLoader(*this, _entityClasses, _models)*/
 {}
 
 sigc::signal<void>& EClassManager::defsLoadingSignal()
@@ -44,6 +44,10 @@ sigc::signal<void>& EClassManager::defsReloadedSignal()
 // Get a named entity class, creating if necessary
 IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_brushes)
 {
+    return std::static_pointer_cast<IEntityClass>(
+        GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::EntityDef, name)
+    );
+#if 0
     ensureDefsLoaded();
 
     // Return an error if no name is given
@@ -66,8 +70,9 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
 
     // Try to insert the class
     return insertUnique(eclass);
+#endif
 }
-
+#if 0
 EntityClass::Ptr EClassManager::findInternal(const std::string& name)
 {
     // Find the EntityClass in the map.
@@ -89,7 +94,7 @@ void EClassManager::ensureDefsLoaded()
 {
     _defLoader.ensureFinished();
 }
-
+#endif
 void EClassManager::realise()
 {
 	if (_realised)
@@ -98,12 +103,17 @@ void EClassManager::realise()
 	}
 
 	_realised = true;
-
+#if 0
     _defLoader.start();
+#endif
 }
 
 IEntityClassPtr EClassManager::findClass(const std::string& className)
 {
+    return std::static_pointer_cast<IEntityClass>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::EntityDef, className)
+    );
+#if 0
     ensureDefsLoaded();
 
 	// greebo: Convert the lookup className string to lowercase first
@@ -112,24 +122,33 @@ IEntityClassPtr EClassManager::findClass(const std::string& className)
     EntityClasses::const_iterator i = _entityClasses.find(classNameLower);
 
     return i != _entityClasses.end() ? i->second : IEntityClassPtr();
+#endif
 }
 
 void EClassManager::forEachEntityClass(EntityClassVisitor& visitor)
 {
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::EntityDef, [&](const decl::IDeclaration::Ptr& decl)
+    {
+        visitor.visit(std::static_pointer_cast<IEntityClass>(decl));
+    });
+#if 0
     ensureDefsLoaded();
 
 	for (auto& [_, eclass] : _entityClasses)
 	{
 		visitor.visit(eclass);
 	}
+#endif
 }
 
 void EClassManager::unrealise()
 {
     if (_realised)
 	{
+#if 0
         // This waits for any threaded work to finish
         _defLoader.reset();
+#endif
        	_realised = false;
     }
 }
@@ -151,6 +170,8 @@ void EClassManager::forEachModelDef(const std::function<void(const IModelDef::Pt
 
 void EClassManager::reloadDefs()
 {
+    GlobalDeclarationManager().reloadDeclarations();
+#if 0
 	// greebo: Leave all current entityclasses as they are, just invoke the
 	// FileLoader again. It will parse the files again, and look up
 	// the eclass names in the existing map. If found, the eclass
@@ -158,7 +179,7 @@ void EClassManager::reloadDefs()
 	// This is to assure that any IEntityClassPtrs remain intact during
 	// the process, only the class contents change.
     _defLoader.parseSynchronously();
-
+#endif
     // On top of the "loaded" signal, emit the "reloaded" signal
     _defsReloadedSignal.emit();
 }
@@ -220,19 +241,20 @@ void EClassManager::shutdownModule()
 	_defsReloadedSignal.clear();
     _defsLoadedSignal.clear();
     _defsLoadingSignal.clear();
-
+#if 0
 	// Clear member structures
 	_entityClasses.clear();
 	_models.clear();
+#endif
 }
 
 void EClassManager::onEclassOverrideColourChanged(const std::string& eclass, bool overrideRemoved)
 {
     // An override colour in the IColourManager instance has changed
     // Do we have an affected eclass with that name?
-    auto foundEclass = _entityClasses.find(eclass);
+    auto foundEclass = std::static_pointer_cast<EntityClass>(findClass(eclass));
 
-    if (foundEclass == _entityClasses.end())
+    if (!foundEclass)
     {
         return;
     }
@@ -241,11 +263,11 @@ void EClassManager::onEclassOverrideColourChanged(const std::string& eclass, boo
     // We perform this switch to avoid firing the eclass changed signal twice
     if (overrideRemoved)
     {
-        foundEclass->second->resetColour();
+        foundEclass->resetColour();
     }
     else
     {
-        GlobalEclassColourManager().applyColours(*foundEclass->second);
+        GlobalEclassColourManager().applyColours(*foundEclass);
     }
 }
 

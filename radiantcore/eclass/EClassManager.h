@@ -37,6 +37,7 @@ private:
     // Whether the entity classes have been realised
     bool _realised;
 
+#if 0
     // Map of named entity classes
     typedef std::map<std::string, EntityClass::Ptr> EntityClasses;
     EntityClasses _entityClasses;
@@ -46,7 +47,7 @@ private:
 
     // The worker thread loading the eclasses will be managed by this
     EClassParser _defLoader;
-
+#endif
     sigc::signal<void> _defsLoadingSignal;
     sigc::signal<void> _defsLoadedSignal;
     sigc::signal<void> _defsReloadedSignal;
@@ -84,15 +85,15 @@ public:
     void shutdownModule() override;
 
 private:
+#if 0
     // Since loading is happening in a worker thread, we need to ensure
     // that it's done loading before accessing any defs or models.
     void ensureDefsLoaded();
-
 	// Tries to insert the given eclass, not overwriting existing ones
 	// In either case, the eclass in the map is returned
 	EntityClass::Ptr insertUnique(const EntityClass::Ptr& eclass);
     EntityClass::Ptr findInternal(const std::string& name);
-
+#endif
 	void reloadDefsCmd(const cmd::ArgumentList& args);
 
     void onEclassOverrideColourChanged(const std::string& eclass, bool overrideRemoved);

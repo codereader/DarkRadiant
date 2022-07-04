@@ -136,16 +136,6 @@ public:
     std::string getDefFileName() override;
 
     /**
-     * Resolve inheritance for this class.
-     *
-     * @param classmap
-     * A reference to the global map of entity classes, which should be searched
-     * for the parent entity.
-     */
-    typedef std::map<std::string, Ptr> EntityClasses;
-    void resolveInheritance(EntityClasses& classmap);
-
-    /**
      * Return the mod name.
      */
     std::string getModName() const override {
@@ -176,6 +166,11 @@ public:
     }
 
 protected:
+    /**
+     * Resolve inheritance for this class.
+     */
+    void resolveInheritance();
+
     void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block) override;
 };
 

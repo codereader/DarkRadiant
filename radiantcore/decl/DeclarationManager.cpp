@@ -103,6 +103,7 @@ IDeclaration::Ptr DeclarationManager::findOrCreateDeclaration(Type type, const s
         if (decl != decls.end())
         {
             returnValue = decl->second;
+            return;
         }
 
         // Nothing found, acquire the lock to create the new decl
