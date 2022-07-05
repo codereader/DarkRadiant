@@ -55,6 +55,17 @@ TEST_F(CommandSystemTest, AddAndRunCommandWithArgs)
     // except via the message bus)
     GlobalCommandSystem().executeCommand(COMMAND_NAME, std::string("wrong"));
     EXPECT_EQ(runCount, 1);
+
+    // Call the command with an argument list
+    GlobalCommandSystem().executeCommand(COMMAND_NAME, {{45}, {"blah"}});
+    EXPECT_EQ(runCount, 2);
+    EXPECT_EQ(args.size(), 2);
+    EXPECT_EQ(args.at(0).getInt(), 45);
+    EXPECT_EQ(args.at(1).getString(), "blah");
+
+    // Call the command with an argument list containing incorrect types (should be a NOP)
+    GlobalCommandSystem().executeCommand(COMMAND_NAME, {{"wrong"}, 4.5f});
+    EXPECT_EQ(runCount, 2);
 }
 
 TEST_F(CommandSystemTest, RunCommandSequence)
