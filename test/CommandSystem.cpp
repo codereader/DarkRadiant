@@ -33,27 +33,28 @@ TEST_F(CommandSystemTest, AddAndRunCommandWithArgs)
     const char* COMMAND_NAME = "testCmdWithArgs";
     ASSERT_FALSE(GlobalCommandSystem().commandExists(COMMAND_NAME));
 
-    // Create a test command object which stores its args
-    struct TestCmd {
-        int runCount = 0;
-        cmd::ArgumentList args;
-
-        void exec(const cmd::ArgumentList& a)
-        {
-            ++runCount;
-            args = a;
-        }
-    };
-    TestCmd cmd;
+    // Create a test command which stores its args
+    int runCount = 0;
+    cmd::ArgumentList args;
     GlobalCommandSystem().addCommand(COMMAND_NAME,
-                                     [&cmd](const cmd::ArgumentList& args) { cmd.exec(args); },
-                                     {cmd::ARGTYPE_INT});
+                                     [&](const cmd::ArgumentList& a) {
+                                         ++runCount;
+                                         args = a;
+                                     },
+                                     {cmd::ARGTYPE_INT, cmd::ARGTYPE_STRING});
 
     // Call the command and check the args
-    GlobalCommandSystem().executeCommand(COMMAND_NAME, 27);
-    EXPECT_EQ(cmd.runCount, 1);
-    ASSERT_EQ(cmd.args.size(), 1);
-    EXPECT_EQ(cmd.args.at(0).getInt(), 27);
+    GlobalCommandSystem().executeCommand(COMMAND_NAME, 27, std::string("balls"));
+    EXPECT_EQ(runCount, 1);
+    ASSERT_EQ(args.size(), 2);
+    EXPECT_EQ(args.at(0).getInt(), 27);
+    EXPECT_EQ(args.at(1).getString(), "balls");
+
+    // Calling the command with incorrect args does nothing (the command is not
+    // called, but there is not currently a way to signal this to the caller
+    // except via the message bus)
+    GlobalCommandSystem().executeCommand(COMMAND_NAME, std::string("wrong"));
+    EXPECT_EQ(runCount, 1);
 }
 
 TEST_F(CommandSystemTest, RunCommandSequence)
