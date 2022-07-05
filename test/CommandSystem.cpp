@@ -28,6 +28,34 @@ TEST_F(CommandSystemTest, AddAndRunCommand)
     EXPECT_EQ(runCount, 2);
 }
 
+TEST_F(CommandSystemTest, AddAndRunCommandWithArgs)
+{
+    const char* COMMAND_NAME = "testCmdWithArgs";
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(COMMAND_NAME));
+
+    // Create a test command object which stores its args
+    struct TestCmd {
+        int runCount = 0;
+        cmd::ArgumentList args;
+
+        void exec(const cmd::ArgumentList& a)
+        {
+            ++runCount;
+            args = a;
+        }
+    };
+    TestCmd cmd;
+    GlobalCommandSystem().addCommand(COMMAND_NAME,
+                                     [&cmd](const cmd::ArgumentList& args) { cmd.exec(args); },
+                                     {cmd::ARGTYPE_INT});
+
+    // Call the command and check the args
+    GlobalCommandSystem().executeCommand(COMMAND_NAME, 27);
+    EXPECT_EQ(cmd.runCount, 1);
+    ASSERT_EQ(cmd.args.size(), 1);
+    EXPECT_EQ(cmd.args.at(0).getInt(), 27);
+}
+
 TEST_F(CommandSystemTest, RunCommandSequence)
 {
     const char* FIRST_COMMAND = "firstRunCountCommand";
