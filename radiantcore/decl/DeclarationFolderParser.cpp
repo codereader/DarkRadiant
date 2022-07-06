@@ -37,7 +37,7 @@ namespace
 
 DeclarationFolderParser::DeclarationFolderParser(DeclarationManager& owner, Type declType, 
     const std::string& baseDir, const std::string& extension,
-    const std::map<std::string, Type>& typeMapping) :
+    const std::map<std::string, Type, string::ILess>& typeMapping) :
     ThreadedDeclParser<void>(declType, baseDir, extension, 1),
     _owner(owner),
     _typeMapping(typeMapping),

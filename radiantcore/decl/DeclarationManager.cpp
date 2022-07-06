@@ -61,9 +61,9 @@ void DeclarationManager::registerDeclFolder(Type defaultType, const std::string&
     decls.parser->start();
 }
 
-std::map<std::string, Type> DeclarationManager::getTypenameMapping()
+std::map<std::string, Type, string::ILess> DeclarationManager::getTypenameMapping()
 {
-    std::map<std::string, Type> result;
+    std::map<std::string, Type, string::ILess> result;
 
     std::lock_guard creatorLock(_creatorLock);
 

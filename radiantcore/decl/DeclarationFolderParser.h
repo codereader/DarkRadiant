@@ -3,6 +3,7 @@
 #include "DeclarationFile.h"
 
 #include "parser/ThreadedDeclParser.h"
+#include "string/string.h"
 
 namespace decl
 {
@@ -18,7 +19,7 @@ private:
     DeclarationManager& _owner;
 
     // Maps typename string ("material") to Type enum (Type::Material)
-    std::map<std::string, Type> _typeMapping;
+    std::map<std::string, Type, string::ILess> _typeMapping;
 
     // Holds all the identified blocks of all visited files
     std::map<Type, std::vector<DeclarationBlockSyntax>> _parsedBlocks;
@@ -29,7 +30,7 @@ private:
 public:
     DeclarationFolderParser(DeclarationManager& owner, Type declType,
         const std::string& baseDir, const std::string& extension,
-        const std::map<std::string, Type>& typeMapping);
+        const std::map<std::string, Type, string::ILess>& typeMapping);
 
 protected:
     void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir) override;

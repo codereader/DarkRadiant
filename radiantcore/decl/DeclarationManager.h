@@ -82,7 +82,7 @@ private:
 
     // Attempts to resolve the block type of the given block, returns true on success, false otherwise.
     // Stores the determined type in the given reference.
-    std::map<std::string, Type> getTypenameMapping();
+    std::map<std::string, Type, string::ILess> getTypenameMapping();
     bool tryDetermineBlockType(const DeclarationBlockSyntax& block, Type& type);
     void processParsedBlocks(std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks);
 
