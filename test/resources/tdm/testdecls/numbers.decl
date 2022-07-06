@@ -15,4 +15,10 @@ testdecl decl/numbers/2
     diffusemap textures/numbers/2
 }
 
+// CamelCase typename shouldn't make a difference
+TestDecl decl/numbers/3
+{
+    diffusemap textures/numbers/3
+}
+
 testdecl2 decltable1 { { 0, 0, 0, 0, 1, 1 } }

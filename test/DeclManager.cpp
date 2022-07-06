@@ -380,6 +380,16 @@ inline void expectMaterialDoesNotContain(decl::Type type, const std::string& dec
         << declName << " should NOT contain " << contents;
 }
 
+// EntityDef is treated the same as EnTiTyDeF and entitydef
+TEST_F(DeclManagerTest, DeclTypenamesAreCaseInsensitive)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    expectMaterialIsPresent(decl::Type::Material, "decl/numbers/3");
+    expectMaterialContains(decl::Type::Material, "decl/numbers/3", "diffusemap textures/numbers/3");
+}
+
 TEST_F(DeclManagerTest, ReloadDeclarationDetectsChangedFile)
 {
     TemporaryFile tempFile(_context.getTestProjectPath() + "testdecls/temp_file.decl");

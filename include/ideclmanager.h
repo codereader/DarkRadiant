@@ -93,6 +93,7 @@ public:
 
     // Registers the declaration typename (e.g. "material") and associates it with the given creator
     // It's not allowed to register more than one creator for a single typename
+    // Note: The given typename will be treated case-insensitively by the decl parser.
     virtual void registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& creator) = 0;
 
     // Unregisters the given typename and the associated creator

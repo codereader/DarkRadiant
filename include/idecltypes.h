@@ -4,6 +4,11 @@
 #include <string>
 #include "i18n.h"
 
+// Some X11 headers are defining this
+#ifdef None
+#undef None
+#endif
+
 namespace decl
 {
 
