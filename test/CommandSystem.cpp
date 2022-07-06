@@ -66,6 +66,12 @@ TEST_F(CommandSystemTest, AddAndRunCommandWithArgs)
     // Call the command with an argument list containing incorrect types (should be a NOP)
     GlobalCommandSystem().executeCommand(COMMAND_NAME, {{"wrong"}, 4.5f});
     EXPECT_EQ(runCount, 2);
+
+    // Call the command as a string
+    GlobalCommandSystem().execute("testCmdWithArgs 96 \"string_arg\"");
+    EXPECT_EQ(runCount, 3);
+    EXPECT_EQ(args.at(0).getInt(), 96);
+    EXPECT_EQ(args.at(1).getString(), "string_arg");
 }
 
 TEST_F(CommandSystemTest, RunCommandSequence)
@@ -92,6 +98,47 @@ TEST_F(CommandSystemTest, RunCommandSequence)
     EXPECT_EQ(secondRunCount, 2);
     GlobalCommandSystem().execute("secondRunCountCommand ;secondRunCountCommand");
     EXPECT_EQ(secondRunCount, 4);
+}
+
+TEST_F(CommandSystemTest, RunCommandSequenceWithArgs)
+{
+    const char* FIRST_COMMAND = "firstCommandWithArgs";
+    int firstRunCount = 0;
+    cmd::ArgumentList firstArgs;
+
+    const char* SECOND_COMMAND = "secondCommandWithArgs";
+    int secondRunCount = 0;
+    cmd::ArgumentList secondArgs;
+
+    // Register a command for each run count
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(FIRST_COMMAND));
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(SECOND_COMMAND));
+    GlobalCommandSystem().addCommand(FIRST_COMMAND,
+                                     [&](const cmd::ArgumentList& a) {
+                                         ++firstRunCount;
+                                         firstArgs = a;
+                                     },
+                                     {cmd::ARGTYPE_STRING});
+    GlobalCommandSystem().addCommand(SECOND_COMMAND,
+                                     [&](const cmd::ArgumentList& a) {
+                                         ++secondRunCount;
+                                         secondArgs = a;
+                                     },
+                                     {cmd::ARGTYPE_DOUBLE});
+
+    // Run a semicolon-separated sequence of both commands
+    GlobalCommandSystem().execute("firstCommandWithArgs \"blah\"; secondCommandWithArgs 1.25");
+    EXPECT_EQ(firstRunCount, 1);
+    EXPECT_EQ(firstArgs.at(0).getString(), "blah");
+    EXPECT_EQ(secondRunCount, 1);
+    EXPECT_EQ(secondArgs.at(0).getDouble(), 1.25);
+
+    // Calling the first command with incorrect args should not prevent the second command from
+    // running
+    GlobalCommandSystem().execute("firstCommandWithArgs ; secondCommandWithArgs -16.9");
+    EXPECT_EQ(firstRunCount, 1);
+    EXPECT_EQ(secondRunCount, 2);
+    EXPECT_EQ(secondArgs.at(0).getDouble(), -16.9);
 }
 
 TEST_F(CommandSystemTest, AddCheckedCommand)
