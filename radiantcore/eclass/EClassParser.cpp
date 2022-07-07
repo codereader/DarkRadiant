@@ -47,7 +47,7 @@ void EClassParser::parse(std::istream& stream, const vfs::FileInfo& fileInfo, co
             if (i == _entityClasses.end())
             {
                 // Not existing yet, allocate a new class
-                auto result = _entityClasses.emplace(sName, std::make_shared<EntityClass>(sName, fileInfo));
+                auto result = _entityClasses.emplace(sName, std::make_shared<EntityClass>(sName));
 
                 i = result.first;
             }
@@ -66,9 +66,10 @@ void EClassParser::parse(std::istream& stream, const vfs::FileInfo& fileInfo, co
 
             // Parse the contents of the eclass (excluding name)
             i->second->parseFromTokens(tokeniser);
-
+#if 0
             // Set the mod directory
             i->second->setModName(modDir);
+#endif
         }
     }
 }

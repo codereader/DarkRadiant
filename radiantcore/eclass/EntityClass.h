@@ -39,10 +39,6 @@ private:
     // The name of this entity class
     std::string _name;
 
-    // Source file information. May not exist if the entity class was created in code rather than
-    // loaded from a .def file.
-    std::optional<vfs::FileInfo> _fileInfo;
-
     // Parent class pointer (or NULL)
     EntityClass* _parent = nullptr;
 
@@ -99,8 +95,8 @@ private:
 
 public:
 
-    /// Construct an EntityClass with a given FileInfo
-    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo);
+    /// Construct a named EntityClass
+    EntityClass(const std::string& name);
 
     ~EntityClass();
 
@@ -139,15 +135,9 @@ public:
     /**
      * Return the mod name.
      */
-    std::string getModName() const override {
-        return _modName;
-    }
-
-    /**
-     * Set the mod name.
-     */
-    void setModName(const std::string& mn) {
-        _modName = mn;
+    std::string getModName() const override
+    {
+        return getBlockSyntax().getModName();
     }
 
     // Initialises this class from the given tokens
