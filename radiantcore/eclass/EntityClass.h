@@ -82,6 +82,7 @@ private:
 
 private:
     void ensureParsed();
+    void onParseFinished();
 
     // Clear all contents (done before parsing from tokens)
     void clear();

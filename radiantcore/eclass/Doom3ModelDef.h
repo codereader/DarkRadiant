@@ -90,8 +90,16 @@ private:
 
         _parsed = true;
 
-        parser::BasicDefTokeniser<std::string> tokeniser(getBlockSyntax().contents);
-        parseFromTokens(tokeniser);
+        try
+        {
+            parser::BasicDefTokeniser<std::string> tokeniser(getBlockSyntax().contents);
+            parseFromTokens(tokeniser);
+        }
+        catch (const parser::ParseException& ex)
+        {
+            rError() << "[DeclParser]: Error parsing " << getTypeName(getDeclType()) << " " << getDeclName()
+                << ": " << ex.what() << std::endl;
+        }
     }
 
     void clearContents()

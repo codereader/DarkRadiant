@@ -459,8 +459,31 @@ void EntityClass::ensureParsed()
 
     _parsed = true;
 
-    parser::BasicDefTokeniser<std::string> tokeniser(getBlockSyntax().contents);
-    parseFromTokens(tokeniser);
+    try
+    {
+        if (getDeclName() == "atdm:mover_lock_handle")
+        {
+            int i = 6;
+        }
+
+        parser::BasicDefTokeniser<std::string> tokeniser(getBlockSyntax().contents);
+        parseFromTokens(tokeniser);
+    }
+    catch (const parser::ParseException& ex)
+    {
+        rError() << "[DeclParser]: Error parsing " << getTypeName(getDeclType()) << " " << getDeclName()
+            << ": " << ex.what() << std::endl;
+    }
+
+    onParseFinished();
+}
+
+void EntityClass::onParseFinished()
+{
+    resolveInheritance();
+
+    // Notify the observers
+    emitChangedSignal();
 }
 
 void EntityClass::clear()
@@ -569,11 +592,6 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
                 << " already set on entityclass " << _name << std::endl;
         }
     }
-
-    resolveInheritance();
-
-    // Notify the observers
-    emitChangedSignal();
 }
 
 } // namespace eclass
