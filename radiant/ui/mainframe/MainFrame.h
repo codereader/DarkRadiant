@@ -33,6 +33,9 @@ private:
 	sigc::signal<void> _sigMainFrameReady;
 	sigc::signal<void> _sigMainFrameShuttingDown;
 
+	sigc::connection _defsLoadingSignal;
+	sigc::connection _defsLoadedSignal;
+
 private:
 	void construct();
 	void keyChanged();

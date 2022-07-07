@@ -178,6 +178,16 @@ void DeclarationManager::reloadDeclarations()
 
     util::ScopedBoolLock reparseLock(_reparseInProgress);
 
+    // Invoke the declsReloading signal for all types
+    {
+        std::lock_guard declLock(_declarationLock);
+
+        for (const auto& [type, _] : _declarationsByType)
+        {
+            signal_DeclsReloading(type).emit();
+        }
+    }
+
     _parseStamp++;
 
     // Remove all unrecognised blocks from previous runs
@@ -214,11 +224,13 @@ void DeclarationManager::reloadDeclarations()
     }
 
     // Invoke the declsReloaded signal for all types
-    std::lock_guard declLock(_declarationLock);
-
-    for (const auto& [type, _] : _declarationsByType)
     {
-        signal_DeclsReloaded(type).emit();
+        std::lock_guard declLock(_declarationLock);
+
+        for (const auto& [type, _] : _declarationsByType)
+        {
+            signal_DeclsReloaded(type).emit();
+        }
     }
 }
 
@@ -263,6 +275,11 @@ void DeclarationManager::runParsersForAllFolders()
         parsers.back()->ensureFinished();
         parsers.pop_back();
     }
+}
+
+sigc::signal<void>& DeclarationManager::signal_DeclsReloading(Type type)
+{
+    return _declsReloadingSignals.try_emplace(type).first->second;
 }
 
 sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
@@ -447,6 +464,7 @@ void DeclarationManager::shutdownModule()
     _unrecognisedBlocks.clear();
     _declarationsByType.clear();
     _creatorsByTypename.clear();
+    _declsReloadingSignals.clear();
     _declsReloadedSignals.clear();
 }
 

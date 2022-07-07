@@ -149,14 +149,12 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 	);
 
     // When the eclass defs are in progress of being loaded, block all updates
-    GlobalEntityClassManager().defsLoadingSignal().connect(
+    _defsLoadingSignal = GlobalDeclarationManager().signal_DeclsReloading(decl::Type::EntityDef).connect(
         [this]() { _defLoadingBlocksUpdates = true; }
     );
 
-    GlobalEntityClassManager().defsLoadedSignal().connect([this]()
-        {
-            _defLoadingBlocksUpdates = false;
-        }
+    _defsLoadedSignal = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
+        [this]() { _defLoadingBlocksUpdates = false; }
     );
 
 	// Subscribe for the post-module init event
@@ -170,6 +168,9 @@ void MainFrame::shutdownModule()
 
 	_mapNameChangedConn.disconnect();
 	_mapModifiedChangedConn.disconnect();
+
+    _defsLoadingSignal.disconnect();
+    _defsLoadedSignal.disconnect();
 
 	disableScreenUpdates();
 }

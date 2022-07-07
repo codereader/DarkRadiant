@@ -283,7 +283,7 @@ TEST_F(DeclManagerTest, DeclsReloadedSignalAfterInitialParse)
     EXPECT_FALSE(modelSignalFired) << "Model-type Signal should not have been fired";
 }
 
-TEST_F(DeclManagerTest, DeclsReloadedSignal)
+TEST_F(DeclManagerTest, DeclsReloadedSignals)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
     GlobalDeclarationManager().registerDeclType("testdecl2", std::make_shared<TestDeclaration2Creator>());
@@ -293,19 +293,30 @@ TEST_F(DeclManagerTest, DeclsReloadedSignal)
     GlobalDeclarationManager().foreachDeclaration(decl::Type::Material, [](const decl::IDeclaration::Ptr&) {});
     GlobalDeclarationManager().foreachDeclaration(decl::Type::Model, [](const decl::IDeclaration::Ptr&) {});
 
-    bool materialSignalFired = false;
-    bool modelSignalFired = false;
+    bool materialsReloadingFired = false;
+    bool modelsReloadingFired = false;
+    GlobalDeclarationManager().signal_DeclsReloading(decl::Type::Material).connect(
+        [&]() { materialsReloadingFired = true; }
+    );
+    GlobalDeclarationManager().signal_DeclsReloading(decl::Type::Model).connect(
+        [&]() { modelsReloadingFired = true; }
+    );
+
+    bool materialsReloadedFired = false;
+    bool modelsReloadedFired = false;
     GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material).connect(
-        [&]() { materialSignalFired = true; }
+        [&]() { materialsReloadedFired = true; }
     );
     GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Model).connect(
-        [&]() { modelSignalFired = true; }
+        [&]() { modelsReloadedFired = true; }
     );
 
     GlobalDeclarationManager().reloadDeclarations();
 
-    EXPECT_TRUE(materialSignalFired) << "Material signal should have fired after reloadDecls";
-    EXPECT_TRUE(modelSignalFired) << "Model signal should have fired after reloadDecls";
+    EXPECT_TRUE(materialsReloadingFired) << "Material signal should have before reloadDecls";
+    EXPECT_TRUE(modelsReloadingFired) << "Model signal should have fired before reloadDecls";
+    EXPECT_TRUE(materialsReloadedFired) << "Material signal should have fired after reloadDecls";
+    EXPECT_TRUE(modelsReloadedFired) << "Model signal should have fired after reloadDecls";
 }
 
 TEST_F(DeclManagerTest, FindDeclaration)

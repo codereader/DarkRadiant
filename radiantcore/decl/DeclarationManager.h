@@ -52,6 +52,7 @@ private:
     std::list<DeclarationBlockSyntax> _unrecognisedBlocks;
     std::recursive_mutex _unrecognisedBlockLock;
 
+    std::map<Type, sigc::signal<void>> _declsReloadingSignals;
     std::map<Type, sigc::signal<void>> _declsReloadedSignals;
 
     std::size_t _parseStamp;
@@ -64,6 +65,7 @@ public:
     IDeclaration::Ptr findDeclaration(Type type, const std::string& name) override;
     IDeclaration::Ptr findOrCreateDeclaration(Type type, const std::string& name) override;
     void foreachDeclaration(Type type, const std::function<void(const IDeclaration::Ptr&)>& functor) override;
+    sigc::signal<void>& signal_DeclsReloading(Type type) override;
     sigc::signal<void>& signal_DeclsReloaded(Type type) override;
     void reloadDeclarations() override;
 

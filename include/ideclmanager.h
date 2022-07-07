@@ -124,6 +124,9 @@ public:
     // All declaration references will stay intact, only their contents will be refreshed
     virtual void reloadDeclarations() = 0;
 
+    // Signal emitted right before decls are being reloaded
+    virtual sigc::signal<void>& signal_DeclsReloading(Type type) = 0;
+
     // Signal emitted when the decls of the given type have been (re-)loaded
     virtual sigc::signal<void>& signal_DeclsReloaded(Type type) = 0;
 };
