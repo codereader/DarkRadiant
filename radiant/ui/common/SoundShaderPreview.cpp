@@ -169,7 +169,7 @@ void SoundShaderPreview::update()
 			}
 
             _shaderFileInfo->setName(shader->getDeclName());
-            _shaderFileInfo->setPath(shader->getShaderFilePath());
+            _shaderFileInfo->setPath(shader->getDeclFilePath());
 
 			handleSelectionChange();
 		}

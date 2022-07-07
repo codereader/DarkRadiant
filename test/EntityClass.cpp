@@ -36,7 +36,7 @@ TEST_F(EntityClassTest, EntityClassDefFilename)
     EXPECT_TRUE(cls);
 
     EXPECT_EQ(cls->getModName(), RadiantTest::DefaultGameType);
-    EXPECT_EQ(cls->getDefFileName(), "def/entity_with_model.def");
+    EXPECT_EQ(cls->getDeclFilePath(), "def/entity_with_model.def");
 }
 
 TEST_F(EntityClassTest, LightEntityRecognition)

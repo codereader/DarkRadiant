@@ -28,7 +28,6 @@ public:
 	SoundRadii getRadii() override;
 	SoundFileList getSoundFileList() override;
 	const std::string& getDisplayFolder() override;
-	std::string getShaderFilePath() const override;
 	std::string getDefinition() const override;
 
 protected:

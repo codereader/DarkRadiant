@@ -57,6 +57,11 @@ public:
     {
         return _block.getModName();
     }
+
+    std::string getDeclFilePath() const override
+    {
+        return _block.fileInfo.fullPath();
+    }
 };
 
 class TestDeclarationCreator :
@@ -365,6 +370,19 @@ TEST_F(DeclManagerTest, FindOrCreateUnknownDeclarationType)
     // Unknown types should yield an exception
     EXPECT_THROW(GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::None, "decl/nonexistent"), std::invalid_argument);
     EXPECT_THROW(GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Undetermined, "decl/nonexistent"), std::invalid_argument);
+}
+
+TEST_F(DeclManagerTest, DeclarationMetadata)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
+
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::Material, "decl/exporttest/guisurf1");
+
+    EXPECT_TRUE(decl);
+    EXPECT_EQ(decl->getDeclType(), decl::Type::Material);
+    EXPECT_EQ(decl->getDeclFilePath(), "testdecls/exporttest.decl");
+    EXPECT_EQ(decl->getModName(), RadiantTest::DefaultGameType);
 }
 
 inline void expectMaterialIsPresent(decl::Type type, const std::string& declName)

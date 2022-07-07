@@ -49,7 +49,7 @@ public:
 
 	std::string getDefFileName()
 	{
-		return _eclass ? _eclass->getDefFileName() : std::string();
+		return _eclass ? _eclass->getDeclFilePath() : std::string();
 	}
 };
 

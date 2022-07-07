@@ -58,6 +58,9 @@ public:
     // Implementations are free to either (re-)parse immediately or deferred.
     virtual void setBlockSyntax(const DeclarationBlockSyntax& block) = 0;
 
+    // Returns the mod-relative path to the file this decl has been declared in
+    virtual std::string getDeclFilePath() const = 0;
+
     // Returns the value of the internally used parse epoch counter
     virtual std::size_t getParseStamp() const = 0;
 

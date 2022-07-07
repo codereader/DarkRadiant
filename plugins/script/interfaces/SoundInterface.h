@@ -77,7 +77,7 @@ public:
 
 	std::string getShaderFilePath()
 	{
-		return _shader ? _shader->getShaderFilePath() : std::string();
+		return _shader ? _shader->getDeclFilePath() : std::string();
 	}
 
 	std::string getDefinition()

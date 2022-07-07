@@ -352,11 +352,6 @@ bool EntityClass::isOfType(const std::string& className)
 	return false;
 }
 
-std::string EntityClass::getDefFileName()
-{
-    return getBlockSyntax().fileInfo.fullPath();
-}
-
 // Find a single attribute
 EntityClassAttribute* EntityClass::getAttribute(const std::string& name, bool includeInherited)
 {

@@ -30,7 +30,7 @@ TEST_F(SoundManagerTest, GetExistingSoundShader)
     EXPECT_EQ(existing->getDisplayFolder(), "ambient/environmental/city");
     EXPECT_NEAR(existing->getRadii().getMin(true), 9, 0.01); // in meters
     EXPECT_NEAR(existing->getRadii().getMax(true), 30, 0.01); // in meters
-    EXPECT_EQ(existing->getShaderFilePath(), "sound/parsing_test.sndshd");
+    EXPECT_EQ(existing->getDeclFilePath(), "sound/parsing_test.sndshd");
     auto fileList = existing->getSoundFileList();
     EXPECT_EQ(fileList.size(), 2);
     EXPECT_EQ(fileList.at(0), "sound/nonexistent.ogg");

@@ -87,11 +87,6 @@ const std::string& SoundShader::getDisplayFolder()
     return _contents->displayFolder;
 }
 
-std::string SoundShader::getShaderFilePath() const
-{
-	return getBlockSyntax().fileInfo.fullPath();
-}
-
 std::string SoundShader::getDefinition() const
 {
 	return getBlockSyntax().contents;

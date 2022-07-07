@@ -73,6 +73,11 @@ public:
         return getBlockSyntax().getModName();
     }
 
+    std::string getDeclFilePath() const final override
+    {
+        return getBlockSyntax().fileInfo.fullPath();
+    }
+
     std::size_t getParseStamp() const final
     {
         return _parseStamp;

@@ -117,8 +117,6 @@ public:
 
 	bool isOfType(const std::string& className) override;
 
-    std::string getDefFileName() override;
-
     void emitChangedSignal()
     {
         if (!_blockChangeSignal)

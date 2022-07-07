@@ -389,7 +389,7 @@ void EntityClassChooser::updateSelection()
             {
                 _modelPreview->setModel(eclass->getAttributeValue("model"));
                 _modelPreview->setSkin(eclass->getAttributeValue("skin"));
-                defFileName->SetLabel(eclass->getDefFileName());
+                defFileName->SetLabel(eclass->getDeclFilePath());
                 return; // success
             }
         }

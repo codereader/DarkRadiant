@@ -39,7 +39,7 @@ std::string SoundShaderDefinitionView::getDeclName()
 
 std::string SoundShaderDefinitionView::getDeclFileName()
 {
-	return _shader ? _shader->getShaderFilePath() : std::string();
+	return _shader ? _shader->getDeclFilePath() : std::string();
 }
 
 std::string SoundShaderDefinitionView::getDefinition()
