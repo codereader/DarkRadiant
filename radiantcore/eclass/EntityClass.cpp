@@ -485,6 +485,7 @@ void EntityClass::clear()
 {
     // Don't clear the name
     _isLight = false;
+    _parent = nullptr;
 
     _colour = UndefinedColour;
     _colourTransparent = false;
