@@ -11,7 +11,7 @@ class SoundShaderDefinitionView :
 {
 private:
 	// The shader which should be previewed
-	ISoundShaderPtr _shader;
+    ISoundShader::Ptr _shader;
 
 public:
 	SoundShaderDefinitionView(const std::string& shaderName, wxWindow* parent = nullptr);

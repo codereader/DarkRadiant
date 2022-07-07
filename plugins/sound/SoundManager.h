@@ -25,8 +25,8 @@ public:
 	SoundManager();
 
     // ISoundManager implementation
-	void forEachShader(std::function<void(const ISoundShader&)>) override;
-	ISoundShaderPtr getSoundShader(const std::string& shaderName) override;
+	void forEachShader(std::function<void(const ISoundShader::Ptr&)>) override;
+	ISoundShader::Ptr getSoundShader(const std::string& shaderName) override;
 	bool playSound(const std::string& fileName) override;
 	bool playSound(const std::string& fileName, bool loopSound) override;
 	void stopSound() override;

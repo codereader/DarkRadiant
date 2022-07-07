@@ -59,12 +59,12 @@ SoundManager::SoundManager()
     _emptyShader->setBlockSyntax(defaultBlock);
 }
 
-void SoundManager::forEachShader(std::function<void(const ISoundShader&)> functor)
+void SoundManager::forEachShader(std::function<void(const ISoundShader::Ptr&)> functor)
 {
     GlobalDeclarationManager().foreachDeclaration(decl::Type::SoundShader,
         [&](const decl::IDeclaration::Ptr& soundShader)
         {
-            functor(*std::static_pointer_cast<ISoundShader>(soundShader));
+            functor(std::static_pointer_cast<ISoundShader>(soundShader));
         });
 }
 
@@ -91,7 +91,7 @@ void SoundManager::stopSound()
 	if (_soundPlayer) _soundPlayer->stop();
 }
 
-ISoundShaderPtr SoundManager::getSoundShader(const std::string& shaderName)
+ISoundShader::Ptr SoundManager::getSoundShader(const std::string& shaderName)
 {
     auto found = std::static_pointer_cast<ISoundShader>(
         GlobalDeclarationManager().findDeclaration(decl::Type::SoundShader, shaderName)

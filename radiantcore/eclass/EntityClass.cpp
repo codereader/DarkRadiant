@@ -17,7 +17,7 @@ namespace
 }
 
 EntityClass::EntityClass(const std::string& name)
-: DeclarationBase<IEntityClass>(name),
+: DeclarationBase<IEntityClass>(decl::Type::EntityDef, name),
   _visibility([this]() {
       // Entity class visibility is NOT inherited -- hiding an abstract base entity from the list
       // does not imply all of its concrete subclasses should also be hidden.
@@ -27,18 +27,12 @@ EntityClass::EntityClass(const std::string& name)
   _colour(UndefinedColour),
   // greebo: Changed default behaviour when unknown entites are encountered to isFixedSize == FALSE
   // so that brushes of unknown classes don't get lost (issue #240)
-  _fixedSize(false),
-  _parsed(false)
+  _fixedSize(false)
 {}
 
 EntityClass::~EntityClass()
 {
     _parentChangedConnection.disconnect();
-}
-
-decl::Type EntityClass::getDeclType() const
-{
-    return decl::Type::EntityDef;
 }
 
 IEntityClass* EntityClass::getParent()
@@ -60,16 +54,8 @@ sigc::signal<void>& EntityClass::changedSignal()
 
 void EntityClass::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
 {
-    bool hasBeenInUse = _parsed;
-
-    _parsed = false;
     clear();
-
-    // Unparsed eclasses aren't really referenced, no need to notify
-    if (hasBeenInUse)
-    {
-        emitChangedSignal();
-    }
+    emitChangedSignal();
 }
 
 bool EntityClass::isFixedSize()
@@ -441,34 +427,6 @@ std::string EntityClass::getAttributeDescription(const std::string& name)
     return _parent ? _parent->getAttributeDescription(name) : "";
 }
 
-void EntityClass::ensureParsed()
-{
-    if (_parsed) return;
-
-    _parsed = true;
-
-    try
-    {
-        parser::BasicDefTokeniser<std::string> tokeniser(getBlockSyntax().contents);
-        parseFromTokens(tokeniser);
-    }
-    catch (const parser::ParseException& ex)
-    {
-        rError() << "[DeclParser]: Error parsing " << getTypeName(getDeclType()) << " " << getDeclName()
-            << ": " << ex.what() << std::endl;
-    }
-
-    onParseFinished();
-}
-
-void EntityClass::onParseFinished()
-{
-    resolveInheritance();
-
-    // Notify the observers
-    emitChangedSignal();
-}
-
 void EntityClass::clear()
 {
     // Don't clear the name
@@ -482,8 +440,6 @@ void EntityClass::clear()
 
     _attributes.clear();
     _inheritanceResolved = false;
-
-    _modName = "base";
 }
 
 void EntityClass::parseEditorSpawnarg(const std::string& key, const std::string& value)
@@ -520,11 +476,14 @@ void EntityClass::parseEditorSpawnarg(const std::string& key, const std::string&
     }
 }
 
-void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
+void EntityClass::onBeginParsing()
 {
     // Clear this structure first, we might be "refreshing" ourselves from tokens
     clear();
+}
 
+void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
+{
     // Loop over all of the keys in this entitydef
     while (tokeniser.hasMoreTokens())
     {
@@ -576,6 +535,14 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
                 << " already set on entityclass " << getDeclName() << std::endl;
         }
     }
+}
+
+void EntityClass::onParsingFinished()
+{
+    resolveInheritance();
+
+    // Notify the observers
+    emitChangedSignal();
 }
 
 } // namespace eclass

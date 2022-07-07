@@ -23,18 +23,13 @@ public:
     using Ptr = std::shared_ptr<Doom3ModelDef>;
 
 	Doom3ModelDef(const std::string& name) :
-        DeclarationBase<IModelDef>(name),
+        DeclarationBase<IModelDef>(decl::Type::ModelDef, name),
         _parsed(false)
 	{}
 
     std::string getModName() const override
     {
         return getBlockSyntax().getModName();
-    }
-
-    decl::Type getDeclType() const override
-    {
-        return decl::Type::ModelDef;
     }
 
     const std::string& getMesh() override

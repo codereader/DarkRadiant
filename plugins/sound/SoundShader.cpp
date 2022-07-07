@@ -21,7 +21,7 @@ struct SoundShader::ParsedContents
 };
 
 SoundShader::SoundShader(const std::string& name)
-:	DeclarationBase<ISoundShader>(name)
+:	DeclarationBase<ISoundShader>(decl::Type::SoundShader, name)
 {}
 
 // Destructor must be defined with ParsedContents definition visible, otherwise
@@ -29,17 +29,14 @@ SoundShader::SoundShader(const std::string& name)
 SoundShader::~SoundShader()
 { }
 
-void SoundShader::parseDefinition() const
+void SoundShader::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
 	_contents = std::make_unique<ParsedContents>();
 
-	// Get a new tokeniser and parse the block
-	parser::BasicDefTokeniser<std::string> tok(getBlockSyntax().contents);
-
-	while (tok.hasMoreTokens())
+	while (tokeniser.hasMoreTokens())
     {
 		// Get the next token
-		std::string nextToken = tok.nextToken();
+		auto nextToken = tokeniser.nextToken();
 
 		// Watch out for sound file definitions
         // Check if the token starts with soundSLASH or soundBACKSLASH
@@ -54,36 +51,36 @@ void SoundShader::parseDefinition() const
 		else if (nextToken == "minDistance")
         {
 			// Set the radius and convert to metres
-			_contents->soundRadii.setMin(string::convert<float>(tok.nextToken()), true);
+			_contents->soundRadii.setMin(string::convert<float>(tokeniser.nextToken()), true);
 		}
 		else if (nextToken == "maxDistance")
         {
 			// Set the radius and convert to metres
-			_contents->soundRadii.setMax(string::convert<float>(tok.nextToken()), true);
+			_contents->soundRadii.setMax(string::convert<float>(tokeniser.nextToken()), true);
 		}
 		else if (nextToken == "editor_displayFolder")
         {
 			// Set the display folder
-			_contents->displayFolder = tok.nextToken();
+			_contents->displayFolder = tokeniser.nextToken();
 		}
 	}
 }
 
-SoundRadii SoundShader::getRadii() const
+SoundRadii SoundShader::getRadii()
 {
-    if (!_contents) parseDefinition();
+    ensureParsed();
     return _contents->soundRadii;
 }
 
-SoundFileList SoundShader::getSoundFileList() const
+SoundFileList SoundShader::getSoundFileList()
 {
-    if (!_contents) parseDefinition();
+    ensureParsed();
     return _contents->soundFiles;
 }
 
-const std::string& SoundShader::getDisplayFolder() const
+const std::string& SoundShader::getDisplayFolder()
 {
-    if (!_contents) parseDefinition();
+    ensureParsed();
     return _contents->displayFolder;
 }
 

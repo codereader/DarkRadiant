@@ -17,10 +17,6 @@ class SoundShader final :
     struct ParsedContents;
     mutable std::unique_ptr<ParsedContents> _contents;
 
-private:
-	// Parses the definition block
-	void parseDefinition() const;
-
 public:
 	using Ptr = std::shared_ptr<SoundShader>;
 
@@ -29,15 +25,15 @@ public:
     ~SoundShader();
 
     // ISoundShader implementation
-	SoundRadii getRadii() const override;
-	decl::Type getDeclType() const override { return decl::Type::SoundShader; }
-	SoundFileList getSoundFileList() const override;
+	SoundRadii getRadii() override;
+	SoundFileList getSoundFileList() override;
 	std::string getModName() const override { return getBlockSyntax().getModName(); }
-	const std::string& getDisplayFolder() const override;
+	const std::string& getDisplayFolder() override;
 	std::string getShaderFilePath() const override;
 	std::string getDefinition() const override;
 
 protected:
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override;
     void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block) override;
 };
 

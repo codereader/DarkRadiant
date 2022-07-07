@@ -31,7 +31,6 @@ class EntityClass :
     public decl::DeclarationBase<IEntityClass>
 {
 public:
-
     /// EntityClass pointer type
     using Ptr = std::shared_ptr<EntityClass>;
 
@@ -63,19 +62,14 @@ private:
     // after recursively instructing the parent to resolve its own inheritance.
     bool _inheritanceResolved = false;
 
-    // Name of the mod owning this class
-    std::string _modName = "base";
-
     // Emitted when contents are reloaded
     sigc::signal<void> _changedSignal;
     bool _blockChangeSignal = false;
     sigc::connection _parentChangedConnection;
 
-    bool _parsed;
-
 private:
-    void ensureParsed();
-    void onParseFinished();
+    // Resolve inheritance for this class.
+    void resolveInheritance();
 
     // Clear all contents (done before parsing from tokens)
     void clear();
@@ -101,8 +95,6 @@ public:
     static Ptr CreateDefault(const std::string& name);
 
     Type getClassType() override;
-
-    decl::Type getDeclType() const override;
 
     void emplaceAttribute(EntityClassAttribute&& attribute);
 
@@ -135,9 +127,6 @@ public:
         return getBlockSyntax().getModName();
     }
 
-    // Initialises this class from the given tokens
-    void parseFromTokens(parser::DefTokeniser& tokeniser);
-
     void emitChangedSignal()
     {
         if (!_blockChangeSignal)
@@ -152,10 +141,14 @@ public:
     }
 
 protected:
-    /**
-     * Resolve inheritance for this class.
-     */
-    void resolveInheritance();
+    // Initialises this class from the given tokens
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override;
+
+    // Clears the structure before parsing
+    void onBeginParsing() override;
+
+    // After parsing, inheritance and colour overrides will be resolved
+    void onParsingFinished() override;
 
     void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block) override;
 };

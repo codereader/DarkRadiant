@@ -49,14 +49,14 @@ public:
  */
 class ScriptSoundShader
 {
-	ISoundShaderPtr _shader;
+	ISoundShader::Ptr _shader;
 
 public:
-	ScriptSoundShader(const ISoundShaderPtr& shader) :
+	ScriptSoundShader(const ISoundShader::Ptr& shader) :
 		_shader(shader)
 	{}
 
-	operator ISoundShaderPtr&() {
+	operator ISoundShader::Ptr&() {
 		return _shader;
 	}
 

@@ -47,9 +47,9 @@ TEST_F(SoundManagerTest, ForEachSoundShader)
 {
     std::set<std::string> visitedNames;
 
-    GlobalSoundManager().forEachShader([&] (const ISoundShader& shader)
+    GlobalSoundManager().forEachShader([&] (const ISoundShader::Ptr& shader)
     {
-        visitedNames.insert(shader.getDeclName());
+        visitedNames.insert(shader->getDeclName());
     });
 
     EXPECT_EQ(visitedNames.count("parsing_test_case1"), 1) << "Expected shader not visited";

@@ -65,14 +65,16 @@ class ISoundShader :
 public:
     virtual ~ISoundShader() {}
 
+    using Ptr = std::shared_ptr<ISoundShader>;
+
     /// Get the min and max radii of the shader
-    virtual SoundRadii getRadii() const = 0;
+    virtual SoundRadii getRadii() = 0;
 
     /// Get the list of sound files associated to this shader
-    virtual SoundFileList getSoundFileList() const = 0;
+    virtual SoundFileList getSoundFileList() = 0;
 
 	// angua: get the display folder for sorting the sounds in the sound chooser window
-	virtual const std::string& getDisplayFolder() const = 0;
+	virtual const std::string& getDisplayFolder() = 0;
 
     // Returns the mod-relative path to the file this shader is defined in
     virtual std::string getShaderFilePath() const = 0;
@@ -81,7 +83,6 @@ public:
     virtual std::string getDefinition() const = 0;
 
 };
-typedef std::shared_ptr<ISoundShader> ISoundShaderPtr;
 
 constexpr const char* const MODULE_SOUNDMANAGER("SoundManager");
 
@@ -91,12 +92,12 @@ class ISoundManager :
 {
 public:
     /// Invoke a function for each sound shader
-    virtual void forEachShader(std::function<void(const ISoundShader&)>) = 0;
+    virtual void forEachShader(std::function<void(const ISoundShader::Ptr&)>) = 0;
 
     /** greebo: Tries to lookup the SoundShader with the given name,
      *          returns a soundshader with an empty name, if the lookup failed.
      */
-    virtual ISoundShaderPtr getSoundShader(const std::string& shaderName) = 0;
+    virtual ISoundShader::Ptr getSoundShader(const std::string& shaderName) = 0;
 
     /** 
 	 * greebo: Plays the given sound file (defined by its VFS path).
