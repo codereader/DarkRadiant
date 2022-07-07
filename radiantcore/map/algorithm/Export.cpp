@@ -20,6 +20,7 @@
 #include "registry/registry.h"
 #include "scene/Traverse.h"
 #include "command/ExecutionFailure.h"
+#include "command/ExecutionNotPossible.h"
 #include "Models.h"
 
 namespace map
@@ -46,7 +47,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 {
 	if (!path_is_absolute(options.outputFilename.c_str()))
 	{
-		throw std::runtime_error("Output path must be absolute.");
+		throw cmd::ExecutionNotPossible(_("Output path must be absolute."));
 	}
 
 	std::string outputFormat = options.outputFormat;
@@ -110,7 +111,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 	// Check the pre-requisites before exporting
 	if (options.replaceSelectionWithModel && rootPath.empty())
 	{
-		throw std::runtime_error(_("To replace the selection with the exported model\nthe output path must be located within the mod/project."));
+		throw cmd::ExecutionFailure(_("To replace the selection with the exported model\nthe output path must be located within the mod/project."));
 	}
 
 	rMessage() << "Exporting selection to file " << outputPath << outputFile << std::endl;
@@ -133,46 +134,45 @@ void exportSelectedAsModel(const ModelExportOptions& options)
         selection::algorithm::deleteSelection();
 
         // Create an entity of the same class in its place
-        try
+        // Place the model in the world origin, unless we set "center objects" to true
+        Vector3 modelPos(0, 0, 0);
+
+        if (options.centerObjects)
         {
-            // Place the model in the world origin, unless we set "center objects" to true
-            Vector3 modelPos(0, 0, 0);
-
-            if (options.centerObjects)
-            {
-                modelPos = -exporter.getCenterTransform().translation();
-            }
-
-            auto className = lastSelectedEntity ? lastSelectedEntity->getKeyValue("classname") : "func_static";
-            auto eclass = GlobalEntityClassManager().findOrInsert(className, false);
-            auto modelNode = GlobalEntityModule().createEntity(eclass);
-            scene::addNodeToContainer(modelNode, root);
-
-            auto newEntity = Node_getEntity(modelNode);
-            newEntity->setKeyValue("model", relativeModelPath);
-            newEntity->setKeyValue("origin", string::to_string(modelPos));
-            modelNode->assignToLayers(previousLayerSet);
-
-            if (lastSelectedEntity)
-            {
-                // Preserve all spawnargs of the last selected entity, except for a few
-                std::set<std::string> spawnargsToDiscard{ "model", "classname", "origin", "rotation" };
-
-                lastSelectedEntity->forEachKeyValue([&](const std::string& key, const std::string& value)
-                {
-                    if (spawnargsToDiscard.count(string::to_lower_copy(key)) > 0) return;
-
-                    rMessage() << "Replaced entity inherits the key " << key << " with value " << value << std::endl;
-                    newEntity->setKeyValue(key, value);
-                });
-            }
-
-            Node_setSelected(modelNode, true);
+            modelPos = -exporter.getCenterTransform().translation();
         }
-        catch (cmd::ExecutionFailure& ex)
+
+        auto className = lastSelectedEntity ? lastSelectedEntity->getKeyValue("classname") : "func_static";
+        auto eclass = GlobalEntityClassManager().findClass(className);
+
+        if (!eclass)
         {
-            throw std::runtime_error(fmt::format(_("Unable to create model: {0}"), ex.what()));
+            throw cmd::ExecutionFailure(fmt::format(_("Cannot replace exported entity, class {0} not found"), className));
         }
+
+        auto modelNode = GlobalEntityModule().createEntity(eclass);
+        scene::addNodeToContainer(modelNode, root);
+
+        auto newEntity = Node_getEntity(modelNode);
+        newEntity->setKeyValue("model", relativeModelPath);
+        newEntity->setKeyValue("origin", string::to_string(modelPos));
+        modelNode->assignToLayers(previousLayerSet);
+
+        if (lastSelectedEntity)
+        {
+            // Preserve all spawnargs of the last selected entity, except for a few
+            std::set<std::string> spawnargsToDiscard{ "model", "classname", "origin", "rotation" };
+
+            lastSelectedEntity->forEachKeyValue([&](const std::string& key, const std::string& value)
+            {
+                if (spawnargsToDiscard.count(string::to_lower_copy(key)) > 0) return;
+
+                rMessage() << "Replaced entity inherits the key " << key << " with value " << value << std::endl;
+                newEntity->setKeyValue(key, value);
+            });
+        }
+
+        Node_setSelected(modelNode, true);
     }
     
     // It's possible that the export overwrote a model we're already using in this map, refresh it
@@ -228,14 +228,8 @@ void exportSelectedAsModelCmd(const cmd::ArgumentList& args)
 		options.exportLightsAsObjects = (args[6].getInt() != 0);
 	}
 
-	try
-	{
-		exportSelectedAsModel(options);
-	}
-	catch (std::runtime_error& ex)
-	{
-		rError() << "Failed to export model: " << ex.what() << std::endl;
-	}
+    // Forward the call, leak any ExecutionFailure exceptions
+	exportSelectedAsModel(options);
 }
 
 }
