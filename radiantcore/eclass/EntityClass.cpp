@@ -461,11 +461,6 @@ void EntityClass::ensureParsed()
 
     try
     {
-        if (getDeclName() == "atdm:mover_lock_handle")
-        {
-            int i = 6;
-        }
-
         parser::BasicDefTokeniser<std::string> tokeniser(getBlockSyntax().contents);
         parseFromTokens(tokeniser);
     }
