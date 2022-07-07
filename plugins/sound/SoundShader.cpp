@@ -34,7 +34,7 @@ void SoundShader::parseDefinition() const
 	_contents = std::make_unique<ParsedContents>();
 
 	// Get a new tokeniser and parse the block
-	parser::BasicDefTokeniser<std::string> tok(_declBlock.contents);
+	parser::BasicDefTokeniser<std::string> tok(getBlockSyntax().contents);
 
 	while (tok.hasMoreTokens())
     {
@@ -89,19 +89,16 @@ const std::string& SoundShader::getDisplayFolder() const
 
 std::string SoundShader::getShaderFilePath() const
 {
-	return _fileInfo.fullPath();
+	return getBlockSyntax().fileInfo.fullPath();
 }
 
 std::string SoundShader::getDefinition() const
 {
-	return _declBlock.contents;
+	return getBlockSyntax().contents;
 }
 
 void SoundShader::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
 {
-    _fileInfo = block.fileInfo;
-    _modName = block.getModName();
-
     // Reset any contents, we reparse as soon as any property is accessed
     _contents.reset();
 }

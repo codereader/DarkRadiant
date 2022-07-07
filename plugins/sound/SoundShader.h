@@ -16,17 +16,9 @@ class SoundShader final :
 	// Name of the shader
 	std::string _name;
 
-	// The raw unparsed definition block
-    decl::DeclarationBlockSyntax _declBlock;
-
     // Information we have parsed on demand
     struct ParsedContents;
     mutable std::unique_ptr<ParsedContents> _contents;
-
-	vfs::FileInfo _fileInfo;
-
-	// The modname (ModResource implementation)
-	std::string _modName;
 
 private:
 	// Parses the definition block
@@ -44,7 +36,7 @@ public:
 	const std::string& getDeclName() const override { return _name; }
 	decl::Type getDeclType() const override { return decl::Type::SoundShader; }
 	SoundFileList getSoundFileList() const override;
-	std::string getModName() const override { return _modName; }
+	std::string getModName() const override { return getBlockSyntax().getModName(); }
 	const std::string& getDisplayFolder() const override;
 	std::string getShaderFilePath() const override;
 	std::string getDefinition() const override;
