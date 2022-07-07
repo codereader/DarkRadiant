@@ -318,9 +318,6 @@ public:
      */
     virtual void forEachEntityClass(EntityClassVisitor& visitor) = 0;
 
-    virtual void realise() = 0;
-    virtual void unrealise() = 0;
-
     /**
      * greebo: This reloads the entityDefs and modelDefs from all files. Does not
      * change the scenegraph, only the contents of the EClass objects are

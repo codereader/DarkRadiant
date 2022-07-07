@@ -29,7 +29,6 @@ add_library(radiantcore MODULE
             eclass/EntityClass.cpp
             eclass/EClassColourManager.cpp
             eclass/EClassManager.cpp
-            eclass/EClassParser.cpp
             entity/AngleKey.cpp
             entity/AttachmentData.cpp
             entity/curve/CurveCatmullRom.cpp

@@ -1,30 +1,18 @@
 #include "EClassManager.h"
 
-#include "iarchive.h"
 #include "ideclmanager.h"
 #include "ieclasscolours.h"
 #include "i18n.h"
 #include "iregistry.h"
 #include "icommandsystem.h"
-#include "iradiant.h"
-#include "ifilesystem.h"
 #include "messages/ScopedLongRunningOperation.h"
 
-#include "EntityClass.h"
-#include "Doom3ModelDef.h"
 #include "DefCreators.h"
-
-#include "string/case_conv.h"
-#include <functional>
 
 #include "module/StaticModule.h"
 
-namespace eclass {
-
-EClassManager::EClassManager() :
-    _realised(false)/*,
-    _defLoader(*this, _entityClasses, _models)*/
-{}
+namespace eclass
+{
 
 sigc::signal<void>& EClassManager::defsLoadingSignal()
 {
@@ -47,65 +35,6 @@ IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_br
     return std::static_pointer_cast<IEntityClass>(
         GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::EntityDef, name)
     );
-#if 0
-    ensureDefsLoaded();
-
-    // Return an error if no name is given
-    if (name.empty())
-        return IEntityClassPtr();
-
-    // Convert string to lowercase, for case-insensitive lookup
-    std::string lName = string::to_lower_copy(name);
-
-    // Find and return if exists
-    EntityClass::Ptr eclass = findInternal(lName);
-    if (eclass)
-        return eclass;
-
-    // Otherwise insert the new EntityClass
-    eclass = EntityClass::CreateDefault(lName);
-
-    // Any overrides should also apply to entityDefs that are crated on the fly
-    GlobalEclassColourManager().applyColours(*eclass);
-
-    // Try to insert the class
-    return insertUnique(eclass);
-#endif
-}
-#if 0
-EntityClass::Ptr EClassManager::findInternal(const std::string& name)
-{
-    // Find the EntityClass in the map.
-    auto i = _entityClasses.find(name);
-
-    return i != _entityClasses.end() ? i->second : EntityClass::Ptr();
-}
-
-EntityClass::Ptr EClassManager::insertUnique(const EntityClass::Ptr& eclass)
-{
-	// Try to insert the eclass
-    auto i = _entityClasses.emplace(eclass->getName(), eclass);
-
-    // Return the pointer to the inserted eclass
-    return i.first->second;
-}
-
-void EClassManager::ensureDefsLoaded()
-{
-    _defLoader.ensureFinished();
-}
-#endif
-void EClassManager::realise()
-{
-	if (_realised)
-    {
-		return; // nothing to do anymore
-	}
-
-	_realised = true;
-#if 0
-    _defLoader.start();
-#endif
 }
 
 IEntityClassPtr EClassManager::findClass(const std::string& className)
@@ -113,16 +42,6 @@ IEntityClassPtr EClassManager::findClass(const std::string& className)
     return std::static_pointer_cast<IEntityClass>(
         GlobalDeclarationManager().findDeclaration(decl::Type::EntityDef, className)
     );
-#if 0
-    ensureDefsLoaded();
-
-	// greebo: Convert the lookup className string to lowercase first
-	std::string classNameLower = string::to_lower_copy(className);
-
-    EntityClasses::const_iterator i = _entityClasses.find(classNameLower);
-
-    return i != _entityClasses.end() ? i->second : IEntityClassPtr();
-#endif
 }
 
 void EClassManager::forEachEntityClass(EntityClassVisitor& visitor)
@@ -131,26 +50,6 @@ void EClassManager::forEachEntityClass(EntityClassVisitor& visitor)
     {
         visitor.visit(std::static_pointer_cast<IEntityClass>(decl));
     });
-#if 0
-    ensureDefsLoaded();
-
-	for (auto& [_, eclass] : _entityClasses)
-	{
-		visitor.visit(eclass);
-	}
-#endif
-}
-
-void EClassManager::unrealise()
-{
-    if (_realised)
-	{
-#if 0
-        // This waits for any threaded work to finish
-        _defLoader.reset();
-#endif
-       	_realised = false;
-    }
 }
 
 IModelDef::Ptr EClassManager::findModel(const std::string& name)
@@ -171,15 +70,7 @@ void EClassManager::forEachModelDef(const std::function<void(const IModelDef::Pt
 void EClassManager::reloadDefs()
 {
     GlobalDeclarationManager().reloadDeclarations();
-#if 0
-	// greebo: Leave all current entityclasses as they are, just invoke the
-	// FileLoader again. It will parse the files again, and look up
-	// the eclass names in the existing map. If found, the eclass
-	// will be asked to clear itself and re-parse from the tokens.
-	// This is to assure that any IEntityClassPtrs remain intact during
-	// the process, only the class contents change.
-    _defLoader.parseSynchronously();
-#endif
+
     // On top of the "loaded" signal, emit the "reloaded" signal
     _defsReloadedSignal.emit();
 }
@@ -196,7 +87,6 @@ const StringSet& EClassManager::getDependencies() const
     static StringSet _dependencies
     {
         MODULE_DECLMANAGER,
-        MODULE_VIRTUALFILESYSTEM,
         MODULE_XMLREGISTRY,
         MODULE_COMMANDSYSTEM,
         MODULE_ECLASS_COLOUR_MANAGER,
@@ -213,13 +103,6 @@ void EClassManager::initialiseModule(const IApplicationContext& ctx)
     GlobalDeclarationManager().registerDeclType("model", std::make_shared<ModelDefCreator>());
     GlobalDeclarationManager().registerDeclFolder(decl::Type::EntityDef, "def/", ".def");
 
-	GlobalFileSystem().addObserver(*this);
-
-    if (GlobalFileSystem().isInitialised())
-    {
-        realise();
-    }
-
 	GlobalCommandSystem().addCommand("ReloadDefs", std::bind(&EClassManager::reloadDefsCmd, this, std::placeholders::_1));
 
     _eclassColoursChanged = GlobalEclassColourManager().sig_overrideColourChanged().connect(
@@ -232,20 +115,10 @@ void EClassManager::shutdownModule()
 
     _eclassColoursChanged.disconnect();
 
-	GlobalFileSystem().removeObserver(*this);
-
-	// Unrealise ourselves and wait for threads to finish
-	unrealise();
-
 	// Don't notify anyone anymore
 	_defsReloadedSignal.clear();
     _defsLoadedSignal.clear();
     _defsLoadingSignal.clear();
-#if 0
-	// Clear member structures
-	_entityClasses.clear();
-	_models.clear();
-#endif
 }
 
 void EClassManager::onEclassOverrideColourChanged(const std::string& eclass, bool overrideRemoved)
@@ -277,18 +150,6 @@ void EClassManager::reloadDefsCmd(const cmd::ArgumentList& args)
 	radiant::ScopedLongRunningOperation operation(_("Reloading Defs"));
 
     reloadDefs();
-}
-
-// Gets called on VFS initialise
-void EClassManager::onFileSystemInitialise()
-{
-	realise();
-}
-
-// Gets called on VFS shutdown
-void EClassManager::onFileSystemShutdown()
-{
-	unrealise();
 }
 
 // Static module instance

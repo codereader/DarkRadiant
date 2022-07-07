@@ -43,7 +43,6 @@
     <ClCompile Include="..\..\radiantcore\decl\FavouritesManager.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp" />
-    <ClCompile Include="..\..\radiantcore\eclass\EClassParser.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EntityClass.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\AngleKey.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\AttachmentData.cpp" />
@@ -768,7 +767,6 @@
     <ClInclude Include="..\..\radiantcore\decl\FavouritesManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h" />
-    <ClInclude Include="..\..\radiantcore\eclass\EClassParser.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EntityClass.h" />
     <ClInclude Include="..\..\radiantcore\eclass\DefCreators.h" />
