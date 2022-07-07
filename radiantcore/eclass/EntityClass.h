@@ -119,14 +119,6 @@ public:
 
     std::string getDefFileName() override;
 
-    /**
-     * Return the mod name.
-     */
-    std::string getModName() const override
-    {
-        return getBlockSyntax().getModName();
-    }
-
     void emitChangedSignal()
     {
         if (!_blockChangeSignal)

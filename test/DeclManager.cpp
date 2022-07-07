@@ -52,6 +52,11 @@ public:
     {
         _parseStamp = parseStamp;
     }
+
+    std::string getModName() const override
+    {
+        return _block.getModName();
+    }
 };
 
 class TestDeclarationCreator :

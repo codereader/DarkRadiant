@@ -24,11 +24,6 @@ public:
         DeclarationBase<IModelDef>(decl::Type::ModelDef, name)
 	{}
 
-    std::string getModName() const override
-    {
-        return getBlockSyntax().getModName();
-    }
-
     const std::string& getMesh() override
 	{
         ensureParsed();

@@ -59,8 +59,7 @@ class SoundRadii {
 
 /// Representation of a single sound or sound shader.
 class ISoundShader :
-    public decl::IDeclaration,
-    public ModResource
+    public decl::IDeclaration
 {
 public:
     virtual ~ISoundShader() {}

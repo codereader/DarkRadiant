@@ -36,7 +36,8 @@ struct DeclarationBlockSyntax : ModResource
 };
 
 // Common interface shared by all the declarations supported by a certain game type
-class IDeclaration
+class IDeclaration :
+    public ModResource
 {
 public:
     virtual ~IDeclaration()

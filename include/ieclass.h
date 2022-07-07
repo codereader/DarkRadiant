@@ -120,8 +120,7 @@ typedef std::shared_ptr<const IEntityClass> IEntityClassConstPtr;
  * \ingroup eclass
  */
 class IEntityClass :
-    public decl::IDeclaration,
-    public ModResource
+    public decl::IDeclaration
 {
 public:
     virtual ~IEntityClass() {}
@@ -233,8 +232,7 @@ public:
  * \ingroup eclass
  */
 class IModelDef :
-    public decl::IDeclaration,
-    public ModResource
+    public decl::IDeclaration
 {
 public:
     using Ptr = std::shared_ptr<IModelDef>;

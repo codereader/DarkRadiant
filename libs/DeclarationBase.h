@@ -25,7 +25,7 @@ private:
         "DeclarationInterface type must inherit from IDeclaration");
 
     std::string _name;
-    Type _type;
+    decl::Type _type;
 
     std::size_t _parseStamp;
 
@@ -35,7 +35,7 @@ private:
     bool _parsed;
 
 protected:
-    DeclarationBase(Type type, const std::string& name) :
+    DeclarationBase(decl::Type type, const std::string& name) :
         _name(name),
         _type(type),
         _parseStamp(0),
@@ -48,7 +48,7 @@ public:
         return _name;
     }
 
-    Type getDeclType() const final override
+    decl::Type getDeclType() const final override
     {
         return _type;
     }
@@ -66,6 +66,11 @@ public:
         _parsed = false;
 
         onSyntaxBlockAssigned(_declBlock);
+    }
+
+    std::string getModName() const final override
+    {
+        return getBlockSyntax().getModName();
     }
 
     std::size_t getParseStamp() const final

@@ -27,7 +27,6 @@ public:
     // ISoundShader implementation
 	SoundRadii getRadii() override;
 	SoundFileList getSoundFileList() override;
-	std::string getModName() const override { return getBlockSyntax().getModName(); }
 	const std::string& getDisplayFolder() override;
 	std::string getShaderFilePath() const override;
 	std::string getDefinition() const override;
