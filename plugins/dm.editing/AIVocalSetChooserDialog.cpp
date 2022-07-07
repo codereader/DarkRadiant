@@ -146,7 +146,7 @@ void AIVocalSetChooserDialog::handleSetSelectionChanged()
 			}
 
 			// Update the usage panel
-			_description->SetValue(eclass::getUsage(*ecls));
+			_description->SetValue(eclass::getUsage(ecls));
 		}
 	}
 	else
