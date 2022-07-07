@@ -17,14 +17,11 @@ private:
     std::string _skin;
     Anims _anims;
 
-    bool _parsed;
-
 public:
     using Ptr = std::shared_ptr<Doom3ModelDef>;
 
 	Doom3ModelDef(const std::string& name) :
-        DeclarationBase<IModelDef>(decl::Type::ModelDef, name),
-        _parsed(false)
+        DeclarationBase<IModelDef>(decl::Type::ModelDef, name)
 	{}
 
     std::string getModName() const override
@@ -65,45 +62,14 @@ public:
 	}
 
 protected:
-    void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& _) override
+    void onBeginParsing() override
     {
-        // Trigger a reparse next time any of the getters is accessed
-        _parsed = false;
-    }
-
-private:
-    void ensureParsed()
-    {
-        if (_parsed) return; // nothing to do
-
-        _parsed = true;
-
-        try
-        {
-            parser::BasicDefTokeniser<std::string> tokeniser(getBlockSyntax().contents);
-            parseFromTokens(tokeniser);
-        }
-        catch (const parser::ParseException& ex)
-        {
-            rError() << "[DeclParser]: Error parsing " << getTypeName(getDeclType()) << " " << getDeclName()
-                << ": " << ex.what() << std::endl;
-        }
-    }
-
-    void clearContents()
-    {
-        // Don't clear the name
-        _mesh.clear();
-        _skin.clear();
-        _parent.reset();
-        _anims.clear();
+        clearContents();
     }
 
     // Reads the data from the given tokens into the member variables
-    void parseFromTokens(parser::DefTokeniser& tokeniser)
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override
     {
-        clearContents();
-
         // State enum
         enum
         {
@@ -154,6 +120,16 @@ private:
                 state = NONE;
             }
         }
+    }
+
+private:
+    void clearContents()
+    {
+        // Don't clear the name
+        _mesh.clear();
+        _skin.clear();
+        _parent.reset();
+        _anims.clear();
     }
 
     void inheritFrom(const std::string& parentName)

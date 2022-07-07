@@ -33,8 +33,8 @@ public:
 	std::string getDefinition() const override;
 
 protected:
+    void onBeginParsing() override;
     void parseFromTokens(parser::DefTokeniser& tokeniser) override;
-    void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block) override;
 };
 
 }

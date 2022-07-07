@@ -29,10 +29,13 @@ SoundShader::SoundShader(const std::string& name)
 SoundShader::~SoundShader()
 { }
 
+void SoundShader::onBeginParsing()
+{
+    _contents = std::make_unique<ParsedContents>();
+}
+
 void SoundShader::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
-	_contents = std::make_unique<ParsedContents>();
-
 	while (tokeniser.hasMoreTokens())
     {
 		// Get the next token
@@ -92,12 +95,6 @@ std::string SoundShader::getShaderFilePath() const
 std::string SoundShader::getDefinition() const
 {
 	return getBlockSyntax().contents;
-}
-
-void SoundShader::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
-{
-    // Reset any contents, we reparse as soon as any property is accessed
-    _contents.reset();
 }
 
 } // namespace
