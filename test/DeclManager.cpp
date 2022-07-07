@@ -20,7 +20,8 @@ private:
 public:
     TestDeclaration(decl::Type type, const std::string& name) :
         _type(type),
-        _name(name)
+        _name(name),
+        _parseStamp(0)
     {}
 
     const std::string& getDeclName() const override

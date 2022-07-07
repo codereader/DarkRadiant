@@ -87,9 +87,4 @@ const std::string& SoundShader::getDisplayFolder()
     return _contents->displayFolder;
 }
 
-std::string SoundShader::getDefinition() const
-{
-	return getBlockSyntax().contents;
-}
-
 } // namespace

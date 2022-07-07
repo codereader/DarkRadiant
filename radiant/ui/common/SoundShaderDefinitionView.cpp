@@ -44,7 +44,7 @@ std::string SoundShaderDefinitionView::getDeclFileName()
 
 std::string SoundShaderDefinitionView::getDefinition()
 {
-	return _shader ? _shader->getDefinition() : std::string();
+	return _shader ? _shader->getBlockSyntax().contents : std::string();
 }
 
 }

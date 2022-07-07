@@ -82,7 +82,7 @@ public:
 
 	std::string getDefinition()
 	{
-		return _shader ? _shader->getDefinition() : std::string();
+		return _shader ? _shader->getBlockSyntax().contents : std::string();
 	}
 
 	bool isNull() const {

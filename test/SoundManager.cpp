@@ -36,9 +36,6 @@ TEST_F(SoundManagerTest, GetExistingSoundShader)
     EXPECT_EQ(fileList.at(0), "sound/nonexistent.ogg");
     EXPECT_EQ(fileList.at(1), "sound/nonexistent2.ogg");
 
-    EXPECT_NE(existing->getDefinition().find("maxDistance 30"), std::string::npos)
-        << "Didn't find the expected contents";
-
     EXPECT_NE(existing->getBlockSyntax().contents.find("maxDistance 30"), std::string::npos)
         << "Didn't find the expected contents";
 }

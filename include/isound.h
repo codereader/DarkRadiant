@@ -74,10 +74,6 @@ public:
 
 	// angua: get the display folder for sorting the sounds in the sound chooser window
 	virtual const std::string& getDisplayFolder() = 0;
-
-    // Returns the raw sound shader definition text
-    virtual std::string getDefinition() const = 0;
-
 };
 
 constexpr const char* const MODULE_SOUNDMANAGER("SoundManager");
