@@ -13,9 +13,6 @@ namespace sound
 class SoundShader final :
 	public decl::DeclarationBase<ISoundShader>
 {
-	// Name of the shader
-	std::string _name;
-
     // Information we have parsed on demand
     struct ParsedContents;
     mutable std::unique_ptr<ParsedContents> _contents;
@@ -33,7 +30,6 @@ public:
 
     // ISoundShader implementation
 	SoundRadii getRadii() const override;
-	const std::string& getDeclName() const override { return _name; }
 	decl::Type getDeclType() const override { return decl::Type::SoundShader; }
 	SoundFileList getSoundFileList() const override;
 	std::string getModName() const override { return getBlockSyntax().getModName(); }

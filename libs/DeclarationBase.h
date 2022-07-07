@@ -23,17 +23,25 @@ private:
     static_assert(std::is_base_of_v<IDeclaration, DeclarationInterface>, 
         "DeclarationInterface type must inherit from IDeclaration");
 
+    std::string _name;
+
     std::size_t _parseStamp;
 
     // The raw unparsed definition block
     DeclarationBlockSyntax _declBlock;
 
 protected:
-    DeclarationBase() :
+    DeclarationBase(const std::string& name) :
+        _name(name),
         _parseStamp(0)
     {}
 
 public:
+    const std::string& getDeclName() const override
+    {
+        return _name;
+    }
+
     const DeclarationBlockSyntax& getBlockSyntax() const override
     {
         return _declBlock;

@@ -2,7 +2,6 @@
 
 #include "itextstream.h"
 #include "ieclasscolours.h"
-#include "os/path.h"
 #include "string/convert.h"
 
 #include "string/predicate.h"
@@ -18,7 +17,7 @@ namespace
 }
 
 EntityClass::EntityClass(const std::string& name)
-: _name(name),
+: DeclarationBase<IEntityClass>(name),
   _visibility([this]() {
       // Entity class visibility is NOT inherited -- hiding an abstract base entity from the list
       // does not imply all of its concrete subclasses should also be hidden.
@@ -37,19 +36,9 @@ EntityClass::~EntityClass()
     _parentChangedConnection.disconnect();
 }
 
-const std::string& EntityClass::getDeclName() const
-{
-    return _name;
-}
-
 decl::Type EntityClass::getDeclType() const
 {
     return decl::Type::EntityDef;
-}
-
-const std::string& EntityClass::getName() const
-{
-    return getDeclName();
 }
 
 IEntityClass* EntityClass::getParent()
@@ -134,7 +123,7 @@ EntityClass::Type EntityClass::getClassType()
         return Type::EntityClassModel;
     }
     
-    if (getName() == "speaker")
+    if (getDeclName() == "speaker")
     {
         return Type::Speaker;
     }
@@ -306,7 +295,7 @@ void EntityClass::resolveInheritance()
     // parent name is the same as our own classname, to avoid infinite
     // recursion.
     std::string parentName = getAttributeValue("inherit");
-    if (parentName.empty() || parentName == _name)
+    if (parentName.empty() || parentName == getDeclName())
     {
         resetColour();
         return;
@@ -322,7 +311,7 @@ void EntityClass::resolveInheritance()
     }
     else
     {
-        rWarning() << "[eclassmgr] Entity class " << _name
+        rWarning() << "[eclassmgr] Entity class " << getDeclName()
             << " specifies unknown parent class " << parentName << std::endl;
     }
 
@@ -368,7 +357,7 @@ bool EntityClass::isOfType(const std::string& className)
          currentClass != nullptr;
          currentClass = currentClass->getParent())
     {
-        if (currentClass->getName() == className)
+        if (currentClass->getDeclName() == className)
 		{
 			return true;
 		}
@@ -584,7 +573,7 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         {
             // Both type and value are not empty, emit a warning
             rWarning() << "[eclassmgr] attribute " << key
-                << " already set on entityclass " << _name << std::endl;
+                << " already set on entityclass " << getDeclName() << std::endl;
         }
     }
 }

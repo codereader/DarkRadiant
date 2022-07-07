@@ -11,8 +11,6 @@ class Doom3ModelDef :
     public decl::DeclarationBase<IModelDef>
 {
 private:
-    std::string _name;
-
     Ptr _parent;
 
     std::string _mesh;
@@ -24,19 +22,14 @@ private:
 public:
     using Ptr = std::shared_ptr<Doom3ModelDef>;
 
-	Doom3ModelDef(const std::string& modelDefName) :
-        _parsed(false),
-        _name(modelDefName)
+	Doom3ModelDef(const std::string& name) :
+        DeclarationBase<IModelDef>(name),
+        _parsed(false)
 	{}
 
     std::string getModName() const override
     {
         return getBlockSyntax().getModName();
-    }
-
-    const std::string& getDeclName() const override
-    {
-        return _name;
     }
 
     decl::Type getDeclType() const override

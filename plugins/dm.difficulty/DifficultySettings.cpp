@@ -307,7 +307,7 @@ std::string DifficultySettings::getInheritanceKey(const std::string& className)
          currentClass != NULL;
          currentClass = currentClass->getParent())
     {
-        inheritanceChain.push_front(currentClass->getName());
+        inheritanceChain.push_front(currentClass->getDeclName());
     }
 
     // Build the inheritance key

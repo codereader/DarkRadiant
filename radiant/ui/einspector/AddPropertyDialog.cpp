@@ -153,7 +153,7 @@ void AddPropertyDialog::populateTreeView()
 	{
 		// First add a top-level category named after the entity class, and populate
 		// it with custom keyvals defined in the DEF for that class
-		std::string cName = _entity->getEntityClass()->getName();
+		std::string cName = _entity->getEntityClass()->getDeclName();
 
 		wxutil::TreeModel::Row defRoot = _treeStore->AddItem();
 

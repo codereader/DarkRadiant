@@ -201,7 +201,7 @@ public:
 	{
 		if (eclass->getAttributeValue("editor_vocal_set") == "1")
 		{
-			_list.insert(eclass->getName());
+			_list.insert(eclass->getDeclName());
 		}
 	}
 };

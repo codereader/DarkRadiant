@@ -180,7 +180,7 @@ public:
     {
         if (eclass->getAttributeValue("editor_head") == "1")
         {
-            _list.insert(eclass->getName());
+            _list.insert(eclass->getDeclName());
         }
     }
 };

@@ -319,7 +319,7 @@ sigc::signal<void>& MaterialPreview::signal_LightChanged()
 
 std::string MaterialPreview::getLightClassname()
 {
-    return _light ? Node_getEntity(_light)->getEntityClass()->getName() : "";
+    return _light ? Node_getEntity(_light)->getEntityClass()->getDeclName() : "";
 }
 
 void MaterialPreview::setLightClassname(const std::string& className)

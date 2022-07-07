@@ -21,7 +21,7 @@ struct SoundShader::ParsedContents
 };
 
 SoundShader::SoundShader(const std::string& name)
-:	_name(name)
+:	DeclarationBase<ISoundShader>(name)
 {}
 
 // Destructor must be defined with ParsedContents definition visible, otherwise

@@ -1717,7 +1717,7 @@ inline IEntityNodePtr findPlayerStartEntity()
 
     algorithm::findFirstEntity(GlobalMapModule().getRoot(), [&](const IEntityNodePtr& entity)
     {
-        if (entity->getEntity().getEntityClass()->getName() == "info_player_start")
+        if (entity->getEntity().getEntityClass()->getDeclName() == "info_player_start")
         {
             found = entity;
         }

@@ -465,7 +465,7 @@ TEST_F(ModelExportTest, ExportedModelInheritsSpawnargs)
     EXPECT_EQ(newEntity->getKeyValue("dummy1"), "value1");
     EXPECT_EQ(newEntity->getKeyValue("dummy2"), "value2");
     EXPECT_EQ(newEntity->getKeyValue("classname"), "atdm:mover_door");
-    EXPECT_EQ(newEntity->getEntityClass()->getName(), "atdm:mover_door");
+    EXPECT_EQ(newEntity->getEntityClass()->getDeclName(), "atdm:mover_door");
 
     // This one should not have been inherited, it was belonging to the other entity
     EXPECT_EQ(newEntity->getKeyValue("henrys_key"), "");

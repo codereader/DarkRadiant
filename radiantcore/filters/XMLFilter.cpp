@@ -69,7 +69,7 @@ bool XMLFilter::isEntityVisible(const FilterRule::Type type, const Entity& entit
 		{
 			std::regex ex(ruleIter->match);
 
-			if (std::regex_match(eclass->getName(), ex))
+			if (std::regex_match(eclass->getDeclName(), ex))
 			{
 				visible = ruleIter->show;
 			}

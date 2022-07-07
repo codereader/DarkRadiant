@@ -109,7 +109,7 @@ public:
         // Create the folder to put this EntityClass in, depending on the value
         // of the DISPLAY_FOLDER_KEY.
         addPath(
-            eclass->getModName() + folderPath + "/" + eclass->getName(),
+            eclass->getModName() + folderPath + "/" + eclass->getDeclName(),
             [&](TreeModel::Row& row, const std::string& path,
                 const std::string& leafName, bool isFolder)
             {

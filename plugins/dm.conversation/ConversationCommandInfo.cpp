@@ -63,7 +63,7 @@ void ConversationCommandInfo::parseFromEntityClass(const IEntityClassPtr& eclass
 		}
 		else {
 			rError() << "Could not determine Conversation Command Argument type: " <<
-				argTypeStr << " on entityDef " << eclass->getName() << std::endl;
+				argTypeStr << " on entityDef " << eclass->getDeclName() << std::endl;
 		}
 
 		// add the argument to the local list

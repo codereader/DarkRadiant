@@ -142,9 +142,6 @@ public:
     /// Signal emitted when entity class contents are changed or reloaded
     virtual sigc::signal<void>& changedSignal() = 0;
 
-    /// Get the name of this entity class
-    virtual const std::string& getName() const = 0;
-
     /// Get the parent entity class or NULL if there is no parent
     virtual IEntityClass* getParent() = 0;
 

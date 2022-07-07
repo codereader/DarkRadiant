@@ -36,9 +36,6 @@ public:
     using Ptr = std::shared_ptr<EntityClass>;
 
 private:
-    // The name of this entity class
-    std::string _name;
-
     // Parent class pointer (or NULL)
     EntityClass* _parent = nullptr;
 
@@ -105,13 +102,11 @@ public:
 
     Type getClassType() override;
 
-    const std::string& getDeclName() const override;
     decl::Type getDeclType() const override;
 
     void emplaceAttribute(EntityClassAttribute&& attribute);
 
     // IEntityClass implementation
-    const std::string& getName() const override;
     IEntityClass* getParent() override;
     vfs::Visibility getVisibility() override;
     sigc::signal<void>& changedSignal() override;

@@ -98,11 +98,11 @@ IEntityNodePtr Doom3EntityModule::createEntity(const IEntityClassPtr& eclass)
 		node->moveToLayer(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer());
 	}
 
-	node->getEntity().setKeyValue("classname", eclass->getName());
+	node->getEntity().setKeyValue("classname", eclass->getDeclName());
 
 	// If this is not a worldspawn or unrecognised entity, generate a unique
 	// name for it
-	const std::string& eclassName = eclass->getName();
+	const std::string& eclassName = eclass->getDeclName();
 
 	if (!eclassName.empty() &&
 		eclassName != "worldspawn" &&

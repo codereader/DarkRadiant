@@ -36,7 +36,7 @@ public:
 		if (entity != nullptr)
 		{
 			IEntityClassConstPtr eclass = entity->getEntityClass();
-			std::string ecName = eclass->getName();
+			std::string ecName = eclass->getDeclName();
 
 			auto found = _map.find(ecName);
 
