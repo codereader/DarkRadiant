@@ -284,15 +284,6 @@ class IEntityClassManager :
     public RegisterableModule
 {
 public:
-    /// Signal emitted when starting to parse DEFs
-    virtual sigc::signal<void>& defsLoadingSignal() = 0;
-
-    /// Signal emitted when all DEFs have been loaded (after module initialisation)
-    virtual sigc::signal<void>& defsLoadedSignal() = 0;
-
-    /// Signal emitted when all DEFs are reloaded
-    virtual sigc::signal<void>& defsReloadedSignal() = 0;
-
     /**
      * Return the IEntityClass corresponding to the given name, creating it if
      * necessary. If it is created, the has_brushes parameter will be used to

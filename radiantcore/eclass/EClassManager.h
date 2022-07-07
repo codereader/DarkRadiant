@@ -24,17 +24,10 @@ class EClassManager final :
     public IEntityClassManager
 {
 private:
-    sigc::signal<void> _defsLoadingSignal;
-    sigc::signal<void> _defsLoadedSignal;
-    sigc::signal<void> _defsReloadedSignal;
-
     sigc::connection _eclassColoursChanged;
 
 public:
     // IEntityClassManager implementation
-    sigc::signal<void>& defsLoadingSignal() override;
-    sigc::signal<void>& defsLoadedSignal() override;
-    sigc::signal<void>& defsReloadedSignal() override;
     IEntityClassPtr findOrInsert(const std::string& name, bool has_brushes) override;
     IEntityClassPtr findClass(const std::string& className) override;
     void forEachEntityClass(EntityClassVisitor& visitor) override;

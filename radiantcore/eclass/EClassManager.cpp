@@ -14,21 +14,6 @@
 namespace eclass
 {
 
-sigc::signal<void>& EClassManager::defsLoadingSignal()
-{
-    return _defsLoadingSignal;
-}
-
-sigc::signal<void>& EClassManager::defsLoadedSignal()
-{
-	return _defsLoadedSignal;
-}
-
-sigc::signal<void>& EClassManager::defsReloadedSignal()
-{
-    return _defsReloadedSignal;
-}
-
 // Get a named entity class, creating if necessary
 IEntityClassPtr EClassManager::findOrInsert(const std::string& name, bool has_brushes)
 {
@@ -70,9 +55,6 @@ void EClassManager::forEachModelDef(const std::function<void(const IModelDef::Pt
 void EClassManager::reloadDefs()
 {
     GlobalDeclarationManager().reloadDeclarations();
-
-    // On top of the "loaded" signal, emit the "reloaded" signal
-    _defsReloadedSignal.emit();
 }
 
 // RegisterableModule implementation
@@ -114,11 +96,6 @@ void EClassManager::shutdownModule()
 	rMessage() << getName() << "::shutdownModule called." << std::endl;
 
     _eclassColoursChanged.disconnect();
-
-	// Don't notify anyone anymore
-	_defsReloadedSignal.clear();
-    _defsLoadedSignal.clear();
-    _defsLoadingSignal.clear();
 }
 
 void EClassManager::onEclassOverrideColourChanged(const std::string& eclass, bool overrideRemoved)

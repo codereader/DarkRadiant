@@ -9,6 +9,7 @@
 
 #include "i18n.h"
 #include "ifavourites.h"
+#include "ideclmanager.h"
 #include "ui/imainframe.h"
 #include "gamelib.h"
 
@@ -202,7 +203,7 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
 
     // Listen for defs-reloaded signal (cannot bind directly to
     // ThreadedEntityClassLoader method because it is not sigc::trackable)
-    _defsReloaded = GlobalEntityClassManager().defsReloadedSignal().connect(
+    _defsReloaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
         sigc::mem_fun(this, &EntityClassChooser::loadEntityClasses)
     );
 
