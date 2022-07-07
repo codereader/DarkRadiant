@@ -43,12 +43,12 @@ protected:
     {}
 
 public:
-    const std::string& getDeclName() const final override
+    const std::string& getDeclName() const final
     {
         return _name;
     }
 
-    decl::Type getDeclType() const final override
+    decl::Type getDeclType() const final
     {
         return _type;
     }
@@ -58,7 +58,7 @@ public:
         return _declBlock;
     }
 
-    void setBlockSyntax(const DeclarationBlockSyntax& block) final override
+    void setBlockSyntax(const DeclarationBlockSyntax& block) final
     {
         _declBlock = block;
 
@@ -68,12 +68,12 @@ public:
         onSyntaxBlockAssigned(_declBlock);
     }
 
-    std::string getModName() const final override
+    std::string getModName() const final
     {
         return getBlockSyntax().getModName();
     }
 
-    std::string getDeclFilePath() const final override
+    std::string getDeclFilePath() const final
     {
         return getBlockSyntax().fileInfo.fullPath();
     }

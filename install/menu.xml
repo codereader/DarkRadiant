@@ -22,13 +22,12 @@
 		<menuSeparator />
 		<menuItem name="ConvertModel" caption="Import/Convert Model..." command="ConvertModelDialog" />
 		<menuSeparator />
+		<menuItem name="reloadDecls" caption="Reload Declarations" command="ReloadDecls" />
 		<menuItem name="refreshModels" caption="&amp;Reload Models" command="RefreshModels" icon="model16red.png" />
 		<menuItem name="refreshSelectedModels" caption="Reload Selected Models" command="RefreshSelectedModels" icon="model16red.png" />
 		<menuItem name="reloadSkins" caption="Reload S&amp;kins" command="ReloadSkins" icon="skin16.png" />
 		<menuItem name="refreshShaders" caption="Reload Materials" command="RefreshShaders" icon="texwindow_flushandreload.png" />
-		<menuItem name="reloadDefs" caption="Reload Defs" command="ReloadDefs" />
 		<menuItem name="reloadParticles" caption="Reload Particles" command="ReloadParticles" icon="particle16.png" />
-		<menuItem name="reloadSounds" caption="Reload Sounds" command="ReloadSounds" icon="icon_sound.png" />
 		<menuSeparator />
 		<menuItem name="gameSelector" caption="&amp;Game/Project Setup..." command="ProjectSettings" />
 		<menuSeparator />

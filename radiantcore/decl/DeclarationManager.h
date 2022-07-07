@@ -55,8 +55,8 @@ private:
     std::map<Type, sigc::signal<void>> _declsReloadingSignals;
     std::map<Type, sigc::signal<void>> _declsReloadedSignals;
 
-    std::size_t _parseStamp;
-    bool _reparseInProgress;
+    std::size_t _parseStamp = 0;
+    bool _reparseInProgress = false;
 
 public:
     void registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& parser) override;
