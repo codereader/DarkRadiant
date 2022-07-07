@@ -1,5 +1,6 @@
 #include "gtest/gtest.h"
 
+#include "parser/DefTokeniser.h"
 #include "parser/DefBlockTokeniser.h"
 
 namespace test
@@ -206,6 +207,47 @@ TEST(DefBlockTokeniser, WhitespaceAfterTypename)
         std::make_pair("sound textures/parsing_test/block4", "_white"),
         std::make_pair("sound textures/parsing_test/block5", "_white"),
     });
+}
+
+TEST(DefTokeniser, EmptyQuotesAtEndOfBlock)
+{
+    std::string testString = R"(
+	"inherit"					"atdm:mover_handle_base"
+
+	"spawnclass"				"CFrobLockHandle"
+
+	"editor_DisplayFolder"		"Movers"
+	"editor_usage"				"Attach to a lock by binding it."
+
+	"editor_snd snd_tap_locked"		"Called when the handle starts to move and its door is locked."
+	"editor_snd snd_tap_default"	"Called when the handle starts to move and its door is unlocked."
+
+    "noclipmodel"               "1"
+
+    "mins"                      "-1 -1 -3"
+    "maxs"                      "1 1 3"
+    "frobbox_size"              "1 1 1"
+
+	"snd_tap_default"			""
+	"snd_tap_locked"			""
+)";
+
+    parser::BasicDefTokeniser<std::string> tokeniser(testString);
+
+    std::map<std::string, std::string> keyValuePairs;
+    while (tokeniser.hasMoreTokens())
+    {
+        auto key = tokeniser.nextToken();
+        auto value = tokeniser.nextToken();
+
+        keyValuePairs.emplace(std::move(key), std::move(value));
+    }
+
+    EXPECT_EQ(keyValuePairs.size(), 12) << "Expected 12 key value pairs after parsing";
+
+    EXPECT_EQ(keyValuePairs["snd_tap_locked"], "");
+    EXPECT_EQ(keyValuePairs["editor_snd snd_tap_locked"], "Called when the handle starts to move and its door is locked.");
+    EXPECT_EQ(keyValuePairs["mins"], "-1 -1 -3");
 }
 
 }

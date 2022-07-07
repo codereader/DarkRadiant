@@ -8,7 +8,7 @@ add_executable(drtest
                ContinuousBuffer.cpp
                CSG.cpp
                DeclManager.cpp
-               DefBlockTokeniser.cpp
+               DefTokenisers.cpp
                Entity.cpp
                EntityClass.cpp
                Favourites.cpp
