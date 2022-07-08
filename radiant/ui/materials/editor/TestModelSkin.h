@@ -49,7 +49,9 @@ public:
         syntax.modName = "None";
         syntax.typeName = "skin";
         syntax.name = getSkinName();
-        syntax.contents = fmt::format("{0}\t{1}", TEST_MODEL_MATERIAL, _material->getName());
+
+        syntax.contents = _material ?
+            fmt::format("{0}\t{1}", TEST_MODEL_MATERIAL, _material->getName()) : "";
 
         _skin->setBlockSyntax(syntax);
     }
