@@ -40,7 +40,6 @@
 #include "map/algorithm/MapExporter.h"
 #include "model/export/ModelExporter.h"
 #include "model/export/ModelScalePreserver.h"
-#include "map/algorithm/Skins.h"
 #include "messages/ScopedLongRunningOperation.h"
 #include "messages/FileOverwriteConfirmation.h"
 #include "messages/FileSaveConfirmation.h"
@@ -999,7 +998,6 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveAutomaticBackup", std::bind(&Map::saveAutomaticMapBackup, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("ExportMap", std::bind(&Map::exportMap, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
-	GlobalCommandSystem().addCommand("ReloadSkins", map::algorithm::reloadSkins);
     GlobalCommandSystem().addCommand("FocusViews", std::bind(&Map::focusViewCmd, this, std::placeholders::_1), { cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_VECTOR3 });
     GlobalCommandSystem().addCommand("FocusCameraOnSelection", std::bind(&Map::focusCameraOnSelectionCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,

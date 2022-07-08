@@ -1,6 +1,7 @@
 #include "Doom3SkinCache.h"
 
 #include "itextstream.h"
+#include "iscenegraph.h"
 #include "ideclmanager.h"
 #include "module/StaticModule.h"
 #include "SkinCreator.h"
@@ -109,7 +110,28 @@ void Doom3SkinCache::onSkinDeclsReloaded()
         });
     }
 
+    // Run an update of the active scene, if the module is present
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_SCENEGRAPH))
+    {
+        updateModelsInScene();
+    }
+
     signal_skinsReloaded().emit();
+}
+
+void Doom3SkinCache::updateModelsInScene()
+{
+    GlobalSceneGraph().foreachNode([](const scene::INodePtr& node)->bool
+    {
+        // Check if we have a skinnable model
+        if (auto skinned = std::dynamic_pointer_cast<SkinnedModel>(node); skinned)
+        {
+            // Let the skinned model reload its current skin.
+            skinned->skinChanged(skinned->getSkin());
+        }
+
+        return true; // traverse further
+    });
 }
 
 // Module instance

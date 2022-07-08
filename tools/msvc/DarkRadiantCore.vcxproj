@@ -106,7 +106,6 @@
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
-    <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp" />
     <ClCompile Include="..\..\radiantcore\map\ArchivedMapResource.cpp" />
     <ClCompile Include="..\..\radiantcore\map\autosaver\AutoSaver.cpp" />
     <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp" />
@@ -858,7 +857,6 @@
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapExporter.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h" />
-    <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h" />
     <ClInclude Include="..\..\radiantcore\map\ArchivedMapResource.h" />
     <ClInclude Include="..\..\radiantcore\map\autosaver\AutoSaver.h" />
     <ClInclude Include="..\..\radiantcore\map\CounterManager.h" />

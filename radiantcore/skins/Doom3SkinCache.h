@@ -53,6 +53,7 @@ public:
 
 private:
     void onSkinDeclsReloaded();
+    void updateModelsInScene();
 };
 
 } // namespace

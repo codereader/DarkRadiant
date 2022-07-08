@@ -892,9 +892,6 @@
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\infofile\InfoFile.cpp">
       <Filter>src\map\infofile</Filter>
     </ClCompile>
@@ -2026,9 +2023,6 @@
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapImporter.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\infofile\InfoFile.h">
