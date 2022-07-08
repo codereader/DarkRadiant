@@ -133,4 +133,49 @@ skin temporary_skin
     EXPECT_EQ(activeMaterials.at(0), "textures/common/noclip");
 }
 
+// A slight variant of the above ReloadDeclsRefreshesModels: in this test the
+// skin body is changed manually (similar to what happens during reloadDecls)
+// and the declsReloaded signal is fired manually by the test code.
+// This is to hide the dominant entityDefs-reloaded signal that is making
+// the above test green without even without any skin signal listening code
+TEST_F(ModelSkinTest, ReloadDeclsRefreshesModelsUsingSignal)
+{
+    // Create a model and insert it into the scene
+    auto funcStaticClass = GlobalEntityClassManager().findClass("func_static");
+    auto funcStatic = GlobalEntityModule().createEntity(funcStaticClass);
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+
+    // Set model and skin spawnargs
+    funcStatic->getEntity().setKeyValue("model", "models/ase/tiles.ase");
+    funcStatic->getEntity().setKeyValue("skin", "tile_skin");
+
+    // Find the child model node
+    auto model = algorithm::findChildModel(funcStatic);
+    EXPECT_EQ(model->getIModel().getModelPath(), "models/ase/tiles.ase");
+
+    // Check the contents of the materials list
+    auto activeMaterials = model->getIModel().getActiveMaterials();
+    EXPECT_EQ(activeMaterials.size(), 1);
+    EXPECT_EQ(activeMaterials.at(0), "textures/numbers/10");
+
+    // Inject a new block syntax into the existing skin declaration
+    auto skin = GlobalModelSkinCache().findSkin("tile_skin");
+    decl::DeclarationBlockSyntax syntax;
+
+    syntax.name = skin->getDeclName();
+    syntax.typeName = "skin";
+    syntax.contents = R"(
+    model               models/ase/tiles.ase
+    textures/atest/a    textures/common/noclip
+)";
+    skin->setBlockSyntax(syntax);
+
+    // Create an artificial skins-reloaded event
+    GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Skin).emit();
+
+    activeMaterials = model->getIModel().getActiveMaterials();
+    EXPECT_EQ(activeMaterials.size(), 1);
+    EXPECT_EQ(activeMaterials.at(0), "textures/common/noclip");
+}
+
 }
