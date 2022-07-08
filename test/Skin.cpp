@@ -1,6 +1,10 @@
 #include "RadiantTest.h"
 
 #include "modelskin.h"
+#include "scenelib.h"
+#include "algorithm/Entity.h"
+#include "algorithm/Scene.h"
+#include "testutil/TemporaryFile.h"
 
 namespace test
 {
@@ -78,6 +82,55 @@ TEST_F(ModelSkinTest, GetAllSkins)
     expectSkinIsListed(allSkins, "ivy_onesided");
 }
 
+TEST_F(ModelSkinTest, ReloadDeclsRefreshesModels)
+{
+    // Create a temporary file holding a new skin
+    TemporaryFile tempFile(_context.getTestProjectPath() + "skins/_skin_decl_test.skin");
+    tempFile.setContents(R"(
+skin temporary_skin
+{
+    model               models/ase/tiles.ase
+    textures/atest/a    textures/common/caulk
+}
+)");
 
+    // Load that new declaration
+    GlobalDeclarationManager().reloadDeclarations();
+
+    EXPECT_TRUE(GlobalModelSkinCache().findSkin("temporary_skin"));
+
+    // Create a model and insert it into the scene
+    auto funcStaticClass = GlobalEntityClassManager().findClass("func_static");
+    auto funcStatic = GlobalEntityModule().createEntity(funcStaticClass);
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+
+    // Set model and skin spawnargs
+    funcStatic->getEntity().setKeyValue("model", "models/ase/tiles.ase");
+    funcStatic->getEntity().setKeyValue("skin", "temporary_skin");
+
+    // Find the child model node
+    auto model = algorithm::findChildModel(funcStatic);
+    EXPECT_EQ(model->getIModel().getModelPath(), "models/ase/tiles.ase");
+
+    // Check the contents of the materials list
+    auto activeMaterials = model->getIModel().getActiveMaterials();
+    EXPECT_EQ(activeMaterials.size(), 1);
+    EXPECT_EQ(activeMaterials.at(0), "textures/common/caulk");
+
+    // Change the remap to noclip
+    tempFile.setContents(R"(
+skin temporary_skin
+{
+    model               models/ase/tiles.ase
+    textures/atest/a    textures/common/noclip
+}
+)");
+
+    GlobalDeclarationManager().reloadDeclarations();
+
+    activeMaterials = model->getIModel().getActiveMaterials();
+    EXPECT_EQ(activeMaterials.size(), 1);
+    EXPECT_EQ(activeMaterials.at(0), "textures/common/noclip");
+}
 
 }
