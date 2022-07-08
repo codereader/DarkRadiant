@@ -1,0 +1,217 @@
+// Various particles used to test the parser and the particle manager interface
+
+// A particle with depth hack
+particle flamejet {
+	depthHack	0.001
+	{
+		count				20
+		material			textures/particles/pfirebig2
+		time				0.700
+		cycles				0.000
+		bunching			1.000
+		distribution		cylinder 4.000 4.000 10.000 0.000 
+		direction			cone 10.000 
+		orientation			view 
+		speed				 86.000  to "-4.000"
+		size				 16.500  to 28.500
+		aspect				 1.000 
+		rotation				 24.000  to 29.000
+		fadeIn				0.350
+		fadeOut				0.200
+		color 				0.920 0.920 0.920 1.000
+		fadeColor 			0.000 0.000 0.000 1.000
+		offset 				0.000 0.000 0.000
+		gravity 			10.000
+	}
+	{
+		count				4
+		material			textures/particles/dust
+		time				1.600
+		cycles				0.000
+		bunching			1.000
+		distribution		cylinder 2.000 2.000 2.000 0.000 
+		direction			cone 90.000 
+		orientation			view 
+		speed				 47.000  to 0.000
+		size				 13.000  to 38.500
+		aspect				 1.500  to 1.000
+		rotation				 50.000  to 85.000
+		fadeIn				1.000
+		fadeOut				0.600
+		color 				1.000 1.000 1.000 1.000
+		fadeColor 			0.000 0.000 1.000 0.000
+		offset 				0.000 0.000 4.000
+		gravity 			world -29.000
+	}
+	{
+		count				10
+		material			textures/particles/pfirebig2
+		time				0.750
+		cycles				0.000
+		bunching			1.000
+		distribution		rect 3.000 3.000 0.000 
+		direction			outward 100.000 
+		orientation			view 
+		speed				 0.500 
+		size				 0.000  to 25.500
+		aspect				 1.000  to 0.800
+		rotation				 100.000 
+		fadeIn				0.350
+		fadeOut				0.200
+		color 				1.000 1.000 1.000 1.000
+		fadeColor 			0.000 0.000 0.000 1.000
+		offset 				0.000 0.000 -20.000
+		gravity 			world 13.000
+	}
+}
+
+particle tdm_fire_torch
+{
+	{
+		count				80
+		material			textures/particles/pfiresmall2
+		time				1.000
+		cycles				0.000
+		bunching			0.950
+		distribution		rect 0.000 0.000 0.000 
+		direction			cone "50.000" 
+		orientation			view 
+		speed				"4.000"  to "0.000"
+		size				"5.500"  to "3.000"
+		aspect				"1.000"  to "2.000"
+		randomDistribution	1
+		boundsExpansion		0.000
+		fadeIn				0.000
+		fadeOut				1.000
+		fadeIndex				0.000
+		color 				1.000 1.000 1.000 1.000
+		fadeColor 			0.000 0.000 0.000 0.000
+		offset 				0.000 0.000 0.000
+		gravity 			world -20.000
+	}
+	{
+		count				3
+		material			textures/particles/smokepuff
+		time				0.030
+		cycles				0.000
+		bunching			0.900
+		distribution		rect 0.000 0.000 1.000 
+		direction			cone "0.000" 
+		orientation			view 
+		speed				"0.000" 
+		size				"8.000" 
+		aspect				"1.000" 
+		randomDistribution	1
+		boundsExpansion		0.000
+		fadeIn				0.000
+		fadeOut				0.000
+		fadeIndex			0.000
+		color 				0.000 0.160 0.490 1.000
+		fadeColor 			0.000 0.000 0.000 0.000
+		offset 				0.000 0.000 1.000
+		gravity 			1.000
+	}
+	{
+		count				20
+		material			textures/particles/smokepuff
+		time				2.700
+		cycles				0.000
+		bunching			1.000
+		distribution		rect 4.000 4.000 4.000 
+		direction			cone "45.000" 
+		orientation			view 
+		speed				"0.000" 
+		size				"10.000"  to "20.000"
+		aspect				"1.000" 
+		randomDistribution	1
+		boundsExpansion		0.000
+		fadeIn				0.750
+		fadeOut				0.250
+		fadeIndex			0.000
+		color 				0.040 0.040 0.040 1.000
+		fadeColor 			0.000 0.000 0.000 0.000
+		offset 				0.000 0.000 0.000
+		gravity 			world -4.000
+	}
+}
+
+particle firefly_blue { 
+	{
+		count 				1
+		material 			firefly_blue
+		time 				0.050
+		cycles 				0.000
+		timeOffset 			0.000
+		bunching 			0.000
+		distribution 			rect 0.000 0.000 0.000
+		direction 			cone 0.000
+		orientation 			view
+		speed 				"0.000"
+		size 				"5.000"
+		aspect 				"1.000"
+		rotation 			"0.000"
+		randomDistribution 		0
+		boundsExpansion 		0.000
+		fadeIn 				0.000
+		fadeOut 			0.000
+		fadeIndex 			0.000
+		color 				0.200 0.170 0.080 1.000
+		fadeColor 			0.000 0.000 0.000 0.000
+		offset 				0.000 0.000 0.000
+		gravity 			0.000
+	}
+}
+
+// Mixed case typename
+pArticle firefly_yellow { 
+	{
+		count 				1
+		material 			firefly_yellow
+		time 				0.050
+		cycles 				0.000
+		timeOffset 			0.000
+		bunching 			0.000
+		distribution 		rect 0.000 0.000 0.000
+		direction 			cone 0.000
+		orientation 		view
+		speed 				"0.000"
+		size 				"5.000"
+		aspect 				"1.000"
+		rotation 			"0.000"
+		randomDistribution 	0
+		boundsExpansion 	0.000
+		fadeIn 				0.000
+		fadeOut 			0.000
+		fadeIndex 			0.000
+		color 				0.200 0.170 0.080 1.000
+		fadeColor 			0.000 0.000 0.000 0.000
+		offset 				0.000 0.000 0.000
+		gravity 			0.000
+	}
+}
+
+// No typename
+firefly_green {
+	{
+		count				1
+		material			firefly_green
+		time				0.050
+		cycles				0.000
+		bunching			0.000
+		distribution		rect 0.000 0.000 0.000 
+		direction			cone "0.000" 
+		orientation			view 
+		speed				 "0.000" 
+		size				 "5.000" 
+		aspect				 "1.000" 
+		randomDistribution				0
+		boundsExpansion				0.000
+		fadeIn				0.000
+		fadeOut				0.000
+		fadeIndex				0.000
+		color 				0.200 0.170 0.080 1.000
+		fadeColor 			0.000 0.000 0.000 0.000
+		offset 				0.000 0.000 0.000
+		gravity 			0.000
+	}
+}

@@ -14,8 +14,15 @@ private:
     std::string _path;
 
 public:
-    TemporaryFile(const std::string& path, const std::string& contents = "") :
+    // Set up the auto-destruct sequence for the file in the given path
+    // Doesn't create the file yet, this is done in setContents() at the latest
+    TemporaryFile(const std::string& path) :
         _path(path)
+    {}
+
+    // Construct and immediately create the file with the given contents
+    TemporaryFile(const std::string& path, const std::string& contents) :
+        TemporaryFile(path)
     {
         setContents(contents);
     }
@@ -30,7 +37,10 @@ public:
 
     ~TemporaryFile()
     {
-        fs::remove(_path);
+        if (fs::exists(_path))
+        {
+            fs::remove(_path);
+        }
     }
 };
 

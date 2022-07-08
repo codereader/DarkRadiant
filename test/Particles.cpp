@@ -2,6 +2,10 @@
 
 #include "iparticles.h"
 #include "iparticlestage.h"
+#include "os/path.h"
+#include "string/replace.h"
+#include "algorithm/FileUtils.h"
+#include "testutil/TemporaryFile.h"
 
 namespace test
 {
@@ -43,20 +47,30 @@ TEST_F(ParticlesTest, FindParticle)
     EXPECT_TRUE(GlobalParticlesManager().getDefByName("firefly_yellow")) << "mixed case typename particle firefly_yellow not found";
     EXPECT_TRUE(GlobalParticlesManager().getDefByName("firefly_green")) << "particle without typename firefly_green not found";
     EXPECT_TRUE(GlobalParticlesManager().getDefByName("flamejet"));
+    EXPECT_TRUE(GlobalParticlesManager().getDefByName("flamejet_in_pk4"));
+    EXPECT_TRUE(GlobalParticlesManager().getDefByName("tdm_fire_torch_in_pk4"));
 
     EXPECT_FALSE(GlobalParticlesManager().getDefByName("flamejet_nonexisting")) << "flamejet_nonexisting doesn't exist";
 }
 
 TEST_F(ParticlesTest, ParticleMetadata)
 {
-    auto decl = GlobalParticlesManager().getDefByName("flamejet");
+    auto flamejet = GlobalParticlesManager().getDefByName("flamejet");
 
-    EXPECT_EQ(decl->getDeclName(), "flamejet");
-    EXPECT_EQ(decl->getModName(), RadiantTest::DefaultGameType);
-    EXPECT_EQ(decl->getDeclFilePath(), "particles/testparticles.prt");
+    EXPECT_EQ(flamejet->getDeclName(), "flamejet");
+    EXPECT_EQ(flamejet->getDeclType(), decl::Type::Particle);
+    EXPECT_EQ(flamejet->getModName(), RadiantTest::DefaultGameType);
+    EXPECT_EQ(flamejet->getDeclFilePath(), "particles/testparticles.prt");
+
+    auto flamejetInPk4 = GlobalParticlesManager().getDefByName("flamejet_in_pk4");
+
+    EXPECT_EQ(flamejetInPk4->getDeclName(), "flamejet_in_pk4");
+    EXPECT_EQ(flamejetInPk4->getDeclType(), decl::Type::Particle);
+    EXPECT_EQ(flamejetInPk4->getModName(), RadiantTest::DefaultGameType);
+    EXPECT_EQ(flamejetInPk4->getDeclFilePath(), "particles/override_test.prt");
 }
 
-TEST_F(ParticlesTest, ParticleProperties)
+TEST_F(ParticlesTest, DefProperties)
 {
     auto decl = GlobalParticlesManager().getDefByName("flamejet");
 
@@ -131,6 +145,122 @@ TEST_F(ParticlesTest, ParticleProperties)
     EXPECT_EQ(decl->getStage(2).getRotationSpeed().getFrom(), 100.0f);
     EXPECT_EQ(decl->getStage(2).getRotationSpeed().getTo(), 100.0f);
     EXPECT_EQ(decl->getStage(2).getOffset(), Vector3(0, 0, -20));
+}
+
+TEST_F(ParticlesTest, ForeachParticleDef)
+{
+    std::set<std::string> visitedDefs;
+    GlobalParticlesManager().forEachParticleDef([&](const particles::IParticleDef& def)
+    {
+        visitedDefs.insert(def.getDeclName());
+    });
+
+    EXPECT_EQ(visitedDefs.count("tdm_fire_torch"), 1) << "A particle didn't appear in the list of visited particles";
+    EXPECT_EQ(visitedDefs.count("firefly_blue"), 1) << "A particle didn't appear in the list of visited particles";
+    EXPECT_EQ(visitedDefs.count("firefly_yellow"), 1) << "A particle didn't appear in the list of visited particles";
+    EXPECT_EQ(visitedDefs.count("firefly_green"), 1) << "A particle didn't appear in the list of visited particles";
+    EXPECT_EQ(visitedDefs.count("flamejet"), 1) << "A particle didn't appear in the list of visited particles";
+    EXPECT_EQ(visitedDefs.count("flamejet_in_pk4"), 1) << "A particle didn't appear in the list of visited particles";
+    EXPECT_EQ(visitedDefs.count("tdm_fire_torch_in_pk4"), 1) << "A particle didn't appear in the list of visited particles";
+
+    EXPECT_NE(visitedDefs.count("not_existing"), 1) << "This particle shouldn't appear in the list of visited particles";
+}
+
+TEST_F(ParticlesTest, FindOrInsertParticleDef)
+{
+    EXPECT_TRUE(GlobalParticlesManager().findOrInsertParticleDef("tdm_fire_torch")) << "tdm_fire_torch not found";
+    EXPECT_TRUE(GlobalParticlesManager().findOrInsertParticleDef("firefly_blue")) << "firefly_blue not found";
+    EXPECT_TRUE(GlobalParticlesManager().findOrInsertParticleDef("firefly_yellow")) << "mixed case typename particle firefly_yellow not found";
+    EXPECT_TRUE(GlobalParticlesManager().findOrInsertParticleDef("firefly_green")) << "particle without typename firefly_green not found";
+    EXPECT_TRUE(GlobalParticlesManager().findOrInsertParticleDef("flamejet"));
+
+    auto inserted = GlobalParticlesManager().findOrInsertParticleDef("flamejet_nonexisting");
+    EXPECT_TRUE(inserted) << "Nonexistent def should have been inserted";
+
+    EXPECT_EQ(inserted->getName(), "flamejet_nonexisting");
+    EXPECT_EQ(inserted->getDeclType(), decl::Type::Particle);
+    EXPECT_EQ(inserted->getBlockSyntax().contents, "");
+}
+
+constexpr const char* TestParticleSource = R"(
+    particle flamejet {
+	depthHack	0.001
+	{
+		count				20
+		material			textures/particles/pfirebig2
+		time				0.700
+		cycles				0.000
+		bunching			1.000
+		distribution		cylinder 4.000 4.000 10.000 0.000 
+		direction			cone 10.000 
+		orientation			view 
+		speed				 86.000  to "-4.000"
+		size				 16.500  to 28.500
+		aspect				 1.000 
+		rotation				 24.000  to 29.000
+		fadeIn				0.350
+		fadeOut				0.200
+		color 				0.920 0.920 0.920 1.000
+		fadeColor 			0.000 0.000 0.000 1.000
+		offset 				0.000 0.000 0.000
+		gravity 			10.000
+	}
+)";
+
+inline particles::IParticleDef::Ptr createParticleFromSource()
+{
+    auto decl = GlobalParticlesManager().findOrInsertParticleDef("some_def");
+
+    std::string source = TestParticleSource;
+    string::replace_first(source, "flamejet", "some_def");
+
+    decl::DeclarationBlockSyntax syntax;
+    syntax.typeName = "particle";
+    syntax.name = decl->getDeclName();
+    syntax.contents = source;
+    syntax.fileInfo = vfs::FileInfo("particles/", "export_particle_test.prt", vfs::Visibility::NORMAL);
+    decl->setBlockSyntax(syntax);
+    decl->setFilename(os::getFilename(syntax.fileInfo.fullPath()));
+
+    return decl;
+}
+
+// Save a new particle to a file on disk
+TEST_F(ParticlesTest, SaveNewParticleToNewFile)
+{
+    auto decl = createParticleFromSource();
+
+    const auto& syntax = decl->getBlockSyntax();
+    auto outputPath = _context.getTestProjectPath() + syntax.fileInfo.fullPath();
+    EXPECT_FALSE(fs::exists(outputPath)) << "Output file shouldn't exist yet";
+
+    // Auto-remove the file that is going to be written
+    TemporaryFile outputFile(outputPath);
+
+    GlobalParticlesManager().saveParticleDef("some_def");
+
+    EXPECT_TRUE(fs::exists(outputPath)) << "Output file should exist now";
+
+    auto contents = algorithm::loadTextFromVfsFile(syntax.fileInfo.fullPath());
+    EXPECT_NE(contents.find("particle some_def"), std::string::npos) << "Didn't find the expected contents in the file";
+}
+
+// Save the particle to a file that already exists (but doesn't contain the def)
+TEST_F(ParticlesTest, SaveNewParticleToExistingFile)
+{
+    // TODO
+}
+
+// Save a particle to the same physical file that originally declared the decl
+TEST_F(ParticlesTest, SaveExistingParticleToExistingFile)
+{
+    // TODO
+}
+
+// Save particle originally defined in a PK4 file to a new physical file that overrides the PK4
+TEST_F(ParticlesTest, SaveExistingParticleToNewFileOverridingPk4)
+{
+    // TODO
 }
 
 }
