@@ -19,7 +19,7 @@ public:
 
 	std::string getName()
 	{
-		return _skin ? _skin->getName() : std::string();
+		return _skin ? _skin->getDeclName() : std::string();
 	}
 
 	std::string getRemap(const std::string& name)

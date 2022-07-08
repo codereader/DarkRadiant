@@ -17,20 +17,11 @@ public:
 	virtual ~ISkin() {}
 
 	/**
-	 * greebo: Returns the name of this skin.
-	 * Deprecated, use getDeclName() instead
-	 */
-	virtual std::string getName() const = 0;
-
-	/**
 	 * Get the mapped texture for the given query texture, using the mappings
 	 * in this skin. If there is no mapping for the given texture, return an
 	 * empty string.
 	 */
 	virtual std::string getRemap(const std::string& name) = 0;
-
-    // Returns the file name this skin has been defined in (Deprecated, use getDeclFilePath() instead)
-    virtual std::string getSkinFileName() const = 0;
 };
 
 } // namespace

@@ -11,19 +11,23 @@ TEST_F(ModelSkinTest, FindSkins)
 {
     // All of these declarations need to be parsed and present
     auto tileSkin = GlobalModelSkinCache().findSkin("tile_skin");
-    EXPECT_EQ(tileSkin->getSkinFileName(), "skins/test_skins.skin");
+    EXPECT_EQ(tileSkin->getDeclName(), "tile_skin");
+    EXPECT_EQ(tileSkin->getDeclFilePath(), "skins/test_skins.skin");
     EXPECT_EQ(tileSkin->getRemap("textures/atest/a"), "textures/numbers/10");
 
     auto separatedTileSkin = GlobalModelSkinCache().findSkin("separated_tile_skin");
-    EXPECT_EQ(separatedTileSkin->getSkinFileName(), "skins/test_skins.skin");
+    EXPECT_EQ(separatedTileSkin->getDeclName(), "separated_tile_skin");
+    EXPECT_EQ(separatedTileSkin->getDeclFilePath(), "skins/test_skins.skin");
     EXPECT_EQ(separatedTileSkin->getRemap("material"), "textures/numbers/11");
 
     auto skinWithStrangeCasing = GlobalModelSkinCache().findSkin("skin_with_strange_casing");
-    EXPECT_EQ(skinWithStrangeCasing->getSkinFileName(), "skins/test_skins.skin");
+    EXPECT_EQ(skinWithStrangeCasing->getDeclName(), "skin_with_strange_casing");
+    EXPECT_EQ(skinWithStrangeCasing->getDeclFilePath(), "skins/test_skins.skin");
     EXPECT_EQ(skinWithStrangeCasing->getRemap("material"), "textures/numbers/11");
 
     auto ivyOnesided = GlobalModelSkinCache().findSkin("ivy_onesided");
-    EXPECT_EQ(ivyOnesided->getSkinFileName(), "skins/selection_test.skin");
+    EXPECT_EQ(ivyOnesided->getDeclName(), "ivy_onesided");
+    EXPECT_EQ(ivyOnesided->getDeclFilePath(), "skins/selection_test.skin");
     EXPECT_EQ(ivyOnesided->getRemap("textures/darkmod/decals/vegetation/ivy_mixed_pieces"), 
         "textures/darkmod/decals/vegetation/ivy_mixed_pieces_onesided");
 }
@@ -33,8 +37,8 @@ TEST_F(ModelSkinTest, FindSkinsIsCaseInsensitive)
     // This is a different spelling than the one used in the decl file
     auto tileSkin = GlobalModelSkinCache().findSkin("tILE_skiN");
 
-    EXPECT_NE(tileSkin->getName(), "tILE_skiN") << "Name should not actually be the same as the one in the request";
-    EXPECT_EQ(tileSkin->getSkinFileName(), "skins/test_skins.skin");
+    EXPECT_NE(tileSkin->getDeclName(), "tILE_skiN") << "Name should not actually be the same as the one in the request";
+    EXPECT_EQ(tileSkin->getDeclFilePath(), "skins/test_skins.skin");
     EXPECT_EQ(tileSkin->getRemap("textures/atest/a"), "textures/numbers/10");
 }
 
