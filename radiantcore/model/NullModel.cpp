@@ -34,7 +34,7 @@ void NullModel::setModelPath(const std::string& modelPath)
 	_modelPath = modelPath;
 }
 
-void NullModel::applySkin(const ModelSkin& skin)
+void NullModel::applySkin(const decl::ISkin::Ptr& skin)
 {
 	// do nothing
 }

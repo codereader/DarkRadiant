@@ -170,8 +170,8 @@ void ModelPreview::prepareScene()
 
 		if (model)
 		{
-			ModelSkin& mSkin = GlobalModelSkinCache().capture(_skin);
-			model->getIModel().applySkin(mSkin);
+			auto skin = GlobalModelSkinCache().findSkin(_skin);
+			model->getIModel().applySkin(skin);
 		}
 
 		// Trigger an initial update of the subgraph

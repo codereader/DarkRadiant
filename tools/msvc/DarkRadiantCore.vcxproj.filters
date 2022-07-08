@@ -2337,9 +2337,6 @@
     <ClInclude Include="..\..\radiantcore\particles\ParticleLoader.h">
       <Filter>src\particles</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\skins\SkinDeclParser.h">
-      <Filter>src\skins</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FenceSyncProvider.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
@@ -2384,6 +2381,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\eclass\DefCreators.h">
       <Filter>src\eclass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\skins\SkinCreator.h">
+      <Filter>src\skins</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

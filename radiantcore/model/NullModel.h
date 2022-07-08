@@ -25,7 +25,7 @@ public:
 	std::string getModelPath() const override;
 	void setModelPath(const std::string& modelPath);
 
-	void applySkin(const ModelSkin& skin) override;
+	void applySkin(const decl::ISkin::Ptr& skin) override;
 
 	int getSurfaceCount() const override;
     int getVertexCount() const override;

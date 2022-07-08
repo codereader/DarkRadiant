@@ -1,73 +1,43 @@
 #include "Doom3SkinCache.h"
 
 #include "itextstream.h"
-#include "ifilesystem.h"
-#include "iarchive.h"
+#include "ideclmanager.h"
 #include "module/StaticModule.h"
-
-#include <iostream>
+#include "SkinCreator.h"
 
 namespace skins
 {
 
-Doom3SkinCache::Doom3SkinCache() :
-    _nullSkin("")
+namespace
 {
-    _defLoader.signal_finished().connect(
-        [this]() { _sigSkinsReloaded.emit(); }
-    );
+    // CONSTANTS
+    constexpr const char* const SKINS_FOLDER = "skins/";
+    constexpr const char* const SKIN_FILE_EXTENSION = ".skin";
 }
 
-ModelSkin& Doom3SkinCache::capture(const std::string& name)
+decl::ISkin::Ptr Doom3SkinCache::findSkin(const std::string& name)
 {
-    ensureDefsLoaded();
-
-    auto i = _namedSkins.find(name);
-
-	return i != _namedSkins.end() ? *(i->second) : _nullSkin;
+    return std::static_pointer_cast<decl::ISkin>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::Skin, name)
+    );
 }
 
 const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model)
 {
-    ensureDefsLoaded();
-    return _modelSkins[model];
+    static StringList _emptyList;
+
+    auto existing = _modelSkins.find(model);
+    return existing != _modelSkins.end() ? existing->second : _emptyList;
 }
 
 const StringList& Doom3SkinCache::getAllSkins()
 {
-    ensureDefsLoaded();
     return _allSkins;
-}
-
-void Doom3SkinCache::addNamedSkin(const ModelSkinPtr& modelSkin)
-{
-    _namedSkins[modelSkin->getName()] = modelSkin;
-    _allSkins.emplace_back(modelSkin->getName());
-}
-
-void Doom3SkinCache::removeSkin(const std::string& name)
-{
-    _namedSkins.erase(name);
-    _allSkins.erase(std::find(_allSkins.begin(), _allSkins.end(), name));
 }
 
 sigc::signal<void> Doom3SkinCache::signal_skinsReloaded()
 {
 	return _sigSkinsReloaded;
-}
-
-// Realise the skin cache
-void Doom3SkinCache::ensureDefsLoaded()
-{
-    if (_allSkins.empty())
-    {
-        // Get the result of the loader and move the contents
-        auto result = _defLoader.get();
-
-        _allSkins = std::move(result->allSkins);
-        _modelSkins = std::move(result->modelSkins);
-        _namedSkins = std::move(result->namedSkins);
-    }
 }
 
 const std::string& Doom3SkinCache::getName() const
@@ -82,7 +52,7 @@ const StringSet& Doom3SkinCache::getDependencies() const
 
 	if (_dependencies.empty())
     {
-		_dependencies.insert(MODULE_VIRTUALFILESYSTEM);
+		_dependencies.insert(MODULE_DECLMANAGER);
 	}
 
 	return _dependencies;
@@ -90,21 +60,46 @@ const StringSet& Doom3SkinCache::getDependencies() const
 
 void Doom3SkinCache::refresh()
 {
-	_modelSkins.clear();
-	_namedSkins.clear();
-	_allSkins.clear();
+    GlobalDeclarationManager().reloadDeclarations();
 
-    // Reset loader and launch a new thread
-    _defLoader.reset();
-    _defLoader.start();
+	_modelSkins.clear();
+	_allSkins.clear();
 }
 
 void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
-    // Load the skins in a new thread
-    refresh();
+    GlobalDeclarationManager().registerDeclType("skin", std::make_shared<SkinCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Skin, SKINS_FOLDER, SKIN_FILE_EXTENSION);
+
+    _declsReloadedConnection = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Skin).connect(
+        sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclsReloaded)
+    );
+}
+
+void Doom3SkinCache::shutdownModule()
+{
+    _declsReloadedConnection.disconnect();
+}
+
+void Doom3SkinCache::onSkinDeclsReloaded()
+{
+    // Re-build the lists and mappings
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::Skin, [&](const decl::IDeclaration::Ptr& decl)
+    {
+        auto skin = std::static_pointer_cast<Skin>(decl);
+
+        _allSkins.push_back(skin->getDeclName());
+
+        skin->foreachMatchingModel([&](const std::string& modelName)
+        {
+            auto& matchingSkins = _modelSkins.try_emplace(modelName).first->second;
+            matchingSkins.push_back(skin->getDeclName());
+        });
+    });
+
+    signal_skinsReloaded().emit();
 }
 
 // Module instance

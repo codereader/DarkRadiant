@@ -188,12 +188,9 @@ void MD5ModelNode::skinChanged(const std::string& newSkinName)
     // greebo: Store the new skin name locally
     _skin = newSkinName;
 
-    // greebo: Acquire the ModelSkin reference from the SkinCache
-    // Note: This always returns a valid reference
-    auto& skin = GlobalModelSkinCache().capture(_skin);
-
+    // greebo: Acquire the ModelSkin reference from the SkinCache (might return null)
     // Applying the skin might trigger onModelShadersChanged()
-    _model->applySkin(skin);
+    _model->applySkin(GlobalModelSkinCache().findSkin(_skin));
 
     // Refresh the scene
     GlobalSceneGraph().sceneChanged();
