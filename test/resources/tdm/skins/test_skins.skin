@@ -8,6 +8,13 @@ Skin tile_skin
 	textures/numbers/1 textures/numbers/11
 }
 
+tile_skin2
+{
+	model "models/ase/tiles.ase"
+
+	textures/atest/a textures/numbers/12
+}
+
 // Untyped declaration
 separated_tile_skin
 {
