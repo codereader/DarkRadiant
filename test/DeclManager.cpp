@@ -2,6 +2,7 @@
 
 #include "ideclmanager.h"
 #include "testutil/TemporaryFile.h"
+#include "testutil/ThreadUtils.h"
 
 namespace test
 {
@@ -287,8 +288,10 @@ TEST_F(DeclManagerTest, DeclsReloadedSignalAfterInitialParse)
     // Parse this folder, it contains decls of type testdecl and testdecl2 in the .decl files
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "testdecls", ".decl");
 
-    // Force the thread to be finished
+    // Force the threads to be finished
     GlobalDeclarationManager().foreachDeclaration(decl::Type::Material, [](const decl::IDeclaration::Ptr&) {});
+
+    EXPECT_TRUE(algorithm::waitUntil([&]() { return materialSignalFired; })) << "Time out waiting for the flag";
 
     EXPECT_TRUE(materialSignalFired) << "Material signal should have fired by the time parsing has finished";
     EXPECT_FALSE(modelSignalFired) << "Model-type Signal should not have been fired";
@@ -323,6 +326,8 @@ TEST_F(DeclManagerTest, DeclsReloadedSignals)
     );
 
     GlobalDeclarationManager().reloadDeclarations();
+
+    EXPECT_TRUE(algorithm::waitUntil([&]() { return materialsReloadedFired; })) << "Time out waiting for the flag";
 
     EXPECT_TRUE(materialsReloadingFired) << "Material signal should have fired before reloadDecls";
     EXPECT_TRUE(modelsReloadingFired) << "Model signal should have fired before reloadDecls";

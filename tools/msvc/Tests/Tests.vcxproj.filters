@@ -116,6 +116,9 @@
     <ClInclude Include="..\..\..\test\algorithm\FileUtils.h">
       <Filter>algorithm</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\test\testutil\ThreadUtils.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="algorithm">
