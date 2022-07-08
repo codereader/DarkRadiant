@@ -216,7 +216,7 @@ void ParticlePreview::onPostRender()
         drawAxes();
     }
 
-    const particles::IParticleDefPtr& def = _particleNode->getParticle()->getParticleDef();
+    const particles::IParticleDef::Ptr& def = _particleNode->getParticle()->getParticleDef();
 
     // Calculate the total time of the particles
     std::size_t totalTimeMsec = 0;

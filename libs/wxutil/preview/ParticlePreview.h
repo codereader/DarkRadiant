@@ -53,10 +53,10 @@ public:
     /**
      * Get the model from the widget, in order to display properties about it.
      */
-    particles::IParticleDefPtr getParticle()
+    particles::IParticleDef::Ptr getParticle()
     {
         return _particleNode ? _particleNode->getParticle()->getParticleDef()
-                             : particles::IParticleDefPtr();
+                             : particles::IParticleDef::Ptr();
     }
 
 protected:

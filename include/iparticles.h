@@ -2,6 +2,7 @@
 
 #include "imodule.h"
 #include "irenderable.h"
+#include "ideclmanager.h"
 
 #include <functional>
 #include <sigc++/signal.h>
@@ -36,13 +37,12 @@ typedef std::shared_ptr<IParticleNode> IParticleNodePtr;
  * Each particle system is made up of one or more particle stages, information
  * about which is provided via the IStageDef interface.
  */
-class IParticleDef
+class IParticleDef :
+    public decl::IDeclaration
 {
 public:
+    using Ptr = std::shared_ptr<IParticleDef>;
 
-    /**
-	 * Destructor
-	 */
 	virtual ~IParticleDef() {}
 
 	/// Get the name of the particle system.
@@ -100,7 +100,6 @@ public:
 	// Note: Name, filename and observers are not copied
 	virtual void copyFrom(const IParticleDef& other) = 0;
 };
-typedef std::shared_ptr<IParticleDef> IParticleDefPtr;
 
 /**
  * A renderable particle, which is capable of compiling the
@@ -127,13 +126,13 @@ public:
 	/**
 	 * Get the particle definition used by this renderable.
 	 */
-	virtual const IParticleDefPtr& getParticleDef() const = 0;
+	virtual const IParticleDef::Ptr& getParticleDef() const = 0;
 
 	/**
 	 * Set the particle definition. You'll need to call update() after
 	 * setting a new particle def.
 	 */
-	virtual void setParticleDef(const IParticleDefPtr& def) = 0;
+	virtual void setParticleDef(const IParticleDef::Ptr& def) = 0;
 
 	/**
 	 * greebo: Particles have a main direction, usually defined by the
@@ -163,11 +162,8 @@ typedef std::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
 typedef std::function< void (const IParticleDef&) > ParticleDefVisitor;
 
 /* CONSTANTS */
-namespace
-{
-	const char* PARTICLES_DIR = "particles/";
-	const char* PARTICLES_EXT = "prt";
-}
+constexpr const char* const PARTICLES_DIR = "particles/";
+constexpr const char* const PARTICLES_EXT = "prt";
 
 /// Inteface for the particles manager
 class IParticlesManager :
@@ -182,10 +178,10 @@ public:
 	virtual void forEachParticleDef(const ParticleDefVisitor&) = 0;
 
     /// Return the definition object for the given named particle system
-	virtual IParticleDefPtr getDefByName(const std::string& name) = 0;
+	virtual IParticleDef::Ptr getDefByName(const std::string& name) = 0;
 
 	// Finds or creates the particle def with the given name, always returns non-NULL
-	virtual IParticleDefPtr findOrInsertParticleDef(const std::string& name) = 0;
+	virtual IParticleDef::Ptr findOrInsertParticleDef(const std::string& name) = 0;
 
 	// Removes the named particle definition from the storage
 	virtual void removeParticleDef(const std::string& name) = 0;
@@ -236,7 +232,7 @@ public:
 
 } // namespace
 
-const char* const MODULE_PARTICLESMANAGER = "ParticlesManager";
+constexpr const char* const MODULE_PARTICLESMANAGER = "ParticlesManager";
 
 // Accessor
 inline particles::IParticlesManager& GlobalParticlesManager()

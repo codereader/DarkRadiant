@@ -3,7 +3,7 @@
 namespace particles
 {
 
-RenderableParticle::RenderableParticle(const IParticleDefPtr& particleDef) :
+RenderableParticle::RenderableParticle(const IParticleDef::Ptr& particleDef) :
 	_particleDef(), // don't initialise the ptr yet
 	_random(rand()), // use a random seed
 	_direction(0,0,1), // default direction
@@ -92,12 +92,12 @@ void RenderableParticle::setRenderSystem(const RenderSystemPtr& renderSystem)
 	_renderSystem = renderSystem;
 }
 
-const IParticleDefPtr& RenderableParticle::getParticleDef() const
+const IParticleDef::Ptr& RenderableParticle::getParticleDef() const
 {
 	return _particleDef;
 }
 
-void RenderableParticle::setParticleDef(const IParticleDefPtr& def)
+void RenderableParticle::setParticleDef(const IParticleDef::Ptr& def)
 {
 	if (_particleDef)
 	{

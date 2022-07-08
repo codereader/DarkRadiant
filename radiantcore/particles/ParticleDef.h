@@ -1,13 +1,13 @@
 #pragma once
 
-#include "StageDef.h"
+#include <vector>
 
 #include "iparticles.h"
 
-#include "parser/DefTokeniser.h"
+#include "StageDef.h"
 #include "string/string.h"
-#include <vector>
-#include <set>
+#include "parser/DefTokeniser.h"
+#include "DeclarationBase.h"
 
 namespace particles
 {
@@ -16,12 +16,9 @@ namespace particles
  * Representation of a single particle definition. Each definition is comprised
  * of a number of "stages", which must all be rendered in turn.
  */
-class ParticleDef
-: public IParticleDef
+class ParticleDef :
+    public decl::DeclarationBase<IParticleDef>
 {
-	// Name
-	std::string _name;
-
 	// The filename this particle has been defined in
 	std::string _filename;
 
@@ -35,24 +32,21 @@ class ParticleDef
     // Changed signal
     sigc::signal<void> _changedSignal;
 
-    // A unique parse pass identifier
-    std::size_t _parseStamp;
-
 public:
 
 	/**
 	 * Construct a named ParticleDef.
 	 */
-	ParticleDef(const std::string& name)
-	: _name(name)
-	{ }
+	ParticleDef(const std::string& name) :
+        DeclarationBase<particles::IParticleDef>(decl::Type::Particle, name)
+	{}
 
 	/**
 	 * Return the ParticleDef name.
 	 */
 	const std::string& getName() const override
 	{
-		return _name;
+		return getDeclName();
 	}
 
 	const std::string& getFilename() const override
@@ -138,16 +132,6 @@ public:
 	void copyFrom(const IParticleDef& other) override;
 
 	void parseFromTokens(parser::DefTokeniser& tok);
-
-    std::size_t getParseStamp() const
-    {
-        return _parseStamp;
-    }
-
-    void setParseStamp(std::size_t stamp)
-    {
-        _parseStamp = stamp;
-    }
 
 	// Stream insertion operator, writing the entire particle def to the given stream
 	friend std::ostream& operator<< (std::ostream& stream, const ParticleDef& def);

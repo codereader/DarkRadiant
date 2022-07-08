@@ -66,13 +66,13 @@ void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v)
 	}
 }
 
-IParticleDefPtr ParticlesManager::getDefByName(const std::string& name)
+IParticleDef::Ptr ParticlesManager::getDefByName(const std::string& name)
 {
     ensureDefsLoaded();
 
 	ParticleDefMap::const_iterator found = _particleDefs.find(name);
 
-	return found != _particleDefs.end() ? found->second : IParticleDefPtr();
+	return found != _particleDefs.end() ? found->second : IParticleDef::Ptr();
 }
 
 IParticleNodePtr ParticlesManager::createParticleNode(const std::string& name)
@@ -114,7 +114,7 @@ IRenderableParticlePtr ParticlesManager::getRenderableParticle(const std::string
 	}
 }
 
-IParticleDefPtr ParticlesManager::findOrInsertParticleDef(const std::string& name)
+IParticleDef::Ptr ParticlesManager::findOrInsertParticleDef(const std::string& name)
 {
     ensureDefsLoaded();
 

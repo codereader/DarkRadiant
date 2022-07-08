@@ -1269,7 +1269,7 @@ void ParticleEditor::setupEditParticle()
 
     // Get the def for the selected particle system if it exists
     std::string selectedName = getParticleNameFromIter(item);
-    IParticleDefPtr def = GlobalParticlesManager().getDefByName(selectedName);
+    IParticleDef::Ptr def = GlobalParticlesManager().getDefByName(selectedName);
     if (!def)
     {
         _preview->setParticle("");
@@ -1305,7 +1305,7 @@ bool ParticleEditor::particleHasUnsavedChanges()
         // Particle selection changed, check if we have any unsaved changes
         std::string origName = getParticleNameFromIter(_selectedDefIter);
 
-        IParticleDefPtr origDef = GlobalParticlesManager().getDefByName(origName);
+        IParticleDef::Ptr origDef = GlobalParticlesManager().getDefByName(origName);
 
         if (!origDef || *_currentDef != *origDef)
         {
@@ -1341,7 +1341,7 @@ bool ParticleEditor::saveCurrentParticle()
     // Get the original particle name
     std::string origName = getParticleNameFromIter(_selectedDefIter);
 
-    IParticleDefPtr origDef = GlobalParticlesManager().getDefByName(origName);
+    IParticleDef::Ptr origDef = GlobalParticlesManager().getDefByName(origName);
 
     // This should really succeed, we can't have non-existing particles selected
     // in the treeview
@@ -1455,20 +1455,20 @@ void ParticleEditor::_onNewParticle(wxCommandEvent& ev)
     createAndSelectNewParticle();
 }
 
-IParticleDefPtr ParticleEditor::createAndSelectNewParticle()
+IParticleDef::Ptr ParticleEditor::createAndSelectNewParticle()
 {
     std::string particleName = queryNewParticleName();
 
     if (particleName.empty())
     {
-        return IParticleDefPtr(); // no valid name, abort
+        return IParticleDef::Ptr(); // no valid name, abort
     }
 
     std::string destFile = queryParticleFile();
 
     if (destFile.empty())
     {
-        return IParticleDefPtr(); // no valid destination file
+        return IParticleDef::Ptr(); // no valid destination file
     }
 
     // Good filename, good destination file, we're set to go
@@ -1541,7 +1541,7 @@ std::string ParticleEditor::queryNewParticleName()
         }
 
         // Check if this particle already exists
-        IParticleDefPtr existing = GlobalParticlesManager().getDefByName(particleName);
+        IParticleDef::Ptr existing = GlobalParticlesManager().getDefByName(particleName);
 
         if (existing == NULL)
         {
@@ -1572,7 +1572,7 @@ void ParticleEditor::_onCloneCurrentParticle(wxCommandEvent& ev)
     }
 
     // Look up the original particle def
-    IParticleDefPtr original = GlobalParticlesManager().getDefByName(origName);
+    IParticleDef::Ptr original = GlobalParticlesManager().getDefByName(origName);
 
     // Create a new particle (this will already set up an edit particle, which is empty)
     auto newParticle = createAndSelectNewParticle();

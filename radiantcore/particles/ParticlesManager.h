@@ -31,9 +31,9 @@ public:
 
     void forEachParticleDef(const ParticleDefVisitor& visitor) override;
 
-    IParticleDefPtr getDefByName(const std::string& name) override;
+    IParticleDef::Ptr getDefByName(const std::string& name) override;
 
-	IParticleDefPtr findOrInsertParticleDef(const std::string& name) override;
+	IParticleDef::Ptr findOrInsertParticleDef(const std::string& name) override;
 
 	void removeParticleDef(const std::string& name) override;
 
