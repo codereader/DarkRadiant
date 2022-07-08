@@ -82,7 +82,8 @@ public:
 		row[_columns.isFavourite] = isFavourite;
         row[_columns.isModelDefFolder] = false;
 
-		if (!_includeSkins) return; // done
+        // Don't search skins for folders (or if switched off by preference)
+		if (!_includeSkins || !isExplicit) return; // done
 
 		// Now check if there are any skins for this model, and add them as
 		// children if so
