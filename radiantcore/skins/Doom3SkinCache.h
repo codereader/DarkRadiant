@@ -20,6 +20,8 @@ namespace skins
 class Doom3SkinCache :
     public decl::IModelSkinCache
 {
+    std::mutex _cacheLock;
+
 	// List of all skins
 	std::vector<std::string> _allSkins;
 

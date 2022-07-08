@@ -10,7 +10,6 @@ namespace skins
 
 namespace
 {
-    // CONSTANTS
     constexpr const char* const SKINS_FOLDER = "skins/";
     constexpr const char* const SKIN_FILE_EXTENSION = ".skin";
 }
@@ -26,12 +25,16 @@ const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model)
 {
     static StringList _emptyList;
 
+    std::lock_guard<std::mutex> lock(_cacheLock);
+
     auto existing = _modelSkins.find(model);
     return existing != _modelSkins.end() ? existing->second : _emptyList;
 }
 
 const StringList& Doom3SkinCache::getAllSkins()
 {
+    std::lock_guard<std::mutex> lock(_cacheLock);
+
     return _allSkins;
 }
 
@@ -61,9 +64,6 @@ const StringSet& Doom3SkinCache::getDependencies() const
 void Doom3SkinCache::refresh()
 {
     GlobalDeclarationManager().reloadDeclarations();
-
-	_modelSkins.clear();
-	_allSkins.clear();
 }
 
 void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
@@ -81,23 +81,33 @@ void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
 void Doom3SkinCache::shutdownModule()
 {
     _declsReloadedConnection.disconnect();
+
+    _modelSkins.clear();
+    _allSkins.clear();
 }
 
 void Doom3SkinCache::onSkinDeclsReloaded()
 {
-    // Re-build the lists and mappings
-    GlobalDeclarationManager().foreachDeclaration(decl::Type::Skin, [&](const decl::IDeclaration::Ptr& decl)
     {
-        auto skin = std::static_pointer_cast<Skin>(decl);
+        std::lock_guard<std::mutex> lock(_cacheLock);
 
-        _allSkins.push_back(skin->getDeclName());
+        _modelSkins.clear();
+        _allSkins.clear();
 
-        skin->foreachMatchingModel([&](const std::string& modelName)
+        // Re-build the lists and mappings
+        GlobalDeclarationManager().foreachDeclaration(decl::Type::Skin, [&](const decl::IDeclaration::Ptr& decl)
         {
-            auto& matchingSkins = _modelSkins.try_emplace(modelName).first->second;
-            matchingSkins.push_back(skin->getDeclName());
+            auto skin = std::static_pointer_cast<Skin>(decl);
+
+            _allSkins.push_back(skin->getDeclName());
+
+            skin->foreachMatchingModel([&](const std::string& modelName)
+            {
+                auto& matchingSkins = _modelSkins.try_emplace(modelName).first->second;
+                matchingSkins.push_back(skin->getDeclName());
+            });
         });
-    });
+    }
 
     signal_skinsReloaded().emit();
 }

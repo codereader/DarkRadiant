@@ -96,6 +96,9 @@ private:
 
     // Requires the creatorsMutex to be locked
     std::string getTypenameByType(Type type);
+
+    // Emit the reloaded signal (on a different thread if requested)
+    void emitDeclsReloadedSignal(Type type, bool async);
 };
 
 }

@@ -324,7 +324,7 @@ TEST_F(DeclManagerTest, DeclsReloadedSignals)
 
     GlobalDeclarationManager().reloadDeclarations();
 
-    EXPECT_TRUE(materialsReloadingFired) << "Material signal should have before reloadDecls";
+    EXPECT_TRUE(materialsReloadingFired) << "Material signal should have fired before reloadDecls";
     EXPECT_TRUE(modelsReloadingFired) << "Model signal should have fired before reloadDecls";
     EXPECT_TRUE(materialsReloadedFired) << "Material signal should have fired after reloadDecls";
     EXPECT_TRUE(modelsReloadedFired) << "Model signal should have fired after reloadDecls";

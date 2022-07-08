@@ -229,7 +229,7 @@ void DeclarationManager::reloadDeclarations()
 
         for (const auto& [type, _] : _declarationsByType)
         {
-            signal_DeclsReloaded(type).emit();
+            emitDeclsReloadedSignal(type, false);
         }
     }
 }
@@ -287,6 +287,18 @@ sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
     return _declsReloadedSignals.try_emplace(type).first->second;
 }
 
+void DeclarationManager::emitDeclsReloadedSignal(Type type, bool async)
+{
+    if (async)
+    {
+        std::thread([this, type]() { signal_DeclsReloaded(type).emit(); }).detach();
+    }
+    else
+    {
+        signal_DeclsReloaded(type).emit();
+    }
+}
+
 void DeclarationManager::onParserFinished(Type parserType, 
     std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)
 {
@@ -297,8 +309,9 @@ void DeclarationManager::onParserFinished(Type parserType,
     // Process the list of unrecognised blocks (from this and any previous run)
     handleUnrecognisedBlocks();
 
-    // Invoke the declsReloaded signal for this type
-    signal_DeclsReloaded(parserType).emit();
+    // Invoke the declsReloaded signal for this type on a new thread
+    // to allow clients to use the API without deadlocking
+    emitDeclsReloadedSignal(parserType, true);
 }
 
 void DeclarationManager::processParsedBlocks(std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)

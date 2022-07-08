@@ -132,6 +132,7 @@ public:
     virtual sigc::signal<void>& signal_DeclsReloading(Type type) = 0;
 
     // Signal emitted when the decls of the given type have been (re-)loaded
+    // Note that this signal can be fired on an arbitrary thread
     virtual sigc::signal<void>& signal_DeclsReloaded(Type type) = 0;
 };
 

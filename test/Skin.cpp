@@ -59,7 +59,7 @@ TEST_F(ModelSkinTest, FindMatchingSkins)
     EXPECT_EQ(separatedSkins.at(0), "separated_tile_skin");
 
     auto tileSkins = GlobalModelSkinCache().getSkinsForModel("models/ase/tiles.ase");
-    EXPECT_EQ(separatedSkins.size(), 2);
+    EXPECT_EQ(tileSkins.size(), 2);
     expectSkinIsListed(tileSkins, "tile_skin");
     expectSkinIsListed(tileSkins, "tile_skin2");
 }
