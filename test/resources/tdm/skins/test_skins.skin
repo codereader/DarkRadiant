@@ -1,0 +1,24 @@
+
+// Typed Declaration
+Skin tile_skin
+{
+	model "models/ase/tiles.ase"
+
+	textures/atest/a textures/numbers/10
+	textures/numbers/1 textures/numbers/11
+}
+
+// Untyped declaration
+separated_tile_skin
+{
+	model "models/ase/separated_tiles.ase"
+
+	material textures/numbers/11
+	textures/numbers/1 textures/numbers/11
+}
+
+// Typed declaration
+SkIn skin_with_strange_casing
+{
+    material textures/numbers/11
+}
