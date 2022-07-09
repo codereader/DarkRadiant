@@ -5,6 +5,8 @@
 #include "os/path.h"
 #include "string/replace.h"
 #include "algorithm/FileUtils.h"
+#include "parser/DefBlockTokeniser.h"
+#include "string/case_conv.h"
 #include "testutil/TemporaryFile.h"
 
 namespace test
@@ -18,10 +20,14 @@ public:
 
     void preStartup() override
     {
+        // Remove the physical override_test.prt file
+        fs::remove(_context.getTestProjectPath() + "particles/override_test.prt");
+
         // Create a backup of the testparticles file
         fs::path testFile = _context.getTestProjectPath() + "particles/" + TEST_PARTICLE_FILE;
         fs::path bakFile = testFile;
         bakFile.replace_extension(".bak");
+        fs::remove(bakFile);
         fs::copy(testFile, bakFile);
     }
 
@@ -207,7 +213,6 @@ TEST_F(ParticlesTest, FindOrInsertParticleDef)
 
 constexpr const char* ParticleSourceTemplate = R"(
 
-particle flamejet {
 	depthHack	0.001
 	{
 		count				20
@@ -229,30 +234,27 @@ particle flamejet {
 		offset 				0.000 0.000 0.000
 		gravity 			10.000
 	}
-}
 
 )";
 
-inline std::string createParticleSource(const std::string& defName)
+inline std::string createParticleSource()
 {
-    std::string source = ParticleSourceTemplate;
-    string::replace_first(source, "flamejet", defName);
-
-    return source;
+    return ParticleSourceTemplate;
 }
 
 inline particles::IParticleDef::Ptr createParticleFromSource(const std::string& defName)
 {
     auto decl = GlobalParticlesManager().findOrInsertParticleDef(defName);
 
-    auto source = createParticleSource(defName);
+    auto source = createParticleSource();
 
     decl::DeclarationBlockSyntax syntax;
     syntax.typeName = "particle";
-    syntax.name = decl->getDeclName();
+    syntax.name = defName;
     syntax.contents = source;
     syntax.fileInfo = vfs::FileInfo("particles/", "export_particle_test.prt", vfs::Visibility::NORMAL);
     decl->setBlockSyntax(syntax);
+    decl->getDepthHack(); // ensure the particle is parsed
     decl->setFilename(os::getFilename(syntax.fileInfo.fullPath()));
 
     return decl;
@@ -273,27 +275,36 @@ inline void expectParticleIsPresentInFile(const particles::IParticleDef::Ptr& de
 {
     auto contents = algorithm::loadTextFromVfsFile(path);
 
-    std::size_t foundOccurrences = 0;
+    parser::BasicDefBlockTokeniser<std::string> tokeniser(contents);
 
-    auto stringToFind = "particle " + decl->getDeclName();
+    std::vector<parser::BlockTokeniser::Block> foundBlocks;
+    auto particleName = string::to_lower_copy(decl->getName());
 
-    std::size_t offset = 0;
-    std::size_t foundPosition = contents.find(stringToFind, offset);
-
-    while (foundPosition != std::string::npos)
+    while (tokeniser.hasMoreBlocks())
     {
-        ++foundOccurrences;
-        offset = foundPosition + 1;
-        foundPosition = contents.find(stringToFind, offset);
+        auto block = tokeniser.nextBlock();
+        auto header = string::to_lower_copy(block.name);
+
+        if (decl->getNumStages() > 0 && 
+            string::starts_with(block.name, "particle") && 
+            string::ends_with(block.name, particleName))
+        {
+            if (block.contents.find(decl->getStage(0).getMaterialName()) == std::string::npos)
+            {
+                continue;
+            }
+
+            foundBlocks.push_back(block);
+        }
     }
 
     if (expectPresent)
     {
-        EXPECT_EQ(foundOccurrences, 1) << "Expected exactly one match of " << stringToFind << " in the contents in the file";
+        EXPECT_EQ(foundBlocks.size(), 1) << "Expected exactly one particle " << particleName << " in the contents in the file";
     }
     else
     {
-        EXPECT_EQ(foundOccurrences, 0) << "Expected no match of " << stringToFind << " in the contents in the file";
+        EXPECT_TRUE(foundBlocks.empty()) << "Expected no particle " << particleName << " in the contents in the file";
     }
 }
 
@@ -334,13 +345,47 @@ TEST_F(ParticlesTest, SaveNewParticleToExistingFile)
 // Save a particle to the same physical file that originally declared the decl
 TEST_F(ParticlesTest, SaveExistingParticleToExistingFile)
 {
-    // TODO
+    auto decl = GlobalParticlesManager().getDefByName("firefly_blue");
+
+    // Swap the material name of this particle
+    auto syntax = decl->getBlockSyntax();
+    EXPECT_NE(syntax.contents.find("firefly_blue"), std::string::npos) << "Expected the material name in the block";
+    string::replace_all(syntax.contents, "firefly_blue", "modified_material");
+    decl->setBlockSyntax(syntax);
+
+    // This modified particle should not be present
+    expectParticleIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), false);
+
+    // Save, it should be there now
+    GlobalParticlesManager().saveParticleDef(decl->getDeclName());
+    expectParticleIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // The test fixture will restore the original file contents in TearDown
 }
 
 // Save particle originally defined in a PK4 file to a new physical file that overrides the PK4
 TEST_F(ParticlesTest, SaveExistingParticleToNewFileOverridingPk4)
 {
-    // TODO
+    auto decl = GlobalParticlesManager().getDefByName("firefly_blue_in_pk4");
+
+    // Swap the material name of this particle
+    auto syntax = decl->getBlockSyntax();
+    EXPECT_NE(syntax.contents.find("firefly_blue"), std::string::npos) << "Expected the material name in the block";
+    string::replace_all(syntax.contents, "firefly_blue", "modified_material");
+    decl->setBlockSyntax(syntax);
+
+    // The overriding file should not be present
+    auto outputPath = _context.getTestProjectPath() + decl->getBlockSyntax().fileInfo.fullPath();
+
+    // Let the file be deleted when we're done here
+    TemporaryFile outputFile(outputPath);
+    EXPECT_FALSE(fs::exists(outputPath));
+
+    expectParticleIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), false);
+
+    // Save, it should be there now
+    GlobalParticlesManager().saveParticleDef(decl->getDeclName());
+    expectParticleIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
 }
 
 }
