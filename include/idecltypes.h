@@ -43,6 +43,8 @@ inline std::string getTypeName(Type type)
     case Type::ModelDef: return _("ModelDef");
     case Type::Particle: return _("Particle");
     case Type::Skin: return _("Skin");
+    case Type::TestDecl: return _("TestDecl");
+    case Type::TestDecl2: return _("TestDecl2");
     default:
         throw std::runtime_error("Unhandled decl type");
     }

@@ -68,6 +68,7 @@ public:
     sigc::signal<void>& signal_DeclsReloading(Type type) override;
     sigc::signal<void>& signal_DeclsReloaded(Type type) override;
     void reloadDeclarations() override;
+    void removeDeclaration(Type type, const std::string& name) override;
 
     const std::string& getName() const override;
     const StringSet& getDependencies() const override;
@@ -90,7 +91,7 @@ private:
 
     // Requires the creatorsMutex and the declarationMutex to be locked
     const IDeclaration::Ptr& createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block);
-    void doWithDeclarations(Type type, const std::function<void(const NamedDeclarations&)>& action);
+    void doWithDeclarations(Type type, const std::function<void(NamedDeclarations&)>& action);
     void handleUnrecognisedBlocks();
     void reloadDeclsCmd(const cmd::ArgumentList& args);
 

@@ -618,9 +618,9 @@ TEST_F(DeclManagerTest, RemoveDeclaration)
 
     expectDeclIsPresent(decl::Type::TestDecl, "decl/precedence_test/1");
 
-    // The first decl in the file precedence_test1.decl takes precedence over any decls
-    // declared in the same file or other files sorted after precedence_test1.decl
-    expectDeclContains(decl::Type::TestDecl, "decl/precedence_test/1", "diffusemap textures/numbers/1");
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/precedence_test/1");
+
+    expectDeclIsNotPresent(decl::Type::TestDecl, "decl/precedence_test/1");
 }
 
 }

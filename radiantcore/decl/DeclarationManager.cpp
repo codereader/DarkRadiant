@@ -79,7 +79,7 @@ IDeclaration::Ptr DeclarationManager::findDeclaration(Type type, const std::stri
 {
     IDeclaration::Ptr returnValue;
 
-    doWithDeclarations(type, [&](const NamedDeclarations& decls)
+    doWithDeclarations(type, [&](NamedDeclarations& decls)
     {
         auto decl = decls.find(name);
 
@@ -96,7 +96,7 @@ IDeclaration::Ptr DeclarationManager::findOrCreateDeclaration(Type type, const s
 {
     IDeclaration::Ptr returnValue;
 
-    doWithDeclarations(type, [&](const NamedDeclarations& decls)
+    doWithDeclarations(type, [&](NamedDeclarations& decls)
     {
         auto decl = decls.find(name);
 
@@ -135,7 +135,7 @@ IDeclaration::Ptr DeclarationManager::findOrCreateDeclaration(Type type, const s
 
 void DeclarationManager::foreachDeclaration(Type type, const std::function<void(const IDeclaration::Ptr&)>& functor)
 {
-    doWithDeclarations(type, [&](const NamedDeclarations& decls)
+    doWithDeclarations(type, [&](NamedDeclarations& decls)
     {
         for (const auto& [_, decl] : decls)
         {
@@ -144,7 +144,7 @@ void DeclarationManager::foreachDeclaration(Type type, const std::function<void(
     });
 }
 
-void DeclarationManager::doWithDeclarations(Type type, const std::function<void(const NamedDeclarations&)>& action)
+void DeclarationManager::doWithDeclarations(Type type, const std::function<void(NamedDeclarations&)>& action)
 {
     // Find type dictionary
     auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationLock);
@@ -275,6 +275,20 @@ void DeclarationManager::runParsersForAllFolders()
         parsers.back()->ensureFinished();
         parsers.pop_back();
     }
+}
+
+void DeclarationManager::removeDeclaration(Type type, const std::string& name)
+{
+    // Acquire the lock and perform the removal
+    doWithDeclarations(type, [&](NamedDeclarations& decls)
+    {
+        auto decl = decls.find(name);
+
+        if (decl != decls.end())
+        {
+            decls.erase(decl);
+        }
+    });
 }
 
 sigc::signal<void>& DeclarationManager::signal_DeclsReloading(Type type)
