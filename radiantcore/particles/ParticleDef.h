@@ -26,8 +26,7 @@ class ParticleDef :
 	float _depthHack;
 
 	// Vector of stages
-	typedef std::vector<StageDef::Ptr> StageList;
-	StageList _stages;
+    std::vector<IStageDef::Ptr> _stages;
 
     // Changed signal
     sigc::signal<void> _changedSignal;
@@ -38,7 +37,8 @@ public:
 	 * Construct a named ParticleDef.
 	 */
 	ParticleDef(const std::string& name) :
-        DeclarationBase<particles::IParticleDef>(decl::Type::Particle, name)
+        DeclarationBase<particles::IParticleDef>(decl::Type::Particle, name),
+        _depthHack(0)
 	{}
 
 	/**
@@ -105,7 +105,7 @@ public:
 
 	void appendStage(const StageDef::Ptr& stage);
 
-	bool isEqualTo(IParticleDef::Ptr& other) override
+	bool isEqualTo(Ptr& other) override
 	{
 		// Compare depth hack flag
 		if (getDepthHack() != other->getDepthHack()) return false;
@@ -145,10 +145,9 @@ inline std::ostream& operator<<(std::ostream& stream, const ParticleDef& def)
 	stream << "particle " << def.getName() << " { " << std::endl;
 
 	// Write stages, one by one
-	for (ParticleDef::StageList::const_iterator i = def._stages.begin(); i != def._stages.end(); ++i)
+	for (const auto& stage : def._stages)
 	{
-		const StageDef& stage = **i;
-		stream << stage;
+		stream << *std::static_pointer_cast<StageDef>(stage);
 	}
 
 	// Closing brace
