@@ -1,3 +1,4 @@
+#if 0
 #include "ParticleLoader.h"
 
 #include "ifilesystem.h"
@@ -83,3 +84,4 @@ void ParticleLoader::onFinishParsing()
 }
 
 }
+#endif

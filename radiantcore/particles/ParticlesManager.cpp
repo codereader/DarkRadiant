@@ -9,6 +9,7 @@
 #include "itextstream.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
+#include "ideclmanager.h"
 #include "iarchive.h"
 #include "igame.h"
 #include "i18n.h"
@@ -25,6 +26,8 @@
 #include <iostream>
 #include <functional>
 #include <regex>
+
+#include "ParticleDefCreator.h"
 #include "string/predicate.h"
 #include "module/StaticModule.h"
 
@@ -42,21 +45,19 @@ namespace
     }
 }
 
-ParticlesManager::ParticlesManager() :
-    _defLoader(_particleDefs)
-{
-    _defLoader.signal_finished().connect(
-        sigc::mem_fun(this, &ParticlesManager::onParticlesLoaded));
-}
-
 sigc::signal<void>& ParticlesManager::signal_particlesReloaded()
 {
     return _particlesReloadedSignal;
 }
 
 // Visit all of the particle defs
-void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v)
+void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& visitor)
 {
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::Particle, [&](const decl::IDeclaration::Ptr& decl)
+    {
+        visitor(*std::static_pointer_cast<IParticleDef>(decl));
+    });
+#if 0
     ensureDefsLoaded();
 
 	// Invoke the visitor for each ParticleDef object
@@ -64,15 +65,21 @@ void ParticlesManager::forEachParticleDef(const ParticleDefVisitor& v)
 	{
 		v(*pair.second);
 	}
+#endif
 }
 
 IParticleDef::Ptr ParticlesManager::getDefByName(const std::string& name)
 {
+    return std::static_pointer_cast<IParticleDef>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::Particle, name)
+    );
+#if 0
     ensureDefsLoaded();
 
 	ParticleDefMap::const_iterator found = _particleDefs.find(name);
 
 	return found != _particleDefs.end() ? found->second : IParticleDef::Ptr();
+#endif
 }
 
 IParticleNodePtr ParticlesManager::createParticleNode(const std::string& name)
@@ -85,6 +92,13 @@ IParticleNodePtr ParticlesManager::createParticleNode(const std::string& name)
 		nameCleaned = nameCleaned.substr(0, nameCleaned.length() - 4);
 	}
 
+    auto def = getDefByName(name);
+
+    if (!def)
+    {
+        return IParticleNodePtr();
+    }
+#if 0
     ensureDefsLoaded();
 
 	ParticleDefMap::const_iterator found = _particleDefs.find(nameCleaned);
@@ -93,36 +107,37 @@ IParticleNodePtr ParticlesManager::createParticleNode(const std::string& name)
 	{
 		return IParticleNodePtr();
 	}
+#endif
 
-	RenderableParticlePtr renderable(new RenderableParticle(found->second));
-	return ParticleNodePtr(new ParticleNode(renderable));
+	return std::make_shared<ParticleNode>(std::make_shared<RenderableParticle>(def));
 }
 
 IRenderableParticlePtr ParticlesManager::getRenderableParticle(const std::string& name)
 {
+#if 0
     ensureDefsLoaded();
 
 	ParticleDefMap::const_iterator found = _particleDefs.find(name);
+#endif
+    auto def = getDefByName(name);
 
-	if (found != _particleDefs.end())
-	{
-		return RenderableParticlePtr(new RenderableParticle(found->second));
-	}
-	else
-	{
-		return IRenderableParticlePtr();
-	}
+    return def ? std::make_shared<RenderableParticle>(def) : IRenderableParticlePtr();
 }
 
 IParticleDef::Ptr ParticlesManager::findOrInsertParticleDef(const std::string& name)
 {
+#if 0
     ensureDefsLoaded();
-
+#endif
     return findOrInsertParticleDefInternal(name);
 }
 
 ParticleDefPtr ParticlesManager::findOrInsertParticleDefInternal(const std::string& name)
 {
+    return std::static_pointer_cast<ParticleDef>(
+        GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Particle, name)
+    );
+#if 0
     ParticleDefMap::iterator i = _particleDefs.find(name);
 
     if (i != _particleDefs.end())
@@ -137,10 +152,13 @@ ParticleDefPtr ParticlesManager::findOrInsertParticleDefInternal(const std::stri
 
     // Return the iterator from the insertion result
     return result.first->second;
+#endif
 }
 
 void ParticlesManager::removeParticleDef(const std::string& name)
 {
+    // TODO
+#if 0
     ensureDefsLoaded();
 
 	ParticleDefMap::iterator i = _particleDefs.find(name);
@@ -149,13 +167,15 @@ void ParticlesManager::removeParticleDef(const std::string& name)
 	{
 		_particleDefs.erase(i);
 	}
+#endif
 }
 
+#if 0
 void ParticlesManager::ensureDefsLoaded()
 {
     _defLoader.ensureFinished();
 }
-
+#endif
 const std::string& ParticlesManager::getName() const
 {
 	static std::string _name(MODULE_PARTICLESMANAGER);
@@ -166,6 +186,7 @@ const StringSet& ParticlesManager::getDependencies() const
 {
     static StringSet _dependencies
     {
+        MODULE_DECLMANAGER,
         MODULE_VIRTUALFILESYSTEM,
         MODULE_COMMANDSYSTEM,
         MODULE_FILETYPES,
@@ -178,33 +199,52 @@ void ParticlesManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << "ParticlesManager::initialiseModule called" << std::endl;
 
+    GlobalDeclarationManager().registerDeclType("particle", std::make_shared<ParticleDefCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Particle, PARTICLES_DIR, PARTICLES_EXT);
+
+#if 0
 	// Load the .prt files in a new thread, public methods will block until
     // this has been completed
     _defLoader.start();
+#endif
 
 	// Register the "ReloadParticles" commands
 	GlobalCommandSystem().addCommand("ReloadParticles", std::bind(&ParticlesManager::reloadParticleDefs, this));
 
 	// Register the particle file extension
 	GlobalFiletypes().registerPattern("particle", FileTypePattern(_("Particle File"), "prt", "*.prt"));
+
+    _defsReloadedConn = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Particle).connect(
+        [this]() { _particlesReloadedSignal.emit(); }
+    );
+}
+
+void ParticlesManager::shutdownModule()
+{
+    _defsReloadedConn.disconnect();
 }
 
 void ParticlesManager::reloadParticleDefs()
 {
+    GlobalDeclarationManager().reloadDeclarations();
+#if 0
     _particleDefs.clear();
 
     _defLoader.reset();
     _defLoader.start();
+#endif
 }
 
+#if 0
 void ParticlesManager::onParticlesLoaded()
 {
     // Notify observers about this event
     _particlesReloadedSignal.emit();
 }
-
+#endif
 void ParticlesManager::saveParticleDef(const std::string& particleName)
 {
+#if 0
     ensureDefsLoaded();
 
 	ParticleDefMap::const_iterator found = _particleDefs.find(particleName);
@@ -213,8 +253,16 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	{
 		throw std::runtime_error(_("Cannot save particle, it has not been registered yet."));
 	}
+#else
+    auto decl = getDefByName(particleName);
 
-	ParticleDefPtr particle = found->second;
+    if (!decl)
+    {
+        throw std::runtime_error(_("Cannot save particle, it has not been registered yet."));
+    }
+#endif
+
+	auto particle = std::static_pointer_cast<ParticleDef>(decl);
 
 	std::string relativePath = PARTICLES_DIR + particle->getFilename();
 

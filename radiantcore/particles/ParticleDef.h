@@ -26,7 +26,7 @@ class ParticleDef :
 	float _depthHack;
 
 	// Vector of stages
-	typedef std::vector<StageDefPtr> StageList;
+	typedef std::vector<StageDef::Ptr> StageList;
 	StageList _stages;
 
     // Changed signal
@@ -73,29 +73,28 @@ public:
 		return _changedSignal;
 	}
 
-	float getDepthHack() const override
+	float getDepthHack() override
 	{
+        ensureParsed();
 		return _depthHack;
 	}
 
 	void setDepthHack(float value) override
 	{
+        ensureParsed();
 		_depthHack = value;
 	}
 
-	std::size_t getNumStages() const override
+	std::size_t getNumStages() override
 	{
+        ensureParsed();
 		return _stages.size();
 	}
 
-	const IStageDef& getStage(std::size_t stageNum) const override
+    const std::shared_ptr<IStageDef>& getStage(std::size_t stageNum) override
 	{
-		return *_stages[stageNum];
-	}
-
-	IStageDef& getStage(std::size_t stageNum) override
-	{
-		return *_stages[stageNum];
+        ensureParsed();
+		return _stages[stageNum];
 	}
 
 	std::size_t addParticleStage() override;
@@ -104,37 +103,35 @@ public:
 
 	void swapParticleStages(std::size_t index, std::size_t index2) override;
 
-	void appendStage(const StageDefPtr& stage);
+	void appendStage(const StageDef::Ptr& stage);
 
-	bool operator==(const IParticleDef& other) const override
+	bool isEqualTo(IParticleDef::Ptr& other) override
 	{
 		// Compare depth hack flag
-		if (getDepthHack() != other.getDepthHack()) return false;
+		if (getDepthHack() != other->getDepthHack()) return false;
 
 		// Compare number of stages
-		if (getNumStages() != other.getNumStages()) return false;
+		if (getNumStages() != other->getNumStages()) return false;
 
 		// Compare each stage
 		for (std::size_t i = 0; i < getNumStages(); ++i)
 		{
-			if (getStage(i) != other.getStage(i)) return false;
+			if (getStage(i) != other->getStage(i)) return false;
 		}
 
 		// All checks passed => equal
 		return true;
 	}
 
-	bool operator!=(const IParticleDef& other) const override
-	{
-		return !operator==(other);
-	}
-
-	void copyFrom(const IParticleDef& other) override;
-
-	void parseFromTokens(parser::DefTokeniser& tok);
+	void copyFrom(const Ptr& other) override;
 
 	// Stream insertion operator, writing the entire particle def to the given stream
 	friend std::ostream& operator<< (std::ostream& stream, const ParticleDef& def);
+
+protected:
+    void onBeginParsing() override;
+	void parseFromTokens(parser::DefTokeniser& tok) override;
+    void onParsingFinished() override;
 };
 typedef std::shared_ptr<ParticleDef> ParticleDefPtr;
 

@@ -59,17 +59,14 @@ public:
 	/**
 	 * Set/get the depth hack flag
 	 */
-	virtual float getDepthHack() const = 0;
+	virtual float getDepthHack() = 0;
 	virtual void setDepthHack(float value) = 0;
 
 	/// Returns the number of stages for this particle system.
-	virtual std::size_t getNumStages() const = 0;
-
-    /// Get a const stage definition from the particle definition
-	virtual const IStageDef& getStage(std::size_t stageNum) const = 0;
+	virtual std::size_t getNumStages() = 0;
 
     /// Get a stage definition from the particle definition
-	virtual IStageDef& getStage(std::size_t stageNum) = 0;
+	virtual const std::shared_ptr<IStageDef>& getStage(std::size_t stageNum) = 0;
 
 	/**
 	 * Add a new stage to this particle, returns the index of the new stage.
@@ -91,14 +88,13 @@ public:
     /// Signal emitted when some aspect of the particle def has changed
     virtual sigc::signal<void>& signal_changed() = 0;
 
-	// Comparison operators - particle defs are considered equal if all properties (except the name!),
+	// Comparison operator - particle defs are considered equal if all properties (except the name!),
 	// number of stages and stage contents are the equal
-	virtual bool operator==(const IParticleDef& other) const = 0;
-	virtual bool operator!=(const IParticleDef& other) const = 0;
+	virtual bool isEqualTo(Ptr& other) = 0;
 
 	// Copies all properties from the other particle, overwriting this one
 	// Note: Name, filename and observers are not copied
-	virtual void copyFrom(const IParticleDef& other) = 0;
+	virtual void copyFrom(const Ptr& other) = 0;
 };
 
 /**
@@ -163,7 +159,7 @@ typedef std::function< void (const IParticleDef&) > ParticleDefVisitor;
 
 /* CONSTANTS */
 constexpr const char* const PARTICLES_DIR = "particles/";
-constexpr const char* const PARTICLES_EXT = "prt";
+constexpr const char* const PARTICLES_EXT = ".prt";
 
 /// Inteface for the particles manager
 class IParticlesManager :

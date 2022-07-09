@@ -954,6 +954,7 @@
     <ClInclude Include="..\..\radiantcore\model\StaticModelNode.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModelSurface.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleDef.h" />
+    <ClInclude Include="..\..\radiantcore\particles\ParticleDefCreator.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleLoader.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleNode.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleParameter.h" />

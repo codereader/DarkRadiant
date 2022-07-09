@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <memory>
 
 template<typename Element> class BasicVector3;
 typedef BasicVector3<double> Vector3;
@@ -57,6 +58,7 @@ public:
 class IStageDef
 {
 public:
+    using Ptr = std::shared_ptr<IStageDef>;
 
 	// Particle orientation
 	enum OrientationType
@@ -415,7 +417,7 @@ public:
 	/**
 	 * Copy operator, copies all properties from the other stage into this one.
 	 */
-	virtual void copyFrom(const IStageDef& other) = 0;
+	virtual void copyFrom(const Ptr& other) = 0;
 
 	/**
 	 * Returns the stage visibility. This flag is used in the Particle Editor context only,

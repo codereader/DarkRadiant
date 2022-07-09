@@ -223,16 +223,16 @@ void ParticlePreview::onPostRender()
 
     for (std::size_t i = 0; i < def->getNumStages(); ++i)
     {
-        const particles::IStageDef& stage = def->getStage(i);
+        const auto& stage = def->getStage(i);
 
         // For ever-repeating stages, set stuff to INT_MAX and break
-        if (stage.getCycles() == 0)
+        if (stage->getCycles() == 0)
         {
             totalTimeMsec = INT_MAX;
             break;
         }
 
-        totalTimeMsec += static_cast<int>(stage.getCycleMsec() * stage.getCycles());
+        totalTimeMsec += static_cast<int>(stage->getCycleMsec() * stage->getCycles());
     }
 
     // Update the sensitivity of the auto-loop button

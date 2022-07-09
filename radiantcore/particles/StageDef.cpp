@@ -66,29 +66,14 @@ StageDef::StageDef() :
 	reset();
 }
 
-StageDef::StageDef(parser::DefTokeniser& tok) :
-	_rotationSpeed(new ParticleParameter(*this)),
-	_speed(new ParticleParameter(*this)),
-	_size(new ParticleParameter(*this)),
-	_aspect(new ParticleParameter(*this)),
-	_visible(true)
+StageDef::Ptr StageDef::Parse(parser::DefTokeniser& tok)
 {
-	// Parse from the tokens, but don't allow any parse exceptions
-	// from leaving this constructor.
-	try
-	{
-		parseFromTokens(tok);
-	}
-	catch (parser::ParseException& p)
-	{
-		rError() << "[particles]: Could not parse particle stage: " <<
-			p.what() << std::endl;
-	}
-	catch (std::invalid_argument& e)
-	{
-		rError() << "[particles]: Invalid cast when parsing particle stage: " <<
-			e.what() << std::endl;
-	}
+    auto stage = std::make_shared<StageDef>();
+
+	// Parse from the tokens, leak all parse exceptions
+    stage->parseFromTokens(tok);
+
+    return stage;
 }
 
 void StageDef::reset()
@@ -146,61 +131,61 @@ void StageDef::reset()
 	_aspect.reset(new ParticleParameter(*this, 1.0f));
 }
 
-void StageDef::copyFrom(const IStageDef& other)
+void StageDef::copyFrom(const IStageDef::Ptr& other)
 {
-	setMaterialName(other.getMaterialName());
-	setCount(other.getCount());
-	setDuration(other.getDuration());
-	setCycles(other.getCycles());
-	setBunching(other.getBunching());
-	setTimeOffset(other.getTimeOffset());
-	setDeadTime(other.getDeadTime());
-	setColour(other.getColour());
-	setFadeColour(other.getFadeColour());
-	setFadeInFraction(other.getFadeInFraction());
-	setFadeOutFraction(other.getFadeOutFraction());
-	setFadeIndexFraction(other.getFadeIndexFraction());
-	setAnimationFrames(other.getAnimationFrames());
-	setAnimationRate(other.getAnimationRate());
-	setInitialAngle(other.getInitialAngle());
-	setBoundsExpansion(other.getBoundsExpansion());
-	setRandomDistribution(other.getRandomDistribution());
-	setUseEntityColour(other.getUseEntityColour());
-	setGravity(other.getGravity());
-	setWorldGravityFlag(other.getWorldGravityFlag());
-	setOffset(other.getOffset());
-	setOrientationType(other.getOrientationType());
+	setMaterialName(other->getMaterialName());
+	setCount(other->getCount());
+	setDuration(other->getDuration());
+	setCycles(other->getCycles());
+	setBunching(other->getBunching());
+	setTimeOffset(other->getTimeOffset());
+	setDeadTime(other->getDeadTime());
+	setColour(other->getColour());
+	setFadeColour(other->getFadeColour());
+	setFadeInFraction(other->getFadeInFraction());
+	setFadeOutFraction(other->getFadeOutFraction());
+	setFadeIndexFraction(other->getFadeIndexFraction());
+	setAnimationFrames(other->getAnimationFrames());
+	setAnimationRate(other->getAnimationRate());
+	setInitialAngle(other->getInitialAngle());
+	setBoundsExpansion(other->getBoundsExpansion());
+	setRandomDistribution(other->getRandomDistribution());
+	setUseEntityColour(other->getUseEntityColour());
+	setGravity(other->getGravity());
+	setWorldGravityFlag(other->getWorldGravityFlag());
+	setOffset(other->getOffset());
+	setOrientationType(other->getOrientationType());
 
 	for (int i = 0; i < 4; ++i)
 	{
-		setOrientationParm(i, other.getOrientationParm(i));
+		setOrientationParm(i, other->getOrientationParm(i));
 	}
 
-	setDistributionType(other.getDistributionType());
+	setDistributionType(other->getDistributionType());
 
 	for (int i = 0; i < 4; ++i)
 	{
-		setDistributionParm(i, other.getDistributionParm(i));
+		setDistributionParm(i, other->getDistributionParm(i));
 	}
 
-	setDirectionType(other.getDirectionType());
+	setDirectionType(other->getDirectionType());
 
 	for (int i = 0; i < 4; ++i)
 	{
-		setDirectionParm(i, other.getDirectionParm(i));
+		setDirectionParm(i, other->getDirectionParm(i));
 	}
 
-	setCustomPathType(other.getCustomPathType());
+	setCustomPathType(other->getCustomPathType());
 
 	for (int i = 0; i < 8; ++i)
 	{
-		setCustomPathParm(i, other.getCustomPathParm(i));
+		setCustomPathParm(i, other->getCustomPathParm(i));
 	}
 
-	*_size = other.getSize();
-	*_aspect = other.getAspect();
-	*_speed = other.getSpeed();
-	*_rotationSpeed = other.getRotationSpeed();
+	*_size = other->getSize();
+	*_aspect = other->getAspect();
+	*_speed = other->getSpeed();
+	*_rotationSpeed = other->getRotationSpeed();
 }
 
 void StageDef::parseFromTokens(parser::DefTokeniser& tok)

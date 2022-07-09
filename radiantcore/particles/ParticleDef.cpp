@@ -7,7 +7,7 @@ namespace particles
 std::size_t ParticleDef::addParticleStage()
 {
     // Create a new stage and relay its changed signal
-    StageDefPtr stage = std::make_shared<StageDef>();
+    auto stage = std::make_shared<StageDef>();
     stage->signal_changed().connect(_changedSignal.make_slot());
     _stages.push_back(stage);
 
@@ -37,7 +37,7 @@ void ParticleDef::swapParticleStages(std::size_t index, std::size_t index2)
     _changedSignal.emit();
 }
 
-void ParticleDef::appendStage(const StageDefPtr& stage)
+void ParticleDef::appendStage(const StageDef::Ptr& stage)
 {
     // Relay the incoming stage's changed signal then add to list
     stage->signal_changed().connect(_changedSignal.make_slot());
@@ -45,17 +45,19 @@ void ParticleDef::appendStage(const StageDefPtr& stage)
     _changedSignal.emit();
 }
 
-void ParticleDef::copyFrom(const IParticleDef& other)
+void ParticleDef::copyFrom(const Ptr& other)
 {
-    setDepthHack(other.getDepthHack());
+    ensureParsed();
+
+    setDepthHack(other->getDepthHack());
 
     _stages.clear();
 
     // Copy each stage
-    for (std::size_t i = 0; i < other.getNumStages(); ++i)
+    for (std::size_t i = 0; i < other->getNumStages(); ++i)
     {
-        StageDefPtr stage = std::make_shared<StageDef>();
-        stage->copyFrom(other.getStage(i));
+        auto stage = std::make_shared<StageDef>();
+        stage->copyFrom(other->getStage(i));
         stage->signal_changed().connect(_changedSignal.make_slot());
         _stages.push_back(stage);
     }
@@ -64,34 +66,36 @@ void ParticleDef::copyFrom(const IParticleDef& other)
 	_changedSignal.emit();
 }
 
-void ParticleDef::parseFromTokens(parser::DefTokeniser& tok)
+void ParticleDef::onBeginParsing()
 {
     // Clear out the particle def (except the name) before parsing
     clear();
+}
 
+void ParticleDef::parseFromTokens(parser::DefTokeniser& tokeniser)
+{
     // Any global keywords will come first, after which we get a series of
     // brace-delimited stages.
-    std::string token = tok.nextToken();
 
-    while (token != "}")
+    while (tokeniser.hasMoreTokens())
     {
+        auto token = tokeniser.nextToken();
+
         if (token == "depthHack")
         {
-            setDepthHack(string::convert<float>(tok.nextToken()));
+            setDepthHack(string::convert<float>(tokeniser.nextToken()));
         }
         else if (token == "{")
         {
             // Construct/Parse the stage from the tokens
-            StageDefPtr stage = std::make_shared<StageDef>(std::ref(tok));
-
             // Append to the ParticleDef
-            appendStage(stage);
+            appendStage(StageDef::Parse(tokeniser));
         }
-
-        // Get next token
-        token = tok.nextToken();
     }
+}
 
+void ParticleDef::onParsingFinished()
+{
     _changedSignal.emit();
 }
 

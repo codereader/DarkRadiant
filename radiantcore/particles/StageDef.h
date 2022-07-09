@@ -88,6 +88,7 @@ class StageDef : public IStageDef
     sigc::signal<void> _changedSignal;
 
 private:
+
     void recalculateCycleMsec()
     {
         _cycleMsec = static_cast<int>((_duration + _deadTime) * 1000);
@@ -112,12 +113,13 @@ private:
     Vector4 parseVector4(parser::DefTokeniser& tok);
 
 public:
+    using Ptr = std::shared_ptr<StageDef>;
 
     /// Create an empty particle stage with default values
     StageDef();
 
     /// Create a particle stage from the given token stream
-    StageDef(parser::DefTokeniser& tok);
+    static Ptr Parse(parser::DefTokeniser& tok);
 
     /// Resets/clears all values to default. This is called by parseFromTokens().
     void reset();
@@ -531,7 +533,7 @@ public:
         return !operator==(other);
     }
 
-    void copyFrom(const IStageDef& other);
+    void copyFrom(const IStageDef::Ptr& other);
 
     bool isVisible() const
     {
@@ -555,7 +557,6 @@ public:
     void parseFromTokens(parser::DefTokeniser& tok);
 
 };
-typedef std::shared_ptr<StageDef> StageDefPtr;
 
 /**
  * Write stage to text stream, including opening & closing braces and one level of indentation.

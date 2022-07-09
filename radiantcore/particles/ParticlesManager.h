@@ -3,11 +3,11 @@
 #include "ParticleDef.h"
 #include "StageDef.h"
 
-#include "ParticleLoader.h"
 #include "iparticles.h"
 #include "parser/DefTokeniser.h"
 
 #include <map>
+#include <sigc++/connection.h>
 
 namespace particles
 {
@@ -16,16 +16,11 @@ class ParticlesManager :
 	public IParticlesManager
 {
 private:
-	ParticleDefMap _particleDefs;
-
-    ParticleLoader _defLoader;
-
     // Reloaded signal
+    sigc::connection _defsReloadedConn;
     sigc::signal<void> _particlesReloadedSignal;
 
 public:
-    ParticlesManager();
-
 	// IParticlesManager implementation
     sigc::signal<void>& signal_particlesReloaded() override;
 
@@ -48,6 +43,7 @@ public:
 	const std::string& getName() const override;
     const StringSet& getDependencies() const override;
     void initialiseModule(const IApplicationContext& ctx) override;
+    void shutdownModule() override;
 
 	static ParticlesManager& Instance()
 	{
@@ -59,11 +55,13 @@ public:
 private:
     ParticleDefPtr findOrInsertParticleDefInternal(const std::string& name);
 
+#if 0
     // Since loading is happening in a worker thread, we need to ensure
     // that it's done loading before accessing any defs.
     void ensureDefsLoaded();
 
     void onParticlesLoaded();
+#endif
 };
 
 }
