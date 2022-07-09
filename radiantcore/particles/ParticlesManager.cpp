@@ -24,6 +24,7 @@
 #include "ParticleDefCreator.h"
 #include "string/predicate.h"
 #include "module/StaticModule.h"
+#include "os/path.h"
 
 namespace particles
 {
@@ -172,7 +173,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 
 	auto particle = std::static_pointer_cast<ParticleDef>(decl);
 
-	std::string relativePath = PARTICLES_DIR + particle->getFilename();
+    std::string relativePath = particle->getBlockSyntax().fileInfo.fullPath();
 
 	fs::path targetPath = GlobalGameManager().getModPath();
 
@@ -189,7 +190,7 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	// Ensure the particles folder exists
 	fs::create_directories(targetPath);
 
-	fs::path targetFile = targetPath / particle->getFilename();
+    fs::path targetFile = targetPath / os::getFilename(particle->getBlockSyntax().fileInfo.name);
 
 	// If the file doesn't exist yet, let's check if we need to inherit stuff first from the VFS
 	if (!fs::exists(targetFile))

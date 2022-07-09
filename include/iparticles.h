@@ -45,15 +45,6 @@ public:
 
 	virtual ~IParticleDef() {}
 
-	/// Get the name of the particle system.
-	virtual const std::string& getName() const = 0;
-
-	/**
-	 * Get the name of the .prt file this particle is defined in.
-	 * Might return an empty string if this particle def has not been saved yet.
-	 */
-	virtual const std::string& getFilename() const = 0;
-
 	virtual void setFilename(const std::string& filename) = 0;
 
 	/**

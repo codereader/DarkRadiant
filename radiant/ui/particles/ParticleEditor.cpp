@@ -175,7 +175,7 @@ void ParticleEditor::populateParticleDefList()
     // Create and use a ParticlesVisitor to populate the list
     GlobalParticlesManager().forEachParticleDef([&] (const IParticleDef& particle)
 	{
-        auto name = particle.getName();
+        auto name = particle.getDeclName();
 
         if (string::ends_with(name, EDIT_SUFFIX))
         {
@@ -1013,8 +1013,7 @@ void ParticleEditor::updateWidgetsFromParticle()
 
     // Update outfile label
     fs::path outFile = GlobalGameManager().getModPath();
-    outFile /= PARTICLES_DIR;
-    outFile /= _currentDef->getFilename();
+    outFile /= _currentDef->getBlockSyntax().fileInfo.fullPath();
 
 	findNamedObject<wxStaticText>(this, "ParticleEditorSaveNote")->SetLabelMarkup(
 		fmt::format(_("Note: changes will be written to the file <i>{0}</i>"), outFile.string()));
@@ -1280,19 +1279,19 @@ void ParticleEditor::setupEditParticle()
     std::string temporaryParticleName = selectedName + EDIT_SUFFIX;
 
     _currentDef = GlobalParticlesManager().findOrInsertParticleDef(temporaryParticleName);
-    _currentDef->setFilename(def->getFilename());
+    _currentDef->setFilename(os::getFilename(def->getBlockSyntax().fileInfo.name));
 
     _currentDef->copyFrom(def);
 
     // Point the preview to this temporary particle def
-    _preview->setParticle(_currentDef->getName());
+    _preview->setParticle(_currentDef->getDeclName());
 }
 
 void ParticleEditor::releaseEditParticle()
 {
-    if (_currentDef && string::ends_with(_currentDef->getName(), EDIT_SUFFIX))
+    if (_currentDef && string::ends_with(_currentDef->getDeclName(), EDIT_SUFFIX))
     {
-        GlobalParticlesManager().removeParticleDef(_currentDef->getName());
+        GlobalParticlesManager().removeParticleDef(_currentDef->getDeclName());
     }
 
     _currentDef.reset();
@@ -1353,7 +1352,7 @@ bool ParticleEditor::saveCurrentParticle()
     // Write changes to disk, and return the result
     try
     {
-        GlobalParticlesManager().saveParticleDef(origDef->getName());
+        GlobalParticlesManager().saveParticleDef(origDef->getDeclName());
         return true;
     }
     catch (std::runtime_error& err)
@@ -1480,7 +1479,7 @@ IParticleDef::Ptr ParticleEditor::createAndSelectNewParticle()
     populateParticleDefList();
 
     // Highlight our new particle
-    selectParticleDef(particle->getName());
+    selectParticleDef(particle->getDeclName());
 
     return particle;
 }
@@ -1590,7 +1589,7 @@ void ParticleEditor::_onCloneCurrentParticle(wxCommandEvent& ev)
     _selectedDefIter = wxDataViewItem(); // to force re-setup of the selected edit particle
     _preview->setParticle(""); // Preview might hold old data as well
 
-    selectParticleDef(newParticle->getName());
+    selectParticleDef(newParticle->getDeclName());
 
     // Save the new particle declaration to the file immediately
     saveCurrentParticle();

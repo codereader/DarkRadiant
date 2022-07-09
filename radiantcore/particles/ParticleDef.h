@@ -5,7 +5,6 @@
 #include "iparticles.h"
 
 #include "StageDef.h"
-#include "string/string.h"
 #include "parser/DefTokeniser.h"
 #include "DeclarationBase.h"
 
@@ -37,26 +36,15 @@ public:
 	 * Construct a named ParticleDef.
 	 */
 	ParticleDef(const std::string& name) :
-        DeclarationBase<particles::IParticleDef>(decl::Type::Particle, name),
+        DeclarationBase<IParticleDef>(decl::Type::Particle, name),
         _depthHack(0)
 	{}
 
-	/**
-	 * Return the ParticleDef name.
-	 */
-	const std::string& getName() const override
-	{
-		return getDeclName();
-	}
-
-	const std::string& getFilename() const override
-	{
-		return _filename;
-	}
-
 	void setFilename(const std::string& filename) override
 	{
-		_filename = filename;
+        auto syntax = getBlockSyntax();
+        syntax.fileInfo = vfs::FileInfo(syntax.fileInfo.topDir, filename, vfs::Visibility::NORMAL);
+        setBlockSyntax(syntax);
 	}
 
 	// Clears stage and depth hack information
@@ -142,7 +130,7 @@ inline std::ostream& operator<<(std::ostream& stream, const ParticleDef& def)
 	stream << std::fixed;
 
 	// Decl keyword, name and opening brace
-	stream << "particle " << def.getName() << " { " << std::endl;
+	stream << "particle " << def.getDeclName() << " { " << std::endl;
 
 	// Write stages, one by one
 	for (const auto& stage : def._stages)

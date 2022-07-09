@@ -206,7 +206,7 @@ TEST_F(ParticlesTest, FindOrInsertParticleDef)
     auto inserted = GlobalParticlesManager().findOrInsertParticleDef("flamejet_nonexisting");
     EXPECT_TRUE(inserted) << "Nonexistent def should have been inserted";
 
-    EXPECT_EQ(inserted->getName(), "flamejet_nonexisting");
+    EXPECT_EQ(inserted->getDeclName(), "flamejet_nonexisting");
     EXPECT_EQ(inserted->getDeclType(), decl::Type::Particle);
     EXPECT_EQ(inserted->getBlockSyntax().contents, "");
 }
@@ -278,7 +278,7 @@ inline void expectParticleIsPresentInFile(const particles::IParticleDef::Ptr& de
     parser::BasicDefBlockTokeniser<std::string> tokeniser(contents);
 
     std::vector<parser::BlockTokeniser::Block> foundBlocks;
-    auto particleName = string::to_lower_copy(decl->getName());
+    auto particleName = string::to_lower_copy(decl->getDeclName());
 
     while (tokeniser.hasMoreBlocks())
     {

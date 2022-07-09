@@ -48,7 +48,7 @@ protected:
             ThrowIfCancellationRequested();
 
             // Add the ".prt" extension to the name fo display in the list
-            std::string prtName = def.getName() + ".prt";
+            std::string prtName = def.getDeclName() + ".prt";
 
             // Add the Def name to the list store
             wxutil::TreeModel::Row row = model->AddItem();

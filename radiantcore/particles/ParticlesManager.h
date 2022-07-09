@@ -43,14 +43,7 @@ public:
     const StringSet& getDependencies() const override;
     void initialiseModule(const IApplicationContext& ctx) override;
     void shutdownModule() override;
-#if 0
-	static ParticlesManager& Instance()
-	{
-		return *std::static_pointer_cast<ParticlesManager>(
-			module::GlobalModuleRegistry().getModule(MODULE_PARTICLESMANAGER)
-		);
-	}
-#endif
+
 private:
     ParticleDefPtr findOrInsertParticleDefInternal(const std::string& name);
 };
