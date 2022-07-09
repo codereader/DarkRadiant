@@ -93,23 +93,7 @@ public:
 
 	void appendStage(const StageDef::Ptr& stage);
 
-	bool isEqualTo(Ptr& other) override
-	{
-		// Compare depth hack flag
-		if (getDepthHack() != other->getDepthHack()) return false;
-
-		// Compare number of stages
-		if (getNumStages() != other->getNumStages()) return false;
-
-		// Compare each stage
-		for (std::size_t i = 0; i < getNumStages(); ++i)
-		{
-			if (getStage(i) != other->getStage(i)) return false;
-		}
-
-		// All checks passed => equal
-		return true;
-	}
+    bool isEqualTo(const Ptr& other) override;
 
 	void copyFrom(const Ptr& other) override;
 

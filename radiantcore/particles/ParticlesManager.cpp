@@ -102,17 +102,7 @@ ParticleDefPtr ParticlesManager::findOrInsertParticleDefInternal(const std::stri
 
 void ParticlesManager::removeParticleDef(const std::string& name)
 {
-    // TODO
-#if 0
-    ensureDefsLoaded();
-
-	ParticleDefMap::iterator i = _particleDefs.find(name);
-
-	if (i != _particleDefs.end())
-	{
-		_particleDefs.erase(i);
-	}
-#endif
+    GlobalDeclarationManager().removeDeclaration(decl::Type::Particle, name);
 }
 
 const std::string& ParticlesManager::getName() const

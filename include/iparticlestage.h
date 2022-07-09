@@ -409,10 +409,9 @@ public:
 	virtual const IParticleParameter& getRotationSpeed() const = 0;
 	virtual IParticleParameter& getRotationSpeed() = 0;
 
-	// Comparison operators - particle stages are considered equal 
+	// Comparison operator - particle stages are considered equal 
 	// if all properties are equal
-	virtual bool operator==(const IStageDef& other) const = 0;
-	virtual bool operator!=(const IStageDef& other) const = 0;
+    virtual bool isEqualTo(const Ptr& other) = 0;
 
 	/**
 	 * Copy operator, copies all properties from the other stage into this one.

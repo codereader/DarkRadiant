@@ -526,12 +526,7 @@ public:
     ParticleParameter& getRotationSpeed() { return *_rotationSpeed; }
 
     /// Equality comparison with other IStageDef objects
-    bool operator==(const IStageDef& other) const;
-
-    bool operator!=(const IStageDef& other) const
-    {
-        return !operator==(other);
-    }
+    bool isEqualTo(const IStageDef::Ptr& other) override;
 
     void copyFrom(const IStageDef::Ptr& other);
 

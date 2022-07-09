@@ -81,7 +81,7 @@ public:
 
 	// Comparison operator - particle defs are considered equal if all properties (except the name!),
 	// number of stages and stage contents are the equal
-	virtual bool isEqualTo(Ptr& other) = 0;
+	virtual bool isEqualTo(const Ptr& other) = 0;
 
 	// Copies all properties from the other particle, overwriting this one
 	// Note: Name, filename and observers are not copied

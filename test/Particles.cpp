@@ -386,6 +386,11 @@ TEST_F(ParticlesTest, SaveExistingParticleToNewFileOverridingPk4)
     // Save, it should be there now
     GlobalParticlesManager().saveParticleDef(decl->getDeclName());
     expectParticleIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // Check if the other particle declaration is still intact in the file (use the same path to check)
+    auto otherDecl = GlobalParticlesManager().getDefByName("tdm_fire_torch_in_pk4");
+    EXPECT_EQ(otherDecl->getDeclFilePath(), decl->getDeclFilePath()) << "The decls should be in the same .prt file";
+    expectParticleIsPresentInFile(otherDecl, decl->getBlockSyntax().fileInfo.fullPath(), true);
 }
 
 }

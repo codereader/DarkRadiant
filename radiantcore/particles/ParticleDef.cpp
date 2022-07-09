@@ -66,6 +66,24 @@ void ParticleDef::copyFrom(const Ptr& other)
 	_changedSignal.emit();
 }
 
+bool ParticleDef::isEqualTo(const Ptr& other)
+{
+    // Compare depth hack flag
+    if (getDepthHack() != other->getDepthHack()) return false;
+
+    // Compare number of stages
+    if (getNumStages() != other->getNumStages()) return false;
+
+    // Compare each stage
+    for (std::size_t i = 0; i < getNumStages(); ++i)
+    {
+        if (!getStage(i)->isEqualTo(other->getStage(i))) return false;
+    }
+
+    // All checks passed => equal
+    return true;
+}
+
 void ParticleDef::onBeginParsing()
 {
     // Clear out the particle def (except the name) before parsing
