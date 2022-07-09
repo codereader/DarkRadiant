@@ -24,6 +24,10 @@ enum class Type
     ModelDef,
     Particle,
     Skin,
+
+    // These are used in unit tests only
+    TestDecl,
+    TestDecl2,
 };
 
 inline std::string getTypeName(Type type)
