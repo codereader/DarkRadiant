@@ -10,7 +10,30 @@
 namespace test
 {
 
-using ParticlesTest = RadiantTest;
+class ParticlesTest :
+    public RadiantTest
+{
+public:
+    const char* const TEST_PARTICLE_FILE = "testparticles.prt";
+
+    void preStartup() override
+    {
+        // Create a backup of the testparticles file
+        fs::path testFile = _context.getTestProjectPath() + "particles/" + TEST_PARTICLE_FILE;
+        fs::path bakFile = testFile;
+        bakFile.replace_extension(".bak");
+        fs::copy(testFile, bakFile);
+    }
+
+    void preShutdown() override
+    {
+        fs::path testFile = _context.getTestProjectPath() + "particles/" + TEST_PARTICLE_FILE;
+        fs::remove(testFile);
+        fs::path bakFile = testFile;
+        bakFile.replace_extension(".bak");
+        fs::rename(bakFile, testFile);
+    }
+};
 
 // #5853: Two files define the same particle def:
 // 1) in VFS: particles/z_precedence.prt
@@ -182,8 +205,9 @@ TEST_F(ParticlesTest, FindOrInsertParticleDef)
     EXPECT_EQ(inserted->getBlockSyntax().contents, "");
 }
 
-constexpr const char* TestParticleSource = R"(
-    particle flamejet {
+constexpr const char* ParticleSourceTemplate = R"(
+
+particle flamejet {
 	depthHack	0.001
 	{
 		count				20
@@ -205,14 +229,23 @@ constexpr const char* TestParticleSource = R"(
 		offset 				0.000 0.000 0.000
 		gravity 			10.000
 	}
+}
+
 )";
 
-inline particles::IParticleDef::Ptr createParticleFromSource()
+inline std::string createParticleSource(const std::string& defName)
 {
-    auto decl = GlobalParticlesManager().findOrInsertParticleDef("some_def");
+    std::string source = ParticleSourceTemplate;
+    string::replace_first(source, "flamejet", defName);
 
-    std::string source = TestParticleSource;
-    string::replace_first(source, "flamejet", "some_def");
+    return source;
+}
+
+inline particles::IParticleDef::Ptr createParticleFromSource(const std::string& defName)
+{
+    auto decl = GlobalParticlesManager().findOrInsertParticleDef(defName);
+
+    auto source = createParticleSource(defName);
 
     decl::DeclarationBlockSyntax syntax;
     syntax.typeName = "particle";
@@ -225,10 +258,49 @@ inline particles::IParticleDef::Ptr createParticleFromSource()
     return decl;
 }
 
+// Filename is the leaf name, relative to the particles/ folder
+inline void setParticleFilename(const particles::IParticleDef::Ptr& decl, const std::string& filename)
+{
+    auto syntax = decl->getBlockSyntax();
+    syntax.fileInfo = vfs::FileInfo("particles/", filename, vfs::Visibility::NORMAL);
+    decl->setBlockSyntax(syntax);
+
+    // Legacy invocation
+    decl->setFilename(os::getFilename(syntax.fileInfo.fullPath()));
+}
+
+inline void expectParticleIsPresentInFile(const particles::IParticleDef::Ptr& decl, const std::string& path, bool expectPresent)
+{
+    auto contents = algorithm::loadTextFromVfsFile(path);
+
+    std::size_t foundOccurrences = 0;
+
+    auto stringToFind = "particle " + decl->getDeclName();
+
+    std::size_t offset = 0;
+    std::size_t foundPosition = contents.find(stringToFind, offset);
+
+    while (foundPosition != std::string::npos)
+    {
+        ++foundOccurrences;
+        offset = foundPosition + 1;
+        foundPosition = contents.find(stringToFind, offset);
+    }
+
+    if (expectPresent)
+    {
+        EXPECT_EQ(foundOccurrences, 1) << "Expected exactly one match of " << stringToFind << " in the contents in the file";
+    }
+    else
+    {
+        EXPECT_EQ(foundOccurrences, 0) << "Expected no match of " << stringToFind << " in the contents in the file";
+    }
+}
+
 // Save a new particle to a file on disk
 TEST_F(ParticlesTest, SaveNewParticleToNewFile)
 {
-    auto decl = createParticleFromSource();
+    auto decl = createParticleFromSource("some_def");
 
     const auto& syntax = decl->getBlockSyntax();
     auto outputPath = _context.getTestProjectPath() + syntax.fileInfo.fullPath();
@@ -237,18 +309,26 @@ TEST_F(ParticlesTest, SaveNewParticleToNewFile)
     // Auto-remove the file that is going to be written
     TemporaryFile outputFile(outputPath);
 
-    GlobalParticlesManager().saveParticleDef("some_def");
+    GlobalParticlesManager().saveParticleDef(decl->getDeclName());
 
     EXPECT_TRUE(fs::exists(outputPath)) << "Output file should exist now";
 
-    auto contents = algorithm::loadTextFromVfsFile(syntax.fileInfo.fullPath());
-    EXPECT_NE(contents.find("particle some_def"), std::string::npos) << "Didn't find the expected contents in the file";
+    expectParticleIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
 }
 
 // Save the particle to a file that already exists (but doesn't contain the def)
 TEST_F(ParticlesTest, SaveNewParticleToExistingFile)
 {
-    // TODO
+    auto decl = createParticleFromSource("some_def346");
+
+    setParticleFilename(decl, TEST_PARTICLE_FILE);
+
+    // Def file should not have that particle def yet
+    expectParticleIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), false);
+
+    GlobalParticlesManager().saveParticleDef(decl->getDeclName());
+
+    expectParticleIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
 }
 
 // Save a particle to the same physical file that originally declared the decl

@@ -14,6 +14,11 @@ inline std::string loadTextFromVfsFile(const std::string& vfsPath)
 {
     auto file = GlobalFileSystem().openTextFile(vfsPath);
 
+    if (!file)
+    {
+        return std::string();
+    }
+
     std::stringstream textStream;
     std::istream mapStream(&file->getInputStream());
     textStream << mapStream.rdbuf();
