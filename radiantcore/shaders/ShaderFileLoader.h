@@ -51,13 +51,13 @@ protected:
         {
             // Get the next block
             parser::BlockTokeniser::Block block = tokeniser.nextBlock();
-
+#if 0
             // Try to parse tables
             if (parseTable(block, fileInfo))
             {
                 continue; // table successfully parsed
             }
-
+#endif
             if (block.name.substr(0, 5) == "skin ")
             {
                 continue; // skip skin definition
@@ -92,6 +92,7 @@ protected:
     }
 
 private:
+#if 0
     bool parseTable(const parser::BlockTokeniser::Block& block, const vfs::FileInfo& fileInfo)
     {
         if (block.name.length() <= 5 || !string::starts_with(block.name, "table"))
@@ -120,6 +121,7 @@ private:
 
         return false;
     }
+#endif
 };
 
 }

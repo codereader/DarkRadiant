@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iimage.h"
+#include "ideclmanager.h"
 #include "imodule.h"
 #include "ifilesystem.h"
 #include <sigc++/signal.h>
@@ -455,21 +456,19 @@ inline std::ostream& operator<< (std::ostream& os, const Material* m)
 typedef std::function<void(const std::string&)> ShaderNameCallback;
 
 // Represents a table declaration in the .mtr files
-class ITableDefinition
+class ITableDefinition :
+    public decl::IDeclaration
 {
 public:
     using Ptr = std::shared_ptr<ITableDefinition>;
 
     virtual ~ITableDefinition() {}
 
-    // The name of this table
-    virtual const std::string& getName() const = 0;
-
     // Retrieve a value from this table, respecting the clamp and snap flags
     virtual float getValue(float index) = 0;
 };
 
-const char* const MODULE_SHADERSYSTEM = "MaterialManager";
+constexpr const char* const MODULE_SHADERSYSTEM = "MaterialManager";
 
 /**
  * \brief

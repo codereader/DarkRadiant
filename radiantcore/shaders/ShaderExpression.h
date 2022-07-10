@@ -320,7 +320,7 @@ public:
 
     virtual std::string convertToString() override
     {
-        return fmt::format("{0}[{1}]", _tableDef->getName(), _lookupExpr->getExpressionString());
+        return fmt::format("{0}[{1}]", _tableDef->getDeclName(), _lookupExpr->getExpressionString());
     }
 
     virtual Ptr clone() const override

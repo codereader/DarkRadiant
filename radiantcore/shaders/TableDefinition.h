@@ -4,6 +4,7 @@
 #include <string>
 #include <memory>
 #include "ishaders.h"
+#include "decl/DeclarationBase.h"
 
 namespace shaders
 {
@@ -12,15 +13,9 @@ namespace shaders
 // table <tablename> { [snap] [clamp] { <data>, <data>, ... } }
 
 class TableDefinition :
-    public ITableDefinition
+    public decl::DeclarationBase<ITableDefinition>
 {
 private:
-	// The block name
-	std::string _name;
-
-	// Raw content
-	std::string _blockContents;
-
 	// Whether to prevent value interpolation
 	bool _snap;
 
@@ -30,23 +25,15 @@ private:
 	// The actual values of this table
 	std::vector<float> _values;
 
-	// Whether we parsed the block contents already
-	bool _parsed;
-
 public:
-	TableDefinition(const std::string& name, const std::string& blockContents);
-
-	const std::string& getName() const
-	{
-		return _name;
-	}
+	TableDefinition(const std::string& name);
 
 	// Retrieve a value from this table, respecting the clamp and snap flags
-	float getValue(float index);
+	float getValue(float index) override;
 
-private:
-	void parseDefinition();
+protected:
+    void onBeginParsing() override;
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override;
 };
-typedef std::shared_ptr<TableDefinition> TableDefinitionPtr;
 
 } // namespace

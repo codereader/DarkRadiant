@@ -4,6 +4,8 @@
 
 #include "i18n.h"
 #include "iradiant.h"
+#include "ideclmanager.h"
+
 #include "iregistry.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
@@ -24,6 +26,7 @@
 #include "os/file.h"
 #include "os/path.h"
 #include "decl/SpliceHelper.h"
+#include "decl/DeclarationCreator.h"
 #include "stream/TemporaryOutputStream.h"
 #include "string/predicate.h"
 #include "string/replace.h"
@@ -496,9 +499,9 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
 
 ITableDefinition::Ptr Doom3ShaderSystem::getTable(const std::string& name)
 {
-    ensureDefsLoaded();
-
-    return _library->getTableForName(name);
+    return std::static_pointer_cast<ITableDefinition>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::Table, name)
+    );
 }
 
 const std::string& Doom3ShaderSystem::getName() const
@@ -509,15 +512,14 @@ const std::string& Doom3ShaderSystem::getName() const
 
 const StringSet& Doom3ShaderSystem::getDependencies() const
 {
-    static StringSet _dependencies;
-
-    if (_dependencies.empty())
+    static StringSet _dependencies
     {
-        _dependencies.insert(MODULE_VIRTUALFILESYSTEM);
-        _dependencies.insert(MODULE_XMLREGISTRY);
-        _dependencies.insert(MODULE_GAMEMANAGER);
-        _dependencies.insert(MODULE_FILETYPES);
-    }
+        MODULE_DECLMANAGER,
+        MODULE_VIRTUALFILESYSTEM,
+        MODULE_XMLREGISTRY,
+        MODULE_GAMEMANAGER,
+        MODULE_FILETYPES,
+    };
 
     return _dependencies;
 }
@@ -525,6 +527,10 @@ const StringSet& Doom3ShaderSystem::getDependencies() const
 void Doom3ShaderSystem::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called" << std::endl;
+
+    GlobalDeclarationManager().registerDeclType("table", std::make_shared<decl::DeclarationCreator<TableDefinition>>(decl::Type::Table));
+    //GlobalDeclarationManager().registerDeclType("material", std::make_shared<decl::DeclarationCreator<ShaderTemplate>>(decl::Type::Material));
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "materials/", ".mtr");
 
     construct();
     realise();

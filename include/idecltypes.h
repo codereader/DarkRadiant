@@ -18,6 +18,7 @@ enum class Type
     Undetermined = -2,
     None = -1,
     Material = 0,
+    Table,
     EntityDef,
     SoundShader,
     Model,
