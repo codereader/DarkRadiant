@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <sigc++/connection.h>
 
 #include "iparticles.h"
 
@@ -24,8 +25,8 @@ class ParticleDef :
 	// Depth hack
 	float _depthHack;
 
-	// Vector of stages
-    std::vector<IStageDef::Ptr> _stages;
+	// Vector of stages and the connected change signals
+    std::vector<std::pair<IStageDef::Ptr, sigc::connection>> _stages;
 
     // Changed signal
     sigc::signal<void> _changedSignal;
@@ -67,7 +68,6 @@ public:
 	std::size_t addParticleStage() override;
 	void removeParticleStage(std::size_t index) override;
 	void swapParticleStages(std::size_t index, std::size_t index2) override;
-	void appendStage(const StageDef::Ptr& stage);
 
     bool isEqualTo(const Ptr& other) override;
 
@@ -85,6 +85,7 @@ protected:
 
 private:
     void onParticleChanged();
+    void appendStage(const StageDef::Ptr& stage);
 };
 typedef std::shared_ptr<ParticleDef> ParticleDefPtr;
 

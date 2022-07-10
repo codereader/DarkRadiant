@@ -32,15 +32,15 @@ std::size_t ParticleDef::getNumStages()
 const std::shared_ptr<IStageDef>& ParticleDef::getStage(std::size_t stageNum)
 {
     ensureParsed();
-	return _stages[stageNum];
+	return _stages[stageNum].first;
 }
 
 std::size_t ParticleDef::addParticleStage()
 {
-    // Create a new stage and relay its changed signal
-    auto stage = std::make_shared<StageDef>();
-    stage->signal_changed().connect(_changedSignal.make_slot());
-    _stages.push_back(stage);
+    ensureParsed();
+
+    // Create and append a new stage
+    appendStage(std::make_shared<StageDef>());
 
     onParticleChanged();
 
@@ -49,31 +49,40 @@ std::size_t ParticleDef::addParticleStage()
 
 void ParticleDef::removeParticleStage(std::size_t index)
 {
+    ensureParsed();
+
     if (index < _stages.size())
     {
+        // Disconnect the change signal before removal
+        _stages[index].second.disconnect();
         _stages.erase(_stages.begin() + index);
     }
 
-    _changedSignal.emit();
+    onParticleChanged();
 }
 
 void ParticleDef::swapParticleStages(std::size_t index, std::size_t index2)
 {
+    ensureParsed();
+
     if (index >= _stages.size() || index2 >= _stages.size() || index == index2)
     {
         return;
     }
 
     std::swap(_stages[index], _stages[index2]);
-    _changedSignal.emit();
+    onParticleChanged();
 }
 
 void ParticleDef::appendStage(const StageDef::Ptr& stage)
 {
-    // Relay the incoming stage's changed signal then add to list
-    stage->signal_changed().connect(_changedSignal.make_slot());
-    _stages.push_back(stage);
-    _changedSignal.emit();
+    // Add to list and connect the incoming stage's changed signal
+    _stages.emplace_back(std::make_pair(
+        stage,
+        stage->signal_changed().connect(sigc::mem_fun(this, &ParticleDef::onParticleChanged)))
+    );
+
+    // This method is only used internally, no signal emission
 }
 
 void ParticleDef::copyFrom(const Ptr& other)
@@ -93,8 +102,8 @@ void ParticleDef::copyFrom(const Ptr& other)
         {
             auto stage = std::make_shared<StageDef>();
             stage->copyFrom(other->getStage(i));
-            stage->signal_changed().connect(_changedSignal.make_slot());
-            _stages.push_back(stage);
+
+            appendStage(stage);
         }
     }
 
@@ -171,7 +180,7 @@ std::string ParticleDef::generateSyntax()
     // Write stages, one by one
     for (const auto& stage : _stages)
     {
-        stream << *std::static_pointer_cast<StageDef>(stage);
+        stream << *std::static_pointer_cast<StageDef>(stage.first);
     }
 
     stream << "\n"; // final line break before the closing brace

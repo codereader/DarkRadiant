@@ -420,7 +420,7 @@ TEST_F(ParticlesTest, SaveExistingParticleToNewFileOverridingPk4)
 
 // Assumes that the syntax changes after performing the given action on the named particle
 // Optionally calls the given predicate with the syntax after the change
-inline void expectParticleSyntaxChangeAfter(const std::string& defName,
+inline void expectSyntaxChangeAfter(const std::string& defName,
     std::function<void(const particles::IParticleDef::Ptr&)> action,
     std::function<bool(const std::string&)> predicate = [](const std::string&) { return true; })
 {
@@ -437,10 +437,10 @@ inline void expectParticleSyntaxChangeAfter(const std::string& defName,
     EXPECT_TRUE(predicate(blockSyntaxAfterChange)) << "Changed source text didn't pass the check";
 }
 
-TEST_F(ParticlesTest, ParticleSyntaxChangeAddStage)
+TEST_F(ParticlesTest, SyntaxChangeAddStage)
 {
-    auto numStagesAfterChange = 0;
-    expectParticleSyntaxChangeAfter("firefly_blue", [&](const particles::IParticleDef::Ptr& decl)
+    std::size_t numStagesAfterChange = 0;
+    expectSyntaxChangeAfter("firefly_blue", [&](const particles::IParticleDef::Ptr& decl)
     {
         decl->addParticleStage();
         numStagesAfterChange = decl->getNumStages();
@@ -452,9 +452,43 @@ TEST_F(ParticlesTest, ParticleSyntaxChangeAddStage)
     });
 }
 
-TEST_F(ParticlesTest, ParticleSyntaxChangeDepthHack)
+TEST_F(ParticlesTest, SyntaxChangeRemoveStage)
 {
-    expectParticleSyntaxChangeAfter("firefly_blue", [](const particles::IParticleDef::Ptr& decl)
+    std::size_t numStagesAfterChange = 0;
+    expectSyntaxChangeAfter("firefly_blue", [&](const particles::IParticleDef::Ptr& decl)
+    {
+        decl->removeParticleStage(0);
+        numStagesAfterChange = decl->getNumStages();
+    },
+    [&](const std::string& contents)
+    {
+        // Expect as many opening braces as there are stages
+        return std::count(contents.begin(), contents.end(), '{') == numStagesAfterChange;
+    });
+}
+
+TEST_F(ParticlesTest, SyntaxChangeSwapStages)
+{
+    std::size_t fireBigPositionBeforeChange = std::string::npos;
+    std::size_t dustPositionBeforeChange = std::string::npos;
+
+    expectSyntaxChangeAfter("flamejet", [&](const particles::IParticleDef::Ptr& decl)
+    {
+        fireBigPositionBeforeChange = decl->getBlockSyntax().contents.find("textures/particles/pfirebig2");
+        dustPositionBeforeChange = decl->getBlockSyntax().contents.find("textures/particles/dust");
+
+        decl->swapParticleStages(0, 1);
+    },
+    [&](const std::string& contents)
+    {
+        return contents.find("textures/particles/pfirebig2") > fireBigPositionBeforeChange &&
+               contents.find("textures/particles/dust") < dustPositionBeforeChange;
+    });
+}
+
+TEST_F(ParticlesTest, SyntaxChangeDepthHack)
+{
+    expectSyntaxChangeAfter("firefly_blue", [](const particles::IParticleDef::Ptr& decl)
     {
         decl->setDepthHack(0.332f);
     },
@@ -464,13 +498,25 @@ TEST_F(ParticlesTest, ParticleSyntaxChangeDepthHack)
     });
 
     // Depth hack should be gone when setting it back to 0
-    expectParticleSyntaxChangeAfter("firefly_blue", [](const particles::IParticleDef::Ptr& decl)
+    expectSyntaxChangeAfter("firefly_blue", [](const particles::IParticleDef::Ptr& decl)
     {
         decl->setDepthHack(0.0f);
     },
     [](const std::string& contents)
     {
         return contents.find("depthHack") == std::string::npos;
+    });
+}
+
+TEST_F(ParticlesTest, SyntaxChangeStageMaterial)
+{
+    expectSyntaxChangeAfter("firefly_blue", [](const particles::IParticleDef::Ptr& decl)
+    {
+        decl->getStage(0)->setMaterialName("textures/common/caulk");
+    },
+    [](const std::string& contents)
+    {
+        return contents.find("textures/common/caulk") != std::string::npos;
     });
 }
 

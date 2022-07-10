@@ -89,6 +89,9 @@ class StageDef : public IStageDef
 
 private:
 
+    /// Resets/clears all values to default. This is called by parseFromTokens().
+    void reset();
+
     void recalculateCycleMsec()
     {
         _cycleMsec = static_cast<int>((_duration + _deadTime) * 1000);
@@ -120,9 +123,6 @@ public:
 
     /// Create a particle stage from the given token stream
     static Ptr Parse(parser::DefTokeniser& tok);
-
-    /// Resets/clears all values to default. This is called by parseFromTokens().
-    void reset();
 
     /// Signal emitted when some property of the particle stage has changed
     sigc::signal<void> signal_changed() const
