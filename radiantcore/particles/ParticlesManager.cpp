@@ -217,7 +217,6 @@ void ParticlesManager::saveParticleDef(const std::string& particleName)
 	// Open a temporary file
     stream::TemporaryOutputStream tempStream(targetFile);
 
-	std::string tempString;
     auto& stream = tempStream.getStream();
 
 	// If a previous file exists, open it for reading and filter out the particle def we'll be writing

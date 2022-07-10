@@ -1,11 +1,19 @@
 #include <future>
+#include <fstream>
 
+#include "i18n.h"
 #include "DeclarationManager.h"
+
+#include <regex>
 
 #include "DeclarationFolderParser.h"
 #include "ifilesystem.h"
+#include "decl/SpliceHelper.h"
 #include "module/StaticModule.h"
 #include "string/trim.h"
+#include "os/path.h"
+#include "fmt/format.h"
+#include "stream/TemporaryOutputStream.h"
 #include "util/ScopedBoolLock.h"
 
 namespace decl
@@ -291,11 +299,143 @@ void DeclarationManager::removeDeclaration(Type type, const std::string& name)
     });
 }
 
+namespace
+{
+
+void ensureTargetFileExists(const std::string& targetFile, const std::string& relativePath)
+{
+    // If the file doesn't exist yet, let's check if we need to inherit stuff from the VFS
+    if (fs::exists(targetFile)) return;
+
+    auto inheritFile = GlobalFileSystem().openTextFile(relativePath);
+
+    if (!inheritFile) return;
+
+    // There is a file with that name already in the VFS, copy it to the target file
+    TextInputStream& inheritStream = inheritFile->getInputStream();
+
+    std::ofstream outFile(targetFile);
+
+    if (!outFile.is_open())
+    {
+        throw std::runtime_error(fmt::format(_("Cannot open file for writing: {0}"), targetFile));
+    }
+
+    char buf[16384];
+    std::size_t bytesRead = inheritStream.read(buf, sizeof(buf));
+
+    while (bytesRead > 0)
+    {
+        outFile.write(buf, bytesRead);
+
+        bytesRead = inheritStream.read(buf, sizeof(buf));
+    }
+
+    outFile.close();
+}
+
+void writeDeclaration(std::ostream& stream, const IDeclaration::Ptr& decl)
+{
+    const auto& syntax = decl->getBlockSyntax();
+
+    // Write the type (optional)
+    if (!syntax.typeName.empty())
+    {
+        stream << syntax.typeName << " ";
+    }
+
+    // Write the decl name
+    stream << decl->getDeclName() << std::endl;
+
+    // Write the blocks including opening/closing braces
+    stream << "{" << syntax.contents << "}";
+
+    // A trailing line break after the declaration to keep distance
+    stream << std::endl;
+}
+
+}
+
 void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
 {
-    // All parsers need to have finished
+    const auto& syntax = decl->getBlockSyntax();
+
     // Check filename for emptiness
-    // TODO
+    if (syntax.fileInfo.name.empty())
+    {
+        throw std::invalid_argument("The file name of the decl is empty.");
+    }
+
+    // All parsers need to have finished
+    waitForTypedParsersToFinish();
+
+    std::string relativePath = syntax.fileInfo.fullPath();
+
+    fs::path targetPath = GlobalGameManager().getModPath();
+
+    if (targetPath.empty())
+    {
+        targetPath = GlobalGameManager().getUserEnginePath();
+
+        rMessage() << "No mod base path found, falling back to user engine path to save particle file: " <<
+            targetPath.string() << std::endl;
+    }
+
+    // Ensure the target folder exists
+    targetPath /= os::getDirectory(relativePath);
+    fs::create_directories(targetPath);
+
+    auto targetFile = targetPath / os::getFilename(syntax.fileInfo.name);
+
+    // Make sure the physical file exists and is inheriting its contents from the VFS (if necessary)
+    ensureTargetFileExists(targetFile.string(), relativePath);
+
+    // Open a temporary file
+    stream::TemporaryOutputStream tempStream(targetFile);
+
+    auto& stream = tempStream.getStream();
+
+    // If a previous file exists, open it for reading and filter out the decl we'll be writing
+    if (fs::exists(targetFile))
+    {
+        std::ifstream inheritStream(targetFile.string());
+
+        if (!inheritStream.is_open())
+        {
+            throw std::runtime_error(fmt::format(_("Cannot open file for reading: {0}"), targetFile.string()));
+        }
+
+        // TODO: Unit tests covering the casing
+        auto typeName = getTypenameByType(decl->getDeclType());
+
+        // Write the file to the output stream, up to the point the decl should be written to
+        // The typename is optional and not case-sensitive
+        std::regex pattern("^[\\s]*(" + typeName + "[\\s]+" + decl->getDeclName() + "|" + decl->getDeclName() + ")\\s*(\\{)*\\s*$", 
+            std::regex_constants::icase);
+
+        SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, pattern);
+
+        if (inheritStream.eof())
+        {
+            // Particle def was not found in the inherited stream, write our comment
+            stream << std::endl << std::endl;
+        }
+
+        // We're at the insertion point (which might as well be EOF of the inheritStream)
+        writeDeclaration(stream, decl);
+
+        // Write the rest of the stream
+        stream << inheritStream.rdbuf();
+
+        inheritStream.close();
+    }
+    else
+    {
+        // Write the declaration itself
+        writeDeclaration(stream, decl);
+    }
+
+    tempStream.closeAndReplaceTargetFile();
 }
 
 sigc::signal<void>& DeclarationManager::signal_DeclsReloading(Type type)
