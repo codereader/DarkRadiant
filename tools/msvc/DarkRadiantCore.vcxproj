@@ -953,7 +953,6 @@
     <ClInclude Include="..\..\radiantcore\model\StaticModelNode.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModelSurface.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleDef.h" />
-    <ClInclude Include="..\..\radiantcore\particles\ParticleDefCreator.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleNode.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleParameter.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleQuad.h" />
@@ -1114,7 +1113,6 @@
     <ClInclude Include="..\..\radiantcore\shaders\VideoMapExpression.h" />
     <ClInclude Include="..\..\radiantcore\skins\Doom3ModelSkin.h" />
     <ClInclude Include="..\..\radiantcore\skins\Doom3SkinCache.h" />
-    <ClInclude Include="..\..\radiantcore\skins\SkinCreator.h" />
     <ClInclude Include="..\..\radiantcore\undo\Operation.h" />
     <ClInclude Include="..\..\radiantcore\undo\Stack.h" />
     <ClInclude Include="..\..\radiantcore\undo\StackFiller.h" />

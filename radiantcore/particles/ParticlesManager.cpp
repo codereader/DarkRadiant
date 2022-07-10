@@ -12,7 +12,7 @@
 
 #include <functional>
 
-#include "ParticleDefCreator.h"
+#include "decl/DeclarationCreator.h"
 #include "string/predicate.h"
 #include "module/StaticModule.h"
 
@@ -110,7 +110,7 @@ void ParticlesManager::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
-    GlobalDeclarationManager().registerDeclType("particle", std::make_shared<ParticleDefCreator>());
+    GlobalDeclarationManager().registerDeclType("particle", std::make_shared<decl::DeclarationCreator<ParticleDef>>(decl::Type::Particle));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Particle, PARTICLES_DIR, PARTICLES_EXT);
 
 	// Register the "ReloadParticles" commands

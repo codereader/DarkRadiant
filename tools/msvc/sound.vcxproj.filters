@@ -25,9 +25,6 @@
     <ClInclude Include="..\..\plugins\sound\OggFileLoader.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\plugins\sound\SoundShaderParser.h">
-      <Filter>src</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\sound\sound.cpp">

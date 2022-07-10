@@ -4,7 +4,7 @@
 #include "iscenegraph.h"
 #include "ideclmanager.h"
 #include "module/StaticModule.h"
-#include "SkinCreator.h"
+#include "decl/DeclarationCreator.h"
 
 namespace skins
 {
@@ -71,7 +71,7 @@ void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
 {
 	rMessage() << getName() << "::initialiseModule called" << std::endl;
 
-    GlobalDeclarationManager().registerDeclType("skin", std::make_shared<SkinCreator>());
+    GlobalDeclarationManager().registerDeclType("skin", std::make_shared<decl::DeclarationCreator<Skin>>(decl::Type::Skin));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Skin, SKINS_FOLDER, SKIN_FILE_EXTENSION);
 
     _declsReloadedConnection = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Skin).connect(

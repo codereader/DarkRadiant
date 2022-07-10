@@ -2370,11 +2370,5 @@
     <ClInclude Include="..\..\radiantcore\eclass\DefCreators.h">
       <Filter>src\eclass</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\skins\SkinCreator.h">
-      <Filter>src\skins</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\particles\ParticleDefCreator.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

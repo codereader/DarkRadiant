@@ -13,7 +13,7 @@
 
 #include "WavFileLoader.h"
 #include "OggFileLoader.h"
-#include "SoundShaderParser.h"
+#include "decl/DeclarationCreator.h"
 
 namespace sound
 {
@@ -136,8 +136,8 @@ void SoundManager::initialiseModule(const IApplicationContext& ctx)
         rMessage() << "SoundManager: sound output disabled" << std::endl;
     }
 
-    // Register the parser capable of loading shaders and point the decl manager to the sound folder
-    GlobalDeclarationManager().registerDeclType("sound", std::make_shared<SoundShaderParser>());
+    // Register the creator capable of constructing shaders and point the decl manager to the sound folder
+    GlobalDeclarationManager().registerDeclType("sound", std::make_shared<decl::DeclarationCreator<SoundShader>>(decl::Type::SoundShader));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::SoundShader, SOUND_FOLDER, SOUND_FILE_EXTENSION);
 
     // Route the decls reloaded signal to the local signal

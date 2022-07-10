@@ -8,6 +8,7 @@
 #include "messages/ScopedLongRunningOperation.h"
 
 #include "DefCreators.h"
+#include "decl/DeclarationCreator.h"
 
 #include "module/StaticModule.h"
 
@@ -82,7 +83,7 @@ void EClassManager::initialiseModule(const IApplicationContext& ctx)
 	rMessage() << getName() << "::initialiseModule called." << std::endl;
 
     GlobalDeclarationManager().registerDeclType("entityDef", std::make_shared<EntityDefCreator>());
-    GlobalDeclarationManager().registerDeclType("model", std::make_shared<ModelDefCreator>());
+    GlobalDeclarationManager().registerDeclType("model", std::make_shared<decl::DeclarationCreator<Doom3ModelDef>>(decl::Type::ModelDef));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::EntityDef, "def/", ".def");
 
 	GlobalCommandSystem().addCommand("ReloadDefs", std::bind(&EClassManager::reloadDefsCmd, this, std::placeholders::_1));

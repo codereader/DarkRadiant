@@ -397,6 +397,9 @@
     <ClInclude Include="..\..\libs\decl\SpliceHelper.h">
       <Filter>decl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\decl\DeclarationCreator.h">
+      <Filter>decl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
