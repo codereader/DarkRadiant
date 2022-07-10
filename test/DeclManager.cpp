@@ -714,6 +714,9 @@ inline void expectDeclIsPresentInFile(const ITestDeclaration::Ptr& decl, const s
     std::vector<parser::BlockTokeniser::Block> foundBlocks;
     auto declName = string::to_lower_copy(decl->getDeclName());
 
+    // Run a check against our custom decl
+    auto hasAllKeyValuePairs = true;
+
     while (tokeniser.hasMoreBlocks())
     {
         auto block = tokeniser.nextBlock();
@@ -723,27 +726,22 @@ inline void expectDeclIsPresentInFile(const ITestDeclaration::Ptr& decl, const s
         {
             foundBlocks.push_back(block);
 
-            // Run a check against our custom decl
-            auto hasAllKeyValuePairs = true;
-
             // Every key and every value must be present in the file
             decl->foreachKeyValue([&](std::pair<std::string, std::string> pair)
-                {
-                    hasAllKeyValuePairs &= block.contents.find("\"" + pair.first + "\"") != std::string::npos;
-                    hasAllKeyValuePairs &= block.contents.find("\"" + pair.second + "\"") != std::string::npos;
-                });
-
-            EXPECT_EQ(hasAllKeyValuePairs, expectPresent) << "The decl didn't have the expected key/value pairs in its contents";
+            {
+                hasAllKeyValuePairs &= block.contents.find("\"" + pair.first + "\"") != std::string::npos;
+                hasAllKeyValuePairs &= block.contents.find("\"" + pair.second + "\"") != std::string::npos;
+            });
         }
     }
 
     if (expectPresent)
     {
-        EXPECT_EQ(foundBlocks.size(), 1) << "Expected exactly one decl " << declName << " in the contents in the file";
+        EXPECT_EQ(foundBlocks.size() && hasAllKeyValuePairs, 1) << "Expected exactly one decl " << declName << " in the contents in the file";
     }
     else
     {
-        EXPECT_TRUE(foundBlocks.empty()) << "Expected no decl " << declName << " in the contents in the file";
+        EXPECT_TRUE(foundBlocks.empty() || !hasAllKeyValuePairs) << "Expected no decl " << declName << " in the contents in the file";
     }
 }
 

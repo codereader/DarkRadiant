@@ -410,16 +410,10 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
 
         // Write the file to the output stream, up to the point the decl should be written to
         // The typename is optional and not case-sensitive
-        std::regex pattern("^[\\s]*(" + typeName + "[\\s]+" + decl->getDeclName() + "|" + decl->getDeclName() + ")\\s*(\\{)*\\s*$", 
+        std::regex pattern("^[\\s]*(" + typeName + "[\\s]+" + decl->getDeclName() + "|" + decl->getDeclName() + ")\\s*\\{*\\s*$", 
             std::regex_constants::icase);
 
         SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, pattern);
-
-        if (inheritStream.eof())
-        {
-            // Particle def was not found in the inherited stream, write our comment
-            stream << std::endl << std::endl;
-        }
 
         // We're at the insertion point (which might as well be EOF of the inheritStream)
         writeDeclaration(stream, decl);
