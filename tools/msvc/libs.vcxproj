@@ -158,6 +158,7 @@
     <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
     <ClInclude Include="..\..\libs\dragplanes.h" />
     <ClInclude Include="..\..\libs\eclass.h" />
+    <ClInclude Include="..\..\libs\EditableDeclaration.h" />
     <ClInclude Include="..\..\libs\entitylib.h" />
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
     <ClInclude Include="..\..\libs\GameConfigUtil.h" />

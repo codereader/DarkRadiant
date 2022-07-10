@@ -390,6 +390,7 @@
       <Filter>render</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\DeclarationBase.h" />
+    <ClInclude Include="..\..\libs\EditableDeclaration.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

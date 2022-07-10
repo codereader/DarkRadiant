@@ -3,66 +3,80 @@
 #include "ideclmanager.h"
 #include "testutil/TemporaryFile.h"
 #include "testutil/ThreadUtils.h"
+#include "EditableDeclaration.h"
 
 namespace test
 {
 
 using DeclManagerTest = RadiantTest;
 
-class TestDeclaration :
+class ITestDeclaration :
     public decl::IDeclaration
 {
+public:
+    virtual ~ITestDeclaration() {}
+
+    // Interface methods for testing purposes
+
+    virtual std::string getKeyValue(const std::string& key) = 0;
+    virtual void setKeyValue(const std::string& key, const std::string& value) = 0;
+};
+
+class TestDeclaration :
+    public decl::EditableDeclaration<ITestDeclaration>
+{
 private:
-    decl::Type _type;
-    std::string _name;
-    decl::DeclarationBlockSyntax _block;
-    std::size_t _parseStamp;
+    std::map<std::string, std::string> _keyValues;
 
 public:
     TestDeclaration(decl::Type type, const std::string& name) :
-        _type(type),
-        _name(name),
-        _parseStamp(0)
+        EditableDeclaration<ITestDeclaration>(type, name)
     {}
 
-    const std::string& getDeclName() const override
+    std::string getKeyValue(const std::string& key) override
     {
-        return _name;
+        ensureParsed();
+        return _keyValues.count(key) > 0 ? _keyValues.at(key) : "";
     }
 
-    decl::Type getDeclType() const override
+    // API method to simulate a change of the declaration contents
+    void setKeyValue(const std::string& key, const std::string& value) override
     {
-        return _type;
+        _keyValues[key] = value;
+        onParsedContentsChanged();
     }
 
-    const decl::DeclarationBlockSyntax& getBlockSyntax() const override
+    int generateSyntaxInvocationCount = 0;
+
+protected:
+    std::string generateSyntax() override
     {
-        return _block;
+        ++generateSyntaxInvocationCount;
+
+        std::stringstream stream;
+
+        stream << "\n";
+
+        for (const auto& [key, value] : _keyValues)
+        {
+            stream << "\"" << key << "\" \"" << value << "\"\n";
+        }
+
+        stream << "\n";
+
+        return stream.str();
     }
 
-    void setBlockSyntax(const decl::DeclarationBlockSyntax& block) override
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override
     {
-        _block = block;
-    }
+        while (tokeniser.hasMoreTokens())
+        {
+            // Read key/value pairs until end of decl
+            auto key = tokeniser.nextToken();
+            auto value = tokeniser.nextToken();
 
-    std::size_t getParseStamp() const override
-    {
-        return _parseStamp;
-    }
-
-    void setParseStamp(std::size_t parseStamp) override
-    {
-        _parseStamp = parseStamp;
-    }
-
-    std::string getModName() const override
-    {
-        return _block.getModName();
-    }
-
-    std::string getDeclFilePath() const override
-    {
-        return _block.fileInfo.fullPath();
+            _keyValues.emplace(key, value);
+        }
     }
 };
 
@@ -621,6 +635,31 @@ TEST_F(DeclManagerTest, RemoveDeclaration)
     GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/precedence_test/1");
 
     expectDeclIsNotPresent(decl::Type::TestDecl, "decl/precedence_test/1");
+}
+
+TEST_F(DeclManagerTest, SyntaxGeneration)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+
+    auto decl = std::static_pointer_cast<TestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/0"));
+
+    EXPECT_EQ(decl->getKeyValue("diffusemap"), "textures/numbers/0");
+
+    // Expect the unchanged block to be present
+    EXPECT_NE(decl->getBlockSyntax().contents.find("textures/numbers/0"), std::string::npos);
+    decl->generateSyntaxInvocationCount = 0;
+
+    // Chagne the declaration
+    decl->setKeyValue("diffusemap", "some/other/texture");
+
+    // The old material name should be gone now, the new one should be there
+    EXPECT_EQ(decl->generateSyntaxInvocationCount, 0) << "No call to generateSyntax should have been recorded yet";
+    EXPECT_EQ(decl->getBlockSyntax().contents.find("textures/numbers/0"), std::string::npos);
+    EXPECT_EQ(decl->generateSyntaxInvocationCount, 1) << "A call to generateSyntax should have been recorded";
+    EXPECT_NE(decl->getBlockSyntax().contents.find("some/other/texture"), std::string::npos);
+    EXPECT_EQ(decl->generateSyntaxInvocationCount, 1) << "Only one call to generateSyntax should have been recorded";
 }
 
 }

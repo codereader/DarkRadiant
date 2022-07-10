@@ -52,7 +52,7 @@ public:
     virtual Type getDeclType() const = 0;
 
     // The raw syntax block (without the outer curly braces) used to construct this decl
-    virtual const DeclarationBlockSyntax& getBlockSyntax() const = 0;
+    virtual const DeclarationBlockSyntax& getBlockSyntax() = 0;
 
     // Set the block contents of this declaration.
     // Implementations are free to either (re-)parse immediately or deferred.

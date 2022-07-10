@@ -15,6 +15,9 @@ namespace decl
  * 
  * class SoundShader : public DeclarationBase<ISoundShader>
  * {}
+ *
+ * Declaration types that can be modified through its public API should inherit
+ * and implement the EditableDeclaration<> template.
  */
 template<typename DeclarationInterface>
 class DeclarationBase :
@@ -53,7 +56,7 @@ public:
         return _type;
     }
 
-    const DeclarationBlockSyntax& getBlockSyntax() const override
+    const DeclarationBlockSyntax& getBlockSyntax() override
     {
         return _declBlock;
     }
@@ -70,12 +73,12 @@ public:
 
     std::string getModName() const final
     {
-        return getBlockSyntax().getModName();
+        return _declBlock.getModName();
     }
 
     std::string getDeclFilePath() const final
     {
-        return getBlockSyntax().fileInfo.fullPath();
+        return _declBlock.fileInfo.fullPath();
     }
 
     std::size_t getParseStamp() const final
@@ -132,10 +135,19 @@ protected:
     virtual void onParsingFinished()
     {}
 
-    // Invoked after a new syntax block has been assigned
+    // Invoked after a new syntax block has been assigned through setBlockSyntax()
     // Allows subclasses to either reparse immediately or schedule a later parse
     virtual void onSyntaxBlockAssigned(const DeclarationBlockSyntax& block)
     {}
+
+    // Updates the contents member of the attached syntax block without
+    // firing any update signals. This is meant to be used internally by EditableDeclaration.
+    // Assigning the block contents will not change the "parsed" status, the method
+    // parseFromTokens() will not forced to be called afterwards.
+    void assignSyntaxBlockContents(const std::string& newSyntax)
+    {
+        _declBlock.contents = newSyntax;
+    }
 };
 
 }
