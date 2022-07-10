@@ -286,8 +286,8 @@ inline void expectParticleIsPresentInFile(const particles::IParticleDef::Ptr& de
         auto header = string::to_lower_copy(block.name);
 
         if (decl->getNumStages() > 0 && 
-            string::starts_with(block.name, "particle") && 
-            string::ends_with(block.name, particleName))
+            string::starts_with(header, "particle") &&
+            string::ends_with(header, particleName))
         {
             if (block.contents.find(decl->getStage(0)->getMaterialName()) == std::string::npos)
             {

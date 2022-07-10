@@ -291,6 +291,13 @@ void DeclarationManager::removeDeclaration(Type type, const std::string& name)
     });
 }
 
+void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
+{
+    // All parsers need to have finished
+    // Check filename for emptiness
+    // TODO
+}
+
 sigc::signal<void>& DeclarationManager::signal_DeclsReloading(Type type)
 {
     return _declsReloadingSignals.try_emplace(type).first->second;

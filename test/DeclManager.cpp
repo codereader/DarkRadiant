@@ -4,22 +4,57 @@
 #include "testutil/TemporaryFile.h"
 #include "testutil/ThreadUtils.h"
 #include "EditableDeclaration.h"
+#include "algorithm/FileUtils.h"
+#include "os/path.h"
+#include "parser/DefBlockTokeniser.h"
+#include "string/case_conv.h"
 
 namespace test
 {
 
-using DeclManagerTest = RadiantTest;
+class DeclManagerTest :
+    public RadiantTest
+{
+public:
+    const char* const TEST_DECL_FILE = "numbers.decl";
+    const char* const TEST_DECL_FOLDER = "testdecls/";
+
+    void preStartup() override
+    {
+        // Remove the physical override_test.decl file
+        fs::remove(_context.getTestProjectPath() + "testdecls/override_test.decl");
+
+        // Create a backup of the numbers file
+        fs::path testFile = _context.getTestProjectPath() + TEST_DECL_FOLDER + TEST_DECL_FILE;
+        fs::path bakFile = testFile;
+        bakFile.replace_extension(".bak");
+        fs::remove(bakFile);
+        fs::copy(testFile, bakFile);
+    }
+
+    void preShutdown() override
+    {
+        fs::path testFile = _context.getTestProjectPath() + TEST_DECL_FOLDER + TEST_DECL_FILE;
+        fs::remove(testFile);
+        fs::path bakFile = testFile;
+        bakFile.replace_extension(".bak");
+        fs::rename(bakFile, testFile);
+    }
+};
 
 class ITestDeclaration :
     public decl::IDeclaration
 {
 public:
+    using Ptr = std::shared_ptr<ITestDeclaration>;
+
     virtual ~ITestDeclaration() {}
 
     // Interface methods for testing purposes
 
     virtual std::string getKeyValue(const std::string& key) = 0;
     virtual void setKeyValue(const std::string& key, const std::string& value) = 0;
+    virtual void foreachKeyValue(std::function<void(std::pair<std::string, std::string>)> functor) = 0;
 };
 
 class TestDeclaration :
@@ -44,6 +79,14 @@ public:
     {
         _keyValues[key] = value;
         onParsedContentsChanged();
+    }
+
+    void foreachKeyValue(std::function<void(std::pair<std::string, std::string>)> functor) override
+    {
+        for (auto& pair : _keyValues)
+        {
+            functor(pair);
+        }
     }
 
     int generateSyntaxInvocationCount = 0;
@@ -192,7 +235,7 @@ TEST_F(DeclManagerTest, DeclFolderRegistration)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
 
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls/", "decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, "decl");
 
     checkKnownTestDeclNames();
 }
@@ -202,17 +245,17 @@ TEST_F(DeclManagerTest, DeclFolderRegistrationWithoutSlash)
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
 
     // Omit the trailing slash, should work just fine
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", "decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
 
     checkKnownTestDeclNames();
 }
 
-TEST_F(DeclManagerTest, DeclFolderRegistrationWithExtensionDot)
+TEST_F(DeclManagerTest, DeclFolderRegistrationWithoutExtensionDot)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
 
-    // Add the dot to the file extension, should work just fine
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    // Add no dot to the file extension, should work just fine
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, "decl");
 
     checkKnownTestDeclNames();
 }
@@ -224,7 +267,7 @@ TEST_F(DeclManagerTest, DeclTypeCreatorRegistration)
     GlobalDeclarationManager().registerDeclType("testdecl2", std::make_shared<TestDeclaration2Creator>());
 
     // Parse this folder, it contains decls of type testdecl and testdecl2 in the .decl files
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     checkKnownTestDeclNames();
     checkKnownTestDecl2Names();
@@ -238,7 +281,7 @@ TEST_F(DeclManagerTest, LateCreatorRegistration)
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
 
     // Parse this folder, it contains decls of type testdecl and testdecl2 in the .decl files
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     // Let the testdecl creator finish its work
     getAllDeclNames(decl::Type::TestDecl);
@@ -265,7 +308,7 @@ TEST_F(DeclManagerTest, CreatorRegistrationDuringRunningThread)
     GlobalDeclarationManager().registerDeclType("testdecl", creator);
 
     // Parse this folder, it contains decls of type testdecl and testdecl2 in the .decl files
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     auto foundTestDecl2Names = getAllDeclNames(decl::Type::TestDecl2);
     EXPECT_FALSE(foundTestDecl2Names.count("decltable1") > 0);
@@ -300,7 +343,7 @@ TEST_F(DeclManagerTest, DeclsReloadedSignalAfterInitialParse)
     );
 
     // Parse this folder, it contains decls of type testdecl and testdecl2 in the .decl files
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     // Force the threads to be finished
     GlobalDeclarationManager().foreachDeclaration(decl::Type::TestDecl, [](const decl::IDeclaration::Ptr&) {});
@@ -315,7 +358,7 @@ TEST_F(DeclManagerTest, DeclsReloadedSignals)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
     GlobalDeclarationManager().registerDeclType("testdecl2", std::make_shared<TestDeclaration2Creator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     // Force the threads to be finished
     GlobalDeclarationManager().foreachDeclaration(decl::Type::TestDecl, [](const decl::IDeclaration::Ptr&) {});
@@ -352,7 +395,7 @@ TEST_F(DeclManagerTest, DeclsReloadedSignals)
 TEST_F(DeclManagerTest, FindDeclaration)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     EXPECT_TRUE(GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/exporttest/guisurf1"));
     EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/nonexistent"));
@@ -365,7 +408,7 @@ TEST_F(DeclManagerTest, FindDeclaration)
 TEST_F(DeclManagerTest, FindOrCreateDeclaration)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     EXPECT_TRUE(GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::TestDecl, "decl/exporttest/guisurf1"));
     EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/nonexistent")) <<
@@ -395,7 +438,7 @@ TEST_F(DeclManagerTest, FindOrCreateUnknownDeclarationType)
 TEST_F(DeclManagerTest, DeclarationMetadata)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/exporttest/guisurf1");
 
@@ -438,7 +481,7 @@ inline void expectDeclDoesNotContain(decl::Type type, const std::string& declNam
 TEST_F(DeclManagerTest, DeclTypenamesAreCaseInsensitive)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     expectDeclIsPresent(decl::Type::TestDecl, "decl/numbers/3");
     expectDeclContains(decl::Type::TestDecl, "decl/numbers/3", "diffusemap textures/numbers/3");
@@ -462,7 +505,7 @@ decl/temporary/12
 )");
 
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     expectDeclIsPresent(decl::Type::TestDecl, "decl/temporary/11");
     expectDeclContains(decl::Type::TestDecl, "decl/temporary/12", "diffusemap textures/temporary/12");
@@ -501,7 +544,7 @@ testdecl    decl/temporary/12 { diffusemap textures/temporary/12 }
 )");
 
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     expectDeclIsPresent(decl::Type::TestDecl, "decl/temporary/12");
     expectDeclIsPresent(decl::Type::TestDecl, "decl/temporary/11");
@@ -538,7 +581,7 @@ testdecl    decl/temporary/14 { diffusemap textures/temporary/14 }
 )");
 
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     expectDeclIsPresent(decl::Type::TestDecl, "decl/temporary/11");
     expectDeclIsPresent(decl::Type::TestDecl, "decl/temporary/12");
@@ -572,7 +615,7 @@ testdecl   decl/temporary/13 { diffusemap textures/temporary/13 }
 )");
 
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     expectDeclIsPresent(decl::Type::TestDecl, "decl/temporary/11");
     expectDeclIsPresent(decl::Type::TestDecl, "decl/temporary/12");
@@ -598,7 +641,7 @@ testdecl    decl/temporary/12 { diffusemap textures/changed_temporary/12 } // ch
 TEST_F(DeclManagerTest, ReloadDeclarationsIncreasesParseStamp)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/exporttest/guisurf1");
     EXPECT_TRUE(decl) << "Couldn't find the declaration decl/exporttest/guisurf1";
@@ -616,7 +659,7 @@ TEST_F(DeclManagerTest, ReloadDeclarationsIncreasesParseStamp)
 TEST_F(DeclManagerTest, DeclarationPrecedence)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     expectDeclIsPresent(decl::Type::TestDecl, "decl/precedence_test/1");
 
@@ -628,7 +671,7 @@ TEST_F(DeclManagerTest, DeclarationPrecedence)
 TEST_F(DeclManagerTest, RemoveDeclaration)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     expectDeclIsPresent(decl::Type::TestDecl, "decl/precedence_test/1");
 
@@ -640,7 +683,7 @@ TEST_F(DeclManagerTest, RemoveDeclaration)
 TEST_F(DeclManagerTest, SyntaxGeneration)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, "testdecls", ".decl");
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
     auto decl = std::static_pointer_cast<TestDeclaration>(
         GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/0"));
@@ -660,6 +703,191 @@ TEST_F(DeclManagerTest, SyntaxGeneration)
     EXPECT_EQ(decl->generateSyntaxInvocationCount, 1) << "A call to generateSyntax should have been recorded";
     EXPECT_NE(decl->getBlockSyntax().contents.find("some/other/texture"), std::string::npos);
     EXPECT_EQ(decl->generateSyntaxInvocationCount, 1) << "Only one call to generateSyntax should have been recorded";
+}
+
+inline void expectDeclIsPresentInFile(const ITestDeclaration::Ptr& decl, const std::string& path, bool expectPresent)
+{
+    auto contents = algorithm::loadTextFromVfsFile(path);
+
+    parser::BasicDefBlockTokeniser<std::string> tokeniser(contents);
+
+    std::vector<parser::BlockTokeniser::Block> foundBlocks;
+    auto declName = string::to_lower_copy(decl->getDeclName());
+
+    while (tokeniser.hasMoreBlocks())
+    {
+        auto block = tokeniser.nextBlock();
+        auto header = string::to_lower_copy(block.name);
+
+        if (string::ends_with(header, declName))
+        {
+            foundBlocks.push_back(block);
+
+            // Run a check against our custom decl
+            auto hasAllKeyValuePairs = true;
+
+            // Every key and every value must be present in the file
+            decl->foreachKeyValue([&](std::pair<std::string, std::string> pair)
+                {
+                    hasAllKeyValuePairs &= block.contents.find("\"" + pair.first + "\"") != std::string::npos;
+                    hasAllKeyValuePairs &= block.contents.find("\"" + pair.second + "\"") != std::string::npos;
+                });
+
+            EXPECT_EQ(hasAllKeyValuePairs, expectPresent) << "The decl didn't have the expected key/value pairs in its contents";
+        }
+    }
+
+    if (expectPresent)
+    {
+        EXPECT_EQ(foundBlocks.size(), 1) << "Expected exactly one decl " << declName << " in the contents in the file";
+    }
+    else
+    {
+        EXPECT_TRUE(foundBlocks.empty()) << "Expected no decl " << declName << " in the contents in the file";
+    }
+}
+
+// Save a new declaration to a file on disk
+TEST_F(DeclManagerTest, SaveNewDeclToNewFile)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::TestDecl, "some_def"));
+
+    decl->setKeyValue("tork", "some_value");
+
+    // Set the decl to save its contents to a new file that doesn't exist yet
+    auto syntax = decl->getBlockSyntax();
+    syntax.fileInfo = vfs::FileInfo(TEST_DECL_FOLDER, "some_new_file.decl", vfs::Visibility::NORMAL);
+    decl->setBlockSyntax(syntax);
+
+    auto outputPath = _context.getTestProjectPath() + syntax.fileInfo.fullPath();
+    EXPECT_FALSE(fs::exists(outputPath)) << "Output file shouldn't exist yet";
+
+    // Auto-remove the file that is going to be written
+    TemporaryFile outputFile(outputPath);
+
+    GlobalDeclarationManager().saveDeclaration(decl);
+
+    EXPECT_TRUE(fs::exists(outputPath)) << "Output file should exist now";
+
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+}
+
+// Save the decl to a file that already exists (but doesn't contain the def)
+TEST_F(DeclManagerTest, SaveNewDeclToExistingFile)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::TestDecl, "some_def346"));
+
+    decl->setKeyValue("tork", "myvalue with spaces");
+
+    // Set up the decl to save its contents to an existing file
+    auto syntax = decl->getBlockSyntax();
+    syntax.fileInfo = vfs::FileInfo(TEST_DECL_FOLDER, "numbers.decl", vfs::Visibility::NORMAL);
+    decl->setBlockSyntax(syntax);
+
+    auto outputPath = _context.getTestProjectPath() + syntax.fileInfo.fullPath();
+    EXPECT_TRUE(fs::exists(outputPath)) << "Output file must already exist";
+
+    // Def file should not have that decl yet
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), false);
+
+    GlobalDeclarationManager().saveDeclaration(decl);
+
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // the fixture will revert the changes to numbers.decl
+}
+
+// Save a decl to the same physical file that originally declared the decl
+TEST_F(DeclManagerTest, SaveExistingDeclToExistingFile)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/1"));
+
+    // Swap some contents of this decl
+    decl->setKeyValue("diffusemap", "textures/changed/1");
+    decl->setKeyValue("tork", "new_value");
+
+    // This modified decl should not be present
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), false);
+
+    // Save, it should be there now
+    GlobalDeclarationManager().saveDeclaration(decl);
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // The test fixture will restore the original file contents in TearDown
+}
+
+// Save decl originally defined in a PK4 file to a new physical file that overrides the PK4
+TEST_F(DeclManagerTest, SaveExistingDeclToNewFileOverridingPk4)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/export/1"));
+
+    // Swap some contents of this decl
+    decl->setKeyValue("diffusemap", "textures/changed/1");
+    decl->setKeyValue("tork", "new_value");
+
+    // The overriding file should not be present
+    auto outputPath = _context.getTestProjectPath() + decl->getBlockSyntax().fileInfo.fullPath();
+
+    // Let the file be deleted when we're done here
+    TemporaryFile outputFile(outputPath);
+    EXPECT_FALSE(fs::exists(outputPath));
+
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), false);
+
+    // Save, it should be there now
+    GlobalDeclarationManager().saveDeclaration(decl);
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // Check if the other decl declaration is still intact in the file (use the same path to check)
+    auto export2Decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/export/2"));
+    EXPECT_EQ(export2Decl->getDeclFilePath(), decl->getDeclFilePath()) << "The decls should be in the same .decl file";
+    expectDeclIsPresentInFile(export2Decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    auto export0Decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/export/0"));
+    EXPECT_EQ(export0Decl->getDeclFilePath(), decl->getDeclFilePath()) << "The decls should be in the same .decl file";
+    expectDeclIsPresentInFile(export0Decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    auto contents = algorithm::loadTextFromVfsFile(decl->getBlockSyntax().fileInfo.fullPath());
+
+    // Comments need to be left untouched
+    EXPECT_NE(contents.find("Some comment before the declaration decl/export/0"), std::string::npos) << "Comments should be left intact";
+    EXPECT_NE(contents.find("Some comment before the declaration decl/export/1"), std::string::npos) << "Comments should be left intact";
+    EXPECT_NE(contents.find("Some comment before the declaration decl/export/2"), std::string::npos) << "Comments should be left intact";
+}
+
+TEST_F(DeclManagerTest, SaveDeclarationWithoutFileInfoThrows)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::TestDecl, "newdecl/0"));
+
+    // Sabotage the decl to ensure an empty file name
+    auto syntax = decl->getBlockSyntax();
+    syntax.fileInfo = vfs::FileInfo(TEST_DECL_FOLDER, "", vfs::Visibility::NORMAL);
+    decl->setBlockSyntax(syntax);
+
+    // Saving a decl without file info needs to throw
+    EXPECT_THROW(GlobalDeclarationManager().saveDeclaration(decl), std::invalid_argument);
 }
 
 }

@@ -133,6 +133,23 @@ public:
     // All declaration references will stay intact, only their contents will be refreshed
     virtual void reloadDeclarations() = 0;
 
+    // Saves the given declaration to a physical declaration file. Depending on the original location
+    // of the declaration the outcome will be different.
+    //
+    // It is required for the declaration to have valid file information set on its syntax block,
+    // otherwise the declaration manager will not know where to save it to and throws std::invalid_argument.
+    //
+    // Case #1: Newly created declarations (created through findOrCreateDeclaration):
+    //      The decl will be appended to the given file. The file will be created if required.
+    // Case #2: Existing declarations (with their original file being a physical file):
+    //      The decl in the file will be replaced with its new syntax block. All the content before and
+    //      after the declaration will be left untouched.
+    // Case #3: Existing declarations (with their original file being stored within a PK4):
+    //      The decl file will be copied and saved to its corresponding physical location, effectively
+    //      creating a file that will override the one in the PK4. The decl will be merged into the file
+    //      just like in case #2
+    virtual void saveDeclaration(const IDeclaration::Ptr& decl) = 0;
+
     // Signal emitted right before decls are being reloaded
     virtual sigc::signal<void>& signal_DeclsReloading(Type type) = 0;
 
