@@ -422,7 +422,7 @@ TEST_F(ParticlesTest, SaveExistingParticleToNewFileOverridingPk4)
 // Optionally calls the given predicate with the syntax after the change
 inline void expectSyntaxChangeAfter(const std::string& defName,
     std::function<void(const particles::IParticleDef::Ptr&)> action,
-    std::function<bool(const std::string&)> predicate = [](const std::string&) { return true; })
+    std::function<void(const std::string&)> predicate = [](const std::string&) { })
 {
     auto decl = GlobalParticlesManager().getDefByName(defName);
     auto blockSyntaxBeforeChange = decl->getBlockSyntax().contents;
@@ -434,7 +434,7 @@ inline void expectSyntaxChangeAfter(const std::string& defName,
 
     EXPECT_NE(blockSyntaxBeforeChange, blockSyntaxAfterChange) << "Syntax block should have changed";
 
-    EXPECT_TRUE(predicate(blockSyntaxAfterChange)) << "Changed source text didn't pass the check";
+    predicate(blockSyntaxAfterChange);
 }
 
 TEST_F(ParticlesTest, SyntaxChangeAddStage)
@@ -448,7 +448,7 @@ TEST_F(ParticlesTest, SyntaxChangeAddStage)
     [&](const std::string& contents)
     {
         // Expect as many opening braces as there are stages
-        return std::count(contents.begin(), contents.end(), '{') == numStagesAfterChange;
+        EXPECT_EQ(std::count(contents.begin(), contents.end(), '{'), numStagesAfterChange);
     });
 }
 
@@ -463,7 +463,7 @@ TEST_F(ParticlesTest, SyntaxChangeRemoveStage)
     [&](const std::string& contents)
     {
         // Expect as many opening braces as there are stages
-        return std::count(contents.begin(), contents.end(), '{') == numStagesAfterChange;
+        EXPECT_EQ(std::count(contents.begin(), contents.end(), '{'), numStagesAfterChange);
     });
 }
 
@@ -481,8 +481,8 @@ TEST_F(ParticlesTest, SyntaxChangeSwapStages)
     },
     [&](const std::string& contents)
     {
-        return contents.find("textures/particles/pfirebig2") > fireBigPositionBeforeChange &&
-               contents.find("textures/particles/dust") < dustPositionBeforeChange;
+        EXPECT_GT(contents.find("textures/particles/pfirebig2"), fireBigPositionBeforeChange);
+        EXPECT_LT(contents.find("textures/particles/dust"), dustPositionBeforeChange);
     });
 }
 
@@ -494,7 +494,7 @@ TEST_F(ParticlesTest, SyntaxChangeDepthHack)
     },
     [] (const std::string& contents)
     {
-        return contents.find("depthHack\t0.332") != std::string::npos;
+        EXPECT_NE(contents.find("depthHack\t0.332"), std::string::npos);
     });
 
     // Depth hack should be gone when setting it back to 0
@@ -504,7 +504,7 @@ TEST_F(ParticlesTest, SyntaxChangeDepthHack)
     },
     [](const std::string& contents)
     {
-        return contents.find("depthHack") == std::string::npos;
+        EXPECT_EQ(contents.find("depthHack"), std::string::npos);
     });
 }
 
@@ -516,7 +516,20 @@ TEST_F(ParticlesTest, SyntaxChangeStageMaterial)
     },
     [](const std::string& contents)
     {
-        return contents.find("textures/common/caulk") != std::string::npos;
+        EXPECT_NE(contents.find("textures/common/caulk"), std::string::npos);
+    });
+}
+
+TEST_F(ParticlesTest, SyntaxChangeStageParameterChange)
+{
+    expectSyntaxChangeAfter("firefly_blue", [](const particles::IParticleDef::Ptr& decl)
+    {
+        decl->getStage(0)->getSize().setFrom(0.77f);
+        decl->getStage(0)->getSize().setTo(566.22f);
+    },
+    [](const std::string& contents)
+    {
+        EXPECT_NE(contents.find("\"0.770\" to \"566.220\""), std::string::npos);
     });
 }
 
