@@ -462,6 +462,16 @@ TEST_F(ParticlesTest, ParticleSyntaxChangeDepthHack)
     {
         return contents.find("depthHack\t0.332") != std::string::npos;
     });
+
+    // Depth hack should be gone when setting it back to 0
+    expectParticleSyntaxChangeAfter("firefly_blue", [](const particles::IParticleDef::Ptr& decl)
+    {
+        decl->setDepthHack(0.0f);
+    },
+    [](const std::string& contents)
+    {
+        return contents.find("depthHack") == std::string::npos;
+    });
 }
 
 }

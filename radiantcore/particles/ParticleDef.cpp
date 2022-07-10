@@ -1,8 +1,39 @@
 #include "ParticleDef.h"
 #include "string/convert.h"
+#include "util/ScopedBoolLock.h"
 
 namespace particles
 {
+
+sigc::signal<void>& ParticleDef::signal_changed()
+{ 
+	return _changedSignal;
+}
+
+float ParticleDef::getDepthHack()
+{
+    ensureParsed();
+	return _depthHack;
+}
+
+void ParticleDef::setDepthHack(float value)
+{
+    ensureParsed();
+    _depthHack = value;
+    onParsedContentsChanged();
+}
+
+std::size_t ParticleDef::getNumStages()
+{
+    ensureParsed();
+	return _stages.size();
+}
+
+const std::shared_ptr<IStageDef>& ParticleDef::getStage(std::size_t stageNum)
+{
+    ensureParsed();
+	return _stages[stageNum];
+}
 
 std::size_t ParticleDef::addParticleStage()
 {
@@ -11,8 +42,7 @@ std::size_t ParticleDef::addParticleStage()
     stage->signal_changed().connect(_changedSignal.make_slot());
     _stages.push_back(stage);
 
-    onParsedContentsChanged(); // source text has changed
-    _changedSignal.emit();
+    onParticleChanged();
 
     return _stages.size() - 1;
 }
@@ -50,21 +80,26 @@ void ParticleDef::copyFrom(const Ptr& other)
 {
     ensureParsed();
 
-    setDepthHack(other->getDepthHack());
-
-    _stages.clear();
-
-    // Copy each stage
-    for (std::size_t i = 0; i < other->getNumStages(); ++i)
     {
-        auto stage = std::make_shared<StageDef>();
-        stage->copyFrom(other->getStage(i));
-        stage->signal_changed().connect(_changedSignal.make_slot());
-        _stages.push_back(stage);
+        // Suppress signals until we're done copying
+        util::ScopedBoolLock changeLock(_blockChangedSignal);
+
+        setDepthHack(other->getDepthHack());
+
+        _stages.clear();
+
+        // Copy each stage
+        for (std::size_t i = 0; i < other->getNumStages(); ++i)
+        {
+            auto stage = std::make_shared<StageDef>();
+            stage->copyFrom(other->getStage(i));
+            stage->signal_changed().connect(_changedSignal.make_slot());
+            _stages.push_back(stage);
+        }
     }
 
 	// We've changed all the stages, so emit the changed signal now (#4411)
-	_changedSignal.emit();
+	onParticleChanged();
 }
 
 bool ParticleDef::isEqualTo(const Ptr& other)
@@ -128,7 +163,10 @@ std::string ParticleDef::generateSyntax()
 
     stream << "\n"; // initial line break after the opening brace
 
-    // TODO: Depth Hack
+    if (_depthHack > 0)
+    {
+        stream << "\tdepthHack\t" << _depthHack << std::endl;
+    }
 
     // Write stages, one by one
     for (const auto& stage : _stages)
@@ -139,6 +177,14 @@ std::string ParticleDef::generateSyntax()
     stream << "\n"; // final line break before the closing brace
 
     return stream.str();
+}
+
+void ParticleDef::onParticleChanged()
+{
+    if (_blockChangedSignal) return;
+
+    onParsedContentsChanged();
+    _changedSignal.emit();
 }
 
 }

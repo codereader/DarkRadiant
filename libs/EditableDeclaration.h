@@ -19,6 +19,15 @@ namespace decl
  * It's up to the client code to avoid these situations.
  * On a related note, subclasses need to call ensureParsed() before altering
  * its members, to avoid parseFromTokens() from undoing the changes.
+ *
+ * Example implementation of a public setter method:
+ *
+ * void YourDeclaration::setFloatValue(float value)
+ * {
+ *     ensureParsed();
+ *     _value = value;
+ *     onParsedContentsChanged();
+ * }
  */
 template<typename DeclarationInterface>
 class EditableDeclaration :

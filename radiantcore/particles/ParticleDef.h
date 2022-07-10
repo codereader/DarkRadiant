@@ -29,15 +29,16 @@ class ParticleDef :
 
     // Changed signal
     sigc::signal<void> _changedSignal;
+    bool _blockChangedSignal;
 
 public:
-
 	/**
 	 * Construct a named ParticleDef.
 	 */
 	ParticleDef(const std::string& name) :
         EditableDeclaration<IParticleDef>(decl::Type::Particle, name),
-        _depthHack(0)
+        _depthHack(0),
+        _blockChangedSignal(false)
 	{}
 
 	void setFilename(const std::string& filename) override
@@ -56,41 +57,16 @@ public:
 	}
 
     // IParticleDef implementation
-    sigc::signal<void>& signal_changed() override 
-	{ 
-		return _changedSignal;
-	}
+    sigc::signal<void>& signal_changed() override;
 
-	float getDepthHack() override
-	{
-        ensureParsed();
-		return _depthHack;
-	}
+    float getDepthHack() override;
+    void setDepthHack(float value) override;
 
-	void setDepthHack(float value) override
-	{
-        ensureParsed();
-		_depthHack = value;
-	}
-
-	std::size_t getNumStages() override
-	{
-        ensureParsed();
-		return _stages.size();
-	}
-
-    const std::shared_ptr<IStageDef>& getStage(std::size_t stageNum) override
-	{
-        ensureParsed();
-		return _stages[stageNum];
-	}
-
+    std::size_t getNumStages() override;
+    const std::shared_ptr<IStageDef>& getStage(std::size_t stageNum) override;
 	std::size_t addParticleStage() override;
-
 	void removeParticleStage(std::size_t index) override;
-
 	void swapParticleStages(std::size_t index, std::size_t index2) override;
-
 	void appendStage(const StageDef::Ptr& stage);
 
     bool isEqualTo(const Ptr& other) override;
@@ -106,6 +82,9 @@ protected:
     void onParsingFinished() override;
 
     std::string generateSyntax() override;
+
+private:
+    void onParticleChanged();
 };
 typedef std::shared_ptr<ParticleDef> ParticleDefPtr;
 
