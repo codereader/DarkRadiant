@@ -2367,8 +2367,5 @@
     <ClInclude Include="..\..\radiantcore\decl\DeclarationFolderParser.h">
       <Filter>src\decl</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\eclass\DefCreators.h">
-      <Filter>src\eclass</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

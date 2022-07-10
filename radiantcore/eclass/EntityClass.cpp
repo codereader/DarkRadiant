@@ -24,7 +24,7 @@ EntityClass::EntityClass(const std::string& name)
       return getAttributeValue("editor_visibility", false) == "hidden" ? vfs::Visibility::HIDDEN
                                                                        : vfs::Visibility::NORMAL;
   }),
-  _colour(UndefinedColour),
+  _colour(DefaultEntityColour),
   // greebo: Changed default behaviour when unknown entites are encountered to isFixedSize == FALSE
   // so that brushes of unknown classes don't get lost (issue #240)
   _fixedSize(false)
@@ -212,16 +212,6 @@ void EntityClass::emplaceAttribute(EntityClassAttribute&& attribute)
             existing.setType(attribute.getType());
         }
     }
-}
-
-EntityClass::Ptr EntityClass::CreateDefault(const std::string& name)
-{
-    auto eclass = std::make_shared<EntityClass>(name);
-
-    // Force the entity class colour to default
-    eclass->setColour(UndefinedColour);
-
-    return eclass;
 }
 
 void EntityClass::forEachAttributeInternal(InternalAttrVisitor visitor,
