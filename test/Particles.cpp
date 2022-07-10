@@ -363,6 +363,31 @@ TEST_F(ParticlesTest, SaveExistingParticleToExistingFile)
     // The test fixture will restore the original file contents in TearDown
 }
 
+TEST_F(ParticlesTest, SaveChangedParticle)
+{
+    auto decl = GlobalParticlesManager().getDefByName("firefly_blue");
+
+    auto blockSyntaxBeforeChange = decl->getBlockSyntax().contents;
+
+    // Swap the material name of this particle, and set the depth hack
+    decl->setDepthHack(0.56789f);
+    decl->getStage(0)->setMaterialName("modified_material");
+
+    // Block syntax should have changed by now
+    auto blockSyntaxAfterChange = decl->getBlockSyntax().contents;
+
+    EXPECT_NE(blockSyntaxBeforeChange, blockSyntaxAfterChange) << "Syntax block should have changed";
+
+    // This modified particle should not be present in the file
+    expectParticleIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), false);
+
+    // Save, it should be there now
+    GlobalParticlesManager().saveParticleDef(decl->getDeclName());
+    expectParticleIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // The test fixture will restore the original file contents in TearDown
+}
+
 // Save particle originally defined in a PK4 file to a new physical file that overrides the PK4
 TEST_F(ParticlesTest, SaveExistingParticleToNewFileOverridingPk4)
 {
