@@ -888,4 +888,64 @@ TEST_F(DeclManagerTest, SaveDeclarationWithoutFileInfoThrows)
     EXPECT_THROW(GlobalDeclarationManager().saveDeclaration(decl), std::invalid_argument);
 }
 
+// In numbers.decl, decl/numbers/1 is declared without an explicit typename
+TEST_F(DeclManagerTest, SaveExistingDeclLackingTypename)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/1"));
+
+    // Swap some contents of this decl
+    decl->setKeyValue("diffusemap", "textures/changed/1");
+
+    // Save, then it should be present in the file
+    GlobalDeclarationManager().saveDeclaration(decl);
+
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // The test fixture will restore the original file contents in TearDown
+}
+
+// In numbers.decl, testDecl decl/numbers/2 is declared using an explicit typename (case is matching)
+TEST_F(DeclManagerTest, SaveExistingDeclWithMatchingTypename)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/2"));
+
+    // Swap some contents of this decl
+    decl->setKeyValue("diffusemap", "textures/changed/2");
+
+    // Save, then it should be present in the file
+    GlobalDeclarationManager().saveDeclaration(decl);
+
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // The test fixture will restore the original file contents in TearDown
+}
+
+// In numbers.decl, TestDecl decl/numbers/3 is declared using an explicit typename that has different casing
+TEST_F(DeclManagerTest, SaveExistingDeclWithMixedCaseTypename)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/3"));
+
+    // Swap some contents of this decl
+    decl->setKeyValue("diffusemap", "textures/changed/3");
+
+    // Save, then it should be present in the file
+    GlobalDeclarationManager().saveDeclaration(decl);
+
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // The test fixture will restore the original file contents in TearDown
+}
+
 }

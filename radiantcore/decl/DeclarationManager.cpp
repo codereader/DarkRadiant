@@ -405,11 +405,11 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
             throw std::runtime_error(fmt::format(_("Cannot open file for reading: {0}"), targetFile.string()));
         }
 
-        // TODO: Unit tests covering the casing
+        // Look up the typename for this decl
         auto typeName = getTypenameByType(decl->getDeclType());
 
         // Write the file to the output stream, up to the point the decl should be written to
-        // The typename is optional and not case-sensitive
+        // The typename is optional and compared case-sensitively
         std::regex pattern("^[\\s]*(" + typeName + "[\\s]+" + decl->getDeclName() + "|" + decl->getDeclName() + ")\\s*\\{*\\s*$", 
             std::regex_constants::icase);
 
