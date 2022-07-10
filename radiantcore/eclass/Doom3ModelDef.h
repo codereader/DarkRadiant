@@ -2,7 +2,7 @@
 
 #include "ieclass.h"
 #include "parser/DefTokeniser.h"
-#include "DeclarationBase.h"
+#include "decl/DeclarationBase.h"
 
 namespace eclass
 {

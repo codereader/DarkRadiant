@@ -153,12 +153,12 @@
     <ClInclude Include="..\..\libs\debugging\render.h" />
     <ClInclude Include="..\..\libs\debugging\ScenegraphUtils.h" />
     <ClInclude Include="..\..\libs\debugging\ScopedDebugTimer.h" />
-    <ClInclude Include="..\..\libs\DeclarationBase.h" />
+    <ClInclude Include="..\..\libs\decl\DeclarationBase.h" />
+    <ClInclude Include="..\..\libs\decl\EditableDeclaration.h" />
     <ClInclude Include="..\..\libs\decl\SpliceHelper.h" />
     <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
     <ClInclude Include="..\..\libs\dragplanes.h" />
     <ClInclude Include="..\..\libs\eclass.h" />
-    <ClInclude Include="..\..\libs\EditableDeclaration.h" />
     <ClInclude Include="..\..\libs\entitylib.h" />
     <ClInclude Include="..\..\libs\EventRateLimiter.h" />
     <ClInclude Include="..\..\libs\GameConfigUtil.h" />

@@ -10,7 +10,7 @@
 #include "generic/Lazy.h"
 
 #include "parser/DefTokeniser.h"
-#include "DeclarationBase.h"
+#include "decl/DeclarationBase.h"
 
 #include <vector>
 #include <map>

@@ -3,7 +3,7 @@
 #include "ideclmanager.h"
 #include "testutil/TemporaryFile.h"
 #include "testutil/ThreadUtils.h"
-#include "EditableDeclaration.h"
+#include "decl/EditableDeclaration.h"
 #include "algorithm/FileUtils.h"
 #include "os/path.h"
 #include "parser/DefBlockTokeniser.h"

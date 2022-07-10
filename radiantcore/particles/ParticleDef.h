@@ -7,7 +7,7 @@
 
 #include "StageDef.h"
 #include "parser/DefTokeniser.h"
-#include "EditableDeclaration.h"
+#include "decl/EditableDeclaration.h"
 
 namespace particles
 {

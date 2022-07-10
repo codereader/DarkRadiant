@@ -1,7 +1,7 @@
 #pragma once
 
 #include "modelskin.h"
-#include "DeclarationBase.h"
+#include "decl/DeclarationBase.h"
 
 #include <string>
 #include <map>

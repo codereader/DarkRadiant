@@ -4,7 +4,7 @@
 
 #include "isound.h"
 #include "ifilesystem.h"
-#include "DeclarationBase.h"
+#include "decl/DeclarationBase.h"
 
 namespace sound
 {
