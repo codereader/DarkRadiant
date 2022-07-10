@@ -148,10 +148,6 @@ typedef std::shared_ptr<IRenderableParticle> IRenderableParticlePtr;
  */
 typedef std::function< void (const IParticleDef&) > ParticleDefVisitor;
 
-/* CONSTANTS */
-constexpr const char* const PARTICLES_DIR = "particles/";
-constexpr const char* const PARTICLES_EXT = ".prt";
-
 /// Inteface for the particles manager
 class IParticlesManager :
 	public RegisterableModule
