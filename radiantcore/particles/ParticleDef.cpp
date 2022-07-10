@@ -11,6 +11,7 @@ std::size_t ParticleDef::addParticleStage()
     stage->signal_changed().connect(_changedSignal.make_slot());
     _stages.push_back(stage);
 
+    onParsedContentsChanged(); // source text has changed
     _changedSignal.emit();
 
     return _stages.size() - 1;
@@ -115,6 +116,29 @@ void ParticleDef::parseFromTokens(parser::DefTokeniser& tokeniser)
 void ParticleDef::onParsingFinished()
 {
     _changedSignal.emit();
+}
+
+std::string ParticleDef::generateSyntax()
+{
+    std::stringstream stream;
+
+    // Don't use scientific notation when exporting floats
+    stream << std::fixed;
+    stream.precision(3); // Three post-comma digits precision
+
+    stream << "\n"; // initial line break after the opening brace
+
+    // TODO: Depth Hack
+
+    // Write stages, one by one
+    for (const auto& stage : _stages)
+    {
+        stream << *std::static_pointer_cast<StageDef>(stage);
+    }
+
+    stream << "\n"; // final line break before the closing brace
+
+    return stream.str();
 }
 
 }

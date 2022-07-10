@@ -42,8 +42,8 @@ public:
         // In case the contents have been invalidated, acquire the new source text
         if (_syntaxBlockInvalidated)
         {
-            DeclarationBase<DeclarationInterface>::assignSyntaxBlockContents(generateSyntax());
             _syntaxBlockInvalidated = false;
+            DeclarationBase<DeclarationInterface>::assignSyntaxBlockContents(generateSyntax());
         }
 
         return DeclarationBase<DeclarationInterface>::getBlockSyntax();

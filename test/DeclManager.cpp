@@ -651,7 +651,7 @@ TEST_F(DeclManagerTest, SyntaxGeneration)
     EXPECT_NE(decl->getBlockSyntax().contents.find("textures/numbers/0"), std::string::npos);
     decl->generateSyntaxInvocationCount = 0;
 
-    // Chagne the declaration
+    // Change the declaration
     decl->setKeyValue("diffusemap", "some/other/texture");
 
     // The old material name should be gone now, the new one should be there

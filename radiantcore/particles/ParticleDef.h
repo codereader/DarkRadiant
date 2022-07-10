@@ -6,7 +6,7 @@
 
 #include "StageDef.h"
 #include "parser/DefTokeniser.h"
-#include "DeclarationBase.h"
+#include "EditableDeclaration.h"
 
 namespace particles
 {
@@ -16,7 +16,7 @@ namespace particles
  * of a number of "stages", which must all be rendered in turn.
  */
 class ParticleDef :
-    public decl::DeclarationBase<IParticleDef>
+    public decl::EditableDeclaration<IParticleDef>
 {
 	// The filename this particle has been defined in
 	std::string _filename;
@@ -36,7 +36,7 @@ public:
 	 * Construct a named ParticleDef.
 	 */
 	ParticleDef(const std::string& name) :
-        DeclarationBase<IParticleDef>(decl::Type::Particle, name),
+        EditableDeclaration<IParticleDef>(decl::Type::Particle, name),
         _depthHack(0)
 	{}
 
@@ -98,29 +98,25 @@ public:
 	void copyFrom(const Ptr& other) override;
 
 	// Stream insertion operator, writing the entire particle def to the given stream
-	friend std::ostream& operator<< (std::ostream& stream, const ParticleDef& def);
+	friend std::ostream& operator<< (std::ostream& stream, ParticleDef& def);
 
 protected:
     void onBeginParsing() override;
 	void parseFromTokens(parser::DefTokeniser& tok) override;
     void onParsingFinished() override;
+
+    std::string generateSyntax() override;
 };
 typedef std::shared_ptr<ParticleDef> ParticleDefPtr;
 
 // This will write the entire particle decl to the given stream, including the leading "particle" keyword
-inline std::ostream& operator<<(std::ostream& stream, const ParticleDef& def)
+inline std::ostream& operator<<(std::ostream& stream, ParticleDef& def)
 {
-	// Don't use scientific notation when exporting floats
-	stream << std::fixed;
-
 	// Decl keyword, name and opening brace
-	stream << "particle " << def.getDeclName() << " { " << std::endl;
+    stream << "particle " << def.getDeclName() << " \n{";
 
-	// Write stages, one by one
-	for (const auto& stage : def._stages)
-	{
-		stream << *std::static_pointer_cast<StageDef>(stage);
-	}
+    // The raw contents (contains all needed line breaks)
+    stream << def.getBlockSyntax().contents;
 
 	// Closing brace
 	stream << "}";

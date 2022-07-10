@@ -418,4 +418,50 @@ TEST_F(ParticlesTest, SaveExistingParticleToNewFileOverridingPk4)
     expectParticleIsPresentInFile(otherDecl, decl->getBlockSyntax().fileInfo.fullPath(), true);
 }
 
+// Assumes that the syntax changes after performing the given action on the named particle
+// Optionally calls the given predicate with the syntax after the change
+inline void expectParticleSyntaxChangeAfter(const std::string& defName,
+    std::function<void(const particles::IParticleDef::Ptr&)> action,
+    std::function<bool(const std::string&)> predicate = [](const std::string&) { return true; })
+{
+    auto decl = GlobalParticlesManager().getDefByName(defName);
+    auto blockSyntaxBeforeChange = decl->getBlockSyntax().contents;
+
+    action(decl);
+
+    // Block syntax should have changed by now
+    auto blockSyntaxAfterChange = decl->getBlockSyntax().contents;
+
+    EXPECT_NE(blockSyntaxBeforeChange, blockSyntaxAfterChange) << "Syntax block should have changed";
+
+    EXPECT_TRUE(predicate(blockSyntaxAfterChange)) << "Changed source text didn't pass the check";
+}
+
+TEST_F(ParticlesTest, ParticleSyntaxChangeAddStage)
+{
+    auto numStagesAfterChange = 0;
+    expectParticleSyntaxChangeAfter("firefly_blue", [&](const particles::IParticleDef::Ptr& decl)
+    {
+        decl->addParticleStage();
+        numStagesAfterChange = decl->getNumStages();
+    },
+    [&](const std::string& contents)
+    {
+        // Expect as many opening braces as there are stages
+        return std::count(contents.begin(), contents.end(), '{') == numStagesAfterChange;
+    });
+}
+
+TEST_F(ParticlesTest, ParticleSyntaxChangeDepthHack)
+{
+    expectParticleSyntaxChangeAfter("firefly_blue", [](const particles::IParticleDef::Ptr& decl)
+    {
+        decl->setDepthHack(0.332f);
+    },
+    [] (const std::string& contents)
+    {
+        return contents.find("depthHack\t0.332") != std::string::npos;
+    });
+}
+
 }
