@@ -148,6 +148,21 @@ TEST_F(CommandSystemTest, RunCommandSequenceWithArgs)
     EXPECT_EQ(second.args.at(0).getDouble(), -16.9);
 }
 
+TEST_F(CommandSystemTest, PassVectorArgs)
+{
+    // Add a command which receives vectors
+    TestCommandReceiver rec("vectorCommand");
+    GlobalCommandSystem().addCommand(rec.name, [&](const cmd::ArgumentList& a) { rec(a); },
+                                     {cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_VECTOR2});
+
+    // Ensure that vector arguments are passed through correctly
+    GlobalCommandSystem().executeCommand(rec.name, {Vector3{1, 4, -25}, Vector2{-5, 56.5}});
+    EXPECT_EQ(rec.runCount, 1);
+    ASSERT_EQ(rec.args.size(), 2);
+    EXPECT_EQ(rec.args.at(0).getVector3(), Vector3(1, 4, -25));
+    EXPECT_EQ(rec.args.at(1).getVector2(), Vector2(-5, 56.5));
+}
+
 TEST_F(CommandSystemTest, AddCheckedCommand)
 {
     const char* COMMAND_NAME = "testCheckedCommand";
