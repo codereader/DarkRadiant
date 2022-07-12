@@ -11,134 +11,141 @@ TEST_F(CommandSystemTest, GetCommandSystem)
     EXPECT_EQ(mod.getName(), "CommandSystem");
 }
 
+namespace
+{
+    // Command receiver object. Keeps track of its received arguments and the number of times it
+    // was called.
+    struct TestCommandReceiver
+    {
+        // Name of the command to call
+        const std::string name;
+
+        // Number of times called
+        int runCount = 0;
+
+        // Last received arguments
+        cmd::ArgumentList args;
+
+        // Construct with name
+        TestCommandReceiver(std::string n)
+        : name(std::move(n))
+        {}
+
+        // Executor method
+        void operator() (cmd::ArgumentList argList) {
+            ++runCount;
+            args = std::move(argList);
+        }
+    };
+}
+
 TEST_F(CommandSystemTest, AddAndRunCommand)
 {
-    const char* COMMAND_NAME = "testRunCount";
-    int runCount = 0;
+    TestCommandReceiver rec("testRunCount");
 
     // Add a command which just logs the number of times it is called
-    ASSERT_FALSE(GlobalCommandSystem().commandExists(COMMAND_NAME));
-    GlobalCommandSystem().addCommand(COMMAND_NAME, [&](const cmd::ArgumentList&) { ++runCount; });
-    EXPECT_TRUE(GlobalCommandSystem().commandExists(COMMAND_NAME));
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(rec.name));
+    GlobalCommandSystem().addCommand(rec.name,
+                                     [&](const cmd::ArgumentList& args) { rec(args); });
+    EXPECT_TRUE(GlobalCommandSystem().commandExists(rec.name));
 
     // Ensure that the call happens when we run the command
-    GlobalCommandSystem().executeCommand(COMMAND_NAME);
-    EXPECT_EQ(runCount, 1);
-    GlobalCommandSystem().executeCommand(COMMAND_NAME);
-    EXPECT_EQ(runCount, 2);
+    GlobalCommandSystem().executeCommand(rec.name);
+    EXPECT_EQ(rec.runCount, 1);
+    GlobalCommandSystem().executeCommand(rec.name);
+    EXPECT_EQ(rec.runCount, 2);
 }
 
 TEST_F(CommandSystemTest, AddAndRunCommandWithArgs)
 {
-    const char* COMMAND_NAME = "testCmdWithArgs";
-    ASSERT_FALSE(GlobalCommandSystem().commandExists(COMMAND_NAME));
+    TestCommandReceiver rec("testCmdWithArgs");
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(rec.name));
 
     // Create a test command which stores its args
-    int runCount = 0;
-    cmd::ArgumentList args;
-    GlobalCommandSystem().addCommand(COMMAND_NAME,
-                                     [&](const cmd::ArgumentList& a) {
-                                         ++runCount;
-                                         args = a;
-                                     },
+    GlobalCommandSystem().addCommand(rec.name, [&](const cmd::ArgumentList& a) { rec(a); },
                                      {cmd::ARGTYPE_INT, cmd::ARGTYPE_STRING});
 
     // Call the command and check the args
-    GlobalCommandSystem().executeCommand(COMMAND_NAME, 27, std::string("balls"));
-    EXPECT_EQ(runCount, 1);
-    ASSERT_EQ(args.size(), 2);
-    EXPECT_EQ(args.at(0).getInt(), 27);
-    EXPECT_EQ(args.at(1).getString(), "balls");
+    GlobalCommandSystem().executeCommand(rec.name, 27, std::string("balls"));
+    EXPECT_EQ(rec.runCount, 1);
+    ASSERT_EQ(rec.args.size(), 2);
+    EXPECT_EQ(rec.args.at(0).getInt(), 27);
+    EXPECT_EQ(rec.args.at(1).getString(), "balls");
 
     // Calling the command with incorrect args does nothing (the command is not
     // called, but there is not currently a way to signal this to the caller
     // except via the message bus)
-    GlobalCommandSystem().executeCommand(COMMAND_NAME, std::string("wrong"));
-    EXPECT_EQ(runCount, 1);
+    GlobalCommandSystem().executeCommand(rec.name, std::string("wrong"));
+    EXPECT_EQ(rec.runCount, 1);
 
     // Call the command with an argument list
-    GlobalCommandSystem().executeCommand(COMMAND_NAME, {{45}, {"blah"}});
-    EXPECT_EQ(runCount, 2);
-    EXPECT_EQ(args.size(), 2);
-    EXPECT_EQ(args.at(0).getInt(), 45);
-    EXPECT_EQ(args.at(1).getString(), "blah");
+    GlobalCommandSystem().executeCommand(rec.name, {{45}, {"blah"}});
+    EXPECT_EQ(rec.runCount, 2);
+    EXPECT_EQ(rec.args.size(), 2);
+    EXPECT_EQ(rec.args.at(0).getInt(), 45);
+    EXPECT_EQ(rec.args.at(1).getString(), "blah");
 
     // Call the command with an argument list containing incorrect types (should be a NOP)
-    GlobalCommandSystem().executeCommand(COMMAND_NAME, {{"wrong"}, 4.5f});
-    EXPECT_EQ(runCount, 2);
+    GlobalCommandSystem().executeCommand(rec.name, {{"wrong"}, 4.5f});
+    EXPECT_EQ(rec.runCount, 2);
 
     // Call the command as a string
     GlobalCommandSystem().execute("testCmdWithArgs 96 \"string_arg\"");
-    EXPECT_EQ(runCount, 3);
-    EXPECT_EQ(args.at(0).getInt(), 96);
-    EXPECT_EQ(args.at(1).getString(), "string_arg");
+    EXPECT_EQ(rec.runCount, 3);
+    EXPECT_EQ(rec.args.at(0).getInt(), 96);
+    EXPECT_EQ(rec.args.at(1).getString(), "string_arg");
 }
 
 TEST_F(CommandSystemTest, RunCommandSequence)
 {
-    const char* FIRST_COMMAND = "firstRunCountCommand";
-    int firstRunCount = 0;
-    const char* SECOND_COMMAND = "secondRunCountCommand";
-    int secondRunCount = 0;
+    TestCommandReceiver first("firstRunCountCommand");
+    TestCommandReceiver second("secondRunCountCommand");
 
     // Register a command for each run count
-    ASSERT_FALSE(GlobalCommandSystem().commandExists(FIRST_COMMAND));
-    ASSERT_FALSE(GlobalCommandSystem().commandExists(SECOND_COMMAND));
-    GlobalCommandSystem().addCommand(FIRST_COMMAND,
-                                     [&](const cmd::ArgumentList&) { ++firstRunCount; });
-    GlobalCommandSystem().addCommand(SECOND_COMMAND,
-                                     [&](const cmd::ArgumentList&) { ++secondRunCount; });
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(first.name));
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(second.name));
+    GlobalCommandSystem().addCommand(first.name,
+                                     [&](const cmd::ArgumentList& args) { first(args); });
+    GlobalCommandSystem().addCommand(second.name,
+                                     [&](const cmd::ArgumentList& args) { second(args); });
 
     // Run a semicolon-separated sequence of both commands
     GlobalCommandSystem().execute("firstRunCountCommand; secondRunCountCommand");
-    EXPECT_EQ(firstRunCount, 1);
-    EXPECT_EQ(secondRunCount, 1);
+    EXPECT_EQ(first.runCount, 1);
+    EXPECT_EQ(second.runCount, 1);
     GlobalCommandSystem().execute("  secondRunCountCommand  ; firstRunCountCommand  ");
-    EXPECT_EQ(firstRunCount, 2);
-    EXPECT_EQ(secondRunCount, 2);
+    EXPECT_EQ(first.runCount, 2);
+    EXPECT_EQ(second.runCount, 2);
     GlobalCommandSystem().execute("secondRunCountCommand ;secondRunCountCommand");
-    EXPECT_EQ(secondRunCount, 4);
+    EXPECT_EQ(second.runCount, 4);
 }
 
 TEST_F(CommandSystemTest, RunCommandSequenceWithArgs)
 {
-    const char* FIRST_COMMAND = "firstCommandWithArgs";
-    int firstRunCount = 0;
-    cmd::ArgumentList firstArgs;
-
-    const char* SECOND_COMMAND = "secondCommandWithArgs";
-    int secondRunCount = 0;
-    cmd::ArgumentList secondArgs;
+    TestCommandReceiver first("firstCommandWithArgs");
+    TestCommandReceiver second("secondCommandWithArgs");
 
     // Register a command for each run count
-    ASSERT_FALSE(GlobalCommandSystem().commandExists(FIRST_COMMAND));
-    ASSERT_FALSE(GlobalCommandSystem().commandExists(SECOND_COMMAND));
-    GlobalCommandSystem().addCommand(FIRST_COMMAND,
-                                     [&](const cmd::ArgumentList& a) {
-                                         ++firstRunCount;
-                                         firstArgs = a;
-                                     },
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(first.name));
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(second.name));
+    GlobalCommandSystem().addCommand(first.name, [&](const cmd::ArgumentList& a) { first(a); },
                                      {cmd::ARGTYPE_STRING});
-    GlobalCommandSystem().addCommand(SECOND_COMMAND,
-                                     [&](const cmd::ArgumentList& a) {
-                                         ++secondRunCount;
-                                         secondArgs = a;
-                                     },
+    GlobalCommandSystem().addCommand(second.name, [&](const cmd::ArgumentList& a) { second(a); },
                                      {cmd::ARGTYPE_DOUBLE});
 
     // Run a semicolon-separated sequence of both commands
     GlobalCommandSystem().execute("firstCommandWithArgs \"blah\"; secondCommandWithArgs 1.25");
-    EXPECT_EQ(firstRunCount, 1);
-    EXPECT_EQ(firstArgs.at(0).getString(), "blah");
-    EXPECT_EQ(secondRunCount, 1);
-    EXPECT_EQ(secondArgs.at(0).getDouble(), 1.25);
+    EXPECT_EQ(first.runCount, 1);
+    EXPECT_EQ(first.args.at(0).getString(), "blah");
+    EXPECT_EQ(second.runCount, 1);
+    EXPECT_EQ(second.args.at(0).getDouble(), 1.25);
 
     // Calling the first command with incorrect args should not prevent the second command from
     // running
     GlobalCommandSystem().execute("firstCommandWithArgs ; secondCommandWithArgs -16.9");
-    EXPECT_EQ(firstRunCount, 1);
-    EXPECT_EQ(secondRunCount, 2);
-    EXPECT_EQ(secondArgs.at(0).getDouble(), -16.9);
+    EXPECT_EQ(first.runCount, 1);
+    EXPECT_EQ(second.runCount, 2);
+    EXPECT_EQ(second.args.at(0).getDouble(), -16.9);
 }
 
 TEST_F(CommandSystemTest, AddCheckedCommand)
