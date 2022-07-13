@@ -45,7 +45,7 @@ protected:
         Vector3 startPos(-size, -size, -size);
         Vector3 endPos(size, size, size);
         GlobalCommandSystem().executeCommand("ResizeSelectedBrushesToBounds",
-            startPos, endPos, std::string("shader"));
+                                             {startPos, endPos, std::string("shader")});
 
         auto result = functor(std::dynamic_pointer_cast<IBrushNode>(_brushNode));
 
@@ -82,7 +82,7 @@ TEST_F(BrushTest, FitTextureWithZeroScale)
     Vector3 startPos(-size, -size, -size);
     Vector3 endPos(size, size, size);
     GlobalCommandSystem().executeCommand("ResizeSelectedBrushesToBounds",
-        startPos, endPos, std::string("shader"));
+                                         {startPos, endPos, std::string("shader")});
 
     GlobalSelectionSystem().setSelectedAll(false);
 

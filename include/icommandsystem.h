@@ -365,13 +365,6 @@ public:
         executeCommand(name, {arg1, arg2});
     }
 
-    /// Convenience method to execute a command with 3 arguments
-    void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2,
-                        const Argument& arg3)
-    {
-        executeCommand(name, {arg1, arg2, arg3});
-    }
-
     /**
 	 * greebo: Returns autocompletion info for the given prefix.
 	 */
