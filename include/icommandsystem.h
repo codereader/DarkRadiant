@@ -345,13 +345,7 @@ public:
 	virtual void execute(const std::string& input) = 0;
 
     /// Execute the named command with the given list of arguments
-    virtual void executeCommand(const std::string& name, const ArgumentList& args) = 0;
-
-    /// Convenience method to execute a command with no arguments
-    void executeCommand(const std::string& name)
-    {
-        executeCommand(name, ArgumentList{});
-    }
+    virtual void executeCommand(const std::string& name, const ArgumentList& args = {}) = 0;
 
     /// Convenience method to execute a command with 1 argument
     void executeCommand(const std::string& name, const Argument& arg1)
