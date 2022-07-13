@@ -344,19 +344,35 @@ public:
 	 */
 	virtual void execute(const std::string& input) = 0;
 
-	/**
-	 * Execute the named command with the given arguments.
-	 */
-	virtual void executeCommand(const std::string& name) = 0;
-	virtual void executeCommand(const std::string& name, const Argument& arg1) = 0;
-	virtual void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2) = 0;
-	virtual void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2, const Argument& arg3) = 0;
+    /// Execute the named command with the given list of arguments
+    virtual void executeCommand(const std::string& name, const ArgumentList& args) = 0;
 
-	// For more than 3 arguments, use this method to pass a vector of arguments
-	virtual void executeCommand(const std::string& name,
-								 const ArgumentList& args) = 0;
+    /// Convenience method to execute a command with no arguments
+    void executeCommand(const std::string& name)
+    {
+        executeCommand(name, ArgumentList{});
+    }
 
-	/**
+    /// Convenience method to execute a command with 1 argument
+    void executeCommand(const std::string& name, const Argument& arg1)
+    {
+        executeCommand(name, ArgumentList{arg1});
+    }
+
+    /// Convenience method to execute a command with 2 arguments
+    void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2)
+    {
+        executeCommand(name, {arg1, arg2});
+    }
+
+    /// Convenience method to execute a command with 3 arguments
+    void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2,
+                        const Argument& arg3)
+    {
+        executeCommand(name, {arg1, arg2, arg3});
+    }
+
+    /**
 	 * greebo: Returns autocompletion info for the given prefix.
 	 */
 	virtual AutoCompletionInfo getAutoCompletionInfo(const std::string& prefix) = 0;

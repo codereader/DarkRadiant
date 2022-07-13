@@ -366,41 +366,6 @@ void CommandSystem::execute(const std::string& input)
     }
 }
 
-void CommandSystem::executeCommand(const std::string& name)
-{
-	executeCommand(name, ArgumentList());
-}
-
-void CommandSystem::executeCommand(const std::string& name, const Argument& arg1)
-{
-	ArgumentList args(1);
-	args[0] = arg1;
-
-	executeCommand(name, args);
-}
-
-void CommandSystem::executeCommand(const std::string& name, const Argument& arg1,
-	const Argument& arg2)
-{
-	ArgumentList args(2);
-	args[0] = arg1;
-	args[1] = arg2;
-
-	executeCommand(name, args);
-}
-
-void CommandSystem::executeCommand(const std::string& name,
-	const Argument& arg1, const Argument& arg2,
-	const Argument& arg3)
-{
-	ArgumentList args(3);
-	args[0] = arg1;
-	args[1] = arg2;
-	args[2] = arg3;
-
-	executeCommand(name, args);
-}
-
 void CommandSystem::executeCommand(const std::string& name, const ArgumentList& args)
 {
 	// Find the named command

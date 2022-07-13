@@ -38,11 +38,6 @@ public:
 	// Execute the given command sequence
 	void execute(const std::string& input) override;
 
-	void executeCommand(const std::string& name) override;
-	void executeCommand(const std::string& name, const Argument& arg1) override;
-	void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2) override;
-	void executeCommand(const std::string& name, const Argument& arg1, const Argument& arg2, const Argument& arg3) override;
-
 	// For more than 3 arguments, use this method to pass a vector of arguments
 	void executeCommand(const std::string& name, const ArgumentList& args) override;
 
