@@ -92,6 +92,18 @@ public:
     }
 
 protected:
+    // Defines the whitespace characters used by the DefTokeniser to separate tokens
+    virtual const char* getWhitespaceDelimiters() const
+    {
+        return parser::WHITESPACE;
+    }
+
+    // Defines the characters separating tokens and are considered tokens themselves
+    virtual const char* getKeptDelimiters() const
+    {
+        return "{}()";
+    }
+
     // Subclasses should call this to ensure the attached syntax block has been processed.
     // In case the block needs parsing, the parseFromTokens() method will be invoked,
     // followed by an onParseFinished() call (the latter of which is invoked regardless
@@ -108,7 +120,8 @@ protected:
         try
         {
             // Set up a tokeniser to let the subclass implementation parse the contents
-            parser::BasicDefTokeniser<std::string> tokeniser(getBlockSyntax().contents);
+            parser::BasicDefTokeniser<std::string> tokeniser(getBlockSyntax().contents,
+                getWhitespaceDelimiters(), getKeptDelimiters());
             parseFromTokens(tokeniser);
         }
         catch (const parser::ParseException& ex)

@@ -529,6 +529,11 @@ public:
     }
 
 protected:
+    const char* getKeptDelimiters() const override
+    {
+        return KeptDelimiters;
+    }
+
     /**
      * Parse a Doom 3 material decl. This is the master parse function, it
      * returns no value but exceptions may be thrown at any stage of the
