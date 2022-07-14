@@ -29,7 +29,7 @@ public:
 	/* greebo: Trys to lookup the named shader definition and returns
 	 * its reference. Always returns a valid reference.
 	 */
-	ShaderDefinition& getDefinition(const std::string& name);
+    std::shared_ptr<ShaderTemplate> getTemplate(const std::string& name);
 
     // Updates the stored definition in the library with the given one
     void replaceDefinition(const std::string& name, const ShaderDefinition& def);

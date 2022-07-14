@@ -119,7 +119,6 @@ public:
 
     MaterialPtr createEmptyMaterial(const std::string& name) override;
 
-    MaterialPtr createDefaultMaterial(const std::string& name) override;
     MaterialPtr copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy) override;
     bool renameMaterial(const std::string& oldName, const std::string& newName) override;
     void removeMaterial(const std::string& name) override;

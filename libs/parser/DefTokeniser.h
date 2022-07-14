@@ -555,7 +555,7 @@ public:
      */
     BasicDefTokeniser(std::istream& str,
                       const char* delims = WHITESPACE,
-                      const char* keptDelims = "{}()")
+                      const char* keptDelims = "{}(),")
     : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
            DefTokeniserFunc(delims, keptDelims)),

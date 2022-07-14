@@ -22,15 +22,14 @@ namespace shaders
 
 /* Constructor. Sets the name and the ShaderDefinition to use.
  */
-CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
-    CShader(name, definition, false)
+CShader::CShader(const std::string& name, const ShaderTemplate::Ptr& declaration) :
+    CShader(name, declaration, false)
 {}
 
-CShader::CShader(const std::string& name, const ShaderDefinition& definition, bool isInternal) :
+CShader::CShader(const std::string& name, const ShaderTemplate::Ptr& declaration, bool isInternal) :
     _isInternal(isInternal),
-    _originalTemplate(definition.shaderTemplate),
-    _template(definition.shaderTemplate),
-    _fileInfo(definition.file),
+    _originalTemplate(declaration),
+    _template(declaration),
     _name(name),
     m_bInUse(false),
     _visible(true)

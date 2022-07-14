@@ -157,8 +157,7 @@ MaterialPtr Doom3ShaderSystem::getMaterial(const std::string& name)
 {
     ensureDefsLoaded();
 
-    CShaderPtr shader = _library->findShader(name);
-    return shader;
+    return _library->findShader(name);
 }
 
 bool Doom3ShaderSystem::materialExists(const std::string& name)
@@ -177,8 +176,9 @@ bool Doom3ShaderSystem::materialCanBeModified(const std::string& name)
         return false;
     }
 
-    const auto& def = _library->getDefinition(name);
-    return def.file.name.empty() || def.file.getIsPhysicalFile();
+    auto decl = _library->getTemplate(name);
+    const auto& fileInfo = decl->getBlockSyntax().fileInfo;
+    return fileInfo.name.empty() || fileInfo.getIsPhysicalFile();
 }
 
 void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback)
@@ -366,11 +366,6 @@ void Doom3ShaderSystem::removeMaterial(const std::string& name)
     _sigMaterialRemoved.emit(name);
 }
 
-MaterialPtr Doom3ShaderSystem::createDefaultMaterial(const std::string& name)
-{
-    return std::make_shared<CShader>(name, _library->getEmptyDefinition(), true);
-}
-
 MaterialPtr Doom3ShaderSystem::copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy)
 {
     if (nameOfCopy.empty())
@@ -529,7 +524,7 @@ void Doom3ShaderSystem::initialiseModule(const IApplicationContext& ctx)
     rMessage() << getName() << "::initialiseModule called" << std::endl;
 
     GlobalDeclarationManager().registerDeclType("table", std::make_shared<decl::DeclarationCreator<TableDefinition>>(decl::Type::Table));
-    //GlobalDeclarationManager().registerDeclType("material", std::make_shared<decl::DeclarationCreator<ShaderTemplate>>(decl::Type::Material));
+    GlobalDeclarationManager().registerDeclType("material", std::make_shared<decl::DeclarationCreator<ShaderTemplate>>(decl::Type::Material));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "materials/", ".mtr");
 
     construct();

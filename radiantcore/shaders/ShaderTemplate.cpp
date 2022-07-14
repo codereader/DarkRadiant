@@ -25,6 +25,7 @@ namespace shaders
 {
 
 ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
+    decl::EditableDeclaration<shaders::IShaderDefinition>(decl::Type::Material, other.getDeclName()),
     _name(other._name),
     _currentLayer(new Doom3ShaderLayer(*this)),
     _suppressChangeSignal(false),
@@ -50,9 +51,6 @@ ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
     _coverage(other._coverage),
     _renderBumpArguments(other._renderBumpArguments),
     _renderBumpFlatArguments(other._renderBumpFlatArguments),
-    _blockContents(other._blockContents),
-    _blockContentsNeedUpdate(other._blockContentsNeedUpdate),
-    _parsed(other._parsed),
     _parseFlags(other._parseFlags),
     _guiDeclName(other._guiDeclName)
 {
@@ -76,14 +74,14 @@ std::shared_ptr<ShaderTemplate> ShaderTemplate::clone() const
 
 const MapExpressionPtr& ShaderTemplate::getEditorTexture()
 {
-    if (!_parsed) parseDefinition();
+    ensureParsed();
 
     return _editorTex;
 }
 
 void ShaderTemplate::setEditorImageExpressionFromString(const std::string& expression)
 {
-    if (!_parsed) parseDefinition();
+    ensureParsed();
 
     _editorTex = !expression.empty() ? MapExpression::createForString(expression) : MapExpressionPtr();
     onTemplateChanged();
@@ -1180,71 +1178,64 @@ bool ShaderTemplate::saveLayer()
     return true;
 }
 
-void ShaderTemplate::parseDefinition()
+void ShaderTemplate::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     util::ScopedBoolLock parseLock(_suppressChangeSignal);
 
+#if 0
     // Construct a local deftokeniser to parse the unparsed block
     parser::BasicDefTokeniser<std::string> tokeniser(
         _blockContents,
         DiscardedDelimiters, // delimiters (whitespace)
         KeptDelimiters
     );
-
     _parsed = true; // we're parsed from now on
+#endif
 
-    try
+    int level = 1;  // we always start at top level
+
+    while (level > 0 && tokeniser.hasMoreTokens())
     {
-        int level = 1;  // we always start at top level
-
-        while (level > 0 && tokeniser.hasMoreTokens())
+        auto token = tokeniser.nextToken();
+        
+        if (token == "}")
         {
-            std::string token = tokeniser.nextToken();
-            
-            if (token == "}")
-			{
-                if (--level == 1)
-				{
-                    saveLayer();
-                }
-            }
-            else if (token == "{")
-			{
-                ++level;
-            }
-            else
-			{
-				string::to_lower(token);
-
-                switch (level)
-				{
-                    case 1: // global level
-                        if (parseShaderFlags(tokeniser, token)) continue;
-                        if (parseLightKeywords(tokeniser, token)) continue;
-                        if (parseBlendShortcuts(tokeniser, token)) continue;
-						if (parseSurfaceFlags(tokeniser, token)) continue;
-						if (parseMaterialType(tokeniser, token)) continue;
-
-						rWarning() << "Material keyword not recognised: " << token << std::endl;
-
-                        break;
-                    case 2: // stage level
-						if (parseCondition(tokeniser, token)) continue;
-                        if (parseBlendType(tokeniser, token)) continue;
-                        if (parseBlendMaps(tokeniser, token)) continue;
-                        if (parseStageModifiers(tokeniser, token)) continue;
-
-						rWarning() << "Stage keyword not recognised: " << token << std::endl;
-
-                        break;
-                }
+            if (--level == 1)
+            {
+                saveLayer();
             }
         }
-    }
-    catch (parser::ParseException& p)
-	{
-        rError() << "Error while parsing shader " << _name << ": "
-            << p.what() << std::endl;
+        else if (token == "{")
+        {
+            ++level;
+        }
+        else
+        {
+            string::to_lower(token);
+
+            switch (level)
+            {
+                case 1: // global level
+                    if (parseShaderFlags(tokeniser, token)) continue;
+                    if (parseLightKeywords(tokeniser, token)) continue;
+                    if (parseBlendShortcuts(tokeniser, token)) continue;
+                    if (parseSurfaceFlags(tokeniser, token)) continue;
+                    if (parseMaterialType(tokeniser, token)) continue;
+
+                    rWarning() << "Material keyword not recognised: " << token << std::endl;
+
+                    break;
+                case 2: // stage level
+                    if (parseCondition(tokeniser, token)) continue;
+                    if (parseBlendType(tokeniser, token)) continue;
+                    if (parseBlendMaps(tokeniser, token)) continue;
+                    if (parseStageModifiers(tokeniser, token)) continue;
+
+                    rWarning() << "Stage keyword not recognised: " << token << std::endl;
+
+                    break;
+            }
+        }
     }
 
 	// greebo: It appears that D3 is applying default sort values for material without
@@ -1256,9 +1247,6 @@ void ShaderTemplate::parseDefinition()
 	}
 
 	determineCoverage();
-
-    // We might have invoked a few setters during this process, clear the flag now
-    _blockContentsNeedUpdate = false;
 }
 
 void ShaderTemplate::determineCoverage()
@@ -1421,7 +1409,7 @@ std::size_t ShaderTemplate::duplicateLayer(std::size_t index)
 
 bool ShaderTemplate::hasDiffusemap()
 {
-	if (!_parsed) parseDefinition();
+	ensureParsed();
 
 	for (const auto& layer : _layers)
     {
@@ -1436,39 +1424,28 @@ bool ShaderTemplate::hasDiffusemap()
 
 int ShaderTemplate::getParseFlags()
 {
-    if (!_parsed) parseDefinition();
+    ensureParsed();
 
     return _parseFlags;
 }
 
 std::string ShaderTemplate::getRenderBumpArguments()
 {
-    if (!_parsed) parseDefinition();
+    ensureParsed();
 
     return _renderBumpArguments;
 }
 
 std::string ShaderTemplate::getRenderBumpFlatArguments()
 {
-    if (!_parsed) parseDefinition();
+    ensureParsed();
 
     return _renderBumpFlatArguments;
 }
 
-void ShaderTemplate::setBlockContents(const std::string& blockContents)
+std::string ShaderTemplate::generateSyntax()
 {
-    _blockContents = blockContents;
-}
-
-const std::string& ShaderTemplate::getBlockContents()
-{
-    if (_blockContentsNeedUpdate)
-    {
-        _blockContentsNeedUpdate = false;
-        _blockContents = MaterialSourceGenerator::GenerateDefinitionBlock(*this);
-    }
-
-    return _blockContents;
+    return MaterialSourceGenerator::GenerateDefinitionBlock(*this);
 }
 
 } // namespace

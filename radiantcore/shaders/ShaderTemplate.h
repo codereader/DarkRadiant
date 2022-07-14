@@ -6,6 +6,7 @@
 #include "ishaders.h"
 #include "parser/DefTokeniser.h"
 #include "math/Vector3.h"
+#include "decl/EditableDeclaration.h"
 
 #include <map>
 #include <memory>
@@ -15,12 +16,20 @@ namespace shaders { class MapExpression; }
 namespace shaders
 {
 
+class IShaderDefinition :
+    public decl::IDeclaration
+{
+public:
+    virtual ~IShaderDefinition() {}
+};
+
 /**
  * Data structure storing parsed material information from a material decl. This
  * class parses the decl using a tokeniser and stores the relevant information
  * internally, for later use by a CShader.
  */
-class ShaderTemplate final
+class ShaderTemplate final :
+    public decl::EditableDeclaration<IShaderDefinition>
 {
 private:
 	static const int SORT_UNDEFINED = -99999;	// undefined sort number, will be replaced after parsing
@@ -35,6 +44,7 @@ private:
     bool _suppressChangeSignal;
 
 public:
+    using Ptr = std::shared_ptr<ShaderTemplate>;
 
     // Shared parsing constants
     constexpr static const char* DiscardedDelimiters = parser::WHITESPACE;
@@ -95,11 +105,11 @@ public:
     std::string _renderBumpFlatArguments;
 
 	// Raw material declaration
-	std::string _blockContents;
-    bool _blockContentsNeedUpdate;
+	//std::string _blockContents;
+    //bool _blockContentsNeedUpdate;
 
 	// Whether the block has been parsed
-	bool _parsed;
+	//bool _parsed;
 
     int _parseFlags;
 
@@ -114,11 +124,16 @@ public:
 
 public:
 
+    ShaderTemplate(const std::string& name) :
+        ShaderTemplate(name, "")
+    {}
+
     /**
      * \brief
      * Construct a ShaderTemplate.
      */
-	ShaderTemplate(const std::string& name, const std::string& blockContents) : 
+	ShaderTemplate(const std::string& name, const std::string& blockContents) :
+        decl::EditableDeclaration<shaders::IShaderDefinition>(decl::Type::Material, name),
         _name(name),
         _currentLayer(new Doom3ShaderLayer(*this)),
         _suppressChangeSignal(false),
@@ -137,9 +152,6 @@ public:
         _sortReq(SORT_UNDEFINED),	// will be set to default values after the shader has been parsed
         _polygonOffset(0.0f),
         _coverage(Material::MC_UNDETERMINED),
-        _blockContents(blockContents),
-        _blockContentsNeedUpdate(false),
-        _parsed(false),
         _parseFlags(0)
 	{
 		_decalInfo.stayMilliSeconds = 0;
@@ -169,13 +181,13 @@ public:
 
 	const std::string& getDescription()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return description;
 	}
 
     void setDescription(const std::string& newDescription)
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		description = newDescription;
 
         onTemplateChanged();
@@ -183,33 +195,33 @@ public:
 
 	int getMaterialFlags()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _materialFlags;
 	}
 
     void setMaterialFlag(Material::Flags flag)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _materialFlags |= flag;
         onTemplateChanged();
     }
 
     void clearMaterialFlag(Material::Flags flag)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _materialFlags &= ~flag;
         onTemplateChanged();
     }
 
 	Material::CullType getCullType()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _cullType;
 	}
 
     void setCullType(Material::CullType type)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _cullType = type;
 
         onTemplateChanged();
@@ -217,13 +229,13 @@ public:
 
 	ClampType getClampType()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _clampType;
 	}
 
     void setClampType(ClampType type)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _clampType = type;
 
         onTemplateChanged();
@@ -231,13 +243,13 @@ public:
 
 	int getSurfaceFlags()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _surfaceFlags;
 	}
 
     void setSurfaceFlag(Material::SurfaceFlags flag)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _surfaceFlags |= flag;
 
         onTemplateChanged();
@@ -245,7 +257,7 @@ public:
 
     void clearSurfaceFlag(Material::SurfaceFlags flag)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _surfaceFlags &= ~flag;
 
         onTemplateChanged();
@@ -253,26 +265,26 @@ public:
 
 	Material::SurfaceType getSurfaceType()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _surfaceType;
 	}
 
     void setSurfaceType(Material::SurfaceType type)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _surfaceType = type;
         onTemplateChanged();
     }
 
 	Material::DeformType getDeformType()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _deformType;
 	}
 
     IShaderExpression::Ptr getDeformExpression(std::size_t index)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
 
         assert(index >= 0 && index < 3);
         return index < _deformExpressions.size() ? _deformExpressions[index] : IShaderExpression::Ptr();
@@ -280,19 +292,19 @@ public:
 
     std::string getDeformDeclName()
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         return _deformDeclName;
     }
 
 	int getSpectrum()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _spectrum;
 	}
 
     void setSpectrum(int spectrum)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _spectrum = spectrum;
 
         onTemplateChanged();
@@ -300,49 +312,49 @@ public:
 
 	const Material::DecalInfo& getDecalInfo()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _decalInfo;
 	}
 
 	Material::Coverage getCoverage()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _coverage;
 	}
 
 	const std::vector<Doom3ShaderLayer::Ptr>& getLayers()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _layers;
 	}
 
 	bool isFogLight()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return fogLight;
 	}
 
 	bool isAmbientLight()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return ambientLight;
 	}
 
 	bool isBlendLight()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return blendLight;
 	}
     
     bool isCubicLight()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _cubicLight;
 	}
 
     void setIsAmbientLight(bool newValue)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         ambientLight = newValue;
 
         onTemplateChanged();
@@ -350,7 +362,7 @@ public:
 
     void setIsBlendLight(bool newValue)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         blendLight = newValue;
 
         onTemplateChanged();
@@ -358,7 +370,7 @@ public:
 
     void setIsFogLight(bool newValue)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         fogLight = newValue;
 
         onTemplateChanged();
@@ -366,7 +378,7 @@ public:
 
     void setIsCubicLight(bool newValue)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _cubicLight = newValue;
 
         onTemplateChanged();
@@ -374,13 +386,13 @@ public:
 
     float getSortRequest()
     {
-		if (!_parsed) parseDefinition();
+		ensureParsed();
         return _sortReq;
     }
 
     void setSortRequest(float sortRequest)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
 
         _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
         _sortReq = sortRequest;
@@ -390,7 +402,7 @@ public:
 
     void resetSortRequest()
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
 
         _materialFlags &= ~Material::FLAG_HAS_SORT_DEFINED;
 
@@ -409,23 +421,23 @@ public:
 
     float getPolygonOffset()
     {
-		if (!_parsed) parseDefinition();
+		ensureParsed();
         return _polygonOffset;
     }
 
     void setPolygonOffset(float offset)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         setMaterialFlag(Material::FLAG_POLYGONOFFSET);
         _polygonOffset = offset;
 
         onTemplateChanged();
     }
 
-	// Sets the raw block definition contents, will be parsed on demand
-    void setBlockContents(const std::string& blockContents);
-
-    const std::string& getBlockContents();
+    const std::string& getBlockContents()
+	{
+        return getBlockSyntax().contents;
+	}
 
     /**
      * \brief
@@ -438,13 +450,13 @@ public:
 
 	const MapExpressionPtr& getLightFalloff()
 	{
-		if (!_parsed) parseDefinition();
+		ensureParsed();
 		return _lightFalloff;
 	}
 
     void setLightFalloffExpressionFromString(const std::string& expressionString)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _lightFalloff = !expressionString.empty() ? 
             MapExpression::createForString(expressionString) : MapExpressionPtr();
 
@@ -453,13 +465,13 @@ public:
     
     IShaderLayer::MapType getLightFalloffCubeMapType()
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         return _lightFalloffCubeMapType;
     }
 
     void setLightFalloffCubeMapType(IShaderLayer::MapType type)
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         _lightFalloffCubeMapType = type;
 
         onTemplateChanged();
@@ -487,7 +499,7 @@ public:
 
     const std::string& getGuiSurfArgument()
     {
-        if (!_parsed) parseDefinition();
+        ensureParsed();
         return _guiDeclName;
     }
 
@@ -501,7 +513,7 @@ public:
     {
         if (_suppressChangeSignal) return;
 
-        _blockContentsNeedUpdate = true;
+        onParsedContentsChanged();
         _sigTemplateChanged.emit();
     }
 
@@ -516,17 +528,20 @@ public:
         return _sigTemplateChanged;
     }
 
+protected:
+    /**
+     * Parse a Doom 3 material decl. This is the master parse function, it
+     * returns no value but exceptions may be thrown at any stage of the
+     * parsing.
+     */
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override;
+
+    std::string generateSyntax() override;
+
 private:
 
 	// Add the given layer and assigns editor preview layer if applicable
 	void addLayer(const Doom3ShaderLayer::Ptr& layer);
-
-	/**
-	 * Parse a Doom 3 material decl. This is the master parse function, it
-	 * returns no value but exceptions may be thrown at any stage of the
-	 * parsing.
-	 */
-	void parseDefinition();
 
     // Parse helpers. These scan for possible matches, this is not a
     // recursive-descent parser. Each of these helpers return true 

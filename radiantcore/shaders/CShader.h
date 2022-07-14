@@ -17,11 +17,11 @@ private:
     bool _isInternal;
 
     // The unmodified template
-    ShaderTemplatePtr _originalTemplate;
+    ShaderTemplate::Ptr _originalTemplate;
 
     // The template this material is working with - if this instance 
     // has not been altered, this is the same as _originalTemplate
-	ShaderTemplatePtr _template;
+    ShaderTemplate::Ptr _template;
 
     sigc::connection _templateChanged;
 
@@ -49,12 +49,12 @@ public:
 	static bool m_lightingEnabled;
 
 	/*
-	 * Constructor. Sets the name and the ShaderDefinition to use.
+	 * Constructor. Sets the name and the ShaderTemplate to use.
 	 */
-	CShader(const std::string& name, const ShaderDefinition& definition);
+	CShader(const std::string& name, const ShaderTemplate::Ptr& declaration);
 
-    // Creates a named material from the given definition, with an option to flag this material as "internal"
-	CShader(const std::string& name, const ShaderDefinition& definition, bool isInternal);
+    // Creates a named material from the given declaration, with an option to flag this material as "internal"
+	CShader(const std::string& name, const ShaderTemplate::Ptr& declaration, bool isInternal);
 
 	~CShader();
 
