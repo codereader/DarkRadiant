@@ -59,7 +59,9 @@ Doom3ShaderSystem::Doom3ShaderSystem() :
 
 void Doom3ShaderSystem::construct()
 {
+#if 0
     _defLoader = std::make_unique<ShaderFileLoader>();
+#endif
     _library = std::make_shared<ShaderLibrary>();
     _textureManager = std::make_shared<GLTextureManager>();
 
@@ -86,9 +88,10 @@ void Doom3ShaderSystem::realise()
 {
     if (!_realised)
     {
+#if 0
         // Start loading defs
         _defLoader->start();
-
+#endif
         _signalDefsLoaded.emit();
         _realised = true;
     }
@@ -106,11 +109,13 @@ void Doom3ShaderSystem::unrealise()
 
 void Doom3ShaderSystem::ensureDefsLoaded()
 {
+#if 0
     // To avoid assigning the pointer everytime, check if the library is empty
     if (_library->getNumDefinitions() == 0)
     {
         _library = _defLoader->get();
     }
+#endif
 }
 
 void Doom3ShaderSystem::onFileSystemInitialise()
@@ -125,7 +130,9 @@ void Doom3ShaderSystem::onFileSystemShutdown()
 
 void Doom3ShaderSystem::freeShaders() {
     _library->clear();
+#if 0
     _defLoader->reset();
+#endif
     _textureManager->checkBindings();
     activeShadersChangedNotify();
 }

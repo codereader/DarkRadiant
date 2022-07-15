@@ -27,10 +27,10 @@ class Doom3ShaderSystem :
 	// The shaderlibrary stores all the known shaderdefinitions
 	// as well as the active shaders
 	ShaderLibraryPtr _library;
-
+#if 0
     // The ShaderFileLoader will provide a new ShaderLibrary once complete
     std::unique_ptr<ShaderFileLoader> _defLoader;
-
+#endif
 	// The manager that handles the texture caching.
 	GLTextureManagerPtr _textureManager;
 

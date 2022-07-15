@@ -66,7 +66,7 @@ std::shared_ptr<ShaderTemplate> ShaderLibrary::getTemplate(const std::string& na
 
 bool ShaderLibrary::definitionExists(const std::string& name) const
 {
-	return _definitions.count(name) > 0;
+    return GlobalDeclarationManager().findDeclaration(decl::Type::Material, name) != nullptr;
 }
 
 void ShaderLibrary::replaceDefinition(const std::string& name, const ShaderDefinition& def)
@@ -88,10 +88,14 @@ void ShaderLibrary::copyDefinition(const std::string& nameOfOriginal, const std:
     assert(definitionExists(nameOfOriginal));
     assert(!definitionExists(nameOfCopy));
 
-    auto found = _definitions.find(nameOfOriginal);
+    auto originalDecl = GlobalDeclarationManager().findDeclaration(decl::Type::Material, nameOfOriginal);
+    auto decl = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Material, nameOfCopy);
 
-    auto result = _definitions.emplace(nameOfCopy, found->second);
-    result.first->second.file = vfs::FileInfo{"", "", vfs::Visibility::HIDDEN};
+    // Replace the syntax block of the target with the one of the original
+    auto syntax = originalDecl->getBlockSyntax();
+    syntax.fileInfo = vfs::FileInfo{ "", "", vfs::Visibility::HIDDEN };
+
+    decl->setBlockSyntax(syntax);
 }
 
 void ShaderLibrary::renameDefinition(const std::string& oldName, const std::string& newName)
@@ -175,11 +179,13 @@ std::size_t ShaderLibrary::getNumDefinitions()
 
 void ShaderLibrary::foreachShaderName(const ShaderNameCallback& callback)
 {
-    for (const auto& pair : _definitions)
-	{
-        if (pair.second.file.visibility == vfs::Visibility::NORMAL)
-            callback(pair.first);
-	}
+    GlobalDeclarationManager().foreachDeclaration(decl::Type::Material, [&](const decl::IDeclaration::Ptr& decl)
+    {
+        if (decl->getBlockSyntax().fileInfo.visibility == vfs::Visibility::NORMAL)
+        {
+            callback(decl->getDeclName());
+        }
+    });
 }
 
 void ShaderLibrary::foreachShader(const std::function<void(const CShaderPtr&)>& func)
