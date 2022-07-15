@@ -680,6 +680,76 @@ TEST_F(DeclManagerTest, RemoveDeclaration)
     expectDeclIsNotPresent(decl::Type::TestDecl, "decl/precedence_test/1");
 }
 
+TEST_F(DeclManagerTest, RenameDeclaration)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/precedence_test/1");
+    expectDeclIsNotPresent(decl::Type::TestDecl, "decl/renamed/1");
+
+    auto oldSyntax = GlobalDeclarationManager().findDeclaration(
+        decl::Type::TestDecl, "decl/precedence_test/1")->getBlockSyntax();
+
+    auto result = GlobalDeclarationManager().renameDeclaration(
+        decl::Type::TestDecl, "decl/precedence_test/1", "decl/renamed/1");
+
+    EXPECT_TRUE(result) << "Rename operation should have succeeded";
+
+    expectDeclIsNotPresent(decl::Type::TestDecl, "decl/precedence_test/1");
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/renamed/1");
+
+    auto newSyntax = GlobalDeclarationManager().findDeclaration(
+        decl::Type::TestDecl, "decl/renamed/1")->getBlockSyntax();
+
+    // Check that the syntax of the renamed declaration is the same as before
+    EXPECT_EQ(newSyntax.name, oldSyntax.name);
+    EXPECT_EQ(newSyntax.contents, oldSyntax.contents);
+    EXPECT_EQ(newSyntax.getModName(), oldSyntax.getModName());
+    EXPECT_EQ(newSyntax.typeName, oldSyntax.typeName);
+    EXPECT_EQ(newSyntax.fileInfo.fullPath(), oldSyntax.fileInfo.fullPath());
+}
+
+TEST_F(DeclManagerTest, RenameDeclarationFailsIfNotExisting)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    expectDeclIsNotPresent(decl::Type::TestDecl, "decl/notexisting/1");
+
+    auto result = GlobalDeclarationManager().renameDeclaration(
+        decl::Type::TestDecl, "decl/notexisting/1", "decl/renamed/1");
+
+    EXPECT_FALSE(result) << "Rename operation should have failed";
+}
+
+TEST_F(DeclManagerTest, RenameDeclarationFailsIfNameIsTheSame)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/precedence_test/1");
+
+    auto result = GlobalDeclarationManager().renameDeclaration(
+        decl::Type::TestDecl, "decl/precedence_test/1", "decl/precedence_test/1");
+
+    EXPECT_FALSE(result) << "Rename operation should have failed";
+}
+
+TEST_F(DeclManagerTest, RenameDeclarationFailsIfNameIsInUse)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/numbers/1");
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/numbers/2");
+
+    auto result = GlobalDeclarationManager().renameDeclaration(
+        decl::Type::TestDecl, "decl/numbers/1", "decl/numbers/2");
+
+    EXPECT_FALSE(result) << "Rename operation should have failed";
+}
+
 TEST_F(DeclManagerTest, SyntaxGeneration)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());

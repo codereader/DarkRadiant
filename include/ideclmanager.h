@@ -124,6 +124,11 @@ public:
     // Iterate over all known declarations, using the given visitor
     virtual void foreachDeclaration(Type type, const std::function<void(const IDeclaration::Ptr&)>& functor) = 0;
 
+    // Renames the declaration from oldName to newName. The new name must not be in use by any other declaration,
+    // and it must be different from oldName, otherwise renaming will fail.
+    // Returns true if the old declaration existed and could successfully be renamed, false on any failure.
+    virtual bool renameDeclaration(Type type, const std::string& oldName, const std::string& newName) = 0;
+
     // Removes the given declaration from the internal dictionaries.
     // This doesn't remove the declaration from the source files, so this operation
     // will not survive a reloadDeclarations command. Used to remove temporary decls in edit scenarios.

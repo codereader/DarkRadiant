@@ -299,6 +299,23 @@ void DeclarationManager::removeDeclaration(Type type, const std::string& name)
     });
 }
 
+bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName, const std::string& newName)
+{
+    auto result = false;
+
+    // Acquire the lock and perform the removal
+    doWithDeclarations(type, [&](NamedDeclarations& decls)
+    {
+        auto decl = decls.find(oldName);
+
+        //if (decl != decls.end())
+        //{
+        //}
+    });
+
+    return result;
+}
+
 namespace
 {
 

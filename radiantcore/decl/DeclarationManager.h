@@ -68,6 +68,7 @@ public:
     sigc::signal<void>& signal_DeclsReloading(Type type) override;
     sigc::signal<void>& signal_DeclsReloaded(Type type) override;
     void reloadDeclarations() override;
+    bool renameDeclaration(Type type, const std::string& oldName, const std::string& newName) override;
     void removeDeclaration(Type type, const std::string& name) override;
     void saveDeclaration(const IDeclaration::Ptr& decl) override;
 
