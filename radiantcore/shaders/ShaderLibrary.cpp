@@ -98,8 +98,11 @@ void ShaderLibrary::copyDefinition(const std::string& nameOfOriginal, const std:
     decl->setBlockSyntax(syntax);
 }
 
-void ShaderLibrary::renameDefinition(const std::string& oldName, const std::string& newName)
+bool ShaderLibrary::renameDefinition(const std::string& oldName, const std::string& newName)
 {
+    auto result = GlobalDeclarationManager().renameDeclaration(decl::Type::Material, oldName, newName);
+
+#if 0
     // These need to be checked by the caller
     assert(definitionExists(oldName));
     assert(!definitionExists(newName));
@@ -109,9 +112,9 @@ void ShaderLibrary::renameDefinition(const std::string& oldName, const std::stri
     extracted.key() = newName;
 
     _definitions.insert(std::move(extracted));
-
+#endif
     // Rename in shaders table (if existing)
-    if (_shaders.count(oldName) > 0)
+    if (result && _shaders.count(oldName) > 0)
     {
         auto extractedShader = _shaders.extract(oldName);
         extractedShader.key() = newName;
@@ -119,18 +122,23 @@ void ShaderLibrary::renameDefinition(const std::string& oldName, const std::stri
         // Insert it under the new name before setting the CShader instance's name
         // the observing OpenGLShader instance will request the material to reconstruct itself
         // If the new name is not present at that point, the library will create a default material.
-        auto result = _shaders.insert(std::move(extractedShader));
+        auto insertedShader = _shaders.insert(std::move(extractedShader));
 
         // Rename the CShader instance
-        result.position->second->setName(newName);
+        insertedShader.position->second->setName(newName);
     }
+
+    return result;
 }
 
 void ShaderLibrary::removeDefinition(const std::string& name)
 {
     assert(definitionExists(name));
 
+    GlobalDeclarationManager().removeDeclaration(decl::Type::Material, name);
+#if 0
     _definitions.erase(name);
+#endif
     _shaders.erase(name);
 }
 

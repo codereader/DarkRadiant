@@ -43,7 +43,7 @@ public:
     void copyDefinition(const std::string& nameOfOriginal, const std::string& nameOfCopy);
 
     // Renames the definition oldName => newName. oldName must be present, newName must not be present
-    void renameDefinition(const std::string& oldName, const std::string& newName);
+    bool renameDefinition(const std::string& oldName, const std::string& newName);
 
     // Removes the named definition. The name must be present in the library.
     void removeDefinition(const std::string& name);

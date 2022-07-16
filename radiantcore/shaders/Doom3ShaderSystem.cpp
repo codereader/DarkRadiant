@@ -335,6 +335,7 @@ MaterialPtr Doom3ShaderSystem::createEmptyMaterial(const std::string& name)
 
 bool Doom3ShaderSystem::renameMaterial(const std::string& oldName, const std::string& newName)
 {
+#if 0
     if (oldName == newName)
     {
         rWarning() << "Cannot rename, the new name is no different" << std::endl;
@@ -352,12 +353,15 @@ bool Doom3ShaderSystem::renameMaterial(const std::string& oldName, const std::st
         rWarning() << "Cannot rename material to " << newName << " since this name is already in use" << std::endl;
         return false;
     }
+#endif
+    auto result = _library->renameDefinition(oldName, newName);
 
-    _library->renameDefinition(oldName, newName);
+    if (result)
+    {
+        _sigMaterialRenamed(oldName, newName);
+    }
 
-    _sigMaterialRenamed(oldName, newName);
-
-    return true;
+    return result;
 }
 
 void Doom3ShaderSystem::removeMaterial(const std::string& name)
