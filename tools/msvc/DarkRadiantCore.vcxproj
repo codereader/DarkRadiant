@@ -1099,7 +1099,6 @@
     <ClInclude Include="..\..\radiantcore\shaders\NamedBindable.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderDefinition.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderExpression.h" />
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderFileLoader.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderLibrary.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderTemplate.h" />
     <ClInclude Include="..\..\radiantcore\shaders\SoundMapExpression.h" />

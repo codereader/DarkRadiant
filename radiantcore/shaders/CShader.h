@@ -156,6 +156,8 @@ public:
     // Returns the current template (including any modifications) of this material
     const ShaderTemplatePtr& getTemplate();
 
+    void saveDeclaration();
+
 private:
     void ensureTemplateCopy();
     void subscribeToTemplateChanges();

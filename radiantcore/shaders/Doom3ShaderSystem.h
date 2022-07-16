@@ -9,7 +9,6 @@
 #include <functional>
 
 #include "ShaderLibrary.h"
-#include "ShaderFileLoader.h"
 #include "TableDefinition.h"
 #include "textures/GLTextureManager.h"
 
@@ -27,10 +26,7 @@ class Doom3ShaderSystem :
 	// The shaderlibrary stores all the known shaderdefinitions
 	// as well as the active shaders
 	ShaderLibraryPtr _library;
-#if 0
-    // The ShaderFileLoader will provide a new ShaderLibrary once complete
-    std::unique_ptr<ShaderFileLoader> _defLoader;
-#endif
+
 	// The manager that handles the texture caching.
 	GLTextureManagerPtr _textureManager;
 
@@ -140,9 +136,6 @@ private:
     // This attaches this class as Observer to the Filesystem
     void construct();
     void destroy();
-
-    // For methods accessing the ShaderLibrary the parser thread must be done
-    void ensureDefsLoaded();
 
     // Unloads all the existing shaders and calls activeShadersChangedNotify()
     void freeShaders();

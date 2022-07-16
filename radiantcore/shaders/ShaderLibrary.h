@@ -31,9 +31,6 @@ public:
 	 */
     std::shared_ptr<ShaderTemplate> getTemplate(const std::string& name);
 
-    // Updates the stored definition in the library with the given one
-    void replaceDefinition(const std::string& name, const ShaderDefinition& def);
-
 	/**
 	 * Returns true if the given shader definition exists.
 	 */

@@ -616,6 +616,11 @@ void CShader::ensureTemplateCopy()
 
 void CShader::commitModifications()
 {
+    if (_template == _originalTemplate) return;
+
+    // Replace the contents with our working copy
+    _originalTemplate->setBlockSyntax(_template->getBlockSyntax());
+
     // Overwrite the original template reference, the material is now unmodified again
     _originalTemplate = _template;
 }
@@ -675,6 +680,13 @@ void CShader::refreshImageMaps()
     _texLightFalloff.reset();
 
     _sigMaterialModified.emit();
+}
+
+void CShader::saveDeclaration()
+{
+
+
+    
 }
 
 bool CShader::m_lightingEnabled = false;

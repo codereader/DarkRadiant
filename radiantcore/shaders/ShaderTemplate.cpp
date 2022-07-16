@@ -1182,16 +1182,6 @@ void ShaderTemplate::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     util::ScopedBoolLock parseLock(_suppressChangeSignal);
 
-#if 0
-    // Construct a local deftokeniser to parse the unparsed block
-    parser::BasicDefTokeniser<std::string> tokeniser(
-        _blockContents,
-        DiscardedDelimiters, // delimiters (whitespace)
-        KeptDelimiters
-    );
-    _parsed = true; // we're parsed from now on
-#endif
-
     int level = 1;  // we always start at top level
 
     while (level > 0 && tokeniser.hasMoreTokens())

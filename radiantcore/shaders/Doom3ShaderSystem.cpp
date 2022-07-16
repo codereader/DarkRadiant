@@ -1,5 +1,4 @@
 #include "Doom3ShaderSystem.h"
-#include "ShaderFileLoader.h"
 #include "MaterialSourceGenerator.h"
 
 #include "i18n.h"
@@ -59,9 +58,6 @@ Doom3ShaderSystem::Doom3ShaderSystem() :
 
 void Doom3ShaderSystem::construct()
 {
-#if 0
-    _defLoader = std::make_unique<ShaderFileLoader>();
-#endif
     _library = std::make_shared<ShaderLibrary>();
     _textureManager = std::make_shared<GLTextureManager>();
 
@@ -88,10 +84,6 @@ void Doom3ShaderSystem::realise()
 {
     if (!_realised)
     {
-#if 0
-        // Start loading defs
-        _defLoader->start();
-#endif
         _signalDefsLoaded.emit();
         _realised = true;
     }
@@ -107,17 +99,6 @@ void Doom3ShaderSystem::unrealise()
     }
 }
 
-void Doom3ShaderSystem::ensureDefsLoaded()
-{
-#if 0
-    // To avoid assigning the pointer everytime, check if the library is empty
-    if (_library->getNumDefinitions() == 0)
-    {
-        _library = _defLoader->get();
-    }
-#endif
-}
-
 void Doom3ShaderSystem::onFileSystemInitialise()
 {
     realise();
@@ -130,9 +111,6 @@ void Doom3ShaderSystem::onFileSystemShutdown()
 
 void Doom3ShaderSystem::freeShaders() {
     _library->clear();
-#if 0
-    _defLoader->reset();
-#endif
     _textureManager->checkBindings();
     activeShadersChangedNotify();
 }
@@ -162,22 +140,16 @@ sigc::signal<void>& Doom3ShaderSystem::signal_DefsUnloaded()
 // Return a shader by name
 MaterialPtr Doom3ShaderSystem::getMaterial(const std::string& name)
 {
-    ensureDefsLoaded();
-
     return _library->findShader(name);
 }
 
 bool Doom3ShaderSystem::materialExists(const std::string& name)
 {
-    ensureDefsLoaded();
-
     return _library->definitionExists(name);
 }
 
 bool Doom3ShaderSystem::materialCanBeModified(const std::string& name)
 {
-    ensureDefsLoaded();
-
     if (!_library->definitionExists(name))
     {
         return false;
@@ -190,16 +162,12 @@ bool Doom3ShaderSystem::materialCanBeModified(const std::string& name)
 
 void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback)
 {
-    ensureDefsLoaded();
-
     // Pass the call to the Library
     _library->foreachShaderName(callback);
 }
 
 void Doom3ShaderSystem::setLightingEnabled(bool enabled)
 {
-    ensureDefsLoaded();
-
     if (CShader::m_lightingEnabled != enabled)
     {
         // First unrealise the lighting of all shaders
@@ -267,8 +235,6 @@ void Doom3ShaderSystem::activeShadersChangedNotify()
 
 void Doom3ShaderSystem::foreachMaterial(const std::function<void(const MaterialPtr&)>& func)
 {
-    ensureDefsLoaded();
-
     _library->foreachShader(func);
 }
 
@@ -320,14 +286,6 @@ MaterialPtr Doom3ShaderSystem::createEmptyMaterial(const std::string& name)
     auto candidate = ensureNonConflictingName(name);
     auto decl = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Material, name);
 
-#if 0
-    // Create a new template/definition
-    auto shaderTemplate = std::make_shared<ShaderTemplate>(candidate, "");
-
-    ShaderDefinition def{ shaderTemplate, vfs::FileInfo("", "", vfs::Visibility::HIDDEN) };
-
-    _library->addDefinition(candidate, def);
-#endif
     auto material = _library->findShader(candidate);
     material->setIsModified();
 
@@ -338,25 +296,6 @@ MaterialPtr Doom3ShaderSystem::createEmptyMaterial(const std::string& name)
 
 bool Doom3ShaderSystem::renameMaterial(const std::string& oldName, const std::string& newName)
 {
-#if 0
-    if (oldName == newName)
-    {
-        rWarning() << "Cannot rename, the new name is no different" << std::endl;
-        return false;
-    }
-
-    if (!_library->definitionExists(oldName))
-    {
-        rWarning() << "Cannot rename non-existent material " << oldName << std::endl;
-        return false;
-    }
-
-    if (_library->definitionExists(newName))
-    {
-        rWarning() << "Cannot rename material to " << newName << " since this name is already in use" << std::endl;
-        return false;
-    }
-#endif
     auto result = _library->renameDefinition(oldName, newName);
 
     if (result)
@@ -408,8 +347,6 @@ MaterialPtr Doom3ShaderSystem::copyMaterial(const std::string& nameOfOriginal, c
 
 void Doom3ShaderSystem::saveMaterial(const std::string& name)
 {
-    ensureDefsLoaded();
-
     auto material = _library->findShader(name);
 
     if (!material->isModified())
@@ -423,6 +360,13 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
         throw std::runtime_error("Cannot save this material, it's read-only.");
     }
 
+    // Store the modifications in our actual template and un-mark the file
+    material->commitModifications();
+
+    // Write the declaration to disk
+    GlobalDeclarationManager().saveDeclaration(material->getTemplate());
+
+#if 0
     if (material->getShaderFileInfo().fullPath().empty())
     {
         throw std::runtime_error("No file path set on this material, cannot save.");
@@ -504,6 +448,7 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
         material->getTemplate(),
         GlobalFileSystem().getFileInfo(material->getShaderFileInfo().fullPath())
     });
+#endif
 }
 
 ITableDefinition::Ptr Doom3ShaderSystem::getTable(const std::string& name)

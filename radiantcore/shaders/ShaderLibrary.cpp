@@ -1,6 +1,5 @@
 #include "ShaderLibrary.h"
 
-#include <iostream>
 #include <utility>
 #include "iimage.h"
 #include "itextstream.h"
@@ -63,19 +62,6 @@ std::shared_ptr<ShaderTemplate> ShaderLibrary::getTemplate(const std::string& na
 bool ShaderLibrary::definitionExists(const std::string& name) const
 {
     return GlobalDeclarationManager().findDeclaration(decl::Type::Material, name) != nullptr;
-}
-
-void ShaderLibrary::replaceDefinition(const std::string& name, const ShaderDefinition& def)
-{
-    auto found = _definitions.find(name);
-
-    if (found == _definitions.end())
-    {
-        addDefinition(name, def);
-        return;
-    }
-
-    found->second = def;
 }
 
 void ShaderLibrary::copyDefinition(const std::string& nameOfOriginal, const std::string& nameOfCopy)
