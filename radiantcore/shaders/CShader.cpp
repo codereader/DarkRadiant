@@ -218,7 +218,7 @@ void CShader::clearMaterialFlag(Flags flag)
 
 bool CShader::IsDefault() const
 {
-	return _isInternal || _fileInfo.name.empty();
+	return _isInternal || _template->getBlockSyntax().fileInfo.name.empty();
 }
 
 // get the cull type
@@ -311,7 +311,7 @@ Material::Coverage CShader::getCoverage() const
 // get shader file name (ie the file where this one is defined)
 const char* CShader::getShaderFileName() const
 {
-	return _fileInfo.name.c_str();
+	return _template->getBlockSyntax().fileInfo.name.c_str();
 }
 
 void CShader::setShaderFileName(const std::string& fullPath)

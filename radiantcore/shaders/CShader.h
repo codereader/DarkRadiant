@@ -25,9 +25,6 @@ private:
 
     sigc::connection _templateChanged;
 
-	// The shader file name (i.e. the file where this one is defined)
-	vfs::FileInfo _fileInfo;
-
 	// Name of shader
 	std::string _name;
 
