@@ -303,14 +303,38 @@ bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName
 {
     auto result = false;
 
+    if (oldName == newName)
+    {
+        rWarning() << "Cannot rename, the new name is no different" << std::endl;
+        return result;
+    }
+
     // Acquire the lock and perform the removal
     doWithDeclarations(type, [&](NamedDeclarations& decls)
     {
-        auto decl = decls.find(oldName);
+        auto decl = decls.find(newName);
+        
+        if (decl != decls.end())
+        {
+            rWarning() << "Cannot rename declaration to " << newName << " since this name is already in use" << std::endl;
+            return;
+        }
 
-        //if (decl != decls.end())
-        //{
-        //}
+        // Look up the original declaration
+        decl = decls.find(oldName);
+
+        if (decl == decls.end())
+        {
+            rWarning() << "Cannot rename non-existent declaration " << oldName << std::endl;
+            return;
+        }
+
+        // Rename in definition table
+        auto extracted = decls.extract(oldName);
+        extracted.key() = newName;
+
+        decls.insert(std::move(extracted));
+        result = true;
     });
 
     return result;
