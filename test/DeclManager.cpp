@@ -828,10 +828,10 @@ TEST_F(DeclManagerTest, SaveNewDeclToNewFile)
 
     // Set the decl to save its contents to a new file that doesn't exist yet
     auto syntax = decl->getBlockSyntax();
-    syntax.fileInfo = vfs::FileInfo(TEST_DECL_FOLDER, "some_new_file.decl", vfs::Visibility::NORMAL);
-    decl->setBlockSyntax(syntax);
+    auto fileInfo = vfs::FileInfo(TEST_DECL_FOLDER, "some_new_file.decl", vfs::Visibility::NORMAL);
+    decl->setFileInfo(fileInfo);
 
-    auto outputPath = _context.getTestProjectPath() + syntax.fileInfo.fullPath();
+    auto outputPath = _context.getTestProjectPath() + fileInfo.fullPath();
     EXPECT_FALSE(fs::exists(outputPath)) << "Output file shouldn't exist yet";
 
     // Auto-remove the file that is going to be written
@@ -857,8 +857,8 @@ TEST_F(DeclManagerTest, SaveNewDeclToExistingFile)
 
     // Set up the decl to save its contents to an existing file
     auto syntax = decl->getBlockSyntax();
-    syntax.fileInfo = vfs::FileInfo(TEST_DECL_FOLDER, "numbers.decl", vfs::Visibility::NORMAL);
-    decl->setBlockSyntax(syntax);
+    auto fileInfo = vfs::FileInfo(TEST_DECL_FOLDER, "numbers.decl", vfs::Visibility::NORMAL);
+    decl->setFileInfo(fileInfo);
 
     auto outputPath = _context.getTestProjectPath() + syntax.fileInfo.fullPath();
     EXPECT_TRUE(fs::exists(outputPath)) << "Output file must already exist";
@@ -950,9 +950,7 @@ TEST_F(DeclManagerTest, SaveDeclarationWithoutFileInfoThrows)
         GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::TestDecl, "newdecl/0"));
 
     // Sabotage the decl to ensure an empty file name
-    auto syntax = decl->getBlockSyntax();
-    syntax.fileInfo = vfs::FileInfo(TEST_DECL_FOLDER, "", vfs::Visibility::NORMAL);
-    decl->setBlockSyntax(syntax);
+    decl->setFileInfo(vfs::FileInfo(TEST_DECL_FOLDER, "", vfs::Visibility::NORMAL));
 
     // Saving a decl without file info needs to throw
     EXPECT_THROW(GlobalDeclarationManager().saveDeclaration(decl), std::invalid_argument);
@@ -1016,6 +1014,20 @@ TEST_F(DeclManagerTest, SaveExistingDeclWithMixedCaseTypename)
     expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
 
     // The test fixture will restore the original file contents in TearDown
+}
+
+TEST_F(DeclManagerTest, SetDeclFileInfo)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/3");
+
+    decl->setFileInfo(vfs::FileInfo("materials/", "testfile.mtr", vfs::Visibility::HIDDEN));
+
+    EXPECT_EQ(decl->getBlockSyntax().fileInfo.name, "testfile.mtr");
+    EXPECT_EQ(decl->getBlockSyntax().fileInfo.topDir, "materials/");
+    EXPECT_EQ(decl->getBlockSyntax().fileInfo.visibility, vfs::Visibility::HIDDEN);
 }
 
 }

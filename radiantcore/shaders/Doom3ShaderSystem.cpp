@@ -316,15 +316,18 @@ std::string Doom3ShaderSystem::ensureNonConflictingName(const std::string& name)
 
 MaterialPtr Doom3ShaderSystem::createEmptyMaterial(const std::string& name)
 {
+    // Find a non-conflicting name and create an empty declaration
     auto candidate = ensureNonConflictingName(name);
+    auto decl = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Material, name);
 
+#if 0
     // Create a new template/definition
     auto shaderTemplate = std::make_shared<ShaderTemplate>(candidate, "");
 
     ShaderDefinition def{ shaderTemplate, vfs::FileInfo("", "", vfs::Visibility::HIDDEN) };
 
     _library->addDefinition(candidate, def);
-
+#endif
     auto material = _library->findShader(candidate);
     material->setIsModified();
 

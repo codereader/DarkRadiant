@@ -81,6 +81,11 @@ public:
         return _declBlock.fileInfo.fullPath();
     }
 
+    void setFileInfo(const vfs::FileInfo& fileInfo) override
+    {
+        _declBlock.fileInfo = fileInfo;
+    }
+
     std::size_t getParseStamp() const final
     {
         return _parseStamp;

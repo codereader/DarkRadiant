@@ -61,6 +61,9 @@ public:
     // Returns the mod-relative path to the file this decl has been declared in
     virtual std::string getDeclFilePath() const = 0;
 
+    // Sets the file info as contained in the block syntax
+    virtual void setFileInfo(const vfs::FileInfo& fileInfo) = 0;
+
     // Returns the value of the internally used parse epoch counter
     virtual std::size_t getParseStamp() const = 0;
 

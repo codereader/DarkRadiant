@@ -45,8 +45,7 @@ public:
 	void setFilename(const std::string& filename) override
 	{
         auto syntax = getBlockSyntax();
-        syntax.fileInfo = vfs::FileInfo(syntax.fileInfo.topDir, filename, vfs::Visibility::NORMAL);
-        setBlockSyntax(syntax);
+        setFileInfo(vfs::FileInfo(syntax.fileInfo.topDir, filename, vfs::Visibility::NORMAL));
 	}
 
 	// Clears stage and depth hack information

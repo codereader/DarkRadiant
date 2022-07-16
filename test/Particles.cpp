@@ -263,12 +263,11 @@ inline particles::IParticleDef::Ptr createParticleFromSource(const std::string& 
 // Filename is the leaf name, relative to the particles/ folder
 inline void setParticleFilename(const particles::IParticleDef::Ptr& decl, const std::string& filename)
 {
-    auto syntax = decl->getBlockSyntax();
-    syntax.fileInfo = vfs::FileInfo("particles/", filename, vfs::Visibility::NORMAL);
-    decl->setBlockSyntax(syntax);
+    auto fileInfo = vfs::FileInfo("particles/", filename, vfs::Visibility::NORMAL);
+    decl->setFileInfo(fileInfo);
 
     // Legacy invocation
-    decl->setFilename(os::getFilename(syntax.fileInfo.fullPath()));
+    decl->setFilename(os::getFilename(fileInfo.fullPath()));
 }
 
 inline void expectParticleIsPresentInFile(const particles::IParticleDef::Ptr& decl, const std::string& path, bool expectPresent)
