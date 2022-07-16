@@ -40,12 +40,15 @@ private:
     // and will be regenerated before a call to getSyntaxBlock() returns.
     bool _syntaxBlockInvalidated;
 
-public:
+protected:
     EditableDeclaration(decl::Type type, const std::string& name) :
         DeclarationBase<DeclarationInterface>(type, name),
         _syntaxBlockInvalidated(false)
     {}
 
+    EditableDeclaration(const EditableDeclaration<DeclarationInterface>& other) = default;
+
+public:
     const DeclarationBlockSyntax& getBlockSyntax() override
     {
         // In case the contents have been invalidated, acquire the new source text

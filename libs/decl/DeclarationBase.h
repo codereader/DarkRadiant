@@ -45,6 +45,8 @@ protected:
         _parsed(false)
     {}
 
+    DeclarationBase(const DeclarationBase<DeclarationInterface>& other) = default;
+
 public:
     const std::string& getDeclName() const final
     {

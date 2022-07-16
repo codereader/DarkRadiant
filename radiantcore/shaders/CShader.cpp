@@ -346,14 +346,12 @@ void CShader::setShaderFileName(const std::string& fullPath)
         throw std::invalid_argument("The file extension must be " + extension);
     }
 
-    _fileInfo.topDir = materialsFolder;
-    _fileInfo.name = pathRelativeToMaterialsFolder;
-    _fileInfo.visibility = vfs::Visibility::NORMAL;
+    _template->setFileInfo(vfs::FileInfo(materialsFolder, pathRelativeToMaterialsFolder, vfs::Visibility::NORMAL));
 }
 
 const vfs::FileInfo& CShader::getShaderFileInfo() const
 {
-    return _fileInfo;
+    return _template->getBlockSyntax().fileInfo;
 }
 
 std::string CShader::getDefinition()
