@@ -1016,6 +1016,26 @@ TEST_F(DeclManagerTest, SaveExistingDeclWithMixedCaseTypename)
     // The test fixture will restore the original file contents in TearDown
 }
 
+// Looks like this: testdecl decl/numbers/5 { // a comment in the same line as the opening brace
+TEST_F(DeclManagerTest, SaveExistingDeclWithCommentInTheSameLine)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/5"));
+
+    // Swap some contents of this decl
+    decl->setKeyValue("diffusemap", "textures/changed/5");
+
+    // Save, then it should be present in the file
+    GlobalDeclarationManager().saveDeclaration(decl);
+
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // The test fixture will restore the original file contents in TearDown
+}
+
 TEST_F(DeclManagerTest, SetDeclFileInfo)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
