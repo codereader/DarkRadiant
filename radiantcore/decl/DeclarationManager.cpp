@@ -451,7 +451,7 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
 
         // Write the file to the output stream, up to the point the decl should be written to
         // The typename is optional and compared case-sensitively
-        std::regex pattern("^[\\s]*(" + typeName + "[\\s]+" + decl->getDeclName() + "|" + decl->getDeclName() + ")\\s*\\{*\\s*$", 
+        std::regex pattern("^[\\s]*(" + typeName + "[\\s]+" + decl->getDeclName() + "|" + decl->getDeclName() + ")\\s*\\{*.*$", 
             std::regex_constants::icase);
 
         SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, pattern);

@@ -1036,6 +1036,27 @@ TEST_F(DeclManagerTest, SaveExistingDeclWithCommentInTheSameLine)
     // The test fixture will restore the original file contents in TearDown
 }
 
+// Decl looks like this: testdecl decl/numbers/6 { diffusemap textures/numbers/6 }
+TEST_F(DeclManagerTest, SaveExistingDeclWithEverythingInASingleLine)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/6"));
+
+    // Swap some contents of this decl
+    decl->setKeyValue("diffusemap", "textures/changed/6");
+    decl->setKeyValue("bumpmap", "textures/whatever/6");
+
+    // Save, then it should be present in the file
+    GlobalDeclarationManager().saveDeclaration(decl);
+
+    expectDeclIsPresentInFile(decl, decl->getBlockSyntax().fileInfo.fullPath(), true);
+
+    // The test fixture will restore the original file contents in TearDown
+}
+
 TEST_F(DeclManagerTest, SetDeclFileInfo)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
