@@ -1,5 +1,5 @@
 #include "CShader.h"
-#include "Doom3ShaderSystem.h"
+#include "MaterialManager.h"
 #include "MapExpression.h"
 
 #include "iregistry.h"

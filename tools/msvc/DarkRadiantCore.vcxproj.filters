@@ -346,9 +346,6 @@
     <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderLayer.cpp">
       <Filter>src\shaders</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderSystem.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\shaders\MapExpression.cpp">
       <Filter>src\shaders</Filter>
     </ClCompile>
@@ -1147,6 +1144,9 @@
     <ClCompile Include="..\..\radiantcore\decl\DeclarationFolderParser.cpp">
       <Filter>src\decl</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\shaders\MaterialManager.cpp">
+      <Filter>src\shaders</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -1363,9 +1363,6 @@
       <Filter>src\shaders</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderLayer.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderSystem.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\MapExpression.h">
@@ -2360,6 +2357,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\decl\DeclarationFolderParser.h">
       <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\shaders\MaterialManager.h">
+      <Filter>src\shaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

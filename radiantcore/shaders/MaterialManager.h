@@ -13,10 +13,10 @@ namespace shaders
 
 /**
  * \brief
- * Implementation of the MaterialManager for Doom 3 .
+ * Implementation of the IMaterialManager for Doom 3 .
  */
 class Doom3ShaderSystem :
-	public MaterialManager
+	public IMaterialManager
 {
 	// The shaderlibrary stores all the known templates
 	// as well as the active shaders
@@ -30,8 +30,6 @@ class Doom3ShaderSystem :
 
 	// Flag to indicate whether the active shaders callback should be invoked
 	bool _enableActiveUpdates;
-
-	bool _realised;
 
     sigc::signal<void, const std::string&> _sigMaterialCreated;
     sigc::signal<void, const std::string&, const std::string&> _sigMaterialRenamed;

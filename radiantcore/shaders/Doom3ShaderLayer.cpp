@@ -1,5 +1,5 @@
 #include "Doom3ShaderLayer.h"
-#include "Doom3ShaderSystem.h"
+#include "MaterialManager.h"
 #include "SoundMapExpression.h"
 #include "VideoMapExpression.h"
 #include "CameraCubeMapDecl.h"

@@ -477,7 +477,7 @@ constexpr const char* const MODULE_SHADERSYSTEM = "MaterialManager";
  * The material manager parses all of the MTR declarations and provides access
  * to Material objects representing the loaded materials.
  */
-class MaterialManager
+class IMaterialManager
 : public RegisterableModule
 {
 public:
@@ -589,8 +589,8 @@ public:
     virtual ITableDefinition::Ptr getTable(const std::string& name) = 0;
 };
 
-inline MaterialManager& GlobalMaterialManager()
+inline IMaterialManager& GlobalMaterialManager()
 {
-	static module::InstanceReference<MaterialManager> _reference(MODULE_SHADERSYSTEM);
+	static module::InstanceReference<IMaterialManager> _reference(MODULE_SHADERSYSTEM);
 	return _reference;
 }

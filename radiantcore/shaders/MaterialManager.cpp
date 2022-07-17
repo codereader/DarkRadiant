@@ -1,4 +1,4 @@
-#include "Doom3ShaderSystem.h"
+#include "MaterialManager.h"
 #include "MaterialSourceGenerator.h"
 
 #include "i18n.h"

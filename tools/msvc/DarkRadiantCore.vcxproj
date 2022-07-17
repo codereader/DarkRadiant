@@ -704,9 +704,9 @@
     <ClCompile Include="..\..\radiantcore\shaders\CameraCubeMapDecl.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\CShader.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderLayer.cpp" />
-    <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ExpressionSlots.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\MapExpression.cpp" />
+    <ClCompile Include="..\..\radiantcore\shaders\MaterialManager.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\MaterialSourceGenerator.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ShaderExpression.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ShaderLibrary.cpp" />
@@ -1092,9 +1092,9 @@
     <ClInclude Include="..\..\radiantcore\shaders\CameraCubeMapDecl.h" />
     <ClInclude Include="..\..\radiantcore\shaders\CShader.h" />
     <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderLayer.h" />
-    <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderSystem.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ExpressionSlots.h" />
     <ClInclude Include="..\..\radiantcore\shaders\MapExpression.h" />
+    <ClInclude Include="..\..\radiantcore\shaders\MaterialManager.h" />
     <ClInclude Include="..\..\radiantcore\shaders\MaterialSourceGenerator.h" />
     <ClInclude Include="..\..\radiantcore\shaders\NamedBindable.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderExpression.h" />
