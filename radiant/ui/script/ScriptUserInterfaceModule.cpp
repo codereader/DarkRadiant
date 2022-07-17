@@ -45,7 +45,7 @@ public:
 	void initialiseModule(const IApplicationContext& ctx) override
 	{
 		// Bind the reloadscripts command to the menu
-        GlobalMenuManager().insert("main/file/refreshShaders", 	// menu location path
+        GlobalMenuManager().insert("main/file/reloadDecls", 	// menu location path
 			"ReloadScripts", // name
 			menu::ItemType::Item,	// type
 			_("Reload Scripts"),	// caption

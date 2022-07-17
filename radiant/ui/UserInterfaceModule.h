@@ -59,6 +59,7 @@ private:
 	sigc::connection _entitySettingsConn;
 	sigc::connection _coloursUpdatedConn;
     sigc::connection _mapEditModeChangedConn;
+    sigc::connection _reloadMaterialsConn;
 
 	std::size_t _execFailedListener;
 	std::size_t _notificationListener;

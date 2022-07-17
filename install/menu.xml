@@ -25,7 +25,6 @@
 		<menuItem name="reloadDecls" caption="Reload Declarations" command="ReloadDecls" />
 		<menuItem name="refreshModels" caption="&amp;Reload Models" command="RefreshModels" icon="model16red.png" />
 		<menuItem name="refreshSelectedModels" caption="Reload Selected Models" command="RefreshSelectedModels" icon="model16red.png" />
-		<menuItem name="refreshShaders" caption="Reload Materials" command="RefreshShaders" icon="texwindow_flushandreload.png" />
 		<menuItem name="reloadParticles" caption="Reload Particles" command="ReloadParticles" icon="particle16.png" />
 		<menuSeparator />
 		<menuItem name="gameSelector" caption="&amp;Game/Project Setup..." command="ProjectSettings" />
