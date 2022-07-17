@@ -16,11 +16,11 @@ namespace shaders { class MapExpression; }
 namespace shaders
 {
 
-class IShaderDefinition :
+class IShaderTemplate :
     public decl::IDeclaration
 {
 public:
-    virtual ~IShaderDefinition() {}
+    virtual ~IShaderTemplate() {}
 };
 
 /**
@@ -29,7 +29,7 @@ public:
  * internally, for later use by a CShader.
  */
 class ShaderTemplate final :
-    public decl::EditableDeclaration<IShaderDefinition>
+    public decl::EditableDeclaration<IShaderTemplate>
 {
 private:
 	static const int SORT_UNDEFINED = -99999;	// undefined sort number, will be replaced after parsing
@@ -104,13 +104,6 @@ public:
     std::string _renderBumpArguments;
     std::string _renderBumpFlatArguments;
 
-	// Raw material declaration
-	//std::string _blockContents;
-    //bool _blockContentsNeedUpdate;
-
-	// Whether the block has been parsed
-	//bool _parsed;
-
     int _parseFlags;
 
     // The string value specified by the guisurf keyword, if other than entity[2]3]
@@ -124,16 +117,12 @@ public:
 
 public:
 
-    ShaderTemplate(const std::string& name) :
-        ShaderTemplate(name, "")
-    {}
-
     /**
      * \brief
      * Construct a ShaderTemplate.
      */
-	ShaderTemplate(const std::string& name, const std::string& blockContents) :
-        decl::EditableDeclaration<shaders::IShaderDefinition>(decl::Type::Material, name),
+	ShaderTemplate(const std::string& name) :
+        decl::EditableDeclaration<IShaderTemplate>(decl::Type::Material, name),
         _name(name),
         _currentLayer(new Doom3ShaderLayer(*this)),
         _suppressChangeSignal(false),

@@ -1097,7 +1097,6 @@
     <ClInclude Include="..\..\radiantcore\shaders\MapExpression.h" />
     <ClInclude Include="..\..\radiantcore\shaders\MaterialSourceGenerator.h" />
     <ClInclude Include="..\..\radiantcore\shaders\NamedBindable.h" />
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderDefinition.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderExpression.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderLibrary.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderTemplate.h" />

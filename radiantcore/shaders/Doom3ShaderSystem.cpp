@@ -9,7 +9,6 @@
 #include "ifiletypes.h"
 #include "igame.h"
 
-#include "ShaderDefinition.h"
 #include "ShaderExpression.h"
 
 #include "debugging/ScopedDebugTimer.h"

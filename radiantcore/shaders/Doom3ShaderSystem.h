@@ -18,7 +18,7 @@ namespace shaders
 class Doom3ShaderSystem :
 	public MaterialManager
 {
-	// The shaderlibrary stores all the known shaderdefinitions
+	// The shaderlibrary stores all the known templates
 	// as well as the active shaders
 	ShaderLibraryPtr _library;
 

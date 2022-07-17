@@ -25,7 +25,7 @@ namespace shaders
 {
 
 ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
-    decl::EditableDeclaration<shaders::IShaderDefinition>(other),
+    decl::EditableDeclaration<shaders::IShaderTemplate>(other),
     _name(other._name),
     _currentLayer(new Doom3ShaderLayer(*this)),
     _suppressChangeSignal(false),

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ShaderDefinition.h"
+#include "ShaderTemplate.h"
 #include <sigc++/connection.h>
 #include <memory>
 

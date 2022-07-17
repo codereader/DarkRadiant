@@ -20,7 +20,7 @@ namespace {
 namespace shaders
 {
 
-/* Constructor. Sets the name and the ShaderDefinition to use.
+/* Constructor. Sets the name and the ShaderTemplate to use.
  */
 CShader::CShader(const std::string& name, const ShaderTemplate::Ptr& declaration) :
     CShader(name, declaration, false)

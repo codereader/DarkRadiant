@@ -4,27 +4,17 @@
 #include <map>
 #include <memory>
 #include "CShader.h"
+#include "string/string.h"
 
 namespace shaders
 {
 
 class ShaderLibrary
 {
-	// The shader definitions act as precursor for a real shader
-	// These are referenced by name.
-	ShaderDefinitionMap _definitions;
-
 	typedef std::map<std::string, CShaderPtr, string::ILess> ShaderMap;
     ShaderMap _shaders;
 
-    std::unique_ptr<ShaderDefinition> _emptyDefinition;
-
 public:
-
-	/* greebo: Add a shader definition to the internal list
-	 * @returns: FALSE, if such a name already exists, TRUE otherwise
-	 */
-	bool addDefinition(const std::string& name, const ShaderDefinition& def);
 
 	/* greebo: Trys to lookup the named shader definition and returns
 	 * its reference. Always returns a valid reference.
@@ -45,15 +35,9 @@ public:
     // Removes the named definition. The name must be present in the library.
     void removeDefinition(const std::string& name);
 
-    // Returns an empty definition, just enough to construct a shader from it
-    ShaderDefinition& getEmptyDefinition();
-
 	/* greebo: Clears out all internal containers (definitions, tables, shaders)
 	 */
 	void clear();
-
-	// Get the number of known shaders
-	std::size_t getNumDefinitions();
 
 	/* greebo: Retrieves the shader with the given name.
 	 *
