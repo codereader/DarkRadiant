@@ -113,9 +113,6 @@ void ParticlesManager::initialiseModule(const IApplicationContext& ctx)
     GlobalDeclarationManager().registerDeclType("particle", std::make_shared<decl::DeclarationCreator<ParticleDef>>(decl::Type::Particle));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Particle, PARTICLES_DIR, PARTICLES_EXT);
 
-	// Register the "ReloadParticles" commands
-	GlobalCommandSystem().addCommand("ReloadParticles", std::bind(&ParticlesManager::reloadParticleDefs, this));
-
 	// Register the particle file extension
 	GlobalFiletypes().registerPattern("particle", FileTypePattern(_("Particle File"), "prt", "*.prt"));
 
@@ -127,11 +124,6 @@ void ParticlesManager::initialiseModule(const IApplicationContext& ctx)
 void ParticlesManager::shutdownModule()
 {
     _defsReloadedConn.disconnect();
-}
-
-void ParticlesManager::reloadParticleDefs()
-{
-    GlobalDeclarationManager().reloadDeclarations();
 }
 
 void ParticlesManager::saveParticleDef(const std::string& particleName)

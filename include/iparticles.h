@@ -196,21 +196,6 @@ public:
 	 * throws a std::runtime_error on any failure.
 	 */
 	virtual void saveParticleDef(const std::string& particle) = 0;
-
-	/**
-     * \brief
-     * Force the particles manager to reload all particle definitions from the
-     * .prt files.
-     *
-     * Any existing references to IParticleDefs will remain valid, but their
-     * contents might change.  Anything sensitive to these changes (like the
-     * renderable particles) should connect to the particles reloaded signal.
-	 *
-     * If particle defs are removed from the .prt files, the corresponding
-     * IParticleDef instance will remain in memory, but will be empty after
-     * reload.
-	 */
-	virtual void reloadParticleDefs() = 0;
 };
 
 } // namespace

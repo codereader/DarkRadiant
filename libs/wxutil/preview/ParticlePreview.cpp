@@ -64,7 +64,7 @@ ParticlePreview::ParticlePreview(wxWindow* parent) :
 	_reloadButton = toolbar->AddTool(TOOL_REFRESH, "", 
 		wxutil::GetLocalBitmap("refresh.png", wxART_TOOLBAR));
     _reloadButton->SetShortHelp(_("Reload Particle Defs"));
-    IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
+    IEventPtr ev = GlobalEventManager().findEvent("ReloadDecls");
 	ev->connectToolItem(_reloadButton);
 
 	toolbar->Realize();
@@ -74,7 +74,7 @@ ParticlePreview::ParticlePreview(wxWindow* parent) :
 
 ParticlePreview::~ParticlePreview()
 {
-	IEventPtr ev = GlobalEventManager().findEvent("ReloadParticles");
+	IEventPtr ev = GlobalEventManager().findEvent("ReloadDecls");
 	ev->disconnectToolItem(_reloadButton);
 }
 

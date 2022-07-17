@@ -34,8 +34,6 @@ public:
     IRenderableParticlePtr getRenderableParticle(const std::string& name) override;
     IParticleNodePtr createParticleNode(const std::string& name) override;
 
-	void reloadParticleDefs() override;
-
 	void saveParticleDef(const std::string& particle) override;
 
 	// RegisterableModule implementation
