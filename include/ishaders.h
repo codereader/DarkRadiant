@@ -484,28 +484,7 @@ public:
   // NOTE: shader and texture names used must be full path.
   // Shaders usable as textures have prefix equal to getTexturePrefix()
 
-  virtual void realise() = 0;
-  virtual void unrealise() = 0;
   virtual void refresh() = 0;
-
-	/** Determine whether the shader system is realised. This may be used
-	 * by components which need to ensure the shaders are realised before
-	 * they start trying to display them.
-	 *
-	 * @returns
-	 * true if the shader system is realised, false otherwise
-	 */
-	virtual bool isRealised() = 0;
-
-	// Signal which is invoked when the materials defs have been parsed
-	// Note that the DEF files might be parsed in a separate thread so
-	// any call acquiring material info might need to block and wait for
-	// that background call to finish before it can yield results.
-	virtual sigc::signal<void>& signal_DefsLoaded() = 0;
-
-	// Signal invoked when the material defs have been unloaded due
-	// to a filesystem or other configuration change
-	virtual sigc::signal<void>& signal_DefsUnloaded() = 0;
 
 	/**
      * \brief Return the shader with the given name. The default shader will be

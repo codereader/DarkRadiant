@@ -61,7 +61,6 @@ class OpenGLRenderSystem final
 	sigc::signal<void> _sigExtensionsInitialised;
 
 	sigc::connection _materialDefsLoaded;
-	sigc::connection _materialDefsUnloaded;
 	sigc::connection _sharedContextCreated;
 	sigc::connection _sharedContextDestroyed;
 

@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ui/imainframe.h"
+#include "ideclmanager.h"
 #include "imap.h"
 #include "ui/igroupdialog.h"
 #include "ipreferencesystem.h"
@@ -201,15 +202,13 @@ void MediaBrowser::initialiseModule(const IApplicationContext& ctx)
 		sigc::mem_fun(*this, &MediaBrowser::onMainFrameConstructed)
 	);
 
-	// Attach to the MaterialManager to get notified on unrealise/realise
-	// events, in which case we're reloading the media tree
-	_materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
-		sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsLoaded)
-	);
+    // Attach to the DeclarationManager to get notified on unrealise/realise
+    // events, in which case we're reloading the media tree
+    _materialDefsLoaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
+        .connect(sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsLoaded));
 
-	_materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
-		sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsUnloaded)
-	);
+    _materialDefsUnloaded = GlobalDeclarationManager().signal_DeclsReloading(decl::Type::Material)
+        .connect(sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsUnloaded));
 
 	_shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
 		sigc::mem_fun(this, &MediaBrowser::onShaderClipboardSourceChanged)

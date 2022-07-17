@@ -2,19 +2,12 @@
 #include "MaterialSourceGenerator.h"
 
 #include "i18n.h"
-#include "iradiant.h"
 #include "ideclmanager.h"
 
 #include "iregistry.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
-#include "ipreferencesystem.h"
-#include "iradiant.h"
 #include "igame.h"
-#include "iarchive.h"
-
-#include "xmlutil/Node.h"
-#include "xmlutil/MissingXMLNodeException.h"
 
 #include "ShaderDefinition.h"
 #include "ShaderExpression.h"
@@ -22,15 +15,9 @@
 #include "debugging/ScopedDebugTimer.h"
 #include "module/StaticModule.h"
 
-#include "os/file.h"
-#include "os/path.h"
-#include "decl/SpliceHelper.h"
 #include "decl/DeclarationCreator.h"
 #include "stream/TemporaryOutputStream.h"
-#include "string/predicate.h"
-#include "string/replace.h"
 #include "materials/ParseLib.h"
-#include "parser/DefBlockTokeniser.h"
 #include <functional>
 
 namespace
@@ -52,61 +39,19 @@ namespace shaders
 {
 
 Doom3ShaderSystem::Doom3ShaderSystem() :
-    _enableActiveUpdates(true),
-    _realised(false)
+    _enableActiveUpdates(true)
 {}
 
 void Doom3ShaderSystem::construct()
 {
     _library = std::make_shared<ShaderLibrary>();
     _textureManager = std::make_shared<GLTextureManager>();
-
-    // Register this class as VFS observer
-    GlobalFileSystem().addObserver(*this);
 }
 
 void Doom3ShaderSystem::destroy()
 {
-    // De-register this class as VFS Observer
-    GlobalFileSystem().removeObserver(*this);
-
-    // Free the shaders if we're in realised state
-    if (_realised)
-    {
-        freeShaders();
-    }
-
     // Don't destroy the GLTextureManager, it's called from
     // the CShader destructors.
-}
-
-void Doom3ShaderSystem::realise()
-{
-    if (!_realised)
-    {
-        _signalDefsLoaded.emit();
-        _realised = true;
-    }
-}
-
-void Doom3ShaderSystem::unrealise()
-{
-    if (_realised)
-    {
-        _signalDefsUnloaded.emit();
-        freeShaders();
-        _realised = false;
-    }
-}
-
-void Doom3ShaderSystem::onFileSystemInitialise()
-{
-    realise();
-}
-
-void Doom3ShaderSystem::onFileSystemShutdown()
-{
-    unrealise();
 }
 
 void Doom3ShaderSystem::freeShaders() {
@@ -116,28 +61,8 @@ void Doom3ShaderSystem::freeShaders() {
 }
 
 void Doom3ShaderSystem::refresh() {
-    unrealise();
-    realise();
 }
 
-// Is the shader system realised
-bool Doom3ShaderSystem::isRealised()
-{
-    // Don't report true until we have at least some definitions loaded
-    return _realised && _library->getNumDefinitions() > 0;
-}
-
-sigc::signal<void>& Doom3ShaderSystem::signal_DefsLoaded()
-{
-    return _signalDefsLoaded;
-}
-
-sigc::signal<void>& Doom3ShaderSystem::signal_DefsUnloaded()
-{
-    return _signalDefsUnloaded;
-}
-
-// Return a shader by name
 MaterialPtr Doom3ShaderSystem::getMaterial(const std::string& name)
 {
     return _library->findShader(name);
@@ -365,90 +290,6 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
 
     // Write the declaration to disk
     GlobalDeclarationManager().saveDeclaration(material->getTemplate());
-
-#if 0
-    if (material->getShaderFileInfo().fullPath().empty())
-    {
-        throw std::runtime_error("No file path set on this material, cannot save.");
-    }
-
-    // Construct the output path for this material
-    fs::path outputPath = GlobalGameManager().getModPath();
-
-    if (outputPath.empty())
-    {
-        outputPath = GlobalGameManager().getUserEnginePath();
-    }
-
-    outputPath /= material->getShaderFileInfo().fullPath();
-
-    auto outputDir = os::getDirectory(outputPath.string());
-    if (!os::fileOrDirExists(outputDir))
-    {
-        rMessage() << "Creating mod materials path: " << outputDir << std::endl;
-        fs::create_directories(outputDir);
-    }
-
-    rMessage() << "Saving material " << material->getName() << " to " << outputPath << std::endl;
-
-    stream::TemporaryOutputStream tempStream(outputPath);
-
-    std::string tempString;
-    auto& stream = tempStream.getStream();
-
-    // If a previous file exists, open it for reading and filter out the material def we'll be writing
-    if (fs::exists(outputPath))
-    {
-        std::ifstream inheritStream(outputPath);
-
-        if (!inheritStream.is_open())
-        {
-            throw std::runtime_error(
-                fmt::format(_("Cannot open file for reading: {0}"), outputPath.string()));
-        }
-
-        // Write the file to the output stream, up to the point the material def should be written to
-        std::regex pattern(getDeclNamePatternForMaterialName(material->getName()));
-
-        decl::SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, pattern);
-
-        if (inheritStream.eof())
-        {
-            // Material declaration was not found in the inherited stream, write our comment
-            stream << std::endl << std::endl;
-
-            MaterialSourceGenerator::WriteMaterialGenerationComment(stream);
-        }
-
-        // We're at the insertion point (which might as well be EOF of the inheritStream)
-
-        // Write the name, curly braces and block contents
-        MaterialSourceGenerator::WriteFullMaterialToStream(stream, material);
-
-        stream << inheritStream.rdbuf();
-
-        inheritStream.close();
-    }
-    else
-    {
-        // File is empty, just write the comment and the declaration
-        MaterialSourceGenerator::WriteMaterialGenerationComment(stream);
-        MaterialSourceGenerator::WriteFullMaterialToStream(stream, material);
-    }
-
-    tempStream.closeAndReplaceTargetFile();
-
-    // Store the modifications in our actual template and un-mark the file
-    material->commitModifications();
-
-    // Update the template in our library
-    // Re-acquire the vfs::FileInfo structure which might still be empty for a newly created material
-    _library->replaceDefinition(material->getName(), ShaderDefinition
-    {
-        material->getTemplate(),
-        GlobalFileSystem().getFileInfo(material->getShaderFileInfo().fullPath())
-    });
-#endif
 }
 
 ITableDefinition::Ptr Doom3ShaderSystem::getTable(const std::string& name)
@@ -487,7 +328,6 @@ void Doom3ShaderSystem::initialiseModule(const IApplicationContext& ctx)
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "materials/", ".mtr");
 
     construct();
-    realise();
 
 #if 0
     testShaderExpressionParsing();
@@ -663,7 +503,8 @@ void Doom3ShaderSystem::shutdownModule()
     rMessage() << "Doom3ShaderSystem::shutdownModule called" << std::endl;
 
     destroy();
-    unrealise();
+    _library->clear();
+    _library.reset();
 }
 
 // Accessor function encapsulating the static shadersystem instance
