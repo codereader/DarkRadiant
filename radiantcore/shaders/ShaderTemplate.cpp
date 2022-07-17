@@ -1178,6 +1178,40 @@ bool ShaderTemplate::saveLayer()
     return true;
 }
 
+void ShaderTemplate::clear()
+{
+    _layers.clear();
+    _currentLayer.reset(new Doom3ShaderLayer(*this));
+
+    _suppressChangeSignal = false;
+    _lightFalloffCubeMapType = IShaderLayer::MapType::Map;
+    fogLight = false;
+    ambientLight = false;
+    blendLight = false;
+    _cubicLight = false;
+    _materialFlags = 0;
+    _cullType = Material::CULL_BACK;
+    _clampType = CLAMP_REPEAT;
+    _surfaceFlags = 0;
+    _surfaceType = Material::SURFTYPE_DEFAULT;
+    _deformType = Material::DEFORM_NONE;
+    _spectrum = 0;
+    _sortReq = SORT_UNDEFINED;	// will be set to default values after the shader has been parsed
+    _polygonOffset = 0.0f;
+    _coverage = Material::MC_UNDETERMINED;
+    _parseFlags = 0;
+    
+    _decalInfo.stayMilliSeconds = 0;
+    _decalInfo.fadeMilliSeconds = 0;
+    _decalInfo.startColour = Vector4(1, 1, 1, 1);
+    _decalInfo.endColour = Vector4(0, 0, 0, 0);
+}
+
+void ShaderTemplate::onBeginParsing()
+{
+    clear();
+}
+
 void ShaderTemplate::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     util::ScopedBoolLock parseLock(_suppressChangeSignal);
@@ -1436,6 +1470,14 @@ std::string ShaderTemplate::getRenderBumpFlatArguments()
 std::string ShaderTemplate::generateSyntax()
 {
     return MaterialSourceGenerator::GenerateDefinitionBlock(*this);
+}
+
+void ShaderTemplate::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
+{
+    // Don't call onTemplateChanged() since that is meant is to be used
+    // when the template is modified after parsing
+    // Just emit the template changed signal
+    _sigTemplateChanged.emit();
 }
 
 } // namespace

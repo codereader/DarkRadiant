@@ -123,7 +123,6 @@ public:
 	ShaderTemplate(const std::string& name) :
         decl::EditableDeclaration<IShaderTemplate>(decl::Type::Material, name),
         _name(name),
-        _currentLayer(new Doom3ShaderLayer(*this)),
         _suppressChangeSignal(false),
         _lightFalloffCubeMapType(IShaderLayer::MapType::Map),
         fogLight(false),
@@ -142,11 +141,10 @@ public:
         _coverage(Material::MC_UNDETERMINED),
         _parseFlags(0)
 	{
-		_decalInfo.stayMilliSeconds = 0;
-		_decalInfo.fadeMilliSeconds = 0;
-		_decalInfo.startColour = Vector4(1,1,1,1);
-		_decalInfo.endColour = Vector4(0,0,0,0);
+        clear();
 	}
+
+    void clear();
 
     // Clone a new instance from this template
     std::shared_ptr<ShaderTemplate> clone() const;
@@ -522,12 +520,16 @@ protected:
         return KeptDelimiters;
     }
 
+    void onBeginParsing() override;
+
     /**
      * Parse a Doom 3 material decl. This is the master parse function, it
      * returns no value but exceptions may be thrown at any stage of the
      * parsing.
      */
     void parseFromTokens(parser::DefTokeniser& tokeniser) override;
+
+    void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block) override;
 
     std::string generateSyntax() override;
 

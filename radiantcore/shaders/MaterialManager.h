@@ -15,7 +15,7 @@ namespace shaders
  * \brief
  * Implementation of the IMaterialManager for Doom 3 .
  */
-class Doom3ShaderSystem :
+class MaterialManager :
 	public IMaterialManager
 {
 	// The shaderlibrary stores all the known templates
@@ -35,8 +35,10 @@ class Doom3ShaderSystem :
     sigc::signal<void, const std::string&, const std::string&> _sigMaterialRenamed;
     sigc::signal<void, const std::string&> _sigMaterialRemoved;
 
+    sigc::connection _materialsReloadedSignal;
+
 public:
-	Doom3ShaderSystem();
+    MaterialManager();
 
 	// Flushes the shaders from memory and reloads the material files
     void refresh() override;
@@ -111,11 +113,13 @@ private:
 	void testShaderExpressionParsing();
 
     std::string ensureNonConflictingName(const std::string& name);
+
+    void onMaterialDefsReloaded();
 };
 
-typedef std::shared_ptr<Doom3ShaderSystem> Doom3ShaderSystemPtr;
+typedef std::shared_ptr<MaterialManager> MaterialManagerPtr;
 
-Doom3ShaderSystemPtr GetShaderSystem();
+MaterialManagerPtr GetShaderSystem();
 
 GLTextureManager& GetTextureManager();
 

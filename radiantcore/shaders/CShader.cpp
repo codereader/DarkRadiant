@@ -413,7 +413,10 @@ void CShader::realise() {
 	realiseLighting();
 }
 
-void CShader::unrealise() {
+void CShader::unrealise()
+{
+    _editorTexture.reset();
+    _texLightFalloff.reset();
 	unrealiseLighting();
 }
 
@@ -680,13 +683,6 @@ void CShader::refreshImageMaps()
     _texLightFalloff.reset();
 
     _sigMaterialModified.emit();
-}
-
-void CShader::saveDeclaration()
-{
-
-
-    
 }
 
 bool CShader::m_lightingEnabled = false;

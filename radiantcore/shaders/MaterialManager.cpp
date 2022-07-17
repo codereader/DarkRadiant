@@ -37,42 +37,42 @@ namespace
 namespace shaders
 {
 
-Doom3ShaderSystem::Doom3ShaderSystem() :
+MaterialManager::MaterialManager() :
     _enableActiveUpdates(true)
 {}
 
-void Doom3ShaderSystem::construct()
+void MaterialManager::construct()
 {
     _library = std::make_shared<ShaderLibrary>();
     _textureManager = std::make_shared<GLTextureManager>();
 }
 
-void Doom3ShaderSystem::destroy()
+void MaterialManager::destroy()
 {
     // Don't destroy the GLTextureManager, it's called from
     // the CShader destructors.
 }
 
-void Doom3ShaderSystem::freeShaders() {
+void MaterialManager::freeShaders() {
     _library->clear();
     _textureManager->checkBindings();
     activeShadersChangedNotify();
 }
 
-void Doom3ShaderSystem::refresh() {
+void MaterialManager::refresh() {
 }
 
-MaterialPtr Doom3ShaderSystem::getMaterial(const std::string& name)
+MaterialPtr MaterialManager::getMaterial(const std::string& name)
 {
     return _library->findShader(name);
 }
 
-bool Doom3ShaderSystem::materialExists(const std::string& name)
+bool MaterialManager::materialExists(const std::string& name)
 {
     return _library->definitionExists(name);
 }
 
-bool Doom3ShaderSystem::materialCanBeModified(const std::string& name)
+bool MaterialManager::materialCanBeModified(const std::string& name)
 {
     if (!_library->definitionExists(name))
     {
@@ -84,13 +84,13 @@ bool Doom3ShaderSystem::materialCanBeModified(const std::string& name)
     return fileInfo.name.empty() || fileInfo.getIsPhysicalFile();
 }
 
-void Doom3ShaderSystem::foreachShaderName(const ShaderNameCallback& callback)
+void MaterialManager::foreachShaderName(const ShaderNameCallback& callback)
 {
     // Pass the call to the Library
     _library->foreachShaderName(callback);
 }
 
-void Doom3ShaderSystem::setLightingEnabled(bool enabled)
+void MaterialManager::setLightingEnabled(bool enabled)
 {
     if (CShader::m_lightingEnabled != enabled)
     {
@@ -111,18 +111,18 @@ void Doom3ShaderSystem::setLightingEnabled(bool enabled)
     }
 }
 
-const char* Doom3ShaderSystem::getTexturePrefix() const
+const char* MaterialManager::getTexturePrefix() const
 {
     return TEXTURE_PREFIX;
 }
 
-GLTextureManager& Doom3ShaderSystem::getTextureManager()
+GLTextureManager& MaterialManager::getTextureManager()
 {
     return *_textureManager;
 }
 
 // Get default textures
-TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(IShaderLayer::Type type)
+TexturePtr MaterialManager::getDefaultInteractionTexture(IShaderLayer::Type type)
 {
     TexturePtr defaultTex;
 
@@ -144,12 +144,12 @@ TexturePtr Doom3ShaderSystem::getDefaultInteractionTexture(IShaderLayer::Type ty
     return defaultTex;
 }
 
-sigc::signal<void> Doom3ShaderSystem::signal_activeShadersChanged() const
+sigc::signal<void> MaterialManager::signal_activeShadersChanged() const
 {
     return _signalActiveShadersChanged;
 }
 
-void Doom3ShaderSystem::activeShadersChangedNotify()
+void MaterialManager::activeShadersChangedNotify()
 {
     if (_enableActiveUpdates)
     {
@@ -157,12 +157,12 @@ void Doom3ShaderSystem::activeShadersChangedNotify()
     }
 }
 
-void Doom3ShaderSystem::foreachMaterial(const std::function<void(const MaterialPtr&)>& func)
+void MaterialManager::foreachMaterial(const std::function<void(const MaterialPtr&)>& func)
 {
     _library->foreachShader(func);
 }
 
-TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename)
+TexturePtr MaterialManager::loadTextureFromFile(const std::string& filename)
 {
     // Remove any unused Textures before allocating new ones.
     _textureManager->checkBindings();
@@ -171,27 +171,27 @@ TexturePtr Doom3ShaderSystem::loadTextureFromFile(const std::string& filename)
     return _textureManager->getBinding(filename);
 }
 
-sigc::signal<void, const std::string&>& Doom3ShaderSystem::signal_materialCreated()
+sigc::signal<void, const std::string&>& MaterialManager::signal_materialCreated()
 {
     return _sigMaterialCreated;
 }
 
-sigc::signal<void, const std::string&, const std::string&>& Doom3ShaderSystem::signal_materialRenamed()
+sigc::signal<void, const std::string&, const std::string&>& MaterialManager::signal_materialRenamed()
 {
     return _sigMaterialRenamed;
 }
 
-sigc::signal<void, const std::string&>& Doom3ShaderSystem::signal_materialRemoved()
+sigc::signal<void, const std::string&>& MaterialManager::signal_materialRemoved()
 {
     return _sigMaterialRemoved;
 }
 
-IShaderExpression::Ptr Doom3ShaderSystem::createShaderExpressionFromString(const std::string& exprStr)
+IShaderExpression::Ptr MaterialManager::createShaderExpressionFromString(const std::string& exprStr)
 {
     return ShaderExpression::createFromString(exprStr);
 }
 
-std::string Doom3ShaderSystem::ensureNonConflictingName(const std::string& name)
+std::string MaterialManager::ensureNonConflictingName(const std::string& name)
 {
     auto candidate = name;
     auto i = 0;
@@ -204,7 +204,7 @@ std::string Doom3ShaderSystem::ensureNonConflictingName(const std::string& name)
     return candidate;
 }
 
-MaterialPtr Doom3ShaderSystem::createEmptyMaterial(const std::string& name)
+MaterialPtr MaterialManager::createEmptyMaterial(const std::string& name)
 {
     // Find a non-conflicting name and create an empty declaration
     auto candidate = ensureNonConflictingName(name);
@@ -218,7 +218,7 @@ MaterialPtr Doom3ShaderSystem::createEmptyMaterial(const std::string& name)
     return material;
 }
 
-bool Doom3ShaderSystem::renameMaterial(const std::string& oldName, const std::string& newName)
+bool MaterialManager::renameMaterial(const std::string& oldName, const std::string& newName)
 {
     auto result = _library->renameDefinition(oldName, newName);
 
@@ -230,7 +230,7 @@ bool Doom3ShaderSystem::renameMaterial(const std::string& oldName, const std::st
     return result;
 }
 
-void Doom3ShaderSystem::removeMaterial(const std::string& name)
+void MaterialManager::removeMaterial(const std::string& name)
 {
     if (!_library->definitionExists(name))
     {
@@ -243,7 +243,7 @@ void Doom3ShaderSystem::removeMaterial(const std::string& name)
     _sigMaterialRemoved.emit(name);
 }
 
-MaterialPtr Doom3ShaderSystem::copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy)
+MaterialPtr MaterialManager::copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy)
 {
     if (nameOfCopy.empty())
     {
@@ -269,7 +269,7 @@ MaterialPtr Doom3ShaderSystem::copyMaterial(const std::string& nameOfOriginal, c
     return material;
 }
 
-void Doom3ShaderSystem::saveMaterial(const std::string& name)
+void MaterialManager::saveMaterial(const std::string& name)
 {
     auto material = _library->findShader(name);
 
@@ -291,20 +291,20 @@ void Doom3ShaderSystem::saveMaterial(const std::string& name)
     GlobalDeclarationManager().saveDeclaration(material->getTemplate());
 }
 
-ITableDefinition::Ptr Doom3ShaderSystem::getTable(const std::string& name)
+ITableDefinition::Ptr MaterialManager::getTable(const std::string& name)
 {
     return std::static_pointer_cast<ITableDefinition>(
         GlobalDeclarationManager().findDeclaration(decl::Type::Table, name)
     );
 }
 
-const std::string& Doom3ShaderSystem::getName() const
+const std::string& MaterialManager::getName() const
 {
     static std::string _name(MODULE_SHADERSYSTEM);
     return _name;
 }
 
-const StringSet& Doom3ShaderSystem::getDependencies() const
+const StringSet& MaterialManager::getDependencies() const
 {
     static StringSet _dependencies
     {
@@ -318,13 +318,16 @@ const StringSet& Doom3ShaderSystem::getDependencies() const
     return _dependencies;
 }
 
-void Doom3ShaderSystem::initialiseModule(const IApplicationContext& ctx)
+void MaterialManager::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called" << std::endl;
 
     GlobalDeclarationManager().registerDeclType("table", std::make_shared<decl::DeclarationCreator<TableDefinition>>(decl::Type::Table));
     GlobalDeclarationManager().registerDeclType("material", std::make_shared<decl::DeclarationCreator<ShaderTemplate>>(decl::Type::Material));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "materials/", ".mtr");
+
+    _materialsReloadedSignal = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
+        .connect(sigc::mem_fun(this, &MaterialManager::onMaterialDefsReloaded));
 
     construct();
 
@@ -336,11 +339,22 @@ void Doom3ShaderSystem::initialiseModule(const IApplicationContext& ctx)
     GlobalFiletypes().registerPattern("material", FileTypePattern(_("Material File"), "mtr", "*.mtr"));
 }
 
+void MaterialManager::onMaterialDefsReloaded()
+{
+    _library->foreachShader([](const CShaderPtr& shader)
+    {
+        shader->unrealise();
+        shader->realise();
+        shader->refreshImageMaps();
+    });
+}
+
+
 // Horrible evil macro to avoid assertion failures if expr is NULL
 #define GET_EXPR_OR_RETURN expr = createShaderExpressionFromString(exprStr);\
                                   if (!expr) return;
 
-void Doom3ShaderSystem::testShaderExpressionParsing()
+void MaterialManager::testShaderExpressionParsing()
 {
     // Test a few things
     std::string exprStr = "3";
@@ -497,9 +511,9 @@ void Doom3ShaderSystem::testShaderExpressionParsing()
     rMessage() << "Expression " << exprStr << ": " << expr->getValue(0) << std::endl;
 }
 
-void Doom3ShaderSystem::shutdownModule()
+void MaterialManager::shutdownModule()
 {
-    rMessage() << "Doom3ShaderSystem::shutdownModule called" << std::endl;
+    rMessage() << "MaterialManager::shutdownModule called" << std::endl;
 
     destroy();
     _library->clear();
@@ -507,13 +521,13 @@ void Doom3ShaderSystem::shutdownModule()
 }
 
 // Accessor function encapsulating the static shadersystem instance
-Doom3ShaderSystemPtr GetShaderSystem()
+MaterialManagerPtr GetShaderSystem()
 {
     // Acquire the moduleptr from the module registry
     RegisterableModulePtr modulePtr(module::GlobalModuleRegistry().getModule(MODULE_SHADERSYSTEM));
 
     // static_cast it onto our shadersystem type
-    return std::static_pointer_cast<Doom3ShaderSystem>(modulePtr);
+    return std::static_pointer_cast<MaterialManager>(modulePtr);
 }
 
 GLTextureManager& GetTextureManager()
@@ -522,6 +536,6 @@ GLTextureManager& GetTextureManager()
 }
 
 // Static module instance
-module::StaticModuleRegistration<Doom3ShaderSystem> d3ShaderSystemModule;
+module::StaticModuleRegistration<MaterialManager> materialManagerModule;
 
 } // namespace shaders
