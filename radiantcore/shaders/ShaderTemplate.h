@@ -5,10 +5,9 @@
 
 #include "ishaders.h"
 #include "parser/DefTokeniser.h"
-#include "math/Vector3.h"
+#include "math/Vector4.h"
 #include "decl/EditableDeclaration.h"
 
-#include <map>
 #include <memory>
 
 namespace shaders { class MapExpression; }
@@ -554,13 +553,5 @@ private:
 	bool saveLayer();
     void determineCoverage();
 };
-
-/* TYPEDEFS */
-
-// Pointer to ShaderTemplate
-typedef std::shared_ptr<ShaderTemplate> ShaderTemplatePtr;
-
-// Map of named ShaderTemplates
-typedef std::map<std::string, ShaderTemplatePtr> ShaderTemplateMap;
 
 }

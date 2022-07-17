@@ -625,7 +625,7 @@ void CShader::commitModifications()
     _originalTemplate = _template;
 }
 
-const ShaderTemplatePtr& CShader::getTemplate()
+const ShaderTemplate::Ptr& CShader::getTemplate()
 {
     return _template;
 }

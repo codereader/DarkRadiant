@@ -154,7 +154,7 @@ public:
     void refreshImageMaps() override;
 
     // Returns the current template (including any modifications) of this material
-    const ShaderTemplatePtr& getTemplate();
+    const ShaderTemplate::Ptr& getTemplate();
 
     void saveDeclaration();
 
