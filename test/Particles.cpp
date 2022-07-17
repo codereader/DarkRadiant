@@ -532,4 +532,11 @@ TEST_F(ParticlesTest, SyntaxChangeStageParameterChange)
     });
 }
 
+// Acquiring a particle node with or without .prt as the name suffix
+TEST_F(ParticlesTest, AcquireParticleNode)
+{
+    EXPECT_TRUE(GlobalParticlesManager().createParticleNode("firefly_blue_in_pk4.prt"));
+    EXPECT_TRUE(GlobalParticlesManager().createParticleNode("firefly_blue_in_pk4"));
+}
+
 }

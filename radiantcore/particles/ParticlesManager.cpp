@@ -54,7 +54,7 @@ IParticleNodePtr ParticlesManager::createParticleNode(const std::string& name)
 		nameCleaned = nameCleaned.substr(0, nameCleaned.length() - 4);
 	}
 
-    auto def = getDefByName(name);
+    auto def = getDefByName(nameCleaned);
 
     if (!def)
     {
