@@ -161,6 +161,53 @@ TEST_F(CommandSystemTest, PassVectorArgs)
     ASSERT_EQ(rec.args.size(), 2);
     EXPECT_EQ(rec.args.at(0).getVector3(), Vector3(1, 4, -25));
     EXPECT_EQ(rec.args.at(1).getVector2(), Vector2(-5, 56.5));
+
+    // Parse a vector from a string
+    GlobalCommandSystem().execute("vectorCommand \"24 -8.5 0.0246\" \"18 256\"");
+    EXPECT_EQ(rec.runCount, 2);
+    ASSERT_EQ(rec.args.size(), 2);
+    EXPECT_EQ(rec.args.at(0).getVector3(), Vector3(24, -8.5, 0.0246));
+    EXPECT_EQ(rec.args.at(1).getVector2(), Vector2(18, 256));
+}
+
+TEST_F(CommandSystemTest, AcceptDoubleAsIntArg)
+{
+    TestCommandReceiver rec("intCmd");
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(rec.name));
+    GlobalCommandSystem().addCommand(rec.name, [&](const cmd::ArgumentList& a) { rec(a); },
+                                     {cmd::ARGTYPE_INT});
+
+    // Double is accepted as an int if it is rounded to an int already
+    GlobalCommandSystem().executeCommand(rec.name, 2.0);
+    EXPECT_EQ(rec.runCount, 1);
+    ASSERT_EQ(rec.args.size(), 1);
+    EXPECT_EQ(rec.args.at(0).getDouble(), 2.0);
+    EXPECT_EQ(rec.args.at(0).getInt(), 2);
+
+    // Double which is not an integer value does not trigger the command
+    GlobalCommandSystem().executeCommand(rec.name, 2.9);
+    EXPECT_EQ(rec.runCount, 1);
+    GlobalCommandSystem().executeCommand(rec.name, 2.6);
+    EXPECT_EQ(rec.runCount, 1);
+    GlobalCommandSystem().executeCommand(rec.name, 26.0);
+    EXPECT_EQ(rec.runCount, 2);
+}
+
+TEST_F(CommandSystemTest, AcceptIntAsDoubleArg)
+{
+    TestCommandReceiver rec("doubleCmd");
+    ASSERT_FALSE(GlobalCommandSystem().commandExists(rec.name));
+    GlobalCommandSystem().addCommand(rec.name, [&](const cmd::ArgumentList& a) { rec(a); },
+                                     {cmd::ARGTYPE_DOUBLE});
+
+    // Every int is a valid double
+    GlobalCommandSystem().executeCommand(rec.name, 3829);
+    EXPECT_EQ(rec.runCount, 1);
+    EXPECT_EQ(rec.args.at(0).getDouble(), 3829);
+    EXPECT_EQ(rec.args.at(0).getInt(), 3829);
+
+    GlobalCommandSystem().executeCommand(rec.name, -2);
+    EXPECT_EQ(rec.args.at(0).getDouble(), -2);
 }
 
 TEST_F(CommandSystemTest, AddCheckedCommand)
