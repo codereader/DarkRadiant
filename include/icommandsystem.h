@@ -25,7 +25,13 @@ enum ArgumentTypeFlags
 	ARGTYPE_OPTIONAL	= 1 << 16,
 };
 
-// One command argument, provides several getter methods
+/**
+ * @brief A single command argument which may be of several different types.
+ *
+ * The argument maintains a list of type flags which indicate which types this argument may be
+ * interpreted as. For example, an argument constructed from an integer may also be interpreted as
+ * a double, so will have both ARGTYPE_INT and ARGTYPE_DOUBLE.
+ */
 class Argument
 {
 	std::string _strValue;

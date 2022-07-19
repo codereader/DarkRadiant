@@ -5,6 +5,49 @@ namespace test
 
 using CommandSystemTest = RadiantTest;
 
+TEST_F(CommandSystemTest, ConstructVoidArg)
+{
+    cmd::Argument voidArg;
+
+    EXPECT_EQ(voidArg.getType(), cmd::ARGTYPE_VOID);
+    EXPECT_EQ(voidArg.getInt(), 0);
+    EXPECT_EQ(voidArg.getDouble(), 0);
+    EXPECT_EQ(voidArg.getString(), "");
+}
+
+TEST_F(CommandSystemTest, ConstructIntArg)
+{
+    cmd::Argument intArg(357);
+
+    EXPECT_EQ(intArg.getType(), cmd::ARGTYPE_INT | cmd::ARGTYPE_DOUBLE);
+    EXPECT_EQ(intArg.getInt(), 357);
+    EXPECT_EQ(intArg.getDouble(), 357.0);
+    EXPECT_EQ(intArg.getString(), "357");
+}
+
+TEST_F(CommandSystemTest, ConstructStringArg)
+{
+    cmd::Argument stringArg("arbitrary string");
+
+    EXPECT_EQ(stringArg.getType(), cmd::ARGTYPE_STRING);
+    EXPECT_EQ(stringArg.getString(), "arbitrary string");
+
+    // String should be interpreted as numeric if possible
+    cmd::Argument intStringArg("81924");
+    EXPECT_EQ(intStringArg.getType(),
+              cmd::ARGTYPE_STRING | cmd::ARGTYPE_INT | cmd::ARGTYPE_DOUBLE);
+    EXPECT_EQ(intStringArg.getDouble(), 81924.0);
+    EXPECT_EQ(intStringArg.getInt(), 81924);
+    EXPECT_EQ(intStringArg.getString(), "81924");
+}
+
+TEST_F(CommandSystemTest, ConstructVectorArg)
+{
+    cmd::Argument v2Arg(Vector2(123, -8.6));
+    EXPECT_EQ(v2Arg.getType(), cmd::ARGTYPE_VECTOR2);
+    EXPECT_EQ(v2Arg.getVector2(), Vector2(123, -8.6));
+}
+
 TEST_F(CommandSystemTest, GetCommandSystem)
 {
     const auto& mod = GlobalCommandSystem();
