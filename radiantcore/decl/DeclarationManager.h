@@ -9,6 +9,7 @@
 #include "string/string.h"
 
 #include "DeclarationFile.h"
+#include "DeclarationFolderParser.h"
 
 namespace decl
 {
@@ -43,6 +44,8 @@ private:
 
         // If not empty, holds the running parser
         std::unique_ptr<DeclarationFolderParser> parser;
+
+        std::future<void> parserFinisher;
     };
 
     // One entry for each decl
@@ -57,6 +60,9 @@ private:
 
     std::size_t _parseStamp = 0;
     bool _reparseInProgress = false;
+
+    // Holds the results during reparseDeclarations
+    std::vector<std::pair<Type, ParseResult>> _parseResults;
 
 public:
     void registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& parser) override;
@@ -77,11 +83,11 @@ public:
     void initialiseModule(const IApplicationContext& ctx) override;
     void shutdownModule() override;
 
-    // Invoked once a parser thread has finished. It will move its data over to here.
-    void onParserFinished(Type parserType,
-        std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks);
+    // Invoked once a parser thread has finished (results are moved to here)
+    void onParserFinished(Type parserType, ParseResult&& parsedBlocks);
 
 private:
+    void processParseResult(Type parserType, ParseResult& parsedBlocks);
     void runParsersForAllFolders();
     void waitForTypedParsersToFinish();
 
@@ -89,7 +95,7 @@ private:
     // Stores the determined type in the given reference.
     std::map<std::string, Type, string::ILess> getTypenameMapping();
     bool tryDetermineBlockType(const DeclarationBlockSyntax& block, Type& type);
-    void processParsedBlocks(std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks);
+    void processParsedBlocks(ParseResult& parsedBlocks);
 
     // Requires the creatorsMutex and the declarationMutex to be locked
     const IDeclaration::Ptr& createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block);

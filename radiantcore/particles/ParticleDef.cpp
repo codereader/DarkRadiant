@@ -157,7 +157,7 @@ void ParticleDef::parseFromTokens(parser::DefTokeniser& tokeniser)
     }
 }
 
-void ParticleDef::onParsingFinished()
+void ParticleDef::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
 {
     _changedSignal.emit();
 }

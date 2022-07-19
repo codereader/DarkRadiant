@@ -78,7 +78,7 @@ public:
 protected:
     void onBeginParsing() override;
 	void parseFromTokens(parser::DefTokeniser& tok) override;
-    void onParsingFinished() override;
+    void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block) override;
 
     std::string generateSyntax() override;
 

@@ -10,6 +10,8 @@ namespace decl
 
 class DeclarationManager;
 
+using ParseResult = std::map<Type, std::vector<DeclarationBlockSyntax>>;
+
 // Threaded parser processing all files in the configured decl folder
 // Submits all parsed declarations to the IDeclarationManager when finished
 class DeclarationFolderParser :
@@ -22,7 +24,7 @@ private:
     std::map<std::string, Type, string::ILess> _typeMapping;
 
     // Holds all the identified blocks of all visited files
-    std::map<Type, std::vector<DeclarationBlockSyntax>> _parsedBlocks;
+    ParseResult _parsedBlocks;
 
     // The default type to assign to untyped blocks
     Type _defaultDeclType;

@@ -206,6 +206,14 @@ void DeclarationManager::reloadDeclarations()
 
     runParsersForAllFolders();
 
+    // Process the buffered results synchronously
+    for (auto& [type, result] : _parseResults)
+    {
+        processParseResult(type, result);
+    }
+
+    _parseResults.clear();
+
     // Empty all declarations that haven't been touched during this reparse run
     {
         std::lock_guard declLock(_declarationLock);
@@ -495,8 +503,48 @@ void DeclarationManager::emitDeclsReloadedSignal(Type type, bool async)
     }
 }
 
-void DeclarationManager::onParserFinished(Type parserType, 
-    std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)
+void DeclarationManager::onParserFinished(Type parserType, ParseResult&& parsedBlocks)
+{
+    if (_reparseInProgress)
+    {
+        // In the reparse scenario the results are processed synchronously
+        // so buffer everything and let the reloadDeclarations() method
+        // assign the blocks in the thread that started it.
+        _parseResults.emplace_back(parserType, parsedBlocks);
+    }
+    else
+    {
+        // When not reloading, process the result immediately
+        processParseResult(parserType, parsedBlocks);
+    }
+
+    // Move the parser reference out and wait for it to finish. Once the parser is gone,
+    // the public API will be available to any callbacks the decls reloaded signal
+    // is going to invoke. Since we're already on the parser thread
+    // itself here, we need to do this on a separate thread to avoid deadlocks
+    {
+        std::lock_guard declLock(_declarationLock);
+
+        auto decls = _declarationsByType.find(parserType);
+        assert(decls != _declarationsByType.end());
+
+        // Move the parser reference from the dictionary as capture to the lambda
+        // Then let the unique_ptr in the lambda go out of scope to finish the thread
+        // Lambda is mutable to make the unique_ptr member non-const
+        decls->second.parserFinisher = std::async(std::launch::async, [p = std::move(decls->second.parser)]() mutable
+        {
+            p.reset();
+        });
+    }
+
+    if (!_reparseInProgress)
+    {
+        // Emit the signal on the same thread
+        emitDeclsReloadedSignal(parserType, false);
+    }
+}
+
+void DeclarationManager::processParseResult(Type parserType, ParseResult& parsedBlocks)
 {
     // Sort all parsed blocks into our main dictionary
     // unrecognised blocks will be pushed to _unrecognisedBlocks
@@ -504,13 +552,9 @@ void DeclarationManager::onParserFinished(Type parserType,
 
     // Process the list of unrecognised blocks (from this and any previous run)
     handleUnrecognisedBlocks();
-
-    // Invoke the declsReloaded signal for this type on a new thread
-    // to allow clients to use the API without deadlocking
-    emitDeclsReloadedSignal(parserType, true);
 }
 
-void DeclarationManager::processParsedBlocks(std::map<Type, std::vector<DeclarationBlockSyntax>>& parsedBlocks)
+void DeclarationManager::processParsedBlocks(ParseResult& parsedBlocks)
 {
     std::lock_guard declLock(_declarationLock);
     std::lock_guard creatorLock(_creatorLock);
