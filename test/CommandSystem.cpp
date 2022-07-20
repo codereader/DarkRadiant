@@ -39,13 +39,42 @@ TEST_F(CommandSystemTest, ConstructStringArg)
     EXPECT_EQ(intStringArg.getDouble(), 81924.0);
     EXPECT_EQ(intStringArg.getInt(), 81924);
     EXPECT_EQ(intStringArg.getString(), "81924");
+
+    // Integers are interpreted with stoi(), which does not fail on floating point values but
+    // ignores everything after the decimal point.
+    cmd::Argument fltStringArg("34.2570");
+    EXPECT_EQ(fltStringArg.getType(),
+              cmd::ARGTYPE_STRING | cmd::ARGTYPE_INT | cmd::ARGTYPE_DOUBLE);
+    EXPECT_EQ(fltStringArg.getDouble(), 34.257);
+    EXPECT_EQ(fltStringArg.getInt(), 34);
+    EXPECT_EQ(fltStringArg.getString(), "34.2570");
 }
 
 TEST_F(CommandSystemTest, ConstructVectorArg)
 {
+    // Vector2
     cmd::Argument v2Arg(Vector2(123, -8.6));
     EXPECT_EQ(v2Arg.getType(), cmd::ARGTYPE_VECTOR2);
     EXPECT_EQ(v2Arg.getVector2(), Vector2(123, -8.6));
+
+    // Vector3
+    cmd::Argument v3Arg(Vector3(-18, 0.56, 1.25));
+    EXPECT_EQ(v3Arg.getType(), cmd::ARGTYPE_VECTOR3);
+    EXPECT_EQ(v3Arg.getVector3(), Vector3(-18, 0.56, 1.25));
+
+    // Vectors can also be constructed from strings
+    cmd::Argument v2Str("18 -20");
+    EXPECT_EQ(v2Str.getType(),
+              cmd::ARGTYPE_STRING | cmd::ARGTYPE_VECTOR2 | cmd::ARGTYPE_INT | cmd::ARGTYPE_DOUBLE);
+    EXPECT_EQ(v2Str.getVector2(), Vector2(18, -20));
+
+    cmd::Argument v3Str("6 8 0.12");
+    EXPECT_EQ(
+        v3Str.getType(),
+        cmd::ARGTYPE_STRING | cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_VECTOR2 | cmd::ARGTYPE_INT
+                            | cmd::ARGTYPE_DOUBLE
+    );
+    EXPECT_EQ(v3Str.getVector3(), Vector3(6, 8, 0.12));
 }
 
 TEST_F(CommandSystemTest, GetCommandSystem)
