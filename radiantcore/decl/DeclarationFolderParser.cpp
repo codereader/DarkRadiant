@@ -66,7 +66,7 @@ void DeclarationFolderParser::parse(std::istream& stream, const vfs::FileInfo& f
 void DeclarationFolderParser::onFinishParsing()
 {
     // Submit all parsed declarations to the decl manager
-    _owner.onParserFinished(_defaultDeclType, std::move(_parsedBlocks));
+    _owner.onParserFinished(_defaultDeclType, _parsedBlocks);
 }
 
 Type DeclarationFolderParser::determineBlockType(const DeclarationBlockSyntax& block)

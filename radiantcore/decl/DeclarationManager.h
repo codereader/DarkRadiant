@@ -83,8 +83,8 @@ public:
     void initialiseModule(const IApplicationContext& ctx) override;
     void shutdownModule() override;
 
-    // Invoked once a parser thread has finished (results are moved to here)
-    void onParserFinished(Type parserType, ParseResult&& parsedBlocks);
+    // Invoked once a parser thread has finished
+    void onParserFinished(Type parserType, ParseResult& parsedBlocks);
 
 private:
     void processParseResult(Type parserType, ParseResult& parsedBlocks);

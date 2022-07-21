@@ -164,11 +164,15 @@ void DeclarationManager::doWithDeclarations(Type type, const std::function<void(
     // Ensure the parser is done
     if (decls->second.parser)
     {
-        // Release the lock to give the thread a chance to finish
+        // Move the parser to prevent the parser thread from trying to do
+        // the same in onParserFinished
+        std::unique_ptr parser(std::move(decls->second.parser));
+
+        // Release the lock and let the thread finish
         declLock.reset();
 
-        decls->second.parser->ensureFinished(); // blocks
-        decls->second.parser.reset();
+        parser->ensureFinished(); // blocks
+        parser.reset();
 
         declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationLock);
     }
@@ -503,14 +507,15 @@ void DeclarationManager::emitDeclsReloadedSignal(Type type, bool async)
     }
 }
 
-void DeclarationManager::onParserFinished(Type parserType, ParseResult&& parsedBlocks)
+void DeclarationManager::onParserFinished(Type parserType, ParseResult& parsedBlocks)
 {
     if (_reparseInProgress)
     {
         // In the reparse scenario the results are processed synchronously
         // so buffer everything and let the reloadDeclarations() method
         // assign the blocks in the thread that started it.
-        _parseResults.emplace_back(parserType, parsedBlocks);
+        auto& pair = _parseResults.emplace_back(parserType, ParseResult());
+        pair.second.swap(parsedBlocks);
     }
     else
     {
@@ -528,13 +533,18 @@ void DeclarationManager::onParserFinished(Type parserType, ParseResult&& parsedB
         auto decls = _declarationsByType.find(parserType);
         assert(decls != _declarationsByType.end());
 
-        // Move the parser reference from the dictionary as capture to the lambda
-        // Then let the unique_ptr in the lambda go out of scope to finish the thread
-        // Lambda is mutable to make the unique_ptr member non-const
-        decls->second.parserFinisher = std::async(std::launch::async, [p = std::move(decls->second.parser)]() mutable
+        // Check if the parser reference is still there,
+        // it might have already been moved out in doWithDeclarations()
+        if (decls->second.parser)
         {
-            p.reset();
-        });
+            // Move the parser reference from the dictionary as capture to the lambda
+            // Then let the unique_ptr in the lambda go out of scope to finish the thread
+            // Lambda is mutable to make the unique_ptr member non-const
+            decls->second.parserFinisher = std::async(std::launch::async, [p = std::move(decls->second.parser)]() mutable
+            {
+                p.reset();
+            });
+        }
     }
 
     if (!_reparseInProgress)
