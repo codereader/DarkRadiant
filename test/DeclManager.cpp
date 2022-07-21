@@ -373,10 +373,17 @@ TEST_F(DeclManagerTest, DeclsReloadedSignals)
         [&]() { testdecl2sReloadingFired = true; }
     );
 
-    bool testdeclsReloadedFired = false;
+    auto callingThreadId = std::this_thread::get_id();
+    std::thread::id signalThreadId;
+
+    std::size_t testdeclsReloadedFireCount = 0;
     bool testdecl2sReloadedFired = false;
     GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::TestDecl).connect(
-        [&]() { testdeclsReloadedFired = true; }
+        [&]()
+        {
+            ++testdeclsReloadedFireCount;
+            signalThreadId = std::this_thread::get_id();
+        }
     );
     GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::TestDecl2).connect(
         [&]() { testdecl2sReloadedFired = true; }
@@ -384,12 +391,13 @@ TEST_F(DeclManagerTest, DeclsReloadedSignals)
 
     GlobalDeclarationManager().reloadDeclarations();
 
-    EXPECT_TRUE(algorithm::waitUntil([&]() { return testdeclsReloadedFired; })) << "Time out waiting for the flag";
-
     EXPECT_TRUE(testdeclsReloadingFired) << "testdecl signal should have fired before reloadDecls";
     EXPECT_TRUE(testdecl2sReloadingFired) << "testdecl2 signal should have fired before reloadDecls";
-    EXPECT_TRUE(testdeclsReloadedFired) << "testdecl signal should have fired after reloadDecls";
+    EXPECT_EQ(testdeclsReloadedFireCount, 1) << "testdecl signal should have fired once after reloadDecls";
     EXPECT_TRUE(testdecl2sReloadedFired) << "testdecl2 signal should have fired after reloadDecls";
+
+    // The signal has to be fire on the same thread as the calling code
+    EXPECT_EQ(callingThreadId, signalThreadId) << "Reloaded Signal should have been fired on the calling thread.";
 }
 
 TEST_F(DeclManagerTest, FindDeclaration)
