@@ -219,38 +219,32 @@ void DeclarationManager::reloadDeclarations()
     _parseResults.clear();
 
     // Empty all declarations that haven't been touched during this reparse run
+    std::lock_guard declLock(_declarationLock);
+
+    for (const auto& [_, namedDecls] : _declarationsByType)
     {
-        std::lock_guard declLock(_declarationLock);
-
-        for (const auto& [_, namedDecls] : _declarationsByType)
+        for (const auto& [name, decl] : namedDecls.decls)
         {
-            for (const auto& [name, decl] : namedDecls.decls)
+            if (decl->getParseStamp() < _parseStamp)
             {
-                if (decl->getParseStamp() < _parseStamp)
-                {
-                    rMessage() << "[DeclManager] " << getTypeName(decl->getDeclType()) << " " << 
-                        name << " no longer present after reloadDecls" << std::endl;
+                rMessage() << "[DeclManager] " << getTypeName(decl->getDeclType()) << " " << 
+                    name << " no longer present after reloadDecls" << std::endl;
 
-                    auto syntax = decl->getBlockSyntax();
+                auto syntax = decl->getBlockSyntax();
 
-                    // Clear name and file info
-                    syntax.contents.clear();
-                    syntax.fileInfo = vfs::FileInfo();
+                // Clear name and file info
+                syntax.contents.clear();
+                syntax.fileInfo = vfs::FileInfo();
 
-                    decl->setBlockSyntax(syntax);
-                }
+                decl->setBlockSyntax(syntax);
             }
         }
     }
 
     // Invoke the declsReloaded signal for all types
+    for (const auto& [type, _] : _declarationsByType)
     {
-        std::lock_guard declLock(_declarationLock);
-
-        for (const auto& [type, _] : _declarationsByType)
-        {
-            emitDeclsReloadedSignal(type, false);
-        }
+        emitDeclsReloadedSignal(type);
     }
 }
 
@@ -495,16 +489,9 @@ sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
     return _declsReloadedSignals.try_emplace(type).first->second;
 }
 
-void DeclarationManager::emitDeclsReloadedSignal(Type type, bool async)
+void DeclarationManager::emitDeclsReloadedSignal(Type type)
 {
-    if (async)
-    {
-        std::thread([this, type]() { signal_DeclsReloaded(type).emit(); }).detach();
-    }
-    else
-    {
-        signal_DeclsReloaded(type).emit();
-    }
+    signal_DeclsReloaded(type).emit();
 }
 
 void DeclarationManager::onParserFinished(Type parserType, ParseResult& parsedBlocks)
@@ -547,10 +534,11 @@ void DeclarationManager::onParserFinished(Type parserType, ParseResult& parsedBl
         }
     }
 
+    // In the reparse scenario the calling code will emit this signal
     if (!_reparseInProgress)
     {
-        // Emit the signal on the same thread
-        emitDeclsReloadedSignal(parserType, false);
+        // Emit the signal
+        emitDeclsReloadedSignal(parserType);
     }
 }
 
