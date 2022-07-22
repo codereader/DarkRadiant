@@ -664,6 +664,37 @@ TEST_F(DeclManagerTest, ReloadDeclarationsIncreasesParseStamp)
     EXPECT_NE(decl->getParseStamp(), firstParseStamp) << "Parse stamp should have changed on reload";
 }
 
+// A declaration that is removed after reloadDecls should have its visibility set to hidden
+TEST_F(DeclManagerTest, RemovedDeclarationIsHidden)
+{
+    TemporaryFile tempFile(_context.getTestProjectPath() + "testdecls/temp_file.decl");
+
+    tempFile.setContents(R"(
+testdecl   decl/temporary/11 { diffusemap textures/temporary/11 }
+testdecl    decl/temporary/12 { diffusemap textures/temporary/12 }
+)");
+
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/temporary/11");
+
+    // Remove decl/temporary/11
+    tempFile.setContents(R"(
+testdecl   decl/temporary/13 { diffusemap textures/temporary/13 }
+testdecl    decl/temporary/12 { diffusemap textures/temporary/12 }
+)");
+
+    GlobalDeclarationManager().reloadDeclarations();
+
+    // the decl decl/temporary/11 should be there, but hidden
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/temporary/11");
+
+    EXPECT_TRUE(decl) << "Declaration should still be registered after reloadDecls";
+    EXPECT_TRUE(decl->getBlockSyntax().contents.empty()) << "Declaration should be empty after reloadDecls";
+    EXPECT_EQ(decl->getBlockSyntax().fileInfo.visibility, vfs::Visibility::HIDDEN) << "Declaration should be hidden after reloadDecls";
+}
+
 TEST_F(DeclManagerTest, DeclarationPrecedence)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
