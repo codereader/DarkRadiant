@@ -599,7 +599,14 @@ bool DeclarationManager::tryDetermineBlockType(const DeclarationBlockSyntax& blo
 const IDeclaration::Ptr& DeclarationManager::createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block)
 {
     // Get the mapping for this decl type
-    auto& map = _declarationsByType.try_emplace(type, Declarations()).first->second.decls;
+    auto it = _declarationsByType.find(type);
+
+    if (it == _declarationsByType.end())
+    {
+        it = _declarationsByType.emplace(type, Declarations()).first;
+    }
+
+    auto& map = it->second.decls;
 
     // See if this decl is already in use
     auto existing = map.find(block.name);
