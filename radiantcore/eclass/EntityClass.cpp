@@ -47,6 +47,8 @@ vfs::Visibility EntityClass::determineVisibilityFromValues()
 
 vfs::Visibility EntityClass::getVisibility()
 {
+    ensureParsed();
+
     // File visibility overrides the setting in the entity key/value pairs
     return getBlockSyntax().fileInfo.visibility == vfs::Visibility::HIDDEN ?
         vfs::Visibility::HIDDEN : _visibility.get();
