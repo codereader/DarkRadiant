@@ -39,64 +39,64 @@ scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 	}
 
 	// Get the extension of this model
-	std::string type = actualModelPath.substr(actualModelPath.rfind(".") + 1);
+    auto extension = os::getExtension(actualModelPath);
 
-	if (type == "prt")
+	if (extension == "prt")
 	{
 		// This is a particle, pass the call to the Particles Manager
 		return GlobalParticlesManager().createParticleNode(actualModelPath);
 	}
 
 	// Get a suitable model loader
-	IModelImporterPtr modelLoader = GlobalModelFormatManager().getImporter(type);
+	auto modelLoader = GlobalModelFormatManager().getImporter(extension);
 
 	// Try to construct a model node using the suitable loader
 	auto node =  modelLoader->loadModel(actualModelPath);
 
-	if (node)
+    if (!node)
+    {
+        // The model load failed, let's return a NullModel
+        return loadNullModel(actualModelPath);
+    }
+
+    // Model load was successful
+	// For MD5 models, apply the idle animation by default
+	if (modelDef)
 	{
-		// For MD5 models, apply the idle animation by default
-		if (modelDef)
+		auto modelNode = Node_getModel(node);
+
+		if (!modelNode)
 		{
-			model::ModelNodePtr modelNode = Node_getModel(node);
-
-			if (!modelNode)
-			{
-				return node;
-			}
-
-			// Set the animation to play
-			try
-			{
-				md5::IMD5Model& md5model = dynamic_cast<md5::IMD5Model&>(modelNode->getIModel());
-
-				// Look up the "idle" anim if there is one
-				auto found = modelDef->getAnim("idle");
-
-				if (!found.empty())
-				{
-					// Load the anim
-					auto anim = GlobalAnimationCache().getAnim(found);
-
-					if (anim)
-					{
-						md5model.setAnim(anim);
-						md5model.updateAnim(0);
-					}
-				}
-			}
-			catch (std::bad_cast&)
-			{
-				// not an MD5 model, do nothing
-			}
+			return node;
 		}
 
-		// Model load was successful
-		return node;
+		// Set the animation to play
+		try
+		{
+			auto& md5model = dynamic_cast<md5::IMD5Model&>(modelNode->getIModel());
+
+			// Look up the "idle" anim if there is one
+			auto found = modelDef->getAnim("idle");
+
+			if (!found.empty())
+			{
+				// Load the anim
+				auto anim = GlobalAnimationCache().getAnim(found);
+
+				if (anim)
+				{
+					md5model.setAnim(anim);
+					md5model.updateAnim(0);
+				}
+			}
+		}
+		catch (std::bad_cast&)
+		{
+			// not an MD5 model, do nothing
+		}
 	}
 
-	// The model load failed, let's return a NullModel
-	return loadNullModel(actualModelPath);
+	return node;
 }
 
 IModelPtr ModelCache::getModel(const std::string& modelPath)
