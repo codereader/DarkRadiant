@@ -1079,7 +1079,8 @@ TEST_F(DeclManagerTest, SetDeclFileInfo)
     EXPECT_EQ(decl->getBlockSyntax().fileInfo.visibility, vfs::Visibility::HIDDEN);
 }
 
-TEST_F(DeclManagerTest, ChangedSignal)
+// Changed signal should fire on assigning a new syntax block
+TEST_F(DeclManagerTest, ChangedSignalOnSyntaxBlockChange)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
     GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
@@ -1095,6 +1096,24 @@ TEST_F(DeclManagerTest, ChangedSignal)
     decl->setBlockSyntax(syntax);
 
     EXPECT_EQ(changedSignalReceiveCount, 1) << "Changed signal should have fired once after assigning the syntax block";
+}
+
+// Change signal should fire when an EditableDeclaration is modified
+TEST_F(DeclManagerTest, ChangedSignalOnEdit)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<TestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/3"));
+
+    std::size_t changedSignalReceiveCount = 0;
+    decl->signal_DeclarationChanged().connect([&] { ++changedSignalReceiveCount; });
+
+    // Change the editable declaration
+    decl->setKeyValue("nork", "tork");
+
+    EXPECT_EQ(changedSignalReceiveCount, 1) << "Changed signal should have fired once after editing the decl";
 }
 
 }

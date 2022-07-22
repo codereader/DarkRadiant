@@ -69,6 +69,9 @@ protected:
     void onParsedContentsChanged()
     {
         _syntaxBlockInvalidated = true;
+
+        // Emit the changed signal of the base
+        DeclarationBase<DeclarationInterface>::signal_DeclarationChanged().emit();
     }
 
     // Should generate a new syntax block based on the current state of the instance.
