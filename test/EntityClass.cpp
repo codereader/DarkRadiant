@@ -450,6 +450,40 @@ entityDef aReplacementDef
     EXPECT_EQ(eclass->getVisibility(), vfs::Visibility::HIDDEN) << "entityDef should be hidden after reloadDecls";
 }
 
+TEST_F(EntityClassTest, VisibilityIsReevaluatedAfterReloadDecls)
+{
+    // Create a temporary DEF file
+    TemporaryFile tempFile(_context.getTestProjectPath() + "def/temporary_file.def");
+
+    tempFile.setContents(R"(
+entityDef changingVisibility
+{
+    "editor_visibility" "hidden"
+}
+)");
+
+    // Reload the decls to find the new entityDef
+    GlobalDeclarationManager().reloadDeclarations();
+
+    auto eclass = GlobalEntityClassManager().findClass("changingVisibility");
+    EXPECT_TRUE(eclass) << "Cannot find changingVisibility";
+    EXPECT_EQ(eclass->getVisibility(), vfs::Visibility::HIDDEN) << "Should be hidden";
+
+    // Change the visibility and reload
+    tempFile.setContents(R"(
+entityDef changingVisibility
+{
+    "editor_visibility" "visible"
+}
+)");
+
+    GlobalDeclarationManager().reloadDeclarations();
+
+    eclass = GlobalEntityClassManager().findClass("changingVisibility");
+    EXPECT_TRUE(eclass) << "Cannot find changingVisibility after reloadDecls";
+    EXPECT_EQ(eclass->getVisibility(), vfs::Visibility::NORMAL) << "Should be visible now";
+}
+
 TEST_F(EntityClassTest, GetAttributeValue)
 {
     auto eclass = GlobalEntityClassManager().findClass("attribute_type_test");
