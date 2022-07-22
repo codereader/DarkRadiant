@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <sigc++/signal.h>
 #include "imodule.h"
 #include "ifilesystem.h"
 #include "ModResource.h"
@@ -69,6 +70,10 @@ public:
 
     // Sets the internally used parse epoch counter 
     virtual void setParseStamp(std::size_t parseStamp) = 0;
+
+    // Fired when this declaration changed (i.e. as result of a reloadDecls
+    // operation or a change in an editor).
+    virtual sigc::signal<void>& signal_DeclarationChanged() = 0;
 };
 
 // Factory interface being able to create a single declaration type

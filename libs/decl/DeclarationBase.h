@@ -37,6 +37,8 @@ private:
 
     bool _parsed;
 
+    sigc::signal<void> _changedSignal;
+
 protected:
     DeclarationBase(decl::Type type, const std::string& name) :
         _name(name),
@@ -71,6 +73,8 @@ public:
         _parsed = false;
 
         onSyntaxBlockAssigned(_declBlock);
+
+        _changedSignal.emit();
     }
 
     std::string getModName() const final
@@ -96,6 +100,11 @@ public:
     void setParseStamp(std::size_t parseStamp) final
     {
         _parseStamp = parseStamp;
+    }
+
+    sigc::signal<void>& signal_DeclarationChanged() final
+    {
+        return _changedSignal;
     }
 
 protected:

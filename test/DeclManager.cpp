@@ -1079,4 +1079,22 @@ TEST_F(DeclManagerTest, SetDeclFileInfo)
     EXPECT_EQ(decl->getBlockSyntax().fileInfo.visibility, vfs::Visibility::HIDDEN);
 }
 
+TEST_F(DeclManagerTest, ChangedSignal)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/3");
+
+    std::size_t changedSignalReceiveCount = 0;
+    decl->signal_DeclarationChanged().connect([&] { ++changedSignalReceiveCount; });
+
+    // Assign a new syntax block, this should emit the signal
+    auto syntax = decl->getBlockSyntax();
+    syntax.contents += "\n";
+    decl->setBlockSyntax(syntax);
+
+    EXPECT_EQ(changedSignalReceiveCount, 1) << "Changed signal should have fired once after assigning the syntax block";
+}
+
 }
