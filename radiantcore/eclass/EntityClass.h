@@ -70,6 +70,7 @@ private:
 private:
     // Resolve inheritance for this class.
     void resolveInheritance();
+    vfs::Visibility determineVisibilityFromValues();
 
     // Clear all contents (done before parsing from tokens)
     void clear();

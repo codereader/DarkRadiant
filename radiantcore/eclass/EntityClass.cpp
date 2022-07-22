@@ -18,12 +18,7 @@ namespace
 
 EntityClass::EntityClass(const std::string& name)
 : DeclarationBase<IEntityClass>(decl::Type::EntityDef, name),
-  _visibility([this]() {
-      // Entity class visibility is NOT inherited -- hiding an abstract base entity from the list
-      // does not imply all of its concrete subclasses should also be hidden.
-      return getAttributeValue("editor_visibility", false) == "hidden" ? vfs::Visibility::HIDDEN
-                                                                       : vfs::Visibility::NORMAL;
-  }),
+  _visibility([this] { return determineVisibilityFromValues(); }),
   _colour(DefaultEntityColour),
   // greebo: Changed default behaviour when unknown entites are encountered to isFixedSize == FALSE
   // so that brushes of unknown classes don't get lost (issue #240)
@@ -40,6 +35,14 @@ IEntityClass* EntityClass::getParent()
     ensureParsed();
 
     return _parent;
+}
+
+vfs::Visibility EntityClass::determineVisibilityFromValues()
+{
+    // Entity class visibility is NOT inherited -- hiding an abstract base entity from the list
+    // does not imply all of its concrete subclasses should also be hidden.
+    return getAttributeValue("editor_visibility", false) == "hidden" ? 
+        vfs::Visibility::HIDDEN : vfs::Visibility::NORMAL;
 }
 
 vfs::Visibility EntityClass::getVisibility()
@@ -527,6 +530,9 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
 void EntityClass::onParsingFinished()
 {
     resolveInheritance();
+
+    // Reset the determined visibility, it might have changed
+    _visibility = Lazy<vfs::Visibility>([this] { return determineVisibilityFromValues(); });
 
     // Notify the observers
     emitChangedSignal();
