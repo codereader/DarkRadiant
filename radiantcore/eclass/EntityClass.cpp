@@ -44,7 +44,9 @@ IEntityClass* EntityClass::getParent()
 
 vfs::Visibility EntityClass::getVisibility()
 {
-    return _visibility.get();
+    // File visibility overrides the setting in the entity key/value pairs
+    return getBlockSyntax().fileInfo.visibility == vfs::Visibility::HIDDEN ?
+        vfs::Visibility::HIDDEN : _visibility.get();
 }
 
 sigc::signal<void>& EntityClass::changedSignal()
