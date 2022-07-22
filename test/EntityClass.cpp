@@ -10,6 +10,7 @@
 #include "algorithm/Entity.h"
 #include "algorithm/FileUtils.h"
 #include "algorithm/Scene.h"
+#include "testutil/TemporaryFile.h"
 
 namespace test
 {
@@ -411,6 +412,42 @@ TEST_F(EntityClassTest, EClassVisibilityIsNotInherited)
     auto funcStatic = GlobalEntityClassManager().findClass("func_static");
     ASSERT_TRUE(funcStatic);
     EXPECT_EQ(funcStatic->getVisibility(), vfs::Visibility::NORMAL);
+}
+
+TEST_F(EntityClassTest, RemovedEntityClassIsHidden)
+{
+    // Create a temporary DEF file
+    TemporaryFile tempFile(_context.getTestProjectPath() + "def/temporary_file.def");
+
+    tempFile.setContents(R"(
+entityDef someDefThatIsGoingToBeRemoved
+{
+    "groundlevel" "11"
+}
+)");
+
+    // Reload the decls to find the new entityDef
+    GlobalDeclarationManager().reloadDeclarations();
+
+    auto eclass = GlobalEntityClassManager().findClass("someDefThatIsGoingToBeRemoved");
+    EXPECT_TRUE(eclass) << "Cannot find someDefThatIsGoingToBeRemoved";
+
+    // Remove the def from the file
+    tempFile.setContents(R"(
+entityDef aReplacementDef
+{
+    "groundlevel" "11"
+}
+)");
+
+    GlobalDeclarationManager().reloadDeclarations();
+
+    // the decl "someDefThatIsGoingToBeRemoved" should be there, but hidden
+    eclass = GlobalEntityClassManager().findClass("someDefThatIsGoingToBeRemoved");
+
+    EXPECT_TRUE(eclass) << "entityDef should still be registered after reloadDecls";
+    EXPECT_TRUE(eclass->getBlockSyntax().contents.empty()) << "entityDef should be empty after reloadDecls";
+    EXPECT_EQ(eclass->getVisibility(), vfs::Visibility::HIDDEN) << "entityDef should be hidden after reloadDecls";
 }
 
 TEST_F(EntityClassTest, GetAttributeValue)
