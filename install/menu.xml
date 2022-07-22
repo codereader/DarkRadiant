@@ -22,7 +22,7 @@
 		<menuSeparator />
 		<menuItem name="ConvertModel" caption="Import/Convert Model..." command="ConvertModelDialog" />
 		<menuSeparator />
-		<menuItem name="reloadDecls" caption="Reload Declarations" command="ReloadDecls" />
+		<menuItem name="reloadDecls" caption="Reload Declarations" command="ReloadDecls" icon="reloaddecls.png" />
 		<menuItem name="refreshModels" caption="&amp;Reload Models" command="RefreshModels" icon="model16red.png" />
 		<menuItem name="refreshSelectedModels" caption="Reload Selected Models" command="RefreshSelectedModels" icon="model16red.png" />
 		<menuSeparator />
