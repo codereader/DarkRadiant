@@ -11,10 +11,10 @@ ScriptEntityClass EClassManagerInterface::findClass(const std::string& name)
 	return ScriptEntityClass(GlobalEntityClassManager().findClass(name));
 }
 
-IModelDef EClassManagerInterface::findModel(const std::string& name)
+ScriptModelDef EClassManagerInterface::findModel(const std::string& name)
 {
-	IModelDefPtr modelDef = GlobalEntityClassManager().findModel(name);
-	return (modelDef != NULL) ? *modelDef : _emptyModelDef;
+	auto modelDef = GlobalEntityClassManager().findModel(name);
+	return modelDef ? ScriptModelDef(*modelDef) : _emptyModelDef;
 }
 
 void EClassManagerInterface::forEachEntityClass(EntityClassVisitor& visitor)
@@ -24,7 +24,10 @@ void EClassManagerInterface::forEachEntityClass(EntityClassVisitor& visitor)
 
 void EClassManagerInterface::forEachModelDef(ModelDefVisitor& visitor)
 {
-	GlobalEntityClassManager().forEachModelDef(visitor);
+    GlobalEntityClassManager().forEachModelDef([&](const IModelDef::Ptr& model)
+    {
+        visitor.visit(model);
+    });
 }
 
 // IScriptInterface implementation
@@ -43,13 +46,13 @@ void EClassManagerInterface::registerInterface(py::module& scope, py::dict& glob
 	py::bind_map<IModelDef::Anims>(scope, "Anims");
 
 	// Add the declaration for a ModelDef
-	py::class_<IModelDef> modelDef(scope, "ModelDef");
+	py::class_<ScriptModelDef> modelDef(scope, "ModelDef");
 
-	modelDef.def_readonly("name", &IModelDef::name);
-	modelDef.def_readonly("mesh", &IModelDef::mesh);
-	modelDef.def_readonly("skin", &IModelDef::skin);
-	modelDef.def_readonly("parent", &IModelDef::parent);
-	modelDef.def_readonly("anims", &IModelDef::anims);
+	modelDef.def_readonly("name", &ScriptModelDef::name);
+	modelDef.def_readonly("mesh", &ScriptModelDef::mesh);
+	modelDef.def_readonly("skin", &ScriptModelDef::skin);
+	modelDef.def_readonly("parent", &ScriptModelDef::parent);
+	modelDef.def_readonly("anims", &ScriptModelDef::anims);
 
 	// Add the declaration for an EntityClass
 	py::class_<ScriptEntityClass> eclass(scope, "EntityClass");

@@ -677,7 +677,7 @@ void TextureBrowser::queueUpdate()
 void TextureBrowser::performUpdate()
 {
     // During startup the openGL module might not have created the font yet
-    if (!GlobalMaterialManager().isRealised() || GlobalOpenGL().getFontHeight() == 0)
+    if (GlobalOpenGL().getFontHeight() == 0)
     {
         return;
     }

@@ -114,6 +114,7 @@
     <ClInclude Include="..\..\include\icounter.h" />
     <ClInclude Include="..\..\include\icurve.h" />
     <ClInclude Include="..\..\include\idatastream.h" />
+    <ClInclude Include="..\..\include\ideclmanager.h" />
     <ClInclude Include="..\..\include\idecltypes.h" />
     <ClInclude Include="..\..\include\ieclass.h" />
     <ClInclude Include="..\..\include\ieclasscolours.h" />

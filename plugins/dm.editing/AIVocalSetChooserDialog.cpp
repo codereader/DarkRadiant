@@ -146,7 +146,7 @@ void AIVocalSetChooserDialog::handleSetSelectionChanged()
 			}
 
 			// Update the usage panel
-			_description->SetValue(eclass::getUsage(*ecls));
+			_description->SetValue(eclass::getUsage(ecls));
 		}
 	}
 	else
@@ -201,7 +201,7 @@ public:
 	{
 		if (eclass->getAttributeValue("editor_vocal_set") == "1")
 		{
-			_list.insert(eclass->getName());
+			_list.insert(eclass->getDeclName());
 		}
 	}
 };

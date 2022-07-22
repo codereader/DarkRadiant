@@ -1,0 +1,9 @@
+// Test declarations used for some DeclarationManager unit tests
+
+decl/exporttest/guisurf1
+{
+    guiSurf	guis/lvlmaps/genericmap.gui
+}
+
+testdecl2 decltable2 { { 0, 0, 0, 0, 1, 1 } }
+testdecl2 decltable3 { { 0, 0, 0, 0, 1, 1 } }

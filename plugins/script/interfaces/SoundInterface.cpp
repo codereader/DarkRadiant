@@ -35,7 +35,7 @@ void SoundManagerInterface::registerInterface(py::module& scope, py::dict& globa
 	// Add the declaration for a SoundShader
 	py::class_<ScriptSoundShader> shader(scope, "SoundShader");
 
-	shader.def(py::init<const ISoundShaderPtr&>());
+	shader.def(py::init<const ISoundShader::Ptr&>());
 	shader.def("isNull", &ScriptSoundShader::isNull);
 	shader.def("getName", &ScriptSoundShader::getName);
 	shader.def("getRadii", &ScriptSoundShader::getRadii);

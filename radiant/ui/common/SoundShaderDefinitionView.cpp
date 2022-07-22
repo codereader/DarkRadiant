@@ -34,17 +34,17 @@ bool SoundShaderDefinitionView::isEmpty() const
 
 std::string SoundShaderDefinitionView::getDeclName()
 {
-	return _shader ? _shader->getName() : std::string();
+	return _shader ? _shader->getDeclName() : std::string();
 }
 
 std::string SoundShaderDefinitionView::getDeclFileName()
 {
-	return _shader ? _shader->getShaderFilePath() : std::string();
+	return _shader ? _shader->getDeclFilePath() : std::string();
 }
 
 std::string SoundShaderDefinitionView::getDefinition()
 {
-	return _shader ? _shader->getDefinition() : std::string();
+	return _shader ? _shader->getBlockSyntax().contents : std::string();
 }
 
 }

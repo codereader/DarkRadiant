@@ -4,40 +4,22 @@
 #include <map>
 #include <memory>
 #include "CShader.h"
-#include "TableDefinition.h"
+#include "string/string.h"
 
 namespace shaders
 {
 
 class ShaderLibrary
 {
-	// The shader definitions act as precursor for a real shader
-	// These are referenced by name.
-	ShaderDefinitionMap _definitions;
-
 	typedef std::map<std::string, CShaderPtr, string::ILess> ShaderMap;
     ShaderMap _shaders;
 
-    // The lookup tables used in shader expressions
-    typedef std::map<std::string, TableDefinitionPtr, string::ILess> TableDefinitions;
-    TableDefinitions _tables;
-
-    std::unique_ptr<ShaderDefinition> _emptyDefinition;
-
 public:
-
-	/* greebo: Add a shader definition to the internal list
-	 * @returns: FALSE, if such a name already exists, TRUE otherwise
-	 */
-	bool addDefinition(const std::string& name, const ShaderDefinition& def);
 
 	/* greebo: Trys to lookup the named shader definition and returns
 	 * its reference. Always returns a valid reference.
 	 */
-	ShaderDefinition& getDefinition(const std::string& name);
-
-    // Updates the stored definition in the library with the given one
-    void replaceDefinition(const std::string& name, const ShaderDefinition& def);
+    std::shared_ptr<ShaderTemplate> getTemplate(const std::string& name);
 
 	/**
 	 * Returns true if the given shader definition exists.
@@ -48,20 +30,14 @@ public:
     void copyDefinition(const std::string& nameOfOriginal, const std::string& nameOfCopy);
 
     // Renames the definition oldName => newName. oldName must be present, newName must not be present
-    void renameDefinition(const std::string& oldName, const std::string& newName);
+    bool renameDefinition(const std::string& oldName, const std::string& newName);
 
     // Removes the named definition. The name must be present in the library.
     void removeDefinition(const std::string& name);
 
-    // Returns an empty definition, just enough to construct a shader from it
-    ShaderDefinition& getEmptyDefinition();
-
 	/* greebo: Clears out all internal containers (definitions, tables, shaders)
 	 */
 	void clear();
-
-	// Get the number of known shaders
-	std::size_t getNumDefinitions();
 
 	/* greebo: Retrieves the shader with the given name.
 	 *
@@ -74,12 +50,6 @@ public:
 
 	// Traverse the library using the given functor
 	void foreachShader(const std::function<void(const CShaderPtr&)>& func);
-
-    // Look up a table def, return NULL if not found
-    ITableDefinition::Ptr getTableForName(const std::string& name);
-
-    // Method for adding tables, returns FALSE if a def with the same name already exists
-    bool addTableDefinition(const TableDefinitionPtr& def);
 };
 typedef std::shared_ptr<ShaderLibrary> ShaderLibraryPtr;
 

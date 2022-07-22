@@ -1,0 +1,8 @@
+// Test declarations used for precedence tests
+
+// This one is ignored since a decl in the precedence_test1.decl has already been declared with this name
+// The file precedence_test1.decl is sorted before precedence_test2.decl, so it takes precedence
+decl/precedence_test/1
+{
+    diffusemap textures/numbers/3
+}

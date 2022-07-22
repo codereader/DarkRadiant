@@ -205,12 +205,9 @@ void StaticModelNode::skinChanged(const std::string& newSkinName)
     // The new skin name is stored locally
     _skin = newSkinName;
 
-    // greebo: Acquire the ModelSkin reference from the SkinCache
-    // Note: This always returns a valid reference
-    auto& skin = GlobalModelSkinCache().capture(_skin);
-
+    // greebo: Acquire the ModelSkin reference from the SkinCache (might return null)
     // Applying the skin might trigger onModelShadersChanged()
-    _model->applySkin(skin);
+    _model->applySkin(GlobalModelSkinCache().findSkin(_skin));
 
     // Refresh the scene (TODO: get rid of that)
     GlobalSceneGraph().sceneChanged();

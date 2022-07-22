@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iimage.h"
+#include "ideclmanager.h"
 #include "imodule.h"
 #include "ifilesystem.h"
 #include <sigc++/signal.h>
@@ -455,21 +456,19 @@ inline std::ostream& operator<< (std::ostream& os, const Material* m)
 typedef std::function<void(const std::string&)> ShaderNameCallback;
 
 // Represents a table declaration in the .mtr files
-class ITableDefinition
+class ITableDefinition :
+    public decl::IDeclaration
 {
 public:
     using Ptr = std::shared_ptr<ITableDefinition>;
 
     virtual ~ITableDefinition() {}
 
-    // The name of this table
-    virtual const std::string& getName() const = 0;
-
     // Retrieve a value from this table, respecting the clamp and snap flags
     virtual float getValue(float index) = 0;
 };
 
-const char* const MODULE_SHADERSYSTEM = "MaterialManager";
+constexpr const char* const MODULE_SHADERSYSTEM = "MaterialManager";
 
 /**
  * \brief
@@ -478,35 +477,14 @@ const char* const MODULE_SHADERSYSTEM = "MaterialManager";
  * The material manager parses all of the MTR declarations and provides access
  * to Material objects representing the loaded materials.
  */
-class MaterialManager
+class IMaterialManager
 : public RegisterableModule
 {
 public:
   // NOTE: shader and texture names used must be full path.
   // Shaders usable as textures have prefix equal to getTexturePrefix()
 
-  virtual void realise() = 0;
-  virtual void unrealise() = 0;
   virtual void refresh() = 0;
-
-	/** Determine whether the shader system is realised. This may be used
-	 * by components which need to ensure the shaders are realised before
-	 * they start trying to display them.
-	 *
-	 * @returns
-	 * true if the shader system is realised, false otherwise
-	 */
-	virtual bool isRealised() = 0;
-
-	// Signal which is invoked when the materials defs have been parsed
-	// Note that the DEF files might be parsed in a separate thread so
-	// any call acquiring material info might need to block and wait for
-	// that background call to finish before it can yield results.
-	virtual sigc::signal<void>& signal_DefsLoaded() = 0;
-
-	// Signal invoked when the material defs have been unloaded due
-	// to a filesystem or other configuration change
-	virtual sigc::signal<void>& signal_DefsUnloaded() = 0;
 
 	/**
      * \brief Return the shader with the given name. The default shader will be
@@ -607,16 +585,12 @@ public:
     // If the path is not writable or the material is not suitable for saving, this will throw an exception
     virtual void saveMaterial(const std::string& name) = 0;
 
-    // Creates a named, internal material for debug/testing etc.
-    // Used by shaders without corresponding material declaration, like entity wireframe shaders
-    virtual MaterialPtr createDefaultMaterial(const std::string& name) = 0;
-
     // Tries to find the named table, returns an empty reference if nothing found
     virtual ITableDefinition::Ptr getTable(const std::string& name) = 0;
 };
 
-inline MaterialManager& GlobalMaterialManager()
+inline IMaterialManager& GlobalMaterialManager()
 {
-	static module::InstanceReference<MaterialManager> _reference(MODULE_SHADERSYSTEM);
+	static module::InstanceReference<IMaterialManager> _reference(MODULE_SHADERSYSTEM);
 	return _reference;
 }

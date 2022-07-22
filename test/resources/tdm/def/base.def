@@ -215,6 +215,21 @@ entityDef fixed_size_entity
 	"spawnclass"					"idStaticEntity"
 }
 
+// The editor_mins/maxs set to "?" make this a non-fixed-size entity class
+entityDef variable_size_entity 
+{
+	"editor_color"					"1 1 0"
+	"editor_mins"					"?"
+	"editor_maxs"					"?"
+
+	"spawnclass"					"idStaticEntity"
+}
+
+entityDef derived_from_variable_size_entity 
+{
+	"inherit"					"variable_size_entity"
+}
+
 entityDef eclass_with_usage_attribute
 {
 	"editor_usage"					"Moveable barrel. Works just like a func_moveable. However the barrel"

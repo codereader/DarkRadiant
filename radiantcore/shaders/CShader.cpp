@@ -1,5 +1,5 @@
 #include "CShader.h"
-#include "Doom3ShaderSystem.h"
+#include "MaterialManager.h"
 #include "MapExpression.h"
 
 #include "iregistry.h"
@@ -20,17 +20,16 @@ namespace {
 namespace shaders
 {
 
-/* Constructor. Sets the name and the ShaderDefinition to use.
+/* Constructor. Sets the name and the ShaderTemplate to use.
  */
-CShader::CShader(const std::string& name, const ShaderDefinition& definition) :
-    CShader(name, definition, false)
+CShader::CShader(const std::string& name, const ShaderTemplate::Ptr& declaration) :
+    CShader(name, declaration, false)
 {}
 
-CShader::CShader(const std::string& name, const ShaderDefinition& definition, bool isInternal) :
+CShader::CShader(const std::string& name, const ShaderTemplate::Ptr& declaration, bool isInternal) :
     _isInternal(isInternal),
-    _originalTemplate(definition.shaderTemplate),
-    _template(definition.shaderTemplate),
-    _fileInfo(definition.file),
+    _originalTemplate(declaration),
+    _template(declaration),
     _name(name),
     m_bInUse(false),
     _visible(true)
@@ -219,7 +218,7 @@ void CShader::clearMaterialFlag(Flags flag)
 
 bool CShader::IsDefault() const
 {
-	return _isInternal || _fileInfo.name.empty();
+	return _isInternal || _template->getBlockSyntax().fileInfo.name.empty();
 }
 
 // get the cull type
@@ -312,7 +311,7 @@ Material::Coverage CShader::getCoverage() const
 // get shader file name (ie the file where this one is defined)
 const char* CShader::getShaderFileName() const
 {
-	return _fileInfo.name.c_str();
+	return _template->getBlockSyntax().fileInfo.name.c_str();
 }
 
 void CShader::setShaderFileName(const std::string& fullPath)
@@ -347,14 +346,12 @@ void CShader::setShaderFileName(const std::string& fullPath)
         throw std::invalid_argument("The file extension must be " + extension);
     }
 
-    _fileInfo.topDir = materialsFolder;
-    _fileInfo.name = pathRelativeToMaterialsFolder;
-    _fileInfo.visibility = vfs::Visibility::NORMAL;
+    _template->setFileInfo(vfs::FileInfo(materialsFolder, pathRelativeToMaterialsFolder, vfs::Visibility::NORMAL));
 }
 
 const vfs::FileInfo& CShader::getShaderFileInfo() const
 {
-    return _fileInfo;
+    return _template->getBlockSyntax().fileInfo;
 }
 
 std::string CShader::getDefinition()
@@ -416,7 +413,10 @@ void CShader::realise() {
 	realiseLighting();
 }
 
-void CShader::unrealise() {
+void CShader::unrealise()
+{
+    _editorTexture.reset();
+    _texLightFalloff.reset();
 	unrealiseLighting();
 }
 
@@ -619,11 +619,16 @@ void CShader::ensureTemplateCopy()
 
 void CShader::commitModifications()
 {
+    if (_template == _originalTemplate) return;
+
+    // Replace the contents with our working copy
+    _originalTemplate->setBlockSyntax(_template->getBlockSyntax());
+
     // Overwrite the original template reference, the material is now unmodified again
     _originalTemplate = _template;
 }
 
-const ShaderTemplatePtr& CShader::getTemplate()
+const ShaderTemplate::Ptr& CShader::getTemplate()
 {
     return _template;
 }

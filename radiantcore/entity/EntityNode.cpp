@@ -146,7 +146,7 @@ void EntityNode::createAttachedEntities()
             auto cls = GlobalEntityClassManager().findClass(a.eclass);
             if (!cls)
             {
-                rWarning() << "EntityNode [" << _eclass->getName()
+                rWarning() << "EntityNode [" << _eclass->getDeclName()
                            << "]: cannot attach non-existent entity class '"
                            << a.eclass << "'\n";
                 return;

@@ -7,7 +7,10 @@ add_executable(drtest
                ColourSchemes.cpp
                ContinuousBuffer.cpp
                CSG.cpp
+               DeclManager.cpp
+               DefTokenisers.cpp
                Entity.cpp
+               EntityClass.cpp
                Favourites.cpp
                FileTypes.cpp
                GeometryStore.cpp
@@ -40,6 +43,7 @@ add_executable(drtest
                SelectionAlgorithm.cpp
                Selection.cpp
                Settings.cpp
+               SoundManager.cpp
                TextureManipulation.cpp
                TextureTool.cpp
                Transformation.cpp

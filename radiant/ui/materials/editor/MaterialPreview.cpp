@@ -30,11 +30,8 @@ MaterialPreview::MaterialPreview(wxWindow* parent) :
     _sceneIsReady(false),
     _defaultCamDistanceFactor(2.0f)
 {
-    _testModelSkin.reset(new TestModelSkin("model"));
-    GlobalModelSkinCache().addNamedSkin(_testModelSkin);
-
-    _testRoomSkin.reset(new TestModelSkin("room"));
-    GlobalModelSkinCache().addNamedSkin(_testRoomSkin);
+    _testModelSkin = std::make_unique<TestModelSkin>("model");
+    _testRoomSkin = std::make_unique<TestModelSkin>("room");
 
     setupToolbar();
 
@@ -44,17 +41,8 @@ MaterialPreview::MaterialPreview(wxWindow* parent) :
 
 MaterialPreview::~MaterialPreview()
 {
-    if (_testModelSkin)
-    {
-        GlobalModelSkinCache().removeSkin(_testModelSkin->getName());
-        _testModelSkin.reset();
-    }
-
-    if (_testRoomSkin)
-    {
-        GlobalModelSkinCache().removeSkin(_testRoomSkin->getName());
-        _testRoomSkin.reset();
-    }
+    _testModelSkin.reset();
+    _testRoomSkin.reset();
 }
 
 void MaterialPreview::setupToolbar()
@@ -97,7 +85,7 @@ void MaterialPreview::updateModelSkin()
 
     if (skinnedModel)
     {
-        skinnedModel->skinChanged(_testModelSkin->getName());
+        skinnedModel->skinChanged(_testModelSkin->getSkinName());
     }
 }
 
@@ -128,7 +116,7 @@ void MaterialPreview::updateRoomSkin()
 
     if (skinnedRoom)
     {
-        skinnedRoom->skinChanged(_testRoomSkin->getName());
+        skinnedRoom->skinChanged(_testRoomSkin->getSkinName());
     }
 }
 
@@ -319,7 +307,7 @@ sigc::signal<void>& MaterialPreview::signal_LightChanged()
 
 std::string MaterialPreview::getLightClassname()
 {
-    return _light ? Node_getEntity(_light)->getEntityClass()->getName() : "";
+    return _light ? Node_getEntity(_light)->getEntityClass()->getDeclName() : "";
 }
 
 void MaterialPreview::setLightClassname(const std::string& className)

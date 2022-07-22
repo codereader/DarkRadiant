@@ -280,7 +280,7 @@ void performLookupTests(const ITableDefinition::Ptr& table, const std::vector<st
     for (auto testcase : testCases)
     {
         EXPECT_NEAR(table->getValue(testcase.first), testcase.second, TestEpsilon) << "Lookup failed: "
-            << table->getName() << "[" << testcase.first << "] = " << table->getValue(testcase.first) << ", but should be " << testcase.second;
+            << table->getDeclName() << "[" << testcase.first << "] = " << table->getValue(testcase.first) << ", but should be " << testcase.second;
     }
 }
 

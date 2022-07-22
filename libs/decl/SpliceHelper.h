@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <istream>
 #include <regex>
 
 namespace decl
@@ -30,14 +30,8 @@ public:
                 std::size_t openBraces = 0;
                 bool blockStarted = false;
 
-                if (!matches[1].str().empty())
-                {
-                    // We've had an opening brace in the first line
-                    openBraces++;
-                    blockStarted = true;
-                }
-
-                while (std::getline(input, line))
+                // Forward the input stream till we find the closing brace
+                do
                 {
                     for (std::size_t i = 0; i < line.length(); ++i)
                     {
@@ -56,15 +50,13 @@ public:
                     {
                         break;
                     }
-                }
+                } while (std::getline(input, line));
 
                 return; // stop right here, return to caller
             }
-            else
-            {
-                // No particular match, add line to output
-                output << line;
-            }
+            
+            // No particular match, add line to output
+            output << line;
 
             // Append a newline in any case
             output << std::endl;

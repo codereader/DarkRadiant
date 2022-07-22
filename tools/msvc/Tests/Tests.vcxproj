@@ -61,6 +61,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <ItemGroup>
     <ClInclude Include="..\..\..\test\algorithm\Entity.h" />
+    <ClInclude Include="..\..\..\test\algorithm\FileUtils.h" />
     <ClInclude Include="..\..\..\test\algorithm\Primitives.h" />
     <ClInclude Include="..\..\..\test\algorithm\Scene.h" />
     <ClInclude Include="..\..\..\test\algorithm\View.h" />
@@ -75,10 +76,12 @@
     <ClInclude Include="..\..\..\test\testutil\CommandFailureHelper.h" />
     <ClInclude Include="..\..\..\test\testutil\MapOperationMonitor.h" />
     <ClInclude Include="..\..\..\test\testutil\RenderUtils.h" />
+    <ClInclude Include="..\..\..\test\testutil\TemporaryFile.h" />
     <ClInclude Include="..\..\..\test\testutil\TestBufferObjectProvider.h" />
     <ClInclude Include="..\..\..\test\testutil\FileSelectionHelper.h" />
     <ClInclude Include="..\..\..\test\testutil\TestObjectRenderer.h" />
     <ClInclude Include="..\..\..\test\testutil\TestSyncObjectProvider.h" />
+    <ClInclude Include="..\..\..\test\testutil\ThreadUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\test\Basic.cpp" />
@@ -87,7 +90,10 @@
     <ClCompile Include="..\..\..\test\ColourSchemes.cpp" />
     <ClCompile Include="..\..\..\test\ContinuousBuffer.cpp" />
     <ClCompile Include="..\..\..\test\CSG.cpp" />
+    <ClCompile Include="..\..\..\test\DeclManager.cpp" />
+    <ClCompile Include="..\..\..\test\DefTokenisers.cpp" />
     <ClCompile Include="..\..\..\test\Entity.cpp" />
+    <ClCompile Include="..\..\..\test\EntityClass.cpp" />
     <ClCompile Include="..\..\..\test\EntityInspector.cpp" />
     <ClCompile Include="..\..\..\test\Favourites.cpp" />
     <ClCompile Include="..\..\..\test\FileTypes.cpp" />
@@ -110,7 +116,6 @@
     <ClCompile Include="..\..\..\test\ModelExport.cpp" />
     <ClCompile Include="..\..\..\test\Models.cpp" />
     <ClCompile Include="..\..\..\test\ModelScale.cpp" />
-    <ClCompile Include="..\..\..\test\Parsing.cpp" />
     <ClCompile Include="..\..\..\test\Particles.cpp" />
     <ClCompile Include="..\..\..\test\Patch.cpp" />
     <ClCompile Include="..\..\..\test\PatchIterators.cpp" />
@@ -122,6 +127,8 @@
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\Settings.cpp" />
+    <ClCompile Include="..\..\..\test\Skin.cpp" />
+    <ClCompile Include="..\..\..\test\SoundManager.cpp" />
     <ClCompile Include="..\..\..\test\TextureManipulation.cpp" />
     <ClCompile Include="..\..\..\test\TextureTool.cpp" />
     <ClCompile Include="..\..\..\test\Transformation.cpp" />

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "modelskin.h"
+#include "decl/DeclarationBase.h"
 
 #include <string>
 #include <map>
@@ -14,51 +15,87 @@ namespace skins
  * maps between an existing texture and a new texture, and possibly the name of
  * the model that this skin is associated with.
  */
-class Doom3ModelSkin
-: public ModelSkin
+class Skin :
+    public decl::DeclarationBase<decl::ISkin>
 {
-	// Map of texture switches
-	typedef std::map<std::string, std::string> StringMap;
-	StringMap _remaps;
+    // The list of models this skin is matching
+    std::set<std::string> _matchingModels;
 
-	std::string _name;
-	std::string _skinFileName;
+	// Map of texture switches
+    std::map<std::string, std::string> _remaps;
 
 public:
-	Doom3ModelSkin(const std::string& name) :
-		_name(name)
+    Skin(const std::string& name) :
+        DeclarationBase<decl::ISkin>(decl::Type::Skin, name)
 	{}
 
 	std::string getName() const {
-		return _name;
-	}
-
-	void setSkinFileName(const std::string& fileName) {
-		_skinFileName = fileName;
+		return getDeclName();
 	}
 
 	std::string getSkinFileName() const {
-		return _skinFileName;
+		return getDeclFilePath();
 	}
 
 	// Get this skin's remap for the provided material name (if any).
-	std::string getRemap(const std::string& name) const {
-		StringMap::const_iterator i = _remaps.find(name);
-		if(i != _remaps.end()) {
-			return i->second;
-		}
-		else { // none found
-			return "";
-		}
+	std::string getRemap(const std::string& name) override
+    {
+        ensureParsed();
+
+		auto i = _remaps.find(name);
+        return  i != _remaps.end() ? i->second : std::string();
 	}
 
 	// Add a remap pair to this skin
-	void addRemap(const std::string& src, const std::string& dst) {
-		_remaps.insert(StringMap::value_type(src, dst));
+	void addRemap(const std::string& src, const std::string& dst)
+    {
+		_remaps.emplace(src, dst);
 	}
 
+    // Visit the functor with the name of each model mentioned in this skin declaration
+    void foreachMatchingModel(const std::function<void(const std::string&)>& functor)
+    {
+        ensureParsed();
+
+        for (const auto& model : _matchingModels)
+        {
+            functor(model);
+        }
+    }
+
+protected:
+    void onBeginParsing() override
+    {
+        _remaps.clear();
+        _matchingModels.clear();
+    }
+
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override
+    {
+        // [ "skin" ] <name>
+        // "{"
+        //      [ "model" <modelname> ]
+        //      ( <sourceTex> <destTex> )*
+        // "}"
+        while (tokeniser.hasMoreTokens())
+        {
+            // Read key/value pairs until end of decl
+            auto key = tokeniser.nextToken();
+            auto value = tokeniser.nextToken();
+
+            // If this is a model key, add to the model->skin map, otherwise assume
+            // this is a remap declaration
+            if (key == "model")
+            {
+                _matchingModels.insert(value);
+            }
+            else
+            {
+                addRemap(key, value);
+            }
+        }
+    }
 };
-typedef std::shared_ptr<Doom3ModelSkin> Doom3ModelSkinPtr;
 
 
 }

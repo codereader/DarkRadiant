@@ -9,7 +9,7 @@ namespace script
 
 ScriptModelSkin ModelSkinCacheInterface::capture(const std::string& name)
 {
-	return ScriptModelSkin(GlobalModelSkinCache().capture(name));
+	return ScriptModelSkin(GlobalModelSkinCache().findSkin(name));
 }
 
 StringList ModelSkinCacheInterface::getSkinsForModel(const std::string& model)
@@ -31,7 +31,7 @@ void ModelSkinCacheInterface::registerInterface(py::module& scope, py::dict& glo
 {
 	// Declare the model skin
 	py::class_<ScriptModelSkin> skin(scope, "ModelSkin");
-	skin.def(py::init<ModelSkin&>());
+	skin.def(py::init<const decl::ISkin::Ptr&>());
 	skin.def("getName", &ScriptModelSkin::getName);
 	skin.def("getRemap", &ScriptModelSkin::getRemap);
 

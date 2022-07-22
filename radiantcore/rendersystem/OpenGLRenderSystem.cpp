@@ -5,6 +5,7 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "iradiant.h"
+#include "ideclmanager.h"
 
 #include "math/Matrix4.h"
 #include "module/StaticModule.h"
@@ -36,21 +37,14 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 {
     bool shouldRealise = false;
 
-    // For the static default rendersystem, the MaterialManager is not existent yet,
+    // For the static default rendersystem, the DeclarationManager is not existent yet,
     // hence it will be attached in initialiseModule().
-    if (module::GlobalModuleRegistry().moduleExists(MODULE_SHADERSYSTEM))
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_DECLMANAGER))
     {
-        _materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
-            sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
-        _materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
-            sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
+        _materialDefsLoaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
+            .connect(sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
 
-        if (GlobalMaterialManager().isRealised())
-        {
-            // Hold back with the realise() call until we know whether we can call
-            // extensionsInitialised() below - this should happen before realise()
-            shouldRealise = true;
-        }
+        shouldRealise = true;
     }
 
     // If the openGL module is already initialised and a shared context is created
@@ -70,7 +64,6 @@ OpenGLRenderSystem::OpenGLRenderSystem() :
 OpenGLRenderSystem::~OpenGLRenderSystem()
 {
     _materialDefsLoaded.disconnect();
-    _materialDefsUnloaded.disconnect();
 
     // Destruct the shaders before the geometry store is destroyed
     _shaders.clear();
@@ -402,15 +395,8 @@ void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 {
     rMessage() << getName() << "::initialiseModule called." << std::endl;
 
-    _materialDefsLoaded = GlobalMaterialManager().signal_DefsLoaded().connect(
-        sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
-    _materialDefsUnloaded = GlobalMaterialManager().signal_DefsUnloaded().connect(
-        sigc::mem_fun(*this, &OpenGLRenderSystem::unrealise));
-
-    if (GlobalMaterialManager().isRealised())
-    {
-        realise();
-    }
+    _materialDefsLoaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
+        .connect(sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
 
     // greebo: Don't realise the module yet, this must wait
     // until the shared GL context has been created (this
@@ -439,7 +425,6 @@ void OpenGLRenderSystem::shutdownModule()
     _sharedContextCreated.disconnect();
     _sharedContextDestroyed.disconnect();
 	_materialDefsLoaded.disconnect();
-	_materialDefsUnloaded.disconnect();
 }
 
 void OpenGLRenderSystem::addEntity(const IRenderEntityPtr& renderEntity)

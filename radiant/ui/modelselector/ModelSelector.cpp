@@ -261,7 +261,7 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
 
         if (modelDef)
         {
-            _infoTable->Append(_("Defined in"), modelDef->defFilename);
+            _infoTable->Append(_("Defined in"), modelDef->getBlockSyntax().fileInfo.fullPath());
         }
     }
 

@@ -32,7 +32,6 @@
     <ClCompile Include="..\..\..\test\LayerManipulation.cpp" />
     <ClCompile Include="..\..\..\test\Favourites.cpp" />
     <ClCompile Include="..\..\..\test\Prefabs.cpp" />
-    <ClCompile Include="..\..\..\test\Parsing.cpp" />
     <ClCompile Include="..\..\..\test\Entity.cpp" />
     <ClCompile Include="..\..\..\test\Basic.cpp" />
     <ClCompile Include="..\..\..\test\MaterialExport.cpp" />
@@ -59,6 +58,11 @@
     <ClCompile Include="..\..\..\test\GeometryStore.cpp" />
     <ClCompile Include="..\..\..\test\Settings.cpp" />
     <ClCompile Include="..\..\..\test\Patch.cpp" />
+    <ClCompile Include="..\..\..\test\DeclManager.cpp" />
+    <ClCompile Include="..\..\..\test\SoundManager.cpp" />
+    <ClCompile Include="..\..\..\test\EntityClass.cpp" />
+    <ClCompile Include="..\..\..\test\DefTokenisers.cpp" />
+    <ClCompile Include="..\..\..\test\Skin.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
@@ -104,6 +108,15 @@
       <Filter>testutil</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\testutil\RenderUtils.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\testutil\TemporaryFile.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\algorithm\FileUtils.h">
+      <Filter>algorithm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\testutil\ThreadUtils.h">
       <Filter>testutil</Filter>
     </ClInclude>
   </ItemGroup>

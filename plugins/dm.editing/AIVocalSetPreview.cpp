@@ -67,7 +67,7 @@ void AIVocalSetPreview::update()
 	if (_vocalSetDef != NULL)
 	{
         eclass::AttributeList sndAttrs = eclass::getSpawnargsWithPrefix(
-            *_vocalSetDef, "snd_"
+            _vocalSetDef, "snd_"
         );
 
 		for (eclass::AttributeList::const_iterator i = sndAttrs.begin();
@@ -86,9 +86,9 @@ std::string AIVocalSetPreview::getRandomSoundFile()
 	// get a random sound shader
 	std::size_t idx = static_cast<std::size_t>(rand()) % _setShaders.size();
 
-	ISoundShaderPtr soundShader = GlobalSoundManager().getSoundShader(_setShaders[idx]);
+	auto soundShader = GlobalSoundManager().getSoundShader(_setShaders[idx]);
 
-	if (soundShader == NULL) return "";
+	if (!soundShader) return "";
 
 	SoundFileList files = soundShader->getSoundFileList();
 

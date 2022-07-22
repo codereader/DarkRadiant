@@ -144,7 +144,7 @@ void MD5AnimationViewer::_onModelSelChanged(wxDataViewEvent& ev)
 
 void MD5AnimationViewer::handleModelSelectionChange()
 {
-	IModelDefPtr modelDef = getSelectedModelDef();
+	auto modelDef = getSelectedModelDef();
 
 	if (!modelDef)
 	{
@@ -154,7 +154,7 @@ void MD5AnimationViewer::handleModelSelectionChange()
 
 	_animTreeView->Enable(true);
 
-	scene::INodePtr modelNode =  GlobalModelCache().getModelNode(modelDef->mesh);
+	auto modelNode =  GlobalModelCache().getModelNode(modelDef->getMesh());
 	_preview->setAnim(md5::IMD5AnimPtr());
 	_preview->setModelNode(modelNode);
 	
@@ -228,13 +228,13 @@ void MD5AnimationViewer::setSelectedAnim(const std::string& anim)
 	_animToSelect = anim;
 }
 
-IModelDefPtr MD5AnimationViewer::getSelectedModelDef()
+IModelDef::Ptr MD5AnimationViewer::getSelectedModelDef()
 {
 	std::string modelDefName = getSelectedModel();
 
 	if (modelDefName.empty())
 	{
-		return IModelDefPtr();
+		return {};
 	}
 
 	return GlobalEntityClassManager().findModel(modelDefName);
@@ -247,7 +247,7 @@ void MD5AnimationViewer::_onAnimSelChanged(wxDataViewEvent& ev)
 
 void MD5AnimationViewer::handleAnimSelectionChange()
 {
-	IModelDefPtr modelDef = getSelectedModelDef();
+	auto modelDef = getSelectedModelDef();
 
 	if (!modelDef) 
 	{
@@ -271,11 +271,6 @@ void MD5AnimationViewer::handleAnimSelectionChange()
 	_preview->setAnim(anim);
 }
 
-void MD5AnimationViewer::visit(const IModelDefPtr& modelDef)
-{
-	_modelPopulator.addPath(modelDef->getModName() + "/" + modelDef->name);
-}
-
 void MD5AnimationViewer::visit(wxutil::TreeModel& /* store */,
 	wxutil::TreeModel::Row& row, const std::string& path, bool isExplicit)
 {
@@ -289,7 +284,10 @@ void MD5AnimationViewer::populateModelList()
 {
 	_modelList->Clear();
 
-	GlobalEntityClassManager().forEachModelDef(*this);
+	GlobalEntityClassManager().forEachModelDef([&] (const IModelDef::Ptr& modelDef)
+	{
+        _modelPopulator.addPath(modelDef->getModName() + "/" + modelDef->getDeclName());
+	});
 
 	_modelPopulator.forEachNode(*this);
 
@@ -300,16 +298,16 @@ void MD5AnimationViewer::populateAnimationList()
 {
 	_animList->Clear();
 
-	IModelDefPtr modelDef = getSelectedModelDef();
+	auto modelDef = getSelectedModelDef();
 
 	if (!modelDef) return;
 
-	for (IModelDef::Anims::const_iterator i = modelDef->anims.begin(); i != modelDef->anims.end(); ++i)
+	for (const auto& [key, filename] : modelDef->getAnims())
 	{
 		wxutil::TreeModel::Row row = _animList->AddItem();
 
-		row[_animColumns.name] = i->first;		// anim name
-		row[_animColumns.filename] = i->second;	// anim filename
+		row[_animColumns.name] = key;
+		row[_animColumns.filename] = filename;
 
 		row.SendItemAdded();
 	}

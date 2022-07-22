@@ -6,7 +6,7 @@
 #include "registry/registry.h"
 #include "math/Vector3.h"
 #include "ipreferencesystem.h"
-#include "../Doom3ShaderSystem.h"
+#include "../MaterialManager.h"
 #include "RGBAImage.h"
 
 namespace 

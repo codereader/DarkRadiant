@@ -88,7 +88,7 @@ public:
 	virtual std::string getModelPath() const override;
 	void setModelPath(const std::string& modelPath);
 
-	virtual void applySkin(const ModelSkin& skin) override;
+	virtual void applySkin(const decl::ISkin::Ptr& skin) override;
 
     // Signal emitted after the captured shaders have been changed (or cleared)
     sigc::signal<void>& signal_ShadersChanged();

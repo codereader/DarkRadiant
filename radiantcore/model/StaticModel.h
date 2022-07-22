@@ -178,7 +178,7 @@ public:
 
 	/** Apply the given skin to this model.
 	 */
-	void applySkin(const ModelSkin& skin) override;
+	void applySkin(const decl::ISkin::Ptr& skin) override;
 
 	/**
 	 * Selection test. Test each surface against the SelectionTest object and

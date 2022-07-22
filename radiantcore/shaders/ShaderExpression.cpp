@@ -3,7 +3,7 @@
 #include "itextstream.h"
 
 #include "string/convert.h"
-#include "Doom3ShaderSystem.h"
+#include "MaterialManager.h"
 
 #include <stack>
 #include <list>

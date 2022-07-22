@@ -10,6 +10,7 @@
 #include "generic/Lazy.h"
 
 #include "parser/DefTokeniser.h"
+#include "decl/DeclarationBase.h"
 
 #include <vector>
 #include <map>
@@ -26,23 +27,14 @@ namespace eclass
 {
 
 /// Implementation of the IEntityClass interface.
-class EntityClass
-: public IEntityClass
+class EntityClass :
+    public decl::DeclarationBase<IEntityClass>
 {
 public:
-
     /// EntityClass pointer type
     using Ptr = std::shared_ptr<EntityClass>;
 
 private:
-
-    // The name of this entity class
-    std::string _name;
-
-    // Source file information. May not exist if the entity class was created in code rather than
-    // loaded from a .def file.
-    std::optional<vfs::FileInfo> _fileInfo;
-
     // Parent class pointer (or NULL)
     EntityClass* _parent = nullptr;
 
@@ -52,8 +44,9 @@ private:
     // Should this entity type be treated as a light?
     bool _isLight = false;
 
-    // Colour of this entity and flag to indicate it has been specified
+    // Colour of this entity
     Vector4 _colour;
+
     bool _colourTransparent = false;
 
     // Does this entity have a fixed size?
@@ -61,30 +54,24 @@ private:
 
     // Map of named EntityAttribute structures. EntityAttributes are picked
     // up from the DEF file during parsing. Ignores key case.
-    typedef std::map<std::string, EntityClassAttribute, string::ILess> EntityAttributeMap;
+    using EntityAttributeMap = std::map<std::string, EntityClassAttribute, string::ILess>;
     EntityAttributeMap _attributes;
-
-    // The model and skin for this entity class (if it has one)
-    std::string _model;
-    std::string _skin;
 
     // Flag to indicate inheritance resolved. An EntityClass resolves its
     // inheritance by copying all values from the parent onto the child,
     // after recursively instructing the parent to resolve its own inheritance.
     bool _inheritanceResolved = false;
 
-    // Name of the mod owning this class
-    std::string _modName = "base";
-
-    // The time this def has been parsed
-    std::size_t _parseStamp = 0;
-
     // Emitted when contents are reloaded
     sigc::signal<void> _changedSignal;
     bool _blockChangeSignal = false;
-    std::optional<sigc::connection> _parentChangedConnection;
+    sigc::connection _parentChangedConnection;
 
 private:
+    // Resolve inheritance for this class.
+    void resolveInheritance();
+    vfs::Visibility determineVisibilityFromValues();
+
     // Clear all contents (done before parsing from tokens)
     void clear();
     void parseEditorSpawnarg(const std::string& key, const std::string& value);
@@ -97,91 +84,39 @@ private:
 
     // Return attribute if found, possibly checking parents
     EntityClassAttribute* getAttribute(const std::string&, bool includeInherited = true);
-    const EntityClassAttribute* getAttribute(const std::string&, bool includeInherited = true) const;
 
 public:
 
-    /// Construct an EntityClass with no FileInfo.
-    EntityClass(const std::string& name, bool isFixedSize = false);
+    /// Construct a named EntityClass
+    EntityClass(const std::string& name);
 
-    /// Construct an EntityClass with a given FileInfo.
-    EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize = false);
+    ~EntityClass();
 
     /// Create a heap-allocated default/empty EntityClass
-    static EntityClass::Ptr createDefault(const std::string& name, bool brushes);
+    static Ptr CreateDefault(const std::string& name);
+
+    Type getClassType() override;
 
     void emplaceAttribute(EntityClassAttribute&& attribute);
 
     // IEntityClass implementation
-    const std::string& getName() const override;
-    const IEntityClass* getParent() const override;
-    vfs::Visibility getVisibility() const override;
+    IEntityClass* getParent() override;
+    vfs::Visibility getVisibility() override;
     sigc::signal<void>& changedSignal() override;
-    bool isFixedSize() const override;
-    AABB getBounds() const override;
-    bool isLight() const override;
-    const Vector4& getColour() const override;
+    bool isFixedSize() override;
+    AABB getBounds() override;
+    bool isLight() override;
+    const Vector4& getColour() override;
     /// Set the display colour
     void setColour(const Vector4& colour) override;
     // Resets the colour to the value defined in the attributes
     void resetColour();
-    std::string getAttributeValue(const std::string&, bool includeInherited = true) const override;
-    std::string getAttributeType(const std::string& name) const override;
-    std::string getAttributeDescription(const std::string& name) const override;
-    void forEachAttribute(AttributeVisitor, bool) const override;
-
-    const std::string& getModelPath() const override { return _model; }
-    const std::string& getSkin() const override { return _skin; }
+    std::string getAttributeValue(const std::string&, bool includeInherited = true) override;
+    std::string getAttributeType(const std::string& name) override;
+    std::string getAttributeDescription(const std::string& name) override;
+    void forEachAttribute(AttributeVisitor, bool) override;
 
 	bool isOfType(const std::string& className) override;
-
-    std::string getDefFileName() override;
-
-    /// Set a model on this entity class.
-    void setModelPath(const std::string& path) {
-        _fixedSize = true;
-        _model = path;
-    }
-
-    /// Set the skin.
-    void setSkin(const std::string& skin) { _skin = skin; }
-
-    /**
-     * Resolve inheritance for this class.
-     *
-     * @param classmap
-     * A reference to the global map of entity classes, which should be searched
-     * for the parent entity.
-     */
-    typedef std::map<std::string, EntityClass::Ptr> EntityClasses;
-    void resolveInheritance(EntityClasses& classmap);
-
-    /**
-     * Return the mod name.
-     */
-    std::string getModName() const override {
-        return _modName;
-    }
-
-    /**
-     * Set the mod name.
-     */
-    void setModName(const std::string& mn) {
-        _modName = mn;
-    }
-
-    // Initialises this class from the given tokens
-    void parseFromTokens(parser::DefTokeniser& tokeniser);
-
-    void setParseStamp(std::size_t parseStamp)
-    {
-        _parseStamp = parseStamp;
-    }
-
-    std::size_t getParseStamp() const
-    {
-        return _parseStamp;
-    }
 
     void emitChangedSignal()
     {
@@ -195,6 +130,18 @@ public:
     {
         _blockChangeSignal = block;
     }
+
+protected:
+    // Initialises this class from the given tokens
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override;
+
+    // Clears the structure before parsing
+    void onBeginParsing() override;
+
+    // After parsing, inheritance and colour overrides will be resolved
+    void onParsingFinished() override;
+
+    void onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block) override;
 };
 
 }

@@ -129,7 +129,7 @@ const IModelSurface& StaticModel::getSurface(unsigned surfaceNum) const
 }
 
 // Apply the given skin to this model
-void StaticModel::applySkin(const ModelSkin& skin)
+void StaticModel::applySkin(const decl::ISkin::Ptr& skin)
 {
     // Apply the skin to each surface, then try to capture shaders
     for (auto& s : _surfaces)
@@ -139,7 +139,7 @@ void StaticModel::applySkin(const ModelSkin& skin)
 
         // Look up the remap for this surface's material name. If there is a remap
         // change the Shader* to point to the new shader.
-        std::string remap = skin.getRemap(defaultMaterial);
+        auto remap = skin ? skin->getRemap(defaultMaterial) : std::string();
 
         if (!remap.empty() && remap != activeMaterial)
         {

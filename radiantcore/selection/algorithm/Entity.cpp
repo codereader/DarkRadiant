@@ -261,7 +261,7 @@ bool entityReferencesModel(const Entity& entity, const std::string& searchString
     // The entity might still reference the model through a model def
     auto modelDef = GlobalEntityClassManager().findModel(model);
 
-    return modelDef && modelDef->mesh == searchString;
+    return modelDef && modelDef->getMesh() == searchString;
 }
 
 void selectItemsByModel(const std::string& model)

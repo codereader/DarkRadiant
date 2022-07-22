@@ -28,10 +28,10 @@ public:
 
 	void visit(const IEntityClassPtr& eclass)
 	{
-		if (string::starts_with(eclass->getName(), _prefix))
+		if (string::starts_with(eclass->getDeclName(), _prefix))
 		{
 			// We have a match, store the eclassptr
-			_map[eclass->getName()] = eclass;
+			_map[eclass->getDeclName()] = eclass;
 		}
 	}
 };

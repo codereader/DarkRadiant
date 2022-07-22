@@ -14,7 +14,7 @@ SpawnArgs::SpawnArgs(const IEntityClassPtr& eclass) :
         std::function<void()>(), "EntityKeyValues"),
 	_observerMutex(false),
 	_isContainer(!eclass->isFixedSize()),
-	_attachments(eclass->getName())
+	_attachments(eclass->getDeclName())
 {
     // Parse attachment keys
     parseAttachments();

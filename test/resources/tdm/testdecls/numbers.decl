@@ -1,0 +1,31 @@
+// Test declarations used for some DeclarationManager unit tests
+
+decl/numbers/0
+{
+    diffusemap textures/numbers/0
+}
+
+decl/numbers/1
+{
+    diffusemap textures/numbers/1
+}
+
+testdecl decl/numbers/2
+{
+    diffusemap textures/numbers/2
+}
+
+// CamelCase typename shouldn't make a difference
+TestDecl decl/numbers/3
+{
+    diffusemap textures/numbers/3
+}
+
+testdecl2 decltable1 { { 0, 0, 0, 0, 1, 1 } }
+
+testdecl decl/numbers/5 { // a comment in the same line as the opening brace
+    diffusemap textures/numbers/5
+}
+
+// Everything in the same line
+testdecl decl/numbers/6 { diffusemap textures/numbers/6 }

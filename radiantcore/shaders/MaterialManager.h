@@ -1,16 +1,11 @@
 #pragma once
 
 #include "ishaders.h"
-#include "ifilesystem.h"
 #include "imodule.h"
-#include "iradiant.h"
-#include "icommandsystem.h"
 
 #include <functional>
 
 #include "ShaderLibrary.h"
-#include "ShaderFileLoader.h"
-#include "TableDefinition.h"
 #include "textures/GLTextureManager.h"
 
 namespace shaders
@@ -18,18 +13,14 @@ namespace shaders
 
 /**
  * \brief
- * Implementation of the MaterialManager for Doom 3 .
+ * Implementation of the IMaterialManager for Doom 3 .
  */
-class Doom3ShaderSystem :
-	public MaterialManager,
-	public vfs::VirtualFileSystem::Observer
+class MaterialManager :
+	public IMaterialManager
 {
-	// The shaderlibrary stores all the known shaderdefinitions
+	// The shaderlibrary stores all the known templates
 	// as well as the active shaders
 	ShaderLibraryPtr _library;
-
-    // The ShaderFileLoader will provide a new ShaderLibrary once complete
-    std::unique_ptr<ShaderFileLoader> _defLoader;
 
 	// The manager that handles the texture caching.
 	GLTextureManagerPtr _textureManager;
@@ -40,42 +31,17 @@ class Doom3ShaderSystem :
 	// Flag to indicate whether the active shaders callback should be invoked
 	bool _enableActiveUpdates;
 
-	// TRUE if the material files have been parsed
-	bool _realised;
-
-	// Signals for module subscribers
-	sigc::signal<void> _signalDefsLoaded;
-	sigc::signal<void> _signalDefsUnloaded;
-
     sigc::signal<void, const std::string&> _sigMaterialCreated;
     sigc::signal<void, const std::string&, const std::string&> _sigMaterialRenamed;
     sigc::signal<void, const std::string&> _sigMaterialRemoved;
 
+    sigc::connection _materialsReloadedSignal;
+
 public:
-
-	// Constructor, allocates the library
-	Doom3ShaderSystem();
-
-	// Gets called on initialise
-	void onFileSystemInitialise() override;
-
-	// Gets called on shutdown
-    void onFileSystemShutdown() override;
-
-	// greebo: This parses the material files and emits the defs loaded signal
-    void realise() override;
-
-	// greebo: Emits the defs unloaded signal and frees the shaders
-    void unrealise() override;
+    MaterialManager();
 
 	// Flushes the shaders from memory and reloads the material files
     void refresh() override;
-
-	// Is the shader system realised
-    bool isRealised() override;
-
-	sigc::signal<void>& signal_DefsLoaded() override;
-	sigc::signal<void>& signal_DefsUnloaded() override;
 
     sigc::signal<void, const std::string&>& signal_materialCreated() override;
     sigc::signal<void, const std::string&, const std::string&>& signal_materialRenamed() override;
@@ -119,14 +85,13 @@ public:
 
     MaterialPtr createEmptyMaterial(const std::string& name) override;
 
-    MaterialPtr createDefaultMaterial(const std::string& name) override;
     MaterialPtr copyMaterial(const std::string& nameOfOriginal, const std::string& nameOfCopy) override;
     bool renameMaterial(const std::string& oldName, const std::string& newName) override;
     void removeMaterial(const std::string& name) override;
     void saveMaterial(const std::string& name) override;
 
 	// Look up a table def, return NULL if not found
-	ITableDefinition::Ptr getTable(const std::string& name);
+	ITableDefinition::Ptr getTable(const std::string& name) override;
 
 public:
     sigc::signal<void> signal_activeShadersChanged() const override;
@@ -142,20 +107,19 @@ private:
     void construct();
     void destroy();
 
-    // For methods accessing the ShaderLibrary the parser thread must be done
-    void ensureDefsLoaded();
-
     // Unloads all the existing shaders and calls activeShadersChangedNotify()
     void freeShaders();
 
 	void testShaderExpressionParsing();
 
     std::string ensureNonConflictingName(const std::string& name);
+
+    void onMaterialDefsReloaded();
 };
 
-typedef std::shared_ptr<Doom3ShaderSystem> Doom3ShaderSystemPtr;
+typedef std::shared_ptr<MaterialManager> MaterialManagerPtr;
 
-Doom3ShaderSystemPtr GetShaderSystem();
+MaterialManagerPtr GetShaderSystem();
 
 GLTextureManager& GetTextureManager();
 

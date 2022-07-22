@@ -78,13 +78,13 @@ namespace detail
  * Whether to include class spawnargs inherited from the parent class. Defaults
  * to true.
  */
-inline AttributeList getSpawnargsWithPrefix(const IEntityClass& eclass,
+inline AttributeList getSpawnargsWithPrefix(const IEntityClassPtr& eclass,
                                             const std::string& prefix,
                                             bool includeInherited = true)
 {
     // Populate the list with with matching attributes
     AttributeList matches;
-    eclass.forEachAttribute(
+    eclass->forEachAttribute(
         [&](const EntityClassAttribute& a, bool inherited) {
             if (string::istarts_with(a.getName(), prefix) &&
                 (includeInherited || !inherited))
@@ -109,7 +109,7 @@ inline AttributeList getSpawnargsWithPrefix(const IEntityClass& eclass,
  * The usage text consists of the values of all "editor_usage" spawnargs
  * concatenated in order.
  */
-inline std::string getUsage(const IEntityClass& entityClass)
+inline std::string getUsage(const IEntityClassPtr& entityClass)
 {
     // Find all relevant spawnargs in order
     AttributeList usageAttrs = getSpawnargsWithPrefix(

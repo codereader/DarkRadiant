@@ -4,52 +4,34 @@
 
 #include "isound.h"
 #include "ifilesystem.h"
+#include "decl/DeclarationBase.h"
 
 namespace sound
 {
 
 /// Representation of a single sound shader.
-class SoundShader : 
-	public ISoundShader
+class SoundShader final :
+	public decl::DeclarationBase<ISoundShader>
 {
-	// Name of the shader
-	std::string _name;
-
-	// The raw unparsed definition block
-	std::string _blockContents;
-
     // Information we have parsed on demand
     struct ParsedContents;
     mutable std::unique_ptr<ParsedContents> _contents;
 
-	vfs::FileInfo _fileInfo;
-
-	// The modname (ModResource implementation)
-	std::string _modName;
-
-private:
-	// Parses the definition block
-	void parseDefinition() const;
-
 public:
 	using Ptr = std::shared_ptr<SoundShader>;
 
-	/// Constructor.
-	SoundShader(const std::string& name,
-				const std::string& blockContents,
-				const vfs::FileInfo& fileInfo,
-				const std::string& modName = "base");
+	SoundShader(const std::string& name);
 
-    virtual ~SoundShader();
+    ~SoundShader();
 
     // ISoundShader implementation
-	SoundRadii getRadii() const override;
-	std::string getName() const override { return _name; }
-	SoundFileList getSoundFileList() const override;
-	std::string getModName() const override { return _modName; }
-	const std::string& getDisplayFolder() const override;
-	std::string getShaderFilePath() const override;
-	std::string getDefinition() const override;
+	SoundRadii getRadii() override;
+	SoundFileList getSoundFileList() override;
+	const std::string& getDisplayFolder() override;
+
+protected:
+    void onBeginParsing() override;
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override;
 };
 
 }

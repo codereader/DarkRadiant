@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\include\irenderableobject.h" />
     <ClInclude Include="..\..\include\igeometrystore.h" />
     <ClInclude Include="..\..\include\iobjectrenderer.h" />
+    <ClInclude Include="..\..\include\ideclmanager.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ui">

@@ -129,7 +129,7 @@ void AIHeadChooserDialog::handleSelectionChanged()
             _preview->setSkin(ecls->getAttributeValue("skin"));
 
             // Update the usage panel
-            _description->SetValue(eclass::getUsage(*ecls));
+            _description->SetValue(eclass::getUsage(ecls));
         }
     }
     else
@@ -180,7 +180,7 @@ public:
     {
         if (eclass->getAttributeValue("editor_head") == "1")
         {
-            _list.insert(eclass->getName());
+            _list.insert(eclass->getDeclName());
         }
     }
 };

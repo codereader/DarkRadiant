@@ -38,10 +38,11 @@
     <ClCompile Include="..\..\radiantcore\clipper\Clipper.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\ClipPoint.cpp" />
     <ClCompile Include="..\..\radiantcore\clipper\SplitAlgorithm.cpp" />
+    <ClCompile Include="..\..\radiantcore\decl\DeclarationFolderParser.cpp" />
+    <ClCompile Include="..\..\radiantcore\decl\DeclarationManager.cpp" />
     <ClCompile Include="..\..\radiantcore\decl\FavouritesManager.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassColourManager.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EClassManager.cpp" />
-    <ClCompile Include="..\..\radiantcore\eclass\EClassParser.cpp" />
     <ClCompile Include="..\..\radiantcore\eclass\EntityClass.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\AngleKey.cpp" />
     <ClCompile Include="..\..\radiantcore\entity\AttachmentData.cpp" />
@@ -105,7 +106,6 @@
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapExporter.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp" />
     <ClCompile Include="..\..\radiantcore\map\algorithm\Models.cpp" />
-    <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp" />
     <ClCompile Include="..\..\radiantcore\map\ArchivedMapResource.cpp" />
     <ClCompile Include="..\..\radiantcore\map\autosaver\AutoSaver.cpp" />
     <ClCompile Include="..\..\radiantcore\map\CounterManager.cpp" />
@@ -593,7 +593,6 @@
     <ClCompile Include="..\..\radiantcore\model\StaticModelNode.cpp" />
     <ClCompile Include="..\..\radiantcore\model\StaticModelSurface.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleDef.cpp" />
-    <ClCompile Include="..\..\radiantcore\particles\ParticleLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleNode.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticleParameter.cpp" />
     <ClCompile Include="..\..\radiantcore\particles\ParticlesManager.cpp" />
@@ -705,9 +704,9 @@
     <ClCompile Include="..\..\radiantcore\shaders\CameraCubeMapDecl.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\CShader.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderLayer.cpp" />
-    <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ExpressionSlots.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\MapExpression.cpp" />
+    <ClCompile Include="..\..\radiantcore\shaders\MaterialManager.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\MaterialSourceGenerator.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ShaderExpression.cpp" />
     <ClCompile Include="..\..\radiantcore\shaders\ShaderLibrary.cpp" />
@@ -758,11 +757,14 @@
     <ClInclude Include="..\..\radiantcore\clipper\Clipper.h" />
     <ClInclude Include="..\..\radiantcore\clipper\ClipPoint.h" />
     <ClInclude Include="..\..\radiantcore\clipper\SplitAlgorithm.h" />
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationFile.h" />
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationFolderParser.h" />
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationManager.h" />
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationStreamParser.h" />
     <ClInclude Include="..\..\radiantcore\decl\FavouriteSet.h" />
     <ClInclude Include="..\..\radiantcore\decl\FavouritesManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\Doom3ModelDef.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassColourManager.h" />
-    <ClInclude Include="..\..\radiantcore\eclass\EClassParser.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EClassManager.h" />
     <ClInclude Include="..\..\radiantcore\eclass\EntityClass.h" />
     <ClInclude Include="..\..\radiantcore\entity\algorithm\Speaker.h" />
@@ -853,7 +855,6 @@
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapExporter.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapImporter.h" />
     <ClInclude Include="..\..\radiantcore\map\algorithm\Models.h" />
-    <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h" />
     <ClInclude Include="..\..\radiantcore\map\ArchivedMapResource.h" />
     <ClInclude Include="..\..\radiantcore\map\autosaver\AutoSaver.h" />
     <ClInclude Include="..\..\radiantcore\map\CounterManager.h" />
@@ -951,7 +952,6 @@
     <ClInclude Include="..\..\radiantcore\model\StaticModelNode.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModelSurface.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleDef.h" />
-    <ClInclude Include="..\..\radiantcore\particles\ParticleLoader.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleNode.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleParameter.h" />
     <ClInclude Include="..\..\radiantcore\particles\ParticleQuad.h" />
@@ -1092,14 +1092,12 @@
     <ClInclude Include="..\..\radiantcore\shaders\CameraCubeMapDecl.h" />
     <ClInclude Include="..\..\radiantcore\shaders\CShader.h" />
     <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderLayer.h" />
-    <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderSystem.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ExpressionSlots.h" />
     <ClInclude Include="..\..\radiantcore\shaders\MapExpression.h" />
+    <ClInclude Include="..\..\radiantcore\shaders\MaterialManager.h" />
     <ClInclude Include="..\..\radiantcore\shaders\MaterialSourceGenerator.h" />
     <ClInclude Include="..\..\radiantcore\shaders\NamedBindable.h" />
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderDefinition.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderExpression.h" />
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderFileLoader.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderLibrary.h" />
     <ClInclude Include="..\..\radiantcore\shaders\ShaderTemplate.h" />
     <ClInclude Include="..\..\radiantcore\shaders\SoundMapExpression.h" />
@@ -1112,7 +1110,6 @@
     <ClInclude Include="..\..\radiantcore\shaders\VideoMapExpression.h" />
     <ClInclude Include="..\..\radiantcore\skins\Doom3ModelSkin.h" />
     <ClInclude Include="..\..\radiantcore\skins\Doom3SkinCache.h" />
-    <ClInclude Include="..\..\radiantcore\skins\SkinDeclParser.h" />
     <ClInclude Include="..\..\radiantcore\undo\Operation.h" />
     <ClInclude Include="..\..\radiantcore\undo\Stack.h" />
     <ClInclude Include="..\..\radiantcore\undo\StackFiller.h" />

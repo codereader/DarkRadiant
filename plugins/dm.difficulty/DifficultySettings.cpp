@@ -303,11 +303,11 @@ std::string DifficultySettings::getInheritanceKey(const std::string& className)
 
     // Get the inheritance chain of this class
     std::list<std::string> inheritanceChain;
-    for (const IEntityClass* currentClass = eclass.get();
+    for (IEntityClass* currentClass = eclass.get();
          currentClass != NULL;
          currentClass = currentClass->getParent())
     {
-        inheritanceChain.push_front(currentClass->getName());
+        inheritanceChain.push_front(currentClass->getDeclName());
     }
 
     // Build the inheritance key
@@ -341,7 +341,7 @@ void DifficultySettings::parseFromEntityDef(const IEntityClassPtr& def)
     std::string diffPrefix = "diff_" + string::to_string(_level) + "_";
     std::string prefix = diffPrefix + "change_";
 
-    eclass::AttributeList spawnargs = eclass::getSpawnargsWithPrefix(*def, prefix);
+    eclass::AttributeList spawnargs = eclass::getSpawnargsWithPrefix(def, prefix);
 
     for (eclass::AttributeList::iterator i = spawnargs.begin();
          i != spawnargs.end(); ++i)

@@ -2,7 +2,6 @@
 
 #include "itextstream.h"
 #include "ieclasscolours.h"
-#include "os/path.h"
 #include "string/convert.h"
 
 #include "string/predicate.h"
@@ -17,37 +16,42 @@ namespace
     const Vector4 UndefinedColour(-1, -1, -1, -1);
 }
 
-EntityClass::EntityClass(const std::string& name, bool fixedSize)
-: _name(name),
-  _visibility([this]() {
-      // Entity class visibility is NOT inherited -- hiding an abstract base entity from the list
-      // does not imply all of its concrete subclasses should also be hidden.
-      return getAttributeValue("editor_visibility", false) == "hidden" ? vfs::Visibility::HIDDEN
-                                                                       : vfs::Visibility::NORMAL;
-  }),
-  _colour(UndefinedColour),
-  _fixedSize(fixedSize)
+EntityClass::EntityClass(const std::string& name)
+: DeclarationBase<IEntityClass>(decl::Type::EntityDef, name),
+  _visibility([this] { return determineVisibilityFromValues(); }),
+  _colour(DefaultEntityColour),
+  // greebo: Changed default behaviour when unknown entites are encountered to isFixedSize == FALSE
+  // so that brushes of unknown classes don't get lost (issue #240)
+  _fixedSize(false)
 {}
 
-EntityClass::EntityClass(const std::string& name, const vfs::FileInfo& fileInfo, bool fixedSize)
-: EntityClass(name, fixedSize)
+EntityClass::~EntityClass()
 {
-    _fileInfo = fileInfo;
+    _parentChangedConnection.disconnect();
 }
 
-const std::string& EntityClass::getName() const
+IEntityClass* EntityClass::getParent()
 {
-    return _name;
-}
+    ensureParsed();
 
-const IEntityClass* EntityClass::getParent() const
-{
     return _parent;
 }
 
-vfs::Visibility EntityClass::getVisibility() const
+vfs::Visibility EntityClass::determineVisibilityFromValues()
 {
-    return _visibility.get();
+    // Entity class visibility is NOT inherited -- hiding an abstract base entity from the list
+    // does not imply all of its concrete subclasses should also be hidden.
+    return getAttributeValue("editor_visibility", false) == "hidden" ? 
+        vfs::Visibility::HIDDEN : vfs::Visibility::NORMAL;
+}
+
+vfs::Visibility EntityClass::getVisibility()
+{
+    ensureParsed();
+
+    // File visibility overrides the setting in the entity key/value pairs
+    return getBlockSyntax().fileInfo.visibility == vfs::Visibility::HIDDEN ?
+        vfs::Visibility::HIDDEN : _visibility.get();
 }
 
 sigc::signal<void>& EntityClass::changedSignal()
@@ -55,8 +59,16 @@ sigc::signal<void>& EntityClass::changedSignal()
     return _changedSignal;
 }
 
-bool EntityClass::isFixedSize() const
+void EntityClass::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
 {
+    clear();
+    emitChangedSignal();
+}
+
+bool EntityClass::isFixedSize()
+{
+    ensureParsed();
+
     if (_fixedSize) {
         return true;
     }
@@ -68,8 +80,10 @@ bool EntityClass::isFixedSize() const
     }
 }
 
-AABB EntityClass::getBounds() const
+AABB EntityClass::getBounds()
 {
+    ensureParsed();
+
     if (isFixedSize())
     {
         return AABB::createFromMinMax(
@@ -77,14 +91,43 @@ AABB EntityClass::getBounds() const
             string::convert<Vector3>(getAttributeValue("editor_maxs"))
         );
     }
-    else
-    {
-        return AABB(); // null AABB
-    }
+
+    return AABB(); // null AABB
 }
 
-bool EntityClass::isLight() const
+EntityClass::Type EntityClass::getClassType()
 {
+    ensureParsed();
+
+    if (isLight())
+    {
+        return Type::Light;
+    }
+
+    if (!isFixedSize())
+    {
+        // Variable size entity
+        return Type::StaticGeometry;
+    }
+    
+    if (!getAttributeValue("model").empty())
+    {
+        // Fixed size, has model path
+        return Type::EntityClassModel;
+    }
+    
+    if (getDeclName() == "speaker")
+    {
+        return Type::Speaker;
+    }
+
+    return Type::Generic;
+}
+
+bool EntityClass::isLight()
+{
+    ensureParsed();
+
     return _isLight;
 }
 
@@ -97,6 +140,8 @@ void EntityClass::setIsLight(bool val)
 
 void EntityClass::setColour(const Vector4& colour)
 {
+    ensureParsed();
+
     auto origColour = _colour;
     _colour = colour;
 
@@ -113,6 +158,8 @@ void EntityClass::setColour(const Vector4& colour)
 
 void EntityClass::resetColour()
 {
+    ensureParsed();
+
     // An override colour which matches this exact class is final, and overrides
     // everything else
     if (GlobalEclassColourManager().applyColours(*this))
@@ -137,8 +184,10 @@ void EntityClass::resetColour()
     setColour(DefaultEntityColour);
 }
 
-const Vector4& EntityClass::getColour() const
+const Vector4& EntityClass::getColour()
 {
+    ensureParsed();
+
     return _colour;
 }
 
@@ -172,16 +221,6 @@ void EntityClass::emplaceAttribute(EntityClassAttribute&& attribute)
     }
 }
 
-EntityClass::Ptr EntityClass::createDefault(const std::string& name, bool brushes)
-{
-    auto eclass = std::make_shared<EntityClass>(name, !brushes);
-
-    // Force the entity class colour to default
-    eclass->setColour(UndefinedColour);
-
-    return eclass;
-}
-
 void EntityClass::forEachAttributeInternal(InternalAttrVisitor visitor,
                                            bool editorKeys) const
 {
@@ -201,8 +240,10 @@ void EntityClass::forEachAttributeInternal(InternalAttrVisitor visitor,
 }
 
 void EntityClass::forEachAttribute(AttributeVisitor visitor,
-                                   bool editorKeys) const
+                                   bool editorKeys)
 {
+    ensureParsed();
+
     // First compile a map of all attributes we need to pass to the visitor,
     // ensuring that there is only one attribute per name (i.e. we don't want to
     // visit the same-named attribute on both a child and one of its ancestors)
@@ -227,7 +268,7 @@ void EntityClass::forEachAttribute(AttributeVisitor visitor,
 }
 
 // Resolve inheritance for this class
-void EntityClass::resolveInheritance(EntityClasses& classmap)
+void EntityClass::resolveInheritance()
 {
     // If we have already resolved inheritance, do nothing
     if (_inheritanceResolved)
@@ -237,36 +278,33 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
     // parent name is the same as our own classname, to avoid infinite
     // recursion.
     std::string parentName = getAttributeValue("inherit");
-    if (parentName.empty() || parentName == _name)
+    if (parentName.empty() || parentName == getDeclName())
     {
         resetColour();
         return;
     }
 
     // Find the parent entity class
-    auto pIter = classmap.find(parentName);
-    if (pIter != classmap.end())
-    {
-        // Recursively resolve inheritance of parent
-        pIter->second->resolveInheritance(classmap);
+    auto parentClass = GlobalEntityClassManager().findClass(parentName);
 
+    if (parentClass)
+    {
         // Set our parent pointer
-        _parent = pIter->second.get();
+        _parent = static_cast<EntityClass*>(parentClass.get());
     }
     else
     {
-        rWarning() << "[eclassmgr] Entity class "
-                              << _name << " specifies unknown parent class "
-                              << parentName << std::endl;
+        rWarning() << "[eclassmgr] Entity class " << getDeclName()
+            << " specifies unknown parent class " << parentName << std::endl;
     }
 
     // Set the resolved flag
     _inheritanceResolved = true;
 
-    if (!getAttributeValue("model").empty())
+    if (!_fixedSize && !getAttributeValue("model").empty())
     {
-        // We have a model path (probably an inherited one)
-        setModelPath(getAttributeValue("model"));
+        // We have a model path (probably an inherited one), so this is treated as fixed-size class
+        _fixedSize = true;
     }
 
     if (getAttributeValue("editor_light") == "1" || getAttributeValue("spawnclass") == "idLight")
@@ -287,9 +325,7 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
     {
         // resolveInheritance() can be called more than once (e.g. after Reload Defs) so make sure
         // we only have a single connection to the parent's changed signal.
-        if (_parentChangedConnection) {
-            _parentChangedConnection->disconnect();
-        }
+        _parentChangedConnection.disconnect();
         _parentChangedConnection = _parent->changedSignal().connect(
             sigc::mem_fun(this, &EntityClass::resetColour)
         );
@@ -298,11 +334,13 @@ void EntityClass::resolveInheritance(EntityClasses& classmap)
 
 bool EntityClass::isOfType(const std::string& className)
 {
-	for (const IEntityClass* currentClass = this;
-         currentClass != NULL;
+    ensureParsed();
+
+	for (IEntityClass* currentClass = this;
+         currentClass != nullptr;
          currentClass = currentClass->getParent())
     {
-        if (currentClass->getName() == className)
+        if (currentClass->getDeclName() == className)
 		{
 			return true;
 		}
@@ -311,23 +349,11 @@ bool EntityClass::isOfType(const std::string& className)
 	return false;
 }
 
-std::string EntityClass::getDefFileName()
-{
-    return _fileInfo ? _fileInfo->fullPath() : "";
-}
-
 // Find a single attribute
-EntityClassAttribute* EntityClass::getAttribute(const std::string& name,
-                                                bool includeInherited)
+EntityClassAttribute* EntityClass::getAttribute(const std::string& name, bool includeInherited)
 {
-    return const_cast<EntityClassAttribute*>(
-        std::as_const(*this).getAttribute(name, includeInherited)
-    );
-}
+    ensureParsed();
 
-// Find a single attribute
-const EntityClassAttribute* EntityClass::getAttribute(const std::string& name, bool includeInherited) const
-{
     // First look up the attribute on this class; if found, we can simply return it
     auto f = _attributes.find(name);
     if (f != _attributes.end())
@@ -343,7 +369,7 @@ const EntityClassAttribute* EntityClass::getAttribute(const std::string& name, b
     return _parent->getAttribute(name);
 }
 
-std::string EntityClass::getAttributeValue(const std::string& name, bool includeInherited) const
+std::string EntityClass::getAttributeValue(const std::string& name, bool includeInherited)
 {
     if (auto* attr = getAttribute(name, includeInherited); attr)
         return attr->getValue();
@@ -351,8 +377,10 @@ std::string EntityClass::getAttributeValue(const std::string& name, bool include
         return "";
 }
 
-std::string EntityClass::getAttributeType(const std::string& name) const
+std::string EntityClass::getAttributeType(const std::string& name)
 {
+    ensureParsed();
+
     // Check the attributes on this class
     const auto& attribute = _attributes.find(name);
 
@@ -370,8 +398,10 @@ std::string EntityClass::getAttributeType(const std::string& name) const
     return _parent ? _parent->getAttributeType(name) : "";
 }
 
-std::string EntityClass::getAttributeDescription(const std::string& name) const
+std::string EntityClass::getAttributeDescription(const std::string& name) 
 {
+    ensureParsed();
+
     // Check the attributes on this class first
     const auto& attribute = _attributes.find(name);
 
@@ -393,6 +423,7 @@ void EntityClass::clear()
 {
     // Don't clear the name
     _isLight = false;
+    _parent = nullptr;
 
     _colour = UndefinedColour;
     _colourTransparent = false;
@@ -400,15 +431,10 @@ void EntityClass::clear()
     _fixedSize = false;
 
     _attributes.clear();
-    _model.clear();
-    _skin.clear();
     _inheritanceResolved = false;
-
-    _modName = "base";
 }
 
-void EntityClass::parseEditorSpawnarg(const std::string& key,
-                                           const std::string& value)
+void EntityClass::parseEditorSpawnarg(const std::string& key, const std::string& value)
 {
     // "editor_yyy" represents an attribute that may be set on this
     // entity. Construct a value-less EntityClassAttribute to add to
@@ -442,24 +468,24 @@ void EntityClass::parseEditorSpawnarg(const std::string& key,
     }
 }
 
-void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
+void EntityClass::onBeginParsing()
 {
     // Clear this structure first, we might be "refreshing" ourselves from tokens
     clear();
+}
 
-    // Required open brace (the name has already been parsed by the EClassManager)
-    tokeniser.assertNextToken("{");
-
+void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
+{
     // Loop over all of the keys in this entitydef
-    std::string key;
-    while ((key = tokeniser.nextToken()) != "}")
+    while (tokeniser.hasMoreTokens())
     {
-        const std::string value = tokeniser.nextToken();
+        auto key = tokeniser.nextToken();
+        auto value = tokeniser.nextToken();
 
         // Handle some keys specially
         if (key == "model")
         {
-            setModelPath(os::standardPath(value));
+            _fixedSize = true;
         }
         else if (key == "editor_color")
         {
@@ -485,7 +511,6 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         if (!attribute)
         {
             // Attribute does not exist, add it.
-            //
             // Following key-specific processing, add the keyvalue to the eclass
             // The type is an empty string, it will be set to a non-type as soon as we encounter it
             emplaceAttribute(EntityClassAttribute("", key, value, ""));
@@ -499,9 +524,17 @@ void EntityClass::parseFromTokens(parser::DefTokeniser& tokeniser)
         {
             // Both type and value are not empty, emit a warning
             rWarning() << "[eclassmgr] attribute " << key
-                << " already set on entityclass " << _name << std::endl;
+                << " already set on entityclass " << getDeclName() << std::endl;
         }
-    } // while true
+    }
+}
+
+void EntityClass::onParsingFinished()
+{
+    resolveInheritance();
+
+    // Reset the determined visibility, it might have changed
+    _visibility = Lazy<vfs::Visibility>([this] { return determineVisibilityFromValues(); });
 
     // Notify the observers
     emitChangedSignal();

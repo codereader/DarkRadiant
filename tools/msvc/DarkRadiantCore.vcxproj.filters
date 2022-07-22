@@ -346,9 +346,6 @@
     <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderLayer.cpp">
       <Filter>src\shaders</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\shaders\Doom3ShaderSystem.cpp">
-      <Filter>src\shaders</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\shaders\MapExpression.cpp">
       <Filter>src\shaders</Filter>
     </ClCompile>
@@ -892,9 +889,6 @@
     <ClCompile Include="..\..\radiantcore\map\algorithm\MapImporter.cpp">
       <Filter>src\map\algorithm</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\map\algorithm\Skins.cpp">
-      <Filter>src\map\algorithm</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\map\infofile\InfoFile.cpp">
       <Filter>src\map\infofile</Filter>
     </ClCompile>
@@ -1126,12 +1120,6 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\particles\ParticleLoader.cpp">
-      <Filter>src\particles</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiantcore\eclass\EClassParser.cpp">
-      <Filter>src\eclass</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
@@ -1149,6 +1137,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\decl\DeclarationManager.cpp">
+      <Filter>src\decl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\decl\DeclarationFolderParser.cpp">
+      <Filter>src\decl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\shaders\MaterialManager.cpp">
+      <Filter>src\shaders</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1368,22 +1365,13 @@
     <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderLayer.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\shaders\Doom3ShaderSystem.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\MapExpression.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\NamedBindable.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderDefinition.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\ShaderExpression.h">
-      <Filter>src\shaders</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\shaders\ShaderFileLoader.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\ShaderLibrary.h">
@@ -2025,9 +2013,6 @@
     <ClInclude Include="..\..\radiantcore\map\algorithm\MapImporter.h">
       <Filter>src\map\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\map\algorithm\Skins.h">
-      <Filter>src\map\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\map\infofile\InfoFile.h">
       <Filter>src\map\infofile</Filter>
     </ClInclude>
@@ -2331,15 +2316,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\SceneRenderer.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\particles\ParticleLoader.h">
-      <Filter>src\particles</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\eclass\EClassParser.h">
-      <Filter>src\eclass</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiantcore\skins\SkinDeclParser.h">
-      <Filter>src\skins</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FenceSyncProvider.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
@@ -2369,6 +2345,21 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationManager.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationFile.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationStreamParser.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\decl\DeclarationFolderParser.h">
+      <Filter>src\decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\shaders\MaterialManager.h">
+      <Filter>src\shaders</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

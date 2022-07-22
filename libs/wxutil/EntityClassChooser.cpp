@@ -9,6 +9,7 @@
 
 #include "i18n.h"
 #include "ifavourites.h"
+#include "ideclmanager.h"
 #include "ui/imainframe.h"
 #include "gamelib.h"
 
@@ -108,7 +109,7 @@ public:
         // Create the folder to put this EntityClass in, depending on the value
         // of the DISPLAY_FOLDER_KEY.
         addPath(
-            eclass->getModName() + folderPath + "/" + eclass->getName(),
+            eclass->getModName() + folderPath + "/" + eclass->getDeclName(),
             [&](TreeModel::Row& row, const std::string& path,
                 const std::string& leafName, bool isFolder)
             {
@@ -202,7 +203,7 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
 
     // Listen for defs-reloaded signal (cannot bind directly to
     // ThreadedEntityClassLoader method because it is not sigc::trackable)
-    _defsReloaded = GlobalEntityClassManager().defsReloadedSignal().connect(
+    _defsReloaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
         sigc::mem_fun(this, &EntityClassChooser::loadEntityClasses)
     );
 
@@ -356,7 +357,7 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass)
 
     // Set the usage panel to the IEntityClass' usage information string
     auto* usageText = findNamedObject<wxTextCtrl>(this, "EntityClassChooserUsageText");
-    usageText->SetValue(e ? eclass::getUsage(*e) : "");
+    usageText->SetValue(e ? eclass::getUsage(e) : "");
 }
 
 void EntityClassChooser::updateSelection()
@@ -388,7 +389,7 @@ void EntityClassChooser::updateSelection()
             {
                 _modelPreview->setModel(eclass->getAttributeValue("model"));
                 _modelPreview->setSkin(eclass->getAttributeValue("skin"));
-                defFileName->SetLabel(eclass->getDefFileName());
+                defFileName->SetLabel(eclass->getDeclFilePath());
                 return; // success
             }
         }

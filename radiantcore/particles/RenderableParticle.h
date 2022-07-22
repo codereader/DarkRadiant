@@ -18,7 +18,7 @@ class RenderableParticle : public IRenderableParticle,
                            public sigc::trackable
 {
 	// The particle definition containing the stage info
-	IParticleDefPtr _particleDef;
+	IParticleDef::Ptr _particleDef;
 
     // Signal connection from the particle def
     sigc::connection _defConnection;
@@ -55,7 +55,7 @@ class RenderableParticle : public IRenderableParticle,
 	RenderSystemWeakPtr _renderSystem;
 
 public:
-	RenderableParticle(const IParticleDefPtr& particleDef);
+	RenderableParticle(const IParticleDef::Ptr& particleDef);
 
 	~RenderableParticle();
 
@@ -74,8 +74,8 @@ public:
 		return Highlight::NoHighlight; // never highlighted
 	}
 
-	const IParticleDefPtr& getParticleDef() const override;
-	void setParticleDef(const IParticleDefPtr& def) override;
+	const IParticleDef::Ptr& getParticleDef() const override;
+	void setParticleDef(const IParticleDef::Ptr& def) override;
 
 	void setMainDirection(const Vector3& direction) override;
 	void setEntityColour(const Vector3& colour) override;

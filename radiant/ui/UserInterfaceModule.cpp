@@ -237,6 +237,9 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMenuManager().setVisibility("main/help/userGuideLocal", false);
     });
 #endif
+
+    _reloadMaterialsConn = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
+        .connect([]() { GlobalMainFrame().updateAllWindows(); });
 }
 
 void UserInterfaceModule::shutdownModule()
@@ -248,6 +251,7 @@ void UserInterfaceModule::shutdownModule()
 	GlobalRadiantCore().getMessageBus().removeListener(_execFailedListener);
 	GlobalRadiantCore().getMessageBus().removeListener(_notificationListener);
 
+    _reloadMaterialsConn.disconnect();
 	_coloursUpdatedConn.disconnect();
 	_entitySettingsConn.disconnect();
     _mapEditModeChangedConn.disconnect();
@@ -364,20 +368,6 @@ void UserInterfaceModule::applyEntityVertexColours()
 	settings.setLightVertexColour(LightEditVertexType::Selected, GlobalColourSchemeManager().getColour("light_vertex_selected"));
 }
 
-void UserInterfaceModule::refreshShadersCmd(const cmd::ArgumentList& args)
-{
-	// Disable screen updates for the scope of this function
-	auto blocker = GlobalMainFrame().getScopedScreenUpdateBlocker(_("Processing..."), _("Loading Shaders"));
-
-	// Reload the Shadersystem, this will also trigger an
-	// OpenGLRenderSystem unrealise/realise sequence as the rendersystem
-	// is attached to this class as Observer
-	// We can't do this refresh() operation in a thread it seems due to context binding
-	GlobalMaterialManager().refresh();
-
-	GlobalMainFrame().updateAllWindows();
-}
-
 void UserInterfaceModule::registerUICommands()
 {
 	TexTool::registerCommands();
@@ -416,7 +406,6 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
 	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
-	GlobalCommandSystem().addCommand("RefreshShaders", std::bind(&UserInterfaceModule::refreshShadersCmd, this, std::placeholders::_1));
 
 	// ----------------------- Bind Events ---------------------------------------
 

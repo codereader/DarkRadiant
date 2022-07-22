@@ -85,7 +85,7 @@ private:
 			"ReadableEditorDialog"
 		);
 
-		mm.insert("main/file/refreshShaders",
+		mm.insert("main/file/reloadDecls",
 			"ReloadReadables", ui::menu::ItemType::Item,
 			_("Reload Readable Guis"), // caption
 			"book.png", // icon

@@ -23,11 +23,12 @@ add_library(radiantcore MODULE
             clipper/ClipPoint.cpp
             clipper/SplitAlgorithm.cpp
             commandsystem/CommandSystem.cpp
+            decl/DeclarationFolderParser.cpp
+            decl/DeclarationManager.cpp
             decl/FavouritesManager.cpp
             eclass/EntityClass.cpp
             eclass/EClassColourManager.cpp
             eclass/EClassManager.cpp
-            eclass/EClassParser.cpp
             entity/AngleKey.cpp
             entity/AttachmentData.cpp
             entity/curve/CurveCatmullRom.cpp
@@ -96,7 +97,6 @@ add_library(radiantcore MODULE
             map/algorithm/MapExporter.cpp
             map/algorithm/MapImporter.cpp
             map/algorithm/Models.cpp
-            map/algorithm/Skins.cpp
             map/autosaver/AutoSaver.cpp
             map/ArchivedMapResource.cpp
             map/CounterManager.cpp
@@ -195,7 +195,6 @@ add_library(radiantcore MODULE
             modulesystem/ModuleLoader.cpp
             modulesystem/ModuleRegistry.cpp
             particles/ParticleDef.cpp
-            particles/ParticleLoader.cpp
             particles/ParticleNode.cpp
             particles/ParticleParameter.cpp
             particles/ParticlesManager.cpp
@@ -292,7 +291,7 @@ add_library(radiantcore MODULE
             shaders/CameraCubeMapDecl.cpp
             shaders/CShader.cpp
             shaders/Doom3ShaderLayer.cpp
-            shaders/Doom3ShaderSystem.cpp
+            shaders/MaterialManager.cpp
             shaders/ExpressionSlots.cpp
             shaders/MapExpression.cpp
             shaders/MaterialSourceGenerator.cpp

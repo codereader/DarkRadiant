@@ -66,29 +66,14 @@ StageDef::StageDef() :
 	reset();
 }
 
-StageDef::StageDef(parser::DefTokeniser& tok) :
-	_rotationSpeed(new ParticleParameter(*this)),
-	_speed(new ParticleParameter(*this)),
-	_size(new ParticleParameter(*this)),
-	_aspect(new ParticleParameter(*this)),
-	_visible(true)
+StageDef::Ptr StageDef::Parse(parser::DefTokeniser& tok)
 {
-	// Parse from the tokens, but don't allow any parse exceptions
-	// from leaving this constructor.
-	try
-	{
-		parseFromTokens(tok);
-	}
-	catch (parser::ParseException& p)
-	{
-		rError() << "[particles]: Could not parse particle stage: " <<
-			p.what() << std::endl;
-	}
-	catch (std::invalid_argument& e)
-	{
-		rError() << "[particles]: Invalid cast when parsing particle stage: " <<
-			e.what() << std::endl;
-	}
+    auto stage = std::make_shared<StageDef>();
+
+	// Parse from the tokens, leak all parse exceptions
+    stage->parseFromTokens(tok);
+
+    return stage;
 }
 
 void StageDef::reset()
@@ -146,61 +131,61 @@ void StageDef::reset()
 	_aspect.reset(new ParticleParameter(*this, 1.0f));
 }
 
-void StageDef::copyFrom(const IStageDef& other)
+void StageDef::copyFrom(const IStageDef::Ptr& other)
 {
-	setMaterialName(other.getMaterialName());
-	setCount(other.getCount());
-	setDuration(other.getDuration());
-	setCycles(other.getCycles());
-	setBunching(other.getBunching());
-	setTimeOffset(other.getTimeOffset());
-	setDeadTime(other.getDeadTime());
-	setColour(other.getColour());
-	setFadeColour(other.getFadeColour());
-	setFadeInFraction(other.getFadeInFraction());
-	setFadeOutFraction(other.getFadeOutFraction());
-	setFadeIndexFraction(other.getFadeIndexFraction());
-	setAnimationFrames(other.getAnimationFrames());
-	setAnimationRate(other.getAnimationRate());
-	setInitialAngle(other.getInitialAngle());
-	setBoundsExpansion(other.getBoundsExpansion());
-	setRandomDistribution(other.getRandomDistribution());
-	setUseEntityColour(other.getUseEntityColour());
-	setGravity(other.getGravity());
-	setWorldGravityFlag(other.getWorldGravityFlag());
-	setOffset(other.getOffset());
-	setOrientationType(other.getOrientationType());
+	setMaterialName(other->getMaterialName());
+	setCount(other->getCount());
+	setDuration(other->getDuration());
+	setCycles(other->getCycles());
+	setBunching(other->getBunching());
+	setTimeOffset(other->getTimeOffset());
+	setDeadTime(other->getDeadTime());
+	setColour(other->getColour());
+	setFadeColour(other->getFadeColour());
+	setFadeInFraction(other->getFadeInFraction());
+	setFadeOutFraction(other->getFadeOutFraction());
+	setFadeIndexFraction(other->getFadeIndexFraction());
+	setAnimationFrames(other->getAnimationFrames());
+	setAnimationRate(other->getAnimationRate());
+	setInitialAngle(other->getInitialAngle());
+	setBoundsExpansion(other->getBoundsExpansion());
+	setRandomDistribution(other->getRandomDistribution());
+	setUseEntityColour(other->getUseEntityColour());
+	setGravity(other->getGravity());
+	setWorldGravityFlag(other->getWorldGravityFlag());
+	setOffset(other->getOffset());
+	setOrientationType(other->getOrientationType());
 
 	for (int i = 0; i < 4; ++i)
 	{
-		setOrientationParm(i, other.getOrientationParm(i));
+		setOrientationParm(i, other->getOrientationParm(i));
 	}
 
-	setDistributionType(other.getDistributionType());
+	setDistributionType(other->getDistributionType());
 
 	for (int i = 0; i < 4; ++i)
 	{
-		setDistributionParm(i, other.getDistributionParm(i));
+		setDistributionParm(i, other->getDistributionParm(i));
 	}
 
-	setDirectionType(other.getDirectionType());
+	setDirectionType(other->getDirectionType());
 
 	for (int i = 0; i < 4; ++i)
 	{
-		setDirectionParm(i, other.getDirectionParm(i));
+		setDirectionParm(i, other->getDirectionParm(i));
 	}
 
-	setCustomPathType(other.getCustomPathType());
+	setCustomPathType(other->getCustomPathType());
 
 	for (int i = 0; i < 8; ++i)
 	{
-		setCustomPathParm(i, other.getCustomPathParm(i));
+		setCustomPathParm(i, other->getCustomPathParm(i));
 	}
 
-	*_size = other.getSize();
-	*_aspect = other.getAspect();
-	*_speed = other.getSpeed();
-	*_rotationSpeed = other.getRotationSpeed();
+	*_size = other->getSize();
+	*_aspect = other->getAspect();
+	*_speed = other->getSpeed();
+	*_rotationSpeed = other->getRotationSpeed();
 }
 
 void StageDef::parseFromTokens(parser::DefTokeniser& tok)
@@ -730,62 +715,62 @@ void StageDef::setMaterialName(const std::string& material)
     _changedSignal.emit();
 }
 
-bool StageDef::operator==(const IStageDef& other) const
+bool StageDef::isEqualTo(const IStageDef::Ptr& other)
 {
-    if (getMaterialName() != other.getMaterialName()) return false;
+    if (getMaterialName() != other->getMaterialName()) return false;
 
-    if (getCount() != other.getCount()) return false;
-    if (getDuration() != other.getDuration()) return false;
-    if (getCycles() != other.getCycles()) return false;
-    if (getBunching() != other.getBunching()) return false;
-    if (getTimeOffset() != other.getTimeOffset()) return false;
-    if (getDeadTime() != other.getDeadTime()) return false;
-    if (getColour() != other.getColour()) return false;
-    if (getFadeColour() != other.getFadeColour()) return false;
-    if (getFadeInFraction() != other.getFadeInFraction()) return false;
-    if (getFadeOutFraction() != other.getFadeOutFraction()) return false;
-    if (getFadeIndexFraction() != other.getFadeIndexFraction()) return false;
-    if (getAnimationFrames() != other.getAnimationFrames()) return false;
-    if (getAnimationRate() != other.getAnimationRate()) return false;
-    if (getInitialAngle() != other.getInitialAngle()) return false;
-    if (getBoundsExpansion() != other.getBoundsExpansion()) return false;
-    if (getRandomDistribution() != other.getRandomDistribution()) return false;
-    if (getUseEntityColour() != other.getUseEntityColour()) return false;
-    if (getGravity() != other.getGravity()) return false;
-    if (getWorldGravityFlag() != other.getWorldGravityFlag()) return false;
-    if (getOffset() != other.getOffset()) return false;
-    if (getOrientationType() != other.getOrientationType()) return false;
-
-    for (int i = 0; i < 4; ++i)
-    {
-        if (getOrientationParm(i) != other.getOrientationParm(i)) return false;
-    }
-
-    if (getDistributionType() != other.getDistributionType()) return false;
+    if (getCount() != other->getCount()) return false;
+    if (getDuration() != other->getDuration()) return false;
+    if (getCycles() != other->getCycles()) return false;
+    if (getBunching() != other->getBunching()) return false;
+    if (getTimeOffset() != other->getTimeOffset()) return false;
+    if (getDeadTime() != other->getDeadTime()) return false;
+    if (getColour() != other->getColour()) return false;
+    if (getFadeColour() != other->getFadeColour()) return false;
+    if (getFadeInFraction() != other->getFadeInFraction()) return false;
+    if (getFadeOutFraction() != other->getFadeOutFraction()) return false;
+    if (getFadeIndexFraction() != other->getFadeIndexFraction()) return false;
+    if (getAnimationFrames() != other->getAnimationFrames()) return false;
+    if (getAnimationRate() != other->getAnimationRate()) return false;
+    if (getInitialAngle() != other->getInitialAngle()) return false;
+    if (getBoundsExpansion() != other->getBoundsExpansion()) return false;
+    if (getRandomDistribution() != other->getRandomDistribution()) return false;
+    if (getUseEntityColour() != other->getUseEntityColour()) return false;
+    if (getGravity() != other->getGravity()) return false;
+    if (getWorldGravityFlag() != other->getWorldGravityFlag()) return false;
+    if (getOffset() != other->getOffset()) return false;
+    if (getOrientationType() != other->getOrientationType()) return false;
 
     for (int i = 0; i < 4; ++i)
     {
-        if (getDistributionParm(i) != other.getDistributionParm(i)) return false;
+        if (getOrientationParm(i) != other->getOrientationParm(i)) return false;
     }
 
-    if (getDirectionType() != other.getDirectionType()) return false;
+    if (getDistributionType() != other->getDistributionType()) return false;
 
     for (int i = 0; i < 4; ++i)
     {
-        if (getDirectionParm(i) != other.getDirectionParm(i)) return false;
+        if (getDistributionParm(i) != other->getDistributionParm(i)) return false;
     }
 
-    if (getCustomPathType() != other.getCustomPathType()) return false;
+    if (getDirectionType() != other->getDirectionType()) return false;
+
+    for (int i = 0; i < 4; ++i)
+    {
+        if (getDirectionParm(i) != other->getDirectionParm(i)) return false;
+    }
+
+    if (getCustomPathType() != other->getCustomPathType()) return false;
 
     for (int i = 0; i < 8; ++i)
     {
-        if (getCustomPathParm(i) != other.getCustomPathParm(i)) return false;
+        if (getCustomPathParm(i) != other->getCustomPathParm(i)) return false;
     }
 
-    if (getSize() != other.getSize()) return false;
-    if (getAspect() != other.getAspect()) return false;
-    if (getSpeed() != other.getSpeed()) return false;
-    if (getRotationSpeed() != other.getRotationSpeed()) return false;
+    if (getSize() != other->getSize()) return false;
+    if (getAspect() != other->getAspect()) return false;
+    if (getSpeed() != other->getSpeed()) return false;
+    if (getRotationSpeed() != other->getRotationSpeed()) return false;
 
     // All checks passed => equal
     return true;

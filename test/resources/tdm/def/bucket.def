@@ -165,3 +165,8 @@ entityDef bucket_metal
 	"snd_bounce_dirt"       "tdm_impact_metal_bucket_on_soft"
 
 }
+
+entityDef bucket_metal2
+{
+    "inherit"               "bucket_metal"
+}

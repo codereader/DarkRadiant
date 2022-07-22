@@ -316,8 +316,8 @@ void SkinChooser::handleSelectionChange()
     if (!selectedSkin.empty())
     {
         _fileInfo->setName(selectedSkin);
-        auto& skin = GlobalModelSkinCache().capture(selectedSkin);
-        _fileInfo->setPath(skin.getSkinFileName());
+        auto skin = GlobalModelSkinCache().findSkin(selectedSkin);
+        _fileInfo->setPath(skin->getDeclFilePath());
     }
     else
     {

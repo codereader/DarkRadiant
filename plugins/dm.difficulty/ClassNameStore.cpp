@@ -36,7 +36,7 @@ ClassNameStorePtr& ClassNameStore::InstancePtr()
 // EntityClassVisitor implementation
 void ClassNameStore::visit(const IEntityClassPtr& eclass)
 {
-	_classNames.Add(eclass->getName());
+	_classNames.Add(eclass->getDeclName());
 }
 
 void ClassNameStore::populateListStore()

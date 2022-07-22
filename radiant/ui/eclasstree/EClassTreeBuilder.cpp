@@ -86,7 +86,7 @@ void EClassTreeBuilder::visit(const IEntityClassPtr& eclass)
 	fullPath += getInheritancePathRecursive(eclass);
 
 	// The entityDef name itself
-	fullPath += eclass->getName();
+	fullPath += eclass->getDeclName();
 
 	// Let the VFSTreePopulator do the insertion
 	_treePopulator.addPath(fullPath);
@@ -119,7 +119,7 @@ std::string EClassTreeBuilder::getInheritancePathRecursive(const IEntityClassPtr
                 returnValue += getInheritancePathRecursive(parent);
             } else {
                 rError() << "EClassTreeBuilder: Cannot resolve inheritance path for "
-                         << eclass->getName() << std::endl;
+                         << eclass->getDeclName() << std::endl;
             }
 
             returnValue += attribute + "/";

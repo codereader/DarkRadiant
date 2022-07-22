@@ -3,31 +3,28 @@
 #include <vector>
 #include "imodule.h"
 #include <sigc++/signal.h>
+#include "ideclmanager.h"
 
-class ModelSkin
+namespace decl
+{
+
+class ISkin :
+    public IDeclaration
 {
 public:
-    /**
-	 * Destructor
-	 */
-	virtual ~ModelSkin() {}
+    using Ptr = std::shared_ptr<ISkin>;
 
-	/**
-	 * greebo: Returns the name of this skin.
-	 */
-	virtual std::string getName() const = 0;
+	virtual ~ISkin() {}
 
 	/**
 	 * Get the mapped texture for the given query texture, using the mappings
 	 * in this skin. If there is no mapping for the given texture, return an
 	 * empty string.
 	 */
-	virtual std::string getRemap(const std::string& name) const = 0;
-
-    // Returns the file name this skin has been defined in
-    virtual std::string getSkinFileName() const = 0;
+	virtual std::string getRemap(const std::string& name) = 0;
 };
-typedef std::shared_ptr<ModelSkin> ModelSkinPtr;
+
+} // namespace
 
 class SkinnedModel
 {
@@ -46,20 +43,23 @@ typedef std::shared_ptr<SkinnedModel> SkinnedModelPtr;
 // Model skinlist typedef
 typedef std::vector<std::string> StringList;
 
-const char* const MODULE_MODELSKINCACHE("ModelSkinCache");
+constexpr const char* const MODULE_MODELSKINCACHE("ModelSkinCache");
+
+namespace decl
+{
 
 /**
  * Interface class for the skin manager.
  */
-class ModelSkinCache :
+class IModelSkinCache :
 	public RegisterableModule
 {
 public:
 	/**
-	 * Lookup a specific named skin and return the corresponding ModelSkin
-	 * object.
+	 * Lookup a specific named skin and return the corresponding skin object.
+	 * Returns an empty reference if no declaration is matching the name.
 	 */
-	virtual ModelSkin& capture(const std::string& name) = 0;
+	virtual ISkin::Ptr findSkin(const std::string& name) = 0;
 
 	/**
 	 * Return the skins associated with the given model.
@@ -80,13 +80,6 @@ public:
 	 */
 	virtual const StringList& getAllSkins() = 0;
 
-    // Adds a runtime-generated skin to the collection, it will be resolvable by capture(). 
-    // Note that this skin is not going to survive a refresh() call 
-    virtual void addNamedSkin(const ModelSkinPtr& modelSkin) = 0;
-
-    // Removes a named skin from the cache
-    virtual void removeSkin(const std::string& name) = 0;
-
 	/**
 	 * greebo: Reloads all skins from the definition files.
 	 */
@@ -96,8 +89,10 @@ public:
 	virtual sigc::signal<void> signal_skinsReloaded() = 0;
 };
 
-inline ModelSkinCache& GlobalModelSkinCache()
+} // namespace
+
+inline decl::IModelSkinCache& GlobalModelSkinCache()
 {
-	static module::InstanceReference<ModelSkinCache> _reference(MODULE_MODELSKINCACHE);
+	static module::InstanceReference<decl::IModelSkinCache> _reference(MODULE_MODELSKINCACHE);
 	return _reference;
 }

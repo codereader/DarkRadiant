@@ -41,7 +41,7 @@ private:
     wxDataViewItem _selectedStageIter;
 
     // The particle definition we're working on
-    particles::IParticleDefPtr _currentDef;
+    particles::IParticleDef::Ptr _currentDef;
 
     bool _callbacksDisabled;
     bool _saveInProgress;
@@ -81,7 +81,7 @@ private:
 
     // Creates a particle with a new name (queried from the user), selects it and returns the particle ref
     // Returns NULL if the user cancelled in some way
-    particles::IParticleDefPtr createAndSelectNewParticle();
+    particles::IParticleDef::Ptr createAndSelectNewParticle();
 
     // Highlight the named particle in the treeview
     void selectParticleDef(const std::string& particleDefName);

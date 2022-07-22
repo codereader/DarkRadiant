@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "isound.h"
+#include "ideclmanager.h"
 #include "ui/imainframe.h"
 #include "ifavourites.h"
 #include "registry/registry.h"
@@ -68,20 +69,20 @@ public:
     }
 
     // Invoked for each sound shader
-    void addShader(const ISoundShader& shader)
+    void addShader(const ISoundShader::Ptr& shader)
     {
         // Construct a "path" into the sound shader tree,
         // using the mod name as first folder level
         // angua: if there is a displayFolder present, put it between the mod name and the shader name
-        std::string displayFolder = shader.getDisplayFolder();
+        std::string displayFolder = shader->getDisplayFolder();
 
         // Some shaders contain backslashes, sort them in the tree by replacing the backslashes
-        std::string shaderNameForwardSlashes = shader.getName();
+        std::string shaderNameForwardSlashes = shader->getDeclName();
         std::replace(shaderNameForwardSlashes.begin(), shaderNameForwardSlashes.end(), '\\', '/');
 
         std::string fullPath = !displayFolder.empty() ?
-            shader.getModName() + "/" + displayFolder + "/" + shaderNameForwardSlashes :
-            shader.getModName() + "/" + shaderNameForwardSlashes;
+            shader->getModName() + "/" + displayFolder + "/" + shaderNameForwardSlashes :
+            shader->getModName() + "/" + shaderNameForwardSlashes;
 
         // Sort the shader into the tree and set the values
         addPath(fullPath, [&](wxutil::TreeModel::Row& row, const std::string& path, 
@@ -91,7 +92,7 @@ public:
 
             row[_columns.iconAndName] = wxVariant(
                 wxDataViewIconText(leafName, isFolder ? _folderIcon : _shaderIcon));
-            row[_columns.leafName] = shader.getName();
+            row[_columns.leafName] = shader->getDeclName();
             row[_columns.fullName] = path;
             row[_columns.isFolder] = isFolder;
             row[_columns.isFavourite] = isFavourite;
@@ -130,7 +131,7 @@ public:
         SoundShaderPopulator visitor(model, _columns);
 
         // Visit all sound shaders and collect them for later insertion
-        GlobalSoundManager().forEachShader([&](const ISoundShader& shader)
+        GlobalSoundManager().forEachShader([&](const ISoundShader::Ptr& shader)
         {
             ThrowIfCancellationRequested();
             visitor.addShader(shader);
@@ -285,7 +286,7 @@ int SoundChooser::ShowModal()
 {
     _windowPosition.applyPosition();
 
-    _shadersReloaded = GlobalSoundManager().signal_soundShadersReloaded()
+    _shadersReloaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::SoundShader)
         .connect(sigc::mem_fun(this, &SoundChooser::onShadersReloaded));
 
 	int returnCode = DialogBase::ShowModal();

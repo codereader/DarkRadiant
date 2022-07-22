@@ -1,7 +1,7 @@
 #include "TextureMatrix.h"
 
 #include "ShaderExpression.h"
-#include "Doom3ShaderSystem.h"
+#include "MaterialManager.h"
 
 namespace shaders
 {

@@ -4,6 +4,7 @@
 
 #include "i18n.h"
 #include "ientity.h"
+#include "ideclmanager.h"
 #include "ieclass.h"
 #include "iregistry.h"
 #include "igame.h"
@@ -160,7 +161,7 @@ void EntityInspector::construct()
     // Stimulate initial redraw to get the correct status
     requestIdleCallback();
 
-    _defsReloadedHandler = GlobalEntityClassManager().defsReloadedSignal().connect(
+    _defsReloadedHandler = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
         sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
     );
 
@@ -519,6 +520,7 @@ void EntityInspector::refresh()
 {
     _selectionNeedsUpdate = true;
     _helpTextNeedsUpdate = true;
+    _inheritedPropertiesNeedUpdate = true;
     requestIdleCallback();
 }
 
@@ -532,6 +534,7 @@ const StringSet& EntityInspector::getDependencies() const
 {
     static StringSet _dependencies
     {
+        MODULE_DECLMANAGER,
         MODULE_XMLREGISTRY,
         MODULE_GROUPDIALOG,
         MODULE_SELECTIONSYSTEM,
@@ -1409,7 +1412,7 @@ void EntityInspector::updateHelpText(const wxutil::TreeModel::Row& row)
     if (selectedKey == "classname")
     {
         // #5621: Show the editor_usage string when the classname is selected
-        setHelpText(eclass::getUsage(*eclass));
+        setHelpText(eclass::getUsage(eclass));
         return;
     }
 
