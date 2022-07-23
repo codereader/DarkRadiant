@@ -2,14 +2,12 @@
 
 #include "i18n.h"
 #include "ifavourites.h"
-#include "ui/imainframe.h"
 #include "icommandsystem.h"
 #include "iorthoview.h"
 
 #include "wxutil/Bitmap.h"
 #include <wx/toolbar.h>
 #include <wx/checkbox.h>
-#include <wx/frame.h>
 #include <wx/sizer.h>
 
 #include "command/ExecutionFailure.h"

@@ -1,9 +1,5 @@
 #pragma once
 
-#include "imodule.h"
-#include "icommandsystem.h"
-#include "idecltypes.h"
-
 #include <wx/panel.h>
 #include <wx/listctrl.h>
 #include <wx/imaglist.h>
@@ -58,7 +54,6 @@ public:
 private:
     wxToolBar* createLeftToolBar();
     wxToolBar* createRightToolBar();
-    void onMainFrameConstructed();
     void onFavouritesChanged();
     void reloadFavourites();
     void setupCategories();
