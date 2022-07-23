@@ -13,7 +13,7 @@ namespace decl
 // Represents a declaration block as found in the various decl files
 // Holds the name of the block, its typename and the raw block contents
 // including whitespace and comments but exluding the outermost brace pair
-struct DeclarationBlockSyntax : ModResource
+struct DeclarationBlockSyntax : game::IResource
 {
     // The type name of this block (e.g. "table")
     std::string typeName;
@@ -38,7 +38,7 @@ struct DeclarationBlockSyntax : ModResource
 
 // Common interface shared by all the declarations supported by a certain game type
 class IDeclaration :
-    public ModResource
+    public game::IResource
 {
 public:
     virtual ~IDeclaration()

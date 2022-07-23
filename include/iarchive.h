@@ -61,7 +61,7 @@ typedef std::shared_ptr<ArchiveFile> ArchiveFilePtr;
  * \ingroup vfs
  */
 class ArchiveTextFile :
-	public ModResource
+    public game::IResource
 {
 public:
 	/// \brief Returns the path to this file (relative to the filesystem root)

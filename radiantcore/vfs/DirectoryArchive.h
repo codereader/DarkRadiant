@@ -14,7 +14,7 @@ class DirectoryArchive final :
 {
 	std::string _root;
 
-	// The modname for constructing the ModResource is cached here
+	// The modname for constructing the game::IResource is cached here
 	// since changing the game paths will trigger a re-initialisation
 	// of the VFS anyway.
 	mutable std::string _modName;

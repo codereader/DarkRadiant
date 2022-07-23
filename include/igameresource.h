@@ -1,21 +1,20 @@
-#ifndef MODRESOURCE_H_
-#define MODRESOURCE_H_
+#pragma once
 
 #include <string>
 
+namespace game
+{
+
 /**
  * Interface for objects representing resources which were defined within
- * either a directory or a PK4 archive belonging to a particular mod. Provides
+ * either a directory or a PK4 archive belonging to a particular mod/game. Provides
  * a single method to retrieve the name of the mod that contains this particular
  * resource.
  */
-class ModResource
+class IResource
 {
 public:
-    /**
-	 * Destructor
-	 */
-    virtual ~ModResource() {}
+    virtual ~IResource() {}
 
     /**
      * Return the name of the mod which owns this resource object. Objects that
@@ -25,4 +24,4 @@ public:
     virtual std::string getModName() const = 0;
 };
 
-#endif /*MODRESOURCE_H_*/
+}
