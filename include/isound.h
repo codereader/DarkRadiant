@@ -2,7 +2,7 @@
 
 #include "imodule.h"
 #include "ideclmanager.h"
-#include "ModResource.h"
+#include "igameresource.h"
 
 #include <vector>
 #include <functional>

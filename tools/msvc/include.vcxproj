@@ -126,6 +126,7 @@
     <ClInclude Include="..\..\include\ifilter.h" />
     <ClInclude Include="..\..\include\ifonts.h" />
     <ClInclude Include="..\..\include\igame.h" />
+    <ClInclude Include="..\..\include\igameresource.h" />
     <ClInclude Include="..\..\include\igeometryrenderer.h" />
     <ClInclude Include="..\..\include\igeometrystore.h" />
     <ClInclude Include="..\..\include\igl.h" />
@@ -205,7 +206,6 @@
     <ClInclude Include="..\..\include\ivolumetest.h" />
     <ClInclude Include="..\..\include\iwindingrenderer.h" />
     <ClInclude Include="..\..\include\modelskin.h" />
-    <ClInclude Include="..\..\include\ModResource.h" />
     <ClInclude Include="..\..\include\precompiled_interfaces.h" />
     <ClInclude Include="..\..\include\precompiled_main.h" />
     <ClInclude Include="..\..\include\precompiled_math.h" />

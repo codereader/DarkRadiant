@@ -101,7 +101,6 @@
     <ClInclude Include="..\..\include\iversioncontrol.h" />
     <ClInclude Include="..\..\include\ivolumetest.h" />
     <ClInclude Include="..\..\include\modelskin.h" />
-    <ClInclude Include="..\..\include\ModResource.h" />
     <ClInclude Include="..\..\include\precompiled_interfaces.h" />
     <ClInclude Include="..\..\include\precompiled_main.h" />
     <ClInclude Include="..\..\include\precompiled_math.h" />
@@ -169,6 +168,7 @@
     <ClInclude Include="..\..\include\igeometrystore.h" />
     <ClInclude Include="..\..\include\iobjectrenderer.h" />
     <ClInclude Include="..\..\include\ideclmanager.h" />
+    <ClInclude Include="..\..\include\igameresource.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ui">

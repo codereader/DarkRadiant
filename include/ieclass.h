@@ -7,7 +7,7 @@
 #pragma once
 
 #include "ideclmanager.h"
-#include "ModResource.h"
+#include "igameresource.h"
 
 #include "imodule.h"
 #include "ifilesystem.h"

@@ -75,7 +75,7 @@
 #include "ivolumetest.h"
 #include "imapfilechangetracker.h"
 #include "modelskin.h"
-#include "ModResource.h"
+#include "igameresource.h"
 #include "ishaderlayer.h"
 #include "StringSerialisable.h"
 #include "Texture.h"

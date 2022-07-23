@@ -6,7 +6,7 @@
  * \ingroup vfs
  */
 
-#include "ModResource.h"
+#include "igameresource.h"
 
 #include "imodule.h"
 #include <cstddef>

@@ -4,7 +4,7 @@
 #include <sigc++/signal.h>
 #include "imodule.h"
 #include "ifilesystem.h"
-#include "ModResource.h"
+#include "igameresource.h"
 #include "idecltypes.h"
 
 namespace decl
