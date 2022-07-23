@@ -354,7 +354,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
 
     updateScroll();
 
-    GlobalFavouritesManager().getSignalForType(decl::Type::Material).connect(
+    GlobalFavouritesManager().getSignalForType(decl::getTypeName(decl::Type::Material)).connect(
         sigc::mem_fun(this, &TextureBrowser::onFavouritesChanged));
 }
 
@@ -690,7 +690,7 @@ void TextureBrowser::performUpdate()
     CurrentPosition layout;
     _entireSpaceHeight = 0;
     // Update the favourites
-    _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Material);
+    _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Material));
 
     GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& mat)
     {

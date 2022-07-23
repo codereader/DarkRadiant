@@ -29,7 +29,7 @@ public:
         _columns(columns)
     {
         // Get the list of favourites
-        _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Particle);
+        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Particle));
     }
 
     ~ThreadedParticlesLoader()

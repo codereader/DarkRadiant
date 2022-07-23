@@ -513,11 +513,11 @@ void ResourceTreeView::SetFavouriteRecursively(TreeModel::Row& row, bool isFavou
     // Keep track of this choice
     if (isFavourite)
     {
-        GlobalFavouritesManager().addFavourite(_declType, row[_columns.fullName]);
+        GlobalFavouritesManager().addFavourite(decl::getTypeName(_declType), row[_columns.fullName]);
     }
     else
     {
-        GlobalFavouritesManager().removeFavourite(_declType, row[_columns.fullName]);
+        GlobalFavouritesManager().removeFavourite(decl::getTypeName(_declType), row[_columns.fullName]);
     }
 
     row.SendItemChanged();

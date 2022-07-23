@@ -5,17 +5,26 @@
 #include "iregistry.h"
 #include <sigc++/signal.h>
 
-namespace decl
+namespace game
 {
 
 class FavouriteSet
 {
 private:
+    std::string _typeName;
     std::set<std::string> _set;
 
     sigc::signal<void> _sigSetChanged;
 
 public:
+    FavouriteSet() :
+        FavouriteSet("")
+    {}
+
+    FavouriteSet(const std::string& typeName) :
+        _typeName(typeName)
+    {}
+
     std::set<std::string>& get()
     {
         return _set;
@@ -26,25 +35,33 @@ public:
         return _set;
     }
 
+    void add(FavouriteSet& other)
+    {
+        _set.insert(other.get().begin(), other.get().end());
+    }
+
     void loadFromRegistry(const std::string& rootPath)
     {
-        xml::NodeList favourites = GlobalRegistry().findXPath(rootPath + "//favourite");
+        auto path = _typeName.empty() ? rootPath : rootPath + "/" + _typeName;
 
-        for (xml::Node& node : favourites)
+        auto favourites = GlobalRegistry().findXPath(path + "//favourite");
+
+        for (const auto& node : favourites)
         {
             _set.insert(node.getAttributeValue("value"));
         }
     }
 
-    void saveToRegistry(const std::string& rootPath)
+    void saveToRegistry(const std::string& rootPath) const
     {
-        GlobalRegistry().deleteXPath(rootPath + "//favourite");
+        auto path = _typeName.empty() ? rootPath : rootPath + "/" + _typeName;
+        GlobalRegistry().deleteXPath(path + "//favourite");
 
-        xml::Node favourites = GlobalRegistry().createKey(rootPath);
+        auto favourites = GlobalRegistry().createKey(path);
 
         for (const auto& favourite : _set)
         {
-            xml::Node node = favourites.createChild("favourite");
+            auto node = favourites.createChild("favourite");
             node.setAttributeValue("value", favourite);
         }
     }

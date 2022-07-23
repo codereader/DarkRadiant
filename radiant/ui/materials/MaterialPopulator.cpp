@@ -150,7 +150,7 @@ MaterialPopulator::MaterialPopulator(const MaterialTreeView::TreeColumns& column
     ThreadedResourceTreePopulator(columns),
     _columns(columns)
 {
-    _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Material);
+    _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Material));
 }
 
 MaterialPopulator::~MaterialPopulator()

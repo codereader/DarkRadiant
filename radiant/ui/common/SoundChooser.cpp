@@ -65,7 +65,7 @@ public:
         _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
 
         // Get the list of favourites
-        _favourites = GlobalFavouritesManager().getFavourites(decl::Type::SoundShader);
+        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::SoundShader));
     }
 
     // Invoked for each sound shader

@@ -1,91 +1,92 @@
 #include "FavouritesManager.h"
 
 #include "iregistry.h"
+#include "idecltypes.h"
 #include "module/StaticModule.h"
 
-namespace decl
+namespace game
 {
 
 namespace
 {
-    const char* const RKEY_MEDIABROWSER_LEGACY_ROOT = "user/ui/mediaBrowser/favourites";
-    const char* const RKEY_FAVOURITES_ROOT = "user/ui/favourites";
-    const char* const RKEY_SUBPATH_MATERIALS = "/materials";
-    const char* const RKEY_SUBPATH_ENTITYDEFS = "/entityDefs";
-    const char* const RKEY_SUBPATH_SOUNDSHADERS = "/soundShaders";
-    const char* const RKEY_SUBPATH_MODELS = "/models";
-    const char* const RKEY_SUBPATH_PARTICLES = "/particles";
+    constexpr const char* const RKEY_MEDIABROWSER_LEGACY_ROOT = "user/ui/mediaBrowser/favourites";
+    constexpr const char* const RKEY_FAVOURITES_ROOT = "user/ui/favourites";
+    constexpr const char* const RKEY_LEGACY_SUBPATH_MATERIALS = "/materials";
+    constexpr const char* const RKEY_LEGACY_SUBPATH_ENTITYDEFS = "/entityDefs";
+    constexpr const char* const RKEY_LEGACY_SUBPATH_SOUNDSHADERS = "/soundShaders";
+    constexpr const char* const RKEY_LEGACY_SUBPATH_MODELS = "/models";
+    constexpr const char* const RKEY_LEGACY_SUBPATH_PARTICLES = "/particles";
 }
 
-void FavouritesManager::addFavourite(decl::Type type, const std::string& path)
+void FavouritesManager::addFavourite(const std::string& typeName, const std::string& identifier)
 {
-    if (path.empty() || type == decl::Type::None) return;
+    if (typeName.empty() || identifier.empty()) return;
 
-    auto set = _favouritesByType.find(type);
+    auto set = _favouritesByType.find(typeName);
 
     if (set == _favouritesByType.end())
     {
-        set = _favouritesByType.emplace(type, FavouriteSet()).first;
+        set = _favouritesByType.emplace(typeName, FavouriteSet(typeName)).first;
     }
 
-    if (set->second.get().emplace(path).second)
+    if (set->second.get().emplace(identifier).second)
     {
         // Fire signal only when something got added
         set->second.signal_setChanged().emit();
     }
 }
 
-void FavouritesManager::removeFavourite(decl::Type type, const std::string& path)
+void FavouritesManager::removeFavourite(const std::string& typeName, const std::string& identifier)
 {
-    if (path.empty() || type == decl::Type::None) return;
+    if (typeName.empty() || identifier.empty()) return;
 
-    auto set = _favouritesByType.find(type);
+    auto set = _favouritesByType.find(typeName);
 
     if (set == _favouritesByType.end())
     {
         return;
     }
 
-    if (set->second.get().erase(path) > 0)
+    if (set->second.get().erase(identifier) > 0)
     {
         // Fire signal only when something got removed
         set->second.signal_setChanged().emit();
     }
 }
 
-bool FavouritesManager::isFavourite(decl::Type type, const std::string& path)
+bool FavouritesManager::isFavourite(const std::string& typeName, const std::string& identifier)
 {
-    if (path.empty() || type == decl::Type::None) return false;
+    if (typeName.empty() || identifier.empty()) return false;
 
-    auto set = _favouritesByType.find(type);
+    auto set = _favouritesByType.find(typeName);
 
-    return set != _favouritesByType.end() ? set->second.get().count(path) > 0 : false;
+    return set != _favouritesByType.end() ? set->second.get().count(identifier) > 0 : false;
 }
 
-std::set<std::string> FavouritesManager::getFavourites(decl::Type type)
+std::set<std::string> FavouritesManager::getFavourites(const std::string& typeName)
 {
-    if (type == decl::Type::None)
+    if (typeName.empty())
     {
         return std::set<std::string>();
     }
 
-    auto set = _favouritesByType.find(type);
+    auto set = _favouritesByType.find(typeName);
 
     return set != _favouritesByType.end() ? set->second.get() : std::set<std::string>();
 }
 
-sigc::signal<void>& FavouritesManager::getSignalForType(decl::Type type)
+sigc::signal<void>& FavouritesManager::getSignalForType(const std::string& typeName)
 {
-    if (type == decl::Type::None)
+    if (typeName.empty())
     {
-        throw std::logic_error("No signal for decl::Type::None");
+        throw std::invalid_argument("No signal for empty typenames");
     }
 
-    auto set = _favouritesByType.find(type);
+    auto set = _favouritesByType.find(typeName);
 
     if (set == _favouritesByType.end())
     {
-        set = _favouritesByType.emplace(type, FavouriteSet()).first;
+        set = _favouritesByType.emplace(typeName, FavouriteSet(typeName)).first;
     }
 
     return set->second.signal_setChanged();
@@ -112,18 +113,50 @@ const StringSet& FavouritesManager::getDependencies() const
 void FavouritesManager::initialiseModule(const IApplicationContext&)
 {
     // Up to version 2.10.0, the MediaBrowser favourites were stored in this path
-    _favouritesByType[Type::Material].loadFromRegistry(RKEY_MEDIABROWSER_LEGACY_ROOT);
+    importLegacySet(RKEY_MEDIABROWSER_LEGACY_ROOT, decl::getTypeName(decl::Type::Material));
 
-    // Get rid of this old key after importing its data
-    GlobalRegistry().deleteXPath(RKEY_MEDIABROWSER_LEGACY_ROOT);
-
-    // Load from the regular paths
+    // Load from the legacy paths (pre-3.1.0)
     std::string root = RKEY_FAVOURITES_ROOT;
-    _favouritesByType[Type::Material].loadFromRegistry(root + RKEY_SUBPATH_MATERIALS);
-    _favouritesByType[Type::EntityDef].loadFromRegistry(root + RKEY_SUBPATH_ENTITYDEFS);
-    _favouritesByType[Type::SoundShader].loadFromRegistry(root + RKEY_SUBPATH_SOUNDSHADERS);
-    _favouritesByType[Type::Model].loadFromRegistry(root + RKEY_SUBPATH_MODELS);
-    _favouritesByType[Type::Particle].loadFromRegistry(root + RKEY_SUBPATH_PARTICLES);
+
+    importLegacySet(root + RKEY_LEGACY_SUBPATH_MATERIALS, decl::getTypeName(decl::Type::Material));
+    importLegacySet(root + RKEY_LEGACY_SUBPATH_ENTITYDEFS, decl::getTypeName(decl::Type::EntityDef));
+    importLegacySet(root + RKEY_LEGACY_SUBPATH_SOUNDSHADERS, decl::getTypeName(decl::Type::SoundShader));
+    importLegacySet(root + RKEY_LEGACY_SUBPATH_PARTICLES, decl::getTypeName(decl::Type::Particle));
+    importLegacySet(root + RKEY_LEGACY_SUBPATH_MODELS, "model");
+
+    // Load the rest of the types from the remaining regular paths
+    auto nodes = GlobalRegistry().findXPath(root + "/*");
+
+    for (const auto& node : nodes)
+    {
+        auto typeName = node.getName();
+
+        if (typeName.empty()) continue;
+
+        // Ensure a set with that typename exists
+        auto set = _favouritesByType.find(typeName);
+
+        if (set == _favouritesByType.end())
+        {
+            set = _favouritesByType.emplace(typeName, FavouriteSet(typeName)).first;
+        }
+
+        // Append all favourites in that node to the set
+        set->second.loadFromRegistry(root);
+    }
+}
+
+void FavouritesManager::importLegacySet(const std::string& path, const std::string& targetTypeName)
+{
+    auto oldSet = FavouriteSet(); // untyped set to be able to use the raw path
+    oldSet.loadFromRegistry(path);
+
+    for (const auto& identifier : oldSet.get())
+    {
+        addFavourite(targetTypeName, identifier);
+    }
+
+    GlobalRegistry().deleteXPath(path);
 }
 
 void FavouritesManager::shutdownModule()
@@ -132,11 +165,10 @@ void FavouritesManager::shutdownModule()
     GlobalRegistry().deleteXPath(RKEY_FAVOURITES_ROOT);
 
     // Save favourites to registry
-    _favouritesByType[Type::Material].saveToRegistry(root + RKEY_SUBPATH_MATERIALS);
-    _favouritesByType[Type::EntityDef].saveToRegistry(root + RKEY_SUBPATH_ENTITYDEFS);
-    _favouritesByType[Type::SoundShader].saveToRegistry(root + RKEY_SUBPATH_SOUNDSHADERS);
-    _favouritesByType[Type::Model].saveToRegistry(root + RKEY_SUBPATH_MODELS);
-    _favouritesByType[Type::Particle].saveToRegistry(root + RKEY_SUBPATH_PARTICLES);
+    for (const auto& [_, set] :_favouritesByType)
+    {
+        set.saveToRegistry(root);
+    }
 
     // Clear observers
     for (auto& pair : _favouritesByType)

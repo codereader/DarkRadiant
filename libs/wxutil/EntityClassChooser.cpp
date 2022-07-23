@@ -90,7 +90,7 @@ public:
         _entityIcon.CopyFromBitmap(wxutil::GetLocalBitmap(ENTITY_ICON));
 
         // Get the list of favourite eclasses
-        _favourites = GlobalFavouritesManager().getFavourites(decl::Type::EntityDef);
+        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::EntityDef));
     }
 
     // EntityClassVisitor implementation

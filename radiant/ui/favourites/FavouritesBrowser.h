@@ -23,7 +23,7 @@ private:
     // Holds the data used to construct the wxListItem
     struct FavouriteItem
     {
-        decl::Type type;
+        std::string typeName;
         std::string fullPath;
         std::string leafName;
     };
@@ -34,7 +34,7 @@ private:
 
     struct FavouriteCategory
     {
-        decl::Type type;
+        std::string typeName;
         std::string displayName;
         std::string iconName;
         int iconIndex;
@@ -74,7 +74,7 @@ private:
 
     // Returns the list of all selected item indices
     std::vector<long> getSelectedItems();
-    decl::Type getSelectedDeclType();
+    std::string getSelectedTypeName();
 
     void onApplyTextureToSelection();
     bool testSingleTextureSelected();

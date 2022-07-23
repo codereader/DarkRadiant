@@ -50,7 +50,7 @@ public:
 		_skinIcon.CopyFromBitmap(wxutil::GetLocalBitmap(SKIN_ICON));
 
         // Get the list of favourites
-        _favourites = GlobalFavouritesManager().getFavourites(decl::Type::Model);
+        _favourites = GlobalFavouritesManager().getFavourites("model");
 	}
 
 	virtual ~ModelDataInserter() {}
