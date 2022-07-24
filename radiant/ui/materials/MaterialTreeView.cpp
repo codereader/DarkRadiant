@@ -17,7 +17,7 @@ MaterialTreeView::MaterialTreeView(wxWindow* parent) :
     textCol->SetWidth(300);
 
     AddSearchColumn(Columns().iconAndName);
-    EnableFavouriteManagement(decl::Type::Material);
+    EnableFavouriteManagement(decl::getTypeName(decl::Type::Material));
 
     // The wxWidgets algorithm sucks at sorting large flat lists of strings,
     // so we do that ourselves

@@ -321,7 +321,7 @@ void EntityClassChooser::setupTreeView()
     _treeView = new ResourceTreeView(parent, _columns, wxDV_NO_HEADER);
     _treeView->AddSearchColumn(_columns.iconAndName);
     _treeView->SetExpandTopLevelItemsAfterPopulation(true);
-    _treeView->EnableFavouriteManagement(decl::Type::EntityDef);
+    _treeView->EnableFavouriteManagement(decl::getTypeName(decl::Type::EntityDef));
 
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
 

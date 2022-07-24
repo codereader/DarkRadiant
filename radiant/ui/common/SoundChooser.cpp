@@ -196,7 +196,7 @@ wxutil::ResourceTreeView* SoundChooser::createTreeView(wxWindow* parent)
 	// Use the TreeModel's full string search function
 	_treeView->AddSearchColumn(_columns.iconAndName);
     _treeView->SetExpandTopLevelItemsAfterPopulation(true);
-    _treeView->EnableFavouriteManagement(decl::Type::SoundShader);
+    _treeView->EnableFavouriteManagement(decl::getTypeName(decl::Type::SoundShader));
 
 	// Get selection and connect the changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundChooser::_onSelectionChange, this);

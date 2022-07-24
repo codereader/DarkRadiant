@@ -43,7 +43,7 @@ wxutil::ResourceTreeView* ParticleSelector::createTreeView(wxWindow* parent)
 
     // Apply full-text search to the column
     _treeView->AddSearchColumn(_columns.leafName);
-    _treeView->EnableFavouriteManagement(decl::Type::Particle);
+    _treeView->EnableFavouriteManagement(decl::getTypeName(decl::Type::Particle));
 
     // Start loading particles into the view
     populateParticleList();

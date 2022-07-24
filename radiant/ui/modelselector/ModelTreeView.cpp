@@ -18,7 +18,7 @@ ModelTreeView::ModelTreeView(wxWindow* parent) :
 
     // Use the TreeModel's full string search function
     AddSearchColumn(Columns().iconAndName);
-    EnableFavouriteManagement(decl::Type::Model);
+    EnableFavouriteManagement("model");
 }
 
 const ModelTreeView::TreeColumns& ModelTreeView::Columns() const

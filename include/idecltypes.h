@@ -20,7 +20,6 @@ enum class Type
     Table,
     EntityDef,
     SoundShader,
-    Model,
     ModelDef,
     Particle,
     Skin,
@@ -39,7 +38,6 @@ inline std::string getTypeName(Type type)
     case Type::Material: return "Material";
     case Type::EntityDef: return "EntityDef";
     case Type::SoundShader: return "SoundShader";
-    case Type::Model: return "Model";
     case Type::ModelDef: return "ModelDef";
     case Type::Particle: return "Particle";
     case Type::Skin: return "Skin";

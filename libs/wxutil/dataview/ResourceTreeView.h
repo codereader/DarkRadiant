@@ -87,7 +87,8 @@ private:
 
     std::vector<ui::IMenuItemPtr> _customMenuItems;
 
-    decl::Type _declType;
+    // Typename used to store favourites. Favourites disabled if empty.
+    std::string _favouriteTypeName;
 
     wxString _filterText;
 
@@ -130,8 +131,8 @@ public:
 
     virtual void Clear();
 
-    // Enable favourite management for the given declaration type
-    virtual void EnableFavouriteManagement(decl::Type declType);
+    // Enable favourite management for the given favourite type name
+    virtual void EnableFavouriteManagement(const std::string& typeName);
     // Disable favourite management features
     virtual void DisableFavouriteManagement();
 

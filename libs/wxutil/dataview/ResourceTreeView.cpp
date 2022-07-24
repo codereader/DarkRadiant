@@ -45,7 +45,6 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     _mode(TreeMode::ShowAll),
     _expandTopLevelItemsAfterPopulation(false),
     _columnToSelectAfterPopulation(nullptr),
-    _declType(decl::Type::None),
     _declPathColumn(_columns.fullName)
 {
     _treeStore = model;
@@ -186,14 +185,14 @@ void ResourceTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
         new StockIconTextMenuItem(_(ADD_TO_FAVOURITES), wxART_ADD_BOOKMARK),
         std::bind(&ResourceTreeView::_onSetFavourite, this, true),
         std::bind(&ResourceTreeView::_testAddToFavourites, this),
-        [this]() { return _declType != decl::Type::None; }
+        [this]() { return !_favouriteTypeName.empty(); }
     );
 
     popupMenu.addItem(
         new StockIconTextMenuItem(_(REMOVE_FROM_FAVOURITES), wxART_DEL_BOOKMARK),
         std::bind(&ResourceTreeView::_onSetFavourite, this, false),
         std::bind(&ResourceTreeView::_testRemoveFromFavourites, this),
-        [this]() { return _declType != decl::Type::None; }
+        [this]() { return !_favouriteTypeName.empty(); }
     );
 
     popupMenu.addSeparator();
@@ -378,14 +377,14 @@ void ResourceTreeView::Clear()
     _emptyFavouritesLabel = wxDataViewItem();
 }
 
-void ResourceTreeView::EnableFavouriteManagement(decl::Type declType)
+void ResourceTreeView::EnableFavouriteManagement(const std::string& typeName)
 {
-    _declType = declType;
+    _favouriteTypeName = typeName;
 }
 
 void ResourceTreeView::DisableFavouriteManagement()
 {
-    _declType = decl::Type::None;
+    _favouriteTypeName.clear();
     SetTreeMode(TreeMode::ShowAll);
 }
 
@@ -513,11 +512,11 @@ void ResourceTreeView::SetFavouriteRecursively(TreeModel::Row& row, bool isFavou
     // Keep track of this choice
     if (isFavourite)
     {
-        GlobalFavouritesManager().addFavourite(decl::getTypeName(_declType), row[_columns.fullName]);
+        GlobalFavouritesManager().addFavourite(_favouriteTypeName, row[_columns.fullName]);
     }
     else
     {
-        GlobalFavouritesManager().removeFavourite(decl::getTypeName(_declType), row[_columns.fullName]);
+        GlobalFavouritesManager().removeFavourite(_favouriteTypeName, row[_columns.fullName]);
     }
 
     row.SendItemChanged();
