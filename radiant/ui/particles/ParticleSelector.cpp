@@ -35,7 +35,7 @@ ParticleSelector::ParticleSelector(wxWindow* parent) :
 
 wxutil::ResourceTreeView* ParticleSelector::createTreeView(wxWindow* parent)
 {
-    _treeView = new wxutil::DeclarationTreeView(parent, _columns, wxDV_NO_HEADER);
+    _treeView = new wxutil::DeclarationTreeView(parent, decl::Type::Particle, _columns, wxDV_NO_HEADER);
     _treeView->SetSize(300, -1);
 
     _treeView->AppendIconTextColumn(_("Particle"), _columns.iconAndName.getColumnIndex(),
@@ -43,7 +43,6 @@ wxutil::ResourceTreeView* ParticleSelector::createTreeView(wxWindow* parent)
 
     // Apply full-text search to the column
     _treeView->AddSearchColumn(_columns.leafName);
-    _treeView->EnableFavouriteManagement(decl::getTypeName(decl::Type::Particle));
 
     // Start loading particles into the view
     populateParticleList();
