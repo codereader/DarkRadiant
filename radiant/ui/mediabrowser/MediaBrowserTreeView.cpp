@@ -73,7 +73,7 @@ void MediaBrowserTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
         std::bind(&MediaBrowserTreeView::_testSingleTexSel, this)
     );
 
-    ResourceTreeView::PopulateContextMenu(popupMenu);
+    MaterialTreeView::PopulateContextMenu(popupMenu);
 }
 
 void MediaBrowserTreeView::_onLoadInTexView()

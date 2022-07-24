@@ -77,6 +77,7 @@ struct ShaderNameFunctor
         row[_columns.leafName] = leafName;
         row[_columns.fullName] = path;
         row[_columns.isFolder] = false;
+        row[_columns.declName] = path;
         row[_columns.isOtherMaterialsFolder] = false;
         row[_columns.isFavourite] = isFavourite;
 

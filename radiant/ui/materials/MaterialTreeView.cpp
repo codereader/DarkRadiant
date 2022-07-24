@@ -8,7 +8,7 @@ namespace ui
 {
 
 MaterialTreeView::MaterialTreeView(wxWindow* parent) :
-    ResourceTreeView(parent, Columns(), wxDV_NO_HEADER)
+    DeclarationTreeView(parent, decl::Type::Material, Columns(), wxDV_NO_HEADER)
 {
     auto* textCol = AppendIconTextColumn(_("Shader"), Columns().iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
@@ -17,7 +17,6 @@ MaterialTreeView::MaterialTreeView(wxWindow* parent) :
     textCol->SetWidth(300);
 
     AddSearchColumn(Columns().iconAndName);
-    EnableFavouriteManagement(decl::getTypeName(decl::Type::Material));
 
     // The wxWidgets algorithm sucks at sorting large flat lists of strings,
     // so we do that ourselves
