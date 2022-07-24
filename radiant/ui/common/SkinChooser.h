@@ -10,6 +10,7 @@
 #include <string>
 
 #include "wxutil/dataview/TreeModel.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 #include "ui/modelselector/MaterialsList.h"
 
 namespace wxutil { class TreeView; }
@@ -27,28 +28,11 @@ typedef std::shared_ptr<SkinChooser> SkinChooserPtr;
 class SkinChooser :
 	public wxutil::DialogBase
 {
-public:
-	// Treemodel definition
-	struct TreeColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		TreeColumns() :
-			displayName(add(wxutil::TreeModel::Column::IconText)),
-			fullName(add(wxutil::TreeModel::Column::String)),
-			isFolder(add(wxutil::TreeModel::Column::Boolean))
-		{}
-
-		wxutil::TreeModel::Column displayName;
-		wxutil::TreeModel::Column fullName;
-		wxutil::TreeModel::Column isFolder;
-	};
-
 private:
-	TreeColumns _columns;
+    wxutil::DeclarationTreeView::Columns _columns;
 
-	// Tree store, view and selection
 	wxutil::TreeModel::Ptr _treeStore;
-	wxutil::TreeView* _treeView;
+	wxutil::DeclarationTreeView* _treeView;
     MaterialsList* _materialsList;
 
     wxutil::DeclFileInfo* _fileInfo;
@@ -80,6 +64,7 @@ private:
 
 	// callbacks
 	void _onSelChanged(wxDataViewEvent& ev);
+    void _onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev);
 
 	// Retrieve the currently selected skin
 	std::string getSelectedSkin();
