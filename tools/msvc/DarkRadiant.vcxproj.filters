@@ -583,9 +583,6 @@
     <ClCompile Include="..\..\radiant\ui\DispatchEvent.cpp">
       <Filter>src\ui</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\common\DefinitionView.cpp">
-      <Filter>src\ui\common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
@@ -1211,9 +1208,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\tools\ObjectFinder.h">
       <Filter>src\camera\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\common\DefinitionView.h">
-      <Filter>src\ui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderDefinitionView.h">
       <Filter>src\ui\common</Filter>

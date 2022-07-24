@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ideclmanager.h"
+#include "wxutil/DeclarationSourceView.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 
 namespace wxutil
@@ -38,9 +39,9 @@ void DeclarationTreeView::_onShowDefinition()
 
     if (decl)
     {
-        //auto* view = new GenericDefinitionView(decl, this);
-        //view->ShowModal();
-        //view->Destroy();
+        auto* view = new DeclarationSourceView(decl, this);
+        view->ShowModal();
+        view->Destroy();
     }
 }
 

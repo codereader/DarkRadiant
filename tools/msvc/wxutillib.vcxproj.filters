@@ -155,6 +155,8 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\DeclarationTreeView.h">
       <Filter>dataview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\DeclarationSourceView.h" />
+    <ClInclude Include="..\..\libs\wxutil\DefinitionView.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -237,5 +239,6 @@
     <ClCompile Include="..\..\libs\wxutil\dataview\DeclarationTreeView.cpp">
       <Filter>dataview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\DefinitionView.cpp" />
   </ItemGroup>
 </Project>

@@ -2,13 +2,13 @@
 
 #include "ishaders.h"
 #include <sigc++/connection.h>
-#include "ui/common/DefinitionView.h"
+#include "wxutil/DefinitionView.h"
 
 namespace ui
 {
 
 class MaterialDefinitionView:
-	public DefinitionView
+	public wxutil::DefinitionView
 {
 private:
 	// The material which should be previewed

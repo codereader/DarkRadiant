@@ -1,13 +1,13 @@
 #pragma once
 
 #include "isound.h"
-#include "DefinitionView.h"
+#include "wxutil/DefinitionView.h"
 
 namespace ui
 {
 
 class SoundShaderDefinitionView :
-	public DefinitionView
+    public wxutil::DefinitionView
 {
 private:
 	// The shader which should be previewed

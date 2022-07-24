@@ -34,7 +34,6 @@ add_executable(darkradiant
                ui/commandlist/CommandList.cpp
                ui/commandlist/ShortcutChooser.cpp
                ui/common/CommandEntry.cpp
-               ui/common/DefinitionView.cpp
                ui/common/EntityChooser.cpp
                ui/common/ImageFilePopulator.cpp
                ui/common/ImageFileSelector.cpp

@@ -2,18 +2,17 @@
 
 #include "i18n.h"
 #include "ishaders.h"
-#include "ui/imainframe.h"
 
-#include "wxutil/SourceView.h"
+#include "SourceView.h"
 
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 
-namespace ui
+namespace wxutil
 {
 
 DefinitionView::DefinitionView(const std::string& title, wxWindow* parent) :
-	wxutil::DialogBase(title, parent),
+	DialogBase(title, parent),
 	_view(nullptr)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -50,7 +49,7 @@ DefinitionView::DefinitionView(const std::string& title, wxWindow* parent) :
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
 }
 
-void DefinitionView::addSourceView(wxutil::SourceViewCtrl* view)
+void DefinitionView::addSourceView(SourceViewCtrl* view)
 {
 	_view = view;
 	_panel->GetSizer()->Add(_view, 1, wxEXPAND | wxTOP, 6);

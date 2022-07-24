@@ -4,14 +4,15 @@
 #include <wx/panel.h>
 #include "wxutil/dialog/DialogBase.h"
 
-namespace wxutil { class SourceViewCtrl; }
 class wxStaticText;
 
-namespace ui
+namespace wxutil
 {
 
+class SourceViewCtrl;
+
 class DefinitionView :
-	public wxutil::DialogBase
+	public DialogBase
 {
 private:
 	wxStaticText* _declName;
@@ -20,7 +21,7 @@ private:
 	wxPanel* _panel;
 
 	// Will be created by subclasses
-	wxutil::SourceViewCtrl* _view;
+	SourceViewCtrl* _view;
 
 public:
 	DefinitionView(const std::string& title, wxWindow* parent = nullptr);
@@ -43,7 +44,7 @@ protected:
 	virtual std::string getDefinition() = 0;
 
 	wxWindow* getMainPanel();
-	void addSourceView(wxutil::SourceViewCtrl* view);
+	void addSourceView(SourceViewCtrl* view);
 };
 
-} // namespace ui
+} // namespace

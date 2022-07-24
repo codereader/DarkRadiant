@@ -14,6 +14,7 @@ add_library(wxutil
             dialog/MessageBox.cpp
             fsview/FileSystemView.cpp
             fsview/Populator.cpp
+            DefinitionView.cpp
             DirChooser.cpp
             EntityClassChooser.cpp
             FileChooser.cpp
