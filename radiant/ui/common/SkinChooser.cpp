@@ -42,6 +42,9 @@ namespace
 
         std::string _model;
 
+        wxIcon _folderIcon;
+        wxIcon _skinIcon;
+
     public:
         ThreadedSkinLoader(const wxutil::DeclarationTreeView::Columns& columns, const std::string& model, 
             wxDataViewItem& allSkinsItem, wxDataViewItem& matchingSkinsItem) :
@@ -53,6 +56,9 @@ namespace
         {
             // Get the list of favourites
             _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Skin));
+
+            _skinIcon.CopyFromBitmap(wxutil::GetLocalBitmap(SKIN_ICON));
+            _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
         }
 
         ~ThreadedSkinLoader()
@@ -65,47 +71,35 @@ namespace
         {
             ScopedDebugTimer timer("ThreadedSkinLoader::run()");
 
-            wxIcon folderIcon;
-            folderIcon.CopyFromBitmap(
-                wxutil::GetLocalBitmap(FOLDER_ICON));
-
-            wxIcon skinIcon;
-            skinIcon.CopyFromBitmap(
-                wxutil::GetLocalBitmap(SKIN_ICON));
-
             // Add the "Matching skins" toplevel node
-            wxutil::TreeModel::Row matchingSkins = model->AddItem();
+            auto matchingSkins = model->AddItem();
 
-            matchingSkins[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Matching skins"), folderIcon));
+            matchingSkins[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("Matching skins"), _folderIcon));
             matchingSkins[_columns.fullName] = "";
             matchingSkins[_columns.isFolder] = true;
             _matchingSkinsItem = matchingSkins.getItem();
 
             // Get the skins for the associated model, and add them as matching skins
-            const StringList& matchList = GlobalModelSkinCache().getSkinsForModel(_model);
+            const auto& matchList = GlobalModelSkinCache().getSkinsForModel(_model);
 
             for (const auto& skin : matchList)
             {
-                wxutil::TreeModel::Row skinRow = model->AddItem(matchingSkins.getItem());
-
-                skinRow[_columns.iconAndName] = wxVariant(wxDataViewIconText(skin, skinIcon));
-                skinRow[_columns.fullName] = skin;
-                skinRow[_columns.isFolder] = false;
+                auto row = model->AddItem(matchingSkins.getItem());
+                StoreSkinValues(row, skin, skin, false);
             }
 
             // Add "All skins" toplevel node
-            wxutil::TreeModel::Row allSkins = model->AddItem();
+            auto allSkins = model->AddItem();
 
-            allSkins[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("All skins"), folderIcon));
+            allSkins[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("All skins"), _folderIcon));
             allSkins[_columns.fullName] = "";
             allSkins[_columns.isFolder] = true;
             _allSkinsItem = allSkins.getItem();
 
             // Get the list of skins for the model
-            const StringList& skins = GlobalModelSkinCache().getAllSkins();
+            const auto& skins = GlobalModelSkinCache().getAllSkins();
 
-            // Create a TreePopulator for the tree store and pass in each of the
-            // skin names.
+            // Create a TreePopulator for the tree store and pass in each of the skin names.
             wxutil::VFSTreePopulator pop(model, allSkins.getItem());
 
             for (const auto& skin : skins)
@@ -113,13 +107,7 @@ namespace
                 pop.addPath(skin, [&](wxutil::TreeModel::Row& row,
                     const std::string& path, const std::string& leafName, bool isFolder)
                     {
-                        // Get the display path, everything after rightmost slash
-                        std::string displayPath = leafName.substr(leafName.rfind("/") + 1);
-
-                        row[_columns.iconAndName] = wxVariant(wxDataViewIconText(displayPath,
-                            !isFolder ? skinIcon : folderIcon));
-                        row[_columns.fullName] = path;
-                        row[_columns.isFolder] = isFolder;
+                        StoreSkinValues(row, path, leafName, isFolder);
                     });
             }
         }
@@ -127,6 +115,20 @@ namespace
         void SortModel(const wxutil::TreeModel::Ptr& model) override
         {
             model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
+        }
+
+    private:
+        void StoreSkinValues(wxutil::TreeModel::Row& row, const std::string& fullSkinName, const std::string& leafName, bool isFolder)
+        {
+            bool isFavourite = _favourites.count(fullSkinName) > 0;
+
+            row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, !isFolder ? _skinIcon : _folderIcon));
+            row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
+            row[_columns.fullName] = fullSkinName;
+            row[_columns.leafName] = leafName;
+            row[_columns.declName] = fullSkinName;
+            row[_columns.isFolder] = isFolder;
+            row[_columns.isFavourite] = isFavourite;
         }
     };
 }
