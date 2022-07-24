@@ -37,14 +37,17 @@ namespace
 
         std::set<std::string> _favourites;
 
+        wxDataViewItem& _allSkinsItem;
         wxDataViewItem& _matchingSkinsItem;
 
         std::string _model;
 
     public:
-        ThreadedSkinLoader(const wxutil::DeclarationTreeView::Columns& columns, const std::string& model, wxDataViewItem& matchingSkinsItem) :
+        ThreadedSkinLoader(const wxutil::DeclarationTreeView::Columns& columns, const std::string& model, 
+            wxDataViewItem& allSkinsItem, wxDataViewItem& matchingSkinsItem) :
             ThreadedResourceTreePopulator(columns),
             _columns(columns),
+            _allSkinsItem(allSkinsItem),
             _matchingSkinsItem(matchingSkinsItem),
             _model(model)
         {
@@ -96,6 +99,7 @@ namespace
             allSkins[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("All skins"), folderIcon));
             allSkins[_columns.fullName] = "";
             allSkins[_columns.isFolder] = true;
+            _allSkinsItem = allSkins.getItem();
 
             // Get the list of skins for the model
             const StringList& skins = GlobalModelSkinCache().getAllSkins();
@@ -158,7 +162,8 @@ void SkinChooser::populateWindow()
     _treeView->AppendIconTextColumn(_("Skin"), _columns.iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
     _treeView->AddSearchColumn(_columns.leafName);
-    
+    _treeView->SetExpandTopLevelItemsAfterPopulation(false);
+
 	// Connect up selection changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinChooser::_onSelChanged, this);
     _treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &SkinChooser::_onTreeViewPopulationFinished, this);
@@ -241,7 +246,7 @@ void SkinChooser::_onItemActivated(wxDataViewEvent& ev)
 // Populate the list of skins
 void SkinChooser::populateSkins()
 {
-    _treeView->Populate(std::make_shared<ThreadedSkinLoader>(_columns, _model, _matchingSkinsItem));
+    _treeView->Populate(std::make_shared<ThreadedSkinLoader>(_columns, _model, _allSkinsItem, _matchingSkinsItem));
 }
 
 std::string SkinChooser::getSelectedSkin()
@@ -352,6 +357,10 @@ void SkinChooser::_onTreeViewPopulationFinished(wxutil::ResourceTreeView::Popula
 {
     // Make sure the "matching skins" item is expanded
     _treeView->Expand(_matchingSkinsItem);
+    _treeView->Collapse(_allSkinsItem);
+
+    // Select the active skin
+    setSelectedSkin(_prevSkin);
 }
 
 } // namespace
