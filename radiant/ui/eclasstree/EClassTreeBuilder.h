@@ -1,58 +1,47 @@
 #pragma once
 
 #include "ieclass.h"
-#include "wxutil/dataview/VFSTreePopulator.h"
+
+#include "wxutil/dataview/DeclarationTreeView.h"
+#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
+
 #include <wx/icon.h>
-#include <wx/thread.h>
+
+namespace wxutil { class VFSTreePopulator; }
 
 namespace ui
 {
 
-struct EClassTreeColumns;
-
 /**
- * greebo: This traverses all the entity classes loaded so far and
- *         pushes them into the given tree store.
+ * Visitor class to retrieve entityDef names and sort them into the hierarchy tree.
  */
-class EClassTreeBuilder :
-	public EntityClassVisitor,
-	public wxutil::VFSTreePopulator::Visitor,
-	public wxThread
+class EClassTreeBuilder final :
+    public wxutil::ThreadedResourceTreePopulator,
+	public EntityClassVisitor
 {
 private:
-	const EClassTreeColumns& _columns;
+	const wxutil::DeclarationTreeView::Columns& _columns;
 
-	// The tree store to populate
-	wxutil::TreeModel::Ptr _treeStore;
-
-	// The event handler to notify on completion
-	wxEvtHandler* _finishedHandler;
-
-	// The helper class, doing the tedious treeview insertion for us.
-	wxutil::VFSTreePopulator _treePopulator;
+    std::set<std::string> _favourites;
 
 	wxIcon _entityIcon;
 
+    std::unique_ptr<wxutil::VFSTreePopulator> _treePopulator;
+
 public:
-	EClassTreeBuilder(const EClassTreeColumns& columns, wxEvtHandler* finishedHandler);
+    EClassTreeBuilder(const wxutil::DeclarationTreeView::Columns& columns);
 
-	~EClassTreeBuilder(); // waits for thread to finish
+    ~EClassTreeBuilder();
 
-	void populate();
-
-	// Visitor implementation
-	virtual void visit(const IEntityClassPtr& eclass);
-
-	void visit(wxutil::TreeModel& store, wxutil::TreeModel::Row& row,
-			   const std::string& path, bool isExplicit);
+    void visit(const IEntityClassPtr& eclass) override;
 
 protected:
-	// Thread entry point
-	ExitCode Entry();
+    void PopulateModel(const wxutil::TreeModel::Ptr& model) override;
+    void SortModel(const wxutil::TreeModel::Ptr& model) override;
 
 private:
-	// Returns an inheritance path, like this: "moveables/swords/"
-	std::string getInheritancePathRecursive(const IEntityClassPtr& eclass);
+    // Returns an inheritance path, like this: "moveables/swords/"
+    static std::string GetInheritancePathRecursively(IEntityClass& eclass);
 };
 
-} // namespace ui
+} // namespace

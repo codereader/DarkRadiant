@@ -1,41 +1,23 @@
 #pragma once
 
-#include "iradiant.h"
 #include "icommandsystem.h"
+
 #include "wxutil/dialog/DialogBase.h"
-#include <memory>
 #include "wxutil/dataview/TreeView.h"
-#include <memory>
+#include "wxutil/dataview/DeclarationTreeView.h"
 
 class EntityClassAttribute;
 
 namespace ui
 {
 
-class EClassTreeBuilder;
-
-class EClassTree;
-typedef std::shared_ptr<EClassTree> EClassTreePtr;
-
-struct EClassTreeColumns :
-	public wxutil::TreeModel::ColumnRecord
-{
-	EClassTreeColumns() :
-		name(add(wxutil::TreeModel::Column::IconText))
-	{}
-
-	wxutil::TreeModel::Column name;	// name
-};
-
 class EClassTree :
 	public wxutil::DialogBase
 {
 private:
 	// The EClass treeview widget and underlying liststore
-	EClassTreeColumns _eclassColumns;
-	wxutil::TreeModel::Ptr _eclassStore;
-
-	wxutil::TreeView* _eclassView;
+    wxutil::DeclarationTreeView::Columns _eclassColumns;
+	wxutil::DeclarationTreeView* _eclassView;
 
 	struct PropertyListColumns :
 		public wxutil::TreeModel::ColumnRecord
@@ -55,8 +37,6 @@ private:
 	PropertyListColumns _propertyColumns;
 	wxutil::TreeModel::Ptr _propertyStore;
 	wxutil::TreeView* _propertyView;
-
-	std::unique_ptr<EClassTreeBuilder> _treeBuilder;
 
 	// Private constructor, traverses the entity classes
 	EClassTree();
@@ -80,7 +60,7 @@ private:
 
 	// callbacks
 	void onSelectionChanged(wxDataViewEvent& ev);
-	void onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev);
+    void onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev);
 };
 
 } // namespace ui

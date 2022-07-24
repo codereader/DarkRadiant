@@ -129,6 +129,8 @@ namespace
             row[_columns.declName] = fullSkinName;
             row[_columns.isFolder] = isFolder;
             row[_columns.isFavourite] = isFavourite;
+
+            row.SendItemAdded();
         }
     };
 }

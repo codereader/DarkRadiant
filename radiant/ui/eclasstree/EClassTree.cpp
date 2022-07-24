@@ -2,13 +2,10 @@
 
 #include "ieclass.h"
 #include "ientity.h"
-#include "ui/imainframe.h"
 #include "iselection.h"
-
-#include "EClassTreeBuilder.h"
 #include "i18n.h"
 
-#include <functional>
+#include "EClassTreeBuilder.h"
 
 #include <wx/sizer.h>
 #include <wx/splitter.h>
@@ -19,69 +16,41 @@ namespace ui
 
 namespace
 {
-	const char* const ECLASSTREE_TITLE = N_("Entity Class Tree");
+	constexpr const char* const ECLASSTREE_TITLE = N_("Entity Class Tree");
 }
 
 EClassTree::EClassTree() :
 	DialogBase(_(ECLASSTREE_TITLE)),
-	_eclassStore(NULL),
-	_eclassView(NULL),
-	_propertyStore(NULL),
-	_propertyView(NULL)
+	_eclassView(nullptr),
+	_propertyStore(nullptr),
+	_propertyView(nullptr)
 {
-	// Create a new tree store for the entityclasses
-	_eclassStore = new wxutil::TreeModel(_eclassColumns);
-
 	// Construct the window's widgets
 	populateWindow();
 
-	wxutil::TreeModel::Row row = _eclassStore->AddItem();
-
-	wxIcon icon;
-	icon.CopyFromBitmap(wxutil::GetLocalBitmap("cmenu_add_entity.png"));
-	row[_eclassColumns.name] = wxVariant(wxDataViewIconText(_("Loading, please wait..."), icon));
-
-	row.SendItemAdded();
-
-	// Construct an eclass visitor and traverse the entity classes
-	_treeBuilder.reset(new EClassTreeBuilder(_eclassColumns, this));
-
-	Connect(wxutil::EV_TREEMODEL_POPULATION_FINISHED,
-		TreeModelPopulationFinishedHandler(EClassTree::onTreeStorePopulationFinished), NULL, this);
-
-	_treeBuilder->populate();
+    _eclassView->Populate(std::make_shared<EClassTreeBuilder>(_eclassColumns));
 }
 
-void EClassTree::onTreeStorePopulationFinished(wxutil::TreeModel::PopulationFinishedEvent& ev)
+void EClassTree::onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev)
 {
-	_eclassStore = ev.GetTreeModel();
-	wxDataViewItem preselectItem;
+	std::string className;
 
 	// Do we have anything selected
 	if (GlobalSelectionSystem().countSelected() > 0)
 	{
 		// Get the last selected node and check if it's an entity
-		scene::INodePtr lastSelected = GlobalSelectionSystem().ultimateSelected();
+		auto lastSelected = GlobalSelectionSystem().ultimateSelected();
 
-		Entity* entity = Node_getEntity(lastSelected);
-
-		if (entity != NULL)
+		if (const auto* entity = Node_getEntity(lastSelected); entity)
 		{
 			// There is an entity selected, extract the classname
-			std::string classname = entity->getKeyValue("classname");
-
-			// Find and select the classname
-			preselectItem = _eclassStore->FindString(classname, _eclassColumns.name);
+            className = entity->getKeyValue("classname");
 		}
 	}
 
-	_eclassView->AssociateModel(_eclassStore.get());
-
-	if (preselectItem.IsOk())
+	if (!className.empty())
 	{
-		_eclassView->Select(preselectItem);
-		_eclassView->EnsureVisible(preselectItem);
-		handleSelectionChange();
+        _eclassView->SetSelectedFullname(className);
 	}
 	else
 	{
@@ -95,8 +64,7 @@ void EClassTree::populateWindow()
 	// Create the overall vbox
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition,
-		wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+	auto* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
 	createEClassTreeView(splitter);
@@ -118,17 +86,18 @@ void EClassTree::populateWindow()
 
 void EClassTree::createEClassTreeView(wxWindow* parent)
 {
-	_eclassView = wxutil::TreeView::CreateWithModel(parent, _eclassStore.get());
+	_eclassView = new wxutil::DeclarationTreeView(parent, decl::Type::EntityDef, _eclassColumns);
 
 	// Use the TreeModel's full string search function
-	_eclassView->AddSearchColumn(_eclassColumns.name);
+    _eclassView->AddSearchColumn(_eclassColumns.leafName);
+    _eclassView->EnableSetFavouritesRecursively(false);
 
 	// Tree selection
-	_eclassView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED,
-		wxDataViewEventHandler(EClassTree::onSelectionChanged), NULL, this);
+	_eclassView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EClassTree::onSelectionChanged, this);
+    _eclassView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &EClassTree::onTreeViewPopulationFinished, this);
 
 	// Single column with icon and name
-	_eclassView->AppendIconTextColumn(_("Classname"), _eclassColumns.name.getColumnIndex(),
+	_eclassView->AppendIconTextColumn(_("Classname"), _eclassColumns.iconAndName.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 }
 
@@ -172,22 +141,21 @@ void EClassTree::updatePropertyView(const std::string& eclassName)
 	// Clear the existing list
 	_propertyStore->Clear();
 
-	IEntityClassPtr eclass = GlobalEntityClassManager().findClass(eclassName);
-	if (!eclass)
-		return;
+	auto eclass = GlobalEntityClassManager().findClass(eclassName);
 
-    eclass->forEachAttribute(
-        [&](const EntityClassAttribute& a, bool inherited) {
-            addToListStore(a, inherited);
-        },
-        true);
+    if (!eclass) return;
+
+    eclass->forEachAttribute([&](const EntityClassAttribute& attr, bool inherited)
+    {
+        addToListStore(attr, inherited);
+    }, true);
 }
 
 // Static command target
 void EClassTree::ShowDialog(const cmd::ArgumentList& args)
 {
 	// Construct a new instance, this enters the main loop
-	EClassTree* tree = new EClassTree;
+	auto* tree = new EClassTree();
 
 	tree->ShowModal();
 	tree->Destroy();
@@ -196,7 +164,7 @@ void EClassTree::ShowDialog(const cmd::ArgumentList& args)
 void EClassTree::handleSelectionChange()
 {
 	// Prepare to check for a selection
-	wxDataViewItem item = _eclassView->GetSelection();
+	auto item = _eclassView->GetSelection();
 
 	// Add button is enabled if there is a selection and it is not a folder.
 	if (item.IsOk())
@@ -204,11 +172,9 @@ void EClassTree::handleSelectionChange()
 		_propertyView->Enable(true);
 
 		// Set the panel text with the usage information
-		wxutil::TreeModel::Row row(item, *_eclassStore);
+		wxutil::TreeModel::Row row(item, *_eclassView->GetTreeModel());
 
-		wxDataViewIconText value = row[_eclassColumns.name];
-
-		updatePropertyView(value.GetText().ToStdString());
+		updatePropertyView(row[_eclassColumns.declName].getString().ToStdString());
 	}
 	else
 	{
