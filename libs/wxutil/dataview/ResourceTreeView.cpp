@@ -45,6 +45,7 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     _mode(TreeMode::ShowAll),
     _expandTopLevelItemsAfterPopulation(false),
     _columnToSelectAfterPopulation(nullptr),
+    _setFavouritesRecursively(true),
     _declPathColumn(_columns.fullName)
 {
     _treeStore = model;
@@ -506,6 +507,11 @@ void ResourceTreeView::SetFavouriteRecursively(TreeModel::Row& row, bool isFavou
     }
 
     // Not a folder, set the desired status on this item
+    SetFavourite(row, isFavourite);
+}
+
+void ResourceTreeView::SetFavourite(TreeModel::Row& row, bool isFavourite)
+{
     row[_columns.isFavourite] = isFavourite;
     row[_columns.iconAndName] = TreeViewItemStyle::Declaration(isFavourite);
 
@@ -531,7 +537,19 @@ void ResourceTreeView::_onSetFavourite(bool isFavourite)
     // Grab this item and enter recursion, propagating the favourite status
     TreeModel::Row row(item, *GetModel());
 
-    SetFavouriteRecursively(row, isFavourite);
+    if (_setFavouritesRecursively)
+    {
+        SetFavouriteRecursively(row, isFavourite);
+    }
+    else
+    {
+        SetFavourite(row, isFavourite);
+    }
+}
+
+void ResourceTreeView::EnableSetFavouritesRecursively(bool enabled)
+{
+    _setFavouritesRecursively = enabled;
 }
 
 std::string ResourceTreeView::GetResourcePath(const TreeModel::Row& row)

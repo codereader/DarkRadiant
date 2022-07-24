@@ -89,6 +89,7 @@ private:
 
     // Typename used to store favourites. Favourites disabled if empty.
     std::string _favouriteTypeName;
+    bool _setFavouritesRecursively;
 
     wxString _filterText;
 
@@ -136,6 +137,9 @@ public:
     // Disable favourite management features
     virtual void DisableFavouriteManagement();
 
+    // Whether add/remove favourites is operating recursively
+    virtual void EnableSetFavouritesRecursively(bool enabled);
+
     virtual bool IsDirectorySelected();
     virtual bool IsFavouriteSelected();
 
@@ -157,6 +161,7 @@ public:
 protected:
     virtual void PopulateContextMenu(wxutil::PopupMenu& popupMenu);
 
+    virtual void SetFavourite(TreeModel::Row& row, bool isFavourite);
     virtual void SetFavouriteRecursively(TreeModel::Row& row, bool isFavourite);
 
     virtual void SetupTreeModelFilter();
