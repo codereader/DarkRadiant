@@ -4,8 +4,6 @@
 #include "imodel.h"
 #include "modelskin.h"
 
-#include "iradiant.h"
-
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/preview/ModelPreview.h"
 #include "wxutil/DeclFileInfo.h"
@@ -82,12 +80,6 @@ private:
 
 	// callbacks
 	void _onSelChanged(wxDataViewEvent& ev);
-
-	// Contains the static instance
-	static SkinChooser& Instance();
-
-	// This is where the static shared_ptr of the singleton instance is held.
-	static SkinChooserPtr& InstancePtr();
 
 	// Retrieve the currently selected skin
 	std::string getSelectedSkin();

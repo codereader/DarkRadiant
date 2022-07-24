@@ -1,8 +1,6 @@
 #include "SkinChooser.h"
 
 #include "i18n.h"
-#include "ui/imainframe.h"
-#include "itextstream.h"
 #include "modelskin.h"
 
 #include "wxutil/Bitmap.h"
@@ -19,10 +17,10 @@ namespace ui
 
 namespace
 {
-	const char* FOLDER_ICON = "folder16.png";
-	const char* SKIN_ICON = "skin16.png";
+	constexpr const char* FOLDER_ICON = "folder16.png";
+	constexpr const char* SKIN_ICON = "skin16.png";
 
-	const char* const WINDOW_TITLE = N_("Choose Skin");
+	constexpr const char* const WINDOW_TITLE = N_("Choose Skin");
 }
 
 // Constructor
@@ -37,30 +35,6 @@ SkinChooser::SkinChooser() :
 	FitToScreen(0.6f, 0.6f);
 
 	populateWindow();
-}
-
-SkinChooser& SkinChooser::Instance()
-{
-	SkinChooserPtr& instancePtr = InstancePtr();
-
-	if (!instancePtr)
-	{
-		// Not yet instantiated, do it now
-		instancePtr.reset(new SkinChooser);
-
-		// Pre-destruction cleanup
-		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &SkinChooser::onMainFrameShuttingDown)
-        );
-	}
-
-	return *instancePtr;
-}
-
-SkinChooserPtr& SkinChooser::InstancePtr()
-{
-	static SkinChooserPtr _instancePtr;
-	return _instancePtr;
 }
 
 void SkinChooser::populateWindow()
@@ -285,24 +259,18 @@ void SkinChooser::setSelectedSkin(const std::string& skin)
 std::string SkinChooser::chooseSkin(const std::string& model,
 									const std::string& prev)
 {
-	Instance()._model = model;
-	Instance()._prevSkin = prev;
+    auto dialog = new SkinChooser();
 
-	Instance().ShowModal();
-	Instance().Hide();
-	
-	return Instance()._lastSkin;
-}
+    dialog->_model = model;
+    dialog->_prevSkin = prev;
 
-void SkinChooser::onMainFrameShuttingDown()
-{
-	rMessage() << "SkinChooser shutting down." << std::endl;
+    dialog->ShowModal();
 
-	_preview.reset();
+    auto selectedSkin = dialog->_lastSkin;
 
-	// Destroy the window
-	SendDestroyEvent();
-	InstancePtr().reset();
+    dialog->Destroy();
+
+    return selectedSkin;
 }
 
 void SkinChooser::handleSelectionChange()
