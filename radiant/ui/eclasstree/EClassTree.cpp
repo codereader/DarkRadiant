@@ -7,6 +7,8 @@
 
 #include "EClassTreeBuilder.h"
 
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
+
 #include <wx/sizer.h>
 #include <wx/splitter.h>
 #include "wxutil/Bitmap.h"
@@ -67,10 +69,10 @@ void EClassTree::populateWindow()
 	auto* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
-	createEClassTreeView(splitter);
+	auto eclassPane = createEClassTreeView(splitter);
 	createPropertyTreeView(splitter);
 
-	splitter->SplitVertically(_eclassView, _propertyView);
+	splitter->SplitVertically(eclassPane, _propertyView);
 
 	GetSizer()->Add(splitter, 1, wxEXPAND | wxALL, 12);
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxCLOSE), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
@@ -84,9 +86,11 @@ void EClassTree::populateWindow()
 	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.25f));
 }
 
-void EClassTree::createEClassTreeView(wxWindow* parent)
+wxWindow* EClassTree::createEClassTreeView(wxWindow* parent)
 {
-	_eclassView = new wxutil::DeclarationTreeView(parent, decl::Type::EntityDef, _eclassColumns);
+    auto panel = new wxPanel(parent);
+
+	_eclassView = new wxutil::DeclarationTreeView(panel, decl::Type::EntityDef, _eclassColumns);
 
 	// Use the TreeModel's full string search function
     _eclassView->AddSearchColumn(_eclassColumns.leafName);
@@ -99,6 +103,14 @@ void EClassTree::createEClassTreeView(wxWindow* parent)
 	// Single column with icon and name
 	_eclassView->AppendIconTextColumn(_("Classname"), _eclassColumns.iconAndName.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
+
+    auto toolbar = new wxutil::ResourceTreeViewToolbar(panel, _eclassView);
+
+    panel->SetSizer(new wxBoxSizer(wxVERTICAL));
+    panel->GetSizer()->Add(toolbar, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 6);
+    panel->GetSizer()->Add(_eclassView, 1, wxEXPAND);
+
+    return panel;
 }
 
 void EClassTree::createPropertyTreeView(wxWindow* parent)

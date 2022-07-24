@@ -49,7 +49,7 @@ private:
 	// Constructs and adds all the dialog widgets
 	void populateWindow();
 
-	void createEClassTreeView(wxWindow* parent); // EClass Tree
+	wxWindow* createEClassTreeView(wxWindow* parent); // EClass Tree
 	void createPropertyTreeView(wxWindow* parent); // Property Tree
 
 	// Loads the spawnargs into the right treeview
