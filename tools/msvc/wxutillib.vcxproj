@@ -136,6 +136,7 @@
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />
     <ClInclude Include="..\..\libs\wxutil\ConsoleView.h" />
     <ClInclude Include="..\..\libs\wxutil\ControlButton.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\DeclarationTreeView.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\IResourceTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\KeyValueTable.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreeView.h" />
@@ -198,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\ConsoleView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\dataview\DeclarationTreeView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\KeyValueTable.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\ResourceTreeView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.cpp" />

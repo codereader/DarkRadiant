@@ -152,6 +152,9 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\FormLayout.h" />
     <ClInclude Include="..\..\libs\wxutil\DeclFileInfo.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\DeclarationTreeView.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -230,6 +233,9 @@
     </ClCompile>
     <ClCompile Include="..\..\libs\wxutil\menu\FilterPopupMenu.cpp">
       <Filter>menu</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\dataview\DeclarationTreeView.cpp">
+      <Filter>dataview</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

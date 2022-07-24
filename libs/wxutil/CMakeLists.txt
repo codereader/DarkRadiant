@@ -1,5 +1,6 @@
 add_library(wxutil
             ConsoleView.cpp
+            dataview/DeclarationTreeView.cpp
             dataview/KeyValueTable.cpp
             dataview/ResourceTreeView.cpp
             dataview/ResourceTreeViewToolbar.cpp

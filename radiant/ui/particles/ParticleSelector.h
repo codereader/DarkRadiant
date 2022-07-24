@@ -3,7 +3,7 @@
 #include <sigc++/trackable.h>
 #include <wx/panel.h>
 
-#include "wxutil/dataview/ResourceTreeView.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/preview/ParticlePreview.h"
 
 namespace ui
@@ -19,10 +19,10 @@ class ParticleSelector :
     public sigc::trackable
 {
 private:
-    wxutil::ResourceTreeView::Columns _columns;
+    wxutil::DeclarationTreeView::Columns _columns;
 
     // Tree view listing all the particles
-    wxutil::ResourceTreeView* _treeView;
+    wxutil::DeclarationTreeView* _treeView;
 
     // The preview widget
     wxutil::ParticlePreviewPtr _preview;
