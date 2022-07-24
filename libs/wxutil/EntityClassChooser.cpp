@@ -66,7 +66,7 @@ class EntityClassTreePopulator:
     TreeModel::Ptr _store;
 
     // Column definition
-    const ResourceTreeView::Columns& _columns;
+    const DeclarationTreeView::Columns& _columns;
 
     // Key that specifies the display folder
     std::string _folderKey;
@@ -80,7 +80,7 @@ public:
 
     // Constructor
     EntityClassTreePopulator(const TreeModel::Ptr& store,
-                             const ResourceTreeView::Columns& columns)
+                             const DeclarationTreeView::Columns& columns)
     : VFSTreePopulator(store),
       _store(store),
       _columns(columns),
@@ -122,6 +122,7 @@ public:
                 );
                 row[_columns.fullName] = leafName;
                 row[_columns.leafName] = leafName;
+                row[_columns.declName] = eclass->getDeclName();
 
                 row[_columns.isFolder] = isFolder;
                 row[_columns.isFavourite] = isFavourite;
@@ -138,10 +139,10 @@ class ThreadedEntityClassLoader final :
 {
 private:
     // Column specification struct
-    const ResourceTreeView::Columns& _columns;
+    const DeclarationTreeView::Columns& _columns;
 
 public:
-    ThreadedEntityClassLoader(const ResourceTreeView::Columns& cols) :
+    ThreadedEntityClassLoader(const DeclarationTreeView::Columns& cols) :
         ThreadedResourceTreePopulator(cols),
         _columns(cols)
     {}
@@ -318,10 +319,9 @@ void EntityClassChooser::setupTreeView()
 {
     wxPanel* parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
 
-    _treeView = new ResourceTreeView(parent, _columns, wxDV_NO_HEADER);
+    _treeView = new DeclarationTreeView(parent, decl::Type::EntityDef, _columns, wxDV_NO_HEADER);
     _treeView->AddSearchColumn(_columns.iconAndName);
     _treeView->SetExpandTopLevelItemsAfterPopulation(true);
-    _treeView->EnableFavouriteManagement(decl::getTypeName(decl::Type::EntityDef));
 
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
 
