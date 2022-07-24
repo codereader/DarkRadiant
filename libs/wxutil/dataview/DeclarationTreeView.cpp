@@ -14,9 +14,23 @@ DeclarationTreeView::DeclarationTreeView(wxWindow* parent, decl::Type declType, 
 
 DeclarationTreeView::DeclarationTreeView(wxWindow* parent, decl::Type declType, const TreeModel::Ptr& model, const Columns& columns, long style) :
     ResourceTreeView(parent, model, columns, style),
+    _columns(columns),
     _declType(declType)
 {
     EnableFavouriteManagement(decl::getTypeName(_declType));
+}
+
+std::string DeclarationTreeView::GetSelectedDeclName()
+{
+    auto item = GetSelection();
+
+    if (!item.IsOk() || IsDirectorySelected())
+    {
+        return std::string();
+    }
+
+    TreeModel::Row row(item, *GetModel());
+    return row[_columns.declName];
 }
 
 void DeclarationTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
@@ -34,8 +48,8 @@ void DeclarationTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
 
 void DeclarationTreeView::_onShowDefinition()
 {
-    auto fullName = GetSelectedFullname();
-    auto decl = GlobalDeclarationManager().findDeclaration(_declType, fullName);
+    auto declName = GetSelectedDeclName();
+    auto decl = GlobalDeclarationManager().findDeclaration(_declType, declName);
 
     if (decl)
     {
@@ -47,7 +61,7 @@ void DeclarationTreeView::_onShowDefinition()
 
 bool DeclarationTreeView::_showDefinitionEnabled()
 {
-    return !GetSelectedFullname().empty();
+    return !IsDirectorySelected() && !GetSelectedDeclName().empty();
 }
 
 }

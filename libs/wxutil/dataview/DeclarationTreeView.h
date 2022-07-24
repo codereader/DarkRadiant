@@ -5,10 +5,28 @@
 namespace wxutil
 {
 
+/**
+ * Specialised TreeView used to display lists or trees of Declarations,
+ * like Particles, Materials, Skins, etc.
+ */
 class DeclarationTreeView :
     public ResourceTreeView
 {
+public:
+    // Extends the ResourceTreeView Columns by a declName entry
+    struct Columns :
+        public wxutil::ResourceTreeView::Columns
+    {
+        Columns() :
+            ResourceTreeView::Columns(),
+            declName(add(TreeModel::Column::String))
+        {}
+
+        TreeModel::Column declName; // the name used to acquire the IDeclaration reference
+    };
+
 private:
+    const Columns& _columns;
     decl::Type _declType;
 
 public:
@@ -17,6 +35,9 @@ public:
 
 protected:
     void PopulateContextMenu(wxutil::PopupMenu& popupMenu) override;
+
+    // Returns the name of the selected declaration, suitable for lookups in IDeclarationManager
+    virtual std::string GetSelectedDeclName();
 
 private:
     void _onShowDefinition();

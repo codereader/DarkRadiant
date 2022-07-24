@@ -4,7 +4,7 @@
 
 #include "debugging/ScopedDebugTimer.h"
 
-#include "wxutil/dataview/ResourceTreeView.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 
@@ -19,12 +19,12 @@ class ThreadedParticlesLoader final :
     public wxutil::ThreadedResourceTreePopulator
 {
 private:
-    const wxutil::ResourceTreeView::Columns& _columns;
+    const wxutil::DeclarationTreeView::Columns& _columns;
 
     std::set<std::string> _favourites;
 
 public:
-    ThreadedParticlesLoader(const wxutil::ResourceTreeView::Columns& columns) :
+    ThreadedParticlesLoader(const wxutil::DeclarationTreeView::Columns& columns) :
         ThreadedResourceTreePopulator(columns),
         _columns(columns)
     {
@@ -59,6 +59,7 @@ protected:
             row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
             row[_columns.fullName] = prtName;
             row[_columns.leafName] = prtName;
+            row[_columns.declName] = def.getDeclName();
             row[_columns.isFolder] = false;
             row[_columns.isFavourite] = isFavourite;
 
