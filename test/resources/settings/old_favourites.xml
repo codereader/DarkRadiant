@@ -2,9 +2,9 @@
 <user>
 	<ui>
 		<favourites>
-            <material>
+            <Material>
                 <favourite value="textures/some/weird/name" />
-            </material>
+            </Material>
             <materials>
                 <favourite value="textures/common/ladder"/>
             </materials>
