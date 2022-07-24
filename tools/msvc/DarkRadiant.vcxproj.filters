@@ -268,9 +268,6 @@
     <ClCompile Include="..\..\radiant\ui\einspector\PropertyEditorFactory.cpp">
       <Filter>src\ui\einspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\einspector\SkinChooser.cpp">
-      <Filter>src\ui\einspector</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\einspector\SkinPropertyEditor.cpp">
       <Filter>src\ui\einspector</Filter>
     </ClCompile>
@@ -712,6 +709,9 @@
     <ClCompile Include="..\..\radiant\ui\particles\ParticleChooserDialog.cpp">
       <Filter>src\ui\particles</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\SkinChooser.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -790,9 +790,6 @@
       <Filter>src\ui\einspector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\einspector\PropertyEditorFactory.h">
-      <Filter>src\ui\einspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\einspector\SkinChooser.h">
       <Filter>src\ui\einspector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\einspector\SkinPropertyEditor.h">
@@ -1385,6 +1382,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\particles\ParticleChooserDialog.h">
       <Filter>src\ui\particles</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\SkinChooser.h">
+      <Filter>src\ui\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,5 @@
 #include "SkinPropertyEditor.h"
-#include "SkinChooser.h"
+#include "ui/common/SkinChooser.h"
 #include "PropertyEditorFactory.h"
 
 #include "i18n.h"

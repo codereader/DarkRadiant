@@ -15,7 +15,7 @@
 #include "wxutil/Bitmap.h"
 #include <wx/sizer.h>
 
-#include "SkinChooser.h"
+#include "ui/common/SkinChooser.h"
 
 namespace ui
 {

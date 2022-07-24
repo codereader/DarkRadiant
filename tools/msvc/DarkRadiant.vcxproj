@@ -232,6 +232,7 @@
     <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ImageFilePopulator.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ImageFileSelector.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\SkinChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp" />
@@ -304,7 +305,6 @@
     <ClCompile Include="..\..\radiant\ui\einspector\ModelPropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\PropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\PropertyEditorFactory.cpp" />
-    <ClCompile Include="..\..\radiant\ui\einspector\SkinChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\SkinPropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\SoundPropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\TexturePropertyEditor.cpp" />
@@ -426,6 +426,7 @@
     <ClInclude Include="..\..\radiant\ui\common\DialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\common\ImageFilePopulator.h" />
     <ClInclude Include="..\..\radiant\ui\common\ImageFileSelector.h" />
+    <ClInclude Include="..\..\radiant\ui\common\SkinChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h" />
@@ -513,7 +514,6 @@
     <ClInclude Include="..\..\radiant\ui\einspector\ModelPropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\PropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\PropertyEditorFactory.h" />
-    <ClInclude Include="..\..\radiant\ui\einspector\SkinChooser.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\SkinPropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\SoundPropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\TexturePropertyEditor.h" />

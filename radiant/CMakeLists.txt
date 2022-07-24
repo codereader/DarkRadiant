@@ -42,6 +42,7 @@ add_executable(darkradiant
                ui/common/ShaderSelector.cpp
                ui/common/SoundShaderDefinitionView.cpp
                ui/common/TexturePreviewCombo.cpp
+               ui/common/SkinChooser.cpp
                ui/common/SoundChooser.cpp
                ui/common/SoundShaderPreview.cpp
                ui/DispatchEvent.cpp
@@ -60,7 +61,6 @@ add_executable(darkradiant
                ui/einspector/ModelPropertyEditor.cpp
                ui/einspector/PropertyEditor.cpp
                ui/einspector/PropertyEditorFactory.cpp
-               ui/einspector/SkinChooser.cpp
                ui/einspector/SkinPropertyEditor.cpp
                ui/einspector/SoundPropertyEditor.cpp
                ui/einspector/TexturePropertyEditor.cpp
