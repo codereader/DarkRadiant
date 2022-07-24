@@ -11,6 +11,7 @@
 
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "ui/modelselector/MaterialsList.h"
 
 namespace wxutil { class TreeView; }
@@ -33,6 +34,7 @@ private:
 
 	wxutil::TreeModel::Ptr _treeStore;
 	wxutil::DeclarationTreeView* _treeView;
+    wxutil::ResourceTreeViewToolbar* _treeViewToolbar;
     MaterialsList* _materialsList;
 
     wxutil::DeclFileInfo* _fileInfo;

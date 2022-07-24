@@ -136,6 +136,7 @@ namespace
 SkinChooser::SkinChooser() :
 	DialogBase(_(WINDOW_TITLE)),
 	_treeView(nullptr),
+    _treeViewToolbar(nullptr),
     _materialsList(nullptr),
     _fileInfo(nullptr)
 {
@@ -170,6 +171,8 @@ void SkinChooser::populateWindow()
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinChooser::_onSelChanged, this);
     _treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &SkinChooser::_onTreeViewPopulationFinished, this);
 
+    _treeViewToolbar = new wxutil::ResourceTreeViewToolbar(leftPanel, _treeView);
+
     // Preview
     _preview.reset(new wxutil::ModelPreview(splitter));
 	_preview->getWidget()->SetMinClientSize(wxSize(GetSize().GetWidth() / 3, -1));
@@ -184,6 +187,7 @@ void SkinChooser::populateWindow()
 
     _fileInfo = new wxutil::DeclFileInfo(leftPanel, decl::Type::Skin);
 
+    leftPanel->GetSizer()->Add(_treeViewToolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
     leftPanel->GetSizer()->Add(_treeView, 1, wxEXPAND);
     leftPanel->GetSizer()->Add(_fileInfo, 0, wxEXPAND | wxTOP, 6);
     leftPanel->GetSizer()->Add(_materialsList, 0, wxEXPAND | wxTOP, 6);
@@ -207,6 +211,8 @@ int SkinChooser::ShowModal()
 {
 	populateSkins();
 
+    _treeViewToolbar->ClearFilter();
+
 	// Display the model in the window title
 	SetTitle(std::string(_(WINDOW_TITLE)) + ": " + _model);
 
@@ -214,8 +220,6 @@ int SkinChooser::ShowModal()
     _modelLoadedConn.disconnect();
     _modelLoadedConn = _preview->signal_ModelLoaded().connect(
         sigc::mem_fun(this, &SkinChooser::_onPreviewModelLoaded));
-
-    setSelectedSkin(_prevSkin);
 
 	int returnCode = DialogBase::ShowModal();
 
