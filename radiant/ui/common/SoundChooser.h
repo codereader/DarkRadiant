@@ -2,7 +2,7 @@
 
 #include "ui/iresourcechooser.h"
 #include "wxutil/dialog/DialogBase.h"
-#include "wxutil/dataview/ResourceTreeView.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/menu/PopupMenu.h"
 #include "wxutil/WindowPosition.h"
 
@@ -22,8 +22,8 @@ class SoundChooser :
 	public IResourceChooser
 {
 private:
-    wxutil::ResourceTreeView::Columns _columns;
-	wxutil::ResourceTreeView* _treeView;
+    wxutil::DeclarationTreeView::Columns _columns;
+	wxutil::DeclarationTreeView* _treeView;
 
 	// The preview widget group
 	SoundShaderPreview* _preview;
@@ -38,7 +38,7 @@ private:
 private:
 
 	// Widget construction
-    wxutil::ResourceTreeView* createTreeView(wxWindow* parent);
+    wxutil::DeclarationTreeView* createTreeView(wxWindow* parent);
 
     void loadSoundShaders();
     void handleSelectionChange();

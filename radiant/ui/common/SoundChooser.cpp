@@ -48,7 +48,7 @@ class SoundShaderPopulator :
     public wxutil::VFSTreePopulator
 {
 private:
-    const wxutil::ResourceTreeView::Columns& _columns;
+    const wxutil::DeclarationTreeView::Columns& _columns;
 
     wxIcon _shaderIcon;
     wxIcon _folderIcon;
@@ -57,7 +57,7 @@ private:
 public:
     // Constructor
     SoundShaderPopulator(const wxutil::TreeModel::Ptr& treeStore,
-                         const wxutil::ResourceTreeView::Columns& columns) :
+                         const wxutil::DeclarationTreeView::Columns& columns) :
                          VFSTreePopulator(treeStore),
                          _columns(columns)
     {
@@ -88,13 +88,14 @@ public:
         addPath(fullPath, [&](wxutil::TreeModel::Row& row, const std::string& path, 
             const std::string& leafName, bool isFolder)
         {
-            bool isFavourite = !isFolder && _favourites.count(leafName) > 0;
+            bool isFavourite = !isFolder && _favourites.count(path) > 0;
 
             row[_columns.iconAndName] = wxVariant(
                 wxDataViewIconText(leafName, isFolder ? _folderIcon : _shaderIcon));
             row[_columns.leafName] = shader->getDeclName();
             row[_columns.fullName] = path;
             row[_columns.isFolder] = isFolder;
+            row[_columns.declName] = shader->getDeclName();
             row[_columns.isFavourite] = isFavourite;
             row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite); // assign attributes
             row.SendItemAdded();
@@ -108,12 +109,12 @@ class ThreadedSoundShaderLoader :
     public wxutil::ThreadedResourceTreePopulator
 {
     // Column specification struct
-    const wxutil::ResourceTreeView::Columns& _columns;
+    const wxutil::DeclarationTreeView::Columns& _columns;
 
 public:
 
     // Construct and initialise variables
-    ThreadedSoundShaderLoader(const wxutil::ResourceTreeView::Columns& columns) :
+    ThreadedSoundShaderLoader(const wxutil::DeclarationTreeView::Columns& columns) :
         ThreadedResourceTreePopulator(columns),
         _columns(columns)
     {}
@@ -185,10 +186,10 @@ SoundChooser::SoundChooser(wxWindow* parent) :
 }
 
 // Create the tree view
-wxutil::ResourceTreeView* SoundChooser::createTreeView(wxWindow* parent)
+wxutil::DeclarationTreeView* SoundChooser::createTreeView(wxWindow* parent)
 {
     // Tree view with single text icon column
-	_treeView = new wxutil::ResourceTreeView(parent, _columns);
+	_treeView = new wxutil::DeclarationTreeView(parent, decl::Type::SoundShader, _columns);
 
     _treeView->AppendIconTextColumn(_("Soundshader"), _columns.iconAndName.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
@@ -196,7 +197,6 @@ wxutil::ResourceTreeView* SoundChooser::createTreeView(wxWindow* parent)
 	// Use the TreeModel's full string search function
 	_treeView->AddSearchColumn(_columns.iconAndName);
     _treeView->SetExpandTopLevelItemsAfterPopulation(true);
-    _treeView->EnableFavouriteManagement(decl::getTypeName(decl::Type::SoundShader));
 
 	// Get selection and connect the changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundChooser::_onSelectionChange, this);
