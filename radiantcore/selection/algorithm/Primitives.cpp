@@ -379,7 +379,7 @@ void createDecalsForSelectedFaces(const cmd::ArgumentList& args)
 	}
 }
 
-void makeVisportal(const cmd::ArgumentList& args)
+void makeVisportal()
 {
 	BrushPtrVector brushes = getSelectedBrushes();
 

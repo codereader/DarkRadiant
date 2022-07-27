@@ -86,7 +86,7 @@ namespace selection {
 	/**
 	 * greebo: Applies the visportal/nodraw texture combo to the selected brushes.
 	 */
-	void makeVisportal(const cmd::ArgumentList& args);
+	void makeVisportal();
 
 	/**
 	 * greebo: Surrounds the current model selection with a monsterclip brush.
