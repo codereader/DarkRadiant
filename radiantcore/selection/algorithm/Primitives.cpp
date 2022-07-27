@@ -347,7 +347,7 @@ public:
 	}
 };
 
-void createDecalsForSelectedFaces(const cmd::ArgumentList& args)
+void createDecalsForSelectedFaces()
 {
 	// Sanity check
 	if (FaceInstance::Selection().empty())

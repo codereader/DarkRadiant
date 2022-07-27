@@ -1005,9 +1005,12 @@ void registerCommands()
 
 	GlobalCommandSystem().addCommand("ExportSelectedAsCollisionModel", createCMFromSelection, { cmd::ARGTYPE_STRING });
 
-	GlobalCommandSystem().addCommand("CreateDecalsForFaces", createDecalsForSelectedFaces);
+    GlobalCommandSystem().addWithCheck(
+        "CreateDecalsForFaces", [](const cmd::ArgumentList&) { createDecalsForSelectedFaces(); },
+        [] { return !FaceInstance::Selection().empty(); }
+    );
 
-	GlobalCommandSystem().addCommand("Copy", clipboard::copy);
+    GlobalCommandSystem().addCommand("Copy", clipboard::copy);
 	GlobalCommandSystem().addCommand("Cut", clipboard::cut);
 	GlobalCommandSystem().addCommand("Paste", clipboard::paste);
 	GlobalCommandSystem().addCommand("PasteToCamera", clipboard::pasteToCamera);
