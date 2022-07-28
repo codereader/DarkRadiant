@@ -2,6 +2,7 @@ add_library(script MODULE
             interfaces/BrushInterface.cpp
             interfaces/CameraInterface.cpp
             interfaces/CommandSystemInterface.cpp
+            interfaces/DeclarationManagerInterface.cpp
             interfaces/DialogInterface.cpp
             interfaces/EClassInterface.cpp
             interfaces/EntityInterface.cpp

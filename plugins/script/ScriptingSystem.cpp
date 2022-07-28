@@ -34,6 +34,7 @@
 #include "interfaces/SelectionGroupInterface.h"
 #include "interfaces/CameraInterface.h"
 #include "interfaces/LayerInterface.h"
+#include "interfaces/DeclarationManagerInterface.h"
 
 #include "PythonModule.h"
 
@@ -328,6 +329,7 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 	addInterface("SelectionGroupInterface", std::make_shared<SelectionGroupInterface>());
 	addInterface("CameraInterface", std::make_shared<CameraInterface>());
 	addInterface("LayerInterface", std::make_shared<LayerInterface>());
+	addInterface("DeclarationManager", std::make_shared<DeclarationManagerInterface>());
 
 	GlobalCommandSystem().addCommand(
 		"RunScript",

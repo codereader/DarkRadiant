@@ -97,6 +97,9 @@
     <ClInclude Include="..\..\plugins\script\interfaces\LayerInterface.h">
       <Filter>src\interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\plugins\script\interfaces\DeclarationManagerInterface.h">
+      <Filter>src\interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\plugins\script\SceneNodeBuffer.cpp">
@@ -181,6 +184,9 @@
       <Filter>src\interfaces</Filter>
     </ClCompile>
     <ClCompile Include="..\..\plugins\script\interfaces\LayerInterface.cpp">
+      <Filter>src\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\plugins\script\interfaces\DeclarationManagerInterface.cpp">
       <Filter>src\interfaces</Filter>
     </ClCompile>
   </ItemGroup>
