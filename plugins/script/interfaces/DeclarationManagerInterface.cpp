@@ -37,6 +37,28 @@ void DeclarationManagerInterface::foreachDeclaration(decl::Type type, Declaratio
     });
 }
 
+bool DeclarationManagerInterface::renameDeclaration(decl::Type type, const std::string& oldName, const std::string& newName)
+{
+    return GlobalDeclarationManager().renameDeclaration(type, oldName, newName);
+}
+
+void DeclarationManagerInterface::removeDeclaration(decl::Type type, const std::string& name)
+{
+    GlobalDeclarationManager().removeDeclaration(type, name);
+}
+
+void DeclarationManagerInterface::reloadDeclarations()
+{
+    GlobalDeclarationManager().reloadDeclarations();
+}
+
+void DeclarationManagerInterface::saveDeclaration(const ScriptDeclaration& decl)
+{
+    if (!decl.get()) return;
+
+    GlobalDeclarationManager().saveDeclaration(decl.get());
+}
+
 void DeclarationManagerInterface::registerInterface(py::module& scope, py::dict& globals)
 {
     py::class_<ScriptDeclaration> declaration(scope, "Declaration");
@@ -64,6 +86,7 @@ void DeclarationManagerInterface::registerInterface(py::module& scope, py::dict&
     declaration.def("getBlockSyntax", &ScriptDeclaration::getBlockSyntax);
     declaration.def("setBlockSyntax", &ScriptDeclaration::setBlockSyntax);
     declaration.def("getDeclFilePath", &ScriptDeclaration::getDeclFilePath);
+    declaration.def("setDeclFilePath", &ScriptDeclaration::setDeclFilePath);
 
     py::class_<DeclarationVisitor, DeclarationVisitorWrapper>(scope, "DeclarationVisitor")
         .def(py::init<>())
@@ -73,7 +96,11 @@ void DeclarationManagerInterface::registerInterface(py::module& scope, py::dict&
     py::class_<DeclarationManagerInterface>(scope, "DeclarationManager")
         .def("findDeclaration", &DeclarationManagerInterface::findDeclaration)
         .def("findOrCreateDeclaration", &DeclarationManagerInterface::findOrCreateDeclaration)
-        .def("foreachDeclaration", &DeclarationManagerInterface::foreachDeclaration);
+        .def("foreachDeclaration", &DeclarationManagerInterface::foreachDeclaration)
+        .def("renameDeclaration", &DeclarationManagerInterface::renameDeclaration)
+        .def("removeDeclaration", &DeclarationManagerInterface::removeDeclaration)
+        .def("reloadDeclarations", &DeclarationManagerInterface::reloadDeclarations)
+        .def("saveDeclaration", &DeclarationManagerInterface::saveDeclaration);
 
     // Now point the Python variable "GlobalDeclarationManager" to this instance
     globals["GlobalDeclarationManager"] = this;

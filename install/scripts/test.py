@@ -27,6 +27,17 @@ print("Definition: " + caulk.getBlockSyntax().contents)
 
 GlobalDeclarationManager.foreachDeclaration(Declaration.Type.ModelDef, visitor)
 
+# Create a new material
+myOwnMaterial = GlobalDeclarationManager.findOrCreateDeclaration(Declaration.Type.Material, "textures/myown_material")
+
+syntax = myOwnMaterial.getBlockSyntax()
+syntax.contents = "diffusemap _white"
+myOwnMaterial.setBlockSyntax(syntax)
+
+# Save the material to a new file
+myOwnMaterial.setDeclFilePath("materials/", "script_test.mtr")
+GlobalDeclarationManager.saveDeclaration(myOwnMaterial)
+
 # Test the EClassManager interface
 eclass = GlobalEntityClassManager.findClass('atdm:func_shooter')
 print(eclass.getAttribute('editor_usage').getValue())
