@@ -64,7 +64,7 @@ void DeclarationManagerInterface::registerInterface(py::module& scope, py::dict&
     py::class_<ScriptDeclaration> declaration(scope, "Declaration");
 
     py::enum_<decl::Type>(declaration, "Type")
-        .value("None", decl::Type::None)
+        .value("NullType", decl::Type::None) // None is a reserved word in Python
         .value("Material", decl::Type::Material)
         .value("Table", decl::Type::Table)
         .value("EntityDef", decl::Type::EntityDef)
