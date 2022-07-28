@@ -1529,6 +1529,8 @@ TEST_F(MaterialsTest, CoverageOfMaterialWithBlendStage)
 
 TEST_F(MaterialsTest, ShaderExpressionEvaluation)
 {
+    constexpr std::size_t TimeInMilliseconds = 200;
+    constexpr float TimeInSeconds = TimeInMilliseconds / 1000.0f;
     auto testExpressions = std::map<std::string, float>
     {
         { "3", 3.0f },
@@ -1544,6 +1546,7 @@ TEST_F(MaterialsTest, ShaderExpressionEvaluation)
         { "3-3*5", -12.0f },
         { "cosTable[0]", 1.0f },
         { "cosTable[1]", 1.0f },
+        { "cosTable[time*5]", 1.0f },
         { "cosTable[0.3]", -0.3090f },
         { "3-3*cosTable[2]", 0.0f },
         { "3+cosTable[3]*7", 10.0f },
@@ -1559,19 +1562,25 @@ TEST_F(MaterialsTest, ShaderExpressionEvaluation)
         { "3 == 3 && 1 != 0", 1.0f },
         { "1 != 1 || 3 == 3", 1.0f },
         { "4 == 3 || 1 != 0", 1.0f },
-        { "time", 0.0f },
+        { "time", TimeInSeconds }, // time is measured in seconds
         { "-3 + 5", 2.0f },
         { "3 * -5", -15.0f },
         { "3 * -5 + 4", -11.0f },
         { "3 + -5 * 4", -17.0f },
         { "3 * 5 * -6", -90.0f },
+        { "time / 6 * 3", TimeInSeconds / 6.0f * 3.0f },
+        { "time / (6 * 3)", TimeInSeconds / 18.0f },
+        { "(time / 6) * 3", (TimeInSeconds / 6.0f) * 3.0f },
+        { "9 - 5 + 2", 6.0f },
+        { "9 - 5 - 2", 2.0f },
+
     };
 
     for (const auto& [expressionString, expectedValue] : testExpressions)
     {
         auto expr = GlobalMaterialManager().createShaderExpressionFromString(expressionString);
 
-        EXPECT_NEAR(expr->getValue(0), expectedValue, 0.01f) << 
+        EXPECT_NEAR(expr->getValue(TimeInMilliseconds), expectedValue, 0.001f) <<
             "Expression " << expressionString << " should evaluate to " << expectedValue;
     }
 }
