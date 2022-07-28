@@ -23,6 +23,11 @@ public:
         return _decl;
     }
 
+    bool isNull() const
+    {
+        return !_decl;
+    }
+
     const std::string& getDeclName() const
     {
         static std::string _emptyName;

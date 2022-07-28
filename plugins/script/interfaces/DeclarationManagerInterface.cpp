@@ -81,6 +81,7 @@ void DeclarationManagerInterface::registerInterface(py::module& scope, py::dict&
         .def_readwrite("modName", &decl::DeclarationBlockSyntax::modName);
 
     declaration.def(py::init<const decl::IDeclaration::Ptr&>());
+    declaration.def("isNull", &ScriptDeclaration::isNull);
     declaration.def("getDeclName", &ScriptDeclaration::getDeclName);
     declaration.def("getDeclType", &ScriptDeclaration::getDeclType);
     declaration.def("getBlockSyntax", &ScriptDeclaration::getBlockSyntax);
