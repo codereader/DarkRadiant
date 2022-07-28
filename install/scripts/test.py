@@ -9,6 +9,17 @@ worldspawn = Radiant.findEntityByClassname("worldspawn")
 worldspawn.setKeyValue('test', 'success')
 print('Worldspawn edited')
 
+# Test the DeclarationManager interface
+class TestDeclarationVisitor(dr.DeclarationVisitor) :
+    def visit(self, decl):
+        print(decl)
+
+visitor = TestDeclarationVisitor()
+
+# Visit all skins and modeldefs
+GlobalDeclarationManager.foreachDeclaration(Declaration.Type.Skin, visitor)
+GlobalDeclarationManager.foreachDeclaration(Declaration.Type.ModelDef, visitor)
+
 # Test the EClassManager interface
 eclass = GlobalEntityClassManager.findClass('atdm:func_shooter')
 print(eclass.getAttribute('editor_usage').getValue())

@@ -20,6 +20,13 @@ public:
     // TODO
 };
 
+class DeclarationVisitor
+{
+public:
+    virtual ~DeclarationVisitor() {}
+    virtual void visit(const decl::IDeclaration::Ptr& declaration) = 0;
+};
+
 /**
 * Exposes the GlobalDeclarationManager interface to scripts
 */
@@ -29,6 +36,8 @@ class DeclarationManagerInterface :
 public:
     // Mapped methods
     ScriptDeclaration findDeclaration(decl::Type type, const std::string& name);
+    ScriptDeclaration findOrCreateDeclaration(decl::Type type, const std::string& name);
+    void foreachDeclaration(decl::Type type, DeclarationVisitor& visitor);
 
     // IScriptInterface implementation
     void registerInterface(py::module& scope, py::dict& globals) override;
