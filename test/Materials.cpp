@@ -1527,4 +1527,53 @@ TEST_F(MaterialsTest, CoverageOfMaterialWithBlendStage)
     EXPECT_EQ(material->getCoverage(), Material::MC_OPAQUE) << "Material should be opaque";
 }
 
+TEST_F(MaterialsTest, ShaderExpressionEvaluation)
+{
+    auto testExpressions = std::map<std::string, float>
+    {
+        { "3", 3.0f },
+        { "3+4", 7.0f },
+        { "(3+4)", 7.0f },
+        { "(4.2)", 4.2f },
+        { "3+5+6", 14.0f },
+        { "3+(5+6)", 14.0f },
+        { "3 * 3+5", 14.0f },
+        { "3+3*5", 18.0f },
+        { "(3+3)*5", 30.0f },
+        { "(3+3*7)-5", 19.0f },
+        { "3-3*5", -12.0f },
+        { "cosTable[0]", 1.0f },
+        { "cosTable[1]", 1.0f },
+        { "cosTable[0.3]", -0.3090f },
+        { "3-3*cosTable[2]", 0.0f },
+        { "3+cosTable[3]*7", 10.0f },
+        { "(3+cosTable[3])*7", 28.0f },
+        { "2.3 % 2", 0.3f },
+        { "2.0 % 0.5", 0.0f },
+        { "2 == 2", 1.0f },
+        { "1 == 2", 0.0f },
+        { "1 != 2", 1.0f },
+        { "1.2 != 1.2", 0.0f },
+        { "1.2 == 1.2*3", 0.0f },
+        { "1.2*3 == 1.2*3", 1.0f },
+        { "3 == 3 && 1 != 0", 1.0f },
+        { "1 != 1 || 3 == 3", 1.0f },
+        { "4 == 3 || 1 != 0", 1.0f },
+        { "time", 0.0f },
+        { "-3 + 5", 2.0f },
+        { "3 * -5", -15.0f },
+        { "3 * -5 + 4", -11.0f },
+        { "3 + -5 * 4", -17.0f },
+        { "3 * 5 * -6", -90.0f },
+    };
+
+    for (const auto& [expressionString, expectedValue] : testExpressions)
+    {
+        auto expr = GlobalMaterialManager().createShaderExpressionFromString(expressionString);
+
+        EXPECT_NEAR(expr->getValue(0), expectedValue, 0.01f) << 
+            "Expression " << expressionString << " should evaluate to " << expectedValue;
+    }
+}
+
 }
