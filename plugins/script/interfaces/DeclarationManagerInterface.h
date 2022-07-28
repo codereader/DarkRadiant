@@ -17,7 +17,35 @@ public:
         _decl(decl)
     {}
 
-    // TODO
+    const std::string& getDeclName() const
+    {
+        static std::string _emptyName;
+        return _decl ? _decl->getDeclName() : _emptyName;
+    }
+
+    decl::Type getDeclType() const
+    {
+        return _decl ? _decl->getDeclType() : decl::Type::None;
+    }
+
+    const decl::DeclarationBlockSyntax& getBlockSyntax()
+    {
+        static decl::DeclarationBlockSyntax _emptySyntax;
+        return _decl ? _decl->getBlockSyntax() : _emptySyntax;
+    }
+
+    void setBlockSyntax(const decl::DeclarationBlockSyntax& block)
+    {
+        if (_decl)
+        {
+            _decl->setBlockSyntax(block);
+        }
+    }
+
+    std::string getDeclFilePath() const
+    {
+        return _decl ? _decl->getDeclFilePath() : "";
+    }
 };
 
 class DeclarationVisitor

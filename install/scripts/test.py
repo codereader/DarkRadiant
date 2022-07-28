@@ -12,12 +12,19 @@ print('Worldspawn edited')
 # Test the DeclarationManager interface
 class TestDeclarationVisitor(dr.DeclarationVisitor) :
     def visit(self, decl):
-        print(decl)
+        print(str(decl.getDeclType()) + ": " + decl.getDeclName())
 
 visitor = TestDeclarationVisitor()
 
-# Visit all skins and modeldefs
+# Visit all skins
 GlobalDeclarationManager.foreachDeclaration(Declaration.Type.Skin, visitor)
+
+caulk = GlobalDeclarationManager.findDeclaration(Declaration.Type.Material, "textures/common/caulk")
+print("Name: " + caulk.getDeclName())
+print("Type: " + str(caulk.getDeclType()))
+print("Defined in: " + str(caulk.getDeclFilePath()))
+print("Definition: " + caulk.getBlockSyntax().contents)
+
 GlobalDeclarationManager.foreachDeclaration(Declaration.Type.ModelDef, visitor)
 
 # Test the EClassManager interface

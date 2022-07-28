@@ -21,7 +21,12 @@ public:
 
 ScriptDeclaration DeclarationManagerInterface::findDeclaration(decl::Type type, const std::string& name)
 {
-    return ScriptDeclaration({});
+    return ScriptDeclaration(GlobalDeclarationManager().findDeclaration(type, name));
+}
+
+ScriptDeclaration DeclarationManagerInterface::findOrCreateDeclaration(decl::Type type, const std::string& name)
+{
+    return ScriptDeclaration(GlobalDeclarationManager().findOrCreateDeclaration(type, name));
 }
 
 void DeclarationManagerInterface::foreachDeclaration(decl::Type type, DeclarationVisitor& visitor)
@@ -47,14 +52,28 @@ void DeclarationManagerInterface::registerInterface(py::module& scope, py::dict&
         .value("Skin", decl::Type::Skin)
         .export_values();
 
-    py::class_<DeclarationVisitor, DeclarationVisitorWrapper> visitor(scope, "DeclarationVisitor");
-    visitor.def(py::init<>());
-    visitor.def("visit", &DeclarationVisitor::visit);
+    py::class_<decl::DeclarationBlockSyntax>(scope, "DeclarationBlockSyntax")
+        .def_readwrite("typeName", &decl::DeclarationBlockSyntax::typeName)
+        .def_readwrite("name", &decl::DeclarationBlockSyntax::name)
+        .def_readwrite("contents", &decl::DeclarationBlockSyntax::contents)
+        .def_readwrite("modName", &decl::DeclarationBlockSyntax::modName);
+
+    declaration.def(py::init<const decl::IDeclaration::Ptr&>());
+    declaration.def("getDeclName", &ScriptDeclaration::getDeclName);
+    declaration.def("getDeclType", &ScriptDeclaration::getDeclType);
+    declaration.def("getBlockSyntax", &ScriptDeclaration::getBlockSyntax);
+    declaration.def("setBlockSyntax", &ScriptDeclaration::setBlockSyntax);
+    declaration.def("getDeclFilePath", &ScriptDeclaration::getDeclFilePath);
+
+    py::class_<DeclarationVisitor, DeclarationVisitorWrapper>(scope, "DeclarationVisitor")
+        .def(py::init<>())
+        .def("visit", &DeclarationVisitor::visit);
 
     // IDeclarationManager interface
-    py::class_<DeclarationManagerInterface> materialManager(scope, "DeclarationManager");
-
-    materialManager.def("foreachDeclaration", &DeclarationManagerInterface::foreachDeclaration);
+    py::class_<DeclarationManagerInterface>(scope, "DeclarationManager")
+        .def("findDeclaration", &DeclarationManagerInterface::findDeclaration)
+        .def("findOrCreateDeclaration", &DeclarationManagerInterface::findOrCreateDeclaration)
+        .def("foreachDeclaration", &DeclarationManagerInterface::foreachDeclaration);
 
     // Now point the Python variable "GlobalDeclarationManager" to this instance
     globals["GlobalDeclarationManager"] = this;
