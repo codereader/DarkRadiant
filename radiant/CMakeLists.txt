@@ -93,7 +93,6 @@ add_executable(darkradiant
                ui/mainframe/SplitPaneLayout.cpp
                ui/mainframe/TopLevelFrame.cpp
                ui/mapselector/MapSelector.cpp
-               ui/materials/MaterialDefinitionView.cpp
                ui/materials/editor/MaterialEditor.cpp
                ui/materials/editor/MaterialEditorModule.cpp
                ui/materials/editor/MaterialPreview.cpp

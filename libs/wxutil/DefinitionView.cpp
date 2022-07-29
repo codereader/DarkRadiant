@@ -49,8 +49,15 @@ DefinitionView::DefinitionView(const std::string& title, wxWindow* parent) :
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
 }
 
-void DefinitionView::addSourceView(SourceViewCtrl* view)
+void DefinitionView::setSourceView(SourceViewCtrl* view)
 {
+    // Remove the existing view first
+    if (_view)
+    {
+        delete _view;
+        _view = nullptr;
+    }
+
 	_view = view;
 	_panel->GetSizer()->Add(_view, 1, wxEXPAND | wxTOP, 6);
 }

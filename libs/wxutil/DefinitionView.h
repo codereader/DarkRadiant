@@ -44,7 +44,7 @@ protected:
 	virtual std::string getDefinition() = 0;
 
 	wxWindow* getMainPanel();
-	void addSourceView(SourceViewCtrl* view);
+	void setSourceView(SourceViewCtrl* view);
 };
 
 } // namespace

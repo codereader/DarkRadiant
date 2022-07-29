@@ -661,9 +661,6 @@
     <ClCompile Include="..\..\radiant\ui\common\ImageFilePopulator.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\materials\MaterialDefinitionView.cpp">
-      <Filter>src\ui\materials</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\materials\MaterialPopulator.cpp">
       <Filter>src\ui\materials</Filter>
     </ClCompile>
@@ -1289,9 +1286,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\ImageFilePopulator.h">
       <Filter>src\ui\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\materials\MaterialDefinitionView.h">
-      <Filter>src\ui\materials</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\materials\MaterialPopulator.h">
       <Filter>src\ui\materials</Filter>

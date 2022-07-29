@@ -3,8 +3,8 @@
 #include "i18n.h"
 #include "icommandsystem.h"
 
-#include "ui/materials/MaterialDefinitionView.h"
 #include "TextureDirectoryLoader.h"
+#include "wxutil/DeclarationSourceView.h"
 #include "wxutil/ModalProgressDialog.h"
 
 namespace ui
@@ -117,7 +117,8 @@ void MediaBrowserTreeView::_onShowShaderDefinition()
     std::string shaderName = GetSelectedFullname();
 
     // Construct a shader view and pass the shader name
-    auto view = new MaterialDefinitionView(shaderName);
+    auto view = new wxutil::DeclarationSourceView(this);
+    view->setDeclaration(decl::Type::Material, shaderName);
     view->ShowModal();
     view->Destroy();
 }

@@ -6,7 +6,7 @@
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/menu/IconTextMenuItem.h"
-#include "ui/materials/MaterialDefinitionView.h"
+#include "wxutil/DeclarationSourceView.h"
 
 #include "texturelib.h"
 #include "string/string.h"
@@ -73,7 +73,9 @@ ShaderSelector::ShaderSelector(wxWindow* parent, Client* client, const std::stri
 void ShaderSelector::_onShowShaderDefinition()
 {
     // Construct a definition view and pass the material name
-    auto view = new MaterialDefinitionView(getSelection());
+    auto view = new wxutil::DeclarationSourceView(this);
+    view->setDeclaration(decl::Type::Material, getSelection());
+
     view->ShowModal();
     view->Destroy();
 }

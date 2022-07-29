@@ -3,9 +3,7 @@
 #include "i18n.h"
 #include "irender.h"
 #include "wxutil/menu/IconTextMenuItem.h"
-#include "ui/materials/MaterialDefinitionView.h"
-
-#include <iostream>
+#include "wxutil/DeclarationSourceView.h"
 
 namespace ui
 {
@@ -108,7 +106,9 @@ void MaterialsList::onContextMenu(wxDataViewEvent& ev)
 void MaterialsList::onShowShaderDefinition()
 {
     // Construct a definition view and pass the material name
-    auto view = new MaterialDefinitionView(getSelectedMaterial());
+    auto view = new wxutil::DeclarationSourceView(this);
+    
+    view->setDeclaration(decl::Type::Material, getSelectedMaterial());
     view->ShowModal();
     view->Destroy();
 }
