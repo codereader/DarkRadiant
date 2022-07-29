@@ -1,14 +1,9 @@
 #pragma once
 
-#include <set>
-
 #include "ieclass.h"
-#include "ifavourites.h"
 
-#include "wxutil/Bitmap.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
-#include "wxutil/dataview/TreeViewItemStyle.h"
 
 namespace ui
 {
@@ -19,17 +14,13 @@ class ThreadedEntityDefPopulator :
 private:
     const wxutil::DeclarationTreeView::Columns& _columns;
 
-    wxIcon _icon;
-
 public:
     ThreadedEntityDefPopulator(const wxutil::DeclarationTreeView::Columns& columns, const std::string& iconName) :
-        ThreadedDeclarationTreePopulator(decl::Type::EntityDef, columns),
+        ThreadedDeclarationTreePopulator(decl::Type::EntityDef, columns, iconName),
         _columns(columns)
-    {
-        _icon.CopyFromBitmap(wxutil::GetLocalBitmap(iconName));
-    }
+    {}
 
-    ~ThreadedEntityDefPopulator()
+    ~ThreadedEntityDefPopulator() override
     {
         EnsureStopped();
     }
@@ -38,7 +29,7 @@ protected:
     // Predicate to be implemented by subclasses. Returns true if the eclass should be listed.
     virtual bool ClassShouldBeListed(const IEntityClassPtr& eclass) = 0;
 
-    virtual void PopulateModel(const wxutil::TreeModel::Ptr& model) override
+    void PopulateModel(const wxutil::TreeModel::Ptr& model) override
     {
         GlobalEntityClassManager().forEachEntityClass([&](const IEntityClassPtr& eclass)
         {
@@ -49,19 +40,9 @@ protected:
 
             if (!ClassShouldBeListed(eclass)) return;
 
-            bool isFavourite = IsFavourite(eclass->getDeclName());
-
             auto row = model->AddItem();
-
-            row[_columns.iconAndName] = wxVariant(wxDataViewIconText(eclass->getDeclName(), _icon));
-            row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
-            row[_columns.fullName] = eclass->getDeclName();
-            row[_columns.leafName] = eclass->getDeclName();
-            row[_columns.declName] = eclass->getDeclName();
-            row[_columns.isFolder] = false;
-            row[_columns.isFavourite] = isFavourite;
-
-            row.SendItemAdded();
+            const auto& declName = eclass->getDeclName();
+            AssignValuesToRow(row, declName, declName, declName, false);
         });
     }
 };
