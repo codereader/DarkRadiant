@@ -7,6 +7,11 @@
 #include "DefinitionView.h"
 #include "SourceView.h"
 
+// Some X11 headers are defining this
+#ifdef None
+#undef None
+#endif
+
 namespace wxutil
 {
 
