@@ -624,8 +624,8 @@ void CShader::commitModifications()
     // Replace the contents with our working copy
     _originalTemplate->setBlockSyntax(_template->getBlockSyntax());
 
-    // Overwrite the original template reference, the material is now unmodified again
-    _originalTemplate = _template;
+    // Overwrite the working template reference, the material is now unmodified again
+    _template = _originalTemplate;
 }
 
 const ShaderTemplate::Ptr& CShader::getTemplate()

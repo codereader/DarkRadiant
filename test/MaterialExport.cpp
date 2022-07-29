@@ -1233,6 +1233,27 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
         << "New definition not found in file";
 }
 
+TEST_F(MaterialExportTest, SavedMaterialCanBeModified)
+{
+    // Create a backup copy of the material file we're going to manipulate
+    fs::path exportTestFile = _context.getTestProjectPath() + "materials/exporttest.mtr";
+    BackupCopy backup(exportTestFile);
+
+    std::string description = "Newly Generated Block";
+
+    auto material = GlobalMaterialManager().createEmptyMaterial("textures/exporttest/modifytest");
+    material->setDescription(description);
+    material->setShaderFileName("materials/exporttest.mtr");
+
+    GlobalMaterialManager().saveMaterial(material->getName());
+
+    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+        << "New definition not found in file";
+
+    EXPECT_TRUE(GlobalMaterialManager().materialCanBeModified(material->getName()))
+        << "Material reports as read-only after saving";
+}
+
 TEST_F(MaterialExportTest, SetShaderFilePath)
 {
     auto newMaterial = GlobalMaterialManager().createEmptyMaterial("textures/exporttest/somePath");

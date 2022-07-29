@@ -477,6 +477,10 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
     }
 
     tempStream.closeAndReplaceTargetFile();
+
+    // Refresh the file info, otherwise a newly created file might not be considered "physical"
+    // and declarations might report themselves as if they were originating in a PK4
+    decl->setFileInfo(GlobalFileSystem().getFileInfo(relativePath));
 }
 
 sigc::signal<void>& DeclarationManager::signal_DeclsReloading(Type type)

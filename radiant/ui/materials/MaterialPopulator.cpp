@@ -2,9 +2,9 @@
 
 #include "i18n.h"
 #include "ishaders.h"
+#include "string/replace.h"
 
 #include "string/split.h"
-#include "shaderlib.h"
 
 #include "wxutil/dataview/VFSTreePopulator.h"
 
