@@ -10,6 +10,7 @@
 
 #include "ifavourites.h"
 #include "wxutil/Bitmap.h"
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 
@@ -160,7 +161,10 @@ wxWindow* MD5AnimationViewer::createListPane(wxWindow* parent)
 
 wxWindow* MD5AnimationViewer::createModelTreeView(wxWindow* parent)
 {
-    _modelTreeView = new wxutil::DeclarationTreeView(parent, decl::Type::ModelDef, _modelColumns, wxDV_NO_HEADER | wxDV_SINGLE);
+    auto panel = new wxPanel(parent);
+    panel->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+    _modelTreeView = new wxutil::DeclarationTreeView(panel, decl::Type::ModelDef, _modelColumns, wxDV_NO_HEADER | wxDV_SINGLE);
 	_modelTreeView->SetMinClientSize(wxSize(300, -1));
     _modelTreeView->SetExpandTopLevelItemsAfterPopulation(true);
 
@@ -174,8 +178,12 @@ wxWindow* MD5AnimationViewer::createModelTreeView(wxWindow* parent)
 	// Connect up the selection changed callback
 	_modelTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MD5AnimationViewer::_onModelSelChanged, this);
 
+    auto toolbar = new wxutil::ResourceTreeViewToolbar(panel, _modelTreeView);
+    panel->GetSizer()->Add(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
+    panel->GetSizer()->Add(_modelTreeView, 1, wxEXPAND);
+
 	// Pack into scrolled window and return
-	return _modelTreeView;
+	return panel;
 }
 
 wxWindow* MD5AnimationViewer::createAnimTreeView(wxWindow* parent)
