@@ -152,24 +152,16 @@ std::string AIHeadChooserDialog::getSelectedHead()
 
 void AIHeadChooserDialog::handleSelectionChanged()
 {
-	// Prepare to check for a selection
-    auto item = _headsView->GetSelection();
+    _selectedHead = _headsView->GetSelectedDeclName();
 
-    // Add button is enabled if there is a selection and it is not a folder.
-    if (item.IsOk())
+    // Update sensitivity
+    FindWindowById(wxID_OK, this)->Enable(!_selectedHead.empty());
+    _description->Enable(!_selectedHead.empty());
+
+    if (!_selectedHead.empty())
     {
-        // Make the OK button active
-		FindWindowById(wxID_OK, this)->Enable(true);
-        _description->Enable(true);
-
-        // Set the panel text with the usage information
-		wxutil::TreeModel::Row row(item, *_headsView->GetTreeModel());
-        _selectedHead = row[_columns.declName];
-
         // Lookup the IEntityClass instance
-        auto ecls = GlobalEntityClassManager().findClass(_selectedHead);
-
-        if (ecls)
+        if (auto ecls = GlobalEntityClassManager().findClass(_selectedHead); ecls)
         {
             _preview->setModel(ecls->getAttributeValue("model"));
             _preview->setSkin(ecls->getAttributeValue("skin"));
@@ -180,11 +172,7 @@ void AIHeadChooserDialog::handleSelectionChanged()
     }
     else
     {
-        _selectedHead = "";
         _preview->setModel("");
-
-		FindWindowById(wxID_OK, this)->Enable(false);
-        _description->Enable(false);
     }
 }
 
