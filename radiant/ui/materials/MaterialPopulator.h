@@ -15,9 +15,6 @@ private:
 
     std::string _otherMaterialsPath;
 
-    wxIcon _folderIcon;
-    wxIcon _textureIcon;
-
     // Maps of names to corresponding treemodel items, for both intermediate
     // paths and explicitly presented paths
     using NamedIterMap = std::map<std::string, wxDataViewItem, string::ILess>;
@@ -42,9 +39,9 @@ protected:
     void SortModel(const wxutil::TreeModel::Ptr& model) override;
 
 private:
-    wxutil::TreeModel::Row insertFolder(const wxutil::TreeModel::Ptr& model, const std::string& path,
+    wxutil::TreeModel::Row InsertFolder(const wxutil::TreeModel::Ptr& model, const std::string& path,
         const std::string& leafName, const wxDataViewItem& parentItem, bool isOtherMaterial);
-    wxutil::TreeModel::Row insertTexture(const wxutil::TreeModel::Ptr& model, const std::string& path,
+    void InsertTexture(const wxutil::TreeModel::Ptr& model, const std::string& path,
         const std::string& leafName, const wxDataViewItem& parentItem);
     wxDataViewItem& addRecursive(const wxutil::TreeModel::Ptr& model, const std::string& path, bool isOtherMaterial);
     void insert(const wxutil::TreeModel::Ptr& model, const std::string& name);

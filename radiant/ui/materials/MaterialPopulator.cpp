@@ -5,7 +5,6 @@
 #include "i18n.h"
 #include "ishaders.h"
 
-#include "string/string.h"
 #include "string/split.h"
 #include "shaderlib.h"
 
@@ -19,19 +18,14 @@ namespace
 {
     const char* const OTHER_MATERIALS_FOLDER = N_("Other Materials");
 
-    constexpr const char* const FOLDER_ICON = "folder16.png";
     constexpr const char* const TEXTURE_ICON = "icon_texture.png";
 }
 
-// Construct and initialise variables
 MaterialPopulator::MaterialPopulator(const MaterialTreeView::TreeColumns& columns) :
     ThreadedDeclarationTreePopulator(decl::Type::Material, columns, TEXTURE_ICON),
     _columns(columns),
     _otherMaterialsPath(_(OTHER_MATERIALS_FOLDER))
-{
-    _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
-    _textureIcon.CopyFromBitmap(wxutil::GetLocalBitmap(TEXTURE_ICON));
-}
+{}
 
 MaterialPopulator::~MaterialPopulator()
 {
@@ -76,8 +70,7 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
         if (!existingItem.IsOk())
         {
             // Insert this folder
-            auto row = insertFolder(model, parentPath, parts[i], parentItem, i == 0 && parts[i] == otherMaterialsFolder);
-            row.SendItemAdded();
+            auto row = InsertFolder(model, parentPath, parts[i], parentItem, i == 0 && parts[i] == otherMaterialsFolder);
 
             parentItem = row.getItem();
         }
@@ -96,8 +89,7 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
 
     if (!existingItem.IsOk())
     {
-        auto row = insertTexture(model, itemPath, parts.back(), parentItem);
-        row.SendItemAdded();
+        InsertTexture(model, itemPath, parts.back(), parentItem);
     }
 }
 
@@ -136,44 +128,31 @@ void MaterialPopulator::PopulateModel(const wxutil::TreeModel::Ptr& model)
     });
 }
 
-wxutil::TreeModel::Row MaterialPopulator::insertFolder(const wxutil::TreeModel::Ptr& model, 
+wxutil::TreeModel::Row MaterialPopulator::InsertFolder(const wxutil::TreeModel::Ptr& model, 
     const std::string& path, const std::string& leafName, const wxDataViewItem& parentItem, bool isOtherMaterial)
 {
     // Append a node to the tree view for this child
     auto row = model->AddItem(parentItem);
 
-    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, _folderIcon));
-    row[_columns.leafName] = leafName;
-    row[_columns.fullName] = path;
-    row[_columns.isFolder] = true;
     row[_columns.isOtherMaterialsFolder] = isOtherMaterial;
-    row[_columns.isFavourite] = false; // folders are not favourites
+
+    AssignValuesToRow(row, path, path, leafName, true);
 
     return row;
 }
 
-wxutil::TreeModel::Row MaterialPopulator::insertTexture(const wxutil::TreeModel::Ptr& model,
+void MaterialPopulator::InsertTexture(const wxutil::TreeModel::Ptr& model,
     const std::string& path, const std::string& leafName, const wxDataViewItem& parentItem)
 {
     auto row = model->AddItem(parentItem);
 
-    bool isFavourite = IsFavourite(path);
-
-    row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, _textureIcon));
-    row[_columns.leafName] = leafName;
-    row[_columns.fullName] = path;
-    row[_columns.isFolder] = false;
-    row[_columns.declName] = path;
+    // Assign additional columns
     row[_columns.isOtherMaterialsFolder] = false;
-    row[_columns.isFavourite] = isFavourite;
 
-    // Formatting
-    row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
-
-    return row;
+    // Base class call will invoke Row::SendItemAdded()
+    AssignValuesToRow(row, path, path, leafName, false);
 }
 
-// Recursive add function
 wxDataViewItem& MaterialPopulator::addRecursive(const wxutil::TreeModel::Ptr& model,
     const std::string& path, bool isOtherMaterial)
 {
@@ -199,7 +178,7 @@ wxDataViewItem& MaterialPopulator::addRecursive(const wxutil::TreeModel::Ptr& mo
 
     std::string name = slashPos != std::string::npos ? path.substr(slashPos + 1) : path;
 
-    auto row = insertFolder(model, path, name, parIter, isOtherMaterial);
+    auto row = InsertFolder(model, path, name, parIter, isOtherMaterial);
 
     // Add a copy of the wxDataViewItem to our hashmap and return it
     auto result = _iters.emplace(path, row.getItem());
@@ -210,7 +189,7 @@ wxDataViewItem& MaterialPopulator::addRecursive(const wxutil::TreeModel::Ptr& mo
 void MaterialPopulator::insert(const wxutil::TreeModel::Ptr& model, const std::string& name)
 {
     // Find rightmost slash
-    std::size_t slashPos = name.rfind("/");
+    auto slashPos = name.rfind("/");
 
     wxDataViewItem parent;
 
@@ -229,7 +208,7 @@ void MaterialPopulator::insert(const wxutil::TreeModel::Ptr& model, const std::s
 
     // Insert the actual leaf
     auto leafName = slashPos != std::string::npos ? name.substr(slashPos + 1) : name;
-    insertTexture(model, name, leafName, parent);
+    InsertTexture(model, name, leafName, parent);
 }
 
 void MaterialPopulator::SortModel(const wxutil::TreeModel::Ptr& model)
