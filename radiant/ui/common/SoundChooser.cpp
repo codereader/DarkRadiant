@@ -8,16 +8,15 @@
 
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
-#include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "debugging/ScopedDebugTimer.h"
 #include "ui/UserInterfaceModule.h"
+#include "os/path.h"
 
 #include <wx/sizer.h>
 #include <wx/button.h>
 #include <wx/stattext.h>
 
-#include "wxutil/Bitmap.h"
 #include <sigc++/functors/mem_fun.h>
 
 namespace ui
@@ -25,88 +24,22 @@ namespace ui
 
 namespace
 {
-	const char* const SHADER_ICON = "icon_sound.png";
-	const char* const FOLDER_ICON = "folder16.png";
+	constexpr const char* const SHADER_ICON = "icon_sound.png";
 
-    const char* const RKEY_WINDOW_STATE = "user/ui/soundChooser/window";
-    const char* const RKEY_LAST_SELECTED_SHADER = "user/ui/soundChooser/lastSelectedShader";
+    constexpr const char* const RKEY_WINDOW_STATE = "user/ui/soundChooser/window";
+    constexpr const char* const RKEY_LAST_SELECTED_SHADER = "user/ui/soundChooser/lastSelectedShader";
 }
-
-/**
-* Visitor class to enumerate sound shaders and add them to the tree store.
-*/
-class SoundShaderPopulator :
-    public wxutil::VFSTreePopulator
-{
-private:
-    const wxutil::DeclarationTreeView::Columns& _columns;
-
-    wxIcon _shaderIcon;
-    wxIcon _folderIcon;
-
-    std::set<std::string> _favourites;
-public:
-    // Constructor
-    SoundShaderPopulator(const wxutil::TreeModel::Ptr& treeStore,
-                         const wxutil::DeclarationTreeView::Columns& columns) :
-                         VFSTreePopulator(treeStore),
-                         _columns(columns)
-    {
-        _shaderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(SHADER_ICON));
-        _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
-
-        // Get the list of favourites
-        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::SoundShader));
-    }
-
-    // Invoked for each sound shader
-    void addShader(const ISoundShader::Ptr& shader)
-    {
-        // Construct a "path" into the sound shader tree,
-        // using the mod name as first folder level
-        // angua: if there is a displayFolder present, put it between the mod name and the shader name
-        std::string displayFolder = shader->getDisplayFolder();
-
-        // Some shaders contain backslashes, sort them in the tree by replacing the backslashes
-        std::string shaderNameForwardSlashes = shader->getDeclName();
-        std::replace(shaderNameForwardSlashes.begin(), shaderNameForwardSlashes.end(), '\\', '/');
-
-        std::string fullPath = !displayFolder.empty() ?
-            shader->getModName() + "/" + displayFolder + "/" + shaderNameForwardSlashes :
-            shader->getModName() + "/" + shaderNameForwardSlashes;
-
-        // Sort the shader into the tree and set the values
-        addPath(fullPath, [&](wxutil::TreeModel::Row& row, const std::string& path, 
-            const std::string& leafName, bool isFolder)
-        {
-            bool isFavourite = !isFolder && _favourites.count(path) > 0;
-
-            row[_columns.iconAndName] = wxVariant(
-                wxDataViewIconText(leafName, isFolder ? _folderIcon : _shaderIcon));
-            row[_columns.leafName] = shader->getDeclName();
-            row[_columns.fullName] = path;
-            row[_columns.isFolder] = isFolder;
-            row[_columns.declName] = shader->getDeclName();
-            row[_columns.isFavourite] = isFavourite;
-            row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite); // assign attributes
-            row.SendItemAdded();
-        });
-    }
-};
-
 
 // Local class for loading sound shader definitions in a separate thread
 class ThreadedSoundShaderLoader :
     public wxutil::ThreadedDeclarationTreePopulator
 {
-    // Column specification struct
+private:
     const wxutil::DeclarationTreeView::Columns& _columns;
 
 public:
-
-    // Construct and initialise variables
     ThreadedSoundShaderLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedDeclarationTreePopulator(decl::Type::SoundShader, columns),
+        ThreadedDeclarationTreePopulator(decl::Type::SoundShader, columns, SHADER_ICON),
         _columns(columns)
     {}
 
@@ -119,14 +52,31 @@ public:
     {
         ScopedDebugTimer timer("ThreadedSoundShaderLoader::run()");
 
-        // Populate it with the list of sound shaders by using a visitor class.
-        SoundShaderPopulator visitor(model, _columns);
-
+        wxutil::VFSTreePopulator populator(model);
+        
         // Visit all sound shaders and collect them for later insertion
         GlobalSoundManager().forEachShader([&](const ISoundShader::Ptr& shader)
         {
             ThrowIfCancellationRequested();
-            visitor.addShader(shader);
+
+            // Construct a "path" into the sound shader tree,
+            // using the mod name as first folder level
+            // angua: if there is a displayFolder present, put it between the mod name and the shader name
+            auto displayFolder = shader->getDisplayFolder();
+
+            // Some shaders contain backslashes, sort them in the tree by replacing the backslashes
+            auto shaderNameForwardSlashes = os::standardPath(shader->getDeclName());
+
+            auto fullPath = !displayFolder.empty() ?
+                shader->getModName() + "/" + displayFolder + "/" + shaderNameForwardSlashes :
+                shader->getModName() + "/" + shaderNameForwardSlashes;
+
+            // Sort the shader into the tree and set the values
+            populator.addPath(fullPath, [&](wxutil::TreeModel::Row& row, 
+                const std::string& path, const std::string& leafName, bool isFolder)
+            {
+                AssignValuesToRow(row, path, isFolder ? path : shader->getDeclName(), leafName, isFolder);
+            });
         });
     }
 
