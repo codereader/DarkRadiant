@@ -14,9 +14,6 @@ class MaterialPopulator :
 private:
     const MaterialTreeView::TreeColumns& _columns;
 
-    // The set of favourites
-    std::set<std::string> _favourites;
-
 public:
     // Construct and initialise variables
     MaterialPopulator(const MaterialTreeView::TreeColumns& columns);

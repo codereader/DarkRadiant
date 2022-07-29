@@ -106,7 +106,7 @@ public:
 
     // Construct and initialise variables
     ThreadedSoundShaderLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedDeclarationTreePopulator(columns),
+        ThreadedDeclarationTreePopulator(decl::Type::SoundShader, columns),
         _columns(columns)
     {}
 

@@ -95,6 +95,7 @@ private:
 
     // The column that is hosting the declaration path (used by e.g. "copy to clipboard")
     TreeModel::Column _declPathColumn;
+    TreeModel::Column _favouriteKeyColumn;
 
 public:
     ResourceTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
@@ -163,6 +164,9 @@ protected:
 
     virtual void SetFavourite(TreeModel::Row& row, bool isFavourite);
     virtual void SetFavouriteRecursively(TreeModel::Row& row, bool isFavourite);
+
+    // Defines the column that is used to retrieve the key when adding/removing favourites
+    virtual void SetFavouriteKeyColumn(const TreeModel::Column& column);
 
     virtual void SetupTreeModelFilter();
 

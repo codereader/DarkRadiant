@@ -148,11 +148,9 @@ struct ShaderNameFunctor
 
 // Construct and initialise variables
 MaterialPopulator::MaterialPopulator(const MaterialTreeView::TreeColumns& columns) :
-    ThreadedDeclarationTreePopulator(columns),
+    ThreadedDeclarationTreePopulator(decl::Type::Material, columns),
     _columns(columns)
-{
-    _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Material));
-}
+{}
 
 MaterialPopulator::~MaterialPopulator()
 {
@@ -162,7 +160,7 @@ MaterialPopulator::~MaterialPopulator()
 
 void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, const std::string& materialName)
 {
-    ShaderNameFunctor functor(*model, _columns, _favourites);
+    ShaderNameFunctor functor(*model, _columns, GetFavourites());
 
     std::vector<std::string> parts;
     string::split(parts, materialName, "/");
@@ -252,7 +250,7 @@ void MaterialPopulator::PopulateModel(const wxutil::TreeModel::Ptr& model)
 {
     model->SetHasDefaultCompare(false);
 
-    ShaderNameFunctor functor(*model, _columns, _favourites);
+    ShaderNameFunctor functor(*model, _columns, GetFavourites());
     GlobalMaterialManager().foreachShaderName([&](const std::string& name)
     {
         ThrowIfCancellationRequested();

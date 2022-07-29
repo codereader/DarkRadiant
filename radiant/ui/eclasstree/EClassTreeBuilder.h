@@ -22,8 +22,6 @@ class EClassTreeBuilder final :
 private:
 	const wxutil::DeclarationTreeView::Columns& _columns;
 
-    std::set<std::string> _favourites;
-
 	wxIcon _entityIcon;
 
     std::unique_ptr<wxutil::VFSTreePopulator> _treePopulator;

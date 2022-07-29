@@ -46,7 +46,8 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     _expandTopLevelItemsAfterPopulation(false),
     _columnToSelectAfterPopulation(nullptr),
     _setFavouritesRecursively(true),
-    _declPathColumn(_columns.fullName)
+    _declPathColumn(_columns.fullName),
+    _favouriteKeyColumn(_columns.fullName)
 {
     _treeStore = model;
 
@@ -518,14 +519,19 @@ void ResourceTreeView::SetFavourite(TreeModel::Row& row, bool isFavourite)
     // Keep track of this choice
     if (isFavourite)
     {
-        GlobalFavouritesManager().addFavourite(_favouriteTypeName, row[_columns.fullName]);
+        GlobalFavouritesManager().addFavourite(_favouriteTypeName, row[_favouriteKeyColumn]);
     }
     else
     {
-        GlobalFavouritesManager().removeFavourite(_favouriteTypeName, row[_columns.fullName]);
+        GlobalFavouritesManager().removeFavourite(_favouriteTypeName, row[_favouriteKeyColumn]);
     }
 
     row.SendItemChanged();
+}
+
+void ResourceTreeView::SetFavouriteKeyColumn(const TreeModel::Column& column)
+{
+    _favouriteKeyColumn = column;
 }
 
 void ResourceTreeView::_onSetFavourite(bool isFavourite)

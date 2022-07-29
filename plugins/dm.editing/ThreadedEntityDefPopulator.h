@@ -18,18 +18,14 @@ class ThreadedEntityDefPopulator :
 {
 private:
     const wxutil::DeclarationTreeView::Columns& _columns;
-    std::set<std::string> _favourites;
 
     wxIcon _icon;
 
 public:
     ThreadedEntityDefPopulator(const wxutil::DeclarationTreeView::Columns& columns, const std::string& iconName) :
-        ThreadedDeclarationTreePopulator(columns),
+        ThreadedDeclarationTreePopulator(decl::Type::EntityDef, columns),
         _columns(columns)
     {
-        // Get the list of favourites
-        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::EntityDef));
-
         _icon.CopyFromBitmap(wxutil::GetLocalBitmap(iconName));
     }
 
@@ -53,7 +49,7 @@ protected:
 
             if (!ClassShouldBeListed(eclass)) return;
 
-            bool isFavourite = _favourites.count(eclass->getDeclName()) > 0;
+            bool isFavourite = IsFavourite(eclass->getDeclName());
 
             auto row = model->AddItem();
 

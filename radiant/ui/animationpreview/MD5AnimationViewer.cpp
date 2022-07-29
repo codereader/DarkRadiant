@@ -26,19 +26,14 @@ class ThreadedModelDefLoader final :
 private:
     const wxutil::DeclarationTreeView::Columns& _columns;
 
-    std::set<std::string> _favourites;
-
     wxIcon _folderIcon;
     wxIcon _modelIcon;
 
 public:
     ThreadedModelDefLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedDeclarationTreePopulator(columns),
+        ThreadedDeclarationTreePopulator(decl::Type::ModelDef, columns),
         _columns(columns)
     {
-        // Get the list of favourites
-        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Skin));
-
         _modelIcon.CopyFromBitmap(wxutil::GetLocalBitmap("model16green.png"));
         _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap("folder16.png"));
     }
@@ -71,7 +66,7 @@ protected:
 private:
     void StoreModelDefValues(wxutil::TreeModel::Row& row, const std::string& modelName, const std::string& leafName, bool isFolder)
     {
-        bool isFavourite = _favourites.count(modelName) > 0;
+        bool isFavourite = IsFavourite(modelName);
 
         row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, !isFolder ? _modelIcon : _folderIcon));
         row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);

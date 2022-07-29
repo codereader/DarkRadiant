@@ -18,12 +18,9 @@ namespace
 }
 
 EClassTreeBuilder::EClassTreeBuilder(const wxutil::DeclarationTreeView::Columns& columns) :
-    ThreadedDeclarationTreePopulator(columns),
+    ThreadedDeclarationTreePopulator(decl::Type::EntityDef, columns),
     _columns(columns)
 {
-    // Get the list of favourites
-    _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::EntityDef));
-
     _entityIcon.CopyFromBitmap(wxutil::GetLocalBitmap(ENTITY_ICON));
 }
 
@@ -65,7 +62,7 @@ void EClassTreeBuilder::visit(const IEntityClassPtr& eclass)
     _treePopulator->addPath(fullPath, [&](wxutil::TreeModel::Row& row,
         const std::string& path, const std::string& leafName, bool isFolder)
         {
-            bool isFavourite = _favourites.count(leafName) > 0;
+            bool isFavourite = IsFavourite(leafName);
 
             row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, _entityIcon));
             row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);

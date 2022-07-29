@@ -35,8 +35,6 @@ namespace
     private:
         const wxutil::DeclarationTreeView::Columns& _columns;
 
-        std::set<std::string> _favourites;
-
         wxDataViewItem& _allSkinsItem;
         wxDataViewItem& _matchingSkinsItem;
 
@@ -48,15 +46,12 @@ namespace
     public:
         ThreadedSkinLoader(const wxutil::DeclarationTreeView::Columns& columns, const std::string& model, 
             wxDataViewItem& allSkinsItem, wxDataViewItem& matchingSkinsItem) :
-            ThreadedDeclarationTreePopulator(columns),
+            ThreadedDeclarationTreePopulator(decl::Type::Skin, columns),
             _columns(columns),
             _allSkinsItem(allSkinsItem),
             _matchingSkinsItem(matchingSkinsItem),
             _model(model)
         {
-            // Get the list of favourites
-            _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Skin));
-
             _skinIcon.CopyFromBitmap(wxutil::GetLocalBitmap(SKIN_ICON));
             _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
         }
@@ -120,7 +115,7 @@ namespace
     private:
         void StoreSkinValues(wxutil::TreeModel::Row& row, const std::string& fullSkinName, const std::string& leafName, bool isFolder)
         {
-            bool isFavourite = _favourites.count(fullSkinName) > 0;
+            bool isFavourite = IsFavourite(fullSkinName);
 
             row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, !isFolder ? _skinIcon : _folderIcon));
             row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);

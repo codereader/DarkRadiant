@@ -47,20 +47,15 @@ private:
     const wxutil::DeclarationTreeView::Columns& _columns;
     const ShaderSelector::PrefixList& _prefixes;
 
-    std::set<std::string> _favourites;
-
     wxIcon _folderIcon;
     wxIcon _textureIcon;
 
 public:
     ThreadedMaterialLoader(const wxutil::DeclarationTreeView::Columns& columns, const ShaderSelector::PrefixList& prefixes) :
-        ThreadedDeclarationTreePopulator(columns),
+        ThreadedDeclarationTreePopulator(decl::Type::Material, columns),
         _columns(columns),
         _prefixes(prefixes)
     {
-        // Get the list of favourites
-        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Skin));
-
         _textureIcon.CopyFromBitmap(wxutil::GetLocalBitmap(TEXTURE_ICON));
         _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
     }
@@ -100,7 +95,7 @@ protected:
 private:
     void StoreMaterialValues(wxutil::TreeModel::Row& row, const std::string& materialName, const std::string& leafName, bool isFolder)
     {
-        bool isFavourite = _favourites.count(materialName) > 0;
+        bool isFavourite = IsFavourite(materialName);
 
         row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, !isFolder ? _textureIcon : _folderIcon));
         row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);

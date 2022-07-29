@@ -17,6 +17,7 @@ DeclarationTreeView::DeclarationTreeView(wxWindow* parent, decl::Type declType, 
     _columns(columns),
     _declType(declType)
 {
+    SetFavouriteKeyColumn(_columns.declName);
     EnableFavouriteManagement(decl::getTypeName(_declType));
 }
 

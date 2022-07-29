@@ -21,16 +21,11 @@ class ThreadedParticlesLoader final :
 private:
     const wxutil::DeclarationTreeView::Columns& _columns;
 
-    std::set<std::string> _favourites;
-
 public:
     ThreadedParticlesLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedDeclarationTreePopulator(columns),
+        ThreadedDeclarationTreePopulator(decl::Type::Particle, columns),
         _columns(columns)
-    {
-        // Get the list of favourites
-        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Particle));
-    }
+    {}
 
     ~ThreadedParticlesLoader()
     {
@@ -53,7 +48,7 @@ protected:
             // Add the Def name to the list store
             wxutil::TreeModel::Row row = model->AddItem();
 
-            bool isFavourite = _favourites.count(prtName) > 0;
+            bool isFavourite = IsFavourite(def.getDeclName());
 
             row[_columns.iconAndName] = wxVariant(wxDataViewIconText(prtName));
             row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
