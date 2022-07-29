@@ -1,13 +1,9 @@
 #include "EClassTreeBuilder.h"
 
 #include "EClassTree.h"
-#include "ifavourites.h"
-
-#include "wxutil/Bitmap.h"
 
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/dataview/TreeModel.h"
-#include "wxutil/dataview/TreeViewItemStyle.h"
 
 namespace ui
 {
@@ -18,11 +14,9 @@ namespace
 }
 
 EClassTreeBuilder::EClassTreeBuilder(const wxutil::DeclarationTreeView::Columns& columns) :
-    ThreadedDeclarationTreePopulator(decl::Type::EntityDef, columns),
+    ThreadedDeclarationTreePopulator(decl::Type::EntityDef, columns, ENTITY_ICON),
     _columns(columns)
-{
-    _entityIcon.CopyFromBitmap(wxutil::GetLocalBitmap(ENTITY_ICON));
-}
+{}
 
 EClassTreeBuilder::~EClassTreeBuilder()
 {
@@ -35,7 +29,26 @@ void EClassTreeBuilder::PopulateModel(const wxutil::TreeModel::Ptr& model)
 
     ThrowIfCancellationRequested();
 
-    GlobalEntityClassManager().forEachEntityClass(*this);
+    GlobalEntityClassManager().forEachEntityClass([&](const IEntityClassPtr& eclass)
+    {
+        ThrowIfCancellationRequested();
+
+        // Prefix mod name
+        auto fullPath = eclass->getModName() + "/";
+
+        // Prefix inheritance path (recursively)
+        fullPath += GetInheritancePathRecursively(*eclass);
+
+        // The entityDef name itself
+        fullPath += eclass->getDeclName();
+
+        // Let the VFSTreePopulator sort this into the tree
+        _treePopulator->addPath(fullPath, [&](wxutil::TreeModel::Row& row,
+            const std::string& path, const std::string& leafName, bool isFolder)
+        {
+            AssignValuesToRow(row, path, leafName, leafName, false);
+        });
+    });
 
     ThrowIfCancellationRequested();
 }
@@ -43,37 +56,6 @@ void EClassTreeBuilder::PopulateModel(const wxutil::TreeModel::Ptr& model)
 void EClassTreeBuilder::SortModel(const wxutil::TreeModel::Ptr& model)
 {
     model->SortModelByColumn(_columns.leafName);
-}
-
-void EClassTreeBuilder::visit(const IEntityClassPtr& eclass)
-{
-    ThrowIfCancellationRequested();
-
-	// Prefix mod name
-	std::string fullPath = eclass->getModName() + "/";
-
-	// Prefix inheritance path (recursively)
-	fullPath += GetInheritancePathRecursively(*eclass);
-
-	// The entityDef name itself
-	fullPath += eclass->getDeclName();
-
-	// Let the VFSTreePopulator sort this into the tree
-    _treePopulator->addPath(fullPath, [&](wxutil::TreeModel::Row& row,
-        const std::string& path, const std::string& leafName, bool isFolder)
-        {
-            bool isFavourite = IsFavourite(leafName);
-
-            row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, _entityIcon));
-            row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
-            row[_columns.fullName] = leafName;
-            row[_columns.leafName] = leafName;
-            row[_columns.declName] = leafName;
-            row[_columns.isFolder] = false;
-            row[_columns.isFavourite] = isFavourite;
-
-            row.SendItemAdded();
-        });
 }
 
 std::string EClassTreeBuilder::GetInheritancePathRecursively(IEntityClass& eclass)

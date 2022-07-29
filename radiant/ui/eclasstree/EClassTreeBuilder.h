@@ -16,8 +16,7 @@ namespace ui
  * Visitor class to retrieve entityDef names and sort them into the hierarchy tree.
  */
 class EClassTreeBuilder final :
-    public wxutil::ThreadedDeclarationTreePopulator,
-	public EntityClassVisitor
+    public wxutil::ThreadedDeclarationTreePopulator
 {
 private:
 	const wxutil::DeclarationTreeView::Columns& _columns;
@@ -30,8 +29,6 @@ public:
     EClassTreeBuilder(const wxutil::DeclarationTreeView::Columns& columns);
 
     ~EClassTreeBuilder();
-
-    void visit(const IEntityClassPtr& eclass) override;
 
 protected:
     void PopulateModel(const wxutil::TreeModel::Ptr& model) override;

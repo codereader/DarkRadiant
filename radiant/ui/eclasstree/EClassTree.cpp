@@ -52,7 +52,7 @@ void EClassTree::onTreeViewPopulationFinished(wxutil::ResourceTreeView::Populati
 
 	if (!className.empty())
 	{
-        _eclassView->SetSelectedFullname(className);
+        _eclassView->SetSelectedDeclName(className);
 	}
 	else
 	{
