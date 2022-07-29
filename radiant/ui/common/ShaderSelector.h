@@ -5,6 +5,7 @@
 #include <memory>
 #include "wxutil/GLWidget.h"
 #include "wxutil/dataview/TreeView.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/menu/PopupMenu.h"
 
 #include <wx/panel.h>
@@ -69,11 +70,8 @@ public:
 	};
 
 private:
-	ShaderTreeColumns _shaderTreeColumns;
-
-	// Tree view and selection object
-	wxutil::TreeView* _treeView;
-	wxutil::TreeModel::Ptr _treeStore;
+    wxutil::DeclarationTreeView::Columns _shaderTreeColumns;
+	wxutil::DeclarationTreeView* _treeView;
 
 	// GL preview widget
 	wxutil::GLWidget* _glWidget;
@@ -100,8 +98,6 @@ private:
 
 	// List store for info table
 	wxutil::TreeModel::Ptr _infoStore;
-
-    wxutil::PopupMenuPtr _contextMenu;
 
 public:
 	// This is where the prefixes are stored (needed to filter the possible shaders)
@@ -161,7 +157,6 @@ private:
 	// callbacks
 	bool onPreviewRender();
 	void _onSelChange(wxDataViewEvent& ev);
-    void _onContextMenu(wxDataViewEvent& ev);
 
     void _onShowShaderDefinition();
 };
