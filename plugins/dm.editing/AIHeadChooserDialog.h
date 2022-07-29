@@ -2,10 +2,9 @@
 
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/preview/ModelPreview.h"
-#include "wxutil/dataview/TreeView.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 
 #include <set>
-#include <map>
 
 namespace ui
 {
@@ -27,9 +26,8 @@ private:
 		wxutil::TreeModel::Column name;
 	};
 
-	ListStoreColumns _columns;
-	wxutil::TreeModel::Ptr _headStore;
-	wxutil::TreeView* _headsView;
+    wxutil::DeclarationTreeView::Columns _columns;
+	wxutil::DeclarationTreeView* _headsView;
 
 	wxTextCtrl* _description;
 
@@ -38,8 +36,6 @@ private:
 
 	// The name of the currently selected head
 	std::string _selectedHead;
-
-	static HeadList _availableHeads;
 
 public:
 	AIHeadChooserDialog();
@@ -53,12 +49,9 @@ public:
 private:
 	void populateHeadStore();
 
-	// Searches all entity classes for available heads
-	static void findAvailableHeads();
-
 	void handleSelectionChanged();
 	void onHeadSelectionChanged(wxDataViewEvent& ev);
     void _onItemActivated( wxDataViewEvent& ev );
 };
 
-} // namespace ui
+} // namespace
