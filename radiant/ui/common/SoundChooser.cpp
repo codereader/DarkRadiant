@@ -215,16 +215,15 @@ const std::string& SoundChooser::getSelectedShader() const
 	return _selectedShader;
 }
 
-// Set the selected sound shader, and focuses the treeview to the new selection
 void SoundChooser::setSelectedShader(const std::string& shader)
 {
-    _treeView->SetSelectedElement(shader, _columns.leafName);
+    _treeView->SetSelectedDeclName(shader);
 }
 
 void SoundChooser::handleSelectionChange()
 {
     _selectedShader = !_treeView->IsDirectorySelected() ? 
-        _treeView->GetSelectedElement(_columns.leafName) : std::string();
+        _treeView->GetSelectedDeclName() : std::string();
 
     // Notify the preview widget about the change
     _preview->setSoundShader(_selectedShader);
