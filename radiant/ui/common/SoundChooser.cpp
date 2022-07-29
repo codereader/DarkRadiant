@@ -3,7 +3,6 @@
 #include "i18n.h"
 #include "isound.h"
 #include "ideclmanager.h"
-#include "ui/imainframe.h"
 #include "ifavourites.h"
 #include "registry/registry.h"
 
@@ -11,10 +10,7 @@
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
-#include "wxutil/menu/IconTextMenuItem.h"
-#include "wxutil/menu/MenuItem.h"
 #include "debugging/ScopedDebugTimer.h"
-#include "ui/common/SoundShaderDefinitionView.h"
 #include "ui/UserInterfaceModule.h"
 
 #include <wx/sizer.h>
@@ -24,8 +20,6 @@
 #include "wxutil/Bitmap.h"
 #include <sigc++/functors/mem_fun.h>
 
-#include <functional>
-
 namespace ui
 {
 
@@ -33,9 +27,6 @@ namespace
 {
 	const char* const SHADER_ICON = "icon_sound.png";
 	const char* const FOLDER_ICON = "folder16.png";
-
-    const char* const SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
-    const char* const SHOW_SHADER_DEF_ICON = "icon_script.png";
 
     const char* const RKEY_WINDOW_STATE = "user/ui/soundChooser/window";
     const char* const RKEY_LAST_SELECTED_SHADER = "user/ui/soundChooser/lastSelectedShader";
@@ -165,19 +156,13 @@ SoundChooser::SoundChooser(wxWindow* parent) :
     grid->Add( dblClickHint, 0, wxALIGN_CENTER_VERTICAL );
     grid->Add( buttonSizer, 0, wxALIGN_RIGHT );
 
-    auto* treeView = createTreeView(this);
-    auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, treeView);
+    createTreeView(this);
+    auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, _treeView);
 
 	GetSizer()->Add(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxALL, 12);
-	GetSizer()->Add(treeView, 1, wxEXPAND | wxLEFT | wxRIGHT, 12);
+	GetSizer()->Add(_treeView, 1, wxEXPAND | wxLEFT | wxRIGHT, 12);
     GetSizer()->Add(_preview, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
 	GetSizer()->Add(grid, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
-
-    _treeView->AddCustomMenuItem(std::make_shared<wxutil::MenuItem>(
-        new wxutil::IconTextMenuItem(_(SHOW_SHADER_DEF_TEXT), SHOW_SHADER_DEF_ICON),
-        std::bind(&SoundChooser::onShowShaderDefinition, this),
-        std::bind(&SoundChooser::testShowShaderDefinition, this)
-    ));
 
     _windowPosition.initialise(this, RKEY_WINDOW_STATE, 0.5f, 0.7f);
 
@@ -185,8 +170,7 @@ SoundChooser::SoundChooser(wxWindow* parent) :
     loadSoundShaders();
 }
 
-// Create the tree view
-wxutil::DeclarationTreeView* SoundChooser::createTreeView(wxWindow* parent)
+void SoundChooser::createTreeView(wxWindow* parent)
 {
     // Tree view with single text icon column
 	_treeView = new wxutil::DeclarationTreeView(parent, decl::Type::SoundShader, _columns);
@@ -201,8 +185,6 @@ wxutil::DeclarationTreeView* SoundChooser::createTreeView(wxWindow* parent)
 	// Get selection and connect the changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundChooser::_onSelectionChange, this);
 	_treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &SoundChooser::_onItemActivated, this);
-
-	return _treeView;
 }
 
 void SoundChooser::loadSoundShaders()
@@ -267,18 +249,6 @@ void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
 		// It's a regular item, try to play it back
 		_preview->playRandomSoundFile();
 	}
-}
-
-void SoundChooser::onShowShaderDefinition()
-{
-    auto* view = new SoundShaderDefinitionView(getSelectedShader(), this);
-    view->ShowModal();
-    view->Destroy();
-}
-
-bool SoundChooser::testShowShaderDefinition()
-{
-    return !_selectedShader.empty();
 }
 
 int SoundChooser::ShowModal()

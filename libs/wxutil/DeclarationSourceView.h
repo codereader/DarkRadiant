@@ -20,7 +20,15 @@ public:
         DefinitionView(fmt::format(_("Declaration Source: {0}"), decl->getDeclName()), parent),
         _decl(decl)
     {
-        addSourceView(new D3DeclarationViewCtrl(getMainPanel()));
+        // Pick the correct source view control based on the given type
+        switch (_decl->getDeclType())
+        {
+        case decl::Type::SoundShader:
+            addSourceView(new D3SoundShaderSourceViewCtrl(getMainPanel()));
+            break;
+        default:
+            addSourceView(new D3DeclarationViewCtrl(getMainPanel()));
+        }
     }
 
 protected:

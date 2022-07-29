@@ -3,11 +3,9 @@
 #include "ui/iresourcechooser.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
-#include "wxutil/menu/PopupMenu.h"
 #include "wxutil/WindowPosition.h"
 
 #include "SoundShaderPreview.h"
-#include <memory>
 #include <string>
 #include <sigc++/connection.h>
 
@@ -36,9 +34,7 @@ private:
     wxutil::WindowPosition _windowPosition;
 
 private:
-
-	// Widget construction
-    wxutil::DeclarationTreeView* createTreeView(wxWindow* parent);
+    void createTreeView(wxWindow* parent);
 
     void loadSoundShaders();
     void handleSelectionChange();
@@ -48,16 +44,9 @@ private:
 	void _onItemActivated(wxDataViewEvent& ev);
     void _onReloadSounds(wxCommandEvent& ev);
 
-	void onShowShaderDefinition();
-	bool testShowShaderDefinition();
-
     void onShadersReloaded();
 
 public:
-
-	/**
-	 * Constructor creates widgets.
-	 */
 	SoundChooser(wxWindow* parent = nullptr);
 
 	// Retrieve the selected sound shader
@@ -66,12 +55,12 @@ public:
 	// Set the selected sound shader, and focuses the treeview to the new selection
 	void setSelectedShader(const std::string& shader);
 
-	virtual int ShowModal() override;
+	int ShowModal() override;
 
 	// Run the dialog and return the selected shader - this will be empty if the user clicks cancel
-	virtual std::string chooseResource(const std::string& preselected = std::string()) override;
+	std::string chooseResource(const std::string& preselected = std::string()) override;
 
-	virtual void destroyDialog() override;
+	void destroyDialog() override;
 };
 
 } // namespace

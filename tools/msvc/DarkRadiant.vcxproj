@@ -234,7 +234,6 @@
     <ClCompile Include="..\..\radiant\ui\common\ImageFileSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SkinChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundChooser.cpp" />
-    <ClCompile Include="..\..\radiant\ui\common\SoundShaderDefinitionView.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\DispatchEvent.cpp" />
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
@@ -428,7 +427,6 @@
     <ClInclude Include="..\..\radiant\ui\common\ImageFileSelector.h" />
     <ClInclude Include="..\..\radiant\ui\common\SkinChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h" />
-    <ClInclude Include="..\..\radiant\ui\common\SoundShaderDefinitionView.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h" />
     <ClInclude Include="..\..\radiant\ui\DispatchEvent.h" />
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />

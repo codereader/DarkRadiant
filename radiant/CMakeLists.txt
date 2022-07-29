@@ -40,7 +40,6 @@ add_executable(darkradiant
                ui/common/MapPreview.cpp
                ui/common/ShaderChooser.cpp
                ui/common/ShaderSelector.cpp
-               ui/common/SoundShaderDefinitionView.cpp
                ui/common/TexturePreviewCombo.cpp
                ui/common/SkinChooser.cpp
                ui/common/SoundChooser.cpp
