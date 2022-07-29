@@ -9,10 +9,8 @@
 #include <wx/sizer.h>
 
 #include "ifavourites.h"
-#include "wxutil/Bitmap.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
-#include "wxutil/dataview/TreeViewItemStyle.h"
 
 namespace ui
 {
@@ -26,17 +24,11 @@ class ThreadedModelDefLoader final :
 private:
     const wxutil::DeclarationTreeView::Columns& _columns;
 
-    wxIcon _folderIcon;
-    wxIcon _modelIcon;
-
 public:
     ThreadedModelDefLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedDeclarationTreePopulator(decl::Type::ModelDef, columns),
+        ThreadedDeclarationTreePopulator(decl::Type::ModelDef, columns, "model16green.png"),
         _columns(columns)
-    {
-        _modelIcon.CopyFromBitmap(wxutil::GetLocalBitmap("model16green.png"));
-        _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap("folder16.png"));
-    }
+    {}
 
     ~ThreadedModelDefLoader()
     {
@@ -53,7 +45,7 @@ protected:
             populator.addPath(modelDef->getModName() + "/" + modelDef->getDeclName(), [&](wxutil::TreeModel::Row& row,
                 const std::string& path, const std::string& leafName, bool isFolder)
             {
-                StoreModelDefValues(row, modelDef->getDeclName(), leafName, isFolder);
+                AssignValuesToRow(row, path, modelDef->getDeclName(), leafName, isFolder);
             });;
         });
     }
@@ -61,22 +53,6 @@ protected:
     void SortModel(const wxutil::TreeModel::Ptr& model) override
     {
         model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
-    }
-
-private:
-    void StoreModelDefValues(wxutil::TreeModel::Row& row, const std::string& modelName, const std::string& leafName, bool isFolder)
-    {
-        bool isFavourite = IsFavourite(modelName);
-
-        row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, !isFolder ? _modelIcon : _folderIcon));
-        row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
-        row[_columns.fullName] = modelName;
-        row[_columns.leafName] = leafName;
-        row[_columns.declName] = modelName;
-        row[_columns.isFolder] = isFolder;
-        row[_columns.isFavourite] = isFavourite;
-
-        row.SendItemAdded();
     }
 };
 
