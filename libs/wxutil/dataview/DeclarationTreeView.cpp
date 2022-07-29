@@ -22,15 +22,7 @@ DeclarationTreeView::DeclarationTreeView(wxWindow* parent, decl::Type declType, 
 
 std::string DeclarationTreeView::GetSelectedDeclName()
 {
-    auto item = GetSelection();
-
-    if (!item.IsOk() || IsDirectorySelected())
-    {
-        return std::string();
-    }
-
-    TreeModel::Row row(item, *GetModel());
-    return row[_columns.declName];
+    return !IsDirectorySelected() ? GetSelectedElement(_columns.declName) : std::string();
 }
 
 void DeclarationTreeView::SetSelectedDeclName(const std::string& declName)
@@ -51,14 +43,18 @@ void DeclarationTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
     );
 }
 
+DeclarationSourceView* DeclarationTreeView::CreateDeclarationView(const decl::IDeclaration::Ptr& decl)
+{
+    return new DeclarationSourceView(decl, this);
+}
+
 void DeclarationTreeView::_onShowDefinition()
 {
     auto declName = GetSelectedDeclName();
-    auto decl = GlobalDeclarationManager().findDeclaration(_declType, declName);
 
-    if (decl)
+    if (auto decl = GlobalDeclarationManager().findDeclaration(_declType, declName); decl)
     {
-        auto* view = new DeclarationSourceView(decl, this);
+        auto* view = CreateDeclarationView(decl);
         view->ShowModal();
         view->Destroy();
     }
@@ -66,7 +62,7 @@ void DeclarationTreeView::_onShowDefinition()
 
 bool DeclarationTreeView::_showDefinitionEnabled()
 {
-    return !IsDirectorySelected() && !GetSelectedDeclName().empty();
+    return !GetSelectedDeclName().empty();
 }
 
 }

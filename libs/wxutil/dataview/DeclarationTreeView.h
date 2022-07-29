@@ -1,9 +1,12 @@
 #pragma once
 
+#include "ideclmanager.h"
 #include "ResourceTreeView.h"
 
 namespace wxutil
 {
+
+class DeclarationSourceView;
 
 /**
  * Specialised TreeView used to display lists or trees of Declarations,
@@ -34,12 +37,16 @@ public:
     DeclarationTreeView(wxWindow* parent, decl::Type declType, const TreeModel::Ptr& model, const Columns& columns, long style = wxDV_SINGLE);
 
     // Returns the name of the selected declaration, suitable for lookups in IDeclarationManager
+    // Returns an empty string if no declaration or a directory is selected
     virtual std::string GetSelectedDeclName();
 
     virtual void SetSelectedDeclName(const std::string& declName);
 
 protected:
     void PopulateContextMenu(wxutil::PopupMenu& popupMenu) override;
+
+    // Creates the definition view that should be used to show the given declaration
+    virtual DeclarationSourceView* CreateDeclarationView(const decl::IDeclaration::Ptr& decl);
 
 private:
     void _onShowDefinition();
