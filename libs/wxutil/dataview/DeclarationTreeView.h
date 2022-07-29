@@ -33,11 +33,13 @@ public:
     DeclarationTreeView(wxWindow* parent, decl::Type declType, const Columns& columns, long style = wxDV_SINGLE);
     DeclarationTreeView(wxWindow* parent, decl::Type declType, const TreeModel::Ptr& model, const Columns& columns, long style = wxDV_SINGLE);
 
-protected:
-    void PopulateContextMenu(wxutil::PopupMenu& popupMenu) override;
-
     // Returns the name of the selected declaration, suitable for lookups in IDeclarationManager
     virtual std::string GetSelectedDeclName();
+
+    virtual void SetSelectedDeclName(const std::string& declName);
+
+protected:
+    void PopulateContextMenu(wxutil::PopupMenu& popupMenu) override;
 
 private:
     void _onShowDefinition();

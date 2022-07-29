@@ -142,12 +142,12 @@ void AIHeadChooserDialog::_onItemActivated(wxDataViewEvent& ev)
 
 void AIHeadChooserDialog::setSelectedHead(const std::string& headDef)
 {
-    _headsView->SetSelectedFullname(headDef);
+    _headsView->SetSelectedDeclName(headDef);
 }
 
 std::string AIHeadChooserDialog::getSelectedHead()
 {
-    return _headsView->GetSelectedFullname();
+    return _headsView->GetSelectedDeclName();
 }
 
 void AIHeadChooserDialog::handleSelectionChanged()

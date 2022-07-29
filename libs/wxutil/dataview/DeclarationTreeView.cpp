@@ -33,6 +33,11 @@ std::string DeclarationTreeView::GetSelectedDeclName()
     return row[_columns.declName];
 }
 
+void DeclarationTreeView::SetSelectedDeclName(const std::string& declName)
+{
+    SetSelectedElement(declName, _columns.declName);
+}
+
 void DeclarationTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
 {
     ResourceTreeView::PopulateContextMenu(popupMenu);
