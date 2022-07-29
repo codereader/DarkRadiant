@@ -50,7 +50,7 @@ void MediaBrowserTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
         new wxutil::IconTextMenuItem(_(OPEN_IN_MATERIAL_EDITOR_TEXT), OPEN_IN_MATERIAL_EDITOR_ICON),
         [this]()
         {
-            GlobalCommandSystem().executeCommand("MaterialEditor", cmd::ArgumentList{ GetSelectedFullname() });
+            GlobalCommandSystem().executeCommand("MaterialEditor", cmd::ArgumentList{ GetSelectedDeclName() });
         },
         std::bind(&MediaBrowserTreeView::_testSingleTexSel, this)
     );
@@ -96,17 +96,17 @@ bool MediaBrowserTreeView::_testLoadInTexView()
 void MediaBrowserTreeView::_onApplyToSel()
 {
     // Pass shader name to the selection system
-    GlobalCommandSystem().executeCommand("SetShaderOnSelection", GetSelectedFullname());
+    GlobalCommandSystem().executeCommand("SetShaderOnSelection", GetSelectedDeclName());
 }
 
 bool MediaBrowserTreeView::_testSingleTexSel()
 {
-    return !IsDirectorySelected() && !GetSelectedFullname().empty();
+    return !IsDirectorySelected() && !GetSelectedDeclName().empty();
 }
 
 void MediaBrowserTreeView::_onSelectItems(bool select)
 {
-    std::string shaderName = GetSelectedFullname();
+    std::string shaderName = GetSelectedDeclName();
 
     if (select)
     {
@@ -120,7 +120,7 @@ void MediaBrowserTreeView::_onSelectItems(bool select)
 
 void MediaBrowserTreeView::_onTreeViewItemActivated(wxDataViewEvent& ev)
 {
-    std::string selection = GetSelectedFullname();
+    std::string selection = GetSelectedDeclName();
 
     if (!IsDirectorySelected() && !selection.empty())
     {

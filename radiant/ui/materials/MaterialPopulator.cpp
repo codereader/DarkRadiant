@@ -1,15 +1,13 @@
 #include "MaterialPopulator.h"
 
 #include <map>
-#include "ifavourites.h"
 #include "i18n.h"
 #include "ishaders.h"
 
 #include "string/split.h"
 #include "shaderlib.h"
 
-#include "wxutil/Bitmap.h"
-#include "wxutil/dataview/TreeViewItemStyle.h"
+#include "wxutil/dataview/VFSTreePopulator.h"
 
 namespace ui
 {
@@ -24,6 +22,7 @@ namespace
 MaterialPopulator::MaterialPopulator(const MaterialTreeView::TreeColumns& columns) :
     ThreadedDeclarationTreePopulator(decl::Type::Material, columns, TEXTURE_ICON),
     _columns(columns),
+    _texturePrefix(GlobalMaterialManager().getTexturePrefix()),
     _otherMaterialsPath(_(OTHER_MATERIALS_FOLDER))
 {}
 
@@ -38,7 +37,7 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
     std::vector<std::string> parts;
     string::split(parts, materialName, "/");
 
-    bool isOtherMaterial = parts.size() > 1 && !string::istarts_with(materialName, GlobalTexturePrefix_get());
+    bool isOtherMaterial = parts.size() > 1 && !string::istarts_with(materialName, _texturePrefix);
     auto otherMaterialsFolder = _(OTHER_MATERIALS_FOLDER);
 
     if (isOtherMaterial)
@@ -121,10 +120,53 @@ void MaterialPopulator::PopulateModel(const wxutil::TreeModel::Ptr& model)
 {
     model->SetHasDefaultCompare(false);
 
+    wxutil::VFSTreePopulator populator(model);
+
+    // Insert the "Other Materials" folder in any case
+    populator.addPath(_otherMaterialsPath, [&](wxutil::TreeModel::Row& row,
+        const std::string& path, const std::string& leafName, bool isFolder)
+    {
+        row[_columns.isOtherMaterialsFolder] = true;
+        AssignValuesToRow(row, path, path, path, true);
+    });
+
     GlobalMaterialManager().foreachShaderName([&](const std::string& name)
     {
         ThrowIfCancellationRequested();
-        insert(model, name);
+
+        // Determine the folder this texture will be sorted into
+        auto texturePath = string::istarts_with(name, _texturePrefix) ?
+            name : _otherMaterialsPath + "/" + name;
+
+        populator.addPath(texturePath, [&](wxutil::TreeModel::Row& row,
+            const std::string& path, const std::string& leafName, bool isFolder)
+        {
+            row[_columns.isOtherMaterialsFolder] = false;
+            AssignValuesToRow(row, path, isFolder ? path : name, leafName, isFolder);
+        });
+#if 0
+        // Find rightmost slash
+        auto slashPos = name.rfind("/");
+
+        wxDataViewItem parent;
+
+        if (string::istarts_with(name, _texturePrefix))
+        {
+            // Regular texture, ensure parent folder
+            parent = slashPos != std::string::npos ? addRecursive(model, name.substr(0, slashPos), false) : model->GetRoot();
+        }
+        else
+        {
+            // Put it under "other materials", ensure parent folder
+            parent = slashPos != std::string::npos ?
+                addRecursive(model, _otherMaterialsPath + "/" + name.substr(0, slashPos), true) :
+                addRecursive(model, _otherMaterialsPath, true);
+        }
+
+        // Insert the actual leaf
+        auto leafName = slashPos != std::string::npos ? name.substr(slashPos + 1) : name;
+        InsertTexture(model, name, leafName, parent);
+#endif
     });
 }
 
@@ -184,31 +226,6 @@ wxDataViewItem& MaterialPopulator::addRecursive(const wxutil::TreeModel::Ptr& mo
     auto result = _iters.emplace(path, row.getItem());
 
     return result.first->second;
-}
-
-void MaterialPopulator::insert(const wxutil::TreeModel::Ptr& model, const std::string& name)
-{
-    // Find rightmost slash
-    auto slashPos = name.rfind("/");
-
-    wxDataViewItem parent;
-
-    if (string::istarts_with(name, GlobalTexturePrefix_get()))
-    {
-        // Regular texture, ensure parent folder
-        parent = slashPos != std::string::npos ? addRecursive(model, name.substr(0, slashPos), false) : model->GetRoot();
-    }
-    else
-    {
-        // Put it under "other materials", ensure parent folder
-        parent = slashPos != std::string::npos ?
-            addRecursive(model, _otherMaterialsPath + "/" + name.substr(0, slashPos), true) :
-            addRecursive(model, _otherMaterialsPath, true);
-    }
-
-    // Insert the actual leaf
-    auto leafName = slashPos != std::string::npos ? name.substr(slashPos + 1) : name;
-    InsertTexture(model, name, leafName, parent);
 }
 
 void MaterialPopulator::SortModel(const wxutil::TreeModel::Ptr& model)

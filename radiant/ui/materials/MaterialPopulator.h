@@ -13,6 +13,7 @@ class MaterialPopulator :
 private:
     const MaterialTreeView::TreeColumns& _columns;
 
+    std::string _texturePrefix;
     std::string _otherMaterialsPath;
 
     // Maps of names to corresponding treemodel items, for both intermediate
@@ -44,7 +45,6 @@ private:
     void InsertTexture(const wxutil::TreeModel::Ptr& model, const std::string& path,
         const std::string& leafName, const wxDataViewItem& parentItem);
     wxDataViewItem& addRecursive(const wxutil::TreeModel::Ptr& model, const std::string& path, bool isOtherMaterial);
-    void insert(const wxutil::TreeModel::Ptr& model, const std::string& name);
 };
 
 }

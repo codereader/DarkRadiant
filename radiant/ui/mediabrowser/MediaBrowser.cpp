@@ -122,13 +122,13 @@ void MediaBrowser::onMapEvent(IMap::MapEvent ev)
 
 std::string MediaBrowser::getSelection()
 {
-    return _treeView->GetSelectedFullname();
+    return _treeView->GetSelectedDeclName();
 }
 
 // Set the selection in the treeview
 void MediaBrowser::setSelection(const std::string& selection)
 {
-    _treeView->SetSelectedFullname(selection);
+    _treeView->SetSelectedDeclName(selection);
 }
 
 void MediaBrowser::onMaterialDefsLoaded()
