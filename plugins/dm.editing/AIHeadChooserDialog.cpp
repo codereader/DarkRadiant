@@ -11,6 +11,7 @@
 #include "wxutil/Bitmap.h"
 #include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
 
 namespace ui
 {
@@ -78,26 +79,33 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, 
+	auto splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, 
 		wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
 	GetSizer()->Add(splitter, 1, wxEXPAND | wxALL, 12);
 	GetSizer()->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
 
-	_headsView = new wxutil::DeclarationTreeView(splitter, decl::Type::EntityDef, _columns, wxDV_NO_HEADER);
+    auto treeViewPanel = new wxPanel(splitter);
+    treeViewPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+	_headsView = new wxutil::DeclarationTreeView(treeViewPanel, decl::Type::EntityDef, _columns, wxDV_NO_HEADER);
 	_headsView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &AIHeadChooserDialog::onHeadSelectionChanged, this);
 
 	// Head Name column
-	_headsView->AppendTextColumn("", _columns.leafName.getColumnIndex(),
+	_headsView->AppendIconTextColumn("", _columns.iconAndName.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     // Allow searching for the name
     _headsView->AddSearchColumn(_columns.leafName);
 
+    auto treeViewToolbar = new wxutil::ResourceTreeViewToolbar(treeViewPanel, _headsView);
+    treeViewPanel->GetSizer()->Add(treeViewToolbar, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 6);
+    treeViewPanel->GetSizer()->Add(_headsView, 1, wxEXPAND);
+
 	FitToScreen(0.7f, 0.6f);
 
-	wxPanel* previewPanel = new wxPanel(splitter, wxID_ANY);
+	auto previewPanel = new wxPanel(splitter, wxID_ANY);
 
 	// Set the default rotation to something better suitable for the head models
 	_preview.reset(new wxutil::ModelPreview(previewPanel));
@@ -112,12 +120,11 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 	previewPanel->GetSizer()->Add(_description, 0, wxEXPAND | wxBOTTOM, 6);
 	previewPanel->GetSizer()->Add(_preview->getWidget(), 1, wxEXPAND);
 
-	splitter->SplitVertically(_headsView, previewPanel);
+	splitter->SplitVertically(treeViewPanel, previewPanel);
 
 	// Set the default size of the window
 	splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.3f));
 
-    // Load the found heads into the GtkListStore
     populateHeadStore();
 
     Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &AIHeadChooserDialog::_onItemActivated, this);
@@ -135,28 +142,12 @@ void AIHeadChooserDialog::_onItemActivated(wxDataViewEvent& ev)
 
 void AIHeadChooserDialog::setSelectedHead(const std::string& headDef)
 {
-    _selectedHead = headDef;
-
-    if (_selectedHead.empty())
-    {
-        _headsView->UnselectAll();
-        return;
-    }
-
-	auto found = _headsView->GetTreeModel()->FindString(headDef, _columns.leafName);
-
-    // Lookup the model path in the treemodel
-	if (found.IsOk())
-    {
-        _headsView->Select(found);
-		_headsView->EnsureVisible(found);
-		handleSelectionChanged();
-    }
+    _headsView->SetSelectedFullname(headDef);
 }
 
 std::string AIHeadChooserDialog::getSelectedHead()
 {
-    return _selectedHead;
+    return _headsView->GetSelectedFullname();
 }
 
 void AIHeadChooserDialog::handleSelectionChanged()

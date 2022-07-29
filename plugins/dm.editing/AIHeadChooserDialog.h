@@ -4,28 +4,13 @@
 #include "wxutil/preview/ModelPreview.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
 
-#include <set>
-
 namespace ui
 {
 
 class AIHeadChooserDialog :
 	public wxutil::DialogBase
 {
-public:
-	typedef std::set<std::string> HeadList;
-
 private:
-	struct ListStoreColumns :
-		public wxutil::TreeModel::ColumnRecord
-	{
-		ListStoreColumns() : 
-			name(add(wxutil::TreeModel::Column::String))
-		{}
-
-		wxutil::TreeModel::Column name;
-	};
-
     wxutil::DeclarationTreeView::Columns _columns;
 	wxutil::DeclarationTreeView* _headsView;
 
