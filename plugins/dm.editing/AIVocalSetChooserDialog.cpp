@@ -12,8 +12,8 @@
 #include "ifavourites.h"
 #include "wxutil/Bitmap.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
+#include "ThreadedEntityDefPopulator.h"
 
 namespace ui
 {
@@ -24,53 +24,17 @@ namespace
 }
 
 class ThreadedVocalSetLoader :
-    public wxutil::ThreadedResourceTreePopulator
+    public ThreadedEntityDefPopulator
 {
-private:
-    const wxutil::DeclarationTreeView::Columns& _columns;
-    std::set<std::string> _favourites;
-
-    wxIcon _setIcon;
-
 public:
     ThreadedVocalSetLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedResourceTreePopulator(columns),
-        _columns(columns)
-    {
-        // Get the list of favourites
-        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::EntityDef));
-
-        _setIcon.CopyFromBitmap(wxutil::GetLocalBitmap("icon_sound.png"));
-    }
-
-    ~ThreadedVocalSetLoader()
-    {
-        EnsureStopped();
-    }
+        ThreadedEntityDefPopulator(columns, "icon_sound.png")
+    {}
 
 protected:
-    void PopulateModel(const wxutil::TreeModel::Ptr& model) override
+    bool ClassShouldBeListed(const IEntityClassPtr& eclass) override
     {
-        GlobalEntityClassManager().forEachEntityClass([&](const IEntityClassPtr& eclass)
-        {
-            ThrowIfCancellationRequested();
-
-            if (eclass->getAttributeValue("editor_vocal_set") != "1") return;
-
-            bool isFavourite = _favourites.count(eclass->getDeclName()) > 0;
-
-            auto row = model->AddItem();
-
-            row[_columns.iconAndName] = wxVariant(wxDataViewIconText(eclass->getDeclName(), _setIcon));
-            row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
-            row[_columns.fullName] = eclass->getDeclName();
-            row[_columns.leafName] = eclass->getDeclName();
-            row[_columns.declName] = eclass->getDeclName();
-            row[_columns.isFolder] = false;
-            row[_columns.isFavourite] = isFavourite;
-
-            row.SendItemAdded();
-        });
+        return eclass->getAttributeValue("editor_vocal_set") == "1";
     }
 };
 

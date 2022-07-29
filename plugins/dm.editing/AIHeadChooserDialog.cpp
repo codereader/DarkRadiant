@@ -9,9 +9,9 @@
 #include <wx/splitter.h>
 
 #include "wxutil/Bitmap.h"
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include "ThreadedEntityDefPopulator.h"
 
 namespace ui
 {
@@ -22,53 +22,17 @@ namespace
 }
 
 class ThreadedAIHeadLoader :
-    public wxutil::ThreadedResourceTreePopulator
+    public ThreadedEntityDefPopulator
 {
-private:
-    const wxutil::DeclarationTreeView::Columns& _columns;
-    std::set<std::string> _favourites;
-
-    wxIcon _headIcon;
-
 public:
     ThreadedAIHeadLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedResourceTreePopulator(columns),
-        _columns(columns)
-    {
-        // Get the list of favourites
-        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::EntityDef));
-
-        _headIcon.CopyFromBitmap(wxutil::GetLocalBitmap("icon_classname.png"));
-    }
-
-    ~ThreadedAIHeadLoader()
-    {
-        EnsureStopped();
-    }
+        ThreadedEntityDefPopulator(columns, "icon_classname.png")
+    {}
 
 protected:
-    void PopulateModel(const wxutil::TreeModel::Ptr& model) override
+    bool ClassShouldBeListed(const IEntityClassPtr& eclass) override
     {
-        GlobalEntityClassManager().forEachEntityClass([&](const IEntityClassPtr& eclass)
-        {
-            ThrowIfCancellationRequested();
-
-            if (eclass->getAttributeValue("editor_head") != "1") return;
-
-            bool isFavourite = _favourites.count(eclass->getDeclName()) > 0;
-
-            auto row = model->AddItem();
-
-            row[_columns.iconAndName] = wxVariant(wxDataViewIconText(eclass->getDeclName(), _headIcon));
-            row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
-            row[_columns.fullName] = eclass->getDeclName();
-            row[_columns.leafName] = eclass->getDeclName();
-            row[_columns.declName] = eclass->getDeclName();
-            row[_columns.isFolder] = false;
-            row[_columns.isFavourite] = isFavourite;
-
-            row.SendItemAdded();
-        });
+        return eclass->getAttributeValue("editor_head") == "1";
     }
 };
 
