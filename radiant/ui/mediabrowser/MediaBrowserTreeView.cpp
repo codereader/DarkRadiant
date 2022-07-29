@@ -4,8 +4,8 @@
 #include "icommandsystem.h"
 
 #include "TextureDirectoryLoader.h"
-#include "wxutil/DeclarationSourceView.h"
 #include "wxutil/ModalProgressDialog.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace ui
 {
@@ -18,9 +18,6 @@ namespace
     constexpr const char* const APPLY_TEXTURE_TEXT = N_("Apply to selection");
     constexpr const char* const APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
      
-    constexpr const char* const SHOW_SHADER_DEF_TEXT = N_("Show Shader Definition");
-    constexpr const char* const SHOW_SHADER_DEF_ICON = "icon_script.png";
-
     constexpr const char* const OPEN_IN_MATERIAL_EDITOR_TEXT = N_("Open in Material Editor");
     constexpr const char* const OPEN_IN_MATERIAL_EDITOR_ICON = "edit.png";
      
@@ -47,11 +44,6 @@ void MediaBrowserTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
     popupMenu.addItem(
         new wxutil::IconTextMenuItem(_(APPLY_TEXTURE_TEXT), APPLY_TEXTURE_ICON),
         std::bind(&MediaBrowserTreeView::_onApplyToSel, this),
-        std::bind(&MediaBrowserTreeView::_testSingleTexSel, this)
-    );
-    popupMenu.addItem(
-        new wxutil::IconTextMenuItem(_(SHOW_SHADER_DEF_TEXT), SHOW_SHADER_DEF_ICON),
-        std::bind(&MediaBrowserTreeView::_onShowShaderDefinition, this),
         std::bind(&MediaBrowserTreeView::_testSingleTexSel, this)
     );
     popupMenu.addItem(
@@ -110,17 +102,6 @@ void MediaBrowserTreeView::_onApplyToSel()
 bool MediaBrowserTreeView::_testSingleTexSel()
 {
     return !IsDirectorySelected() && !GetSelectedFullname().empty();
-}
-
-void MediaBrowserTreeView::_onShowShaderDefinition()
-{
-    std::string shaderName = GetSelectedFullname();
-
-    // Construct a shader view and pass the shader name
-    auto view = new wxutil::DeclarationSourceView(this);
-    view->setDeclaration(decl::Type::Material, shaderName);
-    view->ShowModal();
-    view->Destroy();
 }
 
 void MediaBrowserTreeView::_onSelectItems(bool select)
