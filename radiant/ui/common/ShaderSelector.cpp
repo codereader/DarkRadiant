@@ -11,7 +11,6 @@
 
 #include <wx/dataview.h>
 #include <wx/sizer.h>
-#include "wxutil/Bitmap.h"
 
 #include <GL/glew.h>
 
@@ -22,9 +21,7 @@
 #include "string/predicate.h"
 #include <functional>
 
-#include "ifavourites.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
-#include "wxutil/dataview/TreeViewItemStyle.h"
 
 namespace ui
 {
@@ -33,8 +30,7 @@ namespace ui
 
 namespace
 {
-	const char* const FOLDER_ICON = "folder16.png";
-	const char* const TEXTURE_ICON = "icon_texture.png";
+	constexpr const char* const TEXTURE_ICON = "icon_texture.png";
 }
 
 /**
@@ -47,18 +43,12 @@ private:
     const wxutil::DeclarationTreeView::Columns& _columns;
     const ShaderSelector::PrefixList& _prefixes;
 
-    wxIcon _folderIcon;
-    wxIcon _textureIcon;
-
 public:
     ThreadedMaterialLoader(const wxutil::DeclarationTreeView::Columns& columns, const ShaderSelector::PrefixList& prefixes) :
-        ThreadedDeclarationTreePopulator(decl::Type::Material, columns),
+        ThreadedDeclarationTreePopulator(decl::Type::Material, columns, TEXTURE_ICON),
         _columns(columns),
         _prefixes(prefixes)
-    {
-        _textureIcon.CopyFromBitmap(wxutil::GetLocalBitmap(TEXTURE_ICON));
-        _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
-    }
+    {}
 
     ~ThreadedMaterialLoader()
     {
@@ -79,7 +69,7 @@ protected:
                     populator.addPath(materialName, [&](wxutil::TreeModel::Row& row,
                         const std::string& path, const std::string& leafName, bool isFolder)
                     {
-                        StoreMaterialValues(row, path, leafName, isFolder);
+                        AssignValuesToRow(row, path, path, leafName, isFolder);
                     });
                     break; // don't consider any further prefixes
                 }
@@ -90,22 +80,6 @@ protected:
     void SortModel(const wxutil::TreeModel::Ptr& model) override
     {
         model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
-    }
-
-private:
-    void StoreMaterialValues(wxutil::TreeModel::Row& row, const std::string& materialName, const std::string& leafName, bool isFolder)
-    {
-        bool isFavourite = IsFavourite(materialName);
-
-        row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, !isFolder ? _textureIcon : _folderIcon));
-        row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
-        row[_columns.fullName] = materialName;
-        row[_columns.leafName] = leafName;
-        row[_columns.declName] = materialName;
-        row[_columns.isFolder] = isFolder;
-        row[_columns.isFavourite] = isFavourite;
-
-        row.SendItemAdded();
     }
 };
 
