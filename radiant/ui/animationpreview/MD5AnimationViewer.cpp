@@ -1,7 +1,6 @@
 #include "MD5AnimationViewer.h"
 
 #include "i18n.h"
-#include "ui/imainframe.h"
 #include "imodelcache.h"
 #include "imd5anim.h"
 
@@ -9,23 +8,93 @@
 #include <wx/stattext.h>
 #include <wx/sizer.h>
 
+#include "ifavourites.h"
+#include "wxutil/Bitmap.h"
+#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
+#include "wxutil/dataview/TreeViewItemStyle.h"
+
 namespace ui
 {
+
+/**
+ * Visitor class to retrieve modelDefs and add them to folders.
+ */
+class ThreadedModelDefLoader final :
+    public wxutil::ThreadedResourceTreePopulator
+{
+private:
+    const wxutil::DeclarationTreeView::Columns& _columns;
+
+    std::set<std::string> _favourites;
+
+    wxIcon _folderIcon;
+    wxIcon _modelIcon;
+
+public:
+    ThreadedModelDefLoader(const wxutil::DeclarationTreeView::Columns& columns) :
+        ThreadedResourceTreePopulator(columns),
+        _columns(columns)
+    {
+        // Get the list of favourites
+        _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Skin));
+
+        _modelIcon.CopyFromBitmap(wxutil::GetLocalBitmap("model16green.png"));
+        _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap("folder16.png"));
+    }
+
+    ~ThreadedModelDefLoader()
+    {
+        EnsureStopped();
+    }
+
+protected:
+    void PopulateModel(const wxutil::TreeModel::Ptr& model) override
+    {
+        wxutil::VFSTreePopulator populator(model);
+
+        GlobalEntityClassManager().forEachModelDef([&](const IModelDef::Ptr& modelDef)
+        {
+            populator.addPath(modelDef->getModName() + "/" + modelDef->getDeclName(), [&](wxutil::TreeModel::Row& row,
+                const std::string& path, const std::string& leafName, bool isFolder)
+            {
+                StoreModelDefValues(row, modelDef->getDeclName(), leafName, isFolder);
+            });;
+        });
+    }
+
+    void SortModel(const wxutil::TreeModel::Ptr& model) override
+    {
+        model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
+    }
+
+private:
+    void StoreModelDefValues(wxutil::TreeModel::Row& row, const std::string& modelName, const std::string& leafName, bool isFolder)
+    {
+        bool isFavourite = _favourites.count(modelName) > 0;
+
+        row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, !isFolder ? _modelIcon : _folderIcon));
+        row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
+        row[_columns.fullName] = modelName;
+        row[_columns.leafName] = leafName;
+        row[_columns.declName] = modelName;
+        row[_columns.isFolder] = isFolder;
+        row[_columns.isFavourite] = isFavourite;
+
+        row.SendItemAdded();
+    }
+};
 
 MD5AnimationViewer::MD5AnimationViewer(wxWindow* parent, RunMode runMode) :
 	wxutil::DialogBase(_("MD5 Animation Viewer"), parent),
 	_runMode(runMode),
-	_modelList(new wxutil::TreeModel(_modelColumns)),
-	_modelPopulator(_modelList),
 	_animList(new wxutil::TreeModel(_animColumns, true))
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition,
-		wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+	auto splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
 	splitter->SetMinimumPaneSize(10); // disallow unsplitting
 
-									  // Preview goes to the right
+	// Preview goes to the right
 	_preview.reset(new AnimationPreview(splitter));
 
 	splitter->SplitVertically(createListPane(splitter), _preview->getWidget());
@@ -55,11 +124,6 @@ MD5AnimationViewer::MD5AnimationViewer(wxWindow* parent, RunMode runMode) :
 	{
 		ev.Skip();
 
-		if (!_modelToSelect.empty())
-		{
-			setSelectedModel(_modelToSelect);
-		}
-
 		if (!_animToSelect.empty())
 		{
 			setSelectedAnim(_animToSelect);
@@ -69,7 +133,7 @@ MD5AnimationViewer::MD5AnimationViewer(wxWindow* parent, RunMode runMode) :
 
 void MD5AnimationViewer::Show(const cmd::ArgumentList& args)
 {
-	MD5AnimationViewer* viewer = new MD5AnimationViewer(nullptr, RunMode::ViewOnly);
+	auto viewer = new MD5AnimationViewer(nullptr, RunMode::ViewOnly);
 
 	viewer->ShowModal();
 	viewer->Destroy();
@@ -77,13 +141,13 @@ void MD5AnimationViewer::Show(const cmd::ArgumentList& args)
 
 wxWindow* MD5AnimationViewer::createListPane(wxWindow* parent)
 {
-	wxPanel* listPane = new wxPanel(parent, wxID_ANY);
+	auto listPane = new wxPanel(parent, wxID_ANY);
 	listPane->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	wxStaticText* modelLabel = new wxStaticText(listPane, wxID_ANY, _("Model Definition"));
+    auto modelLabel = new wxStaticText(listPane, wxID_ANY, _("Model Definition"));
 	modelLabel->SetFont(modelLabel->GetFont().Bold());
 
-	wxStaticText* animLabel = new wxStaticText(listPane, wxID_ANY, _("Available Animations"));
+    auto animLabel = new wxStaticText(listPane, wxID_ANY, _("Available Animations"));
 	animLabel->SetFont(animLabel->GetFont().Bold());
 	
 	listPane->GetSizer()->Add(modelLabel, 0, wxEXPAND | wxBOTTOM, 6);
@@ -96,19 +160,19 @@ wxWindow* MD5AnimationViewer::createListPane(wxWindow* parent)
 
 wxWindow* MD5AnimationViewer::createModelTreeView(wxWindow* parent)
 {
-	_modelTreeView = wxutil::TreeView::CreateWithModel(parent, _modelList.get(), wxDV_SINGLE | wxDV_NO_HEADER);
+    _modelTreeView = new wxutil::DeclarationTreeView(parent, decl::Type::ModelDef, _modelColumns, wxDV_NO_HEADER | wxDV_SINGLE);
 	_modelTreeView->SetMinClientSize(wxSize(300, -1));
+    _modelTreeView->SetExpandTopLevelItemsAfterPopulation(true);
 
 	// Single text column
-	_modelTreeView->AppendTextColumn(_("Model Definition"), _modelColumns.name.getColumnIndex(),
+	_modelTreeView->AppendIconTextColumn(_("Model Definition"), _modelColumns.iconAndName.getColumnIndex(),
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE);
 
 	// Apply full-text search to the column
-	_modelTreeView->AddSearchColumn(_modelColumns.name);
+	_modelTreeView->AddSearchColumn(_modelColumns.leafName);
 
 	// Connect up the selection changed callback
-	_modelTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxDataViewEventHandler(MD5AnimationViewer::_onModelSelChanged), NULL, this);
+	_modelTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MD5AnimationViewer::_onModelSelChanged, this);
 
 	// Pack into scrolled window and return
 	return _modelTreeView;
@@ -131,8 +195,7 @@ wxWindow* MD5AnimationViewer::createAnimTreeView(wxWindow* parent)
 	_animTreeView->AddSearchColumn(_animColumns.name);
 
 	// Connect up the selection changed callback
-	_animTreeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxDataViewEventHandler(MD5AnimationViewer::_onAnimSelChanged), NULL, this);
+	_animTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MD5AnimationViewer::_onAnimSelChanged, this);
 
 	return _animTreeView;
 }
@@ -163,41 +226,17 @@ void MD5AnimationViewer::handleModelSelectionChange()
 
 std::string MD5AnimationViewer::getSelectedModel()
 {
-	wxDataViewItem item = _modelTreeView->GetSelection();
-
-	if (!item.IsOk())
-	{
-		return std::string();
-	}
-
-	wxutil::TreeModel::Row row(item, *_modelList);
-
-	return static_cast<std::string>(row[_modelColumns.name]);
+    return _modelTreeView->GetSelectedDeclName();
 }
 
 void MD5AnimationViewer::setSelectedModel(const std::string& model)
 {
-	if (IsShownOnScreen())
-	{
-		wxDataViewItem item = _modelList->FindString(model, _modelColumns.name);
-
-		if (item.IsOk())
-		{
-			_modelTreeView->Select(item);
-			_modelTreeView->EnsureVisible(item);
-			handleModelSelectionChange();
-		}
-
-		_modelToSelect.clear();
-		return;
-	}
-
-	_modelToSelect = model;
+    _modelTreeView->SetSelectedDeclName(model);
 }
 
 std::string MD5AnimationViewer::getSelectedAnim()
 {
-	wxDataViewItem item = _animTreeView->GetSelection();
+	auto item = _animTreeView->GetSelection();
 
 	if (!item.IsOk())
 	{
@@ -212,7 +251,7 @@ void MD5AnimationViewer::setSelectedAnim(const std::string& anim)
 {
 	if (IsShownOnScreen())
 	{
-		wxDataViewItem item = _animList->FindString(anim, _animColumns.name);
+		auto item = _animList->FindString(anim, _animColumns.name);
 
 		if (item.IsOk())
 		{
@@ -271,27 +310,9 @@ void MD5AnimationViewer::handleAnimSelectionChange()
 	_preview->setAnim(anim);
 }
 
-void MD5AnimationViewer::visit(wxutil::TreeModel& /* store */,
-	wxutil::TreeModel::Row& row, const std::string& path, bool isExplicit)
-{
-	// Get the display path, everything after rightmost slash
-	row[_modelColumns.name] = path.substr(path.rfind("/") + 1);
-
-	row.SendItemAdded();
-}
-
 void MD5AnimationViewer::populateModelList()
 {
-	_modelList->Clear();
-
-	GlobalEntityClassManager().forEachModelDef([&] (const IModelDef::Ptr& modelDef)
-	{
-        _modelPopulator.addPath(modelDef->getModName() + "/" + modelDef->getDeclName());
-	});
-
-	_modelPopulator.forEachNode(*this);
-
-	_modelTreeView->ExpandTopLevelItems();
+    _modelTreeView->Populate(std::make_shared<ThreadedModelDefLoader>(_modelColumns));
 }
 
 void MD5AnimationViewer::populateAnimationList()
