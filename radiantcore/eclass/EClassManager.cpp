@@ -31,9 +31,17 @@ IEntityClassPtr EClassManager::findClass(const std::string& className)
 
 void EClassManager::forEachEntityClass(EntityClassVisitor& visitor)
 {
+    forEachEntityClass([&](const IEntityClassPtr& eclass)
+    {
+        visitor.visit(eclass);
+    });
+}
+
+void EClassManager::forEachEntityClass(const std::function<void(const IEntityClassPtr&)>& functor)
+{
     GlobalDeclarationManager().foreachDeclaration(decl::Type::EntityDef, [&](const decl::IDeclaration::Ptr& decl)
     {
-        visitor.visit(std::static_pointer_cast<IEntityClass>(decl));
+        functor(std::static_pointer_cast<IEntityClass>(decl));
     });
 }
 

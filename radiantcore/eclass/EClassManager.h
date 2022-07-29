@@ -31,6 +31,7 @@ public:
     IEntityClassPtr findOrInsert(const std::string& name, bool has_brushes) override;
     IEntityClassPtr findClass(const std::string& className) override;
     void forEachEntityClass(EntityClassVisitor& visitor) override;
+    void forEachEntityClass(const std::function<void(const IEntityClassPtr&)>& functor) override;
 
     // Find the modeldef with the given name
     IModelDef::Ptr findModel(const std::string& name) override;

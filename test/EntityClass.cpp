@@ -31,6 +31,22 @@ TEST_F(EntityClassTest, LookupEntityClass)
         GlobalEntityClassManager().findClass("LiGHT")) << "Lookup should be case-insensitive";
 }
 
+TEST_F(EntityClassTest, ForeachEntityClass)
+{
+    std::set<std::string> visitedNames;
+
+    // Nonexistent class should return null (but not throw or crash)
+    GlobalEntityClassManager().forEachEntityClass([&] (const IEntityClassPtr& eclass)
+    {
+        visitedNames.insert(eclass->getDeclName());
+    });
+
+    EXPECT_TRUE(visitedNames.count("light") > 0);
+    EXPECT_TRUE(visitedNames.count("light_extinguishable") > 0);
+    EXPECT_TRUE(visitedNames.count("dr:entity_using_modeldef") > 0);
+    EXPECT_TRUE(visitedNames.count("atdm:light_base") > 0);
+}
+
 TEST_F(EntityClassTest, EntityClassDefFilename)
 {
     auto cls = GlobalEntityClassManager().findClass("dr:entity_using_modeldef");

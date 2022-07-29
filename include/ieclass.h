@@ -301,6 +301,9 @@ public:
      */
     virtual void forEachEntityClass(EntityClassVisitor& visitor) = 0;
 
+    // Iterate over all entityDefs using the given function object
+    virtual void forEachEntityClass(const std::function<void(const IEntityClassPtr&)>& functor) = 0;
+
     /**
      * greebo: This reloads the entityDefs and modelDefs from all files. Does not
      * change the scenegraph, only the contents of the EClass objects are
