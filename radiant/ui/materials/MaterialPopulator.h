@@ -2,7 +2,6 @@
 
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "MaterialTreeView.h"
-#include "string/string.h"
 
 namespace ui
 {
@@ -15,11 +14,6 @@ private:
 
     std::string _texturePrefix;
     std::string _otherMaterialsPath;
-
-    // Maps of names to corresponding treemodel items, for both intermediate
-    // paths and explicitly presented paths
-    using NamedIterMap = std::map<std::string, wxDataViewItem, string::ILess>;
-    NamedIterMap _iters;
 
 public:
     // Construct and initialise variables
@@ -44,7 +38,6 @@ private:
         const std::string& leafName, const wxDataViewItem& parentItem, bool isOtherMaterial);
     void InsertTexture(const wxutil::TreeModel::Ptr& model, const std::string& path,
         const std::string& leafName, const wxDataViewItem& parentItem);
-    wxDataViewItem& addRecursive(const wxutil::TreeModel::Ptr& model, const std::string& path, bool isOtherMaterial);
 };
 
 }

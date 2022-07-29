@@ -1,6 +1,5 @@
 #include "MaterialPopulator.h"
 
-#include <map>
 #include "i18n.h"
 #include "ishaders.h"
 
@@ -38,11 +37,10 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
     string::split(parts, materialName, "/");
 
     bool isOtherMaterial = parts.size() > 1 && !string::istarts_with(materialName, _texturePrefix);
-    auto otherMaterialsFolder = _(OTHER_MATERIALS_FOLDER);
 
     if (isOtherMaterial)
     {
-        parts.insert(parts.begin(), otherMaterialsFolder);
+        parts.insert(parts.begin(), _otherMaterialsPath);
     }
 
     while (parts.back().empty())
@@ -69,7 +67,7 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
         if (!existingItem.IsOk())
         {
             // Insert this folder
-            auto row = InsertFolder(model, parentPath, parts[i], parentItem, i == 0 && parts[i] == otherMaterialsFolder);
+            auto row = InsertFolder(model, parentPath, parts[i], parentItem, i == 0 && parts[i] == _otherMaterialsPath);
 
             parentItem = row.getItem();
         }
@@ -144,29 +142,6 @@ void MaterialPopulator::PopulateModel(const wxutil::TreeModel::Ptr& model)
             row[_columns.isOtherMaterialsFolder] = false;
             AssignValuesToRow(row, path, isFolder ? path : name, leafName, isFolder);
         });
-#if 0
-        // Find rightmost slash
-        auto slashPos = name.rfind("/");
-
-        wxDataViewItem parent;
-
-        if (string::istarts_with(name, _texturePrefix))
-        {
-            // Regular texture, ensure parent folder
-            parent = slashPos != std::string::npos ? addRecursive(model, name.substr(0, slashPos), false) : model->GetRoot();
-        }
-        else
-        {
-            // Put it under "other materials", ensure parent folder
-            parent = slashPos != std::string::npos ?
-                addRecursive(model, _otherMaterialsPath + "/" + name.substr(0, slashPos), true) :
-                addRecursive(model, _otherMaterialsPath, true);
-        }
-
-        // Insert the actual leaf
-        auto leafName = slashPos != std::string::npos ? name.substr(slashPos + 1) : name;
-        InsertTexture(model, name, leafName, parent);
-#endif
     });
 }
 
@@ -193,39 +168,6 @@ void MaterialPopulator::InsertTexture(const wxutil::TreeModel::Ptr& model,
 
     // Base class call will invoke Row::SendItemAdded()
     AssignValuesToRow(row, path, path, leafName, false);
-}
-
-wxDataViewItem& MaterialPopulator::addRecursive(const wxutil::TreeModel::Ptr& model,
-    const std::string& path, bool isOtherMaterial)
-{
-    // Look up candidate in the map and return it if found
-    auto it = _iters.find(path);
-
-    if (it != _iters.end())
-    {
-        return it->second;
-    }
-
-    /* Otherwise, split the path on its rightmost slash, call recursively on the
-     * first half in order to add the parent node, then add the second half as
-     * a child. Recursive bottom-out is when there is no slash (top-level node).
-     */
-     // Find rightmost slash
-    std::size_t slashPos = path.rfind("/");
-
-    // Call recursively to get parent iter, leaving it at the toplevel if
-    // there is no slash
-    const auto& parIter = slashPos != std::string::npos ? 
-        addRecursive(model, path.substr(0, slashPos), isOtherMaterial) : model->GetRoot();
-
-    std::string name = slashPos != std::string::npos ? path.substr(slashPos + 1) : path;
-
-    auto row = InsertFolder(model, path, name, parIter, isOtherMaterial);
-
-    // Add a copy of the wxDataViewItem to our hashmap and return it
-    auto result = _iters.emplace(path, row.getItem());
-
-    return result.first->second;
 }
 
 void MaterialPopulator::SortModel(const wxutil::TreeModel::Ptr& model)
