@@ -148,7 +148,7 @@ struct ShaderNameFunctor
 
 // Construct and initialise variables
 MaterialPopulator::MaterialPopulator(const MaterialTreeView::TreeColumns& columns) :
-    ThreadedResourceTreePopulator(columns),
+    ThreadedDeclarationTreePopulator(columns),
     _columns(columns)
 {
     _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Material));

@@ -6,7 +6,7 @@
 #include "ifavourites.h"
 #include "registry/registry.h"
 
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
+#include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
@@ -97,7 +97,7 @@ public:
 
 // Local class for loading sound shader definitions in a separate thread
 class ThreadedSoundShaderLoader :
-    public wxutil::ThreadedResourceTreePopulator
+    public wxutil::ThreadedDeclarationTreePopulator
 {
     // Column specification struct
     const wxutil::DeclarationTreeView::Columns& _columns;
@@ -106,7 +106,7 @@ public:
 
     // Construct and initialise variables
     ThreadedSoundShaderLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedResourceTreePopulator(columns),
+        ThreadedDeclarationTreePopulator(columns),
         _columns(columns)
     {}
 

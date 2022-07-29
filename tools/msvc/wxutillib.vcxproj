@@ -141,6 +141,7 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\KeyValueTable.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreeView.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\ResourceTreeViewToolbar.h" />
+    <ClInclude Include="..\..\libs\wxutil\dataview\ThreadedDeclarationTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\ThreadedResourceTreePopulator.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeModel.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeModelFilter.h" />

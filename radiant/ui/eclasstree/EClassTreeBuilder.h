@@ -3,7 +3,7 @@
 #include "ieclass.h"
 
 #include "wxutil/dataview/DeclarationTreeView.h"
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
+#include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 
 #include <wx/icon.h>
 
@@ -16,7 +16,7 @@ namespace ui
  * Visitor class to retrieve entityDef names and sort them into the hierarchy tree.
  */
 class EClassTreeBuilder final :
-    public wxutil::ThreadedResourceTreePopulator,
+    public wxutil::ThreadedDeclarationTreePopulator,
 	public EntityClassVisitor
 {
 private:

@@ -9,7 +9,7 @@
 
 #include "ifavourites.h"
 #include "debugging/ScopedDebugTimer.h"
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
+#include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
@@ -30,7 +30,7 @@ namespace
      * Visitor class to retrieve skin names and add them to folders.
      */
     class ThreadedSkinLoader final :
-        public wxutil::ThreadedResourceTreePopulator
+        public wxutil::ThreadedDeclarationTreePopulator
     {
     private:
         const wxutil::DeclarationTreeView::Columns& _columns;
@@ -48,7 +48,7 @@ namespace
     public:
         ThreadedSkinLoader(const wxutil::DeclarationTreeView::Columns& columns, const std::string& model, 
             wxDataViewItem& allSkinsItem, wxDataViewItem& matchingSkinsItem) :
-            ThreadedResourceTreePopulator(columns),
+            ThreadedDeclarationTreePopulator(columns),
             _columns(columns),
             _allSkinsItem(allSkinsItem),
             _matchingSkinsItem(matchingSkinsItem),

@@ -2,14 +2,14 @@
 
 #include <set>
 
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
+#include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "MaterialTreeView.h"
 
 namespace ui
 {
 
 class MaterialPopulator :
-    public wxutil::ThreadedResourceTreePopulator
+    public wxutil::ThreadedDeclarationTreePopulator
 {
 private:
     const MaterialTreeView::TreeColumns& _columns;

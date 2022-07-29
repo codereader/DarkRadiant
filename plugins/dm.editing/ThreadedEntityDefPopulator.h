@@ -7,14 +7,14 @@
 
 #include "wxutil/Bitmap.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
+#include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 
 namespace ui
 {
 
 class ThreadedEntityDefPopulator :
-    public wxutil::ThreadedResourceTreePopulator
+    public wxutil::ThreadedDeclarationTreePopulator
 {
 private:
     const wxutil::DeclarationTreeView::Columns& _columns;
@@ -24,7 +24,7 @@ private:
 
 public:
     ThreadedEntityDefPopulator(const wxutil::DeclarationTreeView::Columns& columns, const std::string& iconName) :
-        ThreadedResourceTreePopulator(columns),
+        ThreadedDeclarationTreePopulator(columns),
         _columns(columns)
     {
         // Get the list of favourites

@@ -5,7 +5,7 @@
 #include "debugging/ScopedDebugTimer.h"
 
 #include "wxutil/dataview/DeclarationTreeView.h"
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
+#include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 
 namespace ui
@@ -16,7 +16,7 @@ namespace ui
  * treemodel.
  */
 class ThreadedParticlesLoader final :
-    public wxutil::ThreadedResourceTreePopulator
+    public wxutil::ThreadedDeclarationTreePopulator
 {
 private:
     const wxutil::DeclarationTreeView::Columns& _columns;
@@ -25,7 +25,7 @@ private:
 
 public:
     ThreadedParticlesLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedResourceTreePopulator(columns),
+        ThreadedDeclarationTreePopulator(columns),
         _columns(columns)
     {
         // Get the list of favourites

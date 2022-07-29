@@ -11,7 +11,7 @@
 #include "ifavourites.h"
 #include "wxutil/Bitmap.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
+#include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 
 namespace ui
@@ -21,7 +21,7 @@ namespace ui
  * Visitor class to retrieve modelDefs and add them to folders.
  */
 class ThreadedModelDefLoader final :
-    public wxutil::ThreadedResourceTreePopulator
+    public wxutil::ThreadedDeclarationTreePopulator
 {
 private:
     const wxutil::DeclarationTreeView::Columns& _columns;
@@ -33,7 +33,7 @@ private:
 
 public:
     ThreadedModelDefLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedResourceTreePopulator(columns),
+        ThreadedDeclarationTreePopulator(columns),
         _columns(columns)
     {
         // Get the list of favourites

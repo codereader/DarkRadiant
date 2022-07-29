@@ -23,7 +23,7 @@
 #include <functional>
 
 #include "ifavourites.h"
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
+#include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 
 namespace ui
@@ -41,7 +41,7 @@ namespace
  * Visitor class to retrieve material names and add them to folders.
  */
 class ThreadedMaterialLoader final :
-    public wxutil::ThreadedResourceTreePopulator
+    public wxutil::ThreadedDeclarationTreePopulator
 {
 private:
     const wxutil::DeclarationTreeView::Columns& _columns;
@@ -54,7 +54,7 @@ private:
 
 public:
     ThreadedMaterialLoader(const wxutil::DeclarationTreeView::Columns& columns, const ShaderSelector::PrefixList& prefixes) :
-        ThreadedResourceTreePopulator(columns),
+        ThreadedDeclarationTreePopulator(columns),
         _columns(columns),
         _prefixes(prefixes)
     {

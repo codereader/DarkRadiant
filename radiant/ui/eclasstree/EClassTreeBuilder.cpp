@@ -18,7 +18,7 @@ namespace
 }
 
 EClassTreeBuilder::EClassTreeBuilder(const wxutil::DeclarationTreeView::Columns& columns) :
-    ThreadedResourceTreePopulator(columns),
+    ThreadedDeclarationTreePopulator(columns),
     _columns(columns)
 {
     // Get the list of favourites
