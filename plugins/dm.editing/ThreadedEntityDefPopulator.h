@@ -48,6 +48,9 @@ protected:
         {
             ThrowIfCancellationRequested();
 
+            // Don't include hidden eclasses
+            if (eclass->getVisibility() == vfs::Visibility::HIDDEN) return;
+
             if (!ClassShouldBeListed(eclass)) return;
 
             bool isFavourite = _favourites.count(eclass->getDeclName()) > 0;

@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "ieclass.h"
-#include "ifavourites.h"
 
 #include "eclass.h"
 
