@@ -1573,7 +1573,10 @@ TEST_F(MaterialsTest, ShaderExpressionEvaluation)
         { "(time / 6) * 3", (TimeInSeconds / 6.0f) * 3.0f },
         { "9 - 5 + 2", 6.0f },
         { "9 - 5 - 2", 2.0f },
-
+        { "0 && 1 || 1", 1.0f },
+        { "1 || 1 && 0", 1.0f },
+        { "0 <= 1 <= 0", 0.0f },
+        { "5 >= 7 == 7 >= 9", 1.0f },
     };
 
     for (const auto& [expressionString, expectedValue] : testExpressions)
