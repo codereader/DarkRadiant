@@ -97,7 +97,27 @@ namespace
 
         void SortModel(const wxutil::TreeModel::Ptr& model) override
         {
-            model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
+            // Sort the model such that the Matching Skins folder is sorted on top.
+            // To achieve that we pass a custom folder sort lambda
+            model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder, [&] (const wxDataViewItem& a, const wxDataViewItem& b)
+            {
+                if (a == _matchingSkinsItem && b == _allSkinsItem)
+                {
+                    return -1; // matching skins on top
+                }
+
+                if (a == _allSkinsItem && b == _matchingSkinsItem)
+                {
+                    return +1;
+                }
+
+                // Fall back to regular string comparison for all other folders
+                wxVariant aName, bName;
+                model->GetValue(aName, a, _columns.leafName.getColumnIndex());
+                model->GetValue(bName, b, _columns.leafName.getColumnIndex());
+
+                return aName.GetString().CmpNoCase(bName.GetString());
+            });
         }
     };
 }
