@@ -1,12 +1,9 @@
 #pragma once
 
-#include "ifavourites.h"
-
 #include "debugging/ScopedDebugTimer.h"
 
 #include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
-#include "wxutil/dataview/TreeViewItemStyle.h"
 
 namespace ui
 {
@@ -18,13 +15,9 @@ namespace ui
 class ThreadedParticlesLoader final :
     public wxutil::ThreadedDeclarationTreePopulator
 {
-private:
-    const wxutil::DeclarationTreeView::Columns& _columns;
-
 public:
     ThreadedParticlesLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedDeclarationTreePopulator(decl::Type::Particle, columns),
-        _columns(columns)
+        ThreadedDeclarationTreePopulator(decl::Type::Particle, columns, "particle16.png")
     {}
 
     ~ThreadedParticlesLoader()
@@ -43,22 +36,12 @@ protected:
             ThrowIfCancellationRequested();
 
             // Add the ".prt" extension to the name fo display in the list
-            std::string prtName = def.getDeclName() + ".prt";
+            auto prtName = def.getDeclName() + ".prt";
 
             // Add the Def name to the list store
             wxutil::TreeModel::Row row = model->AddItem();
 
-            bool isFavourite = IsFavourite(def.getDeclName());
-
-            row[_columns.iconAndName] = wxVariant(wxDataViewIconText(prtName));
-            row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite);
-            row[_columns.fullName] = prtName;
-            row[_columns.leafName] = prtName;
-            row[_columns.declName] = def.getDeclName();
-            row[_columns.isFolder] = false;
-            row[_columns.isFavourite] = isFavourite;
-
-            row.SendItemAdded();
+            AssignValuesToRow(row, prtName, def.getDeclName(), prtName, false);
         });
     }
 };
