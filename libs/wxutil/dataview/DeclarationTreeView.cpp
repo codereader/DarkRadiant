@@ -45,7 +45,10 @@ void DeclarationTreeView::PopulateContextMenu(wxutil::PopupMenu& popupMenu)
 
 DeclarationSourceView* DeclarationTreeView::CreateDeclarationView(const decl::IDeclaration::Ptr& decl)
 {
-    return new DeclarationSourceView(decl, this);
+    auto view = new DeclarationSourceView(decl->getDeclType(), this);
+    view->setDeclaration(decl);
+
+    return view;
 }
 
 void DeclarationTreeView::_onShowDefinition()
