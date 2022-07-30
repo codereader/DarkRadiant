@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <memory>
 #include "wxutil/dataview/DeclarationTreeView.h"
 
@@ -25,12 +24,10 @@ namespace ui
  * preview of the currently-selected shader and a table containing certain
  * information about the shader.
  *
- * Use the wxWindow* operator to incorporate this class into a dialog window.
- *
  * This widget populates its list of shaders automatically, and offers a method
  * that allows calling code to retrieve the user's selection. The set of
- * displayed textures can be defined by passing a list of texture prefixes to
- * the constructor (comma-separated, e.g. "fog,light").
+ * displayed textures can be defined by passing the corresponding TextureFilter
+ * value to the constructor.
  */
 class ShaderSelector :
 	public wxPanel

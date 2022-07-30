@@ -14,15 +14,14 @@ namespace ui
 	namespace
 	{
 		const char* const LABEL_TITLE = N_("Choose Shader");
-		const std::string SHADER_PREFIXES = "textures";
 		const std::string RKEY_WINDOW_STATE = "user/ui/textures/shaderChooser/window";
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
+ShaderChooser::ShaderChooser(wxWindow* parent, ShaderSelector::TextureFilter filter, wxTextCtrl* targetEntry) :
 	wxutil::DialogBase(_(LABEL_TITLE), parent),
 	_targetEntry(targetEntry),
-	_selector(NULL)
+	_selector(nullptr)
 {
 	// Create a default panel to this dialog
 	wxPanel* mainPanel = new wxPanel(this, wxID_ANY);
@@ -32,7 +31,7 @@ ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
 	mainPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
 
 	_selector = new ShaderSelector(mainPanel, 
-        std::bind(&ShaderChooser::shaderSelectionChanged, this), ShaderSelector::TextureFilter::Regular);
+        std::bind(&ShaderChooser::shaderSelectionChanged, this), filter);
 
 	if (_targetEntry != nullptr)
 	{
@@ -40,8 +39,9 @@ ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
 
 		// Set the cursor of the tree view to the currently selected shader
 		_selector->setSelection(_initialShader);
-        Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &ShaderChooser::_onItemActivated, this );
 	}
+
+    _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ShaderChooser::_onItemActivated, this);
 
 	// Pack in the ShaderSelector and buttons panel
 	dialogVBox->Add(_selector, 1, wxEXPAND);
@@ -55,17 +55,33 @@ ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
 	_windowPosition.applyPosition();
 }
 
+std::string ShaderChooser::getSelectedTexture()
+{
+    return _selector->getSelection();
+}
+
+void ShaderChooser::setSelectedTexture(const std::string& textureName)
+{
+    _selector->setSelection(textureName);
+}
+
 void ShaderChooser::shutdown()
 {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 }
 
-void ShaderChooser::_onItemActivated( wxDataViewEvent& ev ) {
-    if ( !_selector->getSelection().empty() ) {
-        _targetEntry->SetValue( _selector->getSelection() );
+void ShaderChooser::_onItemActivated(wxDataViewEvent& ev)
+{
+    if (!_selector->getSelection().empty())
+    {
+        if (_targetEntry)
+        {
+            _targetEntry->SetValue(_selector->getSelection());
+        }
+
         shutdown();
-        EndModal( wxID_OK );
+        EndModal(wxID_OK);
     }
 }
 

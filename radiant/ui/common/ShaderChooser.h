@@ -38,11 +38,16 @@ public:
 	/** greebo: Construct the dialog window and its contents.
 	 *
 	 * @parent: The widget this dialog is transient for.
+	 * @filter: Defines the texture set to show
 	 * @targetEntry: The text entry where the selected shader can be written to.
 	 *               Also, the initially selected shader will be read from
 	 *               this field at startup.
 	 */
-	ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry = NULL);
+	ShaderChooser(wxWindow* parent, ShaderSelector::TextureFilter filter, wxTextCtrl* targetEntry = nullptr);
+
+    std::string getSelectedTexture();
+
+    void setSelectedTexture(const std::string& textureName);
 
     /// Signal emitted when selected shader is changed
     sigc::signal<void> signal_shaderChanged() const

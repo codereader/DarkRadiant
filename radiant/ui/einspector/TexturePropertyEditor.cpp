@@ -1,5 +1,5 @@
 #include "TexturePropertyEditor.h"
-#include "LightTextureChooser.h"
+#include "ui/common/ShaderChooser.h"
 #include "PropertyEditorFactory.h"
 
 #include "i18n.h"
@@ -27,7 +27,7 @@ TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, IEntitySelection&
 // Browse button callback
 void TexturePropertyEditor::onBrowseButtonClick()
 {
-	LightTextureChooser* dialog = new LightTextureChooser;
+	auto dialog = new ShaderChooser(getWidget(), ShaderSelector::TextureFilter::Lights);
 
     dialog->setSelectedTexture(getKeyValue(_key));
 

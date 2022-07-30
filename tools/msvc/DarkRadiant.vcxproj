@@ -299,7 +299,6 @@
     <ClCompile Include="..\..\radiant\ui\einspector\EntityInspector.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\EntityPropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\FloatPropertyEditor.cpp" />
-    <ClCompile Include="..\..\radiant\ui\einspector\LightTextureChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\ModelPropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\PropertyEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\PropertyEditorFactory.cpp" />
@@ -506,7 +505,6 @@
     <ClInclude Include="..\..\radiant\ui\einspector\EntityInspector.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\EntityPropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\FloatPropertyEditor.h" />
-    <ClInclude Include="..\..\radiant\ui\einspector\LightTextureChooser.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\ModelPropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\PropertyEditor.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\PropertyEditorFactory.h" />
