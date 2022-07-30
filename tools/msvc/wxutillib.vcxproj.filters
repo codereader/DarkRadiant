@@ -22,6 +22,9 @@
     <Filter Include="dataview">
       <UniqueIdentifier>{77e3b8d8-cacc-4872-a5f5-a7c5d07f0551}</UniqueIdentifier>
     </Filter>
+    <Filter Include="sourceview">
+      <UniqueIdentifier>{7b81be5b-cc2f-43c2-bef8-fb9c7c1a31c0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\wxutil\dialog\DialogBase.h">
@@ -73,7 +76,6 @@
     <ClInclude Include="..\..\libs\wxutil\PanedPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\PathEntry.h" />
     <ClInclude Include="..\..\libs\wxutil\SerialisableWidgets.h" />
-    <ClInclude Include="..\..\libs\wxutil\SourceView.h" />
     <ClInclude Include="..\..\libs\wxutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\XmlResourceBasedWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\ChoiceHelper.h" />
@@ -155,10 +157,17 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\DeclarationTreeView.h">
       <Filter>dataview</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\libs\wxutil\DeclarationSourceView.h" />
-    <ClInclude Include="..\..\libs\wxutil\DefinitionView.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\ThreadedDeclarationTreePopulator.h">
       <Filter>dataview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\sourceview\DeclarationSourceView.h">
+      <Filter>sourceview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\sourceview\DefinitionView.h">
+      <Filter>sourceview</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\sourceview\SourceView.h">
+      <Filter>sourceview</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -187,7 +196,6 @@
     <ClCompile Include="..\..\libs\wxutil\PanedPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\PathEntry.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SerialisableWidgets.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\SourceView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\ConsoleView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\DirChooser.cpp" />
@@ -242,6 +250,11 @@
     <ClCompile Include="..\..\libs\wxutil\dataview\DeclarationTreeView.cpp">
       <Filter>dataview</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\libs\wxutil\DefinitionView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\sourceview\DefinitionView.cpp">
+      <Filter>sourceview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\sourceview\SourceView.cpp">
+      <Filter>sourceview</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

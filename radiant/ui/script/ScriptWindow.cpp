@@ -5,7 +5,7 @@
 #include "iundo.h"
 #include "i18n.h"
 
-#include "wxutil/SourceView.h"
+#include "wxutil/sourceview/SourceView.h"
 #include <wx/button.h>
 #include <wx/splitter.h>
 #include <wx/sizer.h>

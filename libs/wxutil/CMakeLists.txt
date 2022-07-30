@@ -14,7 +14,6 @@ add_library(wxutil
             dialog/MessageBox.cpp
             fsview/FileSystemView.cpp
             fsview/Populator.cpp
-            DefinitionView.cpp
             DirChooser.cpp
             EntityClassChooser.cpp
             FileChooser.cpp
@@ -32,7 +31,8 @@ add_library(wxutil
             preview/ParticlePreview.cpp
             preview/RenderPreview.cpp
             SerialisableWidgets.cpp
-            SourceView.cpp
+            sourceview/DefinitionView.cpp
+            sourceview/SourceView.cpp
             Splitter.cpp
             WindowPosition.cpp
             window/TransientWindow.cpp)

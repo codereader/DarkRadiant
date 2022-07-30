@@ -3,7 +3,7 @@
 #include "i18n.h"
 #include "irender.h"
 #include "wxutil/menu/IconTextMenuItem.h"
-#include "wxutil/DeclarationSourceView.h"
+#include "wxutil/sourceview/DeclarationSourceView.h"
 
 namespace ui
 {

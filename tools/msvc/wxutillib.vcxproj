@@ -148,10 +148,8 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeView.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeViewItemStyle.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\VFSTreePopulator.h" />
-    <ClInclude Include="..\..\libs\wxutil\DeclarationSourceView.h" />
     <ClInclude Include="..\..\libs\wxutil\DeclFileInfo.h" />
     <ClInclude Include="..\..\libs\wxutil\DeferredMotionDelta.h" />
-    <ClInclude Include="..\..\libs\wxutil\DefinitionView.h" />
     <ClInclude Include="..\..\libs\wxutil\dialog\AutoSaveRequestBlocker.h" />
     <ClInclude Include="..\..\libs\wxutil\dialog\Dialog.h" />
     <ClInclude Include="..\..\libs\wxutil\dialog\DialogBase.h" />
@@ -194,7 +192,9 @@
     <ClInclude Include="..\..\libs\wxutil\ScopeTimer.h" />
     <ClInclude Include="..\..\libs\wxutil\ScrollWindow.h" />
     <ClInclude Include="..\..\libs\wxutil\SerialisableWidgets.h" />
-    <ClInclude Include="..\..\libs\wxutil\SourceView.h" />
+    <ClInclude Include="..\..\libs\wxutil\sourceview\DeclarationSourceView.h" />
+    <ClInclude Include="..\..\libs\wxutil\sourceview\DefinitionView.h" />
+    <ClInclude Include="..\..\libs\wxutil\sourceview\SourceView.h" />
     <ClInclude Include="..\..\libs\wxutil\Splitter.h" />
     <ClInclude Include="..\..\libs\wxutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\window\TransientWindow.h" />
@@ -211,7 +211,6 @@
     <ClCompile Include="..\..\libs\wxutil\dataview\TreeModelFilter.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\TreeView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\VFSTreePopulator.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\DefinitionView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\Dialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\DialogBase.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp" />
@@ -234,7 +233,8 @@
     <ClCompile Include="..\..\libs\wxutil\preview\ParticlePreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\RenderPreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SerialisableWidgets.cpp" />
-    <ClCompile Include="..\..\libs\wxutil\SourceView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\sourceview\DefinitionView.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\sourceview\SourceView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\Splitter.cpp" />
     <ClCompile Include="..\..\libs\wxutil\WindowPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\window\TransientWindow.cpp" />

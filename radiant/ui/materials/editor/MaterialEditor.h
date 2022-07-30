@@ -10,7 +10,7 @@
 #include "wxutil/PanedPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "MaterialPreview.h"
-#include "wxutil/SourceView.h"
+#include "wxutil/sourceview/SourceView.h"
 
 #include "../MaterialTreeView.h"
 #include "Binding.h"
