@@ -58,8 +58,8 @@ protected:
 
 private:
     std::string GetColumnValue(const wxutil::TreeModel::Column& column);
-    void showModelDefinition();
-    bool testShowModelDefinition();
+    void showDefinition();
+    bool testShowDefinition();
 };
 
 }

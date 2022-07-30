@@ -25,8 +25,8 @@ ModelTreeView::ModelTreeView(wxWindow* parent) :
 
     AddCustomMenuItem(std::make_shared<wxutil::MenuItem>(
         new wxutil::IconTextMenuItem(_("Show Definition"), "decl.png"),
-        std::bind(&ModelTreeView::showModelDefinition, this),
-        std::bind(&ModelTreeView::testShowModelDefinition, this)));
+        std::bind(&ModelTreeView::showDefinition, this),
+        std::bind(&ModelTreeView::testShowDefinition, this)));
 }
 
 const ModelTreeView::TreeColumns& ModelTreeView::Columns() const
@@ -118,30 +118,52 @@ std::string ModelTreeView::GetColumnValue(const wxutil::TreeModel::Column& colum
     return row[column];
 }
 
-void ModelTreeView::showModelDefinition()
+void ModelTreeView::showDefinition()
 {
-    auto selectedModelPath = GetColumnValue(Columns().modelPath);
-    auto modelDef = GlobalDeclarationManager().findDeclaration(decl::Type::ModelDef, selectedModelPath);
+    auto item = GetSelection();
+    wxutil::TreeModel::Row row(item, *GetModel());
 
-    if (modelDef)
+    decl::IDeclaration::Ptr decl;
+
+    if (row[Columns().isSkin].getBool())
+    {
+        decl = GlobalDeclarationManager().findDeclaration(decl::Type::Skin, GetSelectedSkin());
+    }
+    else
+    {
+        // Must be a modelDef
+        auto selectedModelPath = row[Columns().modelPath].getString().ToStdString();
+        decl = GlobalDeclarationManager().findDeclaration(decl::Type::ModelDef, selectedModelPath);
+    }
+
+    if (decl)
     {
         auto view = new wxutil::DeclarationSourceView(this);
-        view->setDeclaration(modelDef);
+        view->setDeclaration(decl);
 
         view->ShowModal();
         view->Destroy();
     }
 }
 
-bool ModelTreeView::testShowModelDefinition()
+bool ModelTreeView::testShowDefinition()
 {
     if (IsDirectorySelected()) return false;
 
-    auto selectedModelPath = GetColumnValue(Columns().modelPath);
+    auto item = GetSelection();
+    if (!item.IsOk()) return false;
 
-    auto modelDef = GlobalDeclarationManager().findDeclaration(decl::Type::ModelDef, selectedModelPath);
+    wxutil::TreeModel::Row row(item, *GetModel());
 
-    return modelDef != nullptr;
+    auto selectedModelPath = row[Columns().modelPath].getString().ToStdString();
+
+    if (GlobalDeclarationManager().findDeclaration(decl::Type::ModelDef, selectedModelPath))
+    {
+        return true;
+    }
+
+    // Could also be a skin
+    return _showSkins && row[Columns().isSkin].getBool();
 }
 
 }
