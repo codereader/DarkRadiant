@@ -9,7 +9,7 @@ SourceViewCtrl::SourceViewCtrl(wxWindow* parent) :
 	// Predefine a few styles for use in subclasses
 	_predefinedStyles[Default]			= Style("BLACK");
 	_predefinedStyles[Keyword1]			= Style("BLUE", Bold);
-	_predefinedStyles[Keyword2]			= Style("MIDNIGHT BLUE");
+	_predefinedStyles[Keyword2]			= Style("MIDNIGHT BLUE", static_cast<FontStyle>(Bold | Italic));
 	_predefinedStyles[Keyword3]			= Style("CORNFLOWER BLUE");
 	_predefinedStyles[Keyword4]			= Style("CYAN");
 	_predefinedStyles[Keyword5]			= Style("DARK GREY");
