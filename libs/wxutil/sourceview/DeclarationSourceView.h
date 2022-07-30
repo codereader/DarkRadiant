@@ -107,6 +107,9 @@ private:
         case decl::Type::Material:
             setSourceView(new D3MaterialSourceViewCtrl(getMainPanel()));
             break;
+        case decl::Type::Particle:
+            setSourceView(new D3ParticleSourceViewCtrl(getMainPanel()));
+            break;
         default:
             setSourceView(new D3DeclarationViewCtrl(getMainPanel()));
         }

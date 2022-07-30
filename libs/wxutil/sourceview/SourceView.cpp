@@ -164,4 +164,18 @@ D3SoundShaderSourceViewCtrl::D3SoundShaderSourceViewCtrl(wxWindow* parent) :
 	SetKeyWords(1, "");
 };
 
+// D3 Particles
+
+D3ParticleSourceViewCtrl::D3ParticleSourceViewCtrl(wxWindow* parent) :
+	D3DeclarationViewCtrl(parent)
+{
+	SetKeyWords(0, "depthHack count material time cycles timeOffset deadTime bunching color "
+        "fadeColor fadeIn fadeOut fadeIndex animationFrames animationrate angle rotation "
+        "boundsExpansion randomDistribution entityColor gravity offset speed "
+        "size aspect orientation distribution direction customPath");
+
+	SetKeyWords(1, "world view aimed x y z rect cylinder sphere cone outward helix "
+        "flies orbit drip to");
+};
+
 } // namespace

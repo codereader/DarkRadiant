@@ -147,4 +147,15 @@ public:
 	D3SoundShaderSourceViewCtrl(wxWindow* parent);
 };
 
+/**
+ * A special class providing highlighting for the Doom 3
+ * particle syntax.
+ */
+class D3ParticleSourceViewCtrl :
+    public D3DeclarationViewCtrl
+{
+public:
+    D3ParticleSourceViewCtrl(wxWindow* parent);
+};
+
 } // namespace
