@@ -137,9 +137,11 @@ void ShaderSelector::createTreeView()
     _treeView->Populate(std::make_shared<ThreadedMaterialLoader>(_shaderTreeColumns, _prefixes));
 }
 
-// Create the preview panel (GL widget and info table)
 void ShaderSelector::createPreview()
 {
+    _previewCombo = new TexturePreviewCombo(this);
+    GetSizer()->Add(_previewCombo, 0, wxEXPAND | wxTOP, 3);
+#if 0
 	// HBox contains the preview GL widget along with a texture attributes pane.
 	wxBoxSizer* sizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -162,16 +164,18 @@ void ShaderSelector::createPreview()
 	sizer->Add(tree, 1, wxEXPAND);
 
 	GetSizer()->Add(sizer, 0, wxEXPAND | wxTOP, 3);
+#endif
 }
 
-// Get the selected shader
-MaterialPtr ShaderSelector::getSelectedShader() {
+MaterialPtr ShaderSelector::getSelectedShader()
+{
 	return GlobalMaterialManager().getMaterial(getSelection());
 }
 
 // Update the attributes table
 void ShaderSelector::updateInfoTable()
 {
+    return;
 	_infoStore->Clear();
 
 	// Get the selected texture name. If nothing is selected, we just leave the
@@ -188,6 +192,8 @@ void ShaderSelector::updateInfoTable()
 // Callback to redraw the GL widget
 bool ShaderSelector::onPreviewRender()
 {
+    return true;
+
 	// Get the viewport size from the GL widget
 	wxSize req = _glWidget->GetClientSize();
 
@@ -332,8 +338,12 @@ void ShaderSelector::displayLightShaderInfo(const MaterialPtr& shader,
 // Callback for selection changed
 void ShaderSelector::_onSelChange(wxDataViewEvent& ev)
 {
+    _previewCombo->SetTexture(getSelection());
+#if 0
 	updateInfoTable();
 	_glWidget->Refresh();
+
+#endif
 }
 
 } // namespace ui

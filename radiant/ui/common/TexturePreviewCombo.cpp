@@ -4,7 +4,7 @@
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/GLWidget.h"
 #include "wxutil/dataview/KeyValueTable.h"
-#include "wxutil/dataview/TreeModel.h"
+#include "gamelib.h"
 
 #include "ishaders.h"
 #include "texturelib.h"
@@ -18,21 +18,23 @@
 namespace ui
 {
 
-// Constructor. Create widgets.
+namespace
+{
+    constexpr const char* const LIGHT_PREFIX_XPATH = "/light/texture//prefix";
+}
 
 TexturePreviewCombo::TexturePreviewCombo(wxWindow* parent) :
     wxPanel(parent, wxID_ANY),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexturePreviewCombo::_onRender, this), "TexturePreviewCombo")),
     _texName(""),
-	_infoTable(NULL),
+	_infoTable(nullptr),
 	_contextMenu(new wxutil::PopupMenu)
 {
     _glWidget->SetMinSize(wxSize(128, 128));
 
     // Add info table
 	_infoTable = new wxutil::KeyValueTable(this);
-	_infoTable->Connect(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU,
-		wxDataViewEventHandler(TexturePreviewCombo::_onContextMenu), NULL, this);
+	_infoTable->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &TexturePreviewCombo::_onContextMenu, this);
 
 	SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -44,6 +46,8 @@ TexturePreviewCombo::TexturePreviewCombo(wxWindow* parent) :
 		new wxutil::StockIconTextMenuItem(_("Copy shader name"), wxART_COPY),
         std::bind(&TexturePreviewCombo::_onCopyTexName, this)
     );
+
+    loadLightTexturePrefixes();
 }
 
 // Update the selected texture
@@ -75,11 +79,38 @@ void TexturePreviewCombo::refreshInfoTable()
     }
 
     // Get shader info
-    MaterialPtr shader = GlobalMaterialManager().getMaterial(_texName);
+    auto shader = GlobalMaterialManager().getMaterial(_texName);
 
+    // Regular shader info
     _infoTable->Append(_("Shader"), shader->getName());
     _infoTable->Append(_("Defined in"), shader->getShaderFileName());
-    _infoTable->Append(_("Description"), shader->getDescription());
+
+    auto descr = shader->getDescription();
+    _infoTable->Append(_("Description"), descr.empty() ? "-" : descr);
+
+    if (isLightTexture())
+    {
+        auto first = shader->firstLayer();
+
+        if (first)
+        {
+            auto tex = shader->firstLayer()->getTexture();
+            _infoTable->Append(_("Image map"), tex->getName());
+        }
+
+        // Light types, from the Material
+        std::string lightType;
+        if (shader->isAmbientLight())
+            lightType.append("ambient ");
+        if (shader->isBlendLight())
+            lightType.append("blend ");
+        if (shader->isFogLight())
+            lightType.append("fog");
+        if (lightType.empty())
+            lightType.append("-");
+
+        _infoTable->Append(_("Light flags"), lightType);
+    }
 
     _infoTable->TriggerColumnSizeEvent();
 }
@@ -105,11 +136,10 @@ void TexturePreviewCombo::_onContextMenu(wxDataViewEvent& ev)
 	_contextMenu->show(_infoTable);
 }
 
-// CALLBACKS
 bool TexturePreviewCombo::_onRender()
 {
 	// Get the viewport size from the GL widget
-	wxSize req = _glWidget->GetClientSize();
+	auto req = _glWidget->GetClientSize();
 
 	if (req.GetWidth() == 0 || req.GetHeight() == 0) return false;
 
@@ -132,28 +162,37 @@ bool TexturePreviewCombo::_onRender()
 	if (!_texName.empty())
 	{
 		// Get a reference to the selected shader
-		MaterialPtr shader = GlobalMaterialManager().getMaterial(_texName);
+		auto shader = GlobalMaterialManager().getMaterial(_texName);
 
-		// This is an "ordinary" texture, take the editor image
-		TexturePtr tex = shader->getEditorImage();
+        // This is an "ordinary" texture, take the editor image
+        auto tex = shader->getEditorImage();
 
-		if (tex != NULL)
+        if (isLightTexture())
+        {
+            // This is a light, take the first layer texture
+            if (auto first = shader->firstLayer(); first)
+            {
+                tex = shader->firstLayer()->getTexture();
+            }
+        }
+
+		if (tex)
 		{
 			glBindTexture(GL_TEXTURE_2D, tex->getGLTexNum());
 
 			// Calculate the correct aspect ratio for preview
-			float aspect = float(tex->getWidth()) / float(tex->getHeight());
+			auto aspect = static_cast<float>(tex->getWidth()) / tex->getHeight();
 			float hfWidth, hfHeight;
 
 			if (aspect > 1.0f)
 			{
-				hfWidth = 0.5 * req.GetWidth();
-				hfHeight = 0.5 * req.GetHeight() / aspect;
+				hfWidth = 0.5f * req.GetWidth();
+				hfHeight = 0.5f * req.GetHeight() / aspect;
 			}
 			else
 			{
-				hfHeight = 0.5 * req.GetWidth();
-				hfWidth = 0.5 * req.GetHeight() * aspect;
+				hfHeight = 0.5f * req.GetWidth();
+				hfWidth = 0.5f * req.GetHeight() * aspect;
 			}
 
 			// Draw a quad to put the texture on
@@ -162,13 +201,13 @@ bool TexturePreviewCombo::_onRender()
 
 			glBegin(GL_QUADS);
 			glTexCoord2i(0, 1);
-			glVertex2f(0.5*req.GetWidth() - hfWidth, 0.5*req.GetHeight() - hfHeight);
+			glVertex2f(0.5f*req.GetWidth() - hfWidth, 0.5f*req.GetHeight() - hfHeight);
 			glTexCoord2i(1, 1);
-			glVertex2f(0.5*req.GetWidth() + hfWidth, 0.5*req.GetHeight() - hfHeight);
+			glVertex2f(0.5f*req.GetWidth() + hfWidth, 0.5f*req.GetHeight() - hfHeight);
 			glTexCoord2i(1, 0);
-			glVertex2f(0.5*req.GetWidth() + hfWidth, 0.5*req.GetHeight() + hfHeight);
+			glVertex2f(0.5f*req.GetWidth() + hfWidth, 0.5f*req.GetHeight() + hfHeight);
 			glTexCoord2i(0, 0);
-			glVertex2f(0.5*req.GetWidth() - hfWidth, 0.5*req.GetHeight() + hfHeight);
+			glVertex2f(0.5f*req.GetWidth() - hfWidth, 0.5f*req.GetHeight() + hfHeight);
 			glEnd();
 		}
 	}
@@ -176,6 +215,31 @@ bool TexturePreviewCombo::_onRender()
 	glPopAttrib();
 
 	return true;
+}
+
+void TexturePreviewCombo::loadLightTexturePrefixes()
+{
+    // Get the list of light texture prefixes from the registry
+    auto prefList = game::current::getNodes(LIGHT_PREFIX_XPATH);
+
+    // Copy the Node contents into the prefix vector
+    for (const auto& node : prefList)
+    {
+        _lightTexturePrefixes.push_back(node.getContent() + "/");
+    }
+}
+
+bool TexturePreviewCombo::isLightTexture()
+{
+    for (const auto& prefix : _lightTexturePrefixes)
+    {
+        if (string::istarts_with(_texName, prefix))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 }

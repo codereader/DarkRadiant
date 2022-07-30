@@ -10,6 +10,8 @@
 
 #include <wx/panel.h>
 
+#include "TexturePreviewCombo.h"
+
 // FORWARD DECLS
 class Material;
 typedef std::shared_ptr<Material> MaterialPtr;
@@ -95,6 +97,8 @@ private:
 	};
 
 	InfoStoreColumns _infoStoreColumns;
+
+    TexturePreviewCombo* _previewCombo;
 
 	// List store for info table
 	wxutil::TreeModel::Ptr _infoStore;

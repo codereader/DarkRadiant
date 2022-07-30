@@ -34,6 +34,8 @@ class TexturePreviewCombo :
 	// Context menu
 	wxutil::PopupMenuPtr _contextMenu;
 
+    std::vector<std::string> _lightTexturePrefixes;
+
 public:
 
 	/** Constructor creates widgets.
@@ -59,6 +61,10 @@ private:
 
 	// Popupmenu event
 	void _onContextMenu(wxDataViewEvent& ev);
+
+    void loadLightTexturePrefixes();
+
+    bool isLightTexture();
 };
 
 } // namespace
