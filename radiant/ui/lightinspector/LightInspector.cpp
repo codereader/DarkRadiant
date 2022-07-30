@@ -100,14 +100,10 @@ void LightInspector::onMainFrameShuttingDown()
     InstancePtr().reset();
 }
 
-void LightInspector::shaderSelectionChanged(
-    const std::string& shader,
-    wxutil::TreeModel& listStore)
+void LightInspector::shaderSelectionChanged()
 {
-    // Get the shader, and its image map if possible
+    // Get the selected shader
     MaterialPtr ishader = _texSelector->getSelectedShader();
-    // Pass the call to the static member of ShaderSelector
-    ShaderSelector::displayLightShaderInfo(ishader, listStore);
 
     // greebo: Do not write to the entities if this call resulted from an update()
     if (_updateActive) return;
@@ -201,7 +197,7 @@ void LightInspector::setupTextureWidgets()
 {
     wxPanel* parent = findNamedObject<wxPanel>(this, "LightInspectorChooserPanel");
 
-    _texSelector = new ShaderSelector(parent, this, getPrefixList(), true);
+    _texSelector = new ShaderSelector(parent, std::bind(&LightInspector::shaderSelectionChanged, this), getPrefixList());
     parent->GetSizer()->Add(_texSelector, 1, wxEXPAND);
 }
 

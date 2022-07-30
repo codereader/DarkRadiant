@@ -17,8 +17,7 @@ namespace ui
  * all shaders matching the "texture/" prefix.
  */
 class ShaderChooser :
-	public wxutil::DialogBase,
-	public ShaderSelector::Client
+	public wxutil::DialogBase
 {
 	// The text entry the chosen texture is written into (can be NULL)
 	wxTextCtrl* _targetEntry;
@@ -51,13 +50,10 @@ public:
         return _shaderChangedSignal;
     }
 
-	/**
-	 * greebo: ShaderSelector::Client implementation
-	 * Gets called upon shader selection change.
-	 */
-	void shaderSelectionChanged(const std::string& shader, wxutil::TreeModel& listStore);
-
 private:
+	// greebo: Gets called upon shader selection change.
+	void shaderSelectionChanged();
+
 	// Saves the window position
 	void shutdown();
 

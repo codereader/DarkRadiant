@@ -1,7 +1,6 @@
 #include "ShaderChooser.h"
 
 #include "i18n.h"
-#include "iregistry.h"
 #include "ishaders.h"
 #include "texturelib.h"
 
@@ -30,7 +29,8 @@ ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
 	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
 	mainPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
 
-	_selector = new ShaderSelector(mainPanel, this, SHADER_PREFIXES);
+	_selector = new ShaderSelector(mainPanel, 
+        std::bind(&ShaderChooser::shaderSelectionChanged, this), SHADER_PREFIXES);
 
 	if (_targetEntry != nullptr)
 	{
@@ -84,27 +84,21 @@ void ShaderChooser::createButtons(wxPanel* mainPanel, wxBoxSizer* dialogVBox)
 	dialogVBox->Add(buttons, 0, wxALIGN_RIGHT | wxTOP, 6);
 }
 
-void ShaderChooser::shaderSelectionChanged(const std::string& shaderName,
-										   wxutil::TreeModel& listStore)
+void ShaderChooser::shaderSelectionChanged()
 {
-	if (_targetEntry != NULL)
+	if (_targetEntry)
 	{
 		_targetEntry->SetValue(_selector->getSelection());
 	}
 
 	// Propagate the call up to the client (e.g. SurfaceInspector)
     _shaderChangedSignal.emit();
-
-	// Get the shader, and its image map if possible
-	MaterialPtr shader = _selector->getSelectedShader();
-	// Pass the call to the static member
-	ShaderSelector::displayShaderInfo(shader, listStore);
 }
 
 void ShaderChooser::revertShader()
 {
 	// Revert the shadername to the value it had at dialog startup
-	if (_targetEntry != NULL)
+	if (_targetEntry)
 	{
 		_targetEntry->SetValue(_initialShader);
 
@@ -124,7 +118,7 @@ void ShaderChooser::callbackCancel(wxCommandEvent& ev)
 
 void ShaderChooser::callbackOK(wxCommandEvent& ev)
 {
-	if (_targetEntry != NULL)
+	if (_targetEntry)
 	{
 		_targetEntry->SetValue(_selector->getSelection());
 	}

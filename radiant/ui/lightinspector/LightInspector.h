@@ -28,7 +28,6 @@ typedef std::shared_ptr<LightInspector> LightInspectorPtr;
  */
 class LightInspector :
     public wxutil::TransientWindow,
-    public ShaderSelector::Client,
     public sigc::trackable,
     private wxutil::XmlResourceBasedWidget
 {
@@ -106,10 +105,8 @@ private:
     // Set the given key/value pair on ALL entities in the list of lights
     void setKeyValueAllLights(const std::string& k, const std::string& v);
 
-    /** greebo: Gets called when the shader selection gets changed, so that
-     *          the displayed texture info can be updated.
-     */
-    void shaderSelectionChanged(const std::string& shader, wxutil::TreeModel& listStore);
+    // greebo: Gets called when the light texture selection has changed
+    void shaderSelectionChanged();
 
     // Safely disconnects this dialog from all the systems
     // and saves the window size/position to the registry

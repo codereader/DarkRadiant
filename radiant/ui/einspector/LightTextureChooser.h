@@ -16,8 +16,7 @@ namespace ui
  * buttons.
  */
 class LightTextureChooser :
-	public wxutil::DialogBase,
-	public ShaderSelector::Client
+	public wxutil::DialogBase
 {
 private:
 	// The ShaderSelector widget group, that contains the actual selection
@@ -51,11 +50,8 @@ public:
      */
     void setSelectedTexture(const std::string& textureName);
 
-	/** greebo: Gets called upon selection change, updates the infostore
-	 * 			of the contained ShaderSelector helper class accordingly.
-	 */
-	void shaderSelectionChanged(const std::string& shaderName,
-								wxutil::TreeModel& listStore);
+	// greebo: Gets called upon selection change
+	void shaderSelectionChanged();
 
 };
 

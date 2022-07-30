@@ -52,7 +52,7 @@ LightTextureChooser::LightTextureChooser() :
 	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
 	mainPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);	
 
-	_selector = new ShaderSelector(mainPanel, this, getPrefixList(), true); // true >> render a light texture
+	_selector = new ShaderSelector(mainPanel, {}, getPrefixList());
 
 	// Pack in the ShaderSelector and buttons panel
 	dialogVBox->Add(_selector, 1, wxEXPAND);
@@ -86,15 +86,6 @@ std::string LightTextureChooser::getSelectedTexture()
 void LightTextureChooser::setSelectedTexture(const std::string& textureName)
 {
     _selector->setSelection(textureName);
-}
-
-void LightTextureChooser::shaderSelectionChanged(const std::string& shaderName,
-	wxutil::TreeModel& listStore)
-{
-	// Get the shader, and its image map if possible
-	MaterialPtr shader = _selector->getSelectedShader();
-	// Pass the call to the static member light shader info
-	ShaderSelector::displayLightShaderInfo(shader, listStore);
 }
 
 } // namespace ui
