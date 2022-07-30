@@ -34,13 +34,9 @@ namespace
 class ThreadedSoundShaderLoader :
     public wxutil::ThreadedDeclarationTreePopulator
 {
-private:
-    const wxutil::DeclarationTreeView::Columns& _columns;
-
 public:
     ThreadedSoundShaderLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedDeclarationTreePopulator(decl::Type::SoundShader, columns, SHADER_ICON),
-        _columns(columns)
+        ThreadedDeclarationTreePopulator(decl::Type::SoundShader, columns, SHADER_ICON)
     {}
 
     ~ThreadedSoundShaderLoader()
@@ -78,12 +74,6 @@ public:
                 AssignValuesToRow(row, path, isFolder ? path : shader->getDeclName(), leafName, isFolder);
             });
         });
-    }
-
-    void SortModel(const wxutil::TreeModel::Ptr& model) override
-    {
-        // angua: Ensure sound shaders are sorted before giving them to the tree view
-        model->SortModelFoldersFirst(_columns.iconAndName, _columns.isFolder);
     }
 };
 

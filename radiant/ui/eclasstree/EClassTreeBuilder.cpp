@@ -14,8 +14,7 @@ namespace
 }
 
 EClassTreeBuilder::EClassTreeBuilder(const wxutil::DeclarationTreeView::Columns& columns) :
-    ThreadedDeclarationTreePopulator(decl::Type::EntityDef, columns, ENTITY_ICON),
-    _columns(columns)
+    ThreadedDeclarationTreePopulator(decl::Type::EntityDef, columns, ENTITY_ICON)
 {}
 
 EClassTreeBuilder::~EClassTreeBuilder()
@@ -51,11 +50,6 @@ void EClassTreeBuilder::PopulateModel(const wxutil::TreeModel::Ptr& model)
     });
 
     ThrowIfCancellationRequested();
-}
-
-void EClassTreeBuilder::SortModel(const wxutil::TreeModel::Ptr& model)
-{
-    model->SortModelByColumn(_columns.leafName);
 }
 
 std::string EClassTreeBuilder::GetInheritancePathRecursively(IEntityClass& eclass)

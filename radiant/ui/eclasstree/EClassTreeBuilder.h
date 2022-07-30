@@ -19,8 +19,6 @@ class EClassTreeBuilder final :
     public wxutil::ThreadedDeclarationTreePopulator
 {
 private:
-	const wxutil::DeclarationTreeView::Columns& _columns;
-
 	wxIcon _entityIcon;
 
     std::unique_ptr<wxutil::VFSTreePopulator> _treePopulator;
@@ -32,7 +30,6 @@ public:
 
 protected:
     void PopulateModel(const wxutil::TreeModel::Ptr& model) override;
-    void SortModel(const wxutil::TreeModel::Ptr& model) override;
 
 private:
     // Returns an inheritance path, like this: "moveables/swords/"

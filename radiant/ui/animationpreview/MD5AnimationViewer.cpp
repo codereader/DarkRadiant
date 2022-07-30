@@ -21,16 +21,12 @@ namespace ui
 class ThreadedModelDefLoader final :
     public wxutil::ThreadedDeclarationTreePopulator
 {
-private:
-    const wxutil::DeclarationTreeView::Columns& _columns;
-
 public:
     ThreadedModelDefLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedDeclarationTreePopulator(decl::Type::ModelDef, columns, "model16green.png"),
-        _columns(columns)
+        ThreadedDeclarationTreePopulator(decl::Type::ModelDef, columns, "model16green.png")
     {}
 
-    ~ThreadedModelDefLoader()
+    ~ThreadedModelDefLoader() override
     {
         EnsureStopped();
     }
@@ -48,11 +44,6 @@ protected:
                 AssignValuesToRow(row, path, modelDef->getDeclName(), leafName, isFolder);
             });;
         });
-    }
-
-    void SortModel(const wxutil::TreeModel::Ptr& model) override
-    {
-        model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
     }
 };
 

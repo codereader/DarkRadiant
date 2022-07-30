@@ -40,13 +40,11 @@ class ThreadedMaterialLoader final :
     public wxutil::ThreadedDeclarationTreePopulator
 {
 private:
-    const wxutil::DeclarationTreeView::Columns& _columns;
     const ShaderSelector::PrefixList& _prefixes;
 
 public:
     ThreadedMaterialLoader(const wxutil::DeclarationTreeView::Columns& columns, const ShaderSelector::PrefixList& prefixes) :
         ThreadedDeclarationTreePopulator(decl::Type::Material, columns, TEXTURE_ICON),
-        _columns(columns),
         _prefixes(prefixes)
     {}
 
@@ -75,11 +73,6 @@ protected:
                 }
             }
         });
-    }
-
-    void SortModel(const wxutil::TreeModel::Ptr& model) override
-    {
-        model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
     }
 };
 

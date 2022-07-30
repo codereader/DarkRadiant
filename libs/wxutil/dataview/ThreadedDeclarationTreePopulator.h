@@ -57,6 +57,12 @@ public:
     }
 
 protected:
+    // Default sorting behaviour is to sort the tree alphabetically with folders on top
+    void SortModel(const TreeModel::Ptr& model) override
+    {
+        model->SortModelFoldersFirst(_columns.leafName, _columns.isFolder);
+    }
+
     /**
      * Populates the given row with values matching for a certain declaration or folder
      *
