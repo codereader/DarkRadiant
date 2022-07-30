@@ -9,6 +9,7 @@
 #include <wx/sizer.h>
 
 #include "texturelib.h"
+#include "gamelib.h"
 #include "string/split.h"
 #include "string/predicate.h"
 
@@ -32,13 +33,21 @@ class ThreadedMaterialLoader final :
     public wxutil::ThreadedDeclarationTreePopulator
 {
 private:
-    const ShaderSelector::PrefixList& _prefixes;
+    std::vector<std::string> _prefixes;
 
 public:
-    ThreadedMaterialLoader(const wxutil::DeclarationTreeView::Columns& columns, const ShaderSelector::PrefixList& prefixes) :
-        ThreadedDeclarationTreePopulator(decl::Type::Material, columns, TEXTURE_ICON),
-        _prefixes(prefixes)
-    {}
+    ThreadedMaterialLoader(const wxutil::DeclarationTreeView::Columns& columns, ShaderSelector::TextureFilter filter) :
+        ThreadedDeclarationTreePopulator(decl::Type::Material, columns, TEXTURE_ICON)
+    {
+        if (filter == ShaderSelector::TextureFilter::Lights)
+        {
+            _prefixes = game::current::getLightTexturePrefixes();
+        }
+        else
+        {
+            _prefixes = std::vector<std::string>{ GlobalMaterialManager().getTexturePrefix() };
+        }
+    }
 
     ~ThreadedMaterialLoader() override
     {
@@ -54,7 +63,7 @@ protected:
         {
             for (const std::string& prefix : _prefixes)
             {
-                if (string::istarts_with(materialName, prefix + "/"))
+                if (string::istarts_with(materialName, prefix))
                 {
                     populator.addPath(materialName, [&](wxutil::TreeModel::Row& row,
                         const std::string& path, const std::string& leafName, bool isFolder)
@@ -69,17 +78,15 @@ protected:
 };
 
 ShaderSelector::ShaderSelector(wxWindow* parent, const std::function<void()>& selectionChanged,
-    const std::string& prefixes) :
+    TextureFilter textureFilter) :
 	wxPanel(parent, wxID_ANY),
 	_treeView(nullptr),
+    _textureFilter(textureFilter),
 	_selectionChanged(selectionChanged)
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	// Split the given comma-separated list into the vector
-	string::split(_prefixes, prefixes, ",");
-
-	// Pack in TreeView and info panel
+    // Pack in TreeView and info panel
 	createTreeView();
 	createPreview();
 }
@@ -111,7 +118,7 @@ void ShaderSelector::createTreeView()
 
     GetSizer()->Add(_treeView, 1, wxEXPAND);
 
-    _treeView->Populate(std::make_shared<ThreadedMaterialLoader>(_shaderTreeColumns, _prefixes));
+    _treeView->Populate(std::make_shared<ThreadedMaterialLoader>(_shaderTreeColumns, _textureFilter));
 }
 
 void ShaderSelector::createPreview()

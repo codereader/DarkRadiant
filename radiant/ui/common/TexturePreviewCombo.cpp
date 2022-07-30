@@ -18,11 +18,6 @@
 namespace ui
 {
 
-namespace
-{
-    constexpr const char* const LIGHT_PREFIX_XPATH = "/light/texture//prefix";
-}
-
 TexturePreviewCombo::TexturePreviewCombo(wxWindow* parent) :
     wxPanel(parent, wxID_ANY),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexturePreviewCombo::_onRender, this), "TexturePreviewCombo")),
@@ -219,14 +214,7 @@ bool TexturePreviewCombo::_onRender()
 
 void TexturePreviewCombo::loadLightTexturePrefixes()
 {
-    // Get the list of light texture prefixes from the registry
-    auto prefList = game::current::getNodes(LIGHT_PREFIX_XPATH);
-
-    // Copy the Node contents into the prefix vector
-    for (const auto& node : prefList)
-    {
-        _lightTexturePrefixes.push_back(node.getContent() + "/");
-    }
+    _lightTexturePrefixes = game::current::getLightTexturePrefixes();
 }
 
 bool TexturePreviewCombo::isLightTexture()

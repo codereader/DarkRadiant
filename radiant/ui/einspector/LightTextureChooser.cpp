@@ -14,34 +14,6 @@
 namespace ui
 {
 
-namespace
-{
-	const char* const LIGHT_PREFIX_XPATH = "/light/texture//prefix";
-
-	/** greebo: Loads the prefixes from the registry and creates a
-	 * 			comma-separated list string
-	 */
-	inline std::string getPrefixList()
-	{
-		std::string prefixes;
-
-		// Get the list of light texture prefixes from the registry
-		xml::NodeList prefList = GlobalGameManager().currentGame()->getLocalXPath(LIGHT_PREFIX_XPATH);
-
-		// Copy the Node contents into the prefix vector
-		for (xml::NodeList::iterator i = prefList.begin();
-			 i != prefList.end();
-			 ++i)
-		{
-			prefixes += (prefixes.empty()) ? "" : ",";
-			prefixes += i->getContent();
-		}
-
-		return prefixes;
-	}
-}
-
-// Construct the dialog
 LightTextureChooser::LightTextureChooser() :
 	wxutil::DialogBase(_("Choose texture"), GlobalMainFrame().getWxTopLevelWindow())
 {
@@ -52,7 +24,7 @@ LightTextureChooser::LightTextureChooser() :
 	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
 	mainPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);	
 
-	_selector = new ShaderSelector(mainPanel, {}, getPrefixList());
+	_selector = new ShaderSelector(mainPanel, {}, ShaderSelector::TextureFilter::Lights);
 
 	// Pack in the ShaderSelector and buttons panel
 	dialogVBox->Add(_selector, 1, wxEXPAND);

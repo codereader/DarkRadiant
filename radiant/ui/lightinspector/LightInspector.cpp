@@ -33,29 +33,7 @@ namespace
 {
     const char* LIGHTINSPECTOR_TITLE = N_("Light properties");
     const std::string RKEY_WINDOW_STATE = "user/ui/lightInspector/window";
-    const char* LIGHT_PREFIX_XPATH = "/light/texture//prefix";
     const char* COLOR_KEY = "_color";
-
-    /** greebo: Loads the prefixes from the registry and creates a
-     *          comma-separated list string
-     */
-    inline std::string getPrefixList() {
-        std::string prefixes;
-
-        // Get the list of light texture prefixes from the registry
-        xml::NodeList prefList = GlobalGameManager().currentGame()->getLocalXPath(LIGHT_PREFIX_XPATH);
-
-        // Copy the Node contents into the prefix vector
-        for (xml::NodeList::iterator i = prefList.begin();
-             i != prefList.end();
-             ++i)
-        {
-            prefixes += (prefixes.empty()) ? "" : ",";
-            prefixes += i->getContent();
-        }
-
-        return prefixes;
-    }
 }
 
 // Private constructor sets up dialog
@@ -197,7 +175,8 @@ void LightInspector::setupTextureWidgets()
 {
     wxPanel* parent = findNamedObject<wxPanel>(this, "LightInspectorChooserPanel");
 
-    _texSelector = new ShaderSelector(parent, std::bind(&LightInspector::shaderSelectionChanged, this), getPrefixList());
+    _texSelector = new ShaderSelector(parent, std::bind(&LightInspector::shaderSelectionChanged, this), 
+        ShaderSelector::TextureFilter::Lights);
     parent->GetSizer()->Add(_texSelector, 1, wxEXPAND);
 }
 

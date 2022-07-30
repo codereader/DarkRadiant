@@ -7,6 +7,8 @@
 #include <wx/button.h>
 #include <wx/textctrl.h>
 
+#include "ShaderSelector.h"
+
 namespace ui
 {
 	namespace
@@ -30,7 +32,7 @@ ShaderChooser::ShaderChooser(wxWindow* parent, wxTextCtrl* targetEntry) :
 	mainPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
 
 	_selector = new ShaderSelector(mainPanel, 
-        std::bind(&ShaderChooser::shaderSelectionChanged, this), SHADER_PREFIXES);
+        std::bind(&ShaderChooser::shaderSelectionChanged, this), ShaderSelector::TextureFilter::Regular);
 
 	if (_targetEntry != nullptr)
 	{

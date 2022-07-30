@@ -70,6 +70,27 @@ inline std::string getInfoFileExtension()
     return extension;
 }
 
+constexpr const char* const LIGHT_PREFIX_XPATH = "/light/texture//prefix";
+
+/**
+ * Returns the list of light texture prefixes, including trailing slashes
+ */
+inline std::vector<std::string> getLightTexturePrefixes()
+{
+    std::vector<std::string> prefixes;
+
+    // Get the list of light texture prefixes from the registry
+    auto prefList = getNodes(LIGHT_PREFIX_XPATH);
+
+    // Copy the Node contents into the prefix vector
+    for (const auto& node : prefList)
+    {
+        prefixes.push_back(node.getContent() + "/");
+    }
+
+    return prefixes;
+}
+
 } // namespace
 
 } // namespace

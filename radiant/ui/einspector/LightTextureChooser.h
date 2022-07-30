@@ -50,9 +50,6 @@ public:
      */
     void setSelectedTexture(const std::string& textureName);
 
-	// greebo: Gets called upon selection change
-	void shaderSelectionChanged();
-
 };
 
 } // namespace ui

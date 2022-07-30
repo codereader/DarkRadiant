@@ -35,26 +35,30 @@ namespace ui
 class ShaderSelector :
 	public wxPanel
 {
+public:
+    enum class TextureFilter
+    {
+        Regular, // prefix: "textures/"
+        Lights,  // prefix: light/, fog/
+    };
+
 private:
     wxutil::DeclarationTreeView::Columns _shaderTreeColumns;
 	wxutil::DeclarationTreeView* _treeView;
+
+    TextureFilter _textureFilter;
 
 	std::function<void()> _selectionChanged;
 
     TexturePreviewCombo* _previewCombo;
 
 public:
-	// This is where the prefixes are stored (needed to filter the possible shaders)
-	typedef std::vector<std::string> PrefixList;
-	PrefixList _prefixes;
-
 	/** Constructor.
 	 *
 	 * @selectionChanged: Functor invoked when the tree view selection changes.
 	 * @prefixes: A comma-separated list of shader prefixes.
 	 */
-	ShaderSelector(wxWindow* parent, const std::function<void()>& selectionChanged,
-		const std::string& prefixes);
+	ShaderSelector(wxWindow* parent, const std::function<void()>& selectionChanged, TextureFilter filter);
 
 	/** Return the shader selected by the user, or an empty string if there
 	 * was no selection.
