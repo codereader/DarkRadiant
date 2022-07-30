@@ -12,7 +12,6 @@ add_executable(darkradiant
                eventmanager/Statement.cpp
                eventmanager/Toggle.cpp
                eventmanager/WidgetToggle.cpp
-               log/Console.cpp
                main.cpp
                map/AutoSaveTimer.cpp
                map/StartupMapLoader.cpp
@@ -33,7 +32,6 @@ add_executable(darkradiant
                ui/brush/QuerySidesDialog.cpp
                ui/commandlist/CommandList.cpp
                ui/commandlist/ShortcutChooser.cpp
-               ui/common/CommandEntry.cpp
                ui/common/EntityChooser.cpp
                ui/common/ImageFilePopulator.cpp
                ui/common/ImageFileSelector.cpp
@@ -44,6 +42,8 @@ add_executable(darkradiant
                ui/common/SkinChooser.cpp
                ui/common/SoundChooser.cpp
                ui/common/SoundShaderPreview.cpp
+               ui/console/CommandEntry.cpp
+               ui/console/Console.cpp
                ui/DispatchEvent.cpp
                ui/Documentation.cpp
                ui/eclasstree/EClassTreeBuilder.cpp

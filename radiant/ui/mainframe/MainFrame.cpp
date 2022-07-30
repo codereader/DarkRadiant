@@ -11,7 +11,7 @@
 #include "iregistry.h"
 #include "iradiant.h"
 
-#include "log/Console.h"
+#include "ui/console/Console.h"
 #include "xyview/GlobalXYWnd.h"
 #include "camera/CameraWndManager.h"
 

@@ -35,7 +35,7 @@
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/Documentation.h"
-#include "log/Console.h"
+#include "ui/console/Console.h"
 #include "ui/lightinspector/LightInspector.h"
 #include "ui/patch/PatchInspector.h"
 #include "ui/surfaceinspector/SurfaceInspector.h"

@@ -188,6 +188,9 @@
     <Filter Include="src\textool\tools">
       <UniqueIdentifier>{05468cce-ffef-47f1-9a5e-d4278f0ae3c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\console">
+      <UniqueIdentifier>{66e30145-e977-405c-9507-fc783318215a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -213,9 +216,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\commandlist\ShortcutChooser.cpp">
       <Filter>src\ui\commandlist</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\common\CommandEntry.cpp">
-      <Filter>src\ui\common</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\common\EntityChooser.cpp">
       <Filter>src\ui\common</Filter>
@@ -381,9 +381,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp">
       <Filter>src\xyview</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\log\Console.cpp">
-      <Filter>src\log</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\precompiled.cpp">
       <Filter>src</Filter>
@@ -703,6 +700,12 @@
     <ClCompile Include="..\..\radiant\ui\common\SkinChooser.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\console\CommandEntry.cpp">
+      <Filter>src\ui\console</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\console\Console.cpp">
+      <Filter>src\ui\console</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -728,9 +731,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\commandlist\ShortcutChooser.h">
       <Filter>src\ui\commandlist</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\common\CommandEntry.h">
-      <Filter>src\ui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\EntityChooser.h">
       <Filter>src\ui\common</Filter>
@@ -914,9 +914,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h">
       <Filter>src\xyview</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\log\Console.h">
-      <Filter>src\log</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\log\PIDFile.h">
       <Filter>src\log</Filter>
@@ -1367,6 +1364,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\SkinChooser.h">
       <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\console\CommandEntry.h">
+      <Filter>src\ui\console</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\console\Console.h">
+      <Filter>src\ui\console</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

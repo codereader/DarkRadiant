@@ -235,6 +235,8 @@
     <ClCompile Include="..\..\radiant\ui\common\SkinChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\SoundShaderPreview.cpp" />
+    <ClCompile Include="..\..\radiant\ui\console\CommandEntry.cpp" />
+    <ClCompile Include="..\..\radiant\ui\console\Console.cpp" />
     <ClCompile Include="..\..\radiant\ui\DispatchEvent.cpp" />
     <ClCompile Include="..\..\radiant\ui\Documentation.cpp" />
     <ClCompile Include="..\..\radiant\ui\eclasstree\EClassTree.cpp" />
@@ -285,7 +287,6 @@
     <ClCompile Include="..\..\radiant\ui\about\AboutDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\commandlist\CommandList.cpp" />
     <ClCompile Include="..\..\radiant\ui\commandlist\ShortcutChooser.cpp" />
-    <ClCompile Include="..\..\radiant\ui\common\CommandEntry.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\EntityChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MapPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ShaderChooser.cpp" />
@@ -369,7 +370,6 @@
     <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\XYWnd.cpp" />
-    <ClCompile Include="..\..\radiant\log\Console.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\ApplicationContext.h" />
@@ -426,6 +426,8 @@
     <ClInclude Include="..\..\radiant\ui\common\SkinChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h" />
+    <ClInclude Include="..\..\radiant\ui\console\CommandEntry.h" />
+    <ClInclude Include="..\..\radiant\ui\console\Console.h" />
     <ClInclude Include="..\..\radiant\ui\DispatchEvent.h" />
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />
@@ -491,7 +493,6 @@
     <ClInclude Include="..\..\radiant\ui\commandlist\CommandList.h" />
     <ClInclude Include="..\..\radiant\ui\commandlist\CommandListPopulator.h" />
     <ClInclude Include="..\..\radiant\ui\commandlist\ShortcutChooser.h" />
-    <ClInclude Include="..\..\radiant\ui\common\CommandEntry.h" />
     <ClInclude Include="..\..\radiant\ui\common\EntityChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\MapPreview.h" />
     <ClInclude Include="..\..\radiant\ui\common\ShaderChooser.h" />
@@ -590,7 +591,6 @@
     <ClInclude Include="..\..\radiant\xyview\tools\ZoomTool.h" />
     <ClInclude Include="..\..\radiant\xyview\XYRenderer.h" />
     <ClInclude Include="..\..\radiant\xyview\XYWnd.h" />
-    <ClInclude Include="..\..\radiant\log\Console.h" />
     <ClInclude Include="..\..\radiant\log\PIDFile.h" />
     <ClInclude Include="..\..\radiant\log\PopupErrorHandler.h" />
   </ItemGroup>
