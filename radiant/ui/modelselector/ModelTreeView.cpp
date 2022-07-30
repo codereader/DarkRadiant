@@ -1,6 +1,9 @@
 #include "ModelTreeView.h"
 
+#include "ideclmanager.h"
 #include "ModelPopulator.h"
+#include "wxutil/menu/IconTextMenuItem.h"
+#include "wxutil/sourceview/DeclarationSourceView.h"
 
 namespace ui
 {
@@ -19,6 +22,11 @@ ModelTreeView::ModelTreeView(wxWindow* parent) :
     // Use the TreeModel's full string search function
     AddSearchColumn(Columns().iconAndName);
     EnableFavouriteManagement("model");
+
+    AddCustomMenuItem(std::make_shared<wxutil::MenuItem>(
+        new wxutil::IconTextMenuItem(_("Show Definition"), "decl.png"),
+        std::bind(&ModelTreeView::showModelDefinition, this),
+        std::bind(&ModelTreeView::testShowModelDefinition, this)));
 }
 
 const ModelTreeView::TreeColumns& ModelTreeView::Columns() const
@@ -108,6 +116,32 @@ std::string ModelTreeView::GetColumnValue(const wxutil::TreeModel::Column& colum
     wxutil::TreeModel::Row row(item, *GetModel());
 
     return row[column];
+}
+
+void ModelTreeView::showModelDefinition()
+{
+    auto selectedModelPath = GetColumnValue(Columns().modelPath);
+    auto modelDef = GlobalDeclarationManager().findDeclaration(decl::Type::ModelDef, selectedModelPath);
+
+    if (modelDef)
+    {
+        auto view = new wxutil::DeclarationSourceView(this);
+        view->setDeclaration(modelDef);
+
+        view->ShowModal();
+        view->Destroy();
+    }
+}
+
+bool ModelTreeView::testShowModelDefinition()
+{
+    if (IsDirectorySelected()) return false;
+
+    auto selectedModelPath = GetColumnValue(Columns().modelPath);
+
+    auto modelDef = GlobalDeclarationManager().findDeclaration(decl::Type::ModelDef, selectedModelPath);
+
+    return modelDef != nullptr;
 }
 
 }
