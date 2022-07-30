@@ -21,7 +21,8 @@ private:
 
 private:
 
-	void onBrowseButtonClick() override;
+	void _onBrowseButton(wxCommandEvent& ev);
+    void _onShowDefinition(wxCommandEvent& ev);
 
 public:
 

@@ -3,15 +3,16 @@
 
 #include "i18n.h"
 #include "ientity.h"
-#include "iundo.h"
+#include "ieclass.h"
 #include "icommandsystem.h"
 
 #include <wx/panel.h>
 #include <wx/button.h>
 #include <wx/sizer.h>
 #include "wxutil/EntityClassChooser.h"
+#include "wxutil/sourceview/DeclarationSourceView.h"
 
-#include "command/ExecutionFailure.h"
+#include "wxutil/Bitmap.h"
 
 namespace ui
 {
@@ -23,11 +24,26 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelect
 : PropertyEditor(entities),
   _key(name)
 {
-	constructBrowseButtonPanel(parent, _("Choose Entity Class..."),
-		PropertyEditorFactory::getBitmapFor("classname"));
+    wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+    mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+
+    // Register the main widget in the base class
+    setMainWidget(mainVBox);
+
+    wxButton* browseButton = new wxButton(mainVBox, wxID_ANY, _("Choose Entity Class..."));
+    browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("classname"));
+    browseButton->Bind(wxEVT_BUTTON, &ClassnamePropertyEditor::_onBrowseButton, this);
+
+    // Browse button for particles
+    wxButton* showDefinition = new wxButton(mainVBox, wxID_ANY, _("Show Definition..."));
+    showDefinition->SetBitmap(wxutil::GetLocalBitmap("decl.png"));
+    showDefinition->Bind(wxEVT_BUTTON, &ClassnamePropertyEditor::_onShowDefinition, this);
+
+    mainVBox->GetSizer()->Add(browseButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
+    mainVBox->GetSizer()->Add(showDefinition, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
 }
 
-void ClassnamePropertyEditor::onBrowseButtonClick()
+void ClassnamePropertyEditor::_onBrowseButton(wxCommandEvent& ev)
 {
 	std::string currentEclass = _entities.getSharedKeyValue(_key, false);
 
@@ -41,6 +57,21 @@ void ClassnamePropertyEditor::onBrowseButtonClick()
 		// Apply the classname change to the current selection, dispatch the command
 		GlobalCommandSystem().executeCommand("SetEntityKeyValue", _key, selection);
 	}
+}
+
+void ClassnamePropertyEditor::_onShowDefinition(wxCommandEvent& ev)
+{
+    auto currentEclass = _entities.getSharedKeyValue(_key, false);
+    auto eclass = GlobalEntityClassManager().findClass(currentEclass);
+
+    if (eclass)
+    {
+        auto view = new wxutil::DeclarationSourceView(getWidget());
+        view->setDeclaration(eclass);
+
+        view->ShowModal();
+        view->Destroy();
+    }
 }
 
 } // namespace ui
