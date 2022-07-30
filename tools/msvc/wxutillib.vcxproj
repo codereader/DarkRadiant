@@ -233,6 +233,7 @@
     <ClCompile Include="..\..\libs\wxutil\preview\ParticlePreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\RenderPreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\SerialisableWidgets.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\sourceview\DeclarationSourceView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\sourceview\DefinitionView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\sourceview\SourceView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\Splitter.cpp" />

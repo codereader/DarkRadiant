@@ -158,4 +158,15 @@ public:
     D3ParticleSourceViewCtrl(wxWindow* parent);
 };
 
+/**
+* A special class providing highlighting for the Doom 3
+* modelDef syntax.
+*/
+class D3ModelDefSourceViewCtrl :
+    public D3DeclarationViewCtrl
+{
+public:
+    D3ModelDefSourceViewCtrl(wxWindow* parent);
+};
+
 } // namespace

@@ -2,15 +2,7 @@
 
 #include <sigc++/connection.h>
 #include "ideclmanager.h"
-#include "i18n.h"
-#include "fmt/format.h"
 #include "DefinitionView.h"
-#include "SourceView.h"
-
-// Some X11 headers are defining this
-#ifdef None
-#undef None
-#endif
 
 namespace wxutil
 {
@@ -28,92 +20,23 @@ private:
     sigc::connection _declChangedConn;
 
 public:
-    DeclarationSourceView(wxWindow* parent) :
-        DefinitionView("", parent),
-        _activeSourceViewType(decl::Type::Undetermined)
-    {
-        updateSourceView();
-    }
+    DeclarationSourceView(wxWindow* parent);
 
-    ~DeclarationSourceView()
-    {
-        _declChangedConn.disconnect();
-    }
+    ~DeclarationSourceView() override;
 
-    void setDeclaration(const decl::IDeclaration::Ptr& decl)
-    {
-        _declChangedConn.disconnect();
+    void setDeclaration(const decl::IDeclaration::Ptr& decl);
 
-        _decl = decl;
-
-        if (_decl)
-        {
-            _declChangedConn = _decl->signal_DeclarationChanged().connect(
-                sigc::mem_fun(*this, &DeclarationSourceView::update)
-            );
-        }
-
-        updateSourceView();
-        update();
-        updateTitle();
-    }
-
-    void setDeclaration(decl::Type type, const std::string& declName)
-    {
-        setDeclaration(GlobalDeclarationManager().findDeclaration(type, declName));
-    }
+    void setDeclaration(decl::Type type, const std::string& declName);
 
 protected:
-    bool isEmpty() const override
-    {
-        return !_decl;
-    }
-
-    std::string getDeclName() override
-    {
-        return _decl ? _decl->getDeclName() : "";
-    }
-
-    std::string getDeclFileName() override
-    {
-        return _decl ? _decl->getDeclFilePath() : "";
-    }
-
-    std::string getDefinition() override
-    {
-        return _decl ? _decl->getBlockSyntax().contents : "";
-    }
+    bool isEmpty() const override;
+    std::string getDeclName() override;
+    std::string getDeclFileName() override;
+    std::string getDefinition() override;
 
 private:
-    void updateTitle()
-    {
-        SetTitle(fmt::format(_("Declaration Source: {0}"), !isEmpty() ? _decl->getDeclName() : ""));
-    }
-
-    void updateSourceView()
-    {
-        auto newType = _decl ? _decl->getDeclType() : decl::Type::None;
-
-        if (newType == _activeSourceViewType) return;
-
-        _activeSourceViewType = newType;
-
-        // Pick the correct source view control based on the active type
-        switch (newType)
-        {
-        case decl::Type::SoundShader:
-            setSourceView(new D3SoundShaderSourceViewCtrl(getMainPanel()));
-            break;
-        case decl::Type::Material:
-            setSourceView(new D3MaterialSourceViewCtrl(getMainPanel()));
-            break;
-        case decl::Type::Particle:
-            setSourceView(new D3ParticleSourceViewCtrl(getMainPanel()));
-            break;
-        default:
-            setSourceView(new D3DeclarationViewCtrl(getMainPanel()));
-        }
-    }
+    void updateTitle();
+    void updateSourceView();
 };
 
 }

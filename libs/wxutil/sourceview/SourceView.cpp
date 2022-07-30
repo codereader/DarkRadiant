@@ -178,4 +178,14 @@ D3ParticleSourceViewCtrl::D3ParticleSourceViewCtrl(wxWindow* parent) :
         "flies orbit drip to");
 };
 
+// D3 ModelDefs
+
+D3ModelDefSourceViewCtrl::D3ModelDefSourceViewCtrl(wxWindow* parent) :
+    D3DeclarationViewCtrl(parent)
+{
+    SetKeyWords(0, "mesh anim channel frame inherit ");
+
+    SetKeyWords(1, "torso legs eyelids sound sound_voice no_random_headturning footstep ");
+};
+
 } // namespace

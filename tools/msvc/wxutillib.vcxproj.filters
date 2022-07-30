@@ -256,5 +256,8 @@
     <ClCompile Include="..\..\libs\wxutil\sourceview\SourceView.cpp">
       <Filter>sourceview</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\sourceview\DeclarationSourceView.cpp">
+      <Filter>sourceview</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
