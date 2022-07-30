@@ -3,13 +3,13 @@
 	<subMenu name="file" caption="&amp;File">
 		<menuItem name="new" caption="&amp;New Map" command="NewMap" />
 		<menuSeparator />
-		<menuItem name="open" caption="&amp;Open..." command="OpenMap" />
+		<menuItem name="open" caption="&amp;Open..." command="OpenMap" icon="file_open.png" />
 		<menuItem name="openMapFromProject" caption="&amp;Open Map from Project..." command="OpenMapFromProject" />
 		<menuItem name="import" caption="&amp;Import Map..." command="ImportMap" />
 		<menuItem name="mergeMap" caption="&amp;Merge Map..." command="MergeControlDialog" />
 		<menuItem name="loadprefab" caption="Import &amp;Prefab..." command="LoadPrefab" />
 		<menuSeparator />
-		<menuItem name="save" caption="&amp;Save" command="SaveMap" />
+		<menuItem name="save" caption="&amp;Save" command="SaveMap" icon="file_save.png" />
 		<menuItem name="saveas" caption="Save &amp;as..." command="SaveMapAs" />
 		<menuItem name="saveCopyAs" caption="Save &amp;copy as..." command="SaveMapCopyAs" />
 		<menuSeparator />
@@ -23,8 +23,8 @@
 		<menuItem name="ConvertModel" caption="Import/Convert Model..." command="ConvertModelDialog" />
 		<menuSeparator />
 		<menuItem name="reloadDecls" caption="Reload Declarations" command="ReloadDecls" icon="decl.png" />
-		<menuItem name="refreshModels" caption="&amp;Reload Models" command="RefreshModels" icon="model16red.png" />
-		<menuItem name="refreshSelectedModels" caption="Reload Selected Models" command="RefreshSelectedModels" icon="model16red.png" />
+		<menuItem name="refreshModels" caption="&amp;Reload Models" command="RefreshModels" icon="model16green.png" />
+		<menuItem name="refreshSelectedModels" caption="Reload Selected Models" command="RefreshSelectedModels" icon="model16green.png" />
 		<menuSeparator />
 		<menuItem name="gameSelector" caption="&amp;Game/Project Setup..." command="ProjectSettings" />
 		<menuSeparator />

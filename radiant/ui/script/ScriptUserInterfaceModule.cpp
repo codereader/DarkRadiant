@@ -49,7 +49,7 @@ public:
 			"ReloadScripts", // name
 			menu::ItemType::Item,	// type
 			_("Reload Scripts"),	// caption
-			"",	// icon
+			"icon_script.png",	// icon
 			"ReloadScripts"); // event name
 
 		// Subscribe to get notified as soon as Radiant is fully initialised
