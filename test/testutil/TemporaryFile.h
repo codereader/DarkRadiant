@@ -3,6 +3,7 @@
 #include <string>
 #include <fstream>
 #include "os/file.h"
+#include "../algorithm/FileUtils.h"
 
 namespace test
 {
@@ -29,10 +30,7 @@ public:
 
     void setContents(const std::string& contents)
     {
-        std::ofstream stream(_path, std::ofstream::out);
-        stream << contents;
-        stream.flush();
-        stream.close();
+        algorithm::replaceFileContents(_path, contents);
     }
 
     ~TemporaryFile()

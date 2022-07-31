@@ -1,3 +1,13 @@
+model flag_pirate01
+{
+    mesh                        models/md5/flag01.md5mesh
+}
+
+model reload_decl_test_model
+{
+    mesh                        reload_decl_test_nonexisting_md5.md5mesh
+}
+
 model just_a_model
 {
     mesh                       just_an_md5.md5mesh

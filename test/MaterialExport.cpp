@@ -6,6 +6,7 @@
 #include "string/trim.h"
 #include "string/replace.h"
 #include "materials/ParseLib.h"
+#include "algorithm/FileUtils.h"
 #include <fmt/format.h>
 
 namespace test
@@ -1085,33 +1086,6 @@ bool fileContainsText(const fs::path& path, const std::string& textToFind)
 
     return contents.find(textToFind) != std::string::npos;
 }
-
-class BackupCopy
-{
-private:
-    fs::path _originalFile;
-    fs::path _backupFile;
-public:
-    BackupCopy(const fs::path& originalFile) :
-        _originalFile(originalFile)
-    {
-        _backupFile = _originalFile;
-        _backupFile.replace_extension("bak");
-
-        if (fs::exists(_backupFile))
-        {
-            fs::remove(_backupFile);
-        }
-
-        fs::copy(_originalFile, _backupFile);
-    }
-
-    ~BackupCopy()
-    {
-        fs::remove(_originalFile);
-        fs::rename(_backupFile, _originalFile);
-    }
-};
 
 TEST_F(MaterialExportTest, MaterialDefDetectionRegex)
 {
