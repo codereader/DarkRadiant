@@ -151,9 +151,9 @@ inline void setWorldspawnKeyValue(const std::string& key, const std::string& val
     Node_getEntity(entity)->setKeyValue(key, value);
 }
 
-inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
+inline scene::INodePtr findChildModelNode(const scene::INodePtr& parent)
 {
-    model::ModelNodePtr candidate;
+    scene::INodePtr candidate;
 
     parent->foreachNode([&](const scene::INodePtr& node)
     {
@@ -161,7 +161,7 @@ inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
 
         if (model)
         {
-            candidate = model;
+            candidate = node;
             return false;
         }
 
@@ -169,6 +169,11 @@ inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
     });
 
     return candidate;
+}
+
+inline model::ModelNodePtr findChildModel(const scene::INodePtr& parent)
+{
+    return Node_getModel(findChildModelNode(parent));
 }
 
 // Returns the number of children of the given parent node matching the given predicate

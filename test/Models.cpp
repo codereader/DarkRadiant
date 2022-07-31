@@ -664,4 +664,38 @@ TEST_F(ModelTest, ModelKeyMonitorsDefAfterUndo)
     EXPECT_EQ(model->getIModel().getPolyCount(), 96) << "Polycount is incorrect after the def change";
 }
 
+// #6035: ReloadDecls causes the ModelKey to refresh the model, resetting its transform to identity
+TEST_F(ModelTest, ModelOriginIsPreservedAfterDefChange)
+{
+    auto modelDef = GlobalEntityClassManager().findModel("reload_decl_test_model");
+    EXPECT_TRUE(modelDef) << "ModelDef not found, cannot continue test";
+    EXPECT_FALSE(os::fileOrDirExists(_context.getTestProjectPath() + modelDef->getMesh())) << "ModelDef shouldn't exist on disk";
+
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", modelDef->getDeclName());
+    funcStatic->getEntity().setKeyValue("origin", "300 100 50");
+
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+    auto modelNode = algorithm::findChildModelNode(funcStatic);
+    EXPECT_TRUE(modelNode) << "No ModelNode found after assigning the key";
+
+    // Check and remember this translation
+    auto translation = modelNode->localToWorld().tCol();
+    EXPECT_TRUE(math::isNear(translation, { 300, 100, 50 }, 0.001));
+    EXPECT_TRUE(math::isNear(translation, funcStatic->localToWorld().tCol(), 0.001));
+
+    // Change the syntax block of the def
+    auto newMd5Mesh = "models/md5/flag01.md5mesh";
+    auto syntax = modelDef->getBlockSyntax();
+    string::replace_all(syntax.contents, modelDef->getMesh(), newMd5Mesh);
+    modelDef->setBlockSyntax(syntax);
+
+    modelNode = algorithm::findChildModelNode(funcStatic);
+
+    EXPECT_TRUE(modelNode) << "No ModelNode found on the entity after changing the def";
+    auto newTranslation = modelNode->localToWorld().tCol();
+    EXPECT_TRUE(math::isNear(newTranslation, translation, 0.001))
+        << "Translation changed after reloading the def, was " << translation << ", it changed to " << newTranslation;
+}
+
 }
