@@ -155,7 +155,10 @@ void ModelPreview::prepareScene()
 		_entity->removeChildNode(_modelNode);
 	}
 
-	_modelNode = GlobalModelCache().getModelNode(_model);
+    // Check if the model key is pointing to a def
+    auto modelDef = GlobalEntityClassManager().findModel(_model);
+
+	_modelNode = GlobalModelCache().getModelNode(modelDef ? modelDef->getMesh() : _model);
 
     if (_modelNode)
 	{
