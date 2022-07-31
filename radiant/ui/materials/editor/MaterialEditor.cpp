@@ -1557,6 +1557,9 @@ void MaterialEditor::selectMaterial(const MaterialPtr& material)
 
 void MaterialEditor::_onNewMaterial(wxCommandEvent& ev)
 {
+    // Clear the filter before creating a new material
+    _treeView->ClearFilterText();
+
     auto materialName = "textures/darkmod/map_specific/unnamed";
     auto newMaterial = GlobalMaterialManager().createEmptyMaterial(materialName);
 
