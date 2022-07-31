@@ -13,6 +13,7 @@
 #include "string/trim.h"
 #include "os/path.h"
 #include "fmt/format.h"
+#include "gamelib.h"
 #include "stream/TemporaryOutputStream.h"
 #include "util/ScopedBoolLock.h"
 
@@ -418,15 +419,7 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
 
     std::string relativePath = syntax.fileInfo.fullPath();
 
-    fs::path targetPath = GlobalGameManager().getModPath();
-
-    if (targetPath.empty())
-    {
-        targetPath = GlobalGameManager().getUserEnginePath();
-
-        rMessage() << "No mod base path found, falling back to user engine path to save particle file: " <<
-            targetPath.string() << std::endl;
-    }
+    fs::path targetPath = game::current::getWriteableGameResourcePath();
 
     // Ensure the target folder exists
     targetPath /= os::getDirectory(relativePath);

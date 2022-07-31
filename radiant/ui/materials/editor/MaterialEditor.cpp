@@ -1377,20 +1377,20 @@ bool MaterialEditor::saveCurrentMaterial()
             // Ask the user where to save it
             wxutil::FileChooser chooser(this, _("Select Material file"), false, "material", "." + mtrExtension);
 
-            fs::path modMaterialsPath = GlobalGameManager().getModPath();
-            modMaterialsPath /= materialsFolderName;
+            fs::path materialsPath = game::current::getWriteableGameResourcePath();
+            materialsPath /= materialsFolderName;
 
-            if (!os::fileOrDirExists(modMaterialsPath.string()))
+            if (!os::fileOrDirExists(materialsPath.string()))
             {
-                rMessage() << "Ensuring mod materials path: " << modMaterialsPath << std::endl;
-                fs::create_directories(modMaterialsPath);
+                rMessage() << "Ensuring materials path: " << materialsPath << std::endl;
+                fs::create_directories(materialsPath);
             }
 
             // Point the file chooser to that new file
-            chooser.setCurrentPath(GlobalGameManager().getModPath() + materialsFolderName);
+            chooser.setCurrentPath(materialsPath.string());
             chooser.askForOverwrite(false);
 
-            std::string result = chooser.display();
+            auto result = chooser.display();
 
             if (result.empty())
             {

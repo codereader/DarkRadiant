@@ -1,6 +1,7 @@
 #pragma once
 
 #include "igame.h"
+#include "itextstream.h"
 #include "registry/registry.h"
 #include "string/convert.h"
 #include "os/path.h"
@@ -89,6 +90,26 @@ inline std::vector<std::string> getLightTexturePrefixes()
     }
 
     return prefixes;
+}
+
+/**
+ * Returns the path where DarkRadiant is able to write custom game resources (like decls) to.
+ * This defaults to the mod path and falls back to the user engine path if not found.
+ * Does not create any directories.
+ */
+inline std::string getWriteableGameResourcePath()
+{
+    // Try the mod path first
+    auto targetPath = GlobalGameManager().getModPath();
+
+    if (targetPath.empty())
+    {
+        targetPath = GlobalGameManager().getUserEnginePath();
+
+        rMessage() << "No mod path found, falling back to user engine path: " << targetPath << std::endl;
+    }
+
+    return targetPath;
 }
 
 } // namespace
