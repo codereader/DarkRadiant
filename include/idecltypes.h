@@ -36,6 +36,7 @@ inline std::string getTypeName(Type type)
     case Type::Undetermined: return "Undetermined";
     case Type::None: return "None";
     case Type::Material: return "Material";
+    case Type::Table: return "Table";
     case Type::EntityDef: return "EntityDef";
     case Type::SoundShader: return "SoundShader";
     case Type::ModelDef: return "ModelDef";
