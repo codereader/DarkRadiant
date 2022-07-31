@@ -64,9 +64,22 @@ void ModelKey::attachModelNode()
 	// If the "model" spawnarg is empty, there's nothing to attach
     if (_model.path.empty()) return;
 
+    // The actual model path to request the model from the file cache
+    std::string actualModelPath(_model.path);
+
+    // Check if the model key is pointing to a def
+    if (auto modelDef = GlobalEntityClassManager().findModel(_model.path); modelDef)
+    {
+        // We have a valid modelDef, use the mesh defined there
+        actualModelPath = modelDef->getMesh();
+
+        // Start watching the modelDef for changes
+        subscribeToModelDef(modelDef);
+    }
+
 	// We have a non-empty model key, send the request to
 	// the model cache to acquire a new child node
-	_model.node = GlobalModelCache().getModelNode(_model.path);
+	_model.node = GlobalModelCache().getModelNode(actualModelPath);
 
 	// The model loader should not return NULL, but a sanity check is always ok
 	if (_model.node)
@@ -90,10 +103,17 @@ void ModelKey::attachModelNode()
 
 void ModelKey::detachModelNode()
 {
+    unsubscribeFromModelDef();
+
     if (!_model.node) return; // nothing to do
 
     _parentNode.removeChildNode(_model.node);
     _model.node.reset();
+}
+
+void ModelKey::onModelDefChanged()
+{
+    attachModelNodeKeepinSkin();
 }
 
 void ModelKey::attachModelNodeKeepinSkin()
@@ -125,7 +145,7 @@ void ModelKey::attachModelNodeKeepinSkin()
 void ModelKey::skinChanged(const std::string& value)
 {
 	// Check if we have a skinnable model
-	SkinnedModelPtr skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
+	auto skinned = std::dynamic_pointer_cast<SkinnedModel>(_model.node);
 
 	if (skinned)
 	{
@@ -147,4 +167,30 @@ void ModelKey::importState(const ModelNodeAndPath& data)
 {
 	_model.path = data.path;
 	_model.node = data.node;
+    _model.modelDefMonitored = data.modelDefMonitored;
+
+    if (_model.modelDefMonitored)
+    {
+        unsubscribeFromModelDef();
+
+        if (auto modelDef = GlobalEntityClassManager().findModel(_model.path); modelDef)
+        {
+            subscribeToModelDef(modelDef);
+        }
+    }
+}
+
+void ModelKey::subscribeToModelDef(const IModelDef::Ptr& modelDef)
+{
+    // Monitor this modelDef for potential mesh changes
+    _modelDefChanged = modelDef->signal_DeclarationChanged().connect(
+        sigc::mem_fun(this, &ModelKey::onModelDefChanged)
+    );
+    _model.modelDefMonitored = true;
+}
+
+void ModelKey::unsubscribeFromModelDef()
+{
+    _modelDefChanged.disconnect();
+    _model.modelDefMonitored = false;
 }
