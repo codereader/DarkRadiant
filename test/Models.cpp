@@ -588,4 +588,31 @@ TEST_F(ModelTest, ModelNodeIsRefreshedByReloadDecls)
     EXPECT_EQ(model->getIModel().getPolyCount(), 96); // should be the flag model's poly count now
 }
 
+TEST_F(ModelTest, ModelNodeIsRefreshedByChangingDef)
+{
+    auto modelDef = GlobalEntityClassManager().findModel("reload_decl_test_model");
+    EXPECT_TRUE(modelDef) << "ModelDef not found, cannot continue test";
+    EXPECT_FALSE(os::fileOrDirExists(_context.getTestProjectPath() + modelDef->getMesh())) << "ModelDef shouldn't exist on disk";
+
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", modelDef->getDeclName());
+
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+    EXPECT_TRUE(algorithm::findChildModel(funcStatic)) << "No ModelNode found after assigning the key";
+
+    // Change the syntax block of the def
+    auto newMd5Mesh = "models/md5/flag01.md5mesh";
+    auto syntax = modelDef->getBlockSyntax();
+    string::replace_all(syntax.contents, modelDef->getMesh(), newMd5Mesh);
+
+    // Assign the new syntax, this fires the decl changed signal, the entity should react
+    modelDef->setBlockSyntax(syntax);
+
+    auto model = algorithm::findChildModel(funcStatic);
+
+    EXPECT_TRUE(model) << "No ModelNode found on the entity";
+    EXPECT_EQ(model->getIModel().getModelPath(), newMd5Mesh);
+    EXPECT_EQ(model->getIModel().getPolyCount(), 96); // should be the flag model's poly count now
+}
+
 }
