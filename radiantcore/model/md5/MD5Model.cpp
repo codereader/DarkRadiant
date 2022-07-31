@@ -329,6 +329,8 @@ void MD5Model::updateAnim(std::size_t time)
 		surface->updateToSkeleton(_skeleton);
 	}
 
+    updateAABB();
+
     signal_ModelAnimationUpdated().emit();
 }
 

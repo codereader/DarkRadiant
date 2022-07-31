@@ -64,8 +64,7 @@ private:
     void onModelDefChanged();
 
 	// Loads the model node and attaches it to the parent node
-	void attachModelNode();
-
+    void attachModelNode();
     void detachModelNode();
 
     // Attaches a model node, making sure that the skin setting is kept
@@ -75,4 +74,6 @@ private:
 
     void subscribeToModelDef(const IModelDef::Ptr& modelDef);
     void unsubscribeFromModelDef();
+
+    void applyIdlePose(const scene::INodePtr& node, const IModelDef::Ptr& ptr);
 };

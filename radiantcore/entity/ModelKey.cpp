@@ -68,7 +68,9 @@ void ModelKey::attachModelNode()
     std::string actualModelPath(_model.path);
 
     // Check if the model key is pointing to a def
-    if (auto modelDef = GlobalEntityClassManager().findModel(_model.path); modelDef)
+    auto modelDef = GlobalEntityClassManager().findModel(_model.path);
+
+    if (modelDef)
     {
         // We have a valid modelDef, use the mesh defined there
         actualModelPath = modelDef->getMesh();
@@ -82,26 +84,28 @@ void ModelKey::attachModelNode()
 	_model.node = GlobalModelCache().getModelNode(actualModelPath);
 
 	// The model loader should not return NULL, but a sanity check is always ok
-	if (_model.node)
-	{
-		// Add the model node as child of the entity node
-		_parentNode.addChildNode(_model.node);
+    if (!_model.node) return;
 
-		// Assign the model node to the same layers as the parent entity
-		_model.node->assignToLayers(_parentNode.getLayers());
+	// Add the model node as child of the entity node
+	_parentNode.addChildNode(_model.node);
 
-		// Inherit the parent node's visibility. This should do the trick to resolve #2709
-		// but is not as heavy on performance as letting the Filtersystem check the whole subgraph
+	// Assign the model node to the same layers as the parent entity
+	_model.node->assignToLayers(_parentNode.getLayers());
 
-		// The sophisticated check would be like this
-		// GlobalFilterSystem().updateSubgraph(_parentNode.getSelf());
+	// Inherit the parent node's visibility. This should do the trick to resolve #2709
+	// but is not as heavy on performance as letting the Filtersystem check the whole subgraph
 
-		// Copy the visibility flags from the parent node (#4141 and #5134)
-		scene::assignVisibilityFlagsFromNode(*_model.node, _parentNode);
+	// Copy the visibility flags from the parent node (#4141 and #5134)
+	scene::assignVisibilityFlagsFromNode(*_model.node, _parentNode);
 
-        // Mark the transform of this model as changed, it must re-evaluate itself
-        _model.node->transformChanged();
-	}
+    // Assign idle pose to modelDef meshes
+    if (modelDef)
+    {
+        applyIdlePose(_model.node, modelDef);
+    }
+
+    // Mark the transform of this model as changed, it must re-evaluate itself
+    _model.node->transformChanged();
 }
 
 void ModelKey::detachModelNode()
@@ -196,4 +200,26 @@ void ModelKey::unsubscribeFromModelDef()
 {
     _modelDefChanged.disconnect();
     _model.modelDefMonitored = false;
+}
+
+void ModelKey::applyIdlePose(const scene::INodePtr& node, const IModelDef::Ptr& modelDef)
+{
+    auto modelNode = Node_getModel(node);
+
+    if (!modelNode) return;
+
+    // Set the animation to play
+    auto md5model = dynamic_cast<md5::IMD5Model*>(&(modelNode->getIModel()));
+
+    // Look up the "idle" anim if there is one
+    auto found = modelDef->getAnim("idle");
+
+    if (found.empty()) return;
+
+    // Load the anim
+    if (auto anim = GlobalAnimationCache().getAnim(found))
+    {
+        md5model->setAnim(anim);
+        md5model->updateAnim(0);
+    }
 }
