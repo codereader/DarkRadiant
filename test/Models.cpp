@@ -548,7 +548,7 @@ TEST_F(ModelTest, ClearingModelKeyRemovesModel)
 }
 
 // #5504: Reload Defs is not sufficient for reloading modelDefs
-TEST_F(ModelTest, ModelNodeIsRefreshedByReloadDecls)
+TEST_F(ModelTest, ModelKeyReactsToReloadDecls)
 {
     auto funcStatic = algorithm::createEntityByClassName("func_static");
     scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
@@ -588,7 +588,7 @@ TEST_F(ModelTest, ModelNodeIsRefreshedByReloadDecls)
     EXPECT_EQ(model->getIModel().getPolyCount(), 96); // should be the flag model's poly count now
 }
 
-TEST_F(ModelTest, ModelNodeIsRefreshedByChangingDef)
+TEST_F(ModelTest, ModelKeyMonitorsDef)
 {
     auto modelDef = GlobalEntityClassManager().findModel("reload_decl_test_model");
     EXPECT_TRUE(modelDef) << "ModelDef not found, cannot continue test";
@@ -613,6 +613,55 @@ TEST_F(ModelTest, ModelNodeIsRefreshedByChangingDef)
     EXPECT_TRUE(model) << "No ModelNode found on the entity";
     EXPECT_EQ(model->getIModel().getModelPath(), newMd5Mesh);
     EXPECT_EQ(model->getIModel().getPolyCount(), 96); // should be the flag model's poly count now
+}
+
+// Prove that the modelDef change subscription is restored after undo
+TEST_F(ModelTest, ModelKeyMonitorsDefAfterUndo)
+{
+    auto modelDef = GlobalEntityClassManager().findModel("reload_decl_test_model");
+    EXPECT_TRUE(modelDef) << "ModelDef not found, cannot continue test";
+    EXPECT_FALSE(os::fileOrDirExists(_context.getTestProjectPath() + modelDef->getMesh())) << "ModelDef shouldn't exist on disk";
+
+    auto funcStatic = algorithm::createEntityByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", modelDef->getDeclName());
+
+    scene::addNodeToContainer(funcStatic, GlobalMapModule().getRoot());
+
+    EXPECT_EQ(algorithm::findChildModel(funcStatic)->getIModel().getPolyCount(), 0) << "Model should be the NullModel";
+
+    // Change the model in the course of an undoable operation
+    {
+        UndoableCommand cmd("changeModelKey");
+        funcStatic->getEntity().setKeyValue("model", "models/ase/testcube.ase");
+    }
+
+    EXPECT_EQ(algorithm::findChildModel(funcStatic)->getIModel().getPolyCount(), 12) << "Model should be a cube now";
+
+    std::string newMd5Mesh("models/md5/flag01.md5mesh");
+
+    // Change the syntax of the modelDef
+    auto syntax = modelDef->getBlockSyntax();
+    syntax.contents = "mesh " + newMd5Mesh;
+    modelDef->setBlockSyntax(syntax);
+
+    // The entity should not be monitoring that modelDef, so no change is expected
+    EXPECT_EQ(algorithm::findChildModel(funcStatic)->getIModel().getPolyCount(), 12) << "Model should still be a cube";
+
+    // Change the modelDef back to something non-existent before undo
+    syntax.contents = "mesh some/nonexistent/mesh.md5mesh";
+    modelDef->setBlockSyntax(syntax);
+
+    // Now hit Undo, the entity's ModelKey should resume to monitor the modelDef
+    GlobalCommandSystem().execute("Undo");
+
+    syntax.contents = "mesh " + newMd5Mesh;
+    modelDef->setBlockSyntax(syntax);
+
+    auto model = algorithm::findChildModel(funcStatic);
+
+    EXPECT_TRUE(model) << "No ModelNode found on the entity";
+    EXPECT_EQ(model->getIModel().getModelPath(), newMd5Mesh) << "ModelKey didn't react to the mesh change";
+    EXPECT_EQ(model->getIModel().getPolyCount(), 96) << "Polycount is incorrect after the def change";
 }
 
 }
