@@ -1,14 +1,9 @@
 #include "ModelCache.h"
 
-#include "ieclass.h"
-#include "ifilesystem.h"
 #include "imodel.h"
-#include "imd5model.h"
-#include "imd5anim.h"
-#include "iparticles.h"
 #include "iparticlenode.h"
+#include "iparticles.h"
 
-#include <iostream>
 #include "os/path.h"
 #include "os/file.h"
 
@@ -26,77 +21,23 @@ ModelCache::ModelCache() :
 
 scene::INodePtr ModelCache::getModelNode(const std::string& modelPath)
 {
-	// Check if we have a reference to a modeldef
-	auto modelDef = GlobalEntityClassManager().findModel(modelPath);
-
-	// The actual model path (is usually the same as the incoming modelPath)
-	std::string actualModelPath(modelPath);
-
-	if (modelDef)
-	{
-		// We have a valid modelDef, override the model path
-		actualModelPath = modelDef->getMesh();
-	}
-
 	// Get the extension of this model
-    auto extension = os::getExtension(actualModelPath);
+    auto extension = os::getExtension(modelPath);
 
 	if (extension == "prt")
 	{
 		// This is a particle, pass the call to the Particles Manager
-		return GlobalParticlesManager().createParticleNode(actualModelPath);
+		return GlobalParticlesManager().createParticleNode(modelPath);
 	}
 
 	// Get a suitable model loader
 	auto modelLoader = GlobalModelFormatManager().getImporter(extension);
 
 	// Try to construct a model node using the suitable loader
-	auto node =  modelLoader->loadModel(actualModelPath);
+	auto node =  modelLoader->loadModel(modelPath);
 
-    if (!node)
-    {
-        // The model load failed, let's return a NullModel
-        return loadNullModel(actualModelPath);
-    }
-
-    // Model load was successful
-	// For MD5 models, apply the idle animation by default
-	if (modelDef)
-	{
-		auto modelNode = Node_getModel(node);
-
-		if (!modelNode)
-		{
-			return node;
-		}
-
-		// Set the animation to play
-		try
-		{
-			auto& md5model = dynamic_cast<md5::IMD5Model&>(modelNode->getIModel());
-
-			// Look up the "idle" anim if there is one
-			auto found = modelDef->getAnim("idle");
-
-			if (!found.empty())
-			{
-				// Load the anim
-				auto anim = GlobalAnimationCache().getAnim(found);
-
-				if (anim)
-				{
-					md5model.setAnim(anim);
-					md5model.updateAnim(0);
-				}
-			}
-		}
-		catch (std::bad_cast&)
-		{
-			// not an MD5 model, do nothing
-		}
-	}
-
-	return node;
+    // In case the model load failed, let's return a NullModel
+    return node ? node : loadNullModel(modelPath);
 }
 
 IModelPtr ModelCache::getModel(const std::string& modelPath)
