@@ -38,6 +38,7 @@
 #include "CheckBoxBinding.h"
 #include "MapExpressionEntry.h"
 #include "TexturePreview.h"
+#include "ui/common/ShaderChooser.h"
 
 namespace ui
 {
@@ -324,6 +325,14 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
     getControl<wxButton>("MaterialPreviewLightResetColourButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
     {
         _preview->resetLightColour();
+    });
+
+    getControl<wxButton>("MaterialPreviewRoomMaterialButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
+    {
+        auto textCtrl = getControl<wxTextCtrl>("MaterialPreviewRoomMaterial");
+        auto selector = new ShaderChooser(this, ShaderSelector::TextureFilter::Regular, textCtrl);
+        selector->ShowModal();
+        selector->Destroy();
     });
 }
 
