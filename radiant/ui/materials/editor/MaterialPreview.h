@@ -10,6 +10,10 @@
 namespace ui
 {
 
+/**
+ * A render preview to display materials on a rotating object
+ * placed in a room with customisable material and lighting.
+ */
 class MaterialPreview :
     public wxutil::RenderPreview
 {
@@ -29,13 +33,15 @@ private:
     std::shared_ptr<TestModelSkin> _testModelSkin;
     std::shared_ptr<TestModelSkin> _testRoomSkin;
 
+    std::string _roomMaterial;
+
     float _defaultCamDistanceFactor;
 
     wxToolBarToolBase* _testModelCubeButton;
     wxToolBarToolBase* _testModelSphereButton;
     wxToolBarToolBase* _testModelTilesButton;
 
-    sigc::signal<void> _sigLightChanged;
+    sigc::signal<void> _sigSceneChanged;
 
 public:
     MaterialPreview(wxWindow* parent);
@@ -54,7 +60,10 @@ public:
     void setLightColour(const Vector3& colour);
     void resetLightColour();
 
-    sigc::signal<void>& signal_LightChanged();
+    const std::string& getRoomMaterial();
+    void setRoomMaterial(const std::string& material);
+
+    sigc::signal<void>& signal_SceneChanged();
 
 protected:
     bool canDrawGrid() override;
@@ -70,7 +79,6 @@ private:
     void setupRoom();
     void updateModelSkin();
     void updateRoomSkin();
-    std::string getRoomMaterial();
     std::string getDefaultLightDef();
     void onTestModelSelectionChanged(wxCommandEvent& ev);
 };

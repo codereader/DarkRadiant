@@ -123,7 +123,7 @@ MaterialEditor::MaterialEditor() :
     _stageView(nullptr),
     _stageUpdateInProgress(false),
     _materialUpdateInProgress(false),
-    _lightUpdateInProgress(false)
+    _previewSceneUpdateInProgress(false)
 {
     loadNamedPanel(this, "MaterialEditorMainPanel");
 
@@ -254,9 +254,9 @@ void MaterialEditor::setupSourceTextPanel(wxWindow* previewPanel)
 
 void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
 {
-    auto collapsiblePane = new wxCollapsiblePane(previewPanel, wxID_ANY, _("Light Properties"));
+    auto collapsiblePane = new wxCollapsiblePane(previewPanel, wxID_ANY, _("Preview Scene Properties"));
     
-    auto propertyPanel = getControl<wxPanel>("MaterialPreviewLightPanel");
+    auto propertyPanel = getControl<wxPanel>("MaterialPreviewScenePanel");
     propertyPanel->GetContainingSizer()->Detach(propertyPanel);
     propertyPanel->Reparent(collapsiblePane->GetPane());
     propertyPanel->SetMinSize(wxSize(-1, 100));
@@ -274,11 +274,12 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
     previewPanel->GetSizer()->Add(collapsiblePane, 0, wxEXPAND);
 
     // Wire up the signals
-    _preview->signal_LightChanged().connect([this] ()
+    _preview->signal_SceneChanged().connect([this] ()
     {
-        util::ScopedBoolLock lock(_lightUpdateInProgress);
+        util::ScopedBoolLock lock(_previewSceneUpdateInProgress);
 
         getControl<wxTextCtrl>("MaterialPreviewLightClassname")->SetValue(_preview->getLightClassname());
+        getControl<wxTextCtrl>("MaterialPreviewRoomMaterial")->SetValue(_preview->getRoomMaterial());
 
         auto colour = _preview->getLightColour() * 255.0;
         getControl<wxColourPickerCtrl>("MaterialPreviewLightColour")->SetColour(
@@ -289,8 +290,14 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
 
     getControl<wxTextCtrl>("MaterialPreviewLightClassname")->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
     {
-        if (_lightUpdateInProgress) return;
+        if (_previewSceneUpdateInProgress) return;
         _preview->setLightClassname(ev.GetString().ToStdString());
+    });
+
+    getControl<wxTextCtrl>("MaterialPreviewRoomMaterial")->Bind(wxEVT_TEXT, [this](wxCommandEvent& ev)
+    {
+        if (_previewSceneUpdateInProgress) return;
+        _preview->setRoomMaterial(ev.GetString().ToStdString());
     });
 
 #if defined(__WXMSW__) && wxCHECK_VERSION(3,1,3)
@@ -301,7 +308,7 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
     getControl<wxColourPickerCtrl>("MaterialPreviewLightColour")->Bind(colourEvtType,
     [this](wxColourPickerEvent& ev)
     {
-        if (_lightUpdateInProgress) return;
+        if (_previewSceneUpdateInProgress) return;
         auto colour = ev.GetColour();
         _preview->setLightColour(Vector3(colour.Red() / 255.0, colour.Green() / 255.0, colour.Blue() / 255.0));
     });

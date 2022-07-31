@@ -86,7 +86,7 @@ private:
 
     bool _stageUpdateInProgress;
     bool _materialUpdateInProgress;
-    bool _lightUpdateInProgress;
+    bool _previewSceneUpdateInProgress;
 
     std::string _materialToPreselect;
 

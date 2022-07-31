@@ -28,6 +28,7 @@ namespace
 MaterialPreview::MaterialPreview(wxWindow* parent) :
     RenderPreview(parent, true),
     _sceneIsReady(false),
+    _roomMaterial(game::current::getValue<std::string>(GKEY_DEFAULT_ROOM_MATERIAL)),
     _defaultCamDistanceFactor(2.0f)
 {
     _testModelSkin = std::make_unique<TestModelSkin>("model");
@@ -89,9 +90,17 @@ void MaterialPreview::updateModelSkin()
     }
 }
 
-std::string MaterialPreview::getRoomMaterial()
+const std::string& MaterialPreview::getRoomMaterial()
 {
-    return game::current::getValue<std::string>(GKEY_DEFAULT_ROOM_MATERIAL);
+    return _roomMaterial;
+}
+
+void MaterialPreview::setRoomMaterial(const std::string& material)
+{
+    _roomMaterial = material;
+    updateRoomSkin();
+
+    signal_SceneChanged().emit();
 }
 
 std::string MaterialPreview::getDefaultLightDef()
@@ -108,8 +117,7 @@ std::string MaterialPreview::getDefaultLightDef()
 
 void MaterialPreview::updateRoomSkin()
 {
-    auto roomMaterial = getRoomMaterial();
-    _testRoomSkin->setRemapMaterial(GlobalMaterialManager().getMaterial(roomMaterial));
+    _testRoomSkin->setRemapMaterial(GlobalMaterialManager().getMaterial(getRoomMaterial()));
 
     // Let the model update its remaps
     auto skinnedRoom = std::dynamic_pointer_cast<SkinnedModel>(_room);
@@ -243,7 +251,7 @@ void MaterialPreview::setupSceneGraph()
         setViewOrigin(Vector3(1, 1, 1) * distance);
         setViewAngles(Vector3(37, 135, 0));
 
-        _sigLightChanged.emit();
+        signal_SceneChanged().emit();
     }
     catch (std::runtime_error&)
     {
@@ -300,9 +308,9 @@ void MaterialPreview::onTestModelSelectionChanged(wxCommandEvent& ev)
     queueDraw();
 }
 
-sigc::signal<void>& MaterialPreview::signal_LightChanged()
+sigc::signal<void>& MaterialPreview::signal_SceneChanged()
 {
-    return _sigLightChanged;
+    return _sigSceneChanged;
 }
 
 std::string MaterialPreview::getLightClassname()
@@ -315,7 +323,7 @@ void MaterialPreview::setLightClassname(const std::string& className)
     if (!_light || className.empty()) return;
 
     _light = changeEntityClassname(_light, className);
-    _sigLightChanged.emit();
+    signal_SceneChanged().emit();
 }
 
 Vector3 MaterialPreview::getLightColour()
@@ -337,7 +345,7 @@ void MaterialPreview::setLightColour(const Vector3& colour)
     if (!_light) return;
 
     Node_getEntity(_light)->setKeyValue("_color", string::to_string(colour));
-    _sigLightChanged.emit();
+    signal_SceneChanged().emit();
 }
 
 void MaterialPreview::resetLightColour()
@@ -345,7 +353,7 @@ void MaterialPreview::resetLightColour()
     if (!_light) return;
 
     Node_getEntity(_light)->setKeyValue("_color", "");
-    _sigLightChanged.emit();
+    signal_SceneChanged().emit();
 }
 
 }
