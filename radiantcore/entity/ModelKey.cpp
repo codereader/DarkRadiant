@@ -98,6 +98,9 @@ void ModelKey::attachModelNode()
 
 		// Copy the visibility flags from the parent node (#4141 and #5134)
 		scene::assignVisibilityFlagsFromNode(*_model.node, _parentNode);
+
+        // Mark the transform of this model as changed, it must re-evaluate itself
+        _model.node->transformChanged();
 	}
 }
 
