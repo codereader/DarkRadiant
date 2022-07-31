@@ -128,6 +128,11 @@ IShaderExpression::Ptr ShaderTemplate::parseSingleExpressionTerm(parser::DefToke
 bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
                                       const std::string& token)
 {
+    if (_name == "textures/darkmod/metal/detailed/panel_circledesign01_brown_ns")
+    {
+        int i = 6;
+    }
+
     if (token == "translucent")
 	{
         _materialFlags |= Material::FLAG_TRANSLUCENT | Material::FLAG_NOSHADOWS;
@@ -1349,11 +1354,9 @@ void ShaderTemplate::addLayer(const Doom3ShaderLayer::Ptr& layer)
     // Add the layer
     _layers.emplace_back(layer);
 
-    // If this is our first layer, clear the noshadows flag that was set before
-    // and redetermine the coverage
+    // If this is our first layer, redetermine the coverage
     if (_layers.size() == 1)
     {
-        _materialFlags &= ~Material::FLAG_NOSHADOWS;
         _coverage = Material::MC_UNDETERMINED;
         determineCoverage();
     }

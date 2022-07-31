@@ -1527,6 +1527,14 @@ TEST_F(MaterialsTest, CoverageOfMaterialWithBlendStage)
     EXPECT_EQ(material->getCoverage(), Material::MC_OPAQUE) << "Material should be opaque";
 }
 
+TEST_F(MaterialsTest, ParseNoShadowsFlag)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/noshadowsflag");
+
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/coverage1";
+    EXPECT_EQ(material->getMaterialFlags() & Material::FLAG_NOSHADOWS, Material::FLAG_NOSHADOWS) << "Material should have noshadows set";
+}
+
 TEST_F(MaterialsTest, ShaderExpressionEvaluation)
 {
     constexpr std::size_t TimeInMilliseconds = 200;

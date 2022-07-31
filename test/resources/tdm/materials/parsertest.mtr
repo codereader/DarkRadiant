@@ -1026,3 +1026,11 @@ textures/parsertest/coverage1
 		rgb .5
 	}
 }
+
+// Test determining the noshadows flag
+textures/parsertest/noshadowsflag
+{
+    glass
+	noShadows
+	diffusemap _black
+}
