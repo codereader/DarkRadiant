@@ -1305,4 +1305,20 @@ TEST_F(MaterialExportTest_TdmMissionSetup, ShaderFilePathValidation)
     EXPECT_THROW(newMaterial->setShaderFileName(wrongMissionPath + "materials/exporttest.mtr"), std::invalid_argument);
 }
 
+TEST_F(MaterialExportTest, GetWriteableOutputPath)
+{
+    auto path = game::current::getWriteableGameResourcePath();
+
+    EXPECT_TRUE(string::ends_with(path, "/")) << "Game resource path should end with a trailing slash";
+    EXPECT_EQ(path, _context.getTestProjectPath()) << "Output folder should point at the TDM project folder";
+}
+
+TEST_F(MaterialExportTest_TdmMissionSetup, GetWriteableOutputPath)
+{
+    auto path = game::current::getWriteableGameResourcePath();
+
+    EXPECT_TRUE(string::ends_with(path, "/")) << "Game resource path should end with a trailing slash";
+    EXPECT_EQ(path, getTestMissionPath()) << "Output folder should point at the current FM folder";
+}
+
 }
