@@ -430,6 +430,7 @@ floors or walls in succession. To match the height of an existing brush, simply
 select (*Shift + Left click*) and deselect it (*ESC*) before drawing the new
 brush.
 
+[[BrushShapes]]
 ==== More complex brush shapes
 
 Although each brush starts out as a six-sided cuboid, it doesn't have to stay
@@ -463,6 +464,7 @@ While these shapes can be useful for certain architectural modelling, remember
 that brushes are always flat-shaded and are not generally a good substitute for
 spheres or cones created with patches or static meshes.
 
+[[CreatingARoom]]
 ==== Creating a room
 
 Although it is not too difficult to create a hollow room by creating floor,
@@ -1833,6 +1835,25 @@ currently-selected entity. See <<ReparentingPrimitives,reparenting primitives>>.
 
 *Select parent entities*:: Select the parent entity of the currently-selected
 primitive. See <<ReparentingPrimitives,reparenting primitives>>.
+
+=== Brush menu
+
+*Prism...*:: Create an angular prism (extruded polygon) from the selected brush. See
+<<BrushShapes,brush shapes>>.
+
+*Cone...*:: Create a cone or pyramid from the selected brush. See <<BrushShapes,brush shapes>>.
+
+*Sphere...*:: Create an approximation of a sphere from the selected brush. See
+<<BrushShapes,brush shapes>>.
+
+*CSG -> Make Hollow*:: Create a hollow room from the selected brush. See
+<<CreatingARoom,creating a room>>.
+
+*CSG -> Make Room*:: Create a hollow room from the selected brush, without any overlapping walls.
+See <<CreatingARoom,creating a room>>.
+
+*Make Detail / Make Structural*:: These options only exist to support legacy games, and are not
+used in the Dark Mod.
 
 == Configuring DarkRadiant
 
