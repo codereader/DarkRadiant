@@ -14,6 +14,7 @@
 #include "SplitAlgorithm.h"
 #include "brush/csg/CSG.h"
 #include "debugging/debugging.h"
+#include "selectionlib.h"
 
 #include <functional>
 
@@ -280,27 +281,32 @@ void Clipper::initialiseModule(const IApplicationContext& ctx)
 	constructPreferences();
 
 	// Register the clip commands
-	GlobalCommandSystem().addCommand("ClipSelected", std::bind(&Clipper::clipSelectionCmd, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("SplitSelected", std::bind(&Clipper::splitSelectedCmd, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("FlipClip", std::bind(&Clipper::flipClipperCmd, this, std::placeholders::_1));
+    auto haveSomethingToClip = [this] {
+        return clipMode() && selection::pred::haveSelectedBrush();
+    };
+    GlobalCommandSystem().addWithCheck(
+        "ClipSelected", cmd::noArgs([this] { clipSelectionCmd(); }), haveSomethingToClip
+    );
+    GlobalCommandSystem().addWithCheck(
+        "SplitSelected", cmd::noArgs([this] { splitSelectedCmd(); }), haveSomethingToClip
+    );
+    GlobalCommandSystem().addWithCheck(
+        "FlipClip", cmd::noArgs([this] { flipClip(); }), haveSomethingToClip
+    );
 }
 
-void Clipper::clipSelectionCmd(const cmd::ArgumentList& args) {
+void Clipper::clipSelectionCmd() {
 	if (clipMode()) {
 		UndoableCommand undo("clipperClip");
 		clip();
 	}
 }
 
-void Clipper::splitSelectedCmd(const cmd::ArgumentList& args) {
+void Clipper::splitSelectedCmd() {
 	if (clipMode()) {
 		UndoableCommand undo("clipperSplit");
 		splitClip();
 	}
-}
-
-void Clipper::flipClipperCmd(const cmd::ArgumentList& args) {
-	flipClip();
 }
 
 // Define the static Clipper module

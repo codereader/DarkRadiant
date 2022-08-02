@@ -213,6 +213,12 @@ typedef std::vector<Argument> ArgumentList;
  */
 typedef std::function<void (const ArgumentList&)> Function;
 
+/// Convert a zero-argument function into a Function by discarding the ArgumentList
+template <typename F> Function noArgs(F f)
+{
+    return [f](const ArgumentList&) { f(); };
+}
+
 /**
  * @brief Signature for a function which can test if a particular command should
  * be enabled.

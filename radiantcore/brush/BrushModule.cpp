@@ -146,10 +146,9 @@ void BrushModuleImpl::registerBrushCommands()
 	GlobalCommandSystem().addCommand("BrushMakeSided", selection::algorithm::brushMakeSided, { cmd::ARGTYPE_INT });
 
 	GlobalCommandSystem().addCommand("TextureNatural", selection::algorithm::naturalTexture);
-    GlobalCommandSystem().addWithCheck(
-        "MakeVisportal", [](const cmd::ArgumentList&) { selection::algorithm::makeVisportal(); },
-        selection::pred::haveSelectedBrush
-    );
+    GlobalCommandSystem().addWithCheck("MakeVisportal",
+                                       cmd::noArgs(selection::algorithm::makeVisportal),
+                                       selection::pred::haveSelectedBrush);
     GlobalCommandSystem().addCommand("SurroundWithMonsterclip", selection::algorithm::surroundWithMonsterclip);
 
 	GlobalCommandSystem().addCommand("ResizeSelectedBrushesToBounds", selection::algorithm::resizeSelectedBrushesToBounds,
