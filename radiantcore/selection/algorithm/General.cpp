@@ -1015,8 +1015,11 @@ void registerCommands()
 	GlobalCommandSystem().addCommand("Paste", clipboard::paste);
 	GlobalCommandSystem().addCommand("PasteToCamera", clipboard::pasteToCamera);
 
-	GlobalCommandSystem().addCommand("ConnectSelection", connectSelectedEntities);
-    GlobalCommandSystem().addCommand("BindSelection", bindEntities);
+    GlobalCommandSystem().addWithCheck("ConnectSelection", cmd::noArgs(connectSelectedEntities),
+                                       [] { return selection::pred::haveEntitiesExact(2); });
+    GlobalCommandSystem().addWithCheck("BindSelection", cmd::noArgs(bindEntities),
+                                       [] { return selection::pred::haveEntitiesExact(2); });
+
     GlobalCommandSystem().addCommand("PlacePlayerStart", placePlayerStart, { cmd::ARGTYPE_VECTOR3 });
 	GlobalCommandSystem().addCommand("SetEntityKeyValue", setEntityKeyValueOnSelection, { cmd::ARGTYPE_STRING, cmd::ARGTYPE_STRING });
     GlobalCommandSystem().addCommand("CreateCurveNURBS", createCurveNURBS);

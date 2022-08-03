@@ -163,7 +163,7 @@ void setEntityKeyValueOnSelection(const cmd::ArgumentList& args)
 	setEntityKeyValue(args[0].getString(), args[1].getString());
 }
 
-void bindEntities(const cmd::ArgumentList& args)
+void bindEntities()
 {
 	const SelectionInfo& info = GlobalSelectionSystem().getSelectionInfo();
 
@@ -199,7 +199,7 @@ void bindEntities(const cmd::ArgumentList& args)
 	}
 }
 
-void connectSelectedEntities(const cmd::ArgumentList& args)
+void connectSelectedEntities()
 {
 	if (GlobalSelectionSystem().countSelected() == 2)
 	{

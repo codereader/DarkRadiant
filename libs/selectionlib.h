@@ -11,35 +11,23 @@
 #include "math/Vector3.h"
 #include "math/AABB.h"
 
-/** greebo: A structure containing information about the current
- * Selection. An instance of this is maintained by the
- * RadiantSelectionSystem, and a const reference can be
+/** 
+ * @brief A structure containing information about the current Selection.
+ *
+ * An instance of this is maintained by the RadiantSelectionSystem, and a const reference can be
  * retrieved via the according getSelectionInfo() method.
  */
-class SelectionInfo {
+class SelectionInfo
+{
 public:
-	int totalCount; 	// number of selected items
-	int patchCount; 	// number of selected patches
-	int brushCount; 	// -- " -- brushes
-	int entityCount; 	// -- " -- entities
-	int componentCount;	// -- " -- components (faces, edges, vertices)
+    int totalCount = 0;     // number of selected items
+    int patchCount = 0;     // number of selected patches
+    int brushCount = 0;     // -- " -- brushes
+    int entityCount = 0;    // -- " -- entities
+    int componentCount = 0; // -- " -- components (faces, edges, vertices)
 
-	SelectionInfo() :
-		totalCount(0),
-		patchCount(0),
-		brushCount(0),
-		entityCount(0),
-		componentCount(0)
-	{}
-
-	// Zeroes all the counters
-	void clear() {
-		totalCount = 0;
-		patchCount = 0;
-		brushCount = 0;
-		entityCount = 0;
-		componentCount = 0;
-	}
+    // Zeroes all the counters
+    void clear() { *this = SelectionInfo(); }
 };
 
 namespace selection
@@ -256,6 +244,13 @@ namespace pred
     inline bool haveSelectedBrush()
     {
         return GlobalSelectionSystem().getSelectionInfo().brushCount > 0;
+    }
+
+    /// Return true if exactly the given number of entities are selected (and nothing else)
+    inline bool haveEntitiesExact(int n)
+    {
+        const auto& info = GlobalSelectionSystem().getSelectionInfo();
+        return info.totalCount == n && info.entityCount == n;
     }
 }
 
