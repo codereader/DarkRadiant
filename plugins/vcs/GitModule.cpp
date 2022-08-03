@@ -61,8 +61,6 @@ const StringSet& GitModule::getDependencies() const
 
 void GitModule::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     // Register commands
     registerCommands();
     createPreferencePage();

@@ -292,8 +292,6 @@ const StringSet& ScriptingSystem::getDependencies() const
 
 void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Subscribe to get notified as soon as Radiant is fully initialised
 	module::GlobalModuleRegistry().signal_allModulesInitialised()
 		.connect(sigc::mem_fun(this, &ScriptingSystem::initialise));

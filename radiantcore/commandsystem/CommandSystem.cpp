@@ -45,8 +45,6 @@ const StringSet& CommandSystem::getDependencies() const {
 
 void CommandSystem::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << "CommandSystem::initialiseModule called." << std::endl;
-
 	// Add the built-in commands
 	addCommand("bind", std::bind(&CommandSystem::bindCmd, this, std::placeholders::_1), { ARGTYPE_STRING, ARGTYPE_STRING });
 	addCommand("unbind", std::bind(&CommandSystem::unbindCmd, this, std::placeholders::_1), { ARGTYPE_STRING });

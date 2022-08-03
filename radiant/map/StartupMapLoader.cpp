@@ -108,8 +108,6 @@ const StringSet& StartupMapLoader::getDependencies() const
 
 void StartupMapLoader::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	GlobalMainFrame().signal_MainFrameReady().connect(
 		sigc::mem_fun(*this, &StartupMapLoader::onMainFrameReady)
 	);

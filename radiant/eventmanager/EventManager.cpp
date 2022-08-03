@@ -67,8 +67,6 @@ const StringSet& EventManager::getDependencies() const
 
 void EventManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Deactivate the empty event, so it's safe to return it as NullEvent
 	_emptyEvent->setEnabled(false);
 

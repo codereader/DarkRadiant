@@ -207,8 +207,6 @@ const StringSet& ModelCache::getDependencies() const
 
 void ModelCache::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	GlobalCommandSystem().addCommand("RefreshModels",
 		std::bind(&ModelCache::refreshModelsCmd, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("RefreshSelectedModels",

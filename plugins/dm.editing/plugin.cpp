@@ -42,8 +42,6 @@ public:
 
 	virtual void initialiseModule(const IApplicationContext& ctx)
 	{
-		rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 		// Associated "def_head" with an empty property editor instance
 		GlobalEntityInspector().registerPropertyEditor(
 			ui::DEF_HEAD_KEY, ui::AIHeadPropertyEditor::CreateNew);

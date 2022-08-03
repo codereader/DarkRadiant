@@ -176,8 +176,6 @@ const StringSet& ParticlesManager::getDependencies() const
 
 void ParticlesManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << "ParticlesManager::initialiseModule called" << std::endl;
-
 	// Load the .prt files in a new thread, public methods will block until
     // this has been completed
     _defLoader.start();

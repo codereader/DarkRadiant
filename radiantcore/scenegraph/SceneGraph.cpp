@@ -372,7 +372,6 @@ const StringSet& SceneGraphModule::getDependencies() const
 
 void SceneGraphModule::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
 }
 
 // Static module instances

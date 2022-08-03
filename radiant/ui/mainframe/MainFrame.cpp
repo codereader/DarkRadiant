@@ -81,8 +81,6 @@ const StringSet& MainFrame::getDependencies() const
 
 void MainFrame::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << "MainFrame::initialiseModule called." << std::endl;
-
 	// Add another page for Multi-Monitor stuff
 	IPreferencePage& page = GlobalPreferenceSystem().getPage(_("Settings/Multi Monitor"));
 

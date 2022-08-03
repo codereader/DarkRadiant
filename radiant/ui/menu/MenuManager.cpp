@@ -265,8 +265,6 @@ const StringSet& MenuManager::getDependencies() const
 
 void MenuManager::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     loadFromRegistry();
 
     GlobalMainFrame().signal_MainFrameShuttingDown().connect(

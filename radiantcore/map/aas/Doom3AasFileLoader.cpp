@@ -113,8 +113,6 @@ const StringSet& Doom3AasFileLoader::getDependencies() const
 
 void Doom3AasFileLoader::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << ": initialiseModule called." << std::endl;
-
 	// Register ourselves as aas format
     GlobalAasFileManager().registerLoader(shared_from_this());
 }

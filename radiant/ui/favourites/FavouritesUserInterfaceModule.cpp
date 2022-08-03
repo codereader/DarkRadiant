@@ -43,8 +43,6 @@ public:
 
     void initialiseModule(const IApplicationContext& ctx) override
     {
-        rMessage() << getName() << "::initialiseModule called." << std::endl;
-
         GlobalCommandSystem().addCommand("ToggleFavouritesBrowser",
             sigc::mem_fun(this, &FavouritesUserInterfaceModule::togglePage));
 

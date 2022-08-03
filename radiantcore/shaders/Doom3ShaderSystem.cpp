@@ -524,8 +524,6 @@ const StringSet& Doom3ShaderSystem::getDependencies() const
 
 void Doom3ShaderSystem::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called" << std::endl;
-
     construct();
     realise();
 

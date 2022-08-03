@@ -113,8 +113,6 @@ const StringSet& UserInterfaceModule::getDependencies() const
 
 void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Output the wxWidgets version to the logfile
 	std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
 	wxVersion += string::to_string(wxMINOR_VERSION) + ".";

@@ -42,8 +42,6 @@ public:
 
     void initialiseModule(const IApplicationContext& ctx) override
     {
-        rMessage() << getName() << "::initialiseModule called." << std::endl;
-
         // Add the callback event
         GlobalCommandSystem().addWithCheck("StimResponseEditor",
                                            cmd::noArgs(ui::StimResponseEditor::ShowDialog),

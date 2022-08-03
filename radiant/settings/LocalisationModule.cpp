@@ -31,8 +31,6 @@ const StringSet& LocalisationModule::getDependencies() const
 
 void LocalisationModule::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
 	// Construct the list of available languages
 	ComboBoxValueList langs;
 

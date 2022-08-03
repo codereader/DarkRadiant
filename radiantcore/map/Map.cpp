@@ -1486,8 +1486,6 @@ const StringSet& Map::getDependencies() const
 
 void Map::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     // Register for the startup event
 	_mapPositionManager.reset(new MapPositionManager);
 

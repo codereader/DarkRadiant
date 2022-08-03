@@ -441,7 +441,6 @@ const StringSet& Doom3FileSystem::getDependencies() const
 
 void Doom3FileSystem::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called" << std::endl;
 }
 
 void Doom3FileSystem::shutdownModule()

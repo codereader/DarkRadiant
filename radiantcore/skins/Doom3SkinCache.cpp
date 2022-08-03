@@ -101,8 +101,6 @@ void Doom3SkinCache::refresh()
 
 void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
     // Load the skins in a new thread
     refresh();
 }

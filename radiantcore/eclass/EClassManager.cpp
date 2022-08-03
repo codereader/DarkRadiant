@@ -196,8 +196,6 @@ const StringSet& EClassManager::getDependencies() const
 
 void EClassManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	GlobalFileSystem().addObserver(*this);
 
     if (GlobalFileSystem().isInitialised())

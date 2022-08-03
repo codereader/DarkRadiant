@@ -53,8 +53,6 @@ const StringSet& GridManager::getDependencies() const
 
 void GridManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << "GridManager::initialiseModule called.\n";
-
 	populateGridItems();
 	registerCommands();
 

@@ -952,8 +952,6 @@ const StringSet& RadiantSelectionSystem::getDependencies() const
 
 void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	_pivot.initialise();
 
 	// Add manipulators

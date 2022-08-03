@@ -439,8 +439,6 @@ const StringSet& RegionManager::getDependencies() const
 
 void RegionManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	initialiseCommands();
 
 	_worldMin = game::current::getValue<float>("/defaults/minWorldCoord");

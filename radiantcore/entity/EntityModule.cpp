@@ -289,8 +289,6 @@ const StringSet& Doom3EntityModule::getDependencies() const
 
 void Doom3EntityModule::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     LightShader::m_defaultShader = game::current::getValue<std::string>("/defaults/lightShader");
 
     GlobalCommandSystem().addCommand("CreateSpeaker", std::bind(&algorithm::CreateSpeaker, std::placeholders::_1),

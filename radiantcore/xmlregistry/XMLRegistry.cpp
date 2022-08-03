@@ -299,8 +299,6 @@ const StringSet& XMLRegistry::getDependencies() const
 
 void XMLRegistry::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << "XMLRegistry::initialiseModule called" << std::endl;
-
     // Load the XML files from the runtime data directory
     std::string base = ctx.getRuntimeDataPath();
 

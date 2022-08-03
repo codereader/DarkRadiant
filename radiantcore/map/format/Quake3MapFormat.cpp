@@ -26,8 +26,6 @@ const StringSet& Quake3MapFormatBase::getDependencies() const
 
 void Quake3MapFormatBase::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << ": initialiseModule called." << std::endl;
-
 	// Register ourselves as map format for maps and regions
 	GlobalMapFormatManager().registerMapFormat("map", getSharedToThis());
 	GlobalMapFormatManager().registerMapFormat("reg", getSharedToThis());
