@@ -1836,6 +1836,18 @@ currently-selected entity. See <<ReparentingPrimitives,reparenting primitives>>.
 *Select parent entities*:: Select the parent entity of the currently-selected
 primitive. See <<ReparentingPrimitives,reparenting primitives>>.
 
+=== Entity menu
+
+*Connect selected entities*:: Set a `target` spawnarg on the first selected entity pointing to the
+second selected entity.
+
+*Bind selected entities*:: Set a `bind` spawnarg on the first selected entity pointing to the
+*second selected entity.
+
+*Entity class tree...*:: Show a tree of all available entity types in the current game, along with
+all of their properties. Unlike the tree shown in the *Create Entity* dialog, this entity class
+tree shows an inheritance-based hierarchy and does not include a 3D preview.
+
 === Brush menu
 
 *Prism...*:: Create an angular prism (extruded polygon) from the selected brush. See
