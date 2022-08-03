@@ -1864,6 +1864,16 @@ tree shows an inheritance-based hierarchy and does not include a 3D preview.
 *CSG -> Make Room*:: Create a hollow room from the selected brush, without any overlapping walls.
 See <<CreatingARoom,creating a room>>.
 
+*Clipper -> Clip Selection*:: Split the selected brush along the defined clip plane, keeping one
+half. See <<SplittingBrushes,splitting brushes>>.
+
+*Clipper -> Split Selection*:: Split the selected brush along the defined clip plane, keeping both
+halves. See <<SplittingBrushes,splitting brushes>>.
+
+*Clipper -> Flip Clip Orientation*:: Change which half of the brush is retained after using the
+*Clip Selection* command. Difficult to use in practice; instead just *Split Selection* and delete
+the unwanted half manually. See <<SplittingBrushes,splitting brushes>>.
+
 *Make Detail / Make Structural*:: These options only exist to support legacy games, and are not
 used in the Dark Mod.
 
