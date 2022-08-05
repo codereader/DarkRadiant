@@ -1535,6 +1535,70 @@ TEST_F(MaterialsTest, ParseNoShadowsFlag)
     EXPECT_EQ(material->getMaterialFlags() & Material::FLAG_NOSHADOWS, Material::FLAG_NOSHADOWS) << "Material should have noshadows set";
 }
 
+TEST_F(MaterialsTest, MaterialParserRemoteRenderMap)
+{
+    // Remote Render Map without map expression
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/remoteRenderMap1");
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/remoteRenderMap1";
+
+    auto layers = material->getAllLayers();
+
+    EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(0)->getMapType(), IShaderLayer::MapType::RemoteRenderMap);
+    EXPECT_EQ(layers.at(0)->getRenderMapSize(), Vector2(232, 232));
+    EXPECT_FALSE(layers.at(0)->getMapExpression());
+
+    // Remote Render Map with map expression
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/remoteRenderMap2");
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/remoteRenderMap2";
+
+    layers = material->getAllLayers();
+
+    EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(0)->getMapType(), IShaderLayer::MapType::RemoteRenderMap);
+    EXPECT_EQ(layers.at(0)->getRenderMapSize(), Vector2(256, 128));
+    EXPECT_TRUE(layers.at(0)->getMapExpression());
+    EXPECT_EQ(layers.at(0)->getMapExpression()->getExpressionString(), "textures/common/mirror.tga");
+}
+
+TEST_F(MaterialsTest, MaterialParserMirrorRenderMap)
+{
+    // Mirror Render Map without map expression
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/mirrorRenderMap1");
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/mirrorRenderMap1";
+
+    auto layers = material->getAllLayers();
+
+    EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(0)->getMapType(), IShaderLayer::MapType::MirrorRenderMap);
+    EXPECT_EQ(layers.at(0)->getRenderMapSize(), Vector2(256, 128));
+    EXPECT_FALSE(layers.at(0)->getMapExpression());
+
+    // Mirror Render Map with map expression
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/mirrorRenderMap2");
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/mirrorRenderMap2";
+
+    layers = material->getAllLayers();
+
+    EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(0)->getMapType(), IShaderLayer::MapType::MirrorRenderMap);
+    EXPECT_EQ(layers.at(0)->getRenderMapSize(), Vector2(256, 128));
+    EXPECT_TRUE(layers.at(0)->getMapExpression());
+    EXPECT_EQ(layers.at(0)->getMapExpression()->getExpressionString(), "textures/common/mirror.tga");
+
+    // Mirror Render Map without dimensions
+    material = GlobalMaterialManager().getMaterial("textures/parsertest/mirrorRenderMap3");
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/mirrorRenderMap3";
+
+    layers = material->getAllLayers();
+
+    EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BLEND);
+    EXPECT_EQ(layers.at(0)->getMapType(), IShaderLayer::MapType::MirrorRenderMap);
+    EXPECT_EQ(layers.at(0)->getRenderMapSize(), Vector2(0, 0));
+    EXPECT_TRUE(layers.at(0)->getMapExpression());
+    EXPECT_EQ(layers.at(0)->getMapExpression()->getExpressionString(), "textures/common/mirror.tga");
+}
+
 TEST_F(MaterialsTest, ShaderExpressionEvaluation)
 {
     constexpr std::size_t TimeInMilliseconds = 200;
