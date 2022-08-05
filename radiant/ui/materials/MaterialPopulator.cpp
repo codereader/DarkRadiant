@@ -86,7 +86,7 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
 
     if (!existingItem.IsOk())
     {
-        InsertTexture(model, itemPath, parts.back(), parentItem);
+        InsertTexture(model, itemPath, materialName, parts.back(), parentItem);
     }
 }
 
@@ -159,7 +159,7 @@ wxutil::TreeModel::Row MaterialPopulator::InsertFolder(const wxutil::TreeModel::
 }
 
 void MaterialPopulator::InsertTexture(const wxutil::TreeModel::Ptr& model,
-    const std::string& path, const std::string& leafName, const wxDataViewItem& parentItem)
+    const std::string& path, const std::string& declName, const std::string& leafName, const wxDataViewItem& parentItem)
 {
     auto row = model->AddItem(parentItem);
 
@@ -167,7 +167,7 @@ void MaterialPopulator::InsertTexture(const wxutil::TreeModel::Ptr& model,
     row[_columns.isOtherMaterialsFolder] = false;
 
     // Base class call will invoke Row::SendItemAdded()
-    AssignValuesToRow(row, path, path, leafName, false);
+    AssignValuesToRow(row, path, declName, leafName, false);
 }
 
 void MaterialPopulator::SortModel(const wxutil::TreeModel::Ptr& model)

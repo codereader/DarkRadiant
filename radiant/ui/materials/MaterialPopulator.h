@@ -36,8 +36,8 @@ protected:
 private:
     wxutil::TreeModel::Row InsertFolder(const wxutil::TreeModel::Ptr& model, const std::string& path,
         const std::string& leafName, const wxDataViewItem& parentItem, bool isOtherMaterial);
-    void InsertTexture(const wxutil::TreeModel::Ptr& model, const std::string& path,
-        const std::string& leafName, const wxDataViewItem& parentItem);
+    void InsertTexture(const wxutil::TreeModel::Ptr& model, const std::string& path, 
+        const std::string& declName, const std::string& leafName, const wxDataViewItem& parentItem);
 };
 
 }
