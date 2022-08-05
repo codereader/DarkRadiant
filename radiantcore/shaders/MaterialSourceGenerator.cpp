@@ -295,12 +295,12 @@ namespace
     
 }
 
-void writeBlendMap(std::ostream& stream, Doom3ShaderLayer& layer)
+void writeBlendMap(std::ostream& stream, const Doom3ShaderLayer& layer)
 {
     // Blend types
     const auto& blendFunc = layer.getBlendFuncStrings();
 
-    if (!blendFunc.first.empty())
+    if (!blendFunc.first.empty() && !isDefaultBlendFunc(blendFunc))
     {
         stream << "\t\tblend " << blendFunc.first;
 

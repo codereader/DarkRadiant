@@ -6,6 +6,7 @@
 #include "ishaderlayer.h"
 #include "gamelib.h"
 #include "os/path.h"
+#include "string/case_conv.h"
 #include "xmlutil/MissingXMLNodeException.h"
 
 namespace shaders
@@ -293,6 +294,12 @@ constexpr std::pair<const char*, std::pair<const char*, const char*>> BlendTypeS
     { "modulate", { "gl_dst_color", "gl_zero" } },
     { "none", { "gl_zero", "gl_one" } },
 };
+
+inline bool isDefaultBlendFunc(const std::pair<std::string, std::string>& blendFuncStrings)
+{
+    return string::to_lower_copy(blendFuncStrings.first) == "gl_one" && 
+           string::to_lower_copy(blendFuncStrings.second) == "gl_zero";
+}
 
 constexpr std::pair<const char*, IShaderLayer::TexGenType> TexGenTypeNames[]
 {
