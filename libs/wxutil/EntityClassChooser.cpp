@@ -240,7 +240,6 @@ EntityClassChooser::~EntityClassChooser()
     _defsReloaded.disconnect();
 }
 
-// Display the singleton instance
 std::string EntityClassChooser::ChooseEntityClass(Purpose purpose, const std::string& eclassToSelect)
 {
     EntityClassChooser instance{ purpose };

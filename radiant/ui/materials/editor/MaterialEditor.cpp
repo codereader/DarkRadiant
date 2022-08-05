@@ -319,7 +319,11 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
         auto textCtrl = getControl<wxTextCtrl>("MaterialPreviewLightClassname");
         auto newClassName = wxutil::EntityClassChooser::ChooseEntityClass(
             wxutil::EntityClassChooser::Purpose::SelectClassname, textCtrl->GetValue().ToStdString());
-        textCtrl->SetValue(newClassName);
+
+        if (!newClassName.empty())
+        {
+            textCtrl->SetValue(newClassName);
+        }
     });
     
     getControl<wxButton>("MaterialPreviewLightResetColourButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
