@@ -38,6 +38,7 @@
 #include "CheckBoxBinding.h"
 #include "MapExpressionEntry.h"
 #include "TexturePreview.h"
+#include "string/trim.h"
 #include "ui/common/ShaderChooser.h"
 
 namespace ui
@@ -570,13 +571,45 @@ void MaterialEditor::setupBasicMaterialPage()
     testFrob->Bind(wxEVT_LEFT_UP, &MaterialEditor::_onBasicTestFrobStages, this);
 }
 
+void MaterialEditor::createDecalColourBinding(const std::string& controlName, const std::function<double(const MaterialPtr&)>& loadFunc)
+{
+    _materialBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrlDouble, MaterialPtr>>(
+        getControl<wxSpinCtrlDouble>(controlName),
+        loadFunc,
+        [this](const MaterialPtr& material, double _)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+            assignDecalInfoToMaterial(material, true);
+        },
+        [this]() { onMaterialChanged(); }));
+}
+
 void MaterialEditor::setupMaterialProperties()
 {
     // Convert int-valued spinctrls to double-valued ones
     convertToSpinCtrlDouble(this, "MaterialPolygonOffsetValue", -100, 100, 0.1, 1);
     convertToSpinCtrlDouble(this, "MaterialEditorDecalInfoStaySeconds", 0, 999999, 0.1, 2);
     convertToSpinCtrlDouble(this, "MaterialEditorDecalInfoFadeSeconds", 0, 999999, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoStartRed", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoStartGreen", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoStartBlue", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoStartAlpha", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoEndRed", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoEndGreen", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoEndBlue", 0.0, 1.0, 0.1, 2);
+    convertToSpinCtrlDouble(this, "MaterialDecalInfoEndAlpha", 0.0, 1.0, 0.1, 2);
     convertToSpinCtrlDouble(this, "MaterialStagePrivatePolygonOffset", -100, 100, 0.1, 1);
+
+#if defined(__WXMSW__)
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartRed")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartGreen")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartBlue")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartAlpha")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndRed")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndGreen")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndBlue")->SetMaxSize(wxSize(80, -1));
+    getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndAlpha")->SetMaxSize(wxSize(80, -1));
+#endif
 
     // Place map expression controls where needed
     convertTextCtrlToMapExpressionEntry("MaterialStageImageMap");
@@ -696,7 +729,7 @@ void MaterialEditor::setupMaterialProperties()
         {
             return material->getDecalInfo().stayMilliSeconds / 1000.0;
         },
-        [this](const MaterialPtr& material, double value)
+        [this](const MaterialPtr& material, double _)
         {
             if (_materialUpdateInProgress || !_material) return;
             assignDecalInfoToMaterial(material, true);
@@ -709,12 +742,22 @@ void MaterialEditor::setupMaterialProperties()
         {
             return material->getDecalInfo().fadeMilliSeconds / 1000.0;
         },
-        [this](const MaterialPtr& material, double value)
+        [this](const MaterialPtr& material, double _)
         {
             if (_materialUpdateInProgress || !_material) return;
             assignDecalInfoToMaterial(material, true);
         },
             [this]() { onMaterialChanged(); }));
+
+    createDecalColourBinding("MaterialDecalInfoStartRed", [](const MaterialPtr& material) { return material->getDecalInfo().startColour.x(); });
+    createDecalColourBinding("MaterialDecalInfoStartGreen", [](const MaterialPtr& material) { return material->getDecalInfo().startColour.y(); });
+    createDecalColourBinding("MaterialDecalInfoStartBlue", [](const MaterialPtr& material) { return material->getDecalInfo().startColour.z(); });
+    createDecalColourBinding("MaterialDecalInfoStartAlpha", [](const MaterialPtr& material) { return material->getDecalInfo().startColour.w(); });
+
+    createDecalColourBinding("MaterialDecalInfoEndRed", [](const MaterialPtr& material) { return material->getDecalInfo().endColour.x(); });
+    createDecalColourBinding("MaterialDecalInfoEndGreen", [](const MaterialPtr& material) { return material->getDecalInfo().endColour.y(); });
+    createDecalColourBinding("MaterialDecalInfoEndBlue", [](const MaterialPtr& material) { return material->getDecalInfo().endColour.z(); });
+    createDecalColourBinding("MaterialDecalInfoEndAlpha", [](const MaterialPtr& material) { return material->getDecalInfo().endColour.w(); });
 
     // For light fall off images, only cameracubemap and map are allowed
     auto lightFallOffCubeMapType = getControl<wxChoice>("MaterialLightFalloffCubeMapType");
@@ -1503,6 +1546,8 @@ void MaterialEditor::revertCurrentMaterial()
 
 bool MaterialEditor::askUserAboutModifiedMaterial()
 {
+    if (!_material) return true;
+
     // Get the original name
     std::string origName = _material->getName();
 
@@ -2094,12 +2139,6 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxCheckBox>("MaterialHasDecalInfo")->SetValue(hasDecalInfo);
         getControl<wxPanel>("MaterialDecalInfoPanel")->Enable(hasDecalInfo);
 
-        const auto& decalInfo = _material->getDecalInfo();
-        getControl<wxTextCtrl>("MaterialDecalInfoStartRgb")->SetValue(fmt::format("({0} {1} {2} {3})", 
-            decalInfo.startColour.x(), decalInfo.startColour.y(), decalInfo.startColour.z(), decalInfo.startColour.w()));
-        getControl<wxTextCtrl>("MaterialDecalInfoEndRgb")->SetValue(fmt::format("({0} {1} {2} {3})",
-            decalInfo.endColour.x(), decalInfo.endColour.y(), decalInfo.endColour.z(), decalInfo.endColour.w()));
-
         getControl<wxCheckBox>("MaterialHasRenderBump")->SetValue(!_material->getRenderBumpArguments().empty());
         //getControl<wxTextCtrl>("MaterialRenderBumpArguments")->Enable(!_material->getRenderBumpArguments().empty());
         getControl<wxTextCtrl>("MaterialRenderBumpArguments")->SetValue(_material->getRenderBumpArguments());
@@ -2135,8 +2174,14 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxCheckBox>("MaterialHasDecalInfo")->SetValue(false);
         getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds")->SetValue(0);
         getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds")->SetValue(0);
-        getControl<wxTextCtrl>("MaterialDecalInfoStartRgb")->SetValue("");
-        getControl<wxTextCtrl>("MaterialDecalInfoEndRgb")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartRed")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartGreen")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartBlue")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartAlpha")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndRed")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndGreen")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndBlue")->SetValue("");
+        getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndAlpha")->SetValue("");
 
         getControl<wxCheckBox>("MaterialHasSpectrum")->SetValue(false);
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->SetValue(0);
@@ -2862,6 +2907,20 @@ void MaterialEditor::assignDecalInfoToMaterial(const MaterialPtr& material, bool
     {
         info.stayMilliSeconds = static_cast<int>(getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds")->GetValue() * 1000);
         info.fadeMilliSeconds = static_cast<int>(getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds")->GetValue() * 1000);
+
+        info.startColour = Vector4(
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartRed")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartGreen")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartBlue")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoStartAlpha")->GetValue()
+        );
+
+        info.endColour = Vector4(
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndRed")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndGreen")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndBlue")->GetValue(),
+            getControl<wxSpinCtrlDouble>("MaterialDecalInfoEndAlpha")->GetValue()
+        );
 
         if (!wasEnabled && info.stayMilliSeconds == 0)
         {

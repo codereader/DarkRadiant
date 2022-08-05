@@ -144,6 +144,7 @@ private:
     IEditableShaderLayer::Ptr getEditableStageForSelection();
     std::pair<IShaderLayer::Ptr, std::size_t> findMaterialStageByType(IShaderLayer::Type type);
     void assignDecalInfoToMaterial(const MaterialPtr& material, bool isEnabled);
+    void createDecalColourBinding(const std::string& controlName, const std::function<double(const MaterialPtr&)>& loadFunc);
 
     void updateBasicPageFromMaterial();
     void updateBasicImagePreview();
