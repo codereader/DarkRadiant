@@ -257,6 +257,20 @@ inline bool tryConvertToFloat(const std::string& src, float& value)
     return lastChar != firstChar;
 }
 
+// Attempts to convert the given source string to an int value,
+// returning true on success. The value reference will then be holding
+// the resulting int value (or 0 in case of failure).
+// Note: this is using the exception-less std::strtol, making it preferable
+// over the string::convert<int> method (in certain hot code paths).
+inline bool tryConvertToInt(const std::string& src, int& value)
+{
+    char* lastChar;
+    auto* firstChar = src.c_str();
+    value = static_cast<int>(std::strtol(firstChar, &lastChar, 10));
+
+    return lastChar != firstChar;
+}
+
 // Convert the given type to a std::string
 template<typename Src> 
 inline std::string to_string(const Src& value)

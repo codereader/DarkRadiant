@@ -551,6 +551,7 @@ private:
 	bool parseMaterialType(parser::DefTokeniser&, const std::string&);
 	bool parseCondition(parser::DefTokeniser&, const std::string&);
 	IShaderExpression::Ptr parseSingleExpressionTerm(parser::DefTokeniser& tokeniser);
+	void parseRenderMapSize(parser::DefTokeniser&, bool optional);
 
 	bool saveLayer();
     void determineCoverage();

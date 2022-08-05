@@ -598,10 +598,8 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 {
     if (token == "map")
     {
-        _currentLayer->setBindableTexture(
-            MapExpression::createForToken(tokeniser)
-        );
-        _currentLayer->setMapType(IShaderLayer::MapType::Map);
+        _currentLayer->setBindableTexture(MapExpression::createForToken(tokeniser));
+        // Don't reset the map type of this layer, "map" can occur in multiple scenarios
     }
     else if (token == "cameracubemap")
     {
@@ -663,35 +661,13 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	else if (token == "remoterendermap")
 	{
         _currentLayer->setMapType(IShaderLayer::MapType::RemoteRenderMap);
-
-		try
-		{
-			auto width = std::stoi(tokeniser.nextToken());
-            auto height = std::stoi(tokeniser.nextToken());
-            _currentLayer->setRenderMapSize(Vector2(width, height));
-		}
-		catch (std::logic_error& e)
-		{
-			rWarning() << "Error parsing remoteRenderMap. Expected two integers: " 
-				<< e.what() << std::endl;
-		}
+        parseRenderMapSize(tokeniser, true); // remoteRenderMap dimension is mandatory
 	}
 	else if (token == "mirrorrendermap")
 	{
         _currentLayer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
         _currentLayer->setTexGenType(IShaderLayer::TexGenType::TEXGEN_SCREEN);
-
-		try
-		{
-            auto width = std::stoi(tokeniser.nextToken());
-            auto height = std::stoi(tokeniser.nextToken());
-            _currentLayer->setRenderMapSize(Vector2(width, height));
-		}
-		catch (std::invalid_argument& e)
-		{
-			rWarning() << "Error parsing mirrorRenderMap. Expected two integers: "
-				<< e.what() << std::endl;
-		}
+        parseRenderMapSize(tokeniser, true); // mirrorRenderMap dimension is optional
 	}
 	else
 	{
@@ -699,6 +675,35 @@ bool ShaderTemplate::parseBlendMaps(parser::DefTokeniser& tokeniser, const std::
 	}
 
 	return true;
+}
+
+void ShaderTemplate::parseRenderMapSize(parser::DefTokeniser& tokeniser, bool optional)
+{
+    // Parse the dimensions without immediately exhausting the upcoming token
+    // Will not exhaust the tokens that are not convertible to an integer
+    int width;
+    if (string::tryConvertToInt(tokeniser.peek(), width))
+    {
+        tokeniser.nextToken(); // exhaust
+    }
+    else if (!optional)
+    {
+        rWarning() << "Error parsing render map width. Expected two integers." << std::endl;
+        return;
+    }
+
+    int height;
+    if (string::tryConvertToInt(tokeniser.peek(), height))
+    {
+        tokeniser.nextToken(); // exhaust
+    }
+    else if (!optional)
+    {
+        rWarning() << "Error parsing render map height. Expected two integers." << std::endl;
+        return;
+    }
+
+    _currentLayer->setRenderMapSize({ width, height });
 }
 
 bool ShaderTemplate::parseStageModifiers(parser::DefTokeniser& tokeniser,
