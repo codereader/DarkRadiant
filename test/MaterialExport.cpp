@@ -471,6 +471,28 @@ TEST_F(MaterialExportTest, StageBlendTypes)
     }
 }
 
+// Checks that the default blend func GL_ONE, GL_ZERO is not explicitly written to the stage def
+TEST_F(MaterialExportTest, StageDefaultBlendFunc)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+    auto layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+
+    // Set it to something non-trivial
+    layer->setBlendFuncStrings({ "gl_one", "gl_one" });
+
+    expectDefinitionContains(material, "blend gl_one, gl_one");
+
+    // Now set it back to the defaults
+    layer->setBlendFuncStrings({ "gl_one", "gl_zero" });
+
+    expectDefinitionDoesNotContain(material, "blend gl_one, gl_one"); // old blend func should be gone
+    expectDefinitionDoesNotContain(material, "blend gl_one, gl_zero"); // this one should not be written
+    expectDefinitionDoesNotContain(material, "blend"); // basically we don't want any blend at all
+}
+
 TEST_F(MaterialExportTest, StageMaps)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");

@@ -967,6 +967,24 @@ TEST_F(MaterialsTest, MaterialParserGuiSurf)
     EXPECT_EQ(material->getGuiSurfArgument(), "");
 }
 
+// Checks the default blend func if no explicit function is defined
+TEST_F(MaterialsTest, MaterialParserDefaultBlendFunc)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/defaultBlendFunc");
+    auto firstLayer = material->getAllLayers().front();
+
+    EXPECT_EQ(firstLayer->getType(), IShaderLayer::BLEND);
+    EXPECT_EQ(firstLayer->getMapType(), IShaderLayer::MapType::Map);
+    EXPECT_TRUE(firstLayer->getMapExpression());
+    EXPECT_EQ(firstLayer->getMapExpression()->getExpressionString(), "textures/common/caulk.tga");
+
+    // No explicit blend func means the stage is using "gl_one, gl_zero"
+    EXPECT_EQ(firstLayer->getBlendFuncStrings().first, "gl_one");
+    EXPECT_EQ(firstLayer->getBlendFuncStrings().second, "gl_zero");
+    EXPECT_EQ(firstLayer->getBlendFunc().src, GL_ONE);
+    EXPECT_EQ(firstLayer->getBlendFunc().dest, GL_ZERO);
+}
+
 TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr1");

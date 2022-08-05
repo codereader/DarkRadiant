@@ -1078,3 +1078,11 @@ textures/parsertest/mirrorRenderMap3
         mirrorRenderMap
 	}
 }
+
+textures/parsertest/defaultBlendFunc
+{
+	{
+        // No explicit blend function definition
+        map textures/common/caulk.tga
+	}
+}
