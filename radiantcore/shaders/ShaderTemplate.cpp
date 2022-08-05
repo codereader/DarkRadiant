@@ -1383,10 +1383,10 @@ std::size_t ShaderTemplate::addLayer(IShaderLayer::Type type)
     case IShaderLayer::SPECULAR:
         map = MapExpression::createForString("_black");
         break;
-    case IShaderLayer::DIFFUSE: 
+    case IShaderLayer::DIFFUSE:
+        map = MapExpression::createForString("_white");
     case IShaderLayer::BLEND:
     default:
-        map = MapExpression::createForString("_white");
         break;
     }
 
