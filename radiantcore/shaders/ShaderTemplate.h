@@ -302,6 +302,14 @@ public:
 		return _decalInfo;
 	}
 
+    void setDecalInfo(const Material::DecalInfo& info)
+	{
+        ensureParsed();
+        _decalInfo = info;
+
+        onTemplateChanged();
+	}
+
 	Material::Coverage getCoverage()
 	{
 		ensureParsed();

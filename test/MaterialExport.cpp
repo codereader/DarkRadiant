@@ -276,7 +276,7 @@ TEST_F(MaterialExportTest, Deform)
     expectDefinitionContains(material, "deform particle2 testparticle");
 }
 
-TEST_F(MaterialExportTest, DecalInfo)
+TEST_F(MaterialExportTest, DecalInfoPreservation)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/decalinfo");
     expectDefinitionContains(material, "decalinfo");
@@ -285,6 +285,75 @@ TEST_F(MaterialExportTest, DecalInfo)
     material->setDescription("-");
 
     expectDefinitionContains(material, "decalinfo 14.3 1.5 ( 0.9 0.8 0.7 0.6 ) ( 0.5 0.5 0.4 0.3 )");
+}
+
+TEST_F(MaterialExportTest, DecalInfoManipulation)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+    expectDefinitionDoesNotContain(material, "decalinfo");
+
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalInfo) << "Empty material shouldn't the decal info flag set";
+
+    // Setting a default decalInfo structure shouldn't do anything
+    Material::DecalInfo info;
+    material->setDecalInfo(info);
+
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalInfo) << "Default decalInfo shouldn't cause the flag to be set";
+
+    info.stayMilliSeconds = 10;
+    material->setDecalInfo(info);
+
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasDecalInfo) << "Flag should be set now";
+    EXPECT_EQ(material->getDecalInfo().stayMilliSeconds, info.stayMilliSeconds);
+    EXPECT_EQ(material->getDecalInfo().fadeMilliSeconds, info.fadeMilliSeconds);
+    EXPECT_EQ(material->getDecalInfo().startColour, info.startColour);
+    EXPECT_EQ(material->getDecalInfo().endColour, info.endColour);
+
+    // Definition time unit is seconds
+    expectDefinitionContains(material, "decalinfo 0.01 0 ( 0 0 0 0 ) ( 0 0 0 0 )");
+
+    info.stayMilliSeconds = 40000;
+    info.fadeMilliSeconds = 10000;
+    info.startColour = Vector4(0.5, 0.6, 0.8, 1.0);
+    info.endColour = Vector4(0.1, 0.2, 0.3, 0.0);
+    material->setDecalInfo(info);
+
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasDecalInfo) << "Flag should be set now";
+    EXPECT_EQ(material->getDecalInfo().stayMilliSeconds, info.stayMilliSeconds);
+    EXPECT_EQ(material->getDecalInfo().fadeMilliSeconds, info.fadeMilliSeconds);
+    EXPECT_EQ(material->getDecalInfo().startColour, info.startColour);
+    EXPECT_EQ(material->getDecalInfo().endColour, info.endColour);
+
+    expectDefinitionContains(material, "decalinfo 40 10 ( 0.5, 0.6, 0.8, 1 ) ( 0.1, 0.2, 0.3, 0 )");
+
+    // Clear the structure again
+    Material::DecalInfo emptyInfo;
+    material->setDecalInfo(emptyInfo);
+
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalInfo) << "Flag should be cleared again";
+
+    expectDefinitionDoesNotContain(material, "decalinfo");
+    expectDefinitionDoesNotContain(material, "decalInfo");
+}
+
+// Check that DECAL_MACRO is used where applicable
+TEST_F(MaterialExportTest, DecalMacroUsage)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+    EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
+
+#if 0
+    DECAL_MACRO
+	decalInfo 10 30 ( 1 1 1 10 ) ( -5 -5 -5 0 )		// fade rgb down fast (clamps to 0), but leave alpha clamped at 1 for the first nine seconds
+	{       
+      	blend		gl_zero, gl_one_minus_src_alpha
+		map			makealpha(textures/darkmod/decals/cracks/cannonball_hole)
+		clamp		// we don't want it to tile if the projection extends past the bounds
+		vertexColor
+	}
+
+    expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+#endif
 }
 
 TEST_F(MaterialExportTest, RenderBump)

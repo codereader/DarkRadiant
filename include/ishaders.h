@@ -173,6 +173,13 @@ public:
 		int		fadeMilliSeconds;
 		Vector4	startColour;
 		Vector4	endColour;
+
+        DecalInfo() :
+            stayMilliSeconds(0),
+            fadeMilliSeconds(0),
+            startColour(0,0,0,0),
+            endColour(0,0,0,0)
+        {}
 	};
 
 	enum Coverage
@@ -288,6 +295,11 @@ public:
 
 	/// Retrieves the decal info structure of this material.
 	virtual DecalInfo getDecalInfo() const = 0;
+
+    // Sets the decal info structure on this material.
+    // If the structure is not empty, it will enable the ParseFlag PF_HasDecalInfo,
+    // an empty/defaulted decalInfo structure will clear the flag
+    virtual void setDecalInfo(const DecalInfo& info) = 0;
 
 	/// Returns the coverage type of this material, also needed by the map compiler.
 	virtual Coverage getCoverage() const = 0;

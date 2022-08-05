@@ -91,6 +91,7 @@ public:
 	int getSpectrum() const override;
     void setSpectrum(int spectrum) override;
 	DecalInfo getDecalInfo() const override;
+    void setDecalInfo(const DecalInfo& info) override;
 	Coverage getCoverage() const override;
 	std::string getDescription() const override;
     void setDescription(const std::string& description) override;

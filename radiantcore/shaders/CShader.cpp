@@ -303,6 +303,12 @@ Material::DecalInfo CShader::getDecalInfo() const
 	return _template->getDecalInfo();
 }
 
+void CShader::setDecalInfo(const DecalInfo& info)
+{
+    ensureTemplateCopy();
+    return _template->setDecalInfo(info);
+}
+
 Material::Coverage CShader::getCoverage() const
 {
 	return _template->getCoverage();
