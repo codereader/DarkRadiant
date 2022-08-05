@@ -342,18 +342,35 @@ TEST_F(MaterialExportTest, DecalMacroUsage)
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
     EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
 
-#if 0
-    DECAL_MACRO
-	decalInfo 10 30 ( 1 1 1 10 ) ( -5 -5 -5 0 )		// fade rgb down fast (clamps to 0), but leave alpha clamped at 1 for the first nine seconds
-	{       
-      	blend		gl_zero, gl_one_minus_src_alpha
-		map			makealpha(textures/darkmod/decals/cracks/cannonball_hole)
-		clamp		// we don't want it to tile if the projection extends past the bounds
-		vertexColor
-	}
+    // polygonOffset 1 | discrete | sort decal | noShadows
 
+    // Set the 4 decal macro properties one after the other, the last one should cut it
+
+    material->setPolygonOffset(1.0f);
     expectDefinitionDoesNotContain(material, "DECAL_MACRO");
-#endif
+
+    material->setSurfaceFlag(Material::SURF_DISCRETE);
+    expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+
+    material->setSortRequest(Material::SORT_DECAL);
+    expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+
+    material->setMaterialFlag(Material::FLAG_NOSHADOWS);
+    expectDefinitionContains(material, "DECAL_MACRO");
+
+    // Setting decalInfo doesn't influence DECAL_MACRO
+    Material::DecalInfo info;
+    info.stayMilliSeconds = 5000;
+    info.fadeMilliSeconds = 1000;
+    info.startColour = Vector4(1, 1, 1, 1);
+    info.endColour = Vector4(0, 0, 0, 1);
+    material->setDecalInfo(info);
+
+    expectDefinitionContains(material, "DECAL_MACRO");
+
+    // Set the polygonOffset to a mismatching value, this breaks the spell
+    material->setPolygonOffset(1.1f);
+    expectDefinitionDoesNotContain(material, "DECAL_MACRO");
 }
 
 TEST_F(MaterialExportTest, RenderBump)
