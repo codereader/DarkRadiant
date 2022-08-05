@@ -272,6 +272,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
     material.def("getSpectrum", &ScriptMaterial::getSpectrum);
     material.def("setSpectrum", &ScriptMaterial::setSpectrum);
     material.def("getDecalInfo", &ScriptMaterial::getDecalInfo);
+    material.def("setDecalInfo", &ScriptMaterial::setDecalInfo);
     material.def("getCoverage", &ScriptMaterial::getCoverage);
     material.def("getLightFalloffExpressionString", &ScriptMaterial::getLightFalloffExpressionString);
     material.def("setLightFalloffExpressionFromString", &ScriptMaterial::setLightFalloffExpressionFromString);

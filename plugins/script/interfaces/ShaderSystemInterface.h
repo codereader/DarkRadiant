@@ -600,6 +600,11 @@ public:
         return _material ? _material->getDecalInfo() : Material::DecalInfo();
     }
 
+    void setDecalInfo(const Material::DecalInfo& decalInfo)
+    {
+        if (_material) _material->setDecalInfo(decalInfo);
+    }
+
     Material::Coverage getCoverage()
     {
         return _material ? _material->getCoverage() : Material::MC_UNDETERMINED;
