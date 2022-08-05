@@ -445,6 +445,10 @@ public:
 	// Pass a boolean-valued "is-a-folder" column to indicate which items are actual folders.
 	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn);
 
+    // Sort the model by a string-valued column, sorting folders on top, starting at the given item.
+    // See also the other SortModelFoldersFirst overload.
+    virtual void SortModelFoldersFirst(const wxDataViewItem& startItem, const Column& stringColumn, const Column& isFolderColumn);
+
     using FolderCompareFunction = std::function<int(const wxDataViewItem&, const wxDataViewItem&)>;
 
     // Sort the model by a string-valued column, sorting folders on top.
@@ -453,6 +457,11 @@ public:
     // if the custom folder func returns equal (0), the regular name comparison is performed.
 	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn, 
         const FolderCompareFunction& customFolderSortFunc);
+
+    // Sort the model by a string-valued column, sorting folders on top, starting at the given item.
+    // See also the other SortModelFoldersFirst overload.
+    virtual void SortModelFoldersFirst(const wxDataViewItem& startItem, const Column& stringColumn, 
+        const Column& isFolderColumn, const FolderCompareFunction& customFolderSortFunc);
 
     // Find the given string needle in the given column (searches the entire tree)
 	virtual wxDataViewItem FindString(const std::string& needle, const Column& column);
@@ -523,7 +532,7 @@ protected:
 protected:
 	void ForeachNodeRecursive(const TreeModel::NodePtr& node, const VisitFunction& visitFunction);
 	void ForeachNodeRecursiveReverse(const TreeModel::NodePtr& node, const TreeModel::VisitFunction& visitFunction);
-	void SortModelRecursive(const TreeModel::NodePtr& node, const TreeModel::SortFunction& sortFunction);
+	void SortModelRecursively(Node* node, const TreeModel::SortFunction& sortFunction);
 
 	// Sort functor for the SortModelFoldersFirst() method, uses the stringCompare method to compare the actual text values
     // Pass CompareStringVariants or CompareIconTextVariants as stringCompare.
