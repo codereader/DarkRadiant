@@ -2372,9 +2372,7 @@ void MaterialEditor::updateStageControls()
             soundMapWave->SetValue(false);
         }
 
-        if (selectedStage->getMapType() == IShaderLayer::MapType::RemoteRenderMap ||
-            selectedStage->getMapType() == IShaderLayer::MapType::MirrorRenderMap ||
-            selectedStage->getMapType() == IShaderLayer::MapType::SoundMap)
+        if (selectedStage->getMapType() == IShaderLayer::MapType::SoundMap)
         {
             imageMap->Disable();
         }
