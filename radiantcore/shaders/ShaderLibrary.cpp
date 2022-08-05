@@ -64,6 +64,7 @@ void ShaderLibrary::copyDefinition(const std::string& nameOfOriginal, const std:
 
     // Replace the syntax block of the target with the one of the original
     auto syntax = originalDecl->getBlockSyntax();
+    syntax.name = nameOfCopy;
     syntax.fileInfo = vfs::FileInfo{ "", "", vfs::Visibility::HIDDEN };
 
     decl->setBlockSyntax(syntax);
