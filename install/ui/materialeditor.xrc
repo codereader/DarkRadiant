@@ -1538,7 +1538,6 @@
 																																								<border>0</border>
 																																								<object class="wxSpinCtrl" name="MaterialEditorDecalInfoStaySeconds">
 																																									<style>wxSP_ARROW_KEYS</style>
-																																									<enabled>0</enabled>
 																																									<value>0</value>
 																																									<min>0</min>
 																																									<max>10</max>
@@ -1576,7 +1575,6 @@
 																																								<border>0</border>
 																																								<object class="wxSpinCtrl" name="MaterialEditorDecalInfoFadeSeconds">
 																																									<style>wxSP_ARROW_KEYS</style>
-																																									<enabled>0</enabled>
 																																									<value>0</value>
 																																									<min>0</min>
 																																									<max>10</max>
@@ -1613,7 +1611,6 @@
 																																								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																																								<border>0</border>
 																																								<object class="wxTextCtrl" name="MaterialDecalInfoStartRgb">
-																																									<enabled>0</enabled>
 																																									<value></value>
 																																								</object>
 																																							</object>
@@ -1639,7 +1636,6 @@
 																																								<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
 																																								<border>0</border>
 																																								<object class="wxTextCtrl" name="MaterialDecalInfoEndRgb">
-																																									<enabled>0</enabled>
 																																									<value></value>
 																																								</object>
 																																							</object>

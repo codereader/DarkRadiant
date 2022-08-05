@@ -143,6 +143,7 @@ private:
     IShaderLayer::Ptr getSelectedStage();
     IEditableShaderLayer::Ptr getEditableStageForSelection();
     std::pair<IShaderLayer::Ptr, std::size_t> findMaterialStageByType(IShaderLayer::Type type);
+    void assignDecalInfoToMaterial(const MaterialPtr& material, bool isEnabled);
 
     void updateBasicPageFromMaterial();
     void updateBasicImagePreview();

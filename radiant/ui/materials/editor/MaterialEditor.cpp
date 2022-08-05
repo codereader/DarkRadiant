@@ -670,6 +670,52 @@ void MaterialEditor::setupMaterialProperties()
         getControl<wxSpinCtrl>("MaterialSpectrumValue")->Enable(ev.IsChecked());
     });
 
+    auto hasDecalInfo = getControl<wxCheckBox>("MaterialHasDecalInfo");
+    hasDecalInfo->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev)
+    {
+        getControl<wxPanel>("MaterialDecalInfoPanel")->Enable(ev.IsChecked());
+    });
+
+    _materialBindings.emplace(std::make_shared<CheckBoxBinding<MaterialPtr>>(hasDecalInfo,
+        [](const MaterialPtr& material)
+        {
+            return material->getParseFlags() & Material::PF_HasDecalInfo;
+        },
+        [this](const MaterialPtr& material, bool value)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+
+            // Set the decal info structure from the control contents
+            assignDecalInfoToMaterial(material, value);
+        },
+        [this]() { onMaterialChanged(); }));
+
+    _materialBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrlDouble, MaterialPtr>>(
+        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds"),
+        [](const MaterialPtr& material)
+        {
+            return material->getDecalInfo().stayMilliSeconds / 1000.0;
+        },
+        [this](const MaterialPtr& material, double value)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+            assignDecalInfoToMaterial(material, true);
+        },
+        [this]() { onMaterialChanged(); }));
+
+    _materialBindings.emplace(std::make_shared<SpinCtrlBinding<wxSpinCtrlDouble, MaterialPtr>>(
+        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds"),
+        [](const MaterialPtr& material)
+        {
+            return material->getDecalInfo().fadeMilliSeconds / 1000.0;
+        },
+        [this](const MaterialPtr& material, double value)
+        {
+            if (_materialUpdateInProgress || !_material) return;
+            assignDecalInfoToMaterial(material, true);
+        },
+            [this]() { onMaterialChanged(); }));
+
     // For light fall off images, only cameracubemap and map are allowed
     auto lightFallOffCubeMapType = getControl<wxChoice>("MaterialLightFalloffCubeMapType");
     lightFallOffCubeMapType->AppendString(shaders::getStringForMapType(IShaderLayer::MapType::Map));
@@ -2049,8 +2095,6 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
         getControl<wxPanel>("MaterialDecalInfoPanel")->Enable(hasDecalInfo);
 
         const auto& decalInfo = _material->getDecalInfo();
-        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds")->SetValue(decalInfo.stayMilliSeconds / 1000.0f);
-        getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds")->SetValue(decalInfo.fadeMilliSeconds / 1000.0f);
         getControl<wxTextCtrl>("MaterialDecalInfoStartRgb")->SetValue(fmt::format("({0} {1} {2} {3})", 
             decalInfo.startColour.x(), decalInfo.startColour.y(), decalInfo.startColour.z(), decalInfo.startColour.w()));
         getControl<wxTextCtrl>("MaterialDecalInfoEndRgb")->SetValue(fmt::format("({0} {1} {2} {3})",
@@ -2807,6 +2851,25 @@ void MaterialEditor::_onBasicTestFrobStages(wxMouseEvent& ev)
 {
     _preview->enableFrobHighlight(ev.ButtonDown());
     ev.Skip();
+}
+
+void MaterialEditor::assignDecalInfoToMaterial(const MaterialPtr& material, bool isEnabled)
+{
+    Material::DecalInfo info;
+    bool wasEnabled = material->getParseFlags() & Material::PF_HasDecalInfo;
+
+    if (isEnabled)
+    {
+        info.stayMilliSeconds = static_cast<int>(getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoStaySeconds")->GetValue() * 1000);
+        info.fadeMilliSeconds = static_cast<int>(getControl<wxSpinCtrlDouble>("MaterialEditorDecalInfoFadeSeconds")->GetValue() * 1000);
+
+        if (!wasEnabled && info.stayMilliSeconds == 0)
+        {
+            info.stayMilliSeconds = 1; // make sure the value is > 0 otherwise the flag doesn't get set
+        }
+    }
+
+    material->setDecalInfo(info);
 }
 
 }
