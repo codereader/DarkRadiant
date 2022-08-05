@@ -87,6 +87,30 @@ void ShaderTemplate::setEditorImageExpressionFromString(const std::string& expre
     onTemplateChanged();
 }
 
+void ShaderTemplate::setDecalInfo(const Material::DecalInfo& info)
+{
+    ensureParsed();
+
+    _decalInfo = info;
+
+    // Check if this decal info is empty, if yes: clear the flag 
+    Material::DecalInfo emptyInfo;
+
+    if (_decalInfo.stayMilliSeconds == emptyInfo.stayMilliSeconds &&
+        _decalInfo.fadeMilliSeconds == emptyInfo.fadeMilliSeconds &&
+        _decalInfo.startColour == emptyInfo.startColour &&
+        _decalInfo.endColour == emptyInfo.endColour)
+    {
+        _parseFlags &= ~Material::PF_HasDecalInfo;
+    }
+    else
+    {
+        _parseFlags |= Material::PF_HasDecalInfo;
+    }
+
+    onTemplateChanged();
+}
+
 IShaderExpression::Ptr ShaderTemplate::parseSingleExpressionTerm(parser::DefTokeniser& tokeniser)
 {
 	std::string token = tokeniser.nextToken();

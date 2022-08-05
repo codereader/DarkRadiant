@@ -324,7 +324,7 @@ TEST_F(MaterialExportTest, DecalInfoManipulation)
     EXPECT_EQ(material->getDecalInfo().startColour, info.startColour);
     EXPECT_EQ(material->getDecalInfo().endColour, info.endColour);
 
-    expectDefinitionContains(material, "decalinfo 40 10 ( 0.5, 0.6, 0.8, 1 ) ( 0.1, 0.2, 0.3, 0 )");
+    expectDefinitionContains(material, "decalinfo 40 10 ( 0.5 0.6 0.8 1 ) ( 0.1 0.2 0.3 0 )");
 
     // Clear the structure again
     Material::DecalInfo emptyInfo;
