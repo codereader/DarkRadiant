@@ -1499,6 +1499,27 @@ std::string ShaderTemplate::getRenderBumpFlatArguments()
     return _renderBumpFlatArguments;
 }
 
+bool ShaderTemplate::evaluateMacroUsage()
+{
+    ensureParsed();
+
+    auto oldDecalMacroFlag = _parseFlags & Material::PF_HasDecalMacro;
+
+    // Reset the decal_macro flag and evaluate
+    _parseFlags &= ~Material::PF_HasDecalMacro;
+
+    if (getPolygonOffset() == 1.0f &&
+        getSortRequest() == Material::SORT_DECAL &&
+        (getSurfaceFlags() & Material::SURF_DISCRETE) != 0 &&
+        (getMaterialFlags() & Material::FLAG_NOSHADOWS) != 0)
+    {
+        _parseFlags |= Material::PF_HasDecalMacro;
+    }
+
+    // If the flag changed => return true
+    return oldDecalMacroFlag != (_parseFlags & Material::PF_HasDecalMacro);
+}
+
 std::string ShaderTemplate::generateSyntax()
 {
     return MaterialSourceGenerator::GenerateDefinitionBlock(*this);

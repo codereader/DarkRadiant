@@ -189,6 +189,7 @@ public:
     {
         ensureParsed();
         _materialFlags |= flag;
+        evaluateMacroUsage(); // material flags influence macro usage
         onTemplateChanged();
     }
 
@@ -196,6 +197,7 @@ public:
     {
         ensureParsed();
         _materialFlags &= ~flag;
+        evaluateMacroUsage(); // material flags influence macro usage
         onTemplateChanged();
     }
 
@@ -237,7 +239,7 @@ public:
     {
         ensureParsed();
         _surfaceFlags |= flag;
-
+        evaluateMacroUsage(); // surface flags influence macro usage
         onTemplateChanged();
     }
 
@@ -245,7 +247,7 @@ public:
     {
         ensureParsed();
         _surfaceFlags &= ~flag;
-
+        evaluateMacroUsage(); // surface flags influence macro usage
         onTemplateChanged();
     }
 
@@ -384,6 +386,7 @@ public:
 
         _materialFlags |= Material::FLAG_HAS_SORT_DEFINED;
         _sortReq = sortRequest;
+        evaluateMacroUsage(); // sort request influences macro usage
 
         onTemplateChanged();
     }
@@ -404,6 +407,8 @@ public:
             _sortReq = Material::SORT_OPAQUE;
         }
 
+        evaluateMacroUsage(); // sort request influences macro usage
+
         onTemplateChanged();
     }
 
@@ -418,6 +423,8 @@ public:
         ensureParsed();
         setMaterialFlag(Material::FLAG_POLYGONOFFSET);
         _polygonOffset = offset;
+
+        evaluateMacroUsage(); // polygon offset influences macro usage
 
         onTemplateChanged();
     }
@@ -536,8 +543,7 @@ protected:
     std::string generateSyntax() override;
 
 private:
-
-	// Add the given layer and assigns editor preview layer if applicable
+    // Add the given layer and assigns editor preview layer if applicable
 	void addLayer(const Doom3ShaderLayer::Ptr& layer);
 
     // Parse helpers. These scan for possible matches, this is not a
@@ -557,6 +563,9 @@ private:
 
 	bool saveLayer();
     void determineCoverage();
+    // Checks if the settings of this material justify the use of any macro keywords like DECAL_MACRO
+    // Returns true if a macro flag changed, in which case a changed signal should be emitted
+    bool evaluateMacroUsage();
 };
 
 }

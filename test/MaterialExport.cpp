@@ -342,21 +342,27 @@ TEST_F(MaterialExportTest, DecalMacroUsage)
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
     EXPECT_EQ(string::trim_copy(material->getDefinition()), "");
 
+    // Set the 4 decal macro properties one after the other, the last one should cut it
     // polygonOffset 1 | discrete | sort decal | noShadows
 
-    // Set the 4 decal macro properties one after the other, the last one should cut it
+    // Clear the noshadows flag, an empty material is translucent and implicitly set to noshadows
+    material->clearMaterialFlag(Material::FLAG_NOSHADOWS);
 
     material->setPolygonOffset(1.0f);
     expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalMacro);
 
     material->setSurfaceFlag(Material::SURF_DISCRETE);
     expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalMacro);
 
     material->setSortRequest(Material::SORT_DECAL);
     expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalMacro);
 
     material->setMaterialFlag(Material::FLAG_NOSHADOWS);
     expectDefinitionContains(material, "DECAL_MACRO");
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasDecalMacro);
 
     // Setting decalInfo doesn't influence DECAL_MACRO
     Material::DecalInfo info;
@@ -367,10 +373,12 @@ TEST_F(MaterialExportTest, DecalMacroUsage)
     material->setDecalInfo(info);
 
     expectDefinitionContains(material, "DECAL_MACRO");
+    EXPECT_TRUE(material->getParseFlags() & Material::PF_HasDecalMacro);
 
     // Set the polygonOffset to a mismatching value, this breaks the spell
     material->setPolygonOffset(1.1f);
     expectDefinitionDoesNotContain(material, "DECAL_MACRO");
+    EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalMacro);
 }
 
 TEST_F(MaterialExportTest, RenderBump)
