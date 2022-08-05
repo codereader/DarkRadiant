@@ -361,8 +361,11 @@ TEST_F(MaterialExportTest, DecalMacroUsage)
     EXPECT_FALSE(material->getParseFlags() & Material::PF_HasDecalMacro);
 
     material->setMaterialFlag(Material::FLAG_NOSHADOWS);
-    expectDefinitionContains(material, "DECAL_MACRO");
     EXPECT_TRUE(material->getParseFlags() & Material::PF_HasDecalMacro);
+    expectDefinitionContains(material, "DECAL_MACRO");
+
+    // The implied keywords should be gone from the definition
+    expectDefinitionDoesNotContainAnyOf(material, { "discrete", "noShadows", "polygonOffset 1", "sort decal" });
 
     // Setting decalInfo doesn't influence DECAL_MACRO
     Material::DecalInfo info;

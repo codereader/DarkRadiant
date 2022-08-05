@@ -462,9 +462,20 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
         stream << "\n";
     }
 
+    // Macros go first
+    bool hasDecalMacro = shaderTemplate.getParseFlags() & Material::PF_HasDecalMacro;
+
+    if (hasDecalMacro)
+    {
+        stream << "\t" << "DECAL_MACRO" << "\n";
+    }
+
     // Go through the material flags which reflect a single keyword
     for (const auto& pair : shaders::MaterialFlagKeywords)
     {
+        // Skip exporting noShadows is DECAL_MACRO is active
+        if (hasDecalMacro && pair.second == Material::FLAG_NOSHADOWS) continue;
+
         if (shaderTemplate.getMaterialFlags() & pair.second)
         {
             stream << "\t" << pair.first << "\n";
@@ -472,7 +483,9 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     }
 
     // Polygon Offset
-    if (shaderTemplate.getMaterialFlags() & Material::FLAG_POLYGONOFFSET)
+    // DECAL_MACRO implies polygonOffset 1, prevent writing redundant information
+    if ((shaderTemplate.getMaterialFlags() & Material::FLAG_POLYGONOFFSET) != 0 &&
+        (shaderTemplate.getPolygonOffset() != 1 || !hasDecalMacro))
     {
         stream << fmt::format("\tpolygonOffset {0}\n", shaderTemplate.getPolygonOffset());
     }
@@ -513,7 +526,8 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     }
 
     // Sort
-    if (shaderTemplate.getMaterialFlags() & Material::FLAG_HAS_SORT_DEFINED)
+    if (shaderTemplate.getMaterialFlags() & Material::FLAG_HAS_SORT_DEFINED && 
+        (!hasDecalMacro || shaderTemplate.getSortRequest() != Material::SORT_DECAL))
     {
         stream << "\tsort ";
 
@@ -638,6 +652,9 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     // Surface flags
     for (const auto& pair : SurfaceFlags)
     {
+        // Skip exporting "discrete" is DECAL_MACRO is active
+        if (hasDecalMacro && pair.second == Material::SURF_DISCRETE) continue;
+
         if (shaderTemplate.getSurfaceFlags() & pair.second)
         {
             stream << "\t" << pair.first << "\n";
