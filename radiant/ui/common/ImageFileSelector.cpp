@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ImageFilePopulator.h"
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
 
 namespace ui
 {
@@ -66,7 +67,14 @@ ImageFileSelector::ImageFileSelector(wxWindow* parent, wxTextCtrl* targetControl
     _okButton = dialogButtons->GetAffirmativeButton();
     _okButton->Disable();
 
-    GetSizer()->Add(_treeView, 1, wxALL|wxEXPAND, 12);
+    auto toolbar = new wxutil::ResourceTreeViewToolbar(this, _treeView);
+    toolbar->EnableFavouriteManagement(false);
+
+    auto treeViewSizer = new wxBoxSizer(wxVERTICAL);
+    treeViewSizer->Add(toolbar, 0, wxEXPAND | wxBOTTOM, 6);
+    treeViewSizer->Add(_treeView, 1, wxALL | wxEXPAND, 0);
+
+    GetSizer()->Add(treeViewSizer, 1, wxALL|wxEXPAND, 12);
     GetSizer()->Add(dialogButtons, 0, wxALIGN_RIGHT | wxBOTTOM | wxRIGHT, 12);
 
     FitToScreen(0.5f, 0.7f);
