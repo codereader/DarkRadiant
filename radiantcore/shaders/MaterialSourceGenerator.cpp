@@ -316,10 +316,24 @@ void writeBlendMap(std::ostream& stream, Doom3ShaderLayer& layer)
     case IShaderLayer::MapType::MirrorRenderMap:
         stream << "\t\tmirrorRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", "
             << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
+
+        // Mirror render stages are allowed to have map expressions
+        if (mapExpr)
+        {
+            stream << "\t\tmap " << (mapExpr ? mapExpr->getExpressionString() : "") << "\n";
+        }
+
         break;
     case IShaderLayer::MapType::RemoteRenderMap:
         stream << "\t\tremoteRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", "
             << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
+
+        // Remote render stages are allowed to have map expressions
+        if (mapExpr)
+        {
+            stream << "\t\tmap " << (mapExpr ? mapExpr->getExpressionString() : "") << "\n";
+        }
+
         break;
     case IShaderLayer::MapType::VideoMap:
     {

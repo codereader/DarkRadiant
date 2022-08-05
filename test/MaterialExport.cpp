@@ -498,10 +498,30 @@ TEST_F(MaterialExportTest, StageMaps)
 
     material->revertModifications();
 
+    // Mirror Render Map with extra map expression
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
+    layer->setMapExpressionFromString("textures/common/mirror.tga");
+    layer->setRenderMapSize(Vector2(512, 256));
+    expectDefinitionContains(material, "mirrorRenderMap 512, 256");
+    expectDefinitionContains(material, "map textures/common/mirror.tga");
+
+    material->revertModifications();
+
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setMapType(IShaderLayer::MapType::RemoteRenderMap);
     layer->setRenderMapSize(Vector2(512, 256));
     expectDefinitionContains(material, "remoteRenderMap 512, 256");
+
+    material->revertModifications();
+
+    // Remote Render Map with extra map expression
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::RemoteRenderMap);
+    layer->setRenderMapSize(Vector2(512, 256));
+    layer->setMapExpressionFromString("textures/remoteRender.tga");
+    expectDefinitionContains(material, "remoteRenderMap 512, 256");
+    expectDefinitionContains(material, "map textures/remoteRender.tga");
 
     material->revertModifications();
 
