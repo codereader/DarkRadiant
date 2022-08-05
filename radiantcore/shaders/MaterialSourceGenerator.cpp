@@ -280,6 +280,21 @@ void writeStageModifiers(std::ostream& stream, Doom3ShaderLayer& layer)
     }
 }
 
+namespace
+{
+    // Generates the dimension string " 200 300" including a leading whitespace
+    // Generates an empty string if the dimensions are 0,0
+    std::string generateRenderMapDimensions(const Doom3ShaderLayer& layer)
+    {
+        const auto& size = layer.getRenderMapSize();
+
+        return size.getLengthSquared() <= 0 ? "" : fmt::format(" {0} {1}",
+            static_cast<int>(layer.getRenderMapSize().x()),
+            static_cast<int>(layer.getRenderMapSize().y()));
+    }
+    
+}
+
 void writeBlendMap(std::ostream& stream, Doom3ShaderLayer& layer)
 {
     // Blend types
@@ -314,8 +329,8 @@ void writeBlendMap(std::ostream& stream, Doom3ShaderLayer& layer)
         stream << "\t\tcameraCubeMap " << (mapExpr ? mapExpr->getExpressionString() : "") << "\n";
         break;
     case IShaderLayer::MapType::MirrorRenderMap:
-        stream << "\t\tmirrorRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", "
-            << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
+        // Whitespace separator will be generated along with the dimensions
+        stream << "\t\tmirrorRenderMap" << generateRenderMapDimensions(layer) << "\n";
 
         // Mirror render stages are allowed to have map expressions
         if (mapExpr)
@@ -325,8 +340,8 @@ void writeBlendMap(std::ostream& stream, Doom3ShaderLayer& layer)
 
         break;
     case IShaderLayer::MapType::RemoteRenderMap:
-        stream << "\t\tremoteRenderMap " << static_cast<int>(layer.getRenderMapSize().x()) << ", "
-            << static_cast<int>(layer.getRenderMapSize().y()) << "\n";
+        // Whitespace separator will be generated along with the dimensions
+        stream << "\t\tremoteRenderMap" << generateRenderMapDimensions(layer) << "\n";
 
         // Remote render stages are allowed to have map expressions
         if (mapExpr)

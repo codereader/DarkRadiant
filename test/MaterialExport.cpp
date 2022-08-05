@@ -494,7 +494,7 @@ TEST_F(MaterialExportTest, StageMaps)
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
     layer->setRenderMapSize(Vector2(512, 256));
-    expectDefinitionContains(material, "mirrorRenderMap 512, 256");
+    expectDefinitionContains(material, "mirrorRenderMap 512 256");
 
     material->revertModifications();
 
@@ -503,15 +503,24 @@ TEST_F(MaterialExportTest, StageMaps)
     layer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
     layer->setMapExpressionFromString("textures/common/mirror.tga");
     layer->setRenderMapSize(Vector2(512, 256));
-    expectDefinitionContains(material, "mirrorRenderMap 512, 256");
+    expectDefinitionContains(material, "mirrorRenderMap 512 256");
     expectDefinitionContains(material, "map textures/common/mirror.tga");
+
+    material->revertModifications();
+
+    // Mirror Render Map with 0,0 dimensions
+    layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
+    layer->setMapType(IShaderLayer::MapType::MirrorRenderMap);
+    layer->setRenderMapSize(Vector2(0, 0));
+    expectDefinitionContains(material, "mirrorRenderMap");
+    expectDefinitionDoesNotContain(material, "mirrorRenderMap 0 0"); // should be dimensionless
 
     material->revertModifications();
 
     layer = material->getEditableLayer(material->addLayer(IShaderLayer::BLEND));
     layer->setMapType(IShaderLayer::MapType::RemoteRenderMap);
     layer->setRenderMapSize(Vector2(512, 256));
-    expectDefinitionContains(material, "remoteRenderMap 512, 256");
+    expectDefinitionContains(material, "remoteRenderMap 512 256");
 
     material->revertModifications();
 
@@ -520,7 +529,7 @@ TEST_F(MaterialExportTest, StageMaps)
     layer->setMapType(IShaderLayer::MapType::RemoteRenderMap);
     layer->setRenderMapSize(Vector2(512, 256));
     layer->setMapExpressionFromString("textures/remoteRender.tga");
-    expectDefinitionContains(material, "remoteRenderMap 512, 256");
+    expectDefinitionContains(material, "remoteRenderMap 512 256");
     expectDefinitionContains(material, "map textures/remoteRender.tga");
 
     material->revertModifications();
