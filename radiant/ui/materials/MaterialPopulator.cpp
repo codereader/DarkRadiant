@@ -87,6 +87,12 @@ void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, c
     if (!existingItem.IsOk())
     {
         InsertTexture(model, itemPath, materialName, parts.back(), parentItem);
+
+        // Sort the subtree starting from this parent item
+        SortModel(model, parentItem);
+
+        // Force a reload of this subtree by sending events for each child
+        model->SendSubtreeRefreshEvents(parentItem);
     }
 }
 
@@ -173,7 +179,12 @@ void MaterialPopulator::InsertTexture(const wxutil::TreeModel::Ptr& model,
 void MaterialPopulator::SortModel(const wxutil::TreeModel::Ptr& model)
 {
     // Sort the model while we're still in the worker thread
-    model->SortModelFoldersFirst(_columns.iconAndName, _columns.isFolder,
+    SortModel(model, wxDataViewItem());
+}
+
+void MaterialPopulator::SortModel(const wxutil::TreeModel::Ptr& model, const wxDataViewItem& startItem)
+{
+    model->SortModelFoldersFirst(startItem, _columns.iconAndName, _columns.isFolder,
         [&](const wxDataViewItem& a, const wxDataViewItem& b)
     {
         // Special folder comparison function

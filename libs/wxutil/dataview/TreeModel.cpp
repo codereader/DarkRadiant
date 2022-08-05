@@ -1020,4 +1020,16 @@ void TreeModel::SetEnabled(const wxDataViewItem& item, unsigned int col, bool en
 	owningNode->enabledFlags[col] = enabled;
 }
 
+void TreeModel::SendSubtreeRefreshEvents(wxDataViewItem& parentItem)
+{
+    wxDataViewItemArray children;
+    GetChildren(parentItem, children);
+
+    for (auto child : children)
+    {
+        ItemDeleted(parentItem, child);
+        ItemAdded(parentItem, child);
+    }
+}
+
 } // namespace

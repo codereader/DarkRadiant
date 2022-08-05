@@ -525,6 +525,10 @@ public:
 	virtual int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
                         unsigned int column, bool ascending) const override;
 
+    // Forces client data views to refresh this subtree by sending add/remove events
+    // for each of the children of the given item
+    virtual void SendSubtreeRefreshEvents(wxDataViewItem& parentItem);
+
 protected:
 	// Returns a reference to the actual rootnode, only allowed for use in subclasses
 	virtual const NodePtr& getRootNode() const;
