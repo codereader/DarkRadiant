@@ -209,7 +209,7 @@ int MaterialEditor::ShowModal()
 
     if (!_materialToPreselect.empty())
     {
-        _treeView->SetSelectedFullname(_materialToPreselect);
+        _treeView->SetSelectedDeclName(_materialToPreselect);
     }
 
     int returnCode = DialogBase::ShowModal();
@@ -1500,7 +1500,7 @@ void MaterialEditor::handleMaterialSelectionChange()
     // Update the preview if a texture is selected
     if (_selectedMaterialItem.IsOk() && !_treeView->IsDirectorySelected())
     {
-        _material = GlobalMaterialManager().getMaterial(_treeView->GetSelectedFullname());
+        _material = GlobalMaterialManager().getMaterial(_treeView->GetSelectedDeclName());
 
         _materialChanged = _material->sig_materialChanged().connect([this]()
         {
@@ -1523,7 +1523,7 @@ void MaterialEditor::_onMaterialNameChanged(wxCommandEvent& ev)
     auto nameEntry = static_cast<wxTextCtrl*>(ev.GetEventObject());
 
     GlobalMaterialManager().renameMaterial(_material->getName(), nameEntry->GetValue().ToStdString());
-    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), _treeView->Columns().fullName);
+    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), _treeView->Columns().declName);
     _treeView->EnsureVisible(item);
  
     updateMaterialPropertiesFromMaterial();
@@ -1559,7 +1559,7 @@ void MaterialEditor::selectMaterial(const MaterialPtr& material)
         return;
     }
 
-    auto newItem = _treeView->GetTreeModel()->FindString(material->getName(), _treeView->Columns().fullName);
+    auto newItem = _treeView->GetTreeModel()->FindString(material->getName(), _treeView->Columns().declName);
 
     if (newItem.IsOk())
     {
@@ -2707,7 +2707,7 @@ void MaterialEditor::updateMaterialTreeItem()
     if (!_material) return;
 
     const auto& columns = _treeView->Columns();
-    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), columns.fullName);
+    auto item = _treeView->GetTreeModel()->FindString(_material->getName(), columns.declName);
 
     if (!item.IsOk())
     {
