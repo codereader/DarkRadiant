@@ -23,6 +23,21 @@ namespace
     const char* const FUNC_STATIC_CLASS = "func_static";
     const char* const GKEY_DEFAULT_ROOM_MATERIAL = "/materialPreview/defaultRoomMaterial";
     const char* const GKEY_DEFAULT_LIGHT_DEF = "/materialPreview/defaultLightDef";
+
+    inline bool isSkyboxMaterial(const MaterialPtr& material)
+    {
+        if (!material) return false;
+
+        for (const auto& layer : material->getAllLayers())
+        {
+            if (layer->getMapType() == IShaderLayer::MapType::CameraCubeMap)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
 
 MaterialPreview::MaterialPreview(wxWindow* parent) :
@@ -68,6 +83,15 @@ void MaterialPreview::setupToolbar()
     toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onTestModelSelectionChanged, this, _testModelSphereButton->GetId());
     toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onTestModelSelectionChanged, this, _testModelTilesButton->GetId());
 
+    toolbar->AddSeparator();
+
+    _swapBackgroundMaterialButton = toolbar->AddTool(wxID_ANY, "Swap", wxutil::GetLocalBitmap("swap_background.png", wxART_TOOLBAR));
+    _swapBackgroundMaterialButton->SetToggle(true);
+    toolbar->ToggleTool(_swapBackgroundMaterialButton->GetId(), false);
+    _swapBackgroundMaterialButton->SetShortHelp(_("Swap Background and Foreground Materials"));
+
+    toolbar->Bind(wxEVT_TOOL, &MaterialPreview::onSwapBackgroundMaterialChanged, this, _swapBackgroundMaterialButton->GetId());
+
     toolbar->Realize();
 
     addToolbar(toolbar);
@@ -78,8 +102,13 @@ const MaterialPtr& MaterialPreview::getMaterial()
     return _material;
 }
 
-void MaterialPreview::updateModelSkin()
+void MaterialPreview::updateModelSkin(const std::string& material)
 {
+    // Assign the material to the temporary skin
+    _testModelSkin->setRemapMaterial(GlobalMaterialManager().getMaterial(material));
+
+    if (!_model) return;
+
     // Hide the model if there's no material to preview
     _model->setFiltered(_testModelSkin->isEmpty());
 
@@ -100,7 +129,7 @@ const std::string& MaterialPreview::getRoomMaterial()
 void MaterialPreview::setRoomMaterial(const std::string& material)
 {
     _roomMaterial = material;
-    updateRoomSkin();
+    updateSceneMaterials();
 
     signal_SceneChanged().emit();
 }
@@ -155,9 +184,9 @@ std::string MaterialPreview::getDefaultLightDef()
     return className;
 }
 
-void MaterialPreview::updateRoomSkin()
+void MaterialPreview::updateRoomSkin(const std::string& roomMaterial)
 {
-    _testRoomSkin->setRemapMaterial(GlobalMaterialManager().getMaterial(getRoomMaterial()));
+    _testRoomSkin->setRemapMaterial(GlobalMaterialManager().getMaterial(roomMaterial));
 
     // Let the model update its remaps
     auto skinnedRoom = std::dynamic_pointer_cast<SkinnedModel>(_room);
@@ -184,13 +213,11 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
 
     _sceneIsReady = false;
 
-    if (_model)
-    {
-        // Assign the material to the temporary skin
-        _testModelSkin->setRemapMaterial(_material);
+    // Detect whether we should apply this material to the background
+    _swapBackgroundMaterial = isSkyboxMaterial(_material);
+    _swapBackgroundMaterialButton->GetToolBar()->ToggleTool(_swapBackgroundMaterialButton->GetId(), _swapBackgroundMaterial);
 
-        updateModelSkin();
-    }
+    updateSceneMaterials();
 
     if (!hadMaterial && _material)
     {
@@ -202,6 +229,20 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
     }
 
     queueDraw();
+}
+
+void MaterialPreview::updateSceneMaterials()
+{
+    auto foregroundMaterial = _material ? _material->getName() : _roomMaterial;
+    auto backgroundMaterial = _roomMaterial;
+
+    if (_swapBackgroundMaterial)
+    {
+        std::swap(foregroundMaterial, backgroundMaterial);
+    }
+
+    updateModelSkin(foregroundMaterial);
+    updateRoomSkin(backgroundMaterial);
 }
 
 void MaterialPreview::enableFrobHighlight(bool enable)
@@ -313,7 +354,7 @@ void MaterialPreview::setupRoom()
 
     roomEntity->addChildNode(_room);
     
-    updateRoomSkin();
+    updateRoomSkin(getRoomMaterial());
 }
 
 void MaterialPreview::setupTestModel()
@@ -343,7 +384,7 @@ void MaterialPreview::setupTestModel()
     // The test model is a child of this entity
     scene::addNodeToContainer(_model, _entity);
 
-    updateModelSkin();
+    updateSceneMaterials();
 }
 
 void MaterialPreview::onTestModelSelectionChanged(wxCommandEvent& ev)
@@ -361,6 +402,13 @@ void MaterialPreview::onTestModelSelectionChanged(wxCommandEvent& ev)
         setTestModelType(TestModel::Tiles);
     }
 
+    queueDraw();
+}
+
+void MaterialPreview::onSwapBackgroundMaterialChanged(wxCommandEvent& ev)
+{
+    _swapBackgroundMaterial = ev.IsChecked();
+    updateSceneMaterials();
     queueDraw();
 }
 

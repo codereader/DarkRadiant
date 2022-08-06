@@ -35,12 +35,14 @@ private:
 
     std::string _roomMaterial;
     std::string _lightClassname;
+    bool _swapBackgroundMaterial;
 
     float _defaultCamDistanceFactor;
 
     wxToolBarToolBase* _testModelCubeButton;
     wxToolBarToolBase* _testModelSphereButton;
     wxToolBarToolBase* _testModelTilesButton;
+    wxToolBarToolBase* _swapBackgroundMaterialButton;
 
     sigc::signal<void> _sigSceneChanged;
 
@@ -91,10 +93,12 @@ private:
     void setupToolbar();
     void setupTestModel();
     void setupRoom();
-    void updateModelSkin();
-    void updateRoomSkin();
+    void updateModelSkin(const std::string& material);
+    void updateRoomSkin(const std::string& material);
+    void updateSceneMaterials();
     std::string getDefaultLightDef();
     void onTestModelSelectionChanged(wxCommandEvent& ev);
+    void onSwapBackgroundMaterialChanged(wxCommandEvent& ev);
 };
 
 }
