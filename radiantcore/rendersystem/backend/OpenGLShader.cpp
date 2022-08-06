@@ -626,6 +626,17 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     auto editorTex = _material->getEditorImage();
     previewPass.texture0 = editorTex ? editorTex->getGLTexNum() : 0;
 
+    // If there's a diffuse stage's, link it to this shader pass to inherit
+    // settings like scale and translate
+    for (const auto& layer : _material->getAllLayers())
+    {
+        if (layer->getType() == IShaderLayer::DIFFUSE)
+        {
+            previewPass.stage0 = layer;
+            break;
+        }
+    }
+
     previewPass.setRenderFlag(RENDER_FILL);
     previewPass.setRenderFlag(RENDER_TEXTURE_2D);
     previewPass.setRenderFlag(RENDER_DEPTHTEST);
