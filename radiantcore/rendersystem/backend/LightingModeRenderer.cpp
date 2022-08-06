@@ -360,13 +360,16 @@ void LightingModeRenderer::drawNonInteractionPasses(OpenGLState& current, Render
             // For each pass except for the depth fill and interaction passes, draw the geometry
             glShader->foreachNonInteractionPass([&](OpenGLShaderPass& pass)
             {
+                // Evaluate the stage before deciding whether it's active
+                pass.evaluateShaderStages(time, entity.get());
+
                 if (!pass.stateIsActive())
                 {
                     return;
                 }
 
                 // Apply our state to the current state object
-                pass.evaluateStagesAndApplyState(current, globalFlagsMask, time, entity.get());
+                pass.applyState(current, globalFlagsMask);
 
                 // Bind textures
                 OpenGLState::SetTextureState(current.texture0, pass.state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
