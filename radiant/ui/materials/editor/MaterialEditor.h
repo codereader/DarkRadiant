@@ -105,6 +105,9 @@ protected:
     bool _onDeleteEvent() override;
 
 private:
+    void loadSettings();
+    void saveSettings();
+    
     // Asks user to save each unmodified material.
     // Returns true if it is safe to go ahead and close the dialog
     bool okToCloseDialog();

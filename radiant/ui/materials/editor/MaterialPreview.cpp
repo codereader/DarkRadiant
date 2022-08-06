@@ -29,7 +29,8 @@ MaterialPreview::MaterialPreview(wxWindow* parent) :
     RenderPreview(parent, true),
     _sceneIsReady(false),
     _roomMaterial(game::current::getValue<std::string>(GKEY_DEFAULT_ROOM_MATERIAL)),
-    _defaultCamDistanceFactor(2.0f)
+    _defaultCamDistanceFactor(2.0f),
+    _lightClassname(getDefaultLightDef())
 {
     _testModelSkin = std::make_unique<TestModelSkin>("model");
     _testRoomSkin = std::make_unique<TestModelSkin>("room");
@@ -48,7 +49,7 @@ MaterialPreview::~MaterialPreview()
 
 void MaterialPreview::setupToolbar()
 {
-    // Add one additional toolbar for particle-related stuff
+    // Add one additional toolbar
     wxToolBar* toolbar = new wxToolBar(_mainPanel, wxID_ANY);
     toolbar->SetToolBitmapSize(wxSize(16, 16));
 
@@ -101,6 +102,44 @@ void MaterialPreview::setRoomMaterial(const std::string& material)
     updateRoomSkin();
 
     signal_SceneChanged().emit();
+}
+
+MaterialPreview::TestModel MaterialPreview::getTestModelType()
+{
+    if (_testModelCubeButton->IsToggled()) return TestModel::Cube;
+    if (_testModelSphereButton->IsToggled()) return TestModel::Sphere;
+    if (_testModelTilesButton->IsToggled()) return TestModel::Tiles;
+
+    return TestModel::Cube;
+}
+
+void MaterialPreview::setTestModelType(TestModel type)
+{
+    _testModelCubeButton->SetToggle(type == TestModel::Cube);
+    _testModelSphereButton->SetToggle(type == TestModel::Sphere);
+    _testModelTilesButton->SetToggle(type == TestModel::Tiles);
+
+    setupTestModel();
+}
+
+std::string MaterialPreview::GetTestModelTypeName(TestModel type)
+{
+    switch (type)
+    {
+    case TestModel::Cube: return "Cube";
+    case TestModel::Sphere: return "Sphere";
+    case TestModel::Tiles: return "Tiles";
+    default: throw std::invalid_argument("Unknown preview model type");
+    }
+}
+
+MaterialPreview::TestModel MaterialPreview::GetTestModelType(const std::string& typeName)
+{
+    if (typeName == "Cube") return TestModel::Cube;
+    if (typeName == "Sphere") return TestModel::Sphere;
+    if (typeName == "Tiles") return TestModel::Tiles;
+
+    return TestModel::Cube; // in case bad serialization data reaches this point
 }
 
 std::string MaterialPreview::getDefaultLightDef()
@@ -237,8 +276,7 @@ void MaterialPreview::setupSceneGraph()
         getScene()->setRoot(_rootNode);
 
         // Set up the light
-        _light = GlobalEntityModule().createEntity(
-            GlobalEntityClassManager().findClass(getDefaultLightDef()));
+        _light = GlobalEntityModule().createEntity(GlobalEntityClassManager().findClass(_lightClassname));
 
         Node_getEntity(_light)->setKeyValue("light_radius", "750 750 750");
         Node_getEntity(_light)->setKeyValue("origin", "150 150 150");
@@ -276,6 +314,8 @@ void MaterialPreview::setupRoom()
 
 void MaterialPreview::setupTestModel()
 {
+    if (!_entity) return; // too early
+
     if (_entity && _model)
     {
         scene::removeNodeFromParent(_model);
@@ -304,7 +344,21 @@ void MaterialPreview::setupTestModel()
 
 void MaterialPreview::onTestModelSelectionChanged(wxCommandEvent& ev)
 {
-    setupTestModel();
+    if (!ev.IsChecked()) return; // ígnore un-check events
+
+    if (ev.GetId() == _testModelCubeButton->GetId())
+    {
+        setTestModelType(TestModel::Cube);
+    }
+    else if (ev.GetId() == _testModelSphereButton->GetId())
+    {
+        setTestModelType(TestModel::Sphere);
+    }
+    else if (ev.GetId() == _testModelTilesButton->GetId())
+    {
+        setTestModelType(TestModel::Tiles);
+    }
+
     queueDraw();
 }
 
@@ -315,14 +369,17 @@ sigc::signal<void>& MaterialPreview::signal_SceneChanged()
 
 std::string MaterialPreview::getLightClassname()
 {
-    return _light ? Node_getEntity(_light)->getEntityClass()->getDeclName() : "";
+    return _lightClassname;
 }
 
 void MaterialPreview::setLightClassname(const std::string& className)
 {
-    if (!_light || className.empty()) return;
+    // Store this value locally, even if we don't have any light to adjust yet
+    _lightClassname = className;
 
-    _light = changeEntityClassname(_light, className);
+    if (!_light || _lightClassname.empty()) return;
+
+    _light = changeEntityClassname(_light, _lightClassname);
     signal_SceneChanged().emit();
 }
 

@@ -34,6 +34,7 @@ private:
     std::shared_ptr<TestModelSkin> _testRoomSkin;
 
     std::string _roomMaterial;
+    std::string _lightClassname;
 
     float _defaultCamDistanceFactor;
 
@@ -44,6 +45,13 @@ private:
     sigc::signal<void> _sigSceneChanged;
 
 public:
+    enum class TestModel
+    {
+        Cube,
+        Sphere,
+        Tiles,
+    };
+
     MaterialPreview(wxWindow* parent);
 
     virtual ~MaterialPreview();
@@ -62,6 +70,12 @@ public:
 
     const std::string& getRoomMaterial();
     void setRoomMaterial(const std::string& material);
+
+    TestModel getTestModelType();
+    void setTestModelType(TestModel type);
+
+    static std::string GetTestModelTypeName(TestModel type);
+    static TestModel GetTestModelType(const std::string& typeName);
 
     sigc::signal<void>& signal_SceneChanged();
 

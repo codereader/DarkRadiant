@@ -38,7 +38,6 @@
 #include "CheckBoxBinding.h"
 #include "MapExpressionEntry.h"
 #include "TexturePreview.h"
-#include "string/trim.h"
 #include "ui/common/ShaderChooser.h"
 
 namespace ui
@@ -48,13 +47,19 @@ namespace
 {
     const char* const DIALOG_TITLE = N_("Material Editor");
 
-    const char* const ICON_STAGE_VISIBLE = "visible.png";
-    const char* const ICON_STAGE_INVISIBLE = "invisible.png";
-    const char* const ICON_GLOBAL_SETTINGS = "icon_texture.png";
+    constexpr const char* const ICON_STAGE_VISIBLE = "visible.png";
+    constexpr const char* const ICON_STAGE_INVISIBLE = "invisible.png";
+    constexpr const char* const ICON_GLOBAL_SETTINGS = "icon_texture.png";
 
     const std::string RKEY_ROOT = "user/ui/materialEditor/";
     const std::string RKEY_SPLIT_POS = RKEY_ROOT + "splitPos";
     const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+
+    const std::string RKEY_LIGHTING_MODE_ENABLED = RKEY_ROOT + "lightModeEnabled";
+    const std::string RKEY_LAST_SELECTED_MATERIAL = RKEY_ROOT + "lastSelectedMaterial";
+    const std::string RKEY_PREVIEW_LIGHT_CLASSNAME = RKEY_ROOT + "previewLightClassname";
+    const std::string RKEY_PREVIEW_ROOM_MATERIAL = RKEY_ROOT + "previewRoomMaterial";
+    const std::string RKEY_PREVIEW_OBJECT_TYPE = RKEY_ROOT + "previewObjectType";
 
     const char* const CUSTOM_BLEND_TYPE = N_("Custom");
 
@@ -213,7 +218,11 @@ int MaterialEditor::ShowModal()
         _treeView->SetSelectedDeclName(_materialToPreselect);
     }
 
+    loadSettings();
+
     int returnCode = DialogBase::ShowModal();
+
+    saveSettings();
 
     // Tell the position tracker to save the information
     _windowPosition.saveToPath(RKEY_WINDOW_STATE);
@@ -233,6 +242,51 @@ int MaterialEditor::ShowModal(const std::string& materialToPreselect)
     }
 
     return ShowModal();
+}
+
+void MaterialEditor::loadSettings()
+{
+    if (_materialToPreselect.empty())
+    {
+        _materialToPreselect = registry::getValue<std::string>(RKEY_LAST_SELECTED_MATERIAL);
+
+        if (!_materialToPreselect.empty())
+        {
+            _treeView->SetSelectedDeclName(_materialToPreselect);
+        }
+    }
+
+    _preview->setStartupLightingMode(registry::getValue<bool>(RKEY_LIGHTING_MODE_ENABLED));
+
+    auto storedClassname = registry::getValue<std::string>(RKEY_PREVIEW_LIGHT_CLASSNAME);
+
+    if (!storedClassname.empty())
+    {
+        _preview->setLightClassname(storedClassname);
+    }
+
+    auto storedRoomMaterial = registry::getValue<std::string>(RKEY_PREVIEW_ROOM_MATERIAL);
+
+    if (!storedRoomMaterial.empty())
+    {
+        _preview->setRoomMaterial(storedRoomMaterial);
+    }
+
+    auto storedTestModelType = registry::getValue<std::string>(RKEY_PREVIEW_OBJECT_TYPE);
+
+    if (!storedTestModelType.empty())
+    {
+        _preview->setTestModelType(MaterialPreview::GetTestModelType(storedTestModelType));
+    }
+}
+
+void MaterialEditor::saveSettings()
+{
+    registry::setValue(RKEY_LAST_SELECTED_MATERIAL, _treeView->GetSelectedDeclName());
+    registry::setValue(RKEY_LIGHTING_MODE_ENABLED, _preview->getLightingModeEnabled());
+    registry::setValue(RKEY_PREVIEW_LIGHT_CLASSNAME, _preview->getLightClassname());
+    registry::setValue(RKEY_PREVIEW_ROOM_MATERIAL, _preview->getRoomMaterial());
+    registry::setValue(RKEY_PREVIEW_OBJECT_TYPE, MaterialPreview::GetTestModelTypeName(_preview->getTestModelType()));
 }
 
 void MaterialEditor::setupSourceTextPanel(wxWindow* previewPanel)
