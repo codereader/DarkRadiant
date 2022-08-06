@@ -37,6 +37,7 @@ MaterialPreview::MaterialPreview(wxWindow* parent) :
 
     setupToolbar();
 
+    setStartupLightingMode(true);
     setViewOrigin(Vector3(1, 1, 1) * 100);
     setViewAngles(Vector3(37, 135, 0));
 }
@@ -193,7 +194,6 @@ void MaterialPreview::setMaterial(const MaterialPtr& material)
 
     if (!hadMaterial && _material)
     {
-        setLightingModeEnabled(true);
         startPlayback();
     }
     else if (hadMaterial && !_material)
