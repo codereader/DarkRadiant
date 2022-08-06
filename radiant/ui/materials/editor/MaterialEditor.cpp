@@ -499,8 +499,8 @@ void MaterialEditor::_onBasicMapEntryChanged(const std::string& entryName, IShad
         stageCreated = true;
     }
 
-    stage->setMapExpressionFromString(textCtrl->GetValue().ToStdString());
-    
+    applyMapExpressionToStage(stage, textCtrl->GetValue().ToStdString());
+
     if (stageCreated)
     {
         updateStageListFromMaterial();
@@ -1161,6 +1161,29 @@ void MaterialEditor::createSpinCtrlDoubleBinding(const std::string& ctrlName,
         std::bind(&MaterialEditor::getEditableStageForSelection, this)));
 }
 
+void MaterialEditor::applyMapExpressionToStage(const IEditableShaderLayer::Ptr& stage, const std::string& value)
+{
+    // Try to keep an existing frob highlight stage intact
+    bool hadFrobHighlightStage = false;
+
+    if (stage->getType() == IShaderLayer::DIFFUSE)
+    {
+        hadFrobHighlightStage = shaders::FrobStageSetup::IsPresent(_material);
+
+        if (hadFrobHighlightStage)
+        {
+            shaders::FrobStageSetup::RemoveFromMaterial(_material);
+        }
+    }
+
+    stage->setMapExpressionFromString(value);
+
+    if (hadFrobHighlightStage)
+    {
+        shaders::FrobStageSetup::AddToMaterial(_material);
+    }
+}
+
 void MaterialEditor::setupMaterialStageProperties()
 {
     auto stageImageMap = getControl<MapExpressionEntry>("MaterialStageImageMap");
@@ -1173,7 +1196,7 @@ void MaterialEditor::setupMaterialStageProperties()
         [this](const IEditableShaderLayer::Ptr& stage, const std::string& value)
         {
             if (_stageUpdateInProgress) return;
-            stage->setMapExpressionFromString(value);
+            applyMapExpressionToStage(stage, value);
         },
         [this]() { onMaterialChanged(); updateBasicPageFromMaterial(); },
         std::bind(&MaterialEditor::getEditableStageForSelection, this)));

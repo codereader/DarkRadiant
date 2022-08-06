@@ -204,6 +204,7 @@ private:
     void _onClose(wxCommandEvent& ev);
     void _onReloadImages(wxCommandEvent& ev);
 
+    void applyMapExpressionToStage(const IEditableShaderLayer::Ptr& stage, const std::string& value);
     void toggleSelectedStage();
     void onMaterialChanged();
     void convertTextCtrlToMapExpressionEntry(const std::string& ctrlName);
