@@ -100,10 +100,15 @@ public:
 
     static void ShowDialog(const cmd::ArgumentList& args);
 
-    void _onClose(wxCommandEvent& ev);
-    void _onReloadImages(wxCommandEvent& ev);
+protected:
+    // Intercept close commands from pressing ESC keys
+    bool _onDeleteEvent() override;
 
 private:
+    // Asks user to save each unmodified material.
+    // Returns true if it is safe to go ahead and close the dialog
+    bool okToCloseDialog();
+
     void setupBasicMaterialPage();
     void setupMaterialTreeView();
     void setupMaterialStageView();
@@ -196,6 +201,8 @@ private:
     void _onBasicAddFrobStages(wxCommandEvent& ev);
     void _onBasicRemoveFrobStages(wxCommandEvent& ev);
     void _onBasicTestFrobStages(wxMouseEvent& ev);
+    void _onClose(wxCommandEvent& ev);
+    void _onReloadImages(wxCommandEvent& ev);
 
     void toggleSelectedStage();
     void onMaterialChanged();

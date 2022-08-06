@@ -348,7 +348,7 @@ void MaterialEditor::_onReloadImages(wxCommandEvent& ev)
     _material->refreshImageMaps();
 }
 
-void MaterialEditor::_onClose(wxCommandEvent& ev)
+bool MaterialEditor::okToCloseDialog()
 {
     // Check all unsaved materials
     std::list<MaterialPtr> modifiedMaterials;
@@ -367,12 +367,27 @@ void MaterialEditor::_onClose(wxCommandEvent& ev)
         // Prompt user to save or discard
         if (!askUserAboutModifiedMaterial())
         {
-            return; // cancel the close event
+            return false; // cancel the close event
         }
     }
 
     // At this point, everything is saved
-    EndModal(wxID_CLOSE);
+    return true;
+}
+
+bool MaterialEditor::_onDeleteEvent()
+{
+    // Return true if preClose() vetoes the close event
+    return !okToCloseDialog();
+}
+
+void MaterialEditor::_onClose(wxCommandEvent& ev)
+{
+    // Check if it's ok to close the dialog
+    if (okToCloseDialog())
+    {
+        EndModal(wxID_CLOSE);
+    }
 }
 
 void MaterialEditor::ShowDialog(const cmd::ArgumentList& args)
