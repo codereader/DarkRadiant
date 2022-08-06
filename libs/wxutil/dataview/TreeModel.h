@@ -475,6 +475,12 @@ public:
     // Find the given number needle in the given column (searches only the subtree given by the startNode item)
 	virtual wxDataViewItem FindInteger(long needle, const Column& column, const wxDataViewItem& startNode);
 
+    // Find the item matching the predicate (searches the entire tree)
+    virtual wxDataViewItem FindItem(const std::function<bool(const TreeModel::Row&)>& predicate);
+
+    // Find the item matching the predicate (searches from the given item)
+    virtual wxDataViewItem FindItem(const std::function<bool(const TreeModel::Row&)>& predicate, const wxDataViewItem& startNode);
+
     // Returns true if any of the given columns in the given row contains the string value
     // Set lowerStrings to true to convert the column values to lowercase first (the value is not touched
     // and needs to be made lowercase by the calling code).

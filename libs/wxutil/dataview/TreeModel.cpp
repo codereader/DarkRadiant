@@ -492,6 +492,22 @@ wxDataViewItem TreeModel::FindInteger(long needle, const Column& column, const w
 	});
 }
 
+wxDataViewItem TreeModel::FindItem(const std::function<bool(const TreeModel::Row&)>& predicate)
+{
+    return FindItem(predicate, wxDataViewItem());
+}
+
+wxDataViewItem TreeModel::FindItem(const std::function<bool(const TreeModel::Row&)>& predicate, const wxDataViewItem& startItem)
+{
+    auto* startNode = !startItem.IsOk() ? _rootNode.get() : static_cast<Node*>(startItem.GetID());
+
+    return FindRecursive(*startNode, [&](const Node& node)->bool
+    {
+        Row row(node.item, *this);
+        return predicate(row);
+    });
+}
+
 wxDataViewItem TreeModel::FindRecursive(const TreeModel::Node& node, const std::function<bool (const TreeModel::Node&)>& predicate)
 {
 	// Test the node itself

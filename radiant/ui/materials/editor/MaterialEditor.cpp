@@ -2036,14 +2036,19 @@ void MaterialEditor::updateStageListFromMaterial()
         row[STAGE_COLS().index] = index;
         row[STAGE_COLS().name] = getNameForLayer(*layer);
         row[STAGE_COLS().visible] = true;
+        row[STAGE_COLS().global] = false;
 
         row.SendItemAdded();
 
         ++index;
     }
 
-    // Pre-select the first stage (it's ok if there are no stages)
-    selectStageByIndex(0);
+    // Pre-select the global settings page
+    auto globalSettings = _stageList->FindItem([&](const wxutil::TreeModel::Row& row)
+    {
+        return row[STAGE_COLS().global].getBool();
+    });
+    _stageView->Select(globalSettings);
 }
 
 void MaterialEditor::updateMaterialPropertiesFromMaterial()
