@@ -283,11 +283,15 @@ void MaterialPreview::setupSceneGraph()
 
         scene::addNodeToContainer(_light, _rootNode);
 
-        // Reset the default view, facing down to the model from diagonally above the bounding box
-        double distance = _model->localAABB().getRadius() * _defaultCamDistanceFactor;
+        // Initialise the view origin and angles, if thery're still empty
+        if (getViewOrigin() == Vector3(0,0,0))
+        {
+            // Reset the default view, facing down to the model from diagonally above the bounding box
+            double distance = _model->localAABB().getRadius() * _defaultCamDistanceFactor;
 
-        setViewOrigin(Vector3(1, 1, 1) * distance);
-        setViewAngles(Vector3(37, 135, 0));
+            setViewOrigin(Vector3(1, 1, 1) * distance);
+            setViewAngles(Vector3(37, 135, 0));
+        }
 
         signal_SceneChanged().emit();
     }

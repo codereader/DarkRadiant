@@ -60,6 +60,8 @@ namespace
     const std::string RKEY_PREVIEW_LIGHT_CLASSNAME = RKEY_ROOT + "previewLightClassname";
     const std::string RKEY_PREVIEW_ROOM_MATERIAL = RKEY_ROOT + "previewRoomMaterial";
     const std::string RKEY_PREVIEW_OBJECT_TYPE = RKEY_ROOT + "previewObjectType";
+    const std::string RKEY_PREVIEW_ORIGIN = RKEY_ROOT + "previewViewOrigin";
+    const std::string RKEY_PREVIEW_ANGLES = RKEY_ROOT + "previewViewAngles";
 
     const char* const CUSTOM_BLEND_TYPE = N_("Custom");
 
@@ -278,6 +280,13 @@ void MaterialEditor::loadSettings()
     {
         _preview->setTestModelType(MaterialPreview::GetTestModelType(storedTestModelType));
     }
+
+    if (!registry::getValue<std::string>(RKEY_PREVIEW_ORIGIN).empty() && 
+        !registry::getValue<std::string>(RKEY_PREVIEW_ANGLES).empty())
+    {
+        _preview->setViewOrigin(registry::getValue<Vector3>(RKEY_PREVIEW_ORIGIN));
+        _preview->setViewAngles(registry::getValue<Vector3>(RKEY_PREVIEW_ANGLES));
+    }
 }
 
 void MaterialEditor::saveSettings()
@@ -287,6 +296,8 @@ void MaterialEditor::saveSettings()
     registry::setValue(RKEY_PREVIEW_LIGHT_CLASSNAME, _preview->getLightClassname());
     registry::setValue(RKEY_PREVIEW_ROOM_MATERIAL, _preview->getRoomMaterial());
     registry::setValue(RKEY_PREVIEW_OBJECT_TYPE, MaterialPreview::GetTestModelTypeName(_preview->getTestModelType()));
+    registry::setValue(RKEY_PREVIEW_ORIGIN, _preview->getViewOrigin());
+    registry::setValue(RKEY_PREVIEW_ANGLES, _preview->getViewAngles());
 }
 
 void MaterialEditor::setupSourceTextPanel(wxWindow* previewPanel)

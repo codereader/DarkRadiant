@@ -216,8 +216,14 @@ public:
         return _renderSystem;
     }
 
+    // Gets the position of the camera
+    const Vector3& getViewOrigin();
+
     // Defines the position of the camera
     void setViewOrigin(const Vector3& origin);
+
+    // Gets the view angles (euler angles)
+    const Vector3& getViewAngles();
 
     // Defines the view angles (euler angles in degrees)
     void setViewAngles(const Vector3& angles);

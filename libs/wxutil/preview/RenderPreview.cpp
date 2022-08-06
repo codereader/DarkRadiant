@@ -234,11 +234,21 @@ void RenderPreview::initialisePreview()
     updateModelViewMatrix();
 }
 
+const Vector3& RenderPreview::getViewOrigin()
+{
+    return _viewOrigin;
+}
+
 void RenderPreview::setViewOrigin(const Vector3& origin)
 {
     _viewOrigin = origin;
 
     updateModelViewMatrix();
+}
+
+const Vector3& RenderPreview::getViewAngles()
+{
+    return _viewAngles;
 }
 
 void RenderPreview::setViewAngles(const Vector3& angles)
