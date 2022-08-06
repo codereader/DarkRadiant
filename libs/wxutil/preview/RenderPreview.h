@@ -92,6 +92,8 @@ private:
 
     render::CamRenderer::HighlightShaders _shaders;
 
+    bool _enableLightingModeAtStart;
+
 protected:
     const unsigned int MSEC_PER_FRAME = 16;
 
@@ -225,6 +227,11 @@ public:
 
     // Enable/disable lighting mode
     void setLightingModeEnabled(bool enabled);
+
+    // Pass true to enable lighting mode right at startup
+    // Use this to define the mode before the render context is available,
+    // i.e. at dialog construction time
+    void setStartupLightingMode(bool enableAtStart);
 
 	/// Schedule a GL widget redraw operation
     void queueDraw();

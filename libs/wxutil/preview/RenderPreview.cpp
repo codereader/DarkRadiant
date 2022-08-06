@@ -46,6 +46,7 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
 	_glWidget(new wxutil::GLWidget(_mainPanel, std::bind(&RenderPreview::drawPreview, this), "RenderPreview")),
     _initialised(false),
 	_renderGrid(registry::getValue<bool>(RKEY_RENDERPREVIEW_SHOWGRID)),
+    _enableLightingModeAtStart(false),
     _renderSystem(GlobalRenderSystemFactory().createRenderSystem()),
     _viewOrigin(0, 0, 0),
     _viewAngles(0, 0, 0),
@@ -79,6 +80,11 @@ RenderPreview::RenderPreview(wxWindow* parent, bool enableAnimation) :
     _freezePointer.connectMouseEvents(
         std::bind(&RenderPreview::onGLMouseClick, this, std::placeholders::_1),
         std::bind(&RenderPreview::onGLMouseRelease, this, std::placeholders::_1));
+}
+
+void RenderPreview::setStartupLightingMode(bool enableAtStart)
+{
+    _enableLightingModeAtStart = enableAtStart;
 }
 
 void RenderPreview::setupToolbars(bool enableAnimation)
@@ -219,7 +225,7 @@ void RenderPreview::initialisePreview()
 
     if (_renderSystem->shaderProgramsAvailable())
     {
-        setLightingModeEnabled(false);
+        setLightingModeEnabled(_enableLightingModeAtStart);
     }
 
     // In case it didn't happen until now, make sure the rendersystem is realised
