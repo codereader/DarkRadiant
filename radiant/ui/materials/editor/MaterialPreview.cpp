@@ -115,9 +115,9 @@ MaterialPreview::TestModel MaterialPreview::getTestModelType()
 
 void MaterialPreview::setTestModelType(TestModel type)
 {
-    _testModelCubeButton->SetToggle(type == TestModel::Cube);
-    _testModelSphereButton->SetToggle(type == TestModel::Sphere);
-    _testModelTilesButton->SetToggle(type == TestModel::Tiles);
+    _testModelCubeButton->GetToolBar()->ToggleTool(_testModelCubeButton->GetId(), type == TestModel::Cube);
+    _testModelSphereButton->GetToolBar()->ToggleTool(_testModelSphereButton->GetId(), type == TestModel::Sphere);
+    _testModelTilesButton->GetToolBar()->ToggleTool(_testModelTilesButton->GetId(), type == TestModel::Tiles);
 
     setupTestModel();
 }
@@ -344,8 +344,6 @@ void MaterialPreview::setupTestModel()
 
 void MaterialPreview::onTestModelSelectionChanged(wxCommandEvent& ev)
 {
-    if (!ev.IsChecked()) return; // ígnore un-check events
-
     if (ev.GetId() == _testModelCubeButton->GetId())
     {
         setTestModelType(TestModel::Cube);
