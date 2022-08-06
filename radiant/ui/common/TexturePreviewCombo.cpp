@@ -162,9 +162,9 @@ bool TexturePreviewCombo::_onRender()
         // This is an "ordinary" texture, take the editor image
         auto tex = shader->getEditorImage();
 
-        if (isLightTexture())
+        // If this is a light, take #the first layer texture, but prefer the editor image if we got one
+        if (isLightTexture() && !tex)
         {
-            // This is a light, take the first layer texture
             if (auto first = shader->firstLayer(); first)
             {
                 tex = shader->firstLayer()->getTexture();
