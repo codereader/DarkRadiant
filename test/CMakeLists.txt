@@ -8,6 +8,7 @@ add_executable(drtest
                ContinuousBuffer.cpp
                CSG.cpp
                DeclManager.cpp
+               DefBlockSyntaxParser.cpp
                DefTokenisers.cpp
                Entity.cpp
                EntityClass.cpp

@@ -2,7 +2,6 @@
 
 #include <memory>
 
-#include "ParseException.h"
 #include "string/tokeniser.h"
 
 namespace parser
@@ -106,9 +105,10 @@ public:
     {}
 
     // Parse the text stored in the container into a def syntax tree
+    // The returned syntax tree reference is never null
     DefSyntaxTree::Ptr parse()
     {
-        return {};
+        return std::make_shared<DefSyntaxTree>();
     }
 };
 

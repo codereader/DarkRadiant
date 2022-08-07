@@ -91,6 +91,7 @@
     <ClCompile Include="..\..\..\test\ContinuousBuffer.cpp" />
     <ClCompile Include="..\..\..\test\CSG.cpp" />
     <ClCompile Include="..\..\..\test\DeclManager.cpp" />
+    <ClCompile Include="..\..\..\test\DefBlockSyntaxParser.cpp" />
     <ClCompile Include="..\..\..\test\DefTokenisers.cpp" />
     <ClCompile Include="..\..\..\test\Entity.cpp" />
     <ClCompile Include="..\..\..\test\EntityClass.cpp" />
