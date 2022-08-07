@@ -6,7 +6,7 @@
 #include <sigc++/signal.h>
 #include <vector>
 
-namespace util
+namespace parser
 {
 
 /**

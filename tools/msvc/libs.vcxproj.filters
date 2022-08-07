@@ -128,7 +128,6 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\UndoFileChangeTracker.h" />
     <ClInclude Include="..\..\libs\SurfaceShader.h" />
-    <ClInclude Include="..\..\libs\ThreadedDefLoader.h" />
     <ClInclude Include="..\..\libs\render\RenderablePivot.h">
       <Filter>render</Filter>
     </ClInclude>
@@ -399,6 +398,9 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\decl\DeclarationCreator.h">
       <Filter>decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\parser\ThreadedDefLoader.h">
+      <Filter>parser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

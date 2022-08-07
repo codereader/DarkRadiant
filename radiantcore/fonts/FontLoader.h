@@ -3,7 +3,7 @@
 #include "ifonts.h"
 
 #include "ifilesystem.h"
-#include "ThreadedDefLoader.h"
+#include "parser/ThreadedDefLoader.h"
 
 namespace fonts
 {
@@ -11,7 +11,7 @@ namespace fonts
 class FontManager;
 
 class FontLoader :
-    public util::ThreadedDefLoader<void>
+    public parser::ThreadedDefLoader<void>
 {
 private:
 	// The manager for registering the fonts
@@ -19,7 +19,7 @@ private:
 
 public:
 	FontLoader(FontManager& manager) :
-        util::ThreadedDefLoader<void>(std::bind(&FontLoader::loadFonts, this)),
+        parser::ThreadedDefLoader<void>(std::bind(&FontLoader::loadFonts, this)),
 		_manager(manager)
 	{}
 

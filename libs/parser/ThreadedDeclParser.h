@@ -3,9 +3,9 @@
 #include "ifilesystem.h"
 #include "itextstream.h"
 #include "idecltypes.h"
-#include "ThreadedDefLoader.h"
 #include "debugging/ScopedDebugTimer.h"
 #include "parser/ParseException.h"
+#include "parser/ThreadedDefLoader.h"
 
 namespace parser
 {
@@ -16,7 +16,7 @@ namespace parser
  */
 template <typename ReturnType>
 class ThreadedDeclParser :
-    public util::ThreadedDefLoader<ReturnType>
+    public ThreadedDefLoader<ReturnType>
 {
 private:
     decl::Type _declType;
@@ -28,7 +28,7 @@ protected:
     // Construct a parser traversing all files matching the given extension in the given VFS path
     // Subclasses need to implement the parse(std::istream) overload for this scenario
     ThreadedDeclParser(decl::Type declType, const std::string& baseDir, const std::string& extension, std::size_t depth = 1) :
-        util::ThreadedDefLoader<ReturnType>(std::bind(&ThreadedDeclParser::doParse, this)),
+        ThreadedDefLoader<ReturnType>(std::bind(&ThreadedDeclParser::doParse, this)),
         _baseDir(baseDir),
         _extension(extension),
         _depth(depth),
