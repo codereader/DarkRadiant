@@ -402,6 +402,9 @@
     <ClInclude Include="..\..\libs\parser\ThreadedDefLoader.h">
       <Filter>parser</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\parser\DefBlockSyntaxParser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">
