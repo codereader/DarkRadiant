@@ -712,14 +712,17 @@ TEST_F(DeclManagerTest, RemoveDeclaration)
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
     GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
-    expectDeclIsPresent(decl::Type::TestDecl, "decl/precedence_test/1");
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/removal/1");
 
     // Keep a local reference to the decl around to see what happens with its contents after removal
-    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/precedence_test/1");
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/removal/1");
 
-    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/precedence_test/1");
+    // Create a backup copy of the decl file we're going to manipulate
+    BackupCopy backup(_context.getTestProjectPath() + decl->getDeclFilePath());
 
-    expectDeclIsNotPresent(decl::Type::TestDecl, "decl/precedence_test/1");
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/1");
+
+    expectDeclIsNotPresent(decl::Type::TestDecl, "decl/removal/1");
 
     // The held reference should be cleared
     EXPECT_TRUE(decl->getBlockSyntax().name.empty());

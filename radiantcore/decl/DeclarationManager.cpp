@@ -328,7 +328,10 @@ void DeclarationManager::removeDeclarationFromFile(const IDeclaration::Ptr& decl
 {
     const auto& syntax = decl->getBlockSyntax();
 
-    if (!syntax.fileInfo.name.empty() && !syntax.fileInfo.getIsPhysicalFile())
+    // Nothing to do if the decl hasn't been saved
+    if (syntax.fileInfo.name.empty()) return;
+
+    if (!syntax.fileInfo.getIsPhysicalFile())
     {
         throw std::logic_error("Only declarations stored in physical files can be removed.");
     }
