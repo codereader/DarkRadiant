@@ -1223,18 +1223,6 @@ TEST_F(MaterialExportTest, BlendShortcuts)
     material->revertModifications();
 }
 
-bool fileContainsText(const fs::path& path, const std::string& textToFind)
-{
-    std::stringstream contentStream;
-    std::ifstream input(path);
-
-    contentStream << input.rdbuf();
-
-    std::string contents = string::replace_all_copy(contentStream.str(), "\r\n", "\n");
-
-    return contents.find(textToFind) != std::string::npos;
-}
-
 TEST_F(MaterialExportTest, MaterialDefDetectionRegex)
 {
     std::smatch matches;
@@ -1272,16 +1260,16 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
     auto originalDefinition = "textures/exporttest/renderBump1 { // Opening brace in the same line as the name (DON'T REMOVE THIS)\n"
         "    renderBump textures/output.tga models/hipoly \n"
         "}";
-    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
 
     auto material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump1");
     material->setDescription(description);
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
         << "New definition not found in file";
-    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition)) 
+    EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition)) 
         << "Original definition still in file";
 
     // RenderBump2
@@ -1289,16 +1277,16 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
         "{\n"
         "    renderBump -size 100 200 textures/output.tga models/hipoly \n"
         "}";
-    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
 
     material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump2");
     material->setDescription(description);
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
         << "New definition not found in file";
-    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition))
+    EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition))
         << "Original definition still in file";
 
     // RenderBump3
@@ -1307,32 +1295,32 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
         "{\n"
         "    renderBump -aa 2 textures/output.tga models/hipoly \n"
         "}";
-    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
 
     material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump3");
     material->setDescription(description);
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
         << "New definition not found in file";
-    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition))
+    EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition))
         << "Original definition still in file";
 
     // RenderBump4
     originalDefinition = "textures/exporttest/renderBump4 {\n"
         "    renderBump -aa 2 -size 10 10 textures/output.tga models/hipoly \n"
         "}";
-    EXPECT_TRUE(fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, originalDefinition)) << "Original definition not found in file " << exportTestFile;
 
     material = GlobalMaterialManager().getMaterial("textures/exporttest/renderBump4");
     material->setDescription(description);
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
         << "New definition not found in file";
-    EXPECT_FALSE(fileContainsText(exportTestFile, originalDefinition))
+    EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition))
         << "Original definition still in file";
 
     // Create a new material, which is definitely not present in the file
@@ -1345,13 +1333,13 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
     newMaterial->setShaderFileName(exportTestFile.string());
     EXPECT_TRUE(newMaterial->isModified());
 
-    EXPECT_FALSE(fileContainsText(exportTestFile, newMaterial->getName()));
+    EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, newMaterial->getName()));
 
     GlobalMaterialManager().saveMaterial(newMaterial->getName());
 
     // After saving the material should no longer be "modified"
     EXPECT_FALSE(newMaterial->isModified());
-    EXPECT_TRUE(fileContainsText(exportTestFile, newMaterial->getName() + "\n{" + newMaterial->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, newMaterial->getName() + "\n{" + newMaterial->getDefinition() + "}"))
         << "New definition not found in file";
 }
 
@@ -1369,7 +1357,7 @@ TEST_F(MaterialExportTest, SavedMaterialCanBeModified)
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
         << "New definition not found in file";
 
     EXPECT_TRUE(GlobalMaterialManager().materialCanBeModified(material->getName()))

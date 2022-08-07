@@ -23,7 +23,7 @@ testdecl decl/removal/2
 }
 // Some comments after decl/removal/2
 
-// CamelCase typename shouldn't make a difference
+// Comment before decl/removal/3
 TestDecl decl/removal/3
 {
     diffusemap textures/removal/3
@@ -35,8 +35,8 @@ testdecl decl/removal/5 { // a comment in the same line as the opening brace
     diffusemap textures/removal/5
 }
 
-// Everything in the same line
+// Everything in the same line (before decl/removal/6)
 testdecl decl/removal/6 { diffusemap textures/removal/6 }
-testdecl decl/removal/7 { diffusemap textures/removal/6 }
+testdecl decl/removal/7 { diffusemap textures/removal/7 }
 
-testdecl decl/removal/8 { diffusemap textures/removal/6 }
+testdecl decl/removal/8 { diffusemap textures/removal/8 }

@@ -749,9 +749,8 @@ TEST_F(DeclManagerTest, RemoveDeclarationFromPhysicalFile)
     auto fileContents = algorithm::loadTextFromVfsFile(decl->getDeclFilePath());
     EXPECT_NE(fileContents.find(originalSyntax.contents), std::string::npos) << "Decl source not found";
 
-    // Create a backup copy of the material file we're going to manipulate
-    fs::path declFile = _context.getTestProjectPath() + decl->getDeclFilePath();
-    BackupCopy backup(declFile);
+    // Create a backup copy of the decl file we're going to manipulate
+    BackupCopy backup(_context.getTestProjectPath() + decl->getDeclFilePath());
 
     // Remove the decl, it should remove the source from the file
     GlobalDeclarationManager().removeDeclaration(decl->getDeclType(), decl->getDeclName());
@@ -761,21 +760,146 @@ TEST_F(DeclManagerTest, RemoveDeclarationFromPhysicalFile)
     EXPECT_EQ(contentsAfterRemoval.find(originalSyntax.contents), std::string::npos) << "Decl source should be gone";
 }
 
-// Removing a decl will also remove leading comment lines
-TEST_F(DeclManagerTest, RemoveDeclarationIncludesLeadingComment)
+// Removing a decl will keep leading comment lines that are separated with an empty line
+TEST_F(DeclManagerTest, RemoveDeclarationPreservesSeparatedLeadingComments)
 {
-    // TODO
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    // Create a backup copy of the decl file we're going to manipulate
+    auto fullPath = _context.getTestProjectPath() + "testdecls/removal_tests.decl";
+    BackupCopy backup(fullPath);
+
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Comments at the beginning of the file with an empty line in between"));
+
+    // Remove decl/removal/0. This should remove the decl, but the comment at the beginning of the file should remain intact
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/0");
+
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Comments at the beginning of the file with an empty line in between"));
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, R"(decl/removal/0
+{
+    diffusemap textures/removal/0
+})"));
+
+    // Similar situation with decls/removal/5
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Comment with a line before the start of the decl decl/removal/5"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, R"(testdecl decl/removal/5 { // a comment in the same line as the opening brace
+    diffusemap textures/removal/5
+})"));
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/5");
+
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, R"(testdecl decl/removal/5 { // a comment in the same line as the opening brace
+    diffusemap textures/removal/5
+})"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Comment with a line before the start of the decl decl/removal/5"));
 }
 
-// Removing decls with weird line break configurations
-TEST_F(DeclManagerTest, RemoveDeclarationWithNonstandardLinebreaks)
+// Removing a decl will keep trailing comment lines and remove leading C-style comments
+TEST_F(DeclManagerTest, RemoveDeclarationRemovesLeadingCStyleComment)
 {
-    // TODO
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    // Create a backup copy of the decl file we're going to manipulate
+    auto fullPath = _context.getTestProjectPath() + "testdecls/removal_tests.decl";
+    BackupCopy backup(fullPath);
+
+    // decl/removal/1 has leading C-style comment, and a trailing single line comment
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "/* Without \"testdecl\" typename, C-style comment */"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Some comments after decl/removal/1"));
+
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/1");
+
+    // Leading comment should be gone, trailing comment should stay
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, R"(decl/removal/1
+{
+    diffusemap textures/removal/1
+})"));
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "/* Without \"testdecl\" typename, C-style comment */"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Some comments after decl/removal/1"));
+}
+
+// Removing a decl will keep trailing comment lines and remove leading single-line comments
+TEST_F(DeclManagerTest, RemoveDeclarationRemovesLeadingSingleLineComment)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    // Create a backup copy of the decl file we're going to manipulate
+    auto fullPath = _context.getTestProjectPath() + "testdecls/removal_tests.decl";
+    BackupCopy backup(fullPath);
+
+    // decl/removal/3 has leading single-line comment
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, R"(// Comment before decl/removal/3)"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, R"(TestDecl decl/removal/3
+{
+    diffusemap textures/removal/3
+})"));
+
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/3");
+
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, R"(// Comment before decl/removal/3)"));
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, R"(TestDecl decl/removal/3
+{
+    diffusemap textures/removal/3
+})"));
+    // This one is a trailing comment, and separated with an empty line too
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Comment with a line before the start of the decl decl/removal/5"));
+
+    // decl/removal/6 has leading single-line comment, decl 7 is right afterwards
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, R"(// Everything in the same line (before decl/removal/6))"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "testdecl decl/removal/6 { diffusemap textures/removal/6 }"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "testdecl decl/removal/7 { diffusemap textures/removal/7 }"));
+
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/6");
+
+    // Leading comment should be gone, trailing decl should remain intact
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, R"(// Everything in the same line (before decl/removal/6))"));
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "testdecl decl/removal/6 { diffusemap textures/removal/6 }"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "testdecl decl/removal/7 { diffusemap textures/removal/7 }"));
+}
+
+// Removing a decl will keep trailing comment lines and remove leading multi-line comments
+TEST_F(DeclManagerTest, RemoveDeclarationRemovesLeadingMultilineComment)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    // Create a backup copy of the decl file we're going to manipulate
+    auto fullPath = _context.getTestProjectPath() + "testdecls/removal_tests.decl";
+    BackupCopy backup(fullPath);
+
+    // decl/removal/2 has leading multiline comment, and a trailing single line comment
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, R"(/**
+ A multiline comment before this decl
+ */)"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Some comments after decl/removal/2"));
+
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/2");
+
+    // Leading comment should be gone, trailing comment should stay
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, R"(testdecl decl/removal/2
+{
+    diffusemap textures/removal/2
+})"));
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, R"(/**
+ A multiline comment before this decl
+ */)"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Some comments after decl/removal/2"));
 }
 
 TEST_F(DeclManagerTest, RemoveUnsavedDeclaration)
 {
-    // TODO
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::TestDecl, "decl/newlycreated/1");
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/newlycreated/1");
+
+    // Removing an in-memory decl should succeed
+    EXPECT_NO_THROW(GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/newlycreated/1"));
+
+    expectDeclIsNotPresent(decl::Type::TestDecl, "decl/newlycreated/1");
 }
 
 TEST_F(DeclManagerTest, RenameDeclaration)

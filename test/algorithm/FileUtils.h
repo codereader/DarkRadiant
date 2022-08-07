@@ -3,6 +3,7 @@
 #include <string>
 #include "ifilesystem.h"
 #include "os/fs.h"
+#include "string/replace.h"
 
 namespace test
 {
@@ -62,6 +63,19 @@ inline std::string loadTextFromVfsFile(const std::string& vfsPath)
     textStream.flush();
 
     return textStream.str();
+}
+
+// True if the file (full physical path) contains the given text (ignoring CRLF vs. LF line break differences)
+inline bool fileContainsText(const fs::path& path, const std::string& textToFind)
+{
+    std::stringstream contentStream;
+    std::ifstream input(path);
+
+    contentStream << input.rdbuf();
+
+    std::string contents = string::replace_all_copy(contentStream.str(), "\r\n", "\n");
+
+    return contents.find(textToFind) != std::string::npos;
 }
 
 }
