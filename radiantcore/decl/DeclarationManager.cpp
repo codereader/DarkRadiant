@@ -257,11 +257,15 @@ void DeclarationManager::waitForTypedParsersToFinish()
     {
         if (!decls.parser) continue;
 
-        // Release the lock to give the thread a chance to finish
+        // Move the parser to prevent the parser thread from trying to do
+        // the same in onParserFinished
+        std::unique_ptr parser(std::move(decls.parser));
+
+        // Release the lock and let the thread finish
         declLock.reset();
 
-        decls.parser->ensureFinished(); // blocks
-        decls.parser.reset();
+        parser->ensureFinished(); // blocks
+        parser.reset();
 
         declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationLock);
     }
