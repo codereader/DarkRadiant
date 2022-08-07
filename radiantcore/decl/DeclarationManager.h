@@ -96,6 +96,7 @@ private:
     std::map<std::string, Type, string::ILess> getTypenameMapping();
     bool tryDetermineBlockType(const DeclarationBlockSyntax& block, Type& type);
     void processParsedBlocks(ParseResult& parsedBlocks);
+    void removeDeclarationFromFile(const IDeclaration::Ptr& decl);
 
     // Requires the creatorsMutex and the declarationMutex to be locked
     const IDeclaration::Ptr& createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block);

@@ -714,9 +714,21 @@ TEST_F(DeclManagerTest, RemoveDeclaration)
 
     expectDeclIsPresent(decl::Type::TestDecl, "decl/precedence_test/1");
 
+    // Keep a local reference to the decl around to see what happens with its contents after removal
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/precedence_test/1");
+
     GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/precedence_test/1");
 
     expectDeclIsNotPresent(decl::Type::TestDecl, "decl/precedence_test/1");
+
+    // The held reference should be cleared
+    EXPECT_TRUE(decl->getBlockSyntax().name.empty());
+    EXPECT_TRUE(decl->getBlockSyntax().typeName.empty());
+    EXPECT_TRUE(decl->getBlockSyntax().contents.empty());
+    EXPECT_TRUE(decl->getBlockSyntax().fileInfo.name.empty());
+    EXPECT_TRUE(decl->getBlockSyntax().fileInfo.topDir.empty());
+    EXPECT_TRUE(decl->getBlockSyntax().fileInfo.fullPath().empty());
+    EXPECT_EQ(decl->getBlockSyntax().fileInfo.visibility, vfs::Visibility::HIDDEN);
 }
 
 // Removing a decl defined in a PK4 file will throw

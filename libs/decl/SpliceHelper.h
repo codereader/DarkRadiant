@@ -11,12 +11,16 @@ namespace decl
 // The part of the input stream leading up to the def is piped to the output stream in unmodified form,
 // excluding the declaration block itself.
 // Piping will either stop once the declaration is found (and omitted) or the input stream is exhausted.
-// The capture group in the regex is used to identify an opening brace in the same line as the decl name.
 class SpliceHelper
 {
 public:
-    static void PipeStreamUntilInsertionPoint(std::istream& input, std::ostream& output, const std::regex& patternToFind)
+    static void PipeStreamUntilInsertionPoint(std::istream& input, std::ostream& output, const std::string& typeName, const std::string& declName)
     {
+        // Write the file to the output stream, up to the point the decl should be written to
+        // The typename is optional and compared case-sensitively
+        std::regex pattern("^[\\s]*(" + typeName + "[\\s]+" + declName + "|" + declName + ")\\s*\\{*.*$",
+            std::regex_constants::icase);
+
         std::string line;
 
         while (std::getline(input, line))
@@ -24,7 +28,7 @@ public:
             std::smatch matches;
 
             // See if this line contains the def in question
-            if (std::regex_match(line, matches, patternToFind))
+            if (std::regex_match(line, matches, pattern))
             {
                 // Line matches, march from opening brace to the other one
                 std::size_t openBraces = 0;

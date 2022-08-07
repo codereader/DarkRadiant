@@ -294,6 +294,9 @@ void DeclarationManager::runParsersForAllFolders()
 
 void DeclarationManager::removeDeclaration(Type type, const std::string& name)
 {
+    // All parsers need to have finished
+    waitForTypedParsersToFinish();
+
     // Acquire the lock and perform the removal
     doWithDeclarations(type, [&](NamedDeclarations& decls)
     {
@@ -301,9 +304,60 @@ void DeclarationManager::removeDeclaration(Type type, const std::string& name)
 
         if (decl != decls.end())
         {
+            // This will throw if the decl is stored in an archive
+            removeDeclarationFromFile(decl->second);
+
+            // Clear out this declaration's syntax block
+            auto syntax = decl->second->getBlockSyntax();
+            syntax.name.clear();
+            syntax.typeName.clear();
+            syntax.contents.clear();
+            syntax.fileInfo = vfs::FileInfo();
+            decl->second->setBlockSyntax(syntax);
+
             decls.erase(decl);
         }
     });
+}
+
+void DeclarationManager::removeDeclarationFromFile(const IDeclaration::Ptr& decl)
+{
+    const auto& syntax = decl->getBlockSyntax();
+
+    if (!syntax.fileInfo.name.empty() && !syntax.fileInfo.getIsPhysicalFile())
+    {
+        throw std::logic_error("Only declarations stored in physical files can be removed.");
+    }
+
+    auto fullPath = GlobalFileSystem().findFile(syntax.fileInfo.fullPath());
+
+    if (fullPath.empty() || !fs::exists(fullPath)) throw std::logic_error("Physical file not found: " + syntax.fileInfo.fullPath());
+
+    fullPath += syntax.fileInfo.fullPath();
+
+    // Open a temporary file
+    stream::TemporaryOutputStream tempStream(fullPath);
+
+    auto& stream = tempStream.getStream();
+
+    std::ifstream inheritStream(fullPath);
+
+    if (!inheritStream.is_open())
+    {
+        throw std::runtime_error(fmt::format(_("Cannot open file for reading: {0}"), fullPath));
+    }
+
+    // Look up the typename for this decl and find the insertion point
+    SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, getTypenameByType(decl->getDeclType()), decl->getDeclName());
+
+    // The stream is at the insertion point, the old decl has been cut out already
+
+    // Just write the rest of the stream
+    stream << inheritStream.rdbuf();
+
+    inheritStream.close();
+
+    tempStream.closeAndReplaceTargetFile();
 }
 
 bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName, const std::string& newName)
@@ -316,7 +370,7 @@ bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName
         return result;
     }
 
-    // Acquire the lock and perform the removal
+    // Acquire the lock and perform the rename
     doWithDeclarations(type, [&](NamedDeclarations& decls)
     {
         auto decl = decls.find(newName);
@@ -445,15 +499,8 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
             throw std::runtime_error(fmt::format(_("Cannot open file for reading: {0}"), targetFile.string()));
         }
 
-        // Look up the typename for this decl
-        auto typeName = getTypenameByType(decl->getDeclType());
-
-        // Write the file to the output stream, up to the point the decl should be written to
-        // The typename is optional and compared case-sensitively
-        std::regex pattern("^[\\s]*(" + typeName + "[\\s]+" + decl->getDeclName() + "|" + decl->getDeclName() + ")\\s*\\{*.*$", 
-            std::regex_constants::icase);
-
-        SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, pattern);
+        // Look up the typename for this decl and find the insertion point
+        SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, getTypenameByType(decl->getDeclType()), decl->getDeclName());
 
         // We're at the insertion point (which might as well be EOF of the inheritStream)
         writeDeclaration(stream, decl);
