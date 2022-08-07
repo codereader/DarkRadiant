@@ -1,0 +1,42 @@
+// Test declarations used for some DeclarationManager unit tests
+// Don't even alter the whitespace in this file.
+// Comments at the beginning of the file with an empty line in between
+
+decl/removal/0
+{
+    diffusemap textures/removal/0
+}
+
+/* Without "testdecl" typename, C-style comment */
+decl/removal/1
+{
+    diffusemap textures/removal/1
+}
+// Some comments after decl/removal/1
+
+/**
+ A multiline comment before this decl
+ */
+testdecl decl/removal/2
+{
+    diffusemap textures/removal/2
+}
+// Some comments after decl/removal/2
+
+// CamelCase typename shouldn't make a difference
+TestDecl decl/removal/3
+{
+    diffusemap textures/removal/3
+}
+
+// Comment with a line before the start of the decl decl/removal/5
+
+testdecl decl/removal/5 { // a comment in the same line as the opening brace
+    diffusemap textures/removal/5
+}
+
+// Everything in the same line
+testdecl decl/removal/6 { diffusemap textures/removal/6 }
+testdecl decl/removal/7 { diffusemap textures/removal/6 }
+
+testdecl decl/removal/8 { diffusemap textures/removal/6 }

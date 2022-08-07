@@ -137,9 +137,10 @@ public:
     // Returns true if the old declaration existed and could successfully be renamed, false on any failure.
     virtual bool renameDeclaration(Type type, const std::string& oldName, const std::string& newName) = 0;
 
-    // Removes the given declaration from the internal dictionaries.
-    // This doesn't remove the declaration from the source files, so this operation
-    // will not survive a reloadDeclarations command. Used to remove temporary decls in edit scenarios.
+    // Removes the given declaration both from memory and the decl file, if there is one.
+    // Only declarations stored in physical files (or unsaved ones) can be removed.
+    // Attempting to remove a read-only declaration (e.g. decls saved in PK4 archives)
+    // will cause a std::logic_error to be thrown.
     virtual void removeDeclaration(Type type, const std::string& name) = 0;
 
     // Re-load all declarations.

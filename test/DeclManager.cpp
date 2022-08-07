@@ -719,6 +719,65 @@ TEST_F(DeclManagerTest, RemoveDeclaration)
     expectDeclIsNotPresent(decl::Type::TestDecl, "decl/precedence_test/1");
 }
 
+// Removing a decl defined in a PK4 file will throw
+TEST_F(DeclManagerTest, RemoveDeclarationInPk4File)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/export/0");
+    EXPECT_TRUE(decl) << "decl/export/0 must be present";
+    EXPECT_FALSE(decl->getBlockSyntax().fileInfo.getIsPhysicalFile()) << "decl/export/0 should be in a PK4 file";
+
+    // Attempting to remove the decl will throw
+    EXPECT_THROW(GlobalDeclarationManager().removeDeclaration(decl->getDeclType(), decl->getDeclName()),
+        std::logic_error) << "Removing a PK4 decl should throw";
+}
+
+// Removing a decl defined in a physical file will succeed
+TEST_F(DeclManagerTest, RemoveDeclarationFromPhysicalFile)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/removal/1");
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/removal/1");
+
+    auto originalSyntax = decl->getBlockSyntax();
+    EXPECT_TRUE(originalSyntax.fileInfo.getIsPhysicalFile()) << "decl/removal/1 must be in a physical file";
+
+    auto fileContents = algorithm::loadTextFromVfsFile(decl->getDeclFilePath());
+    EXPECT_NE(fileContents.find(originalSyntax.contents), std::string::npos) << "Decl source not found";
+
+    // Create a backup copy of the material file we're going to manipulate
+    fs::path declFile = _context.getTestProjectPath() + decl->getDeclFilePath();
+    BackupCopy backup(declFile);
+
+    // Remove the decl, it should remove the source from the file
+    GlobalDeclarationManager().removeDeclaration(decl->getDeclType(), decl->getDeclName());
+
+    auto contentsAfterRemoval = algorithm::loadTextFromVfsFile(decl->getDeclFilePath());
+    EXPECT_NE(contentsAfterRemoval, fileContents) << "File contents should have been changed";
+    EXPECT_EQ(contentsAfterRemoval.find(originalSyntax.contents), std::string::npos) << "Decl source should be gone";
+}
+
+// Removing a decl will also remove leading comment lines
+TEST_F(DeclManagerTest, RemoveDeclarationIncludesLeadingComment)
+{
+    // TODO
+}
+
+// Removing decls with weird line break configurations
+TEST_F(DeclManagerTest, RemoveDeclarationWithNonstandardLinebreaks)
+{
+    // TODO
+}
+
+TEST_F(DeclManagerTest, RemoveUnsavedDeclaration)
+{
+    // TODO
+}
+
 TEST_F(DeclManagerTest, RenameDeclaration)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
