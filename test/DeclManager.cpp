@@ -903,6 +903,36 @@ TEST_F(DeclManagerTest, RemoveDeclarationRemovesLeadingMultilineComment)
     EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Some comments after decl/removal/2"));
 }
 
+// There's an evil misleading commented out declaration decl/removal/9 in the file
+// right before the actual, uncommented one
+TEST_F(DeclManagerTest, RemoveDeclarationIgnoresCommentedContent)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    // Create a backup copy of the decl file we're going to manipulate
+    auto fullPath = _context.getTestProjectPath() + "testdecls/removal_tests.decl";
+    BackupCopy backup(fullPath);
+
+    // decl/removal/9 has a commented declaration above the actual one
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, R"(/*
+testdecl decl/removal/9
+{
+    diffusemap textures/old/5
+}
+*/)"));
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/removal/9");
+
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/9");
+
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, R"(/*
+testdecl decl/removal/9
+{
+    diffusemap textures/old/5
+}
+*/)")) << "The decl manager removed the wrong declaration";
+}
+
 TEST_F(DeclManagerTest, RemoveUnsavedDeclaration)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());

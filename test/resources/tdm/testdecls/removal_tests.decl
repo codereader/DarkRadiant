@@ -40,3 +40,17 @@ testdecl decl/removal/6 { diffusemap textures/removal/6 }
 testdecl decl/removal/7 { diffusemap textures/removal/7 }
 
 testdecl decl/removal/8 { diffusemap textures/removal/8 }
+
+// An old, commented out version of a decl that should not be touched
+// This is trying to mislead the splice helper cutting out the decl
+/*
+testdecl decl/removal/9
+{
+    diffusemap textures/old/5
+}
+*/
+
+testdecl decl/removal/9
+{
+    diffusemap textures/removal/5
+}
