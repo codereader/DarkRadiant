@@ -1,8 +1,10 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "string/tokeniser.h"
+#include "string/join.h"
 
 namespace parser
 {
@@ -11,14 +13,93 @@ namespace parser
 // Can be of type text, whitespace or comment
 struct DefSyntaxToken
 {
-    
+    enum class Type
+    {
+        Nothing,
+        Whitespace,
+    };
+
+    // Token type
+    Type type;
+
+    // The raw string as parsed from the source text
+    std::string value;
+
+    void clear()
+    {
+        type = Type::Nothing;
+        value.clear();
+    }
 };
 
-struct DefSyntaxNode
+class DefSyntaxNode
 {
+public:
     using Ptr = std::shared_ptr<DefSyntaxNode>;
 
+    enum class Type
+    {
+        Root,
+        Whitespace,
+    };
 
+private:
+    // All child nodes of this node
+    std::vector<Ptr> _children;
+
+    Type _type;
+
+public:
+    DefSyntaxNode(Type type) :
+        _type(type)
+    {}
+
+    Type getType() const
+    {
+        return _type;
+    }
+
+    const std::vector<Ptr>& getChildren() const
+    {
+        return _children;
+    }
+
+    void appendChildNode(Ptr&& node)
+    {
+        _children.emplace_back(node);
+    }
+
+    virtual std::string getString() const
+    {
+        std::string value;
+        value.reserve(getChildren().size() * 10);
+
+        for (const auto& child : getChildren())
+        {
+            value += child->getString();
+        }
+
+        return value;
+    }
+};
+
+class DefWhitespaceSyntax :
+    public DefSyntaxNode
+{
+private:
+    DefSyntaxToken _token;
+public:
+    DefWhitespaceSyntax(const DefSyntaxToken& token) :
+        DefSyntaxNode(Type::Whitespace),
+        _token(token)
+    {
+        assert(token.type == DefSyntaxToken::Type::Whitespace);
+    }
+
+    std::string getString() const override
+    {
+        return _token.value;
+    }
 };
 
 struct DefSyntaxTree
@@ -40,7 +121,8 @@ class DefSyntaxTokeniserFunc
     // Enumeration of states
     enum class State
     {
-        None,	  // haven't found anything yet
+        Searching,      // haven't found anything yet
+        Whitespace,     // on whitespace
     } _state;
 
     constexpr static const char* const Delims = " \t\n\v\r";
@@ -61,7 +143,7 @@ class DefSyntaxTokeniserFunc
 
 public:
     DefSyntaxTokeniserFunc() :
-		_state(State::None)
+		_state(State::Searching)
     {}
 
     /**
@@ -74,8 +156,44 @@ public:
     template<typename InputIterator>
     bool operator() (InputIterator& next, const InputIterator& end, DefSyntaxToken& tok)
 	{
-        // Return true if we have found a named block
-        return false;
+        // Initialise state, no persistence between calls
+        _state = State::Searching;
+
+        // Clear out the token, no guarantee that it is empty
+        tok.clear();
+
+        while (next != end)
+        {
+            char ch = *next;
+
+            switch (_state)
+            {
+            case State::Searching:
+                if (IsWhitespace(ch))
+                {
+                    _state = State::Whitespace;
+                    tok.type = DefSyntaxToken::Type::Whitespace;
+                    tok.value += ch;
+                    ++next;
+                    continue;
+                }
+                break;
+            case State::Whitespace:
+                if (IsWhitespace(ch))
+                {
+                    tok.value += ch;
+                    ++next;
+                    continue;
+                }
+
+                // Ran out of whitespace, return token
+                return true;
+                break;
+            }
+        }
+
+        // Return true if we have found a non-empty token
+        return !tok.value.empty();
     }
 }; 
 
@@ -108,7 +226,23 @@ public:
     // The returned syntax tree reference is never null
     DefSyntaxTree::Ptr parse()
     {
-        return std::make_shared<DefSyntaxTree>();
+        auto syntaxTree = std::make_shared<DefSyntaxTree>();
+
+        syntaxTree->root = std::make_shared<DefSyntaxNode>(DefSyntaxNode::Type::Root);
+
+        while (!_tokIter.isExhausted())
+        {
+            auto token = *_tokIter++;
+
+            switch (token.type)
+            {
+            case DefSyntaxToken::Type::Whitespace:
+                syntaxTree->root->appendChildNode(std::make_shared<DefWhitespaceSyntax>(token));
+                break;
+            }
+        }
+
+        return syntaxTree;
     }
 };
 
