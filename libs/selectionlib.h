@@ -252,6 +252,12 @@ namespace pred
         const auto& info = GlobalSelectionSystem().getSelectionInfo();
         return info.totalCount == n && info.entityCount == n;
     }
+
+    /// Return true if at least one patch is selected
+    inline bool havePatch()
+    {
+        return GlobalSelectionSystem().getSelectionInfo().patchCount > 0;
+    }
 }
 
 } // namespace selection

@@ -425,12 +425,15 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("CreateNewLayerDialog", CreateLayerDialog::CreateNewLayer,
 		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
-	GlobalCommandSystem().addCommand("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd);
-	GlobalCommandSystem().addCommand("PatchCapDialog", PatchCapDialog::Show);
-	GlobalCommandSystem().addCommand("ThickenPatchDialog", PatchThickenDialog::Show);
-	GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
+    GlobalCommandSystem().addWithCheck("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("PatchCapDialog", PatchCapDialog::Show,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("ThickenPatchDialog", PatchThickenDialog::Show,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
 
-	GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
+    GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
     GlobalCommandSystem().addWithCheck("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show,
                                        selection::pred::haveSelectedBrush, {cmd::ARGTYPE_INT});
 
