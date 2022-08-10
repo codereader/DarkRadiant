@@ -280,7 +280,7 @@ void Clipper::initialiseModule(const IApplicationContext& ctx)
 
 	// Register the clip commands
     auto haveSomethingToClip = [this] {
-        return clipMode() && selection::pred::haveSelectedBrush();
+        return clipMode() && selection::pred::haveBrush();
     };
     GlobalCommandSystem().addWithCheck(
         "ClipSelected", cmd::noArgs([this] { clipSelectionCmd(); }), haveSomethingToClip

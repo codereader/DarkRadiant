@@ -241,7 +241,7 @@ inline void assignNodeToSelectionGroups(const scene::INodePtr& node, const IGrou
 namespace pred
 {
     /// Return true if there is at least one selected brush
-    inline bool haveSelectedBrush()
+    inline bool haveBrush()
     {
         return GlobalSelectionSystem().getSelectionInfo().brushCount > 0;
     }
@@ -251,6 +251,13 @@ namespace pred
     {
         const auto& info = GlobalSelectionSystem().getSelectionInfo();
         return info.totalCount == n && info.entityCount == n;
+    }
+
+    /// Return true if the exact given number of patches are selected (and nothing else)
+    inline bool havePatchesExact(int n)
+    {
+        const auto& info = GlobalSelectionSystem().getSelectionInfo();
+        return info.totalCount == n && info.patchCount == n;
     }
 
     /// Return true if at least one patch is selected

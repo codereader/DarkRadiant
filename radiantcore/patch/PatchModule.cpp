@@ -12,6 +12,7 @@
 #include "patch/algorithm/Prefab.h"
 #include "patch/algorithm/General.h"
 #include "selection/algorithm/Patch.h"
+#include "selectionlib.h"
 
 #include "module/StaticModule.h"
 #include "messages/TextureChanged.h"
@@ -104,16 +105,20 @@ void PatchModule::registerPatchCommands()
 	GlobalCommandSystem().addCommand("PatchAppendRowBeginning", selection::algorithm::appendPatchRowsAtBeginning);
 	GlobalCommandSystem().addCommand("PatchAppendRowEnd", selection::algorithm::appendPatchRowsAtEnd);
 
-	GlobalCommandSystem().addCommand("InvertCurve", selection::algorithm::invertPatch);
-	GlobalCommandSystem().addCommand("RedisperseRows", selection::algorithm::redispersePatchRows);
-	GlobalCommandSystem().addCommand("RedisperseCols", selection::algorithm::redispersePatchCols);
-	GlobalCommandSystem().addCommand("MatrixTranspose", selection::algorithm::transposePatch);
-	GlobalCommandSystem().addCommand("CapSelectedPatches", selection::algorithm::capPatch, { cmd::ARGTYPE_STRING });
-	GlobalCommandSystem().addCommand("ThickenSelectedPatches", selection::algorithm::thickenPatches,
-		{ cmd::ARGTYPE_DOUBLE, cmd::ARGTYPE_INT, cmd::ARGTYPE_INT }); // thickness, create_seams, axis
-	GlobalCommandSystem().addCommand("StitchPatchTexture", patch::algorithm::stitchTextures);
-	GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge, { cmd::ARGTYPE_DOUBLE });
-	GlobalCommandSystem().addCommand("WeldSelectedPatches", patch::algorithm::weldSelectedPatches);
+    GlobalCommandSystem().addCommand("InvertCurve", selection::algorithm::invertPatch);
+    GlobalCommandSystem().addCommand("RedisperseRows", selection::algorithm::redispersePatchRows);
+    GlobalCommandSystem().addCommand("RedisperseCols", selection::algorithm::redispersePatchCols);
+    GlobalCommandSystem().addCommand("MatrixTranspose", selection::algorithm::transposePatch);
+    GlobalCommandSystem().addCommand("CapSelectedPatches", selection::algorithm::capPatch,
+                                     {cmd::ARGTYPE_STRING});
+    GlobalCommandSystem().addCommand(
+        "ThickenSelectedPatches", selection::algorithm::thickenPatches,
+        {cmd::ARGTYPE_DOUBLE, cmd::ARGTYPE_INT, cmd::ARGTYPE_INT} // thickness, create_seams, axis
+    );
+    GlobalCommandSystem().addWithCheck("StitchPatchTexture", patch::algorithm::stitchTextures,
+                                       [] { return selection::pred::havePatchesExact(2); });
+    GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge, {cmd::ARGTYPE_DOUBLE});
+    GlobalCommandSystem().addCommand("WeldSelectedPatches", patch::algorithm::weldSelectedPatches);
 }
 
 module::StaticModuleRegistration<PatchModule> patchModule;

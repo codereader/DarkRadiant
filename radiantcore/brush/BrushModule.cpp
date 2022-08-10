@@ -147,7 +147,7 @@ void BrushModuleImpl::registerBrushCommands()
 	GlobalCommandSystem().addCommand("TextureNatural", selection::algorithm::naturalTexture);
     GlobalCommandSystem().addWithCheck("MakeVisportal",
                                        cmd::noArgs(selection::algorithm::makeVisportal),
-                                       selection::pred::haveSelectedBrush);
+                                       selection::pred::haveBrush);
     GlobalCommandSystem().addCommand("SurroundWithMonsterclip", selection::algorithm::surroundWithMonsterclip);
 
 	GlobalCommandSystem().addCommand("ResizeSelectedBrushesToBounds", selection::algorithm::resizeSelectedBrushesToBounds,

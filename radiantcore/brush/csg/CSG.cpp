@@ -494,13 +494,13 @@ void mergeSelectedBrushes(const cmd::ArgumentList& args)
 
 void registerCommands()
 {
-    using selection::pred::haveSelectedBrush;
+    using selection::pred::haveBrush;
 
     GlobalCommandSystem().addWithCheck("CSGSubtract", subtractBrushesFromUnselected,
-                                       haveSelectedBrush);
-    GlobalCommandSystem().addWithCheck("CSGMerge", mergeSelectedBrushes, haveSelectedBrush);
-    GlobalCommandSystem().addWithCheck("CSGHollow", hollowSelectedBrushes, haveSelectedBrush);
-    GlobalCommandSystem().addWithCheck("CSGRoom", makeRoomForSelectedBrushes, haveSelectedBrush);
+                                       haveBrush);
+    GlobalCommandSystem().addWithCheck("CSGMerge", mergeSelectedBrushes, haveBrush);
+    GlobalCommandSystem().addWithCheck("CSGHollow", hollowSelectedBrushes, haveBrush);
+    GlobalCommandSystem().addWithCheck("CSGRoom", makeRoomForSelectedBrushes, haveBrush);
 }
 
 } // namespace algorithm
