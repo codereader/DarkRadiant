@@ -260,10 +260,16 @@ namespace pred
         return info.totalCount == n && info.patchCount == n;
     }
 
+    /// Return true if at least the given number of patches are selected
+    inline bool havePatchesAtLeast(int n)
+    {
+        return GlobalSelectionSystem().getSelectionInfo().patchCount >= n;
+    }
+
     /// Return true if at least one patch is selected
     inline bool havePatch()
     {
-        return GlobalSelectionSystem().getSelectionInfo().patchCount > 0;
+        return havePatchesAtLeast(1);
     }
 }
 

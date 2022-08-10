@@ -118,7 +118,9 @@ void PatchModule::registerPatchCommands()
     GlobalCommandSystem().addWithCheck("StitchPatchTexture", patch::algorithm::stitchTextures,
                                        [] { return selection::pred::havePatchesExact(2); });
     GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge, {cmd::ARGTYPE_DOUBLE});
-    GlobalCommandSystem().addCommand("WeldSelectedPatches", patch::algorithm::weldSelectedPatches);
+    GlobalCommandSystem().addWithCheck("WeldSelectedPatches",
+                                       patch::algorithm::weldSelectedPatches,
+                                       [] { return selection::pred::havePatchesAtLeast(2); });
 }
 
 module::StaticModuleRegistration<PatchModule> patchModule;
