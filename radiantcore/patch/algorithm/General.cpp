@@ -89,7 +89,7 @@ void thicken(const PatchNodePtr& sourcePatch, float thickness, bool createSeams,
 	targetPatch->invertMatrix();
 }
 
-void stitchTextures(const cmd::ArgumentList& args)
+void stitchTextures()
 {
 	// Get all the selected patches
 	PatchPtrVector patchList = selection::algorithm::getSelectedPatches();

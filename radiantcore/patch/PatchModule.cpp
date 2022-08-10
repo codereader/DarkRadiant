@@ -90,12 +90,27 @@ void PatchModule::registerPatchCommands()
 	GlobalCommandSystem().addCommand("CreateSimplePatchMesh", patch::algorithm::createSimplePatch,
 		{ cmd::ARGTYPE_INT, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL, cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL }); // dimX, dimY, removeSelectedBrush
 
-	GlobalCommandSystem().addCommand("PatchInsertColumnEnd", selection::algorithm::insertPatchColumnsAtEnd);
-	GlobalCommandSystem().addCommand("PatchInsertColumnBeginning", selection::algorithm::insertPatchColumnsAtBeginning);
-	GlobalCommandSystem().addCommand("PatchInsertRowEnd", selection::algorithm::insertPatchRowsAtEnd);
-	GlobalCommandSystem().addCommand("PatchInsertRowBeginning", selection::algorithm::insertPatchRowsAtBeginning);
+    GlobalCommandSystem().addWithCheck(
+        "PatchInsertColumnEnd",
+        cmd::noArgs(selection::algorithm::insertPatchColumnsAtEnd),
+        selection::pred::havePatch
+    );
+    GlobalCommandSystem().addWithCheck(
+        "PatchInsertColumnBeginning",
+        cmd::noArgs(selection::algorithm::insertPatchColumnsAtBeginning),
+        selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck(
+        "PatchInsertRowEnd",
+        cmd::noArgs(selection::algorithm::insertPatchRowsAtEnd),
+        selection::pred::havePatch
+    );
+    GlobalCommandSystem().addWithCheck(
+        "PatchInsertRowBeginning",
+        cmd::noArgs(selection::algorithm::insertPatchRowsAtBeginning),
+        selection::pred::havePatch
+    );
 
-	GlobalCommandSystem().addCommand("PatchDeleteColumnBeginning", selection::algorithm::deletePatchColumnsFromBeginning);
+    GlobalCommandSystem().addCommand("PatchDeleteColumnBeginning", selection::algorithm::deletePatchColumnsFromBeginning);
 	GlobalCommandSystem().addCommand("PatchDeleteColumnEnd", selection::algorithm::deletePatchColumnsFromEnd);
 	GlobalCommandSystem().addCommand("PatchDeleteRowBeginning", selection::algorithm::deletePatchRowsFromBeginning);
 	GlobalCommandSystem().addCommand("PatchDeleteRowEnd", selection::algorithm::deletePatchRowsFromEnd);
@@ -115,7 +130,8 @@ void PatchModule::registerPatchCommands()
         "ThickenSelectedPatches", selection::algorithm::thickenPatches,
         {cmd::ARGTYPE_DOUBLE, cmd::ARGTYPE_INT, cmd::ARGTYPE_INT} // thickness, create_seams, axis
     );
-    GlobalCommandSystem().addWithCheck("StitchPatchTexture", patch::algorithm::stitchTextures,
+    GlobalCommandSystem().addWithCheck("StitchPatchTexture",
+                                       cmd::noArgs(patch::algorithm::stitchTextures),
                                        [] { return selection::pred::havePatchesExact(2); });
     GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge, {cmd::ARGTYPE_DOUBLE});
     GlobalCommandSystem().addWithCheck("WeldSelectedPatches",
