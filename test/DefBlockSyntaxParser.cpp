@@ -22,11 +22,18 @@ inline void expectToken(const parser::DefSyntaxToken& token, parser::DefSyntaxTo
     EXPECT_EQ(token.value, value) << "Expected token value " << value;
 }
 
+inline parser::DefBlockSyntaxParser<const std::string>::Tokeniser createTokeniser(const std::string& source)
+{
+    return parser::DefBlockSyntaxParser<const std::string>::Tokeniser(
+        parser::detail::SyntaxParserTraits<const std::string>::GetStartIterator(source),
+        parser::detail::SyntaxParserTraits<const std::string>::GetEndIterator(source), 
+        parser::DefBlockSyntaxTokeniserFunc()
+    );
+}
+
 inline void expectSingleToken(const std::string& source, parser::DefSyntaxToken::Type type, const std::string& value)
 {
-    string::Tokeniser<parser::DefBlockSyntaxTokeniserFunc, std::string::const_iterator, parser::DefSyntaxToken> tokeniser(
-        source, parser::DefBlockSyntaxTokeniserFunc()
-    );
+    auto tokeniser = createTokeniser(source);
 
     auto it = tokeniser.getIterator();
     expectToken(*it++, type, value);
@@ -36,10 +43,7 @@ inline void expectSingleToken(const std::string& source, parser::DefSyntaxToken:
 
 TEST(DefBlockSyntaxTokeniser, EmptyText)
 {
-    string::Tokeniser<parser::DefBlockSyntaxTokeniserFunc, std::string::const_iterator, parser::DefSyntaxToken> tokeniser(
-        "", parser::DefBlockSyntaxTokeniserFunc()
-    );
-
+    auto tokeniser = createTokeniser("");
     auto it = tokeniser.getIterator();
     
     EXPECT_TRUE(it.isExhausted());
@@ -72,10 +76,7 @@ TEST(DefBlockSyntaxTokeniser, SingleTokens)
 
 void expectTokenSequence(const std::string& source, const std::vector<std::pair<parser::DefSyntaxToken::Type, std::string>>& sequence)
 {
-    string::Tokeniser<parser::DefBlockSyntaxTokeniserFunc, std::string::const_iterator, parser::DefSyntaxToken> tokeniser(
-        source, parser::DefBlockSyntaxTokeniserFunc()
-    );
-
+    auto tokeniser = createTokeniser(source);
     auto it = tokeniser.getIterator();
 
     for (const auto& [type, value] : sequence)

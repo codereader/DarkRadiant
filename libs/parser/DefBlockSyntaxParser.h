@@ -480,11 +480,10 @@ public:
                 }
                 else if (ch == '/')
                 {
-                    // Check for a block comment
-                    auto afterNext = next;
-                    ++afterNext;
+                    auto nextChar = next != end ? next.peek() : '\0';
 
-                    if (afterNext != end && (*afterNext == '*' || *afterNext == '/'))
+                    // Check for a block comment
+                    if (nextChar == '*' || nextChar == '/')
                     {
                         // This ends our token
                         return true;
@@ -523,16 +522,65 @@ template<typename ContainerType> struct SyntaxParserTraits
 template<>
 struct SyntaxParserTraits<const std::string>
 {
-    typedef std::string::const_iterator Iterator;
+    struct StringIteratorAdapter
+    {
+        const std::string& container;
+        std::string::const_iterator wrapped;
+
+        StringIteratorAdapter(const std::string& container_, const std::string::const_iterator& iter) :
+            container(container_),
+            wrapped(iter)
+        {}
+
+        StringIteratorAdapter& operator++()
+        {
+            ++wrapped;
+            return *this;
+        }
+
+        StringIteratorAdapter operator++(int) noexcept
+        {
+            StringIteratorAdapter temp = *this;
+            ++(*this);
+            return temp;
+        }
+        
+        char operator*() const
+        {
+            return *wrapped;
+        }
+
+        char peek() const
+        {
+            if (wrapped == container.end()) return '\0';
+
+            std::string::const_iterator copy = wrapped;
+            ++copy;
+
+            return copy != container.end() ? *copy : '\0';
+        }
+
+        bool operator==(const StringIteratorAdapter& other) const
+        {
+            return wrapped == other.wrapped;
+        }
+
+        bool operator!=(const StringIteratorAdapter& other) const
+        {
+            return !(operator==(other));
+        }
+    };
+
+    typedef StringIteratorAdapter Iterator;
 
     static Iterator GetStartIterator(const std::string& str)
     {
-        return str.begin();
+        return StringIteratorAdapter(str, str.begin());
     }
 
     static Iterator GetEndIterator(const std::string& str)
     {
-        return str.end();
+        return StringIteratorAdapter(str, str.end());
     }
 };
 
@@ -540,36 +588,84 @@ struct SyntaxParserTraits<const std::string>
 template<>
 struct SyntaxParserTraits<std::istream>
 {
-    typedef std::istream_iterator<char> Iterator;
+    struct StreamIteratorAdapter
+    {
+        std::istream& stream;
+        std::istream_iterator<char> wrapped;
+
+        StreamIteratorAdapter(std::istream& stream_, std::istream_iterator<char> iter) :
+            stream(stream_),
+            wrapped(iter)
+        {}
+
+        StreamIteratorAdapter(const StreamIteratorAdapter& other) :
+            stream(other.stream),
+            wrapped(other.wrapped)
+        {}
+
+        StreamIteratorAdapter& operator++()
+        {
+            ++wrapped;
+            return *this;
+        }
+
+        StreamIteratorAdapter operator++(int) noexcept
+        {
+            StreamIteratorAdapter temp(*this);
+            ++(*this);
+            return temp;
+        }
+
+        char operator*() const
+        {
+            return *wrapped;
+        }
+
+        char peek() const
+        {
+            return static_cast<char>(stream.peek());
+        }
+
+        bool operator==(const StreamIteratorAdapter& other) const
+        {
+            return wrapped == other.wrapped;
+        }
+
+        bool operator!=(const StreamIteratorAdapter& other) const
+        {
+            return !(operator==(other));
+        }
+    };
+
+    typedef StreamIteratorAdapter Iterator;
 
     static Iterator GetStartIterator(std::istream& str)
     {
         str >> std::noskipws;
-        return Iterator(str);
+        return StreamIteratorAdapter(str, std::istream_iterator<char>(str));
     }
 
     static Iterator GetEndIterator(std::istream& str)
     {
-        return Iterator();
+        return StreamIteratorAdapter(str, std::istream_iterator<char>());
     }
 };
 
 }
 
 /**
- * Parses and cuts decl file contents into syntax blocks.
- * Each block structure has a name, an optional typename,
- * the raw block contents. Every block can have leading and trailing
- * non-decl syntax elements like whitespace and/or comments.
+ * Parses and cuts decl file contents into a syntax tree.
+ * Every syntax tree has a root node with 0..N children.
  */
 template<typename ContainerType>
 class DefBlockSyntaxParser
 {
-private:
+public:
     // Internal tokeniser and its iterator
     using Tokeniser = string::Tokeniser<DefBlockSyntaxTokeniserFunc,
         typename detail::SyntaxParserTraits<ContainerType>::Iterator, DefSyntaxToken>;
 
+private:
     Tokeniser _tok;
     typename Tokeniser::Iterator _tokIter;
 
