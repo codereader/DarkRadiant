@@ -163,15 +163,33 @@ TEST_F(DefBlockSyntaxParserTest, Whitespace)
     EXPECT_EQ(syntaxTree->root->getChildren().front()->getString(), "\r\n \r\n");
 }
 
-// Attempt to parse a whole file and reconstruct it from the syntax tree
-TEST_F(DefBlockSyntaxParserTest, ReconstructFileFromSyntaxTree)
+void checkDeclFileReconstruction(const std::string& declFile)
 {
-    auto originalText = algorithm::loadTextFromVfsFile("testdecls/removal_tests.decl");
-
+    auto originalText = algorithm::loadTextFromVfsFile(declFile);
     auto syntaxTree = parseText(originalText);
 
     auto reconstructedText = syntaxTree->getString();
-    EXPECT_EQ(reconstructedText, originalText) << "Parsed file couldn't be reconstructed";
+    EXPECT_EQ(reconstructedText, originalText) << "Parsed file " << declFile << " couldn't be reconstructed";
+}
+// Attempt to parse a whole file and reconstruct it from the syntax tree
+TEST_F(DefBlockSyntaxParserTest, ReconstructFileFromSyntaxTree)
+{
+    checkDeclFileReconstruction("testdecls/exporttest.decl");
+    checkDeclFileReconstruction("testdecls/numbers.decl");
+    checkDeclFileReconstruction("testdecls/precedence_test1.decl");
+    checkDeclFileReconstruction("testdecls/precedence_test2.decl");
+    checkDeclFileReconstruction("testdecls/removal_tests.decl");
+    checkDeclFileReconstruction("testdecls/removal_tests.decl");
+
+    checkDeclFileReconstruction("particles/testparticles.prt");
+    
+    checkDeclFileReconstruction("materials/parsertest.mtr");
+    checkDeclFileReconstruction("materials/example.mtr");
+    checkDeclFileReconstruction("materials/tdm_internal_engine.mtr");
+
+    checkDeclFileReconstruction("def/base.def");
+    checkDeclFileReconstruction("def/tdm_ai.def");
+    checkDeclFileReconstruction("def/mover_door.def");
 }
 
 }
