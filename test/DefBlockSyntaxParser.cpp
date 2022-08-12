@@ -1,6 +1,7 @@
-#include "gtest/gtest.h"
+#include "RadiantTest.h"
 
 #include "parser/DefBlockSyntaxParser.h"
+#include "algorithm/FileUtils.h"
 
 namespace test
 {
@@ -117,16 +118,29 @@ TEST(DefBlockSyntaxTokeniser, TokenSequences)
         { parser::DefSyntaxToken::Type::BracedBlock, "{\n    \"some to//kens {{\" \"containing /* control characters */\" // test\n}" },
         { parser::DefSyntaxToken::Type::Whitespace, "\r\n\r\n" },
     });
+
+    expectTokenSequence("test\n{\n\"some\" \"keyvalue\" // line comment\n\n}\r\n\r\ntest2\n{\n\"some\" \"keyvalue\"\n\n}\n",
+    {
+        { parser::DefSyntaxToken::Type::Token, "test" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n" },
+        { parser::DefSyntaxToken::Type::BracedBlock, "{\n\"some\" \"keyvalue\" // line comment\n\n}" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\r\n\r\n" },
+        { parser::DefSyntaxToken::Type::Token, "test2" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n" },
+        { parser::DefSyntaxToken::Type::BracedBlock, "{\n\"some\" \"keyvalue\"\n\n}" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n" },
+    });
 }
 
-TEST(DefBlockSyntaxParser, EmptyText)
+using DefBlockSyntaxParserTest = RadiantTest;
+
+TEST_F(DefBlockSyntaxParserTest, EmptyText)
 {
     auto syntaxTree = parseText("");
-
     EXPECT_TRUE(syntaxTree) << "Syntax Root must not be null";
 }
 
-TEST(DefBlockSyntaxParser, Whitespace)
+TEST_F(DefBlockSyntaxParserTest, Whitespace)
 {
     auto syntaxTree = parseText(" ");
     EXPECT_EQ(syntaxTree->root->getChildren().size(), 1) << "Expected 1 whitespace node";
@@ -147,6 +161,17 @@ TEST(DefBlockSyntaxParser, Whitespace)
     EXPECT_EQ(syntaxTree->root->getChildren().size(), 1) << "Expected 1 whitespace node";
     EXPECT_EQ(syntaxTree->root->getChildren().front()->getType(), parser::DefSyntaxNode::Type::Whitespace);
     EXPECT_EQ(syntaxTree->root->getChildren().front()->getString(), "\r\n \r\n");
+}
+
+// Attempt to parse a whole file and reconstruct it from the syntax tree
+TEST_F(DefBlockSyntaxParserTest, ReconstructFileFromSyntaxTree)
+{
+    auto originalText = algorithm::loadTextFromVfsFile("testdecls/removal_tests.decl");
+
+    auto syntaxTree = parseText(originalText);
+
+    auto reconstructedText = syntaxTree->root->getString();
+    EXPECT_EQ(reconstructedText, originalText) << "Parsed file couldn't be reconstructed";
 }
 
 }

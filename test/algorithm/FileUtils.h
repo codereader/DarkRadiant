@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <fstream>
 #include "ifilesystem.h"
 #include "os/fs.h"
 #include "string/replace.h"
