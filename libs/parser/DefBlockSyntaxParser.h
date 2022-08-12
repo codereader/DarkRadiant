@@ -81,6 +81,16 @@ public:
         _children.emplace_back(node);
     }
 
+    void removeChildNode(const Ptr& node)
+    {
+        auto existing = std::find(_children.begin(), _children.end(), node);
+
+        if (existing != _children.end())
+        {
+            _children.erase(existing);
+        }
+    }
+
     virtual std::string getString() const
     {
         std::string value;

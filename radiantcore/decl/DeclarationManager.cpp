@@ -7,6 +7,7 @@
 #include <regex>
 
 #include "DeclarationFolderParser.h"
+#include "parser/DefBlockSyntaxParser.h"
 #include "ifilesystem.h"
 #include "decl/SpliceHelper.h"
 #include "module/StaticModule.h"
@@ -354,15 +355,40 @@ void DeclarationManager::removeDeclarationFromFile(const IDeclaration::Ptr& decl
         throw std::runtime_error(fmt::format(_("Cannot open file for reading: {0}"), fullPath));
     }
 
-    // Look up the typename for this decl and find the insertion point
-    SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, getTypenameByType(decl->getDeclType()), decl->getDeclName());
-
-    // The stream is at the insertion point, the old decl has been cut out already
-
-    // Just write the rest of the stream
-    stream << inheritStream.rdbuf();
-
+    // Parse the existing file into a syntax tree for manipulation
+    parser::DefBlockSyntaxParser<std::istream> parser(inheritStream);
+    
+    auto syntaxTree = parser.parse();
     inheritStream.close();
+
+    // Remove the declaration from the tree
+    std::vector<parser::DefSyntaxNode::Ptr> nodesToRemove;
+
+    for (const auto& node : syntaxTree->getRoot()->getChildren())
+    {
+        if (node->getType() != parser::DefSyntaxNode::Type::DeclBlock) continue;
+
+        auto blockNode = std::static_pointer_cast<parser::DefBlockSyntax>(node);
+
+        if (blockNode->getName() && blockNode->getName()->getToken().value == decl->getDeclName())
+        {
+            nodesToRemove.push_back(blockNode);
+        }
+    }
+
+    if (nodesToRemove.empty())
+    {
+        rWarning() << "Could not locate the decl block " << decl->getDeclName() << " in the file " << fullPath << std::endl;
+        return;
+    }
+
+    for (const auto& node : nodesToRemove)
+    {
+        syntaxTree->getRoot()->removeChildNode(node);
+    }
+
+    // Export the syntax tree with the missing decl block
+    stream << syntaxTree->getString();
 
     tempStream.closeAndReplaceTargetFile();
 }
