@@ -170,7 +170,7 @@ TEST_F(DefBlockSyntaxParserTest, ReconstructFileFromSyntaxTree)
 
     auto syntaxTree = parseText(originalText);
 
-    auto reconstructedText = syntaxTree->root->getString();
+    auto reconstructedText = syntaxTree->getString();
     EXPECT_EQ(reconstructedText, originalText) << "Parsed file couldn't be reconstructed";
 }
 

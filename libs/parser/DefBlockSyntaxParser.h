@@ -9,8 +9,8 @@
 namespace parser
 {
 
-// A structural element of the parsed text
-// Can be of type text, whitespace or comment
+// A snippet of the source text
+// Can be strings, whitespace or comments
 struct DefSyntaxToken
 {
     enum class Type
@@ -36,6 +36,9 @@ struct DefSyntaxToken
     }
 };
 
+// Represents an element of a parsed syntax tree.
+// Each node can have 0 or more child nodes, grouping them
+// into a meaningful structure.
 class DefSyntaxNode
 {
 public:
@@ -48,9 +51,7 @@ public:
         Comment,
         DeclType,
         DeclName,
-        BlockStart,
-        BlockContent,
-        BlockEnd,
+        DeclBlock,
     };
 
 private:
@@ -112,11 +113,138 @@ public:
     }
 };
 
+class DefCommentSyntax :
+    public DefSyntaxNode
+{
+private:
+    DefSyntaxToken _token;
+public:
+    DefCommentSyntax(const DefSyntaxToken& token) :
+        DefSyntaxNode(Type::Comment),
+        _token(token)
+    {
+        assert(token.type == DefSyntaxToken::Type::BlockComment || token.type == DefSyntaxToken::Type::EolComment);
+    }
+
+    std::string getString() const override
+    {
+        return _token.value;
+    }
+};
+
+class DefTypeSyntax :
+    public DefSyntaxNode
+{
+private:
+    DefSyntaxToken _token;
+public:
+    using Ptr = std::shared_ptr<DefTypeSyntax>;
+
+    DefTypeSyntax(const DefSyntaxToken& token) :
+        DefSyntaxNode(Type::DeclType),
+        _token(token)
+    {
+        assert(token.type == DefSyntaxToken::Type::Token);
+    }
+
+    const DefSyntaxToken& getToken() const
+    {
+        return _token;
+    }
+
+    std::string getString() const override
+    {
+        return _token.value;
+    }
+};
+
+class DefNameSyntax :
+    public DefSyntaxNode
+{
+private:
+    DefSyntaxToken _token;
+public:
+    using Ptr = std::shared_ptr<DefNameSyntax>;
+
+    DefNameSyntax(const DefSyntaxToken& token) :
+        DefSyntaxNode(Type::DeclName),
+        _token(token)
+    {
+        assert(token.type == DefSyntaxToken::Type::Token);
+    }
+
+    const DefSyntaxToken& getToken() const
+    {
+        return _token;
+    }
+
+    std::string getString() const override
+    {
+        return _token.value;
+    }
+};
+
+class DefBlockSyntax :
+    public DefSyntaxNode
+{
+private:
+    DefSyntaxToken _blockToken;
+
+    std::vector<DefSyntaxNode::Ptr> _headerNodes;
+
+    DefTypeSyntax::Ptr _type;
+    DefNameSyntax::Ptr _name;
+public:
+    using Ptr = std::shared_ptr<DefBlockSyntax>;
+
+    DefBlockSyntax(const DefSyntaxToken blockToken, std::vector<DefSyntaxNode::Ptr>&& headerNodes, 
+                   int nameIndex = -1, int typeIndex = -1) :
+        DefSyntaxNode(Type::DeclBlock),
+        _blockToken(blockToken),
+        _headerNodes(headerNodes)
+    {
+        assert(_blockToken.type == DefSyntaxToken::Type::BracedBlock);
+        assert(nameIndex >= 0);
+
+        if (nameIndex != -1)
+        {
+            _name = std::static_pointer_cast<DefNameSyntax>(_headerNodes.at(nameIndex));
+        }
+
+        if (typeIndex != -1)
+        {
+            _type = std::static_pointer_cast<DefTypeSyntax>(_headerNodes.at(typeIndex));
+        }
+    }
+
+    std::string getString() const override
+    {
+        std::string output;
+        output.reserve(_blockToken.value.size() + _headerNodes.size() * 50);
+
+        for (const auto& headerNode : _headerNodes)
+        {
+            if (!headerNode) continue;
+
+            output.append(headerNode->getString());
+        }
+
+        output.append(_blockToken.value);
+
+        return output;
+    }
+};
+
 struct DefSyntaxTree
 {
     using Ptr = std::shared_ptr<DefSyntaxTree>;
 
     DefSyntaxNode::Ptr root;
+
+    std::string getString() const
+    {
+        return root ? root->getString() : "";
+    }
 };
 
 /**
@@ -387,17 +515,89 @@ public:
 
         while (!_tokIter.isExhausted())
         {
-            auto token = *_tokIter++;
+            auto token = *_tokIter;
 
             switch (token.type)
             {
+            case DefSyntaxToken::Type::BlockComment:
+            case DefSyntaxToken::Type::EolComment:
+                syntaxTree->root->appendChildNode(std::make_shared<DefCommentSyntax>(token));
+                ++_tokIter;
+                break;
             case DefSyntaxToken::Type::Whitespace:
                 syntaxTree->root->appendChildNode(std::make_shared<DefWhitespaceSyntax>(token));
+                ++_tokIter;
+                break;
+            case DefSyntaxToken::Type::BracedBlock:
+                rWarning() << "Unnamed block encountered: " << token.value << std::endl;
+                syntaxTree->root->appendChildNode(std::make_shared<DefBlockSyntax>(token, std::vector<DefSyntaxNode::Ptr>()));
+                ++_tokIter;
+                break;
+            case DefSyntaxToken::Type::Token:
+                syntaxTree->root->appendChildNode(parseBlock());
                 break;
             }
         }
 
         return syntaxTree;
+    }
+
+private:
+    DefBlockSyntax::Ptr parseBlock()
+    {
+        std::vector<DefSyntaxNode::Ptr> headerNodes;
+        DefBlockSyntax::Ptr block;
+
+        int nameIndex = -1;
+        int typeIndex = -1;
+
+        // Check the next token
+        while (!block && !_tokIter.isExhausted())
+        {
+            auto token = *_tokIter++;
+
+            switch (token.type)
+            {
+            case DefSyntaxToken::Type::BlockComment:
+            case DefSyntaxToken::Type::EolComment:
+                headerNodes.push_back(std::make_shared<DefCommentSyntax>(token));
+                break;
+            case DefSyntaxToken::Type::Whitespace:
+                headerNodes.push_back(std::make_shared<DefWhitespaceSyntax>(token));
+                break;
+            case DefSyntaxToken::Type::BracedBlock:
+                // The braced block token concludes this decl block
+                block = std::make_shared<DefBlockSyntax>(token, std::move(headerNodes), nameIndex, typeIndex);
+                break;
+            case DefSyntaxToken::Type::Token:
+                if (nameIndex == -1)
+                {
+                    // No name yet, assume this is the name
+                    nameIndex = static_cast<int>(headerNodes.size());
+                    headerNodes.emplace_back(std::make_shared<DefNameSyntax>(token));
+                    continue;
+                }
+
+                // We already got a first string token, check if this is the second
+                if (typeIndex == -1)
+                {
+                    // The first one is the type, change the node type
+                    typeIndex = nameIndex;
+                    auto oldName = std::static_pointer_cast<DefNameSyntax>(headerNodes.at(typeIndex));
+                    headerNodes.at(typeIndex) = std::make_shared<DefTypeSyntax>(oldName->getToken());
+
+                    // Append the name to the end of the vector
+                    nameIndex = static_cast<int>(headerNodes.size());
+                    headerNodes.emplace_back(std::make_shared<DefNameSyntax>(token));
+                    continue;
+                }
+                
+                rWarning() << "Invalid number of decl block headers, already got a name and type" << std::endl;
+                break;
+            }
+        }
+
+        return block;
     }
 };
 

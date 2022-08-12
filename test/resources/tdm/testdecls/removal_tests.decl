@@ -1,8 +1,8 @@
 // Test declarations used for some DeclarationManager unit tests
-// Don't even alter the whitespace in this file.
+ // Don't even alter the whitespace in this file.
 // Comments at the beginning of the file with an empty line in between
 
-decl/removal/0
+ decl/removal/0
 {
     diffusemap textures/removal/0
 }
