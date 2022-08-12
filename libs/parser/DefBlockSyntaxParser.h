@@ -17,6 +17,11 @@ struct DefSyntaxToken
     {
         Nothing,
         Whitespace,
+        OpeningBrace,
+        ClosingBrace,
+        Token,
+        EolComment,
+        BlockComment,
     };
 
     // Token type
@@ -41,6 +46,12 @@ public:
     {
         Root,
         Whitespace,
+        Comment,
+        DeclType,
+        DeclName,
+        BlockStart,
+        BlockContent,
+        BlockEnd,
     };
 
 private:
@@ -109,40 +120,38 @@ struct DefSyntaxTree
     DefSyntaxNode::Ptr root;
 };
 
-namespace detail
-{
-
 /**
- * Stateful tokeniser function cutting the incoming character range into
- * qualified DefSyntaxTokens.
+ * Stateless tokeniser function cutting the incoming character range into
+ * qualified DefSyntaxTokens, returning one token at a time.
  */
-class DefSyntaxTokeniserFunc
+class DefBlockSyntaxTokeniserFunc
 {
     // Enumeration of states
     enum class State
     {
         Searching,      // haven't found anything yet
         Whitespace,     // on whitespace
+        Token,          // non-whitespace, non-control character
+        BlockComment,   // within a /* block comment */
+        EolComment,     // on an EOL comment starting with //
     } _state;
 
     constexpr static const char* const Delims = " \t\n\v\r";
 
-	constexpr static char BlockStartChar = '{';
-	constexpr static char BlockEndChar = '}';
+	constexpr static char OpeningBrace = '{';
+	constexpr static char ClosingBrace = '}';
 
     static bool IsWhitespace(char c)
 	{
-        const char* curDelim = Delims;
-        while (*curDelim != 0) {
-            if (*(curDelim++) == c) {
-                return true;
-            }
+        for (const char* curDelim = Delims; *curDelim != 0; ++curDelim)
+        {
+            if (*curDelim == c) return true;
         }
         return false;
     }
 
 public:
-    DefSyntaxTokeniserFunc() :
+    DefBlockSyntaxTokeniserFunc() :
 		_state(State::Searching)
     {}
 
@@ -162,6 +171,8 @@ public:
         // Clear out the token, no guarantee that it is empty
         tok.clear();
 
+        std::size_t blockLevel = 0;
+
         while (next != end)
         {
             char ch = *next;
@@ -177,7 +188,58 @@ public:
                     ++next;
                     continue;
                 }
-                break;
+
+                if (ch == OpeningBrace)
+                {
+                    tok.type = DefSyntaxToken::Type::OpeningBrace;
+                    tok.value += ch;
+                    ++next;
+                    return true;
+                }
+                
+                if (ch == ClosingBrace)
+                {
+                    tok.type = DefSyntaxToken::Type::ClosingBrace;
+                    tok.value += ch;
+                    ++next;
+                    return true;
+                }
+                
+                if (ch == '/')
+                {
+                    // Token type not yet determined switch to forward slash mode
+                    tok.value += ch;
+                    ++next;
+
+                    // Check the next character, it determines what we have
+                    if (next != end)
+                    {
+                        if (*next == '*')
+                        {
+                            _state = State::BlockComment;
+                            tok.type = DefSyntaxToken::Type::BlockComment;
+                            tok.value += '*';
+                            ++next;
+                            continue;
+                        }
+
+                        if (*next == '/')
+                        {
+                            _state = State::EolComment;
+                            tok.type = DefSyntaxToken::Type::EolComment;
+                            tok.value += '/';
+                            ++next;
+                            continue;
+                        }
+                    }
+                }
+                 
+                tok.type = DefSyntaxToken::Type::Token;
+                _state = State::Token;
+                tok.value += ch;
+                ++next;
+                continue;
+
             case State::Whitespace:
                 if (IsWhitespace(ch))
                 {
@@ -188,7 +250,71 @@ public:
 
                 // Ran out of whitespace, return token
                 return true;
-                break;
+
+            case State::BlockComment:
+                // Inside a delimited comment, we add everything to the token 
+                // and check for the "*/" sequence.
+                tok.value += ch;
+                ++next;
+
+                // If we just added an asterisk, check if we hit the end
+                if (ch == '*' && next != end && *next == '/')
+                {
+                    // Add the slash and close this block comment
+                    tok.value += '/';
+                    ++next;
+                    return true;
+                }
+
+                continue; // carry on
+
+            case State::EolComment:
+                // This comment lasts until the end of the line.
+                if (ch == '\r' || ch == '\n')
+                {
+                    // Stop here, leave next where it is
+                    return true;
+                }
+                
+                // Add to comment and continue
+                tok.value += ch;
+                ++next;
+                continue;
+
+            case State::Token:
+                assert(!tok.value.empty());
+
+                if (ch == OpeningBrace || ch == ClosingBrace)
+                {
+                    // Finalise the token and leave next where it is
+                    return true;
+                }
+                else if (ch == '/')
+                {
+                    // Check for a block comment
+                    auto afterNext = next;
+                    ++afterNext;
+
+                    if (afterNext != end && (*afterNext == '*' || *afterNext == '/'))
+                    {
+                        // This ends our token
+                        return true;
+                    }
+
+                    // Not starting a comment, continue
+                    tok.value += ch;
+                    ++next;
+                    continue;
+                }
+                else if (IsWhitespace(ch))
+                {
+                    // Whitespace terminates our token
+                    return true;
+                }
+                
+                tok.value += ch;
+                ++next;
+                continue;
             }
         }
 
@@ -196,8 +322,6 @@ public:
         return !tok.value.empty();
     }
 }; 
-
-}
 
 /**
  * Parses and cuts decl file contents into syntax blocks.
@@ -210,7 +334,7 @@ class DefBlockSyntaxParser
 {
 private:
     // Internal tokeniser and its iterator
-    using Tokeniser = string::Tokeniser<detail::DefSyntaxTokeniserFunc,
+    using Tokeniser = string::Tokeniser<DefBlockSyntaxTokeniserFunc,
         std::string::const_iterator, DefSyntaxToken>;
 
     Tokeniser _tok;
@@ -218,7 +342,7 @@ private:
 
 public:
     DefBlockSyntaxParser(const ContainerType& str) :
-        _tok(str, detail::DefSyntaxTokeniserFunc()),
+        _tok(str, DefBlockSyntaxTokeniserFunc()),
         _tokIter(_tok.getIterator())
     {}
 
