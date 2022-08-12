@@ -17,8 +17,7 @@ struct DefSyntaxToken
     {
         Nothing,
         Whitespace,
-        OpeningBrace,
-        ClosingBrace,
+        BracedBlock, // starting with { and *maybe* ending with }
         Token,
         EolComment,
         BlockComment,
@@ -129,11 +128,13 @@ class DefBlockSyntaxTokeniserFunc
     // Enumeration of states
     enum class State
     {
-        Searching,      // haven't found anything yet
-        Whitespace,     // on whitespace
-        Token,          // non-whitespace, non-control character
-        BlockComment,   // within a /* block comment */
-        EolComment,     // on an EOL comment starting with //
+        Searching,                // haven't found anything yet
+        Whitespace,               // on whitespace
+        Token,                    // non-whitespace, non-control character
+        BracedBlock,              // within a braced block
+        QuotedStringWithinBlock,  // within a quoted string within a block
+        BlockComment,             // within a /* block comment */
+        EolComment,               // on an EOL comment starting with //
     } _state;
 
     constexpr static const char* const Delims = " \t\n\v\r";
@@ -171,7 +172,7 @@ public:
         // Clear out the token, no guarantee that it is empty
         tok.clear();
 
-        std::size_t blockLevel = 0;
+        std::size_t openedBlocks = 0;
 
         while (next != end)
         {
@@ -191,18 +192,12 @@ public:
 
                 if (ch == OpeningBrace)
                 {
-                    tok.type = DefSyntaxToken::Type::OpeningBrace;
+                    _state = State::BracedBlock;
+                    tok.type = DefSyntaxToken::Type::BracedBlock;
                     tok.value += ch;
+                    openedBlocks = 1;
                     ++next;
-                    return true;
-                }
-                
-                if (ch == ClosingBrace)
-                {
-                    tok.type = DefSyntaxToken::Type::ClosingBrace;
-                    tok.value += ch;
-                    ++next;
-                    return true;
+                    continue;
                 }
                 
                 if (ch == '/')
@@ -238,6 +233,42 @@ public:
                 _state = State::Token;
                 tok.value += ch;
                 ++next;
+                continue;
+
+            case State::BracedBlock:
+
+                // Add the character and advance in any case
+                tok.value += ch;
+                ++next;
+
+                // Check for another opening brace
+                if (ch == OpeningBrace)
+                {
+                    // another block within this block, ignore this
+                    ++openedBlocks;
+                }
+                else if (ch == ClosingBrace && --openedBlocks == 0)
+                {
+                    // End of block content, we're done here
+                    return true;
+                }
+                else if (ch == '"')
+                {
+                    // An opening quote within the braced block, switch to a special block
+                    // ignoring any control characters within that string
+                    _state = State::QuotedStringWithinBlock;
+                }
+                continue;
+
+            case State::QuotedStringWithinBlock:
+                // Add the character and advance over anything
+                tok.value += ch;
+                ++next;
+
+                if (ch == '"')
+                {
+                    _state = State::BracedBlock;
+                }
                 continue;
 
             case State::Whitespace:

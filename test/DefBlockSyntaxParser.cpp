@@ -59,28 +59,64 @@ TEST(DefBlockSyntaxTokeniser, SingleTokens)
     expectSingleToken("test", parser::DefSyntaxToken::Type::Token, "test");
     expectSingleToken("textures/common", parser::DefSyntaxToken::Type::Token, "textures/common");
     expectSingleToken("m/is/leading*/token/", parser::DefSyntaxToken::Type::Token, "m/is/leading*/token/");
+    
     expectSingleToken("// EOL comment ", parser::DefSyntaxToken::Type::EolComment, "// EOL comment ");
-    expectSingleToken("//EOLcomment", parser::DefSyntaxToken::Type::EolComment, "//EOLcomment");
     expectSingleToken("//", parser::DefSyntaxToken::Type::EolComment, "//");
+    expectSingleToken("//EOLcomment", parser::DefSyntaxToken::Type::EolComment, "//EOLcomment");
     expectSingleToken("/* block comment */", parser::DefSyntaxToken::Type::BlockComment, "/* block comment */");
     expectSingleToken("/* bl/ock * * * comment */", parser::DefSyntaxToken::Type::BlockComment, "/* bl/ock * * * comment */");
     expectSingleToken("/* blk \n test test\n\ncomment */", parser::DefSyntaxToken::Type::BlockComment, "/* blk \n test test\n\ncomment */");
     expectSingleToken("/* this should not crash *", parser::DefSyntaxToken::Type::BlockComment, "/* this should not crash *");
 }
 
-TEST(DefBlockSyntaxTokeniser, TokenSequences)
+void expectTokenSequence(const std::string& source, const std::vector<std::pair<parser::DefSyntaxToken::Type, std::string>>& sequence)
 {
-    std::string source = " test{}";
     string::Tokeniser<parser::DefBlockSyntaxTokeniserFunc, std::string::const_iterator, parser::DefSyntaxToken> tokeniser(
         source, parser::DefBlockSyntaxTokeniserFunc()
     );
 
     auto it = tokeniser.getIterator();
 
-    expectToken(*it++, parser::DefSyntaxToken::Type::Whitespace, " ");
-    expectToken(*it++, parser::DefSyntaxToken::Type::Token, "test");
-    expectToken(*it++, parser::DefSyntaxToken::Type::OpeningBrace, "{");
-    expectToken(*it++, parser::DefSyntaxToken::Type::ClosingBrace, "}");
+    for (const auto& [type, value] : sequence)
+    {
+        expectToken(*it++, type, value);
+    }
+}
+
+TEST(DefBlockSyntaxTokeniser, TokenSequences)
+{
+    expectTokenSequence(" test{}",
+    {
+        { parser::DefSyntaxToken::Type::Whitespace, " " },
+        { parser::DefSyntaxToken::Type::Token, "test" },
+        { parser::DefSyntaxToken::Type::BracedBlock, "{}" },
+    });
+
+    expectTokenSequence(" test//comment\n{\n{\r\n   TESt \n}\n}",
+    {
+        { parser::DefSyntaxToken::Type::Whitespace, " " },
+        { parser::DefSyntaxToken::Type::Token, "test" },
+        { parser::DefSyntaxToken::Type::EolComment, "//comment" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n" },
+        { parser::DefSyntaxToken::Type::BracedBlock, "{\n{\r\n   TESt \n}\n}" },
+    });
+
+    expectTokenSequence("/*comment*/\ntest/* comment */{{//",
+    {
+        { parser::DefSyntaxToken::Type::BlockComment, "/*comment*/" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n" },
+        { parser::DefSyntaxToken::Type::Token, "test" },
+        { parser::DefSyntaxToken::Type::BlockComment, "/* comment */" },
+        { parser::DefSyntaxToken::Type::BracedBlock, "{{//" },
+    });
+
+    expectTokenSequence("test\n{\n    \"some to//kens {{\" \"containing /* control characters */\" // test\n}\r\n\r\n",
+    {
+        { parser::DefSyntaxToken::Type::Token, "test" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n" },
+        { parser::DefSyntaxToken::Type::BracedBlock, "{\n    \"some to//kens {{\" \"containing /* control characters */\" // test\n}" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\r\n\r\n" },
+    });
 }
 
 TEST(DefBlockSyntaxParser, EmptyText)
