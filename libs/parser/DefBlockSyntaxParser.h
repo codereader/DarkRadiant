@@ -5,6 +5,7 @@
 
 #include "string/tokeniser.h"
 #include "string/join.h"
+#include "string/trim.h"
 
 namespace parser
 {
@@ -217,6 +218,24 @@ public:
         }
     }
 
+    // Returns the type identifier of this block (can be empty)
+    const DefTypeSyntax::Ptr& getType() const
+    {
+        return _type;
+    }
+
+    // Returns the name identifier of this block (can be empty)
+    const DefNameSyntax::Ptr& getName() const
+    {
+        return _name;
+    }
+
+    // Returns the raw block contents without the opening and closing braces
+    std::string getBlockContents() const
+    {
+        return string::trim_copy(_blockToken.value, "{}");
+    }
+
     std::string getString() const override
     {
         std::string output;
@@ -235,15 +254,26 @@ public:
     }
 };
 
-struct DefSyntaxTree
+class DefSyntaxTree
 {
+private:
+    DefSyntaxNode::Ptr _root;
+
+public:
     using Ptr = std::shared_ptr<DefSyntaxTree>;
 
-    DefSyntaxNode::Ptr root;
+    DefSyntaxTree() :
+        _root(std::make_shared<DefSyntaxNode>(DefSyntaxNode::Type::Root))
+    {}
+
+    const DefSyntaxNode::Ptr& getRoot()
+    {
+        return _root;
+    }
 
     std::string getString() const
     {
-        return root ? root->getString() : "";
+        return _root->getString();
     }
 };
 
@@ -482,6 +512,50 @@ public:
     }
 }; 
 
+namespace detail
+{
+
+// Traits class to retrieve the correct iterators for a given container type
+template<typename ContainerType> struct SyntaxParserTraits
+{};
+
+// Specialisation on const std::string inputs
+template<>
+struct SyntaxParserTraits<const std::string>
+{
+    typedef std::string::const_iterator Iterator;
+
+    static Iterator GetStartIterator(const std::string& str)
+    {
+        return str.begin();
+    }
+
+    static Iterator GetEndIterator(const std::string& str)
+    {
+        return str.end();
+    }
+};
+
+// Specialisation on std::istream inputs
+template<>
+struct SyntaxParserTraits<std::istream>
+{
+    typedef std::istream_iterator<char> Iterator;
+
+    static Iterator GetStartIterator(std::istream& str)
+    {
+        str >> std::noskipws;
+        return Iterator(str);
+    }
+
+    static Iterator GetEndIterator(std::istream& str)
+    {
+        return Iterator();
+    }
+};
+
+}
+
 /**
  * Parses and cuts decl file contents into syntax blocks.
  * Each block structure has a name, an optional typename,
@@ -494,14 +568,16 @@ class DefBlockSyntaxParser
 private:
     // Internal tokeniser and its iterator
     using Tokeniser = string::Tokeniser<DefBlockSyntaxTokeniserFunc,
-        std::string::const_iterator, DefSyntaxToken>;
+        typename detail::SyntaxParserTraits<ContainerType>::Iterator, DefSyntaxToken>;
 
     Tokeniser _tok;
-    Tokeniser::Iterator _tokIter;
+    typename Tokeniser::Iterator _tokIter;
 
 public:
-    DefBlockSyntaxParser(const ContainerType& str) :
-        _tok(str, DefBlockSyntaxTokeniserFunc()),
+    DefBlockSyntaxParser(ContainerType& str) :
+        _tok(detail::SyntaxParserTraits<ContainerType>::GetStartIterator(str),
+             detail::SyntaxParserTraits<ContainerType>::GetEndIterator(str), 
+             DefBlockSyntaxTokeniserFunc()),
         _tokIter(_tok.getIterator())
     {}
 
@@ -511,8 +587,6 @@ public:
     {
         auto syntaxTree = std::make_shared<DefSyntaxTree>();
 
-        syntaxTree->root = std::make_shared<DefSyntaxNode>(DefSyntaxNode::Type::Root);
-
         while (!_tokIter.isExhausted())
         {
             auto token = *_tokIter;
@@ -521,20 +595,20 @@ public:
             {
             case DefSyntaxToken::Type::BlockComment:
             case DefSyntaxToken::Type::EolComment:
-                syntaxTree->root->appendChildNode(std::make_shared<DefCommentSyntax>(token));
+                syntaxTree->getRoot()->appendChildNode(std::make_shared<DefCommentSyntax>(token));
                 ++_tokIter;
                 break;
             case DefSyntaxToken::Type::Whitespace:
-                syntaxTree->root->appendChildNode(std::make_shared<DefWhitespaceSyntax>(token));
+                syntaxTree->getRoot()->appendChildNode(std::make_shared<DefWhitespaceSyntax>(token));
                 ++_tokIter;
                 break;
             case DefSyntaxToken::Type::BracedBlock:
                 rWarning() << "Unnamed block encountered: " << token.value << std::endl;
-                syntaxTree->root->appendChildNode(std::make_shared<DefBlockSyntax>(token, std::vector<DefSyntaxNode::Ptr>()));
+                syntaxTree->getRoot()->appendChildNode(std::make_shared<DefBlockSyntax>(token, std::vector<DefSyntaxNode::Ptr>()));
                 ++_tokIter;
                 break;
             case DefSyntaxToken::Type::Token:
-                syntaxTree->root->appendChildNode(parseBlock());
+                syntaxTree->getRoot()->appendChildNode(parseBlock());
                 break;
             }
         }

@@ -12,7 +12,7 @@ namespace
 
 inline parser::DefSyntaxTree::Ptr parseText(const std::string& text)
 {
-    parser::DefBlockSyntaxParser<std::string> parser(text);
+    parser::DefBlockSyntaxParser<const std::string> parser(text);
     return parser.parse();
 }
 
@@ -130,6 +130,39 @@ TEST(DefBlockSyntaxTokeniser, TokenSequences)
         { parser::DefSyntaxToken::Type::BracedBlock, "{\n\"some\" \"keyvalue\"\n\n}" },
         { parser::DefSyntaxToken::Type::Whitespace, "\n" },
     });
+
+    expectTokenSequence(R"(// Test declarations used for some DeclarationManager unit tests
+
+decl/exporttest/guisurf1
+{
+    guiSurf	guis/lvlmaps/genericmap.gui
+}
+
+testdecl2 decltable2 { { 0, 0, 0, 0, 1, 1 } }
+testdecl2 decltable3 { { 0, 0, 0, 0, 1, 1 } }
+)",
+    {
+        { parser::DefSyntaxToken::Type::EolComment, "// Test declarations used for some DeclarationManager unit tests" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n\n" },
+        { parser::DefSyntaxToken::Type::Token, "decl/exporttest/guisurf1" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n" },
+        { parser::DefSyntaxToken::Type::BracedBlock, R"({
+    guiSurf	guis/lvlmaps/genericmap.gui
+})" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n\n" },
+        { parser::DefSyntaxToken::Type::Token, "testdecl2" },
+        { parser::DefSyntaxToken::Type::Whitespace, " " },
+        { parser::DefSyntaxToken::Type::Token, "decltable2" },
+        { parser::DefSyntaxToken::Type::Whitespace, " " },
+        { parser::DefSyntaxToken::Type::BracedBlock, "{ { 0, 0, 0, 0, 1, 1 } }" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n" },
+        { parser::DefSyntaxToken::Type::Token, "testdecl2" },
+        { parser::DefSyntaxToken::Type::Whitespace, " " },
+        { parser::DefSyntaxToken::Type::Token, "decltable3" },
+        { parser::DefSyntaxToken::Type::Whitespace, " " },
+        { parser::DefSyntaxToken::Type::BracedBlock, "{ { 0, 0, 0, 0, 1, 1 } }" },
+        { parser::DefSyntaxToken::Type::Whitespace, "\n" },
+    });
 }
 
 using DefBlockSyntaxParserTest = RadiantTest;
@@ -143,24 +176,97 @@ TEST_F(DefBlockSyntaxParserTest, EmptyText)
 TEST_F(DefBlockSyntaxParserTest, Whitespace)
 {
     auto syntaxTree = parseText(" ");
-    EXPECT_EQ(syntaxTree->root->getChildren().size(), 1) << "Expected 1 whitespace node";
-    EXPECT_EQ(syntaxTree->root->getChildren().front()->getType(), parser::DefSyntaxNode::Type::Whitespace);
-    EXPECT_EQ(syntaxTree->root->getChildren().front()->getString(), " ");
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().size(), 1) << "Expected 1 whitespace node";
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().front()->getType(), parser::DefSyntaxNode::Type::Whitespace);
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().front()->getString(), " ");
 
     syntaxTree = parseText("\n\n");
-    EXPECT_EQ(syntaxTree->root->getChildren().size(), 1) << "Expected 1 whitespace node";
-    EXPECT_EQ(syntaxTree->root->getChildren().front()->getType(), parser::DefSyntaxNode::Type::Whitespace);
-    EXPECT_EQ(syntaxTree->root->getChildren().front()->getString(), "\n\n");
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().size(), 1) << "Expected 1 whitespace node";
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().front()->getType(), parser::DefSyntaxNode::Type::Whitespace);
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().front()->getString(), "\n\n");
 
     syntaxTree = parseText("\t \t");
-    EXPECT_EQ(syntaxTree->root->getChildren().size(), 1) << "Expected 1 whitespace node";
-    EXPECT_EQ(syntaxTree->root->getChildren().front()->getType(), parser::DefSyntaxNode::Type::Whitespace);
-    EXPECT_EQ(syntaxTree->root->getChildren().front()->getString(), "\t \t");
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().size(), 1) << "Expected 1 whitespace node";
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().front()->getType(), parser::DefSyntaxNode::Type::Whitespace);
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().front()->getString(), "\t \t");
 
     syntaxTree = parseText("\r\n \r\n");
-    EXPECT_EQ(syntaxTree->root->getChildren().size(), 1) << "Expected 1 whitespace node";
-    EXPECT_EQ(syntaxTree->root->getChildren().front()->getType(), parser::DefSyntaxNode::Type::Whitespace);
-    EXPECT_EQ(syntaxTree->root->getChildren().front()->getString(), "\r\n \r\n");
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().size(), 1) << "Expected 1 whitespace node";
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().front()->getType(), parser::DefSyntaxNode::Type::Whitespace);
+    EXPECT_EQ(syntaxTree->getRoot()->getChildren().front()->getString(), "\r\n \r\n");
+}
+
+namespace
+{
+
+    const std::string ExampleFileContent = R"(// Some comment
+
+decl/exporttest/guisurf1
+{
+    guiSurf	guis/lvlmaps/genericmap.gui
+}
+
+testdecl2 decltable2 { { 0, 0, 0, 0, 1, 1 } }
+testdecl2 decltable3 { { 0, 0, 0, 0, 1, 1 } }
+)";
+
+    void expectExampleFileSyntax(const parser::DefSyntaxTree::Ptr& syntaxTree)
+    {
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().size(), 8) << "Expected 8 nodes";
+
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(0)->getType(), parser::DefSyntaxNode::Type::Comment);
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(0)->getString(), "// Some comment");
+
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(1)->getType(), parser::DefSyntaxNode::Type::Whitespace);
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(1)->getString(), "\n\n");
+
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(2)->getType(), parser::DefSyntaxNode::Type::DeclBlock);
+        auto block = std::static_pointer_cast<parser::DefBlockSyntax>(syntaxTree->getRoot()->getChildren().at(2));
+        EXPECT_FALSE(block->getType());
+        EXPECT_EQ(block->getName()->getString(), "decl/exporttest/guisurf1");
+        EXPECT_EQ(block->getBlockContents(), "\n    guiSurf	guis/lvlmaps/genericmap.gui\n");
+
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(3)->getType(), parser::DefSyntaxNode::Type::Whitespace);
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(3)->getString(), "\n\n");
+
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(4)->getType(), parser::DefSyntaxNode::Type::DeclBlock);
+        block = std::static_pointer_cast<parser::DefBlockSyntax>(syntaxTree->getRoot()->getChildren().at(4));
+        EXPECT_EQ(block->getType()->getString(), "testdecl2");
+        EXPECT_EQ(block->getName()->getString(), "decltable2");
+        EXPECT_EQ(block->getBlockContents(), " { 0, 0, 0, 0, 1, 1 } ");
+
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(5)->getType(), parser::DefSyntaxNode::Type::Whitespace);
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(5)->getString(), "\n");
+
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(6)->getType(), parser::DefSyntaxNode::Type::DeclBlock);
+        block = std::static_pointer_cast<parser::DefBlockSyntax>(syntaxTree->getRoot()->getChildren().at(6));
+        EXPECT_EQ(block->getType()->getString(), "testdecl2");
+        EXPECT_EQ(block->getName()->getString(), "decltable3");
+        EXPECT_EQ(block->getBlockContents(), " { 0, 0, 0, 0, 1, 1 } ");
+
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(7)->getType(), parser::DefSyntaxNode::Type::Whitespace);
+        EXPECT_EQ(syntaxTree->getRoot()->getChildren().at(7)->getString(), "\n");
+    }
+}
+
+// Parse the example decl file contents from a string and check the syntax tree contents
+TEST_F(DefBlockSyntaxParserTest, SimpleDeclFileFromString)
+{
+    parser::DefBlockSyntaxParser<const std::string> parser(ExampleFileContent);
+    auto tree = parser.parse();
+    
+    expectExampleFileSyntax(tree);
+}
+
+// Parse the example decl file contents from a stream and check the syntax tree contents
+TEST_F(DefBlockSyntaxParserTest, SimpleDeclFileFromStream)
+{
+    std::stringstream stream(ExampleFileContent);
+
+    parser::DefBlockSyntaxParser<std::istream> parser(stream);
+    auto tree = parser.parse();
+    
+    expectExampleFileSyntax(tree);
 }
 
 void checkDeclFileReconstruction(const std::string& declFile)
