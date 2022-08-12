@@ -1,7 +1,6 @@
 #include "DeclarationFolderParser.h"
 
 #include "DeclarationManager.h"
-#include "parser/DefBlockTokeniser.h"
 #include "parser/DefBlockSyntaxParser.h"
 #include "string/trim.h"
 
@@ -10,31 +9,6 @@ namespace decl
 
 namespace
 {
-    std::string getBlockTypeName(const std::string& declaration)
-    {
-        auto spacePos = declaration.find(' ');
-
-        if (spacePos == std::string::npos) return {};
-
-        return string::trim_copy(declaration.substr(0, spacePos), " \t"); // remove all tabs and spaces
-    }
-
-    DeclarationBlockSyntax createBlock(const parser::BlockTokeniser::Block& block,
-        const vfs::FileInfo& fileInfo, const std::string& modName)
-    {
-        auto spacePos = block.name.find(' ');
-
-        DeclarationBlockSyntax syntax;
-
-        syntax.typeName = getBlockTypeName(block.name);
-        syntax.name = spacePos != std::string::npos ? block.name.substr(spacePos + 1) : block.name;
-        syntax.contents = block.contents;
-        syntax.modName = modName;
-        syntax.fileInfo = fileInfo;
-
-        return syntax;
-    }
-
     DeclarationBlockSyntax createBlock(const parser::DefBlockSyntax& block,
         const vfs::FileInfo& fileInfo, const std::string& modName)
     {
@@ -64,7 +38,6 @@ DeclarationFolderParser::DeclarationFolderParser(DeclarationManager& owner, Type
 
 void DeclarationFolderParser::parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir)
 {
-#if 1
     // Parse the incoming stream into syntax blocks
     parser::DefBlockSyntaxParser<std::istream> parser(stream);
 
@@ -87,23 +60,6 @@ void DeclarationFolderParser::parse(std::istream& stream, const vfs::FileInfo& f
         auto& blockList = _parsedBlocks.try_emplace(declType).first->second;
         blockList.emplace_back(std::move(blockSyntax));
     }
-#else
-    // Cut the incoming stream into declaration blocks
-    parser::BasicDefBlockTokeniser<std::istream> tokeniser(stream);
-
-    while (tokeniser.hasMoreBlocks())
-    {
-        auto block = tokeniser.nextBlock();
-
-        // Convert the incoming block to a DeclarationBlockSyntax
-        auto blockSyntax = createBlock(block, fileInfo, modDir);
-
-        // Move the block in the correct bucket
-        auto declType = determineBlockType(blockSyntax);
-        auto& blockList = _parsedBlocks.try_emplace(declType).first->second;
-        blockList.emplace_back(std::move(blockSyntax));
-    }
-#endif
 }
 
 void DeclarationFolderParser::onFinishParsing()
