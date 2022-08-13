@@ -113,4 +113,28 @@ inline std::size_t getFileSize(const std::string& path)
 	}
 }
 
+// Move/rename the given file to a .bak file, overwriting any existing .bak file
+// If the current file doesn't exist, this does nothing.
+// Returns true on success, false on failure or if the file doesn't exist.
+inline bool moveToBackupFile(const fs::path& path)
+{
+    if (!fs::is_regular_file(path))
+    {
+        return false;
+    }
+
+    try
+    {
+        // Move the old target file to .bak (overwriting any existing .bak file)
+        fs::rename(path, path.string() + ".bak");
+        return true;
+    }
+    catch (fs::filesystem_error& e)
+    {
+        rError() << "Could not rename the existing file to .bak: " << path.string() << std::endl
+            << e.what() << std::endl;
+        return false;
+    }
+}
+
 } // namespace

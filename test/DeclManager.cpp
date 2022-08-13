@@ -973,6 +973,53 @@ testdecl decl/removal/9
 */)")) << "The decl manager removed the wrong declaration";
 }
 
+// Before overwriting the existing file it will be moved to .bak
+TEST_F(DeclManagerTest, RemoveDeclarationCreatesBackupFile)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    // Create a backup copy of the decl file we're going to manipulate
+    auto fullPath = _context.getTestProjectPath() + "testdecls/removal_tests.decl";
+    auto expectedBackupPath = fullPath + ".bak";
+
+    // Remove the bak file for this test
+    fs::remove(expectedBackupPath);
+
+    // We want to remove the .bak file at the end of the test
+    TemporaryFile expectedBakFile(expectedBackupPath);
+
+    // A backup copy to restore the decl file to its previous state
+    BackupCopy backup(fullPath);
+
+    // Check that both decls are there
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "testDecl decl/removal/3a"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "testdecl decl/removal/2"));
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/removal/3a");
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/removal/2");
+
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/3a");
+
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "testDecl decl/removal/3a"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "testdecl decl/removal/2"));
+
+    // The backup file should be there and contain the old decl
+    EXPECT_TRUE(os::fileOrDirExists(expectedBackupPath)) << "Cannot find the backup file " << expectedBackupPath;
+    EXPECT_TRUE(algorithm::fileContainsText(expectedBackupPath, "testDecl decl/removal/3a"));
+    EXPECT_TRUE(algorithm::fileContainsText(expectedBackupPath, "testdecl decl/removal/2"));
+
+    // Now remove the second decl, it should overwrite the first .bak copy
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/2");
+
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "testDecl decl/removal/3a"));
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "testdecl decl/removal/2"));
+    EXPECT_TRUE(os::fileOrDirExists(expectedBackupPath)) << "Cannot find the backup file " << expectedBackupPath;
+
+    // The decl that got removed first should be missing in this second backup version too
+    EXPECT_FALSE(algorithm::fileContainsText(expectedBackupPath, "testDecl decl/removal/3a"));
+    EXPECT_TRUE(algorithm::fileContainsText(expectedBackupPath, "testdecl decl/removal/2"));
+}
+
 TEST_F(DeclManagerTest, RemoveUnsavedDeclaration)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());

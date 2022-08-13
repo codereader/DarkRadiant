@@ -13,6 +13,7 @@
 #include "module/StaticModule.h"
 #include "string/trim.h"
 #include "os/path.h"
+#include "os/file.h"
 #include "fmt/format.h"
 #include "gamelib.h"
 #include "stream/TemporaryOutputStream.h"
@@ -433,6 +434,9 @@ void DeclarationManager::removeDeclarationFromFile(const IDeclaration::Ptr& decl
     
     auto syntaxTree = parser.parse();
     inheritStream.close();
+
+    // Move the old file to .bak before overwriting it
+    os::moveToBackupFile(fullPath);
 
     removeDeclarationFromSyntaxTree(syntaxTree, decl->getDeclName());
 
