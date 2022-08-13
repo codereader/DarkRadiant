@@ -9,7 +9,6 @@
 #include "DeclarationFolderParser.h"
 #include "parser/DefBlockSyntaxParser.h"
 #include "ifilesystem.h"
-#include "decl/SpliceHelper.h"
 #include "module/StaticModule.h"
 #include "string/trim.h"
 #include "os/path.h"
@@ -522,26 +521,6 @@ void ensureTargetFileExists(const std::string& targetFile, const std::string& re
     outFile.close();
 }
 
-void writeDeclaration(std::ostream& stream, const IDeclaration::Ptr& decl)
-{
-    const auto& syntax = decl->getBlockSyntax();
-
-    // Write the type (optional)
-    if (!syntax.typeName.empty())
-    {
-        stream << syntax.typeName << " ";
-    }
-
-    // Write the decl name
-    stream << decl->getDeclName() << std::endl;
-
-    // Write the blocks including opening/closing braces
-    stream << "{" << syntax.contents << "}";
-
-    // A trailing line break after the declaration to keep distance
-    stream << std::endl;
-}
-
 }
 
 void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
@@ -575,7 +554,6 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
 
     auto& stream = tempStream.getStream();
 
-#if 1
     parser::DefSyntaxTree::Ptr syntaxTree;
 
     if (fs::exists(targetFile))
@@ -612,35 +590,6 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
 
     // Export the modified syntax tree
     stream << syntaxTree->getString();
-
-#else
-    // If a previous file exists, open it for reading and filter out the decl we'll be writing
-    if (fs::exists(targetFile))
-    {
-        std::ifstream inheritStream(targetFile.string());
-
-        if (!inheritStream.is_open())
-        {
-            throw std::runtime_error(fmt::format(_("Cannot open file for reading: {0}"), targetFile.string()));
-        }
-
-        // Look up the typename for this decl and find the insertion point
-        SpliceHelper::PipeStreamUntilInsertionPoint(inheritStream, stream, getTypenameByType(decl->getDeclType()), decl->getDeclName());
-
-        // We're at the insertion point (which might as well be EOF of the inheritStream)
-        writeDeclaration(stream, decl);
-
-        // Write the rest of the stream
-        stream << inheritStream.rdbuf();
-
-        inheritStream.close();
-    }
-    else
-    {
-        // Write the declaration itself
-        writeDeclaration(stream, decl);
-    }
-#endif
 
     tempStream.closeAndReplaceTargetFile();
 

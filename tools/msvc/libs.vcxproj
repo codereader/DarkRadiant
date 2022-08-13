@@ -156,7 +156,6 @@
     <ClInclude Include="..\..\libs\decl\DeclarationBase.h" />
     <ClInclude Include="..\..\libs\decl\DeclarationCreator.h" />
     <ClInclude Include="..\..\libs\decl\EditableDeclaration.h" />
-    <ClInclude Include="..\..\libs\decl\SpliceHelper.h" />
     <ClInclude Include="..\..\libs\DirectoryArchiveFile.h" />
     <ClInclude Include="..\..\libs\dragplanes.h" />
     <ClInclude Include="..\..\libs\eclass.h" />
