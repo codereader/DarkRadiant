@@ -311,30 +311,26 @@ inline void parseBlock(const std::string& testString,
     // Check that the expected blocks appear in the syntax tree, in the correct order
     auto expectedBlock = expectedBlocks.begin();
 
-    for (const auto& node : syntaxTree->getRoot()->getChildren())
+    syntaxTree->foreachBlock([&](const parser::DefBlockSyntax::Ptr& block)
     {
-        if (node->getType() != parser::DefSyntaxNode::Type::DeclBlock) continue;
-
-        auto blockNode = std::static_pointer_cast<parser::DefBlockSyntax>(node);
-
         if (expectedBlock->first.find(' ') != std::string::npos)
         {
             // Check name and type
             std::vector<std::string> parts;
             string::split(parts, expectedBlock->first, " \t");
-            EXPECT_EQ(blockNode->getType()->getString(), parts[0]);
-            EXPECT_EQ(blockNode->getName()->getString(), parts[1]);
+            EXPECT_EQ(block->getType()->getString(), parts[0]);
+            EXPECT_EQ(block->getName()->getString(), parts[1]);
         }
         else
         {
             // Check the name only
-            EXPECT_EQ(blockNode->getName()->getString(), expectedBlock->first);
+            EXPECT_EQ(block->getName()->getString(), expectedBlock->first);
         }
 
-        EXPECT_NE(blockNode->getBlockContents().find(expectedBlock->second), std::string::npos);
+        EXPECT_NE(block->getBlockContents().find(expectedBlock->second), std::string::npos);
 
         ++expectedBlock;
-    }
+    });
 }
 
 inline void parseBlock(const std::string& testString,

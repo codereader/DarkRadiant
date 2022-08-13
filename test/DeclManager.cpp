@@ -1142,17 +1142,13 @@ inline void expectDeclIsPresentInFile(const ITestDeclaration::Ptr& decl, const s
     // Run a check against our custom decl
     auto hasAllKeyValuePairs = true;
 
-    for (const auto& node : syntaxTree->getRoot()->getChildren())
+    syntaxTree->foreachBlock([&] (const parser::DefBlockSyntax::Ptr& block)
     {
-        if (node->getType() != parser::DefSyntaxNode::Type::DeclBlock) continue;
+        auto blockContents = block->getBlockContents();
 
-        auto blockNode = std::static_pointer_cast<parser::DefBlockSyntax>(node);
-
-        auto blockContents = blockNode->getBlockContents();
-
-        if (blockNode->getName() && string::to_lower_copy(blockNode->getName()->getString()) == declName)
+        if (block->getName() && string::to_lower_copy(block->getName()->getString()) == declName)
         {
-            foundBlocks.push_back(blockNode);
+            foundBlocks.push_back(block);
 
             // Every key and every value must be present in the file
             decl->foreachKeyValue([&](std::pair<std::string, std::string> pair)
@@ -1161,7 +1157,7 @@ inline void expectDeclIsPresentInFile(const ITestDeclaration::Ptr& decl, const s
                 hasAllKeyValuePairs &= blockContents.find("\"" + pair.second + "\"") != std::string::npos;
             });
         }
-    }
+    });
 
     if (expectPresent)
     {

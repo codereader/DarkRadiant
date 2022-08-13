@@ -280,26 +280,22 @@ inline void expectParticleIsPresentInFile(const particles::IParticleDef::Ptr& de
     std::vector<parser::DefBlockSyntax::Ptr> foundBlocks;
     auto particleName = string::to_lower_copy(decl->getDeclName());
 
-    for (const auto& node : syntaxTree->getRoot()->getChildren())
+    syntaxTree->foreachBlock([&](const parser::DefBlockSyntax::Ptr& block)
     {
-        if (node->getType() != parser::DefSyntaxNode::Type::DeclBlock) continue;
-
-        auto blockNode = std::static_pointer_cast<parser::DefBlockSyntax>(node);
-
-        auto blockContents = blockNode->getBlockContents();
+        auto blockContents = block->getBlockContents();
 
         if (decl->getNumStages() > 0 && 
-            blockNode->getType() && blockNode->getType()->getString() == "particle" &&
-            blockNode->getName() && blockNode->getName()->getString() == particleName)
+            block->getType() && block->getType()->getString() == "particle" &&
+            block->getName() && block->getName()->getString() == particleName)
         {
             if (blockContents.find(decl->getStage(0)->getMaterialName()) == std::string::npos)
             {
-                continue;
+                return;
             }
 
-            foundBlocks.push_back(blockNode);
+            foundBlocks.push_back(block);
         }
-    }
+    });
 
     if (expectPresent)
     {

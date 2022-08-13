@@ -288,6 +288,18 @@ public:
         return _root;
     }
 
+    void foreachBlock(const std::function<void(const DefBlockSyntax::Ptr&)>& functor)
+    {
+        for (const auto& node : getRoot()->getChildren())
+        {
+            if (node->getType() != DefSyntaxNode::Type::DeclBlock) continue;
+
+            auto blockNode = std::static_pointer_cast<DefBlockSyntax>(node);
+
+            functor(blockNode);
+        }
+    }
+
     std::string getString() const
     {
         return _root->getString();
