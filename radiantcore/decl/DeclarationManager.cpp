@@ -325,6 +325,79 @@ void DeclarationManager::removeDeclaration(Type type, const std::string& name)
     });
 }
 
+namespace
+{
+
+void removeDeclarationFromSyntaxTree(const parser::DefSyntaxTree::Ptr& syntaxTree, const std::string& declName)
+{
+    // Remove the declaration from the tree
+    std::vector<parser::DefSyntaxNode::Ptr> nodesToRemove;
+
+    const auto& childNodes = syntaxTree->getRoot()->getChildren();
+    for (int i = 0; i < childNodes.size(); ++i)
+    {
+        const auto& node = childNodes.at(i);
+
+        if (node->getType() != parser::DefSyntaxNode::Type::DeclBlock) continue;
+
+        auto blockNode = std::static_pointer_cast<parser::DefBlockSyntax>(node);
+
+        if (blockNode->getName() && blockNode->getName()->getToken().value == declName)
+        {
+            nodesToRemove.push_back(blockNode);
+
+            parser::DefSyntaxNode::Ptr encounteredWhitespace;
+
+            // Try to locate comment nodes preceding this block
+            for (int p = i - 1; p >= 0; --p)
+            {
+                const auto& predecessor = childNodes.at(p);
+                if (predecessor->getType() == parser::DefSyntaxNode::Type::Whitespace)
+                {
+                    // Stop at the first whitespace token that contains more than one line break
+                    auto whitespace = std::static_pointer_cast<parser::DefWhitespaceSyntax>(predecessor);
+                    
+                    // stop searching at the first empty line
+                    if (whitespace->getNumberOfLineBreaks() > 1) break;
+
+                    // This is just a single line break (or none), remember to remove it when we encounter a comment
+                    encounteredWhitespace = predecessor;
+                }
+                else if (predecessor->getType() == parser::DefSyntaxNode::Type::Comment)
+                {
+                    nodesToRemove.push_back(predecessor);
+
+                    // Remove any whitespace that stood between this comment and the block
+                    if (encounteredWhitespace)
+                    {
+                        nodesToRemove.push_back(encounteredWhitespace);
+                        encounteredWhitespace.reset();
+                    }
+
+                    continue;
+                }
+                else // stop at all other node types
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    if (nodesToRemove.empty())
+    {
+        rWarning() << "Could not locate the decl block " << declName << std::endl;
+        return;
+    }
+
+    for (const auto& node : nodesToRemove)
+    {
+        syntaxTree->getRoot()->removeChildNode(node);
+    }
+}
+
+}
+
 void DeclarationManager::removeDeclarationFromFile(const IDeclaration::Ptr& decl)
 {
     const auto& syntax = decl->getBlockSyntax();
@@ -361,33 +434,9 @@ void DeclarationManager::removeDeclarationFromFile(const IDeclaration::Ptr& decl
     auto syntaxTree = parser.parse();
     inheritStream.close();
 
-    // Remove the declaration from the tree
-    std::vector<parser::DefSyntaxNode::Ptr> nodesToRemove;
+    removeDeclarationFromSyntaxTree(syntaxTree, decl->getDeclName());
 
-    for (const auto& node : syntaxTree->getRoot()->getChildren())
-    {
-        if (node->getType() != parser::DefSyntaxNode::Type::DeclBlock) continue;
-
-        auto blockNode = std::static_pointer_cast<parser::DefBlockSyntax>(node);
-
-        if (blockNode->getName() && blockNode->getName()->getToken().value == decl->getDeclName())
-        {
-            nodesToRemove.push_back(blockNode);
-        }
-    }
-
-    if (nodesToRemove.empty())
-    {
-        rWarning() << "Could not locate the decl block " << decl->getDeclName() << " in the file " << fullPath << std::endl;
-        return;
-    }
-
-    for (const auto& node : nodesToRemove)
-    {
-        syntaxTree->getRoot()->removeChildNode(node);
-    }
-
-    // Export the syntax tree with the missing decl block
+    // Export the modified syntax tree
     stream << syntaxTree->getString();
 
     tempStream.closeAndReplaceTargetFile();

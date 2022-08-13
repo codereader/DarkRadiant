@@ -903,6 +903,46 @@ TEST_F(DeclManagerTest, RemoveDeclarationRemovesLeadingMultilineComment)
     EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Some comments after decl/removal/2"));
 }
 
+// Multiple comments preceding the decl with minor whitespace in between
+TEST_F(DeclManagerTest, RemoveDeclarationRemovesLeadingMixedComment)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    // Create a backup copy of the decl file we're going to manipulate
+    auto fullPath = _context.getTestProjectPath() + "testdecls/removal_tests.decl";
+    BackupCopy backup(fullPath);
+
+    // decl/removal/3a has leading multiline comment, and a trailing single line comment
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, R"(// Multiple comment lines before decl/removal/a3
+/* mixed style comments too */
+	 // multiple comment with some whitespace at the start of each line
+ // multiple comment with some whitespace at the start of each line)"));
+
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/3a");
+
+    // Leading comment should be gone, trailing comment should stay
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, R"(decl/removal/3a
+{
+    diffusemap textures/removal/a3
+})"));
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, R"(// Multiple comment lines before decl/removal/a3
+/* mixed style comments too */
+	 // multiple comment with some whitespace at the start of each line
+ // multiple comment with some whitespace at the start of each line)"));
+
+    // Safety check that nothing else got removed (including whitespace)
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, R"(
+
+// Comment with a line before the start of the decl decl/removal/5)"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, R"(TestDecl decl/removal/3
+{
+    diffusemap textures/removal/3
+}
+
+)"));
+}
+
 // There's an evil misleading commented out declaration decl/removal/9 in the file
 // right before the actual, uncommented one
 TEST_F(DeclManagerTest, RemoveDeclarationIgnoresCommentedContent)

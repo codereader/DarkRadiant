@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <vector>
+#include <algorithm>
 
 #include "string/tokeniser.h"
 #include "string/join.h"
@@ -116,6 +117,12 @@ public:
         _token(token)
     {
         assert(token.type == DefSyntaxToken::Type::Whitespace);
+    }
+
+    // Returns the number of line breaks this whitespace contains
+    std::size_t getNumberOfLineBreaks()
+    {
+        return std::count_if(_token.value.begin(), _token.value.end(), [](char c) { return c == '\n'; });
     }
 
     std::string getString() const override

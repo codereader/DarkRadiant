@@ -29,6 +29,15 @@ TestDecl decl/removal/3
     diffusemap textures/removal/3
 }
 
+// Multiple comment lines before decl/removal/a3
+/* mixed style comments too */
+	 // multiple comment with some whitespace at the start of each line
+ // multiple comment with some whitespace at the start of each line
+testDecl decl/removal/3a
+{
+    diffusemap textures/removal/a3
+}
+
 // Comment with a line before the start of the decl decl/removal/5
 
 testdecl decl/removal/5 { // a comment in the same line as the opening brace
