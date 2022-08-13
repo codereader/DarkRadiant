@@ -176,6 +176,7 @@ private:
     bool isAllowedToChangeMaterial();
     bool askUserAboutModifiedMaterial();
     bool saveCurrentMaterial();
+    void deleteCurrentMaterial();
     void revertCurrentMaterial();
     void copySelectedMaterial();
 
@@ -183,6 +184,7 @@ private:
     void _onMaterialSelectionChanged(wxDataViewEvent& ev);
     void _onNewMaterial(wxCommandEvent& ev);
     void _onSaveMaterial(wxCommandEvent& ev);
+    void _onDeleteMaterial(wxCommandEvent& ev);
     void _onCopyMaterial(wxCommandEvent& ev);
     void _onRevertMaterial(wxCommandEvent& ev);
     void _onUnlockMaterial(wxCommandEvent& ev);

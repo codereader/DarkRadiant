@@ -494,6 +494,10 @@ void MaterialEditor::setupMaterialTreeView()
     saveButton->Disable();
     saveButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onSaveMaterial, this);
 
+    auto deleteButton = getControl<wxButton>("MaterialEditorDeleteDefButton");
+    deleteButton->Disable();
+    deleteButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onDeleteMaterial, this);
+
     auto copyButton = getControl<wxButton>("MaterialEditorCopyDefButton");
     copyButton->Disable();
     copyButton->Bind(wxEVT_BUTTON, &MaterialEditor::_onCopyMaterial, this);
@@ -1629,6 +1633,32 @@ bool MaterialEditor::saveCurrentMaterial()
     return true;
 }
 
+void MaterialEditor::deleteCurrentMaterial()
+{
+    auto materialFileInfo = _material->getShaderFileInfo().isEmpty() ?
+        _("") : " " + _material->getShaderFileInfo().fullPath();
+
+    if (wxutil::Messagebox::Show(_("Confirm Removal"),
+        fmt::format(_("The selected material {0} will be removed,\nincluding its source text in the .mtr file{1}.\n"
+            "This action cannot be undone. Are you sure you want to remove this material?"),
+            _material->getName(), materialFileInfo), IDialog::MESSAGE_ASK, this) == IDialog::RESULT_NO)
+    {
+        return;
+    }
+
+    try
+    {
+        GlobalMaterialManager().removeMaterial(_material->getName());
+    }
+    catch (const std::runtime_error& ex)
+    {
+        rError() << "Could not delete the material: " << ex.what() << std::endl;
+        wxutil::Messagebox::ShowError(ex.what(), this);
+    }
+
+    handleMaterialSelectionChange();
+}
+
 void MaterialEditor::revertCurrentMaterial()
 {
     if (!_material) return;
@@ -1746,6 +1776,13 @@ void MaterialEditor::_onSaveMaterial(wxCommandEvent& ev)
     if (!_material) return;
 
     saveCurrentMaterial();
+}
+
+void MaterialEditor::_onDeleteMaterial(wxCommandEvent& ev)
+{
+    if (!_material) return;
+
+    deleteCurrentMaterial();
 }
 
 void MaterialEditor::selectMaterial(const MaterialPtr& material)
@@ -1911,6 +1948,7 @@ void MaterialEditor::updateMaterialControlSensitivity()
 
     getControl<wxButton>("MaterialEditorSaveDefButton")->Enable(_material && 
         _material->isModified() && canBeModified);
+    getControl<wxButton>("MaterialEditorDeleteDefButton")->Enable(_material && canBeModified);
 
     getControl<wxButton>("MaterialEditorCopyDefButton")->Enable(_material != nullptr);
     getControl<wxButton>("MaterialEditorRevertButton")->Enable(_material && _material->isModified());
