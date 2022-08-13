@@ -323,8 +323,14 @@ inline void parseBlock(const std::string& testString,
         }
         else
         {
-            // Check the name only
-            EXPECT_EQ(block->getName()->getString(), expectedBlock->first);
+            if (expectedBlock->first.empty())
+            {
+                EXPECT_TRUE(!block->getName() || block->getName()->getString().empty());
+            }
+            else
+            {
+                EXPECT_EQ(block->getName()->getString(), expectedBlock->first);
+            }
         }
 
         EXPECT_NE(block->getBlockContents().find(expectedBlock->second), std::string::npos);
@@ -518,6 +524,32 @@ TEST_F(DefBlockSyntaxParserTest, ParseWhitespaceAfterTypename)
         std::make_pair("sound textures/parsing_test/block4", "_white"),
         std::make_pair("sound textures/parsing_test/block5", "_white"),
         });
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseUnnamedBlock)
+{
+    std::string testString = R"(/* just a comment */ {
+        diffusemap _white
+    })";
+
+    parseBlock(testString, "", "_white");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseBlockWithTooManyLeadingTokens)
+{
+    std::string testString = R"(testdecl blabla something {
+        diffusemap _white
+    })";
+
+    parseBlock(testString, "testdecl blabla", "_white");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseIncompleteBlock)
+{
+    std::string testString = R"(testdecl something {
+        diffusemap _white)";
+
+    parseBlock(testString, "something", "_white");
 }
 
 }

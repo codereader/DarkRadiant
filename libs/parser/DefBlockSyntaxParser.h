@@ -254,7 +254,6 @@ public:
         _headerNodes(headerNodes)
     {
         assert(_blockToken.type == DefSyntaxToken::Type::BracedBlock);
-        assert(nameIndex >= 0);
 
         if (nameIndex != -1)
         {
@@ -351,7 +350,7 @@ public:
     {
         for (const auto& node : getRoot()->getChildren())
         {
-            if (node->getType() != DefSyntaxNode::Type::DeclBlock) continue;
+            if (!node || node->getType() != DefSyntaxNode::Type::DeclBlock) continue;
 
             auto blockNode = std::static_pointer_cast<DefBlockSyntax>(node);
 
@@ -825,13 +824,12 @@ private:
     DefBlockSyntax::Ptr parseBlock()
     {
         std::vector<DefSyntaxNode::Ptr> headerNodes;
-        DefBlockSyntax::Ptr block;
 
         int nameIndex = -1;
         int typeIndex = -1;
 
         // Check the next token
-        while (!block && !_tokIter.isExhausted())
+        while (!_tokIter.isExhausted())
         {
             auto token = *_tokIter++;
 
@@ -846,8 +844,7 @@ private:
                 break;
             case DefSyntaxToken::Type::BracedBlock:
                 // The braced block token concludes this decl block
-                block = std::make_shared<DefBlockSyntax>(token, std::move(headerNodes), nameIndex, typeIndex);
-                break;
+                return std::make_shared<DefBlockSyntax>(token, std::move(headerNodes), nameIndex, typeIndex);
             case DefSyntaxToken::Type::Token:
                 if (nameIndex == -1)
                 {
@@ -871,12 +868,14 @@ private:
                     continue;
                 }
                 
-                rWarning() << "Invalid number of decl block headers, already got a name and type" << std::endl;
+                rWarning() << "Invalid number of decl block headers, already got a name and type: " 
+                    << headerNodes.at(typeIndex)->getString() << " " 
+                    << headerNodes.at(nameIndex)->getString() << std::endl;
                 break;
             }
         }
 
-        return block;
+        return {};
     }
 };
 
