@@ -1267,7 +1267,7 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + " {" + material->getDefinition() + "}"))
         << "New definition not found in file";
     EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition)) 
         << "Original definition still in file";
@@ -1284,7 +1284,9 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    // Saving doesn't alter any whitespace or comments around the curly braces
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, 
+        "textures/exporttest/renderBump2  // Comment in the same line as the name (DON'T REMOVE THIS)\n{" + material->getDefinition() + "}"))
         << "New definition not found in file";
     EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition))
         << "Original definition still in file";
@@ -1302,7 +1304,10 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, 
+        "textures/exporttest/renderBump3\n"
+        " // Comment in between the name and the definition (DON'T REMOVE THIS)\n"
+        "{" + material->getDefinition() + "}"))
         << "New definition not found in file";
     EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition))
         << "Original definition still in file";
@@ -1318,7 +1323,7 @@ TEST_F(MaterialExportTest, WritingMaterialFiles)
 
     GlobalMaterialManager().saveMaterial(material->getName());
 
-    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + "\n{" + material->getDefinition() + "}"))
+    EXPECT_TRUE(algorithm::fileContainsText(exportTestFile, material->getName() + " {" + material->getDefinition() + "}"))
         << "New definition not found in file";
     EXPECT_FALSE(algorithm::fileContainsText(exportTestFile, originalDefinition))
         << "Original definition still in file";

@@ -323,7 +323,7 @@ public:
 
         int nameIndex = static_cast<int>(headerNodes.size());
         headerNodes.emplace_back(DefNameSyntax::Create(name));
-        headerNodes.emplace_back(DefWhitespaceSyntax::Create(" "));
+        headerNodes.emplace_back(DefWhitespaceSyntax::Create("\n"));
 
         DefSyntaxToken blockToken(DefSyntaxToken::Type::BracedBlock, "{}");
         return std::make_shared<DefBlockSyntax>(blockToken, std::move(headerNodes), nameIndex, typeIndex);
