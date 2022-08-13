@@ -6,7 +6,7 @@
 #include "decl/EditableDeclaration.h"
 #include "algorithm/FileUtils.h"
 #include "os/path.h"
-#include "parser/DefBlockTokeniser.h"
+#include "parser/DefBlockSyntaxParser.h"
 #include "string/case_conv.h"
 
 namespace test
@@ -1133,28 +1133,32 @@ inline void expectDeclIsPresentInFile(const ITestDeclaration::Ptr& decl, const s
 {
     auto contents = algorithm::loadTextFromVfsFile(path);
 
-    parser::BasicDefBlockTokeniser<std::string> tokeniser(contents);
+    parser::DefBlockSyntaxParser<const std::string> parser(contents);
+    auto syntaxTree = parser.parse();
 
-    std::vector<parser::BlockTokeniser::Block> foundBlocks;
+    std::vector<parser::DefBlockSyntax::Ptr> foundBlocks;
     auto declName = string::to_lower_copy(decl->getDeclName());
 
     // Run a check against our custom decl
     auto hasAllKeyValuePairs = true;
 
-    while (tokeniser.hasMoreBlocks())
+    for (const auto& node : syntaxTree->getRoot()->getChildren())
     {
-        auto block = tokeniser.nextBlock();
-        auto header = string::to_lower_copy(block.name);
+        if (node->getType() != parser::DefSyntaxNode::Type::DeclBlock) continue;
 
-        if (string::ends_with(header, declName))
+        auto blockNode = std::static_pointer_cast<parser::DefBlockSyntax>(node);
+
+        auto blockContents = blockNode->getBlockContents();
+
+        if (blockNode->getName() && string::to_lower_copy(blockNode->getName()->getString()) == declName)
         {
-            foundBlocks.push_back(block);
+            foundBlocks.push_back(blockNode);
 
             // Every key and every value must be present in the file
             decl->foreachKeyValue([&](std::pair<std::string, std::string> pair)
             {
-                hasAllKeyValuePairs &= block.contents.find("\"" + pair.first + "\"") != std::string::npos;
-                hasAllKeyValuePairs &= block.contents.find("\"" + pair.second + "\"") != std::string::npos;
+                hasAllKeyValuePairs &= blockContents.find("\"" + pair.first + "\"") != std::string::npos;
+                hasAllKeyValuePairs &= blockContents.find("\"" + pair.second + "\"") != std::string::npos;
             });
         }
     }

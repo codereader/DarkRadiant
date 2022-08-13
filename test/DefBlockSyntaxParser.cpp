@@ -2,6 +2,7 @@
 
 #include "parser/DefBlockSyntaxParser.h"
 #include "algorithm/FileUtils.h"
+#include "string/split.h"
 
 namespace test
 {
@@ -168,13 +169,13 @@ testdecl2 decltable3 { { 0, 0, 0, 0, 1, 1 } }
 
 using DefBlockSyntaxParserTest = RadiantTest;
 
-TEST_F(DefBlockSyntaxParserTest, EmptyText)
+TEST_F(DefBlockSyntaxParserTest, ParseEmptyText)
 {
     auto syntaxTree = parseText("");
     EXPECT_TRUE(syntaxTree) << "Syntax Root must not be null";
 }
 
-TEST_F(DefBlockSyntaxParserTest, Whitespace)
+TEST_F(DefBlockSyntaxParserTest, ParseWhitespace)
 {
     auto syntaxTree = parseText(" ");
     EXPECT_EQ(syntaxTree->getRoot()->getChildren().size(), 1) << "Expected 1 whitespace node";
@@ -297,6 +298,230 @@ TEST_F(DefBlockSyntaxParserTest, ReconstructFileFromSyntaxTree)
     checkDeclFileReconstruction("def/base.def");
     checkDeclFileReconstruction("def/tdm_ai.def");
     checkDeclFileReconstruction("def/mover_door.def");
+}
+
+inline void parseBlock(const std::string& testString,
+    const std::vector<std::pair<std::string, std::string>>& expectedBlocks)
+{
+    // Use the stream parser variant (even though we could parse right from the string)
+    std::istringstream stream{ testString };
+    parser::DefBlockSyntaxParser<std::istream> parser(stream);
+    auto syntaxTree = parser.parse();
+
+    // Check that the expected blocks appear in the syntax tree, in the correct order
+    auto expectedBlock = expectedBlocks.begin();
+
+    for (const auto& node : syntaxTree->getRoot()->getChildren())
+    {
+        if (node->getType() != parser::DefSyntaxNode::Type::DeclBlock) continue;
+
+        auto blockNode = std::static_pointer_cast<parser::DefBlockSyntax>(node);
+
+        if (expectedBlock->first.find(' ') != std::string::npos)
+        {
+            // Check name and type
+            std::vector<std::string> parts;
+            string::split(parts, expectedBlock->first, " \t");
+            EXPECT_EQ(blockNode->getType()->getString(), parts[0]);
+            EXPECT_EQ(blockNode->getName()->getString(), parts[1]);
+        }
+        else
+        {
+            // Check the name only
+            EXPECT_EQ(blockNode->getName()->getString(), expectedBlock->first);
+        }
+
+        EXPECT_NE(blockNode->getBlockContents().find(expectedBlock->second), std::string::npos);
+
+        ++expectedBlock;
+    }
+}
+
+inline void parseBlock(const std::string& testString,
+    const std::string& expectedName, const std::string& needleToFindInBlockContents)
+{
+    parseBlock(testString, { std::make_pair(expectedName, needleToFindInBlockContents) });
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseTypedBlock)
+{
+    std::string testString = R"(entityDef atdm:target_base
+{
+	"inherit"				"atdm:entity_base"
+
+	"editor_displayFolder"	"Targets"
+	"nodraw"				"1"
+})";
+
+    parseBlock(testString, "entityDef atdm:target_base", "\"atdm:entity_base\"");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseTypedBlockWithWhitespace)
+{
+    std::string testString = R"(	entityDef	atdm:target_base  		
+{
+	"inherit"				"atdm:entity_base"
+
+	"editor_displayFolder"	"Inner opening { and closing } braces to confuse the parser"
+	"nodraw"				"1"
+})";
+
+    parseBlock(testString, "entityDef atdm:target_base", "\"atdm:entity_base\"");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseTypedBlockWithCurlyBracesInContent)
+{
+    std::string testString = R"(	entityDef	atdm:target_base  		
+{
+	"editor_displayFolder"	"Inner opening { and closing } braces to confuse the parser"
+	"nodraw"				"1"
+})";
+
+    parseBlock(testString, "entityDef atdm:target_base", "Inner opening { and closing } braces to confuse the parser");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseNestedBlock)
+{
+    std::string testString = R"(textures/darkmod/test  		
+{
+    {
+        blend diffusemap
+        map _white
+    }
+})";
+
+    parseBlock(testString, "textures/darkmod/test", "blend diffusemap");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseNameAndBlockInSeparateLines)
+{
+    std::string testString = R"(textures/parsing_test/variant1
+    {
+        diffusemap _white
+    })";
+
+    parseBlock(testString, "textures/parsing_test/variant1", "_white");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseCommentAfterBlockName)
+{
+    std::string testString = R"(textures/parsing_test/commentAfterBlockName // comment separated by whitespace
+    {
+        diffusemap _white
+    })";
+
+    parseBlock(testString, "textures/parsing_test/commentAfterBlockName", "_white");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseCommentAfterBlockNameNoWhitespace)
+{
+    std::string testString = R"(textures/parsing_test/CommentAfterBlockNameNoWhitespace// comment without whitespace
+    {
+        diffusemap _white
+    })";
+
+    parseBlock(testString, "textures/parsing_test/CommentAfterBlockNameNoWhitespace", "_white");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseCommentInBetweenNameAndBlock)
+{
+    std::string testString = R"(textures/parsing_test/commentInBetweenNameAndBlock
+// comment between name and block
+{
+    diffusemap _white
+})";
+
+    parseBlock(testString, "textures/parsing_test/commentInBetweenNameAndBlock", "_white");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseNameAndBlockInSameLine)
+{
+    std::string testString = R"(textures/parsing_test/variant2 {
+        diffusemap _white
+    })";
+
+    parseBlock(testString, "textures/parsing_test/variant2", "_white");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseNameAndBlockInSameLineNoWhitespace)
+{
+    std::string testString = R"(textures/parsing_test/variant3{
+        diffusemap _white
+    })";
+
+    parseBlock(testString, "textures/parsing_test/variant3", "_white");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseTightBlockSequence)
+{
+    std::string testString = R"(textures/parsing_test/block1 {
+        diffusemap _white
+    }
+
+    textures/parsing_test/block2 {
+        diffusemap _white
+    } textures/parsing_test/block3 {
+        diffusemap _white
+    }
+    textures/parsing_test/block4 {
+        diffusemap _white
+    }textures/parsing_test/block5 {
+        diffusemap _white
+    })";
+
+    parseBlock(testString, {
+        std::make_pair("textures/parsing_test/block1", "_white"),
+        std::make_pair("textures/parsing_test/block2", "_white"),
+        std::make_pair("textures/parsing_test/block3", "_white"),
+        std::make_pair("textures/parsing_test/block4", "_white"),
+        std::make_pair("textures/parsing_test/block5", "_white"),
+        });
+}
+
+// The tokeniser normalises the whitespace between type and name to a single space
+TEST_F(DefBlockSyntaxParserTest, ParseWhitespaceAfterTypename)
+{
+    std::string testString = R"(textures/parsing_test/block1 {
+        diffusemap _white
+    }
+
+    // Add a tab in between type name and block name
+    sound	textures/parsing_test/block1a {
+        diffusemap _white
+    }
+
+    // spaces after the typename, and some tabs after the name
+    sound    textures/parsing_test/block1b		{
+        diffusemap _white
+    }
+
+    // Tabs before and after the name
+    sound	  	  	textures/parsing_test/block1c
+    {
+        diffusemap _white
+    }
+
+    textures/parsing_test/block2 {
+        diffusemap _white
+    } sound textures/parsing_test/block3 {
+        diffusemap _white
+    }
+    sound textures/parsing_test/block4 {
+        diffusemap _white
+    }sound textures/parsing_test/block5 {
+        diffusemap _white
+    })";
+
+    parseBlock(testString, {
+        std::make_pair("textures/parsing_test/block1", "_white"),
+        std::make_pair("sound textures/parsing_test/block1a", "_white"),
+        std::make_pair("sound textures/parsing_test/block1b", "_white"),
+        std::make_pair("sound textures/parsing_test/block1c", "_white"),
+        std::make_pair("textures/parsing_test/block2", "_white"),
+        std::make_pair("sound textures/parsing_test/block3", "_white"),
+        std::make_pair("sound textures/parsing_test/block4", "_white"),
+        std::make_pair("sound textures/parsing_test/block5", "_white"),
+        });
 }
 
 }
