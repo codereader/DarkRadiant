@@ -5,7 +5,7 @@
 #include "os/path.h"
 #include "string/replace.h"
 #include "algorithm/FileUtils.h"
-#include "parser/DefBlockTokeniser.h"
+#include "parser/DefBlockSyntaxParser.h"
 #include "string/case_conv.h"
 #include "testutil/TemporaryFile.h"
 
@@ -274,26 +274,30 @@ inline void expectParticleIsPresentInFile(const particles::IParticleDef::Ptr& de
 {
     auto contents = algorithm::loadTextFromVfsFile(path);
 
-    parser::BasicDefBlockTokeniser<std::string> tokeniser(contents);
+    parser::DefBlockSyntaxParser<const std::string> parser(contents);
+    auto syntaxTree = parser.parse();
 
-    std::vector<parser::BlockTokeniser::Block> foundBlocks;
+    std::vector<parser::DefBlockSyntax::Ptr> foundBlocks;
     auto particleName = string::to_lower_copy(decl->getDeclName());
 
-    while (tokeniser.hasMoreBlocks())
+    for (const auto& node : syntaxTree->getRoot()->getChildren())
     {
-        auto block = tokeniser.nextBlock();
-        auto header = string::to_lower_copy(block.name);
+        if (node->getType() != parser::DefSyntaxNode::Type::DeclBlock) continue;
+
+        auto blockNode = std::static_pointer_cast<parser::DefBlockSyntax>(node);
+
+        auto blockContents = blockNode->getBlockContents();
 
         if (decl->getNumStages() > 0 && 
-            string::starts_with(header, "particle") &&
-            string::ends_with(header, particleName))
+            blockNode->getType() && blockNode->getType()->getString() == "particle" &&
+            blockNode->getName() && blockNode->getName()->getString() == particleName)
         {
-            if (block.contents.find(decl->getStage(0)->getMaterialName()) == std::string::npos)
+            if (blockContents.find(decl->getStage(0)->getMaterialName()) == std::string::npos)
             {
                 continue;
             }
 
-            foundBlocks.push_back(block);
+            foundBlocks.push_back(blockNode);
         }
     }
 
