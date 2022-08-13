@@ -695,6 +695,9 @@ TEST_F(EntityClassTest, MissingEntityClassPreservesPrimitives)
     EXPECT_EQ(algorithm::getChildCount(entity, algorithm::patchHasMaterial("textures/common/caulk")), 1)
         << "Expected 1 patch to carry the caulk material";
 
+    // Remove the .darkradiant file (that is going to be created) after this test.
+    TemporaryFile tempDarkRadiantFile(_context.getTestProjectPath() + "maps/missing_entitydef.darkradiant");
+
     GlobalCommandSystem().executeCommand("SaveMap");
 
     EXPECT_EQ(algorithm::loadTextFromVfsFile("maps/" + mapName), mapTextBeforeSaving)
