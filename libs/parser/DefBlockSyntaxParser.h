@@ -406,7 +406,7 @@ class DefBlockSyntaxTokeniserFunc
         QuotedStringWithinBlock,  // within a quoted string within a block
         BlockComment,             // within a /* block comment */
         EolComment,               // on an EOL comment starting with //
-    } _state;
+    };
 
     constexpr static const char* const Delims = " \t\n\v\r";
 
@@ -423,10 +423,6 @@ class DefBlockSyntaxTokeniserFunc
     }
 
 public:
-    DefBlockSyntaxTokeniserFunc() :
-		_state(State::Searching)
-    {}
-
     /**
      * REQUIRED by the string::Tokeniser. The operator() will be invoked by the Tokeniser.
      * This function must search for a token between the two iterators next and end, and if
@@ -438,7 +434,7 @@ public:
     bool operator() (InputIterator& next, const InputIterator& end, DefSyntaxToken& tok)
 	{
         // Initialise state, no persistence between calls
-        _state = State::Searching;
+        auto state = State::Searching;
 
         // Clear out the token, no guarantee that it is empty
         tok.clear();
@@ -449,12 +445,12 @@ public:
         {
             char ch = *next;
 
-            switch (_state)
+            switch (state)
             {
             case State::Searching:
                 if (IsWhitespace(ch))
                 {
-                    _state = State::Whitespace;
+                    state = State::Whitespace;
                     tok.type = DefSyntaxToken::Type::Whitespace;
                     tok.value += ch;
                     ++next;
@@ -463,7 +459,7 @@ public:
 
                 if (ch == OpeningBrace)
                 {
-                    _state = State::BracedBlock;
+                    state = State::BracedBlock;
                     tok.type = DefSyntaxToken::Type::BracedBlock;
                     tok.value += ch;
                     openedBlocks = 1;
@@ -482,7 +478,7 @@ public:
                     {
                         if (*next == '*')
                         {
-                            _state = State::BlockComment;
+                            state = State::BlockComment;
                             tok.type = DefSyntaxToken::Type::BlockComment;
                             tok.value += '*';
                             ++next;
@@ -491,7 +487,7 @@ public:
 
                         if (*next == '/')
                         {
-                            _state = State::EolComment;
+                            state = State::EolComment;
                             tok.type = DefSyntaxToken::Type::EolComment;
                             tok.value += '/';
                             ++next;
@@ -501,7 +497,7 @@ public:
                 }
                  
                 tok.type = DefSyntaxToken::Type::Token;
-                _state = State::Token;
+                state = State::Token;
                 tok.value += ch;
                 ++next;
                 continue;
@@ -527,7 +523,7 @@ public:
                 {
                     // An opening quote within the braced block, switch to a special block
                     // ignoring any control characters within that string
-                    _state = State::QuotedStringWithinBlock;
+                    state = State::QuotedStringWithinBlock;
                 }
                 continue;
 
@@ -538,7 +534,7 @@ public:
 
                 if (ch == '"')
                 {
-                    _state = State::BracedBlock;
+                    state = State::BracedBlock;
                 }
                 continue;
 
