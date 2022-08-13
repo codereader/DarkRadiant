@@ -31,6 +31,15 @@ struct DefSyntaxToken
     // The raw string as parsed from the source text
     std::string value;
 
+    DefSyntaxToken() :
+        DefSyntaxToken(Type::Nothing, "")
+    {}
+
+    DefSyntaxToken(Type type_, const std::string& value_) :
+        type(type_),
+        value(value_)
+    {}
+
     void clear()
     {
         type = Type::Nothing;
@@ -112,6 +121,8 @@ class DefWhitespaceSyntax :
 private:
     DefSyntaxToken _token;
 public:
+    using Ptr = std::shared_ptr<DefWhitespaceSyntax>;
+
     DefWhitespaceSyntax(const DefSyntaxToken& token) :
         DefSyntaxNode(Type::Whitespace),
         _token(token)
@@ -128,6 +139,13 @@ public:
     std::string getString() const override
     {
         return _token.value;
+    }
+
+    static Ptr Create(const std::string& whitespace)
+    {
+        return std::make_shared<DefWhitespaceSyntax>(
+            DefSyntaxToken(DefSyntaxToken::Type::Whitespace, whitespace)
+        );
     }
 };
 
@@ -174,6 +192,13 @@ public:
     {
         return _token.value;
     }
+
+    static Ptr Create(const std::string& typeName)
+    {
+        return std::make_shared<DefTypeSyntax>(
+            DefSyntaxToken(DefSyntaxToken::Type::Token, typeName)
+        );
+    }
 };
 
 class DefNameSyntax :
@@ -200,6 +225,13 @@ public:
     {
         return _token.value;
     }
+
+    static Ptr Create(const std::string& name)
+    {
+        return std::make_shared<DefNameSyntax>(
+            DefSyntaxToken(DefSyntaxToken::Type::Token, name)
+        );
+    }
 };
 
 class DefBlockSyntax :
@@ -215,7 +247,7 @@ private:
 public:
     using Ptr = std::shared_ptr<DefBlockSyntax>;
 
-    DefBlockSyntax(const DefSyntaxToken blockToken, std::vector<DefSyntaxNode::Ptr>&& headerNodes, 
+    DefBlockSyntax(const DefSyntaxToken& blockToken, std::vector<DefSyntaxNode::Ptr>&& headerNodes, 
                    int nameIndex = -1, int typeIndex = -1) :
         DefSyntaxNode(Type::DeclBlock),
         _blockToken(blockToken),
@@ -253,6 +285,12 @@ public:
         return string::trim_copy(_blockToken.value, "{}");
     }
 
+    // Sets the raw block contents without the opening and closing braces
+    void setBlockContents(const std::string& contents)
+    {
+        _blockToken.value = "{" + contents + "}";
+    }
+
     std::string getString() const override
     {
         std::string output;
@@ -268,6 +306,27 @@ public:
         output.append(_blockToken.value);
 
         return output;
+    }
+
+    static Ptr CreateTypedBlock(const std::string& type, const std::string& name)
+    {
+        std::vector<DefSyntaxNode::Ptr> headerNodes;
+
+        int typeIndex = -1;
+
+        if (!type.empty())
+        {
+            typeIndex = static_cast<int>(headerNodes.size());
+            headerNodes.emplace_back(DefTypeSyntax::Create(type));
+            headerNodes.emplace_back(DefWhitespaceSyntax::Create(" "));
+        }
+
+        int nameIndex = static_cast<int>(headerNodes.size());
+        headerNodes.emplace_back(DefNameSyntax::Create(name));
+        headerNodes.emplace_back(DefWhitespaceSyntax::Create(" "));
+
+        DefSyntaxToken blockToken(DefSyntaxToken::Type::BracedBlock, "{}");
+        return std::make_shared<DefBlockSyntax>(blockToken, std::move(headerNodes), nameIndex, typeIndex);
     }
 };
 
@@ -298,6 +357,31 @@ public:
 
             functor(blockNode);
         }
+    }
+
+    // Return the first block syntax node matching the given name (case-sensitive)
+    parser::DefBlockSyntax::Ptr findFirstNamedBlock(const std::string& name)
+    {
+        return findFirstBlock([&](const parser::DefBlockSyntax::Ptr& block)
+        {
+            return block->getName() && block->getName()->getString() == name;
+        });
+    }
+
+    // Find the first block matching the given predicate
+    parser::DefBlockSyntax::Ptr findFirstBlock(const std::function<bool(const parser::DefBlockSyntax::Ptr&)>& predicate)
+    {
+        parser::DefBlockSyntax::Ptr result;
+
+        foreachBlock([&](const parser::DefBlockSyntax::Ptr& block)
+        {
+            if (!result && predicate(block))
+            {
+                result = block;
+            }
+        });
+
+        return result;
     }
 
     std::string getString() const

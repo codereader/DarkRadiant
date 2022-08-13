@@ -575,6 +575,45 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
 
     auto& stream = tempStream.getStream();
 
+#if 1
+    parser::DefSyntaxTree::Ptr syntaxTree;
+
+    if (fs::exists(targetFile))
+    {
+        // Parse the existing file into a syntax tree for manipulation
+        std::ifstream inheritStream(targetFile.string());
+
+        parser::DefBlockSyntaxParser<std::istream> parser(inheritStream);
+
+        syntaxTree = parser.parse();
+        inheritStream.close();
+    }
+    else
+    {
+        // Since there's no existing file, create a new syntax tree
+        syntaxTree = std::make_shared<parser::DefSyntaxTree>();
+    }
+
+    // Take the first named block matching our decl. There's a risk that there is another
+    // decl of a different type with the same name in the tree, but we don't try to check this here
+    auto block = syntaxTree->findFirstNamedBlock(decl->getDeclName());
+
+    if (!block)
+    {
+        // Create a new block node with leading whitespace and add it to the tree
+        syntaxTree->getRoot()->appendChildNode(parser::DefWhitespaceSyntax::Create("\n\n"));
+
+        block = parser::DefBlockSyntax::CreateTypedBlock(syntax.typeName, decl->getDeclName());
+        syntaxTree->getRoot()->appendChildNode(block);
+    }
+
+    // Store the new block contents and save the file
+    block->setBlockContents(syntax.contents);
+
+    // Export the modified syntax tree
+    stream << syntaxTree->getString();
+
+#else
     // If a previous file exists, open it for reading and filter out the decl we'll be writing
     if (fs::exists(targetFile))
     {
@@ -601,6 +640,7 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
         // Write the declaration itself
         writeDeclaration(stream, decl);
     }
+#endif
 
     tempStream.closeAndReplaceTargetFile();
 
