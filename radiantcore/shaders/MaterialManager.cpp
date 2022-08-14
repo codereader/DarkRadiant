@@ -192,7 +192,7 @@ MaterialPtr MaterialManager::createEmptyMaterial(const std::string& name)
 {
     // Find a non-conflicting name and create an empty declaration
     auto candidate = ensureNonConflictingName(name);
-    auto decl = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Material, name);
+    auto decl = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Material, candidate);
 
     auto material = _library->findShader(candidate);
     material->setIsModified();
