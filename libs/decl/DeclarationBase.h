@@ -57,15 +57,20 @@ public:
         return _name;
     }
     
-    const std::string& getOriginalDeclName() const final
-    {
-        return _originalName;
-    }
-   
     void setDeclName(const std::string& newName) override
     {
         _name = newName;
         _declBlock.name = newName;
+    }
+
+    const std::string& getOriginalDeclName() const final
+    {
+        return _originalName;
+    }
+
+    void setOriginalDeclName(const std::string& newName) override
+    {
+        _originalName = newName;
     }
 
     decl::Type getDeclType() const final

@@ -221,6 +221,11 @@ public:
         return _token;
     }
 
+    void setName(const std::string& name)
+    {
+        _token = DefSyntaxToken(DefSyntaxToken::Type::Token, name);
+    }
+
     std::string getString() const override
     {
         return _token.value;

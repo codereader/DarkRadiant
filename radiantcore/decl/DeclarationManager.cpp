@@ -428,9 +428,9 @@ void DeclarationManager::removeDeclarationFromFile(const IDeclaration::Ptr& decl
     auto syntaxTree = parser.parse();
     existingFile.close();
 
-    // Try to remove the decl from the syntax tree
+    // Try to remove the decl from the syntax tree (using the original name)
     // Returns false if the decl could not be located (decl has not been saved to this file then)
-    if (removeDeclarationFromSyntaxTree(syntaxTree, decl->getDeclName()))
+    if (removeDeclarationFromSyntaxTree(syntaxTree, decl->getOriginalDeclName()))
     {
         // Open a temporary file
         stream::TemporaryOutputStream tempStream(fullPath);
@@ -579,7 +579,7 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
 
     // Take the first named block matching our decl. There's a risk that there is another
     // decl of a different type with the same name in the tree, but we don't try to check this here
-    auto block = syntaxTree->findFirstNamedBlock(decl->getDeclName());
+    auto block = syntaxTree->findFirstNamedBlock(decl->getOriginalDeclName());
 
     if (!block)
     {
@@ -588,6 +588,13 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
 
         block = parser::DefBlockSyntax::CreateTypedBlock(syntax.typeName, decl->getDeclName());
         syntaxTree->getRoot()->appendChildNode(block);
+    }
+
+    // Check if the name of the decl has been changed
+    if (decl->getDeclName() != decl->getOriginalDeclName())
+    {
+        // Update the name syntax node
+        block->getName()->setName(decl->getDeclName());
     }
 
     // Store the new block contents and save the file
@@ -601,6 +608,12 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
     // Refresh the file info, otherwise a newly created file might not be considered "physical"
     // and declarations might report themselves as if they were originating in a PK4
     decl->setFileInfo(GlobalFileSystem().getFileInfo(relativePath));
+
+    if (decl->getDeclName() != decl->getOriginalDeclName())
+    {
+        // Now that the decl is saved under a new name, update the original decl name
+        decl->setOriginalDeclName(decl->getDeclName());
+    }
 }
 
 sigc::signal<void>& DeclarationManager::signal_DeclsReloading(Type type)
