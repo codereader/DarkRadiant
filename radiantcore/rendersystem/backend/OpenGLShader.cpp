@@ -521,12 +521,11 @@ void OpenGLShader::constructLightingPassesFromMaterial()
     // least one DBS layer then reach the end of the layers.
 
     DBSTriplet triplet;
-    const IShaderLayerVector& allLayers = _material->getAllLayers();
 
-    for (const auto& layer : allLayers)
+    _material->foreachLayer([&] (const IShaderLayer::Ptr& layer)
     {
         // Skip programmatically disabled layers
-        if (!layer->isEnabled()) continue;
+        if (!layer->isEnabled()) return true;
 
 		// Make sure we had at least one evaluation call to fill the material registers
 		layer->evaluateExpressions(0);
@@ -569,7 +568,9 @@ void OpenGLShader::constructLightingPassesFromMaterial()
 
             appendBlendLayer(layer);
         }
-    }
+
+        return true;
+    });
 
     // Submit final pass if we reach the end
     if (triplet.specular || triplet.bump || triplet.diffuse)
@@ -581,15 +582,12 @@ void OpenGLShader::constructLightingPassesFromMaterial()
 void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
 {
     bool hasDiffuseLayer = false;
+    IShaderLayer* firstLayer = nullptr;
 
     // Determine alphatest from first diffuse layer
-    const IShaderLayerVector allLayers = _material->getAllLayers();
-
-    for (IShaderLayerVector::const_iterator i = allLayers.begin();
-         i != allLayers.end();
-         ++i)
+    _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
     {
-        const IShaderLayer::Ptr& layer = *i;
+        firstLayer = layer.get();
 
         if (layer->getType() == IShaderLayer::DIFFUSE)
         {
@@ -598,20 +596,22 @@ void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
             if (layer->getAlphaTest() > 0)
             {
                 applyAlphaTestToPass(pass, layer->getAlphaTest());
-                break;
+                return false;
             }
         }
-    }
+
+        return true;
+    });
 
     // If this is a purely blend material (no DBS layers), set the editor blend
     // mode from the first blend layer.
 	// greebo: Hack to let "shader not found" textures be handled as diffusemaps
-    if (!hasDiffuseLayer && !allLayers.empty() && _material->getName() != "_default")
+    if (!hasDiffuseLayer && firstLayer != nullptr && _material->getName() != "_default")
     {
 		pass.setRenderFlag(RENDER_BLEND);
 		pass.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
 
-		BlendFunc bf = allLayers[0]->getBlendFunc();
+		BlendFunc bf = firstLayer->getBlendFunc();
 		pass.m_blend_src = bf.src;
 		pass.m_blend_dst = bf.dest;
     }
@@ -628,14 +628,16 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
 
     // If there's a diffuse stage's, link it to this shader pass to inherit
     // settings like scale and translate
-    for (const auto& layer : _material->getAllLayers())
+    _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
     {
         if (layer->getType() == IShaderLayer::DIFFUSE)
         {
             previewPass.stage0 = layer;
-            break;
+            return false;
         }
-    }
+
+        return true;
+    });
 
     previewPass.setRenderFlag(RENDER_FILL);
     previewPass.setRenderFlag(RENDER_TEXTURE_2D);

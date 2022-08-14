@@ -111,12 +111,13 @@ namespace
         bool hasBump = false;
         bool hasSpecular = false;
 
-        for (const auto& layer : material->getAllLayers())
+        material->foreachLayer([&](const IShaderLayer::Ptr& layer)
         {
             hasDiffuse |= layer->getType() == IShaderLayer::DIFFUSE;
             hasBump |= layer->getType() == IShaderLayer::BUMP;
             hasSpecular |= layer->getType() == IShaderLayer::SPECULAR;
-        }
+            return true;
+        });
 
         return !hasDiffuse ? IShaderLayer::DIFFUSE :
                !hasBump ? IShaderLayer::BUMP :
@@ -1915,7 +1916,7 @@ void MaterialEditor::updateStageButtonSensitivity()
         auto row = wxutil::TreeModel::Row(item, *_stageList);
         auto index = row[STAGE_COLS().index].getInteger();
         auto isGlobalStage = row[STAGE_COLS().global].getBool();
-        auto layersCount = _material->getAllLayers().size();
+        auto layersCount = _material->getNumLayers();
 
         getControl<wxButton>("MaterialEditorRemoveStageButton")->Enable(!isGlobalStage);
         getControl<wxButton>("MaterialEditorToggleStageButton")->Enable(!isGlobalStage);
@@ -1967,16 +1968,23 @@ std::pair<IShaderLayer::Ptr, std::size_t> MaterialEditor::findMaterialStageByTyp
 {
     if (!_material) return std::pair<IShaderLayer::Ptr, std::size_t>();
 
-    const auto& layers = _material->getAllLayers();
-    for (auto i = 0; i < layers.size(); ++i)
-    {
-        if (layers[i]->getType() == type)
-        {
-            return std::make_pair(layers[i], i);
-        }
-    }
+    std::pair<IShaderLayer::Ptr, std::size_t> result;
 
-    return std::pair<IShaderLayer::Ptr, std::size_t>();
+    std::size_t i = 0;
+
+    _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
+    {
+        if (layer->getType() == type)
+        {
+            result = std::make_pair(layer, i);
+            return false;
+        }
+
+        ++i;
+        return true;
+    });
+
+    return result;
 }
 
 void MaterialEditor::updateBasicPageFromMaterial()
@@ -2165,10 +2173,8 @@ void MaterialEditor::updateStageListFromMaterial()
 
     if (!_material) return;
 
-    const auto& layers = _material->getAllLayers();
-
     int index = 0;
-    for (const auto& layer : layers)
+    _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
     {
         auto row = _stageList->AddItem();
 
@@ -2182,7 +2188,8 @@ void MaterialEditor::updateStageListFromMaterial()
         row.SendItemAdded();
 
         ++index;
-    }
+        return true;
+    });
 
     // Pre-select the global settings page
     auto globalSettings = _stageList->FindItem([&](const wxutil::TreeModel::Row& row)
@@ -2373,13 +2380,12 @@ IShaderLayer::Ptr MaterialEditor::getSelectedStage()
 
     if (!selectedStageItem.IsOk() || !_material) return IShaderLayer::Ptr();
 
-    const auto& layers = _material->getAllLayers();
     wxutil::TreeModel::Row stageRow(selectedStageItem, *_stageList);
     int stageIndex = stageRow[STAGE_COLS().index].getInteger();
 
-    if (stageIndex >= 0 && stageIndex < layers.size())
+    if (stageIndex >= 0 && stageIndex < _material->getNumLayers())
     {
-        return layers[stageIndex];
+        return _material->getLayer(stageIndex);
     }
 
     return IShaderLayer::Ptr();
@@ -2825,7 +2831,7 @@ void MaterialEditor::_onRemoveStage(wxCommandEvent& ev)
     _material->removeLayer(index);
     updateStageListFromMaterial();
 
-    auto layersCount = _material->getAllLayers().size();
+    auto layersCount = _material->getNumLayers();
 
     while (index > 0)
     {
@@ -2904,7 +2910,7 @@ void MaterialEditor::moveStagePosition(int direction)
 
     int newPosition = index + direction;
 
-    if (newPosition >= 0 && newPosition < _material->getAllLayers().size())
+    if (newPosition >= 0 && newPosition < _material->getNumLayers())
     {
         _material->swapLayerPosition(static_cast<std::size_t>(index), static_cast<std::size_t>(newPosition));
         onMaterialChanged();

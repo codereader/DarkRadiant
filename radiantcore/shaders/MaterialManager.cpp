@@ -92,23 +92,7 @@ void MaterialManager::foreachShaderName(const ShaderNameCallback& callback)
 
 void MaterialManager::setLightingEnabled(bool enabled)
 {
-    if (CShader::m_lightingEnabled != enabled)
-    {
-        // First unrealise the lighting of all shaders
-        _library->foreachShader([](const CShaderPtr& shader)
-        {
-            shader->unrealiseLighting();
-        });
-
-        // Set the global (greebo: Does this really need to be done this way?)
-        CShader::m_lightingEnabled = enabled;
-
-        // Now realise the lighting of all shaders
-        _library->foreachShader([](const CShaderPtr& shader)
-        {
-            shader->realiseLighting();
-        });
-    }
+    // remove?
 }
 
 const char* MaterialManager::getTexturePrefix() const

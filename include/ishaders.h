@@ -360,16 +360,21 @@ public:
 	 */
 	virtual bool isDiscrete() const = 0;
 
+    // Returns the number of layers in this material
+    virtual std::size_t getNumLayers() = 0;
+
+    // Returns the n-th layer of this material (0-based index)
+    virtual IShaderLayer::Ptr getLayer(std::size_t index) = 0;
+
     /// Return the first material layer, if any
-	virtual IShaderLayer* firstLayer() const = 0;
+	virtual IShaderLayer* firstLayer() = 0;
 
     /**
-     * \brief Return a std::vector containing all layers in this material
-     * shader.
-     *
+     * \brief Visit all layers in this material using the given functor.
+     * The functor can return false to abort the traversal, true will continue.
      * This includes all diffuse, bump, specular or blend layers.
      */
-    virtual const IShaderLayerVector& getAllLayers() const = 0;
+    virtual void foreachLayer(const std::function<bool(const IShaderLayer::Ptr&)>& functor) = 0;
 
     // Add a new (typed) layer to this material, returning the index of the new layer
     virtual std::size_t addLayer(IShaderLayer::Type type) = 0;
@@ -451,7 +456,6 @@ std::ostream& operator<< (std::ostream& os, const Material& shader)
 {
 	os << "Material(name=" << shader.getName()
 	   << ", filename=" << shader.getShaderFileName()
-	   << ", firstlayer=" << shader.firstLayer()
 	   << ")";
 	return os;
 }

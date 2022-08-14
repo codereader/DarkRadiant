@@ -84,7 +84,7 @@ TexturePtr CShader::getEditorImage()
         if (!editorTex)
         {
             // If there is no editor expression defined, use the an image from a layer, but no Bump or speculars
-            for (const auto& layer : _layers)
+            for (const auto& layer : _template->getLayers())
             {
                 if (layer->getType() != IShaderLayer::BUMP && layer->getType() != IShaderLayer::SPECULAR &&
                     std::dynamic_pointer_cast<MapExpression>(layer->getMapExpression()))
@@ -416,28 +416,12 @@ const std::string& CShader::getGuiSurfArgument()
 // -----------------------------------------
 
 void CShader::realise() {
-	realiseLighting();
 }
 
 void CShader::unrealise()
 {
     _editorTexture.reset();
     _texLightFalloff.reset();
-	unrealiseLighting();
-}
-
-// Parse and load image maps for this shader
-void CShader::realiseLighting()
-{
-	for (const auto& layer : _template->getLayers())
-	{
-		_layers.push_back(layer);
-	}
-}
-
-void CShader::unrealiseLighting()
-{
-	_layers.clear();
 }
 
 void CShader::setName(const std::string& name)
@@ -446,19 +430,30 @@ void CShader::setName(const std::string& name)
     _sigMaterialModified.emit();
 }
 
-IShaderLayer* CShader::firstLayer() const
+IShaderLayer* CShader::firstLayer()
 {
-	if (_layers.empty())
-	{
-		return nullptr;
-	}
+    const auto& layers = _template->getLayers();
 
-	return _layers.front().get();
+	return layers.empty() ? nullptr : layers.front().get();
 }
 
-const IShaderLayerVector& CShader::getAllLayers() const
+std::size_t CShader::getNumLayers()
 {
-    return _layers;
+    return _template->getLayers().size();
+}
+
+IShaderLayer::Ptr CShader::getLayer(std::size_t index)
+{
+    return _template->getLayers().at(index);
+}
+
+void CShader::foreachLayer(const std::function<bool(const IShaderLayer::Ptr&)>& functor)
+{
+    for (const auto& layer : _template->getLayers())
+    {
+        // Abort traversal when the functor returns false
+        if (!functor(layer)) break;
+    }
 }
 
 std::size_t CShader::addLayer(IShaderLayer::Type type)
@@ -466,9 +461,6 @@ std::size_t CShader::addLayer(IShaderLayer::Type type)
     ensureTemplateCopy();
 
     auto newIndex = _template->addLayer(type);
-
-    unrealiseLighting();
-    realiseLighting();
 
     // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
@@ -482,9 +474,6 @@ void CShader::removeLayer(std::size_t index)
 
     _template->removeLayer(index);
 
-    unrealiseLighting();
-    realiseLighting();
-
     // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
 }
@@ -495,9 +484,6 @@ void CShader::swapLayerPosition(std::size_t first, std::size_t second)
 
     _template->swapLayerPosition(first, second);
 
-    unrealiseLighting();
-    realiseLighting();
-
     // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
 }
@@ -507,9 +493,6 @@ std::size_t CShader::duplicateLayer(std::size_t index)
     ensureTemplateCopy();
 
     auto newIndex = _template->duplicateLayer(index);
-
-    unrealiseLighting();
-    realiseLighting();
 
     // We need another signal after the realiseLighting call
     _sigMaterialModified.emit();
@@ -690,7 +673,5 @@ void CShader::refreshImageMaps()
 
     _sigMaterialModified.emit();
 }
-
-bool CShader::m_lightingEnabled = false;
 
 } // namespace shaders

@@ -147,7 +147,7 @@ public:
     void clear();
 
     // Clone a new instance from this template
-    std::shared_ptr<ShaderTemplate> clone() const;
+    std::shared_ptr<ShaderTemplate> clone();
 
 	/**
 	 * Get the name of this shader template.

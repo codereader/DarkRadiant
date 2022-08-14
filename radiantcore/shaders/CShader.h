@@ -37,14 +37,9 @@ private:
 
 	bool _visible;
 
-    // Vector of shader layers
-	IShaderLayerVector _layers;
-
     sigc::signal<void> _sigMaterialModified;
 
 public:
-	static bool m_lightingEnabled;
-
 	/*
 	 * Constructor. Sets the name and the ShaderTemplate to use.
 	 */
@@ -110,7 +105,9 @@ public:
 	bool isDiscrete() const override;
 	bool isVisible() const override;
 	void setVisible(bool visible) override;
-    const IShaderLayerVector& getAllLayers() const;
+    std::size_t getNumLayers() override;
+    IShaderLayer::Ptr getLayer(std::size_t index) override;
+    void foreachLayer(const std::function<bool(const IShaderLayer::Ptr&)>& functor) override;
     std::size_t addLayer(IShaderLayer::Type type) override;
     void removeLayer(std::size_t index) override;
     void swapLayerPosition(std::size_t first, std::size_t second) override;
@@ -131,16 +128,12 @@ public:
 	void realise();
 	void unrealise();
 
-	// Parse and load image maps for this shader
-	void realiseLighting();
-	void unrealiseLighting();
-
 	/*
 	 * Set name of shader.
 	 */
 	void setName(const std::string& name);
 
-	IShaderLayer* firstLayer() const;
+	IShaderLayer* firstLayer() override;
     int getParseFlags() const override;
 
     bool isModified() override;

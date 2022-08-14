@@ -146,15 +146,20 @@ private:
         case ImageType::Specular: layerToFind = IShaderLayer::SPECULAR; break;
         }
 
-        for (const auto& layer : _material->getAllLayers())
+        TexturePtr result;
+
+        _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
         {
             if (layer->getType() == layerToFind)
             {
-                return layer->getTexture();
+                result = layer->getTexture();
+                return false;
             }
-        }
 
-        return TexturePtr();
+            return true;
+        });
+
+        return result;
     }
 };
 

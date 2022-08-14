@@ -67,8 +67,10 @@ ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
     }
 }
 
-std::shared_ptr<ShaderTemplate> ShaderTemplate::clone() const
+std::shared_ptr<ShaderTemplate> ShaderTemplate::clone()
 {
+    ensureParsed();
+
     return std::make_shared<ShaderTemplate>(*this);
 }
 

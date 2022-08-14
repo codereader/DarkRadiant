@@ -1085,7 +1085,7 @@ TEST_F(MaterialExportTest, StageCondition)
 TEST_F(MaterialExportTest, VertexPrograms)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram1");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
 
     // Mark the definition as modified by setting the description
     material->setDescription("-");
@@ -1094,28 +1094,28 @@ TEST_F(MaterialExportTest, VertexPrograms)
     expectDefinitionContains(material, "vertexParm 0 time");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram2");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
     expectDefinitionContains(material, "vertexParm 0 time, 3");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram3");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
     expectDefinitionContains(material, "vertexParm 0 time, 3, global3");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram4");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
     expectDefinitionContains(material, "vertexParm 0 time, 3, global3, time * 2");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram5");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
@@ -1124,12 +1124,12 @@ TEST_F(MaterialExportTest, VertexPrograms)
     expectDefinitionContains(material, "vertexParm 2 5, 6, 7, 8");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram6");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getVertexProgram(), "glprogs/test.vfp");
     // Vertex Parm 1 is empty
-    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[0]);
-    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[1]);
-    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[2]);
-    EXPECT_FALSE(material->getAllLayers().at(0)->getVertexParm(1).expressions[3]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[0]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[1]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[2]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[3]);
     material->setDescription("-");
 
     expectDefinitionContains(material, "vertexProgram glprogs/test.vfp");
@@ -1141,7 +1141,7 @@ TEST_F(MaterialExportTest, VertexPrograms)
 TEST_F(MaterialExportTest, FragmentPrograms)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/program/fragmentProgram1");
-    EXPECT_EQ(material->getAllLayers().at(0)->getFragmentProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getFragmentProgram(), "glprogs/test.vfp");
 
     // Mark the definition as modified by setting the description
     material->setDescription("-");
@@ -1151,7 +1151,7 @@ TEST_F(MaterialExportTest, FragmentPrograms)
     expectDefinitionContains(material, "fragmentMap 2 cubemap cameracubemap nearest linear clamp noclamp zeroclamp alphazeroclamp forcehighquality uncompressed highquality nopicmip temp/optionsftw");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/fragmentProgram2");
-    EXPECT_EQ(material->getAllLayers().at(0)->getFragmentProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getFragmentProgram(), "glprogs/test.vfp");
 
     // Mark the definition as modified by setting the description
     material->setDescription("-");

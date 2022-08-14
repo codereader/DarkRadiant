@@ -343,26 +343,28 @@ public:
 
         if (!_material) return list;
 
-        for (const auto& layer : _material->getAllLayers())
+        _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
         {
             list.emplace_back(layer);
-        }
+            return true;
+        });
 
         return list;
     }
 
     std::size_t getNumStages()
     {
-        return _material ? _material->getAllLayers().size() : 0;
+        return _material ? _material->getNumLayers() : 0;
     }
 
     ScriptMaterialStage getStage(std::size_t index)
     {
-        if (!_material) return ScriptMaterialStage(IShaderLayer::Ptr());
+        if (!_material || index >= _material->getNumLayers())
+        {
+            return ScriptMaterialStage(IShaderLayer::Ptr());
+        }
 
-        const auto& layers = _material->getAllLayers();
-        
-        return ScriptMaterialStage(index >= 0 && index < layers.size() ? layers[index] : IShaderLayer::Ptr());
+        return ScriptMaterialStage(_material->getLayer(index));
     }
 
     ScriptEditableMaterialStage getEditableStage(std::size_t index)

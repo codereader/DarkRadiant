@@ -28,15 +28,20 @@ namespace
     {
         if (!material) return false;
 
-        for (const auto& layer : material->getAllLayers())
+        auto result = false;
+
+        material->foreachLayer([&](const IShaderLayer::Ptr& layer)
         {
             if (layer->getMapType() == IShaderLayer::MapType::CameraCubeMap)
             {
-                return true;
+                result = true;
+                return false;
             }
-        }
 
-        return false;
+            return true;
+        });
+
+        return result;
     }
 }
 

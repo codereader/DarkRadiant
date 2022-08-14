@@ -16,6 +16,19 @@ using MaterialsTest = RadiantTest;
 
 constexpr double TestEpsilon = 0.0001;
 
+inline std::vector<IShaderLayer::Ptr> getAllLayers(const MaterialPtr& material)
+{
+    std::vector<IShaderLayer::Ptr> layers;
+
+    material->foreachLayer([&](const IShaderLayer::Ptr& layer)
+    {
+        layers.push_back(layer);
+        return true;
+    });
+
+    return layers;
+}
+
 TEST_F(MaterialsTest, MaterialFileInfo)
 {
     auto& materialManager = GlobalMaterialManager();
@@ -226,7 +239,7 @@ TEST_F(MaterialsTest, EnumerateMaterialLayers)
     EXPECT_TRUE(material);
 
     // Get a list of all layers in the material
-    auto layers = material->getAllLayers();
+    auto layers = getAllLayers(material);
     EXPECT_EQ(layers.size(), 5);
 
     // First layer is the bump map in this particular material
@@ -379,7 +392,7 @@ TEST_F(MaterialsTest, MaterialRotationEvaluation)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/expressions/rotationCalculation");
 
-    auto& stage = material->getAllLayers().front();
+    auto stage = material->getLayer(0);
 
     // Set time to 5008 seconds, this is the value I happened to run into when debugging this in the engine
     stage->evaluateExpressions(5008);
@@ -599,7 +612,7 @@ TEST_F(MaterialsTest, MaterialParserDeform)
 TEST_F(MaterialsTest, MaterialParserStageNotransform)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    auto stage = material->getAllLayers().front();
+    auto stage = material->getLayer(0);
 
     EXPECT_EQ(stage->getTransformations().size(), 0);
     EXPECT_TRUE(stage->getTextureTransform() == Matrix4::getIdentity());
@@ -608,7 +621,7 @@ TEST_F(MaterialsTest, MaterialParserStageNotransform)
 TEST_F(MaterialsTest, MaterialParserStageTranslate)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/translation1");
-    auto stage = material->getAllLayers().front();
+    auto stage = material->getLayer(0);
 
     EXPECT_EQ(stage->getTransformations().size(), 1);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
@@ -619,7 +632,7 @@ TEST_F(MaterialsTest, MaterialParserStageTranslate)
     expectNear(stage->getTextureTransform(), Matrix4::getTranslation(Vector3(3.0, 5.0, 0)));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/translation2");
-    stage = material->getAllLayers().front();
+    stage = material->getLayer(0);
 
     EXPECT_EQ(stage->getTransformations().size(), 1);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
@@ -633,7 +646,7 @@ TEST_F(MaterialsTest, MaterialParserStageTranslate)
 TEST_F(MaterialsTest, MaterialParserStageRotate)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/rotate1");
-    auto stage = material->getAllLayers().front();
+    auto stage = material->getLayer(0);
 
     EXPECT_EQ(stage->getTransformations().size(), 1);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Rotate);
@@ -656,7 +669,7 @@ TEST_F(MaterialsTest, MaterialParserStageRotate)
 TEST_F(MaterialsTest, MaterialParserStageScale)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/scale1");
-    auto stage = material->getAllLayers().front();
+    auto stage = material->getLayer(0);
 
     EXPECT_EQ(stage->getTransformations().size(), 1);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Scale);
@@ -675,7 +688,7 @@ TEST_F(MaterialsTest, MaterialParserStageScale)
 TEST_F(MaterialsTest, MaterialParserStageCenterScale)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/centerscale1");
-    auto stage = material->getAllLayers().front();
+    auto stage = material->getLayer(0);
 
     EXPECT_EQ(stage->getTransformations().size(), 1);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::CenterScale);
@@ -694,7 +707,7 @@ TEST_F(MaterialsTest, MaterialParserStageCenterScale)
 TEST_F(MaterialsTest, MaterialParserStageShear)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/shear1");
-    auto stage = material->getAllLayers().front();
+    auto stage = material->getLayer(0);
     EXPECT_EQ(stage->getTransformations().size(), 1);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Shear);
     EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "global3 + 5");
@@ -713,7 +726,7 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined1");
 
-    auto stage = material->getAllLayers().front();
+    auto stage = material->getLayer(0);
     EXPECT_EQ(stage->getTransformations().size(), 2);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
     EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
@@ -727,7 +740,7 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined2");
 
-    stage = material->getAllLayers().front();
+    stage = material->getLayer(0);
     EXPECT_EQ(stage->getTransformations().size(), 3);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
     EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
@@ -747,7 +760,7 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/combined3");
 
-    stage = material->getAllLayers().front();
+    stage = material->getLayer(0);
     EXPECT_EQ(stage->getTransformations().size(), 6);
     EXPECT_EQ(stage->getTransformations().at(0).type, IShaderLayer::TransformType::Translate);
     EXPECT_EQ(stage->getTransformations().at(0).expression1->getExpressionString(), "time");
@@ -804,141 +817,141 @@ TEST_F(MaterialsTest, MaterialParserStageTransforms)
 TEST_F(MaterialsTest, MaterialParserStageVertexProgram)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram1");
-    material->getAllLayers().front()->evaluateExpressions(0);
+    material->getLayer(0)->evaluateExpressions(0);
 
-    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 1);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(0, 0, 0, 0)); // all 4 equal
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[1]);
-    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[2]);
-    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[3]);
+    EXPECT_EQ(material->getLayer(0)->getNumVertexParms(), 1);
+    EXPECT_EQ(material->getLayer(0)->getVertexParmValue(0), Vector4(0, 0, 0, 0)); // all 4 equal
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(0).expressions[1]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(0).expressions[2]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(0).expressions[3]);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram2");
-    material->getAllLayers().front()->evaluateExpressions(0);
+    material->getLayer(0)->evaluateExpressions(0);
 
-    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 1);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(0, 3, 0, 1)); // z=0,w=1 implicitly
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3");
-    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[2]);
-    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[3]);
+    EXPECT_EQ(material->getLayer(0)->getNumVertexParms(), 1);
+    EXPECT_EQ(material->getLayer(0)->getVertexParmValue(0), Vector4(0, 3, 0, 1)); // z=0,w=1 implicitly
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[1]->getExpressionString(), "3");
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(0).expressions[2]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(0).expressions[3]);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram3");
-    material->getAllLayers().front()->evaluateExpressions(0);
+    material->getLayer(0)->evaluateExpressions(0);
 
-    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 1);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(0, 3, 0, 1)); // w=1 implicitly
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
-    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(0).expressions[3]);
+    EXPECT_EQ(material->getLayer(0)->getNumVertexParms(), 1);
+    EXPECT_EQ(material->getLayer(0)->getVertexParmValue(0), Vector4(0, 3, 0, 1)); // w=1 implicitly
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[1]->getExpressionString(), "3");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(0).expressions[3]);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram4");
-    material->getAllLayers().front()->evaluateExpressions(1000); // time = 1 sec
+    material->getLayer(0)->evaluateExpressions(1000); // time = 1 sec
 
-    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 1);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(1, 3, 0, 2));
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2");
+    EXPECT_EQ(material->getLayer(0)->getNumVertexParms(), 1);
+    EXPECT_EQ(material->getLayer(0)->getVertexParmValue(0), Vector4(1, 3, 0, 2));
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[1]->getExpressionString(), "3");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram5");
-    material->getAllLayers().front()->evaluateExpressions(2000); // time = 2 secs
+    material->getLayer(0)->evaluateExpressions(2000); // time = 2 secs
 
-    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 3);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(2, 3, 0, 4));
+    EXPECT_EQ(material->getLayer(0)->getNumVertexParms(), 3);
+    EXPECT_EQ(material->getLayer(0)->getVertexParmValue(0), Vector4(2, 3, 0, 4));
 
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[1]->getExpressionString(), "3");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2");
 
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(1), Vector4(1, 2, 3, 4));
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).index, 1);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[0]->getExpressionString(), "1");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[1]->getExpressionString(), "2");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[2]->getExpressionString(), "3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).expressions[3]->getExpressionString(), "4");
+    EXPECT_EQ(material->getLayer(0)->getVertexParmValue(1), Vector4(1, 2, 3, 4));
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(1).index, 1);
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(1).expressions[0]->getExpressionString(), "1");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(1).expressions[1]->getExpressionString(), "2");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(1).expressions[2]->getExpressionString(), "3");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(1).expressions[3]->getExpressionString(), "4");
 
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(2), Vector4(5, 6, 7, 8));
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).index, 2);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[0]->getExpressionString(), "5");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[1]->getExpressionString(), "6");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[2]->getExpressionString(), "7");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[3]->getExpressionString(), "8");
+    EXPECT_EQ(material->getLayer(0)->getVertexParmValue(2), Vector4(5, 6, 7, 8));
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(2).index, 2);
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(2).expressions[0]->getExpressionString(), "5");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(2).expressions[1]->getExpressionString(), "6");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(2).expressions[2]->getExpressionString(), "7");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(2).expressions[3]->getExpressionString(), "8");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram6");
-    material->getAllLayers().front()->evaluateExpressions(2000); // time = 2 secs
+    material->getLayer(0)->evaluateExpressions(2000); // time = 2 secs
 
-    EXPECT_EQ(material->getAllLayers().front()->getNumVertexParms(), 3);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(0), Vector4(2, 3, 0, 4));
+    EXPECT_EQ(material->getLayer(0)->getNumVertexParms(), 3);
+    EXPECT_EQ(material->getLayer(0)->getVertexParmValue(0), Vector4(2, 3, 0, 4));
 
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).index, 0);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[0]->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[1]->getExpressionString(), "3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).index, 0);
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[0]->getExpressionString(), "time");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[1]->getExpressionString(), "3");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[2]->getExpressionString(), "global3");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(0).expressions[3]->getExpressionString(), "time * 2");
 
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(1), Vector4(0, 0, 0, 0));
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(1).index, -1); // missing
-    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(1).expressions[0]);
-    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(1).expressions[1]);
-    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(1).expressions[2]);
-    EXPECT_FALSE(material->getAllLayers().front()->getVertexParm(1).expressions[3]);
+    EXPECT_EQ(material->getLayer(0)->getVertexParmValue(1), Vector4(0, 0, 0, 0));
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(1).index, -1); // missing
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[0]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[1]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[2]);
+    EXPECT_FALSE(material->getLayer(0)->getVertexParm(1).expressions[3]);
 
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParmValue(2), Vector4(5, 6, 7, 8));
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).index, 2);
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[0]->getExpressionString(), "5");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[1]->getExpressionString(), "6");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[2]->getExpressionString(), "7");
-    EXPECT_EQ(material->getAllLayers().front()->getVertexParm(2).expressions[3]->getExpressionString(), "8");
+    EXPECT_EQ(material->getLayer(0)->getVertexParmValue(2), Vector4(5, 6, 7, 8));
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(2).index, 2);
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(2).expressions[0]->getExpressionString(), "5");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(2).expressions[1]->getExpressionString(), "6");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(2).expressions[2]->getExpressionString(), "7");
+    EXPECT_EQ(material->getLayer(0)->getVertexParm(2).expressions[3]->getExpressionString(), "8");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/vertexProgram7");
-    EXPECT_TRUE(material->getAllLayers().empty()); // failure to parse should end up with an empty material
+    EXPECT_EQ(material->getNumLayers(), 0); // failure to parse should end up with an empty material
 }
 
 TEST_F(MaterialsTest, MaterialParserStageFragmentProgram)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/program/fragmentProgram1");
 
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentProgram(), "glprogs/test.vfp");
-    EXPECT_EQ(material->getAllLayers().front()->getNumFragmentMaps(), 3);
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(0).index, 0);
-    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(0).options, " "), "cubeMap forceHighQuality alphaZeroClamp");
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(0).map->getExpressionString(), "env/gen1");
+    EXPECT_EQ(material->getLayer(0)->getFragmentProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getNumFragmentMaps(), 3);
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(0).index, 0);
+    EXPECT_EQ(string::join(material->getLayer(0)->getFragmentMap(0).options, " "), "cubeMap forceHighQuality alphaZeroClamp");
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(0).map->getExpressionString(), "env/gen1");
 
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(1).index, 1);
-    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(1).options, " "), "");
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(1).map->getExpressionString(), "temp/texture");
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(1).index, 1);
+    EXPECT_EQ(string::join(material->getLayer(0)->getFragmentMap(1).options, " "), "");
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(1).map->getExpressionString(), "temp/texture");
 
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(2).index, 2);
-    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(2).options, " "), "cubemap cameracubemap nearest linear clamp noclamp zeroclamp alphazeroclamp forcehighquality uncompressed highquality nopicmip");
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(2).map->getExpressionString(), "temp/optionsftw");
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(2).index, 2);
+    EXPECT_EQ(string::join(material->getLayer(0)->getFragmentMap(2).options, " "), "cubemap cameracubemap nearest linear clamp noclamp zeroclamp alphazeroclamp forcehighquality uncompressed highquality nopicmip");
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(2).map->getExpressionString(), "temp/optionsftw");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/fragmentProgram2");
 
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentProgram(), "glprogs/test.vfp");
-    EXPECT_EQ(material->getAllLayers().front()->getNumFragmentMaps(), 3);
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(0).index, 0);
-    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(0).options, " "), "");
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(0).map->getExpressionString(), "env/gen1");
+    EXPECT_EQ(material->getLayer(0)->getFragmentProgram(), "glprogs/test.vfp");
+    EXPECT_EQ(material->getLayer(0)->getNumFragmentMaps(), 3);
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(0).index, 0);
+    EXPECT_EQ(string::join(material->getLayer(0)->getFragmentMap(0).options, " "), "");
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(0).map->getExpressionString(), "env/gen1");
 
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(1).index, -1); // is missing
-    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(1).options, " "), "");
-    EXPECT_FALSE(material->getAllLayers().front()->getFragmentMap(1).map);
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(1).index, -1); // is missing
+    EXPECT_EQ(string::join(material->getLayer(0)->getFragmentMap(1).options, " "), "");
+    EXPECT_FALSE(material->getLayer(0)->getFragmentMap(1).map);
 
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(2).index, 2);
-    EXPECT_EQ(string::join(material->getAllLayers().front()->getFragmentMap(2).options, " "), "");
-    EXPECT_EQ(material->getAllLayers().front()->getFragmentMap(2).map->getExpressionString(), "temp/texture");
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(2).index, 2);
+    EXPECT_EQ(string::join(material->getLayer(0)->getFragmentMap(2).options, " "), "");
+    EXPECT_EQ(material->getLayer(0)->getFragmentMap(2).map->getExpressionString(), "temp/texture");
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/program/fragmentProgram3");
-    EXPECT_TRUE(material->getAllLayers().empty()); // failure to parse should end up with an empty material
+    EXPECT_EQ(material->getNumLayers(), 0); // failure to parse should end up with an empty material
 }
 
 TEST_F(MaterialsTest, MaterialParserGuiSurf)
@@ -971,7 +984,7 @@ TEST_F(MaterialsTest, MaterialParserGuiSurf)
 TEST_F(MaterialsTest, MaterialParserDefaultBlendFunc)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/defaultBlendFunc");
-    auto firstLayer = material->getAllLayers().front();
+    auto firstLayer = material->getLayer(0);
 
     EXPECT_EQ(firstLayer->getType(), IShaderLayer::BLEND);
     EXPECT_EQ(firstLayer->getMapType(), IShaderLayer::MapType::Map);
@@ -989,7 +1002,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr1");
 
-    auto diffuse = material->getAllLayers().front();
+    auto diffuse = material->getLayer(0);
     auto time = 10;
     auto timeSecs = time / 1000.0f; // 0.01
     diffuse->evaluateExpressions(time);
@@ -1002,7 +1015,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr2");
 
-    diffuse = material->getAllLayers().front();
+    diffuse = material->getLayer(0);
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(1, timeSecs*3, 1, 1));
@@ -1013,7 +1026,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr3");
 
-    diffuse = material->getAllLayers().front();
+    diffuse = material->getLayer(0);
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(1, 1, timeSecs * 3, 1));
@@ -1024,7 +1037,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr4");
 
-    diffuse = material->getAllLayers().front();
+    diffuse = material->getLayer(0);
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(1, 1, 1, timeSecs * 3));
@@ -1035,7 +1048,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr5");
 
-    diffuse = material->getAllLayers().front();
+    diffuse = material->getLayer(0);
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 3, timeSecs * 3, 1));
@@ -1046,7 +1059,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr6");
 
-    diffuse = material->getAllLayers().front();
+    diffuse = material->getLayer(0);
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 3, timeSecs * 3, timeSecs * 3));
@@ -1057,7 +1070,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr7");
 
-    diffuse = material->getAllLayers().front();
+    diffuse = material->getLayer(0);
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, 1, 1, 1)); // second red expression overrules first
@@ -1068,7 +1081,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr8");
 
-    diffuse = material->getAllLayers().front();
+    diffuse = material->getLayer(0);
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, timeSecs * 3, timeSecs * 3, 1)); // red overrules rgb
@@ -1079,7 +1092,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr9");
 
-    diffuse = material->getAllLayers().front();
+    diffuse = material->getLayer(0);
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 3, timeSecs * 4, timeSecs * 3, timeSecs * 3)); // green overrules rgba
@@ -1090,7 +1103,7 @@ TEST_F(MaterialsTest, MaterialParserRgbaExpressions)
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/colourexpr10");
 
-    diffuse = material->getAllLayers().front();
+    diffuse = material->getLayer(0);
     diffuse->evaluateExpressions(time);
 
     EXPECT_TRUE(diffuse->getColour() == Colour4(timeSecs * 4, timeSecs * 6, timeSecs * 5, timeSecs * 7)); // rgba is overridden
@@ -1177,67 +1190,67 @@ TEST_F(MaterialsTest, MaterialParserSurfaceFlags)
 TEST_F(MaterialsTest, MaterialParserStageTextureFiltering)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/texturefilter/nearest");
-    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_FILTER_NEAREST, 0);
+    EXPECT_NE(material->getLayer(0)->getStageFlags() & IShaderLayer::FLAG_FILTER_NEAREST, 0);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/texturefilter/linear");
-    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_FILTER_LINEAR, 0);
+    EXPECT_NE(material->getLayer(0)->getStageFlags() & IShaderLayer::FLAG_FILTER_LINEAR, 0);
 }
 
 TEST_F(MaterialsTest, MaterialParserStageTextureQuality)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/texturequality/highquality");
-    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_HIGHQUALITY, 0);
+    EXPECT_NE(material->getLayer(0)->getStageFlags() & IShaderLayer::FLAG_HIGHQUALITY, 0);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/texturequality/uncompressed");
-    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_HIGHQUALITY, 0);
+    EXPECT_NE(material->getLayer(0)->getStageFlags() & IShaderLayer::FLAG_HIGHQUALITY, 0);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/texturequality/forcehighquality");
-    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_FORCE_HIGHQUALITY, 0);
+    EXPECT_NE(material->getLayer(0)->getStageFlags() & IShaderLayer::FLAG_FORCE_HIGHQUALITY, 0);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/texturequality/nopicmip");
-    EXPECT_NE(material->getAllLayers().front()->getStageFlags() & IShaderLayer::FLAG_NO_PICMIP, 0);
+    EXPECT_NE(material->getLayer(0)->getStageFlags() & IShaderLayer::FLAG_NO_PICMIP, 0);
 }
 
 TEST_F(MaterialsTest, MaterialParserStageTexGen)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/texgen/normal");
-    EXPECT_EQ(material->getAllLayers().front()->getTexGenType(), IShaderLayer::TEXGEN_NORMAL);
-    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(1));
-    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(2));
+    EXPECT_EQ(material->getLayer(0)->getTexGenType(), IShaderLayer::TEXGEN_NORMAL);
+    EXPECT_FALSE(material->getLayer(0)->getTexGenExpression(0));
+    EXPECT_FALSE(material->getLayer(0)->getTexGenExpression(1));
+    EXPECT_FALSE(material->getLayer(0)->getTexGenExpression(2));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/texgen/reflect");
-    EXPECT_EQ(material->getAllLayers().front()->getTexGenType(), IShaderLayer::TEXGEN_REFLECT);
-    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(1));
-    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(2));
+    EXPECT_EQ(material->getLayer(0)->getTexGenType(), IShaderLayer::TEXGEN_REFLECT);
+    EXPECT_FALSE(material->getLayer(0)->getTexGenExpression(0));
+    EXPECT_FALSE(material->getLayer(0)->getTexGenExpression(1));
+    EXPECT_FALSE(material->getLayer(0)->getTexGenExpression(2));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/texgen/skybox");
-    EXPECT_EQ(material->getAllLayers().front()->getTexGenType(), IShaderLayer::TEXGEN_SKYBOX);
-    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(0));
-    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(1));
-    EXPECT_FALSE(material->getAllLayers().front()->getTexGenExpression(2));
+    EXPECT_EQ(material->getLayer(0)->getTexGenType(), IShaderLayer::TEXGEN_SKYBOX);
+    EXPECT_FALSE(material->getLayer(0)->getTexGenExpression(0));
+    EXPECT_FALSE(material->getLayer(0)->getTexGenExpression(1));
+    EXPECT_FALSE(material->getLayer(0)->getTexGenExpression(2));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/texgen/wobblesky");
-    EXPECT_EQ(material->getAllLayers().front()->getTexGenType(), IShaderLayer::TEXGEN_WOBBLESKY);
-    EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(0)->getExpressionString(), "1");
-    EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(1)->getExpressionString(), "0.5");
-    EXPECT_EQ(material->getAllLayers().front()->getTexGenExpression(2)->getExpressionString(), "(time * 0.6)");
+    EXPECT_EQ(material->getLayer(0)->getTexGenType(), IShaderLayer::TEXGEN_WOBBLESKY);
+    EXPECT_EQ(material->getLayer(0)->getTexGenExpression(0)->getExpressionString(), "1");
+    EXPECT_EQ(material->getLayer(0)->getTexGenExpression(1)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(0)->getTexGenExpression(2)->getExpressionString(), "(time * 0.6)");
 }
 
 TEST_F(MaterialsTest, MaterialParserStageClamp)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/clamping/noclamp");
-    EXPECT_EQ(material->getAllLayers().front()->getClampType(), CLAMP_REPEAT);
+    EXPECT_EQ(material->getLayer(0)->getClampType(), CLAMP_REPEAT);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/clamping/clamp");
-    EXPECT_EQ(material->getAllLayers().front()->getClampType(), CLAMP_NOREPEAT);
+    EXPECT_EQ(material->getLayer(0)->getClampType(), CLAMP_NOREPEAT);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/clamping/zeroclamp");
-    EXPECT_EQ(material->getAllLayers().front()->getClampType(), CLAMP_ZEROCLAMP);
+    EXPECT_EQ(material->getLayer(0)->getClampType(), CLAMP_ZEROCLAMP);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/clamping/alphazeroclamp");
-    EXPECT_EQ(material->getAllLayers().front()->getClampType(), CLAMP_ALPHAZEROCLAMP);
+    EXPECT_EQ(material->getLayer(0)->getClampType(), CLAMP_ALPHAZEROCLAMP);
 }
 
 TEST_F(MaterialsTest, MaterialParserStageFlags)
@@ -1261,150 +1274,150 @@ TEST_F(MaterialsTest, MaterialParserStageFlags)
     for (const auto& testCase : testCases)
     {
         auto material = GlobalMaterialManager().getMaterial(testCase.first);
-        EXPECT_EQ(material->getAllLayers().front()->getStageFlags() & testCase.second, testCase.second);
+        EXPECT_EQ(material->getLayer(0)->getStageFlags() & testCase.second, testCase.second);
     }
 }
 
 TEST_F(MaterialsTest, MaterialParserStageVertexColours)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/vertexcolours/none");
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexColourMode(), IShaderLayer::VERTEX_COLOUR_NONE);
+    EXPECT_EQ(material->getLayer(0)->getVertexColourMode(), IShaderLayer::VERTEX_COLOUR_NONE);
     
     material = GlobalMaterialManager().getMaterial("textures/parsertest/vertexcolours/vertexcolour");
-    EXPECT_EQ(material->getAllLayers().at(1)->getVertexColourMode(), IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY);
-    EXPECT_EQ(material->getAllLayers().at(0)->getVertexColourMode(), IShaderLayer::VERTEX_COLOUR_MULTIPLY);
+    EXPECT_EQ(material->getLayer(1)->getVertexColourMode(), IShaderLayer::VERTEX_COLOUR_INVERSE_MULTIPLY);
+    EXPECT_EQ(material->getLayer(0)->getVertexColourMode(), IShaderLayer::VERTEX_COLOUR_MULTIPLY);
     
     material = GlobalMaterialManager().getMaterial("textures/parsertest/vertexcolours/colourcomponents");
 
     // Stage 1: Red
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.5");
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_GREEN));
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_BLUE));
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_ALPHA));
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGB));
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.5");
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_ALPHA));
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     // Stage 2: Green
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.4");
-    EXPECT_FALSE(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RED));
-    EXPECT_FALSE(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_BLUE));
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_ALPHA));
-    EXPECT_FALSE(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGB));
-    EXPECT_FALSE(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.4");
+    EXPECT_FALSE(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RED));
+    EXPECT_FALSE(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_ALPHA));
+    EXPECT_FALSE(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     // Stage 3: Blue
-    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.3");
-    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RED));
-    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_GREEN));
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_ALPHA));
-    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RGB));
-    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.3");
+    EXPECT_FALSE(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_RED));
+    EXPECT_FALSE(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_ALPHA));
+    EXPECT_FALSE(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     // Stage 4: Alpha
-    EXPECT_EQ(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.2");
-    EXPECT_FALSE(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_RED));
-    EXPECT_FALSE(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_GREEN));
-    EXPECT_FALSE(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_BLUE));
-    EXPECT_FALSE(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_RGB));
-    EXPECT_FALSE(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.2");
+    EXPECT_FALSE(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_RED));
+    EXPECT_FALSE(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_GREEN));
+    EXPECT_FALSE(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_BLUE));
+    EXPECT_FALSE(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/vertexcolours/coloured");
 
     // Stage 1: color expr
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.7");
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.6");
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.5");
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.9");
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGB));
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.7");
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.6");
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.9");
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     // Stage 2: colored
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "parm0");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "parm1");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "parm2");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "parm3");
-    EXPECT_FALSE(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGB));
-    EXPECT_FALSE(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "parm0");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "parm1");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "parm2");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "parm3");
+    EXPECT_FALSE(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/vertexcolours/combinations");
 
     // Stage 1: RGB the same, alpha is different
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.5");
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.5");
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.5");
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString(), "0.5");
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time");
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString(), "0.5");
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     // Stage 2: RGBA all the same
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.5");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.5");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.5");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.5");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString(), "0.5");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGBA)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString(), "0.5");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RGBA)->getExpressionString(), "0.5");
 
     // Stage 3: RGB overridden by red
-    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.4");
-    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.3");
-    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.3");
-    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_ALPHA));
-    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RGB));
-    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.4");
+    EXPECT_EQ(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.3");
+    EXPECT_EQ(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.3");
+    EXPECT_FALSE(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_ALPHA));
+    EXPECT_FALSE(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     // Stage 4: RGBA overridden by alpha
-    EXPECT_EQ(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.2");
-    EXPECT_EQ(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.2");
-    EXPECT_EQ(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.2");
-    EXPECT_EQ(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString(), "0.2");
-    EXPECT_FALSE(material->getAllLayers().at(3)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.2");
+    EXPECT_EQ(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.2");
+    EXPECT_EQ(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.2");
+    EXPECT_EQ(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time");
+    EXPECT_EQ(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString(), "0.2");
+    EXPECT_FALSE(material->getLayer(3)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/vertexcolours/combinations2");
 
     // Stage 1: color overridden by green
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.1");
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time");
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.3");
-    EXPECT_EQ(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.4");
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGB));
-    EXPECT_FALSE(material->getAllLayers().at(0)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.1");
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "time");
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.3");
+    EXPECT_EQ(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.4");
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getLayer(0)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     // Stage 2: color overridden by blue and green such that RGB are equivalent
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.1");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.1");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.1");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.4");
-    EXPECT_EQ(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString(), "0.1");
-    EXPECT_FALSE(material->getAllLayers().at(1)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "0.1");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "0.1");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "0.1");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "0.4");
+    EXPECT_EQ(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RGB)->getExpressionString(), "0.1");
+    EXPECT_FALSE(material->getLayer(1)->getColourExpression(IShaderLayer::COMP_RGBA));
 
     // Stage 3: colored overridden by alpha
-    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "parm0");
-    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "parm1");
-    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "parm2");
-    EXPECT_EQ(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time");
-    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RGB));
-    EXPECT_FALSE(material->getAllLayers().at(2)->getColourExpression(IShaderLayer::COMP_RGBA));
+    EXPECT_EQ(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_RED)->getExpressionString(), "parm0");
+    EXPECT_EQ(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_GREEN)->getExpressionString(), "parm1");
+    EXPECT_EQ(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_BLUE)->getExpressionString(), "parm2");
+    EXPECT_EQ(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_ALPHA)->getExpressionString(), "time");
+    EXPECT_FALSE(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_RGB));
+    EXPECT_FALSE(material->getLayer(2)->getColourExpression(IShaderLayer::COMP_RGBA));
 }
 
 TEST_F(MaterialsTest, MaterialParserStagePrivatePolygonOffset)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_EQ(material->getAllLayers().at(0)->getPrivatePolygonOffset(), 0.0f);
+    EXPECT_EQ(material->getLayer(0)->getPrivatePolygonOffset(), 0.0f);
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/privatePolygonOffset");
-    EXPECT_EQ(material->getAllLayers().at(0)->getPrivatePolygonOffset(), -45.9f);
+    EXPECT_EQ(material->getLayer(0)->getPrivatePolygonOffset(), -45.9f);
 }
 
 TEST_F(MaterialsTest, MaterialParserStageAlphaTest)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().at(0)->hasAlphaTest());
-    EXPECT_EQ(material->getAllLayers().at(0)->getAlphaTest(), 0.0f);
+    EXPECT_FALSE(material->getLayer(0)->hasAlphaTest());
+    EXPECT_EQ(material->getLayer(0)->getAlphaTest(), 0.0f);
     
     material = GlobalMaterialManager().getMaterial("textures/parsertest/alphaTest");
 
-    auto layer = material->getAllLayers().at(0);
+    auto layer = material->getLayer(0);
     layer->evaluateExpressions(0);
     EXPECT_TRUE(layer->hasAlphaTest());
     EXPECT_EQ(layer->getAlphaTest(), 0.0f); // sinTable[0] evaluates to 0.0
@@ -1414,12 +1427,12 @@ TEST_F(MaterialsTest, MaterialParserStageAlphaTest)
 TEST_F(MaterialsTest, MaterialParserStageCondition)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/notransform");
-    EXPECT_FALSE(material->getAllLayers().at(0)->getConditionExpression());
+    EXPECT_FALSE(material->getLayer(0)->getConditionExpression());
     
     material = GlobalMaterialManager().getMaterial("textures/parsertest/condition");
 
-    auto layer = material->getAllLayers().at(0);
-    EXPECT_EQ(material->getAllLayers().at(0)->getConditionExpression()->getExpressionString(), "(parm4 > 0)");
+    auto layer = material->getLayer(0);
+    EXPECT_EQ(material->getLayer(0)->getConditionExpression()->getExpressionString(), "(parm4 > 0)");
 }
 
 TEST_F(MaterialsTest, MaterialFrobStageDetection)
@@ -1559,7 +1572,7 @@ TEST_F(MaterialsTest, MaterialParserRemoteRenderMap)
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/remoteRenderMap1");
     EXPECT_TRUE(material) << "Could not find the material textures/parsertest/remoteRenderMap1";
 
-    auto layers = material->getAllLayers();
+    auto layers = getAllLayers(material);
 
     EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BLEND);
     EXPECT_EQ(layers.at(0)->getMapType(), IShaderLayer::MapType::RemoteRenderMap);
@@ -1570,7 +1583,7 @@ TEST_F(MaterialsTest, MaterialParserRemoteRenderMap)
     material = GlobalMaterialManager().getMaterial("textures/parsertest/remoteRenderMap2");
     EXPECT_TRUE(material) << "Could not find the material textures/parsertest/remoteRenderMap2";
 
-    layers = material->getAllLayers();
+    layers = getAllLayers(material);
 
     EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BLEND);
     EXPECT_EQ(layers.at(0)->getMapType(), IShaderLayer::MapType::RemoteRenderMap);
@@ -1585,7 +1598,7 @@ TEST_F(MaterialsTest, MaterialParserMirrorRenderMap)
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/mirrorRenderMap1");
     EXPECT_TRUE(material) << "Could not find the material textures/parsertest/mirrorRenderMap1";
 
-    auto layers = material->getAllLayers();
+    auto layers = getAllLayers(material);
 
     EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BLEND);
     EXPECT_EQ(layers.at(0)->getMapType(), IShaderLayer::MapType::MirrorRenderMap);
@@ -1596,7 +1609,7 @@ TEST_F(MaterialsTest, MaterialParserMirrorRenderMap)
     material = GlobalMaterialManager().getMaterial("textures/parsertest/mirrorRenderMap2");
     EXPECT_TRUE(material) << "Could not find the material textures/parsertest/mirrorRenderMap2";
 
-    layers = material->getAllLayers();
+    layers = getAllLayers(material);
 
     EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BLEND);
     EXPECT_EQ(layers.at(0)->getMapType(), IShaderLayer::MapType::MirrorRenderMap);
@@ -1608,7 +1621,7 @@ TEST_F(MaterialsTest, MaterialParserMirrorRenderMap)
     material = GlobalMaterialManager().getMaterial("textures/parsertest/mirrorRenderMap3");
     EXPECT_TRUE(material) << "Could not find the material textures/parsertest/mirrorRenderMap3";
 
-    layers = material->getAllLayers();
+    layers = getAllLayers(material);
 
     EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::BLEND);
     EXPECT_EQ(layers.at(0)->getMapType(), IShaderLayer::MapType::MirrorRenderMap);
