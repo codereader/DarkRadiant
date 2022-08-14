@@ -722,7 +722,6 @@
     <ClCompile Include="..\..\radiantcore\vfs\DeflatedInputStream.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\DirectoryArchive.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystem.cpp" />
-    <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystemModule.cpp" />
     <ClCompile Include="..\..\radiantcore\vfs\ZipArchive.cpp" />
     <ClCompile Include="..\..\radiantcore\xmlregistry\RegistryTree.cpp" />
     <ClCompile Include="..\..\radiantcore\xmlregistry\XMLRegistry.cpp" />

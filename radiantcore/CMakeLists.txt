@@ -309,7 +309,6 @@ add_library(radiantcore MODULE
             vfs/DeflatedInputStream.cpp
             vfs/DirectoryArchive.cpp
             vfs/Doom3FileSystem.cpp
-            vfs/Doom3FileSystemModule.cpp
             vfs/ZipArchive.cpp
             xmlregistry/RegistryTree.cpp
             xmlregistry/XMLRegistry.cpp)

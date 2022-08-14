@@ -256,9 +256,6 @@
     <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystem.cpp">
       <Filter>src\vfs</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\vfs\Doom3FileSystemModule.cpp">
-      <Filter>src\vfs</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\vfs\ZipArchive.cpp">
       <Filter>src\vfs</Filter>
     </ClCompile>
