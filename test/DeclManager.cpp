@@ -1040,7 +1040,38 @@ TEST_F(DeclManagerTest, RemoveRenamedDecl)
     // Now remove the renamed decl, the file should be stripped from the old decl text
     GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/deleteMeIfYouCan/3");
 
-    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "testDecl decl/removal/3")) << "The old decl is still there";
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "testDecl decl/removal/3\n")) << "The old decl is still there";
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "// Comment before decl/removal/3\n")) << "The comment has not been removed";
+}
+
+TEST_F(DeclManagerTest, RemoveRenamedDeclAfterSave)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    // A backup copy to restore the decl file to its previous state
+    auto fullPath = _context.getTestProjectPath() + "testdecls/removal_tests.decl";
+    BackupCopy backup(fullPath);
+
+    // Check that the decl and the lead-in comment are there
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "testDecl decl/removal/3"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Comment before decl/removal/3"));
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/removal/3");
+
+    GlobalDeclarationManager().renameDeclaration(decl::Type::TestDecl, "decl/removal/3", "decl/deleteMeIfYouCan/3");
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/deleteMeIfYouCan/3");
+
+    // Now save the declaration, this bakes the new name into the file
+    GlobalDeclarationManager().saveDeclaration(decl);
+
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "testDecl decl/removal/3\n")) << "The old decl name should be gone";
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Comment before decl/removal/3")) << "The comment should still be there";
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "decl/deleteMeIfYouCan/3")) << "The new decl name should be in the file now";
+
+    // Now remove the renamed decl, the file should be stripped from the updated decl
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/deleteMeIfYouCan/3");
+
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "decl/deleteMeIfYouCan/3")) << "The updated decl is still there";
     EXPECT_FALSE(algorithm::fileContainsText(fullPath, "// Comment before decl/removal/3")) << "The comment has not been removed";
 }
 
@@ -1479,6 +1510,20 @@ TEST_F(DeclManagerTest, SaveExistingDeclAfterRename)
     // Ensure that the comment has not been removed from the file after renaming
     EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// CamelCase typename shouldn't make a difference"))
         << "The comment has been removed, it should have remained intact";
+
+    // Now rename the decl again, and save again, this should work too
+    auto newName2 = "decl/changedAgain/3";
+    GlobalDeclarationManager().renameDeclaration(decl::Type::TestDecl, newName, newName2);
+
+    // The new name should not be present anywhere in the file yet
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, newName2)) << "New name 2 should not be present yet";
+
+    // Save the renamed declaration, this should remove the old decl and store the new one
+    GlobalDeclarationManager().saveDeclaration(decl);
+
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, newName)) << "The intermediate name should not be present anymore";
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, newName2)) << "New name 2 should be present now";
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, newContent)) << "New content should still be present";
 
     // The test fixture will restore the original file contents in TearDown
 }
