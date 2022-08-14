@@ -1012,8 +1012,11 @@ void ParticleEditor::updateWidgetsFromParticle()
     updateWidgetsFromStage();
 
     // Update outfile label
+    std::string origName = getParticleNameFromIter(_selectedDefIter);
+    auto origDef = GlobalParticlesManager().getDefByName(origName);
+
     fs::path outFile = GlobalGameManager().getModPath();
-    outFile /= _currentDef->getBlockSyntax().fileInfo.fullPath();
+    outFile /= origDef->getBlockSyntax().fileInfo.fullPath();
 
 	findNamedObject<wxStaticText>(this, "ParticleEditorSaveNote")->SetLabelMarkup(
 		fmt::format(_("Note: changes will be written to the file <i>{0}</i>"), outFile.string()));
@@ -1279,7 +1282,8 @@ void ParticleEditor::setupEditParticle()
     std::string temporaryParticleName = selectedName + EDIT_SUFFIX;
 
     _currentDef = GlobalParticlesManager().findOrInsertParticleDef(temporaryParticleName);
-    _currentDef->setFilename(os::getFilename(def->getBlockSyntax().fileInfo.name));
+    // Set the edit particle to an empty file info, it will be filled on saving
+    _currentDef->setFileInfo(vfs::FileInfo());
 
     _currentDef->copyFrom(def);
 
@@ -1473,7 +1477,7 @@ IParticleDef::Ptr ParticleEditor::createAndSelectNewParticle()
     // Good filename, good destination file, we're set to go
     auto particle = GlobalParticlesManager().findOrInsertParticleDef(particleName);
 
-    particle->setFilename(destFile);
+    particle->setFilename("particles/" + destFile);
 
     // Re-load the particles list
     populateParticleDefList();

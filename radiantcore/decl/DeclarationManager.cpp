@@ -309,7 +309,6 @@ void DeclarationManager::removeDeclaration(Type type, const std::string& name)
 
         if (decl != decls.end())
         {
-            // This will throw if the decl is stored in an archive
             removeDeclarationFromFile(decl->second);
 
             // Clear out this declaration's syntax block
@@ -328,7 +327,7 @@ void DeclarationManager::removeDeclaration(Type type, const std::string& name)
 namespace
 {
 
-void removeDeclarationFromSyntaxTree(const parser::DefSyntaxTree::Ptr& syntaxTree, const std::string& declName)
+bool removeDeclarationFromSyntaxTree(const parser::DefSyntaxTree::Ptr& syntaxTree, const std::string& declName)
 {
     // Remove the declaration from the tree
     std::vector<parser::DefSyntaxNode::Ptr> nodesToRemove;
@@ -384,16 +383,12 @@ void removeDeclarationFromSyntaxTree(const parser::DefSyntaxTree::Ptr& syntaxTre
         }
     }
 
-    if (nodesToRemove.empty())
-    {
-        rWarning() << "Could not locate the decl block " << declName << std::endl;
-        return;
-    }
-
     for (const auto& node : nodesToRemove)
     {
         syntaxTree->getRoot()->removeChildNode(node);
     }
+
+    return !nodesToRemove.empty(); // true if we removed one node or more
 }
 
 }
@@ -412,37 +407,43 @@ void DeclarationManager::removeDeclarationFromFile(const IDeclaration::Ptr& decl
 
     auto fullPath = GlobalFileSystem().findFile(syntax.fileInfo.fullPath());
 
-    if (fullPath.empty() || !fs::exists(fullPath)) throw std::logic_error("Physical file not found: " + syntax.fileInfo.fullPath());
+    if (fullPath.empty() || !fs::exists(fullPath))
+    {
+        return;
+    }
 
     fullPath += syntax.fileInfo.fullPath();
 
-    // Open a temporary file
-    stream::TemporaryOutputStream tempStream(fullPath);
+    // Load the syntax tree from the existing file
+    std::ifstream existingFile(fullPath);
 
-    auto& stream = tempStream.getStream();
-
-    std::ifstream inheritStream(fullPath);
-
-    if (!inheritStream.is_open())
+    if (!existingFile.is_open())
     {
         throw std::runtime_error(fmt::format(_("Cannot open file for reading: {0}"), fullPath));
     }
 
     // Parse the existing file into a syntax tree for manipulation
-    parser::DefBlockSyntaxParser<std::istream> parser(inheritStream);
+    parser::DefBlockSyntaxParser<std::istream> parser(existingFile);
     
     auto syntaxTree = parser.parse();
-    inheritStream.close();
+    existingFile.close();
 
-    // Move the old file to .bak before overwriting it
-    os::moveToBackupFile(fullPath);
+    // Try to remove the decl from the syntax tree
+    // Returns false if the decl could not be located (decl has not been saved to this file then)
+    if (removeDeclarationFromSyntaxTree(syntaxTree, decl->getDeclName()))
+    {
+        // Open a temporary file
+        stream::TemporaryOutputStream tempStream(fullPath);
+        auto& stream = tempStream.getStream();
 
-    removeDeclarationFromSyntaxTree(syntaxTree, decl->getDeclName());
+        // Move the old file to .bak before overwriting it
+        os::moveToBackupFile(fullPath);
 
-    // Export the modified syntax tree
-    stream << syntaxTree->getString();
+        // Export the modified syntax tree
+        stream << syntaxTree->getString();
 
-    tempStream.closeAndReplaceTargetFile();
+        tempStream.closeAndReplaceTargetFile();
+    }
 }
 
 bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName, const std::string& newName)
