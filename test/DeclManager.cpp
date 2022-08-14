@@ -1426,6 +1426,20 @@ TEST_F(DeclManagerTest, SetDeclFileInfo)
     EXPECT_EQ(decl->getBlockSyntax().fileInfo.visibility, vfs::Visibility::HIDDEN);
 }
 
+TEST_F(DeclManagerTest, SetDeclName)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/3");
+
+    auto newName = "decl/changed/3333";
+    decl->setDeclName(newName);
+
+    EXPECT_EQ(decl->getDeclName(), newName) << "New name not accepted by the decl";
+    EXPECT_EQ(decl->getBlockSyntax().name, newName) << "New name not propagated to the decl block syntax";
+}
+
 // Changed signal should fire on assigning a new syntax block
 TEST_F(DeclManagerTest, ChangedSignalOnSyntaxBlockChange)
 {

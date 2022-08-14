@@ -49,6 +49,10 @@ public:
     // The full name of this declaration, e.g. "textures/common/caulk"
     virtual const std::string& getDeclName() const = 0;
 
+    // Change the name of this decl. Don't use this directly in client code, use
+    // GlobalDeclarationManager().renameDeclaration() instead.
+    virtual void setDeclName(const std::string& newName) = 0;
+
     // The type of this declaration
     virtual Type getDeclType() const = 0;
 
