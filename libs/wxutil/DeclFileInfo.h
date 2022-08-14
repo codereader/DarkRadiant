@@ -17,6 +17,7 @@ class DeclFileInfo :
 private:
     wxStaticText* _nameLabel;
     wxStaticText* _fileLabel;
+    wxStaticText* _definedInLabel;
 
 public:
     DeclFileInfo(wxWindow* parent, decl::Type declType) :
@@ -32,7 +33,8 @@ public:
 
         sizer->Add(new wxStaticText(this, wxID_ANY, decl::getTypeName(declType) + " "), 0, wxALIGN_CENTER_VERTICAL, 0);
         sizer->Add(_nameLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
-        sizer->Add(new wxStaticText(this, wxID_ANY, _(" defined in ")), 0, wxALIGN_CENTER_VERTICAL, 0);
+        _definedInLabel = new wxStaticText(this, wxID_ANY, _(" defined in "));
+        sizer->Add(_definedInLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
         sizer->Add(_fileLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
 
         SetSizer(sizer);
@@ -47,6 +49,8 @@ public:
     void setPath(const std::string& path)
     {
         _fileLabel->SetLabel(path);
+        _fileLabel->Show(!path.empty());
+        _definedInLabel->Show(!path.empty());
         GetSizer()->Layout();
     }
 };

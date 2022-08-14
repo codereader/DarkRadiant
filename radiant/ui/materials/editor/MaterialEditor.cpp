@@ -27,6 +27,7 @@
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/EntityClassChooser.h"
 #include "wxutil/Bitmap.h"
+#include "wxutil/DeclFileInfo.h"
 #include "materials/FrobStageSetup.h"
 #include <fmt/format.h>
 #include "gamelib.h"
@@ -144,6 +145,10 @@ MaterialEditor::MaterialEditor() :
     // Wire up the buttons
     getControl<wxButton>("MaterialEditorCloseButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onClose, this);
     getControl<wxButton>("MaterialEditorReloadImagesButton")->Bind(wxEVT_BUTTON, &MaterialEditor::_onReloadImages, this);
+
+    auto oldInfoPanel = getControl<wxPanel>("MaterialEditorSaveNotePanel");
+    auto declFileInfo = new wxutil::DeclFileInfo(oldInfoPanel->GetParent(), decl::Type::Material);
+    replaceControl(oldInfoPanel, declFileInfo);
 
     // Add the treeview
     setupMaterialTreeView();
@@ -2236,6 +2241,11 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     {
         getControl<wxTextCtrl>("MaterialDescription")->SetValue(_material->getDescription());
 
+        auto declFileInfo = getControl<wxutil::DeclFileInfo>("MaterialEditorSaveNotePanel");
+        declFileInfo->Show();
+        declFileInfo->setName(_material->getName());
+        declFileInfo->setPath(_material->getShaderFileInfo().fullPath());
+
         // Type dropdown
         auto* materialTypeDropdown = getControl<wxChoice>("MaterialType");
         if (_material->getSurfaceType() == Material::SURFTYPE_DEFAULT)
@@ -2317,6 +2327,7 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
     }
     else
     {
+        getControl<wxPanel>("MaterialEditorSaveNotePanel")->Hide();
         getControl<wxTextCtrl>("MaterialGuiSurfPath")->SetValue("");
 
         getControl<wxCheckBox>("MaterialHasRenderBump")->SetValue(false);

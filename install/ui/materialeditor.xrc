@@ -3404,11 +3404,10 @@
 					<orient>wxHORIZONTAL</orient>
 					<object class="sizeritem">
 						<option>1</option>
-						<flag>wxALIGN_CENTER_VERTICAL</flag>
-						<border>5</border>
-						<object class="wxStaticText" name="MaterialEditorSaveNote">
-							<label></label>
-							<wrap>-1</wrap>
+						<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+						<border>6</border>
+						<object class="wxPanel" name="MaterialEditorSaveNotePanel">
+							<style>wxTAB_TRAVERSAL</style>
 						</object>
 					</object>
 					<object class="sizeritem">
