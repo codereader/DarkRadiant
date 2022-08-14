@@ -476,6 +476,9 @@ bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName
             return;
         }
 
+        // Store the new in the decl itself
+        decl->second->setDeclName(newName);
+
         // Rename in definition table
         auto extracted = decls.extract(oldName);
         extracted.key() = newName;

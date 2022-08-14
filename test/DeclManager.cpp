@@ -1043,22 +1043,28 @@ TEST_F(DeclManagerTest, RenameDeclaration)
     expectDeclIsPresent(decl::Type::TestDecl, "decl/precedence_test/1");
     expectDeclIsNotPresent(decl::Type::TestDecl, "decl/renamed/1");
 
-    auto oldSyntax = GlobalDeclarationManager().findDeclaration(
-        decl::Type::TestDecl, "decl/precedence_test/1")->getBlockSyntax();
+    auto oldDecl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/precedence_test/1");
+    auto oldSyntax = oldDecl->getBlockSyntax();
 
     auto result = GlobalDeclarationManager().renameDeclaration(
         decl::Type::TestDecl, "decl/precedence_test/1", "decl/renamed/1");
 
     EXPECT_TRUE(result) << "Rename operation should have succeeded";
 
+    auto newName = "decl/renamed/1";
     expectDeclIsNotPresent(decl::Type::TestDecl, "decl/precedence_test/1");
-    expectDeclIsPresent(decl::Type::TestDecl, "decl/renamed/1");
+    expectDeclIsPresent(decl::Type::TestDecl, newName);
 
-    auto newSyntax = GlobalDeclarationManager().findDeclaration(
-        decl::Type::TestDecl, "decl/renamed/1")->getBlockSyntax();
+    auto newDecl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, newName);
+    const auto& newSyntax = newDecl->getBlockSyntax();
+
+    EXPECT_EQ(oldDecl->getDeclName(), newName) << "Existing Declaration reference has not been renamed";
+    EXPECT_EQ(newDecl->getDeclName(), newName) << "Newly looked up declaration has not been renamed";
+
+    // The syntax block should carry the new name too
+    EXPECT_EQ(newSyntax.name, newName);
 
     // Check that the syntax of the renamed declaration is the same as before
-    EXPECT_EQ(newSyntax.name, oldSyntax.name);
     EXPECT_EQ(newSyntax.contents, oldSyntax.contents);
     EXPECT_EQ(newSyntax.getModName(), oldSyntax.getModName());
     EXPECT_EQ(newSyntax.typeName, oldSyntax.typeName);
