@@ -40,9 +40,6 @@ class MaterialManager :
 public:
     MaterialManager();
 
-	// Flushes the shaders from memory and reloads the material files
-    void refresh() override;
-
     sigc::signal<void, const std::string&>& signal_materialCreated() override;
     sigc::signal<void, const std::string&, const std::string&>& signal_materialRenamed() override;
     sigc::signal<void, const std::string&>& signal_materialRemoved() override;
@@ -61,8 +58,6 @@ public:
 	void setActiveShaderUpdates(bool v) override {
 		_enableActiveUpdates = v;
 	}
-
-    void setLightingEnabled(bool enabled) override;
 
     const char* getTexturePrefix() const override;
 
@@ -109,8 +104,6 @@ private:
 
     // Unloads all the existing shaders and calls activeShadersChangedNotify()
     void freeShaders();
-
-	void testShaderExpressionParsing();
 
     std::string ensureNonConflictingName(const std::string& name);
 

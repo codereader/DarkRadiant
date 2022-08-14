@@ -500,8 +500,6 @@ public:
   // NOTE: shader and texture names used must be full path.
   // Shaders usable as textures have prefix equal to getTexturePrefix()
 
-  virtual void refresh() = 0;
-
 	/**
      * \brief Return the shader with the given name. The default shader will be
      * returned if name is not found.
@@ -549,8 +547,6 @@ public:
      * Enable or disable active shaders updates (for performance).
      */
     virtual void setActiveShaderUpdates(bool val) = 0;
-
-  virtual void setLightingEnabled(bool enabled) = 0;
 
   virtual const char* getTexturePrefix() const = 0;
 

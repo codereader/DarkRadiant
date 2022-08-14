@@ -59,9 +59,6 @@ void MaterialManager::freeShaders() {
     activeShadersChangedNotify();
 }
 
-void MaterialManager::refresh() {
-}
-
 MaterialPtr MaterialManager::getMaterial(const std::string& name)
 {
     return _library->findShader(name);
@@ -88,11 +85,6 @@ void MaterialManager::foreachShaderName(const ShaderNameCallback& callback)
 {
     // Pass the call to the Library
     _library->foreachShaderName(callback);
-}
-
-void MaterialManager::setLightingEnabled(bool enabled)
-{
-    // remove?
 }
 
 const char* MaterialManager::getTexturePrefix() const

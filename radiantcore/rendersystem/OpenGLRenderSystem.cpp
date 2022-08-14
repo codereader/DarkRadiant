@@ -273,9 +273,6 @@ void OpenGLRenderSystem::setShaderProgram(RenderSystem::ShaderProgram newProg)
     if (oldProgram != newProg)
     {
         unrealise();
-        GlobalMaterialManager().setLightingEnabled(
-            newProg == SHADER_PROGRAM_INTERACTION
-        );
     }
 
     _currentShaderProgram = newProg;
