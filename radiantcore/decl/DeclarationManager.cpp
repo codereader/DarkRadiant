@@ -790,6 +790,11 @@ std::string DeclarationManager::getTypenameByType(Type type)
     throw std::invalid_argument("Unregistered type: " + getTypeName(type));
 }
 
+void DeclarationManager::onFilesystemInitialised()
+{
+    reloadDeclarations();
+}
+
 const std::string& DeclarationManager::getName() const
 {
     static std::string _name(MODULE_DECLMANAGER);
@@ -817,10 +822,16 @@ void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
     // After the initial parsing, all decls will have a parseStamp of 0
     _parseStamp = 0;
     _reparseInProgress = false;
+
+    _vfsInitialisedConn = GlobalFileSystem().signal_Initialised().connect(
+        sigc::mem_fun(*this, &DeclarationManager::onFilesystemInitialised)
+    );
 }
 
 void DeclarationManager::shutdownModule()
 {
+    _vfsInitialisedConn.disconnect();
+
     auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationLock);
     std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
 

@@ -216,6 +216,11 @@ std::string Manager::getUserEnginePath()
     return _config.enginePath;
 }
 
+const GameConfiguration& Manager::getConfig() const
+{
+    return _config;
+}
+
 void Manager::applyConfig(const GameConfiguration& config)
 {
 	if (!GameConfigUtil::PathsValid(config))

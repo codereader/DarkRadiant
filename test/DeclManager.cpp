@@ -1,5 +1,6 @@
 #include "RadiantTest.h"
 
+#include "igame.h"
 #include "ideclmanager.h"
 #include "testutil/TemporaryFile.h"
 #include "testutil/ThreadUtils.h"
@@ -1460,6 +1461,48 @@ TEST_F(DeclManagerTest, ChangedSignalOnEdit)
     decl->setKeyValue("nork", "tork");
 
     EXPECT_EQ(changedSignalReceiveCount, 1) << "Changed signal should have fired once after editing the decl";
+}
+
+TEST_F(DeclManagerTest, GameConfigChangeTriggerReload)
+{
+    auto temporaryFmPath = _context.getTestResourcePath() + "temporaryGameFolder/";
+
+    auto declFolder = temporaryFmPath + "testdecls/";
+    fs::create_directories(declFolder);
+    auto tempDeclFile = declFolder + "test.decl";
+    algorithm::replaceFileContents(tempDeclFile, R"(
+decl/temporaryGame/1
+{
+    diffusemap something
+}
+)");
+
+    // Register the custom decl type, it should not touch that temporary FM folder
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    expectDeclIsNotPresent(decl::Type::TestDecl, "decl/temporaryGame/1");
+    
+    // The numbers/3 decl is only present in the unchanged game config
+    auto number3 = std::static_pointer_cast<TestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/3"));
+
+    std::size_t declarationsReloadingSignalCount = 0;
+    std::size_t declarationsReloadedSignalCount = 0;
+
+    GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::TestDecl).connect([&]() { declarationsReloadedSignalCount++; });
+    GlobalDeclarationManager().signal_DeclsReloading(decl::Type::TestDecl).connect([&]() { declarationsReloadingSignalCount++; });
+
+    // Apply the new game config, this should reparse the decls in the new VFS search folders
+    auto config = GlobalGameManager().getConfig();
+    config.modPath = temporaryFmPath;
+    GlobalGameManager().applyConfig(config);
+
+    // This one should be present now
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/temporaryGame/1");
+
+    // Clean up the temporary FM path
+    fs::remove_all(temporaryFmPath);
 }
 
 }

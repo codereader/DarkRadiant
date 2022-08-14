@@ -6,6 +6,7 @@
 #include <set>
 #include <vector>
 #include <memory>
+#include <sigc++/connection.h>
 #include "string/string.h"
 
 #include "DeclarationFile.h"
@@ -64,6 +65,8 @@ private:
     // Holds the results during reparseDeclarations
     std::vector<std::pair<Type, ParseResult>> _parseResults;
 
+    sigc::connection _vfsInitialisedConn;
+
 public:
     void registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& parser) override;
     void unregisterDeclType(const std::string& typeName) override;
@@ -109,6 +112,8 @@ private:
 
     // Emit the reloaded signal
     void emitDeclsReloadedSignal(Type type);
+
+    void onFilesystemInitialised();
 };
 
 }

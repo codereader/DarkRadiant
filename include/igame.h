@@ -122,6 +122,9 @@ public:
 	// Returns the absolute path where prefabs are going to be saved to
 	virtual const std::string& getPrefabPath() = 0;
 
+    // Returns the active game configuration
+    virtual const GameConfiguration& getConfig() const = 0;
+
 	// Activates the given mod configuration
 	// Stores the given config, initialises VFS and constructs a few secondary paths
 	virtual void applyConfig(const GameConfiguration& config) = 0;
