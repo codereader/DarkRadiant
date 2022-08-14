@@ -1759,6 +1759,9 @@ void MaterialEditor::_onMaterialNameChanged(wxCommandEvent& ev)
 
     GlobalMaterialManager().renameMaterial(_material->getName(), nameEntry->GetValue().ToStdString());
     auto item = _treeView->GetTreeModel()->FindString(_material->getName(), _treeView->Columns().declName);
+
+    // Make sure the item is selected again, it will be de-selected by the rename operation
+    _treeView->Select(item);
     _treeView->EnsureVisible(item);
  
     updateMaterialPropertiesFromMaterial();
