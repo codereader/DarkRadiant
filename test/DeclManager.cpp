@@ -1021,6 +1021,29 @@ TEST_F(DeclManagerTest, RemoveDeclarationCreatesBackupFile)
     EXPECT_TRUE(algorithm::fileContainsText(expectedBackupPath, "testdecl decl/removal/2"));
 }
 
+TEST_F(DeclManagerTest, RemoveRenamedDecl)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    // A backup copy to restore the decl file to its previous state
+    auto fullPath = _context.getTestProjectPath() + "testdecls/removal_tests.decl";
+    BackupCopy backup(fullPath);
+
+    // Check that the decl and the lead-in comment are there
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "testDecl decl/removal/3"));
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// Comment before decl/removal/3"));
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/removal/3");
+
+    GlobalDeclarationManager().renameDeclaration(decl::Type::TestDecl, "decl/removal/3", "decl/deleteMeIfYouCan/3");
+
+    // Now remove the renamed decl, the file should be stripped from the old decl text
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/deleteMeIfYouCan/3");
+
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "testDecl decl/removal/3")) << "The old decl is still there";
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, "// Comment before decl/removal/3")) << "The comment has not been removed";
+}
+
 TEST_F(DeclManagerTest, RemoveUnsavedDeclaration)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
