@@ -162,6 +162,22 @@ TEST_F(MaterialsTest, MaterialRenaming)
     EXPECT_EQ(firedNewName, "");
 }
 
+TEST_F(MaterialsTest, MaterialRenameSetsModifiedStatus)
+{
+    auto& materialManager = GlobalMaterialManager();
+
+    auto material = materialManager.getMaterial("textures/numbers/2");
+    EXPECT_TRUE(material) << "Cannot find the material textures/numbers/2";
+    EXPECT_TRUE(materialManager.materialCanBeModified("textures/numbers/2")) << "Material textures/numbers/2 should be editable";
+    EXPECT_FALSE(material->isModified()) << "Unchanged material should report as modified";
+
+    // Rename this material
+    EXPECT_TRUE(materialManager.renameMaterial("textures/numbers/2", "textures/changedNumber/2"));
+    
+    // Renamed material should be marked as modified
+    EXPECT_TRUE(material->isModified());
+}
+
 TEST_F(MaterialsTest, MaterialCopy)
 {
     auto& materialManager = GlobalMaterialManager();

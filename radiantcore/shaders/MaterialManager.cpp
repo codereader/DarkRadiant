@@ -208,6 +208,8 @@ bool MaterialManager::renameMaterial(const std::string& oldName, const std::stri
 
     if (result)
     {
+        // Mark the material as modified
+        _library->findShader(newName)->setIsModified();
         _sigMaterialRenamed(oldName, newName);
     }
 
