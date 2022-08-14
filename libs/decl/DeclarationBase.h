@@ -28,6 +28,7 @@ private:
         "DeclarationInterface type must inherit from IDeclaration");
 
     std::string _name;
+    std::string _originalName; // the original name as parsed from the file
     decl::Type _type;
 
     std::size_t _parseStamp;
@@ -42,6 +43,7 @@ private:
 protected:
     DeclarationBase(decl::Type type, const std::string& name) :
         _name(name),
+        _originalName(name),
         _type(type),
         _parseStamp(0),
         _parsed(false)
@@ -54,8 +56,12 @@ public:
     {
         return _name;
     }
-
-    // 
+    
+    const std::string& getOriginalDeclName() const final
+    {
+        return _originalName;
+    }
+   
     void setDeclName(const std::string& newName) override
     {
         _name = newName;

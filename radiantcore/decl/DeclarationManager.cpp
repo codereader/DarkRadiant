@@ -476,14 +476,15 @@ bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName
             return;
         }
 
-        // Store the new in the decl itself
-        decl->second->setDeclName(newName);
-
         // Rename in definition table
         auto extracted = decls.extract(oldName);
         extracted.key() = newName;
 
-        decls.insert(std::move(extracted));
+        decl = decls.insert(std::move(extracted)).position;
+
+        // Store the new in the decl itself
+        decl->second->setDeclName(newName);
+
         result = true;
     });
 

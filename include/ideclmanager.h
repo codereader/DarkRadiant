@@ -49,6 +49,11 @@ public:
     // The full name of this declaration, e.g. "textures/common/caulk"
     virtual const std::string& getDeclName() const = 0;
 
+    // The original full name of this declaration, e.g. "textures/common/caulk",
+    // as parsed from the decl file. This is internally needed for saving/deleting
+    // declarations, client code usually wants to use getDeclName().
+    virtual const std::string& getOriginalDeclName() const = 0;
+
     // Change the name of this decl. Don't use this directly in client code, use
     // GlobalDeclarationManager().renameDeclaration() instead.
     virtual void setDeclName(const std::string& newName) = 0;

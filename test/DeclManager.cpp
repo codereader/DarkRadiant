@@ -1418,6 +1418,48 @@ TEST_F(DeclManagerTest, SaveExistingDeclWithEverythingInASingleLine)
     // The test fixture will restore the original file contents in TearDown
 }
 
+TEST_F(DeclManagerTest, SaveExistingDeclAfterRename)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = std::static_pointer_cast<ITestDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/numbers/3"));
+
+    // Remember the contents of this decl
+    auto oldContent = decl->getBlockSyntax().contents;
+
+    auto fullPath = GlobalFileSystem().findFile(decl->getDeclFilePath()) + decl->getDeclFilePath();
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, oldContent));
+
+    // Swap some contents of this decl
+    decl->setKeyValue("diffusemap", "textures/changed/3");
+
+    auto newName = "decl/changed/3";
+    GlobalDeclarationManager().renameDeclaration(decl->getDeclType(), decl->getDeclName(), newName);
+
+    // Get the new block content
+    auto newContent = decl->getBlockSyntax().contents;
+
+    // Both the new name and the new content should not be present anywhere in the file
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, newName)) << "New name should not be present yet";
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, newContent)) << "New content should not be present yet";
+
+    // Save the renamed declaration, this should remove the old decl and store the new one
+    GlobalDeclarationManager().saveDeclaration(decl);
+
+    EXPECT_FALSE(algorithm::fileContainsText(fullPath, oldContent)) << "The old content should be gone";
+
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, newName)) << "New name should be present now";
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, newContent)) << "New content should be present now";
+
+    // Ensure that the comment has not been removed from the file after renaming
+    EXPECT_TRUE(algorithm::fileContainsText(fullPath, "// CamelCase typename shouldn't make a difference"))
+        << "The comment has been removed, it should have remained intact";
+
+    // The test fixture will restore the original file contents in TearDown
+}
+
 TEST_F(DeclManagerTest, SetDeclFileInfo)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
