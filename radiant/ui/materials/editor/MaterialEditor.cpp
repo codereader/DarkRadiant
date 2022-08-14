@@ -412,6 +412,7 @@ void MaterialEditor::_onReloadImages(wxCommandEvent& ev)
     if (!_material) return;
 
     _material->refreshImageMaps();
+    updateBasicImagePreview();
 }
 
 bool MaterialEditor::okToCloseDialog()
