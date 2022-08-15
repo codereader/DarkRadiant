@@ -102,6 +102,17 @@ void ParticleNode::update(const VolumeTest& viewVolume) const
 	_renderableParticle->update(viewRotation, localToWorld(), _renderEntity);
 }
 
+void ParticleNode::onVisibilityChanged(bool isVisibleNow)
+{
+    Node::onVisibilityChanged(isVisibleNow);
+
+    // Clear geometry when hidden. When shown, the particle will be updated every frame anyway
+    if (!isVisibleNow)
+    {
+        _renderableParticle->clearRenderables();
+    }
+}
+
 void ParticleNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     _renderableParticle->clearRenderables();
