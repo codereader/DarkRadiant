@@ -157,7 +157,6 @@ const StringSet& AasFileManager::getDependencies() const
 
 void AasFileManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 // Define the static AasFileManager module

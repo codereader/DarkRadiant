@@ -390,8 +390,6 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
 
 void OpenGLRenderSystem::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     _materialDefsLoaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
         .connect(sigc::mem_fun(*this, &OpenGLRenderSystem::realise));
 

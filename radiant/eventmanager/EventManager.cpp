@@ -6,6 +6,7 @@
 #include <iostream>
 #include <typeinfo>
 
+#include <wx/debug.h>
 #include <wx/wxprec.h>
 #include <wx/toolbar.h>
 #include <wx/menu.h>
@@ -66,8 +67,6 @@ const StringSet& EventManager::getDependencies() const
 
 void EventManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Deactivate the empty event, so it's safe to return it as NullEvent
 	_emptyEvent->setEnabled(false);
 
@@ -260,48 +259,51 @@ void EventManager::setToggled(const std::string& name, const bool toggled)
 
 void EventManager::registerMenuItem(const std::string& eventName, wxMenuItem* item)
 {
-	_menuItems.emplace(eventName, item);
+    // Add to both forward and reverse maps
+    _menuItems.emplace(eventName, item);
+    _commandsByMenuID.emplace(item->GetId(), eventName);
 
-	// Set the accelerator of this menu item
-	auto& accelerator = findAccelerator(eventName);
+    // Set the accelerator of this menu item
+    auto& accelerator = findAccelerator(eventName);
 
-	Event::setMenuItemAccelerator(item, accelerator);
+    Event::setMenuItemAccelerator(item, accelerator);
 
-	// Check if we have an event object corresponding to this event name
-	auto evt = findEvent(eventName);
+    // Check if we have an event object corresponding to this event name
+    auto evt = findEvent(eventName);
 
-	if (!evt->empty())
-	{
-		evt->connectMenuItem(item);
-	}
-	else
-	{
-		item->GetMenu()->Bind(wxEVT_MENU, &EventManager::onMenuItemClicked, this, item->GetId());
-	}
+    if (!evt->empty()) {
+        evt->connectMenuItem(item);
+    }
+    else {
+        item->GetMenu()->Bind(wxEVT_MENU_OPEN,
+                              [this](wxMenuEvent& e) { aboutToOpenMenu(*e.GetMenu()); });
+        item->GetMenu()->Bind(wxEVT_MENU, &EventManager::onMenuItemClicked, this, item->GetId());
+    }
 }
 
 void EventManager::unregisterMenuItem(const std::string& eventName, wxMenuItem* item)
 {
-	for (auto it = _menuItems.lower_bound(eventName);
-		 it != _menuItems.end() && it != _menuItems.upper_bound(eventName); ++it)
-	{
-		if (it->second != item) continue;
+    for (auto it = _menuItems.lower_bound(eventName);
+         it != _menuItems.end() && it != _menuItems.upper_bound(eventName); ++it)
+    {
+        if (it->second != item)
+            continue;
 
-		// Check if we have an event object corresponding to this event name
-		auto evt = findEvent(eventName);
+        // Check if we have an event object corresponding to this event name
+        auto evt = findEvent(eventName);
 
-		if (!evt->empty())
-		{
-			evt->disconnectMenuItem(item);
-		}
-		else
-		{
-			item->GetMenu()->Unbind(wxEVT_MENU, &EventManager::onMenuItemClicked, this, item->GetId());
-		}
+        if (!evt->empty())
+            evt->disconnectMenuItem(item);
+        else
+            item->GetMenu()->Unbind(wxEVT_MENU, &EventManager::onMenuItemClicked, this,
+                                    item->GetId());
 
-		_menuItems.erase(it);
-		break;
-	}
+        // Erase from both forward and reverse maps
+        _menuItems.erase(it);
+        _commandsByMenuID.erase(item->GetId());
+
+        break;
+    }
 }
 
 void EventManager::registerToolItem(const std::string& eventName, const wxToolBarToolBase* item)
@@ -370,14 +372,21 @@ void EventManager::onToolItemClicked(wxCommandEvent& ev)
 
 void EventManager::onMenuItemClicked(wxCommandEvent& ev)
 {
-	for (const auto& pair : _menuItems)
-	{
-		if (pair.second->GetId() == ev.GetId())
-		{
-			GlobalCommandSystem().execute(pair.first);
-			break;
-		}
-	}
+    if (const auto i = _commandsByMenuID.find(ev.GetId()); i != _commandsByMenuID.end())
+        GlobalCommandSystem().execute(i->second);
+    else
+        wxFAIL_MSG("onMenuItemClicked(): no command for menu ID");
+}
+
+void EventManager::aboutToOpenMenu(wxMenu& menu)
+{
+    // Grey out any menu items which cannot currently be run
+    for (wxMenuItem* item: menu.GetMenuItems()) {
+        // Not everything in the menu may have a command ID (e.g. separators)
+        if (auto i = _commandsByMenuID.find(item->GetId()); i != _commandsByMenuID.end()) {
+            item->Enable(GlobalCommandSystem().canExecute(i->second));
+        }
+    }
 }
 
 Accelerator& EventManager::connectAccelerator(int keyCode, unsigned int modifierFlags, const std::string& command)

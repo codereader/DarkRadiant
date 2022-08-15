@@ -26,7 +26,6 @@ const StringSet& GroupDialogManager::getDependencies() const
 
 void GroupDialogManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
 }
 
 module::StaticModuleRegistration<GroupDialogManager> groupDialogManagerModule;

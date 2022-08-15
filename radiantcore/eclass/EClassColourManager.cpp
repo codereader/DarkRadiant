@@ -73,7 +73,6 @@ const StringSet& EClassColourManager::getDependencies() const
 
 void EClassColourManager::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 module::StaticModuleRegistration<EClassColourManager> eclassColourManagerModule;

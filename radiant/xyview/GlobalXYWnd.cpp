@@ -678,8 +678,6 @@ void XYWndManager::observeKey(const std::string& key)
 
 void XYWndManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Connect self to the according registry keys
 	observeKey(RKEY_CHASE_MOUSE);
     observeKey(RKEY_CHASE_MOUSE_CAP);

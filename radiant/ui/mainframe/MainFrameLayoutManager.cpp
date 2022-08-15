@@ -75,8 +75,6 @@ const StringSet& MainFrameLayoutManager::getDependencies() const
 
 void MainFrameLayoutManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << "MainFrameLayoutManager::initialiseModule called." << std::endl;
-
 	// Register the default layouts
 	registerLayout(EMBEDDED_LAYOUT_NAME, EmbeddedLayout::CreateInstance);
 	registerLayout(AUI_LAYOUT_NAME, AuiLayout::CreateInstance);

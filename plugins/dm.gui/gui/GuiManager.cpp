@@ -212,8 +212,6 @@ const StringSet& GuiManager::getDependencies() const
 
 void GuiManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Search the VFS for GUIs
 	init();
 }

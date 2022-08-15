@@ -32,8 +32,6 @@ const StringSet& Doom3MapFormat::getDependencies() const
 
 void Doom3MapFormat::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << ": initialiseModule called." << std::endl;
-
 	// Register ourselves as map format for maps and regions
 	GlobalMapFormatManager().registerMapFormat("map", shared_from_this());
 	GlobalMapFormatManager().registerMapFormat("reg", shared_from_this());

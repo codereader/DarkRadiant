@@ -20,7 +20,8 @@ protected:
         prefabPath /= "prefabs";
         prefabPath /= prefabFolderRelativePath;
 
-        GlobalCommandSystem().executeCommand("LoadPrefabAt", prefabPath.string(), Vector3(0, 0, 0), 1);
+        GlobalCommandSystem().executeCommand("LoadPrefabAt",
+                                             {prefabPath.string(), Vector3(0, 0, 0), 1});
     }
 };
 
@@ -84,7 +85,8 @@ TEST_F(PrefabTest, PrefabInsertPosition)
     fs::path prefabPath = _context.getTestProjectPath();
     prefabPath /= "prefabs/large_bounds.pfbx";
 
-    GlobalCommandSystem().executeCommand("LoadPrefabAt", prefabPath.string(), Vector3(0, 0, 0), 1);
+    GlobalCommandSystem().executeCommand("LoadPrefabAt",
+                                         {prefabPath.string(), Vector3(0, 0, 0), 1});
 
     auto speaker = algorithm::getEntityByName(GlobalMapModule().getRoot(), "speaker_1");
     EXPECT_EQ(speaker->worldAABB().getOrigin(), Vector3(0, 0, 0));

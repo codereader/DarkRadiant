@@ -460,8 +460,6 @@ const StringSet& CameraWndManager::getDependencies() const
 
 void CameraWndManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// greebo: If at startup time the render mode is set to LIGHTING, fall back
 	// to textured. During startup the openGL contexts are not realised yet and the
 	// openGL module is tricked into believing there are no GLSL shader programs supported.

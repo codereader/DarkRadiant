@@ -430,6 +430,7 @@ floors or walls in succession. To match the height of an existing brush, simply
 select (*Shift + Left click*) and deselect it (*ESC*) before drawing the new
 brush.
 
+[[BrushShapes]]
 ==== More complex brush shapes
 
 Although each brush starts out as a six-sided cuboid, it doesn't have to stay
@@ -463,6 +464,7 @@ While these shapes can be useful for certain architectural modelling, remember
 that brushes are always flat-shaded and are not generally a good substitute for
 spheres or cones created with patches or static meshes.
 
+[[CreatingARoom]]
 ==== Creating a room
 
 Although it is not too difficult to create a hollow room by creating floor,
@@ -1833,6 +1835,47 @@ currently-selected entity. See <<ReparentingPrimitives,reparenting primitives>>.
 
 *Select parent entities*:: Select the parent entity of the currently-selected
 primitive. See <<ReparentingPrimitives,reparenting primitives>>.
+
+=== Entity menu
+
+*Connect selected entities*:: Set a `target` spawnarg on the first selected entity pointing to the
+second selected entity.
+
+*Bind selected entities*:: Set a `bind` spawnarg on the first selected entity pointing to the
+*second selected entity.
+
+*Entity class tree...*:: Show a tree of all available entity types in the current game, along with
+all of their properties. Unlike the tree shown in the *Create Entity* dialog, this entity class
+tree shows an inheritance-based hierarchy and does not include a 3D preview.
+
+=== Brush menu
+
+*Prism...*:: Create an angular prism (extruded polygon) from the selected brush. See
+<<BrushShapes,brush shapes>>.
+
+*Cone...*:: Create a cone or pyramid from the selected brush. See <<BrushShapes,brush shapes>>.
+
+*Sphere...*:: Create an approximation of a sphere from the selected brush. See
+<<BrushShapes,brush shapes>>.
+
+*CSG -> Make Hollow*:: Create a hollow room from the selected brush. See
+<<CreatingARoom,creating a room>>.
+
+*CSG -> Make Room*:: Create a hollow room from the selected brush, without any overlapping walls.
+See <<CreatingARoom,creating a room>>.
+
+*Clipper -> Clip Selection*:: Split the selected brush along the defined clip plane, keeping one
+half. See <<SplittingBrushes,splitting brushes>>.
+
+*Clipper -> Split Selection*:: Split the selected brush along the defined clip plane, keeping both
+halves. See <<SplittingBrushes,splitting brushes>>.
+
+*Clipper -> Flip Clip Orientation*:: Change which half of the brush is retained after using the
+*Clip Selection* command. Difficult to use in practice; instead just *Split Selection* and delete
+the unwanted half manually. See <<SplittingBrushes,splitting brushes>>.
+
+*Make Detail / Make Structural*:: These options only exist to support legacy games, and are not
+used in the Dark Mod.
 
 == Configuring DarkRadiant
 

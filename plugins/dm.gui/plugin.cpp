@@ -59,8 +59,6 @@ public:
 
 	void initialiseModule(const IApplicationContext& ctx) override
 	{
-		rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 		GlobalCommandSystem().addCommand("ReadableEditorDialog", ui::ReadableEditorDialog::RunDialog);
 		GlobalCommandSystem().addCommand("ReloadReadables", ui::ReadableReloader::run);
 

@@ -188,8 +188,6 @@ const StringSet& MediaBrowser::getDependencies() const
 
 void MediaBrowser::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	GlobalCommandSystem().addCommand("ToggleMediaBrowser", sigc::mem_fun(this, &MediaBrowser::togglePage));
 
 	// We need to create the liststore and widgets before attaching ourselves

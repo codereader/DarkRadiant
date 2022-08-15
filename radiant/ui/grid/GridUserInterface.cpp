@@ -43,8 +43,6 @@ const StringSet& GridUserInterface::getDependencies() const
 
 void GridUserInterface::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Add the grid status bar element
 	GlobalStatusBarManager().addTextElement("GridStatus", "grid_up.png",
 		statusbar::StandardPosition::GridSize, _("Current Grid Size"));

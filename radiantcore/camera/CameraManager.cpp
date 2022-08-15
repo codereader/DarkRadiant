@@ -21,8 +21,6 @@ const StringSet& CameraManager::getDependencies() const
 
 void CameraManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	GlobalCommandSystem().addCommand("SetActiveCameraPosition",
 		std::bind(&CameraManager::setActiveCameraPosition, this, std::placeholders::_1), { cmd::ARGTYPE_VECTOR3 });
 	GlobalCommandSystem().addCommand("SetActiveCameraAngles",

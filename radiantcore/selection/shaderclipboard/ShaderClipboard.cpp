@@ -213,8 +213,6 @@ const StringSet& ShaderClipboard::getDependencies() const
 
 void ShaderClipboard::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	_postUndoConn = GlobalMapModule().signal_postUndo().connect(
 		sigc::mem_fun(this, &ShaderClipboard::onUndoRedoOperation));
 	_postRedoConn = GlobalMapModule().signal_postRedo().connect(

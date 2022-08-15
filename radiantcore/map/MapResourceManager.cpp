@@ -61,7 +61,6 @@ const StringSet& MapResourceManager::getDependencies() const
 
 void MapResourceManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 // Define the MapResourceManager registerable module

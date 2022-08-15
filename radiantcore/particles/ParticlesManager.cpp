@@ -108,8 +108,6 @@ const StringSet& ParticlesManager::getDependencies() const
 
 void ParticlesManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
     GlobalDeclarationManager().registerDeclType("particle", std::make_shared<decl::DeclarationCreator<ParticleDef>>(decl::Type::Particle));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Particle, PARTICLES_DIR, PARTICLES_EXT);
 

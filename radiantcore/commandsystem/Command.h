@@ -1,6 +1,7 @@
 #ifndef _COMMAND_H_
 #define _COMMAND_H_
 
+#include "icommandsystem.h"
 #include "itextstream.h"
 #include "Executable.h"
 
@@ -15,17 +16,30 @@ class Command :
 	// The number and types of arguments to use
 	Signature _signature;
 
+	// Optional function to test if command can be run
+	CheckFunction _checkFunction;
+
 public:
-	Command(const Function& function, const Signature& signature) :
+	Command(const Function& function, const Signature& signature, CheckFunction checkFunc = {}) :
 		_function(function),
-		_signature(signature)
+		_signature(signature),
+		_checkFunction(checkFunc)
 	{}
 
 	Signature getSignature() {
 		return _signature;
 	}
 
-	virtual void execute(const ArgumentList& args) {
+    /// Test if this command is able to be executed
+    virtual bool canExecute() const
+    {
+        if (_checkFunction)
+            return _checkFunction();
+        else
+            return true;
+    }
+
+    virtual void execute(const ArgumentList& args) {
 		// Check arguments
 		if (_signature.size() < args.size()) {
 			// Too many arguments, that's for sure

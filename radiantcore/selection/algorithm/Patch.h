@@ -18,10 +18,10 @@ void transposePatch(const cmd::ArgumentList& args);
 
 void capPatch(const cmd::ArgumentList& args);
 
-void insertPatchColumnsAtEnd(const cmd::ArgumentList& args);
-void insertPatchColumnsAtBeginning(const cmd::ArgumentList& args);
-void insertPatchRowsAtEnd(const cmd::ArgumentList& args);
-void insertPatchRowsAtBeginning(const cmd::ArgumentList& args);
+void insertPatchColumnsAtEnd();
+void insertPatchColumnsAtBeginning();
+void insertPatchRowsAtEnd();
+void insertPatchRowsAtBeginning();
 
 void deletePatchColumnsFromBeginning(const cmd::ArgumentList& args);
 void deletePatchColumnsFromEnd(const cmd::ArgumentList& args);

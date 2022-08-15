@@ -40,8 +40,6 @@ public:
 
 	void initialiseModule(const IApplicationContext& ctx)
 	{
-		rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 		// Add the callback event
 		GlobalCommandSystem().addCommand("DifficultyEditor",  ui::DifficultyDialog::ShowDialog);
 

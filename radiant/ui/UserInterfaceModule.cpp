@@ -113,8 +113,6 @@ const StringSet& UserInterfaceModule::getDependencies() const
 
 void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	// Output the wxWidgets version to the logfile
 	std::string wxVersion = string::to_string(wxMAJOR_VERSION) + ".";
 	wxVersion += string::to_string(wxMINOR_VERSION) + ".";
@@ -416,15 +414,19 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("CreateNewLayerDialog", CreateLayerDialog::CreateNewLayer,
 		{ cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL });
 
-	GlobalCommandSystem().addCommand("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd);
-	GlobalCommandSystem().addCommand("PatchCapDialog", PatchCapDialog::Show);
-	GlobalCommandSystem().addCommand("ThickenPatchDialog", PatchThickenDialog::Show);
-	GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
+    GlobalCommandSystem().addWithCheck("BulgePatchDialog", BulgePatchDialog::BulgePatchCmd,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("PatchCapDialog", PatchCapDialog::Show,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("ThickenPatchDialog", PatchThickenDialog::Show,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addCommand("CreateSimplePatchDialog", PatchCreateDialog::Show);
 
-	GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
-	GlobalCommandSystem().addCommand("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show, { cmd::ARGTYPE_INT });
+    GlobalCommandSystem().addCommand("ExportCollisionModelDialog", ExportCollisionModelDialog::Show);
+    GlobalCommandSystem().addWithCheck("QueryBrushPrefabSidesDialog", QuerySidesDialog::Show,
+                                       selection::pred::haveBrush, {cmd::ARGTYPE_INT});
 
-	// Set up the CloneSelection command to react on key up events only
+    // Set up the CloneSelection command to react on key up events only
 	GlobalEventManager().addCommand("CloneSelection", "CloneSelection", true); // react on keyUp
 
 	GlobalEventManager().addRegistryToggle("ToggleRotationPivot", "user/ui/rotationPivotIsOrigin");

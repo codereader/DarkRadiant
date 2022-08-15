@@ -832,8 +832,6 @@ const StringSet& DeclarationManager::getDependencies() const
 
 void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     GlobalCommandSystem().addCommand("ReloadDecls",
         std::bind(&DeclarationManager::reloadDeclsCmd, this, std::placeholders::_1));
 

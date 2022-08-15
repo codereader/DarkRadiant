@@ -76,8 +76,6 @@ const StringSet& ClipboardModule::getDependencies() const
 
 void ClipboardModule::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &ClipboardModule::onAppActivated, this);
 }
 

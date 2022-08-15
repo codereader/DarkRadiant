@@ -117,8 +117,10 @@ MouseTool::Result BrushCreatorTool::onMouseMove(Event& ev)
         }
 
         // Dispatch the command
-        GlobalCommandSystem().executeCommand("ResizeSelectedBrushesToBounds", 
-            startPos, endPos, GlobalTextureBrowser().getSelectedShader());
+        GlobalCommandSystem().executeCommand(
+            "ResizeSelectedBrushesToBounds",
+            {startPos, endPos, GlobalTextureBrowser().getSelectedShader()}
+        );
     }
     catch (cmd::ExecutionNotPossible&)
     {

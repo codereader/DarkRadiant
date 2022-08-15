@@ -298,8 +298,9 @@ void OrthoContextMenu::callbackAddPrefab()
     if (!result.prefabPath.empty())
     {
         // Pass the call to the map algorithm and give the lastPoint coordinate as argument
-        GlobalCommandSystem().executeCommand(LOAD_PREFAB_AT_CMD,
-            result.prefabPath, _lastPoint, result.insertAsGroup);
+        GlobalCommandSystem().executeCommand(
+            LOAD_PREFAB_AT_CMD, {result.prefabPath, _lastPoint, result.insertAsGroup}
+        );
     }
 }
 

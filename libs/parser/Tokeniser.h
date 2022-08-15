@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <iterator>
 #include "string/tokeniser.h"
 #include "ParseException.h"
 

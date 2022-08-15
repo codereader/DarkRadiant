@@ -87,8 +87,6 @@ const StringSet& EClassManager::getDependencies() const
 
 void EClassManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     GlobalDeclarationManager().registerDeclType("entityDef", std::make_shared<decl::DeclarationCreator<EntityClass>>(decl::Type::EntityDef));
     GlobalDeclarationManager().registerDeclType("model", std::make_shared<decl::DeclarationCreator<Doom3ModelDef>>(decl::Type::ModelDef));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::EntityDef, "def/", ".def");

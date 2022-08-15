@@ -69,8 +69,6 @@ void Doom3SkinCache::refresh()
 
 void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called" << std::endl;
-
     GlobalDeclarationManager().registerDeclType("skin", std::make_shared<decl::DeclarationCreator<Skin>>(decl::Type::Skin));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Skin, SKINS_FOLDER, SKIN_FILE_EXTENSION);
 

@@ -51,7 +51,6 @@ const StringSet& InfoFileManager::getDependencies() const
 
 void InfoFileManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
 }
 
 void InfoFileManager::shutdownModule()

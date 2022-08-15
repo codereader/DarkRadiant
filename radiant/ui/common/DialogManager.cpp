@@ -42,8 +42,6 @@ const StringSet& DialogManager::getDependencies() const
 
 void DialogManager::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     GlobalMainFrame().signal_MainFrameShuttingDown().connect(
         sigc::mem_fun(this, &DialogManager::clear));
 }

@@ -61,7 +61,7 @@ public:
 	int ShowModal() override;
 
 	// Command target to toggle the dialog
-	static void ShowDialog(const cmd::ArgumentList& args);
+	static void ShowDialog();
 
 	// Get notified when the dialog is not needed anymore
 	virtual bool Destroy() override;

@@ -18,6 +18,7 @@
 #include "wxutil/dataview/KeyValueTable.h"
 
 #include <string>
+#include <wx/tglbtn.h>
 
 namespace ui
 {

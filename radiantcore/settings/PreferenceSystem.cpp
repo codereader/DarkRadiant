@@ -45,7 +45,6 @@ const StringSet& PreferenceSystem::getDependencies() const
 
 void PreferenceSystem::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << "PreferenceSystem::initialiseModule called" << std::endl;
 }
 
 // Define the static PreferenceSystem module

@@ -11,35 +11,23 @@
 #include "math/Vector3.h"
 #include "math/AABB.h"
 
-/** greebo: A structure containing information about the current
- * Selection. An instance of this is maintained by the
- * RadiantSelectionSystem, and a const reference can be
+/** 
+ * @brief A structure containing information about the current Selection.
+ *
+ * An instance of this is maintained by the RadiantSelectionSystem, and a const reference can be
  * retrieved via the according getSelectionInfo() method.
  */
-class SelectionInfo {
+class SelectionInfo
+{
 public:
-	int totalCount; 	// number of selected items
-	int patchCount; 	// number of selected patches
-	int brushCount; 	// -- " -- brushes
-	int entityCount; 	// -- " -- entities
-	int componentCount;	// -- " -- components (faces, edges, vertices)
+    int totalCount = 0;     // number of selected items
+    int patchCount = 0;     // number of selected patches
+    int brushCount = 0;     // -- " -- brushes
+    int entityCount = 0;    // -- " -- entities
+    int componentCount = 0; // -- " -- components (faces, edges, vertices)
 
-	SelectionInfo() :
-		totalCount(0),
-		patchCount(0),
-		brushCount(0),
-		entityCount(0),
-		componentCount(0)
-	{}
-
-	// Zeroes all the counters
-	void clear() {
-		totalCount = 0;
-		patchCount = 0;
-		brushCount = 0;
-		entityCount = 0;
-		componentCount = 0;
-	}
+    // Zeroes all the counters
+    void clear() { *this = SelectionInfo(); }
 };
 
 namespace selection
@@ -79,7 +67,7 @@ public:
 	{}
 };
 
-/** 
+/**
  * greebo: Helper objects that compares each object passed
  * into it, throwing an AmbiguousShaderException as soon as
  * at least two different non-empty shader names are found.
@@ -125,7 +113,7 @@ private:
 		{
 			// No shader encountered yet, take this one
 			_shader = foundShader;
-		} 
+		}
 		else if (_shader != foundShader)
 		{
 			throw AmbiguousShaderException(foundShader);
@@ -137,7 +125,7 @@ private:
 
 }
 
-/** 
+/**
  * greebo: Retrieves the shader name from the current selection.
  * @returns: the name of the shader that is shared by every selected instance or
  * the empty string "" otherwise.
@@ -147,7 +135,7 @@ inline std::string getShaderFromSelection()
 	try
 	{
 		detail::UniqueShaderFinder finder;
-		
+
 		if (GlobalSelectionSystem().countSelectedComponents() > 0)
 		{
 			// Check each selected face
@@ -227,12 +215,12 @@ inline bool curSelectionIsSuitableForReparent()
 inline void assignNodeToSelectionGroups(const scene::INodePtr& node, const IGroupSelectable::GroupIds& groups)
 {
     auto groupSelectable = std::dynamic_pointer_cast<IGroupSelectable>(node);
-    
+
     if (!groupSelectable)
     {
         return;
     }
-    
+
     const auto& groupIds = groupSelectable->getGroupIds();
 
     auto previousGroups = groupSelectable->getGroupIds();
@@ -246,6 +234,42 @@ inline void assignNodeToSelectionGroups(const scene::INodePtr& node, const IGrou
     for (auto id : groupIds)
     {
         groupSelectable->addToGroup(id);
+    }
+}
+
+/// Selection predicates (e.g. for testing if a command should be runnable)
+namespace pred
+{
+    /// Return true if there is at least one selected brush
+    inline bool haveBrush()
+    {
+        return GlobalSelectionSystem().getSelectionInfo().brushCount > 0;
+    }
+
+    /// Return true if exactly the given number of entities are selected (and nothing else)
+    inline bool haveEntitiesExact(int n)
+    {
+        const auto& info = GlobalSelectionSystem().getSelectionInfo();
+        return info.totalCount == n && info.entityCount == n;
+    }
+
+    /// Return true if the exact given number of patches are selected (and nothing else)
+    inline bool havePatchesExact(int n)
+    {
+        const auto& info = GlobalSelectionSystem().getSelectionInfo();
+        return info.totalCount == n && info.patchCount == n;
+    }
+
+    /// Return true if at least the given number of patches are selected
+    inline bool havePatchesAtLeast(int n)
+    {
+        return GlobalSelectionSystem().getSelectionInfo().patchCount >= n;
+    }
+
+    /// Return true if at least one patch is selected
+    inline bool havePatch()
+    {
+        return havePatchesAtLeast(1);
     }
 }
 

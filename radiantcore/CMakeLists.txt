@@ -312,7 +312,6 @@ add_library(radiantcore MODULE
             vfs/ZipArchive.cpp
             xmlregistry/RegistryTree.cpp
             xmlregistry/XMLRegistry.cpp)
-target_compile_options(radiantcore PUBLIC ${SIGC_CFLAGS})
 target_include_directories(radiantcore PRIVATE .)
 target_link_libraries(radiantcore PUBLIC
                       math xmlutil scenegraph wxutil module

@@ -81,12 +81,12 @@ namespace selection {
 
 	/** greebo: Creates a coplanar patch for each selected face instance.
 	 */
-	void createDecalsForSelectedFaces(const cmd::ArgumentList& args);
+	void createDecalsForSelectedFaces();
 
 	/**
 	 * greebo: Applies the visportal/nodraw texture combo to the selected brushes.
 	 */
-	void makeVisportal(const cmd::ArgumentList& args);
+	void makeVisportal();
 
 	/**
 	 * greebo: Surrounds the current model selection with a monsterclip brush.

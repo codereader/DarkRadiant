@@ -50,8 +50,6 @@ const StringSet& StatusBarManager::getDependencies() const
 
 void StatusBarManager::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     GlobalMainFrame().signal_MainFrameShuttingDown().connect(
         sigc::mem_fun(this, &StatusBarManager::onMainFrameShuttingDown));
 

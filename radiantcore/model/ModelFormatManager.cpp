@@ -33,8 +33,6 @@ const StringSet& ModelFormatManager::getDependencies() const
 
 void ModelFormatManager::initialiseModule(const IApplicationContext& ctx)
 {
-	rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 	_nullModelLoader.reset(new NullModelLoader);
 
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(

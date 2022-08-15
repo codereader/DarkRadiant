@@ -308,8 +308,6 @@ const StringSet& MaterialManager::getDependencies() const
 
 void MaterialManager::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called" << std::endl;
-
     GlobalDeclarationManager().registerDeclType("table", std::make_shared<decl::DeclarationCreator<TableDefinition>>(decl::Type::Table));
     GlobalDeclarationManager().registerDeclType("material", std::make_shared<decl::DeclarationCreator<ShaderTemplate>>(decl::Type::Material));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Material, "materials/", ".mtr");

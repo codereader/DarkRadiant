@@ -40,8 +40,6 @@ public:
 
 	void initialiseModule(const IApplicationContext& ctx) override
 	{
-		rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 		GlobalCommandSystem().addCommand("GroupSelected", algorithm::groupSelectedCmd);
 		GlobalCommandSystem().addCommand("UngroupSelected", algorithm::ungroupSelectedCmd);
 		GlobalCommandSystem().addCommand("DeleteAllSelectionGroups", algorithm::deleteAllSelectionGroupsCmd);

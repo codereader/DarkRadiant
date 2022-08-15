@@ -32,8 +32,6 @@ const StringSet& TextureToolSceneGraph::getDependencies() const
 
 void TextureToolSceneGraph::initialiseModule(const IApplicationContext& ctx)
 {
-    rMessage() << getName() << "::initialiseModule called." << std::endl;
-
     _sceneSelectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
         sigc::mem_fun(this, &TextureToolSceneGraph::onSceneSelectionChanged)
     );

@@ -63,8 +63,6 @@ public:
 
 	void initialiseModule(const IApplicationContext& ctx) override
 	{
-		rMessage() << getName() << "::initialiseModule called." << std::endl;
-
 		GlobalCommandSystem().addCommand(COMMAND_ADDTOLAYER,
 			std::bind(&LayerModule::addSelectionToLayer, this, std::placeholders::_1),
 			{ cmd::ARGTYPE_INT });

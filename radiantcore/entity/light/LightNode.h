@@ -7,6 +7,8 @@
 #include "ilightnode.h"
 #include "registry/CachedKey.h"
 #include "scene/TransformedCopy.h"
+#include "math/Frustum.h"
+#include "editable.h"
 
 #include "dragplanes.h"
 #include "../VertexInstance.h"
