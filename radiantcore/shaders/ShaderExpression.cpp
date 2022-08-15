@@ -225,8 +225,6 @@ public:
 		auto rv = operands.top();
 		operands.pop();
 
-		assert(operands.empty()); // there should be nothing left on the stack
-
 		return rv;
 	}
 
