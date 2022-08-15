@@ -1744,8 +1744,37 @@ TEST_F(MaterialsTest, UpdateFromValidSourceTextEmitsSignal)
 
     EXPECT_TRUE(result.success) << "Update from source text should have been succeeded";
     EXPECT_EQ(changedSignalCount, 1) << "Changed signal should have been fired exactly once";
+}
 
+// Failure to parse the source text should not affect the material
+TEST_F(MaterialsTest, UpdateFromInvalidSourceText)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/expressions/sinTableLookup");
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/expressions/sinTableLookup";
 
+    EXPECT_EQ(material->getNumLayers(), 1) << "Material should have one layer";
+    EXPECT_EQ(material->getLayer(0)->getAlphaTestExpression()->getExpressionString(), "sinTable[0.5008]") << "Alphatest expression is missing";
+
+    auto changedSignalCount = 0;
+
+    material->sig_materialChanged().connect(
+        [&]() { changedSignalCount++; }
+    );
+
+    // The material parser is very tolerant against errors, but an improper vertex parm index does the trick
+    auto result = material->updateFromSourceText(R"( {
+        map _white
+        vertexProgram glprogs/test.vfp
+        vertexParm -3 time // invalid vertex parm
+    })");
+
+    EXPECT_FALSE(result.success) << "Update from source text should have been succeeded";
+    EXPECT_EQ(result.parseError, "A material stage can have 4 vertex parameters at most") << "Wrong error message";
+
+    EXPECT_EQ(material->getNumLayers(), 1) << "Material should still have one layer";
+    EXPECT_EQ(material->getLayer(0)->getAlphaTestExpression()->getExpressionString(), "sinTable[0.5008]") << "Alphatest expression got lost";
+
+    EXPECT_EQ(changedSignalCount, 0) << "No changed signal should have been fired";
 }
 
 }
