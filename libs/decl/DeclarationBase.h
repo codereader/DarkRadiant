@@ -37,6 +37,7 @@ private:
     DeclarationBlockSyntax _declBlock;
 
     bool _parsed;
+    std::string _parseErrors;
 
     sigc::signal<void> _changedSignal;
 
@@ -125,6 +126,12 @@ public:
         return _changedSignal;
     }
 
+    const std::string& getParseErrors()
+    {
+        ensureParsed();
+        return _parseErrors;
+    }
+
 protected:
     // Defines the whitespace characters used by the DefTokeniser to separate tokens
     virtual const char* getWhitespaceDelimiters() const
@@ -148,6 +155,7 @@ protected:
 
         // Set the flag to true before parsing, to avoid infinite loops
         _parsed = true;
+        _parseErrors.clear();
 
         onBeginParsing();
 
@@ -160,6 +168,8 @@ protected:
         }
         catch (const parser::ParseException& ex)
         {
+            _parseErrors = ex.what();
+
             rError() << "[DeclParser]: Error parsing " << getTypeName(getDeclType()) << " " << getDeclName()
                 << ": " << ex.what() << std::endl;
         }

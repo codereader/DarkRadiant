@@ -1707,4 +1707,45 @@ TEST_F(MaterialsTest, ShaderExpressionEvaluation)
     }
 }
 
+TEST_F(MaterialsTest, UpdateFromValidSourceText)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+    EXPECT_TRUE(material) << "Could not find the material textures/exporttest/empty";
+
+    auto sourceText = R"(
+    diffusemap _white
+    {
+        blend blend
+        map _flat
+        rgb 0.5
+    }
+)";
+
+    auto result = material->updateFromSourceText(sourceText);
+
+    EXPECT_TRUE(result.success) << "Update from source text should have been succeeded";
+
+    EXPECT_EQ(material->getNumLayers(), 2);
+    EXPECT_EQ(material->getLayer(0)->getMapExpression()->getExpressionString(), "_white");
+}
+
+TEST_F(MaterialsTest, UpdateFromValidSourceTextEmitsSignal)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+    EXPECT_TRUE(material) << "Could not find the material textures/exporttest/empty";
+    
+    auto changedSignalCount = 0;
+
+    material->sig_materialChanged().connect(
+        [&]() { changedSignalCount++; }
+    );
+
+    auto result = material->updateFromSourceText(R"(diffusemap _white)");
+
+    EXPECT_TRUE(result.success) << "Update from source text should have been succeeded";
+    EXPECT_EQ(changedSignalCount, 1) << "Changed signal should have been fired exactly once";
+
+
+}
+
 }

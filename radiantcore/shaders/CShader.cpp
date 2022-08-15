@@ -678,16 +678,22 @@ Material::ParseResult CShader::updateFromSourceText(const std::string& sourceTex
 {
     ensureTemplateCopy();
 
-    if (_template->getMaterialFlags() & Material::FLAG_NOSHADOWS)
+    // Attempt to parse the template (separately from the active one)
+    auto newTemplate= std::make_shared<ShaderTemplate>(getName());
+
+    auto syntax = _template->getBlockSyntax();
+    syntax.contents = sourceText;
+    newTemplate->setBlockSyntax(syntax);
+
+    const auto& error = newTemplate->getParseErrors();
+
+    if (error.empty())
     {
-        _template->clearMaterialFlag(Material::FLAG_NOSHADOWS);
-    }
-    else
-    {
-        _template->setMaterialFlag(Material::FLAG_NOSHADOWS);
+        // Parse seems to be successful, assign the text to the actual template
+        _template->setBlockSyntax(syntax);
     }
 
-    return ParseResult{ true };
+    return ParseResult{ error.empty(), error };
 }
 
 } // namespace shaders

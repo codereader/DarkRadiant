@@ -447,6 +447,7 @@ public:
     struct ParseResult
     {
         bool success;           // whether the update was successful
+        std::string parseError; // if success == false, this contains the error message
     };
 
     // Attempts to redefine this material from the given source text, which is
