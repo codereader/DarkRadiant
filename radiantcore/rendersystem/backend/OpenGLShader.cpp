@@ -731,6 +731,7 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
 
     // Colour modulation
     state.setColour(layer->getColour());
+    state.setVertexColourMode(layer->getVertexColourMode());
 
 	// Sort position
     if (_material->getSortRequest() >= Material::SORT_DECAL)
