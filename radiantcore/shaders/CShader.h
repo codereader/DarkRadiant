@@ -147,7 +147,7 @@ public:
 
     void refreshImageMaps() override;
 
-    bool updateFromSourceText(const std::string& sourceText) override;
+    ParseResult updateFromSourceText(const std::string& sourceText) override;
 
     // Returns the current template (including any modifications) of this material
     const ShaderTemplate::Ptr& getTemplate();

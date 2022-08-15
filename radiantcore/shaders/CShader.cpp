@@ -674,9 +674,20 @@ void CShader::refreshImageMaps()
     _sigMaterialModified.emit();
 }
 
-bool CShader::updateFromSourceText(const std::string& sourceText)
+Material::ParseResult CShader::updateFromSourceText(const std::string& sourceText)
 {
-    return false;
+    ensureTemplateCopy();
+
+    if (_template->getMaterialFlags() & Material::FLAG_NOSHADOWS)
+    {
+        _template->clearMaterialFlag(Material::FLAG_NOSHADOWS);
+    }
+    else
+    {
+        _template->setMaterialFlag(Material::FLAG_NOSHADOWS);
+    }
+
+    return ParseResult{ true };
 }
 
 } // namespace shaders

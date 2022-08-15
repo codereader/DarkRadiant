@@ -135,7 +135,8 @@ MaterialEditor::MaterialEditor() :
     _stageUpdateInProgress(false),
     _materialUpdateInProgress(false),
     _previewSceneUpdateInProgress(false),
-    _updateFromSourceTextInProgress(false)
+    _updateFromSourceTextInProgress(false),
+    _sourceTextUpdateInProgress(false)
 {
     loadNamedPanel(this, "MaterialEditorMainPanel");
 
@@ -313,7 +314,7 @@ void MaterialEditor::setupSourceTextPanel(wxWindow* previewPanel)
     _sourceView = new wxutil::D3MaterialSourceViewCtrl(sourceTextPanel->GetPane());
     _sourceView->SetMinSize(wxSize(-1, 400));
 
-    _sourceView->Bind(wxEVT_TEXT, &MaterialEditor::_onSourceTextChanged, this);
+    _sourceView->Bind(wxEVT_STC_MODIFIED, &MaterialEditor::_onSourceTextChanged, this);
 
     sourceTextPanel->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, [=](wxCollapsiblePaneEvent& ev)
     {
@@ -423,14 +424,22 @@ void MaterialEditor::_onReloadImages(wxCommandEvent& ev)
     updateBasicImagePreview();
 }
 
-void MaterialEditor::_onSourceTextChanged(wxCommandEvent& ev)
+void MaterialEditor::_onSourceTextChanged(wxStyledTextEvent& ev)
 {
-    if (!_material) return;
+    if (!_material || _materialUpdateInProgress || _sourceTextUpdateInProgress) return;
+
+    constexpr auto ObservedModificationTypes = wxSTC_MOD_INSERTTEXT | wxSTC_MOD_DELETETEXT |
+        wxSTC_PERFORMED_UNDO | wxSTC_PERFORMED_REDO;
+
+    if ((ev.GetModificationType() & ObservedModificationTypes) == 0)
+    {
+        return;
+    }
 
     // Block source text updates
     util::ScopedBoolLock lock(_updateFromSourceTextInProgress);
 
-    if (_material->updateFromSourceText(_sourceView->GetValue().ToStdString()))
+    if (_material->updateFromSourceText(_sourceView->GetValue().ToStdString()).success)
     {
         // Update the controls on success
         updateControlsFromMaterial();
@@ -2096,6 +2105,10 @@ void MaterialEditor::updateControlsFromMaterial()
     updateMaterialControlSensitivity();
     updateMaterialPropertiesFromMaterial();
     updateStageListFromMaterial();
+    updateSettingsNotebook();
+
+    auto notebook = getControl<wxNotebook>("MaterialStageSettingsNotebook");
+    notebook->SetSelection(0); // select the first page
 }
 
 inline std::string getDeformExpressionSafe(const MaterialPtr& material, std::size_t index)
@@ -2376,7 +2389,9 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 
 void MaterialEditor::updateSourceView()
 {
-    if (_updateFromSourceTextInProgress) return; // avoid feedback loops
+    if (_updateFromSourceTextInProgress || _sourceTextUpdateInProgress) return; // avoid feedback loops
+
+    util::ScopedBoolLock lock(_sourceTextUpdateInProgress);
 
     if (_material)
     {
