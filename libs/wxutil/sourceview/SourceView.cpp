@@ -128,7 +128,7 @@ D3MaterialSourceViewCtrl::D3MaterialSourceViewCtrl(wxWindow* parent) :
 	D3DeclarationViewCtrl(parent)
 {
 	SetKeyWords(0, "diffusemap qer_editorimage bumpmap specularmap map if description polygonOffset "
-		"noshadows noselfshadow forceshadows nooverlays forceoverlays translucent clamp zeroclamp "
+		"noshadows noShadows noselfshadow forceshadows nooverlays forceoverlays translucent clamp zeroclamp "
 		"alphazeroclamp forceopaque twosided backsided mirror nofog unsmoothedTangents guisurf sort "
 		"decal reflect spectrum deform decalInfo renderbump DECAL_MACRO sprite tube flare expand move "
 		"turbulent eyeBall particle particle2 noportalfog fogLight blendLight ambientLight lightFallOffImage "

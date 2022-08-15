@@ -674,4 +674,9 @@ void CShader::refreshImageMaps()
     _sigMaterialModified.emit();
 }
 
+bool CShader::updateFromSourceText(const std::string& sourceText)
+{
+    return false;
+}
+
 } // namespace shaders

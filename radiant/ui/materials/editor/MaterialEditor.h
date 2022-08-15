@@ -87,6 +87,7 @@ private:
     bool _stageUpdateInProgress;
     bool _materialUpdateInProgress;
     bool _previewSceneUpdateInProgress;
+    bool _updateFromSourceTextInProgress;
 
     std::string _materialToPreselect;
 
@@ -208,6 +209,7 @@ private:
     void _onBasicTestFrobStages(wxMouseEvent& ev);
     void _onClose(wxCommandEvent& ev);
     void _onReloadImages(wxCommandEvent& ev);
+    void _onSourceTextChanged(wxCommandEvent& ev);
 
     void applyMapExpressionToStage(const IEditableShaderLayer::Ptr& stage, const std::string& value);
     void toggleSelectedStage();

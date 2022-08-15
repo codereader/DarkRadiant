@@ -444,6 +444,12 @@ public:
     // Reloads the textures used by this material from disk
     virtual void refreshImageMaps() = 0;
 
+    // Attempts to redefine this material from the given source text, which is
+    // just the block contents, exlcuding the outermost curly braces of the decl.
+    // Returns true on success, returns false if the source text could not
+    // be successfully parsed (e.g. due to malformed syntax).
+    virtual bool updateFromSourceText(const std::string& sourceText) = 0;
+
     // Signal emitted when this material is modified
     virtual sigc::signal<void>& sig_materialChanged() = 0;
 };

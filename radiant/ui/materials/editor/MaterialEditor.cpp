@@ -134,7 +134,8 @@ MaterialEditor::MaterialEditor() :
     _stageView(nullptr),
     _stageUpdateInProgress(false),
     _materialUpdateInProgress(false),
-    _previewSceneUpdateInProgress(false)
+    _previewSceneUpdateInProgress(false),
+    _updateFromSourceTextInProgress(false)
 {
     loadNamedPanel(this, "MaterialEditorMainPanel");
 
@@ -312,6 +313,8 @@ void MaterialEditor::setupSourceTextPanel(wxWindow* previewPanel)
     _sourceView = new wxutil::D3MaterialSourceViewCtrl(sourceTextPanel->GetPane());
     _sourceView->SetMinSize(wxSize(-1, 400));
 
+    _sourceView->Bind(wxEVT_TEXT, &MaterialEditor::_onSourceTextChanged, this);
+
     sourceTextPanel->Bind(wxEVT_COLLAPSIBLEPANE_CHANGED, [=](wxCollapsiblePaneEvent& ev)
     {
         previewPanel->Layout();
@@ -418,6 +421,20 @@ void MaterialEditor::_onReloadImages(wxCommandEvent& ev)
 
     _material->refreshImageMaps();
     updateBasicImagePreview();
+}
+
+void MaterialEditor::_onSourceTextChanged(wxCommandEvent& ev)
+{
+    if (!_material) return;
+
+    // Block source text updates
+    util::ScopedBoolLock lock(_updateFromSourceTextInProgress);
+
+    if (_material->updateFromSourceText(_sourceView->GetValue().ToStdString()))
+    {
+        // Update the controls on success
+        updateControlsFromMaterial();
+    }
 }
 
 bool MaterialEditor::okToCloseDialog()
@@ -2359,6 +2376,8 @@ void MaterialEditor::updateMaterialPropertiesFromMaterial()
 
 void MaterialEditor::updateSourceView()
 {
+    if (_updateFromSourceTextInProgress) return; // avoid feedback loops
+
     if (_material)
     {
         // Surround the definition with curly braces, these are not included
@@ -2415,7 +2434,7 @@ IEditableShaderLayer::Ptr MaterialEditor::getEditableStageForSelection()
     wxutil::TreeModel::Row stageRow(selectedStageItem, *_stageList);
     int stageIndex = stageRow[STAGE_COLS().index].getInteger();
 
-    return _material->getEditableLayer(stageIndex);
+    return stageIndex != -1 ? _material->getEditableLayer(stageIndex) : IEditableShaderLayer::Ptr();
 }
 
 void MaterialEditor::updateStageBlendControls()
