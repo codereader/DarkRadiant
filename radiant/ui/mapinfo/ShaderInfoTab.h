@@ -23,12 +23,16 @@ private:
 		ListColumns() :
 			shader(add(wxutil::TreeModel::Column::String)),
 			faceCount(add(wxutil::TreeModel::Column::Integer)),
-			patchCount(add(wxutil::TreeModel::Column::Integer))
+			patchCount(add(wxutil::TreeModel::Column::Integer)),
+            modelCount(add(wxutil::TreeModel::Column::Integer)),
+            particleCount(add(wxutil::TreeModel::Column::Integer))
 		{}
 
 		wxutil::TreeModel::Column shader;
 		wxutil::TreeModel::Column faceCount;
 		wxutil::TreeModel::Column patchCount;
+		wxutil::TreeModel::Column modelCount;
+		wxutil::TreeModel::Column particleCount;
 	};
 
 	ListColumns _columns;
