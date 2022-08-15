@@ -15,10 +15,10 @@ namespace ui
 
 namespace
 {
-	const char* const TAB_NAME = N_("Shaders");
+	const char* const TAB_NAME = N_("Materials");
 	const std::string TAB_ICON("icon_texture.png");
-	const char* const SELECT_ITEMS = N_("Select elements using this shader");
-	const char* const DESELECT_ITEMS = N_("Deselect elements using this shader");
+	const char* const SELECT_ITEMS = N_("Select elements using this material");
+	const char* const DESELECT_ITEMS = N_("Deselect elements using this material");
 }
 
 ShaderInfoTab::ShaderInfoTab(wxWindow* parent) :
@@ -57,7 +57,7 @@ void ShaderInfoTab::construct()
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_treeView->AppendTextColumn(_("Shader"), _columns.shader.getColumnIndex(), 
+	_treeView->AppendTextColumn(_("Material"), _columns.shader.getColumnIndex(), 
 		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
 	_treeView->AppendTextColumn(_("Faces"), _columns.faceCount.getColumnIndex(), 
@@ -86,7 +86,7 @@ void ShaderInfoTab::construct()
     // The table containing the statistics
 	wxGridSizer* table = new wxGridSizer(1, 2, 3, 6);
 
-	wxStaticText* shaderLabel = new wxStaticText(this, wxID_ANY, _("Shaders used:"));
+	wxStaticText* shaderLabel = new wxStaticText(this, wxID_ANY, _("Materials used:"));
 	shaderLabel->SetMinSize(wxSize(100, -1));
 
 	wxStaticText* shaderCount = new wxStaticText(this, wxID_ANY, 

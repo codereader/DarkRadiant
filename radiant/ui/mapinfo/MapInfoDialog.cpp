@@ -17,7 +17,7 @@ namespace ui
 namespace
 {
 	constexpr const int MAPINFO_DEFAULT_SIZE_X = 800;
-	constexpr const int MAPINFO_DEFAULT_SIZE_Y = 550;
+	constexpr const int MAPINFO_DEFAULT_SIZE_Y = 650;
 	constexpr const char* const MAPINFO_WINDOW_TITLE = N_("Map Info");
 }
 
