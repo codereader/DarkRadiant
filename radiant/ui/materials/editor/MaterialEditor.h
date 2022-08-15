@@ -217,6 +217,8 @@ private:
     void onMaterialChanged();
     void convertTextCtrlToMapExpressionEntry(const std::string& ctrlName);
 
+    decl::DeclarationBlockSyntax getBlockSyntaxFromSourceView();
+
     // Shortcut
     template<typename ObjectClass>
     ObjectClass* getControl(const std::string& name)

@@ -29,6 +29,7 @@
 #include "wxutil/Bitmap.h"
 #include "wxutil/DeclFileInfo.h"
 #include "materials/FrobStageSetup.h"
+#include "parser/DefBlockSyntaxParser.h"
 #include <fmt/format.h>
 #include "gamelib.h"
 #include "string/join.h"
@@ -424,6 +425,27 @@ void MaterialEditor::_onReloadImages(wxCommandEvent& ev)
     updateBasicImagePreview();
 }
 
+decl::DeclarationBlockSyntax MaterialEditor::getBlockSyntaxFromSourceView()
+{
+    auto fullText = _sourceView->GetValue().ToStdString();
+
+    parser::DefBlockSyntaxParser<const std::string> parser(fullText);
+
+    auto syntaxTree = parser.parse();
+    auto block = syntaxTree->findFirstBlock([](const parser::DefBlockSyntax::Ptr&) { return true; });
+
+    if (!block) return {};
+
+    // We don't need to fill in every field of the syntax, the contents are important
+    decl::DeclarationBlockSyntax syntax;
+    
+    syntax.name = _material->getName();
+    syntax.typeName = decl::getTypeName(decl::Type::Material);
+    syntax.contents = block->getBlockContents();
+    
+    return syntax;
+}
+
 void MaterialEditor::_onSourceTextChanged(wxStyledTextEvent& ev)
 {
     if (!_material || _materialUpdateInProgress || _sourceTextUpdateInProgress) return;
@@ -439,7 +461,14 @@ void MaterialEditor::_onSourceTextChanged(wxStyledTextEvent& ev)
     // Block source text updates
     util::ScopedBoolLock lock(_updateFromSourceTextInProgress);
 
-    if (_material->updateFromSourceText(_sourceView->GetValue().ToStdString()).success)
+    auto syntax = getBlockSyntaxFromSourceView();
+
+    if (syntax.name.empty())
+    {
+        return;
+    }
+
+    if (_material->updateFromSourceText(syntax.contents).success)
     {
         // Update the controls on success
         updateControlsFromMaterial();

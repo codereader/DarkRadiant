@@ -681,6 +681,7 @@ Material::ParseResult CShader::updateFromSourceText(const std::string& sourceTex
     // Attempt to parse the template (separately from the active one)
     auto newTemplate= std::make_shared<ShaderTemplate>(getName());
 
+    // Only replace the contents of the block syntax, leave the rest unchanged
     auto syntax = _template->getBlockSyntax();
     syntax.contents = sourceText;
     newTemplate->setBlockSyntax(syntax);
