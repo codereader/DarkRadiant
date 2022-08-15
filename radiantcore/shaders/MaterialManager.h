@@ -88,6 +88,8 @@ public:
 	// Look up a table def, return NULL if not found
 	ITableDefinition::Ptr getTable(const std::string& name) override;
 
+    void reloadImages() override;
+
 public:
     sigc::signal<void> signal_activeShadersChanged() const override;
 

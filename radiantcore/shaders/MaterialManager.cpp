@@ -5,6 +5,7 @@
 #include "ideclmanager.h"
 
 #include "iregistry.h"
+#include "icommandsystem.h"
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "igame.h"
@@ -276,6 +277,14 @@ ITableDefinition::Ptr MaterialManager::getTable(const std::string& name)
     );
 }
 
+void MaterialManager::reloadImages()
+{
+    _library->foreachShader([](const CShaderPtr& shader)
+    {
+        shader->refreshImageMaps();
+    });
+}
+
 const std::string& MaterialManager::getName() const
 {
     static std::string _name(MODULE_SHADERSYSTEM);
@@ -288,6 +297,7 @@ const StringSet& MaterialManager::getDependencies() const
     {
         MODULE_DECLMANAGER,
         MODULE_VIRTUALFILESYSTEM,
+        MODULE_COMMANDSYSTEM,
         MODULE_XMLREGISTRY,
         MODULE_GAMEMANAGER,
         MODULE_FILETYPES,
@@ -311,6 +321,8 @@ void MaterialManager::initialiseModule(const IApplicationContext& ctx)
 
     // Register the mtr file extension
     GlobalFiletypes().registerPattern("material", FileTypePattern(_("Material File"), "mtr", "*.mtr"));
+
+    GlobalCommandSystem().addCommand("ReloadImages", [this](const cmd::ArgumentList&) { reloadImages(); });
 }
 
 void MaterialManager::onMaterialDefsReloaded()

@@ -599,6 +599,9 @@ public:
 
     // Tries to find the named table, returns an empty reference if nothing found
     virtual ITableDefinition::Ptr getTable(const std::string& name) = 0;
+
+    // Reload the textures used by the active shaders
+    virtual void reloadImages() = 0;
 };
 
 inline IMaterialManager& GlobalMaterialManager()
