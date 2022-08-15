@@ -93,7 +93,7 @@ int ImageFileSelector::ShowModal(const std::string& preselectItem)
 
     auto result = DialogBase::ShowModal();
 
-    if (result != wxID_OK)
+    if (result != wxID_OK && _targetControl->GetValue() != _previousValue)
     {
         // Restore the previous value on cancel
         _targetControl->SetValue(_previousValue);
@@ -139,9 +139,11 @@ void ImageFileSelector::onTreeSelectionChanged(wxDataViewEvent& ev)
     bool isFolder = row[_columns.isFolder].getBool();
     _okButton->Enable(!isFolder);
 
-    if (!isFolder)
+    // Only update the target control if the value differs
+    auto newValue = row[_columns.fullName].getString();
+    if (!isFolder && _targetControl && _targetControl->GetValue() != newValue)
     {
-        _targetControl->SetValue(row[_columns.fullName].getString());
+        _targetControl->SetValue(newValue);
     }
 }
 
