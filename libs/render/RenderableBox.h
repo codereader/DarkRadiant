@@ -168,11 +168,9 @@ public:
 
         _needsUpdate = false;
 
-        static Vector3 Origin(0, 0, 0);
-
         // Calculate the corner vertices of this bounding box
-        Vector3 max(Origin + _bounds.extents);
-        Vector3 min(Origin - _bounds.extents);
+        Vector3 max(_bounds.origin + _bounds.extents);
+        Vector3 min(_bounds.origin - _bounds.extents);
 
         auto colour = getVertexColour();
 
