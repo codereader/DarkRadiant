@@ -270,19 +270,19 @@
 		<menuSeparator />
 
 		<subMenu name="insertSubdivisions" caption="Insert">
-			<menuItem name="insertColsBegin" caption="Insert 2 Columns at the beginning" command="PatchInsertColumnBeginning" />
-			<menuItem name="insertColsEnd" caption="Insert 2 Columns at the end" command="PatchInsertColumnEnd" />
+			<menuItem name="insertColsBegin" caption="Insert 2 columns at the beginning" command="PatchInsertColumnBeginning" />
+			<menuItem name="insertColsEnd" caption="Insert 2 columns at the end" command="PatchInsertColumnEnd" />
 			<menuSeparator />
-			<menuItem name="insertRowsBegin" caption="Insert 2 Rows at the beginning" command="PatchInsertRowBeginning" />
-			<menuItem name="insertRowsEnd" caption="Insert 2 Rows at the end" command="PatchInsertRowEnd" />
+			<menuItem name="insertRowsBegin" caption="Insert 2 rows at the beginning" command="PatchInsertRowBeginning" />
+			<menuItem name="insertRowsEnd" caption="Insert 2 rows at the end" command="PatchInsertRowEnd" />
 		</subMenu>
 
-		<subMenu name="appendSubdivisions" caption="Append">
-			<menuItem name="appendFirstcolumns" caption="Append 2 columns at the beginning" command="PatchAppendColumnBeginning" />
-			<menuItem name="appendLastcolumns" caption="Append 2 columns at the end" command="PatchAppendColumnEnd" />
+		<subMenu name="appendSubdivisions" caption="Extend">
+			<menuItem name="appendFirstcolumns" caption="Extend by 2 columns at the beginning" command="PatchAppendColumnBeginning" />
+			<menuItem name="appendLastcolumns" caption="Extend by 2 columns at the end" command="PatchAppendColumnEnd" />
 			<menuSeparator />
-			<menuItem name="appendFirstrows" caption="Append 2 rows at the beginning" command="PatchAppendRowBeginning" />
-			<menuItem name="appendLastrows" caption="Append 2 rows at the end" command="PatchAppendRowEnd" />
+			<menuItem name="appendFirstrows" caption="Extend by 2 rows at the beginning" command="PatchAppendRowBeginning" />
+			<menuItem name="appendLastrows" caption="Extend by 2 rows at the end" command="PatchAppendRowEnd" />
 		</subMenu>
 
 		<subMenu name="deleteSubdivisions" caption="Delete">
