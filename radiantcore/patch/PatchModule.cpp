@@ -110,15 +110,31 @@ void PatchModule::registerPatchCommands()
         selection::pred::havePatch
     );
 
-    GlobalCommandSystem().addCommand("PatchDeleteColumnBeginning", selection::algorithm::deletePatchColumnsFromBeginning);
-	GlobalCommandSystem().addCommand("PatchDeleteColumnEnd", selection::algorithm::deletePatchColumnsFromEnd);
-	GlobalCommandSystem().addCommand("PatchDeleteRowBeginning", selection::algorithm::deletePatchRowsFromBeginning);
-	GlobalCommandSystem().addCommand("PatchDeleteRowEnd", selection::algorithm::deletePatchRowsFromEnd);
+    GlobalCommandSystem().addWithCheck("PatchDeleteColumnBeginning",
+                                       selection::algorithm::deletePatchColumnsFromBeginning,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("PatchDeleteColumnEnd",
+                                       selection::algorithm::deletePatchColumnsFromEnd,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("PatchDeleteRowBeginning",
+                                       selection::algorithm::deletePatchRowsFromBeginning,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("PatchDeleteRowEnd",
+                                       selection::algorithm::deletePatchRowsFromEnd,
+                                       selection::pred::havePatch);
 
-	GlobalCommandSystem().addCommand("PatchAppendColumnBeginning", selection::algorithm::appendPatchColumnsAtBeginning);
-	GlobalCommandSystem().addCommand("PatchAppendColumnEnd", selection::algorithm::appendPatchColumnsAtEnd);
-	GlobalCommandSystem().addCommand("PatchAppendRowBeginning", selection::algorithm::appendPatchRowsAtBeginning);
-	GlobalCommandSystem().addCommand("PatchAppendRowEnd", selection::algorithm::appendPatchRowsAtEnd);
+    GlobalCommandSystem().addWithCheck("PatchAppendColumnBeginning",
+                                       selection::algorithm::appendPatchColumnsAtBeginning,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("PatchAppendColumnEnd",
+                                       selection::algorithm::appendPatchColumnsAtEnd,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("PatchAppendRowBeginning",
+                                       selection::algorithm::appendPatchRowsAtBeginning,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("PatchAppendRowEnd",
+                                       selection::algorithm::appendPatchRowsAtEnd,
+                                       selection::pred::havePatch);
 
     GlobalCommandSystem().addCommand("InvertCurve", selection::algorithm::invertPatch);
     GlobalCommandSystem().addCommand("RedisperseRows", selection::algorithm::redispersePatchRows);
