@@ -136,20 +136,28 @@ void PatchModule::registerPatchCommands()
                                        selection::algorithm::appendPatchRowsAtEnd,
                                        selection::pred::havePatch);
 
-    GlobalCommandSystem().addCommand("InvertCurve", selection::algorithm::invertPatch);
-    GlobalCommandSystem().addCommand("RedisperseRows", selection::algorithm::redispersePatchRows);
-    GlobalCommandSystem().addCommand("RedisperseCols", selection::algorithm::redispersePatchCols);
-    GlobalCommandSystem().addCommand("MatrixTranspose", selection::algorithm::transposePatch);
-    GlobalCommandSystem().addCommand("CapSelectedPatches", selection::algorithm::capPatch,
-                                     {cmd::ARGTYPE_STRING});
-    GlobalCommandSystem().addCommand(
+    GlobalCommandSystem().addWithCheck("InvertCurve", selection::algorithm::invertPatch,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("RedisperseRows",
+                                       selection::algorithm::redispersePatchRows,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("RedisperseCols",
+                                       selection::algorithm::redispersePatchCols,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("MatrixTranspose", selection::algorithm::transposePatch,
+                                       selection::pred::havePatch);
+    GlobalCommandSystem().addWithCheck("CapSelectedPatches", selection::algorithm::capPatch,
+                                       selection::pred::havePatch, {cmd::ARGTYPE_STRING});
+    GlobalCommandSystem().addWithCheck(
         "ThickenSelectedPatches", selection::algorithm::thickenPatches,
+        selection::pred::havePatch,
         {cmd::ARGTYPE_DOUBLE, cmd::ARGTYPE_INT, cmd::ARGTYPE_INT} // thickness, create_seams, axis
     );
     GlobalCommandSystem().addWithCheck("StitchPatchTexture",
                                        cmd::noArgs(patch::algorithm::stitchTextures),
                                        [] { return selection::pred::havePatchesExact(2); });
-    GlobalCommandSystem().addCommand("BulgePatch", patch::algorithm::bulge, {cmd::ARGTYPE_DOUBLE});
+    GlobalCommandSystem().addWithCheck("BulgePatch", patch::algorithm::bulge,
+                                       selection::pred::havePatch, {cmd::ARGTYPE_DOUBLE});
     GlobalCommandSystem().addWithCheck("WeldSelectedPatches",
                                        patch::algorithm::weldSelectedPatches,
                                        [] { return selection::pred::havePatchesAtLeast(2); });
