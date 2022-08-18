@@ -47,6 +47,8 @@ sound test/jorge
     editor_displayFolder	test
 
     volume -7
+    minDistance 2
+    maxDistance 17
 
     sound/test/jorge.ogg
 }

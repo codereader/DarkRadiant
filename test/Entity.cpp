@@ -6,6 +6,7 @@
 #include "iselectable.h"
 #include "iselection.h"
 #include "ifilesystem.h"
+#include "isound.h"
 #include "iundo.h"
 #include "ishaders.h"
 #include "render/RenderableCollectionWalker.h"
@@ -1767,6 +1768,71 @@ TEST_F(EntityTest, MovePlayerStart)
     // Ensure this action is undoable
     GlobalUndoSystem().undo();
     EXPECT_EQ(Node_getEntity(playerStart)->getKeyValue("origin"), originalPosition) << "Origin change didn't get undone";
+}
+
+TEST_F(EntityTest, CreateSpeaker)
+{
+    std::string originalPosition = "50 30 47";
+
+    GlobalCommandSystem().executeCommand("CreateSpeaker", {
+        cmd::Argument("test/jorge"), cmd::Argument(originalPosition)
+    });
+
+    // The speaker should be in the map now
+    auto speaker = std::dynamic_pointer_cast<IEntityNode>(
+        algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const IEntityNodePtr& entity)
+    {
+        return entity->getEntity().getEntityClass()->getDeclName() == "speaker";
+    }));
+
+    EXPECT_TRUE(speaker) << "Could not locate the speaker in the map";
+
+    // Should be at the correct position
+    EXPECT_EQ(speaker->worldAABB().getOrigin(), string::convert<Vector3>(originalPosition));
+    EXPECT_EQ(speaker->getEntity().getKeyValue("origin"), originalPosition);
+
+    // Should carry the s_min/s_max/s_shader key values
+    EXPECT_EQ(speaker->getEntity().getKeyValue("s_shader"), "test/jorge");
+
+    auto soundShader = GlobalSoundManager().getSoundShader("test/jorge");
+    EXPECT_TRUE(soundShader) << "Could not locate the jorge sound shader";
+    EXPECT_EQ(speaker->getEntity().getKeyValue("s_mindistance"), string::to_string(soundShader->getRadii().getMin(true)));
+    EXPECT_EQ(speaker->getEntity().getKeyValue("s_maxdistance"), string::to_string(soundShader->getRadii().getMax(true)));
+
+    // The speaker should be selected
+    EXPECT_TRUE(Node_isSelected(speaker)) << "Speaker should be selected";
+}
+
+// #6062: Moving a speaker should no longer remove the s_mindistance/s_maxdistance key values on the entity
+// even if they are matching the values defined in the sound shader declaration
+TEST_F(EntityTest, MovingSpeakerNotRemovingDistanceArgs)
+{
+    // Empty map, check prerequisites
+    GlobalCommandSystem().executeCommand("CreateSpeaker", {
+        cmd::Argument("test/jorge"), cmd::Argument("50 30 47")
+    });
+
+    auto node = algorithm::findFirstEntity(GlobalMapModule().getRoot(), [](const IEntityNodePtr& entity)
+    {
+        return entity->getEntity().getEntityClass()->getDeclName() == "speaker";
+    });
+    auto speaker = std::dynamic_pointer_cast<IEntityNode>(node);
+
+    EXPECT_TRUE(speaker);
+    EXPECT_NE(speaker->getEntity().getKeyValue("s_mindistance"), "");
+    EXPECT_NE(speaker->getEntity().getKeyValue("s_maxdistance"), "");
+
+    // Move the speaker
+    GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(speaker, true);
+
+    auto transformable = scene::node_cast<ITransformable>(speaker);
+    transformable->setType(TRANSFORM_PRIMITIVE);
+    transformable->setTranslation({ -64, 0, 0 });
+    transformable->freezeTransform();
+
+    EXPECT_NE(speaker->getEntity().getKeyValue("s_mindistance"), "") << "Key value has been lost in translation";
+    EXPECT_NE(speaker->getEntity().getKeyValue("s_maxdistance"), "") << "Key value has been lost in translation";
 }
 
 }
