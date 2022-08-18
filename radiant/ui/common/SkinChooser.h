@@ -74,7 +74,6 @@ private:
 
     void handleSelectionChange();
     void updateMaterialsList();
-	void onMainFrameShuttingDown();
 
     void _onItemActivated( wxDataViewEvent& ev );
     void _onPreviewModelLoaded(const model::ModelNodePtr& model);

@@ -263,6 +263,7 @@ void SkinChooser::setSelectedSkin(const std::string& skin)
     if (item.IsOk())
     {
         _treeView->Select(item);
+        _treeView->EnsureVisible(item);
     }
     else
     {
