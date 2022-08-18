@@ -5,6 +5,7 @@
 #include "itextstream.h"
 #include "iregistry.h"
 #include "iradiant.h"
+#include "icolourscheme.h"
 #include "ideclmanager.h"
 
 #include "math/Matrix4.h"
@@ -380,6 +381,7 @@ const StringSet& OpenGLRenderSystem::getDependencies() const
     static StringSet _dependencies
 	{
         MODULE_COMMANDSYSTEM,
+        MODULE_COLOURSCHEME_MANAGER,
         MODULE_SHADERSYSTEM,
         MODULE_XMLREGISTRY,
         MODULE_SHARED_GL_CONTEXT,
