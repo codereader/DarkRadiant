@@ -126,6 +126,7 @@
     <ClCompile Include="..\..\..\test\Prefabs.cpp" />
     <ClCompile Include="..\..\..\test\Renderer.cpp" />
     <ClCompile Include="..\..\..\test\SceneNode.cpp" />
+    <ClCompile Include="..\..\..\test\SceneStatistics.cpp" />
     <ClCompile Include="..\..\..\test\Selection.cpp" />
     <ClCompile Include="..\..\..\test\SelectionAlgorithm.cpp" />
     <ClCompile Include="..\..\..\test\Settings.cpp" />

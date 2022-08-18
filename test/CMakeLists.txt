@@ -42,6 +42,7 @@ add_executable(drtest
                Prefabs.cpp
                Renderer.cpp
                SceneNode.cpp
+               SceneStatistics.cpp
                SelectionAlgorithm.cpp
                Selection.cpp
                Settings.cpp

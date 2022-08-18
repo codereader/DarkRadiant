@@ -4,8 +4,10 @@
 #include <string>
 #include "ipatch.h"
 #include "ibrush.h"
+#include "imodel.h"
 #include "iparticlenode.h"
 #include "iparticles.h"
+#include "iparticlestage.h"
 #include "iscenegraph.h"
 
 namespace scene
@@ -69,10 +71,16 @@ public:
 
             if (!particleDef) return false;
 
+            std::set<std::string> usedMaterials;
+
             for (auto i = 0; i < particleDef->getNumStages(); ++i)
             {
-                auto stage = particleDef->getStage(i);
-                increaseShaderCount(stage->getMaterialName(), OwnerType::Particle);
+                usedMaterials.insert(particleDef->getStage(i)->getMaterialName());
+            }
+            
+            for (const auto& material : usedMaterials)
+            {
+                increaseShaderCount(material, OwnerType::Particle);
             }
 
             return false;
@@ -82,7 +90,14 @@ public:
         {
             auto modelNode = Node_getModel(node);
 
+            std::set<std::string> usedMaterials;
+
             for (const auto& material : modelNode->getIModel().getActiveMaterials())
+            {
+                usedMaterials.insert(material);
+            }
+
+            for (const auto& material : usedMaterials)
             {
                 increaseShaderCount(material, OwnerType::Model);
             }
