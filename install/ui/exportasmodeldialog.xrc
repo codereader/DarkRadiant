@@ -156,7 +156,7 @@
 										<flag>wxALIGN_CENTER_VERTICAL</flag>
 										<border>6</border>
 										<object class="wxTextCtrl" name="ExportDialogCustomOrigin">
-											<value></value>
+											<value>0 0 0</value>
 										</object>
 									</object>
 								</object>

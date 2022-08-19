@@ -38,6 +38,7 @@ namespace
 
 	constexpr const char* const RKEY_MODEL_EXPORT_SKIP_CAULK = "user/ui/exportAsModel/skipCaulk";
 	constexpr const char* const RKEY_MODEL_EXPORT_EXPORT_ORIGIN = "user/ui/exportAsModel/exportOrigin";
+	constexpr const char* const RKEY_MODEL_EXPORT_CUSTOM_ORIGIN = "user/ui/exportAsModel/customOrigin";
 	constexpr const char* const RKEY_MODEL_EXPORT_REPLACE_WITH_MODEL = "user/ui/exportAsModel/replaceSelectionWithModel";
 	constexpr const char* const RKEY_MODEL_EXPORT_OUTPUT_PATH = "user/ui/exportAsModel/outputPath";
 	constexpr const char* const RKEY_MODEL_EXPORT_OUTPUT_FORMAT = "user/ui/exportAsModel/outputFormat";
@@ -138,6 +139,9 @@ void ExportAsModelDialog::populateWindow()
 
 	bool exportLightsAsObjects = registry::getValue<bool>(RKEY_MODEL_EXPORT_EXPORT_LIGHTS_AS_OBJECTS);
 	findNamedObject<wxCheckBox>(this, "ExportDialogExportLightsAsObjects")->SetValue(exportLightsAsObjects);
+
+    auto customOrigin = registry::getValue<std::string>(RKEY_MODEL_EXPORT_CUSTOM_ORIGIN);
+    findNamedObject<wxTextCtrl>(this, "ExportDialogCustomOrigin")->SetValue(customOrigin);
 
     // Populate the available entitys
     auto entitySelector = findNamedObject<wxChoice>(this, "ExportDialogEntitySelector");
@@ -248,7 +252,7 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 		argList.push_back(outputFormat);
 		argList.push_back(model::getExportOriginString(exportOrigin));
 		argList.push_back(entityName);
-		argList.push_back(customOrigin);
+		argList.push_back(string::convert<Vector3>(customOrigin));
 		argList.push_back(skipCaulk);
 		argList.push_back(replaceSelectionWithModel);
 		argList.push_back(exportLightsAsObjects);
@@ -333,6 +337,9 @@ void ExportAsModelDialog::saveOptionsToRegistry()
 		findNamedObject<wxCheckBox>(this, "ExportDialogSkipCaulk")->GetValue());
 
 	registry::setValue(RKEY_MODEL_EXPORT_EXPORT_ORIGIN, static_cast<int>(getSelectedExportOrigin()));
+
+	registry::setValue(RKEY_MODEL_EXPORT_CUSTOM_ORIGIN,
+        findNamedObject<wxTextCtrl>(this, "ExportDialogCustomOrigin")->GetValue().ToStdString());
 
 	registry::setValue(RKEY_MODEL_EXPORT_REPLACE_WITH_MODEL,
 		findNamedObject<wxCheckBox>(this, "ExportDialogReplaceWithModel")->GetValue());
