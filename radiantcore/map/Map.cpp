@@ -1000,14 +1000,16 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
     GlobalCommandSystem().addCommand("FocusViews", std::bind(&Map::focusViewCmd, this, std::placeholders::_1), { cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_VECTOR3 });
     GlobalCommandSystem().addCommand("FocusCameraOnSelection", std::bind(&Map::focusCameraOnSelectionCmd, this, std::placeholders::_1));
-	GlobalCommandSystem().addCommand("ExportSelectedAsModel", map::algorithm::exportSelectedAsModelCmd,
-        { cmd::ARGTYPE_STRING,
-          cmd::ARGTYPE_STRING,
-          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
-          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
-          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
-          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL,
-          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL });
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<ExportLightsAsObjects>]
+	GlobalCommandSystem().addCommand("ExportSelectedAsModel", algorithm::exportSelectedAsModelCmd,
+        { cmd::ARGTYPE_STRING, // path
+          cmd::ARGTYPE_STRING, // export format
+          cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL, // export origin type
+          cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL, // origin entity name
+          cmd::ARGTYPE_VECTOR3 | cmd::ARGTYPE_OPTIONAL, // custom origin
+          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL, // skip caulk
+          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL, // replace selection with model
+          cmd::ARGTYPE_INT | cmd::ARGTYPE_OPTIONAL }); // export lights as objects
 
     // Add undo commands
     GlobalCommandSystem().addCommand("Undo", std::bind(&Map::undoCmd, this, std::placeholders::_1));

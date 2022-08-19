@@ -5,6 +5,7 @@
 #include "imap.h"
 #include "ieclass.h"
 #include "ientity.h"
+#include "ModelExportOptions.h"
 #include "algorithm/Primitives.h"
 #include "algorithm/Scene.h"
 #include "scenelib.h"
@@ -38,12 +39,14 @@ TEST_F(ModelExportTest, ExportPatchMesh)
 
     cmd::ArgumentList argList;
 
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]
     argList.push_back(outputFilename.string());
     argList.push_back(std::string("lwo"));
-    argList.push_back(true); // centerObjects
+    argList.push_back(model::getExportOriginString(model::ModelExportOrigin::SelectionCenter)); // centerObjects
+    argList.push_back(std::string()); // OriginEntityName
+    argList.push_back(Vector3()); // CustomOrigin
     argList.push_back(true); // skipCaulk
     argList.push_back(false); // replaceSelectionWithModel
-    argList.push_back(false); // useEntityOrigin
     argList.push_back(false); // exportLightsAsObjects
 
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
@@ -444,14 +447,17 @@ TEST_F(ModelExportTest, ExportedModelInheritsSpawnargs)
 
     // Export this model to a mod-relative location
 
-    // ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]
     cmd::ArgumentList argList;
 
-    argList.emplace_back(fullModelPath);
-    argList.emplace_back(os::getExtension(exportedModelPath)); // lwo
-    argList.emplace_back(false); // center objects
-    argList.emplace_back(false); // skip caulk
-    argList.emplace_back(true); // replace selection
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]
+    argList.push_back(fullModelPath);
+    argList.push_back(os::getExtension(exportedModelPath)); // lwo
+    argList.push_back(model::getExportOriginString(model::ModelExportOrigin::MapOrigin)); // don't center objects
+    argList.push_back(std::string()); // OriginEntityName
+    argList.push_back(Vector3()); // CustomOrigin
+    argList.push_back(false); // skipCaulk
+    argList.push_back(true); // replaceSelectionWithModel
+    argList.push_back(false); // exportLightsAsObjects
 
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
 
@@ -524,14 +530,17 @@ TEST_F(ModelExportTest, ExportedModelInheritsLayers)
 
     // Export this model to a mod-relative location
 
-    // ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]
     cmd::ArgumentList argList;
 
-    argList.emplace_back(fullModelPath);
-    argList.emplace_back(os::getExtension(exportedModelPath)); // lwo
-    argList.emplace_back(false); // center objects
-    argList.emplace_back(false); // skip caulk
-    argList.emplace_back(true); // replace selection
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]
+    argList.push_back(fullModelPath);
+    argList.push_back(os::getExtension(exportedModelPath)); // lwo
+    argList.push_back(model::getExportOriginString(model::ModelExportOrigin::MapOrigin)); // don't center objects
+    argList.push_back(std::string()); // OriginEntityName
+    argList.push_back(Vector3()); // CustomOrigin
+    argList.push_back(false); // skipCaulk
+    argList.push_back(true); // replaceSelectionWithModel
+    argList.push_back(false); // exportLightsAsObjects
 
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
 
@@ -586,12 +595,14 @@ TEST_F(ModelExportTest, ExportUsingEntityOrigin)
 
     cmd::ArgumentList argList;
 
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]
     argList.push_back(outputFilename.string());
     argList.push_back(std::string("lwo"));
-    argList.push_back(false); // centerObjects
+    argList.push_back(model::getExportOriginString(model::ModelExportOrigin::EntityOrigin)); // center objects
+    argList.push_back(Node_getEntity(entity)->getKeyValue("name")); // OriginEntityName
+    argList.push_back(Vector3()); // CustomOrigin
     argList.push_back(true); // skipCaulk
     argList.push_back(false); // replaceSelectionWithModel
-    argList.push_back(true); // useEntityOrigin
     argList.push_back(false); // exportLightsAsObjects
 
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);

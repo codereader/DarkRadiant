@@ -15,6 +15,7 @@
 #include <wx/choice.h>
 #include <wx/radiobut.h>
 #include <wx/sizer.h>
+#include <wx/textctrl.h>
 #include "string/case_conv.h"
 #include "string/split.h"
 
@@ -157,7 +158,7 @@ void ExportAsModelDialog::populateWindow()
         entitySelector->Select(0);
     }
 
-    auto exportOrigin = static_cast<ExportOrigin>(registry::getValue<int>(RKEY_MODEL_EXPORT_EXPORT_ORIGIN));
+    auto exportOrigin = static_cast<model::ModelExportOrigin>(registry::getValue<int>(RKEY_MODEL_EXPORT_EXPORT_ORIGIN));
     setSelectedExportOrigin(exportOrigin);
 
 	if (entitySelector->GetCount() > 0)
@@ -171,9 +172,9 @@ void ExportAsModelDialog::populateWindow()
         findNamedObject<wxChoice>(this, "ExportDialogEntitySelector")->Enable(false);
 
         // Switch to another option
-        if (getSelectedExportOrigin() == ExportOrigin::EntityOrigin)
+        if (getSelectedExportOrigin() == model::ModelExportOrigin::EntityOrigin)
         {
-            setSelectedExportOrigin(ExportOrigin::SelectionCenter);
+            setSelectedExportOrigin(model::ModelExportOrigin::SelectionCenter);
         }
 	}
 
@@ -193,6 +194,25 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 	std::string outputFormat = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogFormatChoice"));
 	bool replaceSelectionWithModel = findNamedObject<wxCheckBox>(this, "ExportDialogReplaceWithModel")->GetValue();
 	bool exportLightsAsObjects = findNamedObject<wxCheckBox>(this, "ExportDialogExportLightsAsObjects")->GetValue();
+	auto customOrigin = findNamedObject<wxTextCtrl>(this, "ExportDialogCustomOrigin")->GetValue().ToStdString();
+    auto entityName = std::string();
+
+    // Validate the user-entered origin
+    if (exportOrigin == model::ModelExportOrigin::CustomOrigin)
+    {
+        auto invalidOrigin = Vector3(65536, 65536, 65536);
+        if (string::convert<Vector3>(customOrigin, invalidOrigin) == invalidOrigin)
+        {
+            wxutil::Messagebox::Show(_("Invalid Origin"), 
+                _("The origin you entered could not be parsed.\nUse the format \"x y z\" (without quotes, separated with spaces)"), 
+                IDialog::MessageType::MESSAGE_ERROR);
+            return;
+        }
+    }
+    else if (exportOrigin == model::ModelExportOrigin::EntityOrigin)
+    {
+        entityName = wxutil::ChoiceHelper::GetSelectedStoredString(findNamedObject<wxChoice>(this, "ExportDialogEntitySelector"));
+    }
 
 	if (outputFilename.empty())
 	{
@@ -221,15 +241,16 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 
 	try
 	{
-		// ExportSelectedAsModel <Path> <ExportFormat> [<CenterObjects>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<UseEntityOrigin>] [<ExportLightsAsObjects>]
+		// ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<ExportLightsAsObjects>]
 		cmd::ArgumentList argList;
 
 		argList.push_back(outputFilename);
 		argList.push_back(outputFormat);
-		argList.push_back(exportOrigin != ExportOrigin::MapOrigin);
+		argList.push_back(model::getExportOriginString(exportOrigin));
+		argList.push_back(entityName);
+		argList.push_back(customOrigin);
 		argList.push_back(skipCaulk);
 		argList.push_back(replaceSelectionWithModel);
-		argList.push_back(exportOrigin == ExportOrigin::EntityOrigin);
 		argList.push_back(exportLightsAsObjects);
 
 		GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
@@ -320,37 +341,37 @@ void ExportAsModelDialog::saveOptionsToRegistry()
 		findNamedObject<wxCheckBox>(this, "ExportDialogExportLightsAsObjects")->GetValue());
 }
 
-ExportAsModelDialog::ExportOrigin ExportAsModelDialog::getSelectedExportOrigin()
+model::ModelExportOrigin ExportAsModelDialog::getSelectedExportOrigin()
 {
     if (findNamedObject<wxRadioButton>(this, "ExportOriginUseMapOrigin")->GetValue())
     {
-        return ExportOrigin::MapOrigin;
+        return model::ModelExportOrigin::MapOrigin;
     }
     else if (findNamedObject<wxRadioButton>(this, "ExportOriginUseSelectionCenter")->GetValue())
     {
-        return ExportOrigin::SelectionCenter;
+        return model::ModelExportOrigin::SelectionCenter;
     }
     else if (findNamedObject<wxRadioButton>(this, "ExportOriginUseEntityOrigin")->GetValue())
     {
-        return ExportOrigin::EntityOrigin;
+        return model::ModelExportOrigin::EntityOrigin;
     }
     else if (findNamedObject<wxRadioButton>(this, "ExportOriginUseCustomOrigin")->GetValue())
     {
-        return ExportOrigin::CustomOrigin;
+        return model::ModelExportOrigin::CustomOrigin;
     }
 
-    return ExportOrigin::MapOrigin;
+    return model::ModelExportOrigin::MapOrigin;
 }
 
-void ExportAsModelDialog::setSelectedExportOrigin(ExportOrigin exportOrigin)
+void ExportAsModelDialog::setSelectedExportOrigin(model::ModelExportOrigin exportOrigin)
 {
-    findNamedObject<wxRadioButton>(this, "ExportOriginUseMapOrigin")->SetValue(exportOrigin == ExportOrigin::MapOrigin);
-    findNamedObject<wxRadioButton>(this, "ExportOriginUseSelectionCenter")->SetValue(exportOrigin == ExportOrigin::SelectionCenter);
-    findNamedObject<wxRadioButton>(this, "ExportOriginUseEntityOrigin")->SetValue(exportOrigin == ExportOrigin::EntityOrigin);
-    findNamedObject<wxRadioButton>(this, "ExportOriginUseCustomOrigin")->SetValue(exportOrigin == ExportOrigin::CustomOrigin);
+    findNamedObject<wxRadioButton>(this, "ExportOriginUseMapOrigin")->SetValue(exportOrigin == model::ModelExportOrigin::MapOrigin);
+    findNamedObject<wxRadioButton>(this, "ExportOriginUseSelectionCenter")->SetValue(exportOrigin == model::ModelExportOrigin::SelectionCenter);
+    findNamedObject<wxRadioButton>(this, "ExportOriginUseEntityOrigin")->SetValue(exportOrigin == model::ModelExportOrigin::EntityOrigin);
+    findNamedObject<wxRadioButton>(this, "ExportOriginUseCustomOrigin")->SetValue(exportOrigin == model::ModelExportOrigin::CustomOrigin);
 }
 
-void ExportAsModelDialog::ShowDialog(const cmd::ArgumentList& args)
+void ExportAsModelDialog::ShowDialog(const cmd::ArgumentList&)
 {
 	if (GlobalSelectionSystem().countSelected() == 0)
 	{
@@ -358,7 +379,7 @@ void ExportAsModelDialog::ShowDialog(const cmd::ArgumentList& args)
 		return;
 	}
 
-	ExportAsModelDialog* instance = new ExportAsModelDialog;
+	auto instance = new ExportAsModelDialog;
 
 	instance->ShowModal();
 	instance->Destroy();

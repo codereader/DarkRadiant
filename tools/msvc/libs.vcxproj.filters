@@ -399,6 +399,7 @@
     <ClInclude Include="..\..\libs\parser\DefBlockSyntaxParser.h">
       <Filter>parser</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\ModelExportOptions.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

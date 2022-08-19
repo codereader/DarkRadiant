@@ -2,6 +2,7 @@
 
 #include "icommandsystem.h"
 
+#include "ModelExportOptions.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
@@ -12,17 +13,7 @@ class ExportAsModelDialog :
 	public wxutil::DialogBase,
 	private wxutil::XmlResourceBasedWidget
 {
-private:
-    enum class ExportOrigin
-    {
-        MapOrigin,
-        SelectionCenter,
-        EntityOrigin,
-        CustomOrigin,
-    };
-
 public:
-	// Constructor
 	ExportAsModelDialog(wxWindow* parent = nullptr);
 
 	static void ShowDialog(const cmd::ArgumentList& args);
@@ -39,8 +30,10 @@ private:
 
 	void saveOptionsToRegistry();
 	void handleFormatSelectionChange();
-    ExportOrigin getSelectedExportOrigin();
-    void setSelectedExportOrigin(ExportOrigin exportOrigin);
+
+    Vector3 getExportOrigin();
+    model::ModelExportOrigin getSelectedExportOrigin();
+    void setSelectedExportOrigin(model::ModelExportOrigin exportOrigin);
 };
 
 }
