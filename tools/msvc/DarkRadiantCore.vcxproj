@@ -1132,6 +1132,18 @@
     <ClInclude Include="..\..\radiantcore\xmlregistry\RegistryTree.h" />
     <ClInclude Include="..\..\radiantcore\xmlregistry\XMLRegistry.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\install\gl\cubemap_fp.glsl" />
+    <None Include="..\..\install\gl\cubemap_vp.glsl" />
+    <None Include="..\..\install\gl\interaction_fp.glsl" />
+    <None Include="..\..\install\gl\interaction_vp.glsl" />
+    <None Include="..\..\install\gl\regular_stage_fp.glsl" />
+    <None Include="..\..\install\gl\regular_stage_vp.glsl" />
+    <None Include="..\..\install\gl\shadowmap_fp.glsl" />
+    <None Include="..\..\install\gl\shadowmap_vp.glsl" />
+    <None Include="..\..\install\gl\zfill_alpha_fp.glsl" />
+    <None Include="..\..\install\gl\zfill_alpha_vp.glsl" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <ProjectGuid>{83D79C71-4E8F-4F78-9D46-EF02D5D5CD89}</ProjectGuid>

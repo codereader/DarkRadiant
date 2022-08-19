@@ -212,6 +212,9 @@
     <Filter Include="src\selection\textool">
       <UniqueIdentifier>{24592976-64c8-4027-81b7-5b83f62c43d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gl">
+      <UniqueIdentifier>{dc88a10c-1b0d-4e9b-844a-952046f324e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -2358,5 +2361,37 @@
     <ClInclude Include="..\..\radiantcore\shaders\MaterialManager.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\install\gl\cubemap_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\cubemap_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\interaction_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\interaction_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\regular_stage_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\regular_stage_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\shadowmap_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\shadowmap_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\zfill_alpha_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\zfill_alpha_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
   </ItemGroup>
 </Project>
