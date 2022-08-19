@@ -54,6 +54,25 @@ TEST_F(ModelSkinTest, GetRemap)
     EXPECT_EQ(tileSkin->getRemap("any_other_texture"), "") << "Missing remap should return an empty string";
 }
 
+TEST_F(ModelSkinTest, GetRemapUsingWildcard)
+{
+    auto skin = GlobalModelSkinCache().findSkin("invisible");
+
+    // Check the skin contains what need in this test
+    EXPECT_NE(skin->getBlockSyntax().contents.find("*   textures/common/nodraw"), std::string::npos);
+
+    EXPECT_EQ(skin->getRemap("textures/atest/a"), "textures/common/nodraw") << "Skin should always return nodraw";
+    EXPECT_EQ(skin->getRemap("any_other_texture"), "textures/common/nodraw") << "Skin should always return nodraw";
+}
+
+TEST_F(ModelSkinTest, GetRemapIsRespectingDeclarationOrder)
+{
+    auto skin = GlobalModelSkinCache().findSkin("skin_with_wildcard");
+
+    EXPECT_EQ(skin->getRemap("textures/common/caulk"), "textures/common/shadowcaulk") << "Skin should respond to specific material first";
+    EXPECT_EQ(skin->getRemap("any_other_texture"), "textures/common/nodraw") << "Skin should return nodraw for the rest";
+}
+
 inline void expectSkinIsListed(const StringList& skins, const std::string& expectedSkin)
 {
     EXPECT_NE(std::find(skins.begin(), skins.end(), expectedSkin), skins.end())

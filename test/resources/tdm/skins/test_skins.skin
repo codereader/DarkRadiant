@@ -29,3 +29,19 @@ SkIn skin_with_strange_casing
 {
     material textures/numbers/11
 }
+
+// a skin using the wildcard character to match all materials
+skin invisible
+{
+    *   textures/common/nodraw
+}
+
+// a skin using the wildcard character as fallback match
+skin skin_with_wildcard
+{
+    // This one should match first
+    textures/common/caulk   textures/common/shadowcaulk
+
+    // Everything else is matching this one
+    *   textures/common/nodraw
+}
