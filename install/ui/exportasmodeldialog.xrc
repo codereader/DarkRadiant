@@ -78,7 +78,7 @@
 						<flag>wxBOTTOM|wxTOP</flag>
 						<border>6</border>
 						<object class="wxStaticText" name="ExportDialogOriginLabel">
-							<label>Export Origin</label>
+							<label>Model Origin</label>
 							<wrap>-1</wrap>
 						</object>
 					</object>
@@ -123,7 +123,7 @@
 						<flag>wxBOTTOM|wxTOP</flag>
 						<border>6</border>
 						<object class="wxStaticText" name="ExportDialogOptionLabel">
-							<label>Export Origin</label>
+							<label>Export Options</label>
 							<wrap>-1</wrap>
 						</object>
 					</object>

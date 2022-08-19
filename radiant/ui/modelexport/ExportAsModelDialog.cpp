@@ -56,6 +56,7 @@ void ExportAsModelDialog::populateWindow()
 	GetSizer()->Add(panel, 1, wxEXPAND);
 	
 	makeLabelBold(this, "ExportDialogOutputLabel");
+	makeLabelBold(this, "ExportDialogOriginLabel");
 	makeLabelBold(this, "ExportDialogOptionLabel");
 
 	auto exportButton = findNamedObject<wxButton>(this, "ExportDialogExportButton");
