@@ -89,6 +89,7 @@ void exportSelectedAsModel(const ModelExportOptions& options)
 			{
 				Vector3 entityOrigin = string::convert<Vector3>(entity->getKeyValue("origin"));
 				exporter.setOrigin(entityOrigin);
+                exporter.setCenterObjects(true);
 			}
 		}
 		else

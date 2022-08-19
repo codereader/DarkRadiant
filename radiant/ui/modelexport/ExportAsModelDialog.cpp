@@ -205,7 +205,7 @@ void ExportAsModelDialog::onExport(wxCommandEvent& ev)
 
 		argList.push_back(outputFilename);
 		argList.push_back(outputFormat);
-		argList.push_back(exportOrigin == ExportOrigin::SelectionCenter);
+		argList.push_back(exportOrigin != ExportOrigin::MapOrigin);
 		argList.push_back(skipCaulk);
 		argList.push_back(replaceSelectionWithModel);
 		argList.push_back(exportOrigin == ExportOrigin::EntityOrigin);

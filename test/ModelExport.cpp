@@ -547,4 +547,56 @@ TEST_F(ModelExportTest, ExportedModelInheritsLayers)
     fs::remove(fullModelPath);
 }
 
+TEST_F(ModelExportTest, ExportUsingEntityOrigin)
+{
+    auto modelPath = "models/torch.lwo";
+    auto exportedModelPath = "models/export_test.lwo";
+    auto fullModelPath = _context.getTestProjectPath() + exportedModelPath;
+
+    // Create an entity referencing this new model
+    auto eclass = GlobalEntityClassManager().findClass("func_static");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // This should assign the model node to the entity
+    Node_getEntity(entity)->setKeyValue("model", modelPath);
+    // Offset this entity from the origin
+    Node_getEntity(entity)->setKeyValue("origin", "300 400 50");
+
+    Node_setSelected(entity, true);
+
+    // Choose a file in our temp data folder
+    std::string modRelativePath = "models/temp/temp_model_keeping_origin.lwo";
+
+    fs::path outputFilename = _context.getTestProjectPath();
+    outputFilename /= modRelativePath;
+    os::makeDirectory(outputFilename.parent_path().string());
+
+    auto exporter = GlobalModelFormatManager().getExporter("lwo");
+
+    cmd::ArgumentList argList;
+
+    argList.push_back(outputFilename.string());
+    argList.push_back(std::string("lwo"));
+    argList.push_back(false); // centerObjects
+    argList.push_back(true); // skipCaulk
+    argList.push_back(false); // replaceSelectionWithModel
+    argList.push_back(true); // useEntityOrigin
+    argList.push_back(false); // exportLightsAsObjects
+
+    GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
+
+    auto model = GlobalModelCache().getModel(modRelativePath);
+    EXPECT_TRUE(model);
+
+    // Model should be centered around the entity's origin
+    auto entityOrigin = string::convert<Vector3>(entity->getEntity().getKeyValue("origin"));
+    EXPECT_TRUE(math::isNear(model->localAABB().getOrigin(), entity->worldAABB().getOrigin() - entityOrigin, 0.01));
+    EXPECT_TRUE(math::isNear(model->localAABB().getExtents(), entity->worldAABB().getExtents(), 0.01));
+
+    // Clean up the file
+    fs::remove(outputFilename);
+}
+
 }
