@@ -18,6 +18,7 @@ private:
         MapOrigin,
         SelectionCenter,
         EntityOrigin,
+        CustomOrigin,
     };
 
 public:

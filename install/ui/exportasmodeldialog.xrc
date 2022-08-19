@@ -83,15 +83,18 @@
 						</object>
 					</object>
 					<object class="sizeritem">
-						<option>0</option>
+						<option>1</option>
 						<flag>wxEXPAND|wxLEFT</flag>
 						<border>12</border>
-						<object class="wxBoxSizer">
-							<orient>wxVERTICAL</orient>
+						<object class="wxGridSizer">
+							<rows>4</rows>
+							<cols>1</cols>
+							<vgap>6</vgap>
+							<hgap>0</hgap>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
+								<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+								<border>0</border>
 								<object class="wxRadioButton" name="ExportOriginUseMapOrigin">
 									<style>wxRB_GROUP</style>
 									<label>Use Map Origin</label>
@@ -100,20 +103,62 @@
 							</object>
 							<object class="sizeritem">
 								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
+								<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+								<border>0</border>
 								<object class="wxRadioButton" name="ExportOriginUseSelectionCenter">
 									<label>Use Selection Center</label>
 									<value>0</value>
 								</object>
 							</object>
 							<object class="sizeritem">
-								<option>0</option>
-								<flag>wxBOTTOM|wxTOP</flag>
-								<border>6</border>
-								<object class="wxRadioButton" name="ExportOriginUseEntityOrigin">
-									<label>Use Entity Origin</label>
-									<value>0</value>
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL</flag>
+								<border>0</border>
+								<object class="wxBoxSizer">
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_VERTICAL</flag>
+										<border>0</border>
+										<object class="wxRadioButton" name="ExportOriginUseEntityOrigin">
+											<label>Use Origin of Entity:</label>
+											<value>0</value>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxLEFT</flag>
+										<border>6</border>
+										<object class="wxChoice" name="ExportDialogEntitySelector">
+											<selection>0</selection>
+											<content />
+										</object>
+									</object>
+								</object>
+							</object>
+							<object class="sizeritem">
+								<option>1</option>
+								<flag>wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxTOP</flag>
+								<border>0</border>
+								<object class="wxBoxSizer">
+									<orient>wxHORIZONTAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_VERTICAL</flag>
+										<border>6</border>
+										<object class="wxRadioButton" name="ExportOriginUseCustomOrigin">
+											<label>Use Custom Origin:</label>
+											<value>0</value>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxALIGN_CENTER_VERTICAL</flag>
+										<border>6</border>
+										<object class="wxTextCtrl" name="ExportDialogCustomOrigin">
+											<value></value>
+										</object>
+									</object>
 								</object>
 							</object>
 						</object>
