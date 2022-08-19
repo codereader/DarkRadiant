@@ -619,4 +619,57 @@ TEST_F(ModelExportTest, ExportUsingEntityOrigin)
     fs::remove(outputFilename);
 }
 
+TEST_F(ModelExportTest, ExportUsingCustomOrigin)
+{
+    auto modelPath = "models/torch.lwo";
+    auto exportedModelPath = "models/export_test.lwo";
+    auto fullModelPath = _context.getTestProjectPath() + exportedModelPath;
+
+    // Create an entity referencing this new model
+    auto eclass = GlobalEntityClassManager().findClass("func_static");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    // This should assign the model node to the entity
+    Node_getEntity(entity)->setKeyValue("model", modelPath);
+    // Offset this entity from the origin
+    Node_getEntity(entity)->setKeyValue("origin", "300 400 50");
+
+    Node_setSelected(entity, true);
+
+    // Choose a file in our temp data folder
+    std::string modRelativePath = "models/temp/temp_model_keeping_origin.lwo";
+
+    fs::path outputFilename = _context.getTestProjectPath();
+    outputFilename /= modRelativePath;
+    os::makeDirectory(outputFilename.parent_path().string());
+
+    auto exporter = GlobalModelFormatManager().getExporter("lwo");
+
+    Vector3 customOrigin(70, -17, 600);
+    cmd::ArgumentList argList;
+
+    // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>][<SkipCaulk>][<ReplaceSelectionWithModel>][<ExportLightsAsObjects>]
+    argList.push_back(outputFilename.string());
+    argList.push_back(std::string("lwo"));
+    argList.push_back(model::getExportOriginString(model::ModelExportOrigin::CustomOrigin)); // center objects
+    argList.push_back(std::string()); // OriginEntityName
+    argList.push_back(customOrigin); // CustomOrigin
+    argList.push_back(true); // skipCaulk
+    argList.push_back(false); // replaceSelectionWithModel
+    argList.push_back(false); // exportLightsAsObjects
+
+    GlobalCommandSystem().executeCommand("ExportSelectedAsModel", argList);
+
+    auto model = GlobalModelCache().getModel(modRelativePath);
+    EXPECT_TRUE(model);
+
+    // Model should be centered around the custom origin
+    EXPECT_TRUE(math::isNear(model->localAABB().getOrigin(), entity->worldAABB().getOrigin() - customOrigin, 0.01));
+    EXPECT_TRUE(math::isNear(model->localAABB().getExtents(), entity->worldAABB().getExtents(), 0.01));
+
+    // Clean up the file
+    fs::remove(outputFilename);
+}
+
 }
