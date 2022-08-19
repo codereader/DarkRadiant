@@ -156,7 +156,6 @@ void refreshModelsByPath(const std::string& relativeModelPath)
         {
             entity->refreshModel();
             ++refreshedEntityCount;
-            return false;
         }
 
         return true;
