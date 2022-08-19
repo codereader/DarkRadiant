@@ -21,19 +21,21 @@ class Skin :
     // The list of models this skin is matching
     std::set<std::string> _matchingModels;
 
-	// Map of texture switches
-    std::map<std::string, std::string> _remaps;
+	// Ordered list of texture remaps (as they appear in the decl)
+    std::vector<std::pair<std::string, std::string>> _remaps;
 
 public:
     Skin(const std::string& name) :
         DeclarationBase<decl::ISkin>(decl::Type::Skin, name)
 	{}
 
-	std::string getName() const {
+	std::string getName() const
+    {
 		return getDeclName();
 	}
 
-	std::string getSkinFileName() const {
+	std::string getSkinFileName() const
+    {
 		return getDeclFilePath();
 	}
 
@@ -42,14 +44,22 @@ public:
     {
         ensureParsed();
 
-		auto i = _remaps.find(name);
-        return  i != _remaps.end() ? i->second : std::string();
+        // The remaps are applied in the order they appear in the decl
+        for (const auto& pair : _remaps)
+        {
+            if (pair.first == "*" || pair.first == name)
+            {
+                return pair.second;
+            }
+        }
+
+        return {};
 	}
 
 	// Add a remap pair to this skin
 	void addRemap(const std::string& src, const std::string& dst)
     {
-		_remaps.emplace(src, dst);
+		_remaps.emplace_back(src, dst);
 	}
 
     // Visit the functor with the name of each model mentioned in this skin declaration
@@ -76,6 +86,7 @@ protected:
         // "{"
         //      [ "model" <modelname> ]
         //      ( <sourceTex> <destTex> )*
+        //      ( * <destTex>)*
         // "}"
         while (tokeniser.hasMoreTokens())
         {
@@ -91,6 +102,7 @@ protected:
             }
             else
             {
+                // Add the pair, preserving any wildcards "*"
                 addRemap(key, value);
             }
         }
