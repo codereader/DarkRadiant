@@ -9,6 +9,7 @@
 #include "algorithm/Primitives.h"
 #include "algorithm/Scene.h"
 #include "scenelib.h"
+#include "os/file.h"
 #include "os/path.h"
 #include "string/case_conv.h"
 
@@ -670,6 +671,38 @@ TEST_F(ModelExportTest, ExportUsingCustomOrigin)
 
     // Clean up the file
     fs::remove(outputFilename);
+}
+
+// #5997: ExportSelectedAsCollisionModel should auto-create any necessary folders
+TEST_F(ModelExportTest, ExportSelectedAsCollisionModelCreatesFolder)
+{
+    // Create a func_static
+    auto eclass = GlobalEntityClassManager().findClass("func_static");
+    auto entity = GlobalEntityModule().createEntity(eclass);
+    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+
+    auto brush = algorithm::createCubicBrush(entity, Vector3(50, 50, 50));
+
+    // Select just the entity
+    GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(entity, true);
+
+    auto relativeModelPath = "models/some_folder_not_existing_outside_pk4s/testcube.ase";
+    auto physicalPath = _context.getTestProjectPath() + relativeModelPath;
+
+    // Make sure the folder is not there
+    fs::remove_all(os::getContainingDir(physicalPath));
+    EXPECT_FALSE(os::fileOrDirExists(os::getContainingDir(physicalPath))) << "Folder should not exist yet";
+    EXPECT_FALSE(os::fileOrDirExists(physicalPath)) << "Export CM should not exist yet";
+
+    // Export the selection as collision mesh for the torch model
+    GlobalCommandSystem().executeCommand("ExportSelectedAsCollisionModel", { relativeModelPath });
+
+    // Both file and folder need to exist, just check the file
+    EXPECT_TRUE(os::fileOrDirExists(physicalPath)) << "Folder should have been created by ExportSelectedAsCollisionModel";
+
+    // Remove the folder after the test is done
+    fs::remove_all(os::getContainingDir(physicalPath));
 }
 
 }
