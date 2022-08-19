@@ -351,13 +351,13 @@ TEST_F(ModelExportTest, ConvertAseToLwo)
 // #5659: Exporting a model should be reloaded automatically
 TEST_F(ModelExportTest, ExportedModelTriggersEntityRefresh)
 {
-    auto modelMaterial1 = "textures/numbers/1";
-    auto modelMaterial2 = "textures/numbers/2";
+    auto originalModelMaterial = "textures/numbers/1";
+    auto changedModelMaterial = "textures/numbers/2";
     auto modRelativePath = "models/refresh_test.ase";
     auto aseOutputPath = _context.getTestProjectPath() + modRelativePath;
 
     auto brush = algorithm::createCubicBrush(
-        GlobalMapModule().findOrInsertWorldspawn(), Vector3(0, 0, 0), modelMaterial1);
+        GlobalMapModule().findOrInsertWorldspawn(), Vector3(0, 0, 0), originalModelMaterial);
 
     GlobalSelectionSystem().setSelectedAll(false);
     Node_setSelected(brush, true);
@@ -365,21 +365,27 @@ TEST_F(ModelExportTest, ExportedModelTriggersEntityRefresh)
     // Export this model to the mod-relative location
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", { aseOutputPath, cmd::Argument("ase") });
 
-    // Create an entity referencing this new model
+    // Create two entities referencing this new model
     auto eclass = GlobalEntityClassManager().findClass("func_static");
-    auto entity = GlobalEntityModule().createEntity(eclass);
+    auto entity1 = GlobalEntityModule().createEntity(eclass);
+    auto entity2 = GlobalEntityModule().createEntity(eclass);
 
-    scene::addNodeToContainer(entity, GlobalMapModule().getRoot());
+    scene::addNodeToContainer(entity1, GlobalMapModule().getRoot());
+    scene::addNodeToContainer(entity2, GlobalMapModule().getRoot());
 
     // This should assign the model node to the entity
-    Node_getEntity(entity)->setKeyValue("model", modRelativePath);
-    model::ModelNodePtr model = getChildModelNode(entity);
+    Node_getEntity(entity1)->setKeyValue("model", modRelativePath);
+    Node_getEntity(entity2)->setKeyValue("model", modRelativePath);
+    model::ModelNodePtr model1 = getChildModelNode(entity1);
+    model::ModelNodePtr model2 = getChildModelNode(entity2);
 
-    EXPECT_TRUE(model) << "Could not locate the model node of the entity";
-    EXPECT_EQ(model->getIModel().getSurface(0).getDefaultMaterial(), modelMaterial1);
+    EXPECT_TRUE(model1) << "Could not locate the model node of the entity";
+    EXPECT_TRUE(model2) << "Could not locate the model node of the entity";
+    EXPECT_EQ(model1->getIModel().getSurface(0).getDefaultMaterial(), originalModelMaterial);
+    EXPECT_EQ(model2->getIModel().getSurface(0).getDefaultMaterial(), originalModelMaterial);
 
     // Now change the brush texture and re-export the model
-    Node_getIBrush(brush)->setShader(modelMaterial2);
+    Node_getIBrush(brush)->setShader(changedModelMaterial);
 
     GlobalSelectionSystem().setSelectedAll(false);
     Node_setSelected(brush, true);
@@ -388,10 +394,13 @@ TEST_F(ModelExportTest, ExportedModelTriggersEntityRefresh)
     GlobalCommandSystem().executeCommand("ExportSelectedAsModel", { aseOutputPath, cmd::Argument("ase") });
 
     // If all went well, the entity has automatically refreshed its model
-    model = getChildModelNode(entity);
+    model1 = getChildModelNode(entity1);
+    model2 = getChildModelNode(entity2);
 
-    EXPECT_TRUE(model) << "Could not locate the model node of the entity";
-    EXPECT_EQ(model->getIModel().getSurface(0).getDefaultMaterial(), modelMaterial2);
+    EXPECT_TRUE(model1) << "Could not locate the model node of the entity";
+    EXPECT_TRUE(model2) << "Could not locate the model node of the entity";
+    EXPECT_EQ(model1->getIModel().getSurface(0).getDefaultMaterial(), changedModelMaterial);
+    EXPECT_EQ(model2->getIModel().getSurface(0).getDefaultMaterial(), changedModelMaterial);
 
     fs::remove(aseOutputPath);
 }
