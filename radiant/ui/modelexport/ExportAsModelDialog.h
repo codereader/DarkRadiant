@@ -12,6 +12,14 @@ class ExportAsModelDialog :
 	public wxutil::DialogBase,
 	private wxutil::XmlResourceBasedWidget
 {
+private:
+    enum class ExportOrigin
+    {
+        MapOrigin,
+        SelectionCenter,
+        EntityOrigin,
+    };
+
 public:
 	// Constructor
 	ExportAsModelDialog(wxWindow* parent = nullptr);
@@ -30,6 +38,8 @@ private:
 
 	void saveOptionsToRegistry();
 	void handleFormatSelectionChange();
+    ExportOrigin getSelectedExportOrigin();
+    void setSelectedExportOrigin(ExportOrigin exportOrigin);
 };
 
 }
