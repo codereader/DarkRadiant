@@ -688,21 +688,22 @@ TEST_F(ModelExportTest, ExportSelectedAsCollisionModelCreatesFolder)
     Node_setSelected(entity, true);
 
     auto relativeModelPath = "models/some_folder_not_existing_outside_pk4s/testcube.ase";
-    auto physicalPath = _context.getTestProjectPath() + relativeModelPath;
+    auto expectedPhysicalPath = _context.getTestProjectPath() + relativeModelPath;
+    expectedPhysicalPath = os::replaceExtension(expectedPhysicalPath, "cm");
 
     // Make sure the folder is not there
-    fs::remove_all(os::getContainingDir(physicalPath));
-    EXPECT_FALSE(os::fileOrDirExists(os::getContainingDir(physicalPath))) << "Folder should not exist yet";
-    EXPECT_FALSE(os::fileOrDirExists(physicalPath)) << "Export CM should not exist yet";
+    fs::remove_all(os::getDirectory(expectedPhysicalPath));
+    EXPECT_FALSE(os::fileOrDirExists(os::getDirectory(expectedPhysicalPath))) << "Folder should not exist yet";
+    EXPECT_FALSE(os::fileOrDirExists(expectedPhysicalPath)) << "Export CM should not exist yet";
 
     // Export the selection as collision mesh for the torch model
     GlobalCommandSystem().executeCommand("ExportSelectedAsCollisionModel", { relativeModelPath });
 
     // Both file and folder need to exist, just check the file
-    EXPECT_TRUE(os::fileOrDirExists(physicalPath)) << "Folder should have been created by ExportSelectedAsCollisionModel";
+    EXPECT_TRUE(os::fileOrDirExists(expectedPhysicalPath)) << "Folder should have been created by ExportSelectedAsCollisionModel";
 
     // Remove the folder after the test is done
-    fs::remove_all(os::getContainingDir(physicalPath));
+    fs::remove_all(os::getDirectory(expectedPhysicalPath));
 }
 
 }
