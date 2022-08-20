@@ -66,7 +66,8 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
 
     ensureShadowMapSetup();
 
-    determineInteractingLight(view);
+    // Check and categorise all lights in view
+    collectLights(view);
 
     // Construct default OpenGL state
     OpenGLState current;
@@ -110,36 +111,43 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     return std::move(_result); // move-return our result reference
 }
 
-void LightingModeRenderer::determineInteractingLight(const IRenderView& view)
+void LightingModeRenderer::collectLights(const IRenderView& view)
 {
     _interactingLights.reserve(_lights.size());
 
     // Gather all visible lights and render the surfaces touched by them
     for (const auto& light : _lights)
     {
-        InteractingLight interaction(*light, _geometryStore, _objectRenderer);
-
-        if (!interaction.isInView(view))
+        if (light->isBlendLight())
         {
-            _result->skippedLights++;
+            // TODO
             continue;
         }
-
-        _result->visibleLights++;
-
-        // Check all the surfaces that are touching this light
-        interaction.collectSurfaces(view, _entities);
-
-        _result->objects += interaction.getObjectCount();
-        _result->entities += interaction.getEntityCount();
-
-        // Move the interaction list into its place
-        auto& moved = _interactingLights.emplace_back(std::move(interaction));
-
-        // Check the distance of shadow casting lights to the viewer
-        if (_shadowMappingEnabled.get() && moved.isShadowCasting())
+        else
         {
-            addToShadowLights(moved, view.getViewer());
+            InteractingLight interaction(*light, _geometryStore, _objectRenderer);
+
+            if (!interaction.isInView(view))
+            {
+                _result->skippedLights++;
+                continue;
+            }
+
+            // Check all the surfaces that are touching this light
+            interaction.collectSurfaces(view, _entities);
+
+            _result->visibleLights++;
+            _result->objects += interaction.getObjectCount();
+            _result->entities += interaction.getEntityCount();
+
+            // Move the interaction list into its place
+            auto& moved = _interactingLights.emplace_back(std::move(interaction));
+
+            // Check the distance of shadow casting lights to the viewer
+            if (_shadowMappingEnabled.get() && moved.isShadowCasting())
+            {
+                addToShadowLights(moved, view.getViewer());
+            }
         }
     }
 

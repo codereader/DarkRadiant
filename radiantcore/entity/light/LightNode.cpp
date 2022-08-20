@@ -1,6 +1,6 @@
 #include "LightNode.h"
 
-#include "itextstream.h"
+#include "ishaders.h"
 #include "icolourscheme.h"
 #include "../EntitySettings.h"
 #include <functional>
@@ -1010,6 +1010,11 @@ Vector3 LightNode::getLightOrigin() const
 bool LightNode::isShadowCasting() const
 {
     return EntityNode::isShadowCasting();
+}
+
+bool LightNode::isBlendLight() const
+{
+    return m_shader.isBlendLight();
 }
 
 /* greebo: A light is projected, if the entity keys light_target/light_up/light_right are not empty.

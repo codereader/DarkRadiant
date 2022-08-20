@@ -58,7 +58,7 @@ public:
     IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;
 
 private:
-    void determineInteractingLight(const IRenderView& view);
+    void collectLights(const IRenderView& view);
 
     void drawInteractingLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
         const IRenderView& view, std::size_t renderTime);

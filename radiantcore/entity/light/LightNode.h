@@ -267,6 +267,7 @@ public:
     Matrix4 getLightTextureTransformation() const override;
     Vector3 getLightOrigin() const override;
     bool isShadowCasting() const override;
+    bool isBlendLight() const override;
     const ShaderPtr& getShader() const override;
 	AABB lightAABB() const override;
 };
