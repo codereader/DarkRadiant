@@ -62,33 +62,53 @@ void BlendLight::draw(OpenGLState& state, RenderStateFlags globalFlagsMask,
     BlendLightProgram& program, const IRenderView& view, std::size_t time)
 {
     program.setLightTextureTransform(_light.getLightTextureTransformation());
-    
-    for (const auto& objectRef : _objects)
+    auto lightShader = static_cast<OpenGLShader*>(_light.getShader().get());
+
+    std::vector<IGeometryStore::Slot> untransformedObjects;
+    untransformedObjects.reserve(500);
+
+    lightShader->foreachPass([&](OpenGLShaderPass& pass)
     {
-        auto& object = objectRef.get();
+        // Evaluate the stage before deciding whether it's active
+        pass.evaluateShaderStages(time, &_light.getLightEntity());
 
-        auto lightShader = static_cast<OpenGLShader*>(_light.getShader().get());
+        if (!pass.stateIsActive()) return;
 
-        lightShader->foreachPass([&](OpenGLShaderPass& pass)
+        // Apply our state to the current state object
+        pass.applyState(state, globalFlagsMask);
+
+        // The light textures will be bound by applyState.
+        // The texture0/texture1 fields were filled in when constructing the pass
+
+        program.setBlendColour(pass.state().getColour());
+
+        for (const auto& objectRef : _objects)
         {
-            // Evaluate the stage before deciding whether it's active
-            pass.evaluateShaderStages(time, &_light.getLightEntity());
+            auto& object = objectRef.get();
 
-            if (!pass.stateIsActive()) return;
+            // We submit all objects with an identity matrix in a single multi draw call
+            if (!object.isOriented())
+            {
+                untransformedObjects.push_back(object.getStorageLocation());
+                continue;
+            }
 
-            // The light textures will be bound by applyState.
-            // The texture0/texture1 units will have already been filled in when constructing the pass
-
-            // Apply our state to the current state object
-            pass.applyState(state, globalFlagsMask);
-            
-            program.setBlendColour(pass.state().getColour());
             program.setObjectTransform(object.getObjectTransform());
             
             _objectRenderer.submitGeometry(object.getStorageLocation(), GL_TRIANGLES);
             ++_drawCalls;
-        });
-    }
+        }
+
+        if (!untransformedObjects.empty())
+        {
+            program.setObjectTransform(Matrix4::getIdentity());
+
+            _objectRenderer.submitGeometry(untransformedObjects, GL_TRIANGLES);
+            ++_drawCalls;
+
+            untransformedObjects.clear();
+        }
+    });
 }
 
 }
