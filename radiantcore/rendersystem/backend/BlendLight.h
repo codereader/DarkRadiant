@@ -24,12 +24,22 @@ private:
     IObjectRenderer& _objectRenderer;
     AABB _lightBounds;
 
+    using ObjectList = std::vector<std::reference_wrapper<IRenderableObject>>;
+    ObjectList _objects;
+
+    std::size_t _objectCount;
+
 public:
     BlendLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer);
     BlendLight(BlendLight&& other) = default;
 
     bool isInView(const IRenderView& view);
     void collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities);
+
+    std::size_t getObjectCount() const
+    {
+        return _objectCount;
+    }
 };
 
 }

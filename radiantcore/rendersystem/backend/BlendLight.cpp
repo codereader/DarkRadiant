@@ -1,5 +1,7 @@
 #include "BlendLight.h"
 
+#include "OpenGLShader.h"
+
 namespace render
 {
 
@@ -7,7 +9,8 @@ BlendLight::BlendLight(RendererLight& light, IGeometryStore& store, IObjectRende
     _light(light),
     _store(store),
     _objectRenderer(objectRenderer),
-    _lightBounds(light.lightAABB())
+    _lightBounds(light.lightAABB()),
+    _objectCount(0)
 {}
 
 bool BlendLight::isInView(const IRenderView& view)
@@ -17,7 +20,41 @@ bool BlendLight::isInView(const IRenderView& view)
 
 void BlendLight::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
 {
-    // TODO
+    // Now check all the entities intersecting with this light
+    for (const auto& entity : entities)
+    {
+        entity->foreachRenderableTouchingBounds(_lightBounds,
+            [&](const IRenderableObject::Ptr& object, Shader* shader)
+        {
+            // Skip empty objects and invisible surfaces
+            if (!object->isVisible() || !shader->isVisible()) return;
+
+            // Cull surfaces that are not in view
+            if (object->isOriented())
+            {
+                if (view.TestAABB(object->getObjectBounds(), object->getObjectTransform()) == VOLUME_OUTSIDE)
+                {
+                    return;
+                }
+            }
+            else if (view.TestAABB(object->getObjectBounds()) == VOLUME_OUTSIDE) // non-oriented AABB test
+            {
+                return;
+            }
+
+            auto glShader = static_cast<OpenGLShader*>(shader);
+
+            // We only consider materials designated for camera rendering
+            if (!glShader->isApplicableTo(RenderViewType::Camera))
+            {
+                return;
+            }
+
+            _objects.emplace_back(std::ref(*object));
+
+            ++_objectCount;
+        });
+    }
 }
 
 }

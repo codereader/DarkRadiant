@@ -170,10 +170,11 @@ void LightingModeRenderer::collectBlendLight(RendererLight& light, const IRender
         return;
     }
 
-    _result->visibleLights++;
-
     // Check all the surfaces that are touching this light
     blendLight.collectSurfaces(view, _entities);
+
+    _result->visibleLights++;
+    _result->objects += blendLight.getObjectCount();
 
     // Move the light into its place
     _blendLights.emplace_back(std::move(blendLight));
