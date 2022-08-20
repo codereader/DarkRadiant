@@ -8,7 +8,8 @@
 #include "FrameBuffer.h"
 #include "render/Rectangle.h"
 #include "glprogram/ShadowMapProgram.h"
-#include "InteractingLight.h"
+#include "RegularLight.h"
+#include "BlendLight.h"
 #include "registry/CachedKey.h"
 
 namespace render
@@ -44,8 +45,10 @@ private:
 
     // Data that is valid during a single render pass only
 
-    std::vector<InteractingLight> _interactingLights;
-    std::vector<InteractingLight*> _nearestShadowLights;
+    std::vector<RegularLight> _regularLights;
+    std::vector<RegularLight*> _nearestShadowLights;
+    std::vector<BlendLight> _blendLights;
+
     std::shared_ptr<LightingModeRenderResult> _result;
 
 public:
@@ -73,7 +76,7 @@ private:
 
     void ensureShadowMapSetup();
 
-    void addToShadowLights(InteractingLight& light, const Vector3& viewer);
+    void addToShadowLights(RegularLight& light, const Vector3& viewer);
 };
 
 }

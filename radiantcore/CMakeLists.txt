@@ -218,15 +218,16 @@ add_library(radiantcore MODULE
             rendersystem/backend/glprogram/InteractionProgram.cpp
             rendersystem/backend/glprogram/RegularStageProgram.cpp
             rendersystem/backend/glprogram/ShadowMapProgram.cpp
+            rendersystem/backend/BlendLight.cpp
             rendersystem/backend/BuiltInShader.cpp
             rendersystem/backend/ColourShader.cpp
-            rendersystem/backend/InteractingLight.cpp
             rendersystem/backend/SceneRenderer.cpp
             rendersystem/backend/FullBrightRenderer.cpp
             rendersystem/backend/LightingModeRenderer.cpp
             rendersystem/backend/ObjectRenderer.cpp
             rendersystem/backend/OpenGLShader.cpp
             rendersystem/backend/OpenGLShaderPass.cpp
+            rendersystem/backend/RegularLight.cpp
             rendersystem/backend/DepthFillPass.cpp
             rendersystem/backend/InteractionPass.cpp
             rendersystem/debug/SpacePartitionRenderer.cpp

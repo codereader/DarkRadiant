@@ -1132,9 +1132,6 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractingLight.cpp">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
@@ -1146,6 +1143,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\shaders\MaterialManager.cpp">
       <Filter>src\shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\BlendLight.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\RegularLight.cpp">
+      <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2340,9 +2343,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractingLight.h">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
@@ -2360,6 +2360,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\shaders\MaterialManager.h">
       <Filter>src\shaders</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\BlendLight.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightBase.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\RegularLight.h">
+      <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
