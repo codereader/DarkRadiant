@@ -700,6 +700,7 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
     if (_material->isBlendLight())
     {
         state.texture1 = _material->lightFalloffImage()->getGLTexNum();
+        state.setRenderFlag(RENDER_CULLFACE);
     }
 
     // Get the blend function
