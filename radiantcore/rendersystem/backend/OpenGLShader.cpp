@@ -696,6 +696,12 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
     // Set the texture
     state.texture0 = layerTex->getGLTexNum();
 
+    // BlendLights need to load the fall off image into texture unit 1
+    if (_material->isBlendLight())
+    {
+        state.texture1 = _material->lightFalloffImage()->getGLTexNum();
+    }
+
     // Get the blend function
     BlendFunc blendFunc = layer->getBlendFunc();
     state.m_blend_src = blendFunc.src;

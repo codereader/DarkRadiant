@@ -76,6 +76,13 @@ void BlendLight::draw(OpenGLState& state, RenderStateFlags globalFlagsMask,
 
             if (!pass.stateIsActive()) return;
 
+            // The light textures will be bound by applyState.
+            // The texture0/texture1 units will have already been filled in when constructing the pass
+
+            // TODO: Set clamp
+            // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+            // glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
             // Apply our state to the current state object
             pass.applyState(state, globalFlagsMask);
             
