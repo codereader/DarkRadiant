@@ -5,8 +5,10 @@
 namespace render
 {
 
+class OpenGLState;
 class IGeometryStore;
 class IObjectRenderer;
+class BlendLightProgram;
 
 /**
  * BlendLights are non-shadowcasting lights performing a simple blend operation
@@ -28,6 +30,7 @@ private:
     ObjectList _objects;
 
     std::size_t _objectCount;
+    std::size_t _drawCalls;
 
 public:
     BlendLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer);
@@ -40,6 +43,13 @@ public:
     {
         return _objectCount;
     }
+
+    std::size_t getDrawCalls() const
+    {
+        return _drawCalls;
+    }
+
+    void draw(OpenGLState& state, BlendLightProgram& program, const IRenderView& view, std::size_t renderTime);
 };
 
 }

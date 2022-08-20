@@ -57,4 +57,9 @@ void BlendLight::collectSurfaces(const IRenderView& view, const std::set<IRender
     }
 }
 
+void BlendLight::draw(OpenGLState& state, BlendLightProgram& program, const IRenderView& view, std::size_t renderTime)
+{
+    // TODO
+}
+
 }

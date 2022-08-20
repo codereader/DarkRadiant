@@ -12,6 +12,7 @@ class RendererLight;
 namespace render
 {
 
+class BlendLightProgram;
 class OpenGLShader;
 class InteractionProgram;
 
@@ -139,6 +140,9 @@ public:
     void evaluateShaderStages(std::size_t time, const IRenderEntity* entity);
 
 	friend std::ostream& operator<<(std::ostream& st, const OpenGLShaderPass& self);
+
+    // Returns the openGL state needed for blend light rendering
+    static OpenGLState CreateBlendLightState(BlendLightProgram* blendProgram);
 };
 
 typedef std::shared_ptr<OpenGLShaderPass> OpenGLShaderPassPtr;

@@ -8,6 +8,7 @@
 #include "FrameBuffer.h"
 #include "render/Rectangle.h"
 #include "glprogram/ShadowMapProgram.h"
+#include "glprogram/BlendLightProgram.h"
 #include "RegularLight.h"
 #include "BlendLight.h"
 #include "registry/CachedKey.h"
@@ -38,6 +39,7 @@ private:
     FrameBuffer::Ptr _shadowMapFbo;
     std::vector<Rectangle> _shadowMapAtlas;
     ShadowMapProgram* _shadowMapProgram;
+    BlendLightProgram* _blendLightProgram;
 
     constexpr static std::size_t MaxShadowCastingLights = 6;
 
@@ -66,6 +68,9 @@ private:
     void collectRegularLight(RendererLight& light, const IRenderView& view);
 
     void drawInteractingLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
+        const IRenderView& view, std::size_t renderTime);
+
+    void drawBlendLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
         const IRenderView& view, std::size_t renderTime);
 
     void drawDepthFillPass(OpenGLState& current, RenderStateFlags globalFlagsMask,

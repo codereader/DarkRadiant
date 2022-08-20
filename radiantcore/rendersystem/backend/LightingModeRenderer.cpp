@@ -25,6 +25,7 @@ LightingModeRenderer::LightingModeRenderer(GLProgramFactory& programFactory,
     _lights(lights),
     _entities(entities),
     _shadowMapProgram(nullptr),
+    _blendLightProgram(nullptr),
     _shadowMappingEnabled(RKEY_ENABLE_SHADOW_MAPPING)
 {
     _untransformedObjectsWithoutAlphaTest.reserve(10000);
@@ -95,6 +96,9 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     // Draw the surfaces per light and material
     drawInteractingLights(current, globalFlagsMask, view, time);
 
+    // Draw blend lights
+    drawBlendLights(current, globalFlagsMask, view, time);
+
     // Draw any surfaces without any light interactions
     drawNonInteractionPasses(current, globalFlagsMask, view, time);
 
@@ -106,6 +110,7 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     // Cleanup the data accumulated in this render pass
     _regularLights.clear();
     _nearestShadowLights.clear();
+    _blendLights.clear();
 
     return std::move(_result); // move-return our result reference
 }
@@ -178,6 +183,14 @@ void LightingModeRenderer::collectBlendLight(RendererLight& light, const IRender
 
     // Move the light into its place
     _blendLights.emplace_back(std::move(blendLight));
+
+    // Make sure we have the blend light program around
+    if (!_blendLightProgram)
+    {
+        _blendLightProgram = dynamic_cast<BlendLightProgram*>(
+            _programFactory.getBuiltInProgram(ShaderProgram::BlendLight));
+        assert(_blendLightProgram != nullptr);
+    }
 }
 
 void LightingModeRenderer::addToShadowLights(RegularLight& light, const Vector3& viewer)
@@ -255,6 +268,21 @@ void LightingModeRenderer::drawInteractingLights(OpenGLState& current, RenderSta
     {
         // Unbind the shadow map texture
         OpenGLState::SetTextureState(current.texture5, 0, GL_TEXTURE5, GL_TEXTURE_2D);
+    }
+}
+
+void LightingModeRenderer::drawBlendLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
+    const IRenderView& view, std::size_t renderTime)
+{
+    // Set the openGL state
+    auto blendLightState = OpenGLShaderPass::CreateBlendLightState(_blendLightProgram);
+
+    blendLightState.applyTo(current, globalFlagsMask);
+
+    for (auto& blendLight : _blendLights)
+    {
+        blendLight.draw(current, *_blendLightProgram, view, renderTime);
+        _result->nonInteractionDrawCalls += blendLight.getDrawCalls();
     }
 }
 
