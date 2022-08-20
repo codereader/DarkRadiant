@@ -10,4 +10,14 @@ BlendLight::BlendLight(RendererLight& light, IGeometryStore& store, IObjectRende
     _lightBounds(light.lightAABB())
 {}
 
+bool BlendLight::isInView(const IRenderView& view)
+{
+    return view.TestAABB(_lightBounds) != VOLUME_OUTSIDE;
+}
+
+void BlendLight::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
+{
+    // TODO
+}
+
 }

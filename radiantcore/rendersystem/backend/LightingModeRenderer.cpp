@@ -114,41 +114,16 @@ void LightingModeRenderer::collectLights(const IRenderView& view)
 {
     _regularLights.reserve(_lights.size());
 
-    // Gather all visible lights and render the surfaces touched by them
+    // Categorise all visible lights
     for (const auto& light : _lights)
     {
         if (light->isBlendLight())
         {
-            BlendLight blendLight(*light, _geometryStore, _objectRenderer);
-
+            collectBlendLight(*light, view);
             continue;
         }
-        else
-        {
-            RegularLight interaction(*light, _geometryStore, _objectRenderer);
 
-            if (!interaction.isInView(view))
-            {
-                _result->skippedLights++;
-                continue;
-            }
-
-            // Check all the surfaces that are touching this light
-            interaction.collectSurfaces(view, _entities);
-
-            _result->visibleLights++;
-            _result->objects += interaction.getObjectCount();
-            _result->entities += interaction.getEntityCount();
-
-            // Move the interaction list into its place
-            auto& moved = _regularLights.emplace_back(std::move(interaction));
-
-            // Check the distance of shadow casting lights to the viewer
-            if (_shadowMappingEnabled.get() && moved.isShadowCasting())
-            {
-                addToShadowLights(moved, view.getViewer());
-            }
-        }
+        collectRegularLight(*light, view);
     }
 
     // Assign shadow light indices
@@ -156,6 +131,52 @@ void LightingModeRenderer::collectLights(const IRenderView& view)
     {
         _nearestShadowLights[index]->setShadowLightIndex(index);
     }
+}
+
+void LightingModeRenderer::collectRegularLight(RendererLight& light, const IRenderView& view)
+{
+    RegularLight interaction(light, _geometryStore, _objectRenderer);
+
+    if (!interaction.isInView(view))
+    {
+        _result->skippedLights++;
+        return;
+    }
+
+    // Check all the surfaces that are touching this light
+    interaction.collectSurfaces(view, _entities);
+
+    _result->visibleLights++;
+    _result->objects += interaction.getObjectCount();
+    _result->entities += interaction.getEntityCount();
+
+    // Move the interaction list into its place
+    auto& moved = _regularLights.emplace_back(std::move(interaction));
+
+    // Check the distance of shadow casting lights to the viewer
+    if (_shadowMappingEnabled.get() && moved.isShadowCasting())
+    {
+        addToShadowLights(moved, view.getViewer());
+    }
+}
+
+void LightingModeRenderer::collectBlendLight(RendererLight& light, const IRenderView& view)
+{
+    BlendLight blendLight(light, _geometryStore, _objectRenderer);
+
+    if (!blendLight.isInView(view))
+    {
+        _result->skippedLights++;
+        return;
+    }
+
+    _result->visibleLights++;
+
+    // Check all the surfaces that are touching this light
+    blendLight.collectSurfaces(view, _entities);
+
+    // Move the light into its place
+    _blendLights.emplace_back(std::move(blendLight));
 }
 
 void LightingModeRenderer::addToShadowLights(RegularLight& light, const Vector3& viewer)

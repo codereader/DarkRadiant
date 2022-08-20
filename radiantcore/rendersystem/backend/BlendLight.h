@@ -8,6 +8,14 @@ namespace render
 class IGeometryStore;
 class IObjectRenderer;
 
+/**
+ * BlendLights are non-shadowcasting lights performing a simple blend operation
+ * on any surfaces they intersect with.
+ * The type of blend operation is defined in the stages of the light material.
+ *
+ * Instances only live through the course of a single render pass, therefore direct
+ * references without ref-counting are used.
+ */
 class BlendLight
 {
 private:
@@ -19,6 +27,9 @@ private:
 public:
     BlendLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer);
     BlendLight(BlendLight&& other) = default;
+
+    bool isInView(const IRenderView& view);
+    void collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities);
 };
 
 }

@@ -62,6 +62,8 @@ public:
 
 private:
     void collectLights(const IRenderView& view);
+    void collectBlendLight(RendererLight& light, const IRenderView& view);
+    void collectRegularLight(RendererLight& light, const IRenderView& view);
 
     void drawInteractingLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
         const IRenderView& view, std::size_t renderTime);

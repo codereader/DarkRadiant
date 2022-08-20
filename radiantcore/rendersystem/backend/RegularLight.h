@@ -22,8 +22,10 @@ class DepthFillPass;
 /**
  * Depth-buffer filling light with diffuse/bump/specular interactions
  * between this light and one or more entity renderables.
- *
  * Objects are grouped by entity, then by shader.
+ *
+ * Instances only live through the course of a single render pass, therefore direct
+ * references without ref-counting are used.
  */
 class RegularLight
 {

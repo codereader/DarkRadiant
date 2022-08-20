@@ -2364,9 +2364,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\BlendLight.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightBase.h">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\RegularLight.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
