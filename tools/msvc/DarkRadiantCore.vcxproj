@@ -629,6 +629,7 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\CubeMapProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.cpp" />
@@ -1003,6 +1004,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GeometryRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\CubeMapProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.h" />
@@ -1135,6 +1137,8 @@
     <ClInclude Include="..\..\radiantcore\xmlregistry\XMLRegistry.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\install\gl\blend_light_fp.glsl" />
+    <None Include="..\..\install\gl\blend_light_vp.glsl" />
     <None Include="..\..\install\gl\cubemap_fp.glsl" />
     <None Include="..\..\install\gl\cubemap_vp.glsl" />
     <None Include="..\..\install\gl\interaction_fp.glsl" />

@@ -1150,6 +1150,9 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\RegularLight.cpp">
       <Filter>src\rendersystem\backend</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2367,6 +2370,9 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\RegularLight.h">
       <Filter>src\rendersystem\backend</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\install\gl\cubemap_fp.glsl">
@@ -2397,6 +2403,12 @@
       <Filter>gl</Filter>
     </None>
     <None Include="..\..\install\gl\zfill_alpha_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\blend_light_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\blend_light_vp.glsl">
       <Filter>gl</Filter>
     </None>
   </ItemGroup>

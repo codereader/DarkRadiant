@@ -211,6 +211,7 @@ add_library(radiantcore MODULE
             patch/PatchTesselation.cpp
             Radiant.cpp
             rendersystem/backend/GLProgramFactory.cpp
+            rendersystem/backend/glprogram/BlendLightProgram.cpp
             rendersystem/backend/glprogram/CubeMapProgram.cpp
             rendersystem/backend/glprogram/DepthFillAlphaProgram.cpp
             rendersystem/backend/glprogram/GenericVFPProgram.cpp
