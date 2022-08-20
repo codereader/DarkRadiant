@@ -1,6 +1,7 @@
 #include "BlendLight.h"
 
 #include "OpenGLShader.h"
+#include "glprogram/BlendLightProgram.h"
 
 namespace render
 {
@@ -57,9 +58,34 @@ void BlendLight::collectSurfaces(const IRenderView& view, const std::set<IRender
     }
 }
 
-void BlendLight::draw(OpenGLState& state, BlendLightProgram& program, const IRenderView& view, std::size_t renderTime)
+void BlendLight::draw(OpenGLState& state, RenderStateFlags globalFlagsMask, 
+    BlendLightProgram& program, const IRenderView& view, std::size_t time)
 {
-    // TODO
+    program.setLightTextureTransform(_light.getLightTextureTransformation());
+    
+    for (const auto& objectRef : _objects)
+    {
+        auto& object = objectRef.get();
+
+        auto lightShader = static_cast<OpenGLShader*>(_light.getShader().get());
+
+        lightShader->foreachPass([&](OpenGLShaderPass& pass)
+        {
+            // Evaluate the stage before deciding whether it's active
+            pass.evaluateShaderStages(time, &_light.getLightEntity());
+
+            if (!pass.stateIsActive()) return;
+
+            // Apply our state to the current state object
+            pass.applyState(state, globalFlagsMask);
+
+            program.setBlendColour(pass.state().getColour());
+            program.setObjectTransform(object.getObjectTransform());
+
+            _objectRenderer.submitGeometry(object.getStorageLocation(), GL_TRIANGLES);
+            ++_drawCalls;
+        });
+    }
 }
 
 }

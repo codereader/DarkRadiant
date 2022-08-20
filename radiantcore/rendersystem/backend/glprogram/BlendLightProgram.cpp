@@ -22,29 +22,23 @@ void BlendLightProgram::create()
 
     // Bind vertex attribute locations and link the program
     glBindAttribLocation(_programObj, GLProgramAttribute::Position, "attr_Position");
-    glBindAttribLocation(_programObj, GLProgramAttribute::TexCoord, "attr_TexCoord");
-    glBindAttribLocation(_programObj, GLProgramAttribute::Tangent, "attr_Tangent");
-    glBindAttribLocation(_programObj, GLProgramAttribute::Bitangent, "attr_Bitangent");
-    glBindAttribLocation(_programObj, GLProgramAttribute::Normal, "attr_Normal");
-    glBindAttribLocation(_programObj, GLProgramAttribute::Colour, "attr_Colour");
 
     glLinkProgram(_programObj);
     debug::assertNoGlErrors();
 
-#if 0
-    _locDiffuseTextureMatrix = glGetUniformLocation(_programObj, "u_DiffuseTextureMatrix");
-    _locColourModulation = glGetUniformLocation(_programObj, "u_ColourModulation");
-    _locColourAddition = glGetUniformLocation(_programObj, "u_ColourAddition");
+    _locLightTextureMatrix = glGetUniformLocation(_programObj, "u_LightTextureMatrix");
+    _locBlendColour = glGetUniformLocation(_programObj, "u_BlendColour");
+
     _locModelViewProjection = glGetUniformLocation(_programObj, "u_ModelViewProjection");
     _locObjectTransform = glGetUniformLocation(_programObj, "u_ObjectTransform");
-#endif
 
     glUseProgram(_programObj);
     debug::assertNoGlErrors();
 
-    // Set the texture sampler to texture unit 0
-    auto samplerLoc = glGetUniformLocation(_programObj, "u_Map");
+    auto samplerLoc = glGetUniformLocation(_programObj, "u_LightProjectionTexture");
     glUniform1i(samplerLoc, 0);
+    samplerLoc = glGetUniformLocation(_programObj, "u_LightFallOffTexture");
+    glUniform1i(samplerLoc, 1);
 
     debug::assertNoGlErrors();
     glUseProgram(0);
@@ -57,11 +51,6 @@ void BlendLightProgram::enable()
     GLSLProgramBase::enable();
 
     glEnableVertexAttribArray(GLProgramAttribute::Position);
-    glEnableVertexAttribArray(GLProgramAttribute::TexCoord);
-    glEnableVertexAttribArray(GLProgramAttribute::Tangent);
-    glEnableVertexAttribArray(GLProgramAttribute::Bitangent);
-    glEnableVertexAttribArray(GLProgramAttribute::Normal);
-    glEnableVertexAttribArray(GLProgramAttribute::Colour);
 
     debug::assertNoGlErrors();
 }
@@ -71,13 +60,28 @@ void BlendLightProgram::disable()
     GLSLProgramBase::disable();
 
     glDisableVertexAttribArray(GLProgramAttribute::Position);
-    glDisableVertexAttribArray(GLProgramAttribute::TexCoord);
-    glDisableVertexAttribArray(GLProgramAttribute::Tangent);
-    glDisableVertexAttribArray(GLProgramAttribute::Bitangent);
-    glDisableVertexAttribArray(GLProgramAttribute::Normal);
-    glDisableVertexAttribArray(GLProgramAttribute::Colour);
 
     debug::assertNoGlErrors();
+}
+
+void BlendLightProgram::setModelViewProjection(const Matrix4& modelViewProjection)
+{
+    loadMatrixUniform(_locModelViewProjection, modelViewProjection);
+}
+
+void BlendLightProgram::setObjectTransform(const Matrix4& transform)
+{
+    loadMatrixUniform(_locObjectTransform, transform);
+}
+
+void BlendLightProgram::setLightTextureTransform(const Matrix4& transform)
+{
+    loadTextureMatrixUniform(_locLightTextureMatrix, transform);
+}
+
+void BlendLightProgram::setBlendColour(const Vector4& colour)
+{
+    glUniform4dv(_locBlendColour, 4, colour);
 }
 
 }

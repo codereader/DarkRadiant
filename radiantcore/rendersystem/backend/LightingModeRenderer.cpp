@@ -279,9 +279,11 @@ void LightingModeRenderer::drawBlendLights(OpenGLState& current, RenderStateFlag
 
     blendLightState.applyTo(current, globalFlagsMask);
 
+    _blendLightProgram->setModelViewProjection(view.GetViewProjection());
+
     for (auto& blendLight : _blendLights)
     {
-        blendLight.draw(current, *_blendLightProgram, view, renderTime);
+        blendLight.draw(current, globalFlagsMask , *_blendLightProgram, view, renderTime);
         _result->nonInteractionDrawCalls += blendLight.getDrawCalls();
     }
 }

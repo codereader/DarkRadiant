@@ -49,7 +49,8 @@ public:
         return _drawCalls;
     }
 
-    void draw(OpenGLState& state, BlendLightProgram& program, const IRenderView& view, std::size_t renderTime);
+    void draw(OpenGLState& state, RenderStateFlags globalFlagsMask, BlendLightProgram& program,
+        const IRenderView& view, std::size_t renderTime);
 };
 
 }
