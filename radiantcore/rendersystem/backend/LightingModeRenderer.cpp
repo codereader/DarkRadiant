@@ -274,6 +274,8 @@ void LightingModeRenderer::drawInteractingLights(OpenGLState& current, RenderSta
 void LightingModeRenderer::drawBlendLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
     const IRenderView& view, std::size_t renderTime)
 {
+    if (_blendLights.empty()) return;
+
     // Set the openGL state
     auto blendLightState = OpenGLShaderPass::CreateBlendLightState(_blendLightProgram);
 
