@@ -51,6 +51,12 @@ void BlendLight::collectSurfaces(const IRenderView& view, const std::set<IRender
                 return;
             }
 
+            // Blend lights only affect materials that interact with lighting
+            if (!glShader->getInteractionPass())
+            {
+                return;
+            }
+
             _objects.emplace_back(std::ref(*object));
 
             ++_objectCount;

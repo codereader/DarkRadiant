@@ -96,11 +96,11 @@ IRenderResult::Ptr LightingModeRenderer::render(RenderStateFlags globalFlagsMask
     // Draw the surfaces per light and material
     drawInteractingLights(current, globalFlagsMask, view, time);
 
-    // Draw blend lights
-    drawBlendLights(current, globalFlagsMask, view, time);
-
     // Draw any surfaces without any light interactions
     drawNonInteractionPasses(current, globalFlagsMask, view, time);
+
+    // Draw blend lights
+    drawBlendLights(current, globalFlagsMask, view, time);
 
     vertexBuffer->unbind();
     indexBuffer->unbind();

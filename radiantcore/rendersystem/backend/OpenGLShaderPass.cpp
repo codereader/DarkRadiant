@@ -165,6 +165,7 @@ OpenGLState OpenGLShaderPass::CreateBlendLightState(BlendLightProgram* blendProg
     state.setRenderFlag(RENDER_BLEND);
     state.setRenderFlag(RENDER_PROGRAM);
     state.setRenderFlag(RENDER_SMOOTH);
+    state.setRenderFlag(RENDER_DEPTHTEST);
 
     state.setDepthFunc(GL_LEQUAL);
     state.m_blend_src = GL_SRC_ALPHA;
