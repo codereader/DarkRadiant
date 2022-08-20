@@ -9,8 +9,8 @@ namespace render
 namespace
 {
     // Filenames of shader code
-    constexpr const char* const VP_FILENAME = "blend_light_vp.glsl";
-    constexpr const char* const FP_FILENAME = "blend_light_fp.glsl";
+    constexpr const char* const BLEND_LIGHT_VP_FILENAME = "blend_light_vp.glsl";
+    constexpr const char* const BLEND_LIGHT_FP_FILENAME = "blend_light_fp.glsl";
 }
 
 void BlendLightProgram::create()
@@ -18,7 +18,7 @@ void BlendLightProgram::create()
     // Create the program object
     rMessage() << "[renderer] Creating GLSL Blend Light program" << std::endl;
 
-    _programObj = GLProgramFactory::createGLSLProgram(VP_FILENAME, FP_FILENAME);
+    _programObj = GLProgramFactory::createGLSLProgram(BLEND_LIGHT_VP_FILENAME, BLEND_LIGHT_FP_FILENAME);
 
     // Bind vertex attribute locations and link the program
     glBindAttribLocation(_programObj, GLProgramAttribute::Position, "attr_Position");
@@ -26,11 +26,10 @@ void BlendLightProgram::create()
     glLinkProgram(_programObj);
     debug::assertNoGlErrors();
 
-    _locLightTextureMatrix = glGetUniformLocation(_programObj, "u_LightTextureMatrix");
-    _locBlendColour = glGetUniformLocation(_programObj, "u_BlendColour");
-
     _locModelViewProjection = glGetUniformLocation(_programObj, "u_ModelViewProjection");
     _locObjectTransform = glGetUniformLocation(_programObj, "u_ObjectTransform");
+    _locBlendColour = glGetUniformLocation(_programObj, "u_BlendColour");
+    _locLightTextureMatrix = glGetUniformLocation(_programObj, "u_LightTextureMatrix");
 
     glUseProgram(_programObj);
     debug::assertNoGlErrors();
@@ -76,12 +75,16 @@ void BlendLightProgram::setObjectTransform(const Matrix4& transform)
 
 void BlendLightProgram::setLightTextureTransform(const Matrix4& transform)
 {
-    loadTextureMatrixUniform(_locLightTextureMatrix, transform);
+    loadMatrixUniform(_locLightTextureMatrix, transform);
 }
 
-void BlendLightProgram::setBlendColour(const Vector4& colour)
+void BlendLightProgram::setBlendColour(const Colour4& colour)
 {
-    glUniform4dv(_locBlendColour, 4, colour);
+    glUniform4f(_locBlendColour,
+        static_cast<float>(colour.x()),
+        static_cast<float>(colour.y()),
+        static_cast<float>(colour.z()),
+        static_cast<float>(colour.w()));
 }
 
 }

@@ -22,7 +22,7 @@ public:
     void setModelViewProjection(const Matrix4& modelViewProjection);
     void setObjectTransform(const Matrix4& transform);
     void setLightTextureTransform(const Matrix4& transform);
-    void setBlendColour(const Vector4& colour);
+    void setBlendColour(const Colour4& colour);
 };
 
 }

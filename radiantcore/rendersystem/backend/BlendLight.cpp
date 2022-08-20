@@ -78,10 +78,10 @@ void BlendLight::draw(OpenGLState& state, RenderStateFlags globalFlagsMask,
 
             // Apply our state to the current state object
             pass.applyState(state, globalFlagsMask);
-
+            
             program.setBlendColour(pass.state().getColour());
             program.setObjectTransform(object.getObjectTransform());
-
+            
             _objectRenderer.submitGeometry(object.getStorageLocation(), GL_TRIANGLES);
             ++_drawCalls;
         });

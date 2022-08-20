@@ -20,7 +20,8 @@ RegularLight::RegularLight(RendererLight& light, IGeometryStore& store, IObjectR
     _shadowLightIndex(-1)
 {
     // Consider the "noshadows" flag and the setting of the light material
-    _isShadowCasting = _light.isShadowCasting() && _light.getShader() && _light.getShader()->getMaterial()->lightCastsShadows();
+    _isShadowCasting = _light.isShadowCasting() && _light.getShader() && 
+        _light.getShader()->getMaterial() && _light.getShader()->getMaterial()->lightCastsShadows();
 }
 
 void RegularLight::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader)
