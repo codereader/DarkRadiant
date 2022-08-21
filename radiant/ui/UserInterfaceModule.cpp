@@ -105,7 +105,10 @@ const StringSet& UserInterfaceModule::getDependencies() const
         MODULE_MRU_MANAGER,
         MODULE_MAINFRAME,
         MODULE_MOUSETOOLMANAGER,
-        MODULE_MAP
+        MODULE_MAP,
+        MODULE_PATCH,
+        MODULE_BRUSHCREATOR,
+        MODULE_TEXTOOL_SELECTIONSYSTEM,
     };
 
 	return _dependencies;
@@ -237,7 +240,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 #endif
 
     _reloadMaterialsConn = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
-        .connect([]() { GlobalMainFrame().updateAllWindows(); });
+        .connect([this]() { dispatch([]() { GlobalMainFrame().updateAllWindows(); }); });
 }
 
 void UserInterfaceModule::shutdownModule()

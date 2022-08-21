@@ -13,6 +13,7 @@
 #include "ui/igroupdialog.h"
 #include "ui/imainframe.h"
 #include "itextstream.h"
+#include "ui/iuserinterface.h"
 
 #include "module/StaticModule.h"
 #include "selectionlib.h"
@@ -513,7 +514,7 @@ void EntityInspector::onKeyValueSetChanged(const std::string& key, const std::st
 
 void EntityInspector::onDefsReloaded()
 {
-    refresh();
+    GlobalUserInterface().dispatch([this]() { refresh(); });
 }
 
 void EntityInspector::refresh()

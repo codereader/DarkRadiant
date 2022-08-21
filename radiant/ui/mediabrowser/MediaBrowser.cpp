@@ -9,6 +9,7 @@
 #include "ishaders.h"
 #include "ishaderclipboard.h"
 #include "ifavourites.h"
+#include "ui/iuserinterface.h"
 
 #include "wxutil/MultiMonitor.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
@@ -31,6 +32,7 @@
 
 #include <functional>
 #include "string/predicate.h"
+#include "ui/UserInterfaceModule.h"
 
 namespace ui
 {
@@ -133,12 +135,12 @@ void MediaBrowser::setSelection(const std::string& selection)
 
 void MediaBrowser::onMaterialDefsLoaded()
 {
-    _treeView->Populate();
+    GlobalUserInterface().dispatch([this]() { _treeView->Populate(); });
 }
 
 void MediaBrowser::onMaterialDefsUnloaded()
 {
-    _treeView->Clear();
+    GlobalUserInterface().dispatch([this]() { _treeView->Clear(); });
 }
 
 void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
@@ -180,7 +182,8 @@ const StringSet& MediaBrowser::getDependencies() const
         MODULE_SHADERCLIPBOARD,
         MODULE_MAINFRAME,
         MODULE_FAVOURITES_MANAGER,
-        MODULE_MAP
+        MODULE_MAP,
+        MODULE_USERINTERFACE,
     };
 
 	return _dependencies;
