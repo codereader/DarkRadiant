@@ -2,6 +2,7 @@
 
 #include <map>
 #include <string>
+#include <array>
 #include "ipatch.h"
 #include "ibrush.h"
 #include "imodel.h"
