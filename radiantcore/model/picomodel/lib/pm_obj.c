@@ -544,6 +544,32 @@ static picoModel_t *_obj_load( PM_PARAMS_LOAD )
 			_pico_parse_skip_rest( p );
 			continue;
 		}
+        if (!_pico_stricmp(p->token, "usemtl"))
+        {
+            picoShader_t* shader;
+            char* material;
+
+            material = _pico_parse(p, 0);
+
+            if (material == NULL || !strlen(material))
+                continue;
+
+            /* create a new pico shader */
+            shader = PicoNewShader(model);
+
+            if (shader == NULL)
+                continue;
+
+            /* set shader name */
+            PicoSetShaderName(shader, material);
+
+            if (curSurface != NULL)
+            {
+                PicoSetSurfaceShader(curSurface, shader);
+            }
+
+            continue;
+        }
 		/* vertex */
 		if (!_pico_stricmp(p->token,"v"))
 		{
