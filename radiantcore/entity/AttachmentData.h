@@ -113,6 +113,7 @@ public:
             // Construct the functor argument
             Entity::Attachment a;
             a.eclass = i->second.className;
+            a.name = i->second.name;
             a.offset = pos.origin;
             a.joint = pos.joint;
 
