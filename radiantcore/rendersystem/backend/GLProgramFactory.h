@@ -19,6 +19,7 @@ enum class ShaderProgram
     CubeMap,
     ShadowMap,
     RegularStage,
+    BlendLight,
 };
 
 /**

@@ -623,11 +623,13 @@
     <ClCompile Include="..\..\radiantcore\log\StringLogDevice.cpp" />
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp" />
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleRegistry.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\BlendLight.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\BuiltInShader.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\ColourShader.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\DepthFillPass.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\CubeMapProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.cpp" />
@@ -635,12 +637,12 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\InteractionProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.cpp" />
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractingLight.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractionPass.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\LightingModeRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\ObjectRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShader.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\OpenGLShaderPass.cpp" />
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\RegularLight.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\SceneRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\debug\SpacePartitionRenderer.cpp" />
     <ClCompile Include="..\..\radiantcore\rendersystem\GLFont.cpp" />
@@ -992,6 +994,7 @@
     <ClInclude Include="..\..\radiantcore\messagebus\MessageBus.h" />
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h" />
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleRegistry.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\BlendLight.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\BufferObjectProvider.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\BuiltInShader.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\ColourShader.h" />
@@ -1001,6 +1004,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\FullBrightRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GeometryRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\GLProgramFactory.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\CubeMapProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\GenericVFPProgram.h" />
@@ -1008,7 +1012,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\InteractionProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\ShadowMapProgram.h" />
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractingLight.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractionPass.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\LightingModeRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\ObjectRenderer.h" />
@@ -1017,6 +1020,7 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLState.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateLess.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\OpenGLStateManager.h" />
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\RegularLight.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\SceneRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\SurfaceRenderer.h" />
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\TextRenderer.h" />
@@ -1131,6 +1135,20 @@
     <ClInclude Include="..\..\radiantcore\vfs\ZipStreamUtils.h" />
     <ClInclude Include="..\..\radiantcore\xmlregistry\RegistryTree.h" />
     <ClInclude Include="..\..\radiantcore\xmlregistry\XMLRegistry.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\install\gl\blend_light_fp.glsl" />
+    <None Include="..\..\install\gl\blend_light_vp.glsl" />
+    <None Include="..\..\install\gl\cubemap_fp.glsl" />
+    <None Include="..\..\install\gl\cubemap_vp.glsl" />
+    <None Include="..\..\install\gl\interaction_fp.glsl" />
+    <None Include="..\..\install\gl\interaction_vp.glsl" />
+    <None Include="..\..\install\gl\regular_stage_fp.glsl" />
+    <None Include="..\..\install\gl\regular_stage_vp.glsl" />
+    <None Include="..\..\install\gl\shadowmap_fp.glsl" />
+    <None Include="..\..\install\gl\shadowmap_vp.glsl" />
+    <None Include="..\..\install\gl\zfill_alpha_fp.glsl" />
+    <None Include="..\..\install\gl\zfill_alpha_vp.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

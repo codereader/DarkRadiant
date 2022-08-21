@@ -696,6 +696,13 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
     // Set the texture
     state.texture0 = layerTex->getGLTexNum();
 
+    // BlendLights need to load the fall off image into texture unit 1
+    if (_material->isBlendLight())
+    {
+        state.texture1 = _material->lightFalloffImage()->getGLTexNum();
+        state.setRenderFlag(RENDER_CULLFACE);
+    }
+
     // Get the blend function
     BlendFunc blendFunc = layer->getBlendFunc();
     state.m_blend_src = blendFunc.src;
@@ -721,6 +728,12 @@ void OpenGLShader::appendBlendLayer(const IShaderLayer::Ptr& layer)
         state.setRenderFlag(RENDER_PROGRAM);
         state.setRenderFlag(RENDER_TEXTURE_CUBEMAP);
         state.clearRenderFlag(RENDER_TEXTURE_2D);
+    }
+    else if (_material && _material->isBlendLight())
+    {
+        state.glProgram = _renderSystem.getGLProgramFactory().getBuiltInProgram(ShaderProgram::BlendLight);
+        state.setRenderFlag(RENDER_TEXTURE_2D);
+        state.setRenderFlag(RENDER_PROGRAM);
     }
     else
     {

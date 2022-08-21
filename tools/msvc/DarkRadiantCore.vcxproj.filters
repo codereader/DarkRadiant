@@ -212,6 +212,9 @@
     <Filter Include="src\selection\textool">
       <UniqueIdentifier>{24592976-64c8-4027-81b7-5b83f62c43d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gl">
+      <UniqueIdentifier>{dc88a10c-1b0d-4e9b-844a-952046f324e5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -1129,9 +1132,6 @@
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiantcore\rendersystem\backend\InteractingLight.cpp">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
@@ -1143,6 +1143,15 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\shaders\MaterialManager.cpp">
       <Filter>src\shaders</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\BlendLight.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\RegularLight.cpp">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.cpp">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2337,9 +2346,6 @@
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\DepthFillAlphaProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiantcore\rendersystem\backend\InteractingLight.h">
-      <Filter>src\rendersystem\backend</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\RegularStageProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
     </ClInclude>
@@ -2358,5 +2364,52 @@
     <ClInclude Include="..\..\radiantcore\shaders\MaterialManager.h">
       <Filter>src\shaders</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\BlendLight.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\RegularLight.h">
+      <Filter>src\rendersystem\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.h">
+      <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\install\gl\cubemap_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\cubemap_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\interaction_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\interaction_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\regular_stage_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\regular_stage_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\shadowmap_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\shadowmap_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\zfill_alpha_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\zfill_alpha_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\blend_light_fp.glsl">
+      <Filter>gl</Filter>
+    </None>
+    <None Include="..\..\install\gl\blend_light_vp.glsl">
+      <Filter>gl</Filter>
+    </None>
   </ItemGroup>
 </Project>

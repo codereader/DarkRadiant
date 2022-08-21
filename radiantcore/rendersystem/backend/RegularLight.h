@@ -20,13 +20,14 @@ class ShadowMapProgram;
 class DepthFillPass;
 
 /**
- * Defines interactions between a light and one or more entity renderables
- * It only lives through the course of a single render pass, therefore direct
- * references without ref-counting are used.
- * 
+ * Depth-buffer filling light with diffuse/bump/specular interactions
+ * between this light and one or more entity renderables.
  * Objects are grouped by entity, then by shader.
+ *
+ * Instances only live through the course of a single render pass, therefore direct
+ * references without ref-counting are used.
  */
-class InteractingLight
+class RegularLight
 {
 private:
     RendererLight& _light;
@@ -52,7 +53,8 @@ private:
     bool _isShadowCasting;
 
 public:
-    InteractingLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer);
+    RegularLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer);
+    RegularLight(RegularLight&& other) = default;
 
     const Vector3& getBoundsCenter() const
     {

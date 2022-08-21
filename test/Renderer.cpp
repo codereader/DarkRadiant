@@ -37,10 +37,10 @@ TEST_F(RendererTest, ConstructRenderVertex)
 
     {
         // Initialise without colour or tangents
-        RenderVertex v(Vector3f(128, -64, 59), Vector3f(1, -1, 0), Vector2f(0.5, 0.75));
+        RenderVertex v(Vector3f(128, -64, 59), Vector3f(1, -1, 0), Vector2f(0.5f, 0.75f));
         EXPECT_EQ(v.vertex, Vector3f(128, -64, 59));
         EXPECT_EQ(v.normal, Vector3f(1, -1, 0));
-        EXPECT_EQ(v.texcoord, Vector2f(0.5, 0.75));
+        EXPECT_EQ(v.texcoord, Vector2f(0.5f, 0.75f));
         EXPECT_EQ(v.tangent, Vector3f(0, 0, 0));
         EXPECT_EQ(v.bitangent, Vector3f(0, 0, 0));
         EXPECT_EQ(v.colour, Vector4f(1, 1, 1, 1));
@@ -48,39 +48,39 @@ TEST_F(RendererTest, ConstructRenderVertex)
 
     {
         // Initialise with colour but no tangents
-        RenderVertex v(Vector3f(-275, -0.1, 1.15), Vector3f(0.5, -0.5, 0.8), Vector2f(0.25, 0.37),
-                       Vector4f(1.0, 0.5, 0.5, 0.6));
-        EXPECT_EQ(v.vertex, Vector3f(-275, -0.1, 1.15));
-        EXPECT_EQ(v.normal, Vector3f(0.5, -0.5, 0.8));
-        EXPECT_EQ(v.texcoord, Vector2f(0.25, 0.37));
+        RenderVertex v(Vector3f(-275, -0.1f, 1.15f), Vector3f(0.5f, -0.5f, 0.8f), Vector2f(0.25f, 0.37f),
+                       Vector4f(1.0f, 0.5f, 0.5f, 0.6f));
+        EXPECT_EQ(v.vertex, Vector3f(-275, -0.1f, 1.15f));
+        EXPECT_EQ(v.normal, Vector3f(0.5f, -0.5f, 0.8f));
+        EXPECT_EQ(v.texcoord, Vector2f(0.25f, 0.37f));
         EXPECT_EQ(v.tangent, Vector3f(0, 0, 0));
         EXPECT_EQ(v.bitangent, Vector3f(0, 0, 0));
-        EXPECT_EQ(v.colour, Vector4f(1.0, 0.5, 0.5, 0.6));
+        EXPECT_EQ(v.colour, Vector4f(1.0, 0.5f, 0.5f, 0.6f));
     }
 
     {
         // Initialise all values
-        RenderVertex v(Vector3f(-275, -0.1, 1.15), Vector3f(0.5, -0.5, 0.8), Vector2f(0.25, 0.37),
-                       Vector4f(1.0, 0.5, 0.5, 0.6), Vector3f(0.75, -16, 320),
-                       Vector3f(200, 800, 1056.6));
-        EXPECT_EQ(v.vertex, Vector3f(-275, -0.1, 1.15));
-        EXPECT_EQ(v.normal, Vector3f(0.5, -0.5, 0.8));
-        EXPECT_EQ(v.texcoord, Vector2f(0.25, 0.37));
-        EXPECT_EQ(v.tangent, Vector3f(0.75, -16, 320));
-        EXPECT_EQ(v.bitangent, Vector3f(200, 800, 1056.6));
-        EXPECT_EQ(v.colour, Vector4f(1.0, 0.5, 0.5, 0.6));
+        RenderVertex v(Vector3f(-275, -0.1f, 1.15f), Vector3f(0.5f, -0.5f, 0.8f), Vector2f(0.25f, 0.37f),
+                       Vector4f(1.0f, 0.5f, 0.5f, 0.6f), Vector3f(0.75f, -16, 320),
+                       Vector3f(200, 800, 1056.6f));
+        EXPECT_EQ(v.vertex, Vector3f(-275, -0.1f, 1.15f));
+        EXPECT_EQ(v.normal, Vector3f(0.5f, -0.5f, 0.8f));
+        EXPECT_EQ(v.texcoord, Vector2f(0.25f, 0.37f));
+        EXPECT_EQ(v.tangent, Vector3f(0.75f, -16, 320));
+        EXPECT_EQ(v.bitangent, Vector3f(200, 800, 1056.6f));
+        EXPECT_EQ(v.colour, Vector4f(1.0f, 0.5f, 0.5f, 0.6f));
     }
 
     {
         // Initialise with double-precision (no tangents)
         RenderVertex v(Vector3(350, 8.0002, -19.15), Vector3(0.6, -0.1, 2.5), Vector2(0.15, 0.99),
                        Vector4(1.5, 16, -72.89, 0.6));
-        EXPECT_EQ(v.vertex, Vector3f(350, 8.0002, -19.15));
-        EXPECT_EQ(v.normal, Vector3f(0.6, -0.1, 2.5));
-        EXPECT_EQ(v.texcoord, Vector2f(0.15, 0.99));
+        EXPECT_EQ(v.vertex, Vector3f(350, 8.0002f, -19.15f));
+        EXPECT_EQ(v.normal, Vector3f(0.6f, -0.1f, 2.5f));
+        EXPECT_EQ(v.texcoord, Vector2f(0.15f, 0.99f));
         EXPECT_EQ(v.tangent, Vector3f(0, 0, 0));
         EXPECT_EQ(v.bitangent, Vector3f(0, 0, 0));
-        EXPECT_EQ(v.colour, Vector4f(1.5, 16, -72.89, 0.6));
+        EXPECT_EQ(v.colour, Vector4f(1.5f, 16, -72.89f, 0.6f));
     }
 
     {
@@ -88,12 +88,12 @@ TEST_F(RendererTest, ConstructRenderVertex)
         RenderVertex v(Vector3(350, 8.0002, -19.15), Vector3(0.6, -0.1, 2.5), Vector2(0.15, 0.99),
                        Vector4(1.5, 16, -72.89, 0.6), Vector3(-999, 864.2, 0.001),
                        Vector3(1, 5, 59));
-        EXPECT_EQ(v.vertex, Vector3f(350, 8.0002, -19.15));
-        EXPECT_EQ(v.normal, Vector3f(0.6, -0.1, 2.5));
-        EXPECT_EQ(v.texcoord, Vector2f(0.15, 0.99));
-        EXPECT_EQ(v.tangent, Vector3f(-999, 864.2, 0.001));
+        EXPECT_EQ(v.vertex, Vector3f(350, 8.0002f, -19.15f));
+        EXPECT_EQ(v.normal, Vector3f(0.6f, -0.1f, 2.5f));
+        EXPECT_EQ(v.texcoord, Vector2f(0.15f, 0.99f));
+        EXPECT_EQ(v.tangent, Vector3f(-999, 864.2f, 0.001f));
         EXPECT_EQ(v.bitangent, Vector3f(1, 5, 59));
-        EXPECT_EQ(v.colour, Vector4f(1.5, 16, -72.89, 0.6));
+        EXPECT_EQ(v.colour, Vector4f(1.5f, 16, -72.89f, 0.6f));
     }
 }
 

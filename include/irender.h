@@ -265,6 +265,9 @@ public:
 
     // Whether this light is allowed to cast shadows
     virtual bool isShadowCasting() const = 0;
+
+    // Whether this light is using a blend light material
+    virtual bool isBlendLight() const = 0;
 };
 typedef std::shared_ptr<RendererLight> RendererLightPtr;
 
