@@ -276,7 +276,7 @@ void EventManager::registerMenuItem(const std::string& eventName, wxMenuItem* it
     }
     else {
         item->GetMenu()->Bind(wxEVT_MENU_OPEN,
-                              [this](wxMenuEvent& e) { aboutToOpenMenu(*e.GetMenu()); });
+            [this](wxMenuEvent& e) { aboutToOpenMenu(*e.GetMenu()); e.Skip(); });
         item->GetMenu()->Bind(wxEVT_MENU, &EventManager::onMenuItemClicked, this, item->GetId());
     }
 }
