@@ -1,3 +1,13 @@
+darkradiant (3.1.0~jammy1) jammy; urgency=medium
+
+  * Texture Tool now supports free scaling with the mouse.
+  * Improved robustness and correctness of decl handling.
+  * Numerous fixes to Material Editor.
+  * Improve Model Export dialog and workflow.
+  * Other fixes and improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 23 Aug 2022 20:49:18 +0100
+
 darkradiant (3.0.0~focal1) focal; urgency=medium
 
   * New major release on all platforms
