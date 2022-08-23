@@ -2,7 +2,7 @@ Source: darkradiant
 Section: editors
 Priority: optional
 Maintainer: Matthew Mott <orbweaver3d@gmail.com>
-Build-Depends: debhelper (>= 10), cmake (>= 3.12), pkg-config, asciidoctor, libxml2-dev, libglew-dev, python-dev, libvorbis-dev, libopenal-dev, libalut-dev, libjpeg-dev, libftgl-dev, libwxbase3.0-dev, libwxgtk3.0-gtk3-dev, libsigc++-2.0-dev, libglib2.0-dev, libeigen3-dev, libgit2-dev
+Build-Depends: debhelper (>= 10), cmake (>= 3.12), pkg-config, asciidoctor, libxml2-dev, libglew-dev, python3-dev, libvorbis-dev, libopenal-dev, libalut-dev, libjpeg-dev, libftgl-dev, libwxbase3.0-dev, libwxgtk3.0-gtk3-dev, libsigc++-2.0-dev, libglib2.0-dev, libeigen3-dev, libgit2-dev
 Standards-Version: 4.5.1
 
 Package: darkradiant
