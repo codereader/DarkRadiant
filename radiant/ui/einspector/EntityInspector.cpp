@@ -1465,18 +1465,7 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         if (canUpdateEntity())
         {
             // Get the type for this key if it exists, and the options
-            auto type = getPropertyTypeFromGame(key);
-
-            // If the type was not found, also try looking on the entity class
-            if (type.empty())
-            {
-                auto eclass = _entitySelection->getSingleSharedEntityClass();
-
-                if (eclass)
-                {
-                    type = eclass->getAttributeType(key);
-                }
-            }
+            auto type = getPropertyTypeForKey(key);
 
             // Construct and add a new PropertyEditor
             _currentPropertyEditor = _propertyEditorFactory->create(_editorFrame, type, *_entitySelection, key);
@@ -1521,6 +1510,7 @@ std::string EntityInspector::getPropertyTypeFromGame(const std::string& key)
 
 std::string EntityInspector::getPropertyTypeForKey(const std::string& key)
 {
+    // Check the local mappings first
     auto type = getPropertyTypeFromGame(key);
 
     if (!type.empty())
@@ -1528,22 +1518,17 @@ std::string EntityInspector::getPropertyTypeForKey(const std::string& key)
         return type;
     }
 
-    std::set<IEntityClassPtr> selectedEclasses;
+    // Try to get the type from the entity class (editor_* key values)
+    auto sharedEntityClass = _entitySelection->getSingleSharedEntityClass();
 
-    _entitySelection->foreachEntity([&](Entity* entity)
+    if (sharedEntityClass)
     {
-        selectedEclasses.emplace(entity->getEntityClass());
-    });
+        type = sharedEntityClass->getAttributeType(key);
+    }
 
-    // Query each eclass for the key type, pick the first one
-    for (const auto& eclass : selectedEclasses)
+    if (!type.empty())
     {
-        const auto& keyType = eclass->getAttributeType(key);
-
-        if (!keyType.empty())
-        {
-            return keyType;
-        }
+        return type;
     }
 
     // Finally, look for key types registered on the named attachment
