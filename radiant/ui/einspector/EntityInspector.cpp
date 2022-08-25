@@ -1551,52 +1551,64 @@ std::string EntityInspector::getPropertyTypeForKey(const std::string& key)
         }
     }
 
+    // Finally, look for key types registered on the named attachment
+    return getPropertyTypeForAttachmentKey(key);
+}
+
+std::string EntityInspector::getPropertyTypeForAttachmentKey(const std::string& key)
+{
     // Check for keys using the "set X on Y" pattern to set keyvalues on attachments
     std::regex pattern("^set (\\w+) on (\\w+)$", std::regex::icase);
 
     std::smatch match;
-    if (std::regex_match(key, match, pattern))
+    if (!std::regex_match(key, match, pattern)) return {};
+
+    auto attachmentKey = match[1].str();
+    auto attachmentName = match[2].str();
+
+    // Find a property type in our local mappings
+    auto locallyMappedType = getPropertyTypeForKey(attachmentKey);
+
+    if (!locallyMappedType.empty())
     {
-        auto attachmentKey = match[1].str();
-        auto attachmentName = match[2].str();
+        return locallyMappedType;
+    }
 
-        // Check if the attachment eclass can be uniquely identified on all selected entities
-        std::optional<std::string> attachmentClass;
+    // Check the editor_* definition for this key on the attachment eclass
+    // Check if there is a single attachment eclass on all selected entities
+    std::optional<std::string> attachmentClass;
 
-        _entitySelection->foreachEntity([&](Entity* entity)
+    _entitySelection->foreachEntity([&](Entity* entity)
+    {
+        entity->forEachAttachment([&](const Entity::Attachment& attachment)
         {
-            entity->forEachAttachment([&](const Entity::Attachment& attachment)
+            if (attachment.name != attachmentName) return;
+
+            if (!attachmentClass.has_value())
             {
-                if (attachment.name != attachmentName) return;
+                attachmentClass = attachment.eclass;
+                return;
+            }
 
-                if (!attachmentClass.has_value())
-                {
-                    attachmentClass = attachment.eclass;
-                    return;
-                }
-
-                // Check if the attachment is unique
-                if (attachment.eclass != attachmentClass.value())
-                {
-                    attachmentClass.value().clear();
-                }
-            });
+            // Check if the attachment is unique
+            if (attachment.eclass != attachmentClass.value())
+            {
+                attachmentClass.value().clear();
+            }
         });
+    });
 
-        // Nothing found or not uniquely identified
-        if (attachmentClass.has_value() && !attachmentClass.value().empty())
+    // Nothing found or not uniquely identified
+    if (attachmentClass.has_value() && !attachmentClass.value().empty())
+    {
+        // Check the key of this attachment instead
+        if (auto eclass = GlobalEntityClassManager().findClass(attachmentClass.value()); eclass)
         {
-            // Check the key of this attachment instead
-            auto attachmentEntityClass = GlobalEntityClassManager().findClass(attachmentClass.value());
+            const auto& keyType = eclass->getAttributeType(attachmentKey);
 
-            if (attachmentEntityClass)
+            if (!keyType.empty())
             {
-                const auto& keyType = attachmentEntityClass->getAttributeType(attachmentKey);
-
-                if (!keyType.empty())
-                {
-                    return keyType;
-                }
+                return keyType;
             }
         }
     }
