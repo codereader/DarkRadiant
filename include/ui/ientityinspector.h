@@ -37,10 +37,12 @@ public:
 class ITargetKey
 {
 public:
+    using Ptr = std::shared_ptr<ITargetKey>;
+
     virtual ~ITargetKey() {}
 
     // Returns the full string representation of this key, e.g. "classname" or "set _color on flame"
-    virtual const std::string& getFullKey() const = 0;
+    virtual std::string getFullKey() const = 0;
 
     // The key this is affecting, either on this entity or an attachment
     // ("set X on Y" style keys will return key part X).
@@ -83,7 +85,7 @@ public:
      * @param key
      * The key name which this PropertyEditor is displaying.
      */
-    using CreationFunc = std::function<Ptr(wxWindow*, IEntitySelection&, const std::string& key)>;
+    using CreationFunc = std::function<Ptr(wxWindow*, IEntitySelection&, const ITargetKey::Ptr& key)>;
 
     virtual ~IPropertyEditor() {}
 

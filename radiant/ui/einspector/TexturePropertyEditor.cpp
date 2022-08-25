@@ -13,9 +13,9 @@ namespace ui
 {
 
 // Main constructor
-TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name)
+TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
 : PropertyEditor(entities),
-  _key(name)
+  _key(key)
 {
 	constructBrowseButtonPanel(parent, _("Choose texture..."),
 		PropertyEditorFactory::getBitmapFor("texture"));
@@ -26,7 +26,7 @@ void TexturePropertyEditor::onBrowseButtonClick()
 {
 	auto dialog = new ShaderChooser(getWidget(), ShaderSelector::TextureFilter::Lights);
 
-    dialog->setSelectedTexture(getKeyValue(_key));
+    dialog->setSelectedTexture(getKeyValue(_key->getFullKey()));
 
 	if (dialog->ShowModal() == wxID_OK)
 	{
@@ -36,7 +36,7 @@ void TexturePropertyEditor::onBrowseButtonClick()
 		if (!texture.empty())
 		{
 			// Apply the keyvalue immediately
-			setKeyValue(_key, texture);
+			setKeyValue(_key->getFullKey(), texture);
 		}
 	}
 

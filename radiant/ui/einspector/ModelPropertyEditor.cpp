@@ -21,9 +21,9 @@ namespace ui
 {
 
 // Main constructor
-ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name)
+ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
 : PropertyEditor(entities),
-  _key(name)
+  _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
 	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
@@ -57,7 +57,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 {
 	// Use the ModelSelector to choose a model
 	ModelSelectorResult result = ModelSelector::chooseModel(
-		_entities.getSharedKeyValue(_key, true), false, false // pass the current model, don't show options or skins
+		_entities.getSharedKeyValue(_key->getFullKey(), true), false, false // pass the current model, don't show options or skins
 	);
 
     UndoableCommand cmd("setModelProperty");
@@ -65,7 +65,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
     GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
     {
         Entity* entity = Node_getEntity(node);
-        std::string prevModel = entity->getKeyValue(_key);
+        std::string prevModel = entity->getKeyValue(_key->getFullKey());
         std::string name = entity->getKeyValue("name");
 
         bool wasBrushBasedModel = prevModel == name;
@@ -78,7 +78,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
             if (!willBeBrushBasedModel && wasBrushBasedModel && hasChildPrimitives(node))
             {
                 // Warn the user and proceed
-                wxutil::Messagebox::Show(_("Warning: "),
+                wxutil::Messagebox::Show(_("Warning"),
                     _("Changing this entity's model to the selected value will\nremove all child primitives from it:\n") + name,
                     IDialog::MessageType::MESSAGE_WARNING);
 
@@ -87,7 +87,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
             }
 
             // Save the model key now
-            entity->setKeyValue(_key, result.model);
+            entity->setKeyValue(_key->getFullKey(), result.model);
         }
     });
 }
@@ -95,19 +95,19 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 void ModelPropertyEditor::_onParticleButton(wxCommandEvent& ev)
 {
 	// Invoke ParticlesChooser
-    std::string currentSelection = _entities.getSharedKeyValue(_key, true);
+    std::string currentSelection = _entities.getSharedKeyValue(_key->getFullKey(), true);
 	std::string particle = ParticleChooserDialog::ChooseParticle(currentSelection);
 
 	if (!particle.empty())
 	{
-		setKeyValue(_key, particle);
+		setKeyValue(_key->getFullKey(), particle);
 	}
 }
 
 void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
 {
     // Check the key this model property editor is attached to first
-    auto model = _entities.getSharedKeyValue(_key, true);
+    auto model = _entities.getSharedKeyValue(_key->getFullKey(), true);
 
     // Fall back to "model" if nothing found
     if (model.empty())
@@ -122,13 +122,16 @@ void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
         return;
     }
 
-	std::string prevSkin = _entities.getSharedKeyValue("skin", true);
+    // Target the "skin" property
+    _key->setAffectedKey("skin");
+
+	std::string prevSkin = _entities.getSharedKeyValue(_key->getFullKey(), true);
 	std::string skin = SkinChooser::chooseSkin(model, prevSkin);
 
 	if (skin != prevSkin)
 	{
 		// Apply the key to the entity
-		setKeyValue("skin", skin);
+		setKeyValue(_key->getFullKey(), skin);
 	}
 }
 

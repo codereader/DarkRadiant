@@ -76,7 +76,7 @@ void PropertyEditorFactory::unregisterPropertyEditor(const std::string& key)
 }
 
 IPropertyEditor::Ptr PropertyEditorFactory::create(wxWindow* parent, const std::string& className,
-    IEntitySelection& entities, const std::string& key)
+    IEntitySelection& entities, const ITargetKey::Ptr& key)
 {
 	// greebo: First, search the custom editors for a match
 	for (const auto& pair : _customEditors)
@@ -87,7 +87,8 @@ IPropertyEditor::Ptr PropertyEditorFactory::create(wxWindow* parent, const std::
 		std::regex expr(pair.first);
 		std::smatch matches;
 
-		if (!std::regex_match(key, matches, expr)) continue;
+        auto fullKey = key->getFullKey();
+		if (!std::regex_match(fullKey, matches, expr)) continue;
 
 		// We have a match, invoke the creation function
 		return pair.second(parent, entities, key);

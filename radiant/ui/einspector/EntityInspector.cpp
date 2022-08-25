@@ -27,6 +27,7 @@
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "xmlutil/Document.h"
 #include "selection/EntitySelection.h"
+#include "TargetKey.h"
 
 #include <optional>
 #include <map>
@@ -1467,8 +1468,11 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
             // Get the type for this key if it exists, and the options
             auto type = getPropertyTypeForKey(key);
 
+            // Set up the target key for the property editor instance
+            auto targetKey = TargetKey::CreateFromString(key);
+
             // Construct and add a new PropertyEditor
-            _currentPropertyEditor = _propertyEditorFactory->create(_editorFrame, type, *_entitySelection, key);
+            _currentPropertyEditor = _propertyEditorFactory->create(_editorFrame, type, *_entitySelection, targetKey);
 
             if (_currentPropertyEditor)
             {
@@ -1538,7 +1542,7 @@ std::string EntityInspector::getPropertyTypeForKey(const std::string& key)
 std::string EntityInspector::getPropertyTypeForAttachmentKey(const std::string& key)
 {
     // Check for keys using the "set X on Y" pattern to set keyvalues on attachments
-    std::regex pattern("^set (\\w+) on (\\w+)$", std::regex::icase);
+    std::regex pattern(TargetKey::SetKeyPattern, std::regex::icase);
 
     std::smatch match;
     if (!std::regex_match(key, match, pattern)) return {};

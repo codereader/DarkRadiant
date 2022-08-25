@@ -17,16 +17,16 @@ class EntityPropertyEditor:
 {
 protected:
 	// Keyvalue to set
-	std::string _key;
+    ITargetKey::Ptr _key;
 
 public:
     // Construct a EntityPropertyEditor with an entity and key to edit
-    EntityPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name);
+    EntityPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
     // Create a new EntityPropertyEditor
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const std::string& name)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
     {
-        return std::make_shared<EntityPropertyEditor>(parent, entities, name);
+        return std::make_shared<EntityPropertyEditor>(parent, entities, key);
     }
 
 private:

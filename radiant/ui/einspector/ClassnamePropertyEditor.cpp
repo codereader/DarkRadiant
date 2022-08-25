@@ -18,9 +18,9 @@ namespace ui
 {
 
 // Main constructor
-ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name)
+ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
 : PropertyEditor(entities),
-  _key(name)
+  _key(key)
 {
     wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
     mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
@@ -43,7 +43,7 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelect
 
 void ClassnamePropertyEditor::_onBrowseButton(wxCommandEvent& ev)
 {
-	std::string currentEclass = _entities.getSharedKeyValue(_key, false);
+	std::string currentEclass = _entities.getSharedKeyValue(_key->getFullKey(), false);
 
 	// Use the EntityClassChooser dialog to get a selection from the user
 	std::string selection = wxutil::EntityClassChooser::ChooseEntityClass(
@@ -53,13 +53,13 @@ void ClassnamePropertyEditor::_onBrowseButton(wxCommandEvent& ev)
 	if (!selection.empty() && selection != currentEclass)
 	{
 		// Apply the classname change to the current selection, dispatch the command
-		GlobalCommandSystem().executeCommand("SetEntityKeyValue", _key, selection);
+		GlobalCommandSystem().executeCommand("SetEntityKeyValue", _key->getFullKey(), selection);
 	}
 }
 
 void ClassnamePropertyEditor::_onShowDefinition(wxCommandEvent& ev)
 {
-    auto currentEclass = _entities.getSharedKeyValue(_key, false);
+    auto currentEclass = _entities.getSharedKeyValue(_key->getFullKey(), false);
     auto eclass = GlobalEntityClassManager().findClass(currentEclass);
 
     if (eclass)

@@ -14,8 +14,9 @@
 namespace ui
 {
 
-AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key) :
-	_entities(entities)
+AIVocalSetPropertyEditor::AIVocalSetPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key) :
+	_entities(entities),
+    _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
 	_widget = new wxPanel(parent, wxID_ANY);
@@ -48,7 +49,7 @@ void AIVocalSetPropertyEditor::updateFromEntities()
 }
 
 IPropertyEditor::Ptr AIVocalSetPropertyEditor::CreateNew(wxWindow* parent, IEntitySelection& entities,
-	const std::string& key)
+    const ITargetKey::Ptr& key)
 {
 	return std::make_shared<AIVocalSetPropertyEditor>(parent, entities, key);
 }

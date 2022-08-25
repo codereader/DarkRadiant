@@ -17,7 +17,7 @@ class ClassnamePropertyEditor :
 {
 private:
 	// Keyvalue to set
-	std::string _key;
+    ITargetKey::Ptr _key;
 
 private:
 
@@ -27,11 +27,11 @@ private:
 public:
 
     // Main constructor
-    ClassnamePropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name);
+    ClassnamePropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const std::string& name)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
     {
-        return std::make_shared<ClassnamePropertyEditor>(parent, entities, name);
+        return std::make_shared<ClassnamePropertyEditor>(parent, entities, key);
     }
 };
 
