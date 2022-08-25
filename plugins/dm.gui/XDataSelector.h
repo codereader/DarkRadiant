@@ -47,8 +47,8 @@ private:
 	// Pointer to the ReadableEditorDialog for updating the guiView.
 	ReadableEditorDialog* _editorDialog;
 
-	wxIcon _xdataIcon;
-	wxIcon _folderIcon;
+	wxBitmapBundle _xdataIcon;
+	wxBitmapBundle _folderIcon;
 
 public:
 	// Runs the dialog and returns the name of the chosen definition.

@@ -54,8 +54,8 @@ private:
 	wxutil::TreeView* _oneSidedView;
 	wxutil::TreeView* _twoSidedView;
 
-	wxIcon _guiIcon;
-	wxIcon _folderIcon;
+	wxBitmapBundle _guiIcon;
+	wxBitmapBundle _folderIcon;
 
 public:
 	// Starts the GuiSelector and returns the name of the selected GUI or an empty string if the user canceled.

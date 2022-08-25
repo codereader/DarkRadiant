@@ -25,11 +25,10 @@ XDataSelector::XDataSelector(const XData::StringVectorMap& files, ReadableEditor
 	DialogBase(_(WINDOW_TITLE), editorDialog),
 	_store(new wxutil::TreeModel(_columns)),
 	_files(files),
-	_editorDialog(editorDialog)
+	_editorDialog(editorDialog),
+	_xdataIcon(wxutil::GetLocalBitmap(XDATA_ICON)),
+	_folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON))
 {
-	_xdataIcon.CopyFromBitmap(wxutil::GetLocalBitmap(XDATA_ICON));
-	_folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
-
 	fillTree();
 
 	SetSize(WINDOW_WIDTH, WINDOW_HEIGHT);

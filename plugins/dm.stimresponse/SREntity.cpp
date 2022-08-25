@@ -230,9 +230,7 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 	classIcon += (sr.get("state") != "1") ? SUFFIX_INACTIVE : "";
 	classIcon += SUFFIX_EXTENSION;
 
-	wxBitmap iconBmp = wxutil::GetLocalBitmap(stimType.icon);
-	wxIcon icon;
-	icon.CopyFromBitmap(iconBmp);
+	wxBitmapBundle icon(wxutil::GetLocalBitmap(stimType.icon));
 
 	wxDataViewItemAttr colour;
 	colour.SetColour(sr.inherited() ? wxColor(112,112,112) : wxColor(0,0,0));

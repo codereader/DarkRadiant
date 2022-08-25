@@ -196,9 +196,7 @@ void StimTypes::setStimTypeCaption(int id, const std::string& caption)
 		// Update the list store
 		wxutil::TreeModel::Row row(getIterForId(id), *_listStore);
 
-		wxBitmap bmp = wxutil::GetLocalBitmap(_stimTypes[id].icon);
-		wxIcon stimIcon;
-		stimIcon.CopyFromBitmap(bmp);
+		wxBitmapBundle stimIcon(wxutil::GetLocalBitmap(_stimTypes[id].icon));
 
 		row[_columns.caption] = wxVariant(wxDataViewIconText(_stimTypes[id].caption, stimIcon));
 		row[_columns.captionPlusID] = captionPlusId;
@@ -231,9 +229,7 @@ void StimTypes::add(int id,
 
 	wxutil::TreeModel::Row row = _listStore->AddItem();
 
-	wxBitmap bmp = wxutil::GetLocalBitmap(newStimType.icon);
-	wxIcon stimIcon;
-	stimIcon.CopyFromBitmap(bmp);
+	wxBitmapBundle stimIcon(wxutil::GetLocalBitmap(newStimType.icon));
 
 	row[_columns.id] = id;
 	row[_columns.caption] = wxVariant(wxDataViewIconText(_stimTypes[id].caption, stimIcon));
