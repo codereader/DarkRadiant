@@ -164,12 +164,12 @@ void AuiLayout::deactivate()
 
     GlobalGroupDialog().removePage("textures"); // do this after destroyWindow()
 
+    // Dispose of the managed window
+    _auiMgr.GetManagedWindow()->Destroy();
+
     // Unregister the AuiMgr from the event handlers of the managed window
     // otherwise we run into crashes during shutdown (#5586)
     _auiMgr.UnInit();
-
-    // Dispose of the managed window
-    _auiMgr.GetManagedWindow()->Destroy();
 }
 
 void AuiLayout::restoreStateFromRegistry()
