@@ -14,16 +14,16 @@ IF "%1" == "Debug" (SET WXLIB_SUFFIX=ud) ELSE (SET WXLIB_SUFFIX=u)
 
 @echo Copying wxWidgets binaries
 
-copy ..\..\windeps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_gl_vc*_x64.dll	   ..\..\install /Y
-copy ..\..\windeps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_html_vc*_x64.dll  ..\..\install /Y
-copy ..\..\windeps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_xrc_vc*_x64.dll   ..\..\install /Y
-copy ..\..\windeps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_stc_vc*_x64.dll   ..\..\install /Y
-copy ..\..\windeps\wxWidgets\bin\wxbase313%WXLIB_SUFFIX%_vc*_x64.dll	   ..\..\install /Y
-copy ..\..\windeps\wxWidgets\bin\wxbase313%WXLIB_SUFFIX%_xml_vc*_x64.dll  ..\..\install /Y
-copy ..\..\windeps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_adv_vc*_x64.dll   ..\..\install /Y
-copy ..\..\windeps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_core_vc*_x64.dll  ..\..\install /Y
-copy ..\..\windeps\wxWidgets\bin\wxmsw313%WXLIB_SUFFIX%_aui_vc*_x64.dll  ..\..\install /Y
-copy ..\..\windeps\wxWidgets\bin\wxbase313%WXLIB_SUFFIX%_net_vc*_x64.dll  ..\..\install /Y
+copy ..\..\windeps\wxWidgets\bin\wxmsw32%WXLIB_SUFFIX%_gl_vc*_x64.dll	   ..\..\install /Y
+copy ..\..\windeps\wxWidgets\bin\wxmsw32%WXLIB_SUFFIX%_html_vc*_x64.dll  ..\..\install /Y
+copy ..\..\windeps\wxWidgets\bin\wxmsw32%WXLIB_SUFFIX%_xrc_vc*_x64.dll   ..\..\install /Y
+copy ..\..\windeps\wxWidgets\bin\wxmsw32%WXLIB_SUFFIX%_stc_vc*_x64.dll   ..\..\install /Y
+copy ..\..\windeps\wxWidgets\bin\wxbase32%WXLIB_SUFFIX%_vc*_x64.dll	   ..\..\install /Y
+copy ..\..\windeps\wxWidgets\bin\wxbase32%WXLIB_SUFFIX%_xml_vc*_x64.dll  ..\..\install /Y
+copy ..\..\windeps\wxWidgets\bin\wxmsw32%WXLIB_SUFFIX%_adv_vc*_x64.dll   ..\..\install /Y
+copy ..\..\windeps\wxWidgets\bin\wxmsw32%WXLIB_SUFFIX%_core_vc*_x64.dll  ..\..\install /Y
+copy ..\..\windeps\wxWidgets\bin\wxmsw32%WXLIB_SUFFIX%_aui_vc*_x64.dll  ..\..\install /Y
+copy ..\..\windeps\wxWidgets\bin\wxbase32%WXLIB_SUFFIX%_net_vc*_x64.dll  ..\..\install /Y
 
 IF "%1" == "Debug" (SET DEBUG_SUFFIX=-d) ELSE (SET DEBUG_SUFFIX=)
 
