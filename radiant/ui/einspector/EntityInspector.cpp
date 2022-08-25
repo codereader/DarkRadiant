@@ -28,7 +28,9 @@
 #include "xmlutil/Document.h"
 #include "selection/EntitySelection.h"
 
+#include <optional>
 #include <map>
+#include <regex>
 #include <string>
 
 #include <wx/panel.h>
@@ -1546,6 +1548,56 @@ std::string EntityInspector::getPropertyTypeForKey(const std::string& key)
         if (!keyType.empty())
         {
             return keyType;
+        }
+    }
+
+    // Check for keys using the "set X on Y" pattern to set keyvalues on attachments
+    std::regex pattern("^set (\\w+) on (\\w+)$", std::regex::icase);
+
+    std::smatch match;
+    if (std::regex_match(key, match, pattern))
+    {
+        auto attachmentKey = match[1].str();
+        auto attachmentName = match[2].str();
+
+        // Check if the attachment eclass can be uniquely identified on all selected entities
+        std::optional<std::string> attachmentClass;
+
+        _entitySelection->foreachEntity([&](Entity* entity)
+        {
+            entity->forEachAttachment([&](const Entity::Attachment& attachment)
+            {
+                if (attachment.name != attachmentName) return;
+
+                if (!attachmentClass.has_value())
+                {
+                    attachmentClass = attachment.eclass;
+                    return;
+                }
+
+                // Check if the attachment is unique
+                if (attachment.eclass != attachmentClass.value())
+                {
+                    attachmentClass.value().clear();
+                }
+            });
+        });
+
+        // Nothing found or not uniquely identified
+        if (attachmentClass.has_value() && !attachmentClass.value().empty())
+        {
+            // Check the key of this attachment instead
+            auto attachmentEntityClass = GlobalEntityClassManager().findClass(attachmentClass.value());
+
+            if (attachmentEntityClass)
+            {
+                const auto& keyType = attachmentEntityClass->getAttributeType(attachmentKey);
+
+                if (!keyType.empty())
+                {
+                    return keyType;
+                }
+            }
         }
     }
 
