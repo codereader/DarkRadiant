@@ -26,8 +26,8 @@ private:
 
     std::set<std::string> _favourites;
 
-    wxIcon _folderIcon;
-    wxIcon _declIcon;
+    wxBitmapBundle _folderIcon;
+    wxBitmapBundle _declIcon;
 
 public:
     ThreadedDeclarationTreePopulator(decl::Type type, const DeclarationTreeView::Columns& columns) :
@@ -42,13 +42,12 @@ public:
     ThreadedDeclarationTreePopulator(decl::Type type, const DeclarationTreeView::Columns& columns, 
         const std::string& declIcon, const std::string& folderIcon) :
         ThreadedResourceTreePopulator(columns),
-        _columns(columns)
+        _columns(columns),
+        _declIcon(GetLocalBitmap(declIcon)),
+        _folderIcon(GetLocalBitmap(folderIcon))
     {
         // Assemble the set of favourites for the given declaration type
         _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(type));
-
-        _declIcon.CopyFromBitmap(GetLocalBitmap(declIcon));
-        _folderIcon.CopyFromBitmap(GetLocalBitmap(folderIcon));
     }
 
     ~ThreadedDeclarationTreePopulator() override

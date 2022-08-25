@@ -43,6 +43,7 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     TreeView(parent, nullptr, style), // associate the model later
     _columns(columns),
     _mode(TreeMode::ShowAll),
+    _progressIcon(GetLocalBitmap(ICON_LOADING)),
     _expandTopLevelItemsAfterPopulation(false),
     _columnToSelectAfterPopulation(nullptr),
     _setFavouritesRecursively(true),
@@ -62,8 +63,6 @@ ResourceTreeView::ResourceTreeView(wxWindow* parent, const TreeModel::Ptr& model
     Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &ResourceTreeView::_onContextMenu, this);
     Bind(EV_TREEMODEL_POPULATION_FINISHED, &ResourceTreeView::_onTreeStorePopulationFinished, this);
     Bind(EV_TREEMODEL_POPULATION_PROGRESS, &ResourceTreeView::_onTreeStorePopulationProgress, this);
-
-    _progressIcon.CopyFromBitmap(wxutil::GetLocalBitmap(ICON_LOADING));
 }
 
 ResourceTreeView::~ResourceTreeView()
@@ -127,9 +126,7 @@ void ResourceTreeView::SetupTreeModelFilter()
                 wxutil::TreeModel::Row row = _treeStore->AddItem();
                 _emptyFavouritesLabel = row.getItem();
 
-                wxIcon icon;
-                icon.CopyFromBitmap(wxutil::GetLocalBitmap(ICON_LOADING));
-                row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("No favourites added so far"), icon));
+                row[_columns.iconAndName] = wxVariant(wxDataViewIconText(_("No favourites added so far"), _progressIcon));
                 row[_columns.isFavourite] = true;
                 row[_columns.isFolder] = false;
 

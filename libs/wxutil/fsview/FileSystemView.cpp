@@ -110,11 +110,9 @@ void FileSystemView::Populate(const std::string& preselectPath)
     // Clear the treestore
     _treeStore->Clear();
 
-    wxutil::TreeModel::Row row = _treeStore->AddItem();
+    TreeModel::Row row = _treeStore->AddItem();
 
-    wxIcon loadingIcon;
-    loadingIcon.CopyFromBitmap(
-        wxutil::GetLocalBitmap(_fileIcon));
+    wxBitmapBundle loadingIcon(GetLocalBitmap(_fileIcon));
 
     row[Columns().filename] = wxVariant(wxDataViewIconText(_("Loading..."), loadingIcon));
     row[Columns().isFolder] = false;

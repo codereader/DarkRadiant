@@ -76,7 +76,7 @@ private:
     TreeModelFilter::Ptr _treeModelFilter;
     wxDataViewItem _emptyFavouritesLabel;
     wxDataViewItem _progressItem;
-    wxIcon _progressIcon;
+    wxBitmapBundle _progressIcon;
 
     // The currently active populator object
     IResourceTreePopulator::Ptr _populator;
