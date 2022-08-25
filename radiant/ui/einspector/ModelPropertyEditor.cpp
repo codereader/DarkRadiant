@@ -123,15 +123,16 @@ void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
     }
 
     // Target the "skin" property
-    _key->setAffectedKey("skin");
+    auto skinKey = _key->clone();
+    skinKey->setAffectedKey("skin");
 
-	std::string prevSkin = _entities.getSharedKeyValue(_key->getFullKey(), true);
+	std::string prevSkin = _entities.getSharedKeyValue(skinKey->getFullKey(), true);
 	std::string skin = SkinChooser::chooseSkin(model, prevSkin);
 
 	if (skin != prevSkin)
 	{
 		// Apply the key to the entity
-		setKeyValue(_key->getFullKey(), skin);
+		setKeyValue(skinKey->getFullKey(), skin);
 	}
 }
 

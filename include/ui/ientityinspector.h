@@ -62,6 +62,9 @@ public:
     // make this key a "set x on y" setter, assigning an name will
     // convert this to a regular entity key.
     virtual void setAttachmentName(const std::string& name) = 0;
+
+    // Returns a new copy of this instance
+    virtual Ptr clone() const = 0;
 };
 
 /**

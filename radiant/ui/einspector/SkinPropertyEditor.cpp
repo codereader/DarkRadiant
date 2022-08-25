@@ -25,7 +25,10 @@ SkinPropertyEditor::SkinPropertyEditor(wxWindow* parent, IEntitySelection& entit
 
 void SkinPropertyEditor::onBrowseButtonClick()
 {
-    auto model = _entities.getSharedKeyValue("model", true);
+    auto modelKey = _key->clone();
+    modelKey->setAffectedKey("model");
+
+    auto model = _entities.getSharedKeyValue(modelKey->getFullKey(), true);
 
     if (model.empty())
     {

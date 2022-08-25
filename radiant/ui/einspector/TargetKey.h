@@ -52,6 +52,11 @@ public:
         _attachmentName = name;
     }
 
+    Ptr clone() const override
+    {
+        return std::make_shared<TargetKey>(*this);
+    }
+
     static Ptr CreateFromString(const std::string& key)
     {
         auto instance = std::make_shared<TargetKey>();
