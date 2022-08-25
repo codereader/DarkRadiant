@@ -14,7 +14,7 @@
 namespace ui
 {
 
-AIHeadPropertyEditor::AIHeadPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key, const std::string& options) :
+AIHeadPropertyEditor::AIHeadPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key) :
 	_entities(entities)
 {
 	// Construct the main widget (will be managed by the base class)
@@ -48,9 +48,9 @@ void AIHeadPropertyEditor::updateFromEntities()
 }
 
 IPropertyEditor::Ptr AIHeadPropertyEditor::CreateNew(wxWindow* parent, IEntitySelection& entities,
-	const std::string& key, const std::string& options)
+	const std::string& key)
 {
-	return std::make_shared<AIHeadPropertyEditor>(parent, entities, key, options);
+	return std::make_shared<AIHeadPropertyEditor>(parent, entities, key);
 }
 
 void AIHeadPropertyEditor::onChooseButton(wxCommandEvent& ev)

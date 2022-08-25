@@ -15,9 +15,7 @@ namespace ui
 {
 
 // Main constructor
-SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-									     const std::string& name,
-									     const std::string& options)
+SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name)
 : PropertyEditor(entities),
   _key(name)
 {

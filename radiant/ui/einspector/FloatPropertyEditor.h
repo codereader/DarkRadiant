@@ -31,14 +31,13 @@ public:
 	/**
 	 * Construct with Entity, key name and options.
 	 */
-	FloatPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string&, const std::string&);
+	FloatPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string&);
 
 	void updateFromEntity();
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                         const std::string& name, const std::string& options)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const std::string& name)
     {
-        return std::make_shared<FloatPropertyEditor>(parent, entities, name, options);
+        return std::make_shared<FloatPropertyEditor>(parent, entities, name);
     }
 
 };

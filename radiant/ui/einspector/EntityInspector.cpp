@@ -949,11 +949,7 @@ void EntityInspector::loadPropertyMap()
 
     for (const auto& node : nodes)
     {
-        PropertyParms parms;
-        parms.type = node.getAttributeValue("type");
-        parms.options = node.getAttributeValue("options");
-
-        _propertyTypes.emplace(node.getAttributeValue("match"), parms);
+        _propertyTypes.emplace(node.getAttributeValue("match"), node.getAttributeValue("type"));
     }
 }
 
@@ -1469,22 +1465,21 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         if (canUpdateEntity())
         {
             // Get the type for this key if it exists, and the options
-            PropertyParms parms = getPropertyParmsForKey(key);
+            auto type = getPropertyTypeFromGame(key);
 
             // If the type was not found, also try looking on the entity class
-            if (parms.type.empty())
+            if (type.empty())
             {
                 auto eclass = _entitySelection->getSingleSharedEntityClass();
 
                 if (eclass)
                 {
-                    parms.type = eclass->getAttributeType(key);
+                    type = eclass->getAttributeType(key);
                 }
             }
 
             // Construct and add a new PropertyEditor
-            _currentPropertyEditor = _propertyEditorFactory->create(_editorFrame,
-                parms.type, *_entitySelection, key, parms.options);
+            _currentPropertyEditor = _propertyEditorFactory->create(_editorFrame, type, *_entitySelection, key);
 
             if (_currentPropertyEditor)
             {
@@ -1504,10 +1499,10 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     updateEntryBoxSensitivity();
 }
 
-EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(const std::string& key)
+std::string EntityInspector::getPropertyTypeFromGame(const std::string& key)
 {
     // Attempt to find the key in the property map
-    for (auto&& [expression, parms] : _propertyTypes)
+    for (const auto& [expression, type] : _propertyTypes)
     {
         if (expression.empty()) continue; // safety check
 
@@ -1517,7 +1512,7 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(const std
         if (std::regex_match(key, matches, std::regex(expression)))
         {
             // We have a match
-            return parms;
+            return type;
         }
     }
 
@@ -1526,7 +1521,7 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(const std
 
 std::string EntityInspector::getPropertyTypeForKey(const std::string& key)
 {
-    auto type = getPropertyParmsForKey(key).type;
+    auto type = getPropertyTypeFromGame(key);
 
     if (!type.empty())
     {

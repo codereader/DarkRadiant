@@ -27,11 +27,9 @@ public:
 	wxPanel* getWidget() override;
 	void updateFromEntities();
 
-	AIHeadPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-		const std::string& key, const std::string& options);
+	AIHeadPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key);
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                         const std::string& key, const std::string& options);
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const std::string& key);
 
 private:
 	void onChooseButton(wxCommandEvent& ev);

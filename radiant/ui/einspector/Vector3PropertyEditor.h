@@ -38,8 +38,7 @@ public:
 
 	void updateFromEntity();
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                          const std::string& name, const std::string& options)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const std::string& name)
     {
         return std::make_shared<Vector3PropertyEditor>(parent, entities, name);
     }

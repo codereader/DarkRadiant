@@ -13,11 +13,8 @@ namespace ui
 {
 
 // Main constructor
-TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, IEntitySelection& entities,
-											 const std::string& name,
-											 const std::string& options)
+TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name)
 : PropertyEditor(entities),
-  _prefixes(options),
   _key(name)
 {
 	constructBrowseButtonPanel(parent, _("Choose texture..."),

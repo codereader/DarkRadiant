@@ -24,14 +24,12 @@ private:
 public:
 	~AIVocalSetPropertyEditor();
 
-    AIVocalSetPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-        const std::string& key, const std::string& options);
+    AIVocalSetPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key);
 
 	wxPanel* getWidget() override;
 	void updateFromEntities() override;
 	
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                         const std::string& key, const std::string& options);
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const std::string& key);
 
 private:
 	void onChooseButton(wxCommandEvent& ev);

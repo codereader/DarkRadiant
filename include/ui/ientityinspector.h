@@ -48,12 +48,8 @@ public:
      *
      * @param key
      * The key name which this PropertyEditor is displaying.
-     *
-     * @param options
-     * PropertyEditor-specific options string, from the .game file.
      */
-    using CreationFunc = std::function<Ptr(wxWindow*, IEntitySelection&, 
-        const std::string& key, const std::string& options)>;
+    using CreationFunc = std::function<Ptr(wxWindow*, IEntitySelection&, const std::string& key)>;
 
     virtual ~IPropertyEditor() {}
 

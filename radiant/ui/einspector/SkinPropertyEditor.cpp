@@ -15,9 +15,7 @@ namespace ui
 {
 
 // Main constructor
-SkinPropertyEditor::SkinPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-									   const std::string& name,
-									   const std::string& options)
+SkinPropertyEditor::SkinPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name)
 : PropertyEditor(entities),
   _key(name)
 {

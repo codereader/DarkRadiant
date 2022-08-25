@@ -18,9 +18,7 @@ namespace ui
 {
 
 // Main constructor
-ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelection& entities,
-									     		 const std::string& name,
-									     		 const std::string& options)
+ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name)
 : PropertyEditor(entities),
   _key(name)
 {

@@ -36,8 +36,7 @@ public:
      */
     AnglePropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key);
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                         const std::string& key, const std::string& options)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const std::string& key)
     {
         return std::make_shared<AnglePropertyEditor>(parent, entities, key);
     }

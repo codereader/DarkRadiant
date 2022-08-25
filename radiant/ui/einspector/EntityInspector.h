@@ -137,17 +137,8 @@ private:
 	typedef std::vector<KeyValuePair> ClipBoard;
 	ClipBoard _clipboard;
 
-	// Data structure to store the type (vector3, text etc) and the options
-	// string for a single property.
-	struct PropertyParms
-	{
-		std::string type;
-		std::string options;
-	};
-
-	// Map of property names to PropertyParms, mapped like this: regex => parms
-	typedef std::map<std::string, PropertyParms> PropertyParmMap;
-	PropertyParmMap _propertyTypes;
+	// Map of property names to type, mapped like this: regex => type
+    std::map<std::string, std::string> _propertyTypes;
 
 	sigc::connection _defsReloadedHandler;
 	sigc::connection _mapEditModeChangedHandler;
@@ -248,7 +239,7 @@ private:
 	void loadPropertyMap();
 
 	// Returns property type and option for the given entity key
-	PropertyParms getPropertyParmsForKey(const std::string& key);
+	std::string getPropertyTypeFromGame(const std::string& key);
 	std::string getPropertyTypeForKey(const std::string& key);
 	std::string getPropertyTypeForAttachmentKey(const std::string& key);
     void updateListedKeyTypes();
