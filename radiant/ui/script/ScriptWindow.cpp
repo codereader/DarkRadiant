@@ -18,25 +18,25 @@ namespace ui
 
 ScriptWindow::ScriptWindow(wxWindow* parent) :
 	wxPanel(parent, wxID_ANY),
-	_outView(new wxutil::ConsoleView(this)),
-	_view(new wxutil::PythonSourceViewCtrl(parent))
+	_outView(new wxutil::ConsoleView(this))
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	wxSplitterWindow* vertPane = new wxSplitterWindow(this, wxID_ANY, 
-		wxDefaultPosition, wxDefaultSize, wxSP_3D);
+	auto vertPane = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
     vertPane->SetMinimumPaneSize(10); // disallow unsplitting
 
 	GetSizer()->Add(vertPane, 1, wxEXPAND);
 
 	// Edit panel has a label and a "run" button
-	wxPanel* editPanel = new wxPanel(vertPane, wxID_ANY);
+	auto editPanel = new wxPanel(vertPane, wxID_ANY);
 	editPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	wxStaticText* editLabel = new wxStaticText(editPanel, wxID_ANY, _("Python Script Input"));
+	auto editLabel = new wxStaticText(editPanel, wxID_ANY, _("Python Script Input"));
 
-	wxButton* runButton = new wxButton(editPanel, wxID_ANY, _("Run Script"));
-	runButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ScriptWindow::onRunScript), NULL, this);
+	auto runButton = new wxButton(editPanel, wxID_ANY, _("Run Script"));
+	runButton->Bind(wxEVT_BUTTON, &ScriptWindow::onRunScript, this);
+
+    _view = new wxutil::PythonSourceViewCtrl(editPanel);
 
 	editPanel->GetSizer()->Add(editLabel, 0);
 	editPanel->GetSizer()->Add(_view, 1, wxEXPAND);
