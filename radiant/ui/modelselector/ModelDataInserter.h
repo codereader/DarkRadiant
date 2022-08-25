@@ -31,9 +31,9 @@ private:
 
 	bool _includeSkins;
 
-	wxIcon _modelIcon;
-	wxIcon _folderIcon;
-	wxIcon _skinIcon;
+    wxBitmapBundle _modelIcon;
+    wxBitmapBundle _folderIcon;
+    wxBitmapBundle _skinIcon;
 
     std::set<std::string> _favourites;
 
@@ -43,12 +43,11 @@ public:
 	 */
 	ModelDataInserter(const ModelTreeView::TreeColumns& columns, bool includeSkins) :
 		_columns(columns),
-		_includeSkins(includeSkins)
+		_includeSkins(includeSkins),
+        _modelIcon(wxutil::GetLocalBitmap(MODEL_ICON)),
+        _folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON)),
+        _skinIcon(wxutil::GetLocalBitmap(SKIN_ICON))
 	{
-		_modelIcon.CopyFromBitmap(wxutil::GetLocalBitmap(MODEL_ICON));
-		_folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
-		_skinIcon.CopyFromBitmap(wxutil::GetLocalBitmap(SKIN_ICON));
-
         // Get the list of favourites
         _favourites = GlobalFavouritesManager().getFavourites("model");
 	}
