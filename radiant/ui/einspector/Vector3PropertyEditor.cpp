@@ -63,8 +63,8 @@ Vector3PropertyEditor::Vector3PropertyEditor(wxWindow* parent, IEntitySelection&
     mainVBox->GetSizer()->Add(_zValue, 0, wxALIGN_CENTER_VERTICAL | wxALL, 3);
 
     // Create the apply button
-    wxButton* applyButton = new wxButton(mainVBox, wxID_APPLY, _("Apply..."));
-    applyButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(Vector3PropertyEditor::_onApply), NULL, this);
+    wxButton* applyButton = new wxButton(mainVBox, wxID_APPLY, _("Apply"));
+    applyButton->Bind(wxEVT_BUTTON, &Vector3PropertyEditor::_onApply, this);
 
     mainVBox->GetSizer()->Add(applyButton, 0, wxALIGN_CENTER_VERTICAL | wxALL, 6);
 
