@@ -7,6 +7,9 @@
 #include "util/Noncopyable.h"
 #include "debugging/gl.h"
 
+namespace image
+{
+
 /// A single pixel with 8-bit RGBA components
 struct RGBAPixel
 {
@@ -94,3 +97,5 @@ public:
 	}
 };
 typedef std::shared_ptr<RGBAImage> RGBAImagePtr;
+
+}

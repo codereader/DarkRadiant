@@ -126,7 +126,7 @@ ImagePtr TextureManipulator::getResized(const ImagePtr& input) {
 	if (!(gl_width == width && gl_height == height)) {
 
 		// Create a new Image that hold the resampled texture
-		output.reset(new RGBAImage(gl_width, gl_height));
+		output.reset(new image::RGBAImage(gl_width, gl_height));
 
 		// Resample the texture into the allocated image
 		resampleTexture(sourcePixels, width, height,
