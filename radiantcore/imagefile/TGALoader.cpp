@@ -47,13 +47,7 @@ class Flip11 {}; // both
 template<typename PixelDecoder>
 void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGBAImage& image, const Flip00&)
 {
-  rMessage() << "Entering image_decode" << std::endl;
-  rMessage() << "&image: " << &image << std::endl;
-  rMessage() << "image.getWidth(): " << image.getWidth() << std::endl;
-  rMessage() << "image.getHeight(): " << image.getHeight() << std::endl;
-  rMessage() << "image.pixels: " << image.pixels << std::endl;
   RGBAPixel* end = image.pixels + (image.getHeight() * image.getWidth());
-  rMessage() << "end: " << end << std::endl;
   for(RGBAPixel* row = end; row != image.pixels; row -= image.getWidth())
   {
     for(RGBAPixel* pixel = row - image.getWidth(); pixel != row; ++pixel)
@@ -61,7 +55,6 @@ void image_decode(stream::PointerInputStream& istream, PixelDecoder& decode, RGB
       decode(istream, *pixel);
     }
   }
-  rMessage() << "Leaving image_decode" << std::endl;
 }
 
 template<typename PixelDecoder>
@@ -232,9 +225,6 @@ template<typename Flip>
 void targa_decode_rle_rgb(stream::PointerInputStream& istream, RGBAImage& image, const Flip& flip)
 {
 	TargaDecodeRGBPixelRLE decode;
-  rMessage() << "targa_decode_rle_rgb: &image = " << &image << std::endl;
-  rMessage() << "targa_decode_rle_rgb: image.getWidth(): ";
-  rMessage() << image.getWidth() << std::endl;
   image_decode(istream, decode, image, flip);
 }
 
@@ -336,9 +326,6 @@ RGBAImagePtr Targa_decodeImageData(const TargaHeader& targa_header, stream::Poin
 {
   auto image = std::make_shared<RGBAImage>(targa_header.width, targa_header.height);
 
-  rMessage() << "C22 Targa_decodeImageData after creation: image->getWidth(): ";
-    rMessage() << image->getWidth() << std::endl;
-
   if (targa_header.image_type == 2 || targa_header.image_type == 3)
   {
     switch (targa_header.pixel_size)
@@ -359,9 +346,6 @@ RGBAImagePtr Targa_decodeImageData(const TargaHeader& targa_header, stream::Poin
   }
   else if (targa_header.image_type == 10)
   {
-    rMessage() << "Targa_decodeImageData: image->getWidth(): ";
-    rMessage() << image->getWidth() << std::endl;
-
     switch (targa_header.pixel_size)
     {
     case 24:
