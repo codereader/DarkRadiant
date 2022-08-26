@@ -23,8 +23,8 @@ class ImageFileFunctor :
 private:
     const ImageFileSelector::Columns& _columns;
 
-    wxIcon _fileIcon;
-    wxIcon _folderIcon;
+    wxBitmapBundle _fileIcon;
+    wxBitmapBundle _folderIcon;
 
     std::set<std::string> _cubemapSuffixes;
 
@@ -35,11 +35,10 @@ public:
         VFSTreePopulator(treeStore),
         _columns(columns),
         _cubemapSuffixes({ "_nx", "_ny", "_nz", "_px", "_py", "_pz",
-            "_forward", "_back", "_left", "_right", "_up", "_down" })
-    {
-        _fileIcon.CopyFromBitmap(wxutil::GetLocalBitmap(TEXTURE_ICON));
-        _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
-    }
+            "_forward", "_back", "_left", "_right", "_up", "_down" }),
+        _fileIcon(wxutil::GetLocalBitmap(TEXTURE_ICON)),
+        _folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON))
+    {}
 
     void addFile(const vfs::FileInfo& fileInfo)
     {

@@ -105,7 +105,7 @@ private:
     wxDataViewColumn* _oldValueColumn;
     wxDataViewColumn* _newValueColumn;
 
-	wxIcon _emptyIcon;
+	wxBitmapBundle _emptyIcon;
 
     // Cache of wxDataViewItems pointing to keyvalue rows,
 	// so we can quickly find existing keys to change their values

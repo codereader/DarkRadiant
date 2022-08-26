@@ -83,8 +83,7 @@ protected:
         ThrowIfCancellationRequested();
 
         // Model Defs Folder
-        wxIcon folderIcon;
-        folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
+        wxBitmapBundle folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON));
 
         reportProgress(_("Building tree..."));
 

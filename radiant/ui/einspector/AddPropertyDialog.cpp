@@ -130,8 +130,7 @@ public:
 
 		wxutil::TreeModel::Row row = _store->AddItem(_parent);
 
-		wxIcon icon;
-		icon.CopyFromBitmap(PropertyEditorFactory::getBitmapFor(attr.getType()));
+		wxBitmapBundle icon(PropertyEditorFactory::getBitmapFor(attr.getType()));
 
 		row[_columns.displayName] = wxVariant(wxDataViewIconText(attr.getName(), icon));
 		row[_columns.propertyName] = attr.getName();
@@ -146,8 +145,7 @@ public:
 // Populate tree view
 void AddPropertyDialog::populateTreeView()
 {
-	wxIcon folderIcon;
-	folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
+	wxBitmapBundle folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON));
 
 	// DEF-DEFINED PROPERTIES
 	{
@@ -241,8 +239,7 @@ void AddPropertyDialog::populateTreeView()
 
 		wxutil::TreeModel::Row row(item, *_treeStore);
 
-		wxIcon icon;
-		icon.CopyFromBitmap(PropertyEditorFactory::getBitmapFor(type));
+		wxBitmapBundle icon(PropertyEditorFactory::getBitmapFor(type));
 
 		row[_columns.displayName] = wxVariant(wxDataViewIconText(name, icon));
 		row[_columns.propertyName] = name;
