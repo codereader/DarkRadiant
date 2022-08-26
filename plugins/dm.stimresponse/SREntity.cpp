@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include "wxutil/Bitmap.h"
+#include "wxutil/Icon.h"
 
 namespace
 {
@@ -230,7 +231,7 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 	classIcon += (sr.get("state") != "1") ? SUFFIX_INACTIVE : "";
 	classIcon += SUFFIX_EXTENSION;
 
-	wxBitmapBundle icon(wxutil::GetLocalBitmap(stimType.icon));
+	wxutil::Icon icon(wxutil::GetLocalBitmap(stimType.icon));
 
 	wxDataViewItemAttr colour;
 	colour.SetColour(sr.inherited() ? wxColor(112,112,112) : wxColor(0,0,0));

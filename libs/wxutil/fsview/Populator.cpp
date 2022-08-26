@@ -51,7 +51,7 @@ Populator::~Populator()
 
 void Populator::SetDefaultFileIcon(const std::string& fileIcon)
 {
-    _fileIcon = wxBitmapBundle(GetLocalBitmap(fileIcon));
+    _fileIcon = wxutil::Icon(GetLocalBitmap(fileIcon));
 }
 
 void Populator::visitFile(const vfs::FileInfo& fileInfo)
@@ -157,7 +157,7 @@ void Populator::Populate()
     Run();
 }
 
-const wxBitmapBundle& Populator::GetIconForFile(const std::string& path)
+const wxutil::Icon& Populator::GetIconForFile(const std::string& path)
 {
     auto extension = string::to_lower_copy(os::getExtension(path));
     auto foundIcon = _iconsPerExtension.find(extension);
@@ -172,7 +172,7 @@ const wxBitmapBundle& Populator::GetIconForFile(const std::string& path)
 
     if (!iconName.empty())
     {
-        wxBitmapBundle customIcon(GetLocalBitmap(iconName));
+        wxutil::Icon customIcon(GetLocalBitmap(iconName));
         foundIcon = _iconsPerExtension.emplace(extension, customIcon).first;
     }
     else

@@ -15,6 +15,7 @@
 #include <wx/combobox.h>
 
 #include "string/predicate.h"
+#include "wxutil/Icon.h"
 
 namespace {
 	const std::string RKEY_STIM_DEFINITIONS =
@@ -196,7 +197,7 @@ void StimTypes::setStimTypeCaption(int id, const std::string& caption)
 		// Update the list store
 		wxutil::TreeModel::Row row(getIterForId(id), *_listStore);
 
-		wxBitmapBundle stimIcon(wxutil::GetLocalBitmap(_stimTypes[id].icon));
+		wxutil::Icon stimIcon(wxutil::GetLocalBitmap(_stimTypes[id].icon));
 
 		row[_columns.caption] = wxVariant(wxDataViewIconText(_stimTypes[id].caption, stimIcon));
 		row[_columns.captionPlusID] = captionPlusId;
@@ -229,7 +230,7 @@ void StimTypes::add(int id,
 
 	wxutil::TreeModel::Row row = _listStore->AddItem();
 
-	wxBitmapBundle stimIcon(wxutil::GetLocalBitmap(newStimType.icon));
+	wxutil::Icon stimIcon(wxutil::GetLocalBitmap(newStimType.icon));
 
 	row[_columns.id] = id;
 	row[_columns.caption] = wxVariant(wxDataViewIconText(_stimTypes[id].caption, stimIcon));

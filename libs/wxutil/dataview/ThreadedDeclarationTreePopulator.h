@@ -4,6 +4,7 @@
 #include "ifavourites.h"
 
 #include "../Bitmap.h"
+#include "../Icon.h"
 #include "DeclarationTreeView.h"
 #include "ThreadedResourceTreePopulator.h"
 #include "TreeViewItemStyle.h"
@@ -26,8 +27,8 @@ private:
 
     std::set<std::string> _favourites;
 
-    wxBitmapBundle _folderIcon;
-    wxBitmapBundle _declIcon;
+    wxutil::Icon _folderIcon;
+    wxutil::Icon _declIcon;
 
 public:
     ThreadedDeclarationTreePopulator(decl::Type type, const DeclarationTreeView::Columns& columns) :

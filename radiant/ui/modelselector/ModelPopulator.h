@@ -83,7 +83,7 @@ protected:
         ThrowIfCancellationRequested();
 
         // Model Defs Folder
-        wxBitmapBundle folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON));
+        wxutil::Icon folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON));
 
         reportProgress(_("Building tree..."));
 

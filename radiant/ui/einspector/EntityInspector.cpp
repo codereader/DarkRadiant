@@ -84,8 +84,7 @@ EntityInspector::EntityInspector() :
 
 void EntityInspector::construct()
 {
-    _emptyIcon = wxBitmapBundle(wxutil::GetLocalBitmap("empty.png"));
-    wxASSERT(_emptyIcon.IsOk());
+    _emptyIcon = wxutil::Icon(wxutil::GetLocalBitmap("empty.png"));
 
     wxFrame* temporaryParent = new wxFrame(NULL, wxID_ANY, "");
 
@@ -296,7 +295,7 @@ void EntityInspector::updateKeyType(wxutil::TreeModel::Row& row)
     // Get the type for this key if it exists, and the options
     auto keyType = getPropertyTypeForKey(key);
 
-    wxBitmapBundle icon(keyType.empty() ? _emptyIcon : _propertyEditorFactory->getBitmapFor(keyType));
+    wxutil::Icon icon(keyType.empty() ? _emptyIcon : _propertyEditorFactory->getBitmapFor(keyType));
 
     // Assign the icon to the column
     row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));

@@ -14,6 +14,7 @@
 #include "wxutil/PanedPosition.h"
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/event/SingleIdleCallback.h"
+#include "wxutil/Icon.h"
 
 #include <wx/event.h>
 #include <wx/icon.h>
@@ -105,7 +106,7 @@ private:
     wxDataViewColumn* _oldValueColumn;
     wxDataViewColumn* _newValueColumn;
 
-	wxBitmapBundle _emptyIcon;
+    wxutil::Icon _emptyIcon;
 
     // Cache of wxDataViewItems pointing to keyvalue rows,
 	// so we can quickly find existing keys to change their values

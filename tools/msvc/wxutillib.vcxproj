@@ -168,6 +168,7 @@
     <ClInclude Include="..\..\libs\wxutil\fsview\Populator.h" />
     <ClInclude Include="..\..\libs\wxutil\GLContext.h" />
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
+    <ClInclude Include="..\..\libs\wxutil\Icon.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
     <ClInclude Include="..\..\libs\wxutil\LocalBitmapArtProvider.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\CommandMenuItem.h" />

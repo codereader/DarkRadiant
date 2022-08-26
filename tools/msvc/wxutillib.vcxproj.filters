@@ -169,6 +169,7 @@
     <ClInclude Include="..\..\libs\wxutil\sourceview\SourceView.h">
       <Filter>sourceview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\Icon.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

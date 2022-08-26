@@ -18,6 +18,7 @@
 #include <wx/panel.h>
 #include <wx/splitter.h>
 #include "wxutil/Bitmap.h"
+#include "wxutil/Icon.h"
 
 #include "string/string.h"
 #include "eclass.h"
@@ -72,8 +73,8 @@ class EntityClassTreePopulator:
     // Key that specifies the display folder
     std::string _folderKey;
 
-    wxBitmapBundle _folderIcon;
-    wxBitmapBundle _entityIcon;
+    wxutil::Icon _folderIcon;
+    wxutil::Icon _entityIcon;
 
     std::set<std::string> _favourites;
 

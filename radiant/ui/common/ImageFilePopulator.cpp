@@ -7,6 +7,7 @@
 #include "string/trim.h"
 #include "os/path.h"
 #include "wxutil/Bitmap.h"
+#include "wxutil/Icon.h"
 
 namespace ui
 {
@@ -23,8 +24,8 @@ class ImageFileFunctor :
 private:
     const ImageFileSelector::Columns& _columns;
 
-    wxBitmapBundle _fileIcon;
-    wxBitmapBundle _folderIcon;
+    wxutil::Icon _fileIcon;
+    wxutil::Icon _folderIcon;
 
     std::set<std::string> _cubemapSuffixes;
 

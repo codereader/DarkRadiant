@@ -2,6 +2,7 @@
 
 #include <wx/thread.h>
 #include "ifilesystem.h"
+#include "wxutil/Icon.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 
 namespace wxutil
@@ -60,9 +61,9 @@ private:
     // The helper class, doing the tedious treeview insertion for us.
     wxutil::VFSTreePopulator _treePopulator;
 
-    wxBitmapBundle _fileIcon;
-    wxBitmapBundle _folderIcon;
-    std::map<std::string, wxBitmapBundle> _iconsPerExtension;
+    wxutil::Icon _fileIcon;
+    wxutil::Icon _folderIcon;
+    std::map<std::string, wxutil::Icon> _iconsPerExtension;
 
     std::set<std::string> _fileExtensions;
 
@@ -87,7 +88,7 @@ protected:
 
     void visitFile(const vfs::FileInfo& fileInfo);
     void SearchForFilesMatchingExtension(const std::string& extension);
-    const wxBitmapBundle& GetIconForFile(const std::string& path);
+    const wxutil::Icon& GetIconForFile(const std::string& path);
     wxDataViewItem insertBasePathItem();
 };
 
