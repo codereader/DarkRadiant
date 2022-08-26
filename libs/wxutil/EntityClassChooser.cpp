@@ -72,8 +72,8 @@ class EntityClassTreePopulator:
     // Key that specifies the display folder
     std::string _folderKey;
 
-    wxIcon _folderIcon;
-    wxIcon _entityIcon;
+    wxBitmapBundle _folderIcon;
+    wxBitmapBundle _entityIcon;
 
     std::set<std::string> _favourites;
 
@@ -85,11 +85,10 @@ public:
     : VFSTreePopulator(store),
       _store(store),
       _columns(columns),
-      _folderKey(game::current::getValue<std::string>(FOLDER_KEY_PATH))
+      _folderKey(game::current::getValue<std::string>(FOLDER_KEY_PATH)),
+      _folderIcon(GetLocalBitmap(FOLDER_ICON)),
+      _entityIcon(GetLocalBitmap(ENTITY_ICON))
     {
-        _folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
-        _entityIcon.CopyFromBitmap(wxutil::GetLocalBitmap(ENTITY_ICON));
-
         // Get the list of favourite eclasses
         _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::EntityDef));
     }

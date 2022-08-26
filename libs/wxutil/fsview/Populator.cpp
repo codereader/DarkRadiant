@@ -172,9 +172,7 @@ const wxBitmapBundle& Populator::GetIconForFile(const std::string& path)
 
     if (!iconName.empty())
     {
-        wxIcon customIcon;
-        customIcon.CopyFromBitmap(wxutil::GetLocalBitmap(iconName));
-
+        wxBitmapBundle customIcon(GetLocalBitmap(iconName));
         foundIcon = _iconsPerExtension.emplace(extension, customIcon).first;
     }
     else

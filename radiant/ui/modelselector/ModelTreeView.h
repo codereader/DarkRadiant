@@ -32,7 +32,6 @@ private:
     bool _showSkins;
 
     wxDataViewItem _progressItem;
-    wxIcon _modelIcon;
 
 public:
     ModelTreeView(wxWindow* parent);
