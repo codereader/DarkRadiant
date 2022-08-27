@@ -515,12 +515,11 @@ void OpenGLShader::applyAlphaTestToPass(OpenGLState& pass, double alphaTest)
 // Construct lighting mode render passes
 void OpenGLShader::constructLightingPassesFromMaterial()
 {
-    // Build up and add shader passes for DBS triplets as they are found. A
-    // new triplet is found when (1) the same DBS layer type is seen twice, (2)
-    // we have at least one DBS layer then see a blend layer, or (3) we have at
-    // least one DBS layer then reach the end of the layers.
+    // Build up and add shader passes for DBS stages similar to the game code.
+    // DBS stages are first sorted and then grouped into one or more interaction passes
+    // All other layers are treated as independent blend layers.
 
-    DBSTriplet triplet;
+    std::vector<IShaderLayer::Ptr> interactionLayers;
 
     _material->foreachLayer([&] (const IShaderLayer::Ptr& layer)
     {
@@ -533,50 +532,27 @@ void OpenGLShader::constructLightingPassesFromMaterial()
         switch (layer->getType())
         {
         case IShaderLayer::DIFFUSE:
-            if (triplet.diffuse)
-            {
-                appendInteractionLayer(triplet);
-                triplet.reset();
-            }
-            triplet.diffuse = layer;
-            break;
-
         case IShaderLayer::BUMP:
-            if (triplet.bump)
-            {
-                appendInteractionLayer(triplet);
-                triplet.reset();
-            }
-            triplet.bump = layer;
-            break;
-
         case IShaderLayer::SPECULAR:
-            if (triplet.specular)
-            {
-                appendInteractionLayer(triplet);
-                triplet.reset();
-            }
-            triplet.specular = layer;
+            interactionLayers.push_back(layer);
             break;
 
         case IShaderLayer::BLEND:
-            if (triplet.specular || triplet.bump || triplet.diffuse)
-            {
-                appendInteractionLayer(triplet);
-                triplet.reset();
-            }
-
             appendBlendLayer(layer);
         }
 
         return true;
     });
 
-    // Submit final pass if we reach the end
-    if (triplet.specular || triplet.bump || triplet.diffuse)
-	{
-		appendInteractionLayer(triplet);
-	}
+    // Sort interaction stages: bumps go first, then diffuses, speculars last
+    std::sort(interactionLayers.begin(), interactionLayers.end(), [](const IShaderLayer::Ptr& a, const IShaderLayer::Ptr& b)
+    {
+        // Use the enum value to sort stages
+        return static_cast<int>(a->getType()) < static_cast<int>(b->getType());
+    });
+
+    // Group interaction stages into passes
+    // TODO
 }
 
 void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
