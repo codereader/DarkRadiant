@@ -165,12 +165,12 @@ public:
      * \{
      */
 
-    GLint texture0; // diffuse
-    GLint texture1; // bump
-    GLint texture2; // specular
-    GLint texture3; // light texture
-    GLint texture4; // light falloff
-    GLint texture5; // shadow map
+    GLuint texture0; // diffuse
+    GLuint texture1; // bump
+    GLuint texture2; // specular
+    GLuint texture3; // light texture
+    GLuint texture4; // light falloff
+    GLuint texture5; // shadow map
 
     /**
      * \}
@@ -498,7 +498,7 @@ public:
 
     // Bind the given texture to the texture unit, if it is different from the
     // current state, then set the current state to the new texture.
-    static void SetTextureState(GLint& current, const GLint texture, GLenum textureUnit, GLenum textureMode)
+    static void SetTextureState(GLuint& current, const GLuint texture, GLenum textureUnit, GLenum textureMode)
     {
         if (texture == current) return;
 
@@ -526,7 +526,7 @@ private:
         glLoadMatrixd(tex);
     }
 
-    void setTextureState(GLint& current, const GLint texture, GLenum textureMode)
+    void setTextureState(GLuint& current, const GLuint texture, GLenum textureMode)
     {
         if (texture == current) return;
 

@@ -7,6 +7,20 @@
 namespace render
 {
 
+namespace
+{
+    TexturePtr getDefaultInteractionTexture(IShaderLayer::Type type)
+    {
+        return GlobalMaterialManager().getDefaultInteractionTexture(type);
+    }
+
+    TexturePtr getTextureOrInteractionDefault(const IShaderLayer::Ptr& layer)
+    {
+        auto texture = layer->getTexture();
+        return texture ? texture : getDefaultInteractionTexture(layer->getType());
+    }
+}
+
 inline void setInteractionStateFlags(OpenGLState& state, GLProgramFactory& programFactory)
 {
     // Set render flags
@@ -28,10 +42,34 @@ inline void setInteractionStateFlags(OpenGLState& state, GLProgramFactory& progr
     state.m_blend_dst = GL_ONE;
 }
 
-InteractionPass::InteractionPass(OpenGLShader& owner, OpenGLRenderSystem& renderSystem) :
+InteractionPass::InteractionPass(OpenGLShader& owner, OpenGLRenderSystem& renderSystem, std::vector<IShaderLayer::Ptr>& stages) :
     OpenGLShaderPass(owner)
 {
     setInteractionStateFlags(_glState, renderSystem.getGLProgramFactory());
+
+    // Load the textures or fall back to interaction defaults, but don't leave them empty
+    _interactionStages.reserve(stages.size());
+
+    for (auto&& stage : stages)
+    {
+        auto texture = getTextureOrInteractionDefault(stage)->getGLTexNum();
+        _interactionStages.emplace_back(Stage{ std::move(stage), texture });
+    }
+
+    _defaultBumpTexture = getDefaultInteractionTexture(IShaderLayer::BUMP)->getGLTexNum();
+    _defaultDiffuseTexture = getDefaultInteractionTexture(IShaderLayer::DIFFUSE)->getGLTexNum();
+    _defaultSpecularTexture = getDefaultInteractionTexture(IShaderLayer::SPECULAR)->getGLTexNum();
+}
+
+GLuint InteractionPass::getDefaultInteractionTextureBinding(IShaderLayer::Type type)
+{
+    switch (type)
+    {
+    case IShaderLayer::DIFFUSE: return _defaultDiffuseTexture;
+    case IShaderLayer::BUMP: return _defaultBumpTexture;
+    case IShaderLayer::SPECULAR: return _defaultSpecularTexture;
+    default: throw std::invalid_argument("Non-interaction default texture requested");
+    }
 }
 
 OpenGLState InteractionPass::GenerateInteractionState(GLProgramFactory& programFactory)

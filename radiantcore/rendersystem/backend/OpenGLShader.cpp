@@ -401,14 +401,6 @@ OpenGLState& OpenGLShader::appendDepthFillPass()
     return _depthFillPass->state();
 }
 
-OpenGLState& OpenGLShader::appendInteractionPass()
-{
-    _interactionPass = std::make_shared<InteractionPass>(*this, _renderSystem);
-    _shaderPasses.push_back(_interactionPass);
-
-    return _interactionPass->state();
-}
-
 // Test if we can render in bump map mode
 bool OpenGLShader::canUseLightingMode() const
 {
@@ -452,31 +444,23 @@ void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
     }
 }
 
-// Add an interaction layer
-void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
+OpenGLState& OpenGLShader::appendInteractionPass(std::vector<IShaderLayer::Ptr>& stages)
 {
+    // Store all stages in a single interaction pass
+    _interactionPass = std::make_shared<InteractionPass>(*this, _renderSystem, stages);
+    _shaderPasses.push_back(_interactionPass);
+
+    return _interactionPass->state();
+    
+
+#if 0
 	// Set layer vertex colour mode and alphatest parameters
     IShaderLayer::VertexColourMode vcolMode = IShaderLayer::VERTEX_COLOUR_NONE;
-    double alphaTest = -1;
 
     if (triplet.diffuse)
     {
         vcolMode = triplet.diffuse->getVertexColourMode();
         alphaTest = triplet.diffuse->getAlphaTest();
-    }
-
-    // Append a depthfill shader pass if requested
-    if (triplet.needDepthFill && triplet.diffuse)
-    {
-        // Create depth-buffer fill pass with alpha test
-        auto& zPass = appendDepthFillPass();
-
-        // Store the alpha test value
-        zPass.alphaThreshold = static_cast<GLfloat>(alphaTest);
-
-        // We need a diffuse stage to be able to performthe alpha test
-        zPass.stage0 = triplet.diffuse;
-        zPass.texture0 = getTextureOrInteractionDefault(triplet.diffuse)->getGLTexNum();
     }
 
     // Add the DBS pass
@@ -499,7 +483,8 @@ void OpenGLShader::appendInteractionLayer(const DBSTriplet& triplet)
 	if (triplet.diffuse)
 	{
 		dbsPass.setColour(triplet.diffuse->getColour());
-	} 
+	}
+#endif
 }
 
 void OpenGLShader::applyAlphaTestToPass(OpenGLState& pass, double alphaTest)
@@ -516,10 +501,12 @@ void OpenGLShader::applyAlphaTestToPass(OpenGLState& pass, double alphaTest)
 void OpenGLShader::constructLightingPassesFromMaterial()
 {
     // Build up and add shader passes for DBS stages similar to the game code.
-    // DBS stages are first sorted and then grouped into one or more interaction passes
+    // DBS stages are first sorted and stored in the interaction pass where
+    // they will be evaluated and grouped to DBS triplets in every frame.
     // All other layers are treated as independent blend layers.
 
     std::vector<IShaderLayer::Ptr> interactionLayers;
+    IShaderLayer::Ptr diffuseForDepthFillPass;
 
     _material->foreachLayer([&] (const IShaderLayer::Ptr& layer)
     {
@@ -532,6 +519,15 @@ void OpenGLShader::constructLightingPassesFromMaterial()
         switch (layer->getType())
         {
         case IShaderLayer::DIFFUSE:
+            // Use the diffusemap with the highest opacity for the z-fill pass
+            if (!diffuseForDepthFillPass || 
+                (diffuseForDepthFillPass->getAlphaTest() != -1 && layer->getAlphaTest() == -1))
+            {
+                diffuseForDepthFillPass = layer;
+            }
+            interactionLayers.push_back(layer);
+            break;
+
         case IShaderLayer::BUMP:
         case IShaderLayer::SPECULAR:
             interactionLayers.push_back(layer);
@@ -551,8 +547,20 @@ void OpenGLShader::constructLightingPassesFromMaterial()
         return static_cast<int>(a->getType()) < static_cast<int>(b->getType());
     });
 
-    // Group interaction stages into passes
-    // TODO
+    if (!interactionLayers.empty())
+    {
+        if (diffuseForDepthFillPass)
+        {
+            // Create depth-buffer fill pass, possibly with alpha test
+            auto& zPass = appendDepthFillPass();
+
+            zPass.stage0 = diffuseForDepthFillPass;
+            zPass.texture0 = getTextureOrInteractionDefault(diffuseForDepthFillPass)->getGLTexNum();
+            zPass.alphaThreshold = diffuseForDepthFillPass->getAlphaTest();
+        }
+
+        appendInteractionPass(interactionLayers);
+    }
 }
 
 void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
