@@ -650,6 +650,36 @@ control points will become less densely packed.
 .Inserting (top), Extending (middle) and Deleting (bottom) control points in a patch
 image::AddRemovePatchControlPoints.png[align="center"]
 
+==== Thickening a patch
+
+When created, every patch has zero thickness and can only be viewed from one side; however, a patch
+can be made into an apparently solid object by creating additional patches automatically via the
+*Thicken* command in the *Patch* menu.
+
+.Thickening a patch (left) with side walls (center) and no side walls (right)
+image::PatchThicken.png[align="center"]
+
+The *Thicken* dialog presents several options:
+
+[cols="1h,3"]
+|===
+|*Extrude along Vertex Normals*|
+Thicken the patch by extruding the patch surface in the direction it is facing.
+|*Extrude along X/Y/Z Axis*|
+Thicken the patch by extruding the surface along the specified axis, ignoring the face normal
+direction.
+|*Thickness (units)*|
+Distance in map units to extrude the patch by.
+|*Create seams ("side walls")*|
+If checked, the extruded patch will be made into a fully solid "object" with an interior volume
+completely enclosed by patches. If unchecked, only the initial patch and its extruded copy will be
+created, with the sides left open.
+|===
+
+TIP: Although a thickened patch appears as a solid object, it still consists of individual patches
+which can be selected and manipulated individually. If you wish it to continue to behave as a
+solid, you can <<Group,group>> the patches together.
+
 ==== More complex patch shapes
 
 Just like with brushes, DarkRadiant offers several default patch shapes beyond
