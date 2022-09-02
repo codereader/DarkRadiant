@@ -60,6 +60,22 @@ class ModelSelector: public wxutil::DialogBase, private wxutil::XmlResourceBased
     // Materials list table
     MaterialsList* _materialsList;
 
+    struct RelatedEntityColumns :
+        public wxutil::TreeModel::ColumnRecord
+    {
+        RelatedEntityColumns() :
+            eclassName(add(wxutil::TreeModel::Column::String)),
+            skin(add(wxutil::TreeModel::Column::String))
+        {}
+
+        wxutil::TreeModel::Column eclassName;
+        wxutil::TreeModel::Column skin;
+    };
+
+    RelatedEntityColumns _relatedEntityColumns;
+    wxutil::TreeModel::Ptr _relatedEntityStore;
+    wxutil::TreeView* _relatedEntityView;
+
 	// The window position tracker
 	wxutil::WindowPosition _position;
 	wxutil::PanedPosition _panedPosition;
@@ -98,7 +114,7 @@ private:
 	// Populate the tree view with models
 	void populateModels();
 
-	void showInfoForSelectedModel();
+	void handleSelectionChange();
 
 	void cancelDialog();
 

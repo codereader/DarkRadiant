@@ -53,6 +53,7 @@ ModelSelector::ModelSelector() :
     _treeView(nullptr),
 	_infoTable(nullptr),
     _materialsList(nullptr),
+    _relatedEntityView(nullptr),
 	_lastModel(""),
 	_lastSkin(""),
 	_showOptions(true)
@@ -107,20 +108,37 @@ ModelSelector::ModelSelector() :
 
 void ModelSelector::setupAdvancedPanel(wxWindow* parent)
 {
+    auto detailsPage = findNamedPanel(parent, "ModelDetailsPanel");
+
 	// Create info panel
-	_infoTable = new wxutil::KeyValueTable(parent);
+	_infoTable = new wxutil::KeyValueTable(detailsPage);
 	_infoTable->SetMinClientSize(wxSize(-1, 140));
 
-	_materialsList = new MaterialsList(parent, _modelPreview->getRenderSystem());
+    detailsPage->GetSizer()->Add(_infoTable, 1, wxEXPAND);
+
+    auto materialsPage = findNamedPanel(parent, "ModelMaterialsPanel");
+
+	_materialsList = new MaterialsList(materialsPage, _modelPreview->getRenderSystem());
     _materialsList->SetMinClientSize(wxSize(-1, 140));
+
+    materialsPage->GetSizer()->Add(_materialsList, 1, wxEXPAND);
 
 	// Refresh preview when material visibility changed
     _materialsList->signal_visibilityChanged().connect(
 		sigc::mem_fun(*_modelPreview, &wxutil::ModelPreview::queueDraw)
     );
 
-    parent->GetSizer()->Add(_materialsList, 0, wxEXPAND | wxTOP, 6);
-	parent->GetSizer()->Add(_infoTable, 0, wxEXPAND | wxTOP, 6);
+    auto entityPage = findNamedPanel(parent, "ModelRelatedEntitiesPanel");
+
+    _relatedEntityStore = new wxutil::TreeModel(_relatedEntityColumns, true);
+    _relatedEntityView = wxutil::TreeView::CreateWithModel(entityPage, _relatedEntityStore.get());
+
+    _relatedEntityView->AppendTextColumn(_("Entity Class"), _relatedEntityColumns.eclassName.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    _relatedEntityView->AppendTextColumn(_("Skin"), _relatedEntityColumns.skin.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+
+    entityPage->GetSizer()->Add(_relatedEntityView, 1, wxEXPAND);
 }
 
 void ModelSelector::cancelDialog()
@@ -198,7 +216,6 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     }
 
     _treeView->SetSelectedFullname(curModel);
-    showInfoForSelectedModel();
 
     _showOptions = showOptions;
 
@@ -239,6 +256,10 @@ void ModelSelector::onSkinsOrModelsReloaded()
 
 void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
 {
+    _infoTable->Clear();
+    _materialsList->clear();
+    _relatedEntityStore->Clear();
+
 	if (!modelNode)
 	{
 		return;
@@ -254,18 +275,27 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
 	_infoTable->Append(_("Total polys"), string::to_string(model.getPolyCount()));
 	_infoTable->Append(_("Material surfaces"), string::to_string(model.getSurfaceCount()));
 
-    if (modelName.find_last_of('/') == std::string::npos)
+    // Model name doesn't have a folder, this could be a modelDef
+    if (auto modelDef = GlobalEntityClassManager().findModel(modelName); modelDef)
     {
-        // Model name doesn't have a folder, this could be a modelDef
-        auto modelDef = GlobalEntityClassManager().findModel(modelName);
-
-        if (modelDef)
-        {
-            _infoTable->Append(_("Defined in"), modelDef->getBlockSyntax().fileInfo.fullPath());
-        }
+        _infoTable->Append(_("Defined in"), modelDef->getBlockSyntax().fileInfo.fullPath());
     }
 
     _materialsList->updateFromModel(model);
+
+    // Find related entity classes
+    GlobalEntityClassManager().forEachEntityClass([&] (const IEntityClassPtr& eclass)
+    {
+        auto modelKeyValue = eclass->getAttributeValue("model", true);
+
+        if (modelKeyValue == modelName)
+        {
+            auto row = _relatedEntityStore->AddItem();
+            row[_relatedEntityColumns.eclassName] = eclass->getDeclName();
+            row[_relatedEntityColumns.skin] = eclass->getAttributeValue("skin");
+            row.SendItemAdded();
+        }
+    });
 }
 
 wxWindow* ModelSelector::setupTreeViewToolbar(wxWindow* parent)
@@ -296,7 +326,7 @@ void ModelSelector::setupTreeView(wxWindow* parent)
                     &ModelSelector::onTreeViewPopulationFinished, this);
 
     // Pack in tree view and its toolbar
-    parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND);
+    parent->GetSizer()->Prepend(_treeView, 2, wxEXPAND);
     parent->GetSizer()->Prepend(setupTreeViewToolbar(parent), 0,
                                 wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
     parent->GetSizer()->Layout();
@@ -321,24 +351,20 @@ void ModelSelector::Populate()
 
 void ModelSelector::onSelectionChanged(wxDataViewEvent& ev)
 {
-	showInfoForSelectedModel();
+    handleSelectionChange();
 }
 
 // Update the info table and model preview based on the current selection
-
-void ModelSelector::showInfoForSelectedModel()
+void ModelSelector::handleSelectionChange()
 {
-    // Prepare to populate the info table
-    _infoTable->Clear();
-
     // Get the model name, if this is blank we are looking at a directory,
     // so leave the table empty
-    std::string modelName = _treeView->GetSelectedModelPath();
+    auto modelName = _treeView->GetSelectedModelPath();
 
     if (modelName.empty()) return;
 
     // Get the skin if set
-    std::string skinName = _treeView->GetSelectedSkin();
+    auto skinName = _treeView->GetSelectedSkin();
 
     // Pass the model and skin to the preview widget
     _modelPreview->setModel(modelName);
