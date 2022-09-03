@@ -93,6 +93,7 @@ private:
     RelatedEntityColumns _relatedEntityColumns;
     wxutil::TreeModel::Ptr _relatedEntityStore;
     wxutil::TreeView* _relatedEntityView;
+    wxutil::PopupMenuPtr _relatedEntityContextMenu;
 
 	// The window position tracker
 	wxutil::WindowPosition _position;
@@ -145,6 +146,8 @@ private:
 
 	void onRelatedEntitySelectionChange(wxDataViewEvent& ev);
 	void onRelatedEntityActivated(wxDataViewEvent& ev);
+	void onRelatedEntityContextMenu(wxDataViewEvent& ev);
+	void onShowClassDefinition();
 
 	// Connected to the ModelCache/SkinCache signal, fires after the refresh commands are done
 	void onSkinsOrModelsReloaded();

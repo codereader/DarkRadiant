@@ -29,6 +29,8 @@
 #include "wxutil/Bitmap.h"
 #include "ui/UserInterfaceModule.h"
 #include "registry/Widgets.h"
+#include "wxutil/menu/IconTextMenuItem.h"
+#include "wxutil/sourceview/DeclarationSourceView.h"
 
 namespace ui
 {
@@ -37,6 +39,8 @@ namespace ui
 namespace
 {
     constexpr const char* const MODELSELECTOR_TITLE = N_("Choose Model");
+    constexpr const char* const SHOW_ECLASS_DEFINITION_TEXT = N_("Show Definition");
+    constexpr const char* const SHOW_ECLASS_DEFINITION_ICON = "icon_classname.png";
 
     const std::string RKEY_BASE = "user/ui/modelSelector/";
     const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
@@ -138,7 +142,35 @@ void ModelSelector::setupAdvancedPanel(wxWindow* parent)
     _relatedEntityView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ModelSelector::onRelatedEntitySelectionChange, this);
     _relatedEntityView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ModelSelector::onRelatedEntityActivated, this);
 
+    _relatedEntityView->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, [&] (auto&)
+    {
+        _relatedEntityContextMenu->show(this);
+    });
+
+    // Construct the context menu
+    _relatedEntityContextMenu = std::make_shared<wxutil::PopupMenu>();
+    _relatedEntityContextMenu->addItem(
+        new wxutil::IconTextMenuItem(_(SHOW_ECLASS_DEFINITION_TEXT), SHOW_ECLASS_DEFINITION_ICON),
+        std::bind(&ModelSelector::onShowClassDefinition, this),
+        [this]() { return _relatedEntityView->GetSelection().IsOk(); }
+    );
+
     entityPage->GetSizer()->Prepend(_relatedEntityView, 1, wxEXPAND);
+}
+
+void ModelSelector::onShowClassDefinition()
+{
+    auto item = _relatedEntityView->GetSelection();
+    if (!item.IsOk()) return;
+
+    wxutil::TreeModel::Row row(item, *_relatedEntityStore.get());
+    std::string eclass = row[_relatedEntityColumns.eclassName];
+
+    auto view = new wxutil::DeclarationSourceView(this);
+    view->setDeclaration(decl::Type::EntityDef, eclass);
+
+    view->ShowModal();
+    view->Destroy();
 }
 
 void ModelSelector::onRelatedEntitySelectionChange(wxDataViewEvent& ev)
