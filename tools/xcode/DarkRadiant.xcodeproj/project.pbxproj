@@ -606,6 +606,8 @@
 		3A38324928C34EE90049C4A1 /* RegularLight.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38324528C34EE80049C4A1 /* RegularLight.h */; };
 		3A38324A28C34EE90049C4A1 /* BlendLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38324628C34EE80049C4A1 /* BlendLight.cpp */; };
 		3A38324B28C34EE90049C4A1 /* BlendLight.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38324728C34EE90049C4A1 /* BlendLight.h */; };
+		3A38324E28C354130049C4A1 /* BlendLightProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38324C28C354120049C4A1 /* BlendLightProgram.h */; };
+		3A38324F28C354130049C4A1 /* BlendLightProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38324D28C354120049C4A1 /* BlendLightProgram.cpp */; };
 		3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBE263C7893000C068E /* Bitmap.h */; };
 		3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */; };
 		3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3F623B1B764008A1B2D /* ParticleEditor.cpp */; };
@@ -3636,6 +3638,8 @@
 		3A38324528C34EE80049C4A1 /* RegularLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegularLight.h; path = ../../radiantcore/rendersystem/backend/RegularLight.h; sourceTree = SOURCE_ROOT; };
 		3A38324628C34EE80049C4A1 /* BlendLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlendLight.cpp; path = ../../radiantcore/rendersystem/backend/BlendLight.cpp; sourceTree = SOURCE_ROOT; };
 		3A38324728C34EE90049C4A1 /* BlendLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlendLight.h; path = ../../radiantcore/rendersystem/backend/BlendLight.h; sourceTree = SOURCE_ROOT; };
+		3A38324C28C354120049C4A1 /* BlendLightProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlendLightProgram.h; path = ../../radiantcore/rendersystem/backend/glprogram/BlendLightProgram.h; sourceTree = SOURCE_ROOT; };
+		3A38324D28C354120049C4A1 /* BlendLightProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlendLightProgram.cpp; path = ../../radiantcore/rendersystem/backend/glprogram/BlendLightProgram.cpp; sourceTree = SOURCE_ROOT; };
 		3A8D4CBE263C7893000C068E /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../libs/wxutil/Bitmap.h; sourceTree = SOURCE_ROOT; };
 		3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../libs/wxutil/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
@@ -7854,6 +7858,8 @@
 		3AF743EF1E4F861A003465B5 /* glprogram */ = {
 			isa = PBXGroup;
 			children = (
+				3A38324D28C354120049C4A1 /* BlendLightProgram.cpp */,
+				3A38324C28C354120049C4A1 /* BlendLightProgram.h */,
 				3A3831E72859E8560049C4A1 /* CubeMapProgram.cpp */,
 				3A3831EA2859E8570049C4A1 /* CubeMapProgram.h */,
 				3A3831E82859E8560049C4A1 /* DepthFillAlphaProgram.cpp */,
@@ -9448,6 +9454,7 @@
 			files = (
 				3A38311C272D36D30049C4A1 /* Node.h in Headers */,
 				3AC88A472596F52000E6CCCE /* GLFont.h in Headers */,
+				3A38324E28C354130049C4A1 /* BlendLightProgram.h in Headers */,
 				3AFF051B253ADF91002B1472 /* MessageBus.h in Headers */,
 				3AC88A3B2556707000E6CCCE /* PatchSurface.h in Headers */,
 				3AFF0564253AE1F1002B1472 /* JPEGLoader.h in Headers */,
@@ -10834,6 +10841,7 @@
 				3A3830F7272D36770049C4A1 /* SceneManipulationPivot.cpp in Sources */,
 				3A383111272D36D30049C4A1 /* TextureToolRotateManipulator.cpp in Sources */,
 				3AFF0587253AE32F002B1472 /* KeyValueObserver.cpp in Sources */,
+				3A38324F28C354130049C4A1 /* BlendLightProgram.cpp in Sources */,
 				3AFF04A3253ABCB1002B1472 /* Shader.cpp in Sources */,
 				3AFF04D3253ADCA6002B1472 /* PatchRenderables.cpp in Sources */,
 				3AFF04D5253ADD3E002B1472 /* ParticleDef.cpp in Sources */,
