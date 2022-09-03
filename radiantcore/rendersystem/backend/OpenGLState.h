@@ -222,6 +222,10 @@ public:
      */
     IShaderLayer::CubeMapMode cubeMapMode;
 
+    // Whether to ignore the RGBA colour modulation defined by the associated shader stage
+    // in which case only the _colour member will be used.
+    bool ignoreStageColour;
+
     /// Default constructor
     OpenGLState()
     : _colour(Colour4::WHITE()),
@@ -245,7 +249,8 @@ public:
       m_linestipple_factor(1),
       m_linestipple_pattern(0xAAAA),
       glProgram(nullptr),
-      cubeMapMode(IShaderLayer::CUBE_MAP_NONE)
+      cubeMapMode(IShaderLayer::CUBE_MAP_NONE),
+      ignoreStageColour(false)
     { }
 
     // Determines the difference between this state and the target (current) state.
@@ -450,7 +455,7 @@ public:
 
         // Set the GL colour. Do this unconditionally, since setting glColor is
         // cheap and it avoids problems with leaked colour states.
-        if (stage0)
+        if (stage0 && !ignoreStageColour)
         {
             setColour(stage0->getColour());
         }

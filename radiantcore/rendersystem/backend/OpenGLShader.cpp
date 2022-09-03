@@ -647,6 +647,9 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     // Set the GL color to white
     previewPass.setColour(Colour4::WHITE());
 
+    // For the editor preview pass we always ignore the evaluated colour of the material stage
+    previewPass.ignoreStageColour = true;
+
     // Sort position
     if (_material->getSortRequest() >= Material::SORT_DECAL)
     {
