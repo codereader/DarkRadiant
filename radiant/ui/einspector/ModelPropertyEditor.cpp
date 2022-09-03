@@ -56,9 +56,14 @@ ModelPropertyEditor::ModelPropertyEditor(wxWindow* parent, IEntitySelection& ent
 void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 {
 	// Use the ModelSelector to choose a model
-	ModelSelectorResult result = ModelSelector::chooseModel(
+	auto result = ModelSelector::chooseModel(
 		_entities.getSharedKeyValue(_key->getFullKey(), true), false, false // pass the current model, don't show options or skins
 	);
+
+    if (result.objectKind != ModelSelector::Result::ObjectKind::Model)
+    {
+        return;
+    }
 
     UndoableCommand cmd("setModelProperty");
 
@@ -70,9 +75,9 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 
         bool wasBrushBasedModel = prevModel == name;
 
-        if (!result.model.empty())
+        if (!result.name.empty())
         {
-            bool willBeBrushBasedModel = result.model == name;
+            bool willBeBrushBasedModel = result.name == name;
 
             // Check if any brushes should be removed, but inform the user about this
             if (!willBeBrushBasedModel && wasBrushBasedModel && hasChildPrimitives(node))
@@ -87,7 +92,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
             }
 
             // Save the model key now
-            entity->setKeyValue(_key->getFullKey(), result.model);
+            entity->setKeyValue(_key->getFullKey(), result.name);
         }
     });
 }

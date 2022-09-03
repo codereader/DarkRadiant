@@ -112,6 +112,8 @@ private:
 	void callbackAddPrefab();
 	void callbackAddSpeaker();
 
+    void createEntity(const std::string& classname);
+
 	void registerDefaultItems();
 
 	// Pack widgets

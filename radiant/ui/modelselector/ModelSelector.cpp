@@ -135,6 +135,7 @@ void ModelSelector::setupAdvancedPanel(wxWindow* parent)
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     _relatedEntityView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ModelSelector::onRelatedEntitySelectionChange, this);
+    _relatedEntityView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ModelSelector::onRelatedEntityActivated, this);
 
     entityPage->GetSizer()->Add(_relatedEntityView, 1, wxEXPAND);
 }
@@ -155,9 +156,29 @@ void ModelSelector::onRelatedEntitySelectionChange(wxDataViewEvent& ev)
     _treeView->SetSelectedSkin(skin);
 }
 
+void ModelSelector::onRelatedEntityActivated(wxDataViewEvent& ev)
+{
+    auto item = _relatedEntityView->GetSelection();
+
+    if (!item.IsOk()) return;
+
+    wxutil::TreeModel::Row row(item, *_relatedEntityStore.get());
+
+    std::string eclass = row[_relatedEntityColumns.eclassName];
+
+    _result.objectKind = Result::ObjectKind::EntityClass;
+    _result.name = eclass;
+    _result.skin = "";
+    _result.createClip = false;
+
+    EndModal(wxID_OK);
+    Hide();
+}
+
 void ModelSelector::cancelDialog()
 {
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
+    _result = Result();
 
     EndModal(wxID_CANCEL);
 	Hide();
@@ -215,9 +236,8 @@ void ModelSelector::onTreeViewPopulationFinished(wxutil::ResourceTreeView::Popul
 }
 
 // Show the dialog and enter recursive main loop
-ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
-                                                bool showOptions,
-                                                bool showSkins)
+ModelSelector::Result ModelSelector::showAndBlock(const std::string& curModel,
+    bool showOptions, bool showSkins)
 {
     // Hide the Show Skins button if skins should not be shown for this invocation
     if (showSkins) {
@@ -236,6 +256,8 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     // Conditionally hide the options
     findNamedObject<wxPanel>(this, "ModelSelectorOptionsPanel")->Show(_showOptions);
 
+    _result = Result();
+
     // show and enter recursive main loop.
     int returnCode = ShowModal();
 
@@ -244,19 +266,12 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
     _infoModel.clear();
     _infoSkin.clear();
 
-    // Return selected model/skin, or an empty result if the dialog was cancelled
-    if (returnCode == wxID_OK)
-    {
-        return { _treeView->GetSelectedModelPath(), _treeView->GetSelectedSkin(),
-            findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue() };
-    }
-
-    return {};
+    return returnCode == wxID_OK ? _result : Result();
 }
 
 // Static function to display the instance, and return the selected model to the
 // calling function
-ModelSelectorResult ModelSelector::chooseModel(const std::string& curModel,
+ModelSelector::Result ModelSelector::chooseModel(const std::string& curModel,
                                                bool showOptions,
                                                bool showSkins)
 {
@@ -416,6 +431,11 @@ void ModelSelector::handleSelectionChange()
 void ModelSelector::onOK(wxCommandEvent& ev)
 {
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
+
+    _result.objectKind = Result::ObjectKind::Model;
+    _result.name = _treeView->GetSelectedModelPath();
+    _result.skin = _treeView->GetSelectedSkin();
+    _result.createClip = findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue();
 
 	EndModal(wxID_OK); // break main loop
 	Hide();

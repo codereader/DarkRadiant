@@ -23,20 +23,6 @@
 namespace ui
 {
 
-/**
- * Data structure containing the model, the skin name and the options to be returned from
- * the Model Selector.
- */
-struct ModelSelectorResult
-{
-    // Model and skin strings
-    std::string model;
-    std::string skin;
-
-    // Model creation options
-    bool createClip = false;
-};
-
 class ModelPopulator;
 
 class ModelSelector;
@@ -45,6 +31,34 @@ typedef std::shared_ptr<ModelSelector> ModelSelectorPtr;
 /// Dialog for browsing and selecting a model and/or skin
 class ModelSelector: public wxutil::DialogBase, private wxutil::XmlResourceBasedWidget
 {
+public:
+    /**
+     * Data structure containing the kind (model/eclass),
+     * the name of the object and a possible skin name.
+     * Als contains the options (whether to create Monsterclip).
+     */
+    struct Result
+    {
+        enum class ObjectKind
+        {
+            Model,
+            EntityClass,
+        };
+
+        // The object to create
+        ObjectKind objectKind;
+
+        // Eclass/Model name
+        std::string name;
+
+        // The skin of the model (if not empty)
+        std::string skin;
+
+        // Model creation options
+        bool createClip = false;
+    };
+
+private:
 	wxPanel* _dialogPanel;
 
 	// Model preview widget
@@ -90,6 +104,8 @@ class ModelSelector: public wxutil::DialogBase, private wxutil::XmlResourceBased
 	sigc::connection _modelsReloadedConn;
 	sigc::connection _skinsReloadedConn;
 
+    Result _result;
+
 private:
 	// Private constructor, creates widgets
 	ModelSelector();
@@ -101,9 +117,7 @@ private:
 	static ModelSelectorPtr& InstancePtr();
 
 	// Show the dialog, called internally by chooseModel(). Return the selected model path
-	ModelSelectorResult showAndBlock(const std::string& curModel,
-                                     bool showOptions,
-                                     bool showSkins);
+	Result showAndBlock(const std::string& curModel, bool showOptions, bool showSkins);
 
 	// Helper functions to configure GUI components
     void setupAdvancedPanel(wxWindow* parent);
@@ -130,6 +144,7 @@ private:
 	void onSelectionChanged(wxDataViewEvent& ev);
 
 	void onRelatedEntitySelectionChange(wxDataViewEvent& ev);
+	void onRelatedEntityActivated(wxDataViewEvent& ev);
 
 	// Connected to the ModelCache/SkinCache signal, fires after the refresh commands are done
 	void onSkinsOrModelsReloaded();
@@ -154,8 +169,7 @@ public:
 	 *
 	 * @showOptions: whether to show the advanced options tab.
 	 */
-	static ModelSelectorResult chooseModel(
-			const std::string& curModel = "", bool showOptions = true, bool showSkins = true);
+	static Result chooseModel(const std::string& curModel = "", bool showOptions = true, bool showSkins = true);
 
 	// Starts the background population thread
     static void Populate();
