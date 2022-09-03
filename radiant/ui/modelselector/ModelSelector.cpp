@@ -30,15 +30,13 @@
 #include "ui/UserInterfaceModule.h"
 #include "registry/Widgets.h"
 
-#include <functional>
-
 namespace ui
 {
 
 // CONSTANTS
 namespace
 {
-    const char* const MODELSELECTOR_TITLE = N_("Choose Model");
+    constexpr const char* const MODELSELECTOR_TITLE = N_("Choose Model");
 
     const std::string RKEY_BASE = "user/ui/modelSelector/";
     const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
@@ -54,8 +52,6 @@ ModelSelector::ModelSelector() :
 	_infoTable(nullptr),
     _materialsList(nullptr),
     _relatedEntityView(nullptr),
-	_lastModel(""),
-	_lastSkin(""),
 	_showOptions(true)
 {
     // Set the default size of the window
@@ -138,7 +134,21 @@ void ModelSelector::setupAdvancedPanel(wxWindow* parent)
     _relatedEntityView->AppendTextColumn(_("Skin"), _relatedEntityColumns.skin.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
+    _relatedEntityView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ModelSelector::onRelatedEntitySelectionChange, this);
+
     entityPage->GetSizer()->Add(_relatedEntityView, 1, wxEXPAND);
+}
+
+void ModelSelector::onRelatedEntitySelectionChange(wxDataViewEvent& ev)
+{
+    // Adjust the model preview to use the same skin
+    auto item = _relatedEntityView->GetSelection();
+
+    if (!item.IsOk()) return;
+
+    wxutil::TreeModel::Row row(item, *_relatedEntityStore.get());
+
+    _modelPreview->setSkin(row[_relatedEntityColumns.skin]);
 }
 
 void ModelSelector::cancelDialog()
@@ -230,10 +240,12 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 
     // Return selected model/skin, or an empty result if the dialog was cancelled
     if (returnCode == wxID_OK)
-        return {_lastModel, _lastSkin,
-                findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue()};
-    else
-        return {};
+    {
+        return { _treeView->GetSelectedModelPath(), _treeView->GetSelectedSkin(),
+            findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue() };
+    }
+
+    return {};
 }
 
 // Static function to display the instance, and return the selected model to the
@@ -373,10 +385,6 @@ void ModelSelector::handleSelectionChange()
 
 void ModelSelector::onOK(wxCommandEvent& ev)
 {
-    // Remember the selected model then exit from the recursive main loop
-    _lastModel = _treeView->GetSelectedModelPath();
-    _lastSkin = _treeView->GetSelectedSkin();
-
 	_panedPosition.saveToPath(RKEY_SPLIT_POS);
 
 	EndModal(wxID_OK); // break main loop

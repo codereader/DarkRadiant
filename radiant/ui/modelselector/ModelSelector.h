@@ -80,11 +80,6 @@ class ModelSelector: public wxutil::DialogBase, private wxutil::XmlResourceBased
 	wxutil::WindowPosition _position;
 	wxutil::PanedPosition _panedPosition;
 
-	// Last selected model, which will be returned by showAndBlock() once the
-	// recursive main loop exits.
-	std::string _lastModel;
-	std::string _lastSkin;
-
     // Whether to show advanced options panel
     bool _showOptions;
 
@@ -129,6 +124,8 @@ private:
     // Update the info table with information from the currently-selected model, and
 	// update the displayed model.
 	void onSelectionChanged(wxDataViewEvent& ev);
+
+	void onRelatedEntitySelectionChange(wxDataViewEvent& ev);
 
 	// Connected to the ModelCache/SkinCache signal, fires after the refresh commands are done
 	void onSkinsOrModelsReloaded();
