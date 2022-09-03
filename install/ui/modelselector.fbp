@@ -555,7 +555,7 @@
                                                     <object class="notebookpage" expanded="1">
                                                         <property name="bitmap">Load From Art Provider; darkradiant:cmenu_add_entity.png; </property>
                                                         <property name="label">Related Entity Classes</property>
-                                                        <property name="select">0</property>
+                                                        <property name="select">1</property>
                                                         <object class="wxPanel" expanded="1">
                                                             <property name="BottomDockable">1</property>
                                                             <property name="LeftDockable">1</property>
@@ -614,7 +614,7 @@
                                                                 <property name="permission">none</property>
                                                                 <object class="sizeritem" expanded="1">
                                                                     <property name="border">3</property>
-                                                                    <property name="flag">wxALIGN_LEFT|wxTOP</property>
+                                                                    <property name="flag">wxALIGN_LEFT|wxLEFT|wxTOP</property>
                                                                     <property name="proportion">0</property>
                                                                     <object class="wxStaticText" expanded="1">
                                                                         <property name="BottomDockable">1</property>

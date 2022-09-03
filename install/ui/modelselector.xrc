@@ -82,7 +82,7 @@
 											</object>
 											<object class="notebookpage">
 												<label>Related Entity Classes</label>
-												<selected>0</selected>
+												<selected>1</selected>
 												<bitmap stock_id="darkradiant:cmenu_add_entity.png" stock_client="">undefined.png</bitmap>
 												<object class="wxPanel" name="ModelRelatedEntitiesPanel">
 													<style>wxTAB_TRAVERSAL</style>
@@ -90,7 +90,7 @@
 														<orient>wxVERTICAL</orient>
 														<object class="sizeritem">
 															<option>0</option>
-															<flag>wxALIGN_LEFT|wxTOP</flag>
+															<flag>wxALIGN_LEFT|wxLEFT|wxTOP</flag>
 															<border>3</border>
 															<object class="wxStaticText" name="m_staticText2">
 																<label>Double-click to create the selected Entity Class</label>
