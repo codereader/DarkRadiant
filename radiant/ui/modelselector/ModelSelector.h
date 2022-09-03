@@ -54,6 +54,10 @@ class ModelSelector: public wxutil::DialogBase, private wxutil::XmlResourceBased
 	ModelTreeView* _treeView;
     wxToggleButton* _showSkinsBtn = nullptr;
 
+    // The model name which the info panels are currently displaying info for
+    std::string _infoModel;
+    std::string _infoSkin;
+
     // Key/value table for model information
     wxutil::KeyValueTable* _infoTable;
 

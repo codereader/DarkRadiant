@@ -237,6 +237,8 @@ ModelSelectorResult ModelSelector::showAndBlock(const std::string& curModel,
 
     // Remove the model from the preview's scenegraph before returning
     _modelPreview->setModel("");
+    _infoModel.clear();
+    _infoSkin.clear();
 
     // Return selected model/skin, or an empty result if the dialog was cancelled
     if (returnCode == wxID_OK)
@@ -268,6 +270,17 @@ void ModelSelector::onSkinsOrModelsReloaded()
 
 void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
 {
+    auto modelName = _modelPreview->getModel();
+    auto skinName = _modelPreview->getSkin();
+
+    if (modelName == _infoModel && skinName == _infoSkin)
+    {
+        return; // no change, don't clear everything
+    }
+
+    _infoModel = modelName;
+    _infoSkin = modelName;
+
     _infoTable->Clear();
     _materialsList->clear();
     _relatedEntityStore->Clear();
@@ -280,9 +293,8 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
 	// Update the text in the info table
 	const model::IModel& model = modelNode->getIModel();
 
-    auto modelName = _modelPreview->getModel();
 	_infoTable->Append(_("Model name"), modelName);
-	_infoTable->Append(_("Skin name"), _modelPreview->getSkin());
+	_infoTable->Append(_("Skin name"), skinName);
 	_infoTable->Append(_("Total vertices"), string::to_string(model.getVertexCount()));
 	_infoTable->Append(_("Total polys"), string::to_string(model.getPolyCount()));
 	_infoTable->Append(_("Material surfaces"), string::to_string(model.getSurfaceCount()));
@@ -295,6 +307,8 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
 
     _materialsList->updateFromModel(model);
 
+    wxDataViewItem matchingItem;
+
     // Find related entity classes
     GlobalEntityClassManager().forEachEntityClass([&] (const IEntityClassPtr& eclass)
     {
@@ -303,11 +317,23 @@ void ModelSelector::onModelLoaded(const model::ModelNodePtr& modelNode)
         if (modelKeyValue == modelName)
         {
             auto row = _relatedEntityStore->AddItem();
+
+            auto eclassSkin = eclass->getAttributeValue("skin");
+
             row[_relatedEntityColumns.eclassName] = eclass->getDeclName();
-            row[_relatedEntityColumns.skin] = eclass->getAttributeValue("skin");
+            row[_relatedEntityColumns.skin] = eclassSkin;
+
+            if (!matchingItem.IsOk() && eclassSkin == skinName)
+            {
+                matchingItem = row.getItem();
+            }
+
             row.SendItemAdded();
         }
     });
+
+    // Select the item that is matching the model/skin pair
+    _relatedEntityView->Select(matchingItem);
 }
 
 wxWindow* ModelSelector::setupTreeViewToolbar(wxWindow* parent)
