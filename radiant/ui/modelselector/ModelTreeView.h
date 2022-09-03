@@ -44,6 +44,11 @@ public:
     std::string GetSelectedModelPath();
     std::string GetSelectedSkin();
 
+    // Highlights the given skin of the currently selected model
+    // Does nothing if there's no such skin for the current model
+    // or if there's no model at all. Only functional if _showSkins is enabled.
+    void SetSelectedSkin(const std::string& skin);
+
     void CollapseModelDefsFolder();
 
 protected:

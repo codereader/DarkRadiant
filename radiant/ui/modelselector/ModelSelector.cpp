@@ -148,7 +148,11 @@ void ModelSelector::onRelatedEntitySelectionChange(wxDataViewEvent& ev)
 
     wxutil::TreeModel::Row row(item, *_relatedEntityStore.get());
 
-    _modelPreview->setSkin(row[_relatedEntityColumns.skin]);
+    std::string skin = row[_relatedEntityColumns.skin];
+    _modelPreview->setSkin(skin);
+
+    // Sync the selection in the model tree to match this model/skin combination
+    _treeView->SetSelectedSkin(skin);
 }
 
 void ModelSelector::cancelDialog()
