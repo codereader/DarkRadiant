@@ -1353,7 +1353,7 @@ void XYWnd::draw()
 
     glLoadMatrixd(_modelView);
 
-    unsigned int flagsMask = RENDER_POINT_COLOUR | RENDER_VERTEX_COLOUR;
+    unsigned int flagsMask = RENDER_VERTEX_COLOUR;
 
     if (!getCameraSettings()->solidSelectionBoxes())
     {
