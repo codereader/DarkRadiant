@@ -41,6 +41,7 @@ namespace
     const std::string RKEY_BASE = "user/ui/modelSelector/";
     const std::string RKEY_SPLIT_POS = RKEY_BASE + "splitPos";
     const std::string RKEY_SHOW_SKINS = RKEY_BASE + "showSkinsInTree";
+    const std::string RKEY_LAST_SELECTED_MODEL = RKEY_BASE + "lastSelectedModel";
 }
 
 // Constructor.
@@ -137,7 +138,7 @@ void ModelSelector::setupAdvancedPanel(wxWindow* parent)
     _relatedEntityView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ModelSelector::onRelatedEntitySelectionChange, this);
     _relatedEntityView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ModelSelector::onRelatedEntityActivated, this);
 
-    entityPage->GetSizer()->Add(_relatedEntityView, 1, wxEXPAND);
+    entityPage->GetSizer()->Prepend(_relatedEntityView, 1, wxEXPAND);
 }
 
 void ModelSelector::onRelatedEntitySelectionChange(wxDataViewEvent& ev)
@@ -249,7 +250,15 @@ ModelSelector::Result ModelSelector::showAndBlock(const std::string& curModel,
         _treeView->SetShowSkins(false);
     }
 
-    _treeView->SetSelectedFullname(curModel);
+    if (!curModel.empty())
+    {
+        _treeView->SetSelectedFullname(curModel);
+    }
+    else
+    {
+        // If no model provided, use the selection from the previous session
+        _treeView->SetSelectedFullname(registry::getValue<std::string>(RKEY_LAST_SELECTED_MODEL));
+    }
 
     _showOptions = showOptions;
 
@@ -436,6 +445,9 @@ void ModelSelector::onOK(wxCommandEvent& ev)
     _result.name = _treeView->GetSelectedModelPath();
     _result.skin = _treeView->GetSelectedSkin();
     _result.createClip = findNamedObject<wxCheckBox>(this, "ModelSelectorMonsterClipOption")->GetValue();
+
+    // Remember the last selected model
+    registry::setValue(RKEY_LAST_SELECTED_MODEL, _result.name);
 
 	EndModal(wxID_OK); // break main loop
 	Hide();

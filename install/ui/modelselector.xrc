@@ -88,6 +88,15 @@
 													<style>wxTAB_TRAVERSAL</style>
 													<object class="wxBoxSizer">
 														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALIGN_LEFT|wxTOP</flag>
+															<border>3</border>
+															<object class="wxStaticText" name="m_staticText2">
+																<label>Double-click to create the selected Entity Class</label>
+																<wrap>-1</wrap>
+															</object>
+														</object>
 													</object>
 												</object>
 											</object>
