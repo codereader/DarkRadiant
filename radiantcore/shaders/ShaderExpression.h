@@ -147,7 +147,10 @@ public:
 
 	float getValue(std::size_t time) override
 	{
-		// parmNN is 0 without entity
+        // RGBA _color parms [0-3] have default value 1.0
+        if (_parmNum < 4) return 1.0f;
+
+		// The rest of the parms is 0 by default
 		return 0.0f;
 	}
 
