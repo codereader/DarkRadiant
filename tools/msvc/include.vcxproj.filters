@@ -169,6 +169,7 @@
     <ClInclude Include="..\..\include\iobjectrenderer.h" />
     <ClInclude Include="..\..\include\ideclmanager.h" />
     <ClInclude Include="..\..\include\igameresource.h" />
+    <ClInclude Include="..\..\include\ifx.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ui">

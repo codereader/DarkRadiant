@@ -23,6 +23,7 @@ enum class Type
     ModelDef,
     Particle,
     Skin,
+    Fx,
 
     // These are used in unit tests only
     TestDecl,
@@ -42,6 +43,7 @@ inline std::string getTypeName(Type type)
     case Type::ModelDef: return "ModelDef";
     case Type::Particle: return "Particle";
     case Type::Skin: return "Skin";
+    case Type::Fx: return "Fx";
     case Type::TestDecl: return "TestDecl";
     case Type::TestDecl2: return "TestDecl2";
     default:

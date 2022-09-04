@@ -125,6 +125,7 @@
     <ClInclude Include="..\..\include\ifiletypes.h" />
     <ClInclude Include="..\..\include\ifilter.h" />
     <ClInclude Include="..\..\include\ifonts.h" />
+    <ClInclude Include="..\..\include\ifx.h" />
     <ClInclude Include="..\..\include\igame.h" />
     <ClInclude Include="..\..\include\igameresource.h" />
     <ClInclude Include="..\..\include\igeometryrenderer.h" />

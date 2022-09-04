@@ -215,6 +215,9 @@
     <Filter Include="gl">
       <UniqueIdentifier>{dc88a10c-1b0d-4e9b-844a-952046f324e5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\fx">
+      <UniqueIdentifier>{8090888b-90cb-49eb-b203-f30f0635ab17}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiantcore\modulesystem\ModuleLoader.cpp">
@@ -1152,6 +1155,12 @@
     </ClCompile>
     <ClCompile Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.cpp">
       <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\fx\FxManager.cpp">
+      <Filter>src\fx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiantcore\fx\FxDeclaration.cpp">
+      <Filter>src\fx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -2372,6 +2381,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\rendersystem\backend\glprogram\BlendLightProgram.h">
       <Filter>src\rendersystem\backend\glprogram</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fx\FxManager.h">
+      <Filter>src\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fx\FxDeclaration.h">
+      <Filter>src\fx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
