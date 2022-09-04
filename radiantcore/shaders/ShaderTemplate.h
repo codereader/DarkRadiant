@@ -207,6 +207,13 @@ public:
     void clearMaterialFlag(Material::Flags flag)
     {
         ensureParsed();
+
+        // It's not possible to clear the noshadows flag as long as translucent is active
+        if (flag == Material::FLAG_NOSHADOWS && _materialFlags & Material::FLAG_TRANSLUCENT)
+        {
+            return;
+        }
+
         _materialFlags &= ~flag;
         evaluateMacroUsage(); // material flags influence macro usage
 

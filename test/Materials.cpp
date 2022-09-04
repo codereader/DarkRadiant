@@ -1821,4 +1821,25 @@ TEST_F(MaterialsTest, ChangingTranslucentFlagAffectsNoShadows)
     EXPECT_TRUE(material->getMaterialFlags() & Material::FLAG_NOSHADOWS) << "Material should have the noshadows flag set automatically";
 }
 
+TEST_F(MaterialsTest, ClearingNoShadowsFlagOfTranslucentMaterials)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/coverage2");
+
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/coverage2";
+    EXPECT_EQ(material->getCoverage(), Material::MC_TRANSLUCENT) << "Material should be translucent";
+    EXPECT_EQ(material->surfaceCastsShadow(), false) << "Material should not cast shadows";
+    EXPECT_TRUE(material->getMaterialFlags() & Material::FLAG_NOSHADOWS) << "Material should have the noshadows flag set";
+
+    // It's not possible to clear the noshadows flag as long as translucent is enabled
+    material->clearMaterialFlag(Material::FLAG_NOSHADOWS);
+    EXPECT_TRUE(material->getMaterialFlags() & Material::FLAG_NOSHADOWS) << "Material should still have noshadows set";
+    EXPECT_TRUE(material->getMaterialFlags() & Material::FLAG_TRANSLUCENT) << "Material should still have translucent set";
+
+    // This sequence is allowed
+    material->clearMaterialFlag(Material::FLAG_TRANSLUCENT);
+    material->clearMaterialFlag(Material::FLAG_NOSHADOWS);
+    EXPECT_FALSE(material->getMaterialFlags() & Material::FLAG_NOSHADOWS) << "Material should not have the noshadows flag set";
+    EXPECT_FALSE(material->getMaterialFlags() & Material::FLAG_TRANSLUCENT) << "Material should not have the translucent flag set";
+}
+
 }
