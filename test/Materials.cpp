@@ -645,7 +645,8 @@ TEST_F(MaterialsTest, MaterialParserStageTranslate)
     EXPECT_EQ(stage->getTransformations().at(0).expression2->getExpressionString(), "parm3 + 5");
 
     stage->evaluateExpressions(1000);
-    expectNear(stage->getTextureTransform(), Matrix4::getTranslation(Vector3(3.0, 5.0, 0)));
+    // parm3 is the alpha parm which evaluates to 1 by default
+    expectNear(stage->getTextureTransform(), Matrix4::getTranslation(Vector3(3.0, 6.0, 0)));
 
     material = GlobalMaterialManager().getMaterial("textures/parsertest/transform/translation2");
     stage = material->getLayer(0);
