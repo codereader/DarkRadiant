@@ -1027,6 +1027,18 @@ textures/parsertest/coverage1
 	}
 }
 
+// Test coverage of translucent material
+textures/parsertest/coverage2
+{
+    glass
+	qer_editorimage textures/darkmod/carpet/rugs/mat_shaggy_ed
+
+	noShadows
+	translucent
+	diffusemap textures/darkmod/carpet/rugs/mat_shaggy
+	bumpmap textures/darkmod/carpet/rugs/mat_shaggy_local
+}
+
 // Test determining the noshadows flag
 textures/parsertest/noshadowsflag
 {

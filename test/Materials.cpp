@@ -1575,6 +1575,14 @@ TEST_F(MaterialsTest, CoverageOfMaterialWithBlendStage)
     EXPECT_EQ(material->getCoverage(), Material::MC_OPAQUE) << "Material should be opaque";
 }
 
+TEST_F(MaterialsTest, CoverageOfTranslucentMaterial)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/coverage2");
+
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/coverage2";
+    EXPECT_EQ(material->getCoverage(), Material::MC_TRANSLUCENT) << "Material should be translucent";
+}
+
 TEST_F(MaterialsTest, ParseNoShadowsFlag)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/noshadowsflag");
