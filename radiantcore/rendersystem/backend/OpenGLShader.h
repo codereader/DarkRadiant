@@ -72,14 +72,12 @@ private:
     // Shader pass construction helpers
     void appendBlendLayer(const IShaderLayer::Ptr& layer);
 
-    struct DBSTriplet;
     OpenGLState& appendInteractionPass(std::vector<IShaderLayer::Ptr>& stages);
 
     void constructLightingPassesFromMaterial();
     void determineBlendModeForEditorPass(OpenGLState& pass);
     void constructEditorPreviewPassFromMaterial();
     void applyAlphaTestToPass(OpenGLState& pass, double alphaTest);
-    void setGLTexturesFromTriplet(OpenGLState&, const DBSTriplet&);
 
     // Destroy internal data
 	void destroy();

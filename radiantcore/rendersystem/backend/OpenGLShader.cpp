@@ -10,7 +10,6 @@
 #include "ifilter.h"
 #include "irender.h"
 #include "texturelib.h"
-#include "string/predicate.h"
 
 #include <functional>
 
@@ -30,32 +29,6 @@ namespace
         return texture ? texture : getDefaultInteractionTexture(layer->getType());
     }
 }
-
-// Triplet of diffuse, bump and specular shaders
-struct OpenGLShader::DBSTriplet
-{
-    // DBS layers
-    IShaderLayer::Ptr diffuse;
-    IShaderLayer::Ptr bump;
-    IShaderLayer::Ptr specular;
-
-    // Need-depth-fill flag
-    bool needDepthFill;
-
-    // Initialise
-    DBSTriplet()
-    : needDepthFill(true)
-    { }
-
-    // Clear pointers
-    void reset()
-    {
-        diffuse.reset();
-        bump.reset();
-        specular.reset();
-        needDepthFill = false;
-    }
-};
 
 OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSystem) :
     _name(name),
@@ -408,42 +381,6 @@ bool OpenGLShader::canUseLightingMode() const
         _renderSystem.getCurrentShaderProgram() == RenderSystem::SHADER_PROGRAM_INTERACTION;
 }
 
-void OpenGLShader::setGLTexturesFromTriplet(OpenGLState& pass,
-                                            const DBSTriplet& triplet)
-{
-    // Get texture components. If any of the triplet is missing, look up the
-    // default from the shader system.
-    if (triplet.diffuse)
-    {
-        pass.texture0 = getTextureOrInteractionDefault(triplet.diffuse)->getGLTexNum();
-		pass.stage0 = triplet.diffuse;
-    }
-    else
-    {
-        pass.texture0 = getDefaultInteractionTexture(IShaderLayer::DIFFUSE)->getGLTexNum();
-    }
-
-    if (triplet.bump)
-    {
-        pass.texture1 = getTextureOrInteractionDefault(triplet.bump)->getGLTexNum();
-		pass.stage1 = triplet.bump;
-    }
-    else
-    {
-        pass.texture1 = getDefaultInteractionTexture(IShaderLayer::BUMP)->getGLTexNum();
-    }
-
-    if (triplet.specular)
-    {
-        pass.texture2 = getTextureOrInteractionDefault(triplet.specular)->getGLTexNum();
-		pass.stage2 = triplet.specular;
-    }
-    else
-    {
-        pass.texture2 = getDefaultInteractionTexture(IShaderLayer::SPECULAR)->getGLTexNum();
-    }
-}
-
 OpenGLState& OpenGLShader::appendInteractionPass(std::vector<IShaderLayer::Ptr>& stages)
 {
     // Store all stages in a single interaction pass
@@ -451,40 +388,6 @@ OpenGLState& OpenGLShader::appendInteractionPass(std::vector<IShaderLayer::Ptr>&
     _shaderPasses.push_back(_interactionPass);
 
     return _interactionPass->state();
-    
-
-#if 0
-	// Set layer vertex colour mode and alphatest parameters
-    IShaderLayer::VertexColourMode vcolMode = IShaderLayer::VERTEX_COLOUR_NONE;
-
-    if (triplet.diffuse)
-    {
-        vcolMode = triplet.diffuse->getVertexColourMode();
-        alphaTest = triplet.diffuse->getAlphaTest();
-    }
-
-    // Add the DBS pass
-    auto& dbsPass = appendInteractionPass();
-
-    // Populate the textures and remember the stage reference
-    setGLTexturesFromTriplet(dbsPass, triplet);
-
-    dbsPass.setVertexColourMode(vcolMode);
-
-    if (vcolMode != IShaderLayer::VERTEX_COLOUR_NONE)
-    {
-        // Vertex colours allowed
-        dbsPass.setRenderFlag(RENDER_VERTEX_COLOUR);
-    }
-
-    applyAlphaTestToPass(dbsPass, alphaTest);
-
-	// Apply the diffuse colour modulation
-	if (triplet.diffuse)
-	{
-		dbsPass.setColour(triplet.diffuse->getColour());
-	}
-#endif
 }
 
 void OpenGLShader::applyAlphaTestToPass(OpenGLState& pass, double alphaTest)
