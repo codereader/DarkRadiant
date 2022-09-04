@@ -66,6 +66,7 @@
     <ClCompile Include="..\..\..\test\DefBlockSyntaxParser.cpp" />
     <ClCompile Include="..\..\..\test\CommandSystem.cpp" />
     <ClCompile Include="..\..\..\test\SceneStatistics.cpp" />
+    <ClCompile Include="..\..\..\test\Fx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
