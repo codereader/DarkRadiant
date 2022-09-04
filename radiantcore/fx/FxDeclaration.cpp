@@ -28,6 +28,11 @@ std::string FxDeclaration::getBindTo()
     return _bindTo;
 }
 
+const char* FxDeclaration::getKeptDelimiters() const
+{
+    return "{}(),";
+}
+
 void FxDeclaration::onBeginParsing()
 {
     _bindTo.clear();
@@ -48,7 +53,7 @@ void FxDeclaration::parseFromTokens(parser::DefTokeniser& tokeniser)
         else if (token == "{")
         {
             // An opening brace indicates an action, proceed
-            auto action = std::make_shared<FxAction>();
+            auto action = std::make_shared<FxAction>(*this);
             action->parseFromTokens(tokeniser);
 
             _actions.emplace_back(std::move(action));

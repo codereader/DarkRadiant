@@ -10,13 +10,38 @@ class IFxAction
 public:
     using Ptr = std::shared_ptr<IFxAction>;
 
+    enum class Type
+    {
+        Undefined = -1,
+        Light = 0,
+        Particle,
+        Decal,
+        Model,
+        Sound,
+        Shake,
+        AttachLight,
+        AttachEntity,
+        Launch,
+        Shockwave
+    };
+
     virtual ~IFxAction() {}
+
+    virtual Type getType() = 0;
 
     // Returns the action delay in seconds
     virtual float getDelay() = 0;
 
     // True: Don't shake the entity this effect is attached to
     virtual bool getIgnoreMaster() = 0;
+
+    // Shake parameters
+
+    virtual float getShakeTime() = 0;
+    virtual float getShakeAmplitude() = 0;
+    virtual float getShakeDistance() = 0;
+    virtual bool getShakeFalloff() = 0;
+    virtual float getShakeImpulse() = 0;
 };
 
 class IFxDeclaration :

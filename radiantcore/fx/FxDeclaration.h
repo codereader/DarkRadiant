@@ -22,6 +22,7 @@ public:
     std::string getBindTo() override;
 
 protected:
+    const char* getKeptDelimiters() const override;
     void onBeginParsing() override;
     void parseFromTokens(parser::DefTokeniser& tokeniser) override;
 };

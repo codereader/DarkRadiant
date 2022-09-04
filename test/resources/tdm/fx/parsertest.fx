@@ -38,12 +38,25 @@ fx fx/sparks
 
 fx fx/parserTest1
 {
-	{
-		delay 0
+    {
+        delay 0
         ignoreMaster
-		duration 0.5
-		restart 0
-		light "lights/sparks_sound", 0.7, 0.7, 0.7, 64
-		offset	0, 0, 0
+        duration 0.5
+        restart 0
+        light "lights/sparks_sound", 0.7, 0.7, 0.7, 64
+        offset	0, 0, 0
+        noshadows
+    }
+}
+
+fx fx/parserTest/shake
+{
+	{
+        // place the commas in a slightly random fashion
+        shake 1.3, 2.7, 0.7 , 1 , 0.33
 	}
+    {
+        // place the commas in a slightly random fashion
+        shake 0.0, 2, .7 , 0 , 0.33
+    }
 }

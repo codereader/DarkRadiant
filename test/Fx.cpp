@@ -53,4 +53,23 @@ TEST_F(FxTest, ParseActionIgnoreMaster)
     EXPECT_EQ(getFxByName("fx/parserTest1")->getAction(0)->getIgnoreMaster(), true);
 }
 
+TEST_F(FxTest, ParseActionShake)
+{
+    // shake 1.3, 2.7, 0.7 , 1 , 0.33
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getType(), fx::IFxAction::Type::Shake);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getShakeTime(), 1.3f);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getShakeAmplitude(), 2.7f);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getShakeDistance(), 0.7f);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getShakeFalloff(), true);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getShakeImpulse(), 0.33f);
+
+    // shake 0.0, 2, .7 , 0 , 0.33
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(1)->getType(), fx::IFxAction::Type::Shake);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(1)->getShakeTime(), 0);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(1)->getShakeAmplitude(), 2.0f);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(1)->getShakeDistance(), 0.7f);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(1)->getShakeFalloff(), false);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(1)->getShakeImpulse(), 0.33f);
+}
+
 }
