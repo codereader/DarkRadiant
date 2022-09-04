@@ -19,6 +19,8 @@ class IFxDeclaration :
     public decl::IDeclaration
 {
 public:
+    using Ptr = std::shared_ptr<IFxDeclaration>;
+
     // Returns the number of actions in this FX declaration
     virtual std::size_t getNumActions() = 0;
 
