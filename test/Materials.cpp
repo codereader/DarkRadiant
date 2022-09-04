@@ -1786,4 +1786,18 @@ TEST_F(MaterialsTest, UpdateFromInvalidSourceText)
     EXPECT_EQ(changedSignalCount, 0) << "No changed signal should have been fired";
 }
 
+TEST_F(MaterialsTest, ChangingTranslucentFlagSetsCoverage)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/coverage2");
+
+    EXPECT_TRUE(material) << "Could not find the material textures/parsertest/coverage2";
+    EXPECT_EQ(material->getCoverage(), Material::MC_TRANSLUCENT) << "Material should be translucent";
+
+    material->clearMaterialFlag(Material::FLAG_TRANSLUCENT);
+    EXPECT_EQ(material->getCoverage(), Material::MC_OPAQUE) << "Material should be opaque now";
+
+    material->setMaterialFlag(Material::FLAG_TRANSLUCENT);
+    EXPECT_EQ(material->getCoverage(), Material::MC_TRANSLUCENT) << "Material should be translucent again";
+}
+
 }

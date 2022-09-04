@@ -190,6 +190,14 @@ public:
         ensureParsed();
         _materialFlags |= flag;
         evaluateMacroUsage(); // material flags influence macro usage
+
+        if (flag & Material::FLAG_TRANSLUCENT)
+        {
+            // Re-evaluate the material coverage
+            _coverage = Material::MC_UNDETERMINED;
+            determineCoverage();
+        }
+
         onTemplateChanged();
     }
 
@@ -198,6 +206,14 @@ public:
         ensureParsed();
         _materialFlags &= ~flag;
         evaluateMacroUsage(); // material flags influence macro usage
+
+        if (flag & Material::FLAG_TRANSLUCENT)
+        {
+            // Re-evaluate the material coverage
+            _coverage = Material::MC_UNDETERMINED;
+            determineCoverage();
+        }
+
         onTemplateChanged();
     }
 
