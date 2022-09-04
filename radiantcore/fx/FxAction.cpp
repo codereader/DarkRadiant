@@ -18,4 +18,10 @@ bool FxAction::getIgnoreMaster()
     return _ignoreMaster;
 }
 
+void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
+{
+    
+}
+
+
 }

@@ -23,15 +23,27 @@ fx fx/sparks
 	}
 
 	{
-		delay 0
+		delay 2
 		sound "security_camera_spark"
 		duration 2.5
 
 	}
 	{
-		delay 0
+		delay 1.5
 		duration 2.5
 		restart 0
 		model "sparks.prt"
 	}		   
+}
+
+fx fx/parserTest1
+{
+	{
+		delay 0
+        ignoreMaster
+		duration 0.5
+		restart 0
+		light "lights/sparks_sound", 0.7, 0.7, 0.7, 64
+		offset	0, 0, 0
+	}
 }

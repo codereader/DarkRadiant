@@ -19,6 +19,10 @@ public:
 
     float getDelay() override;
     bool getIgnoreMaster() override;
+
+    // Parses the action from the given tokens.
+    // The opening brace { will already have been been consumed by the calling code
+    void parseFromTokens(parser::DefTokeniser& tokeniser);
 };
 
 }

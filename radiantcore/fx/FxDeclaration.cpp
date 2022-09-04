@@ -1,5 +1,8 @@
 #include "FxDeclaration.h"
 
+#include "string/case_conv.h"
+#include "FxAction.h"
+
 namespace fx
 {
 
@@ -33,7 +36,24 @@ void FxDeclaration::onBeginParsing()
 
 void FxDeclaration::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
-    
+    while (tokeniser.hasMoreTokens())
+    {
+        auto token = tokeniser.nextToken();
+        string::to_lower(token);
+
+        if (token == "bindto")
+        {
+            _bindTo = tokeniser.nextToken();
+        }
+        else if (token == "{")
+        {
+            // An opening brace indicates an action, proceed
+            auto action = std::make_shared<FxAction>();
+            action->parseFromTokens(tokeniser);
+
+            _actions.emplace_back(std::move(action));
+        }
+    }
 }
 
 }
