@@ -154,11 +154,6 @@ IShaderExpression::Ptr ShaderTemplate::parseSingleExpressionTerm(parser::DefToke
 bool ShaderTemplate::parseShaderFlags(parser::DefTokeniser& tokeniser,
                                       const std::string& token)
 {
-    if (_name == "textures/darkmod/metal/detailed/panel_circledesign01_brown_ns")
-    {
-        int i = 6;
-    }
-
     if (token == "translucent")
 	{
         _materialFlags |= Material::FLAG_TRANSLUCENT | Material::FLAG_NOSHADOWS;
@@ -1311,6 +1306,13 @@ void ShaderTemplate::parseFromTokens(parser::DefTokeniser& tokeniser)
 
 void ShaderTemplate::determineCoverage()
 {
+    // An explicit translucent keyword makes it clear
+    if (_materialFlags & Material::FLAG_TRANSLUCENT)
+    {
+        _coverage = Material::MC_TRANSLUCENT;
+        return;
+    }
+
     // Determine coverage if not yet done
     if (_coverage == Material::MC_UNDETERMINED)
     {
