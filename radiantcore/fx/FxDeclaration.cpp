@@ -19,8 +19,15 @@ IFxAction::Ptr FxDeclaration::getAction(std::size_t index)
     return _actions.at(index);
 }
 
+std::string FxDeclaration::getBindTo()
+{
+    ensureParsed();
+    return _bindTo;
+}
+
 void FxDeclaration::onBeginParsing()
 {
+    _bindTo.clear();
     _actions.clear();
 }
 

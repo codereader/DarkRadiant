@@ -71,6 +71,7 @@ add_library(radiantcore MODULE
             fonts/GlyphInfo.cpp
             fonts/GlyphSet.cpp
             fx/FxDeclaration.cpp
+            fx/FxAction.cpp
             fx/FxManager.cpp
             grid/GridManager.cpp
             imagefile/BMPLoader.cpp

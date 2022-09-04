@@ -85,6 +85,7 @@
     <ClCompile Include="..\..\radiantcore\fonts\FontManager.cpp" />
     <ClCompile Include="..\..\radiantcore\fonts\GlyphInfo.cpp" />
     <ClCompile Include="..\..\radiantcore\fonts\GlyphSet.cpp" />
+    <ClCompile Include="..\..\radiantcore\fx\FxAction.cpp" />
     <ClCompile Include="..\..\radiantcore\fx\FxDeclaration.cpp" />
     <ClCompile Include="..\..\radiantcore\fx\FxManager.cpp" />
     <ClCompile Include="..\..\radiantcore\grid\GridManager.cpp" />
@@ -831,6 +832,7 @@
     <ClInclude Include="..\..\radiantcore\fonts\FontManager.h" />
     <ClInclude Include="..\..\radiantcore\fonts\GlyphInfo.h" />
     <ClInclude Include="..\..\radiantcore\fonts\GlyphSet.h" />
+    <ClInclude Include="..\..\radiantcore\fx\FxAction.h" />
     <ClInclude Include="..\..\radiantcore\fx\FxDeclaration.h" />
     <ClInclude Include="..\..\radiantcore\fx\FxManager.h" />
     <ClInclude Include="..\..\radiantcore\grid\GridItem.h" />

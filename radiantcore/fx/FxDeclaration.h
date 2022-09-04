@@ -12,12 +12,14 @@ class FxDeclaration :
 {
 private:
     std::vector<IFxAction::Ptr> _actions;
+    std::string _bindTo;
 
 public:
     FxDeclaration(const std::string& name);
 
     std::size_t getNumActions() override;
     IFxAction::Ptr getAction(std::size_t index) override;
+    std::string getBindTo() override;
 
 protected:
     void onBeginParsing() override;

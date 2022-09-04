@@ -1162,6 +1162,9 @@
     <ClCompile Include="..\..\radiantcore\fx\FxDeclaration.cpp">
       <Filter>src\fx</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\fx\FxAction.cpp">
+      <Filter>src\fx</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2386,6 +2389,9 @@
       <Filter>src\fx</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\fx\FxDeclaration.h">
+      <Filter>src\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\fx\FxAction.h">
       <Filter>src\fx</Filter>
     </ClInclude>
   </ItemGroup>
