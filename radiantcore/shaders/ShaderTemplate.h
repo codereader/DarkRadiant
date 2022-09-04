@@ -193,6 +193,9 @@ public:
 
         if (flag & Material::FLAG_TRANSLUCENT)
         {
+            // Translucent implies noshadows
+            _materialFlags |= Material::FLAG_NOSHADOWS;
+
             // Re-evaluate the material coverage
             _coverage = Material::MC_UNDETERMINED;
             determineCoverage();
