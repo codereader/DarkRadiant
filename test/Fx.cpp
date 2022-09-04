@@ -44,7 +44,7 @@ TEST_F(FxTest, ParseActionDelay)
 {
     EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getDelay(), 0);
     EXPECT_EQ(getFxByName("fx/sparks")->getAction(1)->getDelay(), 2);
-    EXPECT_EQ(getFxByName("fx/sparks")->getAction(2)->getDelay(), 1.5);
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(2)->getDelay(), 1.5f);
 }
 
 TEST_F(FxTest, ParseActionIgnoreMaster)
