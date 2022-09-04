@@ -518,6 +518,12 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     // settings like scale and translate
     previewPass.stage0 = findFirstLayerOfType(_material, IShaderLayer::DIFFUSE);
 
+    // Evaluate the expressions of the diffuse stage once to be able to get a meaningful alphatest value
+    if (previewPass.stage0)
+    {
+        previewPass.stage0->evaluateExpressions(0);
+    }
+
     previewPass.setRenderFlag(RENDER_FILL);
     previewPass.setRenderFlag(RENDER_TEXTURE_2D);
     previewPass.setRenderFlag(RENDER_DEPTHTEST);
