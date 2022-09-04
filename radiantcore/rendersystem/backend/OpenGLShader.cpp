@@ -28,6 +28,24 @@ namespace
         auto texture = layer->getTexture();
         return texture ? texture : getDefaultInteractionTexture(layer->getType());
     }
+
+    IShaderLayer::Ptr findFirstLayerOfType(const MaterialPtr& material, IShaderLayer::Type type)
+    {
+        IShaderLayer::Ptr found;
+
+        material->foreachLayer([&](const IShaderLayer::Ptr& layer)
+        {
+            if (layer->getType() == type)
+            {
+                found = layer;
+                return false;
+            }
+
+            return true;
+        });
+
+        return found;
+    }
 }
 
 OpenGLShader::OpenGLShader(const std::string& name, OpenGLRenderSystem& renderSystem) :
@@ -465,39 +483,23 @@ void OpenGLShader::constructLightingPassesFromMaterial()
     }
 }
 
-void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass)
+void OpenGLShader::determineBlendModeForEditorPass(OpenGLState& pass, const IShaderLayer::Ptr& diffuseLayer)
 {
-    bool hasDiffuseLayer = false;
-    IShaderLayer* firstLayer = nullptr;
-
     // Determine alphatest from first diffuse layer
-    _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
+    if (diffuseLayer && diffuseLayer->getAlphaTest() > 0)
     {
-        firstLayer = layer.get();
-
-        if (layer->getType() == IShaderLayer::DIFFUSE)
-        {
-            hasDiffuseLayer = true;
-
-            if (layer->getAlphaTest() > 0)
-            {
-                applyAlphaTestToPass(pass, layer->getAlphaTest());
-                return false;
-            }
-        }
-
-        return true;
-    });
+        applyAlphaTestToPass(pass, diffuseLayer->getAlphaTest());
+    }
 
     // If this is a purely blend material (no DBS layers), set the editor blend
-    // mode from the first blend layer.
+    // mode from the first layer.
 	// greebo: Hack to let "shader not found" textures be handled as diffusemaps
-    if (!hasDiffuseLayer && firstLayer != nullptr && _material->getName() != "_default")
+    if (!diffuseLayer && _material->getNumLayers() > 0 && _material->getName() != "_default")
     {
 		pass.setRenderFlag(RENDER_BLEND);
 		pass.setSortPosition(OpenGLState::SORT_TRANSLUCENT);
 
-		BlendFunc bf = firstLayer->getBlendFunc();
+		BlendFunc bf = _material->getLayer(0)->getBlendFunc();
 		pass.m_blend_src = bf.src;
 		pass.m_blend_dst = bf.dest;
     }
@@ -514,16 +516,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
 
     // If there's a diffuse stage's, link it to this shader pass to inherit
     // settings like scale and translate
-    _material->foreachLayer([&](const IShaderLayer::Ptr& layer)
-    {
-        if (layer->getType() == IShaderLayer::DIFFUSE)
-        {
-            previewPass.stage0 = layer;
-            return false;
-        }
-
-        return true;
-    });
+    previewPass.stage0 = findFirstLayerOfType(_material, IShaderLayer::DIFFUSE);
 
     previewPass.setRenderFlag(RENDER_FILL);
     previewPass.setRenderFlag(RENDER_TEXTURE_2D);
@@ -544,7 +537,7 @@ void OpenGLShader::constructEditorPreviewPassFromMaterial()
     }
 
     // Set up blend properties
-    determineBlendModeForEditorPass(previewPass);
+    determineBlendModeForEditorPass(previewPass, previewPass.stage0);
 
     // Set the GL color to white
     previewPass.setColour(Colour4::WHITE());

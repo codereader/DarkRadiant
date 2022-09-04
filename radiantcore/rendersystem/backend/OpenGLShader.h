@@ -75,7 +75,7 @@ private:
     OpenGLState& appendInteractionPass(std::vector<IShaderLayer::Ptr>& stages);
 
     void constructLightingPassesFromMaterial();
-    void determineBlendModeForEditorPass(OpenGLState& pass);
+    void determineBlendModeForEditorPass(OpenGLState& pass, const IShaderLayer::Ptr& diffuseLayer);
     void constructEditorPreviewPassFromMaterial();
     void applyAlphaTestToPass(OpenGLState& pass, double alphaTest);
 
