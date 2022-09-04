@@ -703,21 +703,6 @@ void OpenGLShader::constructFromMaterial(const MaterialPtr& material)
 
 void OpenGLShader::construct()
 {
-    switch (_name[0])
-    {
-    // greebo: For a small amount of commits, I'll leave these here to catch my attention
-    case '(': // fill shader
-    case '[':
-    case '<': // wireframe shader
-    case '{': // cam + wireframe shader
-    case '$': // hardcoded legacy stuff
-    {
-        rWarning() << "Legacy shader request encountered" << std::endl;
-        assert(false);
-        return;
-    }
-    }
-
     // Construct the shader from the material definition
     constructFromMaterial(GlobalMaterialManager().getMaterial(_name));
     enableViewType(RenderViewType::Camera);
