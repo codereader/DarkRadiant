@@ -549,15 +549,14 @@ void OpenGLShader::constructLightingPassesFromMaterial()
 
     if (!interactionLayers.empty())
     {
-        if (diffuseForDepthFillPass)
-        {
-            // Create depth-buffer fill pass, possibly with alpha test
-            auto& zPass = appendDepthFillPass();
+        // Create depth-buffer fill pass, possibly with alpha test
+        auto& zPass = appendDepthFillPass();
 
-            zPass.stage0 = diffuseForDepthFillPass;
-            zPass.texture0 = getTextureOrInteractionDefault(diffuseForDepthFillPass)->getGLTexNum();
-            zPass.alphaThreshold = diffuseForDepthFillPass->getAlphaTest();
-        }
+        zPass.stage0 = diffuseForDepthFillPass;
+        zPass.texture0 = diffuseForDepthFillPass ? 
+            getTextureOrInteractionDefault(diffuseForDepthFillPass)->getGLTexNum() :
+            getDefaultInteractionTexture(IShaderLayer::DIFFUSE)->getGLTexNum();
+        zPass.alphaThreshold = diffuseForDepthFillPass ? diffuseForDepthFillPass->getAlphaTest() : -1.0f;
 
         appendInteractionPass(interactionLayers);
     }
