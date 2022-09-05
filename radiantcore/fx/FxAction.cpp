@@ -20,7 +20,9 @@ FxAction::FxAction(FxDeclaration& fx) :
     _ignoreMaster(false),
     _noShadows(false),
     _randomDelay(0.0f, 0.0f),
-    _rotate(0)
+    _rotate(0),
+    _trackOrigin(false),
+    _restart(false)
 {}
 
 FxAction::Type FxAction::getType()
@@ -93,6 +95,16 @@ float FxAction::getDuration()
     return _durationInSeconds;
 }
 
+bool FxAction::getTrackOrigin()
+{
+    return _trackOrigin;
+}
+
+bool FxAction::getRestart()
+{
+    return _restart;
+}
+
 void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     while (tokeniser.hasMoreTokens())
@@ -151,17 +163,15 @@ void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
         {
             _durationInSeconds = string::convert<float>(tokeniser.nextToken());
         }
+        else if (token == "trackorigin")
+        {
+            _trackOrigin = string::convert<int>(tokeniser.nextToken()) != 0;
+        }
+        else if (token == "restart")
+        {
+            _restart = string::convert<int>(tokeniser.nextToken()) != 0;
+        }
 #if 0
-        if (!token.Icmp("trackorigin")) {
-            FXAction.trackOrigin = src.ParseBool();
-            continue;
-        }
-
-        if (!token.Icmp("restart")) {
-            FXAction.restart = src.ParseFloat();
-            continue;
-        }
-
         if (!token.Icmp("fadeIn")) {
             FXAction.fadeInTime = src.ParseFloat();
             continue;

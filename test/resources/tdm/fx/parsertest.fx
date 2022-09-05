@@ -20,6 +20,7 @@ fx fx/sparks
 		restart 0
 		light "lights/sparks_sound", 0.7, 0.7, 0.7, 64
 		offset	0, 0, 0
+        trackOrigin 0
 	}
 
 	{
@@ -89,5 +90,7 @@ fx fx/parserTest/sibling
         model "sparks.prt"
         rotate 56.7
         duration 0.8
+        restart 1
+        trackOrigin 1
 	}
 }

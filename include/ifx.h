@@ -35,7 +35,7 @@ public:
     // Returns the action delay in seconds
     virtual float getDelay() = 0;
 
-    // Action duration in seconds
+    // Action duration in seconds, before it is killed or restarted
     virtual float getDuration() = 0;
 
     // True: Don't shake the entity this effect is attached to
@@ -61,6 +61,12 @@ public:
 
     // According to the docs this is not used
     virtual float getRotate() = 0;
+
+    // Move around with the entity (vs stationary after spawning)
+    virtual bool getTrackOrigin() = 0;
+
+    // True: the action starts again after the 'duration' has run out
+    virtual bool getRestart() = 0;
 };
 
 class IFxDeclaration :

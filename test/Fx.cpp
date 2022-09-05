@@ -110,4 +110,18 @@ TEST_F(FxTest, ParseActionDuration)
     EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(1)->getDuration(), 0.0f); // not set
 }
 
+TEST_F(FxTest, ParseActionTrackOrigin)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getTrackOrigin(), false);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getTrackOrigin(), false); // not set
+    EXPECT_EQ(getFxByName("fx/parserTest/sibling")->getAction(1)->getTrackOrigin(), true);
+}
+
+TEST_F(FxTest, ParseActionRestart)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getRestart(), false);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getRestart(), false); // not set
+    EXPECT_EQ(getFxByName("fx/parserTest/sibling")->getAction(1)->getRestart(), true);
+}
+
 }

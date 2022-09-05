@@ -28,6 +28,8 @@ private:
     std::string _fireSiblingAction;
     std::pair<float, float> _randomDelay;
     float _rotate;
+    bool _trackOrigin;
+    bool _restart;
 
 public:
     using Ptr = std::shared_ptr<FxAction>;
@@ -48,6 +50,8 @@ public:
     const std::string& getFireSiblingAction() override;
     std::pair<float, float> getRandomDelay() override;
     float getRotate() override;
+    bool getTrackOrigin() override;
+    bool getRestart() override;
 
     // Parses the action from the given tokens.
     // The opening brace { will already have been been consumed by the calling code
