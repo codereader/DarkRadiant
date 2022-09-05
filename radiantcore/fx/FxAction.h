@@ -14,6 +14,7 @@ private:
     FxDeclaration& _fx;
 
     Type _type;
+    std::string _name;
 
     float _delayInSeconds;
 
@@ -23,6 +24,9 @@ private:
     bool _shakeFalloff;
     float _shakeImpulse;
     bool _ignoreMaster;
+    bool _noShadows;
+
+    std::string _fireSiblingAction;
 
 public:
     using Ptr = std::shared_ptr<FxAction>;
@@ -30,6 +34,7 @@ public:
     FxAction(FxDeclaration& fx);
 
     Type getType() override;
+    const std::string& getName() override;
     float getDelay() override;
     bool getIgnoreMaster() override;
 
@@ -38,6 +43,10 @@ public:
     float getShakeDistance() override;
     bool getShakeFalloff() override;
     float getShakeImpulse() override;
+
+    bool getNoShadows() override;
+
+    const std::string& getFireSiblingAction() override;
 
     // Parses the action from the given tokens.
     // The opening brace { will already have been been consumed by the calling code

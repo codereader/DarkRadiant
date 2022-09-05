@@ -16,12 +16,18 @@ FxAction::FxAction(FxDeclaration& fx) :
     _shakeDistance(0),
     _shakeFalloff(false),
     _shakeImpulse(0),
-    _ignoreMaster(false)
+    _ignoreMaster(false),
+    _noShadows(false)
 {}
 
 FxAction::Type FxAction::getType()
 {
     return _type;
+}
+
+const std::string& FxAction::getName()
+{
+    return _name;
 }
 
 float FxAction::getDelay()
@@ -59,6 +65,16 @@ bool FxAction::getIgnoreMaster()
     return _ignoreMaster;
 }
 
+bool FxAction::getNoShadows()
+{
+    return _noShadows;
+}
+
+const std::string& FxAction::getFireSiblingAction()
+{
+    return _fireSiblingAction;
+}
+
 void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     while (tokeniser.hasMoreTokens())
@@ -91,24 +107,19 @@ void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
             tokeniser.assertNextToken(",");
             _shakeImpulse = string::convert<float>(tokeniser.nextToken());
         }
+        else if (token == "noshadows")
+        {
+            _noShadows = true;
+        }
+        else if (token == "name")
+        {
+            _name = tokeniser.nextToken();
+        }
+        else if (token == "fire")
+        {
+            _fireSiblingAction = tokeniser.nextToken();
+        }
 #if 0
-        if (!token.Icmp("noshadows")) {
-            FXAction.noshadows = true;
-            continue;
-        }
-
-        if (!token.Icmp("name")) {
-            src.ReadToken(&token);
-            FXAction.name = token;
-            continue;
-        }
-
-        if (!token.Icmp("fire")) {
-            src.ReadToken(&token);
-            FXAction.fire = token;
-            continue;
-        }
-
         if (!token.Icmp("random")) {
             FXAction.random1 = src.ParseFloat();
             src.ExpectTokenString(",");

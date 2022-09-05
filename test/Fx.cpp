@@ -72,4 +72,22 @@ TEST_F(FxTest, ParseActionShake)
     EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(1)->getShakeImpulse(), 0.33f);
 }
 
+TEST_F(FxTest, ParseActionNoShadows)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getNoShadows(), false);
+    EXPECT_EQ(getFxByName("fx/parserTest1")->getAction(0)->getNoShadows(), true);
+}
+
+TEST_F(FxTest, ParseActionName)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getName(), "");
+    EXPECT_EQ(getFxByName("fx/parserTest/name")->getAction(0)->getName(), "Testaction");
+}
+
+TEST_F(FxTest, ParseFireSiblingAction)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getFireSiblingAction(), "");
+    EXPECT_EQ(getFxByName("fx/parserTest/sibling")->getAction(0)->getFireSiblingAction(), "SisterAction");
+}
+
 }
