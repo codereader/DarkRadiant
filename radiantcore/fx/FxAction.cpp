@@ -10,14 +10,17 @@ namespace fx
 FxAction::FxAction(FxDeclaration& fx) :
     _fx(fx),
     _type(Type::Undefined),
-    _delayInSeconds(0.0),
+    _delayInSeconds(0),
+    _durationInSeconds(0),
     _shakeTime(0),
     _shakeAmplitude(0),
     _shakeDistance(0),
     _shakeFalloff(false),
     _shakeImpulse(0),
     _ignoreMaster(false),
-    _noShadows(false)
+    _noShadows(false),
+    _randomDelay(0.0f, 0.0f),
+    _rotate(0)
 {}
 
 FxAction::Type FxAction::getType()
@@ -75,6 +78,21 @@ const std::string& FxAction::getFireSiblingAction()
     return _fireSiblingAction;
 }
 
+std::pair<float, float> FxAction::getRandomDelay()
+{
+    return _randomDelay;
+}
+
+float FxAction::getRotate()
+{
+    return _rotate;
+}
+
+float FxAction::getDuration()
+{
+    return _durationInSeconds;
+}
+
 void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     while (tokeniser.hasMoreTokens())
@@ -119,30 +137,21 @@ void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
         {
             _fireSiblingAction = tokeniser.nextToken();
         }
+        else if (token == "random")
+        {
+            _randomDelay.first = string::convert<float>(tokeniser.nextToken());
+            tokeniser.assertNextToken(",");
+            _randomDelay.second = string::convert<float>(tokeniser.nextToken());
+        }
+        else if (token == "rotate")
+        {
+            _rotate = string::convert<float>(tokeniser.nextToken());
+        }
+        else if (token == "duration")
+        {
+            _durationInSeconds = string::convert<float>(tokeniser.nextToken());
+        }
 #if 0
-        if (!token.Icmp("random")) {
-            FXAction.random1 = src.ParseFloat();
-            src.ExpectTokenString(",");
-            FXAction.random2 = src.ParseFloat();
-            FXAction.delay = 0.0f;		// check random
-            continue;
-        }
-
-        if (!token.Icmp("delay")) {
-            FXAction.delay = src.ParseFloat();
-            continue;
-        }
-
-        if (!token.Icmp("rotate")) {
-            FXAction.rotate = src.ParseFloat();
-            continue;
-        }
-
-        if (!token.Icmp("duration")) {
-            FXAction.duration = src.ParseFloat();
-            continue;
-        }
-
         if (!token.Icmp("trackorigin")) {
             FXAction.trackOrigin = src.ParseBool();
             continue;

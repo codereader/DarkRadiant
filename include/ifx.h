@@ -35,6 +35,9 @@ public:
     // Returns the action delay in seconds
     virtual float getDelay() = 0;
 
+    // Action duration in seconds
+    virtual float getDuration() = 0;
+
     // True: Don't shake the entity this effect is attached to
     virtual bool getIgnoreMaster() = 0;
 
@@ -51,6 +54,13 @@ public:
 
     // Causes the sibling action to happen when this action does.
     virtual const std::string& getFireSiblingAction() = 0;
+
+    // Let the delay be random between min and max (in seconds)
+    // If both are 0.0 no random delay is active and the regular delay is used instead
+    virtual std::pair<float, float> getRandomDelay() = 0;
+
+    // According to the docs this is not used
+    virtual float getRotate() = 0;
 };
 
 class IFxDeclaration :

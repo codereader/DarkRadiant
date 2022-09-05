@@ -84,10 +84,30 @@ TEST_F(FxTest, ParseActionName)
     EXPECT_EQ(getFxByName("fx/parserTest/name")->getAction(0)->getName(), "Testaction");
 }
 
-TEST_F(FxTest, ParseFireSiblingAction)
+TEST_F(FxTest, ParseActionFireSibling)
 {
     EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getFireSiblingAction(), "");
     EXPECT_EQ(getFxByName("fx/parserTest/sibling")->getAction(0)->getFireSiblingAction(), "SisterAction");
+}
+
+TEST_F(FxTest, ParseActionRandomDelay)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getRandomDelay().first, 0.0f);
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getRandomDelay().second, 0.0f);
+    EXPECT_EQ(getFxByName("fx/parserTest/sibling")->getAction(1)->getRandomDelay().first, 0.9f);
+    EXPECT_EQ(getFxByName("fx/parserTest/sibling")->getAction(1)->getRandomDelay().second, 6.888f);
+}
+
+TEST_F(FxTest, ParseActionRotate)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getRotate(), 0.0f);
+    EXPECT_EQ(getFxByName("fx/parserTest/sibling")->getAction(1)->getRotate(), 56.7f);
+}
+
+TEST_F(FxTest, ParseActionDuration)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getDuration(), 0.5f);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(1)->getDuration(), 0.0f); // not set
 }
 
 }

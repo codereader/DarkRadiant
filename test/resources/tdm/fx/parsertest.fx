@@ -85,6 +85,9 @@ fx fx/parserTest/sibling
 	{
         name "SisterAction"
         delay 2.5
+        random 0.9,6.888
         model "sparks.prt"
+        rotate 56.7
+        duration 0.8
 	}
 }
