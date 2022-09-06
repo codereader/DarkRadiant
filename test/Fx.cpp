@@ -240,4 +240,20 @@ TEST_F(FxTest, ParseActionParticleTrackVelocity)
     EXPECT_EQ(getFxByName("fx/parserTest/useModel")->getAction(2)->getParticleTrackVelocity(), true);
 }
 
+TEST_F(FxTest, ParseActionSound)
+{
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getSoundShaderName(), "");
+
+    EXPECT_EQ(getFxByName("fx/parserTest/sound")->getAction(0)->getType(), fx::IFxAction::Type::Sound);
+    EXPECT_EQ(getFxByName("fx/parserTest/sound")->getAction(0)->getSoundShaderName(), "footsteps/stone");
+}
+
+TEST_F(FxTest, ParseActionShockwave)
+{
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getShockwaveDefName(), "");
+
+    EXPECT_EQ(getFxByName("fx/parserTest/shockwave")->getAction(0)->getType(), fx::IFxAction::Type::Shockwave);
+    EXPECT_EQ(getFxByName("fx/parserTest/shockwave")->getAction(0)->getShockwaveDefName(), "atdm:some_shockwave_def");
+}
+
 }

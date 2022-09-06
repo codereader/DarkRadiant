@@ -181,3 +181,19 @@ fx fx/parserTest/decal
         decal "textures/decals/blood"
 	}
 }
+
+fx fx/parserTest/sound
+{
+	{
+        delay 1.5
+        sound "footsteps/stone"
+	}
+}
+
+fx fx/parserTest/shockwave
+{
+	{
+        delay 1.5
+        shockwave "atdm:some_shockwave_def"
+	}
+}

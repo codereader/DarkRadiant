@@ -47,6 +47,8 @@ private:
     std::string _modelName;
     std::string _decalMaterialName;
     bool _particleTrackVelocity;
+    std::string _soundShaderName;
+    std::string _shockwaveDefName;
 
 public:
     using Ptr = std::shared_ptr<FxAction>;
@@ -86,6 +88,8 @@ public:
     const std::string& getModelName() override;
     const std::string& getDecalMaterialName() override;
     bool getParticleTrackVelocity() override;
+    const std::string& getSoundShaderName() override;
+    const std::string& getShockwaveDefName() override;
 
     // Parses the action from the given tokens.
     // The opening brace { will already have been been consumed by the calling code

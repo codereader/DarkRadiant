@@ -120,6 +120,12 @@ public:
 
     // Unused according to docs
     virtual bool getParticleTrackVelocity() = 0;
+
+    // For Type::Sound actions: start a sound (on any channel)
+    virtual const std::string& getSoundShaderName() = 0;
+
+    // For Type::Shockwave actions: the name of the shockwave entityDef
+    virtual const std::string& getShockwaveDefName() = 0;
 };
 
 class IFxDeclaration :

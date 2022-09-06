@@ -199,6 +199,16 @@ bool FxAction::getParticleTrackVelocity()
     return _particleTrackVelocity;
 }
 
+const std::string& FxAction::getSoundShaderName()
+{
+    return _soundShaderName;
+}
+
+const std::string& FxAction::getShockwaveDefName()
+{
+    return _shockwaveDefName;
+}
+
 void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     while (tokeniser.hasMoreTokens())
@@ -358,32 +368,16 @@ void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
         {
             _particleTrackVelocity = true;
         }
-#if 0
-        if (!token.Icmp("sound")) {
-            src.ReadToken(&token);
-            FXAction.data = token;
-            FXAction.type = FX_SOUND;
-
-            // precache it
-            declManager->FindSound(FXAction.data);
-            continue;
+        else if (token == "sound")
+        {
+            _type = Type::Sound;
+            _soundShaderName = tokeniser.nextToken();
         }
-
-        if (!token.Icmp("ignoreMaster")) {
-            FXAction.shakeIgnoreMaster = true;
-            continue;
+        else if (token == "shockwave")
+        {
+            _type = Type::Shockwave;
+            _shockwaveDefName = tokeniser.nextToken();
         }
-
-        if (!token.Icmp("shockwave")) {
-            src.ReadToken(&token);
-            FXAction.data = token;
-            FXAction.type = FX_SHOCKWAVE;
-
-            // precache the entity def
-            declManager->FindType(DECL_ENTITYDEF, FXAction.data);
-            continue;
-        }
-#endif
         else
         {
             rWarning() << "Unrecognised token '" << token << "' in FX " << _fx.getDeclName() << std::endl;
