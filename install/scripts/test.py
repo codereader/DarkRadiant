@@ -36,6 +36,10 @@ print("Type: " + str(fx.getDeclType()))
 print("Defined in: " + str(fx.getDeclFilePath()))
 print("Definition: " + fx.getBlockSyntax().contents)
 
+print("Number of actions: " + str(fx.getNumActions()))
+print("Action with Index 1 (the second):")
+action = fx.getAction(1)
+
 # Create a new material
 myOwnMaterial = GlobalDeclarationManager.findOrCreateDeclaration(Declaration.Type.Material, "textures/myown_material")
 

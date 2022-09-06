@@ -6,6 +6,17 @@
 namespace script
 {
 
+class ScriptFxAction
+{
+private:
+    fx::IFxAction::Ptr _action;
+
+public:
+    ScriptFxAction(const fx::IFxAction::Ptr& action) :
+        _action(action)
+    {}
+};
+
 class ScriptFxDeclaration :
     public ScriptDeclaration
 {
@@ -17,6 +28,21 @@ public:
         ScriptDeclaration(fx),
         _fx(fx)
     {}
+
+    std::size_t getNumActions()
+    {
+        return _fx ? _fx->getNumActions() : 0;
+    }
+
+    ScriptFxAction getAction(std::size_t index)
+    {
+        return ScriptFxAction(_fx ? _fx->getAction(index) : fx::IFxAction::Ptr());
+    }
+
+    std::string getBindTo()
+    {
+        return _fx ? _fx->getBindTo() : std::string();
+    }
 };
 
 /**
