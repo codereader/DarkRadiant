@@ -22,7 +22,10 @@ FxAction::FxAction(FxDeclaration& fx) :
     _randomDelay(0.0f, 0.0f),
     _rotate(0),
     _trackOrigin(false),
-    _restart(false)
+    _restart(false),
+    _fadeInTimeInSeconds(0),
+    _fadeOutTimeInSeconds(0),
+    _decalSize(0)
 {}
 
 FxAction::Type FxAction::getType()
@@ -105,6 +108,26 @@ bool FxAction::getRestart()
     return _restart;
 }
 
+float FxAction::getFadeInTimeInSeconds()
+{
+    return _fadeInTimeInSeconds;
+}
+
+float FxAction::getFadeOutTimeInSeconds()
+{
+    return _fadeOutTimeInSeconds;
+}
+
+float FxAction::getDecalSize()
+{
+    return _decalSize;
+}
+
+const Vector3& FxAction::getOffset()
+{
+    return _offset;
+}
+
 void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     while (tokeniser.hasMoreTokens())
@@ -171,31 +194,27 @@ void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
         {
             _restart = string::convert<int>(tokeniser.nextToken()) != 0;
         }
+        else if (token == "fadein")
+        {
+            _fadeInTimeInSeconds = string::convert<float>(tokeniser.nextToken());
+        }
+        else if (token == "fadeout")
+        {
+            _fadeOutTimeInSeconds = string::convert<float>(tokeniser.nextToken());
+        }
+        else if (token == "size")
+        {
+            _decalSize = string::convert<float>(tokeniser.nextToken());
+        }
+        else if (token == "offset")
+        {
+            _offset.x() = string::convert<float>(tokeniser.nextToken());
+            tokeniser.assertNextToken(",");
+            _offset.y() = string::convert<float>(tokeniser.nextToken());
+            tokeniser.assertNextToken(",");
+            _offset.z() = string::convert<float>(tokeniser.nextToken());
+        }
 #if 0
-        if (!token.Icmp("fadeIn")) {
-            FXAction.fadeInTime = src.ParseFloat();
-            continue;
-        }
-
-        if (!token.Icmp("fadeOut")) {
-            FXAction.fadeOutTime = src.ParseFloat();
-            continue;
-        }
-
-        if (!token.Icmp("size")) {
-            FXAction.size = src.ParseFloat();
-            continue;
-        }
-
-        if (!token.Icmp("offset")) {
-            FXAction.offset.x = src.ParseFloat();
-            src.ExpectTokenString(",");
-            FXAction.offset.y = src.ParseFloat();
-            src.ExpectTokenString(",");
-            FXAction.offset.z = src.ParseFloat();
-            continue;
-        }
-
         if (!token.Icmp("axis")) {
             idVec3 v;
             v.x = src.ParseFloat();

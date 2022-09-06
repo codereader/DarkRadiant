@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ideclmanager.h"
+#include "math/Vector3.h"
 
 namespace fx
 {
@@ -67,6 +68,19 @@ public:
 
     // True: the action starts again after the 'duration' has run out
     virtual bool getRestart() = 0;
+
+    // Fade in the RGB of the light or model over <time> seconds
+    virtual float getFadeInTimeInSeconds() = 0;
+
+    // Fade out the light/model. Ignored if fadeIn is set, you can use 2 seperate
+    // actions (tied together with uselight) if you want a light to fade in and out.
+    virtual float getFadeOutTimeInSeconds() = 0;
+
+    // Size of the decal (corresponds to "size" keyword)
+    virtual float getDecalSize() = 0;
+
+    // Offset from the origin of the entity (or bind point) this action is located at
+    virtual const Vector3& getOffset() = 0;
 };
 
 class IFxDeclaration :

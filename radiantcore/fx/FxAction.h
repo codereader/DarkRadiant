@@ -30,6 +30,10 @@ private:
     float _rotate;
     bool _trackOrigin;
     bool _restart;
+    float _fadeInTimeInSeconds;
+    float _fadeOutTimeInSeconds;
+    float _decalSize;
+    Vector3 _offset;
 
 public:
     using Ptr = std::shared_ptr<FxAction>;
@@ -52,6 +56,10 @@ public:
     float getRotate() override;
     bool getTrackOrigin() override;
     bool getRestart() override;
+    float getFadeInTimeInSeconds() override;
+    float getFadeOutTimeInSeconds() override;
+    float getDecalSize() override;
+    const Vector3& getOffset() override;
 
     // Parses the action from the given tokens.
     // The opening brace { will already have been been consumed by the calling code

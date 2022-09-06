@@ -94,3 +94,19 @@ fx fx/parserTest/sibling
         trackOrigin 1
 	}
 }
+
+fx fx/parserTest/fadeIn
+{
+	{
+        name "FadeIn"
+        delay 1.5
+        duration 2.5
+        fadeIn 1.2
+	}
+	{
+        name "FadeOut"
+        fadeOut 0.8
+        size 1.5
+        offset 1.6  , 0.7,-0.8
+	}
+}

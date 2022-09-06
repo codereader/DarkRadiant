@@ -124,4 +124,24 @@ TEST_F(FxTest, ParseActionRestart)
     EXPECT_EQ(getFxByName("fx/parserTest/sibling")->getAction(1)->getRestart(), true);
 }
 
+TEST_F(FxTest, ParseActionFadeInAndOut)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getFadeInTimeInSeconds(), 0);
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getFadeOutTimeInSeconds(), 0);
+    EXPECT_EQ(getFxByName("fx/parserTest/fadeIn")->getAction(0)->getFadeInTimeInSeconds(), 1.2f);
+    EXPECT_EQ(getFxByName("fx/parserTest/fadeIn")->getAction(1)->getFadeOutTimeInSeconds(), 0.8f);
+}
+
+TEST_F(FxTest, ParseActionSize)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getDecalSize(), 0);
+    EXPECT_EQ(getFxByName("fx/parserTest/fadeIn")->getAction(1)->getDecalSize(), 1.5f);
+}
+
+TEST_F(FxTest, ParseActionOffset)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getOffset(), Vector3(0,0,0));
+    EXPECT_EQ(getFxByName("fx/parserTest/fadeIn")->getAction(1)->getOffset(), Vector3(1.6f, 0.7f, -0.8f));
+}
+
 }
