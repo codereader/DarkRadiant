@@ -9,14 +9,13 @@ using FxTest = RadiantTest;
 
 inline fx::IFxDeclaration::Ptr getFxByName(const std::string& name)
 {
-    return std::static_pointer_cast<fx::IFxDeclaration>(
-        GlobalDeclarationManager().findDeclaration(decl::Type::Fx, name));
+    return GlobalFxManager().findFx(name);
 }
 
 TEST_F(FxTest, GetFxByName)
 {
-    EXPECT_TRUE(GlobalDeclarationManager().findDeclaration(decl::Type::Fx, "fx/tdm_flame"));
-    EXPECT_TRUE(GlobalDeclarationManager().findDeclaration(decl::Type::Fx, "fx/sparks"));
+    EXPECT_TRUE(GlobalFxManager().findFx("fx/tdm_flame"));
+    EXPECT_TRUE(GlobalFxManager().findFx("fx/sparks"));
 }
 
 TEST_F(FxTest, GetNumActions)

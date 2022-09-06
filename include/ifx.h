@@ -1,5 +1,6 @@
 #pragma once
 
+#include "imodule.h"
 #include "ideclmanager.h"
 #include "math/Vector3.h"
 
@@ -145,4 +146,26 @@ public:
     virtual std::string getBindTo() = 0;
 };
 
+/**
+ * Convenience interface to deal with FX declarations
+ */
+class IFxManager :
+    public RegisterableModule
+{
+public:
+    /**
+     * Lookup an FX declaration by name.
+     * If the decl is not found, an empty reference is returned.
+     */
+    virtual IFxDeclaration::Ptr findFx(const std::string& name) = 0;
+};
+
+}
+
+constexpr const char* const MODULE_FXMANAGER("FxManager");
+
+inline fx::IFxManager& GlobalFxManager()
+{
+    static module::InstanceReference<fx::IFxManager> _reference(MODULE_FXMANAGER);
+    return _reference;
 }

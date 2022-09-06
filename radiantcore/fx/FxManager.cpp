@@ -7,6 +7,12 @@
 namespace fx
 {
 
+IFxDeclaration::Ptr FxManager::findFx(const std::string& name)
+{
+    return std::static_pointer_cast<IFxDeclaration>(
+        GlobalDeclarationManager().findDeclaration(decl::Type::Fx, name));
+}
+
 const std::string& FxManager::getName() const
 {
 	static std::string _name("FxManager");
