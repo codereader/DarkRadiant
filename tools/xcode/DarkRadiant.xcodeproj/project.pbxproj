@@ -534,7 +534,6 @@
 		3A38319A2859E7740049C4A1 /* RenderableModelSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3831992859E7730049C4A1 /* RenderableModelSurface.h */; };
 		3A3831B72859E7EE0049C4A1 /* SceneRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38319F2859E7E50049C4A1 /* SceneRenderer.h */; };
 		3A3831B82859E7EE0049C4A1 /* LightingModeRenderResult.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3831A02859E7E60049C4A1 /* LightingModeRenderResult.h */; };
-		3A3831B92859E7EE0049C4A1 /* InteractingLight.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3831A12859E7E60049C4A1 /* InteractingLight.h */; };
 		3A3831BA2859E7EE0049C4A1 /* OpenGLState.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3831A22859E7E60049C4A1 /* OpenGLState.h */; };
 		3A3831BB2859E7EE0049C4A1 /* FullBrightRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3831A32859E7E70049C4A1 /* FullBrightRenderer.cpp */; };
 		3A3831BC2859E7EE0049C4A1 /* ObjectRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3831A42859E7E70049C4A1 /* ObjectRenderer.h */; };
@@ -545,7 +544,6 @@
 		3A3831C12859E7EF0049C4A1 /* InteractionPass.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3831A92859E7E90049C4A1 /* InteractionPass.h */; };
 		3A3831C22859E7EF0049C4A1 /* BuiltInShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3831AA2859E7E90049C4A1 /* BuiltInShader.cpp */; };
 		3A3831C32859E7EF0049C4A1 /* ColourShader.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3831AB2859E7EA0049C4A1 /* ColourShader.h */; };
-		3A3831C42859E7EF0049C4A1 /* InteractingLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3831AC2859E7EA0049C4A1 /* InteractingLight.cpp */; };
 		3A3831C52859E7EF0049C4A1 /* SceneRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3831AD2859E7EB0049C4A1 /* SceneRenderer.cpp */; };
 		3A3831C62859E7EF0049C4A1 /* LightingModeRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3831AE2859E7EB0049C4A1 /* LightingModeRenderer.h */; };
 		3A3831C72859E7EF0049C4A1 /* GeometryRenderer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3831AF2859E7EB0049C4A1 /* GeometryRenderer.h */; };
@@ -596,6 +594,20 @@
 		3A383232285A14520049C4A1 /* DeclarationFolderParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38322D285A14520049C4A1 /* DeclarationFolderParser.cpp */; };
 		3A383235285A14E30049C4A1 /* MaterialManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A383233285A14E20049C4A1 /* MaterialManager.h */; };
 		3A383236285A14E30049C4A1 /* MaterialManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A383234285A14E20049C4A1 /* MaterialManager.cpp */; };
+		3A38323928C34E180049C4A1 /* blend_light_fp.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 3A38323728C34E170049C4A1 /* blend_light_fp.glsl */; };
+		3A38323A28C34E180049C4A1 /* blend_light_vp.glsl in Resources */ = {isa = PBXBuildFile; fileRef = 3A38323828C34E180049C4A1 /* blend_light_vp.glsl */; };
+		3A38323B28C34E2D0049C4A1 /* blend_light_fp.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A38323728C34E170049C4A1 /* blend_light_fp.glsl */; };
+		3A38323C28C34E2D0049C4A1 /* blend_light_vp.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A38323828C34E180049C4A1 /* blend_light_vp.glsl */; };
+		3A38323D28C34E490049C4A1 /* blend_light_fp.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A38323728C34E170049C4A1 /* blend_light_fp.glsl */; };
+		3A38323E28C34E490049C4A1 /* blend_light_vp.glsl in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A38323828C34E180049C4A1 /* blend_light_vp.glsl */; };
+		3A38324128C34E7D0049C4A1 /* Icon.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38323F28C34E7D0049C4A1 /* Icon.h */; };
+		3A38324228C34E7D0049C4A1 /* FormLayout.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38324028C34E7D0049C4A1 /* FormLayout.h */; };
+		3A38324828C34EE90049C4A1 /* RegularLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38324428C34EE70049C4A1 /* RegularLight.cpp */; };
+		3A38324928C34EE90049C4A1 /* RegularLight.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38324528C34EE80049C4A1 /* RegularLight.h */; };
+		3A38324A28C34EE90049C4A1 /* BlendLight.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38324628C34EE80049C4A1 /* BlendLight.cpp */; };
+		3A38324B28C34EE90049C4A1 /* BlendLight.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38324728C34EE90049C4A1 /* BlendLight.h */; };
+		3A38324E28C354130049C4A1 /* BlendLightProgram.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38324C28C354120049C4A1 /* BlendLightProgram.h */; };
+		3A38324F28C354130049C4A1 /* BlendLightProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38324D28C354120049C4A1 /* BlendLightProgram.cpp */; };
 		3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBE263C7893000C068E /* Bitmap.h */; };
 		3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */; };
 		3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3F623B1B764008A1B2D /* ParticleEditor.cpp */; };
@@ -1533,7 +1545,6 @@
 		3AF745831E4F861B003465B5 /* CameraSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7433B1E4F861A003465B5 /* CameraSettings.cpp */; };
 		3AF745851E4F861B003465B5 /* CamWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7433F1E4F861A003465B5 /* CamWnd.cpp */; };
 		3AF745861E4F861B003465B5 /* FloatingCamWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743411E4F861A003465B5 /* FloatingCamWnd.cpp */; };
-		3AF7458E1E4F861B003465B5 /* Console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743621E4F861A003465B5 /* Console.cpp */; };
 		3AF745951E4F861B003465B5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743741E4F861A003465B5 /* main.cpp */; };
 		3AF745AD1E4F861B003465B5 /* StartupMapLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743AF1E4F861A003465B5 /* StartupMapLoader.cpp */; };
 		3AF745C31E4F861B003465B5 /* precompiled.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743E71E4F861A003465B5 /* precompiled.cpp */; };
@@ -2194,6 +2205,8 @@
 			dstPath = Resources/gl;
 			dstSubfolderSpec = 16;
 			files = (
+				3A38323D28C34E490049C4A1 /* blend_light_fp.glsl in CopyFiles */,
+				3A38323E28C34E490049C4A1 /* blend_light_vp.glsl in CopyFiles */,
 				3A3831512859E4120049C4A1 /* cubemap_fp.glsl in CopyFiles */,
 				3A3831522859E4120049C4A1 /* cubemap_vp.glsl in CopyFiles */,
 				3A3831532859E4120049C4A1 /* interaction_fp.glsl in CopyFiles */,
@@ -2213,6 +2226,8 @@
 			dstPath = Contents/Resources/gl;
 			dstSubfolderSpec = 1;
 			files = (
+				3A38323B28C34E2D0049C4A1 /* blend_light_fp.glsl in CopyFiles */,
+				3A38323C28C34E2D0049C4A1 /* blend_light_vp.glsl in CopyFiles */,
 				3A38315E2859E4940049C4A1 /* cubemap_fp.glsl in CopyFiles */,
 				3A38315F2859E4940049C4A1 /* cubemap_vp.glsl in CopyFiles */,
 				3A3831602859E4940049C4A1 /* interaction_fp.glsl in CopyFiles */,
@@ -3555,7 +3570,6 @@
 		3A3831992859E7730049C4A1 /* RenderableModelSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderableModelSurface.h; path = ../../radiantcore/model/RenderableModelSurface.h; sourceTree = SOURCE_ROOT; };
 		3A38319F2859E7E50049C4A1 /* SceneRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneRenderer.h; path = ../../radiantcore/rendersystem/backend/SceneRenderer.h; sourceTree = SOURCE_ROOT; };
 		3A3831A02859E7E60049C4A1 /* LightingModeRenderResult.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightingModeRenderResult.h; path = ../../radiantcore/rendersystem/backend/LightingModeRenderResult.h; sourceTree = SOURCE_ROOT; };
-		3A3831A12859E7E60049C4A1 /* InteractingLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InteractingLight.h; path = ../../radiantcore/rendersystem/backend/InteractingLight.h; sourceTree = SOURCE_ROOT; };
 		3A3831A22859E7E60049C4A1 /* OpenGLState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OpenGLState.h; path = ../../radiantcore/rendersystem/backend/OpenGLState.h; sourceTree = SOURCE_ROOT; };
 		3A3831A32859E7E70049C4A1 /* FullBrightRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FullBrightRenderer.cpp; path = ../../radiantcore/rendersystem/backend/FullBrightRenderer.cpp; sourceTree = SOURCE_ROOT; };
 		3A3831A42859E7E70049C4A1 /* ObjectRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ObjectRenderer.h; path = ../../radiantcore/rendersystem/backend/ObjectRenderer.h; sourceTree = SOURCE_ROOT; };
@@ -3566,7 +3580,6 @@
 		3A3831A92859E7E90049C4A1 /* InteractionPass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InteractionPass.h; path = ../../radiantcore/rendersystem/backend/InteractionPass.h; sourceTree = SOURCE_ROOT; };
 		3A3831AA2859E7E90049C4A1 /* BuiltInShader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BuiltInShader.cpp; path = ../../radiantcore/rendersystem/backend/BuiltInShader.cpp; sourceTree = SOURCE_ROOT; };
 		3A3831AB2859E7EA0049C4A1 /* ColourShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ColourShader.h; path = ../../radiantcore/rendersystem/backend/ColourShader.h; sourceTree = SOURCE_ROOT; };
-		3A3831AC2859E7EA0049C4A1 /* InteractingLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InteractingLight.cpp; path = ../../radiantcore/rendersystem/backend/InteractingLight.cpp; sourceTree = SOURCE_ROOT; };
 		3A3831AD2859E7EB0049C4A1 /* SceneRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneRenderer.cpp; path = ../../radiantcore/rendersystem/backend/SceneRenderer.cpp; sourceTree = SOURCE_ROOT; };
 		3A3831AE2859E7EB0049C4A1 /* LightingModeRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightingModeRenderer.h; path = ../../radiantcore/rendersystem/backend/LightingModeRenderer.h; sourceTree = SOURCE_ROOT; };
 		3A3831AF2859E7EB0049C4A1 /* GeometryRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeometryRenderer.h; path = ../../radiantcore/rendersystem/backend/GeometryRenderer.h; sourceTree = SOURCE_ROOT; };
@@ -3616,6 +3629,17 @@
 		3A38322D285A14520049C4A1 /* DeclarationFolderParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DeclarationFolderParser.cpp; path = ../../radiantcore/decl/DeclarationFolderParser.cpp; sourceTree = SOURCE_ROOT; };
 		3A383233285A14E20049C4A1 /* MaterialManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaterialManager.h; path = ../../radiantcore/shaders/MaterialManager.h; sourceTree = SOURCE_ROOT; };
 		3A383234285A14E20049C4A1 /* MaterialManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MaterialManager.cpp; path = ../../radiantcore/shaders/MaterialManager.cpp; sourceTree = SOURCE_ROOT; };
+		3A38323728C34E170049C4A1 /* blend_light_fp.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = blend_light_fp.glsl; path = ../../../install/gl/blend_light_fp.glsl; sourceTree = "<group>"; };
+		3A38323828C34E180049C4A1 /* blend_light_vp.glsl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = blend_light_vp.glsl; path = ../../../install/gl/blend_light_vp.glsl; sourceTree = "<group>"; };
+		3A38323F28C34E7D0049C4A1 /* Icon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Icon.h; path = ../../libs/wxutil/Icon.h; sourceTree = SOURCE_ROOT; };
+		3A38324028C34E7D0049C4A1 /* FormLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FormLayout.h; path = ../../libs/wxutil/FormLayout.h; sourceTree = SOURCE_ROOT; };
+		3A38324328C34EB10049C4A1 /* TargetKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetKey.h; path = ../../radiant/ui/einspector/TargetKey.h; sourceTree = SOURCE_ROOT; };
+		3A38324428C34EE70049C4A1 /* RegularLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegularLight.cpp; path = ../../radiantcore/rendersystem/backend/RegularLight.cpp; sourceTree = SOURCE_ROOT; };
+		3A38324528C34EE80049C4A1 /* RegularLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegularLight.h; path = ../../radiantcore/rendersystem/backend/RegularLight.h; sourceTree = SOURCE_ROOT; };
+		3A38324628C34EE80049C4A1 /* BlendLight.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlendLight.cpp; path = ../../radiantcore/rendersystem/backend/BlendLight.cpp; sourceTree = SOURCE_ROOT; };
+		3A38324728C34EE90049C4A1 /* BlendLight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlendLight.h; path = ../../radiantcore/rendersystem/backend/BlendLight.h; sourceTree = SOURCE_ROOT; };
+		3A38324C28C354120049C4A1 /* BlendLightProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BlendLightProgram.h; path = ../../radiantcore/rendersystem/backend/glprogram/BlendLightProgram.h; sourceTree = SOURCE_ROOT; };
+		3A38324D28C354120049C4A1 /* BlendLightProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BlendLightProgram.cpp; path = ../../radiantcore/rendersystem/backend/glprogram/BlendLightProgram.cpp; sourceTree = SOURCE_ROOT; };
 		3A8D4CBE263C7893000C068E /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../libs/wxutil/Bitmap.h; sourceTree = SOURCE_ROOT; };
 		3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../libs/wxutil/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
@@ -4626,8 +4650,6 @@
 		3AF7435E1E4F861A003465B5 /* MoveToLayerWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MoveToLayerWalker.h; path = ../../radiantcore/layers/MoveToLayerWalker.h; sourceTree = SOURCE_ROOT; };
 		3AF7435F1E4F861A003465B5 /* RemoveFromLayerWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RemoveFromLayerWalker.h; path = ../../radiantcore/layers/RemoveFromLayerWalker.h; sourceTree = SOURCE_ROOT; };
 		3AF743601E4F861A003465B5 /* SetLayerSelectedWalker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SetLayerSelectedWalker.h; path = ../../radiantcore/layers/SetLayerSelectedWalker.h; sourceTree = SOURCE_ROOT; };
-		3AF743621E4F861A003465B5 /* Console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Console.cpp; path = ../../radiant/log/Console.cpp; sourceTree = SOURCE_ROOT; };
-		3AF743631E4F861A003465B5 /* Console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Console.h; path = ../../radiant/log/Console.h; sourceTree = SOURCE_ROOT; };
 		3AF743641E4F861A003465B5 /* COutRedirector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = COutRedirector.cpp; path = ../../radiantcore/log/COutRedirector.cpp; sourceTree = SOURCE_ROOT; };
 		3AF743651E4F861A003465B5 /* COutRedirector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = COutRedirector.h; path = ../../radiantcore/log/COutRedirector.h; sourceTree = SOURCE_ROOT; };
 		3AF743671E4F861A003465B5 /* LogFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LogFile.cpp; path = ../../radiantcore/log/LogFile.cpp; sourceTree = SOURCE_ROOT; };
@@ -5366,6 +5388,8 @@
 		3A011FC41E50275700A62BC1 /* wxutil */ = {
 			isa = PBXGroup;
 			children = (
+				3A38324028C34E7D0049C4A1 /* FormLayout.h */,
+				3A38323F28C34E7D0049C4A1 /* Icon.h */,
 				3A38320D285A129D0049C4A1 /* sourceview */,
 				3A8D4CBE263C7893000C068E /* Bitmap.h */,
 				3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */,
@@ -5962,6 +5986,8 @@
 		3A3831392859E3830049C4A1 /* gl */ = {
 			isa = PBXGroup;
 			children = (
+				3A38323728C34E170049C4A1 /* blend_light_fp.glsl */,
+				3A38323828C34E180049C4A1 /* blend_light_vp.glsl */,
 				3A38313F2859E3970049C4A1 /* cubemap_fp.glsl */,
 				3A38313D2859E3970049C4A1 /* cubemap_vp.glsl */,
 				3A3831402859E3980049C4A1 /* interaction_fp.glsl */,
@@ -7652,8 +7678,6 @@
 		3AF743611E4F861A003465B5 /* log */ = {
 			isa = PBXGroup;
 			children = (
-				3AF743621E4F861A003465B5 /* Console.cpp */,
-				3AF743631E4F861A003465B5 /* Console.h */,
 				3AF743701E4F861A003465B5 /* PIDFile.h */,
 				3AF743711E4F861A003465B5 /* PopupErrorHandler.h */,
 			);
@@ -7789,6 +7813,10 @@
 		3AF743EE1E4F861A003465B5 /* backend */ = {
 			isa = PBXGroup;
 			children = (
+				3A38324628C34EE80049C4A1 /* BlendLight.cpp */,
+				3A38324728C34EE90049C4A1 /* BlendLight.h */,
+				3A38324428C34EE70049C4A1 /* RegularLight.cpp */,
+				3A38324528C34EE80049C4A1 /* RegularLight.h */,
 				3A3831B22859E7ED0049C4A1 /* BufferObjectProvider.h */,
 				3A3831AA2859E7E90049C4A1 /* BuiltInShader.cpp */,
 				3A3831B52859E7EE0049C4A1 /* BuiltInShader.h */,
@@ -7804,8 +7832,6 @@
 				3AF743EF1E4F861A003465B5 /* glprogram */,
 				3AF743FA1E4F861A003465B5 /* GLProgramFactory.cpp */,
 				3AF743FB1E4F861A003465B5 /* GLProgramFactory.h */,
-				3A3831AC2859E7EA0049C4A1 /* InteractingLight.cpp */,
-				3A3831A12859E7E60049C4A1 /* InteractingLight.h */,
 				3A3831A72859E7E80049C4A1 /* InteractionPass.cpp */,
 				3A3831A92859E7E90049C4A1 /* InteractionPass.h */,
 				3A3831A82859E7E90049C4A1 /* LightingModeRenderer.cpp */,
@@ -7832,6 +7858,8 @@
 		3AF743EF1E4F861A003465B5 /* glprogram */ = {
 			isa = PBXGroup;
 			children = (
+				3A38324D28C354120049C4A1 /* BlendLightProgram.cpp */,
+				3A38324C28C354120049C4A1 /* BlendLightProgram.h */,
 				3A3831E72859E8560049C4A1 /* CubeMapProgram.cpp */,
 				3A3831EA2859E8570049C4A1 /* CubeMapProgram.h */,
 				3A3831E82859E8560049C4A1 /* DepthFillAlphaProgram.cpp */,
@@ -8187,6 +8215,7 @@
 		3AF744BA1E4F861B003465B5 /* einspector */ = {
 			isa = PBXGroup;
 			children = (
+				3A38324328C34EB10049C4A1 /* TargetKey.h */,
 				3AF744BB1E4F861B003465B5 /* AddPropertyDialog.cpp */,
 				3AF744BC1E4F861B003465B5 /* AddPropertyDialog.h */,
 				3AF744BD1E4F861B003465B5 /* AnglePropertyEditor.cpp */,
@@ -8998,11 +9027,13 @@
 				3A38320C285A12730049C4A1 /* ThreadedDeclarationTreePopulator.h in Headers */,
 				3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */,
 				3AC88AAD25BC102500E6CCCE /* IResourceTreePopulator.h in Headers */,
+				3A38324228C34E7D0049C4A1 /* FormLayout.h in Headers */,
 				3A0120381E50278400A62BC1 /* FileChooser.h in Headers */,
 				3A0120521E50278400A62BC1 /* PanedPosition.h in Headers */,
 				3AC88AB925BC102500E6CCCE /* TreeModelFilter.h in Headers */,
 				3A0120431E50278400A62BC1 /* IconTextMenuItem.h in Headers */,
 				3AFF063B253AE829002B1472 /* EntityClassChooser.h in Headers */,
+				3A38324128C34E7D0049C4A1 /* Icon.h in Headers */,
 				3A01204B1E50278400A62BC1 /* Modifier.h in Headers */,
 				3A383217285A12C10049C4A1 /* DefinitionView.h in Headers */,
 				3A0120351E50278400A62BC1 /* KeyEventFilter.h in Headers */,
@@ -9423,6 +9454,7 @@
 			files = (
 				3A38311C272D36D30049C4A1 /* Node.h in Headers */,
 				3AC88A472596F52000E6CCCE /* GLFont.h in Headers */,
+				3A38324E28C354130049C4A1 /* BlendLightProgram.h in Headers */,
 				3AFF051B253ADF91002B1472 /* MessageBus.h in Headers */,
 				3AC88A3B2556707000E6CCCE /* PatchSurface.h in Headers */,
 				3AFF0564253AE1F1002B1472 /* JPEGLoader.h in Headers */,
@@ -9448,9 +9480,9 @@
 				3AFF0560253AE1F1002B1472 /* BMPLoader.h in Headers */,
 				3AE5C347263930D900643850 /* MaterialSourceGenerator.h in Headers */,
 				3AFF05A8253AE3D1002B1472 /* CameraManager.h in Headers */,
+				3A38324B28C34EE90049C4A1 /* BlendLight.h in Headers */,
 				3A383115272D36D30049C4A1 /* TextureToolSceneGraph.h in Headers */,
 				3A3831F32859E8580049C4A1 /* RegularStageProgram.h in Headers */,
-				3A3831B92859E7EE0049C4A1 /* InteractingLight.h in Headers */,
 				3AE5C345263930D900643850 /* ExpressionSlots.h in Headers */,
 				3AC88A9925BC0FE600E6CCCE /* FavouritesManager.h in Headers */,
 				3A383231285A14520049C4A1 /* DeclarationFile.h in Headers */,
@@ -9483,6 +9515,7 @@
 				3AFF04C9253ADC33002B1472 /* SharedOpenGLContextModule.h in Headers */,
 				3AE5C30A26392F8B00643850 /* EntityClass.h in Headers */,
 				3AE5C34B263930D900643850 /* VideoMapExpression.h in Headers */,
+				3A38324928C34EE90049C4A1 /* RegularLight.h in Headers */,
 				3AC88A492596F52000E6CCCE /* OpenGLModule.h in Headers */,
 				3A3831C32859E7EF0049C4A1 /* ColourShader.h in Headers */,
 				3A38318C2859E68B0049C4A1 /* RenderableEntityBox.h in Headers */,
@@ -10020,6 +10053,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3A38323928C34E180049C4A1 /* blend_light_fp.glsl in Resources */,
 				3A383078272D31C70049C4A1 /* repository_logo.png in Resources */,
 				3A3831372859E31D0049C4A1 /* lightingModeWithShadows.png in Resources */,
 				3AA6E08D23BB50DE00BF9AD7 /* stimresponseeditor.xrc in Resources */,
@@ -10076,6 +10110,7 @@
 				3A383070272D31C60049C4A1 /* vscale_down.png in Resources */,
 				3A382FAC26C176AD0049C4A1 /* mergecontroldialog.xrc in Resources */,
 				3A382FA526C176340049C4A1 /* outgoing_commits.png in Resources */,
+				3A38323A28C34E180049C4A1 /* blend_light_vp.glsl in Resources */,
 				3A383129272D5BE90049C4A1 /* link_scale_up.png in Resources */,
 				3A382FA026C176340049C4A1 /* merge_fork.png in Resources */,
 				3A383075272D31C70049C4A1 /* decrease.png in Resources */,
@@ -10496,7 +10531,6 @@
 				3AF745C31E4F861B003465B5 /* precompiled.cpp in Sources */,
 				3AE6F27D1FF78CD0008A1B2D /* EntityList.cpp in Sources */,
 				3AC88794253C24D500E6CCCE /* ClipboardModule.cpp in Sources */,
-				3AF7458E1E4F861B003465B5 /* Console.cpp in Sources */,
 				3AF745951E4F861B003465B5 /* main.cpp in Sources */,
 				3AE6F342239F4FE1008A1B2D /* MouseToolManager.cpp in Sources */,
 				3AE5C29F26392DB300643850 /* DialogManager.cpp in Sources */,
@@ -10690,6 +10724,7 @@
 				3AFF046F253AB96C002B1472 /* DeflatedInputStream.cpp in Sources */,
 				3AFF057F253AE2ED002B1472 /* TargetKeyCollection.cpp in Sources */,
 				3AFF056D253AE23A002B1472 /* XMLFilter.cpp in Sources */,
+				3A38324828C34EE90049C4A1 /* RegularLight.cpp in Sources */,
 				3AFF04D6253ADD3E002B1472 /* ParticleNode.cpp in Sources */,
 				3AFF059A253AE39A002B1472 /* SplitAlgorithm.cpp in Sources */,
 				3A38311A272D36D30049C4A1 /* PatchNode.cpp in Sources */,
@@ -10776,7 +10811,6 @@
 				3AFF06D7253BFD31002B1472 /* dds.cpp in Sources */,
 				3AFF0570253AE272002B1472 /* CurveCatmullRom.cpp in Sources */,
 				3A3831BB2859E7EE0049C4A1 /* FullBrightRenderer.cpp in Sources */,
-				3A3831C42859E7EF0049C4A1 /* InteractingLight.cpp in Sources */,
 				3AFF056F253AE272002B1472 /* Curve.cpp in Sources */,
 				3AFF0510253ADF3F002B1472 /* Lwo2Exporter.cpp in Sources */,
 				3AFF048E253ABB78002B1472 /* ColourSchemeManager.cpp in Sources */,
@@ -10807,6 +10841,7 @@
 				3A3830F7272D36770049C4A1 /* SceneManipulationPivot.cpp in Sources */,
 				3A383111272D36D30049C4A1 /* TextureToolRotateManipulator.cpp in Sources */,
 				3AFF0587253AE32F002B1472 /* KeyValueObserver.cpp in Sources */,
+				3A38324F28C354130049C4A1 /* BlendLightProgram.cpp in Sources */,
 				3AFF04A3253ABCB1002B1472 /* Shader.cpp in Sources */,
 				3AFF04D3253ADCA6002B1472 /* PatchRenderables.cpp in Sources */,
 				3AFF04D5253ADD3E002B1472 /* ParticleDef.cpp in Sources */,
@@ -10843,6 +10878,7 @@
 				3AFF0470253AB96C002B1472 /* DirectoryArchive.cpp in Sources */,
 				3AFF054F253AE18F002B1472 /* LogFile.cpp in Sources */,
 				3AE5C346263930D900643850 /* MaterialSourceGenerator.cpp in Sources */,
+				3A38324A28C34EE90049C4A1 /* BlendLight.cpp in Sources */,
 				3A3831EF2859E8580049C4A1 /* ShadowMapProgram.cpp in Sources */,
 				3AFF06D9253BFD38002B1472 /* TGALoader.cpp in Sources */,
 				3AFF04E1253ADDAB002B1472 /* ModuleLoader.cpp in Sources */,

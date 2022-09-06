@@ -261,6 +261,9 @@ public:
         /// Entity class of the attached entity
         std::string eclass;
 
+        // Optional attachment name (arbitrarily chosen by the user)
+        std::string name;
+
         /// Vector offset where the attached entity should appear
         Vector3 offset;
 

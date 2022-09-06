@@ -34,7 +34,7 @@ public:
     // Create a new PropertyEditor with the provided classname to manage the
     // given Entity object and key name.
     IPropertyEditor::Ptr create(wxWindow* parent, const std::string& className,
-        IEntitySelection& entities, const std::string& key, const std::string& options);
+        IEntitySelection& entities, const ITargetKey::Ptr& key);
 
     // Associate a specific property editor for the given key (regex)
 	void registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator);

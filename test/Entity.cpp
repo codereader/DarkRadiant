@@ -906,8 +906,9 @@ TEST_F(EntityTest, CreateAttachedLightEntity)
 
     // Examine the properties of the single attachment
     Entity::Attachment attachment = attachments.front();
-    EXPECT_EQ(attachment.eclass, "light_cageflame_small");
+    EXPECT_EQ(attachment.eclass, spawnArgs.getKeyValue("def_attach"));
     EXPECT_EQ(attachment.offset, Vector3(0, 0, 10));
+    EXPECT_EQ(attachment.name, spawnArgs.getKeyValue("name_attach"));
 }
 
 TEST_F(EntityTest, RenderAttachedLightEntity)

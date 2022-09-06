@@ -57,11 +57,12 @@ class IShaderLayer
 public:
     using Ptr = std::shared_ptr<IShaderLayer>;
 
-    /// Enumeration of layer types.
+    /// Enumeration of layer types
+    /// The enum value is also used to sort interaction stages: bump before diffuse before specular
     enum Type
     {
-        DIFFUSE,
         BUMP,
+        DIFFUSE,
         SPECULAR,
         BLEND
     };

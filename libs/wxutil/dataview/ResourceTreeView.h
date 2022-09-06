@@ -6,6 +6,7 @@
 #include "TreeModelFilter.h"
 #include "IResourceTreePopulator.h"
 #include "../menu/PopupMenu.h"
+#include "wxutil/Icon.h"
 
 namespace wxutil
 {
@@ -76,7 +77,7 @@ private:
     TreeModelFilter::Ptr _treeModelFilter;
     wxDataViewItem _emptyFavouritesLabel;
     wxDataViewItem _progressItem;
-    wxIcon _progressIcon;
+    Icon _progressIcon;
 
     // The currently active populator object
     IResourceTreePopulator::Ptr _populator;

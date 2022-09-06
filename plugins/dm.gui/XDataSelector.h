@@ -1,6 +1,7 @@
 #pragma once
 
 #include "XDataLoader.h"
+#include "wxutil/Icon.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/dataview/TreeView.h"
@@ -47,8 +48,8 @@ private:
 	// Pointer to the ReadableEditorDialog for updating the guiView.
 	ReadableEditorDialog* _editorDialog;
 
-	wxIcon _xdataIcon;
-	wxIcon _folderIcon;
+	wxutil::Icon _xdataIcon;
+	wxutil::Icon _folderIcon;
 
 public:
 	// Runs the dialog and returns the name of the chosen definition.

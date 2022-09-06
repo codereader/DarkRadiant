@@ -53,6 +53,55 @@
 											</object>
 										</object>
 									</object>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxEXPAND | wxALL</flag>
+										<border>0</border>
+										<object class="wxNotebook" name="ModelSelectorDetailsNotebook">
+											<object class="notebookpage">
+												<label>Properties</label>
+												<selected>0</selected>
+												<bitmap stock_id="darkradiant:icon_classname.png" stock_client="">undefined.png</bitmap>
+												<object class="wxPanel" name="ModelDetailsPanel">
+													<style>wxTAB_TRAVERSAL</style>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+													</object>
+												</object>
+											</object>
+											<object class="notebookpage">
+												<label>Materials</label>
+												<selected>0</selected>
+												<bitmap stock_id="darkradiant:icon_texture.png" stock_client="">undefined.png</bitmap>
+												<object class="wxPanel" name="ModelMaterialsPanel">
+													<style>wxTAB_TRAVERSAL</style>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+													</object>
+												</object>
+											</object>
+											<object class="notebookpage">
+												<label>Related Entity Classes</label>
+												<selected>1</selected>
+												<bitmap stock_id="darkradiant:cmenu_add_entity.png" stock_client="">undefined.png</bitmap>
+												<object class="wxPanel" name="ModelRelatedEntitiesPanel">
+													<style>wxTAB_TRAVERSAL</style>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>0</option>
+															<flag>wxALIGN_LEFT|wxLEFT|wxTOP</flag>
+															<border>3</border>
+															<object class="wxStaticText" name="m_staticText2">
+																<label>Double-click to create the selected Entity Class</label>
+																<wrap>-1</wrap>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+										</object>
+									</object>
 								</object>
 							</object>
 							<object class="wxPanel" name="ModelSelectorRightPanel">

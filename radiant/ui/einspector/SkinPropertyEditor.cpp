@@ -15,11 +15,9 @@ namespace ui
 {
 
 // Main constructor
-SkinPropertyEditor::SkinPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-									   const std::string& name,
-									   const std::string& options)
+SkinPropertyEditor::SkinPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
 : PropertyEditor(entities),
-  _key(name)
+  _key(key)
 {
 	constructBrowseButtonPanel(parent, _("Choose skin..."),
 		PropertyEditorFactory::getBitmapFor("skin"));
@@ -27,7 +25,10 @@ SkinPropertyEditor::SkinPropertyEditor(wxWindow* parent, IEntitySelection& entit
 
 void SkinPropertyEditor::onBrowseButtonClick()
 {
-    auto model = _entities.getSharedKeyValue("model", true);
+    auto modelKey = _key->clone();
+    modelKey->setAffectedKey("model");
+
+    auto model = _entities.getSharedKeyValue(modelKey->getFullKey(), true);
 
     if (model.empty())
     {
@@ -37,11 +38,11 @@ void SkinPropertyEditor::onBrowseButtonClick()
     }
 
 	// Display the SkinChooser to get a skin from the user
-	std::string prevSkin = _entities.getSharedKeyValue(_key, true);
+	std::string prevSkin = _entities.getSharedKeyValue(_key->getFullKey(), true);
 	std::string skin = SkinChooser::chooseSkin(model, prevSkin);
 
 	// Apply the key to the entity
-	setKeyValue(_key, skin);
+	setKeyValue(_key->getFullKey(), skin);
 }
 
 std::string SkinChooserDialogWrapper::runDialog(Entity* entity, const std::string& key)

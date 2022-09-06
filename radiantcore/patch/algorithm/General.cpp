@@ -305,6 +305,12 @@ scene::INodePtr createdMergedPatch(const PatchNodePtr& patchNode1, const PatchNo
             auto& dimensionToExpand = patch1Edge.edgeType == EdgeType::Row ? numNewRows : numNewColumns;
             dimensionToExpand += numNewEdges;
 
+            // Check if the new dimensions are out of bounds
+            if (numNewColumns > MAX_PATCH_WIDTH || numNewRows > MAX_PATCH_HEIGHT)
+            {
+                throw cmd::ExecutionFailure(_("Merged patch would exceed maximum dimensions, cannot proceed."));
+            }
+
             // Create the new patch
             auto newPatchNode = GlobalPatchModule().createPatch(patch1.subdivisionsFixed() ? PatchDefType::Def3 : PatchDefType::Def2);
             auto& newPatch = std::dynamic_pointer_cast<IPatchNode>(newPatchNode)->getPatch();

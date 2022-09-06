@@ -14,6 +14,7 @@
 #include "wxutil/PanedPosition.h"
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/event/SingleIdleCallback.h"
+#include "wxutil/Icon.h"
 
 #include <wx/event.h>
 #include <wx/icon.h>
@@ -105,7 +106,7 @@ private:
     wxDataViewColumn* _oldValueColumn;
     wxDataViewColumn* _newValueColumn;
 
-	wxIcon _emptyIcon;
+    wxutil::Icon _emptyIcon;
 
     // Cache of wxDataViewItems pointing to keyvalue rows,
 	// so we can quickly find existing keys to change their values
@@ -137,17 +138,8 @@ private:
 	typedef std::vector<KeyValuePair> ClipBoard;
 	ClipBoard _clipboard;
 
-	// Data structure to store the type (vector3, text etc) and the options
-	// string for a single property.
-	struct PropertyParms
-	{
-		std::string type;
-		std::string options;
-	};
-
-	// Map of property names to PropertyParms, mapped like this: regex => parms
-	typedef std::map<std::string, PropertyParms> PropertyParmMap;
-	PropertyParmMap _propertyTypes;
+	// Map of property names to type, mapped like this: regex => type
+    std::map<std::string, std::string> _propertyTypes;
 
 	sigc::connection _defsReloadedHandler;
 	sigc::connection _mapEditModeChangedHandler;
@@ -248,8 +240,9 @@ private:
 	void loadPropertyMap();
 
 	// Returns property type and option for the given entity key
-	PropertyParms getPropertyParmsForKey(const std::string& key);
+	std::string getPropertyTypeFromGame(const std::string& key);
 	std::string getPropertyTypeForKey(const std::string& key);
+	std::string getPropertyTypeForAttachmentKey(const std::string& key);
     void updateListedKeyTypes();
     void updateKeyType(wxutil::TreeModel::Row& row);
 

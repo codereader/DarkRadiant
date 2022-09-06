@@ -32,13 +32,10 @@ Populator::Populator(const TreeColumns& columns,
     _treeStore(new wxutil::TreeModel(_columns)),
     _finishedHandler(finishedHandler),
     _treePopulator(_treeStore),
+    _fileIcon(GetLocalBitmap(FILE_ICON)),
+    _folderIcon(GetLocalBitmap(FOLDER_ICON)),
     _fileExtensions(fileExtensions)
 {
-    _fileIcon.CopyFromBitmap(
-        wxutil::GetLocalBitmap(FILE_ICON));
-    _folderIcon.CopyFromBitmap(
-        wxutil::GetLocalBitmap(FOLDER_ICON));
-
     _basePathItem = insertBasePathItem();
     _treePopulator.setTopLevelItem(_basePathItem);
 }
@@ -54,7 +51,7 @@ Populator::~Populator()
 
 void Populator::SetDefaultFileIcon(const std::string& fileIcon)
 {
-    _fileIcon.CopyFromBitmap(wxutil::GetLocalBitmap(fileIcon));
+    _fileIcon = wxutil::Icon(GetLocalBitmap(fileIcon));
 }
 
 void Populator::visitFile(const vfs::FileInfo& fileInfo)
@@ -160,7 +157,7 @@ void Populator::Populate()
     Run();
 }
 
-const wxIcon& Populator::GetIconForFile(const std::string& path)
+const wxutil::Icon& Populator::GetIconForFile(const std::string& path)
 {
     auto extension = string::to_lower_copy(os::getExtension(path));
     auto foundIcon = _iconsPerExtension.find(extension);
@@ -175,9 +172,7 @@ const wxIcon& Populator::GetIconForFile(const std::string& path)
 
     if (!iconName.empty())
     {
-        wxIcon customIcon;
-        customIcon.CopyFromBitmap(wxutil::GetLocalBitmap(iconName));
-
+        wxutil::Icon customIcon(GetLocalBitmap(iconName));
         foundIcon = _iconsPerExtension.emplace(extension, customIcon).first;
     }
     else

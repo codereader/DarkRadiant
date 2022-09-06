@@ -6,7 +6,7 @@
 #include "irender.h"
 #include "ishaders.h"
 #include "texturelib.h"
-#include "iglprogram.h"
+#include "glprogram/BlendLightProgram.h"
 
 #include "debugging/render.h"
 #include "debugging/gl.h"
@@ -156,6 +156,24 @@ void OpenGLShaderPass::drawRenderables(OpenGLState& current)
 
     // Cleanup
     glPopMatrix();
+}
+
+OpenGLState OpenGLShaderPass::CreateBlendLightState(BlendLightProgram* blendProgram)
+{
+    OpenGLState state;
+
+    state.setRenderFlag(RENDER_BLEND);
+    state.setRenderFlag(RENDER_PROGRAM);
+    state.setRenderFlag(RENDER_SMOOTH);
+    state.setRenderFlag(RENDER_DEPTHTEST);
+    state.setRenderFlag(RENDER_CULLFACE);
+
+    state.setDepthFunc(GL_LEQUAL);
+    state.m_blend_src = GL_SRC_ALPHA;
+    state.m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
+    state.glProgram = blendProgram;
+
+    return state;
 }
 
 // Stream insertion operator

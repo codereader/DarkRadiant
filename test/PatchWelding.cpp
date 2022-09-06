@@ -78,11 +78,8 @@ void verifyMergedPatch(const scene::INodePtr& mergedPatchNode, int expectedRows,
     EXPECT_EQ(merged->getPatch().getWidth(), expectedCols);
 }
 
-void assumePatchWeldingFails(const std::string& number1, const std::string& number2)
+void assumePatchWeldingFails(const scene::INodePtr& firstPatch, const scene::INodePtr& secondPatch)
 {
-    auto firstPatch = findPatchWithNumber(number1);
-    auto secondPatch = findPatchWithNumber(number2);
-
     Node_setSelected(firstPatch, true);
     Node_setSelected(secondPatch, true);
 
@@ -97,6 +94,14 @@ void assumePatchWeldingFails(const std::string& number1, const std::string& numb
     // Two patches not removed from the scene
     EXPECT_TRUE(firstPatch->getParent());
     EXPECT_TRUE(secondPatch->getParent());
+}
+
+void assumePatchWeldingFails(const std::string& number1, const std::string& number2)
+{
+    auto firstPatch = findPatchWithNumber(number1);
+    auto secondPatch = findPatchWithNumber(number2);
+
+    assumePatchWeldingFails(firstPatch, secondPatch);
 }
 
 }
@@ -156,6 +161,19 @@ INSTANTIATE_TEST_CASE_P(WeldPatch16WithOther3x3, PatchWelding3x3,
                     std::tuple{ "18", "16", 5, 3 },
                     std::tuple{ "19", "16", 5, 3 },
                     std::tuple{ "20", "16", 5, 3 }));
+
+TEST_F(PatchWeldingTest, WeldPatchExceedingMaximumDimensions)
+{
+    loadMap("weld_patches_out_of_bounds.map");
+
+    auto firstPatch = algorithm::getNthChild(GlobalMapModule().findOrInsertWorldspawn(), 0);
+    auto secondPatch = algorithm::getNthChild(GlobalMapModule().findOrInsertWorldspawn(), 1);
+
+    EXPECT_TRUE(Node_isPatch(firstPatch)) << "Map should contain excactly two worldspawn patches";
+    EXPECT_TRUE(Node_isPatch(secondPatch)) << "Map should contain excactly two worldspawn patches";
+
+    assumePatchWeldingFails(firstPatch, secondPatch);
+}
 
 // Patch 4 = worldspawn, Patch 7 = func_static
 TEST_F(PatchWeldingTest, TryToWeldPatchesOfDifferentParents)

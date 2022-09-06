@@ -29,6 +29,45 @@ public:
 };
 
 /**
+ * Represents the key selection in the entity inspector.
+ * This can be the direct key like "model" or it can be a proxy setter,
+ * in the form of "set <key> on <attachment>" which are propagating
+ * key values to attached entities at spawn time.
+ */
+class ITargetKey
+{
+public:
+    using Ptr = std::shared_ptr<ITargetKey>;
+
+    virtual ~ITargetKey() {}
+
+    // Returns the full string representation of this key, e.g. "classname" or "set _color on flame"
+    virtual std::string getFullKey() const = 0;
+
+    // The key this is affecting, either on this entity or an attachment
+    // ("set X on Y" style keys will return key part X).
+    virtual const std::string& getAffectedKey() const = 0;
+
+    // Modify the key this setter is affecting.
+    // Passing an empty key will throw an std::invalid_argument exception.
+    virtual void setAffectedKey(const std::string&) = 0;
+
+    // Returns true whether this is a "set X on Y" style key, or false if this a regular key
+    virtual bool isTargetingAttachment() const = 0;
+
+    // In case this a "set x on y" style key, this method returns the name of the attachment y
+    virtual const std::string& getAttachmentName() const = 0;
+
+    // Set the name of the attachment to modify. Assigning a non-empty name will
+    // make this key a "set x on y" setter, assigning an name will
+    // convert this to a regular entity key.
+    virtual void setAttachmentName(const std::string& name) = 0;
+
+    // Returns a new copy of this instance
+    virtual Ptr clone() const = 0;
+};
+
+/**
  * Abstract base for a PropertyEditor which provides
  * a user interface for editing spawnargs (entity keyvalues).
  */
@@ -48,12 +87,8 @@ public:
      *
      * @param key
      * The key name which this PropertyEditor is displaying.
-     *
-     * @param options
-     * PropertyEditor-specific options string, from the .game file.
      */
-    using CreationFunc = std::function<Ptr(wxWindow*, IEntitySelection&, 
-        const std::string& key, const std::string& options)>;
+    using CreationFunc = std::function<Ptr(wxWindow*, IEntitySelection&, const ITargetKey::Ptr& key)>;
 
     virtual ~IPropertyEditor() {}
 

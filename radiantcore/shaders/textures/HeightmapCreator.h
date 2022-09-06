@@ -20,7 +20,7 @@ ImagePtr createNormalmapFromHeightmap(ImagePtr heightMap, float scale) {
 	std::size_t width = heightMap->getWidth();
 	std::size_t height = heightMap->getHeight();
 
-	ImagePtr normalMap (new RGBAImage(width, height));
+	ImagePtr normalMap (new image::RGBAImage(width, height));
 
 	byte* in = heightMap->getPixels();
 	byte* out = normalMap->getPixels();

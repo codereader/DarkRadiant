@@ -83,12 +83,10 @@ const unsigned RENDER_FILL = 1 << 14;
 const unsigned RENDER_VERTEX_COLOUR = 1 << 15;
 
 /**
- * If enabled, point geometry may submit colours for each point. If disabled,
- * point geometry must not change colour during rendering.
- *
- * Does not affect GL state.
+ * If enabled, the renderer will apply the state's colour by calling glColor.
+ * If not enabled, a white colour will be used.
  */
-const unsigned RENDER_POINT_COLOUR = 1 << 16;
+const unsigned RENDER_COLOUR = 1 << 16;
 
 /// GL_TEXTURE_2D will be enabled during rendering.
 const unsigned RENDER_TEXTURE_2D = 1 << 17;
@@ -265,6 +263,9 @@ public:
 
     // Whether this light is allowed to cast shadows
     virtual bool isShadowCasting() const = 0;
+
+    // Whether this light is using a blend light material
+    virtual bool isBlendLight() const = 0;
 };
 typedef std::shared_ptr<RendererLight> RendererLightPtr;
 

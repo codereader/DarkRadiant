@@ -1371,6 +1371,9 @@
     <ClInclude Include="..\..\radiant\ui\console\Console.h">
       <Filter>src\ui\console</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\TargetKey.h">
+      <Filter>src\ui\einspector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

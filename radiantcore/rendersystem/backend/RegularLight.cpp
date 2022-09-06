@@ -1,5 +1,6 @@
-#include "InteractingLight.h"
+#include "RegularLight.h"
 
+#include "ishaders.h"
 #include "OpenGLShader.h"
 #include "ObjectRenderer.h"
 #include "glprogram/DepthFillAlphaProgram.h"
@@ -8,7 +9,7 @@
 namespace render
 {
 
-InteractingLight::InteractingLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer) :
+RegularLight::RegularLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer) :
     _light(light),
     _store(store),
     _objectRenderer(objectRenderer),
@@ -20,10 +21,11 @@ InteractingLight::InteractingLight(RendererLight& light, IGeometryStore& store, 
     _shadowLightIndex(-1)
 {
     // Consider the "noshadows" flag and the setting of the light material
-    _isShadowCasting = _light.isShadowCasting() && _light.getShader() && _light.getShader()->getMaterial()->lightCastsShadows();
+    _isShadowCasting = _light.isShadowCasting() && _light.getShader() && 
+        _light.getShader()->getMaterial() && _light.getShader()->getMaterial()->lightCastsShadows();
 }
 
-void InteractingLight::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader)
+void RegularLight::addObject(IRenderableObject& object, IRenderEntity& entity, OpenGLShader* shader)
 {
     auto& objectsByMaterial = _objectsByEntity.emplace(
         &entity, ObjectsByMaterial{}).first->second;
@@ -36,17 +38,17 @@ void InteractingLight::addObject(IRenderableObject& object, IRenderEntity& entit
     ++_objectCount;
 }
 
-bool InteractingLight::isInView(const IRenderView& view)
+bool RegularLight::isInView(const IRenderView& view)
 {
     return view.TestAABB(_lightBounds) != VOLUME_OUTSIDE;
 }
 
-bool InteractingLight::isShadowCasting() const
+bool RegularLight::isShadowCasting() const
 {
     return _isShadowCasting;
 }
 
-void InteractingLight::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
+void RegularLight::collectSurfaces(const IRenderView& view, const std::set<IRenderEntityPtr>& entities)
 {
     bool shadowCasting = isShadowCasting();
 
@@ -97,7 +99,7 @@ void InteractingLight::collectSurfaces(const IRenderView& view, const std::set<I
     }
 }
 
-void InteractingLight::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
+void RegularLight::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram& program, 
     std::size_t renderTime, std::vector<IGeometryStore::Slot>& untransformedObjectsWithoutAlphaTest)
 {
     std::vector<IGeometryStore::Slot> untransformedObjects;
@@ -151,7 +153,7 @@ void InteractingLight::fillDepthBuffer(OpenGLState& state, DepthFillAlphaProgram
     }
 }
 
-void InteractingLight::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, 
+void RegularLight::drawShadowMap(OpenGLState& state, const Rectangle& rectangle, 
     ShadowMapProgram& program, std::size_t renderTime)
 {
     // Set up the viewport to write to a specific area within the shadow map texture
@@ -214,7 +216,109 @@ void InteractingLight::drawShadowMap(OpenGLState& state, const Rectangle& rectan
     debug::assertNoGlErrors();
 }
 
-void InteractingLight::drawInteractions(OpenGLState& state, InteractionProgram& program, 
+RegularLight::InteractionDrawCall::InteractionDrawCall(OpenGLState& state, InteractionProgram& program,
+    IObjectRenderer& objectRenderer, const Vector3& worldLightOrigin, const Vector3& viewer) :
+    _state(state),
+    _program(program),
+    _objectRenderer(objectRenderer),
+    _worldLightOrigin(worldLightOrigin),
+    _viewer(viewer),
+    _bump(nullptr),
+    _diffuse(nullptr),
+    _specular(nullptr),
+    _interactionDrawCalls(0)
+{
+    _untransformedObjects.reserve(10000);
+}
+
+void RegularLight::InteractionDrawCall::submit(const ObjectList& objects)
+{
+    // Every material without bump defines an implicit _flat bump (see in TDM sources: Material::AddImplicitStages)
+    if (!_bump)
+    {
+        _bump = &_defaultBumpStage;
+    }
+
+    // Substitute diffuse and specular with default images if necessary
+    if (!_diffuse)
+    {
+        _diffuse = &_defaultDiffuseStage;
+    }
+
+    if (!_specular)
+    {
+        _specular = &_defaultSpecularStage;
+    }
+
+    // Bind textures
+    OpenGLState::SetTextureState(_state.texture0, _diffuse->texture, GL_TEXTURE0, GL_TEXTURE_2D);
+    OpenGLState::SetTextureState(_state.texture1, _bump->texture, GL_TEXTURE1, GL_TEXTURE_2D);
+    OpenGLState::SetTextureState(_state.texture2, _specular->texture, GL_TEXTURE2, GL_TEXTURE_2D);
+
+    // Enable alphatest if required
+    if (_diffuse && _diffuse->stage && _diffuse->stage->hasAlphaTest())
+    {
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GEQUAL, _diffuse->stage->getAlphaTest());
+    }
+    else
+    {
+        glDisable(GL_ALPHA_TEST);
+    }
+
+    // Load stage texture matrices
+    _program.setDiffuseTextureTransform(_diffuse && _diffuse->stage ? _diffuse->stage->getTextureTransform() : Matrix4::getIdentity());
+    _program.setBumpTextureTransform(_bump && _bump->stage ? _bump->stage->getTextureTransform() : Matrix4::getIdentity());
+    _program.setSpecularTextureTransform(_specular && _specular->stage ? _specular->stage->getTextureTransform() : Matrix4::getIdentity());
+
+    // Vertex colour mode and diffuse stage colour setup for this pass
+    _program.setStageVertexColour(_diffuse && _diffuse->stage ? _diffuse->stage->getVertexColourMode() : IShaderLayer::VERTEX_COLOUR_NONE,
+        _diffuse && _diffuse->stage ? _diffuse->stage->getColour() : Colour4::WHITE());
+
+    for (const auto& object : objects)
+    {
+        // We submit all objects with an identity matrix in a single multi draw call
+        if (!object.get().isOriented())
+        {
+            _untransformedObjects.push_back(object.get().getStorageLocation());
+            continue;
+        }
+
+        _program.setUpObjectLighting(_worldLightOrigin, _viewer, object.get().getObjectTransform().getInverse());
+        _program.setObjectTransform(object.get().getObjectTransform());
+
+        _objectRenderer.submitGeometry(object.get().getStorageLocation(), GL_TRIANGLES);
+        ++_interactionDrawCalls;
+    }
+
+    if (!_untransformedObjects.empty())
+    {
+        _program.setUpObjectLighting(_worldLightOrigin, _viewer, Matrix4::getIdentity());
+        _program.setObjectTransform(Matrix4::getIdentity());
+
+        _objectRenderer.submitGeometry(_untransformedObjects, GL_TRIANGLES);
+        ++_interactionDrawCalls;
+
+        _untransformedObjects.clear();
+    }
+}
+
+void RegularLight::InteractionDrawCall::setBump(const InteractionPass::Stage* bump)
+{
+    _bump = bump;
+}
+
+void RegularLight::InteractionDrawCall::setDiffuse(const InteractionPass::Stage* diffuse)
+{
+    _diffuse = diffuse;
+}
+
+void RegularLight::InteractionDrawCall::setSpecular(const InteractionPass::Stage* specular)
+{
+    _specular = specular;
+}
+
+void RegularLight::drawInteractions(OpenGLState& state, InteractionProgram& program, 
     const IRenderView& view, std::size_t renderTime)
 {
     if (_objectsByEntity.empty())
@@ -224,8 +328,7 @@ void InteractingLight::drawInteractions(OpenGLState& state, InteractionProgram& 
 
     auto worldLightOrigin = _light.getLightOrigin();
 
-    std::vector<IGeometryStore::Slot> untransformedObjects;
-    untransformedObjects.reserve(10000);
+    InteractionDrawCall draw(state, program, _objectRenderer, worldLightOrigin, view.getViewer());
 
     // Set up textures used by this light
     program.setupLightParameters(state, _light, renderTime);
@@ -236,74 +339,57 @@ void InteractingLight::drawInteractions(OpenGLState& state, InteractionProgram& 
         {
             const auto pass = shader->getInteractionPass();
 
-            if (!pass || !pass->stateIsActive()) continue;
+            if (!pass) continue;
 
-            // Evaluate the expressions in the material stages
-            pass->evaluateShaderStages(renderTime, entity);
+            draw.prepare(*pass);
 
-            // Enable alphatest if required
-            if (pass->state().stage0 && pass->state().stage0->hasAlphaTest())
+            for (const auto& interactionStage : pass->getInteractionStages())
             {
-                glEnable(GL_ALPHA_TEST);
-                glAlphaFunc(GL_GEQUAL, pass->state().stage0->getAlphaTest());
-            }
-            else
-            {
-                glDisable(GL_ALPHA_TEST);
-            }
+                interactionStage.stage->evaluateExpressions(renderTime, *entity);
 
-            // Bind textures
-            OpenGLState::SetTextureState(state.texture0, pass->state().texture0, GL_TEXTURE0, GL_TEXTURE_2D);
-            OpenGLState::SetTextureState(state.texture1, pass->state().texture1, GL_TEXTURE1, GL_TEXTURE_2D);
-            OpenGLState::SetTextureState(state.texture2, pass->state().texture2, GL_TEXTURE2, GL_TEXTURE_2D);
+                if (!interactionStage.stage->isVisible()) continue; // ignore inactive stages
 
-            // Load stage texture matrices
-            program.setDiffuseTextureTransform(pass->getDiffuseTextureTransform());
-            program.setBumpTextureTransform(pass->getBumpTextureTransform());
-            program.setSpecularTextureTransform(pass->getSpecularTextureTransform());
-
-            // Vertex colour mode and diffuse stage colour setup for this pass
-            program.setStageVertexColour(pass->state().getVertexColourMode(), 
-                pass->state().stage0 ? pass->state().stage0->getColour() : Colour4::WHITE());
-
-            for (const auto& object : objects)
-            {
-                // We submit all objects with an identity matrix in a single multi draw call
-                if (!object.get().isOriented())
+                switch (interactionStage.stage->getType())
                 {
-                    untransformedObjects.push_back(object.get().getStorageLocation());
-                    continue;
+                case IShaderLayer::BUMP:
+                    if (draw.hasBump())
+                    {
+                        draw.submit(objects); // submit pending draws when changing bump maps
+                    }
+                    draw.setBump(&interactionStage);
+                    break;
+                case IShaderLayer::DIFFUSE:
+                    if (draw.hasDiffuse())
+                    {
+                        draw.submit(objects); // submit pending draws when changing diffuse maps
+                    }
+                    draw.setDiffuse(&interactionStage);
+                    break;
+                case IShaderLayer::SPECULAR:
+                    if (draw.hasSpecular())
+                    {
+                        draw.submit(objects); // submit pending draws when changing specular maps
+                    }
+                    draw.setSpecular(&interactionStage);
+                    break;
+                default:
+                    throw std::logic_error("Non-interaction stage encountered in interaction pass");
                 }
-
-                program.setUpObjectLighting(worldLightOrigin, view.getViewer(), 
-                    object.get().getObjectTransform().getInverse());
-
-                pass->getProgram().setObjectTransform(object.get().getObjectTransform());
-
-                _objectRenderer.submitGeometry(object.get().getStorageLocation(), GL_TRIANGLES);
-                ++_interactionDrawCalls;
             }
 
-            if (!untransformedObjects.empty())
-            {
-                program.setUpObjectLighting(worldLightOrigin, view.getViewer(), Matrix4::getIdentity());
-
-                pass->getProgram().setObjectTransform(Matrix4::getIdentity());
-
-                _objectRenderer.submitGeometry(untransformedObjects, GL_TRIANGLES);
-                ++_interactionDrawCalls;
-
-                untransformedObjects.clear();
-            }
+            // Submit the pending draw call
+            draw.submit(objects);
         }
     }
+
+    _interactionDrawCalls += draw.getInteractionDrawCalls();
 
     // Unbind the light textures
     OpenGLState::SetTextureState(state.texture3, 0, GL_TEXTURE3, GL_TEXTURE_2D);
     OpenGLState::SetTextureState(state.texture4, 0, GL_TEXTURE4, GL_TEXTURE_2D);
 }
 
-void InteractingLight::setupAlphaTest(OpenGLState& state, OpenGLShader* shader, DepthFillPass* depthFillPass,
+void RegularLight::setupAlphaTest(OpenGLState& state, OpenGLShader* shader, DepthFillPass* depthFillPass,
     ISupportsAlphaTest& program, std::size_t renderTime, IRenderEntity* entity)
 {
     const auto& material = shader->getMaterial();

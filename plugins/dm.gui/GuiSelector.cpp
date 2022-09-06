@@ -34,11 +34,10 @@ GuiSelector::GuiSelector(bool twoSided, ReadableEditorDialog* editorDialog) :
 	_oneSidedStore(new wxutil::TreeModel(_columns)),
 	_twoSidedStore(new wxutil::TreeModel(_columns)),
 	_oneSidedView(NULL),
-	_twoSidedView(NULL)
+	_twoSidedView(NULL),
+	_guiIcon(wxutil::GetLocalBitmap(GUI_ICON)),
+	_folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON))
 {
-	_guiIcon.CopyFromBitmap(wxutil::GetLocalBitmap(GUI_ICON));
-	_folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
-
 	// Set the windowsize and default border width in accordance to the HIG
 	SetSize(WINDOW_WIDTH, WINDOW_HEIGHT);
 

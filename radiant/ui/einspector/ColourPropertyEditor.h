@@ -23,8 +23,8 @@ private:
 	// The colour picker
 	wxColourPickerCtrl* _colorButton;
 
-	// Name of keyval
-	std::string _key;
+	// The target key
+    ITargetKey::Ptr _key;
 
 private:
 	// Set the colour button from the given string
@@ -39,15 +39,14 @@ private:
 public:
 
 	/// Construct a ColourPropertyEditor with a given Entity and keyname
-	ColourPropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& name);
+	ColourPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
 	void updateFromEntity();
 
 	/// Create a new ColourPropertyEditor
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-        const std::string& name, const std::string& options)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
     {
-        return std::make_shared<ColourPropertyEditor>(parent, entities, name);
+        return std::make_shared<ColourPropertyEditor>(parent, entities, key);
     }
 };
 

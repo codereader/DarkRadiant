@@ -13,7 +13,7 @@ class SoundPropertyEditor :
 {
 private:
 	// Keyvalue to set
-	std::string _key;
+    ITargetKey::Ptr _key;
 
 private:
 
@@ -22,13 +22,11 @@ private:
 public:
 
 	// Main constructor
-    SoundPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-                        const std::string& name, const std::string& options);
+    SoundPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                  const std::string& name, const std::string& options)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
     {
-        return std::make_shared<SoundPropertyEditor>(parent, entities, name, options);
+        return std::make_shared<SoundPropertyEditor>(parent, entities, key);
     }
 };
 

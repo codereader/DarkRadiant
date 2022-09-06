@@ -165,12 +165,12 @@ public:
      * \{
      */
 
-    GLint texture0; // diffuse
-    GLint texture1; // bump
-    GLint texture2; // specular
-    GLint texture3; // light texture
-    GLint texture4; // light falloff
-    GLint texture5; // shadow map
+    GLuint texture0; // diffuse
+    GLuint texture1; // bump
+    GLuint texture2; // specular
+    GLuint texture3; // light texture
+    GLuint texture4; // light falloff
+    GLuint texture5; // shadow map
 
     /**
      * \}
@@ -222,6 +222,10 @@ public:
      */
     IShaderLayer::CubeMapMode cubeMapMode;
 
+    // Whether to ignore the RGBA colour modulation defined by the associated shader stage
+    // in which case only the _colour member will be used.
+    bool ignoreStageColour;
+
     /// Default constructor
     OpenGLState()
     : _colour(Colour4::WHITE()),
@@ -245,7 +249,8 @@ public:
       m_linestipple_factor(1),
       m_linestipple_pattern(0xAAAA),
       glProgram(nullptr),
-      cubeMapMode(IShaderLayer::CUBE_MAP_NONE)
+      cubeMapMode(IShaderLayer::CUBE_MAP_NONE),
+      ignoreStageColour(false)
     { }
 
     // Determines the difference between this state and the target (current) state.
@@ -450,7 +455,7 @@ public:
 
         // Set the GL colour. Do this unconditionally, since setting glColor is
         // cheap and it avoids problems with leaked colour states.
-        if (stage0)
+        if (stage0 && !ignoreStageColour)
         {
             setColour(stage0->getColour());
         }
@@ -498,7 +503,7 @@ public:
 
     // Bind the given texture to the texture unit, if it is different from the
     // current state, then set the current state to the new texture.
-    static void SetTextureState(GLint& current, const GLint texture, GLenum textureUnit, GLenum textureMode)
+    static void SetTextureState(GLuint& current, const GLuint texture, GLenum textureUnit, GLenum textureMode)
     {
         if (texture == current) return;
 
@@ -526,7 +531,7 @@ private:
         glLoadMatrixd(tex);
     }
 
-    void setTextureState(GLint& current, const GLint texture, GLenum textureMode)
+    void setTextureState(GLuint& current, const GLuint texture, GLenum textureMode)
     {
         if (texture == current) return;
 

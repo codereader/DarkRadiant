@@ -27,17 +27,16 @@ private:
 	ButtonMap _buttons;
 
     // Key to edit
-    std::string _key;
+    ITargetKey::Ptr _key;
 
 public:
     /**
      * \brief
      * Construct a AnglePropertyEditor to edit the given entity and key.
      */
-    AnglePropertyEditor(wxWindow* parent, IEntitySelection& entities, const std::string& key);
+    AnglePropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                         const std::string& key, const std::string& options)
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
     {
         return std::make_shared<AnglePropertyEditor>(parent, entities, key);
     }

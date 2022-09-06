@@ -78,6 +78,31 @@ std::string ModelTreeView::GetSelectedSkin()
     return GetColumnValue(Columns().skin);
 }
 
+void ModelTreeView::SetSelectedSkin(const std::string& skin)
+{
+    if (!_showSkins) return;
+
+    auto selectedModel = GetSelectedModelPath();
+
+    if (selectedModel.empty()) return;
+
+    // Search the subtree of the current selection, starting from the parent
+    // (we might already have selected a skin, so start at the parent to be safe).
+    auto matchingItem = GetTreeModel()->FindItem([&](const wxutil::TreeModel::Row& row)
+    {
+        std::string foundModel = row[Columns().modelPath];
+        std::string foundSkin = row[Columns().skin];
+
+        return foundModel == selectedModel && foundSkin == skin;
+    }, GetTreeModel()->GetParent(GetSelection()));
+
+    if (matchingItem.IsOk())
+    {
+        Select(matchingItem);
+        EnsureVisible(matchingItem);
+    }
+}
+
 void ModelTreeView::CollapseModelDefsFolder()
 {
     // Find the modelDefs item in the top-level children and collapse it

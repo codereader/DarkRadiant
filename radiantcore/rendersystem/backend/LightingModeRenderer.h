@@ -8,7 +8,9 @@
 #include "FrameBuffer.h"
 #include "render/Rectangle.h"
 #include "glprogram/ShadowMapProgram.h"
-#include "InteractingLight.h"
+#include "glprogram/BlendLightProgram.h"
+#include "RegularLight.h"
+#include "BlendLight.h"
 #include "registry/CachedKey.h"
 
 namespace render
@@ -37,6 +39,7 @@ private:
     FrameBuffer::Ptr _shadowMapFbo;
     std::vector<Rectangle> _shadowMapAtlas;
     ShadowMapProgram* _shadowMapProgram;
+    BlendLightProgram* _blendLightProgram;
 
     constexpr static std::size_t MaxShadowCastingLights = 6;
 
@@ -44,8 +47,10 @@ private:
 
     // Data that is valid during a single render pass only
 
-    std::vector<InteractingLight> _interactingLights;
-    std::vector<InteractingLight*> _nearestShadowLights;
+    std::vector<RegularLight> _regularLights;
+    std::vector<RegularLight*> _nearestShadowLights;
+    std::vector<BlendLight> _blendLights;
+
     std::shared_ptr<LightingModeRenderResult> _result;
 
 public:
@@ -58,9 +63,14 @@ public:
     IRenderResult::Ptr render(RenderStateFlags globalFlagsMask, const IRenderView& view, std::size_t time) override;
 
 private:
-    void determineInteractingLight(const IRenderView& view);
+    void collectLights(const IRenderView& view);
+    void collectBlendLight(RendererLight& light, const IRenderView& view);
+    void collectRegularLight(RendererLight& light, const IRenderView& view);
 
     void drawInteractingLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
+        const IRenderView& view, std::size_t renderTime);
+
+    void drawBlendLights(OpenGLState& current, RenderStateFlags globalFlagsMask,
         const IRenderView& view, std::size_t renderTime);
 
     void drawDepthFillPass(OpenGLState& current, RenderStateFlags globalFlagsMask,
@@ -73,7 +83,7 @@ private:
 
     void ensureShadowMapSetup();
 
-    void addToShadowLights(InteractingLight& light, const Vector3& viewer);
+    void addToShadowLights(RegularLight& light, const Vector3& viewer);
 };
 
 }

@@ -17,6 +17,7 @@ namespace test
 
 using ModelTest = RadiantTest;
 using AseImportTest = ModelTest;
+using ObjImportTest = ModelTest;
 
 TEST_F(ModelTest, LwoPolyCount)
 {
@@ -696,6 +697,17 @@ TEST_F(ModelTest, ModelOriginIsPreservedAfterDefChange)
     auto newTranslation = modelNode->localToWorld().tCol();
     EXPECT_TRUE(math::isNear(newTranslation, translation, 0.001))
         << "Translation changed after reloading the def, was " << translation << ", it changed to " << newTranslation;
+}
+
+// an .obj file with usemtl directly referring to the material name
+TEST_F(ObjImportTest, UseMtlReferencingMaterial)
+{
+    auto model = GlobalModelCache().getModel("models/cube_with_usemtl.obj");
+    EXPECT_TRUE(model);
+
+    EXPECT_EQ(model->getSurfaceCount(), 1);
+    EXPECT_EQ(model->getSurface(0).getDefaultMaterial(), "textures/common/caulk")
+        << "OBJ Model loader should have taken the material from the usemtl keyword";
 }
 
 }

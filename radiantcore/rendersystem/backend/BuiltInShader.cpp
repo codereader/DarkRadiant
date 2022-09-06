@@ -378,7 +378,6 @@ void BuiltInShader::constructCameraMergeActionOverlay(OpenGLState& pass, const C
 
 void BuiltInShader::constructPointShader(OpenGLState& pass, float pointSize, OpenGLState::SortPosition sort)
 {
-    pass.setRenderFlag(RENDER_POINT_COLOUR);
     pass.setRenderFlag(RENDER_DEPTHWRITE);
 
     pass.setSortPosition(sort);

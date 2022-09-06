@@ -1,5 +1,6 @@
 #pragma once
 
+#include "wxutil/Icon.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/dataview/TreeView.h"
@@ -54,8 +55,8 @@ private:
 	wxutil::TreeView* _oneSidedView;
 	wxutil::TreeView* _twoSidedView;
 
-	wxIcon _guiIcon;
-	wxIcon _folderIcon;
+	wxutil::Icon _guiIcon;
+	wxutil::Icon _folderIcon;
 
 public:
 	// Starts the GuiSelector and returns the name of the selected GUI or an empty string if the user canceled.

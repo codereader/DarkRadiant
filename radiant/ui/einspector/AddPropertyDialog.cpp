@@ -13,6 +13,7 @@
 #include <wx/button.h>
 #include <wx/panel.h>
 #include "wxutil/Bitmap.h"
+#include "wxutil/Icon.h"
 #include <wx/textctrl.h>
 
 #include <map>
@@ -130,8 +131,7 @@ public:
 
 		wxutil::TreeModel::Row row = _store->AddItem(_parent);
 
-		wxIcon icon;
-		icon.CopyFromBitmap(PropertyEditorFactory::getBitmapFor(attr.getType()));
+        wxutil::Icon icon(PropertyEditorFactory::getBitmapFor(attr.getType()));
 
 		row[_columns.displayName] = wxVariant(wxDataViewIconText(attr.getName(), icon));
 		row[_columns.propertyName] = attr.getName();
@@ -146,8 +146,7 @@ public:
 // Populate tree view
 void AddPropertyDialog::populateTreeView()
 {
-	wxIcon folderIcon;
-	folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
+    wxutil::Icon folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON));
 
 	// DEF-DEFINED PROPERTIES
 	{
@@ -241,8 +240,7 @@ void AddPropertyDialog::populateTreeView()
 
 		wxutil::TreeModel::Row row(item, *_treeStore);
 
-		wxIcon icon;
-		icon.CopyFromBitmap(PropertyEditorFactory::getBitmapFor(type));
+        wxutil::Icon icon(PropertyEditorFactory::getBitmapFor(type));
 
 		row[_columns.displayName] = wxVariant(wxDataViewIconText(name, icon));
 		row[_columns.propertyName] = name;

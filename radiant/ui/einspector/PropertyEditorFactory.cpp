@@ -76,7 +76,7 @@ void PropertyEditorFactory::unregisterPropertyEditor(const std::string& key)
 }
 
 IPropertyEditor::Ptr PropertyEditorFactory::create(wxWindow* parent, const std::string& className,
-    IEntitySelection& entities, const std::string& key, const std::string& options)
+    IEntitySelection& entities, const ITargetKey::Ptr& key)
 {
 	// greebo: First, search the custom editors for a match
 	for (const auto& pair : _customEditors)
@@ -87,10 +87,11 @@ IPropertyEditor::Ptr PropertyEditorFactory::create(wxWindow* parent, const std::
 		std::regex expr(pair.first);
 		std::smatch matches;
 
-		if (!std::regex_match(key, matches, expr)) continue;
+        auto fullKey = key->getFullKey();
+		if (!std::regex_match(fullKey, matches, expr)) continue;
 
 		// We have a match, invoke the creation function
-		return pair.second(parent, entities, key, options);
+		return pair.second(parent, entities, key);
 	}
 
 	// No custom editor found, search for the named property editor type
@@ -103,7 +104,7 @@ IPropertyEditor::Ptr PropertyEditorFactory::create(wxWindow* parent, const std::
         return {};
     } 
     
-    return iter->second(parent, entities, key, options);
+    return iter->second(parent, entities, key);
 }
 
 void PropertyEditorFactory::registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create)

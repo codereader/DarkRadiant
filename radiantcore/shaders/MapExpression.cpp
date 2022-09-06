@@ -121,7 +121,7 @@ ImagePtr MapExpression::getResampled(const ImagePtr& input, std::size_t width, s
 	// Check if the dimensions differ from the desired ones
 	if (width != input->getWidth() || height != input->getHeight()) {
 		// Allocate a new image buffer
-		ImagePtr resampled (new RGBAImage(width, height));
+		ImagePtr resampled (new image::RGBAImage(width, height));
 
 		// Resample the texture to match the dimensions of the first image
 		TextureManipulator::instance().resampleTexture(
@@ -203,7 +203,7 @@ ImagePtr AddNormalsExpression::getImage() const {
 	// The image must match the dimensions of the first
 	imgTwo = getResampled(imgTwo, width, height);
 
-    ImagePtr result (new RGBAImage(width, height));
+    ImagePtr result (new image::RGBAImage(width, height));
 
     byte* pixOne = imgOne->getPixels();
     byte* pixTwo = imgTwo->getPixels();
@@ -274,7 +274,7 @@ ImagePtr SmoothNormalsExpression::getImage() const {
 	std::size_t width = normalMap->getWidth();
 	std::size_t height = normalMap->getHeight();
 
-	ImagePtr result (new RGBAImage(width, height));
+	ImagePtr result (new image::RGBAImage(width, height));
 
 	byte* in = normalMap->getPixels();
 	byte* out = result->getPixels();
@@ -369,7 +369,7 @@ ImagePtr AddExpression::getImage() const {
 	// Resize the image to match the dimensions of the first
     imgTwo = getResampled(imgTwo, width, height);
 
-    ImagePtr result (new RGBAImage(width, height));
+    ImagePtr result (new image::RGBAImage(width, height));
 
     byte* pixOne = imgOne->getPixels();
     byte* pixTwo = imgTwo->getPixels();
@@ -451,7 +451,7 @@ ImagePtr ScaleExpression::getImage() const
 		return img;
 	}
 
-    ImagePtr result (new RGBAImage(width, height));
+    ImagePtr result (new image::RGBAImage(width, height));
 
     byte* in = img->getPixels();
     byte* out = result->getPixels();
@@ -517,7 +517,7 @@ ImagePtr InvertAlphaExpression::getImage() const {
 	std::size_t width = img->getWidth();
 	std::size_t height = img->getHeight();
 
-	ImagePtr result (new RGBAImage(width, height));
+	ImagePtr result (new image::RGBAImage(width, height));
 
 	byte* in = img->getPixels();
 	byte* out = result->getPixels();
@@ -572,7 +572,7 @@ ImagePtr InvertColorExpression::getImage() const {
 	std::size_t width = img->getWidth();
 	std::size_t height = img->getHeight();
 
-	ImagePtr result (new RGBAImage(width, height));
+	ImagePtr result (new image::RGBAImage(width, height));
 
 	byte* in = img->getPixels();
 	byte* out = result->getPixels();
@@ -625,7 +625,7 @@ ImagePtr MakeIntensityExpression::getImage() const {
 	std::size_t width = img->getWidth();
 	std::size_t height = img->getHeight();
 
-	ImagePtr result (new RGBAImage(width, height));
+	ImagePtr result (new image::RGBAImage(width, height));
 
 	byte* in = img->getPixels();
 	byte* out = result->getPixels();
@@ -683,7 +683,7 @@ ImagePtr MakeAlphaExpression::getImage() const
 	std::size_t width = img->getWidth();
 	std::size_t height = img->getHeight();
 
-	ImagePtr result (new RGBAImage(width, height));
+	ImagePtr result (new image::RGBAImage(width, height));
 
 	byte* in = img->getPixels();
 	byte* out = result->getPixels();

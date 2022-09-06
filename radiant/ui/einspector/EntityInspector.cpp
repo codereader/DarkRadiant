@@ -27,8 +27,11 @@
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "xmlutil/Document.h"
 #include "selection/EntitySelection.h"
+#include "TargetKey.h"
 
+#include <optional>
 #include <map>
+#include <regex>
 #include <string>
 
 #include <wx/panel.h>
@@ -81,8 +84,7 @@ EntityInspector::EntityInspector() :
 
 void EntityInspector::construct()
 {
-    _emptyIcon.CopyFromBitmap(wxutil::GetLocalBitmap("empty.png"));
-    wxASSERT(_emptyIcon.IsOk());
+    _emptyIcon = wxutil::Icon(wxutil::GetLocalBitmap("empty.png"));
 
     wxFrame* temporaryParent = new wxFrame(NULL, wxID_ANY, "");
 
@@ -293,8 +295,8 @@ void EntityInspector::updateKeyType(wxutil::TreeModel::Row& row)
     // Get the type for this key if it exists, and the options
     auto keyType = getPropertyTypeForKey(key);
 
-    wxIcon icon;
-    icon.CopyFromBitmap(keyType.empty() ? _emptyIcon : _propertyEditorFactory->getBitmapFor(keyType));
+    wxutil::Icon icon(keyType.empty() ? _emptyIcon :
+        wxutil::Icon(_propertyEditorFactory->getBitmapFor(keyType)));
 
     // Assign the icon to the column
     row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
@@ -947,11 +949,7 @@ void EntityInspector::loadPropertyMap()
 
     for (const auto& node : nodes)
     {
-        PropertyParms parms;
-        parms.type = node.getAttributeValue("type");
-        parms.options = node.getAttributeValue("options");
-
-        _propertyTypes.emplace(node.getAttributeValue("match"), parms);
+        _propertyTypes.emplace(node.getAttributeValue("match"), node.getAttributeValue("type"));
     }
 }
 
@@ -1467,22 +1465,13 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         if (canUpdateEntity())
         {
             // Get the type for this key if it exists, and the options
-            PropertyParms parms = getPropertyParmsForKey(key);
+            auto type = getPropertyTypeForKey(key);
 
-            // If the type was not found, also try looking on the entity class
-            if (parms.type.empty())
-            {
-                auto eclass = _entitySelection->getSingleSharedEntityClass();
-
-                if (eclass)
-                {
-                    parms.type = eclass->getAttributeType(key);
-                }
-            }
+            // Set up the target key for the property editor instance
+            auto targetKey = TargetKey::CreateFromString(key);
 
             // Construct and add a new PropertyEditor
-            _currentPropertyEditor = _propertyEditorFactory->create(_editorFrame,
-                parms.type, *_entitySelection, key, parms.options);
+            _currentPropertyEditor = _propertyEditorFactory->create(_editorFrame, type, *_entitySelection, targetKey);
 
             if (_currentPropertyEditor)
             {
@@ -1502,10 +1491,10 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     updateEntryBoxSensitivity();
 }
 
-EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(const std::string& key)
+std::string EntityInspector::getPropertyTypeFromGame(const std::string& key)
 {
     // Attempt to find the key in the property map
-    for (auto&& [expression, parms] : _propertyTypes)
+    for (const auto& [expression, type] : _propertyTypes)
     {
         if (expression.empty()) continue; // safety check
 
@@ -1515,7 +1504,7 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(const std
         if (std::regex_match(key, matches, std::regex(expression)))
         {
             // We have a match
-            return parms;
+            return type;
         }
     }
 
@@ -1524,28 +1513,86 @@ EntityInspector::PropertyParms EntityInspector::getPropertyParmsForKey(const std
 
 std::string EntityInspector::getPropertyTypeForKey(const std::string& key)
 {
-    auto type = getPropertyParmsForKey(key).type;
+    // Check the local mappings first
+    auto type = getPropertyTypeFromGame(key);
 
     if (!type.empty())
     {
         return type;
     }
 
-    std::set<IEntityClassPtr> selectedEclasses;
+    // Try to get the type from the entity class (editor_* key values)
+    auto sharedEntityClass = _entitySelection->getSingleSharedEntityClass();
+
+    if (sharedEntityClass)
+    {
+        type = sharedEntityClass->getAttributeType(key);
+    }
+
+    if (!type.empty())
+    {
+        return type;
+    }
+
+    // Finally, look for key types registered on the named attachment
+    return getPropertyTypeForAttachmentKey(key);
+}
+
+std::string EntityInspector::getPropertyTypeForAttachmentKey(const std::string& key)
+{
+    // Check for keys using the "set X on Y" pattern to set keyvalues on attachments
+    std::regex pattern(TargetKey::SetKeyPattern, std::regex::icase);
+
+    std::smatch match;
+    if (!std::regex_match(key, match, pattern)) return {};
+
+    auto attachmentKey = match[1].str();
+    auto attachmentName = match[2].str();
+
+    // Find a property type in our local mappings
+    auto locallyMappedType = getPropertyTypeForKey(attachmentKey);
+
+    if (!locallyMappedType.empty())
+    {
+        return locallyMappedType;
+    }
+
+    // Check the editor_* definition for this key on the attachment eclass
+    // Check if there is a single attachment eclass on all selected entities
+    std::optional<std::string> attachmentClass;
 
     _entitySelection->foreachEntity([&](Entity* entity)
     {
-        selectedEclasses.emplace(entity->getEntityClass());
+        entity->forEachAttachment([&](const Entity::Attachment& attachment)
+        {
+            if (attachment.name != attachmentName) return;
+
+            if (!attachmentClass.has_value())
+            {
+                attachmentClass = attachment.eclass;
+                return;
+            }
+
+            // Check if the attachment is unique
+            if (attachment.eclass != attachmentClass.value())
+            {
+                attachmentClass.value().clear();
+            }
+        });
     });
 
-    // Query each eclass for the key type, pick the first one
-    for (const auto& eclass : selectedEclasses)
+    // Nothing found or not uniquely identified
+    if (attachmentClass.has_value() && !attachmentClass.value().empty())
     {
-        const auto& keyType = eclass->getAttributeType(key);
-
-        if (!keyType.empty())
+        // Check the key of this attachment instead
+        if (auto eclass = GlobalEntityClassManager().findClass(attachmentClass.value()); eclass)
         {
-            return keyType;
+            const auto& keyType = eclass->getAttributeType(attachmentKey);
+
+            if (!keyType.empty())
+            {
+                return keyType;
+            }
         }
     }
 

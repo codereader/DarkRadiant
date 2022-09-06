@@ -21,17 +21,17 @@ private:
 
     IEntitySelection& _entities;
 
+    ITargetKey::Ptr _key;
+
 public:
 	~AIHeadPropertyEditor();
 
 	wxPanel* getWidget() override;
 	void updateFromEntities();
 
-	AIHeadPropertyEditor(wxWindow* parent, IEntitySelection& entities,
-		const std::string& key, const std::string& options);
+	AIHeadPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
-    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities,
-                         const std::string& key, const std::string& options);
+    static Ptr CreateNew(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 
 private:
 	void onChooseButton(wxCommandEvent& ev);

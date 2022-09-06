@@ -190,14 +190,40 @@ public:
         ensureParsed();
         _materialFlags |= flag;
         evaluateMacroUsage(); // material flags influence macro usage
+
+        if (flag & Material::FLAG_TRANSLUCENT)
+        {
+            // Translucent implies noshadows
+            _materialFlags |= Material::FLAG_NOSHADOWS;
+
+            // Re-evaluate the material coverage
+            _coverage = Material::MC_UNDETERMINED;
+            determineCoverage();
+        }
+
         onTemplateChanged();
     }
 
     void clearMaterialFlag(Material::Flags flag)
     {
         ensureParsed();
+
+        // It's not possible to clear the noshadows flag as long as translucent is active
+        if (flag == Material::FLAG_NOSHADOWS && _materialFlags & Material::FLAG_TRANSLUCENT)
+        {
+            return;
+        }
+
         _materialFlags &= ~flag;
         evaluateMacroUsage(); // material flags influence macro usage
+
+        if (flag & Material::FLAG_TRANSLUCENT)
+        {
+            // Re-evaluate the material coverage
+            _coverage = Material::MC_UNDETERMINED;
+            determineCoverage();
+        }
+
         onTemplateChanged();
     }
 

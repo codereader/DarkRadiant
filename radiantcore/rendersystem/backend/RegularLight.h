@@ -8,6 +8,7 @@
 #include "iobjectrenderer.h"
 #include "irenderview.h"
 #include "render/Rectangle.h"
+#include "InteractionPass.h"
 
 namespace render
 {
@@ -20,22 +21,24 @@ class ShadowMapProgram;
 class DepthFillPass;
 
 /**
- * Defines interactions between a light and one or more entity renderables
- * It only lives through the course of a single render pass, therefore direct
- * references without ref-counting are used.
- * 
+ * Depth-buffer filling light with diffuse/bump/specular interactions
+ * between this light and one or more entity renderables.
  * Objects are grouped by entity, then by shader.
+ *
+ * Instances only live through the course of a single render pass, therefore direct
+ * references without ref-counting are used.
  */
-class InteractingLight
+class RegularLight
 {
+public:
+    // A flat list of renderables
+    using ObjectList = std::vector<std::reference_wrapper<IRenderableObject>>;
+
 private:
     RendererLight& _light;
     IGeometryStore& _store;
     IObjectRenderer& _objectRenderer;
     AABB _lightBounds;
-
-    // A flat list of renderables
-    using ObjectList = std::vector<std::reference_wrapper<IRenderableObject>>;
 
     // All objects, grouped by material
     using ObjectsByMaterial = std::map<OpenGLShader*, ObjectList>;
@@ -51,8 +54,74 @@ private:
     int _shadowLightIndex;
     bool _isShadowCasting;
 
+    // Helper object submitting a DBS interaction draw call
+    class InteractionDrawCall
+    {
+    private:
+        OpenGLState& _state;
+        InteractionProgram& _program;
+
+        IObjectRenderer& _objectRenderer;
+        const Vector3& _worldLightOrigin;
+        const Vector3& _viewer;
+
+        const InteractionPass::Stage* _bump;
+        const InteractionPass::Stage* _diffuse;
+        const InteractionPass::Stage* _specular;
+
+        std::vector<IGeometryStore::Slot> _untransformedObjects;
+
+        InteractionPass::Stage _defaultBumpStage;
+        InteractionPass::Stage _defaultDiffuseStage;
+        InteractionPass::Stage _defaultSpecularStage;
+
+        std::size_t _interactionDrawCalls;
+
+    public:
+        InteractionDrawCall(OpenGLState& state, InteractionProgram& program,
+            IObjectRenderer& objectRenderer, const Vector3& worldLightOrigin, const Vector3& viewer);
+
+        std::size_t getInteractionDrawCalls() const
+        {
+            return _interactionDrawCalls;
+        }
+
+        void prepare(InteractionPass& pass)
+        {
+            _bump = nullptr;
+            _diffuse = nullptr;
+            _specular = nullptr;
+
+            _defaultBumpStage.texture = pass.getDefaultInteractionTextureBinding(IShaderLayer::BUMP);
+            _defaultDiffuseStage.texture = pass.getDefaultInteractionTextureBinding(IShaderLayer::DIFFUSE);
+            _defaultSpecularStage.texture = pass.getDefaultInteractionTextureBinding(IShaderLayer::SPECULAR);
+        }
+
+        bool hasBump() const
+        {
+            return _bump != nullptr;
+        }
+
+        bool hasDiffuse() const
+        {
+            return _diffuse != nullptr;
+        }
+
+        bool hasSpecular() const
+        {
+            return _specular != nullptr;
+        }
+
+        void setBump(const InteractionPass::Stage* bump);
+        void setDiffuse(const InteractionPass::Stage* diffuse);
+        void setSpecular(const InteractionPass::Stage* specular);
+
+        void submit(const ObjectList& objects);
+    };
+
 public:
-    InteractingLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer);
+    RegularLight(RendererLight& light, IGeometryStore& store, IObjectRenderer& objectRenderer);
+    RegularLight(RegularLight&& other) = default;
 
     const Vector3& getBoundsCenter() const
     {

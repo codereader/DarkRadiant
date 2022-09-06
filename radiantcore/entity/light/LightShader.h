@@ -2,6 +2,7 @@
 
 #include <string>
 #include "irender.h"
+#include "shaders/MaterialManager.h"
 
 namespace entity {
 
@@ -41,6 +42,14 @@ public:
 	const ShaderPtr& get() const
 	{
 		return _shader;
+	}
+
+    bool isBlendLight() const
+	{
+        if (!_shader) return false;
+
+        const auto& material = _shader->getMaterial();
+        return material ? material->isBlendLight() : false;
 	}
 
 private:

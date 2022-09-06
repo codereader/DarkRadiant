@@ -72,14 +72,12 @@ private:
     // Shader pass construction helpers
     void appendBlendLayer(const IShaderLayer::Ptr& layer);
 
-    struct DBSTriplet;
-    void appendInteractionLayer(const DBSTriplet& triplet);
+    OpenGLState& appendInteractionPass(std::vector<IShaderLayer::Ptr>& stages);
 
     void constructLightingPassesFromMaterial();
-    void determineBlendModeForEditorPass(OpenGLState& pass);
+    void determineBlendModeForEditorPass(OpenGLState& pass, const IShaderLayer::Ptr& diffuseLayer);
     void constructEditorPreviewPassFromMaterial();
     void applyAlphaTestToPass(OpenGLState& pass, double alphaTest);
-    void setGLTexturesFromTriplet(OpenGLState&, const DBSTriplet&);
 
     // Destroy internal data
 	void destroy();
@@ -192,7 +190,6 @@ protected:
     void clearPasses();
 
     OpenGLState& appendDepthFillPass();
-    OpenGLState& appendInteractionPass();
 };
 
 typedef std::shared_ptr<OpenGLShader> OpenGLShaderPtr;

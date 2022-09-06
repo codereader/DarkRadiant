@@ -5,8 +5,6 @@
 #include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 
-#include <wx/icon.h>
-
 namespace wxutil { class VFSTreePopulator; }
 
 namespace ui
@@ -19,8 +17,6 @@ class EClassTreeBuilder final :
     public wxutil::ThreadedDeclarationTreePopulator
 {
 private:
-	wxIcon _entityIcon;
-
     std::unique_ptr<wxutil::VFSTreePopulator> _treePopulator;
 
 public:

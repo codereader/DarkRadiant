@@ -5,6 +5,7 @@
 #include "ifavourites.h"
 #include "ModelSelector.h"
 #include "wxutil/Bitmap.h"
+#include "wxutil/Icon.h"
 
 #include "ModelTreeView.h"
 
@@ -14,9 +15,9 @@ namespace ui
 /* CONSTANTS */
 namespace
 {
-	const char* MODEL_ICON = "model16green.png";
-	const char* SKIN_ICON = "skin16.png";
-	const char* FOLDER_ICON = "folder16.png";
+	constexpr const char* MODEL_ICON = "model16green.png";
+	constexpr const char* SKIN_ICON = "skin16.png";
+	constexpr const char* FOLDER_ICON = "folder16.png";
 }
 
 /**
@@ -31,9 +32,9 @@ private:
 
 	bool _includeSkins;
 
-	wxIcon _modelIcon;
-	wxIcon _folderIcon;
-	wxIcon _skinIcon;
+    wxutil::Icon _modelIcon;
+    wxutil::Icon _folderIcon;
+    wxutil::Icon _skinIcon;
 
     std::set<std::string> _favourites;
 
@@ -43,12 +44,11 @@ public:
 	 */
 	ModelDataInserter(const ModelTreeView::TreeColumns& columns, bool includeSkins) :
 		_columns(columns),
-		_includeSkins(includeSkins)
+		_includeSkins(includeSkins),
+        _modelIcon(wxutil::GetLocalBitmap(MODEL_ICON)),
+        _folderIcon(wxutil::GetLocalBitmap(FOLDER_ICON)),
+        _skinIcon(wxutil::GetLocalBitmap(SKIN_ICON))
 	{
-		_modelIcon.CopyFromBitmap(wxutil::GetLocalBitmap(MODEL_ICON));
-		_folderIcon.CopyFromBitmap(wxutil::GetLocalBitmap(FOLDER_ICON));
-		_skinIcon.CopyFromBitmap(wxutil::GetLocalBitmap(SKIN_ICON));
-
         // Get the list of favourites
         _favourites = GlobalFavouritesManager().getFavourites("model");
 	}
