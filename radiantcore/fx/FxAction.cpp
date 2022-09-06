@@ -30,7 +30,8 @@ FxAction::FxAction(FxDeclaration& fx) :
     _axis(0,0,0),
     _angle(0,0,0),
     _lightRgbColour(0, 0, 0),
-    _lightRadius(0)
+    _lightRadius(0),
+    _particleTrackVelocity(false)
 {}
 
 FxAction::Type FxAction::getType()
@@ -183,6 +184,21 @@ float FxAction::getLightRadius()
     return _lightRadius;
 }
 
+const std::string& FxAction::getModelName()
+{
+    return _modelName;
+}
+
+const std::string& FxAction::getDecalMaterialName()
+{
+    return _decalMaterialName;
+}
+
+bool FxAction::getParticleTrackVelocity()
+{
+    return _particleTrackVelocity;
+}
+
 void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     while (tokeniser.hasMoreTokens())
@@ -323,42 +339,26 @@ void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
             tokeniser.assertNextToken(",");
             _lightRadius = string::convert<float>(tokeniser.nextToken());
         }
+        else if (token == "model")
+        {
+            _type = Type::Model;
+            _modelName = tokeniser.nextToken();
+        }
+        else if (token == "particle")
+        {
+            _type = Type::Particle;
+            _modelName = tokeniser.nextToken();
+        }
+        else if (token == "decal")
+        {
+            _type = Type::Decal;
+            _decalMaterialName = tokeniser.nextToken();
+        }
+        else if (token == "particletrackvelocity")
+        {
+            _particleTrackVelocity = true;
+        }
 #if 0
-        if (!token.Icmp("model")) {
-            src.ReadToken(&token);
-            FXAction.data = token;
-            FXAction.type = FX_MODEL;
-
-            // precache it
-            renderModelManager->FindModel(FXAction.data);
-            continue;
-        }
-
-        if (!token.Icmp("particle")) {	// FIXME: now the same as model
-            src.ReadToken(&token);
-            FXAction.data = token;
-            FXAction.type = FX_PARTICLE;
-
-            // precache it
-            renderModelManager->FindModel(FXAction.data);
-            continue;
-        }
-
-        if (!token.Icmp("decal")) {
-            src.ReadToken(&token);
-            FXAction.data = token;
-            FXAction.type = FX_DECAL;
-
-            // precache it
-            declManager->FindMaterial(FXAction.data);
-            continue;
-        }
-
-        if (!token.Icmp("particleTrackVelocity")) {
-            FXAction.particleTrackVelocity = true;
-            continue;
-        }
-
         if (!token.Icmp("sound")) {
             src.ReadToken(&token);
             FXAction.data = token;

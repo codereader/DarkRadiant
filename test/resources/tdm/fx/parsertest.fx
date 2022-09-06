@@ -140,12 +140,18 @@ fx fx/parserTest/useModel
 {
 	{
         delay 1.5
+        model "tree.ase"
         name "ModelOwner"
 	}
 	{
         useModel "ModelOwner"
         fadeOut 0.5
 	}
+    {
+        particle "drips.prt"
+        fadeOut 0.5
+        particleTrackVelocity
+    }
 }
 
 fx fx/parserTest/attach
@@ -165,5 +171,13 @@ fx fx/parserTest/projectile
 	{
         delay 1.5
         launch "atdm:projectile_broadhead"
+	}
+}
+
+fx fx/parserTest/decal
+{
+	{
+        delay 1.5
+        decal "textures/decals/blood"
 	}
 }

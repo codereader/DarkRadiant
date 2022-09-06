@@ -111,6 +111,15 @@ public:
 
     // For Type::Light actions, this defines the radius of the spawned light
     virtual float getLightRadius() = 0;
+
+    // Return the name of the model or particle
+    virtual const std::string& getModelName() = 0;
+
+    // For Type::Decal actions, this defines the decal material name
+    virtual const std::string& getDecalMaterialName() = 0;
+
+    // Unused according to docs
+    virtual bool getParticleTrackVelocity() = 0;
 };
 
 class IFxDeclaration :

@@ -44,6 +44,9 @@ private:
     std::string _lightMaterialName;
     Vector3 _lightRgbColour;
     float _lightRadius;
+    std::string _modelName;
+    std::string _decalMaterialName;
+    bool _particleTrackVelocity;
 
 public:
     using Ptr = std::shared_ptr<FxAction>;
@@ -80,6 +83,9 @@ public:
     const std::string& getLightMaterialName() override;
     const Vector3& getLightRgbColour() override;
     float getLightRadius() override;
+    const std::string& getModelName() override;
+    const std::string& getDecalMaterialName() override;
+    bool getParticleTrackVelocity() override;
 
     // Parses the action from the given tokens.
     // The opening brace { will already have been been consumed by the calling code

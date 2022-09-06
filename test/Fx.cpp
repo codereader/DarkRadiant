@@ -210,4 +210,34 @@ TEST_F(FxTest, ParseActionLight)
     EXPECT_TRUE(math::isNear(getFxByName("fx/parserTest/useLight")->getAction(0)->getLightRgbColour(), Vector3(0.5, 1, 0.7), 0.001f));
 }
 
+TEST_F(FxTest, ParseActionModel)
+{
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getModelName(), "");
+
+    EXPECT_EQ(getFxByName("fx/parserTest/useModel")->getAction(0)->getType(), fx::IFxAction::Type::Model);
+    EXPECT_EQ(getFxByName("fx/parserTest/useModel")->getAction(0)->getModelName(), "tree.ase");
+}
+
+TEST_F(FxTest, ParseActionParticle)
+{
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getModelName(), "");
+
+    EXPECT_EQ(getFxByName("fx/parserTest/useModel")->getAction(2)->getType(), fx::IFxAction::Type::Particle);
+    EXPECT_EQ(getFxByName("fx/parserTest/useModel")->getAction(2)->getModelName(), "drips.prt");
+}
+
+TEST_F(FxTest, ParseActionDecal)
+{
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getDecalMaterialName(), "");
+
+    EXPECT_EQ(getFxByName("fx/parserTest/decal")->getAction(0)->getType(), fx::IFxAction::Type::Decal);
+    EXPECT_EQ(getFxByName("fx/parserTest/decal")->getAction(0)->getDecalMaterialName(), "textures/decals/blood");
+}
+
+TEST_F(FxTest, ParseActionParticleTrackVelocity)
+{
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getParticleTrackVelocity(), false);
+    EXPECT_EQ(getFxByName("fx/parserTest/useModel")->getAction(2)->getParticleTrackVelocity(), true);
+}
+
 }
