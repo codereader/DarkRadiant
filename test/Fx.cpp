@@ -144,4 +144,41 @@ TEST_F(FxTest, ParseActionOffset)
     EXPECT_EQ(getFxByName("fx/parserTest/fadeIn")->getAction(1)->getOffset(), Vector3(1.6f, 0.7f, -0.8f));
 }
 
+TEST_F(FxTest, ParseActionAxisAndAngle)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getAxis(), Vector3(0,0,0));
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getAngle(), Vector3(0,0,0));
+
+    EXPECT_EQ(getFxByName("fx/parserTest/axisAndAngle")->getAction(0)->getAxis(), Vector3(0.8f, 0.6f, 0.5f));
+    EXPECT_EQ(getFxByName("fx/parserTest/axisAndAngle")->getAction(0)->getAngle(), Vector3(0, 0, 0));
+
+    EXPECT_EQ(getFxByName("fx/parserTest/axisAndAngle")->getAction(1)->getAxis(), Vector3(0, 0, 0));
+    EXPECT_EQ(getFxByName("fx/parserTest/axisAndAngle")->getAction(1)->getAngle(), Vector3(0.8f, -0.6f, 0.2f));
+}
+
+TEST_F(FxTest, ParseActionUseLight)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getUseLight(), "");
+
+    EXPECT_EQ(getFxByName("fx/parserTest/useLight")->getAction(1)->getUseLight(), "LightOwner");
+    // Use light implies that the action is of type light
+    EXPECT_EQ(getFxByName("fx/parserTest/useLight")->getAction(1)->getType(), fx::IFxAction::Type::Light);
+}
+
+TEST_F(FxTest, ParseActionAttachLight)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getAttachLight(), "");
+
+    EXPECT_EQ(getFxByName("fx/parserTest/attach")->getAction(0)->getAttachLight(), "light_1");
+    EXPECT_EQ(getFxByName("fx/parserTest/attach")->getAction(0)->getType(), fx::IFxAction::Type::AttachLight);
+}
+
+TEST_F(FxTest, ParseActionAttachEntity)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getAttachEntity(), "");
+
+    EXPECT_EQ(getFxByName("fx/parserTest/attach")->getAction(1)->getAttachEntity(), "func_static_1");
+    EXPECT_EQ(getFxByName("fx/parserTest/attach")->getAction(1)->getType(), fx::IFxAction::Type::AttachEntity);
+}
+
 }

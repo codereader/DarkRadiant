@@ -110,3 +110,40 @@ fx fx/parserTest/fadeIn
         offset 1.6  , 0.7,-0.8
 	}
 }
+
+fx fx/parserTest/axisAndAngle
+{
+	{
+        delay 1.5
+        axis 0.8,0.6, 0.5
+	}
+	{
+        delay 0.5
+        angle 0.8,-0.6, 0.2
+	}
+}
+
+fx fx/parserTest/useLight
+{
+	{
+        delay 1.5
+        name "LightOwner"
+        light "lights/biground", 0.5, 1, 0.7, 550.3
+	}
+	{
+        useLight "LightOwner"
+        fadeOut 0.5
+	}
+}
+
+fx fx/parserTest/attach
+{
+	{
+        delay 1.5
+        attachLight "light_1"
+	}
+    {
+        delay 2.5
+        attachEntity "func_static_1"
+    }
+}

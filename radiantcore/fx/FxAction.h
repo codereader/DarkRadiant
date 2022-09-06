@@ -34,6 +34,11 @@ private:
     float _fadeOutTimeInSeconds;
     float _decalSize;
     Vector3 _offset;
+    Vector3 _axis;
+    Vector3 _angle;
+    std::string _useLightAction;
+    std::string _attachLightName;
+    std::string _attachEntityName;
 
 public:
     using Ptr = std::shared_ptr<FxAction>;
@@ -60,6 +65,11 @@ public:
     float getFadeOutTimeInSeconds() override;
     float getDecalSize() override;
     const Vector3& getOffset() override;
+    const Vector3& getAxis() override;
+    const Vector3& getAngle() override;
+    const std::string& getUseLight() override;
+    const std::string& getAttachLight() override;
+    const std::string& getAttachEntity() override;
 
     // Parses the action from the given tokens.
     // The opening brace { will already have been been consumed by the calling code

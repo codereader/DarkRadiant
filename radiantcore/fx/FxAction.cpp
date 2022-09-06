@@ -25,7 +25,10 @@ FxAction::FxAction(FxDeclaration& fx) :
     _restart(false),
     _fadeInTimeInSeconds(0),
     _fadeOutTimeInSeconds(0),
-    _decalSize(0)
+    _decalSize(0),
+    _offset(0,0,0),
+    _axis(0,0,0),
+    _angle(0,0,0)
 {}
 
 FxAction::Type FxAction::getType()
@@ -128,6 +131,31 @@ const Vector3& FxAction::getOffset()
     return _offset;
 }
 
+const Vector3& FxAction::getAxis()
+{
+    return _axis;
+}
+
+const Vector3& FxAction::getAngle()
+{
+    return _angle;
+}
+
+const std::string& FxAction::getUseLight()
+{
+    return _useLightAction;
+}
+
+const std::string& FxAction::getAttachLight()
+{
+    return _attachLightName;
+}
+
+const std::string& FxAction::getAttachEntity()
+{
+    return _attachEntityName;
+}
+
 void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
 {
     while (tokeniser.hasMoreTokens())
@@ -214,69 +242,38 @@ void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
             tokeniser.assertNextToken(",");
             _offset.z() = string::convert<float>(tokeniser.nextToken());
         }
+        else if (token == "axis")
+        {
+            _axis.x() = string::convert<float>(tokeniser.nextToken());
+            tokeniser.assertNextToken(",");
+            _axis.y() = string::convert<float>(tokeniser.nextToken());
+            tokeniser.assertNextToken(",");
+            _axis.z() = string::convert<float>(tokeniser.nextToken());
+        }
+        else if (token == "angle")
+        {
+            _angle.x() = string::convert<float>(tokeniser.nextToken());
+            tokeniser.assertNextToken(",");
+            _angle.y() = string::convert<float>(tokeniser.nextToken());
+            tokeniser.assertNextToken(",");
+            _angle.z() = string::convert<float>(tokeniser.nextToken());
+        }
+        else if (token == "uselight")
+        {
+            _useLightAction = tokeniser.nextToken();
+            _type = Type::Light;
+        }
+        else if (token == "attachlight")
+        {
+            _attachLightName = tokeniser.nextToken();
+            _type = Type::AttachLight;
+        }
+        else if (token == "attachentity")
+        {
+            _attachEntityName = tokeniser.nextToken();
+            _type = Type::AttachEntity;
+        }
 #if 0
-        if (!token.Icmp("axis")) {
-            idVec3 v;
-            v.x = src.ParseFloat();
-            src.ExpectTokenString(",");
-            v.y = src.ParseFloat();
-            src.ExpectTokenString(",");
-            v.z = src.ParseFloat();
-            v.Normalize();
-            FXAction.axis = v.ToMat3();
-            FXAction.explicitAxis = true;
-            continue;
-        }
-
-        if (!token.Icmp("angle")) {
-            idAngles a;
-            a[0] = src.ParseFloat();
-            src.ExpectTokenString(",");
-            a[1] = src.ParseFloat();
-            src.ExpectTokenString(",");
-            a[2] = src.ParseFloat();
-            FXAction.axis = a.ToMat3();
-            FXAction.explicitAxis = true;
-            continue;
-        }
-
-        if (!token.Icmp("uselight")) {
-            src.ReadToken(&token);
-            FXAction.data = token;
-            for (int i = 0; i < events.Num(); i++) {
-                if (events[i].name.Icmp(FXAction.data) == 0) {
-                    FXAction.sibling = i;
-                    FXAction.lightColor = events[i].lightColor;
-                    FXAction.lightRadius = events[i].lightRadius;
-                }
-            }
-            FXAction.type = FX_LIGHT;
-
-            // precache the light material
-            declManager->FindMaterial(FXAction.data);
-            continue;
-        }
-
-        if (!token.Icmp("attachlight")) {
-            src.ReadToken(&token);
-            FXAction.data = token;
-            FXAction.type = FX_ATTACHLIGHT;
-
-            // precache it
-            declManager->FindMaterial(FXAction.data);
-            continue;
-        }
-
-        if (!token.Icmp("attachentity")) {
-            src.ReadToken(&token);
-            FXAction.data = token;
-            FXAction.type = FX_ATTACHENTITY;
-
-            // precache the model
-            renderModelManager->FindModel(FXAction.data);
-            continue;
-        }
-
         if (!token.Icmp("launch")) {
             src.ReadToken(&token);
             FXAction.data = token;

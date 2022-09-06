@@ -81,6 +81,21 @@ public:
 
     // Offset from the origin of the entity (or bind point) this action is located at
     virtual const Vector3& getOffset() = 0;
+
+    // Axis of the model, mutually exclusive with angle
+    virtual const Vector3& getAxis() = 0;
+
+    // Alternate way of setting the axis of the model
+    virtual const Vector3& getAngle() = 0;
+
+    // Returns the name of the action containing the light which should be used
+    virtual const std::string& getUseLight() = 0;
+
+    // Attach to external light (a light not defined in the effect) for fading.
+    virtual const std::string& getAttachLight() = 0;
+
+    // Attach to an external entity
+    virtual const std::string& getAttachEntity() = 0;
 };
 
 class IFxDeclaration :
