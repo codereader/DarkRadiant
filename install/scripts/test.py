@@ -27,6 +27,15 @@ print("Definition: " + caulk.getBlockSyntax().contents)
 
 GlobalDeclarationManager.foreachDeclaration(Declaration.Type.ModelDef, visitor)
 
+# FX interface
+fx = GlobalFxManager.findFx("fx/sparks")
+
+# An FX declaration inherits all the Declaration methods and properties
+print("Name: " + fx.getDeclName())
+print("Type: " + str(fx.getDeclType()))
+print("Defined in: " + str(fx.getDeclFilePath()))
+print("Definition: " + fx.getBlockSyntax().contents)
+
 # Create a new material
 myOwnMaterial = GlobalDeclarationManager.findOrCreateDeclaration(Declaration.Type.Material, "textures/myown_material")
 

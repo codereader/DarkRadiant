@@ -72,6 +72,7 @@ void DeclarationManagerInterface::registerInterface(py::module& scope, py::dict&
         .value("ModelDef", decl::Type::ModelDef)
         .value("Particle", decl::Type::Particle)
         .value("Skin", decl::Type::Skin)
+        .value("Fx", decl::Type::Fx)
         .export_values();
 
     py::class_<decl::DeclarationBlockSyntax>(scope, "DeclarationBlockSyntax")

@@ -35,6 +35,7 @@
 #include "interfaces/CameraInterface.h"
 #include "interfaces/LayerInterface.h"
 #include "interfaces/DeclarationManagerInterface.h"
+#include "interfaces/FxManagerInterface.h"
 
 #include "PythonModule.h"
 
@@ -328,6 +329,7 @@ void ScriptingSystem::initialiseModule(const IApplicationContext& ctx)
 	addInterface("CameraInterface", std::make_shared<CameraInterface>());
 	addInterface("LayerInterface", std::make_shared<LayerInterface>());
 	addInterface("DeclarationManager", std::make_shared<DeclarationManagerInterface>());
+	addInterface("FxManager", std::make_shared<FxManagerInterface>());
 
 	GlobalCommandSystem().addCommand(
 		"RunScript",

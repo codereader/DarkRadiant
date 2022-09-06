@@ -7,6 +7,7 @@ add_library(script MODULE
             interfaces/EClassInterface.cpp
             interfaces/EntityInterface.cpp
             interfaces/FileSystemInterface.cpp
+            interfaces/FxManagerInterface.cpp
             interfaces/GameInterface.cpp
             interfaces/GridInterface.cpp
             interfaces/LayerInterface.cpp
