@@ -28,7 +28,9 @@ FxAction::FxAction(FxDeclaration& fx) :
     _decalSize(0),
     _offset(0,0,0),
     _axis(0,0,0),
-    _angle(0,0,0)
+    _angle(0,0,0),
+    _lightRgbColour(0, 0, 0),
+    _lightRadius(0)
 {}
 
 FxAction::Type FxAction::getType()
@@ -146,6 +148,11 @@ const std::string& FxAction::getUseLight()
     return _useLightAction;
 }
 
+const std::string& FxAction::getUseModel()
+{
+    return _useModelAction;
+}
+
 const std::string& FxAction::getAttachLight()
 {
     return _attachLightName;
@@ -154,6 +161,26 @@ const std::string& FxAction::getAttachLight()
 const std::string& FxAction::getAttachEntity()
 {
     return _attachEntityName;
+}
+
+const std::string& FxAction::getLaunchProjectileDef()
+{
+    return _launchProjectileDefName;
+}
+
+const std::string& FxAction::getLightMaterialName()
+{
+    return _lightMaterialName;
+}
+
+const Vector3& FxAction::getLightRgbColour()
+{
+    return _lightRgbColour;
+}
+
+float FxAction::getLightRadius()
+{
+    return _lightRadius;
 }
 
 void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
@@ -263,6 +290,11 @@ void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
             _useLightAction = tokeniser.nextToken();
             _type = Type::Light;
         }
+        else if (token == "usemodel")
+        {
+            _useModelAction = tokeniser.nextToken();
+            _type = Type::Model;
+        }
         else if (token == "attachlight")
         {
             _attachLightName = tokeniser.nextToken();
@@ -273,50 +305,25 @@ void FxAction::parseFromTokens(parser::DefTokeniser& tokeniser)
             _attachEntityName = tokeniser.nextToken();
             _type = Type::AttachEntity;
         }
+        else if (token == "launch")
+        {
+            _launchProjectileDefName = tokeniser.nextToken();
+            _type = Type::Launch;
+        }
+        else if (token == "light")
+        {
+            _type = Type::Light;
+            _lightMaterialName = tokeniser.nextToken();
+            tokeniser.assertNextToken(",");
+            _lightRgbColour.x() = string::convert<float>(tokeniser.nextToken());
+            tokeniser.assertNextToken(",");
+            _lightRgbColour.y() = string::convert<float>(tokeniser.nextToken());
+            tokeniser.assertNextToken(",");
+            _lightRgbColour.z() = string::convert<float>(tokeniser.nextToken());
+            tokeniser.assertNextToken(",");
+            _lightRadius = string::convert<float>(tokeniser.nextToken());
+        }
 #if 0
-        if (!token.Icmp("launch")) {
-            src.ReadToken(&token);
-            FXAction.data = token;
-            FXAction.type = FX_LAUNCH;
-
-            // precache the entity def
-            declManager->FindType(DECL_ENTITYDEF, FXAction.data);
-            continue;
-        }
-
-        if (!token.Icmp("useModel")) {
-            src.ReadToken(&token);
-            FXAction.data = token;
-            for (int i = 0; i < events.Num(); i++) {
-                if (events[i].name.Icmp(FXAction.data) == 0) {
-                    FXAction.sibling = i;
-                }
-            }
-            FXAction.type = FX_MODEL;
-
-            // precache the model
-            renderModelManager->FindModel(FXAction.data);
-            continue;
-        }
-
-        if (!token.Icmp("light")) {
-            src.ReadToken(&token);
-            FXAction.data = token;
-            src.ExpectTokenString(",");
-            FXAction.lightColor[0] = src.ParseFloat();
-            src.ExpectTokenString(",");
-            FXAction.lightColor[1] = src.ParseFloat();
-            src.ExpectTokenString(",");
-            FXAction.lightColor[2] = src.ParseFloat();
-            src.ExpectTokenString(",");
-            FXAction.lightRadius = src.ParseFloat();
-            FXAction.type = FX_LIGHT;
-
-            // precache the light material
-            declManager->FindMaterial(FXAction.data);
-            continue;
-        }
-
         if (!token.Icmp("model")) {
             src.ReadToken(&token);
             FXAction.data = token;

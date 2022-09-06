@@ -136,6 +136,18 @@ fx fx/parserTest/useLight
 	}
 }
 
+fx fx/parserTest/useModel
+{
+	{
+        delay 1.5
+        name "ModelOwner"
+	}
+	{
+        useModel "ModelOwner"
+        fadeOut 0.5
+	}
+}
+
 fx fx/parserTest/attach
 {
 	{
@@ -146,4 +158,12 @@ fx fx/parserTest/attach
         delay 2.5
         attachEntity "func_static_1"
     }
+}
+
+fx fx/parserTest/projectile
+{
+	{
+        delay 1.5
+        launch "atdm:projectile_broadhead"
+	}
 }

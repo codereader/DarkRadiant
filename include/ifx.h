@@ -91,11 +91,26 @@ public:
     // Returns the name of the action containing the light which should be used
     virtual const std::string& getUseLight() = 0;
 
+    // Modify the model in a named sibling action. Can be used to fade out a particle in a sibling.
+    virtual const std::string& getUseModel() = 0;
+
     // Attach to external light (a light not defined in the effect) for fading.
     virtual const std::string& getAttachLight() = 0;
 
     // Attach to an external entity
     virtual const std::string& getAttachEntity() = 0;
+
+    // Launches a projectile of the given entityDef
+    virtual const std::string& getLaunchProjectileDef() = 0;
+
+    // If not empty, this action spawns a light with this material
+    virtual const std::string& getLightMaterialName() = 0;
+
+    // For Type::Light actions, this defines the RGB colour components
+    virtual const Vector3& getLightRgbColour() = 0;
+
+    // For Type::Light actions, this defines the radius of the spawned light
+    virtual float getLightRadius() = 0;
 };
 
 class IFxDeclaration :

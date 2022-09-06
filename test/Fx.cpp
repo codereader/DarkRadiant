@@ -165,6 +165,15 @@ TEST_F(FxTest, ParseActionUseLight)
     EXPECT_EQ(getFxByName("fx/parserTest/useLight")->getAction(1)->getType(), fx::IFxAction::Type::Light);
 }
 
+TEST_F(FxTest, ParseActionUseModel)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getUseModel(), "");
+
+    EXPECT_EQ(getFxByName("fx/parserTest/useModel")->getAction(1)->getUseModel(), "ModelOwner");
+    // UseModel implies that the action is of type Model
+    EXPECT_EQ(getFxByName("fx/parserTest/useModel")->getAction(1)->getType(), fx::IFxAction::Type::Model);
+}
+
 TEST_F(FxTest, ParseActionAttachLight)
 {
     EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getAttachLight(), "");
@@ -179,6 +188,26 @@ TEST_F(FxTest, ParseActionAttachEntity)
 
     EXPECT_EQ(getFxByName("fx/parserTest/attach")->getAction(1)->getAttachEntity(), "func_static_1");
     EXPECT_EQ(getFxByName("fx/parserTest/attach")->getAction(1)->getType(), fx::IFxAction::Type::AttachEntity);
+}
+
+TEST_F(FxTest, ParseActionLaunchProjectile)
+{
+    EXPECT_EQ(getFxByName("fx/sparks")->getAction(0)->getLaunchProjectileDef(), "");
+
+    EXPECT_EQ(getFxByName("fx/parserTest/projectile")->getAction(0)->getLaunchProjectileDef(), "atdm:projectile_broadhead");
+    EXPECT_EQ(getFxByName("fx/parserTest/projectile")->getAction(0)->getType(), fx::IFxAction::Type::Launch);
+}
+
+TEST_F(FxTest, ParseActionLight)
+{
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getLightMaterialName(), "");
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getLightRadius(), 0.0f);
+    EXPECT_EQ(getFxByName("fx/parserTest/shake")->getAction(0)->getLightRgbColour(), Vector3(0,0,0));
+
+    EXPECT_EQ(getFxByName("fx/parserTest/useLight")->getAction(0)->getType(), fx::IFxAction::Type::Light);
+    EXPECT_EQ(getFxByName("fx/parserTest/useLight")->getAction(0)->getLightMaterialName(), "lights/biground");
+    EXPECT_EQ(getFxByName("fx/parserTest/useLight")->getAction(0)->getLightRadius(), 550.3f);
+    EXPECT_TRUE(math::isNear(getFxByName("fx/parserTest/useLight")->getAction(0)->getLightRgbColour(), Vector3(0.5, 1, 0.7), 0.001f));
 }
 
 }

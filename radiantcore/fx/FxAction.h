@@ -37,8 +37,13 @@ private:
     Vector3 _axis;
     Vector3 _angle;
     std::string _useLightAction;
+    std::string _useModelAction;
     std::string _attachLightName;
     std::string _attachEntityName;
+    std::string _launchProjectileDefName;
+    std::string _lightMaterialName;
+    Vector3 _lightRgbColour;
+    float _lightRadius;
 
 public:
     using Ptr = std::shared_ptr<FxAction>;
@@ -68,8 +73,13 @@ public:
     const Vector3& getAxis() override;
     const Vector3& getAngle() override;
     const std::string& getUseLight() override;
+    const std::string& getUseModel() override;
     const std::string& getAttachLight() override;
     const std::string& getAttachEntity() override;
+    const std::string& getLaunchProjectileDef() override;
+    const std::string& getLightMaterialName() override;
+    const Vector3& getLightRgbColour() override;
+    float getLightRadius() override;
 
     // Parses the action from the given tokens.
     // The opening brace { will already have been been consumed by the calling code
