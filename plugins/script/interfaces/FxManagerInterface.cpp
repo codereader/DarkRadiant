@@ -68,6 +68,7 @@ void FxManagerInterface::registerInterface(py::module& scope, py::dict& globals)
 	// Add the Fx Declaration interface
 	py::class_<ScriptFxDeclaration, ScriptDeclaration> fxDeclaration(scope, "Fx");
     fxDeclaration.def(py::init<const fx::IFxDeclaration::Ptr&>());
+    fxDeclaration.def("isNull", &ScriptFxDeclaration::isNull);
     fxDeclaration.def("getBindTo", &ScriptFxDeclaration::getBindTo);
     fxDeclaration.def("getNumActions", &ScriptFxDeclaration::getNumActions);
     fxDeclaration.def("getAction", &ScriptFxDeclaration::getAction);

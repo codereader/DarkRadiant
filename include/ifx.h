@@ -73,7 +73,7 @@ public:
     // Fade in the RGB of the light or model over <time> seconds
     virtual float getFadeInTimeInSeconds() = 0;
 
-    // Fade out the light/model. Ignored if fadeIn is set, you can use 2 seperate
+    // Fade out the light/model. Ignored if fadeIn is set, you can use 2 separate
     // actions (tied together with uselight) if you want a light to fade in and out.
     virtual float getFadeOutTimeInSeconds() = 0;
 

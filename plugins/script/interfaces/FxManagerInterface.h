@@ -204,6 +204,11 @@ public:
         _fx(fx)
     {}
 
+    bool isNull()
+    {
+        return !_fx;
+    }
+
     std::size_t getNumActions()
     {
         return _fx ? _fx->getNumActions() : 0;
