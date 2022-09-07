@@ -15,6 +15,181 @@ public:
     ScriptFxAction(const fx::IFxAction::Ptr& action) :
         _action(action)
     {}
+
+    fx::IFxAction::Type getType()
+    {
+        return _action ? _action->getType() : fx::IFxAction::Type::Undefined;
+    }
+
+    std::string getName()
+    {
+        return _action ? _action->getName() : std::string();
+    }
+
+    float getDelay()
+    {
+        return _action ? _action->getDelay() : 0;
+    }
+
+    float getDuration()
+    {
+        return _action ? _action->getDuration() : 0;
+    }
+
+    bool getIgnoreMaster()
+    {
+        return _action ? _action->getIgnoreMaster() : false;
+    }
+
+    float getShakeTime()
+    {
+        return _action ? _action->getShakeTime() : 0;
+    }
+
+    float getShakeAmplitude()
+    {
+        return _action ? _action->getShakeAmplitude() : 0;
+    }
+
+    float getShakeDistance()
+    {
+        return _action ? _action->getShakeDistance() : 0;
+    }
+
+    bool getShakeFalloff()
+    {
+        return _action ? _action->getShakeFalloff() : false;
+    }
+
+    float getShakeImpulse()
+    {
+        return _action ? _action->getShakeImpulse() : 0;
+    }
+
+    bool getNoShadows()
+    {
+        return _action ? _action->getNoShadows() : false;
+    }
+
+    std::string getFireSiblingAction()
+    {
+        return _action ? _action->getFireSiblingAction() : std::string();
+    }
+
+    std::pair<float, float> getRandomDelay()
+    {
+        return _action ? _action->getRandomDelay() : std::pair<float, float>();
+    }
+
+    float getRotate()
+    {
+        return _action ? _action->getRotate() : 0;
+    }
+
+    bool getTrackOrigin()
+    {
+        return _action ? _action->getTrackOrigin() : false;
+    }
+
+    bool getRestart()
+    {
+        return _action ? _action->getRestart() : false;
+    }
+
+    float getFadeInTimeInSeconds()
+    {
+        return _action ? _action->getFadeInTimeInSeconds() : 0;
+    }
+
+    float getFadeOutTimeInSeconds()
+    {
+        return _action ? _action->getFadeOutTimeInSeconds() : 0;
+    }
+
+    float getDecalSize()
+    {
+        return _action ? _action->getDecalSize() : 0;
+    }
+
+    Vector3 getOffset()
+    {
+        return _action ? _action->getOffset() : Vector3(0,0,0);
+    }
+
+    Vector3 getAxis()
+    {
+        return _action ? _action->getAxis() : Vector3(0,0,0);
+    }
+
+    Vector3 getAngle()
+    {
+        return _action ? _action->getAngle() : Vector3(0,0,0);
+    }
+
+    std::string getUseLight()
+    {
+        return _action ? _action->getUseLight() : std::string();
+    }
+
+    std::string getUseModel()
+    {
+        return _action ? _action->getUseModel() : std::string();
+    }
+
+    std::string getAttachLight()
+    {
+        return _action ? _action->getAttachLight() : std::string();
+    }
+
+    std::string getAttachEntity()
+    {
+        return _action ? _action->getAttachEntity() : std::string();
+    }
+
+    std::string getLaunchProjectileDef()
+    {
+        return _action ? _action->getLaunchProjectileDef() : std::string();
+    }
+
+    std::string getLightMaterialName()
+    {
+        return _action ? _action->getLightMaterialName() : std::string();
+    }
+
+    Vector3 getLightRgbColour()
+    {
+        return _action ? _action->getLightRgbColour() : Vector3(0,0,0);
+    }
+
+    float getLightRadius()
+    {
+        return _action ? _action->getLightRadius() : 0;
+    }
+
+    std::string getModelName()
+    {
+        return _action ? _action->getModelName() : std::string();
+    }
+
+    std::string getDecalMaterialName()
+    {
+        return _action ? _action->getDecalMaterialName() : std::string();
+    }
+
+    bool getParticleTrackVelocity()
+    {
+        return _action ? _action->getParticleTrackVelocity() : false;
+    }
+
+    std::string getSoundShaderName()
+    {
+        return _action ? _action->getSoundShaderName() : std::string();
+    }
+
+    std::string getShockwaveDefName()
+    {
+        return _action ? _action->getShockwaveDefName() : std::string();
+    }
 };
 
 class ScriptFxDeclaration :
