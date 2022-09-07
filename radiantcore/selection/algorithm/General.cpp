@@ -1025,13 +1025,17 @@ void registerCommands()
     GlobalCommandSystem().addCommand("CreateCurveNURBS", createCurveNURBS);
     GlobalCommandSystem().addCommand("CreateCurveCatmullRom", createCurveCatmullRom);
 
-	GlobalCommandSystem().addCommand("FloorSelection", floorSelection);
-	GlobalCommandSystem().addCommand("BrushSetDetailFlag", brushSetDetailFlag, { cmd::ARGTYPE_STRING });
-	GlobalCommandSystem().addStatement("BrushMakeDetail", "BrushSetDetailFlag detail", false);
-	GlobalCommandSystem().addStatement("BrushMakeStructural", "BrushSetDetailFlag structural", false);
+    GlobalCommandSystem().addCommand("FloorSelection", floorSelection);
+    GlobalCommandSystem().addWithCheck("BrushSetDetailFlag", brushSetDetailFlag,
+                                       [] { return selection::pred::haveBrush(); },
+                                       {cmd::ARGTYPE_STRING});
+    GlobalCommandSystem().addStatement("BrushMakeDetail", "BrushSetDetailFlag detail",
+                                       false);
+    GlobalCommandSystem().addStatement("BrushMakeStructural", "BrushSetDetailFlag structural",
+                                       false);
 
-	GlobalCommandSystem().addCommand(scene::SELECT_NODE_BY_INDEX_CMD, scene::selectNodeByIndexCmd,
-		{ cmd::ARGTYPE_INT, cmd::ARGTYPE_INT });
+    GlobalCommandSystem().addCommand(scene::SELECT_NODE_BY_INDEX_CMD, scene::selectNodeByIndexCmd,
+                                     {cmd::ARGTYPE_INT, cmd::ARGTYPE_INT});
 }
 
 	} // namespace algorithm
