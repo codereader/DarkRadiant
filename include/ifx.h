@@ -29,23 +29,23 @@ public:
 
     virtual ~IFxAction() {}
 
-    virtual Type getType() = 0;
+    virtual Type getActionType() = 0;
 
     // Returns the name of this action (which might be an empty string)
     virtual const std::string& getName() = 0;
 
     // Returns the action delay in seconds
-    virtual float getDelay() = 0;
+    virtual float getDelayInSeconds() = 0;
 
     // Action duration in seconds, before it is killed or restarted
-    virtual float getDuration() = 0;
+    virtual float getDurationInSeconds() = 0;
 
     // True: Don't shake the entity this effect is attached to
     virtual bool getIgnoreMaster() = 0;
 
     // Shake parameters
 
-    virtual float getShakeTime() = 0;
+    virtual float getShakeTimeInSeconds() = 0;
     virtual float getShakeAmplitude() = 0;
     virtual float getShakeDistance() = 0;
     virtual bool getShakeFalloff() = 0;

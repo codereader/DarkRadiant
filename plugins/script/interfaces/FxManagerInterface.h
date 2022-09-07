@@ -16,9 +16,9 @@ public:
         _action(action)
     {}
 
-    fx::IFxAction::Type getType()
+    fx::IFxAction::Type getActionType()
     {
-        return _action ? _action->getType() : fx::IFxAction::Type::Undefined;
+        return _action ? _action->getActionType() : fx::IFxAction::Type::Undefined;
     }
 
     std::string getName()
@@ -26,14 +26,14 @@ public:
         return _action ? _action->getName() : std::string();
     }
 
-    float getDelay()
+    float getDelayInSeconds()
     {
-        return _action ? _action->getDelay() : 0;
+        return _action ? _action->getDelayInSeconds() : 0;
     }
 
-    float getDuration()
+    float getDurationInSeconds()
     {
-        return _action ? _action->getDuration() : 0;
+        return _action ? _action->getDurationInSeconds() : 0;
     }
 
     bool getIgnoreMaster()
@@ -41,9 +41,9 @@ public:
         return _action ? _action->getIgnoreMaster() : false;
     }
 
-    float getShakeTime()
+    float getShakeTimeInSeconds()
     {
-        return _action ? _action->getShakeTime() : 0;
+        return _action ? _action->getShakeTimeInSeconds() : 0;
     }
 
     float getShakeAmplitude()

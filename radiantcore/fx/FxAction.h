@@ -55,12 +55,12 @@ public:
 
     FxAction(FxDeclaration& fx);
 
-    Type getType() override;
+    Type getActionType() override;
     const std::string& getName() override;
-    float getDelay() override;
-    float getDuration() override;
+    float getDelayInSeconds() override;
+    float getDurationInSeconds() override;
     bool getIgnoreMaster() override;
-    float getShakeTime() override;
+    float getShakeTimeInSeconds() override;
     float getShakeAmplitude() override;
     float getShakeDistance() override;
     bool getShakeFalloff() override;

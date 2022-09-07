@@ -34,7 +34,7 @@ FxAction::FxAction(FxDeclaration& fx) :
     _particleTrackVelocity(false)
 {}
 
-FxAction::Type FxAction::getType()
+FxAction::Type FxAction::getActionType()
 {
     return _type;
 }
@@ -44,12 +44,12 @@ const std::string& FxAction::getName()
     return _name;
 }
 
-float FxAction::getDelay()
+float FxAction::getDelayInSeconds()
 {
     return _delayInSeconds;
 }
 
-float FxAction::getShakeTime()
+float FxAction::getShakeTimeInSeconds()
 {
     return _shakeTime;
 }
@@ -99,7 +99,7 @@ float FxAction::getRotate()
     return _rotate;
 }
 
-float FxAction::getDuration()
+float FxAction::getDurationInSeconds()
 {
     return _durationInSeconds;
 }
