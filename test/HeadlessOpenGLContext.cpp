@@ -1,5 +1,6 @@
 #include "HeadlessOpenGLContext.h"
 #include "itextstream.h"
+#include <chrono>
 
 #ifdef WIN32
 #include <GL/wglew.h>
@@ -42,9 +43,18 @@ public:
 
 		CreateWindowW(_wc.lpszClassName, L"HeadlessOpenGLContext", WS_OVERLAPPEDWINDOW, 0, 0, 640, 480, 0, 0, _wc.hInstance, 0);
 
+        auto startTime = std::chrono::steady_clock::now();
+
 		while (_tempContext == nullptr && PeekMessage(&msg, NULL, 0, 0, 0) > 0)
 		{
 			DispatchMessage(&msg);
+            auto endTime = std::chrono::steady_clock::now();
+            auto elapsedMsecs = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+
+            if (elapsedMsecs > 10000)
+            {
+                throw std::runtime_error("Failed to acquire the temporary context within 10 seconds");
+            }
 		}
 
 		_context = _tempContext;
@@ -219,6 +229,7 @@ void HeadlessOpenGLContextModule::createContext()
 	{
         rError() << "Headless GL context creation failed: " << ex.what() << std::endl;
         std::cerr << "Headless GL context creation failed: " << ex.what() << std::endl;
+        throw; // leak this exception
 	}
 }
 
