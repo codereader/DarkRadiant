@@ -24,9 +24,10 @@ private:
     // Declaration names are compared case-insensitively
     using NamedDeclarations = std::map<std::string, IDeclaration::Ptr, string::ILess>;
 
+    std::recursive_mutex _declarationAndCreatorLock;
+
     std::map<std::string, IDeclarationCreator::Ptr> _creatorsByTypename;
     std::map<Type, IDeclarationCreator::Ptr> _creatorsByType;
-    std::recursive_mutex _creatorLock;
 
     struct RegisteredFolder
     {
@@ -51,7 +52,6 @@ private:
 
     // One entry for each decl
     std::map<Type, Declarations> _declarationsByType;
-    std::recursive_mutex _declarationLock;
 
     std::list<DeclarationBlockSyntax> _unrecognisedBlocks;
     std::recursive_mutex _unrecognisedBlockLock;
@@ -64,6 +64,7 @@ private:
 
     // Holds the results during reparseDeclarations
     std::vector<std::pair<Type, ParseResult>> _parseResults;
+    std::mutex _parseResultLock;
 
     sigc::connection _vfsInitialisedConn;
 
@@ -103,7 +104,7 @@ private:
 
     // Requires the creatorsMutex and the declarationMutex to be locked
     const IDeclaration::Ptr& createOrUpdateDeclaration(Type type, const DeclarationBlockSyntax& block);
-    void doWithDeclarations(Type type, const std::function<void(NamedDeclarations&)>& action);
+    void doWithDeclarationLock(Type type, const std::function<void(NamedDeclarations&)>& action);
     void handleUnrecognisedBlocks();
     void reloadDeclsCmd(const cmd::ArgumentList& args);
 
