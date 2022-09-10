@@ -5,14 +5,9 @@
 namespace xml
 {
 
-// Construct a Node from the given xmlNodePtr.
-
-Node::Node(xmlNodePtr node):
+Node::Node(const Document* owner, xmlNodePtr node) :
+    _owner(owner),
     _xmlNode(node)
-{}
-
-Node::Node(const Node& other) :
-    Node(other._xmlNode)
 {}
 
 bool Node::isValid() const
@@ -21,7 +16,7 @@ bool Node::isValid() const
 }
 
 // Return the name of a node
-const std::string Node::getName() const
+std::string Node::getName() const
 {
 	if (_xmlNode) {
 		return std::string( reinterpret_cast<const char*>(_xmlNode->name) );
@@ -39,7 +34,7 @@ NodeList Node::getChildren() const
     // Iterate throught the list of children, adding each child node
     // to the return list if it matches the requested name
     for (xmlNodePtr child = _xmlNode->children; child != NULL; child = child->next) {
-        retval.push_back(child);
+        retval.emplace_back(_owner, child);
     }
 
     return retval;
@@ -56,10 +51,8 @@ Node Node::createChild(const std::string& name)
 	xmlFree(nodeName);
 
 	// Create a new xml::Node out of this pointer and return it
-	return Node(newChild);
+	return Node(_owner, newChild);
 }
-
-// Return a NodeList of named children of this node
 
 NodeList Node::getNamedChildren(const std::string& name) const
 {
@@ -69,14 +62,13 @@ NodeList Node::getNamedChildren(const std::string& name) const
     // to the return list if it matches the requested name
     for (xmlNodePtr child = _xmlNode->children; child != NULL; child = child->next) {
         if (xmlStrcmp(child->name, reinterpret_cast<const xmlChar*>(name.c_str())) == 0) {
-            retval.push_back(child);
+            retval.emplace_back(_owner, child);
         }
     }
 
     return retval;
 }
 
-// Set the value of the given attribute
 void Node::setAttributeValue(const std::string& key, const std::string& value)
 {
 	xmlChar* k = xmlCharStrdup(key.c_str());
@@ -155,6 +147,11 @@ void Node::erase()
 
 	// All child nodes are freed recursively
 	xmlFreeNode(_xmlNode);
+}
+
+xmlNodePtr Node::getNodePtr() const
+{
+    return _xmlNode;
 }
 
 } // namespace xml

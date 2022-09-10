@@ -76,6 +76,11 @@ public:
 
 	// Saves the document to a std::string and returns it
 	std::string saveToString() const;
+
+private:
+    friend class Node;
+
+    std::mutex& getLock() const;
 };
 
 }

@@ -202,7 +202,7 @@ TEST_F(XmlTest, SaveDocumentToString)
 TEST_F(XmlTest, CreateEmptyNode)
 {
     // Test the saveToString() method
-    xml::Node node(nullptr);
+    xml::Node node(nullptr, nullptr);
 
     EXPECT_FALSE(node.isValid()) << "Empty node should not be valid";
 }
@@ -233,11 +233,16 @@ TEST_F(XmlTest, CopyConstructNode)
     EXPECT_EQ(copy.getName(), "testDocument") << "Copied node has the wrong name";
 
     // Copying an empty node should be possible
-    xml::Node nullNode(nullptr);
+    xml::Node nullNode(nullptr, nullptr);
     xml::Node copiedNullNode(nullNode);
 
     EXPECT_FALSE(nullNode.isValid()) << "Empty node should not be valid";
     EXPECT_FALSE(copiedNullNode.isValid()) << "Empty copied node should not be valid";
+
+    // operator=
+    xml::Node assignedNullNode(rootNode);
+    assignedNullNode = nullNode;
+    EXPECT_FALSE(assignedNullNode.isValid()) << "Empty assigned node should not be valid";
 }
 
 TEST_F(XmlTest, GetNodeChildren)

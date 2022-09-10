@@ -24,7 +24,7 @@ private:
 
 public:
     ShortcutSaver(const std::string& rootKey) :
-        _shortcutsNode(nullptr)
+        _shortcutsNode(nullptr, nullptr)
     {
         // Remove any existing shortcut definitions
         GlobalRegistry().deleteXPath(rootKey + "//shortcuts");
