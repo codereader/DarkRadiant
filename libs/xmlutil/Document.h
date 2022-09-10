@@ -41,9 +41,6 @@ public:
 	// stream data into memory, and parse it chunk by chunk.
 	Document(std::istream& stream);
 
-	// Copy constructor (note: does not create an actual copy of the internal xmlDoc)
-	Document(const Document& other);
-
 	// Destructor, frees the xmlDocPtr
 	~Document();
 

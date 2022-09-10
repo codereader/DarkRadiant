@@ -64,10 +64,6 @@ Document::Document(std::istream& stream) :
 	xmlFreeParserCtxt(ctxt);
 }
 
-Document::Document(const Document& other) :
-	_xmlDoc(other._xmlDoc)
-{}
-
 Document::~Document() 
 {
 	if (_xmlDoc != nullptr)
