@@ -55,11 +55,19 @@ protected:
     // Main parse entry point, process all files
     ReturnType doParse()
     {
-        onBeginParsing();
+        try
+        {
+            onBeginParsing();
 
-        processFiles();
+            processFiles();
 
-        return onFinishParsing();
+            return onFinishParsing();
+        }
+        catch (const std::exception& ex)
+        {
+            rError() << "Exception in ThreadedDeclParser: " << ex.what() << std::endl;
+            throw;
+        }
     }
 
     // Parse all decls found in the given stream, to be implemented by subclasses
