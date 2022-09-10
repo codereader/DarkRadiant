@@ -624,11 +624,13 @@ void DeclarationManager::saveDeclaration(const IDeclaration::Ptr& decl)
 
 sigc::signal<void>& DeclarationManager::signal_DeclsReloading(Type type)
 {
+    std::lock_guard lock(_signalAddLock);
     return _declsReloadingSignals.try_emplace(type).first->second;
 }
 
 sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
 {
+    std::lock_guard lock(_signalAddLock);
     return _declsReloadedSignals.try_emplace(type).first->second;
 }
 
@@ -669,13 +671,10 @@ void DeclarationManager::onParserFinished(Type parserType, ParseResult& parsedBl
         // it might have already been moved out in doWithDeclarationLock()
         if (decls->second.parser)
         {
-            // Move parser ptr as long as we hold the lock
-            std::unique_ptr parser(std::move(decls->second.parser));
-
-            // Move the parser reference from the local variable as capture to the lambda
+            // Move the parser reference from the dictionary as capture to the lambda
             // Then let the unique_ptr in the lambda go out of scope to finish the thread
             // Lambda is mutable to make the unique_ptr member non-const
-            decls->second.parserFinisher = std::async(std::launch::async, [p = std::move(parser)]() mutable
+            decls->second.parserFinisher = std::async(std::launch::async, [p = std::move(decls->second.parser)]() mutable
             {
                 p.reset();
             });

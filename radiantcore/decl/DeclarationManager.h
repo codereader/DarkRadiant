@@ -58,6 +58,7 @@ private:
 
     std::map<Type, sigc::signal<void>> _declsReloadingSignals;
     std::map<Type, sigc::signal<void>> _declsReloadedSignals;
+    std::mutex _signalAddLock; // mutex used to ensure only one thread is adding values to the above maps
 
     std::size_t _parseStamp = 0;
     bool _reparseInProgress = false;
