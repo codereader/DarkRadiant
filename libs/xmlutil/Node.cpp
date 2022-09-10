@@ -145,7 +145,7 @@ void Node::addText(const std::string& text)
 	);
 
 	// Add the newly allocated text as sibling of this node
-	xmlAddSibling(_xmlNode, whitespace);
+    xmlAddNextSibling(_xmlNode, whitespace);
 }
 
 void Node::erase()
