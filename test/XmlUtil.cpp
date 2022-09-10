@@ -383,4 +383,41 @@ TEST_F(XmlTest, SetNodeContent)
     EXPECT_NE(document.saveToString().find(someTextWithWhitespace), std::string::npos) << "Expected to find the custom whitespace string in the document";
 }
 
+TEST_F(XmlTest, AddTextToNode)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    auto colourscheme = document.findXPath("//colourscheme[@name='DarkRadiant Default']").at(0);
+    auto testNode1 = colourscheme.createChild("testNode");
+    auto testNode2 = colourscheme.createChild("testNode");
+
+    // The two nodes lack any whitespace
+    auto expectedText = "<testNode/><testNode/>";
+    auto expectedTextWithAddedText = "<testNode/> \t  <testNode/>\n";
+    EXPECT_NE(document.saveToString().find(expectedText), std::string::npos) << "Expected to find the new nodes in the document";
+    EXPECT_EQ(document.saveToString().find(expectedTextWithAddedText), std::string::npos) << "Whitespaced text should not be present yet";
+
+    // Add some specific whitespace to the first node and a line break to the second
+    testNode1.addText(" \t  ");
+    testNode2.addText("\n");
+
+    EXPECT_EQ(document.saveToString().find(expectedText), std::string::npos) << "The old text should be gone";
+    EXPECT_NE(document.saveToString().find(expectedTextWithAddedText), std::string::npos) << "Expected to find the whitespaced nodes in the document";
+}
+
+TEST_F(XmlTest, EraseNode)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    // Expect exactly two colour schemes, one with that name
+    EXPECT_EQ(document.findXPath("//colourscheme").size(), 2);
+    EXPECT_EQ(document.findXPath("//colourscheme[@name='DarkRadiant Default']").size(), 1);
+
+    auto colourscheme = document.findXPath("//colourscheme[@name='DarkRadiant Default']").at(0);
+    colourscheme.erase();
+
+    EXPECT_EQ(document.findXPath("//colourscheme").size(), 1);
+    EXPECT_EQ(document.findXPath("//colourscheme[@name='DarkRadiant Default']").size(), 0);
+}
+
 }
