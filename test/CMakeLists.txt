@@ -53,7 +53,8 @@ add_executable(drtest
                Transformation.cpp
                UndoRedo.cpp
                VFS.cpp
-               WorldspawnColour.cpp)
+               WorldspawnColour.cpp
+               XmlUtil.cpp)
 
 find_package(Threads REQUIRED)
 

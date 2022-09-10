@@ -35,16 +35,29 @@ Document::Document(std::istream& stream) :
 		return;
 	}
 
-	xmlParserCtxtPtr ctxt = xmlCreatePushParserCtxt(nullptr, nullptr, buffer.data(), 1, "stream");
+	auto ctxt = xmlCreatePushParserCtxt(nullptr, nullptr, buffer.data(), 1, "stream");
 
 	while (!stream.eof())
 	{
 		stream.read(buffer.data(), buffer.size());
-		xmlParseChunk(ctxt, buffer.data(), static_cast<int>(stream.gcount()), 0);
+
+        auto error = xmlParseChunk(ctxt, buffer.data(), static_cast<int>(stream.gcount()), 0);
+
+        if (error != 0)
+        {
+            xmlFreeParserCtxt(ctxt);
+            return;
+        }
 	}
 
 	// Terminate the parser
-	xmlParseChunk(ctxt, buffer.data(), 0, 1);
+	auto error = xmlParseChunk(ctxt, buffer.data(), 0, 1);
+
+    if (error != 0)
+    {
+        xmlFreeParserCtxt(ctxt);
+        return;
+    }
 
 	_xmlDoc = ctxt->myDoc;
 

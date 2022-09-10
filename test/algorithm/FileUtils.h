@@ -66,6 +66,17 @@ inline std::string loadTextFromVfsFile(const std::string& vfsPath)
     return textStream.str();
 }
 
+// Returns the text contents of the given file
+inline std::string loadFileToString(const fs::path& path)
+{
+    std::stringstream contentStream;
+    std::ifstream input(path);
+
+    contentStream << input.rdbuf();
+
+    return contentStream.str();
+}
+
 // True if the file (full physical path) contains the given text (ignoring CRLF vs. LF line break differences)
 inline bool fileContainsText(const fs::path& path, const std::string& textToFind)
 {
