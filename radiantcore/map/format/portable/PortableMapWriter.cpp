@@ -133,7 +133,7 @@ void PortableMapWriter::beginWriteEntity(const IEntityNodePtr& entity, std::ostr
 	node.setAttributeValue(ATTR_ENTITY_NUMBER, string::to_string(_entityCount++));
 
 	auto primitiveNode = node.createChild(TAG_ENTITY_PRIMITIVES);
-	_curEntityPrimitives = xml::Node(primitiveNode.getNodePtr());
+	_curEntityPrimitives = xml::Node(primitiveNode);
 
 	auto keyValues = node.createChild(TAG_ENTITY_KEYVALUES);
 
@@ -160,7 +160,7 @@ void PortableMapWriter::endWriteEntity(const IEntityNodePtr& entity, std::ostrea
 
 void PortableMapWriter::beginWriteBrush(const IBrushNodePtr& brushNode, std::ostream& stream)
 {
-	assert(_curEntityPrimitives.getNodePtr() != nullptr);
+	assert(_curEntityPrimitives.isValid());
 
 	auto brushTag = _curEntityPrimitives.createChild(TAG_BRUSH);
 	brushTag.setAttributeValue(ATTR_BRUSH_NUMBER, string::to_string(_primitiveCount++));
@@ -224,7 +224,7 @@ void PortableMapWriter::endWriteBrush(const IBrushNodePtr& brush, std::ostream& 
 
 void PortableMapWriter::beginWritePatch(const IPatchNodePtr& patchNode, std::ostream& stream)
 {
-	assert(_curEntityPrimitives.getNodePtr() != nullptr);
+	assert(_curEntityPrimitives.isValid());
 
 	auto patchTag = _curEntityPrimitives.createChild(TAG_PATCH);
 	patchTag.setAttributeValue(ATTR_PATCH_NUMBER, string::to_string(_primitiveCount++));

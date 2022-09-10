@@ -145,7 +145,7 @@ void Document::importDocument(Document& other, Node& importNode)
 
 	xmlNodePtr targetNode = importNode.getNodePtr();
 
-	if (targetNode->name == NULL)
+	if (!importNode.isValid())
 	{
 		// invalid importnode
 		return;

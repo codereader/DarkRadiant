@@ -11,10 +11,13 @@ Node::Node(xmlNodePtr node):
     _xmlNode(node)
 {}
 
-// Return the actual node ptr
-xmlNodePtr Node::getNodePtr() const
+Node::Node(const Node& other) :
+    Node(other._xmlNode)
+{}
+
+bool Node::isValid() const
 {
-	return _xmlNode;
+    return _xmlNode != nullptr;
 }
 
 // Return the name of a node

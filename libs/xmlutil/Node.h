@@ -34,8 +34,11 @@ public:
     // Construct a Node from the provided xmlNodePtr.
 	Node(xmlNodePtr node);
 
-	// Get the actual node pointer to a given node
-    xmlNodePtr getNodePtr() const;
+    // Copy-constructor. The copy will reference the same underlying xml node
+    Node(const Node& other);
+
+    // Returns true if this node is not empty (null)
+    bool isValid() const;
 
     // Get the name of the given node
     const std::string getName() const;
@@ -71,6 +74,15 @@ public:
 
 	// Unlink and delete the node and all its children
 	void erase();
+
+private:
+    friend class Document;
+
+    // Private accessor, used by the friend Document class
+    xmlNodePtr getNodePtr() const
+    {
+        return _xmlNode;
+    }
 };
 
 } // namespace xml
