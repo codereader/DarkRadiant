@@ -65,5 +65,9 @@
     <colour name="texture_background" value="0.25 0.25 0.25"/>
     <colour name="workzone" value="1 0 0"/>
     <colour name="xyview_crosshairs" value="0.2 0.9 0.2"/>
+    <specialNodeWithWhitespace name="withWhitespacedContent">
+        Some special content including leading and trailing whitespace
+    </specialNodeWithWhitespace>
+    <specialNode name="withContent">Some special content</specialNode>
   </colourscheme>
 </testDocument>

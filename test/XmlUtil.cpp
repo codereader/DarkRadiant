@@ -6,6 +6,7 @@
 #include "algorithm/FileUtils.h"
 #include "string/trim.h"
 #include "testutil/TemporaryFile.h"
+#include "xmlutil/Node.h"
 #include "xmlutil/Document.h"
 
 namespace test
@@ -154,7 +155,7 @@ TEST_F(XmlTest, FindXPathInDocument)
 
     // Find all colour nodes using various methods
     EXPECT_EQ(document.findXPath("/testDocument/colourscheme/colour").size(), 62);
-    EXPECT_EQ(document.findXPath("/testDocument/colourscheme/*").size(), 62);
+    EXPECT_EQ(document.findXPath("/testDocument/colourscheme/*").size(), 64);
     EXPECT_EQ(document.findXPath("/testDocument//colour").size(), 62);
     EXPECT_EQ(document.findXPath("//colour").size(), 62);
 
@@ -196,6 +197,190 @@ TEST_F(XmlTest, SaveDocumentToString)
 
     // saveToString() should produce the same file again, except for trailing line breaks
     EXPECT_EQ(string::trim_copy(document.saveToString()), fileContents);
+}
+
+TEST_F(XmlTest, CreateEmptyNode)
+{
+    // Test the saveToString() method
+    xml::Node node(nullptr);
+
+    EXPECT_FALSE(node.isValid()) << "Empty node should not be valid";
+}
+
+TEST_F(XmlTest, NodeName)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    // Get the root node and check its name
+    auto rootNode = document.findXPath("/testDocument").at(0);
+
+    EXPECT_TRUE(rootNode.isValid()) << "Root node should be valid";
+    EXPECT_EQ(rootNode.getName(), "testDocument") << "Root node has the wrong name";
+}
+
+TEST_F(XmlTest, CopyConstructNode)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    // Get the root node and check its name
+    auto rootNode = document.findXPath("/testDocument").at(0);
+
+    EXPECT_TRUE(rootNode.isValid()) << "Root node should be valid";
+    EXPECT_EQ(rootNode.getName(), "testDocument") << "Root node has the wrong name";
+
+    xml::Node copy(rootNode);
+    EXPECT_TRUE(copy.isValid()) << "Root node should be valid";
+    EXPECT_EQ(copy.getName(), "testDocument") << "Copied node has the wrong name";
+
+    // Copying an empty node should be possible
+    xml::Node nullNode(nullptr);
+    xml::Node copiedNullNode(nullNode);
+
+    EXPECT_FALSE(nullNode.isValid()) << "Empty node should not be valid";
+    EXPECT_FALSE(copiedNullNode.isValid()) << "Empty copied node should not be valid";
+}
+
+TEST_F(XmlTest, GetNodeChildren)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    // Get the root node and check its name
+    auto rootNode = document.findXPath("/testDocument").at(0);
+
+    EXPECT_TRUE(rootNode.isValid()) << "Root node should be valid";
+
+    auto children = rootNode.getChildren();
+
+    EXPECT_GE(children.size(), 2) << "Expected at least 2 child nodes";
+
+    // Check all non-text nodes
+    for (const auto& child : children)
+    {
+        if (child.getName() == "text")
+        {
+            continue;
+        }
+
+        EXPECT_EQ(child.getName(), "colourscheme") << "Expected only colourscheme nodes";
+    }
+}
+
+TEST_F(XmlTest, GetNamedNodeChildren)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    // Get the root node and check its name
+    auto rootNode = document.findXPath("/testDocument").at(0);
+
+    EXPECT_TRUE(rootNode.isValid()) << "Root node should be valid";
+
+    auto children = rootNode.getNamedChildren("colourscheme");
+
+    EXPECT_EQ(children.size(), 2) << "Expected exactly 2 child nodes";
+
+    EXPECT_EQ(children.at(0).getName(), "colourscheme") << "Expected only colourscheme nodes";
+    EXPECT_EQ(children.at(1).getName(), "colourscheme") << "Expected only colourscheme nodes";
+}
+
+TEST_F(XmlTest, GetNodeAttributeValue)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    // Get the root node and check its name
+    auto colourNode = document.findXPath("/testDocument//colour[@name='active_view_name']").at(0);
+
+    EXPECT_TRUE(colourNode.isValid()) << "Colour node should be valid";
+    EXPECT_EQ(colourNode.getName(), "colour") << "Expected only colourscheme nodes";
+
+    EXPECT_EQ(colourNode.getAttributeValue("name"), "active_view_name") << "Attribute values not retrieved";
+    EXPECT_EQ(colourNode.getAttributeValue("value"), "0.7 0.7 0") << "Attribute values not retrieved";
+    EXPECT_EQ(colourNode.getAttributeValue("nonexistent"), "") << "Nonexistent attributes should return an empty string";
+}
+
+TEST_F(XmlTest, SetNodeAttributeValue)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    // Get the root node and check its name
+    auto colourNode = document.findXPath("/testDocument//colour[@name='active_view_name']").at(0);
+
+    EXPECT_EQ(colourNode.getAttributeValue("name"), "active_view_name") << "Attribute values not retrieved";
+    EXPECT_EQ(colourNode.getAttributeValue("nonexistent"), "") << "Nonexistent attributes should return an empty string";
+    EXPECT_EQ(document.findXPath("/testDocument//colour[@name='active_view_name']").size(), 2) << "We should start with 2 active_view_name colours";
+    EXPECT_EQ(document.findXPath("/testDocument//colour[@name='My new name!']").size(), 0) << "This node should not be there yet";
+
+    colourNode.setAttributeValue("name", "My new name!");
+    colourNode.setAttributeValue("nonexistent", "Not so nonexistent anymore");
+
+    EXPECT_EQ(colourNode.getAttributeValue("name"), "My new name!") << "Attribute values not retrieved";
+    EXPECT_EQ(colourNode.getAttributeValue("nonexistent"), "Not so nonexistent anymore") << "Attribute values not retrieved";
+
+    // The changes should also be applied within the document without explicitly having to save anything
+    EXPECT_EQ(document.findXPath("/testDocument//colour[@name='active_view_name']").size(), 1) << "Only one of these should be left";
+    EXPECT_EQ(document.findXPath("/testDocument//colour[@name='My new name!']").size(), 1);
+}
+
+TEST_F(XmlTest, CreateNodeChild)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    EXPECT_EQ(document.findXPath("//colourscheme[@name='Black & Green']").size(), 1);
+    EXPECT_EQ(document.findXPath("//colourscheme[@name='Black & Green']/testNode").size(), 0) << "Expected no children";
+
+    auto colourscheme = document.findXPath("//colourscheme[@name='Black & Green']").at(0);
+    auto previousChildNodes = colourscheme.getChildren();
+
+    colourscheme.createChild("testNode");
+
+    EXPECT_EQ(document.findXPath("//colourscheme[@name='Black & Green']").size(), 1);
+    EXPECT_EQ(document.findXPath("//colourscheme[@name='Black & Green']/testNode").size(), 1) << "Expected 1 child now";
+
+    auto childNodes = colourscheme.getChildren();
+    EXPECT_EQ(childNodes.size(), previousChildNodes.size() + 1);
+
+    childNodes = colourscheme.getNamedChildren("testNode");
+    EXPECT_EQ(childNodes.size(), 1);
+    EXPECT_EQ(childNodes.at(0).getName(), "testNode");
+}
+
+TEST_F(XmlTest, GetNodeContent)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    auto colourNode = document.findXPath("//colourscheme[@name='DarkRadiant Default']/colour[@name='xyview_crosshairs']").at(0);
+    EXPECT_EQ(colourNode.getContent(), "") << "Closed XML tag should have an empty content";
+
+    EXPECT_EQ(document.findXPath("//colourscheme[@name='DarkRadiant Default']").size(), 1);
+    EXPECT_EQ(document.findXPath("//colourscheme[@name='DarkRadiant Default']/specialNode").size(), 1) << "Expected 1 matching node";
+
+    auto specialNode = document.findXPath("//colourscheme[@name='DarkRadiant Default']/specialNode").at(0);
+    EXPECT_EQ(specialNode.getContent(), "Some special content");
+
+    auto specialNodeWithWhitespace = document.findXPath("//colourscheme[@name='DarkRadiant Default']/specialNodeWithWhitespace").at(0);
+    EXPECT_EQ(specialNodeWithWhitespace.getContent(), R"(
+        Some special content including leading and trailing whitespace
+    )");
+}
+
+TEST_F(XmlTest, SetNodeContent)
+{
+    xml::Document document(_context.getTestResourcePath() + TEST_XML_FILE);
+
+    EXPECT_EQ(document.findXPath("//colourscheme[@name='DarkRadiant Default']").size(), 1);
+    EXPECT_EQ(document.findXPath("//colourscheme[@name='DarkRadiant Default']/specialNode").size(), 1) << "Expected 1 matching node";
+
+    auto specialNode = document.findXPath("//colourscheme[@name='DarkRadiant Default']/specialNode").at(0);
+
+    std::string someText = "-Some text-";
+    specialNode.setContent(someText);
+    EXPECT_EQ(specialNode.getContent(), someText);
+    EXPECT_NE(document.saveToString().find(someText), std::string::npos) << "Expected to find the custom string in the document";
+
+    // LF whitespaces should be preserved when stored in the content
+    std::string someTextWithWhitespace = "\n-Some\ntext-\t\t\n";
+    specialNode.setContent(someTextWithWhitespace);
+    EXPECT_EQ(specialNode.getContent(), someTextWithWhitespace);
+    EXPECT_NE(document.saveToString().find(someTextWithWhitespace), std::string::npos) << "Expected to find the custom whitespace string in the document";
 }
 
 }
