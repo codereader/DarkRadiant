@@ -156,28 +156,15 @@ void DeclarationManager::foreachDeclaration(Type type, const std::function<void(
 
 void DeclarationManager::doWithDeclarationLock(Type type, const std::function<void(NamedDeclarations&)>& action)
 {
+    // All parsers should be done before doing anything with the declarations
+    waitForTypedParsersToFinish();
+
     // Find type dictionary
-    auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
+    std::lock_guard declLock(_declarationAndCreatorLock);
 
     auto decls = _declarationsByType.find(type);
 
     if (decls == _declarationsByType.end()) return;
-
-    // Ensure the parser is done
-    if (decls->second.parser)
-    {
-        // Move the parser to prevent the parser thread from trying to do
-        // the same in onParserFinished
-        std::unique_ptr parser(std::move(decls->second.parser));
-
-        // Release the lock and let the thread finish
-        declLock.reset();
-
-        parser->ensureFinished(); // blocks
-        parser.reset();
-
-        declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
-    }
 
     action(decls->second.decls);
 }

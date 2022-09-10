@@ -128,7 +128,7 @@ class TestDeclarationCreator :
     public decl::IDeclarationCreator
 {
 public:
-    bool processingDisabled = false;
+    std::function<void()> creationCallback;
 
     decl::Type getDeclType() const override
     {
@@ -137,10 +137,9 @@ public:
 
     decl::IDeclaration::Ptr createDeclaration(const std::string& name) override
     {
-        while (processingDisabled)
+        if (creationCallback)
         {
-            using namespace std::chrono_literals;
-            std::this_thread::sleep_for(20ms);
+            creationCallback();
         }
 
         return std::make_shared<TestDeclaration>(getDeclType(), name);
@@ -303,28 +302,32 @@ TEST_F(DeclManagerTest, CreatorRegistrationDuringRunningThread)
 {
     auto creator = std::make_shared<TestDeclarationCreator>();
 
-    // Hold back this creator until we let it go in this fixture
-    creator->processingDisabled = true;
+    bool testDecl2Registered = false;
+
+    // When the first testdecl is created, we register the decl2 type
+    creator->creationCallback = [&]()
+    {
+        if (!testDecl2Registered)
+        {
+            // Register the testdecl2 creator now, it should be used by the decl manager
+            // (after the running thread is done) to parse the missing pieces
+            GlobalDeclarationManager().registerDeclType("testdecl2", std::make_shared<TestDeclaration2Creator>());
+            testDecl2Registered = true;
+        }
+    };
 
     GlobalDeclarationManager().registerDeclType("testdecl", creator);
 
-    // Parse this folder, it contains decls of type testdecl and testdecl2 in the .decl files
-    // The creator will block and keep the thread alive until further notice
-    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
-
+    // We assume we know nothing about the decl2 typed table yet
     auto foundTestDecl2Names = getAllDeclNames(decl::Type::TestDecl2);
     EXPECT_FALSE(foundTestDecl2Names.count("decltable1") > 0);
 
-    // Register the testdecl2 creator now, it should be used by the decl manager to parse the missing pieces
-    GlobalDeclarationManager().registerDeclType("testdecl2", std::make_shared<TestDeclaration2Creator>());
+    // Parse this folder, it contains decls of type testdecl and testdecl2 in the .decl files
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
 
-    // The first thread is still running, so we didn't get the decltable1 decls yet
-    foundTestDecl2Names = getAllDeclNames(decl::Type::TestDecl2);
-    EXPECT_FALSE(foundTestDecl2Names.count("decltable1") > 0);
-
-    // Released the flag to let the first parser finish its work
-    creator->processingDisabled = false;
     getAllDeclNames(decl::Type::TestDecl);
+
+    EXPECT_TRUE(testDecl2Registered) << "Callback to register testdecl2 has never been invoked";
 
     // Everything should be registered now
     checkKnownTestDecl2Names();
