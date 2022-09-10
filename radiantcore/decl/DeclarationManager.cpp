@@ -243,24 +243,23 @@ void DeclarationManager::reloadDeclarations()
 
 void DeclarationManager::waitForTypedParsersToFinish()
 {
-    auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
+    // Extract all parsers while we hold the lock
+    std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
 
-    for (auto& [_, decls] : _declarationsByType)
     {
-        if (!decls.parser) continue;
+        std::lock_guard declLock(_declarationAndCreatorLock);
 
-        // Move the parser to prevent the parser thread from trying to do
-        // the same in onParserFinished
-        std::unique_ptr parser(std::move(decls.parser));
-
-        // Release the lock and let the thread finish
-        declLock.reset();
-
-        parser->ensureFinished(); // blocks
-        parser.reset();
-
-        declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
+        for (auto& [_, decl] : _declarationsByType)
+        {
+            if (decl.parser)
+            {
+                parsersToFinish.emplace_back(std::move(decl.parser));
+            }
+        }
     }
+
+    // Let all parsers complete their work
+    parsersToFinish.clear();
 }
 
 void DeclarationManager::runParsersForAllFolders()
@@ -868,20 +867,7 @@ void DeclarationManager::shutdownModule()
 {
     _vfsInitialisedConn.disconnect();
 
-    auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
-    std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
-
-    for (auto& [_, decl] : _declarationsByType)
-    {
-        if (decl.parser)
-        {
-            parsersToFinish.emplace_back(std::move(decl.parser));
-        }
-    }
-
-    // Release the lock, destruct all parsers
-    declLock.reset();
-    parsersToFinish.clear(); // might block if parsers are running
+    waitForTypedParsersToFinish();
 
     // All parsers have finished, clear the structure, no need to lock anything
     _registeredFolders.clear();
