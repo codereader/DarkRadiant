@@ -36,8 +36,11 @@ protected:
     {}
 
 public:
-    virtual ~ThreadedDeclParser()
-    {}
+    ~ThreadedDeclParser() override
+    {
+        // Ensure that reset() is called while this class is still intact
+        ThreadedDefLoader<ReturnType>::reset();
+    }
 
     // Bypass the threading, and just perform the parse routine
     ReturnType parseSynchronously()

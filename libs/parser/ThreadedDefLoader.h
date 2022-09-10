@@ -85,8 +85,6 @@ public:
         // Wait for any running thread to finish
         if (_loadingStarted)
         {
-            _loadingStarted = false;
-
             if (_result.valid())
             {
                 _result.get();
@@ -99,6 +97,8 @@ public:
 
             _result = std::shared_future<ReturnType>();
             _finisher = std::shared_future<void>();
+
+            _loadingStarted = false;
         }
     }
 

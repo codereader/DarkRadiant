@@ -34,6 +34,12 @@ public:
         const std::string& baseDir, const std::string& extension,
         const std::map<std::string, Type, string::ILess>& typeMapping);
 
+    ~DeclarationFolderParser() override
+    {
+        // Ensure that reset() is called while this class is still intact
+        reset();
+    }
+
 protected:
     void parse(std::istream& stream, const vfs::FileInfo& fileInfo, const std::string& modDir) override;
     void onFinishParsing() override;
