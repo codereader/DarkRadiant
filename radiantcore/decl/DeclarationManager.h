@@ -5,6 +5,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include <atomic>
 #include <memory>
 #include <sigc++/connection.h>
 #include "string/string.h"
@@ -68,6 +69,8 @@ private:
     std::mutex _parseResultLock;
 
     sigc::connection _vfsInitialisedConn;
+
+    std::atomic_flag _parserCleanupInProgress;
 
 public:
     void registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& parser) override;

@@ -243,6 +243,10 @@ void DeclarationManager::reloadDeclarations()
 
 void DeclarationManager::waitForTypedParsersToFinish()
 {
+    // Acquire the flag and set it to prevent the main thread from shutting down the module
+    while (_parserCleanupInProgress.test_and_set(std::memory_order_acquire))
+    {}
+
     // Extract all parsers while we hold the lock
     std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
 
@@ -260,6 +264,9 @@ void DeclarationManager::waitForTypedParsersToFinish()
 
     // Let all parsers complete their work
     parsersToFinish.clear();
+
+    // Clear the flag, we're done here
+    _parserCleanupInProgress.clear(std::memory_order_release);
 }
 
 void DeclarationManager::runParsersForAllFolders()
@@ -857,6 +864,7 @@ void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
     // After the initial parsing, all decls will have a parseStamp of 0
     _parseStamp = 0;
     _reparseInProgress = false;
+    _parserCleanupInProgress.clear();
 
     _vfsInitialisedConn = GlobalFileSystem().signal_Initialised().connect(
         sigc::mem_fun(*this, &DeclarationManager::onFilesystemInitialised)
@@ -866,6 +874,17 @@ void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
 void DeclarationManager::shutdownModule()
 {
     _vfsInitialisedConn.disconnect();
+
+    // Parser cleanup might still be running on a worker thread
+    // Don't proceed with the shutdown until that work is done
+    while (_parserCleanupInProgress.test_and_set(std::memory_order_acquire))
+    {
+        rMessage() << "Waiting for parsers to finish..." << std::endl;
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    }
+
+    _parserCleanupInProgress.clear(std::memory_order_release);
 
     waitForTypedParsersToFinish();
 
