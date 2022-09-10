@@ -127,6 +127,8 @@ Node Document::addTopLevelNode(const std::string& name)
 
 Node Document::getTopLevelNode() const
 {
+    std::lock_guard lock(_lock);
+
 	if (!isValid())
 	{
 		// Invalid Document, return a NULL node
