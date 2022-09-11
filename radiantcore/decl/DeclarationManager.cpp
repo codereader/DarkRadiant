@@ -292,21 +292,30 @@ void DeclarationManager::waitForCleanupTasksToFinish()
 {
     while (true)
     {
-        // Pick the next task to wait for
-        auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
+        // Find the next cleanup task, but don't remove it from the list
+        // Other threads might check the same list and get the impression there's nothing to wait for
+        std::shared_ptr<std::shared_future<void>> task;
 
-        if (_parserCleanupTasks.empty()) break; // Done
-
-        // Extract the next cleanup task
-        std::shared_ptr task = std::move(_parserCleanupTasks.back());
-        _parserCleanupTasks.pop_back();
-
-        if (task->valid())
         {
-            // Release the lock and let it run
-            declLock.reset();
-            task->get();
+            // Pick the next task to wait for
+            std::lock_guard declLock(_declarationAndCreatorLock);
+
+            if (_parserCleanupTasks.empty()) break; // Done
+
+            for (const auto& candidate : _parserCleanupTasks)
+            {
+                if (candidate && candidate->valid() &&
+                    candidate->wait_for(std::chrono::milliseconds(0)) != std::future_status::ready)
+                {
+                    task = candidate;
+                    break;
+                }
+            }
+
+            if (!task) return;
         }
+
+        task->get(); // wait for this task, then enter the next round
     }
 }
 
@@ -952,6 +961,7 @@ void DeclarationManager::shutdownModule()
     waitForSignalInvokersToFinish();
 
     // All parsers and tasks have finished, clear all structures, no need to lock anything
+    _parserCleanupTasks.clear();
     _registeredFolders.clear();
     _unrecognisedBlocks.clear();
     _declarationsByType.clear();
