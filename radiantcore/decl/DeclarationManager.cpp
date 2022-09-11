@@ -256,28 +256,26 @@ void DeclarationManager::waitForTypedParsersToFinish()
     // Acquire the lock to modify the cleanup tasks list
     auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
 
-    // Add the task to the list, we need to wait for it when
-    // shutting down the module
-    auto& task = _parserCleanupTasks.emplace_back(
-        std::async(std::launch::async, [this]()
+    // Extract all parsers while we hold the lock
+    std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
+
+    for (auto& [_, decl] : _declarationsByType)
+    {
+        if (decl.parser)
         {
-            // Extract all parsers while we hold the lock
-            std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
+            parsersToFinish.emplace_back(std::move(decl.parser));
+        }
+    }
 
-            {
-                std::lock_guard declLock(_declarationAndCreatorLock);
+    if (parsersToFinish.empty()) return; // nothing to do
 
-                for (auto& [_, decl] : _declarationsByType)
-                {
-                    if (decl.parser)
-                    {
-                        parsersToFinish.emplace_back(std::move(decl.parser));
-                    }
-                }
-            }
-
-            // With the lock released, let all parsers finish their work
-            parsersToFinish.clear();
+    // Add the task to the list, we need to wait for it when shutting down the module
+    // Move the collected parsers to the lambda
+    auto& task = _parserCleanupTasks.emplace_back(
+        std::async(std::launch::async, [parsers = std::move(parsersToFinish)]() mutable
+        {
+            // Without locking anything, just let all parsers finish their work
+            parsers.clear();
         })
     );
 
