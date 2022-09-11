@@ -270,17 +270,14 @@ void DeclarationManager::waitForTypedParsersToFinish()
 
         if (!parsersToFinish.empty())
         {
+            // Add the task to the list, we need to wait for it when shutting down the module
             // Move the collected parsers to the async lambda and clear it there
-            auto task = std::make_shared<std::shared_future<void>>(
+            _parserCleanupTasks.emplace_back(std::make_shared<std::shared_future<void>>(
                 std::async(std::launch::async, [parsers = std::move(parsersToFinish)]() mutable
                 {
                     // Without locking anything, just let all parsers finish their work
                     parsers.clear();
-                }));
-
-            // Add the task to the list (but keep a strong reference to it),
-            // we need to wait for it when shutting down the module
-            _parserCleanupTasks.push_back(task);
+                })));
         }
     }
 
@@ -951,6 +948,14 @@ void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
     _vfsInitialisedConn = GlobalFileSystem().signal_Initialised().connect(
         sigc::mem_fun(*this, &DeclarationManager::onFilesystemInitialised)
     );
+
+    // Finish all pending threads before the modules are shut down
+    // The push_front is a counter-action to the Map module subscribing to the same event
+    module::GlobalModuleRegistry().signal_modulesUninitialising().slots().push_front([this]()
+    {
+        waitForTypedParsersToFinish();
+        waitForSignalInvokersToFinish();
+    });
 }
 
 void DeclarationManager::shutdownModule()
