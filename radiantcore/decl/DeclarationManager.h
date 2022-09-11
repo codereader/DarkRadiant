@@ -3,9 +3,7 @@
 #include "ideclmanager.h"
 #include "icommandsystem.h"
 #include <map>
-#include <set>
 #include <vector>
-#include <atomic>
 #include <memory>
 #include <sigc++/connection.h>
 #include "string/string.h"
@@ -49,6 +47,7 @@ private:
         std::unique_ptr<DeclarationFolderParser> parser;
 
         std::future<void> parserFinisher;
+        std::future<void> signalInvoker;
     };
 
     // One entry for each decl
@@ -70,7 +69,8 @@ private:
 
     sigc::connection _vfsInitialisedConn;
 
-    std::atomic_flag _parserCleanupInProgress;
+    // Access allowed if the _declarationAndCreatorLock is owned
+    std::vector<std::shared_future<void>> _parserCleanupTasks;
 
 public:
     void registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& parser) override;
@@ -98,6 +98,7 @@ private:
     void processParseResult(Type parserType, ParseResult& parsedBlocks);
     void runParsersForAllFolders();
     void waitForTypedParsersToFinish();
+    void waitForCleanupTasksToFinish();
 
     // Attempts to resolve the block type of the given block, returns true on success, false otherwise.
     // Stores the determined type in the given reference.

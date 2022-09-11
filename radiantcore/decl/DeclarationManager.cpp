@@ -211,31 +211,41 @@ void DeclarationManager::reloadDeclarations()
         _parseResults.clear();
     }
 
+    std::vector<Type> typesToNotify;
+
     // Empty all declarations that haven't been touched during this reparse run
-    std::lock_guard declLock(_declarationAndCreatorLock);
-
-    for (const auto& [_, namedDecls] : _declarationsByType)
     {
-        for (const auto& [name, decl] : namedDecls.decls)
+        std::lock_guard declLock(_declarationAndCreatorLock);
+
+        for (const auto& [_, namedDecls] : _declarationsByType)
         {
-            if (decl->getParseStamp() < _parseStamp)
+            for (const auto& [name, decl] : namedDecls.decls)
             {
-                rMessage() << "[DeclManager] " << getTypeName(decl->getDeclType()) << " " << 
-                    name << " no longer present after reloadDecls" << std::endl;
+                if (decl->getParseStamp() < _parseStamp)
+                {
+                    rMessage() << "[DeclManager] " << getTypeName(decl->getDeclType()) << " " <<
+                        name << " no longer present after reloadDecls" << std::endl;
 
-                auto syntax = decl->getBlockSyntax();
+                    auto syntax = decl->getBlockSyntax();
 
-                // Clear name and file info
-                syntax.contents.clear();
-                syntax.fileInfo = vfs::FileInfo();
+                    // Clear name and file info
+                    syntax.contents.clear();
+                    syntax.fileInfo = vfs::FileInfo();
 
-                decl->setBlockSyntax(syntax);
+                    decl->setBlockSyntax(syntax);
+                }
             }
+        }
+
+        // Invoke the declsReloaded signal for all types
+        for (const auto& [type, _] : _declarationsByType)
+        {
+            typesToNotify.push_back(type);
         }
     }
 
-    // Invoke the declsReloaded signal for all types
-    for (const auto& [type, _] : _declarationsByType)
+    // Notify the clients with the lock released
+    for (auto type : typesToNotify)
     {
         emitDeclsReloadedSignal(type);
     }
@@ -243,30 +253,83 @@ void DeclarationManager::reloadDeclarations()
 
 void DeclarationManager::waitForTypedParsersToFinish()
 {
-    // Acquire the flag and set it to prevent the main thread from shutting down the module
-    while (_parserCleanupInProgress.test_and_set(std::memory_order_acquire))
-    {}
+    // Acquire the lock to modify the cleanup tasks list
+    auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
 
-    // Extract all parsers while we hold the lock
-    std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
+    // Add the task to the list, we need to wait for it when
+    // shutting down the module
+    auto& task = _parserCleanupTasks.emplace_back(
+        std::async(std::launch::async, [this]()
+        {
+            // Extract all parsers while we hold the lock
+            std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
 
+            {
+                std::lock_guard declLock(_declarationAndCreatorLock);
+
+                for (auto& [_, decl] : _declarationsByType)
+                {
+                    if (decl.parser)
+                    {
+                        parsersToFinish.emplace_back(std::move(decl.parser));
+                    }
+                }
+            }
+
+            // With the lock released, let all parsers finish their work
+            parsersToFinish.clear();
+        })
+    );
+
+    // Release the lock and let the task run
+    declLock.reset();
+    task.get();
+}
+
+void DeclarationManager::waitForCleanupTasksToFinish()
+{
+    while (true)
     {
-        std::lock_guard declLock(_declarationAndCreatorLock);
+        // Pick the next task to wait for
+        auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
+
+        std::shared_future<void> task;
+
+        if (!_parserCleanupTasks.empty())
+        {
+            task = std::move(_parserCleanupTasks.back());
+            _parserCleanupTasks.pop_back();
+        }
+
+        if (task.valid())
+        {
+            // Release the lock and let it run
+            declLock.reset();
+            task.get();
+            continue; // enter the next round
+        }
+
+        // No cleanup task found, check the tasks in the declaration structures
+        std::future<void> signalInvoker;
 
         for (auto& [_, decl] : _declarationsByType)
         {
-            if (decl.parser)
+            if (decl.signalInvoker.valid())
             {
-                parsersToFinish.emplace_back(std::move(decl.parser));
+                signalInvoker = std::move(decl.signalInvoker);
+                break;
             }
         }
+
+        if (signalInvoker.valid())
+        {
+            declLock.reset();
+            signalInvoker.get();
+            continue;
+        }
+
+        return; // nothing more to do, we're done
     }
-
-    // Let all parsers complete their work
-    parsersToFinish.clear();
-
-    // Clear the flag, we're done here
-    _parserCleanupInProgress.clear(std::memory_order_release);
 }
 
 void DeclarationManager::runParsersForAllFolders()
@@ -665,20 +728,23 @@ void DeclarationManager::onParserFinished(Type parserType, ParseResult& parsedBl
         if (decls->second.parser)
         {
             // Move the parser reference from the dictionary as capture to the lambda
-            // Then let the unique_ptr in the lambda go out of scope to finish the thread
+            // Then let the unique_ptr in the lambda go out of scope to finish off the thread
             // Lambda is mutable to make the unique_ptr member non-const
             decls->second.parserFinisher = std::async(std::launch::async, [p = std::move(decls->second.parser)]() mutable
             {
                 p.reset();
             });
         }
-    }
 
-    // In the reparse scenario the calling code will emit this signal
-    if (!_reparseInProgress)
-    {
-        // Emit the signal
-        emitDeclsReloadedSignal(parserType);
+        // In the reparse scenario the calling code will emit this signal
+        // In the regular threaded scenario, the signal should fire on a separate thread
+        if (!_reparseInProgress)
+        {
+            decls->second.signalInvoker = std::async(std::launch::async, [=]()
+            {
+                emitDeclsReloadedSignal(parserType);
+            });
+        }
     }
 }
 
@@ -864,7 +930,6 @@ void DeclarationManager::initialiseModule(const IApplicationContext& ctx)
     // After the initial parsing, all decls will have a parseStamp of 0
     _parseStamp = 0;
     _reparseInProgress = false;
-    _parserCleanupInProgress.clear();
 
     _vfsInitialisedConn = GlobalFileSystem().signal_Initialised().connect(
         sigc::mem_fun(*this, &DeclarationManager::onFilesystemInitialised)
@@ -875,20 +940,10 @@ void DeclarationManager::shutdownModule()
 {
     _vfsInitialisedConn.disconnect();
 
-    // Parser cleanup might still be running on a worker thread
-    // Don't proceed with the shutdown until that work is done
-    while (_parserCleanupInProgress.test_and_set(std::memory_order_acquire))
-    {
-        rMessage() << "Waiting for parsers to finish..." << std::endl;
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
-    }
-
-    _parserCleanupInProgress.clear(std::memory_order_release);
-
     waitForTypedParsersToFinish();
+    waitForCleanupTasksToFinish();
 
-    // All parsers have finished, clear the structure, no need to lock anything
+    // All parsers and tasks have finished, clear all structures, no need to lock anything
     _registeredFolders.clear();
     _unrecognisedBlocks.clear();
     _declarationsByType.clear();
