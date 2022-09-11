@@ -269,9 +269,8 @@ void DeclarationManager::waitForTypedParsersToFinish()
 
     if (parsersToFinish.empty()) return; // nothing to do
 
-    // Add the task to the list, we need to wait for it when shutting down the module
-    // Move the collected parsers to the lambda
-    auto& task = _parserCleanupTasks.emplace_back(
+    // Move the collected parsers to the async lambda and clear it there
+    auto task = std::make_shared<std::shared_future<void>>(
         std::async(std::launch::async, [parsers = std::move(parsersToFinish)]() mutable
         {
             // Without locking anything, just let all parsers finish their work
@@ -279,9 +278,13 @@ void DeclarationManager::waitForTypedParsersToFinish()
         })
     );
 
+    // Add the task to the list (but keep a strong reference to it),
+    // we need to wait for it when shutting down the module
+    _parserCleanupTasks.push_back(task);
+
     // Release the lock and let the task run
     declLock.reset();
-    task.get();
+    task->get();
 }
 
 void DeclarationManager::waitForCleanupTasksToFinish()
@@ -291,19 +294,20 @@ void DeclarationManager::waitForCleanupTasksToFinish()
         // Pick the next task to wait for
         auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
 
-        std::shared_future<void> task;
+        std::shared_ptr<std::shared_future<void>> task;
 
         if (!_parserCleanupTasks.empty())
         {
+            // Extract the next cleanup task
             task = std::move(_parserCleanupTasks.back());
             _parserCleanupTasks.pop_back();
         }
 
-        if (task.valid())
+        if (task && task->valid())
         {
             // Release the lock and let it run
             declLock.reset();
-            task.get();
+            task->get();
             continue; // enter the next round
         }
 

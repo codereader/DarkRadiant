@@ -70,7 +70,7 @@ private:
     sigc::connection _vfsInitialisedConn;
 
     // Access allowed if the _declarationAndCreatorLock is owned
-    std::vector<std::shared_future<void>> _parserCleanupTasks;
+    std::vector<std::shared_ptr<std::shared_future<void>>> _parserCleanupTasks;
 
 public:
     void registerDeclType(const std::string& typeName, const IDeclarationCreator::Ptr& parser) override;
