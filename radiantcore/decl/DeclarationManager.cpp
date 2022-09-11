@@ -253,38 +253,39 @@ void DeclarationManager::reloadDeclarations()
 
 void DeclarationManager::waitForTypedParsersToFinish()
 {
-    // Acquire the lock to modify the cleanup tasks list
-    auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
-
-    // Extract all parsers while we hold the lock
-    std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
-
-    for (auto& [_, decl] : _declarationsByType)
     {
-        if (decl.parser)
+        // Acquire the lock to modify the cleanup tasks list
+        std::lock_guard declLock(_declarationAndCreatorLock);
+
+        // Extract all parsers while we hold the lock
+        std::vector<std::unique_ptr<DeclarationFolderParser>> parsersToFinish;
+
+        for (auto& [_, decl] : _declarationsByType)
         {
-            parsersToFinish.emplace_back(std::move(decl.parser));
+            if (decl.parser)
+            {
+                parsersToFinish.emplace_back(std::move(decl.parser));
+            }
+        }
+
+        if (!parsersToFinish.empty())
+        {
+            // Move the collected parsers to the async lambda and clear it there
+            auto task = std::make_shared<std::shared_future<void>>(
+                std::async(std::launch::async, [parsers = std::move(parsersToFinish)]() mutable
+                {
+                    // Without locking anything, just let all parsers finish their work
+                    parsers.clear();
+                }));
+
+            // Add the task to the list (but keep a strong reference to it),
+            // we need to wait for it when shutting down the module
+            _parserCleanupTasks.push_back(task);
         }
     }
 
-    if (parsersToFinish.empty()) return; // nothing to do
-
-    // Move the collected parsers to the async lambda and clear it there
-    auto task = std::make_shared<std::shared_future<void>>(
-        std::async(std::launch::async, [parsers = std::move(parsersToFinish)]() mutable
-        {
-            // Without locking anything, just let all parsers finish their work
-            parsers.clear();
-        })
-    );
-
-    // Add the task to the list (but keep a strong reference to it),
-    // we need to wait for it when shutting down the module
-    _parserCleanupTasks.push_back(task);
-
-    // Release the lock and let the task run
-    declLock.reset();
-    task->get();
+    // Let all running tasks finish
+    waitForCleanupTasksToFinish();
 }
 
 void DeclarationManager::waitForCleanupTasksToFinish()
@@ -294,22 +295,27 @@ void DeclarationManager::waitForCleanupTasksToFinish()
         // Pick the next task to wait for
         auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
 
-        std::shared_ptr<std::shared_future<void>> task;
+        if (_parserCleanupTasks.empty()) break; // Done
 
-        if (!_parserCleanupTasks.empty())
-        {
-            // Extract the next cleanup task
-            task = std::move(_parserCleanupTasks.back());
-            _parserCleanupTasks.pop_back();
-        }
+        // Extract the next cleanup task
+        std::shared_ptr task = std::move(_parserCleanupTasks.back());
+        _parserCleanupTasks.pop_back();
 
-        if (task && task->valid())
+        if (task->valid())
         {
             // Release the lock and let it run
             declLock.reset();
             task->get();
-            continue; // enter the next round
         }
+    }
+}
+
+void DeclarationManager::waitForSignalInvokersToFinish()
+{
+    while (true)
+    {
+        // Pick the next task to wait for
+        auto declLock = std::make_unique<std::lock_guard<std::recursive_mutex>>(_declarationAndCreatorLock);
 
         // No cleanup task found, check the tasks in the declaration structures
         std::future<void> signalInvoker;
@@ -943,7 +949,7 @@ void DeclarationManager::shutdownModule()
     _vfsInitialisedConn.disconnect();
 
     waitForTypedParsersToFinish();
-    waitForCleanupTasksToFinish();
+    waitForSignalInvokersToFinish();
 
     // All parsers and tasks have finished, clear all structures, no need to lock anything
     _registeredFolders.clear();

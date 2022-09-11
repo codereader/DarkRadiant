@@ -99,6 +99,7 @@ private:
     void runParsersForAllFolders();
     void waitForTypedParsersToFinish();
     void waitForCleanupTasksToFinish();
+    void waitForSignalInvokersToFinish();
 
     // Attempts to resolve the block type of the given block, returns true on success, false otherwise.
     // Stores the determined type in the given reference.
