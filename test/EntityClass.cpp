@@ -52,7 +52,7 @@ TEST_F(EntityClassTest, EntityClassDefFilename)
     auto cls = GlobalEntityClassManager().findClass("dr:entity_using_modeldef");
     EXPECT_TRUE(cls);
 
-    EXPECT_EQ(cls->getModName(), RadiantTest::DefaultGameType);
+    EXPECT_EQ(cls->getModName(), RadiantTest::DEFAULT_GAME_TYPE);
     EXPECT_EQ(cls->getDeclFilePath(), "def/entity_with_model.def");
 }
 
