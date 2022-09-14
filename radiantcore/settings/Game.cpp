@@ -90,7 +90,7 @@ std::string Game::getKeyValue(const std::string& key) const
 
 bool Game::hasFeature(const std::string& feature) const
 {
-    xml::NodeList nodes = getLocalXPath("features");
+    xml::NodeList nodes = getLocalXPath("/features");
     if (nodes.empty())
         return false;
 

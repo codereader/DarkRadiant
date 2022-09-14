@@ -48,4 +48,22 @@ TEST_F(GameTest, GetGameKeyValues)
     EXPECT_EQ(game->getKeyValue("maptypes"), "mapdoom3");
 }
 
+TEST_F(GameTest, GetOptionalFeatures)
+{
+    auto games = GlobalGameManager().getSortedGameList();
+
+    auto tdm = std::find_if(games.begin(), games.end(), [](game::IGamePtr g) {
+        return g->getName() == "The Dark Mod 2.0 (Standalone)";
+    });
+    ASSERT_TRUE(tdm != games.end());
+    auto q3 = std::find_if(games.begin(), games.end(), [](game::IGamePtr g) {
+        return g->getName() == "Quake 3";
+    });
+    ASSERT_TRUE(q3 != games.end());
+
+    // Only Quake 3 should have the "detail_brushes" feature
+    EXPECT_FALSE((*tdm)->hasFeature("detail_brushes"));
+    EXPECT_TRUE((*q3)->hasFeature("detail_brushes"));
+}
+
 }

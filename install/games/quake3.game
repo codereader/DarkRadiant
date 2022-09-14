@@ -33,6 +33,11 @@
 		</texture>
 	</filetypes>
 
+	<!-- Optional game-specific features to expose -->
+	<features>
+		<feature>detail_brushes</feature>
+	</features>
+
 	<!-- Filters to use for the filter system -->
 	<filtersystem>
 		<filter name="World geometry">
