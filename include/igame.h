@@ -26,8 +26,11 @@ public:
     virtual ~IGame() {}
 
     /**
-     * \brief
-     * Get a string key value from the game file.
+     * \brief Get a string key value from the game file.
+     *
+     * The "key values" are the attributes on the top-level <game> node, for example "type",
+     * "name" and "index". Originally these were the only data items stored in the .game
+     * file, before it was expanded into a general XML tree.
      *
      * \param key
      * Name of the key to retrieve. If this key does not exist, a warning is

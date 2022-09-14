@@ -37,4 +37,15 @@ TEST_F(GameTest, GetGameList)
     EXPECT_EQ(games[2]->getName(), "Doom 3 Demo");
 }
 
+TEST_F(GameTest, GetGameKeyValues)
+{
+    auto game = GlobalGameManager().currentGame();
+
+    // Default game is darkmod.game
+    EXPECT_EQ(game->getKeyValue("type"), "doom3");
+    EXPECT_EQ(game->getKeyValue("name"), "The Dark Mod 2.0 (Standalone)");
+    EXPECT_EQ(game->getKeyValue("index"), "10");
+    EXPECT_EQ(game->getKeyValue("maptypes"), "mapdoom3");
+}
+
 }
