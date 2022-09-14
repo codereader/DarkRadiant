@@ -18,18 +18,12 @@ const char* const RKEY_MOD_BASE_PATH = "user/paths/modBasePath";
 namespace game
 {
 
-/**
- * \brief
- * Interface for an object representing a single game type.
- */
+/// Interface for an object representing a single game type.
 class IGame
 {
 public:
-    /**
-	 * \brief
-	 * Destructor
-	 */
-	virtual ~IGame() {}
+    /// Destructor
+    virtual ~IGame() {}
 
     /**
      * \brief
@@ -40,6 +34,18 @@ public:
      * emitted and the empty string is returned.
 	 */
     virtual std::string getKeyValue(const std::string& key) const = 0;
+
+    /**
+     * @brief Test if this game has a specific optional feature.
+     *
+     * Games are allowed to specify certain features to expose in the UI, which might not be
+     * required in other games. Each feature is defined by a single text string which appears under
+     * the <features> node.
+     */
+    virtual bool hasFeature(const std::string& feature) const = 0;
+
+    /// Get the name of this game
+    virtual std::string getName() const = 0;
 
     /**
      * \brief

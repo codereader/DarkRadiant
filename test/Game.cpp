@@ -25,4 +25,16 @@ TEST_F(GameTest, GetCurrentGameConfig)
     EXPECT_EQ(pathComps.at(pathComps.size() - 2), "resources");
 }
 
+TEST_F(GameTest, GetGameList)
+{
+    auto games = GlobalGameManager().getSortedGameList();
+    ASSERT_TRUE(games.size() > 2);
+
+    // The games are sorted by the "index" value in the .game XML file, placing TDM at the top,
+    // followed by Doom 3 and its demo.
+    EXPECT_EQ(games[0]->getName(), "The Dark Mod 2.0 (Standalone)");
+    EXPECT_EQ(games[1]->getName(), "Doom 3");
+    EXPECT_EQ(games[2]->getName(), "Doom 3 Demo");
+}
+
 }
