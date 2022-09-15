@@ -10,6 +10,8 @@
 #include "os/dir.h"
 #include "string/encoding.h"
 
+#include <filesystem>
+
 #ifdef WIN32
 #define NOMINMAX
 #include <windows.h>
@@ -187,39 +189,26 @@ const char* LINK_NAME =
 /// brief Returns the filename of the executable belonging to the current process, or 0 if not found.
 std::string getExecutablePath(char* argv[])
 {
-    char buf[PATH_MAX+1];
-
-    // Now read the symbolic link
-    int ret = readlink(LINK_NAME, buf, PATH_MAX);
-
-    if (ret == -1)
+    try
     {
+        auto execpath = std::filesystem::canonical(LINK_NAME);
+        std::string ret = execpath.parent_path();
+        if (ret.size() && ret[ret.size()-1] != '/') ret += "/";
+        return ret;
+    }
+    catch (...) {}
+
+    try {
         rMessage() << "getexename: falling back to argv[0]: '" << argv[0] << "'\n";
-
-        const char* path = realpath(argv[0], buf);
-
-        if (path == nullptr)
-        {
-            // In case of an error, leave the handling up to the caller
-            return std::string();
-        }
-        ret = strlen(path);
+        auto execpath = std::filesystem::canonical(argv[0]);
+        std::string ret = execpath.parent_path();
+        if (ret.size() && ret[ret.size()-1] != '/') ret += "/";
+        return ret;
     }
+    catch (...) { }
 
-    /* Ensure proper NUL termination */
-    buf[ret] = '\0';
-
-    /* delete the program name */
-    *(strrchr(buf, '/')) = '\0';
-
-    // NOTE: we build app path with a trailing '/'
-    // it's a general convention in Radiant to have the slash at the end of directories
-    if (buf[strlen(buf)-1] != '/')
-    {
-        strcat(buf, "/");
-    }
-
-    return std::string(buf);
+    // In case of an error, leave the handling up to the caller
+    return {};
 }
 
 #endif
