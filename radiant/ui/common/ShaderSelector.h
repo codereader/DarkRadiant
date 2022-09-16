@@ -1,11 +1,8 @@
 #pragma once
 
-#include <string>
 #include <memory>
 #include "DeclarationSelector.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
-
-#include <wx/panel.h>
 
 #include "TexturePreviewCombo.h"
 
@@ -58,11 +55,11 @@ public:
 	// Get the selected Material
 	MaterialPtr getSelectedShader();
 
-private:
-	// Create GUI elements
-	void createPreview();
+protected:
+    void onTreeViewSelectionChanged() override;
 
-	void _onSelChange(wxDataViewEvent& ev);
+private:
+	void createPreview();
 
     const wxutil::DeclarationTreeView::Columns& Columns();
 };

@@ -54,6 +54,8 @@ void DeclarationSelector::PopulateTreeView(const wxutil::IResourceTreePopulator:
 
 void DeclarationSelector::onTreeViewSelectionChanged(wxDataViewEvent& ev)
 {
+    // Invoke the virtual method
+    onTreeViewSelectionChanged();
     ev.Skip();
 }
 

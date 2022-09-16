@@ -85,7 +85,6 @@ ShaderSelector::ShaderSelector(wxWindow* parent, const std::function<void()>& se
 	createPreview();
 
     PopulateTreeView(std::make_shared<ThreadedMaterialLoader>(Columns(), _textureFilter));
-    GetTreeView()->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ShaderSelector::_onSelChange, this);
 }
 
 const wxutil::DeclarationTreeView::Columns& ShaderSelector::Columns()
@@ -105,7 +104,7 @@ MaterialPtr ShaderSelector::getSelectedShader()
 	return GlobalMaterialManager().getMaterial(GetSelectedDeclName());
 }
 
-void ShaderSelector::_onSelChange(wxDataViewEvent& ev)
+void ShaderSelector::onTreeViewSelectionChanged()
 {
     _previewCombo->SetTexture(GetSelectedDeclName());
 

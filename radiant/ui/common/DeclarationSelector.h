@@ -43,6 +43,10 @@ protected:
     wxutil::DeclarationTreeView* GetTreeView();
     void PopulateTreeView(const wxutil::IResourceTreePopulator::Ptr& populator);
 
+    // Event method invoked when the tree view selection has been changed
+    virtual void onTreeViewSelectionChanged()
+    {}
+
 private:
     void createTreeView();
     void onTreeViewSelectionChanged(wxDataViewEvent& ev);
