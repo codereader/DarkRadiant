@@ -1,5 +1,8 @@
 #include "DeclarationSelector.h"
 
+#include <wx/sizer.h>
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
+
 namespace ui
 {
 
@@ -12,19 +15,52 @@ DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType,
     wxPanel(parent),
     _declType(declType),
     _columns(columns),
-    _treeView(nullptr)
+    _treeView(nullptr),
+    _horizontalSizer(nullptr),
+    _treeViewSizerItem(nullptr)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     createTreeView();
+
+    auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, _treeView);
+
+    auto treeVbox = new wxBoxSizer(wxVERTICAL);
+    treeVbox->Add(toolbar, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 6);
+    treeVbox->Add(_treeView, 1, wxEXPAND);
+
+    _horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
+    _treeViewSizerItem = _horizontalSizer->Add(treeVbox, 1, wxEXPAND);
+    // the horizontal sizer has room for a preview widget => AddPreviewToRightPane
+
+    GetSizer()->Add(_horizontalSizer, 1, wxEXPAND);
+
+    // a preview widget can be appended to the vertical sizer => AddPreviewToBottom
+}
+
+void DeclarationSelector::AddPreviewToRightPane(wxWindow* preview, int sizerProportion)
+{
+    // Tree view no longer takes full proportion after a full-size preview has been added
+    if (sizerProportion == 1)
+    {
+        _treeViewSizerItem->SetProportion(0);
+    }
+
+    preview->Reparent(this);
+    _horizontalSizer->Add(preview, sizerProportion, wxEXPAND | wxLEFT, 6);
+}
+
+void DeclarationSelector::AddPreviewToBottom(wxWindow* preview, int sizerProportion)
+{
+    preview->Reparent(this);
+    GetSizer()->Add(preview, sizerProportion, wxEXPAND | wxTOP, 3);
 }
 
 void DeclarationSelector::createTreeView()
 {
-    _treeView = new wxutil::DeclarationTreeView(this, decl::Type::Material,
-        _columns, wxDV_NO_HEADER | wxDV_SINGLE);
+    _treeView = new wxutil::DeclarationTreeView(this, _declType, _columns, wxDV_NO_HEADER | wxDV_SINGLE);
 
     // Single visible column, containing the directory/decl name and the icon
-    _treeView->AppendIconTextColumn(_("Value"), _columns.iconAndName.getColumnIndex(),
+    _treeView->AppendIconTextColumn(decl::getTypeName(_declType), _columns.iconAndName.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     // Use the TreeModel's full string search function
@@ -32,8 +68,6 @@ void DeclarationSelector::createTreeView()
 
     // Get selection and connect the changed callback
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &DeclarationSelector::onTreeViewSelectionChanged, this);
-
-    GetSizer()->Add(_treeView, 1, wxEXPAND);
 }
 
 wxutil::DeclarationTreeView* DeclarationSelector::GetTreeView() const

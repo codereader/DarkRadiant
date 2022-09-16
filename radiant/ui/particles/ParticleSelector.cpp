@@ -7,55 +7,21 @@ namespace ui
 {
 
 ParticleSelector::ParticleSelector(wxWindow* parent) :
-    wxPanel(parent, wxID_ANY),
+    DeclarationSelector(parent, decl::Type::Particle),
     _preview(new wxutil::ParticlePreview(this))
 {
-    SetSizer(new wxBoxSizer(wxVERTICAL));
-
-    // Tree view plus toolbar
-    auto* treeView = createTreeView(this);
-    auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, treeView);
-
-    auto treeVbox = new wxBoxSizer(wxVERTICAL);
-    treeVbox->Add(toolbar, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 6);
-    treeVbox->Add(treeView, 1, wxEXPAND);
-
-    // Treeview to the left, preview to the right
-    auto hbox = new wxBoxSizer(wxHORIZONTAL);
-
-    hbox->Add(treeVbox, 1, wxEXPAND);
-    hbox->Add(_preview->getWidget(), 0, wxEXPAND | wxLEFT, 6);
-
-    GetSizer()->Add(hbox, 1, wxEXPAND | wxALL, 12);
+    AddPreviewToRightPane(_preview->getWidget());
     
     GlobalParticlesManager().signal_particlesReloaded().connect(
         sigc::mem_fun(this, &ParticleSelector::reloadParticles)
     );
-}
 
-wxutil::ResourceTreeView* ParticleSelector::createTreeView(wxWindow* parent)
-{
-    _treeView = new wxutil::DeclarationTreeView(parent, decl::Type::Particle, _columns, wxDV_NO_HEADER);
-    _treeView->SetSize(300, -1);
-
-    _treeView->AppendIconTextColumn(_("Particle"), _columns.iconAndName.getColumnIndex(),
-        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-
-    // Apply full-text search to the column
-    _treeView->AddSearchColumn(_columns.leafName);
-
-    // Start loading particles into the view
     populateParticleList();
-
-    // Connect up the selection changed callback
-    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ParticleSelector::_onSelChanged, this);
-
-    return _treeView;
 }
 
 void ParticleSelector::populateParticleList()
 {
-    _treeView->Populate(std::make_shared<ThreadedParticlesLoader>(_columns));
+    PopulateTreeView(std::make_shared<ThreadedParticlesLoader>(GetColumns()));
 }
 
 void ParticleSelector::reloadParticles()
@@ -63,25 +29,23 @@ void ParticleSelector::reloadParticles()
     populateParticleList();
 }
 
-std::string ParticleSelector::getSelectedParticle()
+std::string ParticleSelector::GetSelectedParticle()
 {
-    return _treeView->GetSelectedFullname();
+    return GetTreeView()->GetSelectedFullname();
 }
 
-void ParticleSelector::setSelectedParticle(const std::string& particleName)
+void ParticleSelector::SetSelectedParticle(const std::string& particleName)
 {
-    _treeView->SetSelectedFullname(particleName);
+    GetTreeView()->SetSelectedFullname(particleName);
 }
 
-void ParticleSelector::_onSelChanged(wxDataViewEvent& ev)
+void ParticleSelector::onTreeViewSelectionChanged()
 {
-    // Get the selection and store it
-    auto item = _treeView->GetSelection();
+    auto selectedParticle = GetSelectedParticle();
 
-    if (item.IsOk())
+    if (!selectedParticle.empty())
     {
-        wxutil::TreeModel::Row row(item, *_treeView->GetTreeModel());
-        _preview->setParticle(row[_columns.leafName]);
+        _preview->setParticle(selectedParticle);
     }
 }
 

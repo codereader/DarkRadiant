@@ -81,16 +81,10 @@ ShaderSelector::ShaderSelector(wxWindow* parent, const std::function<void()>& se
     _textureFilter(textureFilter),
 	_selectionChanged(selectionChanged)
 {
-    // Pack in info panel
-	createPreview();
+    _previewCombo = new TexturePreviewCombo(this);
+    AddPreviewToBottom(_previewCombo);
 
     PopulateTreeView(std::make_shared<ThreadedMaterialLoader>(GetColumns(), _textureFilter));
-}
-
-void ShaderSelector::createPreview()
-{
-    _previewCombo = new TexturePreviewCombo(this);
-    GetSizer()->Add(_previewCombo, 0, wxEXPAND | wxTOP, 3);
 }
 
 MaterialPtr ShaderSelector::getSelectedShader()

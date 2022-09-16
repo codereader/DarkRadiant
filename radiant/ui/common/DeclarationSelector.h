@@ -20,6 +20,9 @@ private:
     const wxutil::DeclarationTreeView::Columns& _columns;
     wxutil::DeclarationTreeView* _treeView;
 
+    wxSizer* _horizontalSizer;
+    wxSizerItem* _treeViewSizerItem;
+
 public:
     // Construct a selector widget with the default set of tree view columns
     DeclarationSelector(wxWindow* parent, decl::Type declType);
@@ -45,6 +48,11 @@ public:
 
 protected:
     wxutil::DeclarationTreeView* GetTreeView() const;
+
+    // Adds a preview widget to the right of the tree view
+    void AddPreviewToRightPane(wxWindow* preview, int sizerProportion = 1);
+    void AddPreviewToBottom(wxWindow* preview, int sizerProportion = 0);
+
     const wxutil::DeclarationTreeView::Columns& GetColumns() const;
 
     void PopulateTreeView(const wxutil::IResourceTreePopulator::Ptr& populator);

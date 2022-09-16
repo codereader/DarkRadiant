@@ -56,9 +56,6 @@ public:
 
 protected:
     void onTreeViewSelectionChanged() override;
-
-private:
-	void createPreview();
 };
 
 } // namespace ui

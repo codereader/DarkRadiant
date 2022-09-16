@@ -77,7 +77,7 @@ ParticleChooserDialog::SelectionResult ParticleChooserDialog::RunDialog(bool sho
 {
     auto* dialog = new ParticleChooserDialog(showClassnameSelector);
 
-    dialog->_selector->setSelectedParticle(currentParticle);
+    dialog->_selector->SetSelectedParticle(currentParticle);
 
     auto result = dialog->ShowModal();
 
@@ -85,7 +85,7 @@ ParticleChooserDialog::SelectionResult ParticleChooserDialog::RunDialog(bool sho
 
     if (result == wxID_OK)
     {
-        selectionResult.selectedParticle = result == wxID_OK ? dialog->_selector->getSelectedParticle() : "";
+        selectionResult.selectedParticle = result == wxID_OK ? dialog->_selector->GetSelectedParticle() : "";
         selectionResult.selectedClassname = showClassnameSelector ? dialog->getSelectedClassname() : "";
     }
 
