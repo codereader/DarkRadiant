@@ -79,46 +79,31 @@ protected:
 
 ShaderSelector::ShaderSelector(wxWindow* parent, const std::function<void()>& selectionChanged,
     TextureFilter textureFilter) :
-	wxPanel(parent, wxID_ANY),
-	_treeView(nullptr),
+    DeclarationSelector(parent, decl::Type::Material, Columns()),
     _textureFilter(textureFilter),
 	_selectionChanged(selectionChanged)
 {
-	SetSizer(new wxBoxSizer(wxVERTICAL));
-
-    // Pack in TreeView and info panel
-	createTreeView();
+    // Pack in info panel
 	createPreview();
+
+    PopulateTreeView(std::make_shared<ThreadedMaterialLoader>(Columns(), _textureFilter));
+    GetTreeView()->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ShaderSelector::_onSelChange, this);
+}
+
+const wxutil::DeclarationTreeView::Columns& ShaderSelector::Columns()
+{
+    static wxutil::DeclarationTreeView::Columns _shaderColumns;
+    return _shaderColumns;
 }
 
 std::string ShaderSelector::getSelection()
 {
-    return _treeView->GetSelectedDeclName();
+    return GetTreeView()->GetSelectedDeclName();
 }
 
 void ShaderSelector::setSelection(const std::string& sel)
 {
-    _treeView->SetSelectedDeclName(sel);
-}
-
-void ShaderSelector::createTreeView()
-{
-    _treeView = new wxutil::DeclarationTreeView(this, decl::Type::Material, 
-        _shaderTreeColumns, wxDV_NO_HEADER | wxDV_SINGLE);
-
-    // Single visible column, containing the directory/shader name and the icon
-    _treeView->AppendIconTextColumn(_("Value"), _shaderTreeColumns.iconAndName.getColumnIndex(),
-        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-
-    // Use the TreeModel's full string search function
-    _treeView->AddSearchColumn(_shaderTreeColumns.leafName);
-
-    // Get selection and connect the changed callback
-    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &ShaderSelector::_onSelChange, this);
-
-    GetSizer()->Add(_treeView, 1, wxEXPAND);
-
-    _treeView->Populate(std::make_shared<ThreadedMaterialLoader>(_shaderTreeColumns, _textureFilter));
+    GetTreeView()->SetSelectedDeclName(sel);
 }
 
 void ShaderSelector::createPreview()

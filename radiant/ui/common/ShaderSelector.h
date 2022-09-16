@@ -2,6 +2,7 @@
 
 #include <string>
 #include <memory>
+#include "DeclarationSelector.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
 
 #include <wx/panel.h>
@@ -30,7 +31,7 @@ namespace ui
  * value to the constructor.
  */
 class ShaderSelector :
-	public wxPanel
+	public DeclarationSelector
 {
 public:
     enum class TextureFilter
@@ -40,9 +41,6 @@ public:
     };
 
 private:
-    wxutil::DeclarationTreeView::Columns _shaderTreeColumns;
-	wxutil::DeclarationTreeView* _treeView;
-
     TextureFilter _textureFilter;
 
 	std::function<void()> _selectionChanged;
@@ -80,6 +78,8 @@ private:
 	void createPreview();
 
 	void _onSelChange(wxDataViewEvent& ev);
+
+    const wxutil::DeclarationTreeView::Columns& Columns();
 };
 
 } // namespace ui

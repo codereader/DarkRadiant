@@ -229,6 +229,7 @@
     <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp" />
     <ClCompile Include="..\..\radiant\ui\brush\FindBrush.cpp" />
     <ClCompile Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.cpp" />
+    <ClCompile Include="..\..\radiant\ui\common\DeclarationSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ImageFilePopulator.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ImageFileSelector.cpp" />
@@ -420,6 +421,7 @@
     <ClInclude Include="..\..\radiant\ui\AutoSaveRequestHandler.h" />
     <ClInclude Include="..\..\radiant\ui\brush\FindBrush.h" />
     <ClInclude Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.h" />
+    <ClInclude Include="..\..\radiant\ui\common\DeclarationSelector.h" />
     <ClInclude Include="..\..\radiant\ui\common\DialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\common\ImageFilePopulator.h" />
     <ClInclude Include="..\..\radiant\ui\common\ImageFileSelector.h" />

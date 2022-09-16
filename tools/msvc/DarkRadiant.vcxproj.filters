@@ -706,6 +706,9 @@
     <ClCompile Include="..\..\radiant\ui\console\Console.cpp">
       <Filter>src\ui\console</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\common\DeclarationSelector.cpp">
+      <Filter>src\ui\common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1373,6 +1376,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\einspector\TargetKey.h">
       <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\DeclarationSelector.h">
+      <Filter>src\ui\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
