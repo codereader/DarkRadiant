@@ -24,6 +24,7 @@
 
 #include "textool/TexTool.h"
 #include "ui/patch/PatchInspector.h"
+#include "ui/materials/MaterialChooser.h"
 
 namespace ui
 {
@@ -376,7 +377,7 @@ void SurfaceInspector::populateWindow()
 	_shaderEntry->Connect(wxEVT_TEXT_ENTER, wxCommandEventHandler(SurfaceInspector::onShaderEntryActivate), NULL, this);
 	shaderHBox->Add(_shaderEntry, 1, wxEXPAND);
 
-	// Create the icon button to open the ShaderChooser
+	// Create the icon button to open the MaterialChooser
     _selectShaderButton = new wxBitmapButton(
         this, wxID_ANY, wxutil::GetLocalBitmap(FOLDER_ICON)
     );
@@ -788,7 +789,7 @@ void SurfaceInspector::onShaderSelect(wxCommandEvent& ev)
     std::string previousShader = _shaderEntry->GetValue().ToStdString();
 
 	// Instantiate the modal dialog, will block execution
-	auto* chooser = new ShaderChooser(this, MaterialSelector::TextureFilter::Regular, _shaderEntry);
+	auto* chooser = new MaterialChooser(this, MaterialSelector::TextureFilter::Regular, _shaderEntry);
 
     chooser->signal_shaderChanged().connect(
         sigc::mem_fun(this, &SurfaceInspector::emitShader)

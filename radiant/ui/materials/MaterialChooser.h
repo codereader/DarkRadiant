@@ -16,7 +16,7 @@ namespace ui
  * buttons. The MaterialSelector subclass is automatically populated with
  * all shaders matching the "texture/" prefix.
  */
-class ShaderChooser :
+class MaterialChooser :
 	public wxutil::DialogBase
 {
 	// The text entry the chosen texture is written into (can be NULL)
@@ -43,7 +43,7 @@ public:
 	 *               Also, the initially selected shader will be read from
 	 *               this field at startup.
 	 */
-	ShaderChooser(wxWindow* parent, MaterialSelector::TextureFilter filter, wxTextCtrl* targetEntry = nullptr);
+	MaterialChooser(wxWindow* parent, MaterialSelector::TextureFilter filter, wxTextCtrl* targetEntry = nullptr);
 
     std::string getSelectedTexture();
 

@@ -20,7 +20,7 @@
 #include <wx/radiobut.h>
 
 
-#include "ui/common/ShaderChooser.h" // for static displayLightInfo() function
+#include "ui/materials/MaterialChooser.h" // for static displayLightInfo() function
 #include "util/ScopedBoolLock.h"
 #include "gamelib.h"
 

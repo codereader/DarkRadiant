@@ -1,4 +1,4 @@
-#include "ShaderChooser.h"
+#include "MaterialChooser.h"
 
 #include "i18n.h"
 #include "ishaders.h"
@@ -13,12 +13,12 @@ namespace ui
 {
 	namespace
 	{
-		const char* const LABEL_TITLE = N_("Choose Shader");
-		const std::string RKEY_WINDOW_STATE = "user/ui/textures/shaderChooser/window";
+		const char* const LABEL_TITLE = N_("Choose Material");
+		const std::string RKEY_WINDOW_STATE = "user/ui/textures/materialChooser/window";
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(wxWindow* parent, MaterialSelector::TextureFilter filter, wxTextCtrl* targetEntry) :
+MaterialChooser::MaterialChooser(wxWindow* parent, MaterialSelector::TextureFilter filter, wxTextCtrl* targetEntry) :
 	wxutil::DialogBase(_(LABEL_TITLE), parent),
 	_targetEntry(targetEntry),
 	_selector(nullptr)
@@ -31,7 +31,7 @@ ShaderChooser::ShaderChooser(wxWindow* parent, MaterialSelector::TextureFilter f
 	mainPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
 
 	_selector = new MaterialSelector(mainPanel,
-        std::bind(&ShaderChooser::shaderSelectionChanged, this), filter);
+        std::bind(&MaterialChooser::shaderSelectionChanged, this), filter);
 
 	if (_targetEntry != nullptr)
 	{
@@ -41,7 +41,7 @@ ShaderChooser::ShaderChooser(wxWindow* parent, MaterialSelector::TextureFilter f
 		_selector->SetSelectedDeclName(_initialShader);
 	}
 
-    _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ShaderChooser::_onItemActivated, this);
+    _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &MaterialChooser::_onItemActivated, this);
 
 	// Pack in the MaterialSelector and buttons panel
 	dialogVBox->Add(_selector, 1, wxEXPAND);
@@ -55,23 +55,23 @@ ShaderChooser::ShaderChooser(wxWindow* parent, MaterialSelector::TextureFilter f
 	_windowPosition.applyPosition();
 }
 
-std::string ShaderChooser::getSelectedTexture()
+std::string MaterialChooser::getSelectedTexture()
 {
     return _selector->GetSelectedDeclName();
 }
 
-void ShaderChooser::setSelectedTexture(const std::string& textureName)
+void MaterialChooser::setSelectedTexture(const std::string& textureName)
 {
     _selector->SetSelectedDeclName(textureName);
 }
 
-void ShaderChooser::shutdown()
+void MaterialChooser::shutdown()
 {
 	// Tell the position tracker to save the information
 	_windowPosition.saveToPath(RKEY_WINDOW_STATE);
 }
 
-void ShaderChooser::_onItemActivated(wxDataViewEvent& ev)
+void MaterialChooser::_onItemActivated(wxDataViewEvent& ev)
 {
     if (!_selector->GetSelectedDeclName().empty())
     {
@@ -86,15 +86,15 @@ void ShaderChooser::_onItemActivated(wxDataViewEvent& ev)
 }
 
 // Construct the buttons
-void ShaderChooser::createButtons(wxPanel* mainPanel, wxBoxSizer* dialogVBox)
+void MaterialChooser::createButtons(wxPanel* mainPanel, wxBoxSizer* dialogVBox)
 {
 	wxBoxSizer* buttons = new wxBoxSizer(wxHORIZONTAL);
 
 	wxButton* okButton = new wxButton(mainPanel, wxID_OK);
 	wxButton* cancelButton = new wxButton(mainPanel, wxID_CANCEL);
 
-	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ShaderChooser::callbackOK), NULL, this);
-	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(ShaderChooser::callbackCancel), NULL, this);
+	okButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(MaterialChooser::callbackOK), NULL, this);
+	cancelButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(MaterialChooser::callbackCancel), NULL, this);
 
 	buttons->Add(okButton);
 	buttons->Add(cancelButton, 0, wxLEFT, 6);
@@ -102,7 +102,7 @@ void ShaderChooser::createButtons(wxPanel* mainPanel, wxBoxSizer* dialogVBox)
 	dialogVBox->Add(buttons, 0, wxALIGN_RIGHT | wxTOP, 6);
 }
 
-void ShaderChooser::shaderSelectionChanged()
+void MaterialChooser::shaderSelectionChanged()
 {
 	if (_targetEntry)
 	{
@@ -113,7 +113,7 @@ void ShaderChooser::shaderSelectionChanged()
     _shaderChangedSignal.emit();
 }
 
-void ShaderChooser::revertShader()
+void MaterialChooser::revertShader()
 {
 	// Revert the shadername to the value it had at dialog startup
 	if (_targetEntry)
@@ -125,7 +125,7 @@ void ShaderChooser::revertShader()
 	}
 }
 
-void ShaderChooser::callbackCancel(wxCommandEvent& ev)
+void MaterialChooser::callbackCancel(wxCommandEvent& ev)
 {
 	// Revert the shadername to the value it had at dialog startup
 	revertShader();
@@ -134,7 +134,7 @@ void ShaderChooser::callbackCancel(wxCommandEvent& ev)
 	ev.Skip();
 }
 
-void ShaderChooser::callbackOK(wxCommandEvent& ev)
+void MaterialChooser::callbackOK(wxCommandEvent& ev)
 {
 	if (_targetEntry)
 	{

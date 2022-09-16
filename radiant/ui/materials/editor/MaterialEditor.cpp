@@ -40,7 +40,7 @@
 #include "CheckBoxBinding.h"
 #include "MapExpressionEntry.h"
 #include "TexturePreview.h"
-#include "ui/common/ShaderChooser.h"
+#include "../MaterialChooser.h"
 
 namespace ui
 {
@@ -411,7 +411,7 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
     getControl<wxButton>("MaterialPreviewRoomMaterialButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
     {
         auto textCtrl = getControl<wxTextCtrl>("MaterialPreviewRoomMaterial");
-        auto selector = new ShaderChooser(this, MaterialSelector::TextureFilter::Regular, textCtrl);
+        auto selector = new MaterialChooser(this, MaterialSelector::TextureFilter::Regular, textCtrl);
         selector->ShowModal();
         selector->Destroy();
     });

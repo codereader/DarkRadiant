@@ -6,7 +6,6 @@
 #include "iradiant.h"
 #include "wxutil/window/TransientWindow.h"
 #include "wxutil/FormLayout.h"
-#include "ui/common/ShaderChooser.h"
 #include "messages/TextureChanged.h"
 
 #include <sigc++/connection.h>

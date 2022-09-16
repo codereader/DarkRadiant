@@ -90,9 +90,9 @@
         <window xPosition="158" yPosition="241" width="400" height="380"/>
     </mergeControlDialog>
     <textures>
-      <shaderChooser>
+      <materialChooser>
         <window xPosition="200" yPosition="100" width="550" height="500" />
-      </shaderChooser>
+      </materialChooser>
       <browser>
         <hideUnused value="0" />
         <textureScale value="3" />

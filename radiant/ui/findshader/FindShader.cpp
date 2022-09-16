@@ -5,7 +5,7 @@
 #include "imousetoolmanager.h"
 #include "ishaderclipboard.h"
 
-#include "ui/common/ShaderChooser.h"
+#include "ui/materials/MaterialChooser.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/MouseButton.h"
 #include "wxutil/Modifier.h"
@@ -106,7 +106,7 @@ void FindAndReplaceShader::performReplace()
 void FindAndReplaceShader::onChooseFind(wxCommandEvent& ev)
 {
 	// Construct the modal dialog
-	ShaderChooser* chooser = new ShaderChooser(this, MaterialSelector::TextureFilter::Regular,
+	auto chooser = new MaterialChooser(this, MaterialSelector::TextureFilter::Regular,
 		findNamedObject<wxTextCtrl>(this, "FindReplaceDialogFindEntry"));
 
 	chooser->ShowModal();
@@ -116,7 +116,7 @@ void FindAndReplaceShader::onChooseFind(wxCommandEvent& ev)
 void FindAndReplaceShader::onChooseReplace(wxCommandEvent& ev)
 {
 	// Construct the modal dialog
-	ShaderChooser* chooser = new ShaderChooser(this, MaterialSelector::TextureFilter::Regular,
+	auto chooser = new MaterialChooser(this, MaterialSelector::TextureFilter::Regular,
 		findNamedObject<wxTextCtrl>(this, "FindReplaceDialogReplaceEntry"));
 
 	chooser->ShowModal();
