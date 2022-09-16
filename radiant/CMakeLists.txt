@@ -37,7 +37,6 @@ add_executable(darkradiant
                ui/common/ImageFileSelector.cpp
                ui/common/MapPreview.cpp
                ui/common/ShaderChooser.cpp
-               ui/common/ShaderSelector.cpp
                ui/common/TexturePreviewCombo.cpp
                ui/common/SkinChooser.cpp
                ui/common/SoundChooser.cpp
@@ -96,6 +95,7 @@ add_executable(darkradiant
                ui/materials/editor/MaterialEditorModule.cpp
                ui/materials/editor/MaterialPreview.cpp
                ui/materials/MaterialPopulator.cpp
+               ui/materials/MaterialSelector.cpp
                ui/materials/MaterialTreeView.cpp
                ui/merge/MergeControlDialog.cpp
                ui/animationpreview/AnimationPreview.cpp

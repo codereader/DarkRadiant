@@ -1,9 +1,8 @@
 #pragma once
 
 #include <memory>
-#include "DeclarationSelector.h"
-
-#include "TexturePreviewCombo.h"
+#include "../common/DeclarationSelector.h"
+#include "../common/TexturePreviewCombo.h"
 
 // FORWARD DECLS
 class Material;
@@ -15,18 +14,18 @@ namespace ui
 {
 
 /**
- * A widget that allows the selection of a shader. The widget contains
- * three elements - a tree view displaying available shaders as
- * identified by the specified prefixes, a TexturePreviewComob displaying a
- * preview of the currently-selected shader and a table containing certain
- * information about the shader.
+ * A widget that allows the selection of a material. The widget contains
+ * three elements - a tree view displaying available materials as
+ * identified by the specified prefixes, a TexturePreviewCombo displaying a
+ * preview of the currently-selected material and a table containing certain
+ * information about it.
  *
- * This widget populates its list of shaders automatically, and offers a method
+ * This widget populates its list of materials automatically, and offers a method
  * that allows calling code to retrieve the user's selection. The set of
- * displayed textures can be defined by passing the corresponding TextureFilter
+ * displayed materials can be defined by passing the corresponding TextureFilter
  * value to the constructor.
  */
-class ShaderSelector :
+class MaterialSelector :
 	public DeclarationSelector
 {
 public:
@@ -49,7 +48,7 @@ public:
 	 * @selectionChanged: Functor invoked when the tree view selection changes.
 	 * @filter: which texture set to show in the selector
 	 */
-	ShaderSelector(wxWindow* parent, const std::function<void()>& selectionChanged, TextureFilter filter);
+    MaterialSelector(wxWindow* parent, const std::function<void()>& selectionChanged, TextureFilter filter);
 
 	// Get the selected Material
 	MaterialPtr getSelectedShader();

@@ -268,6 +268,7 @@
     <ClCompile Include="..\..\radiant\ui\materials\editor\MaterialEditorModule.cpp" />
     <ClCompile Include="..\..\radiant\ui\materials\editor\MaterialPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\materials\MaterialPopulator.cpp" />
+    <ClCompile Include="..\..\radiant\ui\materials\MaterialSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\materials\MaterialTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\menu\MenuBar.cpp" />
@@ -291,7 +292,6 @@
     <ClCompile Include="..\..\radiant\ui\common\EntityChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\MapPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\ShaderChooser.cpp" />
-    <ClCompile Include="..\..\radiant\ui\common\ShaderSelector.cpp" />
     <ClCompile Include="..\..\radiant\ui\common\TexturePreviewCombo.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\AddPropertyDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\einspector\AnglePropertyEditor.cpp" />
@@ -474,6 +474,7 @@
     <ClInclude Include="..\..\radiant\ui\materials\editor\TestModelSkin.h" />
     <ClInclude Include="..\..\radiant\ui\materials\editor\TexturePreview.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialPopulator.h" />
+    <ClInclude Include="..\..\radiant\ui\materials\MaterialSelector.h" />
     <ClInclude Include="..\..\radiant\ui\materials\MaterialTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\mediabrowser\MediaBrowserTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuBar.h" />
@@ -499,7 +500,6 @@
     <ClInclude Include="..\..\radiant\ui\common\EntityChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\MapPreview.h" />
     <ClInclude Include="..\..\radiant\ui\common\ShaderChooser.h" />
-    <ClInclude Include="..\..\radiant\ui\common\ShaderSelector.h" />
     <ClInclude Include="..\..\radiant\ui\common\TexturePreviewCombo.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\AddPropertyDialog.h" />
     <ClInclude Include="..\..\radiant\ui\einspector\AnglePropertyEditor.h" />

@@ -106,7 +106,7 @@ void FindAndReplaceShader::performReplace()
 void FindAndReplaceShader::onChooseFind(wxCommandEvent& ev)
 {
 	// Construct the modal dialog
-	ShaderChooser* chooser = new ShaderChooser(this, ShaderSelector::TextureFilter::Regular,
+	ShaderChooser* chooser = new ShaderChooser(this, MaterialSelector::TextureFilter::Regular,
 		findNamedObject<wxTextCtrl>(this, "FindReplaceDialogFindEntry"));
 
 	chooser->ShowModal();
@@ -116,7 +116,7 @@ void FindAndReplaceShader::onChooseFind(wxCommandEvent& ev)
 void FindAndReplaceShader::onChooseReplace(wxCommandEvent& ev)
 {
 	// Construct the modal dialog
-	ShaderChooser* chooser = new ShaderChooser(this, ShaderSelector::TextureFilter::Regular,
+	ShaderChooser* chooser = new ShaderChooser(this, MaterialSelector::TextureFilter::Regular,
 		findNamedObject<wxTextCtrl>(this, "FindReplaceDialogReplaceEntry"));
 
 	chooser->ShowModal();

@@ -24,7 +24,7 @@ TexturePropertyEditor::TexturePropertyEditor(wxWindow* parent, IEntitySelection&
 // Browse button callback
 void TexturePropertyEditor::onBrowseButtonClick()
 {
-	auto dialog = new ShaderChooser(getWidget(), ShaderSelector::TextureFilter::Lights);
+	auto dialog = new ShaderChooser(getWidget(), MaterialSelector::TextureFilter::Lights);
 
     dialog->setSelectedTexture(getKeyValue(_key->getFullKey()));
 

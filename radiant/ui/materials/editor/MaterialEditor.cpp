@@ -411,7 +411,7 @@ void MaterialEditor::setupPreviewLightProperties(wxWindow* previewPanel)
     getControl<wxButton>("MaterialPreviewRoomMaterialButton")->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev)
     {
         auto textCtrl = getControl<wxTextCtrl>("MaterialPreviewRoomMaterial");
-        auto selector = new ShaderChooser(this, ShaderSelector::TextureFilter::Regular, textCtrl);
+        auto selector = new ShaderChooser(this, MaterialSelector::TextureFilter::Regular, textCtrl);
         selector->ShowModal();
         selector->Destroy();
     });

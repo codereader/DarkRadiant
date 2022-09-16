@@ -2,7 +2,7 @@
 
 #include "icommandsystem.h"
 #include "iradiant.h"
-#include "ui/common/ShaderSelector.h"
+#include "ui/materials/MaterialSelector.h"
 #include "wxutil/window/TransientWindow.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
@@ -35,7 +35,7 @@ class LightInspector :
     bool _isProjected;
 
     // Internal widgets
-    ShaderSelector* _texSelector;
+    MaterialSelector* _texSelector;
     wxSlider* _brightnessSlider;
 
     // The light entities to edit

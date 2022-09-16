@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ui/common/ShaderSelector.h"
+#include "ui/materials/MaterialSelector.h"
 #include "wxutil/WindowPosition.h"
 #include "wxutil/dialog/DialogBase.h"
 #include <string>
@@ -12,8 +12,8 @@ class Material;
 namespace ui
 {
 
-/* A dialog containing a ShaderSelector widget combo and OK/Cancel
- * buttons. The ShaderSelector subclass is automatically populated with
+/* A dialog containing a MaterialSelector widget combo and OK/Cancel
+ * buttons. The MaterialSelector subclass is automatically populated with
  * all shaders matching the "texture/" prefix.
  */
 class ShaderChooser :
@@ -22,9 +22,9 @@ class ShaderChooser :
 	// The text entry the chosen texture is written into (can be NULL)
 	wxTextCtrl* _targetEntry;
 
-	// The ShaderSelector widget, that contains the actual selection
+	// The MaterialSelector widget, that contains the actual selection
 	// tools (treeview etc.)
-	ShaderSelector* _selector;
+    MaterialSelector* _selector;
 
 	// The shader name at dialog startup (to allow proper behaviour on cancelling)
 	std::string _initialShader;
@@ -43,7 +43,7 @@ public:
 	 *               Also, the initially selected shader will be read from
 	 *               this field at startup.
 	 */
-	ShaderChooser(wxWindow* parent, ShaderSelector::TextureFilter filter, wxTextCtrl* targetEntry = nullptr);
+	ShaderChooser(wxWindow* parent, MaterialSelector::TextureFilter filter, wxTextCtrl* targetEntry = nullptr);
 
     std::string getSelectedTexture();
 

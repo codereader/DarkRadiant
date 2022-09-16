@@ -226,9 +226,6 @@
     <ClCompile Include="..\..\radiant\ui\common\ShaderChooser.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\common\ShaderSelector.cpp">
-      <Filter>src\ui\common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\common\TexturePreviewCombo.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
@@ -709,6 +706,9 @@
     <ClCompile Include="..\..\radiant\ui\common\DeclarationSelector.cpp">
       <Filter>src\ui\common</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\materials\MaterialSelector.cpp">
+      <Filter>src\ui\materials</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -742,9 +742,6 @@
       <Filter>src\ui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\ShaderChooser.h">
-      <Filter>src\ui\common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\common\ShaderSelector.h">
       <Filter>src\ui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\TexturePreviewCombo.h">
@@ -1379,6 +1376,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\DeclarationSelector.h">
       <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\materials\MaterialSelector.h">
+      <Filter>src\ui\materials</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

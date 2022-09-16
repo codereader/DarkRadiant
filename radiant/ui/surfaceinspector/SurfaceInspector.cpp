@@ -788,7 +788,7 @@ void SurfaceInspector::onShaderSelect(wxCommandEvent& ev)
     std::string previousShader = _shaderEntry->GetValue().ToStdString();
 
 	// Instantiate the modal dialog, will block execution
-	auto* chooser = new ShaderChooser(this, ShaderSelector::TextureFilter::Regular, _shaderEntry);
+	auto* chooser = new ShaderChooser(this, MaterialSelector::TextureFilter::Regular, _shaderEntry);
 
     chooser->signal_shaderChanged().connect(
         sigc::mem_fun(this, &SurfaceInspector::emitShader)

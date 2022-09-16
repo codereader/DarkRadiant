@@ -10,6 +10,8 @@ namespace ui
 
 /**
  * Common implementation of a declaration selector widget that can be added to a dialog.
+ * It features a Declaration Tree View with an associated toolbar for favourite management.
+ * Preview widgets can optionally be appended to the right or the bottom of the tree view.
  */
 class DeclarationSelector :
     public wxPanel

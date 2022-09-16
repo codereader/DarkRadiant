@@ -7,7 +7,7 @@
 #include <wx/button.h>
 #include <wx/textctrl.h>
 
-#include "ShaderSelector.h"
+#include "../materials/MaterialSelector.h"
 
 namespace ui
 {
@@ -18,7 +18,7 @@ namespace ui
 	}
 
 // Construct the dialog
-ShaderChooser::ShaderChooser(wxWindow* parent, ShaderSelector::TextureFilter filter, wxTextCtrl* targetEntry) :
+ShaderChooser::ShaderChooser(wxWindow* parent, MaterialSelector::TextureFilter filter, wxTextCtrl* targetEntry) :
 	wxutil::DialogBase(_(LABEL_TITLE), parent),
 	_targetEntry(targetEntry),
 	_selector(nullptr)
@@ -30,7 +30,7 @@ ShaderChooser::ShaderChooser(wxWindow* parent, ShaderSelector::TextureFilter fil
 	wxBoxSizer* dialogVBox = new wxBoxSizer(wxVERTICAL);
 	mainPanel->GetSizer()->Add(dialogVBox, 1, wxEXPAND | wxALL, 12);
 
-	_selector = new ShaderSelector(mainPanel, 
+	_selector = new MaterialSelector(mainPanel,
         std::bind(&ShaderChooser::shaderSelectionChanged, this), filter);
 
 	if (_targetEntry != nullptr)
@@ -43,7 +43,7 @@ ShaderChooser::ShaderChooser(wxWindow* parent, ShaderSelector::TextureFilter fil
 
     _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ShaderChooser::_onItemActivated, this);
 
-	// Pack in the ShaderSelector and buttons panel
+	// Pack in the MaterialSelector and buttons panel
 	dialogVBox->Add(_selector, 1, wxEXPAND);
 
 	createButtons(mainPanel, dialogVBox);

@@ -175,8 +175,8 @@ void LightInspector::setupTextureWidgets()
 {
     wxPanel* parent = findNamedObject<wxPanel>(this, "LightInspectorChooserPanel");
 
-    _texSelector = new ShaderSelector(parent, std::bind(&LightInspector::shaderSelectionChanged, this), 
-        ShaderSelector::TextureFilter::Lights);
+    _texSelector = new MaterialSelector(parent, std::bind(&LightInspector::shaderSelectionChanged, this),
+        MaterialSelector::TextureFilter::Lights);
     parent->GetSizer()->Add(_texSelector, 1, wxEXPAND);
 }
 
