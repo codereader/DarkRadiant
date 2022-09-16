@@ -51,30 +51,15 @@ public:
 	/** Constructor.
 	 *
 	 * @selectionChanged: Functor invoked when the tree view selection changes.
-	 * @prefixes: A comma-separated list of shader prefixes.
+	 * @filter: which texture set to show in the selector
 	 */
 	ShaderSelector(wxWindow* parent, const std::function<void()>& selectionChanged, TextureFilter filter);
-
-	/** Return the shader selected by the user, or an empty string if there
-	 * was no selection.
-	 */
-	std::string getSelection();
-
-	/** Set the given shader name as the current selection, highlighting it
-	 * in the tree view.
-	 *
-	 * @param selection
-	 * The fullname of the shader to select, or the empty string if there
-	 * should be no selection.
-	 */
-	void setSelection(const std::string& selection);
 
 	// Get the selected Material
 	MaterialPtr getSelectedShader();
 
 private:
 	// Create GUI elements
-	void createTreeView();
 	void createPreview();
 
 	void _onSelChange(wxDataViewEvent& ev);

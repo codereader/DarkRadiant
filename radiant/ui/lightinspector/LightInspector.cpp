@@ -87,11 +87,11 @@ void LightInspector::shaderSelectionChanged()
     if (_updateActive) return;
 
     std::string commandStr("setLightTexture: ");
-    commandStr += _texSelector->getSelection();
+    commandStr += _texSelector->GetSelectedDeclName();
     UndoableCommand command(commandStr);
 
     // Write the texture key
-    setKeyValueAllLights("texture", _texSelector->getSelection());
+    setKeyValueAllLights("texture", _texSelector->GetSelectedDeclName());
 }
 
 // Set up the point/projected light options
@@ -476,7 +476,7 @@ void LightInspector::getValuesFromEntity()
     updateColourWidgets();
 
     // Set the texture selection from the "texture" key
-    _texSelector->setSelection(entity->getKeyValue("texture"));
+    _texSelector->SetSelectedDeclName(entity->getKeyValue("texture"));
 
     // Determine whether this is a projected light, and set the toggles
     // appropriately

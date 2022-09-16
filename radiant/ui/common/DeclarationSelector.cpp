@@ -37,6 +37,16 @@ wxutil::DeclarationTreeView* DeclarationSelector::GetTreeView()
     return _treeView;
 }
 
+std::string DeclarationSelector::GetSelectedDeclName()
+{
+    return _treeView->GetSelectedDeclName();
+}
+
+void DeclarationSelector::SetSelectedDeclName(const std::string& declName)
+{
+    _treeView->SetSelectedDeclName(declName);
+}
+
 void DeclarationSelector::PopulateTreeView(const wxutil::IResourceTreePopulator::Ptr& populator)
 {
     _treeView->Populate(populator);

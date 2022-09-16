@@ -23,6 +23,22 @@ private:
 public:
     DeclarationSelector(wxWindow* parent, decl::Type declType, const wxutil::DeclarationTreeView::Columns& columns);
 
+    /**
+     * Return the declaration selected by the user, or an empty string if there
+     * was no selection.
+     */
+    virtual std::string GetSelectedDeclName();
+
+    /**
+     * Set the given declaration name as the current selection, highlighting it
+     * in the tree view.
+     *
+     * @param declName
+     * The fullname of the declaration to select, or the empty string if there
+     * should be no selection.
+     */
+    virtual void SetSelectedDeclName(const std::string& declName);
+
 protected:
     wxutil::DeclarationTreeView* GetTreeView();
     void PopulateTreeView(const wxutil::IResourceTreePopulator::Ptr& populator);

@@ -38,7 +38,7 @@ ShaderChooser::ShaderChooser(wxWindow* parent, ShaderSelector::TextureFilter fil
 		_initialShader = _targetEntry->GetValue();
 
 		// Set the cursor of the tree view to the currently selected shader
-		_selector->setSelection(_initialShader);
+		_selector->SetSelectedDeclName(_initialShader);
 	}
 
     _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ShaderChooser::_onItemActivated, this);
@@ -57,12 +57,12 @@ ShaderChooser::ShaderChooser(wxWindow* parent, ShaderSelector::TextureFilter fil
 
 std::string ShaderChooser::getSelectedTexture()
 {
-    return _selector->getSelection();
+    return _selector->GetSelectedDeclName();
 }
 
 void ShaderChooser::setSelectedTexture(const std::string& textureName)
 {
-    _selector->setSelection(textureName);
+    _selector->SetSelectedDeclName(textureName);
 }
 
 void ShaderChooser::shutdown()
@@ -73,11 +73,11 @@ void ShaderChooser::shutdown()
 
 void ShaderChooser::_onItemActivated(wxDataViewEvent& ev)
 {
-    if (!_selector->getSelection().empty())
+    if (!_selector->GetSelectedDeclName().empty())
     {
         if (_targetEntry)
         {
-            _targetEntry->SetValue(_selector->getSelection());
+            _targetEntry->SetValue(_selector->GetSelectedDeclName());
         }
 
         shutdown();
@@ -106,7 +106,7 @@ void ShaderChooser::shaderSelectionChanged()
 {
 	if (_targetEntry)
 	{
-		_targetEntry->SetValue(_selector->getSelection());
+		_targetEntry->SetValue(_selector->GetSelectedDeclName());
 	}
 
 	// Propagate the call up to the client (e.g. SurfaceInspector)
@@ -138,7 +138,7 @@ void ShaderChooser::callbackOK(wxCommandEvent& ev)
 {
 	if (_targetEntry)
 	{
-		_targetEntry->SetValue(_selector->getSelection());
+		_targetEntry->SetValue(_selector->GetSelectedDeclName());
 	}
 
 	shutdown();

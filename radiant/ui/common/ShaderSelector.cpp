@@ -3,14 +3,12 @@
 #include <vector>
 #include <string>
 
-#include "i18n.h"
 #include "ishaders.h"
 
 #include <wx/sizer.h>
 
 #include "texturelib.h"
 #include "gamelib.h"
-#include "string/split.h"
 #include "string/predicate.h"
 
 #include "wxutil/dataview/VFSTreePopulator.h"
@@ -96,16 +94,6 @@ const wxutil::DeclarationTreeView::Columns& ShaderSelector::Columns()
     return _shaderColumns;
 }
 
-std::string ShaderSelector::getSelection()
-{
-    return GetTreeView()->GetSelectedDeclName();
-}
-
-void ShaderSelector::setSelection(const std::string& sel)
-{
-    GetTreeView()->SetSelectedDeclName(sel);
-}
-
 void ShaderSelector::createPreview()
 {
     _previewCombo = new TexturePreviewCombo(this);
@@ -114,12 +102,12 @@ void ShaderSelector::createPreview()
 
 MaterialPtr ShaderSelector::getSelectedShader()
 {
-	return GlobalMaterialManager().getMaterial(getSelection());
+	return GlobalMaterialManager().getMaterial(GetSelectedDeclName());
 }
 
 void ShaderSelector::_onSelChange(wxDataViewEvent& ev)
 {
-    _previewCombo->SetTexture(getSelection());
+    _previewCombo->SetTexture(GetSelectedDeclName());
 
     if (_selectionChanged)
     {
