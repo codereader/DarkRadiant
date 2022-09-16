@@ -21,13 +21,17 @@ private:
     wxutil::DeclarationTreeView* _treeView;
 
 public:
+    // Construct a selector widget with the default set of tree view columns
+    DeclarationSelector(wxWindow* parent, decl::Type declType);
+
+    // Construct a selector widget with the given set of tree view columns
     DeclarationSelector(wxWindow* parent, decl::Type declType, const wxutil::DeclarationTreeView::Columns& columns);
 
     /**
      * Return the declaration selected by the user, or an empty string if there
      * was no selection.
      */
-    virtual std::string GetSelectedDeclName();
+    virtual std::string GetSelectedDeclName() const;
 
     /**
      * Set the given declaration name as the current selection, highlighting it
@@ -40,12 +44,17 @@ public:
     virtual void SetSelectedDeclName(const std::string& declName);
 
 protected:
-    wxutil::DeclarationTreeView* GetTreeView();
+    wxutil::DeclarationTreeView* GetTreeView() const;
+    const wxutil::DeclarationTreeView::Columns& GetColumns() const;
+
     void PopulateTreeView(const wxutil::IResourceTreePopulator::Ptr& populator);
 
     // Event method invoked when the tree view selection has been changed
     virtual void onTreeViewSelectionChanged()
     {}
+
+    // Default tree view columns. Subclasses can use a different set of columns if needed
+    static const wxutil::DeclarationTreeView::Columns& CreateDefaultColumns();
 
 private:
     void createTreeView();

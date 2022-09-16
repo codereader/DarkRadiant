@@ -3,6 +3,10 @@
 namespace ui
 {
 
+DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType) :
+    DeclarationSelector(parent, declType, CreateDefaultColumns())
+{}
+
 DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType, 
         const wxutil::DeclarationTreeView::Columns& columns) :
     wxPanel(parent),
@@ -32,12 +36,17 @@ void DeclarationSelector::createTreeView()
     GetSizer()->Add(_treeView, 1, wxEXPAND);
 }
 
-wxutil::DeclarationTreeView* DeclarationSelector::GetTreeView()
+wxutil::DeclarationTreeView* DeclarationSelector::GetTreeView() const
 {
     return _treeView;
 }
 
-std::string DeclarationSelector::GetSelectedDeclName()
+const wxutil::DeclarationTreeView::Columns& DeclarationSelector::GetColumns() const
+{
+    return _columns;
+}
+
+std::string DeclarationSelector::GetSelectedDeclName() const
 {
     return _treeView->GetSelectedDeclName();
 }
@@ -50,6 +59,12 @@ void DeclarationSelector::SetSelectedDeclName(const std::string& declName)
 void DeclarationSelector::PopulateTreeView(const wxutil::IResourceTreePopulator::Ptr& populator)
 {
     _treeView->Populate(populator);
+}
+
+const wxutil::DeclarationTreeView::Columns& DeclarationSelector::CreateDefaultColumns()
+{
+    static wxutil::DeclarationTreeView::Columns _treeViewColumns;
+    return _treeViewColumns;
 }
 
 void DeclarationSelector::onTreeViewSelectionChanged(wxDataViewEvent& ev)

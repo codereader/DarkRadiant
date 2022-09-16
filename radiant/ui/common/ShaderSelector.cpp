@@ -77,20 +77,14 @@ protected:
 
 ShaderSelector::ShaderSelector(wxWindow* parent, const std::function<void()>& selectionChanged,
     TextureFilter textureFilter) :
-    DeclarationSelector(parent, decl::Type::Material, Columns()),
+    DeclarationSelector(parent, decl::Type::Material),
     _textureFilter(textureFilter),
 	_selectionChanged(selectionChanged)
 {
     // Pack in info panel
 	createPreview();
 
-    PopulateTreeView(std::make_shared<ThreadedMaterialLoader>(Columns(), _textureFilter));
-}
-
-const wxutil::DeclarationTreeView::Columns& ShaderSelector::Columns()
-{
-    static wxutil::DeclarationTreeView::Columns _shaderColumns;
-    return _shaderColumns;
+    PopulateTreeView(std::make_shared<ThreadedMaterialLoader>(GetColumns(), _textureFilter));
 }
 
 void ShaderSelector::createPreview()

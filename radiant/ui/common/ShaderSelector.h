@@ -2,7 +2,6 @@
 
 #include <memory>
 #include "DeclarationSelector.h"
-#include "wxutil/dataview/DeclarationTreeView.h"
 
 #include "TexturePreviewCombo.h"
 
@@ -60,8 +59,6 @@ protected:
 
 private:
 	void createPreview();
-
-    const wxutil::DeclarationTreeView::Columns& Columns();
 };
 
 } // namespace ui
