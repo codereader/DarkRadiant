@@ -45,11 +45,14 @@ TexturePreviewCombo::TexturePreviewCombo(wxWindow* parent) :
     loadLightTexturePrefixes();
 }
 
-// Update the selected texture
-
-void TexturePreviewCombo::SetTexture(const std::string& tex)
+void TexturePreviewCombo::ClearPreview()
 {
-    _texName = tex;
+    SetPreviewDeclName({});
+}
+
+void TexturePreviewCombo::SetPreviewDeclName(const std::string& declName)
+{
+    _texName = declName;
     refreshInfoTable();
 
     _glWidget->Refresh(false);

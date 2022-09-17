@@ -4,6 +4,8 @@
 #include "wxutil/menu/PopupMenu.h"
 #include <wx/panel.h>
 
+#include "IDeclarationPreview.h"
+
 namespace wxutil
 { 
 	class KeyValueTable;
@@ -20,7 +22,8 @@ namespace ui
  * a List View showing information about that texture.
  */
 class TexturePreviewCombo :
-	public wxPanel
+	public wxPanel,
+    public IDeclarationPreview
 {
 	// The OpenGL preview widget
 	wxutil::GLWidget* _glWidget;
@@ -42,12 +45,14 @@ public:
 	 */
 	TexturePreviewCombo(wxWindow* parent);
 
+    void ClearPreview() override;
+
 	/** Set the texture to preview.
 	 *
-	 * @param tex
+	 * @param declName
 	 * String name of the texture to preview (e.g. "textures/common/caulk")
 	 */
-	void SetTexture(const std::string& tex);
+    void SetPreviewDeclName(const std::string& declName) override;
 
 private:
 	/* gtkutil::PopupMenu callbacks */

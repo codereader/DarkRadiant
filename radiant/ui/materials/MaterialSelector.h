@@ -2,7 +2,6 @@
 
 #include <memory>
 #include "../common/DeclarationSelector.h"
-#include "../common/TexturePreviewCombo.h"
 
 // FORWARD DECLS
 class Material;
@@ -39,8 +38,6 @@ private:
     TextureFilter _textureFilter;
 
 	std::function<void()> _selectionChanged;
-
-    TexturePreviewCombo* _previewCombo;
 
 public:
 	/** Constructor.

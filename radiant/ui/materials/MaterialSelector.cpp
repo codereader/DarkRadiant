@@ -5,12 +5,11 @@
 
 #include "ishaders.h"
 
-#include <wx/sizer.h>
-
 #include "texturelib.h"
 #include "gamelib.h"
 #include "string/predicate.h"
 
+#include "../common/TexturePreviewCombo.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 
@@ -81,8 +80,7 @@ MaterialSelector::MaterialSelector(wxWindow* parent, const std::function<void()>
     _textureFilter(textureFilter),
 	_selectionChanged(selectionChanged)
 {
-    _previewCombo = new TexturePreviewCombo(this);
-    AddPreviewToBottom(_previewCombo);
+    AddPreviewToBottom(new TexturePreviewCombo(this));
 
     PopulateTreeView(std::make_shared<ThreadedMaterialLoader>(GetColumns(), _textureFilter));
 }
@@ -94,8 +92,6 @@ MaterialPtr MaterialSelector::getSelectedShader()
 
 void MaterialSelector::onTreeViewSelectionChanged()
 {
-    _previewCombo->SetTexture(GetSelectedDeclName());
-
     if (_selectionChanged)
     {
         _selectionChanged();

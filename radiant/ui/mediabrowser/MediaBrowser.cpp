@@ -150,12 +150,12 @@ void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     // Update the preview if a texture is selected
     if (!_treeView->IsDirectorySelected())
     {
-        _preview->SetTexture(getSelection());
+        _preview->SetPreviewDeclName(getSelection());
         GlobalShaderClipboard().setSourceShader(getSelection());
     }
     else
     {
-        _preview->SetTexture("");
+        _preview->ClearPreview();
         // Nothing selected, clear the clipboard
         GlobalShaderClipboard().clear();
     }
