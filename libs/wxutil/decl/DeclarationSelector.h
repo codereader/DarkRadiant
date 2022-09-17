@@ -24,24 +24,25 @@ class DeclarationSelector :
 private:
     decl::Type _declType;
 
-    const wxutil::DeclarationTreeView::Columns& _columns;
-    wxutil::DeclarationTreeView* _treeView;
+    const DeclarationTreeView::Columns& _columns;
+    DeclarationTreeView* _treeView;
 
-    wxSizer* _horizontalSizer;
+    wxPanel* _leftPanel;
+    wxPanel* _rightPanel;
+
     wxSizer* _treeVbox;
-    wxSizerItem* _treeViewSizerItem;
 
-    // Optional preview widget attached to this selector
+    // The set of preview widgets attached to this selector
     std::vector<ui::IDeclarationPreview*> _previews;
 
-    wxutil::DeclFileInfo* _declFileInfo;
+    DeclFileInfo* _declFileInfo;
 
 public:
     // Construct a selector widget with the default set of tree view columns
     DeclarationSelector(wxWindow* parent, decl::Type declType);
 
     // Construct a selector widget with the given set of tree view columns
-    DeclarationSelector(wxWindow* parent, decl::Type declType, const wxutil::DeclarationTreeView::Columns& columns);
+    DeclarationSelector(wxWindow* parent, decl::Type declType, const DeclarationTreeView::Columns& columns);
 
     /**
      * Return the declaration selected by the user, or an empty string if there
@@ -63,15 +64,15 @@ public:
     void FocusTreeView();
 
 protected:
-    wxutil::DeclarationTreeView* GetTreeView() const;
+    DeclarationTreeView* GetTreeView() const;
 
     // Adds a preview widget to the right of the tree view
     void AddPreviewToRightPane(ui::IDeclarationPreview* preview, int sizerProportion = 1);
     void AddPreviewToBottom(ui::IDeclarationPreview* preview, int sizerProportion = 0);
 
-    const wxutil::DeclarationTreeView::Columns& GetColumns() const;
+    const DeclarationTreeView::Columns& GetColumns() const;
 
-    void PopulateTreeView(const wxutil::IResourceTreePopulator::Ptr& populator);
+    void PopulateTreeView(const IResourceTreePopulator::Ptr& populator);
 
     // Event method invoked when the tree view selection has been changed
     virtual void onTreeViewSelectionChanged()
@@ -82,10 +83,10 @@ protected:
     {}
 
     // Default tree view columns. Subclasses can use a different set of columns if needed
-    static const wxutil::DeclarationTreeView::Columns& CreateDefaultColumns();
+    static const DeclarationTreeView::Columns& CreateDefaultColumns();
 
 private:
-    void createTreeView();
+    void createTreeView(wxWindow* parent);
     void onTreeViewSelectionChanged(wxDataViewEvent& ev);
     void onTreeViewItemActivated(wxDataViewEvent& ev);
 };

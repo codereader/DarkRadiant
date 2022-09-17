@@ -1,6 +1,7 @@
 #include "DeclarationSelector.h"
 
 #include <wx/sizer.h>
+#include <wx/splitter.h>
 #include "../dataview/ResourceTreeViewToolbar.h"
 #include "DeclFileInfo.h"
 
@@ -17,14 +18,20 @@ DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType,
     _declType(declType),
     _columns(columns),
     _treeView(nullptr),
-    _horizontalSizer(nullptr),
-    _treeViewSizerItem(nullptr)
+    _leftPanel(nullptr),
+    _rightPanel(nullptr)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    createTreeView();
 
-    auto* toolbar = new ResourceTreeViewToolbar(this, _treeView);
-    _declFileInfo = new DeclFileInfo(this, _declType);
+    _leftPanel = new wxPanel(this);
+    _leftPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+    GetSizer()->Add(_leftPanel, 1, wxEXPAND);
+
+    createTreeView(_leftPanel);
+
+    auto* toolbar = new ResourceTreeViewToolbar(_leftPanel, _treeView);
+    _declFileInfo = new DeclFileInfo(_leftPanel, _declType);
 
     _treeVbox = new wxBoxSizer(wxVERTICAL);
     _treeVbox->Add(toolbar, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 6);
@@ -32,25 +39,36 @@ DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType,
     _treeVbox->Add(_declFileInfo, 0, wxEXPAND | wxTOP | wxBOTTOM, 6);
     // a preview widget can be appended to the vertical sizer => AddPreviewToBottom
 
-    _horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
-    _treeViewSizerItem = _horizontalSizer->Add(_treeVbox, 1, wxEXPAND);
-    // the horizontal sizer has room for a preview widget => AddPreviewToRightPane
-
-    GetSizer()->Add(_horizontalSizer, 1, wxEXPAND);
+    _leftPanel->GetSizer()->Add(_treeVbox, 1, wxEXPAND);
+    // the right panel has room for a preview widget => AddPreviewToRightPane
 }
 
 void DeclarationSelector::AddPreviewToRightPane(ui::IDeclarationPreview* preview, int sizerProportion)
 {
-    auto widget = preview->GetPreviewWidget();
-
-    // Tree view no longer takes full proportion after a full-size preview has been added
-    if (sizerProportion == 1)
+    if (_rightPanel)
     {
-        _treeViewSizerItem->SetProportion(0);
+        throw std::logic_error("A preview is already present in the right panel");
     }
 
-    widget->Reparent(this);
-    _horizontalSizer->Add(widget, sizerProportion, wxEXPAND | wxLEFT, 6);
+    // Split the window
+    auto splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+
+    // Remove items from sizer, then add the splitter
+    GetSizer()->Clear(false);
+    GetSizer()->Add(splitter, 1, wxEXPAND);
+
+    // Move the left panel as child to the splitter
+    _leftPanel->Reparent(splitter);
+    _rightPanel = new wxPanel(splitter);
+    _rightPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+    splitter->SetMinimumPaneSize(200); // no unsplitting
+    splitter->SplitVertically(_leftPanel, _rightPanel, 350);
+
+    auto widget = preview->GetPreviewWidget();
+
+    widget->Reparent(_rightPanel);
+    _rightPanel->GetSizer()->Add(widget, sizerProportion, wxEXPAND | wxLEFT, 6);
 
     _previews.push_back(preview);
 }
@@ -59,16 +77,15 @@ void DeclarationSelector::AddPreviewToBottom(ui::IDeclarationPreview* preview, i
 {
     auto widget = preview->GetPreviewWidget();
 
-    widget->Reparent(this);
-
+    widget->Reparent(_leftPanel);
     _treeVbox->Add(widget, sizerProportion, wxEXPAND | wxTOP, 3);
 
     _previews.push_back(preview);
 }
 
-void DeclarationSelector::createTreeView()
+void DeclarationSelector::createTreeView(wxWindow* parent)
 {
-    _treeView = new DeclarationTreeView(this, _declType, _columns, wxDV_NO_HEADER | wxDV_SINGLE);
+    _treeView = new DeclarationTreeView(parent, _declType, _columns, wxDV_NO_HEADER | wxDV_SINGLE);
 
     // Single visible column, containing the directory/decl name and the icon
     _treeView->AppendIconTextColumn(decl::getTypeName(_declType), _columns.iconAndName.getColumnIndex(),
