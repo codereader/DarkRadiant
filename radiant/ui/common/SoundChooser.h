@@ -31,10 +31,8 @@ private:
 
 private:
     void loadSoundShaders();
-    void handleSelectionChange();
 
 	// callbacks
-	void _onSelectionChange(wxDataViewEvent& ev);
 	void _onItemActivated(wxDataViewEvent& ev);
     void _onReloadSounds(wxCommandEvent& ev);
 

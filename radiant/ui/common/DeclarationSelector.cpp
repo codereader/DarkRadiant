@@ -47,12 +47,22 @@ void DeclarationSelector::AddPreviewToRightPane(wxWindow* preview, int sizerProp
 
     preview->Reparent(this);
     _horizontalSizer->Add(preview, sizerProportion, wxEXPAND | wxLEFT, 6);
+
+    if (auto declPreview = dynamic_cast<IDeclarationPreview*>(preview); declPreview)
+    {
+        _previews.push_back(declPreview);
+    }
 }
 
 void DeclarationSelector::AddPreviewToBottom(wxWindow* preview, int sizerProportion)
 {
     preview->Reparent(this);
     GetSizer()->Add(preview, sizerProportion, wxEXPAND | wxTOP, 3);
+
+    if (auto declPreview = dynamic_cast<IDeclarationPreview*>(preview); declPreview)
+    {
+        _previews.push_back(declPreview);
+    }
 }
 
 void DeclarationSelector::createTreeView()
@@ -104,6 +114,12 @@ const wxutil::DeclarationTreeView::Columns& DeclarationSelector::CreateDefaultCo
 
 void DeclarationSelector::onTreeViewSelectionChanged(wxDataViewEvent& ev)
 {
+    // Notify all previews
+    for (auto preview : _previews)
+    {
+        preview->SetPreviewDeclName(_treeView->GetSelectedDeclName());
+    }
+
     // Invoke the virtual method
     onTreeViewSelectionChanged();
     ev.Skip();

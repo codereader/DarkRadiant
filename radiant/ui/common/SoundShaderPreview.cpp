@@ -104,10 +104,15 @@ wxSizer* SoundShaderPreview::createControlPanel(wxWindow* parent)
 	return vbox;
 }
 
-void SoundShaderPreview::setSoundShader(const std::string& soundShader)
+void SoundShaderPreview::ClearPreview()
 {
-	_soundShader = soundShader;
-	update();
+    SetPreviewDeclName({});
+}
+
+void SoundShaderPreview::SetPreviewDeclName(const std::string& declName)
+{
+    _soundShader = declName;
+    update();
 }
 
 void SoundShaderPreview::playRandomSoundFile()

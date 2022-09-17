@@ -36,14 +36,14 @@ SoundChooser::SoundChooser(wxWindow* parent) :
     reloadButton->Bind(wxEVT_BUTTON, &SoundChooser::_onReloadSounds, this);
 
     buttonSizer->Prepend(reloadButton, 0, wxRIGHT, 32);
-    auto* dblClickHint = new wxStaticText( this, wxID_ANY, _( "Ctrl + Double Click on treeview items for quick play" ), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT );
+    auto* dblClickHint = new wxStaticText(this, wxID_ANY, 
+        _( "Ctrl + Double Click on treeview items for quick play" ), wxDefaultPosition, wxDefaultSize, wxALIGN_RIGHT);
     auto* grid = new wxFlexGridSizer( 2 );
     grid->AddGrowableCol( 1 );
     grid->Add( dblClickHint, 0, wxALIGN_CENTER_VERTICAL );
     grid->Add( buttonSizer, 0, wxALIGN_RIGHT );
 
     _selector = new SoundShaderSelector(this);
-    _selector->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundChooser::_onSelectionChange, this);
     _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &SoundChooser::_onItemActivated, this);
 
 	GetSizer()->Add(_selector, 1, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 12);
@@ -69,12 +69,6 @@ std::string SoundChooser::getSelectedShader() const
 void SoundChooser::setSelectedShader(const std::string& shader)
 {
     _selector->SetSelectedDeclName(shader);
-}
-
-void SoundChooser::_onSelectionChange(wxDataViewEvent& ev)
-{
-    // Notify the preview widget about the change
-    _preview->setSoundShader(_selector->GetSelectedDeclName());
 }
 
 void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
@@ -115,7 +109,7 @@ int SoundChooser::ShowModal()
 
 void SoundChooser::_onReloadSounds(wxCommandEvent& ev)
 {
-    _preview->setSoundShader(std::string());
+    _preview->ClearPreview();
 
     // Send the command to the SoundManager
     // After parsing it will fire the sounds reloaded signal => onShadersReloaded()

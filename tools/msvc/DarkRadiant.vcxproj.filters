@@ -1383,6 +1383,9 @@
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderSelector.h">
       <Filter>src\ui\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\common\IDeclarationPreview.h">
+      <Filter>src\ui\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

@@ -1,8 +1,10 @@
 #pragma once
 
+#include <vector>
 #include "idecltypes.h"
 #include <wx/panel.h>
 
+#include "IDeclarationPreview.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
 
 namespace ui
@@ -24,6 +26,9 @@ private:
 
     wxSizer* _horizontalSizer;
     wxSizerItem* _treeViewSizerItem;
+
+    // Optional preview widget attached to this selector
+    std::vector<IDeclarationPreview*> _previews;
 
 public:
     // Construct a selector widget with the default set of tree view columns

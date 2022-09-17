@@ -11,6 +11,8 @@
 
 #include <wx/panel.h>
 
+#include "IDeclarationPreview.h"
+
 class wxButton;
 class wxStaticText;
 class wxSizer;
@@ -23,7 +25,8 @@ namespace ui
  * sound shader with playback option.
  */
 class SoundShaderPreview :
-	public wxPanel
+	public wxPanel,
+    public IDeclarationPreview
 {
 private:
 	// Tree store and view for available sound files, and the tree selection
@@ -69,12 +72,14 @@ private:
 public:
 	SoundShaderPreview(wxWindow* parent);
 
-    ~SoundShaderPreview();
+    ~SoundShaderPreview() override;
 
-	/** greebo: Sets the soundshader to preview.
-	 * 			This updates the preview liststore and treeview.
+    void ClearPreview() override;
+
+	/**
+	 * Sets the soundshader to preview. This updates the preview liststore and treeview.
 	 */
-	void setSoundShader(const std::string& soundShader);
+    void SetPreviewDeclName(const std::string& declName) override;
 
 	/**
 	 * Provided a sound shader is assigned, this will pick
