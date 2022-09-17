@@ -4,7 +4,6 @@
 #include "dataview/TreeModel.h"
 #include "dataview/TreeViewItemStyle.h"
 #include "dataview/ThreadedResourceTreePopulator.h"
-#include "dataview/ResourceTreeViewToolbar.h"
 #include "dataview/VFSTreePopulator.h"
 #include "decl/DeclarationSelector.h"
 
@@ -73,8 +72,8 @@ class EntityClassTreePopulator:
     // Key that specifies the display folder
     std::string _folderKey;
 
-    wxutil::Icon _folderIcon;
-    wxutil::Icon _entityIcon;
+    Icon _folderIcon;
+    Icon _entityIcon;
 
     std::set<std::string> _favourites;
 
@@ -240,29 +239,29 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
     DialogBase(getDialogTitle(purpose)),
     _selector(nullptr)
 {
-    loadNamedPanel(this, "EntityClassChooserMainPanel");
+    SetSizer(new wxBoxSizer(wxVERTICAL));
 
-    // Connect button signals
-    auto confirmButton = findNamedObject<wxButton>(this, "EntityClassChooserAddButton");
-    confirmButton->Bind(wxEVT_BUTTON, &EntityClassChooser::onOK, this);
+    auto mainSizer = new wxBoxSizer(wxVERTICAL);
+    GetSizer()->Add(mainSizer, 1, wxEXPAND | wxALL, 12);
+
+    auto buttonSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
+    
+    _affirmativeButton = buttonSizer->GetAffirmativeButton();
 
     switch (purpose)
     {
     case Purpose::AddEntity: 
-        confirmButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
+        _affirmativeButton->SetLabelText(_("Create"));
         break;
     case Purpose::ConvertEntity:
-        confirmButton->SetLabelText(_("Convert"));
+        _affirmativeButton->SetLabelText(_("Convert"));
         break;
     case Purpose::SelectClassname:
-        confirmButton->SetLabelText(_("Select"));
+        _affirmativeButton->SetLabelText(_("Select"));
         break;
     default:
         throw std::logic_error("Unknown entity class chooser purpose");
     }
-
-    findNamedObject<wxButton>(this, "EntityClassChooserCancelButton")->Bind(
-        wxEVT_BUTTON, &EntityClassChooser::onCancel, this);
 
     // Listen for defs-reloaded signal (cannot bind directly to
     // ThreadedEntityClassLoader method because it is not sigc::trackable)
@@ -270,28 +269,15 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
         [this]() { GlobalUserInterface().dispatch([this]() { loadEntityClasses(); }); }
     );
 
-    // Setup the tree view and invoke threaded loader to get the entity classes
-    setupSelector();
+    Bind(wxEVT_CLOSE_WINDOW, &EntityClassChooser::onDeleteEvent, this);
+
+    mainSizer->Add(setupSelector(this), 1, wxEXPAND | wxBOTTOM, 12);
+    mainSizer->Add(buttonSizer, 0, wxALIGN_RIGHT, 12);
+
     loadEntityClasses();
 
-#if 0
-    // Disallow unsplitting
-    splitter->SetMinimumPaneSize(200);
-    splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.2f));
-#endif
     // Persist layout to registry
     _windowPosition.initialise(this, RKEY_WINDOW_STATE, 0.7f, 0.8f);
-#if 0
-    _panedPosition.connect(splitter);
-    _panedPosition.loadFromPath(RKEY_SPLIT_POS);
-#endif
-    Bind(wxEVT_CLOSE_WINDOW, &EntityClassChooser::onDeleteEvent, this);
-#if 0
-    // Set the model preview height to something significantly smaller than the
-    // window's height to allow shrinking
-    _modelPreview->getWidget()->SetMinClientSize(
-        wxSize(GetSize().GetWidth() * 0.4f, GetSize().GetHeight() * 0.2f));
-#endif
 }
 
 EntityClassChooser::~EntityClassChooser()
@@ -365,16 +351,14 @@ int EntityClassChooser::ShowModal()
     return returnCode;
 }
 
-void EntityClassChooser::setupSelector()
+wxWindow* EntityClassChooser::setupSelector(wxWindow* parent)
 {
-    auto parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
-
     _selector = new EntityClassSelector(parent);
 
     _selector->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
     _selector->Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &EntityClassChooser::_onItemActivated, this );
 
-    parent->GetSizer()->Prepend(_selector, 1, wxEXPAND | wxBOTTOM | wxRIGHT, 6);
+    return _selector;
 }
 
 void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev )
@@ -383,32 +367,13 @@ void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev )
 
     if (!selectedEclass.empty())
     {
-        onOK(ev);
+        EndModal(wxID_OK);
     }
 }
 
 void EntityClassChooser::updateSelection()
 {
-    auto selectedEclass = _selector->GetSelectedDeclName();
-
-    if (selectedEclass.empty())
-    {
-        findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(false);
-        return;
-    }
-
-    // Make the OK button active
-    findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(true);
-}
-
-void EntityClassChooser::onCancel(wxCommandEvent& ev)
-{
-    EndModal(wxID_CANCEL); // break main loop
-}
-
-void EntityClassChooser::onOK(wxCommandEvent& ev)
-{
-    EndModal(wxID_OK); // break main loop
+    _affirmativeButton->Enable(!_selector->GetSelectedDeclName().empty());
 }
 
 void EntityClassChooser::onSelectionChanged(wxDataViewEvent& ev)

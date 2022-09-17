@@ -1,14 +1,9 @@
 #pragma once
 
-#include "iradiant.h"
-#include "ieclass.h"
-
 #include "dialog/DialogBase.h"
-#include "XmlResourceBasedWidget.h"
 #include "PanedPosition.h"
 #include "WindowPosition.h"
 
-#include <memory>
 #include <sigc++/connection.h>
 #include <wx/dataview.h>
 
@@ -22,8 +17,7 @@ class EntityClassSelector;
  * of a class to create at the current location.
  */
 class EntityClassChooser final :
-    public DialogBase,
-    private XmlResourceBasedWidget
+    public DialogBase
 {
 public:
     // Enumeration of possible modes of this dialog
@@ -43,20 +37,20 @@ private:
 
     sigc::connection _defsReloaded;
 
+    wxButton* _affirmativeButton;
+
 private:
     EntityClassChooser(Purpose purpose);
     ~EntityClassChooser();
 
     void loadEntityClasses();
 
-    void setupSelector();
+    wxWindow* setupSelector(wxWindow * parent);
 
     // Updates the member variables based on the current tree selection
     void updateSelection();
 
     // Button callbacks
-    void onCancel(wxCommandEvent& ev);
-    void onOK(wxCommandEvent& ev);
     void onSelectionChanged(wxDataViewEvent& ev);
     void onDeleteEvent(wxCloseEvent& ev);
 
