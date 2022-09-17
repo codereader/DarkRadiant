@@ -423,7 +423,6 @@
     <ClInclude Include="..\..\radiant\ui\colourscheme\ColourSchemeEditor.h" />
     <ClInclude Include="..\..\radiant\ui\common\DeclarationSelector.h" />
     <ClInclude Include="..\..\radiant\ui\common\DialogManager.h" />
-    <ClInclude Include="..\..\radiant\ui\common\IDeclarationPreview.h" />
     <ClInclude Include="..\..\radiant\ui\common\ImageFilePopulator.h" />
     <ClInclude Include="..\..\radiant\ui\common\ImageFileSelector.h" />
     <ClInclude Include="..\..\radiant\ui\common\SkinChooser.h" />

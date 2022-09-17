@@ -28,7 +28,6 @@ public:
     std::string GetSelectedParticle();
     void SetSelectedParticle(const std::string& particleName);
 
-protected:
     void onTreeViewSelectionChanged() override;
 
 private:

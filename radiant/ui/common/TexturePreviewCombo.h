@@ -4,7 +4,7 @@
 #include "wxutil/menu/PopupMenu.h"
 #include <wx/panel.h>
 
-#include "IDeclarationPreview.h"
+#include "ui/ideclpreview.h"
 
 namespace wxutil
 { 

@@ -78,9 +78,14 @@ ParticlePreview::~ParticlePreview()
 	ev->disconnectToolItem(_reloadButton);
 }
 
-void ParticlePreview::setParticle(const std::string& name)
+void ParticlePreview::ClearPreview()
 {
-    std::string nameClean = name;
+    SetPreviewDeclName({});
+}
+
+void ParticlePreview::SetPreviewDeclName(const std::string& declName)
+{
+    std::string nameClean = declName;
 
     if (string::ends_with(nameClean, ".prt"))
     {

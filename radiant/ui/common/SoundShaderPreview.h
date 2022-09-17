@@ -11,7 +11,7 @@
 
 #include <wx/panel.h>
 
-#include "IDeclarationPreview.h"
+#include "ui/ideclpreview.h"
 
 class wxButton;
 class wxStaticText;

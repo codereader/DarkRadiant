@@ -4,7 +4,7 @@
 #include "idecltypes.h"
 #include <wx/panel.h>
 
-#include "IDeclarationPreview.h"
+#include "ui/ideclpreview.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
 
 namespace ui

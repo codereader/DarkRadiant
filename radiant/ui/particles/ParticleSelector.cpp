@@ -45,7 +45,7 @@ void ParticleSelector::onTreeViewSelectionChanged()
 
     if (!selectedParticle.empty())
     {
-        _preview->setParticle(selectedParticle);
+        _preview->SetPreviewDeclName(selectedParticle);
     }
 }
 

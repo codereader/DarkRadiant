@@ -214,6 +214,7 @@
     <ClInclude Include="..\..\include\StringSerialisable.h" />
     <ClInclude Include="..\..\include\Texture.h" />
     <ClInclude Include="..\..\include\ui\ianimationchooser.h" />
+    <ClInclude Include="..\..\include\ui\ideclpreview.h" />
     <ClInclude Include="..\..\include\ui\idialogmanager.h" />
     <ClInclude Include="..\..\include\ui\ientityinspector.h" />
     <ClInclude Include="..\..\include\ui\ieventmanager.h" />

@@ -851,7 +851,7 @@ void ParticleEditor::handleDefSelChanged()
     }
     else
     {
-        _preview->setParticle("");
+        _preview->ClearPreview();
 		_stageView->UnselectAll();
         _selectedStageIter = wxDataViewItem();
         _stageList->Clear();
@@ -1274,7 +1274,7 @@ void ParticleEditor::setupEditParticle()
     IParticleDef::Ptr def = GlobalParticlesManager().getDefByName(selectedName);
     if (!def)
     {
-        _preview->setParticle("");
+        _preview->ClearPreview();
         return;
     }
 
@@ -1288,7 +1288,7 @@ void ParticleEditor::setupEditParticle()
     _currentDef->copyFrom(def);
 
     // Point the preview to this temporary particle def
-    _preview->setParticle(_currentDef->getDeclName());
+    _preview->SetPreviewDeclName(_currentDef->getDeclName());
 }
 
 void ParticleEditor::releaseEditParticle()
@@ -1591,7 +1591,7 @@ void ParticleEditor::_onCloneCurrentParticle(wxCommandEvent& ev)
     // Clear selection and re-select the particle to set up the working copy
     _defView->UnselectAll();
     _selectedDefIter = wxDataViewItem(); // to force re-setup of the selected edit particle
-    _preview->setParticle(""); // Preview might hold old data as well
+    _preview->ClearPreview(); // Preview might hold old data as well
 
     selectParticleDef(newParticle->getDeclName());
 
