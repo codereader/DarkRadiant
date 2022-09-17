@@ -3,15 +3,10 @@
 #include "i18n.h"
 #include "isound.h"
 #include "ideclmanager.h"
-#include "ifavourites.h"
 #include "registry/registry.h"
 
-#include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
-#include "wxutil/dataview/ResourceTreeViewToolbar.h"
-#include "debugging/ScopedDebugTimer.h"
 #include "ui/UserInterfaceModule.h"
-#include "os/path.h"
 
 #include <wx/sizer.h>
 #include <wx/button.h>
@@ -24,66 +19,17 @@ namespace ui
 
 namespace
 {
-	constexpr const char* const SHADER_ICON = "icon_sound.png";
-
     constexpr const char* const RKEY_WINDOW_STATE = "user/ui/soundChooser/window";
     constexpr const char* const RKEY_LAST_SELECTED_SHADER = "user/ui/soundChooser/lastSelectedShader";
 }
 
-// Local class for loading sound shader definitions in a separate thread
-class ThreadedSoundShaderLoader :
-    public wxutil::ThreadedDeclarationTreePopulator
-{
-public:
-    ThreadedSoundShaderLoader(const wxutil::DeclarationTreeView::Columns& columns) :
-        ThreadedDeclarationTreePopulator(decl::Type::SoundShader, columns, SHADER_ICON)
-    {}
-
-    ~ThreadedSoundShaderLoader()
-    {
-        EnsureStopped();
-    }
-
-    void PopulateModel(const wxutil::TreeModel::Ptr& model) override
-    {
-        ScopedDebugTimer timer("ThreadedSoundShaderLoader::run()");
-
-        wxutil::VFSTreePopulator populator(model);
-        
-        // Visit all sound shaders and collect them for later insertion
-        GlobalSoundManager().forEachShader([&](const ISoundShader::Ptr& shader)
-        {
-            ThrowIfCancellationRequested();
-
-            // Construct a "path" into the sound shader tree,
-            // using the mod name as first folder level
-            // angua: if there is a displayFolder present, put it between the mod name and the shader name
-            auto displayFolder = shader->getDisplayFolder();
-
-            // Some shaders contain backslashes, sort them in the tree by replacing the backslashes
-            auto shaderNameForwardSlashes = os::standardPath(shader->getDeclName());
-
-            auto fullPath = !displayFolder.empty() ?
-                shader->getModName() + "/" + displayFolder + "/" + shaderNameForwardSlashes :
-                shader->getModName() + "/" + shaderNameForwardSlashes;
-
-            // Sort the shader into the tree and set the values
-            populator.addPath(fullPath, [&](wxutil::TreeModel::Row& row, 
-                const std::string& path, const std::string& leafName, bool isFolder)
-            {
-                AssignValuesToRow(row, path, isFolder ? path : shader->getDeclName(), leafName, isFolder);
-            });
-        });
-    }
-};
-
 // Constructor
 SoundChooser::SoundChooser(wxWindow* parent) :
 	DialogBase(_("Choose sound"), parent),
-	_treeView(nullptr),
+    _selector(nullptr),
 	_preview(new SoundShaderPreview(this))
 {
-	SetSizer(new wxBoxSizer(wxVERTICAL));
+    SetSizer(new wxBoxSizer(wxVERTICAL));
 	
     auto* buttonSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
     auto* reloadButton = new wxButton(this, wxID_ANY, _("Reload Sounds"));
@@ -96,11 +42,11 @@ SoundChooser::SoundChooser(wxWindow* parent) :
     grid->Add( dblClickHint, 0, wxALIGN_CENTER_VERTICAL );
     grid->Add( buttonSizer, 0, wxALIGN_RIGHT );
 
-    createTreeView(this);
-    auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, _treeView);
+    _selector = new SoundShaderSelector(this);
+    _selector->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundChooser::_onSelectionChange, this);
+    _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &SoundChooser::_onItemActivated, this);
 
-	GetSizer()->Add(toolbar, 0, wxEXPAND | wxALIGN_LEFT | wxALL, 12);
-	GetSizer()->Add(_treeView, 1, wxEXPAND | wxLEFT | wxRIGHT, 12);
+	GetSizer()->Add(_selector, 1, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 12);
     GetSizer()->Add(_preview, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
 	GetSizer()->Add(grid, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 
@@ -110,85 +56,46 @@ SoundChooser::SoundChooser(wxWindow* parent) :
     loadSoundShaders();
 }
 
-void SoundChooser::createTreeView(wxWindow* parent)
-{
-    // Tree view with single text icon column
-	_treeView = new wxutil::DeclarationTreeView(parent, decl::Type::SoundShader, _columns);
-
-    _treeView->AppendIconTextColumn(_("Soundshader"), _columns.iconAndName.getColumnIndex(), 
-		wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-
-	// Use the TreeModel's full string search function
-	_treeView->AddSearchColumn(_columns.iconAndName);
-    _treeView->SetExpandTopLevelItemsAfterPopulation(true);
-
-	// Get selection and connect the changed callback
-	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SoundChooser::_onSelectionChange, this);
-	_treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &SoundChooser::_onItemActivated, this);
-}
-
 void SoundChooser::loadSoundShaders()
 {
-    _treeView->Populate(std::make_shared<ThreadedSoundShaderLoader>(_columns));
+    _selector->LoadSoundShaders();
 }
 
-const std::string& SoundChooser::getSelectedShader() const
+std::string SoundChooser::getSelectedShader() const
 {
-	return _selectedShader;
+    return _selector->GetSelectedDeclName();
 }
 
 void SoundChooser::setSelectedShader(const std::string& shader)
 {
-    _treeView->SetSelectedDeclName(shader);
-}
-
-void SoundChooser::handleSelectionChange()
-{
-    _selectedShader = !_treeView->IsDirectorySelected() ? 
-        _treeView->GetSelectedDeclName() : std::string();
-
-    // Notify the preview widget about the change
-    _preview->setSoundShader(_selectedShader);
+    _selector->SetSelectedDeclName(shader);
 }
 
 void SoundChooser::_onSelectionChange(wxDataViewEvent& ev)
 {
-    handleSelectionChange();
+    // Notify the preview widget about the change
+    _preview->setSoundShader(_selector->GetSelectedDeclName());
 }
 
 void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
 {
-	wxDataViewItem item = ev.GetItem();
+    auto selectedItem = _selector->GetSelectedDeclName();;
 
-	if (item.IsOk())
-	{
-		wxutil::TreeModel::Row row(item, *_treeView->GetTreeModel());
+    if (selectedItem.empty())
+    {
+        ev.Skip();
+        return;
+    }
 
-		bool isFolder = row[_columns.isFolder].getBool();
+    if (!wxGetKeyState(WXK_CONTROL))
+    {
+        // simple double click closes modal, ctrl+dblclk plays sound
+        EndModal(wxID_OK);
+        return;
+    }
 
-		if (isFolder)
-		{
-			// In case we double-click a folder, toggle its expanded state
-			if (_treeView->IsExpanded(item))
-			{
-				_treeView->Collapse(item);
-			}
-			else
-			{
-				_treeView->Expand(item);
-			}
-
-			return;
-		}
-
-        if ( !wxGetKeyState( WXK_CONTROL ) ) { // simple double click closes modal, ctrl+dblclk plays sound
-            EndModal( wxID_OK ); 
-            return;
-        }
-
-		// It's a regular item, try to play it back
-		_preview->playRandomSoundFile();
-	}
+    // It's a regular item, try to play it back
+    _preview->playRandomSoundFile();
 }
 
 int SoundChooser::ShowModal()
@@ -200,12 +107,8 @@ int SoundChooser::ShowModal()
 
 	int returnCode = DialogBase::ShowModal();
 
-	if (returnCode != wxID_OK)
-	{
-		_selectedShader.clear();
-	}
-
     _windowPosition.saveToPath(RKEY_WINDOW_STATE);
+    _shadersReloaded.disconnect();
 
 	return returnCode;
 }
@@ -255,7 +158,6 @@ std::string SoundChooser::chooseResource(const std::string& shaderToPreselect)
 
 void SoundChooser::destroyDialog()
 {
-    _shadersReloaded.disconnect();
 	Destroy();
 }
 

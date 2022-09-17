@@ -68,6 +68,7 @@ void DeclarationSelector::createTreeView()
 
     // Get selection and connect the changed callback
     _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &DeclarationSelector::onTreeViewSelectionChanged, this);
+    _treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &DeclarationSelector::onTreeViewItemActivated, this);
 }
 
 wxutil::DeclarationTreeView* DeclarationSelector::GetTreeView() const
@@ -105,6 +106,13 @@ void DeclarationSelector::onTreeViewSelectionChanged(wxDataViewEvent& ev)
 {
     // Invoke the virtual method
     onTreeViewSelectionChanged();
+    ev.Skip();
+}
+
+void DeclarationSelector::onTreeViewItemActivated(wxDataViewEvent& ev)
+{
+    // Invoke the virtual method
+    onTreeViewItemActivated();
     ev.Skip();
 }
 

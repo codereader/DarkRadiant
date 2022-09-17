@@ -63,12 +63,17 @@ protected:
     virtual void onTreeViewSelectionChanged()
     {}
 
+    // Event method invoked when the tree view selection has been activated (Enter key or double-click)
+    virtual void onTreeViewItemActivated()
+    {}
+
     // Default tree view columns. Subclasses can use a different set of columns if needed
     static const wxutil::DeclarationTreeView::Columns& CreateDefaultColumns();
 
 private:
     void createTreeView();
     void onTreeViewSelectionChanged(wxDataViewEvent& ev);
+    void onTreeViewItemActivated(wxDataViewEvent& ev);
 };
 
 }

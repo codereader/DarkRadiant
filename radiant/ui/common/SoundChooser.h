@@ -2,8 +2,8 @@
 
 #include "ui/iresourcechooser.h"
 #include "wxutil/dialog/DialogBase.h"
-#include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/WindowPosition.h"
+#include "ui/common/SoundShaderSelector.h"
 
 #include "SoundShaderPreview.h"
 #include <string>
@@ -20,22 +20,16 @@ class SoundChooser :
 	public IResourceChooser
 {
 private:
-    wxutil::DeclarationTreeView::Columns _columns;
-	wxutil::DeclarationTreeView* _treeView;
+    SoundShaderSelector* _selector;
 
 	// The preview widget group
 	SoundShaderPreview* _preview;
-
-	// Last selected shader
-	std::string _selectedShader;
 
     sigc::connection _shadersReloaded;
 
     wxutil::WindowPosition _windowPosition;
 
 private:
-    void createTreeView(wxWindow* parent);
-
     void loadSoundShaders();
     void handleSelectionChange();
 
@@ -50,7 +44,7 @@ public:
 	SoundChooser(wxWindow* parent = nullptr);
 
 	// Retrieve the selected sound shader
-	const std::string& getSelectedShader() const;
+	std::string getSelectedShader() const;
 
 	// Set the selected sound shader, and focuses the treeview to the new selection
 	void setSelectedShader(const std::string& shader);

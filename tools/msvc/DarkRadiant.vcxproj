@@ -427,6 +427,7 @@
     <ClInclude Include="..\..\radiant\ui\common\ImageFileSelector.h" />
     <ClInclude Include="..\..\radiant\ui\common\SkinChooser.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundChooser.h" />
+    <ClInclude Include="..\..\radiant\ui\common\SoundShaderSelector.h" />
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h" />
     <ClInclude Include="..\..\radiant\ui\console\CommandEntry.h" />
     <ClInclude Include="..\..\radiant\ui\console\Console.h" />
