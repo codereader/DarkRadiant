@@ -166,6 +166,52 @@ public:
     }
 };
 
+class EntityClassDescription :
+    public wxPanel,
+    public ui::IDeclarationPreview
+{
+private:
+    wxTextCtrl* _textCtrl;
+public:
+    EntityClassDescription(wxWindow* parent) :
+        wxPanel(parent)
+    {
+        SetSizer(new wxBoxSizer(wxVERTICAL));
+
+        _textCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition,
+            wxSize(-1, 90), wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
+        _textCtrl->SetMinSize(wxSize(-1, 90));
+
+        auto descriptionLabel = new wxStaticText(this, wxID_ANY, _("Description"));
+        descriptionLabel->SetFont(descriptionLabel->GetFont().Bold());
+
+        GetSizer()->Add(descriptionLabel, 0, wxEXPAND | wxALIGN_LEFT, 0);
+        GetSizer()->Add(_textCtrl, 1, wxEXPAND | wxTOP, 6);
+
+        Disable();
+    }
+
+    wxWindow* GetPreviewWidget() override
+    {
+        return this;
+    }
+
+    void ClearPreview() override
+    {
+        _textCtrl->SetValue("");
+        Enable(false);
+    }
+
+    void SetPreviewDeclName(const std::string& declName) override
+    {
+        // Lookup the IEntityClass instance
+        auto eclass = GlobalEntityClassManager().findClass(declName);
+        _textCtrl->SetValue(eclass ? eclass::getUsage(eclass) : "");
+
+        Enable(!declName.empty() && eclass);
+    }
+};
+
 class EntityClassSelector :
     public DeclarationSelector
 {
@@ -181,6 +227,7 @@ public:
         GetTreeView()->SetExpandTopLevelItemsAfterPopulation(true);
 
         AddPreviewToRightPane(_preview.get());
+        AddPreviewToBottom(new EntityClassDescription(this));
     }
 
     void LoadEntityClasses()
@@ -226,8 +273,6 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
     // Setup the tree view and invoke threaded loader to get the entity classes
     setupSelector();
     loadEntityClasses();
-
-    makeLabelBold(this, "EntityClassChooserUsageLabel");
 
 #if 0
     // Disallow unsplitting
@@ -342,16 +387,6 @@ void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev )
     }
 }
 
-void EntityClassChooser::updateUsageInfo(const std::string& declName)
-{
-    // Lookup the IEntityClass instance
-    auto eclass = GlobalEntityClassManager().findOrInsert(declName, true);
-
-    // Set the usage panel to the IEntityClass' usage information string
-    auto* usageText = findNamedObject<wxTextCtrl>(this, "EntityClassChooserUsageText");
-    usageText->SetValue(eclass ? eclass::getUsage(eclass) : "");
-}
-
 void EntityClassChooser::updateSelection()
 {
     auto selectedEclass = _selector->GetSelectedDeclName();
@@ -364,9 +399,6 @@ void EntityClassChooser::updateSelection()
 
     // Make the OK button active
     findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(true);
-
-    // Set the panel text with the usage information
-    updateUsageInfo(selectedEclass);
 }
 
 void EntityClassChooser::onCancel(wxCommandEvent& ev)

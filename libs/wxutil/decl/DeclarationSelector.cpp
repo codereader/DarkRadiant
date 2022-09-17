@@ -26,18 +26,17 @@ DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType,
     auto* toolbar = new ResourceTreeViewToolbar(this, _treeView);
     _declFileInfo = new DeclFileInfo(this, _declType);
 
-    auto treeVbox = new wxBoxSizer(wxVERTICAL);
-    treeVbox->Add(toolbar, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 6);
-    treeVbox->Add(_treeView, 1, wxEXPAND);
-    treeVbox->Add(_declFileInfo, 0, wxEXPAND | wxTOP | wxBOTTOM, 6);
+    _treeVbox = new wxBoxSizer(wxVERTICAL);
+    _treeVbox->Add(toolbar, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 6);
+    _treeVbox->Add(_treeView, 1, wxEXPAND);
+    _treeVbox->Add(_declFileInfo, 0, wxEXPAND | wxTOP | wxBOTTOM, 6);
+    // a preview widget can be appended to the vertical sizer => AddPreviewToBottom
 
     _horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
-    _treeViewSizerItem = _horizontalSizer->Add(treeVbox, 1, wxEXPAND);
+    _treeViewSizerItem = _horizontalSizer->Add(_treeVbox, 1, wxEXPAND);
     // the horizontal sizer has room for a preview widget => AddPreviewToRightPane
 
     GetSizer()->Add(_horizontalSizer, 1, wxEXPAND);
-
-    // a preview widget can be appended to the vertical sizer => AddPreviewToBottom
 }
 
 void DeclarationSelector::AddPreviewToRightPane(ui::IDeclarationPreview* preview, int sizerProportion)
@@ -61,7 +60,8 @@ void DeclarationSelector::AddPreviewToBottom(ui::IDeclarationPreview* preview, i
     auto widget = preview->GetPreviewWidget();
 
     widget->Reparent(this);
-    GetSizer()->Add(widget, sizerProportion, wxEXPAND | wxTOP, 3);
+
+    _treeVbox->Add(widget, sizerProportion, wxEXPAND | wxTOP, 3);
 
     _previews.push_back(preview);
 }

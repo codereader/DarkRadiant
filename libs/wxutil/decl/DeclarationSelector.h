@@ -28,6 +28,7 @@ private:
     wxutil::DeclarationTreeView* _treeView;
 
     wxSizer* _horizontalSizer;
+    wxSizer* _treeVbox;
     wxSizerItem* _treeViewSizerItem;
 
     // Optional preview widget attached to this selector

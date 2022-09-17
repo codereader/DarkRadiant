@@ -51,9 +51,6 @@ private:
 
     void setupSelector();
 
-    // Update the usage panel with information from the provided entityclass
-    void updateUsageInfo(const std::string& eclass);
-
     // Updates the member variables based on the current tree selection
     void updateSelection();
 
