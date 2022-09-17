@@ -1,22 +1,27 @@
 #include "DialogBase.h"
 
+#include <wx/display.h>
+#include <wx/sizer.h>
+#include <wx/frame.h>
+#include "ui/imainframe.h"
+
 #include "AutoSaveRequestBlocker.h"
 
 namespace wxutil
 {
 
-    namespace
+namespace
+{
+    inline wxWindow* FindTopLevelWindow()
     {
-        inline wxWindow* FindTopLevelWindow()
+        if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
         {
-            if (module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME))
-            {
-                return GlobalMainFrame().getWxTopLevelWindow();
-            }
-
-            return nullptr;
+            return GlobalMainFrame().getWxTopLevelWindow();
         }
+
+        return nullptr;
     }
+}
 
 DialogBase::DialogBase(const std::string& title, wxWindow* parent)
 : wxDialog(parent ? parent : FindTopLevelWindow(),
@@ -44,7 +49,7 @@ void DialogBase::FitToScreen(float xProp, float yProp)
 {
     int curDisplayIdx = 0;
 
-    if (GlobalMainFrame().getWxTopLevelWindow() != NULL)
+    if (GlobalMainFrame().getWxTopLevelWindow() != nullptr)
     {
         curDisplayIdx = wxDisplay::GetFromWindow(GlobalMainFrame().getWxTopLevelWindow());
     }
@@ -65,6 +70,11 @@ int DialogBase::ShowModal()
     AutoSaveRequestBlocker blocker("Modal Dialog is active");
 
     return wxDialog::ShowModal();
+}
+
+bool DialogBase::_onDeleteEvent()
+{
+    return false;
 }
 
 }

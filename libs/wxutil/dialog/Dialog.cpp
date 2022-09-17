@@ -6,13 +6,14 @@
 #include "DialogElements.h"
 #include "../EntryAbortedException.h"
 
+#include <wx/frame.h>
 #include <wx/sizer.h>
 
 namespace wxutil
 {
 
 Dialog::Dialog(const std::string& title, wxWindow* parent) :
-	_dialog(new wxutil::DialogBase(title, parent != NULL ? parent : GlobalMainFrame().getWxTopLevelWindow())),
+	_dialog(new wxutil::DialogBase(title, parent != nullptr ? parent : GlobalMainFrame().getWxTopLevelWindow())),
 	_result(RESULT_CANCELLED),
 	_elementsTable(new wxFlexGridSizer(1, 2, 6, 12)), // Nx2 table
 	_constructed(false),

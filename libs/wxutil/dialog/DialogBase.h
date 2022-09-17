@@ -1,26 +1,18 @@
 #pragma once
 
 #include <wx/dialog.h>
-#include <wx/frame.h>
-#include <wx/display.h>
-#include <wx/panel.h>
-#include <wx/sizer.h>
-#include "ui/imainframe.h"
 
 namespace wxutil
 {
 
 /**
  * \brief Base class for many DarkRadiant dialogs.
- *
- * It comes with a panel/sizer combination pre-populated, use the _mainPanel
- * member to add more stuff.
  */
-class DialogBase: public wxDialog
+class DialogBase : public wxDialog
 {
 public:
     /// Construct and initialise
-    DialogBase(const std::string& title, wxWindow* parent = NULL);
+    DialogBase(const std::string& title, wxWindow* parent = nullptr);
 
     /**
      * Adjust this window to fit the display DarkRadiant is currently (mainly)
@@ -30,14 +22,11 @@ public:
      */
     void FitToScreen(float xProp, float yProp);
 
-    virtual int ShowModal() override;
+    int ShowModal() override;
 
 protected:
     // Overrideable: return true to prevent the window from being deleted
-    virtual bool _onDeleteEvent()
-    {
-        return false;
-    }
+    virtual bool _onDeleteEvent();
 };
 
 } // namespace
