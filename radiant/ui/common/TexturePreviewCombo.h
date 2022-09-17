@@ -45,6 +45,11 @@ public:
 	 */
 	TexturePreviewCombo(wxWindow* parent);
 
+    wxWindow* GetPreviewWidget() override
+    {
+        return this;
+    }
+
     void ClearPreview() override;
 
 	/** Set the texture to preview.

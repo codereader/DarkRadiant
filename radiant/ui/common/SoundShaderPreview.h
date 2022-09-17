@@ -74,6 +74,11 @@ public:
 
     ~SoundShaderPreview() override;
 
+    wxWindow* GetPreviewWidget() override
+    {
+        return this;
+    }
+
     void ClearPreview() override;
 
 	/**

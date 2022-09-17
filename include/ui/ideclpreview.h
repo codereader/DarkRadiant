@@ -2,6 +2,8 @@
 
 #include <string>
 
+class wxWindow;
+
 namespace ui
 {
 
@@ -14,6 +16,9 @@ class IDeclarationPreview
 {
 public:
     virtual ~IDeclarationPreview() {}
+
+    // Returns the widget that can be packed into the selector container
+    virtual wxWindow* GetPreviewWidget() = 0;
 
     // Clear the preview
     virtual void ClearPreview() = 0;

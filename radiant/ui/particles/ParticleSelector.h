@@ -28,8 +28,6 @@ public:
     std::string GetSelectedParticle();
     void SetSelectedParticle(const std::string& particleName);
 
-    void onTreeViewSelectionChanged() override;
-
 private:
     // Populate the list of particles
     void populateParticleList();

@@ -57,8 +57,8 @@ protected:
     wxutil::DeclarationTreeView* GetTreeView() const;
 
     // Adds a preview widget to the right of the tree view
-    void AddPreviewToRightPane(wxWindow* preview, int sizerProportion = 1);
-    void AddPreviewToBottom(wxWindow* preview, int sizerProportion = 0);
+    void AddPreviewToRightPane(IDeclarationPreview* preview, int sizerProportion = 1);
+    void AddPreviewToBottom(IDeclarationPreview* preview, int sizerProportion = 0);
 
     const wxutil::DeclarationTreeView::Columns& GetColumns() const;
 

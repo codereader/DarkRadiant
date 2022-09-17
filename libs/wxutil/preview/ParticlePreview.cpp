@@ -78,6 +78,11 @@ ParticlePreview::~ParticlePreview()
 	ev->disconnectToolItem(_reloadButton);
 }
 
+wxWindow* ParticlePreview::GetPreviewWidget()
+{
+    return _mainPanel;
+}
+
 void ParticlePreview::ClearPreview()
 {
     SetPreviewDeclName({});

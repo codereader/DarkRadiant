@@ -37,32 +37,30 @@ DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType,
     // a preview widget can be appended to the vertical sizer => AddPreviewToBottom
 }
 
-void DeclarationSelector::AddPreviewToRightPane(wxWindow* preview, int sizerProportion)
+void DeclarationSelector::AddPreviewToRightPane(IDeclarationPreview* preview, int sizerProportion)
 {
+    auto widget = preview->GetPreviewWidget();
+
     // Tree view no longer takes full proportion after a full-size preview has been added
     if (sizerProportion == 1)
     {
         _treeViewSizerItem->SetProportion(0);
     }
 
-    preview->Reparent(this);
-    _horizontalSizer->Add(preview, sizerProportion, wxEXPAND | wxLEFT, 6);
+    widget->Reparent(this);
+    _horizontalSizer->Add(widget, sizerProportion, wxEXPAND | wxLEFT, 6);
 
-    if (auto declPreview = dynamic_cast<IDeclarationPreview*>(preview); declPreview)
-    {
-        _previews.push_back(declPreview);
-    }
+    _previews.push_back(preview);
 }
 
-void DeclarationSelector::AddPreviewToBottom(wxWindow* preview, int sizerProportion)
+void DeclarationSelector::AddPreviewToBottom(IDeclarationPreview* preview, int sizerProportion)
 {
-    preview->Reparent(this);
-    GetSizer()->Add(preview, sizerProportion, wxEXPAND | wxTOP, 3);
+    auto widget = preview->GetPreviewWidget();
 
-    if (auto declPreview = dynamic_cast<IDeclarationPreview*>(preview); declPreview)
-    {
-        _previews.push_back(declPreview);
-    }
+    widget->Reparent(this);
+    GetSizer()->Add(widget, sizerProportion, wxEXPAND | wxTOP, 3);
+
+    _previews.push_back(preview);
 }
 
 void DeclarationSelector::createTreeView()

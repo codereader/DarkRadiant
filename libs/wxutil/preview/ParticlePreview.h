@@ -42,6 +42,8 @@ public:
 
 	~ParticlePreview();
 
+    wxWindow* GetPreviewWidget() override;
+
     void ClearPreview() override;
 
     /**
