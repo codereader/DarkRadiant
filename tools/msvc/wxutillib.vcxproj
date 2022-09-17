@@ -186,6 +186,7 @@
     <ClInclude Include="..\..\libs\wxutil\NonModalEntry.h" />
     <ClInclude Include="..\..\libs\wxutil\PanedPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\PathEntry.h" />
+    <ClInclude Include="..\..\libs\wxutil\preview\EntityClassPreview.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\GuiRenderer.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\GuiView.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\ModelPreview.h" />

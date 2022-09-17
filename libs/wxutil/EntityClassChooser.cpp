@@ -23,6 +23,7 @@
 #include "eclass.h"
 
 #include "debugging/ScopedDebugTimer.h"
+#include "preview/EntityClassPreview.h"
 
 namespace wxutil
 {
@@ -168,11 +169,18 @@ public:
 class EntityClassSelector :
     public DeclarationSelector
 {
+private:
+    // Model preview widget
+    std::unique_ptr<EntityClassPreview> _preview;
+
 public:
     EntityClassSelector(wxWindow* parent) :
-        DeclarationSelector(parent, decl::Type::EntityDef)
+        DeclarationSelector(parent, decl::Type::EntityDef),
+        _preview(new EntityClassPreview(this))
     {
         GetTreeView()->SetExpandTopLevelItemsAfterPopulation(true);
+
+        AddPreviewToRightPane(_preview.get());
     }
 
     void LoadEntityClasses()
@@ -183,8 +191,7 @@ public:
 
 EntityClassChooser::EntityClassChooser(Purpose purpose) :
     DialogBase(getDialogTitle(purpose)),
-    _selector(nullptr),
-    _selectedName("")
+    _selector(nullptr)
 {
     loadNamedPanel(this, "EntityClassChooserMainPanel");
 
@@ -210,13 +217,6 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
     findNamedObject<wxButton>(this, "EntityClassChooserCancelButton")->Bind(
         wxEVT_BUTTON, &EntityClassChooser::onCancel, this);
 
-    // Add model preview to right-hand-side of main container
-    auto rightPanel = findNamedObject<wxPanel>(this, "EntityClassChooserRightPane");
-
-    _modelPreview.reset(new ModelPreview(rightPanel));
-
-    rightPanel->GetSizer()->Add(_modelPreview->getWidget(), 1, wxEXPAND);
-
     // Listen for defs-reloaded signal (cannot bind directly to
     // ThreadedEntityClassLoader method because it is not sigc::trackable)
     _defsReloaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
@@ -229,24 +229,24 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
 
     makeLabelBold(this, "EntityClassChooserUsageLabel");
 
-    wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "EntityClassChooserSplitter");
-
+#if 0
     // Disallow unsplitting
     splitter->SetMinimumPaneSize(200);
     splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.2f));
-
+#endif
     // Persist layout to registry
     _windowPosition.initialise(this, RKEY_WINDOW_STATE, 0.7f, 0.8f);
-
+#if 0
     _panedPosition.connect(splitter);
     _panedPosition.loadFromPath(RKEY_SPLIT_POS);
-
+#endif
     Bind(wxEVT_CLOSE_WINDOW, &EntityClassChooser::onDeleteEvent, this);
-
+#if 0
     // Set the model preview height to something significantly smaller than the
     // window's height to allow shrinking
     _modelPreview->getWidget()->SetMinClientSize(
         wxSize(GetSize().GetWidth() * 0.4f, GetSize().GetHeight() * 0.2f));
+#endif
 }
 
 EntityClassChooser::~EntityClassChooser()
@@ -293,19 +293,14 @@ void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
     _selector->SetSelectedDeclName(eclass);
 }
 
-const std::string& EntityClassChooser::getSelectedEntityClass() const
+std::string EntityClassChooser::getSelectedEntityClass() const
 {
-    return _selectedName;
+    return _selector->GetSelectedDeclName();
 }
 
 void EntityClassChooser::onDeleteEvent(wxCloseEvent& ev)
 {
-    // greebo: Clear the selected name on hide, we don't want to create another entity when
-    // the user clicks on the X in the upper right corner.
-    _selectedName.clear();
-
     EndModal(wxID_CANCEL); // break main loop
-    Hide();
 }
 
 int EntityClassChooser::ShowModal()
@@ -363,10 +358,6 @@ void EntityClassChooser::updateSelection()
 
     if (selectedEclass.empty())
     {
-        // Nothing selected
-        _modelPreview->setModel("");
-        _modelPreview->setSkin("");
-
         findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(false);
         return;
     }
@@ -376,32 +367,16 @@ void EntityClassChooser::updateSelection()
 
     // Set the panel text with the usage information
     updateUsageInfo(selectedEclass);
-
-    // Update the _selectionName field
-    _selectedName = selectedEclass;
-
-    // Lookup the IEntityClass instance
-    auto eclass = GlobalEntityClassManager().findClass(selectedEclass);
-
-    if (eclass)
-    {
-        _modelPreview->setModel(eclass->getAttributeValue("model"));
-        _modelPreview->setSkin(eclass->getAttributeValue("skin"));
-    }
 }
 
 void EntityClassChooser::onCancel(wxCommandEvent& ev)
 {
-    _selectedName.clear();
-
     EndModal(wxID_CANCEL); // break main loop
-    Hide();
 }
 
 void EntityClassChooser::onOK(wxCommandEvent& ev)
 {
     EndModal(wxID_OK); // break main loop
-    Hide();
 }
 
 void EntityClassChooser::onSelectionChanged(wxDataViewEvent& ev)

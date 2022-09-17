@@ -178,6 +178,9 @@
     <ClInclude Include="..\..\libs\wxutil\decl\DeclFileInfo.h">
       <Filter>decl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\preview\EntityClassPreview.h">
+      <Filter>preview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

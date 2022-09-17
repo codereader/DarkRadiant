@@ -3,7 +3,6 @@
 #include "iradiant.h"
 #include "ieclass.h"
 
-#include "preview/ModelPreview.h"
 #include "dialog/DialogBase.h"
 #include "XmlResourceBasedWidget.h"
 #include "PanedPosition.h"
@@ -39,12 +38,6 @@ public:
 private:
     EntityClassSelector* _selector;
 
-    // Last selected classname
-    std::string _selectedName;
-
-    // Model preview widget
-    ModelPreviewPtr _modelPreview;
-
     WindowPosition _windowPosition;
     PanedPosition _panedPosition;
 
@@ -74,7 +67,7 @@ private:
     void setSelectedEntityClass(const std::string& eclass);
 
     // Sets the tree selection to the given entity class
-    const std::string& getSelectedEntityClass() const;
+    std::string getSelectedEntityClass() const;
 
     void _onItemActivated( wxDataViewEvent& ev );
 
