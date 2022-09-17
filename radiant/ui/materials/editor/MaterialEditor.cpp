@@ -27,7 +27,7 @@
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/EntityClassChooser.h"
 #include "wxutil/Bitmap.h"
-#include "wxutil/DeclFileInfo.h"
+#include "wxutil/decl/DeclFileInfo.h"
 #include "materials/FrobStageSetup.h"
 #include "parser/DefBlockSyntaxParser.h"
 #include <fmt/format.h>

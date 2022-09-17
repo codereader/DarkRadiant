@@ -2,7 +2,7 @@
 
 #include <wx/sizer.h>
 #include "../dataview/ResourceTreeViewToolbar.h"
-#include "../DeclFileInfo.h"
+#include "DeclFileInfo.h"
 
 namespace wxutil
 {

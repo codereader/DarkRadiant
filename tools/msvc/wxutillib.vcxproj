@@ -148,8 +148,8 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeView.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeViewItemStyle.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\VFSTreePopulator.h" />
-    <ClInclude Include="..\..\libs\wxutil\DeclFileInfo.h" />
     <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelector.h" />
+    <ClInclude Include="..\..\libs\wxutil\decl\DeclFileInfo.h" />
     <ClInclude Include="..\..\libs\wxutil\DeferredMotionDelta.h" />
     <ClInclude Include="..\..\libs\wxutil\dialog\AutoSaveRequestBlocker.h" />
     <ClInclude Include="..\..\libs\wxutil\dialog\Dialog.h" />

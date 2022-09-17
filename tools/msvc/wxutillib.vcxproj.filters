@@ -156,7 +156,6 @@
       <Filter>dialog</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\FormLayout.h" />
-    <ClInclude Include="..\..\libs\wxutil\DeclFileInfo.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\DeclarationTreeView.h">
       <Filter>dataview</Filter>
     </ClInclude>
@@ -174,6 +173,9 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\Icon.h" />
     <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelector.h">
+      <Filter>decl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\decl\DeclFileInfo.h">
       <Filter>decl</Filter>
     </ClInclude>
   </ItemGroup>

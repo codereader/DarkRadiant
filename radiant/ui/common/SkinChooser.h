@@ -6,7 +6,7 @@
 
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/preview/ModelPreview.h"
-#include "wxutil/DeclFileInfo.h"
+#include "wxutil/decl/DeclFileInfo.h"
 #include <string>
 
 #include "wxutil/dataview/TreeModel.h"

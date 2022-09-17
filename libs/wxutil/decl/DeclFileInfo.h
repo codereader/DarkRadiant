@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "idecltypes.h"
+#include "ideclmanager.h"
 
 #include <wx/panel.h>
 #include <wx/stattext.h>
