@@ -5,20 +5,18 @@
 
 #include "preview/ModelPreview.h"
 #include "dialog/DialogBase.h"
-#include "dataview/DeclarationTreeView.h"
-#include "dataview/ResourceTreeViewToolbar.h"
 #include "XmlResourceBasedWidget.h"
 #include "PanedPosition.h"
 #include "WindowPosition.h"
 
 #include <memory>
 #include <sigc++/connection.h>
+#include <wx/dataview.h>
 
 namespace wxutil
 {
 
-class EntityClassChooser;
-typedef std::shared_ptr<EntityClassChooser> EntityClassChooserPtr;
+class EntityClassSelector;
 
 /**
  * Dialog window displaying a tree of Entity Classes, allowing the selection
@@ -39,9 +37,7 @@ public:
     };
 
 private:
-    DeclarationTreeView::Columns _columns;
-    DeclarationTreeView* _treeView;
-    ResourceTreeViewToolbar* _treeViewToolbar;
+    EntityClassSelector* _selector;
 
     // Last selected classname
     std::string _selectedName;

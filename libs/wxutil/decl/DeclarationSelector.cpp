@@ -12,7 +12,7 @@ DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType) 
 {}
 
 DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType, 
-        const wxutil::DeclarationTreeView::Columns& columns) :
+        const DeclarationTreeView::Columns& columns) :
     wxPanel(parent),
     _declType(declType),
     _columns(columns),
@@ -23,8 +23,8 @@ DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType,
     SetSizer(new wxBoxSizer(wxVERTICAL));
     createTreeView();
 
-    auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, _treeView);
-    _declFileInfo = new wxutil::DeclFileInfo(this, _declType);
+    auto* toolbar = new ResourceTreeViewToolbar(this, _treeView);
+    _declFileInfo = new DeclFileInfo(this, _declType);
 
     auto treeVbox = new wxBoxSizer(wxVERTICAL);
     treeVbox->Add(toolbar, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 6);
@@ -68,7 +68,7 @@ void DeclarationSelector::AddPreviewToBottom(ui::IDeclarationPreview* preview, i
 
 void DeclarationSelector::createTreeView()
 {
-    _treeView = new wxutil::DeclarationTreeView(this, _declType, _columns, wxDV_NO_HEADER | wxDV_SINGLE);
+    _treeView = new DeclarationTreeView(this, _declType, _columns, wxDV_NO_HEADER | wxDV_SINGLE);
 
     // Single visible column, containing the directory/decl name and the icon
     _treeView->AppendIconTextColumn(decl::getTypeName(_declType), _columns.iconAndName.getColumnIndex(),
@@ -82,12 +82,17 @@ void DeclarationSelector::createTreeView()
     _treeView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &DeclarationSelector::onTreeViewItemActivated, this);
 }
 
-wxutil::DeclarationTreeView* DeclarationSelector::GetTreeView() const
+void DeclarationSelector::FocusTreeView()
+{
+    _treeView->SetFocus();
+}
+
+DeclarationTreeView* DeclarationSelector::GetTreeView() const
 {
     return _treeView;
 }
 
-const wxutil::DeclarationTreeView::Columns& DeclarationSelector::GetColumns() const
+const DeclarationTreeView::Columns& DeclarationSelector::GetColumns() const
 {
     return _columns;
 }
@@ -102,14 +107,14 @@ void DeclarationSelector::SetSelectedDeclName(const std::string& declName)
     _treeView->SetSelectedDeclName(declName);
 }
 
-void DeclarationSelector::PopulateTreeView(const wxutil::IResourceTreePopulator::Ptr& populator)
+void DeclarationSelector::PopulateTreeView(const IResourceTreePopulator::Ptr& populator)
 {
     _treeView->Populate(populator);
 }
 
-const wxutil::DeclarationTreeView::Columns& DeclarationSelector::CreateDefaultColumns()
+const DeclarationTreeView::Columns& DeclarationSelector::CreateDefaultColumns()
 {
-    static wxutil::DeclarationTreeView::Columns _treeViewColumns;
+    static DeclarationTreeView::Columns _treeViewColumns;
     return _treeViewColumns;
 }
 

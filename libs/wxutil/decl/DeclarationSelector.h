@@ -58,6 +58,9 @@ public:
      */
     virtual void SetSelectedDeclName(const std::string& declName);
 
+    // Set the focus on the treeview widget
+    void FocusTreeView();
+
 protected:
     wxutil::DeclarationTreeView* GetTreeView() const;
 

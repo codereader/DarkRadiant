@@ -6,12 +6,12 @@
 #include "dataview/ThreadedResourceTreePopulator.h"
 #include "dataview/ResourceTreeViewToolbar.h"
 #include "dataview/VFSTreePopulator.h"
+#include "decl/DeclarationSelector.h"
 
 #include "i18n.h"
 #include "ifavourites.h"
 #include "ideclmanager.h"
 #include "ui/iuserinterface.h"
-#include "ui/imainframe.h"
 #include "gamelib.h"
 
 #include <wx/button.h>
@@ -20,7 +20,6 @@
 #include "wxutil/Bitmap.h"
 #include "wxutil/Icon.h"
 
-#include "string/string.h"
 #include "eclass.h"
 
 #include "debugging/ScopedDebugTimer.h"
@@ -30,18 +29,18 @@ namespace wxutil
 
 namespace
 {
-    const char* const TITLE_ADD_ENTITY = N_("Create Entity");
-    const char* const TITLE_CONVERT_TO_ENTITY = N_("Convert to Entity");
-    const char* const TITLE_SELECT_ENTITY = N_("Select Entity Class");
-    const char* const RKEY_SPLIT_POS = "user/ui/entityClassChooser/splitPos";
-    const char* const RKEY_WINDOW_STATE = "user/ui/entityClassChooser/window";
-    const char* const RKEY_LAST_SELECTED_ECLASS = "user/ui/entityClassChooser/lastSelectedEclass";
+    constexpr const char* const TITLE_ADD_ENTITY = N_("Create Entity");
+    constexpr const char* const TITLE_CONVERT_TO_ENTITY = N_("Convert to Entity");
+    constexpr const char* const TITLE_SELECT_ENTITY = N_("Select Entity Class");
+    constexpr const char* const RKEY_SPLIT_POS = "user/ui/entityClassChooser/splitPos";
+    constexpr const char* const RKEY_WINDOW_STATE = "user/ui/entityClassChooser/window";
+    constexpr const char* const RKEY_LAST_SELECTED_ECLASS = "user/ui/entityClassChooser/lastSelectedEclass";
 
-    const char* const FOLDER_ICON = "folder16.png";
-    const char* const ENTITY_ICON = "cmenu_add_entity.png";
+    constexpr const char* const FOLDER_ICON = "folder16.png";
+    constexpr const char* const ENTITY_ICON = "cmenu_add_entity.png";
 
     // Registry XPath to lookup key that specifies the display folder
-    const char* const FOLDER_KEY_PATH = "/entityChooser/displayFolderKey";
+    constexpr const char* const FOLDER_KEY_PATH = "/entityChooser/displayFolderKey";
 
     std::string getDialogTitle(EntityClassChooser::Purpose purpose)
     {
@@ -166,10 +165,25 @@ public:
     }
 };
 
-// Main constructor
+class EntityClassSelector :
+    public DeclarationSelector
+{
+public:
+    EntityClassSelector(wxWindow* parent) :
+        DeclarationSelector(parent, decl::Type::EntityDef)
+    {
+        GetTreeView()->SetExpandTopLevelItemsAfterPopulation(true);
+    }
+
+    void LoadEntityClasses()
+    {
+        PopulateTreeView(std::make_shared<ThreadedEntityClassLoader>(GetColumns()));
+    }
+};
+
 EntityClassChooser::EntityClassChooser(Purpose purpose) :
     DialogBase(getDialogTitle(purpose)),
-    _treeView(nullptr),
+    _selector(nullptr),
     _selectedName("")
 {
     loadNamedPanel(this, "EntityClassChooserMainPanel");
@@ -180,13 +194,13 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
 
     switch (purpose)
     {
-    case EntityClassChooser::Purpose::AddEntity: 
+    case Purpose::AddEntity: 
         confirmButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
         break;
-    case EntityClassChooser::Purpose::ConvertEntity:
+    case Purpose::ConvertEntity:
         confirmButton->SetLabelText(_("Convert"));
         break;
-    case EntityClassChooser::Purpose::SelectClassname:
+    case Purpose::SelectClassname:
         confirmButton->SetLabelText(_("Select"));
         break;
     default:
@@ -197,7 +211,7 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
         wxEVT_BUTTON, &EntityClassChooser::onCancel, this);
 
     // Add model preview to right-hand-side of main container
-    wxPanel* rightPanel = findNamedObject<wxPanel>(this, "EntityClassChooserRightPane");
+    auto rightPanel = findNamedObject<wxPanel>(this, "EntityClassChooserRightPane");
 
     _modelPreview.reset(new ModelPreview(rightPanel));
 
@@ -272,12 +286,12 @@ std::string EntityClassChooser::ChooseEntityClass(Purpose purpose, const std::st
 
 void EntityClassChooser::loadEntityClasses()
 {
-    _treeView->Populate(std::make_shared<ThreadedEntityClassLoader>(_columns));
+    _selector->LoadEntityClasses();
 }
 
 void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
 {
-    _treeView->SetSelectedFullname(eclass);
+    _selector->SetSelectedDeclName(eclass);
 }
 
 const std::string& EntityClassChooser::getSelectedEntityClass() const
@@ -299,13 +313,10 @@ int EntityClassChooser::ShowModal()
 {
     _windowPosition.applyPosition();
 
-    _treeViewToolbar->ClearFilter();
-
     // Update the member variables
     updateSelection();
 
-    // Focus on the treeview
-    _treeView->SetFocus();
+    _selector->FocusTreeView();
 
     int returnCode = DialogBase::ShowModal();
 
@@ -317,35 +328,23 @@ int EntityClassChooser::ShowModal()
 
 void EntityClassChooser::setupTreeView()
 {
-    wxPanel* parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
+    auto parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
 
-    _treeView = new DeclarationTreeView(parent, decl::Type::EntityDef, _columns, wxDV_NO_HEADER);
-    _treeView->AddSearchColumn(_columns.iconAndName);
-    _treeView->SetExpandTopLevelItemsAfterPopulation(true);
+    _selector = new EntityClassSelector(parent);
 
-    _treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
+    _selector->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
+    _selector->Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &EntityClassChooser::_onItemActivated, this );
 
-    // Single column with icon and name
-    _treeView->AppendIconTextColumn(_("Classname"), _columns.iconAndName.getColumnIndex(),
-        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-
-    Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &EntityClassChooser::_onItemActivated, this );
-
-    _treeViewToolbar = new ResourceTreeViewToolbar(parent, _treeView);
-
-    parent->GetSizer()->Prepend(_treeView, 1, wxEXPAND | wxBOTTOM | wxRIGHT, 6);
-    parent->GetSizer()->Prepend(_treeViewToolbar, 0, wxEXPAND | wxALIGN_LEFT | wxBOTTOM | wxLEFT | wxRIGHT, 6);
+    parent->GetSizer()->Prepend(_selector, 1, wxEXPAND | wxBOTTOM | wxRIGHT, 6);
 }
 
-// tree double click or enter key
-void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev ) {
-    wxDataViewItem item = _treeView->GetSelection();
-    if ( item.IsOk() ) {
-        TreeModel::Row row( item, *_treeView->GetModel() );
+void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev )
+{
+    auto selectedEclass = _selector->GetSelectedDeclName();
 
-        if ( !row[_columns.isFolder].getBool() ) {
-            onOK( ev );
-        }
+    if (!selectedEclass.empty())
+    {
+        onOK(ev);
     }
 }
 
@@ -362,45 +361,39 @@ void EntityClassChooser::updateUsageInfo(const std::string& eclass)
 
 void EntityClassChooser::updateSelection()
 {
-    wxDataViewItem item = _treeView->GetSelection();
+    auto selectedEclass = _selector->GetSelectedDeclName();
+
     auto* defFileName = findNamedObject<wxStaticText>(this, "EntityClassChooserDefFileName");
 
-    if (item.IsOk())
+    if (selectedEclass.empty())
     {
-        TreeModel::Row row(item, *_treeView->GetModel());
+        // Nothing selected
+        _modelPreview->setModel("");
+        _modelPreview->setSkin("");
+        defFileName->SetLabel("-");
 
-        if (!row[_columns.isFolder].getBool())
-        {
-            // Make the OK button active
-            findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(true);
-
-            // Set the panel text with the usage information
-            std::string selName = row[_columns.leafName];
-
-            updateUsageInfo(selName);
-
-            // Update the _selectionName field
-            _selectedName = selName;
-
-            // Lookup the IEntityClass instance
-            auto eclass = GlobalEntityClassManager().findClass(selName);
-
-            if (eclass)
-            {
-                _modelPreview->setModel(eclass->getAttributeValue("model"));
-                _modelPreview->setSkin(eclass->getAttributeValue("skin"));
-                defFileName->SetLabel(eclass->getDeclFilePath());
-                return; // success
-            }
-        }
+        findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(false);
+        return;
     }
 
-    // Nothing selected
-    _modelPreview->setModel("");
-    _modelPreview->setSkin("");
-    defFileName->SetLabel("-");
+    // Make the OK button active
+    findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(true);
 
-    findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(false);
+    // Set the panel text with the usage information
+    updateUsageInfo(selectedEclass);
+
+    // Update the _selectionName field
+    _selectedName = selectedEclass;
+
+    // Lookup the IEntityClass instance
+    auto eclass = GlobalEntityClassManager().findClass(selectedEclass);
+
+    if (eclass)
+    {
+        _modelPreview->setModel(eclass->getAttributeValue("model"));
+        _modelPreview->setSkin(eclass->getAttributeValue("skin"));
+        defFileName->SetLabel(eclass->getDeclFilePath());
+    }
 }
 
 void EntityClassChooser::onCancel(wxCommandEvent& ev)
