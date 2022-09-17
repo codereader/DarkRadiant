@@ -56,8 +56,7 @@ private:
 
     void loadEntityClasses();
 
-    // Widget construction helpers
-    void setupTreeView();
+    void setupSelector();
 
     // Update the usage panel with information from the provided entityclass
     void updateUsageInfo(const std::string& eclass);

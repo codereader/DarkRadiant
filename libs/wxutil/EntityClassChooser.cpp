@@ -224,10 +224,9 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
     );
 
     // Setup the tree view and invoke threaded loader to get the entity classes
-    setupTreeView();
+    setupSelector();
     loadEntityClasses();
 
-    makeLabelBold(this, "EntityClassChooserDefFileNameLabel");
     makeLabelBold(this, "EntityClassChooserUsageLabel");
 
     wxSplitterWindow* splitter = findNamedObject<wxSplitterWindow>(this, "EntityClassChooserSplitter");
@@ -326,7 +325,7 @@ int EntityClassChooser::ShowModal()
     return returnCode;
 }
 
-void EntityClassChooser::setupTreeView()
+void EntityClassChooser::setupSelector()
 {
     auto parent = findNamedObject<wxPanel>(this, "EntityClassChooserLeftPane");
 
@@ -348,29 +347,25 @@ void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev )
     }
 }
 
-// Update the usage information
-void EntityClassChooser::updateUsageInfo(const std::string& eclass)
+void EntityClassChooser::updateUsageInfo(const std::string& declName)
 {
     // Lookup the IEntityClass instance
-    auto e = GlobalEntityClassManager().findOrInsert(eclass, true);
+    auto eclass = GlobalEntityClassManager().findOrInsert(declName, true);
 
     // Set the usage panel to the IEntityClass' usage information string
     auto* usageText = findNamedObject<wxTextCtrl>(this, "EntityClassChooserUsageText");
-    usageText->SetValue(e ? eclass::getUsage(e) : "");
+    usageText->SetValue(eclass ? eclass::getUsage(eclass) : "");
 }
 
 void EntityClassChooser::updateSelection()
 {
     auto selectedEclass = _selector->GetSelectedDeclName();
 
-    auto* defFileName = findNamedObject<wxStaticText>(this, "EntityClassChooserDefFileName");
-
     if (selectedEclass.empty())
     {
         // Nothing selected
         _modelPreview->setModel("");
         _modelPreview->setSkin("");
-        defFileName->SetLabel("-");
 
         findNamedObject<wxButton>(this, "EntityClassChooserAddButton")->Enable(false);
         return;
@@ -392,7 +387,6 @@ void EntityClassChooser::updateSelection()
     {
         _modelPreview->setModel(eclass->getAttributeValue("model"));
         _modelPreview->setSkin(eclass->getAttributeValue("skin"));
-        defFileName->SetLabel(eclass->getDeclFilePath());
     }
 }
 

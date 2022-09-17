@@ -33,24 +33,6 @@
 									<growablerows></growablerows>
 									<object class="sizeritem">
 										<option>0</option>
-										<flag></flag>
-										<border>0</border>
-										<object class="wxStaticText" name="EntityClassChooserDefFileNameLabel">
-											<label>Defined in:</label>
-											<wrap>-1</wrap>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>0</option>
-										<flag></flag>
-										<border>6</border>
-										<object class="wxStaticText" name="EntityClassChooserDefFileName">
-											<label>-</label>
-											<wrap>-1</wrap>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>0</option>
 										<flag>wxTOP</flag>
 										<border>2</border>
 										<object class="wxStaticText" name="EntityClassChooserUsageLabel">
