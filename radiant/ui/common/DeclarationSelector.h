@@ -7,6 +7,8 @@
 #include "ui/ideclpreview.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
 
+namespace wxutil { class DeclFileInfo; }
+
 namespace ui
 {
 
@@ -29,6 +31,8 @@ private:
 
     // Optional preview widget attached to this selector
     std::vector<IDeclarationPreview*> _previews;
+
+    wxutil::DeclFileInfo* _declFileInfo;
 
 public:
     // Construct a selector widget with the default set of tree view columns

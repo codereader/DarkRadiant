@@ -2,6 +2,7 @@
 
 #include <wx/sizer.h>
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include "wxutil/DeclFileInfo.h"
 
 namespace ui
 {
@@ -23,10 +24,12 @@ DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType,
     createTreeView();
 
     auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, _treeView);
+    _declFileInfo = new wxutil::DeclFileInfo(this, _declType);
 
     auto treeVbox = new wxBoxSizer(wxVERTICAL);
     treeVbox->Add(toolbar, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 6);
     treeVbox->Add(_treeView, 1, wxEXPAND);
+    treeVbox->Add(_declFileInfo, 0, wxEXPAND | wxTOP | wxBOTTOM, 6);
 
     _horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
     _treeViewSizerItem = _horizontalSizer->Add(treeVbox, 1, wxEXPAND);
@@ -112,10 +115,22 @@ const wxutil::DeclarationTreeView::Columns& DeclarationSelector::CreateDefaultCo
 
 void DeclarationSelector::onTreeViewSelectionChanged(wxDataViewEvent& ev)
 {
+    auto declName = _treeView->GetSelectedDeclName();
+
     // Notify all previews
     for (auto preview : _previews)
     {
-        preview->SetPreviewDeclName(_treeView->GetSelectedDeclName());
+        preview->SetPreviewDeclName(declName);
+    }
+
+    // Update the info labels
+    if (!declName.empty())
+    {
+        _declFileInfo->SetDeclarationName(declName);
+    }
+    else
+    {
+        _declFileInfo->Clear();
     }
 
     // Invoke the virtual method

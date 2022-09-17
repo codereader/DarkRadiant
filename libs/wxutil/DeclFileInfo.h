@@ -18,10 +18,12 @@ private:
     wxStaticText* _nameLabel;
     wxStaticText* _fileLabel;
     wxStaticText* _definedInLabel;
+    decl::Type _declType;
 
 public:
     DeclFileInfo(wxWindow* parent, decl::Type declType) :
-        wxPanel(parent, wxID_ANY)
+        wxPanel(parent, wxID_ANY),
+        _declType(declType)
     {
         _fileLabel = new wxStaticText(this, wxID_ANY, "");
         _fileLabel->SetFont(_fileLabel->GetFont().Bold());
@@ -31,18 +33,34 @@ public:
 
         auto sizer = new wxBoxSizer(wxHORIZONTAL);
 
-        sizer->Add(new wxStaticText(this, wxID_ANY, decl::getTypeName(declType) + " "), 0, wxALIGN_CENTER_VERTICAL, 0);
+        sizer->Add(new wxStaticText(this, wxID_ANY, decl::getTypeName(_declType) + " "), 0, wxALIGN_CENTER_VERTICAL, 0);
         sizer->Add(_nameLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
         _definedInLabel = new wxStaticText(this, wxID_ANY, _(" defined in "));
         sizer->Add(_definedInLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
         sizer->Add(_fileLabel, 0, wxALIGN_CENTER_VERTICAL, 0);
 
         SetSizer(sizer);
+
+        setPath({});
+    }
+
+    void SetDeclarationName(const std::string& declName)
+    {
+        auto decl = GlobalDeclarationManager().findDeclaration(_declType, declName);
+
+        setName(!declName.empty() && decl ? decl->getDeclName() : std::string());
+        setPath(!declName.empty() && decl ? decl->getDeclFilePath() : std::string());
+    }
+
+    void Clear()
+    {
+        setName({});
+        setPath({});
     }
 
     void setName(const std::string& name)
     {
-        _nameLabel->SetLabel(name);
+        _nameLabel->SetLabel(!name.empty() ? name : "-");
         GetSizer()->Layout();
     }
 
