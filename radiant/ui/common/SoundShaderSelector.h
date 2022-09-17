@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DeclarationSelector.h"
+#include "SoundShaderPreview.h"
 
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
@@ -64,18 +65,37 @@ public:
 class SoundShaderSelector :
     public DeclarationSelector
 {
+private:
+    // The preview widget group
+    SoundShaderPreview* _preview;
+
 public:
     SoundShaderSelector(wxWindow* parent) :
-        DeclarationSelector(parent, decl::Type::SoundShader)
+        DeclarationSelector(parent, decl::Type::SoundShader),
+        _preview(new SoundShaderPreview(this))
     {
         GetTreeView()->SetExpandTopLevelItemsAfterPopulation(true);
 
         LoadSoundShaders();
+
+        AddPreviewToBottom(_preview);
     }
 
     void LoadSoundShaders()
     {
         PopulateTreeView(std::make_shared<ThreadedSoundShaderLoader>(GetColumns()));
+    }
+
+protected:
+    void onTreeViewItemActivated() override
+    {
+        auto selectedItem = GetSelectedDeclName();
+
+        // Ctrl-Double-Click plays back a random file
+        if (wxGetKeyState(WXK_CONTROL))
+        {
+            _preview->playRandomSoundFile();
+        }
     }
 };
 

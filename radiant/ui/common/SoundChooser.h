@@ -22,10 +22,7 @@ class SoundChooser :
 private:
     SoundShaderSelector* _selector;
 
-	// The preview widget group
-	SoundShaderPreview* _preview;
-
-    sigc::connection _shadersReloaded;
+	sigc::connection _shadersReloaded;
 
     wxutil::WindowPosition _windowPosition;
 

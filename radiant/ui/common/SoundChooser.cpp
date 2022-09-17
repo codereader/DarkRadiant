@@ -26,8 +26,7 @@ namespace
 // Constructor
 SoundChooser::SoundChooser(wxWindow* parent) :
 	DialogBase(_("Choose sound"), parent),
-    _selector(nullptr),
-	_preview(new SoundShaderPreview(this))
+    _selector(nullptr)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 	
@@ -47,8 +46,7 @@ SoundChooser::SoundChooser(wxWindow* parent) :
     _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &SoundChooser::_onItemActivated, this);
 
 	GetSizer()->Add(_selector, 1, wxEXPAND | wxLEFT | wxRIGHT | wxTOP, 12);
-    GetSizer()->Add(_preview, 0, wxEXPAND | wxLEFT | wxRIGHT | wxBOTTOM, 12);
-	GetSizer()->Add(grid, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
+	GetSizer()->Add(grid, 0, wxEXPAND | wxALL, 12);
 
     _windowPosition.initialise(this, RKEY_WINDOW_STATE, 0.5f, 0.7f);
 
@@ -73,23 +71,15 @@ void SoundChooser::setSelectedShader(const std::string& shader)
 
 void SoundChooser::_onItemActivated(wxDataViewEvent& ev)
 {
-    auto selectedItem = _selector->GetSelectedDeclName();;
+    auto selectedItem = _selector->GetSelectedDeclName();
 
-    if (selectedItem.empty())
-    {
-        ev.Skip();
-        return;
-    }
-
-    if (!wxGetKeyState(WXK_CONTROL))
+    if (!selectedItem.empty() && !wxGetKeyState(WXK_CONTROL))
     {
         // simple double click closes modal, ctrl+dblclk plays sound
         EndModal(wxID_OK);
-        return;
     }
 
-    // It's a regular item, try to play it back
-    _preview->playRandomSoundFile();
+    ev.Skip();
 }
 
 int SoundChooser::ShowModal()
@@ -109,7 +99,7 @@ int SoundChooser::ShowModal()
 
 void SoundChooser::_onReloadSounds(wxCommandEvent& ev)
 {
-    _preview->ClearPreview();
+    _selector->SetSelectedDeclName({});
 
     // Send the command to the SoundManager
     // After parsing it will fire the sounds reloaded signal => onShadersReloaded()
