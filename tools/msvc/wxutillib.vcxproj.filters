@@ -25,6 +25,9 @@
     <Filter Include="sourceview">
       <UniqueIdentifier>{7b81be5b-cc2f-43c2-bef8-fb9c7c1a31c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="decl">
+      <UniqueIdentifier>{6d847c23-2205-43c6-b505-8cc8778c1251}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\libs\wxutil\dialog\DialogBase.h">
@@ -170,6 +173,9 @@
       <Filter>sourceview</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\Icon.h" />
+    <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelector.h">
+      <Filter>decl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -259,6 +265,9 @@
     </ClCompile>
     <ClCompile Include="..\..\libs\wxutil\sourceview\DeclarationSourceView.cpp">
       <Filter>sourceview</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\decl\DeclarationSelector.cpp">
+      <Filter>decl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -3,14 +3,15 @@
 #include <vector>
 #include "idecltypes.h"
 #include <wx/panel.h>
+#include <wx/sizer.h>
 
 #include "ui/ideclpreview.h"
-#include "wxutil/dataview/DeclarationTreeView.h"
+#include "../dataview/DeclarationTreeView.h"
 
-namespace wxutil { class DeclFileInfo; }
-
-namespace ui
+namespace wxutil
 {
+
+class DeclFileInfo;
 
 /**
  * Common implementation of a declaration selector widget that can be added to a dialog.
@@ -30,7 +31,7 @@ private:
     wxSizerItem* _treeViewSizerItem;
 
     // Optional preview widget attached to this selector
-    std::vector<IDeclarationPreview*> _previews;
+    std::vector<ui::IDeclarationPreview*> _previews;
 
     wxutil::DeclFileInfo* _declFileInfo;
 
@@ -61,8 +62,8 @@ protected:
     wxutil::DeclarationTreeView* GetTreeView() const;
 
     // Adds a preview widget to the right of the tree view
-    void AddPreviewToRightPane(IDeclarationPreview* preview, int sizerProportion = 1);
-    void AddPreviewToBottom(IDeclarationPreview* preview, int sizerProportion = 0);
+    void AddPreviewToRightPane(ui::IDeclarationPreview* preview, int sizerProportion = 1);
+    void AddPreviewToBottom(ui::IDeclarationPreview* preview, int sizerProportion = 0);
 
     const wxutil::DeclarationTreeView::Columns& GetColumns() const;
 

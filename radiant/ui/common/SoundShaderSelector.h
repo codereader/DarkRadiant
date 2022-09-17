@@ -1,6 +1,6 @@
 #pragma once
 
-#include "DeclarationSelector.h"
+#include "wxutil/decl/DeclarationSelector.h"
 #include "SoundShaderPreview.h"
 
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
@@ -63,7 +63,7 @@ public:
 };
 
 class SoundShaderSelector :
-    public DeclarationSelector
+    public wxutil::DeclarationSelector
 {
 private:
     // The preview widget group

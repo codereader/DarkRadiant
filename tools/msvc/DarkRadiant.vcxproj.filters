@@ -700,9 +700,6 @@
     <ClCompile Include="..\..\radiant\ui\console\Console.cpp">
       <Filter>src\ui\console</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\common\DeclarationSelector.cpp">
-      <Filter>src\ui\common</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\materials\MaterialSelector.cpp">
       <Filter>src\ui\materials</Filter>
     </ClCompile>
@@ -1370,9 +1367,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\einspector\TargetKey.h">
       <Filter>src\ui\einspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\common\DeclarationSelector.h">
-      <Filter>src\ui\common</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\materials\MaterialSelector.h">
       <Filter>src\ui\materials</Filter>

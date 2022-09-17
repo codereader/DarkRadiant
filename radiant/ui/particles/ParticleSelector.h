@@ -2,7 +2,7 @@
 
 #include <sigc++/trackable.h>
 
-#include "../common/DeclarationSelector.h"
+#include "wxutil/decl/DeclarationSelector.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/preview/ParticlePreview.h"
 
@@ -15,7 +15,7 @@ namespace ui
  * Features a resource tree view on the left and a render preview on the right.
  */
 class ParticleSelector :
-    public DeclarationSelector,
+    public wxutil::DeclarationSelector,
     public sigc::trackable
 {
 private:

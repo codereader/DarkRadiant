@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "../common/DeclarationSelector.h"
+#include "wxutil/decl/DeclarationSelector.h"
 
 // FORWARD DECLS
 class Material;
@@ -25,7 +25,7 @@ namespace ui
  * value to the constructor.
  */
 class MaterialSelector :
-	public DeclarationSelector
+	public wxutil::DeclarationSelector
 {
 public:
     enum class TextureFilter

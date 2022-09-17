@@ -1,10 +1,10 @@
 #include "DeclarationSelector.h"
 
 #include <wx/sizer.h>
-#include "wxutil/dataview/ResourceTreeViewToolbar.h"
-#include "wxutil/DeclFileInfo.h"
+#include "../dataview/ResourceTreeViewToolbar.h"
+#include "../DeclFileInfo.h"
 
-namespace ui
+namespace wxutil
 {
 
 DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType) :
@@ -40,7 +40,7 @@ DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType,
     // a preview widget can be appended to the vertical sizer => AddPreviewToBottom
 }
 
-void DeclarationSelector::AddPreviewToRightPane(IDeclarationPreview* preview, int sizerProportion)
+void DeclarationSelector::AddPreviewToRightPane(ui::IDeclarationPreview* preview, int sizerProportion)
 {
     auto widget = preview->GetPreviewWidget();
 
@@ -56,7 +56,7 @@ void DeclarationSelector::AddPreviewToRightPane(IDeclarationPreview* preview, in
     _previews.push_back(preview);
 }
 
-void DeclarationSelector::AddPreviewToBottom(IDeclarationPreview* preview, int sizerProportion)
+void DeclarationSelector::AddPreviewToBottom(ui::IDeclarationPreview* preview, int sizerProportion)
 {
     auto widget = preview->GetPreviewWidget();
 
