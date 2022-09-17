@@ -32,6 +32,7 @@ add_executable(darkradiant
                ui/brush/QuerySidesDialog.cpp
                ui/commandlist/CommandList.cpp
                ui/commandlist/ShortcutChooser.cpp
+               ui/common/DeclarationSelector.cpp
                ui/common/EntityChooser.cpp
                ui/common/ImageFilePopulator.cpp
                ui/common/ImageFileSelector.cpp
