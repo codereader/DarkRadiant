@@ -1,5 +1,7 @@
 #pragma once
 
+#include <wx/dataview.h>
+
 #include "idecltypes.h"
 #include "../dialog/DialogBase.h"
 
@@ -37,10 +39,16 @@ public:
     // Set the declaration selection in the selector
     virtual void SetSelectedDeclName(const std::string& declName);
 
+    int ShowModal() override;
+
 protected:
-    virtual void SetSelector(DeclarationSelector* selector);
+    void SetSelector(DeclarationSelector* selector);
 
     wxButton* GetAffirmativeButton();
+
+private:
+    void HandleTreeViewSelectionChanged();
+    void onTreeViewSelectionChanged(wxDataViewEvent& ev);
 };
 
 }

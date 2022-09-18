@@ -310,18 +310,6 @@ void EntityClassChooser::onDeleteEvent(wxCloseEvent& ev)
     EndModal(wxID_CANCEL); // break main loop
 }
 
-int EntityClassChooser::ShowModal()
-{
-    // Update the member variables
-    updateSelection();
-
-    _selector->FocusTreeView();
-
-    int returnCode = DialogBase::ShowModal();
-
-    return returnCode;
-}
-
 void EntityClassChooser::loadFromPath(const std::string& registryKey)
 {
     if (!_restoreSelectionFromRegistry) return;
@@ -343,7 +331,6 @@ EntityClassSelector* EntityClassChooser::setupSelector(wxWindow* parent)
 {
     _selector = new EntityClassSelector(parent);
 
-    _selector->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityClassChooser::onSelectionChanged, this);
     _selector->Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &EntityClassChooser::_onItemActivated, this );
 
     return _selector;
@@ -355,16 +342,6 @@ void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev )
     {
         EndModal(wxID_OK);
     }
-}
-
-void EntityClassChooser::updateSelection()
-{
-    GetAffirmativeButton()->Enable(!_selector->GetSelectedDeclName().empty());
-}
-
-void EntityClassChooser::onSelectionChanged(wxDataViewEvent& ev)
-{
-    updateSelection();
 }
 
 } // namespace ui

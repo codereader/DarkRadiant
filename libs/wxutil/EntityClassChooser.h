@@ -38,23 +38,16 @@ private:
 
 private:
     EntityClassChooser(Purpose purpose);
-    ~EntityClassChooser();
+    ~EntityClassChooser() override;
 
     void loadEntityClasses();
 
     EntityClassSelector* setupSelector(wxWindow * parent);
 
-    // Updates the member variables based on the current tree selection
-    void updateSelection();
-
     // Button callbacks
-    void onSelectionChanged(wxDataViewEvent& ev);
     void onDeleteEvent(wxCloseEvent& ev);
 
     void _onItemActivated( wxDataViewEvent& ev );
-
-    // Overridden from wxDialog
-    int ShowModal() override;
 
 public:
     void loadFromPath(const std::string& registryKey) override;
