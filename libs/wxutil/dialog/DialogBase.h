@@ -50,8 +50,8 @@ public:
     int ShowModal() override;
 
 protected:
-    // Returns the registry path to this window's serialized state
-    std::string GetWindowStatePath();
+    // Adds an element that should persist its state between dialog sessions
+    void RegisterPersistableObject(ui::IPersistableObject* object);
 
     // Overrideable: return true to prevent the window from being deleted
     virtual bool _onDeleteEvent();

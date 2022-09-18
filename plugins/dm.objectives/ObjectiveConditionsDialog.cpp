@@ -12,6 +12,7 @@
 #include <wx/choice.h>
 
 #include "wxutil/ChoiceHelper.h"
+#include "fmt/format.h"
 
 #include "ObjectiveEntity.h"
 

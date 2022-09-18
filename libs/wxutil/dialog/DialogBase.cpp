@@ -21,8 +21,6 @@ namespace
 
         return nullptr;
     }
-
-    constexpr const char* const RKEY_WINDOW_STATES = "user/ui/windowStates/";
 }
 
 
@@ -60,10 +58,8 @@ DialogBase::DialogBase(const std::string& title, wxWindow* parent, const std::st
             e.Skip();
     });
 
-    if (!windowName.empty())
-    {
-        _windowPosition.initialise(this, GetWindowStatePath());
-    }
+    _windowPosition.connect(this);
+    _windowState.registerObject(&_windowPosition);
 }
 
 void DialogBase::FitToScreen(float xProp, float yProp)
@@ -90,20 +86,18 @@ int DialogBase::ShowModal()
     // While this dialog is active, block any auto save requests
     AutoSaveRequestBlocker blocker("Modal Dialog is active");
 
-    _windowPosition.applyPosition();
+    _windowState.restore();
 
     auto returnCode = wxDialog::ShowModal();
 
-    _windowPosition.saveToPath(GetWindowStatePath());
+    _windowState.save();
 
     return returnCode;
 }
 
-std::string DialogBase::GetWindowStatePath()
+void DialogBase::RegisterPersistableObject(ui::IPersistableObject* object)
 {
-    auto name = GetName().ToStdString();
-
-    return name.empty() ? "" : RKEY_WINDOW_STATES + name;
+    _windowState.registerObject(object);
 }
 
 bool DialogBase::_onDeleteEvent()
