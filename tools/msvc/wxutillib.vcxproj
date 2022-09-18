@@ -192,6 +192,7 @@
     <ClInclude Include="..\..\libs\wxutil\preview\ModelPreview.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\ParticlePreview.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\RenderPreview.h" />
+    <ClInclude Include="..\..\libs\wxutil\preview\SkinPreview.h" />
     <ClInclude Include="..\..\libs\wxutil\ScopeTimer.h" />
     <ClInclude Include="..\..\libs\wxutil\ScrollWindow.h" />
     <ClInclude Include="..\..\libs\wxutil\SerialisableWidgets.h" />

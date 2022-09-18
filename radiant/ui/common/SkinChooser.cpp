@@ -9,9 +9,10 @@
 #include "ifavourites.h"
 #include "debugging/ScopedDebugTimer.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
-#include "wxutil/dataview/TreeView.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
 #include "wxutil/decl/DeclarationSelector.h"
+#include "wxutil/preview/SkinPreview.h"
+#include "ui/modelselector/MaterialsList.h"
 
 namespace ui
 {
@@ -127,21 +128,42 @@ class SkinSelector :
     public wxutil::DeclarationSelector
 {
 private:
+    std::string _model;
+
     wxDataViewItem _allSkinsItem;
     wxDataViewItem _matchingSkinsItem;
 
+    std::unique_ptr<wxutil::SkinPreview> _preview;
+    MaterialsList* _materialsList;
+
 public:
-    SkinSelector(wxWindow* parent) :
-        DeclarationSelector(parent, decl::Type::Skin)
+    SkinSelector(wxWindow* parent, const std::string& model) :
+        DeclarationSelector(parent, decl::Type::Skin),
+        _model(model),
+        _preview(new wxutil::SkinPreview(this, _model)),
+        _materialsList(new MaterialsList(this, _preview->getRenderSystem()))
     {
         // We want to control ourselves which items are expanded after population
         GetTreeView()->SetExpandTopLevelItemsAfterPopulation(false);
         GetTreeView()->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &SkinSelector::onTreeViewPopulationFinished, this);
+
+        //AddPreviewToBottom(_materialsList); // TODO
+        AddPreviewToRightPane(_preview.get());
+
+        // Models are lazy-loaded, subscribe to the preview's event
+        _preview->signal_ModelLoaded().connect(sigc::mem_fun(this, &SkinSelector::onPreviewModelLoaded));
+
+        _materialsList->SetMinClientSize(wxSize(-1, 140));
+
+        // Refresh preview when material visibility changed
+        _materialsList->signal_visibilityChanged().connect(
+            sigc::mem_fun(*_preview, &wxutil::ModelPreview::queueDraw)
+        );
     }
 
-    void Populate(const std::string& model)
+    void Populate()
     {
-        PopulateTreeView(std::make_shared<ThreadedSkinLoader>(GetColumns(), model, _allSkinsItem, _matchingSkinsItem));
+        PopulateTreeView(std::make_shared<ThreadedSkinLoader>(GetColumns(), _model, _allSkinsItem, _matchingSkinsItem));
     }
 
     void SetSelectedDeclName(const std::string& skin) override
@@ -167,6 +189,25 @@ public:
     }
 
 private:
+    void onPreviewModelLoaded(const model::ModelNodePtr& model)
+    {
+        updateMaterialsList();
+    }
+
+    void updateMaterialsList()
+    {
+        // Update the material list
+        auto modelNode = Node_getModel(_preview->getModelNode());
+
+        if (!modelNode)
+        {
+            _materialsList->clear();
+            return;
+        }
+
+        _materialsList->updateFromModel(modelNode->getIModel());
+    }
+
     void onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev)
     {
         // Make sure the "matching skins" item is expanded
@@ -175,10 +216,10 @@ private:
     }
 };
 
-SkinChooser::SkinChooser() :
-	DialogBase(_(WINDOW_TITLE)),
-    _selector(nullptr),
-    _materialsList(nullptr)
+SkinChooser::SkinChooser(const std::string& model) :
+	DialogBase(_(WINDOW_TITLE), "SkinChooser"),
+    _model(model),
+    _selector(nullptr)
 {
     populateWindow();
 }
@@ -190,7 +231,7 @@ void SkinChooser::populateWindow()
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
-    _selector = new SkinSelector(this);
+    _selector = new SkinSelector(this, _model);
 
 #if 0
     wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition,
@@ -215,14 +256,7 @@ void SkinChooser::populateWindow()
     _treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &SkinChooser::_onTreeViewPopulationFinished, this);
 
     _treeViewToolbar = new wxutil::ResourceTreeViewToolbar(leftPanel, _treeView);
-#endif
-    // Preview
-    _preview.reset(new wxutil::ModelPreview(this));
-	_preview->getWidget()->SetMinClientSize(wxSize(GetSize().GetWidth() / 3, -1));
 
-    _materialsList = new MaterialsList(this, _preview->getRenderSystem());
-    _materialsList->SetMinClientSize(wxSize(-1, 140));
-#if 0
     // Refresh preview when material visibility changed
     _materialsList->signal_visibilityChanged().connect(
         sigc::mem_fun(*_preview, &wxutil::ModelPreview::queueDraw)
@@ -237,10 +271,6 @@ void SkinChooser::populateWindow()
 
 	// Pack treeview and preview
     splitter->SplitVertically(leftPanel, _preview->getWidget());
-#endif
-    FitToScreen(0.8f, 0.8f);
-
-#if 0
     // Set the default size of the window
     splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.3f));
 
@@ -251,6 +281,8 @@ void SkinChooser::populateWindow()
 	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxTOP, 12);
 
     Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &SkinChooser::_onItemActivated, this );
+
+    RegisterPersistableObject(_selector);
 }
 
 int SkinChooser::ShowModal()
@@ -259,11 +291,6 @@ int SkinChooser::ShowModal()
 
 	// Display the model in the window title
 	SetTitle(std::string(_(WINDOW_TITLE)) + ": " + _model);
-
-    // Models are lazy-loaded, subscribe to the preview's event
-    _modelLoadedConn.disconnect();
-    _modelLoadedConn = _preview->signal_ModelLoaded().connect(
-        sigc::mem_fun(this, &SkinChooser::_onPreviewModelLoaded));
 
 	int returnCode = DialogBase::ShowModal();
 
@@ -278,9 +305,6 @@ int SkinChooser::ShowModal()
 		_lastSkin = _prevSkin;
 	}
 
-    _modelLoadedConn.disconnect();
-	_preview->setModel(""); // release model
-
 	return returnCode;
 }
 
@@ -293,7 +317,7 @@ void SkinChooser::_onItemActivated(wxDataViewEvent& ev)
 // Populate the list of skins
 void SkinChooser::populateSkins()
 {
-    _selector->Populate(_model);
+    _selector->Populate();
 }
 
 std::string SkinChooser::getSelectedSkin()
@@ -304,15 +328,13 @@ std::string SkinChooser::getSelectedSkin()
 void SkinChooser::setSelectedSkin(const std::string& skin)
 {
     _selector->SetSelectedDeclName(skin);
-
-    handleSelectionChange();
 }
 
 // Static method to display singleton instance and choose a skin
 std::string SkinChooser::chooseSkin(const std::string& model,
 									const std::string& prev)
 {
-    auto dialog = new SkinChooser();
+    auto dialog = new SkinChooser(model);
 
     dialog->_model = model;
     dialog->_prevSkin = prev;
@@ -324,41 +346,6 @@ std::string SkinChooser::chooseSkin(const std::string& model,
     dialog->Destroy();
 
     return selectedSkin;
-}
-
-void SkinChooser::handleSelectionChange()
-{
-    auto selectedSkin = getSelectedSkin();
-
-    // Set the model preview to show the model with the selected skin
-    _preview->setModel(_model);
-    _preview->setSkin(selectedSkin);
-
-    updateMaterialsList();
-}
-
-void SkinChooser::updateMaterialsList()
-{
-    // Update the material list
-    auto modelNode = Node_getModel(_preview->getModelNode());
-
-    if (!modelNode)
-    {
-        _materialsList->clear();
-        return;
-    }
-
-    _materialsList->updateFromModel(modelNode->getIModel());
-}
-
-void SkinChooser::_onPreviewModelLoaded(const model::ModelNodePtr& model)
-{
-    updateMaterialsList();
-}
-
-void SkinChooser::_onSelChanged(wxDataViewEvent& ev)
-{
-    handleSelectionChange();
 }
 
 void SkinChooser::_onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev)

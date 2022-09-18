@@ -4,10 +4,8 @@
 #include "imodel.h"
 
 #include "wxutil/dialog/DialogBase.h"
-#include "wxutil/preview/ModelPreview.h"
 #include <string>
 
-#include "ui/modelselector/MaterialsList.h"
 #include "wxutil/dataview/ResourceTreeView.h"
 
 namespace ui
@@ -23,24 +21,18 @@ class SkinChooser :
 	public wxutil::DialogBase
 {
 private:
-    SkinSelector* _selector;
-    MaterialsList* _materialsList;
-
 	// The model name to use for skin matching
 	std::string _model;
+
+    SkinSelector* _selector;
 
 	// The last skin selected, and the original (previous) skin
 	std::string _lastSkin;
 	std::string _prevSkin;
 
-	// Model preview widget
-    wxutil::ModelPreviewPtr _preview;
-
-    sigc::connection _modelLoadedConn;
-
 private:
 	// Constructor creates widgets
-	SkinChooser();
+	SkinChooser(const std::string& model);
 
 	// Widget creation functions
 	void populateWindow();
@@ -49,23 +41,16 @@ private:
 	void populateSkins();
 
 	// callbacks
-	void _onSelChanged(wxDataViewEvent& ev);
     void _onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev);
 
 	// Retrieve the currently selected skin
 	std::string getSelectedSkin();
     void setSelectedSkin(const std::string& skin);
 
-    void handleSelectionChange();
-    void updateMaterialsList();
-
     void _onItemActivated( wxDataViewEvent& ev );
-    void _onPreviewModelLoaded(const model::ModelNodePtr& model);
 
 public:
-
-	// Override Dialogbase
-	int ShowModal();
+	int ShowModal() override;
 
 	/** Display the dialog and return the skin chosen by the user, or an empty
 	 * string if no selection was made. This static method enters are recursive
