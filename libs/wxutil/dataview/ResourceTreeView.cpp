@@ -20,7 +20,9 @@ namespace
 // Event implementation
 ResourceTreeView::PopulationFinishedEvent::PopulationFinishedEvent(int id) :
     wxEvent(id, EV_TREEVIEW_POPULATION_FINISHED)
-{}
+{
+    m_propagationLevel = wxEVENT_PROPAGATE_MAX;
+}
 
 ResourceTreeView::PopulationFinishedEvent::PopulationFinishedEvent(const PopulationFinishedEvent& event) :
     wxEvent(event)

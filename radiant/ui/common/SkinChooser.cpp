@@ -213,6 +213,8 @@ private:
         // Make sure the "matching skins" item is expanded
         GetTreeView()->Expand(_matchingSkinsItem);
         GetTreeView()->Collapse(_allSkinsItem);
+
+        ev.Skip();
     }
 };
 
@@ -232,6 +234,7 @@ void SkinChooser::populateWindow()
 	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
     _selector = new SkinSelector(this, _model);
+    _selector->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &SkinChooser::_onTreeViewPopulationFinished, this);
 
 #if 0
     wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition,
