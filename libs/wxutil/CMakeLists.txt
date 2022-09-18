@@ -9,6 +9,7 @@ add_library(wxutil
             dataview/TreeModelFilter.cpp
             dataview/TreeView.cpp
             dataview/VFSTreePopulator.cpp
+            decl/DeclarationSelectorDialog.cpp
             decl/DeclarationSelector.cpp
             dialog/DialogBase.cpp
             dialog/Dialog.cpp

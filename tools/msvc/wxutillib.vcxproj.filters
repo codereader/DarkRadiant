@@ -185,6 +185,9 @@
     <ClInclude Include="..\..\libs\wxutil\preview\SkinPreview.h">
       <Filter>preview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelectorDialog.h">
+      <Filter>decl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -279,5 +282,8 @@
       <Filter>decl</Filter>
     </ClCompile>
     <ClCompile Include="..\..\libs\wxutil\WindowState.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\decl\DeclarationSelectorDialog.cpp">
+      <Filter>decl</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

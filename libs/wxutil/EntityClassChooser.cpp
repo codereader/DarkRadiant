@@ -233,29 +233,22 @@ public:
 };
 
 EntityClassChooser::EntityClassChooser(Purpose purpose) :
-    DialogBase(getDialogTitle(purpose), "EntityClassChooser"),
+    DeclarationSelectorDialog(decl::Type::EntityDef, getDialogTitle(purpose), "EntityClassChooser"),
     _selector(nullptr),
     _restoreSelectionFromRegistry(true)
 {
-    SetSizer(new wxBoxSizer(wxVERTICAL));
-
-    auto mainSizer = new wxBoxSizer(wxVERTICAL);
-    GetSizer()->Add(mainSizer, 1, wxEXPAND | wxALL, 12);
-
-    auto buttonSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
-    
-    _affirmativeButton = buttonSizer->GetAffirmativeButton();
+    auto affirmativeButton = GetAffirmativeButton();
 
     switch (purpose)
     {
     case Purpose::AddEntity: 
-        _affirmativeButton->SetLabelText(_("Create"));
+        affirmativeButton->SetLabelText(_("Create"));
         break;
     case Purpose::ConvertEntity:
-        _affirmativeButton->SetLabelText(_("Convert"));
+        affirmativeButton->SetLabelText(_("Convert"));
         break;
     case Purpose::SelectClassname:
-        _affirmativeButton->SetLabelText(_("Select"));
+        affirmativeButton->SetLabelText(_("Select"));
         break;
     default:
         throw std::logic_error("Unknown entity class chooser purpose");
@@ -269,14 +262,12 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
 
     Bind(wxEVT_CLOSE_WINDOW, &EntityClassChooser::onDeleteEvent, this);
 
-    mainSizer->Add(setupSelector(this), 1, wxEXPAND | wxBOTTOM, 12);
-    mainSizer->Add(buttonSizer, 0, wxALIGN_RIGHT, 12);
+    SetSelector(setupSelector(this));
 
     loadEntityClasses();
 
     // Save the state of the selector widget on dialog close
     RegisterPersistableObject(this);
-    RegisterPersistableObject(_selector);
 }
 
 EntityClassChooser::~EntityClassChooser()
@@ -291,12 +282,12 @@ std::string EntityClassChooser::ChooseEntityClass(Purpose purpose, const std::st
     // We'll fall back to the value saved in the registry if eclassToSelect is empty
     if (!eclassToSelect.empty())
     {
-        instance.setSelectedEntityClass(eclassToSelect);
+        instance.SetSelectedDeclName(eclassToSelect);
     }
 
     if (instance.ShowModal() == wxID_OK)
     {
-        return instance.getSelectedEntityClass();
+        return instance.GetSelectedDeclName();
     }
     
     return ""; // Empty selection on cancel
@@ -307,15 +298,11 @@ void EntityClassChooser::loadEntityClasses()
     _selector->LoadEntityClasses();
 }
 
-void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
+void EntityClassChooser::SetSelectedDeclName(const std::string& declName)
 {
-    _selector->SetSelectedDeclName(eclass);
+    DeclarationSelectorDialog::SetSelectedDeclName(declName);
+    
     _restoreSelectionFromRegistry = false; // prevent this selection from being overwritten
-}
-
-std::string EntityClassChooser::getSelectedEntityClass() const
-{
-    return _selector->GetSelectedDeclName();
 }
 
 void EntityClassChooser::onDeleteEvent(wxCloseEvent& ev)
@@ -343,16 +330,16 @@ void EntityClassChooser::loadFromPath(const std::string& registryKey)
 
     if (!lastSelectedDeclName.empty())
     {
-        setSelectedEntityClass(lastSelectedDeclName);
+        SetSelectedDeclName(lastSelectedDeclName);
     }
 }
 
 void EntityClassChooser::saveToPath(const std::string& registryKey)
 {
-    GlobalRegistry().setAttribute(registryKey, "lastSelectedDeclName", getSelectedEntityClass());
+    GlobalRegistry().setAttribute(registryKey, "lastSelectedDeclName", GetSelectedDeclName());
 }
 
-wxWindow* EntityClassChooser::setupSelector(wxWindow* parent)
+EntityClassSelector* EntityClassChooser::setupSelector(wxWindow* parent)
 {
     _selector = new EntityClassSelector(parent);
 
@@ -372,7 +359,7 @@ void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev )
 
 void EntityClassChooser::updateSelection()
 {
-    _affirmativeButton->Enable(!_selector->GetSelectedDeclName().empty());
+    GetAffirmativeButton()->Enable(!_selector->GetSelectedDeclName().empty());
 }
 
 void EntityClassChooser::onSelectionChanged(wxDataViewEvent& ev)

@@ -148,6 +148,7 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeView.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\TreeViewItemStyle.h" />
     <ClInclude Include="..\..\libs\wxutil\dataview\VFSTreePopulator.h" />
+    <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelectorDialog.h" />
     <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelector.h" />
     <ClInclude Include="..\..\libs\wxutil\decl\DeclFileInfo.h" />
     <ClInclude Include="..\..\libs\wxutil\DeferredMotionDelta.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="..\..\libs\wxutil\dataview\TreeView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dataview\VFSTreePopulator.cpp" />
     <ClCompile Include="..\..\libs\wxutil\decl\DeclarationSelector.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\decl\DeclarationSelectorDialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\Dialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\DialogBase.cpp" />
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp" />

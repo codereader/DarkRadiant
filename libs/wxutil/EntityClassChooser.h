@@ -1,6 +1,6 @@
 #pragma once
 
-#include "dialog/DialogBase.h"
+#include "decl/DeclarationSelectorDialog.h"
 #include "ui/iwindowstate.h"
 
 #include <sigc++/connection.h>
@@ -16,7 +16,7 @@ class EntityClassSelector;
  * of a class to create at the current location.
  */
 class EntityClassChooser final :
-    public DialogBase,
+    public DeclarationSelectorDialog,
     public ui::IPersistableObject
 {
 public:
@@ -34,8 +34,6 @@ private:
 
     sigc::connection _defsReloaded;
 
-    wxButton* _affirmativeButton;
-
     bool _restoreSelectionFromRegistry;
 
 private:
@@ -44,7 +42,7 @@ private:
 
     void loadEntityClasses();
 
-    wxWindow* setupSelector(wxWindow * parent);
+    EntityClassSelector* setupSelector(wxWindow * parent);
 
     // Updates the member variables based on the current tree selection
     void updateSelection();
@@ -52,12 +50,6 @@ private:
     // Button callbacks
     void onSelectionChanged(wxDataViewEvent& ev);
     void onDeleteEvent(wxCloseEvent& ev);
-
-    // Sets the tree selection to the given entity class
-    void setSelectedEntityClass(const std::string& eclass);
-
-    // Sets the tree selection to the given entity class
-    std::string getSelectedEntityClass() const;
 
     void _onItemActivated( wxDataViewEvent& ev );
 
@@ -67,6 +59,8 @@ private:
 public:
     void loadFromPath(const std::string& registryKey) override;
     void saveToPath(const std::string& registryKey) override;
+
+    void SetSelectedDeclName(const std::string& declName) override;
 
     /**
      * \brief Construct and show the dialog to choose an entity class,
