@@ -224,6 +224,8 @@ public:
 
         AddPreviewToRightPane(_preview.get());
         AddPreviewToBottom(new EntityClassDescription(this));
+
+        Populate();
     }
 
     void Populate() override
@@ -234,7 +236,6 @@ public:
 
 EntityClassChooser::EntityClassChooser(Purpose purpose) :
     DeclarationSelectorDialog(decl::Type::EntityDef, getDialogTitle(purpose), "EntityClassChooser"),
-    _selector(nullptr),
     _restoreSelectionFromRegistry(true)
 {
     auto affirmativeButton = GetAffirmativeButton();
@@ -254,23 +255,10 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
         throw std::logic_error("Unknown entity class chooser purpose");
     }
 
-    // Listen for defs-reloaded signal (cannot bind directly to
-    // ThreadedEntityClassLoader method because it is not sigc::trackable)
-    _defsReloaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
-        [this]() { GlobalUserInterface().dispatch([this]() { loadEntityClasses(); }); }
-    );
-
-    SetSelector(setupSelector(this));
-
-    loadEntityClasses();
+    SetSelector(new EntityClassSelector(this));
 
     // Save the state of the selector widget on dialog close
     RegisterPersistableObject(this);
-}
-
-EntityClassChooser::~EntityClassChooser()
-{
-    _defsReloaded.disconnect();
 }
 
 std::string EntityClassChooser::ChooseEntityClass(Purpose purpose, const std::string& eclassToSelect)
@@ -289,11 +277,6 @@ std::string EntityClassChooser::ChooseEntityClass(Purpose purpose, const std::st
     }
     
     return ""; // Empty selection on cancel
-}
-
-void EntityClassChooser::loadEntityClasses()
-{
-    _selector->Populate();
 }
 
 void EntityClassChooser::SetSelectedDeclName(const std::string& declName)
@@ -318,12 +301,6 @@ void EntityClassChooser::loadFromPath(const std::string& registryKey)
 void EntityClassChooser::saveToPath(const std::string& registryKey)
 {
     GlobalRegistry().setAttribute(registryKey, "lastSelectedDeclName", GetSelectedDeclName());
-}
-
-EntityClassSelector* EntityClassChooser::setupSelector(wxWindow* parent)
-{
-    _selector = new EntityClassSelector(parent);
-    return _selector;
 }
 
 } // namespace ui

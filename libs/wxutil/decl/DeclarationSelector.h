@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <sigc++/connection.h>
+
 #include "idecltypes.h"
 #include "ui/iwindowstate.h"
 #include <wx/panel.h>
@@ -42,12 +44,16 @@ private:
 
     std::unique_ptr<PanedPosition> _panedPosition;
 
+    sigc::connection _declsReloaded;
+
 public:
     // Construct a selector widget with the default set of tree view columns
     DeclarationSelector(wxWindow* parent, decl::Type declType);
 
     // Construct a selector widget with the given set of tree view columns
     DeclarationSelector(wxWindow* parent, decl::Type declType, const DeclarationTreeView::Columns& columns);
+
+    ~DeclarationSelector() override;
 
     /**
      * Return the declaration selected by the user, or an empty string if there

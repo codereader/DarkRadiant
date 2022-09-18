@@ -4,6 +4,7 @@
 #include <wx/splitter.h>
 #include "../dataview/ResourceTreeViewToolbar.h"
 #include "DeclFileInfo.h"
+#include "ui/iuserinterface.h"
 
 namespace wxutil
 {
@@ -41,6 +42,16 @@ DeclarationSelector::DeclarationSelector(wxWindow* parent, decl::Type declType,
 
     _leftPanel->GetSizer()->Add(_treeVbox, 1, wxEXPAND);
     // the right panel has room for a preview widget => AddPreviewToRightPane
+
+    // Listen for decls-reloaded signal to refresh the tree
+    _declsReloaded = GlobalDeclarationManager().signal_DeclsReloaded(_declType).connect(
+        [this]() { GlobalUserInterface().dispatch([this]() { Populate(); }); }
+    );
+}
+
+DeclarationSelector::~DeclarationSelector()
+{
+    _declsReloaded.disconnect();
 }
 
 void DeclarationSelector::AddPreviewToRightPane(ui::IDeclarationPreview* preview, int sizerProportion)

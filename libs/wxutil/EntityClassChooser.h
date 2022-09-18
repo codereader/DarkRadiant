@@ -3,13 +3,10 @@
 #include "decl/DeclarationSelectorDialog.h"
 #include "ui/iwindowstate.h"
 
-#include <sigc++/connection.h>
 #include <wx/dataview.h>
 
 namespace wxutil
 {
-
-class EntityClassSelector;
 
 /**
  * Dialog window displaying a tree of Entity Classes, allowing the selection
@@ -30,19 +27,10 @@ public:
     };
 
 private:
-    EntityClassSelector* _selector;
-
-    sigc::connection _defsReloaded;
-
     bool _restoreSelectionFromRegistry;
 
 private:
     EntityClassChooser(Purpose purpose);
-    ~EntityClassChooser() override;
-
-    void loadEntityClasses();
-
-    EntityClassSelector* setupSelector(wxWindow * parent);
 
 public:
     void loadFromPath(const std::string& registryKey) override;
