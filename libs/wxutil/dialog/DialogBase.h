@@ -3,6 +3,7 @@
 #include <string>
 #include <wx/dialog.h>
 #include "../WindowPosition.h"
+#include "../WindowState.h"
 
 namespace wxutil
 {
@@ -18,6 +19,7 @@ namespace wxutil
 class DialogBase : public wxDialog
 {
 private:
+    WindowState _windowState;
     WindowPosition _windowPosition;
 
 public:

@@ -173,6 +173,9 @@
     <ClInclude Include="..\..\include\ui\ideclpreview.h">
       <Filter>ui</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\ui\iwindowstate.h">
+      <Filter>ui</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="ui">

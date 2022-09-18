@@ -200,6 +200,7 @@
     <ClInclude Include="..\..\libs\wxutil\sourceview\SourceView.h" />
     <ClInclude Include="..\..\libs\wxutil\Splitter.h" />
     <ClInclude Include="..\..\libs\wxutil\WindowPosition.h" />
+    <ClInclude Include="..\..\libs\wxutil\WindowState.h" />
     <ClInclude Include="..\..\libs\wxutil\window\TransientWindow.h" />
     <ClInclude Include="..\..\libs\wxutil\XmlResourceBasedWidget.h" />
   </ItemGroup>
@@ -242,6 +243,7 @@
     <ClCompile Include="..\..\libs\wxutil\sourceview\SourceView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\Splitter.cpp" />
     <ClCompile Include="..\..\libs\wxutil\WindowPosition.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\WindowState.cpp" />
     <ClCompile Include="..\..\libs\wxutil\window\TransientWindow.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

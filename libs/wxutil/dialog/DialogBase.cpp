@@ -41,7 +41,8 @@ DialogBase::DialogBase(const std::string& title, wxWindow* parent) :
 DialogBase::DialogBase(const std::string& title, wxWindow* parent, const std::string& windowName)
 : wxDialog(parent ? parent : FindTopLevelWindow(),
            wxID_ANY, title, wxDefaultPosition, wxDefaultSize,
-           wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER, !windowName.empty() ? windowName : wxASCII_STR(wxDialogNameStr))
+           wxCAPTION | wxSYSTEM_MENU | wxRESIZE_BORDER, !windowName.empty() ? windowName : wxASCII_STR(wxDialogNameStr)),
+    _windowState(windowName)
 {
     // Allow subclasses to override close event
     Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent& e) {
