@@ -11,6 +11,7 @@
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/dataview/VFSTreePopulator.h"
+#include "wxutil/decl/DeclarationSelector.h"
 
 namespace ui
 {
@@ -122,12 +123,62 @@ namespace
     };
 }
 
+class SkinSelector :
+    public wxutil::DeclarationSelector
+{
+private:
+    wxDataViewItem _allSkinsItem;
+    wxDataViewItem _matchingSkinsItem;
+
+public:
+    SkinSelector(wxWindow* parent) :
+        DeclarationSelector(parent, decl::Type::Skin)
+    {
+        // We want to control ourselves which items are expanded after population
+        GetTreeView()->SetExpandTopLevelItemsAfterPopulation(false);
+        GetTreeView()->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &SkinSelector::onTreeViewPopulationFinished, this);
+    }
+
+    void Populate(const std::string& model)
+    {
+        PopulateTreeView(std::make_shared<ThreadedSkinLoader>(GetColumns(), model, _allSkinsItem, _matchingSkinsItem));
+    }
+
+    void SetSelectedDeclName(const std::string& skin) override
+    {
+        // Search in the matching skins tree first
+        auto item = GetTreeView()->GetTreeModel()->FindString(skin, GetColumns().declName, _matchingSkinsItem);
+
+        if (!item.IsOk())
+        {
+            // Fall back to the All Skins tree
+            item = GetTreeView()->GetTreeModel()->FindString(skin, GetColumns().declName, _allSkinsItem);
+        }
+
+        if (item.IsOk())
+        {
+            GetTreeView()->Select(item);
+            GetTreeView()->EnsureVisible(item);
+        }
+        else
+        {
+            GetTreeView()->UnselectAll();
+        }
+    }
+
+private:
+    void onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev)
+    {
+        // Make sure the "matching skins" item is expanded
+        GetTreeView()->Expand(_matchingSkinsItem);
+        GetTreeView()->Collapse(_allSkinsItem);
+    }
+};
+
 SkinChooser::SkinChooser() :
 	DialogBase(_(WINDOW_TITLE)),
-	_treeView(nullptr),
-    _treeViewToolbar(nullptr),
-    _materialsList(nullptr),
-    _fileInfo(nullptr)
+    _selector(nullptr),
+    _materialsList(nullptr)
 {
     populateWindow();
 }
@@ -139,6 +190,9 @@ void SkinChooser::populateWindow()
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
 
+    _selector = new SkinSelector(this);
+
+#if 0
     wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition,
                                                       wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     splitter->SetMinimumPaneSize(10); // disallow unsplitting
@@ -161,14 +215,14 @@ void SkinChooser::populateWindow()
     _treeView->Bind(wxutil::EV_TREEVIEW_POPULATION_FINISHED, &SkinChooser::_onTreeViewPopulationFinished, this);
 
     _treeViewToolbar = new wxutil::ResourceTreeViewToolbar(leftPanel, _treeView);
-
+#endif
     // Preview
-    _preview.reset(new wxutil::ModelPreview(splitter));
+    _preview.reset(new wxutil::ModelPreview(this));
 	_preview->getWidget()->SetMinClientSize(wxSize(GetSize().GetWidth() / 3, -1));
 
-    _materialsList = new MaterialsList(leftPanel, _preview->getRenderSystem());
+    _materialsList = new MaterialsList(this, _preview->getRenderSystem());
     _materialsList->SetMinClientSize(wxSize(-1, 140));
-
+#if 0
     // Refresh preview when material visibility changed
     _materialsList->signal_visibilityChanged().connect(
         sigc::mem_fun(*_preview, &wxutil::ModelPreview::queueDraw)
@@ -183,14 +237,17 @@ void SkinChooser::populateWindow()
 
 	// Pack treeview and preview
     splitter->SplitVertically(leftPanel, _preview->getWidget());
-
+#endif
     FitToScreen(0.8f, 0.8f);
 
+#if 0
     // Set the default size of the window
     splitter->SetSashPosition(static_cast<int>(GetSize().GetWidth() * 0.3f));
 
 	// Overall vbox for treeview/preview and buttons
 	vbox->Add(splitter, 1, wxEXPAND);
+#endif
+    vbox->Add(_selector, 1, wxEXPAND);
 	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxTOP, 12);
 
     Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &SkinChooser::_onItemActivated, this );
@@ -199,8 +256,6 @@ void SkinChooser::populateWindow()
 int SkinChooser::ShowModal()
 {
 	populateSkins();
-
-    _treeViewToolbar->ClearFilter();
 
 	// Display the model in the window title
 	SetTitle(std::string(_(WINDOW_TITLE)) + ": " + _model);
@@ -231,9 +286,6 @@ int SkinChooser::ShowModal()
 
 void SkinChooser::_onItemActivated(wxDataViewEvent& ev)
 {
-    // Don't respond to double clicks other than the skin tree view
-    if (ev.GetEventObject() != _treeView) return;
-
     _lastSkin = getSelectedSkin();
     EndModal(wxID_OK);
 }
@@ -241,34 +293,17 @@ void SkinChooser::_onItemActivated(wxDataViewEvent& ev)
 // Populate the list of skins
 void SkinChooser::populateSkins()
 {
-    _treeView->Populate(std::make_shared<ThreadedSkinLoader>(_columns, _model, _allSkinsItem, _matchingSkinsItem));
+    _selector->Populate(_model);
 }
 
 std::string SkinChooser::getSelectedSkin()
 {
-    return _treeView->GetSelectedDeclName();
+    return _selector->GetSelectedDeclName();
 }
 
 void SkinChooser::setSelectedSkin(const std::string& skin)
 {
-    // Search in the matching skins tree first
-    auto item = _treeView->GetTreeModel()->FindString(skin, _columns.declName, _matchingSkinsItem);
-
-    if (!item.IsOk())
-    {
-        // Fall back to the All Skins tree
-        item = _treeView->GetTreeModel()->FindString(skin, _columns.declName, _allSkinsItem);
-    }
-
-    if (item.IsOk())
-    {
-        _treeView->Select(item);
-        _treeView->EnsureVisible(item);
-    }
-    else
-    {
-        _treeView->UnselectAll();
-    }
+    _selector->SetSelectedDeclName(skin);
 
     handleSelectionChange();
 }
@@ -299,18 +334,6 @@ void SkinChooser::handleSelectionChange()
     _preview->setModel(_model);
     _preview->setSkin(selectedSkin);
 
-    if (!selectedSkin.empty())
-    {
-        _fileInfo->setName(selectedSkin);
-        auto skin = GlobalModelSkinCache().findSkin(selectedSkin);
-        _fileInfo->setPath(skin->getDeclFilePath());
-    }
-    else
-    {
-        _fileInfo->setName("-");
-        _fileInfo->setPath("-");
-    }
-
     updateMaterialsList();
 }
 
@@ -340,10 +363,6 @@ void SkinChooser::_onSelChanged(wxDataViewEvent& ev)
 
 void SkinChooser::_onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev)
 {
-    // Make sure the "matching skins" item is expanded
-    _treeView->Expand(_matchingSkinsItem);
-    _treeView->Collapse(_allSkinsItem);
-
     // Select the active skin
     setSelectedSkin(_prevSkin);
 }

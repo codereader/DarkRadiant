@@ -2,27 +2,20 @@
 
 #include <sigc++/connection.h>
 #include "imodel.h"
-#include "modelskin.h"
 
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/preview/ModelPreview.h"
-#include "wxutil/decl/DeclFileInfo.h"
 #include <string>
 
-#include "wxutil/dataview/TreeModel.h"
-#include "wxutil/dataview/DeclarationTreeView.h"
-#include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "ui/modelselector/MaterialsList.h"
-
-namespace wxutil { class TreeView; }
+#include "wxutil/dataview/ResourceTreeView.h"
 
 namespace ui
 {
 
-class SkinChooser;
-typedef std::shared_ptr<SkinChooser> SkinChooserPtr;
+class SkinSelector;
 
-/** Dialog to allow selection of skins for a model entity. Skins are grouped
+/** Dialog to allow selection of skins for a model. Skins are grouped
  * into two toplevel categories - matching skins which are associated with the
  * model, and all skins available.
  */
@@ -30,14 +23,8 @@ class SkinChooser :
 	public wxutil::DialogBase
 {
 private:
-    wxutil::DeclarationTreeView::Columns _columns;
-
-	wxutil::TreeModel::Ptr _treeStore;
-	wxutil::DeclarationTreeView* _treeView;
-    wxutil::ResourceTreeViewToolbar* _treeViewToolbar;
+    SkinSelector* _selector;
     MaterialsList* _materialsList;
-
-    wxutil::DeclFileInfo* _fileInfo;
 
 	// The model name to use for skin matching
 	std::string _model;
@@ -48,9 +35,6 @@ private:
 
 	// Model preview widget
     wxutil::ModelPreviewPtr _preview;
-
-    wxDataViewItem _allSkinsItem;
-    wxDataViewItem _matchingSkinsItem;
 
     sigc::connection _modelLoadedConn;
 
