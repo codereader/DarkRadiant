@@ -32,8 +32,6 @@ namespace
     constexpr const char* const TITLE_ADD_ENTITY = N_("Create Entity");
     constexpr const char* const TITLE_CONVERT_TO_ENTITY = N_("Convert to Entity");
     constexpr const char* const TITLE_SELECT_ENTITY = N_("Select Entity Class");
-    constexpr const char* const RKEY_SPLIT_POS = "user/ui/entityClassChooser/splitPos";
-    constexpr const char* const RKEY_WINDOW_STATE = "user/ui/entityClassChooser/window";
     constexpr const char* const RKEY_LAST_SELECTED_ECLASS = "user/ui/entityClassChooser/lastSelectedEclass";
 
     constexpr const char* const FOLDER_ICON = "folder16.png";
@@ -275,6 +273,9 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
     mainSizer->Add(buttonSizer, 0, wxALIGN_RIGHT, 12);
 
     loadEntityClasses();
+
+    // Save the state of the selector widget on dialog close
+    RegisterPersistableObject(_selector);
 }
 
 EntityClassChooser::~EntityClassChooser()
@@ -339,8 +340,6 @@ int EntityClassChooser::ShowModal()
     _selector->FocusTreeView();
 
     int returnCode = DialogBase::ShowModal();
-
-    _panedPosition.saveToPath(RKEY_SPLIT_POS);
 
     return returnCode;
 }

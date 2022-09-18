@@ -1,8 +1,6 @@
 #pragma once
 
 #include "dialog/DialogBase.h"
-#include "PanedPosition.h"
-#include "WindowPosition.h"
 
 #include <sigc++/connection.h>
 #include <wx/dataview.h>
@@ -31,8 +29,6 @@ public:
 
 private:
     EntityClassSelector* _selector;
-
-    PanedPosition _panedPosition;
 
     sigc::connection _defsReloaded;
 

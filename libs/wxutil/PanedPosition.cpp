@@ -6,7 +6,7 @@
 
 namespace
 {
-    const int DEFAULT_POSITION = 200;
+    constexpr int DEFAULT_POSITION = 200;
 }
 
 namespace wxutil
@@ -27,16 +27,14 @@ void PanedPosition::connect(wxSplitterWindow* paned)
 
     _paned = paned;
 
-    _paned->Bind(wxEVT_SPLITTER_SASH_POS_CHANGED,
-                 &PanedPosition::onPositionChange, this);
+    _paned->Bind(wxEVT_SPLITTER_SASH_POS_CHANGED, &PanedPosition::onPositionChange, this);
 }
 
 void PanedPosition::disconnect()
 {
     if (_paned)
     {
-        _paned->Unbind(wxEVT_SPLITTER_SASH_POS_CHANGED,
-                       &PanedPosition::onPositionChange, this);
+        _paned->Unbind(wxEVT_SPLITTER_SASH_POS_CHANGED, &PanedPosition::onPositionChange, this);
 
         _paned.Release();
     }

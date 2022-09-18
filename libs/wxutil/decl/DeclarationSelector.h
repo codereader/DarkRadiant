@@ -2,11 +2,13 @@
 
 #include <vector>
 #include "idecltypes.h"
+#include "ui/iwindowstate.h"
 #include <wx/panel.h>
 #include <wx/sizer.h>
 
 #include "ui/ideclpreview.h"
 #include "../dataview/DeclarationTreeView.h"
+#include "wxutil/PanedPosition.h"
 
 namespace wxutil
 {
@@ -19,7 +21,8 @@ class DeclFileInfo;
  * Preview widgets can optionally be appended to the right or the bottom of the tree view.
  */
 class DeclarationSelector :
-    public wxPanel
+    public wxPanel,
+    public ui::IPersistableObject
 {
 private:
     decl::Type _declType;
@@ -36,6 +39,8 @@ private:
     std::vector<ui::IDeclarationPreview*> _previews;
 
     DeclFileInfo* _declFileInfo;
+
+    std::unique_ptr<PanedPosition> _panedPosition;
 
 public:
     // Construct a selector widget with the default set of tree view columns
@@ -62,6 +67,9 @@ public:
 
     // Set the focus on the treeview widget
     void FocusTreeView();
+
+    void loadFromPath(const std::string& registryKey) override;
+    void saveToPath(const std::string& registryKey) override;
 
 protected:
     DeclarationTreeView* GetTreeView() const;

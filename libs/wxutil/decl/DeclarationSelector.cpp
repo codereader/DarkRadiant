@@ -65,6 +65,9 @@ void DeclarationSelector::AddPreviewToRightPane(ui::IDeclarationPreview* preview
     splitter->SetMinimumPaneSize(200); // no unsplitting
     splitter->SplitVertically(_leftPanel, _rightPanel, 350);
 
+    _panedPosition = std::make_unique<PanedPosition>();
+    _panedPosition->connect(splitter);
+
     auto widget = preview->GetPreviewWidget();
 
     widget->Reparent(_rightPanel);
@@ -102,6 +105,22 @@ void DeclarationSelector::createTreeView(wxWindow* parent)
 void DeclarationSelector::FocusTreeView()
 {
     _treeView->SetFocus();
+}
+
+void DeclarationSelector::loadFromPath(const std::string& registryKey)
+{
+    if (_panedPosition)
+    {
+        _panedPosition->loadFromPath(registryKey);
+    }
+}
+
+void DeclarationSelector::saveToPath(const std::string& registryKey)
+{
+    if (_panedPosition)
+    {
+        _panedPosition->saveToPath(registryKey);
+    }
 }
 
 DeclarationTreeView* DeclarationSelector::GetTreeView() const
