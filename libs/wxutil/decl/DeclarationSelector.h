@@ -78,6 +78,8 @@ protected:
     void AddPreviewToRightPane(ui::IDeclarationPreview* preview, int sizerProportion = 1);
     void AddPreviewToBottom(ui::IDeclarationPreview* preview, int sizerProportion = 0);
 
+    void AddWidgetToBottom(wxWindow* widget, int sizerProportion = 0);
+
     const DeclarationTreeView::Columns& GetColumns() const;
 
     void PopulateTreeView(const IResourceTreePopulator::Ptr& populator);

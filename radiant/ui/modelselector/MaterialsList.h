@@ -62,7 +62,7 @@ public:
      * This indicates that a redraw will be needed based on the new material
      * visibility.
      */
-    sigc::signal<void> signal_visibilityChanged() const
+    sigc::signal<void>& signal_visibilityChanged()
     {
         return _visibilityChangedSignal;
     }

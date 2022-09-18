@@ -76,12 +76,17 @@ void DeclarationSelector::AddPreviewToRightPane(ui::IDeclarationPreview* preview
     _previews.push_back(preview);
 }
 
+void DeclarationSelector::AddWidgetToBottom(wxWindow* widget, int sizerProportion)
+{
+    widget->Reparent(_leftPanel);
+    _treeVbox->Add(widget, sizerProportion, wxEXPAND | wxTOP, 3);
+}
+
 void DeclarationSelector::AddPreviewToBottom(ui::IDeclarationPreview* preview, int sizerProportion)
 {
     auto widget = preview->GetPreviewWidget();
 
-    widget->Reparent(_leftPanel);
-    _treeVbox->Add(widget, sizerProportion, wxEXPAND | wxTOP, 3);
+    AddWidgetToBottom(widget, sizerProportion);
 
     _previews.push_back(preview);
 }

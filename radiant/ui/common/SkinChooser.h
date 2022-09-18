@@ -26,28 +26,13 @@ private:
 
     SkinSelector* _selector;
 
-	// The last skin selected, and the original (previous) skin
-	std::string _lastSkin;
-	std::string _prevSkin;
-
 private:
 	// Constructor creates widgets
 	SkinChooser(const std::string& model);
 
-	// Widget creation functions
-	void populateWindow();
-
-	// Populate the tree with skins
-	void populateSkins();
-
-	// callbacks
-    void _onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev);
-
 	// Retrieve the currently selected skin
 	std::string getSelectedSkin();
     void setSelectedSkin(const std::string& skin);
-
-    void _onItemActivated( wxDataViewEvent& ev );
 
 public:
 	int ShowModal() override;
