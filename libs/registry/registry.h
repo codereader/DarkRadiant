@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "string/convert.h"
+#include "string/predicate.h"
 
 #include "util/Noncopyable.h"
 
@@ -32,6 +33,14 @@ template<typename T> T getValue(const std::string& key, T defaultVal = T())
         return string::convert<T>(GlobalRegistry().get(key));
     else
         return defaultVal;
+}
+
+// Returns the concatenated paths, separated by a slash
+// The base path may or may not end with a slash
+// The subpath must not start with a slash
+inline std::string combinePath(std::string basePath, const std::string& subPath)
+{
+    return string::ends_with(basePath, "/") ? basePath + subPath : basePath + "/" + subPath;
 }
 
 /**

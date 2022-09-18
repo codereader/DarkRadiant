@@ -1,7 +1,7 @@
 #include "PanedPosition.h"
 
 #include "string/convert.h"
-#include "iregistry.h"
+#include "registry/registry.h"
 #include <wx/splitter.h>
 
 #include "string/predicate.h"
@@ -55,17 +55,12 @@ void PanedPosition::setPosition(int position)
 
 void PanedPosition::saveToPath(const std::string& path)
 {
-    GlobalRegistry().setAttribute(getRegistryPath(path), "position", string::to_string(_position));
+    GlobalRegistry().setAttribute(registry::combinePath(path, _name), "position", string::to_string(_position));
 }
 
 void PanedPosition::loadFromPath(const std::string& path)
 {
-    setPosition(string::convert<int>(GlobalRegistry().getAttribute(getRegistryPath(path), "position")));
-}
-
-std::string PanedPosition::getRegistryPath(const std::string& basePath)
-{
-    return string::ends_with(basePath, "/") ? basePath + _name : basePath + "/" + _name;
+    setPosition(string::convert<int>(GlobalRegistry().getAttribute(registry::combinePath(path, _name), "position")));
 }
 
 void PanedPosition::onPositionChange(wxSplitterEvent& ev)

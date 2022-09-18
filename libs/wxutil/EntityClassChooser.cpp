@@ -32,7 +32,6 @@ namespace
     constexpr const char* const TITLE_ADD_ENTITY = N_("Create Entity");
     constexpr const char* const TITLE_CONVERT_TO_ENTITY = N_("Convert to Entity");
     constexpr const char* const TITLE_SELECT_ENTITY = N_("Select Entity Class");
-    constexpr const char* const RKEY_LAST_SELECTED_ECLASS = "user/ui/entityClassChooser/lastSelectedEclass";
 
     constexpr const char* const FOLDER_ICON = "folder16.png";
     constexpr const char* const ENTITY_ICON = "cmenu_add_entity.png";
@@ -120,7 +119,7 @@ public:
                 );
                 row[_columns.fullName] = leafName;
                 row[_columns.leafName] = leafName;
-                row[_columns.declName] = eclass->getDeclName();
+                row[_columns.declName] = !isFolder ? eclass->getDeclName() : std::string();
 
                 row[_columns.isFolder] = isFolder;
                 row[_columns.isFavourite] = isFavourite;
@@ -235,7 +234,8 @@ public:
 
 EntityClassChooser::EntityClassChooser(Purpose purpose) :
     DialogBase(getDialogTitle(purpose), "EntityClassChooser"),
-    _selector(nullptr)
+    _selector(nullptr),
+    _restoreSelectionFromRegistry(true)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -275,6 +275,7 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
     loadEntityClasses();
 
     // Save the state of the selector widget on dialog close
+    RegisterPersistableObject(this);
     RegisterPersistableObject(_selector);
 }
 
@@ -287,26 +288,15 @@ std::string EntityClassChooser::ChooseEntityClass(Purpose purpose, const std::st
 {
     EntityClassChooser instance{ purpose };
 
-    // Fall back to the value we saved in the registry if we didn't get any other instructions
-    auto preselectEclass = !eclassToSelect.empty() ? eclassToSelect : 
-        registry::getValue<std::string>(RKEY_LAST_SELECTED_ECLASS);
-
-    if (!preselectEclass.empty())
+    // We'll fall back to the value saved in the registry if eclassToSelect is empty
+    if (!eclassToSelect.empty())
     {
-        instance.setSelectedEntityClass(preselectEclass);
+        instance.setSelectedEntityClass(eclassToSelect);
     }
 
     if (instance.ShowModal() == wxID_OK)
     {
-        auto selection = instance.getSelectedEntityClass();
-
-        // Remember this selection on OK
-        if (!selection.empty())
-        {
-            registry::setValue(RKEY_LAST_SELECTED_ECLASS, selection);
-        }
-
-        return selection;
+        return instance.getSelectedEntityClass();
     }
     
     return ""; // Empty selection on cancel
@@ -320,6 +310,7 @@ void EntityClassChooser::loadEntityClasses()
 void EntityClassChooser::setSelectedEntityClass(const std::string& eclass)
 {
     _selector->SetSelectedDeclName(eclass);
+    _restoreSelectionFromRegistry = false; // prevent this selection from being overwritten
 }
 
 std::string EntityClassChooser::getSelectedEntityClass() const
@@ -344,6 +335,23 @@ int EntityClassChooser::ShowModal()
     return returnCode;
 }
 
+void EntityClassChooser::loadFromPath(const std::string& registryKey)
+{
+    if (!_restoreSelectionFromRegistry) return;
+
+    auto lastSelectedDeclName = GlobalRegistry().getAttribute(registryKey, "lastSelectedDeclName");
+
+    if (!lastSelectedDeclName.empty())
+    {
+        setSelectedEntityClass(lastSelectedDeclName);
+    }
+}
+
+void EntityClassChooser::saveToPath(const std::string& registryKey)
+{
+    GlobalRegistry().setAttribute(registryKey, "lastSelectedDeclName", getSelectedEntityClass());
+}
+
 wxWindow* EntityClassChooser::setupSelector(wxWindow* parent)
 {
     _selector = new EntityClassSelector(parent);
@@ -356,9 +364,7 @@ wxWindow* EntityClassChooser::setupSelector(wxWindow* parent)
 
 void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev )
 {
-    auto selectedEclass = _selector->GetSelectedDeclName();
-
-    if (!selectedEclass.empty())
+    if (!_selector->GetSelectedDeclName().empty())
     {
         EndModal(wxID_OK);
     }

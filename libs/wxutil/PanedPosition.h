@@ -50,8 +50,6 @@ public:
 	void loadFromPath(const std::string& path) override;
 
 private:
-    std::string getRegistryPath(const std::string& basePath);
-
 	// The callback that gets invoked on position change
 	void onPositionChange(wxSplitterEvent& ev);
 };

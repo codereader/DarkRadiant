@@ -1,6 +1,7 @@
 #pragma once
 
 #include "dialog/DialogBase.h"
+#include "ui/iwindowstate.h"
 
 #include <sigc++/connection.h>
 #include <wx/dataview.h>
@@ -15,7 +16,8 @@ class EntityClassSelector;
  * of a class to create at the current location.
  */
 class EntityClassChooser final :
-    public DialogBase
+    public DialogBase,
+    public ui::IPersistableObject
 {
 public:
     // Enumeration of possible modes of this dialog
@@ -33,6 +35,8 @@ private:
     sigc::connection _defsReloaded;
 
     wxButton* _affirmativeButton;
+
+    bool _restoreSelectionFromRegistry;
 
 private:
     EntityClassChooser(Purpose purpose);
@@ -61,6 +65,8 @@ private:
     int ShowModal() override;
 
 public:
+    void loadFromPath(const std::string& registryKey) override;
+    void saveToPath(const std::string& registryKey) override;
 
     /**
      * \brief Construct and show the dialog to choose an entity class,
