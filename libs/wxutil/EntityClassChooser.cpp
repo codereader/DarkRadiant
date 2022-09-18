@@ -260,8 +260,6 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
         [this]() { GlobalUserInterface().dispatch([this]() { loadEntityClasses(); }); }
     );
 
-    Bind(wxEVT_CLOSE_WINDOW, &EntityClassChooser::onDeleteEvent, this);
-
     SetSelector(setupSelector(this));
 
     loadEntityClasses();
@@ -305,11 +303,6 @@ void EntityClassChooser::SetSelectedDeclName(const std::string& declName)
     _restoreSelectionFromRegistry = false; // prevent this selection from being overwritten
 }
 
-void EntityClassChooser::onDeleteEvent(wxCloseEvent& ev)
-{
-    EndModal(wxID_CANCEL); // break main loop
-}
-
 void EntityClassChooser::loadFromPath(const std::string& registryKey)
 {
     if (!_restoreSelectionFromRegistry) return;
@@ -330,18 +323,7 @@ void EntityClassChooser::saveToPath(const std::string& registryKey)
 EntityClassSelector* EntityClassChooser::setupSelector(wxWindow* parent)
 {
     _selector = new EntityClassSelector(parent);
-
-    _selector->Bind( wxEVT_DATAVIEW_ITEM_ACTIVATED, &EntityClassChooser::_onItemActivated, this );
-
     return _selector;
-}
-
-void EntityClassChooser::_onItemActivated( wxDataViewEvent& ev )
-{
-    if (!_selector->GetSelectedDeclName().empty())
-    {
-        EndModal(wxID_OK);
-    }
 }
 
 } // namespace ui

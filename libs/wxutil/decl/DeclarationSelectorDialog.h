@@ -48,7 +48,8 @@ protected:
 
 private:
     void HandleTreeViewSelectionChanged();
-    void onTreeViewSelectionChanged(wxDataViewEvent& ev);
+    void onDeclSelectionChanged(wxDataViewEvent& ev);
+    void onDeclItemActivated(wxDataViewEvent& ev);
 };
 
 }

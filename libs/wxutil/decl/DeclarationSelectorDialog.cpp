@@ -39,7 +39,8 @@ void DeclarationSelectorDialog::SetSelector(DeclarationSelector* selector)
     _mainSizer->Prepend(_selector, 1, wxEXPAND | wxBOTTOM, 12);
 
     // Update the affirmative button's sensitivity based on the selection
-    _selector->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &DeclarationSelectorDialog::onTreeViewSelectionChanged, this);
+    _selector->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &DeclarationSelectorDialog::onDeclSelectionChanged, this);
+    _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &DeclarationSelectorDialog::onDeclItemActivated, this);
 
     // The selector state should be persisted on dialog close
     RegisterPersistableObject(_selector);
@@ -79,9 +80,18 @@ void DeclarationSelectorDialog::HandleTreeViewSelectionChanged()
     GetAffirmativeButton()->Enable(!_selector->GetSelectedDeclName().empty());
 }
 
-void DeclarationSelectorDialog::onTreeViewSelectionChanged(wxDataViewEvent&)
+void DeclarationSelectorDialog::onDeclSelectionChanged(wxDataViewEvent&)
 {
     HandleTreeViewSelectionChanged();
+}
+
+void DeclarationSelectorDialog::onDeclItemActivated(wxDataViewEvent&)
+{
+    // Double-clicking a valid decl item positively closes the dialog
+    if (!_selector->GetSelectedDeclName().empty())
+    {
+        EndModal(wxID_OK);
+    }
 }
 
 }

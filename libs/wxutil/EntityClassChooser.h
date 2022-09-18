@@ -44,11 +44,6 @@ private:
 
     EntityClassSelector* setupSelector(wxWindow * parent);
 
-    // Button callbacks
-    void onDeleteEvent(wxCloseEvent& ev);
-
-    void _onItemActivated( wxDataViewEvent& ev );
-
 public:
     void loadFromPath(const std::string& registryKey) override;
     void saveToPath(const std::string& registryKey) override;
