@@ -39,7 +39,7 @@ void SkinPropertyEditor::onBrowseButtonClick()
 
 	// Display the SkinChooser to get a skin from the user
 	std::string prevSkin = _entities.getSharedKeyValue(_key->getFullKey(), true);
-	std::string skin = SkinChooser::chooseSkin(model, prevSkin);
+	std::string skin = SkinChooser::ChooseSkin(model, prevSkin);
 
 	// Apply the key to the entity
 	setKeyValue(_key->getFullKey(), skin);
@@ -49,7 +49,7 @@ std::string SkinChooserDialogWrapper::runDialog(Entity* entity, const std::strin
 {
     std::string modelName = entity->getKeyValue("model");
     std::string prevSkin = entity->getKeyValue(key);
-    std::string skin = SkinChooser::chooseSkin(modelName, prevSkin);
+    std::string skin = SkinChooser::ChooseSkin(modelName, prevSkin);
 
     // return the new value
     return skin;

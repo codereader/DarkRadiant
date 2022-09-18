@@ -132,7 +132,7 @@ void ModelPropertyEditor::_onSkinButton(wxCommandEvent& ev)
     skinKey->setAffectedKey("skin");
 
 	std::string prevSkin = _entities.getSharedKeyValue(skinKey->getFullKey(), true);
-	std::string skin = SkinChooser::chooseSkin(model, prevSkin);
+	std::string skin = SkinChooser::ChooseSkin(model, prevSkin);
 
 	if (skin != prevSkin)
 	{

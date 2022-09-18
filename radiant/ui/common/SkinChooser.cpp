@@ -3,8 +3,6 @@
 #include "i18n.h"
 #include "modelskin.h"
 
-#include <wx/sizer.h>
-#include <wx/splitter.h>
 #include "fmt/format.h"
 
 #include "ifavourites.h"
@@ -21,7 +19,6 @@ namespace ui
 namespace
 {
 	constexpr const char* SKIN_ICON = "skin16.png";
-
 	constexpr const char* const WINDOW_TITLE = N_("Choose Skin");
 
     /**
@@ -163,6 +160,8 @@ public:
         _materialsList->signal_visibilityChanged().connect(
             sigc::mem_fun(*_preview, &wxutil::ModelPreview::queueDraw)
         );
+
+        Populate();
     }
 
     void Populate() override
@@ -250,58 +249,32 @@ private:
 };
 
 SkinChooser::SkinChooser(const std::string& model) :
-	DialogBase(_(WINDOW_TITLE), "SkinChooser"),
-    _model(model),
-    _selector(nullptr)
+    DeclarationSelectorDialog(decl::Type::Skin, _(WINDOW_TITLE), "SkinChooser"),
+    _model(model)
 {
-	SetSizer(new wxBoxSizer(wxVERTICAL));
-
-	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
-	GetSizer()->Add(vbox, 1, wxEXPAND | wxALL, 12);
-
-    _selector = new SkinSelector(this, _model);
-
-    // Double-clicks on a skin closes the dialog
-    _selector->signal_skinActivated().connect([this]() { EndModal(wxID_OK); });
-
-    vbox->Add(_selector, 1, wxEXPAND);
-	vbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 0, wxALIGN_RIGHT | wxTOP, 12);
-
-    RegisterPersistableObject(_selector);
+    SetSelector(new SkinSelector(this, _model));
 }
 
 int SkinChooser::ShowModal()
 {
-    _selector->Populate();
-
 	// Display the model in the window title
 	SetTitle(fmt::format("{0}: {1}", _(WINDOW_TITLE), _model));
 
-	return DialogBase::ShowModal();
+	return DeclarationSelectorDialog::ShowModal();
 }
 
-std::string SkinChooser::getSelectedSkin()
-{
-    return _selector->GetSelectedDeclName();
-}
-
-void SkinChooser::setSelectedSkin(const std::string& skin)
-{
-    _selector->SetSelectedDeclName(skin);
-}
-
-std::string SkinChooser::chooseSkin(const std::string& model, const std::string& prev)
+std::string SkinChooser::ChooseSkin(const std::string& model, const std::string& prev)
 {
     auto dialog = new SkinChooser(model);
 
     // We return the previous skin, unless the dialog returns OK
     auto selectedSkin = prev;
 
-    dialog->setSelectedSkin(selectedSkin);
+    dialog->SetSelectedDeclName(selectedSkin);
 
     if (dialog->ShowModal() == wxID_OK)
     {
-        selectedSkin = dialog->getSelectedSkin();
+        selectedSkin = dialog->GetSelectedDeclName();
     }
 
     dialog->Destroy();
