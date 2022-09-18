@@ -23,6 +23,11 @@ WindowPosition::WindowPosition() :
 	_window(nullptr)
 {}
 
+void WindowPosition::initialise(wxTopLevelWindow* window, const std::string& windowStateKey)
+{
+    initialise(window, windowStateKey, 0.6f, 0.8f);
+}
+
 void WindowPosition::initialise(wxTopLevelWindow* window, 
                                 const std::string& windowStateKey,
                                 float defaultXFraction, 
@@ -91,6 +96,8 @@ void WindowPosition::setSize(int width, int height)
 
 void WindowPosition::saveToPath(const std::string& path)
 {
+    if (path.empty()) return;
+
 	GlobalRegistry().setAttribute(path, "xPosition", string::to_string(_position[0]));
 	GlobalRegistry().setAttribute(path, "yPosition", string::to_string(_position[1]));
 	GlobalRegistry().setAttribute(path, "width", string::to_string(_size[0]));
@@ -99,11 +106,21 @@ void WindowPosition::saveToPath(const std::string& path)
 
 void WindowPosition::loadFromPath(const std::string& path)
 {
+    if (path.empty()) return;
+
 	_position[0] = string::convert<int>(GlobalRegistry().getAttribute(path, "xPosition"));
 	_position[1] = string::convert<int>(GlobalRegistry().getAttribute(path, "yPosition"));
 
 	_size[0] = string::convert<int>(GlobalRegistry().getAttribute(path, "width"));
 	_size[1] = string::convert<int>(GlobalRegistry().getAttribute(path, "height"));
+
+    if (_size[0] == 0 || _size[1] == 0)
+    {
+        auto defaultXFraction = string::convert<float>(GlobalRegistry().getAttribute(path, "defaultWidthFraction"));
+        auto defaultYFraction = string::convert<float>(GlobalRegistry().getAttribute(path, "defaultHeightFraction"));
+
+        fitToScreen(defaultXFraction, defaultYFraction);
+    }
 }
 
 void WindowPosition::applyPosition()

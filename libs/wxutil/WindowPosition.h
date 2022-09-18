@@ -42,6 +42,10 @@ public:
     void initialise(wxTopLevelWindow* window, const std::string& windowStateKey,
                     float defaultXFraction, float defaultYFraction);
 
+    // All-in-one method to connect a window and load its state from the given path.
+    // Default X/Y fractions will be read from the given key, otherwise a default size will be set.
+    void initialise(wxTopLevelWindow* window, const std::string& windowStateKey);
+
 	// Connect the passed window to this object
 	void connect(wxTopLevelWindow* window);
 	void disconnect(wxTopLevelWindow* window);

@@ -32,7 +32,6 @@ public:
 private:
     EntityClassSelector* _selector;
 
-    WindowPosition _windowPosition;
     PanedPosition _panedPosition;
 
     sigc::connection _defsReloaded;

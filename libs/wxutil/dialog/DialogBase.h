@@ -1,18 +1,41 @@
 #pragma once
 
+#include <string>
 #include <wx/dialog.h>
+#include "../WindowPosition.h"
 
 namespace wxutil
 {
 
 /**
  * \brief Base class for many DarkRadiant dialogs.
+ *
+ * This base implementation will listen to ESC keys to close the dialog.
+ *
+ * If a dialog name has been passed to the constructor, the window will 
+ * save its state to the registry on close (and restore it in ShowModal()).
  */
 class DialogBase : public wxDialog
 {
+private:
+    WindowPosition _windowPosition;
+
 public:
-    /// Construct and initialise
-    DialogBase(const std::string& title, wxWindow* parent = nullptr);
+    /// Construct and initialise a dialog that is a child of DarkRadiant's main window (if present)
+    DialogBase(const std::string& title);
+
+    // Construct a dialog that is child of the given parent window (if the window is nullptr, the
+    // dialog will try to be a child to DarkRadiant's main window)
+    DialogBase(const std::string& title, wxWindow* parent);
+
+    // Construct and initialise a named dialog that is a child of DarkRadiant's main window (if present)
+    // The name should not have any spaces or special characters in it, keep it alphanumeric
+    DialogBase(const std::string& title, const std::string& windowName);
+
+    // Construct a named dialog that is child of the given parent (if parent is nullptr, the
+    // dialog will try to be a child to DarkRadiant's main window)
+    // The name should not have any spaces or special characters in it, keep it alphanumeric
+    DialogBase(const std::string& title, wxWindow* parent, const std::string& windowName);
 
     /**
      * Adjust this window to fit the display DarkRadiant is currently (mainly)
@@ -25,6 +48,9 @@ public:
     int ShowModal() override;
 
 protected:
+    // Returns the registry path to this window's serialized state
+    std::string GetWindowStatePath();
+
     // Overrideable: return true to prevent the window from being deleted
     virtual bool _onDeleteEvent();
 };

@@ -336,5 +336,10 @@
           <autoFetchInterval value="10" />
       </git>
     </vcs>
+    <windowStates>
+        <!-- Default Width/Height Fraction defines the proportion of the screen size 
+             this window will take if no size information has been saved so far -->
+        <EntityClassChooser defaultWidthFraction="0.7" defaultHeightFraction="0.8" />
+    </windowStates>
   </ui>
 </user>

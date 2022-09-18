@@ -236,7 +236,7 @@ public:
 };
 
 EntityClassChooser::EntityClassChooser(Purpose purpose) :
-    DialogBase(getDialogTitle(purpose)),
+    DialogBase(getDialogTitle(purpose), "EntityClassChooser"),
     _selector(nullptr)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -275,9 +275,6 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
     mainSizer->Add(buttonSizer, 0, wxALIGN_RIGHT, 12);
 
     loadEntityClasses();
-
-    // Persist layout to registry
-    _windowPosition.initialise(this, RKEY_WINDOW_STATE, 0.7f, 0.8f);
 }
 
 EntityClassChooser::~EntityClassChooser()
@@ -336,8 +333,6 @@ void EntityClassChooser::onDeleteEvent(wxCloseEvent& ev)
 
 int EntityClassChooser::ShowModal()
 {
-    _windowPosition.applyPosition();
-
     // Update the member variables
     updateSelection();
 
@@ -346,7 +341,6 @@ int EntityClassChooser::ShowModal()
     int returnCode = DialogBase::ShowModal();
 
     _panedPosition.saveToPath(RKEY_SPLIT_POS);
-    _windowPosition.saveToPath(RKEY_WINDOW_STATE);
 
     return returnCode;
 }
