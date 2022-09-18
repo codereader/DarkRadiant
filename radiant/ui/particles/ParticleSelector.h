@@ -28,9 +28,10 @@ public:
     std::string GetSelectedParticle();
     void SetSelectedParticle(const std::string& particleName);
 
-private:
     // Populate the list of particles
-    void populateParticleList();
+    void Populate() override;
+
+private:
     void reloadParticles();
 };
 

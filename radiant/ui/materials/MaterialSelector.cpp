@@ -82,6 +82,11 @@ MaterialSelector::MaterialSelector(wxWindow* parent, const std::function<void()>
 {
     AddPreviewToBottom(new TexturePreviewCombo(this));
 
+    Populate();
+}
+
+void MaterialSelector::Populate()
+{
     PopulateTreeView(std::make_shared<ThreadedMaterialLoader>(GetColumns(), _textureFilter));
 }
 

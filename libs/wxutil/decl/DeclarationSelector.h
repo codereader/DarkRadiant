@@ -71,6 +71,9 @@ public:
     void loadFromPath(const std::string& registryKey) override;
     void saveToPath(const std::string& registryKey) override;
 
+    // (Re-)populate the tree view, must be implemented by subclasses
+    virtual void Populate() = 0;
+
 protected:
     DeclarationTreeView* GetTreeView() const;
 

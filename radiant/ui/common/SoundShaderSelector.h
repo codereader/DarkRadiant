@@ -76,12 +76,12 @@ public:
     {
         GetTreeView()->SetExpandTopLevelItemsAfterPopulation(true);
 
-        LoadSoundShaders();
+        Populate();
 
         AddPreviewToBottom(_preview);
     }
 
-    void LoadSoundShaders()
+    void Populate() override
     {
         PopulateTreeView(std::make_shared<ThreadedSoundShaderLoader>(GetColumns()));
     }

@@ -165,7 +165,7 @@ public:
         );
     }
 
-    void Populate()
+    void Populate() override
     {
         PopulateTreeView(std::make_shared<ThreadedSkinLoader>(GetColumns(), _model, _allSkinsItem, _matchingSkinsItem));
     }

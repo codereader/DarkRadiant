@@ -16,17 +16,17 @@ ParticleSelector::ParticleSelector(wxWindow* parent) :
         sigc::mem_fun(this, &ParticleSelector::reloadParticles)
     );
 
-    populateParticleList();
+    Populate();
 }
 
-void ParticleSelector::populateParticleList()
+void ParticleSelector::Populate()
 {
     PopulateTreeView(std::make_shared<ThreadedParticlesLoader>(GetColumns()));
 }
 
 void ParticleSelector::reloadParticles()
 {
-    populateParticleList();
+    Populate();
 }
 
 std::string ParticleSelector::GetSelectedParticle()

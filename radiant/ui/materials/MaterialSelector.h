@@ -50,6 +50,8 @@ public:
 	// Get the selected Material
 	MaterialPtr getSelectedShader();
 
+    void Populate() override;
+
 protected:
     void onTreeViewSelectionChanged() override;
 };

@@ -56,7 +56,7 @@ SoundChooser::SoundChooser(wxWindow* parent) :
 
 void SoundChooser::loadSoundShaders()
 {
-    _selector->LoadSoundShaders();
+    _selector->Populate();
 }
 
 std::string SoundChooser::getSelectedShader() const

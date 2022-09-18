@@ -226,7 +226,7 @@ public:
         AddPreviewToBottom(new EntityClassDescription(this));
     }
 
-    void LoadEntityClasses()
+    void Populate() override
     {
         PopulateTreeView(std::make_shared<ThreadedEntityClassLoader>(GetColumns()));
     }
@@ -293,7 +293,7 @@ std::string EntityClassChooser::ChooseEntityClass(Purpose purpose, const std::st
 
 void EntityClassChooser::loadEntityClasses()
 {
-    _selector->LoadEntityClasses();
+    _selector->Populate();
 }
 
 void EntityClassChooser::SetSelectedDeclName(const std::string& declName)
