@@ -65,7 +65,7 @@ void DeclarationSelector::AddPreviewToRightPane(ui::IDeclarationPreview* preview
     splitter->SetMinimumPaneSize(200); // no unsplitting
     splitter->SplitVertically(_leftPanel, _rightPanel, 350);
 
-    _panedPosition = std::make_unique<PanedPosition>();
+    _panedPosition = std::make_unique<PanedPosition>("selectorSplitter");
     _panedPosition->connect(splitter);
 
     auto widget = preview->GetPreviewWidget();

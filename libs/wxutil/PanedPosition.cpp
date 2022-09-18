@@ -4,6 +4,8 @@
 #include "iregistry.h"
 #include <wx/splitter.h>
 
+#include "string/predicate.h"
+
 namespace
 {
     constexpr int DEFAULT_POSITION = 200;
@@ -12,7 +14,8 @@ namespace
 namespace wxutil
 {
 
-PanedPosition::PanedPosition() :
+PanedPosition::PanedPosition(const std::string& name) :
+    _name(name),
     _position(DEFAULT_POSITION)
 {}
 
@@ -52,14 +55,17 @@ void PanedPosition::setPosition(int position)
 
 void PanedPosition::saveToPath(const std::string& path)
 {
-    GlobalRegistry().setAttribute(path, "position", string::to_string(_position));
+    GlobalRegistry().setAttribute(getRegistryPath(path), "position", string::to_string(_position));
 }
 
 void PanedPosition::loadFromPath(const std::string& path)
 {
-    setPosition(
-        string::convert<int>(GlobalRegistry().getAttribute(path, "position"))
-    );
+    setPosition(string::convert<int>(GlobalRegistry().getAttribute(getRegistryPath(path), "position")));
+}
+
+std::string PanedPosition::getRegistryPath(const std::string& basePath)
+{
+    return string::ends_with(basePath, "/") ? basePath + _name : basePath + "/" + _name;
 }
 
 void PanedPosition::onPositionChange(wxSplitterEvent& ev)

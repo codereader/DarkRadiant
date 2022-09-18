@@ -27,6 +27,8 @@ class PanedPosition :
     public ui::IPersistableObject
 {
 private:
+    std::string _name;
+
 	// The position of this object
 	int _position;
 
@@ -34,7 +36,7 @@ private:
 	wxWeakRef<wxSplitterWindow> _paned;
 
 public:
-	PanedPosition();
+	PanedPosition(const std::string& name = "splitter");
 
 	~PanedPosition();
 
@@ -48,6 +50,8 @@ public:
 	void loadFromPath(const std::string& path) override;
 
 private:
+    std::string getRegistryPath(const std::string& basePath);
+
 	// The callback that gets invoked on position change
 	void onPositionChange(wxSplitterEvent& ev);
 };
