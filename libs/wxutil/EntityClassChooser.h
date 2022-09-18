@@ -1,9 +1,6 @@
 #pragma once
 
 #include "decl/DeclarationSelectorDialog.h"
-#include "ui/iwindowstate.h"
-
-#include <wx/dataview.h>
 
 namespace wxutil
 {
@@ -13,8 +10,7 @@ namespace wxutil
  * of a class to create at the current location.
  */
 class EntityClassChooser final :
-    public DeclarationSelectorDialog,
-    public ui::IPersistableObject
+    public DeclarationSelectorDialog
 {
 public:
     // Enumeration of possible modes of this dialog
@@ -27,17 +23,11 @@ public:
     };
 
 private:
-    bool _restoreSelectionFromRegistry;
-
-private:
     EntityClassChooser(Purpose purpose);
 
+    static std::string GetDialogTitle(Purpose purpose);
+
 public:
-    void loadFromPath(const std::string& registryKey) override;
-    void saveToPath(const std::string& registryKey) override;
-
-    void SetSelectedDeclName(const std::string& declName) override;
-
     /**
      * \brief Construct and show the dialog to choose an entity class,
      * returning the result.

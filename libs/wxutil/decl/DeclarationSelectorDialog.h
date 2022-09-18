@@ -2,6 +2,7 @@
 
 #include <wx/dataview.h>
 
+#include "ui/iwindowstate.h"
 #include "idecltypes.h"
 #include "../dialog/DialogBase.h"
 
@@ -20,7 +21,8 @@ class DeclarationSelector;
  * of the active selection.
  */
 class DeclarationSelectorDialog :
-    public DialogBase
+    public DialogBase,
+    public ui::IPersistableObject
 {
 private:
     decl::Type _declType;
@@ -28,6 +30,8 @@ private:
     DeclarationSelector* _selector;
     wxSizer* _mainSizer;
     wxStdDialogButtonSizer* _buttonSizer;
+
+    bool _restoreSelectionFromRegistry;
 
 public:
     DeclarationSelectorDialog(decl::Type declType, const std::string& title, 
@@ -40,6 +44,9 @@ public:
     virtual void SetSelectedDeclName(const std::string& declName);
 
     int ShowModal() override;
+
+    void loadFromPath(const std::string& registryKey) override;
+    void saveToPath(const std::string& registryKey) override;
 
 protected:
     void SetSelector(DeclarationSelector* selector);

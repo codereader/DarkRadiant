@@ -4,6 +4,8 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 
+#include "iregistry.h"
+
 namespace wxutil
 {
 
@@ -13,7 +15,8 @@ DeclarationSelectorDialog::DeclarationSelectorDialog(decl::Type declType,
     _declType(declType),
     _selector(nullptr),
     _mainSizer(nullptr),
-    _buttonSizer(nullptr)
+    _buttonSizer(nullptr),
+    _restoreSelectionFromRegistry(true)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -24,6 +27,9 @@ DeclarationSelectorDialog::DeclarationSelectorDialog(decl::Type declType,
     // Button row
     _buttonSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
     _mainSizer->Add(_buttonSizer, 0, wxALIGN_RIGHT, 12);
+
+    // Save the state of this dialog on close
+    RegisterPersistableObject(this);
 }
 
 void DeclarationSelectorDialog::SetSelector(DeclarationSelector* selector)
@@ -54,6 +60,7 @@ std::string DeclarationSelectorDialog::GetSelectedDeclName()
 void DeclarationSelectorDialog::SetSelectedDeclName(const std::string& declName)
 {
     _selector->SetSelectedDeclName(declName);
+    _restoreSelectionFromRegistry = false; // prevent this selection from being overwrittenvoid
 }
 
 int DeclarationSelectorDialog::ShowModal()
@@ -92,6 +99,23 @@ void DeclarationSelectorDialog::onDeclItemActivated(wxDataViewEvent&)
     {
         EndModal(wxID_OK);
     }
+}
+
+void DeclarationSelectorDialog::loadFromPath(const std::string& registryKey)
+{
+    if (!_restoreSelectionFromRegistry) return;
+
+    auto lastSelectedDeclName = GlobalRegistry().getAttribute(registryKey, "lastSelectedDeclName");
+
+    if (!lastSelectedDeclName.empty())
+    {
+        SetSelectedDeclName(lastSelectedDeclName);
+    }
+}
+
+void DeclarationSelectorDialog::saveToPath(const std::string& registryKey)
+{
+    GlobalRegistry().setAttribute(registryKey, "lastSelectedDeclName", GetSelectedDeclName());
 }
 
 }

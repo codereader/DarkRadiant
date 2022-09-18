@@ -10,12 +10,10 @@
 #include "i18n.h"
 #include "ifavourites.h"
 #include "ideclmanager.h"
-#include "ui/iuserinterface.h"
 #include "gamelib.h"
 
 #include <wx/button.h>
 #include <wx/panel.h>
-#include <wx/splitter.h>
 #include "wxutil/Bitmap.h"
 #include "wxutil/Icon.h"
 
@@ -38,18 +36,6 @@ namespace
 
     // Registry XPath to lookup key that specifies the display folder
     constexpr const char* const FOLDER_KEY_PATH = "/entityChooser/displayFolderKey";
-
-    std::string getDialogTitle(EntityClassChooser::Purpose purpose)
-    {
-        switch (purpose)
-        {
-        case EntityClassChooser::Purpose::AddEntity: return _(TITLE_ADD_ENTITY);
-        case EntityClassChooser::Purpose::ConvertEntity: return _(TITLE_CONVERT_TO_ENTITY);
-        case EntityClassChooser::Purpose::SelectClassname: return _(TITLE_SELECT_ENTITY);
-        default:
-            throw std::logic_error("Unknown entity class chooser purpose");
-        }
-    }
 }
 
 /*
@@ -91,7 +77,7 @@ public:
     }
 
     // EntityClassVisitor implementation
-    void visit(const IEntityClassPtr& eclass)
+    void visit(const IEntityClassPtr& eclass) override
     {
         // Skip hidden entity classes
         if (eclass->getVisibility() == vfs::Visibility::HIDDEN)
@@ -235,8 +221,7 @@ public:
 };
 
 EntityClassChooser::EntityClassChooser(Purpose purpose) :
-    DeclarationSelectorDialog(decl::Type::EntityDef, getDialogTitle(purpose), "EntityClassChooser"),
-    _restoreSelectionFromRegistry(true)
+    DeclarationSelectorDialog(decl::Type::EntityDef, GetDialogTitle(purpose), "EntityClassChooser")
 {
     auto affirmativeButton = GetAffirmativeButton();
 
@@ -256,9 +241,6 @@ EntityClassChooser::EntityClassChooser(Purpose purpose) :
     }
 
     SetSelector(new EntityClassSelector(this));
-
-    // Save the state of the selector widget on dialog close
-    RegisterPersistableObject(this);
 }
 
 std::string EntityClassChooser::ChooseEntityClass(Purpose purpose, const std::string& eclassToSelect)
@@ -279,28 +261,16 @@ std::string EntityClassChooser::ChooseEntityClass(Purpose purpose, const std::st
     return ""; // Empty selection on cancel
 }
 
-void EntityClassChooser::SetSelectedDeclName(const std::string& declName)
+std::string EntityClassChooser::GetDialogTitle(Purpose purpose)
 {
-    DeclarationSelectorDialog::SetSelectedDeclName(declName);
-    
-    _restoreSelectionFromRegistry = false; // prevent this selection from being overwritten
-}
-
-void EntityClassChooser::loadFromPath(const std::string& registryKey)
-{
-    if (!_restoreSelectionFromRegistry) return;
-
-    auto lastSelectedDeclName = GlobalRegistry().getAttribute(registryKey, "lastSelectedDeclName");
-
-    if (!lastSelectedDeclName.empty())
+    switch (purpose)
     {
-        SetSelectedDeclName(lastSelectedDeclName);
+    case Purpose::AddEntity: return _(TITLE_ADD_ENTITY);
+    case Purpose::ConvertEntity: return _(TITLE_CONVERT_TO_ENTITY);
+    case Purpose::SelectClassname: return _(TITLE_SELECT_ENTITY);
+    default:
+        throw std::logic_error("Unknown EntityClassChooser purpose");
     }
-}
-
-void EntityClassChooser::saveToPath(const std::string& registryKey)
-{
-    GlobalRegistry().setAttribute(registryKey, "lastSelectedDeclName", GetSelectedDeclName());
 }
 
 } // namespace ui
