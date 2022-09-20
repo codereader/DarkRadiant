@@ -126,11 +126,17 @@ public:
 	// Tries to (recursively) locate the MenuElement by looking up the path
 	MenuElementPtr find(const std::string& menuPath);
 
-	/**
-	 * Parses the given XML node recursively and creates all items from the 
-	 * information it finds. Returns the constructed MenuElement.
-	 */
-	static MenuElementPtr CreateFromNode(const xml::Node& node);
+    /**
+     * @brief Parses the given XML node recursively and creates all items from the
+     * information it finds.
+     * 
+     * @param node 
+     * XML node containing the menu information.
+     *
+     * @return Constructed MenuElement pointer or null if the menu item is not required in
+     * the current game configuration.
+     */
+    static MenuElementPtr CreateFromNode(const xml::Node& node);
 
 	/**
 	 * Constructs a menu element for the given type

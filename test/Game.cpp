@@ -64,6 +64,10 @@ TEST_F(GameTest, GetOptionalFeatures)
     // Only Quake 3 should have the "detail_brushes" feature
     EXPECT_FALSE((*tdm)->hasFeature("detail_brushes"));
     EXPECT_TRUE((*q3)->hasFeature("detail_brushes"));
+
+    // Only Dark Mod should have the "hot_reload" feature
+    EXPECT_TRUE((*tdm)->hasFeature("hot_reload"));
+    EXPECT_FALSE((*q3)->hasFeature("hot_reload"));
 }
 
 }
