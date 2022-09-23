@@ -211,6 +211,7 @@
 		<property match="bindToJoint" category="Links" type="text" />
 		<property match="s_shader" category="Sound" type="sound" />
     <property match="fx" category="Basic" type="fx" />
+    <property match="fx_.+" category="Basic" type="fx" />
 		<property match="snd_.*" category="Sound" type="sound" hidden="1" />
 		<property match="s_mindistance" category="Sound" type="text" />
 		<property match="s_maxdistance" category="Sound" type="text" />
