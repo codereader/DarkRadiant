@@ -25,8 +25,11 @@ DeclarationSelectorDialog::DeclarationSelectorDialog(decl::Type declType,
     GetSizer()->Add(_mainSizer, 1, wxEXPAND | wxALL, 12);
 
     // Button row
+    _bottomRowSizer = new wxBoxSizer(wxHORIZONTAL);
     _buttonSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
-    _mainSizer->Add(_buttonSizer, 0, wxALIGN_RIGHT, 12);
+    _bottomRowSizer->Add(_buttonSizer, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 12);
+
+    _mainSizer->Add(_bottomRowSizer, 0, wxEXPAND, 12);
 
     // Save the state of this dialog on close
     RegisterPersistableObject(this);
@@ -50,6 +53,16 @@ void DeclarationSelectorDialog::SetSelector(DeclarationSelector* selector)
 
     // The selector state should be persisted on dialog close
     RegisterPersistableObject(_selector);
+}
+
+void DeclarationSelectorDialog::AddItemToBottomRow(wxWindow* widget)
+{
+    _bottomRowSizer->Prepend(widget, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+}
+
+void DeclarationSelectorDialog::AddItemToBottomRow(wxSizer* sizer)
+{
+    _bottomRowSizer->Prepend(sizer, 0, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
 }
 
 std::string DeclarationSelectorDialog::GetSelectedDeclName()

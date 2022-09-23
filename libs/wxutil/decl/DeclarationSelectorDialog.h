@@ -29,6 +29,7 @@ private:
 
     DeclarationSelector* _selector;
     wxSizer* _mainSizer;
+    wxSizer* _bottomRowSizer;
     wxStdDialogButtonSizer* _buttonSizer;
 
     bool _restoreSelectionFromRegistry;
@@ -50,6 +51,11 @@ public:
 
 protected:
     void SetSelector(DeclarationSelector* selector);
+
+    // Adds a widget to the bottom row, to the left of the standard buttons
+    void AddItemToBottomRow(wxWindow* widget);
+    // Adds a widget to the bottom row, to the left of the standard buttons
+    void AddItemToBottomRow(wxSizer* sizer);
 
     wxButton* GetAffirmativeButton();
 

@@ -341,6 +341,7 @@
              this window will take if no size information has been saved so far -->
         <EntityClassChooser defaultWidthFraction="0.7" defaultHeightFraction="0.8" />
         <SkinChooser defaultWidthFraction="0.7" defaultHeightFraction="0.8" />
+        <ParticleChooser defaultWidthFraction="0.7" defaultHeightFraction="0.8" />
     </windowStates>
   </ui>
 </user>

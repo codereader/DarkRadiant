@@ -2,9 +2,6 @@
 
 #include "i18n.h"
 
-#include "wxutil/dataview/ThreadedResourceTreePopulator.h"
-#include "wxutil/dataview/TreeViewItemStyle.h"
-
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/radiobut.h>
@@ -13,16 +10,12 @@ namespace ui
 {
 
 ParticleChooserDialog::ParticleChooserDialog(bool showClassnameSelector) :
-	DialogBase(_("Choose Particle")),
+    DeclarationSelectorDialog(decl::Type::Particle, _("Choose Particle"), "ParticleChooser"),
     _selector(new ParticleSelector(this)),
     _funcEmitter(nullptr),
     _funcSmoke(nullptr)
 {
-	SetSizer(new wxBoxSizer(wxVERTICAL));
-	
-	GetSizer()->Add(_selector, 1, wxEXPAND | wxALL, 12);
-
-    auto bottomHbox = new wxBoxSizer(wxHORIZONTAL);
+    SetSelector(_selector);
 
     if (showClassnameSelector)
     {
@@ -39,16 +32,8 @@ ParticleChooserDialog::ParticleChooserDialog(bool showClassnameSelector) :
         radioHbox->Add(_funcEmitter, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 12);
         radioHbox->Add(_funcSmoke, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
 
-        bottomHbox->Add(radioHbox, 0, wxLEFT, 12);
+        AddItemToBottomRow(radioHbox);
     }
-
-    bottomHbox->Add(CreateStdDialogButtonSizer(wxOK | wxCANCEL), 1, wxALIGN_CENTER_VERTICAL);
-
-	GetSizer()->Add(bottomHbox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
-
-	FitToScreen(0.5f, 0.6f);
-
-    _selector->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &ParticleChooserDialog::_onItemActivated, this);
 }
 
 std::string ParticleChooserDialog::getSelectedClassname()
@@ -56,11 +41,6 @@ std::string ParticleChooserDialog::getSelectedClassname()
     if (_funcSmoke == nullptr || _funcEmitter == nullptr) return "";
 
     return _funcEmitter->GetValue() ? "func_emitter" : "func_smoke";
-}
-
-void ParticleChooserDialog::_onItemActivated(wxDataViewEvent& ev)
-{
-    EndModal(wxID_OK);
 }
 
 std::string ParticleChooserDialog::ChooseParticle(const std::string& currentParticle)
@@ -77,6 +57,7 @@ ParticleChooserDialog::SelectionResult ParticleChooserDialog::RunDialog(bool sho
 {
     auto* dialog = new ParticleChooserDialog(showClassnameSelector);
 
+    // Prefer SetSelectedParticle to handle the .prt extension
     dialog->_selector->SetSelectedParticle(currentParticle);
 
     auto result = dialog->ShowModal();
@@ -85,6 +66,7 @@ ParticleChooserDialog::SelectionResult ParticleChooserDialog::RunDialog(bool sho
 
     if (result == wxID_OK)
     {
+        // GetSelectedParticle will return the name including the .prt ending
         selectionResult.selectedParticle = result == wxID_OK ? dialog->_selector->GetSelectedParticle() : "";
         selectionResult.selectedClassname = showClassnameSelector ? dialog->getSelectedClassname() : "";
     }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wxutil/dialog/DialogBase.h"
+#include "wxutil/decl/DeclarationSelectorDialog.h"
 
 #include "ParticleSelector.h"
 
@@ -16,8 +16,8 @@ namespace ui
  * \brief
  * Chooser dialog for selection and preview of particle systems.
  */
-class ParticleChooserDialog : 
-	public wxutil::DialogBase,
+class ParticleChooserDialog :
+	public wxutil::DeclarationSelectorDialog,
     public sigc::trackable
 {
 private:
@@ -29,8 +29,6 @@ private:
 private:
 	// Constructor creates elements
 	ParticleChooserDialog(bool showClassnameSelector);
-
-    void _onItemActivated( wxDataViewEvent& ev );
 
     std::string getSelectedClassname();
 

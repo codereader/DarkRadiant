@@ -25,7 +25,10 @@ private:
 public:
     ParticleSelector(wxWindow* parent);
 
+    // Returns the selected particle name, including the .prt extension
     std::string GetSelectedParticle();
+
+    // Set the selected particle (particleName includes the .prt extension)
     void SetSelectedParticle(const std::string& particleName);
 
     // Populate the list of particles
