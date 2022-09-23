@@ -458,7 +458,7 @@ TEST_F(DeclManagerTest, DeclarationMetadata)
     EXPECT_TRUE(decl);
     EXPECT_EQ(decl->getDeclType(), decl::Type::TestDecl);
     EXPECT_EQ(decl->getDeclFilePath(), "testdecls/exporttest.decl");
-    EXPECT_EQ(decl->getModName(), RadiantTest::DefaultGameType);
+    EXPECT_EQ(decl->getModName(), RadiantTest::DEFAULT_GAME_TYPE);
 }
 
 inline void expectDeclIsPresent(decl::Type type, const std::string& declName)

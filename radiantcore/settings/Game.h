@@ -16,10 +16,8 @@ namespace game
  * This class also contains the code for loading a .game file and importing its
  * contents into the XMLRegistry.
  */
-class Game :
-	public IGame
+class Game: public IGame
 {
-private:
 	std::string _enginePath;
 
    // user-friendly name
@@ -35,10 +33,10 @@ public:
 	// Copy Constructor
 	Game(const Game& other);
 
-	std::string getName() const;
-
     /* IGame implementation */
-	std::string getKeyValue(const std::string& key) const override;
+    std::string getName() const override;
+    bool hasFeature(const std::string& feature) const override;
+    std::string getKeyValue(const std::string& key) const override;
     xml::NodeList getLocalXPath(const std::string& path) const override;
 
 private:

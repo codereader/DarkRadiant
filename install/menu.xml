@@ -244,8 +244,8 @@
 		<menuItem name="makevisportal" caption="Make Visportal" command="MakeVisportal" icon="make_visportal.png"  />
 
 		<menuSeparator />
-		<menuItem name="brushmakedetail" caption="Make Detail" command="BrushMakeDetail" />
-		<menuItem name="brushmakestructural" caption="Make Structural" command="BrushMakeStructural" />
+		<menuItem name="brushmakedetail" caption="Make Detail" command="BrushMakeDetail" gamefeature="detail_brushes" />
+		<menuItem name="brushmakestructural" caption="Make Structural" command="BrushMakeStructural" gamefeature="detail_brushes" />
 	</subMenu>
 
 	<subMenu name="patch" caption="&amp;Patch">

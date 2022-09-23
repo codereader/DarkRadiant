@@ -1,3 +1,25 @@
+darkradiant (3.2.0~jammy1) jammy; urgency=medium
+
+  * Show entityDefs related to selected models in Model Chooser.
+  * Support for rendering blend lights.
+  * Implement sorting of Interaction Stages.
+  * Recognise type of "set x on y" spawnargs.
+  * OBJ files: loader supports usemtl keywords directly referencing material
+    names (without .mtl file).
+  * Numerous bug fixes and improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 06 Sep 2022 20:27:52 +0100
+
+darkradiant (3.1.0~jammy1) jammy; urgency=medium
+
+  * Texture Tool now supports free scaling with the mouse.
+  * Improved robustness and correctness of decl handling.
+  * Numerous fixes to Material Editor.
+  * Improve Model Export dialog and workflow.
+  * Other fixes and improvements.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 23 Aug 2022 20:49:18 +0100
+
 darkradiant (3.0.0~focal1) focal; urgency=medium
 
   * New major release on all platforms

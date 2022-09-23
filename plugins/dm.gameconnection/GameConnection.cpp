@@ -804,16 +804,15 @@ const StringSet& GameConnection::getDependencies() const
 
 void GameConnection::initialiseModule(const IApplicationContext& ctx)
 {
+    // Don't add any commands if the hot_reload feature is not enabled by the current Game
+    if (!GlobalGameManager().currentGame()->hasFeature("hot_reload"))
+        return;
+
     // Show/hide GUI window
-    GlobalCommandSystem().addCommand(
-        "GameConnectionDialogToggle",
-        gameconn::GameConnectionDialog::toggleDialog
-    );
-    GlobalMenuManager().add(
-        "main/map", "GameConnectionDialog",
-        ui::menu::ItemType::Item, _("Game Connection..."), "",
-        "GameConnectionDialogToggle"
-    );
+    GlobalCommandSystem().addCommand("GameConnectionDialogToggle",
+                                     gameconn::GameConnectionDialog::toggleDialog);
+    GlobalMenuManager().add("main/map", "GameConnectionDialog", ui::menu::ItemType::Item,
+                            _("Game Connection..."), "", "GameConnectionDialogToggle");
 
     // Restart game
     GlobalCommandSystem().addCommand(
@@ -836,23 +835,15 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
             return isCameraSyncEnabled() != oldEnabled;
         }
     );
-    GlobalCommandSystem().addCommand(
-        "GameConnectionBackSyncCamera",
-        [this](const cmd::ArgumentList&) {
-            backSyncCamera();
-        }
-    );
+    GlobalCommandSystem().addCommand("GameConnectionBackSyncCamera",
+                                     [this](const cmd::ArgumentList&) { backSyncCamera(); });
     _event_backSyncCamera = GlobalEventManager().addCommand(
         "GameConnectionBackSyncCamera", "GameConnectionBackSyncCamera", false
     );
 
     // Reload map
-    GlobalCommandSystem().addCommand(
-        "GameConnectionReloadMap",
-        [this](const cmd::ArgumentList&) {
-            reloadMap();
-        }
-    );
+    GlobalCommandSystem().addCommand("GameConnectionReloadMap",
+                                     [this](const cmd::ArgumentList&) { reloadMap(); });
     GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleAutoMapReload",
         [this](bool v) {
@@ -863,12 +854,8 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     );
 
     // Update map
-    GlobalCommandSystem().addCommand(
-        "GameConnectionUpdateMap",
-        [this](const cmd::ArgumentList&) {
-            doUpdateMap();
-        }
-    );
+    GlobalCommandSystem().addCommand("GameConnectionUpdateMap",
+                                     [this](const cmd::ArgumentList&) { doUpdateMap(); });
     GlobalEventManager().addAdvancedToggle(
         "GameConnectionToggleAutoMapUpdate",
         [this](bool v) {
@@ -882,17 +869,12 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     // Respawn selected
     GlobalCommandSystem().addCommand(
         "GameConnectionRespawnSelected",
-        [this](const cmd::ArgumentList&) {
-            respawnSelectedEntities();
-        }
+        [this](const cmd::ArgumentList&) { respawnSelectedEntities(); }
     );
+
     // Pause game
-    GlobalCommandSystem().addCommand(
-        "GameConnectionPauseGame",
-        [this](const cmd::ArgumentList&) {
-            togglePauseGame();
-        }
-    );
+    GlobalCommandSystem().addCommand("GameConnectionPauseGame",
+                                     [this](const cmd::ArgumentList&) { togglePauseGame(); });
 
     // Toolbar button(s)
     GlobalMainFrame().signal_MainFrameConstructed().connect(

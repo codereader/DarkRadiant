@@ -2,6 +2,7 @@
 
 #include <string>
 #include <iterator>
+#include <vector>
 
 namespace string
 {
@@ -11,8 +12,9 @@ namespace string
  * the tokens at the end the given token container (which might be any container 
  * supporting insert iterators (std::vector, std::list, std::set, etc.)
  */
-template<class ContainerType>
-inline void split(ContainerType& tokens, const std::string& subject, const std::string& delimiters, bool trimEmpty = true)
+template <typename ContainerType>
+inline void split(ContainerType& tokens, const std::string& subject, const std::string& delimiters,
+                  bool trimEmpty = true)
 {
 	std::string::size_type lastPos = 0;
 	std::string::size_type length = subject.length();
@@ -44,6 +46,19 @@ inline void split(ContainerType& tokens, const std::string& subject, const std::
 		// Advance the cursor by one to skip the found delimiter
 		lastPos = pos + 1;
 	}
+}
+
+/**
+ * @brief Split the given string into parts, returning the result as a std::vector.
+ *
+ * Convenience wrapper for split() which does not require an existing container variable.
+ */
+inline std::vector<std::string> splitToVec(const std::string& subject,
+                                           const std::string& delimiters, bool trimEmpty = true)
+{
+    std::vector<std::string> result;
+    split(result, subject, delimiters, trimEmpty);
+    return result;
 }
 
 }

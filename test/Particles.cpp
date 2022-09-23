@@ -88,14 +88,14 @@ TEST_F(ParticlesTest, ParticleMetadata)
 
     EXPECT_EQ(flamejet->getDeclName(), "flamejet");
     EXPECT_EQ(flamejet->getDeclType(), decl::Type::Particle);
-    EXPECT_EQ(flamejet->getModName(), RadiantTest::DefaultGameType);
+    EXPECT_EQ(flamejet->getModName(), RadiantTest::DEFAULT_GAME_TYPE);
     EXPECT_EQ(flamejet->getDeclFilePath(), "particles/testparticles.prt");
 
     auto flamejetInPk4 = GlobalParticlesManager().getDefByName("flamejet_in_pk4");
 
     EXPECT_EQ(flamejetInPk4->getDeclName(), "flamejet_in_pk4");
     EXPECT_EQ(flamejetInPk4->getDeclType(), decl::Type::Particle);
-    EXPECT_EQ(flamejetInPk4->getModName(), RadiantTest::DefaultGameType);
+    EXPECT_EQ(flamejetInPk4->getModName(), RadiantTest::DEFAULT_GAME_TYPE);
     EXPECT_EQ(flamejetInPk4->getDeclFilePath(), "particles/override_test.prt");
 }
 

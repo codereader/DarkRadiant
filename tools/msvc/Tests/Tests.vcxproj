@@ -100,6 +100,7 @@
     <ClCompile Include="..\..\..\test\Favourites.cpp" />
     <ClCompile Include="..\..\..\test\FileTypes.cpp" />
     <ClCompile Include="..\..\..\test\Fx.cpp" />
+    <ClCompile Include="..\..\..\test\Game.cpp" />
     <ClCompile Include="..\..\..\test\GeometryStore.cpp" />
     <ClCompile Include="..\..\..\test\Grid.cpp" />
     <ClCompile Include="..\..\..\test\HeadlessOpenGLContext.cpp" />

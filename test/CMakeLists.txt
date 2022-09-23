@@ -16,6 +16,7 @@ add_executable(drtest
                Favourites.cpp
                FileTypes.cpp
                Fx.cpp
+               Game.cpp
                GeometryStore.cpp
                Grid.cpp
                HeadlessOpenGLContext.cpp
