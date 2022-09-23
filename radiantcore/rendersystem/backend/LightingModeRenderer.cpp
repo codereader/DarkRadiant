@@ -122,6 +122,8 @@ void LightingModeRenderer::collectLights(const IRenderView& view)
     // Categorise all visible lights
     for (const auto& light : _lights)
     {
+        if (!light->isVisible()) continue;
+
         if (light->isBlendLight())
         {
             collectBlendLight(*light, view);

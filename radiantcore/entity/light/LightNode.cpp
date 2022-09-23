@@ -1235,6 +1235,11 @@ const ShaderPtr& LightNode::getShader() const
     return m_shader.get();
 }
 
+bool LightNode::isVisible()
+{
+    return visible();
+}
+
 const IRenderEntity& LightNode::getLightEntity() const
 {
 	return *this;

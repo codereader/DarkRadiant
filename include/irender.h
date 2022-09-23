@@ -1,19 +1,16 @@
 #pragma once
 
 #include "imodule.h"
-#include "ivolumetest.h"
 #include "irenderview.h"
 #include "iwindingrenderer.h"
 #include "igeometryrenderer.h"
 #include "isurfacerenderer.h"
 #include <functional>
-#include <vector>
 
 #include "math/Vector3.h"
 #include "math/Vector4.h"
 #include "render/Colour4.h"
 #include "math/AABB.h"
-#include "render/MeshVertex.h"
 
 #include "ishaderlayer.h"
 #include <sigc++/signal.h>
@@ -115,7 +112,6 @@ const unsigned RENDER_OVERRIDE = 1 << 21;
 typedef unsigned RenderStateFlags;
 ///@}
 
-class AABB;
 class Matrix4;
 
 template<typename Element> class BasicVector3;
@@ -207,6 +203,9 @@ class RendererLight
 {
 public:
     virtual ~RendererLight() {}
+
+    // Returns true when this light is visible in the scene, false otherwise
+    virtual bool isVisible() = 0;
 
     /**
      * \brief Return the render entity associated with this light

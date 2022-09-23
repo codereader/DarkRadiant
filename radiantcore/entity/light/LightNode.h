@@ -263,6 +263,7 @@ private:
 
 public:
     // RendererLight implementation
+    bool isVisible() override;
     const IRenderEntity& getLightEntity() const override;
     Matrix4 getLightTextureTransformation() const override;
     Vector3 getLightOrigin() const override;
