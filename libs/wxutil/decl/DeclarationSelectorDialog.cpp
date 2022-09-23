@@ -29,6 +29,7 @@ DeclarationSelectorDialog::DeclarationSelectorDialog(decl::Type declType,
     // Bottom row
     auto grid = new wxFlexGridSizer(1, 2, 0, 12);
     grid->AddGrowableCol(0);
+    grid->AddGrowableCol(1);
 
     // Left half
     _bottomRowSizer = new wxBoxSizer(wxHORIZONTAL);

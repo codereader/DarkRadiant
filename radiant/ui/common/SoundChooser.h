@@ -2,10 +2,6 @@
 
 #include "ui/iresourcechooser.h"
 #include "wxutil/decl/DeclarationSelectorDialog.h"
-#include "ui/common/SoundShaderSelector.h"
-
-#include <string>
-#include <sigc++/connection.h>
 
 namespace ui
 {
@@ -17,19 +13,6 @@ class SoundChooser :
 	public wxutil::DeclarationSelectorDialog,
 	public IResourceChooser
 {
-private:
-    SoundShaderSelector* _selector;
-
-	sigc::connection _shadersReloaded;
-
-private:
-    void loadSoundShaders();
-
-	// callbacks
-    void _onReloadSounds(wxCommandEvent& ev);
-
-    void onShadersReloaded();
-
 public:
 	SoundChooser(wxWindow* parent = nullptr);
 
