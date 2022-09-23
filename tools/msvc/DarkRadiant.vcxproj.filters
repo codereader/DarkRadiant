@@ -191,6 +191,9 @@
     <Filter Include="src\ui\console">
       <UniqueIdentifier>{66e30145-e977-405c-9507-fc783318215a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\fx">
+      <UniqueIdentifier>{7d1fd900-f463-401a-bceb-d04af2bd05f3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -705,6 +708,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\materials\MaterialChooser.cpp">
       <Filter>src\ui\materials</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\fx\FxChooser.cpp">
+      <Filter>src\ui\fx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1376,6 +1382,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderSelector.h">
       <Filter>src\ui\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\fx\FxChooser.h">
+      <Filter>src\ui\fx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

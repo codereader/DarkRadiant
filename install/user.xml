@@ -344,6 +344,7 @@
         <ParticleChooser defaultWidthFraction="0.7" defaultHeightFraction="0.8" />
         <SoundChooser defaultWidthFraction="0.5" defaultHeightFraction="0.7" />
         <MaterialChooser defaultWidthFraction="0.4" defaultHeightFraction="0.8" />
+        <FxChooser defaultWidthFraction="0.4" defaultHeightFraction="0.8" />
     </windowStates>
   </ui>
 </user>

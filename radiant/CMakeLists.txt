@@ -72,6 +72,7 @@ add_executable(darkradiant
                ui/filters/FiltersMainMenu.cpp
                ui/filters/FilterUserInterface.cpp
                ui/findshader/FindShader.cpp
+               ui/fx/FxChooser.cpp
                ui/gl/WxGLWidgetManager.cpp
                ui/grid/GridUserInterface.cpp
                ui/layers/CreateLayerDialog.cpp
