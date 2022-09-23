@@ -135,8 +135,6 @@ private:
     std::unique_ptr<wxutil::SkinPreview> _preview;
     MaterialsList* _materialsList;
 
-    sigc::signal<void> _signalSkinActivated;
-
 public:
     SkinSelector(wxWindow* parent, const std::string& model) :
         DeclarationSelector(parent, decl::Type::Skin),
@@ -194,20 +192,6 @@ public:
 
         _preview->SetPreviewDeclName(GetSelectedDeclName());
         updateMaterialsList();
-    }
-
-    sigc::signal<void>& signal_skinActivated()
-    {
-        return _signalSkinActivated;
-    }
-
-protected:
-    void onTreeViewItemActivated() override
-    {
-        if (!GetSelectedDeclName().empty())
-        {
-            signal_skinActivated().emit();
-        }
     }
 
 private:
