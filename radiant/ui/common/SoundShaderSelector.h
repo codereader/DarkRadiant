@@ -87,7 +87,7 @@ public:
     }
 
 protected:
-    void onTreeViewItemActivated() override
+    bool onTreeViewItemActivated() override
     {
         auto selectedItem = GetSelectedDeclName();
 
@@ -95,7 +95,10 @@ protected:
         if (wxGetKeyState(WXK_CONTROL))
         {
             _preview->playRandomSoundFile();
+            return true;
         }
+
+        return false; // not processed
     }
 };
 

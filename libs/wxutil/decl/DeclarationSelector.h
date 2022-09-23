@@ -98,8 +98,11 @@ protected:
     {}
 
     // Event method invoked when the tree view selection has been activated (Enter key or double-click)
-    virtual void onTreeViewItemActivated()
-    {}
+    // Returns true to indicate that the event has been handled and should not be further processed
+    virtual bool onTreeViewItemActivated()
+    {
+        return false;
+    }
 
     // Default tree view columns. Subclasses can use a different set of columns if needed
     static const DeclarationTreeView::Columns& CreateDefaultColumns();

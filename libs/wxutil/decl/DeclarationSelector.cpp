@@ -198,8 +198,10 @@ void DeclarationSelector::onTreeViewSelectionChanged(wxDataViewEvent& ev)
 void DeclarationSelector::onTreeViewItemActivated(wxDataViewEvent& ev)
 {
     // Invoke the virtual method
-    onTreeViewItemActivated();
-    ev.Skip();
+    if (!onTreeViewItemActivated())
+    {
+        ev.Skip();
+    }
 }
 
 }
