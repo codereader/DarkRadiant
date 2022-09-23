@@ -274,7 +274,8 @@ TreeModel::Row TreeModel::GetRootItem()
 
 void TreeModel::Clear()
 {
-#if wxCHECK_VERSION(3, 0, 5)
+    // This workaround seems to cause crashes in wxGTK 3.2.0, take it out (#6105)
+#if wxCHECK_VERSION(3, 0, 5) && !wxCHECK_VERSION(3, 2, 0)
 	// To work around a problem in wxGTK 3.0.5+, trigger 
 	// an ItemRemoved call for all top-level children before 
 	// actually deleting them.
