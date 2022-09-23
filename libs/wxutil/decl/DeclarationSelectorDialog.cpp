@@ -4,6 +4,8 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 
+#include "i18n.h"
+#include "ideclmanager.h"
 #include "iregistry.h"
 
 namespace wxutil
@@ -24,12 +26,25 @@ DeclarationSelectorDialog::DeclarationSelectorDialog(decl::Type declType,
     _mainSizer = new wxBoxSizer(wxVERTICAL);
     GetSizer()->Add(_mainSizer, 1, wxEXPAND | wxALL, 12);
 
-    // Button row
-    _bottomRowSizer = new wxBoxSizer(wxHORIZONTAL);
-    _buttonSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
-    _bottomRowSizer->Add(_buttonSizer, 1, wxALIGN_CENTER_VERTICAL | wxLEFT, 12);
+    // Bottom row
+    auto grid = new wxFlexGridSizer(1, 2, 0, 12);
+    grid->AddGrowableCol(0);
 
-    _mainSizer->Add(_bottomRowSizer, 0, wxEXPAND, 12);
+    // Left half
+    _bottomRowSizer = new wxBoxSizer(wxHORIZONTAL);
+    grid->Add(_bottomRowSizer, 1, wxALIGN_LEFT);
+
+    // Right half contains the buttons
+    _buttonSizer = CreateStdDialogButtonSizer(wxOK | wxCANCEL);
+
+    // Add a Reload Decls button
+    _reloadDeclsButton = new wxButton(this, wxID_ANY, _("Reload Decls"));
+    _reloadDeclsButton->Bind(wxEVT_BUTTON, &DeclarationSelectorDialog::onReloadDecls, this);
+    _buttonSizer->Prepend(_reloadDeclsButton, 0, wxLEFT | wxALIGN_CENTER_VERTICAL | wxRIGHT, 12);
+
+    grid->Add(_buttonSizer, 0, wxALIGN_RIGHT);
+
+    _mainSizer->Add(grid, 0, wxEXPAND, 12);
 
     // Save the state of this dialog on close
     RegisterPersistableObject(this);
@@ -112,6 +127,11 @@ void DeclarationSelectorDialog::onDeclItemActivated(wxDataViewEvent&)
     {
         EndModal(wxID_OK);
     }
+}
+
+void DeclarationSelectorDialog::onReloadDecls(wxCommandEvent& ev)
+{
+    GlobalDeclarationManager().reloadDeclarations();
 }
 
 void DeclarationSelectorDialog::loadFromPath(const std::string& registryKey)

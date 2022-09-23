@@ -7,6 +7,7 @@
 #include "../dialog/DialogBase.h"
 
 class wxSizer;
+class wxButton;
 class wxStdDialogButtonSizer;
 
 namespace wxutil
@@ -34,6 +35,7 @@ private:
     wxSizer* _mainSizer;
     wxSizer* _bottomRowSizer;
     wxStdDialogButtonSizer* _buttonSizer;
+    wxButton* _reloadDeclsButton;
 
     bool _restoreSelectionFromRegistry;
 
@@ -66,6 +68,7 @@ private:
     void HandleTreeViewSelectionChanged();
     void onDeclSelectionChanged(wxDataViewEvent& ev);
     void onDeclItemActivated(wxDataViewEvent& ev);
+    void onReloadDecls(wxCommandEvent& ev);
 };
 
 }
