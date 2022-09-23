@@ -72,19 +72,20 @@ FxChooser::FxChooser(wxWindow* parent) :
     DeclarationSelectorDialog(decl::Type::SoundShader, _("Choose FX Declaration"), "FxChooser", parent)
 {
     SetSelector(new FxSelector(this));
-    AddItemToBottomRow(new wxStaticText(this, wxID_ANY, _("Ctrl + Double Click on treeview items for quick play")));
 }
 
 std::string FxChooser::ChooseDeclaration(const std::string& preselected)
 {
+    FxChooser instance;
+
     if (!preselected.empty())
     {
-        SetSelectedDeclName(preselected);
+        instance.SetSelectedDeclName(preselected);
     }
 
-    if (ShowModal() == wxID_OK)
+    if (instance.ShowModal() == wxID_OK)
     {
-        return GetSelectedDeclName();
+        return instance.GetSelectedDeclName();
     }
 
     return ""; // Empty selection on cancel

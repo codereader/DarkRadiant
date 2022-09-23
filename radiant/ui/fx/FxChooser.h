@@ -16,7 +16,7 @@ private:
 
 public:
     // Run the dialog and return the selected decl - this will be empty if the user clicks cancel
-    std::string ChooseDeclaration(const std::string& preselected = std::string());
+    static std::string ChooseDeclaration(const std::string& preselected = std::string());
 };
 
 }

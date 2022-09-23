@@ -12,6 +12,7 @@
 #include "ModelPropertyEditor.h"
 #include "ClassnamePropertyEditor.h"
 #include "AnglePropertyEditor.h"
+#include "FxPropertyEditor.h"
 
 #include <regex>
 
@@ -47,6 +48,7 @@ void PropertyEditorFactory::registerBuiltinTypes()
 	_peMap["model"] = ModelPropertyEditor::CreateNew;
 	_peMap["classname"] = ClassnamePropertyEditor::CreateNew;
     _peMap["angle"] = AnglePropertyEditor::CreateNew;
+    _peMap["fx"] = FxPropertyEditor::CreateNew;
 
     _dialogs["skin"] = []() { return std::make_shared<SkinChooserDialogWrapper>(); };
 }

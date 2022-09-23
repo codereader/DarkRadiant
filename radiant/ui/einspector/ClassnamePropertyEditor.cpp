@@ -32,7 +32,6 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelect
     browseButton->SetBitmap(PropertyEditorFactory::getBitmapFor("classname"));
     browseButton->Bind(wxEVT_BUTTON, &ClassnamePropertyEditor::_onBrowseButton, this);
 
-    // Browse button for particles
     wxButton* showDefinition = new wxButton(mainVBox, wxID_ANY, _("Show Definition..."));
     showDefinition->SetBitmap(wxutil::GetLocalBitmap("decl.png"));
     showDefinition->Bind(wxEVT_BUTTON, &ClassnamePropertyEditor::_onShowDefinition, this);

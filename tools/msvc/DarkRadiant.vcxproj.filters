@@ -712,6 +712,9 @@
     <ClCompile Include="..\..\radiant\ui\fx\FxChooser.cpp">
       <Filter>src\ui\fx</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\FxPropertyEditor.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1385,6 +1388,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\fx\FxChooser.h">
       <Filter>src\ui\fx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\FxPropertyEditor.h">
+      <Filter>src\ui\einspector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
