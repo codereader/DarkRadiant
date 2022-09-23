@@ -51,7 +51,8 @@ namespace ui
 MainFrame::MainFrame() :
 	_topLevelWindow(NULL),
 	_screenUpdatesEnabled(false), // not enabled until constructed
-    _defLoadingBlocksUpdates(false)
+    _defLoadingBlocksUpdates(false),
+    _mapLoadingBlocksUpdates(false)
 {}
 
 // RegisterableModule implementation
@@ -155,6 +156,21 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
         [this]() { _defLoadingBlocksUpdates = false; }
     );
 
+    // Block updates when a map is loading
+    _mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
+        [this](IMap::MapEvent ev)
+        {
+            if (ev == IMap::MapLoading)
+            {
+                _mapLoadingBlocksUpdates = true;
+            }
+            else if (ev == IMap::MapLoaded)
+            {
+                _mapLoadingBlocksUpdates = false;
+            }
+        }
+    );
+
 	// Subscribe for the post-module init event
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
 		sigc::mem_fun(this, &MainFrame::postModuleInitialisation));
@@ -164,6 +180,7 @@ void MainFrame::shutdownModule()
 {
 	rMessage() << "MainFrame::shutdownModule called." << std::endl;
 
+    _mapEventSignal.disconnect();
 	_mapNameChangedConn.disconnect();
 	_mapModifiedChangedConn.disconnect();
 
@@ -498,7 +515,7 @@ void MainFrame::saveWindowPosition()
 
 bool MainFrame::screenUpdatesEnabled()
 {
-	return _screenUpdatesEnabled && !_defLoadingBlocksUpdates;
+	return _screenUpdatesEnabled && !_defLoadingBlocksUpdates && !_mapLoadingBlocksUpdates;
 }
 
 void MainFrame::enableScreenUpdates() {

@@ -20,6 +20,7 @@ private:
 
 	bool _screenUpdatesEnabled;
     bool _defLoadingBlocksUpdates;
+    bool _mapLoadingBlocksUpdates;
 
 	wxutil::WindowPosition _windowPosition;
 
@@ -35,6 +36,8 @@ private:
 
 	sigc::connection _defsLoadingSignal;
 	sigc::connection _defsLoadedSignal;
+
+	sigc::connection _mapEventSignal;
 
 private:
 	void construct();
