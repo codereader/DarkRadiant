@@ -26,12 +26,12 @@ void TexturePropertyEditor::onBrowseButtonClick()
 {
 	auto dialog = new MaterialChooser(getWidget(), MaterialSelector::TextureFilter::Lights);
 
-    dialog->setSelectedTexture(getKeyValue(_key->getFullKey()));
+    dialog->SetSelectedDeclName(getKeyValue(_key->getFullKey()));
 
 	if (dialog->ShowModal() == wxID_OK)
 	{
 		// Return the last selection to calling process
-		std::string texture = dialog->getSelectedTexture();
+		std::string texture = dialog->GetSelectedDeclName();
 
 		if (!texture.empty())
 		{
