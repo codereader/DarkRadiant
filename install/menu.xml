@@ -76,7 +76,7 @@
 	<subMenu name="view" caption="V&amp;iew">
 		<menuItem name="newxyview" caption="New XY view" command="NewOrthoView" />
 		<menuItem name="cameraview" caption="Camera View" command="ToggleCamera" />
-		<menuItem name="layercontrols" caption="Layers" command="ToggleLayerControlDialog" />
+		<menuItem name="layercontrols" caption="Layers" command="ToggleLegacyLayerControlDialog" />
 		<menuItem name="consoleView" caption="Console View" command="ToggleConsole" />
 		<menuItem name="textureBrowser" caption="Texture Browser" command="ViewTextures" />
 		<menuItem name="mediabrowser" caption="Media Browser" command="ToggleMediaBrowser" />

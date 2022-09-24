@@ -18,10 +18,10 @@ class wxCommandEvent;
 namespace ui
 {
 
-class LayerControlDialog;
-typedef std::shared_ptr<LayerControlDialog> LayerControlDialogPtr;
+class LegacyLayerControlDialog;
+typedef std::shared_ptr<LegacyLayerControlDialog> LegacyLayerControlDialogPtr;
 
-class LayerControlDialog :
+class LegacyLayerControlDialog :
 	public wxutil::TransientWindow
 {
 private:
@@ -43,7 +43,7 @@ private:
 	sigc::connection _mapEventSignal;
 
 public:
-	LayerControlDialog();
+	LegacyLayerControlDialog();
 
 	// Re-populates the window
 	void refresh();
@@ -57,10 +57,10 @@ public:
 	// Checks if dialog should be shown after startup
 	static void onMainFrameConstructed();
 
-	static LayerControlDialog& Instance();
+	static LegacyLayerControlDialog& Instance();
 
 private:
-	static LayerControlDialogPtr& InstancePtr();
+	static LegacyLayerControlDialogPtr& InstancePtr();
 
 	void onMainFrameShuttingDown();
 

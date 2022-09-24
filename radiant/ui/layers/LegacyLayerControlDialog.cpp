@@ -1,4 +1,4 @@
-#include "LayerControlDialog.h"
+#include "LegacyLayerControlDialog.h"
 
 #include "i18n.h"
 #include "itextstream.h"
@@ -32,7 +32,7 @@ namespace
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 }
 
-LayerControlDialog::LayerControlDialog() :
+LegacyLayerControlDialog::LegacyLayerControlDialog() :
 	TransientWindow(_("Layers"), GlobalMainFrame().getWxTopLevelWindow(), true),
 	_dialogPanel(nullptr),
 	_controlContainer(nullptr),
@@ -48,7 +48,7 @@ LayerControlDialog::LayerControlDialog() :
     SetMinClientSize(wxSize(230, 200));
 }
 
-void LayerControlDialog::populateWindow()
+void LegacyLayerControlDialog::populateWindow()
 {
 	auto dialogPanel = new wxutil::ScrollWindow(this, wxID_ANY);
 	dialogPanel->SetShouldScrollToChildOnFocus(false);
@@ -69,7 +69,7 @@ void LayerControlDialog::populateWindow()
 	_dialogPanel->FitInside(); // ask the sizer about the needed size
 }
 
-void LayerControlDialog::createButtons()
+void LegacyLayerControlDialog::createButtons()
 {
 	// Show all / hide all buttons
 	wxBoxSizer* hideShowBox = new wxBoxSizer(wxHORIZONTAL);
@@ -77,8 +77,8 @@ void LayerControlDialog::createButtons()
 	_showAllLayers = new wxButton(_dialogPanel, wxID_ANY, _("Show all"));
 	_hideAllLayers = new wxButton(_dialogPanel, wxID_ANY, _("Hide all"));
 
-	_showAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onShowAllLayers, this);
-	_hideAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onHideAllLayers, this);
+	_showAllLayers->Bind(wxEVT_BUTTON, &LegacyLayerControlDialog::onShowAllLayers, this);
+	_hideAllLayers->Bind(wxEVT_BUTTON, &LegacyLayerControlDialog::onHideAllLayers, this);
 
 	// Create layer button
 	wxButton* createButton = new wxButton(_dialogPanel, wxID_ANY, _("New"));
@@ -93,7 +93,7 @@ void LayerControlDialog::createButtons()
     _dialogPanel->GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
-void LayerControlDialog::clearControls()
+void LegacyLayerControlDialog::clearControls()
 {
 	// Delete all wxWidgets objects first
 	_controlContainer->Clear(true);
@@ -102,7 +102,7 @@ void LayerControlDialog::clearControls()
 	_layerControls.clear();
 }
 
-void LayerControlDialog::refresh()
+void LegacyLayerControlDialog::refresh()
 {
 	clearControls();
 
@@ -150,7 +150,7 @@ void LayerControlDialog::refresh()
 	update();
 }
 
-void LayerControlDialog::update()
+void LegacyLayerControlDialog::update()
 {
 	if (!GlobalMapModule().getRoot())
 	{
@@ -188,7 +188,7 @@ void LayerControlDialog::update()
 	_hideAllLayers->Enable(numVisible > 0);
 }
 
-void LayerControlDialog::updateLayerUsage()
+void LegacyLayerControlDialog::updateLayerUsage()
 {
 	_rescanSelectionOnIdle = false;
 
@@ -203,19 +203,19 @@ void LayerControlDialog::updateLayerUsage()
 	}
 }
 
-void LayerControlDialog::onIdle()
+void LegacyLayerControlDialog::onIdle()
 {
 	if (!_rescanSelectionOnIdle) return;
 
 	updateLayerUsage();
 }
 
-void LayerControlDialog::toggle(const cmd::ArgumentList& args)
+void LegacyLayerControlDialog::toggle(const cmd::ArgumentList& args)
 {
 	Instance().ToggleVisibility();
 }
 
-void LayerControlDialog::onMainFrameConstructed()
+void LegacyLayerControlDialog::onMainFrameConstructed()
 {
 	// Lookup the stored window information in the registry
 	if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")
@@ -225,9 +225,9 @@ void LayerControlDialog::onMainFrameConstructed()
 	}
 }
 
-void LayerControlDialog::onMainFrameShuttingDown()
+void LegacyLayerControlDialog::onMainFrameShuttingDown()
 {
-	rMessage() << "LayerControlDialog shutting down." << std::endl;
+	rMessage() << "LegacyLayerControlDialog shutting down." << std::endl;
 
 	// Write the visibility status to the registry
 	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", IsShownOnScreen() ? "1" : "0");
@@ -245,31 +245,31 @@ void LayerControlDialog::onMainFrameShuttingDown()
 	InstancePtr().reset();
 }
 
-LayerControlDialogPtr& LayerControlDialog::InstancePtr()
+LegacyLayerControlDialogPtr& LegacyLayerControlDialog::InstancePtr()
 {
-	static LayerControlDialogPtr _instancePtr;
+	static LegacyLayerControlDialogPtr _instancePtr;
 	return _instancePtr;
 }
 
-LayerControlDialog& LayerControlDialog::Instance()
+LegacyLayerControlDialog& LegacyLayerControlDialog::Instance()
 {
-	LayerControlDialogPtr& instancePtr = InstancePtr();
+	LegacyLayerControlDialogPtr& instancePtr = InstancePtr();
 
 	if (!instancePtr)
 	{
 		// Not yet instantiated, do it now
-		instancePtr.reset(new LayerControlDialog);
+		instancePtr.reset(new LegacyLayerControlDialog);
 
 		// Pre-destruction cleanup
 		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &LayerControlDialog::onMainFrameShuttingDown));
+            sigc::mem_fun(*instancePtr, &LegacyLayerControlDialog::onMainFrameShuttingDown));
 	}
 
 	return *instancePtr;
 }
 
 // TransientWindow callbacks
-void LayerControlDialog::_preShow()
+void LegacyLayerControlDialog::_preShow()
 {
 	TransientWindow::_preShow();
 
@@ -281,14 +281,14 @@ void LayerControlDialog::_preShow()
 	connectToMapRoot();
 
 	_mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(this, &LayerControlDialog::onMapEvent)
+		sigc::mem_fun(this, &LegacyLayerControlDialog::onMapEvent)
 	);
 
 	// Re-populate the dialog
 	refresh();
 }
 
-void LayerControlDialog::_postHide()
+void LegacyLayerControlDialog::_postHide()
 {
 	disconnectFromMapRoot();
 
@@ -297,7 +297,7 @@ void LayerControlDialog::_postHide()
 	_rescanSelectionOnIdle = false;
 }
 
-void LayerControlDialog::connectToMapRoot()
+void LegacyLayerControlDialog::connectToMapRoot()
 {
 	// Always disconnect first
 	disconnectFromMapRoot();
@@ -308,11 +308,11 @@ void LayerControlDialog::connectToMapRoot()
 
 		// Layer creation/addition/removal triggers a refresh
 		_layersChangedSignal = layerSystem.signal_layersChanged().connect(
-			sigc::mem_fun(this, &LayerControlDialog::refresh));
+			sigc::mem_fun(this, &LegacyLayerControlDialog::refresh));
 
 		// Visibility change doesn't repopulate the dialog
 		_layerVisibilityChangedSignal = layerSystem.signal_layerVisibilityChanged().connect(
-			sigc::mem_fun(this, &LayerControlDialog::update));
+			sigc::mem_fun(this, &LegacyLayerControlDialog::update));
 
 		// Node membership triggers a selection rescan
 		_nodeLayerMembershipChangedSignal = layerSystem.signal_nodeMembershipChanged().connect([this]()
@@ -322,14 +322,14 @@ void LayerControlDialog::connectToMapRoot()
 	}
 }
 
-void LayerControlDialog::disconnectFromMapRoot()
+void LegacyLayerControlDialog::disconnectFromMapRoot()
 {
 	_nodeLayerMembershipChangedSignal.disconnect();
 	_layersChangedSignal.disconnect();
 	_layerVisibilityChangedSignal.disconnect();
 }
 
-void LayerControlDialog::onShowAllLayers(wxCommandEvent& ev)
+void LegacyLayerControlDialog::onShowAllLayers(wxCommandEvent& ev)
 {
 	if (!GlobalMapModule().getRoot())
 	{
@@ -345,7 +345,7 @@ void LayerControlDialog::onShowAllLayers(wxCommandEvent& ev)
     });
 }
 
-void LayerControlDialog::onHideAllLayers(wxCommandEvent& ev)
+void LegacyLayerControlDialog::onHideAllLayers(wxCommandEvent& ev)
 {
 	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
 
@@ -355,7 +355,7 @@ void LayerControlDialog::onHideAllLayers(wxCommandEvent& ev)
     });
 }
 
-void LayerControlDialog::onMapEvent(IMap::MapEvent ev)
+void LegacyLayerControlDialog::onMapEvent(IMap::MapEvent ev)
 {
 	if (ev == IMap::MapLoaded)
 	{

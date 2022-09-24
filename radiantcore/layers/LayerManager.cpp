@@ -140,7 +140,7 @@ void LayerManager::reset()
 	_layerVisibility.resize(1);
 	_layerVisibility[DEFAULT_LAYER] = true;
 
-	// Update the LayerControlDialog
+	// Update the dialog
 	_layersChangedSignal.emit();
 	_layerVisibilityChangedSignal.emit();
 }
@@ -297,7 +297,7 @@ void LayerManager::onLayerVisibilityChanged()
 	// Update all nodes and views
 	updateSceneGraphVisibility();
 
-	// Update the LayerControlDialog
+	// Update the LegacyLayerControlDialog
 	_layerVisibilityChangedSignal.emit();
 }
 
