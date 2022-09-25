@@ -44,9 +44,7 @@ private:
     TreeColumns _columns;
     wxutil::TreeModel::Ptr _layerStore;
 
-	wxPanel* _dialogPanel;
-
-	wxFlexGridSizer* _controlContainer;
+    std::map<int, wxDataViewItem> _layerItemMap;
 
 	wxButton* _showAllLayers;
 	wxButton* _hideAllLayers;

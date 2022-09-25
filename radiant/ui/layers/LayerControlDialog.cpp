@@ -30,8 +30,6 @@ namespace
 LayerControlDialog::LayerControlDialog() :
 	TransientWindow(_("Layers"), GlobalMainFrame().getWxTopLevelWindow(), true),
     _layersView(nullptr),
-	_dialogPanel(nullptr),
-	_controlContainer(nullptr),
 	_showAllLayers(nullptr),
 	_hideAllLayers(nullptr),
 	_rescanSelectionOnIdle(false)
@@ -87,14 +85,14 @@ void LayerControlDialog::createButtons()
 	// Show all / hide all buttons
 	wxBoxSizer* hideShowBox = new wxBoxSizer(wxHORIZONTAL);
 
-	_showAllLayers = new wxButton(_dialogPanel, wxID_ANY, _("Show all"));
-	_hideAllLayers = new wxButton(_dialogPanel, wxID_ANY, _("Hide all"));
+	_showAllLayers = new wxButton(this, wxID_ANY, _("Show all"));
+	_hideAllLayers = new wxButton(this, wxID_ANY, _("Hide all"));
 
 	_showAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onShowAllLayers, this);
 	_hideAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onHideAllLayers, this);
 
 	// Create layer button
-	wxButton* createButton = new wxButton(_dialogPanel, wxID_ANY, _("New"));
+	wxButton* createButton = new wxButton(this, wxID_ANY, _("New"));
 	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
 
 	wxutil::button::connectToCommand(createButton, "CreateNewLayerDialog");
@@ -102,12 +100,13 @@ void LayerControlDialog::createButtons()
 	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxTOP, 6);
 	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT | wxTOP, 6);
 
-    _dialogPanel->GetSizer()->Add(createButton, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
-    _dialogPanel->GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
+    GetSizer()->Add(createButton, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
+    GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
 void LayerControlDialog::clearControls()
 {
+    _layerItemMap.clear();
     _layerStore->Clear();
 }
 
@@ -133,6 +132,8 @@ void LayerControlDialog::refresh()
         row[_columns.visible] = layerManager.layerIsVisible(layerID);
 
         row.SendItemAdded();
+
+        _layerItemMap.emplace(layerID, row.getItem());
     });
 
 #if 0
@@ -174,13 +175,7 @@ void LayerControlDialog::update()
 	}
 
 	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
-#if 0
-	// Broadcast the update() call
-	for (const LayerControlPtr& control : _layerControls)
-	{
-		control->update();
-	}
-#endif
+
 	// Update usage next time round
 	_rescanSelectionOnIdle = true;
 
@@ -190,14 +185,26 @@ void LayerControlDialog::update()
 
 	layerSystem.foreachLayer([&](int layerID, const std::string& layerName)
     {
-        if (layerSystem.layerIsVisible(layerID))
+        auto existingItem = _layerItemMap.find(layerID);
+
+        if (existingItem == _layerItemMap.end()) return; // tracking error?
+
+        wxutil::TreeModel::Row row(existingItem->second, *_layerStore);
+
+        row[_columns.name] = layerName;
+
+	    if (layerSystem.layerIsVisible(layerID))
         {
+            row[_columns.visible] = true;
             numVisible++;
         }
         else
         {
+            row[_columns.visible] = false;
             numHidden++;
         }
+
+        row.SendItemChanged();
     });
 
 #if 0
