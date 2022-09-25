@@ -32,6 +32,7 @@
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
 #include "ui/layers/LegacyLayerControlDialog.h"
+#include "ui/layers/LayerControlDialog.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/Documentation.h"
@@ -129,6 +130,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 
 	// Register LegacyLayerControlDialog
 	GlobalCommandSystem().addCommand("ToggleLegacyLayerControlDialog", LegacyLayerControlDialog::toggle);
+	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", LayerControlDialog::ToggleDialog);
 
 	// Create a new menu item connected to the CreateNewLayerDialog command
 	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::CommandMenuItem>(

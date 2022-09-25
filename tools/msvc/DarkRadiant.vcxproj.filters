@@ -715,6 +715,9 @@
     <ClCompile Include="..\..\radiant\ui\layers\LegacyLayerControlDialog.cpp">
       <Filter>src\ui\layers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\layers\LayerControlDialog.cpp">
+      <Filter>src\ui\layers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1390,6 +1393,9 @@
       <Filter>src\ui\einspector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\layers\LegacyLayerControlDialog.h">
+      <Filter>src\ui\layers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\layers\LayerControlDialog.h">
       <Filter>src\ui\layers</Filter>
     </ClInclude>
   </ItemGroup>

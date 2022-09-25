@@ -258,6 +258,7 @@
     <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\layers\LayerControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LegacyLayerControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\LongRunningOperationHandler.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\AuiLayout.cpp" />
@@ -458,6 +459,7 @@
     <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialog.h" />
     <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\layers\LayerControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LegacyLayerControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\AuiLayout.h" />

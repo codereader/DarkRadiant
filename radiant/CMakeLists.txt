@@ -79,6 +79,7 @@ add_executable(darkradiant
                ui/layers/CreateLayerDialog.cpp
                ui/layers/LayerContextMenu.cpp
                ui/layers/LayerControl.cpp
+               ui/layers/LayerControlDialog.cpp
                ui/layers/LegacyLayerControlDialog.cpp
                ui/layers/LayerOrthoContextMenuItem.cpp
                ui/lightinspector/LightInspector.cpp
