@@ -289,11 +289,18 @@ TEST_F(DefBlockSyntaxParserTest, ReconstructFileFromSyntaxTree)
     checkDeclFileReconstruction("testdecls/removal_tests.decl");
     checkDeclFileReconstruction("testdecls/removal_tests.decl");
 
+    // These two contain malformed decls at the bottom of the file
+    checkDeclFileReconstruction("testdecls/syntax_parser_test1.decl");
+    checkDeclFileReconstruction("testdecls/syntax_parser_test2.decl");
+    // Unfinished comment block at the end
+    checkDeclFileReconstruction("testdecls/syntax_parser_test3.decl");
+
     checkDeclFileReconstruction("particles/testparticles.prt");
     
     checkDeclFileReconstruction("materials/parsertest.mtr");
     checkDeclFileReconstruction("materials/example.mtr");
     checkDeclFileReconstruction("materials/tdm_internal_engine.mtr");
+    checkDeclFileReconstruction("materials/null_byte_at_the_end.mtr");
 
     checkDeclFileReconstruction("def/base.def");
     checkDeclFileReconstruction("def/tdm_ai.def");
