@@ -774,6 +774,9 @@ template<typename ContainerType>
 class DefBlockSyntaxParser
 {
 public:
+    static_assert(!std::is_same_v<ContainerType, std::string>, 
+        "Non-const std::string is not supported, change ContainerType to 'const std::string'");
+
     // Internal tokeniser and its iterator
     using Tokeniser = string::Tokeniser<DefBlockSyntaxTokeniserFunc,
         typename detail::SyntaxParserTraits<ContainerType>::Iterator, DefSyntaxToken>;
@@ -817,7 +820,12 @@ public:
                 ++_tokIter;
                 break;
             case DefSyntaxToken::Type::Token:
-                syntaxTree->getRoot()->appendChildNode(parseBlock());
+                auto blockNodes = parseBlock();
+
+                for (auto&& node : blockNodes)
+                {
+                    syntaxTree->getRoot()->appendChildNode(std::move(node));
+                }
                 break;
             }
         }
@@ -826,7 +834,7 @@ public:
     }
 
 private:
-    DefBlockSyntax::Ptr parseBlock()
+    std::vector<DefSyntaxNode::Ptr> parseBlock()
     {
         std::vector<DefSyntaxNode::Ptr> headerNodes;
 
@@ -849,7 +857,7 @@ private:
                 break;
             case DefSyntaxToken::Type::BracedBlock:
                 // The braced block token concludes this decl block
-                return std::make_shared<DefBlockSyntax>(token, std::move(headerNodes), nameIndex, typeIndex);
+                return { std::make_shared<DefBlockSyntax>(token, std::move(headerNodes), nameIndex, typeIndex) };
             case DefSyntaxToken::Type::Token:
                 if (nameIndex == -1)
                 {
@@ -880,7 +888,9 @@ private:
             }
         }
 
-        return {};
+        // We didn't find a well-formed block syntax node here, but we'll
+        // at least return all the tokens we found on the way
+        return headerNodes;
     }
 };
 
