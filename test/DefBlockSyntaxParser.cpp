@@ -552,4 +552,34 @@ TEST_F(DefBlockSyntaxParserTest, ParseIncompleteBlock)
     parseBlock(testString, "something", "_white");
 }
 
+TEST_F(DefBlockSyntaxParserTest, ParseTrailingNullByte)
+{
+    std::string testString = "testdecl something {\n"
+        "         diffusemap _white\n}\n\n\n";
+    testString.append({ '\0' });
+
+    parser::DefBlockSyntaxParser<const std::string> parser(testString);
+    auto syntaxTree = parser.parse();
+
+    // Ensure we don't have any empty nodes in the syntax tree
+    for (const auto& syntaxNode : syntaxTree->getRoot()->getChildren())
+    {
+        EXPECT_TRUE(syntaxNode) << "Found an empty node in the syntax tree";
+    }
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseTrailingNullByte2)
+{
+    std::ifstream stream(_context.getTestProjectPath() + "materials/null_byte_at_the_end.mtr");
+
+    parser::DefBlockSyntaxParser<std::istream> parser(stream);
+    auto syntaxTree = parser.parse();
+
+    // Ensure we don't have any empty nodes in the syntax tree
+    for (const auto& syntaxNode : syntaxTree->getRoot()->getChildren())
+    {
+        EXPECT_TRUE(syntaxNode);
+    }
+}
+
 }

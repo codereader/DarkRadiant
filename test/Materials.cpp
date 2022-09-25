@@ -247,6 +247,10 @@ TEST_F(MaterialsTest, MaterialParser)
     EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant1"));
     EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant2"));
     EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant3"));
+
+    // These are defined in null_byte_at_the_end.mtr which has a 0 character at the bottom of the file (#6108)
+    EXPECT_TRUE(materialManager.materialExists("textures/parsertest/something2"));
+    EXPECT_TRUE(materialManager.materialExists("textures/parsertest/something3"));
 }
 
 TEST_F(MaterialsTest, EnumerateMaterialLayers)
