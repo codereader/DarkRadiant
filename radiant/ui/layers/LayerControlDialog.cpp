@@ -59,31 +59,14 @@ void LayerControlDialog::populateWindow()
 
     overallVBox->Add(_layersView, 1, wxEXPAND);
 
-#if 0
-	auto dialogPanel = new wxutil::ScrollWindow(this, wxID_ANY);
-	dialogPanel->SetShouldScrollToChildOnFocus(false);
-	dialogPanel->SetScrollRate(0, 15);
-
-	_dialogPanel = dialogPanel;
-	
-	_dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
-
-	_controlContainer = new wxFlexGridSizer(1, 4, 3, 3);
-	_controlContainer->AddGrowableCol(2);
-
-    _dialogPanel->GetSizer()->Add(_controlContainer, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
-
 	// Add the option buttons ("Create Layer", etc.) to the window
 	createButtons();
-
-	_dialogPanel->FitInside(); // ask the sizer about the needed size
-#endif
 }
 
 void LayerControlDialog::createButtons()
 {
 	// Show all / hide all buttons
-	wxBoxSizer* hideShowBox = new wxBoxSizer(wxHORIZONTAL);
+	auto hideShowBox = new wxBoxSizer(wxHORIZONTAL);
 
 	_showAllLayers = new wxButton(this, wxID_ANY, _("Show all"));
 	_hideAllLayers = new wxButton(this, wxID_ANY, _("Hide all"));
@@ -92,7 +75,7 @@ void LayerControlDialog::createButtons()
 	_hideAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onHideAllLayers, this);
 
 	// Create layer button
-	wxButton* createButton = new wxButton(this, wxID_ANY, _("New"));
+	auto createButton = new wxButton(this, wxID_ANY, _("New"));
 	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
 
 	wxutil::button::connectToCommand(createButton, "CreateNewLayerDialog");
@@ -137,14 +120,6 @@ void LayerControlDialog::refresh()
     });
 
 #if 0
-    // Assign all controls to the target vector, alphabetically sorted
-    for (std::pair<std::string, LayerControlPtr> pair : sortedControls)
-    {
-        _layerControls.push_back(pair.second);
-    }
-
-	_controlContainer->SetRows(static_cast<int>(_layerControls.size()));
-
 	for (const LayerControlPtr& control : _layerControls)
 	{
 		_controlContainer->Add(control->getToggle(), 0);
@@ -159,9 +134,6 @@ void LayerControlDialog::refresh()
 			control->getLabelButton()->SetFocus();
         }
 	}
-
-	_controlContainer->Layout();
-	_dialogPanel->FitInside(); // ask the sizer about the needed size
 #endif
 
 	update();
@@ -207,10 +179,8 @@ void LayerControlDialog::update()
         row.SendItemChanged();
     });
 
-#if 0
 	_showAllLayers->Enable(numHidden > 0);
 	_hideAllLayers->Enable(numVisible > 0);
-#endif
 }
 
 void LayerControlDialog::updateLayerUsage()
