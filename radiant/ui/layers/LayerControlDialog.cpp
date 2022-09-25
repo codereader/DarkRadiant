@@ -12,11 +12,11 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 
-#include "wxutil/ScrollWindow.h"
 #include "wxutil/Button.h"
 
 #include "scene/LayerUsageBreakdown.h"
 #include "wxutil/dataview/TreeView.h"
+#include "wxutil/dataview/TreeViewItemStyle.h"
 
 namespace ui
 {
@@ -104,19 +104,26 @@ void LayerControlDialog::refresh()
 
 	// Traverse the layers
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto activeLayerId = layerManager.getActiveLayer();
 
-    layerManager.foreachLayer([&](int layerID, const std::string& layerName)
+    layerManager.foreachLayer([&](int layerId, const std::string& layerName)
     {
         // Store the object in a sorted container
         auto row = _layerStore->AddItem();
 
-        row[_columns.id] = layerID;
+        row[_columns.id] = layerId;
         row[_columns.name] = layerName;
-        row[_columns.visible] = layerManager.layerIsVisible(layerID);
+
+        if (activeLayerId == layerId)
+        {
+            row[_columns.name] = wxutil::TreeViewItemStyle::ActiveItemStyle();
+        }
+
+        row[_columns.visible] = layerManager.layerIsVisible(layerId);
 
         row.SendItemAdded();
 
-        _layerItemMap.emplace(layerID, row.getItem());
+        _layerItemMap.emplace(layerId, row.getItem());
     });
 
 #if 0
@@ -146,7 +153,8 @@ void LayerControlDialog::update()
 		return;
 	}
 
-	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+	auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto activeLayerId = layerManager.getActiveLayer();
 
 	// Update usage next time round
 	_rescanSelectionOnIdle = true;
@@ -155,9 +163,9 @@ void LayerControlDialog::update()
     std::size_t numVisible = 0;
     std::size_t numHidden = 0;
 
-	layerSystem.foreachLayer([&](int layerID, const std::string& layerName)
+    layerManager.foreachLayer([&](int layerId, const std::string& layerName)
     {
-        auto existingItem = _layerItemMap.find(layerID);
+        auto existingItem = _layerItemMap.find(layerId);
 
         if (existingItem == _layerItemMap.end()) return; // tracking error?
 
@@ -165,7 +173,10 @@ void LayerControlDialog::update()
 
         row[_columns.name] = layerName;
 
-	    if (layerSystem.layerIsVisible(layerID))
+        row[_columns.name] = activeLayerId == layerId ? 
+            wxutil::TreeViewItemStyle::ActiveItemStyle() : wxDataViewItemAttr(); // no style
+
+        if (layerManager.layerIsVisible(layerId))
         {
             row[_columns.visible] = true;
             numVisible++;
