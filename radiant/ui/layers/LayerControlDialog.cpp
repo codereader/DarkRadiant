@@ -65,6 +65,13 @@ void LayerControlDialog::populateWindow()
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &LayerControlDialog::onItemToggled, this);
     _layersView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &LayerControlDialog::onItemSelected, this);
 
+    // Configure drag and drop
+    _layersView->EnableDragSource(wxDF_UNICODETEXT);
+    _layersView->EnableDropTarget(wxDF_UNICODETEXT);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &LayerControlDialog::onBeginDrag, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &LayerControlDialog::onDropPossible, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP, &LayerControlDialog::onDrop, this);
+
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
     auto overallVBox = new wxBoxSizer(wxVERTICAL);
@@ -567,6 +574,34 @@ void LayerControlDialog::onDeleteLayer(wxCommandEvent& ev)
     {
         GlobalCommandSystem().executeCommand("DeleteLayer", cmd::Argument(selectedLayerId));
     }
+}
+
+void LayerControlDialog::onBeginDrag(wxDataViewEvent& ev)
+{
+    wxDataViewItem item(ev.GetItem());
+
+    wxutil::TreeModel::Row row(item, *_layerStore);
+
+    auto selectedLayerId = row[_columns.id].getInteger();
+
+    // Don't allow rearranging the default layer
+    if (selectedLayerId > 0)
+    {
+        auto obj = new wxTextDataObject;
+        obj->SetText(string::to_string(selectedLayerId));
+        ev.SetDataObject(obj);
+        ev.SetDragFlags(wxDrag_AllowMove);
+    }
+}
+
+void LayerControlDialog::onDropPossible(wxDataViewEvent& ev)
+{
+    
+}
+
+void LayerControlDialog::onDrop(wxDataViewEvent& ev)
+{
+    
 }
 
 } // namespace ui

@@ -117,6 +117,9 @@ private:
     void onItemActivated(wxDataViewEvent& ev);
     void onItemToggled(wxDataViewEvent& ev);
     void onItemSelected(wxDataViewEvent& ev);
+    void onBeginDrag(wxDataViewEvent& ev);
+    void onDropPossible(wxDataViewEvent& ev);
+    void onDrop(wxDataViewEvent& ev);
     void onRenameLayer(wxCommandEvent& ev);
     void onDeleteLayer(wxCommandEvent& ev);
     int getSelectedLayerId();
