@@ -86,7 +86,7 @@ void LayerControlDialog::createButtons()
 	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxTOP, 6);
 	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT | wxTOP, 6);
 
-    GetSizer()->Add(createButton, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
+    GetSizer()->Add(createButton, 0, wxEXPAND | wxLEFT | wxRIGHT, 12);
     GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
@@ -122,31 +122,12 @@ void LayerControlDialog::refresh()
             row[_columns.name] = wxutil::TreeViewItemStyle::ActiveItemStyle();
         }
 
-        row[_columns.selectionIsPartOfLayer] = layerId % 2 == 0;
-
         row[_columns.visible] = layerManager.layerIsVisible(layerId);
 
         row.SendItemAdded();
 
         _layerItemMap.emplace(layerId, row.getItem());
     });
-
-#if 0
-	for (const LayerControlPtr& control : _layerControls)
-	{
-		_controlContainer->Add(control->getToggle(), 0);
-		_controlContainer->Add(control->getStatusWidget(), 0, wxEXPAND | wxTOP | wxBOTTOM, 1);
-		_controlContainer->Add(control->getLabelButton(), 0, wxEXPAND);
-		_controlContainer->Add(control->getButtons(), 0, wxEXPAND);
-
-        if (control == _layerControls.front())
-        {
-            // Prevent setting the focus on the buttons at the bottom which lets the scrollbar 
-            // of the window jump around (#4089), set the focus on the first button.
-			control->getLabelButton()->SetFocus();
-        }
-	}
-#endif
 
 	update();
 }
@@ -181,8 +162,6 @@ void LayerControlDialog::update()
         row[_columns.name] = activeLayerId == layerId ? 
             wxutil::TreeViewItemStyle::ActiveItemStyle() : wxDataViewItemAttr(); // no style
 
-        row[_columns.selectionIsPartOfLayer] = layerId % 2 == 0;
-
         if (layerManager.layerIsVisible(layerId))
         {
             row[_columns.visible] = true;
@@ -206,15 +185,20 @@ void LayerControlDialog::updateLayerUsage()
 	_rescanSelectionOnIdle = false;
 
 	// Scan the selection and get the histogram
-	scene::LayerUsageBreakdown breakDown = scene::LayerUsageBreakdown::CreateFromSelection();
-#if 0
-	for (const LayerControlPtr& control : _layerControls)
-	{
-		assert(static_cast<int>(breakDown.size()) > control->getLayerId());
+	auto breakDown = scene::LayerUsageBreakdown::CreateFromSelection();
 
-		control->updateUsageStatusWidget(breakDown[control->getLayerId()]);
-	}
-#endif
+    GlobalMapModule().getRoot()->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
+    {
+        auto existingItem = _layerItemMap.find(layerId);
+
+        if (existingItem == _layerItemMap.end()) return; // tracking error?
+
+        wxutil::TreeModel::Row row(existingItem->second, *_layerStore);
+
+        row[_columns.selectionIsPartOfLayer] = breakDown[layerId] > 0;
+
+        row.SendItemChanged();
+    });
 }
 
 void LayerControlDialog::onIdle()
