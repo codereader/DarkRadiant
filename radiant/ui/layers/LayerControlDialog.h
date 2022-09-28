@@ -50,6 +50,8 @@ private:
 
 	wxButton* _showAllLayers;
 	wxButton* _hideAllLayers;
+	wxButton* _renameButton;
+	wxButton* _deleteButton;
 
 	bool _refreshTreeOnIdle;
 	bool _updateTreeOnIdle;
@@ -99,6 +101,7 @@ private:
 	// Update the usage colours on the controls
 	void updateLayerUsage();
 	void updateButtonSensitivity(std::size_t numVisible, std::size_t numHidden);
+	void updateItemActionSensitivity();
 
 	// Creates the option buttons
 	void createButtons();
@@ -113,6 +116,9 @@ private:
 
     void onItemActivated(wxDataViewEvent& ev);
     void onItemToggled(wxDataViewEvent& ev);
+    void onItemSelected(wxDataViewEvent& ev);
+    void onRenameLayer(wxCommandEvent& ev);
+    void onDeleteLayer(wxCommandEvent& ev);
     int getSelectedLayerId();
 };
 

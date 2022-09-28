@@ -15,9 +15,13 @@
 #include "wxutil/Button.h"
 
 #include "scene/LayerUsageBreakdown.h"
+#include "wxutil/Bitmap.h"
+#include "wxutil/EntryAbortedException.h"
 #include "wxutil/dataview/IndicatorColumn.h"
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/dialog/MessageBox.h"
 
 namespace ui
 {
@@ -59,6 +63,7 @@ void LayerControlDialog::populateWindow()
 
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &LayerControlDialog::onItemActivated, this);
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &LayerControlDialog::onItemToggled, this);
+    _layersView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &LayerControlDialog::onItemSelected, this);
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -83,15 +88,28 @@ void LayerControlDialog::createButtons()
 	_hideAllLayers->Bind(wxEVT_BUTTON, [this](auto& ev) { setVisibilityOfAllLayers(false); });
 
 	// Create layer button
+    auto topRow = new wxBoxSizer(wxHORIZONTAL);
+
 	auto createButton = new wxButton(this, wxID_ANY, _("New"));
 	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
-
 	wxutil::button::connectToCommand(createButton, "CreateNewLayerDialog");
+
+    _deleteButton = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("delete.png"));
+    _deleteButton->Bind(wxEVT_BUTTON, &LayerControlDialog::onDeleteLayer, this);
+    _deleteButton->SetToolTip(_("Delete this layer"));
+
+    _renameButton = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("edit.png"));
+    _renameButton->Bind(wxEVT_BUTTON, &LayerControlDialog::onRenameLayer, this);
+    _renameButton->SetToolTip(_("Rename this layer"));
+
+    topRow->Add(createButton, 1, wxEXPAND | wxRIGHT, 6);
+    topRow->Add(_renameButton, 0, wxEXPAND | wxRIGHT, 6);
+    topRow->Add(_deleteButton, 0, wxEXPAND, 6);
 
 	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxTOP, 6);
 	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT | wxTOP, 6);
 
-    GetSizer()->Add(createButton, 0, wxEXPAND | wxLEFT | wxRIGHT, 12);
+    GetSizer()->Add(topRow, 0, wxEXPAND | wxLEFT | wxRIGHT, 12);
     GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
@@ -212,7 +230,19 @@ void LayerControlDialog::updateButtonSensitivity(std::size_t numVisible, std::si
 {
 	_showAllLayers->Enable(numHidden > 0);
 	_hideAllLayers->Enable(numVisible > 0);
+
+    updateItemActionSensitivity();
 }
+
+void LayerControlDialog::updateItemActionSensitivity()
+{
+    auto selectedLayerId = getSelectedLayerId();
+
+    // Don't allow deleting or renaming the default layer (or -1)
+    _deleteButton->Enable(selectedLayerId > 0);
+    _renameButton->Enable(selectedLayerId > 0);
+}
+
 
 void LayerControlDialog::updateLayerUsage()
 {
@@ -458,6 +488,84 @@ void LayerControlDialog::onItemToggled(wxDataViewEvent& ev)
         wxutil::TreeModel::Row row(ev.GetItem(), *_layerStore);
 
         GlobalMapModule().getRoot()->getLayerManager().setLayerVisibility(row[_columns.id].getInteger(), row[_columns.visible].getBool());
+    }
+}
+
+void LayerControlDialog::onItemSelected(wxDataViewEvent& ev)
+{
+    updateItemActionSensitivity();
+}
+
+void LayerControlDialog::onRenameLayer(wxCommandEvent& ev)
+{
+    if (!GlobalMapModule().getRoot())
+    {
+        rError() << "Can't rename layer, no map root present" << std::endl;
+        return;
+    }
+
+    auto selectedLayerId = getSelectedLayerId();
+    auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+
+    while (true)
+    {
+        // Query the name of the new layer from the user
+        std::string newLayerName;
+
+        try
+        {
+            newLayerName = wxutil::Dialog::TextEntryDialog(
+                _("Rename Layer"),
+                _("Enter new Layer Name"),
+                layerSystem.getLayerName(selectedLayerId),
+                this
+            );
+        }
+        catch (wxutil::EntryAbortedException&)
+        {
+            break;
+        }
+
+        // Attempt to rename the layer, this will return -1 if the operation fails
+        bool success = layerSystem.renameLayer(selectedLayerId, newLayerName);
+
+        if (success)
+        {
+            // Stop here, the control might already have been destroyed
+            GlobalMapModule().setModified(true);
+            return;
+        }
+        else
+        {
+            // Wrong name, let the user try again
+            wxutil::Messagebox::ShowError(_("Could not rename layer, please try again."));
+            continue;
+        }
+    }
+}
+
+void LayerControlDialog::onDeleteLayer(wxCommandEvent& ev)
+{
+    if (!GlobalMapModule().getRoot())
+    {
+        rError() << "Can't delete layer, no map root present" << std::endl;
+        return;
+    }
+
+    auto selectedLayerId = getSelectedLayerId();
+    auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+
+    // Ask the about the deletion
+    auto msg = _("Do you really want to delete this layer?");
+    msg += "\n" + layerSystem.getLayerName(selectedLayerId);
+
+    IDialogPtr box = GlobalDialogManager().createMessageBox(
+        _("Confirm Layer Deletion"), msg, IDialog::MESSAGE_ASK
+    );
+
+    if (box->run() == IDialog::RESULT_YES)
+    {
+        GlobalCommandSystem().executeCommand("DeleteLayer", cmd::Argument(selectedLayerId));
     }
 }
 
