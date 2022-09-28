@@ -364,7 +364,12 @@ void LayerManager::setSelected(int layerID, bool selected)
     }
 }
 
-void LayerManager::setParentLayer(int childlayerId, int parentLayerId)
+int LayerManager::getParentLayer(int layerId)
+{
+    return -1;
+}
+
+void LayerManager::setParentLayer(int childLayerId, int parentLayerId)
 {
     
 }

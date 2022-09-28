@@ -296,6 +296,19 @@ void LayerInterface::setSelected(int layerID, bool selected)
 	}
 }
 
+int LayerInterface::getParentLayer(int layerId)
+{
+	try
+	{
+		return getMapLayerManager().getParentLayer(layerId);
+	}
+	catch (const std::runtime_error& ex)
+	{
+		rError() << ex.what() << std::endl;
+        return -1;
+	}
+}
+
 void LayerInterface::setParentLayer(int childlayerId, int parentLayerId)
 {
 	try
@@ -341,6 +354,7 @@ void LayerInterface::registerInterface(py::module& scope, py::dict& globals)
 	layerManager.def("removeSelectionFromLayer", py::overload_cast<const std::string&>(&LayerInterface::removeSelectionFromLayer));
 	layerManager.def("removeSelectionFromLayer", py::overload_cast<int>(&LayerInterface::removeSelectionFromLayer));
 	layerManager.def("setSelected", &LayerInterface::setSelected);
+	layerManager.def("getParentLayer", &LayerInterface::getParentLayer);
 	layerManager.def("setParentLayer", &LayerInterface::setParentLayer);
 
 	// Now point the Python variable "GlobalLayerManager" to this instance

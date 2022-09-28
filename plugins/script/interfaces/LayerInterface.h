@@ -62,7 +62,8 @@ public:
 	void removeSelectionFromLayer(const std::string& layerName);
 	void removeSelectionFromLayer(int layerID);
 	void setSelected(int layerID, bool selected);
-    void setParentLayer(int childlayerId, int parentLayerId);
+    int getParentLayer(int layerId);
+    void setParentLayer(int childLayerId, int parentLayerId);
 
 	// IScriptInterface implementation
 	void registerInterface(py::module& scope, py::dict& globals) override;

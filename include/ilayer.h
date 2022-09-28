@@ -179,6 +179,12 @@ public:
 	virtual void setSelected(int layerID, bool selected) = 0;
 
     /**
+     * Returns the parent layer ID of the layer identified by the given ID.
+     * Will return -1 if the given layer doesn't have a parent or doesn't exist.
+     */
+    virtual int getParentLayer(int layerId) = 0;
+
+    /**
      * Sets the parent of the given child layer, replacing any previous parent.
      *
      * Any layer can be made a child of another layer, as long as the formed
@@ -189,7 +195,7 @@ public:
      * An attempt to form an invalid operation (like modifying the default layer
      * or forming a recursion) will throw a std::runtime_error.
      */
-    virtual void setParentLayer(int childlayerId, int parentLayerId) = 0;
+    virtual void setParentLayer(int childLayerId, int parentLayerId) = 0;
 
 	/**
 	 * A signal for client code to get notified about layer creation,
