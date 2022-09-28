@@ -24,6 +24,19 @@ inline std::vector<std::string> getAllLayerNames()
     return layerNames;
 }
 
+inline std::vector<int> getAllLayerIds()
+{
+    std::vector<int> layerIds;
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    layerManager.foreachLayer([&](int layerId, const std::string& layerName)
+    {
+        layerIds.push_back(layerId);
+    });
+
+    return layerIds;
+}
+
 TEST_F(LayerTest, CreateLayer)
 {
     EXPECT_EQ(getAllLayerNames().size(), 1) << "Expected a default layer at map start";
@@ -213,6 +226,99 @@ TEST_F(LayerTest, RenameLayer)
 
     EXPECT_EQ(layerManager.getLayerID(testLayerName), -1) << "The old name should no longer be valid";
     EXPECT_EQ(layerManager.getLayerID(newName), layerId) << "The new name should now be valid";
+}
+
+TEST_F(LayerTest, GetFirstVisibleLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    EXPECT_EQ(layerManager.getFirstVisibleLayer(), 0) << "The first visible layer should be the default layer after startup";
+
+    const std::string testLayerName = "TestLayer";
+    auto testLayerId = layerManager.createLayer(testLayerName);
+
+    EXPECT_EQ(layerManager.getFirstVisibleLayer(), 0) << "The first visible layer should still be the default layer";
+
+    // Hide the default layer, the first visible one is now the test layer
+    layerManager.setLayerVisibility(0, false);
+    EXPECT_EQ(layerManager.getFirstVisibleLayer(), testLayerId) << "The test layer is now the first visible one";
+
+    layerManager.setLayerVisibility(0, true);
+    EXPECT_EQ(layerManager.getFirstVisibleLayer(), 0) << "The default layer is now the first visible one again";
+
+    // Hide the default layer again, then hide the second layer too
+    layerManager.setLayerVisibility(0, false);
+    EXPECT_EQ(layerManager.getFirstVisibleLayer(), testLayerId) << "The test layer is now the first visible one";
+    layerManager.setLayerVisibility(testLayerId, false);
+
+    EXPECT_EQ(getAllLayerIds(), std::vector({ 0, testLayerId })) << "No other layers should be present";
+    EXPECT_EQ(layerManager.getFirstVisibleLayer(), 0) << "Even though nothing is visible, the default layer should have been returned";
+}
+
+TEST_F(LayerTest, GetActiveLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "The active layer should be the default layer after startup";
+
+    const std::string testLayerName = "TestLayer";
+    auto testLayerId = layerManager.createLayer(testLayerName);
+
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "The active layer should still be the default layer";
+
+    // Hide the default layer, the active one is now the test layer
+    layerManager.setLayerVisibility(0, false);
+    EXPECT_EQ(layerManager.getActiveLayer(), testLayerId) << "The test layer is now active";
+
+    layerManager.setLayerVisibility(0, true);
+    EXPECT_EQ(layerManager.getActiveLayer(), testLayerId) << "The test layer remains active";
+
+    // Hide all layers
+    layerManager.setLayerVisibility(0, false);
+    layerManager.setLayerVisibility(testLayerId, false);
+
+    EXPECT_EQ(getAllLayerIds(), std::vector({ 0, testLayerId })) << "No other layers should be present";
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "Even though nothing is visible, the default layer should be active";
+}
+
+TEST_F(LayerTest, SetActiveLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "The active layer should be the default layer after startup";
+
+    const std::string testLayerName = "TestLayer";
+    auto testLayerId = layerManager.createLayer(testLayerName);
+
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "The active layer should still be the default layer";
+
+    layerManager.setActiveLayer(testLayerId);
+    EXPECT_EQ(layerManager.getActiveLayer(), testLayerId) << "The test layer should now be active";
+
+    layerManager.setActiveLayer(0);
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "The default layer should now be active";
+
+    // Hide all layers
+    layerManager.setLayerVisibility(0, false);
+    layerManager.setLayerVisibility(testLayerId, false);
+
+    EXPECT_EQ(getAllLayerIds(), std::vector({ 0, testLayerId })) << "No other layers should be present";
+
+    // It's still possible to set a hidden layer to active
+    layerManager.setActiveLayer(0);
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "The default layer should now be active";
+
+    layerManager.setActiveLayer(testLayerId);
+    EXPECT_EQ(layerManager.getActiveLayer(), testLayerId) << "The test layer should now be active";
+
+    // Show the test layer, this doesn't change anything
+    layerManager.setLayerVisibility(testLayerId, true);
+    EXPECT_EQ(layerManager.getActiveLayer(), testLayerId) << "The test layer should now be active";
+
+    // Showing the default layer shouldn't change the active layer
+    layerManager.setLayerVisibility(0, true);
+    EXPECT_EQ(layerManager.getActiveLayer(), testLayerId) << "The test layer should now be active";
+
+    // Deleting the test layer should make the default one active
+    layerManager.deleteLayer(testLayerName);
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "The default layer should now be active";
 }
 
 TEST_F(LayerTest, CreateLayerMarksMapAsModified)
