@@ -103,6 +103,7 @@ private:
 	void disconnectFromMapRoot();
 
     void onItemActivated(wxDataViewEvent& ev);
+    void onItemToggled(wxDataViewEvent& ev);
     int getSelectedLayerId();
 };
 

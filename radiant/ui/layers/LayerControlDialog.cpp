@@ -56,6 +56,7 @@ void LayerControlDialog::populateWindow()
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &LayerControlDialog::onItemActivated, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &LayerControlDialog::onItemToggled, this);
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -375,13 +376,19 @@ int LayerControlDialog::getSelectedLayerId()
 
     if (!item.IsOk()) return -1;
 
-    wxutil::TreeModel::Row row(item, *_layersView->GetModel());
+    wxutil::TreeModel::Row row(item, *_layerStore);
 
     return row[_columns.id].getInteger();
 }
 
 void LayerControlDialog::onItemActivated(wxDataViewEvent& ev)
 {
+    // Don't react to double-clicks on the checkbox
+    if (ev.GetColumn() == _columns.visible.getColumnIndex())
+    {
+        return;
+    }
+
     if (!GlobalMapModule().getRoot())
     {
         rError() << "Can't select layer, no map root present" << std::endl;
@@ -404,6 +411,20 @@ void LayerControlDialog::onItemActivated(wxDataViewEvent& ev)
 
     // Set the entire layer to selected
     GlobalMapModule().getRoot()->getLayerManager().setSelected(layerId, selected);
+}
+
+void LayerControlDialog::onItemToggled(wxDataViewEvent& ev)
+{
+    if (!GlobalMapModule().getRoot()) return;
+
+    if (ev.GetDataViewColumn() != nullptr &&
+        static_cast<int>(ev.GetDataViewColumn()->GetModelColumn()) == _columns.visible.getColumnIndex())
+    {
+        // Model value in the boolean column has changed, this means the checkbox has been toggled
+        wxutil::TreeModel::Row row(ev.GetItem(), *_layerStore);
+
+        GlobalMapModule().getRoot()->getLayerManager().setLayerVisibility(row[_columns.id].getInteger(), row[_columns.visible].getBool());
+    }
 }
 
 } // namespace ui
