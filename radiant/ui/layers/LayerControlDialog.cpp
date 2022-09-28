@@ -33,6 +33,8 @@ LayerControlDialog::LayerControlDialog() :
     _layersView(nullptr),
 	_showAllLayers(nullptr),
 	_hideAllLayers(nullptr),
+	_refreshTreeOnIdle(false),
+	_updateTreeOnIdle(false),
 	_rescanSelectionOnIdle(false)
 {
 	populateWindow();
@@ -77,8 +79,8 @@ void LayerControlDialog::createButtons()
 	_showAllLayers = new wxButton(this, wxID_ANY, _("Show all"));
 	_hideAllLayers = new wxButton(this, wxID_ANY, _("Hide all"));
 
-	_showAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onShowAllLayers, this);
-	_hideAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onHideAllLayers, this);
+    _showAllLayers->Bind(wxEVT_BUTTON, [this](auto& ev) { setVisibilityOfAllLayers(true); });
+	_hideAllLayers->Bind(wxEVT_BUTTON, [this](auto& ev) { setVisibilityOfAllLayers(false); });
 
 	// Create layer button
 	auto createButton = new wxButton(this, wxID_ANY, _("New"));
@@ -99,18 +101,33 @@ void LayerControlDialog::clearControls()
     _layerStore->Clear();
 }
 
+void LayerControlDialog::queueRefresh()
+{
+    _refreshTreeOnIdle = true;
+    _rescanSelectionOnIdle = true;
+}
+
+void LayerControlDialog::queueUpdate()
+{
+    _updateTreeOnIdle = true;
+    _rescanSelectionOnIdle = true;
+}
+
 void LayerControlDialog::refresh()
 {
+    _refreshTreeOnIdle = false;
+
 	clearControls();
 
-	if (!GlobalMapModule().getRoot())
-	{
-		return; // no map present
-	}
+    if (!GlobalMapModule().getRoot()) return; // no map present
 
 	// Traverse the layers
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
     auto activeLayerId = layerManager.getActiveLayer();
+
+    // Update the show/hide all button sensitiveness
+    std::size_t numVisible = 0;
+    std::size_t numHidden = 0;
 
     layerManager.foreachLayer([&](int layerId, const std::string& layerName)
     {
@@ -125,18 +142,30 @@ void LayerControlDialog::refresh()
             row[_columns.name] = wxutil::TreeViewItemStyle::ActiveItemStyle();
         }
 
-        row[_columns.visible] = layerManager.layerIsVisible(layerId);
+        if (layerManager.layerIsVisible(layerId))
+        {
+            row[_columns.visible] = true;
+            numVisible++;
+        }
+        else
+        {
+            row[_columns.visible] = false;
+            numHidden++;
+
+        }
 
         row.SendItemAdded();
 
         _layerItemMap.emplace(layerId, row.getItem());
     });
 
-	update();
+    updateButtonSensitivity(numVisible, numHidden);
 }
 
 void LayerControlDialog::update()
 {
+    _updateTreeOnIdle = false;
+
 	if (!GlobalMapModule().getRoot())
 	{
 		return;
@@ -144,9 +173,6 @@ void LayerControlDialog::update()
 
 	auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
     auto activeLayerId = layerManager.getActiveLayer();
-
-	// Update usage next time round
-	_rescanSelectionOnIdle = true;
 
 	// Update the show/hide all button sensitiveness
     std::size_t numVisible = 0;
@@ -179,6 +205,11 @@ void LayerControlDialog::update()
         row.SendItemChanged();
     });
 
+    updateButtonSensitivity(numVisible, numHidden);
+}
+
+void LayerControlDialog::updateButtonSensitivity(std::size_t numVisible, std::size_t numHidden)
+{
 	_showAllLayers->Enable(numHidden > 0);
 	_hideAllLayers->Enable(numVisible > 0);
 }
@@ -206,9 +237,20 @@ void LayerControlDialog::updateLayerUsage()
 
 void LayerControlDialog::onIdle()
 {
-	if (!_rescanSelectionOnIdle) return;
+    if (_refreshTreeOnIdle)
+    {
+        refresh();
+    }
 
-	updateLayerUsage();
+    if (_updateTreeOnIdle)
+    {
+        update();
+    }
+
+	if (_rescanSelectionOnIdle)
+	{
+	    updateLayerUsage();
+	}
 }
 
 void LayerControlDialog::ToggleDialog(const cmd::ArgumentList& args)
@@ -285,7 +327,7 @@ void LayerControlDialog::_preShow()
 	);
 
 	// Re-populate the dialog
-	refresh();
+	queueRefresh();
 }
 
 void LayerControlDialog::_postHide()
@@ -294,6 +336,8 @@ void LayerControlDialog::_postHide()
 
 	_mapEventSignal.disconnect();
 	_selectionChangedSignal.disconnect();
+	_refreshTreeOnIdle = false;
+    _updateTreeOnIdle = false;
 	_rescanSelectionOnIdle = false;
 }
 
@@ -308,11 +352,11 @@ void LayerControlDialog::connectToMapRoot()
 
 		// Layer creation/addition/removal triggers a refresh
 		_layersChangedSignal = layerSystem.signal_layersChanged().connect(
-			sigc::mem_fun(this, &LayerControlDialog::refresh));
+			sigc::mem_fun(this, &LayerControlDialog::queueRefresh));
 
 		// Visibility change doesn't repopulate the dialog
 		_layerVisibilityChangedSignal = layerSystem.signal_layerVisibilityChanged().connect(
-			sigc::mem_fun(this, &LayerControlDialog::update));
+			sigc::mem_fun(this, &LayerControlDialog::queueUpdate));
 
 		// Node membership triggers a selection rescan
 		_nodeLayerMembershipChangedSignal = layerSystem.signal_nodeMembershipChanged().connect([this]()
@@ -329,29 +373,19 @@ void LayerControlDialog::disconnectFromMapRoot()
 	_layerVisibilityChangedSignal.disconnect();
 }
 
-void LayerControlDialog::onShowAllLayers(wxCommandEvent& ev)
+void LayerControlDialog::setVisibilityOfAllLayers(bool visible)
 {
 	if (!GlobalMapModule().getRoot())
 	{
-		rError() << "Can't show layers, no map loaded." << std::endl;
+		rError() << "Can't change layer visibility, no map loaded." << std::endl;
 		return;
 	}
 
 	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
 
-	layerSystem.foreachLayer([&](int layerID, const std::string& layerName)
+	layerSystem.foreachLayer([&](int layerID, const std::string&)
     {
-		layerSystem.setLayerVisibility(layerID, true);
-    });
-}
-
-void LayerControlDialog::onHideAllLayers(wxCommandEvent& ev)
-{
-	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
-
-	layerSystem.foreachLayer([&](int layerID, const std::string& layerName)
-    {
-		layerSystem.setLayerVisibility(layerID, false);
+		layerSystem.setLayerVisibility(layerID, visible);
     });
 }
 
@@ -361,7 +395,7 @@ void LayerControlDialog::onMapEvent(IMap::MapEvent ev)
 	{
 		// Rebuild the dialog once a map is loaded
 		connectToMapRoot();
-		refresh();
+		queueRefresh();
 	}
 	else if (ev == IMap::MapUnloading)
 	{
@@ -401,7 +435,7 @@ void LayerControlDialog::onItemActivated(wxDataViewEvent& ev)
     if (wxGetKeyState(WXK_CONTROL))
     {
         GlobalMapModule().getRoot()->getLayerManager().setActiveLayer(layerId);
-        refresh();
+        queueRefresh();
         return;
     }
 

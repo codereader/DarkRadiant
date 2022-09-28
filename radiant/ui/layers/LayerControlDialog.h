@@ -51,7 +51,10 @@ private:
 	wxButton* _showAllLayers;
 	wxButton* _hideAllLayers;
 
+	bool _refreshTreeOnIdle;
+	bool _updateTreeOnIdle;
 	bool _rescanSelectionOnIdle;
+
 	sigc::connection _selectionChangedSignal;
 	sigc::connection _layersChangedSignal;
 	sigc::connection _layerVisibilityChangedSignal;
@@ -60,12 +63,6 @@ private:
 
 public:
     LayerControlDialog();
-
-	// Re-populates the window
-	void refresh();
-
-	// Updates the state of all LayerControls
-	void update();
 
 	// Command target (registered in the event manager)
 	static void ToggleDialog(const cmd::ArgumentList& args);
@@ -84,17 +81,29 @@ private:
 	void _preShow() override;
 	void _postHide() override;
 
+    // Calls refresh() on the next idle event
+    void queueRefresh();
+
+    // Calls update() on the next idle event
+    void queueUpdate();
+
+    // Rebuilds the whole data view
+    void refresh();
+
+    // Updates the state of all tree items, doesn't clear the tree
+    void update();
+
 	void populateWindow();
 	void clearControls();
 
 	// Update the usage colours on the controls
 	void updateLayerUsage();
+	void updateButtonSensitivity(std::size_t numVisible, std::size_t numHidden);
 
 	// Creates the option buttons
 	void createButtons();
 
-	void onShowAllLayers(wxCommandEvent& ev);
-	void onHideAllLayers(wxCommandEvent& ev);
+	void setVisibilityOfAllLayers(bool visible);
 	void onIdle();
 
 	void onMapEvent(IMap::MapEvent ev);
