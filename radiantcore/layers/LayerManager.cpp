@@ -226,6 +226,11 @@ void LayerManager::setLayerVisibility(int layerID, bool visible)
 		return;
 	}
 
+    if (_layerVisibility[layerID] == visible)
+    {
+        return; // nothing to change here
+    }
+
 	// Set the visibility
 	_layerVisibility[layerID] = visible;
 

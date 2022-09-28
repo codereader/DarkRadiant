@@ -321,6 +321,96 @@ TEST_F(LayerTest, SetActiveLayer)
     EXPECT_EQ(layerManager.getActiveLayer(), 0) << "The default layer should now be active";
 }
 
+TEST_F(LayerTest, LayerIsVisible)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    EXPECT_TRUE(layerManager.layerIsVisible(0)) << "The default layer should be visible";
+
+    // It's possible to hide the default layer even if no other layer is there
+    layerManager.setLayerVisibility(0, false);
+    EXPECT_FALSE(layerManager.layerIsVisible(0)) << "The default layer should not be visible";
+
+    const std::string testLayerName = "TestLayer";
+    auto testLayerId = layerManager.createLayer(testLayerName);
+
+    EXPECT_TRUE(layerManager.layerIsVisible(testLayerId)) << "The new layer should be visible after creation";
+    EXPECT_FALSE(layerManager.layerIsVisible(0)) << "The default layer should not be visible";
+    
+    layerManager.setLayerVisibility(testLayerId, false);
+    EXPECT_FALSE(layerManager.layerIsVisible(testLayerId)) << "The test layer should now be hidden";
+    EXPECT_FALSE(layerManager.layerIsVisible(0)) << "The default layer should not be visible";
+
+    // A non-existent Id should report as hidden
+    EXPECT_FALSE(layerManager.layerIsVisible(-1)) << "The layer ID should report as hidden";
+    EXPECT_FALSE(layerManager.layerIsVisible(testLayerId + 20)) << "A non-existent ID should report as hidden";
+}
+
+TEST_F(LayerTest, VisibilityChangedSignal)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    EXPECT_TRUE(layerManager.layerIsVisible(0)) << "The default layer should be visible";
+
+    std::size_t layerVisibilityChangedFireCount = 0;
+    std::size_t layersChangedFireCount = 0;
+    layerManager.signal_layersChanged().connect([&]() { ++layersChangedFireCount; });
+    layerManager.signal_layerVisibilityChanged().connect([&]() { ++layerVisibilityChangedFireCount; });
+
+    // Trigger a visibility change
+    layerManager.setLayerVisibility(0, false);
+
+    EXPECT_EQ(layerVisibilityChangedFireCount, 1) << "Visibility changed signal should have been fired once";
+    EXPECT_EQ(layersChangedFireCount, 0) << "Layers changed signal should NOT have been fired at all";
+
+    // Hiding it again, doesn't trigger any signals
+    layerVisibilityChangedFireCount = 0;
+    layersChangedFireCount = 0;
+
+    layerManager.setLayerVisibility(0, false);
+
+    EXPECT_EQ(layerVisibilityChangedFireCount, 0) << "Visibility changed signal should not have been fired";
+    EXPECT_EQ(layersChangedFireCount, 0) << "Layers changed signal should NOT have been fired at all";
+}
+
+TEST_F(LayerTest, SetLayerVisibilityAffectsActiveLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto testLayerId = layerManager.createLayer("TestLayer");
+
+    // Test how the visibility is affecting the active layer
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "The active layer should still be the default layer";
+
+    // Hide the default layer
+    layerManager.setLayerVisibility(0, false);
+    layerManager.setLayerVisibility(testLayerId, false);
+
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "The test layer should now be active";
+
+    // All layers are hidden. Showing one of them will reinstate this layer as active
+    layerManager.setLayerVisibility(testLayerId, true);
+    EXPECT_EQ(layerManager.getActiveLayer(), testLayerId) << "The test layer should now be active";
+}
+
+TEST_F(LayerTest, SetLayerVisibilityHidesNode)
+{
+    loadMap("general_purpose.mapx");
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    // This brush is a member of layer 1
+    auto brush = algorithm::findFirstBrushWithMaterial(GlobalMapModule().findOrInsertWorldspawn(), "textures/numbers/4");
+
+    EXPECT_TRUE(brush->visible()) << "Brush should be visible";
+
+    auto layers = brush->getLayers();
+    EXPECT_NE(layers.find(1), layers.end()) << "Brush should be a member of layer 1";
+
+    layerManager.setLayerVisibility(1, false);
+    EXPECT_FALSE(brush->visible()) << "Brush should be hidden now";
+
+    layerManager.setLayerVisibility(1, true);
+    EXPECT_TRUE(brush->visible()) << "Brush should be visible again";
+}
+
 TEST_F(LayerTest, CreateLayerMarksMapAsModified)
 {
     loadMap("general_purpose.mapx");
