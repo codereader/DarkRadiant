@@ -15,6 +15,7 @@
 #include "wxutil/Button.h"
 
 #include "scene/LayerUsageBreakdown.h"
+#include "wxutil/dataview/IndicatorColumn.h"
 #include "wxutil/dataview/TreeView.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
 
@@ -49,6 +50,8 @@ void LayerControlDialog::populateWindow()
 
     _layersView->AppendToggleColumn(_("Visible"), _columns.visible.getColumnIndex(),
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+    _layersView->AppendColumn(new wxutil::IndicatorColumn(_("Contains Selection"),
+        _columns.selectionIsPartOfLayer.getColumnIndex()));
     _layersView->AppendTextColumn("", _columns.name.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
@@ -119,6 +122,8 @@ void LayerControlDialog::refresh()
             row[_columns.name] = wxutil::TreeViewItemStyle::ActiveItemStyle();
         }
 
+        row[_columns.selectionIsPartOfLayer] = layerId % 2 == 0;
+
         row[_columns.visible] = layerManager.layerIsVisible(layerId);
 
         row.SendItemAdded();
@@ -175,6 +180,8 @@ void LayerControlDialog::update()
 
         row[_columns.name] = activeLayerId == layerId ? 
             wxutil::TreeViewItemStyle::ActiveItemStyle() : wxDataViewItemAttr(); // no style
+
+        row[_columns.selectionIsPartOfLayer] = layerId % 2 == 0;
 
         if (layerManager.layerIsVisible(layerId))
         {

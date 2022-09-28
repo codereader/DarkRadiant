@@ -32,12 +32,14 @@ private:
         TreeColumns() :
             id(add(wxutil::TreeModel::Column::Integer)),
             visible(add(wxutil::TreeModel::Column::Boolean)),
-            name(add(wxutil::TreeModel::Column::String))
+            name(add(wxutil::TreeModel::Column::String)),
+            selectionIsPartOfLayer(add(wxutil::TreeModel::Column::Boolean))
         {}
 
         wxutil::TreeModel::Column id;
         wxutil::TreeModel::Column visible;
         wxutil::TreeModel::Column name;
+        wxutil::TreeModel::Column selectionIsPartOfLayer;
     };
 
     wxutil::TreeView* _layersView;
