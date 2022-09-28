@@ -55,6 +55,8 @@ void LayerControlDialog::populateWindow()
     _layersView->AppendTextColumn("", _columns.name.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &LayerControlDialog::onItemActivated, this);
+
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
     auto overallVBox = new wxBoxSizer(wxVERTICAL);
@@ -365,6 +367,43 @@ void LayerControlDialog::onMapEvent(IMap::MapEvent ev)
 		disconnectFromMapRoot();
 		clearControls();
 	}
+}
+
+int LayerControlDialog::getSelectedLayerId()
+{
+    auto item = _layersView->GetSelection();
+
+    if (!item.IsOk()) return -1;
+
+    wxutil::TreeModel::Row row(item, *_layersView->GetModel());
+
+    return row[_columns.id].getInteger();
+}
+
+void LayerControlDialog::onItemActivated(wxDataViewEvent& ev)
+{
+    if (!GlobalMapModule().getRoot())
+    {
+        rError() << "Can't select layer, no map root present" << std::endl;
+        return;
+    }
+
+    auto layerId = getSelectedLayerId();
+
+    // When holding down CTRL the user sets this as active
+    if (wxGetKeyState(WXK_CONTROL))
+    {
+        GlobalMapModule().getRoot()->getLayerManager().setActiveLayer(layerId);
+        refresh();
+        return;
+    }
+
+    // By default, we SELECT the layer
+    // The user can choose to DESELECT the layer when holding down shift
+    bool selected = !wxGetKeyState(WXK_SHIFT);
+
+    // Set the entire layer to selected
+    GlobalMapModule().getRoot()->getLayerManager().setSelected(layerId, selected);
 }
 
 } // namespace ui

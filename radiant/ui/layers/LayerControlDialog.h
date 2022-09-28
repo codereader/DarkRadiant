@@ -101,6 +101,9 @@ private:
 
 	void connectToMapRoot();
 	void disconnectFromMapRoot();
+
+    void onItemActivated(wxDataViewEvent& ev);
+    int getSelectedLayerId();
 };
 
 } // namespace ui
