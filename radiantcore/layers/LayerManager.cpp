@@ -93,10 +93,15 @@ void LayerManager::deleteLayer(const std::string& name)
 
 	if (layerID == -1)
 	{
-		rError() << "Could not delete layer, name doesn't exist: "
-			<< name << std::endl;
+		rError() << "Could not delete layer, name doesn't exist: " << name << std::endl;
 		return;
 	}
+
+    if (layerID == DEFAULT_LAYER)
+    {
+        rError() << "Cannot delete the default layer" << std::endl;
+        return;
+    }
 
 	// Remove all nodes from this layer first, but don't de-select them yet
 	RemoveFromLayerWalker walker(layerID);
@@ -428,6 +433,11 @@ void LayerManager::setSelected(int layerID, bool selected)
     {
         GlobalSceneGraph().root()->traverseChildren(walker);
     }
+}
+
+void LayerManager::setParentLayer(int childlayerId, int parentLayerId)
+{
+    
 }
 
 sigc::signal<void> LayerManager::signal_layersChanged()

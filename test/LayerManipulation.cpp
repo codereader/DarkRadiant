@@ -1,3 +1,4 @@
+#include "i18n.h"
 #include "RadiantTest.h"
 
 #include "imap.h"
@@ -9,6 +10,67 @@ namespace test
 {
 
 using LayerTest = RadiantTest;
+
+inline std::vector<std::string> getAllLayerNames()
+{
+    std::vector<std::string> layerNames;
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    layerManager.foreachLayer([&](int layerId, const std::string& layerName)
+    {
+        layerNames.push_back(layerName);
+    });
+
+    return layerNames;
+}
+
+TEST_F(LayerTest, CreateLayer)
+{
+    EXPECT_EQ(getAllLayerNames().size(), 1) << "Expected a default layer at map start";
+    EXPECT_EQ(getAllLayerNames(), std::vector{ _("Default") }) << "Expected a default layer at map start";
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    const std::string testLayerName = "TestLayer";
+    auto layerId =layerManager.createLayer(testLayerName);
+
+    EXPECT_GT(layerId, 0) << "New layer must not have and ID of -1 or 0";
+    EXPECT_EQ(getAllLayerNames(), std::vector({ _("Default"), testLayerName })) << "Expected two layers after creating a new one";
+}
+
+TEST_F(LayerTest, CreateLayerWithId)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    const std::string testLayerName = "TestLayer";
+    constexpr int testLayerId = 56;
+    auto layerId = layerManager.createLayer(testLayerName, testLayerId);
+
+    EXPECT_EQ(layerId, testLayerId) << "New layer needs to have the ID " << testLayerId;
+    EXPECT_EQ(getAllLayerNames(), std::vector({ _("Default"), testLayerName })) << "Expected two layers after creating a new one";
+
+    EXPECT_EQ(layerManager.getLayerID(testLayerName), testLayerId) << "getLayerID reported the wrong ID";
+    EXPECT_EQ(layerManager.getLayerName(testLayerId), testLayerName) << "getLayerName reported the wrong Name";
+}
+
+TEST_F(LayerTest, DefaultLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    EXPECT_EQ(layerManager.getLayerID(_("Default")), 0) << "Default layer should have the ID 0";
+    EXPECT_EQ(layerManager.getLayerName(0), _("Default")) << "Default layer should be named "<< _("Default");
+}
+
+TEST_F(LayerTest, DeleteDefaultLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto defaultLayerName = layerManager.getLayerName(0);
+
+    EXPECT_EQ(getAllLayerNames(), std::vector({ defaultLayerName })) << "Expected one default layer";
+
+    // Attempting to delete the default layer doesn't work
+    layerManager.deleteLayer(defaultLayerName);
+
+    EXPECT_EQ(getAllLayerNames(), std::vector({ defaultLayerName })) << "Expected still one default layer";
+}
 
 TEST_F(LayerTest, CreateLayerMarksMapAsModified)
 {
@@ -60,8 +122,6 @@ enum class LayerAction
 
 void performMoveOrAddToLayerTest(LayerAction action)
 {
-    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
-
     auto brush = algorithm::findFirstBrushWithMaterial(
         GlobalMapModule().findOrInsertWorldspawn(), "textures/numbers/1");
     EXPECT_TRUE(brush);

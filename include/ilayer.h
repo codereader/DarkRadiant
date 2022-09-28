@@ -183,6 +183,19 @@ public:
 	 */
 	virtual void setSelected(int layerID, bool selected) = 0;
 
+    /**
+     * Sets the parent of the given child layer, replacing any previous parent.
+     *
+     * Any layer can be made a child of another layer, as long as the formed
+     * tree is staying sane (no recursions).
+     * Setting a parent layer ID of -1 will remove the parent and make this
+     * a top-level layer.
+     *
+     * An attempt to form an invalid operation (like modifying the default layer
+     * or forming a recursion) will throw a std::runtime_error.
+     */
+    virtual void setParentLayer(int childlayerId, int parentLayerId) = 0;
+
 	/**
 	 * A signal for client code to get notified about layer creation,
 	 * renamings and removal.

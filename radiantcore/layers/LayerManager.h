@@ -114,6 +114,8 @@ public:
 	// Selects/unselects an entire layer
 	void setSelected(int layerID, bool selected) override;
 
+    void setParentLayer(int childlayerId, int parentLayerId) override;
+
 	sigc::signal<void> signal_layersChanged() override;
 	sigc::signal<void> signal_layerVisibilityChanged() override;
 	sigc::signal<void> signal_nodeMembershipChanged() override;
