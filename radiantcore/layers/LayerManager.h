@@ -83,30 +83,25 @@ public:
 	void setActiveLayer(int layerID) override;
 
 	// Returns true if the given layer is visible
-	bool layerIsVisible(const std::string& layerName) override;
 	bool layerIsVisible(int layerID) override;
 
 	// Sets the visibility state of the given layer to <visible>
-	void setLayerVisibility(const std::string& layerName, bool visible) override;
 	void setLayerVisibility(int layerID, bool visible) override;
 
 	/**
 	 * greebo: Traverses the selection and adds each node to the given layer.
 	 */
-	void addSelectionToLayer(const std::string& layerName) override;
 	void addSelectionToLayer(int layerID) override;
 
 	/**
 	 * greebo: Moves all selected nodes to the given layer. This implicitly
 	 *         removes the nodes from all other layers.
 	 */
-	void moveSelectionToLayer(const std::string& layerName) override;
 	void moveSelectionToLayer(int layerID) override;
 
 	/**
 	 * greebo: Removes the selected nodes from the given layers.
 	 */
-	void removeSelectionFromLayer(const std::string& layerName) override;
 	void removeSelectionFromLayer(int layerID) override;
 
 	bool updateNodeVisibility(const scene::INodePtr& node) override;

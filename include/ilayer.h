@@ -136,32 +136,27 @@ public:
 	/**
 	 * greebo: Queries the visibility of the given layer.
 	 */
-	virtual bool layerIsVisible(const std::string& layerName) = 0;
 	virtual bool layerIsVisible(int layerID) = 0;
 
 	/**
 	 * greebo: Sets the visibility of the given layer.
 	 */
-	virtual void setLayerVisibility(const std::string& layerName, bool visible) = 0;
 	virtual void setLayerVisibility(int layerID, bool visible) = 0;
 
 	/**
 	 * greebo: Traverses the selection and adds each node to the given layer.
 	 */
-	virtual void addSelectionToLayer(const std::string& layerName) = 0;
 	virtual void addSelectionToLayer(int layerID) = 0;
 
 	/**
 	 * greebo: Moves all selected nodes to the given layer. This implicitly
 	 *         removes the nodes from all other layers.
 	 */
-	virtual void moveSelectionToLayer(const std::string& layerName) = 0;
 	virtual void moveSelectionToLayer(int layerID) = 0;
 
 	/**
 	 * greebo: Removes the selected nodes from the given layers.
 	 */
-	virtual void removeSelectionFromLayer(const std::string& layerName) = 0;
 	virtual void removeSelectionFromLayer(int layerID) = 0;
 
 	/**

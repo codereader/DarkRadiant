@@ -205,20 +205,6 @@ void LayerManager::setActiveLayer(int layerID)
 	_activeLayer = layerID;
 }
 
-bool LayerManager::layerIsVisible(const std::string& layerName) 
-{
-	// Check if the layer already exists
-	int layerID = getLayerID(layerName);
-
-	if (layerID == -1) {
-		rError() << "Could not query layer visibility, name doesn't exist: "
-			<< layerName << std::endl;
-		return false;
-	}
-
-	return _layerVisibility[layerID];
-}
-
 bool LayerManager::layerIsVisible(int layerID) {
 	// Sanity check
 	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size())) {
@@ -259,21 +245,6 @@ void LayerManager::setLayerVisibility(int layerID, bool visible)
 
 	// Fire the visibility changed event
 	onLayerVisibilityChanged();
-}
-
-void LayerManager::setLayerVisibility(const std::string& layerName, bool visible) 
-{
-	// Check if the layer already exists
-	int layerID = getLayerID(layerName);
-
-	if (layerID == -1) 
-	{
-		rError() << "Could not set layer visibility, name doesn't exist: " << layerName << std::endl;
-		return;
-	}
-
-	// Pass the call to the overloaded method to do the work
-	setLayerVisibility(layerID, visible);
 }
 
 void LayerManager::updateSceneGraphVisibility()
@@ -319,34 +290,6 @@ void LayerManager::addSelectionToLayer(int layerID) {
 	onNodeMembershipChanged();
 }
 
-void LayerManager::addSelectionToLayer(const std::string& layerName) {
-	// Check if the layer already exists
-	int layerID = getLayerID(layerName);
-
-	if (layerID == -1) {
-		rError() << "Cannot add to layer, name doesn't exist: "
-			<< layerName << std::endl;
-		return;
-	}
-
-	// Pass the call to the overload
-	addSelectionToLayer(layerID);
-}
-
-void LayerManager::moveSelectionToLayer(const std::string& layerName) {
-	// Check if the layer already exists
-	int layerID = getLayerID(layerName);
-
-	if (layerID == -1) {
-		rError() << "Cannot move to layer, name doesn't exist: "
-			<< layerName << std::endl;
-		return;
-	}
-
-	// Pass the call to the overload
-	moveSelectionToLayer(layerID);
-}
-
 void LayerManager::moveSelectionToLayer(int layerID) {
 	// Check if the layer ID exists
 	if (_layers.find(layerID) == _layers.end()) {
@@ -358,20 +301,6 @@ void LayerManager::moveSelectionToLayer(int layerID) {
 	GlobalSelectionSystem().foreachSelected(walker);
 
 	onNodeMembershipChanged();
-}
-
-void LayerManager::removeSelectionFromLayer(const std::string& layerName) {
-	// Check if the layer already exists
-	int layerID = getLayerID(layerName);
-
-	if (layerID == -1) {
-		rError() << "Cannot remove from layer, name doesn't exist: "
-			<< layerName << std::endl;
-		return;
-	}
-
-	// Pass the call to the overload
-	removeSelectionFromLayer(layerID);
 }
 
 void LayerManager::removeSelectionFromLayer(int layerID) {
