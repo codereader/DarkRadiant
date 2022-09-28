@@ -31,10 +31,19 @@ TEST_F(LayerTest, CreateLayer)
 
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
     const std::string testLayerName = "TestLayer";
+
+    std::size_t layersChangedFireCount = 0;
+    layerManager.signal_layersChanged().connect([&]()
+    {
+        ++layersChangedFireCount;
+    });
+
     auto layerId =layerManager.createLayer(testLayerName);
 
     EXPECT_GT(layerId, 0) << "New layer must not have and ID of -1 or 0";
     EXPECT_EQ(getAllLayerNames(), std::vector({ _("Default"), testLayerName })) << "Expected two layers after creating a new one";
+    EXPECT_EQ(layersChangedFireCount, 1) << "Layers changed signal should have been fired";
+    EXPECT_TRUE(layerManager.layerExists(layerId)) << "The test layer should exist now";
 }
 
 TEST_F(LayerTest, CreateLayerWithId)
@@ -42,6 +51,13 @@ TEST_F(LayerTest, CreateLayerWithId)
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
     const std::string testLayerName = "TestLayer";
     constexpr int testLayerId = 56;
+
+    std::size_t layersChangedFireCount = 0;
+    layerManager.signal_layersChanged().connect([&]()
+    {
+        ++layersChangedFireCount;
+    });
+
     auto layerId = layerManager.createLayer(testLayerName, testLayerId);
 
     EXPECT_EQ(layerId, testLayerId) << "New layer needs to have the ID " << testLayerId;
@@ -49,6 +65,31 @@ TEST_F(LayerTest, CreateLayerWithId)
 
     EXPECT_EQ(layerManager.getLayerID(testLayerName), testLayerId) << "getLayerID reported the wrong ID";
     EXPECT_EQ(layerManager.getLayerName(testLayerId), testLayerName) << "getLayerName reported the wrong Name";
+    EXPECT_EQ(layersChangedFireCount, 1) << "Layers changed signal should have been fired";
+    EXPECT_TRUE(layerManager.layerExists(layerId)) << "The test layer should exist now";
+}
+
+TEST_F(LayerTest, GetLayerId)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    EXPECT_NE(layerManager.getLayerID(_("Default")), -1) << "Default layer should return an ID";
+
+    layerManager.createLayer("TestLayer");
+
+    EXPECT_NE(layerManager.getLayerID("TestLayer"), -1) << "Layer exists, we should get an ID";
+    EXPECT_EQ(layerManager.getLayerID("nonexistent_layer"), -1) << "Layer doesn't exist, yet we got an ID";
+}
+
+TEST_F(LayerTest, LayerExists)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    EXPECT_TRUE(layerManager.layerExists(0)) << "The default layer should always exist";
+    EXPECT_FALSE(layerManager.layerExists(-1)) << "Layer ID -1 should never exist";
+
+    EXPECT_FALSE(layerManager.layerExists(1)) << "Layer ID 1 should not exist";
+    EXPECT_FALSE(layerManager.layerExists(540)) << "Layer ID 540 should not exist";
 }
 
 TEST_F(LayerTest, DefaultLayer)
@@ -57,6 +98,8 @@ TEST_F(LayerTest, DefaultLayer)
 
     EXPECT_EQ(layerManager.getLayerID(_("Default")), 0) << "Default layer should have the ID 0";
     EXPECT_EQ(layerManager.getLayerName(0), _("Default")) << "Default layer should be named "<< _("Default");
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "Default layer should be active";
+    EXPECT_EQ(layerManager.layerIsVisible(0), true) << "Default layer should be visible";
 }
 
 TEST_F(LayerTest, DeleteDefaultLayer)
@@ -66,10 +109,110 @@ TEST_F(LayerTest, DeleteDefaultLayer)
 
     EXPECT_EQ(getAllLayerNames(), std::vector({ defaultLayerName })) << "Expected one default layer";
 
+    std::size_t layersChangedFireCount = 0;
+    layerManager.signal_layersChanged().connect([&]()
+    {
+        ++layersChangedFireCount;
+    });
+
     // Attempting to delete the default layer doesn't work
     layerManager.deleteLayer(defaultLayerName);
 
+    EXPECT_TRUE(layerManager.layerExists(0)) << "The default layer should still exist";
     EXPECT_EQ(getAllLayerNames(), std::vector({ defaultLayerName })) << "Expected still one default layer";
+    EXPECT_EQ(layersChangedFireCount, 0) << "Layers changed signal should NOT have been fired";
+}
+
+TEST_F(LayerTest, DeleteLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    const std::string testLayerName = "TestLayer";
+    auto layerId = layerManager.createLayer(testLayerName);
+
+    EXPECT_TRUE(layerManager.layerExists(layerId)) << "The test layer should have been created";
+    EXPECT_EQ(layerManager.getLayerID(testLayerName), layerId) << "getLayerId reports a different ID";
+
+    std::size_t layersChangedFireCount = 0;
+    layerManager.signal_layersChanged().connect([&]()
+    {
+        ++layersChangedFireCount;
+    });
+
+    // Attempting to delete the default layer doesn't work
+    layerManager.deleteLayer(testLayerName);
+
+    EXPECT_EQ(layerManager.getLayerID(testLayerName), -1) << "The test layer should be gone now";
+    EXPECT_EQ(layersChangedFireCount, 1) << "Layers changed signal should have been fired";
+    EXPECT_FALSE(layerManager.layerExists(layerId)) << "The test layer should be gone now";
+}
+
+TEST_F(LayerTest, ResetLayerManager)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    layerManager.createLayer("TestLayer");
+    layerManager.createLayer("TestLayer2");
+
+    std::size_t layersChangedFireCount = 0;
+    layerManager.signal_layersChanged().connect([&]()
+    {
+        ++layersChangedFireCount;
+    });
+
+    std::size_t layerVisibilityChangedFireCount = 0;
+    layerManager.signal_layerVisibilityChanged().connect([&]()
+    {
+        ++layerVisibilityChangedFireCount;
+    });
+
+    layerManager.reset();
+
+    EXPECT_EQ(layerManager.getLayerID(_("Default")), 0) << "We should have a default layer after reset";
+    EXPECT_EQ(layerManager.getLayerName(0), _("Default")) << "We should have a default layer after reset";
+
+    EXPECT_EQ(layerManager.getLayerID("TestLayer"), -1) << "The test layer should be gone now";
+    EXPECT_EQ(layerManager.getLayerID("TestLayer2"), -1) << "The test layer should be gone now";
+
+    EXPECT_EQ(layerManager.getActiveLayer(), 0) << "Default layer should be active";
+    EXPECT_EQ(layerManager.layerIsVisible(0), true) << "Default layer should be visible";
+
+    EXPECT_EQ(layersChangedFireCount, 1) << "Layers changed signal should have been fired";
+    EXPECT_EQ(layerVisibilityChangedFireCount, 1) << "Layer visibility changed signal should have been fired";
+}
+
+TEST_F(LayerTest, RenameLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    const std::string testLayerName = "TestLayer";
+    const std::string newName = "RenamedLayer";
+    auto layerId = layerManager.createLayer(testLayerName);
+
+    EXPECT_TRUE(layerManager.layerExists(layerId)) << "The test layer should have been created";
+    EXPECT_EQ(layerManager.getLayerID(testLayerName), layerId) << "getLayerId reports a different ID";
+
+    std::size_t layersChangedFireCount = 0;
+    layerManager.signal_layersChanged().connect([&]()
+    {
+        ++layersChangedFireCount;
+    });
+
+    EXPECT_FALSE(layerManager.renameLayer(layerId, _("Default"))) << "Default name is not valid";
+    EXPECT_EQ(layersChangedFireCount, 0) << "Layers changed signal should not have been fired";
+    EXPECT_EQ(layerManager.getLayerID(testLayerName), layerId) << "The old name should still be valid";
+
+    EXPECT_FALSE(layerManager.renameLayer(layerId, "")) << "Empty name is not valid";
+    EXPECT_EQ(layersChangedFireCount, 0) << "Layers changed signal should not have been fired";
+    EXPECT_EQ(layerManager.getLayerID(testLayerName), layerId) << "The old name should still be valid";
+
+    // Rename the layer
+    layerManager.renameLayer(layerId, newName);
+
+    EXPECT_EQ(layersChangedFireCount, 1) << "Layers changed signal should have been fired";
+
+    EXPECT_EQ(layerManager.getLayerID(testLayerName), -1) << "The old name should no longer be valid";
+    EXPECT_EQ(layerManager.getLayerID(newName), layerId) << "The new name should now be valid";
 }
 
 TEST_F(LayerTest, CreateLayerMarksMapAsModified)
