@@ -158,7 +158,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	);
 
 	GlobalMainFrame().signal_MainFrameConstructed().connect(
-		sigc::ptr_fun(LegacyLayerControlDialog::onMainFrameConstructed));
+		sigc::ptr_fun(LayerControlDialog::onMainFrameConstructed));
 
 	// Pre-load models
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(

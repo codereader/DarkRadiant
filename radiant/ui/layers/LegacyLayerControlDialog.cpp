@@ -217,12 +217,14 @@ void LegacyLayerControlDialog::toggle(const cmd::ArgumentList& args)
 
 void LegacyLayerControlDialog::onMainFrameConstructed()
 {
+#if 0
 	// Lookup the stored window information in the registry
 	if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")
 	{
 		// Show dialog
 		Instance().Show();
 	}
+#endif
 }
 
 void LegacyLayerControlDialog::onMainFrameShuttingDown()
