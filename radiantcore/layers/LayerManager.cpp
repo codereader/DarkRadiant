@@ -2,8 +2,6 @@
 
 #include "i18n.h"
 #include "itextstream.h"
-#include "imapinfofile.h"
-#include "icommandsystem.h"
 #include "scene/Node.h"
 #include "scenelib.h"
 #include "module/StaticModule.h"
@@ -12,7 +10,6 @@
 #include "MoveToLayerWalker.h"
 #include "RemoveFromLayerWalker.h"
 #include "SetLayerSelectedWalker.h"
-#include "LayerInfoFileModule.h"
 
 #include <functional>
 #include <climits>
@@ -22,8 +19,8 @@ namespace scene
 
 namespace
 {
-	const char* const DEFAULT_LAYER_NAME = N_("Default");
-	const int DEFAULT_LAYER = 0;
+	constexpr const char* const DEFAULT_LAYER_NAME = N_("Default");
+	constexpr int DEFAULT_LAYER = 0;
 }
 
 LayerManager::LayerManager() :
@@ -36,18 +33,17 @@ LayerManager::LayerManager() :
 int LayerManager::createLayer(const std::string& name, int layerID)
 {
 	// Check if the ID already exists
-	if (_layers.find(layerID) != _layers.end())
+	if (_layers.count(layerID) > 0)
 	{
 		// already exists => quit
 		return -1;
 	}
 
 	// Insert the new layer
-	std::pair<LayerMap::iterator, bool> result = _layers.insert(
-		LayerMap::value_type(layerID, name)
-	);
+	auto result = _layers.emplace(layerID, name);
 
-	if (result.second == false) {
+	if (result.second == false)
+    {
 		rError() << "LayerSystem: Could not create layer!" << std::endl;
 		return -1;
 	}
@@ -73,9 +69,9 @@ int LayerManager::createLayer(const std::string& name)
 	// Check if the layer already exists
 	int existingID = getLayerID(name);
 
-	if (existingID != -1) {
-		rError() << "Could not create layer, name already exists: "
-			<< name << std::endl;
+	if (existingID != -1)
+    {
+		rError() << "Could not create layer, name already exists: " << name << std::endl;
 		return -1;
 	}
 
@@ -129,7 +125,7 @@ void LayerManager::deleteLayer(const std::string& name)
 
 void LayerManager::foreachLayer(const LayerVisitFunc& visitor)
 {
-    for (const LayerMap::value_type& pair : _layers)
+    for (const auto& pair : _layers)
     {
         visitor(pair.first, pair.second);
     }
@@ -140,7 +136,7 @@ void LayerManager::reset()
 	_activeLayer = DEFAULT_LAYER;
 
 	_layers.clear();
-	_layers.insert(LayerMap::value_type(DEFAULT_LAYER, _(DEFAULT_LAYER_NAME)));
+	_layers.emplace(DEFAULT_LAYER, _(DEFAULT_LAYER_NAME));
 
 	_layerVisibility.resize(1);
 	_layerVisibility[DEFAULT_LAYER] = true;
@@ -157,9 +153,10 @@ bool LayerManager::renameLayer(int layerID, const std::string& newLayerName)
 		return false; // empty name or default name used
 	}
 
-	LayerMap::iterator i = _layers.find(layerID);
+	auto i = _layers.find(layerID);
 
-	if (i == _layers.end()) {
+	if (i == _layers.end())
+    {
 		return false; // not found
 	}
 
@@ -175,11 +172,11 @@ bool LayerManager::renameLayer(int layerID, const std::string& newLayerName)
 int LayerManager::getFirstVisibleLayer() const
 {
 	// Iterate over all IDs and check the visibility status, return the first visible
-	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); ++i)
+	for (const auto& [layerId, _] : _layers)
 	{
-		if (_layerVisibility[i->first])
+		if (_layerVisibility[layerId])
 		{
-			return i->first;
+			return layerId;
 		}
 	}
 
@@ -194,9 +191,7 @@ int LayerManager::getActiveLayer() const
 
 void LayerManager::setActiveLayer(int layerID)
 {
-	LayerMap::iterator i = _layers.find(layerID);
-
-	if (i == _layers.end())
+	if (_layers.count(layerID) == 0)
 	{
 		return; // do nothing
 	}
@@ -205,9 +200,11 @@ void LayerManager::setActiveLayer(int layerID)
 	_activeLayer = layerID;
 }
 
-bool LayerManager::layerIsVisible(int layerID) {
+bool LayerManager::layerIsVisible(int layerID)
+{
 	// Sanity check
-	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size())) {
+	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size()))
+    {
 		rMessage() << "LayerSystem: Querying invalid layer ID: " << layerID << std::endl;
 		return false;
 	}
@@ -220,9 +217,7 @@ void LayerManager::setLayerVisibility(int layerID, bool visible)
 	// Sanity check
 	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size()))
 	{
-		rMessage() <<
-			"LayerSystem: Setting visibility of invalid layer ID: " <<
-			layerID << std::endl;
+		rMessage() << "LayerSystem: Setting visibility of invalid layer ID: " << layerID << std::endl;
 		return;
 	}
 
@@ -282,11 +277,10 @@ void LayerManager::onLayerVisibilityChanged()
 	_layerVisibilityChangedSignal.emit();
 }
 
-void LayerManager::addSelectionToLayer(int layerID) {
+void LayerManager::addSelectionToLayer(int layerID)
+{
 	// Check if the layer ID exists
-	if (_layers.find(layerID) == _layers.end()) {
-		return;
-	}
+    if (_layers.count(layerID) == 0) return;
 
 	// Instantiate a Selectionwalker and traverse the selection
 	AddToLayerWalker walker(layerID);
@@ -295,11 +289,10 @@ void LayerManager::addSelectionToLayer(int layerID) {
 	onNodeMembershipChanged();
 }
 
-void LayerManager::moveSelectionToLayer(int layerID) {
+void LayerManager::moveSelectionToLayer(int layerID)
+{
 	// Check if the layer ID exists
-	if (_layers.find(layerID) == _layers.end()) {
-		return;
-	}
+    if (_layers.count(layerID) == 0) return;
 
 	// Instantiate a Selectionwalker and traverse the selection
 	MoveToLayerWalker walker(layerID);
@@ -308,11 +301,10 @@ void LayerManager::moveSelectionToLayer(int layerID) {
 	onNodeMembershipChanged();
 }
 
-void LayerManager::removeSelectionFromLayer(int layerID) {
+void LayerManager::removeSelectionFromLayer(int layerID)
+{
 	// Check if the layer ID exists
-	if (_layers.find(layerID) == _layers.end()) {
-		return;
-	}
+    if (_layers.count(layerID) == 0) return;
 
 	// Instantiate a Selectionwalker and traverse the selection
 	RemoveFromLayerWalker walker(layerID);
@@ -396,10 +388,11 @@ sigc::signal<void> LayerManager::signal_nodeMembershipChanged()
 
 int LayerManager::getLayerID(const std::string& name) const
 {
-	for (LayerMap::const_iterator i = _layers.begin(); i != _layers.end(); i++) {
-		if (i->second == name) {
+	for (const auto& [layerId, layerName] : _layers)
+    {
+		if (layerName == name) {
 			// Name found, return the ID
-			return i->first;
+			return layerId;
 		}
 	}
 
@@ -408,24 +401,20 @@ int LayerManager::getLayerID(const std::string& name) const
 
 std::string LayerManager::getLayerName(int layerID) const 
 {
-	LayerMap::const_iterator found = _layers.find(layerID);
+	auto found = _layers.find(layerID);
 
-	if (found != _layers.end()) {
-		return found->second;
-	}
-
-	// not found
-	return "";
+	return found != _layers.end() ? found->second : std::string();
 }
 
 bool LayerManager::layerExists(int layerID) const
 {
-	return _layers.find(layerID) != _layers.end();
+	return _layers.count(layerID) > 0;
 }
 
 int LayerManager::getHighestLayerID() const
 {
-	if (_layers.size() == 0) {
+	if (_layers.size() == 0)
+    {
 		// Empty layer map, just return DEFAULT_LAYER
 		return DEFAULT_LAYER;
 	}
@@ -436,8 +425,10 @@ int LayerManager::getHighestLayerID() const
 
 int LayerManager::getLowestUnusedLayerID()
 {
-	for (int i = 0; i < INT_MAX; i++) {
-		if (_layers.find(i) == _layers.end()) {
+	for (int i = 0; i < INT_MAX; i++)
+    {
+		if (_layers.count(i) == 0)
+        {
 			// Found a free ID
 			return i;
 		}

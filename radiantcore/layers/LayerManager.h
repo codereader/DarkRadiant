@@ -3,7 +3,6 @@
 #include <vector>
 #include <map>
 #include "ilayer.h"
-#include "imap.h"
 
 namespace scene 
 {
@@ -15,12 +14,10 @@ private:
 	// greebo: An array of booleans reflects the visibility status
 	// of all layers. Indexed by the layer id, it can be used to
 	// quickly check whether a layer is visible or not.
-	typedef std::vector<bool> LayerVisibilityList;
-	LayerVisibilityList _layerVisibility;
+    std::vector<bool> _layerVisibility;
 
 	// The list of named layers, indexed by an integer ID
-	typedef std::map<int, std::string> LayerMap;
-	LayerMap _layers;
+    std::map<int, std::string> _layers;
 
 	// The ID of the active layer
 	int _activeLayer;
