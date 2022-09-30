@@ -3,8 +3,12 @@
 
 #include "imap.h"
 #include "ilayer.h"
-#include "algorithm/Scene.h"
 #include "scenelib.h"
+#include "os/file.h"
+
+#include "algorithm/Scene.h"
+#include "testutil/FileSaveConfirmationHelper.h"
+#include "testutil/TemporaryFile.h"
 
 namespace test
 {
@@ -390,7 +394,7 @@ TEST_F(LayerTest, SetLayerVisibilityAffectsActiveLayer)
     EXPECT_EQ(layerManager.getActiveLayer(), testLayerId) << "The test layer should now be active";
 }
 
-TEST_F(LayerTest, SetLayerVisibilityHidesNode)
+TEST_F(LayerTest, SetLayerVisibilityAffectsNode)
 {
     loadMap("general_purpose.mapx");
 
@@ -409,6 +413,112 @@ TEST_F(LayerTest, SetLayerVisibilityHidesNode)
 
     layerManager.setLayerVisibility(1, true);
     EXPECT_TRUE(brush->visible()) << "Brush should be visible again";
+}
+
+TEST_F(LayerTest, SetLayerParent)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto parentLayerId = layerManager.createLayer("ParentLayer");
+    auto childLayerId = layerManager.createLayer("ChildLayer");
+
+    EXPECT_EQ(layerManager.getParentLayer(0), -1) << "Default layer cannot have a parent";
+    EXPECT_EQ(layerManager.getParentLayer(parentLayerId), -1) << "ParentLayer doesn't have a parent yet";
+    EXPECT_EQ(layerManager.getParentLayer(childLayerId), -1) << "ChildLayer doesn't have a parent yet";
+
+    // It's not valid to assign a parent to the default layer, even if it's -1
+    EXPECT_THROW(layerManager.setParentLayer(0, -1), std::invalid_argument);
+    EXPECT_THROW(layerManager.setParentLayer(0, parentLayerId), std::invalid_argument);
+    EXPECT_THROW(layerManager.setParentLayer(0, 3333), std::invalid_argument);
+
+    // Assigning an invalid parent to a valid child layer throws
+    EXPECT_THROW(layerManager.setParentLayer(childLayerId, 2222), std::invalid_argument);
+    // Assigning a valid parent to an invalid child layer throws
+    EXPECT_THROW(layerManager.setParentLayer(2222, parentLayerId), std::invalid_argument);
+
+    // This is a valid operation
+    EXPECT_NO_THROW(layerManager.setParentLayer(childLayerId, parentLayerId));
+    EXPECT_EQ(layerManager.getParentLayer(childLayerId), parentLayerId) << "Parent Id has not been assigned";
+    // It's ok to do it again
+    EXPECT_NO_THROW(layerManager.setParentLayer(childLayerId, parentLayerId));
+
+    // Remove the parent again
+    EXPECT_NO_THROW(layerManager.setParentLayer(childLayerId, -1));
+    EXPECT_EQ(layerManager.getParentLayer(childLayerId), -1) << "Parent Id has not been removed";
+    // It's ok to do it again
+    EXPECT_NO_THROW(layerManager.setParentLayer(childLayerId, -1));
+    EXPECT_EQ(layerManager.getParentLayer(childLayerId), -1) << "Parent Id has not been removed";
+
+    // Assign a parentLayer, then reassign it to a different parent
+    EXPECT_NO_THROW(layerManager.setParentLayer(childLayerId, parentLayerId));
+    EXPECT_NO_THROW(layerManager.setParentLayer(childLayerId, 0));
+    EXPECT_EQ(layerManager.getParentLayer(childLayerId), 0) << "Parent Id has not been reassigned";
+}
+
+void runLayerHierarchyPersistenceTest(const std::string& mapFilePath)
+{
+    GlobalMapModule().findOrInsertWorldspawn(); // to not save an empty map
+
+    TemporaryFile tempSavedFile(mapFilePath);
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto parentLayerId = layerManager.createLayer("ParentLayer");
+    auto childLayerId = layerManager.createLayer("ChildLayer");
+    auto childLayer2Id = layerManager.createLayer("ChildLayer2");
+    auto childLayer3Id = layerManager.createLayer("ChildLayer3");
+
+    // Default > Parent > Child 
+    layerManager.setParentLayer(childLayerId, parentLayerId);
+    layerManager.setParentLayer(parentLayerId, 0);
+
+    // Default > Child2
+    layerManager.setParentLayer(childLayer2Id, 0);
+
+    // Child3 remains a top-level layer
+
+    EXPECT_FALSE(os::fileOrDirExists(mapFilePath));
+    GlobalCommandSystem().executeCommand("SaveMapCopyAs", mapFilePath);
+
+    // Clear the current map, discarding the changes
+    FileSaveConfirmationHelper helper(radiant::FileSaveConfirmation::Action::DiscardChanges);
+    GlobalCommandSystem().executeCommand("NewMap");
+
+    // The layers are gone now
+    EXPECT_EQ(getAllLayerIds(), std::vector{ 0 }) << "All layers should have been cleared, except for the default";
+
+    // Then load the map from that temporary path
+    EXPECT_TRUE(os::fileOrDirExists(mapFilePath));
+    GlobalCommandSystem().executeCommand("OpenMap", mapFilePath);
+
+    auto unsortedLayerIds = getAllLayerIds();
+    auto layerIds = std::set(unsortedLayerIds.begin(), unsortedLayerIds.end());
+    EXPECT_EQ(layerIds.count(0), 1) << "Default layer ID not present";
+    EXPECT_EQ(layerIds.count(parentLayerId), 1) << "Parent Layer ID not present";
+    EXPECT_EQ(layerIds.count(childLayerId), 1) << "Child Layer ID not present";
+    EXPECT_EQ(layerIds.count(childLayer2Id), 1) << "Child Layer 2 ID not present";
+    EXPECT_EQ(layerIds.count(childLayer3Id), 1) << "Child Layer 3 ID not present";
+
+    EXPECT_EQ(layerManager.getParentLayer(childLayerId), parentLayerId) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(parentLayerId), 0) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(childLayer2Id), 0) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(childLayer3Id), -1) << "Hierarchy has not been restored";
+}
+
+TEST_F(LayerTest, LayerHierarchyIsPersistedToMapx)
+{
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "layer_hierarchy_test.mapx";
+
+    runLayerHierarchyPersistenceTest(tempPath.string());
+}
+
+TEST_F(LayerTest, LayerHierarchyIsPersistedToMap)
+{
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "layer_hierarchy_test.map";
+    // Remove the .darkradiant file after this test
+    TemporaryFile tempDarkRadiantFile(os::replaceExtension(tempPath.string(), "darkradiant"));
+
+    runLayerHierarchyPersistenceTest(tempPath.string());
 }
 
 TEST_F(LayerTest, CreateLayerMarksMapAsModified)
