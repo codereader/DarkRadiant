@@ -707,8 +707,15 @@ void LayerControlDialog::onDrop(wxDataViewEvent& ev)
 
         rMessage() << "Assigning layer " << sourceLayerId << " to parent layer " << targetLayerId << std::endl;
 
-        auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
-        layerManager.setParentLayer(sourceLayerId, targetLayerId);
+        try
+        {
+            auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+            layerManager.setParentLayer(sourceLayerId, targetLayerId);
+        }
+        catch (const std::invalid_argument& ex)
+        {
+            wxutil::Messagebox::ShowError(fmt::format(_("Cannot set Parent Layer: {0}"), ex.what()), this);
+        }
     }
 }
 
