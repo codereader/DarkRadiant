@@ -570,6 +570,54 @@ TEST_F(LayerTest, LayerHierarchyIsPersistedToMap)
     runLayerHierarchyPersistenceTest(tempPath.string());
 }
 
+TEST_F(LayerTest, LayerHierarchyIsRestoredFromMapx)
+{
+    // The .mapx file contains a hierarchy that should be restored
+    // without running into crashes (layer 3 is a child of layer 9)
+    auto mapFilePath = _context.getTestProjectPath() + "maps/layer_hierarchy_restore.mapx";
+
+    GlobalCommandSystem().executeCommand("OpenMap", mapFilePath);
+
+    auto unsortedLayerIds = getAllLayerIds();
+    auto layerIds = std::set(unsortedLayerIds.begin(), unsortedLayerIds.end());
+
+    for (int i = 0; i <= 9; ++i)
+    {
+        EXPECT_EQ(layerIds.count(0), 1) << "Layer with ID " << i << " not present";
+    }
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    EXPECT_EQ(layerManager.getParentLayer(0), -1) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(3), 9) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(4), 2) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(5), 3) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(9), 2) << "Hierarchy has not been restored";
+}
+
+TEST_F(LayerTest, LayerHierarchyIsRestoredFromMap)
+{
+    // The .darkradiant file contains a hierarchy that should be restored
+    // without running into crashes (layer 3 is a child of layer 9)
+    auto mapFilePath = _context.getTestProjectPath() + "maps/layer_hierarchy_restore.map";
+
+    GlobalCommandSystem().executeCommand("OpenMap", mapFilePath);
+
+    auto unsortedLayerIds = getAllLayerIds();
+    auto layerIds = std::set(unsortedLayerIds.begin(), unsortedLayerIds.end());
+
+    for (int i = 0; i <= 9; ++i)
+    {
+        EXPECT_EQ(layerIds.count(0), 1) << "Layer with ID " << i << " not present";
+    }
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    EXPECT_EQ(layerManager.getParentLayer(0), -1) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(3), 9) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(4), 2) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(5), 3) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager.getParentLayer(9), 2) << "Hierarchy has not been restored";
+}
+
 TEST_F(LayerTest, CreateLayerMarksMapAsModified)
 {
     loadMap("general_purpose.mapx");
