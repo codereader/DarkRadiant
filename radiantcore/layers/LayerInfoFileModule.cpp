@@ -294,20 +294,18 @@ void LayerInfoFileModule::applyInfoToScene(const IMapRootNodePtr& root, const ma
 {
     auto& layerManager = root->getLayerManager();
 
-	// Create the layers according to the data found in the map information file
-	for (const auto& [id, name] : _layerNames)
-	{
-		// Create the named layer with the saved ID
+    // Create the layers according to the data found in the map information file
+    for (const auto& [id, name] : _layerNames)
+    {
+        // Create the named layer with the saved ID
         layerManager.createLayer(name, id);
+    }
 
-        // Set parents
-        auto parentLayer = _layerParentIds.find(id);
-
-        if (parentLayer != _layerParentIds.end())
-        {
-            layerManager.setParentLayer(id, parentLayer->second);
-        }
-	}
+    // Assigning child and parent layers needs to happen after all layers have been created
+    for (const auto& [childLayerId, parentLayerId] : _layerParentIds)
+    {
+        layerManager.setParentLayer(childLayerId, parentLayerId);
+    }
 
 	// Set the layer mapping iterator to the beginning
 	auto mapping = _layerMappings.begin();
