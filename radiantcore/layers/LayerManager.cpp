@@ -220,24 +220,11 @@ bool LayerManager::layerIsVisible(int layerID)
 	return _layerVisibility[layerID];
 }
 
-void LayerManager::setLayerVisibility(int layerID, bool visible)
+void LayerManager::setLayerVisibility(int layerId, bool visible)
 {
-	// Sanity check
-	if (layerID < 0 || layerID >= static_cast<int>(_layerVisibility.size()))
-	{
-		rMessage() << "LayerSystem: Setting visibility of invalid layer ID: " << layerID << std::endl;
-		return;
-	}
+    auto layerVisibilityChanged = setLayerVisibilityRecursively(layerId, visible);
 
-    if (_layerVisibility[layerID] == visible)
-    {
-        return; // nothing to change here
-    }
-
-	// Set the visibility
-	_layerVisibility[layerID] = visible;
-
-	if (!visible && layerID == _activeLayer)
+	if (!visible && !_layerVisibility.at(_activeLayer))
 	{
 		// We just hid the active layer, fall back to another one
 		_activeLayer = getFirstVisibleLayer();
@@ -248,11 +235,40 @@ void LayerManager::setLayerVisibility(int layerID, bool visible)
     if (visible && _activeLayer < static_cast<int>(_layerVisibility.size()) && 
         !_layerVisibility[_activeLayer])
     {
-        _activeLayer = layerID;
+        _activeLayer = layerId;
     }
 
-	// Fire the visibility changed event
-	onLayerVisibilityChanged();
+    if (layerVisibilityChanged)
+    {
+	    // Fire the visibility changed event
+	    onLayerVisibilityChanged();
+    }
+}
+
+bool LayerManager::setLayerVisibilityRecursively(int layerId, bool visible)
+{
+    if (layerId < 0 || layerId >= static_cast<int>(_layerVisibility.size()))
+    {
+        rMessage() << "LayerSystem: Setting visibility of invalid layer ID: " << layerId << std::endl;
+        return false;
+    }
+
+    bool visibilityChange = _layerVisibility.at(layerId) != visible;
+
+    _layerVisibility.at(layerId) = visible;
+
+    // Set the visibility of all child layers too
+    // Start with index 1, as the default layer cannot have any parent
+    for (std::size_t childLayerId = 1; childLayerId < _layerParentIds.size(); ++childLayerId)
+    {
+        // If this local layer is assigned as parent to this child layer, recurse into it
+        if (_layerParentIds.at(childLayerId) == layerId)
+        {
+            visibilityChange |= setLayerVisibilityRecursively(static_cast<int>(childLayerId), visible);
+        }
+    }
+
+    return visibilityChange;
 }
 
 void LayerManager::updateSceneGraphVisibility()

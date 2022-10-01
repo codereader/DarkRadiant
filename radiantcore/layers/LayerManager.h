@@ -120,6 +120,11 @@ public:
 	sigc::signal<void> signal_nodeMembershipChanged() override;
 
 private:
+    // Recursively sets the visibility of the given layer and updates
+    // the flags on the _layerVisibility vector.
+    // Returns true if any flag changed, false if nothing changed.
+    bool setLayerVisibilityRecursively(int layerID, bool visible);
+
 	// Internal event emitter
 	void onLayersChanged();
 
