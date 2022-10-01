@@ -504,18 +504,18 @@ void runLayerHierarchyPersistenceTest(const std::string& mapFilePath)
 
     TemporaryFile tempSavedFile(mapFilePath);
 
-    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
-    auto parentLayerId = layerManager.createLayer("ParentLayer");
-    auto childLayerId = layerManager.createLayer("ChildLayer");
-    auto childLayer2Id = layerManager.createLayer("ChildLayer2");
-    auto childLayer3Id = layerManager.createLayer("ChildLayer3");
+    auto* layerManager = &GlobalMapModule().getRoot()->getLayerManager();
+    auto parentLayerId = layerManager->createLayer("ParentLayer");
+    auto childLayerId = layerManager->createLayer("ChildLayer");
+    auto childLayer2Id = layerManager->createLayer("ChildLayer2");
+    auto childLayer3Id = layerManager->createLayer("ChildLayer3");
 
     // Default > Parent > Child 
-    layerManager.setParentLayer(childLayerId, parentLayerId);
-    layerManager.setParentLayer(parentLayerId, 0);
+    layerManager->setParentLayer(childLayerId, parentLayerId);
+    layerManager->setParentLayer(parentLayerId, 0);
 
     // Default > Child2
-    layerManager.setParentLayer(childLayer2Id, 0);
+    layerManager->setParentLayer(childLayer2Id, 0);
 
     // Child3 remains a top-level layer
 
@@ -541,10 +541,12 @@ void runLayerHierarchyPersistenceTest(const std::string& mapFilePath)
     EXPECT_EQ(layerIds.count(childLayer2Id), 1) << "Child Layer 2 ID not present";
     EXPECT_EQ(layerIds.count(childLayer3Id), 1) << "Child Layer 3 ID not present";
 
-    EXPECT_EQ(layerManager.getParentLayer(childLayerId), parentLayerId) << "Hierarchy has not been restored";
-    EXPECT_EQ(layerManager.getParentLayer(parentLayerId), 0) << "Hierarchy has not been restored";
-    EXPECT_EQ(layerManager.getParentLayer(childLayer2Id), 0) << "Hierarchy has not been restored";
-    EXPECT_EQ(layerManager.getParentLayer(childLayer3Id), -1) << "Hierarchy has not been restored";
+    // We changed maps, so acquire a new layer manager reference
+    layerManager = &GlobalMapModule().getRoot()->getLayerManager();
+    EXPECT_EQ(layerManager->getParentLayer(childLayerId), parentLayerId) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager->getParentLayer(parentLayerId), 0) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager->getParentLayer(childLayer2Id), 0) << "Hierarchy has not been restored";
+    EXPECT_EQ(layerManager->getParentLayer(childLayer3Id), -1) << "Hierarchy has not been restored";
 }
 
 TEST_F(LayerTest, LayerHierarchyIsPersistedToMapx)
