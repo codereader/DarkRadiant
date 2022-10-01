@@ -11,6 +11,7 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/artprov.h>
+#include <wx/dataobj.h>
 
 #include "wxutil/Button.h"
 
@@ -595,11 +596,38 @@ void LayerControlDialog::onBeginDrag(wxDataViewEvent& ev)
 
 void LayerControlDialog::onDropPossible(wxDataViewEvent& ev)
 {
+    
 }
 
 void LayerControlDialog::onDrop(wxDataViewEvent& ev)
 {
-    
+    if (!GlobalMapModule().getRoot())
+    {
+        rError() << "Can't change layer hierarchy, no map root present" << std::endl;
+        return;
+    }
+
+    wxDataViewItem item(ev.GetItem());
+    wxutil::TreeModel::Row row(item, *_layerStore);
+
+    auto targetLayerId = row[_columns.id].getInteger();
+
+    // Read the source layer ID and veto the event if it's the same as the source ID
+    if (auto obj = dynamic_cast<wxTextDataObject*>(ev.GetDataObject()); obj)
+    {
+        auto sourceLayerId = string::convert<int>(obj->GetText().ToStdString(), -1);
+
+        if (sourceLayerId == targetLayerId)
+        {
+            ev.Veto();
+            return;
+        }
+
+        rMessage() << "Assigning layer " << sourceLayerId << " to parent layer " << targetLayerId << std::endl;
+
+        auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+        layerManager.setParentLayer(sourceLayerId, targetLayerId);
+    }
 }
 
 } // namespace ui
