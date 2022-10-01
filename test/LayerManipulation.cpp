@@ -168,20 +168,18 @@ TEST_F(LayerTest, ResetLayerManager)
 {
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
 
-    layerManager.createLayer("TestLayer");
-    layerManager.createLayer("TestLayer2");
+    auto testLayerId = layerManager.createLayer("TestLayer");
+    auto testLayer2Id = layerManager.createLayer("TestLayer2");
+
+    // Test Layer 2 is a child of Test Layer
+    layerManager.setParentLayer(testLayer2Id, testLayerId);
 
     std::size_t layersChangedFireCount = 0;
-    layerManager.signal_layersChanged().connect([&]()
-    {
-        ++layersChangedFireCount;
-    });
-
     std::size_t layerVisibilityChangedFireCount = 0;
-    layerManager.signal_layerVisibilityChanged().connect([&]()
-    {
-        ++layerVisibilityChangedFireCount;
-    });
+    std::size_t layerHierarchyChangedFireCount = 0;
+    layerManager.signal_layersChanged().connect([&]() { ++layersChangedFireCount; });
+    layerManager.signal_layerVisibilityChanged().connect([&]() { ++layerVisibilityChangedFireCount; });
+    layerManager.signal_layerHierarchyChanged().connect([&]() { ++layerHierarchyChangedFireCount; });
 
     layerManager.reset();
 
@@ -194,8 +192,14 @@ TEST_F(LayerTest, ResetLayerManager)
     EXPECT_EQ(layerManager.getActiveLayer(), 0) << "Default layer should be active";
     EXPECT_EQ(layerManager.layerIsVisible(0), true) << "Default layer should be visible";
 
+    layerManager.foreachLayer([&](int layerId, const std::string& name)
+    {
+        EXPECT_EQ(layerManager.getParentLayer(layerId), -1) << "Parent relationship should have been reset";
+    });
+
     EXPECT_EQ(layersChangedFireCount, 1) << "Layers changed signal should have been fired";
     EXPECT_EQ(layerVisibilityChangedFireCount, 1) << "Layer visibility changed signal should have been fired";
+    EXPECT_EQ(layerHierarchyChangedFireCount, 1) << "Layer hierarchy changed signal should have been fired";
 }
 
 TEST_F(LayerTest, RenameLayer)
@@ -452,6 +456,46 @@ TEST_F(LayerTest, SetLayerParent)
     EXPECT_NO_THROW(layerManager.setParentLayer(childLayerId, parentLayerId));
     EXPECT_NO_THROW(layerManager.setParentLayer(childLayerId, 0));
     EXPECT_EQ(layerManager.getParentLayer(childLayerId), 0) << "Parent Id has not been reassigned";
+}
+
+TEST_F(LayerTest, HierarchyChangedSignal)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    auto testLayerId = layerManager.createLayer("TestLayer");
+    auto testLayer2Id = layerManager.createLayer("TestLayer2");
+
+    std::size_t layerVisibilityChangedFireCount = 0;
+    std::size_t layersChangedFireCount = 0;
+    std::size_t layerHierarchyChangedFireCount = 0;
+    layerManager.signal_layersChanged().connect([&]() { ++layersChangedFireCount; });
+    layerManager.signal_layerVisibilityChanged().connect([&]() { ++layerVisibilityChangedFireCount; });
+    layerManager.signal_layerHierarchyChanged().connect([&]() { ++layerHierarchyChangedFireCount; });
+
+    // Trigger a hierarchy change
+    layerManager.setParentLayer(testLayer2Id, testLayerId);
+
+    EXPECT_EQ(layerHierarchyChangedFireCount, 1) << "Hierarchy changed signal should have been fired once";
+    EXPECT_EQ(layerVisibilityChangedFireCount, 0) << "Visibility changed signal should not have been fired";
+    EXPECT_EQ(layersChangedFireCount, 0) << "Layers changed signal should NOT have been fired at all";
+
+    // Hiding it again, doesn't trigger any signals
+    layerHierarchyChangedFireCount = 0;
+    layerVisibilityChangedFireCount = 0;
+    layersChangedFireCount = 0;
+
+    layerManager.setParentLayer(testLayer2Id, testLayerId);
+
+    EXPECT_EQ(layerHierarchyChangedFireCount, 0) << "Hierarchy changed signal should not have been fired";
+    EXPECT_EQ(layerVisibilityChangedFireCount, 0) << "Visibility changed signal should not have been fired";
+    EXPECT_EQ(layersChangedFireCount, 0) << "Layers changed signal should NOT have been fired at all";
+
+    layerManager.setParentLayer(testLayer2Id, 0);
+    layerManager.setParentLayer(testLayer2Id, -1);
+
+    EXPECT_EQ(layerHierarchyChangedFireCount, 2) << "Hierarchy changed signal should have been fired twice";
+    EXPECT_EQ(layerVisibilityChangedFireCount, 0) << "Visibility changed signal should not have been fired";
+    EXPECT_EQ(layersChangedFireCount, 0) << "Layers changed signal should NOT have been fired at all";
 }
 
 void runLayerHierarchyPersistenceTest(const std::string& mapFilePath)

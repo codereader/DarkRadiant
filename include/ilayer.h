@@ -208,6 +208,11 @@ public:
 	 */
 	virtual sigc::signal<void> signal_layerVisibilityChanged() = 0;
 
+    /**
+     * Fired whenever a parent of a layer has been changed.
+     */
+    virtual sigc::signal<void> signal_layerHierarchyChanged() = 0;
+
 	/**
 	 * Public signal to get notified about layer membership changes,
 	 * e.g. when a node has been added to a layer, or moved to a new one.

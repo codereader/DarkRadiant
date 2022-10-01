@@ -11,19 +11,23 @@ class LayerManager :
 	public ILayerManager
 {
 private:
+    // The list of named layers, indexed by an integer ID
+    std::map<int, std::string> _layers;
+
 	// greebo: An array of booleans reflects the visibility status
 	// of all layers. Indexed by the layer id, it can be used to
 	// quickly check whether a layer is visible or not.
     std::vector<bool> _layerVisibility;
 
-	// The list of named layers, indexed by an integer ID
-    std::map<int, std::string> _layers;
+    // The parent IDs of each layer (-1 for no parent)
+    std::vector<int> _layerParentIds;
 
 	// The ID of the active layer
 	int _activeLayer;
 
 	sigc::signal<void> _layersChangedSignal;
 	sigc::signal<void> _layerVisibilityChangedSignal;
+	sigc::signal<void> _layerHierarchyChangedSignal;
 	sigc::signal<void> _nodeMembershipChangedSignal;
 
 public:
@@ -111,6 +115,7 @@ public:
 
 	sigc::signal<void> signal_layersChanged() override;
 	sigc::signal<void> signal_layerVisibilityChanged() override;
+	sigc::signal<void> signal_layerHierarchyChanged() override;
 	sigc::signal<void> signal_nodeMembershipChanged() override;
 
 private:

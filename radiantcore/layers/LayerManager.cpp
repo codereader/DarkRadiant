@@ -21,6 +21,7 @@ namespace
 {
 	constexpr const char* const DEFAULT_LAYER_NAME = N_("Default");
 	constexpr int DEFAULT_LAYER = 0;
+	constexpr int NO_PARENT_ID = -1;
 }
 
 LayerManager::LayerManager() :
@@ -51,17 +52,19 @@ int LayerManager::createLayer(const std::string& name, int layerID)
 	// Update the visibility cache, so get the highest ID
 	int highestID = getHighestLayerID();
 
-	// Make sure the vector has allocated enough memory
+	// Make sure the vectors are large enough
 	_layerVisibility.resize(highestID+1);
+	_layerParentIds.resize(highestID+1);
 
 	// Set the newly created layer to "visible"
-	_layerVisibility[result.first->first] = true;
+	_layerVisibility[layerID] = true;
+    _layerParentIds[layerID] = NO_PARENT_ID;
 
 	// Layers have changed
 	onLayersChanged();
 
 	// Return the ID of the inserted layer
-	return result.first->first;
+	return layerID;
 }
 
 int LayerManager::createLayer(const std::string& name)
@@ -106,8 +109,9 @@ void LayerManager::deleteLayer(const std::string& name)
 	// Remove the layer
 	_layers.erase(layerID);
 
-	// Reset the visibility flag to TRUE
+	// Reset the visibility flag to TRUE, remove parent
 	_layerVisibility[layerID] = true;
+	_layerParentIds[layerID] = NO_PARENT_ID;
 
 	if (layerID == _activeLayer)
 	{
@@ -141,9 +145,13 @@ void LayerManager::reset()
 	_layerVisibility.resize(1);
 	_layerVisibility[DEFAULT_LAYER] = true;
 
-	// Update the dialog
+    _layerParentIds.resize(1);
+    _layerParentIds[DEFAULT_LAYER] = NO_PARENT_ID;
+
+	// Emit all changed signals
 	_layersChangedSignal.emit();
 	_layerVisibilityChangedSignal.emit();
+	_layerHierarchyChangedSignal.emit();
 }
 
 bool LayerManager::renameLayer(int layerID, const std::string& newLayerName)
@@ -363,12 +371,28 @@ void LayerManager::setSelected(int layerID, bool selected)
 
 int LayerManager::getParentLayer(int layerId)
 {
-    return -1;
+    return _layerParentIds.at(layerId);
 }
 
 void LayerManager::setParentLayer(int childLayerId, int parentLayerId)
 {
-    
+    if (childLayerId == DEFAULT_LAYER)
+    {
+        throw std::invalid_argument("Cannot assign a parent to the default layer");
+    }
+
+    // Non-existent layer IDs will throw
+    if (!layerExists(childLayerId) || 
+        parentLayerId != -1 && !layerExists(parentLayerId))
+    {
+        throw std::invalid_argument("Invalid layer ID");
+    }
+
+    if (_layerParentIds.at(childLayerId) != parentLayerId)
+    {
+        _layerParentIds.at(childLayerId) = parentLayerId;
+        _layerHierarchyChangedSignal.emit();
+    }
 }
 
 sigc::signal<void> LayerManager::signal_layersChanged()
@@ -379,6 +403,11 @@ sigc::signal<void> LayerManager::signal_layersChanged()
 sigc::signal<void> LayerManager::signal_layerVisibilityChanged()
 {
 	return _layerVisibilityChangedSignal;
+}
+
+sigc::signal<void> LayerManager::signal_layerHierarchyChanged()
+{
+	return _layerHierarchyChangedSignal;
 }
 
 sigc::signal<void> LayerManager::signal_nodeMembershipChanged()
