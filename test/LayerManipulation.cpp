@@ -461,6 +461,26 @@ TEST_F(LayerTest, SetLayerParent)
     EXPECT_EQ(layerManager.getParentLayer(childLayerId), 0) << "Parent Id has not been reassigned";
 }
 
+TEST_F(LayerTest, SetLayerParentRecursionDetection)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto grandParentLayerId = layerManager.createLayer("GrandParentLayer");
+    auto parentLayerId = layerManager.createLayer("ParentLayer");
+    auto childLayerId = layerManager.createLayer("ChildLayer");
+
+    EXPECT_EQ(layerManager.getParentLayer(0), -1) << "Default layer cannot have a parent";
+    EXPECT_EQ(layerManager.getParentLayer(grandParentLayerId), -1) << "GrandParentLayer doesn't have a parent yet";
+    EXPECT_EQ(layerManager.getParentLayer(parentLayerId), -1) << "ParentLayer doesn't have a parent yet";
+    EXPECT_EQ(layerManager.getParentLayer(childLayerId), -1) << "ChildLayer doesn't have a parent yet";
+
+    // Form a straight line GrandParent > Parent > Child
+    layerManager.setParentLayer(childLayerId, parentLayerId);
+    layerManager.setParentLayer(parentLayerId, grandParentLayerId);
+
+    // Then try to assign Child as a parent to its own GrandParent => recursion detection should throw
+    EXPECT_THROW(layerManager.setParentLayer(grandParentLayerId, childLayerId), std::invalid_argument);
+}
+
 TEST_F(LayerTest, HierarchyChangedSignal)
 {
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
