@@ -579,7 +579,6 @@ void LayerControlDialog::onDeleteLayer(wxCommandEvent& ev)
 void LayerControlDialog::onBeginDrag(wxDataViewEvent& ev)
 {
     wxDataViewItem item(ev.GetItem());
-
     wxutil::TreeModel::Row row(item, *_layerStore);
 
     auto selectedLayerId = row[_columns.id].getInteger();
@@ -596,7 +595,6 @@ void LayerControlDialog::onBeginDrag(wxDataViewEvent& ev)
 
 void LayerControlDialog::onDropPossible(wxDataViewEvent& ev)
 {
-    
 }
 
 void LayerControlDialog::onDrop(wxDataViewEvent& ev)

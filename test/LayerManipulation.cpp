@@ -434,6 +434,9 @@ TEST_F(LayerTest, SetLayerParent)
     EXPECT_THROW(layerManager.setParentLayer(0, parentLayerId), std::invalid_argument);
     EXPECT_THROW(layerManager.setParentLayer(0, 3333), std::invalid_argument);
 
+    // It's not allowed to assign a layer as its own parent
+    EXPECT_THROW(layerManager.setParentLayer(parentLayerId, parentLayerId), std::invalid_argument);
+
     // Assigning an invalid parent to a valid child layer throws
     EXPECT_THROW(layerManager.setParentLayer(childLayerId, 2222), std::invalid_argument);
     // Assigning a valid parent to an invalid child layer throws

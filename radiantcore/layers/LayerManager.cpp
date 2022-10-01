@@ -388,6 +388,11 @@ void LayerManager::setParentLayer(int childLayerId, int parentLayerId)
         throw std::invalid_argument("Invalid layer ID");
     }
 
+    if (childLayerId == parentLayerId)
+    {
+        throw std::invalid_argument("Cannot assign a layer as parent of itself");
+    }
+
     if (_layerParentIds.at(childLayerId) != parentLayerId)
     {
         _layerParentIds.at(childLayerId) = parentLayerId;
