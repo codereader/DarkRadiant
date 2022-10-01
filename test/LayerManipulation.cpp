@@ -736,4 +736,19 @@ TEST_F(LayerTest, RemovingFromLayerMarksMapAsModified)
     performMoveOrAddToLayerTest(LayerAction::RemoveFromLayer);
 }
 
+TEST_F(LayerTest, SettingParentLayerMarksMapAsModified)
+{
+    loadMap("general_purpose.mapx");
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto secondLayerId = layerManager.getLayerID("Second Layer");
+    auto thirdLayerId = layerManager.getLayerID("Third Layer");
+
+    EXPECT_FALSE(GlobalMapModule().isModified());
+
+    layerManager.setParentLayer(thirdLayerId, secondLayerId);
+
+    EXPECT_TRUE(GlobalMapModule().isModified());
+}
+
 }
