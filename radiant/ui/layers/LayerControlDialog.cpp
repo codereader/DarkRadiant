@@ -60,7 +60,7 @@ void LayerControlDialog::populateWindow()
     _layersView->AppendColumn(new wxutil::IndicatorColumn(_("Contains Selection"),
         _columns.selectionIsPartOfLayer.getColumnIndex()));
     _layersView->AppendTextColumn("", _columns.name.getColumnIndex(),
-        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &LayerControlDialog::onItemActivated, this);
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &LayerControlDialog::onItemToggled, this);
@@ -139,6 +139,85 @@ void LayerControlDialog::queueUpdate()
     _rescanSelectionOnIdle = true;
 }
 
+class LayerControlDialog::TreePopulator
+{
+private:
+    const wxutil::TreeModel::Ptr& _layerStore;
+    const TreeColumns& _columns;
+
+    std::map<int, wxDataViewItem> _layerItemMap;
+
+    scene::ILayerManager& _layerManager;;
+    int _activeLayerId;
+
+    std::size_t _numVisible = 0;
+    std::size_t _numHidden = 0;
+
+public:
+    LayerControlDialog::TreePopulator(const wxutil::TreeModel::Ptr& layerStore, const TreeColumns& columns) :
+        _layerStore(layerStore),
+        _columns(columns),
+        _layerManager(GlobalMapModule().getRoot()->getLayerManager()),
+        _activeLayerId(_layerManager.getActiveLayer())
+    {}
+
+    std::size_t getNumVisibleLayers() const
+    {
+        return _numVisible;
+    }
+
+    std::size_t getNumHiddenLayers() const
+    {
+        return _numHidden;
+    }
+
+    std::map<int, wxDataViewItem>& getLayerItemMap()
+    {
+        return _layerItemMap;
+    }
+
+    wxDataViewItem processLayer(int layerId, const std::string& layerName)
+    {
+        auto existingItem = _layerItemMap.find(layerId);
+
+        if (existingItem != _layerItemMap.end()) return existingItem->second;
+
+        // Find the parent ID of this layer
+        auto parentLayerId = _layerManager.getParentLayer(layerId);
+
+        auto parentItem = parentLayerId == -1 ? wxDataViewItem() :
+            processLayer(parentLayerId, _layerManager.getLayerName(parentLayerId));
+
+        // Parent item located, insert this layer as child element
+        auto row = _layerStore->AddItem(parentItem);
+
+        row[_columns.id] = layerId;
+        row[_columns.name] = layerName;
+
+        if (_activeLayerId == layerId)
+        {
+            row[_columns.name] = wxutil::TreeViewItemStyle::ActiveItemStyle();
+        }
+
+        if (_layerManager.layerIsVisible(layerId))
+        {
+            row[_columns.visible] = true;
+            _numVisible++;
+        }
+        else
+        {
+            row[_columns.visible] = false;
+            _numHidden++;
+        }
+
+        row.SendItemAdded();
+
+        _layerItemMap.emplace(layerId, row.getItem());
+
+        return row.getItem();
+    }
+};
+
 void LayerControlDialog::refresh()
 {
     _refreshTreeOnIdle = false;
@@ -149,43 +228,13 @@ void LayerControlDialog::refresh()
 
 	// Traverse the layers
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
-    auto activeLayerId = layerManager.getActiveLayer();
 
-    // Update the show/hide all button sensitiveness
-    std::size_t numVisible = 0;
-    std::size_t numHidden = 0;
+    TreePopulator populator(_layerStore, _columns);
+    layerManager.foreachLayer(
+        std::bind(&TreePopulator::processLayer, &populator, std::placeholders::_1, std::placeholders::_2));
 
-    layerManager.foreachLayer([&](int layerId, const std::string& layerName)
-    {
-        // Store the object in a sorted container
-        auto row = _layerStore->AddItem();
-
-        row[_columns.id] = layerId;
-        row[_columns.name] = layerName;
-
-        if (activeLayerId == layerId)
-        {
-            row[_columns.name] = wxutil::TreeViewItemStyle::ActiveItemStyle();
-        }
-
-        if (layerManager.layerIsVisible(layerId))
-        {
-            row[_columns.visible] = true;
-            numVisible++;
-        }
-        else
-        {
-            row[_columns.visible] = false;
-            numHidden++;
-
-        }
-
-        row.SendItemAdded();
-
-        _layerItemMap.emplace(layerId, row.getItem());
-    });
-
-    updateButtonSensitivity(numVisible, numHidden);
+    _layerItemMap = std::move(populator.getLayerItemMap());
+    updateButtonSensitivity(populator.getNumVisibleLayers(), populator.getNumHiddenLayers());
 }
 
 void LayerControlDialog::update()
@@ -396,6 +445,10 @@ void LayerControlDialog::connectToMapRoot()
 		_layerVisibilityChangedSignal = layerSystem.signal_layerVisibilityChanged().connect(
 			sigc::mem_fun(this, &LayerControlDialog::queueUpdate));
 
+        // Hierarchy changes trigger a tree rebuild
+        _layerHierarchyChangedSignal = layerSystem.signal_layerHierarchyChanged().connect(
+            sigc::mem_fun(this, &LayerControlDialog::queueRefresh));
+
 		// Node membership triggers a selection rescan
 		_nodeLayerMembershipChangedSignal = layerSystem.signal_nodeMembershipChanged().connect([this]()
 		{
@@ -407,6 +460,7 @@ void LayerControlDialog::connectToMapRoot()
 void LayerControlDialog::disconnectFromMapRoot()
 {
 	_nodeLayerMembershipChangedSignal.disconnect();
+    _layerHierarchyChangedSignal.disconnect();
 	_layersChangedSignal.disconnect();
 	_layerVisibilityChangedSignal.disconnect();
 }

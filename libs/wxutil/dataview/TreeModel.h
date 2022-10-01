@@ -523,6 +523,11 @@ public:
 	virtual wxDataViewItem GetParent(const wxDataViewItem &item) const override;
     virtual bool IsContainer(const wxDataViewItem& item) const override;
 
+    bool HasContainerColumns(const wxDataViewItem&) const override
+    {
+        return true; // we want all columns to show even if the item has children
+    }
+
 	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const override;
 	virtual wxDataViewItem GetRoot();
 

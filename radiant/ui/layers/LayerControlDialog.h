@@ -42,6 +42,8 @@ private:
         wxutil::TreeModel::Column selectionIsPartOfLayer;
     };
 
+    class TreePopulator;
+
     wxutil::TreeView* _layersView;
     TreeColumns _columns;
     wxutil::TreeModel::Ptr _layerStore;
@@ -61,6 +63,7 @@ private:
 	sigc::connection _layersChangedSignal;
 	sigc::connection _layerVisibilityChangedSignal;
 	sigc::connection _nodeLayerMembershipChangedSignal;
+	sigc::connection _layerHierarchyChangedSignal;
 	sigc::connection _mapEventSignal;
 
 public:
