@@ -393,11 +393,39 @@ void LayerManager::setParentLayer(int childLayerId, int parentLayerId)
         throw std::invalid_argument("Cannot assign a layer as parent of itself");
     }
 
+    // Detect recursions, if any parent layer has this layer in its hierarchy, we should throw
+    if (layerIsChildOf(parentLayerId, childLayerId))
+    {
+        throw std::invalid_argument("This relationship change would result in a recursion");
+    }
+
     if (_layerParentIds.at(childLayerId) != parentLayerId)
     {
         _layerParentIds.at(childLayerId) = parentLayerId;
         _layerHierarchyChangedSignal.emit();
     }
+}
+
+bool LayerManager::layerIsChildOf(int candidateLayerId, int parentLayerId)
+{
+    // Nothing is a parent of the null layer
+    if (candidateLayerId == NO_PARENT_ID || parentLayerId == NO_PARENT_ID)
+    {
+        return false;
+    }
+
+    // Check the hierarchy of the candidate
+    for (int immediateParentId = getParentLayer(candidateLayerId); 
+         immediateParentId != NO_PARENT_ID;
+         immediateParentId = getParentLayer(immediateParentId))
+    {
+        if (immediateParentId == parentLayerId)
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 sigc::signal<void> LayerManager::signal_layersChanged()

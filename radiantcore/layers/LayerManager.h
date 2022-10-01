@@ -136,6 +136,9 @@ private:
 
 	// Returns the lowest unused layer ID
 	int getLowestUnusedLayerID();
+
+    // Returns true if the given candidateLayerId is a child of the given parentLayer
+    bool layerIsChildOf(int candidateLayerId, int parentLayerId);
 };
 
 } // namespace scene
