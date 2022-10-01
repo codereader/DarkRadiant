@@ -678,7 +678,37 @@ void LayerControlDialog::onBeginDrag(wxDataViewEvent& ev)
 
 void LayerControlDialog::onDropPossible(wxDataViewEvent& ev)
 {
-    
+    if (!GlobalMapModule().getRoot()) return;
+
+    auto selectedLayerId = getSelectedLayerId();
+
+    wxDataViewItem item(ev.GetItem());
+    wxutil::TreeModel::Row row(item, *_layerStore);
+
+    auto targetLayerId = row[_columns.id].getInteger();
+
+    // Don't allow dragging layers onto themselves or dragging the default layer
+    if (targetLayerId == selectedLayerId || selectedLayerId == 0)
+    {
+        ev.Veto();
+        return;
+    }
+
+    // Veto this change it the target layer is a child of the dragged one
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    if (layerManager.layerIsChildOf(targetLayerId, selectedLayerId))
+    {
+        ev.Veto();
+        return;
+    }
+
+    // Also don't allow dropping if the target is already an immediate parent
+    if (layerManager.getParentLayer(selectedLayerId) == targetLayerId)
+    {
+        ev.Veto();
+        return;
+    }
 }
 
 void LayerControlDialog::onDrop(wxDataViewEvent& ev)
