@@ -638,6 +638,35 @@ TEST_F(LayerTest, LayerHierarchyIsRestoredFromMap)
     EXPECT_EQ(layerManager.getParentLayer(9), 2) << "Hierarchy has not been restored";
 }
 
+TEST_F(LayerTest, LayerIsChildOf)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto grandParentLayerId = layerManager.createLayer("GrandParentLayer");
+    auto parentLayerId = layerManager.createLayer("ParentLayer");
+    auto childLayerId = layerManager.createLayer("ChildLayer");
+    auto otherLayerId = layerManager.createLayer("OtherLayer");
+
+    // Form a straight line GrandParent > Parent > Child
+    layerManager.setParentLayer(childLayerId, parentLayerId);
+    layerManager.setParentLayer(parentLayerId, grandParentLayerId);
+
+    EXPECT_TRUE(layerManager.layerIsChildOf(childLayerId, parentLayerId)) << "Child should be a descendent of parent";
+    EXPECT_TRUE(layerManager.layerIsChildOf(childLayerId, grandParentLayerId)) << "Child should be a descendent of grand parent";
+
+    EXPECT_FALSE(layerManager.layerIsChildOf(-1, parentLayerId)) << "One ID is -1, should return false";
+    EXPECT_FALSE(layerManager.layerIsChildOf(childLayerId, -1)) << "One ID is -1, should return false";
+    EXPECT_FALSE(layerManager.layerIsChildOf(-1, -1)) << "Both ids are -1, should return false";
+
+    EXPECT_FALSE(layerManager.layerIsChildOf(childLayerId, childLayerId)) << "Both ids are the same, should return false";
+
+    EXPECT_FALSE(layerManager.layerIsChildOf(otherLayerId, parentLayerId)) << "OtherLayer is not a descendent of parent";
+    EXPECT_FALSE(layerManager.layerIsChildOf(otherLayerId, grandParentLayerId)) << "OtherLayer is not a descendent of parent";
+    EXPECT_FALSE(layerManager.layerIsChildOf(otherLayerId, 0)) << "OtherLayer is not a descendent of parent";
+
+    EXPECT_FALSE(layerManager.layerIsChildOf(0, -1)) << "Even though Default has no parent, this should return -1";
+    EXPECT_FALSE(layerManager.layerIsChildOf(0, grandParentLayerId)) << "Default is not a descendant of grand parent";
+}
+
 TEST_F(LayerTest, CreateLayerMarksMapAsModified)
 {
     loadMap("general_purpose.mapx");

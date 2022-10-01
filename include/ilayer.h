@@ -197,6 +197,14 @@ public:
      */
     virtual void setParentLayer(int childLayerId, int parentLayerId) = 0;
 
+    /**
+     * Returns true if the given parentLayerId is part of the ancestry of the
+     * given candidateLayerId (the node itself is not part of the ancestry).
+     *
+     * Returns false if any of the given IDs is -1.
+     */
+    virtual bool layerIsChildOf(int candidateLayerId, int parentLayerId) = 0;
+
 	/**
 	 * A signal for client code to get notified about layer creation,
 	 * renamings and removal.

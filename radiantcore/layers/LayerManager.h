@@ -112,6 +112,7 @@ public:
 
     int getParentLayer(int layerId) override;
     void setParentLayer(int childLayerId, int parentLayerId) override;
+    bool layerIsChildOf(int candidateLayerId, int parentLayerId) override;
 
 	sigc::signal<void> signal_layersChanged() override;
 	sigc::signal<void> signal_layerVisibilityChanged() override;
@@ -136,9 +137,6 @@ private:
 
 	// Returns the lowest unused layer ID
 	int getLowestUnusedLayerID();
-
-    // Returns true if the given candidateLayerId is a child of the given parentLayer
-    bool layerIsChildOf(int candidateLayerId, int parentLayerId);
 };
 
 } // namespace scene
