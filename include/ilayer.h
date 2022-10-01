@@ -140,6 +140,8 @@ public:
 
 	/**
 	 * greebo: Sets the visibility of the given layer.
+	 * This operation will affect all child layers that might be
+	 * assigned to this one, recursively.
 	 */
 	virtual void setLayerVisibility(int layerID, bool visible) = 0;
 
@@ -167,7 +169,7 @@ public:
 	 * current layer settings resulted to "invisible" and the
 	 * node was therefore hidden.
 	 */
-	virtual bool updateNodeVisibility(const scene::INodePtr& node) = 0;
+	virtual bool updateNodeVisibility(const INodePtr& node) = 0;
 
 	/**
 	 * greebo: Sets the selection status of the entire layer.
@@ -242,7 +244,7 @@ public:
 
 } // namespace scene
 
-const char* const MODULE_LAYERS("LayerModule");
+constexpr const char* const MODULE_LAYERS("LayerModule");
 
 inline scene::ILayerModule& GlobalLayerModule()
 {

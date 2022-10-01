@@ -104,11 +104,11 @@ void LayerControlDialog::createButtons()
 
     _deleteButton = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("delete.png"));
     _deleteButton->Bind(wxEVT_BUTTON, &LayerControlDialog::onDeleteLayer, this);
-    _deleteButton->SetToolTip(_("Delete this layer"));
+    _deleteButton->SetToolTip(_("Delete the selected layer"));
 
     _renameButton = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("edit.png"));
     _renameButton->Bind(wxEVT_BUTTON, &LayerControlDialog::onRenameLayer, this);
-    _renameButton->SetToolTip(_("Rename this layer"));
+    _renameButton->SetToolTip(_("Rename the selected layer"));
 
     topRow->Add(createButton, 1, wxEXPAND | wxRIGHT, 6);
     topRow->Add(_renameButton, 0, wxEXPAND | wxRIGHT, 6);

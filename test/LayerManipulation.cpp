@@ -419,6 +419,37 @@ TEST_F(LayerTest, SetLayerVisibilityAffectsNode)
     EXPECT_TRUE(brush->visible()) << "Brush should be visible again";
 }
 
+TEST_F(LayerTest, SetLayerVisibilityWorksRecursively)
+{
+    loadMap("layer_hierarchy_restore.mapx");
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto testLayer2Id = layerManager.getLayerID("Test2");
+    auto boardsLayerId = layerManager.getLayerID("BoardsandStuff");
+    EXPECT_EQ(layerManager.getParentLayer(testLayer2Id), boardsLayerId) << "Test setup is wrong";
+
+    // Move the worldspawn to the child layer
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    Node_setSelected(worldspawn, true);
+    layerManager.moveSelectionToLayer(testLayer2Id);
+    Node_setSelected(worldspawn, false);
+
+    EXPECT_TRUE(worldspawn->visible());
+
+    // Hide the parent layer, this should affect the child layer
+    layerManager.setLayerVisibility(boardsLayerId, false);
+    EXPECT_FALSE(worldspawn->visible()) << "Worldspawn should be hidden now";
+
+    EXPECT_FALSE(layerManager.layerIsVisible(testLayer2Id)) << 
+        "The parent layer visibility should have propagated down to the boards layer";
+
+    layerManager.setLayerVisibility(boardsLayerId, true);
+    EXPECT_TRUE(worldspawn->visible()) << "Worldspawn should be visible again";
+
+    EXPECT_TRUE(layerManager.layerIsVisible(testLayer2Id)) <<
+        "The parent layer visibility should have propagated down to the boards layer";
+}
+
 TEST_F(LayerTest, SetLayerParent)
 {
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
