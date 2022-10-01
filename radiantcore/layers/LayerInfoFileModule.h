@@ -16,10 +16,12 @@ private:
 	// Buffer to hold our output
 	std::stringstream _output;
 	std::stringstream _layerNameBuffer;
+	std::stringstream _layerHierarchyBuffer;
 
 	// The list of layernames
-	typedef std::map<int, std::string> LayerNameMap;
-	LayerNameMap _layerNames;
+    std::map<int, std::string> _layerNames;
+
+    std::map<int, int> _layerParentIds;
 
 	typedef std::vector<scene::LayerList> LayerLists;
 	LayerLists _layerMappings;
@@ -52,6 +54,7 @@ private:
 
 	void parseLayerNames(parser::DefTokeniser& tok);
 	void parseNodeToLayerMapping(parser::DefTokeniser& tok);
+	void parseLayerHierarchy(parser::DefTokeniser& tok);
 };
 
 }
