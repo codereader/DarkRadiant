@@ -376,7 +376,7 @@ int LayerManager::getParentLayer(int layerId)
 
 void LayerManager::setParentLayer(int childLayerId, int parentLayerId)
 {
-    if (childLayerId == DEFAULT_LAYER)
+    if (childLayerId == DEFAULT_LAYER && parentLayerId != -1)
     {
         throw std::invalid_argument("Cannot assign a parent to the default layer");
     }

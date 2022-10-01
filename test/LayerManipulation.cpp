@@ -429,8 +429,8 @@ TEST_F(LayerTest, SetLayerParent)
     EXPECT_EQ(layerManager.getParentLayer(parentLayerId), -1) << "ParentLayer doesn't have a parent yet";
     EXPECT_EQ(layerManager.getParentLayer(childLayerId), -1) << "ChildLayer doesn't have a parent yet";
 
-    // It's not valid to assign a parent to the default layer, even if it's -1
-    EXPECT_THROW(layerManager.setParentLayer(0, -1), std::invalid_argument);
+    // It's not valid to assign a parent to the default layer, unless it's -1
+    EXPECT_NO_THROW(layerManager.setParentLayer(0, -1));
     EXPECT_THROW(layerManager.setParentLayer(0, parentLayerId), std::invalid_argument);
     EXPECT_THROW(layerManager.setParentLayer(0, 3333), std::invalid_argument);
 
