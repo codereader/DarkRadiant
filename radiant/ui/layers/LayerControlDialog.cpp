@@ -222,6 +222,18 @@ void LayerControlDialog::refresh()
 {
     _refreshTreeOnIdle = false;
 
+    // Find out which layers are currently expanded and/or selected
+    auto selectedLayerId = getSelectedLayerId();
+    std::set<int> expandedLayers;
+
+    for (const auto& [id, item] : _layerItemMap)
+    {
+        if (_layersView->IsExpanded(item))
+        {
+            expandedLayers.insert(id);
+        }
+    }
+
 	clearControls();
 
     if (!GlobalMapModule().getRoot()) return; // no map present
@@ -234,6 +246,22 @@ void LayerControlDialog::refresh()
         std::bind(&TreePopulator::processLayer, &populator, std::placeholders::_1, std::placeholders::_2));
 
     _layerItemMap = std::move(populator.getLayerItemMap());
+
+    // Restore the expanded state of tree elements
+    for (const auto& [id, item] : _layerItemMap)
+    {
+        if (expandedLayers.count(id) > 0)
+        {
+            _layersView->Expand(item);
+        }
+
+        if (selectedLayerId == id)
+        {
+            _layersView->Select(item);
+            _layersView->EnsureVisible(item);
+        }
+    }
+
     updateButtonSensitivity(populator.getNumVisibleLayers(), populator.getNumHiddenLayers());
 }
 
