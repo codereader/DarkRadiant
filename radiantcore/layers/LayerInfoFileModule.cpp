@@ -19,6 +19,7 @@ namespace
 	constexpr const char* const LAYER = "Layer";
 	constexpr const char* const LAYERS = "Layers";
 	constexpr const char* const NODE = "Node";
+	constexpr const char* const PARENT = "Parent";
 }
 
 LayerInfoFileModule::LayerInfoFileModule() :
@@ -68,7 +69,7 @@ void LayerInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
     layerManager.foreachLayer([&](int layerId, const std::string& layerName)
 	{
 		_layerNameBuffer << "\t\t" << LAYER << " " << layerId << " { " << layerName << " }" << std::endl;
-        _layerHierarchyBuffer << "\t\t" << LAYER << " " << layerId << " { " << layerManager.getParentLayer(layerId) << " }" << std::endl;
+        _layerHierarchyBuffer << "\t\t" << LAYER << " " << layerId << " " << PARENT << " { " << layerManager.getParentLayer(layerId) << " }" << std::endl;
 	});
 
     // Close both blocks
@@ -267,6 +268,7 @@ void LayerInfoFileModule::parseLayerHierarchy(parser::DefTokeniser& tok)
             int layerId = string::convert<int>(tok.nextToken());
 
             // The block just contains the parent ID
+            tok.assertNextToken(PARENT);
             tok.assertNextToken("{");
             auto parentLayerId = string::convert<int>(tok.nextToken());
             tok.assertNextToken("}");
