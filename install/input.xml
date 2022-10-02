@@ -66,7 +66,7 @@
 		<shortcut command="ShowHidden" key="H" modifiers="SHIFT" />
 		<shortcut command="HideSelected" key="H" />
 		<shortcut command="HideDeselected" key="H" modifiers="CONTROL+SHIFT"/>
-		<shortcut command="ToggleLegacyLayerControlDialog" key="L" modifiers="CONTROL" />
+		<shortcut command="ToggleLayerControlDialog" key="L" modifiers="CONTROL" />
 		<shortcut command="ToggleMediaBrowser" key="M" />
 		<shortcut command="CSGSubtract" key="U" modifiers="SHIFT" />
 		<shortcut command="CSGMerge" key="U" modifiers="CONTROL" />

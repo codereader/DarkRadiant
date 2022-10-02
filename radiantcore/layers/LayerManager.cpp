@@ -286,7 +286,7 @@ void LayerManager::onLayerVisibilityChanged()
 	// Update all nodes and views
 	updateSceneGraphVisibility();
 
-	// Update the LegacyLayerControlDialog
+	// Update the UI
 	_layerVisibilityChangedSignal.emit();
 }
 
