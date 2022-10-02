@@ -283,10 +283,7 @@ void LayerControlDialog::update()
 {
     _updateTreeOnIdle = false;
 
-	if (!GlobalMapModule().getRoot())
-	{
-		return;
-	}
+    if (!GlobalMapModule().getRoot()) return;
 
 	auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
     auto activeLayerId = layerManager.getActiveLayer();
@@ -347,7 +344,9 @@ void LayerControlDialog::updateLayerUsage()
 {
 	_rescanSelectionOnIdle = false;
 
-	// Scan the selection and get the histogram
+    if (!GlobalMapModule().getRoot()) return;
+
+    // Scan the selection and get the histogram
 	auto breakDown = scene::LayerUsageBreakdown::CreateFromSelection();
 
     GlobalMapModule().getRoot()->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
