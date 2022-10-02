@@ -731,10 +731,11 @@ void LayerControlDialog::onDrop(wxDataViewEvent& ev)
         return;
     }
 
-    wxDataViewItem item(ev.GetItem());
+    auto item = ev.GetItem();
     wxutil::TreeModel::Row row(item, *_layerStore);
 
-    auto targetLayerId = row[_columns.id].getInteger();
+    // If an empty item is passed we're supposed to make it top-level again
+    auto targetLayerId = item.IsOk() ? row[_columns.id].getInteger() : -1;
 
     // Read the source layer ID and veto the event if it's the same as the source ID
     if (auto obj = dynamic_cast<wxTextDataObject*>(ev.GetDataObject()); obj)
