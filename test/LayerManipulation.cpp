@@ -457,6 +457,24 @@ TEST_F(LayerTest, SetLayerVisibilityWorksRecursively)
         "The parent layer visibility should have propagated down to the boards layer";
 }
 
+TEST_F(LayerTest, GetParentLayer)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    EXPECT_EQ(layerManager.getParentLayer(0), -1) << "Default layer doesn't have a parent";
+
+    // Set a parent, query again
+    auto someLayerId = layerManager.createLayer("SomeLayer");
+    layerManager.setParentLayer(someLayerId, 0);
+    EXPECT_EQ(layerManager.getParentLayer(someLayerId), 0);
+
+    // Layer ID -1 is not throwing
+    EXPECT_NO_THROW(layerManager.getParentLayer(-1));
+
+    // Any other invalid ID should throw
+    EXPECT_THROW(layerManager.getParentLayer(3434), std::out_of_range);
+}
+
 TEST_F(LayerTest, SetLayerParent)
 {
     auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
