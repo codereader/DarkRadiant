@@ -3,6 +3,7 @@
 
 #include "imap.h"
 #include "ilayer.h"
+#include "ifilter.h"
 #include "scenelib.h"
 #include "algorithm/Primitives.h"
 #include "os/file.h"
@@ -931,6 +932,40 @@ TEST_F(LayerTest, SettingParentLayerMarksMapAsModified)
     layerManager.setParentLayer(thirdLayerId, secondLayerId);
 
     EXPECT_TRUE(GlobalMapModule().isModified());
+}
+
+// #6115: Selecting and deselecting a filtered child brush through layers leaves the brush selected
+TEST_F(LayerTest, SelectFilteredChildPrimitive)
+{
+    loadMap("selecting_filtered_items_with_layers.mapx");
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto caulkLayerId = layerManager.getLayerID("Caulk");
+
+    auto func_static_1 = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+    auto childPrimitive = algorithm::findFirstBrushWithMaterial(func_static_1, "textures/common/caulk");
+
+    EXPECT_EQ(childPrimitive->getLayers(), scene::LayerList{ caulkLayerId }) << "Unexpected layer setup";
+    EXPECT_TRUE(childPrimitive->visible()) << "The brush should be visible after map load";
+
+    // Activate the filter hiding the caulk brush
+    GlobalFilterSystem().setFilterState("Caulk", true);
+
+    EXPECT_FALSE(childPrimitive->visible()) << "The filter should have hidden the brush";
+
+    // Now select the layer, this should set the brush to visible
+    // because the parent entity selection implies a forced-visible state on the brush
+    layerManager.setSelected(caulkLayerId, true);
+
+    EXPECT_TRUE(childPrimitive->visible()) << "Selecting the layer should set the brush to visible";
+
+    EXPECT_TRUE(Node_isSelected(func_static_1)) << "Selecting the layer should have selected func_static_1";
+    EXPECT_TRUE(Node_isSelected(childPrimitive)) << "Selecting the layer selected the brush since it was forced visible";
+
+    layerManager.setSelected(caulkLayerId, false);
+
+    EXPECT_FALSE(Node_isSelected(func_static_1)) << "De-selecting the layer should have de-selected func_static_1";
+    EXPECT_FALSE(Node_isSelected(childPrimitive)) << "De-selecting the layer shouldn't leave the brush selected";
 }
 
 }
