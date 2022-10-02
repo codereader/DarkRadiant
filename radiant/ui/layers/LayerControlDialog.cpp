@@ -142,8 +142,8 @@ void LayerControlDialog::queueUpdate()
 class LayerControlDialog::TreePopulator
 {
 private:
-    const wxutil::TreeModel::Ptr& _layerStore;
     const TreeColumns& _columns;
+    wxutil::TreeModel::Ptr _layerStore;
 
     std::map<int, wxDataViewItem> _layerItemMap;
 
@@ -155,8 +155,8 @@ private:
 
 public:
     TreePopulator(const wxutil::TreeModel::Ptr& layerStore, const TreeColumns& columns) :
-        _layerStore(layerStore),
         _columns(columns),
+        _layerStore(new wxutil::TreeModel(_columns)),
         _layerManager(GlobalMapModule().getRoot()->getLayerManager()),
         _activeLayerId(_layerManager.getActiveLayer())
     {}
@@ -174,6 +174,11 @@ public:
     std::map<int, wxDataViewItem>& getLayerItemMap()
     {
         return _layerItemMap;
+    }
+
+    const wxutil::TreeModel::Ptr& getLayerStore() const
+    {
+        return _layerStore;
     }
 
     wxDataViewItem processLayer(int layerId, const std::string& layerName)
@@ -244,6 +249,13 @@ void LayerControlDialog::refresh()
     TreePopulator populator(_layerStore, _columns);
     layerManager.foreachLayer(
         std::bind(&TreePopulator::processLayer, &populator, std::placeholders::_1, std::placeholders::_2));
+
+    // Get the model and sort each hierarchy level by name
+    _layerStore = populator.getLayerStore();
+    _layerStore->SortModelByColumn(_columns.name);
+
+    // Now associate the layer store with our tree view
+    _layersView->AssociateModel(_layerStore.get());
 
     _layerItemMap = std::move(populator.getLayerItemMap());
 
