@@ -4,6 +4,7 @@
 #include "imap.h"
 #include "ilayer.h"
 #include "scenelib.h"
+#include "algorithm/Primitives.h"
 #include "os/file.h"
 
 #include "algorithm/Scene.h"
@@ -702,6 +703,47 @@ TEST_F(LayerTest, LayerIsChildOf)
 
     EXPECT_FALSE(layerManager.layerIsChildOf(0, -1)) << "Even though Default has no parent, this should return -1";
     EXPECT_FALSE(layerManager.layerIsChildOf(0, grandParentLayerId)) << "Default is not a descendant of grand parent";
+}
+
+TEST_F(LayerTest, SelectLayer)
+{
+    loadMap("layer_hierarchy_restore.mapx");
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto testLayer2Id = layerManager.getLayerID("Test2");
+    
+    // Create brushes and move them into layers
+    auto brush1 = algorithm::createCubicBrush(GlobalMapModule().findOrInsertWorldspawn(), { 200, 300, 100 }, "textures/numbers/1");
+    auto brush2 = algorithm::createCubicBrush(GlobalMapModule().findOrInsertWorldspawn(), { 200, 300, 100 }, "textures/numbers/2");
+    auto brush3 = algorithm::createCubicBrush(GlobalMapModule().findOrInsertWorldspawn(), { 200, 300, 100 }, "textures/numbers/3");
+    auto brush4 = algorithm::createCubicBrush(GlobalMapModule().findOrInsertWorldspawn(), { 200, 300, 100 }, "textures/numbers/4");
+
+    Node_setSelected(brush1, true);
+    Node_setSelected(brush2, true);
+    layerManager.moveSelectionToLayer(testLayer2Id);
+    Node_setSelected(brush1, false);
+    Node_setSelected(brush2, false);
+
+    EXPECT_FALSE(Node_isSelected(brush1));
+    EXPECT_FALSE(Node_isSelected(brush2));
+    EXPECT_FALSE(Node_isSelected(brush3));
+    Node_setSelected(brush4, true); // this selection status should survive the process
+
+    // Use the layer interface to select test layer 2
+    layerManager.setSelected(testLayer2Id, true);
+
+    EXPECT_TRUE(Node_isSelected(brush1)) << "Brush 1 should be selected";
+    EXPECT_TRUE(Node_isSelected(brush2)) << "Brush 2 should be selected";
+    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should still be unselected";
+    EXPECT_TRUE(Node_isSelected(brush4)) << "Brush 4 should remain selected";
+
+    // De-select the layer again
+    layerManager.setSelected(testLayer2Id, false);
+
+    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should not be selected anymore";
+    EXPECT_FALSE(Node_isSelected(brush2)) << "Brush 2 should not be selected anymore";
+    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should still be unselected";
+    EXPECT_TRUE(Node_isSelected(brush4)) << "Brush 4 should remain selected";
 }
 
 TEST_F(LayerTest, CreateLayerMarksMapAsModified)
