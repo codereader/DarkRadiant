@@ -154,7 +154,7 @@ private:
     std::size_t _numHidden = 0;
 
 public:
-    LayerControlDialog::TreePopulator(const wxutil::TreeModel::Ptr& layerStore, const TreeColumns& columns) :
+    TreePopulator(const wxutil::TreeModel::Ptr& layerStore, const TreeColumns& columns) :
         _layerStore(layerStore),
         _columns(columns),
         _layerManager(GlobalMapModule().getRoot()->getLayerManager()),
