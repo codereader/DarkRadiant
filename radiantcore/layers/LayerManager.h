@@ -11,6 +11,8 @@ class LayerManager :
 	public ILayerManager
 {
 private:
+    INode& _rootNode;
+
     // The list of named layers, indexed by an integer ID
     std::map<int, std::string> _layers;
 
@@ -31,7 +33,7 @@ private:
 	sigc::signal<void> _nodeMembershipChangedSignal;
 
 public:
-	LayerManager();
+	LayerManager(INode& rootNode);
 
 	/**
 	 * greebo: Creates a new layer with the given name.

@@ -1,5 +1,6 @@
 #include "Traverse.h"
 
+#include "iscenegraph.h"
 #include "scenelib.h"
 #include "ibrush.h"
 #include "ipatch.h"

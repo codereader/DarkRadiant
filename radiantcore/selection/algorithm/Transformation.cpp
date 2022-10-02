@@ -200,7 +200,7 @@ public:
 
 			// Cloned child nodes are assigned the layers of the source nodes
 			// update the layer visibility flags using the layer manager of the source tree
-			scene::UpdateNodeVisibilityWalker visibilityUpdater(node->getRootNode());
+			scene::UpdateNodeVisibilityWalker visibilityUpdater(node->getRootNode()->getLayerManager());
 			clone->traverse(visibilityUpdater);
 		}
 	}

@@ -24,7 +24,8 @@ namespace
 	constexpr int NO_PARENT_ID = -1;
 }
 
-LayerManager::LayerManager() :
+LayerManager::LayerManager(INode& rootNode) :
+    _rootNode(rootNode),
 	_activeLayer(DEFAULT_LAYER)
 {
 	// Create the "master" layer with ID DEFAULT_LAYER
@@ -104,7 +105,7 @@ void LayerManager::deleteLayer(const std::string& name)
 
 	// Remove all nodes from this layer first, but don't de-select them yet
 	RemoveFromLayerWalker walker(layerID);
-	GlobalSceneGraph().root()->traverse(walker);
+	_rootNode.traverse(walker);
 
 	// Remove the layer
 	_layers.erase(layerID);
@@ -273,8 +274,8 @@ bool LayerManager::setLayerVisibilityRecursively(int layerId, bool visible)
 
 void LayerManager::updateSceneGraphVisibility()
 {
-	UpdateNodeVisibilityWalker walker(GlobalSceneGraph().root());
-	GlobalSceneGraph().root()->traverseChildren(walker);
+	UpdateNodeVisibilityWalker walker(*this);
+	_rootNode.traverseChildren(walker);
 
 	// Redraw
 	SceneChangeNotify();
@@ -337,7 +338,7 @@ void LayerManager::removeSelectionFromLayer(int layerID)
 	onNodeMembershipChanged();
 }
 
-bool LayerManager::updateNodeVisibility(const scene::INodePtr& node)
+bool LayerManager::updateNodeVisibility(const INodePtr& node)
 {
     if (!node->supportsStateFlag(Node::eLayered))
     {
@@ -378,11 +379,7 @@ bool LayerManager::updateNodeVisibility(const scene::INodePtr& node)
 void LayerManager::setSelected(int layerID, bool selected)
 {
 	SetLayerSelectedWalker walker(layerID, selected);
-
-    if (GlobalSceneGraph().root())
-    {
-        GlobalSceneGraph().root()->traverseChildren(walker);
-    }
+    _rootNode.traverseChildren(walker);
 }
 
 int LayerManager::getParentLayer(int layerId)

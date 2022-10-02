@@ -237,9 +237,12 @@ class ILayerModule :
 	public RegisterableModule
 {
 public:
-	virtual ~ILayerModule() {}
+    ~ILayerModule() override {}
 
-	virtual ILayerManager::Ptr createLayerManager() = 0;
+    /**
+     * Creates a new layer manager instance associated to the given scene (root) node
+     */
+    virtual ILayerManager::Ptr createLayerManager(INode& rootNode) = 0;
 };
 
 } // namespace scene
