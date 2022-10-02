@@ -127,6 +127,9 @@ private:
     // Returns true if any flag changed, false if nothing changed.
     bool setLayerVisibilityRecursively(int layerID, bool visible);
 
+    // Invokes the function object with each layer ID in the hierarchy, including the given root
+    void foreachLayerInHierarchy(int rootLayerId, const std::function<void(int)>& functor);
+
 	// Internal event emitter
 	void onLayersChanged();
 

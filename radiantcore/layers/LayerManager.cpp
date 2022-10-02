@@ -13,6 +13,7 @@
 
 #include <functional>
 #include <climits>
+#include <unordered_set>
 
 namespace scene
 {
@@ -246,28 +247,15 @@ void LayerManager::setLayerVisibility(int layerId, bool visible)
     }
 }
 
-bool LayerManager::setLayerVisibilityRecursively(int layerId, bool visible)
+bool LayerManager::setLayerVisibilityRecursively(int rootLayerId, bool visible)
 {
-    if (layerId < 0 || layerId >= static_cast<int>(_layerVisibility.size()))
+    bool visibilityChange = false;
+
+    foreachLayerInHierarchy(rootLayerId, [&](int layerId)
     {
-        rMessage() << "LayerSystem: Setting visibility of invalid layer ID: " << layerId << std::endl;
-        return false;
-    }
-
-    bool visibilityChange = _layerVisibility.at(layerId) != visible;
-
-    _layerVisibility.at(layerId) = visible;
-
-    // Set the visibility of all child layers too
-    // Start with index 1, as the default layer cannot have any parent
-    for (std::size_t childLayerId = 1; childLayerId < _layerParentIds.size(); ++childLayerId)
-    {
-        // If this local layer is assigned as parent to this child layer, recurse into it
-        if (_layerParentIds.at(childLayerId) == layerId)
-        {
-            visibilityChange |= setLayerVisibilityRecursively(static_cast<int>(childLayerId), visible);
-        }
-    }
+        visibilityChange |= _layerVisibility.at(layerId) != visible;
+        _layerVisibility.at(layerId) = visible;
+    });
 
     return visibilityChange;
 }
@@ -376,15 +364,41 @@ bool LayerManager::updateNodeVisibility(const INodePtr& node)
 	return !isHidden;
 }
 
-void LayerManager::setSelected(int layerID, bool selected)
+void LayerManager::foreachLayerInHierarchy(int rootLayerId, const std::function<void(int)>& functor)
 {
-	SetLayerSelectedWalker walker(layerID, selected);
+    if (rootLayerId == -1) return;
+
+    // Hit the root node itself
+    functor(rootLayerId);
+
+    // Recurse into each child layer
+    // Start with index 1, as the default layer cannot have any parent
+    for (std::size_t childLayerId = 1; childLayerId < _layerParentIds.size(); ++childLayerId)
+    {
+        // If this local layer is assigned as parent to this child layer, recurse into it
+        if (_layerParentIds.at(childLayerId) == rootLayerId)
+        {
+            foreachLayerInHierarchy(static_cast<int>(childLayerId), functor);
+        }
+    }
+}
+
+void LayerManager::setSelected(int layerId, bool selected)
+{
+    // Assemble the list of layer IDs this operation is affecting
+    std::unordered_set<int> layerIds(32);
+    foreachLayerInHierarchy(layerId, [&](int childLayerId)
+    {
+        layerIds.insert(childLayerId);
+    });
+
+	SetLayerSelectedWalker walker(layerIds, selected);
     _rootNode.traverseChildren(walker);
 }
 
 int LayerManager::getParentLayer(int layerId)
 {
-    return _layerParentIds.at(layerId);
+    return layerId == -1 ? NO_PARENT_ID : _layerParentIds.at(layerId);
 }
 
 void LayerManager::setParentLayer(int childLayerId, int parentLayerId)
