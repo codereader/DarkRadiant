@@ -73,6 +73,8 @@ void LayerControlDialog::populateWindow()
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &LayerControlDialog::onDropPossible, this);
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP, &LayerControlDialog::onDrop, this);
 
+    _layersView->SetToolTip(_("Double-Click to select all in hierarchy, hold SHIFT to deselect, hold CTRL to set as active layer."));
+
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
     auto overallVBox = new wxBoxSizer(wxVERTICAL);
