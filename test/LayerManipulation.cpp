@@ -746,6 +746,62 @@ TEST_F(LayerTest, SelectLayer)
     EXPECT_TRUE(Node_isSelected(brush4)) << "Brush 4 should remain selected";
 }
 
+TEST_F(LayerTest, SelectLayerWorksRecursively)
+{
+    loadMap("layer_hierarchy_restore.mapx");
+
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto testLayer2Id = layerManager.getLayerID("Test2");
+    auto testLayer7Id = layerManager.getLayerID("Test7");
+    auto boardsLayerId = layerManager.getLayerID("BoardsandStuff");
+    EXPECT_EQ(layerManager.getParentLayer(testLayer2Id), boardsLayerId) << "Test setup is wrong";
+    EXPECT_EQ(layerManager.getParentLayer(testLayer7Id), testLayer2Id) << "Test setup is wrong";
+
+    // Create brushes and move them into the layer hierarchy
+    auto brush1 = algorithm::createCubicBrush(GlobalMapModule().findOrInsertWorldspawn(), { 200, 300, 100 }, "textures/numbers/1");
+    auto brush2 = algorithm::createCubicBrush(GlobalMapModule().findOrInsertWorldspawn(), { 200, 300, 100 }, "textures/numbers/2");
+    auto brush3 = algorithm::createCubicBrush(GlobalMapModule().findOrInsertWorldspawn(), { 200, 300, 100 }, "textures/numbers/3");
+    auto brush4 = algorithm::createCubicBrush(GlobalMapModule().findOrInsertWorldspawn(), { 200, 300, 100 }, "textures/numbers/4");
+
+    // Brushes 1 and 2 go to test layer 7
+    Node_setSelected(brush1, true);
+    Node_setSelected(brush2, true);
+    layerManager.moveSelectionToLayer(testLayer7Id);
+    Node_setSelected(brush1, false);
+    Node_setSelected(brush2, false);
+
+    // Brush 3 goes to the parent layer Test2
+    Node_setSelected(brush3, true);
+    layerManager.moveSelectionToLayer(testLayer2Id);
+    Node_setSelected(brush3, false);
+
+    // Brush 4 remains in the grand parent layer
+    Node_setSelected(brush4, true);
+    layerManager.moveSelectionToLayer(boardsLayerId);
+    Node_setSelected(brush4, false);
+
+    EXPECT_FALSE(Node_isSelected(brush1));
+    EXPECT_FALSE(Node_isSelected(brush2));
+    EXPECT_FALSE(Node_isSelected(brush3));
+    EXPECT_FALSE(Node_isSelected(brush4));
+
+    // Use the layer interface to select the grand parent, this should affect all child layers
+    layerManager.setSelected(boardsLayerId, true);
+
+    EXPECT_TRUE(Node_isSelected(brush1)) << "Brush 1 should be selected";
+    EXPECT_TRUE(Node_isSelected(brush2)) << "Brush 2 should be selected";
+    EXPECT_TRUE(Node_isSelected(brush3)) << "Brush 3 should be unselected";
+    EXPECT_TRUE(Node_isSelected(brush4)) << "Brush 4 should be selected";
+
+    // De-select the layer again
+    layerManager.setSelected(boardsLayerId, false);
+
+    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should not be selected anymore";
+    EXPECT_FALSE(Node_isSelected(brush2)) << "Brush 2 should not be selected anymore";
+    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should not be selected anymore";
+    EXPECT_FALSE(Node_isSelected(brush4)) << "Brush 4 should not be selected anymore";
+}
+
 TEST_F(LayerTest, CreateLayerMarksMapAsModified)
 {
     loadMap("general_purpose.mapx");
