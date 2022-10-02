@@ -27,8 +27,9 @@ public:
 
 	bool pre(const INodePtr& node) override
 	{
-        // skip hidden nodes
-        if (!node->visible()) return false;
+        // Skip hidden nodes, but only when we're selecting
+        // When de-selecting we don't care whether the target node can be seen
+        if (_selected && !node->visible()) return false;
 
         // Skip the worldspawn
         if (Node_isWorldspawn(node)) return true;
