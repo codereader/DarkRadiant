@@ -4,10 +4,10 @@ Name=DarkRadiant
 GenericName=Level editor
 Keywords=doom;doom3;idtech;level;map;the dark mod;game development;
 
-Comment=3D level editor for Doom 3 and the Dark Mod
-Comment[de]=3D Level Editor für Doom 3 und The Dark Mod
+Comment=3D level editor for The Dark Mod and Doom 3
+Comment[de]=3D Level Editor für The Dark Mod und Doom 3
 
-Icon=@CMAKE_INSTALL_PREFIX@/share/darkradiant/bitmaps/darkradiant_icon_64x64.png
+Icon=net.darkradiant.DarkRadiant
 
 # The %f means a single, local, absolute file. Remote files will be
 # first copied in a local temp location and then given to the program:

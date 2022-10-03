@@ -171,6 +171,15 @@ install(DIRECTORY install/ui DESTINATION ${PKGDATADIR}
         FILES_MATCHING PATTERN "*.ttf" PATTERN "*.xrc")
 install(DIRECTORY install/resources DESTINATION ${PKGDATADIR})
 
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/install/bitmaps/darkradiant_icon_64x64.png
+	    DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/64x64/apps
+		RENAME net.darkradiant.DarkRadiant.png)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/install/bitmaps/darkradiant_icon_128x128.png
+	    DESTINATION ${CMAKE_INSTALL_DATADIR}/icons/hicolor/128x128/apps
+		RENAME net.darkradiant.DarkRadiant.png)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/install/net.darkradiant.DarkRadiant.metainfo.xml
+	    DESTINATION ${CMAKE_INSTALL_DATADIR}/metainfo)
+
 # Install locale data
 if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.14")
 # CMake 3.14 and above support TYPE LOCALE, they deduct DESTINATION themselves
