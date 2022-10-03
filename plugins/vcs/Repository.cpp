@@ -13,6 +13,11 @@
 #include "os/file.h"
 #include "fmt/format.h"
 
+#if LIBGIT2_VER_MAJOR <= 0 && LIBGIT2_VER_MINOR < 28
+// Compatibility to older libgit2
+#define GIT_OBJECT_COMMIT GIT_OBJ_COMMIT
+#endif
+
 namespace vcs
 {
 
@@ -104,7 +109,11 @@ std::string Repository::getUpstreamRemoteName(const Reference& reference)
     GitException::ThrowOnError(error);
 
     std::string upstreamRemote = buf.ptr;
+#if LIBGIT2_VER_MAJOR <= 0 && LIBGIT2_VER_MINOR < 28
+    git_buf_free(&buf); // git_buf_dispose was introduced in 0.28
+#else
     git_buf_dispose(&buf);
+#endif
 
     return upstreamRemote;
 }
