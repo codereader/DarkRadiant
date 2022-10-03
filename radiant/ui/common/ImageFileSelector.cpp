@@ -3,6 +3,7 @@
 #include "i18n.h"
 #include "ImageFilePopulator.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
+#include <wx/sizer.h>
 
 namespace ui
 {

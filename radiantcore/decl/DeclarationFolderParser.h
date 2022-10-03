@@ -1,5 +1,7 @@
 #pragma once
 
+#include <map>
+#include "ideclmanager.h"
 #include "DeclarationFile.h"
 
 #include "parser/ThreadedDeclParser.h"

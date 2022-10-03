@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ishaderlayer.h"
 #include "GLSLProgramBase.h"
 
 namespace render

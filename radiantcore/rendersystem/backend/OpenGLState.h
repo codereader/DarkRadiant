@@ -1,14 +1,13 @@
 #pragma once
 
 #include "igl.h"
+#include "iglprogram.h"
 #include "ishaders.h"
 #include "ishaderlayer.h"
+#include "irender.h"
 
 #include "debugging/gl.h"
 #include "render/Colour4.h"
-
-// Full declaration in iglprogram.h
-class GLProgram;
 
 namespace render
 {

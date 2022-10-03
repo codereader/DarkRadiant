@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ifx.h"
+#include "parser/DefTokeniser.h"
 
 namespace fx
 {

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Bounded.h"
+#include "iselectiontest.h"
 #include "irenderable.h"
 
 #include "scene/Node.h"

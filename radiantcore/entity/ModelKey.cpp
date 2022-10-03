@@ -2,6 +2,7 @@
 
 #include <functional>
 #include "imodelcache.h"
+#include "imd5model.h"
 #include "ifilter.h"
 #include "modelskin.h"
 #include "string/replace.h"

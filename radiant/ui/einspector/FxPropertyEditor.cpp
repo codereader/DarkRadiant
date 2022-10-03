@@ -1,8 +1,16 @@
 #include "FxPropertyEditor.h"
 
+#include "i18n.h"
+#include "icommandsystem.h"
+#include "ientity.h"
+
 #include "ClassnamePropertyEditor.h"
 #include "PropertyEditorFactory.h"
 #include "ui/fx/FxChooser.h"
+
+#include <wx/sizer.h>
+#include <wx/panel.h>
+#include <wx/button.h>
 
 namespace ui
 {

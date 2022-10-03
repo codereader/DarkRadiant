@@ -1,5 +1,6 @@
 #pragma once
 
+#include <map>
 #include "imap.h"
 #include "icommandsystem.h"
 #include "wxutil/window/TransientWindow.h"

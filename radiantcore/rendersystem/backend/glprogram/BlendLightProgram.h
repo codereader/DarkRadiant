@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GLSLProgramBase.h"
+#include "render/Colour4.h"
 
 namespace render
 {

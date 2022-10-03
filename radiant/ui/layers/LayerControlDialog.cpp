@@ -1,11 +1,13 @@
 #include "LayerControlDialog.h"
 
 #include "i18n.h"
+#include "iregistry.h"
 #include "itextstream.h"
 #include "ilayer.h"
 #include "ui/imainframe.h"
 #include "iselection.h"
 
+#include <wx/bmpbuttn.h>
 #include <wx/button.h>
 #include <wx/tglbtn.h>
 #include <wx/sizer.h>

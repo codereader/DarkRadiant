@@ -8,6 +8,7 @@
 #include "glprogram/RegularStageProgram.h"
 #include "glprogram/BlendLightProgram.h"
 
+#include "irender.h"
 #include "itextstream.h"
 #include "iregistry.h"
 #include "imodule.h"

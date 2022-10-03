@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ipatch.h"
+#include "math/AABB.h"
 #include "imodelsurface.h"
 
 namespace model

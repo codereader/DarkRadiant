@@ -1,5 +1,6 @@
 #pragma once
 
+#include "isound.h"
 #include "wxutil/decl/DeclarationSelector.h"
 #include "SoundShaderPreview.h"
 

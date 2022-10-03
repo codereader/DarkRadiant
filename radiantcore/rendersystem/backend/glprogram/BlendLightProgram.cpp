@@ -1,5 +1,6 @@
 #include "BlendLightProgram.h"
 
+#include "GLProgramAttributes.h"
 #include "debugging/gl.h"
 #include "rendersystem/backend/GLProgramFactory.h"
 

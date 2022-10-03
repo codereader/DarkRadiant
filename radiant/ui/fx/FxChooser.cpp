@@ -1,5 +1,6 @@
 #include "FxChooser.h"
 
+#include "i18n.h"
 #include "debugging/ScopedDebugTimer.h"
 #include "os/path.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
