@@ -81,9 +81,23 @@ class CamWnd :
 
     // Camera toolbar and associated button IDs
     wxToolBar* _camToolbar = nullptr;
-    int _farClipInID = wxID_NONE;
-    int _farClipOutID = wxID_NONE;
-    int _farClipToggleID = wxID_NONE;
+    struct {
+        // Lighting mode buttons
+        int wireFrame = wxID_NONE;
+        int flatShade = wxID_NONE;
+        int textured = wxID_NONE;
+        int lighting = wxID_NONE;
+        int lightingShadow = wxID_NONE;
+
+        // Far clip buttons
+        int farClipIn = wxID_NONE;
+        int farClipOut = wxID_NONE;
+        int farClipToggle = wxID_NONE;
+
+        // Animation control buttons
+        int startTime = wxID_NONE;
+        int stopTime = wxID_NONE;
+    } _btnIDs;
 
     std::size_t _mapValidHandle;
 

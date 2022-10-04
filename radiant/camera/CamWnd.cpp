@@ -142,21 +142,26 @@ wxWindow* CamWnd::getMainWidget() const
 
 void CamWnd::constructToolbar()
 {
-    // If lighting is not available, grey out the lighting button
+    // Get the toolbar itself
     _camToolbar = findNamedObject<wxToolBar>(_mainWxWidget, "CamToolbar");
 
+    // Get button IDs
     const wxToolBarToolBase* wireframeBtn = getToolBarToolByLabel(_camToolbar, "wireframeBtn");
+    _btnIDs.wireFrame = wireframeBtn->GetId();
     const wxToolBarToolBase* flatShadeBtn = getToolBarToolByLabel(_camToolbar, "flatShadeBtn");
+    _btnIDs.flatShade = flatShadeBtn->GetId();
     const wxToolBarToolBase* texturedBtn = getToolBarToolByLabel(_camToolbar, "texturedBtn");
+    _btnIDs.textured = texturedBtn->GetId();
     const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(_camToolbar, "lightingBtn");
+    _btnIDs.lighting = lightingBtn->GetId();
     const wxToolBarToolBase* shadowLightingBtn = getToolBarToolByLabel(_camToolbar, "shadowBtn");
+    _btnIDs.lightingShadow = shadowLightingBtn->GetId();
     const wxToolBarToolBase* gridButton = getToolBarToolByLabel(_camToolbar, "drawGridButton");
 
     if (!GlobalRenderSystem().shaderProgramsAvailable())
     {
-        //lightingBtn->set_sensitive(false);
-        _camToolbar->EnableTool(lightingBtn->GetId(), false);
-        _camToolbar->EnableTool(shadowLightingBtn->GetId(), false);
+        _camToolbar->EnableTool(_btnIDs.lighting, false);
+        _camToolbar->EnableTool(_btnIDs.lightingShadow, false);
     }
 
     auto toggleShadowMappingEvent = GlobalEventManager().findEvent("ToggleShadowMapping");
@@ -170,26 +175,34 @@ void CamWnd::constructToolbar()
     updateActiveRenderModeButton();
 
     // Connect button signals
-    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onRenderModeButtonsChanged, this, wireframeBtn->GetId());
-    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED,&CamWnd::onRenderModeButtonsChanged, this, flatShadeBtn->GetId());
-    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onRenderModeButtonsChanged, this, texturedBtn->GetId());
-    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onRenderModeButtonsChanged, this, lightingBtn->GetId());
-    
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED,
+                                     &CamWnd::onRenderModeButtonsChanged, this,
+                                     _btnIDs.wireFrame);
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED,
+                                     &CamWnd::onRenderModeButtonsChanged, this,
+                                     _btnIDs.flatShade);
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED,
+                                     &CamWnd::onRenderModeButtonsChanged, this,
+                                     _btnIDs.textured);
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED,
+                                     &CamWnd::onRenderModeButtonsChanged, this,
+                                     _btnIDs.lighting);
+
     auto toggleCameraGridEvent = GlobalEventManager().findEvent("ToggleCameraGrid");
     toggleCameraGridEvent->connectToolItem(gridButton);
 
     // Far clip buttons.
-    _farClipInID = getToolID(_camToolbar, "clipPlaneInButton");
-    _farClipOutID = getToolID(_camToolbar, "clipPlaneOutButton");
-    _farClipToggleID = getToolID(_camToolbar, "clipPlaneToggleButton");
+    _btnIDs.farClipIn = getToolID(_camToolbar, "clipPlaneInButton");
+    _btnIDs.farClipOut = getToolID(_camToolbar, "clipPlaneOutButton");
+    _btnIDs.farClipToggle = getToolID(_camToolbar, "clipPlaneToggleButton");
     setFarClipButtonSensitivity();
 
-    _camToolbar->Bind(wxEVT_TOOL, &CamWnd::onFarClipPlaneInClick, this, _farClipInID);
-    _camToolbar->Bind(wxEVT_TOOL, &CamWnd::onFarClipPlaneOutClick, this, _farClipOutID);
+    _camToolbar->Bind(wxEVT_TOOL, &CamWnd::onFarClipPlaneInClick, this, _btnIDs.farClipIn);
+    _camToolbar->Bind(wxEVT_TOOL, &CamWnd::onFarClipPlaneOutClick, this, _btnIDs.farClipOut);
     _camToolbar->Bind(
         wxEVT_TOOL,
         [](wxCommandEvent&) { getCameraSettings()->toggleFarClip(true); },
-        _farClipToggleID
+        _btnIDs.farClipToggle
     );
 
     GlobalRegistry().signalForKey(RKEY_ENABLE_FARCLIP).connect(
@@ -197,10 +210,14 @@ void CamWnd::constructToolbar()
     );
 
     const wxToolBarToolBase* startTimeButton = getToolBarToolByLabel(_camToolbar, "startTimeButton");
+    _btnIDs.startTime = startTimeButton->GetId();
     const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(_camToolbar, "stopTimeButton");
+    _btnIDs.stopTime = stopTimeButton->GetId();
 
-    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onStartTimeButtonClick, this, startTimeButton->GetId());
-    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onStopTimeButtonClick, this, stopTimeButton->GetId());
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onStartTimeButtonClick,
+                                     this, _btnIDs.startTime);
+    _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED, &CamWnd::onStopTimeButtonClick,
+                                     this, _btnIDs.stopTime);
 
     // Stop time, initially
     stopRenderTime();
@@ -226,11 +243,8 @@ void CamWnd::updateToolbarVisibility()
 void CamWnd::onGLExtensionsInitialised()
 {
     // If lighting is not available, grey out the lighting button
-    const wxToolBarToolBase* lightingBtn = getToolBarToolByLabel(_camToolbar, "lightingBtn");
-    const wxToolBarToolBase* shadowBtn = getToolBarToolByLabel(_camToolbar, "shadowBtn");
-
-    _camToolbar->EnableTool(lightingBtn->GetId(), GlobalRenderSystem().shaderProgramsAvailable());
-    _camToolbar->EnableTool(shadowBtn->GetId(), GlobalRenderSystem().shaderProgramsAvailable());
+    _camToolbar->EnableTool(_btnIDs.lighting, GlobalRenderSystem().shaderProgramsAvailable());
+    _camToolbar->EnableTool(_btnIDs.lightingShadow, GlobalRenderSystem().shaderProgramsAvailable());
 }
 
 void CamWnd::setFarClipButtonSensitivity()
@@ -239,9 +253,9 @@ void CamWnd::setFarClipButtonSensitivity()
     bool enabled = registry::getValue<bool>(RKEY_ENABLE_FARCLIP, true);
 
     // Set toggle button state and sensitivity of in/out buttons
-    _camToolbar->ToggleTool(_farClipToggleID, enabled);
-    _camToolbar->EnableTool(_farClipInID, enabled);
-    _camToolbar->EnableTool(_farClipOutID, enabled);
+    _camToolbar->ToggleTool(_btnIDs.farClipToggle, enabled);
+    _camToolbar->EnableTool(_btnIDs.farClipIn, enabled);
+    _camToolbar->EnableTool(_btnIDs.farClipOut, enabled);
 }
 
 void CamWnd::constructGUIComponents()
@@ -324,8 +338,7 @@ void CamWnd::startRenderTime()
         _timerLock = false; // reset the lock, just in case
     }
 
-    const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(_camToolbar, "stopTimeButton");
-    _camToolbar->EnableTool(stopTimeButton->GetId(), true);
+    _camToolbar->EnableTool(_btnIDs.stopTime, true);
 }
 
 void CamWnd::onStartTimeButtonClick(wxCommandEvent& ev)
@@ -360,11 +373,8 @@ void CamWnd::stopRenderTime()
 {
     _timer.Stop();
 
-    const wxToolBarToolBase* startTimeButton = getToolBarToolByLabel(_camToolbar, "startTimeButton");
-    const wxToolBarToolBase* stopTimeButton = getToolBarToolByLabel(_camToolbar, "stopTimeButton");
-
-    _camToolbar->EnableTool(startTimeButton->GetId(), true);
-    _camToolbar->EnableTool(stopTimeButton->GetId(), false);
+    _camToolbar->EnableTool(_btnIDs.startTime, true);
+    _camToolbar->EnableTool(_btnIDs.stopTime, false);
 }
 
 void CamWnd::onRenderModeButtonsChanged(wxCommandEvent& ev)
@@ -376,22 +386,14 @@ void CamWnd::onRenderModeButtonsChanged(wxCommandEvent& ev)
 
     // This function will be called twice, once for the inactivating button and
     // once for the activating button
-    if (getToolBarToolByLabel(_camToolbar, "texturedBtn")->GetId() == ev.GetId())
-    {
+    if (_btnIDs.textured == ev.GetId())
         getCameraSettings()->setRenderMode(RENDER_MODE_TEXTURED);
-    }
-    else if (getToolBarToolByLabel(_camToolbar, "wireframeBtn")->GetId() == ev.GetId())
-    {
+    else if (_btnIDs.wireFrame == ev.GetId())
         getCameraSettings()->setRenderMode(RENDER_MODE_WIREFRAME);
-    }
-    else if (getToolBarToolByLabel(_camToolbar, "flatShadeBtn")->GetId() == ev.GetId())
-    {
+    else if (_btnIDs.flatShade == ev.GetId())
         getCameraSettings()->setRenderMode(RENDER_MODE_SOLID);
-    }
-    else if (getToolBarToolByLabel(_camToolbar, "lightingBtn")->GetId() == ev.GetId())
-    {
+    else if (_btnIDs.lighting == ev.GetId())
         getCameraSettings()->setRenderMode(RENDER_MODE_LIGHTING);
-    }
 }
 
 void CamWnd::updateActiveRenderModeButton()
@@ -399,16 +401,16 @@ void CamWnd::updateActiveRenderModeButton()
     switch (getCameraSettings()->getRenderMode())
     {
     case RENDER_MODE_WIREFRAME:
-        _camToolbar->ToggleTool(getToolBarToolByLabel(_camToolbar, "wireframeBtn")->GetId(), true);
+        _camToolbar->ToggleTool(_btnIDs.wireFrame, true);
         break;
     case RENDER_MODE_SOLID:
-        _camToolbar->ToggleTool(getToolBarToolByLabel(_camToolbar, "flatShadeBtn")->GetId(), true);
+        _camToolbar->ToggleTool(_btnIDs.flatShade, true);
         break;
     case RENDER_MODE_TEXTURED:
-        _camToolbar->ToggleTool(getToolBarToolByLabel(_camToolbar, "texturedBtn")->GetId(), true);
+        _camToolbar->ToggleTool(_btnIDs.textured, true);
         break;
     case RENDER_MODE_LIGHTING:
-        _camToolbar->ToggleTool(getToolBarToolByLabel(_camToolbar, "lightingBtn")->GetId(), true);
+        _camToolbar->ToggleTool(_btnIDs.lighting, true);
         break;
     default:
         assert(false);
