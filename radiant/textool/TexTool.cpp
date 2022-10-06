@@ -770,9 +770,16 @@ bool TexTool::onGLDraw()
     {
         _determineThemeFromImage = false;
 
-        // Download the pixel data from openGL
+        // Determine the exact texture dimensions to size the buffer
+        GLint width, height;
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &width);
+        glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &height);
+
+        // Allocate the buffer with the reported size
         std::vector<unsigned char> pixels;
-        pixels.resize(tex->getWidth() * tex->getHeight() * 3);
+        pixels.resize(width * height * 3);
+
+        // Download the pixel data from openGL
         glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, pixels.data());
 
         determineThemeBasedOnPixelData(pixels);
