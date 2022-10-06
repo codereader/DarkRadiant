@@ -1,3 +1,15 @@
+darkradiant (3.3.0~jammy1) jammy; urgency=medium
+
+  * New FX chooser and support for parsing FX declarations.
+  * Numerous menu entries greyed out when not currently available.
+  * Certain menu entries and UI elements hidden when not available in current
+    game.
+  * Renderer now handles "translucent" keyword.
+  * Lighting mode renderer now draws hidden lights.
+  * Several minor bugfixes.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 27 Sep 2022 19:53:22 +0100
+
 darkradiant (3.2.0~jammy1) jammy; urgency=medium
 
   * Show entityDefs related to selected models in Model Chooser.
