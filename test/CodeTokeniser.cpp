@@ -46,7 +46,7 @@ TEST_F(CodeTokeniser, ParseWindowDef)
     {
         "windowDef", "rightPageBackground",
         "{",
-            "rect", "-100",",","-10",",","500",",","400",
+            "rect", "-","100",",","-", "10",",","500",",","400",
             "background", "guis/assets/background_right_01",
             "matcolor", "1",",","1",",","1",",","0",
         "}",
@@ -65,7 +65,7 @@ TEST_F(CodeTokeniser, ParseRectExpression)
     {
         "windowDef", "rightPageBackground",
         "{",
-            "rect", "-100",",","-10",",","500",",","400",
+            "rect", "-","100",",","-","10",",","500",",","400",
         "}",
     });
 }
@@ -86,12 +86,12 @@ TEST_F(CodeTokeniser, ParseOnTimeExpression)
     {
         "onTime", "0",
         "{",
-            "if", "(", "gui::worldDisplay","==","1",")",
+            "if", "(", "gui::worldDisplay","=","=","1",")",
             "{",
                 "set", "title::forecolor", "0 0 0 1", ";",
                 "set", "body::forecolor", "0 0 0 1", ";",
             "}",
-            "set", "title::text", "$gui::title", ";"
+            "set", "title::text", "$gui::title", ";",
         "}",
     });
 }

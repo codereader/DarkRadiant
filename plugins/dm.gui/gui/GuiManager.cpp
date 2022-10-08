@@ -174,7 +174,7 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 	// Construct a Code Tokeniser, which is able to handle #includes
 	try
 	{
-		parser::CodeTokeniser tokeniser(file, parser::WHITESPACE, "{}(),;");
+		parser::CodeTokeniser tokeniser(file);
 
 		info.gui = Gui::createFromTokens(tokeniser);
 		info.type = UNDETERMINED;

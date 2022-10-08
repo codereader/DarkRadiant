@@ -109,6 +109,13 @@ public:
                         continue;
                     }
 
+                    if (*next == '/')
+                    {
+                        _state = FORWARDSLASH;
+                        ++next;
+                        continue; // skip slash, will need to add it back if this is not a comment)
+                    }
+
                     // If we have a KEPT delimiter, this is the token to return.
                     if (isKeptDelim(*next)) {
                         tok = *(next++);
@@ -628,7 +635,7 @@ public:
      */
 	CodeTokeniser(const ArchiveTextFilePtr& file,
 				  const char* delims = " \t\n\v\r",
-				  const char* keptDelims = "{}(),;") :
+				  const char* keptDelims = "{}(),;+-*/%=!^&|") :
 		_delims(delims),
 		_keptDelims(keptDelims)
     {
