@@ -912,7 +912,7 @@ private:
 
 		// Parse the entire macro
 		std::istringstream macroStream(defineToken);
-		SingleCodeFileTokeniser macroParser(macroStream);
+		SingleCodeFileTokeniser macroParser(macroStream, _delims, _keptDelims);
 
 		auto name = macroParser.nextToken();
 

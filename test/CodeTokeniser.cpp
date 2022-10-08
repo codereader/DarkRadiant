@@ -122,7 +122,46 @@ TEST_F(CodeTokeniser, ParseQuotes)
     });
 }
 
-TEST_F(CodeTokeniser, ParseMacroExpansion)
+TEST_F(CodeTokeniser, ParseComparisonOperators)
+{
+    expectTokenSequence(_context, R"("visible" > 1)", { "visible", ">", "1" });
+    expectTokenSequence(_context, R"("visible" < 1)", { "visible", "<", "1" });
+    expectTokenSequence(_context, R"("visible" >= 1)", { "visible", ">=", "1" });
+    expectTokenSequence(_context, R"("visible" <= 1)", { "visible", "<=", "1" });
+    expectTokenSequence(_context, R"("visible" != 1)", { "visible", "!=", "1" });
+    expectTokenSequence(_context, R"("visible" == 1)", { "visible", "==", "1" });
+
+    // Without whitespace
+    expectTokenSequence(_context, R"("visible">1)", { "visible", ">", "1" });
+    expectTokenSequence(_context, R"("visible"<1)", { "visible", "<", "1" });
+    expectTokenSequence(_context, R"("visible">=1)", { "visible", ">=", "1" });
+    expectTokenSequence(_context, R"("visible"<=1)", { "visible", "<=", "1" });
+    expectTokenSequence(_context, R"("visible"!=1)", { "visible", "!=", "1" });
+    expectTokenSequence(_context, R"("visible"==1)", { "visible", "==", "1" });
+
+    // With some parentheses around it
+    expectTokenSequence(_context, R"("(visible"==1))", { "(", "visible", "==", "1", ")" });
+}
+
+TEST_F(CodeTokeniser, ParseMathOperators)
+{
+    expectTokenSequence(_context, R"("width"*3)", { "width", "*", "3" });
+    expectTokenSequence(_context, R"("width"*-3)", { "width", "*", "-3" });
+    expectTokenSequence(_context, R"(3*width+4)", { "3", "*", "width", "+", "4" });
+    expectTokenSequence(_context, R"(3%width+4)", { "3", "%", "width", "+", "4" });
+    expectTokenSequence(_context, R"("width" - -3)", { "width", "-", "-3" });
+    expectTokenSequence(_context, R"('gui::test' - (-3+7.1))", { "gui::test", "-", "(", "-3", "7.1", ")" });
+    expectTokenSequence(_context, R"(3||6+4)", { "3", "||", "6", "+", "4" });
+    expectTokenSequence(_context, R"(3||6&&4)", { "3", "||", "6", "&&", "4" });
+    expectTokenSequence(_context, R"(3 || -6 && 4)", { "3", "||", "-6", "&&", "4" });
+    expectTokenSequence(_context, R"(3 < 6.4)", { "3", "<", "6.4" });
+    expectTokenSequence(_context, R"(3<6.4)", { "3", "<", "6.4" });
+    expectTokenSequence(_context, R"(3/5)", { "3", "/", "5" });
+    expectTokenSequence(_context, R"(3/5)", { "3", "/", "5" });
+    expectTokenSequence(_context, R"("visible" = 3 > 0)", { "visible", "=", "3", ">", "0" });
+}
+
+TEST_F(CodeTokeniser, ParseObjectivesMacroExpansion)
 {
     // Taken from TDM's objectives menu
     std::string contents = R"(
@@ -157,7 +196,7 @@ TEST_F(CodeTokeniser, ParseMacroExpansion)
         "windowDef", "Obj_t1_parent",
         "{",
             "rect", "40",",","10",",","490",",","16",
-            "visible","gui::NumObjectivesPerPage",">", "=", "1",
+            "visible","gui::NumObjectivesPerPage",">=", "1",
             "windowDef", "Objbox_t1",
             "{",
                 "rect","0",",","-","5",",","32","*","1",",","32","*","1",
