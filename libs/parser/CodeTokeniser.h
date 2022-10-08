@@ -43,6 +43,9 @@ class CodeTokeniserFunc
     // List of delimiters to keep
     const char* _keptDelims;
 
+    // List of recognised operator tokens
+    const std::vector<std::string>& _operators;
+
     // Test if a character is a delimiter
     bool isDelim(char c) {
         const char* curDelim = _delims;
@@ -68,11 +71,11 @@ class CodeTokeniserFunc
 
 public:
 
-    // Constructor
-    CodeTokeniserFunc(const char* delims, const char* keptDelims) :
+    CodeTokeniserFunc(const char* delims, const char* keptDelims, const std::vector<std::string>& operators) :
 		_state(SEARCHING),
 		_delims(delims),
-		_keptDelims(keptDelims)
+		_keptDelims(keptDelims),
+        _operators(operators)
     {}
 
     /* REQUIRED. Operator() is called by the Tokeniser. This function
@@ -81,13 +84,13 @@ public:
      * parsing on the next call, and return true.
      */
     template<typename InputIterator, typename Token>
-    bool operator() (InputIterator& next, InputIterator end, Token& tok) {
-
+    bool operator() (InputIterator& next, InputIterator end, Token& tok)
+    {
         // Initialise state, no persistence between calls
         _state = SEARCHING;
 
         // Clear out the token, no guarantee that it is empty
-        tok = "";
+        tok.clear();
 
 		enum class QuoteType
 		{
@@ -95,7 +98,7 @@ public:
 			Double = 1,
 		};
 
-		QuoteType quoteType = QuoteType::Single;
+		auto quoteType = QuoteType::Single;
 
         while (next != end)
 		{
@@ -459,10 +462,7 @@ public:
         } // end of for loop
 
         // Return true if we have added anything to the token
-        if (tok != "")
-            return true;
-        else
-            return false;
+        return !tok.empty();
     }
 };
 
@@ -525,15 +525,19 @@ public:
      * @param keptDelims
      * String of characters to treat as delimiters but return as tokens in their
      * own right.
+     *
+     * @param operators
+     * List of recognised operator tokens, like "+=", "/" and "?"
      */
     SingleCodeFileTokeniser(std::istream& str,
-                      const char* delims = WHITESPACE,
-                      const char* keptDelims = "{}(),")
+                      const char* delims,
+                      const char* keptDelims,
+                      const std::vector<std::string>& operators)
     : _tok(CharStreamIterator(setNoskipws(str)), // start iterator
            CharStreamIterator(), // end (null) iterator
-           CodeTokeniserFunc(delims, keptDelims)),
+           CodeTokeniserFunc(delims, keptDelims, operators)),
       _tokIter(_tok.getIterator())
-    { }
+    {}
 
     /**
      * Test if this StringTokeniser has more tokens to return.
@@ -600,10 +604,10 @@ private:
 		SingleCodeFileTokeniser tokeniser;
 
 		ParseNode(const ArchiveTextFilePtr& archive_,
-				const char* delims, const char* keptDelims) :
+				const char* delims, const char* keptDelims, const std::vector<std::string>& operators) :
 			archive(archive_),
 			inputStream(&archive->getInputStream()),
-			tokeniser(inputStream, delims, keptDelims)
+			tokeniser(inputStream, delims, keptDelims, operators)
 		{}
 	};
 
@@ -645,7 +649,7 @@ public:
         _keptDelims(keptDelims),
         _operators(operators.begin(), operators.end())
     {
-		_nodes.emplace_back(std::make_shared<ParseNode>(file, _delims, _keptDelims));
+		_nodes.emplace_back(std::make_shared<ParseNode>(file, _delims, _keptDelims, _operators));
 		_curNode = _nodes.begin();
 
 		_fileStack.push_back(file->getName());
@@ -846,7 +850,7 @@ private:
 
 					_curNode = _nodes.insert(
 						_curNode,
-						std::make_shared<ParseNode>(file, _delims, _keptDelims)
+						std::make_shared<ParseNode>(file, _delims, _keptDelims, _operators)
 					);
 				}
 				else
@@ -918,7 +922,7 @@ private:
 
 		// Parse the entire macro
 		std::istringstream macroStream(defineToken);
-		SingleCodeFileTokeniser macroParser(macroStream, _delims, _keptDelims);
+		SingleCodeFileTokeniser macroParser(macroStream, _delims, _keptDelims, _operators);
 
 		auto name = macroParser.nextToken();
 
