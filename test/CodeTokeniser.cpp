@@ -70,6 +70,32 @@ TEST_F(CodeTokeniser, ParseRectExpression)
     });
 }
 
+TEST_F(CodeTokeniser, ParseOnTimeExpression)
+{
+    std::string contents = R"(
+    onTime 0 {
+        if ("gui::worldDisplay" == 1)
+        {
+            set "title::forecolor" "0 0 0 1";
+            set "body::forecolor" "0 0 0 1";
+        }
+        set "title::text" "$gui::title";
+    })";
+
+    expectTokenSequence(_context, contents,
+    {
+        "onTime", "0",
+        "{",
+            "if", "(", "gui::worldDisplay","==","1",")",
+            "{",
+                "set", "title::forecolor", "0 0 0 1", ";",
+                "set", "body::forecolor", "0 0 0 1", ";",
+            "}",
+            "set", "title::text", "$gui::title", ";"
+        "}",
+    });
+}
+
 TEST_F(CodeTokeniser, PreprocessorDirectives)
 {
     // The file contains a couple of preprocessor expressions
