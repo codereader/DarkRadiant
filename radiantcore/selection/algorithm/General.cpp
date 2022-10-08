@@ -730,9 +730,7 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 			if (!node->visible()) return;
 
     		// Check if the visited instance is componentSnappable
-			ComponentSnappablePtr componentSnappable = Node_getComponentSnappable(node);
-
-			if (componentSnappable)
+			if (auto componentSnappable = Node_getComponentSnappable(node); componentSnappable)
 			{
 				componentSnappable->snapComponents(gridSize);
 			}
@@ -746,14 +744,15 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 			// Don't do anything with hidden nodes
 			if (!node->visible()) return;
 
-			SnappablePtr snappable = Node_getSnappable(node);
-
-			if (snappable)
+			if (auto snappable = Node_getSnappable(node); snappable)
 			{
 				snappable->snapto(gridSize);
 			}
 		});
 	}
+
+    // Remove all degenerated brushes after this operation
+    GlobalSelectionSystem().foreachSelected(RemoveDegenerateBrushWalker());
 }
 
 class IntersectionFinder :

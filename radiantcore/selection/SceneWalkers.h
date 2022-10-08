@@ -46,32 +46,37 @@ class RemoveDegenerateBrushWalker :
 	mutable std::list<scene::INodePtr> _eraseList;
 public:
 	// Destructor removes marked paths
-	~RemoveDegenerateBrushWalker() {
-		for (std::list<scene::INodePtr>::iterator i = _eraseList.begin(); i != _eraseList.end(); ++i) {
-			// Check if the parent has any children left at all
-			scene::INodePtr parent = (*i)->getParent();
+	~RemoveDegenerateBrushWalker() override
+    {
+        for (const auto& node : _eraseList)
+        {
+            // Check if the parent has any children left at all
+            auto parent = node->getParent();
 
-			// Remove the node from the scene
-			scene::removeNodeFromParent(*i);
+            // Remove the node from the scene
+            removeNodeFromParent(node);
 
-			if (parent != NULL && !parent->hasChildNodes()) {
-				rError() << "Warning: removing empty parent entity." << std::endl;
-				scene::removeNodeFromParent(parent);
-			}
-		}
+            if (parent && !parent->hasChildNodes())
+            {
+                rError() << "Warning: removing empty parent entity." << std::endl;
+                removeNodeFromParent(parent);
+            }
+        }
 	}
 
-	void visit(const scene::INodePtr& node) const
+	void visit(const scene::INodePtr& node) const override
 	{
-		Brush* brush = Node_getBrush(node);
-
-		if (brush != NULL && !brush->hasContributingFaces())
+		if (auto brush = Node_getBrush(node); brush)
 		{
-			// greebo: Mark this path for removal
-			_eraseList.push_back(node);
+            brush->evaluateBRep();
 
-			rError() << "Warning: removed degenerate brush!\n";
-			return;
+            if (!brush->hasContributingFaces())
+            {
+			    // greebo: Mark this path for removal
+			    _eraseList.push_back(node);
+
+			    rError() << "Warning: removed degenerate brush!\n";
+            }
 		}
 	}
 };
