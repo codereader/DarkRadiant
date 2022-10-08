@@ -268,7 +268,7 @@ public:
 
                     // In the quoted state, just advance until the closing
                     // quote. No delimiter splitting is required.
-                    if ((*next == '\"' && quoteType == QuoteType::Double) ||
+                    if ((*next == '"' && quoteType == QuoteType::Double) ||
 						(*next == '\'' && quoteType == QuoteType::Single))
 					{
                         ++next;
@@ -299,7 +299,7 @@ public:
 							}
 							else if (*next == '\'' && quoteType == QuoteType::Single) // Escaped Single Quote
 							{
-								tok += '"';
+								tok += '\'';
 							}
 							else
 							{
@@ -635,7 +635,7 @@ public:
      */
 	CodeTokeniser(const ArchiveTextFilePtr& file,
 				  const char* delims = " \t\n\v\r",
-				  const char* keptDelims = "{}(),;+-*/%=!^&|") :
+				  const char* keptDelims = "{}(),;") :
 		_delims(delims),
 		_keptDelims(keptDelims)
     {

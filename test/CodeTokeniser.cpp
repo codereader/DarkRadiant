@@ -96,6 +96,85 @@ TEST_F(CodeTokeniser, ParseOnTimeExpression)
     });
 }
 
+TEST_F(CodeTokeniser, ParseQuotes)
+{
+    std::string contents = R"(
+    // Escaped double quotes
+    if ("gui::\"worldDisplay\"" == 1)
+    {
+        // Single quotes
+        set 'title::forecolor' "0 0 0 1";
+        // Single quotes containing double quotes
+        set 'body::"forecolor"' "0 0 0 1";
+    }
+    // Single quotes with escaped single quotes
+    set 'that\'s something' "$gui::title";
+    )";
+
+    expectTokenSequence(_context, contents,
+    {
+        "if", "(", "gui::\"worldDisplay\"","==","1",")",
+        "{",
+            "set", "title::forecolor", "0 0 0 1", ";",
+            "set", "body::\"forecolor\"", "0 0 0 1", ";",
+        "}",
+        "set", "that's something", "$gui::title", ";",
+    });
+}
+
+TEST_F(CodeTokeniser, ParseMacroExpansion)
+{
+    // Taken from TDM's objectives menu
+    std::string contents = R"(
+    #define POS_START_X 40
+    #define SIZE_MULTIPLIER 1
+    #define POS_OBJ1_START_Y 10
+
+    #define objectiveExample(parent, start, objvisible, box, obj, objtext)\
+    windowDef parent\
+	{\
+		rect		POS_START_X, start, 490, 16\
+		visible		objvisible\
+		windowDef box\
+		{\
+			rect		0, -5, 32*SIZE_MULTIPLIER, 32*SIZE_MULTIPLIER\
+			bordercolor	1,1,1,1\
+			visible		1}\
+		windowDef obj\
+		{\
+			rect		25*SIZE_MULTIPLIER, 0, 430, 60*SIZE_MULTIPLIER*SIZE_MULTIPLIER\
+			bordercolor	1,1,1,1\
+			text		objtext\
+			visible		1\
+		}\
+	}
+	#define exampleText "#str_02925" // This is an example text to illustrate the size of the objectives text.
+	objectiveExample(Obj_t1_parent, POS_OBJ1_START_Y, "gui::NumObjectivesPerPage" >= 1, Objbox_t1, Obj_t1, exampleText)
+    )";
+
+    expectTokenSequence(_context, contents,
+    {
+        "windowDef", "Obj_t1_parent",
+        "{",
+            "rect", "40",",","10",",","490",",","16",
+            "visible","gui::NumObjectivesPerPage",">", "=", "1",
+            "windowDef", "Objbox_t1",
+            "{",
+                "rect","0",",","-","5",",","32","*","1",",","32","*","1",
+                "bordercolor","1",",","1",",","1",",","1",
+                "visible","1",
+            "}",
+            "windowDef", "Obj_t1",
+            "{",
+                "rect","25","*","1",",","0",",","430",",","60","*","1",
+                "bordercolor","1",",","1",",","1",",","1",
+                "text","#str_02925",
+                "visible","1",
+            "}",
+        "}",
+    });
+}
+
 TEST_F(CodeTokeniser, PreprocessorDirectives)
 {
     // The file contains a couple of preprocessor expressions
