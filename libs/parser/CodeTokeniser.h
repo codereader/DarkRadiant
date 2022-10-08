@@ -628,16 +628,22 @@ private:
 	const char* _delims;
 	const char* _keptDelims;
 
+    // The list of operators supported by this tokeniser
+    std::vector<std::string> _operators;
+
 public:
+    constexpr static const char* KEPT_DELIMS = "{}(),;";
 
     /**
      * Construct a CodeTokeniser with the given text file from the VFS.
      */
-	CodeTokeniser(const ArchiveTextFilePtr& file,
-				  const char* delims = " \t\n\v\r",
-				  const char* keptDelims = "{}(),;") :
-		_delims(delims),
-		_keptDelims(keptDelims)
+    CodeTokeniser(const ArchiveTextFilePtr& file,
+                  const char* delims,
+                  const char* keptDelims,
+                  const std::vector<const char*>& operators) :
+        _delims(delims),
+        _keptDelims(keptDelims),
+        _operators(operators.begin(), operators.end())
     {
 		_nodes.emplace_back(std::make_shared<ParseNode>(file, _delims, _keptDelims));
 		_curNode = _nodes.begin();

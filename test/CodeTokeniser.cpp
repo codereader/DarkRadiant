@@ -1,13 +1,14 @@
 #include "RadiantTest.h"
 
 #include "parser/CodeTokeniser.h"
+#include "parser/GuiTokeniser.h"
 
 #include "testutil/TemporaryFile.h"
 
 namespace test
 {
 
-using CodeTokeniser = RadiantTest;
+using GuiTokeniser = RadiantTest;
 
 inline void expectTokenSequence(parser::CodeTokeniser& tokeniser, std::vector<std::string> expectedTokens)
 {
@@ -28,12 +29,12 @@ inline void expectTokenSequence(const radiant::TestContext& context, const std::
     TemporaryFile tempFile(path, contents);
 
     auto file = GlobalFileSystem().openTextFile(TEMPORARY_GUI_FILE);
-    parser::CodeTokeniser tokeniser(file);
+    parser::GuiTokeniser tokeniser(file);
 
     expectTokenSequence(tokeniser, expectedTokens);
 }
 
-TEST_F(CodeTokeniser, ParseWindowDef)
+TEST_F(GuiTokeniser, ParseWindowDef)
 {
     std::string contents = R"(
     windowDef rightPageBackground {
@@ -54,7 +55,7 @@ TEST_F(CodeTokeniser, ParseWindowDef)
 }
 
 // The game's GUI parser supports reading rect-100 values without whitespace separation
-TEST_F(CodeTokeniser, ParseRectExpression)
+TEST_F(GuiTokeniser, ParseRectExpression)
 {
     std::string contents = R"(
     windowDef rightPageBackground {
@@ -70,7 +71,7 @@ TEST_F(CodeTokeniser, ParseRectExpression)
     });
 }
 
-TEST_F(CodeTokeniser, ParseOnTimeExpression)
+TEST_F(GuiTokeniser, ParseOnTimeExpression)
 {
     std::string contents = R"(
     onTime 0 {
@@ -96,7 +97,7 @@ TEST_F(CodeTokeniser, ParseOnTimeExpression)
     });
 }
 
-TEST_F(CodeTokeniser, ParseQuotes)
+TEST_F(GuiTokeniser, ParseQuotes)
 {
     std::string contents = R"(
     // Escaped double quotes
@@ -122,7 +123,7 @@ TEST_F(CodeTokeniser, ParseQuotes)
     });
 }
 
-TEST_F(CodeTokeniser, ParseComparisonOperators)
+TEST_F(GuiTokeniser, ParseComparisonOperators)
 {
     expectTokenSequence(_context, R"("visible" > 1)", { "visible", ">", "1" });
     expectTokenSequence(_context, R"("visible" < 1)", { "visible", "<", "1" });
@@ -143,7 +144,7 @@ TEST_F(CodeTokeniser, ParseComparisonOperators)
     expectTokenSequence(_context, R"("(visible"==1))", { "(", "visible", "==", "1", ")" });
 }
 
-TEST_F(CodeTokeniser, ParseMathOperators)
+TEST_F(GuiTokeniser, ParseMathOperators)
 {
     expectTokenSequence(_context, R"("width"*3)", { "width", "*", "3" });
     expectTokenSequence(_context, R"("width"*-3)", { "width", "*", "-3" });
@@ -159,9 +160,15 @@ TEST_F(CodeTokeniser, ParseMathOperators)
     expectTokenSequence(_context, R"(3/5)", { "3", "/", "5" });
     expectTokenSequence(_context, R"(3/5)", { "3", "/", "5" });
     expectTokenSequence(_context, R"("visible" = 3 > 0)", { "visible", "=", "3", ">", "0" });
+    expectTokenSequence(_context, R"("rect  ("gui::ingame" ? 0 : 50), -75, 640, 640)",
+        { "rect","(","gui::ingame","?","0",":","50",")",",","-75",",","640",",","640" });
+    expectTokenSequence(_context, R"("rect  ("gui::ingame"?0:50), -75, 640, 640)",
+        { "rect","(","gui::ingame","?","0",":","50",")",",","-75",",","640",",","640" });
+    expectTokenSequence(_context, R"("gui::av_in_progress" == 0 && "exit" == 0)",
+        { "gui::av_in_progress","==","0","&&","exit","==","0" });
 }
 
-TEST_F(CodeTokeniser, ParseObjectivesMacroExpansion)
+TEST_F(GuiTokeniser, ParseObjectivesMacroExpansion)
 {
     // Taken from TDM's objectives menu
     std::string contents = R"(
@@ -214,11 +221,11 @@ TEST_F(CodeTokeniser, ParseObjectivesMacroExpansion)
     });
 }
 
-TEST_F(CodeTokeniser, PreprocessorDirectives)
+TEST_F(GuiTokeniser, PreprocessorDirectives)
 {
     // The file contains a couple of preprocessor expressions
     auto file = GlobalFileSystem().openTextFile("guis/parse_test2.gui");
-    parser::CodeTokeniser tokeniser(file);
+    parser::GuiTokeniser tokeniser(file);
 
     expectTokenSequence(tokeniser,
     {

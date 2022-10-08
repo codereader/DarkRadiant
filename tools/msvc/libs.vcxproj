@@ -196,6 +196,7 @@
     <ClInclude Include="..\..\libs\parser\CodeTokeniser.h" />
     <ClInclude Include="..\..\libs\parser\DefBlockSyntaxParser.h" />
     <ClInclude Include="..\..\libs\parser\DefTokeniser.h" />
+    <ClInclude Include="..\..\libs\parser\GuiTokeniser.h" />
     <ClInclude Include="..\..\libs\parser\ParseException.h" />
     <ClInclude Include="..\..\libs\parser\ThreadedDeclParser.h" />
     <ClInclude Include="..\..\libs\parser\ThreadedDefLoader.h" />
