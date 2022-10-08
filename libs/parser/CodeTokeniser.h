@@ -586,6 +586,8 @@ private:
 
 	struct ParseNode
 	{
+        using Ptr = std::shared_ptr<ParseNode>;
+
 		ArchiveTextFilePtr archive;
 		std::istream inputStream;
 		SingleCodeFileTokeniser tokeniser;
@@ -597,23 +599,20 @@ private:
 			tokeniser(inputStream, delims, keptDelims)
 		{}
 	};
-	typedef std::shared_ptr<ParseNode> ParseNodePtr;
 
 	// The stack of child tokenisers
-	typedef std::list<ParseNodePtr> NodeList;
+    using NodeList = std::list<ParseNode::Ptr>;
 	NodeList _nodes;
 
 	NodeList::iterator _curNode;
 
 	// A set of visited files to catch infinite include loops
-	typedef std::list<std::string> FileNameStack;
-	FileNameStack _fileStack;
+    std::list<std::string> _fileStack;
 
-	typedef std::list<std::string> StringList;
+	using StringList = std::list<std::string>;
 
 	// A map associating names to #define'd macros
-	typedef std::map<std::string, Macro> Macros;
-	Macros _macros;
+    std::map<std::string, Macro> _macros;
 
 	// A small local buffer which is needed to properly resolve #define statements
 	// which could consist of several tokens themselves
@@ -633,7 +632,7 @@ public:
 		_delims(delims),
 		_keptDelims(keptDelims)
     {
-		_nodes.push_back(ParseNodePtr(new ParseNode(file, _delims, _keptDelims)));
+		_nodes.emplace_back(std::make_shared<ParseNode>(file, _delims, _keptDelims));
 		_curNode = _nodes.begin();
 
 		_fileStack.push_back(file->getName());
@@ -641,12 +640,12 @@ public:
 		fillTokenBuffer();
 	}
 
-    bool hasMoreTokens() const
+    bool hasMoreTokens() const override
 	{
 		return !_tokenBuffer.empty();
     }
 
-    std::string nextToken()
+    std::string nextToken() override
 	{
 		if (_tokenBuffer.empty())
 		{
@@ -665,7 +664,7 @@ public:
 		return temp;
     }
 
-	std::string peek() const
+	std::string peek() const override
 	{
 		if (_tokenBuffer.empty())
 		{
@@ -703,12 +702,12 @@ private:
 
 			// Found a non-preprocessor token,
 			// check if this is matching a preprocessor definition
-			Macros::const_iterator found = _macros.find(_tokenBuffer.front());
+			auto found = _macros.find(_tokenBuffer.front());
 
 			if (found != _macros.end())
 			{
 				// Expand this macro, new tokens are acquired from the currently active tokeniser
-				StringList expanded = expandMacro(found->second, [this]() { return (*_curNode)->tokeniser.nextToken(); });
+				auto expanded = expandMacro(found->second, [this]() { return (*_curNode)->tokeniser.nextToken(); });
 
 				if (!expanded.empty())
 				{
@@ -757,13 +756,13 @@ private:
 		StringList expandedTokens;
 		
 		// Insert the macro contents into the buffer, expanding sub-macros along the way
-		for (StringList::const_iterator t = macro.tokens.begin(); t != macro.tokens.end(); ++t)
+		for (auto t = macro.tokens.begin(); t != macro.tokens.end(); ++t)
 		{
 			// Replace macro variable with its value
-			std::string token = getMacroToken(*t, macro, argumentValues);
+			auto token = getMacroToken(*t, macro, argumentValues);
 
 			// check if this is matching a preprocessor definition
-			Macros::const_iterator found = _macros.find(token);
+			auto found = _macros.find(token);
 
 			if (found == _macros.end())
 			{
@@ -773,7 +772,7 @@ private:
 			}
 
 			// Enter recursion to expand this sub-macro, new tokens are acquired from the current iterator t
-			StringList subMacro = expandMacro(found->second, [&]() 
+			auto subMacro = expandMacro(found->second, [&]() 
 			{ 
 				if (t == macro.tokens.end())
 				{
@@ -800,10 +799,10 @@ private:
 		return expandedTokens;
 	}
 
-	std::string getMacroToken(std::string token, const Macro& macro, const StringList& argumentValues)
+	static std::string getMacroToken(std::string token, const Macro& macro, const StringList& argumentValues)
 	{
 		// Check if the current token is referring to a macro argument and replace it with its value
-		for (StringList::const_iterator arg = macro.arguments.begin(), val = argumentValues.begin();
+		for (auto arg = macro.arguments.begin(), val = argumentValues.begin();
 			arg != macro.arguments.end() && val != argumentValues.end(); ++arg, ++val)
 		{
 			if (token == *arg)
@@ -819,14 +818,13 @@ private:
 	{
 		if (token == "#include")
 		{
-			std::string includeFile = (*_curNode)->tokeniser.nextToken();
+			auto includeFile = (*_curNode)->tokeniser.nextToken();
+			auto file = GlobalFileSystem().openTextFile(includeFile);
 
-			ArchiveTextFilePtr file = GlobalFileSystem().openTextFile(includeFile);
-
-			if (file != NULL)
+			if (file)
 			{
 				// Catch infinite recursions
-				FileNameStack::const_iterator found = std::find(_fileStack.begin(), _fileStack.end(), file->getName());
+				auto found = std::find(_fileStack.begin(), _fileStack.end(), file->getName());
 
 				if (found == _fileStack.end())
 				{
@@ -835,7 +833,7 @@ private:
 
 					_curNode = _nodes.insert(
 						_curNode,
-						ParseNodePtr(new ParseNode(file, _delims, _keptDelims))
+						std::make_shared<ParseNode>(file, _delims, _keptDelims)
 					);
 				}
 				else
@@ -856,13 +854,13 @@ private:
 		}
 		else if (token == "#undef")
 		{
-			std::string key = (*_curNode)->tokeniser.nextToken();
+			auto key = (*_curNode)->tokeniser.nextToken();
 			_macros.erase(key);
 		}
 		else if (token == "#ifdef")
 		{
-			std::string key = (*_curNode)->tokeniser.nextToken();
-			Macros::const_iterator found = _macros.find(key);
+            auto key = (*_curNode)->tokeniser.nextToken();
+            auto found = _macros.find(key);
 
 			if (found == _macros.end())
 			{
@@ -871,8 +869,7 @@ private:
 		}
 		else if (token == "#ifndef")
 		{
-			Macros::const_iterator found = _macros.find(
-				(*_curNode)->tokeniser.nextToken());
+            auto found = _macros.find((*_curNode)->tokeniser.nextToken());
 
 			if (found != _macros.end())
 			{
@@ -910,7 +907,7 @@ private:
 		std::istringstream macroStream(defineToken);
 		SingleCodeFileTokeniser macroParser(macroStream);
 
-		std::string name = macroParser.nextToken();
+		auto name = macroParser.nextToken();
 
 		bool paramsStarted = false;
 
@@ -920,9 +917,7 @@ private:
 			paramsStarted = true;
 		}
 
-		std::pair<Macros::iterator, bool> result = _macros.insert(
-			Macros::value_type(name, Macro(name))
-		);
+		auto result = _macros.emplace(name, Macro(name));
 
 		if (!result.second)
 		{
@@ -930,11 +925,11 @@ private:
 			result.first->second = Macro(name);
 		}
 
-		Macro& macro = result.first->second;
+		auto& macro = result.first->second;
 
 		while (macroParser.hasMoreTokens())
 		{
-			std::string macroToken = macroParser.nextToken();
+			auto macroToken = macroParser.nextToken();
 
 			// An opening parenthesis might be an argument list, but
 			// only if we're still at the beginning of the macro
@@ -983,7 +978,7 @@ private:
 					<< (*_curNode)->archive->getName() << std::endl;
 			}
 
-			std::string token = (*_curNode)->tokeniser.nextToken();
+			auto token = (*_curNode)->tokeniser.nextToken();
 
 			if (token == "#endif")
 			{
