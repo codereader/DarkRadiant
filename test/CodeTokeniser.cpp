@@ -29,8 +29,17 @@ inline void expectTokenSequence(const radiant::TestContext& context, const std::
     TemporaryFile tempFile(path, contents);
 
     auto file = GlobalFileSystem().openTextFile(TEMPORARY_GUI_FILE);
-    parser::GuiTokeniser tokeniser(file);
+#if 0
+    {
+        parser::GuiTokeniser tokeniser2(file);
+        while (tokeniser2.hasMoreTokens())
+        {
+            std::cout << tokeniser2.nextToken() << std::endl;
+        }
+    }
+#endif // 0
 
+    parser::GuiTokeniser tokeniser(file);
     expectTokenSequence(tokeniser, expectedTokens);
 }
 
@@ -176,6 +185,45 @@ TEST_F(GuiTokeniser, ParseMathOperators)
         { "gui::av_in_progress","==","0","&&","exit","==","0" });
 }
 
+TEST_F(GuiTokeniser, ParseMacroExpansion)
+{
+    std::string contents = R"(
+    #define POS_START_X 40
+    #define SIZE_MULTIPLIER 1
+    #define SUB_WINDOW(Name, Type, VisibleCheck) Type Name \
+    {\
+        rect POS_START_X*SIZE_MULTIPLIER,50,60,70\
+        visible VisibleCheck\
+    }
+
+    #define fullWindow(parent, start, objvisible, box, objtext)\
+    windowDef parent\
+	{\
+		rect		POS_START_X, start, 490, 16\
+		visible		objvisible\
+        SUB_WINDOW(box, windowDef, objvisible)\
+		text		objtext\
+	}
+	#define exampleText "#str_02925"
+	fullWindow(Obj_t1_parent, 10, "gui::NumObjectivesPerPage" >= 1, Objbox_t1, exampleText)
+    )";
+
+    expectTokenSequence(_context, contents,
+    {
+        "windowDef", "Obj_t1_parent",
+        "{",
+            "rect", "40",",","10",",","490",",","16",
+            "visible","gui::NumObjectivesPerPage",">=", "1",
+            "windowDef", "Objbox_t1",
+            "{",
+                "rect","40","*","1",",","50",",","60",",","70",
+                "visible","gui::NumObjectivesPerPage",">=", "1",
+            "}",
+            "text","#str_02925",
+        "}",
+    });
+}
+
 TEST_F(GuiTokeniser, ParseObjectivesMacroExpansion)
 {
     // Taken from TDM's objectives menu
@@ -220,7 +268,7 @@ TEST_F(GuiTokeniser, ParseObjectivesMacroExpansion)
             "}",
             "windowDef", "Obj_t1",
             "{",
-                "rect","25","*","1",",","0",",","430",",","60","*","1",
+                "rect","25","*","1",",","0",",","430",",","60","*","1","*","1",
                 "bordercolor","1",",","1",",","1",",","1",
                 "text","#str_02925",
                 "visible","1",

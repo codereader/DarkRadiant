@@ -801,10 +801,12 @@ private:
 		}
 	}
 
-	// Expands the given macro, returns the beginning and end of a range
+	// Expands the given macro
 	StringList expandMacro(const Macro& macro, const std::function<std::string()>& nextTokenFunc)
 	{
-		StringList argumentValues;
+        // A list of tokens that are fill in for each macro argument
+        std::vector<StringList> argumentValues;
+        argumentValues.resize(macro.arguments.size());
 
 		// Acquire the macro argument values if applicable
 		if (!macro.arguments.empty())
@@ -815,84 +817,99 @@ private:
 				throw ParseException(fmt::format("Error expanding macro {0}, expected '('", macro.name));
 			}
 
-			for (StringList::const_iterator i = macro.arguments.begin(); i != macro.arguments.end(); ++i)
-			{
-				std::string argumentToken = nextTokenFunc();
-				std::string argumentValue = "";
+            auto currentArgumentValues = argumentValues.begin();
+            for (auto arg : macro.arguments)
+            {
+                auto argumentToken = nextTokenFunc();
 
-				while (argumentToken != "," && argumentToken != ")")
-				{
-					argumentValue += argumentToken;
-					argumentValue.append(" ");
+                // Accumulate the macro arguments, comma-separated, until we hit the closing parenthesis
+                while (argumentToken != "," && argumentToken != ")")
+                {
+                    currentArgumentValues->emplace_back(std::move(argumentToken));
+                    argumentToken = nextTokenFunc();
+                }
 
-					argumentToken = nextTokenFunc();
-				}
-
-				argumentValues.push_back(argumentValue);
-			}
+                ++currentArgumentValues;
+            }
 		}
 
 		// Allocate a new list for the expanded tokens
-		StringList expandedTokens;
-		
-		// Insert the macro contents into the buffer, expanding sub-macros along the way
-		for (auto t = macro.tokens.begin(); t != macro.tokens.end(); ++t)
+        auto macroTokens = macro.tokens;
+
+		// Process the macro tokens expanding sub-macros while iterating
+		for (auto t = macroTokens.begin(); t != macroTokens.end();)
 		{
-			// Replace macro variable with its value
-			auto token = getMacroToken(*t, macro, argumentValues);
+			// Replace any macro identifier with the set of values
+			auto tokens = getMacroTokens(*t, macro, argumentValues);
 
-			// check if this is matching a preprocessor definition
-			auto found = _macros.find(token);
+            // Insert all replaced tokens at this point in the list
+            t = macroTokens.erase(t);
+            t = macroTokens.insert(t, tokens.begin(), tokens.end());
 
-			if (found == _macros.end())
-			{
-				// Not a macro
-				expandedTokens.push_back(token);
-				continue;
-			}
+            auto found = _macros.find(*t);
 
-			// Enter recursion to expand this sub-macro, new tokens are acquired from the current iterator t
-			auto subMacro = expandMacro(found->second, [&]() 
-			{ 
-				if (t == macro.tokens.end())
-				{
-					throw ParseException(fmt::format("Running out of tokens expanding sub-macro {0}", token));
-				}
+            if (found == _macros.end())
+            {
+                ++t;
+                continue; // leave this token unchanged
+            }
 
-				// Advance iterator and dereference
-				// When delivering tokens to sub-macro expansions we still need to replace any argument values
-				return getMacroToken(*(++t), macro, argumentValues);
-			});
+            // Remove the macro identifier, get its expansion
+            t = macroTokens.erase(t);
 
-			if (!subMacro.empty())
-			{
-				// Insert the expanded macro contents, don't insert *t itself
-				expandedTokens.insert(expandedTokens.end(), subMacro.begin(), subMacro.end());
-			}
-			else
-			{
-				rWarning() << "Macro expansion yields empty token list: " << *t <<
-					" in " << (*_curNode)->archive->getName() << std::endl;
-			}
+            // Enter recursion to expand this sub-macro, new tokens are acquired from the current iterator t
+            auto subMacro = expandMacro(found->second, [&]()
+            {
+                if (t == macroTokens.end())
+                {
+                    throw ParseException(fmt::format("Running out of tokens expanding sub-macro {0}", *t));
+                }
+
+                // Extract a new piece from the macroTokens and deliver this
+                auto subTokens = getMacroTokens(*t, macro, argumentValues);;
+
+                // Before returning the token, expand any placeholders
+                t = macroTokens.erase(t);
+                t = macroTokens.insert(t, subTokens.begin(), subTokens.end());
+
+                // Take and remove the token from the list and deliver it
+                auto token = *t;
+                t = macroTokens.erase(t);
+
+                return token;
+            });
+
+            if (!subMacro.empty())
+            {
+                // Insert the expanded macro contents
+                t = macroTokens.insert(t, subMacro.begin(), subMacro.end());
+            }
+            else
+            {
+                rWarning() << "Macro expansion yields empty token list: " << *t <<
+                    " in " << (*_curNode)->archive->getName() << std::endl;
+            }
 		}
 
-		return expandedTokens;
+		return macroTokens;
 	}
 
-	static std::string getMacroToken(std::string token, const Macro& macro, const StringList& argumentValues)
-	{
-		// Check if the current token is referring to a macro argument and replace it with its value
-		for (auto arg = macro.arguments.begin(), val = argumentValues.begin();
-			arg != macro.arguments.end() && val != argumentValues.end(); ++arg, ++val)
+    // Check if the current token is referring to a macro argument and replace it with its value tokens
+    static StringList getMacroTokens(std::string token, const Macro& macro, const std::vector<StringList>& argumentValues)
+    {
+        auto values = argumentValues.begin();
+
+		for (auto arg = macro.arguments.begin();
+			arg != macro.arguments.end() && values != argumentValues.end(); ++arg, ++values)
 		{
 			if (token == *arg)
 			{
-				return *val;
+				return *values;
 			}
 		}
 
-		return token; // leave token unchanged
-	}
+        return { token }; // leave token unchanged
+    }
 
 	void handlePreprocessorToken(const std::string& token)
 	{
