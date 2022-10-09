@@ -148,29 +148,30 @@ TEST_F(GuiTokeniser, ParseComparisonOperators)
     expectTokenSequence(_context, R"("visible"<>=1)", { "visible", "<", ">=", "1" });
 
     // With some parentheses around it
-    expectTokenSequence(_context, R"("(visible"==1))", { "(", "visible", "==", "1", ")" });
+    expectTokenSequence(_context, R"(("visible"==1))", { "(", "visible", "==", "1", ")" });
 }
 
 TEST_F(GuiTokeniser, ParseMathOperators)
 {
     expectTokenSequence(_context, R"("width"*3)", { "width", "*", "3" });
-    expectTokenSequence(_context, R"("width"*-3)", { "width", "*", "-3" });
+    expectTokenSequence(_context, R"("width"*-3)", { "width", "*", "-", "3" });
     expectTokenSequence(_context, R"(3*width+4)", { "3", "*", "width", "+", "4" });
     expectTokenSequence(_context, R"(3%width+4)", { "3", "%", "width", "+", "4" });
-    expectTokenSequence(_context, R"("width" - -3)", { "width", "-", "-3" });
-    expectTokenSequence(_context, R"('gui::test' - (-3+7.1))", { "gui::test", "-", "(", "-3", "7.1", ")" });
+    expectTokenSequence(_context, R"("width" - -3)", { "width", "-", "-", "3" });
+    expectTokenSequence(_context, R"('gui::test' - (-3+7.1))", { "gui::test", "-", "(", "-", "3", "+", "7.1", ")" });
     expectTokenSequence(_context, R"(3||6+4)", { "3", "||", "6", "+", "4" });
     expectTokenSequence(_context, R"(3||6&&4)", { "3", "||", "6", "&&", "4" });
-    expectTokenSequence(_context, R"(3 || -6 && 4)", { "3", "||", "-6", "&&", "4" });
+    expectTokenSequence(_context, R"(3 || -6 && 4)", { "3", "||", "-", "6", "&&", "4" });
     expectTokenSequence(_context, R"(3 < 6.4)", { "3", "<", "6.4" });
     expectTokenSequence(_context, R"(3<6.4)", { "3", "<", "6.4" });
     expectTokenSequence(_context, R"(3/5)", { "3", "/", "5" });
+    expectTokenSequence(_context, R"(3/-5)", { "3", "/", "-", "5" });
     expectTokenSequence(_context, R"(3/5)", { "3", "/", "5" });
     expectTokenSequence(_context, R"("visible" = 3 > 0)", { "visible", "=", "3", ">", "0" });
-    expectTokenSequence(_context, R"("rect  ("gui::ingame" ? 0 : 50), -75, 640, 640)",
-        { "rect","(","gui::ingame","?","0",":","50",")",",","-75",",","640",",","640" });
-    expectTokenSequence(_context, R"("rect  ("gui::ingame"?0:50), -75, 640, 640)",
-        { "rect","(","gui::ingame","?","0",":","50",")",",","-75",",","640",",","640" });
+    expectTokenSequence(_context, R"(rect  ("gui::ingame" ? 0 : 50), -75, 640, 640)",
+        { "rect","(","gui::ingame","?","0",":","50",")",",","-", "75",",","640",",","640" });
+    expectTokenSequence(_context, R"(rect  ("gui::ingame"?0:50), -75, 640, 640)",
+        { "rect","(","gui::ingame","?","0",":","50",")",",","-","75",",","640",",","640" });
     expectTokenSequence(_context, R"("gui::av_in_progress" == 0 && "exit" == 0)",
         { "gui::av_in_progress","==","0","&&","exit","==","0" });
 }

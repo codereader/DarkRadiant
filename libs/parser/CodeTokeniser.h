@@ -168,6 +168,13 @@ public:
                         return true;
                     }
 
+                    // Check for operators, they basically act as delimiters
+                    if (isMatchingOperatorByFirstCharacter(*next))
+                    {
+                        // Return what we have so far, we'll deal with the operator next round
+                        return true;
+                    }
+
                     // Now next is pointing at a non-delimiter. Switch on this
                     // character.
                     switch (*next) 
@@ -208,10 +215,11 @@ public:
                     // Check if we can match a second character
                     {
                         const std::string* singleCharacterOperator = nullptr;
+                        auto lastChar = tok.at(tok.length() - 1);
 
                         for (const auto& op : _operators)
                         {
-                            if (op.length() == 2 && op.at(0) == tok.at(0) && op.at(1) == *next)
+                            if (op.length() == 2 && op.at(0) == lastChar && op.at(1) == *next)
                             {
                                 // Exact two-char operator match, exhaust character and return
                                 tok += *next++;
@@ -220,7 +228,7 @@ public:
 
                             // Check if a single-character operator is matching
                             // We will resort to this one if nothing else matches
-                            if (op.length() == 1 && op.at(0) == tok.at(0))
+                            if (op.length() == 1 && op.at(0) == lastChar)
                             {
                                 singleCharacterOperator = &op;
                             }
@@ -426,24 +434,27 @@ public:
                     // If we have a forward slash we may be entering a comment. The forward slash
                     // will NOT YET have been added to the token, so we must add it manually if
                     // this proves not to be a comment.
+                    switch (*next)
+                    {
+                    case '*':
+                        _state = COMMENT_DELIM;
+                        ++next;
+                        continue;
 
-                    switch (*next) {
+                    case '/':
+                        _state = COMMENT_EOL;
+                        ++next;
+                        continue;
 
-                        case '*':
-                            _state = COMMENT_DELIM;
-                            ++next;
-                            continue;
+                    default:
+                        // Not a comment, add to token nonetheless
+                        // Do not increment next, we're already past the slash
+                        tok += "/";
 
-                        case '/':
-                            _state = COMMENT_EOL;
-                            ++next;
-                            continue;
-
-                        default: // false alarm, add the slash and carry on
-                            _state = SEARCHING;
-                            tok += "/";
-                            // Do not increment next here
-                            continue;
+                        // Check if the slash is a starting character of any operator,
+                        // if yes we switch to OPERATOR mode
+                        _state = isMatchingOperatorByFirstCharacter('/') ? OPERATOR : SEARCHING;
+                        continue;
                     }
 
                 case COMMENT_DELIM:
