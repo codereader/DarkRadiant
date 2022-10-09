@@ -87,7 +87,7 @@ TEST_F(GuiTokeniser, ParseOnTimeExpression)
     {
         "onTime", "0",
         "{",
-            "if", "(", "gui::worldDisplay","=","=","1",")",
+            "if", "(", "gui::worldDisplay","==","1",")",
             "{",
                 "set", "title::forecolor", "0 0 0 1", ";",
                 "set", "body::forecolor", "0 0 0 1", ";",
@@ -139,6 +139,13 @@ TEST_F(GuiTokeniser, ParseComparisonOperators)
     expectTokenSequence(_context, R"("visible"<=1)", { "visible", "<=", "1" });
     expectTokenSequence(_context, R"("visible"!=1)", { "visible", "!=", "1" });
     expectTokenSequence(_context, R"("visible"==1)", { "visible", "==", "1" });
+
+    // This is semantic garbage but the parser should pick something up
+    expectTokenSequence(_context, R"("visible">>1)", { "visible", ">", ">", "1" });
+    expectTokenSequence(_context, R"("visible" > >1)", { "visible", ">", ">", "1" });
+    expectTokenSequence(_context, R"("visible" > > 1)", { "visible", ">", ">", "1" });
+    expectTokenSequence(_context, R"("visible" <>= 1)", { "visible", "<", ">=", "1" });
+    expectTokenSequence(_context, R"("visible"<>=1)", { "visible", "<", ">=", "1" });
 
     // With some parentheses around it
     expectTokenSequence(_context, R"("(visible"==1))", { "(", "visible", "==", "1", ")" });

@@ -24,6 +24,7 @@ class CodeTokeniserFunc
 	{
         SEARCHING,        // haven't found anything yet
         TOKEN_STARTED,    // found the start of a possible multi-char token
+        OPERATOR,         // found the start of an operator
 		AFTER_DEFINE,	  // after parsing a #define command
 		AFTER_DEFINE_BACKSLASH,		// after a #define token, encountering a backslash
 		AFTER_DEFINE_SEARCHING_FOR_EOL,	// after a #define token, after encountering a backslash
@@ -47,7 +48,8 @@ class CodeTokeniserFunc
     const std::vector<std::string>& _operators;
 
     // Test if a character is a delimiter
-    bool isDelim(char c) {
+    bool isDelim(char c) const
+    {
         const char* curDelim = _delims;
         while (*curDelim != 0) {
             if (*(curDelim++) == c) {
@@ -58,13 +60,27 @@ class CodeTokeniserFunc
     }
 
     // Test if a character is a kept delimiter
-    bool isKeptDelim(char c) {
+    bool isKeptDelim(char c) const
+    {
         const char* curDelim = _keptDelims;
         while (*curDelim != 0) {
             if (*(curDelim++) == c) {
                 return true;
             }
         }
+        return false;
+    }
+
+    bool isMatchingOperatorByFirstCharacter(char c) const
+    {
+        for (const auto& op : _operators)
+        {
+            if (op.at(0) == c)
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -121,8 +137,16 @@ public:
 
                     // If we have a KEPT delimiter, this is the token to return.
                     if (isKeptDelim(*next)) {
-                        tok = *(next++);
+                        tok = *next++;
                         return true;
+                    }
+
+                    if (isMatchingOperatorByFirstCharacter(*next))
+                    {
+                        // Found the first character of one of our supported operators
+                        tok = *next++;
+                        _state = OPERATOR;
+                        continue;
                     }
 
                     // Otherwise fall through into TOKEN_STARTED, saving the state for the
@@ -152,26 +176,20 @@ public:
                         // current token if we are in the process of building
                         // one.
                         case '\"':
-                            if (tok != "") {
-                                return true;
-                            }
-                            else {
-								quoteType = QuoteType::Double;
-                                _state = QUOTED;
-                                ++next;
-                                continue; // skip the quote
-                            }
+                            if (!tok.empty()) return true;
+                            
+                            quoteType = QuoteType::Double;
+                            _state = QUOTED;
+                            ++next;
+                            continue; // skip the quote
 
 						case '\'':
-							if (tok != "") {
-								return true;
-							}
-							else {
-								quoteType = QuoteType::Single;
-								_state = QUOTED;
-								++next;
-								continue; // skip the quote
-							}
+                            if (!tok.empty()) return true;
+
+							quoteType = QuoteType::Single;
+							_state = QUOTED;
+							++next;
+							continue; // skip the quote
 
                         // Found a slash, possibly start of comment
                         case '/':
@@ -181,9 +199,43 @@ public:
 
                         // General case. Token lasts until next delimiter.
                         default:
-                            tok += *next;
-                            ++next;
+                            tok += *next++;
                             continue;
+                    }
+
+                    case OPERATOR:
+                    // We already matched the first character of one of our operators
+                    // Check if we can match a second character
+                    {
+                        const std::string* singleCharacterOperator = nullptr;
+
+                        for (const auto& op : _operators)
+                        {
+                            if (op.length() == 2 && op.at(0) == tok.at(0) && op.at(1) == *next)
+                            {
+                                // Exact two-char operator match, exhaust character and return
+                                tok += *next++;
+                                return true;
+                            }
+
+                            // Check if a single-character operator is matching
+                            // We will resort to this one if nothing else matches
+                            if (op.length() == 1 && op.at(0) == tok.at(0))
+                            {
+                                singleCharacterOperator = &op;
+                            }
+                        }
+
+                        // No two-character operator matched, did we find a single-character operator?
+                        if (singleCharacterOperator != nullptr)
+                        {
+                            // Don't exhaust the second character, return the operator as token
+                            return true;
+                        }
+
+                        // No operator found, switch back to token mode and re-check (don't exhaust)
+                        _state = TOKEN_STARTED;
+                        continue;
                     }
 
 				case AFTER_DEFINE:
