@@ -29,15 +29,6 @@ inline void expectTokenSequence(const radiant::TestContext& context, const std::
     TemporaryFile tempFile(path, contents);
 
     auto file = GlobalFileSystem().openTextFile(TEMPORARY_GUI_FILE);
-#if 0
-    {
-        parser::GuiTokeniser tokeniser2(file);
-        while (tokeniser2.hasMoreTokens())
-        {
-            std::cout << tokeniser2.nextToken() << std::endl;
-        }
-    }
-#endif // 0
 
     parser::GuiTokeniser tokeniser(file);
     expectTokenSequence(tokeniser, expectedTokens);
