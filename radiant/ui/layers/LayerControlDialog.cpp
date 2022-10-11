@@ -740,28 +740,34 @@ void LayerControlDialog::onDrop(wxDataViewEvent& ev)
     // If an empty item is passed we're supposed to make it top-level again
     auto targetLayerId = item.IsOk() ? row[_columns.id].getInteger() : -1;
 
-    // Read the source layer ID and veto the event if it's the same as the source ID
-    if (auto obj = dynamic_cast<wxTextDataObject*>(ev.GetDataObject()); obj)
+    if (ev.GetDataFormat() != wxDF_UNICODETEXT)
     {
-        auto sourceLayerId = string::convert<int>(obj->GetText().ToStdString(), -1);
+        ev.Veto();
+        return;
+    }
 
-        if (sourceLayerId == targetLayerId)
-        {
-            ev.Veto();
-            return;
-        }
+    // Read the source layer ID and veto the event if it's the same as the source ID
+    wxTextDataObject obj;
+    obj.SetData(wxDF_UNICODETEXT, ev.GetDataSize(), ev.GetDataBuffer());
 
-        rMessage() << "Assigning layer " << sourceLayerId << " to parent layer " << targetLayerId << std::endl;
+    auto sourceLayerId = string::convert<int>(obj.GetText().ToStdString(), -1);
 
-        try
-        {
-            auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
-            layerManager.setParentLayer(sourceLayerId, targetLayerId);
-        }
-        catch (const std::invalid_argument& ex)
-        {
-            wxutil::Messagebox::ShowError(fmt::format(_("Cannot set Parent Layer: {0}"), ex.what()), this);
-        }
+    if (sourceLayerId == targetLayerId)
+    {
+        ev.Veto();
+        return;
+    }
+
+    rMessage() << "Assigning layer " << sourceLayerId << " to parent layer " << targetLayerId << std::endl;
+
+    try
+    {
+        auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+        layerManager.setParentLayer(sourceLayerId, targetLayerId);
+    }
+    catch (const std::invalid_argument& ex)
+    {
+        wxutil::Messagebox::ShowError(fmt::format(_("Cannot set Parent Layer: {0}"), ex.what()), this);
     }
 }
 
