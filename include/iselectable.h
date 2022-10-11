@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include "inode.h"
 
 /**
  * greebo: A Selectable is everything that can be highlighted
@@ -9,7 +10,6 @@
 class ISelectable
 {
 public:
-    // destructor
 	virtual ~ISelectable() {}
 
 	// Set the selection status of this object
@@ -28,7 +28,7 @@ namespace scene
 
 inline void Node_setSelected(const scene::INodePtr& node, bool selected)
 {
-	ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
+	auto selectable = scene::node_cast<ISelectable>(node);
 
     if (selectable)
 	{
@@ -38,7 +38,7 @@ inline void Node_setSelected(const scene::INodePtr& node, bool selected)
 
 inline bool Node_isSelected(const scene::INodePtr& node)
 {
-	ISelectablePtr selectable = scene::node_cast<ISelectable>(node);
+	auto selectable = scene::node_cast<ISelectable>(node);
 
     if (selectable)
 	{

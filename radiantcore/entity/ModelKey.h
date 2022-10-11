@@ -2,6 +2,7 @@
 
 #include <string>
 #include "inode.h"
+#include "ieclass.h"
 #include "ObservedUndoable.h"
 #include <sigc++/connection.h>
 

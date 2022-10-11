@@ -1,5 +1,6 @@
 #pragma once
 
+#include "iselection.h"
 #include "render/VertexCb.h"
 #include "render/RenderableGeometry.h"
 

@@ -69,6 +69,7 @@
     <ClCompile Include="..\..\..\test\Fx.cpp" />
     <ClCompile Include="..\..\..\test\XmlUtil.cpp" />
     <ClCompile Include="..\..\..\test\Game.cpp" />
+    <ClCompile Include="..\..\..\test\CodeTokeniser.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />
@@ -123,6 +124,9 @@
       <Filter>algorithm</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\test\testutil\ThreadUtils.h">
+      <Filter>testutil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\test\testutil\FileSaveConfirmationHelper.h">
       <Filter>testutil</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,0 +1,9 @@
+// Test declarations used for some DefBlockSyntaxParser unit tests
+
+testdecl decl/removal/988
+{
+    diffusemap textures/removal/5
+}
+
+// a malformed decl at the end of this file
+testdecl some/malformed/decl

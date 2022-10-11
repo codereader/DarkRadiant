@@ -86,10 +86,11 @@ void Map::clearMapResource()
     setMapName(_(MAP_UNNAMED_STRING));
 }
 
-void Map::connectToUndoSystem()
+void Map::connectToRootNode()
 {
     _modifiedStatusListener.disconnect();
     _undoEventListener.disconnect();
+    _layerHierarchyChangedListener.disconnect();
 
     _modifiedStatusListener = _resource->signal_modifiedStatusChanged().connect(
         [this](bool newStatus) { setModified(newStatus); }
@@ -98,8 +99,18 @@ void Map::connectToUndoSystem()
     if (!_resource->getRootNode()) return;
 
     _undoEventListener = _resource->getRootNode()->getUndoSystem().signal_undoEvent().connect(
-        sigc::mem_fun(this, &Map::onUndoEvent)
+        sigc::mem_fun(*this, &Map::onUndoEvent)
     );
+
+    // This is a workaround - changing layer hierarchies is not an undoable operation
+    // and this by hitting undo or redo the status might be reset to "unmodified" anytime
+    _layerHierarchyChangedListener = _resource->getRootNode()->getLayerManager()
+        .signal_layerHierarchyChanged().connect(sigc::mem_fun(*this, &Map::onLayerHierarchyChanged));
+}
+
+void Map::onLayerHierarchyChanged()
+{
+    setModified(true);
 }
 
 void Map::onUndoEvent(IUndoSystem::EventType type, const std::string& operationName)
@@ -166,7 +177,7 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
         clearMapResource();
     }
 
-    connectToUndoSystem();
+    connectToRootNode();
 
     // Take the new node and insert it as map root
     GlobalSceneGraph().setRoot(_resource->getRootNode());
@@ -855,7 +866,7 @@ bool Map::saveAs()
         return false;
     }
 
-    connectToUndoSystem();
+    connectToRootNode();
 
     // Resource save was successful, notify about this name change
     rename(fileInfo.fullPath);

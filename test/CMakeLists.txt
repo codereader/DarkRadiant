@@ -4,6 +4,7 @@ add_executable(drtest
                Basic.cpp
                Brush.cpp
                Camera.cpp
+               CodeTokeniser.cpp
                ColourSchemes.cpp
                CommandSystem.cpp
                ContinuousBuffer.cpp

@@ -2,6 +2,7 @@
 
 #include <string>
 #include <wx/dialog.h>
+#include <wx/frame.h>
 #include "../WindowPosition.h"
 #include "../WindowState.h"
 

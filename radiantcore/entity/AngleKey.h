@@ -2,6 +2,7 @@
 
 #include "math/Quaternion.h"
 #include "math/FloatTools.h"
+#include <sigc++/trackable.h>
 #include <functional>
 
 class Entity;

@@ -1,27 +1,30 @@
 #include "LayerControlDialog.h"
 
 #include "i18n.h"
+#include "iregistry.h"
 #include "itextstream.h"
 #include "ilayer.h"
 #include "ui/imainframe.h"
 #include "iselection.h"
 
-#include "registry/registry.h"
-
-#include <wx/button.h>
 #include <wx/bmpbuttn.h>
+#include <wx/button.h>
 #include <wx/tglbtn.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/artprov.h>
-#include <functional>
+#include <wx/dataobj.h>
 
-#include "wxutil/ScrollWindow.h"
 #include "wxutil/Button.h"
 
 #include "scene/LayerUsageBreakdown.h"
-
-#include <map>
+#include "wxutil/Bitmap.h"
+#include "wxutil/EntryAbortedException.h"
+#include "wxutil/dataview/IndicatorColumn.h"
+#include "wxutil/dataview/TreeView.h"
+#include "wxutil/dataview/TreeViewItemStyle.h"
+#include "wxutil/dialog/Dialog.h"
+#include "wxutil/dialog/MessageBox.h"
 
 namespace ui
 {
@@ -34,10 +37,11 @@ namespace
 
 LayerControlDialog::LayerControlDialog() :
 	TransientWindow(_("Layers"), GlobalMainFrame().getWxTopLevelWindow(), true),
-	_dialogPanel(nullptr),
-	_controlContainer(nullptr),
+    _layersView(nullptr),
 	_showAllLayers(nullptr),
 	_hideAllLayers(nullptr),
+	_refreshTreeOnIdle(false),
+	_updateTreeOnIdle(false),
 	_rescanSelectionOnIdle(false)
 {
 	populateWindow();
@@ -50,167 +54,336 @@ LayerControlDialog::LayerControlDialog() :
 
 void LayerControlDialog::populateWindow()
 {
-	auto dialogPanel = new wxutil::ScrollWindow(this, wxID_ANY);
-	dialogPanel->SetShouldScrollToChildOnFocus(false);
-	dialogPanel->SetScrollRate(0, 15);
+    _layerStore = new wxutil::TreeModel(_columns);
+    _layersView = wxutil::TreeView::CreateWithModel(this, _layerStore.get(), wxDV_SINGLE | wxDV_NO_HEADER);
 
-	_dialogPanel = dialogPanel;
-	
-	_dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+    _layersView->AppendToggleColumn(_("Visible"), _columns.visible.getColumnIndex(),
+        wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
+    _layersView->AppendColumn(new wxutil::IndicatorColumn(_("Contains Selection"),
+        _columns.selectionIsPartOfLayer.getColumnIndex()));
+    _layersView->AppendTextColumn("", _columns.name.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
-	_controlContainer = new wxFlexGridSizer(1, 4, 3, 3);
-	_controlContainer->AddGrowableCol(2);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &LayerControlDialog::onItemActivated, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &LayerControlDialog::onItemToggled, this);
+    _layersView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &LayerControlDialog::onItemSelected, this);
 
-    _dialogPanel->GetSizer()->Add(_controlContainer, 1, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
+    // Configure drag and drop
+    _layersView->EnableDragSource(wxDF_UNICODETEXT);
+    _layersView->EnableDropTarget(wxDF_UNICODETEXT);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &LayerControlDialog::onBeginDrag, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &LayerControlDialog::onDropPossible, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP, &LayerControlDialog::onDrop, this);
+
+    _layersView->SetToolTip(_("Double-Click to select all in hierarchy, hold SHIFT to deselect, hold CTRL to set as active layer."));
+
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+
+    auto overallVBox = new wxBoxSizer(wxVERTICAL);
+    GetSizer()->Add(overallVBox, 1, wxEXPAND | wxALL, 12);
+
+    overallVBox->Add(_layersView, 1, wxEXPAND);
 
 	// Add the option buttons ("Create Layer", etc.) to the window
 	createButtons();
-
-	_dialogPanel->FitInside(); // ask the sizer about the needed size
 }
 
 void LayerControlDialog::createButtons()
 {
 	// Show all / hide all buttons
-	wxBoxSizer* hideShowBox = new wxBoxSizer(wxHORIZONTAL);
+	auto hideShowBox = new wxBoxSizer(wxHORIZONTAL);
 
-	_showAllLayers = new wxButton(_dialogPanel, wxID_ANY, _("Show all"));
-	_hideAllLayers = new wxButton(_dialogPanel, wxID_ANY, _("Hide all"));
+	_showAllLayers = new wxButton(this, wxID_ANY, _("Show all"));
+	_hideAllLayers = new wxButton(this, wxID_ANY, _("Hide all"));
 
-	_showAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onShowAllLayers, this);
-	_hideAllLayers->Bind(wxEVT_BUTTON, &LayerControlDialog::onHideAllLayers, this);
+    _showAllLayers->Bind(wxEVT_BUTTON, [this](auto& ev) { setVisibilityOfAllLayers(true); });
+	_hideAllLayers->Bind(wxEVT_BUTTON, [this](auto& ev) { setVisibilityOfAllLayers(false); });
 
 	// Create layer button
-	wxButton* createButton = new wxButton(_dialogPanel, wxID_ANY, _("New"));
-	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
+    auto topRow = new wxBoxSizer(wxHORIZONTAL);
 
+	auto createButton = new wxButton(this, wxID_ANY, _("New"));
+	createButton->SetBitmap(wxArtProvider::GetBitmap(wxART_PLUS));
 	wxutil::button::connectToCommand(createButton, "CreateNewLayerDialog");
+
+    _deleteButton = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("delete.png"));
+    _deleteButton->Bind(wxEVT_BUTTON, &LayerControlDialog::onDeleteLayer, this);
+    _deleteButton->SetToolTip(_("Delete the selected layer"));
+
+    _renameButton = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("edit.png"));
+    _renameButton->Bind(wxEVT_BUTTON, &LayerControlDialog::onRenameLayer, this);
+    _renameButton->SetToolTip(_("Rename the selected layer"));
+
+    topRow->Add(createButton, 1, wxEXPAND | wxRIGHT, 6);
+    topRow->Add(_renameButton, 0, wxEXPAND | wxRIGHT, 6);
+    topRow->Add(_deleteButton, 0, wxEXPAND, 6);
 
 	hideShowBox->Add(_showAllLayers, 1, wxEXPAND | wxTOP, 6);
 	hideShowBox->Add(_hideAllLayers, 1, wxEXPAND | wxLEFT | wxTOP, 6);
 
-    _dialogPanel->GetSizer()->Add(createButton, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 12);
-    _dialogPanel->GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
+    GetSizer()->Add(topRow, 0, wxEXPAND | wxLEFT | wxRIGHT, 12);
+    GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
 void LayerControlDialog::clearControls()
 {
-	// Delete all wxWidgets objects first
-	_controlContainer->Clear(true);
-
-	// Remove all previously allocated layercontrols
-	_layerControls.clear();
+    _layerItemMap.clear();
+    _layerStore->Clear();
 }
+
+void LayerControlDialog::queueRefresh()
+{
+    _refreshTreeOnIdle = true;
+    _rescanSelectionOnIdle = true;
+}
+
+void LayerControlDialog::queueUpdate()
+{
+    _updateTreeOnIdle = true;
+    _rescanSelectionOnIdle = true;
+}
+
+class LayerControlDialog::TreePopulator
+{
+private:
+    const TreeColumns& _columns;
+    wxutil::TreeModel::Ptr _layerStore;
+
+    std::map<int, wxDataViewItem> _layerItemMap;
+
+    scene::ILayerManager& _layerManager;;
+    int _activeLayerId;
+
+    std::size_t _numVisible = 0;
+    std::size_t _numHidden = 0;
+
+public:
+    TreePopulator(const wxutil::TreeModel::Ptr& layerStore, const TreeColumns& columns) :
+        _columns(columns),
+        _layerStore(new wxutil::TreeModel(_columns)),
+        _layerManager(GlobalMapModule().getRoot()->getLayerManager()),
+        _activeLayerId(_layerManager.getActiveLayer())
+    {}
+
+    std::size_t getNumVisibleLayers() const
+    {
+        return _numVisible;
+    }
+
+    std::size_t getNumHiddenLayers() const
+    {
+        return _numHidden;
+    }
+
+    std::map<int, wxDataViewItem>& getLayerItemMap()
+    {
+        return _layerItemMap;
+    }
+
+    const wxutil::TreeModel::Ptr& getLayerStore() const
+    {
+        return _layerStore;
+    }
+
+    wxDataViewItem processLayer(int layerId, const std::string& layerName)
+    {
+        auto existingItem = _layerItemMap.find(layerId);
+
+        if (existingItem != _layerItemMap.end()) return existingItem->second;
+
+        // Find the parent ID of this layer
+        auto parentLayerId = _layerManager.getParentLayer(layerId);
+
+        auto parentItem = parentLayerId == -1 ? wxDataViewItem() :
+            processLayer(parentLayerId, _layerManager.getLayerName(parentLayerId));
+
+        // Parent item located, insert this layer as child element
+        auto row = _layerStore->AddItem(parentItem);
+
+        row[_columns.id] = layerId;
+        row[_columns.name] = layerName;
+
+        if (_activeLayerId == layerId)
+        {
+            row[_columns.name] = wxutil::TreeViewItemStyle::ActiveItemStyle();
+        }
+
+        if (_layerManager.layerIsVisible(layerId))
+        {
+            row[_columns.visible] = true;
+            _numVisible++;
+        }
+        else
+        {
+            row[_columns.visible] = false;
+            _numHidden++;
+        }
+
+        row.SendItemAdded();
+
+        _layerItemMap.emplace(layerId, row.getItem());
+
+        return row.getItem();
+    }
+};
 
 void LayerControlDialog::refresh()
 {
-	clearControls();
+    _refreshTreeOnIdle = false;
 
-	if (!GlobalMapModule().getRoot())
-	{
-		return; // no map present, don't add any layer controls
-	}
+    // Find out which layers are currently expanded and/or selected
+    auto selectedLayerId = getSelectedLayerId();
+    std::set<int> expandedLayers;
 
-    std::map<std::string, LayerControlPtr> sortedControls;
-
-	// Traverse the layers
-	GlobalMapModule().getRoot()->getLayerManager().foreachLayer([&](int layerID, const std::string& layerName)
+    for (const auto& [id, item] : _layerItemMap)
     {
-        // Create a new layercontrol for each visited layer
-        // Store the object in a sorted container
-        sortedControls[layerName] = std::make_shared<LayerControl>(_dialogPanel, layerID);
-    });
-
-    // Assign all controls to the target vector, alphabetically sorted
-    for (std::pair<std::string, LayerControlPtr> pair : sortedControls)
-    {
-        _layerControls.push_back(pair.second);
+        if (_layersView->IsExpanded(item))
+        {
+            expandedLayers.insert(id);
+        }
     }
 
-	_controlContainer->SetRows(static_cast<int>(_layerControls.size()));
+	clearControls();
 
-	for (const LayerControlPtr& control : _layerControls)
-	{
-		_controlContainer->Add(control->getToggle(), 0);
-		_controlContainer->Add(control->getStatusWidget(), 0, wxEXPAND | wxTOP | wxBOTTOM, 1);
-		_controlContainer->Add(control->getLabelButton(), 0, wxEXPAND);
-		_controlContainer->Add(control->getButtons(), 0, wxEXPAND);
+    if (!GlobalMapModule().getRoot()) return; // no map present
 
-        if (control == _layerControls.front())
+	// Traverse the layers
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    TreePopulator populator(_layerStore, _columns);
+    layerManager.foreachLayer(
+        std::bind(&TreePopulator::processLayer, &populator, std::placeholders::_1, std::placeholders::_2));
+
+    // Get the model and sort each hierarchy level by name
+    _layerStore = populator.getLayerStore();
+    _layerStore->SortModelByColumn(_columns.name);
+
+    // Now associate the layer store with our tree view
+    _layersView->AssociateModel(_layerStore.get());
+
+    _layerItemMap = std::move(populator.getLayerItemMap());
+
+    // Restore the expanded state of tree elements
+    for (const auto& [id, item] : _layerItemMap)
+    {
+        if (expandedLayers.count(id) > 0)
         {
-            // Prevent setting the focus on the buttons at the bottom which lets the scrollbar 
-            // of the window jump around (#4089), set the focus on the first button.
-			control->getLabelButton()->SetFocus();
+            _layersView->Expand(item);
         }
-	}
 
-	_controlContainer->Layout();
-	_dialogPanel->FitInside(); // ask the sizer about the needed size
+        if (selectedLayerId == id)
+        {
+            _layersView->Select(item);
+            _layersView->EnsureVisible(item);
+        }
+    }
 
-	update();
+    updateButtonSensitivity(populator.getNumVisibleLayers(), populator.getNumHiddenLayers());
 }
 
 void LayerControlDialog::update()
 {
-	if (!GlobalMapModule().getRoot())
-	{
-		return;
-	}
+    _updateTreeOnIdle = false;
 
-	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+    if (!GlobalMapModule().getRoot()) return;
 
-	// Broadcast the update() call
-	for (const LayerControlPtr& control : _layerControls)
-	{
-		control->update();
-	}
-
-	// Update usage next time round
-	_rescanSelectionOnIdle = true;
+	auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+    auto activeLayerId = layerManager.getActiveLayer();
 
 	// Update the show/hide all button sensitiveness
     std::size_t numVisible = 0;
     std::size_t numHidden = 0;
 
-	layerSystem.foreachLayer([&](int layerID, const std::string& layerName)
+    layerManager.foreachLayer([&](int layerId, const std::string& layerName)
     {
-        if (layerSystem.layerIsVisible(layerID))
+        auto existingItem = _layerItemMap.find(layerId);
+
+        if (existingItem == _layerItemMap.end()) return; // tracking error?
+
+        wxutil::TreeModel::Row row(existingItem->second, *_layerStore);
+
+        row[_columns.name] = layerName;
+
+        row[_columns.name] = activeLayerId == layerId ? 
+            wxutil::TreeViewItemStyle::ActiveItemStyle() : wxDataViewItemAttr(); // no style
+
+        if (layerManager.layerIsVisible(layerId))
         {
+            row[_columns.visible] = true;
             numVisible++;
         }
         else
         {
+            row[_columns.visible] = false;
             numHidden++;
         }
+
+        row.SendItemChanged();
     });
 
+    updateButtonSensitivity(numVisible, numHidden);
+}
+
+void LayerControlDialog::updateButtonSensitivity(std::size_t numVisible, std::size_t numHidden)
+{
 	_showAllLayers->Enable(numHidden > 0);
 	_hideAllLayers->Enable(numVisible > 0);
+
+    updateItemActionSensitivity();
 }
+
+void LayerControlDialog::updateItemActionSensitivity()
+{
+    auto selectedLayerId = getSelectedLayerId();
+
+    // Don't allow deleting or renaming the default layer (or -1)
+    _deleteButton->Enable(selectedLayerId > 0);
+    _renameButton->Enable(selectedLayerId > 0);
+}
+
 
 void LayerControlDialog::updateLayerUsage()
 {
 	_rescanSelectionOnIdle = false;
 
-	// Scan the selection and get the histogram
-	scene::LayerUsageBreakdown breakDown = scene::LayerUsageBreakdown::CreateFromSelection();
+    if (!GlobalMapModule().getRoot()) return;
 
-	for (const LayerControlPtr& control : _layerControls)
-	{
-		assert(static_cast<int>(breakDown.size()) > control->getLayerId());
+    // Scan the selection and get the histogram
+	auto breakDown = scene::LayerUsageBreakdown::CreateFromSelection();
 
-		control->updateUsageStatusWidget(breakDown[control->getLayerId()]);
-	}
+    GlobalMapModule().getRoot()->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
+    {
+        auto existingItem = _layerItemMap.find(layerId);
+
+        if (existingItem == _layerItemMap.end()) return; // tracking error?
+
+        wxutil::TreeModel::Row row(existingItem->second, *_layerStore);
+
+        row[_columns.selectionIsPartOfLayer] = breakDown[layerId] > 0;
+
+        row.SendItemChanged();
+    });
 }
 
 void LayerControlDialog::onIdle()
 {
-	if (!_rescanSelectionOnIdle) return;
+    if (_refreshTreeOnIdle)
+    {
+        refresh();
+    }
 
-	updateLayerUsage();
+    if (_updateTreeOnIdle)
+    {
+        update();
+    }
+
+	if (_rescanSelectionOnIdle)
+	{
+	    updateLayerUsage();
+	}
 }
 
-void LayerControlDialog::toggle(const cmd::ArgumentList& args)
+void LayerControlDialog::ToggleDialog(const cmd::ArgumentList& args)
 {
 	Instance().ToggleVisibility();
 }
@@ -245,15 +418,15 @@ void LayerControlDialog::onMainFrameShuttingDown()
 	InstancePtr().reset();
 }
 
-LayerControlDialogPtr& LayerControlDialog::InstancePtr()
+std::shared_ptr<LayerControlDialog>& LayerControlDialog::InstancePtr()
 {
-	static LayerControlDialogPtr _instancePtr;
+	static std::shared_ptr<LayerControlDialog> _instancePtr;
 	return _instancePtr;
 }
 
 LayerControlDialog& LayerControlDialog::Instance()
 {
-	LayerControlDialogPtr& instancePtr = InstancePtr();
+	auto& instancePtr = InstancePtr();
 
 	if (!instancePtr)
 	{
@@ -268,7 +441,6 @@ LayerControlDialog& LayerControlDialog::Instance()
 	return *instancePtr;
 }
 
-// TransientWindow callbacks
 void LayerControlDialog::_preShow()
 {
 	TransientWindow::_preShow();
@@ -285,7 +457,7 @@ void LayerControlDialog::_preShow()
 	);
 
 	// Re-populate the dialog
-	refresh();
+	queueRefresh();
 }
 
 void LayerControlDialog::_postHide()
@@ -294,6 +466,8 @@ void LayerControlDialog::_postHide()
 
 	_mapEventSignal.disconnect();
 	_selectionChangedSignal.disconnect();
+	_refreshTreeOnIdle = false;
+    _updateTreeOnIdle = false;
 	_rescanSelectionOnIdle = false;
 }
 
@@ -308,11 +482,15 @@ void LayerControlDialog::connectToMapRoot()
 
 		// Layer creation/addition/removal triggers a refresh
 		_layersChangedSignal = layerSystem.signal_layersChanged().connect(
-			sigc::mem_fun(this, &LayerControlDialog::refresh));
+			sigc::mem_fun(this, &LayerControlDialog::queueRefresh));
 
 		// Visibility change doesn't repopulate the dialog
 		_layerVisibilityChangedSignal = layerSystem.signal_layerVisibilityChanged().connect(
-			sigc::mem_fun(this, &LayerControlDialog::update));
+			sigc::mem_fun(this, &LayerControlDialog::queueUpdate));
+
+        // Hierarchy changes trigger a tree rebuild
+        _layerHierarchyChangedSignal = layerSystem.signal_layerHierarchyChanged().connect(
+            sigc::mem_fun(this, &LayerControlDialog::queueRefresh));
 
 		// Node membership triggers a selection rescan
 		_nodeLayerMembershipChangedSignal = layerSystem.signal_nodeMembershipChanged().connect([this]()
@@ -325,33 +503,24 @@ void LayerControlDialog::connectToMapRoot()
 void LayerControlDialog::disconnectFromMapRoot()
 {
 	_nodeLayerMembershipChangedSignal.disconnect();
+    _layerHierarchyChangedSignal.disconnect();
 	_layersChangedSignal.disconnect();
 	_layerVisibilityChangedSignal.disconnect();
 }
 
-void LayerControlDialog::onShowAllLayers(wxCommandEvent& ev)
+void LayerControlDialog::setVisibilityOfAllLayers(bool visible)
 {
 	if (!GlobalMapModule().getRoot())
 	{
-		rError() << "Can't show layers, no map loaded." << std::endl;
+		rError() << "Can't change layer visibility, no map loaded." << std::endl;
 		return;
 	}
 
 	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
 
-	layerSystem.foreachLayer([&](int layerID, const std::string& layerName)
+	layerSystem.foreachLayer([&](int layerID, const std::string&)
     {
-		layerSystem.setLayerVisibility(layerID, true);
-    });
-}
-
-void LayerControlDialog::onHideAllLayers(wxCommandEvent& ev)
-{
-	auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
-
-	layerSystem.foreachLayer([&](int layerID, const std::string& layerName)
-    {
-		layerSystem.setLayerVisibility(layerID, false);
+		layerSystem.setLayerVisibility(layerID, visible);
     });
 }
 
@@ -361,13 +530,245 @@ void LayerControlDialog::onMapEvent(IMap::MapEvent ev)
 	{
 		// Rebuild the dialog once a map is loaded
 		connectToMapRoot();
-		refresh();
+		queueRefresh();
 	}
 	else if (ev == IMap::MapUnloading)
 	{
 		disconnectFromMapRoot();
 		clearControls();
 	}
+}
+
+int LayerControlDialog::getSelectedLayerId()
+{
+    auto item = _layersView->GetSelection();
+
+    if (!item.IsOk()) return -1;
+
+    wxutil::TreeModel::Row row(item, *_layerStore);
+
+    return row[_columns.id].getInteger();
+}
+
+void LayerControlDialog::onItemActivated(wxDataViewEvent& ev)
+{
+    // Don't react to double-clicks on the checkbox
+    if (ev.GetColumn() == _columns.visible.getColumnIndex())
+    {
+        return;
+    }
+
+    if (!GlobalMapModule().getRoot())
+    {
+        rError() << "Can't select layer, no map root present" << std::endl;
+        return;
+    }
+
+    auto layerId = getSelectedLayerId();
+
+    // When holding down CTRL the user sets this as active
+    if (wxGetKeyState(WXK_CONTROL))
+    {
+        GlobalMapModule().getRoot()->getLayerManager().setActiveLayer(layerId);
+        queueRefresh();
+        return;
+    }
+
+    // By default, we SELECT the layer
+    // The user can choose to DESELECT the layer when holding down shift
+    bool selected = !wxGetKeyState(WXK_SHIFT);
+
+    // Set the entire layer to selected
+    GlobalMapModule().getRoot()->getLayerManager().setSelected(layerId, selected);
+}
+
+void LayerControlDialog::onItemToggled(wxDataViewEvent& ev)
+{
+    if (!GlobalMapModule().getRoot()) return;
+
+    if (ev.GetDataViewColumn() != nullptr &&
+        static_cast<int>(ev.GetDataViewColumn()->GetModelColumn()) == _columns.visible.getColumnIndex())
+    {
+        // Model value in the boolean column has changed, this means the checkbox has been toggled
+        wxutil::TreeModel::Row row(ev.GetItem(), *_layerStore);
+
+        GlobalMapModule().getRoot()->getLayerManager().setLayerVisibility(row[_columns.id].getInteger(), row[_columns.visible].getBool());
+    }
+}
+
+void LayerControlDialog::onItemSelected(wxDataViewEvent& ev)
+{
+    updateItemActionSensitivity();
+}
+
+void LayerControlDialog::onRenameLayer(wxCommandEvent& ev)
+{
+    if (!GlobalMapModule().getRoot())
+    {
+        rError() << "Can't rename layer, no map root present" << std::endl;
+        return;
+    }
+
+    auto selectedLayerId = getSelectedLayerId();
+    auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+
+    while (true)
+    {
+        // Query the name of the new layer from the user
+        std::string newLayerName;
+
+        try
+        {
+            newLayerName = wxutil::Dialog::TextEntryDialog(
+                _("Rename Layer"),
+                _("Enter new Layer Name"),
+                layerSystem.getLayerName(selectedLayerId),
+                this
+            );
+        }
+        catch (wxutil::EntryAbortedException&)
+        {
+            break;
+        }
+
+        // Attempt to rename the layer, this will return -1 if the operation fails
+        bool success = layerSystem.renameLayer(selectedLayerId, newLayerName);
+
+        if (success)
+        {
+            // Stop here, the control might already have been destroyed
+            GlobalMapModule().setModified(true);
+            return;
+        }
+        else
+        {
+            // Wrong name, let the user try again
+            wxutil::Messagebox::ShowError(_("Could not rename layer, please try again."));
+            continue;
+        }
+    }
+}
+
+void LayerControlDialog::onDeleteLayer(wxCommandEvent& ev)
+{
+    if (!GlobalMapModule().getRoot())
+    {
+        rError() << "Can't delete layer, no map root present" << std::endl;
+        return;
+    }
+
+    auto selectedLayerId = getSelectedLayerId();
+    auto& layerSystem = GlobalMapModule().getRoot()->getLayerManager();
+
+    // Ask the about the deletion
+    auto msg = _("Do you really want to delete this layer?");
+    msg += "\n" + layerSystem.getLayerName(selectedLayerId);
+
+    IDialogPtr box = GlobalDialogManager().createMessageBox(
+        _("Confirm Layer Deletion"), msg, IDialog::MESSAGE_ASK
+    );
+
+    if (box->run() == IDialog::RESULT_YES)
+    {
+        GlobalCommandSystem().executeCommand("DeleteLayer", cmd::Argument(selectedLayerId));
+    }
+}
+
+void LayerControlDialog::onBeginDrag(wxDataViewEvent& ev)
+{
+    wxDataViewItem item(ev.GetItem());
+    wxutil::TreeModel::Row row(item, *_layerStore);
+
+    auto selectedLayerId = row[_columns.id].getInteger();
+
+    // Don't allow rearranging the default layer
+    if (selectedLayerId > 0)
+    {
+        auto obj = new wxTextDataObject;
+        obj->SetText(string::to_string(selectedLayerId));
+        ev.SetDataObject(obj);
+        ev.SetDragFlags(wxDrag_AllowMove);
+    }
+}
+
+void LayerControlDialog::onDropPossible(wxDataViewEvent& ev)
+{
+    if (!GlobalMapModule().getRoot()) return;
+
+    auto selectedLayerId = getSelectedLayerId();
+
+    wxDataViewItem item(ev.GetItem());
+    wxutil::TreeModel::Row row(item, *_layerStore);
+
+    auto targetLayerId = row[_columns.id].getInteger();
+
+    // Don't allow dragging layers onto themselves or dragging the default layer
+    if (targetLayerId == selectedLayerId || selectedLayerId == 0)
+    {
+        ev.Veto();
+        return;
+    }
+
+    // Veto this change it the target layer is a child of the dragged one
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    if (layerManager.layerIsChildOf(targetLayerId, selectedLayerId))
+    {
+        ev.Veto();
+        return;
+    }
+
+    // Also don't allow dropping if the target is already an immediate parent
+    if (layerManager.getParentLayer(selectedLayerId) == targetLayerId)
+    {
+        ev.Veto();
+        return;
+    }
+}
+
+void LayerControlDialog::onDrop(wxDataViewEvent& ev)
+{
+    if (!GlobalMapModule().getRoot())
+    {
+        rError() << "Can't change layer hierarchy, no map root present" << std::endl;
+        return;
+    }
+
+    auto item = ev.GetItem();
+    wxutil::TreeModel::Row row(item, *_layerStore);
+
+    // If an empty item is passed we're supposed to make it top-level again
+    auto targetLayerId = item.IsOk() ? row[_columns.id].getInteger() : -1;
+
+    if (ev.GetDataFormat() != wxDF_UNICODETEXT)
+    {
+        ev.Veto();
+        return;
+    }
+
+    // Read the source layer ID and veto the event if it's the same as the source ID
+    wxTextDataObject obj;
+    obj.SetData(wxDF_UNICODETEXT, ev.GetDataSize(), ev.GetDataBuffer());
+
+    auto sourceLayerId = string::convert<int>(obj.GetText().ToStdString(), -1);
+
+    if (sourceLayerId == targetLayerId)
+    {
+        ev.Veto();
+        return;
+    }
+
+    rMessage() << "Assigning layer " << sourceLayerId << " to parent layer " << targetLayerId << std::endl;
+
+    try
+    {
+        auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+        layerManager.setParentLayer(sourceLayerId, targetLayerId);
+    }
+    catch (const std::invalid_argument& ex)
+    {
+        wxutil::Messagebox::ShowError(fmt::format(_("Cannot set Parent Layer: {0}"), ex.what()), this);
+    }
 }
 
 } // namespace ui

@@ -1,0 +1,9 @@
+// Test declarations used for some DefBlockSyntaxParser unit tests
+
+testdecl decl/removal/988
+{
+    diffusemap textures/removal/5
+}
+
+// an unfinished comment exceeding EOF
+testdecl /* an unclosed comment 

@@ -3,6 +3,7 @@
 #include <map>
 #include <memory>
 #include "igl.h"
+#include "iglprogram.h"
 
 namespace render
 {

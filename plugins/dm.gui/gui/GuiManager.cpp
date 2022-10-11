@@ -3,7 +3,7 @@
 #include "iarchive.h"
 #include "ifilesystem.h"
 #include "itextstream.h"
-#include "parser/CodeTokeniser.h"
+#include "parser/GuiTokeniser.h"
 
 #include "Gui.h"
 
@@ -174,7 +174,7 @@ GuiPtr GuiManager::loadGui(const std::string& guiPath)
 	// Construct a Code Tokeniser, which is able to handle #includes
 	try
 	{
-		parser::CodeTokeniser tokeniser(file, parser::WHITESPACE, "{}(),;");
+		parser::GuiTokeniser tokeniser(file);
 
 		info.gui = Gui::createFromTokens(tokeniser);
 		info.type = UNDETERMINED;

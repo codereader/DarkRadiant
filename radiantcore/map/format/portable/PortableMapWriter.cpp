@@ -67,12 +67,14 @@ void PortableMapWriter::beginWriteMap(const scene::IMapRootNodePtr& root, std::o
 	auto layers = _map.createChild(TAG_MAP_LAYERS);
 
 	// Visit all layers and add a tag for each
-	root->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
+    auto& layerManager = root->getLayerManager();
+    layerManager.foreachLayer([&](int layerId, const std::string& layerName)
 	{
 		auto layer = layers.createChild(TAG_MAP_LAYER);
 
 		layer.setAttributeValue(ATTR_MAP_LAYER_ID, string::to_string(layerId));
 		layer.setAttributeValue(ATTR_MAP_LAYER_NAME, layerName);
+		layer.setAttributeValue(ATTR_MAP_LAYER_PARENT_ID, string::to_string(layerManager.getParentLayer(layerId)));
 	});
 
 	// Write selection groups

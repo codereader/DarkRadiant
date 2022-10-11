@@ -54,6 +54,10 @@ MaterialsList::MaterialsList(wxWindow* parent, const RenderSystemPtr& renderSyst
 	Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &MaterialsList::onShaderToggled, this);
 	Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, &MaterialsList::onContextMenu, this);
 
+    // Block all double-click events originating from this view, to not confuse
+    // parent widgets with double-click events
+    Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, [](wxDataViewEvent& ev) { ev.StopPropagation(); });
+
     // Construct the context menu
     _contextMenu->addItem(
         new wxutil::IconTextMenuItem(_(SHOW_MATERIAL_DEF_TEXT), SHOW_MATERIAL_DEF_ICON),

@@ -2053,6 +2053,8 @@ std::pair<IShaderLayer::Ptr, std::size_t> MaterialEditor::findMaterialStageByTyp
 
 void MaterialEditor::updateBasicPageFromMaterial()
 {
+    util::ScopedBoolLock lock(_materialUpdateInProgress);
+
     auto nameEntry = getControl<wxTextCtrl>("BasicName");
     nameEntry->SetValue(_material ? _material->getName() : "");
     

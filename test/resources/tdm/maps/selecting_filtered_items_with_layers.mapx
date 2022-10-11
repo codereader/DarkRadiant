@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<map version="1" format="portable">
+  <layers>
+    <layer id="0" name="Default" parentId="-1"/>
+    <layer id="1" name="Caulk" parentId="0"/>
+    <layer id="2" name="Shadow" parentId="0"/>
+  </layers>
+  <selectionGroups/>
+  <selectionSets/>
+  <properties>
+    <property key="EditTimeInSeconds" value="568"/>
+    <property key="LastCameraAngle" value="-29.4 46.5 0"/>
+    <property key="LastCameraPosition" value="1029.94 -936.608 1289.73"/>
+    <property key="LastShaderClipboardMaterial" value="textures/darkmod/map_specific/church/stair_blocks_01"/>
+  </properties>
+  <entity number="0">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-256.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="-20.000000"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-1792.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="16.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-3072.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-768.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="16.000000"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="768.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="-16.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="1536.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="1"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+      <brush number="1">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-256.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="-20.000000"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-512.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="16.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-3072.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-768.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="16.000000"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-512.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="-16.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="1536.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="2"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="worldspawn"/>
+    </keyValues>
+    <layers>
+      <layer id="0"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="1">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-512.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="-52.000000"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-512.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="48.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-768.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-512.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="48.000000"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-512.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="-48.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-768.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/caulk"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="1"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="func_static_1"/>
+      <keyValue key="model" value="func_static_1"/>
+      <keyValue key="origin" value="4352 1280 -256"/>
+    </keyValues>
+    <layers>
+      <layer id="1"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+  <entity number="2">
+    <primitives>
+      <brush number="0">
+        <faces>
+          <face>
+            <plane x="0" y="0" z="1.000000" d="-512.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="-52.000000"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="1.000000" z="0" d="-512.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="48.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="1.000000" y="0" z="0" d="-768.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="0" z="-1.000000" d="-512.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="48.000000"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="0" y="-1.000000" z="0" d="-512.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="-48.000000" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+          <face>
+            <plane x="-1.000000" y="0" z="0" d="-768.000000"/>
+            <textureProjection xx="0.015625" yx="0" tx="0" xy="0" yy="0.015625" ty="0"/>
+            <material name="textures/common/shadow"/>
+            <contentsFlag value="0"/>
+          </face>
+        </faces>
+        <layers>
+          <layer id="2"/>
+        </layers>
+        <selectionGroups/>
+        <selectionSets/>
+      </brush>
+    </primitives>
+    <keyValues>
+      <keyValue key="classname" value="func_static"/>
+      <keyValue key="name" value="func_static_2"/>
+      <keyValue key="model" value="func_static_2"/>
+      <keyValue key="origin" value="4352 0 -256"/>
+    </keyValues>
+    <layers>
+      <layer id="2"/>
+    </layers>
+    <selectionGroups/>
+    <selectionSets/>
+  </entity>
+</map>

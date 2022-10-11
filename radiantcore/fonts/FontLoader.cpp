@@ -5,6 +5,7 @@
 
 #include <regex>
 
+#include "igame.h" 
 #include "ifilesystem.h"
 #include "itextstream.h"
 #include "FontManager.h"

@@ -2,12 +2,14 @@
 
 #include "ishaders.h"
 #include <algorithm>
+
 #include "string/split.h"
 #include "string/case_conv.h"
 #include "string/trim.h"
 #include "string/join.h"
 #include "math/MatrixUtils.h"
 #include "materials/FrobStageSetup.h"
+#include "testutil/TemporaryFile.h"
 
 namespace test
 {
@@ -247,6 +249,10 @@ TEST_F(MaterialsTest, MaterialParser)
     EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant1"));
     EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant2"));
     EXPECT_TRUE(materialManager.materialExists("textures/parsing_test/variant3"));
+
+    // These are defined in null_byte_at_the_end.mtr which has a 0 character at the bottom of the file (#6108)
+    EXPECT_TRUE(materialManager.materialExists("textures/parsertest/something2"));
+    EXPECT_TRUE(materialManager.materialExists("textures/parsertest/something3"));
 }
 
 TEST_F(MaterialsTest, EnumerateMaterialLayers)
@@ -1840,6 +1846,54 @@ TEST_F(MaterialsTest, ClearingNoShadowsFlagOfTranslucentMaterials)
     material->clearMaterialFlag(Material::FLAG_NOSHADOWS);
     EXPECT_FALSE(material->getMaterialFlags() & Material::FLAG_NOSHADOWS) << "Material should not have the noshadows flag set";
     EXPECT_FALSE(material->getMaterialFlags() & Material::FLAG_TRANSLUCENT) << "Material should not have the translucent flag set";
+}
+
+TEST_F(MaterialsTest, AddLayerToNewMaterial)
+{
+    auto material = GlobalMaterialManager().createEmptyMaterial("unittest_material");
+    material->addLayer(IShaderLayer::DIFFUSE);
+
+    // Check that the added layer is present
+    std::vector<IShaderLayer::Ptr> layers;
+    material->foreachLayer([&](const IShaderLayer::Ptr& layer)
+    {
+        layers.push_back(layer);
+        return true;
+    });
+
+    EXPECT_EQ(layers.size(), 1);
+    EXPECT_EQ(layers.front()->getType(), IShaderLayer::DIFFUSE);
+}
+
+// When the material name points to a texture file on disk, a default material
+// will be created around it, with a simple diffuse layer pointing to that texture
+TEST_F(MaterialsTest, CreateMaterialFromTextureFile)
+{
+    // Copy one of our textures to a temporary path
+    auto originalTexturePath = _context.getTestProjectPath() + "textures/numbers/1.tga";
+    auto texturePath = string::replace_all_copy(originalTexturePath, "1.tga", "temporary_texture.tga");
+
+    EXPECT_TRUE(fs::exists(originalTexturePath));
+    EXPECT_FALSE(fs::exists(texturePath));
+    fs::copy(originalTexturePath, texturePath);
+    TemporaryFile tempFile(texturePath); // remove when test is done
+
+    // We request a material that is not really present
+    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Material, "textures/numbers/temporary_texture"));
+
+    auto material = GlobalMaterialManager().getMaterial("textures/numbers/temporary_texture");
+    EXPECT_TRUE(material) << "We should have got a material pointing to that texture on disk";
+
+    // Check the layers of this material, it should contain a diffuse map
+    std::vector<IShaderLayer::Ptr> layers;
+    material->foreachLayer([&](const IShaderLayer::Ptr& layer)
+    {
+        layers.push_back(layer);
+        return true;
+    });
+
+    EXPECT_EQ(layers.size(), 1);
+    EXPECT_EQ(layers.at(0)->getType(), IShaderLayer::DIFFUSE);
 }
 
 }

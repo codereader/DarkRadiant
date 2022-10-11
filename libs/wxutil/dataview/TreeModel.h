@@ -399,55 +399,55 @@ protected:
 public:
 	TreeModel(const ColumnRecord& columns, bool isListModel = false);
 
-	virtual ~TreeModel();
+	~TreeModel() override;
 
 	// Return the column definition of this model
-	virtual const ColumnRecord& GetColumns() const;
+	const ColumnRecord& GetColumns() const;
 
 	// Add a new item below the root element
-	virtual Row AddItem();
+	Row AddItem();
 
 	// Add a new item below the given element
-	virtual Row AddItem(const wxDataViewItem& parent);
+	Row AddItem(const wxDataViewItem& parent);
 
 	// Removes the item, returns TRUE on success
-	virtual bool RemoveItem(const wxDataViewItem& item);
+	bool RemoveItem(const wxDataViewItem& item);
 
 	// Remove all items matching the predicate, returns the number of deleted items
-	virtual int RemoveItems(const std::function<bool (const Row&)>& predicate);
+	int RemoveItems(const std::function<bool (const Row&)>& predicate);
 
 	// Returns a Row reference to the topmost element
-	virtual Row GetRootItem();
+	Row GetRootItem();
 
 	// Returns true if the given column value should render as "enabled" or not
-	virtual bool IsEnabled(const wxDataViewItem& item, unsigned int col) const override;
+	bool IsEnabled(const wxDataViewItem& item, unsigned int col) const override;
 
 	// Removes all items - internally the root node will be kept, but cleared too
 	// This also fires the "Cleared" event to any listeners
-	virtual void Clear();
+	void Clear();
 
-	virtual void SetDefaultStringSortColumn(int index);
-	virtual void SetHasDefaultCompare(bool hasDefaultCompare);
+	void SetDefaultStringSortColumn(int index);
+	void SetHasDefaultCompare(bool hasDefaultCompare);
 
 	// Visit each node in the model, excluding the internal root node
-	virtual void ForeachNode(const VisitFunction& visitFunction);
+	void ForeachNode(const VisitFunction& visitFunction);
 
 	// Visit each node in the model, backwards direction, excluding the internal root node
-	virtual void ForeachNodeReverse(const TreeModel::VisitFunction& visitFunction);
+	void ForeachNodeReverse(const TreeModel::VisitFunction& visitFunction);
 
 	// Sorts the entire tree using the given sort function
-	virtual void SortModel(const SortFunction& sortFunction);
+	void SortModel(const SortFunction& sortFunction);
 
 	// Sorts the entire tree by the given column (can also be a IconText column)
-	virtual void SortModelByColumn(const TreeModel::Column& column);
+	void SortModelByColumn(const TreeModel::Column& column);
 
 	// Sort the model by a string-valued column, sorting folders on top.
 	// Pass a boolean-valued "is-a-folder" column to indicate which items are actual folders.
-	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn);
+	void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn);
 
     // Sort the model by a string-valued column, sorting folders on top, starting at the given item.
     // See also the other SortModelFoldersFirst overload.
-    virtual void SortModelFoldersFirst(const wxDataViewItem& startItem, const Column& stringColumn, const Column& isFolderColumn);
+    void SortModelFoldersFirst(const wxDataViewItem& startItem, const Column& stringColumn, const Column& isFolderColumn);
 
     using FolderCompareFunction = std::function<int(const wxDataViewItem&, const wxDataViewItem&)>;
 
@@ -455,31 +455,31 @@ public:
     // Pass a boolean-valued "is-a-folder" column to indicate which items are actual folders.
     // The customFolderSortFunc can be used to compare folders in a user-defined way
     // if the custom folder func returns equal (0), the regular name comparison is performed.
-	virtual void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn, 
+	void SortModelFoldersFirst(const Column& stringColumn, const Column& isFolderColumn, 
         const FolderCompareFunction& customFolderSortFunc);
 
     // Sort the model by a string-valued column, sorting folders on top, starting at the given item.
     // See also the other SortModelFoldersFirst overload.
-    virtual void SortModelFoldersFirst(const wxDataViewItem& startItem, const Column& stringColumn, 
+    void SortModelFoldersFirst(const wxDataViewItem& startItem, const Column& stringColumn, 
         const Column& isFolderColumn, const FolderCompareFunction& customFolderSortFunc);
 
     // Find the given string needle in the given column (searches the entire tree)
-	virtual wxDataViewItem FindString(const std::string& needle, const Column& column);
+	wxDataViewItem FindString(const std::string& needle, const Column& column);
 
     // Find the given string needle in the given column (searches only the subtree given by the startNode item)
-	virtual wxDataViewItem FindString(const std::string& needle, const Column& column, const wxDataViewItem& startNode);
+	wxDataViewItem FindString(const std::string& needle, const Column& column, const wxDataViewItem& startNode);
 
     // Find the given number needle in the given column (searches the entire tree)
-	virtual wxDataViewItem FindInteger(long needle, const Column& column);
+	wxDataViewItem FindInteger(long needle, const Column& column);
     
     // Find the given number needle in the given column (searches only the subtree given by the startNode item)
-	virtual wxDataViewItem FindInteger(long needle, const Column& column, const wxDataViewItem& startNode);
+	wxDataViewItem FindInteger(long needle, const Column& column, const wxDataViewItem& startNode);
 
     // Find the item matching the predicate (searches the entire tree)
-    virtual wxDataViewItem FindItem(const std::function<bool(const TreeModel::Row&)>& predicate);
+    wxDataViewItem FindItem(const std::function<bool(const TreeModel::Row&)>& predicate);
 
     // Find the item matching the predicate (searches from the given item)
-    virtual wxDataViewItem FindItem(const std::function<bool(const TreeModel::Row&)>& predicate, const wxDataViewItem& startNode);
+    wxDataViewItem FindItem(const std::function<bool(const TreeModel::Row&)>& predicate, const wxDataViewItem& startNode);
 
     // Returns true if any of the given columns in the given row contains the string value
     // Set lowerStrings to true to convert the column values to lowercase first (the value is not touched
@@ -487,57 +487,59 @@ public:
     static bool RowContainsString(const Row& row, const wxString& value, 
         const std::vector<Column>& columnsToSearch, bool lowerStrings = true);
 
-	virtual void SetAttr(const wxDataViewItem& item, unsigned int col, const wxDataViewItemAttr& attr) const;
-	virtual void SetIsListModel(bool isListModel);
+	void SetAttr(const wxDataViewItem& item, unsigned int col, const wxDataViewItemAttr& attr) const;
+	void SetIsListModel(bool isListModel);
 
 	// Search for an item in the given columns (forward), using previousMatch as reference point
 	// search is performed case-insensitively, partial matches are considered ("contains")
-	virtual wxDataViewItem FindNextString(const wxString& needle, 
+	wxDataViewItem FindNextString(const wxString& needle, 
 		const std::vector<Column>& columns, const wxDataViewItem& previousMatch = wxDataViewItem());
 	
 	// Search for an item in the given columns (backwards), using previousMatch as reference point 
 	// search is performed case-insensitively, partial matches are considered ("contains")
-	virtual wxDataViewItem FindPrevString(const wxString& needle,
+	wxDataViewItem FindPrevString(const wxString& needle,
 		const std::vector<Column>& columns, const wxDataViewItem& previousMatch = wxDataViewItem());
 
 	// Marks a specific column value as enabled or disabled.
-	virtual void SetEnabled(const wxDataViewItem& item, unsigned int col, bool enabled);
+	void SetEnabled(const wxDataViewItem& item, unsigned int col, bool enabled);
 
 	// Base class implementation / overrides
 
-	virtual bool HasDefaultCompare() const override;
-	virtual unsigned int GetColumnCount() const override;
+	bool HasDefaultCompare() const override;
+	unsigned int GetColumnCount() const override;
 
     // return type as reported by wxVariant
-    virtual wxString GetColumnType(unsigned int col) const override;
+    wxString GetColumnType(unsigned int col) const override;
 
     // get value into a wxVariant
-    virtual void GetValue(wxVariant &variant,
+    void GetValue(wxVariant &variant,
                           const wxDataViewItem &item, unsigned int col) const override;
-	virtual bool SetValue(const wxVariant &variant,
+	bool SetValue(const wxVariant &variant,
                           const wxDataViewItem &item,
                           unsigned int col) override;
 
-	virtual bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const override;
+	bool GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const override;
 
-	virtual wxDataViewItem GetParent(const wxDataViewItem &item) const override;
-    virtual bool IsContainer(const wxDataViewItem& item) const override;
+	wxDataViewItem GetParent(const wxDataViewItem &item) const override;
+    bool IsContainer(const wxDataViewItem& item) const override;
 
-	virtual unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const override;
-	virtual wxDataViewItem GetRoot();
+    bool HasContainerColumns(const wxDataViewItem&) const override;
 
-	virtual bool IsListModel() const override;
+	unsigned int GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const override;
+	wxDataViewItem GetRoot();
 
-	virtual int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
+	bool IsListModel() const override;
+
+	int Compare(const wxDataViewItem& item1, const wxDataViewItem& item2,
                         unsigned int column, bool ascending) const override;
 
     // Forces client data views to refresh this subtree by sending add/remove events
     // for each of the children of the given item
-    virtual void SendSubtreeRefreshEvents(wxDataViewItem& parentItem);
+    void SendSubtreeRefreshEvents(wxDataViewItem& parentItem);
 
 protected:
 	// Returns a reference to the actual rootnode, only allowed for use in subclasses
-	virtual const NodePtr& getRootNode() const;
+	const NodePtr& getRootNode() const;
 
 protected:
 	void ForeachNodeRecursive(const TreeModel::NodePtr& node, const VisitFunction& visitFunction);

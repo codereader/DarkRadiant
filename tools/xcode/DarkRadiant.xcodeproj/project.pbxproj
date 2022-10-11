@@ -634,6 +634,8 @@
 		3A38328D28DDDAE40049C4A1 /* FxAction.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38328728DDDAE30049C4A1 /* FxAction.h */; };
 		3A38328E28DDDAE40049C4A1 /* FxDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38328828DDDAE30049C4A1 /* FxDeclaration.cpp */; };
 		3A38328F28DDDAE40049C4A1 /* FxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38328928DDDAE40049C4A1 /* FxManager.h */; };
+		3A38329328F32DDC0049C4A1 /* IndicatorColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38329228F32DDB0049C4A1 /* IndicatorColumn.h */; };
+		3A38329628F3383F0049C4A1 /* LegacyLayerControlDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38329528F3383F0049C4A1 /* LegacyLayerControlDialog.cpp */; };
 		3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBE263C7893000C068E /* Bitmap.h */; };
 		3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */; };
 		3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3F623B1B764008A1B2D /* ParticleEditor.cpp */; };
@@ -3691,6 +3693,9 @@
 		3A38328728DDDAE30049C4A1 /* FxAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FxAction.h; path = ../../radiantcore/fx/FxAction.h; sourceTree = SOURCE_ROOT; };
 		3A38328828DDDAE30049C4A1 /* FxDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FxDeclaration.cpp; path = ../../radiantcore/fx/FxDeclaration.cpp; sourceTree = SOURCE_ROOT; };
 		3A38328928DDDAE40049C4A1 /* FxManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FxManager.h; path = ../../radiantcore/fx/FxManager.h; sourceTree = SOURCE_ROOT; };
+		3A38329228F32DDB0049C4A1 /* IndicatorColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IndicatorColumn.h; path = ../../libs/wxutil/dataview/IndicatorColumn.h; sourceTree = SOURCE_ROOT; };
+		3A38329428F3383F0049C4A1 /* LegacyLayerControlDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyLayerControlDialog.h; path = ../../radiant/ui/layers/LegacyLayerControlDialog.h; sourceTree = SOURCE_ROOT; };
+		3A38329528F3383F0049C4A1 /* LegacyLayerControlDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LegacyLayerControlDialog.cpp; path = ../../radiant/ui/layers/LegacyLayerControlDialog.cpp; sourceTree = SOURCE_ROOT; };
 		3A8D4CBE263C7893000C068E /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../libs/wxutil/Bitmap.h; sourceTree = SOURCE_ROOT; };
 		3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../libs/wxutil/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
@@ -6205,6 +6210,7 @@
 		3AC88A9A25BC100900E6CCCE /* dataview */ = {
 			isa = PBXGroup;
 			children = (
+				3A38329228F32DDB0049C4A1 /* IndicatorColumn.h */,
 				3A383207285A12710049C4A1 /* DeclarationTreeView.cpp */,
 				3A383208285A12720049C4A1 /* DeclarationTreeView.h */,
 				3A383209285A12730049C4A1 /* ThreadedDeclarationTreePopulator.h */,
@@ -8357,6 +8363,8 @@
 		3AF744EB1E4F861B003465B5 /* layers */ = {
 			isa = PBXGroup;
 			children = (
+				3A38329528F3383F0049C4A1 /* LegacyLayerControlDialog.cpp */,
+				3A38329428F3383F0049C4A1 /* LegacyLayerControlDialog.h */,
 				3AFF05D9253AE5A4002B1472 /* CreateLayerDialog.cpp */,
 				3AFF05DA253AE5A4002B1472 /* CreateLayerDialog.h */,
 				3AF744EC1E4F861B003465B5 /* LayerContextMenu.cpp */,
@@ -9161,6 +9169,7 @@
 				3A01203E1E50278400A62BC1 /* GLWidget.h in Headers */,
 				3AC88AC025BC104300E6CCCE /* SeparatorItem.h in Headers */,
 				3A0120261E50278400A62BC1 /* ControlButton.h in Headers */,
+				3A38329328F32DDC0049C4A1 /* IndicatorColumn.h in Headers */,
 				3A01205D1E50278400A62BC1 /* SerialisableWidgets.h in Headers */,
 				3A01204C1E50278400A62BC1 /* MouseButton.h in Headers */,
 				3AFF063C253AE829002B1472 /* GLContext.h in Headers */,
@@ -10702,6 +10711,7 @@
 				3AFF05CC253AE546002B1472 /* FilterUserInterface.cpp in Sources */,
 				3AF746491E4F861C003465B5 /* BulgePatchDialog.cpp in Sources */,
 				3AE6F344239F4FE1008A1B2D /* Toggle.cpp in Sources */,
+				3A38329628F3383F0049C4A1 /* LegacyLayerControlDialog.cpp in Sources */,
 				3AE5C2A326392DB300643850 /* SoundShaderPreview.cpp in Sources */,
 				3AF746461E4F861C003465B5 /* Overlay.cpp in Sources */,
 				3AE5C30126392F2A00643850 /* MapStatistics.cpp in Sources */,

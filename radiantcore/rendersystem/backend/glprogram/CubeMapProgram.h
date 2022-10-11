@@ -1,6 +1,7 @@
 #pragma once
 
 #include "GLSLProgramBase.h"
+#include "math/Vector3.h"
 
 namespace render
 {

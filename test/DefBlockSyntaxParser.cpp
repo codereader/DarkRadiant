@@ -289,11 +289,18 @@ TEST_F(DefBlockSyntaxParserTest, ReconstructFileFromSyntaxTree)
     checkDeclFileReconstruction("testdecls/removal_tests.decl");
     checkDeclFileReconstruction("testdecls/removal_tests.decl");
 
+    // These two contain malformed decls at the bottom of the file
+    checkDeclFileReconstruction("testdecls/syntax_parser_test1.decl");
+    checkDeclFileReconstruction("testdecls/syntax_parser_test2.decl");
+    // Unfinished comment block at the end
+    checkDeclFileReconstruction("testdecls/syntax_parser_test3.decl");
+
     checkDeclFileReconstruction("particles/testparticles.prt");
     
     checkDeclFileReconstruction("materials/parsertest.mtr");
     checkDeclFileReconstruction("materials/example.mtr");
     checkDeclFileReconstruction("materials/tdm_internal_engine.mtr");
+    checkDeclFileReconstruction("materials/null_byte_at_the_end.mtr");
 
     checkDeclFileReconstruction("def/base.def");
     checkDeclFileReconstruction("def/tdm_ai.def");
@@ -550,6 +557,36 @@ TEST_F(DefBlockSyntaxParserTest, ParseIncompleteBlock)
         diffusemap _white)";
 
     parseBlock(testString, "something", "_white");
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseTrailingNullByte)
+{
+    std::string testString = "testdecl something {\n"
+        "         diffusemap _white\n}\n\n\n";
+    testString.append({ '\0' });
+
+    parser::DefBlockSyntaxParser<const std::string> parser(testString);
+    auto syntaxTree = parser.parse();
+
+    // Ensure we don't have any empty nodes in the syntax tree
+    for (const auto& syntaxNode : syntaxTree->getRoot()->getChildren())
+    {
+        EXPECT_TRUE(syntaxNode) << "Found an empty node in the syntax tree";
+    }
+}
+
+TEST_F(DefBlockSyntaxParserTest, ParseTrailingNullByte2)
+{
+    std::ifstream stream(_context.getTestProjectPath() + "materials/null_byte_at_the_end.mtr");
+
+    parser::DefBlockSyntaxParser<std::istream> parser(stream);
+    auto syntaxTree = parser.parse();
+
+    // Ensure we don't have any empty nodes in the syntax tree
+    for (const auto& syntaxNode : syntaxTree->getRoot()->getChildren())
+    {
+        EXPECT_TRUE(syntaxNode);
+    }
 }
 
 }

@@ -39,7 +39,7 @@ public:
         _targetManager = GlobalEntityModule().createTargetManager();
         _selectionGroupManager = GlobalSelectionGroupModule().createSelectionGroupManager();
         _selectionSetManager = GlobalSelectionSetModule().createSelectionSetManager();
-        _layerManager = GlobalLayerModule().createLayerManager();
+        _layerManager = GlobalLayerModule().createLayerManager(*this);
         _undoSystem = GlobalUndoSystemFactory().createUndoSystem();
     }
 

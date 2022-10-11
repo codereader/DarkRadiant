@@ -136,32 +136,29 @@ public:
 	/**
 	 * greebo: Queries the visibility of the given layer.
 	 */
-	virtual bool layerIsVisible(const std::string& layerName) = 0;
 	virtual bool layerIsVisible(int layerID) = 0;
 
 	/**
 	 * greebo: Sets the visibility of the given layer.
+	 * This operation will affect all child layers that might be
+	 * assigned to this one, recursively.
 	 */
-	virtual void setLayerVisibility(const std::string& layerName, bool visible) = 0;
 	virtual void setLayerVisibility(int layerID, bool visible) = 0;
 
 	/**
 	 * greebo: Traverses the selection and adds each node to the given layer.
 	 */
-	virtual void addSelectionToLayer(const std::string& layerName) = 0;
 	virtual void addSelectionToLayer(int layerID) = 0;
 
 	/**
 	 * greebo: Moves all selected nodes to the given layer. This implicitly
 	 *         removes the nodes from all other layers.
 	 */
-	virtual void moveSelectionToLayer(const std::string& layerName) = 0;
 	virtual void moveSelectionToLayer(int layerID) = 0;
 
 	/**
 	 * greebo: Removes the selected nodes from the given layers.
 	 */
-	virtual void removeSelectionFromLayer(const std::string& layerName) = 0;
 	virtual void removeSelectionFromLayer(int layerID) = 0;
 
 	/**
@@ -172,7 +169,7 @@ public:
 	 * current layer settings resulted to "invisible" and the
 	 * node was therefore hidden.
 	 */
-	virtual bool updateNodeVisibility(const scene::INodePtr& node) = 0;
+	virtual bool updateNodeVisibility(const INodePtr& node) = 0;
 
 	/**
 	 * greebo: Sets the selection status of the entire layer.
@@ -182,6 +179,33 @@ public:
 	 * should be de-selected.
 	 */
 	virtual void setSelected(int layerID, bool selected) = 0;
+
+    /**
+     * Returns the parent layer ID of the layer identified by the given ID.
+     * Will return -1 if the given layer doesn't have a parent or doesn't exist.
+     */
+    virtual int getParentLayer(int layerId) = 0;
+
+    /**
+     * Sets the parent of the given child layer, replacing any previous parent.
+     *
+     * Any layer can be made a child of another layer, as long as the formed
+     * tree is staying sane (no recursions).
+     * Setting a parent layer ID of -1 will remove the parent and make this
+     * a top-level layer.
+     *
+     * An attempt to form an invalid operation (like modifying the default layer
+     * or forming a recursion) will throw a std::runtime_error.
+     */
+    virtual void setParentLayer(int childLayerId, int parentLayerId) = 0;
+
+    /**
+     * Returns true if the given parentLayerId is part of the ancestry of the
+     * given candidateLayerId (the node itself is not part of the ancestry).
+     *
+     * Returns false if any of the given IDs is -1.
+     */
+    virtual bool layerIsChildOf(int candidateLayerId, int parentLayerId) = 0;
 
 	/**
 	 * A signal for client code to get notified about layer creation,
@@ -193,6 +217,11 @@ public:
 	 * Fired whenever visibility of a layer has been changed.
 	 */
 	virtual sigc::signal<void> signal_layerVisibilityChanged() = 0;
+
+    /**
+     * Fired whenever a parent of a layer has been changed.
+     */
+    virtual sigc::signal<void> signal_layerHierarchyChanged() = 0;
 
 	/**
 	 * Public signal to get notified about layer membership changes,
@@ -208,14 +237,17 @@ class ILayerModule :
 	public RegisterableModule
 {
 public:
-	virtual ~ILayerModule() {}
+    ~ILayerModule() override {}
 
-	virtual ILayerManager::Ptr createLayerManager() = 0;
+    /**
+     * Creates a new layer manager instance associated to the given scene (root) node
+     */
+    virtual ILayerManager::Ptr createLayerManager(INode& rootNode) = 0;
 };
 
 } // namespace scene
 
-const char* const MODULE_LAYERS("LayerModule");
+constexpr const char* const MODULE_LAYERS("LayerModule");
 
 inline scene::ILayerModule& GlobalLayerModule()
 {

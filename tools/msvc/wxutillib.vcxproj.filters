@@ -188,6 +188,9 @@
     <ClInclude Include="..\..\libs\wxutil\decl\DeclarationSelectorDialog.h">
       <Filter>decl</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\dataview\IndicatorColumn.h">
+      <Filter>dataview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

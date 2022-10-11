@@ -1,5 +1,6 @@
 #include "LightNode.h"
 
+#include "igrid.h"
 #include "ishaders.h"
 #include "icolourscheme.h"
 #include "../EntitySettings.h"

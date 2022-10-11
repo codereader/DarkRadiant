@@ -1,5 +1,6 @@
 #include "SpeakerRenderables.h"
 
+#include "ientity.h"
 #include "render.h"
 
 namespace entity

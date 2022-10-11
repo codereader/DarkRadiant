@@ -1,0 +1,40 @@
+
+// Preprocessor definitions
+#define WIDTH 633
+#define HEIGHT 211
+
+// A multi-line preprocessor macro
+#define SOME_MACRO forceaspectwidth  WIDTH  \
+                   forceaspectheight HEIGHT
+
+windowDef Contents
+{
+	// Use the preprocessor macro we defined earlier
+	SOME_MACRO
+
+	// Include a windowDef
+	#include "guis/parse_test_include2.guicode"
+	
+	// Include it a second time, this should not have any effect
+	#include "guis/parse_test_include2.guicode"
+}
+
+// Un-define the macro
+#undef WIDTH
+
+// Since we undefined the macro, this should be gone
+#ifdef WIDTH
+	windowDef ThisShouldNotAppear
+	{
+		SOME_MACRO
+	}
+#else
+	windowDef ThisShouldAppear
+	{}
+#endif
+
+// Check the #ifndef expression
+#ifndef WIDTH
+	windowDef ThisShouldAppearAsWell
+	{}
+#endif

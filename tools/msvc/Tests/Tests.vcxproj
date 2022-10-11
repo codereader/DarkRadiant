@@ -74,6 +74,7 @@
     <ClInclude Include="..\..\..\test\TestContext.h" />
     <ClInclude Include="..\..\..\test\TestLogFile.h" />
     <ClInclude Include="..\..\..\test\testutil\CommandFailureHelper.h" />
+    <ClInclude Include="..\..\..\test\testutil\FileSaveConfirmationHelper.h" />
     <ClInclude Include="..\..\..\test\testutil\MapOperationMonitor.h" />
     <ClInclude Include="..\..\..\test\testutil\RenderUtils.h" />
     <ClInclude Include="..\..\..\test\testutil\TemporaryFile.h" />
@@ -87,6 +88,7 @@
     <ClCompile Include="..\..\..\test\Basic.cpp" />
     <ClCompile Include="..\..\..\test\Brush.cpp" />
     <ClCompile Include="..\..\..\test\Camera.cpp" />
+    <ClCompile Include="..\..\..\test\CodeTokeniser.cpp" />
     <ClCompile Include="..\..\..\test\ColourSchemes.cpp" />
     <ClCompile Include="..\..\..\test\CommandSystem.cpp" />
     <ClCompile Include="..\..\..\test\ContinuousBuffer.cpp" />

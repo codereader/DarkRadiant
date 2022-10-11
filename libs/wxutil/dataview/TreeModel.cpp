@@ -701,6 +701,11 @@ bool TreeModel::IsContainer(const wxDataViewItem& item) const
 #endif
 }
 
+bool TreeModel::HasContainerColumns(const wxDataViewItem&) const
+{
+    return !_isListModel; // we want all columns to show even if the item has children
+}
+
 unsigned int TreeModel::GetChildren(const wxDataViewItem& item, wxDataViewItemArray& children) const
 {
 	// Requests for invalid items are asking for our root children, actually

@@ -1,6 +1,7 @@
 #include "CubeMapProgram.h"
 
 #include "itextstream.h"
+#include "GLProgramAttributes.h"
 #include "debugging/gl.h"
 #include "igl.h"
 #include "../GLProgramFactory.h"

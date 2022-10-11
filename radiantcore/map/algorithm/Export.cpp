@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include "i18n.h"
+#include "ieclass.h"
 #include "ifilesystem.h"
 #include "imodelcache.h"
 #include "ientity.h"

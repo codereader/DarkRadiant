@@ -100,9 +100,9 @@ public:
 		);
 	}
 
-	ILayerManager::Ptr createLayerManager() override
+	ILayerManager::Ptr createLayerManager(INode& rootNode) override
 	{
-		return std::make_shared<LayerManager>();
+		return std::make_shared<LayerManager>(rootNode);
 	}
 
 private:

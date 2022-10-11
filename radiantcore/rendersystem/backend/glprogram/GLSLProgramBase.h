@@ -2,6 +2,7 @@
 
 #include "iglprogram.h"
 #include "igl.h"
+#include "math/Matrix4.h"
 
 namespace render
 {

@@ -14,10 +14,12 @@ namespace scene
 
 namespace
 {
-	const char* const NODE_TO_LAYER_MAPPING = "NodeToLayerMapping";
-	const char* const LAYER = "Layer";
-	const char* const LAYERS = "Layers";
-	const char* const NODE = "Node";
+	constexpr const char* const NODE_TO_LAYER_MAPPING = "NodeToLayerMapping";
+	constexpr const char* const LAYER_HIERARCHY = "LayerHierarchy";
+	constexpr const char* const LAYER = "Layer";
+	constexpr const char* const LAYERS = "Layers";
+	constexpr const char* const NODE = "Node";
+	constexpr const char* const PARENT = "Parent";
 }
 
 LayerInfoFileModule::LayerInfoFileModule() :
@@ -38,9 +40,12 @@ void LayerInfoFileModule::clear()
 	_output.clear();
 	_layerNameBuffer.str(std::string());
 	_layerNameBuffer.clear();
+    _layerHierarchyBuffer.str(std::string());
+    _layerHierarchyBuffer.clear();
 
 	_layerNames.clear();
 	_layerMappings.clear();
+	_layerParentIds.clear();
 }
 
 void LayerInfoFileModule::onInfoFileSaveStart()
@@ -54,13 +59,22 @@ void LayerInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
 	_layerNameBuffer << "\t" << LAYERS << std::endl;
 	_layerNameBuffer << "\t{" << std::endl;
 
+    // Open a separate block for the parent-child relationships
+    _layerHierarchyBuffer << "\t" << LAYER_HIERARCHY << std::endl;
+    _layerHierarchyBuffer << "\t{" << std::endl;
+
 	// Visit all layers and write them to the stream
-	root->getLayerManager().foreachLayer([&](int layerId, const std::string& layerName)
+    auto& layerManager = root->getLayerManager();
+
+    layerManager.foreachLayer([&](int layerId, const std::string& layerName)
 	{
 		_layerNameBuffer << "\t\t" << LAYER << " " << layerId << " { " << layerName << " }" << std::endl;
+        _layerHierarchyBuffer << "\t\t" << LAYER << " " << layerId << " " << PARENT << " { " << layerManager.getParentLayer(layerId) << " }" << std::endl;
 	});
 
+    // Close both blocks
 	_layerNameBuffer << "\t}" << std::endl;
+    _layerHierarchyBuffer << "\t}" << std::endl;
 }
 
 void LayerInfoFileModule::onFinishSaveMap(const scene::IMapRootNodePtr& root)
@@ -85,10 +99,10 @@ void LayerInfoFileModule::saveNode(const INodePtr& node)
 	// Open a Node block
 	_output << "\t\t" << NODE << " { ";
 
-	scene::LayerList layers = node->getLayers();
+	auto layers = node->getLayers();
 
 	// Write a space-separated list of node IDs
-	for (const scene::LayerList::value_type& i : layers)
+	for (const auto& i : layers)
 	{
 		_output << i << " ";
 	}
@@ -108,6 +122,9 @@ void LayerInfoFileModule::writeBlocks(std::ostream& stream)
 {
 	// Write the layer names block
 	stream << _layerNameBuffer.str();
+
+    // Write the layer hierarchy block
+	stream << _layerHierarchyBuffer.str();
 
 	// Write the NodeToLayerMapping block
 	stream << "\t" << NODE_TO_LAYER_MAPPING << std::endl;
@@ -137,7 +154,7 @@ void LayerInfoFileModule::onInfoFileLoadStart()
 
 bool LayerInfoFileModule::canParseBlock(const std::string& blockName)
 {
-	return blockName == LAYERS || blockName == NODE_TO_LAYER_MAPPING;
+	return blockName == LAYERS || blockName == NODE_TO_LAYER_MAPPING || blockName == LAYER_HIERARCHY;
 }
 
 void LayerInfoFileModule::parseBlock(const std::string& blockName, parser::DefTokeniser& tok)
@@ -151,6 +168,10 @@ void LayerInfoFileModule::parseBlock(const std::string& blockName, parser::DefTo
 	else if (blockName == NODE_TO_LAYER_MAPPING)
 	{
 		parseNodeToLayerMapping(tok);
+	}
+    else if (blockName == LAYER_HIERARCHY)
+	{
+		parseLayerHierarchy(tok);
 	}
 }
 
@@ -182,9 +203,9 @@ void LayerInfoFileModule::parseLayerNames(parser::DefTokeniser& tok)
 				token = tok.nextToken();
 			}
 
-			rMessage() << "[InfoFile]: Parsed layer #" << layerID << " with name " << name << std::endl;
+            rDebug() << "[InfoFile]: Parsed layer #" << layerID << " with name " << name << std::endl;
 
-			_layerNames.insert(LayerNameMap::value_type(layerID, name));
+			_layerNames.emplace(layerID, name);
 
 			continue;
 		}
@@ -233,17 +254,61 @@ void LayerInfoFileModule::parseNodeToLayerMapping(parser::DefTokeniser& tok)
 	}
 }
 
+void LayerInfoFileModule::parseLayerHierarchy(parser::DefTokeniser& tok)
+{
+    // The opening brace
+    tok.assertNextToken("{");
+
+    while (tok.hasMoreTokens())
+    {
+        std::string token = tok.nextToken();
+
+        if (token == LAYER)
+        {
+            int layerId = string::convert<int>(tok.nextToken());
+
+            // The block just contains the parent ID
+            tok.assertNextToken(PARENT);
+            tok.assertNextToken("{");
+            auto parentLayerId = string::convert<int>(tok.nextToken());
+            tok.assertNextToken("}");
+
+            if (parentLayerId != -1)
+            {
+                rDebug() << "[InfoFile]: Layer #" << layerId << " is a child of " << parentLayerId << std::endl;
+            }
+
+            _layerParentIds.emplace(layerId, parentLayerId);
+
+            continue;
+        }
+
+        if (token == "}")
+        {
+            break;
+        }
+    }
+}
+
 void LayerInfoFileModule::applyInfoToScene(const IMapRootNodePtr& root, const map::NodeIndexMap& nodeMap)
 {
-	// Create the layers according to the data found in the map information file
-	for (const LayerNameMap::value_type& i : _layerNames)
-	{
-		// Create the named layer with the saved ID
-		root->getLayerManager().createLayer(i.second, i.first);
-	}
+    auto& layerManager = root->getLayerManager();
+
+    // Create the layers according to the data found in the map information file
+    for (const auto& [id, name] : _layerNames)
+    {
+        // Create the named layer with the saved ID
+        layerManager.createLayer(name, id);
+    }
+
+    // Assigning child and parent layers needs to happen after all layers have been created
+    for (const auto& [childLayerId, parentLayerId] : _layerParentIds)
+    {
+        layerManager.setParentLayer(childLayerId, parentLayerId);
+    }
 
 	// Set the layer mapping iterator to the beginning
-	LayerLists::const_iterator mapping = _layerMappings.begin();
+	auto mapping = _layerMappings.begin();
 
 	// Assign the layers
 	root->foreachNode([&](const INodePtr& node)
@@ -266,9 +331,7 @@ void LayerInfoFileModule::applyInfoToScene(const IMapRootNodePtr& root, const ma
 
 		// All other node types inherit the layers from their parent node
 		// Model / particle / target line
-		scene::INodePtr parent = node->getParent();
-
-		if (parent)
+        if (auto parent = node->getParent(); parent)
 		{
 			node->assignToLayers(parent->getLayers());
 		}
@@ -276,14 +339,14 @@ void LayerInfoFileModule::applyInfoToScene(const IMapRootNodePtr& root, const ma
 		return true;
 	});
 
-	rMessage() << "Sanity-checking the layer assignments...";
+	rDebug() << "Sanity-checking the layer assignments...";
 
 	// Sanity-check the layer mapping, it's possible that some .darkradiant
 	// files are mapping nodes to non-existent layer IDs
 	LayerValidityCheckWalker checker;
 	root->traverseChildren(checker);
 
-	rMessage() << "done, had to fix " << checker.getNumFixed() << " assignments." << std::endl;
+	rDebug() << "done, had to fix " << checker.getNumFixed() << " assignments." << std::endl;
 }
 
 void LayerInfoFileModule::onInfoFileLoadFinished()

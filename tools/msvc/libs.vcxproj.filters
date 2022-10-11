@@ -400,6 +400,9 @@
       <Filter>parser</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\ModelExportOptions.h" />
+    <ClInclude Include="..\..\libs\parser\GuiTokeniser.h">
+      <Filter>parser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

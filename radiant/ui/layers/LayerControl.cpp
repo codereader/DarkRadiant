@@ -16,7 +16,7 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
-#include "LayerControlDialog.h"
+#include "LegacyLayerControlDialog.h"
 
 namespace ui
 {
@@ -242,7 +242,7 @@ void LayerControl::onLayerSelect(wxCommandEvent& ev)
 		GlobalMapModule().getRoot()->getLayerManager().setActiveLayer(_layerID);
 
 		// Update our icon set
-		LayerControlDialog::Instance().refresh();
+		LegacyLayerControlDialog::Instance().refresh();
 
 		return;
 	}

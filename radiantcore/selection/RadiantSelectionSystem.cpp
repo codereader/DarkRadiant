@@ -798,8 +798,12 @@ void RadiantSelectionSystem::onManipulationEnd()
         GlobalSceneGraph().root()->traverse(faceSelector);
     }
 
-    // Remove all degenerated brushes from the scene graph (should emit a warning)
-    SelectionSystem::foreachSelected(RemoveDegenerateBrushWalker());
+    {
+        // Remove all degenerated brushes from the scene graph (should emit a warning)
+        // Do this in an undoable transaction we cannot be sure that one is active at this point
+        UndoableCommand cmd(_("Degenerate Brushes removed"));
+        SelectionSystem::foreachSelected(RemoveDegenerateBrushWalker());
+    }
 
     pivotChanged();
     activeManipulator->setSelected(false);

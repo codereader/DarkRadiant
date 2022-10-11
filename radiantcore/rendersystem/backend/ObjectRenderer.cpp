@@ -1,5 +1,7 @@
 #include "ObjectRenderer.h"
 
+#include "GLProgramAttributes.h"
+#include "irenderableobject.h"
 #include "math/Matrix4.h"
 #include "render/RenderVertex.h"
 

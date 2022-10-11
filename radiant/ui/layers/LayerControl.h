@@ -18,7 +18,7 @@ namespace ui
  * to control an associated layer.
  *
  * Multiple LayerControls can be packed as children into the
- * owning LayerControlDialog.
+ * owning LegacyLayerControlDialog.
  */
 class LayerControl :
 	public wxEvtHandler

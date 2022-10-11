@@ -10,6 +10,7 @@
 #include <wx/toolbar.h>
 #include <wx/menu.h>
 #include <wx/app.h>
+#include <wx/stattext.h>
 
 namespace ui
 {

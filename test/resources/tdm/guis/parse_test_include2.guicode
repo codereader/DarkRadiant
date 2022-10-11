@@ -1,0 +1,12 @@
+#ifndef _PARSE_TEST_INCLUDE_2_PROCESSED_
+#define _PARSE_TEST_INCLUDE_2_PROCESSED_
+
+/**
+ * Test comment
+ */
+windowDef IncludedWindow
+{
+    rect 0, 0, 640, 480
+}
+
+#endif

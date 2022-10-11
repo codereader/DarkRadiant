@@ -53,6 +53,14 @@ public:
         return italic;
     }
 
+    static wxDataViewItemAttr ActiveItemStyle()
+    {
+        wxDataViewItemAttr bold;
+        bold.SetBold(true);
+
+        return bold;
+    }
+
     // Styles used by the merge action visualisation in data views
 
     static void ApplyKeyValueAddedStyle(wxDataViewItemAttr& attr)

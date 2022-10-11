@@ -24,7 +24,7 @@ RootNode::RootNode(const std::string& name) :
 	_selectionSetManager = GlobalSelectionSetModule().createSelectionSetManager();
 	assert(_selectionSetManager);
 
-	_layerManager = GlobalLayerModule().createLayerManager();
+	_layerManager = GlobalLayerModule().createLayerManager(*this);
 	assert(_layerManager);
 
     _undoSystem = GlobalUndoSystemFactory().createUndoSystem();

@@ -3,6 +3,7 @@
 #include "ifilesystem.h"
 #include "ifiletypes.h"
 #include "itextstream.h"
+#include "ui/imainframe.h"
 #include "i18n.h"
 #include "iradiant.h"
 #include "imap.h"

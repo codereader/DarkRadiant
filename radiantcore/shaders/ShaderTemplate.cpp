@@ -1384,6 +1384,8 @@ void ShaderTemplate::determineCoverage()
 
 void ShaderTemplate::addLayer(const Doom3ShaderLayer::Ptr& layer)
 {
+    ensureParsed();
+
     // Add the layer
     _layers.emplace_back(layer);
 

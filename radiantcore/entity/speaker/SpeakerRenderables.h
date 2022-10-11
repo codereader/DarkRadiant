@@ -4,6 +4,8 @@
 #include "math/Vector3.h"
 #include "render/RenderableGeometry.h"
 
+class IEntityNode;
+
 namespace entity
 {
 
