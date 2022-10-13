@@ -1,3 +1,10 @@
+darkradiant (3.4.0~jammy1) jammy; urgency=medium
+
+  * Layers can now be organised into a tree rather than a flat list.
+  * Several bug fixes.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 11 Oct 2022 20:11:03 +0100
+
 darkradiant (3.3.0~jammy1) jammy; urgency=medium
 
   * New FX chooser and support for parsing FX declarations.
