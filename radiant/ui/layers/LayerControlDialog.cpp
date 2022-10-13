@@ -65,7 +65,7 @@ void LayerControlDialog::populateWindow()
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &LayerControlDialog::onItemActivated, this);
-    _layersView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &LayerControlDialog::onItemToggled, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &LayerControlDialog::onItemValueChanged, this);
     _layersView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &LayerControlDialog::onItemSelected, this);
 
     // Configure drag and drop
@@ -582,17 +582,23 @@ void LayerControlDialog::onItemActivated(wxDataViewEvent& ev)
     GlobalMapModule().getRoot()->getLayerManager().setSelected(layerId, selected);
 }
 
-void LayerControlDialog::onItemToggled(wxDataViewEvent& ev)
+void LayerControlDialog::onItemValueChanged(wxDataViewEvent& ev)
 {
-    if (!GlobalMapModule().getRoot()) return;
+    auto root = GlobalMapModule().getRoot();
+    if (!root) return;
 
-    if (ev.GetDataViewColumn() != nullptr &&
-        static_cast<int>(ev.GetDataViewColumn()->GetModelColumn()) == _columns.visible.getColumnIndex())
+    // In wxGTK the column shipped with the even doesn't seem to be correct
+    // So we just check if the value in the model differs from the layer's visibility
+    
+    wxutil::TreeModel::Row row(ev.GetItem(), *_layerStore);
+
+    auto visible = row[_columns.visible].getBool();
+    auto layerId = row[_columns.id].getInteger();
+
+    // Check if the visibility has changed in the model
+    if (root->getLayerManager().layerIsVisible(layerId) != visible)
     {
-        // Model value in the boolean column has changed, this means the checkbox has been toggled
-        wxutil::TreeModel::Row row(ev.GetItem(), *_layerStore);
-
-        GlobalMapModule().getRoot()->getLayerManager().setLayerVisibility(row[_columns.id].getInteger(), row[_columns.visible].getBool());
+        root->getLayerManager().setLayerVisibility(layerId, visible);
     }
 }
 

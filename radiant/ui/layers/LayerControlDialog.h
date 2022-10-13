@@ -119,7 +119,7 @@ private:
 	void disconnectFromMapRoot();
 
     void onItemActivated(wxDataViewEvent& ev);
-    void onItemToggled(wxDataViewEvent& ev);
+    void onItemValueChanged(wxDataViewEvent& ev);
     void onItemSelected(wxDataViewEvent& ev);
     void onBeginDrag(wxDataViewEvent& ev);
     void onDropPossible(wxDataViewEvent& ev);
