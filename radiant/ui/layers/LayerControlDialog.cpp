@@ -723,13 +723,6 @@ void LayerControlDialog::onDropPossible(wxDataViewEvent& ev)
         ev.Veto();
         return;
     }
-
-    // Also don't allow dropping if the target is already an immediate parent
-    if (layerManager.getParentLayer(selectedLayerId) == targetLayerId)
-    {
-        ev.Veto();
-        return;
-    }
 }
 
 void LayerControlDialog::onDrop(wxDataViewEvent& ev)
@@ -764,11 +757,20 @@ void LayerControlDialog::onDrop(wxDataViewEvent& ev)
         return;
     }
 
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    if (layerManager.getParentLayer(sourceLayerId) == targetLayerId)
+    {
+        // Dragging a child onto its immediate parent will un-parent it
+        // Redirect the operation to the target layer's' parent
+        targetLayerId = layerManager.getParentLayer(targetLayerId);
+    }
+
     rMessage() << "Assigning layer " << sourceLayerId << " to parent layer " << targetLayerId << std::endl;
 
     try
     {
-        auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+        
         layerManager.setParentLayer(sourceLayerId, targetLayerId);
     }
     catch (const std::invalid_argument& ex)
