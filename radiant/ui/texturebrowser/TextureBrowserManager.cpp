@@ -5,6 +5,7 @@
 #include <sigc++/functors/mem_fun.h>
 #include "i18n.h"
 #include "ui/ieventmanager.h"
+#include "ui/iuserinterface.h"
 #include "ishaderclipboard.h"
 #include "icommandsystem.h"
 #include "ui/igroupdialog.h"
@@ -17,8 +18,25 @@ namespace ui
 
 namespace
 {
-    const char* const MODULE_TEXTURE_BROWSER_MANAGER = "TextureBrowserManager";
+    constexpr const char* const MODULE_TEXTURE_BROWSER_MANAGER = "TextureBrowserManager";
 }
+
+class TextureBrowserControl :
+    public IUserControl
+{
+public:
+    constexpr static const char* Name = "TextureBrowser";
+
+    std::string getControlName() override
+    {
+        return Name;
+    }
+
+    wxWindow* createWidget(wxWindow* parent) override
+    {
+        return new TextureBrowser(parent);
+    }
+};
 
 TextureBrowserManager::TextureBrowserManager()
 {}
@@ -100,6 +118,7 @@ const StringSet& TextureBrowserManager::getDependencies() const
         _dependencies.insert(MODULE_EVENTMANAGER);
         _dependencies.insert(MODULE_COMMANDSYSTEM);
         _dependencies.insert(MODULE_SHADERCLIPBOARD);
+        _dependencies.insert(MODULE_USERINTERFACE);
     }
 
     return _dependencies;
@@ -112,17 +131,21 @@ void TextureBrowserManager::initialiseModule(const IApplicationContext& ctx)
     GlobalEventManager().addRegistryToggle("TextureBrowserShowFavouritesOnly", RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
     GlobalEventManager().addRegistryToggle("TextureBrowserShowNames",
                                            RKEY_TEXTURES_SHOW_NAMES);
-    GlobalCommandSystem().addCommand("ViewTextures", TextureBrowserManager::toggleGroupDialogTexturesTab);
+    GlobalCommandSystem().addCommand("ViewTextures", toggleGroupDialogTexturesTab);
 
     registerPreferencePage();
 
     _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
         sigc::mem_fun(this, &TextureBrowserManager::onShaderClipboardSourceChanged)
     );
+
+    // Register the texture browser
+    GlobalUserInterface().registerControl(std::make_shared<TextureBrowserControl>());
 }
 
 void TextureBrowserManager::shutdownModule()
 {
+    GlobalUserInterface().unregisterControl(TextureBrowserControl::Name);
     _shaderClipboardConn.disconnect();
 }
 
