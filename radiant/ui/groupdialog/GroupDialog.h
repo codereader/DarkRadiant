@@ -8,7 +8,7 @@
 
 #include <wx/windowptr.h>
 
-class wxNotebook;
+class wxAuiNotebook;
 class wxBookCtrlEvent;
 class wxImageList;
 
@@ -43,7 +43,7 @@ class GroupDialog :
 	// The page number of the currently active page widget
 	int _currentPage;
 
-	wxWindowPtr<wxNotebook> _notebook;
+	wxWindowPtr<wxAuiNotebook> _notebook;
 	std::unique_ptr<wxImageList> _imageList;
 
 private:

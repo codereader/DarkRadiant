@@ -7,7 +7,7 @@
 #include <vector>
 
 #include <wx/wxprec.h>
-#include <wx/notebook.h>
+#include <wx/aui/auibook.h>
 #include <wx/bookctrl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
@@ -88,9 +88,9 @@ void GroupDialog::populateWindow()
 	wxBoxSizer* vbox = new wxBoxSizer(wxVERTICAL);
 	panel->GetSizer()->Add(vbox, 1, wxEXPAND);
 
-	_notebook = new wxNotebook(panel, wxID_ANY, 
-		wxDefaultPosition, wxDefaultSize, wxNB_TOP, "GroupDialogNB");
-
+	_notebook = new wxAuiNotebook(panel, wxID_ANY, 
+		wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS);
+    _notebook->SetName("GroupDialogNB");
 	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
 		wxBookCtrlEventHandler(GroupDialog::onPageSwitch), NULL, this);
 
