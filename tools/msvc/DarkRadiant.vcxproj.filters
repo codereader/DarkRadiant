@@ -205,9 +205,6 @@
     <ClCompile Include="..\..\radiant\camera\CamWnd.cpp">
       <Filter>src\camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\camera\FloatingCamWnd.cpp">
-      <Filter>src\camera</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\textool\TexTool.cpp">
       <Filter>src\textool</Filter>
     </ClCompile>
@@ -724,9 +721,6 @@
       <Filter>src\camera</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\CamWnd.h">
-      <Filter>src\camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\camera\FloatingCamWnd.h">
       <Filter>src\camera</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\textool\TexTool.h">

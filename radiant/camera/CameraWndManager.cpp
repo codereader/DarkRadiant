@@ -1,7 +1,7 @@
 #include "CameraWndManager.h"
 
 #include "imousetoolmanager.h"
-#include "iselection.h"
+#include "ui/iuserinterface.h"
 #include "itextstream.h"
 #include "xmlutil/Node.h"
 
@@ -17,7 +17,6 @@
 #include "tools/FreeMoveTool.h"
 #include "tools/PanViewTool.h"
 
-#include "FloatingCamWnd.h"
 #include <functional>
 
 namespace ui
@@ -25,11 +24,32 @@ namespace ui
 
 namespace
 {
-    const float DEFAULT_STRAFE_SPEED = 0.65f;
-    const float DEFAULT_FORWARD_STRAFE_FACTOR = 1.0f;
+    constexpr float DEFAULT_STRAFE_SPEED = 0.65f;
+    constexpr float DEFAULT_FORWARD_STRAFE_FACTOR = 1.0f;
 }
 
-// Constructor
+class CameraControl :
+    public IUserControl
+{
+private:
+    CameraWndManager& _owner;
+
+public:
+    CameraControl(CameraWndManager& owner) :
+        _owner(owner)
+    {}
+
+    std::string getControlName() override
+    {
+        return UserControl::Camera;
+    }
+
+    wxWindow* createWidget(wxWindow* parent) override
+    {
+        return new CamWnd(parent);
+    }
+};
+
 CameraWndManager::CameraWndManager() :
 	_activeCam(-1),
     _toggleStrafeModifierFlags(wxutil::Modifier::NONE),
@@ -78,14 +98,14 @@ void CameraWndManager::registerCommands()
 	GlobalEventManager().addKeyEvent("CameraMoveDown", std::bind(&CameraWndManager::onMoveDownKey, this, std::placeholders::_1));
 }
 
-CamWndPtr CameraWndManager::getActiveCamWnd()
+CamWnd* CameraWndManager::getActiveCamWnd()
 {
 	// Sanity check in debug builds
 	assert(_activeCam == -1 || _cameras.find(_activeCam) != _cameras.end());
 
-	if (_activeCam == -1) return CamWndPtr();
+	if (_activeCam == -1) return nullptr;
 
-	CamWndPtr cam = _cameras[_activeCam].lock();
+	auto cam = _cameras[_activeCam];
 
 	if (!cam)
 	{
@@ -105,19 +125,17 @@ CamWndPtr CameraWndManager::getActiveCamWnd()
 
 		if (_activeCam != -1)
 		{
-			cam = _cameras[_activeCam].lock();
+			cam = _cameras[_activeCam];
 		}
 	}
 
 	return cam;
 }
 
-CamWndPtr CameraWndManager::createCamWnd(wxWindow* parent)
+CamWnd* CameraWndManager::createCamWnd(wxWindow* parent)
 {
 	// Instantantiate a new camera
-	CamWndPtr cam(new CamWnd(parent));
-
-	_cameras.insert(CamWndMap::value_type(cam->getId(), cam));
+	auto cam = new CamWnd(parent);
 
 	if (_activeCam == -1) {
 		_activeCam = cam->getId();
@@ -126,9 +144,16 @@ CamWndPtr CameraWndManager::createCamWnd(wxWindow* parent)
 	return cam;
 }
 
-void CameraWndManager::removeCamWnd(int id) {
+void CameraWndManager::addCamWnd(int id, CamWnd* cam)
+{
+    _cameras.insert(CamWndMap::value_type(id, cam));
+}
+
+
+void CameraWndManager::removeCamWnd(int id)
+{
 	// Find and remove the CamWnd
-	CamWndMap::iterator i = _cameras.find(id);
+	auto i = _cameras.find(id);
 
 	if (i != _cameras.end()) {
 		_cameras.erase(i);
@@ -144,22 +169,6 @@ void CameraWndManager::removeCamWnd(int id) {
 			_activeCam = -1;
 		}
 	}
-}
-
-// Construct/return a floating window containing the CamWnd widget
-FloatingCamWndPtr CameraWndManager::createFloatingWindow()
-{
-	// Create a new floating camera window widget and return it
-	auto cam = std::make_shared<FloatingCamWnd>();
-
-	_cameras.emplace(cam->getId(), cam);
-
-	if (_activeCam == -1)
-	{
-		_activeCam = cam->getId();
-	}
-
-	return cam;
 }
 
 void CameraWndManager::resetCameraAngles(const cmd::ArgumentList& args)
@@ -302,7 +311,7 @@ void CameraWndManager::moveCameraCmd(const cmd::ArgumentList& args)
 	else
 	{
 		rWarning() << "Unknown direction: " << arg << std::endl;
-		rMessage() << "Possible dDirections are: <up|down|forward|back|left|right>" << std::endl;
+		rMessage() << "Possible directions are: <up|down|forward|back|left|right>" << std::endl;
 	}
 }
 
@@ -310,7 +319,7 @@ void CameraWndManager::foreachCamWnd(const std::function<void(CamWnd&)>& action)
 {
     for (auto i = _cameras.begin(); i != _cameras.end(); /* in-loop */)
     {
-        auto cam = i->second.lock();
+        auto cam = i->second;
 
         if (!cam)
         {
@@ -453,6 +462,7 @@ const StringSet& CameraWndManager::getDependencies() const
         MODULE_RENDERSYSTEM,
         MODULE_COMMANDSYSTEM,
         MODULE_MOUSETOOLMANAGER,
+        MODULE_USERINTERFACE,
     };
 
 	return _dependencies;
@@ -486,10 +496,14 @@ void CameraWndManager::initialiseModule(const IApplicationContext& ctx)
     toolGroup.registerMouseTool(std::make_shared<PasteShaderToBrushTool>());
     toolGroup.registerMouseTool(std::make_shared<PasteShaderNameTool>());
     toolGroup.registerMouseTool(std::make_shared<JumpToObjectTool>());
+
+    GlobalUserInterface().registerControl(std::make_shared<CameraControl>(*this));
 }
 
 void CameraWndManager::shutdownModule()
 {
+    GlobalUserInterface().unregisterControl(UserControl::Camera);
+
 	CamWnd::releaseStates();
 
 	_cameras.clear();

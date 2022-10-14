@@ -204,9 +204,6 @@ void SplitPaneLayout::deconstructLayout()
 	// Delete all active views
 	GlobalXYWndManager().destroyViews();
 
-	// Delete the CamWnd
-	_camWnd.reset();
-
 	// Hide the group dialog
 	GlobalGroupDialog().hideDialogWindow();
 

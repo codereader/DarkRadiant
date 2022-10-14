@@ -1,7 +1,6 @@
 add_executable(darkradiant
                camera/CameraSettings.cpp
                camera/CamWnd.cpp
-               camera/FloatingCamWnd.cpp
                camera/CameraWndManager.cpp
                clipboard/ClipboardModule.cpp
                eventmanager/Accelerator.cpp

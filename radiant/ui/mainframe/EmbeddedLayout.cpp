@@ -107,9 +107,6 @@ void EmbeddedLayout::deactivate()
     // Delete all active views
     GlobalXYWndManager().destroyViews();
 
-    // Delete the CamWnd
-    _camWnd.reset();
-
     // Give the notebook back to the GroupDialog
     GlobalGroupDialog().reparentNotebookToSelf();
 

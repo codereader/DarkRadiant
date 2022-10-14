@@ -22,7 +22,7 @@ class SplitPaneLayout :
 {
 private:
 	// The camera view
-	CamWndPtr _camWnd;
+	CamWnd* _camWnd;
 
 	struct SplitPaneView
 	{

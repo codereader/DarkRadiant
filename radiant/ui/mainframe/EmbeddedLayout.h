@@ -20,7 +20,7 @@ class EmbeddedLayout :
 {
 private:
 	// The camera view
-	CamWndPtr _camWnd;
+	CamWnd* _camWnd;
 
 	wxutil::Splitter* _horizPane;
 	wxutil::Splitter* _groupCamPane;

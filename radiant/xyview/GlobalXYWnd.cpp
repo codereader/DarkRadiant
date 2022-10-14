@@ -653,7 +653,7 @@ Vector3 XYWndManager::getFocusPosition()
 		position = GlobalSelectionSystem().getCurrentSelectionCenter();
 	}
 	else {
-		CamWndPtr cam = GlobalCamera().getActiveCamWnd();
+		auto cam = GlobalCamera().getActiveCamWnd();
 
 		if (cam != NULL) {
 			position = cam->getCameraOrigin();

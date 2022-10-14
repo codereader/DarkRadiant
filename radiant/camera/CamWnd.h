@@ -44,7 +44,7 @@ namespace ui
 
 /// Main 3D view widget
 class CamWnd :
-    public wxEvtHandler,
+    public wxPanel,
     public camera::IFreeMoveView,
     public scene::Graph::Observer,
     public util::Noncopyable,
@@ -128,7 +128,6 @@ class CamWnd :
     std::size_t _textureChangedHandler;
 
 public:
-    // Constructor and destructor
     CamWnd(wxWindow* parent);
 
     virtual ~CamWnd();

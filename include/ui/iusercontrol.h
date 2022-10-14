@@ -31,6 +31,7 @@ public:
 // Predefined known user control names
 struct UserControl
 {
+    constexpr static const char* Camera = "Camera";
     constexpr static const char* OrthoView = "OrthoView";
     constexpr static const char* TextureBrowser = "TextureBrowser";
 };

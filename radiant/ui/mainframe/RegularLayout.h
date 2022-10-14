@@ -19,7 +19,7 @@ class RegularLayout :
 	public IMainFrameLayout
 {
 	// The camera view
-	CamWndPtr _camWnd;
+	CamWnd* _camWnd;
 
 	struct RegularView
 	{

@@ -465,7 +465,7 @@ wxToolBar* MainFrame::getToolbar(IMainFrame::Toolbar type)
     // any
     if (type == Toolbar::CAMERA)
     {
-        CamWndPtr cw = GlobalCamera().getActiveCamWnd();
+        auto cw = GlobalCamera().getActiveCamWnd();
         return cw ? cw->getToolbar() : nullptr;
     }
 

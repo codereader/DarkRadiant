@@ -65,8 +65,9 @@ inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd(wxWindow* parent) :
+    wxPanel(parent),
     MouseToolHandler(IMouseToolGroup::Type::CameraView),
-    _mainWxWidget(loadNamedPanel(parent, "CamWndPanel")),
+    _mainWxWidget(loadNamedPanel(this, "CamWndPanel")),
     _id(++_maxId),
     _view(true),
     _camera(GlobalCameraManager().createCamera(_view, std::bind(&CamWnd::requestRedraw, this, std::placeholders::_1))),
@@ -82,6 +83,9 @@ CamWnd::CamWnd(wxWindow* parent) :
     _strafe(false),
     _strafeForward(false)
 {
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    GetSizer()->Add(_mainWxWidget, 1, wxEXPAND);
+
     Bind(wxEVT_TIMER, &CamWnd::onFrame, this, _timer.GetId());
     Bind(wxEVT_TIMER, &CamWnd::onFreeMoveTimer, this, _freeMoveTimer.GetId());
     _wxGLWidget->Bind(wxEVT_IDLE, &CamWnd::onIdle, this);
@@ -133,6 +137,8 @@ CamWnd::CamWnd(wxWindow* parent) :
     GlobalRegistry().signalForKey(RKEY_ENABLE_SHADOW_MAPPING).connect(
         sigc::mem_fun(this, &CamWnd::queueDraw)
     );
+
+    GlobalCamera().addCamWnd(_id, this);
 }
 
 wxWindow* CamWnd::getMainWidget() const

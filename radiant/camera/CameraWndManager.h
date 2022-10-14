@@ -6,7 +6,6 @@
 #include "imousetoolmanager.h"
 
 #include "CamWnd.h"
-#include "FloatingCamWnd.h"
 
 class wxWindow;
 
@@ -24,7 +23,7 @@ class CameraWndManager :
 	public RegisterableModule
 {
 private:
-	typedef std::map<int, CamWndWeakPtr> CamWndMap;
+	typedef std::map<int, CamWnd*> CamWndMap;
 	CamWndMap _cameras;
 
 	// The currently active camera window (-1 if no cam active)
@@ -43,21 +42,17 @@ public:
 	/**
 	 * Returns the currently active CamWnd or NULL if none is active.
 	 */
-	CamWndPtr getActiveCamWnd();
+	CamWnd* getActiveCamWnd();
 
 	/**
 	 * Create a new camera window, ready for packing into a parent widget.
 	 */
-	CamWndPtr createCamWnd(wxWindow* parent);
+	CamWnd* createCamWnd(wxWindow* parent);
 
+    // Register the camera with the given ID
+	void addCamWnd(int id, CamWnd* cam);
 	// Remove the camwnd with the given ID
 	void removeCamWnd(int id);
-
-	/**
-	 * Get a PersistentFloatingWindow containing the CamWnd widget, creating
-	 * it if necessary.
-	 */
-	FloatingCamWndPtr createFloatingWindow();
 
 	// Resets the camera angles of the currently active Camera
 	void resetCameraAngles(const cmd::ArgumentList& args);
@@ -113,10 +108,10 @@ public:
 	void onMoveDownKey(ui::KeyEventType eventType);
 
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const IApplicationContext& ctx);
-	void shutdownModule();
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const IApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
 	// greebo: The construct method registers all the commands

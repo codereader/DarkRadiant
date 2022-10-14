@@ -20,15 +20,11 @@ typedef std::shared_ptr<AuiLayout> AuiLayoutPtr;
 /// Layout based on wxWidgets AUI (dock widget interface)
 class AuiLayout: public IMainFrameLayout
 {
-	// The camera view
-	CamWndPtr _camWnd;
-
     // Main AUI manager
     wxAuiManager _auiMgr;
 
     // List of panes managed by the AUI manager
-    using Panes = std::list<wxWindow*>;
-    Panes _panes;
+    std::list<wxWindow*> _panes;
 
     // Main constructor
     AuiLayout();

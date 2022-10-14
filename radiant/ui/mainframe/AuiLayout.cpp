@@ -55,18 +55,15 @@ std::string AuiLayout::getName()
 
 void AuiLayout::activate()
 {
-    wxFrame* topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
+    auto topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
 
     // AUI manager can't manage a Sizer, we need to create an actual wxWindow
     // container
-    wxWindow* managedArea = new wxWindow(topLevelParent, wxID_ANY);
+    auto managedArea = new wxWindow(topLevelParent, wxID_ANY);
     _auiMgr.SetManagedWindow(managedArea);
     GlobalMainFrame().getWxMainContainer()->Add(managedArea, 1, wxEXPAND);
 
-    // Create a new camera window and parent it
-    _camWnd = GlobalCamera().createCamWnd(managedArea);
-
-    wxPanel* notebookPanel = new wxPanel(managedArea, wxID_ANY);
+    auto notebookPanel = new wxPanel(managedArea, wxID_ANY);
     notebookPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
     GlobalGroupDialog().reparentNotebook(notebookPanel);
@@ -93,13 +90,15 @@ void AuiLayout::activate()
     }
 
     auto orthoViewControl = GlobalUserInterface().findControl(UserControl::OrthoView);
+    auto cameraControl = GlobalUserInterface().findControl(UserControl::Camera);
+    assert(cameraControl);
     assert(orthoViewControl);
 
     // Add the camera and notebook to the left, as with the Embedded layout, and
     // the 2D view on the right
     wxSize size = topLevelParent->GetSize();
     size.Scale(0.5, 1.0);
-    addPane(_camWnd->getMainWidget(),
+    addPane(cameraControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(_("Camera"), size).Left().Position(0));
     addPane(notebookPanel,
             DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1));
@@ -149,9 +148,6 @@ void AuiLayout::deactivate()
 
     // Delete all active views
     GlobalXYWndManager().destroyViews();
-
-    // Delete the CamWnd
-    _camWnd.reset();
 
     // Give the notebook back to the GroupDialog
     GlobalGroupDialog().reparentNotebookToSelf();
