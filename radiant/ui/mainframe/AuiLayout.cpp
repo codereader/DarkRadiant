@@ -75,6 +75,8 @@ void AuiLayout::activate()
     auto textureBrowserControl = GlobalUserInterface().findControl(UserControl::TextureBrowser);
     assert(textureBrowserControl);
 
+    GlobalGroupDialog().addControl(UserControl::TextureBrowser);
+#if 0
     // Texture Page
     {
         IGroupDialog::PagePtr page(new IGroupDialog::Page);
@@ -88,7 +90,7 @@ void AuiLayout::activate()
 
         GlobalGroupDialog().addPage(page);
     }
-
+#endif
     auto orthoViewControl = GlobalUserInterface().findControl(UserControl::OrthoView);
     auto cameraControl = GlobalUserInterface().findControl(UserControl::Camera);
     assert(cameraControl);

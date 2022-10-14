@@ -63,6 +63,12 @@ public:
 	};
 	typedef std::shared_ptr<Page> PagePtr;
 
+    /**
+     * Adds the named control to the group dialog. The control instance is
+     * requested through the IUserInterfaceModule API.
+     */
+    virtual void addControl(const std::string& controlName) = 0;
+
 	/**
 	 * Adds a page to the group dialog.
 	 * @returns: the notebook page widget

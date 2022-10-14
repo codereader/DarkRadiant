@@ -2,6 +2,7 @@
 
 #include "iregistry.h"
 #include "ui/imainframe.h"
+#include "ui/iuserinterface.h"
 #include "i18n.h"
 #include <iostream>
 #include <vector>
@@ -261,6 +262,29 @@ void GroupDialog::onMainFrameShuttingDown()
 	// Destroy the window (after it has been disconnected from the Eventmanager)
 	SendDestroyEvent();
 	InstancePtr().reset();
+}
+
+void GroupDialog::addControl(const std::string& controlName)
+{
+    auto control = GlobalUserInterface().findControl(controlName);
+
+    if (!control)
+    {
+        throw std::logic_error("There's no such control: " + controlName);
+    }
+
+    _controls.emplace(controlName, control);
+
+    auto page = std::make_shared<Page>();
+
+    page->name = controlName;
+    page->windowLabel = _("Something");
+    page->page = control->createWidget(_notebook.get());
+    page->tabIcon = "icon_texture.png";
+    page->tabLabel = _("Something");
+    page->position = Page::Position::End;
+
+    addPage(page);
 }
 
 wxWindow* GroupDialog::addPage(const PagePtr& page)

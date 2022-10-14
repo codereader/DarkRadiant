@@ -4,6 +4,7 @@
 #include <map>
 #include "iradiant.h"
 #include "ui/igroupdialog.h"
+#include "ui/iusercontrol.h"
 #include "wxutil/window/TransientWindow.h"
 
 #include <wx/windowptr.h>
@@ -46,6 +47,8 @@ class GroupDialog :
 	wxWindowPtr<wxAuiNotebook> _notebook;
 	std::unique_ptr<wxImageList> _imageList;
 
+    std::map<std::string, IUserControl::Ptr> _controls;
+
 private:
 	// Private constructor creates GTK widgets etc.
 	GroupDialog();
@@ -58,6 +61,8 @@ public:
 	 * Static method to construct the GroupDialog instance.
 	 */
 	static void construct();
+
+    void addControl(const std::string& controlName) override;
 
 	// Documentation: see igroupdialog.h
 	wxWindow* addPage(const PagePtr& page);
