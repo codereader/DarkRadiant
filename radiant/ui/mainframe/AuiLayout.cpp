@@ -1,20 +1,16 @@
 #include "AuiLayout.h"
 
 #include "i18n.h"
-#include "itextstream.h"
 #include "ui/imenumanager.h"
 #include "ui/igroupdialog.h"
 #include "ui/imainframe.h"
-#include "ui/ientityinspector.h"
+#include "ui/iuserinterface.h"
 
 #include <wx/sizer.h>
-#include <wx/splitter.h>
-#include <functional>
 
 #include "camera/CameraWndManager.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "xyview/GlobalXYWnd.h"
-#include "registry/registry.h"
 
 namespace ui
 {
@@ -82,7 +78,8 @@ void AuiLayout::activate()
     GlobalGroupDialog().hideDialogWindow();
 
     // Add a new texture browser to the group dialog pages
-    wxWindow* textureBrowser = new TextureBrowser(notebookPanel);
+    auto textureBrowserControl = GlobalUserInterface().findControl(UserControl::TextureBrowser);
+    assert(textureBrowserControl);
 
     // Texture Page
     {
@@ -90,7 +87,7 @@ void AuiLayout::activate()
 
         page->name = "textures";
         page->windowLabel = _("Texture Browser");
-        page->page = textureBrowser;
+        page->page = textureBrowserControl->createWidget(notebookPanel);
         page->tabIcon = "icon_texture.png";
         page->tabLabel = _("Textures");
 		page->position = IGroupDialog::Page::Position::TextureBrowser;

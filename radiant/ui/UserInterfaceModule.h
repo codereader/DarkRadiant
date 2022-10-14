@@ -42,6 +42,8 @@ class UserInterfaceModule :
 	public IUserInterfaceModule
 {
 private:
+    std::map<std::string, IUserControl::Ptr> _userControls;
+
 	std::unique_ptr<LongRunningOperationHandler> _longOperationHandler;
 	std::unique_ptr<MapFileProgressHandler> _mapFileProgressHandler;
 	std::unique_ptr<AutoSaveRequestHandler> _autoSaveRequestHandler;

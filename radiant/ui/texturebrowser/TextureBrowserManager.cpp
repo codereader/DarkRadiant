@@ -25,11 +25,9 @@ class TextureBrowserControl :
     public IUserControl
 {
 public:
-    constexpr static const char* Name = "TextureBrowser";
-
     std::string getControlName() override
     {
-        return Name;
+        return UserControl::TextureBrowser;
     }
 
     wxWindow* createWidget(wxWindow* parent) override
@@ -145,7 +143,7 @@ void TextureBrowserManager::initialiseModule(const IApplicationContext& ctx)
 
 void TextureBrowserManager::shutdownModule()
 {
-    GlobalUserInterface().unregisterControl(TextureBrowserControl::Name);
+    GlobalUserInterface().unregisterControl(UserControl::TextureBrowser);
     _shaderClipboardConn.disconnect();
 }
 

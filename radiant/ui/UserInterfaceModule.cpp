@@ -247,6 +247,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 
 void UserInterfaceModule::shutdownModule()
 {
+    _userControls.clear();
     _autosaveTimer.reset();
 
 	wxTheApp->Unbind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
@@ -284,17 +285,22 @@ void UserInterfaceModule::dispatch(const std::function<void()>& action)
 
 void UserInterfaceModule::registerControl(const IUserControl::Ptr& control)
 {
-    
+    if (!_userControls.emplace(control->getControlName(), control).second)
+    {
+        throw std::logic_error("The Control with name " + control->getControlName() + " has already been registered");
+    }
 }
 
 IUserControl::Ptr UserInterfaceModule::findControl(const std::string& name)
 {
-    return {};
+    auto control = _userControls.find(name);
+
+    return control != _userControls.end() ? control->second : IUserControl::Ptr();
 }
 
 void UserInterfaceModule::unregisterControl(const std::string& controlName)
 {
-    
+    _userControls.erase(controlName);
 }
 
 void UserInterfaceModule::handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg)

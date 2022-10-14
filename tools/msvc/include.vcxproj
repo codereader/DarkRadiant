@@ -229,6 +229,7 @@
     <ClInclude Include="..\..\include\ui\iresourcechooser.h" />
     <ClInclude Include="..\..\include\ui\istatusbarmanager.h" />
     <ClInclude Include="..\..\include\ui\itoolbarmanager.h" />
+    <ClInclude Include="..\..\include\ui\iusercontrol.h" />
     <ClInclude Include="..\..\include\ui\iuserinterface.h" />
     <ClInclude Include="..\..\include\ui\iwindowstate.h" />
     <ClInclude Include="..\..\include\ui\iwxgl.h" />
