@@ -282,6 +282,21 @@ void UserInterfaceModule::dispatch(const std::function<void()>& action)
 	wxTheApp->QueueEvent(new DispatchEvent(DISPATCH_EVENT, wxID_ANY, action));
 }
 
+void UserInterfaceModule::registerControl(const IUserControl::Ptr& control)
+{
+    
+}
+
+IUserControl::Ptr UserInterfaceModule::findControl(const std::string& name)
+{
+    return {};
+}
+
+void UserInterfaceModule::unregisterControl(const std::string& controlName)
+{
+    
+}
+
 void UserInterfaceModule::handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg)
 {
 	auto parentWindow = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?

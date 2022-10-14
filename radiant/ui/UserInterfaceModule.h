@@ -80,6 +80,10 @@ public:
 	// This method is safe to be called from any thread.
 	void dispatch(const std::function<void()>& action) override;
 
+    void registerControl(const IUserControl::Ptr& control) override;
+    IUserControl::Ptr findControl(const std::string& name) override;
+    void unregisterControl(const std::string& controlName) override;
+
 private:
 	void registerUICommands();
 	void initialiseEntitySettings();
