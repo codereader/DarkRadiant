@@ -10,10 +10,14 @@
 #include "imap.h"
 #include "ibrush.h"
 #include "ipatch.h"
+#include "iclipper.h"
 #include "ui/ieventmanager.h"
-#include "imousetool.h"
+#include "ishaderclipboard.h"
+#include "ui/imenumanager.h"
 #include "ui/imainframe.h"
 #include "ishaders.h"
+#include "ieditstopwatch.h"
+#include "icounter.h"
 #include "icameraview.h"
 
 #include "wxutil/menu/CommandMenuItem.h"
@@ -104,12 +108,17 @@ const StringSet& UserInterfaceModule::getDependencies() const
         MODULE_EVENTMANAGER,
         MODULE_RADIANT_CORE,
         MODULE_MRU_MANAGER,
+        MODULE_MENUMANAGER,
         MODULE_MAINFRAME,
         MODULE_MOUSETOOLMANAGER,
         MODULE_MAP,
         MODULE_PATCH,
         MODULE_BRUSHCREATOR,
         MODULE_TEXTOOL_SELECTIONSYSTEM,
+        MODULE_SHADERCLIPBOARD,
+        MODULE_EDITING_STOPWATCH,
+        MODULE_COUNTER,
+        MODULE_CLIPPER,
     };
 
 	return _dependencies;

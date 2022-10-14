@@ -63,9 +63,6 @@ void AuiLayout::activate()
     _auiMgr.SetManagedWindow(managedArea);
     GlobalMainFrame().getWxMainContainer()->Add(managedArea, 1, wxEXPAND);
 
-    // Allocate a new OrthoView and set its ViewType to XY
-    XYWndPtr xywnd = GlobalXYWnd().createEmbeddedOrthoView(XY, managedArea);
-
     // Create a new camera window and parent it
     _camWnd = GlobalCamera().createCamWnd(managedArea);
 
@@ -95,6 +92,9 @@ void AuiLayout::activate()
         GlobalGroupDialog().addPage(page);
     }
 
+    auto orthoViewControl = GlobalUserInterface().findControl(UserControl::OrthoView);
+    assert(orthoViewControl);
+
     // Add the camera and notebook to the left, as with the Embedded layout, and
     // the 2D view on the right
     wxSize size = topLevelParent->GetSize();
@@ -103,7 +103,7 @@ void AuiLayout::activate()
             DEFAULT_PANE_INFO(_("Camera"), size).Left().Position(0));
     addPane(notebookPanel,
             DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1));
-    addPane(xywnd->getGLWidget(),
+    addPane(orthoViewControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(_("2D View"), size).CenterPane());
     _auiMgr.Update();
 

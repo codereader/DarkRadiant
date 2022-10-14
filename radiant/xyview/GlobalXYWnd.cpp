@@ -5,7 +5,7 @@
 #include "ui/ieventmanager.h"
 #include "ui/istatusbarmanager.h"
 #include "ipreferencesystem.h"
-#include "itextstream.h"
+#include "ui/iuserinterface.h"
 
 #include "registry/registry.h"
 
@@ -53,6 +53,22 @@ namespace
 
     const int DEFAULT_CHASE_MOUSE_CAP = 32; // pixels per chase moue timer interval
 }
+
+class OrthoviewControl :
+    public IUserControl
+{
+public:
+    std::string getControlName() override
+    {
+        return UserControl::OrthoView;
+    }
+
+    wxWindow* createWidget(wxWindow* parent) override
+    {
+        auto xyWnd = GlobalXYWnd().createEmbeddedOrthoView(XY, parent);
+        return xyWnd->getGLWidget();
+    }
+};
 
 // Constructor
 XYWndManager::XYWndManager() :
@@ -663,7 +679,8 @@ const StringSet& XYWndManager::getDependencies() const
         MODULE_PREFERENCESYSTEM,
         MODULE_COMMANDSYSTEM,
         MODULE_MOUSETOOLMANAGER,
-        MODULE_STATUSBARMANAGER
+        MODULE_STATUSBARMANAGER,
+        MODULE_USERINTERFACE,
     };
 
 	return _dependencies;
@@ -726,10 +743,14 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
     toolGroup.registerMouseTool(std::make_shared<CameraMoveTool>());
     toolGroup.registerMouseTool(std::make_shared<MoveViewTool>());
 	toolGroup.registerMouseTool(std::make_shared<MeasurementTool>());
+
+    GlobalUserInterface().registerControl(std::make_shared<OrthoviewControl>());
 }
 
 void XYWndManager::shutdownModule()
 {
+    GlobalUserInterface().unregisterControl(UserControl::OrthoView);
+
 	// Release all owned XYWndPtrs
 	destroyViews();
 
