@@ -2,16 +2,15 @@
 
 #include "i18n.h"
 #include "ui/igroupdialog.h"
+#include "ui/iusercontrol.h"
 #include "imap.h"
 #include "ui/ieventmanager.h"
 #include "ipreferencesystem.h"
-#include "ui/ientityinspector.h"
 #include "ieclass.h"
 #include "iorthoview.h"
 #include "iregistry.h"
 #include "iradiant.h"
 
-#include "ui/console/Console.h"
 #include "xyview/GlobalXYWnd.h"
 #include "camera/CameraWndManager.h"
 
@@ -478,17 +477,7 @@ void MainFrame::create()
 	// Create the topmost window first
 	createTopLevelWindow();
 
-    // Add the console
-	IGroupDialog::PagePtr consolePage(new IGroupDialog::Page);
-
-	consolePage->name = "console";
-	consolePage->windowLabel = _("Console");
-	consolePage->page = new Console(getWxTopLevelWindow());
-	consolePage->tabIcon = "iconConsole16.png";
-	consolePage->tabLabel = _("Console");
-	consolePage->position = IGroupDialog::Page::Position::Console;
-
-	GlobalGroupDialog().addPage(consolePage);
+	GlobalGroupDialog().addControl(UserControl::Console);
 
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
