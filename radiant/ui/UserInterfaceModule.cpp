@@ -24,6 +24,7 @@
 #include "wxutil/MultiMonitor.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "messages/TextureChanged.h"
+#include "messages/ClearConsole.h"
 #include "string/string.h"
 #include "scene/Group.h"
 #include "command/ExecutionNotPossible.h"
@@ -411,6 +412,8 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("ProjectSettings", GameSetupDialog::Show);
 	GlobalCommandSystem().addCommand("Preferences", PrefDialog::ShowPrefDialog);
+
+    GlobalCommandSystem().addCommand("clear", [](const auto&) { radiant::ClearConsoleMessage::Send(); });
 
 	GlobalCommandSystem().addCommand("ToggleConsole", Console::toggle);
 	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);

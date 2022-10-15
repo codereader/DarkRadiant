@@ -41,6 +41,7 @@ public:
     {
         ApplicationShutdownRequest,
         AutomaticMapSaveRequest,
+        ClearConsole,
         CommandExecutionFailed,
         GameConfigNeeded,
         LongRunningOperation,

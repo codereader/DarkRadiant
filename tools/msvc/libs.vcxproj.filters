@@ -403,6 +403,9 @@
     <ClInclude Include="..\..\libs\parser\GuiTokeniser.h">
       <Filter>parser</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\messages\ClearConsole.h">
+      <Filter>messages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

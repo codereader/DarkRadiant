@@ -8,6 +8,8 @@
 #include "wxutil/ConsoleView.h"
 #include "CommandEntry.h"
 
+namespace radiant { class ClearConsoleMessage; }
+
 namespace ui
 {
 
@@ -25,6 +27,8 @@ private:
 	// The entry box for console commands
 	CommandEntry* _commandEntry;
 
+    std::size_t _clearConsoleHandler;
+
 public:
 	/**
 	 * Creates a new Console instance, ready for packing into
@@ -41,8 +45,7 @@ public:
 	 */
 	static void toggle(const cmd::ArgumentList& args);
 
-	// Command target to clear the console
-	void clearCmd(const cmd::ArgumentList& args);
+	void clear(radiant::ClearConsoleMessage& msg);
 
 	/**
 	 * greebo: Writes the given output string to the Console.
