@@ -721,6 +721,9 @@
     <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowserModule.cpp">
       <Filter>src\ui\mediabrowser</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\PropertyNotebook.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">

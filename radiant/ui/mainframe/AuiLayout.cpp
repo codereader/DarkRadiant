@@ -70,7 +70,7 @@ void AuiLayout::activate()
     _auiMgr.SetManagedWindow(managedArea);
     GlobalMainFrame().getWxMainContainer()->Add(managedArea, 1, wxEXPAND);
 
-    _propertyNotebook = new PropertyNotebook(managedArea);
+    _propertyNotebook = new PropertyNotebook(managedArea, *this);
 
     auto orthoViewControl = GlobalUserInterface().findControl(UserControl::OrthoView);
     auto cameraControl = GlobalUserInterface().findControl(UserControl::Camera);
