@@ -431,6 +431,7 @@
     <ClInclude Include="..\..\radiant\ui\common\SoundShaderPreview.h" />
     <ClInclude Include="..\..\radiant\ui\console\CommandEntry.h" />
     <ClInclude Include="..\..\radiant\ui\console\Console.h" />
+    <ClInclude Include="..\..\radiant\ui\console\ConsoleControl.h" />
     <ClInclude Include="..\..\radiant\ui\DispatchEvent.h" />
     <ClInclude Include="..\..\radiant\ui\Documentation.h" />
     <ClInclude Include="..\..\radiant\ui\eclasstree\EClassTree.h" />

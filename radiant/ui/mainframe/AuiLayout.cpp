@@ -77,21 +77,7 @@ void AuiLayout::activate()
     assert(textureBrowserControl);
 
     GlobalGroupDialog().addControl(UserControl::TextureBrowser);
-#if 0
-    // Texture Page
-    {
-        IGroupDialog::PagePtr page(new IGroupDialog::Page);
 
-        page->name = "textures";
-        page->windowLabel = _("Texture Browser");
-        page->page = textureBrowserControl->createWidget(notebookPanel);
-        page->tabIcon = "icon_texture.png";
-        page->tabLabel = _("Textures");
-		page->position = IGroupDialog::Page::Position::TextureBrowser;
-
-        GlobalGroupDialog().addPage(page);
-    }
-#endif
     auto orthoViewControl = GlobalUserInterface().findControl(UserControl::OrthoView);
     auto cameraControl = GlobalUserInterface().findControl(UserControl::Camera);
     assert(cameraControl);

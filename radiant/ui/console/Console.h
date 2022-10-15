@@ -11,15 +11,9 @@
 namespace ui
 {
 
-class Console;
-typedef std::shared_ptr<Console> ConsolePtr;
-
 /**
- * greebo: The Console class encapsulates a GtkTextView and represents
- *         the "device", which the LogWriter is writing its output to.
- *
- *         The Console is a singleton which needs to be constructed and packed
- *         during mainframe construction.
+ * greebo: The Console class encapsulates a wxutil::ConsoleView and represents
+ * the "device", which the LogWriter is writing its output to.
  */
 class Console :
 	public wxPanel,
@@ -40,7 +34,7 @@ public:
 	 */
 	Console(wxWindow* parent);
 
-	virtual ~Console();
+	~Console() override;
 
 	/**
 	 * greebo: Static command target for toggling the console.

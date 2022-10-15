@@ -75,6 +75,8 @@
 
 #include <wx/version.h>
 
+#include "console/ConsoleControl.h"
+
 namespace ui
 {
 
@@ -252,6 +254,8 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 
     _reloadMaterialsConn = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
         .connect([this]() { dispatch([]() { GlobalMainFrame().updateAllWindows(); }); });
+
+    registerControl(std::make_shared<ConsoleControl>());
 }
 
 void UserInterfaceModule::shutdownModule()
