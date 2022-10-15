@@ -39,6 +39,7 @@ public:
 	void deactivate() override;
 	void toggleFullscreenCameraView() override;
 	void restoreStateFromRegistry() override;
+    void createFloatingControl(const std::string& controlName) override;
 
 	// The creation function, needed by the mainframe layout manager
 	static AuiLayoutPtr CreateInstance();

@@ -16,29 +16,30 @@ class EmbeddedLayout;
 typedef std::shared_ptr<EmbeddedLayout> EmbeddedLayoutPtr;
 
 class EmbeddedLayout :
-	public IMainFrameLayout
+    public IMainFrameLayout
 {
 private:
-	// The camera view
-	CamWnd* _camWnd;
+    // The camera view
+    CamWnd* _camWnd;
 
-	wxutil::Splitter* _horizPane;
-	wxutil::Splitter* _groupCamPane;
+    wxutil::Splitter* _horizPane;
+    wxutil::Splitter* _groupCamPane;
 
-	struct SavedPositions
-	{
-		int horizSashPosition;
-		int groupCamSashPosition;
-	};
-	std::unique_ptr<SavedPositions> _savedPositions;
+    struct SavedPositions
+    {
+        int horizSashPosition;
+        int groupCamSashPosition;
+    };
+    std::unique_ptr<SavedPositions> _savedPositions;
 
 public:
-	// IMainFrameLayout implementation
-	std::string getName() override;
-	void activate() override;
-	void deactivate() override;
-	void toggleFullscreenCameraView() override;
-	void restoreStateFromRegistry() override;
+    // IMainFrameLayout implementation
+    std::string getName() override;
+    void activate() override;
+    void deactivate() override;
+    void toggleFullscreenCameraView() override;
+    void restoreStateFromRegistry() override;
+    void createFloatingControl(const std::string& controlName) override {}
 
 	// The creation function, needed by the mainframe layout manager
 	static EmbeddedLayoutPtr CreateInstance();

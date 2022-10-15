@@ -606,6 +606,13 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 	return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));
 }
 
+void MainFrame::createFloatingControl(const std::string& controlName)
+{
+    if (!_currentLayout) return;
+
+    _currentLayout->createFloatingControl(controlName);
+}
+
 sigc::signal<void>& MainFrame::signal_MainFrameConstructed()
 {
 	return _sigMainFrameConstructed;

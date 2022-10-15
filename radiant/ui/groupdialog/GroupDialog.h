@@ -2,15 +2,16 @@
 
 #include <memory>
 #include <map>
-#include "iradiant.h"
 #include "ui/igroupdialog.h"
 #include "ui/iusercontrol.h"
 #include "wxutil/window/TransientWindow.h"
+#include "wxutil/menu/PopupMenu.h"
 
 #include <wx/windowptr.h>
 
 class wxAuiNotebook;
 class wxBookCtrlEvent;
+class wxAuiNotebookEvent;
 class wxImageList;
 
 namespace ui
@@ -48,6 +49,8 @@ class GroupDialog :
 	std::unique_ptr<wxImageList> _imageList;
 
     std::map<std::string, IUserControl::Ptr> _controls;
+
+    wxutil::PopupMenuPtr _popupMenu;
 
 private:
 	// Private constructor creates GTK widgets etc.
@@ -134,6 +137,9 @@ private:
 
 	// Gets called when the user selects a new tab (updates the title)
 	void onPageSwitch(wxBookCtrlEvent& ev);
+	void onTabRightClick(wxAuiNotebookEvent& ev);
+
+    void undockTab();
 };
 
 } // namespace ui

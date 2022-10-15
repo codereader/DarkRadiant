@@ -169,6 +169,22 @@ void AuiLayout::deactivate()
     managedWindow->Destroy();
 }
 
+void AuiLayout::createFloatingControl(const std::string& controlName)
+{
+    auto control = GlobalUserInterface().findControl(controlName);
+
+    if (!control)
+    {
+        throw std::logic_error("Cannot find named control: " + controlName);
+    }
+
+    auto managedWindow = _auiMgr.GetManagedWindow();
+
+    addPane(control->createWidget(managedWindow), 
+        DEFAULT_PANE_INFO(controlName, wxSize(128, 128)).Float());
+    _auiMgr.Update();
+}
+
 void AuiLayout::restoreStateFromRegistry()
 {
 }

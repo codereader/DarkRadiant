@@ -38,6 +38,12 @@ GroupDialog::GroupDialog() :
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
+    _popupMenu = std::make_shared<wxutil::PopupMenu>();
+    _popupMenu->addItem(
+        new wxMenuItem(nullptr, wxID_ANY, _("Undock"), ""),
+        [this]() { undockTab(); }
+    );
+
 	// Connect the window position tracker
 	InitialiseWindowPosition(300, 400, RKEY_WINDOW_STATE);
 }
@@ -92,8 +98,8 @@ void GroupDialog::populateWindow()
 	_notebook = new wxAuiNotebook(panel, wxID_ANY, 
 		wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS);
     _notebook->SetName("GroupDialogNB");
-	_notebook->Connect(wxEVT_NOTEBOOK_PAGE_CHANGED, 
-		wxBookCtrlEventHandler(GroupDialog::onPageSwitch), NULL, this);
+	_notebook->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &GroupDialog::onPageSwitch, this);
+	_notebook->Bind(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, &GroupDialog::onTabRightClick, this);
 
 	_imageList.reset(new wxImageList(16, 16));
 	_notebook->SetImageList(_imageList.get());
@@ -345,7 +351,7 @@ wxWindow* GroupDialog::addPage(const PagePtr& page)
 void GroupDialog::removePage(const std::string& name)
 {
 	// Find the page with that name
-	for (Pages::iterator i = _pages.begin(); i != _pages.end(); ++i)
+	for (auto i = _pages.begin(); i != _pages.end(); ++i)
 	{
 		// Skip the wrong ones
 		if (i->second.name != name) continue;
@@ -353,7 +359,7 @@ void GroupDialog::removePage(const std::string& name)
 		// Remove the page from the notebook
 		_notebook->DeletePage(_notebook->FindPage(i->second.page));
 
-		// Remove the page and break the loop, iterators are invalid
+		// Remove the page and break the loop
 		_pages.erase(i);
 		break;
 	}
@@ -389,4 +395,37 @@ void GroupDialog::onPageSwitch(wxBookCtrlEvent& ev)
     ev.Skip();
 }
 
-} // namespace ui
+void GroupDialog::onTabRightClick(wxAuiNotebookEvent& ev)
+{
+    _notebook->SetSelection(ev.GetSelection());
+    _popupMenu->show(this);
+}
+
+void GroupDialog::undockTab()
+{
+    auto selectedPageIndex = _notebook->GetSelection();
+
+    if (selectedPageIndex < 0) return;
+
+    // Look up the page in the _pages dictionary by the page widget
+    wxWindow* win = _notebook->GetPage(static_cast<size_t>(selectedPageIndex));
+
+    if (win == nullptr) return;
+
+    for (const auto& page : _pages)
+    {
+        if (page.second.page == win)
+        {
+            auto controlName = page.second.name;
+
+            // Remove the page, we're done
+            removePage(page.second.name);
+
+            // Get the control name and create a floating window
+            GlobalMainFrame().createFloatingControl(controlName);
+            break;
+        }
+    }
+}
+
+} // namespace
