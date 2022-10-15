@@ -103,15 +103,10 @@ public:
 	virtual void updateFromEntities() = 0;
 };
 
-class IEntityInspector :
+class IEntityInspectorModule :
 	public RegisterableModule
 {
 public:
-	/**
-	 * greebo: Retrieve the widget for packing this into a parent container.
-	 */
-	virtual wxPanel* getWidget() = 0;
-
 	/**
 	 * Registers the given property editor and associates it with the given entity key.
 	 * (The string key is interpreted as regular expression.)
@@ -128,17 +123,14 @@ public:
     virtual void registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create) = 0;
     virtual IPropertyEditorDialog::Ptr createDialog(const std::string& key) = 0;
     virtual void unregisterPropertyEditorDialog(const std::string& key) = 0;
-
-	// Lets the EntityInspector restore its settings from the Registry
-	virtual void restoreSettings() = 0;
 };
 
 } // namespace ui
 
 constexpr const char* const MODULE_ENTITYINSPECTOR("EntityInspector");
 
-inline ui::IEntityInspector& GlobalEntityInspector()
+inline ui::IEntityInspectorModule& GlobalEntityInspector()
 {
-	static module::InstanceReference<ui::IEntityInspector> _reference(MODULE_ENTITYINSPECTOR);
+	static module::InstanceReference<ui::IEntityInspectorModule> _reference(MODULE_ENTITYINSPECTOR);
 	return _reference;
 }

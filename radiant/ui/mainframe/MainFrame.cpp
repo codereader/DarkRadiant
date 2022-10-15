@@ -478,6 +478,7 @@ void MainFrame::create()
 	createTopLevelWindow();
 
 	GlobalGroupDialog().addControl(UserControl::Console);
+	GlobalGroupDialog().addControl(UserControl::EntityInspector);
 
 	// Load the previous window settings from the registry
 	restoreWindowPosition();

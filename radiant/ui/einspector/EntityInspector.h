@@ -3,12 +3,9 @@
 #include "PropertyEditor.h"
 
 #include "ui/ientityinspector.h"
-#include "iradiant.h"
 #include "imap.h"
-#include "icommandsystem.h"
 #include "imapmerge.h"
 #include "iselection.h"
-#include "ientity.h"
 #include "string/string.h"
 #include "wxutil/menu/PopupMenu.h"
 #include "wxutil/PanedPosition.h"
@@ -17,7 +14,7 @@
 #include "wxutil/Icon.h"
 
 #include <wx/event.h>
-#include <wx/icon.h>
+#include <wx/panel.h>
 #include <sigc++/connection.h>
 
 #include <map>
@@ -42,15 +39,13 @@ namespace selection
 namespace ui
 {
 
-class PropertyEditorFactory;
-
 /**
  * The EntityInspector class represents the GTK dialog for editing properties
  * on the selected game entity. The class is implemented as a singleton and
  * contains a method to return the current instance.
  */
 class EntityInspector final :
-	public IEntityInspector,
+    public wxPanel,
     public selection::SelectionSystem::Observer,
     public wxutil::SingleIdleCallback
 {
@@ -78,14 +73,9 @@ public:
 	};
 
 private:
-    std::unique_ptr<PropertyEditorFactory> _propertyEditorFactory;
-
     // Tracking helpers to organise the selected entities and their key values
     std::unique_ptr<selection::CollectiveSpawnargs> _spawnargs;
     std::unique_ptr<selection::EntitySelection> _entitySelection;
-
-	// Main EntityInspector widget
-	wxPanel* _mainWidget;
 
 	// Frame to contain the Property Editor
 	wxPanel* _editorFrame;
@@ -257,47 +247,24 @@ private:
     void onMapEditModeChanged(IMap::EditMode mode);
 	void onDefsReloaded();
 
+	// greebo: Tells the inspector to reload the window settings from the registry.
+	void restoreSettings();
+
 protected:
     // Called when the app is idle
     void onIdle() override;
 
 public:
-	// Constructor
-    EntityInspector();
-
-	// Get the main widget for packing
-	wxPanel* getWidget() override;
+    EntityInspector(wxWindow* parent);
+    ~EntityInspector() override;
 
 	/** greebo: Gets called by the RadiantSelectionSystem upon selection change.
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent) override;
 
-    void registerPropertyEditor(const std::string& key,
-                                const IPropertyEditor::CreationFunc& creator) override;
-    void unregisterPropertyEditor(const std::string& key) override;
-    void registerPropertyEditorDialog(const std::string& key,
-                                      const IPropertyEditorDialog::CreationFunc& create) override;
-    IPropertyEditorDialog::Ptr createDialog(const std::string& key) override;
-    void unregisterPropertyEditorDialog(const std::string& key) override;
-
-	void onMainFrameConstructed();
 	void onMainFrameShuttingDown();
 
     void onKeyChange(const std::string& key, const std::string& value, bool isMultiValue = false);
-
-	// greebo: Tells the inspector to reload the window settings from the registry.
-	void restoreSettings() override;
-
-	/**
-	 * greebo: Static command target for toggling the Entity Inspector in the GroupDialog.
-	 */
-	static void toggle(const cmd::ArgumentList& args);
-
-    // RegisterableModule implementation
-    const std::string& getName() const override;
-    const StringSet& getDependencies() const override;
-    void initialiseModule(const IApplicationContext& ctx) override;
-    void shutdownModule() override;
 };
 
 } // namespace ui

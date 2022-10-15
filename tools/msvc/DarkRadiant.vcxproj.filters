@@ -715,6 +715,9 @@
     <ClCompile Include="..\..\radiant\ui\layers\LayerControlDialog.cpp">
       <Filter>src\ui\layers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\einspector\EntityInspectorModule.cpp">
+      <Filter>src\ui\einspector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1394,6 +1397,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\console\ConsoleControl.h">
       <Filter>src\ui\console</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\einspector\EntityInspectorModule.h">
+      <Filter>src\ui\einspector</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

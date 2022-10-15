@@ -1,4 +1,5 @@
 #include "EntityInspector.h"
+#include "EntityInspectorModule.h"
 #include "PropertyEditorFactory.h"
 #include "AddPropertyDialog.h"
 
@@ -63,8 +64,8 @@ namespace
     const std::string RKEY_SHOW_INHERITED_PROPERTIES = RKEY_ROOT + "showInheritedProperties";
 }
 
-EntityInspector::EntityInspector() :
-    _mainWidget(nullptr),
+EntityInspector::EntityInspector(wxWindow* parent) :
+    wxPanel(parent),
     _editorFrame(nullptr),
     _showInheritedCheckbox(nullptr),
     _showHelpColumnCheckbox(nullptr),
@@ -80,32 +81,31 @@ EntityInspector::EntityInspector() :
     _selectionNeedsUpdate(true),
     _inheritedPropertiesNeedUpdate(true),
     _helpTextNeedsUpdate(true)
-{}
+{
+    construct();
+}
 
 void EntityInspector::construct()
 {
     _emptyIcon = wxutil::Icon(wxutil::GetLocalBitmap("empty.png"));
 
-    wxFrame* temporaryParent = new wxFrame(NULL, wxID_ANY, "");
-
-    _mainWidget = new wxPanel(temporaryParent, wxID_ANY);
-    _mainWidget->SetName("EntityInspector");
-    _mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
+    SetName("EntityInspector");
+    SetSizer(new wxBoxSizer(wxVERTICAL));
 
     // Construct HBox with the display checkboxes
     wxBoxSizer* optionsHBox = new wxBoxSizer(wxHORIZONTAL);
 
-    _showInheritedCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show inherited properties"));
+    _showInheritedCheckbox = new wxCheckBox(this, wxID_ANY, _("Show inherited properties"));
     _showInheritedCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
         handleShowInheritedChanged();
     });
 
-    _showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help"));
+    _showHelpColumnCheckbox = new wxCheckBox(this, wxID_ANY, _("Show help"));
     _showHelpColumnCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
         updateHelpTextPanel();
     });
 
-    _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
+    _primitiveNumLabel = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
     _primitiveNumLabel->SetFont(_primitiveNumLabel->GetFont().Bold());
 
     optionsHBox->Add(_primitiveNumLabel, 1, wxEXPAND | wxALL, 5);
@@ -114,19 +114,19 @@ void EntityInspector::construct()
     optionsHBox->Add(_showHelpColumnCheckbox, 0, wxEXPAND);
 
     // Pane with treeview and editor panel
-    _paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    _paned = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     _paned->SetMinimumPaneSize(80);
 
     _paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
     _panedPosition.connect(_paned);
 
-    _helpText = new wxTextCtrl(_mainWidget, wxID_ANY, "",
+    _helpText = new wxTextCtrl(this, wxID_ANY, "",
         wxDefaultPosition, wxDefaultSize, wxTE_LEFT | wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
     _helpText->SetMinClientSize(wxSize(-1, 60));
 
-    _mainWidget->GetSizer()->Add(optionsHBox, 0, wxEXPAND | wxALL, 3);
-    _mainWidget->GetSizer()->Add(_paned, 1, wxEXPAND);
-    _mainWidget->GetSizer()->Add(_helpText, 0, wxEXPAND);
+    GetSizer()->Add(optionsHBox, 0, wxEXPAND | wxALL, 3);
+    GetSizer()->Add(_paned, 1, wxEXPAND);
+    GetSizer()->Add(_helpText, 0, wxEXPAND);
 
     _helpText->Hide();
 
@@ -174,6 +174,10 @@ void EntityInspector::construct()
 
     // initialise the properties
     loadPropertyMap();
+
+    // greebo: Now that the dialog is shown, tell the Entity Inspector to reload
+    // the position info from the Registry once again.
+    restoreSettings();
 }
 
 void EntityInspector::restoreSettings()
@@ -296,7 +300,7 @@ void EntityInspector::updateKeyType(wxutil::TreeModel::Row& row)
     auto keyType = getPropertyTypeForKey(key);
 
     wxutil::Icon icon(keyType.empty() ? _emptyIcon :
-        wxutil::Icon(_propertyEditorFactory->getBitmapFor(keyType)));
+        wxutil::Icon(EntityInspectorModule::Instance().getPropertyEditorFactory().getBitmapFor(keyType)));
 
     // Assign the icon to the column
     row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
@@ -431,22 +435,7 @@ void EntityInspector::createContextMenu()
     );
 }
 
-void EntityInspector::onMainFrameConstructed()
-{
-    // Add entity inspector to the group dialog
-    IGroupDialog::PagePtr page(new IGroupDialog::Page);
-
-    page->name = "entity";
-    page->windowLabel = _("Entity");
-    page->page = getWidget();
-    page->tabIcon = "cmenu_add_entity.png";
-    page->tabLabel = _("Entity");
-    page->position = IGroupDialog::Page::Position::EntityInspector;
-
-    GlobalGroupDialog().addPage(page);
-}
-
-void EntityInspector::onMainFrameShuttingDown()
+EntityInspector::~EntityInspector()
 {
     // Clear the selection and unsubscribe from the selection system
     GlobalSelectionSystem().removeObserver(this);
@@ -527,66 +516,6 @@ void EntityInspector::refresh()
     requestIdleCallback();
 }
 
-const std::string& EntityInspector::getName() const
-{
-    static std::string _name(MODULE_ENTITYINSPECTOR);
-    return _name;
-}
-
-const StringSet& EntityInspector::getDependencies() const
-{
-    static StringSet _dependencies
-    {
-        MODULE_DECLMANAGER,
-        MODULE_XMLREGISTRY,
-        MODULE_GROUPDIALOG,
-        MODULE_SELECTIONSYSTEM,
-        MODULE_GAMEMANAGER,
-        MODULE_COMMANDSYSTEM,
-        MODULE_MAINFRAME,
-        MODULE_MAP,
-    };
-
-    return _dependencies;
-}
-
-void EntityInspector::initialiseModule(const IApplicationContext& ctx)
-{
-    _propertyEditorFactory.reset(new PropertyEditorFactory);
-
-    construct();
-
-    GlobalMainFrame().signal_MainFrameConstructed().connect(
-        sigc::mem_fun(this, &EntityInspector::onMainFrameConstructed)
-    );
-    GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-        sigc::mem_fun(this, &EntityInspector::onMainFrameShuttingDown)
-    );
-
-    GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);
-}
-
-void EntityInspector::shutdownModule()
-{
-    _propertyEditorFactory.reset();
-}
-
-void EntityInspector::registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator)
-{
-    _propertyEditorFactory->registerPropertyEditor(key, creator);
-}
-
-void EntityInspector::unregisterPropertyEditor(const std::string& key)
-{
-    _propertyEditorFactory->unregisterPropertyEditor(key);
-}
-
-wxPanel* EntityInspector::getWidget()
-{
-    return _mainWidget;
-}
-
-// Create the dialog pane
 wxWindow* EntityInspector::createPropertyEditorPane(wxWindow* parent)
 {
     _editorFrame = new wxPanel(parent, wxID_ANY);
@@ -1381,8 +1310,8 @@ void EntityInspector::updateHelpTextPanel()
     {
         _helpText->Show(helpIsVisible);
 
-        // After showing a packed control we need to call the sizer's layout() method
-        _mainWidget->GetSizer()->Layout();
+        // After showing a packed control we need to call the layout() method
+        Layout();
     }
 }
 
@@ -1471,7 +1400,8 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
             auto targetKey = TargetKey::CreateFromString(key);
 
             // Construct and add a new PropertyEditor
-            _currentPropertyEditor = _propertyEditorFactory->create(_editorFrame, type, *_entitySelection, targetKey);
+            _currentPropertyEditor = EntityInspectorModule::Instance().getPropertyEditorFactory()
+                .create(_editorFrame, type, *_entitySelection, targetKey);
 
             if (_currentPropertyEditor)
             {
@@ -1751,28 +1681,5 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
         onKeyChange(key, value, false);
     });
 }
-
-void EntityInspector::registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create)
-{
-    _propertyEditorFactory->registerPropertyEditorDialog(key, create);
-}
-
-IPropertyEditorDialog::Ptr EntityInspector::createDialog(const std::string& key)
-{
-    return _propertyEditorFactory->createDialog(key);
-}
-
-void EntityInspector::unregisterPropertyEditorDialog(const std::string& key)
-{
-    _propertyEditorFactory->unregisterPropertyEditorDialog(key);
-}
-
-void EntityInspector::toggle(const cmd::ArgumentList& args)
-{
-    GlobalGroupDialog().togglePage("entity");
-}
-
-// Define the static EntityInspector module
-module::StaticModuleRegistration<EntityInspector> entityInspectorModule;
 
 } // namespace ui

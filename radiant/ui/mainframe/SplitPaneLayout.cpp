@@ -117,14 +117,6 @@ void SplitPaneLayout::constructLayout()
 		GlobalGroupDialog().addPage(page);
 	}
 	
-	GlobalGroupDialog().showDialogWindow();
-
-	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload
-	// the position info from the Registry once again.
-	GlobalEntityInspector().restoreSettings();
-
-	GlobalGroupDialog().hideDialogWindow();
-
 	topLevelParent->Layout();
 }
 

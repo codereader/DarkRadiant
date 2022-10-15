@@ -83,14 +83,6 @@ void RegularLayout::activate()
 	// Now attempt to load the paned positions from the registry
 	restoreStateFromPath(RKEY_REGULAR_ROOT);
 
-	GlobalGroupDialog().showDialogWindow();
-
-	// greebo: Now that the dialog is shown, tell the Entity Inspector to reload
-	// the position info from the Registry once again.
-	GlobalEntityInspector().restoreSettings();
-
-	GlobalGroupDialog().hideDialogWindow();
-
 	topLevelParent->Layout();
 
 	// Hide the camera toggle option for non-floating views
