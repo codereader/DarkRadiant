@@ -53,7 +53,20 @@ void AuiLayout::addPane(const std::string& name, wxWindow* window, const wxAuiPa
 
 void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
 {
-    
+    // This is a desperate work around to let undocked property windows
+    // return to the property notebook when they're closed
+    // I failed finding any other way to have floating windows dragged into
+    // the notebook, or adding a custom pane button - I'm open to ideas
+    auto closedPane = ev.GetPane();
+
+    for (const auto& info : _panes)
+    {
+        if (info.control == closedPane->window)
+        {
+            _propertyNotebook->addControl(info.controlName);
+            break;
+        }
+    }
 }
 
 std::string AuiLayout::getName()
