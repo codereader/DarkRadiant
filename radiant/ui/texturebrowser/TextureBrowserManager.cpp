@@ -32,7 +32,7 @@ public:
 
     std::string getDisplayName() override
     {
-        return _("Texture Browser");
+        return _("Textures");
     }
 
     wxWindow* createWidget(wxWindow* parent) override

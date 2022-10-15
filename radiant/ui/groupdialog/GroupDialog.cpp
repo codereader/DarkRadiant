@@ -284,11 +284,11 @@ void GroupDialog::addControl(const std::string& controlName)
     auto page = std::make_shared<Page>();
 
     page->name = controlName;
-    page->windowLabel = _("Something");
+    page->windowLabel = control->getDisplayName();
     page->page = control->createWidget(_notebook.get());
     page->tabIcon = "icon_texture.png";
-    page->tabLabel = _("Something");
-    page->position = Page::Position::End;
+    page->tabLabel = control->getDisplayName();
+    page->position = Page::Position::TextureBrowser;
 
     addPage(page);
 }

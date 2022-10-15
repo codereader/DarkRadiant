@@ -101,11 +101,11 @@ void AuiLayout::activate()
     wxSize size = topLevelParent->GetSize();
     size.Scale(0.5, 1.0);
     addPane(cameraControl->getControlName(), cameraControl->createWidget(managedArea),
-            DEFAULT_PANE_INFO(_("Camera"), size).Left().Position(0));
+            DEFAULT_PANE_INFO(cameraControl->getDisplayName(), size).Left().Position(0));
     addPane("PropertiesPanel", notebookPanel,
             DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1));
     addPane(orthoViewControl->getControlName(), orthoViewControl->createWidget(managedArea),
-            DEFAULT_PANE_INFO(_("2D View"), size).CenterPane());
+            DEFAULT_PANE_INFO(orthoViewControl->getDisplayName(), size).CenterPane());
     _auiMgr.Update();
 
     // Nasty hack to get the panes sized properly. Since BestSize() is
@@ -197,7 +197,7 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
     auto managedWindow = _auiMgr.GetManagedWindow();
 
     addPane(control->getControlName(), control->createWidget(managedWindow),
-        DEFAULT_PANE_INFO(controlName, wxSize(128, 128)).Float());
+        DEFAULT_PANE_INFO(control->getDisplayName(), wxSize(128, 128)).Float());
     _auiMgr.Update();
 }
 
