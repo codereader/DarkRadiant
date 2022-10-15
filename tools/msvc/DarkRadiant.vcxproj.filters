@@ -1407,6 +1407,9 @@
     <ClInclude Include="..\..\radiant\ui\mediabrowser\FocusMaterialRequest.h">
       <Filter>src\ui\mediabrowser</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\favourites\FavouritesBrowserControl.h">
+      <Filter>src\ui\favourites</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
