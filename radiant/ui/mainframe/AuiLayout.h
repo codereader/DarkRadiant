@@ -7,6 +7,8 @@
 
 #include <wx/aui/aui.h>
 
+#include "PropertyNotebook.h"
+
 namespace ui
 {
 
@@ -17,6 +19,7 @@ class AuiLayout : public IMainFrameLayout
 {
     // Main AUI manager
     wxAuiManager _auiMgr;
+    PropertyNotebook* _propertyNotebook;
 
     struct PaneInfo
     {
@@ -29,6 +32,8 @@ class AuiLayout : public IMainFrameLayout
 
 public:
     AuiLayout();
+
+    PropertyNotebook* getNotebook();
 
 	// IMainFrameLayout implementation
 	std::string getName() override;

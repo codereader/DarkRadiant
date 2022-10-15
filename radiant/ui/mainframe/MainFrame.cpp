@@ -264,6 +264,7 @@ void MainFrame::construct()
 	// Create the base window and the default widgets
 	create();
 
+#if 0
 	std::string activeLayout = GlobalRegistry().get(RKEY_ACTIVE_LAYOUT);
 
 	if (activeLayout.empty())
@@ -285,6 +286,7 @@ void MainFrame::construct()
 			applyLayout(AUI_LAYOUT_NAME);
 		}
 	}
+#endif
 
 #ifdef __linux__
 	// #4526: In Linux, do another restore after the top level window has been shown
@@ -318,10 +320,10 @@ void MainFrame::construct()
 void MainFrame::removeLayout()
 {
 	// Sanity check
-	if (_currentLayout == NULL) return;
+	if (!_currentLayout) return;
 
 	_currentLayout->deactivate();
-	_currentLayout = IMainFrameLayoutPtr();
+    _currentLayout.reset();
 }
 
 void MainFrame::preDestructionCleanup()
@@ -477,9 +479,11 @@ void MainFrame::create()
 	// Create the topmost window first
 	createTopLevelWindow();
 
-	GlobalGroupDialog().addControl(UserControl::Console);
-	GlobalGroupDialog().addControl(UserControl::EntityInspector);
-	GlobalGroupDialog().addControl(UserControl::MediaBrowser);
+    applyLayout(AUI_LAYOUT_NAME);
+
+    addControl(UserControl::Console, ControlSettings{ Location::PropertyPanel, true });
+    addControl(UserControl::EntityInspector, ControlSettings{ Location::PropertyPanel, true });
+    addControl(UserControl::MediaBrowser, ControlSettings{ Location::PropertyPanel, true });
 
 	// Load the previous window settings from the registry
 	restoreWindowPosition();
@@ -552,6 +556,9 @@ void MainFrame::setActiveLayoutName(const std::string& name)
 
 void MainFrame::applyLayout(const std::string& name)
 {
+    _currentLayout = std::make_shared<AuiLayout>();
+    _currentLayout->activate();
+#if 0
 	if (getCurrentLayout() == name)
 	{
 		// nothing to do
@@ -584,6 +591,7 @@ void MainFrame::applyLayout(const std::string& name)
 		// Empty layout name => remove
 		removeLayout();
 	}
+#endif
 }
 
 std::string MainFrame::getCurrentLayout()
@@ -595,6 +603,14 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 		const std::string& message, bool forceDisplay)
 {
 	return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));
+}
+
+void MainFrame::addControl(const std::string& controlName, ControlSettings defaultSettings)
+{
+    if (defaultSettings.location == Location::PropertyPanel)
+    {
+        _currentLayout->getNotebook()->addControl(controlName);
+    }
 }
 
 void MainFrame::createFloatingControl(const std::string& controlName)

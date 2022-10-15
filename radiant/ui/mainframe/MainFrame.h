@@ -2,6 +2,8 @@
 
 #include <map>
 #include <sigc++/connection.h>
+
+#include "AuiLayout.h"
 #include "icommandsystem.h"
 #include "ui/imainframe.h"
 #include "ui/imainframelayout.h"
@@ -24,8 +26,8 @@ private:
 
 	wxutil::WindowPosition _windowPosition;
 
-	// The current layout object (NULL if no layout active)
-	IMainFrameLayoutPtr _currentLayout;
+	// The current layout object
+	std::shared_ptr<AuiLayout> _currentLayout;
 
 	sigc::connection _mapNameChangedConn;
 	sigc::connection _mapModifiedChangedConn;
@@ -69,6 +71,7 @@ public:
 	IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title, 
 		const std::string& message, bool forceDisplay = false) override;
 
+    void addControl(const std::string& controlName, ControlSettings defaultSettings) override;
     void createFloatingControl(const std::string& controlName) override;
 
 	sigc::signal<void>& signal_MainFrameConstructed() override;

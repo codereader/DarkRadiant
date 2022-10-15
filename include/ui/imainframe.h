@@ -110,6 +110,36 @@ public:
 	virtual IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title,
 		const std::string& message, bool forceDisplay = false) = 0;
 
+    // Specifies the location controls are added to the main frame
+    enum class Location
+    {
+        PropertyPanel,  // a tab in the property notebook
+        FloatingWindow, // a floating window
+    };
+
+    struct ControlSettings
+    {
+        // The location this control is added to
+        Location location;
+
+        // Whether this control is visible
+        bool visible;
+    };
+
+    /**
+     * Add a named control to the main frame. The given setting specifies
+     * where the control is added to and whether it's visible by default.
+     * Persisted user settings might still overrule these default values.
+     *
+     * The suitable point in time to call this method is when 
+     * signal_MainFrameConstructed is invoked. This gives the mainframe
+     * time to restore the layout as customised by the user.
+     *
+     * The control has to be registered with the IUserInterfaceModule before it can
+     * be acquired by the mainframe, so make sure this is done beforehand.
+     */
+    virtual void addControl(const std::string& controlName, ControlSettings defaultSettings) = 0;
+
     /**
      * Create a transient window containing the named control.
      * The control will be looked up using the IUserInterfaceModule API.

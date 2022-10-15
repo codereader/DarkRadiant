@@ -149,6 +149,15 @@ void TextureBrowserManager::initialiseModule(const IApplicationContext& ctx)
 
     // Register the texture browser
     GlobalUserInterface().registerControl(std::make_shared<TextureBrowserControl>());
+
+    GlobalMainFrame().signal_MainFrameConstructed().connect([this]
+    {
+        GlobalMainFrame().addControl(UserControl::TextureBrowser, IMainFrame::ControlSettings
+        {
+            IMainFrame::Location::PropertyPanel,
+            true
+        });
+    });
 }
 
 void TextureBrowserManager::shutdownModule()

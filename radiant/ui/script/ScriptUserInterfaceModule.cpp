@@ -1,11 +1,9 @@
 #include <sigc++/connection.h>
-#include <wx/frame.h>
 
 #include "iscript.h"
 #include "ui/imenumanager.h"
 #include "ui/imainframe.h"
 #include "i18n.h"
-#include "ui/igroupdialog.h"
 #include "ui/iuserinterface.h"
 #include "module/StaticModule.h"
 
@@ -84,7 +82,11 @@ private:
 	{
 		_scriptMenu = std::make_shared<ScriptMenu>();
 
-        GlobalGroupDialog().addControl(ScriptPanel::Name);
+        GlobalMainFrame().addControl(ScriptPanel::Name, IMainFrame::ControlSettings
+        {
+            IMainFrame::Location::PropertyPanel,
+            true
+        });
 	}
 };
 

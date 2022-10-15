@@ -14,7 +14,6 @@
 #include "FixupMapDialog.h"
 #include "AIEditingPanel.h"
 #include "MissionInfoEditDialog.h"
-#include "ui/igroupdialog.h"
 
 class EditingModule :
 	public RegisterableModule
@@ -73,9 +72,14 @@ public:
 			"MissionInfoEditDialog"
 		);
 
-		GlobalMainFrame().signal_MainFrameConstructed().connect(
-			[this] { GlobalGroupDialog().addControl(ui::AIEditingControl::Name); }
-		);
+		GlobalMainFrame().signal_MainFrameConstructed().connect([this] 
+        {
+            GlobalMainFrame().addControl(ui::AIEditingControl::Name, IMainFrame::ControlSettings
+            {
+                IMainFrame::Location::PropertyPanel,
+                true
+            });
+        });
 
         GlobalUserInterface().registerControl(std::make_shared<ui::AIEditingControl>());
 	}

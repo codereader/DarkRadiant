@@ -60,7 +60,11 @@ private:
 
     void onMainFrameConstructed()
     {
-        GlobalGroupDialog().addControl(UserControl::FavouritesBrowser);
+        GlobalMainFrame().addControl(UserControl::FavouritesBrowser, IMainFrame::ControlSettings
+        {
+            IMainFrame::Location::PropertyPanel,
+            true
+        });
     }
 };
 

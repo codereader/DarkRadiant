@@ -7,6 +7,7 @@
 #include "ui/iuserinterface.h"
 
 #include <wx/sizer.h>
+#include <wx/aui/auibook.h>
 
 #include "camera/CameraWndManager.h"
 #include "ui/texturebrowser/TextureBrowser.h"
@@ -32,9 +33,9 @@ namespace
     }
 }
 
-AuiLayout::AuiLayout()
-: _auiMgr(nullptr, wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_VENETIAN_BLINDS_HINT |
-                   wxAUI_MGR_LIVE_RESIZE)
+AuiLayout::AuiLayout() :
+    _auiMgr(nullptr, wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_VENETIAN_BLINDS_HINT | wxAUI_MGR_LIVE_RESIZE),
+    _propertyNotebook(nullptr)
 {
 }
 
@@ -54,6 +55,11 @@ std::string AuiLayout::getName()
     return AUI_LAYOUT_NAME;
 }
 
+PropertyNotebook* AuiLayout::getNotebook()
+{
+    return _propertyNotebook;
+}
+
 void AuiLayout::activate()
 {
     auto topLevelParent = GlobalMainFrame().getWxTopLevelWindow();
@@ -64,19 +70,7 @@ void AuiLayout::activate()
     _auiMgr.SetManagedWindow(managedArea);
     GlobalMainFrame().getWxMainContainer()->Add(managedArea, 1, wxEXPAND);
 
-    auto notebookPanel = new wxPanel(managedArea, wxID_ANY);
-    notebookPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
-
-    GlobalGroupDialog().reparentNotebook(notebookPanel);
-
-    // Hide the floating window
-    GlobalGroupDialog().hideDialogWindow();
-
-    // Add a new texture browser to the group dialog pages
-    auto textureBrowserControl = GlobalUserInterface().findControl(UserControl::TextureBrowser);
-    assert(textureBrowserControl);
-
-    GlobalGroupDialog().addControl(UserControl::TextureBrowser);
+    _propertyNotebook = new PropertyNotebook(managedArea);
 
     auto orthoViewControl = GlobalUserInterface().findControl(UserControl::OrthoView);
     auto cameraControl = GlobalUserInterface().findControl(UserControl::Camera);
@@ -89,7 +83,7 @@ void AuiLayout::activate()
     size.Scale(0.5, 1.0);
     addPane(cameraControl->getControlName(), cameraControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(cameraControl->getDisplayName(), size).Left().Position(0));
-    addPane("PropertiesPanel", notebookPanel,
+    addPane("PropertiesPanel", _propertyNotebook,
             DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1));
     addPane(orthoViewControl->getControlName(), orthoViewControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(orthoViewControl->getDisplayName(), size).CenterPane());
@@ -103,17 +97,6 @@ void AuiLayout::activate()
         _auiMgr.GetPane(info.control).MinSize(MIN_SIZE);
     }
     _auiMgr.Update();
-
-#if 0
-    auto controlNames = registry::getValue<std::string>(RKEY_ROOT + "/floatingControls");
-    std::vector<std::string> floatingControlNames;
-    string::split(floatingControlNames, controlNames, ";");
-
-    for (const auto& controlName : floatingControlNames)
-    {
-        createFloatingControl(controlName);
-    }
-#endif
 
     // If we have a stored perspective, load it
     std::string storedPersp = GlobalRegistry().get(RKEY_ROOT);
@@ -133,10 +116,6 @@ void AuiLayout::activate()
 
 void AuiLayout::deactivate()
 {
-#if 0
-    registry::setValue(RKEY_ROOT + "/floatingControls", string::join(_floatingControlNames, ";"));
-#endif
-
     // Save all floating XYWnd states
     GlobalXYWnd().saveState();
 
@@ -152,14 +131,6 @@ void AuiLayout::deactivate()
 
     // Delete all active views
     GlobalXYWndManager().destroyViews();
-
-    // Give the notebook back to the GroupDialog
-    GlobalGroupDialog().reparentNotebookToSelf();
-
-    // Hide the group dialog
-    GlobalGroupDialog().hideDialogWindow();
-
-    GlobalGroupDialog().removePage("textures"); // do this after destroyWindow()
 
     // Get a reference to the managed window, it might be cleared by UnInit()
     auto managedWindow = _auiMgr.GetManagedWindow();

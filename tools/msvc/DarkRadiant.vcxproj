@@ -467,6 +467,7 @@
     <ClInclude Include="..\..\radiant\ui\layers\LegacyLayerControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\AuiLayout.h" />
+    <ClInclude Include="..\..\radiant\ui\mainframe\PropertyNotebook.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
     <ClInclude Include="..\..\radiant\ui\ManipulatorToggle.h" />
     <ClInclude Include="..\..\radiant\ui\MapCommands.h" />
