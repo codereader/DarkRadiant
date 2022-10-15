@@ -19,8 +19,12 @@ public:
 
     using Ptr = std::shared_ptr<IUserControl>;
 
-    // Returns the name of this control
+    // Returns the name of this control. This is an identifier corresponding to the
+    // UserControl enumeration, like UserControl::Camera, or a plugin-defined identifier
     virtual std::string getControlName() = 0;
+
+    // A visible, localised identifier used for tab captions and window titles
+    virtual std::string getDisplayName() = 0;
 
     // Creates a new wxWidget window for packing into a dialog or sizer
     // Widget ownership is transferred to the caller, IUserControl implementations

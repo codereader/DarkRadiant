@@ -30,6 +30,11 @@ public:
         return UserControl::TextureBrowser;
     }
 
+    std::string getDisplayName() override
+    {
+        return _("Texture Browser");
+    }
+
     wxWindow* createWidget(wxWindow* parent) override
     {
         return new TextureBrowser(parent);

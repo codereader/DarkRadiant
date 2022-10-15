@@ -44,6 +44,11 @@ public:
         return UserControl::Camera;
     }
 
+    std::string getDisplayName() override
+    {
+        return _("Camera");
+    }
+
     wxWindow* createWidget(wxWindow* parent) override
     {
         return new CamWnd(parent);

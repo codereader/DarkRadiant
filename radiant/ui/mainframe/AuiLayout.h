@@ -1,24 +1,19 @@
 #pragma once
 
 #include <memory>
-#include "wxutil/PanedPosition.h"
 #include "ui/imainframelayout.h"
 
 #include "camera/CamWnd.h"
-#include "wxutil/Splitter.h"
 
 #include <wx/aui/aui.h>
 
 namespace ui
 {
 
-#define AUI_LAYOUT_NAME "Dockable"
-
-class AuiLayout;
-typedef std::shared_ptr<AuiLayout> AuiLayoutPtr;
+constexpr const char* const AUI_LAYOUT_NAME = "Dockable";
 
 /// Layout based on wxWidgets AUI (dock widget interface)
-class AuiLayout: public IMainFrameLayout
+class AuiLayout : public IMainFrameLayout
 {
     // Main AUI manager
     wxAuiManager _auiMgr;
@@ -32,13 +27,9 @@ class AuiLayout: public IMainFrameLayout
     // List of panes managed by the AUI manager
     std::list<PaneInfo> _panes;
 
-    // Main constructor
+public:
     AuiLayout();
 
-    // Add a pane to the wxAuiManager and store it in the list
-    void addPane(const std::string& name, wxWindow* window, const wxAuiPaneInfo& info);
-
-public:
 	// IMainFrameLayout implementation
 	std::string getName() override;
 	void activate() override;
@@ -48,7 +39,11 @@ public:
     void createFloatingControl(const std::string& controlName) override;
 
 	// The creation function, needed by the mainframe layout manager
-	static AuiLayoutPtr CreateInstance();
+	static std::shared_ptr<AuiLayout> CreateInstance();
+
+private:
+    // Add a pane to the wxAuiManager and store it in the list
+    void addPane(const std::string& name, wxWindow* window, const wxAuiPaneInfo& info);
 };
 
-} // namespace ui
+} // namespace

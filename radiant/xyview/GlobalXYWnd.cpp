@@ -63,6 +63,11 @@ public:
         return UserControl::OrthoView;
     }
 
+    std::string getDisplayName() override
+    {
+        return _("2D View");
+    }
+
     wxWindow* createWidget(wxWindow* parent) override
     {
         auto xyWnd = GlobalXYWnd().createEmbeddedOrthoView(XY, parent);

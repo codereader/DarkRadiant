@@ -209,10 +209,9 @@ void AuiLayout::toggleFullscreenCameraView()
 {
 }
 
-// The creation function, needed by the mainframe layout manager
-AuiLayoutPtr AuiLayout::CreateInstance()
+std::shared_ptr<AuiLayout> AuiLayout::CreateInstance()
 {
-    return AuiLayoutPtr(new AuiLayout);
+    return std::make_shared<AuiLayout>();
 }
 
 } // namespace ui
