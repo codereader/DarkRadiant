@@ -6,7 +6,7 @@
 
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
-#include <wx/event.h>
+#include <wx/panel.h>
 
 class ISelectable;
 class Entity;
@@ -24,14 +24,13 @@ class SpawnargLinkedCheckbox;
 class SpawnargLinkedSpinButton;
 
 class AIEditingPanel : 
-	public wxEvtHandler,
+	public wxPanel,
 	public Entity::Observer,
 	public sigc::trackable
 {
 private:
 	sigc::connection _selectionChangedSignal;
 
-	wxWindow* _tempParent;
 	wxScrolledWindow* _mainPanel;
 
 	bool _queueUpdate;
@@ -51,28 +50,21 @@ private:
 	sigc::connection _redoHandler;
 
 public:
-	AIEditingPanel();
+	AIEditingPanel(wxWindow* parent);
+	~AIEditingPanel() override;
 
-	static AIEditingPanel& Instance();
-	static void Shutdown();
-
-	static void onMainFrameConstructed();
-
-	void onKeyInsert(const std::string& key, EntityKeyValue& value);
-    void onKeyChange(const std::string& key, const std::string& val);
-	void onKeyErase(const std::string& key, EntityKeyValue& value);
+	void onKeyInsert(const std::string& key, EntityKeyValue& value) override;
+    void onKeyChange(const std::string& key, const std::string& val) override;
+	void onKeyErase(const std::string& key, EntityKeyValue& value) override;
 
 	void postUndo();
 	void postRedo();
 
 protected:
-	void OnPaint(wxPaintEvent& ev);
-
+	void onPaint(wxPaintEvent& ev);
 	void onBrowseButton(wxCommandEvent& ev, const std::string& key);
 
 private:
-	static AIEditingPanelPtr& InstancePtr();
-
 	void constructWidgets();
 	wxSizer* createSpinButtonHbox(SpawnargLinkedSpinButton* spinButton);
 	wxStaticText* createSectionLabel(const std::string& text);
@@ -80,7 +72,6 @@ private:
 									  const std::string& buttonLabel, const std::string& buttonIcon,
 									  const std::string& key);
 
-	void onMainFrameShuttingDown();
 	void onSelectionChanged(const ISelectable& selectable);
 
 	void rescanSelection();

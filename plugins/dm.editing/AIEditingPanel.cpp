@@ -27,25 +27,35 @@
 namespace ui
 {
 
-AIEditingPanel::AIEditingPanel() :
-	_tempParent(new wxFrame(NULL, wxID_ANY, "")),
-	_mainPanel(new wxScrolledWindow(_tempParent, wxID_ANY)),
+AIEditingPanel::AIEditingPanel(wxWindow* parent) :
+	wxPanel(parent),
+	_mainPanel(new wxScrolledWindow(this, wxID_ANY)),
 	_queueUpdate(true),
 	_entity(nullptr)
 {
-    _tempParent->SetName("AIEditingPanelTemporaryParent");
-	_tempParent->Hide();
-	_mainPanel->Connect(wxEVT_PAINT, wxPaintEventHandler(AIEditingPanel::OnPaint), NULL, this);
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    GetSizer()->Add(_mainPanel, 1, wxEXPAND);
+
+	_mainPanel->Bind(wxEVT_PAINT, &AIEditingPanel::onPaint, this);
 
 	constructWidgets();
-
-	GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-		sigc::mem_fun(*this, &AIEditingPanel::onMainFrameShuttingDown)
-	);	
 
 	_selectionChangedSignal = GlobalSelectionSystem().signal_selectionChanged().connect(
 		sigc::mem_fun(*this, &AIEditingPanel::onSelectionChanged)
 	);
+
+    _undoHandler = GlobalMapModule().signal_postUndo().connect(
+        sigc::mem_fun(*this, &AIEditingPanel::updateWidgetsFromSelection));
+    _redoHandler = GlobalMapModule().signal_postRedo().connect(
+        sigc::mem_fun(*this, &AIEditingPanel::updateWidgetsFromSelection));
+}
+
+AIEditingPanel::~AIEditingPanel()
+{
+    _undoHandler.disconnect();
+    _redoHandler.disconnect();
+
+    _selectionChangedSignal.disconnect();
 }
 
 void AIEditingPanel::constructWidgets()
@@ -243,59 +253,6 @@ wxStaticText* AIEditingPanel::createSectionLabel(const std::string& text)
 	return label;
 }
 
-AIEditingPanel& AIEditingPanel::Instance()
-{
-	AIEditingPanelPtr& instance = InstancePtr();
-
-	if (!instance)
-	{
-		instance.reset(new AIEditingPanel);
-	}
-
-	return *instance;
-}
-
-void AIEditingPanel::Shutdown()
-{
-	if (InstancePtr() != NULL)
-	{
-		//Instance().shutdown();
-		InstancePtr().reset();
-	}
-} 
-
-void AIEditingPanel::onMainFrameConstructed()
-{
-	IGroupDialog::PagePtr page(new IGroupDialog::Page);
-
-	page->name = "aieditingpanel";
-	page->windowLabel = _("AI");
-	page->page = Instance()._mainPanel;
-	page->tabIcon = "icon_ai.png";
-	page->tabLabel = _("AI");
-	page->position = IGroupDialog::Page::Position::MediaBrowser - 10;
-
-	// Add the page
-	GlobalGroupDialog().addPage(page);
-
-	// Delete the temporary parent
-	Instance()._tempParent->Destroy();
-	Instance()._tempParent = nullptr;
-
-	Instance()._undoHandler = GlobalMapModule().signal_postUndo().connect(
-		sigc::mem_fun(Instance(), &AIEditingPanel::updateWidgetsFromSelection));
-	Instance()._redoHandler = GlobalMapModule().signal_postRedo().connect(
-		sigc::mem_fun(Instance(), &AIEditingPanel::updateWidgetsFromSelection));
-}
-
-void AIEditingPanel::onMainFrameShuttingDown()
-{
-	_undoHandler.disconnect();
-	_redoHandler.disconnect();
-
-	_selectionChangedSignal.disconnect();
-}
-
 Entity* AIEditingPanel::getEntityFromSelection()
 {
 	Entity* entity = NULL;
@@ -413,7 +370,7 @@ void AIEditingPanel::onSelectionChanged(const ISelectable& selectable)
 	}
 }
 
-void AIEditingPanel::OnPaint(wxPaintEvent& ev)
+void AIEditingPanel::onPaint(wxPaintEvent& ev)
 {
 	if (_queueUpdate)
 	{
@@ -449,11 +406,5 @@ void AIEditingPanel::onBrowseButton(wxCommandEvent& ev, const std::string& key)
 			<< key << std::endl;
 	}
 }
-
-AIEditingPanelPtr& AIEditingPanel::InstancePtr()
-{
-	static AIEditingPanelPtr _instancePtr;
-	return _instancePtr;
-} 
 
 } // namespace
