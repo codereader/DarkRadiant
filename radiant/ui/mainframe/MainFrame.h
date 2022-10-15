@@ -72,7 +72,7 @@ public:
 		const std::string& message, bool forceDisplay = false) override;
 
     void addControl(const std::string& controlName, ControlSettings defaultSettings) override;
-    void createFloatingControl(const std::string& controlName) override;
+    void createFloatingControl(const std::string& controlName);
 
 	sigc::signal<void>& signal_MainFrameConstructed() override;
 	sigc::signal<void>& signal_MainFrameReady() override;

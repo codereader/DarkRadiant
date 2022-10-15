@@ -28,8 +28,8 @@ namespace
     wxAuiPaneInfo DEFAULT_PANE_INFO(const std::string& caption,
                                     const wxSize& minSize)
     {
-        return wxAuiPaneInfo().Caption(caption).CloseButton(false)
-                              .BestSize(minSize).MinSize(minSize);
+        return wxAuiPaneInfo().Caption(caption).CloseButton(false).MaximizeButton().MinimizeButton()
+                              .BestSize(minSize).MinSize(minSize).DestroyOnClose(true);
     }
 }
 
@@ -37,6 +37,7 @@ AuiLayout::AuiLayout() :
     _auiMgr(nullptr, wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_VENETIAN_BLINDS_HINT | wxAUI_MGR_LIVE_RESIZE),
     _propertyNotebook(nullptr)
 {
+    _auiMgr.Bind(wxEVT_AUI_PANE_CLOSE, &AuiLayout::onPaneClose, this);
 }
 
 void AuiLayout::addPane(const std::string& name, wxWindow* window, const wxAuiPaneInfo& info)
@@ -48,6 +49,11 @@ void AuiLayout::addPane(const std::string& name, wxWindow* window, const wxAuiPa
     // Add and store the pane
     _auiMgr.AddPane(window, nameInfo);
     _panes.push_back({ name, window });
+}
+
+void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
+{
+    
 }
 
 std::string AuiLayout::getName()
@@ -89,29 +95,10 @@ void AuiLayout::activate()
             DEFAULT_PANE_INFO(orthoViewControl->getDisplayName(), size).CenterPane());
     _auiMgr.Update();
 
-    // Nasty hack to get the panes sized properly. Since BestSize() is
-    // completely ignored (at least on Linux), we have to add the panes with a
-    // large *minimum* size and then reset this size after the initial addition.
-    for (const auto& info : _panes)
-    {
-        _auiMgr.GetPane(info.control).MinSize(MIN_SIZE);
-    }
-    _auiMgr.Update();
-
-    // If we have a stored perspective, load it
-    std::string storedPersp = GlobalRegistry().get(RKEY_ROOT);
-    if (!storedPersp.empty())
-    {
-        _auiMgr.LoadPerspective(storedPersp);
-    }
-
     // Hide the camera toggle option for non-floating views
     GlobalMenuManager().setVisibility("main/view/cameraview", false);
     // Hide the console/texture browser toggles for non-floating/non-split views
     GlobalMenuManager().setVisibility("main/view/textureBrowser", false);
-
-    // Restore all floating XY views
-    GlobalXYWnd().restoreState();
 }
 
 void AuiLayout::deactivate()
@@ -154,7 +141,8 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
 
     auto managedWindow = _auiMgr.GetManagedWindow();
 
-    auto pane = DEFAULT_PANE_INFO(control->getDisplayName(), wxSize(128, 128)).Float();
+    auto pane = DEFAULT_PANE_INFO(control->getDisplayName(), wxSize(128, 128))
+        .Float().CloseButton(true);
 
     if (!control->getIcon().empty())
     {
@@ -167,6 +155,24 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
 
 void AuiLayout::restoreStateFromRegistry()
 {
+    // Nasty hack to get the panes sized properly. Since BestSize() is
+    // completely ignored (at least on Linux), we have to add the panes with a
+    // large *minimum* size and then reset this size after the initial addition.
+    for (const auto& info : _panes)
+    {
+        _auiMgr.GetPane(info.control).MinSize(MIN_SIZE);
+    }
+    _auiMgr.Update();
+
+    // If we have a stored perspective, load it
+    std::string storedPersp = GlobalRegistry().get(RKEY_ROOT);
+    if (!storedPersp.empty())
+    {
+        _auiMgr.LoadPerspective(storedPersp);
+    }
+
+    // Restore all floating XY views
+    GlobalXYWnd().restoreState();
 }
 
 void AuiLayout::toggleFullscreenCameraView()

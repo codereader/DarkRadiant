@@ -141,12 +141,6 @@ public:
     virtual void addControl(const std::string& controlName, ControlSettings defaultSettings) = 0;
 
     /**
-     * Create a transient window containing the named control.
-     * The control will be looked up using the IUserInterfaceModule API.
-     */
-    virtual void createFloatingControl(const std::string& controlName) = 0;
-
-    /**
      * \brief
      * A signal emitted when the MainFrame window has been set up.
      *

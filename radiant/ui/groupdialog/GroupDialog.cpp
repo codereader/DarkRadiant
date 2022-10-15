@@ -428,7 +428,7 @@ void GroupDialog::undockTab()
             removePage(page.second.name);
 
             // Get the control name and create a floating window
-            GlobalMainFrame().createFloatingControl(controlName);
+            //GlobalMainFrame().createFloatingControl(controlName);
             break;
         }
     }

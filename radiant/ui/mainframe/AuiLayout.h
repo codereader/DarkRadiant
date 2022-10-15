@@ -49,6 +49,7 @@ public:
 private:
     // Add a pane to the wxAuiManager and store it in the list
     void addPane(const std::string& name, wxWindow* window, const wxAuiPaneInfo& info);
+    void onPaneClose(wxAuiManagerEvent& ev);
 };
 
 } // namespace

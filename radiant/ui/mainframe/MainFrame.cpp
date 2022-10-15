@@ -1,7 +1,6 @@
 #include "MainFrame.h"
 
 #include "i18n.h"
-#include "ui/igroupdialog.h"
 #include "ui/iusercontrol.h"
 #include "imap.h"
 #include "ui/ieventmanager.h"
@@ -36,7 +35,6 @@
 
 namespace
 {
-	const std::string RKEY_WINDOW_LAYOUT = "user/ui/mainFrame/windowLayout";
 	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
 	const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
 	const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
@@ -48,7 +46,7 @@ namespace ui
 {
 
 MainFrame::MainFrame() :
-	_topLevelWindow(NULL),
+	_topLevelWindow(nullptr),
 	_screenUpdatesEnabled(false), // not enabled until constructed
     _defLoadingBlocksUpdates(false),
     _mapLoadingBlocksUpdates(false)
@@ -288,22 +286,6 @@ void MainFrame::construct()
 	}
 #endif
 
-#ifdef __linux__
-	// #4526: In Linux, do another restore after the top level window has been shown
-	// After startup, GTK emits onSizeAllocate events which trigger a Layout() sequence
-	// messing up the pane positions, so do the restore() one more time after the main
-	// window came up.
-	_topLevelWindow->Bind(wxEVT_SHOW, [&](wxShowEvent& ev)
-	{
-		if (_currentLayout && ev.IsShown())
-		{
-			_currentLayout->restoreStateFromRegistry();
-		}
-
-		ev.Skip();
-	});
-#endif
-
 	// register the commands
 	GlobalMainFrameLayoutManager().registerCommands();
 
@@ -311,6 +293,25 @@ void MainFrame::construct()
 	// their UI parts. Clear the signal afterwards.
 	signal_MainFrameConstructed().emit();
 	signal_MainFrameConstructed().clear();
+
+    // Restore the saved layout now that all signal listeners have added their controls
+    _currentLayout->restoreStateFromRegistry();
+
+#ifdef __linux__
+    // #4526: In Linux, do another restore after the top level window has been shown
+    // After startup, GTK emits onSizeAllocate events which trigger a Layout() sequence
+    // messing up the pane positions, so do the restore() one more time after the main
+    // window came up.
+    _topLevelWindow->Bind(wxEVT_SHOW, [&](wxShowEvent& ev)
+    {
+        if (_currentLayout && ev.IsShown())
+        {
+            _currentLayout->restoreStateFromRegistry();
+        }
+
+        ev.Skip();
+    });
+#endif
 
 	enableScreenUpdates();
 
@@ -421,8 +422,7 @@ void MainFrame::createTopLevelWindow()
     wxTheApp->SetTopWindow(_topLevelWindow);
 
     // Listen for close events
-    _topLevelWindow->Bind(wxEVT_CLOSE_WINDOW,
-                          &MainFrame::onTopLevelFrameClose, this);
+    _topLevelWindow->Bind(wxEVT_CLOSE_WINDOW, &MainFrame::onTopLevelFrameClose, this);
 }
 
 void MainFrame::restoreWindowPosition()
