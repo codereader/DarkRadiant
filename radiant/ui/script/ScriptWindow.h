@@ -11,9 +11,6 @@ namespace wxutil { class PythonSourceViewCtrl; }
 namespace ui
 {
 
-class ScriptWindow;
-typedef std::shared_ptr<ScriptWindow> ScriptWindowPtr;
-
 class ScriptWindow :
 	public wxPanel
 {

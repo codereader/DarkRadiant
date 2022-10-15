@@ -1410,6 +1410,9 @@
     <ClInclude Include="..\..\radiant\ui\favourites\FavouritesBrowserControl.h">
       <Filter>src\ui\favourites</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\script\ScriptPanel.h">
+      <Filter>src\ui\script</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

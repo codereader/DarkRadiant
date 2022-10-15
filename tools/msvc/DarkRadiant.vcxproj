@@ -565,6 +565,7 @@
     <ClInclude Include="..\..\radiant\ui\prefdialog\PreferenceItem.h" />
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h" />
     <ClInclude Include="..\..\radiant\ui\script\ScriptMenu.h" />
+    <ClInclude Include="..\..\radiant\ui\script\ScriptPanel.h" />
     <ClInclude Include="..\..\radiant\ui\script\ScriptWindow.h" />
     <ClInclude Include="..\..\radiant\ui\SelectionModeToggle.h" />
     <ClInclude Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.h" />
