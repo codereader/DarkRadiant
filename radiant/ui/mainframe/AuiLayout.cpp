@@ -10,6 +10,7 @@
 
 #include "camera/CameraWndManager.h"
 #include "ui/texturebrowser/TextureBrowser.h"
+#include "wxutil/Bitmap.h"
 #include "xyview/GlobalXYWnd.h"
 
 namespace ui
@@ -196,8 +197,14 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
 
     auto managedWindow = _auiMgr.GetManagedWindow();
 
-    addPane(control->getControlName(), control->createWidget(managedWindow),
-        DEFAULT_PANE_INFO(control->getDisplayName(), wxSize(128, 128)).Float());
+    auto pane = DEFAULT_PANE_INFO(control->getDisplayName(), wxSize(128, 128)).Float();
+
+    if (!control->getIcon().empty())
+    {
+        pane.Icon(wxutil::GetLocalBitmap(control->getIcon()));
+    }
+
+    addPane(control->getControlName(), control->createWidget(managedWindow), pane);
     _auiMgr.Update();
 }
 

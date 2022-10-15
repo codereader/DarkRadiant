@@ -26,6 +26,9 @@ public:
     // A visible, localised identifier used for tab captions and window titles
     virtual std::string getDisplayName() = 0;
 
+    // Optional icon file name to use for tab captions, e.g. "icon_texture.png"
+    virtual std::string getIcon() { return {}; }
+
     // Creates a new wxWidget window for packing into a dialog or sizer
     // Widget ownership is transferred to the caller, IUserControl implementations
     // will not delete the returned window

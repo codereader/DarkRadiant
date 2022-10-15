@@ -35,6 +35,11 @@ public:
         return _("Textures");
     }
 
+    std::string getIcon() override
+    {
+        return "icon_texture.png";
+    }
+
     wxWindow* createWidget(wxWindow* parent) override
     {
         return new TextureBrowser(parent);

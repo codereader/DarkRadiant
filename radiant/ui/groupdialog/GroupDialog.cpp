@@ -286,9 +286,15 @@ void GroupDialog::addControl(const std::string& controlName)
     page->name = controlName;
     page->windowLabel = control->getDisplayName();
     page->page = control->createWidget(_notebook.get());
-    page->tabIcon = "icon_texture.png";
+    page->tabIcon = control->getIcon();
     page->tabLabel = control->getDisplayName();
-    page->position = Page::Position::TextureBrowser;
+    page->position = 0;
+
+    // Move to the end of the existing controls
+    for (const auto& existing : _pages)
+    {
+        page->position = std::max(page->position, existing.second.position);
+    }
 
     addPage(page);
 }
