@@ -37,7 +37,7 @@ AuiLayout::AuiLayout()
 {
 }
 
-void AuiLayout::addPane(wxWindow* window, const wxAuiPaneInfo& info)
+void AuiLayout::addPane(const std::string& name, wxWindow* window, const wxAuiPaneInfo& info)
 {
     // Give the pane a deterministic name so we can restore perspective
     wxAuiPaneInfo nameInfo = info;
@@ -45,7 +45,7 @@ void AuiLayout::addPane(wxWindow* window, const wxAuiPaneInfo& info)
 
     // Add and store the pane
     _auiMgr.AddPane(window, nameInfo);
-    _panes.push_back(window);
+    _panes.push_back({ name, window });
 }
 
 std::string AuiLayout::getName()
@@ -100,22 +100,33 @@ void AuiLayout::activate()
     // the 2D view on the right
     wxSize size = topLevelParent->GetSize();
     size.Scale(0.5, 1.0);
-    addPane(cameraControl->createWidget(managedArea),
+    addPane(cameraControl->getControlName(), cameraControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(_("Camera"), size).Left().Position(0));
-    addPane(notebookPanel,
+    addPane("PropertiesPanel", notebookPanel,
             DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1));
-    addPane(orthoViewControl->createWidget(managedArea),
+    addPane(orthoViewControl->getControlName(), orthoViewControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(_("2D View"), size).CenterPane());
     _auiMgr.Update();
 
     // Nasty hack to get the panes sized properly. Since BestSize() is
     // completely ignored (at least on Linux), we have to add the panes with a
     // large *minimum* size and then reset this size after the initial addition.
-    for (wxWindow* w: _panes)
+    for (const auto& info : _panes)
     {
-        _auiMgr.GetPane(w).MinSize(MIN_SIZE);
+        _auiMgr.GetPane(info.control).MinSize(MIN_SIZE);
     }
     _auiMgr.Update();
+
+#if 0
+    auto controlNames = registry::getValue<std::string>(RKEY_ROOT + "/floatingControls");
+    std::vector<std::string> floatingControlNames;
+    string::split(floatingControlNames, controlNames, ";");
+
+    for (const auto& controlName : floatingControlNames)
+    {
+        createFloatingControl(controlName);
+    }
+#endif
 
     // If we have a stored perspective, load it
     std::string storedPersp = GlobalRegistry().get(RKEY_ROOT);
@@ -135,6 +146,10 @@ void AuiLayout::activate()
 
 void AuiLayout::deactivate()
 {
+#if 0
+    registry::setValue(RKEY_ROOT + "/floatingControls", string::join(_floatingControlNames, ";"));
+#endif
+
     // Save all floating XYWnd states
     GlobalXYWnd().saveState();
 
@@ -175,12 +190,13 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
 
     if (!control)
     {
-        throw std::logic_error("Cannot find named control: " + controlName);
+        rError() << "Cannot create floating control: " << controlName << std::endl;
+        return;
     }
 
     auto managedWindow = _auiMgr.GetManagedWindow();
 
-    addPane(control->createWidget(managedWindow), 
+    addPane(control->getControlName(), control->createWidget(managedWindow),
         DEFAULT_PANE_INFO(controlName, wxSize(128, 128)).Float());
     _auiMgr.Update();
 }

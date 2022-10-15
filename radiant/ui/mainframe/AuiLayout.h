@@ -23,14 +23,20 @@ class AuiLayout: public IMainFrameLayout
     // Main AUI manager
     wxAuiManager _auiMgr;
 
+    struct PaneInfo
+    {
+        std::string controlName;
+        wxWindow* control;
+    };
+
     // List of panes managed by the AUI manager
-    std::list<wxWindow*> _panes;
+    std::list<PaneInfo> _panes;
 
     // Main constructor
     AuiLayout();
 
     // Add a pane to the wxAuiManager and store it in the list
-    void addPane(wxWindow* window, const wxAuiPaneInfo& info);
+    void addPane(const std::string& name, wxWindow* window, const wxAuiPaneInfo& info);
 
 public:
 	// IMainFrameLayout implementation
