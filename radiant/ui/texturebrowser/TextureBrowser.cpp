@@ -5,11 +5,7 @@
 #include "ui/imainframe.h"
 #include "ui/itoolbarmanager.h"
 #include "icolourscheme.h"
-#include "ui/igroupdialog.h"
-#include "iradiant.h"
 #include "ifavourites.h"
-#include "ipreferencesystem.h"
-#include "ui/imediabrowser.h"
 #include "ishaderclipboard.h"
 
 #include "wxutil/menu/IconTextMenuItem.h"
@@ -35,14 +31,15 @@
 #include "string/case_conv.h"
 #include "debugging/gl.h"
 #include "TextureBrowserManager.h"
+#include "ui/mediabrowser/FocusMaterialRequest.h"
 
 namespace ui
 {
 
 namespace
 {
-    const char* const SEEK_IN_MEDIA_BROWSER_TEXT = N_("Seek in Media Browser");
-    const char* TEXTURE_ICON = "icon_texture.png";
+    constexpr const char* const SEEK_IN_MEDIA_BROWSER_TEXT = N_("Seek in Media Browser");
+    constexpr const char* TEXTURE_ICON = "icon_texture.png";
 
     int FONT_HEIGHT()
     {
@@ -50,8 +47,8 @@ namespace
         return height;
     }
 
-    const int VIEWPORT_BORDER = 12;
-    const int TILE_BORDER = 2;
+    constexpr int VIEWPORT_BORDER = 12;
+    constexpr int TILE_BORDER = 2;
 }
 
 class TextureBrowser::TextureTile
@@ -885,13 +882,10 @@ void TextureBrowser::onSeekInMediaBrowser()
 {
     if (_popupX > 0 && _popupY > 0)
     {
-        MaterialPtr shader = getShaderAtCoords(_popupX, _popupY);
-
-        if (shader != NULL)
+        if (auto shader = getShaderAtCoords(_popupX, _popupY); shader)
         {
             // Focus the MediaBrowser selection to the given shader
-            GlobalGroupDialog().setPage(GlobalMediaBrowser().getGroupDialogTabName());
-            GlobalMediaBrowser().setSelection(shader->getName());
+            FocusMaterialRequest::Send(shader->getName());
         }
     }
 

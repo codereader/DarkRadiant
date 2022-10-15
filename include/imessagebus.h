@@ -57,6 +57,7 @@ public:
         ManipulatorModeToggleRequest,
         ComponentSelectionModeToggleRequest,
         GridSnapRequest,
+        FocusMaterialRequest,
 
         UserDefinedMessagesGoHigherThanThis = 999,
     };

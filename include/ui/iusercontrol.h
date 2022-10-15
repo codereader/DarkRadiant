@@ -41,6 +41,7 @@ struct UserControl
     constexpr static const char* Camera = "Camera";
     constexpr static const char* Console = "Console";
     constexpr static const char* EntityInspector = "EntityInspector";
+    constexpr static const char* MediaBrowser = "MediaBrowser";
     constexpr static const char* OrthoView = "OrthoView";
     constexpr static const char* TextureBrowser = "TextureBrowser";
 };

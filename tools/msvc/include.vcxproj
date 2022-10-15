@@ -222,7 +222,6 @@
     <ClInclude Include="..\..\include\ui\igroupdialog.h" />
     <ClInclude Include="..\..\include\ui\imainframe.h" />
     <ClInclude Include="..\..\include\ui\imainframelayout.h" />
-    <ClInclude Include="..\..\include\ui\imediabrowser.h" />
     <ClInclude Include="..\..\include\ui\imenu.h" />
     <ClInclude Include="..\..\include\ui\imenumanager.h" />
     <ClInclude Include="..\..\include\ui\iorthocontextmenu.h" />

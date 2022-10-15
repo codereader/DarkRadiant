@@ -718,6 +718,9 @@
     <ClCompile Include="..\..\radiant\ui\einspector\EntityInspectorModule.cpp">
       <Filter>src\ui\einspector</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mediabrowser\MediaBrowserModule.cpp">
+      <Filter>src\ui\mediabrowser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1400,6 +1403,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\einspector\EntityInspectorModule.h">
       <Filter>src\ui\einspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mediabrowser\FocusMaterialRequest.h">
+      <Filter>src\ui\mediabrowser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

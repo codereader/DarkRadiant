@@ -2,15 +2,13 @@
 
 #include <sigc++/connection.h>
 
-#include "ui/imediabrowser.h"
-#include "iradiant.h"
 #include "imodule.h"
 #include "imap.h"
 #include "icommandsystem.h"
 
 #include "MediaBrowserTreeView.h"
 
-#include <wx/event.h>
+#include <wx/panel.h>
 
 class wxWindow;
 class wxTreeCtrl;
@@ -22,23 +20,20 @@ class wxRadioButton;
 namespace ui
 {
 
+class FocusMaterialRequest;
+
 class TexturePreviewCombo;
 
 /**
- * \brief Media Browser page of the group dialog.
+ * \brief Media Browser control
  *
- * This page allows browsing of individual textures by name and loading them
+ * This control allows browsing of individual textures by name and loading them
  * into the texture window or applying directly to map geometry.
  */
 class MediaBrowser : 
-	public wxEvtHandler,
-	public IMediaBrowser
+	public wxPanel
 {
 private:
-	wxFrame* _tempParent;
-
-	wxWindow* _mainWidget;
-
 	MediaBrowserTreeView* _treeView;
 
 	// Texture preview combo (GL widget and info table)
@@ -51,17 +46,18 @@ private:
 
 	bool _blockShaderClipboardUpdates;
 
+    std::size_t _focusMaterialHandler;
+
 private:
 	void construct();
 	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
 
 public:
-	/** Constructor creates widgets.
-	 */
-	MediaBrowser();
+	MediaBrowser(wxWindow* parent);
+    ~MediaBrowser() override;
 
 	// Returns the currently selected item, or an empty string if nothing is selected
-	std::string getSelection() override;
+	std::string getSelection();
 
 	/** Set the given path as the current selection, highlighting it
 	 * in the tree view.
@@ -70,25 +66,15 @@ public:
 	 * The fullname of the item to select, or the empty string if there
 	 * should be no selection.
 	 */
-	void setSelection(const std::string& selection) override;
-
-	const std::string& getName() const override;
-	const StringSet& getDependencies() const override;
-	void initialiseModule(const IApplicationContext& ctx) override;
-	void shutdownModule() override;
+	void setSelection(const std::string& selection);
 
 private:
 	// These are called when the MaterialManager is loading/unloading the defs
 	void onMaterialDefsUnloaded();
 	void onMaterialDefsLoaded();
 
-	void onMainFrameConstructed();
 	void onMapEvent(IMap::MapEvent ev);
-
-	/**
-	* greebo: Command target for toggling the mediabrowser tab in the groupdialog.
-	*/
-	void togglePage(const cmd::ArgumentList& args);
+    void focusMaterial(FocusMaterialRequest& request);
 
 	void onShaderClipboardSourceChanged();
 };
