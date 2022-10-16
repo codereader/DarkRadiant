@@ -25,8 +25,11 @@ public:
         // The image to be displayed in the tab
         std::string tabIcon;
 
+        // If already loaded into the image list, this is the bitmap index
+        int tabIconIndex = -1;
+
         // the actual widget to be added
-        wxWindow* page;
+        wxWindow* page = nullptr;
 
         // the title string for the groupdialog window
         // to be displayed when this tab is active
@@ -72,10 +75,15 @@ public:
 
     void removePage(const std::string& name);
 
-    void saveState(const std::string& registryRootPath);
-    void restoreState(const std::string& registryRootPath);
+    void saveState();
+    void restoreState();
 
 private:
+    std::string getSelectedPageName();
+    int findControlIndexByName(const std::string& controlName);
+    std::string findControlNameByWindow(wxWindow* window);
+    int getImageIndexForControl(const std::string& controlName);
+
     void onPageSwitch(wxBookCtrlEvent& ev);
     void onTabRightClick(wxAuiNotebookEvent& ev);
 

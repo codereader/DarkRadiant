@@ -6,6 +6,16 @@
 namespace ui
 {
 
+namespace
+{
+    const std::string RKEY_ROOT = "user/ui/mainFrame/propertyPanel/";
+    const std::string RKEY_LAST_SHOWN_PAGE = RKEY_ROOT + "lastShownPage";
+    const std::string RKEY_PAGES = RKEY_ROOT + "pages";
+
+    const std::string PAGE_NODE_NAME = "page";
+    const std::string CONTROL_NAME_ATTRIBUTE = "controlName";
+}
+
 PropertyNotebook::PropertyNotebook(wxWindow* parent, AuiLayout& owner) :
     wxAuiNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
         wxNB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS),
@@ -61,7 +71,7 @@ wxWindow* PropertyNotebook::addPage(const PagePtr& page)
     Show();
 
     // Load the icon
-    int imageId = page->tabIcon.empty() ? -1 :
+    page->tabIconIndex = page->tabIcon.empty() ? -1 :
         _imageList->Add(wxutil::GetLocalBitmap(page->tabIcon));
 
     // Handle position conflicts first
@@ -90,24 +100,10 @@ wxWindow* PropertyNotebook::addPage(const PagePtr& page)
     }
 
     page->page->Reparent(this);
-    InsertPage(insertPosition, page->page, page->tabLabel, false, imageId);
+    InsertPage(insertPosition, page->page, page->tabLabel, false, page->tabIconIndex);
 
     // Add this page by copy to the local list
-    _pages.insert(std::make_pair(page->position, Page(*page)));
-
-    // During the startup phase (when pages are added) we want to activate the 
-    // newly added page if it was the active one during the last shutdown.
-    if (this->IsShownOnScreen())
-    {
-#if 0
-        std::string lastShownPage = registry::getValue<std::string>(RKEY_LAST_SHOWN_PAGE);
-
-        if (!lastShownPage.empty() && page->name == lastShownPage)
-        {
-            setPage(lastShownPage);
-        }
-#endif
-    }
+    _pages.emplace(page->position, Page(*page));
 
     return page->page;
 }
@@ -129,14 +125,23 @@ void PropertyNotebook::removePage(const std::string& name)
     }
 }
 
+std::string PropertyNotebook::getSelectedPageName()
+{
+    auto selectedPageIndex = GetSelection();
+
+    if (selectedPageIndex < 0) return {};
+
+    // Look up the page in the _pages dictionary by the page widget
+    auto win = GetPage(static_cast<size_t>(selectedPageIndex));
+
+    return findControlNameByWindow(win);
+}
+
 void PropertyNotebook::onPageSwitch(wxBookCtrlEvent& ev)
 {
-#if 0
-    updatePageTitle(ev.GetSelection());
-
     // Store the page's name into the registry for later retrieval
-    registry::setValue(RKEY_LAST_SHOWN_PAGE, getPageName());
-#endif
+    registry::setValue(RKEY_LAST_SHOWN_PAGE, getSelectedPageName());
+
     // Be sure to skip the event, otherwise pages stay hidden
     ev.Skip();
 }
@@ -158,30 +163,119 @@ void PropertyNotebook::undockTab()
 
     if (win == nullptr) return;
 
-    for (const auto& page : _pages)
+    auto controlName = findControlNameByWindow(win);
+
+    if (!controlName.empty())
     {
-        if (page.second.page == win)
-        {
-            auto controlName = page.second.name;
+        // Remove the page
+        removePage(controlName);
 
-            // Remove the page, we're done
-            removePage(page.second.name);
-
-            // Get the control name and create a floating window
-            _layout.createFloatingControl(controlName);
-            break;
-        }
+        // Get the control name and create a floating window
+        _layout.createFloatingControl(controlName);
     }
 }
 
-void PropertyNotebook::saveState(const std::string& registryRootPath)
+std::string PropertyNotebook::findControlNameByWindow(wxWindow* window)
 {
-    // TODO
+    for (const auto& page : _pages)
+    {
+        if (page.second.page == window)
+        {
+            return page.second.name;
+        }
+    }
+
+    return {};
 }
 
-void PropertyNotebook::restoreState(const std::string& registryRootPath)
+int PropertyNotebook::findControlIndexByName(const std::string& controlName)
 {
-    // TODO
+    for (const auto& page : _pages)
+    {
+        if (page.second.name == controlName)
+        {
+            return FindPage(page.second.page);
+        }
+    }
+
+    return -1;
+}
+
+int PropertyNotebook::getImageIndexForControl(const std::string& controlName)
+{
+    for (const auto& page : _pages)
+    {
+        if (page.second.name == controlName)
+        {
+            return page.second.tabIconIndex;
+        }
+    }
+
+    return -1;
+}
+
+void PropertyNotebook::saveState()
+{
+    GlobalRegistry().deleteXPath(RKEY_PAGES);
+
+    auto pagesKey = GlobalRegistry().createKey(RKEY_PAGES);
+
+    // Save the names and position of all controls
+    for (std::size_t i = 0; i < GetPageCount(); ++i)
+    {
+        auto controlName = findControlNameByWindow(GetPage(i));
+
+        if (controlName.empty()) continue;
+
+        auto paneNode = pagesKey.createChild(PAGE_NODE_NAME);
+        paneNode.setAttributeValue(CONTROL_NAME_ATTRIBUTE, controlName);
+    }
+
+    registry::setValue(RKEY_LAST_SHOWN_PAGE, getSelectedPageName());
+}
+
+void PropertyNotebook::restoreState()
+{
+    std::vector<std::string> sortedControlNames;
+
+    // Restore all missing pages
+    auto pageNodes = GlobalRegistry().findXPath(RKEY_PAGES + "//*");
+    for (int i = 0; i < pageNodes.size(); ++i)
+    {
+        if (pageNodes.at(i).getName() != PAGE_NODE_NAME) continue;
+
+        auto controlName = pageNodes.at(i).getAttributeValue(CONTROL_NAME_ATTRIBUTE);
+
+        auto existingIndex = findControlIndexByName(controlName);
+
+        if (existingIndex == -1)
+        {
+            addControl(controlName);
+            existingIndex = findControlIndexByName(controlName);
+        }
+
+        if (existingIndex != i)
+        {
+            // Move to correct position, keeping image and caption intact
+            auto window = GetPage(existingIndex);
+            auto imageIndex = getImageIndexForControl(controlName);
+            auto pageText = GetPageText(existingIndex);
+
+            RemovePage(existingIndex);
+            InsertPage(i, window, pageText, false, imageIndex);
+        }
+    }
+
+    auto lastShownPage = registry::getValue<std::string>(RKEY_LAST_SHOWN_PAGE);
+
+    for (const auto& page : _pages)
+    {
+        if (page.second.name == lastShownPage)
+        {
+            SetSelection(FindPage(page.second.page));
+            break;
+        }
+    }
 }
 
 }

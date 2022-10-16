@@ -156,7 +156,7 @@ void AuiLayout::saveStateToRegistry()
     }
 
     // Save property notebook stae
-    _propertyNotebook->saveState(RKEY_ROOT);
+    _propertyNotebook->saveState();
 }
 
 void AuiLayout::activate()
@@ -289,7 +289,7 @@ void AuiLayout::restoreStateFromRegistry()
     }
 
     // Restore the property notebook state
-    _propertyNotebook->restoreState(RKEY_ROOT);
+    _propertyNotebook->restoreState();
 
     // Nasty hack to get the panes sized properly. Since BestSize() is
     // completely ignored (at least on Linux), we have to add the panes with a
