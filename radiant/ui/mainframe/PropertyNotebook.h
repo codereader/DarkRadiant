@@ -72,6 +72,9 @@ public:
 
     void removePage(const std::string& name);
 
+    void saveState(const std::string& registryRootPath);
+    void restoreState(const std::string& registryRootPath);
+
 private:
     void onPageSwitch(wxBookCtrlEvent& ev);
     void onTabRightClick(wxAuiNotebookEvent& ev);

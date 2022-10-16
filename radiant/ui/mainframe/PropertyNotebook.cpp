@@ -174,4 +174,14 @@ void PropertyNotebook::undockTab()
     }
 }
 
+void PropertyNotebook::saveState(const std::string& registryRootPath)
+{
+    // TODO
+}
+
+void PropertyNotebook::restoreState(const std::string& registryRootPath)
+{
+    // TODO
+}
+
 }

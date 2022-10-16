@@ -371,6 +371,8 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 		}
     }
 
+    _currentLayout->saveStateToRegistry();
+
     wxASSERT(wxTheApp->GetTopWindow() == _topLevelWindow);
 
     _topLevelWindow->Hide();
@@ -605,25 +607,9 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 	return IScopedScreenUpdateBlockerPtr(new ScreenUpdateBlocker(title, message, forceDisplay));
 }
 
-void MainFrame::addControl(const std::string& controlName, ControlSettings defaultSettings)
+void MainFrame::addControl(const std::string& controlName, const ControlSettings& defaultSettings)
 {
-    switch (defaultSettings.location)
-    {
-    case Location::PropertyPanel:
-        _currentLayout->getNotebook()->addControl(controlName);
-        break;
-
-    case Location::FloatingWindow:
-        _currentLayout->createFloatingControl(controlName);
-        break;
-    }
-}
-
-void MainFrame::createFloatingControl(const std::string& controlName)
-{
-    if (!_currentLayout) return;
-
-    _currentLayout->createFloatingControl(controlName);
+    _currentLayout->addControl(controlName, defaultSettings);
 }
 
 sigc::signal<void>& MainFrame::signal_MainFrameConstructed()

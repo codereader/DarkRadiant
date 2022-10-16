@@ -19,7 +19,14 @@ namespace ui
 
 namespace
 {
-    const std::string RKEY_ROOT = "user/ui/mainFrame/aui";
+    const std::string RKEY_ROOT = "user/ui/mainFrame/aui/";
+    const std::string RKEY_AUI_PERSPECTIVE = RKEY_ROOT + "perspective";
+    const std::string RKEY_AUI_PANES = RKEY_ROOT + "panes";
+    const std::string RKEY_AUI_LAYOUT_VERSION = RKEY_ROOT + "layoutVersion";
+    const std::string PANE_NODE_NAME = "pane";
+    const std::string PANE_NAME_ATTRIBUTE = "paneName";
+    const std::string CONTROL_NAME_ATTRIBUTE = "controlName";
+    constexpr int AuiLayoutVersion = 1;
 
     // Minimum size of docked panels
     const wxSize MIN_SIZE(128, 128);
@@ -31,6 +38,11 @@ namespace
         return wxAuiPaneInfo().Caption(caption).CloseButton(false).MaximizeButton()
                               .BestSize(minSize).MinSize(minSize).DestroyOnClose(true);
     }
+
+    void setupFloatingPane(wxAuiPaneInfo& pane)
+    {
+        pane.Float().CloseButton(true).MinSize(300, 450);
+    }
 }
 
 AuiLayout::AuiLayout() :
@@ -40,15 +52,65 @@ AuiLayout::AuiLayout() :
     _auiMgr.Bind(wxEVT_AUI_PANE_CLOSE, &AuiLayout::onPaneClose, this);
 }
 
-void AuiLayout::addPane(const std::string& name, wxWindow* window, const wxAuiPaneInfo& info)
+bool AuiLayout::paneNameExists(const std::string& name) const
 {
-    // Give the pane a deterministic name so we can restore perspective
-    wxAuiPaneInfo nameInfo = info;
-    nameInfo.Name(std::to_string(_panes.size()));
+    for (const auto& info : _panes)
+    {
+        if (info.paneName == name)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+std::string AuiLayout::generateUniquePaneName(const std::string& controlName)
+{
+    auto paneName = controlName;
+    auto index = 1;
+
+    while (paneNameExists(paneName))
+    {
+        paneName += fmt::format("{0}{1}", controlName, ++index);
+    }
+
+    return paneName;
+}
+
+void AuiLayout::addPane(const std::string& controlName, wxWindow* window, const wxAuiPaneInfo& info)
+{
+    // Give the pane a unique name so we can restore perspectives
+    addPane(controlName, generateUniquePaneName(controlName), window, info);
+}
+
+void AuiLayout::addPane(const std::string& controlName, const std::string& paneName, wxWindow* window, const wxAuiPaneInfo& info)
+{
+    wxAuiPaneInfo paneInfo = info;
+    paneInfo.Name(paneName);
 
     // Add and store the pane
-    _auiMgr.AddPane(window, nameInfo);
-    _panes.push_back({ name, window });
+    _auiMgr.AddPane(window, paneInfo);
+    // Remember this pane
+    _panes.push_back({ paneName, controlName, window });
+}
+
+void AuiLayout::convertPaneToPropertyTab(const std::string& paneName)
+{
+    for (auto i = _panes.begin(); i != _panes.end(); ++i)
+    {
+        if (i->paneName != paneName) continue;
+
+        // Close the pane if it's present
+        if (auto paneInfo = _auiMgr.GetPane(i->paneName); paneInfo.IsOk())
+        {
+            _auiMgr.ClosePane(paneInfo);
+        }
+
+        _propertyNotebook->addControl(i->controlName);
+        _panes.erase(i);
+        break;
+    }
 }
 
 void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
@@ -59,13 +121,13 @@ void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
     // the notebook, or adding a custom pane button - I'm open to ideas
     auto closedPane = ev.GetPane();
 
-    for (const auto& info : _panes)
+    for (auto i = _panes.begin(); i != _panes.end(); ++i)
     {
-        if (info.control == closedPane->window)
-        {
-            _propertyNotebook->addControl(info.controlName);
-            break;
-        }
+        if (i->paneName != closedPane->name) continue;
+
+        _propertyNotebook->addControl(i->controlName);
+        _panes.erase(i);
+        break;
     }
 }
 
@@ -74,9 +136,27 @@ std::string AuiLayout::getName()
     return AUI_LAYOUT_NAME;
 }
 
-PropertyNotebook* AuiLayout::getNotebook()
+void AuiLayout::saveStateToRegistry()
 {
-    return _propertyNotebook;
+    registry::setValue(RKEY_AUI_LAYOUT_VERSION, AuiLayoutVersion);
+
+    // Save the pane perspective
+    registry::setValue(RKEY_AUI_PERSPECTIVE, _auiMgr.SavePerspective().ToStdString());
+
+    // Save tracked panes, we need to create all named panes before we can load the perspective
+    GlobalRegistry().deleteXPath(RKEY_AUI_PANES);
+
+    auto panesKey = GlobalRegistry().createKey(RKEY_AUI_PANES);
+
+    for (const auto& pane : _panes)
+    {
+        auto paneNode = panesKey.createChild(PANE_NODE_NAME);
+        paneNode.setAttributeValue(CONTROL_NAME_ATTRIBUTE, pane.controlName);
+        paneNode.setAttributeValue(PANE_NAME_ATTRIBUTE, pane.paneName);
+    }
+
+    // Save property notebook stae
+    _propertyNotebook->saveState(RKEY_ROOT);
 }
 
 void AuiLayout::activate()
@@ -100,6 +180,7 @@ void AuiLayout::activate()
     // the 2D view on the right
     wxSize size = topLevelParent->GetSize();
     size.Scale(0.5, 1.0);
+
     addPane(cameraControl->getControlName(), cameraControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(cameraControl->getDisplayName(), size).Left().Position(0));
     addPane("PropertiesPanel", _propertyNotebook,
@@ -116,19 +197,6 @@ void AuiLayout::activate()
 
 void AuiLayout::deactivate()
 {
-    // Save all floating XYWnd states
-    GlobalXYWnd().saveState();
-
-    // Store perspective
-    GlobalRegistry().set(RKEY_ROOT, _auiMgr.SavePerspective().ToStdString());
-
-    // Show the camera toggle option again
-    GlobalMenuManager().setVisibility("main/view/cameraview", true);
-    GlobalMenuManager().setVisibility("main/view/textureBrowser", true);
-
-    // Remove all previously stored pane information
-    // GlobalRegistry().deleteXPath(RKEY_ROOT + "//pane");
-
     // Delete all active views
     GlobalXYWndManager().destroyViews();
 
@@ -142,32 +210,87 @@ void AuiLayout::deactivate()
     managedWindow->Destroy();
 }
 
-void AuiLayout::createFloatingControl(const std::string& controlName)
+void AuiLayout::createPane(const std::string& controlName, const std::string& paneName,
+    const std::function<void(wxAuiPaneInfo&)>& setupPane)
 {
     auto control = GlobalUserInterface().findControl(controlName);
 
     if (!control)
     {
-        rError() << "Cannot create floating control: " << controlName << std::endl;
+        rError() << "Cannot find named control: " << controlName << std::endl;
         return;
     }
 
     auto managedWindow = _auiMgr.GetManagedWindow();
 
-    auto pane = DEFAULT_PANE_INFO(control->getDisplayName(), wxSize(250, 450))
-        .Float().CloseButton(true);
+    auto pane = DEFAULT_PANE_INFO(control->getDisplayName(), MIN_SIZE);
+    pane.name = paneName;
+
+    // Run client code to setup the pane properties
+    setupPane(pane);
 
     if (!control->getIcon().empty())
     {
         pane.Icon(wxutil::GetLocalBitmap(control->getIcon()));
     }
 
-    addPane(control->getControlName(), control->createWidget(managedWindow), pane);
+    auto widget = control->createWidget(managedWindow);
+
+    _auiMgr.AddPane(widget, pane);
+    _panes.push_back({ paneName, controlName, widget });
+}
+
+void AuiLayout::createFloatingControl(const std::string& controlName)
+{
+    createPane(controlName, generateUniquePaneName(controlName), setupFloatingPane);
+
     _auiMgr.Update();
+}
+
+void AuiLayout::addControl(const std::string& controlName, const IMainFrame::ControlSettings& defaultSettings)
+{
+    _defaultControlSettings[controlName] = defaultSettings;
+
+    if (defaultSettings.visible)
+    {
+        switch (defaultSettings.location)
+        {
+        case IMainFrame::Location::PropertyPanel:
+            _propertyNotebook->addControl(controlName);
+            break;
+
+        case IMainFrame::Location::FloatingWindow:
+            createFloatingControl(controlName);
+            break;
+        }
+    }
 }
 
 void AuiLayout::restoreStateFromRegistry()
 {
+    // Check the saved version
+    if (registry::getValue<int>(RKEY_AUI_LAYOUT_VERSION) != AuiLayoutVersion)
+    {
+        rMessage() << "No compatible AUI layout state information found in registry" << std::endl;
+        return;
+    }
+
+    // Restore all missing panes, this has to be done before the perspective is restored
+    for (const auto& node : GlobalRegistry().findXPath(RKEY_AUI_PANES + "//*"))
+    {
+        if (node.getName() != PANE_NODE_NAME) continue;
+
+        auto controlName = node.getAttributeValue(CONTROL_NAME_ATTRIBUTE);
+        auto paneName = node.getAttributeValue(PANE_NAME_ATTRIBUTE);
+
+        if (paneNameExists(paneName)) continue; // this one already exists
+
+        createPane(controlName, paneName, setupFloatingPane);
+    }
+
+    // Restore the property notebook state
+    _propertyNotebook->restoreState(RKEY_ROOT);
+
     // Nasty hack to get the panes sized properly. Since BestSize() is
     // completely ignored (at least on Linux), we have to add the panes with a
     // large *minimum* size and then reset this size after the initial addition.
@@ -175,10 +298,12 @@ void AuiLayout::restoreStateFromRegistry()
     {
         _auiMgr.GetPane(info.control).MinSize(MIN_SIZE);
     }
+
     _auiMgr.Update();
 
     // If we have a stored perspective, load it
-    std::string storedPersp = GlobalRegistry().get(RKEY_ROOT);
+    auto storedPersp = registry::getValue<std::string>(RKEY_AUI_PERSPECTIVE);
+
     if (!storedPersp.empty())
     {
         _auiMgr.LoadPerspective(storedPersp);

@@ -138,7 +138,7 @@ public:
      * The control has to be registered with the IUserInterfaceModule before it can
      * be acquired by the mainframe, so make sure this is done beforehand.
      */
-    virtual void addControl(const std::string& controlName, ControlSettings defaultSettings) = 0;
+    virtual void addControl(const std::string& controlName, const ControlSettings& defaultSettings) = 0;
 
     /**
      * \brief
