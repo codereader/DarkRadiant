@@ -169,6 +169,14 @@ void AuiLayout::saveStateToRegistry()
 
     for (const auto& pane : _panes)
     {
+        auto& paneInfo = _auiMgr.GetPane(pane.control);
+
+        // Skip hidden panels
+        if (!paneInfo.IsShown())
+        {
+            continue;
+        }
+
         auto paneNode = panesKey.createChild(PANE_NODE_NAME);
         paneNode.setAttributeValue(CONTROL_NAME_ATTRIBUTE, pane.controlName);
         paneNode.setAttributeValue(PANE_NAME_ATTRIBUTE, pane.paneName);
@@ -315,6 +323,72 @@ void AuiLayout::focusControl(const std::string& controlName)
 
     // Focus matching controls in the property notebook
     _propertyNotebook->focusControl(controlName);
+
+    // Unset the focus of any wxPanels in floating windows
+    for (auto p = _panes.begin(); p != _panes.end(); ++p)
+    {
+        if (p->controlName != controlName) continue;
+
+        auto& paneInfo = _auiMgr.GetPane(p->control);
+
+        // Show hidden panes
+        if (!paneInfo.IsShown())
+        {
+            paneInfo.Show();
+            _auiMgr.Update();
+        }
+
+        if (auto panel = wxDynamicCast(p->control, wxPanel); panel != nullptr)
+        {
+            panel->SetFocusIgnoringChildren();
+        }
+        break;
+    }
+}
+
+void AuiLayout::toggleControl(const std::string& controlName)
+{
+    // Locate the control, is it loaded anywhere?
+    if (!controlExists(controlName))
+    {
+        // Control is not loaded anywhere, check the named settings
+        // Check the default settings if there's a control
+        if (_defaultControlSettings.count(controlName) == 0)
+        {
+            throw cmd::ExecutionFailure(fmt::format(_("Cannot toggle unknown control {0}"), controlName));
+        }
+
+        // Create the control in its default location
+        createControl(controlName);
+        // Bring it to front
+        focusControl(controlName);
+        return;
+    }
+
+    // Control exists, we can toggle
+    // If the control is a property tab, then just focus it
+    if (_propertyNotebook->controlExists(controlName))
+    {
+        // Focus matching controls in the property notebook
+        _propertyNotebook->focusControl(controlName);
+        return;
+    }
+
+    // If it's a docked pane, then do nothing, otherwise toggle its visibility
+    for (auto p = _panes.begin(); p != _panes.end(); ++p)
+    {
+        if (p->controlName == controlName)
+        {
+            auto& paneInfo = _auiMgr.GetPane(p->control);
+
+            if (!paneInfo.IsDocked())
+            {
+                paneInfo.Show(!paneInfo.IsShown());
+                _auiMgr.Update();
+            }
+            break;
+        }
+    }
 }
 
 void AuiLayout::restoreStateFromRegistry()

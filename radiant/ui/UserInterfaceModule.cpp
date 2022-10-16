@@ -424,7 +424,7 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("ToggleConsole", Console::toggle);
 	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);
-	GlobalCommandSystem().addStatement("SurfaceInspector", fmt::format("FocusControl {0}", UserControl::SurfaceInspector));
+	GlobalCommandSystem().addStatement("SurfaceInspector", fmt::format("ToggleControl {0}", UserControl::SurfaceInspector), false);
 	GlobalCommandSystem().addCommand("PatchInspector", PatchInspector::toggle);
 	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);

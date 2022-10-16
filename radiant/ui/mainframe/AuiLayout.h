@@ -46,6 +46,7 @@ public:
 
     void addControl(const std::string& controlName, const IMainFrame::ControlSettings& defaultSettings);
     void focusControl(const std::string& controlName);
+    void toggleControl(const std::string& controlName);
 
 	// The creation function, needed by the mainframe layout manager
 	static std::shared_ptr<AuiLayout> CreateInstance();

@@ -110,6 +110,10 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
         std::bind(&MainFrame::focusControl, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
     );
+    GlobalCommandSystem().addCommand("ToggleControl",
+        std::bind(&MainFrame::toggleControl, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
+    );
 
 	GlobalCommandSystem().addCommand("Exit", sigc::mem_fun(this, &MainFrame::exitCmd));
 
@@ -627,6 +631,18 @@ void MainFrame::focusControl(const cmd::ArgumentList& args)
     }
 
     _currentLayout->focusControl(args.at(0).getString());
+}
+
+void MainFrame::toggleControl(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        // Enumerate possible control names?
+        rMessage() << "Usage: ToggleControl <ControlName>" << std::endl;
+        return;
+    }
+
+    _currentLayout->toggleControl(args.at(0).getString());
 }
 
 sigc::signal<void>& MainFrame::signal_MainFrameConstructed()
