@@ -304,7 +304,7 @@ void AuiLayout::focusControl(const std::string& controlName)
     {
         // Control is not loaded anywhere, check the named settings
         // Check the default settings if there's a control
-        if (!_defaultControlSettings.count(controlName) == 0)
+        if (_defaultControlSettings.count(controlName) == 0)
         {
             throw cmd::ExecutionFailure(fmt::format(_("Cannot focus unknown control {0}"), controlName));
         }
@@ -315,16 +315,6 @@ void AuiLayout::focusControl(const std::string& controlName)
 
     // Focus matching controls in the property notebook
     _propertyNotebook->focusControl(controlName);
-
-    // Focus any pane with this control
-    for (const auto& pane : _panes)
-    {
-        if (pane.controlName == controlName)
-        {
-            pane.control->SetFocus();
-            return;
-        }
-    }
 }
 
 void AuiLayout::restoreStateFromRegistry()

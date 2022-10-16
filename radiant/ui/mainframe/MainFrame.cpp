@@ -626,7 +626,7 @@ void MainFrame::focusControl(const cmd::ArgumentList& args)
         return;
     }
 
-    _currentLayout->focusControl(args.at(1).getString());
+    _currentLayout->focusControl(args.at(0).getString());
 }
 
 sigc::signal<void>& MainFrame::signal_MainFrameConstructed()

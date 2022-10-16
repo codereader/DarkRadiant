@@ -288,6 +288,12 @@ void PropertyNotebook::focusControl(const std::string& controlName)
     if (auto index = findControlIndexByName(controlName); index != -1)
     {
         SetSelection(index);
+
+        // To prevent the Surface Inspector from focusing the entry box after pressing the shortcut
+        if (auto panel = wxDynamicCast(GetPage(index), wxPanel); panel != nullptr)
+        {
+            panel->SetFocusIgnoringChildren();
+        }
     }
 }
 
