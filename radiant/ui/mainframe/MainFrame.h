@@ -90,6 +90,7 @@ private:
 	void create();
 
 	void exitCmd(const cmd::ArgumentList& args);
+	void focusControl(const cmd::ArgumentList& args);
 
 	void removeLayout();
 

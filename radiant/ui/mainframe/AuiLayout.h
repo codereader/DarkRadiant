@@ -45,11 +45,15 @@ public:
     void createFloatingControl(const std::string& controlName) override;
 
     void addControl(const std::string& controlName, const IMainFrame::ControlSettings& defaultSettings);
+    void focusControl(const std::string& controlName);
 
 	// The creation function, needed by the mainframe layout manager
 	static std::shared_ptr<AuiLayout> CreateInstance();
 
 private:
+    // Creates the named control at its registered default location
+    void createControl(const std::string& controlName);
+
     // Add a pane to the wxAuiManager and store it in the list
     void addPane(const std::string& controlName, wxWindow* window, const wxAuiPaneInfo& info);
     void addPane(const std::string& controlName, const std::string& paneName, wxWindow* window, const wxAuiPaneInfo& info);
@@ -59,6 +63,10 @@ private:
 
     void onPaneClose(wxAuiManagerEvent& ev);
     bool paneNameExists(const std::string& name) const;
+
+    // Returns true if the control is loaded in the notebook or in a pane
+    bool controlExists(const std::string& controlName) const;
+
     std::string generateUniquePaneName(const std::string& controlName);
 
     void convertPaneToPropertyTab(const std::string& paneName);

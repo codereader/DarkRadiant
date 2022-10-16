@@ -278,4 +278,17 @@ void PropertyNotebook::restoreState()
     }
 }
 
+bool PropertyNotebook::controlExists(const std::string& controlName)
+{
+    return findControlIndexByName(controlName) != -1;
+}
+
+void PropertyNotebook::focusControl(const std::string& controlName)
+{
+    if (auto index = findControlIndexByName(controlName); index != -1)
+    {
+        SetSelection(index);
+    }
+}
+
 }

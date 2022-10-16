@@ -106,6 +106,11 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 		std::bind(&MainFrame::toggleFullscreenCameraView, this, std::placeholders::_1)
 	);
 
+    GlobalCommandSystem().addCommand("FocusControl",
+        std::bind(&MainFrame::focusControl, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
+    );
+
 	GlobalCommandSystem().addCommand("Exit", sigc::mem_fun(this, &MainFrame::exitCmd));
 
 #ifdef WIN32
@@ -610,6 +615,18 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 void MainFrame::addControl(const std::string& controlName, const ControlSettings& defaultSettings)
 {
     _currentLayout->addControl(controlName, defaultSettings);
+}
+
+void MainFrame::focusControl(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        // Enumerate possible control names?
+        rMessage() << "Usage: FocusControl <ControlName>" << std::endl;
+        return;
+    }
+
+    _currentLayout->focusControl(args.at(1).getString());
 }
 
 sigc::signal<void>& MainFrame::signal_MainFrameConstructed()

@@ -2,7 +2,6 @@
 
 #include "i18n.h"
 #include "ui/imenumanager.h"
-#include "ui/igroupdialog.h"
 #include "ui/imainframe.h"
 #include "ui/iuserinterface.h"
 
@@ -10,6 +9,7 @@
 #include <wx/aui/auibook.h>
 
 #include "camera/CameraWndManager.h"
+#include "command/ExecutionFailure.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "wxutil/Bitmap.h"
 #include "xyview/GlobalXYWnd.h"
@@ -57,6 +57,25 @@ bool AuiLayout::paneNameExists(const std::string& name) const
     for (const auto& info : _panes)
     {
         if (info.paneName == name)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+bool AuiLayout::controlExists(const std::string& controlName) const
+{
+    // Check the notebook first
+    if (_propertyNotebook->controlExists(controlName))
+    {
+        return true;
+    }
+
+    for (const auto& info : _panes)
+    {
+        if (info.controlName == controlName)
         {
             return true;
         }
@@ -253,15 +272,57 @@ void AuiLayout::addControl(const std::string& controlName, const IMainFrame::Con
 
     if (defaultSettings.visible)
     {
-        switch (defaultSettings.location)
-        {
-        case IMainFrame::Location::PropertyPanel:
-            _propertyNotebook->addControl(controlName);
-            break;
+        createControl(controlName);
+    }
+}
 
-        case IMainFrame::Location::FloatingWindow:
-            createFloatingControl(controlName);
-            break;
+void AuiLayout::createControl(const std::string& controlName)
+{
+    auto defaultSettings = _defaultControlSettings.find(controlName);
+
+    if (defaultSettings == _defaultControlSettings.end())
+    {
+        return;
+    }
+
+    switch (defaultSettings->second.location)
+    {
+    case IMainFrame::Location::PropertyPanel:
+        _propertyNotebook->addControl(controlName);
+        break;
+
+    case IMainFrame::Location::FloatingWindow:
+        createFloatingControl(controlName);
+        break;
+    }
+}
+
+void AuiLayout::focusControl(const std::string& controlName)
+{
+    // Locate the control, is it loaded anywhere
+    if (!controlExists(controlName))
+    {
+        // Control is not loaded anywhere, check the named settings
+        // Check the default settings if there's a control
+        if (!_defaultControlSettings.count(controlName) == 0)
+        {
+            throw cmd::ExecutionFailure(fmt::format(_("Cannot focus unknown control {0}"), controlName));
+        }
+
+        // Create the control in its default location
+        createControl(controlName);
+    }
+
+    // Focus matching controls in the property notebook
+    _propertyNotebook->focusControl(controlName);
+
+    // Focus any pane with this control
+    for (const auto& pane : _panes)
+    {
+        if (pane.controlName == controlName)
+        {
+            pane.control->SetFocus();
+            return;
         }
     }
 }

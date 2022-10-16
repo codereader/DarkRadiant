@@ -72,8 +72,12 @@ public:
     void addControl(const std::string& controlName);
 
     wxWindow* addPage(const PagePtr& page);
-
     void removePage(const std::string& name);
+
+    // Returns true if the given control is loaded in a tab
+    bool controlExists(const std::string& controlName);
+
+    void focusControl(const std::string& controlName);
 
     void saveState();
     void restoreState();
