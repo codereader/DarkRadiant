@@ -2,15 +2,13 @@
 
 #include <map>
 #include "icommandsystem.h"
-#include "iregistry.h"
-#include "iradiant.h"
 #include "wxutil/window/TransientWindow.h"
 #include "wxutil/FormLayout.h"
 #include "messages/TextureChanged.h"
 
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
-#include <memory>
+#include <wx/panel.h>
 
 namespace wxutil { class ControlButton; }
 
@@ -26,12 +24,9 @@ class wxStaticText;
 namespace ui
 {
 
-class SurfaceInspector;
-typedef std::shared_ptr<SurfaceInspector> SurfaceInspectorPtr;
-
 /// Inspector for properties of a surface and its applied texture
 class SurfaceInspector :
-	public wxutil::TransientWindow,
+	public wxPanel,
 	public sigc::trackable
 {
     // Manipulatable value field with nudge buttons and a step size selector
@@ -108,34 +103,19 @@ class SurfaceInspector :
 
 public:
 
-	// Constructor
-	SurfaceInspector();
+	SurfaceInspector(wxWindow* parent);
 
-	/// Get the singletone instance
-    static SurfaceInspector& Instance();
+    ~SurfaceInspector() override;
 
     /// Update the instance if it exists, otherwise do nothing
-    static void update();
+    void update();
 
 	/** greebo: Gets called when the default texscale registry key changes
 	 */
 	void keyChanged();
 
-	// Command target to toggle the dialog
-	static void toggle(const cmd::ArgumentList& args);
-
 private:
-	void onMainFrameShuttingDown();
-
 	void doUpdate();
-
-	// This is where the static shared_ptr of the singleton instance is held.
-	static SurfaceInspectorPtr& InstancePtr();
-
-	// TransientWindow events
-	void _preShow();
-	void _postShow();
-	void _preHide();
 
 	/** greebo: Creates a row consisting of label, value entry,
 	 * two arrow buttons and a step entry field.

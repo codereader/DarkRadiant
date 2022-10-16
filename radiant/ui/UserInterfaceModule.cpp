@@ -77,6 +77,7 @@
 #include <wx/version.h>
 
 #include "console/ConsoleControl.h"
+#include "surfaceinspector/SurfaceInspectorControl.h"
 
 namespace ui
 {
@@ -257,6 +258,12 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         .connect([this]() { dispatch([]() { GlobalMainFrame().updateAllWindows(); }); });
 
     registerControl(std::make_shared<ConsoleControl>());
+    registerControl(std::make_shared<SurfaceInspectorControl>());
+
+    GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
+    {
+        GlobalMainFrame().addControl(UserControl::SurfaceInspector, { IMainFrame::Location::FloatingWindow, false });
+    });
 }
 
 void UserInterfaceModule::shutdownModule()
@@ -417,7 +424,7 @@ void UserInterfaceModule::registerUICommands()
 
 	GlobalCommandSystem().addCommand("ToggleConsole", Console::toggle);
 	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);
-	GlobalCommandSystem().addCommand("SurfaceInspector", SurfaceInspector::toggle);
+	// TODO GlobalCommandSystem().addCommand("SurfaceInspector", SurfaceInspector::toggle);
 	GlobalCommandSystem().addCommand("PatchInspector", PatchInspector::toggle);
 	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);

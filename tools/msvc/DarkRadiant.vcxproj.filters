@@ -1419,6 +1419,9 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\PropertyNotebook.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\surfaceinspector\SurfaceInspectorControl.h">
+      <Filter>src\ui\surfaceinspector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

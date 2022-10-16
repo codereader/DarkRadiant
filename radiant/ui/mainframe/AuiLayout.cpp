@@ -28,7 +28,7 @@ namespace
     wxAuiPaneInfo DEFAULT_PANE_INFO(const std::string& caption,
                                     const wxSize& minSize)
     {
-        return wxAuiPaneInfo().Caption(caption).CloseButton(false).MaximizeButton().MinimizeButton()
+        return wxAuiPaneInfo().Caption(caption).CloseButton(false).MaximizeButton()
                               .BestSize(minSize).MinSize(minSize).DestroyOnClose(true);
     }
 }
@@ -154,7 +154,7 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
 
     auto managedWindow = _auiMgr.GetManagedWindow();
 
-    auto pane = DEFAULT_PANE_INFO(control->getDisplayName(), wxSize(128, 128))
+    auto pane = DEFAULT_PANE_INFO(control->getDisplayName(), wxSize(250, 450))
         .Float().CloseButton(true);
 
     if (!control->getIcon().empty())

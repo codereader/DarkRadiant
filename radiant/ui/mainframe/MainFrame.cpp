@@ -607,9 +607,15 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 
 void MainFrame::addControl(const std::string& controlName, ControlSettings defaultSettings)
 {
-    if (defaultSettings.location == Location::PropertyPanel)
+    switch (defaultSettings.location)
     {
+    case Location::PropertyPanel:
         _currentLayout->getNotebook()->addControl(controlName);
+        break;
+
+    case Location::FloatingWindow:
+        _currentLayout->createFloatingControl(controlName);
+        break;
     }
 }
 

@@ -576,6 +576,7 @@
     <ClInclude Include="..\..\radiant\ui\statusbar\MapStatistics.h" />
     <ClInclude Include="..\..\radiant\ui\statusbar\ShaderClipboardStatus.h" />
     <ClInclude Include="..\..\radiant\ui\statusbar\StatusBarManager.h" />
+    <ClInclude Include="..\..\radiant\ui\surfaceinspector\SurfaceInspectorControl.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h" />
     <ClInclude Include="..\..\radiant\ui\toolbar\ToolbarManager.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h" />
