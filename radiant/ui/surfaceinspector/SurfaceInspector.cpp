@@ -640,7 +640,7 @@ void SurfaceInspector::update()
 
 void SurfaceInspector::onIdle(wxIdleEvent& ev)
 {
-	if (_updateNeeded)
+	if (_updateNeeded && IsShownOnScreen())
 	{
 		doUpdate();
 	}
