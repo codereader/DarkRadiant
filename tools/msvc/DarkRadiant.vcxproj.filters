@@ -340,9 +340,6 @@
     <ClCompile Include="..\..\radiant\ui\layers\LayerContextMenu.cpp">
       <Filter>src\ui\layers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\layers\LayerControl.cpp">
-      <Filter>src\ui\layers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.cpp">
       <Filter>src\ui\layers</Filter>
     </ClCompile>
@@ -709,9 +706,6 @@
     <ClCompile Include="..\..\radiant\ui\einspector\FxPropertyEditor.cpp">
       <Filter>src\ui\einspector</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\layers\LegacyLayerControlDialog.cpp">
-      <Filter>src\ui\layers</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\layers\LayerControlDialog.cpp">
       <Filter>src\ui\layers</Filter>
     </ClCompile>
@@ -877,9 +871,6 @@
       <Filter>src\ui\surfaceinspector</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\layers\LayerContextMenu.h">
-      <Filter>src\ui\layers</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\layers\LayerControl.h">
       <Filter>src\ui\layers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.h">
@@ -1394,9 +1385,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\einspector\FxPropertyEditor.h">
       <Filter>src\ui\einspector</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\layers\LegacyLayerControlDialog.h">
-      <Filter>src\ui\layers</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\layers\LayerControlDialog.h">
       <Filter>src\ui\layers</Filter>

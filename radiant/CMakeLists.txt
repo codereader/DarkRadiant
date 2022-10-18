@@ -78,9 +78,7 @@ add_executable(darkradiant
                ui/grid/GridUserInterface.cpp
                ui/layers/CreateLayerDialog.cpp
                ui/layers/LayerContextMenu.cpp
-               ui/layers/LayerControl.cpp
                ui/layers/LayerControlDialog.cpp
-               ui/layers/LegacyLayerControlDialog.cpp
                ui/layers/LayerOrthoContextMenuItem.cpp
                ui/lightinspector/LightInspector.cpp
                ui/LongRunningOperationHandler.cpp

@@ -260,7 +260,6 @@
     <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LayerControlDialog.cpp" />
-    <ClCompile Include="..\..\radiant\ui\layers\LegacyLayerControlDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\LongRunningOperationHandler.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\AuiLayout.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\PropertyNotebook.cpp" />
@@ -359,7 +358,6 @@
     <ClCompile Include="..\..\radiant\ui\splash\Splash.cpp" />
     <ClCompile Include="..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LayerContextMenu.cpp" />
-    <ClCompile Include="..\..\radiant\ui\layers\LayerControl.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\EmbeddedLayout.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\MainFrame.cpp" />
@@ -465,7 +463,6 @@
     <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerControlDialog.h" />
-    <ClInclude Include="..\..\radiant\ui\layers\LegacyLayerControlDialog.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\AuiLayout.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\PropertyNotebook.h" />
@@ -584,7 +581,6 @@
     <ClInclude Include="..\..\radiant\ui\splash\Splash.h" />
     <ClInclude Include="..\..\radiant\ui\surfaceinspector\SurfaceInspector.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerContextMenu.h" />
-    <ClInclude Include="..\..\radiant\ui\layers\LayerControl.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\EmbeddedLayout.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\LayoutCommand.h" />
