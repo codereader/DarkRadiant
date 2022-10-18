@@ -38,7 +38,31 @@ LayerControlPanel::LayerControlPanel(wxWindow* parent) :
 {
 	populateWindow();
 
-	Bind(wxEVT_IDLE, [&](wxIdleEvent&) { onIdle(); });
+    _selectionChangedSignal = GlobalSelectionSystem().signal_selectionChanged().connect([this](const ISelectable&)
+    {
+        _rescanSelectionOnIdle = true;
+        requestIdleCallback();
+    });
+
+    connectToMapRoot();
+
+    _mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
+        sigc::mem_fun(this, &LayerControlPanel::onMapEvent)
+    );
+
+    // Re-populate the dialog
+    queueRefresh();
+}
+
+LayerControlPanel::~LayerControlPanel()
+{
+    disconnectFromMapRoot();
+
+    _mapEventSignal.disconnect();
+    _selectionChangedSignal.disconnect();
+    _refreshTreeOnIdle = false;
+    _updateTreeOnIdle = false;
+    _rescanSelectionOnIdle = false;
 }
 
 void LayerControlPanel::populateWindow()
@@ -124,12 +148,14 @@ void LayerControlPanel::queueRefresh()
 {
     _refreshTreeOnIdle = true;
     _rescanSelectionOnIdle = true;
+    requestIdleCallback();
 }
 
 void LayerControlPanel::queueUpdate()
 {
     _updateTreeOnIdle = true;
     _rescanSelectionOnIdle = true;
+    requestIdleCallback();
 }
 
 class LayerControlPanel::TreePopulator
@@ -372,46 +398,6 @@ void LayerControlPanel::onIdle()
 	}
 }
 
-void LayerControlPanel::onMainFrameShuttingDown()
-{
-    // Hide the window and save its state
-    if (IsShownOnScreen())
-    {
-        Hide();
-    }
-
-	// Destroy the window
-	SendDestroyEvent();
-}
-
-void LayerControlPanel::_preShow()
-{
-	_selectionChangedSignal = GlobalSelectionSystem().signal_selectionChanged().connect([this](const ISelectable&)
-	{
-		_rescanSelectionOnIdle = true;
-	});
-
-	connectToMapRoot();
-
-	_mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(this, &LayerControlPanel::onMapEvent)
-	);
-
-	// Re-populate the dialog
-	queueRefresh();
-}
-
-void LayerControlPanel::_postHide()
-{
-	disconnectFromMapRoot();
-
-	_mapEventSignal.disconnect();
-	_selectionChangedSignal.disconnect();
-	_refreshTreeOnIdle = false;
-    _updateTreeOnIdle = false;
-	_rescanSelectionOnIdle = false;
-}
-
 void LayerControlPanel::connectToMapRoot()
 {
 	// Always disconnect first
@@ -437,6 +423,7 @@ void LayerControlPanel::connectToMapRoot()
 		_nodeLayerMembershipChangedSignal = layerSystem.signal_nodeMembershipChanged().connect([this]()
 		{
 			_rescanSelectionOnIdle = true;
+            requestIdleCallback();
 		});
 	}
 }

@@ -7,6 +7,7 @@
 #include <sigc++/connection.h>
 
 #include "wxutil/dataview/TreeModel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 namespace wxutil
 {
@@ -22,7 +23,8 @@ namespace ui
 {
 
 class LayerControlPanel :
-	public wxPanel
+	public wxPanel,
+    public wxutil::SingleIdleCallback
 {
 private:
     struct TreeColumns :
@@ -67,14 +69,12 @@ private:
 
 public:
     LayerControlPanel(wxWindow* parent);
+    ~LayerControlPanel() override;
+
+protected:
+    void onIdle() override;
 
 private:
-	void onMainFrameShuttingDown();
-
-	// TransientWindow events
-	void _preShow();
-	void _postHide();
-
     // Calls refresh() on the next idle event
     void queueRefresh();
 
@@ -99,7 +99,6 @@ private:
 	void createButtons();
 
 	void setVisibilityOfAllLayers(bool visible);
-	void onIdle();
 
 	void onMapEvent(IMap::MapEvent ev);
 
