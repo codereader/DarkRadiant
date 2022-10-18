@@ -1,10 +1,8 @@
 #include "LayerControlPanel.h"
 
 #include "i18n.h"
-#include "iregistry.h"
 #include "itextstream.h"
 #include "ilayer.h"
-#include "ui/imainframe.h"
 #include "iselection.h"
 
 #include <wx/bmpbuttn.h>
@@ -29,14 +27,8 @@
 namespace ui
 {
 
-namespace
-{
-	const std::string RKEY_ROOT = "user/ui/layers/controlDialog/";
-	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-}
-
-LayerControlPanel::LayerControlPanel() :
-	TransientWindow(_("Layers"), GlobalMainFrame().getWxTopLevelWindow(), true),
+LayerControlPanel::LayerControlPanel(wxWindow* parent) :
+	wxPanel(parent),
     _layersView(nullptr),
 	_showAllLayers(nullptr),
 	_hideAllLayers(nullptr),
@@ -47,9 +39,6 @@ LayerControlPanel::LayerControlPanel() :
 	populateWindow();
 
 	Bind(wxEVT_IDLE, [&](wxIdleEvent&) { onIdle(); });
-
-	InitialiseWindowPosition(230, 400, RKEY_WINDOW_STATE);
-    SetMinClientSize(wxSize(230, 200));
 }
 
 void LayerControlPanel::populateWindow()
@@ -383,23 +372,8 @@ void LayerControlPanel::onIdle()
 	}
 }
 
-void LayerControlPanel::onMainFrameConstructed()
-{
-	// Lookup the stored window information in the registry
-	if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")
-	{
-		// Show dialog
-		Instance().Show();
-	}
-}
-
 void LayerControlPanel::onMainFrameShuttingDown()
 {
-	rMessage() << "LayerControlPanel shutting down." << std::endl;
-
-	// Write the visibility status to the registry
-	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", IsShownOnScreen() ? "1" : "0");
-
     // Hide the window and save its state
     if (IsShownOnScreen())
     {
@@ -408,38 +382,10 @@ void LayerControlPanel::onMainFrameShuttingDown()
 
 	// Destroy the window
 	SendDestroyEvent();
-
-	// Final step: clear the instance pointer
-	InstancePtr().reset();
-}
-
-std::shared_ptr<LayerControlPanel>& LayerControlPanel::InstancePtr()
-{
-	static std::shared_ptr<LayerControlPanel> _instancePtr;
-	return _instancePtr;
-}
-
-LayerControlPanel& LayerControlPanel::Instance()
-{
-	auto& instancePtr = InstancePtr();
-
-	if (!instancePtr)
-	{
-		// Not yet instantiated, do it now
-		instancePtr.reset(new LayerControlPanel);
-
-		// Pre-destruction cleanup
-		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &LayerControlPanel::onMainFrameShuttingDown));
-	}
-
-	return *instancePtr;
 }
 
 void LayerControlPanel::_preShow()
 {
-	TransientWindow::_preShow();
-
 	_selectionChangedSignal = GlobalSelectionSystem().signal_selectionChanged().connect([this](const ISelectable&)
 	{
 		_rescanSelectionOnIdle = true;

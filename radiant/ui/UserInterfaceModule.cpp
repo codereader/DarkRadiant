@@ -36,7 +36,6 @@
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
-#include "ui/layers/LayerControlPanel.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/Documentation.h"
@@ -75,6 +74,7 @@
 #include <wx/version.h>
 
 #include "console/ConsoleControl.h"
+#include "layers/LayerControl.h"
 #include "surfaceinspector/SurfaceInspectorControl.h"
 
 namespace ui
@@ -164,9 +164,6 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 		IOrthoContextMenu::SECTION_LAYER
 	);
 
-	GlobalMainFrame().signal_MainFrameConstructed().connect(
-		sigc::ptr_fun(LayerControlPanel::onMainFrameConstructed));
-
 	// Pre-load models
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
 		sigc::ptr_fun(ModelSelector::Populate)
@@ -253,10 +250,13 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 
     registerControl(std::make_shared<ConsoleControl>());
     registerControl(std::make_shared<SurfaceInspectorControl>());
+    registerControl(std::make_shared<LayerControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
+        // Set default locations of some controls
         GlobalMainFrame().addControl(UserControl::SurfaceInspector, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::LayerControlPanel, { IMainFrame::Location::FloatingWindow, false });
     });
 }
 

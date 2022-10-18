@@ -41,7 +41,7 @@ namespace
 
     void setupFloatingPane(wxAuiPaneInfo& pane)
     {
-        pane.Float().CloseButton(true).MinSize(300, 450);
+        pane.Float().CloseButton(true).MinSize(128, 128);
     }
 }
 

@@ -1410,6 +1410,9 @@
     <ClInclude Include="..\..\radiant\ui\layers\LayerControlPanel.h">
       <Filter>src\ui\layers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\layers\LayerControl.h">
+      <Filter>src\ui\layers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

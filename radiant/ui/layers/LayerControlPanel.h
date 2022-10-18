@@ -2,8 +2,6 @@
 
 #include <map>
 #include "imap.h"
-#include "icommandsystem.h"
-#include "wxutil/window/TransientWindow.h"
 
 #include <wx/panel.h>
 #include <sigc++/connection.h>
@@ -24,7 +22,7 @@ namespace ui
 {
 
 class LayerControlPanel :
-	public wxutil::TransientWindow
+	public wxPanel
 {
 private:
     struct TreeColumns :
@@ -68,21 +66,14 @@ private:
 	sigc::connection _mapEventSignal;
 
 public:
-    LayerControlPanel();
-
-	// Checks if dialog should be shown after startup
-	static void onMainFrameConstructed();
-
-	static LayerControlPanel& Instance();
+    LayerControlPanel(wxWindow* parent);
 
 private:
-	static std::shared_ptr<LayerControlPanel>& InstancePtr();
-
 	void onMainFrameShuttingDown();
 
 	// TransientWindow events
-	void _preShow() override;
-	void _postHide() override;
+	void _preShow();
+	void _postHide();
 
     // Calls refresh() on the next idle event
     void queueRefresh();
