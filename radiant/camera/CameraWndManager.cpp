@@ -152,6 +152,11 @@ CamWnd* CameraWndManager::createCamWnd(wxWindow* parent)
 void CameraWndManager::addCamWnd(int id, CamWnd* cam)
 {
     _cameras.insert(CamWndMap::value_type(id, cam));
+
+    if (_activeCam == -1)
+    {
+        _activeCam = cam->getId();
+    }
 }
 
 
