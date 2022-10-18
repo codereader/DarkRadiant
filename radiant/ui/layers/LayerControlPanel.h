@@ -23,7 +23,7 @@ class wxCommandEvent;
 namespace ui
 {
 
-class LayerControlDialog :
+class LayerControlPanel :
 	public wxutil::TransientWindow
 {
 private:
@@ -68,18 +68,15 @@ private:
 	sigc::connection _mapEventSignal;
 
 public:
-    LayerControlDialog();
-
-	// Command target (registered in the event manager)
-	static void ToggleDialog(const cmd::ArgumentList& args);
+    LayerControlPanel();
 
 	// Checks if dialog should be shown after startup
 	static void onMainFrameConstructed();
 
-	static LayerControlDialog& Instance();
+	static LayerControlPanel& Instance();
 
 private:
-	static std::shared_ptr<LayerControlDialog>& InstancePtr();
+	static std::shared_ptr<LayerControlPanel>& InstancePtr();
 
 	void onMainFrameShuttingDown();
 

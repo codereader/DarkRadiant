@@ -1,4 +1,4 @@
-#include "LayerControlDialog.h"
+#include "LayerControlPanel.h"
 
 #include "i18n.h"
 #include "iregistry.h"
@@ -35,7 +35,7 @@ namespace
 	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 }
 
-LayerControlDialog::LayerControlDialog() :
+LayerControlPanel::LayerControlPanel() :
 	TransientWindow(_("Layers"), GlobalMainFrame().getWxTopLevelWindow(), true),
     _layersView(nullptr),
 	_showAllLayers(nullptr),
@@ -52,7 +52,7 @@ LayerControlDialog::LayerControlDialog() :
     SetMinClientSize(wxSize(230, 200));
 }
 
-void LayerControlDialog::populateWindow()
+void LayerControlPanel::populateWindow()
 {
     _layerStore = new wxutil::TreeModel(_columns);
     _layersView = wxutil::TreeView::CreateWithModel(this, _layerStore.get(), wxDV_SINGLE | wxDV_NO_HEADER);
@@ -64,16 +64,16 @@ void LayerControlDialog::populateWindow()
     _layersView->AppendTextColumn("", _columns.name.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT);
 
-    _layersView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &LayerControlDialog::onItemActivated, this);
-    _layersView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &LayerControlDialog::onItemValueChanged, this);
-    _layersView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &LayerControlDialog::onItemSelected, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_ACTIVATED, &LayerControlPanel::onItemActivated, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &LayerControlPanel::onItemValueChanged, this);
+    _layersView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &LayerControlPanel::onItemSelected, this);
 
     // Configure drag and drop
     _layersView->EnableDragSource(wxDF_UNICODETEXT);
     _layersView->EnableDropTarget(wxDF_UNICODETEXT);
-    _layersView->Bind(wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &LayerControlDialog::onBeginDrag, this);
-    _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &LayerControlDialog::onDropPossible, this);
-    _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP, &LayerControlDialog::onDrop, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &LayerControlPanel::onBeginDrag, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &LayerControlPanel::onDropPossible, this);
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP, &LayerControlPanel::onDrop, this);
 
     _layersView->SetToolTip(_("Double-Click to select all in hierarchy, hold SHIFT to deselect, hold CTRL to set as active layer."));
 
@@ -88,7 +88,7 @@ void LayerControlDialog::populateWindow()
 	createButtons();
 }
 
-void LayerControlDialog::createButtons()
+void LayerControlPanel::createButtons()
 {
 	// Show all / hide all buttons
 	auto hideShowBox = new wxBoxSizer(wxHORIZONTAL);
@@ -107,11 +107,11 @@ void LayerControlDialog::createButtons()
 	wxutil::button::connectToCommand(createButton, "CreateNewLayerDialog");
 
     _deleteButton = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("delete.png"));
-    _deleteButton->Bind(wxEVT_BUTTON, &LayerControlDialog::onDeleteLayer, this);
+    _deleteButton->Bind(wxEVT_BUTTON, &LayerControlPanel::onDeleteLayer, this);
     _deleteButton->SetToolTip(_("Delete the selected layer"));
 
     _renameButton = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("edit.png"));
-    _renameButton->Bind(wxEVT_BUTTON, &LayerControlDialog::onRenameLayer, this);
+    _renameButton->Bind(wxEVT_BUTTON, &LayerControlPanel::onRenameLayer, this);
     _renameButton->SetToolTip(_("Rename the selected layer"));
 
     topRow->Add(createButton, 1, wxEXPAND | wxRIGHT, 6);
@@ -125,25 +125,25 @@ void LayerControlDialog::createButtons()
     GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
 }
 
-void LayerControlDialog::clearControls()
+void LayerControlPanel::clearControls()
 {
     _layerItemMap.clear();
     _layerStore->Clear();
 }
 
-void LayerControlDialog::queueRefresh()
+void LayerControlPanel::queueRefresh()
 {
     _refreshTreeOnIdle = true;
     _rescanSelectionOnIdle = true;
 }
 
-void LayerControlDialog::queueUpdate()
+void LayerControlPanel::queueUpdate()
 {
     _updateTreeOnIdle = true;
     _rescanSelectionOnIdle = true;
 }
 
-class LayerControlDialog::TreePopulator
+class LayerControlPanel::TreePopulator
 {
 private:
     const TreeColumns& _columns;
@@ -227,7 +227,7 @@ public:
     }
 };
 
-void LayerControlDialog::refresh()
+void LayerControlPanel::refresh()
 {
     _refreshTreeOnIdle = false;
 
@@ -281,7 +281,7 @@ void LayerControlDialog::refresh()
     updateButtonSensitivity(populator.getNumVisibleLayers(), populator.getNumHiddenLayers());
 }
 
-void LayerControlDialog::update()
+void LayerControlPanel::update()
 {
     _updateTreeOnIdle = false;
 
@@ -324,7 +324,7 @@ void LayerControlDialog::update()
     updateButtonSensitivity(numVisible, numHidden);
 }
 
-void LayerControlDialog::updateButtonSensitivity(std::size_t numVisible, std::size_t numHidden)
+void LayerControlPanel::updateButtonSensitivity(std::size_t numVisible, std::size_t numHidden)
 {
 	_showAllLayers->Enable(numHidden > 0);
 	_hideAllLayers->Enable(numVisible > 0);
@@ -332,7 +332,7 @@ void LayerControlDialog::updateButtonSensitivity(std::size_t numVisible, std::si
     updateItemActionSensitivity();
 }
 
-void LayerControlDialog::updateItemActionSensitivity()
+void LayerControlPanel::updateItemActionSensitivity()
 {
     auto selectedLayerId = getSelectedLayerId();
 
@@ -342,7 +342,7 @@ void LayerControlDialog::updateItemActionSensitivity()
 }
 
 
-void LayerControlDialog::updateLayerUsage()
+void LayerControlPanel::updateLayerUsage()
 {
 	_rescanSelectionOnIdle = false;
 
@@ -365,7 +365,7 @@ void LayerControlDialog::updateLayerUsage()
     });
 }
 
-void LayerControlDialog::onIdle()
+void LayerControlPanel::onIdle()
 {
     if (_refreshTreeOnIdle)
     {
@@ -383,12 +383,7 @@ void LayerControlDialog::onIdle()
 	}
 }
 
-void LayerControlDialog::ToggleDialog(const cmd::ArgumentList& args)
-{
-	Instance().ToggleVisibility();
-}
-
-void LayerControlDialog::onMainFrameConstructed()
+void LayerControlPanel::onMainFrameConstructed()
 {
 	// Lookup the stored window information in the registry
 	if (GlobalRegistry().getAttribute(RKEY_WINDOW_STATE, "visible") == "1")
@@ -398,9 +393,9 @@ void LayerControlDialog::onMainFrameConstructed()
 	}
 }
 
-void LayerControlDialog::onMainFrameShuttingDown()
+void LayerControlPanel::onMainFrameShuttingDown()
 {
-	rMessage() << "LayerControlDialog shutting down." << std::endl;
+	rMessage() << "LayerControlPanel shutting down." << std::endl;
 
 	// Write the visibility status to the registry
 	GlobalRegistry().setAttribute(RKEY_WINDOW_STATE, "visible", IsShownOnScreen() ? "1" : "0");
@@ -418,30 +413,30 @@ void LayerControlDialog::onMainFrameShuttingDown()
 	InstancePtr().reset();
 }
 
-std::shared_ptr<LayerControlDialog>& LayerControlDialog::InstancePtr()
+std::shared_ptr<LayerControlPanel>& LayerControlPanel::InstancePtr()
 {
-	static std::shared_ptr<LayerControlDialog> _instancePtr;
+	static std::shared_ptr<LayerControlPanel> _instancePtr;
 	return _instancePtr;
 }
 
-LayerControlDialog& LayerControlDialog::Instance()
+LayerControlPanel& LayerControlPanel::Instance()
 {
 	auto& instancePtr = InstancePtr();
 
 	if (!instancePtr)
 	{
 		// Not yet instantiated, do it now
-		instancePtr.reset(new LayerControlDialog);
+		instancePtr.reset(new LayerControlPanel);
 
 		// Pre-destruction cleanup
 		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &LayerControlDialog::onMainFrameShuttingDown));
+            sigc::mem_fun(*instancePtr, &LayerControlPanel::onMainFrameShuttingDown));
 	}
 
 	return *instancePtr;
 }
 
-void LayerControlDialog::_preShow()
+void LayerControlPanel::_preShow()
 {
 	TransientWindow::_preShow();
 
@@ -453,14 +448,14 @@ void LayerControlDialog::_preShow()
 	connectToMapRoot();
 
 	_mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(this, &LayerControlDialog::onMapEvent)
+		sigc::mem_fun(this, &LayerControlPanel::onMapEvent)
 	);
 
 	// Re-populate the dialog
 	queueRefresh();
 }
 
-void LayerControlDialog::_postHide()
+void LayerControlPanel::_postHide()
 {
 	disconnectFromMapRoot();
 
@@ -471,7 +466,7 @@ void LayerControlDialog::_postHide()
 	_rescanSelectionOnIdle = false;
 }
 
-void LayerControlDialog::connectToMapRoot()
+void LayerControlPanel::connectToMapRoot()
 {
 	// Always disconnect first
 	disconnectFromMapRoot();
@@ -482,15 +477,15 @@ void LayerControlDialog::connectToMapRoot()
 
 		// Layer creation/addition/removal triggers a refresh
 		_layersChangedSignal = layerSystem.signal_layersChanged().connect(
-			sigc::mem_fun(this, &LayerControlDialog::queueRefresh));
+			sigc::mem_fun(this, &LayerControlPanel::queueRefresh));
 
 		// Visibility change doesn't repopulate the dialog
 		_layerVisibilityChangedSignal = layerSystem.signal_layerVisibilityChanged().connect(
-			sigc::mem_fun(this, &LayerControlDialog::queueUpdate));
+			sigc::mem_fun(this, &LayerControlPanel::queueUpdate));
 
         // Hierarchy changes trigger a tree rebuild
         _layerHierarchyChangedSignal = layerSystem.signal_layerHierarchyChanged().connect(
-            sigc::mem_fun(this, &LayerControlDialog::queueRefresh));
+            sigc::mem_fun(this, &LayerControlPanel::queueRefresh));
 
 		// Node membership triggers a selection rescan
 		_nodeLayerMembershipChangedSignal = layerSystem.signal_nodeMembershipChanged().connect([this]()
@@ -500,7 +495,7 @@ void LayerControlDialog::connectToMapRoot()
 	}
 }
 
-void LayerControlDialog::disconnectFromMapRoot()
+void LayerControlPanel::disconnectFromMapRoot()
 {
 	_nodeLayerMembershipChangedSignal.disconnect();
     _layerHierarchyChangedSignal.disconnect();
@@ -508,7 +503,7 @@ void LayerControlDialog::disconnectFromMapRoot()
 	_layerVisibilityChangedSignal.disconnect();
 }
 
-void LayerControlDialog::setVisibilityOfAllLayers(bool visible)
+void LayerControlPanel::setVisibilityOfAllLayers(bool visible)
 {
 	if (!GlobalMapModule().getRoot())
 	{
@@ -524,7 +519,7 @@ void LayerControlDialog::setVisibilityOfAllLayers(bool visible)
     });
 }
 
-void LayerControlDialog::onMapEvent(IMap::MapEvent ev)
+void LayerControlPanel::onMapEvent(IMap::MapEvent ev)
 {
 	if (ev == IMap::MapLoaded)
 	{
@@ -539,7 +534,7 @@ void LayerControlDialog::onMapEvent(IMap::MapEvent ev)
 	}
 }
 
-int LayerControlDialog::getSelectedLayerId()
+int LayerControlPanel::getSelectedLayerId()
 {
     auto item = _layersView->GetSelection();
 
@@ -550,7 +545,7 @@ int LayerControlDialog::getSelectedLayerId()
     return row[_columns.id].getInteger();
 }
 
-void LayerControlDialog::onItemActivated(wxDataViewEvent& ev)
+void LayerControlPanel::onItemActivated(wxDataViewEvent& ev)
 {
     // Don't react to double-clicks on the checkbox
     if (ev.GetColumn() == _columns.visible.getColumnIndex())
@@ -582,7 +577,7 @@ void LayerControlDialog::onItemActivated(wxDataViewEvent& ev)
     GlobalMapModule().getRoot()->getLayerManager().setSelected(layerId, selected);
 }
 
-void LayerControlDialog::onItemValueChanged(wxDataViewEvent& ev)
+void LayerControlPanel::onItemValueChanged(wxDataViewEvent& ev)
 {
     auto root = GlobalMapModule().getRoot();
     if (!root) return;
@@ -602,12 +597,12 @@ void LayerControlDialog::onItemValueChanged(wxDataViewEvent& ev)
     }
 }
 
-void LayerControlDialog::onItemSelected(wxDataViewEvent& ev)
+void LayerControlPanel::onItemSelected(wxDataViewEvent& ev)
 {
     updateItemActionSensitivity();
 }
 
-void LayerControlDialog::onRenameLayer(wxCommandEvent& ev)
+void LayerControlPanel::onRenameLayer(wxCommandEvent& ev)
 {
     if (!GlobalMapModule().getRoot())
     {
@@ -655,7 +650,7 @@ void LayerControlDialog::onRenameLayer(wxCommandEvent& ev)
     }
 }
 
-void LayerControlDialog::onDeleteLayer(wxCommandEvent& ev)
+void LayerControlPanel::onDeleteLayer(wxCommandEvent& ev)
 {
     if (!GlobalMapModule().getRoot())
     {
@@ -680,7 +675,7 @@ void LayerControlDialog::onDeleteLayer(wxCommandEvent& ev)
     }
 }
 
-void LayerControlDialog::onBeginDrag(wxDataViewEvent& ev)
+void LayerControlPanel::onBeginDrag(wxDataViewEvent& ev)
 {
     wxDataViewItem item(ev.GetItem());
     wxutil::TreeModel::Row row(item, *_layerStore);
@@ -697,7 +692,7 @@ void LayerControlDialog::onBeginDrag(wxDataViewEvent& ev)
     }
 }
 
-void LayerControlDialog::onDropPossible(wxDataViewEvent& ev)
+void LayerControlPanel::onDropPossible(wxDataViewEvent& ev)
 {
     if (!GlobalMapModule().getRoot()) return;
 
@@ -725,7 +720,7 @@ void LayerControlDialog::onDropPossible(wxDataViewEvent& ev)
     }
 }
 
-void LayerControlDialog::onDrop(wxDataViewEvent& ev)
+void LayerControlPanel::onDrop(wxDataViewEvent& ev)
 {
     if (!GlobalMapModule().getRoot())
     {

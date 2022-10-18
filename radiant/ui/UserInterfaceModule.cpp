@@ -36,14 +36,13 @@
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
-#include "ui/layers/LayerControlDialog.h"
+#include "ui/layers/LayerControlPanel.h"
 #include "ui/overlay/OverlayDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/Documentation.h"
 #include "ui/console/Console.h"
 #include "ui/lightinspector/LightInspector.h"
 #include "ui/patch/PatchInspector.h"
-#include "ui/surfaceinspector/SurfaceInspector.h"
 #include "ui/transform/TransformDialog.h"
 #include "ui/findshader/FindShader.h"
 #include "ui/mapinfo/MapInfoDialog.h"
@@ -140,9 +139,6 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 
 	registerUICommands();
 
-	// Register LayerControlDialog
-	GlobalCommandSystem().addCommand("ToggleLayerControlDialog", LayerControlDialog::ToggleDialog);
-
 	// Create a new menu item connected to the CreateNewLayerDialog command
 	GlobalOrthoContextMenu().addItem(std::make_shared<wxutil::CommandMenuItem>(
 			new wxutil::IconTextMenuItem(_(CREATE_LAYER_TEXT), LAYER_ICON), "CreateNewLayerDialog"),
@@ -169,7 +165,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	);
 
 	GlobalMainFrame().signal_MainFrameConstructed().connect(
-		sigc::ptr_fun(LayerControlDialog::onMainFrameConstructed));
+		sigc::ptr_fun(LayerControlPanel::onMainFrameConstructed));
 
 	// Pre-load models
 	module::GlobalModuleRegistry().signal_allModulesInitialised().connect(
@@ -423,6 +419,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ToggleConsole", Console::toggle);
 	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);
 	GlobalCommandSystem().addStatement("SurfaceInspector", fmt::format("ToggleControl {0}", UserControl::SurfaceInspector), false);
+	GlobalCommandSystem().addStatement("ToggleLayerControlDialog", fmt::format("ToggleControl {0}", UserControl::LayerControlPanel), false);
+
 	GlobalCommandSystem().addCommand("PatchInspector", PatchInspector::toggle);
 	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);

@@ -46,6 +46,7 @@ struct UserControl
     constexpr static const char* OrthoView = "OrthoView";
     constexpr static const char* TextureBrowser = "TextureBrowser";
     constexpr static const char* SurfaceInspector = "SurfaceInspector";
+    constexpr static const char* LayerControlPanel = "LayerControlPanel";
 };
 
 }
