@@ -161,6 +161,9 @@ void EntityInspector::construct()
     // Create the context menu
     createContextMenu();
 
+    // Stimulate initial redraw to get the correct status
+    requestIdleCallback();
+
     _defsReloadedHandler = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
         sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
     );
@@ -175,8 +178,6 @@ void EntityInspector::construct()
     // greebo: Now that the dialog is shown, tell the Entity Inspector to reload
     // the position info from the Registry once again.
     restoreSettings();
-
-    Bind(wxEVT_IDLE, &EntityInspector::_onIdle, this);
 }
 
 void EntityInspector::restoreSettings()
@@ -512,8 +513,7 @@ void EntityInspector::refresh()
     _selectionNeedsUpdate = true;
     _helpTextNeedsUpdate = true;
     _inheritedPropertiesNeedUpdate = true;
-
-    Bind(wxEVT_IDLE, &EntityInspector::_onIdle, this);
+    requestIdleCallback();
 }
 
 wxWindow* EntityInspector::createPropertyEditorPane(wxWindow* parent)
@@ -752,10 +752,8 @@ void EntityInspector::updatePrimitiveNumber()
     _primitiveNumLabel->SetLabelText("");
 }
 
-void EntityInspector::_onIdle(wxIdleEvent& ev)
+void EntityInspector::onIdle()
 {
-    Unbind(wxEVT_IDLE, &EntityInspector::_onIdle, this);
-
     if (_selectionNeedsUpdate)
     {
         _selectionNeedsUpdate = false;

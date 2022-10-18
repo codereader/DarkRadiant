@@ -10,6 +10,7 @@
 #include "wxutil/menu/PopupMenu.h"
 #include "wxutil/PanedPosition.h"
 #include "wxutil/dataview/TreeView.h"
+#include "wxutil/event/SingleIdleCallback.h"
 #include "wxutil/Icon.h"
 
 #include <wx/event.h>
@@ -45,7 +46,8 @@ namespace ui
  */
 class EntityInspector final :
     public wxPanel,
-    public selection::SelectionSystem::Observer
+    public selection::SelectionSystem::Observer,
+    public wxutil::SingleIdleCallback
 {
 public:
 	struct TreeColumns :
@@ -190,7 +192,6 @@ private:
 	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
 	void _onContextMenu(wxDataViewEvent& ev);
 	void _onDataViewItemChanged(wxDataViewEvent& ev);
-	void _onIdle(wxIdleEvent& ev);
 
     void onKeyAdded(const std::string& key, const std::string& value);
     void onKeyRemoved(const std::string& key);
@@ -248,6 +249,10 @@ private:
 
 	// greebo: Tells the inspector to reload the window settings from the registry.
 	void restoreSettings();
+
+protected:
+    // Called when the app is idle
+    void onIdle() override;
 
 public:
     EntityInspector(wxWindow* parent);
