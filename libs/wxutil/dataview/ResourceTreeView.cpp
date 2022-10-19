@@ -513,7 +513,7 @@ void ResourceTreeView::SetFavouriteRecursively(TreeModel::Row& row, bool isFavou
 void ResourceTreeView::SetFavourite(TreeModel::Row& row, bool isFavourite)
 {
     row[_columns.isFavourite] = isFavourite;
-    row[_columns.iconAndName] = TreeViewItemStyle::Declaration(isFavourite);
+    row[_columns.iconAndName].setAttr(TreeViewItemStyle::Declaration(isFavourite));
 
     // Keep track of this choice
     if (isFavourite)

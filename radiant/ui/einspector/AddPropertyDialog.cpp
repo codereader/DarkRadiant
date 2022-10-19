@@ -161,7 +161,7 @@ void AddPropertyDialog::populateTreeView()
 		blueBold.SetBold(true);
 
 		defRoot[_columns.displayName] = wxVariant(wxDataViewIconText(cName, folderIcon));
-		defRoot[_columns.displayName] = blueBold;
+		defRoot[_columns.displayName].setAttr(blueBold);
 		defRoot[_columns.propertyName] = "";
 		defRoot[_columns.description] = _(CUSTOM_PROPERTY_TEXT);
 

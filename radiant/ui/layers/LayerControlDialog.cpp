@@ -205,7 +205,7 @@ public:
 
         if (_activeLayerId == layerId)
         {
-            row[_columns.name] = wxutil::TreeViewItemStyle::ActiveItemStyle();
+            row[_columns.name].setAttr(wxutil::TreeViewItemStyle::ActiveItemStyle());
         }
 
         if (_layerManager.layerIsVisible(layerId))
@@ -304,8 +304,10 @@ void LayerControlDialog::update()
 
         row[_columns.name] = layerName;
 
-        row[_columns.name] = activeLayerId == layerId ? 
-            wxutil::TreeViewItemStyle::ActiveItemStyle() : wxDataViewItemAttr(); // no style
+        row[_columns.name].setAttr(
+            activeLayerId == layerId ? wxutil::TreeViewItemStyle::ActiveItemStyle()
+                                     : wxDataViewItemAttr() // no style
+        );
 
         if (layerManager.layerIsVisible(layerId))
         {

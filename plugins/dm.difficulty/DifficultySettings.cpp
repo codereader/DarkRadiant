@@ -166,7 +166,7 @@ void DifficultySettings::updateTreeModel()
 		colour.SetColour(setting.isDefault ? wxColor(112,112,112) : wxColor(0,0,0));
 
 		row[_columns.description] = setting.getDescString() + (overridden ? _(" (overridden)") : "");
-        row[_columns.description] = colour;
+        row[_columns.description].setAttr(colour);
 
         row[_columns.classname] = setting.className;
         row[_columns.settingId] = setting.id;
@@ -285,7 +285,7 @@ wxDataViewItem DifficultySettings::insertClassName(const std::string& className,
 	black.SetColour(wxColor(0,0,0));
 
 	row[_columns.description] = className;
-    row[_columns.description] = black;
+    row[_columns.description].setAttr(black);
 
     row[_columns.classname] = className;
     row[_columns.settingId] = -1;

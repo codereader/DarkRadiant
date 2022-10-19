@@ -1041,7 +1041,7 @@ void ParticleEditor::reloadStageList()
 		colour.SetColour(stage->isVisible() ? wxColour(0, 0, 0) : wxColour(127, 127, 127));
 
         row[STAGE_COLS().name] = fmt::format("Stage {0}", static_cast<int>(i));
-		row[STAGE_COLS().name] = colour;
+		row[STAGE_COLS().name].setAttr(colour);
 
         row[STAGE_COLS().index] = static_cast<int>(i);
         row[STAGE_COLS().visible] = true;

@@ -72,7 +72,7 @@ public:
 
 		// Pixbuf depends on model type
 		row[_columns.iconAndName] = wxVariant(wxDataViewIconText(displayName, isExplicit ? _modelIcon : _folderIcon));
-        row[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite); // assign attributes
+        row[_columns.iconAndName].setAttr(wxutil::TreeViewItemStyle::Declaration(isFavourite)); // assign attributes
 		row[_columns.fullName] = fullPath;
 		row[_columns.modelPath] = fullPath;
 		row[_columns.leafName] = displayName;
@@ -97,7 +97,7 @@ public:
             isFavourite = isExplicit && _favourites.count(fullSkinPath) > 0;
 
 			skinRow[_columns.iconAndName] = wxVariant(wxDataViewIconText(skinName, _skinIcon));
-            skinRow[_columns.iconAndName] = wxutil::TreeViewItemStyle::Declaration(isFavourite); // assign attributes
+            skinRow[_columns.iconAndName].setAttr(wxutil::TreeViewItemStyle::Declaration(isFavourite)); // assign attributes
 			skinRow[_columns.fullName] = fullSkinPath; // model path + skin
 			skinRow[_columns.modelPath] = fullPath; // this is the model path
 			skinRow[_columns.leafName] = skinName;

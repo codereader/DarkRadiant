@@ -239,10 +239,10 @@ void SREntity::writeToListRow(wxutil::TreeModel::Row& row, StimResponse& sr)
 	const SRListColumns& cols = getColumns();
 
 	row[cols.index] = sr.getIndex();
-	row[cols.index] = colour;
+	row[cols.index].setAttr(colour);
 	row[cols.srClass] = wxVariant(wxutil::GetLocalBitmap(classIcon));
 	row[cols.caption] = wxVariant(wxDataViewIconText(stimTypeStr, icon));
-	row[cols.caption] = colour;
+	row[cols.caption].setAttr(colour);
 	row[cols.inherited] = sr.inherited();
 }
 

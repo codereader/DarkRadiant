@@ -79,7 +79,7 @@ protected:
         auto isFavourite = IsFavourite(declName);
 
         row[_columns.iconAndName] = wxVariant(wxDataViewIconText(leafName, !isFolder ? _declIcon : _folderIcon));
-        row[_columns.iconAndName] = TreeViewItemStyle::Declaration(isFavourite);
+        row[_columns.iconAndName].setAttr(TreeViewItemStyle::Declaration(isFavourite));
         row[_columns.fullName] = fullPath;
         row[_columns.leafName] = leafName;
         row[_columns.declName] = declName;

@@ -1206,7 +1206,7 @@ void MaterialEditor::setupMaterialStageView()
     wxDataViewItemAttr globalStyle;
     globalStyle.SetColour(wxColor(15, 15, 15));
     globalStyle.SetBold(true);
-    row[STAGE_COLS().name] = globalStyle;
+    row[STAGE_COLS().name].setAttr(globalStyle);
 
     row.SendItemAdded();
 
@@ -3042,13 +3042,9 @@ void MaterialEditor::updateMaterialTreeItem()
     wxutil::TreeModel::Row row(item, *_treeView->GetModel());
     
     if (!row[columns.isFolder].getBool())
-    {
-        row[columns.iconAndName] = wxutil::TreeViewItemStyle::Modified(isModified);
-    }
+        row[columns.iconAndName].setAttr(wxutil::TreeViewItemStyle::Modified(isModified));
     else
-    {
-        row[columns.iconAndName] = wxDataViewItemAttr();
-    }
+        row[columns.iconAndName].setAttr(wxDataViewItemAttr());
 
     wxDataViewIconText value = row[columns.iconAndName];
         

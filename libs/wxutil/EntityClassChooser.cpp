@@ -109,7 +109,7 @@ public:
 
                 row[_columns.isFolder] = isFolder;
                 row[_columns.isFavourite] = isFavourite;
-                row[_columns.iconAndName] = TreeViewItemStyle::Declaration(isFavourite); // assign attributes
+                row[_columns.iconAndName].setAttr(TreeViewItemStyle::Declaration(isFavourite)); // assign attributes
                 row.SendItemAdded();
             }
         );

@@ -222,8 +222,8 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
     setOldAndNewValueColumns(row, key, style);
 
     // Apply background style to all other columns
-    row[_columns.name] = style;
-    row[_columns.booleanValue] = style;
+    row[_columns.name].setAttr(style);
+    row[_columns.booleanValue].setAttr(style);
 
     // Before applying the style to the value, check if the value is ambiguous
     if (isMultiValue)
@@ -231,7 +231,7 @@ void EntityInspector::onKeyChange(const std::string& key, const std::string& val
         wxutil::TreeViewItemStyle::ApplyKeyValueAmbiguousStyle(style);
     }
 
-    row[_columns.value] = style;
+    row[_columns.value].setAttr(style);
     row[_columns.isInherited] = false;
 
     updateKeyType(row);
@@ -306,14 +306,14 @@ void EntityInspector::setOldAndNewValueColumns(wxutil::TreeModel::Row& row, cons
         if (action->second->getType() == scene::merge::ActionType::AddKeyValue)
         {
             row[_columns.oldValue] = std::string(); // no old value to show
-            row[_columns.oldValue] = style;
+            row[_columns.oldValue].setAttr(style);
         }
         else
         {
             wxDataViewItemAttr oldAttr = style;
             wxutil::TreeViewItemStyle::SetStrikethrough(oldAttr, true);
             row[_columns.oldValue] = action->second->getUnchangedValue();
-            row[_columns.oldValue] = oldAttr;
+            row[_columns.oldValue].setAttr(oldAttr);
         }
 
         row[_columns.newValue] = action->second->getValue();
@@ -321,7 +321,7 @@ void EntityInspector::setOldAndNewValueColumns(wxutil::TreeModel::Row& row, cons
         wxDataViewItemAttr newAttr = style;
         newAttr.SetBold(true);
 
-        row[_columns.newValue] = newAttr;
+        row[_columns.newValue].setAttr(newAttr);
     }
     else
     {
@@ -1326,13 +1326,9 @@ void EntityInspector::_onEntryActivate(wxCommandEvent& ev)
 void EntityInspector::handleShowInheritedChanged()
 {
     if (_showInheritedCheckbox->IsChecked())
-    {
         addClassProperties();
-    }
     else
-    {
         removeClassProperties();
-    }
 }
 
 void EntityInspector::updateHelpTextPanel()
@@ -1597,8 +1593,6 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 
     auto row = _kvStore->AddItem();
 
-    auto style = wxutil::TreeViewItemStyle::Inherited();
-
     row[_columns.name] = wxVariant(wxDataViewIconText(a.getName(), _emptyIcon));
     row[_columns.value] = a.getValue();
 
@@ -1616,8 +1610,11 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
         row[_columns.booleanValue].setEnabled(false);
     }
 
-    row[_columns.name] = style;
-    row[_columns.value] = style;
+    // Set style attributes
+    auto style = wxutil::TreeViewItemStyle::Inherited();
+    row[_columns.name].setAttr(style);
+    row[_columns.value].setAttr(style);
+
     row[_columns.oldValue] = std::string();
     row[_columns.newValue] = std::string();
 
@@ -1629,19 +1626,12 @@ void EntityInspector::addClassAttribute(const EntityClassAttribute& a)
 // Append inherited (entityclass) properties
 void EntityInspector::addClassProperties()
 {
-    // Get the entityclass for the current entities
-    auto eclass = _entitySelection->getSingleSharedEntityClass();
-
-    if (!eclass)
-    {
-        return;
+    // Visit the entityclass for the current entities
+    if (auto eclass = _entitySelection->getSingleSharedEntityClass(); eclass) {
+        eclass->forEachAttribute(
+            [&](const EntityClassAttribute& a, bool) { addClassAttribute(a); }
+        );
     }
-
-    // Visit the entity class
-    eclass->forEachAttribute([&] (const EntityClassAttribute& a, bool)
-    {
-        addClassAttribute(a);
-    });
 }
 
 // Remove the inherited properties
