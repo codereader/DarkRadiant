@@ -63,25 +63,6 @@ namespace
     const std::string RKEY_SHOW_INHERITED_PROPERTIES = RKEY_ROOT + "showInheritedProperties";
 }
 
-EntityInspector::EntityInspector() :
-    _mainWidget(nullptr),
-    _editorFrame(nullptr),
-    _showInheritedCheckbox(nullptr),
-    _showHelpColumnCheckbox(nullptr),
-    _primitiveNumLabel(nullptr),
-    _keyValueTreeView(nullptr),
-    _booleanColumn(nullptr),
-    _valueColumn(nullptr),
-    _oldValueColumn(nullptr),
-    _newValueColumn(nullptr),
-    _keyEntry(nullptr),
-    _valEntry(nullptr),
-    _setButton(nullptr),
-    _selectionNeedsUpdate(true),
-    _inheritedPropertiesNeedUpdate(true),
-    _helpTextNeedsUpdate(true)
-{}
-
 void EntityInspector::construct()
 {
     _emptyIcon = wxutil::Icon(wxutil::GetLocalBitmap("empty.png"));

@@ -85,26 +85,26 @@ private:
     std::unique_ptr<selection::EntitySelection> _entitySelection;
 
 	// Main EntityInspector widget
-	wxPanel* _mainWidget;
+	wxPanel* _mainWidget = nullptr;
 
 	// Frame to contain the Property Editor
-	wxPanel* _editorFrame;
+	wxPanel* _editorFrame = nullptr;
 
 	// The checkbox for showing the eclass properties
-	wxCheckBox* _showInheritedCheckbox;
-	wxCheckBox* _showHelpColumnCheckbox;
+	wxCheckBox* _showInheritedCheckbox = nullptr;
+	wxCheckBox* _showHelpColumnCheckbox = nullptr;
 
 	// A label showing the primitive number
-	wxStaticText* _primitiveNumLabel;
+	wxStaticText* _primitiveNumLabel = nullptr;
 
     // View and model for the keyvalue list
 	wxutil::TreeView* _keyValueTreeView;
 	TreeColumns _columns;
 	wxutil::TreeModel::Ptr _kvStore;
-    wxDataViewColumn* _booleanColumn;
-    wxDataViewColumn* _valueColumn;
-    wxDataViewColumn* _oldValueColumn;
-    wxDataViewColumn* _newValueColumn;
+    wxDataViewColumn* _booleanColumn = nullptr;
+    wxDataViewColumn* _valueColumn = nullptr;
+    wxDataViewColumn* _oldValueColumn = nullptr;
+    wxDataViewColumn* _newValueColumn = nullptr;
 
     wxutil::Icon _emptyIcon;
 
@@ -115,9 +115,9 @@ private:
 
 	// Key and value edit boxes. These remain available even for multiple entity
     // selections.
-	wxTextCtrl* _keyEntry;
-	wxTextCtrl* _valEntry;
-    wxBitmapButton* _setButton;
+	wxTextCtrl* _keyEntry = nullptr;
+	wxTextCtrl* _valEntry = nullptr;
+    wxBitmapButton* _setButton = nullptr;
 
 	wxTextCtrl* _helpText;
 
@@ -152,9 +152,9 @@ private:
     std::map<std::string, scene::merge::IEntityKeyValueMergeAction::Ptr> _mergeActions;
     std::map<std::string, scene::merge::IConflictResolutionAction::Ptr> _conflictActions;
 
-    bool _selectionNeedsUpdate;
-    bool _inheritedPropertiesNeedUpdate;
-    bool _helpTextNeedsUpdate;
+    bool _selectionNeedsUpdate = true;
+    bool _inheritedPropertiesNeedUpdate = true;
+    bool _helpTextNeedsUpdate = true;
 
 private:
     bool canUpdateEntity();
@@ -262,9 +262,6 @@ protected:
     void onIdle() override;
 
 public:
-	// Constructor
-    EntityInspector();
-
 	// Get the main widget for packing
 	wxPanel* getWidget() override;
 
