@@ -60,10 +60,6 @@ private:
 
 private:
 
-	// TransientWindow callbacks
-	void _preShow();
-	void _preHide();
-
 	/** greebo: Helper method that imports the selected patch
 	 */
 	void rescanSelection();

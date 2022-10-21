@@ -2,7 +2,6 @@
 
 #include "itexturetoolmodel.h"
 
-#include "wxutil/window/TransientWindow.h"
 #include "math/AABB.h"
 #include "ishaders.h"
 #include "imanipulator.h"
