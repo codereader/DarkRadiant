@@ -255,7 +255,7 @@ bool TexTool::textureToolHasFocus()
 {
     auto manipulationPanel = findNamedObject<wxWindow>(this, "TextureToolManipulatorPanel");
 
-    return HasFocus() || _glWidget->HasFocus() || manipulationPanel->HasFocus() || manipulationPanel->FindFocus() != nullptr;
+    return HasFocus() || _glWidget->HasFocus() || manipulationPanel->HasFocus();
 }
 
 void TexTool::handleManipulatorModeToggleRequest(selection::ManipulatorModeToggleRequest& request)
