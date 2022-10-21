@@ -99,7 +99,7 @@ add_executable(darkradiant
                ui/materials/MaterialPopulator.cpp
                ui/materials/MaterialSelector.cpp
                ui/materials/MaterialTreeView.cpp
-               ui/merge/MergeControlDialog.cpp
+               ui/merge/MapMergePanel.cpp
                ui/animationpreview/AnimationPreview.cpp
                ui/animationpreview/MD5AnimationChooser.cpp
                ui/animationpreview/MD5AnimationViewer.cpp
@@ -164,7 +164,7 @@ add_executable(darkradiant
                ui/texturebrowser/TextureBrowser.cpp
                ui/texturebrowser/TextureBrowserManager.cpp
                ui/toolbar/ToolbarManager.cpp
-               ui/transform/TransformDialog.cpp
+               ui/transform/TransformPanel.cpp
                ui/UserInterfaceModule.cpp
                xyview/FloatingOrthoView.cpp
                xyview/GlobalXYWnd.cpp

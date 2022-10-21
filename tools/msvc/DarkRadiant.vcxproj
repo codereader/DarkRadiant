@@ -283,7 +283,7 @@
     <ClCompile Include="..\..\radiant\ui\menu\MenuItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\menu\MenuManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\menu\MenuSeparator.cpp" />
-    <ClCompile Include="..\..\radiant\ui\merge\MergeControlDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\merge\MapMergePanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ConvertModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.cpp" />
@@ -498,7 +498,8 @@
     <ClInclude Include="..\..\radiant\ui\menu\MenuManager.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuRootElement.h" />
     <ClInclude Include="..\..\radiant\ui\menu\MenuSeparator.h" />
-    <ClInclude Include="..\..\radiant\ui\merge\MergeControlDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\merge\MapMergeControl.h" />
+    <ClInclude Include="..\..\radiant\ui\merge\MapMergePanel.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ConvertModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportAsModelDialog.h" />
     <ClInclude Include="..\..\radiant\ui\modelexport\ExportCollisionModelDialog.h" />

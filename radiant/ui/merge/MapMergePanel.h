@@ -2,26 +2,28 @@
 
 #include "iselection.h"
 #include "imap.h"
-#include "icommandsystem.h"
 #include <sigc++/connection.h>
-#include "wxutil/window/TransientWindow.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/dataview/TreeModel.h"
+#include "wxutil/event/SingleIdleCallback.h"
+
+#include <wx/panel.h>
 
 namespace ui
 {
 
-
-class MergeControlDialog final :
-    public wxutil::TransientWindow,
+class MapMergePanel final :
+    public wxPanel,
     private wxutil::XmlResourceBasedWidget,
     public selection::SelectionSystem::Observer,
-    public sigc::trackable
+    public sigc::trackable,
+    public wxutil::SingleIdleCallback
 {
 private:
     sigc::connection _undoHandler;
     sigc::connection _redoHandler;
     sigc::connection _mapEventHandler;
+    sigc::connection _mapEditModeChangedHandler;
 
     bool _updateNeeded;
     std::size_t _numUnresolvedConflicts;
@@ -29,14 +31,8 @@ private:
     wxutil::TreeModel::Ptr _descriptionStore;
 
 public:
-    MergeControlDialog();
-
-    static MergeControlDialog& Instance();
-
-    bool Show(bool show = true) override;
-
-    // The command target
-    static void ShowDialog(const cmd::ArgumentList& args);
+    MapMergePanel(wxWindow* parent);
+    ~MapMergePanel() override;
 
     /** greebo: SelectionSystem::Observer implementation. Gets called by
      * the SelectionSystem upon selection change to allow updating of the
@@ -50,13 +46,9 @@ public:
     static void OnMapEditModeChanged(IMap::EditMode newMode);
 
 protected:
-    void _preShow() override;
-    void _preHide() override;
+    void onIdle() override;
 
 private:
-    void onMainFrameShuttingDown();
-    static std::shared_ptr<MergeControlDialog>& InstancePtr();
-
     void convertTextCtrlToPathEntry(const std::string& ctrlName);
     void onMergeSourceChanged(wxCommandEvent& ev);
     void onMergeModeChanged(wxCommandEvent& ev);
@@ -69,8 +61,8 @@ private:
     void onJumpToNextConflict(wxCommandEvent& ev);
     void updateControls();
     void queueUpdate();
-    void onIdle(wxIdleEvent& ev);
     void onMapEvent(IMap::MapEvent ev);
+    void onClose(wxCloseEvent& ev);
     void updateSummary();
 
     void update();

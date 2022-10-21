@@ -1,8 +1,7 @@
-#include "MergeControlDialog.h"
+#include "MapMergePanel.h"
 
 #include "i18n.h"
-#include "itextstream.h"
-#include "ui/imainframe.h"
+#include "ui/iusercontrol.h"
 #include "icommandsystem.h"
 #include "iselection.h"
 #include "iundo.h"
@@ -30,14 +29,6 @@ namespace ui
 
 namespace
 {
-    const char* const WINDOW_TITLE = N_("Merge Maps");
-
-    const std::string RKEY_ROOT = "user/ui/mergeControlDialog/";
-    const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-}
-
-namespace
-{
 
 // Column setup for the list store
 struct Columns :
@@ -58,8 +49,8 @@ const Columns& COLUMNS()
 
 }
 
-MergeControlDialog::MergeControlDialog() :
-    TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+MapMergePanel::MapMergePanel(wxWindow* parent) :
+    wxPanel(parent),
     _updateNeeded(false),
     _numUnresolvedConflicts(0)
 {
@@ -70,42 +61,42 @@ MergeControlDialog::MergeControlDialog() :
     convertTextCtrlToPathEntry("BaseMapFilename");
 
     auto* mergeSourceEntry = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename");
-    mergeSourceEntry->Bind(wxutil::EV_PATH_ENTRY_CHANGED, &MergeControlDialog::onMergeSourceChanged, this);
+    mergeSourceEntry->Bind(wxutil::EV_PATH_ENTRY_CHANGED, &MapMergePanel::onMergeSourceChanged, this);
 
     auto* baseMapEntry = findNamedObject<wxutil::PathEntry>(this, "BaseMapFilename");
-    baseMapEntry->Bind(wxutil::EV_PATH_ENTRY_CHANGED, &MergeControlDialog::onMergeSourceChanged, this);
+    baseMapEntry->Bind(wxutil::EV_PATH_ENTRY_CHANGED, &MapMergePanel::onMergeSourceChanged, this);
 
     auto* abortMergeButton = findNamedObject<wxButton>(this, "AbortMergeButton");
-    abortMergeButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onAbortMerge, this);
+    abortMergeButton->Bind(wxEVT_BUTTON, &MapMergePanel::onAbortMerge, this);
 
     auto* loadAndCompareButton = findNamedObject<wxButton>(this, "LoadAndCompareButton");
-    loadAndCompareButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onLoadAndCompare, this);
+    loadAndCompareButton->Bind(wxEVT_BUTTON, &MapMergePanel::onLoadAndCompare, this);
 
     auto* finishButton = findNamedObject<wxButton>(this, "FinishMergeButton");
-    finishButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onFinishMerge, this);
+    finishButton->Bind(wxEVT_BUTTON, &MapMergePanel::onFinishMerge, this);
 
     auto* resolveAcceptButton = findNamedObject<wxButton>(this, "ResolveAcceptButton");
-    resolveAcceptButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onResolveAccept, this);
+    resolveAcceptButton->Bind(wxEVT_BUTTON, &MapMergePanel::onResolveAccept, this);
 
     auto* resolveRejectButton = findNamedObject<wxButton>(this, "ResolveRejectButton");
-    resolveRejectButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onResolveReject, this);
+    resolveRejectButton->Bind(wxEVT_BUTTON, &MapMergePanel::onResolveReject, this);
 
     auto* resolveKeepBothButton = findNamedObject<wxButton>(this, "ResolveKeepBothButton");
-    resolveKeepBothButton->Bind(wxEVT_BUTTON, &MergeControlDialog::onResolveKeepBoth, this);
+    resolveKeepBothButton->Bind(wxEVT_BUTTON, &MapMergePanel::onResolveKeepBoth, this);
 
     auto* jumpToNextConflict = findNamedObject<wxButton>(this, "JumpToNextConflictButton");
-    jumpToNextConflict->Bind(wxEVT_BUTTON, &MergeControlDialog::onJumpToNextConflict, this);
+    jumpToNextConflict->Bind(wxEVT_BUTTON, &MapMergePanel::onJumpToNextConflict, this);
 
     findNamedObject<wxCheckBox>(this, "KeepSelectionGroupsIntact")->SetValue(true);
     findNamedObject<wxCheckBox>(this, "MergeLayers")->SetValue(true);
 
     auto twoWayButton = findNamedObject<wxToggleButton>(this, "TwoWayMode");
     twoWayButton->SetBitmap(wxutil::GetLocalBitmap("two_way_merge.png"));
-    twoWayButton->Bind(wxEVT_TOGGLEBUTTON, &MergeControlDialog::onMergeModeChanged, this);
+    twoWayButton->Bind(wxEVT_TOGGLEBUTTON, &MapMergePanel::onMergeModeChanged, this);
 
     auto threeWayButton = findNamedObject<wxToggleButton>(this, "ThreeWayMode");
     threeWayButton->SetBitmap(wxutil::GetLocalBitmap("three_way_merge.png"));
-    threeWayButton->Bind(wxEVT_TOGGLEBUTTON, &MergeControlDialog::onMergeModeChanged, this);
+    threeWayButton->Bind(wxEVT_TOGGLEBUTTON, &MapMergePanel::onMergeModeChanged, this);
 
     auto actionDescriptionPanel = findNamedObject<wxPanel>(this, "ActionDescriptionPanel");
 
@@ -117,96 +108,81 @@ MergeControlDialog::MergeControlDialog() :
 
     actionDescriptionPanel->GetSizer()->Add(listView, 1, wxEXPAND | wxBOTTOM, 6);
 
-    updateControls();
-    Bind(wxEVT_IDLE, &MergeControlDialog::onIdle, this);
+    Bind(wxEVT_CLOSE_WINDOW, &MapMergePanel::onClose, this);
 
     Layout();
     Fit();
 
-    SetMinSize(wxSize(400, 290));
-    InitialiseWindowPosition(400, 290, RKEY_WINDOW_STATE);
+    //SetMinSize(wxSize(400, 290));
+
+    // Register self to the SelSystem to get notified upon selection changes.
+    GlobalSelectionSystem().addObserver(this);
+
+    _mapEventHandler = GlobalMapModule().signal_mapEvent().connect(
+        sigc::mem_fun(this, &MapMergePanel::onMapEvent)
+    );
+    _mapEditModeChangedHandler = GlobalMapModule().signal_editModeChanged().connect(
+        [this](auto editMode) { update(); }
+    );
+
+    _undoHandler = GlobalMapModule().signal_postUndo().connect(
+        sigc::mem_fun(this, &MapMergePanel::queueUpdate));
+    _redoHandler = GlobalMapModule().signal_postRedo().connect(
+        sigc::mem_fun(this, &MapMergePanel::queueUpdate));
+
+    // Check for selection changes before showing the dialog again
+    update();
 }
 
-std::shared_ptr<MergeControlDialog>& MergeControlDialog::InstancePtr()
+MapMergePanel::~MapMergePanel()
 {
-    static std::shared_ptr<MergeControlDialog> _instancePtr;
-    return _instancePtr;
+    // A hidden window doesn't need to listen for events
+    _undoHandler.disconnect();
+    _redoHandler.disconnect();
+    _mapEventHandler.disconnect();
+    _mapEditModeChangedHandler.disconnect();
+
+    GlobalSelectionSystem().removeObserver(this);
 }
 
-MergeControlDialog& MergeControlDialog::Instance()
-{
-    auto& instancePtr = InstancePtr();
-
-    if (!instancePtr)
-    {
-        // Not yet instantiated, do it now
-        instancePtr.reset(new MergeControlDialog);
-
-        // Pre-destruction cleanup
-        GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &MergeControlDialog::onMainFrameShuttingDown)
-        );
-    }
-
-    return *instancePtr;
-}
-
-void MergeControlDialog::onMainFrameShuttingDown()
-{
-    rMessage() << "MergeControlDialog shutting down." << std::endl;
-
-    if (IsShownOnScreen())
-    {
-        Hide();
-    }
-
-    // Destroy the window 
-    SendDestroyEvent();
-    InstancePtr().reset();
-}
-
-bool MergeControlDialog::Show(bool show)
+void MapMergePanel::onClose(wxCloseEvent& ev)
 {
     // Check if there's a merge operation in progress
     // If yes, we ask the user before closing the window
-    if (!show && IsShown() && GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
+    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
     {
         if (wxutil::Messagebox::Show(_("Abort the Merge Operation?"),
             _("The current merge operation hasn't been finished yet.\nDo you want to abort the merge?"),
             IDialog::MessageType::MESSAGE_ASK, this) == IDialog::RESULT_NO)
         {
-            return false; // block this call
+            ev.Veto();
+            return; // block this call
         }
-            
+
         // User wants to cancel, abort the merge and continue calling base
         GlobalMapModule().abortMergeOperation();
     }
 
-    return TransientWindow::Show(show);
+    ev.Skip();
 }
 
-void MergeControlDialog::ShowDialog(const cmd::ArgumentList& args)
-{
-    Instance().Show();
-}
-
-void MergeControlDialog::convertTextCtrlToPathEntry(const std::string& ctrlName)
+void MapMergePanel::convertTextCtrlToPathEntry(const std::string& ctrlName)
 {
     auto oldCtrl = findNamedObject<wxTextCtrl>(this, ctrlName);
     replaceControl(oldCtrl, new wxutil::PathEntry(oldCtrl->GetParent(), "map", true));
 }
 
-void MergeControlDialog::onMergeSourceChanged(wxCommandEvent& ev)
+void MapMergePanel::onMergeSourceChanged(wxCommandEvent& ev)
 {
     update();
 }
 
-bool MergeControlDialog::isInThreeWayMergeMode()
+bool MapMergePanel::isInThreeWayMergeMode()
 {
     return findNamedObject<wxToggleButton>(this, "ThreeWayMode")->GetValue();
 }
 
-void MergeControlDialog::setThreeWayMergeMode(bool enabled)
+void MapMergePanel::setThreeWayMergeMode(bool enabled)
 {
     findNamedObject<wxToggleButton>(this, "TwoWayMode")->SetValue(!enabled);
     findNamedObject<wxToggleButton>(this, "ThreeWayMode")->SetValue(enabled);
@@ -221,7 +197,7 @@ void MergeControlDialog::setThreeWayMergeMode(bool enabled)
     Fit();
 }
 
-void MergeControlDialog::onMergeModeChanged(wxCommandEvent& ev)
+void MapMergePanel::onMergeModeChanged(wxCommandEvent& ev)
 {
     auto twoWayButton = findNamedObject<wxToggleButton>(this, "TwoWayMode");
     auto toggleButton = wxDynamicCast(ev.GetEventObject(), wxToggleButton);
@@ -238,7 +214,7 @@ void MergeControlDialog::onMergeModeChanged(wxCommandEvent& ev)
     }
 }
 
-void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
+void MapMergePanel::onLoadAndCompare(wxCommandEvent& ev)
 {
     auto sourceMapPath = findNamedObject<wxutil::PathEntry>(this, "MergeMapFilename")->getValue();
     auto baseMapPath = findNamedObject<wxutil::PathEntry>(this, "BaseMapFilename")->getValue();
@@ -262,13 +238,13 @@ void MergeControlDialog::onLoadAndCompare(wxCommandEvent& ev)
     update();
 }
 
-void MergeControlDialog::onAbortMerge(wxCommandEvent& ev)
+void MapMergePanel::onAbortMerge(wxCommandEvent& ev)
 {
     GlobalMapModule().abortMergeOperation();
     update();
 }
 
-void MergeControlDialog::onResolveAccept(wxCommandEvent& ev)
+void MapMergePanel::onResolveAccept(wxCommandEvent& ev)
 {
     auto conflictNode = scene::merge::getSingleSelectedConflictNode();
 
@@ -286,13 +262,13 @@ void MergeControlDialog::onResolveAccept(wxCommandEvent& ev)
     update();
 }
 
-void MergeControlDialog::onResolveReject(wxCommandEvent& ev)
+void MapMergePanel::onResolveReject(wxCommandEvent& ev)
 {
     scene::merge::rejectSelectedNodesByDeletion();
     update();
 }
 
-void MergeControlDialog::onResolveKeepBoth(wxCommandEvent& ev)
+void MapMergePanel::onResolveKeepBoth(wxCommandEvent& ev)
 {
     UndoableCommand undo("resolveMergeConflictByKeepingBothEntities");
 
@@ -300,12 +276,12 @@ void MergeControlDialog::onResolveKeepBoth(wxCommandEvent& ev)
     update();
 }
 
-void MergeControlDialog::onJumpToNextConflict(wxCommandEvent& ev)
+void MapMergePanel::onJumpToNextConflict(wxCommandEvent& ev)
 {
     scene::merge::focusNextConflictNode();
 }
 
-void MergeControlDialog::onFinishMerge(wxCommandEvent& ev)
+void MapMergePanel::onFinishMerge(wxCommandEvent& ev)
 {
     auto operation = GlobalMapModule().getActiveMergeOperation();
 
@@ -403,7 +379,7 @@ inline void addActionDescription(const wxutil::TreeModel::Ptr& listStore, const 
     });
 }
 
-void MergeControlDialog::updateControls()
+void MapMergePanel::updateControls()
 {
     auto* targetMapFilename = findNamedObject<wxTextCtrl>(this, "TargetMapFilename");
     targetMapFilename->SetValue(os::getFilename(GlobalMapModule().getMapName()));
@@ -471,42 +447,7 @@ void MergeControlDialog::updateControls()
     Fit();
 }
 
-void MergeControlDialog::_preHide()
-{
-    TransientWindow::_preHide();
-
-    // A hidden window doesn't need to listen for events
-    _undoHandler.disconnect();
-    _redoHandler.disconnect();
-    _mapEventHandler.disconnect();
-
-    GlobalSelectionSystem().removeObserver(this);
-}
-
-void MergeControlDialog::_preShow()
-{
-    TransientWindow::_preShow();
-
-    _undoHandler.disconnect();
-    _redoHandler.disconnect();
-
-    // Register self to the SelSystem to get notified upon selection changes.
-    GlobalSelectionSystem().addObserver(this);
-    
-    _mapEventHandler = GlobalMapModule().signal_mapEvent().connect(
-        sigc::mem_fun(this, &MergeControlDialog::onMapEvent)
-    );
-    
-    _undoHandler = GlobalMapModule().signal_postUndo().connect(
-        sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
-    _redoHandler = GlobalMapModule().signal_postRedo().connect(
-        sigc::mem_fun(this, &MergeControlDialog::queueUpdate));
-
-    // Check for selection changes before showing the dialog again
-    update();
-}
-
-void MergeControlDialog::selectionChanged(const scene::INodePtr& node, bool isComponent)
+void MapMergePanel::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
     if (node->getNodeType() != scene::INode::Type::MergeAction)
     {
@@ -516,19 +457,20 @@ void MergeControlDialog::selectionChanged(const scene::INodePtr& node, bool isCo
     queueUpdate();
 }
 
-void MergeControlDialog::update()
+void MapMergePanel::update()
 {
     // Update the stats first to be able to enable/disable controls based on the numbers
     updateSummary();
     updateControls();
 }
 
-void MergeControlDialog::queueUpdate()
+void MapMergePanel::queueUpdate()
 {
     _updateNeeded = true;
+    requestIdleCallback();
 }
 
-void MergeControlDialog::onIdle(wxIdleEvent& ev)
+void MapMergePanel::onIdle()
 {
     if (!_updateNeeded) return;
 
@@ -536,7 +478,7 @@ void MergeControlDialog::onIdle(wxIdleEvent& ev)
     update();
 }
 
-void MergeControlDialog::onMapEvent(IMap::MapEvent ev)
+void MapMergePanel::onMapEvent(IMap::MapEvent ev)
 {
     if (ev == IMap::MapLoaded || ev == IMap::MapUnloaded)
     {
@@ -544,22 +486,17 @@ void MergeControlDialog::onMapEvent(IMap::MapEvent ev)
     }
 }
 
-void MergeControlDialog::OnMapEditModeChanged(IMap::EditMode mode)
+void MapMergePanel::OnMapEditModeChanged(IMap::EditMode mode)
 {
     // When switching to merge mode, make sure the dialog is shown
 
-    if (mode == IMap::EditMode::Merge && (!InstancePtr() || !Instance().IsShown()))
+    if (mode == IMap::EditMode::Merge)
     {
-        Instance().Show();
-        return;
-    }
-    else if (InstancePtr() && Instance().IsShown())
-    { 
-        Instance().update();
+        GlobalCommandSystem().executeCommand("FocusControl", { UserControl::MapMergePanel });
     }
 }
 
-void MergeControlDialog::updateSummary()
+void MapMergePanel::updateSummary()
 {
     auto operation = GlobalMapModule().getActiveMergeOperation();
 

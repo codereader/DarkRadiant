@@ -67,7 +67,7 @@
 #include "ui/brush/FindBrush.h"
 #include "ui/mousetool/RegistrationHelper.h"
 #include "ui/mapselector/MapSelector.h"
-#include "ui/merge/MergeControlDialog.h"
+#include "ui/merge/MapMergeControl.h"
 #include "ui/PointFileChooser.h"
 
 #include <wx/version.h>
@@ -234,7 +234,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 	wxTheApp->Bind(DISPATCH_EVENT, &UserInterfaceModule::onDispatchEvent, this);
 
     _mapEditModeChangedConn = GlobalMapModule().signal_editModeChanged().connect(
-        sigc::ptr_fun(&MergeControlDialog::OnMapEditModeChanged)
+        sigc::ptr_fun(&MapMergePanel::OnMapEditModeChanged)
     );
 
     _autosaveTimer.reset(new map::AutoSaveTimer);
@@ -258,6 +258,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     registerControl(std::make_shared<PatchInspectorControl>());
     registerControl(std::make_shared<LightInspectorControl>());
     registerControl(std::make_shared<TransformPanelControl>());
+    registerControl(std::make_shared<MapMergeControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
@@ -268,6 +269,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMainFrame().addControl(UserControl::PatchInspector, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::LightInspector, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::TransformPanel, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::MapMergePanel, { IMainFrame::Location::FloatingWindow, false });
     });
 }
 
@@ -433,9 +435,9 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addStatement("ToggleLayerControlDialog", fmt::format("ToggleControl {0}", UserControl::LayerControlPanel), false);
 	GlobalCommandSystem().addStatement("PatchInspector", fmt::format("ToggleControl {0}", UserControl::PatchInspector), false);
 	GlobalCommandSystem().addStatement("TransformDialog", fmt::format("ToggleControl {0}", UserControl::TransformPanel), false);
+	GlobalCommandSystem().addStatement("MergeControlPanel", fmt::format("ToggleControl {0}", UserControl::MapMergePanel), false);
 
-	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::ShowDialog);
-	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
+    GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
     GlobalCommandSystem().addCommand("ChooseAndTogglePointfile",
                                      [](const cmd::ArgumentList&)
                                      { PointFileChooser::chooseAndToggle(); });
