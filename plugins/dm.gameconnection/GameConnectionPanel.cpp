@@ -1,9 +1,4 @@
-#include "GameConnectionDialog.h"
-#include "GameConnection.h"
-
-#include "i18n.h"
-#include "ui/imainframe.h"
-#include "ui/idialogmanager.h"
+#include "GameConnectionPanel.h"
 
 #if HAVE_ACTIVITYINDICATOR
     #include <wx/activityindicator.h>
@@ -14,70 +9,35 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 
+#include "wxutil/dialog/MessageBox.h"
 
-namespace
-{
-    const char* GameConnectionDialog_TITLE = N_("Game connection");
-}
+#include "GameConnection.h"
 
-
-namespace gameconn
+namespace ui
 {
 
-void showError(const std::string& text)
-{
-    auto dlg = GlobalDialogManager().createMessageBox(
-        _("Game connection error"), text, ui::IDialog::MESSAGE_ERROR
-    );
-    if (dlg)
-        dlg->run();
-}
-
-GameConnectionDialog& GameConnectionDialog::Instance()
-{
-    static std::unique_ptr<GameConnectionDialog> _instance;
-
-    if (!_instance) {
-        _instance.reset(new GameConnectionDialog());
-
-        // Pre-destruction cleanup
-        GlobalMainFrame().signal_MainFrameShuttingDown().connect([]() {
-            if (_instance->IsShownOnScreen())
-                _instance->Hide();
-            _instance->SendDestroyEvent();
-            _instance.reset();
-        });
-    }
-
-    return *_instance;
-}
-
-void GameConnectionDialog::toggleDialog(const cmd::ArgumentList& args)
-{
-    // Toggle the instance
-    Instance().ToggleVisibility();
-}
-
-GameConnectionDialog::~GameConnectionDialog()
+GameConnectionPanel::~GameConnectionPanel()
 {
     _updateOnStatusChangeSignal.disconnect();
 }
 
-GameConnectionDialog::GameConnectionDialog() :
-    wxutil::TransientWindow(_(GameConnectionDialog_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true)
+GameConnectionPanel::GameConnectionPanel(wxWindow* parent) :
+    wxPanel(parent)
 {
-    wxPanel* panel = loadNamedPanel(this, "GameConnectionMainPanel");
+    auto mainPanel = loadNamedPanel(this, "GameConnectionMainPanel");
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    GetSizer()->Add(mainPanel, 1, wxEXPAND);
 
 #if HAVE_ACTIVITYINDICATOR
     //could not find activity indicator in wxFormBuilder
-    _connectedActivityIndicator = new wxActivityIndicator(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxT("ConnectedActivityIndicator"));
+    _connectedActivityIndicator = new wxActivityIndicator(mainPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxT("ConnectedActivityIndicator"));
     replaceControl(findNamedObject<wxWindow>(this, "ConnectedActivityIndicator"), _connectedActivityIndicator);
     _connectedActivityIndicator->Start();
 #else
     _connectedActivityIndicator = findNamedObject<wxStaticBitmap>(this, "ConnectedActivityIndicator");
     panel;  //fix warning
 #endif
-    SetMinSize(panel->GetEffectiveMinSize());
+    SetMinSize(mainPanel->GetEffectiveMinSize());
     Layout();
 
     //don't want to call findNamedObject every time, risking a typo
@@ -97,7 +57,7 @@ GameConnectionDialog::GameConnectionDialog() :
     updateConnectedStatus();
     //update GUI when anything changes in connection
     _updateOnStatusChangeSignal = Impl().signal_StatusChanged.connect([this](int) {
-        GameConnectionDialog::updateConnectedStatus();
+        GameConnectionPanel::updateConnectedStatus();
     });
 
     //===================================
@@ -108,7 +68,7 @@ GameConnectionDialog::GameConnectionDialog() :
         if (_connectedCheckbox->IsChecked()) {
             bool success = Impl().connect();
             if (!success)
-                showError("Failed to connect to game.\nMaybe try 'Restart game' button?");
+                wxutil::Messagebox::ShowError("Failed to connect to game.\nMaybe try 'Restart game' button?", this);
         }
         else
             Impl().disconnect(true);
@@ -152,23 +112,13 @@ GameConnectionDialog::GameConnectionDialog() :
     });
 }
 
-void GameConnectionDialog::_preShow()
+gameconn::GameConnection& GameConnectionPanel::Impl()
 {
-    TransientWindow::_preShow();
-}
-
-void GameConnectionDialog::_preHide()
-{
-    TransientWindow::_preHide();
-}
-
-GameConnection& GameConnectionDialog::Impl()
-{
-    static module::InstanceReference<GameConnection> _reference("GameConnection");
+    static module::InstanceReference<gameconn::GameConnection> _reference("GameConnection");
     return _reference;
 }
 
-void GameConnectionDialog::updateConnectedStatus()
+void GameConnectionPanel::updateConnectedStatus()
 {
     bool connected = Impl().isAlive();
     bool restarting = Impl().isGameRestarting();

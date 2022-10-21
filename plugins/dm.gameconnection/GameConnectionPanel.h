@@ -1,10 +1,8 @@
 #pragma once
 
-#include "icommandsystem.h"
-
-#include "wxutil/window/TransientWindow.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
+#include <wx/panel.h>
 #include <sigc++/connection.h>
 
 class wxCheckBox;
@@ -22,18 +20,17 @@ class wxButton;
     typedef wxStaticBitmap ActivityIndicatorOrImage;
 #endif
 
-namespace gameconn
+namespace gameconn { class GameConnection; }
+
+namespace ui
 {
 
-class GameConnection;
-
 /**
- * stgatilov: This is top-level non-modal window
- * which displays the status of game connection system,
- * and allows to control its modes and actions.
+ * stgatilov: A panel displaying the status of game connection system,
+ * allowing to control its modes and actions.
  */
-class GameConnectionDialog :
-	public wxutil::TransientWindow,
+class GameConnectionPanel :
+	public wxPanel,
 	private wxutil::XmlResourceBasedWidget
 {
     wxCheckBox* _connectedCheckbox               = nullptr;
@@ -52,28 +49,14 @@ class GameConnectionDialog :
     sigc::connection _updateOnStatusChangeSignal;
 
 public:
-    ~GameConnectionDialog();
-
-    // This is the actual home of the static instance
-    static GameConnectionDialog& Instance();
-
-    // Toggle the visibility of the dialog instance, constructing it if necessary.
-    static void toggleDialog(const cmd::ArgumentList& args);
+    GameConnectionPanel(wxWindow* parent);
+    ~GameConnectionPanel() override;
 
     // Makes all GUI inactive / active depending on whether connection is alive.
     void updateConnectedStatus();
 
-protected:
-    // TransientWindow callbacks
-    virtual void _preShow() override;
-    virtual void _preHide() override;
-
 private:
-    GameConnectionDialog();
-
-    GameConnection& Impl();
+    gameconn::GameConnection& Impl();
 };
 
-void showError(const std::string& text);
-
-} // namespace ui
+} // namespace
