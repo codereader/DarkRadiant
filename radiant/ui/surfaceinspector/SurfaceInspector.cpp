@@ -120,8 +120,6 @@ SurfaceInspector::SurfaceInspector(wxWindow* parent) :
 	_callbackActive(false),
 	_updateNeeded(false)
 {
-	Bind(wxEVT_IDLE, &SurfaceInspector::onIdle, this);
-
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
@@ -636,11 +634,12 @@ void SurfaceInspector::updateTexDef()
 void SurfaceInspector::update()
 {
     _updateNeeded = true;
+    requestIdleCallback();
 }
 
-void SurfaceInspector::onIdle(wxIdleEvent& ev)
+void SurfaceInspector::onIdle()
 {
-	if (_updateNeeded && IsShownOnScreen())
+	if (_updateNeeded)
 	{
 		doUpdate();
 	}
@@ -793,7 +792,7 @@ void SurfaceInspector::onShaderSelect(wxCommandEvent& ev)
 
 void SurfaceInspector::handleTextureChangedMessage(radiant::TextureChangedMessage& msg)
 {
-	_updateNeeded = true;
+    update();
 }
 
 } // namespace ui

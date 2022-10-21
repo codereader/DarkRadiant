@@ -9,6 +9,7 @@
 #include <sigc++/trackable.h>
 
 #include "wxutil/DockablePanel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 namespace wxutil { class ControlButton; }
 
@@ -27,7 +28,8 @@ namespace ui
 /// Inspector for properties of a surface and its applied texture
 class SurfaceInspector :
 	public wxutil::DockablePanel,
-	public sigc::trackable
+	public sigc::trackable,
+    public wxutil::SingleIdleCallback
 {
     // Manipulatable value field with nudge buttons and a step size selector
 	struct ManipulatorRow
@@ -114,6 +116,9 @@ public:
 	 */
 	void keyChanged();
 
+protected:
+    void onIdle() override;
+
 private:
 	void doUpdate();
 
@@ -162,9 +167,6 @@ private:
 
 	// The keypress handler for catching the Enter key when in the value entry fields
 	void onValueEntryActivate(wxCommandEvent& ev);
-
-	// Called by wxWidgets when the system is idle
-	void onIdle(wxIdleEvent& ev);
 
 	void handleTextureChangedMessage(radiant::TextureChangedMessage& msg);
 
