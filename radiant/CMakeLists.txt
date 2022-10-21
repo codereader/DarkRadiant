@@ -23,8 +23,8 @@ add_executable(darkradiant
                settings/Win32Registry.cpp
                textool/tools/TextureToolManipulateMouseTool.cpp
                textool/TexTool.cpp
-               ui/aas/AasControl.cpp
-               ui/aas/AasControlDialog.cpp
+               ui/aas/AasFileControl.cpp
+               ui/aas/AasVisualisationPanel.cpp
                ui/aas/RenderableAasFile.cpp
                ui/about/AboutDialog.cpp
                ui/brush/FindBrush.cpp

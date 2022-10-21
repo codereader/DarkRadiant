@@ -400,12 +400,6 @@
     <ClCompile Include="..\..\radiant\ui\prefdialog\PreferenceItem.cpp">
       <Filter>src\ui\prefdialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp">
-      <Filter>src\ui\aas</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp">
-      <Filter>src\ui\aas</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\xyview\tools\MeasurementTool.cpp">
       <Filter>src\xyview\tools</Filter>
     </ClCompile>
@@ -718,6 +712,12 @@
     <ClCompile Include="..\..\radiant\ui\merge\MapMergePanel.cpp">
       <Filter>src\ui\merge</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\aas\AasFileControl.cpp">
+      <Filter>src\ui\aas</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\aas\AasVisualisationPanel.cpp">
+      <Filter>src\ui\aas</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -977,12 +977,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\camera\tools\PanViewTool.h">
       <Filter>src\camera\tools</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\aas\AasControl.h">
-      <Filter>src\ui\aas</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h">
-      <Filter>src\ui\aas</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\tools\MeasurementTool.h">
       <Filter>src\xyview\tools</Filter>
@@ -1430,6 +1424,15 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\entitylist\EntityListControl.h">
       <Filter>src\ui\entitylist</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\aas\AasFileControl.h">
+      <Filter>src\ui\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\aas\AasVisualisationControl.h">
+      <Filter>src\ui\aas</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\aas\AasVisualisationPanel.h">
+      <Filter>src\ui\aas</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

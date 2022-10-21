@@ -1,4 +1,4 @@
-#include "AasControl.h"
+#include "AasFileControl.h"
 
 #include "i18n.h"
 #include "iarchive.h"
@@ -16,7 +16,7 @@
 namespace ui
 {
 
-AasControl::AasControl(wxWindow* parent, const map::AasFileInfo& info) :
+AasFileControl::AasFileControl(wxWindow* parent, const map::AasFileInfo& info) :
     _toggle(nullptr),
     _refreshButton(nullptr),
     _buttonHBox(nullptr),
@@ -25,11 +25,11 @@ AasControl::AasControl(wxWindow* parent, const map::AasFileInfo& info) :
 {
     // Create the main toggle
 	_toggle = new wxToggleButton(parent, wxID_ANY, info.type.fileExtension);
-	_toggle->Connect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(AasControl::onToggle), NULL, this);
+	_toggle->Connect(wxEVT_TOGGLEBUTTON, wxCommandEventHandler(AasFileControl::onToggle), NULL, this);
 
     _refreshButton = new wxBitmapButton(parent, wxID_ANY, 
 		wxutil::GetLocalBitmap("refresh.png"));
-	_refreshButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AasControl::onRefresh), NULL, this);
+	_refreshButton->Connect(wxEVT_BUTTON, wxCommandEventHandler(AasFileControl::onRefresh), NULL, this);
 	_refreshButton->SetToolTip(_("Reload AAS File"));
 
 	_buttonHBox = new wxBoxSizer(wxHORIZONTAL);
@@ -39,7 +39,7 @@ AasControl::AasControl(wxWindow* parent, const map::AasFileInfo& info) :
 	update();
 }
 
-AasControl::~AasControl()
+AasFileControl::~AasFileControl()
 {
     // Detach before destruction
     if (_toggle->GetValue())
@@ -49,22 +49,22 @@ AasControl::~AasControl()
     }
 }
 
-wxSizer* AasControl::getButtons()
+wxSizer* AasFileControl::getButtons()
 {
     return _buttonHBox;
 }
 
-wxToggleButton* AasControl::getToggle()
+wxToggleButton* AasFileControl::getToggle()
 {
     return _toggle;
 }
 
-void AasControl::update()
+void AasFileControl::update()
 {
 
 }
 
-void AasControl::ensureAasFileLoaded()
+void AasFileControl::ensureAasFileLoaded()
 {
     if (_aasFile) return;
 
@@ -87,7 +87,7 @@ void AasControl::ensureAasFileLoaded()
     }
 }
 
-void AasControl::onToggle(wxCommandEvent& ev)
+void AasFileControl::onToggle(wxCommandEvent& ev)
 {
     if (_toggle->GetValue())
     {
@@ -106,7 +106,7 @@ void AasControl::onToggle(wxCommandEvent& ev)
     GlobalMainFrame().updateAllWindows();
 }
 
-void AasControl::onRefresh(wxCommandEvent& ev)
+void AasFileControl::onRefresh(wxCommandEvent& ev)
 {
     // Detach renderable
     _aasFile.reset();

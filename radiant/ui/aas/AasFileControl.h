@@ -14,13 +14,13 @@ namespace ui
 {
 
 /**
- * greebo: An AasControl contains a set of widgets needed
+ * greebo: An AasFileControl contains a set of widgets needed
  * to control an associated AAS file.
  *
  * Multiple of these Controls can be packed as children into the
- * owning AasControlDialog.
+ * owning AasControlPanel.
  */
-class AasControl :
+class AasFileControl :
 	public wxEvtHandler
 {
 private:
@@ -41,9 +41,9 @@ private:
     map::RenderableAasFile _renderable;
 
 public:
-	AasControl(wxWindow* parent, const map::AasFileInfo& info);
+	AasFileControl(wxWindow* parent, const map::AasFileInfo& info);
 
-    virtual ~AasControl();
+    virtual ~AasFileControl();
 
 	// Returns the widgets for packing this object into a container/table
 	wxSizer* getButtons();
@@ -58,6 +58,6 @@ private:
 	void onToggle(wxCommandEvent& ev);
 	void onRefresh(wxCommandEvent& ev);
 };
-typedef std::shared_ptr<AasControl> AasControlPtr;
+typedef std::shared_ptr<AasFileControl> AasFileControlPtr;
 
 } // namespace ui

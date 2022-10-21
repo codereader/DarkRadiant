@@ -221,8 +221,8 @@
     <ClCompile Include="..\..\radiant\settings\LocalisationProvider.cpp" />
     <ClCompile Include="..\..\radiant\settings\Win32Registry.cpp" />
     <ClCompile Include="..\..\radiant\textool\tools\TextureToolManipulateMouseTool.cpp" />
-    <ClCompile Include="..\..\radiant\ui\aas\AasControl.cpp" />
-    <ClCompile Include="..\..\radiant\ui\aas\AasControlDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\aas\AasFileControl.cpp" />
+    <ClCompile Include="..\..\radiant\ui\aas\AasVisualisationPanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\aas\RenderableAasFile.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\AnimationPreview.cpp" />
     <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationChooser.cpp" />
@@ -415,8 +415,9 @@
     <ClInclude Include="..\..\radiant\textool\tools\TextureToolManipulateMouseTool.h" />
     <ClInclude Include="..\..\radiant\textool\tools\TextureToolMouseEvent.h" />
     <ClInclude Include="..\..\radiant\textool\tools\TextureToolSelectionTool.h" />
-    <ClInclude Include="..\..\radiant\ui\aas\AasControl.h" />
-    <ClInclude Include="..\..\radiant\ui\aas\AasControlDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\aas\AasFileControl.h" />
+    <ClInclude Include="..\..\radiant\ui\aas\AasVisualisationControl.h" />
+    <ClInclude Include="..\..\radiant\ui\aas\AasVisualisationPanel.h" />
     <ClInclude Include="..\..\radiant\ui\aas\RenderableAasFile.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\AnimationPreview.h" />
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationChooser.h" />

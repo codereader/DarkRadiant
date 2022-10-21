@@ -32,7 +32,6 @@
 #include "module/StaticModule.h"
 
 #include "MapCommands.h"
-#include "ui/aas/AasControlDialog.h"
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
@@ -72,6 +71,7 @@
 
 #include <wx/version.h>
 
+#include "aas/AasVisualisationControl.h"
 #include "console/ConsoleControl.h"
 #include "entitylist/EntityListControl.h"
 #include "layers/LayerControl.h"
@@ -216,9 +216,6 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
 		radiant::IMessage::Type::Notification,
         radiant::TypeListener<radiant::NotificationMessage>(UserInterfaceModule::HandleNotificationMessage));
 
-	// Initialise the AAS UI
-	AasControlDialog::Init();
-
 	SelectionSetToolmenu::Init();
 
 	_mruMenu.reset(new MRUMenu);
@@ -261,6 +258,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     registerControl(std::make_shared<TransformPanelControl>());
     registerControl(std::make_shared<MapMergeControl>());
     registerControl(std::make_shared<EntityListControl>());
+    registerControl(std::make_shared<AasVisualisationControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
@@ -273,6 +271,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMainFrame().addControl(UserControl::TransformPanel, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::MapMergePanel, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::EntityList, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::AasVisualisationPanel, { IMainFrame::Location::FloatingWindow, false });
     });
 }
 
@@ -440,6 +439,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addStatement("TransformDialog", fmt::format("ToggleControl {0}", UserControl::TransformPanel), false);
 	GlobalCommandSystem().addStatement("MergeControlPanel", fmt::format("ToggleControl {0}", UserControl::MapMergePanel), false);
 	GlobalCommandSystem().addStatement("EntityList", fmt::format("ToggleControl {0}", UserControl::EntityList), false);
+	GlobalCommandSystem().addStatement("ToggleAasVisualisationPanel", fmt::format("ToggleControl {0}", UserControl::AasVisualisationPanel), false);
 
     GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
     GlobalCommandSystem().addCommand("ChooseAndTogglePointfile",
