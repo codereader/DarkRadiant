@@ -324,8 +324,8 @@
     <ClCompile Include="..\..\radiant\ui\mousetool\BindToolDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\mousetool\ToolMappingDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\ortho\OrthoContextMenu.cpp" />
+    <ClCompile Include="..\..\radiant\ui\overlay\OrthoBackgroundPanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\overlay\Overlay.cpp" />
-    <ClCompile Include="..\..\radiant\ui\overlay\OverlayDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\particles\ParticleChooserDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\particles\ParticleEditor.cpp" />
     <ClCompile Include="..\..\radiant\ui\particles\ParticleSelector.cpp" />
@@ -549,8 +549,9 @@
     <ClInclude Include="..\..\radiant\ui\mousetool\ToolMappingDialog.h" />
     <ClInclude Include="..\..\radiant\ui\mru\MRUMenu.h" />
     <ClInclude Include="..\..\radiant\ui\ortho\OrthoContextMenu.h" />
+    <ClInclude Include="..\..\radiant\ui\overlay\OrthoBackgroundControl.h" />
+    <ClInclude Include="..\..\radiant\ui\overlay\OrthoBackgroundPanel.h" />
     <ClInclude Include="..\..\radiant\ui\overlay\Overlay.h" />
-    <ClInclude Include="..\..\radiant\ui\overlay\OverlayDialog.h" />
     <ClInclude Include="..\..\radiant\ui\overlay\OverlayRegistryKeys.h" />
     <ClInclude Include="..\..\radiant\ui\particles\ParticleChooserDialog.h" />
     <ClInclude Include="..\..\radiant\ui\particles\ParticleEditor.h" />

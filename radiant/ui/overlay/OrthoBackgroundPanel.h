@@ -1,12 +1,8 @@
 #pragma once
 
-#include "icommandsystem.h"
-
-#include "wxutil/window/TransientWindow.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
-#include <map>
-#include <string>
+#include <wx/panel.h>
 
 class wxFileDirPickerEvent;
 class wxSpinDoubleEvent;
@@ -15,15 +11,11 @@ class wxSpinCtrlDouble;
 namespace ui
 {
 
-class OverlayDialog;
-typedef std::shared_ptr<OverlayDialog> OverlayDialogPtr;
-
 /**
- * Dialog to configure the background image overlay options for the ortho
- * window.
+ * Panel to configure the background image overlay options for the ortho view.
  */
-class OverlayDialog :
-	public wxutil::TransientWindow,
+class OrthoBackgroundPanel :
+	public wxPanel,
 	private wxutil::XmlResourceBasedWidget
 {
 private:
@@ -34,10 +26,10 @@ private:
 	// TRUE, if a widget update is in progress (to avoid callback loops)
 	bool _callbackActive;
 
-private:
-	// Constructor sets up widgets
-	OverlayDialog();
+public:
+	OrthoBackgroundPanel(wxWindow* parent);
 
+private:
 	// Widget construction helpers
 	void setupDialog();
 
@@ -49,23 +41,7 @@ private:
 	void _onToggleUseImage(wxCommandEvent& ev);
 	void _onOptionToggled(wxCommandEvent& ev);
 	void _onScrollChange(wxScrollEvent& ev);
-	void _onClose(wxCommandEvent& ev);
 	void _onSpinChange(wxSpinDoubleEvent& ev);
-
-	// Contains the pointer to the singleton instance
-	static OverlayDialogPtr& InstancePtr();
-
-	static OverlayDialog& Instance();
-
-	void onMainFrameShuttingDown();
-
-	void _preShow();
-
-public:
-	/**
-	 * Static method to display the overlay dialog.
-	 */
-	static void toggle(const cmd::ArgumentList& args);
 };
 
 }

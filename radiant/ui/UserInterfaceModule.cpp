@@ -35,7 +35,6 @@
 #include "ui/prefdialog/GameSetupDialog.h"
 #include "ui/modelselector/ModelSelector.h"
 #include "ui/layers/LayerOrthoContextMenuItem.h"
-#include "ui/overlay/OverlayDialog.h"
 #include "ui/prefdialog/PrefDialog.h"
 #include "ui/Documentation.h"
 #include "ui/console/Console.h"
@@ -76,6 +75,7 @@
 #include "entitylist/EntityListControl.h"
 #include "layers/LayerControl.h"
 #include "lightinspector/LightInspectorControl.h"
+#include "overlay/OrthoBackgroundControl.h"
 #include "patch/PatchInspectorControl.h"
 #include "surfaceinspector/SurfaceInspectorControl.h"
 #include "textool/TextureToolControl.h"
@@ -260,6 +260,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     registerControl(std::make_shared<EntityListControl>());
     registerControl(std::make_shared<AasVisualisationControl>());
     registerControl(std::make_shared<FindShaderControl>());
+    registerControl(std::make_shared<OrthoBackgroundControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
@@ -274,6 +275,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMainFrame().addControl(UserControl::EntityList, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::AasVisualisationPanel, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::FindAndReplaceMaterial, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::OrthoBackgroundPanel, { IMainFrame::Location::FloatingWindow, false });
     });
 }
 
@@ -443,8 +445,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addStatement("EntityList", fmt::format("ToggleControl {0}", UserControl::EntityList), false);
 	GlobalCommandSystem().addStatement("ToggleAasVisualisationPanel", fmt::format("ToggleControl {0}", UserControl::AasVisualisationPanel), false);
 	GlobalCommandSystem().addStatement("FindReplaceTextures", fmt::format("ToggleControl {0}", UserControl::FindAndReplaceMaterial), false);
+	GlobalCommandSystem().addStatement("OverlayDialog", fmt::format("ToggleControl {0}", UserControl::OrthoBackgroundPanel), false);
 
-    GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
     GlobalCommandSystem().addCommand("ChooseAndTogglePointfile",
                                      [](const cmd::ArgumentList&)
                                      { PointFileChooser::chooseAndToggle(); });

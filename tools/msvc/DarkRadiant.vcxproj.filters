@@ -301,9 +301,6 @@
     <ClCompile Include="..\..\radiant\ui\overlay\Overlay.cpp">
       <Filter>src\ui\overlay</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\overlay\OverlayDialog.cpp">
-      <Filter>src\ui\overlay</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\patch\BulgePatchDialog.cpp">
       <Filter>src\ui\patch</Filter>
     </ClCompile>
@@ -718,6 +715,9 @@
     <ClCompile Include="..\..\radiant\ui\aas\AasVisualisationPanel.cpp">
       <Filter>src\ui\aas</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\overlay\OrthoBackgroundPanel.cpp">
+      <Filter>src\ui\overlay</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -829,9 +829,6 @@
       <Filter>src\ui\ortho</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\overlay\Overlay.h">
-      <Filter>src\ui\overlay</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\overlay\OverlayDialog.h">
       <Filter>src\ui\overlay</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\overlay\OverlayRegistryKeys.h">
@@ -1436,6 +1433,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\findshader\FindShaderControl.h">
       <Filter>src\ui\findshader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\overlay\OrthoBackgroundControl.h">
+      <Filter>src\ui\overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\overlay\OrthoBackgroundPanel.h">
+      <Filter>src\ui\overlay</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

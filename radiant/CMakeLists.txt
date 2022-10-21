@@ -133,7 +133,7 @@ add_executable(darkradiant
                ui/mousetool/ToolMappingDialog.cpp
                ui/ortho/OrthoContextMenu.cpp
                ui/overlay/Overlay.cpp
-               ui/overlay/OverlayDialog.cpp
+               ui/overlay/OrthoBackgroundPanel.cpp
                ui/particles/ParticleEditor.cpp
                ui/particles/ParticleChooserDialog.cpp
                ui/particles/ParticleSelector.cpp
