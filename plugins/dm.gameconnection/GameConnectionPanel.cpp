@@ -35,7 +35,6 @@ GameConnectionPanel::GameConnectionPanel(wxWindow* parent) :
     _connectedActivityIndicator->Start();
 #else
     _connectedActivityIndicator = findNamedObject<wxStaticBitmap>(this, "ConnectedActivityIndicator");
-    panel;  //fix warning
 #endif
     SetMinSize(mainPanel->GetEffectiveMinSize());
     Layout();
