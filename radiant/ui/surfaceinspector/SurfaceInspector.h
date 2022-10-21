@@ -1,7 +1,6 @@
 #pragma once
 
 #include <map>
-#include "icommandsystem.h"
 #include "wxutil/window/TransientWindow.h"
 #include "wxutil/FormLayout.h"
 #include "messages/TextureChanged.h"

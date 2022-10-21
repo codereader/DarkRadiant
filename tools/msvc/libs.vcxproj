@@ -186,6 +186,7 @@
     <ClInclude Include="..\..\libs\messages\NotificationMessage.h" />
     <ClInclude Include="..\..\libs\messages\ScopedLongRunningOperation.h" />
     <ClInclude Include="..\..\libs\messages\TextureChanged.h" />
+    <ClInclude Include="..\..\libs\messages\TextureToolRequest.h" />
     <ClInclude Include="..\..\libs\messages\UnselectSelectionRequest.h" />
     <ClInclude Include="..\..\libs\ModelExportOptions.h" />
     <ClInclude Include="..\..\libs\ObservedSelectable.h" />

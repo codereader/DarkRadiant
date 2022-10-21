@@ -76,6 +76,7 @@
 #include "console/ConsoleControl.h"
 #include "layers/LayerControl.h"
 #include "surfaceinspector/SurfaceInspectorControl.h"
+#include "textool/TextureToolControl.h"
 
 namespace ui
 {
@@ -251,12 +252,14 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     registerControl(std::make_shared<ConsoleControl>());
     registerControl(std::make_shared<SurfaceInspectorControl>());
     registerControl(std::make_shared<LayerControl>());
+    registerControl(std::make_shared<TextureToolControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
         // Set default locations of some controls
         GlobalMainFrame().addControl(UserControl::SurfaceInspector, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::LayerControlPanel, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::TextureTool, { IMainFrame::Location::FloatingWindow, false });
     });
 }
 

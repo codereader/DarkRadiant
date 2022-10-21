@@ -58,6 +58,7 @@ public:
         ComponentSelectionModeToggleRequest,
         GridSnapRequest,
         FocusMaterialRequest,
+        TextureToolRequest,
 
         UserDefinedMessagesGoHigherThanThis = 999,
     };

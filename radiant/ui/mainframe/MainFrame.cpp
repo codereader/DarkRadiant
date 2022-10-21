@@ -23,6 +23,7 @@
 
 #include "module/StaticModule.h"
 #include "messages/ApplicationShutdownRequest.h"
+#include "messages/TextureToolRequest.h"
 #include <functional>
 #include <fmt/format.h>
 #include <sigc++/functors/mem_fun.h>
@@ -547,16 +548,13 @@ void MainFrame::updateAllWindows(bool force)
 
     GlobalXYWndManager().updateAllViews(force);
 
-    if (TexTool::Instance().IsShown())
+    if (force)
     {
-        if (force)
-        {
-            TexTool::Instance().forceRedraw();
-        }
-        else
-        {
-            TexTool::Instance().queueDraw();
-        }
+        TextureToolRequest::Send(TextureToolRequest::ForceViewRefresh);
+    }
+    else
+    {
+        TextureToolRequest::Send(TextureToolRequest::QueueViewRefresh);
     }
 }
 

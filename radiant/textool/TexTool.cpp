@@ -2,6 +2,7 @@
 
 #include <limits>
 #include "i18n.h"
+#include "ui/iusercontrol.h"
 #include "ui/ieventmanager.h"
 #include "icommandsystem.h"
 #include "itexturetoolmodel.h"
@@ -30,27 +31,23 @@
 #include <wx/button.h>
 #include <wx/toolbar.h>
 
-
 namespace ui
 {
 
 namespace
 {
-	const char* const WINDOW_TITLE = N_("Texture Tool");
-
     const std::string RKEY_TEXTOOL_ROOT = "user/ui/textures/texTool/";
-	const std::string RKEY_WINDOW_STATE = RKEY_TEXTOOL_ROOT + "window";
-    const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
+    constexpr const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 
     const std::string RKEY_HSCALE_FACTOR = RKEY_TEXTOOL_ROOT + "horizontalScaleFactor";
     const std::string RKEY_VSCALE_FACTOR = RKEY_TEXTOOL_ROOT + "verticalScaleFactor";
     const std::string RKEY_ROTATE_ANGLE = RKEY_TEXTOOL_ROOT + "rotateAngle";
 
-	constexpr const float ZOOM_MODIFIER = 1.25f;
+	constexpr float ZOOM_MODIFIER = 1.25f;
 }
 
-TexTool::TexTool() : 
-    TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+TexTool::TexTool(wxWindow* parent) : 
+    wxPanel(parent),
     MouseToolHandler(IMouseToolGroup::Type::TextureTool),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
     _gridActive(registry::getValue<bool>(textool::RKEY_GRID_STATE)),
@@ -63,11 +60,8 @@ TexTool::TexTool() :
     _gridSnapHandler(std::numeric_limits<std::size_t>::max()),
     _determineThemeFromImage(false)
 {
-	Bind(wxEVT_IDLE, &TexTool::onIdle, this);
-
 	populateWindow();
-
-	InitialiseWindowPosition(600, 400, RKEY_WINDOW_STATE);
+    connectListeners();
 
     registry::observeBooleanKey(
         textool::RKEY_GRID_STATE,
@@ -78,12 +72,6 @@ TexTool::TexTool() :
     _freezePointer.connectMouseEvents(
         std::bind(&TexTool::onMouseDown, this, std::placeholders::_1),
         std::bind(&TexTool::onMouseUp, this, std::placeholders::_1));
-}
-
-TexToolPtr& TexTool::InstancePtr()
-{
-	static TexToolPtr _instancePtr;
-	return _instancePtr;
 }
 
 void TexTool::setGridActive(bool active)
@@ -164,10 +152,14 @@ wxWindow* TexTool::createManipulationPanel()
     return panel;
 }
 
-// Pre-hide callback
-void TexTool::_preHide()
+TexTool::~TexTool()
 {
-	TransientWindow::_preHide();
+    disconnectListeners();
+}
+
+void TexTool::disconnectListeners()
+{
+    _shader.reset();
 
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
@@ -189,13 +181,13 @@ void TexTool::_preHide()
     
     GlobalRadiantCore().getMessageBus().removeListener(_gridSnapHandler);
     _gridSnapHandler = std::numeric_limits<std::size_t>::max();
+
+    GlobalRadiantCore().getMessageBus().removeListener(_texToolRequestHandler);
+    _texToolRequestHandler = std::numeric_limits<std::size_t>::max();
 }
 
-// Pre-show callback
-void TexTool::_preShow()
+void TexTool::connectListeners()
 {
-	TransientWindow::_preShow();
-
 	_sceneSelectionChanged.disconnect();
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
@@ -206,7 +198,7 @@ void TexTool::_preShow()
 
 	// Register self to the SelSystem to get notified upon selection changes.
 	_sceneSelectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
-        [this](const ISelectable&) { _selectionRescanNeeded = true; });
+        [this](const ISelectable&) { _selectionRescanNeeded = true; requestIdleCallback(); });
 
     _manipulatorModeToggleRequestHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::ManipulatorModeToggleRequest,
@@ -230,6 +222,11 @@ void TexTool::_preShow()
         radiant::TypeListener<selection::GridSnapRequest>(
             sigc::mem_fun(this, &TexTool::handleGridSnapRequest)));
 
+    _texToolRequestHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::TextureToolRequest,
+        radiant::TypeListener<TextureToolRequest>(
+            sigc::mem_fun(this, &TexTool::handleTextureToolRequest)));
+
 	_undoHandler = GlobalMapModule().signal_postUndo().connect(
 		sigc::mem_fun(this, &TexTool::onUndoRedoOperation));
 	_redoHandler = GlobalMapModule().signal_postRedo().connect(
@@ -251,7 +248,7 @@ void TexTool::_preShow()
     _selectionRescanNeeded = true;
     updateThemeButtons();
     updateManipulationPanel();
-    queueDraw();
+    requestIdleCallback();
 }
 
 bool TexTool::textureToolHasFocus()
@@ -332,47 +329,14 @@ void TexTool::onSelectionModeChanged(textool::SelectionMode mode)
 {
     queueDraw();
     _manipulatorPanelNeedsUpdate = true;
+    requestIdleCallback();
 }
 
 void TexTool::onSelectionChanged()
 {
     queueDraw();
     _manipulatorPanelNeedsUpdate = true;
-}
-
-void TexTool::onMainFrameShuttingDown()
-{
-	rMessage() << "TexTool shutting down." << std::endl;
-
-	// Release the shader
-	_shader = MaterialPtr();
-
-	if (IsShownOnScreen())
-	{
-		Hide();
-	}
-
-	// Destroy the window
-	SendDestroyEvent();
-	InstancePtr().reset();
-}
-
-TexTool& TexTool::Instance()
-{
-	auto& instancePtr = InstancePtr();
-
-	if (!instancePtr)
-	{
-		// Not yet instantiated, do it now
-		instancePtr.reset(new TexTool);
-
-		// Wire up the pre-destruction cleanup code
-		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &TexTool::onMainFrameShuttingDown)
-        );
-	}
-
-	return *instancePtr;
+    requestIdleCallback();
 }
 
 void TexTool::updateActiveMaterial()
@@ -459,7 +423,7 @@ void TexTool::draw()
 	_glWidget->Refresh();
 }
 
-void TexTool::onIdle(wxIdleEvent& ev)
+void TexTool::onIdle()
 {
     if (_selectionRescanNeeded)
     {
@@ -889,21 +853,30 @@ void TexTool::onMouseScroll(wxMouseEvent& ev)
     draw();
 }
 
-void TexTool::resetViewCmd(const cmd::ArgumentList& args)
+void TexTool::handleTextureToolRequest(TextureToolRequest& request)
 {
-    Instance().recalculateVisibleTexSpace();
-    Instance().queueDraw();
-}
+    switch (request.getAction())
+    {
+    case TextureToolRequest::ResetView:
+        recalculateVisibleTexSpace();
+        queueDraw();
+        break;
 
-void TexTool::toggle(const cmd::ArgumentList& args)
-{
-	Instance().ToggleVisibility();
+    case TextureToolRequest::UseLightTheme:
+    case TextureToolRequest::UseDarkTheme:
+        updateThemeButtons();
+        queueDraw();
+        break;
+    }
 }
 
 void TexTool::registerCommands()
 {
-	GlobalCommandSystem().addCommand("TextureTool", TexTool::toggle);
-	GlobalCommandSystem().addCommand("TextureToolResetView", TexTool::resetViewCmd);
+    GlobalCommandSystem().addStatement("TextureTool", fmt::format("ToggleControl {0}", UserControl::TextureTool), false);
+	GlobalCommandSystem().addCommand("TextureToolResetView", [](const cmd::ArgumentList&)
+	{
+        TextureToolRequest::Send(TextureToolRequest::ResetView);
+	});
 	GlobalEventManager().addRegistryToggle("TexToolToggleGrid", textool::RKEY_GRID_STATE);
 
     GlobalEventManager().addToggle("TextureToolUseLightTheme", [](bool toggled)
@@ -911,8 +884,7 @@ void TexTool::registerCommands()
         if (toggled)
         {
             GlobalTextureToolColourSchemeManager().setActiveScheme(textool::ColourScheme::Light);
-            Instance().updateThemeButtons();
-            Instance().queueDraw();
+            TextureToolRequest::Send(TextureToolRequest::UseLightTheme);
         }
     });
 
@@ -921,8 +893,7 @@ void TexTool::registerCommands()
         if (toggled)
         {
             GlobalTextureToolColourSchemeManager().setActiveScheme(textool::ColourScheme::Dark);
-            Instance().updateThemeButtons();
-            Instance().queueDraw();
+            TextureToolRequest::Send(TextureToolRequest::UseDarkTheme);
         }
     });
 }
