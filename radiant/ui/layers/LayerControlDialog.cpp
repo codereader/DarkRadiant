@@ -552,9 +552,15 @@ int LayerControlDialog::getSelectedLayerId()
 
 void LayerControlDialog::onItemActivated(wxDataViewEvent& ev)
 {
-    // Don't react to double-clicks on the checkbox
+    // When double-clicking the checkbox, just toggle the state
     if (ev.GetColumn() == _columns.visible.getColumnIndex())
     {
+        wxutil::TreeModel::Row row(ev.GetItem(), *_layerStore);
+
+        // Invert the visibility
+        auto visible = !row[_columns.visible].getBool();
+        row[_columns.visible] = visible;
+        row.SendItemChanged();
         return;
     }
 
