@@ -204,7 +204,7 @@ void EntityList::expandRootNode()
 {
 	GraphTreeNodePtr rootNode = _treeModel.find(GlobalSceneGraph().root());
 
-	if (!_treeView->IsExpanded(rootNode->getIter()))
+	if (rootNode && !_treeView->IsExpanded(rootNode->getIter()))
 	{
 		_treeView->Expand(rootNode->getIter());
 	}

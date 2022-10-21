@@ -93,6 +93,8 @@ void GraphTreeModel::refresh()
     _model = new wxutil::TreeModel(_columns);
 #endif
 
+    if (!GlobalSceneGraph().root()) return;
+
 	// Instantiate a scenegraph walker and visit every node in the graph
 	// The walker also clears the graph in its constructor
 	GraphTreeModelPopulator populator(*this, _visibleNodesOnly);
