@@ -41,7 +41,7 @@
 #include "ui/console/Console.h"
 #include "ui/lightinspector/LightInspector.h"
 #include "ui/patch/PatchInspector.h"
-#include "ui/findshader/FindShader.h"
+#include "ui/findshader/FindShaderControl.h"
 #include "ui/mapinfo/MapInfoDialog.h"
 #include "ui/commandlist/CommandList.h"
 #include "ui/mousetool/ToolMappingDialog.h"
@@ -259,6 +259,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     registerControl(std::make_shared<MapMergeControl>());
     registerControl(std::make_shared<EntityListControl>());
     registerControl(std::make_shared<AasVisualisationControl>());
+    registerControl(std::make_shared<FindShaderControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
@@ -272,6 +273,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMainFrame().addControl(UserControl::MapMergePanel, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::EntityList, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::AasVisualisationPanel, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::FindAndReplaceMaterial, { IMainFrame::Location::FloatingWindow, false });
     });
 }
 
@@ -440,6 +442,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addStatement("MergeControlPanel", fmt::format("ToggleControl {0}", UserControl::MapMergePanel), false);
 	GlobalCommandSystem().addStatement("EntityList", fmt::format("ToggleControl {0}", UserControl::EntityList), false);
 	GlobalCommandSystem().addStatement("ToggleAasVisualisationPanel", fmt::format("ToggleControl {0}", UserControl::AasVisualisationPanel), false);
+	GlobalCommandSystem().addStatement("FindReplaceTextures", fmt::format("ToggleControl {0}", UserControl::FindAndReplaceMaterial), false);
 
     GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
     GlobalCommandSystem().addCommand("ChooseAndTogglePointfile",
@@ -453,7 +456,6 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("MapInfo", MapInfoDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("MouseToolMappingDialog", ToolMappingDialog::ShowDialog);
 
-	GlobalCommandSystem().addCommand("FindReplaceTextures", FindAndReplaceShader::ShowDialog);
 	GlobalCommandSystem().addCommand("ShowCommandList", CommandList::ShowDialog);
 	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
 	GlobalCommandSystem().addCommand("ShowUserGuide", Documentation::showUserGuide);

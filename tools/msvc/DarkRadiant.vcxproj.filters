@@ -1434,6 +1434,9 @@
     <ClInclude Include="..\..\radiant\ui\aas\AasVisualisationPanel.h">
       <Filter>src\ui\aas</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\findshader\FindShaderControl.h">
+      <Filter>src\ui\findshader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

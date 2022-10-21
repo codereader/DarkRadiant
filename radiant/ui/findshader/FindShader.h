@@ -2,9 +2,9 @@
 
 #include <string>
 #include "icommandsystem.h"
-#include "wxutil/window/TransientWindow.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include <sigc++/trackable.h>
+#include <wx/panel.h>
 
 class wxTextCtrl;
 class wxButton;
@@ -18,7 +18,7 @@ namespace ui
  * greebo: The dialog providing the Find & Replace shader functionality.
  */
 class FindAndReplaceShader :
-	public wxutil::TransientWindow,
+	public wxPanel,
 	private wxutil::XmlResourceBasedWidget,
     public sigc::trackable
 {
@@ -26,14 +26,7 @@ private:
     wxTextCtrl* _lastFocusedEntry;
 
 public:
-	// Constructor
-	FindAndReplaceShader();
-
-	~FindAndReplaceShader();
-
-	/** greebo: Shows the dialog (allocates on heap, dialog self-destructs)
-	 */
-	static void ShowDialog(const cmd::ArgumentList& args);
+	FindAndReplaceShader(wxWindow* parent);
 
 private:
     void onShaderClipboardChanged();
@@ -47,7 +40,6 @@ private:
 
 	// The callback for the buttons
 	void onReplace(wxCommandEvent& ev);
-	void onClose(wxCommandEvent& ev);
 
 	void onChooseFind(wxCommandEvent& ev);
 	void onChooseReplace(wxCommandEvent& ev);
@@ -60,4 +52,4 @@ private:
     std::string getPickHelpText();
 };
 
-} // namespace ui
+} // namespace

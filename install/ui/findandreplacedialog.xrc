@@ -1,150 +1,139 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
-  <object class="wxPanel" name="FindReplaceDialogMainPanel">
-    <style>wxTAB_TRAVERSAL</style>
-    <size>500,200</size>
-    <object class="wxBoxSizer">
-      <orient>wxVERTICAL</orient>
-      <object class="sizeritem">
-        <option>0</option>
-        <flag>wxALL|wxEXPAND</flag>
-        <border>12</border>
-        <object class="wxFlexGridSizer">
-          <rows>2</rows>
-          <cols>4</cols>
-          <vgap>3</vgap>
-          <hgap>0</hgap>
-          <growablecols>1</growablecols>
-          <growablerows></growablerows>
-          <object class="sizeritem">
-            <option>0</option>
-            <flag>wxALIGN_CENTER_VERTICAL</flag>
-            <border>0</border>
-            <object class="wxStaticText" name="m_staticText1">
-              <label>Find:</label>
-              <wrap>-1</wrap>
-            </object>
-          </object>
-          <object class="sizeritem">
-            <option>0</option>
-            <flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-            <border>6</border>
-            <object class="wxTextCtrl" name="FindReplaceDialogFindEntry">
-              <value></value>
-            </object>
-          </object>
-          <object class="sizeritem">
-            <option>0</option>
-            <flag>wxALIGN_CENTER_VERTICAL</flag>
-            <border>0</border>
-            <object class="wxBitmapButton" name="FindReplaceDialogFindSelectButton">
-              <style>wxBU_AUTODRAW</style>
-              <bitmap stock_id="darkradiant:folder16.png" stock_client="">undefined.png</bitmap>
-              <default>0</default>
-            </object>
-          </object>
-          <object class="sizeritem">
-            <option>0</option>
-            <flag>wxALL</flag>
-            <border>5</border>
-            <object class="wxBitmapButton" name="FindReplaceDialogFindPickButton">
-              <style>wxBU_AUTODRAW</style>
-              <bitmap stock_id="darkradiant:texture_pick.png" stock_client="">undefined.png</bitmap>
-              <default>0</default>
-            </object>
-          </object>
-          <object class="sizeritem">
-            <option>0</option>
-            <flag>wxALIGN_CENTER_VERTICAL</flag>
-            <border>0</border>
-            <object class="wxStaticText" name="m_staticText3">
-              <label>Replace:</label>
-              <wrap>-1</wrap>
-            </object>
-          </object>
-          <object class="sizeritem">
-            <option>0</option>
-            <flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
-            <border>6</border>
-            <object class="wxTextCtrl" name="FindReplaceDialogReplaceEntry">
-              <value></value>
-            </object>
-          </object>
-          <object class="sizeritem">
-            <option>0</option>
-            <flag>wxALIGN_CENTER_VERTICAL</flag>
-            <border>0</border>
-            <object class="wxBitmapButton" name="FindReplaceDialogReplaceSelectButton">
-              <style>wxBU_AUTODRAW</style>
-              <bitmap stock_id="darkradiant:folder16.png" stock_client="">undefined.png</bitmap>
-              <default>0</default>
-            </object>
-          </object>
-          <object class="sizeritem">
-            <option>0</option>
-            <flag>wxALL</flag>
-            <border>5</border>
-            <object class="wxBitmapButton" name="FindReplaceDialogReplacePickButton">
-              <style>wxBU_AUTODRAW</style>
-              <bitmap stock_id="darkradiant:texture_pick.png" stock_client="">undefined.png</bitmap>
-              <default>0</default>
-            </object>
-          </object>
-        </object>
-      </object>
-      <object class="sizeritem">
-        <option>0</option>
-        <flag>wxLEFT</flag>
-        <border>12</border>
-        <object class="wxCheckBox" name="FindReplaceDialogSearchCurSelection">
-          <label>Search current selection only</label>
-          <checked>0</checked>
-        </object>
-      </object>
-      <object class="sizeritem">
-        <option>0</option>
-        <flag>wxALL|wxEXPAND</flag>
-        <border>12</border>
-        <object class="wxBoxSizer">
-          <orient>wxHORIZONTAL</orient>
-          <object class="sizeritem">
-            <option>1</option>
-            <flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
-            <border>6</border>
-            <object class="wxStaticText" name="FindReplaceDialogStatusLabel">
-              <size>200,-1</size>
-              <label>x shader(s) replaced.</label>
-              <wrap>-1</wrap>
-            </object>
-          </object>
-          <object class="sizeritem">
-            <option>0</option>
-            <flag>wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
-            <border>0</border>
-            <object class="wxBoxSizer">
-              <orient>wxHORIZONTAL</orient>
-              <object class="sizeritem">
-                <option>0</option>
-                <flag>wxLEFT</flag>
-                <border>6</border>
-                <object class="wxButton" name="FindReplaceDialogFindButton">
-                  <label>Find and Replace</label>
-                  <default>0</default>
-                </object>
-              </object>
-              <object class="sizeritem">
-                <option>0</option>
-                <flag>wxLEFT</flag>
-                <border>6</border>
-                <object class="wxButton" name="FindReplaceDialogCloseButton">
-                  <label>Close</label>
-                  <default>0</default>
-                </object>
-              </object>
-            </object>
-          </object>
-        </object>
-      </object>
-    </object>
-  </object>
+	<object class="wxPanel" name="FindReplaceDialogMainPanel">
+		<style>wxTAB_TRAVERSAL</style>
+		<size>500,200</size>
+		<object class="wxBoxSizer">
+			<orient>wxVERTICAL</orient>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
+				<object class="wxFlexGridSizer">
+					<rows>2</rows>
+					<cols>4</cols>
+					<vgap>3</vgap>
+					<hgap>0</hgap>
+					<growablecols>1</growablecols>
+					<growablerows></growablerows>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>0</border>
+						<object class="wxStaticText" name="m_staticText1">
+							<label>Find:</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+						<border>6</border>
+						<object class="wxTextCtrl" name="FindReplaceDialogFindEntry">
+							<value></value>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>0</border>
+						<object class="wxBitmapButton" name="FindReplaceDialogFindSelectButton">
+							<bitmap stock_id="darkradiant:folder16.png" stock_client="">undefined.png</bitmap>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxBitmapButton" name="FindReplaceDialogFindPickButton">
+							<bitmap stock_id="darkradiant:texture_pick.png" stock_client="">undefined.png</bitmap>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>0</border>
+						<object class="wxStaticText" name="m_staticText3">
+							<label>Replace:</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxALL|wxEXPAND</flag>
+						<border>6</border>
+						<object class="wxTextCtrl" name="FindReplaceDialogReplaceEntry">
+							<value></value>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALIGN_CENTER_VERTICAL</flag>
+						<border>0</border>
+						<object class="wxBitmapButton" name="FindReplaceDialogReplaceSelectButton">
+							<bitmap stock_id="darkradiant:folder16.png" stock_client="">undefined.png</bitmap>
+							<default>0</default>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxALL</flag>
+						<border>5</border>
+						<object class="wxBitmapButton" name="FindReplaceDialogReplacePickButton">
+							<bitmap stock_id="darkradiant:texture_pick.png" stock_client="">undefined.png</bitmap>
+							<default>0</default>
+						</object>
+					</object>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxLEFT</flag>
+				<border>12</border>
+				<object class="wxCheckBox" name="FindReplaceDialogSearchCurSelection">
+					<label>Search current selection only</label>
+					<checked>0</checked>
+				</object>
+			</object>
+			<object class="sizeritem">
+				<option>0</option>
+				<flag>wxALL|wxEXPAND</flag>
+				<border>12</border>
+				<object class="wxBoxSizer">
+					<orient>wxHORIZONTAL</orient>
+					<object class="sizeritem">
+						<option>1</option>
+						<flag>wxALIGN_CENTER_VERTICAL|wxRIGHT</flag>
+						<border>6</border>
+						<object class="wxStaticText" name="FindReplaceDialogStatusLabel">
+							<size>200,-1</size>
+							<label>x shader(s) replaced.</label>
+							<wrap>-1</wrap>
+						</object>
+					</object>
+					<object class="sizeritem">
+						<option>0</option>
+						<flag>wxBOTTOM|wxLEFT|wxRIGHT|wxTOP</flag>
+						<border>0</border>
+						<object class="wxBoxSizer">
+							<orient>wxHORIZONTAL</orient>
+							<object class="sizeritem">
+								<option>0</option>
+								<flag>wxLEFT</flag>
+								<border>6</border>
+								<object class="wxButton" name="FindReplaceDialogFindButton">
+									<label>Find and Replace</label>
+									<default>0</default>
+									<markup>0</markup>
+									<bitmap />
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
 </resource>

@@ -459,6 +459,7 @@
     <ClInclude Include="..\..\radiant\ui\filters\FilterOrthoContextMenuItem.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FiltersMainMenu.h" />
     <ClInclude Include="..\..\radiant\ui\filters\FilterUserInterface.h" />
+    <ClInclude Include="..\..\radiant\ui\findshader\FindShaderControl.h" />
     <ClInclude Include="..\..\radiant\ui\fx\FxChooser.h" />
     <ClInclude Include="..\..\radiant\ui\gl\WxGLWidgetManager.h" />
     <ClInclude Include="..\..\radiant\ui\grid\GridUserInterface.h" />
