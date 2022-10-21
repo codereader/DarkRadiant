@@ -73,6 +73,7 @@
 #include <wx/version.h>
 
 #include "console/ConsoleControl.h"
+#include "entitylist/EntityListControl.h"
 #include "layers/LayerControl.h"
 #include "lightinspector/LightInspectorControl.h"
 #include "patch/PatchInspectorControl.h"
@@ -259,6 +260,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     registerControl(std::make_shared<LightInspectorControl>());
     registerControl(std::make_shared<TransformPanelControl>());
     registerControl(std::make_shared<MapMergeControl>());
+    registerControl(std::make_shared<EntityListControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
@@ -270,6 +272,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMainFrame().addControl(UserControl::LightInspector, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::TransformPanel, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::MapMergePanel, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::EntityList, { IMainFrame::Location::FloatingWindow, false });
     });
 }
 
@@ -436,6 +439,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addStatement("PatchInspector", fmt::format("ToggleControl {0}", UserControl::PatchInspector), false);
 	GlobalCommandSystem().addStatement("TransformDialog", fmt::format("ToggleControl {0}", UserControl::TransformPanel), false);
 	GlobalCommandSystem().addStatement("MergeControlPanel", fmt::format("ToggleControl {0}", UserControl::MapMergePanel), false);
+	GlobalCommandSystem().addStatement("EntityList", fmt::format("ToggleControl {0}", UserControl::EntityList), false);
 
     GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
     GlobalCommandSystem().addCommand("ChooseAndTogglePointfile",
@@ -461,7 +465,6 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ConvertModelDialog", ConvertModelDialog::ShowDialog);
 
 	GlobalCommandSystem().addCommand("EntityClassTree", EClassTree::ShowDialog);
-	GlobalCommandSystem().addCommand("EntityList", EntityList::toggle);
 
 	// ----------------------- Bind Events ---------------------------------------
 

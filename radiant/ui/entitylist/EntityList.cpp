@@ -1,13 +1,11 @@
 #include "EntityList.h"
 
-#include "ui/imainframe.h"
 #include "icommandsystem.h"
 
 #include "registry/Widgets.h"
 #include "entitylib.h"
 #include "scenelib.h"
 #include "iselectable.h"
-#include "icameraview.h"
 #include "i18n.h"
 
 #include "wxutil/dataview/TreeView.h"
@@ -20,23 +18,40 @@ namespace ui
 
 namespace
 {
-	const char* const WINDOW_TITLE = N_("Entity List");
 	const std::string RKEY_ROOT = "user/ui/entityList/";
-	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
-
 	const std::string RKEY_ENTITYLIST_FOCUS_SELECTION = RKEY_ROOT + "focusSelection";
 	const std::string RKEY_ENTITYLIST_VISIBLE_ONLY = RKEY_ROOT + "visibleNodesOnly";
 }
 
-EntityList::EntityList() :
-	wxutil::TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+EntityList::EntityList(wxWindow* parent) :
+	wxPanel(parent),
 	_callbackActive(false)
 {
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
-	// Connect the window position tracker
-	InitialiseWindowPosition(300, 800, RKEY_WINDOW_STATE);
+    // Observe the scenegraph
+    _treeModel.connectToSceneGraph();
+
+    // Register self to the SelSystem to get notified upon selection changes.
+    GlobalSelectionSystem().addObserver(this);
+
+    // Get notified when filters are changing
+    _filtersConfigChangedConn = GlobalFilterSystem().filterConfigChangedSignal().connect(
+        sigc::mem_fun(*this, &EntityList::onFilterConfigChanged)
+    );
+
+    _callbackActive = true;
+
+    // Repopulate the model before showing the dialog
+    refreshTreeModel();
+
+    _callbackActive = false;
+
+    // Update the widgets
+    update();
+
+    expandRootNode();
 }
     
 EntityList::~EntityList()
@@ -44,11 +59,24 @@ EntityList::~EntityList()
     // In OSX we might receive callbacks during shutdown, so disable any events
     if (_treeView != nullptr)
     {
-        _treeView->Disconnect(wxEVT_DATAVIEW_SELECTION_CHANGED,
-                       wxDataViewEventHandler(EntityList::onSelection), NULL, this);
-        _treeView->Disconnect(wxEVT_DATAVIEW_ITEM_EXPANDED,
-                       wxDataViewEventHandler(EntityList::onRowExpand), NULL, this);
+        _treeView->Unbind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityList::onSelection, this);
+        _treeView->Unbind(wxEVT_DATAVIEW_ITEM_EXPANDED, &EntityList::onRowExpand, this);
     }
+
+    _treeModel.disconnectFromSceneGraph();
+
+    // Disconnect from the filters-changed signal
+    _filtersConfigChangedConn.disconnect();
+
+    // De-register self from the SelectionSystem
+    GlobalSelectionSystem().removeObserver(this);
+
+    // Unselect everything when hiding the dialog
+    _callbackActive = true;
+
+    _treeView->UnselectAll();
+
+    _callbackActive = false;
 }
 
 void EntityList::populateWindow()
@@ -75,11 +103,8 @@ void EntityList::populateWindow()
     // Enable type-ahead searches
     _treeView->AddSearchColumn(_treeModel.getColumns().name);
 
-	_treeView->Connect(wxEVT_DATAVIEW_SELECTION_CHANGED, 
-		wxDataViewEventHandler(EntityList::onSelection), NULL, this);
-
-	_treeView->Connect(wxEVT_DATAVIEW_ITEM_EXPANDED, 
-		wxDataViewEventHandler(EntityList::onRowExpand), NULL, this);
+	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &EntityList::onSelection, this);
+	_treeView->Bind(wxEVT_DATAVIEW_ITEM_EXPANDED, &EntityList::onRowExpand, this);
 
 	// Update the toggle item status according to the registry
 
@@ -156,95 +181,6 @@ void EntityList::onFilterConfigChanged()
         // its visibility, so refresh the whole tree
         refreshTreeModel();
 	}
-}
-
-// Pre-hide callback
-void EntityList::_preHide()
-{
-	TransientWindow::_preHide();
-
-	_treeModel.disconnectFromSceneGraph();
-
-	// Disconnect from the filters-changed signal
-	_filtersConfigChangedConn.disconnect();
-
-	// De-register self from the SelectionSystem
-	GlobalSelectionSystem().removeObserver(this);
-    
-    // Unselect everything when hiding the dialog
-    _callbackActive = true;
-    
-    _treeView->UnselectAll();
-    
-    _callbackActive = false;
-}
-
-// Pre-show callback
-void EntityList::_preShow()
-{
-	TransientWindow::_preShow();
-
-	// Observe the scenegraph
-	_treeModel.connectToSceneGraph();
-
-	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
-
-	// Get notified when filters are changing
-	_filtersConfigChangedConn = GlobalFilterSystem().filterConfigChangedSignal().connect(
-        sigc::mem_fun(Instance(), &EntityList::onFilterConfigChanged)
-    );
-
-	_callbackActive = true;
-
-	// Repopulate the model before showing the dialog
-    refreshTreeModel();
-
-	_callbackActive = false;
-
-	// Update the widgets
-	update();
-
-	expandRootNode();
-}
-
-void EntityList::toggle(const cmd::ArgumentList& args)
-{
-	Instance().ToggleVisibility();
-}
-
-void EntityList::onMainFrameShuttingDown()
-{
-	if (IsShownOnScreen())
-	{
-		Hide();
-	}
-
-	// Destroy the window
-	SendDestroyEvent();
-	InstancePtr().reset();
-}
-
-EntityListPtr& EntityList::InstancePtr()
-{
-	static EntityListPtr _instancePtr;
-	return _instancePtr;
-}
-
-EntityList& EntityList::Instance()
-{
-	if (InstancePtr() == NULL)
-	{
-		// Not yet instantiated, do it now
-		InstancePtr().reset(new EntityList);
-
-		// Pre-destruction cleanup
-		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*InstancePtr(), &EntityList::onMainFrameShuttingDown)
-        );
-	}
-
-	return *InstancePtr();
 }
 
 void EntityList::onRowExpand(wxDataViewEvent& ev)

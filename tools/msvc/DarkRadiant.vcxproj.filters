@@ -1428,6 +1428,9 @@
     <ClInclude Include="..\..\radiant\ui\merge\MapMergeControl.h">
       <Filter>src\ui\merge</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\entitylist\EntityListControl.h">
+      <Filter>src\ui\entitylist</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
