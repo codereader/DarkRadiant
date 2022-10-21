@@ -1416,6 +1416,9 @@
     <ClInclude Include="..\..\radiant\textool\TextureToolControl.h">
       <Filter>src\textool</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\patch\PatchInspectorControl.h">
+      <Filter>src\ui\patch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />

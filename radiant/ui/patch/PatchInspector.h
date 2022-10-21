@@ -1,21 +1,18 @@
 #pragma once
 
 #include <map>
-#include "icommandsystem.h"
 #include "iselection.h"
-#include "iradiant.h"
 #include "ipatch.h"
 
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
 
-#include "wxutil/window/TransientWindow.h"
+#include <wx/panel.h>
 #include "wxutil/event/SingleIdleCallback.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
 namespace wxutil { class ControlButton; }
 class wxChoice;
-class wxPanel;
 class wxTextCtrl;
 class wxSizer;
 
@@ -23,11 +20,12 @@ namespace ui
 {
 
 class PatchInspector : 
-	public wxutil::TransientWindow,
+	public wxPanel,
     public selection::SelectionSystem::Observer,
 	public IPatch::Observer,
 	private wxutil::XmlResourceBasedWidget,
-	public sigc::trackable
+	public sigc::trackable,
+    public wxutil::SingleIdleCallback
 {
 private:
 	wxChoice* _rowCombo;
@@ -94,7 +92,6 @@ private:
 
 	// Gets called if the spin buttons with the coordinates get changed
 	void onCoordChange(wxCommandEvent& ev);
-	void onStepChanged();
 
 	void onClickSmaller(CoordRow& row);
 	void onClickLarger(CoordRow& row);
@@ -104,36 +101,25 @@ private:
 	void onTessChange(wxSpinEvent& ev);
 
 public:
-	PatchInspector();
-
-	/** greebo: Contains the static instance of this dialog.
-	 * Constructs the instance and calls toggle() when invoked.
-	 */
-	static PatchInspector& Instance();
-
-	// The command target
-	static void toggle(const cmd::ArgumentList& args);
+	PatchInspector(wxWindow* parent);
+	~PatchInspector() override;
 
 	/** greebo: SelectionSystem::Observer implementation. Gets called by
 	 * the SelectionSystem upon selection change to allow updating of the
 	 * patch property widgets.
 	 */
-	void selectionChanged(const scene::INodePtr& node, bool isComponent);
+	void selectionChanged(const scene::INodePtr& node, bool isComponent) override;
 
 	// Request a deferred update of the UI elements (is performed when GTK is idle)
 	void queueUpdate();
 
-	/**
-	 * greebo: Safely disconnects this dialog from all systems
-	 * (SelectionSystem, EventManager, ...)
-	 * Also saves the window state to the registry.
-	 */
-	void onMainFrameShuttingDown();
-
 	// Patch::Observer
-	void onPatchControlPointsChanged();
-	void onPatchTextureChanged();
-	void onPatchDestruction();
+	void onPatchControlPointsChanged() override;
+	void onPatchTextureChanged() override;
+	void onPatchDestruction() override;
+
+protected:
+    void onIdle() override;
 
 private:
 	void setPatch(const IPatchNodePtr& patch);
@@ -146,13 +132,6 @@ private:
 
 	// Populates the combo boxes
 	void repopulateVertexChooser();
-
-	// This is where the static shared_ptr of the singleton instance is held.
-	static std::shared_ptr<PatchInspector>& InstancePtr();
-
-	// Called by wxWidgets when the system is idle
-	void onIdle(wxIdleEvent& ev);
-
-}; // class PatchInspector
+};
 
 } // namespace ui

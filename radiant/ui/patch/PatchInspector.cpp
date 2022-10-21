@@ -1,7 +1,6 @@
 #include "PatchInspector.h"
 
 #include "i18n.h"
-#include "itextstream.h"
 #include "ui/imainframe.h"
 #include "iundo.h"
 
@@ -11,10 +10,10 @@
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
 #include <wx/spinctrl.h>
-#include "wxutil/Bitmap.h"
 
 #include "registry/Widgets.h"
 #include "selectionlib.h"
+#include "wxutil/Bitmap.h"
 #include "wxutil/ControlButton.h"
 #include "util/ScopedBoolLock.h"
 
@@ -25,11 +24,9 @@ namespace ui
 
 namespace
 {
-	const char* const WINDOW_TITLE = N_("Patch Inspector");
-	const char* const LABEL_STEP = N_("Step:");
+	constexpr const char* const LABEL_STEP = N_("Step:");
 
 	const std::string RKEY_ROOT = "user/ui/patch/patchInspector/";
-	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 	const std::string RKEY_X_STEP = RKEY_ROOT + "xCoordStep";
 	const std::string RKEY_Y_STEP = RKEY_ROOT + "yCoordStep";
 	const std::string RKEY_Z_STEP = RKEY_ROOT + "zCoordStep";
@@ -37,8 +34,8 @@ namespace
 	const std::string RKEY_T_STEP = RKEY_ROOT + "tCoordStep";
 }
 
-PatchInspector::PatchInspector() : 
-	TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+PatchInspector::PatchInspector(wxWindow* parent) :
+    wxPanel(parent),
 	_rowCombo(nullptr),
 	_colCombo(nullptr),
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo()),
@@ -47,50 +44,22 @@ PatchInspector::PatchInspector() :
 	_updateActive(false),
 	_updateNeeded(false)
 {
-	Bind(wxEVT_IDLE, &PatchInspector::onIdle, this);
-
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
-	InitialiseWindowPosition(410, 480, RKEY_WINDOW_STATE);
-}
+    _undoHandler.disconnect();
+    _redoHandler.disconnect();
 
-std::shared_ptr<PatchInspector>& PatchInspector::InstancePtr()
-{
-	static std::shared_ptr<PatchInspector> _instancePtr;
-	return _instancePtr;
-}
+    // Register self to the SelSystem to get notified upon selection changes.
+    GlobalSelectionSystem().addObserver(this);
 
-void PatchInspector::onMainFrameShuttingDown()
-{
-	rMessage() << "PatchInspector shutting down." << std::endl;
+    _undoHandler = GlobalMapModule().signal_postUndo().connect(
+        sigc::mem_fun(this, &PatchInspector::queueUpdate));
+    _redoHandler = GlobalMapModule().signal_postRedo().connect(
+        sigc::mem_fun(this, &PatchInspector::queueUpdate));
 
-	if (IsShownOnScreen())
-	{
-		Hide();
-	}
-
-	// Destroy the window 
-	SendDestroyEvent();
-	InstancePtr().reset();
-}
-
-PatchInspector& PatchInspector::Instance()
-{
-	auto& instancePtr = InstancePtr();
-
-	if (!instancePtr)
-	{
-		// Not yet instantiated, do it now
-		instancePtr.reset(new PatchInspector);
-
-		// Pre-destruction cleanup
-		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &PatchInspector::onMainFrameShuttingDown)
-        );
-	}
-
-	return *instancePtr;
+    // Check for selection changes
+    rescanSelection();
 }
 
 void PatchInspector::populateWindow()
@@ -106,8 +75,8 @@ void PatchInspector::populateWindow()
 	_colCombo = findNamedObject<wxChoice>(this, "PatchInspectorControlColumn");
 
 	// Create the controls table
-	wxPanel* coordPanel = findNamedObject<wxPanel>(this, "PatchInspectorCoordPanel");
-	wxFlexGridSizer* table = new wxFlexGridSizer(5, 5, 6, 16);
+	auto coordPanel = findNamedObject<wxPanel>(this, "PatchInspectorCoordPanel");
+	auto table = new wxFlexGridSizer(5, 5, 6, 16);
 	table->AddGrowableCol(1);
 
 	coordPanel->GetSizer()->Add(table, 1, wxEXPAND);
@@ -126,24 +95,22 @@ void PatchInspector::populateWindow()
     registry::bindWidget(_coords["t"].stepEntry, RKEY_T_STEP);
 
     // Connect all the arrow buttons
-    for (CoordMap::iterator i = _coords.begin(); i != _coords.end(); ++i)
+    for (const auto& [_, row] : _coords)
 	{
-    	CoordRow& row = i->second;
-
     	// Pass a CoordRow ref to the callback, that's all it will need to update
 		row.smaller->Bind(wxEVT_BUTTON, std::bind(&PatchInspector::onClickSmaller, this, row));
 		row.larger->Bind(wxEVT_BUTTON, std::bind(&PatchInspector::onClickLarger, this, row));
     }
 
 	// Tesselation checkbox
-	findNamedObject<wxCheckBox>(this, "PatchInspectorFixedSubdivisions")->Connect(
-		wxEVT_CHECKBOX, wxCommandEventHandler(PatchInspector::onFixedTessChange), NULL, this);
+	findNamedObject<wxCheckBox>(this, "PatchInspectorFixedSubdivisions")->Bind(
+		wxEVT_CHECKBOX, &PatchInspector::onFixedTessChange, this);
 
 	// Tesselation values
-	findNamedObject<wxSpinCtrl>(this, "PatchInspectorSubdivisionsX")->Connect(
-		wxEVT_SPINCTRL, wxSpinEventHandler(PatchInspector::onTessChange), NULL, this);
-	findNamedObject<wxSpinCtrl>(this, "PatchInspectorSubdivisionsY")->Connect(
-		wxEVT_SPINCTRL, wxSpinEventHandler(PatchInspector::onTessChange), NULL, this);
+	findNamedObject<wxSpinCtrl>(this, "PatchInspectorSubdivisionsX")->Bind(
+		wxEVT_SPINCTRL, &PatchInspector::onTessChange, this);
+	findNamedObject<wxSpinCtrl>(this, "PatchInspectorSubdivisionsY")->Bind(
+		wxEVT_SPINCTRL, &PatchInspector::onTessChange, this);
 }
 
 PatchInspector::CoordRow PatchInspector::createCoordRow(
@@ -191,8 +158,8 @@ PatchInspector::CoordRow PatchInspector::createCoordRow(
 
 void PatchInspector::queueUpdate()
 {
-	// Request an idle callback to perform the update when GTK is idle
 	_updateNeeded = true;
+    requestIdleCallback();
 }
 
 void PatchInspector::update()
@@ -246,39 +213,16 @@ void PatchInspector::loadControlVertex()
 	}
 }
 
-// Pre-hide callback
-void PatchInspector::_preHide()
+PatchInspector::~PatchInspector()
 {
-	TransientWindow::_preHide();
-
 	// Clear the patch, we don't need to observe it while hidden
-	setPatch(IPatchNodePtr());
+	setPatch({});
 
 	// A hidden PatchInspector doesn't need to listen for events
 	_undoHandler.disconnect();
 	_redoHandler.disconnect();
 
 	GlobalSelectionSystem().removeObserver(this);
-}
-
-// Pre-show callback
-void PatchInspector::_preShow()
-{
-	TransientWindow::_preShow();
-
-	_undoHandler.disconnect();
-	_redoHandler.disconnect();
-
-	// Register self to the SelSystem to get notified upon selection changes.
-	GlobalSelectionSystem().addObserver(this);
-	
-	_undoHandler = GlobalMapModule().signal_postUndo().connect(
-		sigc::mem_fun(this, &PatchInspector::queueUpdate));
-	_redoHandler = GlobalMapModule().signal_postRedo().connect(
-		sigc::mem_fun(this, &PatchInspector::queueUpdate));
-
-	// Check for selection changes before showing the dialog again
-	rescanSelection();
 }
 
 void PatchInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
@@ -541,12 +485,6 @@ void PatchInspector::onClickSmaller(CoordRow& row)
 	row.value->SetValue(string::to_string(value - step));
 }
 
-// static command target
-void PatchInspector::toggle(const cmd::ArgumentList& args)
-{
-	Instance().ToggleVisibility();
-}
-
 void PatchInspector::onPatchControlPointsChanged()
 {
 	queueUpdate();
@@ -562,7 +500,7 @@ void PatchInspector::onPatchDestruction()
 	rescanSelection();
 }
 
-void PatchInspector::onIdle(wxIdleEvent& ev)
+void PatchInspector::onIdle()
 {
 	if (_updateNeeded)
 	{
@@ -570,4 +508,4 @@ void PatchInspector::onIdle(wxIdleEvent& ev)
 	}
 }
 
-} // namespace ui
+} // namespace

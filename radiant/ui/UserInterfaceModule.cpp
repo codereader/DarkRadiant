@@ -75,6 +75,7 @@
 
 #include "console/ConsoleControl.h"
 #include "layers/LayerControl.h"
+#include "patch/PatchInspectorControl.h"
 #include "surfaceinspector/SurfaceInspectorControl.h"
 #include "textool/TextureToolControl.h"
 
@@ -253,6 +254,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     registerControl(std::make_shared<SurfaceInspectorControl>());
     registerControl(std::make_shared<LayerControl>());
     registerControl(std::make_shared<TextureToolControl>());
+    registerControl(std::make_shared<PatchInspectorControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
@@ -260,6 +262,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMainFrame().addControl(UserControl::SurfaceInspector, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::LayerControlPanel, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::TextureTool, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::PatchInspector, { IMainFrame::Location::FloatingWindow, false });
     });
 }
 
@@ -423,8 +426,8 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);
 	GlobalCommandSystem().addStatement("SurfaceInspector", fmt::format("ToggleControl {0}", UserControl::SurfaceInspector), false);
 	GlobalCommandSystem().addStatement("ToggleLayerControlDialog", fmt::format("ToggleControl {0}", UserControl::LayerControlPanel), false);
+	GlobalCommandSystem().addStatement("PatchInspector", fmt::format("ToggleControl {0}", UserControl::PatchInspector), false);
 
-	GlobalCommandSystem().addCommand("PatchInspector", PatchInspector::toggle);
 	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
 	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);

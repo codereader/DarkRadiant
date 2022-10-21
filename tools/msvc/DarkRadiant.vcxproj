@@ -555,6 +555,7 @@
     <ClInclude Include="..\..\radiant\ui\patch\CapDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchCreateDialog.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchInspector.h" />
+    <ClInclude Include="..\..\radiant\ui\patch\PatchInspectorControl.h" />
     <ClInclude Include="..\..\radiant\ui\patch\PatchThickenDialog.h" />
     <ClInclude Include="..\..\radiant\ui\PointFileChooser.h" />
     <ClInclude Include="..\..\radiant\ui\prefabselector\PrefabSelector.h" />
