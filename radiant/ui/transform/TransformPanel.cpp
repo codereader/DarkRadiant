@@ -1,11 +1,8 @@
-#include "TransformDialog.h"
+#include "TransformPanel.h"
 
 #include "i18n.h"
 #include "icommandsystem.h"
-#include "ui/imainframe.h"
-#include "itextstream.h"
 #include "selectionlib.h"
-#include "string/string.h"
 #include "registry/Widgets.h"
 
 #include "wxutil/ControlButton.h"
@@ -22,22 +19,20 @@ namespace ui
 
 namespace 
 {
-	const char* const WINDOW_TITLE = N_("Arbitrary Transformation");
-	const char* const LABEL_ROTATION = N_("Rotation");
-	const char* const LABEL_SCALE = N_("Scale");
+	constexpr const char* const LABEL_ROTATION = N_("Rotation");
+	constexpr const char* const LABEL_SCALE = N_("Scale");
 
-	const char* const LABEL_ROTX = N_("X-Axis Rotate:");
-	const char* const LABEL_ROTY = N_("Y-Axis Rotate:");
-	const char* const LABEL_ROTZ = N_("Z-Axis Rotate:");
+	constexpr const char* const LABEL_ROTX = N_("X-Axis Rotate:");
+	constexpr const char* const LABEL_ROTY = N_("Y-Axis Rotate:");
+	constexpr const char* const LABEL_ROTZ = N_("Z-Axis Rotate:");
 
-	const char* const LABEL_SCALEX = N_("X-Axis Scale:");
-	const char* const LABEL_SCALEY = N_("Y-Axis Scale:");
-	const char* const LABEL_SCALEZ = N_("Z-Axis Scale:");
+	constexpr const char* const LABEL_SCALEX = N_("X-Axis Scale:");
+	constexpr const char* const LABEL_SCALEY = N_("Y-Axis Scale:");
+	constexpr const char* const LABEL_SCALEZ = N_("Z-Axis Scale:");
 
-	const char* const LABEL_STEP = N_("Step:");
+    constexpr const char* const LABEL_STEP = N_("Step:");
 
-	const std::string RKEY_ROOT = "user/ui/transformDialog/";
-	const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
+	const std::string RKEY_ROOT = "user/ui/transformPanel/";
 	const std::string RKEY_ROTX_STEP = RKEY_ROOT + "rotXStep";
 	const std::string RKEY_ROTY_STEP = RKEY_ROOT + "rotYStep";
 	const std::string RKEY_ROTZ_STEP = RKEY_ROOT + "rotZStep";
@@ -47,72 +42,32 @@ namespace
 	const std::string RKEY_SCALEZ_STEP = RKEY_ROOT + "scaleZStep";
 }
 
-TransformDialog::TransformDialog()
-: TransientWindow(_(WINDOW_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
-  _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
+TransformPanel::TransformPanel(wxWindow* parent) :
+    wxPanel(parent),
+    _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	// Create all the widgets and pack them into the window
 	populateWindow();
 
+    _selectionChanged.disconnect();
+
+    // Register self to the SelSystem to get notified upon selection changes.
+    _selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
+        [this](const ISelectable&) { update(); });
+
 	// Update the widget sensitivity
 	update();
-
-	InitialiseWindowPosition(260, 314, RKEY_WINDOW_STATE);
 }
 
-void TransformDialog::onMainFrameShuttingDown()
+void TransformPanel::populateWindow()
 {
-	rMessage() << "TransformDialog shutting down." << std::endl;
-
-	if (IsShownOnScreen())
-	{
-		Hide();
-	}
-
-	// Destroy the window
-	SendDestroyEvent();
-	InstancePtr().reset();
-}
-
-TransformDialogPtr& TransformDialog::InstancePtr()
-{
-	static TransformDialogPtr _instancePtr;
-
-	if (_instancePtr == NULL)
-	{
-		// Not yet instantiated, do it now
-		_instancePtr = TransformDialogPtr(new TransformDialog);
-
-		// Pre-destruction cleanup
-		GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*_instancePtr, &TransformDialog::onMainFrameShuttingDown)
-        );
-	}
-
-	return _instancePtr;
-}
-
-TransformDialog& TransformDialog::Instance() 
-{
-	return *InstancePtr();
-}
-
-// The command target
-void TransformDialog::toggle(const cmd::ArgumentList& args)
-{
-	Instance().ToggleVisibility();
-}
-
-void TransformDialog::populateWindow()
-{
-	wxPanel* dialogPanel = new wxPanel(this, wxID_ANY);
-	dialogPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	wxBoxSizer* overallVBox = new wxBoxSizer(wxVERTICAL);
-	dialogPanel->GetSizer()->Add(overallVBox, 1, wxEXPAND | wxALL, 12);
+	GetSizer()->Add(overallVBox, 1, wxEXPAND | wxALL, 12);
 
-	_rotatePanel = new wxPanel(dialogPanel, wxID_ANY);
-	_scalePanel = new wxPanel(dialogPanel, wxID_ANY);
+	_rotatePanel = new wxPanel(this, wxID_ANY);
+	_scalePanel = new wxPanel(this, wxID_ANY);
 
 	overallVBox->Add(_rotatePanel, 0, wxEXPAND);
 	overallVBox->Add(_scalePanel, 1, wxEXPAND);
@@ -161,12 +116,12 @@ void TransformDialog::populateWindow()
     	EntryRow& row = i->second;
 
 		// Pass a EntryRow pointer to the callback, that's all it will need to update
-		row.smaller->Bind(wxEVT_BUTTON, std::bind(&TransformDialog::onClickSmaller, this, std::placeholders::_1, &row));
-		row.larger->Bind(wxEVT_BUTTON, std::bind(&TransformDialog::onClickLarger, this, std::placeholders::_1, &row));
+		row.smaller->Bind(wxEVT_BUTTON, std::bind(&TransformPanel::onClickSmaller, this, std::placeholders::_1, &row));
+		row.larger->Bind(wxEVT_BUTTON, std::bind(&TransformPanel::onClickLarger, this, std::placeholders::_1, &row));
     }
 }
 
-TransformDialog::EntryRow TransformDialog::createEntryRow(
+TransformPanel::EntryRow TransformPanel::createEntryRow(
 	const std::string& label, wxSizer* table, bool isRotator, int axis)
 {
 	EntryRow entryRow;
@@ -218,30 +173,12 @@ TransformDialog::EntryRow TransformDialog::createEntryRow(
 	return entryRow;
 }
 
-// Pre-hide callback
-void TransformDialog::_preHide()
+TransformPanel::~TransformPanel()
 {
-	TransientWindow::_preHide();
-
 	_selectionChanged.disconnect();
 }
 
-// Pre-show callback
-void TransformDialog::_preShow()
-{
-	TransientWindow::_preShow();
-
-	_selectionChanged.disconnect();
-
-	// Register self to the SelSystem to get notified upon selection changes.
-	_selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
-		[this](const ISelectable&) { update(); });
-
-	// Update the widget values
-	update();
-}
-
-void TransformDialog::update()
+void TransformPanel::update()
 {
 	// Check if there is anything selected
 	bool rotSensitive = (_selectionInfo.totalCount > 0);
@@ -255,7 +192,7 @@ void TransformDialog::update()
 	_scalePanel->Enable(scaleSensitive);
 }
 
-void TransformDialog::onClickLarger(wxCommandEvent& ev, EntryRow* row)
+void TransformPanel::onClickLarger(wxCommandEvent& ev, EntryRow* row)
 {
 	// Get the current step increment
 	float step = string::convert<float>(row->stepEntry->GetValue().ToStdString());
@@ -285,7 +222,7 @@ void TransformDialog::onClickLarger(wxCommandEvent& ev, EntryRow* row)
 	}
 }
 
-void TransformDialog::onClickSmaller(wxCommandEvent& ev, EntryRow* row)
+void TransformPanel::onClickSmaller(wxCommandEvent& ev, EntryRow* row)
 {
 	// Get the current value and the step increment
 	float step = string::convert<float>(row->stepEntry->GetValue().ToStdString());
@@ -321,4 +258,4 @@ void TransformDialog::onClickSmaller(wxCommandEvent& ev, EntryRow* row)
 	}
 }
 
-} // namespace ui
+} // namespace

@@ -2,10 +2,7 @@
 
 #include <string>
 #include <map>
-#include "icommandsystem.h"
-#include "iradiant.h"
 #include "iselection.h"
-#include "wxutil/window/TransientWindow.h"
 #include <wx/panel.h>
 #include <sigc++/connection.h>
 
@@ -13,21 +10,17 @@ namespace wxutil { class ControlButton; }
 
 class wxTextCtrl;
 
-/* greebo: The dialog providing the Free Transform functionality.
+/**
+ * The panel providing the Free Transform functionality.
  *
- * The Dialog gets notified upon selection change and updates the widget
- * sensitivity accordingly.
- *
- * If any entity is part of the selection, the scale widgets get disabled.
+ * Gets notified upon selection change and updates the widget sensitivity accordingly.
+ * E.g. if any entity is part of the selection, the scale widgets get disabled.
  */
 namespace ui
 {
 
-class TransformDialog;
-typedef std::shared_ptr<TransformDialog> TransformDialogPtr;
-
-class TransformDialog : 
-	public wxutil::TransientWindow
+class TransformPanel : 
+	public wxPanel
 {
 private:
 	// The entry fields
@@ -52,12 +45,11 @@ private:
 
 	sigc::connection _selectionChanged;
 
+public:
+	TransformPanel(wxWindow* parent);
+	~TransformPanel() override;
+
 private:
-
-	// TransientWindow callbacks
-	virtual void _preShow();
-	virtual void _preHide();
-
 	/** greebo: Updates the sensitivity of the widgets according to
 	 * 			the current selection.
 	 */
@@ -78,30 +70,7 @@ private:
 	// Callbacks to catch the scale/rotation button clicks
 	void onClickSmaller(wxCommandEvent& ev, EntryRow* row);
 	void onClickLarger(wxCommandEvent& ev, EntryRow* row);
+};
 
-	/** 
-	 * greebo: Safely disconnects this dialog from all systems
-	 * and saves the window state to the registry.
-	 */
-	void onMainFrameShuttingDown();
-
-public:
-	// Constructor
-	TransformDialog();
-
-	/** greebo: Contains the static instance of this dialog.
-	 * Constructs the instance and calls toggle() when invoked.
-	 */
-	static TransformDialog& Instance();
-
-	/** greebo: The command target to connect to the EventManager.
-	 */
-	static void toggle(const cmd::ArgumentList& args);
-
-private:
-	static TransformDialogPtr& InstancePtr();
-
-}; // class TransformDialog
-
-} // namespace ui
+} // namespace
 

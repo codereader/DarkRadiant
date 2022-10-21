@@ -353,7 +353,6 @@
     <ClCompile Include="..\..\radiant\ui\statusbar\StatusBarManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\toolbar\ToolbarManager.cpp" />
-    <ClCompile Include="..\..\radiant\ui\transform\TransformDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp" />
     <ClCompile Include="..\..\radiant\ui\splash\Splash.cpp" />
     <ClCompile Include="..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp" />
@@ -366,6 +365,7 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\SplitPaneLayout.cpp" />
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp" />
+    <ClCompile Include="..\..\radiant\ui\transform\TransformPanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\UserInterfaceModule.cpp" />
     <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp" />
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
@@ -580,7 +580,6 @@
     <ClInclude Include="..\..\radiant\ui\surfaceinspector\SurfaceInspectorControl.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h" />
     <ClInclude Include="..\..\radiant\ui\toolbar\ToolbarManager.h" />
-    <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\splash\Splash.h" />
     <ClInclude Include="..\..\radiant\ui\surfaceinspector\SurfaceInspector.h" />
@@ -594,6 +593,8 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\SplitPaneLayout.h" />
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h" />
+    <ClInclude Include="..\..\radiant\ui\transform\TransformPanel.h" />
+    <ClInclude Include="..\..\radiant\ui\transform\TransformPanelControl.h" />
     <ClInclude Include="..\..\radiant\ui\UserInterfaceModule.h" />
     <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />

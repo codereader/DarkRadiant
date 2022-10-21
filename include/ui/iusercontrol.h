@@ -50,6 +50,7 @@ struct UserControl
     constexpr static const char* LightInspector = "LightInspector";
     constexpr static const char* LayerControlPanel = "LayerControlPanel";
     constexpr static const char* TextureTool = "TextureTool";
+    constexpr static const char* TransformPanel = "TransformPanel";
 };
 
 }

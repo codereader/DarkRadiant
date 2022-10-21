@@ -325,9 +325,6 @@
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefPage.cpp">
       <Filter>src\ui\prefdialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\transform\TransformDialog.cpp">
-      <Filter>src\ui\transform</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp">
       <Filter>src\ui\texturebrowser</Filter>
     </ClCompile>
@@ -718,6 +715,9 @@
     <ClCompile Include="..\..\radiant\ui\layers\LayerControlPanel.cpp">
       <Filter>src\ui\layers</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\transform\TransformPanel.cpp">
+      <Filter>src\ui\transform</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -857,9 +857,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h">
       <Filter>src\ui\prefdialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\transform\TransformDialog.h">
-      <Filter>src\ui\transform</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h">
       <Filter>src\ui\texturebrowser</Filter>
@@ -1421,6 +1418,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\lightinspector\LightInspectorControl.h">
       <Filter>src\ui\lightinspector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\transform\TransformPanelControl.h">
+      <Filter>src\ui\transform</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\transform\TransformPanel.h">
+      <Filter>src\ui\transform</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

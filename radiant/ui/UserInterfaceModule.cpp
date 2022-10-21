@@ -42,7 +42,6 @@
 #include "ui/console/Console.h"
 #include "ui/lightinspector/LightInspector.h"
 #include "ui/patch/PatchInspector.h"
-#include "ui/transform/TransformDialog.h"
 #include "ui/findshader/FindShader.h"
 #include "ui/mapinfo/MapInfoDialog.h"
 #include "ui/commandlist/CommandList.h"
@@ -79,6 +78,7 @@
 #include "patch/PatchInspectorControl.h"
 #include "surfaceinspector/SurfaceInspectorControl.h"
 #include "textool/TextureToolControl.h"
+#include "transform/TransformPanelControl.h"
 
 namespace ui
 {
@@ -257,6 +257,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     registerControl(std::make_shared<TextureToolControl>());
     registerControl(std::make_shared<PatchInspectorControl>());
     registerControl(std::make_shared<LightInspectorControl>());
+    registerControl(std::make_shared<TransformPanelControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
@@ -266,6 +267,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMainFrame().addControl(UserControl::TextureTool, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::PatchInspector, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::LightInspector, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::TransformPanel, { IMainFrame::Location::FloatingWindow, false });
     });
 }
 
@@ -430,10 +432,10 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addStatement("SurfaceInspector", fmt::format("ToggleControl {0}", UserControl::SurfaceInspector), false);
 	GlobalCommandSystem().addStatement("ToggleLayerControlDialog", fmt::format("ToggleControl {0}", UserControl::LayerControlPanel), false);
 	GlobalCommandSystem().addStatement("PatchInspector", fmt::format("ToggleControl {0}", UserControl::PatchInspector), false);
+	GlobalCommandSystem().addStatement("TransformDialog", fmt::format("ToggleControl {0}", UserControl::TransformPanel), false);
 
 	GlobalCommandSystem().addCommand("MergeControlDialog", MergeControlDialog::ShowDialog);
 	GlobalCommandSystem().addCommand("OverlayDialog", OverlayDialog::toggle);
-	GlobalCommandSystem().addCommand("TransformDialog", TransformDialog::toggle);
     GlobalCommandSystem().addCommand("ChooseAndTogglePointfile",
                                      [](const cmd::ArgumentList&)
                                      { PointFileChooser::chooseAndToggle(); });
