@@ -87,11 +87,13 @@ private:
     int findControlIndexByName(const std::string& controlName);
     std::string findControlNameByWindow(wxWindow* window);
     int getImageIndexForControl(const std::string& controlName);
+    std::string getSelectedControlName();
 
     void onPageSwitch(wxBookCtrlEvent& ev);
     void onTabRightClick(wxAuiNotebookEvent& ev);
 
     void undockTab();
+    void closeTab();
 };
 
 }

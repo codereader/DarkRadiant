@@ -34,6 +34,10 @@ PropertyNotebook::PropertyNotebook(wxWindow* parent, AuiLayout& owner) :
         new wxMenuItem(nullptr, wxID_ANY, _("Undock"), ""),
         [this]() { undockTab(); }
     );
+    _popupMenu->addItem(
+        new wxMenuItem(nullptr, wxID_ANY, _("Close"), ""),
+        [this]() { closeTab(); }
+    );
 }
 
 void PropertyNotebook::addControl(const std::string& controlName)
@@ -152,18 +156,23 @@ void PropertyNotebook::onTabRightClick(wxAuiNotebookEvent& ev)
     _popupMenu->show(this);
 }
 
-void PropertyNotebook::undockTab()
+std::string PropertyNotebook::getSelectedControlName()
 {
     auto selectedPageIndex = GetSelection();
 
-    if (selectedPageIndex < 0) return;
+    if (selectedPageIndex < 0) return {};
 
     // Look up the page in the _pages dictionary by the page widget
     auto win = GetPage(static_cast<size_t>(selectedPageIndex));
 
-    if (win == nullptr) return;
+    if (win == nullptr) return {};
 
-    auto controlName = findControlNameByWindow(win);
+    return findControlNameByWindow(win);
+}
+
+void PropertyNotebook::undockTab()
+{
+    auto controlName = getSelectedControlName();
 
     if (!controlName.empty())
     {
@@ -172,6 +181,17 @@ void PropertyNotebook::undockTab()
 
         // Get the control name and create a floating window
         _layout.createFloatingControl(controlName);
+    }
+}
+
+void PropertyNotebook::closeTab()
+{
+    auto controlName = getSelectedControlName();
+
+    if (!controlName.empty())
+    {
+        // Remove the page
+        removePage(controlName);
     }
 }
 
