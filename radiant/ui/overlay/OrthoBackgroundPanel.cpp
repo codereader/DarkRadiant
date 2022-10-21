@@ -15,7 +15,7 @@ namespace ui
 {
 
 OrthoBackgroundPanel::OrthoBackgroundPanel(wxWindow* parent) :
-	wxPanel(parent),
+    DockablePanel(parent),
 	_spinScale(nullptr),
 	_spinHorizOffset(nullptr),
 	_spinVertOffset(nullptr),

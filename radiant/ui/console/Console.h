@@ -3,10 +3,9 @@
 #include "icommandsystem.h"
 #include "ilogwriter.h"
 
-#include <wx/panel.h>
-
 #include "wxutil/ConsoleView.h"
 #include "CommandEntry.h"
+#include "wxutil/DockablePanel.h"
 
 namespace radiant { class ClearConsoleMessage; }
 
@@ -18,7 +17,7 @@ namespace ui
  * the "device", which the LogWriter is writing its output to.
  */
 class Console :
-	public wxPanel,
+	public wxutil::DockablePanel,
 	public applog::ILogDevice
 {
 private:

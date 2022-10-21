@@ -43,7 +43,7 @@ namespace
 }
 
 TransformPanel::TransformPanel(wxWindow* parent) :
-    wxPanel(parent),
+    DockablePanel(parent),
     _selectionInfo(GlobalSelectionSystem().getSelectionInfo())
 {
 	// Create all the widgets and pack them into the window

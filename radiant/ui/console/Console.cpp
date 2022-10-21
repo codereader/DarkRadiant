@@ -12,7 +12,7 @@ namespace ui
 {
 
 Console::Console(wxWindow* parent) :
-	wxPanel(parent, wxID_ANY),
+	DockablePanel(parent),
 	_view(new wxutil::ConsoleView(this)),
 	_commandEntry(new CommandEntry(this))
 {

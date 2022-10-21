@@ -65,7 +65,7 @@ inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
 // ---------- CamWnd Implementation --------------------------------------------------
 
 CamWnd::CamWnd(wxWindow* parent) :
-    wxPanel(parent),
+    DockablePanel(parent),
     MouseToolHandler(IMouseToolGroup::Type::CameraView),
     _mainWxWidget(loadNamedPanel(this, "CamWndPanel")),
     _id(++_maxId),

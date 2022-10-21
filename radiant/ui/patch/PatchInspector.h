@@ -7,7 +7,7 @@
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
 
-#include <wx/panel.h>
+#include "wxutil/DockablePanel.h"
 #include "wxutil/event/SingleIdleCallback.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 
@@ -20,7 +20,7 @@ namespace ui
 {
 
 class PatchInspector : 
-	public wxPanel,
+	public wxutil::DockablePanel,
     public selection::SelectionSystem::Observer,
 	public IPatch::Observer,
 	private wxutil::XmlResourceBasedWidget,

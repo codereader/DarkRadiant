@@ -14,10 +14,11 @@
 #include "wxutil/Icon.h"
 
 #include <wx/event.h>
-#include <wx/panel.h>
 #include <sigc++/connection.h>
 
 #include <map>
+
+#include "wxutil/DockablePanel.h"
 
 /* FORWARD DECLS */
 
@@ -45,7 +46,7 @@ namespace ui
  * contains a method to return the current instance.
  */
 class EntityInspector final :
-    public wxPanel,
+    public wxutil::DockablePanel,
     public selection::SelectionSystem::Observer,
     public wxutil::SingleIdleCallback
 {

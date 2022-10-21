@@ -2,13 +2,11 @@
 
 #include <sigc++/connection.h>
 
-#include "imodule.h"
 #include "imap.h"
-#include "icommandsystem.h"
 
 #include "MediaBrowserTreeView.h"
 
-#include <wx/panel.h>
+#include "wxutil/DockablePanel.h"
 
 class wxWindow;
 class wxTreeCtrl;
@@ -31,7 +29,7 @@ class TexturePreviewCombo;
  * into the texture window or applying directly to map geometry.
  */
 class MediaBrowser : 
-	public wxPanel
+	public wxutil::DockablePanel
 {
 private:
 	MediaBrowserTreeView* _treeView;

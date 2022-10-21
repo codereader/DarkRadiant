@@ -26,7 +26,7 @@ namespace
 }
 
 LightInspector::LightInspector(wxWindow* parent) :
-    wxPanel(parent),
+    DockablePanel(parent),
     _isProjected(false),
     _texSelector(nullptr),
     _updateActive(false),

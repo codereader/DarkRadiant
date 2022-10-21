@@ -28,7 +28,7 @@ namespace ui
 {
 
 LayerControlPanel::LayerControlPanel(wxWindow* parent) :
-	wxPanel(parent),
+    DockablePanel(parent),
     _layersView(nullptr),
 	_showAllLayers(nullptr),
 	_hideAllLayers(nullptr),

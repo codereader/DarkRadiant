@@ -37,7 +37,7 @@ namespace
 }
 
 FavouritesBrowser::FavouritesBrowser(wxWindow* parent) :
-    wxPanel(parent, wxID_ANY),
+    DockablePanel(parent),
     _listView(nullptr),
     _showFullPath(nullptr),
     _updateNeeded(true)

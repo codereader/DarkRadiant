@@ -50,7 +50,7 @@ const Columns& COLUMNS()
 }
 
 MapMergePanel::MapMergePanel(wxWindow* parent) :
-    wxPanel(parent),
+    DockablePanel(parent),
     _updateNeeded(false),
     _numUnresolvedConflicts(0)
 {

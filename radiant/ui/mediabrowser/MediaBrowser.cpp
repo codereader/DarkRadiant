@@ -21,7 +21,7 @@ namespace ui
 {
 
 MediaBrowser::MediaBrowser(wxWindow* parent) :
-	wxPanel(parent),
+    DockablePanel(parent),
 	_treeView(nullptr),
 	_preview(nullptr),
 	_blockShaderClipboardUpdates(false)

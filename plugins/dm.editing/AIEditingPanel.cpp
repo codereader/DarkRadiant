@@ -18,7 +18,6 @@
 #include <wx/sizer.h>
 #include <wx/button.h>
 #include "wxutil/Bitmap.h"
-#include <wx/frame.h>
 #include <wx/panel.h>
 #include <wx/scrolwin.h>
 
@@ -28,7 +27,7 @@ namespace ui
 {
 
 AIEditingPanel::AIEditingPanel(wxWindow* parent) :
-	wxPanel(parent),
+    DockablePanel(parent),
 	_mainPanel(new wxScrolledWindow(this, wxID_ANY)),
 	_queueUpdate(true),
 	_entity(nullptr)

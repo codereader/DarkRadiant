@@ -17,7 +17,7 @@ namespace ui
 {
 
 ScriptWindow::ScriptWindow(wxWindow* parent) :
-	wxPanel(parent, wxID_ANY),
+    DockablePanel(parent),
 	_outView(new wxutil::ConsoleView(this))
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));

@@ -116,7 +116,7 @@ void SurfaceInspector::FitTextureWidgets::enable(bool enabled)
 }
 
 SurfaceInspector::SurfaceInspector(wxWindow* parent) :
-    wxPanel(parent),
+    DockablePanel(parent),
 	_callbackActive(false),
 	_updateNeeded(false)
 {

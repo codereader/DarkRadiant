@@ -65,7 +65,7 @@ namespace
 }
 
 EntityInspector::EntityInspector(wxWindow* parent) :
-    wxPanel(parent),
+    DockablePanel(parent),
     _editorFrame(nullptr),
     _showInheritedCheckbox(nullptr),
     _showHelpColumnCheckbox(nullptr),

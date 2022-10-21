@@ -2,8 +2,9 @@
 
 #include "wxutil/XmlResourceBasedWidget.h"
 
-#include <wx/panel.h>
 #include <sigc++/connection.h>
+
+#include "wxutil/DockablePanel.h"
 
 class wxCheckBox;
 class wxButton;
@@ -30,7 +31,7 @@ namespace ui
  * allowing to control its modes and actions.
  */
 class GameConnectionPanel :
-	public wxPanel,
+	public wxutil::DockablePanel,
 	private wxutil::XmlResourceBasedWidget
 {
     wxCheckBox* _connectedCheckbox               = nullptr;

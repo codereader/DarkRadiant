@@ -8,7 +8,8 @@
 #include <string>
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
-#include <wx/panel.h>
+
+#include "wxutil/DockablePanel.h"
 
 /* FORWARD DECLS */
 class Entity;
@@ -23,7 +24,7 @@ namespace ui
  * \brief Dialog to allow adjustment of properties on lights
  */
 class LightInspector :
-    public wxPanel,
+    public wxutil::DockablePanel,
     public sigc::trackable,
     private wxutil::XmlResourceBasedWidget
 {

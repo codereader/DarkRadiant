@@ -3,7 +3,8 @@
 #include "AasFileControl.h"
 #include "imap.h"
 #include <sigc++/connection.h>
-#include <wx/panel.h>
+
+#include "wxutil/DockablePanel.h"
 
 class wxFlexGridSizer;
 class wxButton;
@@ -12,7 +13,7 @@ namespace ui
 {
 
 class AasVisualisationPanel :
-	public wxPanel
+	public wxutil::DockablePanel
 {
 private:
     std::vector<AasFileControlPtr> _aasControls;

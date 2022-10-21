@@ -27,7 +27,7 @@ namespace
 }
 
 EntityList::EntityList(wxWindow* parent) :
-	wxPanel(parent),
+    DockablePanel(parent),
 	_callbackActive(false)
 {
 	// Create all the widgets and pack them into the window

@@ -28,6 +28,7 @@
 #include "render/RenderStatistics.h"
 #include "render/CamRenderer.h"
 #include "messages/TextureChanged.h"
+#include "wxutil/DockablePanel.h"
 
 constexpr int CAMWND_MINSIZE_X = 240;
 constexpr int CAMWND_MINSIZE_Y = 200;
@@ -44,7 +45,7 @@ namespace ui
 
 /// Main 3D view widget
 class CamWnd :
-    public wxPanel,
+    public wxutil::DockablePanel,
     public camera::IFreeMoveView,
     public scene::Graph::Observer,
     public util::Noncopyable,

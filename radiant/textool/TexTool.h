@@ -23,6 +23,7 @@
 #include <wx/panel.h>
 
 #include "messages/TextureToolRequest.h"
+#include "wxutil/DockablePanel.h"
 
 class Winding;
 class Patch;
@@ -33,7 +34,7 @@ namespace ui
 {
 
 class TexTool :
-	public wxPanel,
+	public wxutil::DockablePanel,
     public IOrthoViewBase,
 	public sigc::trackable,
     protected wxutil::MouseToolHandler,

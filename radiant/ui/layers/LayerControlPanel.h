@@ -3,9 +3,9 @@
 #include <map>
 #include "imap.h"
 
-#include <wx/panel.h>
 #include <sigc++/connection.h>
 
+#include "wxutil/DockablePanel.h"
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/event/SingleIdleCallback.h"
 
@@ -23,7 +23,7 @@ namespace ui
 {
 
 class LayerControlPanel :
-	public wxPanel,
+	public wxutil::DockablePanel,
     public wxutil::SingleIdleCallback
 {
 private:

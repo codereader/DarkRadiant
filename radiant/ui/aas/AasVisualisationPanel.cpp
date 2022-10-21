@@ -16,7 +16,7 @@ namespace ui
 {
 
 AasVisualisationPanel::AasVisualisationPanel(wxWindow* parent) :
-	wxPanel(parent),
+    DockablePanel(parent),
 	_dialogPanel(nullptr),
 	_controlContainer(nullptr)
 {

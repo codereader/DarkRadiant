@@ -33,7 +33,7 @@ namespace
 }
 
 FindAndReplaceShader::FindAndReplaceShader(wxWindow* parent) :
-	wxPanel(parent),
+    DockablePanel(parent),
     _lastFocusedEntry(nullptr)
 {
 	// Create all the widgets

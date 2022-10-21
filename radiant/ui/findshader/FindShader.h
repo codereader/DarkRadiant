@@ -4,7 +4,8 @@
 #include "icommandsystem.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include <sigc++/trackable.h>
-#include <wx/panel.h>
+
+#include "wxutil/DockablePanel.h"
 
 class wxTextCtrl;
 class wxButton;
@@ -18,7 +19,7 @@ namespace ui
  * greebo: The dialog providing the Find & Replace shader functionality.
  */
 class FindAndReplaceShader :
-	public wxPanel,
+	public wxutil::DockablePanel,
 	private wxutil::XmlResourceBasedWidget,
     public sigc::trackable
 {

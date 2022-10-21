@@ -1,8 +1,5 @@
 #pragma once
 
-#include <sigc++/connection.h>
-#include "iregistry.h"
-#include "icommandsystem.h"
 #include "wxutil/FreezePointer.h"
 
 #include "texturelib.h"
@@ -10,7 +7,8 @@
 #include "registry/CachedKey.h"
 
 #include "TextureBrowserManager.h"
-#include <wx/panel.h>
+
+#include "wxutil/DockablePanel.h"
 
 namespace wxutil
 {
@@ -49,7 +47,7 @@ namespace
  * containing all active texture tiles.
  */
 class TextureBrowser :
-    public wxPanel,
+    public wxutil::DockablePanel,
     public sigc::trackable
 {
     class TextureTile;

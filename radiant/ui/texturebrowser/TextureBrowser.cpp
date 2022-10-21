@@ -207,7 +207,7 @@ private:
 };
 
 TextureBrowser::TextureBrowser(wxWindow* parent) :
-    wxPanel(parent, wxID_ANY),
+    DockablePanel(parent),
     _popupX(-1),
     _popupY(-1),
     _startOrigin(-1),

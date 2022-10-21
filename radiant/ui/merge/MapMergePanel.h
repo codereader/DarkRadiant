@@ -7,13 +7,13 @@
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/event/SingleIdleCallback.h"
 
-#include <wx/panel.h>
+#include "wxutil/DockablePanel.h"
 
 namespace ui
 {
 
 class MapMergePanel final :
-    public wxPanel,
+    public wxutil::DockablePanel,
     private wxutil::XmlResourceBasedWidget,
     public selection::SelectionSystem::Observer,
     public sigc::trackable,

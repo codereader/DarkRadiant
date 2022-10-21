@@ -2,7 +2,7 @@
 
 #include "wxutil/XmlResourceBasedWidget.h"
 
-#include <wx/panel.h>
+#include "wxutil/DockablePanel.h"
 
 class wxFileDirPickerEvent;
 class wxSpinDoubleEvent;
@@ -15,7 +15,7 @@ namespace ui
  * Panel to configure the background image overlay options for the ortho view.
  */
 class OrthoBackgroundPanel :
-	public wxPanel,
+	public wxutil::DockablePanel,
 	private wxutil::XmlResourceBasedWidget
 {
 private:

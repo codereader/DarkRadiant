@@ -35,7 +35,7 @@ namespace
 }
 
 PatchInspector::PatchInspector(wxWindow* parent) :
-    wxPanel(parent),
+    DockablePanel(parent),
 	_rowCombo(nullptr),
 	_colCombo(nullptr),
 	_selectionInfo(GlobalSelectionSystem().getSelectionInfo()),

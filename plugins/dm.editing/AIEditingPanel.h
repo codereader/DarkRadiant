@@ -6,7 +6,8 @@
 
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
-#include <wx/panel.h>
+
+#include "wxutil/DockablePanel.h"
 
 class ISelectable;
 class Entity;
@@ -24,7 +25,7 @@ class SpawnargLinkedCheckbox;
 class SpawnargLinkedSpinButton;
 
 class AIEditingPanel : 
-	public wxPanel,
+	public wxutil::DockablePanel,
 	public Entity::Observer,
 	public sigc::trackable
 {

@@ -3,8 +3,9 @@
 #include <string>
 #include <map>
 #include "iselection.h"
-#include <wx/panel.h>
 #include <sigc++/connection.h>
+
+#include "wxutil/DockablePanel.h"
 
 namespace wxutil { class ControlButton; }
 
@@ -19,8 +20,8 @@ class wxTextCtrl;
 namespace ui
 {
 
-class TransformPanel : 
-	public wxPanel
+class TransformPanel :
+	public wxutil::DockablePanel
 {
 private:
 	// The entry fields

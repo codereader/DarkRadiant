@@ -4,7 +4,8 @@
 #include "GraphTreeModel.h"
 #include <set>
 #include <sigc++/connection.h>
-#include <wx/panel.h>
+
+#include "wxutil/DockablePanel.h"
 
 namespace wxutil
 {
@@ -17,7 +18,7 @@ namespace ui
 {
 
 class EntityList :
-	public wxPanel,
+	public wxutil::DockablePanel,
     public selection::SelectionSystem::Observer
 {
 private:

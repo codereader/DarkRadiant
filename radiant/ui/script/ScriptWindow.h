@@ -2,8 +2,8 @@
 
 #include "icommandsystem.h"
 
-#include <wx/panel.h>
 #include "wxutil/ConsoleView.h"
+#include "wxutil/DockablePanel.h"
 
 class wxCommandEvent;
 namespace wxutil { class PythonSourceViewCtrl; }
@@ -12,7 +12,7 @@ namespace ui
 {
 
 class ScriptWindow :
-	public wxPanel
+	public wxutil::DockablePanel
 {
 private:
 	// Use a standard console window for the script output

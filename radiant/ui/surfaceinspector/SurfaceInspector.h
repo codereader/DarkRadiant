@@ -7,7 +7,8 @@
 
 #include <sigc++/connection.h>
 #include <sigc++/trackable.h>
-#include <wx/panel.h>
+
+#include "wxutil/DockablePanel.h"
 
 namespace wxutil { class ControlButton; }
 
@@ -25,7 +26,7 @@ namespace ui
 
 /// Inspector for properties of a surface and its applied texture
 class SurfaceInspector :
-	public wxPanel,
+	public wxutil::DockablePanel,
 	public sigc::trackable
 {
     // Manipulatable value field with nudge buttons and a step size selector

@@ -191,6 +191,7 @@
     <ClInclude Include="..\..\libs\wxutil\dataview\IndicatorColumn.h">
       <Filter>dataview</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\wxutil\DockablePanel.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

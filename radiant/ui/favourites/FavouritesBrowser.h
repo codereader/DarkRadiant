@@ -1,19 +1,19 @@
 #pragma once
 
-#include <wx/panel.h>
 #include <wx/listctrl.h>
 #include <wx/imaglist.h>
 #include <wx/toolbar.h>
 #include <wx/checkbox.h>
 #include <sigc++/connection.h>
 
+#include "wxutil/DockablePanel.h"
 #include "wxutil/menu/PopupMenu.h"
 
 namespace ui
 {
 
 class FavouritesBrowser :
-    public wxPanel
+    public wxutil::DockablePanel
 {
 private:
     // Holds the data used to construct the wxListItem

@@ -22,7 +22,7 @@ GameConnectionPanel::~GameConnectionPanel()
 }
 
 GameConnectionPanel::GameConnectionPanel(wxWindow* parent) :
-    wxPanel(parent)
+    DockablePanel(parent)
 {
     auto mainPanel = loadNamedPanel(this, "GameConnectionMainPanel");
     SetSizer(new wxBoxSizer(wxVERTICAL));

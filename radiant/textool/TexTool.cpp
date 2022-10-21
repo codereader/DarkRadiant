@@ -47,7 +47,7 @@ namespace
 }
 
 TexTool::TexTool(wxWindow* parent) : 
-    wxPanel(parent),
+    DockablePanel(parent),
     MouseToolHandler(IMouseToolGroup::Type::TextureTool),
     _glWidget(new wxutil::GLWidget(this, std::bind(&TexTool::onGLDraw, this), "TexTool")),
     _gridActive(registry::getValue<bool>(textool::RKEY_GRID_STATE)),
