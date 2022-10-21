@@ -2,7 +2,7 @@ add_library(dm_gameconnection MODULE
             clsocket/ActiveSocket.cpp
             clsocket/PassiveSocket.cpp
             clsocket/SimpleSocket.cpp
-            GameConnectionDialog.cpp
+            GameConnectionPanel.cpp
             DiffDoom3MapWriter.cpp
             AutomationEngine.cpp
             GameConnection.cpp
