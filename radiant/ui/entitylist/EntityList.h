@@ -1,7 +1,6 @@
 #pragma once
 
 #include "iselection.h"
-#include "icommandsystem.h"
 #include "GraphTreeModel.h"
 #include <set>
 #include <sigc++/connection.h>
@@ -78,9 +77,6 @@ private:
 	void onVisibleOnlyToggle(wxCommandEvent& ev);
 
 	void expandRootNode();
-
-	void _preHide();
-	void _preShow();
 };
 
 } // namespace

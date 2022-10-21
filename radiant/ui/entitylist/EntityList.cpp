@@ -12,6 +12,9 @@
 
 #include <wx/sizer.h>
 #include <wx/checkbox.h>
+#include <wx/wupdlock.h>
+
+#include "util/ScopedBoolLock.h"
 
 namespace ui
 {
@@ -72,11 +75,8 @@ EntityList::~EntityList()
     GlobalSelectionSystem().removeObserver(this);
 
     // Unselect everything when hiding the dialog
-    _callbackActive = true;
-
+    util::ScopedBoolLock lock(_callbackActive);
     _treeView->UnselectAll();
-
-    _callbackActive = false;
 }
 
 void EntityList::populateWindow()
@@ -121,20 +121,19 @@ void EntityList::populateWindow()
 	_treeModel.setConsiderVisibleNodesOnly(_visibleOnly->GetValue());
 
 	// Connect the toggle buttons' "toggled" signal
-	_visibleOnly->Connect(wxEVT_CHECKBOX, 
-		wxCommandEventHandler(EntityList::onVisibleOnlyToggle), NULL, this);
+	_visibleOnly->Bind(wxEVT_CHECKBOX, &EntityList::onVisibleOnlyToggle, this);
 }
 
 void EntityList::update()
 {
 	// Disable callbacks and traverse the treemodel
-	_callbackActive = true;
+    util::ScopedBoolLock lock(_callbackActive);
+
+    wxWindowUpdateLocker freezer(_treeView);
 
 	// Traverse the entire tree, updating the selection
 	_treeModel.updateSelectionStatus(std::bind(&EntityList::onTreeViewSelection, this,
 		std::placeholders::_1, std::placeholders::_2));
-
-	_callbackActive = false;
 }
 
 void EntityList::refreshTreeModel()
@@ -154,21 +153,16 @@ void EntityList::refreshTreeModel()
     expandRootNode();
 }
 
-// Gets notified upon selection change
 void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
-	if (_callbackActive || !IsShownOnScreen() || isComponent)
-	{
-		// Don't update if not shown or already updating, also ignore components
-		return;
-	}
+    // Don't update already updating, also ignore components
+    if (_callbackActive || isComponent) return;
 
-	_callbackActive = true;
+    util::ScopedBoolLock lock(_callbackActive);
+    wxWindowUpdateLocker freezer(_treeView);
 
-	_treeModel.updateSelectionStatus(node, std::bind(&EntityList::onTreeViewSelection, this,
-		std::placeholders::_1, std::placeholders::_2));
-
-	_callbackActive = false;
+    _treeModel.updateSelectionStatus(node, std::bind(&EntityList::onTreeViewSelection, this,
+        std::placeholders::_1, std::placeholders::_2));
 }
 
 void EntityList::onFilterConfigChanged()
@@ -202,7 +196,7 @@ void EntityList::onVisibleOnlyToggle(wxCommandEvent& ev)
 
 void EntityList::expandRootNode()
 {
-	GraphTreeNodePtr rootNode = _treeModel.find(GlobalSceneGraph().root());
+	auto rootNode = _treeModel.find(GlobalSceneGraph().root());
 
 	if (rootNode && !_treeView->IsExpanded(rootNode->getIter()))
 	{
