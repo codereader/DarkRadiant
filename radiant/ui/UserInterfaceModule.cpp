@@ -75,6 +75,7 @@
 
 #include "console/ConsoleControl.h"
 #include "layers/LayerControl.h"
+#include "lightinspector/LightInspectorControl.h"
 #include "patch/PatchInspectorControl.h"
 #include "surfaceinspector/SurfaceInspectorControl.h"
 #include "textool/TextureToolControl.h"
@@ -255,6 +256,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     registerControl(std::make_shared<LayerControl>());
     registerControl(std::make_shared<TextureToolControl>());
     registerControl(std::make_shared<PatchInspectorControl>());
+    registerControl(std::make_shared<LightInspectorControl>());
 
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
@@ -263,6 +265,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMainFrame().addControl(UserControl::LayerControlPanel, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::TextureTool, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::PatchInspector, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::LightInspector, { IMainFrame::Location::FloatingWindow, false });
     });
 }
 
@@ -423,7 +426,7 @@ void UserInterfaceModule::registerUICommands()
     GlobalCommandSystem().addCommand("clear", [](const auto&) { radiant::ClearConsoleMessage::Send(); });
 
 	GlobalCommandSystem().addCommand("ToggleConsole", Console::toggle);
-	GlobalCommandSystem().addCommand("ToggleLightInspector", LightInspector::toggleInspector);
+	GlobalCommandSystem().addStatement("ToggleLightInspector", fmt::format("ToggleControl {0}", UserControl::LightInspector), false);
 	GlobalCommandSystem().addStatement("SurfaceInspector", fmt::format("ToggleControl {0}", UserControl::SurfaceInspector), false);
 	GlobalCommandSystem().addStatement("ToggleLayerControlDialog", fmt::format("ToggleControl {0}", UserControl::LayerControlPanel), false);
 	GlobalCommandSystem().addStatement("PatchInspector", fmt::format("ToggleControl {0}", UserControl::PatchInspector), false);

@@ -465,6 +465,7 @@
     <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerControl.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerControlPanel.h" />
+    <ClInclude Include="..\..\radiant\ui\lightinspector\LightInspectorControl.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\AuiLayout.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\PropertyNotebook.h" />

@@ -1419,6 +1419,9 @@
     <ClInclude Include="..\..\radiant\ui\patch\PatchInspectorControl.h">
       <Filter>src\ui\patch</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\lightinspector\LightInspectorControl.h">
+      <Filter>src\ui\lightinspector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
