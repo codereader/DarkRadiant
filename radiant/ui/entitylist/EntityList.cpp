@@ -30,31 +30,7 @@ EntityList::EntityList(wxWindow* parent) :
     DockablePanel(parent),
 	_callbackActive(false)
 {
-	// Create all the widgets and pack them into the window
 	populateWindow();
-
-    // Observe the scenegraph
-    _treeModel.connectToSceneGraph();
-
-    // Register self to the SelSystem to get notified upon selection changes.
-    GlobalSelectionSystem().addObserver(this);
-
-    // Get notified when filters are changing
-    _filtersConfigChangedConn = GlobalFilterSystem().filterConfigChangedSignal().connect(
-        sigc::mem_fun(*this, &EntityList::onFilterConfigChanged)
-    );
-
-    _callbackActive = true;
-
-    // Repopulate the model before showing the dialog
-    refreshTreeModel();
-
-    _callbackActive = false;
-
-    // Update the widgets
-    update();
-
-    expandRootNode();
 }
     
 EntityList::~EntityList()
@@ -66,6 +42,43 @@ EntityList::~EntityList()
         _treeView->Unbind(wxEVT_DATAVIEW_ITEM_EXPANDED, &EntityList::onRowExpand, this);
     }
 
+    disconnectListeners();
+}
+
+void EntityList::onPanelActivated()
+{
+    connectListeners();
+
+    // Repopulate the model before showing the dialog
+    util::ScopedBoolLock lock(_callbackActive);
+    refreshTreeModel();
+}
+
+void EntityList::onPanelDeactivated()
+{
+    disconnectListeners();
+
+    // Unselect everything when hiding the dialog
+    util::ScopedBoolLock lock(_callbackActive);
+    _treeView->UnselectAll();
+}
+
+void EntityList::connectListeners()
+{
+    // Observe the scenegraph
+    _treeModel.connectToSceneGraph();
+
+    // Register self to the SelSystem to get notified upon selection changes.
+    GlobalSelectionSystem().addObserver(this);
+
+    // Get notified when filters are changing
+    _filtersConfigChangedConn = GlobalFilterSystem().filterConfigChangedSignal().connect(
+        sigc::mem_fun(*this, &EntityList::onFilterConfigChanged)
+    );
+}
+
+void EntityList::disconnectListeners()
+{
     _treeModel.disconnectFromSceneGraph();
 
     // Disconnect from the filters-changed signal
@@ -73,10 +86,6 @@ EntityList::~EntityList()
 
     // De-register self from the SelectionSystem
     GlobalSelectionSystem().removeObserver(this);
-
-    // Unselect everything when hiding the dialog
-    util::ScopedBoolLock lock(_callbackActive);
-    _treeView->UnselectAll();
 }
 
 void EntityList::populateWindow()

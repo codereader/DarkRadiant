@@ -48,7 +48,14 @@ public:
 	EntityList(wxWindow* parent);
     ~EntityList() override;
 
+protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
+    void connectListeners();
+    void disconnectListeners();
+
 	/** greebo: Creates the widgets
 	 */
 	void populateWindow();
