@@ -117,7 +117,13 @@ public:
 protected:
     void onIdle() override;
 
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
+    void connectEventHandlers();
+    void disconnectEventHandlers();
+
 	void setPatch(const IPatchNodePtr& patch);
 
 	// Updates the widgets (this is private, use queueUpdate() instead)

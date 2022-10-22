@@ -46,10 +46,27 @@ PatchInspector::PatchInspector(wxWindow* parent) :
 {
 	// Create all the widgets and pack them into the window
 	populateWindow();
+}
 
-    _undoHandler.disconnect();
-    _redoHandler.disconnect();
+PatchInspector::~PatchInspector()
+{
+    disconnectEventHandlers();
+}
 
+void PatchInspector::onPanelActivated()
+{
+    connectEventHandlers();
+    // Check for selection changes
+    rescanSelection();
+}
+
+void PatchInspector::onPanelDeactivated()
+{
+    disconnectEventHandlers();
+}
+
+void PatchInspector::connectEventHandlers()
+{
     // Register self to the SelSystem to get notified upon selection changes.
     GlobalSelectionSystem().addObserver(this);
 
@@ -57,9 +74,18 @@ PatchInspector::PatchInspector(wxWindow* parent) :
         sigc::mem_fun(this, &PatchInspector::queueUpdate));
     _redoHandler = GlobalMapModule().signal_postRedo().connect(
         sigc::mem_fun(this, &PatchInspector::queueUpdate));
+}
 
-    // Check for selection changes
-    rescanSelection();
+void PatchInspector::disconnectEventHandlers()
+{
+    // Clear the patch, we don't need to observe it while hidden
+    setPatch({});
+
+    // A hidden PatchInspector doesn't need to listen for events
+    _undoHandler.disconnect();
+    _redoHandler.disconnect();
+
+    GlobalSelectionSystem().removeObserver(this);
 }
 
 void PatchInspector::populateWindow()
@@ -211,18 +237,6 @@ void PatchInspector::loadControlVertex()
 
 		_updateActive = false;
 	}
-}
-
-PatchInspector::~PatchInspector()
-{
-	// Clear the patch, we don't need to observe it while hidden
-	setPatch({});
-
-	// A hidden PatchInspector doesn't need to listen for events
-	_undoHandler.disconnect();
-	_redoHandler.disconnect();
-
-	GlobalSelectionSystem().removeObserver(this);
 }
 
 void PatchInspector::selectionChanged(const scene::INodePtr& node, bool isComponent)
