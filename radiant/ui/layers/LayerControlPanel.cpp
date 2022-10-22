@@ -37,7 +37,26 @@ LayerControlPanel::LayerControlPanel(wxWindow* parent) :
 	_rescanSelectionOnIdle(false)
 {
 	populateWindow();
+}
 
+LayerControlPanel::~LayerControlPanel()
+{
+    disconnectListeners();
+}
+
+void LayerControlPanel::onPanelActivated()
+{
+    connectListeners();
+    queueRefresh();
+}
+
+void LayerControlPanel::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void LayerControlPanel::connectListeners()
+{
     _selectionChangedSignal = GlobalSelectionSystem().signal_selectionChanged().connect([this](const ISelectable&)
     {
         _rescanSelectionOnIdle = true;
@@ -49,17 +68,15 @@ LayerControlPanel::LayerControlPanel(wxWindow* parent) :
     _mapEventSignal = GlobalMapModule().signal_mapEvent().connect(
         sigc::mem_fun(this, &LayerControlPanel::onMapEvent)
     );
-
-    // Re-populate the dialog
-    queueRefresh();
 }
 
-LayerControlPanel::~LayerControlPanel()
+void LayerControlPanel::disconnectListeners()
 {
     disconnectFromMapRoot();
 
     _mapEventSignal.disconnect();
     _selectionChangedSignal.disconnect();
+
     _refreshTreeOnIdle = false;
     _updateTreeOnIdle = false;
     _rescanSelectionOnIdle = false;

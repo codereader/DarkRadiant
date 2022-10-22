@@ -74,7 +74,13 @@ public:
 protected:
     void onIdle() override;
 
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
+    void connectListeners();
+    void disconnectListeners();
+
     // Calls refresh() on the next idle event
     void queueRefresh();
 
