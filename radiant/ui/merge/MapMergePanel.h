@@ -47,8 +47,13 @@ public:
 
 protected:
     void onIdle() override;
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
 
 private:
+    void connectListeners();
+    void disconnectListeners();
+
     void convertTextCtrlToPathEntry(const std::string& ctrlName);
     void onMergeSourceChanged(wxCommandEvent& ev);
     void onMergeModeChanged(wxCommandEvent& ev);

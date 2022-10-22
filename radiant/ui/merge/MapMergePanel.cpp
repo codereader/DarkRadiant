@@ -112,9 +112,26 @@ MapMergePanel::MapMergePanel(wxWindow* parent) :
 
     Layout();
     Fit();
+}
 
-    //SetMinSize(wxSize(400, 290));
+MapMergePanel::~MapMergePanel()
+{
+    disconnectListeners();
+}
 
+void MapMergePanel::onPanelActivated()
+{
+    connectListeners();
+    update();
+}
+
+void MapMergePanel::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void MapMergePanel::connectListeners()
+{
     // Register self to the SelSystem to get notified upon selection changes.
     GlobalSelectionSystem().addObserver(this);
 
@@ -129,14 +146,10 @@ MapMergePanel::MapMergePanel(wxWindow* parent) :
         sigc::mem_fun(this, &MapMergePanel::queueUpdate));
     _redoHandler = GlobalMapModule().signal_postRedo().connect(
         sigc::mem_fun(this, &MapMergePanel::queueUpdate));
-
-    // Check for selection changes before showing the dialog again
-    update();
 }
 
-MapMergePanel::~MapMergePanel()
+void MapMergePanel::disconnectListeners()
 {
-    // A hidden window doesn't need to listen for events
     _undoHandler.disconnect();
     _redoHandler.disconnect();
     _mapEventHandler.disconnect();
