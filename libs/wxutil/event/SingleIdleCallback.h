@@ -17,7 +17,7 @@ namespace wxutil
 class SingleIdleCallback
 {
 private:
-	bool _callbackPending;
+	bool _registered;
 
     // To avoid inheriting from wxEvtHandler, we use composition
     // maintaining an inner wxEvtHandler instance to be invoked on idle
@@ -43,20 +43,20 @@ private:
 	void handleIdleCallback()
 	{
         wxTheApp->Unbind(wxEVT_IDLE, &InternalEventHandler::_onIdle, &_evtHandler);
+        _registered = false;
 		
 		// Call the virtual function
 		onIdle();
-
-		_callbackPending = false;
 	}
 
 	// Remove the callback
 	void deregisterCallback()
 	{
-        if (!_callbackPending) return;
+        if (!_registered) return;
 
         if (wxTheApp)
         {
+            _registered = false;
             wxTheApp->Unbind(wxEVT_IDLE, &InternalEventHandler::_onIdle, &_evtHandler);
         }
 	}
@@ -69,19 +69,13 @@ protected:
 	 */
 	void requestIdleCallback()
 	{
-		if (_callbackPending) return; // avoid duplicate registrations
+		if (_registered) return; // avoid duplicate registrations
 
 		if (wxTheApp)
 		{
-			_callbackPending = true;
+            _registered = true;
             wxTheApp->Bind(wxEVT_IDLE, &InternalEventHandler::_onIdle, &_evtHandler);
 		}
-	}
-
-	// TRUE if an idle callback is pending
-	bool callbacksPending() const
-	{
-		return _callbackPending;
 	}
 
     void cancelCallbacks()
@@ -92,7 +86,7 @@ protected:
 	// Flushes any pending events, forces a call to onGtkIdle, if necessary
 	void flushIdleCallback()
 	{
-		if (_callbackPending)
+		if (_registered)
 		{
 			// Cancel the event and force an onIdle() call
 			deregisterCallback();
@@ -111,7 +105,7 @@ protected:
 public:
 
     SingleIdleCallback() :
-        _callbackPending(false),
+        _registered(false),
         _evtHandler(*this)
     {}
 
