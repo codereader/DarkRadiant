@@ -1,9 +1,8 @@
 #pragma once
 
 #include <string>
-#include "icommandsystem.h"
+#include <sigc++/connection.h>
 #include "wxutil/XmlResourceBasedWidget.h"
-#include <sigc++/trackable.h>
 
 #include "wxutil/DockablePanel.h"
 
@@ -20,16 +19,25 @@ namespace ui
  */
 class FindAndReplaceShader :
 	public wxutil::DockablePanel,
-	private wxutil::XmlResourceBasedWidget,
-    public sigc::trackable
+	private wxutil::XmlResourceBasedWidget
 {
 private:
     wxTextCtrl* _lastFocusedEntry;
 
+    sigc::connection _shaderClipboardConn;
+
 public:
 	FindAndReplaceShader(wxWindow* parent);
+    ~FindAndReplaceShader() override;
+
+protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
 
 private:
+    void connectListeners();
+    void disconnectListeners();
+
     void onShaderClipboardChanged();
 
 	// This is called to initialise the dialog window / create the widgets

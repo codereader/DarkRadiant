@@ -36,13 +36,33 @@ FindAndReplaceShader::FindAndReplaceShader(wxWindow* parent) :
     DockablePanel(parent),
     _lastFocusedEntry(nullptr)
 {
-	// Create all the widgets
 	populateWindow();
+}
 
-	Fit();
+FindAndReplaceShader::~FindAndReplaceShader()
+{
+    disconnectListeners();
+}
 
-    GlobalShaderClipboard().signal_sourceChanged().connect(
+void FindAndReplaceShader::onPanelActivated()
+{
+    connectListeners();
+}
+
+void FindAndReplaceShader::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void FindAndReplaceShader::connectListeners()
+{
+    _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
         sigc::mem_fun(this, &FindAndReplaceShader::onShaderClipboardChanged));
+}
+
+void FindAndReplaceShader::disconnectListeners()
+{
+    _shaderClipboardConn.disconnect();
 }
 
 void FindAndReplaceShader::populateWindow()
@@ -80,6 +100,7 @@ void FindAndReplaceShader::populateWindow()
 	findNamedObject<wxStaticText>(this, "FindReplaceDialogStatusLabel")->SetLabel("");
 
 	SetSize(mainPanel->GetMinSize());
+    Fit();
 }
 
 void FindAndReplaceShader::performReplace()
