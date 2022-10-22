@@ -18,7 +18,7 @@ namespace ui
 
 GameConnectionPanel::~GameConnectionPanel()
 {
-    _updateOnStatusChangeSignal.disconnect();
+    disconnectListeners();
 }
 
 GameConnectionPanel::GameConnectionPanel(wxWindow* parent) :
@@ -51,13 +51,6 @@ GameConnectionPanel::GameConnectionPanel(wxWindow* parent) :
     _hotReloadUpdateOnChangeCheckbox = findNamedObject<wxCheckBox>(this, "HotReloadUpdateOnChangeCheckbox");
     _respawnSelectedButton           = findNamedObject<wxButton  >(this, "RespawnSelectedButton");
     _pauseGameButton                 = findNamedObject<wxButton  >(this, "PauseGameButton");
-
-    //initially we are not connected, so disable most of GUI
-    updateConnectedStatus();
-    //update GUI when anything changes in connection
-    _updateOnStatusChangeSignal = Impl().signal_StatusChanged.connect([this](int) {
-        GameConnectionPanel::updateConnectedStatus();
-    });
 
     //===================================
     //         EVENT HANDLERS
@@ -109,6 +102,30 @@ GameConnectionPanel::GameConnectionPanel(wxWindow* parent) :
     _pauseGameButton->Bind(wxEVT_BUTTON, [this](wxCommandEvent& ev) {
         Impl().togglePauseGame();
     });
+}
+
+void GameConnectionPanel::onPanelActivated()
+{
+    connectListeners();
+    updateConnectedStatus();
+}
+
+void GameConnectionPanel::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void GameConnectionPanel::connectListeners()
+{
+    //update GUI when anything changes in connection
+    _updateOnStatusChangeSignal = Impl().signal_StatusChanged.connect([this](int) {
+        updateConnectedStatus();
+    });
+}
+
+void GameConnectionPanel::disconnectListeners()
+{
+    _updateOnStatusChangeSignal.disconnect();
 }
 
 gameconn::GameConnection& GameConnectionPanel::Impl()

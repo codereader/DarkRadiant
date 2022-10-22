@@ -56,7 +56,14 @@ public:
     // Makes all GUI inactive / active depending on whether connection is alive.
     void updateConnectedStatus();
 
+protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
+    void connectListeners();
+    void disconnectListeners();
+
     gameconn::GameConnection& Impl();
 };
 
