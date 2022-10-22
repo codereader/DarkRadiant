@@ -512,6 +512,21 @@ void AuiLayout::restoreStateFromRegistry()
         _auiMgr.LoadPerspective(storedPersp);
     }
 
+    // After restoring the perspective, ensure all visible panes are active
+    for (const auto& info : _panes)
+    {
+        auto& paneInfo = _auiMgr.GetPane(info.control);
+
+        if (paneInfo.IsShown())
+        {
+            ensureControlIsActive(paneInfo.window);
+        }
+        else
+        {
+            ensureControlIsInactive(paneInfo.window);
+        }
+    }
+
     // Restore all floating XY views
     GlobalXYWnd().restoreState();
 }
