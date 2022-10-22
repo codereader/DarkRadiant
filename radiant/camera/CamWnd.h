@@ -126,12 +126,12 @@ class CamWnd :
 
     IGLFont::Ptr _glFont;
 
+    sigc::connection _shadowMappingKeyChangedHandler;
     std::size_t _textureChangedHandler;
 
 public:
     CamWnd(wxWindow* parent);
-
-    virtual ~CamWnd();
+    ~CamWnd() override;
 
     // The unique ID of this camwindow
     int getId();
@@ -215,6 +215,9 @@ public:
     void moveForwardDiscrete(double units);
 
 protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
     void handleFreeMoveKeyEvent(KeyEventType eventType, unsigned int movementFlags);
     void handleKeyEvent(KeyEventType eventType, unsigned int freeMoveFlags, const std::function<void()>& discreteMovement);
 
@@ -227,6 +230,9 @@ protected:
     virtual IInteractiveView& getInteractiveView() override;
 
 private:
+    void connectEventHandlers();
+    void disconnectEventHandlers();
+
     void constructGUIComponents();
     void constructToolbar();
     void setFarClipButtonSensitivity();
