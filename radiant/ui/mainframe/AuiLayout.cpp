@@ -299,7 +299,9 @@ void AuiLayout::createPane(const std::string& controlName, const std::string& pa
 
 void AuiLayout::createFloatingControl(const std::string& controlName)
 {
-    createPane(controlName, generateUniquePaneName(controlName), [this](auto& paneInfo)
+    auto paneName = generateUniquePaneName(controlName);
+
+    createPane(controlName, paneName, [this](auto& paneInfo)
     {
         setupFloatingPane(paneInfo);
 
@@ -310,9 +312,10 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
         {
             _auiMgr.LoadPaneInfo(existingSizeInfo->second, paneInfo);
         }
-
-        ensureControlIsActive(paneInfo.window);
     });
+
+    auto& paneInfo = _auiMgr.GetPane(paneName);
+    ensureControlIsActive(paneInfo.window);
 
     _auiMgr.Update();
 }
