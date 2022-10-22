@@ -23,14 +23,31 @@ AasVisualisationPanel::AasVisualisationPanel(wxWindow* parent) :
 	populateWindow();
 
     SetMinClientSize(wxSize(135, 100));
-
-	_mapEventSlot = GlobalMapModule().signal_mapEvent().connect(
-		sigc::mem_fun(*this, &AasVisualisationPanel::onMapEvent));
-
-    refresh();
 }
 
 AasVisualisationPanel::~AasVisualisationPanel()
+{
+    disconnectListeners();
+}
+
+void AasVisualisationPanel::onPanelActivated()
+{
+    connectListeners();
+    refresh();
+}
+
+void AasVisualisationPanel::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void AasVisualisationPanel::connectListeners()
+{
+    _mapEventSlot = GlobalMapModule().signal_mapEvent().connect(
+        sigc::mem_fun(*this, &AasVisualisationPanel::onMapEvent));
+}
+
+void AasVisualisationPanel::disconnectListeners()
 {
     _mapEventSlot.disconnect();
 }

@@ -29,7 +29,14 @@ public:
 	AasVisualisationPanel(wxWindow* parent);
     ~AasVisualisationPanel() override;
 
+protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
+    void connectListeners();
+    void disconnectListeners();
+
     // Re-populates the window
 	void refresh();
 
