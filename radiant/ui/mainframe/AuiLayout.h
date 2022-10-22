@@ -51,6 +51,9 @@ public:
     void focusControl(const std::string& controlName);
     void toggleControl(const std::string& controlName);
 
+    void ensureControlIsActive(wxWindow* control);
+    void ensureControlIsInactive(wxWindow* control);
+
 	// The creation function, needed by the mainframe layout manager
 	static std::shared_ptr<AuiLayout> CreateInstance();
 

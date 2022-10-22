@@ -310,6 +310,8 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
         {
             _auiMgr.LoadPaneInfo(existingSizeInfo->second, paneInfo);
         }
+
+        ensureControlIsActive(paneInfo.window);
     });
 
     _auiMgr.Update();
@@ -346,6 +348,22 @@ void AuiLayout::createControl(const std::string& controlName)
     }
 }
 
+void AuiLayout::ensureControlIsActive(wxWindow* control)
+{
+    if (auto dockablePanel = dynamic_cast<wxutil::DockablePanel*>(control); dockablePanel)
+    {
+        dockablePanel->activatePanel();
+    }
+}
+
+void AuiLayout::ensureControlIsInactive(wxWindow* control)
+{
+    if (auto dockablePanel = dynamic_cast<wxutil::DockablePanel*>(control); dockablePanel)
+    {
+        dockablePanel->deactivatePanel();
+    }
+}
+
 void AuiLayout::focusControl(const std::string& controlName)
 {
     // Locate the control, is it loaded anywhere
@@ -376,6 +394,7 @@ void AuiLayout::focusControl(const std::string& controlName)
         if (!paneInfo.IsShown())
         {
             paneInfo.Show();
+            ensureControlIsActive(p->control);
             _auiMgr.Update();
         }
 
@@ -418,17 +437,26 @@ void AuiLayout::toggleControl(const std::string& controlName)
     // If it's a docked pane, then do nothing, otherwise toggle its visibility
     for (auto p = _panes.begin(); p != _panes.end(); ++p)
     {
-        if (p->controlName == controlName)
-        {
-            auto& paneInfo = _auiMgr.GetPane(p->control);
+        if (p->controlName != controlName) continue;
 
-            if (!paneInfo.IsDocked())
+        auto& paneInfo = _auiMgr.GetPane(p->control);
+
+        if (!paneInfo.IsDocked())
+        {
+            if (paneInfo.IsShown())
             {
-                paneInfo.Show(!paneInfo.IsShown());
-                _auiMgr.Update();
+                paneInfo.Hide();
+                ensureControlIsInactive(p->control);
             }
-            break;
+            else
+            {
+                paneInfo.Show();
+                ensureControlIsActive(p->control);
+            }
+            
+            _auiMgr.Update();
         }
+        break;
     }
 }
 

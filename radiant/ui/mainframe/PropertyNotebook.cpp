@@ -26,7 +26,7 @@ PropertyNotebook::PropertyNotebook(wxWindow* parent, AuiLayout& owner) :
     _imageList.reset(new wxImageList(16, 16));
     SetImageList(_imageList.get());
 
-    Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, &PropertyNotebook::onPageSwitch, this);
+    Bind(wxEVT_AUINOTEBOOK_PAGE_CHANGED, &PropertyNotebook::onPageSwitch, this);
     Bind(wxEVT_AUINOTEBOOK_TAB_RIGHT_UP, &PropertyNotebook::onTabRightClick, this);
 
     _popupMenu = std::make_shared<wxutil::PopupMenu>();
@@ -145,6 +145,23 @@ void PropertyNotebook::onPageSwitch(wxBookCtrlEvent& ev)
 {
     // Store the page's name into the registry for later retrieval
     registry::setValue(RKEY_LAST_SHOWN_PAGE, getSelectedPageName());
+
+    auto selectedPageIndex = GetSelection();
+
+    // Set the active/inactive status of all windows
+    for (std::size_t i = 0; i < GetPageCount(); ++i)
+    {
+        auto win = GetPage(i);
+
+        if (i == selectedPageIndex)
+        {
+            _layout.ensureControlIsActive(win);
+        }
+        else
+        {
+            _layout.ensureControlIsInactive(win);
+        }
+    }
 
     // Be sure to skip the event, otherwise pages stay hidden
     ev.Skip();
