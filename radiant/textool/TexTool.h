@@ -185,6 +185,9 @@ protected:
 	// Idle callback, used for deferred updates
 	void onIdle() override;
 
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
     MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
     MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;
     MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;

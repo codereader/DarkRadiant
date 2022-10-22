@@ -61,7 +61,6 @@ TexTool::TexTool(wxWindow* parent) :
     _determineThemeFromImage(false)
 {
 	populateWindow();
-    connectListeners();
 
     registry::observeBooleanKey(
         textool::RKEY_GRID_STATE,
@@ -72,6 +71,27 @@ TexTool::TexTool(wxWindow* parent) :
     _freezePointer.connectMouseEvents(
         std::bind(&TexTool::onMouseDown, this, std::placeholders::_1),
         std::bind(&TexTool::onMouseUp, this, std::placeholders::_1));
+}
+
+TexTool::~TexTool()
+{
+    disconnectListeners();
+}
+
+void TexTool::onPanelActivated()
+{
+    connectListeners();
+
+    // Trigger an update of the current selection
+    _selectionRescanNeeded = true;
+    updateThemeButtons();
+    updateManipulationPanel();
+    requestIdleCallback();
+}
+
+void TexTool::onPanelDeactivated()
+{
+    disconnectListeners();
 }
 
 void TexTool::setGridActive(bool active)
@@ -150,11 +170,6 @@ wxWindow* TexTool::createManipulationPanel()
     registry::bindWidget(findNamedObject<wxSpinCtrlDouble>(panel, "RotateAngle"), RKEY_ROTATE_ANGLE);
 
     return panel;
-}
-
-TexTool::~TexTool()
-{
-    disconnectListeners();
 }
 
 void TexTool::disconnectListeners()
@@ -243,12 +258,6 @@ void TexTool::connectListeners()
     );
 
     _gridChanged = GlobalGrid().signal_gridChanged().connect(sigc::mem_fun(this, &TexTool::queueDraw));
-
-	// Trigger an update of the current selection
-    _selectionRescanNeeded = true;
-    updateThemeButtons();
-    updateManipulationPanel();
-    requestIdleCallback();
 }
 
 bool TexTool::textureToolHasFocus()
