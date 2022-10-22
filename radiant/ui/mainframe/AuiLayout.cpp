@@ -22,9 +22,11 @@ namespace
     const std::string RKEY_ROOT = "user/ui/mainFrame/aui/";
     const std::string RKEY_AUI_PERSPECTIVE = RKEY_ROOT + "perspective";
     const std::string RKEY_AUI_PANES = RKEY_ROOT + "panes";
+    const std::string RKEY_AUI_FLOATING_PANE_LOCATIONS = RKEY_ROOT + "floatingPaneLocations";
     const std::string RKEY_AUI_LAYOUT_VERSION = RKEY_ROOT + "layoutVersion";
     const std::string PANE_NODE_NAME = "pane";
     const std::string PANE_NAME_ATTRIBUTE = "paneName";
+    const std::string STATE_ATTRIBUTE = "state";
     const std::string CONTROL_NAME_ATTRIBUTE = "controlName";
     constexpr int AuiLayoutVersion = 1;
 
@@ -191,6 +193,17 @@ void AuiLayout::saveStateToRegistry()
         paneNode.setAttributeValue(PANE_NAME_ATTRIBUTE, pane.paneName);
     }
 
+    GlobalRegistry().deleteXPath(RKEY_AUI_FLOATING_PANE_LOCATIONS);
+    auto floatingPanesKey = GlobalRegistry().createKey(RKEY_AUI_FLOATING_PANE_LOCATIONS);
+
+    // Persist the floating pane locations
+    for (const auto& [name, state] : _floatingPaneLocations)
+    {
+        auto paneNode = floatingPanesKey.createChild(PANE_NODE_NAME);
+        paneNode.setAttributeValue(PANE_NAME_ATTRIBUTE, name);
+        paneNode.setAttributeValue(STATE_ATTRIBUTE, state);
+    }
+
     // Save property notebook stae
     _propertyNotebook->saveState();
 }
@@ -262,14 +275,7 @@ void AuiLayout::createPane(const std::string& controlName, const std::string& pa
     auto pane = DEFAULT_PANE_INFO(control->getDisplayName(), MIN_SIZE);
     pane.name = paneName;
 
-    // Run client code to setup the pane properties
-    setupPane(pane);
-
-    if (!control->getIcon().empty())
-    {
-        pane.Icon(wxutil::GetLocalBitmap(control->getIcon()));
-    }
-
+    // Create the widget and determine the best default size
     auto widget = control->createWidget(managedWindow);
 
     // Fit and determine the floating size automatically
@@ -277,6 +283,15 @@ void AuiLayout::createPane(const std::string& controlName, const std::string& pa
 
     // Some additional height for the window title bar
     pane.FloatingSize(widget->GetSize().x, widget->GetSize().y + 30);
+
+    // Run client code to set up the pane properties, do this after setting the default size
+    // since the client code may also try to restore any persisted size info
+    setupPane(pane);
+
+    if (!control->getIcon().empty())
+    {
+        pane.Icon(wxutil::GetLocalBitmap(control->getIcon()));
+    }
 
     _auiMgr.AddPane(widget, pane);
     _panes.push_back({ paneName, controlName, widget });
@@ -424,6 +439,12 @@ void AuiLayout::restoreStateFromRegistry()
     {
         rMessage() << "No compatible AUI layout state information found in registry" << std::endl;
         return;
+    }
+
+    _floatingPaneLocations.clear();
+    for (const auto& node : GlobalRegistry().findXPath(RKEY_AUI_FLOATING_PANE_LOCATIONS + "//*"))
+    {
+        _floatingPaneLocations[node.getAttributeValue(PANE_NAME_ATTRIBUTE)] = node.getAttributeValue(STATE_ATTRIBUTE);
     }
 
     // Restore all missing panes, this has to be done before the perspective is restored
