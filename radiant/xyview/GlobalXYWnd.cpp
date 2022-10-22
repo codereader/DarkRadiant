@@ -4,6 +4,7 @@
 #include "i18n.h"
 #include "ui/ieventmanager.h"
 #include "ui/istatusbarmanager.h"
+#include "ui/imainframe.h"
 #include "ipreferencesystem.h"
 #include "ui/iuserinterface.h"
 
@@ -171,7 +172,12 @@ void XYWndManager::destroyViews()
 
 void XYWndManager::registerCommands()
 {
-	GlobalCommandSystem().addCommand("NewOrthoView", std::bind(&XYWndManager::createXYFloatingOrthoView, this, std::placeholders::_1));
+    GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
+    {
+        GlobalMainFrame().addControl(UserControl::OrthoView, { IMainFrame::Location::FloatingWindow, false });
+    });
+
+    GlobalCommandSystem().addStatement("NewOrthoView", fmt::format("CreateControl {0}", UserControl::OrthoView), false);
 	GlobalCommandSystem().addCommand("NextView", std::bind(&XYWndManager::toggleActiveView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("ZoomIn", std::bind(&XYWndManager::zoomIn, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("ZoomOut", std::bind(&XYWndManager::zoomOut, this, std::placeholders::_1));
@@ -686,6 +692,7 @@ const StringSet& XYWndManager::getDependencies() const
         MODULE_MOUSETOOLMANAGER,
         MODULE_STATUSBARMANAGER,
         MODULE_USERINTERFACE,
+        MODULE_MAINFRAME,
     };
 
 	return _dependencies;

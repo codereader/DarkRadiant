@@ -115,6 +115,10 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
         std::bind(&MainFrame::toggleControl, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
     );
+    GlobalCommandSystem().addCommand("CreateControl",
+        std::bind(&MainFrame::createControl, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
+    );
 
 	GlobalCommandSystem().addCommand("Exit", sigc::mem_fun(this, &MainFrame::exitCmd));
 
@@ -616,7 +620,7 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 
 void MainFrame::addControl(const std::string& controlName, const ControlSettings& defaultSettings)
 {
-    _currentLayout->addControl(controlName, defaultSettings);
+    _currentLayout->registerControl(controlName, defaultSettings);
 }
 
 void MainFrame::focusControl(const cmd::ArgumentList& args)
@@ -629,6 +633,17 @@ void MainFrame::focusControl(const cmd::ArgumentList& args)
     }
 
     _currentLayout->focusControl(args.at(0).getString());
+}
+
+void MainFrame::createControl(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        rMessage() << "Usage: CreateControl <ControlName>" << std::endl;
+        return;
+    }
+
+    _currentLayout->createControl(args.at(0).getString());
 }
 
 void MainFrame::toggleControl(const cmd::ArgumentList& args)

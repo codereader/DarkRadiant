@@ -47,7 +47,10 @@ public:
 	void restoreStateFromRegistry() override;
     void createFloatingControl(const std::string& controlName) override;
 
-    void addControl(const std::string& controlName, const IMainFrame::ControlSettings& defaultSettings);
+    void registerControl(const std::string& controlName, const IMainFrame::ControlSettings& defaultSettings);
+
+    // Creates the named control at its registered default location
+    void createControl(const std::string& controlName);
     void focusControl(const std::string& controlName);
     void toggleControl(const std::string& controlName);
 
@@ -58,8 +61,6 @@ public:
 	static std::shared_ptr<AuiLayout> CreateInstance();
 
 private:
-    // Creates the named control at its registered default location
-    void createControl(const std::string& controlName);
 
     // Add a pane to the wxAuiManager and store it in the list
     void addPane(const std::string& controlName, wxWindow* window, const wxAuiPaneInfo& info);

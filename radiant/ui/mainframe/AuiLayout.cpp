@@ -320,7 +320,7 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
     _auiMgr.Update();
 }
 
-void AuiLayout::addControl(const std::string& controlName, const IMainFrame::ControlSettings& defaultSettings)
+void AuiLayout::registerControl(const std::string& controlName, const IMainFrame::ControlSettings& defaultSettings)
 {
     _defaultControlSettings[controlName] = defaultSettings;
 

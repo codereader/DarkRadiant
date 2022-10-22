@@ -91,6 +91,7 @@ private:
 
 	void exitCmd(const cmd::ArgumentList& args);
 	void focusControl(const cmd::ArgumentList& args);
+	void createControl(const cmd::ArgumentList& args);
 	void toggleControl(const cmd::ArgumentList& args);
 
 	void removeLayout();
