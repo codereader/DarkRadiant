@@ -60,7 +60,14 @@ public:
     LightInspector(wxWindow* parent);
     ~LightInspector() override;
 
+protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
+    void connectListeners();
+    void disconnectListeners();
+
     // Widget construction functions
     void setupLightShapeOptions();
     void bindSpawnargToCheckbox(std::string spawnarg, std::string checkbox);

@@ -48,11 +48,22 @@ LightInspector::LightInspector(wxWindow* parent) :
     makeLabelBold(this, "LightInspectorOptionsLabel");
 
     SetMinSize(contents->GetEffectiveMinSize());
+}
 
-    _selectionChanged.disconnect();
-    _undoHandler.disconnect();
-    _redoHandler.disconnect();
+void LightInspector::onPanelActivated()
+{
+    connectListeners();
+    // Update the widgets right now
+    update();
+}
 
+void LightInspector::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void LightInspector::connectListeners()
+{
     // Register self as observer to receive events
     _undoHandler = GlobalMapModule().signal_postUndo().connect(
         sigc::mem_fun(this, &LightInspector::update));
@@ -62,9 +73,13 @@ LightInspector::LightInspector(wxWindow* parent) :
     // Register self to the SelSystem to get notified upon selection changes.
     _selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
         [this](const ISelectable&) { update(); });
+}
 
-    // Update the widgets right now
-    update();
+void LightInspector::disconnectListeners()
+{
+    _selectionChanged.disconnect();
+    _undoHandler.disconnect();
+    _redoHandler.disconnect();
 }
 
 void LightInspector::shaderSelectionChanged()
