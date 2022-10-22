@@ -49,6 +49,7 @@ AuiLayout::AuiLayout() :
     _auiMgr(nullptr, wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_VENETIAN_BLINDS_HINT | wxAUI_MGR_LIVE_RESIZE),
     _propertyNotebook(nullptr)
 {
+    _auiMgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
     _auiMgr.Bind(wxEVT_AUI_PANE_CLOSE, &AuiLayout::onPaneClose, this);
 }
 
@@ -262,6 +263,12 @@ void AuiLayout::createPane(const std::string& controlName, const std::string& pa
     }
 
     auto widget = control->createWidget(managedWindow);
+
+    // Fit and determine the floating size automatically
+    widget->Fit();
+
+    // Some additional height for the window title bar
+    pane.FloatingSize(widget->GetSize().x, widget->GetSize().y + 30);
 
     _auiMgr.AddPane(widget, pane);
     _panes.push_back({ paneName, controlName, widget });
