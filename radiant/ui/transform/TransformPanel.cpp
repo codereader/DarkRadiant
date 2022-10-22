@@ -48,15 +48,36 @@ TransformPanel::TransformPanel(wxWindow* parent) :
 {
 	// Create all the widgets and pack them into the window
 	populateWindow();
+}
 
-    _selectionChanged.disconnect();
+TransformPanel::~TransformPanel()
+{
+    disconnectListeners();
+}
 
+void TransformPanel::onPanelActivated()
+{
+    connectListeners();
+
+    // Update the widget sensitivity
+    update();
+}
+
+void TransformPanel::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void TransformPanel::connectListeners()
+{
     // Register self to the SelSystem to get notified upon selection changes.
     _selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
         [this](const ISelectable&) { update(); });
+}
 
-	// Update the widget sensitivity
-	update();
+void TransformPanel::disconnectListeners()
+{
+    _selectionChanged.disconnect();
 }
 
 void TransformPanel::populateWindow()
@@ -171,11 +192,6 @@ TransformPanel::EntryRow TransformPanel::createEntryRow(
 
 	// Return the filled structure
 	return entryRow;
-}
-
-TransformPanel::~TransformPanel()
-{
-	_selectionChanged.disconnect();
 }
 
 void TransformPanel::update()
