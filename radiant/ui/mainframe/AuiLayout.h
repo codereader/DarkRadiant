@@ -32,6 +32,9 @@ class AuiLayout : public IMainFrameLayout
 
     std::map<std::string, IMainFrame::ControlSettings> _defaultControlSettings;
 
+    // Stored floating window locations
+    std::map<std::string, std::string> _floatingPaneLocations;
+
 public:
     AuiLayout();
 

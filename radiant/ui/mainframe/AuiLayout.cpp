@@ -135,11 +135,19 @@ void AuiLayout::convertPaneToPropertyTab(const std::string& paneName)
 
 void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
 {
+    // For floating panes, memorise the last size and position
+    auto closedPane = ev.GetPane();
+
+    if (closedPane->IsFloating())
+    {
+        // Store the position of this pane before closing
+        _floatingPaneLocations[closedPane->name.ToStdString()] = _auiMgr.SavePaneInfo(*closedPane).ToStdString();
+    }
+
     // This is a desperate work around to let undocked property windows
     // return to the property notebook when they're closed
     // I failed finding any other way to have floating windows dragged into
     // the notebook, or adding a custom pane button - I'm open to ideas
-    auto closedPane = ev.GetPane();
 
     for (auto i = _panes.begin(); i != _panes.end(); ++i)
     {
@@ -276,7 +284,18 @@ void AuiLayout::createPane(const std::string& controlName, const std::string& pa
 
 void AuiLayout::createFloatingControl(const std::string& controlName)
 {
-    createPane(controlName, generateUniquePaneName(controlName), setupFloatingPane);
+    createPane(controlName, generateUniquePaneName(controlName), [this](auto& paneInfo)
+    {
+        setupFloatingPane(paneInfo);
+
+        // Check if we got existing size information for this floating pane
+        auto existingSizeInfo = _floatingPaneLocations.find(paneInfo.name.ToStdString());
+
+        if (existingSizeInfo != _floatingPaneLocations.end())
+        {
+            _auiMgr.LoadPaneInfo(existingSizeInfo->second, paneInfo);
+        }
+    });
 
     _auiMgr.Update();
 }
