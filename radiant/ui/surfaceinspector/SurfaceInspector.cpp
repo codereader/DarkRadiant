@@ -138,13 +138,37 @@ SurfaceInspector::SurfaceInspector(wxWindow* parent) :
         sigc::mem_fun(this, &SurfaceInspector::keyChanged)
     );
 
-	// Update the widget status
-	doUpdate();
-
 	// Get the relevant Events from the Manager and connect the widgets
-	connectEvents();
+	connectButtons();
 
-	//InitialiseWindowPosition(410, 480, RKEY_WINDOW_STATE);
+    // Force the focus to the inspector window itself to avoid the cursor
+    // from jumping into the shader entry field
+    this->SetFocus();
+}
+
+SurfaceInspector::~SurfaceInspector()
+{
+    disconnectEventHandlers();
+}
+
+void SurfaceInspector::onPanelActivated()
+{
+    connectEventHandlers();
+
+    // Re-scan the selection
+    doUpdate();
+}
+
+void SurfaceInspector::onPanelDeactivated()
+{
+    disconnectEventHandlers();
+}
+
+void SurfaceInspector::connectEventHandlers()
+{
+    // Connect the ToggleTexLock item to the corresponding command
+    GlobalEventManager().findEvent("TogTexLock")->connectToggleButton(_texLockButton);
+
     // Register self to the SelSystem to get notified upon selection changes.
     _selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
         [this](const ISelectable&) { doUpdate(); });
@@ -159,16 +183,9 @@ SurfaceInspector::SurfaceInspector(wxWindow* parent) :
         radiant::IMessage::Type::TextureChanged,
         radiant::TypeListener<radiant::TextureChangedMessage>(
             sigc::mem_fun(this, &SurfaceInspector::handleTextureChangedMessage)));
-
-    // Re-scan the selection
-    doUpdate();
-
-    // Force the focus to the inspector window itself to avoid the cursor
-    // from jumping into the shader entry field
-    this->SetFocus();
 }
 
-SurfaceInspector::~SurfaceInspector()
+void SurfaceInspector::disconnectEventHandlers()
 {
     GlobalEventManager().findEvent("TogTexLock")->disconnectToggleButton(_texLockButton);
 
@@ -180,7 +197,7 @@ SurfaceInspector::~SurfaceInspector()
     _redoHandler.disconnect();
 }
 
-void SurfaceInspector::connectEvents()
+void SurfaceInspector::connectButtons()
 {
 	// Be sure to connect these signals BEFORE the buttons are connected
 	// to the events, so that the doUpdate() call gets invoked after the actual event has been fired.
@@ -201,9 +218,6 @@ void SurfaceInspector::connectEvents()
 		i->second.smaller->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 		i->second.larger->Connect(wxEVT_BUTTON, wxCommandEventHandler(SurfaceInspector::onUpdateAfterButtonClick), NULL, this);
 	}
-
-	// Connect the ToggleTexLock item to the according command
-	GlobalEventManager().findEvent("TogTexLock")->connectToggleButton(_texLockButton);
 
 	wxutil::button::connectToCommand(_flipTexture.flipX, "FlipTextureX");
 	wxutil::button::connectToCommand(_flipTexture.flipY, "FlipTextureY");
@@ -651,11 +665,10 @@ void SurfaceInspector::doUpdate()
 
 	const SelectionInfo& selectionInfo = GlobalSelectionSystem().getSelectionInfo();
 
-	bool valueSensitivity = false;
 	bool haveSelection = (selectionInfo.totalCount > 0);
 
 	// If patches or entities are selected, the value entry fields have no meaning
-	valueSensitivity = (selectionInfo.patchCount == 0 &&
+	bool valueSensitivity = (selectionInfo.patchCount == 0 &&
 						selectionInfo.totalCount > 0 &&
 						selectionInfo.entityCount == 0 &&
 						GlobalSelectionSystem().getSelectedFaceCount() == 1);

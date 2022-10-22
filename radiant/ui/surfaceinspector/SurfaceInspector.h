@@ -119,7 +119,13 @@ public:
 protected:
     void onIdle() override;
 
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
+    void connectEventHandlers();
+    void disconnectEventHandlers();
+
 	void doUpdate();
 
 	/** greebo: Creates a row consisting of label, value entry,
@@ -139,7 +145,7 @@ private:
     void createScaleLinkButtons(wxutil::FormLayout& table);
 
 	// Connect IEvents to the widgets
-	void connectEvents();
+	void connectButtons();
 
 	// Updates the texture shift/scale/rotation fields
 	void updateTexDef();
