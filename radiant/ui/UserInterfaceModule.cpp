@@ -265,17 +265,17 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
     {
         // Set default locations of some controls
-        GlobalMainFrame().addControl(UserControl::SurfaceInspector, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::SurfaceInspector, { IMainFrame::Location::FloatingWindow, false, 330, 480 });
         GlobalMainFrame().addControl(UserControl::LayerControlPanel, { IMainFrame::Location::FloatingWindow, false, 180, 300 });
-        GlobalMainFrame().addControl(UserControl::TextureTool, { IMainFrame::Location::FloatingWindow, false });
-        GlobalMainFrame().addControl(UserControl::PatchInspector, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::TextureTool, { IMainFrame::Location::FloatingWindow, false, 600, 400 });
+        GlobalMainFrame().addControl(UserControl::PatchInspector, { IMainFrame::Location::FloatingWindow, false, 280, 480 });
         GlobalMainFrame().addControl(UserControl::LightInspector, { IMainFrame::Location::FloatingWindow, false, 780, 420 });
-        GlobalMainFrame().addControl(UserControl::TransformPanel, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::TransformPanel, { IMainFrame::Location::FloatingWindow, false, 260, 310 });
         GlobalMainFrame().addControl(UserControl::MapMergePanel, { IMainFrame::Location::FloatingWindow, false, 380, 440 });
         GlobalMainFrame().addControl(UserControl::EntityList, { IMainFrame::Location::FloatingWindow, false, 250, 400 });
-        GlobalMainFrame().addControl(UserControl::AasVisualisationPanel, { IMainFrame::Location::FloatingWindow, false });
-        GlobalMainFrame().addControl(UserControl::FindAndReplaceMaterial, { IMainFrame::Location::FloatingWindow, false });
-        GlobalMainFrame().addControl(UserControl::OrthoBackgroundPanel, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::AasVisualisationPanel, { IMainFrame::Location::FloatingWindow, false, 200, 200 });
+        GlobalMainFrame().addControl(UserControl::FindAndReplaceMaterial, { IMainFrame::Location::FloatingWindow, false, 350, 200 });
+        GlobalMainFrame().addControl(UserControl::OrthoBackgroundPanel, { IMainFrame::Location::FloatingWindow, false, 480, 350 });
     });
 }
 
