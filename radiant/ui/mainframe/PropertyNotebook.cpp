@@ -20,7 +20,7 @@ PropertyNotebook::PropertyNotebook(wxWindow* parent, AuiLayout& owner) :
     wxAuiNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
         wxNB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS),
     _layout(owner),
-    _hintRectangle(nullptr)
+    _dropHint(nullptr)
 {
     SetName("PropertyNotebook");
 
@@ -33,11 +33,11 @@ PropertyNotebook::PropertyNotebook(wxWindow* parent, AuiLayout& owner) :
     _popupMenu = std::make_shared<wxutil::PopupMenu>();
     _popupMenu->addItem(
         new wxMenuItem(nullptr, wxID_ANY, _("Undock"), ""),
-        [this]() { undockTab(); }
+        [this]() { undockSelectedTab(); }
     );
     _popupMenu->addItem(
         new wxMenuItem(nullptr, wxID_ANY, _("Close"), ""),
-        [this]() { closeTab(); }
+        [this]() { closeSelectedTab(); }
     );
 }
 
@@ -50,81 +50,42 @@ void PropertyNotebook::addControl(const std::string& controlName)
         throw std::logic_error("There's no such control: " + controlName);
     }
 
-    _controls.emplace(controlName, control);
-
-    auto page = std::make_shared<Page>();
-
-    page->name = controlName;
-    page->page = control->createWidget(this);
-    page->tabIcon = control->getIcon();
-    page->tabLabel = control->getDisplayName();
-    page->position = 0;
-
-    // Move to the end of the existing controls
-    for (const auto& existing : _pages)
-    {
-        page->position = std::max(page->position, existing.second.position);
-    }
-
-    // Add and select the new page
-    SetSelection(FindPage(addPage(page)));
-}
-
-wxWindow* PropertyNotebook::addPage(const PagePtr& page)
-{
     // Make sure the notebook is visible before adding pages
     Show();
 
     // Load the icon
-    page->tabIconIndex = page->tabIcon.empty() ? -1 :
-        _imageList->Add(wxutil::GetLocalBitmap(page->tabIcon));
+    int tabIconIndex = control->getIcon().empty() ? -1 :
+        _imageList->Add(wxutil::GetLocalBitmap(control->getIcon()));
+    
+    auto content = control->createWidget(this);
+    content->Reparent(this);
 
-    // Handle position conflicts first
-    auto conflictingPage = _pages.find(page->position);
-
-    // Move back one position until we find a free slot
-    while (conflictingPage != _pages.end())
-    {
-        page->position = conflictingPage->second.position + 1;
-
-        conflictingPage = _pages.find(page->position);
-    }
-
-    // Create the notebook page
-    size_t insertPosition = GetPageCount();
-
-    // Find a page with a higher position value and sort the incoming one to the left
-    for (auto existing : _pages)
-    {
-        if (page->position < existing.second.position)
-        {
-            // Found, extract the tab position and break the loop
-            insertPosition = FindPage(existing.second.page);
-            break;
-        }
-    }
-
-    page->page->Reparent(this);
-    InsertPage(insertPosition, page->page, page->tabLabel, false, page->tabIconIndex);
+    AddPage(content, control->getDisplayName(), false, tabIconIndex);
 
     // Add this page by copy to the local list
-    _pages.emplace(page->position, Page(*page));
+    _pages.emplace_back(Page
+    {
+        control->getControlName(),
+        tabIconIndex,
+        content,
+    });
 
-    return page->page;
+    // Select the new page
+    SetSelection(FindPage(content));
 }
 
-void PropertyNotebook::removePage(const std::string& name)
+void PropertyNotebook::removeControl(const std::string& controlName)
 {
     // Find the page with that name
     for (auto i = _pages.begin(); i != _pages.end(); ++i)
     {
         // Skip the wrong ones
-        if (i->second.name != name) continue;
+        if (i->controlName != controlName) continue;
 
         // Remove the page from the notebook
-        DeletePage(FindPage(i->second.page));
+        DeletePage(FindPage(i->page));
 
-        // Remove the page and break the loop
+        // Remove the entry and break the loop
         _pages.erase(i);
         break;
     }
@@ -188,28 +149,23 @@ std::string PropertyNotebook::getSelectedControlName()
     return findControlNameByWindow(win);
 }
 
-void PropertyNotebook::undockTab()
+void PropertyNotebook::undockSelectedTab()
 {
     auto controlName = getSelectedControlName();
 
-    if (!controlName.empty())
-    {
-        // Remove the page
-        removePage(controlName);
+    closeSelectedTab();
 
-        // Get the control name and create a floating window
-        _layout.createFloatingControl(controlName);
-    }
+    // Get the control name and create a floating window
+    _layout.createFloatingControl(controlName);
 }
 
-void PropertyNotebook::closeTab()
+void PropertyNotebook::closeSelectedTab()
 {
     auto controlName = getSelectedControlName();
 
     if (!controlName.empty())
     {
-        // Remove the page
-        removePage(controlName);
+        removeControl(controlName);
     }
 }
 
@@ -217,9 +173,9 @@ std::string PropertyNotebook::findControlNameByWindow(wxWindow* window)
 {
     for (const auto& page : _pages)
     {
-        if (page.second.page == window)
+        if (page.page == window)
         {
-            return page.second.name;
+            return page.controlName;
         }
     }
 
@@ -230,9 +186,9 @@ int PropertyNotebook::findControlIndexByName(const std::string& controlName)
 {
     for (const auto& page : _pages)
     {
-        if (page.second.name == controlName)
+        if (page.controlName == controlName)
         {
-            return FindPage(page.second.page);
+            return FindPage(page.page);
         }
     }
 
@@ -243,9 +199,9 @@ int PropertyNotebook::getImageIndexForControl(const std::string& controlName)
 {
     for (const auto& page : _pages)
     {
-        if (page.second.name == controlName)
+        if (page.controlName == controlName)
         {
-            return page.second.tabIconIndex;
+            return page.tabIconIndex;
         }
     }
 
@@ -308,9 +264,9 @@ void PropertyNotebook::restoreState()
 
     for (const auto& page : _pages)
     {
-        if (page.second.name == lastShownPage)
+        if (page.controlName == lastShownPage)
         {
-            SetSelection(FindPage(page.second.page));
+            SetSelection(FindPage(page.page));
             break;
         }
     }
@@ -337,27 +293,27 @@ void PropertyNotebook::focusControl(const std::string& controlName)
 
 void PropertyNotebook::showDropHint(const wxRect& size)
 {
-    if (!_hintRectangle)
+    if (!_dropHint)
     {
-        _hintRectangle = new wxFrame(this, wxID_ANY, wxEmptyString,
+        _dropHint = new wxFrame(this, wxID_ANY, wxEmptyString,
             wxDefaultPosition, wxSize(1, 1),
             wxFRAME_TOOL_WINDOW | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxNO_BORDER);
 
-        _hintRectangle->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
-        _hintRectangle->SetTransparent(128);
+        _dropHint->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+        _dropHint->SetTransparent(128);
     }
 
-    _hintRectangle->SetSize(size);
-    _hintRectangle->Raise();
-    _hintRectangle->Show();
+    _dropHint->SetSize(size);
+    _dropHint->Raise();
+    _dropHint->Show();
 }
 
 void PropertyNotebook::hideDropHint()
 {
-    if (!_hintRectangle) return;
+    if (!_dropHint) return;
 
-    _hintRectangle->Destroy();
-    _hintRectangle = nullptr;
+    _dropHint->Destroy();
+    _dropHint = nullptr;
 }
 
 }
