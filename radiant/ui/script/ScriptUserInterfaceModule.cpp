@@ -1,6 +1,7 @@
 #include <sigc++/connection.h>
 
 #include "iscript.h"
+#include "icommandsystem.h"
 #include "ui/imenumanager.h"
 #include "ui/imainframe.h"
 #include "i18n.h"
@@ -37,6 +38,7 @@ public:
             MODULE_MENUMANAGER,
             MODULE_MAINFRAME,
             MODULE_USERINTERFACE,
+            MODULE_COMMANDSYSTEM,
         };
 
 		return _dependencies;
@@ -61,6 +63,8 @@ public:
 			.connect(sigc::mem_fun(this, &ScriptUserInterfaceModule::onScriptsReloaded));
 
         GlobalUserInterface().registerControl(std::make_shared<ScriptPanel>());
+
+        GlobalCommandSystem().addStatement("ToggleScriptPanel", fmt::format("ToggleControl {0}", ScriptPanel::Name), false);
 	}
 
 	void shutdownModule() override

@@ -1,7 +1,5 @@
 #pragma once
 
-#include "icommandsystem.h"
-
 #include "wxutil/ConsoleView.h"
 #include "wxutil/DockablePanel.h"
 
@@ -23,13 +21,8 @@ private:
 public:
 	ScriptWindow(wxWindow* parent);
 
-	/**
-	 * greebo: Static command target for toggling the script window.
-	 */
-	static void toggle(const cmd::ArgumentList& args);
-
 private:
 	void onRunScript(wxCommandEvent& ev);
 };
 
-} // namespace script
+} // namespace
