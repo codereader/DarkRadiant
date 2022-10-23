@@ -148,16 +148,23 @@ void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
 
     ensureControlIsInactive(closedPane->window);
 
-    // This is a desperate work around to let undocked property windows
-    // return to the property notebook when they're closed
-    // I failed finding any other way to have floating windows dragged into
-    // the notebook, or adding a custom pane button - I'm open to ideas
-
+    // Find and remove the pane info structure
     for (auto i = _panes.begin(); i != _panes.end(); ++i)
     {
         if (i->paneName != closedPane->name) continue;
 
-        _propertyNotebook->addControl(i->controlName);
+        // This is a desperate work around to let undocked property windows
+        // return to the property notebook when they're closed
+        // I failed finding any other way to have floating windows dragged into
+        // the notebook, or adding a custom pane button - I'm open to ideas
+        auto settings = _defaultControlSettings.find(closedPane->name.ToStdString());
+
+        if (settings != _defaultControlSettings.end() && settings->second.location == IMainFrame::Location::PropertyPanel)
+        {
+            // Create a new instance to the property notebook
+            _propertyNotebook->addControl(i->controlName);
+        }
+
         _panes.erase(i);
         break;
     }
