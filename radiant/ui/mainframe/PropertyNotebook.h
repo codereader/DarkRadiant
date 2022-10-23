@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ui/iuserinterface.h"
 #include <wx/aui/auibook.h>
 
 #include "wxutil/menu/PopupMenu.h"
@@ -10,6 +9,10 @@ namespace ui
 
 class AuiLayout;
 
+/**
+ * Specialised AUI notebook implementation, adding save/restore capabilities
+ * and an interface to allow floating panes to be dragged in as new tab.
+ */
 class PropertyNotebook :
     public wxAuiNotebook
 {
@@ -39,13 +42,11 @@ public:
     PropertyNotebook(wxWindow* parent, AuiLayout& owner);
 
     void addControl(const std::string& controlName);
-
-    void removeControl(const std::string& name);
+    void focusControl(const std::string& controlName);
+    void removeControl(const std::string& controlName);
 
     // Returns true if the given control is loaded in a tab
     bool controlExists(const std::string& controlName);
-
-    void focusControl(const std::string& controlName);
 
     void saveState();
     void restoreState();
@@ -55,10 +56,10 @@ public:
 
 private:
     std::string getSelectedPageName();
+    std::string getSelectedControlName();
     int findControlIndexByName(const std::string& controlName);
     std::string findControlNameByWindow(wxWindow* window);
-    int getImageIndexForControl(const std::string& controlName);
-    std::string getSelectedControlName();
+    int findImageIndexForControl(const std::string& controlName);
 
     void onPageSwitch(wxBookCtrlEvent& ev);
     void onTabRightClick(wxAuiNotebookEvent& ev);

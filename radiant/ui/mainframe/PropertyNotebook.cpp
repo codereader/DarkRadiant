@@ -1,5 +1,6 @@
 #include "PropertyNotebook.h"
 
+#include "ui/iuserinterface.h"
 #include "wxutil/Bitmap.h"
 #include "AuiLayout.h"
 
@@ -43,6 +44,12 @@ PropertyNotebook::PropertyNotebook(wxWindow* parent, AuiLayout& owner) :
 
 void PropertyNotebook::addControl(const std::string& controlName)
 {
+    if (controlExists(controlName))
+    {
+        rWarning() << "Control " << controlName << " has already been added as tab" << std::endl;
+        return;
+    }
+
     auto control = GlobalUserInterface().findControl(controlName);
 
     if (!control)
@@ -195,7 +202,7 @@ int PropertyNotebook::findControlIndexByName(const std::string& controlName)
     return -1;
 }
 
-int PropertyNotebook::getImageIndexForControl(const std::string& controlName)
+int PropertyNotebook::findImageIndexForControl(const std::string& controlName)
 {
     for (const auto& page : _pages)
     {
@@ -252,7 +259,7 @@ void PropertyNotebook::restoreState()
         {
             // Move to correct position, keeping image and caption intact
             auto window = GetPage(existingIndex);
-            auto imageIndex = getImageIndexForControl(controlName);
+            auto imageIndex = findImageIndexForControl(controlName);
             auto pageText = GetPageText(existingIndex);
 
             RemovePage(existingIndex);
