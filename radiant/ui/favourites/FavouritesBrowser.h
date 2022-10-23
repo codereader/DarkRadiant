@@ -7,13 +7,15 @@
 #include <sigc++/connection.h>
 
 #include "wxutil/DockablePanel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 #include "wxutil/menu/PopupMenu.h"
 
 namespace ui
 {
 
 class FavouritesBrowser :
-    public wxutil::DockablePanel
+    public wxutil::DockablePanel,
+    public wxutil::SingleIdleCallback
 {
 private:
     // Holds the data used to construct the wxListItem
@@ -39,19 +41,29 @@ private:
 
     // Maps decl type to icon index
     std::list<FavouriteCategory> _categories;
-    std::list<sigc::connection> changedConnections;
+    std::list<sigc::connection> _changedConnections;
     std::list<FavouriteItem> _listItems;
 
     wxCheckBox* _showFullPath;
-    bool _updateNeeded;
+    bool _reloadFavouritesOnIdle;
 
     wxutil::PopupMenuPtr _popupMenu;
 
 public:
     FavouritesBrowser(wxWindow* parent);
-    ~FavouritesBrowser();
+    ~FavouritesBrowser() override;
+
+protected:
+    void onIdle() override;
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
 
 private:
+    void queueUpdate();
+
+    void connectListeners();
+    void disconnectListeners();
+
     wxToolBar* createLeftToolBar();
     wxToolBar* createRightToolBar();
     void onFavouritesChanged();
@@ -63,7 +75,6 @@ private:
     void onRemoveFromFavourite();
     void onCategoryToggled(wxCommandEvent& ev);
     void onShowFullPathToggled(wxCommandEvent& ev);
-    void onListCtrlPaint(wxPaintEvent& ev);
     void onContextMenu(wxContextMenuEvent& ev);
     void onItemActivated(wxListEvent& ev);
 
