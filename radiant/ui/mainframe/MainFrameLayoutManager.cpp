@@ -41,10 +41,14 @@ void MainFrameLayoutManager::registerCommands()
     // remove all commands beforehand
     _commands.clear();
 
-    // Add a new command for each layout
-    for (auto i = _layouts.begin(); i != _layouts.end(); ++i)
+    // Don't bother adding the menu if we just have one layout
+    if (_layouts.size() > 1)
     {
-        _commands.emplace_back(std::make_shared<LayoutCommand>(i->first));
+        // Add a new command for each layout
+        for (auto i = _layouts.begin(); i != _layouts.end(); ++i)
+        {
+            _commands.emplace_back(std::make_shared<LayoutCommand>(i->first));
+        }
     }
 }
 
