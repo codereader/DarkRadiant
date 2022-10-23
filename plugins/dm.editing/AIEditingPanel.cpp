@@ -27,7 +27,8 @@ namespace ui
 AIEditingPanel::AIEditingPanel(wxWindow* parent) :
     DockablePanel(parent),
 	_mainPanel(new wxScrolledWindow(this, wxID_ANY)),
-	_entity(nullptr)
+	_entity(nullptr),
+    _rescanSelectionOnIdle(true)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(_mainPanel, 1, wxEXPAND);
@@ -43,7 +44,9 @@ AIEditingPanel::~AIEditingPanel()
 void AIEditingPanel::onPanelActivated()
 {
     connectListeners();
-    rescanSelection();
+
+    _rescanSelectionOnIdle = true;
+    requestIdleCallback();
 }
 
 void AIEditingPanel::onPanelDeactivated()
@@ -74,6 +77,15 @@ void AIEditingPanel::disconnectListeners()
     {
         _entity->detachObserver(this);
         _entity = nullptr;
+    }
+}
+
+void AIEditingPanel::onIdle()
+{
+    if (_rescanSelectionOnIdle)
+    {
+        _rescanSelectionOnIdle = false;
+        rescanSelection();
     }
 }
 
@@ -380,7 +392,8 @@ void AIEditingPanel::rescanSelection()
 
 void AIEditingPanel::onSelectionChanged(const ISelectable&)
 {
-    rescanSelection();
+    _rescanSelectionOnIdle = true;
+    requestIdleCallback();
 }
 
 void AIEditingPanel::onBrowseButton(wxCommandEvent& ev, const std::string& key)

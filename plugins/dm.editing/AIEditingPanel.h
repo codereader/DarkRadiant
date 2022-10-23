@@ -8,6 +8,7 @@
 #include <sigc++/trackable.h>
 
 #include "wxutil/DockablePanel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 class ISelectable;
 class Entity;
@@ -27,7 +28,8 @@ class SpawnargLinkedSpinButton;
 class AIEditingPanel : 
 	public wxutil::DockablePanel,
 	public Entity::Observer,
-	public sigc::trackable
+	public sigc::trackable,
+    public wxutil::SingleIdleCallback
 {
 private:
 	sigc::connection _selectionChangedSignal;
@@ -48,6 +50,8 @@ private:
 	sigc::connection _undoHandler;
 	sigc::connection _redoHandler;
 
+    bool _rescanSelectionOnIdle;
+
 public:
 	AIEditingPanel(wxWindow* parent);
 	~AIEditingPanel() override;
@@ -60,6 +64,7 @@ public:
 	void postRedo();
 
 protected:
+    void onIdle() override;
 	void onBrowseButton(wxCommandEvent& ev, const std::string& key);
 
     void onPanelActivated() override;
