@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="window">
-      <UniqueIdentifier>{57279c19-f6ac-43a7-8d84-d5026bcaa887}</UniqueIdentifier>
-    </Filter>
     <Filter Include="menu">
       <UniqueIdentifier>{7d42ed4c-3443-4ed5-a232-7e4c689d577a}</UniqueIdentifier>
     </Filter>
@@ -68,9 +65,6 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\preview\ModelPreview.h">
       <Filter>preview</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\libs\wxutil\window\TransientWindow.h">
-      <Filter>window</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\ModalProgressDialog.h" />
     <ClInclude Include="..\..\libs\wxutil\MouseButton.h" />
@@ -211,9 +205,6 @@
     </ClCompile>
     <ClCompile Include="..\..\libs\wxutil\preview\ModelPreview.cpp">
       <Filter>preview</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\libs\wxutil\window\TransientWindow.cpp">
-      <Filter>window</Filter>
     </ClCompile>
     <ClCompile Include="..\..\libs\wxutil\ModalProgressDialog.cpp" />
     <ClCompile Include="..\..\libs\wxutil\PanedPosition.cpp" />
