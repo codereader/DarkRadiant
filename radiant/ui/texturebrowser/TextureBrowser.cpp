@@ -243,6 +243,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     observeKey(RKEY_TEXTURE_SHOW_FILTER);
     observeKey(RKEY_TEXTURE_MAX_NAME_LENGTH);
     observeKey(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
+    observeKey(RKEY_TEXTURES_SHOW_NAMES);
 
     loadScaleFromRegistry();
 
@@ -269,8 +270,6 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
 
     GlobalMaterialManager().signal_activeShadersChanged().connect(
         sigc::mem_fun(this, &TextureBrowser::onActiveShadersChanged));
-
-    Bind(wxEVT_IDLE, &TextureBrowser::onIdle, this);
 
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -351,14 +350,34 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     }
 
     updateScroll();
-
-    GlobalFavouritesManager().getSignalForType(decl::getTypeName(decl::Type::Material)).connect(
-        sigc::mem_fun(this, &TextureBrowser::onFavouritesChanged));
 }
 
 TextureBrowser::~TextureBrowser()
 {
+    disconnectListeners();
     GlobalTextureBrowser().unregisterTextureBrowser(this);
+}
+
+void TextureBrowser::onPanelActivated()
+{
+    connectListeners();
+    queueUpdate();
+}
+
+void TextureBrowser::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void TextureBrowser::connectListeners()
+{
+    _favouritesChangedHandler = GlobalFavouritesManager().getSignalForType(decl::getTypeName(decl::Type::Material))
+        .connect(sigc::mem_fun(this, &TextureBrowser::onFavouritesChanged));
+}
+
+void TextureBrowser::disconnectListeners()
+{
+    _favouritesChangedHandler.disconnect();
 }
 
 void TextureBrowser::loadScaleFromRegistry()
@@ -455,7 +474,7 @@ void TextureBrowser::keyChanged()
 
 void TextureBrowser::onFavouritesChanged()
 {
-    _updateNeeded = true;
+    queueUpdate();
 }
 
 // Return the display width of a texture in the texture browser
@@ -670,6 +689,11 @@ void TextureBrowser::setOriginY(int newOriginY)
 void TextureBrowser::queueUpdate()
 {
     _updateNeeded = true;
+
+    if (panelIsActive())
+    {
+        requestIdleCallback();
+    }
 }
 
 void TextureBrowser::performUpdate()
@@ -768,12 +792,12 @@ MaterialPtr TextureBrowser::getShaderAtCoords(int x, int y)
         }
     }
 
-    return MaterialPtr();
+    return {};
 }
 
 void TextureBrowser::selectTextureAt(int mx, int my)
 {
-    MaterialPtr shader = getShaderAtCoords(mx, my);
+    auto shader = getShaderAtCoords(mx, my);
 
     if (shader)
     {
@@ -1008,16 +1032,12 @@ void TextureBrowser::onGLMouseButtonRelease(wxMouseEvent& ev)
     }
 }
 
-void TextureBrowser::onIdle(wxIdleEvent& ev)
+void TextureBrowser::onIdle()
 {
     if (_updateNeeded)
     {
         performUpdate();
-
-        if (this->IsShownOnScreen())
-        {
-            queueDraw();
-        }
+        queueDraw();
     }
 }
 
@@ -1030,11 +1050,6 @@ bool TextureBrowser::onRender()
 
 	debug::assertNoGlErrors();
 
-    if (_updateNeeded)
-    {
-        performUpdate();
-    }
-
     draw();
 
     debug::assertNoGlErrors();
@@ -1042,7 +1057,7 @@ bool TextureBrowser::onRender()
     return true;
 }
 
-} // namespace ui
+} // namespace
 
 /** greebo: The accessor method, use this to call non-static TextureBrowser methods
  */
