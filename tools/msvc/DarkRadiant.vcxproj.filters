@@ -337,22 +337,13 @@
     <ClCompile Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.cpp">
       <Filter>src\ui\layers</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\mainframe\EmbeddedLayout.cpp">
-      <Filter>src\ui\mainframe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\mainframe\MainFrame.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\mainframe\MainFrameLayoutManager.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\mainframe\RegularLayout.cpp">
-      <Filter>src\ui\mainframe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp">
-      <Filter>src\ui\mainframe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\mainframe\SplitPaneLayout.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp">
@@ -867,9 +858,6 @@
     <ClInclude Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.h">
       <Filter>src\ui\layers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mainframe\EmbeddedLayout.h">
-      <Filter>src\ui\mainframe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\LayoutCommand.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
@@ -879,13 +867,7 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\MainFrameLayoutManager.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mainframe\RegularLayout.h">
-      <Filter>src\ui\mainframe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h">
-      <Filter>src\ui\mainframe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mainframe\SplitPaneLayout.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h">

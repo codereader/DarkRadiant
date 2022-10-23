@@ -83,13 +83,10 @@ add_executable(darkradiant
                ui/lightinspector/LightInspector.cpp
                ui/LongRunningOperationHandler.cpp
                ui/mainframe/AuiLayout.cpp
-               ui/mainframe/EmbeddedLayout.cpp
                ui/mainframe/MainFrame.cpp
                ui/mainframe/MainFrameLayoutManager.cpp
                ui/mainframe/PropertyNotebook.cpp
-               ui/mainframe/RegularLayout.cpp
                ui/mainframe/ScreenUpdateBlocker.cpp
-               ui/mainframe/SplitPaneLayout.cpp
                ui/mainframe/TopLevelFrame.cpp
                ui/mapselector/MapSelector.cpp
                ui/materials/editor/MaterialEditor.cpp
