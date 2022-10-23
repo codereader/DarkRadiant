@@ -21,6 +21,7 @@ void AuiFloatingFrame::onIdle()
     if (_isMoving && !wxGetMouseState().LeftIsDown())
     {
         _isMoving = false;
+        _notebook->hideDropHint();
 
         if (_owner->MouseCursorIsHoveringNotebook())
         {
@@ -43,9 +44,12 @@ void AuiFloatingFrame::onMove(wxMoveEvent& ev)
         // Block this event, don't let the regular wxAuiFloatingFrame process it
         _owner->HideHint();
         ev.StopPropagation();
+
+        _notebook->showDropHint(_notebook->GetScreenRect());
     }
     else
     {
+        _notebook->hideDropHint();
         ev.Skip();
     }
 }

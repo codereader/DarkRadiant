@@ -62,6 +62,8 @@ private:
 
     wxutil::PopupMenuPtr _popupMenu;
 
+    wxFrame* _hintRectangle;
+
 public:
     PropertyNotebook(wxWindow* parent, AuiLayout& owner);
 
@@ -77,6 +79,9 @@ public:
 
     void saveState();
     void restoreState();
+
+    void showDropHint(const wxRect& size);
+    void hideDropHint();
 
 private:
     std::string getSelectedPageName();

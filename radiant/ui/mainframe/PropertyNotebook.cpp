@@ -19,7 +19,8 @@ namespace
 PropertyNotebook::PropertyNotebook(wxWindow* parent, AuiLayout& owner) :
     wxAuiNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
         wxNB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS),
-    _layout(owner)
+    _layout(owner),
+    _hintRectangle(nullptr)
 {
     SetName("PropertyNotebook");
 
@@ -331,6 +332,31 @@ void PropertyNotebook::focusControl(const std::string& controlName)
             panel->SetFocusIgnoringChildren();
         }
     }
+}
+
+void PropertyNotebook::showDropHint(const wxRect& size)
+{
+    if (!_hintRectangle)
+    {
+        _hintRectangle = new wxFrame(this, wxID_ANY, wxEmptyString,
+            wxDefaultPosition, wxSize(1, 1),
+            wxFRAME_TOOL_WINDOW | wxFRAME_FLOAT_ON_PARENT | wxFRAME_NO_TASKBAR | wxNO_BORDER);
+
+        _hintRectangle->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_ACTIVECAPTION));
+        _hintRectangle->SetTransparent(128);
+    }
+
+    _hintRectangle->SetSize(size);
+    _hintRectangle->Raise();
+    _hintRectangle->Show();
+}
+
+void PropertyNotebook::hideDropHint()
+{
+    if (!_hintRectangle) return;
+
+    _hintRectangle->Destroy();
+    _hintRectangle = nullptr;
 }
 
 }
