@@ -184,6 +184,9 @@ void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
         _panes.erase(i);
         break;
     }
+
+    // Avoid losing focus of the main window
+    wxGetTopLevelParent(_auiMgr.GetManagedWindow())->SetFocus();
 }
 
 std::string AuiLayout::getName()
