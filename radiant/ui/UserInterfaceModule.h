@@ -88,6 +88,7 @@ public:
     void registerControl(const IUserControl::Ptr& control) override;
     IUserControl::Ptr findControl(const std::string& name) override;
     void unregisterControl(const std::string& controlName) override;
+    void foreachControl(const std::function<void(const std::string&)>& functor) override;
 
 private:
 	void registerUICommands();

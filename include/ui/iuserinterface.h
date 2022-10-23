@@ -33,6 +33,11 @@ public:
      * Unregisters the named control. Does nothing if the name is not registered.
      */
     virtual void unregisterControl(const std::string& controlName) = 0;
+
+    /**
+     * Iterate over all registered control names
+     */
+    virtual void foreachControl(const std::function<void(const std::string&)>& functor) = 0;
 };
 
 }

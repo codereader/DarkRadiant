@@ -340,6 +340,14 @@ void UserInterfaceModule::unregisterControl(const std::string& controlName)
     _userControls.erase(controlName);
 }
 
+void UserInterfaceModule::foreachControl(const std::function<void(const std::string&)>& functor)
+{
+    for (const auto& [name, _] : _userControls)
+    {
+        functor(name);
+    }
+}
+
 void UserInterfaceModule::handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg)
 {
 	auto parentWindow = module::GlobalModuleRegistry().moduleExists(MODULE_MAINFRAME) ?
