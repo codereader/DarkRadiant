@@ -24,6 +24,9 @@ wxAuiFloatingFrame* AuiManager::CreateFloatingFrame(wxWindow* parent, const wxAu
 
 void AuiManager::DockPanelToNotebook(AuiFloatingFrame* frame)
 {
+    // Focus the notebook parent to avoid flickering
+    wxGetTopLevelParent(_notebook)->SetFocus();
+
     _layout->convertFloatingPaneToPropertyTab(frame);
     _notebook->hideDropHint();
 }
