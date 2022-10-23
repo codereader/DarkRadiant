@@ -34,8 +34,6 @@ private:
 
 	wxScrolledWindow* _mainPanel;
 
-	bool _queueUpdate;
-
 	typedef std::map<std::string, SpawnargLinkedCheckbox*> CheckboxMap;
 	CheckboxMap _checkboxes;
 
@@ -62,10 +60,15 @@ public:
 	void postRedo();
 
 protected:
-	void onPaint(wxPaintEvent& ev);
 	void onBrowseButton(wxCommandEvent& ev, const std::string& key);
 
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
+    void connectListeners();
+    void disconnectListeners();
+
 	void constructWidgets();
 	wxSizer* createSpinButtonHbox(SpawnargLinkedSpinButton* spinButton);
 	wxStaticText* createSectionLabel(const std::string& text);

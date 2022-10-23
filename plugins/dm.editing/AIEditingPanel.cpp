@@ -6,9 +6,7 @@
 #include "imap.h"
 #include "itextstream.h"
 #include "ui/ientityinspector.h"
-#include "ui/imainframe.h"
 #include "iundo.h"
-#include "ui/igroupdialog.h"
 #include "selectionlib.h"
 
 #include "SpawnargLinkedCheckbox.h"
@@ -29,19 +27,35 @@ namespace ui
 AIEditingPanel::AIEditingPanel(wxWindow* parent) :
     DockablePanel(parent),
 	_mainPanel(new wxScrolledWindow(this, wxID_ANY)),
-	_queueUpdate(true),
 	_entity(nullptr)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(_mainPanel, 1, wxEXPAND);
 
-	_mainPanel->Bind(wxEVT_PAINT, &AIEditingPanel::onPaint, this);
-
 	constructWidgets();
+}
 
-	_selectionChangedSignal = GlobalSelectionSystem().signal_selectionChanged().connect(
-		sigc::mem_fun(*this, &AIEditingPanel::onSelectionChanged)
-	);
+AIEditingPanel::~AIEditingPanel()
+{
+    disconnectListeners();
+}
+
+void AIEditingPanel::onPanelActivated()
+{
+    connectListeners();
+    rescanSelection();
+}
+
+void AIEditingPanel::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void AIEditingPanel::connectListeners()
+{
+    _selectionChangedSignal = GlobalSelectionSystem().signal_selectionChanged().connect(
+        sigc::mem_fun(*this, &AIEditingPanel::onSelectionChanged)
+    );
 
     _undoHandler = GlobalMapModule().signal_postUndo().connect(
         sigc::mem_fun(*this, &AIEditingPanel::updateWidgetsFromSelection));
@@ -49,12 +63,18 @@ AIEditingPanel::AIEditingPanel(wxWindow* parent) :
         sigc::mem_fun(*this, &AIEditingPanel::updateWidgetsFromSelection));
 }
 
-AIEditingPanel::~AIEditingPanel()
+void AIEditingPanel::disconnectListeners()
 {
     _undoHandler.disconnect();
     _redoHandler.disconnect();
 
     _selectionChangedSignal.disconnect();
+
+    if (_entity != nullptr)
+    {
+        _entity->detachObserver(this);
+        _entity = nullptr;
+    }
 }
 
 void AIEditingPanel::constructWidgets()
@@ -335,49 +355,32 @@ void AIEditingPanel::updateWidgetsFromSelection()
 
 void AIEditingPanel::rescanSelection()
 {
-	_queueUpdate = false;
-
 	// Load the new entity from the selection
-	_entity = getEntityFromSelection();
+	auto newEntity = getEntityFromSelection();
 
-	if (_entity != nullptr)
-	{
-		_entity->attachObserver(this);
-	}
+    if (newEntity != _entity)
+    {
+        // Disconnect from any previous entity
+        if (_entity != nullptr)
+        {
+            _entity->detachObserver(this);
+            _entity = nullptr; // issue #4282
+        }
+
+        if (newEntity != nullptr)
+        {
+            _entity = newEntity;
+            _entity->attachObserver(this);
+        }
+    }
 
 	updatePanelSensitivity();
 	updateWidgetsFromSelection();
 }
 
-void AIEditingPanel::onSelectionChanged(const ISelectable& selectable)
+void AIEditingPanel::onSelectionChanged(const ISelectable&)
 {
-	// Immediately disconnect from the current entity in any case
-	if (_entity != nullptr)
-	{
-		_entity->detachObserver(this);
-        _entity = nullptr; // issue #4282
-	}
-
-	if (GlobalGroupDialog().getPage() == _mainPanel)
-	{
-		rescanSelection();
-	}
-	else
-	{
-		// We don't scan the selection if the page is not visible
-		_queueUpdate = true;
-	}
-}
-
-void AIEditingPanel::onPaint(wxPaintEvent& ev)
-{
-	if (_queueUpdate)
-	{
-		// Wake up from sleep mode and inspect the current selection
-		rescanSelection();
-	}
-
-	ev.Skip();
+    rescanSelection();
 }
 
 void AIEditingPanel::onBrowseButton(wxCommandEvent& ev, const std::string& key)
@@ -385,7 +388,7 @@ void AIEditingPanel::onBrowseButton(wxCommandEvent& ev, const std::string& key)
 	if (_entity == nullptr) return;
 
 	// Look up the property editor dialog
-    IPropertyEditorDialog::Ptr dialog = GlobalEntityInspector().createDialog(key);
+    auto dialog = GlobalEntityInspector().createDialog(key);
 
 	if (dialog)
 	{
