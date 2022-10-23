@@ -146,6 +146,8 @@ void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
         _floatingPaneLocations[closedPane->name.ToStdString()] = _auiMgr.SavePaneInfo(*closedPane).ToStdString();
     }
 
+    ensureControlIsInactive(closedPane->window);
+
     // This is a desperate work around to let undocked property windows
     // return to the property notebook when they're closed
     // I failed finding any other way to have floating windows dragged into
