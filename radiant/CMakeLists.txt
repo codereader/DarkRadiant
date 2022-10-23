@@ -102,8 +102,6 @@ add_executable(darkradiant
                ui/animationpreview/MD5AnimationViewer.cpp
                ui/colourscheme/ColourSchemeEditor.cpp
                ui/common/DialogManager.cpp
-               ui/groupdialog/GroupDialog.cpp
-               ui/groupdialog/GroupDialogManager.cpp
                ui/menu/MenuBar.cpp
                ui/menu/MenuElement.cpp
                ui/menu/MenuFolder.cpp

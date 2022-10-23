@@ -124,9 +124,6 @@
     <ClInclude Include="..\..\include\ui\ifilechooser.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\ui\igroupdialog.h">
-      <Filter>ui</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\ui\imainframe.h">
       <Filter>ui</Filter>
     </ClInclude>

@@ -256,8 +256,6 @@
     <ClCompile Include="..\..\radiant\ui\fx\FxChooser.cpp" />
     <ClCompile Include="..\..\radiant\ui\gl\WxGLWidgetManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\grid\GridUserInterface.cpp" />
-    <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialog.cpp" />
-    <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialogManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LayerControlPanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\LongRunningOperationHandler.cpp" />
@@ -459,8 +457,6 @@
     <ClInclude Include="..\..\radiant\ui\fx\FxChooser.h" />
     <ClInclude Include="..\..\radiant\ui\gl\WxGLWidgetManager.h" />
     <ClInclude Include="..\..\radiant\ui\grid\GridUserInterface.h" />
-    <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialog.h" />
-    <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialogManager.h" />
     <ClInclude Include="..\..\radiant\ui\layers\CreateLayerDialog.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerControl.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerControlPanel.h" />

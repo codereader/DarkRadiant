@@ -1,7 +1,6 @@
 #include "MainFrameLayoutManager.h"
 
 #include "itextstream.h"
-#include "ui/igroupdialog.h"
 #include "icommandsystem.h"
 
 #include "module/StaticModule.h"

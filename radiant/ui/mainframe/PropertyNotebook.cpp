@@ -54,7 +54,6 @@ void PropertyNotebook::addControl(const std::string& controlName)
     auto page = std::make_shared<Page>();
 
     page->name = controlName;
-    page->windowLabel = control->getDisplayName();
     page->page = control->createWidget(this);
     page->tabIcon = control->getIcon();
     page->tabLabel = control->getDisplayName();

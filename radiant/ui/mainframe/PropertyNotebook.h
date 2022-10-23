@@ -31,10 +31,6 @@ public:
         // the actual widget to be added
         wxWindow* page = nullptr;
 
-        // the title string for the groupdialog window
-        // to be displayed when this tab is active
-        std::string windowLabel;
-
         // Define the order of the "native" group dialog pages
         // Use this enum values to indicate which tab position 
         // you need your page to have sorted at

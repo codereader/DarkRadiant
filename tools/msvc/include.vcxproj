@@ -219,7 +219,6 @@
     <ClInclude Include="..\..\include\ui\ientityinspector.h" />
     <ClInclude Include="..\..\include\ui\ieventmanager.h" />
     <ClInclude Include="..\..\include\ui\ifilechooser.h" />
-    <ClInclude Include="..\..\include\ui\igroupdialog.h" />
     <ClInclude Include="..\..\include\ui\imainframe.h" />
     <ClInclude Include="..\..\include\ui\imainframelayout.h" />
     <ClInclude Include="..\..\include\ui\imenu.h" />

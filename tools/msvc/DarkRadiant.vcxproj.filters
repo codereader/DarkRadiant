@@ -173,9 +173,6 @@
     <Filter Include="src\ui\colourscheme">
       <UniqueIdentifier>{f198ee8a-abfc-41e7-b3a5-9087c21695d6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\ui\groupdialog">
-      <UniqueIdentifier>{07fc75c2-d1cf-498c-8eb4-806389afc62b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="src\ui\materials">
       <UniqueIdentifier>{d855833c-6204-4825-ba61-c4e143ba50ce}</UniqueIdentifier>
     </Filter>
@@ -594,12 +591,6 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.cpp">
       <Filter>src\ui\animationpreview</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialog.cpp">
-      <Filter>src\ui\groupdialog</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\groupdialog\GroupDialogManager.cpp">
-      <Filter>src\ui\groupdialog</Filter>
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\common\DialogManager.cpp">
       <Filter>src\ui\common</Filter>
@@ -1214,12 +1205,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\animationpreview\MD5AnimationViewer.h">
       <Filter>src\ui\animationpreview</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialog.h">
-      <Filter>src\ui\groupdialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\groupdialog\GroupDialogManager.h">
-      <Filter>src\ui\groupdialog</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\common\DialogManager.h">
       <Filter>src\ui\common</Filter>
