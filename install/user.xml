@@ -39,7 +39,6 @@
       <showStimTypeIDs value="0" />
     </stimResponseEditor>
     <lightInspector>
-      <window xPosition="100" yPosition="150" width="780" height="400" />
       <instantApply value="1" />
     </lightInspector>
     <ModelSelector>
@@ -80,14 +79,6 @@
       <scaleYStep value="1.1" />
       <scaleZStep value="1.1" />
     </transformPanel>
-    <layers>
-      <controlDialog>
-        <window xPosition="57" yPosition="449" width="164" height="299" />
-      </controlDialog>
-    </layers>
-    <mergeControlDialog>
-        <window xPosition="158" yPosition="241" width="400" height="380"/>
-    </mergeControlDialog>
     <textures>
       <materialChooser>
         <window xPosition="200" yPosition="100" width="550" height="500" />
@@ -141,9 +132,6 @@
         <pane name="vertical2" position="250" />
       </splitPane>
     </mainFrame>
-    <entityList>
-      <window xPosition="50" yPosition="530" width="250" height="400" />
-    </entityList>
     <multiMonitor>
       <startMonitorNum value="0" />
     </multiMonitor>

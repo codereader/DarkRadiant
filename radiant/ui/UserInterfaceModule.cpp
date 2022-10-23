@@ -266,12 +266,12 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
     {
         // Set default locations of some controls
         GlobalMainFrame().addControl(UserControl::SurfaceInspector, { IMainFrame::Location::FloatingWindow, false });
-        GlobalMainFrame().addControl(UserControl::LayerControlPanel, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::LayerControlPanel, { IMainFrame::Location::FloatingWindow, false, 180, 300 });
         GlobalMainFrame().addControl(UserControl::TextureTool, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::PatchInspector, { IMainFrame::Location::FloatingWindow, false });
-        GlobalMainFrame().addControl(UserControl::LightInspector, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::LightInspector, { IMainFrame::Location::FloatingWindow, false, 780, 420 });
         GlobalMainFrame().addControl(UserControl::TransformPanel, { IMainFrame::Location::FloatingWindow, false });
-        GlobalMainFrame().addControl(UserControl::MapMergePanel, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::MapMergePanel, { IMainFrame::Location::FloatingWindow, false, 380, 440 });
         GlobalMainFrame().addControl(UserControl::EntityList, { IMainFrame::Location::FloatingWindow, false, 250, 400 });
         GlobalMainFrame().addControl(UserControl::AasVisualisationPanel, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::FindAndReplaceMaterial, { IMainFrame::Location::FloatingWindow, false });
