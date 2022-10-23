@@ -272,7 +272,7 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMainFrame().addControl(UserControl::LightInspector, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::TransformPanel, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::MapMergePanel, { IMainFrame::Location::FloatingWindow, false });
-        GlobalMainFrame().addControl(UserControl::EntityList, { IMainFrame::Location::FloatingWindow, false });
+        GlobalMainFrame().addControl(UserControl::EntityList, { IMainFrame::Location::FloatingWindow, false, 250, 400 });
         GlobalMainFrame().addControl(UserControl::AasVisualisationPanel, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::FindAndReplaceMaterial, { IMainFrame::Location::FloatingWindow, false });
         GlobalMainFrame().addControl(UserControl::OrthoBackgroundPanel, { IMainFrame::Location::FloatingWindow, false });

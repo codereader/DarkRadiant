@@ -124,6 +124,12 @@ public:
 
         // Whether this control is visible
         bool visible;
+
+        // Default control width when packed in a floating window
+        int defaultFloatingWidth = 128;
+
+        // Default control height when packed in a floating window
+        int defaultFloatingHeight = 128;
     };
 
     /**

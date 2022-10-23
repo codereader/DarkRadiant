@@ -303,7 +303,7 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
 {
     auto paneName = generateUniquePaneName(controlName);
 
-    createPane(controlName, paneName, [this](auto& paneInfo)
+    createPane(controlName, paneName, [&](auto& paneInfo)
     {
         setupFloatingPane(paneInfo);
 
@@ -313,6 +313,15 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
         if (existingSizeInfo != _floatingPaneLocations.end())
         {
             _auiMgr.LoadPaneInfo(existingSizeInfo->second, paneInfo);
+        }
+
+        // Check for the default floating size
+        auto defaultSettings = _defaultControlSettings.find(controlName);
+
+        if (defaultSettings != _defaultControlSettings.end())
+        {
+            paneInfo.FloatingSize(defaultSettings->second.defaultFloatingWidth, 
+                defaultSettings->second.defaultFloatingHeight);
         }
     });
 
