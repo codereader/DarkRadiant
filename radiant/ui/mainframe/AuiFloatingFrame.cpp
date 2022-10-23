@@ -32,11 +32,10 @@ void AuiFloatingFrame::onIdle()
 
 void AuiFloatingFrame::onMove(wxMoveEvent& ev)
 {
-    if (wxGetMouseState().LeftIsDown())
-    {
-        _isMoving = true;
-        requestIdleCallback();
-    }
+    if (!wxGetMouseState().LeftIsDown()) return;
+
+    _isMoving = true;
+    requestIdleCallback();
 
     // Check if the mouse cursor is moved to the vicinity of a property notebook
     if (_owner->MouseCursorIsHoveringNotebook())

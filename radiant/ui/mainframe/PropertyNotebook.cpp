@@ -66,7 +66,8 @@ void PropertyNotebook::addControl(const std::string& controlName)
         page->position = std::max(page->position, existing.second.position);
     }
 
-    addPage(page);
+    // Add and select the new page
+    SetSelection(FindPage(addPage(page)));
 }
 
 wxWindow* PropertyNotebook::addPage(const PagePtr& page)

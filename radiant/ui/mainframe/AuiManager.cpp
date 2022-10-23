@@ -25,6 +25,7 @@ wxAuiFloatingFrame* AuiManager::CreateFloatingFrame(wxWindow* parent, const wxAu
 void AuiManager::DockPanelToNotebook(AuiFloatingFrame* frame)
 {
     _layout->convertFloatingPaneToPropertyTab(frame);
+    _notebook->hideDropHint();
 }
 
 bool AuiManager::MouseCursorIsHoveringNotebook()
