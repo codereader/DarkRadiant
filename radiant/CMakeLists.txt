@@ -90,6 +90,7 @@ add_executable(darkradiant
                ui/mainframe/PropertyNotebook.cpp
                ui/mainframe/ScreenUpdateBlocker.cpp
                ui/mainframe/TopLevelFrame.cpp
+               ui/mainframe/ViewMenu.cpp
                ui/mapselector/MapSelector.cpp
                ui/materials/editor/MaterialEditor.cpp
                ui/materials/editor/MaterialEditorModule.cpp

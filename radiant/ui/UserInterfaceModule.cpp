@@ -276,11 +276,14 @@ void UserInterfaceModule::initialiseModule(const IApplicationContext& ctx)
         GlobalMainFrame().addControl(UserControl::AasVisualisationPanel, { IMainFrame::Location::FloatingWindow, false, 200, 200 });
         GlobalMainFrame().addControl(UserControl::FindAndReplaceMaterial, { IMainFrame::Location::FloatingWindow, false, 350, 200 });
         GlobalMainFrame().addControl(UserControl::OrthoBackgroundPanel, { IMainFrame::Location::FloatingWindow, false, 480, 350 });
+
+        _viewMenu = std::make_unique<ViewMenu>();
     });
 }
 
 void UserInterfaceModule::shutdownModule()
 {
+    _viewMenu.reset();
     _userControls.clear();
     _autosaveTimer.reset();
 

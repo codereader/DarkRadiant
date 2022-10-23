@@ -24,6 +24,7 @@
 #include "messages/NotificationMessage.h"
 #include "ui/mru/MRUMenu.h"
 #include "DispatchEvent.h"
+#include "mainframe/ViewMenu.h"
 #include "map/AutoSaveTimer.h"
 #include "textool/TexToolModeToggles.h"
 
@@ -69,6 +70,8 @@ private:
 	std::unique_ptr<MRUMenu> _mruMenu;
 
 	std::unique_ptr<map::AutoSaveTimer> _autosaveTimer;
+
+    std::unique_ptr<ViewMenu> _viewMenu;
 
 public:
 	// RegisterableModule

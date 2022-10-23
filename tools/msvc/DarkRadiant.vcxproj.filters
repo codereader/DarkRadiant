@@ -703,6 +703,9 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\AuiManager.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\ViewMenu.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1411,6 +1414,9 @@
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\AuiFloatingFrame.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\ViewMenu.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
   </ItemGroup>

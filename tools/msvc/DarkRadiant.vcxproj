@@ -264,6 +264,7 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\AuiManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\PropertyNotebook.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
+    <ClCompile Include="..\..\radiant\ui\mainframe\ViewMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\MapCommands.cpp" />
     <ClCompile Include="..\..\radiant\ui\MapFileProgressHandler.cpp" />
     <ClCompile Include="..\..\radiant\ui\mapinfo\LayerInfoTab.cpp" />
@@ -469,6 +470,7 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\AuiManager.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\PropertyNotebook.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
+    <ClInclude Include="..\..\radiant\ui\mainframe\ViewMenu.h" />
     <ClInclude Include="..\..\radiant\ui\ManipulatorToggle.h" />
     <ClInclude Include="..\..\radiant\ui\MapCommands.h" />
     <ClInclude Include="..\..\radiant\ui\MapFileProgressHandler.h" />
