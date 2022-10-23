@@ -7,6 +7,7 @@
 #include "MediaBrowserTreeView.h"
 
 #include "wxutil/DockablePanel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 class wxWindow;
 class wxTreeCtrl;
@@ -29,7 +30,8 @@ class TexturePreviewCombo;
  * into the texture window or applying directly to map geometry.
  */
 class MediaBrowser : 
-	public wxutil::DockablePanel
+	public wxutil::DockablePanel,
+    public wxutil::SingleIdleCallback
 {
 private:
 	MediaBrowserTreeView* _treeView;
@@ -43,12 +45,10 @@ private:
 	sigc::connection _mapLoadedConn;
 
 	bool _blockShaderClipboardUpdates;
+	bool _reloadTreeOnIdle;
+    std::string _queuedSelection;
 
     std::size_t _focusMaterialHandler;
-
-private:
-	void construct();
-	void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
 
 public:
 	MediaBrowser(wxWindow* parent);
@@ -66,7 +66,22 @@ public:
 	 */
 	void setSelection(const std::string& selection);
 
+protected:
+    void onIdle() override;
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
 private:
+    void construct();
+    void destroy();
+    void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
+
+    void queueTreeReload();
+    void queueSelection(const std::string& material);
+
+    void connectListeners();
+    void disconnectListeners();
+
 	// These are called when the MaterialManager is loading/unloading the defs
 	void onMaterialDefsUnloaded();
 	void onMaterialDefsLoaded();
