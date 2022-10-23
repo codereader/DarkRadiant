@@ -4,7 +4,6 @@
 #include "imap.h"
 #include "ishaders.h"
 #include "ishaderclipboard.h"
-#include "ui/iuserinterface.h"
 
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 
@@ -30,6 +29,28 @@ MediaBrowser::MediaBrowser(wxWindow* parent) :
     construct();
     queueTreeReload();
 
+    connectListeners();
+}
+
+MediaBrowser::~MediaBrowser()
+{
+    disconnectListeners();
+    _treeView = nullptr;
+}
+
+void MediaBrowser::onPanelActivated()
+{
+    // Request an idle callback now to process pending updates
+    // that might have piled up while we've been inactive
+    requestIdleCallback();
+}
+
+void MediaBrowser::onPanelDeactivated()
+{
+}
+
+void MediaBrowser::connectListeners()
+{
     // These listeners remain connected even if the mediabrowser is inactive
 
     // Attach to the DeclarationManager to get notified on unrealise/realise
@@ -48,46 +69,19 @@ MediaBrowser::MediaBrowser(wxWindow* parent) :
     _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
         sigc::mem_fun(this, &MediaBrowser::onShaderClipboardSourceChanged)
     );
-}
 
-MediaBrowser::~MediaBrowser()
-{
-    destroy();
-}
-
-void MediaBrowser::destroy()
-{
-    disconnectListeners();
-    _mapLoadedConn.disconnect();
-    _materialDefsLoaded.disconnect();
-    _materialDefsUnloaded.disconnect();
-    _shaderClipboardConn.disconnect();
-    _treeView = nullptr;
-}
-
-void MediaBrowser::onPanelActivated()
-{
-    connectListeners();
-
-    // Request an idle callback now to process pending updates
-    requestIdleCallback();
-}
-
-void MediaBrowser::onPanelDeactivated()
-{
-    disconnectListeners();
-}
-
-void MediaBrowser::connectListeners()
-{
     _focusMaterialHandler = GlobalRadiantCore().getMessageBus().addListener(
         radiant::IMessage::Type::FocusMaterialRequest,
-        radiant::TypeListener<ui::FocusMaterialRequest>(
+        radiant::TypeListener<FocusMaterialRequest>(
             sigc::mem_fun(this, &MediaBrowser::focusMaterial)));
 }
 
 void MediaBrowser::disconnectListeners()
 {
+    _mapLoadedConn.disconnect();
+    _materialDefsLoaded.disconnect();
+    _materialDefsUnloaded.disconnect();
+    _shaderClipboardConn.disconnect();
     GlobalRadiantCore().getMessageBus().removeListener(_focusMaterialHandler);
 }
 
@@ -143,7 +137,8 @@ void MediaBrowser::construct()
 		// like the search popup, so check the event object
 		if (ev.GetEventObject() == this)
 		{
-            destroy();
+            disconnectListeners();
+            _treeView = nullptr;
 		}
 		ev.Skip();
 	});
@@ -219,7 +214,6 @@ void MediaBrowser::onShaderClipboardSourceChanged()
 void MediaBrowser::focusMaterial(FocusMaterialRequest& request)
 {
     queueSelection(request.getRequestedMaterial());
-    GlobalGroupDialog().setPage(UserControl::MediaBrowser);
 }
 
 } // namespace

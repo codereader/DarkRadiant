@@ -4,6 +4,7 @@
 #include "itextstream.h"
 #include "ui/imainframe.h"
 #include "ui/itoolbarmanager.h"
+#include "ui/iusercontrol.h"
 #include "icolourscheme.h"
 #include "ifavourites.h"
 #include "ishaderclipboard.h"
@@ -885,6 +886,7 @@ void TextureBrowser::onSeekInMediaBrowser()
         if (auto shader = getShaderAtCoords(_popupX, _popupY); shader)
         {
             // Focus the MediaBrowser selection to the given shader
+            GlobalCommandSystem().executeCommand("FocusControl", { UserControl::MediaBrowser });
             FocusMaterialRequest::Send(shader->getName());
         }
     }

@@ -73,7 +73,6 @@ protected:
 
 private:
     void construct();
-    void destroy();
     void _onTreeViewSelectionChanged(wxDataViewEvent& ev);
 
     void queueTreeReload();
