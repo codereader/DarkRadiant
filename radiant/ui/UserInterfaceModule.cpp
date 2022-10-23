@@ -435,7 +435,7 @@ void UserInterfaceModule::registerUICommands()
 
     GlobalCommandSystem().addCommand("clear", [](const auto&) { radiant::ClearConsoleMessage::Send(); });
 
-	GlobalCommandSystem().addCommand("ToggleConsole", Console::toggle);
+	GlobalCommandSystem().addStatement("ToggleConsole", fmt::format("ToggleControl {0}", UserControl::Console), false);
 	GlobalCommandSystem().addStatement("ToggleLightInspector", fmt::format("ToggleControl {0}", UserControl::LightInspector), false);
 	GlobalCommandSystem().addStatement("SurfaceInspector", fmt::format("ToggleControl {0}", UserControl::SurfaceInspector), false);
 	GlobalCommandSystem().addStatement("ToggleLayerControlDialog", fmt::format("ToggleControl {0}", UserControl::LayerControlPanel), false);

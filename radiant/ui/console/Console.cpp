@@ -1,6 +1,5 @@
 #include "Console.h"
 
-#include "ui/igroupdialog.h"
 #include "iradiant.h"
 
 #include "wxutil/ConsoleView.h"
@@ -42,11 +41,6 @@ Console::~Console()
 void Console::clear(radiant::ClearConsoleMessage& msg)
 {
 	_view->Clear();
-}
-
-void Console::toggle(const cmd::ArgumentList& args)
-{
-	GlobalGroupDialog().togglePage("console");
 }
 
 void Console::SetFocus()

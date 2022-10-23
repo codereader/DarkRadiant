@@ -1,6 +1,5 @@
 #pragma once
 
-#include "icommandsystem.h"
 #include "ilogwriter.h"
 
 #include "wxutil/ConsoleView.h"
@@ -38,11 +37,6 @@ public:
 	Console(wxWindow* parent);
 
 	~Console() override;
-
-	/**
-	 * greebo: Static command target for toggling the console.
-	 */
-	static void toggle(const cmd::ArgumentList& args);
 
 	void clear(radiant::ClearConsoleMessage& msg);
 

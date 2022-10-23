@@ -55,23 +55,13 @@ public:
 
     void initialiseModule(const IApplicationContext& ctx) override
     {
-        GlobalCommandSystem().addCommand("ToggleMediaBrowser", sigc::mem_fun(this, &MediaBrowserModule::togglePage));
-
+        GlobalCommandSystem().addStatement("ToggleMediaBrowser", fmt::format("ToggleControl {0}", UserControl::MediaBrowser), false);
         GlobalUserInterface().registerControl(std::make_shared<MediaBrowserControl>());
     }
 
     void shutdownModule() override
     {
         GlobalUserInterface().unregisterControl(UserControl::MediaBrowser);
-    }
-
-private:
-    /**
-    * greebo: Command target for toggling the mediabrowser tab in the groupdialog.
-    */
-    void togglePage(const cmd::ArgumentList& args)
-    {
-        GlobalGroupDialog().togglePage(UserControl::MediaBrowser);
     }
 };
 

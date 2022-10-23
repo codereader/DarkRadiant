@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ui/ientityinspector.h"
-#include "icommandsystem.h"
 #include "PropertyEditorFactory.h"
 
 namespace ui
@@ -29,9 +28,6 @@ public:
     void shutdownModule() override;
 
     static EntityInspectorModule& Instance();
-
-private:
-    static void toggleEntityInspector(const cmd::ArgumentList& args);
 };
 
 } // namespace

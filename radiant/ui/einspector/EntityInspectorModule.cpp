@@ -3,7 +3,6 @@
 #include "ideclmanager.h"
 #include "iregistry.h"
 #include "iselection.h"
-#include "ui/igroupdialog.h"
 #include "icommandsystem.h"
 #include "imap.h"
 #include "igame.h"
@@ -71,7 +70,7 @@ void EntityInspectorModule::initialiseModule(const IApplicationContext& ctx)
 {
     _propertyEditorFactory.reset(new PropertyEditorFactory);
 
-    GlobalCommandSystem().addCommand("ToggleEntityInspector", toggleEntityInspector);
+    GlobalCommandSystem().addStatement("ToggleEntityInspector", fmt::format("ToggleControl {0}", UserControl::EntityInspector), false);
 
     GlobalUserInterface().registerControl(std::make_shared<EntityInspectorControl>());
 }
@@ -80,11 +79,6 @@ void EntityInspectorModule::shutdownModule()
 {
     GlobalUserInterface().unregisterControl(UserControl::EntityInspector);
     _propertyEditorFactory.reset();
-}
-
-void EntityInspectorModule::toggleEntityInspector(const cmd::ArgumentList& args)
-{
-    GlobalGroupDialog().togglePage("entity");
 }
 
 void EntityInspectorModule::registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator)

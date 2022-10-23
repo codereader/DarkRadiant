@@ -2,10 +2,8 @@
 #include "ui/imainframe.h"
 #include "ui/iuserinterface.h"
 #include "icommandsystem.h"
-#include "ui/igroupdialog.h"
 
 #include "module/StaticModule.h"
-#include "FavouritesBrowser.h"
 #include "FavouritesBrowserControl.h"
 
 namespace ui
@@ -36,8 +34,8 @@ public:
 
     void initialiseModule(const IApplicationContext& ctx) override
     {
-        GlobalCommandSystem().addCommand("ToggleFavouritesBrowser",
-            sigc::mem_fun(this, &FavouritesUserInterfaceModule::togglePage));
+        GlobalCommandSystem().addStatement("ToggleFavouritesBrowser", 
+            fmt::format("ToggleControl {0}", UserControl::FavouritesBrowser), false);
 
         // Subscribe to get notified as soon as Radiant is fully initialised
         GlobalMainFrame().signal_MainFrameConstructed().connect(
@@ -53,11 +51,6 @@ public:
     }
 
 private:
-    void togglePage(const cmd::ArgumentList& args)
-    {
-        GlobalGroupDialog().togglePage(UserControl::FavouritesBrowser);
-    }
-
     void onMainFrameConstructed()
     {
         GlobalMainFrame().addControl(UserControl::FavouritesBrowser, IMainFrame::ControlSettings
