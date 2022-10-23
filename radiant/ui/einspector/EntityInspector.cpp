@@ -11,22 +11,17 @@
 #include "igame.h"
 #include "imap.h"
 #include "iundo.h"
-#include "ui/igroupdialog.h"
-#include "ui/imainframe.h"
 #include "itextstream.h"
 #include "ui/iuserinterface.h"
 
-#include "module/StaticModule.h"
 #include "selectionlib.h"
 #include "scene/SelectionIndex.h"
 #include "scenelib.h"
 #include "eclass.h"
 #include "gamelib.h"
-#include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
-#include "xmlutil/Document.h"
 #include "selection/EntitySelection.h"
 #include "TargetKey.h"
 
@@ -37,7 +32,6 @@
 
 #include <wx/panel.h>
 #include <wx/sizer.h>
-#include <wx/frame.h>
 #include <wx/checkbox.h>
 #include <wx/stattext.h>
 #include <wx/splitter.h>
@@ -50,13 +44,12 @@
 #include "registry/Widgets.h"
 #include <regex>
 
-namespace ui {
-
-/* CONSTANTS */
+namespace ui
+{
 
 namespace
 {
-    const char* const PROPERTY_NODES_XPATH = "/entityInspector//property";
+    constexpr const char* const PROPERTY_NODES_XPATH = "/entityInspector//property";
 
     const std::string RKEY_ROOT = "user/ui/entityInspector/";
     const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
@@ -130,9 +123,6 @@ void EntityInspector::construct()
 
     _helpText->Hide();
 
-    // Register self to the SelectionSystem to get notified upon selection
-    // changes.
-    GlobalSelectionSystem().addObserver(this);
     _spawnargs.reset(new selection::CollectiveSpawnargs);
 
     // Connect the signals
@@ -153,7 +143,6 @@ void EntityInspector::construct()
     registry::bindWidget(_showInheritedCheckbox, RKEY_SHOW_INHERITED_PROPERTIES);
 
     handleShowInheritedChanged();
-    updateHelpTextPanel();
 
     // Reload the information from the registry
     restoreSettings();
@@ -161,23 +150,14 @@ void EntityInspector::construct()
     // Create the context menu
     createContextMenu();
 
-    // Stimulate initial redraw to get the correct status
-    requestIdleCallback();
-
-    _defsReloadedHandler = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
-        sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
-    );
-
-    _mapEditModeChangedHandler = GlobalMapModule().signal_editModeChanged().connect(
-        sigc::mem_fun(this, &EntityInspector::onMapEditModeChanged)
-    );
-
     // initialise the properties
     loadPropertyMap();
 
     // greebo: Now that the dialog is shown, tell the Entity Inspector to reload
     // the position info from the Registry once again.
     restoreSettings();
+
+    refresh();
 }
 
 void EntityInspector::restoreSettings()
@@ -437,8 +417,8 @@ void EntityInspector::createContextMenu()
 
 EntityInspector::~EntityInspector()
 {
-    // Clear the selection and unsubscribe from the selection system
-    GlobalSelectionSystem().removeObserver(this);
+    disconnectListeners();
+
     _keyValueAddedHandler.disconnect();
     _keyValueRemovedHandler.disconnect();
     _keyValueSetChangedHandler.disconnect();
@@ -448,15 +428,45 @@ EntityInspector::~EntityInspector()
     _mergeActions.clear();
     _conflictActions.clear();
 
-    _mapEditModeChangedHandler.disconnect();
-    _defsReloadedHandler.disconnect();
-
-    // Remove all previously stored pane information
     _panedPosition.saveToPath(RKEY_PANE_STATE);
 
     // Remove the current property editor to prevent destructors
     // from firing too late in the shutdown process
     _currentPropertyEditor.reset();
+}
+
+void EntityInspector::onPanelActivated()
+{
+    connectListeners();
+    refresh();
+}
+
+void EntityInspector::onPanelDeactivated()
+{
+    _panedPosition.saveToPath(RKEY_PANE_STATE);
+    disconnectListeners();
+}
+
+void EntityInspector::connectListeners()
+{
+    // Register self to the SelectionSystem to get notified upon selection changes.
+    GlobalSelectionSystem().addObserver(this);
+
+    _defsReloadedHandler = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
+        sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
+    );
+
+    _mapEditModeChangedHandler = GlobalMapModule().signal_editModeChanged().connect(
+        sigc::mem_fun(this, &EntityInspector::onMapEditModeChanged)
+    );
+}
+
+void EntityInspector::disconnectListeners()
+{
+    GlobalSelectionSystem().removeObserver(this);
+
+    _mapEditModeChangedHandler.disconnect();
+    _defsReloadedHandler.disconnect();
 }
 
 void EntityInspector::onKeyUpdatedCommon(const std::string& key)

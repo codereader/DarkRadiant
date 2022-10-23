@@ -251,9 +251,15 @@ private:
 	// greebo: Tells the inspector to reload the window settings from the registry.
 	void restoreSettings();
 
+    void connectListeners();
+    void disconnectListeners();
+
 protected:
     // Called when the app is idle
     void onIdle() override;
+
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
 
 public:
     EntityInspector(wxWindow* parent);
@@ -262,8 +268,6 @@ public:
 	/** greebo: Gets called by the RadiantSelectionSystem upon selection change.
 	 */
 	void selectionChanged(const scene::INodePtr& node, bool isComponent) override;
-
-	void onMainFrameShuttingDown();
 
     void onKeyChange(const std::string& key, const std::string& value, bool isMultiValue = false);
 };
