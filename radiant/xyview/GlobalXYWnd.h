@@ -1,10 +1,7 @@
 #pragma once
 
-#include <list>
 #include <map>
 #include "iorthoview.h"
-#include "iclipper.h"
-#include "iregistry.h"
 #include "icommandsystem.h"
 #include "imousetoolmanager.h"
 
@@ -87,11 +84,6 @@ public:
 	// Free all the allocated views from the heap
 	void destroyViews() override;
 
-	// Saves the current state of all open views to the registry
-	void saveState();
-	// Restores the xy windows according to the state saved in the XMLRegistry
-	void restoreState();
-
 	XYWndPtr getActiveXY() const;
 
 	/**
@@ -148,17 +140,6 @@ public:
 	 * Create a non-floating (embedded) orthoview of the given type
 	 */
 	XYWndPtr createEmbeddedOrthoView(EViewType viewType, wxWindow* parent);
-
-	/**
-	 * Create a new floating ortho view, as a child of the main window.
-	 */
-	XYWndPtr createFloatingOrthoView(EViewType viewType);
-
-	/**
-	 * Parameter-less wrapper for createFloatingOrthoView(), for use by the
-	 * event manager. The default orientation of XY is used.
-	 */
-	void createXYFloatingOrthoView(const cmd::ArgumentList& args);
 
 	/**
 	 * greebo: This removes a certain orthoview ID, usually initiating

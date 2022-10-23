@@ -1,5 +1,4 @@
 #include "GlobalXYWnd.h"
-#include "FloatingOrthoView.h"
 
 #include "i18n.h"
 #include "ui/ieventmanager.h"
@@ -80,74 +79,6 @@ public:
 XYWndManager::XYWndManager() :
     _maxZoomFactor(1024)
 {}
-
-/* greebo: This method restores all xy views from the information stored in the registry.
- *
- * Note: The window creation code looks very unelegant (in fact it is), but this is required
- * to restore the exact position of the windows (at least on my WinXP/GTK2+ system).
- *
- * The position of the TransientWindow has to be set IMMEDIATELY after creation, before
- * any widgets are added to this container. When trying to apply the position restore
- * on the fully "fabricated" xyview widget, the position tends to be some 20 pixels below
- * the original position. I have no full explanation for this and it is nasty, but the code
- * below seems to work.
- */
-void XYWndManager::restoreState()
-{
-	auto views = GlobalRegistry().findXPath(RKEY_XYVIEW_ROOT + "//views");
-
-    if (views.empty()) return;
-
-	// Find all <view> tags under the first found <views> tag
-	auto viewList = views[0].getNamedChildren("view");
-
-	for (const auto& node : viewList)
-	{
-		// Assemble the XPath for the viewstate
-		std::string path = RKEY_XYVIEW_ROOT +
-			"/views/view[@name='" + node.getAttributeValue("name") + "']";
-
-		const std::string typeStr = node.getAttributeValue("type");
-
-		EViewType type = XY;
-
-		if (typeStr == "YZ")
-		{
-			type = YZ;
-		}
-		else if (typeStr == "XZ")
-		{
-			type = XZ;
-		}
-		else
-		{
-			type = XY;
-		}
-
-		// Create the view and restore the size
-		createFloatingOrthoView(type);
-	}
-}
-
-void XYWndManager::saveState()
-{
-	// Delete all the current window states from the registry
-	GlobalRegistry().deleteXPath(RKEY_XYVIEW_ROOT + "//views");
-
-	// Create a new node
-	std::string rootNodePath(RKEY_XYVIEW_ROOT + "/views");
-
-	for (auto& [_, view] : _xyWnds)
-	{
-		// Save each XYView state to the registry
-		auto floatingView = std::dynamic_pointer_cast<FloatingOrthoView>(view);
-
-		if (floatingView)
-		{
-			floatingView->SaveWindowState();
-		}
-	}
-}
 
 void XYWndManager::destroyViews()
 {
@@ -610,45 +541,6 @@ XYWndPtr XYWndManager::createEmbeddedOrthoView(EViewType viewType, wxWindow* par
     newWnd->setViewType(viewType);
 
 	return newWnd;
-}
-
-// Create a new floating ortho view
-XYWndPtr XYWndManager::createFloatingOrthoView(EViewType viewType)
-{
-	// Create a new XY view
-	int uniqueId = getUniqueID();
-
-	FloatingOrthoViewPtr newWnd(
-		new FloatingOrthoView(
-			uniqueId,
-			XYWnd::getViewTypeTitle(viewType),
-			GlobalMainFrame().getWxTopLevelWindow()
-		)
-	);
-
-	std::pair<XYWndMap::iterator, bool> result = _xyWnds.insert(
-		XYWndMap::value_type(uniqueId, newWnd));
-
-	// Ensure that the insertion is successful
-	assert(result.second == true);
-
-	// Tag the new view as active, if there is no active view yet
-	if (_activeXY == NULL)
-	{
-		_activeXY = newWnd;
-	}
-
-	// Set the viewtype and show the window
-	newWnd->setViewType(viewType);
-	newWnd->Show();
-
-	return newWnd;
-}
-
-// Shortcut method for connecting to a GlobalEventManager command
-void XYWndManager::createXYFloatingOrthoView(const cmd::ArgumentList& args)
-{
-	createFloatingOrthoView(XY);
 }
 
 /* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views

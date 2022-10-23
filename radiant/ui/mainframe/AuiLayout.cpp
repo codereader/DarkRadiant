@@ -526,9 +526,6 @@ void AuiLayout::restoreStateFromRegistry()
             ensureControlIsInactive(paneInfo.window);
         }
     }
-
-    // Restore all floating XY views
-    GlobalXYWnd().restoreState();
 }
 
 void AuiLayout::toggleFullscreenCameraView()

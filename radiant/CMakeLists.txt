@@ -166,7 +166,6 @@ add_executable(darkradiant
                ui/toolbar/ToolbarManager.cpp
                ui/transform/TransformPanel.cpp
                ui/UserInterfaceModule.cpp
-               xyview/FloatingOrthoView.cpp
                xyview/GlobalXYWnd.cpp
                xyview/tools/BrushCreatorTool.cpp
                xyview/tools/ClipperTool.cpp

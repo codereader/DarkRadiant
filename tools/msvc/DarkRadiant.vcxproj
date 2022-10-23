@@ -367,7 +367,6 @@
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\transform\TransformPanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\UserInterfaceModule.cpp" />
-    <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp" />
     <ClCompile Include="..\..\radiant\xyview\GlobalXYWnd.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\BrushCreatorTool.cpp" />
     <ClCompile Include="..\..\radiant\xyview\tools\ClipperTool.cpp" />
@@ -601,7 +600,6 @@
     <ClInclude Include="..\..\radiant\ui\transform\TransformPanel.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformPanelControl.h" />
     <ClInclude Include="..\..\radiant\ui\UserInterfaceModule.h" />
-    <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h" />
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\BrushCreatorTool.h" />
     <ClInclude Include="..\..\radiant\xyview\tools\CameraAngleTool.h" />

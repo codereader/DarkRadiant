@@ -373,9 +373,6 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\xyview\FloatingOrthoView.cpp">
-      <Filter>src\xyview</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\prefabselector\PrefabSelector.cpp">
       <Filter>src\ui\prefabselector</Filter>
     </ClCompile>
@@ -893,9 +890,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h">
       <Filter>src\ui\brush</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\xyview\FloatingOrthoView.h">
-      <Filter>src\xyview</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\xyview\GlobalXYWnd.h">
       <Filter>src\xyview</Filter>
