@@ -697,6 +697,12 @@
     <ClCompile Include="..\..\radiant\ui\overlay\OrthoBackgroundPanel.cpp">
       <Filter>src\ui\overlay</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\AuiFloatingFrame.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\mainframe\AuiManager.cpp">
+      <Filter>src\ui\mainframe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1400,6 +1406,12 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\overlay\OrthoBackgroundPanel.h">
       <Filter>src\ui\overlay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\AuiManager.h">
+      <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\mainframe\AuiFloatingFrame.h">
+      <Filter>src\ui\mainframe</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

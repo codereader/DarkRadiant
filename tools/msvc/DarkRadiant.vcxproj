@@ -259,7 +259,9 @@
     <ClCompile Include="..\..\radiant\ui\layers\CreateLayerDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LayerControlPanel.cpp" />
     <ClCompile Include="..\..\radiant\ui\LongRunningOperationHandler.cpp" />
+    <ClCompile Include="..\..\radiant\ui\mainframe\AuiFloatingFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\AuiLayout.cpp" />
+    <ClCompile Include="..\..\radiant\ui\mainframe\AuiManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\PropertyNotebook.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\TopLevelFrame.cpp" />
     <ClCompile Include="..\..\radiant\ui\MapCommands.cpp" />
@@ -462,7 +464,9 @@
     <ClInclude Include="..\..\radiant\ui\layers\LayerControlPanel.h" />
     <ClInclude Include="..\..\radiant\ui\lightinspector\LightInspectorControl.h" />
     <ClInclude Include="..\..\radiant\ui\LongRunningOperationHandler.h" />
+    <ClInclude Include="..\..\radiant\ui\mainframe\AuiFloatingFrame.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\AuiLayout.h" />
+    <ClInclude Include="..\..\radiant\ui\mainframe\AuiManager.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\PropertyNotebook.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\TopLevelFrame.h" />
     <ClInclude Include="..\..\radiant\ui\ManipulatorToggle.h" />

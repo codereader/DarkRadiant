@@ -82,6 +82,8 @@ add_executable(darkradiant
                ui/layers/LayerOrthoContextMenuItem.cpp
                ui/lightinspector/LightInspector.cpp
                ui/LongRunningOperationHandler.cpp
+               ui/mainframe/AuiManager.cpp
+               ui/mainframe/AuiFloatingFrame.cpp
                ui/mainframe/AuiLayout.cpp
                ui/mainframe/MainFrame.cpp
                ui/mainframe/MainFrameLayoutManager.cpp

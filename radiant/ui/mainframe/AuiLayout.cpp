@@ -13,6 +13,7 @@
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "wxutil/Bitmap.h"
 #include "xyview/GlobalXYWnd.h"
+#include "AuiFloatingFrame.h"
 
 namespace ui
 {
@@ -48,7 +49,7 @@ namespace
 }
 
 AuiLayout::AuiLayout() :
-    _auiMgr(nullptr, wxAUI_MGR_ALLOW_FLOATING | wxAUI_MGR_VENETIAN_BLINDS_HINT | wxAUI_MGR_LIVE_RESIZE),
+    _auiMgr(this),
     _propertyNotebook(nullptr)
 {
     _auiMgr.GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_NONE);
@@ -94,7 +95,7 @@ std::string AuiLayout::generateUniquePaneName(const std::string& controlName)
 
     while (paneNameExists(paneName))
     {
-        paneName += fmt::format("{0}{1}", controlName, ++index);
+        paneName = fmt::format("{0}{1}", controlName, ++index);
     }
 
     return paneName;
@@ -132,6 +133,21 @@ void AuiLayout::convertPaneToPropertyTab(const std::string& paneName)
         _propertyNotebook->addControl(i->controlName);
         _panes.erase(i);
         break;
+    }
+}
+
+void AuiLayout::convertFloatingPaneToPropertyTab(AuiFloatingFrame* floatingWindow)
+{
+    for (auto i = _panes.begin(); i != _panes.end(); ++i)
+    {
+        auto& paneInfo = _auiMgr.GetPane(i->paneName);
+
+        if (paneInfo.IsOk() && paneInfo.IsFloating() && paneInfo.frame == floatingWindow)
+        {
+            // Close the floating pane
+            convertPaneToPropertyTab(i->paneName);
+            break;
+        }
     }
 }
 
@@ -228,6 +244,7 @@ void AuiLayout::activate()
     GlobalMainFrame().getWxMainContainer()->Add(managedArea, 1, wxEXPAND);
 
     _propertyNotebook = new PropertyNotebook(managedArea, *this);
+    _auiMgr.SetPropertyNotebook(_propertyNotebook);
 
     auto orthoViewControl = GlobalUserInterface().findControl(UserControl::OrthoView);
     auto cameraControl = GlobalUserInterface().findControl(UserControl::Camera);

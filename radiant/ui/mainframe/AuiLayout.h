@@ -5,7 +5,7 @@
 
 #include "camera/CamWnd.h"
 
-#include <wx/aui/aui.h>
+#include "AuiManager.h"
 #include "PropertyNotebook.h"
 
 namespace ui
@@ -13,11 +13,13 @@ namespace ui
 
 constexpr const char* const AUI_LAYOUT_NAME = "Dockable";
 
+class AuiFloatingFrame;
+
 /// Layout based on wxWidgets AUI (dock widget interface)
 class AuiLayout : public IMainFrameLayout
 {
     // Main AUI manager
-    wxAuiManager _auiMgr;
+    AuiManager _auiMgr;
     PropertyNotebook* _propertyNotebook;
 
     struct PaneInfo
@@ -60,8 +62,10 @@ public:
 	// The creation function, needed by the mainframe layout manager
 	static std::shared_ptr<AuiLayout> CreateInstance();
 
-private:
+    // Internally used by the AuiManager implementation
+    void convertFloatingPaneToPropertyTab(AuiFloatingFrame* floatingWindow);
 
+private:
     // Add a pane to the wxAuiManager and store it in the list
     void addPane(const std::string& controlName, wxWindow* window, const wxAuiPaneInfo& info);
     void addPane(const std::string& controlName, const std::string& paneName, wxWindow* window, const wxAuiPaneInfo& info);
