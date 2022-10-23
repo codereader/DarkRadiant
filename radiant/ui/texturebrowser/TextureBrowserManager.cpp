@@ -8,9 +8,7 @@
 #include "ui/iuserinterface.h"
 #include "ishaderclipboard.h"
 #include "icommandsystem.h"
-#include "ui/igroupdialog.h"
 #include "ipreferencesystem.h"
-#include "itextstream.h"
 #include "module/StaticModule.h"
 
 namespace ui
@@ -104,12 +102,6 @@ void TextureBrowserManager::registerPreferencePage()
     page.appendCheckBox(_("Show \"Other Materials\""), RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
 }
 
-// Static command target
-void TextureBrowserManager::toggleGroupDialogTexturesTab(const cmd::ArgumentList& args)
-{
-    GlobalGroupDialog().togglePage("textures");
-}
-
 const std::string& TextureBrowserManager::getName() const
 {
     static std::string _name(MODULE_TEXTURE_BROWSER_MANAGER);
@@ -137,9 +129,8 @@ void TextureBrowserManager::initialiseModule(const IApplicationContext& ctx)
     GlobalEventManager().addRegistryToggle("TextureBrowserToggleUniformScale", RKEY_TEXTURE_USE_UNIFORM_SCALE);
     GlobalEventManager().addRegistryToggle("TextureBrowserHideUnused", RKEY_TEXTURES_HIDE_UNUSED);
     GlobalEventManager().addRegistryToggle("TextureBrowserShowFavouritesOnly", RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
-    GlobalEventManager().addRegistryToggle("TextureBrowserShowNames",
-                                           RKEY_TEXTURES_SHOW_NAMES);
-    GlobalCommandSystem().addCommand("ViewTextures", toggleGroupDialogTexturesTab);
+    GlobalEventManager().addRegistryToggle("TextureBrowserShowNames", RKEY_TEXTURES_SHOW_NAMES);
+    GlobalCommandSystem().addStatement("ViewTextures", fmt::format("ToggleControl {0}", UserControl::TextureBrowser), false);
 
     registerPreferencePage();
 
