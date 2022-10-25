@@ -99,12 +99,14 @@ private:
 
     // View and model for the keyvalue list
     wxutil::TreeView* _keyValueTreeView;
-    TreeColumns _columns;
+    TreeColumns _modelCols;
     wxutil::TreeModel::Ptr _kvStore;
-    wxDataViewColumn* _booleanColumn = nullptr;
-    wxDataViewColumn* _valueColumn = nullptr;
-    wxDataViewColumn* _oldValueColumn = nullptr;
-    wxDataViewColumn* _newValueColumn = nullptr;
+    struct {
+        wxDataViewColumn* boolean = nullptr;
+        wxDataViewColumn* value = nullptr;
+        wxDataViewColumn* oldValue = nullptr;
+        wxDataViewColumn* newValue = nullptr;
+    } _viewCols;
 
     wxutil::Icon _emptyIcon;
 
