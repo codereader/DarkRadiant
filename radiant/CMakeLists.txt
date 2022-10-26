@@ -86,7 +86,6 @@ add_executable(darkradiant
                ui/mainframe/AuiFloatingFrame.cpp
                ui/mainframe/AuiLayout.cpp
                ui/mainframe/MainFrame.cpp
-               ui/mainframe/MainFrameLayoutManager.cpp
                ui/mainframe/PropertyNotebook.cpp
                ui/mainframe/ScreenUpdateBlocker.cpp
                ui/mainframe/TopLevelFrame.cpp

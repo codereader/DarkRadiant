@@ -39,8 +39,6 @@ namespace
 	const std::string RKEY_WINDOW_STATE = "user/ui/mainFrame/window";
 	const std::string RKEY_MULTIMON_START_MONITOR = "user/ui/multiMonitor/startMonitorNum";
 	const std::string RKEY_DISABLE_WIN_DESKTOP_COMP = "user/ui/compatibility/disableWindowsDesktopComposition";
-
-	const std::string RKEY_ACTIVE_LAYOUT = "user/ui/mainFrame/activeLayout";
 }
 
 namespace ui
@@ -66,7 +64,6 @@ const StringSet& MainFrame::getDependencies() const
 
 	if (_dependencies.empty())
 	{
-		_dependencies.insert(MODULE_MAINFRAME_LAYOUT_MANAGER);
 		_dependencies.insert(MODULE_XMLREGISTRY);
 		_dependencies.insert(MODULE_PREFERENCESYSTEM);
 		_dependencies.insert(MODULE_COMMANDSYSTEM);
@@ -101,11 +98,6 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 	}
 
 	page.appendCombo(_("Start DarkRadiant on monitor"), RKEY_MULTIMON_START_MONITOR, list);
-
-	// Add the toggle max/min command for floating windows
-	GlobalCommandSystem().addCommand("ToggleFullScreenCamera",
-		std::bind(&MainFrame::toggleFullscreenCameraView, this, std::placeholders::_1)
-	);
 
     GlobalCommandSystem().addCommand(FOCUS_CONTROL_COMMAND,
         std::bind(&MainFrame::focusControl, this, std::placeholders::_1),
@@ -189,8 +181,6 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 
 void MainFrame::shutdownModule()
 {
-	rMessage() << "MainFrame::shutdownModule called." << std::endl;
-
     _mapEventSignal.disconnect();
 	_mapNameChangedConn.disconnect();
 	_mapModifiedChangedConn.disconnect();
@@ -263,45 +253,10 @@ void MainFrame::setDesktopCompositionEnabled(bool enabled)
 }
 #endif
 
-void MainFrame::toggleFullscreenCameraView(const cmd::ArgumentList& args)
-{
-	if (_currentLayout == NULL) return;
-
-	// Issue the call
-	_currentLayout->toggleFullscreenCameraView();
-}
-
 void MainFrame::construct()
 {
 	// Create the base window and the default widgets
 	create();
-
-#if 0
-	std::string activeLayout = GlobalRegistry().get(RKEY_ACTIVE_LAYOUT);
-
-	if (activeLayout.empty())
-	{
-		activeLayout = AUI_LAYOUT_NAME; // fall back to hardcoded layout
-	}
-
-	// Apply the layout
-	applyLayout(activeLayout);
-
-	if (_currentLayout == NULL)
-	{
-		// Layout is still empty, this is not good
-		rError() << "Could not restore layout " << activeLayout << std::endl;
-
-		if (activeLayout != AUI_LAYOUT_NAME)
-		{
-			// Try to fallback to floating layout
-			applyLayout(AUI_LAYOUT_NAME);
-		}
-	}
-#endif
-
-	// register the commands
-	GlobalMainFrameLayoutManager().registerCommands();
 
 	// Emit the "constructed" signal to give modules a chance to register
 	// their UI parts. Clear the signal afterwards.
@@ -309,7 +264,7 @@ void MainFrame::construct()
 	signal_MainFrameConstructed().clear();
 
     // Restore the saved layout now that all signal listeners have added their controls
-    _currentLayout->restoreStateFromRegistry();
+    _layout->restoreStateFromRegistry();
 
 #ifdef __linux__
     // #4526: In Linux, do another restore after the top level window has been shown
@@ -318,9 +273,9 @@ void MainFrame::construct()
     // window came up.
     _topLevelWindow->Bind(wxEVT_SHOW, [&](wxShowEvent& ev)
     {
-        if (_currentLayout && ev.IsShown())
+        if (_layout && ev.IsShown())
         {
-            _currentLayout->restoreStateFromRegistry();
+            _layout->restoreStateFromRegistry();
         }
 
         ev.Skip();
@@ -335,10 +290,10 @@ void MainFrame::construct()
 void MainFrame::removeLayout()
 {
 	// Sanity check
-	if (!_currentLayout) return;
+	if (!_layout) return;
 
-	_currentLayout->deactivate();
-    _currentLayout.reset();
+	_layout->deactivate();
+    _layout.reset();
 }
 
 void MainFrame::preDestructionCleanup()
@@ -346,7 +301,7 @@ void MainFrame::preDestructionCleanup()
 	saveWindowPosition();
 
     // Free the layout
-    if (_currentLayout)
+    if (_layout)
     {
         removeLayout();
     }
@@ -385,7 +340,7 @@ void MainFrame::onTopLevelFrameClose(wxCloseEvent& ev)
 		}
     }
 
-    _currentLayout->saveStateToRegistry();
+    _layout->saveStateToRegistry();
 
     wxASSERT(wxTheApp->GetTopWindow() == _topLevelWindow);
 
@@ -495,7 +450,8 @@ void MainFrame::create()
 	// Create the topmost window first
 	createTopLevelWindow();
 
-    applyLayout(AUI_LAYOUT_NAME);
+    _layout = std::make_shared<AuiLayout>();
+    _layout->activate();
 
     addControl(UserControl::Console, ControlSettings{ Location::PropertyPanel, true });
     addControl(UserControl::EntityInspector, ControlSettings{ Location::PropertyPanel, true });
@@ -562,56 +518,6 @@ void MainFrame::updateAllWindows(bool force)
     }
 }
 
-void MainFrame::setActiveLayoutName(const std::string& name)
-{
-    GlobalRegistry().set(RKEY_ACTIVE_LAYOUT, name);
-}
-
-void MainFrame::applyLayout(const std::string& name)
-{
-    _currentLayout = std::make_shared<AuiLayout>();
-    _currentLayout->activate();
-#if 0
-	if (getCurrentLayout() == name)
-	{
-		// nothing to do
-		rMessage() << "MainFrame: Won't activate layout " << name
-			<< ", is already active." << std::endl;
-		return;
-	}
-
-	// Set or clear?
-	if (!name.empty())
-    {
-		// Try to find that new layout
-		IMainFrameLayoutPtr layout = GlobalMainFrameLayoutManager().getLayout(name);
-
-		if (layout == NULL) {
-			rError() << "MainFrame: Could not find layout with name " << name << std::endl;
-			return;
-		}
-
-		// Found a new layout, remove the old one
-		removeLayout();
-
-		rMessage() << "MainFrame: Activating layout " << name << std::endl;
-
-		// Store and activate the new layout
-		_currentLayout = layout;
-		_currentLayout->activate();
-	}
-	else {
-		// Empty layout name => remove
-		removeLayout();
-	}
-#endif
-}
-
-std::string MainFrame::getCurrentLayout()
-{
-	return (_currentLayout != NULL) ? _currentLayout->getName() : "";
-}
-
 IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std::string& title,
 		const std::string& message, bool forceDisplay)
 {
@@ -620,7 +526,7 @@ IScopedScreenUpdateBlockerPtr MainFrame::getScopedScreenUpdateBlocker(const std:
 
 void MainFrame::addControl(const std::string& controlName, const ControlSettings& defaultSettings)
 {
-    _currentLayout->registerControl(controlName, defaultSettings);
+    _layout->registerControl(controlName, defaultSettings);
 }
 
 void MainFrame::focusControl(const cmd::ArgumentList& args)
@@ -632,7 +538,7 @@ void MainFrame::focusControl(const cmd::ArgumentList& args)
         return;
     }
 
-    _currentLayout->focusControl(args.at(0).getString());
+    _layout->focusControl(args.at(0).getString());
 }
 
 void MainFrame::createControl(const cmd::ArgumentList& args)
@@ -643,7 +549,7 @@ void MainFrame::createControl(const cmd::ArgumentList& args)
         return;
     }
 
-    _currentLayout->createControl(args.at(0).getString());
+    _layout->createControl(args.at(0).getString());
 }
 
 void MainFrame::toggleControl(const cmd::ArgumentList& args)
@@ -655,7 +561,7 @@ void MainFrame::toggleControl(const cmd::ArgumentList& args)
         return;
     }
 
-    _currentLayout->toggleControl(args.at(0).getString());
+    _layout->toggleControl(args.at(0).getString());
 }
 
 sigc::signal<void>& MainFrame::signal_MainFrameConstructed()

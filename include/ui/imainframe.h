@@ -3,7 +3,7 @@
 #include "imodule.h"
 #include <sigc++/signal.h>
 
-const char* const MODULE_MAINFRAME("MainFrame");
+constexpr const char* const MODULE_MAINFRAME("MainFrame");
 
 class wxFrame;
 class wxToolBar;
@@ -86,20 +86,6 @@ public:
      * Set the force flag to true to redraw immediately insteaf of queueing.
 	 */
 	virtual void updateAllWindows(bool force = false) = 0;
-
-	/**
-	 * Applies the named layout to the MainFrame window. See MainFrameLayout class.
-	 */
-	virtual void applyLayout(const std::string& name) = 0;
-
-    /// Store the layout name, but do not immediately apply it
-    virtual void setActiveLayoutName(const std::string& name) = 0;
-
-	/**
-	 * Returns the name of the currently activated layout or
-	 * an empty string if no layout is applied.
-	 */
-	virtual std::string getCurrentLayout() = 0;
 
 	/**
 	 * Acquire a screen update blocker object that displays a modal message.

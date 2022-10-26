@@ -1,7 +1,6 @@
 #pragma once
 
 #include <memory>
-#include "ui/imainframelayout.h"
 
 #include "camera/CamWnd.h"
 
@@ -16,7 +15,7 @@ constexpr const char* const AUI_LAYOUT_NAME = "Dockable";
 class AuiFloatingFrame;
 
 /// Layout based on wxWidgets AUI (dock widget interface)
-class AuiLayout : public IMainFrameLayout
+class AuiLayout
 {
     // Main AUI manager
     AuiManager _auiMgr;
@@ -43,14 +42,11 @@ class AuiLayout : public IMainFrameLayout
 public:
     AuiLayout();
 
-	// IMainFrameLayout implementation
-	std::string getName() override;
-	void activate() override;
-	void deactivate() override;
-	void toggleFullscreenCameraView() override;
+	void activate();
+	void deactivate();
 	void saveStateToRegistry();
-	void restoreStateFromRegistry() override;
-    void createFloatingControl(const std::string& controlName) override;
+	void restoreStateFromRegistry();
+    void createFloatingControl(const std::string& controlName);
 
     void registerControl(const std::string& controlName, const IMainFrame::ControlSettings& defaultSettings);
 
@@ -61,9 +57,6 @@ public:
 
     void ensureControlIsActive(wxWindow* control);
     void ensureControlIsInactive(wxWindow* control);
-
-	// The creation function, needed by the mainframe layout manager
-	static std::shared_ptr<AuiLayout> CreateInstance();
 
     // Internally used by the AuiManager implementation
     void convertFloatingPaneToPropertyTab(AuiFloatingFrame* floatingWindow);

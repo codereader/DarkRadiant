@@ -360,7 +360,6 @@
     <ClCompile Include="..\..\radiant\ui\layers\LayerContextMenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\MainFrame.cpp" />
-    <ClCompile Include="..\..\radiant\ui\mainframe\MainFrameLayoutManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp" />
     <ClCompile Include="..\..\radiant\ui\brush\QuerySidesDialog.cpp" />
     <ClCompile Include="..\..\radiant\ui\transform\TransformPanel.cpp" />
@@ -588,9 +587,7 @@
     <ClInclude Include="..\..\radiant\ui\surfaceinspector\SurfaceInspector.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerContextMenu.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.h" />
-    <ClInclude Include="..\..\radiant\ui\mainframe\LayoutCommand.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\MainFrame.h" />
-    <ClInclude Include="..\..\radiant\ui\mainframe\MainFrameLayoutManager.h" />
     <ClInclude Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h" />
     <ClInclude Include="..\..\radiant\ui\brush\QuerySidesDialog.h" />
     <ClInclude Include="..\..\radiant\ui\transform\TransformPanel.h" />

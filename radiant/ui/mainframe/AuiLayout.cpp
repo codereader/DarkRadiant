@@ -180,11 +180,6 @@ void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
     handlePaneClosed(*closedPane);
 }
 
-std::string AuiLayout::getName()
-{
-    return AUI_LAYOUT_NAME;
-}
-
 void AuiLayout::saveStateToRegistry()
 {
     registry::setValue(RKEY_AUI_LAYOUT_VERSION, AuiLayoutVersion);
@@ -454,9 +449,7 @@ void AuiLayout::toggleControl(const std::string& controlName)
     // Locate the control, is it loaded anywhere?
     if (!controlExists(controlName))
     {
-        // Control is not loaded anywhere, create the control in its default location
-        createControl(controlName);
-        // Bring it to front
+        // Control is not loaded anywhere; focusControl will create it in its default location
         focusControl(controlName);
         return;
     }
@@ -608,15 +601,6 @@ void AuiLayout::restoreStateFromRegistry()
             ensureControlIsInactive(paneInfo.window);
         }
     }
-}
-
-void AuiLayout::toggleFullscreenCameraView()
-{
-}
-
-std::shared_ptr<AuiLayout> AuiLayout::CreateInstance()
-{
-    return std::make_shared<AuiLayout>();
 }
 
 } // namespace ui

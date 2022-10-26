@@ -127,9 +127,6 @@
     <ClInclude Include="..\..\include\ui\imainframe.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\ui\imainframelayout.h">
-      <Filter>ui</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\ui\imenu.h">
       <Filter>ui</Filter>
     </ClInclude>

@@ -337,9 +337,6 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\MainFrame.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\mainframe\MainFrameLayoutManager.cpp">
-      <Filter>src\ui\mainframe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
@@ -858,13 +855,7 @@
     <ClInclude Include="..\..\radiant\ui\layers\LayerOrthoContextMenuItem.h">
       <Filter>src\ui\layers</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mainframe\LayoutCommand.h">
-      <Filter>src\ui\mainframe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\MainFrame.h">
-      <Filter>src\ui\mainframe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\mainframe\MainFrameLayoutManager.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\ScreenUpdateBlocker.h">

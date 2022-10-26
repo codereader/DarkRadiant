@@ -1,12 +1,10 @@
 #pragma once
 
-#include <map>
 #include <sigc++/connection.h>
 
 #include "AuiLayout.h"
 #include "icommandsystem.h"
 #include "ui/imainframe.h"
-#include "ui/imainframelayout.h"
 #include "wxutil/WindowPosition.h"
 
 namespace ui
@@ -27,7 +25,7 @@ private:
 	wxutil::WindowPosition _windowPosition;
 
 	// The current layout object
-	std::shared_ptr<AuiLayout> _currentLayout;
+	std::shared_ptr<AuiLayout> _layout;
 
 	sigc::connection _mapNameChangedConn;
 	sigc::connection _mapModifiedChangedConn;
@@ -62,11 +60,6 @@ public:
 	wxToolBar* getToolbar(Toolbar type) override;
 
 	void updateAllWindows(bool force = false) override;
-
-	// Apply the named viewstyle
-	void applyLayout(const std::string& name) override;
-    void setActiveLayoutName(const std::string& name) override;
-	std::string getCurrentLayout() override;
 
 	IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title, 
 		const std::string& message, bool forceDisplay = false) override;
