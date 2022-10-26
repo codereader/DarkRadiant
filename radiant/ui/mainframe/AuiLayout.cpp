@@ -261,13 +261,21 @@ void AuiLayout::activate()
     wxSize size = topLevelParent->GetSize();
     size.Scale(0.5, 1.0);
 
-    addPane(cameraControl->getControlName(), cameraControl->createWidget(managedArea),
+    // Force a minimum width of the camera
+    auto camera = cameraControl->createWidget(managedArea);
+    auto previousMinSize = camera->GetMinSize();
+    camera->SetMinSize(wxSize(600, -1));
+
+    addPane(cameraControl->getControlName(), camera,
             DEFAULT_PANE_INFO(cameraControl->getDisplayName(), size).Left().Position(0));
     addPane("PropertiesPanel", _propertyNotebook,
             DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1).CloseButton(false).DestroyOnClose(false));
     addPane(orthoViewControl->getControlName(), orthoViewControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(orthoViewControl->getDisplayName(), size).CenterPane());
     _auiMgr.Update();
+
+    // Reset the camera min size
+    camera->SetMinSize(previousMinSize);
 
     // Hide the camera toggle option for non-floating views
     GlobalMenuManager().setVisibility("main/view/cameraview", false);
