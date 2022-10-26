@@ -259,7 +259,7 @@ void AuiLayout::activate()
     addPane(cameraControl->getControlName(), cameraControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(cameraControl->getDisplayName(), size).Left().Position(0));
     addPane("PropertiesPanel", _propertyNotebook,
-            DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1));
+            DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1).CloseButton(false).DestroyOnClose(false));
     addPane(orthoViewControl->getControlName(), orthoViewControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(orthoViewControl->getDisplayName(), size).CenterPane());
     _auiMgr.Update();
