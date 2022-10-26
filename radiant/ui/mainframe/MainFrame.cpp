@@ -107,7 +107,7 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
         std::bind(&MainFrame::toggleControl, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
     );
-    GlobalCommandSystem().addCommand("ToggleMainControl",
+    GlobalCommandSystem().addCommand(TOGGLE_MAIN_CONTROL_COMMAND,
         std::bind(&MainFrame::toggleMainControl, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
     );

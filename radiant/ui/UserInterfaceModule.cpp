@@ -337,6 +337,10 @@ void UserInterfaceModule::registerControl(const IUserControl::Ptr& control)
     // Add a command shortcut toggling this control
     GlobalCommandSystem().addStatement(fmt::format("{0}{1}", TOGGLE_CONTROL_STATEMENT_PREFIX, control->getControlName()), 
         fmt::format("{0} \"{1}\"", TOGGLE_CONTROL_COMMAND, control->getControlName()), false);
+
+    // Add a command shortcut for making this the main control
+    GlobalCommandSystem().addStatement(fmt::format("{0}{1}", TOGGLE_MAIN_CONTROL_STATEMENT_PREFIX, control->getControlName()),
+        fmt::format("{0} \"{1}\"", TOGGLE_MAIN_CONTROL_COMMAND, control->getControlName()), false);
 }
 
 IUserControl::Ptr UserInterfaceModule::findControl(const std::string& name)

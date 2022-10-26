@@ -39,6 +39,9 @@ public:
 // The command used to toggle a control: bring it to front if hidden, or hide it if it's a visible floating window
 constexpr const char* const TOGGLE_CONTROL_COMMAND = "ToggleControl";
 
+// The command used to make a control the main control (replacing the resident ortho view)
+constexpr const char* const TOGGLE_MAIN_CONTROL_COMMAND = "ToggleMainControl";
+
 // The command name used to focus a control, brings it to front, creating it if necessary
 constexpr const char* const FOCUS_CONTROL_COMMAND = "FocusControl";
 
@@ -47,6 +50,9 @@ constexpr const char* const CREATE_CONTROL_COMMAND = "CreateControl";
 
 // Prefix used to construct statements like "ToggleLightInspector"
 constexpr const char* const TOGGLE_CONTROL_STATEMENT_PREFIX = "Toggle";
+
+// Prefix for statements making a certain control the main control
+constexpr const char* const TOGGLE_MAIN_CONTROL_STATEMENT_PREFIX = "ToggleMainControl_";
 
 // Predefined known user control names
 struct UserControl

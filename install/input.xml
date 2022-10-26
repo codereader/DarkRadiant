@@ -172,6 +172,7 @@
 		<shortcut command="SetGrid128" key="8" modifiers=""/>
 		<shortcut command="SetGrid256" key="9" modifiers=""/>
 		<shortcut command="ToggleTextureTool" key="T" modifiers="CONTROL+ALT"/>
+		<shortcut command="ToggleMainControl_TextureTool" key="T" modifiers="CONTROL+ALT+SHIFT"/>
 		<shortcut command="NormaliseTexture" key="" modifiers=""/>
 		<shortcut command="TexToolGridUp" key="plus" modifiers="SHIFT" />
 		<shortcut command="TexToolGridDown" key="minus" modifiers="SHIFT" />
