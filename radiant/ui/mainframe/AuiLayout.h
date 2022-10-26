@@ -74,6 +74,8 @@ private:
         const std::function<void(wxAuiPaneInfo&)>& setupPane);
 
     void onPaneClose(wxAuiManagerEvent& ev);
+    void handlePaneClosed(const wxAuiPaneInfo& paneInfo);
+
     bool paneNameExists(const std::string& name) const;
 
     // Returns true if the control is loaded in the notebook or in a pane

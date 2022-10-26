@@ -151,35 +151,20 @@ void AuiLayout::convertFloatingPaneToPropertyTab(AuiFloatingFrame* floatingWindo
     }
 }
 
-void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
+void AuiLayout::handlePaneClosed(const wxAuiPaneInfo& pane)
 {
-    // For floating panes, memorise the last size and position
-    auto closedPane = ev.GetPane();
-
-    if (closedPane->IsFloating())
+    if (pane.IsFloating())
     {
         // Store the position of this pane before closing
-        _floatingPaneLocations[closedPane->name.ToStdString()] = _auiMgr.SavePaneInfo(*closedPane).ToStdString();
+        _floatingPaneLocations[pane.name.ToStdString()] = _auiMgr.SavePaneInfo(pane).ToStdString();
     }
 
-    ensureControlIsInactive(closedPane->window);
+    ensureControlIsInactive(pane.window);
 
     // Find and remove the pane info structure
     for (auto i = _panes.begin(); i != _panes.end(); ++i)
     {
-        if (i->paneName != closedPane->name) continue;
-
-        // This is a desperate work around to let undocked property windows
-        // return to the property notebook when they're closed
-        // I failed finding any other way to have floating windows dragged into
-        // the notebook, or adding a custom pane button - I'm open to ideas
-        auto settings = _defaultControlSettings.find(closedPane->name.ToStdString());
-
-        if (settings != _defaultControlSettings.end() && settings->second.location == IMainFrame::Location::PropertyPanel)
-        {
-            // Create a new instance to the property notebook
-            _propertyNotebook->addControl(i->controlName);
-        }
+        if (i->paneName != pane.name) continue;
 
         _panes.erase(i);
         break;
@@ -187,6 +172,14 @@ void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
 
     // Avoid losing focus of the main window
     wxGetTopLevelParent(_auiMgr.GetManagedWindow())->SetFocus();
+}
+
+void AuiLayout::onPaneClose(wxAuiManagerEvent& ev)
+{
+    // For floating panes, memorise the last size and position
+    auto closedPane = ev.GetPane();
+
+    handlePaneClosed(*closedPane);
 }
 
 std::string AuiLayout::getName()
@@ -449,17 +442,16 @@ void AuiLayout::focusControl(const std::string& controlName)
 
 void AuiLayout::toggleControl(const std::string& controlName)
 {
+    // Check the default settings if there's a control
+    if (_defaultControlSettings.count(controlName) == 0)
+    {
+        throw cmd::ExecutionFailure(fmt::format(_("Cannot toggle unknown control {0}"), controlName));
+    }
+
     // Locate the control, is it loaded anywhere?
     if (!controlExists(controlName))
     {
-        // Control is not loaded anywhere, check the named settings
-        // Check the default settings if there's a control
-        if (_defaultControlSettings.count(controlName) == 0)
-        {
-            throw cmd::ExecutionFailure(fmt::format(_("Cannot toggle unknown control {0}"), controlName));
-        }
-
-        // Create the control in its default location
+        // Control is not loaded anywhere, create the control in its default location
         createControl(controlName);
         // Bring it to front
         focusControl(controlName);
@@ -475,14 +467,15 @@ void AuiLayout::toggleControl(const std::string& controlName)
         return;
     }
 
-    // If it's a docked pane, then do nothing, otherwise toggle its visibility
+    // If it's a docked pane, toggle its visibility
     for (auto p = _panes.begin(); p != _panes.end(); ++p)
     {
         if (p->controlName != controlName) continue;
 
         auto& paneInfo = _auiMgr.GetPane(p->control);
 
-        if (!paneInfo.IsDocked())
+        // Show/hide, unless it's the center pane
+        if (paneInfo.dock_direction != wxAUI_DOCK_CENTER)
         {
             if (paneInfo.IsShown())
             {
@@ -497,6 +490,7 @@ void AuiLayout::toggleControl(const std::string& controlName)
             
             _auiMgr.Update();
         }
+
         break;
     }
 }
