@@ -509,6 +509,25 @@ void AuiLayout::toggleControl(const std::string& controlName)
     }
 }
 
+void AuiLayout::removeNonOrthoCenterPanes()
+{
+    for (auto p = _panes.begin(); p != _panes.end();)
+    {
+        auto& paneInfo = _auiMgr.GetPane(p->paneName);
+
+        if (!isCenterPane(paneInfo) || string::starts_with(paneInfo.name.ToStdString(), UserControl::OrthoView))
+        {
+            ++p;
+            continue;
+        }
+
+        ensureControlIsInactive(paneInfo.window);
+        paneInfo.DestroyOnClose(true);
+        _auiMgr.ClosePane(paneInfo);
+        _panes.erase(p++);
+    }
+}
+
 void AuiLayout::toggleMainControl(const std::string& controlName)
 {
     // Check the center pane to see what's currently in there
@@ -518,6 +537,7 @@ void AuiLayout::toggleMainControl(const std::string& controlName)
 
         if (!isCenterPane(paneInfo) || !paneInfo.IsShown()) continue;
 
+        // If the existing pane has already the requested control, switch back to ortho
         auto newControlName = string::starts_with(paneInfo.name.ToStdString(), controlName) ? UserControl::OrthoView : controlName;
 
         if (newControlName == paneInfo.name) return; // nothing to do
@@ -540,17 +560,16 @@ void AuiLayout::toggleMainControl(const std::string& controlName)
             existingOrthoView.Show();
             ensureControlIsActive(existingOrthoView.window);
 
-            // Destroy the other pane when switching back to ortho
-            paneInfo.DestroyOnClose(true);
-            ensureControlIsInactive(paneInfo.window);
-            _auiMgr.ClosePane(paneInfo);
-            _panes.erase(p);
+            removeNonOrthoCenterPanes();
         }
         else
         {
             // Hide the existing OrthoView pane
             existingOrthoView.Hide();
             ensureControlIsInactive(existingOrthoView.window);
+
+            // Close all other center panes, we don't need two main panels
+            removeNonOrthoCenterPanes();
 
             // Add the new control as center pane
             auto newWidget = control->createWidget(_auiMgr.GetManagedWindow());

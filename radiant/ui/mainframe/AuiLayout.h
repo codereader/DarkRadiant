@@ -72,6 +72,7 @@ private:
 
     void onPaneClose(wxAuiManagerEvent& ev);
     void handlePaneClosed(wxAuiPaneInfo& paneInfo);
+    void removeNonOrthoCenterPanes();
 
     void savePaneLocation(wxAuiPaneInfo& paneInfo);
     void restorePaneLocation(wxAuiPaneInfo& paneInfo);
