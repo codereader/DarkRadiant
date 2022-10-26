@@ -47,6 +47,11 @@ namespace
     {
         pane.Float().CloseButton(true).MinSize(128, 128);
     }
+
+    inline bool isCenterPane(const wxAuiPaneInfo& pane)
+    {
+        return pane.dock_direction == wxAUI_DOCK_CENTER;
+    }
 }
 
 AuiLayout::AuiLayout() :
@@ -468,7 +473,7 @@ void AuiLayout::toggleControl(const std::string& controlName)
         auto& paneInfo = _auiMgr.GetPane(p->control);
 
         // Show/hide, unless it's the center pane
-        if (paneInfo.dock_direction != wxAUI_DOCK_CENTER)
+        if (!isCenterPane(paneInfo))
         {
             if (paneInfo.IsShown())
             {
@@ -500,6 +505,61 @@ void AuiLayout::toggleControl(const std::string& controlName)
             }
         }
 
+        break;
+    }
+}
+
+void AuiLayout::toggleMainControl(const std::string& controlName)
+{
+    // Check the center pane to see what's currently in there
+    for (auto p = _panes.begin(); p != _panes.end(); ++p)
+    {
+        auto& paneInfo = _auiMgr.GetPane(p->paneName);
+
+        if (!isCenterPane(paneInfo) || !paneInfo.IsShown()) continue;
+
+        auto newControlName = string::starts_with(paneInfo.name.ToStdString(), controlName) ? UserControl::OrthoView : controlName;
+
+        if (newControlName == paneInfo.name) return; // nothing to do
+
+        auto control = GlobalUserInterface().findControl(newControlName);
+
+        if (!control)
+        {
+            throw std::invalid_argument("Cannot make " + newControlName + " to a main control");
+        }
+
+        rMessage() << "Swapping " << newControlName << " with the existing main control " <<
+            paneInfo.name.ToStdString() << std::endl;
+
+        // Find the hidden OrthoView pane
+        auto& existingOrthoView = _auiMgr.GetPane(UserControl::OrthoView);
+
+        if (newControlName == UserControl::OrthoView)
+        {
+            existingOrthoView.Show();
+            ensureControlIsActive(existingOrthoView.window);
+
+            // Destroy the other pane when switching back to ortho
+            paneInfo.DestroyOnClose(true);
+            ensureControlIsInactive(paneInfo.window);
+            _auiMgr.ClosePane(paneInfo);
+            _panes.erase(p);
+        }
+        else
+        {
+            // Hide the existing OrthoView pane
+            existingOrthoView.Hide();
+            ensureControlIsInactive(existingOrthoView.window);
+
+            // Add the new control as center pane
+            auto newWidget = control->createWidget(_auiMgr.GetManagedWindow());
+            addPane(generateUniquePaneName(newControlName), newWidget,
+                DEFAULT_PANE_INFO(control->getDisplayName(), MIN_SIZE).CenterPane());
+            ensureControlIsActive(newWidget);
+        }
+        
+        _auiMgr.Update();
         break;
     }
 }

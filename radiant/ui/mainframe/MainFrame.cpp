@@ -107,6 +107,10 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
         std::bind(&MainFrame::toggleControl, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
     );
+    GlobalCommandSystem().addCommand("ToggleMainControl",
+        std::bind(&MainFrame::toggleMainControl, this, std::placeholders::_1),
+        { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
+    );
     GlobalCommandSystem().addCommand(CREATE_CONTROL_COMMAND,
         std::bind(&MainFrame::createControl, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
@@ -562,6 +566,18 @@ void MainFrame::toggleControl(const cmd::ArgumentList& args)
     }
 
     _layout->toggleControl(args.at(0).getString());
+}
+
+void MainFrame::toggleMainControl(const cmd::ArgumentList& args)
+{
+    if (args.size() != 1)
+    {
+        // Enumerate possible control names?
+        rMessage() << "Usage: ToggleMainControl <ControlName>" << std::endl;
+        return;
+    }
+
+    _layout->toggleMainControl(args.at(0).getString());
 }
 
 sigc::signal<void>& MainFrame::signal_MainFrameConstructed()

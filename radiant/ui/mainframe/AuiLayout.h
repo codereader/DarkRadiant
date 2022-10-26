@@ -54,6 +54,7 @@ public:
     void createControl(const std::string& controlName);
     void focusControl(const std::string& controlName);
     void toggleControl(const std::string& controlName);
+    void toggleMainControl(const std::string& controlName);
 
     void ensureControlIsActive(wxWindow* control);
     void ensureControlIsInactive(wxWindow* control);
