@@ -37,6 +37,9 @@ class AuiLayout : public IMainFrameLayout
     // Stored floating window locations
     std::map<std::string, std::string> _floatingPaneLocations;
 
+    // Stored last known locations of docked panes
+    std::map<std::string, std::string> _dockedPaneLocations;
+
 public:
     AuiLayout();
 
@@ -75,6 +78,9 @@ private:
 
     void onPaneClose(wxAuiManagerEvent& ev);
     void handlePaneClosed(const wxAuiPaneInfo& paneInfo);
+
+    void savePaneLocation(const wxAuiPaneInfo& paneInfo);
+    void restorePaneLocation(wxAuiPaneInfo& paneInfo);
 
     bool paneNameExists(const std::string& name) const;
 

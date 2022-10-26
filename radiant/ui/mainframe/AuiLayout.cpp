@@ -24,6 +24,7 @@ namespace
     const std::string RKEY_AUI_PERSPECTIVE = RKEY_ROOT + "perspective";
     const std::string RKEY_AUI_PANES = RKEY_ROOT + "panes";
     const std::string RKEY_AUI_FLOATING_PANE_LOCATIONS = RKEY_ROOT + "floatingPaneLocations";
+    const std::string RKEY_AUI_DOCKED_PANE_LOCATIONS = RKEY_ROOT + "dockedPaneLocations";
     const std::string RKEY_AUI_LAYOUT_VERSION = RKEY_ROOT + "layoutVersion";
     const std::string PANE_NODE_NAME = "pane";
     const std::string PANE_NAME_ATTRIBUTE = "paneName";
@@ -153,11 +154,8 @@ void AuiLayout::convertFloatingPaneToPropertyTab(AuiFloatingFrame* floatingWindo
 
 void AuiLayout::handlePaneClosed(const wxAuiPaneInfo& pane)
 {
-    if (pane.IsFloating())
-    {
-        // Store the position of this pane before closing
-        _floatingPaneLocations[pane.name.ToStdString()] = _auiMgr.SavePaneInfo(pane).ToStdString();
-    }
+    // Store the position of this pane before closing
+    savePaneLocation(pane);
 
     ensureControlIsInactive(pane.window);
 
@@ -214,13 +212,24 @@ void AuiLayout::saveStateToRegistry()
         paneNode.setAttributeValue(PANE_NAME_ATTRIBUTE, pane.paneName);
     }
 
+    // Persist the floating pane locations
     GlobalRegistry().deleteXPath(RKEY_AUI_FLOATING_PANE_LOCATIONS);
     auto floatingPanesKey = GlobalRegistry().createKey(RKEY_AUI_FLOATING_PANE_LOCATIONS);
 
-    // Persist the floating pane locations
     for (const auto& [name, state] : _floatingPaneLocations)
     {
         auto paneNode = floatingPanesKey.createChild(PANE_NODE_NAME);
+        paneNode.setAttributeValue(PANE_NAME_ATTRIBUTE, name);
+        paneNode.setAttributeValue(STATE_ATTRIBUTE, state);
+    }
+
+    // Persist the docked pane locations
+    GlobalRegistry().deleteXPath(RKEY_AUI_DOCKED_PANE_LOCATIONS);
+    auto dockedPanesKey = GlobalRegistry().createKey(RKEY_AUI_DOCKED_PANE_LOCATIONS);
+
+    for (const auto& [name, state] : _dockedPaneLocations)
+    {
+        auto paneNode = dockedPanesKey.createChild(PANE_NODE_NAME);
         paneNode.setAttributeValue(PANE_NAME_ATTRIBUTE, name);
         paneNode.setAttributeValue(STATE_ATTRIBUTE, state);
     }
@@ -327,14 +336,6 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
     {
         setupFloatingPane(paneInfo);
 
-        // Check if we got existing size information for this floating pane
-        auto existingSizeInfo = _floatingPaneLocations.find(paneInfo.name.ToStdString());
-
-        if (existingSizeInfo != _floatingPaneLocations.end())
-        {
-            _auiMgr.LoadPaneInfo(existingSizeInfo->second, paneInfo);
-        }
-
         // Check for the default floating size
         auto defaultSettings = _defaultControlSettings.find(controlName);
 
@@ -343,6 +344,8 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
             paneInfo.FloatingSize(defaultSettings->second.defaultFloatingWidth, 
                 defaultSettings->second.defaultFloatingHeight);
         }
+
+        restorePaneLocation(paneInfo);
     });
 
     auto& paneInfo = _auiMgr.GetPane(paneName);
@@ -479,19 +482,60 @@ void AuiLayout::toggleControl(const std::string& controlName)
         {
             if (paneInfo.IsShown())
             {
+                savePaneLocation(paneInfo);
                 paneInfo.Hide();
                 ensureControlIsInactive(p->control);
             }
             else
             {
                 paneInfo.Show();
+                restorePaneLocation(paneInfo);
+
+                if (paneInfo.dock_direction == wxAUI_DOCK_LEFT || paneInfo.dock_direction == wxAUI_DOCK_RIGHT)
+                {
+                    // Set the minimum width of this restored pane otherwise the
+                    // wxAuiManager::Update() routine is resetting the pane to its minimum dimensions
+                    paneInfo.MinSize(paneInfo.rect.GetSize().x, -1);
+                }
+
                 ensureControlIsActive(p->control);
             }
             
             _auiMgr.Update();
+
+            // Reset the mininum size again to not interfere with any drag operations
+            if (paneInfo.IsDocked())
+            {
+                paneInfo.MinSize(MIN_SIZE);
+            }
         }
 
         break;
+    }
+}
+
+void AuiLayout::savePaneLocation(const wxAuiPaneInfo& pane)
+{
+    if (pane.IsFloating())
+    {
+        _floatingPaneLocations[pane.name.ToStdString()] = _auiMgr.SavePaneInfo(pane).ToStdString();
+    }
+    else
+    {
+        _dockedPaneLocations[pane.name.ToStdString()] = _auiMgr.SavePaneInfo(pane).ToStdString();
+    }
+}
+
+void AuiLayout::restorePaneLocation(wxAuiPaneInfo& pane)
+{
+    // Check if we got existing size information for this floating pane
+    const auto& locations = pane.IsFloating() ? _floatingPaneLocations : _dockedPaneLocations;
+
+    auto existingSizeInfo = locations.find(pane.name.ToStdString());
+
+    if (existingSizeInfo != locations.end())
+    {
+        _auiMgr.LoadPaneInfo(existingSizeInfo->second, pane);
     }
 }
 
@@ -508,6 +552,12 @@ void AuiLayout::restoreStateFromRegistry()
     for (const auto& node : GlobalRegistry().findXPath(RKEY_AUI_FLOATING_PANE_LOCATIONS + "//*"))
     {
         _floatingPaneLocations[node.getAttributeValue(PANE_NAME_ATTRIBUTE)] = node.getAttributeValue(STATE_ATTRIBUTE);
+    }
+
+    _dockedPaneLocations.clear();
+    for (const auto& node : GlobalRegistry().findXPath(RKEY_AUI_DOCKED_PANE_LOCATIONS + "//*"))
+    {
+        _dockedPaneLocations[node.getAttributeValue(PANE_NAME_ATTRIBUTE)] = node.getAttributeValue(STATE_ATTRIBUTE);
     }
 
     // Restore all missing panes, this has to be done before the perspective is restored
