@@ -407,7 +407,7 @@ void AuiLayout::ensureControlIsInactive(wxWindow* control)
 
 void AuiLayout::focusControl(const std::string& controlName)
 {
-    // Locate the control, is it loaded anywhere
+    // Locate the control, is it loaded anywhere?
     if (!controlExists(controlName))
     {
         // Control is not loaded anywhere, check the named settings

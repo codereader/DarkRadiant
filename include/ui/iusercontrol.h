@@ -39,6 +39,12 @@ public:
 // The command used to toggle a control: bring it to front if hidden, or hide it if it's a visible floating window
 constexpr const char* const TOGGLE_CONTROL_COMMAND = "ToggleControl";
 
+// The command name used to focus a control, brings it to front, creating it if necessary
+constexpr const char* const FOCUS_CONTROL_COMMAND = "FocusControl";
+
+// The command name used to create a new instance of a control
+constexpr const char* const CREATE_CONTROL_COMMAND = "CreateControl";
+
 // Prefix used to construct statements like "ToggleLightInspector"
 constexpr const char* const TOGGLE_CONTROL_STATEMENT_PREFIX = "Toggle";
 

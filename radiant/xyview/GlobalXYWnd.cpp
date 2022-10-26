@@ -108,7 +108,7 @@ void XYWndManager::registerCommands()
         GlobalMainFrame().addControl(UserControl::OrthoView, { IMainFrame::Location::FloatingWindow, false });
     });
 
-    GlobalCommandSystem().addStatement("NewOrthoView", fmt::format("CreateControl {0}", UserControl::OrthoView), false);
+    GlobalCommandSystem().addStatement("NewOrthoView", fmt::format("{0} {1}", CREATE_CONTROL_COMMAND, UserControl::OrthoView), false);
 	GlobalCommandSystem().addCommand("NextView", std::bind(&XYWndManager::toggleActiveView, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("ZoomIn", std::bind(&XYWndManager::zoomIn, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("ZoomOut", std::bind(&XYWndManager::zoomOut, this, std::placeholders::_1));

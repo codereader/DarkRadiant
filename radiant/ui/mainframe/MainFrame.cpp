@@ -107,15 +107,15 @@ void MainFrame::initialiseModule(const IApplicationContext& ctx)
 		std::bind(&MainFrame::toggleFullscreenCameraView, this, std::placeholders::_1)
 	);
 
-    GlobalCommandSystem().addCommand("FocusControl",
+    GlobalCommandSystem().addCommand(FOCUS_CONTROL_COMMAND,
         std::bind(&MainFrame::focusControl, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
     );
-    GlobalCommandSystem().addCommand("ToggleControl",
+    GlobalCommandSystem().addCommand(TOGGLE_CONTROL_COMMAND,
         std::bind(&MainFrame::toggleControl, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
     );
-    GlobalCommandSystem().addCommand("CreateControl",
+    GlobalCommandSystem().addCommand(CREATE_CONTROL_COMMAND,
         std::bind(&MainFrame::createControl, this, std::placeholders::_1),
         { cmd::ARGTYPE_STRING | cmd::ARGTYPE_OPTIONAL }
     );

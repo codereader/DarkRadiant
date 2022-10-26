@@ -505,7 +505,7 @@ void MapMergePanel::OnMapEditModeChanged(IMap::EditMode mode)
 
     if (mode == IMap::EditMode::Merge)
     {
-        GlobalCommandSystem().executeCommand("FocusControl", { UserControl::MapMergePanel });
+        GlobalCommandSystem().executeCommand(FOCUS_CONTROL_COMMAND, { UserControl::MapMergePanel });
     }
 }
 

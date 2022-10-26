@@ -910,7 +910,7 @@ void TextureBrowser::onSeekInMediaBrowser()
         if (auto shader = getShaderAtCoords(_popupX, _popupY); shader)
         {
             // Focus the MediaBrowser selection to the given shader
-            GlobalCommandSystem().executeCommand("FocusControl", { UserControl::MediaBrowser });
+            GlobalCommandSystem().executeCommand(FOCUS_CONTROL_COMMAND, { UserControl::MediaBrowser });
             FocusMaterialRequest::Send(shader->getName());
         }
     }
