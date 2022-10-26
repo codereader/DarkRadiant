@@ -39,7 +39,6 @@
       <showStimTypeIDs value="0" />
     </stimResponseEditor>
     <lightInspector>
-      <window xPosition="100" yPosition="150" width="780" height="400" />
       <instantApply value="1" />
     </lightInspector>
     <ModelSelector>
@@ -72,23 +71,14 @@
     <offsetClonedObjects value="1" />
     <manipulatorFontSize value="14" />
     <manipulatorFontStyle value="Sans" />
-    <transformDialog>
-      <window xPosition="150" yPosition="200" width="260" height="314" />
+    <transformPanel>
       <rotXStep value="45" />
       <rotYStep value="45" />
       <rotZStep value="45" />
       <scaleXStep value="1.1" />
       <scaleYStep value="1.1" />
       <scaleZStep value="1.1" />
-    </transformDialog>
-    <layers>
-      <controlDialog>
-        <window xPosition="57" yPosition="449" width="164" height="299" />
-      </controlDialog>
-    </layers>
-    <mergeControlDialog>
-        <window xPosition="158" yPosition="241" width="400" height="380"/>
-    </mergeControlDialog>
+    </transformPanel>
     <textures>
       <materialChooser>
         <window xPosition="200" yPosition="100" width="550" height="500" />
@@ -141,16 +131,7 @@
         <pane name="vertical1" position="250" />
         <pane name="vertical2" position="250" />
       </splitPane>
-      <floating>
-        <groupDialogVisible value="1" />
-      </floating>
     </mainFrame>
-    <groupDialog>
-      <window xPosition="50" yPosition="530" width="350" height="200" />
-    </groupDialog>
-    <entityList>
-      <window xPosition="50" yPosition="530" width="250" height="400" />
-    </entityList>
     <multiMonitor>
       <startMonitorNum value="0" />
     </multiMonitor>
@@ -305,7 +286,7 @@
       <toggletoolbutton name="shownames" action="TextureBrowserShowNames" tooltip="Show texture names" icon="icon_text.png"/>
       <toggletoolbutton name="useuniformscale" action="TextureBrowserToggleUniformScale" tooltip="Use Uniform Thumbnail Scale" icon="texwindow_uniformsize.png"/>
       <separator/>
-      <toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
+      <toolbutton name="findandreplace" action="ToggleFindAndReplaceMaterial" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
     </toolbar>
     <toolbar name="textool" align="horizontal">
       <toolbutton name="griddown" action="GridDown" tooltip="Decrease Grid Size" icon="grid_down.png"/>

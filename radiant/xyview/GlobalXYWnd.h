@@ -1,10 +1,7 @@
 #pragma once
 
-#include <list>
 #include <map>
 #include "iorthoview.h"
-#include "iclipper.h"
-#include "iregistry.h"
 #include "icommandsystem.h"
 #include "imousetoolmanager.h"
 
@@ -18,13 +15,10 @@ namespace ui
 class XYWndManager : 
     public IXWndManager
 {
-	// Store an indexed map of XYWnds. When one is deleted, it will notify
-	// the XYWndManager of its index so that it can be removed from the map
-	typedef std::map<int, XYWndPtr> XYWndMap;
-	XYWndMap _xyWnds;
+	std::map<int, XYWnd*> _xyWnds;
 
 	// The active XYWnd
-	XYWndPtr _activeXY;
+	int _activeXYWndId;
 
 	// True, if the view is moved when the mouse cursor exceeds the view window borders
 	bool _chaseMouse;
@@ -57,9 +51,7 @@ private:
 	void refreshFromRegistry();
 
 public:
-
-	// Constructor
-	XYWndManager();
+    XYWndManager();
 
 	// Returns the state of the xy view preferences
 	bool chaseMouse() const;
@@ -83,16 +75,6 @@ public:
 	// Passes a draw call to each allocated view, set force to true 
     // to redraw immediately instead of queueing the draw.
 	void updateAllViews(bool force = false) override;
-
-	// Free all the allocated views from the heap
-	void destroyViews() override;
-
-	// Saves the current state of all open views to the registry
-	void saveState();
-	// Restores the xy windows according to the state saved in the XMLRegistry
-	void restoreState();
-
-	XYWndPtr getActiveXY() const;
 
 	/**
 	 * Set the given XYWnd to active state.
@@ -135,9 +117,8 @@ public:
 
 	void toggleActiveView(const cmd::ArgumentList& args);
 
-	// Retrieves the pointer to the first view matching the given view type
-	// @returns: NULL if no matching window could be found, the according pointer otherwise
-	XYWndPtr getView(EViewType viewType);
+    void registerXYWnd(XYWnd* view);
+    void unregisterXYWnd(XYWnd* view);
 
 	/**
 	 * Create a non-floating (embedded) ortho view. DEPRECATED
@@ -148,17 +129,6 @@ public:
 	 * Create a non-floating (embedded) orthoview of the given type
 	 */
 	XYWndPtr createEmbeddedOrthoView(EViewType viewType, wxWindow* parent);
-
-	/**
-	 * Create a new floating ortho view, as a child of the main window.
-	 */
-	XYWndPtr createFloatingOrthoView(EViewType viewType);
-
-	/**
-	 * Parameter-less wrapper for createFloatingOrthoView(), for use by the
-	 * event manager. The default orientation of XY is used.
-	 */
-	void createXYFloatingOrthoView(const cmd::ArgumentList& args);
 
 	/**
 	 * greebo: This removes a certain orthoview ID, usually initiating
@@ -176,6 +146,8 @@ public:
 	void shutdownModule() override;
 
 private:
+    void doWithActiveXyWnd(const std::function<void(XYWnd&)>& action) const;
+
 	/* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views
 	 * If something is selected the center of the selection is taken as new origin, otherwise the camera
 	 * position is considered to be the new origin of the toggled orthoview. */

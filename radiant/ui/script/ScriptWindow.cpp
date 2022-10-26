@@ -1,7 +1,6 @@
 #include "ScriptWindow.h"
 
 #include "iscript.h"
-#include "ui/igroupdialog.h"
 #include "iundo.h"
 #include "i18n.h"
 
@@ -17,7 +16,7 @@ namespace ui
 {
 
 ScriptWindow::ScriptWindow(wxWindow* parent) :
-	wxPanel(parent, wxID_ANY),
+    DockablePanel(parent),
 	_outView(new wxutil::ConsoleView(this))
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -48,11 +47,6 @@ ScriptWindow::ScriptWindow(wxWindow* parent) :
 
 	vertPane->SplitHorizontally(editPanel, _outView);
 	vertPane->SetSashPosition(150);
-}
-
-void ScriptWindow::toggle(const cmd::ArgumentList& args)
-{
-	GlobalGroupDialog().togglePage("Script");
 }
 
 void ScriptWindow::onRunScript(wxCommandEvent& ev)

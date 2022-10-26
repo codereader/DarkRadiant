@@ -33,6 +33,26 @@ TEST(BasicTest, StringILessFunctor)
     EXPECT_TRUE(!less("BLEH", "blah"));
 }
 
+TEST(BasicTest, StringIsAlphaNumeric)
+{
+    EXPECT_FALSE(string::isAlphaNumeric(""));
+
+    EXPECT_TRUE(string::isAlphaNumeric("abc"));
+    EXPECT_TRUE(string::isAlphaNumeric("ABC"));
+    EXPECT_TRUE(string::isAlphaNumeric("12"));
+    EXPECT_TRUE(string::isAlphaNumeric("0"));
+    EXPECT_TRUE(string::isAlphaNumeric("abc12"));
+    EXPECT_TRUE(string::isAlphaNumeric("abcdefghijklmnopqrstuvwxyz123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"));
+
+    EXPECT_FALSE(string::isAlphaNumeric("abc test"));
+    EXPECT_FALSE(string::isAlphaNumeric("abc\ntest"));
+    EXPECT_FALSE(string::isAlphaNumeric("abc\ttest"));
+    EXPECT_FALSE(string::isAlphaNumeric("abc\rtest"));
+    EXPECT_FALSE(string::isAlphaNumeric("$abc"));
+    EXPECT_FALSE(string::isAlphaNumeric("/abc"));
+    EXPECT_FALSE(string::isAlphaNumeric("test&afff"));
+}
+
 TEST(PathTests, GetFileExtension)
 {
     EXPECT_EQ(os::getExtension(""), "");

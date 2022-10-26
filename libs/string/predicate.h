@@ -2,6 +2,7 @@
 
 #include <string>
 #include <cstring>
+#include <cctype>
 
 namespace string
 {
@@ -231,6 +232,23 @@ template<typename TestStringType>
 inline bool iends_with(const std::string& input, const TestStringType& test)
 {
 	return ends_with(input, test, detail::isEqualNoCase);
+}
+
+/**
+ * Returns true if the given inpit string is consisting of alphanumeric characters only.
+ * Returns false if the input string is an empty string.
+ */
+inline bool isAlphaNumeric(const std::string& input)
+{
+    for (const auto c : input)
+    {
+        if (!::isalpha(c) && !::isdigit(c))
+        {
+            return false;
+        }
+    }
+
+    return !input.empty();
 }
 
 }

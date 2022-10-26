@@ -1,9 +1,7 @@
 #pragma once
 
-#include "icommandsystem.h"
-
-#include <wx/panel.h>
 #include "wxutil/ConsoleView.h"
+#include "wxutil/DockablePanel.h"
 
 class wxCommandEvent;
 namespace wxutil { class PythonSourceViewCtrl; }
@@ -11,11 +9,8 @@ namespace wxutil { class PythonSourceViewCtrl; }
 namespace ui
 {
 
-class ScriptWindow;
-typedef std::shared_ptr<ScriptWindow> ScriptWindowPtr;
-
 class ScriptWindow :
-	public wxPanel
+	public wxutil::DockablePanel
 {
 private:
 	// Use a standard console window for the script output
@@ -26,13 +21,8 @@ private:
 public:
 	ScriptWindow(wxWindow* parent);
 
-	/**
-	 * greebo: Static command target for toggling the script window.
-	 */
-	static void toggle(const cmd::ArgumentList& args);
-
 private:
 	void onRunScript(wxCommandEvent& ev);
 };
 
-} // namespace script
+} // namespace

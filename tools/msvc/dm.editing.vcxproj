@@ -230,6 +230,7 @@
     <ClCompile Include="..\..\plugins\dm.editing\ReadmeTxt.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\plugins\dm.editing\AIEditingControl.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIEditingPanel.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIHeadChooserDialog.h" />
     <ClInclude Include="..\..\plugins\dm.editing\AIHeadPropertyEditor.h" />

@@ -2,7 +2,7 @@
 <resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
 	<object class="wxPanel" name="OverlayDialogMainPanel">
 		<style>wxTAB_TRAVERSAL</style>
-		<size>500,380</size>
+		<size>500,331</size>
 		<object class="wxBoxSizer">
 			<orient>wxVERTICAL</orient>
 			<object class="sizeritem">
@@ -16,7 +16,7 @@
 			</object>
 			<object class="sizeritem">
 				<option>1</option>
-				<flag>wxEXPAND | wxALL</flag>
+				<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT</flag>
 				<border>12</border>
 				<object class="wxPanel" name="OverlayDialogControlPanel">
 					<style>wxTAB_TRAVERSAL</style>
@@ -231,15 +231,6 @@
 							</object>
 						</object>
 					</object>
-				</object>
-			</object>
-			<object class="sizeritem">
-				<option>0</option>
-				<flag>wxALIGN_RIGHT|wxBOTTOM|wxLEFT|wxRIGHT</flag>
-				<border>12</border>
-				<object class="wxButton" name="OverlayDialogCloseButton">
-					<label>Close</label>
-					<default>0</default>
 				</object>
 			</object>
 		</object>

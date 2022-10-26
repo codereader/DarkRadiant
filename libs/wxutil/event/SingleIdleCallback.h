@@ -1,8 +1,7 @@
 #pragma once
 
-#include <wx/wxprec.h>
+#include <wx/event.h>
 #include <wx/app.h>
-#include <iostream>
 
 namespace wxutil
 {
@@ -15,38 +14,51 @@ namespace wxutil
  * whenever it is ready to receive an idle callback. Subsequently, it will have
  * its onIdle() method invoked once during the idle period.
  */
-class SingleIdleCallback :
-	public wxEvtHandler
+class SingleIdleCallback
 {
 private:
-	bool _callbackPending;
+	bool _registered;
+
+    // To avoid inheriting from wxEvtHandler, we use composition
+    // maintaining an inner wxEvtHandler instance to be invoked on idle
+    class InternalEventHandler :
+        public wxEvtHandler
+    {
+    private:
+        SingleIdleCallback& _owner;
+    public:
+        InternalEventHandler(SingleIdleCallback& owner) :
+            _owner(owner)
+        {}
+
+        void _onIdle(wxIdleEvent&)
+        {
+            // Call the virtual function
+            _owner.handleIdleCallback();
+        }
+    } _evtHandler;
 
 private:
 
-	// Actual wxIdelEvent callback method, which invokes the child class'
-	// implementing method
-	void _onIdle(wxIdleEvent& ev)
+	void handleIdleCallback()
 	{
-		wxTheApp->Disconnect(wxEVT_IDLE, wxIdleEventHandler(wxutil::SingleIdleCallback::_onIdle), NULL, this);
+        wxTheApp->Unbind(wxEVT_IDLE, &InternalEventHandler::_onIdle, &_evtHandler);
+        _registered = false;
 		
 		// Call the virtual function
 		onIdle();
-
-		_callbackPending = false;
 	}
 
 	// Remove the callback
 	void deregisterCallback()
 	{
-		if (_callbackPending)
-		{
-			if (wxTheApp)
-			{
-				wxTheApp->Disconnect(wxEVT_IDLE, wxIdleEventHandler(wxutil::SingleIdleCallback::_onIdle), NULL, this);
-			}
+        if (!_registered) return;
 
-			_callbackPending = false;
-		}
+        if (wxTheApp)
+        {
+            _registered = false;
+            wxTheApp->Unbind(wxEVT_IDLE, &InternalEventHandler::_onIdle, &_evtHandler);
+        }
 	}
 
 protected:
@@ -57,19 +69,13 @@ protected:
 	 */
 	void requestIdleCallback()
 	{
-		if (_callbackPending) return; // avoid duplicate registrations
+		if (_registered) return; // avoid duplicate registrations
 
 		if (wxTheApp)
 		{
-			_callbackPending = true;
-			wxTheApp->Connect(wxEVT_IDLE, wxIdleEventHandler(wxutil::SingleIdleCallback::_onIdle), NULL, this);
+            _registered = true;
+            wxTheApp->Bind(wxEVT_IDLE, &InternalEventHandler::_onIdle, &_evtHandler);
 		}
-	}
-
-	// TRUE if an idle callback is pending
-	bool callbacksPending() const
-	{
-		return _callbackPending;
 	}
 
     void cancelCallbacks()
@@ -80,7 +86,7 @@ protected:
 	// Flushes any pending events, forces a call to onGtkIdle, if necessary
 	void flushIdleCallback()
 	{
-		if (_callbackPending)
+		if (_registered)
 		{
 			// Cancel the event and force an onIdle() call
 			deregisterCallback();
@@ -98,9 +104,10 @@ protected:
 
 public:
 
-	SingleIdleCallback() :
-		_callbackPending(0)
-	{}
+    SingleIdleCallback() :
+        _registered(false),
+        _evtHandler(*this)
+    {}
 
 	/**
 	 * Destructor. De-registers the callback from wx, so that the method will

@@ -180,8 +180,6 @@ void CameraSettings::keyChanged()
 	importDrawMode(registry::getValue<int>(RKEY_DRAWMODE));
 
 	// Check if a global camwindow is set
-	CamWndPtr cam = GlobalCamera().getActiveCamWnd();
-
     GlobalCamera().foreachCamWnd([&](CamWnd& cam)
     {
         bool freeMovedWasEnabled = cam.freeMoveEnabled();

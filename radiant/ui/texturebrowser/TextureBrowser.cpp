@@ -4,12 +4,9 @@
 #include "itextstream.h"
 #include "ui/imainframe.h"
 #include "ui/itoolbarmanager.h"
+#include "ui/iusercontrol.h"
 #include "icolourscheme.h"
-#include "ui/igroupdialog.h"
-#include "iradiant.h"
 #include "ifavourites.h"
-#include "ipreferencesystem.h"
-#include "ui/imediabrowser.h"
 #include "ishaderclipboard.h"
 
 #include "wxutil/menu/IconTextMenuItem.h"
@@ -35,14 +32,15 @@
 #include "string/case_conv.h"
 #include "debugging/gl.h"
 #include "TextureBrowserManager.h"
+#include "ui/mediabrowser/FocusMaterialRequest.h"
 
 namespace ui
 {
 
 namespace
 {
-    const char* const SEEK_IN_MEDIA_BROWSER_TEXT = N_("Seek in Media Browser");
-    const char* TEXTURE_ICON = "icon_texture.png";
+    constexpr const char* const SEEK_IN_MEDIA_BROWSER_TEXT = N_("Seek in Media Browser");
+    constexpr const char* TEXTURE_ICON = "icon_texture.png";
 
     int FONT_HEIGHT()
     {
@@ -50,8 +48,8 @@ namespace
         return height;
     }
 
-    const int VIEWPORT_BORDER = 12;
-    const int TILE_BORDER = 2;
+    constexpr int VIEWPORT_BORDER = 12;
+    constexpr int TILE_BORDER = 2;
 }
 
 class TextureBrowser::TextureTile
@@ -210,7 +208,7 @@ private:
 };
 
 TextureBrowser::TextureBrowser(wxWindow* parent) :
-    wxPanel(parent, wxID_ANY),
+    DockablePanel(parent),
     _popupX(-1),
     _popupY(-1),
     _startOrigin(-1),
@@ -245,6 +243,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     observeKey(RKEY_TEXTURE_SHOW_FILTER);
     observeKey(RKEY_TEXTURE_MAX_NAME_LENGTH);
     observeKey(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
+    observeKey(RKEY_TEXTURES_SHOW_NAMES);
 
     loadScaleFromRegistry();
 
@@ -271,8 +270,6 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
 
     GlobalMaterialManager().signal_activeShadersChanged().connect(
         sigc::mem_fun(this, &TextureBrowser::onActiveShadersChanged));
-
-    Bind(wxEVT_IDLE, &TextureBrowser::onIdle, this);
 
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -353,14 +350,37 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     }
 
     updateScroll();
-
-    GlobalFavouritesManager().getSignalForType(decl::getTypeName(decl::Type::Material)).connect(
-        sigc::mem_fun(this, &TextureBrowser::onFavouritesChanged));
 }
 
 TextureBrowser::~TextureBrowser()
 {
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
     GlobalTextureBrowser().unregisterTextureBrowser(this);
+}
+
+void TextureBrowser::onPanelActivated()
+{
+    connectListeners();
+    queueUpdate();
+}
+
+void TextureBrowser::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void TextureBrowser::connectListeners()
+{
+    _favouritesChangedHandler = GlobalFavouritesManager().getSignalForType(decl::getTypeName(decl::Type::Material))
+        .connect(sigc::mem_fun(this, &TextureBrowser::onFavouritesChanged));
+}
+
+void TextureBrowser::disconnectListeners()
+{
+    _favouritesChangedHandler.disconnect();
 }
 
 void TextureBrowser::loadScaleFromRegistry()
@@ -457,7 +477,7 @@ void TextureBrowser::keyChanged()
 
 void TextureBrowser::onFavouritesChanged()
 {
-    _updateNeeded = true;
+    queueUpdate();
 }
 
 // Return the display width of a texture in the texture browser
@@ -672,6 +692,11 @@ void TextureBrowser::setOriginY(int newOriginY)
 void TextureBrowser::queueUpdate()
 {
     _updateNeeded = true;
+
+    if (panelIsActive())
+    {
+        requestIdleCallback();
+    }
 }
 
 void TextureBrowser::performUpdate()
@@ -770,12 +795,12 @@ MaterialPtr TextureBrowser::getShaderAtCoords(int x, int y)
         }
     }
 
-    return MaterialPtr();
+    return {};
 }
 
 void TextureBrowser::selectTextureAt(int mx, int my)
 {
-    MaterialPtr shader = getShaderAtCoords(mx, my);
+    auto shader = getShaderAtCoords(mx, my);
 
     if (shader)
     {
@@ -885,13 +910,11 @@ void TextureBrowser::onSeekInMediaBrowser()
 {
     if (_popupX > 0 && _popupY > 0)
     {
-        MaterialPtr shader = getShaderAtCoords(_popupX, _popupY);
-
-        if (shader != NULL)
+        if (auto shader = getShaderAtCoords(_popupX, _popupY); shader)
         {
             // Focus the MediaBrowser selection to the given shader
-            GlobalGroupDialog().setPage(GlobalMediaBrowser().getGroupDialogTabName());
-            GlobalMediaBrowser().setSelection(shader->getName());
+            GlobalCommandSystem().executeCommand(FOCUS_CONTROL_COMMAND, { UserControl::MediaBrowser });
+            FocusMaterialRequest::Send(shader->getName());
         }
     }
 
@@ -1012,16 +1035,12 @@ void TextureBrowser::onGLMouseButtonRelease(wxMouseEvent& ev)
     }
 }
 
-void TextureBrowser::onIdle(wxIdleEvent& ev)
+void TextureBrowser::onIdle()
 {
     if (_updateNeeded)
     {
         performUpdate();
-
-        if (this->IsShownOnScreen())
-        {
-            queueDraw();
-        }
+        queueDraw();
     }
 }
 
@@ -1034,11 +1053,6 @@ bool TextureBrowser::onRender()
 
 	debug::assertNoGlErrors();
 
-    if (_updateNeeded)
-    {
-        performUpdate();
-    }
-
     draw();
 
     debug::assertNoGlErrors();
@@ -1046,7 +1060,7 @@ bool TextureBrowser::onRender()
     return true;
 }
 
-} // namespace ui
+} // namespace
 
 /** greebo: The accessor method, use this to call non-static TextureBrowser methods
  */

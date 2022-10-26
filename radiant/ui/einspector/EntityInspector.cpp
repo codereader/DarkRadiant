@@ -1,4 +1,5 @@
 #include "EntityInspector.h"
+#include "EntityInspectorModule.h"
 #include "PropertyEditorFactory.h"
 #include "AddPropertyDialog.h"
 
@@ -10,22 +11,17 @@
 #include "igame.h"
 #include "imap.h"
 #include "iundo.h"
-#include "ui/igroupdialog.h"
-#include "ui/imainframe.h"
 #include "itextstream.h"
 #include "ui/iuserinterface.h"
 
-#include "module/StaticModule.h"
 #include "selectionlib.h"
 #include "scene/SelectionIndex.h"
 #include "scenelib.h"
 #include "eclass.h"
 #include "gamelib.h"
-#include "wxutil/dialog/MessageBox.h"
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/dataview/TreeViewItemStyle.h"
-#include "xmlutil/Document.h"
 #include "selection/EntitySelection.h"
 #include "TargetKey.h"
 
@@ -36,7 +32,6 @@
 
 #include <wx/panel.h>
 #include <wx/sizer.h>
-#include <wx/frame.h>
 #include <wx/checkbox.h>
 #include <wx/stattext.h>
 #include <wx/splitter.h>
@@ -49,13 +44,12 @@
 #include "registry/Widgets.h"
 #include <regex>
 
-namespace ui {
-
-/* CONSTANTS */
+namespace ui
+{
 
 namespace
 {
-    const char* const PROPERTY_NODES_XPATH = "/entityInspector//property";
+    constexpr const char* const PROPERTY_NODES_XPATH = "/entityInspector//property";
 
     const std::string RKEY_ROOT = "user/ui/entityInspector/";
     const std::string RKEY_PANE_STATE = RKEY_ROOT + "pane";
@@ -63,8 +57,8 @@ namespace
     const std::string RKEY_SHOW_INHERITED_PROPERTIES = RKEY_ROOT + "showInheritedProperties";
 }
 
-EntityInspector::EntityInspector() :
-    _mainWidget(nullptr),
+EntityInspector::EntityInspector(wxWindow* parent) :
+    DockablePanel(parent),
     _editorFrame(nullptr),
     _showInheritedCheckbox(nullptr),
     _showHelpColumnCheckbox(nullptr),
@@ -80,32 +74,31 @@ EntityInspector::EntityInspector() :
     _selectionNeedsUpdate(true),
     _inheritedPropertiesNeedUpdate(true),
     _helpTextNeedsUpdate(true)
-{}
+{
+    construct();
+}
 
 void EntityInspector::construct()
 {
     _emptyIcon = wxutil::Icon(wxutil::GetLocalBitmap("empty.png"));
 
-    wxFrame* temporaryParent = new wxFrame(NULL, wxID_ANY, "");
-
-    _mainWidget = new wxPanel(temporaryParent, wxID_ANY);
-    _mainWidget->SetName("EntityInspector");
-    _mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
+    SetName("EntityInspector");
+    SetSizer(new wxBoxSizer(wxVERTICAL));
 
     // Construct HBox with the display checkboxes
     wxBoxSizer* optionsHBox = new wxBoxSizer(wxHORIZONTAL);
 
-    _showInheritedCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show inherited properties"));
+    _showInheritedCheckbox = new wxCheckBox(this, wxID_ANY, _("Show inherited properties"));
     _showInheritedCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
         handleShowInheritedChanged();
     });
 
-    _showHelpColumnCheckbox = new wxCheckBox(_mainWidget, wxID_ANY, _("Show help"));
+    _showHelpColumnCheckbox = new wxCheckBox(this, wxID_ANY, _("Show help"));
     _showHelpColumnCheckbox->Bind(wxEVT_CHECKBOX, [this](wxCommandEvent& ev) {
         updateHelpTextPanel();
     });
 
-    _primitiveNumLabel = new wxStaticText(_mainWidget, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
+    _primitiveNumLabel = new wxStaticText(this, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
     _primitiveNumLabel->SetFont(_primitiveNumLabel->GetFont().Bold());
 
     optionsHBox->Add(_primitiveNumLabel, 1, wxEXPAND | wxALL, 5);
@@ -114,25 +107,22 @@ void EntityInspector::construct()
     optionsHBox->Add(_showHelpColumnCheckbox, 0, wxEXPAND);
 
     // Pane with treeview and editor panel
-    _paned = new wxSplitterWindow(_mainWidget, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+    _paned = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
     _paned->SetMinimumPaneSize(80);
 
     _paned->SplitHorizontally(createTreeViewPane(_paned), createPropertyEditorPane(_paned));
     _panedPosition.connect(_paned);
 
-    _helpText = new wxTextCtrl(_mainWidget, wxID_ANY, "",
+    _helpText = new wxTextCtrl(this, wxID_ANY, "",
         wxDefaultPosition, wxDefaultSize, wxTE_LEFT | wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
     _helpText->SetMinClientSize(wxSize(-1, 60));
 
-    _mainWidget->GetSizer()->Add(optionsHBox, 0, wxEXPAND | wxALL, 3);
-    _mainWidget->GetSizer()->Add(_paned, 1, wxEXPAND);
-    _mainWidget->GetSizer()->Add(_helpText, 0, wxEXPAND);
+    GetSizer()->Add(optionsHBox, 0, wxEXPAND | wxALL, 3);
+    GetSizer()->Add(_paned, 1, wxEXPAND);
+    GetSizer()->Add(_helpText, 0, wxEXPAND);
 
     _helpText->Hide();
 
-    // Register self to the SelectionSystem to get notified upon selection
-    // changes.
-    GlobalSelectionSystem().addObserver(this);
     _spawnargs.reset(new selection::CollectiveSpawnargs);
 
     // Connect the signals
@@ -153,7 +143,6 @@ void EntityInspector::construct()
     registry::bindWidget(_showInheritedCheckbox, RKEY_SHOW_INHERITED_PROPERTIES);
 
     handleShowInheritedChanged();
-    updateHelpTextPanel();
 
     // Reload the information from the registry
     restoreSettings();
@@ -161,19 +150,14 @@ void EntityInspector::construct()
     // Create the context menu
     createContextMenu();
 
-    // Stimulate initial redraw to get the correct status
-    requestIdleCallback();
-
-    _defsReloadedHandler = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
-        sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
-    );
-
-    _mapEditModeChangedHandler = GlobalMapModule().signal_editModeChanged().connect(
-        sigc::mem_fun(this, &EntityInspector::onMapEditModeChanged)
-    );
-
     // initialise the properties
     loadPropertyMap();
+
+    // greebo: Now that the dialog is shown, tell the Entity Inspector to reload
+    // the position info from the Registry once again.
+    restoreSettings();
+
+    refresh();
 }
 
 void EntityInspector::restoreSettings()
@@ -296,7 +280,7 @@ void EntityInspector::updateKeyType(wxutil::TreeModel::Row& row)
     auto keyType = getPropertyTypeForKey(key);
 
     wxutil::Icon icon(keyType.empty() ? _emptyIcon :
-        wxutil::Icon(_propertyEditorFactory->getBitmapFor(keyType)));
+        wxutil::Icon(EntityInspectorModule::Instance().getPropertyEditorFactory().getBitmapFor(keyType)));
 
     // Assign the icon to the column
     row[_columns.name] = wxVariant(wxDataViewIconText(key, icon));
@@ -431,25 +415,13 @@ void EntityInspector::createContextMenu()
     );
 }
 
-void EntityInspector::onMainFrameConstructed()
+EntityInspector::~EntityInspector()
 {
-    // Add entity inspector to the group dialog
-    IGroupDialog::PagePtr page(new IGroupDialog::Page);
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 
-    page->name = "entity";
-    page->windowLabel = _("Entity");
-    page->page = getWidget();
-    page->tabIcon = "cmenu_add_entity.png";
-    page->tabLabel = _("Entity");
-    page->position = IGroupDialog::Page::Position::EntityInspector;
-
-    GlobalGroupDialog().addPage(page);
-}
-
-void EntityInspector::onMainFrameShuttingDown()
-{
-    // Clear the selection and unsubscribe from the selection system
-    GlobalSelectionSystem().removeObserver(this);
     _keyValueAddedHandler.disconnect();
     _keyValueRemovedHandler.disconnect();
     _keyValueSetChangedHandler.disconnect();
@@ -459,15 +431,45 @@ void EntityInspector::onMainFrameShuttingDown()
     _mergeActions.clear();
     _conflictActions.clear();
 
-    _mapEditModeChangedHandler.disconnect();
-    _defsReloadedHandler.disconnect();
-
-    // Remove all previously stored pane information
     _panedPosition.saveToPath(RKEY_PANE_STATE);
 
     // Remove the current property editor to prevent destructors
     // from firing too late in the shutdown process
     _currentPropertyEditor.reset();
+}
+
+void EntityInspector::onPanelActivated()
+{
+    connectListeners();
+    refresh();
+}
+
+void EntityInspector::onPanelDeactivated()
+{
+    _panedPosition.saveToPath(RKEY_PANE_STATE);
+    disconnectListeners();
+}
+
+void EntityInspector::connectListeners()
+{
+    // Register self to the SelectionSystem to get notified upon selection changes.
+    GlobalSelectionSystem().addObserver(this);
+
+    _defsReloadedHandler = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::EntityDef).connect(
+        sigc::mem_fun(this, &EntityInspector::onDefsReloaded)
+    );
+
+    _mapEditModeChangedHandler = GlobalMapModule().signal_editModeChanged().connect(
+        sigc::mem_fun(this, &EntityInspector::onMapEditModeChanged)
+    );
+}
+
+void EntityInspector::disconnectListeners()
+{
+    GlobalSelectionSystem().removeObserver(this);
+
+    _mapEditModeChangedHandler.disconnect();
+    _defsReloadedHandler.disconnect();
 }
 
 void EntityInspector::onKeyUpdatedCommon(const std::string& key)
@@ -527,66 +529,6 @@ void EntityInspector::refresh()
     requestIdleCallback();
 }
 
-const std::string& EntityInspector::getName() const
-{
-    static std::string _name(MODULE_ENTITYINSPECTOR);
-    return _name;
-}
-
-const StringSet& EntityInspector::getDependencies() const
-{
-    static StringSet _dependencies
-    {
-        MODULE_DECLMANAGER,
-        MODULE_XMLREGISTRY,
-        MODULE_GROUPDIALOG,
-        MODULE_SELECTIONSYSTEM,
-        MODULE_GAMEMANAGER,
-        MODULE_COMMANDSYSTEM,
-        MODULE_MAINFRAME,
-        MODULE_MAP,
-    };
-
-    return _dependencies;
-}
-
-void EntityInspector::initialiseModule(const IApplicationContext& ctx)
-{
-    _propertyEditorFactory.reset(new PropertyEditorFactory);
-
-    construct();
-
-    GlobalMainFrame().signal_MainFrameConstructed().connect(
-        sigc::mem_fun(this, &EntityInspector::onMainFrameConstructed)
-    );
-    GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-        sigc::mem_fun(this, &EntityInspector::onMainFrameShuttingDown)
-    );
-
-    GlobalCommandSystem().addCommand("ToggleEntityInspector", toggle);
-}
-
-void EntityInspector::shutdownModule()
-{
-    _propertyEditorFactory.reset();
-}
-
-void EntityInspector::registerPropertyEditor(const std::string& key, const IPropertyEditor::CreationFunc& creator)
-{
-    _propertyEditorFactory->registerPropertyEditor(key, creator);
-}
-
-void EntityInspector::unregisterPropertyEditor(const std::string& key)
-{
-    _propertyEditorFactory->unregisterPropertyEditor(key);
-}
-
-wxPanel* EntityInspector::getWidget()
-{
-    return _mainWidget;
-}
-
-// Create the dialog pane
 wxWindow* EntityInspector::createPropertyEditorPane(wxWindow* parent)
 {
     _editorFrame = new wxPanel(parent, wxID_ANY);
@@ -1381,8 +1323,8 @@ void EntityInspector::updateHelpTextPanel()
     {
         _helpText->Show(helpIsVisible);
 
-        // After showing a packed control we need to call the sizer's layout() method
-        _mainWidget->GetSizer()->Layout();
+        // After showing a packed control we need to call the layout() method
+        Layout();
     }
 }
 
@@ -1471,7 +1413,8 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
             auto targetKey = TargetKey::CreateFromString(key);
 
             // Construct and add a new PropertyEditor
-            _currentPropertyEditor = _propertyEditorFactory->create(_editorFrame, type, *_entitySelection, targetKey);
+            _currentPropertyEditor = EntityInspectorModule::Instance().getPropertyEditorFactory()
+                .create(_editorFrame, type, *_entitySelection, targetKey);
 
             if (_currentPropertyEditor)
             {
@@ -1751,28 +1694,5 @@ void EntityInspector::handleMergeActions(const scene::INodePtr& selectedNode)
         onKeyChange(key, value, false);
     });
 }
-
-void EntityInspector::registerPropertyEditorDialog(const std::string& key, const IPropertyEditorDialog::CreationFunc& create)
-{
-    _propertyEditorFactory->registerPropertyEditorDialog(key, create);
-}
-
-IPropertyEditorDialog::Ptr EntityInspector::createDialog(const std::string& key)
-{
-    return _propertyEditorFactory->createDialog(key);
-}
-
-void EntityInspector::unregisterPropertyEditorDialog(const std::string& key)
-{
-    _propertyEditorFactory->unregisterPropertyEditorDialog(key);
-}
-
-void EntityInspector::toggle(const cmd::ArgumentList& args)
-{
-    GlobalGroupDialog().togglePage("entity");
-}
-
-// Define the static EntityInspector module
-module::StaticModuleRegistration<EntityInspector> entityInspectorModule;
 
 } // namespace ui

@@ -28,6 +28,7 @@
 #include "render/RenderStatistics.h"
 #include "render/CamRenderer.h"
 #include "messages/TextureChanged.h"
+#include "wxutil/DockablePanel.h"
 
 constexpr int CAMWND_MINSIZE_X = 240;
 constexpr int CAMWND_MINSIZE_Y = 200;
@@ -44,7 +45,7 @@ namespace ui
 
 /// Main 3D view widget
 class CamWnd :
-    public wxEvtHandler,
+    public wxutil::DockablePanel,
     public camera::IFreeMoveView,
     public scene::Graph::Observer,
     public util::Noncopyable,
@@ -125,13 +126,12 @@ class CamWnd :
 
     IGLFont::Ptr _glFont;
 
+    sigc::connection _shadowMappingKeyChangedHandler;
     std::size_t _textureChangedHandler;
 
 public:
-    // Constructor and destructor
     CamWnd(wxWindow* parent);
-
-    virtual ~CamWnd();
+    ~CamWnd() override;
 
     // The unique ID of this camwindow
     int getId();
@@ -167,6 +167,9 @@ public:
 
     /// \see ICameraView::getCameraOrigin
     const Vector3& getCameraOrigin() const;
+
+    /// \see ICameraView::setCameraOrigin
+    void setCameraOrigin(const Vector3& origin);
 
     const Frustum& getViewFrustum() const;
 
@@ -215,6 +218,9 @@ public:
     void moveForwardDiscrete(double units);
 
 protected:
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
     void handleFreeMoveKeyEvent(KeyEventType eventType, unsigned int movementFlags);
     void handleKeyEvent(KeyEventType eventType, unsigned int freeMoveFlags, const std::function<void()>& discreteMovement);
 
@@ -227,6 +233,9 @@ protected:
     virtual IInteractiveView& getInteractiveView() override;
 
 private:
+    void connectEventHandlers();
+    void disconnectEventHandlers();
+
     void constructGUIComponents();
     void constructToolbar();
     void setFarClipButtonSensitivity();
@@ -244,10 +253,7 @@ private:
     void drawTime();
     void drawGrid();
     void requestRedraw(bool force);
-
-    // Motion and ICameraView related
-    void setCameraOrigin(const Vector3& origin);
-
+    
     CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
     void onGLResize(wxSizeEvent& ev);

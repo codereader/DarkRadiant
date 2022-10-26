@@ -1,7 +1,6 @@
 add_executable(darkradiant
                camera/CameraSettings.cpp
                camera/CamWnd.cpp
-               camera/FloatingCamWnd.cpp
                camera/CameraWndManager.cpp
                clipboard/ClipboardModule.cpp
                eventmanager/Accelerator.cpp
@@ -24,8 +23,8 @@ add_executable(darkradiant
                settings/Win32Registry.cpp
                textool/tools/TextureToolManipulateMouseTool.cpp
                textool/TexTool.cpp
-               ui/aas/AasControl.cpp
-               ui/aas/AasControlDialog.cpp
+               ui/aas/AasFileControl.cpp
+               ui/aas/AasVisualisationPanel.cpp
                ui/aas/RenderableAasFile.cpp
                ui/about/AboutDialog.cpp
                ui/brush/FindBrush.cpp
@@ -52,6 +51,7 @@ add_executable(darkradiant
                ui/einspector/ClassnamePropertyEditor.cpp
                ui/einspector/ColourPropertyEditor.cpp
                ui/einspector/EntityInspector.cpp
+               ui/einspector/EntityInspectorModule.cpp
                ui/einspector/EntityPropertyEditor.cpp
                ui/einspector/FloatPropertyEditor.cpp
                ui/einspector/FxPropertyEditor.cpp
@@ -78,20 +78,18 @@ add_executable(darkradiant
                ui/grid/GridUserInterface.cpp
                ui/layers/CreateLayerDialog.cpp
                ui/layers/LayerContextMenu.cpp
-               ui/layers/LayerControl.cpp
-               ui/layers/LayerControlDialog.cpp
-               ui/layers/LegacyLayerControlDialog.cpp
+               ui/layers/LayerControlPanel.cpp
                ui/layers/LayerOrthoContextMenuItem.cpp
                ui/lightinspector/LightInspector.cpp
                ui/LongRunningOperationHandler.cpp
+               ui/mainframe/AuiManager.cpp
+               ui/mainframe/AuiFloatingFrame.cpp
                ui/mainframe/AuiLayout.cpp
-               ui/mainframe/EmbeddedLayout.cpp
                ui/mainframe/MainFrame.cpp
-               ui/mainframe/MainFrameLayoutManager.cpp
-               ui/mainframe/RegularLayout.cpp
+               ui/mainframe/PropertyNotebook.cpp
                ui/mainframe/ScreenUpdateBlocker.cpp
-               ui/mainframe/SplitPaneLayout.cpp
                ui/mainframe/TopLevelFrame.cpp
+               ui/mainframe/ViewMenu.cpp
                ui/mapselector/MapSelector.cpp
                ui/materials/editor/MaterialEditor.cpp
                ui/materials/editor/MaterialEditorModule.cpp
@@ -100,14 +98,12 @@ add_executable(darkradiant
                ui/materials/MaterialPopulator.cpp
                ui/materials/MaterialSelector.cpp
                ui/materials/MaterialTreeView.cpp
-               ui/merge/MergeControlDialog.cpp
+               ui/merge/MapMergePanel.cpp
                ui/animationpreview/AnimationPreview.cpp
                ui/animationpreview/MD5AnimationChooser.cpp
                ui/animationpreview/MD5AnimationViewer.cpp
                ui/colourscheme/ColourSchemeEditor.cpp
                ui/common/DialogManager.cpp
-               ui/groupdialog/GroupDialog.cpp
-               ui/groupdialog/GroupDialogManager.cpp
                ui/menu/MenuBar.cpp
                ui/menu/MenuElement.cpp
                ui/menu/MenuFolder.cpp
@@ -134,7 +130,7 @@ add_executable(darkradiant
                ui/mousetool/ToolMappingDialog.cpp
                ui/ortho/OrthoContextMenu.cpp
                ui/overlay/Overlay.cpp
-               ui/overlay/OverlayDialog.cpp
+               ui/overlay/OrthoBackgroundPanel.cpp
                ui/particles/ParticleEditor.cpp
                ui/particles/ParticleChooserDialog.cpp
                ui/particles/ParticleSelector.cpp
@@ -165,9 +161,8 @@ add_executable(darkradiant
                ui/texturebrowser/TextureBrowser.cpp
                ui/texturebrowser/TextureBrowserManager.cpp
                ui/toolbar/ToolbarManager.cpp
-               ui/transform/TransformDialog.cpp
+               ui/transform/TransformPanel.cpp
                ui/UserInterfaceModule.cpp
-               xyview/FloatingOrthoView.cpp
                xyview/GlobalXYWnd.cpp
                xyview/tools/BrushCreatorTool.cpp
                xyview/tools/ClipperTool.cpp

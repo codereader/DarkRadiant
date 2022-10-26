@@ -1,16 +1,16 @@
 #pragma once
 
-#include <sigc++/connection.h>
-#include "iregistry.h"
-#include "icommandsystem.h"
 #include "wxutil/FreezePointer.h"
 
+#include <sigc++/connection.h>
 #include "texturelib.h"
 #include "wxutil/menu/PopupMenu.h"
 #include "registry/CachedKey.h"
 
 #include "TextureBrowserManager.h"
-#include <wx/panel.h>
+
+#include "wxutil/DockablePanel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 namespace wxutil
 {
@@ -25,21 +25,18 @@ class wxToolBar;
 namespace ui
 {
 
-namespace
-{
-    const char* const RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
-    const char* const RKEY_TEXTURES_SHOW_FAVOURITES_ONLY = "user/ui/textures/browser/showFavouritesOnly";
-    const char* const RKEY_TEXTURES_SHOW_OTHER_MATERIALS = "user/ui/textures/browser/showOtherMaterials";
-    const char* const RKEY_TEXTURES_SHOW_NAMES = "user/ui/textures/browser/showNames";
-    const char* const RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
-    const char* const RKEY_TEXTURE_USE_UNIFORM_SCALE = "user/ui/textures/browser/useUniformScale";
-    const char* const RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
-    const char* const RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
-    const char* const RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
-    const char* const RKEY_TEXTURE_SHOW_FILTER = "user/ui/textures/browser/showFilter";
-    const char* const RKEY_TEXTURE_CONTEXTMENU_EPSILON = "user/ui/textures/browser/contextMenuMouseEpsilon";
-    const char* const RKEY_TEXTURE_MAX_NAME_LENGTH = "user/ui/textures/browser/maxShadernameLength";
-}
+constexpr const char* const RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
+constexpr const char* const RKEY_TEXTURES_SHOW_FAVOURITES_ONLY = "user/ui/textures/browser/showFavouritesOnly";
+constexpr const char* const RKEY_TEXTURES_SHOW_OTHER_MATERIALS = "user/ui/textures/browser/showOtherMaterials";
+constexpr const char* const RKEY_TEXTURES_SHOW_NAMES = "user/ui/textures/browser/showNames";
+constexpr const char* const RKEY_TEXTURE_UNIFORM_SIZE = "user/ui/textures/browser/uniformSize";
+constexpr const char* const RKEY_TEXTURE_USE_UNIFORM_SCALE = "user/ui/textures/browser/useUniformScale";
+constexpr const char* const RKEY_TEXTURE_SCALE = "user/ui/textures/browser/textureScale";
+constexpr const char* const RKEY_TEXTURE_SHOW_SCROLLBAR = "user/ui/textures/browser/showScrollBar";
+constexpr const char* const RKEY_TEXTURE_MOUSE_WHEEL_INCR = "user/ui/textures/browser/mouseWheelIncrement";
+constexpr const char* const RKEY_TEXTURE_SHOW_FILTER = "user/ui/textures/browser/showFilter";
+constexpr const char* const RKEY_TEXTURE_CONTEXTMENU_EPSILON = "user/ui/textures/browser/contextMenuMouseEpsilon";
+constexpr const char* const RKEY_TEXTURE_MAX_NAME_LENGTH = "user/ui/textures/browser/maxShadernameLength";
 
 /**
  * \brief Widget for rendering active textures as tiles in a scrollable
@@ -49,8 +46,9 @@ namespace
  * containing all active texture tiles.
  */
 class TextureBrowser :
-    public wxPanel,
-    public sigc::trackable
+    public wxutil::DockablePanel,
+    public sigc::trackable,
+    public wxutil::SingleIdleCallback
 {
     class TextureTile;
     typedef std::list<TextureTile> TextureTiles;
@@ -129,11 +127,11 @@ class TextureBrowser :
     // renderable items will be updated next round
     bool _updateNeeded;
 
-public:
-    // Constructor
-    TextureBrowser(wxWindow* parent);
+    sigc::connection _favouritesChangedHandler;
 
-    virtual ~TextureBrowser();
+public:
+    TextureBrowser(wxWindow* parent);
+    ~TextureBrowser() override;
 
     // Schedules an update of the renderable items
     void queueUpdate();
@@ -148,6 +146,15 @@ public:
      *          refocuses the texturebrowser to that shader.
      */
     void setSelectedShader(const std::string& newShader);
+
+protected:
+    void onIdle() override;
+    void onPanelActivated() override;
+    void onPanelDeactivated() override;
+
+private:
+    void connectListeners();
+    void disconnectListeners();
 
 private:
     void clearFilter();
@@ -239,7 +246,6 @@ private:
     bool materialIsVisible(const MaterialPtr& material);
 
 	// wx callbacks
-    void onIdle(wxIdleEvent& ev);
 	bool onRender();
 	void onScrollChanged(wxScrollEvent& ev);
 	void onGLResize(wxSizeEvent& ev);

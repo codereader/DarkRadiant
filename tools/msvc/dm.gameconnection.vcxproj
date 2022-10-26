@@ -154,7 +154,7 @@ copy $(DarkRadiantRoot)plugins\dm.gameconnection\*.png $(DarkRadiantRoot)install
     <ClCompile Include="..\..\plugins\dm.gameconnection\clsocket\SimpleSocket.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\DiffDoom3MapWriter.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\GameConnection.cpp" />
-    <ClCompile Include="..\..\plugins\dm.gameconnection\GameConnectionDialog.cpp" />
+    <ClCompile Include="..\..\plugins\dm.gameconnection\GameConnectionPanel.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\MapObserver.cpp" />
     <ClCompile Include="..\..\plugins\dm.gameconnection\MessageTcp.cpp" />
   </ItemGroup>
@@ -168,7 +168,8 @@ copy $(DarkRadiantRoot)plugins\dm.gameconnection\*.png $(DarkRadiantRoot)install
     <ClInclude Include="..\..\plugins\dm.gameconnection\DiffDoom3MapWriter.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\DiffStatus.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\GameConnection.h" />
-    <ClInclude Include="..\..\plugins\dm.gameconnection\GameConnectionDialog.h" />
+    <ClInclude Include="..\..\plugins\dm.gameconnection\GameConnectionControl.h" />
+    <ClInclude Include="..\..\plugins\dm.gameconnection\GameConnectionPanel.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\MapObserver.h" />
     <ClInclude Include="..\..\plugins\dm.gameconnection\MessageTcp.h" />
   </ItemGroup>
