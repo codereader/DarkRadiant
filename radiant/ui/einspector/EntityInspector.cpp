@@ -276,8 +276,8 @@ void EntityInspector::updateKeyType(wxutil::TreeModel::Row& row)
     // Get the type for this key if it exists, and the options
     auto keyType = getPropertyTypeForKey(key);
 
-    wxutil::Icon icon(keyType.empty() ? _emptyIcon :
-        wxutil::Icon(_propertyEditorFactory->getBitmapFor(keyType)));
+    auto icon = keyType.empty() ? _emptyIcon
+                                : wxutil::Icon(_propertyEditorFactory->getBitmapFor(keyType));
 
     // Assign the icon to the column
     row[_modelCols.name] = wxVariant(wxDataViewIconText(key, icon));
