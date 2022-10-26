@@ -68,10 +68,11 @@ namespace
 int XYWnd::_nextId = 1;
 
 XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner) :
+    DockablePanel(parent),
     MouseToolHandler(IMouseToolGroup::Type::OrthoView),
     _owner(owner),
     _id(_nextId++),
-	_wxGLWidget(new wxutil::GLWidget(parent, std::bind(&XYWnd::onRender, this), "XYWnd")),
+	_wxGLWidget(new wxutil::GLWidget(this, std::bind(&XYWnd::onRender, this), "XYWnd")),
     _drawing(false),
     _updateRequested(false),
 	_minWorldCoord(game::current::getValue<float>("/defaults/minWorldCoord")),
@@ -82,6 +83,9 @@ XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner) :
 	_isActive(false)
 {
     _owner.registerXYWnd(this);
+
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
 
     _width = 0;
     _height = 0;
@@ -107,28 +111,28 @@ XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner) :
 	//_wxGLWidget->SetMinClientSize(wxSize(XYWND_MINSIZE_X, XYWND_MINSIZE_Y));
 
 	// wxGLWidget wireup
-	_wxGLWidget->Connect(wxEVT_SIZE, wxSizeEventHandler(XYWnd::onGLResize), NULL, this);
+	_wxGLWidget->Bind(wxEVT_SIZE, &XYWnd::onGLResize, this);
 
-	_wxGLWidget->Connect(wxEVT_MOUSEWHEEL, wxMouseEventHandler(XYWnd::onGLWindowScroll), NULL, this);
-    _wxGLWidget->Connect(wxEVT_MOTION, wxMouseEventHandler(XYWnd::onGLMouseMove), NULL, this);
+	_wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &XYWnd::onGLWindowScroll, this);
+    _wxGLWidget->Bind(wxEVT_MOTION, &XYWnd::onGLMouseMove, this);
 
-	_wxGLWidget->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_LEFT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_RIGHT_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_RIGHT_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_RIGHT_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_MIDDLE_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-    _wxGLWidget->Connect(wxEVT_MIDDLE_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_MIDDLE_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX1_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_DOWN, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_DCLICK, wxMouseEventHandler(XYWnd::onGLMouseButtonPress), NULL, this);
-	_wxGLWidget->Connect(wxEVT_AUX2_UP, wxMouseEventHandler(XYWnd::onGLMouseButtonRelease), NULL, this);
+	_wxGLWidget->Bind(wxEVT_LEFT_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_LEFT_UP, &XYWnd::onGLMouseButtonRelease, this);
+	_wxGLWidget->Bind(wxEVT_RIGHT_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_RIGHT_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_RIGHT_UP, &XYWnd::onGLMouseButtonRelease, this);
+	_wxGLWidget->Bind(wxEVT_MIDDLE_DOWN, &XYWnd::onGLMouseButtonPress, this);
+    _wxGLWidget->Bind(wxEVT_MIDDLE_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_MIDDLE_UP, &XYWnd::onGLMouseButtonRelease, this);
+	_wxGLWidget->Bind(wxEVT_AUX1_DOWN, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX1_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX1_UP, &XYWnd::onGLMouseButtonRelease, this);
+	_wxGLWidget->Bind(wxEVT_AUX2_DOWN, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX2_DCLICK, &XYWnd::onGLMouseButtonPress, this);
+	_wxGLWidget->Bind(wxEVT_AUX2_UP, &XYWnd::onGLMouseButtonRelease, this);
 
-	_wxGLWidget->Connect(wxEVT_IDLE, wxIdleEventHandler(XYWnd::onIdle), NULL, this);
+	_wxGLWidget->Bind(wxEVT_IDLE, &XYWnd::onIdle, this);
 
 	_freezePointer.connectMouseEvents(
 		std::bind(&XYWnd::onGLMouseButtonPress, this, std::placeholders::_1),

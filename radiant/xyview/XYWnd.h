@@ -20,6 +20,7 @@
 #include "imousetool.h"
 #include "tools/XYMouseToolEvent.h"
 #include "wxutil/MouseToolHandler.h"
+#include "wxutil/DockablePanel.h"
 #include "XYRenderer.h"
 
 namespace ui
@@ -28,7 +29,7 @@ namespace ui
 class XYWndManager;
 
 class XYWnd final :
-    public wxPanel,
+    public wxutil::DockablePanel,
     public IOrthoView,
     public scene::Graph::Observer,
     protected wxutil::MouseToolHandler
