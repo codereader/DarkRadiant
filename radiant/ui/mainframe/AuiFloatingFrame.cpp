@@ -18,15 +18,22 @@ AuiFloatingFrame::AuiFloatingFrame(wxWindow* parent, AuiManager* ownerMgr, Prope
 
 void AuiFloatingFrame::onIdle()
 {
-    if (_isMoving && !wxGetMouseState().LeftIsDown())
-    {
-        _isMoving = false;
-        _notebook->hideDropHint();
+    if (!_isMoving) return;
 
-        if (_owner->MouseCursorIsHoveringNotebook())
-        {
-            _owner->DockPanelToNotebook(this);
-        }
+    if (wxGetMouseState().LeftIsDown())
+    {
+        // Keep monitoring
+        requestIdleCallback();
+        return;
+    }
+
+    // Mouse button released
+    _isMoving = false;
+    _notebook->hideDropHint();
+
+    if (_owner->MouseCursorIsHoveringNotebook())
+    {
+        _owner->DockPanelToNotebook(this);
     }
 }
 
