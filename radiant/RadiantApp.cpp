@@ -133,6 +133,10 @@ void RadiantApp::initWxWidgets()
 
     // Register the local art provider
     _bitmapArtProvider = std::make_unique<wxutil::LocalBitmapArtProvider>(_context.getBitmapsPath());
+
+    // Make tooltip boxes less annoying (#6128)
+    wxToolTip::SetDelay(2500);
+    wxToolTip::SetAutoPop(2000);
 }
 
 void RadiantApp::cleanupWxWidgets()
