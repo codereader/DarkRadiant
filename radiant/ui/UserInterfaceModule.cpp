@@ -1,5 +1,6 @@
 #include "UserInterfaceModule.h"
 
+#include <cctype>
 #include <sigc++/functors/ptr_fun.h>
 
 #include "i18n.h"
@@ -326,6 +327,19 @@ void UserInterfaceModule::registerControl(const IUserControl::Ptr& control)
     {
         throw std::logic_error("The Control with name " + control->getControlName() + " has already been registered");
     }
+
+    // Check the name for validity
+    for (const auto c : control->getControlName())
+    {
+        if (!::isalpha(c) && !::isdigit(c))
+        {
+            throw std::invalid_argument("Control name " + control->getControlName() + " contains invalid characters, only alphanumerics are allowed");
+        }
+    }
+
+    // Add a command shortcut toggling this control
+    GlobalCommandSystem().addStatement(fmt::format("{0}{1}", TOGGLE_CONTROL_STATEMENT_PREFIX, control->getControlName()), 
+        fmt::format("{0} \"{1}\"", TOGGLE_CONTROL_COMMAND, control->getControlName()), false);
 }
 
 IUserControl::Ptr UserInterfaceModule::findControl(const std::string& name)

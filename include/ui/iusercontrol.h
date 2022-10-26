@@ -21,6 +21,7 @@ public:
 
     // Returns the name of this control. This is an identifier corresponding to the
     // UserControl enumeration, like UserControl::Camera, or a plugin-defined identifier
+    // Whitespace and other non-alphanumeric characters are not allowed
     virtual std::string getControlName() = 0;
 
     // A visible, localised identifier used for tab captions and window titles
@@ -34,6 +35,12 @@ public:
     // will not delete the returned window
     virtual wxWindow* createWidget(wxWindow* parent) = 0;
 };
+
+// The command used to toggle a control: bring it to front if hidden, or hide it if it's a visible floating window
+constexpr const char* const TOGGLE_CONTROL_COMMAND = "ToggleControl";
+
+// Prefix used to construct statements like "ToggleLightInspector"
+constexpr const char* const TOGGLE_CONTROL_STATEMENT_PREFIX = "Toggle";
 
 // Predefined known user control names
 struct UserControl

@@ -96,7 +96,6 @@ private:
 	void applyEntityVertexColours();
 	void applyBrushVertexColours();
 	void applyPatchVertexColours();
-	void refreshShadersCmd(const cmd::ArgumentList& args);
 
 	void handleCommandExecutionFailure(radiant::CommandExecutionFailedMessage& msg);
 	static void HandleNotificationMessage(radiant::NotificationMessage& msg);
