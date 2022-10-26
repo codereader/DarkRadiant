@@ -70,8 +70,6 @@ void EntityInspectorModule::initialiseModule(const IApplicationContext& ctx)
 {
     _propertyEditorFactory.reset(new PropertyEditorFactory);
 
-    GlobalCommandSystem().addStatement("ToggleEntityInspector", fmt::format("ToggleControl {0}", UserControl::EntityInspector), false);
-
     GlobalUserInterface().registerControl(std::make_shared<EntityInspectorControl>());
 }
 

@@ -881,7 +881,6 @@ void TexTool::handleTextureToolRequest(TextureToolRequest& request)
 
 void TexTool::registerCommands()
 {
-    GlobalCommandSystem().addStatement("TextureTool", fmt::format("ToggleControl {0}", UserControl::TextureTool), false);
 	GlobalCommandSystem().addCommand("TextureToolResetView", [](const cmd::ArgumentList&)
 	{
         TextureToolRequest::Send(TextureToolRequest::ResetView);

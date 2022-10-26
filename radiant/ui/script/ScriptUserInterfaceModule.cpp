@@ -63,8 +63,6 @@ public:
 			.connect(sigc::mem_fun(this, &ScriptUserInterfaceModule::onScriptsReloaded));
 
         GlobalUserInterface().registerControl(std::make_shared<ScriptPanel>());
-
-        GlobalCommandSystem().addStatement("ToggleScriptPanel", fmt::format("ToggleControl {0}", ScriptPanel::Name), false);
 	}
 
 	void shutdownModule() override

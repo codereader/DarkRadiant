@@ -460,18 +460,6 @@ void UserInterfaceModule::registerUICommands()
 
     GlobalCommandSystem().addCommand("clear", [](const auto&) { radiant::ClearConsoleMessage::Send(); });
 
-	GlobalCommandSystem().addStatement("ToggleConsole", fmt::format("ToggleControl {0}", UserControl::Console), false);
-	GlobalCommandSystem().addStatement("ToggleLightInspector", fmt::format("ToggleControl {0}", UserControl::LightInspector), false);
-	GlobalCommandSystem().addStatement("SurfaceInspector", fmt::format("ToggleControl {0}", UserControl::SurfaceInspector), false);
-	GlobalCommandSystem().addStatement("ToggleLayerControlDialog", fmt::format("ToggleControl {0}", UserControl::LayerControlPanel), false);
-	GlobalCommandSystem().addStatement("PatchInspector", fmt::format("ToggleControl {0}", UserControl::PatchInspector), false);
-	GlobalCommandSystem().addStatement("TransformDialog", fmt::format("ToggleControl {0}", UserControl::TransformPanel), false);
-	GlobalCommandSystem().addStatement("MergeControlPanel", fmt::format("ToggleControl {0}", UserControl::MapMergePanel), false);
-	GlobalCommandSystem().addStatement("EntityList", fmt::format("ToggleControl {0}", UserControl::EntityList), false);
-	GlobalCommandSystem().addStatement("ToggleAasVisualisationPanel", fmt::format("ToggleControl {0}", UserControl::AasVisualisationPanel), false);
-	GlobalCommandSystem().addStatement("FindReplaceTextures", fmt::format("ToggleControl {0}", UserControl::FindAndReplaceMaterial), false);
-	GlobalCommandSystem().addStatement("OverlayDialog", fmt::format("ToggleControl {0}", UserControl::OrthoBackgroundPanel), false);
-
     GlobalCommandSystem().addCommand("ChooseAndTogglePointfile",
                                      [](const cmd::ArgumentList&)
                                      { PointFileChooser::chooseAndToggle(); });

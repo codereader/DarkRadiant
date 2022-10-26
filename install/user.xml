@@ -286,7 +286,7 @@
       <toggletoolbutton name="shownames" action="TextureBrowserShowNames" tooltip="Show texture names" icon="icon_text.png"/>
       <toggletoolbutton name="useuniformscale" action="TextureBrowserToggleUniformScale" tooltip="Use Uniform Thumbnail Scale" icon="texwindow_uniformsize.png"/>
       <separator/>
-      <toolbutton name="findandreplace" action="FindReplaceTextures" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
+      <toolbutton name="findandreplace" action="ToggleFindAndReplaceMaterial" tooltip="Find &amp; Replace" icon="texwindow_findandreplace.png"/>
     </toolbar>
     <toolbar name="textool" align="horizontal">
       <toolbutton name="griddown" action="GridDown" tooltip="Decrease Grid Size" icon="grid_down.png"/>

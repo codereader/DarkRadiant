@@ -55,7 +55,6 @@ public:
 
     void initialiseModule(const IApplicationContext& ctx) override
     {
-        GlobalCommandSystem().addStatement("ToggleMediaBrowser", fmt::format("ToggleControl {0}", UserControl::MediaBrowser), false);
         GlobalUserInterface().registerControl(std::make_shared<MediaBrowserControl>());
     }
 

@@ -813,11 +813,8 @@ void GameConnection::initialiseModule(const IApplicationContext& ctx)
     if (!GlobalGameManager().currentGame()->hasFeature("hot_reload"))
         return;
 
-    // Show/hide GUI window
-    GlobalCommandSystem().addStatement("GameConnectionDialogToggle", 
-        fmt::format("ToggleControl {0}", ui::GameConnectionControl::Name), false);
-    GlobalMenuManager().add("main/map", "GameConnectionDialog", ui::menu::ItemType::Item,
-                            _("Game Connection..."), "", "GameConnectionDialogToggle");
+    GlobalMenuManager().add("main/map", "GameConnectionPanel", ui::menu::ItemType::Item, _("Game Connection..."),
+        "", fmt::format("{0}{1}", ui::TOGGLE_CONTROL_STATEMENT_PREFIX, ui::GameConnectionControl::Name));
 
     GlobalUserInterface().registerControl(std::make_shared<ui::GameConnectionControl>());
 

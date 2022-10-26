@@ -88,10 +88,6 @@ void CameraWndManager::registerCommands()
 	GlobalCommandSystem().addCommand("CameraAngleUp", std::bind(&CameraWndManager::pitchUpDiscrete, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CameraAngleDown", std::bind(&CameraWndManager::pitchDownDiscrete, this, std::placeholders::_1));
 
-	// Bind the events to the commands
-	GlobalEventManager().addWidgetToggle("ToggleCamera");
-	GlobalEventManager().setToggled("ToggleCamera", true);
-
 	GlobalEventManager().addRegistryToggle("ToggleCameraGrid", RKEY_CAMERA_GRID_ENABLED);
 	GlobalEventManager().addRegistryToggle("ToggleShadowMapping", RKEY_ENABLE_SHADOW_MAPPING);
 

@@ -34,9 +34,6 @@ public:
 
     void initialiseModule(const IApplicationContext& ctx) override
     {
-        GlobalCommandSystem().addStatement("ToggleFavouritesBrowser", 
-            fmt::format("ToggleControl {0}", UserControl::FavouritesBrowser), false);
-
         // Subscribe to get notified as soon as Radiant is fully initialised
         GlobalMainFrame().signal_MainFrameConstructed().connect(
             sigc::mem_fun(this, &FavouritesUserInterfaceModule::onMainFrameConstructed)
