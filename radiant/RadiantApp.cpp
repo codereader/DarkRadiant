@@ -14,6 +14,7 @@
 
 #include <wx/wxprec.h>
 #include <wx/event.h>
+#include <wx/tooltip.h>
 #include <wx/cmdline.h>
 #include <wx/xrc/xmlres.h>
 #include <sigc++/functors/mem_fun.h>
