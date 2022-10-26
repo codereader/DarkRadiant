@@ -40,6 +40,7 @@ private:
 
 public:
     PropertyNotebook(wxWindow* parent, AuiLayout& owner);
+    ~PropertyNotebook() override;
 
     void addControl(const std::string& controlName);
     void focusControl(const std::string& controlName);

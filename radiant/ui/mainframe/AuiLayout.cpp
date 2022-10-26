@@ -152,7 +152,7 @@ void AuiLayout::convertFloatingPaneToPropertyTab(AuiFloatingFrame* floatingWindo
     }
 }
 
-void AuiLayout::handlePaneClosed(const wxAuiPaneInfo& pane)
+void AuiLayout::handlePaneClosed(wxAuiPaneInfo& pane)
 {
     // Store the position of this pane before closing
     savePaneLocation(pane);
@@ -272,9 +272,6 @@ void AuiLayout::activate()
 
 void AuiLayout::deactivate()
 {
-    // Delete all active views
-    GlobalXYWndManager().destroyViews();
-
     // Get a reference to the managed window, it might be cleared by UnInit()
     auto managedWindow = _auiMgr.GetManagedWindow();
 
@@ -507,7 +504,7 @@ void AuiLayout::toggleControl(const std::string& controlName)
     }
 }
 
-void AuiLayout::savePaneLocation(const wxAuiPaneInfo& pane)
+void AuiLayout::savePaneLocation(wxAuiPaneInfo& pane)
 {
     if (pane.IsFloating())
     {

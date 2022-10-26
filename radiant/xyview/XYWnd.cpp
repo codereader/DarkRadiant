@@ -61,14 +61,16 @@ inline float normalised_to_world(float normalised, float world_origin, float nor
 
 namespace
 {
-    const char* const RKEY_XYVIEW_ROOT = "user/ui/xyview";
-    const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
+    constexpr const char* const RKEY_XYVIEW_ROOT = "user/ui/xyview";
+    constexpr const char* const RKEY_SELECT_EPSILON = "user/ui/selectionEpsilon";
 }
 
-// Constructor
-XYWnd::XYWnd(int id, wxWindow* parent) :
+int XYWnd::_nextId = 1;
+
+XYWnd::XYWnd(wxWindow* parent, XYWndManager& owner) :
     MouseToolHandler(IMouseToolGroup::Type::OrthoView),
-	_id(id),
+    _owner(owner),
+    _id(_nextId++),
 	_wxGLWidget(new wxutil::GLWidget(parent, std::bind(&XYWnd::onRender, this), "XYWnd")),
     _drawing(false),
     _updateRequested(false),
@@ -79,6 +81,8 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
 	_chasingMouse(false),
 	_isActive(false)
 {
+    _owner.registerXYWnd(this);
+
     _width = 0;
     _height = 0;
 
@@ -141,9 +145,15 @@ XYWnd::XYWnd(int id, wxWindow* parent) :
         sigc::mem_fun(this, &XYWnd::onCameraMoved));
 }
 
-// Destructor
+int XYWnd::getId() const
+{
+    return _id;
+}
+
 XYWnd::~XYWnd()
 {
+    _owner.unregisterXYWnd(this);
+
     _font.reset();
 
     destroyXYView();
@@ -155,11 +165,6 @@ XYWnd::~XYWnd()
                                   string::to_string(_origin));
     GlobalRegistry().setAttribute(recentPath, "scale",
                                   string::to_string(_scale));
-}
-
-int XYWnd::getId() const
-{
-    return _id;
 }
 
 void XYWnd::destroyXYView()

@@ -57,7 +57,14 @@ namespace
 class OrthoviewControl :
     public IUserControl
 {
+private:
+    XYWndManager& _owner;
+
 public:
+    OrthoviewControl(XYWndManager& owner) :
+        _owner(owner)
+    {}
+
     std::string getControlName() override
     {
         return UserControl::OrthoView;
@@ -70,35 +77,38 @@ public:
 
     wxWindow* createWidget(wxWindow* parent) override
     {
-        auto xyWnd = GlobalXYWnd().createEmbeddedOrthoView(XY, parent);
-        return xyWnd->getGLWidget();
+        return new XYWnd(parent, _owner);
     }
 };
 
-// Constructor
 XYWndManager::XYWndManager() :
-    _maxZoomFactor(1024)
+    _maxZoomFactor(1024),
+    _activeXYWndId(-1)
 {}
 
-void XYWndManager::destroyViews()
+void XYWndManager::registerXYWnd(XYWnd* view)
 {
-	// Discard the whole list
-	for (auto i = _xyWnds.begin(); i != _xyWnds.end(); /* in-loop incr.*/)
-	{
-		// Extract the pointer to prevent the destructor from firing
-		XYWndPtr candidate = i->second;
+    if (!_xyWnds.emplace(view->getId(), view).second)
+    {
+        throw std::invalid_argument("XY Wnd ID has already been registered");
+    }
 
-		// Now remove the item from the map, increase the iterator
-		_xyWnds.erase(i++);
+    // Activate this view if this is the first one
+    if (_activeXYWndId == -1)
+    {
+        setActiveXY(view->getId());
+    }
+}
 
-		// greebo: Release the shared_ptr, this fires the destructor chain
-		// which eventually reaches notifyXYWndDestroy(). This is safe at this
-		// point, because the id is not found in the map anymore, thus
-		// double-deletions are prevented.
-		candidate = XYWndPtr();
-	}
+void XYWndManager::unregisterXYWnd(XYWnd* view)
+{
+    auto id = view->getId();
+    _xyWnds.erase(id);
 
-	_activeXY = XYWndPtr();
+    if (_activeXYWndId == id)
+    {
+        setActiveXY(_xyWnds.empty() ? -1 : _xyWnds.begin()->first);
+    }
 }
 
 void XYWndManager::registerCommands()
@@ -257,7 +267,7 @@ bool XYWndManager::zoomCenteredOnMouseCursor() const
 
 void XYWndManager::updateAllViews(bool force)
 {
-	for (const XYWndMap::value_type& i : _xyWnds)
+	for (const auto& i : _xyWnds)
 	{
         if (force)
         {
@@ -270,50 +280,54 @@ void XYWndManager::updateAllViews(bool force)
 	}
 }
 
-void XYWndManager::zoomIn(const cmd::ArgumentList& args) {
-	if (_activeXY != NULL) {
-		_activeXY->zoomIn();
-	}
+void XYWndManager::doWithActiveXyWnd(const std::function<void(XYWnd&)>& action) const
+{
+    auto window = _xyWnds.find(_activeXYWndId);
+
+    if (window != _xyWnds.end())
+    {
+        action(*window->second);
+    }
 }
 
-void XYWndManager::zoomOut(const cmd::ArgumentList& args) {
-	if (_activeXY != NULL) {
-		_activeXY->zoomOut();
-	}
+void XYWndManager::zoomIn(const cmd::ArgumentList& args)
+{
+    doWithActiveXyWnd([](auto& activeXyWnd) { activeXyWnd.zoomIn(); });
 }
 
-XYWndPtr XYWndManager::getActiveXY() const {
-	return _activeXY;
+void XYWndManager::zoomOut(const cmd::ArgumentList& args)
+{
+    doWithActiveXyWnd([](auto& activeXyWnd) { activeXyWnd.zoomOut(); });
 }
 
-void XYWndManager::setOrigin(const Vector3& origin) {
+void XYWndManager::setOrigin(const Vector3& origin)
+{
 	// Cycle through the list of views and set the origin
-	for (XYWndMap::iterator i = _xyWnds.begin();
-		 i != _xyWnds.end();
-		 ++i)
+	for (auto& [_, xyWnd] : _xyWnds)
 	{
-		i->second->setOrigin(origin);
+		xyWnd->setOrigin(origin);
 	}
 }
 
 Vector3 XYWndManager::getActiveViewOrigin()
 {
-	if (!_activeXY)
-	{
-		throw std::runtime_error("No active view found");
-	}
+    Vector3 result;
 
-	return _activeXY->getOrigin();
+    doWithActiveXyWnd([&](auto& activeXyWnd) { result = activeXyWnd.getOrigin(); });
+
+    return result;
 }
 
 IOrthoView& XYWndManager::getActiveView()
 {
-	if (!_activeXY)
-	{
-		throw std::runtime_error("No active view found");
-	}
+    auto window = _xyWnds.find(_activeXYWndId);
 
-	return *_activeXY;
+    if (window == _xyWnds.end())
+    {
+		throw std::runtime_error("No active view found");
+    }
+
+	return *window->second;
 }
 
 // Return the first view matching the given viewType
@@ -330,157 +344,113 @@ IOrthoView& XYWndManager::getViewByType(EViewType viewType)
 	throw std::runtime_error("No matching view found");
 }
 
-void XYWndManager::setScale(float scale) {
-	for (XYWndMap::iterator i = _xyWnds.begin();
-		 i != _xyWnds.end();
-		 ++i)
+void XYWndManager::setScale(float scale)
+{
+    for (auto& [_, xyWnd] : _xyWnds)
 	{
-		i->second->setScale(scale);
+		xyWnd->setScale(scale);
 	}
 }
 
-void XYWndManager::positionAllViews(const Vector3& origin) {
-	for (XYWndMap::iterator i = _xyWnds.begin();
-		 i != _xyWnds.end();
-		 ++i)
+void XYWndManager::positionAllViews(const Vector3& origin)
+{
+    for (auto& [_, xyWnd] : _xyWnds)
 	{
-		i->second->positionView(origin);
+		xyWnd->positionView(origin);
 	}
 }
 
-void XYWndManager::positionActiveView(const Vector3& origin) {
-	if (_activeXY != NULL) {
-		return _activeXY->positionView(origin);
-	}
+void XYWndManager::positionActiveView(const Vector3& origin)
+{
+    doWithActiveXyWnd([&](auto& activeXyWnd) { activeXyWnd.positionView(origin); });
 }
 
-EViewType XYWndManager::getActiveViewType() const {
-	if (_activeXY != NULL) {
-		return _activeXY->getViewType();
-	}
-	// Return at least anything
-	return XY;
+EViewType XYWndManager::getActiveViewType() const
+{
+    auto viewType = XY;
+
+    doWithActiveXyWnd([&](auto& activeXyWnd) { viewType = activeXyWnd.getViewType(); });
+
+    return viewType;
 }
 
-void XYWndManager::setActiveViewType(EViewType viewType) {
-	if (_activeXY != NULL) {
-		return _activeXY->setViewType(viewType);
-	}
+void XYWndManager::setActiveViewType(EViewType viewType)
+{
+    doWithActiveXyWnd([&](auto& activeXyWnd) { activeXyWnd.setViewType(viewType); });
 }
 
-void XYWndManager::toggleActiveView(const cmd::ArgumentList& args) {
-	if (_activeXY != NULL) {
-		if (_activeXY->getViewType() == XY) {
-			_activeXY->setViewType(XZ);
-		}
-		else if (_activeXY->getViewType() == XZ) {
-			_activeXY->setViewType(YZ);
-		}
-		else {
-			_activeXY->setViewType(XY);
-		}
+void XYWndManager::toggleActiveView(const cmd::ArgumentList& args)
+{
+    doWithActiveXyWnd([&](auto& activeXyWnd)
+    {
+        if (activeXyWnd.getViewType() == XY)
+        {
+            activeXyWnd.setViewType(XZ);
+        }
+        else if (activeXyWnd.getViewType() == XZ)
+        {
+            activeXyWnd.setViewType(YZ);
+        }
+        else
+        {
+            activeXyWnd.setViewType(XY);
+        }
 
-		positionActiveView(getFocusPosition());
-	}
+        // Re-focus the view when toggling projections
+        activeXyWnd.setOrigin(getFocusPosition());
+    });
 }
 
-void XYWndManager::setActiveViewXY(const cmd::ArgumentList& args) {
+void XYWndManager::setActiveViewXY(const cmd::ArgumentList& args)
+{
 	setActiveViewType(XY);
 	positionActiveView(getFocusPosition());
 }
 
-void XYWndManager::setActiveViewXZ(const cmd::ArgumentList& args) {
+void XYWndManager::setActiveViewXZ(const cmd::ArgumentList& args)
+{
 	setActiveViewType(XZ);
 	positionActiveView(getFocusPosition());
 }
 
-void XYWndManager::setActiveViewYZ(const cmd::ArgumentList& args) {
+void XYWndManager::setActiveViewYZ(const cmd::ArgumentList& args)
+{
 	setActiveViewType(YZ);
 	positionActiveView(getFocusPosition());
 }
 
-void XYWndManager::splitViewFocus(const cmd::ArgumentList& args) {
+void XYWndManager::splitViewFocus(const cmd::ArgumentList& args)
+{
 	positionAllViews(getFocusPosition());
 }
 
-void XYWndManager::zoom100(const cmd::ArgumentList& args) {
+void XYWndManager::zoom100(const cmd::ArgumentList& args)
+{
 	setScale(1);
 }
 
-void XYWndManager::focusActiveView(const cmd::ArgumentList& args) {
+void XYWndManager::focusActiveView(const cmd::ArgumentList& args)
+{
 	positionActiveView(getFocusPosition());
 }
 
-XYWndPtr XYWndManager::getView(EViewType viewType)
+void XYWndManager::setActiveXY(int id)
 {
-	// Cycle through the list of views and get the one matching the type
-	for (XYWndMap::iterator i = _xyWnds.begin();
-		 i != _xyWnds.end();
-		 ++i)
-	{
-		// If the view matches, return the pointer
-		if (i->second->getViewType() == viewType) {
-			return i->second;
-		}
-	}
+    // Notify the currently active XYView that is has been deactivated
+    doWithActiveXyWnd([](auto& activeXyWnd) { activeXyWnd.setActive(false); });
 
-	return XYWndPtr();
-}
+    // Find the ID in the map and update the active pointer
+    auto view = _xyWnds.find(id);
 
-// Change the active XYWnd
-void XYWndManager::setActiveXY(int index) {
-
-	// Notify the currently active XYView that is has been deactivated
-	if (_activeXY != NULL)
-	{
-		_activeXY->setActive(false);
-	}
-
-	// Find the ID in the map and update the active pointer
-	XYWndMap::const_iterator it = _xyWnds.find(index);
-
-	if (it != _xyWnds.end())
-	{
-		_activeXY = it->second;
-	}
-	else
-	{
-		throw std::logic_error(
-			"Cannot set XYWnd with ID " + string::to_string(index) + " as active, "
-			+ " ID not found in map."
-		);
-	}
-
-	// Notify the new active XYView about its activation
-	if (_activeXY != NULL)
-	{
-		_activeXY->setActive(true);
-	}
-}
-
-void XYWndManager::destroyXYWnd(int id)
-{
-	XYWndMap::iterator found = _xyWnds.find(id);
-
-	if (found != _xyWnds.end())
-	{
-		// Remove the shared_ptr from the map
-		_xyWnds.erase(found);
-	}
-
-	// Also check if the activeXY is holding a strong reference of the XYWnd
-	// which prevents destruction - release the shared_ptr
-	if (_activeXY != NULL && _activeXY->getId() == id)
-	{
-		_activeXY.reset();
-
-		// Set the activeXY to the next possible XYWnd
-		if (!_xyWnds.empty())
-		{
-			_activeXY = _xyWnds.begin()->second;
-			_activeXY->setActive(true);
-		}
-	}
+    if (view != _xyWnds.end())
+    {
+        _activeXYWndId = view->first;
+        view->second->setActive(true);
+    }
+    else
+    {
+        _activeXYWndId = -1;
+    }
 }
 
 int XYWndManager::getUniqueID() const
@@ -494,53 +464,6 @@ int XYWndManager::getUniqueID() const
 	throw std::runtime_error(
 		"Cannot create unique ID for ortho view: no more IDs."
 	);
-}
-
-// Create a standard (non-floating) ortho view
-XYWndPtr XYWndManager::createEmbeddedOrthoView()
-{
-	// Allocate a new window and add it to the map
-	int id = getUniqueID();
-
-	XYWndPtr newWnd = XYWndPtr(new XYWnd(id, GlobalMainFrame().getWxTopLevelWindow()));
-
-	std::pair<XYWndMap::iterator, bool> result = _xyWnds.insert(
-		XYWndMap::value_type(id, newWnd));
-
-	// Ensure that the insertion is successful
-	assert(result.second == true);
-
-	// Tag the new view as active, if there is no active view yet
-	if (_activeXY == NULL)
-	{
-		_activeXY = newWnd;
-	}
-
-	return newWnd;
-}
-
-XYWndPtr XYWndManager::createEmbeddedOrthoView(EViewType viewType, wxWindow* parent)
-{
-	// Allocate a new window and add it to the map
-	int id = getUniqueID();
-
-	XYWndPtr newWnd = XYWndPtr(new XYWnd(id, parent));
-
-	std::pair<XYWndMap::iterator, bool> result = _xyWnds.insert(
-		XYWndMap::value_type(id, newWnd));
-
-	// Ensure that the insertion is successful
-	assert(result.second == true);
-
-	// Tag the new view as active, if there is no active view yet
-	if (_activeXY == NULL)
-	{
-		_activeXY = newWnd;
-	}
-
-    newWnd->setViewType(viewType);
-
-	return newWnd;
 }
 
 /* greebo: This function determines the point currently being "looked" at, it is used for toggling the ortho views
@@ -648,15 +571,15 @@ void XYWndManager::initialiseModule(const IApplicationContext& ctx)
     toolGroup.registerMouseTool(std::make_shared<MoveViewTool>());
 	toolGroup.registerMouseTool(std::make_shared<MeasurementTool>());
 
-    GlobalUserInterface().registerControl(std::make_shared<OrthoviewControl>());
+    GlobalUserInterface().registerControl(std::make_shared<OrthoviewControl>(*this));
 }
 
 void XYWndManager::shutdownModule()
 {
     GlobalUserInterface().unregisterControl(UserControl::OrthoView);
 
-	// Release all owned XYWndPtrs
-	destroyViews();
+	// Clear all tracked references
+    _xyWnds.clear();
 
 	XYWnd::releaseStates();
 }

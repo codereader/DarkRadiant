@@ -42,6 +42,9 @@ PropertyNotebook::PropertyNotebook(wxWindow* parent, AuiLayout& owner) :
     );
 }
 
+PropertyNotebook::~PropertyNotebook()
+{}
+
 void PropertyNotebook::addControl(const std::string& controlName)
 {
     if (controlExists(controlName))

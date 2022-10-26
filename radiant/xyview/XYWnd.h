@@ -25,15 +25,19 @@
 namespace ui
 {
 
-class XYWnd :
-    public wxEvtHandler,
+class XYWndManager;
+
+class XYWnd final :
+    public wxPanel,
     public IOrthoView,
     public scene::Graph::Observer,
     protected wxutil::MouseToolHandler
 {
-protected:
-    // Unique ID of this XYWnd
+private:
+    XYWndManager& _owner;
+
     int _id;
+    static int _nextId;
 
     wxutil::GLWidget* _wxGLWidget;
     bool _drawing;
@@ -99,11 +103,8 @@ protected:
     IGLFont::Ptr _font;
 
 public:
-    // Constructor, this allocates the GL widget
-    XYWnd(int uniqueId, wxWindow* parent);
-
-    // Destructor
-    virtual ~XYWnd();
+    XYWnd(wxWindow* parent, XYWndManager& owner);
+    ~XYWnd() override;
 
     int getId() const;
 
@@ -153,7 +154,7 @@ public:
     void updateModelview();
     void updateProjection();
 
-    virtual void setViewType(EViewType n);
+    void setViewType(EViewType n);
     EViewType getViewType() const override;
 
     void setScale(float f);
@@ -172,12 +173,12 @@ protected:
     void destroyXYView();
 
     // Required overrides being a MouseToolHandler
-    virtual MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
-    virtual MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;
-    virtual MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
-    virtual void startCapture(const MouseToolPtr& tool) override;
-    virtual void endCapture() override;
-    virtual IInteractiveView& getInteractiveView() override;
+    MouseTool::Result processMouseDownEvent(const MouseToolPtr& tool, const Vector2& point) override;
+    MouseTool::Result processMouseUpEvent(const MouseToolPtr& tool, const Vector2& point) override;
+    MouseTool::Result processMouseMoveEvent(const MouseToolPtr& tool, int x, int y) override;
+    void startCapture(const MouseToolPtr& tool) override;
+    void endCapture() override;
+    IInteractiveView& getInteractiveView() override;
 
 private:
     XYMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
