@@ -26,7 +26,7 @@
 #include "wxutil/dialog/MessageBox.h"
 #include "messages/TextureChanged.h"
 #include "messages/ClearConsole.h"
-#include "string/string.h"
+#include "string/predicate.h"
 #include "scene/Group.h"
 #include "command/ExecutionNotPossible.h"
 
@@ -329,12 +329,9 @@ void UserInterfaceModule::registerControl(const IUserControl::Ptr& control)
     }
 
     // Check the name for validity
-    for (const auto c : control->getControlName())
+    if (!string::isAlphaNumeric(control->getControlName()))
     {
-        if (!::isalpha(c) && !::isdigit(c))
-        {
-            throw std::invalid_argument("Control name " + control->getControlName() + " contains invalid characters, only alphanumerics are allowed");
-        }
+        throw std::invalid_argument("Control name " + control->getControlName() + " contains invalid characters, only alphanumerics are allowed");
     }
 
     // Add a command shortcut toggling this control
