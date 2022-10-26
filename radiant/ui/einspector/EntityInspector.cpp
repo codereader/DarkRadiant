@@ -417,7 +417,10 @@ void EntityInspector::createContextMenu()
 
 EntityInspector::~EntityInspector()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 
     _keyValueAddedHandler.disconnect();
     _keyValueRemovedHandler.disconnect();

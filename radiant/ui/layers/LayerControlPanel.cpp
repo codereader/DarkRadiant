@@ -41,7 +41,10 @@ LayerControlPanel::LayerControlPanel(wxWindow* parent) :
 
 LayerControlPanel::~LayerControlPanel()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 void LayerControlPanel::onPanelActivated()

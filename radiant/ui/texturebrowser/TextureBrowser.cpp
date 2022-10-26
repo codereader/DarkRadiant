@@ -354,7 +354,10 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
 
 TextureBrowser::~TextureBrowser()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
     GlobalTextureBrowser().unregisterTextureBrowser(this);
 }
 

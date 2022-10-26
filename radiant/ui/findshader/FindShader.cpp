@@ -41,7 +41,10 @@ FindAndReplaceShader::FindAndReplaceShader(wxWindow* parent) :
 
 FindAndReplaceShader::~FindAndReplaceShader()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 void FindAndReplaceShader::onPanelActivated()

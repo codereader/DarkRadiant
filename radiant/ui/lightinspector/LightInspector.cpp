@@ -241,11 +241,10 @@ void LightInspector::update()
 
 LightInspector::~LightInspector()
 {
-    // Remove as observer, an invisible inspector doesn't need to receive events
-    _selectionChanged.disconnect();
-
-    _undoHandler.disconnect();
-    _redoHandler.disconnect();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 void LightInspector::updateLightShapeWidgets()

@@ -116,7 +116,10 @@ MapMergePanel::MapMergePanel(wxWindow* parent) :
 
 MapMergePanel::~MapMergePanel()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 void MapMergePanel::onPanelActivated()

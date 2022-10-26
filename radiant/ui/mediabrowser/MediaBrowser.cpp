@@ -34,7 +34,10 @@ MediaBrowser::MediaBrowser(wxWindow* parent) :
 
 MediaBrowser::~MediaBrowser()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
     _treeView = nullptr;
 }
 

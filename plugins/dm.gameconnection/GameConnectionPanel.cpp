@@ -18,7 +18,10 @@ namespace ui
 
 GameConnectionPanel::~GameConnectionPanel()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 GameConnectionPanel::GameConnectionPanel(wxWindow* parent) :

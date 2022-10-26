@@ -75,7 +75,10 @@ TexTool::TexTool(wxWindow* parent) :
 
 TexTool::~TexTool()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 void TexTool::onPanelActivated()

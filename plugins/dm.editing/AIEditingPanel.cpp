@@ -38,7 +38,10 @@ AIEditingPanel::AIEditingPanel(wxWindow* parent) :
 
 AIEditingPanel::~AIEditingPanel()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 void AIEditingPanel::onPanelActivated()

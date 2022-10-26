@@ -27,7 +27,10 @@ AasVisualisationPanel::AasVisualisationPanel(wxWindow* parent) :
 
 AasVisualisationPanel::~AasVisualisationPanel()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 void AasVisualisationPanel::onPanelActivated()

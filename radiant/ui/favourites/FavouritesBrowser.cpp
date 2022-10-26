@@ -65,7 +65,10 @@ FavouritesBrowser::FavouritesBrowser(wxWindow* parent) :
 
 FavouritesBrowser::~FavouritesBrowser()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 void FavouritesBrowser::onPanelActivated()

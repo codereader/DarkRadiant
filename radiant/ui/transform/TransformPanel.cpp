@@ -52,7 +52,10 @@ TransformPanel::TransformPanel(wxWindow* parent) :
 
 TransformPanel::~TransformPanel()
 {
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 void TransformPanel::onPanelActivated()

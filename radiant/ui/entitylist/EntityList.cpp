@@ -42,7 +42,10 @@ EntityList::~EntityList()
         _treeView->Unbind(wxEVT_DATAVIEW_ITEM_EXPANDED, &EntityList::onRowExpand, this);
     }
 
-    disconnectListeners();
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
 }
 
 void EntityList::onPanelActivated()
