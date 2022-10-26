@@ -128,7 +128,7 @@ CamWnd::CamWnd(wxWindow* parent) :
 void CamWnd::onPanelActivated()
 {
     connectEventHandlers();
-    queueDraw();
+    _wxGLWidget->Refresh();
 }
 
 void CamWnd::onPanelDeactivated()
@@ -317,7 +317,10 @@ void CamWnd::constructGUIComponents()
 
 CamWnd::~CamWnd()
 {
-    disconnectEventHandlers();
+    if (panelIsActive())
+    {
+        disconnectEventHandlers();
+    }
 
     // Release the camera instance
     GlobalCameraManager().destroyCamera(_camera);

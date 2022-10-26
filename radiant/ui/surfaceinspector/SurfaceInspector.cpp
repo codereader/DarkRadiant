@@ -148,7 +148,10 @@ SurfaceInspector::SurfaceInspector(wxWindow* parent) :
 
 SurfaceInspector::~SurfaceInspector()
 {
-    disconnectEventHandlers();
+    if (panelIsActive())
+    {
+        disconnectEventHandlers();
+    }
 }
 
 void SurfaceInspector::onPanelActivated()

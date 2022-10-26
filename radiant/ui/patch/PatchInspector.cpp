@@ -50,7 +50,10 @@ PatchInspector::PatchInspector(wxWindow* parent) :
 
 PatchInspector::~PatchInspector()
 {
-    disconnectEventHandlers();
+    if (panelIsActive())
+    {
+        disconnectEventHandlers();
+    }
 }
 
 void PatchInspector::onPanelActivated()
