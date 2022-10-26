@@ -39,7 +39,13 @@ void AuiFloatingFrame::onIdle()
 
 void AuiFloatingFrame::onMove(wxMoveEvent& ev)
 {
-    if (!wxGetMouseState().LeftIsDown()) return;
+    // Ignore dragging of the PropertyPanel itself
+    // Only react to left-mouse drags
+    if (!wxGetMouseState().LeftIsDown() || FindWindow(_notebook->GetId()))
+    {
+        ev.Skip();
+        return;
+    }
 
     _isMoving = true;
     requestIdleCallback();
