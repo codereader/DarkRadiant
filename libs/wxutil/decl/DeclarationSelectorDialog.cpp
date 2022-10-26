@@ -89,7 +89,7 @@ std::string DeclarationSelectorDialog::GetSelectedDeclName()
 void DeclarationSelectorDialog::SetSelectedDeclName(const std::string& declName)
 {
     _selector->SetSelectedDeclName(declName);
-    _restoreSelectionFromRegistry = false; // prevent this selection from being overwrittenvoid
+    _restoreSelectionFromRegistry = false; // prevent this selection from being overwritten
 }
 
 int DeclarationSelectorDialog::ShowModal()

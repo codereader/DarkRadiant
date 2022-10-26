@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 
+#include "string/predicate.h"
 #include <wx/sizer.h>
 #include <wx/stattext.h>
 #include <wx/radiobut.h>
@@ -53,12 +54,16 @@ ParticleChooserDialog::SelectionResult ParticleChooserDialog::ChooseParticleAndE
     return RunDialog(true, currentParticle);
 }
 
-ParticleChooserDialog::SelectionResult ParticleChooserDialog::RunDialog(bool showClassnameSelector, const std::string& currentParticle)
+ParticleChooserDialog::SelectionResult ParticleChooserDialog::RunDialog(bool showClassnameSelector, std::string currentParticle)
 {
     auto* dialog = new ParticleChooserDialog(showClassnameSelector);
 
-    // Prefer SetSelectedParticle to handle the .prt extension
-    dialog->_selector->SetSelectedParticle(currentParticle);
+    if (string::ends_with(currentParticle, ".prt"))
+    {
+        currentParticle = currentParticle.substr(0, currentParticle.length() - 4);
+    }
+
+    dialog->SetSelectedDeclName(currentParticle);
 
     auto result = dialog->ShowModal();
 
