@@ -75,6 +75,7 @@
 
 	<subMenu name="view" caption="V&amp;iew">
 		<menuItem name="newxyview" caption="New XY view" command="NewOrthoView" />
+		<menuItem name="newcamview" caption="New Camera view" command="NewCameraView" />
     <menuSeparator name="controlSeparatorBottom" />
 		<subMenu name="camera" caption="Camera">
 			<menuItem name="cameraCenter" caption="&amp;Center" command="CenterView" />

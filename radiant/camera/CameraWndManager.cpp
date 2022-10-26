@@ -65,6 +65,8 @@ CameraWndManager::CameraWndManager() :
 
 void CameraWndManager::registerCommands()
 {
+    GlobalCommandSystem().addStatement("NewCameraView", fmt::format("{0} {1}", CREATE_CONTROL_COMMAND, UserControl::Camera), false);
+
 	GlobalCommandSystem().addCommand("CenterView", std::bind(&CameraWndManager::resetCameraAngles, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CubicClipZoomIn", std::bind(&CameraWndManager::farClipPlaneIn, this, std::placeholders::_1));
 	GlobalCommandSystem().addCommand("CubicClipZoomOut", std::bind(&CameraWndManager::farClipPlaneOut, this, std::placeholders::_1));
@@ -469,6 +471,7 @@ const StringSet& CameraWndManager::getDependencies() const
         MODULE_COMMANDSYSTEM,
         MODULE_MOUSETOOLMANAGER,
         MODULE_USERINTERFACE,
+        MODULE_MAINFRAME,
     };
 
 	return _dependencies;
@@ -504,6 +507,12 @@ void CameraWndManager::initialiseModule(const IApplicationContext& ctx)
     toolGroup.registerMouseTool(std::make_shared<JumpToObjectTool>());
 
     GlobalUserInterface().registerControl(std::make_shared<CameraControl>(*this));
+
+    GlobalMainFrame().signal_MainFrameConstructed().connect([&]()
+    {
+        // When creating new camera views, use a floating window
+        GlobalMainFrame().addControl(UserControl::Camera, { IMainFrame::Location::FloatingWindow, false });
+    });
 }
 
 void CameraWndManager::shutdownModule()
