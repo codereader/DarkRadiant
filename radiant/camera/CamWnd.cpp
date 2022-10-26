@@ -128,7 +128,7 @@ CamWnd::CamWnd(wxWindow* parent) :
 void CamWnd::onPanelActivated()
 {
     connectEventHandlers();
-    _wxGLWidget->Refresh();
+    queueDraw();
 }
 
 void CamWnd::onPanelDeactivated()

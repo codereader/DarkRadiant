@@ -168,6 +168,9 @@ public:
     /// \see ICameraView::getCameraOrigin
     const Vector3& getCameraOrigin() const;
 
+    /// \see ICameraView::setCameraOrigin
+    void setCameraOrigin(const Vector3& origin);
+
     const Frustum& getViewFrustum() const;
 
     // greebo: This measures the rendering time during a 360° turn of the camera.
@@ -250,10 +253,7 @@ private:
     void drawTime();
     void drawGrid();
     void requestRedraw(bool force);
-
-    // Motion and ICameraView related
-    void setCameraOrigin(const Vector3& origin);
-
+    
     CameraMouseToolEvent createMouseEvent(const Vector2& point, const Vector2& delta = Vector2(0, 0));
 
     void onGLResize(wxSizeEvent& ev);

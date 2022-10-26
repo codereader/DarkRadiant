@@ -51,7 +51,17 @@ public:
 
     wxWindow* createWidget(wxWindow* parent) override
     {
-        return new CamWnd(parent);
+        auto cam = new CamWnd(parent);
+
+        // Inherit origin and angles from existing cameras
+        if (_owner.getActiveCamWnd())
+        {
+            auto activeCam = _owner.getActiveCamWnd();
+            cam->setCameraOrigin(activeCam->getCameraOrigin());
+            cam->setCameraAngles(activeCam->getCameraAngles());
+        }
+
+        return cam;
     }
 };
 
