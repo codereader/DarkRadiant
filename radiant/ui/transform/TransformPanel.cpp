@@ -108,10 +108,10 @@ void TransformPanel::populateWindow()
 	scaleLabel->SetFont(scaleLabel->GetFont().Bold());
 	
 	// Arrange label and control rows
-	wxFlexGridSizer* rotateTable = new wxFlexGridSizer(3, 4, 6, 6);
-	wxFlexGridSizer* scaleTable = new wxFlexGridSizer(3, 4, 6, 6);
+	wxFlexGridSizer* rotateTable = new wxFlexGridSizer(3, 4, 3, 6);
+	wxFlexGridSizer* scaleTable = new wxFlexGridSizer(3, 4, 3, 6);
 
-	_rotatePanel->GetSizer()->Add(rotateLabel, 0);
+	_rotatePanel->GetSizer()->Add(rotateLabel, 0, wxBOTTOM, 6);
 	_rotatePanel->GetSizer()->Add(rotateTable, 1, wxEXPAND | wxLEFT, 6);
 
 	_scalePanel->GetSizer()->Add(scaleLabel, 0, wxTOP | wxBOTTOM, 6);
