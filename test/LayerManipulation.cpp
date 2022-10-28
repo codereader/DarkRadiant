@@ -578,6 +578,30 @@ TEST_F(LayerTest, HierarchyChangedSignal)
     EXPECT_EQ(layersChangedFireCount, 0) << "Layers changed signal should NOT have been fired at all";
 }
 
+void loadAndExpectLayersToBeRestored(const std::string& mapFilePath, const std::vector<int>& expectedLayerIds)
+{
+    // Clear the current map, discarding the changes
+    FileSaveConfirmationHelper helper(radiant::FileSaveConfirmation::Action::DiscardChanges);
+    GlobalCommandSystem().executeCommand("NewMap");
+
+    // The layers are gone now
+    EXPECT_EQ(getAllLayerIds(), std::vector{ 0 }) << "All layers should have been cleared, except for the default";
+
+    // Then load the map from that temporary path
+    EXPECT_TRUE(os::fileOrDirExists(mapFilePath));
+    GlobalCommandSystem().executeCommand("OpenMap", mapFilePath);
+
+    auto unsortedLayerIds = getAllLayerIds();
+    auto layerIds = std::set(unsortedLayerIds.begin(), unsortedLayerIds.end());
+
+    EXPECT_EQ(layerIds.size(), expectedLayerIds.size()) << "Expected layer count not matching";
+
+    for (auto expectedId : expectedLayerIds)
+    {
+        EXPECT_EQ(layerIds.count(expectedId), 1) << "Layer ID " << expectedId << " not present";
+    }
+}
+
 void runLayerHierarchyPersistenceTest(const std::string& mapFilePath)
 {
     GlobalMapModule().findOrInsertWorldspawn(); // to not save an empty map
@@ -602,24 +626,7 @@ void runLayerHierarchyPersistenceTest(const std::string& mapFilePath)
     EXPECT_FALSE(os::fileOrDirExists(mapFilePath));
     GlobalCommandSystem().executeCommand("SaveMapCopyAs", mapFilePath);
 
-    // Clear the current map, discarding the changes
-    FileSaveConfirmationHelper helper(radiant::FileSaveConfirmation::Action::DiscardChanges);
-    GlobalCommandSystem().executeCommand("NewMap");
-
-    // The layers are gone now
-    EXPECT_EQ(getAllLayerIds(), std::vector{ 0 }) << "All layers should have been cleared, except for the default";
-
-    // Then load the map from that temporary path
-    EXPECT_TRUE(os::fileOrDirExists(mapFilePath));
-    GlobalCommandSystem().executeCommand("OpenMap", mapFilePath);
-
-    auto unsortedLayerIds = getAllLayerIds();
-    auto layerIds = std::set(unsortedLayerIds.begin(), unsortedLayerIds.end());
-    EXPECT_EQ(layerIds.count(0), 1) << "Default layer ID not present";
-    EXPECT_EQ(layerIds.count(parentLayerId), 1) << "Parent Layer ID not present";
-    EXPECT_EQ(layerIds.count(childLayerId), 1) << "Child Layer ID not present";
-    EXPECT_EQ(layerIds.count(childLayer2Id), 1) << "Child Layer 2 ID not present";
-    EXPECT_EQ(layerIds.count(childLayer3Id), 1) << "Child Layer 3 ID not present";
+    loadAndExpectLayersToBeRestored(mapFilePath, { 0, parentLayerId, childLayerId, childLayer2Id, childLayer3Id });
 
     // We changed maps, so acquire a new layer manager reference
     layerManager = &GlobalMapModule().getRoot()->getLayerManager();
@@ -966,6 +973,98 @@ TEST_F(LayerTest, SelectFilteredChildPrimitive)
 
     EXPECT_FALSE(Node_isSelected(func_static_1)) << "De-selecting the layer should have de-selected func_static_1";
     EXPECT_FALSE(Node_isSelected(childPrimitive)) << "De-selecting the layer shouldn't leave the brush selected";
+}
+
+void runLayerVisibilityPersistenceTest(const std::string& mapFilePath)
+{
+    GlobalMapModule().findOrInsertWorldspawn(); // to not save an empty map
+
+    TemporaryFile tempSavedFile(mapFilePath);
+
+    auto* layerManager = &GlobalMapModule().getRoot()->getLayerManager();
+    auto layer1Id = layerManager->createLayer("Layer1");
+    auto layer2Id = layerManager->createLayer("Layer2");
+    auto layer3Id = layerManager->createLayer("Layer3");
+    auto layer4Id = layerManager->createLayer("Layer4");
+
+    // Set layers 1 and 3 to hidden
+    layerManager->setLayerVisibility(layer1Id, false);
+    layerManager->setLayerVisibility(layer3Id, false);
+
+    EXPECT_FALSE(os::fileOrDirExists(mapFilePath));
+    GlobalCommandSystem().executeCommand("SaveMapCopyAs", mapFilePath);
+
+    loadAndExpectLayersToBeRestored(mapFilePath, { 0, layer1Id, layer2Id, layer3Id, layer4Id });
+
+    // We changed maps, so acquire a new layer manager reference
+    layerManager = &GlobalMapModule().getRoot()->getLayerManager();
+    EXPECT_FALSE(layerManager->layerIsVisible(layer1Id)) << "Visibility has not been restored";
+    EXPECT_TRUE(layerManager->layerIsVisible(layer2Id)) << "Visibility has not been restored";
+    EXPECT_FALSE(layerManager->layerIsVisible(layer3Id)) << "Visibility has not been restored";
+    EXPECT_TRUE(layerManager->layerIsVisible(layer4Id)) << "Visibility has not been restored";
+}
+
+TEST_F(LayerTest, LayerVisibilityIsPersistedToMap)
+{
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "layer_visibility_test.map";
+
+    // Remove the .darkradiant file after this test
+    TemporaryFile tempDarkRadiantFile(os::replaceExtension(tempPath.string(), "darkradiant"));
+
+    runLayerVisibilityPersistenceTest(tempPath.string());
+}
+
+TEST_F(LayerTest, LayerVisibilityIsPersistedToMapx)
+{
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "layer_visibility_test.mapx";
+
+    runLayerVisibilityPersistenceTest(tempPath.string());
+}
+
+void runLayerActiveStatusPersistenceTest(const std::string& mapFilePath)
+{
+    GlobalMapModule().findOrInsertWorldspawn(); // to not save an empty map
+
+    TemporaryFile tempSavedFile(mapFilePath);
+
+    auto* layerManager = &GlobalMapModule().getRoot()->getLayerManager();
+    auto layer1Id = layerManager->createLayer("Layer1");
+    auto layer2Id = layerManager->createLayer("Layer2");
+
+    EXPECT_EQ(layerManager->getActiveLayer(), 0) << "Default layer should be active";
+
+    // Set layer 2 to active
+    layerManager->setActiveLayer(layer2Id);
+
+    EXPECT_FALSE(os::fileOrDirExists(mapFilePath));
+    GlobalCommandSystem().executeCommand("SaveMapCopyAs", mapFilePath);
+
+    loadAndExpectLayersToBeRestored(mapFilePath, { 0, layer1Id, layer2Id });
+
+    // We changed maps, so acquire a new layer manager reference
+    layerManager = &GlobalMapModule().getRoot()->getLayerManager();
+    EXPECT_EQ(layerManager->getActiveLayer(), layer2Id) << "Active layer has not been restored";
+}
+
+TEST_F(LayerTest, LayerActiveStatusIsPersistedToMap)
+{
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "layer_active_status_test.map";
+
+    // Remove the .darkradiant file after this test
+    TemporaryFile tempDarkRadiantFile(os::replaceExtension(tempPath.string(), "darkradiant"));
+
+    runLayerActiveStatusPersistenceTest(tempPath.string());
+}
+
+TEST_F(LayerTest, LayerActiveStatusIsPersistedToMapx)
+{
+    fs::path tempPath = _context.getTemporaryDataPath();
+    tempPath /= "layer_active_status_test.mapx";
+
+    runLayerActiveStatusPersistenceTest(tempPath.string());
 }
 
 }
