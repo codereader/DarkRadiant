@@ -402,7 +402,8 @@ void BrushNode::onPreRender(const VolumeTest& volume)
         }
     }
 
-    if (isSelected() && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent)
+    if (isSelected() && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent ||
+        _numSelectedComponents > 0) // could be a single selected face without the brush being selected
     {
         updateSelectedPointsArray();
 

@@ -1355,6 +1355,8 @@ void Brush::buildBRep() {
 
 const std::vector<Vector3>& Brush::getVertices(selection::ComponentSelectionMode mode) const
 {
+    static std::vector<Vector3> _emptyVertexList;
+
     switch (mode)
     {
         case selection::ComponentSelectionMode::Vertex: 
@@ -1365,9 +1367,12 @@ const std::vector<Vector3>& Brush::getVertices(selection::ComponentSelectionMode
 
         case selection::ComponentSelectionMode::Face: 
             return _faceCentroidPoints;
-    }
 
-    throw std::runtime_error("Brush::getVertices: Component mode not supported");
+        default:
+            // We're getting here if single brush faces have been selected using Ctrl-Shift-LMB
+            // and the RenderableBrushVertices is asking for visible components
+            return _emptyVertexList;
+    }
 }
 
 // ----------------------------------------------------------------------------
