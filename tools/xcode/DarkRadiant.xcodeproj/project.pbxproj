@@ -648,6 +648,18 @@
 		3A3832C6290B92170049C4A1 /* OrthoBackgroundPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832C5290B92170049C4A1 /* OrthoBackgroundPanel.cpp */; };
 		3A3832CD290B92660049C4A1 /* TransformPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832CA290B92650049C4A1 /* TransformPanel.cpp */; };
 		3A3832D0290B98060049C4A1 /* LayerControlPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832CF290B98030049C4A1 /* LayerControlPanel.cpp */; };
+		3A3832D2290B9F0A0049C4A1 /* TransientPopupWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3832D1290B9F0A0049C4A1 /* TransientPopupWindow.h */; };
+		3A3832D5290B9F2D0049C4A1 /* EntityPreview.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3832D3290B9F2B0049C4A1 /* EntityPreview.h */; };
+		3A3832D6290B9F2D0049C4A1 /* EntityPreview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832D4290B9F2C0049C4A1 /* EntityPreview.cpp */; };
+		3A3832DE290B9F600049C4A1 /* MapTextureBrowser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832D7290B9F5B0049C4A1 /* MapTextureBrowser.cpp */; };
+		3A3832DF290B9F600049C4A1 /* TextureBrowserPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832D8290B9F5C0049C4A1 /* TextureBrowserPanel.cpp */; };
+		3A3832E0290B9F600049C4A1 /* TextureThumbnailBrowser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832DD290B9F5F0049C4A1 /* TextureThumbnailBrowser.cpp */; };
+		3A3832E5290B9FA20049C4A1 /* ModelNodeBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832E1290B9FA00049C4A1 /* ModelNodeBase.cpp */; };
+		3A3832E6290B9FA20049C4A1 /* IndexedBoxSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3832E2290B9FA10049C4A1 /* IndexedBoxSurface.h */; };
+		3A3832E7290B9FA20049C4A1 /* NullModelBoxSurface.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3832E3290B9FA10049C4A1 /* NullModelBoxSurface.h */; };
+		3A3832E8290B9FA20049C4A1 /* ModelNodeBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3832E4290B9FA20049C4A1 /* ModelNodeBase.h */; };
+		3A3832EB290B9FD70049C4A1 /* SceneSelectionTesters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832E9290B9FD50049C4A1 /* SceneSelectionTesters.cpp */; };
+		3A3832EC290B9FD70049C4A1 /* SceneSelectionTesters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3832EA290B9FD60049C4A1 /* SceneSelectionTesters.h */; };
 		3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBE263C7893000C068E /* Bitmap.h */; };
 		3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */; };
 		3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3F623B1B764008A1B2D /* ParticleEditor.cpp */; };
@@ -1633,7 +1645,6 @@
 		3AF746521E4F861C003465B5 /* PrefPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7454E1E4F861B003465B5 /* PrefPage.cpp */; };
 		3AF746531E4F861C003465B5 /* Splash.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745511E4F861B003465B5 /* Splash.cpp */; };
 		3AF746541E4F861C003465B5 /* SurfaceInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745541E4F861B003465B5 /* SurfaceInspector.cpp */; };
-		3AF746551E4F861C003465B5 /* TextureBrowser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745571E4F861B003465B5 /* TextureBrowser.cpp */; };
 		3AF746561E4F861C003465B5 /* TextureBrowserManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745591E4F861B003465B5 /* TextureBrowserManager.cpp */; };
 		3AF746581E4F861C003465B5 /* UserInterfaceModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7455E1E4F861B003465B5 /* UserInterfaceModule.cpp */; };
 		3AF7465A1E4F861C003465B5 /* GlobalXYWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745631E4F861B003465B5 /* GlobalXYWnd.cpp */; };
@@ -3725,6 +3736,22 @@
 		3A3832CC290B92660049C4A1 /* TransformPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformPanel.h; path = ../../radiant/ui/transform/TransformPanel.h; sourceTree = SOURCE_ROOT; };
 		3A3832CE290B98010049C4A1 /* LayerControlPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerControlPanel.h; path = ../../radiant/ui/layers/LayerControlPanel.h; sourceTree = SOURCE_ROOT; };
 		3A3832CF290B98030049C4A1 /* LayerControlPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerControlPanel.cpp; path = ../../radiant/ui/layers/LayerControlPanel.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832D1290B9F0A0049C4A1 /* TransientPopupWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransientPopupWindow.h; path = ../../libs/wxutil/TransientPopupWindow.h; sourceTree = SOURCE_ROOT; };
+		3A3832D3290B9F2B0049C4A1 /* EntityPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityPreview.h; path = ../../libs/wxutil/preview/EntityPreview.h; sourceTree = SOURCE_ROOT; };
+		3A3832D4290B9F2C0049C4A1 /* EntityPreview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityPreview.cpp; path = ../../libs/wxutil/preview/EntityPreview.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832D7290B9F5B0049C4A1 /* MapTextureBrowser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapTextureBrowser.cpp; path = ../../radiant/ui/texturebrowser/MapTextureBrowser.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832D8290B9F5C0049C4A1 /* TextureBrowserPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureBrowserPanel.cpp; path = ../../radiant/ui/texturebrowser/TextureBrowserPanel.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832D9290B9F5D0049C4A1 /* TextureBrowserPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureBrowserPanel.h; path = ../../radiant/ui/texturebrowser/TextureBrowserPanel.h; sourceTree = SOURCE_ROOT; };
+		3A3832DA290B9F5D0049C4A1 /* TextureDirectoryBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureDirectoryBrowser.h; path = ../../radiant/ui/texturebrowser/TextureDirectoryBrowser.h; sourceTree = SOURCE_ROOT; };
+		3A3832DB290B9F5E0049C4A1 /* MapTextureBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapTextureBrowser.h; path = ../../radiant/ui/texturebrowser/MapTextureBrowser.h; sourceTree = SOURCE_ROOT; };
+		3A3832DC290B9F5F0049C4A1 /* TextureThumbnailBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureThumbnailBrowser.h; path = ../../radiant/ui/texturebrowser/TextureThumbnailBrowser.h; sourceTree = SOURCE_ROOT; };
+		3A3832DD290B9F5F0049C4A1 /* TextureThumbnailBrowser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureThumbnailBrowser.cpp; path = ../../radiant/ui/texturebrowser/TextureThumbnailBrowser.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832E1290B9FA00049C4A1 /* ModelNodeBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ModelNodeBase.cpp; path = ../../radiantcore/model/ModelNodeBase.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832E2290B9FA10049C4A1 /* IndexedBoxSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IndexedBoxSurface.h; path = ../../radiantcore/model/IndexedBoxSurface.h; sourceTree = SOURCE_ROOT; };
+		3A3832E3290B9FA10049C4A1 /* NullModelBoxSurface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = NullModelBoxSurface.h; path = ../../radiantcore/model/NullModelBoxSurface.h; sourceTree = SOURCE_ROOT; };
+		3A3832E4290B9FA20049C4A1 /* ModelNodeBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelNodeBase.h; path = ../../radiantcore/model/ModelNodeBase.h; sourceTree = SOURCE_ROOT; };
+		3A3832E9290B9FD50049C4A1 /* SceneSelectionTesters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneSelectionTesters.cpp; path = ../../radiantcore/selection/SceneSelectionTesters.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832EA290B9FD60049C4A1 /* SceneSelectionTesters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneSelectionTesters.h; path = ../../radiantcore/selection/SceneSelectionTesters.h; sourceTree = SOURCE_ROOT; };
 		3A8D4CBE263C7893000C068E /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../libs/wxutil/Bitmap.h; sourceTree = SOURCE_ROOT; };
 		3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../libs/wxutil/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
@@ -5031,8 +5058,6 @@
 		3AF745521E4F861B003465B5 /* Splash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Splash.h; path = ../../radiant/ui/splash/Splash.h; sourceTree = SOURCE_ROOT; };
 		3AF745541E4F861B003465B5 /* SurfaceInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SurfaceInspector.cpp; path = ../../radiant/ui/surfaceinspector/SurfaceInspector.cpp; sourceTree = SOURCE_ROOT; };
 		3AF745551E4F861B003465B5 /* SurfaceInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurfaceInspector.h; path = ../../radiant/ui/surfaceinspector/SurfaceInspector.h; sourceTree = SOURCE_ROOT; };
-		3AF745571E4F861B003465B5 /* TextureBrowser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureBrowser.cpp; path = ../../radiant/ui/texturebrowser/TextureBrowser.cpp; sourceTree = SOURCE_ROOT; };
-		3AF745581E4F861B003465B5 /* TextureBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureBrowser.h; path = ../../radiant/ui/texturebrowser/TextureBrowser.h; sourceTree = SOURCE_ROOT; };
 		3AF745591E4F861B003465B5 /* TextureBrowserManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureBrowserManager.cpp; path = ../../radiant/ui/texturebrowser/TextureBrowserManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AF7455A1E4F861B003465B5 /* TextureBrowserManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureBrowserManager.h; path = ../../radiant/ui/texturebrowser/TextureBrowserManager.h; sourceTree = SOURCE_ROOT; };
 		3AF7455E1E4F861B003465B5 /* UserInterfaceModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UserInterfaceModule.cpp; path = ../../radiant/ui/UserInterfaceModule.cpp; sourceTree = SOURCE_ROOT; };
@@ -5439,6 +5464,7 @@
 		3A011FC41E50275700A62BC1 /* wxutil */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832D1290B9F0A0049C4A1 /* TransientPopupWindow.h */,
 				3A383298290B90540049C4A1 /* DockablePanel.h */,
 				3A8D4CBE263C7893000C068E /* Bitmap.h */,
 				3A38325B28DDD9580049C4A1 /* BitmapToggleButton.h */,
@@ -5546,6 +5572,8 @@
 		3A0120071E50278400A62BC1 /* preview */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832D4290B9F2C0049C4A1 /* EntityPreview.cpp */,
+				3A3832D3290B9F2B0049C4A1 /* EntityPreview.h */,
 				3A38326D28DDD9DA0049C4A1 /* EntityClassPreview.h */,
 				3A38326E28DDD9DA0049C4A1 /* SkinPreview.h */,
 				3AE6F1DE1FD1A529008A1B2D /* GuiRenderer.cpp */,
@@ -7974,6 +8002,8 @@
 		3AF744121E4F861A003465B5 /* selection */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832E9290B9FD50049C4A1 /* SceneSelectionTesters.cpp */,
+				3A3832EA290B9FD60049C4A1 /* SceneSelectionTesters.h */,
 				3A3830FD272D36A40049C4A1 /* textool */,
 				3A3830F5272D36760049C4A1 /* SceneManipulationPivot.cpp */,
 				3A3830F6272D36760049C4A1 /* SceneManipulationPivot.h */,
@@ -8583,8 +8613,13 @@
 		3AF745561E4F861B003465B5 /* texturebrowser */ = {
 			isa = PBXGroup;
 			children = (
-				3AF745571E4F861B003465B5 /* TextureBrowser.cpp */,
-				3AF745581E4F861B003465B5 /* TextureBrowser.h */,
+				3A3832D7290B9F5B0049C4A1 /* MapTextureBrowser.cpp */,
+				3A3832DB290B9F5E0049C4A1 /* MapTextureBrowser.h */,
+				3A3832D8290B9F5C0049C4A1 /* TextureBrowserPanel.cpp */,
+				3A3832D9290B9F5D0049C4A1 /* TextureBrowserPanel.h */,
+				3A3832DA290B9F5D0049C4A1 /* TextureDirectoryBrowser.h */,
+				3A3832DD290B9F5F0049C4A1 /* TextureThumbnailBrowser.cpp */,
+				3A3832DC290B9F5F0049C4A1 /* TextureThumbnailBrowser.h */,
 				3AF745591E4F861B003465B5 /* TextureBrowserManager.cpp */,
 				3AF7455A1E4F861B003465B5 /* TextureBrowserManager.h */,
 			);
@@ -8904,6 +8939,10 @@
 		3AFF04E3253ADDCA002B1472 /* model */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832E2290B9FA10049C4A1 /* IndexedBoxSurface.h */,
+				3A3832E1290B9FA00049C4A1 /* ModelNodeBase.cpp */,
+				3A3832E4290B9FA20049C4A1 /* ModelNodeBase.h */,
+				3A3832E3290B9FA10049C4A1 /* NullModelBoxSurface.h */,
 				3A3831992859E7730049C4A1 /* RenderableModelSurface.h */,
 				3AE5C3242639305800643850 /* StaticModel.cpp */,
 				3AE5C3252639305800643850 /* StaticModel.h */,
@@ -9138,6 +9177,7 @@
 				3A0120211E50278400A62BC1 /* ChoiceHelper.h in Headers */,
 				3A01203A1E50278400A62BC1 /* FreezePointer.h in Headers */,
 				3A01203F1E50278400A62BC1 /* IConv.h in Headers */,
+				3A3832D2290B9F0A0049C4A1 /* TransientPopupWindow.h in Headers */,
 				3A38326C28DDD9B40049C4A1 /* DeclFileInfo.h in Headers */,
 				3A38325D28DDD9590049C4A1 /* WindowState.h in Headers */,
 				3A01205A1E50278400A62BC1 /* RenderPreview.h in Headers */,
@@ -9167,6 +9207,7 @@
 				3AC88ABE25BC102500E6CCCE /* VFSTreePopulator.h in Headers */,
 				3AC88AB325BC102500E6CCCE /* ResourceTreeViewToolbar.h in Headers */,
 				3A01202C1E50278400A62BC1 /* DialogBase.h in Headers */,
+				3A3832D5290B9F2D0049C4A1 /* EntityPreview.h in Headers */,
 				3A0120461E50278400A62BC1 /* PopupMenu.h in Headers */,
 				3AC88A762596F6A500E6CCCE /* FileSystemView.h in Headers */,
 				3AC88AB525BC102500E6CCCE /* ThreadedResourceTreePopulator.h in Headers */,
@@ -9583,6 +9624,7 @@
 				3AFF0560253AE1F1002B1472 /* BMPLoader.h in Headers */,
 				3AE5C347263930D900643850 /* MaterialSourceGenerator.h in Headers */,
 				3AFF05A8253AE3D1002B1472 /* CameraManager.h in Headers */,
+				3A3832E6290B9FA20049C4A1 /* IndexedBoxSurface.h in Headers */,
 				3A38324B28C34EE90049C4A1 /* BlendLight.h in Headers */,
 				3A383115272D36D30049C4A1 /* TextureToolSceneGraph.h in Headers */,
 				3A3831F32859E8580049C4A1 /* RegularStageProgram.h in Headers */,
@@ -9632,12 +9674,14 @@
 				3A3831CB2859E7EF0049C4A1 /* FrameBuffer.h in Headers */,
 				3A3831BA2859E7EE0049C4A1 /* OpenGLState.h in Headers */,
 				3AFF0497253ABBBA002B1472 /* LocalisationProvider.h in Headers */,
+				3A3832E7290B9FA20049C4A1 /* NullModelBoxSurface.h in Headers */,
 				3A3830E0272D356A0049C4A1 /* Quake3Utils.h in Headers */,
 				3A38317D2859E6370049C4A1 /* RenderableBrushVertices.h in Headers */,
 				3AFF0599253AE39A002B1472 /* BrushByPlaneClipper.h in Headers */,
 				3AC88A412596F4EC00E6CCCE /* FileVisitor.h in Headers */,
 				3A38317E2859E6370049C4A1 /* RenderableWinding.h in Headers */,
 				3AE5C32D2639305800643850 /* StaticModelNode.h in Headers */,
+				3A3832E8290B9FA20049C4A1 /* ModelNodeBase.h in Headers */,
 				3A38322E285A14520049C4A1 /* DeclarationManager.h in Headers */,
 				3A3831F82859E8A00049C4A1 /* Renderables.h in Headers */,
 				3AFF05A6253AE3D1002B1472 /* Camera.h in Headers */,
@@ -9652,6 +9696,7 @@
 				3A3831BC2859E7EE0049C4A1 /* ObjectRenderer.h in Headers */,
 				3AFF048F253ABB78002B1472 /* ColourSchemeManager.h in Headers */,
 				3A3830E4272D359D0049C4A1 /* LegacyBrushDefExporter.h in Headers */,
+				3A3832EC290B9FD70049C4A1 /* SceneSelectionTesters.h in Headers */,
 				3A38328B28DDDAE40049C4A1 /* FxDeclaration.h in Headers */,
 				3A3830EF272D35FE0049C4A1 /* ofbx.h in Headers */,
 				3A3831C92859E7EF0049C4A1 /* FullBrightRenderer.h in Headers */,
@@ -10285,6 +10330,7 @@
 				3A0120551E50278400A62BC1 /* ModelPreview.cpp in Sources */,
 				3AFF063D253AE829002B1472 /* Splitter.cpp in Sources */,
 				3A0120511E50278400A62BC1 /* PanedPosition.cpp in Sources */,
+				3A3832D6290B9F2D0049C4A1 /* EntityPreview.cpp in Sources */,
 				3A0120571E50278400A62BC1 /* ParticlePreview.cpp in Sources */,
 				3A38326928DDD9B40049C4A1 /* DeclarationSelector.cpp in Sources */,
 			);
@@ -10563,6 +10609,7 @@
 				3AE5C2A026392DB300643850 /* ImageFilePopulator.cpp in Sources */,
 				3AE6F27E1FF78CD0008A1B2D /* GraphTreeModel.cpp in Sources */,
 				3AFF05DE253AE5E2002B1472 /* ExportCollisionModelDialog.cpp in Sources */,
+				3A3832E0290B9F600049C4A1 /* TextureThumbnailBrowser.cpp in Sources */,
 				3AE6F20E1FDC229F008A1B2D /* GameSetupPageIdTech.cpp in Sources */,
 				3AF7463F1E4F861C003465B5 /* MaterialsList.cpp in Sources */,
 				3AC88A9225BC0FB600E6CCCE /* ModelTreeView.cpp in Sources */,
@@ -10576,6 +10623,7 @@
 				3AF7464D1E4F861C003465B5 /* PatchThickenDialog.cpp in Sources */,
 				3AE6F345239F4FE1008A1B2D /* WidgetToggle.cpp in Sources */,
 				3A38328228DDDABB0049C4A1 /* MaterialChooser.cpp in Sources */,
+				3A3832DF290B9F600049C4A1 /* TextureBrowserPanel.cpp in Sources */,
 				3AF745AD1E4F861B003465B5 /* StartupMapLoader.cpp in Sources */,
 				3A3832BB290B91B70049C4A1 /* PropertyNotebook.cpp in Sources */,
 				3AF7461E1E4F861B003465B5 /* ModelPropertyEditor.cpp in Sources */,
@@ -10596,7 +10644,6 @@
 				3A3830CE272D34550049C4A1 /* SceneManipulateMouseTool.cpp in Sources */,
 				3AF746451E4F861C003465B5 /* OrthoContextMenu.cpp in Sources */,
 				3AFF0603253AE706002B1472 /* MapFileProgressHandler.cpp in Sources */,
-				3AF746551E4F861C003465B5 /* TextureBrowser.cpp in Sources */,
 				3AE5C2F226392EED00643850 /* MenuManager.cpp in Sources */,
 				3AF746501E4F861C003465B5 /* PrefDialog.cpp in Sources */,
 				3AFF05D3253AE560002B1472 /* FilterDialog.cpp in Sources */,
@@ -10646,6 +10693,7 @@
 				3AF745951E4F861B003465B5 /* main.cpp in Sources */,
 				3AE6F342239F4FE1008A1B2D /* MouseToolManager.cpp in Sources */,
 				3AE5C29F26392DB300643850 /* DialogManager.cpp in Sources */,
+				3A3832DE290B9F600049C4A1 /* MapTextureBrowser.cpp in Sources */,
 				3AE6F33E239F4FE1008A1B2D /* Accelerator.cpp in Sources */,
 				3AF7462A1E4F861B003465B5 /* FindShader.cpp in Sources */,
 				3AF746171E4F861B003465B5 /* BooleanPropertyEditor.cpp in Sources */,
@@ -10837,6 +10885,7 @@
 				3AFF056D253AE23A002B1472 /* XMLFilter.cpp in Sources */,
 				3A38324828C34EE90049C4A1 /* RegularLight.cpp in Sources */,
 				3AFF04D6253ADD3E002B1472 /* ParticleNode.cpp in Sources */,
+				3A3832EB290B9FD70049C4A1 /* SceneSelectionTesters.cpp in Sources */,
 				3AFF059A253AE39A002B1472 /* SplitAlgorithm.cpp in Sources */,
 				3A38311A272D36D30049C4A1 /* PatchNode.cpp in Sources */,
 				3A383236285A14E30049C4A1 /* MaterialManager.cpp in Sources */,
@@ -10924,6 +10973,7 @@
 				3A3831BB2859E7EE0049C4A1 /* FullBrightRenderer.cpp in Sources */,
 				3AFF056F253AE272002B1472 /* Curve.cpp in Sources */,
 				3AFF0510253ADF3F002B1472 /* Lwo2Exporter.cpp in Sources */,
+				3A3832E5290B9FA20049C4A1 /* ModelNodeBase.cpp in Sources */,
 				3AFF048E253ABB78002B1472 /* ColourSchemeManager.cpp in Sources */,
 				3A38328E28DDDAE40049C4A1 /* FxDeclaration.cpp in Sources */,
 				3AFF0536253AE08A002B1472 /* InfoFile.cpp in Sources */,
