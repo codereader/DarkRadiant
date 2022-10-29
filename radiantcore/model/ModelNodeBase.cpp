@@ -27,6 +27,21 @@ std::size_t ModelNodeBase::getHighlightFlags()
     return Highlight::NoHighlight; // models are never highlighted themselves
 }
 
+void ModelNodeBase::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    // Renderables will acquire their shaders in onPreRender
+    createRenderableSurfaces();
+
+    Node::onInsertIntoScene(root);
+}
+
+void ModelNodeBase::onRemoveFromScene(scene::IMapRootNode& root)
+{
+    destroyRenderableSurfaces();
+
+    Node::onRemoveFromScene(root);
+}
+
 void ModelNodeBase::destroyRenderableSurfaces()
 {
     detachFromShaders();

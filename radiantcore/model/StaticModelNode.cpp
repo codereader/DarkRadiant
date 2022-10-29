@@ -37,19 +37,14 @@ void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 {
     _model->connectUndoSystem(root.getUndoSystem());
 
-    // Renderables will acquire their shaders in onPreRender
-    createRenderableSurfaces();
-
-    Node::onInsertIntoScene(root);
+    ModelNodeBase::onInsertIntoScene(root);
 }
 
 void StaticModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     _model->disconnectUndoSystem(root.getUndoSystem());
 
-    destroyRenderableSurfaces();
-
-    Node::onRemoveFromScene(root);
+    ModelNodeBase::onRemoveFromScene(root);
 }
 
 const IModel& StaticModelNode::getIModel() const

@@ -28,6 +28,9 @@ public:
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
     std::size_t getHighlightFlags() override;
 
+    void onInsertIntoScene(scene::IMapRootNode& root) override;
+    void onRemoveFromScene(scene::IMapRootNode& root) override;
+
 protected:
     // To be implemented by subclasses, this should populate the _renderableSurfaces collection
     virtual void createRenderableSurfaces() = 0;

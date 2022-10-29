@@ -38,9 +38,6 @@ public:
 	MD5ModelNode(const MD5ModelPtr& model);
     virtual ~MD5ModelNode();
 
-    void onInsertIntoScene(scene::IMapRootNode& root) override;
-    void onRemoveFromScene(scene::IMapRootNode& root) override;
-
 	// ModelNode implementation
 	const model::IModel& getIModel() const override;
 	model::IModel& getIModel() override;

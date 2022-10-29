@@ -82,21 +82,6 @@ void MD5ModelNode::createRenderableSurfaces()
     });
 }
 
-void MD5ModelNode::onInsertIntoScene(scene::IMapRootNode& root)
-{
-    // Renderables will acquire their shaders in onPreRender
-    createRenderableSurfaces();
-
-    Node::onInsertIntoScene(root);
-}
-
-void MD5ModelNode::onRemoveFromScene(scene::IMapRootNode& root)
-{
-    destroyRenderableSurfaces();
-
-    Node::onRemoveFromScene(root);
-}
-
 void MD5ModelNode::testSelect(Selector& selector, SelectionTest& test)
 {
     _model->testSelect(selector, test, localToWorld());
