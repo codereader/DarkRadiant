@@ -25,6 +25,7 @@ protected:
 public:
     scene::INode::Type getNodeType() const override;
 
+    void onPreRender(const VolumeTest& volume) override;
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
     std::size_t getHighlightFlags() override;
 
@@ -39,6 +40,8 @@ protected:
 
     // Detaches all surfaces from their shaders and clears the _renderableSurfaces collection
     virtual void destroyRenderableSurfaces();
+
+    void onVisibilityChanged(bool isVisibleNow) override;
 
     void attachToShaders();
     void detachFromShaders();

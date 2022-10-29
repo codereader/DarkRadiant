@@ -94,10 +94,7 @@ bool MD5ModelNode::getIntersection(const Ray& ray, Vector3& intersection)
 
 void MD5ModelNode::onPreRender(const VolumeTest& volume)
 {
-    assert(_renderEntity);
-
-    // Attach renderables (or do nothing if everything is up to date)
-    attachToShaders();
+    ModelNodeBase::onPreRender(volume);
 
     if (_showSkeleton.get())
     {
@@ -132,18 +129,6 @@ void MD5ModelNode::onModelShadersChanged()
 {
     // Detach from existing shaders, re-acquire them in onPreRender
     detachFromShaders();
-}
-
-void MD5ModelNode::onVisibilityChanged(bool isVisibleNow)
-{
-    if (isVisibleNow)
-    {
-        attachToShaders();
-    }
-    else
-    {
-        detachFromShaders();
-    }
 }
 
 void MD5ModelNode::onModelAnimationUpdated()

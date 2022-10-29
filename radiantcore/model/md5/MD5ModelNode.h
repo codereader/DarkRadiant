@@ -68,7 +68,6 @@ public:
 
 protected:
     void createRenderableSurfaces() override;
-    void onVisibilityChanged(bool isVisibleNow) override;
 
 private:
     void onModelAnimationUpdated();

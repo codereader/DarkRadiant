@@ -1,7 +1,6 @@
 #include "StaticModelNode.h"
 
 #include "StaticModelSurface.h"
-#include "ivolumetest.h"
 #include "ishaders.h"
 #include "iscenegraph.h"
 #include "imap.h"
@@ -88,14 +87,6 @@ void StaticModelNode::setModel(const StaticModelPtr& model) {
     _model = model;
 }
 
-void StaticModelNode::onPreRender(const VolumeTest& volume)
-{
-    assert(_renderEntity);
-
-    // Attach renderables (or do nothing if everything is up to date)
-    attachToShaders();
-}
-
 void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
     Node::setRenderSystem(renderSystem);
@@ -164,18 +155,6 @@ void StaticModelNode::_applyTransformation()
         _model->revertScale();
         _model->evaluateScale(getScale());
         _model->freezeScale();
-    }
-}
-
-void StaticModelNode::onVisibilityChanged(bool isVisibleNow)
-{
-    if (isVisibleNow)
-    {
-        attachToShaders();
-    }
-    else
-    {
-        detachFromShaders();
     }
 }
 

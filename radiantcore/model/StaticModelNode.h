@@ -71,7 +71,6 @@ public:
 	void setModel(const StaticModelPtr& model);
 
 	// Renderable implementation
-  	void onPreRender(const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
 	// Traceable implementation
@@ -86,7 +85,6 @@ protected:
 
 	void _onTransformationChanged() override;
 	void _applyTransformation() override;
-    void onVisibilityChanged(bool isVisibleNow) override;
 
 private:
     void onModelShadersChanged();

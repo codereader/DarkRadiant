@@ -12,6 +12,14 @@ scene::INode::Type ModelNodeBase::getNodeType() const
     return Type::Model;
 }
 
+void ModelNodeBase::onPreRender(const VolumeTest& volume)
+{
+    assert(_renderEntity);
+
+    // Attach renderables (or do nothing if everything is up to date)
+    attachToShaders();
+}
+
 void ModelNodeBase::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     auto identity = Matrix4::getIdentity();
@@ -105,6 +113,18 @@ void ModelNodeBase::transformChangedLocal()
     for (auto& surface : _renderableSurfaces)
     {
         surface->boundsChanged();
+    }
+}
+
+void ModelNodeBase::onVisibilityChanged(bool isVisibleNow)
+{
+    if (isVisibleNow)
+    {
+        attachToShaders();
+    }
+    else
+    {
+        detachFromShaders();
     }
 }
 
