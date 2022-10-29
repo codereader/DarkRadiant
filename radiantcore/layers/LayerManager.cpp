@@ -253,6 +253,8 @@ bool LayerManager::setLayerVisibilityRecursively(int rootLayerId, bool visible)
 
     foreachLayerInHierarchy(rootLayerId, [&](int layerId)
     {
+        if (layerId < 0 || layerId >= _layerVisibility.size()) return;
+
         visibilityChange |= _layerVisibility.at(layerId) != visible;
         _layerVisibility.at(layerId) = visible;
     });

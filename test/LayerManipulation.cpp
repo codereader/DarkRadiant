@@ -402,6 +402,15 @@ TEST_F(LayerTest, SetLayerVisibilityAffectsActiveLayer)
     EXPECT_EQ(layerManager.getActiveLayer(), testLayerId) << "The test layer should now be active";
 }
 
+TEST_F(LayerTest, SetLayerVisibilityUsingInvalidId)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    // Hide non-existent layers
+    EXPECT_NO_THROW(layerManager.setLayerVisibility(333, false));
+    EXPECT_NO_THROW(layerManager.setLayerVisibility(-2, false));
+}
+
 TEST_F(LayerTest, SetLayerVisibilityAffectsNode)
 {
     loadMap("general_purpose.mapx");
