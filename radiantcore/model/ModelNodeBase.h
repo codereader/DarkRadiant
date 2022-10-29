@@ -34,6 +34,8 @@ public:
 
     void transformChangedLocal() override;
 
+    void onFiltersChanged() override;
+
 protected:
     // To be implemented by subclasses, this should populate the _renderableSurfaces collection
     virtual void createRenderableSurfaces() = 0;

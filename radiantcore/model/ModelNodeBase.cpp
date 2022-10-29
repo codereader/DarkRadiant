@@ -136,4 +136,13 @@ void ModelNodeBase::onVisibilityChanged(bool isVisibleNow)
     }
 }
 
+void ModelNodeBase::onFiltersChanged()
+{
+    Node::onFiltersChanged();
+
+    // When filters change, some of our surfaces might come into view or end up hidden
+    // Detach existing surfaces, the next rendering pass will rebuild them
+    detachFromShaders();
+}
+
 }
