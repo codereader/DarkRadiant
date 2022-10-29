@@ -148,20 +148,7 @@ void MD5ModelNode::onVisibilityChanged(bool isVisibleNow)
 
 void MD5ModelNode::onModelAnimationUpdated()
 {
-    for (auto& surface : _renderableSurfaces)
-    {
-        surface->queueUpdate();
-    }
-}
-
-void MD5ModelNode::transformChangedLocal()
-{
-    Node::transformChangedLocal();
-
-    for (auto& surface : _renderableSurfaces)
-    {
-        surface->boundsChanged();
-    }
+    queueRenderableUpdate();
 }
 
 } // namespace md5

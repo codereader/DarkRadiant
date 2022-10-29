@@ -98,4 +98,14 @@ void ModelNodeBase::queueRenderableUpdate()
     }
 }
 
+void ModelNodeBase::transformChangedLocal()
+{
+    Node::transformChangedLocal();
+
+    for (auto& surface : _renderableSurfaces)
+    {
+        surface->boundsChanged();
+    }
+}
+
 }

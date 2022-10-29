@@ -117,16 +117,6 @@ bool StaticModelNode::getIntersection(const Ray& ray, Vector3& intersection)
     return _model->getIntersection(ray, intersection, localToWorld());
 }
 
-void StaticModelNode::transformChangedLocal()
-{
-    Node::transformChangedLocal();
-
-    for (auto& surface : _renderableSurfaces)
-    {
-        surface->boundsChanged();
-    }
-}
-
 // Skin changed notify
 void StaticModelNode::skinChanged(const std::string& newSkinName)
 {

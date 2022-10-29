@@ -77,8 +77,6 @@ public:
 	// Traceable implementation
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
-    void transformChangedLocal() override;
-
     // Called when the contained model has applied the scale to its surfaces
     // The Node listens to this and queues a renderable update
     void onModelScaleApplied();

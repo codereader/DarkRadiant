@@ -31,6 +31,8 @@ public:
     void onInsertIntoScene(scene::IMapRootNode& root) override;
     void onRemoveFromScene(scene::IMapRootNode& root) override;
 
+    void transformChangedLocal() override;
+
 protected:
     // To be implemented by subclasses, this should populate the _renderableSurfaces collection
     virtual void createRenderableSurfaces() = 0;
