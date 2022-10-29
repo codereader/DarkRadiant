@@ -109,4 +109,14 @@ void RootNode::onChildRemoved(const scene::INodePtr& child)
 	Node::onChildRemoved(child);
 }
 
+void RootNode::onFiltersChanged()
+{
+    // Recursively notify the whole tree
+    foreachNode([](const scene::INodePtr& node)
+    {
+        node->onFiltersChanged();
+        return true;
+    });
+}
+
 } // namespace map
