@@ -55,7 +55,6 @@ public:
 	virtual const AABB& localAABB() const override;
 
 	virtual std::string name() const override;
-	Type getNodeType() const override;
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test) override;

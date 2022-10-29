@@ -66,7 +66,6 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test) override;
 
 	std::string name() const override;
-	Type getNodeType() const override;
 
 	const StaticModelPtr& getModel() const;
 	void setModel(const StaticModelPtr& model);

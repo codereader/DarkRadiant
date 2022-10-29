@@ -85,11 +85,6 @@ std::string StaticModelNode::name() const {
     return _model->getFilename();
 }
 
-scene::INode::Type StaticModelNode::getNodeType() const
-{
-    return Type::Model;
-}
-
 const StaticModelPtr& StaticModelNode::getModel() const {
     return _model;
 }

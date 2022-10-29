@@ -67,11 +67,6 @@ std::string MD5ModelNode::name() const
     return _model->getFilename();
 }
 
-scene::INode::Type MD5ModelNode::getNodeType() const
-{
-    return Type::Model;
-}
-
 void MD5ModelNode::createRenderableSurfaces()
 {
     _model->foreachSurface([&](const MD5Surface& surface)

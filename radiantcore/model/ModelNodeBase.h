@@ -23,6 +23,8 @@ protected:
     ModelNodeBase();
 
 public:
+    scene::INode::Type getNodeType() const override;
+
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
     std::size_t getHighlightFlags() override;
 

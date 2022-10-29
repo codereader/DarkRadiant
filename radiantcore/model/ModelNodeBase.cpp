@@ -7,6 +7,11 @@ ModelNodeBase::ModelNodeBase() :
     _attachedToShaders(false)
 {}
 
+scene::INode::Type ModelNodeBase::getNodeType() const
+{
+    return Type::Model;
+}
+
 void ModelNodeBase::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     auto identity = Matrix4::getIdentity();
