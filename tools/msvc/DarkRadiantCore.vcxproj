@@ -174,6 +174,7 @@
     <ClCompile Include="..\..\radiantcore\model\md5\MD5Surface.cpp" />
     <ClCompile Include="..\..\radiantcore\model\ModelCache.cpp" />
     <ClCompile Include="..\..\radiantcore\model\ModelFormatManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\ModelNodeBase.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiantcore\model\picomodel\lib\lwo\clip.c">
@@ -945,6 +946,7 @@
     <ClInclude Include="..\..\radiantcore\model\md5\RenderableMD5Skeleton.h" />
     <ClInclude Include="..\..\radiantcore\model\ModelCache.h" />
     <ClInclude Include="..\..\radiantcore\model\ModelFormatManager.h" />
+    <ClInclude Include="..\..\radiantcore\model\ModelNodeBase.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModel.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelNode.h" />

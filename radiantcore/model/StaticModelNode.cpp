@@ -154,7 +154,10 @@ void StaticModelNode::attachToShaders()
     for (auto& surface : _renderableSurfaces)
     {
         auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
-        
+
+        // Skip filtered materials
+        //TODO if (!shader->isVisible()) continue;
+
         // Solid mode
         surface->attachToShader(shader);
 

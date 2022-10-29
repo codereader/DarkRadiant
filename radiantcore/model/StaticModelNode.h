@@ -1,14 +1,13 @@
 #pragma once
 
-#include "Transformable.h"
 #include "iselectiontest.h"
-#include "irender.h"
 #include "itraceable.h"
 #include "modelskin.h"
 #include "irenderable.h"
-#include "pivot.h"
+
+#include "ModelNodeBase.h"
+#include "Transformable.h"
 #include "StaticModel.h"
-#include "scene/Node.h"
 #include "RenderableModelSurface.h"
 
 namespace model
@@ -24,7 +23,7 @@ namespace model
  * a particular entity gaining a "model" spawnarg.
  */
 class StaticModelNode final :
-	public scene::Node,
+	public ModelNodeBase,
 	public ModelNode,
 	public SelectionTestable,
 	public SkinnedModel,

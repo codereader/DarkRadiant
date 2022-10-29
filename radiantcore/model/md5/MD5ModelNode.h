@@ -1,13 +1,15 @@
 #pragma once
 
-#include <sigc++/connection.h>
-#include "MD5Model.h"
-#include "modelskin.h"
 #include "itraceable.h"
-#include "scene/Node.h"
-#include "../RenderableModelSurface.h"
+#include "modelskin.h"
+
+#include "model/ModelNodeBase.h"
+#include "MD5Model.h"
 #include "registry/CachedKey.h"
+#include "../RenderableModelSurface.h"
 #include "RenderableMD5Skeleton.h"
+
+#include <sigc++/connection.h>
 
 namespace md5
 {
@@ -15,7 +17,7 @@ namespace md5
 constexpr const char* const RKEY_RENDER_SKELETON = "user/ui/md5/renderSkeleton";
 
 class MD5ModelNode :
-	public scene::Node,
+	public model::ModelNodeBase,
 	public model::ModelNode,
 	public SelectionTestable,
 	public SkinnedModel,
