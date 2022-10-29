@@ -90,6 +90,8 @@ public:
     void onModelScaleApplied();
 
 protected:
+    void createRenderableSurfaces() override;
+
 	void _onTransformationChanged() override;
 	void _applyTransformation() override;
     void onVisibilityChanged(bool isVisibleNow) override;

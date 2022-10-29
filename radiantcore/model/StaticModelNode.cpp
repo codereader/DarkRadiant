@@ -20,11 +20,8 @@ StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
     skinChanged("");
 }
 
-void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
+void StaticModelNode::createRenderableSurfaces()
 {
-    _model->connectUndoSystem(root.getUndoSystem());
-
-    // Renderables will acquire their shaders in onPreRender
     _model->foreachSurface([&](const StaticModelSurface& surface)
     {
         if (surface.getVertexArray().empty() || surface.getIndexArray().empty())
@@ -34,6 +31,14 @@ void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
 
         _renderableSurfaces.emplace_back(std::make_shared<RenderableModelSurface>(surface, _renderEntity, localToWorld()));
     });
+}
+
+void StaticModelNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    _model->connectUndoSystem(root.getUndoSystem());
+
+    // Renderables will acquire their shaders in onPreRender
+    createRenderableSurfaces();
 
     Node::onInsertIntoScene(root);
 }
@@ -42,12 +47,7 @@ void StaticModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
     _model->disconnectUndoSystem(root.getUndoSystem());
 
-    for (auto& surface : _renderableSurfaces)
-    {
-        surface->detach();
-    }
-
-    _renderableSurfaces.clear();
+    destroyRenderableSurfaces();
 
     Node::onRemoveFromScene(root);
 }

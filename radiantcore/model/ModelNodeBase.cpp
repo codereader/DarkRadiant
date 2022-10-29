@@ -17,6 +17,13 @@ void ModelNodeBase::renderHighlights(IRenderableCollector& collector, const Volu
     }
 }
 
+void ModelNodeBase::destroyRenderableSurfaces()
+{
+    detachFromShaders();
+
+    _renderableSurfaces.clear();
+}
+
 void ModelNodeBase::detachFromShaders()
 {
     // Detach any existing surfaces. In case we need them again,

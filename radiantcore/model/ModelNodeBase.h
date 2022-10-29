@@ -26,6 +26,12 @@ public:
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 
 protected:
+    // To be implemented by subclasses, this should populate the _renderableSurfaces collection
+    virtual void createRenderableSurfaces() = 0;
+
+    // Detaches all surfaces from their shaders and clears the _renderableSurfaces collection
+    virtual void destroyRenderableSurfaces();
+
     void attachToShaders();
     void detachFromShaders();
     void queueRenderableUpdate();

@@ -72,9 +72,8 @@ scene::INode::Type MD5ModelNode::getNodeType() const
     return Type::Model;
 }
 
-void MD5ModelNode::onInsertIntoScene(scene::IMapRootNode& root)
+void MD5ModelNode::createRenderableSurfaces()
 {
-    // Renderables will acquire their shaders in onPreRender
     _model->foreachSurface([&](const MD5Surface& surface)
     {
         if (surface.getVertexArray().empty() || surface.getIndexArray().empty())
@@ -86,20 +85,21 @@ void MD5ModelNode::onInsertIntoScene(scene::IMapRootNode& root)
             std::make_shared<model::RenderableModelSurface>(surface, _renderEntity, localToWorld())
         );
     });
+}
+
+void MD5ModelNode::onInsertIntoScene(scene::IMapRootNode& root)
+{
+    // Renderables will acquire their shaders in onPreRender
+    createRenderableSurfaces();
 
     Node::onInsertIntoScene(root);
 }
 
 void MD5ModelNode::onRemoveFromScene(scene::IMapRootNode& root)
 {
+    destroyRenderableSurfaces();
+
     Node::onRemoveFromScene(root);
-
-    for (auto& surface : _renderableSurfaces)
-    {
-        surface->detach();
-    }
-
-    _renderableSurfaces.clear();
 }
 
 void MD5ModelNode::testSelect(Selector& selector, SelectionTest& test)

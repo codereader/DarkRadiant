@@ -78,6 +78,7 @@ public:
     void transformChangedLocal() override;
 
 protected:
+    void createRenderableSurfaces() override;
     void onVisibilityChanged(bool isVisibleNow) override;
 
 private:
