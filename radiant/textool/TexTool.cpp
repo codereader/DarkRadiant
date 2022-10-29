@@ -291,7 +291,7 @@ void TexTool::handleManipulatorModeToggleRequest(selection::ManipulatorModeToggl
 void TexTool::handleTextureChanged(radiant::TextureChangedMessage& message)
 {
     _activeMaterialNeedsUpdate = true;
-    forceRedraw();
+    queueDraw();
 }
 
 void TexTool::handleGridSnapRequest(selection::GridSnapRequest& request)
@@ -878,6 +878,14 @@ void TexTool::handleTextureToolRequest(TextureToolRequest& request)
     case TextureToolRequest::UseDarkTheme:
         updateThemeButtons();
         queueDraw();
+        break;
+
+    case TextureToolRequest::QueueViewRefresh:
+        queueDraw();
+        break;
+
+    case TextureToolRequest::ForceViewRefresh:
+        forceRedraw();
         break;
     }
 }
