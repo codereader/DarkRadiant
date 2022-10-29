@@ -71,7 +71,6 @@ public:
 
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
-	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 
 	std::size_t getHighlightFlags() override
 	{

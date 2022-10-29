@@ -133,16 +133,6 @@ void MD5ModelNode::onPreRender(const VolumeTest& volume)
     }
 }
 
-void MD5ModelNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
-{
-    auto identity = Matrix4::getIdentity();
-
-    for (const auto& surface : _renderableSurfaces)
-    {
-        collector.addHighlightRenderable(*surface, identity);
-    }
-}
-
 void MD5ModelNode::detachFromShaders()
 {
     // Detach any existing surfaces. In case we need them again,
