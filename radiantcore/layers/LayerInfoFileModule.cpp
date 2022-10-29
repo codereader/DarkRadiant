@@ -8,6 +8,7 @@
 #include "string/convert.h"
 #include "debugging/ScenegraphUtils.h"
 #include "parser/DefTokeniser.h"
+#include "string/join.h"
 
 namespace scene
 {
@@ -75,7 +76,14 @@ void LayerInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
 	{
 		_layerNameBuffer << "\t\t" << LAYER << " " << layerId << " { " << layerName << " }" << std::endl;
         _layerHierarchyBuffer << "\t\t" << LAYER << " " << layerId << " " << PARENT << " { " << layerManager.getParentLayer(layerId) << " }" << std::endl;
+
+        if (!layerManager.layerIsVisible(layerId))
+        {
+            _hiddenLayerIds.push_back(layerId);
+        }
 	});
+
+    _activeLayerId = layerManager.getActiveLayer();
 
     // Close both blocks
 	_layerNameBuffer << "\t}" << std::endl;
@@ -127,6 +135,13 @@ void LayerInfoFileModule::writeBlocks(std::ostream& stream)
 {
 	// Write the layer names block
 	stream << _layerNameBuffer.str();
+
+    // Write the layer properties block
+    stream << "\t" << LAYER_PROPERTIES << std::endl;
+    stream << "\t{" << std::endl;
+    stream << "\t\t" << ACTIVE_LAYER << " { " << _activeLayerId << " }" << std::endl;
+    stream << "\t\t" << HIDDEN_LAYERS << " { " << string::join(_hiddenLayerIds, " ") << " }" << std::endl;
+    stream << "\t}" << std::endl;
 
     // Write the layer hierarchy block
 	stream << _layerHierarchyBuffer.str();
