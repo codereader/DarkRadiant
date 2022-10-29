@@ -66,11 +66,6 @@ public:
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
 
-	std::size_t getHighlightFlags() override
-	{
-		return Highlight::NoHighlight; // models are never highlighted themselves
-	}
-
 	// Returns the name of the currently active skin
 	virtual std::string getSkin() const override;
 	void skinChanged(const std::string& newSkinName) override;

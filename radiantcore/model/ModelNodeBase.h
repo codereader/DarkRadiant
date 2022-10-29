@@ -24,6 +24,7 @@ protected:
 
 public:
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
+    std::size_t getHighlightFlags() override;
 
 protected:
     // To be implemented by subclasses, this should populate the _renderableSurfaces collection

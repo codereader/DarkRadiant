@@ -17,6 +17,11 @@ void ModelNodeBase::renderHighlights(IRenderableCollector& collector, const Volu
     }
 }
 
+std::size_t ModelNodeBase::getHighlightFlags()
+{
+    return Highlight::NoHighlight; // models are never highlighted themselves
+}
+
 void ModelNodeBase::destroyRenderableSurfaces()
 {
     detachFromShaders();

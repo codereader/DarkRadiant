@@ -75,11 +75,6 @@ public:
   	void onPreRender(const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
-	std::size_t getHighlightFlags() override
-	{
-		return Highlight::NoHighlight; // models are never highlighted themselves
-	}
-
 	// Traceable implementation
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
 
