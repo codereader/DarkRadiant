@@ -9,6 +9,8 @@
 #include "os/file.h"
 
 #include "algorithm/Scene.h"
+#include "string/split.h"
+#include "string/trim.h"
 #include "testutil/FileSaveConfirmationHelper.h"
 #include "testutil/TemporaryFile.h"
 
@@ -1065,6 +1067,143 @@ TEST_F(LayerTest, LayerActiveStatusIsPersistedToMapx)
     tempPath /= "layer_active_status_test.mapx";
 
     runLayerActiveStatusPersistenceTest(tempPath.string());
+}
+
+inline void replacePropertiesBlock(const std::string& infoFilePath, const std::string& replacement)
+{
+    auto contents = algorithm::loadFileToString(infoFilePath);
+
+    std::list<std::string> lines;
+    string::split(lines, contents, "\n\r");
+
+    contents.clear();
+    for (auto line = lines.begin(); line != lines.end(); ++line)
+    {
+        if (string::trim_copy(*line) == "LayerProperties")
+        {
+            ++line; // skip LayerProperties
+            ++line; // skip the opening brace
+
+            while (string::trim_copy(*line) != "}")
+            {
+                ++line;
+            }
+
+            // Add the replacement block here
+            contents.append(replacement);
+            contents.append("\n");
+            continue;
+        }
+
+        contents.append(*line);
+        contents.append("\n");
+    }
+
+    algorithm::replaceFileContents(infoFilePath, contents);
+}
+
+TEST_F(LayerTest, ParseEmptyLayerPropertiesBlock)
+{
+    fs::path mapFilePath = _context.getTestProjectPath();
+    mapFilePath /= "maps/layer_hierarchy_restore.map";
+
+    // Restore the .darkradiant file after this test
+    auto infoFilePath = os::replaceExtension(mapFilePath.string(), "darkradiant");
+    BackupCopy copy(infoFilePath);
+
+    replacePropertiesBlock(infoFilePath, R"(    LayerProperties
+    {
+    })");
+
+    loadAndExpectLayersToBeRestored(mapFilePath.string(), {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getParentLayer(3), 9) << "Failed to restore hierarchy";
+}
+
+TEST_F(LayerTest, ParseLayerPropertiesActiveLayer)
+{
+    fs::path mapFilePath = _context.getTestProjectPath();
+    mapFilePath /= "maps/layer_hierarchy_restore.map";
+
+    // Restore the .darkradiant file after this test
+    auto infoFilePath = os::replaceExtension(mapFilePath.string(), "darkradiant");
+    BackupCopy backupCopy(infoFilePath);
+
+    // Throw in a few potentially problematic cases.
+    // The hierarchy should still restore as planned
+    replacePropertiesBlock(infoFilePath, R"(LayerProperties { ActiveLayer { -2 } })");
+    loadAndExpectLayersToBeRestored(mapFilePath.string(), { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getParentLayer(3), 9) << "Failed to restore hierarchy";
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer(), 0) << "Active layer should be default";
+    backupCopy.restoreNow();
+
+    replacePropertiesBlock(infoFilePath, R"(LayerProperties { ActiveLayer { 36545634 } })");
+    loadAndExpectLayersToBeRestored(mapFilePath.string(), { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getParentLayer(3), 9) << "Failed to restore hierarchy";
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer(), 0) << "Active layer should be default";
+    backupCopy.restoreNow();
+
+    replacePropertiesBlock(infoFilePath, R"(LayerProperties { ActiveLayer { abc } })");
+    loadAndExpectLayersToBeRestored(mapFilePath.string(), { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getParentLayer(3), 9) << "Failed to restore hierarchy";
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer(), 0) << "Active layer should be default";
+    backupCopy.restoreNow();
+
+    // Now the positive test case
+    replacePropertiesBlock(infoFilePath, R"(LayerProperties { ActiveLayer { 3 } })");
+    loadAndExpectLayersToBeRestored(mapFilePath.string(), { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getParentLayer(3), 9) << "Failed to restore hierarchy";
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getActiveLayer(), 3) << "Failed to restore active layer";
+    backupCopy.restoreNow();
+}
+
+void expectLayersAreVisible(const std::vector<int>& layerIds, bool expectVisible)
+{
+    auto& layerManager = GlobalMapModule().getRoot()->getLayerManager();
+
+    for (auto id : layerIds)
+    {
+        EXPECT_EQ(layerManager.layerIsVisible(id), expectVisible) << "Layer ID " << id << " didn't meet visibility expectation";
+    }
+}
+
+TEST_F(LayerTest, ParseLayerPropertiesHiddenLayers)
+{
+    fs::path mapFilePath = _context.getTestProjectPath();
+    mapFilePath /= "maps/layer_hierarchy_restore.map";
+
+    // Restore the .darkradiant file after this test
+    auto infoFilePath = os::replaceExtension(mapFilePath.string(), "darkradiant");
+    BackupCopy backupCopy(infoFilePath);
+
+    // No hidden layers
+    replacePropertiesBlock(infoFilePath, R"(LayerProperties { HiddenLayers { } })");
+    loadAndExpectLayersToBeRestored(mapFilePath.string(), { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getParentLayer(3), 9) << "Failed to restore hierarchy";
+    expectLayersAreVisible({ 0,1,2,3,4,5,6,7,8,9 }, true); // all layers should be visible
+    backupCopy.restoreNow();
+
+    // An invalid layer ID in there
+    replacePropertiesBlock(infoFilePath, R"(LayerProperties { HiddenLayers { -1 3 4 } })");
+    loadAndExpectLayersToBeRestored(mapFilePath.string(), { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getParentLayer(3), 9) << "Failed to restore hierarchy";
+    expectLayersAreVisible({ 0,1,2,5,6,7,8,9 }, true);
+    expectLayersAreVisible({ 3, 4 }, false);
+    backupCopy.restoreNow();
+
+    // Duplicate layer IDs listed, plus one out of range
+    replacePropertiesBlock(infoFilePath, R"(LayerProperties { HiddenLayers { 0 4 5 5 5 3 44444 } })");
+    loadAndExpectLayersToBeRestored(mapFilePath.string(), { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getParentLayer(3), 9) << "Failed to restore hierarchy";
+    expectLayersAreVisible({ 1,2,6,7,8,9 }, true);
+    expectLayersAreVisible({ 0,3,4,5 }, false);
+    backupCopy.restoreNow();
+
+    // Now the positive test case
+    replacePropertiesBlock(infoFilePath, R"(LayerProperties { HiddenLayers { 0 4 5 9 } })");
+    loadAndExpectLayersToBeRestored(mapFilePath.string(), { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 });
+    EXPECT_EQ(GlobalMapModule().getRoot()->getLayerManager().getParentLayer(3), 9) << "Failed to restore hierarchy";
+    expectLayersAreVisible({ 1,2,3,6,7,8 }, true);
+    expectLayersAreVisible({ 0,4,5,9 }, false);
 }
 
 }
