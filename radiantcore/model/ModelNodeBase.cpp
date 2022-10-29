@@ -87,8 +87,9 @@ void ModelNodeBase::attachToShaders()
     {
         auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
 
-        // Skip filtered materials
-        //TODO if (!shader->isVisible()) continue;
+        // Skip filtered materials - the wireframe shader itself is always visible
+        // so filtered surfaces need to be kept from attaching their geometry
+        if (!shader->isVisible()) continue;
 
         // Solid mode
         surface->attachToShader(shader);
