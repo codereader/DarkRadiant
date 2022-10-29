@@ -23,6 +23,7 @@
 #include "wxutil/dataview/TreeViewItemStyle.h"
 #include "wxutil/dialog/Dialog.h"
 #include "wxutil/dialog/MessageBox.h"
+#include "wxutil/menu/IconTextMenuItem.h"
 
 namespace ui
 {
@@ -107,8 +108,7 @@ void LayerControlPanel::populateWindow()
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_BEGIN_DRAG, &LayerControlPanel::onBeginDrag, this);
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP_POSSIBLE, &LayerControlPanel::onDropPossible, this);
     _layersView->Bind(wxEVT_DATAVIEW_ITEM_DROP, &LayerControlPanel::onDrop, this);
-
-    _layersView->SetToolTip(_("Double-Click to select all in hierarchy, hold SHIFT to deselect, hold CTRL to set as active layer."));
+    _layersView->Bind(wxEVT_DATAVIEW_ITEM_CONTEXT_MENU, [&](auto&) { _popupMenu->show(this); });
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
@@ -119,6 +119,7 @@ void LayerControlPanel::populateWindow()
 
 	// Add the option buttons ("Create Layer", etc.) to the window
 	createButtons();
+    createPopupMenu();
 }
 
 void LayerControlPanel::createButtons()
@@ -140,11 +141,11 @@ void LayerControlPanel::createButtons()
 	wxutil::button::connectToCommand(createButton, "CreateNewLayerDialog");
 
     _deleteButton = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("delete.png"));
-    _deleteButton->Bind(wxEVT_BUTTON, &LayerControlPanel::onDeleteLayer, this);
+    _deleteButton->Bind(wxEVT_BUTTON, [this](auto&) { deleteSelectedLayer(); });
     _deleteButton->SetToolTip(_("Delete the selected layer"));
 
     _renameButton = new wxBitmapButton(this, wxID_ANY, wxutil::GetLocalBitmap("edit.png"));
-    _renameButton->Bind(wxEVT_BUTTON, &LayerControlPanel::onRenameLayer, this);
+    _renameButton->Bind(wxEVT_BUTTON, [this](auto&) { renameSelectedLayer(); });
     _renameButton->SetToolTip(_("Rename the selected layer"));
 
     topRow->Add(createButton, 1, wxEXPAND | wxRIGHT, 6);
@@ -156,6 +157,44 @@ void LayerControlPanel::createButtons()
 
     GetSizer()->Add(topRow, 0, wxEXPAND | wxLEFT | wxRIGHT, 12);
     GetSizer()->Add(hideShowBox, 0, wxEXPAND | wxBOTTOM | wxLEFT | wxRIGHT, 12);
+}
+
+void LayerControlPanel::createPopupMenu()
+{
+    _popupMenu = std::make_shared<wxutil::PopupMenu>();
+
+    _popupMenu->addItem(
+        new wxMenuItem(nullptr, wxID_ANY, _("Select all items in this hierarchy\tDoubleclick"), ""),
+        [this]() { GlobalMapModule().getRoot()->getLayerManager().setSelected(getSelectedLayerId(), true); },
+        [this]() { return getSelectedLayerId() != -1; }
+    );
+    _popupMenu->addItem(
+        new wxMenuItem(nullptr, wxID_ANY, _("De-select all items in this hierarchy\tSHIFT-Doublelick"), ""),
+        [this]() { GlobalMapModule().getRoot()->getLayerManager().setSelected(getSelectedLayerId(), false); },
+        [this]() { return getSelectedLayerId() != -1; }
+    );
+    _popupMenu->addItem(
+        new wxMenuItem(nullptr, wxID_ANY, _("Make this the active layer\tCTRL-Doubleclick"), ""),
+        [this]() { GlobalMapModule().getRoot()->getLayerManager().setActiveLayer(getSelectedLayerId()); queueUpdate(); },
+        [this]() { return getSelectedLayerId() != -1; }
+    );
+    _popupMenu->addSeparator();
+    _popupMenu->addItem(
+        new wxMenuItem(nullptr, wxID_ANY, _("Make layer top-level"), ""),
+        [this]() { GlobalMapModule().getRoot()->getLayerManager().setParentLayer(getSelectedLayerId(), -1); },
+        [this]() { return GlobalMapModule().getRoot()->getLayerManager().getParentLayer(getSelectedLayerId()) != -1; }
+    );
+    _popupMenu->addSeparator();
+    _popupMenu->addItem(
+        new wxutil::IconTextMenuItem(_("Rename this layer"), "edit.png"),
+        [this]() { renameSelectedLayer(); },
+        [this]() { return getSelectedLayerId() > 0; } // must not be the default layer
+    );
+    _popupMenu->addItem(
+        new wxutil::IconTextMenuItem(_("Delete this layer"), "delete.png"),
+        [this]() { deleteSelectedLayer(); },
+        [this]() { return getSelectedLayerId() > 0; } // must not be the default layer
+    );
 }
 
 void LayerControlPanel::clearControls()
@@ -561,7 +600,7 @@ void LayerControlPanel::onItemSelected(wxDataViewEvent& ev)
     updateItemActionSensitivity();
 }
 
-void LayerControlPanel::onRenameLayer(wxCommandEvent& ev)
+void LayerControlPanel::renameSelectedLayer()
 {
     if (!GlobalMapModule().getRoot())
     {
@@ -609,7 +648,7 @@ void LayerControlPanel::onRenameLayer(wxCommandEvent& ev)
     }
 }
 
-void LayerControlPanel::onDeleteLayer(wxCommandEvent& ev)
+void LayerControlPanel::deleteSelectedLayer()
 {
     if (!GlobalMapModule().getRoot())
     {

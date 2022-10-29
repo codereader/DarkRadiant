@@ -14,7 +14,6 @@
 
 #include <wx/wxprec.h>
 #include <wx/event.h>
-#include <wx/tooltip.h>
 #include <wx/cmdline.h>
 #include <wx/xrc/xmlres.h>
 #include <sigc++/functors/mem_fun.h>
@@ -134,10 +133,6 @@ void RadiantApp::initWxWidgets()
 
     // Register the local art provider
     _bitmapArtProvider = std::make_unique<wxutil::LocalBitmapArtProvider>(_context.getBitmapsPath());
-
-    // Make tooltip boxes less annoying (#6128)
-    wxToolTip::SetDelay(2500);
-    wxToolTip::SetAutoPop(2000);
 }
 
 void RadiantApp::cleanupWxWidgets()
