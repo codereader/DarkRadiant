@@ -8,7 +8,6 @@
 #include "ModelNodeBase.h"
 #include "Transformable.h"
 #include "StaticModel.h"
-#include "RenderableModelSurface.h"
 
 namespace model
 {
@@ -38,11 +37,6 @@ private:
 
 	// The name of this model's skin
 	std::string _skin;
-
-    // The renderable surfaces attached to the shaders
-    std::vector<RenderableModelSurface::Ptr> _renderableSurfaces;
-
-    bool _attachedToShaders;
 
 public:
     typedef std::shared_ptr<StaticModelNode> Ptr;
@@ -101,9 +95,6 @@ protected:
     void onVisibilityChanged(bool isVisibleNow) override;
 
 private:
-    void attachToShaders();
-    void detachFromShaders();
-    void queueRenderableUpdate();
     void onModelShadersChanged();
 };
 

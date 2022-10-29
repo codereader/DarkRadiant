@@ -1,17 +1,14 @@
 #include "MD5ModelNode.h"
 
 #include "ivolumetest.h"
-#include "imodelcache.h"
 #include "ishaders.h"
 #include "iscenegraph.h"
-#include <functional>
 
 namespace md5
 {
 
 MD5ModelNode::MD5ModelNode(const MD5ModelPtr& model) :
     _model(new MD5Model(*model)), // create a copy of the incoming model, we need our own instance
-    _attachedToShaders(false),
     _showSkeleton(RKEY_RENDER_SKELETON),
     _renderableSkeleton(_model->getSkeleton(), localToWorld())
 {
@@ -131,41 +128,6 @@ void MD5ModelNode::onPreRender(const VolumeTest& volume)
     {
         _renderableSkeleton.clear();
     }
-}
-
-void MD5ModelNode::detachFromShaders()
-{
-    // Detach any existing surfaces. In case we need them again,
-    // the node will re-attach in the next pre-render phase
-    for (auto& surface : _renderableSurfaces)
-    {
-        surface->detach();
-    }
-
-    _attachedToShaders = false;
-}
-
-void MD5ModelNode::attachToShaders()
-{
-    if (_attachedToShaders || !_renderEntity) return;
-
-    auto renderSystem = _renderSystem.lock();
-
-    if (!renderSystem) return;
-
-    for (auto& surface : _renderableSurfaces)
-    {
-        auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
-        surface->attachToShader(shader);
-
-        // For orthoview rendering we need the entity's wireframe shader
-        surface->attachToShader(_renderEntity->getWireShader());
-
-        // Attach to the render entity for lighting mode rendering
-        surface->attachToEntity(_renderEntity, shader);
-    }
-
-    _attachedToShaders = true;
 }
 
 std::string MD5ModelNode::getSkin() const

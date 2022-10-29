@@ -17,12 +17,18 @@ protected:
     // The renderable surfaces attached to the shaders
     std::vector<RenderableModelSurface::Ptr> _renderableSurfaces;
 
+    bool _attachedToShaders;
+
 protected:
-    ModelNodeBase()
-    {}
+    ModelNodeBase();
 
 public:
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
+
+protected:
+    void attachToShaders();
+    void detachFromShaders();
+    void queueRenderableUpdate();
 };
 
 }

@@ -6,7 +6,6 @@
 #include "model/ModelNodeBase.h"
 #include "MD5Model.h"
 #include "registry/CachedKey.h"
-#include "../RenderableModelSurface.h"
 #include "RenderableMD5Skeleton.h"
 
 #include <sigc++/connection.h>
@@ -27,11 +26,6 @@ class MD5ModelNode :
 
 	// The name of this model's skin
 	std::string _skin;
-
-    // The renderable surfaces attached to the shaders
-    std::vector<model::RenderableModelSurface::Ptr> _renderableSurfaces;
-
-    bool _attachedToShaders;
 
     sigc::connection _animationUpdateConnection;
     sigc::connection _modelShadersChangedConnection;
@@ -88,8 +82,6 @@ protected:
 
 private:
     void onModelAnimationUpdated();
-    void attachToShaders();
-    void detachFromShaders();
     void onModelShadersChanged();
 };
 

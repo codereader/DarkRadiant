@@ -4,20 +4,14 @@
 #include "ivolumetest.h"
 #include "ishaders.h"
 #include "iscenegraph.h"
-#include "ifilter.h"
 #include "imap.h"
-#include "imodelcache.h"
-#include "math/Frustum.h"
-#include "generic/callback.h"
-#include <functional>
 
 namespace model
 {
 
 StaticModelNode::StaticModelNode(const StaticModelPtr& picoModel) :
     _model(new StaticModel(*picoModel)),
-    _name(picoModel->getFilename()),
-    _attachedToShaders(false)
+    _name(picoModel->getFilename())
 {
     _model->signal_ShadersChanged().connect(sigc::mem_fun(*this, &StaticModelNode::onModelShadersChanged));
     _model->signal_SurfaceScaleApplied().connect(sigc::mem_fun(*this, &StaticModelNode::onModelScaleApplied));
@@ -118,55 +112,6 @@ void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 
     // This will trigger onModelShadersChanged() to refresh the renderables
     _model->setRenderSystem(renderSystem);
-}
-
-void StaticModelNode::detachFromShaders()
-{
-    // Detach any existing surfaces. In case we need them again,
-    // the node will re-attach in the next pre-render phase
-    for (auto& surface : _renderableSurfaces)
-    {
-        surface->detach();
-    }
-
-    _attachedToShaders = false;
-}
-
-void StaticModelNode::attachToShaders()
-{
-    // Refuse to attach without a render entity
-    if (_attachedToShaders || !_renderEntity) return;
-
-    auto renderSystem = _renderSystem.lock();
-
-    if (!renderSystem) return;
-
-    for (auto& surface : _renderableSurfaces)
-    {
-        auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
-
-        // Skip filtered materials
-        //TODO if (!shader->isVisible()) continue;
-
-        // Solid mode
-        surface->attachToShader(shader);
-
-        // For orthoview rendering we need the entity's wireframe shader
-        surface->attachToShader(_renderEntity->getWireShader());
-
-        // Attach to the render entity for lighting mode rendering
-        surface->attachToEntity(_renderEntity, shader);
-    }
-
-    _attachedToShaders = true;
-}
-
-void StaticModelNode::queueRenderableUpdate()
-{
-    for (auto& surface : _renderableSurfaces)
-    {
-        surface->queueUpdate();
-    }
 }
 
 void StaticModelNode::onModelShadersChanged()
