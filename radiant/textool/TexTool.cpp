@@ -291,7 +291,7 @@ void TexTool::handleManipulatorModeToggleRequest(selection::ManipulatorModeToggl
 void TexTool::handleTextureChanged(radiant::TextureChangedMessage& message)
 {
     _activeMaterialNeedsUpdate = true;
-    queueDraw();
+    forceRedraw();
 }
 
 void TexTool::handleGridSnapRequest(selection::GridSnapRequest& request)
