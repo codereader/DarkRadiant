@@ -948,6 +948,7 @@
     <ClInclude Include="..\..\radiantcore\model\ModelFormatManager.h" />
     <ClInclude Include="..\..\radiantcore\model\ModelNodeBase.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModel.h" />
+    <ClInclude Include="..\..\radiantcore\model\NullModelBoxSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelNode.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\lwo\lwo2.h" />
@@ -956,6 +957,7 @@
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\pm_fm.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelModule.h" />
+    <ClInclude Include="..\..\radiantcore\model\IndexedBoxSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\RenderableModelSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModel.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModelNode.h" />

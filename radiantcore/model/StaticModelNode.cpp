@@ -89,7 +89,7 @@ void StaticModelNode::setModel(const StaticModelPtr& model) {
 
 void StaticModelNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 {
-    Node::setRenderSystem(renderSystem);
+    ModelNodeBase::setRenderSystem(renderSystem);
 
     // This will trigger onModelShadersChanged() to refresh the renderables
     _model->setRenderSystem(renderSystem);

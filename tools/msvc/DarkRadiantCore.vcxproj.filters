@@ -2400,6 +2400,12 @@
     <ClInclude Include="..\..\radiantcore\model\ModelNodeBase.h">
       <Filter>src\model</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\IndexedBoxSurface.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\model\NullModelBoxSurface.h">
+      <Filter>src\model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\install\gl\cubemap_fp.glsl">

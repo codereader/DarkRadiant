@@ -85,7 +85,7 @@ void ModelNodeBase::attachToShaders()
 
     for (auto& surface : _renderableSurfaces)
     {
-        auto shader = renderSystem->capture(surface->getSurface().getActiveMaterial());
+        auto shader = surface->captureFillShader(*renderSystem);
 
         // Skip filtered materials - the wireframe shader itself is always visible
         // so filtered surfaces need to be kept from attaching their geometry
@@ -94,8 +94,8 @@ void ModelNodeBase::attachToShaders()
         // Solid mode
         surface->attachToShader(shader);
 
-        // For orthoview rendering we need the entity's wireframe shader
-        surface->attachToShader(_renderEntity->getWireShader());
+        // For orthoview rendering we need a wireframe shader
+        surface->attachToShader(surface->captureWireShader(*renderSystem));
 
         // Attach to the render entity for lighting mode rendering
         surface->attachToEntity(_renderEntity, shader);
@@ -124,6 +124,8 @@ void ModelNodeBase::transformChangedLocal()
 
 void ModelNodeBase::onVisibilityChanged(bool isVisibleNow)
 {
+    Node::onVisibilityChanged(isVisibleNow);
+
     if (isVisibleNow)
     {
         attachToShaders();
