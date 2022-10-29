@@ -50,6 +50,11 @@ void ModelNodeBase::onRemoveFromScene(scene::IMapRootNode& root)
     Node::onRemoveFromScene(root);
 }
 
+void ModelNodeBase::emplaceRenderableSurface(RenderableModelSurface::Ptr&& surface)
+{
+    _renderableSurfaces.emplace_back(std::move(surface));
+}
+
 void ModelNodeBase::destroyRenderableSurfaces()
 {
     detachFromShaders();

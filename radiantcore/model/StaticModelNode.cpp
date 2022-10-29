@@ -28,7 +28,7 @@ void StaticModelNode::createRenderableSurfaces()
             return; // don't handle empty surfaces
         }
 
-        _renderableSurfaces.emplace_back(std::make_shared<RenderableModelSurface>(surface, _renderEntity, localToWorld()));
+        emplaceRenderableSurface(std::make_shared<RenderableModelSurface>(surface, _renderEntity, localToWorld()));
     });
 }
 

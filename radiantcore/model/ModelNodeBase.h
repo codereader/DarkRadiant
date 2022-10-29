@@ -13,7 +13,7 @@ namespace model
 class ModelNodeBase :
     public scene::Node
 {
-protected:
+private:
     // The renderable surfaces attached to the shaders
     std::vector<RenderableModelSurface::Ptr> _renderableSurfaces;
 
@@ -37,6 +37,8 @@ public:
 protected:
     // To be implemented by subclasses, this should populate the _renderableSurfaces collection
     virtual void createRenderableSurfaces() = 0;
+
+    void emplaceRenderableSurface(RenderableModelSurface::Ptr&& surface);
 
     // Detaches all surfaces from their shaders and clears the _renderableSurfaces collection
     virtual void destroyRenderableSurfaces();

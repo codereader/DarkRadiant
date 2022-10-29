@@ -76,7 +76,7 @@ void MD5ModelNode::createRenderableSurfaces()
             return; // don't handle empty surfaces
         }
 
-        _renderableSurfaces.emplace_back(
+        emplaceRenderableSurface(
             std::make_shared<model::RenderableModelSurface>(surface, _renderEntity, localToWorld())
         );
     });
