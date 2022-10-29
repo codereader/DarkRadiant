@@ -362,11 +362,6 @@ void AuiLayout::createFloatingControl(const std::string& controlName)
 void AuiLayout::registerControl(const std::string& controlName, const IMainFrame::ControlSettings& defaultSettings)
 {
     _defaultControlSettings[controlName] = defaultSettings;
-
-    if (defaultSettings.visible)
-    {
-        createControl(controlName);
-    }
 }
 
 void AuiLayout::createControl(const std::string& controlName)
@@ -622,6 +617,9 @@ void AuiLayout::restoreStateFromRegistry()
     if (registry::getValue<int>(RKEY_AUI_LAYOUT_VERSION) != AuiLayoutVersion)
     {
         rMessage() << "No compatible AUI layout state information found in registry" << std::endl;
+
+        // We still need to set up the default pages of the notebook
+        _propertyNotebook->restoreDefaultState();
         return;
     }
 
@@ -650,7 +648,7 @@ void AuiLayout::restoreStateFromRegistry()
         createPane(controlName, paneName, setupFloatingPane);
     }
 
-    // Restore the property notebook state
+    // Restore the property notebook state (will fall back to default if nothing found)
     _propertyNotebook->restoreState();
 
     // Nasty hack to get the panes sized properly. Since BestSize() is

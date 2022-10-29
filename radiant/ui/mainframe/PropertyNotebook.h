@@ -2,6 +2,7 @@
 
 #include <wx/aui/auibook.h>
 
+#include "xmlutil/Node.h"
 #include "wxutil/menu/PopupMenu.h"
 
 namespace ui
@@ -51,11 +52,14 @@ public:
 
     void saveState();
     void restoreState();
+    void restoreDefaultState();
 
     void showDropHint(const wxRect& size);
     void hideDropHint();
 
 private:
+    void restoreState(const xml::NodeList& pagesPath);
+
     std::string getSelectedPageName();
     std::string getSelectedControlName();
     int findControlIndexByName(const std::string& controlName);
