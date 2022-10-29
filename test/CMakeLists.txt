@@ -16,6 +16,7 @@ add_executable(drtest
                EntityClass.cpp
                Favourites.cpp
                FileTypes.cpp
+               Filters.cpp
                Fx.cpp
                Game.cpp
                GeometryStore.cpp
