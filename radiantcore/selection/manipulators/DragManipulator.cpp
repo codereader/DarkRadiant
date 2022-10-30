@@ -13,12 +13,13 @@ namespace selection
 
 const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
 
-DragManipulator::DragManipulator(ManipulationPivot& pivot) :
-	_pivot(pivot),
-	_freeResizeComponent(_resizeTranslatable),
-	_resizeModeActive(false),
-	_freeDragComponent(_dragTranslatable),
-	_dragTranslatable(SelectionTranslator::TranslationCallback())
+DragManipulator::DragManipulator(ManipulationPivot& pivot, ISceneSelectionTesterFactory& factory) :
+    _pivot(pivot),
+    _testerFactory(factory),
+    _freeResizeComponent(_resizeTranslatable),
+    _resizeModeActive(false),
+    _freeDragComponent(_dragTranslatable),
+    _dragTranslatable(SelectionTranslator::TranslationCallback())
 {}
 
 DragManipulator::Type DragManipulator::getType() const
@@ -126,8 +127,8 @@ void DragManipulator::testSelectEntityMode(const VolumeTest& view, SelectionTest
 	SingleItemSelector itemSelector;
 
 	// Find the visible entities
-	EntitySelector selectionTester(itemSelector, test);
-	GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
+    auto tester = _testerFactory.createSceneSelectionTester(SelectionSystem::eEntity);
+    tester->testSelectScene(view, test, itemSelector);
 
 	// Check, if an entity could be found
 	if (itemSelector.hasValidSelectable())

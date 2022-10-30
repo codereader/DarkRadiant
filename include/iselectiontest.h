@@ -358,17 +358,17 @@ public:
 
     // Test all qualified nodes in the scene for selection
     // and add the ones passing the test to the given selector.
-    virtual void testSelectScene(Selector& selector) = 0;
+    virtual void testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector) = 0;
 };
 
 /**
  * Factory interface used to acquire ISceneSelectionTester
  * instances suitable for a given purpose.
  */
-class ISelectionTesterProvider
+class ISceneSelectionTesterFactory
 {
 public:
-    virtual ~ISelectionTesterProvider() {}
+    virtual ~ISceneSelectionTesterFactory() {}
 
     /**
      * Returns an instance of a selection tester suitable for testing

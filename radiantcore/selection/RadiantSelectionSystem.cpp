@@ -28,6 +28,7 @@
 
 #include <functional>
 
+#include "SceneSelectionTesters.h"
 #include "command/ExecutionNotPossible.h"
 
 namespace selection
@@ -78,7 +79,7 @@ void RadiantSelectionSystem::toggleSelectionFocus()
     {
         rMessage() << "Leaving selection focus mode" << std::endl;
         _selectionFocusActive = false;
-        _selectionFocusNodes.clear();
+        _selectionFocusPool.clear();
         return;
     }
 
@@ -88,18 +89,33 @@ void RadiantSelectionSystem::toggleSelectionFocus()
     }
 
     _selectionFocusActive = true;
-    _selectionFocusNodes.clear();
+    _selectionFocusPool.clear();
 
     foreachSelected([&](const auto& node)
     {
-        _selectionFocusNodes.insert(node);
+        if (auto selectable = scene::node_cast<ISelectable>(node); selectable)
+        {
+            _selectionFocusPool.insert(selectable);
+        }
     });
 
-    rMessage() << "Activated selection focus mode, got " << _selectionFocusNodes.size() << " nodes in the pool" << std::endl;
+    rMessage() << "Activated selection focus mode, got " << _selectionFocusPool.size() << " selectables in the pool" << std::endl;
+}
+
+ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(EMode mode)
+{
+    switch (mode)
+    {
+    case eEntity:
+        return std::make_shared<EntitySelectionTester>();
+
+    default:
+        throw std::invalid_argument("Selection Mode not supported yet");
+    }
 }
 
 void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
-    const VolumeTest& view, SelectionSystem::EMode mode, ComponentSelectionMode componentMode)
+    const VolumeTest& view, EMode mode, ComponentSelectionMode componentMode)
 {
     // The (temporary) storage pool
     SelectionPool selector;
@@ -109,9 +125,9 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
     {
         case eEntity:
         {
-            // Instantiate a walker class which is specialised for selecting entities
-            EntitySelector entityTester(selector, test);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
+            // Instantiate a walker class specialised for selecting entities
+            auto entityTester = createSceneSelectionTester(mode);
+            entityTester->testSelectScene(view, test, selector);
 
             std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
         }
@@ -976,7 +992,7 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 	_pivot.initialise();
 
 	// Add manipulators
-	registerManipulator(std::make_shared<DragManipulator>(_pivot));
+	registerManipulator(std::make_shared<DragManipulator>(_pivot, *this));
 	registerManipulator(std::make_shared<ClipManipulator>());
 	registerManipulator(std::make_shared<TranslateManipulator>(_pivot, 2, 64.0f));
 	registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64.0f));

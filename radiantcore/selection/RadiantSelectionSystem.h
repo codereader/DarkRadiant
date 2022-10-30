@@ -2,6 +2,7 @@
 
 #include "irenderable.h"
 #include "iselection.h"
+#include "iselectiontest.h"
 #include "icommandsystem.h"
 #include "imap.h"
 
@@ -15,7 +16,8 @@ namespace selection
 
 class RadiantSelectionSystem final :
 	public SelectionSystem,
-	public Renderable
+	public Renderable,
+    public ISceneSelectionTesterFactory
 {
 private:
 	SceneManipulationPivot _pivot;
@@ -35,7 +37,6 @@ private:
 	// with a preferred sorting (see RadiantSelectionSystem::testSelectScene)
 	typedef std::list<ISelectable*> SelectablesList;
 
-private:
 	SelectionInfo _selectionInfo;
 
     sigc::signal<void, const ISelectable&> _sigSelectionChanged;
@@ -67,10 +68,9 @@ private:
 	sigc::signal<void, ComponentSelectionMode> _sigComponentModeChanged;
 
     bool _selectionFocusActive;
-    std::set<scene::INodePtr> _selectionFocusNodes;
+    std::set<std::shared_ptr<ISelectable>> _selectionFocusPool;
 
 public:
-
 	RadiantSelectionSystem();
 
 	/** greebo: Returns a structure with all the related
@@ -170,13 +170,13 @@ public:
 	void initialiseModule(const IApplicationContext& ctx) override;
 	void shutdownModule() override;
 
-protected:
-	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
-	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
-        const VolumeTest& view, SelectionSystem::EMode mode,
-        ComponentSelectionMode componentMode);
+    ISceneSelectionTester::Ptr createSceneSelectionTester(EMode mode) override;
 
 private:
+	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
+	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
+        const VolumeTest& view, EMode mode, ComponentSelectionMode componentMode);
+
 	bool higherEntitySelectionPriority() const;
 
 	void notifyObservers(const scene::INodePtr& node, bool isComponent);
