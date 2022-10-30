@@ -1,18 +1,18 @@
 #include "CamWnd.h"
 
 #include "igl.h"
-#include "ibrush.h"
 #include "iclipper.h"
 #include "icolourscheme.h"
-#include "ui/imainframe.h"
 #include "itextstream.h"
-#include "iorthoview.h"
 #include "icameraview.h"
+#include "ui/imainframe.h"
 
+#include <functional>
 #include <time.h>
 #include <fmt/format.h>
+#include <sigc++/retype_return.h>
+#include <wx/sizer.h>
 
-#include "util/ScopedBoolLock.h"
 #include "iselectiontest.h"
 #include "selectionlib.h"
 #include "gamelib.h"
@@ -21,19 +21,14 @@
 #include "render/RenderableCollectionWalker.h"
 #include "wxutil/MouseButton.h"
 #include "registry/adaptors.h"
-#include "selection/OccludeSelector.h"
 #include "selection/Device.h"
 #include "selection/SelectionVolume.h"
 #include "FloorHeightWalker.h"
 
 #include "debugging/debugging.h"
 #include "debugging/gl.h"
-#include <wx/sizer.h>
-#include "util/ScopedBoolLock.h"
-#include "CameraSettings.h"
-#include <functional>
-#include <sigc++/retype_return.h>
 #include "render/CamRenderer.h"
+#include "util/ScopedBoolLock.h"
 
 namespace ui
 {
@@ -64,9 +59,10 @@ inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
 
 // ---------- CamWnd Implementation --------------------------------------------------
 
-CamWnd::CamWnd(wxWindow* parent) :
+CamWnd::CamWnd(wxWindow* parent, CameraWndManager& owner) :
     DockablePanel(parent),
     MouseToolHandler(IMouseToolGroup::Type::CameraView),
+    _owner(owner),
     _mainWxWidget(loadNamedPanel(this, "CamWndPanel")),
     _id(++_maxId),
     _view(true),
@@ -122,7 +118,7 @@ CamWnd::CamWnd(wxWindow* parent) :
 
     _renderer.reset(new render::CamRenderer(_view, _shaders));
 
-    GlobalCamera().addCamWnd(_id, this);
+    _owner.addCamWnd(_id, this);
 }
 
 void CamWnd::onPanelActivated()
@@ -326,7 +322,7 @@ CamWnd::~CamWnd()
     GlobalCameraManager().destroyCamera(_camera);
 
     // Notify the camera manager about our destruction
-    GlobalCamera().removeCamWnd(_id);
+    _owner.removeCamWnd(_id);
 }
 
 SelectionTestPtr CamWnd::createSelectionTestForPoint(const Vector2& point)
@@ -1246,6 +1242,9 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
     // GL widget cannot be focused itself, let's reset the focus on the toplevel window
     // which will propagate any key events accordingly.
     GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
+
+    // Set this camwnd to active
+    _owner.setActiveCamWnd(_id);
 
     // Pass the call to the actual handler
     MouseToolHandler::onGLMouseButtonPress(ev);
