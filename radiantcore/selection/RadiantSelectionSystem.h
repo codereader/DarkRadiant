@@ -1,15 +1,11 @@
 #pragma once
 
-#include "iselectiontest.h"
-#include "iregistry.h"
 #include "irenderable.h"
 #include "iselection.h"
-#include "iradiant.h"
 #include "icommandsystem.h"
 #include "imap.h"
 
 #include "selectionlib.h"
-#include "math/Matrix4.h"
 #include "SelectedNodeList.h"
 
 #include "SceneManipulationPivot.h"
@@ -17,15 +13,14 @@
 namespace selection
 {
 
-class RadiantSelectionSystem :
+class RadiantSelectionSystem final :
 	public SelectionSystem,
 	public Renderable
 {
 private:
 	SceneManipulationPivot _pivot;
 
-	typedef std::set<Observer*> ObserverList;
-	ObserverList _observers;
+    std::set<Observer*> _observers;
 
 	// The 3D volume surrounding the most recent selection.
 	WorkZone _workZone;
@@ -45,8 +40,7 @@ private:
 
     sigc::signal<void, const ISelectable&> _sigSelectionChanged;
 
-	typedef std::map<std::size_t, ISceneManipulator::Ptr> Manipulators;
-	Manipulators _manipulators;
+    std::map<std::size_t, ISceneManipulator::Ptr> _manipulators;
 
 	// The currently active manipulator
     ISceneManipulator::Ptr _activeManipulator;
@@ -60,16 +54,15 @@ private:
 	std::size_t _countComponent;
 
 	// The internal list to keep track of the selected instances (components and primitives)
-	typedef SelectedNodeList SelectionListType;
-	SelectionListType _selection;
-	SelectionListType _componentSelection;
+    SelectedNodeList _selection;
+    SelectedNodeList _componentSelection;
 
 	// The coordinates of the mouse pointer when the manipulation starts
 	Vector2 _deviceStart;
 
 	bool nothingSelected() const;
 
-	sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
+	sigc::signal<void, IManipulator::Type> _sigActiveManipulatorChanged;
 	sigc::signal<void, EMode> _sigSelectionModeChanged;
 	sigc::signal<void, ComponentSelectionMode> _sigComponentModeChanged;
 
@@ -109,7 +102,7 @@ public:
 	const ISceneManipulator::Ptr& getActiveManipulator() override;
 	void setActiveManipulator(std::size_t manipulatorId) override;
 	void setActiveManipulator(IManipulator::Type manipulatorType) override;
-	sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() override;
+	sigc::signal<void, IManipulator::Type>& signal_activeManipulatorChanged() override;
 
 	std::size_t countSelected() const override;
 	std::size_t countSelectedComponents() const override;
@@ -167,10 +160,10 @@ public:
 	const Matrix4& getPivot2World() override;
 
 	// RegisterableModule implementation
-	virtual const std::string& getName() const override;
-	virtual const StringSet& getDependencies() const override;
-	virtual void initialiseModule(const IApplicationContext& ctx) override;
-	virtual void shutdownModule() override;
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const IApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 protected:
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".

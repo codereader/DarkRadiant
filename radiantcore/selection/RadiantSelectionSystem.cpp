@@ -63,7 +63,7 @@ void RadiantSelectionSystem::removeObserver(Observer* observer)
 void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool isComponent)
 {
     // Cycle through the list of observers and call the moved method
-    for (ObserverList::iterator i = _observers.begin(); i != _observers.end(); )
+    for (auto i = _observers.begin(); i != _observers.end(); )
 	{
         (*i++)->selectionChanged(node, isComponent);
     }
@@ -257,7 +257,7 @@ std::size_t RadiantSelectionSystem::registerManipulator(const ISceneManipulator:
 
 void RadiantSelectionSystem::unregisterManipulator(const ISceneManipulator::Ptr& manipulator)
 {
-	for (Manipulators::const_iterator i = _manipulators.begin(); i != _manipulators.end(); ++i)
+	for (auto i = _manipulators.begin(); i != _manipulators.end(); ++i)
 	{
 		if (i->second == manipulator)
 		{
@@ -280,7 +280,7 @@ const ISceneManipulator::Ptr& RadiantSelectionSystem::getActiveManipulator()
 
 void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 {
-	Manipulators::const_iterator found = _manipulators.find(manipulatorId);
+	auto found = _manipulators.find(manipulatorId);
 
 	if (found == _manipulators.end())
 	{
@@ -304,11 +304,11 @@ void RadiantSelectionSystem::setActiveManipulator(std::size_t manipulatorId)
 
 void RadiantSelectionSystem::setActiveManipulator(IManipulator::Type manipulatorType)
 {
-	for (const Manipulators::value_type& pair : _manipulators)
+	for (const auto& [_, manipulator] : _manipulators)
 	{
-		if (pair.second->getType() == manipulatorType)
+		if (manipulator->getType() == manipulatorType)
 		{
-			_activeManipulator = pair.second;
+			_activeManipulator = manipulator;
 
 			// Release the user lock when switching manipulators
 			_pivot.setUserLocked(false);
@@ -479,9 +479,7 @@ void RadiantSelectionSystem::setSelectedAllComponents(bool selected)
 // Traverse the current selection components and visit them with the given visitor class
 void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
 {
-    for (SelectionListType::const_iterator i = _componentSelection.begin();
-         i != _componentSelection.end();
-         /* in-loop increment */)
+    for (auto i = _componentSelection.begin(); i != _componentSelection.end(); /* in-loop increment */)
     {
         visitor.visit((i++)->first);
     }
@@ -489,9 +487,7 @@ void RadiantSelectionSystem::foreachSelectedComponent(const Visitor& visitor)
 
 void RadiantSelectionSystem::foreachSelected(const std::function<void(const scene::INodePtr&)>& functor)
 {
-	for (SelectionListType::const_iterator i = _selection.begin();
-         i != _selection.end();
-         /* in-loop increment */)
+	for (auto i = _selection.begin(); i != _selection.end(); /* in-loop increment */)
     {
         functor((i++)->first);
     }
@@ -499,9 +495,7 @@ void RadiantSelectionSystem::foreachSelected(const std::function<void(const scen
 
 void RadiantSelectionSystem::foreachSelectedComponent(const std::function<void(const scene::INodePtr&)>& functor)
 {
-	for (SelectionListType::const_iterator i = _componentSelection.begin();
-         i != _componentSelection.end();
-         /* in-loop increment */)
+	for (auto i = _componentSelection.begin(); i != _componentSelection.end(); /* in-loop increment */)
     {
         functor((i++)->first);
     }
@@ -511,9 +505,7 @@ void RadiantSelectionSystem::foreachBrush(const std::function<void(Brush&)>& fun
 {
 	BrushSelectionWalker walker(functor);
 
-	for (SelectionListType::const_iterator i = _selection.begin();
-         i != _selection.end();
-         /* in-loop increment */)
+	for (auto i = _selection.begin(); i != _selection.end(); /* in-loop increment */)
     {
 		walker.visit((i++)->first); // Handles group nodes recursively
     }
@@ -523,9 +515,7 @@ void RadiantSelectionSystem::foreachFace(const std::function<void(IFace&)>& func
 {
 	FaceSelectionWalker walker(functor);
 
-	for (SelectionListType::const_iterator i = _selection.begin();
-         i != _selection.end();
-         /* in-loop increment */)
+	for (auto i = _selection.begin(); i != _selection.end(); /* in-loop increment */)
     {
 		walker.visit((i++)->first); // Handles group nodes recursively
     }
@@ -538,9 +528,7 @@ void RadiantSelectionSystem::foreachPatch(const std::function<void(IPatch&)>& fu
 {
 	PatchSelectionWalker walker(functor);
 
-	for (SelectionListType::const_iterator i = _selection.begin();
-         i != _selection.end();
-         /* in-loop increment */)
+	for (auto i = _selection.begin(); i != _selection.end(); /* in-loop increment */)
     {
 		walker.visit((i++)->first); // Handles group nodes recursively
     }
@@ -1061,11 +1049,11 @@ void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& 
 
 std::size_t RadiantSelectionSystem::getManipulatorIdForType(IManipulator::Type type)
 {
-	for (const Manipulators::value_type& pair : _manipulators)
+	for (const auto& [id, manipulator] : _manipulators)
 	{
-		if (pair.second->getType() == type)
+		if (manipulator->getType() == type)
 		{
-			return pair.first;
+			return id;
 		}
 	}
 
