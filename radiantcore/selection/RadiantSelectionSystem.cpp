@@ -110,6 +110,8 @@ ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(EM
         return std::make_shared<EntitySelectionTester>();
     case eGroupPart:
         return std::make_shared<GroupChildPrimitiveSelectionTester>();
+    case eMergeAction:
+        return std::make_shared<MergeActionSelectionTester>();
 
     default:
         throw std::invalid_argument("Selection Mode not supported yet");
@@ -197,8 +199,8 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 
         case eMergeAction:
         {
-            MergeActionSelector tester(selector, test);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(view, tester);
+            auto tester = createSceneSelectionTester(mode);
+            tester->testSelectScene(view, test, selector);
 
             // Add the selection crop to the target vector
             std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });

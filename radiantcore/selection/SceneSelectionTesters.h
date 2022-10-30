@@ -24,5 +24,15 @@ class GroupChildPrimitiveSelectionTester :
 public:
     void testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector) override;
 };
-    
+
+/**
+ * This tester is looking for merge action nodes only
+ */
+class MergeActionSelectionTester :
+    public ISceneSelectionTester
+{
+public:
+    void testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector) override;
+};
+
 }

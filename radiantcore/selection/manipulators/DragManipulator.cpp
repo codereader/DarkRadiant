@@ -36,6 +36,9 @@ void DragManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world
 {
 	_resizeModeActive = false;
 
+    // No drag manipulation in merge mode
+    if (GlobalSelectionSystem().Mode() == SelectionSystem::eMergeAction) return;
+
     SelectionPool selector;
 
 	switch (GlobalSelectionSystem().Mode())
