@@ -8,8 +8,14 @@ namespace selection
 
 void EntitySelectionTester::testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector)
 {
-    EntitySelector entityTester(selector, test);
-    GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
+    EntitySelector tester(selector, test);
+    GlobalSceneGraph().foreachVisibleNodeInVolume(view, tester);
+}
+
+void GroupChildPrimitiveSelectionTester::testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector)
+{
+    GroupChildPrimitiveSelector tester(selector, test);
+    GlobalSceneGraph().foreachVisibleNodeInVolume(view, tester);
 }
 
 }

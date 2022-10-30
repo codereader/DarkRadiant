@@ -108,6 +108,8 @@ ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(EM
     {
     case eEntity:
         return std::make_shared<EntitySelectionTester>();
+    case eGroupPart:
+        return std::make_shared<GroupChildPrimitiveSelectionTester>();
 
     default:
         throw std::invalid_argument("Selection Mode not supported yet");
@@ -126,8 +128,8 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
         case eEntity:
         {
             // Instantiate a walker class specialised for selecting entities
-            auto entityTester = createSceneSelectionTester(mode);
-            entityTester->testSelectScene(view, test, selector);
+            auto tester = createSceneSelectionTester(mode);
+            tester->testSelectScene(view, test, selector);
 
             std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
         }
@@ -176,8 +178,8 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
         case eGroupPart:
         {
             // Retrieve all the selectable primitives of group nodes
-            GroupChildPrimitiveSelector primitiveTester(selector, test);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
+            auto tester = createSceneSelectionTester(mode);
+            tester->testSelectScene(view, test, selector);
 
             // Add the selection crop to the target vector
             std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });

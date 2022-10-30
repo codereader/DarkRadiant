@@ -107,8 +107,8 @@ void DragManipulator::testSelectGroupPartMode(const VolumeTest& view, SelectionT
 	// Find all primitives that are selectable
 	SingleItemSelector itemSelector;
 
-	GroupChildPrimitiveSelector childPrimitiveTester(itemSelector, test);
-	GlobalSceneGraph().foreachVisibleNodeInVolume(view, childPrimitiveTester);
+    auto tester = _testerFactory.createSceneSelectionTester(SelectionSystem::eGroupPart);
+    tester->testSelectScene(view, test, itemSelector);
 
 	if (itemSelector.hasValidSelectable())
 	{
@@ -126,7 +126,6 @@ void DragManipulator::testSelectEntityMode(const VolumeTest& view, SelectionTest
 	// Create a boolean selection pool (can have exactly one selectable or none)
 	SingleItemSelector itemSelector;
 
-	// Find the visible entities
     auto tester = _testerFactory.createSceneSelectionTester(SelectionSystem::eEntity);
     tester->testSelectScene(view, test, itemSelector);
 

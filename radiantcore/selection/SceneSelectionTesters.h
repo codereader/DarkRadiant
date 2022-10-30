@@ -4,10 +4,21 @@
 
 namespace selection
 {
+
 /**
  * Tests just the entities in the scene, all other nodes are skipped
  */
 class EntitySelectionTester :
+    public ISceneSelectionTester
+{
+public:
+    void testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector) override;
+};
+
+/**
+ * Tests child primitives of group nodes only, non-worldspawn
+ */
+class GroupChildPrimitiveSelectionTester :
     public ISceneSelectionTester
 {
 public:
