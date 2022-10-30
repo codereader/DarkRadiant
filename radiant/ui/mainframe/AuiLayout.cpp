@@ -668,6 +668,8 @@ void AuiLayout::restoreStateFromRegistry()
         _auiMgr.LoadPerspective(storedPersp);
     }
 
+    ensureVisibleCenterPane();
+
     // After restoring the perspective, ensure all visible panes are active
     for (const auto& info : _panes)
     {
@@ -681,6 +683,37 @@ void AuiLayout::restoreStateFromRegistry()
         {
             ensureControlIsInactive(paneInfo.window);
         }
+    }
+}
+
+void AuiLayout::ensureVisibleCenterPane()
+{
+    // Ensure if we have a visible center pane
+    bool hasVisibleCenterPane = false;
+    wxAuiPaneInfo* centerOrthoPane = nullptr;
+
+    for (const auto& info : _panes)
+    {
+        auto& paneInfo = _auiMgr.GetPane(info.paneName);
+
+        if (!isCenterPane(paneInfo)) continue;
+
+        if (paneInfo.IsShown())
+        {
+            hasVisibleCenterPane = true;
+        }
+
+        if (paneInfo.name == UserControl::OrthoView)
+        {
+            centerOrthoPane = &paneInfo;
+        }
+    }
+
+    if (!hasVisibleCenterPane && centerOrthoPane != nullptr)
+    {
+        // Set the default ortho view center pane to visible
+        centerOrthoPane->Show();
+        _auiMgr.Update();
     }
 }
 
