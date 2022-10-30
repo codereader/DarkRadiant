@@ -635,4 +635,102 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointOnlyOneCandidate)
     EXPECT_TRUE(Node_isSelected(brush2)) << "brush 2 should remain selected";
 }
 
+// Ortho: Toggle point selection in entity mode
+TEST_F(OrthoViewSelectionTest, ToggleSelectPointEntityMode)
+{
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eEntity);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_above_torches");
+    auto torch1 = algorithm::getEntityByName(GlobalMapModule().getRoot(), "torch1");
+
+    // These two are positioned right above the torches and the func_static, but are worldspawn primitives
+    auto brush4 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/4");
+    auto patch4 = algorithm::findFirstPatchWithMaterial(worldspawn, "textures/numbers/4");
+
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static should be unselected at first";
+    EXPECT_FALSE(Node_isSelected(torch1)) << "torch1 should be unselected at first";
+    EXPECT_FALSE(Node_isSelected(brush4)) << "brush4 should be unselected at first";
+    EXPECT_FALSE(Node_isSelected(patch4)) << "patch4 should be unselected at first";
+
+    // Since the func_static is located above the torch, it should get selected first
+    // The worldspawn primitives should be ignored
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
+    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static should be selected now";
+    EXPECT_FALSE(Node_isSelected(torch1)) << "torch1 should still be unselected";
+    EXPECT_FALSE(Node_isSelected(brush4)) << "brush4 should still be unselected";
+    EXPECT_FALSE(Node_isSelected(patch4)) << "patch4 should still be unselected";
+
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static should be unselected again";
+    EXPECT_FALSE(Node_isSelected(torch1)) << "torch1 should still be unselected";
+    EXPECT_FALSE(Node_isSelected(brush4)) << "brush4 should still be unselected";
+    EXPECT_FALSE(Node_isSelected(patch4)) << "patch4 should still be unselected";
+}
+
+// Ortho: Cycle point selection in entity mode
+TEST_F(OrthoViewSelectionTest, CycleSelectPointEntityMode)
+{
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eEntity);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_above_torches");
+    auto torch1 = algorithm::getEntityByName(GlobalMapModule().getRoot(), "torch1");
+    auto torch2 = algorithm::getEntityByName(GlobalMapModule().getRoot(), "torch2");
+
+    EXPECT_FALSE(Node_isSelected(torch1)) << "Torch 1 should be unselected at first";
+    EXPECT_FALSE(Node_isSelected(torch2)) << "Torch 2 should be unselected at first";
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "funcStatic should be unselected at first";
+
+    // First selection in replace mode should select the func_static, since entities are favoured
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eReplace);
+    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected now";
+    EXPECT_FALSE(Node_isSelected(torch1)) << "Torch 1 should still be unselected";
+    EXPECT_FALSE(Node_isSelected(torch2)) << "Torch 2 should still be unselected";
+
+    // Second cycle should have the topmost torch selected
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected again";
+    EXPECT_TRUE(Node_isSelected(torch1)) << "Torch 1 should be selected now";
+    EXPECT_FALSE(Node_isSelected(torch2)) << "Torch 2 should still be unselected";
+
+    // Third cycle should have the second torch selected
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should still be unselected";
+    EXPECT_FALSE(Node_isSelected(torch1)) << "Torch 1 should be unselected again";
+    EXPECT_TRUE(Node_isSelected(torch2)) << "Torch 2 should be selected now";
+
+    // Fourth cycle should select func_static again
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected again";
+    EXPECT_FALSE(Node_isSelected(torch1)) << "Torch 1 should be unselected";
+    EXPECT_FALSE(Node_isSelected(torch2)) << "Torch 2 should be unselected";
+}
+
+// Ortho: Replace selection in entity mode, check that current selection is replaced
+TEST_F(OrthoViewSelectionTest, ReplaceSelectPointEntityMode)
+{
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eEntity);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+    auto funcStaticAboveTorches = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_above_torches");
+
+    EXPECT_FALSE(Node_isSelected(funcStaticAboveTorches)) << "funcStaticAboveTorches should be unselected at first";
+
+    // Select the func_static_1
+    Node_setSelected(funcStatic, true);
+
+    // Run selection in replace mode, this should unselect the previous items
+    performPointSelectionOnNodePosition(funcStaticAboveTorches, selection::SelectionSystem::eReplace);
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected now";
+    EXPECT_TRUE(Node_isSelected(funcStaticAboveTorches)) << "funcStaticAboveTorches should be selected now";
+}
+
 }
