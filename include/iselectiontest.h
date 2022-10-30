@@ -337,3 +337,44 @@ typedef std::shared_ptr<PlaneSelectable> PlaneSelectablePtr;
 inline PlaneSelectablePtr Node_getPlaneSelectable(const scene::INodePtr& node) {
 	return std::dynamic_pointer_cast<PlaneSelectable>(node);
 }
+
+namespace selection
+{
+
+/**
+ * Interface of a scene walker that can be used to test
+ * some or all nodes of the scene for selection.
+ *
+ * All qualified scene nodes are tested for selection and
+ * added to the given Selector instance (which in turn can
+ * accept or reject the selectable based on its own logic).
+ */
+class ISceneSelectionTester
+{
+public:
+    using Ptr = std::shared_ptr<ISceneSelectionTester>;
+
+    virtual ~ISceneSelectionTester() {}
+
+    // Test all qualified nodes in the scene for selection
+    // and add the ones passing the test to the given selector.
+    virtual void testSelectScene(Selector& selector) = 0;
+};
+
+/**
+ * Factory interface used to acquire ISceneSelectionTester
+ * instances suitable for a given purpose.
+ */
+class ISelectionTesterProvider
+{
+public:
+    virtual ~ISelectionTesterProvider() {}
+
+    /**
+     * Returns an instance of a selection tester suitable for testing
+     * scene nodes according to the given purpose/selection mode.
+     */
+    virtual ISceneSelectionTester::Ptr createSceneSelectionTester(SelectionSystem::EMode mode) = 0;
+};
+
+} // namespace

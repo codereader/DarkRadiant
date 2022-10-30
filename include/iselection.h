@@ -2,7 +2,6 @@
 
 #include <cstddef>
 #include "imodule.h"
-#include "ivolumetest.h"
 #include <memory>
 #include <sigc++/signal.h>
 #include "imanipulator.h"
