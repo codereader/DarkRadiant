@@ -28,6 +28,8 @@
 
 #include <functional>
 
+#include "command/ExecutionNotPossible.h"
+
 namespace selection
 {
 
@@ -39,7 +41,8 @@ RadiantSelectionSystem::RadiantSelectionSystem() :
     _mode(ePrimitive),
     _componentMode(ComponentSelectionMode::Default),
     _countPrimitive(0),
-    _countComponent(0)
+    _countComponent(0),
+    _selectionFocusActive(false)
 {}
 
 const SelectionInfo& RadiantSelectionSystem::getSelectionInfo() {
@@ -67,6 +70,32 @@ void RadiantSelectionSystem::notifyObservers(const scene::INodePtr& node, bool i
 	{
         (*i++)->selectionChanged(node, isComponent);
     }
+}
+
+void RadiantSelectionSystem::toggleSelectionFocus()
+{
+    if (_selectionFocusActive)
+    {
+        rMessage() << "Leaving selection focus mode" << std::endl;
+        _selectionFocusActive = false;
+        _selectionFocusNodes.clear();
+        return;
+    }
+
+    if (_selectionInfo.totalCount == 0)
+    {
+        throw cmd::ExecutionNotPossible("Nothing selected, cannot toggle selection focus mode");
+    }
+
+    _selectionFocusActive = true;
+    _selectionFocusNodes.clear();
+
+    foreachSelected([&](const auto& node)
+    {
+        _selectionFocusNodes.insert(node);
+    });
+
+    rMessage() << "Activated selection focus mode, got " << _selectionFocusNodes.size() << " nodes in the pool" << std::endl;
 }
 
 void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
@@ -976,6 +1005,10 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
     GlobalCommandSystem().addCommand("ToggleGroupPartSelectionMode", std::bind(&RadiantSelectionSystem::toggleGroupPartMode, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("ToggleMergeActionSelectionMode", std::bind(&RadiantSelectionSystem::toggleMergeActionMode, this, std::placeholders::_1));
 
+    GlobalCommandSystem().addWithCheck("ToggleSelectionFocus",
+        [this](const auto&) { toggleSelectionFocus(); },
+        [this]() { return _selectionFocusActive || _selectionInfo.totalCount > 0; });
+
     GlobalCommandSystem().addCommand("ToggleComponentSelectionMode",
         std::bind(&RadiantSelectionSystem::toggleComponentModeCmd, this, std::placeholders::_1), { cmd::ARGTYPE_STRING });
 
@@ -1330,6 +1363,11 @@ void RadiantSelectionSystem::toggleMergeActionMode(const cmd::ArgumentList& args
         onManipulatorModeChanged();
         onComponentModeChanged();
     }
+}
+
+void RadiantSelectionSystem::toggleSelectionFocus(const cmd::ArgumentList& args)
+{
+    toggleSelectionFocus();
 }
 
 void RadiantSelectionSystem::onManipulatorModeChanged()

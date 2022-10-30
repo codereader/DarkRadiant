@@ -66,6 +66,9 @@ private:
 	sigc::signal<void, EMode> _sigSelectionModeChanged;
 	sigc::signal<void, ComponentSelectionMode> _sigComponentModeChanged;
 
+    bool _selectionFocusActive;
+    std::set<scene::INodePtr> _selectionFocusNodes;
+
 public:
 
 	RadiantSelectionSystem();
@@ -145,6 +148,8 @@ public:
 	const WorkZone& getWorkZone() override;
 	Vector3 getCurrentSelectionCenter() override;
 
+    void toggleSelectionFocus();
+
     void onPreRender(const VolumeTest& volume) override;
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override
     {}
@@ -188,6 +193,8 @@ private:
 	void toggleEntityMode(const cmd::ArgumentList& args);
 	void toggleGroupPartMode(const cmd::ArgumentList& args);
 	void toggleMergeActionMode(const cmd::ArgumentList& args);
+
+	void toggleSelectionFocus(const cmd::ArgumentList& args);
 
 	void toggleComponentMode(ComponentSelectionMode mode);
 	void toggleComponentModeCmd(const cmd::ArgumentList& args);
