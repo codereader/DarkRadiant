@@ -9,7 +9,7 @@ brushDef3
 ( 0 0 1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
 ( 0 1 0 -266 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
 ( 1 0 0 -316 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
-( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 0 -1 5 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
 ( 0 -1 0 130 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
 ( -1 0 0 124 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
 }
@@ -24,6 +24,37 @@ brushDef3
 ( 0 0 -1 -64 ) ( ( 0.03125 0 -0.5 ) ( 0 0.03125 0 ) ) "textures/numbers/2" 0 0 0
 ( 0 -1 0 -46 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/2" 0 0 0
 ( -1 0 0 124 ) ( ( 0.0625 0 -0.5 ) ( 0 0.0625 0 ) ) "textures/numbers/2" 0 0 0
+}
+}
+// primitive 2
+{
+brushDef3
+{
+( 0 0 1 5 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 0 1 0 -266 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 1 0 0 -316 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( 0 -1 0 130 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+( -1 0 0 124 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/3" 0 0 0
+}
+}
+}
+// entity 1
+{
+"classname" "func_static"
+"name" "func_static_1"
+"model" "func_static_1"
+"origin" "220 198 -169"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 1 0 0 -96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 -1 0 -68 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( -1 0 0 -96 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
 }
 }
 }

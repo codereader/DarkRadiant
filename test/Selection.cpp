@@ -521,6 +521,84 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveMode)
     EXPECT_FALSE(Node_isSelected(brush)) << "Brush should be unselected again";
 }
 
+// Ortho: Toggle selection in primitive mode favours entities over brushes
+TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveModeFavoursEntities)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+
+    // Assume that the entity is located below the brush
+    Vector3 funcStaticOrigin = funcStatic->worldAABB().getOrigin();
+    Vector3 originalBrushPosition = brush->worldAABB().getOrigin();
+    EXPECT_LT(funcStaticOrigin.z() + funcStatic->worldAABB().extents.z(), 
+        originalBrushPosition.z() + brush->worldAABB().extents.z()) << "Entity should be located below the brush";
+
+    EXPECT_FALSE(Node_isSelected(brush)) << "Brush should be unselected at first";
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected at first";
+
+    // Construct an orthoview centered at the brush's location
+    render::View view(false);
+    algorithm::constructCenteredOrthoview(view, originalBrushPosition);
+    auto test = algorithm::constructOrthoviewSelectionTest(view);
+
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eToggle, false);
+    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected now";
+    EXPECT_FALSE(Node_isSelected(brush)) << "Brush should still be unselected";
+
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eToggle, false);
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected again";
+    EXPECT_FALSE(Node_isSelected(brush)) << "Brush should still be unselected";
+}
+
+// Ortho: Cycle selection in primitive mode (brush 1 on top of brush 3 on top of a func_static)
+TEST_F(OrthoViewSelectionTest, CycleSelectPointPrimitiveMode)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+    auto brush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush3 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/3");
+
+    auto originalBrushPosition = brush1->worldAABB().getOrigin();
+
+    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should be unselected at first";
+    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should be unselected at first";
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected at first";
+
+    // Construct an orthoview centered at the brush's location
+    render::View view(false);
+    algorithm::constructCenteredOrthoview(view, originalBrushPosition);
+    auto test = algorithm::constructOrthoviewSelectionTest(view);
+
+    // First selection in replace mode should select the func_static, since entities are favoured
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eReplace, false);
+    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected now";
+    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should still be unselected";
+    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should still be unselected";
+
+    // Second cycle should have the topmost brush selected
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eCycle, false);
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected again";
+    EXPECT_TRUE(Node_isSelected(brush1)) << "Brush 1 should be selected now";
+    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should still be unselected";
+
+    // Third cycle should select the brush in between the func_static and brush 1
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eCycle, false);
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should still be unselected";
+    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should be unselected";
+    EXPECT_TRUE(Node_isSelected(brush3)) << "Brush 3 should be selected now";
+
+    // Fourth cycle should select func_static_1 again
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eCycle, false);
+    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected again";
+    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should be unselected again";
+    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should be unselected again";
+}
+
 // --- Clipboard related tests ---
 
 TEST_F(ClipboardTest, CopyEmptySelection)
