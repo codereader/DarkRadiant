@@ -733,4 +733,104 @@ TEST_F(OrthoViewSelectionTest, ReplaceSelectPointEntityMode)
     EXPECT_TRUE(Node_isSelected(funcStaticAboveTorches)) << "funcStaticAboveTorches should be selected now";
 }
 
+// Ortho: Move two brushes using the drag manipulator
+TEST_F(OrthoViewSelectionTest, DragManipulationByDirectHit)
+{
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().SetMode(selection::SelectionSystem::ePrimitive);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    auto manipulator = GlobalSelectionSystem().getActiveManipulator();
+
+    // Select the brushes and attempt to drag-manipulate them
+    Node_setSelected(brush, true);
+    Node_setSelected(brush2, true);
+
+    auto originalAABB = brush->worldAABB();
+    auto originalAABB2 = brush2->worldAABB();
+
+    // Construct a selection test centered at the node's location
+    render::View view(false);
+    algorithm::constructCenteredOrthoview(view, originalAABB.getOrigin());
+    auto test = algorithm::constructOrthoviewSelectionTest(view);
+
+    auto pivot2World = GlobalSelectionSystem().getPivot2World();
+
+    // Hit the brush right at its center, this should perform a drag-selection
+    manipulator->testSelect(test, pivot2World);
+
+    EXPECT_TRUE(manipulator->isSelected());
+    EXPECT_TRUE(manipulator->getActiveComponent());
+
+    GlobalSelectionSystem().onManipulationStart();
+    manipulator->getActiveComponent()->beginTransformation(pivot2World, view, Vector2(0, 0));
+    manipulator->getActiveComponent()->transform(pivot2World, view, Vector2(0.5, 0.5), 0);
+    GlobalSelectionSystem().onManipulationChanged();
+
+    // The brush should have moved
+    auto newAABB = brush->worldAABB();
+    auto newAABB2 = brush2->worldAABB();
+
+    EXPECT_FALSE(math::isNear(originalAABB.getOrigin(), newAABB.getOrigin(), 20)) << "Brush should have moved";
+    EXPECT_FALSE(math::isNear(originalAABB2.getOrigin(), newAABB2.getOrigin(), 20)) << "Brush 2 should have moved";
+    EXPECT_TRUE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 0.01)) << "Brush should not have changed form";
+    EXPECT_TRUE(math::isNear(originalAABB2.getExtents(), newAABB2.getExtents(), 0.01)) << "Brush 2 should not have changed form";
+
+    EXPECT_TRUE(math::isNear(originalAABB2.getOrigin() - originalAABB.getOrigin(),
+        newAABB2.getOrigin() - newAABB.getOrigin(), 0.01)) << "Relative brush position should not have changed";
+}
+
+// Ortho: Resize two brushes using the drag manipulator
+TEST_F(OrthoViewSelectionTest, DragManipulationByPlane)
+{
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().SetMode(selection::SelectionSystem::ePrimitive);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    auto manipulator = GlobalSelectionSystem().getActiveManipulator();
+
+    // Select both brushes and attempt to drag-manipulate them
+    Node_setSelected(brush, true);
+    Node_setSelected(brush2, true);
+
+    auto originalAABB = brush->worldAABB();
+    auto originalAABB2 = brush2->worldAABB();
+
+    auto selectionBounds = GlobalSelectionSystem().getWorkZone().bounds;
+
+    // Construct a selection test at a point a few pixels off the node's bounding box
+    render::View view(false);
+    algorithm::constructCenteredOrthoview(view, selectionBounds.getOrigin() + Vector3(selectionBounds.getExtents().x(), 0, 0) + 40);
+    auto test = algorithm::constructOrthoviewSelectionTest(view);
+
+    auto pivot2World = GlobalSelectionSystem().getPivot2World();
+
+    // Perform a drag-selection
+    manipulator->testSelect(test, pivot2World);
+
+    EXPECT_TRUE(manipulator->isSelected());
+    EXPECT_TRUE(manipulator->getActiveComponent());
+
+    GlobalSelectionSystem().onManipulationStart();
+    manipulator->getActiveComponent()->beginTransformation(pivot2World, view, Vector2(0, 0));
+    manipulator->getActiveComponent()->transform(pivot2World, view, Vector2(0.3, 0), 0);
+    GlobalSelectionSystem().onManipulationChanged();
+
+    // The brush should have been resized
+    auto newAABB = brush->worldAABB();
+    auto newAABB2 = brush2->worldAABB();
+
+    // The extents of the brush should have been changed
+    EXPECT_FALSE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 20)) << "Brush should have changed form";
+    EXPECT_FALSE(math::isNear(originalAABB2.getExtents(), newAABB2.getExtents(), 20)) << "Brush 2 should have changed form";
+}
+
 }
