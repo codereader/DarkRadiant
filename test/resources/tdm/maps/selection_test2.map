@@ -1,0 +1,29 @@
+Version 2
+// entity 0
+{
+"classname" "worldspawn"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 1 0 -266 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 1 0 0 -316 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( 0 -1 0 130 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+( -1 0 0 124 ) ( ( 0.03125 0 0 ) ( 0 0.03125 0 ) ) "textures/numbers/1" 0 0 0
+}
+}
+// primitive 1
+{
+brushDef3
+{
+( 0 0 1 -64 ) ( ( 0.0625 0 -0.5 ) ( 0 0.0625 0.75 ) ) "textures/numbers/2" 0 0 0
+( 0 1 0 -90 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/2" 0 0 0
+( 1 0 0 -316 ) ( ( 0.0625 0 -0.5 ) ( 0 0.0625 0 ) ) "textures/numbers/2" 0 0 0
+( 0 0 -1 -64 ) ( ( 0.03125 0 -0.5 ) ( 0 0.03125 0 ) ) "textures/numbers/2" 0 0 0
+( 0 -1 0 -46 ) ( ( 0.0625 0 0 ) ( 0 0.0625 0 ) ) "textures/numbers/2" 0 0 0
+( -1 0 0 124 ) ( ( 0.0625 0 -0.5 ) ( 0 0.0625 0 ) ) "textures/numbers/2" 0 0 0
+}
+}
+}

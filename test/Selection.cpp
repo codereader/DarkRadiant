@@ -495,6 +495,32 @@ TEST_F(CameraViewSelectionTest, TwosidedModelFacingUpIsSelectable)
     performModelSelectionTest("twosided_ivy_facing_up", true);
 }
 
+// Ortho: Toggle worldspawn brush selection in primitive mode
+TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveMode)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto unrelatedBrush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+
+    Vector3 originalBrushPosition = brush->worldAABB().getOrigin();
+    EXPECT_FALSE(Node_isSelected(brush)) << "Brush should be unselected at first";
+    EXPECT_FALSE(Node_isSelected(unrelatedBrush)) << "Unrelated brush should be unselected at first";
+
+    // Construct an orthoview centered at the brush's location
+    render::View view(false);
+    algorithm::constructCenteredOrthoview(view, originalBrushPosition);
+    auto test = algorithm::constructOrthoviewSelectionTest(view);
+
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eToggle, false);
+    EXPECT_TRUE(Node_isSelected(brush)) << "Brush should be selected now";
+    EXPECT_FALSE(Node_isSelected(unrelatedBrush)) << "Unrelated brush should still be unselected";
+
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eToggle, false);
+    EXPECT_FALSE(Node_isSelected(brush)) << "Brush should be unselected again";
+}
+
 // --- Clipboard related tests ---
 
 TEST_F(ClipboardTest, CopyEmptySelection)
