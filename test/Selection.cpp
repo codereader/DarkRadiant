@@ -501,8 +501,8 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveMode)
     loadMap("selection_test2.map");
 
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
-    auto unrelatedBrush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    auto unrelatedBrush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
 
     Vector3 originalBrushPosition = brush->worldAABB().getOrigin();
     EXPECT_FALSE(Node_isSelected(brush)) << "Brush should be unselected at first";
@@ -553,6 +553,36 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveModeFavoursEntities)
     EXPECT_FALSE(Node_isSelected(brush)) << "Brush should still be unselected";
 }
 
+// Ortho: Replace selection in primitive mode, check that current selection is replaced
+TEST_F(OrthoViewSelectionTest, ReplaceSelectPointPrimitiveMode)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
+    auto brush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+
+    auto originalBrushPosition = brush2->worldAABB().getOrigin();
+
+    EXPECT_FALSE(Node_isSelected(brush2)) << "Brush 2 should be unselected at first";
+
+    // Construct an orthoview centered at the brush's location
+    render::View view(false);
+    algorithm::constructCenteredOrthoview(view, originalBrushPosition);
+    auto test = algorithm::constructOrthoviewSelectionTest(view);
+
+    // Select the func_static_1
+    Node_setSelected(brush1, true);
+    Node_setSelected(funcStatic, true);
+
+    // Run selection in replace mode, this should unselect the previous items
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eReplace, false);
+    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected now";
+    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should be unselected now";
+    EXPECT_TRUE(Node_isSelected(brush2)) << "Brush 2 should be selected now";
+}
+
 // Ortho: Cycle selection in primitive mode (brush 1 on top of brush 3 on top of a func_static)
 TEST_F(OrthoViewSelectionTest, CycleSelectPointPrimitiveMode)
 {
@@ -597,6 +627,34 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointPrimitiveMode)
     EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected again";
     EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should be unselected again";
     EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should be unselected again";
+}
+
+// Cycle select is not changing the selection if there's only one selectable in the pool
+TEST_F(OrthoViewSelectionTest, CycleSelectPointOnlyOneCandidate)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+
+    auto originalBrushPosition = brush2->worldAABB().getOrigin();
+
+    EXPECT_FALSE(Node_isSelected(brush2)) << "Brush 2 should be unselected at first";
+
+    // Construct an orthoview centered at the brush's location
+    render::View view(false);
+    algorithm::constructCenteredOrthoview(view, originalBrushPosition);
+    auto test = algorithm::constructOrthoviewSelectionTest(view);
+
+    // First selection in replace mode should select brush 2
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eReplace, false);
+    EXPECT_TRUE(Node_isSelected(brush2)) << "brush 2 should be selected now";
+
+    // Second cycle should have the topmost brush selected
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eCycle, false);
+    EXPECT_TRUE(Node_isSelected(brush2)) << "brush 2 should remain selected";
+    GlobalSelectionSystem().selectPoint(test, selection::SelectionSystem::eCycle, false);
+    EXPECT_TRUE(Node_isSelected(brush2)) << "brush 2 should remain selected";
 }
 
 // --- Clipboard related tests ---
