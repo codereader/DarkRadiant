@@ -576,8 +576,7 @@ void AuiLayout::toggleMainControl(const std::string& controlName)
 
             // Add the new control as center pane
             auto newWidget = control->createWidget(_auiMgr.GetManagedWindow());
-            addPane(generateUniquePaneName(newControlName), newWidget,
-                DEFAULT_PANE_INFO(control->getDisplayName(), MIN_SIZE).CenterPane());
+            addPane(newControlName, newWidget, DEFAULT_PANE_INFO(control->getDisplayName(), MIN_SIZE).CenterPane());
             ensureControlIsActive(newWidget);
         }
         
