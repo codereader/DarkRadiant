@@ -30,6 +30,7 @@ namespace
     const std::string PANE_NAME_ATTRIBUTE = "paneName";
     const std::string STATE_ATTRIBUTE = "state";
     const std::string CONTROL_NAME_ATTRIBUTE = "controlName";
+    constexpr const char* const  PROPERTIES_PANEL = "PropertiesPanel";
     constexpr int AuiLayoutVersion = 1;
 
     // Minimum size of docked panels
@@ -268,8 +269,8 @@ void AuiLayout::activate()
 
     addPane(cameraControl->getControlName(), camera,
             DEFAULT_PANE_INFO(cameraControl->getDisplayName(), size).Left().Position(0));
-    addPane("PropertiesPanel", _propertyNotebook,
-            DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1).CloseButton(false).DestroyOnClose(false));
+    addPane(PROPERTIES_PANEL, _propertyNotebook,
+            DEFAULT_PANE_INFO(_("Properties"), size).Left().Position(1).DestroyOnClose(false));
     addPane(orthoViewControl->getControlName(), orthoViewControl->createWidget(managedArea),
             DEFAULT_PANE_INFO(orthoViewControl->getDisplayName(), size).CenterPane());
     _auiMgr.Update();
@@ -667,6 +668,10 @@ void AuiLayout::restoreStateFromRegistry()
     {
         _auiMgr.LoadPerspective(storedPersp);
     }
+
+    // Make sure the properties panel can be closed (the flag might still be set on the stored perspective)
+    auto& propertyPane = _auiMgr.GetPane(PROPERTIES_PANEL);
+    propertyPane.CloseButton(true).DestroyOnClose(false);
 
     ensureVisibleCenterPane();
 
