@@ -65,6 +65,8 @@ public:
         };
     };
 
+    virtual bool hasHighlightFlag(Highlight::Flags flags) const = 0;
+
     virtual void setHighlightFlag(Highlight::Flags flags, bool enabled) = 0;
 
     // Returns true if the current set of highlight flags is not empty

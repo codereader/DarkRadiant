@@ -41,7 +41,8 @@ void MergeActionNodeBase::onInsertIntoScene(IMapRootNode& rootNode)
         boundsChanged();
     }
 
-    hideAffectedNodes();
+    // Don't hide affected nodes, they need to maintain their renderables
+    //hideAffectedNodes();
 
     SelectableNode::onInsertIntoScene(rootNode);
 }

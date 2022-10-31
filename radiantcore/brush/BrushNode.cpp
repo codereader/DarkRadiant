@@ -420,10 +420,15 @@ void BrushNode::onPreRender(const VolumeTest& volume)
 void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
     // Check for the override status of this brush
-    bool forceVisible = isForcedVisible();
+    bool isInMergeMode = collector.hasHighlightFlag(IRenderableCollector::Highlight::MergeAction);
+    bool forceVisible = isForcedVisible() || isInMergeMode;
     bool wholeBrushSelected = isSelected() || Node_isSelected(getParent());
 
-    collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, wholeBrushSelected);
+    // Don't touch the primitive highlight flag in merge mode
+    if (!isInMergeMode)
+    {
+        collector.setHighlightFlag(IRenderableCollector::Highlight::Primitives, wholeBrushSelected);
+    }
 
     // Submit the renderable geometry for each face
     for (auto& faceInstance : _faceInstances)
@@ -434,7 +439,7 @@ void BrushNode::renderHighlights(IRenderableCollector& collector, const VolumeTe
         Face& face = faceInstance.getFace();
         if (face.intersectVolume(volume))
         {
-            bool highlight = wholeBrushSelected || faceInstance.selectedComponents();
+            bool highlight = wholeBrushSelected || forceVisible || faceInstance.selectedComponents();
 
             if (!highlight) continue;
 
