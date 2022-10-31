@@ -50,6 +50,9 @@ public:
     // Returns true if the given control is loaded in a tab
     bool controlExists(const std::string& controlName);
 
+    // Returns true if the tab of this control is shown
+    bool controlIsVisible(const std::string& controlName);
+
     void saveState();
     void restoreState();
     void restoreDefaultState();

@@ -421,6 +421,14 @@ void AuiLayout::focusControl(const std::string& controlName)
     // Focus matching controls in the property notebook
     _propertyNotebook->focusControl(controlName);
 
+    // Ensure the property panel is visible when focusing a tab
+    auto& propertyPane = _auiMgr.GetPane(PROPERTIES_PANEL);
+    if (!propertyPane.IsShown())
+    {
+        propertyPane.Show(true);
+        _auiMgr.Update();
+    }
+
     // Unset the focus of any wxPanels in floating windows
     for (auto p = _panes.begin(); p != _panes.end(); ++p)
     {
@@ -444,6 +452,46 @@ void AuiLayout::focusControl(const std::string& controlName)
     }
 }
 
+void AuiLayout::toggleControlInPropertyPanel(const std::string& controlName)
+{
+    // If the control is a property tab, make it visible
+    // If the notbeook is floating, toggling a visible tab also toggles the whole notebook
+    auto& propertyPane = _auiMgr.GetPane(PROPERTIES_PANEL);
+
+    if (propertyPane.IsFloating())
+    {
+        // Toggling a visible tab in the floating panel hides the whole notebook
+        if (propertyPane.IsShown() && _propertyNotebook->controlIsVisible(controlName))
+        {
+            propertyPane.Hide();
+            _auiMgr.Update();
+            return;
+        }
+
+        // Tab is not visible yet, focus it
+        _propertyNotebook->focusControl(controlName);
+
+        // Ensure the floating pane is visible
+        if (!propertyPane.IsShown())
+        {
+            propertyPane.Show(true);
+            _auiMgr.Update();
+        }
+    }
+    else // Property panel is docked
+    {
+        // Focus matching controls in the property notebook
+        _propertyNotebook->focusControl(controlName);
+
+        // Ensure the non-floating property panel is visible
+        if (!propertyPane.IsShown())
+        {
+            propertyPane.Show(true);
+            _auiMgr.Update();
+        }
+    }
+}
+
 void AuiLayout::toggleControl(const std::string& controlName)
 {
     // Check the default settings if there's a control
@@ -461,11 +509,11 @@ void AuiLayout::toggleControl(const std::string& controlName)
     }
 
     // Control exists, we can toggle
-    // If the control is a property tab, then just focus it
+
+    // Controls in the property panel receive special treatment on toggling
     if (_propertyNotebook->controlExists(controlName))
     {
-        // Focus matching controls in the property notebook
-        _propertyNotebook->focusControl(controlName);
+        toggleControlInPropertyPanel(controlName);
         return;
     }
 

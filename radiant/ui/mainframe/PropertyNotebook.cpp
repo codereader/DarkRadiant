@@ -299,6 +299,11 @@ bool PropertyNotebook::controlExists(const std::string& controlName)
     return findControlIndexByName(controlName) != -1;
 }
 
+bool PropertyNotebook::controlIsVisible(const std::string& controlName)
+{
+    return getSelectedControlName() == controlName;
+}
+
 void PropertyNotebook::focusControl(const std::string& controlName)
 {
     if (auto index = findControlIndexByName(controlName); index != -1)

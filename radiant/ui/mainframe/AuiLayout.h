@@ -70,6 +70,8 @@ private:
     void createPane(const std::string& controlName, const std::string& paneName,
         const std::function<void(wxAuiPaneInfo&)>& setupPane);
 
+    void toggleControlInPropertyPanel(const std::string& controlName);
+
     void onPaneClose(wxAuiManagerEvent& ev);
     void handlePaneClosed(wxAuiPaneInfo& paneInfo);
     void removeNonOrthoCenterPanes();
