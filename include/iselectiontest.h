@@ -271,6 +271,12 @@ public:
      */
     virtual void addIntersection(const SelectionIntersection& intersection) = 0;
 
+    // Returns true if no selectable has been chosen
+    virtual bool empty() const = 0;
+
+    // Iterate over every selectable in the pool
+    virtual void foreachSelectable(const std::function<void(ISelectable*)>& functor) = 0;
+
     /// Add a selectable object and immediately commit it with a null intersection
     void addWithNullIntersection(ISelectable& selectable)
     {

@@ -89,14 +89,14 @@ public:
         _currentSelectables.emplace(selectable, result);
     }
 
-    bool empty() const
+    bool empty() const override
     {
         return _entityPool.empty() && _primitivePool.empty();
     }
 
     // Visit each selectable, entities first, then primitives
-    void foreachSelectable(const std::function<void(ISelectable*)>& functor)
-    {
+    void foreachSelectable(const std::function<void(ISelectable*)>& functor) override
+    { 
         for (const auto& [_, selectable] : _entityPool)
         {
             functor(selectable);

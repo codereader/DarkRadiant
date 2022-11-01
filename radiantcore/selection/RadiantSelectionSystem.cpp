@@ -128,7 +128,6 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 {
     // The (temporary) storage pool
     SelectionPool selector;
-    SelectionPool sel2;
 
     switch(mode)
     {
@@ -144,52 +143,16 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 
         case SelectionMode::Primitive:
         {
-#if 1
-            // We have an orthoview, here, sorting entities before primitives
+            // Sort entities before primitives if required, by referencing the correct selector
             EntitiesFirstSelector sortedPool;
 
-            AnySelector anyTester(sortedPool, test);
-            GlobalSceneGraph().foreachVisibleNodeInVolume(view, anyTester);
+            auto& targetPool = !view.fill() && higherEntitySelectionPriority() ? 
+                static_cast<Selector&>(sortedPool) : selector;
 
-            //auto tester = createSceneSelectionTester(mode);
-            //tester->testSelectScene(view, test, selector);
+            auto tester = createSceneSelectionTester(mode);
+            tester->testSelectScene(view, test, targetPool);
 
-            sortedPool.foreachSelectable([&](ISelectable* s) { targetList.push_back(s); });
-#else
-            // Do we have a camera view (filled rendering?)
-            if (view.fill() || !higherEntitySelectionPriority())
-            {
-                // Test for any visible elements (primitives, entities), but don't select child primitives
-                AnySelector anyTester(selector, test);
-                GlobalSceneGraph().foreachVisibleNodeInVolume(view, anyTester);
-            }
-            else
-            {
-                // First, obtain all the selectable entities
-                EntitySelector entityTester(selector, test);
-                GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
-
-                // Now retrieve all the selectable primitives
-                PrimitiveSelector primitiveTester(sel2, test);
-                GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
-            }
-
-            // Add the first selection crop to the target vector
-            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
-
-            // Add the secondary crop to the vector (if it has any entries)
-            for (SelectionPool::const_iterator i = sel2.begin(); i != sel2.end(); ++i) {
-                // Check for duplicates
-                SelectablesList::iterator j;
-                for (j = targetList.begin(); j != targetList.end(); ++j) {
-                    if (*j == i->second) break;
-                }
-                // Insert if not yet in the list
-                if (j == targetList.end()) {
-                    targetList.push_back(i->second);
-                }
-            }
-#endif
+            targetPool.foreachSelectable([&](ISelectable* s) { targetList.push_back(s); });
         }
         break;
 
@@ -222,7 +185,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
         }
         break;
-    } // switch
+    }
 }
 
 /* greebo: This is true if nothing is selected (either in component mode or in primitive mode)
