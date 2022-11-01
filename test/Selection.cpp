@@ -798,32 +798,15 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointGroupPartMode)
     expectNodeSelectionStatus({ topBrush }, { funcStaticTop, funcStaticMiddle, funcStaticBottom, middleBrush, bottomBrush });
 }
 
-// Ortho: Move two brushes using the drag manipulator
-TEST_F(OrthoViewSelectionTest, DragManipulationByDirectHit)
+void performDragOperation(const Vector3& startPoint)
 {
-    loadMap("selection_test2.map");
-
-    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Primitive);
-    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
-
-    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
-    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
-    auto manipulator = GlobalSelectionSystem().getActiveManipulator();
-
-    // Select the brushes and attempt to drag-manipulate them
-    Node_setSelected(brush, true);
-    Node_setSelected(brush2, true);
-
-    auto originalAABB = brush->worldAABB();
-    auto originalAABB2 = brush2->worldAABB();
-
-    // Construct a selection test centered at the node's location
     render::View view(false);
-    algorithm::constructCenteredOrthoview(view, originalAABB.getOrigin());
+    algorithm::constructCenteredOrthoview(view, startPoint);
     auto test = algorithm::constructOrthoviewSelectionTest(view);
 
     auto pivot2World = GlobalSelectionSystem().getPivot2World();
+
+    auto manipulator = GlobalSelectionSystem().getActiveManipulator();
 
     // Hit the brush right at its center, this should perform a drag-selection
     manipulator->testSelect(test, pivot2World);
@@ -835,6 +818,28 @@ TEST_F(OrthoViewSelectionTest, DragManipulationByDirectHit)
     manipulator->getActiveComponent()->beginTransformation(pivot2World, view, Vector2(0, 0));
     manipulator->getActiveComponent()->transform(pivot2World, view, Vector2(0.5, 0.5), 0);
     GlobalSelectionSystem().onManipulationChanged();
+}
+
+// Ortho: Move two brushes using the drag manipulator
+TEST_F(OrthoViewSelectionTest, DragManipulateBrushesByDirectHitPrimitiveMode)
+{
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Primitive);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+
+    // Select the brushes and attempt to drag-manipulate them
+    Node_setSelected(brush, true);
+    Node_setSelected(brush2, true);
+
+    auto originalAABB = brush->worldAABB();
+    auto originalAABB2 = brush2->worldAABB();
+
+    performDragOperation(originalAABB.getOrigin());
 
     // The brush should have moved
     auto newAABB = brush->worldAABB();
@@ -849,8 +854,34 @@ TEST_F(OrthoViewSelectionTest, DragManipulationByDirectHit)
         newAABB2.getOrigin() - newAABB.getOrigin(), 0.01)) << "Relative brush position should not have changed";
 }
 
+TEST_F(OrthoViewSelectionTest, DragManipulateChildBrushByDirectHitPrimitiveMode)
+{
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Primitive);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto funcStaticMiddle = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_middle");
+    auto brush = algorithm::findFirstBrushWithMaterial(funcStaticMiddle, "textures/numbers/2");
+
+    auto originalEntityOrigin = Node_getEntity(funcStaticMiddle)->getKeyValue("origin");
+
+    // Select the child brush (like the user was tabbing through the func_static children)
+    Node_setSelected(brush, true);
+
+    auto originalAABB = brush->worldAABB();
+    performDragOperation(originalAABB.getOrigin());
+    auto newAABB = brush->worldAABB();
+
+    auto newEntityOrigin = Node_getEntity(funcStaticMiddle)->getKeyValue("origin");
+
+    EXPECT_FALSE(math::isNear(originalAABB.getOrigin(), newAABB.getOrigin(), 20)) << "Item should have moved";
+    EXPECT_TRUE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 0.01)) << "Item should not have changed form";
+    EXPECT_EQ(newEntityOrigin, originalEntityOrigin) << "Parent func_static should not have moved";
+}
+
 // Ortho: Resize two brushes using the drag manipulator
-TEST_F(OrthoViewSelectionTest, DragManipulationByPlane)
+TEST_F(OrthoViewSelectionTest, DragManipulateBrushesByPlanePrimitiveMode)
 {
     loadMap("selection_test2.map");
 
@@ -896,6 +927,54 @@ TEST_F(OrthoViewSelectionTest, DragManipulationByPlane)
     // The extents of the brush should have been changed
     EXPECT_FALSE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 20)) << "Brush should have changed form";
     EXPECT_FALSE(math::isNear(originalAABB2.getExtents(), newAABB2.getExtents(), 20)) << "Brush 2 should have changed form";
+}
+
+// Ortho: Move entities using the drag manipulator in entity mode
+TEST_F(OrthoViewSelectionTest, DragManipulateEntityByDirectHitEntityMode)
+{
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Entity);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto funcStaticMiddle = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_middle");
+
+    // Select the func_static_1 and attempt to drag-manipulate
+    Node_setSelected(funcStaticMiddle, true);
+
+    auto originalAABB = funcStaticMiddle->worldAABB();
+    performDragOperation(originalAABB.getOrigin());
+    auto newAABB = funcStaticMiddle->worldAABB();
+
+    EXPECT_FALSE(math::isNear(originalAABB.getOrigin(), newAABB.getOrigin(), 20)) << "Item should have moved";
+    EXPECT_TRUE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 0.01)) << "Item should not have changed form";
+}
+
+// Ortho: Move items using the drag manipulator in group part mode
+TEST_F(OrthoViewSelectionTest, DragManipulateChildBrushByDirectHitGroupPartMode)
+{
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::GroupPart);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto funcStaticMiddle = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_middle");
+    auto middleBrush = algorithm::findFirstBrushWithMaterial(funcStaticMiddle, "textures/numbers/2");
+
+    auto originalEntityOrigin = Node_getEntity(funcStaticMiddle)->getKeyValue("origin");
+
+    // Select the item and attempt to drag-manipulate
+    Node_setSelected(middleBrush, true);
+
+    auto originalAABB = middleBrush->worldAABB();
+    performDragOperation(originalAABB.getOrigin());
+    auto newAABB = middleBrush->worldAABB();
+    auto newEntityOrigin = Node_getEntity(funcStaticMiddle)->getKeyValue("origin");
+
+    EXPECT_FALSE(math::isNear(originalAABB.getOrigin(), newAABB.getOrigin(), 20)) << "Item should have moved";
+    EXPECT_TRUE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 0.01)) << "Item should not have changed form";
+    EXPECT_EQ(newEntityOrigin, originalEntityOrigin) << "Parent func_static should not have moved";
 }
 
 }
