@@ -68,20 +68,8 @@ void DragManipulator::testSelectPrimitiveMode(const VolumeTest& view, SelectionT
 {
 	SingleItemSelector itemSelector;
 
-	// First try to select entities (including func_* groups)
-	EntitySelector selectionTester(itemSelector, test);
-	GlobalSceneGraph().foreachVisibleNodeInVolume(view, selectionTester);
-
-	if (itemSelector.hasValidSelectable())
-	{
-		// Found a selectable entity
-		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
-		return;
-	}
-	
-	// Find all worldspawn primitives
-	PrimitiveSelector primitiveTester(itemSelector, test);
-	GlobalSceneGraph().foreachVisibleNodeInVolume(view, primitiveTester);
+    auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::Primitive);
+    tester->testSelectScene(view, test, itemSelector);
 
 	if (itemSelector.hasValidSelectable())
 	{
