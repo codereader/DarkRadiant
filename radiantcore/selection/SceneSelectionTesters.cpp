@@ -24,4 +24,14 @@ void MergeActionSelectionTester::testSelectScene(const VolumeTest& view, Selecti
     GlobalSceneGraph().foreachVisibleNodeInVolume(view, tester);
 }
 
+ComponentSelectionTester::ComponentSelectionTester(SelectionSystem& selectionSystem) :
+    _selectionSystem(selectionSystem)
+{}
+
+void ComponentSelectionTester::testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector)
+{
+    ComponentSelector selectionTester(selector, test, _selectionSystem.ComponentMode());
+    _selectionSystem.foreachSelected(selectionTester);
+}
+
 }

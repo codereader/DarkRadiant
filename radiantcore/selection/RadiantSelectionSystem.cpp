@@ -112,6 +112,8 @@ ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(Se
         return std::make_shared<GroupChildPrimitiveSelectionTester>();
     case SelectionMode::MergeAction:
         return std::make_shared<MergeActionSelectionTester>();
+    case SelectionMode::Component:
+        return std::make_shared<ComponentSelectionTester>(*this);
 
     default:
         throw std::invalid_argument("Selection Mode not supported yet");
@@ -119,7 +121,7 @@ ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(Se
 }
 
 void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
-    const VolumeTest& view, SelectionMode mode, ComponentSelectionMode componentMode)
+    const VolumeTest& view, SelectionMode mode)
 {
     // The (temporary) storage pool
     SelectionPool selector;
@@ -190,8 +192,8 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 
         case SelectionMode::Component:
         {
-            ComponentSelector selectionTester(selector, test, componentMode);
-            SelectionSystem::foreachSelected(selectionTester);
+            auto tester = createSceneSelectionTester(mode);
+            tester->testSelectScene(view, test, selector);
 
             std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
         }
@@ -638,7 +640,7 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
         }
     }
     else {
-        testSelectScene(candidates, test, test.getVolume(), getSelectionMode(), ComponentMode());
+        testSelectScene(candidates, test, test.getVolume(), getSelectionMode());
     }
 
     // Was the selection test successful (have we found anything to select)?
@@ -771,7 +773,7 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
     }
     else
     {
-        testSelectScene(candidates, test, test.getVolume(), getSelectionMode(), ComponentMode());
+        testSelectScene(candidates, test, test.getVolume(), getSelectionMode());
     }
 
     // Since toggling a selectable might trigger a group-selection
@@ -995,7 +997,7 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 	_pivot.initialise();
 
 	// Add manipulators
-	registerManipulator(std::make_shared<DragManipulator>(_pivot, *this));
+	registerManipulator(std::make_shared<DragManipulator>(_pivot, *this, *this));
 	registerManipulator(std::make_shared<ClipManipulator>());
 	registerManipulator(std::make_shared<TranslateManipulator>(_pivot, 2, 64.0f));
 	registerManipulator(std::make_shared<RotateManipulator>(_pivot, 8, 64.0f));

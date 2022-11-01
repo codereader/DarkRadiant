@@ -175,7 +175,7 @@ public:
 private:
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
-        const VolumeTest& view, SelectionMode mode, ComponentSelectionMode componentMode);
+        const VolumeTest& view, SelectionMode mode);
 
 	bool higherEntitySelectionPriority() const;
 

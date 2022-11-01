@@ -35,4 +35,19 @@ public:
     void testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector) override;
 };
 
+/**
+ * Tests components of selected scene elements
+ */
+class ComponentSelectionTester :
+    public ISceneSelectionTester
+{
+private:
+    SelectionSystem& _selectionSystem;
+
+public:
+    ComponentSelectionTester(SelectionSystem& selectionSystem);
+
+    void testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector) override;
+};
+
 }

@@ -34,6 +34,7 @@ class DragManipulator :
 {
 private:
 	ManipulationPivot& _pivot;
+    SelectionSystem& _selectionSystem;
     ISceneSelectionTesterFactory& _testerFactory;
 
 	// Resize component
@@ -49,7 +50,7 @@ private:
 	BasicSelectable _dragSelectable;
 
 public:
-	DragManipulator(ManipulationPivot& pivot, ISceneSelectionTesterFactory& factory);
+	DragManipulator(ManipulationPivot& pivot, SelectionSystem& selectionSystem, ISceneSelectionTesterFactory& factory);
 
 	Type getType() const override;
 	Component* getActiveComponent() override;

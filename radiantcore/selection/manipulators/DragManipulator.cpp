@@ -13,8 +13,9 @@ namespace selection
 
 const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
 
-DragManipulator::DragManipulator(ManipulationPivot& pivot, ISceneSelectionTesterFactory& factory) :
+DragManipulator::DragManipulator(ManipulationPivot& pivot, SelectionSystem& selectionSystem, ISceneSelectionTesterFactory& factory) :
     _pivot(pivot),
+    _selectionSystem(selectionSystem),
     _testerFactory(factory),
     _freeResizeComponent(_resizeTranslatable),
     _resizeModeActive(false),
@@ -37,11 +38,11 @@ void DragManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world
 	_resizeModeActive = false;
 
     // No drag manipulation in merge mode
-    if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::MergeAction) return;
+    if (_selectionSystem.getSelectionMode() == SelectionMode::MergeAction) return;
 
     SelectionPool selector;
 
-	switch (GlobalSelectionSystem().getSelectionMode())
+	switch (_selectionSystem.getSelectionMode())
 	{
 	case SelectionMode::Primitive:
 		testSelectPrimitiveMode(test.getVolume(), test, selector);
@@ -143,8 +144,8 @@ void DragManipulator::testSelectComponentMode(const VolumeTest& view, SelectionT
 {
 	BestSelector bestSelector;
 
-	ComponentSelector selectionTester(bestSelector, test, GlobalSelectionSystem().ComponentMode());
-	GlobalSelectionSystem().foreachSelected(selectionTester);
+    auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::Component);
+    tester->testSelectScene(view, test, bestSelector);
 
 	bool transientComponentSelection = registry::getValue<bool>(RKEY_TRANSIENT_COMPONENT_SELECTION);
 
@@ -154,7 +155,7 @@ void DragManipulator::testSelectComponentMode(const VolumeTest& view, SelectionT
 		// component will deselect all previously selected components beforehand
 		if (transientComponentSelection && !selectable->isSelected())
 		{
-			GlobalSelectionSystem().setSelectedAllComponents(false);
+			_selectionSystem.setSelectedAllComponents(false);
 		}
 
 		selector.addSelectable(SelectionIntersection(0, 0), selectable);
