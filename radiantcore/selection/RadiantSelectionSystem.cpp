@@ -30,7 +30,6 @@
 
 #include "SceneSelectionTesters.h"
 #include "command/ExecutionNotPossible.h"
-#include "selection/EntitiesFirstSelector.h"
 
 namespace selection
 {
@@ -126,38 +125,10 @@ ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(Se
 void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
     const VolumeTest& view, SelectionMode mode)
 {
-    // The (temporary) storage pool
-    SelectionPool selector;
+    auto tester = createSceneSelectionTester(mode);
+    tester->testSelectScene(view, test);
 
-    switch(mode)
-    {
-        case SelectionMode::Entity:
-        case SelectionMode::GroupPart:
-        case SelectionMode::Component:
-        case SelectionMode::MergeAction:
-        {
-            auto tester = createSceneSelectionTester(mode);
-            tester->testSelectScene(view, test, selector);
-
-            selector.foreachSelectable([&](ISelectable* s) { targetList.push_back(s); });
-        }
-        break;
-
-        case SelectionMode::Primitive:
-        {
-            // Sort entities before primitives if required, by referencing the correct selector
-            EntitiesFirstSelector sortedPool;
-
-            auto& targetPool = !view.fill() && higherEntitySelectionPriority() ? 
-                static_cast<Selector&>(sortedPool) : selector;
-
-            auto tester = createSceneSelectionTester(mode);
-            tester->testSelectScene(view, test, targetPool);
-
-            targetPool.foreachSelectable([&](ISelectable* s) { targetList.push_back(s); });
-        }
-        break;
-    }
+    tester->foreachSelectable([&](ISelectable* s) { targetList.push_back(s); });
 }
 
 bool RadiantSelectionSystem::nothingSelected() const

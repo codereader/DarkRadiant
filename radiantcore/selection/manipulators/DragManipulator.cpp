@@ -3,8 +3,6 @@
 #include "selection/SelectionPool.h"
 #include "selection/SelectionTestWalkers.h"
 #include "selection/algorithm/Planes.h"
-#include "selection/SingleItemSelector.h"
-#include "selection/BestSelector.h"
 
 #include "registry/registry.h"
 
@@ -12,6 +10,14 @@ namespace selection
 {
 
 const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
+
+namespace
+{
+    bool selectableIsSelected(ISelectable* selectable)
+    {
+        return selectable->isSelected();
+    }
+}
 
 DragManipulator::DragManipulator(ManipulationPivot& pivot, SelectionSystem& selectionSystem, ISceneSelectionTesterFactory& factory) :
     _pivot(pivot),
@@ -66,43 +72,39 @@ void DragManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world
 
 void DragManipulator::testSelectPrimitiveMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
-	SingleItemSelector itemSelector;
-
     auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::Primitive);
-    tester->testSelectScene(view, test, itemSelector);
+    tester->testSelectSceneWithFilter(view, test, selectableIsSelected);
 
-	if (itemSelector.hasValidSelectable())
-	{
-		// Found a selectable primitive
-		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
-		return;
-	}
+    if (tester->hasSelectables())
+    {
+        // Found a selectable primitive
+        selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+        return;
+    }
 
-	// Entities and worldspawn primitives failed, so check for group children too
-	// Find all group child primitives that are selectable
-	GroupChildPrimitiveSelector childPrimitiveTester(itemSelector, test);
-	GlobalSceneGraph().foreachVisibleNodeInVolume(view, childPrimitiveTester);
+    // Entities and worldspawn primitives failed, so check for group children too
+    // Find all group child primitives that are selectable
+    tester = _testerFactory.createSceneSelectionTester(SelectionMode::GroupPart);
+    tester->testSelectSceneWithFilter(view, test, selectableIsSelected);
 
-	if (itemSelector.hasValidSelectable())
-	{
-		// Found a selectable group child primitive
-		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
-		return;
-	}
+    if (tester->hasSelectables())
+    {
+        // Found a selectable group child primitive
+        selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+        return;
+    }
 
-	// all direct hits failed, check for drag-selectable faces
-	_resizeModeActive = algorithm::testSelectPlanes(selector, test);
+    // all direct hits failed, check for drag-selectable faces
+    _resizeModeActive = algorithm::testSelectPlanes(selector, test);
 }
 
 void DragManipulator::testSelectGroupPartMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
-	// Find all primitives that are selectable
-	SingleItemSelector itemSelector;
-
+	// Find all non-worldspawn child primitives that are selectable
     auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::GroupPart);
-    tester->testSelectScene(view, test, itemSelector);
+    tester->testSelectSceneWithFilter(view, test, selectableIsSelected);
 
-	if (itemSelector.hasValidSelectable())
+	if (tester->hasSelectables())
 	{
 		// Found a selectable primitive
 		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
@@ -115,14 +117,11 @@ void DragManipulator::testSelectGroupPartMode(const VolumeTest& view, SelectionT
 
 void DragManipulator::testSelectEntityMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
-	// Create a boolean selection pool (can have exactly one selectable or none)
-	SingleItemSelector itemSelector;
-
     auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::Entity);
-    tester->testSelectScene(view, test, itemSelector);
+    tester->testSelectSceneWithFilter(view, test, selectableIsSelected);
 
 	// Check, if an entity could be found
-	if (itemSelector.hasValidSelectable())
+	if (tester->hasSelectables())
 	{
 		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
 	}
@@ -130,25 +129,25 @@ void DragManipulator::testSelectEntityMode(const VolumeTest& view, SelectionTest
 
 void DragManipulator::testSelectComponentMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
-	BestSelector bestSelector;
+	//BestSelector bestSelector; // TODO?
 
     auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::Component);
-    tester->testSelectScene(view, test, bestSelector);
+    tester->testSelectSceneWithFilter(view, test, selectableIsSelected);
 
 	bool transientComponentSelection = registry::getValue<bool>(RKEY_TRANSIENT_COMPONENT_SELECTION);
 
-	for (ISelectable* selectable : bestSelector.getBestSelectables())
-	{
-		// greebo: For transient component selection, clicking an unselected
-		// component will deselect all previously selected components beforehand
-		if (transientComponentSelection && !selectable->isSelected())
-		{
-			_selectionSystem.setSelectedAllComponents(false);
-		}
+    tester->foreachSelectable([&](auto selectable)
+    {
+        // greebo: For transient component selection, clicking an unselected
+        // component will deselect all previously selected components beforehand
+        if (transientComponentSelection && !selectable->isSelected())
+        {
+            _selectionSystem.setSelectedAllComponents(false);
+        }
 
-		selector.addSelectable(SelectionIntersection(0, 0), selectable);
-		_dragSelectable.setSelected(true);
-	}
+        selector.addSelectable(SelectionIntersection(0, 0), selectable);
+        _dragSelectable.setSelected(true);
+    });
 }
 
 void DragManipulator::setSelected(bool select) 

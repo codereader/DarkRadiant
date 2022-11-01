@@ -352,8 +352,8 @@ namespace selection
  * some or all nodes of the scene for selection.
  *
  * All qualified scene nodes are tested for selection and
- * added to the given Selector instance (which in turn can
- * accept or reject the selectable based on its own logic).
+ * stored internally. Use the foreachSelectable() method
+ * to iterate over the selectables.
  */
 class ISceneSelectionTester
 {
@@ -362,9 +362,20 @@ public:
 
     virtual ~ISceneSelectionTester() {}
 
-    // Test all qualified nodes in the scene for selection
-    // and add the ones passing the test to the given selector.
-    virtual void testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector) = 0;
+    // Tests all qualified nodes in the scene for selection
+    // and stores the ones passing the test internally
+    virtual void testSelectScene(const VolumeTest& view, SelectionTest& test) = 0;
+
+    // Tests all qualified nodes in the scene for selection
+    // all passing selectables are stored internally if they pass the given predicate
+    virtual void testSelectSceneWithFilter(const VolumeTest& view, SelectionTest& test,
+        const std::function<bool(ISelectable*)>& predicate) = 0;
+
+    // Returns true if the tester found one or more selectables passing the test
+    virtual bool hasSelectables() const = 0;
+
+    // Iterates over the selectables that were passing the test
+    virtual void foreachSelectable(const std::function<void(ISelectable*)>& functor) = 0;
 };
 
 /**

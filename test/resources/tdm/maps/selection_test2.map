@@ -175,3 +175,11 @@ brushDef3
 }
 }
 }
+// entity 8
+{
+"classname" "light"
+"name" "light_1"
+"origin" "-168 -48 0"
+"light_center" "0 0 0"
+"light_radius" "160 144 320"
+}
