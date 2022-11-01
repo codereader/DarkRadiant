@@ -505,6 +505,20 @@ void performPointSelectionOnNodePosition(const scene::INodePtr& node, selection:
     GlobalSelectionSystem().selectPoint(test, modifier, false);
 }
 
+void expectNodeSelectionStatus(const std::vector<scene::INodePtr>& shouldBeSelected, 
+    const std::vector<scene::INodePtr>& shouldBeUnselected)
+{
+    for (const auto& node : shouldBeSelected)
+    {
+        EXPECT_TRUE(Node_isSelected(node)) << "Node " << node->name() << " should be selected";
+    }
+
+    for (const auto& node : shouldBeUnselected)
+    {
+        EXPECT_FALSE(Node_isSelected(node)) << "Node " << node->name() << " should be unselected";
+    }
+}
+
 // Ortho: Toggle worldspawn brush selection in primitive mode
 TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveMode)
 {
@@ -514,15 +528,13 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveMode)
     auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
     auto unrelatedBrush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
 
-    EXPECT_FALSE(Node_isSelected(brush)) << "Brush should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(unrelatedBrush)) << "Unrelated brush should be unselected at first";
+    expectNodeSelectionStatus({}, { brush, unrelatedBrush });
 
     performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
-    EXPECT_TRUE(Node_isSelected(brush)) << "Brush should be selected now";
-    EXPECT_FALSE(Node_isSelected(unrelatedBrush)) << "Unrelated brush should still be unselected";
+    expectNodeSelectionStatus({ brush  }, { unrelatedBrush });
 
     performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
-    EXPECT_FALSE(Node_isSelected(brush)) << "Brush should be unselected again";
+    expectNodeSelectionStatus({}, { brush, unrelatedBrush });
 }
 
 // Ortho: Toggle selection in primitive mode favours entities over brushes
@@ -540,16 +552,13 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveModeFavoursEntities)
     EXPECT_LT(funcStaticOrigin.z() + funcStatic->worldAABB().extents.z(), 
         originalBrushPosition.z() + brush->worldAABB().extents.z()) << "Entity should be located below the brush";
 
-    EXPECT_FALSE(Node_isSelected(brush)) << "Brush should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected at first";
+    expectNodeSelectionStatus({}, { brush, funcStatic });
 
     performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
-    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected now";
-    EXPECT_FALSE(Node_isSelected(brush)) << "Brush should still be unselected";
+    expectNodeSelectionStatus({ funcStatic  }, { brush });
 
     performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected again";
-    EXPECT_FALSE(Node_isSelected(brush)) << "Brush should still be unselected";
+    expectNodeSelectionStatus({}, { funcStatic, brush });
 }
 
 // Ortho: Replace selection in primitive mode, check that current selection is replaced
@@ -562,7 +571,7 @@ TEST_F(OrthoViewSelectionTest, ReplaceSelectPointPrimitiveMode)
     auto brush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
     auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
 
-    EXPECT_FALSE(Node_isSelected(brush2)) << "Brush 2 should be unselected at first";
+    expectNodeSelectionStatus({}, { brush1, brush2, funcStatic });
 
     // Select the func_static_1
     Node_setSelected(brush1, true);
@@ -570,9 +579,7 @@ TEST_F(OrthoViewSelectionTest, ReplaceSelectPointPrimitiveMode)
 
     // Run selection in replace mode, this should unselect the previous items
     performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eReplace);
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected now";
-    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should be unselected now";
-    EXPECT_TRUE(Node_isSelected(brush2)) << "Brush 2 should be selected now";
+    expectNodeSelectionStatus({ brush2  }, { brush1, funcStatic });
 }
 
 // Ortho: Cycle selection in primitive mode (brush 1 on top of brush 3 on top of a func_static)
@@ -581,37 +588,38 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointPrimitiveMode)
     loadMap("selection_test2.map");
 
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
-    auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
-    auto brush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
-    auto brush3 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/3");
+    auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_above_torches");
+    auto torch1 = algorithm::getEntityByName(GlobalMapModule().getRoot(), "torch1");
+    auto torch2 = algorithm::getEntityByName(GlobalMapModule().getRoot(), "torch2");
+    auto brush4 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/4");
+    auto patch4 = algorithm::findFirstPatchWithMaterial(worldspawn, "textures/numbers/4");
 
-    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected at first";
+    // Everything should be deselected
+    expectNodeSelectionStatus({}, { brush4, patch4, funcStatic, torch1, torch2 });
 
     // First selection in replace mode should select the func_static, since entities are favoured
-    performPointSelectionOnNodePosition(brush1, selection::SelectionSystem::eReplace);
-    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected now";
-    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should still be unselected";
-    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should still be unselected";
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eReplace);
+    expectNodeSelectionStatus({ funcStatic }, { brush4, patch4, torch1, torch2 });
 
-    // Second cycle should have the topmost brush selected
-    performPointSelectionOnNodePosition(brush1, selection::SelectionSystem::eCycle);
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected again";
-    EXPECT_TRUE(Node_isSelected(brush1)) << "Brush 1 should be selected now";
-    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should still be unselected";
+    // Second cycle should have the next entity selected
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    expectNodeSelectionStatus({ torch1 }, { brush4, patch4, funcStatic, torch2 });
 
     // Third cycle should select the brush in between the func_static and brush 1
-    performPointSelectionOnNodePosition(brush1, selection::SelectionSystem::eCycle);
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should still be unselected";
-    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should be unselected";
-    EXPECT_TRUE(Node_isSelected(brush3)) << "Brush 3 should be selected now";
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    expectNodeSelectionStatus({ torch2 }, { brush4, patch4, funcStatic, torch1 });
 
-    // Fourth cycle should select func_static_1 again
-    performPointSelectionOnNodePosition(brush1, selection::SelectionSystem::eCycle);
-    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected again";
-    EXPECT_FALSE(Node_isSelected(brush1)) << "Brush 1 should be unselected again";
-    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should be unselected again";
+    // Fourth cycle should select topmost primitive
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    expectNodeSelectionStatus({ brush4 }, { patch4, funcStatic, torch1, torch2 });
+
+    // Fifth cycle should select the second primitive
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    expectNodeSelectionStatus({ patch4 }, { brush4, funcStatic, torch1, torch2 });
+
+    // Sixth cycle should select the first entity again
+    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    expectNodeSelectionStatus({ funcStatic }, { brush4, patch4, torch1, torch2 });
 }
 
 // Cycle select is not changing the selection if there's only one selectable in the pool
@@ -650,24 +658,15 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointEntityMode)
     auto brush4 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/4");
     auto patch4 = algorithm::findFirstPatchWithMaterial(worldspawn, "textures/numbers/4");
 
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(torch1)) << "torch1 should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(brush4)) << "brush4 should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(patch4)) << "patch4 should be unselected at first";
+    expectNodeSelectionStatus({}, { funcStatic, torch1, brush4, patch4 });
 
     // Since the func_static is located above the torch, it should get selected first
     // The worldspawn primitives should be ignored
     performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
-    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static should be selected now";
-    EXPECT_FALSE(Node_isSelected(torch1)) << "torch1 should still be unselected";
-    EXPECT_FALSE(Node_isSelected(brush4)) << "brush4 should still be unselected";
-    EXPECT_FALSE(Node_isSelected(patch4)) << "patch4 should still be unselected";
+    expectNodeSelectionStatus({ funcStatic  }, { torch1, brush4, patch4 });
 
     performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static should be unselected again";
-    EXPECT_FALSE(Node_isSelected(torch1)) << "torch1 should still be unselected";
-    EXPECT_FALSE(Node_isSelected(brush4)) << "brush4 should still be unselected";
-    EXPECT_FALSE(Node_isSelected(patch4)) << "patch4 should still be unselected";
+    expectNodeSelectionStatus({}, { funcStatic, torch1, brush4, patch4 });
 }
 
 // Ortho: Cycle point selection in entity mode
@@ -682,33 +681,23 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointEntityMode)
     auto torch1 = algorithm::getEntityByName(GlobalMapModule().getRoot(), "torch1");
     auto torch2 = algorithm::getEntityByName(GlobalMapModule().getRoot(), "torch2");
 
-    EXPECT_FALSE(Node_isSelected(torch1)) << "Torch 1 should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(torch2)) << "Torch 2 should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "funcStatic should be unselected at first";
+    expectNodeSelectionStatus({}, { funcStatic, torch1, torch2 });
 
     // First selection in replace mode should select the func_static, since entities are favoured
     performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eReplace);
-    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected now";
-    EXPECT_FALSE(Node_isSelected(torch1)) << "Torch 1 should still be unselected";
-    EXPECT_FALSE(Node_isSelected(torch2)) << "Torch 2 should still be unselected";
+    expectNodeSelectionStatus({ funcStatic }, { torch1, torch2 });
 
     // Second cycle should have the topmost torch selected
     performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected again";
-    EXPECT_TRUE(Node_isSelected(torch1)) << "Torch 1 should be selected now";
-    EXPECT_FALSE(Node_isSelected(torch2)) << "Torch 2 should still be unselected";
+    expectNodeSelectionStatus({ torch1 }, { funcStatic, torch2 });
 
     // Third cycle should have the second torch selected
     performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should still be unselected";
-    EXPECT_FALSE(Node_isSelected(torch1)) << "Torch 1 should be unselected again";
-    EXPECT_TRUE(Node_isSelected(torch2)) << "Torch 2 should be selected now";
+    expectNodeSelectionStatus({ torch2 }, { torch1, funcStatic });
 
     // Fourth cycle should select func_static again
     performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
-    EXPECT_TRUE(Node_isSelected(funcStatic)) << "func_static_1 should be selected again";
-    EXPECT_FALSE(Node_isSelected(torch1)) << "Torch 1 should be unselected";
-    EXPECT_FALSE(Node_isSelected(torch2)) << "Torch 2 should be unselected";
+    expectNodeSelectionStatus({ funcStatic }, { torch1, torch2 });
 }
 
 // Ortho: Replace selection in entity mode, check that current selection is replaced
@@ -722,15 +711,14 @@ TEST_F(OrthoViewSelectionTest, ReplaceSelectPointEntityMode)
     auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
     auto funcStaticAboveTorches = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_above_torches");
 
-    EXPECT_FALSE(Node_isSelected(funcStaticAboveTorches)) << "funcStaticAboveTorches should be unselected at first";
+    expectNodeSelectionStatus({}, { funcStaticAboveTorches, funcStatic });
 
     // Select the func_static_1
     Node_setSelected(funcStatic, true);
 
     // Run selection in replace mode, this should unselect the previous items
     performPointSelectionOnNodePosition(funcStaticAboveTorches, selection::SelectionSystem::eReplace);
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static_1 should be unselected now";
-    EXPECT_TRUE(Node_isSelected(funcStaticAboveTorches)) << "funcStaticAboveTorches should be selected now";
+    expectNodeSelectionStatus({ funcStaticAboveTorches }, { funcStatic });
 }
 
 TEST_F(OrthoViewSelectionTest, ToggleSelectPointGroupPartMode)
@@ -746,21 +734,14 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointGroupPartMode)
     auto funcStatic2Brush = algorithm::findFirstBrushWithMaterial(funcStatic2, "textures/numbers/1");
     auto torch1 = algorithm::getEntityByName(GlobalMapModule().getRoot(), "torch1");
 
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(torch1)) << "torch1 should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(funcStaticBrush)) << "funcStaticBrush should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(funcStatic2Brush)) << "funcStatic2Brush should be unselected at first";
+    expectNodeSelectionStatus({}, { funcStatic, funcStatic2, funcStaticBrush, funcStatic2Brush, torch1 });
 
     // The torch sits below the func_static_above_torches, only their child brush will be selected
     performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
-    EXPECT_TRUE(Node_isSelected(funcStatic2Brush)) << "The child brush should be selected now";
-    EXPECT_FALSE(Node_isSelected(funcStatic2)) << "The entity itself should not be selected";
-    EXPECT_FALSE(Node_isSelected(torch1)) << "torch1 should still be unselected";
+    expectNodeSelectionStatus({ funcStatic2Brush }, { funcStatic, funcStatic2, funcStaticBrush, torch1 });
 
     performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
-    EXPECT_FALSE(Node_isSelected(funcStatic2Brush)) << "The child brush should be unselected again";
-    EXPECT_FALSE(Node_isSelected(funcStatic2)) << "The entity itself should not be selected";
-    EXPECT_FALSE(Node_isSelected(torch1)) << "torch1 should still be unselected";
+    expectNodeSelectionStatus({}, { funcStatic, funcStatic2, funcStaticBrush, funcStatic2Brush, torch1 });
 }
 
 TEST_F(OrthoViewSelectionTest, ReplaceSelectPointGroupPartMode)
@@ -775,16 +756,13 @@ TEST_F(OrthoViewSelectionTest, ReplaceSelectPointGroupPartMode)
     auto funcStaticBrush = algorithm::findFirstBrushWithMaterial(funcStatic, "textures/numbers/1");
     auto funcStatic2Brush = algorithm::findFirstBrushWithMaterial(funcStatic2, "textures/numbers/1");
 
-    EXPECT_FALSE(Node_isSelected(funcStatic)) << "func_static should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(funcStaticBrush)) << "funcStaticBrush should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(funcStatic2Brush)) << "funcStatic2Brush should be unselected at first";
+    expectNodeSelectionStatus({}, { funcStatic, funcStatic2, funcStaticBrush, funcStatic2Brush });
 
     Node_setSelected(funcStatic2Brush, true);
 
     // Select the other child primitive of the other func_static, it should replace the selection
     performPointSelectionOnNodePosition(funcStatic, selection::SelectionSystem::eReplace);
-    EXPECT_TRUE(Node_isSelected(funcStaticBrush)) << "The new child brush should be selected now";
-    EXPECT_FALSE(Node_isSelected(funcStatic2Brush)) << "The other child brush should not be selected";
+    expectNodeSelectionStatus({ funcStaticBrush }, { funcStatic, funcStatic2, funcStatic2Brush });
 }
 
 TEST_F(OrthoViewSelectionTest, CycleSelectPointGroupPartMode)
@@ -800,33 +778,24 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointGroupPartMode)
     auto middleBrush = algorithm::findFirstBrushWithMaterial(funcStaticMiddle, "textures/numbers/2");
     auto bottomBrush = algorithm::findFirstBrushWithMaterial(funcStaticBottom, "textures/numbers/3");
 
-    EXPECT_FALSE(Node_isSelected(topBrush)) << "top brush should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(middleBrush)) << "middle brush should be unselected at first";
-    EXPECT_FALSE(Node_isSelected(bottomBrush)) << "bottom brush should be unselected at first";
+    // Everything should be unselected at first
+    expectNodeSelectionStatus({}, { funcStaticTop, funcStaticMiddle, funcStaticBottom, topBrush, middleBrush, bottomBrush });
 
     // First selection in replace mode should select the top brush
     performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eReplace);
-    EXPECT_TRUE(Node_isSelected(topBrush)) << "top brush should be selected now";
-    EXPECT_FALSE(Node_isSelected(middleBrush)) << "middle brush should still be unselected";
-    EXPECT_FALSE(Node_isSelected(bottomBrush)) << "bottom brush should still be unselected";
+    expectNodeSelectionStatus({ topBrush }, { funcStaticTop, funcStaticMiddle, funcStaticBottom, middleBrush, bottomBrush });
 
     // Second cycle should have the middle brush selected
     performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eCycle);
-    EXPECT_FALSE(Node_isSelected(topBrush)) << "top brush should be unselected again";
-    EXPECT_TRUE(Node_isSelected(middleBrush)) << "middle brush should be selected now";
-    EXPECT_FALSE(Node_isSelected(bottomBrush)) << "bottom brush should still be unselected";
+    expectNodeSelectionStatus({ middleBrush }, { funcStaticTop, funcStaticMiddle, funcStaticBottom, topBrush, bottomBrush });
 
     // Third cycle should have the bottom brush selected
     performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eCycle);
-    EXPECT_FALSE(Node_isSelected(topBrush)) << "top brush should still be unselected";
-    EXPECT_FALSE(Node_isSelected(middleBrush)) << "middle brush should be unselected again";
-    EXPECT_TRUE(Node_isSelected(bottomBrush)) << "bottom brush should be selected now";
+    expectNodeSelectionStatus({ bottomBrush }, { funcStaticTop, funcStaticMiddle, funcStaticBottom, topBrush, middleBrush });
 
     // Fourth cycle should select the top brush again
     performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eCycle);
-    EXPECT_TRUE(Node_isSelected(topBrush)) << "top brush should be selected again";
-    EXPECT_FALSE(Node_isSelected(middleBrush)) << "middle brush should be unselected";
-    EXPECT_FALSE(Node_isSelected(bottomBrush)) << "bottom brush should be unselected";
+    expectNodeSelectionStatus({ topBrush }, { funcStaticTop, funcStaticMiddle, funcStaticBottom, middleBrush, bottomBrush });
 }
 
 // Ortho: Move two brushes using the drag manipulator
