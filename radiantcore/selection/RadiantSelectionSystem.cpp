@@ -132,12 +132,14 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
     switch(mode)
     {
         case SelectionMode::Entity:
+        case SelectionMode::GroupPart:
+        case SelectionMode::Component:
+        case SelectionMode::MergeAction:
         {
-            // Instantiate a walker class specialised for selecting entities
             auto tester = createSceneSelectionTester(mode);
             tester->testSelectScene(view, test, selector);
 
-            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
+            selector.foreachSelectable([&](ISelectable* s) { targetList.push_back(s); });
         }
         break;
 
@@ -155,41 +157,9 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             targetPool.foreachSelectable([&](ISelectable* s) { targetList.push_back(s); });
         }
         break;
-
-        case SelectionMode::GroupPart:
-        {
-            // Retrieve all the selectable primitives of group nodes
-            auto tester = createSceneSelectionTester(mode);
-            tester->testSelectScene(view, test, selector);
-
-            // Add the selection crop to the target vector
-            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
-        }
-        break;
-
-        case SelectionMode::Component:
-        {
-            auto tester = createSceneSelectionTester(mode);
-            tester->testSelectScene(view, test, selector);
-
-            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
-        }
-        break;
-
-        case SelectionMode::MergeAction:
-        {
-            auto tester = createSceneSelectionTester(mode);
-            tester->testSelectScene(view, test, selector);
-
-            // Add the selection crop to the target vector
-            std::for_each(selector.begin(), selector.end(), [&](const auto& p) { targetList.push_back(p.second); });
-        }
-        break;
     }
 }
 
-/* greebo: This is true if nothing is selected (either in component mode or in primitive mode)
- */
 bool RadiantSelectionSystem::nothingSelected() const
 {
     return (getSelectionMode() == SelectionMode::Component && _countComponent == 0) ||
