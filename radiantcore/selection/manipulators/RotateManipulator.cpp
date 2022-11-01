@@ -306,7 +306,7 @@ bool RotateManipulator::isSelected() const
 void RotateManipulator::rotate(const Quaternion& rotation)
 {
 	// Perform the rotation according to the current mode
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::Component)
 	{
 		GlobalSelectionSystem().foreachSelectedComponent(
 			RotateComponentSelected(rotation, _pivot.getVector3()));

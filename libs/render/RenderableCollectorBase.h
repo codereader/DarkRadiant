@@ -117,7 +117,7 @@ public:
 
         if (highlightFlags & Renderable::Highlight::Selected)
         {
-            if (GlobalSelectionSystem().Mode() != selection::SelectionSystem::eComponent)
+            if (GlobalSelectionSystem().getSelectionMode() != selection::SelectionMode::Component)
             {
                 setHighlightFlag(Highlight::Faces, true);
             }

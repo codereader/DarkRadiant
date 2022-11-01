@@ -39,7 +39,7 @@ namespace selection
 RadiantSelectionSystem::RadiantSelectionSystem() :
     _requestWorkZoneRecalculation(true),
     _defaultManipulatorType(IManipulator::Drag),
-    _mode(ePrimitive),
+    _mode(SelectionMode::Primitive),
     _componentMode(ComponentSelectionMode::Default),
     _countPrimitive(0),
     _countComponent(0),
@@ -102,15 +102,15 @@ void RadiantSelectionSystem::toggleSelectionFocus()
     rMessage() << "Activated selection focus mode, got " << _selectionFocusPool.size() << " selectables in the pool" << std::endl;
 }
 
-ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(EMode mode)
+ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(SelectionMode mode)
 {
     switch (mode)
     {
-    case eEntity:
+    case SelectionMode::Entity:
         return std::make_shared<EntitySelectionTester>();
-    case eGroupPart:
+    case SelectionMode::GroupPart:
         return std::make_shared<GroupChildPrimitiveSelectionTester>();
-    case eMergeAction:
+    case SelectionMode::MergeAction:
         return std::make_shared<MergeActionSelectionTester>();
 
     default:
@@ -119,7 +119,7 @@ ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(EM
 }
 
 void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, SelectionTest& test,
-    const VolumeTest& view, EMode mode, ComponentSelectionMode componentMode)
+    const VolumeTest& view, SelectionMode mode, ComponentSelectionMode componentMode)
 {
     // The (temporary) storage pool
     SelectionPool selector;
@@ -127,7 +127,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 
     switch(mode)
     {
-        case eEntity:
+        case SelectionMode::Entity:
         {
             // Instantiate a walker class specialised for selecting entities
             auto tester = createSceneSelectionTester(mode);
@@ -137,7 +137,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
         }
         break;
 
-        case ePrimitive:
+        case SelectionMode::Primitive:
         {
             // Do we have a camera view (filled rendering?)
             if (view.fill() || !higherEntitySelectionPriority())
@@ -177,7 +177,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
         }
         break;
 
-        case eGroupPart:
+        case SelectionMode::GroupPart:
         {
             // Retrieve all the selectable primitives of group nodes
             auto tester = createSceneSelectionTester(mode);
@@ -188,7 +188,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
         }
         break;
 
-        case eComponent:
+        case SelectionMode::Component:
         {
             ComponentSelector selectionTester(selector, test, componentMode);
             SelectionSystem::foreachSelected(selectionTester);
@@ -197,7 +197,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
         }
         break;
 
-        case eMergeAction:
+        case SelectionMode::MergeAction:
         {
             auto tester = createSceneSelectionTester(mode);
             tester->testSelectScene(view, test, selector);
@@ -213,9 +213,9 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
  */
 bool RadiantSelectionSystem::nothingSelected() const
 {
-    return (Mode() == eComponent && _countComponent == 0) ||
-           (Mode() == ePrimitive && _countPrimitive == 0) ||
-           (Mode() == eGroupPart && _countPrimitive == 0);
+    return (getSelectionMode() == SelectionMode::Component && _countComponent == 0) ||
+           (getSelectionMode() == SelectionMode::Primitive && _countPrimitive == 0) ||
+           (getSelectionMode() == SelectionMode::GroupPart && _countPrimitive == 0);
 }
 
 void RadiantSelectionSystem::pivotChanged()
@@ -233,8 +233,7 @@ bool RadiantSelectionSystem::higherEntitySelectionPriority() const
     return registry::getValue<bool>(RKEY_HIGHER_ENTITY_PRIORITY);
 }
 
-// Sets the current selection mode (Entity, Component or Primitive)
-void RadiantSelectionSystem::SetMode(SelectionSystem::EMode mode)
+void RadiantSelectionSystem::setSelectionMode(SelectionMode mode)
 {
     // Only change something if the mode has actually changed
     if (_mode != mode)
@@ -246,8 +245,8 @@ void RadiantSelectionSystem::SetMode(SelectionSystem::EMode mode)
     }
 }
 
-// returns the currently active mode
-SelectionSystem::EMode RadiantSelectionSystem::Mode() const {
+SelectionMode RadiantSelectionSystem::getSelectionMode() const
+{
     return _mode;
 }
 
@@ -268,7 +267,7 @@ ComponentSelectionMode RadiantSelectionSystem::ComponentMode() const
     return _componentMode;
 }
 
-sigc::signal<void, SelectionSystem::EMode>& RadiantSelectionSystem::signal_selectionModeChanged()
+sigc::signal<void, SelectionMode>& RadiantSelectionSystem::signal_selectionModeChanged()
 {
     return _sigSelectionModeChanged;
 }
@@ -602,7 +601,7 @@ IFace& RadiantSelectionSystem::getSingleSelectedFace()
 
 // Hub function for "deselect all", this passes the deselect call to the according functions
 void RadiantSelectionSystem::deselectAll() {
-    if (Mode() == eComponent) {
+    if (getSelectionMode() == SelectionMode::Component) {
         setSelectedAllComponents(false);
     }
     else {
@@ -639,7 +638,7 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
         }
     }
     else {
-        testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
+        testSelectScene(candidates, test, test.getVolume(), getSelectionMode(), ComponentMode());
     }
 
     // Was the selection test successful (have we found anything to select)?
@@ -772,7 +771,7 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
     }
     else
     {
-        testSelectScene(candidates, test, test.getVolume(), Mode(), ComponentMode());
+        testSelectScene(candidates, test, test.getVolume(), getSelectionMode(), ComponentMode());
     }
 
     // Since toggling a selectable might trigger a group-selection
@@ -828,8 +827,8 @@ void RadiantSelectionSystem::onManipulationEnd()
     assert(activeManipulator);
 
     // greebo: Deselect all faces if we are in brush and drag mode
-    if ((Mode() == SelectionSystem::ePrimitive || Mode() == SelectionSystem::eGroupPart) &&
-        activeManipulator->getType() == selection::IManipulator::Drag)
+    if ((getSelectionMode() == SelectionMode::Primitive || getSelectionMode() == SelectionMode::GroupPart) &&
+        activeManipulator->getType() == IManipulator::Drag)
     {
         SelectAllComponentWalker faceSelector(false, ComponentSelectionMode::Face);
         GlobalSceneGraph().root()->traverse(faceSelector);
@@ -884,7 +883,7 @@ void RadiantSelectionSystem::onManipulationCancelled()
     });
 
     // greebo: Deselect all faces if we are in brush and drag mode
-    if (Mode() == SelectionSystem::ePrimitive && activeManipulator->getType() == selection::IManipulator::Drag)
+    if (getSelectionMode() == SelectionMode::Primitive && activeManipulator->getType() == IManipulator::Drag)
     {
         SelectAllComponentWalker faceSelector(false, ComponentSelectionMode::Face);
         GlobalSceneGraph().root()->traverse(faceSelector);
@@ -1093,7 +1092,7 @@ void RadiantSelectionSystem::checkComponentModeSelectionMode(const ISelectable& 
 {
 	// This seems to be a fail-safe method, to detect situations where component mode is still
 	// active without any primitive selected - in which case the method exits component mode.
-	if (Mode() == eComponent && countSelected() == 0)
+	if (getSelectionMode() == SelectionMode::Component && countSelected() == 0)
 	{
 		activateDefaultMode();
 		onComponentModeChanged();
@@ -1228,7 +1227,7 @@ void RadiantSelectionSystem::toggleManipulatorMode(IManipulator::Type type)
 
 void RadiantSelectionSystem::activateDefaultMode()
 {
-	SetMode(ePrimitive);
+	setSelectionMode(SelectionMode::Primitive);
 	SetComponentMode(ComponentSelectionMode::Default);
 
 	SceneChangeNotify();
@@ -1236,7 +1235,7 @@ void RadiantSelectionSystem::activateDefaultMode()
 
 void RadiantSelectionSystem::toggleComponentMode(ComponentSelectionMode mode)
 {
-	if (Mode() == eComponent && ComponentMode() == mode)
+	if (getSelectionMode() == SelectionMode::Component && ComponentMode() == mode)
 	{
 		// De-select all the selected components before switching back
 		setSelectedAllComponents(false);
@@ -1249,7 +1248,7 @@ void RadiantSelectionSystem::toggleComponentMode(ComponentSelectionMode mode)
 			toggleManipulatorMode(_defaultManipulatorType);
 		}
 
-		SetMode(eComponent);
+		setSelectionMode(SelectionMode::Component);
 		SetComponentMode(mode);
 	}
 
@@ -1301,13 +1300,13 @@ void RadiantSelectionSystem::toggleComponentModeCmd(const cmd::ArgumentList& arg
 
 void RadiantSelectionSystem::toggleEntityMode(const cmd::ArgumentList& args)
 {
-	if (Mode() == eEntity)
+	if (getSelectionMode() == SelectionMode::Entity)
 	{
 		activateDefaultMode();
 	}
 	else
 	{
-		SetMode(eEntity);
+		setSelectionMode(SelectionMode::Entity);
 		SetComponentMode(ComponentSelectionMode::Default);
 	}
 
@@ -1317,7 +1316,7 @@ void RadiantSelectionSystem::toggleEntityMode(const cmd::ArgumentList& args)
 
 void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
 {
-	if (Mode() == eGroupPart)
+	if (getSelectionMode() == SelectionMode::GroupPart)
 	{
 		activateDefaultMode();
 	}
@@ -1351,7 +1350,7 @@ void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
             });
         });
 
-		SetMode(eGroupPart);
+		setSelectionMode(SelectionMode::GroupPart);
 		SetComponentMode(ComponentSelectionMode::Default);
 	}
 
@@ -1361,9 +1360,9 @@ void RadiantSelectionSystem::toggleGroupPartMode(const cmd::ArgumentList& args)
 
 void RadiantSelectionSystem::toggleMergeActionMode(const cmd::ArgumentList& args)
 {
-    auto oldMode = Mode();
+    auto oldMode = getSelectionMode();
 
-    if (Mode() == eMergeAction)
+    if (getSelectionMode() == SelectionMode::MergeAction)
     {
         activateDefaultMode();
     }
@@ -1374,11 +1373,11 @@ void RadiantSelectionSystem::toggleMergeActionMode(const cmd::ArgumentList& args
         setSelectedAll(false);
         setSelectedAllComponents(false);
 
-        SetMode(eMergeAction);
+        setSelectionMode(SelectionMode::MergeAction);
         SetComponentMode(ComponentSelectionMode::Default);
     }
 
-    if (oldMode != Mode())
+    if (oldMode != getSelectionMode())
     {
         onManipulatorModeChanged();
         onComponentModeChanged();
@@ -1414,7 +1413,7 @@ void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
         return; // already handled by other systems
     }
 
-	if (Mode() == eComponent)
+	if (getSelectionMode() == SelectionMode::Component)
 	{
 		if (countSelectedComponents() != 0)
 		{

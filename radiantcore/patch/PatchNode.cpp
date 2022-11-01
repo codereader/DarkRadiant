@@ -383,7 +383,7 @@ void PatchNode::onPreRender(const VolumeTest& volume)
 
 void PatchNode::renderHighlights(IRenderableCollector& collector, const VolumeTest& volume)
 {
-    if (GlobalSelectionSystem().Mode() != selection::SelectionSystem::eComponent)
+    if (GlobalSelectionSystem().getSelectionMode() != selection::SelectionMode::Component)
     {
         // The coloured selection overlay should use the same triangulated surface to avoid z fighting
         collector.setHighlightFlag(IRenderableCollector::Highlight::Faces, true);

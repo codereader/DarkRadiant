@@ -103,7 +103,7 @@ inline int findAndReplaceShader(const std::string& find, const std::string& repl
 
 	if (selectedOnly)
 	{
-		if (GlobalSelectionSystem().Mode() != selection::SelectionSystem::eComponent)
+		if (GlobalSelectionSystem().getSelectionMode() != selection::SelectionMode::Component)
 		{
 			// Find & replace all the brush and patch shaders
 			GlobalSelectionSystem().foreachFace(std::ref(replacer));

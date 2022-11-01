@@ -374,7 +374,7 @@ public:
      * Returns an instance of a selection tester suitable for testing
      * scene nodes according to the given purpose/selection mode.
      */
-    virtual ISceneSelectionTester::Ptr createSceneSelectionTester(SelectionSystem::EMode mode) = 0;
+    virtual ISceneSelectionTester::Ptr createSceneSelectionTester(SelectionMode mode) = 0;
 };
 
 } // namespace

@@ -192,8 +192,8 @@ void appendCurveControlPoint(const cmd::ArgumentList& args)
 
 void removeCurveControlPoints(const cmd::ArgumentList& args)
 {
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
-		GlobalSelectionSystem().ComponentMode() != selection::ComponentSelectionMode::Vertex)
+	if (GlobalSelectionSystem().getSelectionMode() != SelectionMode::Component ||
+		GlobalSelectionSystem().ComponentMode() != ComponentSelectionMode::Vertex)
 	{
 		throw cmd::ExecutionNotPossible(
 			_("Can't remove curve points - must be in vertex editing mode.")
@@ -222,8 +222,8 @@ void removeCurveControlPoints(const cmd::ArgumentList& args)
 
 void insertCurveControlPoints(const cmd::ArgumentList& args)
 {
-	if (GlobalSelectionSystem().Mode() != SelectionSystem::eComponent ||
-		GlobalSelectionSystem().ComponentMode() != selection::ComponentSelectionMode::Vertex)
+	if (GlobalSelectionSystem().getSelectionMode() != SelectionMode::Component ||
+		GlobalSelectionSystem().ComponentMode() != ComponentSelectionMode::Vertex)
 	{
 		throw cmd::ExecutionNotPossible(
 			_("Can't insert curve points - must be in vertex editing mode.")

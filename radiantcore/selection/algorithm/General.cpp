@@ -306,10 +306,10 @@ class InvertSelectionWalker :
 	public scene::NodeVisitor
 {
 private:
-	SelectionSystem::EMode _mode;
+    SelectionMode _mode;
 
 public:
-	InvertSelectionWalker(SelectionSystem::EMode mode) :
+	InvertSelectionWalker(SelectionMode mode) :
 		_mode(mode)
 	{}
 
@@ -327,28 +327,28 @@ public:
 		{
 			switch (_mode)
 			{
-				case SelectionSystem::eEntity:
+				case SelectionMode::Entity:
 					// Only consider non-worldspawn entities
 					if (entity != nullptr && !entity->isWorldspawn())
 					{
 						selectable->setSelected(!selectable->isSelected());
 					}
 					break;
-				case SelectionSystem::ePrimitive:
+				case SelectionMode::Primitive:
 					// Never select the worldspawn entity
 					if (entity == nullptr || !entity->isWorldspawn())
 					{
 						selectable->setSelected(!selectable->isSelected());
 					}
 					break;
-				case SelectionSystem::eGroupPart:
+				case SelectionMode::GroupPart:
 					// All child primitives can be selected (worldspawn entity is filtered out)
 					if (entity == nullptr && Node_isEntity(node->getParent()))
 					{
 						selectable->setSelected(!selectable->isSelected());
 					}
 					break;
-				case SelectionSystem::eComponent:
+				case SelectionMode::Component:
 					break; // not handled here
 			}
 		}
@@ -356,12 +356,12 @@ public:
 		// Determine whether we want to traverse child objects of entities
 		if (entity != nullptr)
 		{
-			if (_mode == SelectionSystem::eGroupPart)
+			if (_mode == SelectionMode::GroupPart)
 			{
 				// In group part mode, we want to traverse all entities but worldspawn
 				return !entity->isWorldspawn();
 			}
-			else if (_mode == SelectionSystem::eEntity)
+			else if (_mode == SelectionMode::Entity)
 			{
 				// In Entity selection mode, we don't need to traverse entity subgraphs
 				// as we only want the parent entity
@@ -432,14 +432,14 @@ public:
 
 void invertSelection(const cmd::ArgumentList& args)
 {
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::Component)
 	{
 		InvertComponentSelectionWalker walker(GlobalSelectionSystem().ComponentMode());
 		GlobalSceneGraph().root()->traverse(walker);
 	}
 	else
 	{
-		InvertSelectionWalker walker(GlobalSelectionSystem().Mode());
+		InvertSelectionWalker walker(GlobalSelectionSystem().getSelectionMode());
 		GlobalSceneGraph().root()->traverse(walker);
 	}
 }
@@ -546,7 +546,7 @@ public:
 	 */
 	static void DoSelection(bool deleteBoundsSrc = true)
 	{
-		if (GlobalSelectionSystem().Mode() != SelectionSystem::ePrimitive)
+		if (GlobalSelectionSystem().getSelectionMode() != SelectionMode::Primitive)
 		{
 			return; // Wrong selection mode
 		}
@@ -721,7 +721,7 @@ void snapSelectionToGrid(const cmd::ArgumentList& args)
 	auto gridSize = GlobalGrid().getGridSize();
 	UndoableCommand undo("snapSelected -grid " + string::to_string(gridSize));
 
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::Component)
 	{
 		// Component mode
 		GlobalSelectionSystem().foreachSelectedComponent([&] (const scene::INodePtr& node)

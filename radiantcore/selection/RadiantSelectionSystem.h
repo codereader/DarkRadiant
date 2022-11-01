@@ -48,7 +48,7 @@ private:
     IManipulator::Type _defaultManipulatorType;
 
 	// state
-	EMode _mode;
+	SelectionMode _mode;
     ComponentSelectionMode _componentMode;
 
 	std::size_t _countPrimitive;
@@ -64,7 +64,7 @@ private:
 	bool nothingSelected() const;
 
 	sigc::signal<void, IManipulator::Type> _sigActiveManipulatorChanged;
-	sigc::signal<void, EMode> _sigSelectionModeChanged;
+	sigc::signal<void, SelectionMode> _sigSelectionModeChanged;
 	sigc::signal<void, ComponentSelectionMode> _sigComponentModeChanged;
 
     bool _selectionFocusActive;
@@ -88,13 +88,13 @@ public:
 	void addObserver(Observer* observer) override;
 	void removeObserver(Observer* observer) override;
 
-	void SetMode(EMode mode) override;
-	EMode Mode() const override;
+	void setSelectionMode(SelectionMode mode) override;
+    SelectionMode getSelectionMode() const override;
 
 	void SetComponentMode(ComponentSelectionMode mode) override;
     ComponentSelectionMode ComponentMode() const override;
 
-	sigc::signal<void, EMode>& signal_selectionModeChanged() override;
+	sigc::signal<void, SelectionMode>& signal_selectionModeChanged() override;
 	sigc::signal<void, ComponentSelectionMode>& signal_componentModeChanged() override;
 
 	// Returns the ID of the registered manipulator
@@ -170,12 +170,12 @@ public:
 	void initialiseModule(const IApplicationContext& ctx) override;
 	void shutdownModule() override;
 
-    ISceneSelectionTester::Ptr createSceneSelectionTester(EMode mode) override;
+    ISceneSelectionTester::Ptr createSceneSelectionTester(SelectionMode mode) override;
 
 private:
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
-        const VolumeTest& view, EMode mode, ComponentSelectionMode componentMode);
+        const VolumeTest& view, SelectionMode mode, ComponentSelectionMode componentMode);
 
 	bool higherEntitySelectionPriority() const;
 

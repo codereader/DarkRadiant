@@ -361,7 +361,7 @@ SelectionTranslator::SelectionTranslator(const TranslationCallback& onTranslatio
 
 void SelectionTranslator::translate(const Vector3& translation)
 {
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::Component)
 	{
 		GlobalSelectionSystem().foreachSelectedComponent(TranslateComponentSelected(translation));
 	}

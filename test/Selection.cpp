@@ -27,7 +27,7 @@ using SelectionTest = RadiantTest;
 
 TEST_F(SelectionTest, DefaultSelectionMode)
 {
-    EXPECT_EQ(GlobalSelectionSystem().Mode(), selection::SelectionSystem::ePrimitive);
+    EXPECT_EQ(GlobalSelectionSystem().getSelectionMode(), selection::SelectionMode::Primitive);
 }
 
 TEST_F(SelectionTest, ApplyShadersToForcedVisibleObjects)
@@ -640,7 +640,7 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointEntityMode)
 {
     loadMap("selection_test2.map");
 
-    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eEntity);
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Entity);
 
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
     auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_above_torches");
@@ -675,7 +675,7 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointEntityMode)
 {
     loadMap("selection_test2.map");
 
-    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eEntity);
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Entity);
 
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
     auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_above_torches");
@@ -716,7 +716,7 @@ TEST_F(OrthoViewSelectionTest, ReplaceSelectPointEntityMode)
 {
     loadMap("selection_test2.map");
 
-    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eEntity);
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Entity);
 
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
     auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
@@ -737,7 +737,7 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointGroupPartMode)
 {
     loadMap("selection_test2.map");
 
-    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eGroupPart);
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::GroupPart);
 
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
     auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
@@ -767,7 +767,7 @@ TEST_F(OrthoViewSelectionTest, ReplaceSelectPointGroupPartMode)
 {
     loadMap("selection_test2.map");
 
-    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eGroupPart);
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::GroupPart);
 
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
     auto funcStatic = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_1");
@@ -791,7 +791,7 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointGroupPartMode)
 {
     loadMap("selection_test2.map");
 
-    GlobalSelectionSystem().SetMode(selection::SelectionSystem::eGroupPart);
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::GroupPart);
 
     auto funcStaticTop = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_top");
     auto funcStaticMiddle = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_middle");
@@ -834,7 +834,7 @@ TEST_F(OrthoViewSelectionTest, DragManipulationByDirectHit)
 {
     loadMap("selection_test2.map");
 
-    GlobalSelectionSystem().SetMode(selection::SelectionSystem::ePrimitive);
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Primitive);
     GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
 
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
@@ -885,7 +885,7 @@ TEST_F(OrthoViewSelectionTest, DragManipulationByPlane)
 {
     loadMap("selection_test2.map");
 
-    GlobalSelectionSystem().SetMode(selection::SelectionSystem::ePrimitive);
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Primitive);
     GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
 
     auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();

@@ -37,22 +37,22 @@ void DragManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world
 	_resizeModeActive = false;
 
     // No drag manipulation in merge mode
-    if (GlobalSelectionSystem().Mode() == SelectionSystem::eMergeAction) return;
+    if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::MergeAction) return;
 
     SelectionPool selector;
 
-	switch (GlobalSelectionSystem().Mode())
+	switch (GlobalSelectionSystem().getSelectionMode())
 	{
-	case SelectionSystem::ePrimitive:
+	case SelectionMode::Primitive:
 		testSelectPrimitiveMode(test.getVolume(), test, selector);
 		break;
-	case SelectionSystem::eGroupPart:
+	case SelectionMode::GroupPart:
 		testSelectGroupPartMode(test.getVolume(), test, selector);
 		break;
-	case SelectionSystem::eEntity:
+	case SelectionMode::Entity:
 		testSelectEntityMode(test.getVolume(), test, selector);
 		break;
-	case SelectionSystem::eComponent:
+	case SelectionMode::Component:
 		testSelectComponentMode(test.getVolume(), test, selector);
 		break;
 	};
@@ -110,7 +110,7 @@ void DragManipulator::testSelectGroupPartMode(const VolumeTest& view, SelectionT
 	// Find all primitives that are selectable
 	SingleItemSelector itemSelector;
 
-    auto tester = _testerFactory.createSceneSelectionTester(SelectionSystem::eGroupPart);
+    auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::GroupPart);
     tester->testSelectScene(view, test, itemSelector);
 
 	if (itemSelector.hasValidSelectable())
@@ -129,7 +129,7 @@ void DragManipulator::testSelectEntityMode(const VolumeTest& view, SelectionTest
 	// Create a boolean selection pool (can have exactly one selectable or none)
 	SingleItemSelector itemSelector;
 
-    auto tester = _testerFactory.createSceneSelectionTester(SelectionSystem::eEntity);
+    auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::Entity);
     tester->testSelectScene(view, test, itemSelector);
 
 	// Check, if an entity could be found
