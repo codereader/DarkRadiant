@@ -1036,7 +1036,7 @@ TEST_F(OrthoViewSelectionTest, CycleVertexSelectionComponentMode)
     auto patch4 = algorithm::findFirstPatchWithMaterial(worldspawn, "textures/numbers/4");
 
     // Rotate the patch such that the ortho view is facing down one row
-    Node_setSelected(patch4, true); // brush must be selected
+    Node_setSelected(patch4, true); // patch must be selected
     GlobalCommandSystem().executeCommand("RotateSelectionY");
 
     GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Component);
@@ -1100,7 +1100,47 @@ TEST_F(OrthoViewSelectionTest, CycleVertexSelectionComponentMode)
 // Ortho: Replace vertex selection (alt-shift-LMB equivalent)
 TEST_F(OrthoViewSelectionTest, ReplaceVertexSelectionComponentMode)
 {
+    loadMap("selection_test2.map");
 
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patch4 = algorithm::findFirstPatchWithMaterial(worldspawn, "textures/numbers/4");
+
+    // Rotate the patch such that the ortho view is facing down one row
+    Node_setSelected(patch4, true); // patch must be selected
+
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Component);
+    GlobalSelectionSystem().SetComponentMode(selection::ComponentSelectionMode::Vertex);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto patch = Node_getIPatch(patch4);
+
+    auto extents = patch4->worldAABB().getExtents();
+
+    auto leftVertex = patch4->worldAABB().getOrigin() - extents;
+    auto rightVertex = patch4->worldAABB().getOrigin() + extents;
+    auto otherVertex = patch4->worldAABB().getOrigin() + Vector3(extents.x(), -extents.y(), 0);
+
+    EXPECT_TRUE(algorithm::patchHasVertices(*patch, { leftVertex, rightVertex, otherVertex }));
+
+    // Everything should be deselected
+    auto componentSelectable = scene::node_cast<ComponentSelectionTestable>(patch4);
+    EXPECT_FALSE(componentSelectable->isSelectedComponents());
+
+    // Select the position of the top vertex (toggle mode)
+    performPointSelectionOnPosition(leftVertex, selection::SelectionSystem::eToggle);
+    performPointSelectionOnPosition(otherVertex, selection::SelectionSystem::eToggle);
+
+    EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
+    EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 2) << "Component selection count is wrong";
+
+    // Select the right vertex using replace mode
+    performPointSelectionOnPosition(rightVertex, selection::SelectionSystem::eReplace);
+    EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
+    EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "Component selection count is wrong";
+
+    Vector3 delta(15, 0, 0);
+    moveSelectedComponentsTo(patch4, delta); // move to the side
+    EXPECT_TRUE(algorithm::patchHasVertices(*patch, { leftVertex, rightVertex + delta, otherVertex }));
 }
 
 // Ortho: Move brush vertices that have not been selected beforehand
@@ -1116,7 +1156,7 @@ TEST_F(OrthoViewSelectionTest, DragManipulateSelectedVerticesComponentMode)
 }
 
 // Ortho: Drag-manipulating unselected components de-selects the previous selection
-TEST_F(OrthoViewSelectionTest, ComponentSelectionIsTransient)
+TEST_F(OrthoViewSelectionTest, DragComponentSelectionIsTransient)
 {
 
 }
