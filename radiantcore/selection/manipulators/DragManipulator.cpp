@@ -129,10 +129,8 @@ void DragManipulator::testSelectEntityMode(const VolumeTest& view, SelectionTest
 
 void DragManipulator::testSelectComponentMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
-	//BestSelector bestSelector; // TODO?
-
     auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::Component);
-    tester->testSelectSceneWithFilter(view, test, selectableIsSelected);
+    tester->testSelectScene(view, test); // don't restrict drag-selecting to selected components
 
 	bool transientComponentSelection = registry::getValue<bool>(RKEY_TRANSIENT_COMPONENT_SELECTION);
 
