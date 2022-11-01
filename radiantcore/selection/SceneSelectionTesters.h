@@ -6,6 +6,19 @@ namespace selection
 {
 
 /**
+ * Tests entities and primitives in the scene, entities sorted first
+ */
+class PrimitiveSelectionTester :
+    public ISceneSelectionTester
+{
+public:
+    void testSelectScene(const VolumeTest& view, SelectionTest& test, Selector& selector) override;
+
+private:
+    bool higherEntitySelectionPriority() const;
+};
+
+/**
  * Tests just the entities in the scene, all other nodes are skipped
  */
 class EntitySelectionTester :

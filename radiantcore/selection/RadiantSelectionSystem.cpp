@@ -30,6 +30,7 @@
 
 #include "SceneSelectionTesters.h"
 #include "command/ExecutionNotPossible.h"
+#include "selection/EntitiesFirstSelector.h"
 
 namespace selection
 {
@@ -106,6 +107,8 @@ ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(Se
 {
     switch (mode)
     {
+    case SelectionMode::Primitive:
+        return std::make_shared<PrimitiveSelectionTester>();
     case SelectionMode::Entity:
         return std::make_shared<EntitySelectionTester>();
     case SelectionMode::GroupPart:
@@ -141,6 +144,18 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
 
         case SelectionMode::Primitive:
         {
+#if 1
+            // We have an orthoview, here, sorting entities before primitives
+            EntitiesFirstSelector sortedPool;
+
+            AnySelector anyTester(sortedPool, test);
+            GlobalSceneGraph().foreachVisibleNodeInVolume(view, anyTester);
+
+            //auto tester = createSceneSelectionTester(mode);
+            //tester->testSelectScene(view, test, selector);
+
+            sortedPool.foreachSelectable([&](ISelectable* s) { targetList.push_back(s); });
+#else
             // Do we have a camera view (filled rendering?)
             if (view.fill() || !higherEntitySelectionPriority())
             {
@@ -150,8 +165,6 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
             }
             else
             {
-                // We have an orthoview, here, select entities first
-
                 // First, obtain all the selectable entities
                 EntitySelector entityTester(selector, test);
                 GlobalSceneGraph().foreachVisibleNodeInVolume(view, entityTester);
@@ -176,6 +189,7 @@ void RadiantSelectionSystem::testSelectScene(SelectablesList& targetList, Select
                     targetList.push_back(i->second);
                 }
             }
+#endif
         }
         break;
 

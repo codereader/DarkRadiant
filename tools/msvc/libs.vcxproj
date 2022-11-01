@@ -255,6 +255,7 @@
     <ClInclude Include="..\..\libs\selection\BestPoint.h" />
     <ClInclude Include="..\..\libs\selection\CollectiveSpawnargs.h" />
     <ClInclude Include="..\..\libs\selection\Device.h" />
+    <ClInclude Include="..\..\libs\selection\EntitiesFirstSelector.h" />
     <ClInclude Include="..\..\libs\selection\EntitySelection.h" />
     <ClInclude Include="..\..\libs\selection\OccludeSelector.h" />
     <ClInclude Include="..\..\libs\selection\Pivot2World.h" />
