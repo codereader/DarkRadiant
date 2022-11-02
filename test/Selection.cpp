@@ -828,6 +828,7 @@ void performDragOperation(const Vector3& startPoint)
     manipulator->getActiveComponent()->beginTransformation(pivot2World, view, Vector2(0, 0));
     manipulator->getActiveComponent()->transform(pivot2World, view, Vector2(0.5, 0.5), 0);
     GlobalSelectionSystem().onManipulationChanged();
+    GlobalSelectionSystem().onManipulationEnd();
 }
 
 // Ortho: Move two brushes using the drag manipulator
@@ -1146,19 +1147,160 @@ TEST_F(OrthoViewSelectionTest, ReplaceVertexSelectionComponentMode)
 // Ortho: Move brush vertices that have not been selected beforehand
 TEST_F(OrthoViewSelectionTest, DragManipulateUnselectedBrushVerticesComponentMode)
 {
+    loadMap("selection_test2.map");
 
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Component);
+    GlobalSelectionSystem().SetComponentMode(selection::ComponentSelectionMode::Vertex);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush4 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/4");
+
+    Node_setSelected(brush4, true); // brush must be selected
+
+    // Everything should be deselected
+    auto componentSelectable = scene::node_cast<ComponentSelectionTestable>(brush4);
+    EXPECT_FALSE(componentSelectable->isSelectedComponents());
+
+    auto brush = Node_getIBrush(brush4);
+    auto originalAABB = brush4->worldAABB();
+    auto vertexPosition = originalAABB.getOrigin() + originalAABB.getExtents();
+
+    // Get the top face
+    auto topFace = algorithm::findBrushFaceWithNormal(brush, { 0, 0, 1 });
+    auto bottomFace = algorithm::findBrushFaceWithNormal(brush, { 0, 0, -1 });
+
+    EXPECT_TRUE(algorithm::faceHasVertex(topFace, 
+        [&](const WindingVertex& v) { return v.vertex.x() == vertexPosition.x() && v.vertex.y() == vertexPosition.y(); }));
+    EXPECT_TRUE(algorithm::faceHasVertex(bottomFace,
+        [&](const WindingVertex& v) { return v.vertex.x() == vertexPosition.x() && v.vertex.y() == vertexPosition.y(); }));
+
+    // Drag-manipulate the vertex at the corner
+    // we will hit and select two vertices that are aligned with the view direction
+    performDragOperation(vertexPosition);
+
+    EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
+
+    // The brush should have changed form
+    auto newAABB = brush4->worldAABB();
+    EXPECT_FALSE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 20)) << "Brush should have changed form";
+
+    brush->evaluateBRep();
+
+    // Both vertices should have been moved
+    EXPECT_FALSE(algorithm::faceHasVertex(topFace,
+        [&](const WindingVertex& v) { return v.vertex.x() == vertexPosition.x() && v.vertex.y() == vertexPosition.y(); }));
+    EXPECT_FALSE(algorithm::faceHasVertex(bottomFace,
+        [&](const WindingVertex& v) { return v.vertex.x() == vertexPosition.x() && v.vertex.y() == vertexPosition.y(); }));
 }
 
-// Ortho: Move brush vertices that have been selected beforehand (selection is not transient)
+// Ortho: Move vertices that have been selected beforehand (selection is not transient)
 TEST_F(OrthoViewSelectionTest, DragManipulateSelectedVerticesComponentMode)
 {
-    
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Component);
+    GlobalSelectionSystem().SetComponentMode(selection::ComponentSelectionMode::Vertex);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patch4 = algorithm::findFirstPatchWithMaterial(worldspawn, "textures/numbers/4");
+
+    Node_setSelected(patch4, true); // patch4 must be selected
+
+    // Everything should be deselected
+    auto componentSelectable = scene::node_cast<ComponentSelectionTestable>(patch4);
+    EXPECT_FALSE(componentSelectable->isSelectedComponents());
+
+    // Select two vertices of this patch
+    auto patch = Node_getIPatch(patch4);
+
+    std::vector<Vector3> vertices;
+    for (std::size_t col = 0; col < patch->getWidth(); ++col)
+    {
+        for (std::size_t row = 0; row < patch->getHeight(); ++row)
+        {
+            vertices.push_back(patch->ctrlAt(row, col).vertex);
+        }
+    }
+
+    auto vertex1 = vertices.at(2);
+    auto vertex2 = vertices.at(6);
+
+    // Remove these two vertices from the list
+    vertices.erase(vertices.begin() + 6);
+    vertices.erase(vertices.begin() + 2);
+
+    EXPECT_TRUE(algorithm::patchHasVertex(*patch, vertex1));
+    EXPECT_TRUE(algorithm::patchHasVertex(*patch, vertex2));
+    EXPECT_TRUE(algorithm::patchHasVertices(*patch, vertices));
+
+    performPointSelectionOnPosition(vertex1, selection::SelectionSystem::eToggle);
+    performPointSelectionOnPosition(vertex2, selection::SelectionSystem::eToggle);
+    EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
+    EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 2) << "2 Vertices should have been selected";
+
+    // Drag-manipulate one vertex, both selected vertices should move
+    performDragOperation(vertex1);
+
+    // Assume that both vertices are moved now
+    EXPECT_FALSE(algorithm::patchHasVertex(*patch, vertex1));
+    EXPECT_FALSE(algorithm::patchHasVertex(*patch, vertex2));
+    // The unmoved vertices should still be unchanged
+    EXPECT_TRUE(algorithm::patchHasVertices(*patch, vertices));
 }
 
 // Ortho: Drag-manipulating unselected components de-selects the previous selection
 TEST_F(OrthoViewSelectionTest, DragComponentSelectionIsTransient)
 {
+    loadMap("selection_test2.map");
 
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Component);
+    GlobalSelectionSystem().SetComponentMode(selection::ComponentSelectionMode::Vertex);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto patch4 = algorithm::findFirstPatchWithMaterial(worldspawn, "textures/numbers/4");
+
+    Node_setSelected(patch4, true); // patch4 must be selected
+
+    // Everything should be deselected
+    auto componentSelectable = scene::node_cast<ComponentSelectionTestable>(patch4);
+    EXPECT_FALSE(componentSelectable->isSelectedComponents());
+
+    // Select two vertices of this patch
+    auto patch = Node_getIPatch(patch4);
+
+    std::vector<Vector3> vertices;
+    for (std::size_t col = 0; col < patch->getWidth(); ++col)
+    {
+        for (std::size_t row = 0; row < patch->getHeight(); ++row)
+        {
+            vertices.push_back(patch->ctrlAt(row, col).vertex);
+        }
+    }
+
+    // Pick and remove 1 vertex from the list
+    auto moveVertex = vertices.at(2);
+    vertices.erase(vertices.begin() + 2);
+
+    EXPECT_TRUE(algorithm::patchHasVertex(*patch, moveVertex));
+    EXPECT_TRUE(algorithm::patchHasVertices(*patch, vertices));
+
+    // Select two unrelated vertices
+    performPointSelectionOnPosition(vertices.at(4), selection::SelectionSystem::eToggle);
+    performPointSelectionOnPosition(vertices.at(7), selection::SelectionSystem::eToggle);
+
+    EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
+    EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 2) << "2 Vertices should have been selected";
+
+    // Drag-manipulate an unselected vertex, both other selected vertices should be deselected
+    performDragOperation(moveVertex);
+
+    // Assume that both vertices are moved now
+    EXPECT_FALSE(algorithm::patchHasVertex(*patch, moveVertex));
+    // All other vertices should still be unchanged
+    EXPECT_TRUE(algorithm::patchHasVertices(*patch, vertices));
 }
 
 }
