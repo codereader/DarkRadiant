@@ -962,6 +962,39 @@ TEST_F(OrthoViewSelectionTest, DragManipulateEntityByDirectHitEntityMode)
     EXPECT_TRUE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 0.01)) << "Item should not have changed form";
 }
 
+// Ortho: Resize entities using the drag manipulator in entity mode
+TEST_F(OrthoViewSelectionTest, DragManipulateEntityByPlaneEntityMode)
+{
+    loadMap("selection_test2.map");
+
+    GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Entity);
+    GlobalSelectionSystem().setActiveManipulator(selection::IManipulator::Drag);
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto light = algorithm::getEntityByName(GlobalMapModule().getRoot(), "light_1");
+
+    // Select the light and attempt to drag-resize
+    Node_setSelected(light, true);
+    auto oldRadius = Node_getEntity(light)->getKeyValue("light_radius");
+    auto oldOrigin = Node_getEntity(light)->getKeyValue("origin");
+
+    // Drag starting from the right side of the bounding box
+    auto originalAABB = light->worldAABB();
+    performDragOperation(originalAABB.getOrigin() + Vector3(originalAABB.getExtents().x(), 0, 0) + 20);
+
+    if (registry::getValue<bool>(RKEY_DRAG_RESIZE_SYMMETRICALLY))
+    {
+        EXPECT_EQ(Node_getEntity(light)->getKeyValue("origin"), oldOrigin) << "Entity origin shouldn't have changed";
+    }
+    else
+    {
+        EXPECT_NE(Node_getEntity(light)->getKeyValue("origin"), oldOrigin) << "Entity origin should have changed";
+    }
+
+    auto newRadius = Node_getEntity(light)->getKeyValue("light_radius");
+    EXPECT_NE(newRadius, oldRadius) << "Light radius should have changed";
+}
+
 // Ortho: Move items using the drag manipulator in group part mode
 TEST_F(OrthoViewSelectionTest, DragManipulateChildBrushByDirectHitGroupPartMode)
 {

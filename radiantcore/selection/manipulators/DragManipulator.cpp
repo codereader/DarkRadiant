@@ -125,6 +125,9 @@ void DragManipulator::testSelectEntityMode(const VolumeTest& view, SelectionTest
 	{
 		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
 	}
+
+    // Check for selectable faces
+    _resizeModeActive = algorithm::testSelectPlanes(selector, test);
 }
 
 void DragManipulator::testSelectComponentMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
