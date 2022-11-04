@@ -79,14 +79,24 @@ void RadiantSelectionSystem::toggleSelectionFocus()
     {
         rMessage() << "Leaving selection focus mode" << std::endl;
         _selectionFocusActive = false;
-        _selectionFocusPool.clear();
-
+        
         GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
         {
             node->setRenderState(scene::INode::RenderState::Active);
             return true;
         });
 
+        // Re-select the pieces we had selected before entering
+        for (const auto& node : _selectionFocusPool)
+        {
+            // Nodes might have been removed in the meantime
+            if (node->inScene())
+            {
+                Node_setSelected(node, true);
+            }
+        }
+
+        _selectionFocusPool.clear();
         SceneChangeNotify();
         return;
     }
