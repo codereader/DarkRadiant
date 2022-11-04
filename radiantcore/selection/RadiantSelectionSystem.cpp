@@ -583,15 +583,16 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
     onSelectionPerformed();
 }
 
-namespace algorithm
+void RadiantSelectionSystem::setSelectionStatus(ISelectable* selectable, bool selected)
 {
+    // In focus mode the selection is not propagated to group peers
+    if (_selectionFocusActive)
+    {
+        selectable->setSelected(selected);
+        return;
+    }
 
-// If the selectable is a GroupSelectable, the respective callback is used
-inline void setSelectionStatus(ISelectable* selectable, bool selected)
-{
-	IGroupSelectable* groupSelectable = dynamic_cast<IGroupSelectable*>(selectable);
-
-	if (groupSelectable)
+	if (auto groupSelectable = dynamic_cast<IGroupSelectable*>(selectable); groupSelectable)
 	{
 		groupSelectable->setSelected(selected, true); // propagate selection state to group peers
 	}
@@ -599,8 +600,6 @@ inline void setSelectionStatus(ISelectable* selectable, bool selected)
 	{
 		selectable->setSelected(selected);
 	}
-}
-
 }
 
 void RadiantSelectionSystem::performPointSelection(const SelectablesList& candidates, EModifier modifier)
@@ -616,7 +615,7 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 		{
 			ISelectable* best = candidates.front();
 			// toggle selection of the object with least depth (=first in the list)
-			algorithm::setSelectionStatus(best, !best->isSelected());
+			setSelectionStatus(best, !best->isSelected());
 		}
 		break;
 
@@ -627,7 +626,7 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 		case eReplace:
 		{
 			// select closest (=first in the list)
-			algorithm::setSelectionStatus(candidates.front(), true);
+			setSelectionStatus(candidates.front(), true);
 		}
 		break;
 
@@ -645,21 +644,18 @@ void RadiantSelectionSystem::performPointSelection(const SelectablesList& candid
 				if ((*i)->isSelected())
 				{
 					// unselect the currently selected one
-					algorithm::setSelectionStatus(*i, false);
-					//(*i)->setSelected(false);
+					setSelectionStatus(*i, false);
 
 					// check if there is a "next" item in the list, if not: select the first item
 					++i;
 
 					if (i != candidates.end())
 					{
-						algorithm::setSelectionStatus(*i, true);
-						//(*i)->setSelected(true);
+						setSelectionStatus(*i, true);
 					}
 					else
 					{
-						algorithm::setSelectionStatus(candidates.front(), true);
-						//candidates.front()->setSelected(true);
+						setSelectionStatus(candidates.front(), true);
 					}
 					break;
 				}
@@ -730,7 +726,7 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
 
     for (const auto& state : selectableStates)
     {
-        algorithm::setSelectionStatus(state.first, state.second);
+        setSelectionStatus(state.first, state.second);
     }
 
     onSelectionPerformed();

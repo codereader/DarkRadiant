@@ -175,6 +175,10 @@ public:
 private:
     bool nodeCanBeSelectionTested(const scene::INodePtr& node);
 
+    // Sets the selection status of the given selectable. The selection status will
+    // be propagated to groups if the current selection mode / focus is allowing that
+    void setSelectionStatus(ISelectable* selectable, bool selected);
+
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
         const VolumeTest& view, SelectionMode mode);
