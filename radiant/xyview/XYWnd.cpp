@@ -1369,10 +1369,7 @@ void XYWnd::draw()
         flagsMask |= RENDER_LINESTIPPLE;
     }
 
-    if (GlobalMapModule().getEditMode() == IMap::EditMode::Merge)
-    {
-        flagsMask |= RENDER_BLEND;
-    }
+    flagsMask |= RENDER_BLEND;
 
     {
         GlobalRenderSystem().startFrame();
