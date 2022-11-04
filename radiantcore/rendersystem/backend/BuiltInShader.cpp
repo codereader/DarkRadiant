@@ -339,17 +339,12 @@ void BuiltInShader::construct()
         setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>(getRenderSystem().getGeometryStore(),
             getRenderSystem().getObjectRenderer(), this));
 
-        pass.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
+        pass.setRenderFlags(RENDER_DEPTHTEST);
 
-        // transparent grey rendering
-        pass.setColour({ 0, 0, 0, 0.05f });
+        // light grey rendering
+        pass.setColour({ 0.73, 0.73, 0.73, 0.1f });
 
-        pass.m_blend_src = GL_SRC_ALPHA;
-        pass.m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
-
-        pass.setRenderFlag(RENDER_BLEND);
-
-        pass.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+        pass.setSortPosition(OpenGLState::SORT_BACKGROUND);
         pass.setDepthFunc(GL_LESS);
         pass.m_linewidth = 1;
         pass.m_pointsize = 1;

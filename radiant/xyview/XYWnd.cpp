@@ -1362,14 +1362,12 @@ void XYWnd::draw()
 
     glLoadMatrixd(_modelView);
 
-    unsigned int flagsMask = RENDER_VERTEX_COLOUR;
+    unsigned int flagsMask = RENDER_VERTEX_COLOUR | RENDER_BLEND;
 
     if (!getCameraSettings()->solidSelectionBoxes())
     {
         flagsMask |= RENDER_LINESTIPPLE;
     }
-
-    flagsMask |= RENDER_BLEND;
 
     {
         GlobalRenderSystem().startFrame();
