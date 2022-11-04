@@ -97,6 +97,8 @@ void RadiantSelectionSystem::toggleSelectionFocus()
     });
 
     rMessage() << "Activated selection focus mode, got " << _selectionFocusPool.size() << " selectables in the pool" << std::endl;
+
+    deselectAll();
 }
 
 bool RadiantSelectionSystem::nodeCanBeSelectionTested(const scene::INodePtr& node)
@@ -1352,7 +1354,7 @@ void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
         return; // already handled by other systems
     }
 
-	if (getSelectionMode() == SelectionMode::Component)
+    if (getSelectionMode() == SelectionMode::Component)
 	{
 		if (countSelectedComponents() != 0)
 		{
@@ -1372,7 +1374,15 @@ void RadiantSelectionSystem::deselectCmd(const cmd::ArgumentList& args)
 		}
 		else
 		{
-			setSelectedAll(false);
+            if (countSelected() > 0)
+            {
+                setSelectedAll(false);
+            }
+            // With no selection left, hitting ESC will leave focus mode
+            else if (_selectionFocusActive)
+            {
+                toggleSelectionFocus();
+            }
 		}
 	}
 }
