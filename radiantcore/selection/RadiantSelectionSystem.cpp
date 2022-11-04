@@ -80,6 +80,14 @@ void RadiantSelectionSystem::toggleSelectionFocus()
         rMessage() << "Leaving selection focus mode" << std::endl;
         _selectionFocusActive = false;
         _selectionFocusPool.clear();
+
+        GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
+        {
+            node->setRenderState(scene::INode::RenderState::Active);
+            return true;
+        });
+
+        SceneChangeNotify();
         return;
     }
 
@@ -91,14 +99,24 @@ void RadiantSelectionSystem::toggleSelectionFocus()
     _selectionFocusActive = true;
     _selectionFocusPool.clear();
 
+    // Set the whole scene to inactive
+    GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
+    {
+        node->setRenderState(scene::INode::RenderState::InActive);
+        return true;
+    });
+
+    // Extract the selection and set these nodes to active
     foreachSelected([&](const auto& node)
     {
+        node->setRenderState(scene::INode::RenderState::Active);
         _selectionFocusPool.insert(node);
     });
 
     rMessage() << "Activated selection focus mode, got " << _selectionFocusPool.size() << " selectables in the pool" << std::endl;
 
     deselectAll();
+    SceneChangeNotify();
 }
 
 bool RadiantSelectionSystem::selectionFocusIsActive()
