@@ -4,12 +4,8 @@
 #include "selection/SelectionTestWalkers.h"
 #include "selection/algorithm/Planes.h"
 
-#include "registry/registry.h"
-
 namespace selection
 {
-
-const std::string RKEY_TRANSIENT_COMPONENT_SELECTION = "user/ui/transientComponentSelection";
 
 namespace
 {
@@ -124,6 +120,7 @@ void DragManipulator::testSelectEntityMode(const VolumeTest& view, SelectionTest
 	if (tester->hasSelectables())
 	{
 		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
+        return;
 	}
 
     // Check for selectable faces
@@ -135,13 +132,11 @@ void DragManipulator::testSelectComponentMode(const VolumeTest& view, SelectionT
     auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::Component);
     tester->testSelectScene(view, test); // don't restrict drag-selecting to selected components
 
-	bool transientComponentSelection = registry::getValue<bool>(RKEY_TRANSIENT_COMPONENT_SELECTION);
-
     tester->foreachSelectable([&](auto selectable)
     {
-        // greebo: For transient component selection, clicking an unselected
+        // greebo: Transient component selection: clicking an unselected
         // component will deselect all previously selected components beforehand
-        if (transientComponentSelection && !selectable->isSelected())
+        if (!selectable->isSelected())
         {
             _selectionSystem.setSelectedAllComponents(false);
         }
