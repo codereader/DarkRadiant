@@ -95,7 +95,8 @@ void ModelNodeBase::attachToShaders()
         surface->attachToShader(shader);
 
         // For orthoview rendering we need a wireframe shader
-        surface->attachToShader(surface->captureWireShader(*renderSystem));
+        surface->attachToShader(getRenderState() == RenderState::Active ? 
+            surface->captureWireShader(*renderSystem) : _inactiveShader);
 
         // Attach to the render entity for lighting mode rendering
         surface->attachToEntity(_renderEntity, shader);
@@ -142,6 +143,25 @@ void ModelNodeBase::onFiltersChanged()
 
     // When filters change, some of our surfaces might come into view or end up hidden
     // Detach existing surfaces, the next rendering pass will rebuild them
+    detachFromShaders();
+}
+
+void ModelNodeBase::setRenderSystem(const RenderSystemPtr& renderSystem)
+{
+    Node::setRenderSystem(renderSystem);
+
+    if (renderSystem)
+    {
+        _inactiveShader = renderSystem->capture(BuiltInShaderType::WireframeInactive);
+    }
+    else
+    {
+        _inactiveShader.reset();
+    }
+}
+
+void ModelNodeBase::onRenderStateChanged()
+{
     detachFromShaders();
 }
 

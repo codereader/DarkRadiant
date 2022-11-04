@@ -106,10 +106,11 @@ void RadiantSelectionSystem::toggleSelectionFocus()
         return true;
     });
 
-    // Extract the selection and set these nodes to active
+    // Extract the selection and set these nodes to active (including all child nodes)
     foreachSelected([&](const auto& node)
     {
         node->setRenderState(scene::INode::RenderState::Active);
+        node->foreachNode([](const auto& child) { child->setRenderState(scene::INode::RenderState::Active); return true; });
         _selectionFocusPool.insert(node);
     });
 
