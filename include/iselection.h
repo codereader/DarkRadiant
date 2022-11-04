@@ -229,6 +229,12 @@ public:
 
 	// Returns the center point of the current selection
 	virtual Vector3 getCurrentSelectionCenter() = 0;
+
+    // Returns true when focus mode is active
+    // In focus mode only certain elements in the map can be selected.
+    // It's also possible to select single parts of selection groups
+    // without disbanding the group.
+    virtual bool selectionFocusIsActive() = 0;
 };
 
 }

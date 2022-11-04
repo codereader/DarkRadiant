@@ -101,6 +101,11 @@ void RadiantSelectionSystem::toggleSelectionFocus()
     deselectAll();
 }
 
+bool RadiantSelectionSystem::selectionFocusIsActive()
+{
+    return _selectionFocusActive;
+}
+
 bool RadiantSelectionSystem::nodeCanBeSelectionTested(const scene::INodePtr& node)
 {
     // All nodes pass if no focus is active, otherwise restrict to the pool

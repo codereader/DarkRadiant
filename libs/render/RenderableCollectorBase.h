@@ -26,15 +26,15 @@ public:
         _flags(Highlight::Flags::NoHighlight)
     {}
 
-    virtual ~RenderableCollectorBase()
+    ~RenderableCollectorBase() override
     {}
 
-    virtual bool hasHighlightFlags() const override
+    bool hasHighlightFlags() const override
     {
         return _flags != 0;
     }
 
-    virtual void setHighlightFlag(Highlight::Flags flags, bool enabled) override
+    void setHighlightFlag(Highlight::Flags flags, bool enabled) override
     {
         if (enabled)
         {
@@ -51,9 +51,9 @@ public:
         node->onPreRender(volume);
 
         // greebo: Highlighting propagates to child nodes
-        scene::INodePtr parent = node->getParent();
+        auto parent = node->getParent();
 
-        std::size_t highlightFlags = node->getHighlightFlags();
+        auto highlightFlags = node->getHighlightFlags();
 
         auto nodeType = node->getNodeType();
 

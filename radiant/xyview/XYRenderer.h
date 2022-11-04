@@ -25,12 +25,16 @@ private:
     IMap::EditMode _editMode;
 
     const HighlightShaders& _shaders;
+    const ShaderPtr& _selectionGroupShader;
 
 public:
     XYRenderer(RenderStateFlags globalstate, const HighlightShaders& shaders) :
         _globalstate(globalstate),
         _editMode(GlobalMapModule().getEditMode()),
-        _shaders(shaders)
+        _shaders(shaders),
+        // In selection focus mode, groups don't render in a special colour
+        _selectionGroupShader(GlobalSelectionSystem().selectionFocusIsActive() ? 
+            _shaders.selectedShader : _shaders.selectedShaderGroup)
     {}
 
     bool supportsFullMaterials() const override
@@ -69,7 +73,7 @@ public:
         {
             if ((_flags & Highlight::Flags::GroupMember) != 0)
             {
-                _shaders.selectedShaderGroup->addRenderable(renderable, localToWorld);
+                _selectionGroupShader->addRenderable(renderable, localToWorld);
             }
             else
             {

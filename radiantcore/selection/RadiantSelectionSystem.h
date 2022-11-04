@@ -164,6 +164,8 @@ public:
 
 	const Matrix4& getPivot2World() override;
 
+    bool selectionFocusIsActive() override;
+
 	// RegisterableModule implementation
 	const std::string& getName() const override;
 	const StringSet& getDependencies() const override;
