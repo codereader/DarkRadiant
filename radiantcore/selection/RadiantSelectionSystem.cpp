@@ -101,11 +101,12 @@ void RadiantSelectionSystem::toggleSelectionFocus()
 
 bool RadiantSelectionSystem::nodeCanBeSelectionTested(const scene::INodePtr& node)
 {
-    return true;
-#if 0
     // All nodes pass if no focus is active, otherwise restrict to the pool
-    return _selectionFocusActive ? _selectionFocusPool.count(node) > 0 : true;
-#endif
+    if (!_selectionFocusActive || !node) return true;
+
+    // Nodes can also be tested if their parent happens to be in the focus, otherwise
+    // it'd be impossible to select focused func_static (their children are the ones that are tested)
+    return _selectionFocusPool.count(node) > 0 || _selectionFocusPool.count(node->getParent()) > 0;
 }
 
 ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(SelectionMode mode)
