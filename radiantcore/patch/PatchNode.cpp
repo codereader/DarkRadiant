@@ -355,7 +355,8 @@ void PatchNode::onPreRender(const VolumeTest& volume)
     if (m_patch.getWidth() > 0 && m_patch.getHeight() > 0)
     {
         _renderableSurfaceSolid.update(m_patch._shader.getGLShader());
-        _renderableSurfaceWireframe.update(_renderEntity->getWireShader());
+        _renderableSurfaceWireframe.update(getRenderState() == RenderState::Active ? 
+            _renderEntity->getWireShader() : _inactiveShader);
         _renderableSurfaceSolid.attachToEntity(_renderEntity);
     }
     else
@@ -408,11 +409,13 @@ void PatchNode::setRenderSystem(const RenderSystemPtr& renderSystem)
     if (renderSystem)
 	{
         _ctrlPointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
+        _inactiveShader = renderSystem->capture(BuiltInShaderType::WireframeInactive);
         _ctrlLatticeShader = renderSystem->capture(BuiltInShaderType::PatchLattice);
 	}
 	else
 	{
         _ctrlPointShader.reset();
+        _inactiveShader.reset();
         _ctrlLatticeShader.reset();
 	}
 }
