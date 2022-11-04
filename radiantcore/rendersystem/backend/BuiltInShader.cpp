@@ -2,6 +2,7 @@
 
 #include "string/convert.h"
 #include "icolourscheme.h"
+#include "../OpenGLRenderSystem.h"
 
 namespace render
 {
@@ -330,6 +331,30 @@ void BuiltInShader::construct()
     case BuiltInShaderType::OrthoMergeActionOverlayConflict:
     {
         constructOrthoMergeActionOverlay(pass, { 0.9f, 0.5f, 0.0f, 0.5f }, OpenGLState::SORT_OVERLAY_ONE_BEFORE_LAST);
+        break;
+    }
+
+    case BuiltInShaderType::WireframeInactive:
+    {
+        setWindingRenderer(std::make_unique<WindingRenderer<WindingIndexer_Lines>>(getRenderSystem().getGeometryStore(),
+            getRenderSystem().getObjectRenderer(), this));
+
+        pass.setRenderFlags(RENDER_DEPTHTEST | RENDER_DEPTHWRITE);
+
+        // transparent grey rendering
+        pass.setColour({ 0, 0, 0, 0.05f });
+
+        pass.m_blend_src = GL_SRC_ALPHA;
+        pass.m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
+
+        pass.setRenderFlag(RENDER_BLEND);
+
+        pass.setSortPosition(OpenGLState::SORT_FULLBRIGHT);
+        pass.setDepthFunc(GL_LESS);
+        pass.m_linewidth = 1;
+        pass.m_pointsize = 1;
+
+        enableViewType(RenderViewType::OrthoView);
         break;
     }
 

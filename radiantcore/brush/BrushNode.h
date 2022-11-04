@@ -47,6 +47,7 @@ class BrushNode final :
 	BrushClipPlane _clipPlane;
 
 	ShaderPtr _pointShader;
+    ShaderPtr _inactiveWireShader;
 
 	// TRUE if any of the FaceInstance's component selection got changed or transformed
 	bool _renderableComponentsNeedUpdate;
@@ -175,6 +176,8 @@ protected:
     void _applyTransformation() override;
 
     void onSelectionStatusChange(bool changeGroupStatus) override;
+
+    void onRenderStateChanged() override;
 
 private:
 	void transformComponents(const Matrix4& matrix);
