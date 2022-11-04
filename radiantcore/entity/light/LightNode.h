@@ -211,6 +211,7 @@ protected:
     void onSelectionStatusChange(bool changeGroupStatus) override;
 
     void onColourKeyChanged(const std::string& value) override;
+    void onRenderStateChanged() override;
 
 private:
     void evaluateTransform();

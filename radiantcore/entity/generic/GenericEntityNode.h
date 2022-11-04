@@ -1,7 +1,6 @@
 #pragma once
 
 #include "editable.h"
-#include "inamespace.h"
 
 #include "selectionlib.h"
 #include "transformlib.h"
@@ -14,7 +13,6 @@
 #include "../AngleKey.h"
 #include "../RotationKey.h"
 #include "../SpawnArgs.h"
-#include "../KeyObserverDelegate.h"
 
 #include "../RenderableArrow.h"
 #include "../RenderableEntityBox.h"
@@ -123,6 +121,10 @@ protected:
 	void construct() override;
 
     void onVisibilityChanged(bool isVisibleNow) override;
+    void onRenderStateChanged() override;
+
+    void updateRenderables();
+    void clearRenderables();
 };
 
 } // namespace entity

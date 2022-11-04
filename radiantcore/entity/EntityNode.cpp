@@ -451,6 +451,7 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
         _wireShader = renderSystem->capture(ColourShaderType::OrthoviewSolid, colour);
         _colourShader = renderSystem->capture(ColourShaderType::CameraAndOrthoview, colour);
         _textRenderer = renderSystem->captureTextRenderer(IGLFont::Style::Sans, 14);
+        _inactiveShader = renderSystem->capture(BuiltInShaderType::WireframeInactive);
     }
     else
     {
@@ -458,6 +459,7 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
         _wireShader.reset();
         _colourShader.reset();
         _textRenderer.reset();
+        _inactiveShader.reset();
     }
 }
 
@@ -561,6 +563,11 @@ const ShaderPtr& EntityNode::getColourShader() const
 const ShaderPtr& EntityNode::getFillShader() const
 {
 	return _fillShader;
+}
+
+const ShaderPtr& EntityNode::getInactiveShader()
+{
+    return _inactiveShader;
 }
 
 Vector4 EntityNode::getEntityColour() const
