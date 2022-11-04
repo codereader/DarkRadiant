@@ -93,29 +93,37 @@ void RadiantSelectionSystem::toggleSelectionFocus()
 
     foreachSelected([&](const auto& node)
     {
-        if (auto selectable = scene::node_cast<ISelectable>(node); selectable)
-        {
-            _selectionFocusPool.insert(selectable);
-        }
+        _selectionFocusPool.insert(node);
     });
 
     rMessage() << "Activated selection focus mode, got " << _selectionFocusPool.size() << " selectables in the pool" << std::endl;
 }
 
+bool RadiantSelectionSystem::nodeCanBeSelectionTested(const scene::INodePtr& node)
+{
+    return true;
+#if 0
+    // All nodes pass if no focus is active, otherwise restrict to the pool
+    return _selectionFocusActive ? _selectionFocusPool.count(node) > 0 : true;
+#endif
+}
+
 ISceneSelectionTester::Ptr RadiantSelectionSystem::createSceneSelectionTester(SelectionMode mode)
 {
+    auto nodePredicate = std::bind(&RadiantSelectionSystem::nodeCanBeSelectionTested, this, std::placeholders::_1);
+
     switch (mode)
     {
     case SelectionMode::Primitive:
-        return std::make_shared<PrimitiveSelectionTester>();
+        return std::make_shared<PrimitiveSelectionTester>(nodePredicate);
     case SelectionMode::Entity:
-        return std::make_shared<EntitySelectionTester>();
+        return std::make_shared<EntitySelectionTester>(nodePredicate);
     case SelectionMode::GroupPart:
-        return std::make_shared<GroupChildPrimitiveSelectionTester>();
+        return std::make_shared<GroupChildPrimitiveSelectionTester>(nodePredicate);
     case SelectionMode::MergeAction:
-        return std::make_shared<MergeActionSelectionTester>();
+        return std::make_shared<MergeActionSelectionTester>(nodePredicate);
     case SelectionMode::Component:
-        return std::make_shared<ComponentSelectionTester>(*this);
+        return std::make_shared<ComponentSelectionTester>(*this, nodePredicate);
 
     default:
         throw std::invalid_argument("Selection Mode not supported yet");
@@ -551,7 +559,10 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
         ComponentSelector tester(selector, test, ComponentSelectionMode::Face);
         GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), [&](const scene::INodePtr& node)
         {
-            tester.testNode(node);
+            if (nodeCanBeSelectionTested(node))
+            {
+                tester.testNode(node);
+            }
             return true;
         });
 
@@ -687,7 +698,10 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
         ComponentSelector tester(pool, test, ComponentSelectionMode::Face);
         GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), [&](const scene::INodePtr& node)
         {
-            tester.testNode(node);
+            if (nodeCanBeSelectionTested(node))
+            {
+                tester.testNode(node);
+            }
             return true;
         });
 

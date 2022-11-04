@@ -68,7 +68,7 @@ private:
 	sigc::signal<void, ComponentSelectionMode> _sigComponentModeChanged;
 
     bool _selectionFocusActive;
-    std::set<std::shared_ptr<ISelectable>> _selectionFocusPool;
+    std::set<scene::INodePtr> _selectionFocusPool;
 
 public:
 	RadiantSelectionSystem();
@@ -173,6 +173,8 @@ public:
     ISceneSelectionTester::Ptr createSceneSelectionTester(SelectionMode mode) override;
 
 private:
+    bool nodeCanBeSelectionTested(const scene::INodePtr& node);
+
 	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
 	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
         const VolumeTest& view, SelectionMode mode);

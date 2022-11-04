@@ -21,9 +21,10 @@ private:
     std::vector<ISelectable*> _selectables;
     NodePredicate _nodePredicate;
 
-public:
-    SelectionTesterBase(const NodePredicate& nodePredicate = NodePredicate());
+protected:
+    SelectionTesterBase(const NodePredicate& nodePredicate);
 
+public:
     bool hasSelectables() const override;
     void foreachSelectable(const std::function<void(ISelectable*)>& functor) override;
     void testSelectScene(const VolumeTest& view, SelectionTest& test) override;
@@ -46,6 +47,8 @@ class PrimitiveSelectionTester :
     public SelectionTesterBase
 {
 public:
+    PrimitiveSelectionTester(const NodePredicate& nodePredicate);
+
     void testSelectSceneWithFilter(const VolumeTest& view, SelectionTest& test,
         const std::function<bool(ISelectable*)>& predicate) override;
 
@@ -60,6 +63,8 @@ class EntitySelectionTester :
     public SelectionTesterBase
 {
 public:
+    EntitySelectionTester(const NodePredicate& nodePredicate);
+
     void testSelectSceneWithFilter(const VolumeTest& view, SelectionTest& test,
         const std::function<bool(ISelectable*)>& predicate) override;
 };
@@ -71,6 +76,8 @@ class GroupChildPrimitiveSelectionTester :
     public SelectionTesterBase
 {
 public:
+    GroupChildPrimitiveSelectionTester(const NodePredicate& nodePredicate);
+
     void testSelectSceneWithFilter(const VolumeTest& view, SelectionTest& test,
         const std::function<bool(ISelectable*)>& predicate) override;
 };
@@ -82,6 +89,8 @@ class MergeActionSelectionTester :
     public SelectionTesterBase
 {
 public:
+    MergeActionSelectionTester(const NodePredicate& nodePredicate);
+
     void testSelectSceneWithFilter(const VolumeTest& view, SelectionTest& test,
         const std::function<bool(ISelectable*)>& predicate) override;
 };
@@ -96,7 +105,7 @@ private:
     SelectionSystem& _selectionSystem;
 
 public:
-    ComponentSelectionTester(SelectionSystem& selectionSystem);
+    ComponentSelectionTester(SelectionSystem& selectionSystem, const NodePredicate& nodePredicate);
 
     void testSelectSceneWithFilter(const VolumeTest& view, SelectionTest& test,
         const std::function<bool(ISelectable*)>& predicate) override;

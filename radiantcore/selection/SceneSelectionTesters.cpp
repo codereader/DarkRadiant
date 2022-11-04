@@ -61,6 +61,10 @@ void SelectionTesterBase::storeSelectablesInPool(Selector& selector,
     });
 }
 
+PrimitiveSelectionTester::PrimitiveSelectionTester(const NodePredicate& nodePredicate) :
+    SelectionTesterBase(nodePredicate)
+{}
+
 void PrimitiveSelectionTester::testSelectSceneWithFilter(const VolumeTest& view, SelectionTest& test,
     const std::function<bool(ISelectable*)>& predicate)
 {
@@ -86,6 +90,10 @@ bool PrimitiveSelectionTester::higherEntitySelectionPriority() const
     return registry::getValue<bool>(RKEY_HIGHER_ENTITY_PRIORITY);
 }
 
+EntitySelectionTester::EntitySelectionTester(const NodePredicate& nodePredicate) :
+    SelectionTesterBase(nodePredicate)
+{}
+
 void EntitySelectionTester::testSelectSceneWithFilter(const VolumeTest& view, SelectionTest& test,
     const std::function<bool(ISelectable*)>& predicate)
 {
@@ -100,6 +108,10 @@ void EntitySelectionTester::testSelectSceneWithFilter(const VolumeTest& view, Se
 
     storeSelectablesInPool(selector, predicate);
 }
+
+GroupChildPrimitiveSelectionTester::GroupChildPrimitiveSelectionTester(const NodePredicate& nodePredicate) :
+    SelectionTesterBase(nodePredicate)
+{}
 
 void GroupChildPrimitiveSelectionTester::testSelectSceneWithFilter(const VolumeTest& view, SelectionTest& test,
     const std::function<bool(ISelectable*)>& predicate)
@@ -116,6 +128,10 @@ void GroupChildPrimitiveSelectionTester::testSelectSceneWithFilter(const VolumeT
     storeSelectablesInPool(selector, predicate);
 }
 
+MergeActionSelectionTester::MergeActionSelectionTester(const NodePredicate& nodePredicate) :
+    SelectionTesterBase(nodePredicate)
+{}
+
 void MergeActionSelectionTester::testSelectSceneWithFilter(const VolumeTest& view, SelectionTest& test,
     const std::function<bool(ISelectable*)>& predicate)
 {
@@ -131,7 +147,8 @@ void MergeActionSelectionTester::testSelectSceneWithFilter(const VolumeTest& vie
     storeSelectablesInPool(selector, predicate);
 }
 
-ComponentSelectionTester::ComponentSelectionTester(SelectionSystem& selectionSystem) :
+ComponentSelectionTester::ComponentSelectionTester(SelectionSystem& selectionSystem, const NodePredicate& nodePredicate) :
+    SelectionTesterBase(nodePredicate),
     _selectionSystem(selectionSystem)
 {}
 
