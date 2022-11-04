@@ -9,7 +9,8 @@ namespace selection
 
 namespace
 {
-    bool selectableIsSelected(ISelectable* selectable)
+    // Predicate function used to pick selectable Sectables only when drag-manipulating
+    bool filterSelectedItemsOnly(ISelectable* selectable)
     {
         return selectable->isSelected();
     }
@@ -58,34 +59,30 @@ void DragManipulator::testSelect(SelectionTest& test, const Matrix4& pivot2world
 	case SelectionMode::Component:
 		testSelectComponentMode(test.getVolume(), test, selector);
 		break;
+	default:
+        return;
 	};
 
-	for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
+	for (auto& [_, selectable] : selector)
 	{
-		i->second->setSelected(true);
+		selectable->setSelected(true);
 	}
+}
+
+bool DragManipulator::testSelectedItemsInScene(SelectionMode mode, const VolumeTest& view, SelectionTest& test)
+{
+    auto tester = _testerFactory.createSceneSelectionTester(mode);
+    tester->testSelectSceneWithFilter(view, test, filterSelectedItemsOnly);
+
+    return tester->hasSelectables();
 }
 
 void DragManipulator::testSelectPrimitiveMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
-    auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::Primitive);
-    tester->testSelectSceneWithFilter(view, test, selectableIsSelected);
-
-    if (tester->hasSelectables())
+    // If testing for entities and worldspawn primitives fails check for group children too
+    if (testSelectedItemsInScene(SelectionMode::Primitive, view, test) ||
+        testSelectedItemsInScene(SelectionMode::GroupPart, view, test))
     {
-        // Found a selectable primitive
-        selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
-        return;
-    }
-
-    // Entities and worldspawn primitives failed, so check for group children too
-    // Find all group child primitives that are selectable
-    tester = _testerFactory.createSceneSelectionTester(SelectionMode::GroupPart);
-    tester->testSelectSceneWithFilter(view, test, selectableIsSelected);
-
-    if (tester->hasSelectables())
-    {
-        // Found a selectable group child primitive
         selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
         return;
     }
@@ -97,10 +94,7 @@ void DragManipulator::testSelectPrimitiveMode(const VolumeTest& view, SelectionT
 void DragManipulator::testSelectGroupPartMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
 	// Find all non-worldspawn child primitives that are selectable
-    auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::GroupPart);
-    tester->testSelectSceneWithFilter(view, test, selectableIsSelected);
-
-	if (tester->hasSelectables())
+	if (testSelectedItemsInScene(SelectionMode::GroupPart, view, test))
 	{
 		// Found a selectable primitive
 		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
@@ -113,11 +107,8 @@ void DragManipulator::testSelectGroupPartMode(const VolumeTest& view, SelectionT
 
 void DragManipulator::testSelectEntityMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector)
 {
-    auto tester = _testerFactory.createSceneSelectionTester(SelectionMode::Entity);
-    tester->testSelectSceneWithFilter(view, test, selectableIsSelected);
-
 	// Check, if an entity could be found
-	if (tester->hasSelectables())
+	if (testSelectedItemsInScene(SelectionMode::Entity, view, test))
 	{
 		selector.addSelectable(SelectionIntersection(0, 0), &_dragSelectable);
         return;

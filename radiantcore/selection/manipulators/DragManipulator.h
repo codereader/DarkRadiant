@@ -59,6 +59,8 @@ public:
 	bool isSelected() const override;
 
 private:
+    bool testSelectedItemsInScene(SelectionMode mode, const VolumeTest& view, SelectionTest& test);
+
 	void testSelectPrimitiveMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector);
 	void testSelectGroupPartMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector);
 	void testSelectEntityMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector);
