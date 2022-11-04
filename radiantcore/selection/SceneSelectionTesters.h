@@ -6,20 +6,37 @@
 namespace selection
 {
 
+class SelectionTestWalker;
+
+/**
+ * Filter function used when traversing the scene,
+ * allowing to globally filter out nodes from the set of candidates.
+ */
+using NodePredicate = std::function<bool(const scene::INodePtr&)>;
+
 class SelectionTesterBase :
     public ISceneSelectionTester
 {
 private:
     std::vector<ISelectable*> _selectables;
+    NodePredicate _nodePredicate;
 
 public:
+    SelectionTesterBase(const NodePredicate& nodePredicate = NodePredicate());
+
     bool hasSelectables() const override;
     void foreachSelectable(const std::function<void(ISelectable*)>& functor) override;
     void testSelectScene(const VolumeTest& view, SelectionTest& test) override;
 
 protected:
-    void storeSelectable(ISelectable* selectable);
+    // Test the given node using the given tester. The node will be forwarded to the
+    // tester only if it passed the predicate passed to the constructor
+    void testNode(const scene::INodePtr& node, SelectionTestWalker& tester);
+
+    bool nodeIsEligible(const scene::INodePtr& node) const;
+
     void storeSelectablesInPool(Selector& selector, const std::function<bool(ISelectable*)>& predicate);
+    void storeSelectable(ISelectable* selectable);
 };
 
 /**

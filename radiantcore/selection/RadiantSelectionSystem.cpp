@@ -548,11 +548,15 @@ void RadiantSelectionSystem::selectPoint(SelectionTest& test, EModifier modifier
     {
         SelectionPool selector;
 
-        ComponentSelector selectionTester(selector, test, ComponentSelectionMode::Face);
-        GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
+        ComponentSelector tester(selector, test, ComponentSelectionMode::Face);
+        GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), [&](const scene::INodePtr& node)
+        {
+            tester.testNode(node);
+            return true;
+        });
 
         // Load them all into the vector
-        for (SelectionPool::const_iterator i = selector.begin(); i != selector.end(); ++i)
+        for (auto i = selector.begin(); i != selector.end(); ++i)
         {
             candidates.push_back(i->second);
         }
@@ -680,11 +684,15 @@ void RadiantSelectionSystem::selectArea(SelectionTest& test, SelectionSystem::EM
 
     if (face)
     {
-        ComponentSelector selectionTester(pool, test, ComponentSelectionMode::Face);
-        GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), selectionTester);
+        ComponentSelector tester(pool, test, ComponentSelectionMode::Face);
+        GlobalSceneGraph().foreachVisibleNodeInVolume(test.getVolume(), [&](const scene::INodePtr& node)
+        {
+            tester.testNode(node);
+            return true;
+        });
 
         // Load them all into the vector
-        for (SelectionPool::const_iterator i = pool.begin(); i != pool.end(); ++i)
+        for (auto i = pool.begin(); i != pool.end(); ++i)
         {
             candidates.push_back(i->second);
         }

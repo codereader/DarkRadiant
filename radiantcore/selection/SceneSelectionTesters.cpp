@@ -8,6 +8,23 @@
 namespace selection
 {
 
+SelectionTesterBase::SelectionTesterBase(const NodePredicate& nodePredicate) :
+    _nodePredicate(nodePredicate)
+{}
+
+bool SelectionTesterBase::nodeIsEligible(const scene::INodePtr& node) const
+{
+    return _nodePredicate ? _nodePredicate(node) : true;
+}
+
+void SelectionTesterBase::testNode(const scene::INodePtr& node, SelectionTestWalker& tester)
+{
+    if (nodeIsEligible(node))
+    {
+        tester.testNode(node);
+    }
+}
+
 bool SelectionTesterBase::hasSelectables() const
 {
     return !_selectables.empty();
@@ -55,7 +72,11 @@ void PrimitiveSelectionTester::testSelectSceneWithFilter(const VolumeTest& view,
         static_cast<Selector&>(sortedPool) : simplePool;
 
     AnySelector anyTester(targetPool, test);
-    GlobalSceneGraph().foreachVisibleNodeInVolume(view, anyTester);
+    GlobalSceneGraph().foreachVisibleNodeInVolume(view, [&](const scene::INodePtr& node)
+    {
+        testNode(node, anyTester);
+        return true;
+    });
 
     storeSelectablesInPool(targetPool, predicate);
 }
@@ -71,7 +92,11 @@ void EntitySelectionTester::testSelectSceneWithFilter(const VolumeTest& view, Se
     SelectionPool selector;
 
     EntitySelector tester(selector, test);
-    GlobalSceneGraph().foreachVisibleNodeInVolume(view, tester);
+    GlobalSceneGraph().foreachVisibleNodeInVolume(view, [&](const scene::INodePtr& node)
+    {
+        testNode(node, tester);
+        return true;
+    });
 
     storeSelectablesInPool(selector, predicate);
 }
@@ -82,7 +107,11 @@ void GroupChildPrimitiveSelectionTester::testSelectSceneWithFilter(const VolumeT
     SelectionPool selector;
 
     GroupChildPrimitiveSelector tester(selector, test);
-    GlobalSceneGraph().foreachVisibleNodeInVolume(view, tester);
+    GlobalSceneGraph().foreachVisibleNodeInVolume(view, [&](const scene::INodePtr& node)
+    {
+        testNode(node, tester);
+        return true;
+    });
 
     storeSelectablesInPool(selector, predicate);
 }
@@ -93,7 +122,11 @@ void MergeActionSelectionTester::testSelectSceneWithFilter(const VolumeTest& vie
     SelectionPool selector;
 
     MergeActionSelector tester(selector, test);
-    GlobalSceneGraph().foreachVisibleNodeInVolume(view, tester);
+    GlobalSceneGraph().foreachVisibleNodeInVolume(view, [&](const scene::INodePtr& node)
+    {
+        testNode(node, tester);
+        return true;
+    });
 
     storeSelectablesInPool(selector, predicate);
 }
@@ -107,8 +140,11 @@ void ComponentSelectionTester::testSelectSceneWithFilter(const VolumeTest& view,
 {
     SelectionPool selector;
 
-    ComponentSelector selectionTester(selector, test, _selectionSystem.ComponentMode());
-    _selectionSystem.foreachSelected(selectionTester);
+    ComponentSelector tester(selector, test, _selectionSystem.ComponentMode());
+    _selectionSystem.foreachSelected([&](const scene::INodePtr& node)
+    {
+        testNode(node, tester);
+    });
 
     storeSelectablesInPool(selector, predicate);
 }
