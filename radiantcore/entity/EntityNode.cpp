@@ -640,4 +640,15 @@ void EntityNode::detachFromRenderSystem()
     }
 }
 
+void EntityNode::setRenderState(RenderState state)
+{
+    SelectableNode::setRenderState(state);
+
+    // Propagate to attachments
+    foreachAttachment([=](const IEntityNodePtr& attachment)
+    {
+        attachment->setRenderState(state);
+    });
+}
+
 } // namespace entity

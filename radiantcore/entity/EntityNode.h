@@ -207,6 +207,8 @@ public:
     // Returns the current world origin of this entity (also up to date during transformations)
     virtual const Vector3& getWorldPosition() const = 0;
 
+    void setRenderState(RenderState state) override;
+
 protected:
     const ShaderPtr& getInactiveShader();
 
