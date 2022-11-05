@@ -112,7 +112,7 @@ void RadiantSelectionSystem::toggleSelectionFocus()
     // Set the whole scene to inactive
     GlobalSceneGraph().root()->foreachNode([&](const scene::INodePtr& node)
     {
-        node->setRenderState(scene::INode::RenderState::InActive);
+        node->setRenderState(scene::INode::RenderState::Inactive);
         return true;
     });
 

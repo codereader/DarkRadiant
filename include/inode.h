@@ -150,7 +150,7 @@ public:
     enum class RenderState
     {
         Active,
-        InActive
+        Inactive
     };
 
     // Returns the current render state of this node
