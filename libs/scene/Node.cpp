@@ -44,7 +44,8 @@ Node::Node(const Node& other) :
 	_instantiated(false),
 	_forceVisible(false),
 	_layers(other._layers),
-    _renderEntity(other._renderEntity)
+    _renderEntity(other._renderEntity),
+    _renderState(other._renderState)
 {}
 
 scene::INodePtr Node::getSelf()

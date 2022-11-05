@@ -68,6 +68,9 @@ public:
         changedMethodCalled(false)
     {}
 
+    // Default copy ctor for testing
+    RenderStateTestNode(const RenderStateTestNode& other) = default;
+
     Type getNodeType() const override
     {
         return Type::Unknown;
@@ -300,6 +303,18 @@ TEST_F(SceneNodeTest, InitialRenderState)
     auto node = std::make_shared<RenderStateTestNode>();
     EXPECT_EQ(node->getRenderState(), scene::INode::RenderState::Active) << "Should be active after construction";
     EXPECT_FALSE(node->changedMethodCalled) << "Changed method should not have been called";
+}
+
+TEST_F(SceneNodeTest, RenderStateOfCopiedNode)
+{
+    auto node = std::make_shared<RenderStateTestNode>();
+    auto copy = std::make_shared<RenderStateTestNode>(*node);
+
+    EXPECT_EQ(copy->getRenderState(), scene::INode::RenderState::Active) << "Copied node should inherit the initial value";
+
+    node->setRenderState(scene::INode::RenderState::Inactive);
+    copy = std::make_shared<RenderStateTestNode>(*node);
+    EXPECT_EQ(copy->getRenderState(), scene::INode::RenderState::Inactive) << "Copied node should inherit the value";
 }
 
 TEST_F(SceneNodeTest, OnRenderStateChanged)
