@@ -34,6 +34,8 @@ class DragManipulator :
 {
 private:
 	ManipulationPivot& _pivot;
+    SelectionSystem& _selectionSystem;
+    ISceneSelectionTesterFactory& _testerFactory;
 
 	// Resize component
 	TranslateFree _freeResizeComponent;
@@ -48,7 +50,7 @@ private:
 	BasicSelectable _dragSelectable;
 
 public:
-	DragManipulator(ManipulationPivot& pivot);
+	DragManipulator(ManipulationPivot& pivot, SelectionSystem& selectionSystem, ISceneSelectionTesterFactory& factory);
 
 	Type getType() const override;
 	Component* getActiveComponent() override;
@@ -57,6 +59,8 @@ public:
 	bool isSelected() const override;
 
 private:
+    bool testSelectedItemsInScene(SelectionMode mode, const VolumeTest& view, SelectionTest& test);
+
 	void testSelectPrimitiveMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector);
 	void testSelectGroupPartMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector);
 	void testSelectEntityMode(const VolumeTest& view, SelectionTest& test, SelectionPool& selector);

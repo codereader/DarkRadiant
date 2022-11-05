@@ -145,6 +145,20 @@ public:
     // Returns true if this node supports the given state flag
     virtual bool supportsStateFlag(unsigned int state) const = 0;
 
+    // Defines the active/inactive state of a node
+    // An inactive node might be rendered differently
+    enum class RenderState
+    {
+        Active,
+        Inactive
+    };
+
+    // Returns the current render state of this node
+    virtual RenderState getRenderState() const = 0;
+
+    // Sets the render state of this node
+    virtual void setRenderState(RenderState state) = 0;
+
 	/** greebo: Returns true, if the node is not hidden by
 	 * 			exclusion, filtering or anything else.
 	 */

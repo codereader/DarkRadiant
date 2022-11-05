@@ -65,7 +65,7 @@ void SelectionTestWalker::performSelectionTest(const scene::INodePtr& selectable
 	_selector.popSelectable();
 }
 
-bool EntitySelector::visit(const scene::INodePtr& node)
+void EntitySelector::testNode(const scene::INodePtr& node)
 {
 	// Check directly for an entity
 	scene::INodePtr entity = getEntityNode(node);
@@ -75,7 +75,7 @@ bool EntitySelector::visit(const scene::INodePtr& node)
 		// Skip any models, the parent entity is taking care of the selection test
 		if (Node_isModel(node))
 		{
-			return true;
+			return;
 		}
 
 		// Second chance check: is the parent a group node?
@@ -83,21 +83,19 @@ bool EntitySelector::visit(const scene::INodePtr& node)
 	}
 
 	// Skip worldspawn in any case
-	if (entity == NULL || entityIsWorldspawn(entity)) return true;
+	if (entity == NULL || entityIsWorldspawn(entity)) return;
 
 	// Comment out to hide debugging output
 	//printNodeName(node);
 
 	// The entity is the selectable, but the actual node will be tested for selection
 	performSelectionTest(entity, node);
-
-	return true;
 }
 
-bool PrimitiveSelector::visit(const scene::INodePtr& node)
+void PrimitiveSelector::testNode(const scene::INodePtr& node)
 {
 	// Skip all entities
-	if (Node_isEntity(node)) return true;
+	if (Node_isEntity(node)) return;
 
 	// Node is not an entity, check parent
 	scene::INodePtr parent = getParentGroupEntity(node);
@@ -108,14 +106,12 @@ bool PrimitiveSelector::visit(const scene::INodePtr& node)
 	{
 		performSelectionTest(node, node);
 	}
-
-	return true;
 }
 
-bool GroupChildPrimitiveSelector::visit(const scene::INodePtr& node)
+void GroupChildPrimitiveSelector::testNode(const scene::INodePtr& node)
 {
 	// Skip all entities
-	if (Node_isEntity(node)) return true;
+	if (Node_isEntity(node)) return;
 
 	// Node is not an entity, check parent
 	scene::INodePtr parent = getParentGroupEntity(node);
@@ -124,11 +120,9 @@ bool GroupChildPrimitiveSelector::visit(const scene::INodePtr& node)
 	{
 		performSelectionTest(node, node);
 	}
-
-	return true;
 }
 
-bool AnySelector::visit(const scene::INodePtr& node)
+void AnySelector::testNode(const scene::INodePtr& node)
 {
 	scene::INodePtr entity = getEntityNode(node);
 
@@ -137,7 +131,7 @@ bool AnySelector::visit(const scene::INodePtr& node)
 	if (entity != NULL)
 	{
 		// skip worldspawn
-		if (entityIsWorldspawn(entity)) return true;
+		if (entityIsWorldspawn(entity)) return;
 
 		// Use this entity as selectable
 		candidate = entity;
@@ -157,21 +151,17 @@ bool AnySelector::visit(const scene::INodePtr& node)
 		else
 		{
 			// A primitive without parent group entity? Error?
-			return true; // skip
+			return; // skip
 		}
 	}
 
 	// The entity is the selectable, but the actual node will be tested for selection
 	performSelectionTest(candidate, node);
-
-	return true;
 }
 
-// scene::Graph::Walker
-bool ComponentSelector::visit(const scene::INodePtr& node)
+void ComponentSelector::testNode(const scene::INodePtr& node)
 {
 	performComponentselectionTest(node);
-	return true;
 }
 
 // SelectionSystem::Visitor
@@ -184,7 +174,7 @@ void ComponentSelector::performComponentselectionTest(const scene::INodePtr& nod
 {
 	ComponentSelectionTestablePtr testable = Node_getComponentSelectionTestable(node);
 
-	if (testable != NULL)
+	if (testable)
 	{
 		testable->testSelectComponents(_selector, _test, _mode);
 	}
@@ -194,10 +184,9 @@ MergeActionSelector::MergeActionSelector(Selector& selector, SelectionTest& test
     SelectionTestWalker(selector, test)
 {}
 
-bool MergeActionSelector::visit(const scene::INodePtr& node)
+void MergeActionSelector::testNode(const scene::INodePtr& node)
 {
     performSelectionTest(node, node);
-    return true;
 }
 
 bool MergeActionSelector::nodeIsEligibleForTesting(const scene::INodePtr& node)

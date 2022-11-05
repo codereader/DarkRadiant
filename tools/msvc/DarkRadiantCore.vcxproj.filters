@@ -1168,6 +1168,9 @@
     <ClCompile Include="..\..\radiantcore\model\ModelNodeBase.cpp">
       <Filter>src\model</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\selection\SceneSelectionTesters.cpp">
+      <Filter>src\selection</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">
@@ -2405,6 +2408,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiantcore\model\NullModelBoxSurface.h">
       <Filter>src\model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiantcore\selection\SceneSelectionTesters.h">
+      <Filter>src\selection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

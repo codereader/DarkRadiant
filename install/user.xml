@@ -67,7 +67,6 @@
     <defaultPivotLocationIgnoresLightVolumes value="1" />
     <selectionEpsilon value="8.0" />
     <dragResizeEntitiesSymmetrically value="1" />
-    <transientComponentSelection value="1" />
     <offsetClonedObjects value="1" />
     <manipulatorFontSize value="14" />
     <manipulatorFontStyle value="Sans" />

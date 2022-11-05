@@ -34,6 +34,7 @@ public:
         SORT_FIRST = -64,
         SORT_ZFILL = 0,             // used by depth buffer fill passes
         SORT_INTERACTION = 2,       // used by the DBS pass
+        SORT_BACKGROUND = 512,      // used by inactive nodes
         SORT_FULLBRIGHT = 1025,     // used by non-translucent editor passes
         SORT_TRANSLUCENT = 1026,    // used by blend-type editor passes
         SORT_OVERLAY_FIRST = 1028,  // used by decals

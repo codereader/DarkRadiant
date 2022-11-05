@@ -12,7 +12,8 @@ RenderableEntityBox::RenderableEntityBox(const IEntityNode& entity, const AABB& 
 
 Vector4 RenderableEntityBox::getVertexColour()
 {
-    return _entity.getEntityColour();
+    // Return white if this entity is inactive, this leaves the shader colour alive
+    return _entity.getRenderState() == scene::INode::RenderState::Active ? _entity.getEntityColour() : INACTIVE_ENTITY_COLOUR;
 }
 
 }

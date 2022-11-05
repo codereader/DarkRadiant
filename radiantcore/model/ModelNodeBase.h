@@ -19,6 +19,8 @@ private:
 
     bool _attachedToShaders;
 
+    ShaderPtr _inactiveShader;
+
 protected:
     ModelNodeBase();
 
@@ -36,6 +38,8 @@ public:
 
     void onFiltersChanged() override;
 
+    void setRenderSystem(const RenderSystemPtr& renderSystem) override;
+
 protected:
     // To be implemented by subclasses, this should populate the _renderableSurfaces collection
     virtual void createRenderableSurfaces() = 0;
@@ -46,6 +50,7 @@ protected:
     virtual void destroyRenderableSurfaces();
 
     void onVisibilityChanged(bool isVisibleNow) override;
+    void onRenderStateChanged() override;
 
     void attachToShaders();
     void detachFromShaders();

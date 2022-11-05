@@ -35,7 +35,8 @@ void RenderableLightOctagon::updateGeometry()
     Vector3f min(Origin - Extents);
     Vector3f mid(Origin);
 
-    auto colour = _light.getEntityColour();
+    auto colour = _light.getRenderState() == scene::INode::RenderState::Active ?
+        _light.getEntityColour() : INACTIVE_ENTITY_COLOUR;
     colour.w() = _alpha;
 
     // top, bottom, tleft, tright, bright, bleft
@@ -94,7 +95,8 @@ void RenderableLightVolume::updatePointLightVolume()
     Vector3f max(Origin + radius);
     Vector3f min(Origin - radius);
 
-    auto colour = _light.getEntityColour();
+    auto colour = _light.getRenderState() == scene::INode::RenderState::Active ?
+        _light.getEntityColour() : INACTIVE_ENTITY_COLOUR;
 
     // Load the 8 corner points
     std::vector<render::RenderVertex> vertices

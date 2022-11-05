@@ -23,7 +23,8 @@ Node::Node() :
 	_local2world(Matrix4::getIdentity()),
 	_instantiated(false),
 	_forceVisible(false),
-    _renderEntity(nullptr)
+    _renderEntity(nullptr),
+    _renderState(RenderState::Active)
 {
 	// Each node is part of layer 0 by default
 	_layers.insert(0);
@@ -43,7 +44,8 @@ Node::Node(const Node& other) :
 	_instantiated(false),
 	_forceVisible(false),
 	_layers(other._layers),
-    _renderEntity(other._renderEntity)
+    _renderEntity(other._renderEntity),
+    _renderState(other._renderState)
 {}
 
 scene::INodePtr Node::getSelf()
@@ -537,6 +539,20 @@ void Node::setForcedVisibility(bool forceVisible, bool includeChildren)
 bool Node::isForcedVisible() const
 {
 	return _forceVisible;
+}
+
+INode::RenderState Node::getRenderState() const
+{
+    return _renderState;
+}
+
+void Node::setRenderState(RenderState state)
+{
+    if (state != _renderState)
+    {
+        _renderState = state;
+        onRenderStateChanged();
+    }
 }
 
 unsigned long Node::_maxNodeId = 0;

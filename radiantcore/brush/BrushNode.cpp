@@ -391,6 +391,9 @@ void BrushNode::onPreRender(const VolumeTest& volume)
     {
         _facesNeedRenderableUpdate = false;
 
+        const auto& wireShader = getRenderState() == RenderState::Active ?
+            _renderEntity->getWireShader() : _inactiveWireShader;
+
         // Every face is asked to run the rendering preparations
         // to link/unlink their geometry to/from the active shader
         for (auto& faceInstance : _faceInstances)
@@ -398,11 +401,11 @@ void BrushNode::onPreRender(const VolumeTest& volume)
             auto& face = faceInstance.getFace();
 
             face.getWindingSurfaceSolid().update(face.getFaceShader().getGLShader(), *_renderEntity);
-            face.getWindingSurfaceWireframe().update(_renderEntity->getWireShader(), *_renderEntity);
+            face.getWindingSurfaceWireframe().update(wireShader, *_renderEntity);
         }
     }
 
-    if (isSelected() && GlobalSelectionSystem().Mode() == selection::SelectionSystem::eComponent ||
+    if (isSelected() && GlobalSelectionSystem().getSelectionMode() == selection::SelectionMode::Component ||
         _numSelectedComponents > 0) // could be a single selected face without the brush being selected
     {
         updateSelectedPointsArray();
@@ -468,10 +471,12 @@ void BrushNode::setRenderSystem(const RenderSystemPtr& renderSystem)
 	if (renderSystem)
 	{
         _pointShader = renderSystem->capture(BuiltInShaderType::BigPoint);
+        _inactiveWireShader = renderSystem->capture(BuiltInShaderType::WireframeInactive);
         _renderableVertices.queueUpdate();
 	}
 	else
 	{
+        _inactiveWireShader.reset();
         _pointShader.reset();
         _renderableVertices.clear();
 	}
@@ -651,4 +656,14 @@ void BrushNode::onSelectionStatusChange(bool changeGroupStatus)
     {
         _clipPlane.clear();
     }
+}
+
+void BrushNode::onRenderStateChanged()
+{
+    _facesNeedRenderableUpdate = true;
+
+    forEachFaceInstance([](FaceInstance& face)
+    {
+        face.getFace().onBrushRenderStateChanged();
+    });
 }

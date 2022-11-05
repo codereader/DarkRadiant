@@ -404,7 +404,7 @@ void Map::setEditMode(EditMode mode)
     if (_editMode == EditMode::Merge)
     {
         GlobalSelectionSystem().setSelectedAll(false);
-        GlobalSelectionSystem().SetMode(selection::SelectionSystem::eMergeAction);
+        GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::MergeAction);
 
         if (getRoot())
         {
@@ -413,7 +413,7 @@ void Map::setEditMode(EditMode mode)
     }
     else
     {
-        GlobalSelectionSystem().SetMode(selection::SelectionSystem::ePrimitive);
+        GlobalSelectionSystem().setSelectionMode(selection::SelectionMode::Primitive);
 
         if (getRoot())
         {

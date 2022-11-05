@@ -769,6 +769,11 @@ void Face::onBrushVisibilityChanged(bool visible)
     }
 }
 
+void Face::onBrushRenderStateChanged()
+{
+    updateRenderables();
+}
+
 void Face::updateFaceVisibility()
 {
     auto newValue = contributes() && getFaceShader().getGLShader()->getMaterial()->isVisible();

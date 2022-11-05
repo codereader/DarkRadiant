@@ -88,6 +88,7 @@
     <ClCompile Include="..\..\..\test\Basic.cpp" />
     <ClCompile Include="..\..\..\test\Brush.cpp" />
     <ClCompile Include="..\..\..\test\Camera.cpp" />
+    <ClCompile Include="..\..\..\test\Clipboard.cpp" />
     <ClCompile Include="..\..\..\test\CodeTokeniser.cpp" />
     <ClCompile Include="..\..\..\test\ColourSchemes.cpp" />
     <ClCompile Include="..\..\..\test\CommandSystem.cpp" />

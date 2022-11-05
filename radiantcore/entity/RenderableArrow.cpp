@@ -27,7 +27,8 @@ void RenderableArrow::updateGeometry()
     auto origin = _node.getWorldPosition() + _node.localAABB().getOrigin();
 
     const auto& direction = _node.getDirection();
-    auto colour = _node.getEntityColour();
+    auto colour = _node.getRenderState() == scene::INode::RenderState::Active ?
+        _node.getEntityColour() : INACTIVE_ENTITY_COLOUR;
 
     Vector3 left(-direction.y(), direction.x(), 0);
 

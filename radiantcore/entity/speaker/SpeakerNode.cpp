@@ -479,6 +479,12 @@ void SpeakerNode::clearRenderables()
     _renderableRadiiFillOutline.clear();
 }
 
+void SpeakerNode::onRenderStateChanged()
+{
+    clearRenderables();
+    updateRenderables();
+}
+
 const Vector3& SpeakerNode::getWorldPosition() const
 {
     return m_origin;

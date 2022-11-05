@@ -650,7 +650,7 @@ Accelerator& EventManager::findAccelerator(const std::string& key, const std::st
 EventManager::AcceleratorMap::iterator EventManager::findAccelerator(unsigned int keyVal, unsigned int modifierFlags)
 {
 	// Cycle through the accelerators and check for matches
-	for (AcceleratorMap::iterator it = _accelerators.begin(); it != _accelerators.end(); ++it)
+	for (auto it = _accelerators.begin(); it != _accelerators.end(); ++it)
     {
 		if (it->second->match(keyVal, modifierFlags))
 		{
@@ -668,6 +668,13 @@ Accelerator& EventManager::findAccelerator(wxKeyEvent& ev)
 	auto it = findAccelerator(keyval, wxutil::Modifier::GetStateForKeyEvent(ev));
 
 	return it != _accelerators.end() ? *it->second : _emptyAccelerator;
+}
+
+IAccelerator::Ptr EventManager::findAcceleratorForEvent(const std::string& eventName)
+{
+    auto existing = _accelerators.find(eventName);
+
+    return existing != _accelerators.end() ? existing->second : IAccelerator::Ptr();
 }
 
 bool EventManager::handleKeyEvent(wxKeyEvent& keyEvent)

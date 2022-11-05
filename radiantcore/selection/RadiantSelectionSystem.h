@@ -1,15 +1,12 @@
 #pragma once
 
-#include "iselectiontest.h"
-#include "iregistry.h"
 #include "irenderable.h"
 #include "iselection.h"
-#include "iradiant.h"
+#include "iselectiontest.h"
 #include "icommandsystem.h"
 #include "imap.h"
 
 #include "selectionlib.h"
-#include "math/Matrix4.h"
 #include "SelectedNodeList.h"
 
 #include "SceneManipulationPivot.h"
@@ -17,15 +14,15 @@
 namespace selection
 {
 
-class RadiantSelectionSystem :
+class RadiantSelectionSystem final :
 	public SelectionSystem,
-	public Renderable
+	public Renderable,
+    public ISceneSelectionTesterFactory
 {
 private:
 	SceneManipulationPivot _pivot;
 
-	typedef std::set<Observer*> ObserverList;
-	ObserverList _observers;
+    std::set<Observer*> _observers;
 
 	// The 3D volume surrounding the most recent selection.
 	WorkZone _workZone;
@@ -40,41 +37,40 @@ private:
 	// with a preferred sorting (see RadiantSelectionSystem::testSelectScene)
 	typedef std::list<ISelectable*> SelectablesList;
 
-private:
 	SelectionInfo _selectionInfo;
 
     sigc::signal<void, const ISelectable&> _sigSelectionChanged;
 
-	typedef std::map<std::size_t, ISceneManipulator::Ptr> Manipulators;
-	Manipulators _manipulators;
+    std::map<std::size_t, ISceneManipulator::Ptr> _manipulators;
 
 	// The currently active manipulator
     ISceneManipulator::Ptr _activeManipulator;
     IManipulator::Type _defaultManipulatorType;
 
 	// state
-	EMode _mode;
+	SelectionMode _mode;
     ComponentSelectionMode _componentMode;
 
 	std::size_t _countPrimitive;
 	std::size_t _countComponent;
 
 	// The internal list to keep track of the selected instances (components and primitives)
-	typedef SelectedNodeList SelectionListType;
-	SelectionListType _selection;
-	SelectionListType _componentSelection;
+    SelectedNodeList _selection;
+    SelectedNodeList _componentSelection;
 
 	// The coordinates of the mouse pointer when the manipulation starts
 	Vector2 _deviceStart;
 
 	bool nothingSelected() const;
 
-	sigc::signal<void, selection::IManipulator::Type> _sigActiveManipulatorChanged;
-	sigc::signal<void, EMode> _sigSelectionModeChanged;
+	sigc::signal<void, IManipulator::Type> _sigActiveManipulatorChanged;
+	sigc::signal<void, SelectionMode> _sigSelectionModeChanged;
 	sigc::signal<void, ComponentSelectionMode> _sigComponentModeChanged;
 
-public:
+    bool _selectionFocusActive;
+    std::set<scene::INodePtr> _selectionFocusPool;
 
+public:
 	RadiantSelectionSystem();
 
 	/** greebo: Returns a structure with all the related
@@ -92,13 +88,13 @@ public:
 	void addObserver(Observer* observer) override;
 	void removeObserver(Observer* observer) override;
 
-	void SetMode(EMode mode) override;
-	EMode Mode() const override;
+	void setSelectionMode(SelectionMode mode) override;
+    SelectionMode getSelectionMode() const override;
 
 	void SetComponentMode(ComponentSelectionMode mode) override;
     ComponentSelectionMode ComponentMode() const override;
 
-	sigc::signal<void, EMode>& signal_selectionModeChanged() override;
+	sigc::signal<void, SelectionMode>& signal_selectionModeChanged() override;
 	sigc::signal<void, ComponentSelectionMode>& signal_componentModeChanged() override;
 
 	// Returns the ID of the registered manipulator
@@ -109,7 +105,7 @@ public:
 	const ISceneManipulator::Ptr& getActiveManipulator() override;
 	void setActiveManipulator(std::size_t manipulatorId) override;
 	void setActiveManipulator(IManipulator::Type manipulatorType) override;
-	sigc::signal<void, selection::IManipulator::Type>& signal_activeManipulatorChanged() override;
+	sigc::signal<void, IManipulator::Type>& signal_activeManipulatorChanged() override;
 
 	std::size_t countSelected() const override;
 	std::size_t countSelectedComponents() const override;
@@ -166,19 +162,29 @@ public:
 
 	const Matrix4& getPivot2World() override;
 
-	// RegisterableModule implementation
-	virtual const std::string& getName() const override;
-	virtual const StringSet& getDependencies() const override;
-	virtual void initialiseModule(const IApplicationContext& ctx) override;
-	virtual void shutdownModule() override;
+    void toggleSelectionFocus() override;
+    bool selectionFocusIsActive() override;
+    AABB getSelectionFocusBounds() override;
 
-protected:
-	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
-	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
-        const VolumeTest& view, SelectionSystem::EMode mode,
-        ComponentSelectionMode componentMode);
+	// RegisterableModule implementation
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const IApplicationContext& ctx) override;
+	void shutdownModule() override;
+
+    ISceneSelectionTester::Ptr createSceneSelectionTester(SelectionMode mode) override;
 
 private:
+    bool nodeCanBeSelectionTested(const scene::INodePtr& node);
+
+    // Sets the selection status of the given selectable. The selection status will
+    // be propagated to groups if the current selection mode / focus is allowing that
+    void setSelectionStatus(ISelectable* selectable, bool selected);
+
+	// Traverses the scene and adds any selectable nodes matching the given SelectionTest to the "targetList".
+	void testSelectScene(SelectablesList& targetList, SelectionTest& test,
+        const VolumeTest& view, SelectionMode mode);
+
 	bool higherEntitySelectionPriority() const;
 
 	void notifyObservers(const scene::INodePtr& node, bool isComponent);
@@ -195,6 +201,8 @@ private:
 	void toggleEntityMode(const cmd::ArgumentList& args);
 	void toggleGroupPartMode(const cmd::ArgumentList& args);
 	void toggleMergeActionMode(const cmd::ArgumentList& args);
+
+	void toggleSelectionFocus(const cmd::ArgumentList& args);
 
 	void toggleComponentMode(ComponentSelectionMode mode);
 	void toggleComponentModeCmd(const cmd::ArgumentList& args);

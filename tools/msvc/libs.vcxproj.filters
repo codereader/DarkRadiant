@@ -409,6 +409,9 @@
     <ClInclude Include="..\..\libs\messages\TextureToolRequest.h">
       <Filter>messages</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\selection\EntitiesFirstSelector.h">
+      <Filter>selection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

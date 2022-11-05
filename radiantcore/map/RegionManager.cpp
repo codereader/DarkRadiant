@@ -329,7 +329,7 @@ void RegionManager::setRegionFromSelection(const cmd::ArgumentList& args)
     // Check, if there is anything selected
     if (info.totalCount > 0)
     {
-        if (GlobalSelectionSystem().Mode() != selection::SelectionSystem::eComponent)
+        if (GlobalSelectionSystem().getSelectionMode() != selection::SelectionMode::Component)
         {
             // Obtain the selection size (its min/max vectors)
             AABB regionBounds = GlobalSelectionSystem().getWorkZone().bounds;

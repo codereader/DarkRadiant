@@ -141,6 +141,7 @@ protected:
 
     void onVisibilityChanged(bool isVisibleNow) override;
     void onSelectionStatusChange(bool changeGroupStatus) override;
+    void onRenderStateChanged() override;
 
 private:
     void evaluateTransform();

@@ -681,6 +681,7 @@
     <ClCompile Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\RadiantSelectionSystem.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\SceneManipulationPivot.cpp" />
+    <ClCompile Include="..\..\radiantcore\selection\SceneSelectionTesters.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\SelectedNodeList.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\selectionset\SelectionSet.cpp" />
     <ClCompile Include="..\..\radiantcore\selection\selectionset\SelectionSetInfoFileModule.cpp" />
@@ -1074,6 +1075,7 @@
     <ClInclude Include="..\..\radiantcore\selection\manipulators\TranslateManipulator.h" />
     <ClInclude Include="..\..\radiantcore\selection\RadiantSelectionSystem.h" />
     <ClInclude Include="..\..\radiantcore\selection\SceneManipulationPivot.h" />
+    <ClInclude Include="..\..\radiantcore\selection\SceneSelectionTesters.h" />
     <ClInclude Include="..\..\radiantcore\selection\SceneWalkers.h" />
     <ClInclude Include="..\..\radiantcore\selection\SelectedNodeList.h" />
     <ClInclude Include="..\..\radiantcore\selection\selectionset\SelectionSet.h" />

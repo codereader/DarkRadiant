@@ -41,7 +41,7 @@ namespace
 void rotateSelected(const Quaternion& rotation)
 {
 	// Perform the rotation according to the current mode
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::Component)
 	{
 		GlobalSelectionSystem().foreachSelectedComponent(
 			RotateComponentSelected(rotation, GlobalSelectionSystem().getPivot2World().translation()));
@@ -92,7 +92,7 @@ void scaleSelected(const Vector3& scaleXYZ)
 		UndoableCommand undo(command);
 
 		// Pass the scale to the according traversor
-		if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+		if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::Component)
 		{
 			GlobalSelectionSystem().foreachSelectedComponent(ScaleComponentSelected(scaleXYZ,
 				GlobalSelectionSystem().getPivot2World().translation()));
@@ -270,7 +270,7 @@ public:
 void cloneSelected(const cmd::ArgumentList& args)
 {
 	// Check for the correct editing mode (don't clone components)
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent ||
+	if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::Component ||
         GlobalMapModule().getEditMode() != IMap::EditMode::Normal)
     {
 		return;
@@ -359,7 +359,7 @@ Vector3 AxisBase_axisForDirection(const AxisBase& axes, ENudgeDirection directio
 void translateSelected(const Vector3& translation)
 {
 	// Apply the transformation and freeze the changes
-	if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+	if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::Component)
 	{
 		GlobalSelectionSystem().foreachSelectedComponent(TranslateComponentSelected(translation));
 	}

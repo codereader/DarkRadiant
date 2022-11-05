@@ -20,10 +20,10 @@ public:
 		_occluded = false;
 	}
 
-	void pushSelectable(ISelectable& selectable) {}
-	void popSelectable() {}
+	void pushSelectable(ISelectable& selectable) override {}
+	void popSelectable() override {}
 
-	void addIntersection(const SelectionIntersection& intersection)
+	void addIntersection(const SelectionIntersection& intersection) override
 	{
 		if (intersection.isCloserThan(_bestIntersection))
 		{
@@ -31,6 +31,14 @@ public:
 			_occluded = true;
 		}
 	}
+
+    bool empty() const override
+    {
+        return true;
+    }
+
+    void foreachSelectable(const std::function<void(ISelectable*)>& functor) override
+    {}
 };
 
 } // namespace

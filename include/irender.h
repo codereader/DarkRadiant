@@ -497,6 +497,9 @@ enum class BuiltInShaderType
     OrthoMergeActionOverlayRemove,
     OrthoMergeActionOverlayChange,
     OrthoMergeActionOverlayConflict,
+
+    // Highly transparent wire shader for inactive nodes
+    WireframeInactive,
 };
 
 // Available types of colour shaders. These areused 

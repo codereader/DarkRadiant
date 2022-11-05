@@ -60,6 +60,19 @@ public:
     {
         return _selectable;
     }
+
+    bool empty() const override
+    {
+        return !hasValidSelectable();
+    }
+
+    void foreachSelectable(const std::function<void(ISelectable*)>& functor) override
+	{
+        if (!empty())
+        {
+            functor(_selectable);
+        }
+	}
 };
 
 }

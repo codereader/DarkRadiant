@@ -1251,6 +1251,12 @@ void LightNode::onColourKeyChanged(const std::string& value)
     updateRenderables();
 }
 
+void LightNode::onRenderStateChanged()
+{
+    clearRenderables();
+    updateRenderables();
+}
+
 void LightNode::updateRenderables()
 {
     _renderableOctagon.queueUpdate();

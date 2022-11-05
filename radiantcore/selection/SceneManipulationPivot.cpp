@@ -83,7 +83,7 @@ void SceneManipulationPivot::updateFromSelection()
         AABB bounds;
 
         // Traverse through the selection and update the <bounds> variable
-        if (GlobalSelectionSystem().Mode() == SelectionSystem::eComponent)
+        if (GlobalSelectionSystem().getSelectionMode() == SelectionMode::Component)
         {
             bounds = algorithm::getCurrentComponentSelectionBounds();
         }

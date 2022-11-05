@@ -1,8 +1,6 @@
 #pragma once
 
-#include "iselection.h"
 #include "iscenegraph.h"
-#include <functional>
 #include "render/RenderableCollectorBase.h"
 
 namespace render

@@ -451,6 +451,7 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
         _wireShader = renderSystem->capture(ColourShaderType::OrthoviewSolid, colour);
         _colourShader = renderSystem->capture(ColourShaderType::CameraAndOrthoview, colour);
         _textRenderer = renderSystem->captureTextRenderer(IGLFont::Style::Sans, 14);
+        _inactiveShader = renderSystem->capture(BuiltInShaderType::WireframeInactive);
     }
     else
     {
@@ -458,6 +459,7 @@ void EntityNode::acquireShaders(const RenderSystemPtr& renderSystem)
         _wireShader.reset();
         _colourShader.reset();
         _textRenderer.reset();
+        _inactiveShader.reset();
     }
 }
 
@@ -563,6 +565,11 @@ const ShaderPtr& EntityNode::getFillShader() const
 	return _fillShader;
 }
 
+const ShaderPtr& EntityNode::getInactiveShader()
+{
+    return _inactiveShader;
+}
+
 Vector4 EntityNode::getEntityColour() const
 {
     return _spawnArgs.getEntityClass()->getColour();
@@ -631,6 +638,17 @@ void EntityNode::detachFromRenderSystem()
         renderSystem->removeEntity(std::dynamic_pointer_cast<IRenderEntity>(shared_from_this()));
         _isAttachedToRenderSystem = false;
     }
+}
+
+void EntityNode::setRenderState(RenderState state)
+{
+    SelectableNode::setRenderState(state);
+
+    // Propagate to attachments
+    foreachAttachment([=](const IEntityNodePtr& attachment)
+    {
+        attachment->setRenderState(state);
+    });
 }
 
 } // namespace entity

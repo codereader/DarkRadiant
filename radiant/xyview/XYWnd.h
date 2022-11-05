@@ -187,6 +187,7 @@ private:
     void ensureFont();
     void onContextMenu();
     void drawSizeInfo(int nDim1, int nDim2, const Vector3& vMinBounds, const Vector3& vMaxBounds);
+    void drawSelectionFocusArea(int nDim1, int nDim2, float xMin, float xMax, float yMin, float yMax);
     void drawCameraIcon();
     float getZoomedScale(int steps);
 

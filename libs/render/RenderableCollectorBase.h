@@ -26,7 +26,7 @@ public:
         _flags(Highlight::Flags::NoHighlight)
     {}
 
-    virtual ~RenderableCollectorBase()
+    ~RenderableCollectorBase() override
     {}
 
     bool hasHighlightFlags() const override
@@ -56,9 +56,9 @@ public:
         node->onPreRender(volume);
 
         // greebo: Highlighting propagates to child nodes
-        scene::INodePtr parent = node->getParent();
+        auto parent = node->getParent();
 
-        std::size_t highlightFlags = node->getHighlightFlags();
+        auto highlightFlags = node->getHighlightFlags();
 
         auto nodeType = node->getNodeType();
 
@@ -122,7 +122,7 @@ public:
 
         if (highlightFlags & Renderable::Highlight::Selected)
         {
-            if (GlobalSelectionSystem().Mode() != selection::SelectionSystem::eComponent)
+            if (GlobalSelectionSystem().getSelectionMode() != selection::SelectionMode::Component)
             {
                 setHighlightFlag(Highlight::Faces, true);
             }

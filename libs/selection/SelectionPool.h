@@ -121,9 +121,17 @@ public:
 		return _pool.end();
 	}
 
-	bool empty()
+	bool empty() const override
 	{
 		return _pool.empty();
+	}
+
+    void foreachSelectable(const std::function<void(ISelectable*)>& functor) override
+	{
+        for (const auto& [_, selectable] : _pool)
+        {
+            functor(selectable);
+        }
 	}
 };
 
