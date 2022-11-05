@@ -148,8 +148,6 @@ public:
 	const WorkZone& getWorkZone() override;
 	Vector3 getCurrentSelectionCenter() override;
 
-    void toggleSelectionFocus();
-
     void onPreRender(const VolumeTest& volume) override;
     void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override
     {}
@@ -164,6 +162,7 @@ public:
 
 	const Matrix4& getPivot2World() override;
 
+    void toggleSelectionFocus() override;
     bool selectionFocusIsActive() override;
     AABB getSelectionFocusBounds() override;
 

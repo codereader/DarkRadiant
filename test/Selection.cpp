@@ -20,11 +20,26 @@
 #include "Transformable.h"
 #include "algorithm/View.h"
 #include "algorithm/XmlUtils.h"
+#include "command/ExecutionNotPossible.h"
 
 namespace test
 {
 
 using SelectionTest = RadiantTest;
+
+void expectNodeSelectionStatus(const std::vector<scene::INodePtr>& shouldBeSelected,
+    const std::vector<scene::INodePtr>& shouldBeUnselected)
+{
+    for (const auto& node : shouldBeSelected)
+    {
+        EXPECT_TRUE(Node_isSelected(node)) << "Node " << node->name() << " should be selected";
+    }
+
+    for (const auto& node : shouldBeUnselected)
+    {
+        EXPECT_FALSE(Node_isSelected(node)) << "Node " << node->name() << " should be unselected";
+    }
+}
 
 TEST_F(SelectionTest, DefaultSelectionMode)
 {
@@ -236,7 +251,7 @@ TEST_F(SelectionTest, ToggleSelectionFocusRequiresSelection)
 
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
 
-    GlobalCommandSystem().executeCommand("ToggleSelectionFocus");
+    EXPECT_THROW(GlobalSelectionSystem().toggleSelectionFocus(), cmd::ExecutionNotPossible);
 
     EXPECT_FALSE(GlobalSelectionSystem().selectionFocusIsActive()) << "Should not have been activated";
 
@@ -244,9 +259,27 @@ TEST_F(SelectionTest, ToggleSelectionFocusRequiresSelection)
     Node_setSelected(brush2, true);
     Node_setSelected(brush, true);
 
-    GlobalCommandSystem().executeCommand("ToggleSelectionFocus");
+    EXPECT_NO_THROW(GlobalSelectionSystem().toggleSelectionFocus());
 
     EXPECT_TRUE(GlobalSelectionSystem().selectionFocusIsActive()) << "Should be active now";
+}
+
+TEST_F(SelectionTest, EnteringSelectionFocusClearsSelection)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+
+    // Select two brushes
+    Node_setSelected(brush2, true);
+    Node_setSelected(brush, true);
+
+    GlobalSelectionSystem().toggleSelectionFocus();
+    EXPECT_TRUE(GlobalSelectionSystem().selectionFocusIsActive()) << "Should be active now";
+
+    expectNodeSelectionStatus({}, { brush, brush2 });
 }
 
 TEST_F(SelectionTest, LeavingSelectionFocusRestoresSelection)
@@ -262,17 +295,36 @@ TEST_F(SelectionTest, LeavingSelectionFocusRestoresSelection)
     Node_setSelected(brush2, true);
     Node_setSelected(brush, true);
 
-    GlobalCommandSystem().executeCommand("ToggleSelectionFocus");
+    GlobalSelectionSystem().toggleSelectionFocus();
     EXPECT_TRUE(GlobalSelectionSystem().selectionFocusIsActive()) << "Should be active now";
 
     GlobalSelectionSystem().setSelectedAll(false);
+    Node_setSelected(brush, true);
 
-    GlobalCommandSystem().executeCommand("ToggleSelectionFocus");
+    GlobalSelectionSystem().toggleSelectionFocus();
     EXPECT_FALSE(GlobalSelectionSystem().selectionFocusIsActive()) << "Should be inactive now";
 
     EXPECT_TRUE(Node_isSelected(brush)) << "Brush selection has not been restored";
     EXPECT_TRUE(Node_isSelected(brush2)) << "Brush 2 selection has not been restored";
     EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should still be unselected";
+}
+
+TEST_F(SelectionTest, SwitchingMapsLeavesFocusMode)
+{
+    loadMap("selection_test2.map");
+
+    auto funcStaticTop = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_top");
+
+    // Enter focus mode with the entity selected (this should move the child into focus too)
+    Node_setSelected(funcStaticTop, true);
+    GlobalSelectionSystem().toggleSelectionFocus();
+    expectNodeSelectionStatus({}, { funcStaticTop });
+
+    funcStaticTop.reset();
+
+    // Even loading the same map again should do the trick
+    loadMap("selection_test2.map");
+    EXPECT_FALSE(GlobalSelectionSystem().selectionFocusIsActive()) << "Changing maps should leave focus";
 }
 
 class ViewSelectionTest :
@@ -567,20 +619,6 @@ void performPointSelectionOnNodePosition(const scene::INodePtr& node, selection:
 {
     auto nodePosition = node->worldAABB().getOrigin();
     performPointSelectionOnPosition(nodePosition, modifier);
-}
-
-void expectNodeSelectionStatus(const std::vector<scene::INodePtr>& shouldBeSelected, 
-    const std::vector<scene::INodePtr>& shouldBeUnselected)
-{
-    for (const auto& node : shouldBeSelected)
-    {
-        EXPECT_TRUE(Node_isSelected(node)) << "Node " << node->name() << " should be selected";
-    }
-
-    for (const auto& node : shouldBeUnselected)
-    {
-        EXPECT_FALSE(Node_isSelected(node)) << "Node " << node->name() << " should be unselected";
-    }
 }
 
 // Ortho: Toggle worldspawn brush selection in primitive mode
@@ -1388,6 +1426,68 @@ TEST_F(OrthoViewSelectionTest, DragComponentSelectionIsTransient)
     EXPECT_FALSE(algorithm::patchHasVertex(*patch, moveVertex));
     // All other vertices should still be unchanged
     EXPECT_TRUE(algorithm::patchHasVertices(*patch, vertices));
+}
+
+TEST_F(OrthoViewSelectionTest, ToggleSelectPointInFocusMode)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    // Brush 1 sits on top of Brush 3, Brush 2 is next to them
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    auto brush3 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/3");
+
+    expectNodeSelectionStatus({}, { brush, brush2, brush3 });
+
+    Node_setSelected(brush3, true);
+    GlobalSelectionSystem().toggleSelectionFocus();
+    expectNodeSelectionStatus({}, { brush, brush2, brush3 });
+
+    // Trying to select brush 1 should select brush 3, since 1 is not part of the focus
+    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+    expectNodeSelectionStatus({ brush3 }, { brush2, brush });
+
+    // Move brush 3
+    auto originalAABB = brush3->worldAABB();
+    performDragOperation(originalAABB.getOrigin());
+    auto newAABB = brush3->worldAABB();
+
+    EXPECT_FALSE(math::isNear(originalAABB.getOrigin(), newAABB.getOrigin(), 20)) << "Item should have moved";
+    EXPECT_TRUE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 0.01)) << "Item should not have changed form";
+}
+
+TEST_F(OrthoViewSelectionTest, ToggleSelectFuncStaticInFocusMode)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+
+    auto funcStaticTop = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_top");
+    auto topBrush = algorithm::findFirstBrushWithMaterial(funcStaticTop, "textures/numbers/1");
+
+    expectNodeSelectionStatus({}, { funcStaticTop, topBrush });
+
+    // Enter focus mode with the entity selected (this should move the child into focus too)
+    Node_setSelected(funcStaticTop, true);
+    GlobalSelectionSystem().toggleSelectionFocus();
+    expectNodeSelectionStatus({}, { funcStaticTop, topBrush });
+
+    // Aim at the brush and select it, this should have the entity selected as usual
+    performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eToggle);
+    expectNodeSelectionStatus({ funcStaticTop }, { topBrush });
+
+    // Move the func_static
+    auto originalEntityOrigin = Node_getEntity(funcStaticTop)->getKeyValue("origin");
+    auto originalAABB = topBrush->worldAABB();
+    performDragOperation(originalAABB.getOrigin());
+    auto newAABB = topBrush->worldAABB();
+    auto newEntityOrigin = Node_getEntity(funcStaticTop)->getKeyValue("origin");
+
+    EXPECT_FALSE(math::isNear(originalAABB.getOrigin(), newAABB.getOrigin(), 20)) << "Item should have moved";
+    EXPECT_NE(newEntityOrigin, originalEntityOrigin) << "Entity should have moved";
+    EXPECT_TRUE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 0.01)) << "Item should not have changed form";
 }
 
 }

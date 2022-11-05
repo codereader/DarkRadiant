@@ -1047,6 +1047,8 @@ void RadiantSelectionSystem::initialiseModule(const IApplicationContext& ctx)
 
 void RadiantSelectionSystem::shutdownModule()
 {
+    _selectionFocusPool.clear();
+
     // greebo: Unselect everything so that no references to scene::Nodes
     // are kept after shutdown, causing destruction issues.
     setSelectedAll(false);
@@ -1440,6 +1442,8 @@ void RadiantSelectionSystem::onMapEvent(IMap::MapEvent ev)
 {
 	if (ev == IMap::MapUnloading || ev == IMap::MapLoading)
 	{
+        _selectionFocusActive = false;
+        _selectionFocusPool.clear();
 		setSelectedAll(false);
 		setSelectedAllComponents(false);
 	}

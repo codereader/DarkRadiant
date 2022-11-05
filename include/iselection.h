@@ -230,6 +230,11 @@ public:
 	// Returns the center point of the current selection
 	virtual Vector3 getCurrentSelectionCenter() = 0;
 
+    // Toggles selection focus mode (only possible with a non-empty selection)
+    // After activating, only items that are part of the set can be selected and manipulated.
+    // Throws cmd::ExecutionNotPossible when trying to activate with an empty selection
+    virtual void toggleSelectionFocus() = 0;
+
     // Returns true when focus mode is active
     // In focus mode only certain elements in the map can be selected.
     // It's also possible to select single parts of selection groups
