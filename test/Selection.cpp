@@ -327,6 +327,37 @@ TEST_F(SelectionTest, SwitchingMapsLeavesFocusMode)
     EXPECT_FALSE(GlobalSelectionSystem().selectionFocusIsActive()) << "Changing maps should leave focus";
 }
 
+TEST_F(SelectionTest, GetSelectionFocusBounds)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto funcStaticTop = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_top");
+
+    EXPECT_FALSE(GlobalSelectionSystem().getSelectionFocusBounds().isValid());
+
+    // Enter focus mode with the entity selected (this should move the child into focus too)
+    Node_setSelected(funcStaticTop, true);
+    Node_setSelected(brush, true);
+
+    GlobalSelectionSystem().toggleSelectionFocus();
+
+    auto reportedBounds = GlobalSelectionSystem().getSelectionFocusBounds();
+    EXPECT_TRUE(reportedBounds.isValid());
+
+    AABB expectedBounds;
+    expectedBounds.includeAABB(funcStaticTop->worldAABB());
+    expectedBounds.includeAABB(brush->worldAABB());
+
+    EXPECT_TRUE(math::isNear(expectedBounds.getOrigin(), reportedBounds.getOrigin(), 0.01));
+    EXPECT_TRUE(math::isNear(expectedBounds.getExtents(), reportedBounds.getExtents(), 0.01));
+
+    // Leaving focus mode should clear the bounds (report as invalid)
+    GlobalSelectionSystem().toggleSelectionFocus();
+    EXPECT_FALSE(GlobalSelectionSystem().getSelectionFocusBounds().isValid());
+}
+
 class ViewSelectionTest :
     public SelectionTest
 {
