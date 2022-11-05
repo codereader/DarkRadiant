@@ -478,7 +478,13 @@ Vector3 XYWndManager::getFocusPosition()
 	{
 		position = GlobalSelectionSystem().getCurrentSelectionCenter();
 	}
-	else {
+    else if (GlobalSelectionSystem().selectionFocusIsActive())
+    {
+        // Use the selection focus area if nothing is selected
+        position = GlobalSelectionSystem().getSelectionFocusBounds().getOrigin();
+    }
+	else
+    {
 		auto cam = GlobalCamera().getActiveCamWnd();
 
 		if (cam != NULL) {
