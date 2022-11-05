@@ -235,6 +235,9 @@ public:
     // It's also possible to select single parts of selection groups
     // without disbanding the group.
     virtual bool selectionFocusIsActive() = 0;
+
+    // Returns the volume the focus items are occupying
+    virtual AABB getSelectionFocusBounds() = 0;
 };
 
 }

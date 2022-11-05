@@ -342,7 +342,7 @@ void BuiltInShader::construct()
         pass.setRenderFlags(RENDER_DEPTHTEST);
 
         // light grey rendering
-        pass.setColour({ 0.73, 0.73, 0.73, 0.1f });
+        pass.setColour({ 0.73f, 0.73f, 0.73f, 0.1f });
 
         pass.setSortPosition(OpenGLState::SORT_BACKGROUND);
         pass.setDepthFunc(GL_LESS);

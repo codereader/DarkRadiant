@@ -135,6 +135,21 @@ bool RadiantSelectionSystem::selectionFocusIsActive()
     return _selectionFocusActive;
 }
 
+AABB RadiantSelectionSystem::getSelectionFocusBounds()
+{
+    AABB bounds;
+
+    for (const auto& node : _selectionFocusPool)
+    {
+        if (node->inScene())
+        {
+            bounds.includeAABB(node->worldAABB());
+        }
+    }
+
+    return bounds;
+}
+
 bool RadiantSelectionSystem::nodeCanBeSelectionTested(const scene::INodePtr& node)
 {
     // All nodes pass if no focus is active, otherwise restrict to the pool

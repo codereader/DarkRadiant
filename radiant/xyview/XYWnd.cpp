@@ -973,6 +973,62 @@ void XYWnd::drawGrid()
             glEnd();
         }
     }
+
+    if (GlobalSelectionSystem().selectionFocusIsActive())
+    {
+        auto bounds = GlobalSelectionSystem().getSelectionFocusBounds();
+
+        if (bounds.isValid())
+        {
+            Vector3f focusMin = bounds.getOrigin() - bounds.getExtents();
+            Vector3f focusMax = bounds.getOrigin() + bounds.getExtents();
+
+            // Define the blend function for transparency
+            glEnable(GL_BLEND);
+            glBlendColor(0, 0, 0, 0.15f);
+            glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
+
+            Vector3 dragBoxColour(0, 0, 0);
+            glColor3dv(dragBoxColour);
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+            // Flood everything outside the bounds with an overlay
+            glBegin(GL_QUADS);
+
+            glVertex2f(xb, yb);
+            glVertex2f(xb, focusMin[nDim2]);
+            glVertex2f(xe, focusMin[nDim2]);
+            glVertex2f(xe, yb);
+
+            glVertex2f(xb, ye);
+            glVertex2f(xe, ye);
+            glVertex2f(xe, focusMax[nDim2]);
+            glVertex2f(xb, focusMax[nDim2]);
+
+            glVertex2f(xb, focusMax[nDim2]);
+            glVertex2f(focusMin[nDim1], focusMax[nDim2]);
+            glVertex2f(focusMin[nDim1], focusMin[nDim2]);
+            glVertex2f(xb, focusMin[nDim2]);
+
+            glVertex2f(focusMax[nDim1], focusMax[nDim2]);
+            glVertex2f(xe, focusMax[nDim2]);
+            glVertex2f(xe, focusMin[nDim2]);
+            glVertex2f(focusMax[nDim1], focusMin[nDim2]);
+
+            glEnd();
+#if 0
+            // The solid borders
+            glBlendColor(0, 0, 0, 0.8f);
+            glBegin(GL_LINE_LOOP);
+            glVertex2f(focusMax[nDim1], focusMax[nDim2]);
+            glVertex2f(focusMax[nDim1], focusMin[nDim2]);
+            glVertex2f(focusMin[nDim1], focusMin[nDim2]);
+            glVertex2f(focusMin[nDim1], focusMax[nDim2]);
+            glEnd();
+#endif
+            glDisable(GL_BLEND);
+        }
+    }
 }
 
 void XYWnd::drawBlockGrid()
