@@ -337,10 +337,8 @@ TEST_F(SelectionTest, GetSelectionFocusBounds)
 
     EXPECT_FALSE(GlobalSelectionSystem().getSelectionFocusBounds().isValid());
 
-    // Enter focus mode with the entity selected (this should move the child into focus too)
     Node_setSelected(funcStaticTop, true);
     Node_setSelected(brush, true);
-
     GlobalSelectionSystem().toggleSelectionFocus();
 
     auto reportedBounds = GlobalSelectionSystem().getSelectionFocusBounds();
@@ -356,6 +354,39 @@ TEST_F(SelectionTest, GetSelectionFocusBounds)
     // Leaving focus mode should clear the bounds (report as invalid)
     GlobalSelectionSystem().toggleSelectionFocus();
     EXPECT_FALSE(GlobalSelectionSystem().getSelectionFocusBounds().isValid());
+}
+
+TEST_F(SelectionTest, DeselectCommandLeavesFocus)
+{
+    loadMap("selection_test2.map");
+
+    auto funcStaticTop = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_top");
+
+    // Enter focus mode with the entity selected (this should move the child into focus too)
+    Node_setSelected(funcStaticTop, true);
+    GlobalSelectionSystem().toggleSelectionFocus();
+    EXPECT_TRUE(GlobalSelectionSystem().selectionFocusIsActive());
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
+
+    // Select the entity in focus mode
+    Node_setSelected(funcStaticTop, true);
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
+
+    // First ESC de-selects the entity but leaves focus mode active
+    GlobalCommandSystem().executeCommand("UnSelectSelection");
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
+    EXPECT_TRUE(GlobalSelectionSystem().selectionFocusIsActive());
+
+    // Another ESC keypress leaves focus mode since no selection is left
+    GlobalCommandSystem().executeCommand("UnSelectSelection");
+    EXPECT_FALSE(GlobalSelectionSystem().selectionFocusIsActive());
+
+    // The entity selection has been restored
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1);
+
+    // One more ESC keypress clears the selection
+    GlobalCommandSystem().executeCommand("UnSelectSelection");
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
 }
 
 class ViewSelectionTest :
