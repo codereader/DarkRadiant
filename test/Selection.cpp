@@ -21,6 +21,7 @@
 #include "algorithm/View.h"
 #include "algorithm/XmlUtils.h"
 #include "command/ExecutionNotPossible.h"
+#include "scene/Group.h"
 
 namespace test
 {
@@ -1550,6 +1551,42 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectFuncStaticInFocusMode)
     EXPECT_FALSE(math::isNear(originalAABB.getOrigin(), newAABB.getOrigin(), 20)) << "Item should have moved";
     EXPECT_NE(newEntityOrigin, originalEntityOrigin) << "Entity should have moved";
     EXPECT_TRUE(math::isNear(originalAABB.getExtents(), newAABB.getExtents(), 0.01)) << "Item should not have changed form";
+}
+
+// Toggle-selecting items in focus mode ignores grouping information
+TEST_F(OrthoViewSelectionTest, ToggleSelectGroupItemInFocusMode)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    auto brush3 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/3");
+
+    Node_setSelected(brush, true);
+    Node_setSelected(brush2, true);
+    Node_setSelected(brush3, true);
+
+    // Group the three brushes together
+    selection::groupSelected();
+
+    GlobalSelectionSystem().setSelectedAll(false);
+
+    // Aim at one brush (not brush1, since the entity below it will take precedenec)
+    // Selecting brush 2 will select the entire group
+    performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eToggle);
+    expectNodeSelectionStatus({ brush, brush2, brush3 }, {});
+
+    // Enter focus mode with the group selected
+    GlobalSelectionSystem().toggleSelectionFocus();
+    expectNodeSelectionStatus({}, { brush, brush2, brush3 });
+
+    // Aim at one brush and select it, this should not select the entire group
+    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+    expectNodeSelectionStatus({ brush }, { brush2, brush3 });
+
+    performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eToggle);
+    expectNodeSelectionStatus({ brush, brush2 }, { brush3 });
 }
 
 }
