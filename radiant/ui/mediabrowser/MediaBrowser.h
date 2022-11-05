@@ -89,6 +89,7 @@ private:
     void focusMaterial(FocusMaterialRequest& request);
 
 	void onShaderClipboardSourceChanged();
+	void sendSelectionToShaderClipboard();
 };
 
 }

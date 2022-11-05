@@ -98,6 +98,8 @@ void MediaBrowser::onIdle()
 
     if (!_queuedSelection.empty())
     {
+        util::ScopedBoolLock lock(_blockShaderClipboardUpdates);
+
         setSelection(_queuedSelection);
         _queuedSelection.clear();
     }
@@ -180,17 +182,31 @@ void MediaBrowser::onMaterialDefsUnloaded()
 
 void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
 {
-    util::ScopedBoolLock lock(_blockShaderClipboardUpdates);
-
     // Update the preview if a texture is selected
     if (!_treeView->IsDirectorySelected())
     {
         _preview->SetPreviewDeclName(getSelection());
-        GlobalShaderClipboard().setSourceShader(getSelection());
     }
     else
     {
         _preview->ClearPreview();
+    }
+
+    sendSelectionToShaderClipboard();
+}
+
+void MediaBrowser::sendSelectionToShaderClipboard()
+{
+    if (_blockShaderClipboardUpdates) return;
+
+    util::ScopedBoolLock lock(_blockShaderClipboardUpdates);
+
+    if (!_treeView->IsDirectorySelected())
+    {
+        GlobalShaderClipboard().setSourceShader(getSelection());
+    }
+    else
+    {
         // Nothing selected, clear the clipboard
         GlobalShaderClipboard().clear();
     }
