@@ -98,6 +98,8 @@ public:
 
 	std::string getEventStr(wxKeyEvent& ev) override;
 
+    IAccelerator::Ptr findAcceleratorForEvent(const std::string& eventName) override;
+
 private:
 	void saveEventListToRegistry();
 

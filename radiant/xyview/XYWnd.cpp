@@ -974,61 +974,91 @@ void XYWnd::drawGrid()
         }
     }
 
-    if (GlobalSelectionSystem().selectionFocusIsActive())
+    drawSelectionFocusArea(nDim1, nDim2, xb, xe, yb, ye);
+}
+
+void XYWnd::drawSelectionFocusArea(int nDim1, int nDim2, float xMin, float xMax, float yMin, float yMax)
+{
+    if (!GlobalSelectionSystem().selectionFocusIsActive()) return;
+
+    auto bounds = GlobalSelectionSystem().getSelectionFocusBounds();
+
+    if (!bounds.isValid()) return;
+
+    Vector3f focusMin = bounds.getOrigin() - bounds.getExtents();
+    Vector3f focusMax = bounds.getOrigin() + bounds.getExtents();
+
+    auto toggleAccel = GlobalEventManager().findAcceleratorForEvent("ToggleSelectionFocus");
+    auto unselectAccel = GlobalEventManager().findAcceleratorForEvent("UnSelectSelection");
+
+    std::string accelInfo;
+
+    if (unselectAccel)
     {
-        auto bounds = GlobalSelectionSystem().getSelectionFocusBounds();
-
-        if (bounds.isValid())
-        {
-            Vector3f focusMin = bounds.getOrigin() - bounds.getExtents();
-            Vector3f focusMax = bounds.getOrigin() + bounds.getExtents();
-
-            // Define the blend function for transparency
-            glEnable(GL_BLEND);
-            glBlendColor(0, 0, 0, 0.15f);
-            glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
-
-            Vector3 dragBoxColour(0, 0, 0);
-            glColor3dv(dragBoxColour);
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-            // Flood everything outside the bounds with an overlay
-            glBegin(GL_QUADS);
-
-            glVertex2f(xb, yb);
-            glVertex2f(xb, focusMin[nDim2]);
-            glVertex2f(xe, focusMin[nDim2]);
-            glVertex2f(xe, yb);
-
-            glVertex2f(xb, ye);
-            glVertex2f(xe, ye);
-            glVertex2f(xe, focusMax[nDim2]);
-            glVertex2f(xb, focusMax[nDim2]);
-
-            glVertex2f(xb, focusMax[nDim2]);
-            glVertex2f(focusMin[nDim1], focusMax[nDim2]);
-            glVertex2f(focusMin[nDim1], focusMin[nDim2]);
-            glVertex2f(xb, focusMin[nDim2]);
-
-            glVertex2f(focusMax[nDim1], focusMax[nDim2]);
-            glVertex2f(xe, focusMax[nDim2]);
-            glVertex2f(xe, focusMin[nDim2]);
-            glVertex2f(focusMax[nDim1], focusMin[nDim2]);
-
-            glEnd();
-#if 0
-            // The solid borders
-            glBlendColor(0, 0, 0, 0.8f);
-            glBegin(GL_LINE_LOOP);
-            glVertex2f(focusMax[nDim1], focusMax[nDim2]);
-            glVertex2f(focusMax[nDim1], focusMin[nDim2]);
-            glVertex2f(focusMin[nDim1], focusMin[nDim2]);
-            glVertex2f(focusMin[nDim1], focusMax[nDim2]);
-            glEnd();
-#endif
-            glDisable(GL_BLEND);
-        }
+        accelInfo += unselectAccel->getString(false);
     }
+
+    if (toggleAccel)
+    {
+        accelInfo += accelInfo.empty() ? "" : _(" or ");
+        accelInfo += toggleAccel->getString(false);
+    }
+
+    std::string focusHint = _("Selection Focus Active");
+
+    if (!accelInfo.empty())
+    {
+        focusHint += fmt::format(_(" (press {0} to exit)"), accelInfo);
+    }
+
+    glColor3d(0.3, 0.3, 0.3);
+    glRasterPos2d((focusMax[nDim1] + focusMin[nDim1])*0.5 - focusHint.length()*3.2/_scale, focusMax[nDim2] + 10 / _scale);
+    _font->drawString(focusHint);
+
+    // Define the blend function for transparency
+    glEnable(GL_BLEND);
+    glBlendColor(0, 0, 0, 0.15f);
+    glBlendFunc(GL_CONSTANT_ALPHA_EXT, GL_ONE_MINUS_CONSTANT_ALPHA_EXT);
+
+    Vector3 dragBoxColour(0, 0, 0);
+    glColor3dv(dragBoxColour);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    // Flood everything outside the bounds with an overlay
+    glBegin(GL_QUADS);
+
+    glVertex2f(xMin, yMin);
+    glVertex2f(xMin, focusMin[nDim2]);
+    glVertex2f(xMax, focusMin[nDim2]);
+    glVertex2f(xMax, yMin);
+
+    glVertex2f(xMin, yMax);
+    glVertex2f(xMax, yMax);
+    glVertex2f(xMax, focusMax[nDim2]);
+    glVertex2f(xMin, focusMax[nDim2]);
+
+    glVertex2f(xMin, focusMax[nDim2]);
+    glVertex2f(focusMin[nDim1], focusMax[nDim2]);
+    glVertex2f(focusMin[nDim1], focusMin[nDim2]);
+    glVertex2f(xMin, focusMin[nDim2]);
+
+    glVertex2f(focusMax[nDim1], focusMax[nDim2]);
+    glVertex2f(xMax, focusMax[nDim2]);
+    glVertex2f(xMax, focusMin[nDim2]);
+    glVertex2f(focusMax[nDim1], focusMin[nDim2]);
+
+    glEnd();
+#if 0
+    // The solid borders
+    glBlendColor(0, 0, 0, 0.4f);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(focusMax[nDim1] + 2, focusMax[nDim2] + 2);
+    glVertex2f(focusMax[nDim1] + 2, focusMin[nDim2] - 2);
+    glVertex2f(focusMin[nDim1] - 2, focusMin[nDim2] - 2);
+    glVertex2f(focusMin[nDim1] - 2, focusMax[nDim2] + 2);
+    glEnd();
+#endif
+    glDisable(GL_BLEND);
 }
 
 void XYWnd::drawBlockGrid()
