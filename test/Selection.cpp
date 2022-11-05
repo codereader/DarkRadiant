@@ -221,6 +221,60 @@ TEST_F(SelectionTest, WorkzoneIsRecalculatedAfterSelectionChange)
     EXPECT_EQ(GlobalSelectionSystem().getWorkZone().bounds, smallBounds);
 }
 
+TEST_F(SelectionTest, InitialSelectionFocusState)
+{
+    EXPECT_FALSE(GlobalSelectionSystem().selectionFocusIsActive());
+}
+
+TEST_F(SelectionTest, ToggleSelectionFocusRequiresSelection)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0);
+
+    GlobalCommandSystem().executeCommand("ToggleSelectionFocus");
+
+    EXPECT_FALSE(GlobalSelectionSystem().selectionFocusIsActive()) << "Should not have been activated";
+
+    // Select two brushes
+    Node_setSelected(brush2, true);
+    Node_setSelected(brush, true);
+
+    GlobalCommandSystem().executeCommand("ToggleSelectionFocus");
+
+    EXPECT_TRUE(GlobalSelectionSystem().selectionFocusIsActive()) << "Should be active now";
+}
+
+TEST_F(SelectionTest, LeavingSelectionFocusRestoresSelection)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    auto brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    auto brush3 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/3");
+
+    // Select two brushes
+    Node_setSelected(brush2, true);
+    Node_setSelected(brush, true);
+
+    GlobalCommandSystem().executeCommand("ToggleSelectionFocus");
+    EXPECT_TRUE(GlobalSelectionSystem().selectionFocusIsActive()) << "Should be active now";
+
+    GlobalSelectionSystem().setSelectedAll(false);
+
+    GlobalCommandSystem().executeCommand("ToggleSelectionFocus");
+    EXPECT_FALSE(GlobalSelectionSystem().selectionFocusIsActive()) << "Should be inactive now";
+
+    EXPECT_TRUE(Node_isSelected(brush)) << "Brush selection has not been restored";
+    EXPECT_TRUE(Node_isSelected(brush2)) << "Brush 2 selection has not been restored";
+    EXPECT_FALSE(Node_isSelected(brush3)) << "Brush 3 should still be unselected";
+}
+
 class ViewSelectionTest :
     public SelectionTest
 {
