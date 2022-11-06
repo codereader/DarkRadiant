@@ -352,9 +352,9 @@
     <ClCompile Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\MapStatistics.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\StatusBarManager.cpp" />
+    <ClCompile Include="..\..\radiant\ui\texturebrowser\MaterialThumbnailBrowser.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\toolbar\ToolbarManager.cpp" />
-    <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp" />
     <ClCompile Include="..\..\radiant\ui\splash\Splash.cpp" />
     <ClCompile Include="..\..\radiant\ui\surfaceinspector\SurfaceInspector.cpp" />
     <ClCompile Include="..\..\radiant\ui\layers\LayerContextMenu.cpp" />
@@ -580,9 +580,9 @@
     <ClInclude Include="..\..\radiant\ui\statusbar\ShaderClipboardStatus.h" />
     <ClInclude Include="..\..\radiant\ui\statusbar\StatusBarManager.h" />
     <ClInclude Include="..\..\radiant\ui\surfaceinspector\SurfaceInspectorControl.h" />
+    <ClInclude Include="..\..\radiant\ui\texturebrowser\MaterialThumbnailBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h" />
     <ClInclude Include="..\..\radiant\ui\toolbar\ToolbarManager.h" />
-    <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\splash\Splash.h" />
     <ClInclude Include="..\..\radiant\ui\surfaceinspector\SurfaceInspector.h" />
     <ClInclude Include="..\..\radiant\ui\layers\LayerContextMenu.h" />

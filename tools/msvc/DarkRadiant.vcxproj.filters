@@ -319,9 +319,6 @@
     <ClCompile Include="..\..\radiant\ui\prefdialog\PrefPage.cpp">
       <Filter>src\ui\prefdialog</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp">
-      <Filter>src\ui\texturebrowser</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\radiant\ui\splash\Splash.cpp">
       <Filter>src\ui\splash</Filter>
     </ClCompile>
@@ -703,6 +700,9 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\ViewMenu.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\texturebrowser\MaterialThumbnailBrowser.cpp">
+      <Filter>src\ui\texturebrowser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -839,9 +839,6 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\prefdialog\PrefPage.h">
       <Filter>src\ui\prefdialog</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h">
-      <Filter>src\ui\texturebrowser</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\splash\Splash.h">
       <Filter>src\ui\splash</Filter>
@@ -1409,6 +1406,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\mainframe\ViewMenu.h">
       <Filter>src\ui\mainframe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\texturebrowser\MaterialThumbnailBrowser.h">
+      <Filter>src\ui\texturebrowser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
