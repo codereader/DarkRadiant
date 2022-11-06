@@ -1044,7 +1044,7 @@ void runLayerVisibilityPersistenceTest(const std::string& mapFilePath)
     EXPECT_TRUE(brush2->visible()) << "Brush 2 should be visible since Layer 2 is visible";
 
     EXPECT_TRUE(brush1->checkStateFlag(scene::Node::eLayered)) << "Brush 1 should be invisible due to layering";
-    EXPECT_FALSE(brush1->checkStateFlag(scene::Node::eLayered)) << "Brush 2 should not be invisible due to layering";
+    EXPECT_FALSE(brush2->checkStateFlag(scene::Node::eLayered)) << "Brush 2 should not be invisible due to layering";
 }
 
 TEST_F(LayerTest, LayerVisibilityIsPersistedToMap)

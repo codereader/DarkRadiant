@@ -194,6 +194,10 @@ void Map::loadMapResourceFromLocation(const MapLocation& location)
             module::GlobalModuleRegistry().getModule(MODULE_RENDERSYSTEM)));
     }
 
+    // Update layer visibility of all nodes
+    scene::UpdateNodeVisibilityWalker updater(_resource->getRootNode()->getLayerManager());
+    _resource->getRootNode()->traverse(updater);
+
     // Map loading finished, emit the signal
     emitMapEvent(MapLoaded);
 
