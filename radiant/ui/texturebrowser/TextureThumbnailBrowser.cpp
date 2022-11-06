@@ -195,7 +195,7 @@ private:
     }
 };
 
-TextureThumbnailBrowser::TextureThumbnailBrowser(wxWindow* parent) :
+TextureThumbnailBrowser::TextureThumbnailBrowser(wxWindow* parent, bool showToolbar) :
     wxPanel(parent),
     _popupX(-1),
     _popupY(-1),
@@ -254,13 +254,14 @@ TextureThumbnailBrowser::TextureThumbnailBrowser(wxWindow* parent) :
     texbox->SetSizer(new wxBoxSizer(wxVERTICAL));
 
     // Load the texture toolbar from the registry
+    if (showToolbar)
     {
-        _textureToolbar = GlobalToolBarManager().createToolbar("texture", texbox);
+        auto textureToolbar = GlobalToolBarManager().createToolbar("texture", texbox);
 
-        if (_textureToolbar != nullptr)
+        if (textureToolbar != nullptr)
         {
             // Pack it into the main window
-            texbox->GetSizer()->Add(_textureToolbar, 0, wxEXPAND);
+            texbox->GetSizer()->Add(textureToolbar, 0, wxEXPAND);
         }
         else
         {

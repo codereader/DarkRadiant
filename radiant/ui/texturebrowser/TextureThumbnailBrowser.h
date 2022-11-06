@@ -97,8 +97,6 @@ class TextureThumbnailBrowser :
 
     unsigned int _maxNameLength;
 
-	wxToolBar* _textureToolbar;
-
     // renderable items will be updated next round
     bool _updateNeeded;
 
@@ -116,7 +114,7 @@ class TextureThumbnailBrowser :
     std::unique_ptr<CurrentPosition> _currentPopulationPosition;
 
 public:
-    TextureThumbnailBrowser(wxWindow* parent);
+    TextureThumbnailBrowser(wxWindow* parent, bool showToolbar = true);
 
     // Schedules an update of the renderable items
     void queueUpdate();

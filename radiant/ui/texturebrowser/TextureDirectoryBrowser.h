@@ -18,7 +18,7 @@ private:
 
 public:
     TextureDirectoryBrowser(wxWindow* parent, const std::string& texturePath) :
-        TextureThumbnailBrowser(parent),
+        TextureThumbnailBrowser(parent, false), // hide the toolbar
         _texturePath(os::standardPathWithSlash(texturePath))
     {}
 

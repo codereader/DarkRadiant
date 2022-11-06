@@ -6,7 +6,9 @@
 
 namespace wxutil
 {
-
+/**
+ * A popup window that is destroying itself as soon as it loses focus
+ */
 class TransientPopupWindow :
     public wxPopupTransientWindow
 {
