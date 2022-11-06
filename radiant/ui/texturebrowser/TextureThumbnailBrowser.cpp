@@ -64,18 +64,8 @@ public:
         _owner(owner)
     {}
 
-    bool isVisible()
-    {
-        return _owner.materialIsVisible(material);
-    }
-
     void render(bool drawName)
     {
-        if (!isVisible())
-        {
-            return;
-        }
-
         TexturePtr texture = material->getEditorImage();
         if (!texture) return;
 
@@ -222,18 +212,13 @@ TextureThumbnailBrowser::TextureThumbnailBrowser(wxWindow* parent) :
     _mouseWheelScrollIncrement(registry::getValue<int>(RKEY_TEXTURE_MOUSE_WHEEL_INCR)),
     _showTextureFilter(registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER)),
     _showTextureScrollbar(registry::getValue<bool>(RKEY_TEXTURE_SHOW_SCROLLBAR)),
-    _hideUnused(registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED)),
-    _showFavouritesOnly(registry::getValue<bool>(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY)),
     _showNamesKey(RKEY_TEXTURES_SHOW_NAMES),
     _textureScale(50),
     _useUniformScale(registry::getValue<bool>(RKEY_TEXTURE_USE_UNIFORM_SCALE)),
-    _showOtherMaterials(registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS)),
     _uniformTextureSize(registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE)),
     _maxNameLength(registry::getValue<int>(RKEY_TEXTURE_MAX_NAME_LENGTH)),
     _updateNeeded(true)
 {
-    observeKey(RKEY_TEXTURES_HIDE_UNUSED);
-    observeKey(RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
     observeKey(RKEY_TEXTURE_UNIFORM_SIZE);
     observeKey(RKEY_TEXTURE_USE_UNIFORM_SCALE);
     observeKey(RKEY_TEXTURE_SCALE);
@@ -241,7 +226,6 @@ TextureThumbnailBrowser::TextureThumbnailBrowser(wxWindow* parent) :
     observeKey(RKEY_TEXTURE_MOUSE_WHEEL_INCR);
     observeKey(RKEY_TEXTURE_SHOW_FILTER);
     observeKey(RKEY_TEXTURE_MAX_NAME_LENGTH);
-    observeKey(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
     observeKey(RKEY_TEXTURES_SHOW_NAMES);
 
     loadScaleFromRegistry();
@@ -264,9 +248,6 @@ TextureThumbnailBrowser::TextureThumbnailBrowser(wxWindow* parent) :
 	_freezePointer.connectMouseEvents(
 		wxutil::FreezePointer::MouseEventFunction(),
 		std::bind(&TextureThumbnailBrowser::onGLMouseButtonRelease, this, std::placeholders::_1));
-
-    GlobalMaterialManager().signal_activeShadersChanged().connect(
-        sigc::mem_fun(this, &TextureThumbnailBrowser::onActiveShadersChanged));
 
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -405,9 +386,6 @@ void TextureThumbnailBrowser::filterChanged()
 
 void TextureThumbnailBrowser::keyChanged()
 {
-    _hideUnused = registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED);
-    _showFavouritesOnly = registry::getValue<bool>(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
-    _showOtherMaterials = registry::getValue<bool>(RKEY_TEXTURES_SHOW_OTHER_MATERIALS);
     _showTextureFilter = registry::getValue<bool>(RKEY_TEXTURE_SHOW_FILTER);
     _uniformTextureSize = registry::getValue<int>(RKEY_TEXTURE_UNIFORM_SIZE);
     _useUniformScale = registry::getValue<bool>(RKEY_TEXTURE_USE_UNIFORM_SCALE);
@@ -495,6 +473,42 @@ std::string TextureThumbnailBrowser::getFilter()
 	return _filter->GetValue().ToStdString();
 }
 
+bool TextureThumbnailBrowser::materialIsFiltered(const std::string& materialName)
+{
+    auto filterText = getFilter();
+
+    if (filterText.empty()) return false; // not filtered
+
+    std::string textureName = shader_get_textureName(materialName.c_str());
+
+    if (_filterIgnoresTexturePath)
+    {
+        std::size_t lastSlash = textureName.find_last_of('/');
+
+        if (lastSlash != std::string::npos)
+        {
+            textureName.erase(0, lastSlash + 1);
+        }
+    }
+
+    string::to_lower(textureName);
+
+    // Split the filter text into words, every word must match (#5738)
+    std::vector<std::string> filters;
+    string::split(filters, string::to_lower_copy(filterText), " ");
+
+    // case insensitive substring match (all must match for the name to be visible)
+    for (const auto& filter : filters)
+    {
+        if (textureName.find(filter) == std::string::npos)
+        {
+            return true; // no match, texture name is filtered out
+        }
+    }
+
+    return false; // not filtered
+}
+
 void TextureThumbnailBrowser::setSelectedShader(const std::string& newShader)
 {
     _shader = newShader;
@@ -536,68 +550,6 @@ Vector2i TextureThumbnailBrowser::getNextPositionForTexture(const Texture& tex)
     currentPos.origin.x() += std::max(96, nWidth) + 16;
 
     return texPos;
-}
-
-// if texture_showinuse jump over non in-use textures
-bool TextureThumbnailBrowser::materialIsVisible(const MaterialPtr& material)
-{
-    if (!material)
-    {
-        return false;
-    }
-
-    auto materialName = material->getName();
-
-    if (!_showOtherMaterials && !string::istarts_with(material->getName(), GlobalTexturePrefix_get()))
-    {
-        return false;
-    }
-
-    if (_hideUnused && !material->IsInUse())
-    {
-        return false;
-    }
-
-    if (_showFavouritesOnly && _favourites.count(materialName) == 0)
-    {
-        return false;
-    }
-
-    auto filterText = getFilter();
-
-    if (!filterText.empty())
-    {
-        std::string textureName = shader_get_textureName(materialName.c_str());
-
-		if (_filterIgnoresTexturePath)
-        {
-			std::size_t lastSlash = textureName.find_last_of('/');
-
-			if (lastSlash != std::string::npos)
-			{
-				textureName.erase(0, lastSlash + 1);
-			}
-        }
-
-		string::to_lower(textureName);
-
-        // Split the filter text into words, every word must match (#5738)
-        std::vector<std::string> filters;
-        string::split(filters, string::to_lower_copy(filterText), " ");
-
-		// case insensitive substring match
-        for (const auto& filter : filters)
-        {
-            if (textureName.find(filter) == std::string::npos)
-            {
-                return false;
-            }
-        }
-
-		return true;
-    }
-
-    return true;
 }
 
 int TextureThumbnailBrowser::getTotalHeight()
@@ -646,22 +598,6 @@ void TextureThumbnailBrowser::queueUpdate()
     requestIdleCallback();
 }
 
-void TextureThumbnailBrowser::populateTiles()
-{
-    // Update the favourites
-    _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Material));
-
-    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& mat)
-    {
-        if (!materialIsVisible(mat))
-        {
-            return;
-        }
-
-        createTileForMaterial(mat);
-    });
-}
-
 void TextureThumbnailBrowser::createTileForMaterial(const MaterialPtr& material)
 {
     // Create a new tile for this material
@@ -703,11 +639,6 @@ void TextureThumbnailBrowser::refreshTiles()
     updateScroll();
     clampOriginY(); // scroll value might be out of range after the update
     _currentPopulationPosition.reset();
-}
-
-void TextureThumbnailBrowser::onActiveShadersChanged()
-{
-    queueUpdate();
 }
 
 void TextureThumbnailBrowser::focus(const std::string& name)
@@ -759,9 +690,7 @@ MaterialPtr TextureThumbnailBrowser::getShaderAtCoords(int x, int y)
 
 void TextureThumbnailBrowser::selectTextureAt(int mx, int my)
 {
-    auto shader = getShaderAtCoords(mx, my);
-
-    if (shader)
+    if (auto shader = getShaderAtCoords(mx, my); shader)
     {
         setSelectedShader(shader->getName());
 

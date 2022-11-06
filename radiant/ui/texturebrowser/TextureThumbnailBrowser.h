@@ -87,19 +87,10 @@ class TextureThumbnailBrowser :
     bool _showTextureFilter;
     // make the texture increments match the grid changes
     bool _showTextureScrollbar;
-    // if true, the texture window will only display in-use shaders
-    // if false, all the shaders in memory are displayed
-    bool _hideUnused;
-    bool _showFavouritesOnly;
+    
     registry::CachedKey<bool> _showNamesKey;
     int _textureScale;
     bool _useUniformScale;
-
-    // Cached set of material favourites
-    std::set<std::string> _favourites;
-
-    // Whether materials not starting with "textures/" should be visible
-    bool _showOtherMaterials;
 
     // The uniform size (in pixels) that textures are resized to when m_resizeTextures is true.
     int _uniformTextureSize;
@@ -147,13 +138,19 @@ protected:
     // To be implemented by subclasses, this method should iterate over all
     // materials that should be shown in the view, calling createTile on each material.
     // (All previous tiles will already have been removed from the view.)
-    virtual void populateTiles();
+    virtual void populateTiles() = 0;
 
     void createTileForMaterial(const MaterialPtr& material);
 
-private:
+    // Returns the currently active filter string or "" if not active.
+    std::string getFilter();
+
+    // Returns true if the given material name is filtered out (should be invisible)
+    bool materialIsFiltered(const std::string& materialName);
+
     void clearFilter();
 
+private:
     int getViewportHeight();
 
     // Callback needed for DeferredAdjustment
@@ -161,9 +158,6 @@ private:
 
     // Repopulates the texture tiles
     void refreshTiles();
-
-    // This gets called by the ShaderSystem
-    void onActiveShadersChanged();
 
     // Return the display width/height of a texture in the texture browser
     int getTextureWidth(const Texture& tex) const;
@@ -192,11 +186,6 @@ private:
     void doMouseWheel(bool wheelUp);
 
     void updateScroll();
-
-    /** greebo: Returns the currently active filter string or "" if
-     *          the filter is not active.
-     */
-    std::string getFilter();
 
     /**
      * Callback run when filter text was changed.
@@ -230,11 +219,6 @@ private:
      *          current selection.
      */
     void selectTextureAt(int mx, int my);
-
-    /** greebo: Returns true if the given material is visible,
-     * taking filter and showUnused into account.
-     */
-    bool materialIsVisible(const MaterialPtr& material);
 
 	// wx callbacks
 	bool onRender();
