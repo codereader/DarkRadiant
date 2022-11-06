@@ -2,7 +2,6 @@
 
 #include <sigc++/connection.h>
 
-#include "AuiLayout.h"
 #include "icommandsystem.h"
 #include "ui/imainframe.h"
 #include "wxutil/WindowPosition.h"
@@ -11,6 +10,7 @@ namespace ui
 {
 
 class TopLevelFrame;
+class AuiLayout;
 
 class MainFrame : 
 	public IMainFrame

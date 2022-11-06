@@ -2,7 +2,11 @@
 
 #include "ui/iuserinterface.h"
 #include "wxutil/Bitmap.h"
+#include "registry/registry.h"
 #include "AuiLayout.h"
+#include "i18n.h"
+
+#include <wx/settings.h>
 
 namespace ui
 {
