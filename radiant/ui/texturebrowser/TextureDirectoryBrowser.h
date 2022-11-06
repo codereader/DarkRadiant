@@ -2,6 +2,7 @@
 
 #include "ishaders.h"
 #include "TextureThumbnailBrowser.h"
+#include "os/path.h"
 
 namespace ui
 {
@@ -18,7 +19,7 @@ private:
 public:
     TextureDirectoryBrowser(wxWindow* parent, const std::string& texturePath) :
         TextureThumbnailBrowser(parent),
-        _texturePath(texturePath)
+        _texturePath(os::standardPathWithSlash(texturePath))
     {}
 
 protected:
@@ -28,6 +29,10 @@ protected:
         {
             // Check if this material is matching the prefix
             if (!string::istarts_with(name, _texturePath)) return;
+
+            // Ignore any subdirectories, just direct leafs
+            auto partAfterPrefix = name.substr(_texturePath.length());
+            if (partAfterPrefix.find('/') != std::string::npos) return;
 
             createTileForMaterial(GlobalMaterialManager().getMaterial(name));
         });

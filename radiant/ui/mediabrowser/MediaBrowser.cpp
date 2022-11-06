@@ -1,5 +1,7 @@
 #include "MediaBrowser.h"
 
+#include <wx/display.h>
+
 #include "ideclmanager.h"
 #include "imap.h"
 #include "ishaders.h"
@@ -8,6 +10,7 @@
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 
 #include <wx/sizer.h>
+#include <wx/popupwin.h>
 
 #include "util/ScopedBoolLock.h"
 #include "ui/texturebrowser/TextureBrowserManager.h"
@@ -15,6 +18,7 @@
 
 #include "FocusMaterialRequest.h"
 #include "ui/UserInterfaceModule.h"
+#include "ui/texturebrowser/TextureDirectoryBrowser.h"
 
 namespace ui
 {
@@ -190,6 +194,35 @@ void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     else
     {
         _preview->ClearPreview();
+
+        // When a directory is selected, open the popup
+        auto popup = new wxPopupTransientWindow(this);
+
+        popup->SetSizer(new wxBoxSizer(wxVERTICAL));
+
+        auto browser = new TextureDirectoryBrowser(popup, _treeView->GetSelectedFullname());
+        //browser->SetMinSize(size);
+
+        wxPoint posScreen;
+        wxSize sizeScreen;
+
+        const int displayNum = wxDisplay::GetFromPoint(GetScreenPosition());
+        if ( displayNum != wxNOT_FOUND )
+        {
+            wxRect rectScreen = wxDisplay(displayNum).GetGeometry();
+            posScreen = rectScreen.GetPosition();
+            sizeScreen = rectScreen.GetSize();
+        }
+
+        // From the upper edge of the mediabrowser to the bottom of the screen (minus a few pixels)
+        wxSize size(600, (posScreen.y + sizeScreen.y) - GetScreenPosition().y - 40);
+
+        popup->GetSizer()->Add(browser, 1, wxEXPAND);
+        popup->SetPosition(this->GetScreenRect().GetRightTop());
+        popup->SetSize(size);
+        popup->Layout();
+        //popup->Position(this->GetScreenRect().GetRightTop(), size);
+        popup->Popup();
     }
 
     sendSelectionToShaderClipboard();
