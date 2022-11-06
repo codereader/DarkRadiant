@@ -988,7 +988,13 @@ TEST_F(LayerTest, SelectFilteredChildPrimitive)
 
 void runLayerVisibilityPersistenceTest(const std::string& mapFilePath)
 {
-    GlobalMapModule().findOrInsertWorldspawn(); // to not save an empty map
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn(); // to not save an empty map
+
+    // Create two brushes
+    auto brush1 = algorithm::createCubicBrush(worldspawn);
+    Node_getIBrush(brush1)->setShader("textures/numbers/1");
+    auto brush2 = algorithm::createCubicBrush(worldspawn);
+    Node_getIBrush(brush2)->setShader("textures/numbers/2");
 
     TemporaryFile tempSavedFile(mapFilePath);
 
@@ -998,12 +1004,27 @@ void runLayerVisibilityPersistenceTest(const std::string& mapFilePath)
     auto layer3Id = layerManager->createLayer("Layer3");
     auto layer4Id = layerManager->createLayer("Layer4");
 
+    // Brush 1 goes into Layer 1
+    Node_setSelected(brush1, true);
+    layerManager->moveSelectionToLayer(layer1Id);
+    Node_setSelected(brush1, false);
+
+    // Brush 2 goes into Layer 2
+    Node_setSelected(brush2, true);
+    layerManager->moveSelectionToLayer(layer2Id);
+    Node_setSelected(brush2, false);
+
     // Set layers 1 and 3 to hidden
     layerManager->setLayerVisibility(layer1Id, false);
     layerManager->setLayerVisibility(layer3Id, false);
 
     EXPECT_FALSE(os::fileOrDirExists(mapFilePath));
     GlobalCommandSystem().executeCommand("SaveMapCopyAs", mapFilePath);
+
+    // Prevent crashes when switching maps while holding strong refs to nodes
+    worldspawn.reset();
+    brush1.reset();
+    brush2.reset();
 
     loadAndExpectLayersToBeRestored(mapFilePath, { 0, layer1Id, layer2Id, layer3Id, layer4Id });
 
@@ -1013,6 +1034,17 @@ void runLayerVisibilityPersistenceTest(const std::string& mapFilePath)
     EXPECT_TRUE(layerManager->layerIsVisible(layer2Id)) << "Visibility has not been restored";
     EXPECT_FALSE(layerManager->layerIsVisible(layer3Id)) << "Visibility has not been restored";
     EXPECT_TRUE(layerManager->layerIsVisible(layer4Id)) << "Visibility has not been restored";
+
+    // Expect that brush 1 is invisible, brush 2 should be shown
+    worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    brush1 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/1");
+    brush2 = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+
+    EXPECT_FALSE(brush1->visible()) << "Brush 1 should be invisible since Layer 1 is hidden";
+    EXPECT_TRUE(brush2->visible()) << "Brush 2 should be visible since Layer 2 is visible";
+
+    EXPECT_TRUE(brush1->checkStateFlag(scene::Node::eLayered)) << "Brush 1 should be invisible due to layering";
+    EXPECT_FALSE(brush1->checkStateFlag(scene::Node::eLayered)) << "Brush 2 should not be invisible due to layering";
 }
 
 TEST_F(LayerTest, LayerVisibilityIsPersistedToMap)
