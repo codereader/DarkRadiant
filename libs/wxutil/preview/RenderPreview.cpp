@@ -30,6 +30,8 @@ namespace wxutil
 namespace
 {
     const GLfloat PREVIEW_FOV = 60;
+    constexpr float NEAR_CLIP_PLANE = 0.1f;
+    constexpr float FAR_CLIP_PLANE = 32768.0f;
 
     // Widget names
     const std::string BOTTOM_BOX("bottomBox");
@@ -499,7 +501,7 @@ bool RenderPreview::drawPreview()
 	}
 
     // Set up the camera
-    Matrix4 projection = camera::calculateProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
+    Matrix4 projection = camera::calculateProjectionMatrix(NEAR_CLIP_PLANE, FAR_CLIP_PLANE, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Keep the modelview matrix in the volumetest class up to date
     _view.construct(projection, getModelViewMatrix(), _previewWidth, _previewHeight);
@@ -551,7 +553,7 @@ void RenderPreview::renderWireFrame()
     RenderStateFlags flags = getRenderFlagsWireframe();
 
     // Set up the camera
-    Matrix4 projection = camera::calculateProjectionMatrix(0.1f, 10000, PREVIEW_FOV, _previewWidth, _previewHeight);
+    Matrix4 projection = camera::calculateProjectionMatrix(NEAR_CLIP_PLANE, FAR_CLIP_PLANE, PREVIEW_FOV, _previewWidth, _previewHeight);
 
     // Front-end render phase, collect OpenGLRenderable objects from the scene
     render::CamRenderer renderer(_view, _shaders);
