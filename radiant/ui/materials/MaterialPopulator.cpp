@@ -31,6 +31,11 @@ MaterialPopulator::~MaterialPopulator()
     EnsureStopped();
 }
 
+std::string MaterialPopulator::GetOtherMaterialsName()
+{
+    return _(OTHER_MATERIALS_FOLDER);
+}
+
 void MaterialPopulator::AddSingleMaterial(const wxutil::TreeModel::Ptr& model, const std::string& materialName)
 {
     std::vector<std::string> parts;

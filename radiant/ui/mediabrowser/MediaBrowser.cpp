@@ -119,7 +119,7 @@ void MediaBrowser::onIdle()
         {
             // When a directory is selected, open the popup
             auto popup = new wxutil::TransientPopupWindow(this);
-            auto browser = new TextureDirectoryBrowser(popup, _treeView->GetSelectedFullname());
+            auto browser = new TextureDirectoryBrowser(popup, _treeView->GetSelectedTextureFolderName());
             popup->GetSizer()->Add(browser, 1, wxEXPAND | wxALL, 3);
 
             // Size reaching from the upper edge of the mediabrowser to the bottom of the screen (minus a few pixels)

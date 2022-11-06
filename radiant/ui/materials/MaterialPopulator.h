@@ -27,6 +27,8 @@ public:
     // Remove the given named material from the tree (assuming it is present)
     void RemoveSingleMaterial(const wxutil::TreeModel::Ptr& model, const std::string& materialName);
 
+    static std::string GetOtherMaterialsName();
+
 protected:
     void PopulateModel(const wxutil::TreeModel::Ptr& model) override;
 

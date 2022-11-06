@@ -37,6 +37,10 @@ public:
     
     virtual void SetTreeMode(MaterialTreeView::TreeMode mode) override;
 
+    // Returns the name of the texture folder without any "Other Materials" prefix
+    // Returns an empty string if no folder is selected
+    std::string GetSelectedTextureFolderName();
+
     // Loads all the materials
     virtual void Populate();
 

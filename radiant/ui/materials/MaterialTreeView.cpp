@@ -58,6 +58,19 @@ void MaterialTreeView::SetTreeMode(MaterialTreeView::TreeMode mode)
     SetSelectedFullname(previouslySelectedItem);
 }
 
+std::string MaterialTreeView::GetSelectedTextureFolderName()
+{
+    if (!IsDirectorySelected()) return {};
+
+    // The folder name is stored in the decl name column
+    auto fullName = GetSelectedFullname();
+
+    auto otherMaterialsPrefix = MaterialPopulator::GetOtherMaterialsName() + "/";
+
+    return string::starts_with(fullName, otherMaterialsPrefix) ? 
+        fullName.substr(otherMaterialsPrefix.length()) : fullName;
+}
+
 void MaterialTreeView::onMaterialCreated(const std::string& name)
 {
     auto populator = MaterialPopulator(Columns());
