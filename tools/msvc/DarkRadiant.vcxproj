@@ -585,6 +585,7 @@
     <ClInclude Include="..\..\radiant\ui\texturebrowser\MapTextureBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserPanel.h" />
+    <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureDirectoryBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureThumbnailBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\toolbar\ToolbarManager.h" />
     <ClInclude Include="..\..\radiant\ui\splash\Splash.h" />

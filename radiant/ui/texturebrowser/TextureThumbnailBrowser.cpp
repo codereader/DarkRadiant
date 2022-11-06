@@ -18,8 +18,8 @@
 #include "registry/registry.h"
 #include "shaderlib.h"
 
-#include "string/predicate.h"
 #include "string/split.h"
+#include "string/case_conv.h"
 #include <functional>
 
 #include <wx/panel.h>
@@ -28,7 +28,6 @@
 #include <wx/scrolbar.h>
 #include <wx/sizer.h>
 
-#include "string/case_conv.h"
 #include "debugging/gl.h"
 #include "ui/mediabrowser/FocusMaterialRequest.h"
 #include "TextureBrowserManager.h"
@@ -295,7 +294,6 @@ TextureThumbnailBrowser::TextureThumbnailBrowser(wxWindow* parent) :
 
         _wxGLWidget->Bind(wxEVT_SIZE, &TextureThumbnailBrowser::onGLResize, this);
         _wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &TextureThumbnailBrowser::onGLMouseScroll, this);
-        _wxGLWidget->Bind(wxEVT_MOTION, [=](wxMouseEvent& e) { SetToolTip("Moved"); });
 
         _wxGLWidget->Bind(wxEVT_LEFT_DOWN, &TextureThumbnailBrowser::onGLMouseButtonPress, this);
         _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &TextureThumbnailBrowser::onGLMouseButtonPress, this);
