@@ -2,12 +2,9 @@
 
 #include "wxutil/FreezePointer.h"
 
-#include <sigc++/connection.h>
 #include "texturelib.h"
 #include "wxutil/menu/PopupMenu.h"
 #include "registry/CachedKey.h"
-
-#include "TextureBrowserManager.h"
 
 #include "wxutil/DockablePanel.h"
 #include "wxutil/event/SingleIdleCallback.h"
@@ -26,19 +23,19 @@ namespace ui
 {
 
 /**
- * \brief Widget for rendering active textures as tiles in a scrollable
+ * \brief Widget for rendering textures thumbnails as tiles in a scrollable
  * container.
  *
  * Uses an OpenGL widget to render a rectangular view into a "virtual space"
  * containing all active texture tiles.
  */
-class MaterialThumbnailBrowser :
+class TextureThumbnailBrowser :
     public wxPanel,
     public sigc::trackable,
     public wxutil::SingleIdleCallback
 {
     class TextureTile;
-    typedef std::list<TextureTile> TextureTiles;
+    typedef std::list<std::shared_ptr<TextureTile>> TextureTiles;
     TextureTiles _tiles;
 
     // Size of the 2D viewport. This is the geometry of the render window, not
@@ -115,7 +112,7 @@ class MaterialThumbnailBrowser :
     bool _updateNeeded;
 
 public:
-    MaterialThumbnailBrowser(wxWindow* parent);
+    TextureThumbnailBrowser(wxWindow* parent);
 
     // Schedules an update of the renderable items
     void queueUpdate();

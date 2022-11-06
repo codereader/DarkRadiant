@@ -700,10 +700,13 @@
     <ClCompile Include="..\..\radiant\ui\mainframe\ViewMenu.cpp">
       <Filter>src\ui\mainframe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\texturebrowser\MaterialThumbnailBrowser.cpp">
+    <ClCompile Include="..\..\radiant\ui\texturebrowser\MapTextureBrowser.cpp">
       <Filter>src\ui\texturebrowser</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp">
+    <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureThumbnailBrowser.cpp">
+      <Filter>src\ui\texturebrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserPanel.cpp">
       <Filter>src\ui\texturebrowser</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1410,10 +1413,13 @@
     <ClInclude Include="..\..\radiant\ui\mainframe\ViewMenu.h">
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\texturebrowser\MaterialThumbnailBrowser.h">
+    <ClInclude Include="..\..\radiant\ui\texturebrowser\MapTextureBrowser.h">
       <Filter>src\ui\texturebrowser</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h">
+    <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureThumbnailBrowser.h">
+      <Filter>src\ui\texturebrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserPanel.h">
       <Filter>src\ui\texturebrowser</Filter>
     </ClInclude>
   </ItemGroup>

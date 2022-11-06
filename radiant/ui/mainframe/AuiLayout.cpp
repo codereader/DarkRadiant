@@ -10,7 +10,6 @@
 
 #include "camera/CameraWndManager.h"
 #include "command/ExecutionFailure.h"
-#include "ui/texturebrowser/TextureBrowser.h"
 #include "wxutil/Bitmap.h"
 #include "xyview/GlobalXYWnd.h"
 #include "AuiFloatingFrame.h"

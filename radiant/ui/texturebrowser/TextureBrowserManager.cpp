@@ -1,5 +1,5 @@
 #include "TextureBrowserManager.h"
-#include "TextureBrowser.h"
+#include "TextureBrowserPanel.h"
 
 #include <list>
 #include <sigc++/functors/mem_fun.h>
@@ -40,7 +40,7 @@ public:
 
     wxWindow* createWidget(wxWindow* parent) override
     {
-        return new TextureBrowser(parent);
+        return new TextureBrowserPanel(parent);
     }
 };
 
@@ -56,25 +56,25 @@ std::string TextureBrowserManager::getSelectedShader()
 
 void TextureBrowserManager::setSelectedShader(const std::string& shader)
 {
-    for (TextureBrowser* browser : _browsers)
+    for (auto browser : _browsers)
     {
         browser->setSelectedShader(shader);
     }
 }
 
-void TextureBrowserManager::registerTextureBrowser(TextureBrowser* browser)
+void TextureBrowserManager::registerTextureBrowser(TextureBrowserPanel* browser)
 {
     _browsers.insert(browser);
 }
 
-void TextureBrowserManager::unregisterTextureBrowser(TextureBrowser* browser)
+void TextureBrowserManager::unregisterTextureBrowser(TextureBrowserPanel* browser)
 {
     _browsers.erase(browser);
 }
 
 void TextureBrowserManager::updateAllWindows()
 {
-    for (TextureBrowser* browser : _browsers)
+    for (auto browser : _browsers)
     {
         browser->queueUpdate();
     }

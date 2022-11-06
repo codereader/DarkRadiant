@@ -19,7 +19,6 @@
 #include "camera/CameraSettings.h"
 #include "ui/ortho/OrthoContextMenu.h"
 #include "ui/overlay/Overlay.h"
-#include "ui/texturebrowser/TextureBrowser.h"
 #include "registry/registry.h"
 #include "selection/Device.h"
 #include "selection/SelectionVolume.h"

@@ -1,17 +1,17 @@
-#include "TextureBrowser.h"
+#include "TextureBrowserPanel.h"
 
 #include "TextureBrowserManager.h"
 #include "ifavourites.h"
-#include "MaterialThumbnailBrowser.h"
+#include "MapTextureBrowser.h"
 
 namespace ui
 {
 
-TextureBrowser::TextureBrowser(wxWindow* parent) :
+TextureBrowserPanel::TextureBrowserPanel(wxWindow* parent) :
     DockablePanel(parent),
     _thumbnailBrowser(nullptr)
 {
-    _thumbnailBrowser = new MaterialThumbnailBrowser(this);
+    _thumbnailBrowser = new MapTextureBrowser(this);
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(_thumbnailBrowser, 1, wxEXPAND);
@@ -19,7 +19,7 @@ TextureBrowser::TextureBrowser(wxWindow* parent) :
     GlobalTextureBrowser().registerTextureBrowser(this);
 }
 
-TextureBrowser::~TextureBrowser()
+TextureBrowserPanel::~TextureBrowserPanel()
 {
     if (panelIsActive())
     {
@@ -28,44 +28,44 @@ TextureBrowser::~TextureBrowser()
     GlobalTextureBrowser().unregisterTextureBrowser(this);
 }
 
-const std::string& TextureBrowser::getSelectedShader() const
+const std::string& TextureBrowserPanel::getSelectedShader() const
 {
     return _thumbnailBrowser->getSelectedShader();
 }
 
-void TextureBrowser::setSelectedShader(const std::string& newShader)
+void TextureBrowserPanel::setSelectedShader(const std::string& newShader)
 {
     _thumbnailBrowser->setSelectedShader(newShader);
 }
 
-void TextureBrowser::onPanelActivated()
+void TextureBrowserPanel::onPanelActivated()
 {
     connectListeners();
     queueUpdate();
 }
 
-void TextureBrowser::onPanelDeactivated()
+void TextureBrowserPanel::onPanelDeactivated()
 {
     disconnectListeners();
 }
 
-void TextureBrowser::connectListeners()
+void TextureBrowserPanel::connectListeners()
 {
     _favouritesChangedHandler = GlobalFavouritesManager().getSignalForType(decl::getTypeName(decl::Type::Material))
-        .connect(sigc::mem_fun(this, &TextureBrowser::onFavouritesChanged));
+        .connect(sigc::mem_fun(this, &TextureBrowserPanel::onFavouritesChanged));
 }
 
-void TextureBrowser::disconnectListeners()
+void TextureBrowserPanel::disconnectListeners()
 {
     _favouritesChangedHandler.disconnect();
 }
 
-void TextureBrowser::onFavouritesChanged()
+void TextureBrowserPanel::onFavouritesChanged()
 {
     queueUpdate();
 }
 
-void TextureBrowser::queueUpdate()
+void TextureBrowserPanel::queueUpdate()
 {
     if (panelIsActive())
     {

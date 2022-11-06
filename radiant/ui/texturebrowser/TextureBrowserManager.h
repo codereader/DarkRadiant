@@ -7,7 +7,7 @@
 namespace ui
 {
 
-class TextureBrowser;
+class TextureBrowserPanel;
 
 constexpr const char* const RKEY_TEXTURES_HIDE_UNUSED = "user/ui/textures/browser/hideUnused";
 constexpr const char* const RKEY_TEXTURES_SHOW_FAVOURITES_ONLY = "user/ui/textures/browser/showFavouritesOnly";
@@ -26,7 +26,7 @@ class TextureBrowserManager :
     public RegisterableModule
 {
 private:
-    std::set<TextureBrowser*> _browsers;
+    std::set<TextureBrowserPanel*> _browsers;
     sigc::connection _shaderClipboardConn;
 
 public:
@@ -36,8 +36,8 @@ public:
     std::string getSelectedShader();
     void setSelectedShader(const std::string& shader);
 
-    void registerTextureBrowser(TextureBrowser* browser);
-    void unregisterTextureBrowser(TextureBrowser* browser);
+    void registerTextureBrowser(TextureBrowserPanel* browser);
+    void unregisterTextureBrowser(TextureBrowserPanel* browser);
 
     // Sends an queueUpdate() call to all registered browsers
     void updateAllWindows();

@@ -7,21 +7,21 @@
 namespace ui
 {
 
-class MaterialThumbnailBrowser;
+class MapTextureBrowser;
 class TextureBrowserManager;
 
-class TextureBrowser :
+class TextureBrowserPanel :
     public wxutil::DockablePanel,
     public sigc::trackable
 {
 private:
     sigc::connection _favouritesChangedHandler;
 
-    MaterialThumbnailBrowser* _thumbnailBrowser;
+    MapTextureBrowser* _thumbnailBrowser;
 
 public:
-    TextureBrowser(wxWindow* parent);
-    ~TextureBrowser() override;
+    TextureBrowserPanel(wxWindow* parent);
+    ~TextureBrowserPanel() override;
 
     void queueUpdate();
 

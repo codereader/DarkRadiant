@@ -159,8 +159,9 @@ add_executable(darkradiant
                ui/statusbar/MapStatistics.cpp
                ui/statusbar/StatusBarManager.cpp
                ui/surfaceinspector/SurfaceInspector.cpp
-               ui/texturebrowser/MaterialThumbnailBrowser.cpp
-               ui/texturebrowser/TextureBrowser.cpp
+               ui/texturebrowser/MapTextureBrowser.cpp
+               ui/texturebrowser/TextureThumbnailBrowser.cpp
+               ui/texturebrowser/TextureBrowserPanel.cpp
                ui/texturebrowser/TextureBrowserManager.cpp
                ui/toolbar/ToolbarManager.cpp
                ui/transform/TransformPanel.cpp

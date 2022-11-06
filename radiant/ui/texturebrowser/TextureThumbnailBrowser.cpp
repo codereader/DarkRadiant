@@ -1,4 +1,4 @@
-#include "MaterialThumbnailBrowser.h"
+#include "TextureThumbnailBrowser.h"
 
 #include "i18n.h"
 #include "itextstream.h"
@@ -31,6 +31,7 @@
 #include "string/case_conv.h"
 #include "debugging/gl.h"
 #include "ui/mediabrowser/FocusMaterialRequest.h"
+#include "TextureBrowserManager.h"
 
 namespace ui
 {
@@ -50,16 +51,16 @@ namespace
     constexpr int TILE_BORDER = 2;
 }
 
-class MaterialThumbnailBrowser::TextureTile
+class TextureThumbnailBrowser::TextureTile
 {
 private:
-    MaterialThumbnailBrowser& _owner;
+    TextureThumbnailBrowser& _owner;
 public:
     Vector2i size;
     Vector2i position;
     MaterialPtr material;
 
-    TextureTile(MaterialThumbnailBrowser& owner) :
+    TextureTile(TextureThumbnailBrowser& owner) :
         _owner(owner)
     {}
 
@@ -205,7 +206,7 @@ private:
     }
 };
 
-MaterialThumbnailBrowser::MaterialThumbnailBrowser(wxWindow* parent) :
+TextureThumbnailBrowser::TextureThumbnailBrowser(wxWindow* parent) :
     wxPanel(parent),
     _popupX(-1),
     _popupY(-1),
@@ -256,16 +257,16 @@ MaterialThumbnailBrowser::MaterialThumbnailBrowser(wxWindow* parent) :
 		TEXTURE_ICON);
 
     _popupMenu->addItem(_seekInMediaBrowser,
-                        std::bind(&MaterialThumbnailBrowser::onSeekInMediaBrowser, this),
-                        std::bind(&MaterialThumbnailBrowser::checkSeekInMediaBrowser, this));
+                        std::bind(&TextureThumbnailBrowser::onSeekInMediaBrowser, this),
+                        std::bind(&TextureThumbnailBrowser::checkSeekInMediaBrowser, this));
 
 	// Catch the RightUp event during mouse capture
 	_freezePointer.connectMouseEvents(
 		wxutil::FreezePointer::MouseEventFunction(),
-		std::bind(&MaterialThumbnailBrowser::onGLMouseButtonRelease, this, std::placeholders::_1));
+		std::bind(&TextureThumbnailBrowser::onGLMouseButtonRelease, this, std::placeholders::_1));
 
     GlobalMaterialManager().signal_activeShadersChanged().connect(
-        sigc::mem_fun(this, &MaterialThumbnailBrowser::onActiveShadersChanged));
+        sigc::mem_fun(this, &TextureThumbnailBrowser::onActiveShadersChanged));
 
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
@@ -290,9 +291,9 @@ MaterialThumbnailBrowser::MaterialThumbnailBrowser(wxWindow* parent) :
     // Filter text entry
     {
         _filter = new wxutil::NonModalEntry(texbox,
-                                            std::bind(&MaterialThumbnailBrowser::queueDraw, this),
-                                            std::bind(&MaterialThumbnailBrowser::clearFilter, this),
-                                            std::bind(&MaterialThumbnailBrowser::filterChanged, this),
+                                            std::bind(&TextureThumbnailBrowser::queueDraw, this),
+                                            std::bind(&TextureThumbnailBrowser::clearFilter, this),
+                                            std::bind(&TextureThumbnailBrowser::filterChanged, this),
                                             false);
 
         texbox->GetSizer()->Add(_filter, 0, wxEXPAND);
@@ -309,18 +310,18 @@ MaterialThumbnailBrowser::MaterialThumbnailBrowser(wxWindow* parent) :
 
     // GL drawing area
     {
-        _wxGLWidget = new wxutil::GLWidget(texbox, std::bind(&MaterialThumbnailBrowser::onRender, this), "TextureBrowser");
+        _wxGLWidget = new wxutil::GLWidget(texbox, std::bind(&TextureThumbnailBrowser::onRender, this), "TextureBrowser");
 
-        _wxGLWidget->Bind(wxEVT_SIZE, &MaterialThumbnailBrowser::onGLResize, this);
-        _wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &MaterialThumbnailBrowser::onGLMouseScroll, this);
+        _wxGLWidget->Bind(wxEVT_SIZE, &TextureThumbnailBrowser::onGLResize, this);
+        _wxGLWidget->Bind(wxEVT_MOUSEWHEEL, &TextureThumbnailBrowser::onGLMouseScroll, this);
         _wxGLWidget->Bind(wxEVT_MOTION, [=](wxMouseEvent& e) { SetToolTip("Moved"); });
 
-        _wxGLWidget->Bind(wxEVT_LEFT_DOWN, &MaterialThumbnailBrowser::onGLMouseButtonPress, this);
-        _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &MaterialThumbnailBrowser::onGLMouseButtonPress, this);
-        _wxGLWidget->Bind(wxEVT_LEFT_UP, &MaterialThumbnailBrowser::onGLMouseButtonRelease, this);
-        _wxGLWidget->Bind(wxEVT_RIGHT_DOWN, &MaterialThumbnailBrowser::onGLMouseButtonPress, this);
-        _wxGLWidget->Bind(wxEVT_RIGHT_DCLICK, &MaterialThumbnailBrowser::onGLMouseButtonPress, this);
-        _wxGLWidget->Bind(wxEVT_RIGHT_UP, &MaterialThumbnailBrowser::onGLMouseButtonRelease, this);
+        _wxGLWidget->Bind(wxEVT_LEFT_DOWN, &TextureThumbnailBrowser::onGLMouseButtonPress, this);
+        _wxGLWidget->Bind(wxEVT_LEFT_DCLICK, &TextureThumbnailBrowser::onGLMouseButtonPress, this);
+        _wxGLWidget->Bind(wxEVT_LEFT_UP, &TextureThumbnailBrowser::onGLMouseButtonRelease, this);
+        _wxGLWidget->Bind(wxEVT_RIGHT_DOWN, &TextureThumbnailBrowser::onGLMouseButtonPress, this);
+        _wxGLWidget->Bind(wxEVT_RIGHT_DCLICK, &TextureThumbnailBrowser::onGLMouseButtonPress, this);
+        _wxGLWidget->Bind(wxEVT_RIGHT_UP, &TextureThumbnailBrowser::onGLMouseButtonRelease, this);
 
         texbox->GetSizer()->Add(_wxGLWidget, 1, wxEXPAND);
     }
@@ -330,8 +331,8 @@ MaterialThumbnailBrowser::MaterialThumbnailBrowser(wxWindow* parent) :
     // Scrollbar
     {
         _scrollbar = new wxScrollBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSB_VERTICAL);
-        _scrollbar->Bind(wxEVT_SCROLL_CHANGED, &MaterialThumbnailBrowser::onScrollChanged, this);
-        _scrollbar->Bind(wxEVT_SCROLL_THUMBTRACK, &MaterialThumbnailBrowser::onScrollChanged, this);
+        _scrollbar->Bind(wxEVT_SCROLL_CHANGED, &TextureThumbnailBrowser::onScrollChanged, this);
+        _scrollbar->Bind(wxEVT_SCROLL_THUMBTRACK, &TextureThumbnailBrowser::onScrollChanged, this);
 
         GetSizer()->Add(_scrollbar, 0, wxEXPAND);
 
@@ -348,7 +349,7 @@ MaterialThumbnailBrowser::MaterialThumbnailBrowser(wxWindow* parent) :
     updateScroll();
 }
 
-void MaterialThumbnailBrowser::loadScaleFromRegistry()
+void TextureThumbnailBrowser::loadScaleFromRegistry()
 {
     int index = registry::getValue<int>(RKEY_TEXTURE_SCALE);
 
@@ -365,14 +366,14 @@ void MaterialThumbnailBrowser::loadScaleFromRegistry()
     queueDraw();
 }
 
-void MaterialThumbnailBrowser::observeKey(const std::string& key)
+void TextureThumbnailBrowser::observeKey(const std::string& key)
 {
     GlobalRegistry().signalForKey(key).connect(
-        sigc::mem_fun(this, &MaterialThumbnailBrowser::keyChanged)
+        sigc::mem_fun(this, &TextureThumbnailBrowser::keyChanged)
     );
 }
 
-void MaterialThumbnailBrowser::queueDraw()
+void TextureThumbnailBrowser::queueDraw()
 {
     if (_wxGLWidget != nullptr)
     {
@@ -386,14 +387,14 @@ void MaterialThumbnailBrowser::queueDraw()
     }
 }
 
-void MaterialThumbnailBrowser::clearFilter()
+void TextureThumbnailBrowser::clearFilter()
 {
 	_filter->SetValue("");
     queueUpdate();
     queueDraw();
 }
 
-void MaterialThumbnailBrowser::filterChanged()
+void TextureThumbnailBrowser::filterChanged()
 {
     if (_filterIsIncremental)
 	{
@@ -402,7 +403,7 @@ void MaterialThumbnailBrowser::filterChanged()
 	}
 }
 
-void MaterialThumbnailBrowser::keyChanged()
+void TextureThumbnailBrowser::keyChanged()
 {
     _hideUnused = registry::getValue<bool>(RKEY_TEXTURES_HIDE_UNUSED);
     _showFavouritesOnly = registry::getValue<bool>(RKEY_TEXTURES_SHOW_FAVOURITES_ONLY);
@@ -441,7 +442,7 @@ void MaterialThumbnailBrowser::keyChanged()
 }
 
 // Return the display width of a texture in the texture browser
-int MaterialThumbnailBrowser::getTextureWidth(const Texture& tex) const
+int TextureThumbnailBrowser::getTextureWidth(const Texture& tex) const
 {
     if (!_useUniformScale)
     {
@@ -462,7 +463,7 @@ int MaterialThumbnailBrowser::getTextureWidth(const Texture& tex) const
     }
 }
 
-int MaterialThumbnailBrowser::getTextureHeight(const Texture& tex) const
+int TextureThumbnailBrowser::getTextureHeight(const Texture& tex) const
 {
     if (!_useUniformScale)
     {
@@ -484,17 +485,17 @@ int MaterialThumbnailBrowser::getTextureHeight(const Texture& tex) const
     }
 }
 
-const std::string& MaterialThumbnailBrowser::getSelectedShader() const
+const std::string& TextureThumbnailBrowser::getSelectedShader() const
 {
     return _shader;
 }
 
-std::string MaterialThumbnailBrowser::getFilter()
+std::string TextureThumbnailBrowser::getFilter()
 {
 	return _filter->GetValue().ToStdString();
 }
 
-void MaterialThumbnailBrowser::setSelectedShader(const std::string& newShader)
+void TextureThumbnailBrowser::setSelectedShader(const std::string& newShader)
 {
     _shader = newShader;
     focus(_shader);
@@ -503,7 +504,7 @@ void MaterialThumbnailBrowser::setSelectedShader(const std::string& newShader)
 // Data structure keeping track of the virtual position for the next texture to
 // be drawn in. Only the getPositionForTexture() method should access the values
 // in this structure.
-class MaterialThumbnailBrowser::CurrentPosition
+class TextureThumbnailBrowser::CurrentPosition
 {
 public:
 
@@ -515,7 +516,7 @@ public:
     int rowAdvance;
 };
 
-Vector2i MaterialThumbnailBrowser::getPositionForTexture(CurrentPosition& currentPos,
+Vector2i TextureThumbnailBrowser::getPositionForTexture(CurrentPosition& currentPos,
                                                const Texture& tex) const
 {
     int nWidth = getTextureWidth(tex);
@@ -548,7 +549,7 @@ Vector2i MaterialThumbnailBrowser::getPositionForTexture(CurrentPosition& curren
 }
 
 // if texture_showinuse jump over non in-use textures
-bool MaterialThumbnailBrowser::materialIsVisible(const MaterialPtr& material)
+bool TextureThumbnailBrowser::materialIsVisible(const MaterialPtr& material)
 {
     if (!material)
     {
@@ -609,12 +610,12 @@ bool MaterialThumbnailBrowser::materialIsVisible(const MaterialPtr& material)
     return true;
 }
 
-int MaterialThumbnailBrowser::getTotalHeight()
+int TextureThumbnailBrowser::getTotalHeight()
 {
     return _entireSpaceHeight;
 }
 
-void MaterialThumbnailBrowser::clampOriginY()
+void TextureThumbnailBrowser::clampOriginY()
 {
     if (_viewportOriginY > 0)
     {
@@ -629,7 +630,7 @@ void MaterialThumbnailBrowser::clampOriginY()
     }
 }
 
-int MaterialThumbnailBrowser::getOriginY()
+int TextureThumbnailBrowser::getOriginY()
 {
     if (_originInvalid)
     {
@@ -641,7 +642,7 @@ int MaterialThumbnailBrowser::getOriginY()
     return _viewportOriginY;
 }
 
-void MaterialThumbnailBrowser::setOriginY(int newOriginY)
+void TextureThumbnailBrowser::setOriginY(int newOriginY)
 {
     _viewportOriginY = newOriginY;
     clampOriginY();
@@ -649,13 +650,13 @@ void MaterialThumbnailBrowser::setOriginY(int newOriginY)
     queueDraw();
 }
 
-void MaterialThumbnailBrowser::queueUpdate()
+void TextureThumbnailBrowser::queueUpdate()
 {
     _updateNeeded = true;
     requestIdleCallback();
 }
 
-void MaterialThumbnailBrowser::performUpdate()
+void TextureThumbnailBrowser::performUpdate()
 {
     // During startup the openGL module might not have created the font yet
     if (GlobalOpenGL().getFontHeight() == 0)
@@ -681,8 +682,8 @@ void MaterialThumbnailBrowser::performUpdate()
         }
 
         // Create a new tile for this material
-        _tiles.push_back(TextureTile(*this));
-        TextureTile& tile = _tiles.back();
+        _tiles.push_back(std::make_shared<TextureTile>(*this));
+        auto& tile = *_tiles.back();
 
         tile.material = mat;
 
@@ -702,35 +703,35 @@ void MaterialThumbnailBrowser::performUpdate()
     clampOriginY(); // scroll value might be out of range after the update
 }
 
-void MaterialThumbnailBrowser::onActiveShadersChanged()
+void TextureThumbnailBrowser::onActiveShadersChanged()
 {
     queueUpdate();
 }
 
-void MaterialThumbnailBrowser::focus(const std::string& name)
+void TextureThumbnailBrowser::focus(const std::string& name)
 {
     if (name.empty())
     {
         return;
     }
 
-    for (const TextureTile& tile : _tiles)
+    for (const auto& tile : _tiles)
     {
         // we have found when texdef->name and the shader name match
         // NOTE: as everywhere else for our comparisons, we are not case sensitive
-        if (shader_equal(name, tile.material->getName()))
+        if (shader_equal(name, tile->material->getName()))
         {
             // scroll origin so the texture is completely on screen
             int originy = getOriginY();
 
-            if (tile.position.y() > originy)
+            if (tile->position.y() > originy)
             {
-                originy = tile.position.y();
+                originy = tile->position.y();
             }
 
-            if (tile.position.y() - tile.size.y() < originy - getViewportHeight())
+            if (tile->position.y() - tile->size.y() < originy - getViewportHeight())
             {
-                originy = tile.position.y() - tile.size.y() + getViewportHeight();
+                originy = tile->position.y() - tile->size.y() + getViewportHeight();
             }
 
             setOriginY(originy);
@@ -738,23 +739,23 @@ void MaterialThumbnailBrowser::focus(const std::string& name)
     }
 }
 
-MaterialPtr MaterialThumbnailBrowser::getShaderAtCoords(int x, int y)
+MaterialPtr TextureThumbnailBrowser::getShaderAtCoords(int x, int y)
 {
     y += getOriginY() - _viewportSize.y();
 
-    for (const TextureTile& tile : _tiles)
+    for (const auto& tile : _tiles)
     {
-        if (x > tile.position.x() && x - tile.position.x() < tile.size.x() &&
-            y < tile.position.y() && tile.position.y() - y < tile.size.y() + FONT_HEIGHT())
+        if (x > tile->position.x() && x - tile->position.x() < tile->size.x() &&
+            y < tile->position.y() && tile->position.y() - y < tile->size.y() + FONT_HEIGHT())
         {
-            return tile.material;
+            return tile->material;
         }
     }
 
     return {};
 }
 
-void MaterialThumbnailBrowser::selectTextureAt(int mx, int my)
+void TextureThumbnailBrowser::selectTextureAt(int mx, int my)
 {
     auto shader = getShaderAtCoords(mx, my);
 
@@ -770,7 +771,7 @@ void MaterialThumbnailBrowser::selectTextureAt(int mx, int my)
     }
 }
 
-void MaterialThumbnailBrowser::draw()
+void TextureThumbnailBrowser::draw()
 {
 	if (_viewportSize.x() == 0 || _viewportSize.y() == 0)
 	{
@@ -802,9 +803,9 @@ void MaterialThumbnailBrowser::draw()
     glEnable (GL_TEXTURE_2D);
 	glPolygonMode (GL_FRONT_AND_BACK, GL_FILL);
 
-    for (TextureTile& tile : _tiles)
+    for (const auto& tile : _tiles)
     {
-        tile.render(_showNamesKey.get());
+        tile->render(_showNamesKey.get());
     }
 
 	debug::assertNoGlErrors();
@@ -816,7 +817,7 @@ void MaterialThumbnailBrowser::draw()
 	glPopAttrib();
 }
 
-void MaterialThumbnailBrowser::doMouseWheel(bool wheelUp)
+void TextureThumbnailBrowser::doMouseWheel(bool wheelUp)
 {
     int originy = getOriginY();
 
@@ -830,7 +831,7 @@ void MaterialThumbnailBrowser::doMouseWheel(bool wheelUp)
     setOriginY(originy);
 }
 
-bool MaterialThumbnailBrowser::checkSeekInMediaBrowser()
+bool TextureThumbnailBrowser::checkSeekInMediaBrowser()
 {
     if (_popupX > 0 && _popupY > 0)
     {
@@ -842,7 +843,7 @@ bool MaterialThumbnailBrowser::checkSeekInMediaBrowser()
     return false;
 }
 
-void MaterialThumbnailBrowser::openContextMenu() {
+void TextureThumbnailBrowser::openContextMenu() {
 
     std::string shaderText = _("No shader");
 
@@ -862,7 +863,7 @@ void MaterialThumbnailBrowser::openContextMenu() {
     _popupMenu->show(_wxGLWidget);
 }
 
-void MaterialThumbnailBrowser::onSeekInMediaBrowser()
+void TextureThumbnailBrowser::onSeekInMediaBrowser()
 {
     if (_popupX > 0 && _popupY > 0)
     {
@@ -878,7 +879,7 @@ void MaterialThumbnailBrowser::onSeekInMediaBrowser()
     _popupY = -1;
 }
 
-void MaterialThumbnailBrowser::onFrozenMouseMotion(int x, int y, unsigned int state)
+void TextureThumbnailBrowser::onFrozenMouseMotion(int x, int y, unsigned int state)
 {
     if (y != 0)
     {
@@ -896,17 +897,17 @@ void MaterialThumbnailBrowser::onFrozenMouseMotion(int x, int y, unsigned int st
     }
 }
 
-void MaterialThumbnailBrowser::onFrozenMouseCaptureLost()
+void TextureThumbnailBrowser::onFrozenMouseCaptureLost()
 {
 	_freezePointer.endCapture();
 }
 
-void MaterialThumbnailBrowser::scrollChanged(double value)
+void TextureThumbnailBrowser::scrollChanged(double value)
 {
     setOriginY(-static_cast<int>(value));
 }
 
-void MaterialThumbnailBrowser::updateScroll()
+void TextureThumbnailBrowser::updateScroll()
 {
     if (_showTextureScrollbar)
     {
@@ -918,18 +919,18 @@ void MaterialThumbnailBrowser::updateScroll()
     }
 }
 
-int MaterialThumbnailBrowser::getViewportHeight()
+int TextureThumbnailBrowser::getViewportHeight()
 {
     return _viewportSize.y();
 }
 
-void MaterialThumbnailBrowser::onScrollChanged(wxScrollEvent& ev)
+void TextureThumbnailBrowser::onScrollChanged(wxScrollEvent& ev)
 {
 	setOriginY(-ev.GetPosition());
 	queueDraw();
 }
 
-void MaterialThumbnailBrowser::onGLResize(wxSizeEvent& ev)
+void TextureThumbnailBrowser::onGLResize(wxSizeEvent& ev)
 {
 	_viewportSize = Vector2i(ev.GetSize().GetWidth(), ev.GetSize().GetHeight());
 
@@ -939,7 +940,7 @@ void MaterialThumbnailBrowser::onGLResize(wxSizeEvent& ev)
 	ev.Skip();
 }
 
-void MaterialThumbnailBrowser::onGLMouseScroll(wxMouseEvent& ev)
+void TextureThumbnailBrowser::onGLMouseScroll(wxMouseEvent& ev)
 {
 	if (ev.GetWheelRotation() > 0)
 	{
@@ -951,13 +952,13 @@ void MaterialThumbnailBrowser::onGLMouseScroll(wxMouseEvent& ev)
 	}
 }
 
-void MaterialThumbnailBrowser::onGLMouseButtonPress(wxMouseEvent& ev)
+void TextureThumbnailBrowser::onGLMouseButtonPress(wxMouseEvent& ev)
 {
 	if (ev.RightDown())
     {
         _freezePointer.startCapture(_wxGLWidget,
-			std::bind(&MaterialThumbnailBrowser::onFrozenMouseMotion, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
-			std::bind(&MaterialThumbnailBrowser::onFrozenMouseCaptureLost, this));
+			std::bind(&TextureThumbnailBrowser::onFrozenMouseMotion, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3),
+			std::bind(&TextureThumbnailBrowser::onFrozenMouseCaptureLost, this));
 
         // Store the coords of the mouse pointer for later reference
         _popupX = static_cast<int>(ev.GetX());
@@ -973,7 +974,7 @@ void MaterialThumbnailBrowser::onGLMouseButtonPress(wxMouseEvent& ev)
     }
 }
 
-void MaterialThumbnailBrowser::onGLMouseButtonRelease(wxMouseEvent& ev)
+void TextureThumbnailBrowser::onGLMouseButtonRelease(wxMouseEvent& ev)
 {
 	if (ev.RightUp())
     {
@@ -991,7 +992,7 @@ void MaterialThumbnailBrowser::onGLMouseButtonRelease(wxMouseEvent& ev)
     }
 }
 
-void MaterialThumbnailBrowser::onIdle()
+void TextureThumbnailBrowser::onIdle()
 {
     if (_updateNeeded)
     {
@@ -1000,7 +1001,7 @@ void MaterialThumbnailBrowser::onIdle()
     }
 }
 
-bool MaterialThumbnailBrowser::onRender()
+bool TextureThumbnailBrowser::onRender()
 {
     if (!GlobalMainFrame().screenUpdatesEnabled())
     {

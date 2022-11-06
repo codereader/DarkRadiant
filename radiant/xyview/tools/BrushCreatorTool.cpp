@@ -5,9 +5,9 @@
 #include "iclipper.h"
 #include "scenelib.h"
 #include "selectionlib.h"
-#include "ui/texturebrowser/TextureBrowser.h"
 #include "command/ExecutionNotPossible.h"
 #include "XYMouseToolEvent.h"
+#include "ui/texturebrowser/TextureBrowserPanel.h"
 #include "ui/texturebrowser/TextureBrowserManager.h"
 
 namespace ui

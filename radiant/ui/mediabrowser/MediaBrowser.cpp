@@ -10,7 +10,7 @@
 #include <wx/sizer.h>
 
 #include "util/ScopedBoolLock.h"
-#include "ui/texturebrowser/TextureBrowser.h"
+#include "ui/texturebrowser/TextureBrowserManager.h"
 #include "ui/common/TexturePreviewCombo.h"
 
 #include "FocusMaterialRequest.h"
