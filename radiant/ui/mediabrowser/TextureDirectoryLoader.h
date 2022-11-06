@@ -7,7 +7,7 @@
 
 #include "i18n.h"
 #include "string/predicate.h"
-#include "../texturebrowser/TextureBrowser.h"
+#include "../texturebrowser/TextureBrowserPanel.h"
 #include "../texturebrowser/TextureBrowserManager.h"
 
 namespace ui
