@@ -17,6 +17,12 @@ public:
         SetSizer(new wxBoxSizer(wxVERTICAL));
     }
 
+    void Dismiss() override
+    {
+        wxPopupTransientWindow::Dismiss();
+        Destroy();
+    }
+
     // Attempts to position the popup to the right or left of the given window
     // The vertical offset is added to the screen position of the given window
     void PositionNextTo(wxWindow* win, int verticalOffset, const wxSize& size)

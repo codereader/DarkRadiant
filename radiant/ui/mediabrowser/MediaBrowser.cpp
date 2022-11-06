@@ -30,7 +30,8 @@ MediaBrowser::MediaBrowser(wxWindow* parent) :
 	_treeView(nullptr),
 	_preview(nullptr),
 	_blockShaderClipboardUpdates(false),
-    _reloadTreeOnIdle(false)
+    _reloadTreeOnIdle(false),
+    _showThumbnailBrowserOnIdle(false)
 {
     construct();
     queueTreeReload();
@@ -108,6 +109,28 @@ void MediaBrowser::onIdle()
 
         setSelection(_queuedSelection);
         _queuedSelection.clear();
+    }
+
+    if (_showThumbnailBrowserOnIdle)
+    {
+        _showThumbnailBrowserOnIdle = false;
+
+        if (_treeView->IsDirectorySelected())
+        {
+            // When a directory is selected, open the popup
+            auto popup = new wxutil::TransientPopupWindow(this);
+            auto browser = new TextureDirectoryBrowser(popup, _treeView->GetSelectedFullname());
+            popup->GetSizer()->Add(browser, 1, wxEXPAND | wxALL, 3);
+
+            // Size reaching from the upper edge of the mediabrowser to the bottom of the screen (minus a few pixels)
+            auto rectScreen = wxutil::MultiMonitor::getMonitorForWindow(this);
+            int verticalOffset = -(GetScreenPosition().y - rectScreen.GetY()) / 2;
+            wxSize size(630, rectScreen.GetY() + rectScreen.GetHeight() - GetScreenPosition().y - verticalOffset - 40);
+
+            popup->PositionNextTo(this, verticalOffset, size);
+            popup->Layout();
+            popup->Popup();
+        }
     }
 }
 
@@ -197,19 +220,8 @@ void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     {
         _preview->ClearPreview();
 
-        // When a directory is selected, open the popup
-        auto popup = new wxutil::TransientPopupWindow(this);
-        auto browser = new TextureDirectoryBrowser(popup, _treeView->GetSelectedFullname());
-        popup->GetSizer()->Add(browser, 1, wxEXPAND | wxALL, 3);
-
-        // Size reaching from the upper edge of the mediabrowser to the bottom of the screen (minus a few pixels)
-        auto rectScreen = wxutil::MultiMonitor::getMonitorForWindow(this);
-        int verticalOffset = -(GetScreenPosition().y - rectScreen.GetY()) / 2;
-        wxSize size(630, rectScreen.GetY() + rectScreen.GetHeight() - GetScreenPosition().y - verticalOffset - 40);
-
-        popup->PositionNextTo(this, verticalOffset, size);
-        popup->Layout();
-        popup->Popup();
+        _showThumbnailBrowserOnIdle = true;
+        requestIdleCallback();
     }
 
     sendSelectionToShaderClipboard();

@@ -46,6 +46,7 @@ private:
 
 	bool _blockShaderClipboardUpdates;
 	bool _reloadTreeOnIdle;
+    bool _showThumbnailBrowserOnIdle;
     std::string _queuedSelection;
 
     std::size_t _focusMaterialHandler;
