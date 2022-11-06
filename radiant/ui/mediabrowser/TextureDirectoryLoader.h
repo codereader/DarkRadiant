@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ui/imainframe.h"
 #include "ishaders.h"
 
 #include "wxutil/ModalProgressDialog.h"
@@ -9,6 +8,7 @@
 #include "i18n.h"
 #include "string/predicate.h"
 #include "../texturebrowser/TextureBrowser.h"
+#include "../texturebrowser/TextureBrowserManager.h"
 
 namespace ui
 {

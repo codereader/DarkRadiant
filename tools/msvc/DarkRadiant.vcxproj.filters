@@ -703,6 +703,9 @@
     <ClCompile Include="..\..\radiant\ui\texturebrowser\MaterialThumbnailBrowser.cpp">
       <Filter>src\ui\texturebrowser</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp">
+      <Filter>src\ui\texturebrowser</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">
@@ -1408,6 +1411,9 @@
       <Filter>src\ui\mainframe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\texturebrowser\MaterialThumbnailBrowser.h">
+      <Filter>src\ui\texturebrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h">
       <Filter>src\ui\texturebrowser</Filter>
     </ClInclude>
   </ItemGroup>

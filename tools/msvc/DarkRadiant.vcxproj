@@ -353,6 +353,7 @@
     <ClCompile Include="..\..\radiant\ui\statusbar\MapStatistics.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\StatusBarManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\MaterialThumbnailBrowser.cpp" />
+    <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowser.cpp" />
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\toolbar\ToolbarManager.cpp" />
     <ClCompile Include="..\..\radiant\ui\splash\Splash.cpp" />
@@ -581,6 +582,7 @@
     <ClInclude Include="..\..\radiant\ui\statusbar\StatusBarManager.h" />
     <ClInclude Include="..\..\radiant\ui\surfaceinspector\SurfaceInspectorControl.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\MaterialThumbnailBrowser.h" />
+    <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowser.h" />
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureBrowserManager.h" />
     <ClInclude Include="..\..\radiant\ui\toolbar\ToolbarManager.h" />
     <ClInclude Include="..\..\radiant\ui\splash\Splash.h" />
