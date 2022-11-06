@@ -218,6 +218,11 @@ const VolumeTest& XYWnd::getVolumeTest() const
     return _view;
 }
 
+bool XYWnd::supportsDragSelections()
+{
+    return true;
+}
+
 int XYWnd::getDeviceWidth() const
 {
     return getWidth();

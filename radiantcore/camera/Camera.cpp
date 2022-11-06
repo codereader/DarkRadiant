@@ -1,7 +1,6 @@
 #include "Camera.h"
 
 #include <functional>
-#include "iregistry.h"
 #include "registry/registry.h"
 #include "CameraManager.h"
 #include "render/View.h"
@@ -31,7 +30,8 @@ Camera::Camera(render::IRenderView& view, const std::function<void(bool)>& reque
 	_height(0),
 	_projection(Matrix4::getIdentity()),
 	_modelview(Matrix4::getIdentity()),
-	_view(view)
+	_view(view),
+    _dragSelectionEnabled(RKEY_CAMERA_DRAG_SELECTION_ENABLED)
 {}
 
 void Camera::updateModelview()
@@ -185,6 +185,11 @@ SelectionTestPtr Camera::createSelectionTestForPoint(const Vector2& point)
 const VolumeTest& Camera::getVolumeTest() const
 {
 	return _view;
+}
+
+bool Camera::supportsDragSelections()
+{
+    return _dragSelectionEnabled.get();
 }
 
 void Camera::queueDraw()

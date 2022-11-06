@@ -4,6 +4,7 @@
 #include "math/Vector3.h"
 #include "math/Matrix4.h"
 #include "generic/callback.h"
+#include "registry/CachedKey.h"
 
 namespace camera
 {
@@ -32,6 +33,8 @@ class Camera :
 	Matrix4 _modelview;
 
 	render::IRenderView& _view;
+
+    registry::CachedKey<bool> _dragSelectionEnabled;
 
 public:
 	Camera(render::IRenderView& view, const std::function<void(bool)>& requestRedraw);
@@ -70,7 +73,7 @@ public:
 
 	SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
 	const VolumeTest& getVolumeTest() const override;
-
+    bool supportsDragSelections() override;
 	void queueDraw() override;
 	void forceRedraw() override;
 

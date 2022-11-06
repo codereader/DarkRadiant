@@ -335,6 +335,11 @@ const VolumeTest& CamWnd::getVolumeTest() const
     return _view;
 }
 
+bool CamWnd::supportsDragSelections()
+{
+    return _camera->supportsDragSelections();
+}
+
 int CamWnd::getDeviceWidth() const
 {
     return _camera->getDeviceWidth();

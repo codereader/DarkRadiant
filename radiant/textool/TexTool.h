@@ -166,6 +166,7 @@ public:
     int getDeviceWidth() const override;
     int getDeviceHeight() const override;
     const VolumeTest& getVolumeTest() const override;
+    bool supportsDragSelections() override;
 
     // Request a deferred update of the UI elements
     void queueDraw() override;

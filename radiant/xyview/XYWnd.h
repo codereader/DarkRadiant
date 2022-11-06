@@ -113,6 +113,7 @@ public:
 
     SelectionTestPtr createSelectionTestForPoint(const Vector2& point) override;
     const VolumeTest& getVolumeTest() const override;
+    bool supportsDragSelections() override;
     int getDeviceWidth() const override;
     int getDeviceHeight() const override;
     void queueDraw() override;

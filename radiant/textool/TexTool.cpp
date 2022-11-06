@@ -423,6 +423,11 @@ const VolumeTest& TexTool::getVolumeTest() const
     return _view;
 }
 
+bool TexTool::supportsDragSelections()
+{
+    return true;
+}
+
 void TexTool::forceRedraw()
 {
     _glWidget->Refresh();
