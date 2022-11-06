@@ -111,6 +111,19 @@ class TextureThumbnailBrowser :
     // renderable items will be updated next round
     bool _updateNeeded;
 
+    // Data structure keeping track of the virtual position for the next texture to
+    // be drawn in. Only the getNextPositionForTexture() method should access the values
+    // in this structure.
+    class CurrentPosition
+    {
+    public:
+        CurrentPosition();
+
+        Vector2i origin;
+        int rowAdvance;
+    };
+    std::unique_ptr<CurrentPosition> _currentPopulationPosition;
+
 public:
     TextureThumbnailBrowser(wxWindow* parent);
 
@@ -131,6 +144,13 @@ public:
 protected:
     void onIdle() override;
 
+    // To be implemented by subclasses, this method should iterate over all
+    // materials that should be shown in the view, calling createTile on each material.
+    // (All previous tiles will already have been removed from the view.)
+    virtual void populateTiles();
+
+    void createTileForMaterial(const MaterialPtr& material);
+
 private:
     void clearFilter();
 
@@ -139,8 +159,8 @@ private:
     // Callback needed for DeferredAdjustment
     void scrollChanged(double value);
 
-    // Actually updates the renderable items (usually done before rendering)
-    void performUpdate();
+    // Repopulates the texture tiles
+    void refreshTiles();
 
     // This gets called by the ShaderSystem
     void onActiveShadersChanged();
@@ -151,9 +171,7 @@ private:
 
     // Get a new position for the given texture, and advance the CurrentPosition
     // state object.
-    class CurrentPosition;
-    Vector2i getPositionForTexture(CurrentPosition& layout,
-                                   const Texture& texture) const;
+    Vector2i getNextPositionForTexture(const Texture& texture);
 
     bool checkSeekInMediaBrowser(); // sensitivity check
     void onSeekInMediaBrowser();

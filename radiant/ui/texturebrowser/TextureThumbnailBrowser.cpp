@@ -501,24 +501,14 @@ void TextureThumbnailBrowser::setSelectedShader(const std::string& newShader)
     focus(_shader);
 }
 
-// Data structure keeping track of the virtual position for the next texture to
-// be drawn in. Only the getPositionForTexture() method should access the values
-// in this structure.
-class TextureThumbnailBrowser::CurrentPosition
+TextureThumbnailBrowser::CurrentPosition::CurrentPosition()
+: origin(VIEWPORT_BORDER, -VIEWPORT_BORDER), rowAdvance(0)
+{ }
+
+Vector2i TextureThumbnailBrowser::getNextPositionForTexture(const Texture& tex)
 {
-public:
+    auto& currentPos = *_currentPopulationPosition;
 
-    CurrentPosition()
-    : origin(VIEWPORT_BORDER, -VIEWPORT_BORDER), rowAdvance(0)
-    { }
-
-    Vector2i origin;
-    int rowAdvance;
-};
-
-Vector2i TextureThumbnailBrowser::getPositionForTexture(CurrentPosition& currentPos,
-                                               const Texture& tex) const
-{
     int nWidth = getTextureWidth(tex);
     int nHeight = getTextureHeight(tex);
 
@@ -656,7 +646,43 @@ void TextureThumbnailBrowser::queueUpdate()
     requestIdleCallback();
 }
 
-void TextureThumbnailBrowser::performUpdate()
+void TextureThumbnailBrowser::populateTiles()
+{
+    // Update the favourites
+    _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Material));
+
+    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& mat)
+    {
+        if (!materialIsVisible(mat))
+        {
+            return;
+        }
+
+        createTileForMaterial(mat);
+    });
+}
+
+void TextureThumbnailBrowser::createTileForMaterial(const MaterialPtr& material)
+{
+    // Create a new tile for this material
+    _tiles.push_back(std::make_shared<TextureTile>(*this));
+    auto& tile = *_tiles.back();
+
+    tile.material = material;
+
+    Texture& texture = *tile.material->getEditorImage();
+
+    tile.position = getNextPositionForTexture(texture);
+    tile.size.x() = getTextureWidth(texture);
+    tile.size.y() = getTextureHeight(texture);
+
+    _entireSpaceHeight = std::max(
+        _entireSpaceHeight,
+        abs(tile.position.y()) + FONT_HEIGHT() + tile.size.y() + TILE_BORDER
+    );
+}
+
+void TextureThumbnailBrowser::refreshTiles()
 {
     // During startup the openGL module might not have created the font yet
     if (GlobalOpenGL().getFontHeight() == 0)
@@ -669,38 +695,14 @@ void TextureThumbnailBrowser::performUpdate()
     // Update all renderable items
     _tiles.clear();
 
-    CurrentPosition layout;
+    _currentPopulationPosition = std::make_unique<CurrentPosition>();
     _entireSpaceHeight = 0;
-    // Update the favourites
-    _favourites = GlobalFavouritesManager().getFavourites(decl::getTypeName(decl::Type::Material));
 
-    GlobalMaterialManager().foreachMaterial([&](const MaterialPtr& mat)
-    {
-        if (!materialIsVisible(mat))
-        {
-            return;
-        }
-
-        // Create a new tile for this material
-        _tiles.push_back(std::make_shared<TextureTile>(*this));
-        auto& tile = *_tiles.back();
-
-        tile.material = mat;
-
-        Texture& texture = *tile.material->getEditorImage();
-
-        tile.position = getPositionForTexture(layout, texture);
-        tile.size.x() = getTextureWidth(texture);
-        tile.size.y() = getTextureHeight(texture);
-
-        _entireSpaceHeight = std::max(
-            _entireSpaceHeight,
-            abs(tile.position.y()) + FONT_HEIGHT() + tile.size.y() + TILE_BORDER
-        );
-    });
+    populateTiles();
 
     updateScroll();
     clampOriginY(); // scroll value might be out of range after the update
+    _currentPopulationPosition.reset();
 }
 
 void TextureThumbnailBrowser::onActiveShadersChanged()
@@ -996,7 +998,7 @@ void TextureThumbnailBrowser::onIdle()
 {
     if (_updateNeeded)
     {
-        performUpdate();
+        refreshTiles();
         queueDraw();
     }
 }
