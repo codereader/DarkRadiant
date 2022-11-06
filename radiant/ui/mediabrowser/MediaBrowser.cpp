@@ -19,6 +19,8 @@
 #include "FocusMaterialRequest.h"
 #include "ui/UserInterfaceModule.h"
 #include "ui/texturebrowser/TextureDirectoryBrowser.h"
+#include "wxutil/MultiMonitor.h"
+#include "wxutil/TransientPopupWindow.h"
 
 namespace ui
 {
@@ -196,32 +198,17 @@ void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
         _preview->ClearPreview();
 
         // When a directory is selected, open the popup
-        auto popup = new wxPopupTransientWindow(this);
-
-        popup->SetSizer(new wxBoxSizer(wxVERTICAL));
-
+        auto popup = new wxutil::TransientPopupWindow(this);
         auto browser = new TextureDirectoryBrowser(popup, _treeView->GetSelectedFullname());
-        //browser->SetMinSize(size);
+        popup->GetSizer()->Add(browser, 1, wxEXPAND | wxALL, 3);
 
-        wxPoint posScreen;
-        wxSize sizeScreen;
+        // Size reaching from the upper edge of the mediabrowser to the bottom of the screen (minus a few pixels)
+        auto rectScreen = wxutil::MultiMonitor::getMonitorForWindow(this);
+        int verticalOffset = -(GetScreenPosition().y - rectScreen.GetY()) / 2;
+        wxSize size(630, rectScreen.GetY() + rectScreen.GetHeight() - GetScreenPosition().y - verticalOffset - 40);
 
-        const int displayNum = wxDisplay::GetFromPoint(GetScreenPosition());
-        if ( displayNum != wxNOT_FOUND )
-        {
-            wxRect rectScreen = wxDisplay(displayNum).GetGeometry();
-            posScreen = rectScreen.GetPosition();
-            sizeScreen = rectScreen.GetSize();
-        }
-
-        // From the upper edge of the mediabrowser to the bottom of the screen (minus a few pixels)
-        wxSize size(600, (posScreen.y + sizeScreen.y) - GetScreenPosition().y - 40);
-
-        popup->GetSizer()->Add(browser, 1, wxEXPAND);
-        popup->SetPosition(this->GetScreenRect().GetRightTop());
-        popup->SetSize(size);
+        popup->PositionNextTo(this, verticalOffset, size);
         popup->Layout();
-        //popup->Position(this->GetScreenRect().GetRightTop(), size);
         popup->Popup();
     }
 

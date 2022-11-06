@@ -186,6 +186,7 @@
       <Filter>dataview</Filter>
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\DockablePanel.h" />
+    <ClInclude Include="..\..\libs\wxutil\TransientPopupWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">

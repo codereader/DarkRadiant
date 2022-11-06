@@ -203,6 +203,7 @@
     <ClInclude Include="..\..\libs\wxutil\sourceview\DefinitionView.h" />
     <ClInclude Include="..\..\libs\wxutil\sourceview\SourceView.h" />
     <ClInclude Include="..\..\libs\wxutil\Splitter.h" />
+    <ClInclude Include="..\..\libs\wxutil\TransientPopupWindow.h" />
     <ClInclude Include="..\..\libs\wxutil\WindowPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\WindowState.h" />
     <ClInclude Include="..\..\libs\wxutil\XmlResourceBasedWidget.h" />
