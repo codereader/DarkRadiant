@@ -392,6 +392,13 @@ void RadiantSelectionSystem::onSelectedChanged(const scene::INodePtr& node, cons
     if (isSelected)
 	{
         _selection.append(node);
+
+        // Any selectable that is not in the pool yet will be added
+        // otherwise creating new nodes is making them unselectable
+        if (_selectionFocusActive)
+        {
+            _selectionFocusPool.insert(node);
+        }
     }
     else
 	{

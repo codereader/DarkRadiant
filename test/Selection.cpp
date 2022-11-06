@@ -1589,4 +1589,42 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectGroupItemInFocusMode)
     expectNodeSelectionStatus({ brush, brush2 }, { brush3 });
 }
 
+// Selecting a node that is not part of the selection focus will add it to the focused set
+
+TEST_F(OrthoViewSelectionTest, UnfocusedNodeIsAddedToFocusOnSelection)
+{
+    loadMap("selection_test2.map");
+
+    auto worldspawn = GlobalMapModule().findOrInsertWorldspawn();
+    auto brush = algorithm::findFirstBrushWithMaterial(worldspawn, "textures/numbers/2");
+    auto funcStaticTop = algorithm::getEntityByName(GlobalMapModule().getRoot(), "func_static_top");
+
+    // Select the func_static and enter focus mode
+    Node_setSelected(funcStaticTop, true);
+    GlobalSelectionSystem().toggleSelectionFocus();
+
+    auto originalFocusBounds = GlobalSelectionSystem().getSelectionFocusBounds();
+
+    // Try to perform selecting the brush
+    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Still nothing should be selected";
+    EXPECT_FALSE(Node_isSelected(brush)) << "Selection should not have succeeded";
+
+    // Programmatically select the node, this adds it to the pool
+    Node_setSelected(brush, true);
+    Node_setSelected(brush, false);
+
+    // This point selection ought to succeed now
+    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+
+    EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "Brush should be selected now";
+    EXPECT_TRUE(Node_isSelected(brush)) << "Selection should have succeeded";
+
+    auto newFocusBounds = GlobalSelectionSystem().getSelectionFocusBounds();
+
+    EXPECT_FALSE(math::isNear(originalFocusBounds.getOrigin(), newFocusBounds.getOrigin(), 20)) << "Bound should have been changed";
+    EXPECT_FALSE(math::isNear(originalFocusBounds.getExtents(), newFocusBounds.getExtents(), 10)) << "Bounds should have changed form";
+}
+
 }
