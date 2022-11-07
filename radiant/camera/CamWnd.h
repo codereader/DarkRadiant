@@ -1,40 +1,39 @@
 #pragma once
 
+#include <memory>
+#include <sigc++/connection.h>
+
 #include "iscenegraph.h"
 #include "imousetool.h"
 #include "icameraview.h"
-#include "ui/ieventmanager.h"
 #include "igl.h"
-#include "irender.h"
+#include "ui/ieventmanager.h"
+
+#include "wxutil/DockablePanel.h"
 #include "wxutil/GLWidget.h"
 #include "wxutil/FreezePointer.h"
-#include "wxutil/WindowPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/event/KeyEventFilter.h"
 #include "wxutil/MouseToolHandler.h"
 #include "wxutil/DeferredMotionDelta.h"
 
 #include <wx/wxprec.h>
-#include <wx/glcanvas.h>
 #include <wx/timer.h>
 #include <wx/stopwatch.h>
-#include "render/View.h"
 
-#include "Rectangle.h"
-#include <memory>
-#include "util/Noncopyable.h"
-#include <sigc++/connection.h>
-#include "tools/CameraMouseToolEvent.h"
-#include "render/RenderStatistics.h"
 #include "render/CamRenderer.h"
+#include "render/RenderStatistics.h"
+#include "render/View.h"
+#include "util/Noncopyable.h"
+#include "Rectangle.h"
+#include "tools/CameraMouseToolEvent.h"
 #include "messages/TextureChanged.h"
-#include "wxutil/DockablePanel.h"
 
 constexpr int CAMWND_MINSIZE_X = 240;
 constexpr int CAMWND_MINSIZE_Y = 200;
 
-#define SPEED_MOVE 32
-#define SPEED_TURN 22.5
+constexpr double SPEED_MOVE = 32.0;
+constexpr double SPEED_TURN = 22.5;
 
 class SelectionTest;
 
@@ -42,6 +41,7 @@ namespace render { class CamRenderer; };
 
 namespace ui
 {
+class CameraWndManager;
 
 /// Main 3D view widget
 class CamWnd :
@@ -53,6 +53,9 @@ class CamWnd :
     private wxutil::XmlResourceBasedWidget,
     protected wxutil::MouseToolHandler
 {
+private:
+    CameraWndManager& _owner;
+
     // Overall panel including toolbar and GL widget
     wxPanel* _mainWxWidget;
 
@@ -130,7 +133,7 @@ class CamWnd :
     std::size_t _textureChangedHandler;
 
 public:
-    CamWnd(wxWindow* parent);
+    CamWnd(wxWindow* parent, CameraWndManager& owner);
     ~CamWnd() override;
 
     // The unique ID of this camwindow

@@ -121,16 +121,18 @@
     <mainFrame>
       <windowLayout value="1" />
       <window xPosition="0" yPosition="0" width="800" height="580" state="4" />
-      <regular>
-        <pane name="vertical" position="650" />
-        <pane name="horizontal" position="500" />
-        <pane name="texcam" position="350" />
-      </regular>
-      <splitPane>
-        <pane name="horizontal" position="300" />
-        <pane name="vertical1" position="250" />
-        <pane name="vertical2" position="250" />
-      </splitPane>
+      <propertyPanel>
+          <lastShownPage value="EntityInspector"/>
+          <pages default="true">
+              <page controlName="EntityInspector"/>
+              <page controlName="AIEditingPanel"/>
+              <page controlName="MediaBrowser"/>
+              <page controlName="FavouritesBrowser"/>
+              <page controlName="Console"/>
+              <page controlName="ScriptPanel"/>
+              <page controlName="TextureBrowser"/>
+          </pages>
+      </propertyPanel>
     </mainFrame>
     <multiMonitor>
       <startMonitorNum value="0" />

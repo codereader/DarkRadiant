@@ -8,6 +8,7 @@
 #include "wxutil/DockablePanel.h"
 #include "wxutil/dataview/TreeModel.h"
 #include "wxutil/event/SingleIdleCallback.h"
+#include "wxutil/menu/PopupMenu.h"
 
 namespace wxutil
 {
@@ -67,6 +68,8 @@ private:
 	sigc::connection _layerHierarchyChangedSignal;
 	sigc::connection _mapEventSignal;
 
+    wxutil::PopupMenuPtr _popupMenu;
+
 public:
     LayerControlPanel(wxWindow* parent);
     ~LayerControlPanel() override;
@@ -103,6 +106,7 @@ private:
 
 	// Creates the option buttons
 	void createButtons();
+	void createPopupMenu();
 
 	void setVisibilityOfAllLayers(bool visible);
 
@@ -117,9 +121,10 @@ private:
     void onBeginDrag(wxDataViewEvent& ev);
     void onDropPossible(wxDataViewEvent& ev);
     void onDrop(wxDataViewEvent& ev);
-    void onRenameLayer(wxCommandEvent& ev);
-    void onDeleteLayer(wxCommandEvent& ev);
     int getSelectedLayerId();
+
+    void renameSelectedLayer();
+    void deleteSelectedLayer();
 };
 
 } // namespace ui

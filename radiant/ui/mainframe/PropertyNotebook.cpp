@@ -242,17 +242,17 @@ void PropertyNotebook::saveState()
     registry::setValue(RKEY_LAST_SHOWN_PAGE, getSelectedPageName());
 }
 
-void PropertyNotebook::restoreState()
+void PropertyNotebook::restoreState(const xml::NodeList& pages)
 {
-    std::vector<std::string> sortedControlNames;
+    // Load the last shown page before restoring the pages
+    // Page switches are going to overwrite the saved value
+    auto lastShownPage = registry::getValue<std::string>(RKEY_LAST_SHOWN_PAGE);
 
-    // Restore all missing pages
-    auto pageNodes = GlobalRegistry().findXPath(RKEY_PAGES + "//*");
-    for (int i = 0; i < pageNodes.size(); ++i)
+    for (int i = 0; i < pages.size(); ++i)
     {
-        if (pageNodes.at(i).getName() != PAGE_NODE_NAME) continue;
+        if (pages.at(i).getName() != PAGE_NODE_NAME) continue;
 
-        auto controlName = pageNodes.at(i).getAttributeValue(CONTROL_NAME_ATTRIBUTE);
+        auto controlName = pages.at(i).getAttributeValue(CONTROL_NAME_ATTRIBUTE);
 
         auto existingIndex = findControlIndexByName(controlName);
 
@@ -278,16 +278,28 @@ void PropertyNotebook::restoreState()
         }
     }
 
-    auto lastShownPage = registry::getValue<std::string>(RKEY_LAST_SHOWN_PAGE);
+    // Bring the last shown page to front
+    focusControl(lastShownPage);
+}
 
-    for (const auto& page : _pages)
+void PropertyNotebook::restoreDefaultState()
+{
+    restoreState(GlobalRegistry().findXPath(RKEY_PAGES + "[@default='true']//*"));
+}
+
+void PropertyNotebook::restoreState()
+{
+    // Check the user settings first
+    auto userDefinedPages = GlobalRegistry().findXPath(RKEY_PAGES + "[not(@default='true')]//*");
+
+    // Fall back to the factory defaults if no pages are defined
+    if (userDefinedPages.empty())
     {
-        if (page.controlName == lastShownPage)
-        {
-            SetSelection(GetPageIndex(page.page));
-            break;
-        }
+        restoreDefaultState();
+        return;
     }
+
+    restoreState(userDefinedPages);
 }
 
 bool PropertyNotebook::controlExists(const std::string& controlName)

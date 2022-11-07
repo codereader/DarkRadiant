@@ -89,6 +89,18 @@ void PortableMapReader::readLayers(const xml::Node& mapNode)
 			auto name = layer.getAttributeValue(ATTR_MAP_LAYER_NAME);
 
             layerManager.createLayer(name, id);
+
+            // Check active layer properties
+            if (layer.getAttributeValue(ATTR_MAP_LAYER_ACTIVE) == ATTR_VALUE_TRUE)
+            {
+                layerManager.setActiveLayer(id);
+            }
+
+            // Set visibility (and make sure this happens before the hierarchy is restored)
+            if (layer.getAttributeValue(ATTR_MAP_LAYER_HIDDEN) == ATTR_VALUE_TRUE)
+            {
+                layerManager.setLayerVisibility(id, false);
+            }
 		}
 
         // Restore the layer hierarchy after all layers have been created

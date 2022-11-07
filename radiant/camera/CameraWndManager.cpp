@@ -51,7 +51,7 @@ public:
 
     wxWindow* createWidget(wxWindow* parent) override
     {
-        auto cam = new CamWnd(parent);
+        auto cam = new CamWnd(parent, _owner);
 
         // Inherit origin and angles from existing cameras
         if (_owner.getActiveCamWnd())
@@ -145,48 +145,37 @@ CamWnd* CameraWndManager::getActiveCamWnd()
 	return cam;
 }
 
-CamWnd* CameraWndManager::createCamWnd(wxWindow* parent)
+void CameraWndManager::setActiveCamWnd(int id)
 {
-	// Instantantiate a new camera
-	auto cam = new CamWnd(parent);
-
-	if (_activeCam == -1) {
-		_activeCam = cam->getId();
-	}
-
-	return cam;
+    if (_cameras.count(id) > 0)
+    {
+        _activeCam = id;
+    }
 }
 
 void CameraWndManager::addCamWnd(int id, CamWnd* cam)
 {
-    _cameras.insert(CamWndMap::value_type(id, cam));
+    _cameras.emplace(id, cam);
 
-    if (_activeCam == -1)
-    {
-        _activeCam = cam->getId();
-    }
+    // New cameras are active immediately
+    _activeCam = cam->getId();
 }
-
 
 void CameraWndManager::removeCamWnd(int id)
 {
-	// Find and remove the CamWnd
-	auto i = _cameras.find(id);
+    // Find and remove the CamWnd
+    auto i = _cameras.find(id);
 
-	if (i != _cameras.end()) {
-		_cameras.erase(i);
-	}
+    if (i != _cameras.end())
+    {
+        _cameras.erase(i);
+    }
 
-	if (_activeCam == id) {
-		// Find a new active camera
-		if (!_cameras.empty()) {
-			_activeCam = _cameras.begin()->first;
-		}
-		else {
-			// No more cameras available
-			_activeCam = -1;
-		}
-	}
+    if (_activeCam == id)
+    {
+        // Find a new active camera
+        _activeCam = !_cameras.empty() ? _cameras.begin()->first : -1;
+    }
 }
 
 void CameraWndManager::resetCameraAngles(const cmd::ArgumentList& args)

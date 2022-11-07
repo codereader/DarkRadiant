@@ -259,6 +259,10 @@ public:
 
     // Called during recursive transform changed, but only by INodes themselves
     virtual void transformChangedLocal() = 0;
+
+    // Method invoked on every node whenever the filter system
+    // changes its state - nodes get a chance to react on that
+    virtual void onFiltersChanged() = 0;
 };
 
 /// Cast an INode to a particular interface

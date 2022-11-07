@@ -86,6 +86,7 @@ private:
     std::string generateUniquePaneName(const std::string& controlName);
 
     void convertPaneToPropertyTab(const std::string& paneName);
+    void ensureVisibleCenterPane();
 };
 
 } // namespace

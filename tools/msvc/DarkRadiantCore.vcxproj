@@ -174,6 +174,7 @@
     <ClCompile Include="..\..\radiantcore\model\md5\MD5Surface.cpp" />
     <ClCompile Include="..\..\radiantcore\model\ModelCache.cpp" />
     <ClCompile Include="..\..\radiantcore\model\ModelFormatManager.cpp" />
+    <ClCompile Include="..\..\radiantcore\model\ModelNodeBase.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModel.cpp" />
     <ClCompile Include="..\..\radiantcore\model\NullModelNode.cpp" />
     <ClCompile Include="..\..\radiantcore\model\picomodel\lib\lwo\clip.c">
@@ -945,7 +946,9 @@
     <ClInclude Include="..\..\radiantcore\model\md5\RenderableMD5Skeleton.h" />
     <ClInclude Include="..\..\radiantcore\model\ModelCache.h" />
     <ClInclude Include="..\..\radiantcore\model\ModelFormatManager.h" />
+    <ClInclude Include="..\..\radiantcore\model\ModelNodeBase.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModel.h" />
+    <ClInclude Include="..\..\radiantcore\model\NullModelBoxSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\NullModelNode.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\lwo\lwo2.h" />
@@ -954,6 +957,7 @@
     <ClInclude Include="..\..\radiantcore\model\picomodel\lib\pm_fm.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelLoader.h" />
     <ClInclude Include="..\..\radiantcore\model\picomodel\PicoModelModule.h" />
+    <ClInclude Include="..\..\radiantcore\model\IndexedBoxSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\RenderableModelSurface.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModel.h" />
     <ClInclude Include="..\..\radiantcore\model\StaticModelNode.h" />

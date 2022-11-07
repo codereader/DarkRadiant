@@ -70,6 +70,7 @@
     <ClCompile Include="..\..\..\test\XmlUtil.cpp" />
     <ClCompile Include="..\..\..\test\Game.cpp" />
     <ClCompile Include="..\..\..\test\CodeTokeniser.cpp" />
+    <ClCompile Include="..\..\..\test\Filters.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\test\HeadlessOpenGLContext.h" />

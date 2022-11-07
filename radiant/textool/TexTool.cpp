@@ -879,6 +879,14 @@ void TexTool::handleTextureToolRequest(TextureToolRequest& request)
         updateThemeButtons();
         queueDraw();
         break;
+
+    case TextureToolRequest::QueueViewRefresh:
+        queueDraw();
+        break;
+
+    case TextureToolRequest::ForceViewRefresh:
+        forceRedraw();
+        break;
     }
 }
 

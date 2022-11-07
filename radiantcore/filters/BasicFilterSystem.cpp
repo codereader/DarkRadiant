@@ -630,8 +630,15 @@ void BasicFilterSystem::updateSubgraph(const scene::INodePtr& root)
 // Update scenegraph instances with filtered status
 void BasicFilterSystem::updateScene()
 {
+    auto rootNode = GlobalSceneGraph().root();
+
+    if (!rootNode) return;
+
 	// pass scenegraph root to specialised routine
-	updateSubgraph(GlobalSceneGraph().root());
+	updateSubgraph(rootNode);
+
+    // Invoke onFiltersChanged on the root node
+    rootNode->onFiltersChanged();
 }
 
 // Update scenegraph instances with filtered status

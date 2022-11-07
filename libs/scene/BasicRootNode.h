@@ -108,6 +108,16 @@ public:
     {
         return Node::getRenderSystem();
     }
+
+    void onFiltersChanged() override
+    {
+        // Recursively notify the whole tree
+        foreachNode([](const INodePtr& node)
+        {
+            node->onFiltersChanged();
+            return true;
+        });
+    }
 };
 
 }
