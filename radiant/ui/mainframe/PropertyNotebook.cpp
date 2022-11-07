@@ -85,7 +85,7 @@ void PropertyNotebook::addControl(const std::string& controlName)
     });
 
     // Select the new page
-    SetSelection(FindPage(content));
+    SetSelection(GetPageIndex(content));
 }
 
 void PropertyNotebook::removeControl(const std::string& controlName)
@@ -97,7 +97,7 @@ void PropertyNotebook::removeControl(const std::string& controlName)
         if (i->controlName != controlName) continue;
 
         // Remove the page from the notebook
-        DeletePage(FindPage(i->page));
+        DeletePage(GetPageIndex(i->page));
 
         // Remove the entry and break the loop
         _pages.erase(i);
@@ -202,7 +202,7 @@ int PropertyNotebook::findControlIndexByName(const std::string& controlName)
     {
         if (page.controlName == controlName)
         {
-            return FindPage(page.page);
+            return GetPageIndex(page.page);
         }
     }
 
@@ -262,8 +262,12 @@ void PropertyNotebook::restoreState()
             existingIndex = findControlIndexByName(controlName);
         }
 
-        if (existingIndex != i)
-        {
+        if (existingIndex == wxNOT_FOUND) {
+            // Sanity check; avoid passing an incorrect index to wxWidgets
+            rWarning() << "PropertyNotebook::restoreState(): failed to find index of control ["
+                       << controlName << "]\n";
+        }
+        else if (existingIndex != i) {
             // Move to correct position, keeping image and caption intact
             auto window = GetPage(existingIndex);
             auto imageIndex = findImageIndexForControl(controlName);
@@ -280,7 +284,7 @@ void PropertyNotebook::restoreState()
     {
         if (page.controlName == lastShownPage)
         {
-            SetSelection(FindPage(page.page));
+            SetSelection(GetPageIndex(page.page));
             break;
         }
     }
