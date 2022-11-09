@@ -124,16 +124,7 @@
     <ClInclude Include="..\..\include\ui\ifilechooser.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\ui\igroupdialog.h">
-      <Filter>ui</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\ui\imainframe.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\ui\imainframelayout.h">
-      <Filter>ui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\ui\imediabrowser.h">
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\ui\imenu.h">
@@ -174,6 +165,9 @@
       <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\ui\iwindowstate.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\ui\iusercontrol.h">
       <Filter>ui</Filter>
     </ClInclude>
   </ItemGroup>

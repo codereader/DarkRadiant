@@ -1,24 +1,17 @@
 #include "LightInspector.h"
 
-#include "i18n.h"
 #include "icameraview.h"
 #include "ientity.h"
 #include "ieclass.h"
-#include "igame.h"
 #include "ishaders.h"
-#include "iradiant.h"
-#include "ui/imainframe.h"
 #include "iselection.h"
 #include "iundo.h"
 
 #include <wx/tglbtn.h>
 #include <wx/clrpicker.h>
 #include <wx/checkbox.h>
-#include <wx/artprov.h>
-#include <wx/stattext.h>
 #include <wx/slider.h>
 #include <wx/radiobut.h>
-
 
 #include "ui/materials/MaterialChooser.h" // for static displayLightInfo() function
 #include "util/ScopedBoolLock.h"
@@ -27,25 +20,23 @@
 namespace ui
 {
 
-/* CONSTANTS */
-
 namespace
 {
-    const char* LIGHTINSPECTOR_TITLE = N_("Light properties");
-    const std::string RKEY_WINDOW_STATE = "user/ui/lightInspector/window";
-    const char* COLOR_KEY = "_color";
+    constexpr const char* COLOR_KEY = "_color";
 }
 
-// Private constructor sets up dialog
-LightInspector::LightInspector() :
-    wxutil::TransientWindow(_(LIGHTINSPECTOR_TITLE), GlobalMainFrame().getWxTopLevelWindow(), true),
+LightInspector::LightInspector(wxWindow* parent) :
+    DockablePanel(parent),
     _isProjected(false),
     _texSelector(nullptr),
     _updateActive(false),
     _supportsAiSee(game::current::getValue<bool>("/light/supportsAiSeeSpawnarg", false))
 {
     // Load XRC panel and access widgets
-    wxPanel* contents = loadNamedPanel(this, "LightInspectorMainPanel");
+    auto contents = loadNamedPanel(this, "LightInspectorMainPanel");
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    GetSizer()->Add(contents, 1, wxEXPAND);
+
     _brightnessSlider = findNamedObject<wxSlider>(this, "BrightnessSlider");
 
     setupLightShapeOptions();
@@ -57,31 +48,44 @@ LightInspector::LightInspector() :
     makeLabelBold(this, "LightInspectorOptionsLabel");
 
     SetMinSize(contents->GetEffectiveMinSize());
-    InitialiseWindowPosition(600, 360, RKEY_WINDOW_STATE);
 }
 
-LightInspectorPtr& LightInspector::InstancePtr()
+void LightInspector::onPanelActivated()
 {
-    static LightInspectorPtr _instancePtr;
-    return _instancePtr;
+    connectListeners();
+    // Update the widgets right now
+    update();
 }
 
-void LightInspector::onMainFrameShuttingDown()
+void LightInspector::onPanelDeactivated()
 {
-    if (IsShownOnScreen())
-    {
-        Hide();
-    }
+    disconnectListeners();
+}
 
-    // Destroy the window
-    SendDestroyEvent();
-    InstancePtr().reset();
+void LightInspector::connectListeners()
+{
+    // Register self as observer to receive events
+    _undoHandler = GlobalMapModule().signal_postUndo().connect(
+        sigc::mem_fun(this, &LightInspector::update));
+    _redoHandler = GlobalMapModule().signal_postRedo().connect(
+        sigc::mem_fun(this, &LightInspector::update));
+
+    // Register self to the SelSystem to get notified upon selection changes.
+    _selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
+        [this](const ISelectable&) { update(); });
+}
+
+void LightInspector::disconnectListeners()
+{
+    _selectionChanged.disconnect();
+    _undoHandler.disconnect();
+    _redoHandler.disconnect();
 }
 
 void LightInspector::shaderSelectionChanged()
 {
     // Get the selected shader
-    MaterialPtr ishader = _texSelector->getSelectedShader();
+    auto ishader = _texSelector->getSelectedShader();
 
     // greebo: Do not write to the entities if this call resulted from an update()
     if (_updateActive) return;
@@ -235,67 +239,13 @@ void LightInspector::update()
     }
 }
 
-// Pre-hide callback
-void LightInspector::_preHide()
+LightInspector::~LightInspector()
 {
-    TransientWindow::_preHide();
-
-    // Remove as observer, an invisible inspector doesn't need to receive events
-    _selectionChanged.disconnect();
-
-    _undoHandler.disconnect();
-    _redoHandler.disconnect();
-}
-
-// Pre-show callback
-void LightInspector::_preShow()
-{
-    TransientWindow::_preShow();
-
-    _selectionChanged.disconnect();
-    _undoHandler.disconnect();
-    _redoHandler.disconnect();
-
-    // Register self as observer to receive events
-    _undoHandler = GlobalMapModule().signal_postUndo().connect(
-        sigc::mem_fun(this, &LightInspector::update));
-    _redoHandler = GlobalMapModule().signal_postRedo().connect(
-        sigc::mem_fun(this, &LightInspector::update));
-
-    // Register self to the SelSystem to get notified upon selection changes.
-    _selectionChanged = GlobalSelectionSystem().signal_selectionChanged().connect(
-        [this](const ISelectable&) { update(); });
-
-    // Update the widgets before showing
-    update();
-}
-
-// Static method to toggle the dialog
-void LightInspector::toggleInspector(const cmd::ArgumentList& args)
-{
-    // Toggle the instance
-    Instance().ToggleVisibility();
-}
-
-LightInspector& LightInspector::Instance()
-{
-    LightInspectorPtr& instancePtr = InstancePtr();
-
-    if (instancePtr == NULL)
+    if (panelIsActive())
     {
-        // Not yet instantiated, do it now
-        instancePtr.reset(new LightInspector);
-
-        // Pre-destruction cleanup
-        GlobalMainFrame().signal_MainFrameShuttingDown().connect(
-            sigc::mem_fun(*instancePtr, &LightInspector::onMainFrameShuttingDown)
-        );
+        disconnectListeners();
     }
-
-    return *instancePtr;
 }
-
-// CALLBACKS
 
 void LightInspector::updateLightShapeWidgets()
 {
@@ -380,7 +330,7 @@ namespace
     }
 
     // Convert linear light value to/from displayed slider value
-    const float SLIDER_POWER = 1.25;
+    constexpr float SLIDER_POWER = 1.25;
     float fromSlider(float value)
     {
         return std::pow(value / 100.f, SLIDER_POWER);

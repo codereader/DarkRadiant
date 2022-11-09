@@ -1,16 +1,16 @@
 #pragma once
 
-#include <map>
 #include <sigc++/connection.h>
+
 #include "icommandsystem.h"
 #include "ui/imainframe.h"
-#include "ui/imainframelayout.h"
 #include "wxutil/WindowPosition.h"
 
 namespace ui
 {
 
 class TopLevelFrame;
+class AuiLayout;
 
 class MainFrame : 
 	public IMainFrame
@@ -24,8 +24,8 @@ private:
 
 	wxutil::WindowPosition _windowPosition;
 
-	// The current layout object (NULL if no layout active)
-	IMainFrameLayoutPtr _currentLayout;
+	// The current layout object
+	std::shared_ptr<AuiLayout> _layout;
 
 	sigc::connection _mapNameChangedConn;
 	sigc::connection _mapModifiedChangedConn;
@@ -61,13 +61,10 @@ public:
 
 	void updateAllWindows(bool force = false) override;
 
-	// Apply the named viewstyle
-	void applyLayout(const std::string& name) override;
-    void setActiveLayoutName(const std::string& name) override;
-	std::string getCurrentLayout() override;
-
 	IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title, 
 		const std::string& message, bool forceDisplay = false) override;
+
+    void addControl(const std::string& controlName, const ControlSettings& defaultSettings) override;
 
 	sigc::signal<void>& signal_MainFrameConstructed() override;
 	sigc::signal<void>& signal_MainFrameReady() override;
@@ -86,6 +83,10 @@ private:
 	void create();
 
 	void exitCmd(const cmd::ArgumentList& args);
+	void focusControl(const cmd::ArgumentList& args);
+	void createControl(const cmd::ArgumentList& args);
+	void toggleControl(const cmd::ArgumentList& args);
+	void toggleMainControl(const cmd::ArgumentList& args);
 
 	void removeLayout();
 

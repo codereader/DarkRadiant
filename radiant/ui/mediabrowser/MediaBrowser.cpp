@@ -1,114 +1,150 @@
 #include "MediaBrowser.h"
 
-#include "i18n.h"
-#include "ui/imainframe.h"
 #include "ideclmanager.h"
 #include "imap.h"
-#include "ui/igroupdialog.h"
-#include "ipreferencesystem.h"
 #include "ishaders.h"
 #include "ishaderclipboard.h"
-#include "ifavourites.h"
-#include "ui/iuserinterface.h"
 
-#include "wxutil/MultiMonitor.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 
 #include <wx/sizer.h>
-#include <wx/radiobut.h>
-#include <wx/frame.h>
 
-#include <iostream>
-#include <map>
-
-#include "registry/registry.h"
-#include "string/string.h"
 #include "util/ScopedBoolLock.h"
 #include "ui/texturebrowser/TextureBrowser.h"
 #include "ui/common/TexturePreviewCombo.h"
 
-#include "debugging/ScopedDebugTimer.h"
-#include "module/StaticModule.h"
-
-#include <functional>
-#include "string/predicate.h"
+#include "FocusMaterialRequest.h"
 #include "ui/UserInterfaceModule.h"
 
 namespace ui
 {
 
-// Constructor
-MediaBrowser::MediaBrowser() :
-	_tempParent(nullptr),
-	_mainWidget(nullptr),
+MediaBrowser::MediaBrowser(wxWindow* parent) :
+    DockablePanel(parent),
 	_treeView(nullptr),
 	_preview(nullptr),
-	_blockShaderClipboardUpdates(false)
-{}
+	_blockShaderClipboardUpdates(false),
+    _reloadTreeOnIdle(false)
+{
+    construct();
+    queueTreeReload();
+
+    connectListeners();
+}
+
+MediaBrowser::~MediaBrowser()
+{
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
+    _treeView = nullptr;
+}
+
+void MediaBrowser::onPanelActivated()
+{
+    // Request an idle callback now to process pending updates
+    // that might have piled up while we've been inactive
+    requestIdleCallback();
+}
+
+void MediaBrowser::onPanelDeactivated()
+{
+}
+
+void MediaBrowser::connectListeners()
+{
+    // These listeners remain connected even if the mediabrowser is inactive
+
+    // Attach to the DeclarationManager to get notified on unrealise/realise
+    // events, in which case we're reloading the media tree
+    _materialDefsLoaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
+        .connect(sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsLoaded));
+
+    _materialDefsUnloaded = GlobalDeclarationManager().signal_DeclsReloading(decl::Type::Material)
+        .connect(sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsUnloaded));
+
+    // The tree view will be re-populated once the first map loaded signal is fired
+    _mapLoadedConn = GlobalMapModule().signal_mapEvent().connect(
+        sigc::mem_fun(this, &MediaBrowser::onMapEvent)
+    );
+
+    _shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
+        sigc::mem_fun(this, &MediaBrowser::onShaderClipboardSourceChanged)
+    );
+
+    _focusMaterialHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::FocusMaterialRequest,
+        radiant::TypeListener<FocusMaterialRequest>(
+            sigc::mem_fun(this, &MediaBrowser::focusMaterial)));
+}
+
+void MediaBrowser::disconnectListeners()
+{
+    _mapLoadedConn.disconnect();
+    _materialDefsLoaded.disconnect();
+    _materialDefsUnloaded.disconnect();
+    _shaderClipboardConn.disconnect();
+    GlobalRadiantCore().getMessageBus().removeListener(_focusMaterialHandler);
+}
+
+void MediaBrowser::onIdle()
+{
+    if (_reloadTreeOnIdle)
+    {
+        _reloadTreeOnIdle = false;
+        _treeView->Populate();
+    }
+
+    if (!_queuedSelection.empty())
+    {
+        setSelection(_queuedSelection);
+        _queuedSelection.clear();
+    }
+}
+
+void MediaBrowser::queueTreeReload()
+{
+    _reloadTreeOnIdle = true;
+
+    // Queue an update if the panel is visible
+    if (panelIsActive())
+    {
+        requestIdleCallback();
+    }
+}
 
 void MediaBrowser::construct()
 {
-	if (_mainWidget != nullptr)
-	{
-		return;
-	}
+	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	_tempParent = new wxFrame(nullptr, wxID_ANY, "");
-	_tempParent->Hide();
+	_treeView = new MediaBrowserTreeView(this);
+    auto* toolbar = new wxutil::ResourceTreeViewToolbar(this, _treeView);
 
-	_mainWidget = new wxPanel(_tempParent, wxID_ANY);
-	_mainWidget->SetSizer(new wxBoxSizer(wxVERTICAL));
-
-	_treeView = new MediaBrowserTreeView(_mainWidget);
-    auto* toolbar = new wxutil::ResourceTreeViewToolbar(_mainWidget, _treeView);
-
-	_mainWidget->GetSizer()->Add(toolbar, 0, wxALIGN_LEFT | wxEXPAND | wxALL, 6);
-	_mainWidget->GetSizer()->Add(_treeView, 1, wxEXPAND);
+	GetSizer()->Add(toolbar, 0, wxALIGN_LEFT | wxEXPAND | wxALL, 6);
+	GetSizer()->Add(_treeView, 1, wxEXPAND);
 
 	// Connect up the selection changed callback
 	_treeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &MediaBrowser::_onTreeViewSelectionChanged, this);
 
 	// Add the info pane
-	_preview = new TexturePreviewCombo(_mainWidget);
-	_mainWidget->GetSizer()->Add(_preview, 0, wxEXPAND);
+	_preview = new TexturePreviewCombo(this);
+	GetSizer()->Add(_preview, 0, wxEXPAND);
 
 	// When destroying the main widget clear out the held references.
 	// The dying populator thread might have posted a finished message which
 	// runs into problems when the _treeView is still valid
-	_mainWidget->Bind(wxEVT_DESTROY, [&](wxWindowDestroyEvent& ev)
+	Bind(wxEVT_DESTROY, [&](wxWindowDestroyEvent& ev)
 	{
 		// In wxGTK the destroy event might bubble from a child window
 		// like the search popup, so check the event object
-		if (ev.GetEventObject() == _mainWidget)
+		if (ev.GetEventObject() == this)
 		{
-			_treeView = nullptr;
-			_shaderClipboardConn.disconnect();
-			_materialDefsLoaded.disconnect();
-			_materialDefsUnloaded.disconnect();
+            disconnectListeners();
+            _treeView = nullptr;
 		}
 		ev.Skip();
 	});
-}
-
-void MediaBrowser::onMainFrameConstructed()
-{
-	// Add the Media Browser page
-	IGroupDialog::PagePtr mediaBrowserPage(new IGroupDialog::Page);
-
-	mediaBrowserPage->name = getGroupDialogTabName();
-	mediaBrowserPage->windowLabel = _("Media");
-	mediaBrowserPage->page = _mainWidget;
-	mediaBrowserPage->tabIcon = "folder16.png";
-	mediaBrowserPage->tabLabel = _("Media");
-	mediaBrowserPage->position = IGroupDialog::Page::Position::MediaBrowser;
-
-	GlobalGroupDialog().addPage(mediaBrowserPage);
-
-	if (_tempParent != nullptr)
-	{
-		_tempParent->Destroy();
-		_tempParent = nullptr;
-	}
 }
 
 void MediaBrowser::onMapEvent(IMap::MapEvent ev)
@@ -118,7 +154,7 @@ void MediaBrowser::onMapEvent(IMap::MapEvent ev)
     // during map realisation (#5475)
     if (ev == IMap::MapEvent::MapLoaded)
     {
-        _treeView->Populate();
+        queueTreeReload();
     }
 }
 
@@ -127,7 +163,6 @@ std::string MediaBrowser::getSelection()
     return _treeView->GetSelectedDeclName();
 }
 
-// Set the selection in the treeview
 void MediaBrowser::setSelection(const std::string& selection)
 {
     _treeView->SetSelectedDeclName(selection);
@@ -135,12 +170,12 @@ void MediaBrowser::setSelection(const std::string& selection)
 
 void MediaBrowser::onMaterialDefsLoaded()
 {
-    GlobalUserInterface().dispatch([this]() { _treeView->Populate(); });
+    queueTreeReload();
 }
 
 void MediaBrowser::onMaterialDefsUnloaded()
 {
-    GlobalUserInterface().dispatch([this]() { _treeView->Clear(); });
+    queueTreeReload();
 }
 
 void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
@@ -161,86 +196,27 @@ void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     }
 }
 
-void MediaBrowser::togglePage(const cmd::ArgumentList& args)
+void MediaBrowser::queueSelection(const std::string& material)
 {
-	GlobalGroupDialog().togglePage(getGroupDialogTabName());
-}
+    _queuedSelection = material;
 
-const std::string& MediaBrowser::getName() const
-{
-	static std::string _name("MediaBrowser");
-	return _name;
-}
-
-const StringSet& MediaBrowser::getDependencies() const
-{
-    static StringSet _dependencies
+    if (panelIsActive())
     {
-        MODULE_COMMANDSYSTEM,
-        MODULE_SHADERSYSTEM,
-        MODULE_GROUPDIALOG,
-        MODULE_SHADERCLIPBOARD,
-        MODULE_MAINFRAME,
-        MODULE_FAVOURITES_MANAGER,
-        MODULE_MAP,
-        MODULE_USERINTERFACE,
-    };
-
-	return _dependencies;
-}
-
-void MediaBrowser::initialiseModule(const IApplicationContext& ctx)
-{
-	GlobalCommandSystem().addCommand("ToggleMediaBrowser", sigc::mem_fun(this, &MediaBrowser::togglePage));
-
-	// We need to create the liststore and widgets before attaching ourselves
-	// to the material manager as observer, as the attach() call below
-	// will invoke a realise() callback, which triggers a population
-	construct();
-
-	// The startup event will add this page to the group dialog tab
-	GlobalMainFrame().signal_MainFrameConstructed().connect(
-		sigc::mem_fun(*this, &MediaBrowser::onMainFrameConstructed)
-	);
-
-    // Attach to the DeclarationManager to get notified on unrealise/realise
-    // events, in which case we're reloading the media tree
-    _materialDefsLoaded = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Material)
-        .connect(sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsLoaded));
-
-    _materialDefsUnloaded = GlobalDeclarationManager().signal_DeclsReloading(decl::Type::Material)
-        .connect(sigc::mem_fun(*this, &MediaBrowser::onMaterialDefsUnloaded));
-
-	_shaderClipboardConn = GlobalShaderClipboard().signal_sourceChanged().connect(
-		sigc::mem_fun(this, &MediaBrowser::onShaderClipboardSourceChanged)
-	);
-
-    _mapLoadedConn = GlobalMapModule().signal_mapEvent().connect(
-        sigc::mem_fun(this, &MediaBrowser::onMapEvent)
-    );
-
-    // The tree view will be populated once the first map loaded signal is fired
-}
-
-void MediaBrowser::shutdownModule()
-{
-    _mapLoadedConn.disconnect();
-	_shaderClipboardConn.disconnect();
-	_materialDefsLoaded.disconnect();
-	_materialDefsUnloaded.disconnect();
+        requestIdleCallback();
+    }
 }
 
 void MediaBrowser::onShaderClipboardSourceChanged()
 {
-	if (_blockShaderClipboardUpdates)
-	{
-		return;
-	}
+    if (_blockShaderClipboardUpdates) return;
 
-	setSelection(GlobalShaderClipboard().getShaderName());
+    // Queue this selection for later
+    queueSelection(GlobalShaderClipboard().getShaderName());
 }
 
-// Static module
-module::StaticModuleRegistration<MediaBrowser> mediaBrowserModule;
+void MediaBrowser::focusMaterial(FocusMaterialRequest& request)
+{
+    queueSelection(request.getRequestedMaterial());
+}
 
 } // namespace

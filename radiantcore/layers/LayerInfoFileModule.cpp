@@ -8,6 +8,7 @@
 #include "string/convert.h"
 #include "debugging/ScenegraphUtils.h"
 #include "parser/DefTokeniser.h"
+#include "string/join.h"
 
 namespace scene
 {
@@ -17,7 +18,10 @@ namespace
 	constexpr const char* const NODE_TO_LAYER_MAPPING = "NodeToLayerMapping";
 	constexpr const char* const LAYER_HIERARCHY = "LayerHierarchy";
 	constexpr const char* const LAYER = "Layer";
+	constexpr const char* const ACTIVE_LAYER = "ActiveLayer";
+	constexpr const char* const HIDDEN_LAYERS = "HiddenLayers";
 	constexpr const char* const LAYERS = "Layers";
+	constexpr const char* const LAYER_PROPERTIES = "LayerProperties";
 	constexpr const char* const NODE = "Node";
 	constexpr const char* const PARENT = "Parent";
 }
@@ -46,6 +50,8 @@ void LayerInfoFileModule::clear()
 	_layerNames.clear();
 	_layerMappings.clear();
 	_layerParentIds.clear();
+    _activeLayerId = 0;
+    _hiddenLayerIds.clear();
 }
 
 void LayerInfoFileModule::onInfoFileSaveStart()
@@ -70,7 +76,14 @@ void LayerInfoFileModule::onBeginSaveMap(const scene::IMapRootNodePtr& root)
 	{
 		_layerNameBuffer << "\t\t" << LAYER << " " << layerId << " { " << layerName << " }" << std::endl;
         _layerHierarchyBuffer << "\t\t" << LAYER << " " << layerId << " " << PARENT << " { " << layerManager.getParentLayer(layerId) << " }" << std::endl;
+
+        if (!layerManager.layerIsVisible(layerId))
+        {
+            _hiddenLayerIds.push_back(layerId);
+        }
 	});
+
+    _activeLayerId = layerManager.getActiveLayer();
 
     // Close both blocks
 	_layerNameBuffer << "\t}" << std::endl;
@@ -123,6 +136,13 @@ void LayerInfoFileModule::writeBlocks(std::ostream& stream)
 	// Write the layer names block
 	stream << _layerNameBuffer.str();
 
+    // Write the layer properties block
+    stream << "\t" << LAYER_PROPERTIES << std::endl;
+    stream << "\t{" << std::endl;
+    stream << "\t\t" << ACTIVE_LAYER << " { " << _activeLayerId << " }" << std::endl;
+    stream << "\t\t" << HIDDEN_LAYERS << " { " << string::join(_hiddenLayerIds, " ") << " }" << std::endl;
+    stream << "\t}" << std::endl;
+
     // Write the layer hierarchy block
 	stream << _layerHierarchyBuffer.str();
 
@@ -154,7 +174,8 @@ void LayerInfoFileModule::onInfoFileLoadStart()
 
 bool LayerInfoFileModule::canParseBlock(const std::string& blockName)
 {
-	return blockName == LAYERS || blockName == NODE_TO_LAYER_MAPPING || blockName == LAYER_HIERARCHY;
+	return blockName == LAYERS || blockName == NODE_TO_LAYER_MAPPING || 
+	       blockName == LAYER_HIERARCHY || blockName == LAYER_PROPERTIES;
 }
 
 void LayerInfoFileModule::parseBlock(const std::string& blockName, parser::DefTokeniser& tok)
@@ -170,9 +191,13 @@ void LayerInfoFileModule::parseBlock(const std::string& blockName, parser::DefTo
 		parseNodeToLayerMapping(tok);
 	}
     else if (blockName == LAYER_HIERARCHY)
-	{
-		parseLayerHierarchy(tok);
-	}
+    {
+        parseLayerHierarchy(tok);
+    }
+    else if (blockName == LAYER_PROPERTIES)
+    {
+        parseLayerProperties(tok);
+    }
 }
 
 void LayerInfoFileModule::parseLayerNames(parser::DefTokeniser& tok)
@@ -290,6 +315,60 @@ void LayerInfoFileModule::parseLayerHierarchy(parser::DefTokeniser& tok)
     }
 }
 
+void LayerInfoFileModule::parseLayerProperties(parser::DefTokeniser& tok)
+{
+    /*
+    LayerProperties
+    {
+        ActiveLayer { 9 }
+        HiddenLayers { 2 1 6 7 }
+    }
+     */
+
+    // The opening brace
+    tok.assertNextToken("{");
+
+    while (tok.hasMoreTokens())
+    {
+        auto token = tok.nextToken();
+
+        if (token == ACTIVE_LAYER)
+        {
+            // The block just contains the active layer ID, only a single one is supported
+            tok.assertNextToken("{");
+            _activeLayerId = string::convert<int>(tok.nextToken(), -1);
+            tok.assertNextToken("}");
+
+            if (_activeLayerId != -1)
+            {
+                rDebug() << "[InfoFile]: ActiveLayer ID could not be parsed: " << _activeLayerId << std::endl;
+            }
+
+            continue;
+        }
+
+        if (token == HIDDEN_LAYERS)
+        {
+            // The block just contains a list of delimited layer IDs (or nothing)
+            tok.assertNextToken("{");
+
+            while (tok.hasMoreTokens())
+            {
+                auto nodeToken = tok.nextToken();
+
+                if (nodeToken == "}") break;
+
+                // Add the ID to the list
+                _hiddenLayerIds.push_back(string::convert<int>(nodeToken));
+            }
+            
+            continue;
+        }
+
+        if (token == "}") break;
+    }
+}
+
 void LayerInfoFileModule::applyInfoToScene(const IMapRootNodePtr& root, const map::NodeIndexMap& nodeMap)
 {
     auto& layerManager = root->getLayerManager();
@@ -299,6 +378,19 @@ void LayerInfoFileModule::applyInfoToScene(const IMapRootNodePtr& root, const ma
     {
         // Create the named layer with the saved ID
         layerManager.createLayer(name, id);
+    }
+
+    // Set the active layer before setting visibility
+    if (_activeLayerId != 0)
+    {
+        layerManager.setActiveLayer(_activeLayerId);
+    }
+
+    // Assign layer visibility status before the hierarchy is restored
+    // this way we don't implicitly set the child layer visibility
+    for (auto hiddenLayerId : _hiddenLayerIds)
+    {
+        layerManager.setLayerVisibility(hiddenLayerId, false);
     }
 
     // Assigning child and parent layers needs to happen after all layers have been created

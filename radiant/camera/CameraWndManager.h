@@ -6,7 +6,6 @@
 #include "imousetoolmanager.h"
 
 #include "CamWnd.h"
-#include "FloatingCamWnd.h"
 
 class wxWindow;
 
@@ -24,8 +23,7 @@ class CameraWndManager :
 	public RegisterableModule
 {
 private:
-	typedef std::map<int, CamWndWeakPtr> CamWndMap;
-	CamWndMap _cameras;
+    std::map<int, CamWnd*> _cameras;
 
 	// The currently active camera window (-1 if no cam active)
 	int _activeCam;
@@ -43,21 +41,14 @@ public:
 	/**
 	 * Returns the currently active CamWnd or NULL if none is active.
 	 */
-	CamWndPtr getActiveCamWnd();
+	CamWnd* getActiveCamWnd();
 
-	/**
-	 * Create a new camera window, ready for packing into a parent widget.
-	 */
-	CamWndPtr createCamWnd(wxWindow* parent);
-
+    // Register the camera with the given ID
+	void addCamWnd(int id, CamWnd* cam);
 	// Remove the camwnd with the given ID
 	void removeCamWnd(int id);
-
-	/**
-	 * Get a PersistentFloatingWindow containing the CamWnd widget, creating
-	 * it if necessary.
-	 */
-	FloatingCamWndPtr createFloatingWindow();
+    // Set the CamWnd with the given ID as active one
+    void setActiveCamWnd(int id);
 
 	// Resets the camera angles of the currently active Camera
 	void resetCameraAngles(const cmd::ArgumentList& args);
@@ -99,24 +90,24 @@ public:
     unsigned int getStrafeForwardModifierFlags();
 
     MouseToolStack getMouseToolsForEvent(wxMouseEvent& ev);
-    void foreachMouseTool(const std::function<void(const ui::MouseToolPtr&)>& func);
+    void foreachMouseTool(const std::function<void(const MouseToolPtr&)>& func);
 
 public:
     void foreachCamWnd(const std::function<void(CamWnd&)>& action);
 	
     // Callbacks for the named camera KeyEvents
-	void onMoveForwardKey(ui::KeyEventType eventType);
-	void onMoveBackKey(ui::KeyEventType eventType);
-	void onMoveLeftKey(ui::KeyEventType eventType);
-	void onMoveRightKey(ui::KeyEventType eventType);
-	void onMoveUpKey(ui::KeyEventType eventType);
-	void onMoveDownKey(ui::KeyEventType eventType);
+	void onMoveForwardKey(KeyEventType eventType);
+	void onMoveBackKey(KeyEventType eventType);
+	void onMoveLeftKey(KeyEventType eventType);
+	void onMoveRightKey(KeyEventType eventType);
+	void onMoveUpKey(KeyEventType eventType);
+	void onMoveDownKey(KeyEventType eventType);
 
 	// RegisterableModule implementation
-	const std::string& getName() const;
-	const StringSet& getDependencies() const;
-	void initialiseModule(const IApplicationContext& ctx);
-	void shutdownModule();
+	const std::string& getName() const override;
+	const StringSet& getDependencies() const override;
+	void initialiseModule(const IApplicationContext& ctx) override;
+	void shutdownModule() override;
 
 private:
 	// greebo: The construct method registers all the commands

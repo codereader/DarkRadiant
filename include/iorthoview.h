@@ -7,7 +7,7 @@ template<typename Element>
 class BasicVector3;
 typedef BasicVector3<double> Vector3;
 
-const char* const RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
+constexpr const char* const RKEY_HIGHER_ENTITY_PRIORITY = "user/ui/xyview/higherEntitySelectionPriority";
 
 // Possible types of the orthogonal view window
 enum EViewType
@@ -77,9 +77,6 @@ public:
     // to redraw immediately instead of queueing the draw.
 	virtual void updateAllViews(bool force = false) = 0;
 
-	// Free all allocated views
-	virtual void destroyViews() = 0;
-
 	// Sets the origin of all available views
 	virtual void setOrigin(const Vector3& origin) = 0;
 
@@ -113,7 +110,7 @@ public:
 
 } // namespace
 
-const char* const MODULE_ORTHOVIEWMANAGER = "OrthoviewManager";
+constexpr const char* const MODULE_ORTHOVIEWMANAGER = "OrthoviewManager";
 
 // This is the accessor for the xy window manager module
 inline ui::IXWndManager& GlobalXYWndManager()

@@ -1,15 +1,13 @@
 #pragma once
 
-#include "Transformable.h"
 #include "iselectiontest.h"
-#include "irender.h"
 #include "itraceable.h"
 #include "modelskin.h"
 #include "irenderable.h"
-#include "pivot.h"
+
+#include "ModelNodeBase.h"
+#include "Transformable.h"
 #include "StaticModel.h"
-#include "scene/Node.h"
-#include "RenderableModelSurface.h"
 
 namespace model
 {
@@ -24,7 +22,7 @@ namespace model
  * a particular entity gaining a "model" spawnarg.
  */
 class StaticModelNode final :
-	public scene::Node,
+	public ModelNodeBase,
 	public ModelNode,
 	public SelectionTestable,
 	public SkinnedModel,
@@ -39,11 +37,6 @@ private:
 
 	// The name of this model's skin
 	std::string _skin;
-
-    // The renderable surfaces attached to the shaders
-    std::vector<RenderableModelSurface::Ptr> _renderableSurfaces;
-
-    bool _attachedToShaders;
 
 public:
     typedef std::shared_ptr<StaticModelNode> Ptr;
@@ -73,39 +66,27 @@ public:
 	void testSelect(Selector& selector, SelectionTest& test) override;
 
 	std::string name() const override;
-	Type getNodeType() const override;
 
 	const StaticModelPtr& getModel() const;
 	void setModel(const StaticModelPtr& model);
 
 	// Renderable implementation
-  	void onPreRender(const VolumeTest& volume) override;
-	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
-
-	std::size_t getHighlightFlags() override
-	{
-		return Highlight::NoHighlight; // models are never highlighted themselves
-	}
 
 	// Traceable implementation
 	bool getIntersection(const Ray& ray, Vector3& intersection) override;
-
-    void transformChangedLocal() override;
 
     // Called when the contained model has applied the scale to its surfaces
     // The Node listens to this and queues a renderable update
     void onModelScaleApplied();
 
 protected:
+    void createRenderableSurfaces() override;
+
 	void _onTransformationChanged() override;
 	void _applyTransformation() override;
-    void onVisibilityChanged(bool isVisibleNow) override;
 
 private:
-    void attachToShaders();
-    void detachFromShaders();
-    void queueRenderableUpdate();
     void onModelShadersChanged();
 };
 

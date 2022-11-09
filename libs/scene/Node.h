@@ -194,6 +194,10 @@ public:
 	virtual RenderSystemPtr getRenderSystem() const;
 	void setRenderSystem(const RenderSystemPtr& renderSystem) override;
 
+    // The default implementation doesn't react to this call
+    void onFiltersChanged() override
+    {}
+
 protected:
     // Set the "forced visible" flag, only to be used internally by subclasses
 	virtual void setForcedVisibility(bool forceVisible, bool includeChildren) override;

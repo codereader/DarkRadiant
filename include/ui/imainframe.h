@@ -3,7 +3,7 @@
 #include "imodule.h"
 #include <sigc++/signal.h>
 
-const char* const MODULE_MAINFRAME("MainFrame");
+constexpr const char* const MODULE_MAINFRAME("MainFrame");
 
 class wxFrame;
 class wxToolBar;
@@ -88,20 +88,6 @@ public:
 	virtual void updateAllWindows(bool force = false) = 0;
 
 	/**
-	 * Applies the named layout to the MainFrame window. See MainFrameLayout class.
-	 */
-	virtual void applyLayout(const std::string& name) = 0;
-
-    /// Store the layout name, but do not immediately apply it
-    virtual void setActiveLayoutName(const std::string& name) = 0;
-
-	/**
-	 * Returns the name of the currently activated layout or
-	 * an empty string if no layout is applied.
-	 */
-	virtual std::string getCurrentLayout() = 0;
-
-	/**
 	 * Acquire a screen update blocker object that displays a modal message.
 	 * As soon as the object is destroyed screen updates are allowed again.
 	 *
@@ -109,6 +95,42 @@ public:
 	 */
 	virtual IScopedScreenUpdateBlockerPtr getScopedScreenUpdateBlocker(const std::string& title,
 		const std::string& message, bool forceDisplay = false) = 0;
+
+    // Specifies the location controls are added to the main frame
+    enum class Location
+    {
+        PropertyPanel,  // a tab in the property notebook
+        FloatingWindow, // a floating window
+    };
+
+    struct ControlSettings
+    {
+        // The location this control is added to
+        Location location;
+
+        // Whether this control is visible
+        bool visible;
+
+        // Default control width when packed in a floating window
+        int defaultFloatingWidth = 128;
+
+        // Default control height when packed in a floating window
+        int defaultFloatingHeight = 128;
+    };
+
+    /**
+     * Add a named control to the main frame. The given setting specifies
+     * where the control is added to and whether it's visible by default.
+     * Persisted user settings might still overrule these default values.
+     *
+     * The suitable point in time to call this method is when 
+     * signal_MainFrameConstructed is invoked. This gives the mainframe
+     * time to restore the layout as customised by the user.
+     *
+     * The control has to be registered with the IUserInterfaceModule before it can
+     * be acquired by the mainframe, so make sure this is done beforehand.
+     */
+    virtual void addControl(const std::string& controlName, const ControlSettings& defaultSettings) = 0;
 
     /**
      * \brief

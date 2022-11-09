@@ -97,6 +97,8 @@ public:
     {
         return Node::getRenderSystem();
     }
+
+    void onFiltersChanged() override;
 };
 typedef std::shared_ptr<RootNode> RootNodePtr;
 

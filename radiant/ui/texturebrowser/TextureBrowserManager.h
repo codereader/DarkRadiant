@@ -3,7 +3,6 @@
 #include <set>
 #include <sigc++/connection.h>
 #include "imodule.h"
-#include "icommandsystem.h"
 
 namespace ui
 {
@@ -39,7 +38,6 @@ public:
     void shutdownModule() override;
 
 private:
-    static void toggleGroupDialogTexturesTab(const cmd::ArgumentList& args);
     void registerPreferencePage();
     void onShaderClipboardSourceChanged();
 };

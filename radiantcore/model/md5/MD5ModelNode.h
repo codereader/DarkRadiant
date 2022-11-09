@@ -1,13 +1,14 @@
 #pragma once
 
-#include <sigc++/connection.h>
-#include "MD5Model.h"
-#include "modelskin.h"
 #include "itraceable.h"
-#include "scene/Node.h"
-#include "../RenderableModelSurface.h"
+#include "modelskin.h"
+
+#include "model/ModelNodeBase.h"
+#include "MD5Model.h"
 #include "registry/CachedKey.h"
 #include "RenderableMD5Skeleton.h"
+
+#include <sigc++/connection.h>
 
 namespace md5
 {
@@ -15,7 +16,7 @@ namespace md5
 constexpr const char* const RKEY_RENDER_SKELETON = "user/ui/md5/renderSkeleton";
 
 class MD5ModelNode :
-	public scene::Node,
+	public model::ModelNodeBase,
 	public model::ModelNode,
 	public SelectionTestable,
 	public SkinnedModel,
@@ -25,11 +26,6 @@ class MD5ModelNode :
 
 	// The name of this model's skin
 	std::string _skin;
-
-    // The renderable surfaces attached to the shaders
-    std::vector<model::RenderableModelSurface::Ptr> _renderableSurfaces;
-
-    bool _attachedToShaders;
 
     sigc::connection _animationUpdateConnection;
     sigc::connection _modelShadersChangedConnection;
@@ -41,9 +37,6 @@ class MD5ModelNode :
 public:
 	MD5ModelNode(const MD5ModelPtr& model);
     virtual ~MD5ModelNode();
-
-    void onInsertIntoScene(scene::IMapRootNode& root) override;
-    void onRemoveFromScene(scene::IMapRootNode& root) override;
 
 	// ModelNode implementation
 	const model::IModel& getIModel() const override;
@@ -59,7 +52,6 @@ public:
 	virtual const AABB& localAABB() const override;
 
 	virtual std::string name() const override;
-	Type getNodeType() const override;
 
 	// SelectionTestable implementation
 	void testSelect(Selector& selector, SelectionTest& test) override;
@@ -69,26 +61,16 @@ public:
 
 	// Renderable implementation
     void onPreRender(const VolumeTest& volume) override;
-	void renderHighlights(IRenderableCollector& collector, const VolumeTest& volume) override;
-
-	std::size_t getHighlightFlags() override
-	{
-		return Highlight::NoHighlight; // models are never highlighted themselves
-	}
 
 	// Returns the name of the currently active skin
 	virtual std::string getSkin() const override;
 	void skinChanged(const std::string& newSkinName) override;
 
-    void transformChangedLocal() override;
-
 protected:
-    void onVisibilityChanged(bool isVisibleNow) override;
+    void createRenderableSurfaces() override;
 
 private:
     void onModelAnimationUpdated();
-    void attachToShaders();
-    void detachFromShaders();
     void onModelShadersChanged();
 };
 

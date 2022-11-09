@@ -38,8 +38,7 @@ add_library(wxutil
             sourceview/SourceView.cpp
             Splitter.cpp
             WindowPosition.cpp
-            WindowState.cpp
-            window/TransientWindow.cpp)
+            WindowState.cpp)
 target_compile_options(wxutil PUBLIC ${FTGL_CFLAGS})
 target_link_libraries(wxutil PUBLIC
                       math

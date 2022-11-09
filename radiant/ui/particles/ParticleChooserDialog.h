@@ -71,7 +71,7 @@ public:
     static SelectionResult ChooseParticleAndEmitter(const std::string& currentParticle = "");
 
 private:
-    static SelectionResult RunDialog(bool showClassnameSelector, const std::string& currentParticle);
+    static SelectionResult RunDialog(bool showClassnameSelector, std::string currentParticle);
 };
 
 }

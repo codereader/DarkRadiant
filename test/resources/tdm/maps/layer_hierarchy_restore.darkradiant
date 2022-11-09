@@ -23,6 +23,11 @@ DarkRadiant Map Information File Version 2
 		Layer 8 { Test7 }
 		Layer 9 { Test8 }
 	}
+	LayerProperties
+	{
+		ActiveLayer { 9 }
+		HiddenLayers { 2 1 6 7 }
+	}
 	LayerHierarchy
 	{
 		Layer 0 Parent { -1 }

@@ -21,31 +21,30 @@ namespace ui
 
 namespace
 {
-    const char* const APPLY_TEXTURE_TEXT = N_("Apply to selection");
-    const char* const APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
+    constexpr const char* const APPLY_TEXTURE_TEXT = N_("Apply to selection");
+    constexpr const char* const APPLY_TEXTURE_ICON = "textureApplyToSelection16.png";
 
-    const char* const APPLY_SOUNDSHADER_TEXT = N_("Apply to selection");
-    const char* const APPLY_SOUNDSHADER_ICON = "icon_sound.png";
+    constexpr const char* const APPLY_SOUNDSHADER_TEXT = N_("Apply to selection");
+    constexpr const char* const APPLY_SOUNDSHADER_ICON = "icon_sound.png";
 
-    const char* const ADD_ENTITY_TEXT = N_("Create entity");
-    const char* const ADD_ENTITY_ICON = "cmenu_add_entity.png";
+    constexpr const char* const ADD_ENTITY_TEXT = N_("Create entity");
+    constexpr const char* const ADD_ENTITY_ICON = "cmenu_add_entity.png";
 
-    const char* const ADD_SPEAKER_TEXT = N_("Create speaker");
-    const char* const ADD_SPEAKER_ICON = "icon_sound.png";
+    constexpr const char* const ADD_SPEAKER_TEXT = N_("Create speaker");
+    constexpr const char* const ADD_SPEAKER_ICON = "icon_sound.png";
 
-    const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
+    constexpr const char* const REMOVE_FROM_FAVOURITES = N_("Remove from Favourites");
 }
 
 FavouritesBrowser::FavouritesBrowser(wxWindow* parent) :
-    wxPanel(parent, wxID_ANY),
+    DockablePanel(parent),
     _listView(nullptr),
     _showFullPath(nullptr),
-    _updateNeeded(true)
+    _reloadFavouritesOnIdle(true)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 
     _listView = new wxListView(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_LIST);
-    _listView->Bind(wxEVT_PAINT, &FavouritesBrowser::onListCtrlPaint, this);
     _listView->Bind(wxEVT_CONTEXT_MENU, &FavouritesBrowser::onContextMenu, this);
     _listView->Bind(wxEVT_LIST_ITEM_ACTIVATED, &FavouritesBrowser::onItemActivated, this);
 
@@ -66,10 +65,43 @@ FavouritesBrowser::FavouritesBrowser(wxWindow* parent) :
 
 FavouritesBrowser::~FavouritesBrowser()
 {
-    for (auto& connection : changedConnections)
+    if (panelIsActive())
+    {
+        disconnectListeners();
+    }
+}
+
+void FavouritesBrowser::onPanelActivated()
+{
+    connectListeners();
+    queueUpdate();
+}
+
+void FavouritesBrowser::onPanelDeactivated()
+{
+    disconnectListeners();
+}
+
+void FavouritesBrowser::connectListeners()
+{
+    // Subscribe to any favourite changes
+    for (auto& category : _categories)
+    {
+        _changedConnections.emplace_back(
+            GlobalFavouritesManager().getSignalForType(category.typeName).connect(
+                sigc::mem_fun(this, &FavouritesBrowser::onFavouritesChanged)
+        ));
+    }
+}
+
+void FavouritesBrowser::disconnectListeners()
+{
+    for (auto& connection : _changedConnections)
     {
         connection.disconnect();
     }
+
+    _changedConnections.clear();
 }
 
 void FavouritesBrowser::clearItems()
@@ -135,14 +167,6 @@ void FavouritesBrowser::setupCategories()
         _iconList->Add(wxutil::GetLocalBitmap("icon_sound.png")),
         nullptr
     });
-
-    // Subscribe to any favourite changes
-    for (auto& category : _categories)
-    {
-        changedConnections.emplace_back(GlobalFavouritesManager().getSignalForType(category.typeName).connect(
-            sigc::mem_fun(this, &FavouritesBrowser::onFavouritesChanged)
-        ));
-    }
 }
 
 wxToolBar* FavouritesBrowser::createRightToolBar()
@@ -183,7 +207,6 @@ wxToolBar* FavouritesBrowser::createLeftToolBar()
 
 void FavouritesBrowser::reloadFavourites()
 {
-    _updateNeeded = false;
     clearItems();
 
     for (const auto& category : _categories)
@@ -212,27 +235,32 @@ void FavouritesBrowser::reloadFavourites()
 
 void FavouritesBrowser::onCategoryToggled(wxCommandEvent& ev)
 {
-    reloadFavourites();
+    queueUpdate();
 }
 
 void FavouritesBrowser::onShowFullPathToggled(wxCommandEvent& ev)
 {
-    reloadFavourites();
+    queueUpdate();
 }
 
 void FavouritesBrowser::onFavouritesChanged()
 {
-    _updateNeeded = true; // Update next time we get painted
+    queueUpdate();
 }
 
-void FavouritesBrowser::onListCtrlPaint(wxPaintEvent& ev)
+void FavouritesBrowser::queueUpdate()
 {
-    if (_updateNeeded)
+    _reloadFavouritesOnIdle = true;
+    requestIdleCallback();
+}
+
+void FavouritesBrowser::onIdle()
+{
+    if (_reloadFavouritesOnIdle)
     {
+        _reloadFavouritesOnIdle = false;
         reloadFavourites();
     }
-
-    ev.Skip();
 }
 
 void FavouritesBrowser::onContextMenu(wxContextMenuEvent& ev)

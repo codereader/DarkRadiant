@@ -57,8 +57,6 @@
 		3A01205B1E50278400A62BC1 /* ScopeTimer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01200E1E50278400A62BC1 /* ScopeTimer.h */; };
 		3A01205C1E50278400A62BC1 /* SerialisableWidgets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A01200F1E50278400A62BC1 /* SerialisableWidgets.cpp */; };
 		3A01205D1E50278400A62BC1 /* SerialisableWidgets.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120101E50278400A62BC1 /* SerialisableWidgets.h */; };
-		3A0120681E50278400A62BC1 /* TransientWindow.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A01201C1E50278400A62BC1 /* TransientWindow.cpp */; };
-		3A0120691E50278400A62BC1 /* TransientWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201D1E50278400A62BC1 /* TransientWindow.h */; };
 		3A01206A1E50278400A62BC1 /* WindowPosition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A01201E1E50278400A62BC1 /* WindowPosition.cpp */; };
 		3A01206B1E50278400A62BC1 /* WindowPosition.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201F1E50278400A62BC1 /* WindowPosition.h */; };
 		3A01206C1E50278400A62BC1 /* XmlResourceBasedWidget.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A0120201E50278400A62BC1 /* XmlResourceBasedWidget.h */; };
@@ -335,7 +333,6 @@
 		3A382FDF26C177930049C4A1 /* GraphComparer.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FCB26C177930049C4A1 /* GraphComparer.h */; };
 		3A382FE126C177C20049C4A1 /* AutoSaveRequestBlocker.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FE026C177C20049C4A1 /* AutoSaveRequestBlocker.h */; };
 		3A382FE426C178190049C4A1 /* PointFileChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FE226C178180049C4A1 /* PointFileChooser.cpp */; };
-		3A382FE826C178530049C4A1 /* MergeControlDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FE726C178530049C4A1 /* MergeControlDialog.cpp */; };
 		3A382FEB26C1788F0049C4A1 /* VcsMapResource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FE926C1788E0049C4A1 /* VcsMapResource.cpp */; };
 		3A382FEC26C1788F0049C4A1 /* VcsMapResource.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A382FEA26C1788F0049C4A1 /* VcsMapResource.h */; };
 		3A382FF026C178C30049C4A1 /* VersionControlManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A382FEE26C178C20049C4A1 /* VersionControlManager.cpp */; };
@@ -635,7 +632,22 @@
 		3A38328E28DDDAE40049C4A1 /* FxDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38328828DDDAE30049C4A1 /* FxDeclaration.cpp */; };
 		3A38328F28DDDAE40049C4A1 /* FxManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38328928DDDAE40049C4A1 /* FxManager.h */; };
 		3A38329328F32DDC0049C4A1 /* IndicatorColumn.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38329228F32DDB0049C4A1 /* IndicatorColumn.h */; };
-		3A38329628F3383F0049C4A1 /* LegacyLayerControlDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A38329528F3383F0049C4A1 /* LegacyLayerControlDialog.cpp */; };
+		3A383299290B90540049C4A1 /* DockablePanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A383298290B90540049C4A1 /* DockablePanel.h */; };
+		3A38329C290B90930049C4A1 /* AIEditingControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38329A290B90920049C4A1 /* AIEditingControl.h */; };
+		3A38329D290B90930049C4A1 /* ThreadedEntityDefPopulator.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A38329B290B90930049C4A1 /* ThreadedEntityDefPopulator.h */; };
+		3A3832A4290B90F80049C4A1 /* AasVisualisationPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832A1290B90F70049C4A1 /* AasVisualisationPanel.cpp */; };
+		3A3832A5290B90F80049C4A1 /* AasFileControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832A3290B90F70049C4A1 /* AasFileControl.cpp */; };
+		3A3832A9290B913D0049C4A1 /* EntityInspectorModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832A7290B913C0049C4A1 /* EntityInspectorModule.cpp */; };
+		3A3832AD290B916C0049C4A1 /* FavouritesUserInterfaceModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832AC290B916C0049C4A1 /* FavouritesUserInterfaceModule.cpp */; };
+		3A3832B8290B91B70049C4A1 /* AuiFloatingFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832B3290B91B50049C4A1 /* AuiFloatingFrame.cpp */; };
+		3A3832B9290B91B70049C4A1 /* ViewMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832B4290B91B50049C4A1 /* ViewMenu.cpp */; };
+		3A3832BA290B91B70049C4A1 /* AuiManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832B5290B91B60049C4A1 /* AuiManager.cpp */; };
+		3A3832BB290B91B70049C4A1 /* PropertyNotebook.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832B7290B91B70049C4A1 /* PropertyNotebook.cpp */; };
+		3A3832BE290B91E00049C4A1 /* MediaBrowserModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832BC290B91DC0049C4A1 /* MediaBrowserModule.cpp */; };
+		3A3832C2290B91FE0049C4A1 /* MapMergePanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832C1290B91FD0049C4A1 /* MapMergePanel.cpp */; };
+		3A3832C6290B92170049C4A1 /* OrthoBackgroundPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832C5290B92170049C4A1 /* OrthoBackgroundPanel.cpp */; };
+		3A3832CD290B92660049C4A1 /* TransformPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832CA290B92650049C4A1 /* TransformPanel.cpp */; };
+		3A3832D0290B98060049C4A1 /* LayerControlPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832CF290B98030049C4A1 /* LayerControlPanel.cpp */; };
 		3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBE263C7893000C068E /* Bitmap.h */; };
 		3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */; };
 		3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3F623B1B764008A1B2D /* ParticleEditor.cpp */; };
@@ -668,7 +680,6 @@
 		3AC88745253C1D5100E6CCCE /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF0633253AE829002B1472 /* Button.h */; };
 		3AC88747253C1D5100E6CCCE /* SingleIdleCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE51E50278400A62BC1 /* SingleIdleCallback.h */; };
 		3AC88748253C1D5100E6CCCE /* CommandMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF41E50278400A62BC1 /* CommandMenuItem.h */; };
-		3AC88749253C1D5100E6CCCE /* TransientWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201D1E50278400A62BC1 /* TransientWindow.h */; };
 		3AC8874A253C1D5100E6CCCE /* ModalProgressDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FFC1E50278400A62BC1 /* ModalProgressDialog.h */; };
 		3AC8874C253C1D5100E6CCCE /* MenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF61E50278400A62BC1 /* MenuItem.h */; };
 		3AC8874E253C1D5100E6CCCE /* ConsoleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD21E50278400A62BC1 /* ConsoleView.h */; };
@@ -847,8 +858,6 @@
 		3AE5C2A726392DB300643850 /* EntityChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744AC1E4F861B003465B5 /* EntityChooser.cpp */; };
 		3AE5C2A826392DB300643850 /* MapPreview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744AE1E4F861B003465B5 /* MapPreview.cpp */; };
 		3AE5C2AC26392DB300643850 /* TexturePreviewCombo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744B81E4F861B003465B5 /* TexturePreviewCombo.cpp */; };
-		3AE5C2B226392DEA00643850 /* GroupDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE5C2AE26392DEA00643850 /* GroupDialog.cpp */; };
-		3AE5C2B326392DEA00643850 /* GroupDialogManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE5C2B026392DEA00643850 /* GroupDialogManager.cpp */; };
 		3AE5C2BB26392E1D00643850 /* AnimationPreview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE5C2B526392E1D00643850 /* AnimationPreview.cpp */; };
 		3AE5C2BC26392E1D00643850 /* MD5AnimationChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE5C2B726392E1D00643850 /* MD5AnimationChooser.cpp */; };
 		3AE5C2BD26392E1D00643850 /* MD5AnimationViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE5C2B926392E1D00643850 /* MD5AnimationViewer.cpp */; };
@@ -1568,7 +1577,6 @@
 		3AF7430B1E4F7A2B003465B5 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3AF7430A1E4F7A2B003465B5 /* OpenGL.framework */; };
 		3AF745831E4F861B003465B5 /* CameraSettings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7433B1E4F861A003465B5 /* CameraSettings.cpp */; };
 		3AF745851E4F861B003465B5 /* CamWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7433F1E4F861A003465B5 /* CamWnd.cpp */; };
-		3AF745861E4F861B003465B5 /* FloatingCamWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743411E4F861A003465B5 /* FloatingCamWnd.cpp */; };
 		3AF745951E4F861B003465B5 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743741E4F861A003465B5 /* main.cpp */; };
 		3AF745AD1E4F861B003465B5 /* StartupMapLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743AF1E4F861A003465B5 /* StartupMapLoader.cpp */; };
 		3AF745C31E4F861B003465B5 /* precompiled.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF743E71E4F861A003465B5 /* precompiled.cpp */; };
@@ -1576,8 +1584,6 @@
 		3AF745EE1E4F861B003465B5 /* SelectionMouseTools.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744581E4F861B003465B5 /* SelectionMouseTools.cpp */; };
 		3AF745FE1E4F861B003465B5 /* Win32Registry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7447F1E4F861B003465B5 /* Win32Registry.cpp */; };
 		3AF746051E4F861B003465B5 /* TexTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744921E4F861B003465B5 /* TexTool.cpp */; };
-		3AF746071E4F861B003465B5 /* AasControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744991E4F861B003465B5 /* AasControl.cpp */; };
-		3AF746081E4F861B003465B5 /* AasControlDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7449B1E4F861B003465B5 /* AasControlDialog.cpp */; };
 		3AF746091E4F861B003465B5 /* AboutDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7449E1E4F861B003465B5 /* AboutDialog.cpp */; };
 		3AF7460A1E4F861B003465B5 /* QuerySidesDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744A11E4F861B003465B5 /* QuerySidesDialog.cpp */; };
 		3AF7460B1E4F861B003465B5 /* CommandList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744A41E4F861B003465B5 /* CommandList.cpp */; };
@@ -1599,16 +1605,10 @@
 		3AF746251E4F861B003465B5 /* Vector3PropertyEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744DB1E4F861B003465B5 /* Vector3PropertyEditor.cpp */; };
 		3AF7462A1E4F861B003465B5 /* FindShader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744E91E4F861B003465B5 /* FindShader.cpp */; };
 		3AF7462B1E4F861B003465B5 /* LayerContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744EC1E4F861B003465B5 /* LayerContextMenu.cpp */; };
-		3AF7462C1E4F861B003465B5 /* LayerControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744EE1E4F861B003465B5 /* LayerControl.cpp */; };
-		3AF7462D1E4F861B003465B5 /* LayerControlDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744F01E4F861B003465B5 /* LayerControlDialog.cpp */; };
 		3AF7462E1E4F861B003465B5 /* LayerOrthoContextMenuItem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744F21E4F861B003465B5 /* LayerOrthoContextMenuItem.cpp */; };
 		3AF7462F1E4F861B003465B5 /* LightInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744F51E4F861B003465B5 /* LightInspector.cpp */; };
-		3AF746301E4F861B003465B5 /* EmbeddedLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744F81E4F861B003465B5 /* EmbeddedLayout.cpp */; };
 		3AF746321E4F861B003465B5 /* MainFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744FD1E4F861B003465B5 /* MainFrame.cpp */; };
-		3AF746331E4F861B003465B5 /* MainFrameLayoutManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF744FF1E4F861B003465B5 /* MainFrameLayoutManager.cpp */; };
-		3AF746341E4F861B003465B5 /* RegularLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745011E4F861B003465B5 /* RegularLayout.cpp */; };
 		3AF746351E4F861B003465B5 /* ScreenUpdateBlocker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745031E4F861B003465B5 /* ScreenUpdateBlocker.cpp */; };
-		3AF746361E4F861B003465B5 /* SplitPaneLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745051E4F861B003465B5 /* SplitPaneLayout.cpp */; };
 		3AF746371E4F861B003465B5 /* TopLevelFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745071E4F861B003465B5 /* TopLevelFrame.cpp */; };
 		3AF746381E4F861B003465B5 /* EntityInfoTab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7450A1E4F861B003465B5 /* EntityInfoTab.cpp */; };
 		3AF746391E4F861B003465B5 /* LayerInfoTab.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7450C1E4F861B003465B5 /* LayerInfoTab.cpp */; };
@@ -1622,7 +1622,6 @@
 		3AF746421E4F861C003465B5 /* ToolMappingDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745251E4F861B003465B5 /* ToolMappingDialog.cpp */; };
 		3AF746451E4F861C003465B5 /* OrthoContextMenu.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7452E1E4F861B003465B5 /* OrthoContextMenu.cpp */; };
 		3AF746461E4F861C003465B5 /* Overlay.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745311E4F861B003465B5 /* Overlay.cpp */; };
-		3AF746471E4F861C003465B5 /* OverlayDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745331E4F861B003465B5 /* OverlayDialog.cpp */; };
 		3AF746491E4F861C003465B5 /* BulgePatchDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7453A1E4F861B003465B5 /* BulgePatchDialog.cpp */; };
 		3AF7464A1E4F861C003465B5 /* CapDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7453C1E4F861B003465B5 /* CapDialog.cpp */; };
 		3AF7464B1E4F861C003465B5 /* PatchCreateDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7453E1E4F861B003465B5 /* PatchCreateDialog.cpp */; };
@@ -1636,9 +1635,7 @@
 		3AF746541E4F861C003465B5 /* SurfaceInspector.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745541E4F861B003465B5 /* SurfaceInspector.cpp */; };
 		3AF746551E4F861C003465B5 /* TextureBrowser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745571E4F861B003465B5 /* TextureBrowser.cpp */; };
 		3AF746561E4F861C003465B5 /* TextureBrowserManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745591E4F861B003465B5 /* TextureBrowserManager.cpp */; };
-		3AF746571E4F861C003465B5 /* TransformDialog.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7455C1E4F861B003465B5 /* TransformDialog.cpp */; };
 		3AF746581E4F861C003465B5 /* UserInterfaceModule.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7455E1E4F861B003465B5 /* UserInterfaceModule.cpp */; };
-		3AF746591E4F861C003465B5 /* FloatingOrthoView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745611E4F861B003465B5 /* FloatingOrthoView.cpp */; };
 		3AF7465A1E4F861C003465B5 /* GlobalXYWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745631E4F861B003465B5 /* GlobalXYWnd.cpp */; };
 		3AF7465B1E4F861C003465B5 /* BrushCreatorTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF745661E4F861B003465B5 /* BrushCreatorTool.cpp */; };
 		3AF7465C1E4F861C003465B5 /* ClipperTool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AF7456A1E4F861B003465B5 /* ClipperTool.cpp */; };
@@ -1988,7 +1985,6 @@
 		3AFF068D253BF4D3002B1472 /* Button.h in Headers */ = {isa = PBXBuildFile; fileRef = 3AFF0633253AE829002B1472 /* Button.h */; };
 		3AFF068F253BF4D3002B1472 /* SingleIdleCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FE51E50278400A62BC1 /* SingleIdleCallback.h */; };
 		3AFF0690253BF4D3002B1472 /* CommandMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF41E50278400A62BC1 /* CommandMenuItem.h */; };
-		3AFF0691253BF4D3002B1472 /* TransientWindow.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A01201D1E50278400A62BC1 /* TransientWindow.h */; };
 		3AFF0692253BF4D3002B1472 /* ModalProgressDialog.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FFC1E50278400A62BC1 /* ModalProgressDialog.h */; };
 		3AFF0694253BF4D3002B1472 /* MenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FF61E50278400A62BC1 /* MenuItem.h */; };
 		3AFF0696253BF4D3002B1472 /* ConsoleView.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A011FD21E50278400A62BC1 /* ConsoleView.h */; };
@@ -3161,8 +3157,6 @@
 		3A01200E1E50278400A62BC1 /* ScopeTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScopeTimer.h; path = ../../libs/wxutil/ScopeTimer.h; sourceTree = SOURCE_ROOT; };
 		3A01200F1E50278400A62BC1 /* SerialisableWidgets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SerialisableWidgets.cpp; path = ../../libs/wxutil/SerialisableWidgets.cpp; sourceTree = SOURCE_ROOT; };
 		3A0120101E50278400A62BC1 /* SerialisableWidgets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SerialisableWidgets.h; path = ../../libs/wxutil/SerialisableWidgets.h; sourceTree = SOURCE_ROOT; };
-		3A01201C1E50278400A62BC1 /* TransientWindow.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransientWindow.cpp; path = ../../libs/wxutil/window/TransientWindow.cpp; sourceTree = SOURCE_ROOT; };
-		3A01201D1E50278400A62BC1 /* TransientWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransientWindow.h; path = ../../libs/wxutil/window/TransientWindow.h; sourceTree = SOURCE_ROOT; };
 		3A01201E1E50278400A62BC1 /* WindowPosition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WindowPosition.cpp; path = ../../libs/wxutil/WindowPosition.cpp; sourceTree = SOURCE_ROOT; };
 		3A01201F1E50278400A62BC1 /* WindowPosition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WindowPosition.h; path = ../../libs/wxutil/WindowPosition.h; sourceTree = SOURCE_ROOT; };
 		3A0120201E50278400A62BC1 /* XmlResourceBasedWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XmlResourceBasedWidget.h; path = ../../libs/wxutil/XmlResourceBasedWidget.h; sourceTree = SOURCE_ROOT; };
@@ -3442,8 +3436,6 @@
 		3A382FE026C177C20049C4A1 /* AutoSaveRequestBlocker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AutoSaveRequestBlocker.h; path = ../../libs/wxutil/dialog/AutoSaveRequestBlocker.h; sourceTree = SOURCE_ROOT; };
 		3A382FE226C178180049C4A1 /* PointFileChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PointFileChooser.cpp; path = ../../radiant/ui/PointFileChooser.cpp; sourceTree = SOURCE_ROOT; };
 		3A382FE326C178190049C4A1 /* PointFileChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PointFileChooser.h; path = ../../radiant/ui/PointFileChooser.h; sourceTree = SOURCE_ROOT; };
-		3A382FE626C178530049C4A1 /* MergeControlDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MergeControlDialog.h; path = ../../radiant/ui/merge/MergeControlDialog.h; sourceTree = SOURCE_ROOT; };
-		3A382FE726C178530049C4A1 /* MergeControlDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MergeControlDialog.cpp; path = ../../radiant/ui/merge/MergeControlDialog.cpp; sourceTree = SOURCE_ROOT; };
 		3A382FE926C1788E0049C4A1 /* VcsMapResource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VcsMapResource.cpp; path = ../../radiantcore/map/VcsMapResource.cpp; sourceTree = SOURCE_ROOT; };
 		3A382FEA26C1788F0049C4A1 /* VcsMapResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = VcsMapResource.h; path = ../../radiantcore/map/VcsMapResource.h; sourceTree = SOURCE_ROOT; };
 		3A382FEE26C178C20049C4A1 /* VersionControlManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = VersionControlManager.cpp; path = ../../radiantcore/versioncontrol/VersionControlManager.cpp; sourceTree = SOURCE_ROOT; };
@@ -3472,9 +3464,7 @@
 		3A38307C272D326E0049C4A1 /* istatusbarmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = istatusbarmanager.h; path = ../../include/ui/istatusbarmanager.h; sourceTree = SOURCE_ROOT; };
 		3A38307D272D326F0049C4A1 /* idialogmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = idialogmanager.h; path = ../../include/ui/idialogmanager.h; sourceTree = SOURCE_ROOT; };
 		3A38307E272D326F0049C4A1 /* ifilechooser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ifilechooser.h; path = ../../include/ui/ifilechooser.h; sourceTree = SOURCE_ROOT; };
-		3A38307F272D326F0049C4A1 /* imediabrowser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = imediabrowser.h; path = ../../include/ui/imediabrowser.h; sourceTree = SOURCE_ROOT; };
 		3A383080272D32700049C4A1 /* imainframe.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = imainframe.h; path = ../../include/ui/imainframe.h; sourceTree = SOURCE_ROOT; };
-		3A383081272D32700049C4A1 /* imainframelayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = imainframelayout.h; path = ../../include/ui/imainframelayout.h; sourceTree = SOURCE_ROOT; };
 		3A383082272D32700049C4A1 /* iuserinterface.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = iuserinterface.h; path = ../../include/ui/iuserinterface.h; sourceTree = SOURCE_ROOT; };
 		3A383083272D32710049C4A1 /* iresourcechooser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = iresourcechooser.h; path = ../../include/ui/iresourcechooser.h; sourceTree = SOURCE_ROOT; };
 		3A383084272D32710049C4A1 /* ieventmanager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ieventmanager.h; path = ../../include/ui/ieventmanager.h; sourceTree = SOURCE_ROOT; };
@@ -3483,7 +3473,6 @@
 		3A383087272D32720049C4A1 /* imenu.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = imenu.h; path = ../../include/ui/imenu.h; sourceTree = SOURCE_ROOT; };
 		3A383088272D32730049C4A1 /* ientityinspector.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ientityinspector.h; path = ../../include/ui/ientityinspector.h; sourceTree = SOURCE_ROOT; };
 		3A383089272D32730049C4A1 /* ianimationchooser.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = ianimationchooser.h; path = ../../include/ui/ianimationchooser.h; sourceTree = SOURCE_ROOT; };
-		3A38308A272D32740049C4A1 /* igroupdialog.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = igroupdialog.h; path = ../../include/ui/igroupdialog.h; sourceTree = SOURCE_ROOT; };
 		3A38308B272D329E0049C4A1 /* imanipulator.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = imanipulator.h; path = ../../include/imanipulator.h; sourceTree = "<group>"; };
 		3A38308C272D329E0049C4A1 /* iautosaver.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = iautosaver.h; path = ../../include/iautosaver.h; sourceTree = "<group>"; };
 		3A38308D272D329F0049C4A1 /* itexturetoolcolours.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = itexturetoolcolours.h; path = ../../include/itexturetoolcolours.h; sourceTree = "<group>"; };
@@ -3694,8 +3683,48 @@
 		3A38328828DDDAE30049C4A1 /* FxDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FxDeclaration.cpp; path = ../../radiantcore/fx/FxDeclaration.cpp; sourceTree = SOURCE_ROOT; };
 		3A38328928DDDAE40049C4A1 /* FxManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FxManager.h; path = ../../radiantcore/fx/FxManager.h; sourceTree = SOURCE_ROOT; };
 		3A38329228F32DDB0049C4A1 /* IndicatorColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IndicatorColumn.h; path = ../../libs/wxutil/dataview/IndicatorColumn.h; sourceTree = SOURCE_ROOT; };
-		3A38329428F3383F0049C4A1 /* LegacyLayerControlDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LegacyLayerControlDialog.h; path = ../../radiant/ui/layers/LegacyLayerControlDialog.h; sourceTree = SOURCE_ROOT; };
-		3A38329528F3383F0049C4A1 /* LegacyLayerControlDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LegacyLayerControlDialog.cpp; path = ../../radiant/ui/layers/LegacyLayerControlDialog.cpp; sourceTree = SOURCE_ROOT; };
+		3A383297290B90250049C4A1 /* iusercontrol.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = iusercontrol.h; path = ../../include/ui/iusercontrol.h; sourceTree = SOURCE_ROOT; };
+		3A383298290B90540049C4A1 /* DockablePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DockablePanel.h; path = ../../libs/wxutil/DockablePanel.h; sourceTree = SOURCE_ROOT; };
+		3A38329A290B90920049C4A1 /* AIEditingControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AIEditingControl.h; path = ../../plugins/dm.editing/AIEditingControl.h; sourceTree = SOURCE_ROOT; };
+		3A38329B290B90930049C4A1 /* ThreadedEntityDefPopulator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ThreadedEntityDefPopulator.h; path = ../../plugins/dm.editing/ThreadedEntityDefPopulator.h; sourceTree = SOURCE_ROOT; };
+		3A38329E290B90D50049C4A1 /* TextureToolControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureToolControl.h; path = ../../radiant/textool/TextureToolControl.h; sourceTree = SOURCE_ROOT; };
+		3A38329F290B90F60049C4A1 /* AasVisualisationControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AasVisualisationControl.h; path = ../../radiant/ui/aas/AasVisualisationControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832A0290B90F60049C4A1 /* AasFileControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AasFileControl.h; path = ../../radiant/ui/aas/AasFileControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832A1290B90F70049C4A1 /* AasVisualisationPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AasVisualisationPanel.cpp; path = ../../radiant/ui/aas/AasVisualisationPanel.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832A2290B90F70049C4A1 /* AasVisualisationPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AasVisualisationPanel.h; path = ../../radiant/ui/aas/AasVisualisationPanel.h; sourceTree = SOURCE_ROOT; };
+		3A3832A3290B90F70049C4A1 /* AasFileControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AasFileControl.cpp; path = ../../radiant/ui/aas/AasFileControl.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832A6290B911E0049C4A1 /* ConsoleControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ConsoleControl.h; path = ../../radiant/ui/console/ConsoleControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832A7290B913C0049C4A1 /* EntityInspectorModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityInspectorModule.cpp; path = ../../radiant/ui/einspector/EntityInspectorModule.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832A8290B913D0049C4A1 /* EntityInspectorModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityInspectorModule.h; path = ../../radiant/ui/einspector/EntityInspectorModule.h; sourceTree = SOURCE_ROOT; };
+		3A3832AA290B91550049C4A1 /* EntityListControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EntityListControl.h; path = ../../radiant/ui/entitylist/EntityListControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832AB290B916C0049C4A1 /* FavouritesBrowserControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FavouritesBrowserControl.h; path = ../../radiant/ui/favourites/FavouritesBrowserControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832AC290B916C0049C4A1 /* FavouritesUserInterfaceModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FavouritesUserInterfaceModule.cpp; path = ../../radiant/ui/favourites/FavouritesUserInterfaceModule.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832AE290B91850049C4A1 /* FindShaderControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FindShaderControl.h; path = ../../radiant/ui/findshader/FindShaderControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832AF290B91A00049C4A1 /* LightInspectorControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightInspectorControl.h; path = ../../radiant/ui/lightinspector/LightInspectorControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832B0290B91B40049C4A1 /* PropertyNotebook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PropertyNotebook.h; path = ../../radiant/ui/mainframe/PropertyNotebook.h; sourceTree = SOURCE_ROOT; };
+		3A3832B1290B91B40049C4A1 /* ViewMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ViewMenu.h; path = ../../radiant/ui/mainframe/ViewMenu.h; sourceTree = SOURCE_ROOT; };
+		3A3832B2290B91B40049C4A1 /* AuiManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuiManager.h; path = ../../radiant/ui/mainframe/AuiManager.h; sourceTree = SOURCE_ROOT; };
+		3A3832B3290B91B50049C4A1 /* AuiFloatingFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuiFloatingFrame.cpp; path = ../../radiant/ui/mainframe/AuiFloatingFrame.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832B4290B91B50049C4A1 /* ViewMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ViewMenu.cpp; path = ../../radiant/ui/mainframe/ViewMenu.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832B5290B91B60049C4A1 /* AuiManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AuiManager.cpp; path = ../../radiant/ui/mainframe/AuiManager.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832B6290B91B60049C4A1 /* AuiFloatingFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AuiFloatingFrame.h; path = ../../radiant/ui/mainframe/AuiFloatingFrame.h; sourceTree = SOURCE_ROOT; };
+		3A3832B7290B91B70049C4A1 /* PropertyNotebook.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PropertyNotebook.cpp; path = ../../radiant/ui/mainframe/PropertyNotebook.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832BC290B91DC0049C4A1 /* MediaBrowserModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MediaBrowserModule.cpp; path = ../../radiant/ui/mediabrowser/MediaBrowserModule.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832BD290B91DD0049C4A1 /* FocusMaterialRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FocusMaterialRequest.h; path = ../../radiant/ui/mediabrowser/FocusMaterialRequest.h; sourceTree = SOURCE_ROOT; };
+		3A3832BF290B91FD0049C4A1 /* MapMergePanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapMergePanel.h; path = ../../radiant/ui/merge/MapMergePanel.h; sourceTree = SOURCE_ROOT; };
+		3A3832C0290B91FD0049C4A1 /* MapMergeControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapMergeControl.h; path = ../../radiant/ui/merge/MapMergeControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832C1290B91FD0049C4A1 /* MapMergePanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MapMergePanel.cpp; path = ../../radiant/ui/merge/MapMergePanel.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832C3290B92160049C4A1 /* OrthoBackgroundControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OrthoBackgroundControl.h; path = ../../radiant/ui/overlay/OrthoBackgroundControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832C4290B92160049C4A1 /* OrthoBackgroundPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OrthoBackgroundPanel.h; path = ../../radiant/ui/overlay/OrthoBackgroundPanel.h; sourceTree = SOURCE_ROOT; };
+		3A3832C5290B92170049C4A1 /* OrthoBackgroundPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OrthoBackgroundPanel.cpp; path = ../../radiant/ui/overlay/OrthoBackgroundPanel.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832C7290B922A0049C4A1 /* PatchInspectorControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PatchInspectorControl.h; path = ../../radiant/ui/patch/PatchInspectorControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832C8290B92430049C4A1 /* ScriptPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScriptPanel.h; path = ../../radiant/ui/script/ScriptPanel.h; sourceTree = SOURCE_ROOT; };
+		3A3832C9290B92540049C4A1 /* SurfaceInspectorControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SurfaceInspectorControl.h; path = ../../radiant/ui/surfaceinspector/SurfaceInspectorControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832CA290B92650049C4A1 /* TransformPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformPanel.cpp; path = ../../radiant/ui/transform/TransformPanel.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832CB290B92650049C4A1 /* TransformPanelControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformPanelControl.h; path = ../../radiant/ui/transform/TransformPanelControl.h; sourceTree = SOURCE_ROOT; };
+		3A3832CC290B92660049C4A1 /* TransformPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformPanel.h; path = ../../radiant/ui/transform/TransformPanel.h; sourceTree = SOURCE_ROOT; };
+		3A3832CE290B98010049C4A1 /* LayerControlPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerControlPanel.h; path = ../../radiant/ui/layers/LayerControlPanel.h; sourceTree = SOURCE_ROOT; };
+		3A3832CF290B98030049C4A1 /* LayerControlPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerControlPanel.cpp; path = ../../radiant/ui/layers/LayerControlPanel.cpp; sourceTree = SOURCE_ROOT; };
 		3A8D4CBE263C7893000C068E /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../libs/wxutil/Bitmap.h; sourceTree = SOURCE_ROOT; };
 		3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../libs/wxutil/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
@@ -3804,10 +3833,6 @@
 		3AE5C27B26392D6D00643850 /* SoundChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundChooser.h; path = ../../radiant/ui/common/SoundChooser.h; sourceTree = SOURCE_ROOT; };
 		3AE5C27C26392D6D00643850 /* SoundShaderPreview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SoundShaderPreview.cpp; path = ../../radiant/ui/common/SoundShaderPreview.cpp; sourceTree = SOURCE_ROOT; };
 		3AE5C27D26392D6D00643850 /* SoundShaderPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SoundShaderPreview.h; path = ../../radiant/ui/common/SoundShaderPreview.h; sourceTree = SOURCE_ROOT; };
-		3AE5C2AE26392DEA00643850 /* GroupDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GroupDialog.cpp; path = ../../radiant/ui/groupdialog/GroupDialog.cpp; sourceTree = SOURCE_ROOT; };
-		3AE5C2AF26392DEA00643850 /* GroupDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupDialog.h; path = ../../radiant/ui/groupdialog/GroupDialog.h; sourceTree = SOURCE_ROOT; };
-		3AE5C2B026392DEA00643850 /* GroupDialogManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GroupDialogManager.cpp; path = ../../radiant/ui/groupdialog/GroupDialogManager.cpp; sourceTree = SOURCE_ROOT; };
-		3AE5C2B126392DEA00643850 /* GroupDialogManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GroupDialogManager.h; path = ../../radiant/ui/groupdialog/GroupDialogManager.h; sourceTree = SOURCE_ROOT; };
 		3AE5C2B526392E1D00643850 /* AnimationPreview.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AnimationPreview.cpp; path = ../../radiant/ui/animationpreview/AnimationPreview.cpp; sourceTree = SOURCE_ROOT; };
 		3AE5C2B626392E1D00643850 /* AnimationPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AnimationPreview.h; path = ../../radiant/ui/animationpreview/AnimationPreview.h; sourceTree = SOURCE_ROOT; };
 		3AE5C2B726392E1D00643850 /* MD5AnimationChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MD5AnimationChooser.cpp; path = ../../radiant/ui/animationpreview/MD5AnimationChooser.cpp; sourceTree = SOURCE_ROOT; };
@@ -4687,8 +4712,6 @@
 		3AF7433C1E4F861A003465B5 /* CameraSettings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraSettings.h; path = ../../radiant/camera/CameraSettings.h; sourceTree = SOURCE_ROOT; };
 		3AF7433F1E4F861A003465B5 /* CamWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CamWnd.cpp; path = ../../radiant/camera/CamWnd.cpp; sourceTree = SOURCE_ROOT; };
 		3AF743401E4F861A003465B5 /* CamWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CamWnd.h; path = ../../radiant/camera/CamWnd.h; sourceTree = SOURCE_ROOT; };
-		3AF743411E4F861A003465B5 /* FloatingCamWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FloatingCamWnd.cpp; path = ../../radiant/camera/FloatingCamWnd.cpp; sourceTree = SOURCE_ROOT; };
-		3AF743421E4F861A003465B5 /* FloatingCamWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FloatingCamWnd.h; path = ../../radiant/camera/FloatingCamWnd.h; sourceTree = SOURCE_ROOT; };
 		3AF743471E4F861A003465B5 /* CameraMouseToolEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CameraMouseToolEvent.h; path = ../../radiant/camera/tools/CameraMouseToolEvent.h; sourceTree = SOURCE_ROOT; };
 		3AF743481E4F861A003465B5 /* FreeMoveTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FreeMoveTool.h; path = ../../radiant/camera/tools/FreeMoveTool.h; sourceTree = SOURCE_ROOT; };
 		3AF743491E4F861A003465B5 /* JumpToObjectTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JumpToObjectTool.h; path = ../../radiant/camera/tools/JumpToObjectTool.h; sourceTree = SOURCE_ROOT; };
@@ -4898,10 +4921,6 @@
 		3AF744801E4F861B003465B5 /* Win32Registry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Win32Registry.h; path = ../../radiant/settings/Win32Registry.h; sourceTree = SOURCE_ROOT; };
 		3AF744921E4F861B003465B5 /* TexTool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TexTool.cpp; path = ../../radiant/textool/TexTool.cpp; sourceTree = SOURCE_ROOT; };
 		3AF744931E4F861B003465B5 /* TexTool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TexTool.h; path = ../../radiant/textool/TexTool.h; sourceTree = SOURCE_ROOT; };
-		3AF744991E4F861B003465B5 /* AasControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AasControl.cpp; path = ../../radiant/ui/aas/AasControl.cpp; sourceTree = SOURCE_ROOT; };
-		3AF7449A1E4F861B003465B5 /* AasControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AasControl.h; path = ../../radiant/ui/aas/AasControl.h; sourceTree = SOURCE_ROOT; };
-		3AF7449B1E4F861B003465B5 /* AasControlDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AasControlDialog.cpp; path = ../../radiant/ui/aas/AasControlDialog.cpp; sourceTree = SOURCE_ROOT; };
-		3AF7449C1E4F861B003465B5 /* AasControlDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AasControlDialog.h; path = ../../radiant/ui/aas/AasControlDialog.h; sourceTree = SOURCE_ROOT; };
 		3AF7449E1E4F861B003465B5 /* AboutDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = AboutDialog.cpp; path = ../../radiant/ui/about/AboutDialog.cpp; sourceTree = SOURCE_ROOT; };
 		3AF7449F1E4F861B003465B5 /* AboutDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AboutDialog.h; path = ../../radiant/ui/about/AboutDialog.h; sourceTree = SOURCE_ROOT; };
 		3AF744A11E4F861B003465B5 /* QuerySidesDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = QuerySidesDialog.cpp; path = ../../radiant/ui/brush/QuerySidesDialog.cpp; sourceTree = SOURCE_ROOT; };
@@ -4951,27 +4970,15 @@
 		3AF744EA1E4F861B003465B5 /* FindShader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FindShader.h; path = ../../radiant/ui/findshader/FindShader.h; sourceTree = SOURCE_ROOT; };
 		3AF744EC1E4F861B003465B5 /* LayerContextMenu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerContextMenu.cpp; path = ../../radiant/ui/layers/LayerContextMenu.cpp; sourceTree = SOURCE_ROOT; };
 		3AF744ED1E4F861B003465B5 /* LayerContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerContextMenu.h; path = ../../radiant/ui/layers/LayerContextMenu.h; sourceTree = SOURCE_ROOT; };
-		3AF744EE1E4F861B003465B5 /* LayerControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerControl.cpp; path = ../../radiant/ui/layers/LayerControl.cpp; sourceTree = SOURCE_ROOT; };
 		3AF744EF1E4F861B003465B5 /* LayerControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerControl.h; path = ../../radiant/ui/layers/LayerControl.h; sourceTree = SOURCE_ROOT; };
-		3AF744F01E4F861B003465B5 /* LayerControlDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerControlDialog.cpp; path = ../../radiant/ui/layers/LayerControlDialog.cpp; sourceTree = SOURCE_ROOT; };
-		3AF744F11E4F861B003465B5 /* LayerControlDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerControlDialog.h; path = ../../radiant/ui/layers/LayerControlDialog.h; sourceTree = SOURCE_ROOT; };
 		3AF744F21E4F861B003465B5 /* LayerOrthoContextMenuItem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerOrthoContextMenuItem.cpp; path = ../../radiant/ui/layers/LayerOrthoContextMenuItem.cpp; sourceTree = SOURCE_ROOT; };
 		3AF744F31E4F861B003465B5 /* LayerOrthoContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerOrthoContextMenuItem.h; path = ../../radiant/ui/layers/LayerOrthoContextMenuItem.h; sourceTree = SOURCE_ROOT; };
 		3AF744F51E4F861B003465B5 /* LightInspector.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LightInspector.cpp; path = ../../radiant/ui/lightinspector/LightInspector.cpp; sourceTree = SOURCE_ROOT; };
 		3AF744F61E4F861B003465B5 /* LightInspector.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LightInspector.h; path = ../../radiant/ui/lightinspector/LightInspector.h; sourceTree = SOURCE_ROOT; };
-		3AF744F81E4F861B003465B5 /* EmbeddedLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EmbeddedLayout.cpp; path = ../../radiant/ui/mainframe/EmbeddedLayout.cpp; sourceTree = SOURCE_ROOT; };
-		3AF744F91E4F861B003465B5 /* EmbeddedLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EmbeddedLayout.h; path = ../../radiant/ui/mainframe/EmbeddedLayout.h; sourceTree = SOURCE_ROOT; };
-		3AF744FC1E4F861B003465B5 /* LayoutCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayoutCommand.h; path = ../../radiant/ui/mainframe/LayoutCommand.h; sourceTree = SOURCE_ROOT; };
 		3AF744FD1E4F861B003465B5 /* MainFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainFrame.cpp; path = ../../radiant/ui/mainframe/MainFrame.cpp; sourceTree = SOURCE_ROOT; };
 		3AF744FE1E4F861B003465B5 /* MainFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainFrame.h; path = ../../radiant/ui/mainframe/MainFrame.h; sourceTree = SOURCE_ROOT; };
-		3AF744FF1E4F861B003465B5 /* MainFrameLayoutManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MainFrameLayoutManager.cpp; path = ../../radiant/ui/mainframe/MainFrameLayoutManager.cpp; sourceTree = SOURCE_ROOT; };
-		3AF745001E4F861B003465B5 /* MainFrameLayoutManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MainFrameLayoutManager.h; path = ../../radiant/ui/mainframe/MainFrameLayoutManager.h; sourceTree = SOURCE_ROOT; };
-		3AF745011E4F861B003465B5 /* RegularLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RegularLayout.cpp; path = ../../radiant/ui/mainframe/RegularLayout.cpp; sourceTree = SOURCE_ROOT; };
-		3AF745021E4F861B003465B5 /* RegularLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegularLayout.h; path = ../../radiant/ui/mainframe/RegularLayout.h; sourceTree = SOURCE_ROOT; };
 		3AF745031E4F861B003465B5 /* ScreenUpdateBlocker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ScreenUpdateBlocker.cpp; path = ../../radiant/ui/mainframe/ScreenUpdateBlocker.cpp; sourceTree = SOURCE_ROOT; };
 		3AF745041E4F861B003465B5 /* ScreenUpdateBlocker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ScreenUpdateBlocker.h; path = ../../radiant/ui/mainframe/ScreenUpdateBlocker.h; sourceTree = SOURCE_ROOT; };
-		3AF745051E4F861B003465B5 /* SplitPaneLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SplitPaneLayout.cpp; path = ../../radiant/ui/mainframe/SplitPaneLayout.cpp; sourceTree = SOURCE_ROOT; };
-		3AF745061E4F861B003465B5 /* SplitPaneLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SplitPaneLayout.h; path = ../../radiant/ui/mainframe/SplitPaneLayout.h; sourceTree = SOURCE_ROOT; };
 		3AF745071E4F861B003465B5 /* TopLevelFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TopLevelFrame.cpp; path = ../../radiant/ui/mainframe/TopLevelFrame.cpp; sourceTree = SOURCE_ROOT; };
 		3AF745081E4F861B003465B5 /* TopLevelFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TopLevelFrame.h; path = ../../radiant/ui/mainframe/TopLevelFrame.h; sourceTree = SOURCE_ROOT; };
 		3AF7450A1E4F861B003465B5 /* EntityInfoTab.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EntityInfoTab.cpp; path = ../../radiant/ui/mapinfo/EntityInfoTab.cpp; sourceTree = SOURCE_ROOT; };
@@ -5001,8 +5008,6 @@
 		3AF7452F1E4F861B003465B5 /* OrthoContextMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OrthoContextMenu.h; path = ../../radiant/ui/ortho/OrthoContextMenu.h; sourceTree = SOURCE_ROOT; };
 		3AF745311E4F861B003465B5 /* Overlay.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Overlay.cpp; path = ../../radiant/ui/overlay/Overlay.cpp; sourceTree = SOURCE_ROOT; };
 		3AF745321E4F861B003465B5 /* Overlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Overlay.h; path = ../../radiant/ui/overlay/Overlay.h; sourceTree = SOURCE_ROOT; };
-		3AF745331E4F861B003465B5 /* OverlayDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OverlayDialog.cpp; path = ../../radiant/ui/overlay/OverlayDialog.cpp; sourceTree = SOURCE_ROOT; };
-		3AF745341E4F861B003465B5 /* OverlayDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OverlayDialog.h; path = ../../radiant/ui/overlay/OverlayDialog.h; sourceTree = SOURCE_ROOT; };
 		3AF745351E4F861B003465B5 /* OverlayRegistryKeys.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OverlayRegistryKeys.h; path = ../../radiant/ui/overlay/OverlayRegistryKeys.h; sourceTree = SOURCE_ROOT; };
 		3AF7453A1E4F861B003465B5 /* BulgePatchDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BulgePatchDialog.cpp; path = ../../radiant/ui/patch/BulgePatchDialog.cpp; sourceTree = SOURCE_ROOT; };
 		3AF7453B1E4F861B003465B5 /* BulgePatchDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BulgePatchDialog.h; path = ../../radiant/ui/patch/BulgePatchDialog.h; sourceTree = SOURCE_ROOT; };
@@ -5030,12 +5035,8 @@
 		3AF745581E4F861B003465B5 /* TextureBrowser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureBrowser.h; path = ../../radiant/ui/texturebrowser/TextureBrowser.h; sourceTree = SOURCE_ROOT; };
 		3AF745591E4F861B003465B5 /* TextureBrowserManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextureBrowserManager.cpp; path = ../../radiant/ui/texturebrowser/TextureBrowserManager.cpp; sourceTree = SOURCE_ROOT; };
 		3AF7455A1E4F861B003465B5 /* TextureBrowserManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextureBrowserManager.h; path = ../../radiant/ui/texturebrowser/TextureBrowserManager.h; sourceTree = SOURCE_ROOT; };
-		3AF7455C1E4F861B003465B5 /* TransformDialog.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TransformDialog.cpp; path = ../../radiant/ui/transform/TransformDialog.cpp; sourceTree = SOURCE_ROOT; };
-		3AF7455D1E4F861B003465B5 /* TransformDialog.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TransformDialog.h; path = ../../radiant/ui/transform/TransformDialog.h; sourceTree = SOURCE_ROOT; };
 		3AF7455E1E4F861B003465B5 /* UserInterfaceModule.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = UserInterfaceModule.cpp; path = ../../radiant/ui/UserInterfaceModule.cpp; sourceTree = SOURCE_ROOT; };
 		3AF7455F1E4F861B003465B5 /* UserInterfaceModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = UserInterfaceModule.h; path = ../../radiant/ui/UserInterfaceModule.h; sourceTree = SOURCE_ROOT; };
-		3AF745611E4F861B003465B5 /* FloatingOrthoView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = FloatingOrthoView.cpp; path = ../../radiant/xyview/FloatingOrthoView.cpp; sourceTree = SOURCE_ROOT; };
-		3AF745621E4F861B003465B5 /* FloatingOrthoView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = FloatingOrthoView.h; path = ../../radiant/xyview/FloatingOrthoView.h; sourceTree = SOURCE_ROOT; };
 		3AF745631E4F861B003465B5 /* GlobalXYWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GlobalXYWnd.cpp; path = ../../radiant/xyview/GlobalXYWnd.cpp; sourceTree = SOURCE_ROOT; };
 		3AF745641E4F861B003465B5 /* GlobalXYWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GlobalXYWnd.h; path = ../../radiant/xyview/GlobalXYWnd.h; sourceTree = SOURCE_ROOT; };
 		3AF745661E4F861B003465B5 /* BrushCreatorTool.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = BrushCreatorTool.cpp; path = ../../radiant/xyview/tools/BrushCreatorTool.cpp; sourceTree = SOURCE_ROOT; };
@@ -5438,6 +5439,7 @@
 		3A011FC41E50275700A62BC1 /* wxutil */ = {
 			isa = PBXGroup;
 			children = (
+				3A383298290B90540049C4A1 /* DockablePanel.h */,
 				3A8D4CBE263C7893000C068E /* Bitmap.h */,
 				3A38325B28DDD9580049C4A1 /* BitmapToggleButton.h */,
 				3AFF0633253AE829002B1472 /* Button.h */,
@@ -5488,7 +5490,6 @@
 				3A38320D285A129D0049C4A1 /* sourceview */,
 				3AFF0637253AE829002B1472 /* Splitter.cpp */,
 				3AFF0638253AE829002B1472 /* Splitter.h */,
-				3A01201B1E50278400A62BC1 /* window */,
 				3A01201E1E50278400A62BC1 /* WindowPosition.cpp */,
 				3A01201F1E50278400A62BC1 /* WindowPosition.h */,
 				3A38325C28DDD9590049C4A1 /* WindowState.cpp */,
@@ -5560,16 +5561,6 @@
 			);
 			name = preview;
 			path = ../../libs/wxutil/preview;
-			sourceTree = SOURCE_ROOT;
-		};
-		3A01201B1E50278400A62BC1 /* window */ = {
-			isa = PBXGroup;
-			children = (
-				3A01201C1E50278400A62BC1 /* TransientWindow.cpp */,
-				3A01201D1E50278400A62BC1 /* TransientWindow.h */,
-			);
-			name = window;
-			path = ../../libs/wxutil/window;
 			sourceTree = SOURCE_ROOT;
 		};
 		3A0120741E502F7800A62BC1 /* scene */ = {
@@ -5955,8 +5946,9 @@
 		3A382FE526C178410049C4A1 /* merge */ = {
 			isa = PBXGroup;
 			children = (
-				3A382FE726C178530049C4A1 /* MergeControlDialog.cpp */,
-				3A382FE626C178530049C4A1 /* MergeControlDialog.h */,
+				3A3832C0290B91FD0049C4A1 /* MapMergeControl.h */,
+				3A3832C1290B91FD0049C4A1 /* MapMergePanel.cpp */,
+				3A3832BF290B91FD0049C4A1 /* MapMergePanel.h */,
 			);
 			name = merge;
 			sourceTree = "<group>";
@@ -5973,6 +5965,7 @@
 		3A383079272D32500049C4A1 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				3A383297290B90250049C4A1 /* iusercontrol.h */,
 				3A38325228DDD8860049C4A1 /* ideclpreview.h */,
 				3A38325328DDD8870049C4A1 /* iwindowstate.h */,
 				3A383089272D32730049C4A1 /* ianimationchooser.h */,
@@ -5980,10 +5973,7 @@
 				3A383088272D32730049C4A1 /* ientityinspector.h */,
 				3A383084272D32710049C4A1 /* ieventmanager.h */,
 				3A38307E272D326F0049C4A1 /* ifilechooser.h */,
-				3A38308A272D32740049C4A1 /* igroupdialog.h */,
 				3A383080272D32700049C4A1 /* imainframe.h */,
-				3A383081272D32700049C4A1 /* imainframelayout.h */,
-				3A38307F272D326F0049C4A1 /* imediabrowser.h */,
 				3A383087272D32720049C4A1 /* imenu.h */,
 				3A383086272D32720049C4A1 /* imenumanager.h */,
 				3A38307B272D326E0049C4A1 /* iorthocontextmenu.h */,
@@ -6077,6 +6067,7 @@
 		3A383222285A13F10049C4A1 /* console */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832A6290B911E0049C4A1 /* ConsoleControl.h */,
 				3A383225285A14010049C4A1 /* CommandEntry.cpp */,
 				3A383223285A14000049C4A1 /* CommandEntry.h */,
 				3A383224285A14010049C4A1 /* Console.cpp */,
@@ -6186,6 +6177,8 @@
 		3AC88A8925BC0F7B00E6CCCE /* favourites */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832AB290B916C0049C4A1 /* FavouritesBrowserControl.h */,
+				3A3832AC290B916C0049C4A1 /* FavouritesUserInterfaceModule.cpp */,
 				3AC88A8A25BC0F9300E6CCCE /* FavouritesBrowser.cpp */,
 				3AC88A8B25BC0F9300E6CCCE /* FavouritesBrowser.h */,
 			);
@@ -6312,17 +6305,6 @@
 				3AE5C26026392BBE00643850 /* tiles.ase */,
 			);
 			name = preview;
-			sourceTree = "<group>";
-		};
-		3AE5C2AD26392DD600643850 /* groupdialog */ = {
-			isa = PBXGroup;
-			children = (
-				3AE5C2AE26392DEA00643850 /* GroupDialog.cpp */,
-				3AE5C2AF26392DEA00643850 /* GroupDialog.h */,
-				3AE5C2B026392DEA00643850 /* GroupDialogManager.cpp */,
-				3AE5C2B126392DEA00643850 /* GroupDialogManager.h */,
-			);
-			name = groupdialog;
 			sourceTree = "<group>";
 		};
 		3AE5C2B426392E0E00643850 /* animationpreview */ = {
@@ -6470,6 +6452,7 @@
 		3AE6F26E1FF78C8C008A1B2D /* entitylist */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832AA290B91550049C4A1 /* EntityListControl.h */,
 				3AE6F2771FF78CD0008A1B2D /* EntityList.cpp */,
 				3AE6F2781FF78CD0008A1B2D /* EntityList.h */,
 				3AE6F2791FF78CD0008A1B2D /* GraphTreeModel.cpp */,
@@ -7113,6 +7096,8 @@
 		3AEBE28F1E50E1660062D9AF /* dm.editing */ = {
 			isa = PBXGroup;
 			children = (
+				3A38329A290B90920049C4A1 /* AIEditingControl.h */,
+				3A38329B290B90930049C4A1 /* ThreadedEntityDefPopulator.h */,
 				3AE6F2141FDD39E7008A1B2D /* MissionInfoTextFile.cpp */,
 				3AE6F2151FDD39E7008A1B2D /* MissionInfoTextFile.h */,
 				3AE6F2161FDD39E7008A1B2D /* MissionReadmeDialog.cpp */,
@@ -7720,8 +7705,6 @@
 				3AF7433C1E4F861A003465B5 /* CameraSettings.h */,
 				3AF7433F1E4F861A003465B5 /* CamWnd.cpp */,
 				3AF743401E4F861A003465B5 /* CamWnd.h */,
-				3AF743411E4F861A003465B5 /* FloatingCamWnd.cpp */,
-				3AF743421E4F861A003465B5 /* FloatingCamWnd.h */,
 				3AF743461E4F861A003465B5 /* tools */,
 			);
 			name = camera;
@@ -8151,6 +8134,7 @@
 		3AF744831E4F861B003465B5 /* textool */ = {
 			isa = PBXGroup;
 			children = (
+				3A38329E290B90D50049C4A1 /* TextureToolControl.h */,
 				3A3830D1272D34A70049C4A1 /* tools */,
 				3A3830CF272D34870049C4A1 /* TexToolModeToggles.h */,
 				3AF744921E4F861B003465B5 /* TexTool.cpp */,
@@ -8187,7 +8171,6 @@
 				3AFF043C24548BED002B1472 /* filters */,
 				3AF744E81E4F861B003465B5 /* findshader */,
 				3AFF05D5253AE574002B1472 /* gl */,
-				3AE5C2AD26392DD600643850 /* groupdialog */,
 				3AF744EB1E4F861B003465B5 /* layers */,
 				3AF744F41E4F861B003465B5 /* lightinspector */,
 				3AFF05F8253AE705002B1472 /* LongRunningOperationHandler.cpp */,
@@ -8236,12 +8219,13 @@
 		3AF744981E4F861B003465B5 /* aas */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832A3290B90F70049C4A1 /* AasFileControl.cpp */,
+				3A3832A0290B90F60049C4A1 /* AasFileControl.h */,
+				3A38329F290B90F60049C4A1 /* AasVisualisationControl.h */,
+				3A3832A1290B90F70049C4A1 /* AasVisualisationPanel.cpp */,
+				3A3832A2290B90F70049C4A1 /* AasVisualisationPanel.h */,
 				3AFF0549253AE111002B1472 /* RenderableAasFile.cpp */,
 				3AFF054A253AE111002B1472 /* RenderableAasFile.h */,
-				3AF744991E4F861B003465B5 /* AasControl.cpp */,
-				3AF7449A1E4F861B003465B5 /* AasControl.h */,
-				3AF7449B1E4F861B003465B5 /* AasControlDialog.cpp */,
-				3AF7449C1E4F861B003465B5 /* AasControlDialog.h */,
 			);
 			name = aas;
 			path = ../../radiant/ui/aas;
@@ -8312,6 +8296,8 @@
 		3AF744BA1E4F861B003465B5 /* einspector */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832A7290B913C0049C4A1 /* EntityInspectorModule.cpp */,
+				3A3832A8290B913D0049C4A1 /* EntityInspectorModule.h */,
 				3A38327728DDDA680049C4A1 /* FxPropertyEditor.cpp */,
 				3A38327628DDDA680049C4A1 /* FxPropertyEditor.h */,
 				3A38324328C34EB10049C4A1 /* TargetKey.h */,
@@ -8353,6 +8339,7 @@
 		3AF744E81E4F861B003465B5 /* findshader */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832AE290B91850049C4A1 /* FindShaderControl.h */,
 				3AF744E91E4F861B003465B5 /* FindShader.cpp */,
 				3AF744EA1E4F861B003465B5 /* FindShader.h */,
 			);
@@ -8363,16 +8350,13 @@
 		3AF744EB1E4F861B003465B5 /* layers */ = {
 			isa = PBXGroup;
 			children = (
-				3A38329528F3383F0049C4A1 /* LegacyLayerControlDialog.cpp */,
-				3A38329428F3383F0049C4A1 /* LegacyLayerControlDialog.h */,
+				3A3832CF290B98030049C4A1 /* LayerControlPanel.cpp */,
+				3A3832CE290B98010049C4A1 /* LayerControlPanel.h */,
 				3AFF05D9253AE5A4002B1472 /* CreateLayerDialog.cpp */,
 				3AFF05DA253AE5A4002B1472 /* CreateLayerDialog.h */,
 				3AF744EC1E4F861B003465B5 /* LayerContextMenu.cpp */,
 				3AF744ED1E4F861B003465B5 /* LayerContextMenu.h */,
-				3AF744EE1E4F861B003465B5 /* LayerControl.cpp */,
 				3AF744EF1E4F861B003465B5 /* LayerControl.h */,
-				3AF744F01E4F861B003465B5 /* LayerControlDialog.cpp */,
-				3AF744F11E4F861B003465B5 /* LayerControlDialog.h */,
 				3AF744F21E4F861B003465B5 /* LayerOrthoContextMenuItem.cpp */,
 				3AF744F31E4F861B003465B5 /* LayerOrthoContextMenuItem.h */,
 			);
@@ -8383,6 +8367,7 @@
 		3AF744F41E4F861B003465B5 /* lightinspector */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832AF290B91A00049C4A1 /* LightInspectorControl.h */,
 				3AF744F51E4F861B003465B5 /* LightInspector.cpp */,
 				3AF744F61E4F861B003465B5 /* LightInspector.h */,
 			);
@@ -8393,21 +8378,20 @@
 		3AF744F71E4F861B003465B5 /* mainframe */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832B3290B91B50049C4A1 /* AuiFloatingFrame.cpp */,
+				3A3832B6290B91B60049C4A1 /* AuiFloatingFrame.h */,
+				3A3832B5290B91B60049C4A1 /* AuiManager.cpp */,
+				3A3832B2290B91B40049C4A1 /* AuiManager.h */,
+				3A3832B7290B91B70049C4A1 /* PropertyNotebook.cpp */,
+				3A3832B0290B91B40049C4A1 /* PropertyNotebook.h */,
+				3A3832B4290B91B50049C4A1 /* ViewMenu.cpp */,
+				3A3832B1290B91B40049C4A1 /* ViewMenu.h */,
 				3AE5C2C226392E8300643850 /* AuiLayout.cpp */,
 				3AE5C2C326392E8300643850 /* AuiLayout.h */,
-				3AF744F81E4F861B003465B5 /* EmbeddedLayout.cpp */,
-				3AF744F91E4F861B003465B5 /* EmbeddedLayout.h */,
-				3AF744FC1E4F861B003465B5 /* LayoutCommand.h */,
 				3AF744FD1E4F861B003465B5 /* MainFrame.cpp */,
 				3AF744FE1E4F861B003465B5 /* MainFrame.h */,
-				3AF744FF1E4F861B003465B5 /* MainFrameLayoutManager.cpp */,
-				3AF745001E4F861B003465B5 /* MainFrameLayoutManager.h */,
-				3AF745011E4F861B003465B5 /* RegularLayout.cpp */,
-				3AF745021E4F861B003465B5 /* RegularLayout.h */,
 				3AF745031E4F861B003465B5 /* ScreenUpdateBlocker.cpp */,
 				3AF745041E4F861B003465B5 /* ScreenUpdateBlocker.h */,
-				3AF745051E4F861B003465B5 /* SplitPaneLayout.cpp */,
-				3AF745061E4F861B003465B5 /* SplitPaneLayout.h */,
 				3AF745071E4F861B003465B5 /* TopLevelFrame.cpp */,
 				3AF745081E4F861B003465B5 /* TopLevelFrame.h */,
 			);
@@ -8436,6 +8420,8 @@
 		3AF745141E4F861B003465B5 /* mediabrowser */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832BD290B91DD0049C4A1 /* FocusMaterialRequest.h */,
+				3A3832BC290B91DC0049C4A1 /* MediaBrowserModule.cpp */,
 				3AC88A8D25BC0FA800E6CCCE /* MediaBrowserTreeView.cpp */,
 				3AC88A8E25BC0FA800E6CCCE /* MediaBrowserTreeView.h */,
 				3AF745151E4F861B003465B5 /* MediaBrowser.cpp */,
@@ -8496,10 +8482,11 @@
 		3AF745301E4F861B003465B5 /* overlay */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832C3290B92160049C4A1 /* OrthoBackgroundControl.h */,
+				3A3832C5290B92170049C4A1 /* OrthoBackgroundPanel.cpp */,
+				3A3832C4290B92160049C4A1 /* OrthoBackgroundPanel.h */,
 				3AF745311E4F861B003465B5 /* Overlay.cpp */,
 				3AF745321E4F861B003465B5 /* Overlay.h */,
-				3AF745331E4F861B003465B5 /* OverlayDialog.cpp */,
-				3AF745341E4F861B003465B5 /* OverlayDialog.h */,
 				3AF745351E4F861B003465B5 /* OverlayRegistryKeys.h */,
 			);
 			name = overlay;
@@ -8524,6 +8511,7 @@
 		3AF745391E4F861B003465B5 /* patch */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832C7290B922A0049C4A1 /* PatchInspectorControl.h */,
 				3AF7453A1E4F861B003465B5 /* BulgePatchDialog.cpp */,
 				3AF7453B1E4F861B003465B5 /* BulgePatchDialog.h */,
 				3AF7453C1E4F861B003465B5 /* CapDialog.cpp */,
@@ -8584,6 +8572,7 @@
 		3AF745531E4F861B003465B5 /* surfaceinspector */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832C9290B92540049C4A1 /* SurfaceInspectorControl.h */,
 				3AF745541E4F861B003465B5 /* SurfaceInspector.cpp */,
 				3AF745551E4F861B003465B5 /* SurfaceInspector.h */,
 			);
@@ -8606,8 +8595,9 @@
 		3AF7455B1E4F861B003465B5 /* transform */ = {
 			isa = PBXGroup;
 			children = (
-				3AF7455C1E4F861B003465B5 /* TransformDialog.cpp */,
-				3AF7455D1E4F861B003465B5 /* TransformDialog.h */,
+				3A3832CA290B92650049C4A1 /* TransformPanel.cpp */,
+				3A3832CC290B92660049C4A1 /* TransformPanel.h */,
+				3A3832CB290B92650049C4A1 /* TransformPanelControl.h */,
 			);
 			name = transform;
 			path = ../../radiant/ui/transform;
@@ -8616,8 +8606,6 @@
 		3AF745601E4F861B003465B5 /* xyview */ = {
 			isa = PBXGroup;
 			children = (
-				3AF745611E4F861B003465B5 /* FloatingOrthoView.cpp */,
-				3AF745621E4F861B003465B5 /* FloatingOrthoView.h */,
 				3AF745631E4F861B003465B5 /* GlobalXYWnd.cpp */,
 				3AF745641E4F861B003465B5 /* GlobalXYWnd.h */,
 				3AF745651E4F861B003465B5 /* tools */,
@@ -9057,6 +9045,7 @@
 		3AFF05E0253AE64E002B1472 /* script */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832C8290B92430049C4A1 /* ScriptPanel.h */,
 				3AFF05E1253AE660002B1472 /* ScriptMenu.cpp */,
 				3AFF05E2253AE660002B1472 /* ScriptMenu.h */,
 				3AFF05E3253AE660002B1472 /* ScriptUserInterfaceModule.cpp */,
@@ -9162,7 +9151,6 @@
 				3A0120361E50278400A62BC1 /* SingleIdleCallback.h in Headers */,
 				3A0120421E50278400A62BC1 /* CommandMenuItem.h in Headers */,
 				3AC88A782596F6A500E6CCCE /* Populator.h in Headers */,
-				3A0120691E50278400A62BC1 /* TransientWindow.h in Headers */,
 				3A01204A1E50278400A62BC1 /* ModalProgressDialog.h in Headers */,
 				3A0120441E50278400A62BC1 /* MenuItem.h in Headers */,
 				3A0120251E50278400A62BC1 /* ConsoleView.h in Headers */,
@@ -9187,6 +9175,7 @@
 				3A0120291E50278400A62BC1 /* DeferredMotionDelta.h in Headers */,
 				3AC88ABB25BC102500E6CCCE /* TreeView.h in Headers */,
 				3AFF063E253AE829002B1472 /* Splitter.h in Headers */,
+				3A383299290B90540049C4A1 /* DockablePanel.h in Headers */,
 				3A38326A28DDD9B40049C4A1 /* DeclarationSelector.h in Headers */,
 				3A383219285A12C10049C4A1 /* SourceView.h in Headers */,
 				3A01206C1E50278400A62BC1 /* XmlResourceBasedWidget.h in Headers */,
@@ -9275,7 +9264,6 @@
 				3AC88747253C1D5100E6CCCE /* SingleIdleCallback.h in Headers */,
 				3AC88774253C1D7200E6CCCE /* picointernal.h in Headers */,
 				3AC88748253C1D5100E6CCCE /* CommandMenuItem.h in Headers */,
-				3AC88749253C1D5100E6CCCE /* TransientWindow.h in Headers */,
 				3AC8874A253C1D5100E6CCCE /* ModalProgressDialog.h in Headers */,
 				3AC8874C253C1D5100E6CCCE /* MenuItem.h in Headers */,
 				3AC8874E253C1D5100E6CCCE /* ConsoleView.h in Headers */,
@@ -9393,6 +9381,7 @@
 				3AEBE3431E50E2700062D9AF /* SpawnargReplacer.h in Headers */,
 				3AEBE3421E50E2700062D9AF /* SpawnargLinkedSpinButton.h in Headers */,
 				3AEBE3411E50E2700062D9AF /* SpawnargLinkedCheckbox.h in Headers */,
+				3A38329C290B90930049C4A1 /* AIEditingControl.h in Headers */,
 				3AE6F1F81FD1A5CA008A1B2D /* MissionInfoEditDialog.h in Headers */,
 				3AE6F21F1FDD39E7008A1B2D /* ReadmeTxt.h in Headers */,
 				3AEBE33A1E50E2700062D9AF /* DeprecatedEclassCollector.h in Headers */,
@@ -9406,6 +9395,7 @@
 				3AE6F21B1FDD39E7008A1B2D /* MissionInfoTextFile.h in Headers */,
 				3AEBE33E1E50E2700062D9AF /* FixupMapDialog.h in Headers */,
 				3AEBE3351E50E2700062D9AF /* AIVocalSetChooserDialog.h in Headers */,
+				3A38329D290B90930049C4A1 /* ThreadedEntityDefPopulator.h in Headers */,
 				3AEBE3311E50E2700062D9AF /* AIHeadChooserDialog.h in Headers */,
 				3AEBE32F1E50E2700062D9AF /* AIEditingPanel.h in Headers */,
 				3AEBE3391E50E2700062D9AF /* AIVocalSetPropertyEditor.h in Headers */,
@@ -9710,7 +9700,6 @@
 				3AFF068D253BF4D3002B1472 /* Button.h in Headers */,
 				3AFF068F253BF4D3002B1472 /* SingleIdleCallback.h in Headers */,
 				3AFF0690253BF4D3002B1472 /* CommandMenuItem.h in Headers */,
-				3AFF0691253BF4D3002B1472 /* TransientWindow.h in Headers */,
 				3AFF0692253BF4D3002B1472 /* ModalProgressDialog.h in Headers */,
 				3AFF0694253BF4D3002B1472 /* MenuItem.h in Headers */,
 				3AFF0696253BF4D3002B1472 /* ConsoleView.h in Headers */,
@@ -10290,7 +10279,6 @@
 				3AE6F1E61FD1A529008A1B2D /* GuiView.cpp in Sources */,
 				3A383214285A12C10049C4A1 /* DeclarationSourceView.cpp in Sources */,
 				3A01202A1E50278400A62BC1 /* Dialog.cpp in Sources */,
-				3A0120681E50278400A62BC1 /* TransientWindow.cpp in Sources */,
 				3A38320A285A12730049C4A1 /* DeclarationTreeView.cpp in Sources */,
 				3A38326B28DDD9B40049C4A1 /* DeclarationSelectorDialog.cpp in Sources */,
 				3A0120451E50278400A62BC1 /* PopupMenu.cpp in Sources */,
@@ -10557,30 +10545,29 @@
 			files = (
 				3AFF05F2253AE6CD002B1472 /* EditingStopwatchStatus.cpp in Sources */,
 				3AE5C2A126392DB300643850 /* ImageFileSelector.cpp in Sources */,
-				3AF746071E4F861B003465B5 /* AasControl.cpp in Sources */,
 				3AF746581E4F861C003465B5 /* UserInterfaceModule.cpp in Sources */,
-				3AF746361E4F861B003465B5 /* SplitPaneLayout.cpp in Sources */,
 				3AF746411E4F861C003465B5 /* BindToolDialog.cpp in Sources */,
 				3AE5C2BD26392E1D00643850 /* MD5AnimationViewer.cpp in Sources */,
 				3AF7464F1E4F861C003465B5 /* PrefabSelector.cpp in Sources */,
 				3AF7461F1E4F861B003465B5 /* PropertyEditor.cpp in Sources */,
 				3AE6F1BB1F496D33008A1B2D /* ExportAsModelDialog.cpp in Sources */,
 				3AE5C2A726392DB300643850 /* EntityChooser.cpp in Sources */,
+				3A3832BE290B91E00049C4A1 /* MediaBrowserModule.cpp in Sources */,
 				3AF7465A1E4F861C003465B5 /* GlobalXYWnd.cpp in Sources */,
+				3A3832A5290B90F80049C4A1 /* AasFileControl.cpp in Sources */,
 				3AC88A672596F61600E6CCCE /* MapSelector.cpp in Sources */,
 				3AFF0601253AE706002B1472 /* LongRunningOperationHandler.cpp in Sources */,
 				3AF7461C1E4F861B003465B5 /* FloatPropertyEditor.cpp in Sources */,
 				3AF746251E4F861B003465B5 /* Vector3PropertyEditor.cpp in Sources */,
 				3AF7462E1E4F861B003465B5 /* LayerOrthoContextMenuItem.cpp in Sources */,
-				3AF746341E4F861B003465B5 /* RegularLayout.cpp in Sources */,
 				3AE5C2A026392DB300643850 /* ImageFilePopulator.cpp in Sources */,
 				3AE6F27E1FF78CD0008A1B2D /* GraphTreeModel.cpp in Sources */,
-				3AF746301E4F861B003465B5 /* EmbeddedLayout.cpp in Sources */,
 				3AFF05DE253AE5E2002B1472 /* ExportCollisionModelDialog.cpp in Sources */,
 				3AE6F20E1FDC229F008A1B2D /* GameSetupPageIdTech.cpp in Sources */,
 				3AF7463F1E4F861C003465B5 /* MaterialsList.cpp in Sources */,
 				3AC88A9225BC0FB600E6CCCE /* ModelTreeView.cpp in Sources */,
 				3AFF05E7253AE660002B1472 /* ScriptUserInterfaceModule.cpp in Sources */,
+				3A3832C2290B91FE0049C4A1 /* MapMergePanel.cpp in Sources */,
 				3A383227285A14020049C4A1 /* Console.cpp in Sources */,
 				3A382FE426C178190049C4A1 /* PointFileChooser.cpp in Sources */,
 				3AFF0498253ABBC6002B1472 /* LocalisationModule.cpp in Sources */,
@@ -10590,9 +10577,9 @@
 				3AE6F345239F4FE1008A1B2D /* WidgetToggle.cpp in Sources */,
 				3A38328228DDDABB0049C4A1 /* MaterialChooser.cpp in Sources */,
 				3AF745AD1E4F861B003465B5 /* StartupMapLoader.cpp in Sources */,
+				3A3832BB290B91B70049C4A1 /* PropertyNotebook.cpp in Sources */,
 				3AF7461E1E4F861B003465B5 /* ModelPropertyEditor.cpp in Sources */,
 				3AE5C2F126392EED00643850 /* MenuItem.cpp in Sources */,
-				3A382FE826C178530049C4A1 /* MergeControlDialog.cpp in Sources */,
 				3AF7460C1E4F861B003465B5 /* ShortcutChooser.cpp in Sources */,
 				3A3830D7272D34B90049C4A1 /* TextureToolManipulateMouseTool.cpp in Sources */,
 				3AF7462B1E4F861B003465B5 /* LayerContextMenu.cpp in Sources */,
@@ -10603,8 +10590,8 @@
 				3AF7465D1E4F861C003465B5 /* MeasurementTool.cpp in Sources */,
 				3AF7464B1E4F861C003465B5 /* PatchCreateDialog.cpp in Sources */,
 				3AF746051E4F861B003465B5 /* TexTool.cpp in Sources */,
-				3AF7462D1E4F861B003465B5 /* LayerControlDialog.cpp in Sources */,
 				3A3831772859E5FD0049C4A1 /* ParticleChooserDialog.cpp in Sources */,
+				3A3832CD290B92660049C4A1 /* TransformPanel.cpp in Sources */,
 				3AF7465C1E4F861C003465B5 /* ClipperTool.cpp in Sources */,
 				3A3830CE272D34550049C4A1 /* SceneManipulateMouseTool.cpp in Sources */,
 				3AF746451E4F861C003465B5 /* OrthoContextMenu.cpp in Sources */,
@@ -10614,9 +10601,9 @@
 				3AF746501E4F861C003465B5 /* PrefDialog.cpp in Sources */,
 				3AFF05D3253AE560002B1472 /* FilterDialog.cpp in Sources */,
 				3AFF0499253ABBC6002B1472 /* LocalisationProvider.cpp in Sources */,
-				3AF746591E4F861C003465B5 /* FloatingOrthoView.cpp in Sources */,
 				3AE6F20C1FDC229F008A1B2D /* GameSetupDialog.cpp in Sources */,
 				3AF746381E4F861B003465B5 /* EntityInfoTab.cpp in Sources */,
+				3A3832BA290B91B70049C4A1 /* AuiManager.cpp in Sources */,
 				3AE6F2841FF78CDB008A1B2D /* EClassTreeBuilder.cpp in Sources */,
 				3AF746181E4F861B003465B5 /* ClassnamePropertyEditor.cpp in Sources */,
 				3AE5C2A826392DB300643850 /* MapPreview.cpp in Sources */,
@@ -10624,8 +10611,8 @@
 				3AE5C2F326392EED00643850 /* MenuSeparator.cpp in Sources */,
 				3AE6F340239F4FE1008A1B2D /* GlobalKeyEventFilter.cpp in Sources */,
 				3AF7465B1E4F861C003465B5 /* BrushCreatorTool.cpp in Sources */,
-				3AF746571E4F861C003465B5 /* TransformDialog.cpp in Sources */,
 				3AE5C2DE26392EB900643850 /* MaterialEditorModule.cpp in Sources */,
+				3A3832C6290B92170049C4A1 /* OrthoBackgroundPanel.cpp in Sources */,
 				3AC88A8F25BC0FA800E6CCCE /* MediaBrowserTreeView.cpp in Sources */,
 				3AF746231E4F861B003465B5 /* SoundPropertyEditor.cpp in Sources */,
 				3A38327828DDDA690049C4A1 /* FxPropertyEditor.cpp in Sources */,
@@ -10659,7 +10646,6 @@
 				3AF745951E4F861B003465B5 /* main.cpp in Sources */,
 				3AE6F342239F4FE1008A1B2D /* MouseToolManager.cpp in Sources */,
 				3AE5C29F26392DB300643850 /* DialogManager.cpp in Sources */,
-				3AE5C2B226392DEA00643850 /* GroupDialog.cpp in Sources */,
 				3AE6F33E239F4FE1008A1B2D /* Accelerator.cpp in Sources */,
 				3AF7462A1E4F861B003465B5 /* FindShader.cpp in Sources */,
 				3AF746171E4F861B003465B5 /* BooleanPropertyEditor.cpp in Sources */,
@@ -10669,8 +10655,9 @@
 				3AE6F20F1FDC229F008A1B2D /* GameSetupPageTdm.cpp in Sources */,
 				3AF7460B1E4F861B003465B5 /* CommandList.cpp in Sources */,
 				3AE5C2CD26392EA300643850 /* MaterialPopulator.cpp in Sources */,
-				3AF746471E4F861C003465B5 /* OverlayDialog.cpp in Sources */,
+				3A3832B9290B91B70049C4A1 /* ViewMenu.cpp in Sources */,
 				3AF746161E4F861B003465B5 /* AnglePropertyEditor.cpp in Sources */,
+				3A3832D0290B98060049C4A1 /* LayerControlPanel.cpp in Sources */,
 				3AE5C2AC26392DB300643850 /* TexturePreviewCombo.cpp in Sources */,
 				3AE5C2C126392E4300643850 /* ColourSchemeEditor.cpp in Sources */,
 				3AF746201E4F861B003465B5 /* PropertyEditorFactory.cpp in Sources */,
@@ -10678,18 +10665,16 @@
 				3AF7461A1E4F861B003465B5 /* EntityInspector.cpp in Sources */,
 				3AF7465E1E4F861C003465B5 /* XYWnd.cpp in Sources */,
 				3A3830DB272D34FA0049C4A1 /* ConvertModelDialog.cpp in Sources */,
-				3AF745861E4F861B003465B5 /* FloatingCamWnd.cpp in Sources */,
 				3AF745831E4F861B003465B5 /* CameraSettings.cpp in Sources */,
-				3AF7462C1E4F861B003465B5 /* LayerControl.cpp in Sources */,
 				3AE5C30226392F2A00643850 /* StatusBarManager.cpp in Sources */,
 				3AFF05D8253AE588002B1472 /* WxGLWidgetManager.cpp in Sources */,
 				3AFF0600253AE706002B1472 /* DispatchEvent.cpp in Sources */,
 				3AF746521E4F861C003465B5 /* PrefPage.cpp in Sources */,
+				3A3832A4290B90F80049C4A1 /* AasVisualisationPanel.cpp in Sources */,
 				3A3830DE272D35260049C4A1 /* CommandStatus.cpp in Sources */,
 				3AE5C2EE26392EED00643850 /* MenuBar.cpp in Sources */,
 				3AE5C2A226392DB300643850 /* SoundChooser.cpp in Sources */,
 				3AF7460A1E4F861B003465B5 /* QuerySidesDialog.cpp in Sources */,
-				3AF746081E4F861B003465B5 /* AasControlDialog.cpp in Sources */,
 				3AF746191E4F861B003465B5 /* ColourPropertyEditor.cpp in Sources */,
 				3AC88A8C25BC0F9300E6CCCE /* FavouritesBrowser.cpp in Sources */,
 				3A383220285A137B0049C4A1 /* SkinChooser.cpp in Sources */,
@@ -10699,19 +10684,18 @@
 				3AF746561E4F861C003465B5 /* TextureBrowserManager.cpp in Sources */,
 				3AF746391E4F861B003465B5 /* LayerInfoTab.cpp in Sources */,
 				3AF746531E4F861C003465B5 /* Splash.cpp in Sources */,
+				3A3832A9290B913D0049C4A1 /* EntityInspectorModule.cpp in Sources */,
 				3AF7462F1E4F861B003465B5 /* LightInspector.cpp in Sources */,
 				3AF745EE1E4F861B003465B5 /* SelectionMouseTools.cpp in Sources */,
 				3AF7463B1E4F861C003465B5 /* ModelInfoTab.cpp in Sources */,
 				3AF746421E4F861C003465B5 /* ToolMappingDialog.cpp in Sources */,
 				3AE5C2BC26392E1D00643850 /* MD5AnimationChooser.cpp in Sources */,
 				3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */,
-				3AF746331E4F861B003465B5 /* MainFrameLayoutManager.cpp in Sources */,
 				3AFF05BC253AE4C3002B1472 /* FindBrush.cpp in Sources */,
 				3AE6F343239F4FE1008A1B2D /* Statement.cpp in Sources */,
 				3AFF05CC253AE546002B1472 /* FilterUserInterface.cpp in Sources */,
 				3AF746491E4F861C003465B5 /* BulgePatchDialog.cpp in Sources */,
 				3AE6F344239F4FE1008A1B2D /* Toggle.cpp in Sources */,
-				3A38329628F3383F0049C4A1 /* LegacyLayerControlDialog.cpp in Sources */,
 				3AE5C2A326392DB300643850 /* SoundShaderPreview.cpp in Sources */,
 				3AF746461E4F861C003465B5 /* Overlay.cpp in Sources */,
 				3AE5C30126392F2A00643850 /* MapStatistics.cpp in Sources */,
@@ -10720,13 +10704,14 @@
 				3AF745E31E4F861B003465B5 /* ManipulateMouseTool.cpp in Sources */,
 				3AE5C2DD26392EB900643850 /* MaterialEditor.cpp in Sources */,
 				3AF746321E4F861B003465B5 /* MainFrame.cpp in Sources */,
-				3AE5C2B326392DEA00643850 /* GroupDialogManager.cpp in Sources */,
 				3AF746241E4F861B003465B5 /* TexturePropertyEditor.cpp in Sources */,
 				3AF746091E4F861B003465B5 /* AboutDialog.cpp in Sources */,
 				3AE5C2DF26392EB900643850 /* MaterialPreview.cpp in Sources */,
 				3AF746401E4F861C003465B5 /* ModelSelector.cpp in Sources */,
+				3A3832AD290B916C0049C4A1 /* FavouritesUserInterfaceModule.cpp in Sources */,
 				3AFF05E6253AE660002B1472 /* ScriptMenu.cpp in Sources */,
 				3AE5C2EF26392EED00643850 /* MenuElement.cpp in Sources */,
+				3A3832B8290B91B70049C4A1 /* AuiFloatingFrame.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,7 +6,7 @@
 		<menuItem name="open" caption="&amp;Open..." command="OpenMap" icon="file_open.png" />
 		<menuItem name="openMapFromProject" caption="&amp;Open Map from Project..." command="OpenMapFromProject" />
 		<menuItem name="import" caption="&amp;Import Map..." command="ImportMap" />
-		<menuItem name="mergeMap" caption="&amp;Merge Map..." command="MergeControlDialog" />
+		<menuItem name="mergeMap" caption="&amp;Merge Map..." command="ToggleMapMergePanel" />
 		<menuItem name="loadprefab" caption="Import &amp;Prefab..." command="LoadPrefab" />
 		<menuSeparator />
 		<menuItem name="save" caption="&amp;Save" command="SaveMap" icon="file_save.png" />
@@ -75,20 +75,8 @@
 
 	<subMenu name="view" caption="V&amp;iew">
 		<menuItem name="newxyview" caption="New XY view" command="NewOrthoView" />
-		<menuItem name="cameraview" caption="Camera View" command="ToggleCamera" />
-		<menuItem name="layercontrols" caption="Layers" command="ToggleLayerControlDialog" />
-		<menuItem name="consoleView" caption="Console View" command="ToggleConsole" />
-		<menuItem name="textureBrowser" caption="Texture Browser" command="ViewTextures" />
-		<menuItem name="mediabrowser" caption="Media Browser" command="ToggleMediaBrowser" />
-		<menuItem name="entityInspector" caption="Entity Inspector" command="ToggleEntityInspector" />
-		<menuItem name="lightInspector" caption="&amp;Light Inspector" command="ToggleLightInspector" />
-		<menuItem name="surfaceInspector" caption="&amp;Surface Inspector" command="SurfaceInspector" />
-		<menuItem name="patchinspector" caption="&amp;Patch Inspector" command="PatchInspector" />
-		<menuItem name="texturetool" caption="&amp;Texture Tool" command="TextureTool" />
-		<menuItem name="entityList" caption="Entity List" command="EntityList" />
-    <menuItem name="aasDialog" caption="AAS Area Viewer" command="ToggleAasControlDialog" />
-		<menuSeparator />
-
+		<menuItem name="newcamview" caption="New Camera view" command="NewCameraView" />
+    <menuSeparator name="controlSeparatorBottom" />
 		<subMenu name="camera" caption="Camera">
 			<menuItem name="cameraCenter" caption="&amp;Center" command="CenterView" />
 			<menuItem name="cameraUpFloor" caption="&amp;Up Floor" command="UpFloor" />
@@ -142,7 +130,7 @@
 
 		<menuSeparator />
 		<menuItem name="colours" caption="Colours..." command="EditColourScheme" icon="editcolour16.png" />
-		<menuItem name="backgroundimage" caption="Background Image..." command="OverlayDialog" icon="bgimage16.png" />
+		<menuItem name="backgroundimage" caption="Background Image..." command="ToggleOrthoBackgroundPanel" icon="bgimage16.png" />
 	</subMenu>
 
 	<subMenu name="modify" caption="Mo&amp;dify">
@@ -180,7 +168,7 @@
 		<menuItem name="toggleFreeRotation" caption="Rotate Objects independently" command="ToggleFreeObjectRotation" />
 
 		<menuSeparator />
-		<menuItem name="transformDialog" caption="Rotate and scale..." command="TransformDialog" />
+		<menuItem name="transformDialog" caption="Rotate and scale..." command="ToggleTransformPanel" />
 
 	</subMenu>
 
@@ -203,7 +191,7 @@
 
 	<subMenu name="map" caption="M&amp;ap">
 		<menuItem name="findBrush" caption="Find brush..." command="FindBrush" />
-    <menuItem name="findReplaceTextures" caption="Find and replace textures..." icon="texwindow_findandreplace.png" command="FindReplaceTextures" />
+    <menuItem name="findReplaceTextures" caption="Find and replace textures..." icon="texwindow_findandreplace.png" command="ToggleFindAndReplaceMaterial" />
 		<menuItem name="mapinfo" caption="Map info..." command="MapInfo" />
 	</subMenu>
 

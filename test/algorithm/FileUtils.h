@@ -34,6 +34,13 @@ public:
         fs::remove(_originalFile);
         fs::rename(_backupFile, _originalFile);
     }
+
+    // Restore the original file, keep the backup
+    void restoreNow()
+    {
+        fs::remove(_originalFile);
+        fs::copy(_backupFile, _originalFile);
+    }
 };
 
 namespace algorithm

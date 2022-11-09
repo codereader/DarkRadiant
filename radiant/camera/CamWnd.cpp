@@ -1,18 +1,18 @@
 #include "CamWnd.h"
 
 #include "igl.h"
-#include "ibrush.h"
 #include "iclipper.h"
 #include "icolourscheme.h"
-#include "ui/imainframe.h"
 #include "itextstream.h"
-#include "iorthoview.h"
 #include "icameraview.h"
+#include "ui/imainframe.h"
 
+#include <functional>
 #include <time.h>
 #include <fmt/format.h>
+#include <sigc++/retype_return.h>
+#include <wx/sizer.h>
 
-#include "util/ScopedBoolLock.h"
 #include "iselectiontest.h"
 #include "selectionlib.h"
 #include "gamelib.h"
@@ -21,39 +21,34 @@
 #include "render/RenderableCollectionWalker.h"
 #include "wxutil/MouseButton.h"
 #include "registry/adaptors.h"
-#include "selection/OccludeSelector.h"
 #include "selection/Device.h"
 #include "selection/SelectionVolume.h"
 #include "FloorHeightWalker.h"
 
 #include "debugging/debugging.h"
 #include "debugging/gl.h"
-#include <wx/sizer.h>
-#include "util/ScopedBoolLock.h"
-#include "CameraSettings.h"
-#include <functional>
-#include <sigc++/retype_return.h>
 #include "render/CamRenderer.h"
+#include "util/ScopedBoolLock.h"
 
 namespace ui
 {
 
 namespace
 {
-    const std::size_t MSEC_PER_FRAME = 16;
+    constexpr std::size_t MSEC_PER_FRAME = 16;
 
-    const unsigned int MOVE_NONE = 0;
-    const unsigned int MOVE_FORWARD = 1 << 0;
-    const unsigned int MOVE_BACK = 1 << 1;
-    const unsigned int MOVE_ROTRIGHT = 1 << 2;
-    const unsigned int MOVE_ROTLEFT = 1 << 3;
-    const unsigned int MOVE_STRAFERIGHT = 1 << 4;
-    const unsigned int MOVE_STRAFELEFT = 1 << 5;
-    const unsigned int MOVE_UP = 1 << 6;
-    const unsigned int MOVE_DOWN = 1 << 7;
-    const unsigned int MOVE_PITCHUP = 1 << 8;
-    const unsigned int MOVE_PITCHDOWN = 1 << 9;
-    const unsigned int MOVE_ALL = MOVE_FORWARD | MOVE_BACK | MOVE_ROTRIGHT | MOVE_ROTLEFT | MOVE_STRAFERIGHT | MOVE_STRAFELEFT | MOVE_UP | MOVE_DOWN | MOVE_PITCHUP | MOVE_PITCHDOWN;
+    constexpr unsigned int MOVE_NONE = 0;
+    constexpr unsigned int MOVE_FORWARD = 1 << 0;
+    constexpr unsigned int MOVE_BACK = 1 << 1;
+    constexpr unsigned int MOVE_ROTRIGHT = 1 << 2;
+    constexpr unsigned int MOVE_ROTLEFT = 1 << 3;
+    constexpr unsigned int MOVE_STRAFERIGHT = 1 << 4;
+    constexpr unsigned int MOVE_STRAFELEFT = 1 << 5;
+    constexpr unsigned int MOVE_UP = 1 << 6;
+    constexpr unsigned int MOVE_DOWN = 1 << 7;
+    constexpr unsigned int MOVE_PITCHUP = 1 << 8;
+    constexpr unsigned int MOVE_PITCHDOWN = 1 << 9;
+    constexpr unsigned int MOVE_ALL = MOVE_FORWARD | MOVE_BACK | MOVE_ROTRIGHT | MOVE_ROTLEFT | MOVE_STRAFERIGHT | MOVE_STRAFELEFT | MOVE_UP | MOVE_DOWN | MOVE_PITCHUP | MOVE_PITCHDOWN;
 }
 
 inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
@@ -64,9 +59,11 @@ inline Vector2 windowvector_for_widget_centre(wxutil::GLWidget& widget)
 
 // ---------- CamWnd Implementation --------------------------------------------------
 
-CamWnd::CamWnd(wxWindow* parent) :
+CamWnd::CamWnd(wxWindow* parent, CameraWndManager& owner) :
+    DockablePanel(parent),
     MouseToolHandler(IMouseToolGroup::Type::CameraView),
-    _mainWxWidget(loadNamedPanel(parent, "CamWndPanel")),
+    _owner(owner),
+    _mainWxWidget(loadNamedPanel(this, "CamWndPanel")),
     _id(++_maxId),
     _view(true),
     _camera(GlobalCameraManager().createCamera(_view, std::bind(&CamWnd::requestRedraw, this, std::placeholders::_1))),
@@ -82,6 +79,9 @@ CamWnd::CamWnd(wxWindow* parent) :
     _strafe(false),
     _strafeForward(false)
 {
+    SetSizer(new wxBoxSizer(wxVERTICAL));
+    GetSizer()->Add(_mainWxWidget, 1, wxEXPAND);
+
     Bind(wxEVT_TIMER, &CamWnd::onFrame, this, _timer.GetId());
     Bind(wxEVT_TIMER, &CamWnd::onFreeMoveTimer, this, _freeMoveTimer.GetId());
     _wxGLWidget->Bind(wxEVT_IDLE, &CamWnd::onIdle, this);
@@ -116,6 +116,24 @@ CamWnd::CamWnd(wxWindow* parent) :
         std::bind(&CamWnd::onGLMouseButtonPress, this, std::placeholders::_1),
         std::bind(&CamWnd::onGLMouseButtonRelease, this, std::placeholders::_1));
 
+    _renderer.reset(new render::CamRenderer(_view, _shaders));
+
+    _owner.addCamWnd(_id, this);
+}
+
+void CamWnd::onPanelActivated()
+{
+    connectEventHandlers();
+    queueDraw();
+}
+
+void CamWnd::onPanelDeactivated()
+{
+    disconnectEventHandlers();
+}
+
+void CamWnd::connectEventHandlers()
+{
     // Subscribe to the global scene graph update
     GlobalSceneGraph().addSceneObserver(this);
 
@@ -127,12 +145,38 @@ CamWnd::CamWnd(wxWindow* parent) :
         radiant::TypeListener<radiant::TextureChangedMessage>(
             sigc::mem_fun(this, &CamWnd::handleTextureChanged)));
 
-    _renderer.reset(new render::CamRenderer(_view, _shaders));
+    const wxToolBarToolBase* gridButton = getToolBarToolByLabel(_camToolbar, "drawGridButton");
+    auto toggleCameraGridEvent = GlobalEventManager().findEvent("ToggleCameraGrid");
+    toggleCameraGridEvent->connectToolItem(gridButton);
 
     // Refresh the camera view when shadows are enabled/disabled
-    GlobalRegistry().signalForKey(RKEY_ENABLE_SHADOW_MAPPING).connect(
+    _shadowMappingKeyChangedHandler = GlobalRegistry().signalForKey(RKEY_ENABLE_SHADOW_MAPPING).connect(
         sigc::mem_fun(this, &CamWnd::queueDraw)
     );
+}
+
+void CamWnd::disconnectEventHandlers()
+{
+    _shadowMappingKeyChangedHandler.disconnect();
+
+    GlobalRadiantCore().getMessageBus().removeListener(_textureChangedHandler);
+
+    const wxToolBarToolBase* gridButton = getToolBarToolByLabel(_camToolbar, "drawGridButton");
+    auto toggleCameraGridEvent = GlobalEventManager().findEvent("ToggleCameraGrid");
+    toggleCameraGridEvent->disconnectToolItem(gridButton);
+
+    // Stop the timer, it might still fire even during shutdown
+    _timer.Stop();
+
+    // Unsubscribe from the global scene graph update
+    GlobalSceneGraph().removeSceneObserver(this);
+
+    if (_freeMoveEnabled)
+    {
+        disableFreeMove();
+    }
+
+    removeHandlersMove();
 }
 
 wxWindow* CamWnd::getMainWidget() const
@@ -156,7 +200,6 @@ void CamWnd::constructToolbar()
     _btnIDs.lighting = lightingBtn->GetId();
     const wxToolBarToolBase* shadowLightingBtn = getToolBarToolByLabel(_camToolbar, "shadowBtn");
     _btnIDs.lightingShadow = shadowLightingBtn->GetId();
-    const wxToolBarToolBase* gridButton = getToolBarToolByLabel(_camToolbar, "drawGridButton");
 
     if (!GlobalRenderSystem().shaderProgramsAvailable())
     {
@@ -187,9 +230,6 @@ void CamWnd::constructToolbar()
     _mainWxWidget->GetParent()->Bind(wxEVT_COMMAND_TOOL_CLICKED,
                                      &CamWnd::onRenderModeButtonsChanged, this,
                                      _btnIDs.lighting);
-
-    auto toggleCameraGridEvent = GlobalEventManager().findEvent("ToggleCameraGrid");
-    toggleCameraGridEvent->connectToolItem(gridButton);
 
     // Far clip buttons.
     _btnIDs.farClipIn = getToolID(_camToolbar, "clipPlaneInButton");
@@ -273,30 +313,16 @@ void CamWnd::constructGUIComponents()
 
 CamWnd::~CamWnd()
 {
-    GlobalRadiantCore().getMessageBus().removeListener(_textureChangedHandler);
-
-    const wxToolBarToolBase* gridButton = getToolBarToolByLabel(_camToolbar, "drawGridButton");
-    auto toggleCameraGridEvent = GlobalEventManager().findEvent("ToggleCameraGrid");
-    toggleCameraGridEvent->disconnectToolItem(gridButton);
-
-    // Stop the timer, it might still fire even during shutdown
-    _timer.Stop();
-
-    // Unsubscribe from the global scene graph update
-    GlobalSceneGraph().removeSceneObserver(this);
-
-    if (_freeMoveEnabled)
+    if (panelIsActive())
     {
-        disableFreeMove();
+        disconnectEventHandlers();
     }
-
-    removeHandlersMove();
 
     // Release the camera instance
     GlobalCameraManager().destroyCamera(_camera);
 
     // Notify the camera manager about our destruction
-    GlobalCamera().removeCamWnd(_id);
+    _owner.removeCamWnd(_id);
 }
 
 SelectionTestPtr CamWnd::createSelectionTestForPoint(const Vector2& point)
@@ -1216,6 +1242,9 @@ void CamWnd::onGLMouseButtonPress(wxMouseEvent& ev)
     // GL widget cannot be focused itself, let's reset the focus on the toplevel window
     // which will propagate any key events accordingly.
     GlobalMainFrame().getWxTopLevelWindow()->SetFocus();
+
+    // Set this camwnd to active
+    _owner.setActiveCamWnd(_id);
 
     // Pass the call to the actual handler
     MouseToolHandler::onGLMouseButtonPress(ev);

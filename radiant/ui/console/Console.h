@@ -1,28 +1,22 @@
 #pragma once
 
-#include "icommandsystem.h"
 #include "ilogwriter.h"
-
-#include <wx/panel.h>
 
 #include "wxutil/ConsoleView.h"
 #include "CommandEntry.h"
+#include "wxutil/DockablePanel.h"
+
+namespace radiant { class ClearConsoleMessage; }
 
 namespace ui
 {
 
-class Console;
-typedef std::shared_ptr<Console> ConsolePtr;
-
 /**
- * greebo: The Console class encapsulates a GtkTextView and represents
- *         the "device", which the LogWriter is writing its output to.
- *
- *         The Console is a singleton which needs to be constructed and packed
- *         during mainframe construction.
+ * greebo: The Console class encapsulates a wxutil::ConsoleView and represents
+ * the "device", which the LogWriter is writing its output to.
  */
 class Console :
-	public wxPanel,
+	public wxutil::DockablePanel,
 	public applog::ILogDevice
 {
 private:
@@ -30,6 +24,8 @@ private:
 
 	// The entry box for console commands
 	CommandEntry* _commandEntry;
+
+    std::size_t _clearConsoleHandler;
 
 public:
 	/**
@@ -40,15 +36,9 @@ public:
 	 */
 	Console(wxWindow* parent);
 
-	virtual ~Console();
+	~Console() override;
 
-	/**
-	 * greebo: Static command target for toggling the console.
-	 */
-	static void toggle(const cmd::ArgumentList& args);
-
-	// Command target to clear the console
-	void clearCmd(const cmd::ArgumentList& args);
+	void clear(radiant::ClearConsoleMessage& msg);
 
 	/**
 	 * greebo: Writes the given output string to the Console.

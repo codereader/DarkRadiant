@@ -334,16 +334,18 @@ StatementVec parseCommandString(const std::string& input)
 
 bool CommandSystem::canExecute(const std::string& input) const
 {
-    // String could contain a command with arguments, so extract the main command
-    auto statements = parseCommandString(input);
-    if (!statements.empty()) {
-        // Check the first command, ignoring arguments or subsequent commands.
-        // For now we discount the possibility that the specific arguments could
-        // change whether a command can be run, although in theory this could be
-        // possible.
-        auto commandName = statements[0].command;
-        if (auto i = _commands.find(commandName); i != _commands.end()) {
-            return i->second->canExecute();
+    // Check the first command, ignoring arguments or subsequent commands.
+    // For now we discount the possibility that the specific arguments could
+    // change whether a command can be run, although in theory this could be possible.
+
+    // Parsing the whole command string is rather expensive, so extract just the first token
+    CommandTokeniser tokeniser(input);
+
+    if (tokeniser.hasMoreTokens())
+    {
+        if (auto cmd = _commands.find(tokeniser.nextToken()); cmd != _commands.end())
+        {
+            return cmd->second->canExecute();
         }
     }
 

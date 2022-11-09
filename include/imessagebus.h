@@ -41,6 +41,7 @@ public:
     {
         ApplicationShutdownRequest,
         AutomaticMapSaveRequest,
+        ClearConsole,
         CommandExecutionFailed,
         GameConfigNeeded,
         LongRunningOperation,
@@ -56,6 +57,8 @@ public:
         ManipulatorModeToggleRequest,
         ComponentSelectionModeToggleRequest,
         GridSnapRequest,
+        FocusMaterialRequest,
+        TextureToolRequest,
 
         UserDefinedMessagesGoHigherThanThis = 999,
     };

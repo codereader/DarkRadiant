@@ -596,6 +596,15 @@ void EntityNode::onEntitySettingsChanged()
     {
         _renderableName.clear();
     }
+
+    // Notify all attached entities
+    foreachAttachment([](const IEntityNodePtr& node)
+    {
+        if (auto attachedEntity = std::dynamic_pointer_cast<EntityNode>(node); attachedEntity)
+        {
+            attachedEntity->onEntitySettingsChanged();
+        }
+    });
 }
 
 void EntityNode::attachToRenderSystem()

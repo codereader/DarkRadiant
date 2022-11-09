@@ -160,6 +160,7 @@ add_library(radiantcore MODULE
             model/md5/MD5Surface.cpp
             model/ModelCache.cpp
             model/ModelFormatManager.cpp
+            model/ModelNodeBase.cpp
             model/NullModel.cpp
             model/NullModelNode.cpp
             model/import/AseModel.cpp

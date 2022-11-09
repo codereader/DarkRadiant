@@ -1,18 +1,17 @@
 #include "Console.h"
 
-#include "ui/igroupdialog.h"
 #include "iradiant.h"
 
 #include "wxutil/ConsoleView.h"
 #include <wx/sizer.h>
 
-#include <functional>
+#include "messages/ClearConsole.h"
 
 namespace ui
 {
 
 Console::Console(wxWindow* parent) :
-	wxPanel(parent, wxID_ANY),
+	DockablePanel(parent),
 	_view(new wxutil::ConsoleView(this)),
 	_commandEntry(new CommandEntry(this))
 {
@@ -21,32 +20,27 @@ Console::Console(wxWindow* parent) :
 	GetSizer()->Add(_view, 1, wxEXPAND);
 	GetSizer()->Add(_commandEntry, 0, wxEXPAND);
 
-    GlobalCommandSystem().addCommand("clear",
-        std::bind(&Console::clearCmd, this, std::placeholders::_1));
-
     // Get a lock on the logging system before doing these changes
     std::lock_guard<std::mutex> lock(GlobalRadiantCore().getLogWriter().getStreamLock());
 
 	// We're ready to catch log output, register ourselves
 	GlobalRadiantCore().getLogWriter().attach(this);
+
+    _clearConsoleHandler = GlobalRadiantCore().getMessageBus().addListener(
+        radiant::IMessage::Type::ClearConsole,
+        radiant::TypeListener<radiant::ClearConsoleMessage>(
+            sigc::mem_fun(this, &Console::clear)));
 }
 
 Console::~Console()
 {
-	// TODO - there might be more than one console instance handle this
-	GlobalCommandSystem().removeCommand("clear");
-
+    GlobalRadiantCore().getMessageBus().removeListener(_clearConsoleHandler);
 	GlobalRadiantCore().getLogWriter().detach(this);
 }
 
-void Console::clearCmd(const cmd::ArgumentList& args)
+void Console::clear(radiant::ClearConsoleMessage& msg)
 {
 	_view->Clear();
-}
-
-void Console::toggle(const cmd::ArgumentList& args)
-{
-	GlobalGroupDialog().togglePage("console");
 }
 
 void Console::SetFocus()
