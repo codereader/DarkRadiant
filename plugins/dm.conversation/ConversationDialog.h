@@ -94,6 +94,7 @@ private:
 	void onMoveConversationUpOrDown(wxCommandEvent& ev);
 	void onClearConversations(wxCommandEvent& ev);
 
+    void editSelectedConversation();
 	int getSelectedConvIndex();
 	void selectConvByIndex(int index);
 };
