@@ -49,7 +49,10 @@ public:
             ev.GetEventType() == wxEVT_AUX2_DOWN)
         {
             auto& mouseEvent = static_cast<wxMouseEvent&>(ev);
-            auto position = this->ScreenToClient(mouseEvent.GetPosition());
+            auto window = static_cast<wxWindow*>(ev.GetEventObject());
+
+            // Convert to coordinates of this window
+            auto position = this->ScreenToClient(window->ClientToScreen(mouseEvent.GetPosition()));
 
             // Close if the click is outside of the window, but prevent double deletions
             if (this->HitTest(position.x, position.y) == wxHT_WINDOW_OUTSIDE &&

@@ -94,6 +94,8 @@ private:
 
 	void onShaderClipboardSourceChanged();
 	void sendSelectionToShaderClipboard();
+    wxutil::TransientPopupWindow* findOrCreateBrowserPopup();
+    void closePopup();
 };
 
 }

@@ -47,8 +47,20 @@ MediaBrowser::~MediaBrowser()
         disconnectListeners();
     }
 
-    _browserPopup.Release();
+    closePopup();
     _treeView = nullptr;
+}
+
+void MediaBrowser::closePopup()
+{
+    if (!_browserPopup.get()) return;
+
+    if (!wxTheApp->IsScheduledForDestruction(_browserPopup.get()))
+    {
+        _browserPopup->Dismiss();
+    }
+
+    _browserPopup.Release();
 }
 
 void MediaBrowser::onPanelActivated()
@@ -60,6 +72,7 @@ void MediaBrowser::onPanelActivated()
 
 void MediaBrowser::onPanelDeactivated()
 {
+    closePopup();
 }
 
 void MediaBrowser::connectListeners()
@@ -120,36 +133,48 @@ void MediaBrowser::onIdle()
 
         if (_treeView->IsDirectorySelected())
         {
-            /// Dismiss any previous popups
-            if (_browserPopup.get())
-            {
-                if (!wxTheApp->IsScheduledForDestruction(_browserPopup.get()))
-                {
-                    _browserPopup->Dismiss();
-                }
-
-                _browserPopup.Release();
-            }
-
             // When a directory is selected, open the popup
-            auto popup = new wxutil::TransientPopupWindow(this);
+            auto popup = findOrCreateBrowserPopup();
 
-            // Remember this popup, if it's still around the next time we get here we need to destroy it
-            _browserPopup = popup;
+            auto browser = static_cast<TextureDirectoryBrowser*>(popup->FindWindow("TextureDirectoryBrowser"));
+            assert(browser);
 
-            auto browser = new TextureDirectoryBrowser(popup, _treeView->GetSelectedTextureFolderName());
-            popup->GetSizer()->Add(browser, 1, wxEXPAND | wxALL, 3);
-
-            // Size reaching from the upper edge of the mediabrowser to the bottom of the screen (minus a few pixels)
-            auto rectScreen = wxutil::MultiMonitor::getMonitorForWindow(this);
-            int verticalOffset = -(GetScreenPosition().y - rectScreen.GetY()) / 2;
-            wxSize size(630, rectScreen.GetY() + rectScreen.GetHeight() - GetScreenPosition().y - verticalOffset - 40);
-
-            popup->PositionNextTo(this, verticalOffset, size);
-            popup->Layout();
+            // Set the (new) texture path and show the popup
+            browser->setTexturePath(_treeView->GetSelectedTextureFolderName());
+            
             popup->Popup();
         }
     }
+}
+
+wxutil::TransientPopupWindow* MediaBrowser::findOrCreateBrowserPopup()
+{
+    // Check if we have any previous popup that is not scheduled to be destroyed
+    if (_browserPopup.get() && !wxTheApp->IsScheduledForDestruction(_browserPopup.get()))
+    {
+        // We can re-use this one
+        return _browserPopup.get();
+    }
+
+    // Create a new one
+    auto popup = new wxutil::TransientPopupWindow(this);
+
+    // Remember this popup
+    _browserPopup = popup;
+
+    auto browser = new TextureDirectoryBrowser(popup, _treeView->GetSelectedTextureFolderName());
+    browser->SetName("TextureDirectoryBrowser");
+    popup->GetSizer()->Add(browser, 1, wxEXPAND | wxALL, 3);
+
+    // Size reaching from the upper edge of the mediabrowser to the bottom of the screen (minus a few pixels)
+    auto rectScreen = wxutil::MultiMonitor::getMonitorForWindow(this);
+    int verticalOffset = -(GetScreenPosition().y - rectScreen.GetY()) / 2;
+    wxSize size(630, rectScreen.GetY() + rectScreen.GetHeight() - GetScreenPosition().y - verticalOffset - 40);
+
+    popup->PositionNextTo(this, verticalOffset, size);
+    popup->Layout();
+
+    return popup;
 }
 
 void MediaBrowser::queueTreeReload()

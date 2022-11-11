@@ -18,9 +18,16 @@ private:
 
 public:
     TextureDirectoryBrowser(wxWindow* parent, const std::string& texturePath) :
-        TextureThumbnailBrowser(parent, false), // hide the toolbar
-        _texturePath(os::standardPathWithSlash(texturePath))
-    {}
+        TextureThumbnailBrowser(parent, false) // hide the toolbar
+    {
+        setTexturePath(texturePath);
+    }
+
+    void setTexturePath(const std::string& texturePath)
+    {
+        _texturePath = os::standardPathWithSlash(texturePath);
+        queueUpdate();
+    }
 
 protected:
     void populateTiles() override
