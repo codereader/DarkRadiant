@@ -8,7 +8,7 @@ inline Vector4 getControlPointVertexColour(std::size_t i, std::size_t width)
     static const Vector3& cornerColourVec = GlobalPatchModule().getSettings().getVertexColour(patch::PatchEditVertexType::Corners);
     static const Vector3& insideColourVec = GlobalPatchModule().getSettings().getVertexColour(patch::PatchEditVertexType::Inside);
 
-    return (i % 2 || (i / width) % 2) ? cornerColourVec : insideColourVec;
+    return (i % 2 || (i / width) % 2) ? insideColourVec : cornerColourVec;
 }
 
 }
