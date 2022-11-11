@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "camera/CamWnd.h"
+#include "ui/mainframe/MainFrame.h"
 
 #include "AuiManager.h"
 #include "PropertyNotebook.h"

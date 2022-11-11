@@ -58,7 +58,7 @@ void KeyValueTable::Append(const std::string& key, const std::string& value)
 	bold.SetBold(true);
 
     row[COLUMNS().key] = key;
-	row[COLUMNS().key] = bold;
+	row[COLUMNS().key].setAttr(bold);
     row[COLUMNS().value] = value;
 
 	row.SendItemAdded();

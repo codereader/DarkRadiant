@@ -187,7 +187,7 @@ public:
 		}
 
 		// get/set operators for dataview attributes
-		ItemValueProxy& operator=(const wxDataViewItemAttr& attr)
+		ItemValueProxy& setAttr(const wxDataViewItemAttr& attr)
 		{
 			_model.SetAttr(_item, _column.getColumnIndex(), attr);
 			return *this;

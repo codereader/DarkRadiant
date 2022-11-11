@@ -138,10 +138,10 @@ void EClassTree::addToListStore(const EntityClassAttribute& attr, bool inherited
 	colour.SetColour(inherited ? wxColor(127, 127, 127) : wxColor(0, 0, 0));
 
     row[_propertyColumns.name] = attr.getName();
-	row[_propertyColumns.name] = colour;
+	row[_propertyColumns.name].setAttr(colour);
 
     row[_propertyColumns.value] = attr.getValue();
-	row[_propertyColumns.value] = colour;
+	row[_propertyColumns.value].setAttr(colour);
 
     row[_propertyColumns.inherited] = inherited ? "1" : "0";
 

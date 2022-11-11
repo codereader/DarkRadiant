@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/aui/auibook.h>
+#include <list>
 
 #include "xmlutil/Node.h"
 #include "wxutil/menu/PopupMenu.h"
