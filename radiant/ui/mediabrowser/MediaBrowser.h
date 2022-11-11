@@ -9,6 +9,8 @@
 #include "wxutil/DockablePanel.h"
 #include "wxutil/event/SingleIdleCallback.h"
 
+namespace wxutil { class TransientPopupWindow; }
+
 class wxWindow;
 class wxTreeCtrl;
 class wxFrame;
@@ -20,7 +22,6 @@ namespace ui
 {
 
 class FocusMaterialRequest;
-
 class TexturePreviewCombo;
 
 /**
@@ -50,6 +51,8 @@ private:
     std::string _queuedSelection;
 
     std::size_t _focusMaterialHandler;
+
+    wxWeakRef<wxutil::TransientPopupWindow> _browserPopup;
 
 public:
 	MediaBrowser(wxWindow* parent);

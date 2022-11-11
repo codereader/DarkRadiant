@@ -10,6 +10,7 @@
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 
 #include <wx/sizer.h>
+#include <wx/app.h>
 #include <wx/popupwin.h>
 
 #include "util/ScopedBoolLock.h"
@@ -45,6 +46,8 @@ MediaBrowser::~MediaBrowser()
     {
         disconnectListeners();
     }
+
+    _browserPopup.Release();
     _treeView = nullptr;
 }
 
@@ -117,8 +120,23 @@ void MediaBrowser::onIdle()
 
         if (_treeView->IsDirectorySelected())
         {
+            /// Dismiss any previous popups
+            if (_browserPopup.get())
+            {
+                if (!wxTheApp->IsScheduledForDestruction(_browserPopup.get()))
+                {
+                    _browserPopup->Dismiss();
+                }
+
+                _browserPopup.Release();
+            }
+
             // When a directory is selected, open the popup
             auto popup = new wxutil::TransientPopupWindow(this);
+
+            // Remember this popup, if it's still around the next time we get here we need to destroy it
+            _browserPopup = popup;
+
             auto browser = new TextureDirectoryBrowser(popup, _treeView->GetSelectedTextureFolderName());
             popup->GetSizer()->Add(browser, 1, wxEXPAND | wxALL, 3);
 
