@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/popupwin.h>
+#include <wx/app.h>
 #include <wx/sizer.h>
 #include "MultiMonitor.h"
 
@@ -41,6 +42,21 @@ public:
         {
             Dismiss();
             return Event_Processed;
+        }
+        
+        if (ev.GetEventType() == wxEVT_LEFT_DOWN || ev.GetEventType() == wxEVT_RIGHT_DOWN ||
+            ev.GetEventType() == wxEVT_MIDDLE_DOWN || ev.GetEventType() == wxEVT_AUX1_DOWN ||
+            ev.GetEventType() == wxEVT_AUX2_DOWN)
+        {
+            auto& mouseEvent = static_cast<wxMouseEvent&>(ev);
+            auto position = this->ScreenToClient(mouseEvent.GetPosition());
+
+            // Close if the click is outside of the window, but prevent double deletions
+            if (this->HitTest(position.x, position.y) == wxHT_WINDOW_OUTSIDE &&
+                !wxTheApp->IsScheduledForDestruction(this))
+            {
+                Dismiss();
+            }
         }
 
         return Event_Skip;
