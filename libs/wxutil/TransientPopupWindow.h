@@ -10,19 +10,40 @@ namespace wxutil
  * A popup window that is destroying itself as soon as it loses focus
  */
 class TransientPopupWindow :
-    public wxPopupTransientWindow
+    public wxPopupTransientWindow,
+    public wxEventFilter
 {
 public:
     TransientPopupWindow(wxWindow* parent) :
         wxPopupTransientWindow(parent, wxBORDER_DEFAULT)
     {
         SetSizer(new wxBoxSizer(wxVERTICAL));
+
+        // Register as global filter to catch events
+        wxEvtHandler::AddFilter(this);
+    }
+
+    ~TransientPopupWindow() override
+    {
+        wxEvtHandler::RemoveFilter(this);
     }
 
     void Dismiss() override
     {
         wxPopupTransientWindow::Dismiss();
         Destroy();
+    }
+
+    int FilterEvent(wxEvent& ev) override
+    {
+        // Close the popup on any ESC keypress
+        if (ev.GetEventType() == wxEVT_KEY_DOWN && static_cast<wxKeyEvent&>(ev).GetKeyCode() == WXK_ESCAPE)
+        {
+            Dismiss();
+            return Event_Processed;
+        }
+
+        return Event_Skip;
     }
 
     // Attempts to position the popup to the right or left of the given window
