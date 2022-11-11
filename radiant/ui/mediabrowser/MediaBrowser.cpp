@@ -53,6 +53,8 @@ MediaBrowser::~MediaBrowser()
 
 void MediaBrowser::closePopup()
 {
+    _showThumbnailBrowserOnIdle = false;
+
     if (!_browserPopup.get()) return;
 
     if (!wxTheApp->IsScheduledForDestruction(_browserPopup.get()))
@@ -258,6 +260,8 @@ void MediaBrowser::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     if (!_treeView->IsDirectorySelected())
     {
         _preview->SetPreviewDeclName(getSelection());
+        // Close any pending popups
+        closePopup();
     }
     else
     {
