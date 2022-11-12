@@ -22,78 +22,49 @@ namespace wxutil
 
 namespace
 {
-	const char* const FUNC_STATIC_CLASS = "func_static";
+	constexpr const char* const FUNC_STATIC_CLASS = "func_static";
 }
 
-ModelPreview::ModelPreview(wxWindow* parent) :
+EntityPreview::EntityPreview(wxWindow* parent) :
     RenderPreview(parent, false),
 	_sceneIsReady(false),
-	_lastModel(""),
 	_defaultCamDistanceFactor(2.8f)
 {}
 
-const std::string& ModelPreview::getModel() const
-{
-	return _model;
-}
-
-const std::string& ModelPreview::getSkin() const
-{
-	return _skin;
-}
-
-void ModelPreview::setModel(const std::string& model)
-{
-	// Remember the name and mark the scene as "not ready"
-	_model = model;
-	_sceneIsReady = false;
-
-	if (!_model.empty())
-	{
-		// Reset time if the model has changed
-		if (_model != _lastModel)
-		{
-			// Reset preview time
-			stopPlayback();
-		}
-
-		// Redraw
-		queueDraw(); 
-	}
-	else
-	{
-		stopPlayback();
-	}
-}
-
-void ModelPreview::setSkin(const std::string& skin) {
-
-	_skin = skin;
-	_sceneIsReady = false;
-
-	// Redraw
-	queueDraw();
-}
-
-void ModelPreview::setDefaultCamDistanceFactor(float factor)
+void EntityPreview::setDefaultCamDistanceFactor(float factor)
 {
 	_defaultCamDistanceFactor = factor;
 }
 
-void ModelPreview::setupSceneGraph()
+const IEntityNodePtr& EntityPreview::getEntity()
+{
+    return _entity;
+}
+
+void EntityPreview::setEntity(const IEntityNodePtr& entity)
+{
+    if (_entity == entity) return;
+
+    if (_entity)
+    {
+        _rootNode->removeChildNode(_entity);
+    }
+
+    _entity = entity;
+
+    if (_entity)
+    {
+        _rootNode->addChildNode(_entity);
+    }
+}
+
+void EntityPreview::setupSceneGraph()
 {
 	RenderPreview::setupSceneGraph();
 
     try
     {
         _rootNode = std::make_shared<scene::BasicRootNode>();
-
-        _entity = GlobalEntityModule().createEntity(
-            GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
-
-        _rootNode->addChildNode(_entity);
-
-        _entity->enable(scene::Node::eHidden);
 
         // This entity is acting as our root node in the scene
         getScene()->setRoot(_rootNode);
@@ -114,98 +85,28 @@ void ModelPreview::setupSceneGraph()
     }
 }
 
-AABB ModelPreview::getSceneBounds()
+AABB EntityPreview::getSceneBounds()
 {
-	if (!_modelNode)
+	if (!_entity)
 	{
 		return RenderPreview::getSceneBounds();
 	}
 
-	return _modelNode->localAABB();
+	return _entity->localAABB();
 }
 
-void ModelPreview::prepareScene()
+void EntityPreview::prepareScene()
 {
 	// Clear the flag
 	_sceneIsReady = true;
-
-	// If the model name is empty, release the model
-	if (_model.empty())
-	{
-		if (_modelNode)
-		{
-			_entity->removeChildNode(_modelNode);
-		}
-
-		_modelNode.reset();
-
-		// Emit the signal carrying an empty pointer
-		_modelLoadedSignal.emit(model::ModelNodePtr());
-		return;
-	}
-
-	// Set up the scene
-	if (!_entity)
-	{
-		getScene(); // trigger a setupscenegraph call
-	}
-
-	if (_modelNode)
-	{
-		_entity->removeChildNode(_modelNode);
-	}
-
-    // Check if the model key is pointing to a def
-    auto modelDef = GlobalEntityClassManager().findModel(_model);
-
-	_modelNode = GlobalModelCache().getModelNode(modelDef ? modelDef->getMesh() : _model);
-
-    if (_modelNode)
-	{
-        // Workaround until #5408 is implemented: remove all remnants from the entity
-        scene::NodeRemover remover;
-        _entity->traverseChildren(remover);
-
-		_entity->addChildNode(_modelNode);
-
-		// Apply the skin
-		model::ModelNodePtr model = Node_getModel(_modelNode);
-
-		if (model)
-		{
-			auto skin = GlobalModelSkinCache().findSkin(_skin);
-			model->getIModel().applySkin(skin);
-		}
-
-        // Apply the idle pose if possible
-        if (modelDef)
-        {
-            scene::applyIdlePose(_modelNode, modelDef);
-        }
-
-		// Trigger an initial update of the subgraph
-		GlobalFilterSystem().updateSubgraph(getScene()->root());
-
-		if (_lastModel != _model)
-		{
-			// Reset the model rotation
-			resetModelRotation();
-
-			// Reset the default view, facing down to the model from diagonally above the bounding box
-			double distance = _modelNode->localAABB().getRadius() * _defaultCamDistanceFactor;
-
-			setViewOrigin(Vector3(1, 1, 1) * distance);
-			setViewAngles(Vector3(34, 135, 0));
-		}
-
-		_lastModel = _model;
-
-		// Done loading, emit the signal
-		_modelLoadedSignal.emit(model);
-	}
 }
 
-bool ModelPreview::onPreRender()
+void EntityPreview::queueSceneUpdate()
+{
+    _sceneIsReady = false;
+}
+
+bool EntityPreview::onPreRender()
 {
 	if (!_sceneIsReady)
 	{
@@ -231,10 +132,10 @@ bool ModelPreview::onPreRender()
         Node_getEntity(_light)->setKeyValue("_color", "0.6 0.6 0.6");
     }
 
-	return _modelNode != nullptr;
+	return _entity != nullptr;
 }
 
-void ModelPreview::onModelRotationChanged()
+void EntityPreview::onModelRotationChanged()
 {
     if (_entity)
     {
@@ -254,14 +155,154 @@ void ModelPreview::onModelRotationChanged()
     }
 }
 
-RenderStateFlags ModelPreview::getRenderFlagsFill()
+RenderStateFlags EntityPreview::getRenderFlagsFill()
 {
 	return RenderPreview::getRenderFlagsFill() | RENDER_DEPTHWRITE | RENDER_DEPTHTEST;
 }
 
+ModelPreview::ModelPreview(wxWindow* parent) :
+    EntityPreview(parent)
+{}
+
+const std::string& ModelPreview::getModel() const
+{
+    return _model;
+}
+
+const std::string& ModelPreview::getSkin() const
+{
+    return _skin;
+}
+
+void ModelPreview::setModel(const std::string& model)
+{
+    // Remember the name and mark the scene as "not ready"
+    _model = model;
+    queueSceneUpdate();
+
+    if (!_model.empty())
+    {
+        // Reset time if the model has changed
+        if (_model != _lastModel)
+        {
+            // Reset preview time
+            stopPlayback();
+        }
+
+        // Redraw
+        queueDraw();
+    }
+    else
+    {
+        stopPlayback();
+    }
+}
+
+void ModelPreview::setSkin(const std::string& skin) {
+
+    _skin = skin;
+    queueSceneUpdate();
+
+    // Redraw
+    queueDraw();
+}
+
+void ModelPreview::setupSceneGraph()
+{
+    EntityPreview::setupSceneGraph();
+
+    // Add a hidden func_static as preview entity
+    auto entity = GlobalEntityModule().createEntity(
+        GlobalEntityClassManager().findClass(FUNC_STATIC_CLASS));
+
+    setEntity(entity);
+
+    entity->enable(scene::Node::eHidden);
+}
+
+void ModelPreview::prepareScene()
+{
+    EntityPreview::prepareScene();
+
+    // If the model name is empty, release the model
+    if (_model.empty())
+    {
+        if (_modelNode)
+        {
+            getEntity()->removeChildNode(_modelNode);
+        }
+
+        _modelNode.reset();
+
+        // Emit the signal carrying an empty pointer
+        _modelLoadedSignal.emit(model::ModelNodePtr());
+        return;
+    }
+
+    if (_modelNode)
+    {
+        getEntity()->removeChildNode(_modelNode);
+    }
+
+    // Check if the model key is pointing to a def
+    auto modelDef = GlobalEntityClassManager().findModel(_model);
+
+    _modelNode = GlobalModelCache().getModelNode(modelDef ? modelDef->getMesh() : _model);
+
+    if (_modelNode)
+    {
+        getEntity()->addChildNode(_modelNode);
+
+        // Apply the skin
+        model::ModelNodePtr model = Node_getModel(_modelNode);
+
+        if (model)
+        {
+            auto skin = GlobalModelSkinCache().findSkin(_skin);
+            model->getIModel().applySkin(skin);
+        }
+
+        // Apply the idle pose if possible
+        if (modelDef)
+        {
+            scene::applyIdlePose(_modelNode, modelDef);
+        }
+
+        // Trigger an initial update of the subgraph
+        GlobalFilterSystem().updateSubgraph(getScene()->root());
+
+        if (_lastModel != _model)
+        {
+            // Reset the model rotation
+            resetModelRotation();
+
+            // Reset the default view, facing down to the model from diagonally above the bounding box
+            double distance = getSceneBounds().getRadius() * _defaultCamDistanceFactor;
+
+            setViewOrigin(Vector3(1, 1, 1) * distance);
+            setViewAngles(Vector3(34, 135, 0));
+        }
+
+        _lastModel = _model;
+
+        // Done loading, emit the signal
+        _modelLoadedSignal.emit(model);
+    }
+}
+
+AABB ModelPreview::getSceneBounds()
+{
+    if (!_modelNode)
+    {
+        return EntityPreview::getSceneBounds();
+    }
+
+    return _modelNode->localAABB();
+}
+
 sigc::signal<void, const model::ModelNodePtr&>& ModelPreview::signal_ModelLoaded()
 {
-	return _modelLoadedSignal;
+    return _modelLoadedSignal;
 }
 
 } // namespace ui

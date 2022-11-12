@@ -17,7 +17,7 @@ private:
 	wxTextCtrl* _description;
 
 	// The model preview
-    wxutil::ModelPreviewPtr _preview;
+    std::unique_ptr<wxutil::ModelPreview> _preview;
 
 	// The name of the currently selected head
 	std::string _selectedHead;

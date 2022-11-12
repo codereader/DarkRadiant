@@ -62,7 +62,7 @@ private:
 	wxPanel* _dialogPanel;
 
 	// Model preview widget
-    wxutil::ModelPreviewPtr _modelPreview;
+    std::unique_ptr<wxutil::ModelPreview> _modelPreview;
 
     // Main tree view with model hierarchy
 	ModelTreeView* _treeView;

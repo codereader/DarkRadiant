@@ -492,6 +492,9 @@ bool RenderPreview::drawPreview()
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    // Make sure the scene is ready
+    getScene();
+
 	// Pre-Render event
 	if (!onPreRender())
 	{

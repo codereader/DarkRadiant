@@ -72,7 +72,7 @@ AIHeadChooserDialog::AIHeadChooserDialog() :
 
 	// Set the default rotation to something better suitable for the head models
 	_preview.reset(new wxutil::ModelPreview(previewPanel));
-	_preview->setDefaultCamDistanceFactor(9.0f);
+	_preview->setDefaultCamDistanceFactor(5.0f);
 
 	_description = new wxTextCtrl(previewPanel, wxID_ANY, "", 
 		wxDefaultPosition, wxDefaultSize, wxTE_LEFT | wxTE_MULTILINE | wxTE_READONLY | wxTE_WORDWRAP);
