@@ -1,10 +1,8 @@
 #pragma once
 
-#include "RenderPreview.h"
+#include "EntityPreview.h"
 
 #include "imodel.h"
-#include "ientity.h"
-#include "imap.h"
 
 #include <sigc++/signal.h>
 #include <string>
@@ -12,56 +10,12 @@
 namespace wxutil
 {
 
-class EntityPreview
-: public RenderPreview
-{
-private:
-	// TRUE when the scene, model and skin have been set up
-	// is set back to FALSE if the model or skin config is changed
-	bool _sceneIsReady;
-
-	scene::IMapRootNodePtr _rootNode;
-
-    // The previewed entity
-    IEntityNodePtr _entity;
-
-    // The light
-    scene::INodePtr _light;
-
-protected:
-	float _defaultCamDistanceFactor;
-
-private:
-    bool onPreRender() override;
-    RenderStateFlags getRenderFlagsFill() override;
-
-protected:
-    void setupSceneGraph() override;
-    AABB getSceneBounds() override;
-
-	virtual void prepareScene();
-
-    void queueSceneUpdate();
-
-    void onModelRotationChanged() override;
-
-public:
-    EntityPreview(wxWindow* parent);
-
-	// Multiply the model node's AABB radius by this factor to get the default camera distance
-	// defaults to 6.
-	void setDefaultCamDistanceFactor(float factor);
-
-    const IEntityNodePtr& getEntity();
-    void setEntity(const IEntityNodePtr& entity);
-};
-
 /**
 * \brief
 * Preview widget for models and skins.
 *
-* Subclass of RenderPreview which holds a model and displays it optionally with
-* a skin.
+* Subclass of EntityPreview (showing a hidden func_static entity)
+* which holds a model and displays it optionally with a skin.
 */
 class ModelPreview :
     public EntityPreview

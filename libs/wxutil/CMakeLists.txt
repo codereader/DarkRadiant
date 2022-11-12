@@ -27,6 +27,7 @@ add_library(wxutil
             MouseToolHandler.cpp
             PanedPosition.cpp
             PathEntry.cpp
+            preview/EntityPreview.cpp
             preview/GuiRenderer.cpp
             preview/GuiView.cpp
             preview/ModelPreview.cpp

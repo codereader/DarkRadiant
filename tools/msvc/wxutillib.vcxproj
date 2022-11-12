@@ -190,6 +190,7 @@
     <ClInclude Include="..\..\libs\wxutil\PanedPosition.h" />
     <ClInclude Include="..\..\libs\wxutil\PathEntry.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\EntityClassPreview.h" />
+    <ClInclude Include="..\..\libs\wxutil\preview\EntityPreview.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\GuiRenderer.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\GuiView.h" />
     <ClInclude Include="..\..\libs\wxutil\preview\ModelPreview.h" />
@@ -237,6 +238,7 @@
     <ClCompile Include="..\..\libs\wxutil\MouseToolHandler.cpp" />
     <ClCompile Include="..\..\libs\wxutil\PanedPosition.cpp" />
     <ClCompile Include="..\..\libs\wxutil\PathEntry.cpp" />
+    <ClCompile Include="..\..\libs\wxutil\preview\EntityPreview.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\GuiRenderer.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\GuiView.cpp" />
     <ClCompile Include="..\..\libs\wxutil\preview\ModelPreview.cpp" />

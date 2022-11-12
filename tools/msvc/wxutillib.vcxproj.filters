@@ -187,6 +187,9 @@
     </ClInclude>
     <ClInclude Include="..\..\libs\wxutil\DockablePanel.h" />
     <ClInclude Include="..\..\libs\wxutil\TransientPopupWindow.h" />
+    <ClInclude Include="..\..\libs\wxutil\preview\EntityPreview.h">
+      <Filter>preview</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\libs\wxutil\dialog\MessageBox.cpp">
@@ -280,6 +283,9 @@
     <ClCompile Include="..\..\libs\wxutil\WindowState.cpp" />
     <ClCompile Include="..\..\libs\wxutil\decl\DeclarationSelectorDialog.cpp">
       <Filter>decl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\libs\wxutil\preview\EntityPreview.cpp">
+      <Filter>preview</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
