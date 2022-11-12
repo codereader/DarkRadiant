@@ -75,6 +75,4 @@ private:
 
     void subscribeToModelDef(const IModelDef::Ptr& modelDef);
     void unsubscribeFromModelDef();
-
-    void applyIdlePose(const scene::INodePtr& node, const IModelDef::Ptr& ptr);
 };

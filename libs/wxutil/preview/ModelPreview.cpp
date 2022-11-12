@@ -177,6 +177,12 @@ void ModelPreview::prepareScene()
 			model->getIModel().applySkin(skin);
 		}
 
+        // Apply the idle pose if possible
+        if (modelDef)
+        {
+            scene::applyIdlePose(_modelNode, modelDef);
+        }
+
 		// Trigger an initial update of the subgraph
 		GlobalFilterSystem().updateSubgraph(getScene()->root());
 

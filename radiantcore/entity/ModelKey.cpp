@@ -1,9 +1,9 @@
 #include "ModelKey.h"
 
 #include <functional>
+
+#include "entitylib.h"
 #include "imodelcache.h"
-#include "imd5model.h"
-#include "ifilter.h"
 #include "modelskin.h"
 #include "string/replace.h"
 #include "scenelib.h"
@@ -102,7 +102,7 @@ void ModelKey::attachModelNode()
     // Assign idle pose to modelDef meshes
     if (modelDef)
     {
-        applyIdlePose(_model.node, modelDef);
+        scene::applyIdlePose(_model.node, modelDef);
     }
 
     // Mark the transform of this model as changed, it must re-evaluate itself
@@ -201,26 +201,4 @@ void ModelKey::unsubscribeFromModelDef()
 {
     _modelDefChanged.disconnect();
     _model.modelDefMonitored = false;
-}
-
-void ModelKey::applyIdlePose(const scene::INodePtr& node, const IModelDef::Ptr& modelDef)
-{
-    auto modelNode = Node_getModel(node);
-
-    if (!modelNode) return;
-
-    // Set the animation to play
-    auto md5model = dynamic_cast<md5::IMD5Model*>(&(modelNode->getIModel()));
-
-    // Look up the "idle" anim if there is one
-    auto found = modelDef->getAnim("idle");
-
-    if (found.empty()) return;
-
-    // Load the anim
-    if (auto anim = GlobalAnimationCache().getAnim(found))
-    {
-        md5model->setAnim(anim);
-        md5model->updateAnim(0);
-    }
 }

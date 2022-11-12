@@ -5,12 +5,12 @@
 #include "iselection.h"
 #include "iselectiontest.h"
 
-#include "generic/callback.h"
 #include "math/AABB.h"
 #include "scenelib.h"
 
-#include <list>
-#include <set>
+#include "imd5anim.h"
+#include "imd5model.h"
+#include "imodel.h"
 
 class SelectionIntersection;
 
@@ -230,6 +230,31 @@ public:
 
 namespace scene
 {
+
+/**
+ * Apply the idle anim to the given scene node using the given modelDef
+ */
+inline void applyIdlePose(const INodePtr& node, const IModelDef::Ptr& modelDef)
+{
+    auto modelNode = Node_getModel(node);
+
+    if (!modelNode) return;
+
+    // Set the animation to play
+    auto md5model = dynamic_cast<md5::IMD5Model*>(&(modelNode->getIModel()));
+
+    // Look up the "idle" anim if there is one
+    auto found = modelDef->getAnim("idle");
+
+    if (found.empty()) return;
+
+    // Load the anim
+    if (auto anim = GlobalAnimationCache().getAnim(found))
+    {
+        md5model->setAnim(anim);
+        md5model->updateAnim(0);
+    }
+}
 
 inline void foreachSelectedEntity(const std::function<void(Entity&)>& functor)
 {
