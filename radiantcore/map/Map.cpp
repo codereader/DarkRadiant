@@ -1014,7 +1014,7 @@ void Map::registerCommands()
     GlobalCommandSystem().addCommand("ExportMap", std::bind(&Map::exportMap, this, std::placeholders::_1));
     GlobalCommandSystem().addCommand("SaveSelected", Map::exportSelection);
     GlobalCommandSystem().addCommand("FocusViews", std::bind(&Map::focusViewCmd, this, std::placeholders::_1), { cmd::ARGTYPE_VECTOR3, cmd::ARGTYPE_VECTOR3 });
-    GlobalCommandSystem().addCommand("FocusCameraOnSelection", std::bind(&Map::focusCameraOnSelectionCmd, this, std::placeholders::_1));
+    GlobalCommandSystem().addCommand("FocusCameraViewOnSelection", std::bind(&Map::focusCameraOnSelectionCmd, this, std::placeholders::_1));
     // ExportSelectedAsModel <Path> <ExportFormat> [<ExportOrigin>] [<OriginEntityName>] [<CustomOrigin>] [<SkipCaulk>] [<ReplaceSelectionWithModel>] [<ExportLightsAsObjects>]
 	GlobalCommandSystem().addCommand("ExportSelectedAsModel", algorithm::exportSelectedAsModelCmd,
         { cmd::ARGTYPE_STRING, // path

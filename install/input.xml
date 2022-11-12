@@ -231,5 +231,8 @@
         <commandRemapping oldname="TextureTool" newname="ToggleTextureTool" />
         <commandRemapping oldname="GameConnectionDialogToggle" newname="ToggleGameConnectionPanel" />
         <commandRemapping oldname="ViewTextures" newname="ToggleTextureBrowser" />
+        <!-- DR 3.6.0: Re-bind the old FocusCameraOnSelection shortcut to ToggleSelectionFocus  -->
+        <!-- FocusCameraOnSelection is now called FocusCameraViewOnSelection -->
+        <commandRemapping oldname="FocusCameraOnSelection" newname="ToggleSelectionFocus" />
 	</commandRemappings>
 </input>
