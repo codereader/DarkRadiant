@@ -25,6 +25,8 @@ private:
     // The previewed entity
     IEntityNodePtr _entity;
 
+    AABB _untransformedEntityBounds;
+
     // The light
     scene::INodePtr _light;
 

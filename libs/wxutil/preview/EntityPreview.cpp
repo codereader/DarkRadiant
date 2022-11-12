@@ -2,6 +2,7 @@
 
 #include "i18n.h"
 #include "ieclass.h"
+#include "ifilter.h"
 #include "scene/BasicRootNode.h"
 
 #include "../dialog/MessageBox.h"
@@ -40,7 +41,16 @@ void EntityPreview::setEntity(const IEntityNodePtr& entity)
     if (_entity)
     {
         _rootNode->addChildNode(_entity);
+
+        // Remember the entity bounds including children
+        _untransformedEntityBounds = _entity->worldAABB();
     }
+    else
+    {
+        _untransformedEntityBounds = AABB({ 0,0,0 }, { 64,64,64 });
+    }
+
+    queueSceneUpdate();
 }
 
 void EntityPreview::setupSceneGraph()
@@ -71,23 +81,36 @@ void EntityPreview::setupSceneGraph()
 
 AABB EntityPreview::getSceneBounds()
 {
-    if (!_entity)
-    {
-        return RenderPreview::getSceneBounds();
-    }
-
-    return _entity->localAABB();
+    return _untransformedEntityBounds;
 }
 
 void EntityPreview::prepareScene()
 {
+    if (_sceneIsReady) return;
+
     // Clear the flag
     _sceneIsReady = true;
+
+    // Reset the model rotation
+    resetModelRotation();
+
+    if (_entity)
+    {
+        // Reset the default view, facing down to the model from diagonally above the bounding box
+        double distance = _entity->worldAABB().getRadius() * _defaultCamDistanceFactor;
+
+        setViewOrigin(Vector3(1, 1, 1) * distance);
+        setViewAngles(Vector3(34, 135, 0));
+    }
+
+    // Trigger an initial update of the subgraph
+    GlobalFilterSystem().updateSubgraph(getScene()->root());
 }
 
 void EntityPreview::queueSceneUpdate()
 {
     _sceneIsReady = false;
+    queueDraw();
 }
 
 bool EntityPreview::onPreRender()

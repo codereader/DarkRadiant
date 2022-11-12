@@ -140,9 +140,6 @@ void ModelPreview::prepareScene()
             scene::applyIdlePose(_modelNode, modelDef);
         }
 
-        // Trigger an initial update of the subgraph
-        GlobalFilterSystem().updateSubgraph(getScene()->root());
-
         if (_lastModel != _model)
         {
             // Reset the model rotation

@@ -3,17 +3,18 @@
 #include "ieclass.h"
 #include "ui/ideclpreview.h"
 #include "ModelPreview.h"
+#include "../dialog/MessageBox.h"
 
 namespace wxutil
 {
 
 class EntityClassPreview :
-    public ModelPreview,
+    public EntityPreview,
     public ui::IDeclarationPreview
 {
 public:
     EntityClassPreview(wxWindow* parent) :
-        ModelPreview(parent)
+        EntityPreview(parent)
     {}
 
     // Returns the widget that can be packed into the selector container
@@ -24,8 +25,7 @@ public:
 
     void ClearPreview() override
     {
-        setModel({});
-        setSkin({});
+        setEntity({});
     }
 
     void SetPreviewDeclName(const std::string& declName) override
@@ -38,8 +38,18 @@ public:
             return;
         }
 
-        setModel(eclass->getAttributeValue("model"));
-        setSkin(eclass->getAttributeValue("skin"));
+        try
+        {
+            // Create an entity of the selected type
+            auto entity = GlobalEntityModule().createEntity(eclass);
+            setEntity(entity);
+        }
+        catch (const std::runtime_error&)
+        {
+            Messagebox::ShowError(fmt::format(
+                _("Unable to setup the preview,\ncould not find the entity class '{0}'"),
+                declName));
+        }
     }
 };
 
