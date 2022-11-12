@@ -33,14 +33,15 @@ void EntityPreview::setEntity(const IEntityNodePtr& entity)
 
     if (_entity)
     {
-        _rootNode->removeChildNode(_entity);
+        // Use getScene to access the root node to ensure it's created
+        getScene()->root()->removeChildNode(_entity);
     }
 
     _entity = entity;
 
     if (_entity)
     {
-        _rootNode->addChildNode(_entity);
+        getScene()->root()->addChildNode(_entity);
 
         // Remember the entity bounds including children
         _untransformedEntityBounds = _entity->worldAABB();
