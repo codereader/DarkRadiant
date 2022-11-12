@@ -19,6 +19,8 @@ class RadiantInterface :
 public:
 	// Returns the first entity matching the given classname
 	ScriptEntityNode findEntityByClassname(const std::string& name);
+    // Find the entity with the given name
+	ScriptEntityNode findEntityByName(const std::string& name);
 
 	// IScriptInterface implementation
 	void registerInterface(py::module& scope, py::dict& globals) override;

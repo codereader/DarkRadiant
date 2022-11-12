@@ -9,6 +9,10 @@ worldspawn = Radiant.findEntityByClassname("worldspawn")
 worldspawn.setKeyValue('test', 'success')
 print('Worldspawn edited')
 
+worldspawn = Radiant.findEntityByName("world")
+worldspawn.setKeyValue('test', 'another success')
+print('Worldspawn edited')
+
 # Test the DeclarationManager interface
 class TestDeclarationVisitor(dr.DeclarationVisitor) :
     def visit(self, decl):
