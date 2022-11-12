@@ -358,6 +358,12 @@ void BuiltInShader::construct()
     }
 }
 
+bool BuiltInShader::supportsVertexColours() const
+{
+    // Disable vertex colours for the inactive wireframe shader
+    return _type != BuiltInShaderType::WireframeInactive;
+}
+
 void BuiltInShader::constructOrthoMergeActionOverlay(OpenGLState& pass, const Colour4& colour,
     OpenGLState::SortPosition sortPosition)
 {

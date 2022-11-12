@@ -533,3 +533,10 @@ void PatchNode::onVisibilityChanged(bool visible)
         updateAllRenderables();
     }
 }
+
+void PatchNode::onRenderStateChanged()
+{
+    SelectableNode::onRenderStateChanged();
+
+    _renderableSurfaceWireframe.queueUpdate();
+}

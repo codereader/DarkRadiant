@@ -98,13 +98,21 @@ void OpenGLShader::drawSurfaces(const VolumeTest& view)
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
     glEnableClientState(GL_NORMAL_ARRAY);
-    glEnableClientState(GL_COLOR_ARRAY);
-    
+
     // Always using CW culling by default
     glFrontFace(GL_CW);
 
     if (hasSurfaces())
     {
+        if (supportsVertexColours())
+        {
+            glEnableClientState(GL_COLOR_ARRAY);
+        }
+        else
+        {
+            glDisableClientState(GL_COLOR_ARRAY);
+        }
+
         _geometryRenderer.renderAllVisibleGeometry();
 
         // Surfaces are not allowed to render vertex colours (for now)

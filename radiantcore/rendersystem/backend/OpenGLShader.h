@@ -168,6 +168,12 @@ protected:
     // Test if we can render using lighting mode
     bool canUseLightingMode() const;
 
+    // Whether any surfaces or geometries should submit colours
+    virtual bool supportsVertexColours() const
+    {
+        return true;
+    }
+
     // Add a shader pass to the end of the list, and return its state object
     OpenGLState& appendDefaultPass();
 
