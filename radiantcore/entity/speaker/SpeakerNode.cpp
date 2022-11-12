@@ -481,6 +481,8 @@ void SpeakerNode::clearRenderables()
 
 void SpeakerNode::onRenderStateChanged()
 {
+    EntityNode::onRenderStateChanged();
+
     clearRenderables();
     updateRenderables();
 }

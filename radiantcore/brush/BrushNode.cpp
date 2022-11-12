@@ -660,6 +660,8 @@ void BrushNode::onSelectionStatusChange(bool changeGroupStatus)
 
 void BrushNode::onRenderStateChanged()
 {
+    SelectableNode::onRenderStateChanged();
+
     _facesNeedRenderableUpdate = true;
 
     forEachFaceInstance([](FaceInstance& face)

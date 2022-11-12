@@ -95,6 +95,8 @@ public:
 protected:
     void onRenderStateChanged() override
     {
+        Node::onRenderStateChanged();
+
         changedMethodCalled = true;
     }
 };

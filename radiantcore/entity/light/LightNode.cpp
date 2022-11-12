@@ -1253,6 +1253,8 @@ void LightNode::onColourKeyChanged(const std::string& value)
 
 void LightNode::onRenderStateChanged()
 {
+    EntityNode::onRenderStateChanged();
+
     clearRenderables();
     updateRenderables();
 }

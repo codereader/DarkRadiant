@@ -162,6 +162,8 @@ void ModelNodeBase::setRenderSystem(const RenderSystemPtr& renderSystem)
 
 void ModelNodeBase::onRenderStateChanged()
 {
+    Node::onRenderStateChanged();
+
     detachFromShaders();
 }
 
