@@ -88,6 +88,13 @@ void TargetLineNode::onVisibilityChanged(bool visible)
     }
 }
 
+void TargetLineNode::onRenderStateChanged()
+{
+    Node::onRenderStateChanged();
+
+    _targetLines.queueUpdate();
+}
+
 std::size_t TargetLineNode::getHighlightFlags()
 {
     // We don't need to return highlighting, since the render system will use

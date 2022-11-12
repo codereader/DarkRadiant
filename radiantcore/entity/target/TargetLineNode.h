@@ -49,6 +49,7 @@ public:
 
 protected:
     void onVisibilityChanged(bool isVisibleNow) override;
+    void onRenderStateChanged() override;
 
 private:
     Vector3 getOwnerPosition() const;
