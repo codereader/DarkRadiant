@@ -8,6 +8,8 @@
 #include "DeclarationTreeView.h"
 #include "ThreadedResourceTreePopulator.h"
 #include "TreeViewItemStyle.h"
+#include "VFSTreePopulator.h"
+#include "os/path.h"
 
 namespace wxutil
 {
@@ -23,6 +25,7 @@ private:
     static constexpr const char* const DEFAULT_DECL_ICON = "decl.png";
     static constexpr const char* const DEFAULT_FOLDER_ICON = "folder16.png";
 
+    decl::Type _type;
     const DeclarationTreeView::Columns& _columns;
 
     std::set<std::string> _favourites;
@@ -43,6 +46,7 @@ public:
     ThreadedDeclarationTreePopulator(decl::Type type, const DeclarationTreeView::Columns& columns, 
         const std::string& declIcon, const std::string& folderIcon) :
         ThreadedResourceTreePopulator(columns),
+        _type(type),
         _columns(columns),
         _declIcon(GetLocalBitmap(declIcon)),
         _folderIcon(GetLocalBitmap(folderIcon))
@@ -54,6 +58,30 @@ public:
     ~ThreadedDeclarationTreePopulator() override
     {
         EnsureStopped();
+    }
+
+    // Default implementation creates a plain tree using the mod name as first path element
+    // Subclasses should override the default implementation (without calling the base) if not suitable
+    void PopulateModel(const TreeModel::Ptr& model) override
+    {
+        VFSTreePopulator populator(model);
+
+        GlobalDeclarationManager().foreachDeclaration(_type, [&](const decl::IDeclaration::Ptr& decl)
+        {
+            ThrowIfCancellationRequested();
+
+            // Some names contain backslashes, sort them in the tree by replacing the backslashes
+            auto nameForwardSlashes = os::standardPath(decl->getDeclName());
+
+            auto fullPath = decl->getModName() + "/" + nameForwardSlashes;
+
+            // Sort the shader into the tree and set the values
+            populator.addPath(fullPath, [&](TreeModel::Row& row,
+                const std::string& path, const std::string& leafName, bool isFolder)
+            {
+                AssignValuesToRow(row, path, isFolder ? path : decl->getDeclName(), leafName, isFolder);
+            });
+        });
     }
 
 protected:

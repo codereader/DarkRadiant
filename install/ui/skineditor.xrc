@@ -27,7 +27,7 @@
 								<object class="wxBoxSizer">
 									<orient>wxHORIZONTAL</orient>
 									<object class="sizeritem">
-										<option>1</option>
+										<option>2</option>
 										<flag>wxEXPAND</flag>
 										<border>0</border>
 										<object class="wxBoxSizer">
@@ -64,7 +64,7 @@
 										</object>
 									</object>
 									<object class="sizeritem">
-										<option>1</option>
+										<option>3</option>
 										<flag>wxEXPAND|wxLEFT</flag>
 										<border>12</border>
 										<object class="wxBoxSizer">

@@ -184,7 +184,7 @@
                                             <object class="sizeritem" expanded="1">
                                                 <property name="border">0</property>
                                                 <property name="flag">wxEXPAND</property>
-                                                <property name="proportion">1</property>
+                                                <property name="proportion">2</property>
                                                 <object class="wxBoxSizer" expanded="1">
                                                     <property name="minimum_size"></property>
                                                     <property name="name">bSizer2</property>
@@ -255,7 +255,7 @@
                                                         <property name="border">12</property>
                                                         <property name="flag">wxEXPAND|wxLEFT</property>
                                                         <property name="proportion">1</property>
-                                                        <object class="wxBoxSizer" expanded="0">
+                                                        <object class="wxBoxSizer" expanded="1">
                                                             <property name="minimum_size"></property>
                                                             <property name="name">bSizer5</property>
                                                             <property name="orient">wxHORIZONTAL</property>
@@ -330,7 +330,7 @@
                                             <object class="sizeritem" expanded="1">
                                                 <property name="border">12</property>
                                                 <property name="flag">wxEXPAND|wxLEFT</property>
-                                                <property name="proportion">1</property>
+                                                <property name="proportion">3</property>
                                                 <object class="wxBoxSizer" expanded="1">
                                                     <property name="minimum_size"></property>
                                                     <property name="name">bSizer21</property>
@@ -401,7 +401,7 @@
                                                         <property name="border">12</property>
                                                         <property name="flag">wxEXPAND|wxLEFT</property>
                                                         <property name="proportion">1</property>
-                                                        <object class="wxBoxSizer" expanded="0">
+                                                        <object class="wxBoxSizer" expanded="1">
                                                             <property name="minimum_size"></property>
                                                             <property name="name">bSizer51</property>
                                                             <property name="orient">wxHORIZONTAL</property>

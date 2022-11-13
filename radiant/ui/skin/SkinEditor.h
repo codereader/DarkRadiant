@@ -5,6 +5,7 @@
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
 #include "wxutil/XmlResourceBasedWidget.h"
+#include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/dialog/DialogBase.h"
 
 namespace ui
@@ -19,12 +20,15 @@ class SkinEditor final :
 private:
     ModelTreeView* _modelTreeView;
 
+    wxutil::DeclarationTreeView::Columns _columns;
+    wxutil::DeclarationTreeView* _skinTreeView;
+
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _panedPosition;
 
 private:
     SkinEditor();
-    ~SkinEditor();
+    ~SkinEditor() override;
 
 public:
     int ShowModal() override;
@@ -33,6 +37,7 @@ public:
 
 private:
     void setupModelTreeView();
+    void setupSkinTreeView();
 
     template<typename ObjectClass>
     ObjectClass* getControl(const std::string& name)
