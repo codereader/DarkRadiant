@@ -6,7 +6,6 @@
 
 #include "i18n.h"
 #include "ientity.h"
-#include "iselection.h"
 #include "scenelib.h"
 #include "wxutil/dialog/MessageBox.h"
 
@@ -67,11 +66,11 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
 
     UndoableCommand cmd("setModelProperty");
 
-    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    _entities.foreachEntity([&](const IEntityNodePtr& node)
     {
-        Entity* entity = Node_getEntity(node);
-        std::string prevModel = entity->getKeyValue(_key->getFullKey());
-        std::string name = entity->getKeyValue("name");
+        auto& entity = node->getEntity();
+        std::string prevModel = entity.getKeyValue(_key->getFullKey());
+        std::string name = entity.getKeyValue("name");
 
         bool wasBrushBasedModel = prevModel == name;
 
@@ -92,7 +91,7 @@ void ModelPropertyEditor::_onModelButton(wxCommandEvent& ev)
             }
 
             // Save the model key now
-            entity->setKeyValue(_key->getFullKey(), result.name);
+            entity.setKeyValue(_key->getFullKey(), result.name);
         }
     });
 }
