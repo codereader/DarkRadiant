@@ -25,6 +25,9 @@ SkinEditor::SkinEditor() :
 {
     loadNamedPanel(this, "SkinEditorMainPanel");
 
+    makeLabelBold(this, "SkinEditorSkinDefinitionsLabel");
+    makeLabelBold(this, "SkinEditorEditSkinDefinitionLabel");
+
     setupModelTreeView();
     setupSkinTreeView();
 

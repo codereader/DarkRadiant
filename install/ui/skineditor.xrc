@@ -22,51 +22,14 @@
 							<orient>wxVERTICAL</orient>
 							<object class="sizeritem">
 								<option>1</option>
-								<flag>wxEXPAND</flag>
-								<border>5</border>
+								<flag>wxBOTTOM|wxEXPAND</flag>
+								<border>6</border>
 								<object class="wxBoxSizer">
 									<orient>wxHORIZONTAL</orient>
 									<object class="sizeritem">
-										<option>2</option>
-										<flag>wxEXPAND</flag>
-										<border>0</border>
-										<object class="wxBoxSizer">
-											<orient>wxVERTICAL</orient>
-											<object class="sizeritem">
-												<option>0</option>
-												<flag>wxBOTTOM</flag>
-												<border>6</border>
-												<object class="wxStaticText" name="SkinEditorModelListLabel">
-													<label>Models</label>
-													<wrap>-1</wrap>
-												</object>
-											</object>
-											<object class="sizeritem">
-												<option>1</option>
-												<flag>wxEXPAND|wxLEFT</flag>
-												<border>12</border>
-												<object class="wxBoxSizer">
-													<orient>wxHORIZONTAL</orient>
-													<object class="sizeritem">
-														<option>1</option>
-														<flag>wxEXPAND | wxALL</flag>
-														<border>0</border>
-														<object class="wxPanel" name="SkinEditorModelTreeView">
-															<style>wxTAB_TRAVERSAL</style>
-															<size>-1,200</size>
-															<object class="wxBoxSizer">
-																<orient>wxVERTICAL</orient>
-															</object>
-														</object>
-													</object>
-												</object>
-											</object>
-										</object>
-									</object>
-									<object class="sizeritem">
-										<option>3</option>
+										<option>1</option>
 										<flag>wxEXPAND|wxLEFT</flag>
-										<border>12</border>
+										<border>0</border>
 										<object class="wxBoxSizer">
 											<orient>wxVERTICAL</orient>
 											<object class="sizeritem">
@@ -86,8 +49,8 @@
 													<orient>wxHORIZONTAL</orient>
 													<object class="sizeritem">
 														<option>1</option>
-														<flag>wxEXPAND | wxALL</flag>
-														<border>0</border>
+														<flag>wxEXPAND</flag>
+														<border>6</border>
 														<object class="wxPanel" name="SkinEditorSkinTreeView">
 															<style>wxTAB_TRAVERSAL</style>
 															<size>-1,200</size>
@@ -180,40 +143,127 @@
 							</object>
 							<object class="sizeritem">
 								<option>1</option>
-								<flag>wxALL|wxBOTTOM|wxEXPAND|wxLEFT|wxTOP</flag>
-								<border>6</border>
-								<object class="wxNotebook" name="SkinEditorNotebook">
-									<object class="notebookpage">
-										<label>Affected Models</label>
-										<selected>0</selected>
-										<object class="wxPanel" name="AffectedModels">
-											<style>wxTAB_TRAVERSAL</style>
-											<object class="wxBoxSizer">
-												<orient>wxVERTICAL</orient>
-												<object class="sizeritem">
-													<option>0</option>
-													<flag>wxEXPAND | wxALL</flag>
-													<border>12</border>
-													<object class="wxPanel" name="SkinEditorAffectedModelPanel">
-														<style>wxTAB_TRAVERSAL</style>
-													</object>
+								<flag>wxEXPAND|wxLEFT</flag>
+								<border>12</border>
+								<object class="wxBoxSizer">
+									<orient>wxVERTICAL</orient>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxBOTTOM|wxTOP</flag>
+										<border>6</border>
+										<object class="wxStaticText" name="SkinEditorEditSkinDefinitionLabel">
+											<label>Edit Skin Definition</label>
+											<wrap>-1</wrap>
+										</object>
+									</object>
+									<object class="sizeritem">
+										<option>0</option>
+										<flag>wxEXPAND|wxTOP</flag>
+										<border>6</border>
+										<object class="wxBoxSizer">
+											<orient>wxHORIZONTAL</orient>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALIGN_CENTER_VERTICAL</flag>
+												<border>12</border>
+												<object class="wxStaticText" name="m_staticText87">
+													<label>Skin Name:</label>
+													<wrap>-1</wrap>
+												</object>
+											</object>
+											<object class="sizeritem">
+												<option>1</option>
+												<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
+												<border>6</border>
+												<object class="wxTextCtrl" name="m_textCtrl48">
+													<value></value>
 												</object>
 											</object>
 										</object>
 									</object>
-									<object class="notebookpage">
-										<label>Material Remapping</label>
-										<selected>1</selected>
-										<object class="wxPanel" name="Remappings">
-											<style>wxTAB_TRAVERSAL</style>
-											<object class="wxBoxSizer">
-												<orient>wxVERTICAL</orient>
-												<object class="sizeritem">
-													<option>1</option>
-													<flag>wxEXPAND|wxLEFT</flag>
-													<border>0</border>
-													<object class="wxPanel" name="SkinEditorRemappingPanel">
-														<style>wxTAB_TRAVERSAL</style>
+									<object class="sizeritem">
+										<option>1</option>
+										<flag>wxBOTTOM|wxEXPAND|wxRIGHT|wxTOP</flag>
+										<border>6</border>
+										<object class="wxNotebook" name="SkinEditorNotebook">
+											<object class="notebookpage">
+												<label>Targeted Models</label>
+												<selected>1</selected>
+												<object class="wxPanel" name="SkinEditorTargetModels">
+													<style>wxTAB_TRAVERSAL</style>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxALL|wxEXPAND</flag>
+															<border>6</border>
+															<object class="wxBoxSizer">
+																<orient>wxHORIZONTAL</orient>
+																<object class="sizeritem">
+																	<option>1</option>
+																	<flag>wxEXPAND</flag>
+																	<border>0</border>
+																	<object class="wxBoxSizer">
+																		<orient>wxVERTICAL</orient>
+																		<object class="sizeritem">
+																			<option>0</option>
+																			<flag>wxBOTTOM</flag>
+																			<border>6</border>
+																			<object class="wxStaticText" name="SkinEditorModelListLabel">
+																				<label>Available Models (double-click to add)</label>
+																				<wrap>-1</wrap>
+																			</object>
+																		</object>
+																		<object class="sizeritem">
+																			<option>1</option>
+																			<flag>wxEXPAND | wxALL</flag>
+																			<border>0</border>
+																			<object class="wxPanel" name="SkinEditorModelTreeView">
+																				<style>wxTAB_TRAVERSAL</style>
+																				<size>-1,200</size>
+																				<object class="wxBoxSizer">
+																					<orient>wxVERTICAL</orient>
+																				</object>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+																<object class="sizeritem">
+																	<option>1</option>
+																	<flag>wxEXPAND|wxLEFT</flag>
+																	<border>6</border>
+																	<object class="wxBoxSizer">
+																		<orient>wxVERTICAL</orient>
+																		<object class="sizeritem">
+																			<option>1</option>
+																			<flag>wxEXPAND | wxALL</flag>
+																			<border>5</border>
+																			<object class="wxPanel" name="SkinEditorSelectedModelList">
+																				<style>wxTAB_TRAVERSAL</style>
+																			</object>
+																		</object>
+																	</object>
+																</object>
+															</object>
+														</object>
+													</object>
+												</object>
+											</object>
+											<object class="notebookpage">
+												<label>Material Replacements</label>
+												<selected>0</selected>
+												<object class="wxPanel" name="SkinEditorRemappings">
+													<style>wxTAB_TRAVERSAL</style>
+													<object class="wxBoxSizer">
+														<orient>wxVERTICAL</orient>
+														<object class="sizeritem">
+															<option>1</option>
+															<flag>wxEXPAND|wxLEFT</flag>
+															<border>0</border>
+															<object class="wxPanel" name="SkinEditorRemappingPanel">
+																<style>wxTAB_TRAVERSAL</style>
+															</object>
+														</object>
 													</object>
 												</object>
 											</object>
