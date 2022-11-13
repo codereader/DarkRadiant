@@ -1,6 +1,10 @@
 #include "SkinEditor.h"
 
+#include <wx/dataview.h>
+
 #include "i18n.h"
+#include "ui/modelselector/ModelTreeView.h"
+#include "wxutil/dataview/ResourceTreeViewToolbar.h"
 
 namespace ui
 {
@@ -18,6 +22,8 @@ SkinEditor::SkinEditor() :
     DialogBase(DIALOG_TITLE)
 {
     loadNamedPanel(this, "SkinEditorMainPanel");
+
+    setupModelTreeView();
 
     // Set the default size of the window
     FitToScreen(0.8f, 0.9f);
@@ -41,10 +47,30 @@ SkinEditor::~SkinEditor()
     
 }
 
+void SkinEditor::setupModelTreeView()
+{
+    auto* panel = getControl<wxPanel>("SkinEditorModelTreeView");
+    _modelTreeView = new ModelTreeView(panel);
+    //_modelTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::_onModelSelectionChanged, this);
+
+    auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _modelTreeView);
+    treeToolbar->EnableFavouriteManagement(false);
+
+    auto definitionLabel = getControl<wxStaticText>("SkinEditorModelListLabel");
+    definitionLabel->GetContainingSizer()->Detach(definitionLabel);
+    definitionLabel->Reparent(treeToolbar);
+    treeToolbar->GetLeftSizer()->Add(definitionLabel, 0, wxALIGN_LEFT);
+
+    panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
+    panel->GetSizer()->Add(_modelTreeView, 1, wxEXPAND);
+}
+
 int SkinEditor::ShowModal()
 {
     // Restore the position
     _windowPosition.applyPosition();
+
+    _modelTreeView->Populate();
 
     int returnCode = DialogBase::ShowModal();
 

@@ -10,11 +10,15 @@
 namespace ui
 {
 
+class ModelTreeView;
+
 class SkinEditor final :
     public wxutil::DialogBase,
     private wxutil::XmlResourceBasedWidget
 {
 private:
+    ModelTreeView* _modelTreeView;
+
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _panedPosition;
 
@@ -26,6 +30,15 @@ public:
     int ShowModal() override;
 
     static void ShowDialog(const cmd::ArgumentList& args);
+
+private:
+    void setupModelTreeView();
+
+    template<typename ObjectClass>
+    ObjectClass* getControl(const std::string& name)
+    {
+        return findNamedObject<ObjectClass>(this, name);
+    }
 };
 
 }
