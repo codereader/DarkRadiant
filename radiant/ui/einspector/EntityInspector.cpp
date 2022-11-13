@@ -1448,7 +1448,10 @@ void EntityInspector::onPropertyEditorAppliedKeyValue(const std::string& key, co
 {
     // If the property editor applied a key that is currently displayed in the entry boxes,
     // sync the value to the one that has been applied (#5700)
-    // TODO
+    if (_keyEntry->GetValue() == key && _valEntry->GetValue() != value)
+    {
+        _valEntry->SetValue(value);
+    }
 }
 
 std::string EntityInspector::getPropertyTypeFromGame(const std::string& key)
