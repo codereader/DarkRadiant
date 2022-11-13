@@ -28,7 +28,7 @@ void SkinPropertyEditor::onBrowseButtonClick()
     auto modelKey = _key->clone();
     modelKey->setAffectedKey("model");
 
-    auto model = _entities.getSharedKeyValue(modelKey->getFullKey(), true);
+    auto model = getKeyValueFromSelection(modelKey->getFullKey());
 
     if (model.empty())
     {
@@ -38,11 +38,11 @@ void SkinPropertyEditor::onBrowseButtonClick()
     }
 
 	// Display the SkinChooser to get a skin from the user
-	std::string prevSkin = _entities.getSharedKeyValue(_key->getFullKey(), true);
+	std::string prevSkin = getKeyValueFromSelection(_key->getFullKey());
 	std::string skin = SkinChooser::ChooseSkin(model, prevSkin);
 
 	// Apply the key to the entity
-	setKeyValue(_key->getFullKey(), skin);
+    setKeyValueOnSelection(_key->getFullKey(), skin);
 }
 
 std::string SkinChooserDialogWrapper::runDialog(Entity* entity, const std::string& key)

@@ -42,12 +42,12 @@ wxPanel* PropertyEditor::getWidget()
 	return _mainWidget;
 }
 
-std::string PropertyEditor::getKeyValue(const std::string& key)
+std::string PropertyEditor::getKeyValueFromSelection(const std::string& key)
 {
     return _entities.getSharedKeyValue(key, true);
 }
 
-void PropertyEditor::setKeyValue(const std::string& key, const std::string& value)
+void PropertyEditor::setKeyValueOnSelection(const std::string& key, const std::string& value)
 {
     if (_entities.empty()) return;
 

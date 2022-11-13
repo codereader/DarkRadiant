@@ -33,13 +33,13 @@ void SoundPropertyEditor::onBrowseButtonClick()
 	IResourceChooser* chooser = GlobalDialogManager().createSoundShaderChooser(wxGetTopLevelParent(getWidget()));
 
 	// Use a SoundChooser dialog to get a selection from the user
-	std::string picked = chooser->chooseResource(getKeyValue(_key->getFullKey()));
+	std::string picked = chooser->chooseResource(getKeyValueFromSelection(_key->getFullKey()));
 
 	// Selection will be empy if user clicked cancel or X
 	if (!picked.empty())
 	{
 		// Apply the change to the entity
-		setKeyValue(_key->getFullKey(), picked);
+        setKeyValueOnSelection(_key->getFullKey(), picked);
 	}
 
 	chooser->destroyDialog();

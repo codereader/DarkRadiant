@@ -26,7 +26,7 @@ void TexturePropertyEditor::onBrowseButtonClick()
 {
 	auto dialog = new MaterialChooser(getWidget(), MaterialSelector::TextureFilter::Lights);
 
-    dialog->SetSelectedDeclName(getKeyValue(_key->getFullKey()));
+    dialog->SetSelectedDeclName(getKeyValueFromSelection(_key->getFullKey()));
 
 	if (dialog->ShowModal() == wxID_OK)
 	{
@@ -36,7 +36,7 @@ void TexturePropertyEditor::onBrowseButtonClick()
 		if (!texture.empty())
 		{
 			// Apply the keyvalue immediately
-			setKeyValue(_key->getFullKey(), texture);
+            setKeyValueOnSelection(_key->getFullKey(), texture);
 		}
 	}
 

@@ -59,7 +59,7 @@ void FloatPropertyEditor::_onApply(wxCommandEvent& ev)
 {
 	float value = static_cast<float>(_spinCtrl->GetValue());
 
-	setKeyValue(_key->getFullKey(), string::to_string(value));
+    setKeyValueOnSelection(_key->getFullKey(), string::to_string(value));
 }
 
 }

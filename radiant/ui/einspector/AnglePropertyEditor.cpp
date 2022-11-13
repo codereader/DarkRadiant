@@ -67,7 +67,7 @@ void AnglePropertyEditor::_onButtonClick(wxCommandEvent& ev)
 	{
 		if (i->first->GetId() == ev.GetId())
 		{
-			setKeyValue(_key->getFullKey(), string::to_string(i->second));
+            setKeyValueOnSelection(_key->getFullKey(), string::to_string(i->second));
 			break;
 		}
 	}

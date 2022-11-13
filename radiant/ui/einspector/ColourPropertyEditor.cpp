@@ -40,7 +40,7 @@ ColourPropertyEditor::ColourPropertyEditor(wxWindow* parent, IEntitySelection& e
 void ColourPropertyEditor::updateFromEntity()
 {
 	// Set colour button's colour, also take inherited values into account
-	setColourButton(_entities.getSharedKeyValue(_key->getFullKey(), true));
+	setColourButton(getKeyValueFromSelection(_key->getFullKey()));
 }
 
 // Set displayed colour from the keyvalue
@@ -73,7 +73,7 @@ std::string ColourPropertyEditor::getSelectedColour()
 void ColourPropertyEditor::_onColorSet(wxColourPickerEvent& ev)
 {
 	// Set the new keyvalue on the entity
-	setKeyValue(_key->getFullKey(), getSelectedColour());
+    setKeyValueOnSelection(_key->getFullKey(), getSelectedColour());
 }
 
 

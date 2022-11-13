@@ -107,7 +107,7 @@ void Vector3PropertyEditor::_onApply(wxCommandEvent& ev)
 		+ string::to_string(_zValue->GetValue());
 
 	// Set the key on the entity
-	setKeyValue(_key->getFullKey(), value);
+    setKeyValueOnSelection(_key->getFullKey(), value);
 }
 
 }
