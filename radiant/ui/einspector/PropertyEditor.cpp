@@ -53,9 +53,9 @@ void PropertyEditor::setKeyValue(const std::string& key, const std::string& valu
 
     UndoableCommand cmd("setProperty");
 
-    _entities.foreachEntity([&](Entity* entity)
+    _entities.foreachEntity([&](const IEntityNodePtr& entity)
     {
-        entity->setKeyValue(key, value);
+        entity->getEntity().setKeyValue(key, value);
     });
 }
 

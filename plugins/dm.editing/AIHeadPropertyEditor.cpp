@@ -64,9 +64,9 @@ void AIHeadPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	// Show and block
 	if (dialog->ShowModal() == wxID_OK)
 	{
-        _entities.foreachEntity([&](Entity* entity)
+        _entities.foreachEntity([&](const IEntityNodePtr& entity)
         {
-            entity->setKeyValue(DEF_HEAD_KEY, dialog->getSelectedHead());
+            entity->getEntity().setKeyValue(DEF_HEAD_KEY, dialog->getSelectedHead());
         });
 	}
 

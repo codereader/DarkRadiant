@@ -1502,9 +1502,9 @@ std::string EntityInspector::getPropertyTypeForAttachmentKey(const std::string& 
     // Check if there is a single attachment eclass on all selected entities
     std::optional<std::string> attachmentClass;
 
-    _entitySelection->foreachEntity([&](Entity* entity)
+    _entitySelection->foreachEntity([&](const IEntityNodePtr& entity)
     {
-        entity->forEachAttachment([&](const Entity::Attachment& attachment)
+        entity->getEntity().forEachAttachment([&](const Entity::Attachment& attachment)
         {
             if (attachment.name != attachmentName) return;
 

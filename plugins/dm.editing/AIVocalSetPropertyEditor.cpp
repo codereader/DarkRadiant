@@ -64,9 +64,9 @@ void AIVocalSetPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	// Show and block
 	if (dialog->ShowModal() == wxID_OK)
 	{
-        _entities.foreachEntity([&](Entity* entity)
+        _entities.foreachEntity([&](const IEntityNodePtr& entity)
         {
-            entity->setKeyValue(DEF_VOCAL_SET_KEY, dialog->getSelectedVocalSet());
+            entity->getEntity().setKeyValue(DEF_VOCAL_SET_KEY, dialog->getSelectedVocalSet());
         });
 	}
 
