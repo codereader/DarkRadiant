@@ -57,6 +57,8 @@ void PropertyEditor::setKeyValue(const std::string& key, const std::string& valu
     {
         entity->getEntity().setKeyValue(key, value);
     });
+
+    signal_keyValueApplied().emit(key, value);
 }
 
 void PropertyEditor::constructBrowseButtonPanel(wxWindow* parent, const std::string& label,
@@ -81,6 +83,11 @@ void PropertyEditor::_onBrowseButtonClick(wxCommandEvent& ev)
 {
 	// Redirect the event to the method overridden by subclasses
 	onBrowseButtonClick();
+}
+
+sigc::signal<void(const std::string&, const std::string&)>& PropertyEditor::signal_keyValueApplied()
+{
+    return _sigKeyValueApplied;
 }
 
 } // namespace ui

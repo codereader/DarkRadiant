@@ -101,6 +101,13 @@ public:
 	 * Instructs the editor to update its widgets from the edited entity's key values.
 	 */
 	virtual void updateFromEntities() = 0;
+
+    /**
+     * A signal that is emitted when a key value has been applied to one or more selected entities.
+     * (This is used as a feedback channel for the EntityInspector UI to get notified when
+     *  a value has been set, such that the text entry boxes can follow along.)
+     */
+    virtual sigc::signal<void(const std::string&, const std::string&)>& signal_keyValueApplied() = 0;
 };
 
 class IEntityInspectorModule :
