@@ -191,6 +191,9 @@
     <Filter Include="src\ui\fx">
       <UniqueIdentifier>{7d1fd900-f463-401a-bceb-d04af2bd05f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\ui\skin">
+      <UniqueIdentifier>{fb0a245f-4bbd-42a0-a877-c3189952d1ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\radiant\main.cpp">
@@ -708,6 +711,9 @@
     </ClCompile>
     <ClCompile Include="..\..\radiant\ui\texturebrowser\TextureBrowserPanel.cpp">
       <Filter>src\ui\texturebrowser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\skin\SkinEditor.cpp">
+      <Filter>src\ui\skin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1424,6 +1430,9 @@
     </ClInclude>
     <ClInclude Include="..\..\radiant\ui\texturebrowser\TextureDirectoryBrowser.h">
       <Filter>src\ui\texturebrowser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\skin\SkinEditor.h">
+      <Filter>src\ui\skin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

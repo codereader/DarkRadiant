@@ -193,6 +193,7 @@
 		<menuItem name="findBrush" caption="Find brush..." command="FindBrush" />
     <menuItem name="findReplaceTextures" caption="Find and replace textures..." icon="texwindow_findandreplace.png" command="ToggleFindAndReplaceMaterial" />
 		<menuItem name="mapinfo" caption="Map info..." command="MapInfo" />
+		<menuItem name="skinEditor" caption="Skin Editor..." command="SkinEditor" icon="icon_skin.png" />
 	</subMenu>
 
 	<subMenu name="entity" caption="E&amp;ntity">
