@@ -125,6 +125,7 @@ private:
 
     // Currently displayed PropertyEditor
     IPropertyEditor::Ptr _currentPropertyEditor;
+    sigc::connection _propertyEditorAppliedKeyValue;
 
     // The clipboard for spawnargs
     typedef std::pair<std::string, std::string> KeyValuePair;
@@ -223,6 +224,9 @@ private:
 
     // Set the keyval on all selected entities from the key and value textboxes
     void setPropertyFromEntries();
+
+    void removePropertyEditor();
+    void onPropertyEditorAppliedKeyValue(const std::string& key, const std::string& value);
 
     // Applies the given key/value pair to the selection (works with multiple
     // selected entities)

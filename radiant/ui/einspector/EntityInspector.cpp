@@ -431,7 +431,7 @@ EntityInspector::~EntityInspector()
 
     // Remove the current property editor to prevent destructors
     // from firing too late in the shutdown process
-    _currentPropertyEditor.reset();
+    removePropertyEditor();
 }
 
 void EntityInspector::onPanelActivated()
@@ -686,13 +686,13 @@ void EntityInspector::updateGUIElements()
 
         if (!entityCanBeUpdated)
         {
-            _currentPropertyEditor.reset();
+            removePropertyEditor();
         }
     }
     else  // no selected entity
     {
         // Remove the displayed PropertyEditor
-		_currentPropertyEditor.reset();
+        removePropertyEditor();
         // Disable the dialog and clear the TreeView
         _editorFrame->Enable(false);
         _showInheritedCheckbox->Enable(false);
@@ -1410,12 +1410,18 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
             // Set up the target key for the property editor instance
             auto targetKey = TargetKey::CreateFromString(key);
 
+            removePropertyEditor();
+
             // Construct and add a new PropertyEditor
             _currentPropertyEditor = EntityInspectorModule::Instance().getPropertyEditorFactory()
                 .create(_editorFrame, type, *_entitySelection, targetKey);
 
             if (_currentPropertyEditor)
             {
+                // Get notified when the property editor applied a key value
+                _propertyEditorAppliedKeyValue = _currentPropertyEditor->signal_keyValueApplied()
+                    .connect(sigc::mem_fun(*this, &EntityInspector::onPropertyEditorAppliedKeyValue));
+
                 // Don't use wxEXPAND to allow for horizontal centering, just add a 6 pixel border
                 // Using wxALIGN_CENTER_HORIZONTAL will position the property editor's panel in the middle
                 _editorFrame->GetSizer()->Add(_currentPropertyEditor->getWidget(), 1, wxALIGN_CENTER_HORIZONTAL | wxALL, 6);
@@ -1426,10 +1432,23 @@ void EntityInspector::_onTreeViewSelectionChanged(wxDataViewEvent& ev)
     else if (selectedItems.Count() > 1)
     {
         // When multiple items are selected, clear the property editor
-        _currentPropertyEditor.reset();
+        removePropertyEditor();
     }
 
     updateEntryBoxSensitivity();
+}
+
+void EntityInspector::removePropertyEditor()
+{
+    _propertyEditorAppliedKeyValue.disconnect();
+    _currentPropertyEditor.reset();
+}
+
+void EntityInspector::onPropertyEditorAppliedKeyValue(const std::string& key, const std::string& value)
+{
+    // If the property editor applied a key that is currently displayed in the entry boxes,
+    // sync the value to the one that has been applied (#5700)
+    // TODO
 }
 
 std::string EntityInspector::getPropertyTypeFromGame(const std::string& key)
