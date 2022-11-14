@@ -26,6 +26,16 @@ const std::set<std::string>& Skin::getModels()
     return _current->matchingModels;
 }
 
+void Skin::addModel(const std::string& model)
+{
+    // TODO
+}
+
+void Skin::removeModel(const std::string& model)
+{
+    // TODO
+}
+
 std::string Skin::getRemap(const std::string& name)
 {
     ensureParsed();

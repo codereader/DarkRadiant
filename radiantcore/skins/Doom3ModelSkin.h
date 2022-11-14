@@ -42,6 +42,9 @@ public:
     std::string getSkinFileName() const;
 
     const std::set<std::string>& getModels() override;
+    void addModel(const std::string& model) override;
+    void removeModel(const std::string& model) override;
+
     const std::vector<Remapping>& getAllRemappings() override;
 
 	// Get this skin's remap for the provided material name (if any).

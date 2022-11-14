@@ -36,6 +36,12 @@ public:
     // Returns the list of models this skin applies to
     virtual const std::set<std::string>& getModels() = 0;
 
+    // Adds the given model to the set of associated models (does nothing if the model is already present)
+    virtual void addModel(const std::string& model) = 0;
+
+    // Removes the given model from the set of models (does nothing if the model is not listed)
+    virtual void removeModel(const std::string& model) = 0;
+
     // The list of all remappings defined in this skin
     virtual const std::vector<Remapping>& getAllRemappings() = 0;
 

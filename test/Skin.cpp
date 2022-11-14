@@ -140,6 +140,84 @@ TEST_F(ModelSkinTest, GetAllSkins)
     expectSkinIsListed(allSkins, "ivy_onesided");
 }
 
+TEST_F(ModelSkinTest, AddModel)
+{
+    // Skin with 2 models
+    auto skin = GlobalModelSkinCache().findSkin("separated_tile_skin");
+        
+    EXPECT_EQ(skin->getModels().size(), 2) << "Unit test skin setup wrong";
+    EXPECT_FALSE(skin->isModified()) << "Skin should be unmodified at start";
+
+    std::size_t signalCount = 0;
+    skin->signal_DeclarationChanged().connect([&] { ++signalCount; });
+
+    constexpr auto modelToAdd = "models/something.ase";
+    skin->addModel(modelToAdd);
+
+    EXPECT_EQ(skin->getModels().size(), 3) << "Model has not been added";
+    EXPECT_EQ(skin->getModels().count(modelToAdd), 1) << "Model has not been added";
+    EXPECT_TRUE(skin->isModified()) << "Skin should be modified now";
+    EXPECT_EQ(signalCount, 1) << "Signal has not been emitted";
+}
+
+TEST_F(ModelSkinTest, AddRedundantModel)
+{
+    // Skin with 2 models
+    auto skin = GlobalModelSkinCache().findSkin("separated_tile_skin");
+    EXPECT_FALSE(skin->isModified()) << "Skin should be unmodified at start";
+
+    auto previousModelCount = skin->getModels().size();
+    auto existingModel = *skin->getModels().begin();
+
+    std::size_t signalCount = 0;
+    skin->signal_DeclarationChanged().connect([&] { ++signalCount; });
+
+    skin->addModel(existingModel);
+
+    EXPECT_EQ(skin->getModels().size(), previousModelCount) << "Model count should not have been changed";
+    EXPECT_FALSE(skin->isModified()) << "Skin should still be unmodified";
+    EXPECT_EQ(signalCount, 0) << "Signal should not have been emitted";
+}
+
+TEST_F(ModelSkinTest, RemoveModel)
+{
+    // Skin with 2 models
+    auto skin = GlobalModelSkinCache().findSkin("separated_tile_skin");
+    EXPECT_FALSE(skin->isModified()) << "Skin should be unmodified at start";
+
+    auto previousModelCount = skin->getModels().size();
+    auto existingModel = *skin->getModels().begin();
+
+    std::size_t signalCount = 0;
+    skin->signal_DeclarationChanged().connect([&] { ++signalCount; });
+
+    skin->removeModel(existingModel);
+
+    EXPECT_EQ(skin->getModels().size(), previousModelCount - 1) << "Model count should have been changed";
+    EXPECT_EQ(skin->getModels().count(existingModel), 0) << "Model should be gone now";
+    EXPECT_TRUE(skin->isModified()) << "Skin should be modified now";
+    EXPECT_EQ(signalCount, 1) << "Signal should have been emitted";
+}
+
+TEST_F(ModelSkinTest, RemoveNonexistentModel)
+{
+    // Skin with 2 models
+    auto skin = GlobalModelSkinCache().findSkin("separated_tile_skin");
+    EXPECT_FALSE(skin->isModified()) << "Skin should be unmodified at start";
+
+    auto previousModelCount = skin->getModels().size();
+    constexpr auto nonexistentModel = "nonexistent_model.ase";
+
+    std::size_t signalCount = 0;
+    skin->signal_DeclarationChanged().connect([&] { ++signalCount; });
+
+    skin->removeModel(nonexistentModel);
+
+    EXPECT_EQ(skin->getModels().size(), previousModelCount) << "Model count should not have been changed";
+    EXPECT_FALSE(skin->isModified()) << "Skin should still be unmodified";
+    EXPECT_EQ(signalCount, 0) << "Signal should not have been emitted";
+}
+
 TEST_F(ModelSkinTest, ReloadDeclsRefreshesModels)
 {
     // Create a temporary file holding a new skin
