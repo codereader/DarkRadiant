@@ -193,6 +193,24 @@ void SkinEditor::updateModelControlsFromSkin(const decl::ISkin::Ptr& skin)
     }
 }
 
+void SkinEditor::updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin)
+{
+    _remappings->Clear();
+
+    if (!skin) return;
+
+    for (const auto& remapping : skin->getAllRemappings())
+    {
+        auto row = _remappings->AddItem();
+
+        row[_remappingColumns.active] = true;
+        row[_remappingColumns.original] = remapping.Original;
+        row[_remappingColumns.replacement] = remapping.Replacement;
+
+        row.SendItemAdded();
+    }
+}
+
 void SkinEditor::updateSkinControlsFromSelection()
 {
     auto skin = getSelectedSkin();
@@ -213,6 +231,7 @@ void SkinEditor::updateSkinControlsFromSelection()
 
     getControl<wxTextCtrl>("SkinEditorSkinName")->SetValue(skin->getDeclName());
     updateModelControlsFromSkin(skin);
+    updateRemappingControlsFromSkin(skin);
 
     updateSkinButtonSensitivity();
 }

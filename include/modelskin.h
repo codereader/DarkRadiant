@@ -15,17 +15,29 @@ class ISkin :
 public:
     using Ptr = std::shared_ptr<ISkin>;
 
-	virtual ~ISkin() {}
+    ~ISkin() override {}
 
-	/**
-	 * Get the mapped texture for the given query texture, using the mappings
-	 * in this skin. If there is no mapping for the given texture, return an
-	 * empty string.
-	 */
-	virtual std::string getRemap(const std::string& name) = 0;
+    struct Remapping
+    {
+        // The original material name (can also be a wildcard "*")
+        std::string Original;
+
+        // The replacement material name
+        std::string Replacement;
+    };
+
+    /**
+     * Get the mapped texture for the given query texture, using the mappings
+     * in this skin. If there is no mapping for the given texture, return an
+     * empty string.
+     */
+    virtual std::string getRemap(const std::string& name) = 0;
 
     // Returns the list of models this skin applies to
     virtual std::set<std::string> getModels() = 0;
+
+    // The list of all remappings defined in this skin
+    virtual const std::vector<Remapping>& getAllRemappings() = 0;
 };
 
 } // namespace
