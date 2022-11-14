@@ -7,6 +7,7 @@
 #include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/dialog/DialogBase.h"
+#include "wxutil/preview/ModelPreview.h"
 
 namespace ui
 {
@@ -19,6 +20,7 @@ class SkinEditor final :
 {
 private:
     ModelTreeView* _modelTreeView;
+    std::unique_ptr<wxutil::ModelPreview> _modelPreview;
 
     wxutil::DeclarationTreeView::Columns _columns;
     wxutil::DeclarationTreeView* _skinTreeView;
@@ -40,7 +42,8 @@ private:
     wxutil::TreeView* _selectedModelList;
 
     wxutil::WindowPosition _windowPosition;
-    wxutil::PanedPosition _panedPosition;
+    wxutil::PanedPosition _leftPanePosition;
+    wxutil::PanedPosition _rightPanePosition;
 
 private:
     SkinEditor();
@@ -55,6 +58,7 @@ private:
     void setupModelTreeView();
     void setupSkinTreeView();
     void setupSelectedModelList();
+    void setupPreview();
 
     template<typename ObjectClass>
     ObjectClass* getControl(const std::string& name)

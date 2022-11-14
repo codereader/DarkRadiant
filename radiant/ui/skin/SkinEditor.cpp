@@ -1,6 +1,7 @@
 #include "SkinEditor.h"
 
 #include <wx/dataview.h>
+#include <wx/splitter.h>
 
 #include "i18n.h"
 #include "ui/modelselector/ModelTreeView.h"
@@ -16,7 +17,8 @@ namespace
     constexpr const char* const SKIN_ICON = "icon_skin.png";
 
     const std::string RKEY_ROOT = "user/ui/skinEditor/";
-    const std::string RKEY_SPLIT_POS = RKEY_ROOT + "splitPos";
+    const std::string RKEY_SPLIT_POS_LEFT = RKEY_ROOT + "splitPosLeft";
+    const std::string RKEY_SPLIT_POS_RIGHT = RKEY_ROOT + "splitPosRight";
     const std::string RKEY_WINDOW_STATE = RKEY_ROOT + "window";
 }
 
@@ -32,6 +34,7 @@ SkinEditor::SkinEditor() :
     setupModelTreeView();
     setupSkinTreeView();
     setupSelectedModelList();
+    setupPreview();
 
     // Set the default size of the window
     FitToScreen(0.8f, 0.9f);
@@ -44,8 +47,13 @@ SkinEditor::SkinEditor() :
     _windowPosition.connect(this);
     _windowPosition.applyPosition();
 
-    //_panedPosition.connect(splitter);
-    //_panedPosition.loadFromPath(RKEY_SPLIT_POS);
+    auto leftSplitter = getControl<wxSplitterWindow>("SkinEditorLeftSplitter");
+    _leftPanePosition.connect(leftSplitter);
+    _leftPanePosition.loadFromPath(RKEY_SPLIT_POS_LEFT);
+
+    auto rightSplitter = getControl<wxSplitterWindow>("SkinEditorRightSplitter");
+    _rightPanePosition.connect(rightSplitter);
+    _rightPanePosition.loadFromPath(RKEY_SPLIT_POS_RIGHT);
 
     CenterOnParent();
 }
@@ -119,6 +127,13 @@ void SkinEditor::setupSelectedModelList()
     item->SetFlag(item->GetFlag() | wxTOP);
 }
 
+void SkinEditor::setupPreview()
+{
+    auto panel = getControl<wxPanel>("SkinEditorPreviewPanel");
+    _modelPreview = std::make_unique<wxutil::ModelPreview>(panel);
+    panel->GetSizer()->Add(_modelPreview->getWidget(), 1, wxEXPAND);
+}
+
 int SkinEditor::ShowModal()
 {
     // Restore the position
@@ -131,6 +146,8 @@ int SkinEditor::ShowModal()
 
     // Tell the position tracker to save the information
     _windowPosition.saveToPath(RKEY_WINDOW_STATE);
+    _leftPanePosition.saveToPath(RKEY_SPLIT_POS_LEFT);
+    _rightPanePosition.saveToPath(RKEY_SPLIT_POS_RIGHT);
 
     return returnCode;
 }
