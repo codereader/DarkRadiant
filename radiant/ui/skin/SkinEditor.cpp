@@ -21,7 +21,8 @@ namespace
 }
 
 SkinEditor::SkinEditor() :
-    DialogBase(DIALOG_TITLE)
+    DialogBase(DIALOG_TITLE),
+    _selectedModels(new wxutil::TreeModel(_selectedModelColumns, true))
 {
     loadNamedPanel(this, "SkinEditorMainPanel");
 
@@ -30,6 +31,7 @@ SkinEditor::SkinEditor() :
 
     setupModelTreeView();
     setupSkinTreeView();
+    setupSelectedModelList();
 
     // Set the default size of the window
     FitToScreen(0.8f, 0.9f);
@@ -59,15 +61,18 @@ void SkinEditor::setupModelTreeView()
     _modelTreeView = new ModelTreeView(panel);
     //_modelTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::_onModelSelectionChanged, this);
 
-    auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(panel, _modelTreeView);
-    treeToolbar->EnableFavouriteManagement(false);
-
     auto definitionLabel = getControl<wxStaticText>("SkinEditorModelListLabel");
-    definitionLabel->GetContainingSizer()->Detach(definitionLabel);
+
+    auto* treeToolbar = new wxutil::ResourceTreeViewToolbar(definitionLabel->GetParent(), _modelTreeView);
+    treeToolbar->EnableFavouriteManagement(false);
+    treeToolbar->SetName("ModelTreeViewToolbar");
+
+    auto labelSizer = definitionLabel->GetContainingSizer();
+    labelSizer->Replace(definitionLabel, treeToolbar);
+
     definitionLabel->Reparent(treeToolbar);
     treeToolbar->GetLeftSizer()->Add(definitionLabel, 0, wxALIGN_LEFT);
 
-    panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_modelTreeView, 1, wxEXPAND);
 }
 
@@ -93,6 +98,25 @@ void SkinEditor::setupSkinTreeView()
 
     panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_skinTreeView, 1, wxEXPAND);
+}
+
+void SkinEditor::setupSelectedModelList()
+{
+    auto* panel = getControl<wxPanel>("SkinEditorSelectedModelList");
+    _selectedModelList = wxutil::TreeView::CreateWithModel(panel, _selectedModels.get(), wxDV_SINGLE | wxDV_NO_HEADER);
+
+    // Single visible column, containing the directory/decl name and the icon
+    _selectedModelList->AppendIconTextColumn(_("Model"), _columns.iconAndName.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    _selectedModelList->EnableSearchPopup(false);
+
+    auto item = panel->GetSizer()->Add(_selectedModelList, 1, wxEXPAND, 0);
+
+    // Add a spacing to match the height of the model tree view toolbar
+    auto toolbar = findNamedObject<wxWindow>(this, "ModelTreeViewToolbar");
+    auto toolbarItem = toolbar->GetContainingSizer()->GetItem(toolbar);
+    item->SetBorder(toolbarItem->GetSize().GetHeight() + 3);
+    item->SetFlag(item->GetFlag() | wxTOP);
 }
 
 int SkinEditor::ShowModal()

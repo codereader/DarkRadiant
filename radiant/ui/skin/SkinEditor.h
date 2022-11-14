@@ -23,6 +23,22 @@ private:
     wxutil::DeclarationTreeView::Columns _columns;
     wxutil::DeclarationTreeView* _skinTreeView;
 
+    struct SelectedModelColumns :
+        public wxutil::TreeModel::ColumnRecord
+    {
+        SelectedModelColumns() :
+            icon(add(wxutil::TreeModel::Column::Icon)),
+            name(add(wxutil::TreeModel::Column::String))
+        {}
+
+        wxutil::TreeModel::Column icon;
+        wxutil::TreeModel::Column name;
+    };
+
+    SelectedModelColumns _selectedModelColumns;
+    wxutil::TreeModel::Ptr _selectedModels;
+    wxutil::TreeView* _selectedModelList;
+
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _panedPosition;
 
@@ -38,6 +54,7 @@ public:
 private:
     void setupModelTreeView();
     void setupSkinTreeView();
+    void setupSelectedModelList();
 
     template<typename ObjectClass>
     ObjectClass* getControl(const std::string& name)
