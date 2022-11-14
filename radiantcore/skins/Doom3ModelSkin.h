@@ -1,10 +1,11 @@
 #pragma once
 
 #include "modelskin.h"
-#include "decl/DeclarationBase.h"
 
 #include <string>
 #include <memory>
+
+#include "decl/EditableDeclaration.h"
 
 namespace skins
 {
@@ -15,7 +16,7 @@ namespace skins
  * the model that this skin is associated with.
  */
 class Skin :
-    public decl::DeclarationBase<decl::ISkin>
+    public decl::EditableDeclaration<decl::ISkin>
 {
     struct SkinData
     {
@@ -63,6 +64,10 @@ public:
 protected:
     void onBeginParsing() override;
     void parseFromTokens(parser::DefTokeniser& tokeniser) override;
+    std::string generateSyntax() override;
+
+private:
+    void ensureSkinDataBackup();
 };
 
 

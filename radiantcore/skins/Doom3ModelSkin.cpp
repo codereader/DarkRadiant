@@ -1,10 +1,12 @@
 #include "Doom3ModelSkin.h"
 
+#include <sstream>
+
 namespace skins
 {
 
 Skin::Skin(const std::string& name) :
-    DeclarationBase<decl::ISkin>(decl::Type::Skin, name),
+    EditableDeclaration<decl::ISkin>(decl::Type::Skin, name),
     _original(std::make_shared<SkinData>()),
     _current(_original)
 {}
@@ -28,12 +30,24 @@ const std::set<std::string>& Skin::getModels()
 
 void Skin::addModel(const std::string& model)
 {
-    // TODO
+    if (_current->matchingModels.count(model) == 0)
+    {
+        ensureSkinDataBackup();
+
+        _current->matchingModels.insert(model);
+        onParsedContentsChanged();
+    }
 }
 
 void Skin::removeModel(const std::string& model)
 {
-    // TODO
+    if (_current->matchingModels.count(model) > 0)
+    {
+        ensureSkinDataBackup();
+
+        _current->matchingModels.erase(model);
+        onParsedContentsChanged();
+    }
 }
 
 std::string Skin::getRemap(const std::string& name)
@@ -54,7 +68,7 @@ std::string Skin::getRemap(const std::string& name)
 
 void Skin::addRemap(const std::string& src, const std::string& dst)
 {
-    ensureParsed();
+    ensureSkinDataBackup();
 
     _current->remaps.emplace_back(Remapping{ src, dst });
 }
@@ -81,12 +95,27 @@ bool Skin::isModified()
 
 void Skin::commitModifications()
 {
-    // TODO
+    _original = _current;
+    onParsedContentsChanged();
 }
 
 void Skin::revertModifications()
 {
-    // TODO
+    _current = _original;
+    onParsedContentsChanged();
+}
+
+void Skin::ensureSkinDataBackup()
+{
+    ensureParsed();
+
+    if (_current != _original)
+    {
+        return; // copy is already in place
+    }
+
+    // Create a copy of the original struct
+    _current = std::make_shared<SkinData>(*_original);
 }
 
 void Skin::onBeginParsing()
@@ -121,6 +150,30 @@ void Skin::parseFromTokens(parser::DefTokeniser& tokeniser)
             _current->remaps.emplace_back(Remapping{ std::move(key), std::move(value) });
         }
     }
+}
+
+std::string Skin::generateSyntax()
+{
+    std::stringstream output;
+
+    // Export models (indentation one tab)
+    for (const auto& model : _current->matchingModels)
+    {
+        output << "\t" << model << std::endl;
+    }
+
+    if (!_current->matchingModels.empty())
+    {
+        output << std::endl;
+    }
+
+    // Export remaps
+    for (const auto& remap : _current->remaps)
+    {
+        output << "\t\"" << remap.Original << "\"\t\"" << remap.Replacement << "\"" << std::endl;
+    }
+
+    return output.str();
 }
 
 }

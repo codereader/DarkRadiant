@@ -161,7 +161,7 @@ TEST_F(ModelSkinTest, AddModel)
     EXPECT_EQ(skin->getModels().count(modelToAdd), 1) << "Model has not been added";
     EXPECT_TRUE(skin->isModified()) << "Skin should be modified now";
     EXPECT_EQ(signalCount, 1) << "Signal has not been emitted";
-    EXPECT_NE(previousDeclBlock.find(modelToAdd), std::string::npos) << "Source should contain " << modelToAdd;
+    EXPECT_NE(skin->getBlockSyntax().contents.find(modelToAdd), std::string::npos) << "Source should contain " << modelToAdd;
 }
 
 TEST_F(ModelSkinTest, AddRedundantModel)
