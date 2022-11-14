@@ -1,11 +1,12 @@
 #include "SkinEditor.h"
 
+#include "i18n.h"
+
 #include <wx/dataview.h>
 #include <wx/splitter.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
 
-#include "i18n.h"
 #include "ui/modelselector/ModelTreeView.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
@@ -165,6 +166,12 @@ void SkinEditor::setupRemappingPanel()
     panel->GetSizer()->Add(_remappingList, 1, wxEXPAND, 0);
 }
 
+decl::ISkin::Ptr SkinEditor::getSelectedSkin()
+{
+    auto selectedSkin = _skinTreeView->GetSelectedDeclName();
+    return selectedSkin.empty() ? decl::ISkin::Ptr() : GlobalModelSkinCache().findSkin(selectedSkin);
+}
+
 void SkinEditor::updateSkinButtonSensitivity()
 {
     auto selectedSkin = _skinTreeView->GetSelectedDeclName();
@@ -172,25 +179,40 @@ void SkinEditor::updateSkinButtonSensitivity()
     getControl<wxButton>("SkinEditorCopyDefButton")->Enable(!selectedSkin.empty());
 }
 
+void SkinEditor::updateModelControlsFromSkin(const decl::ISkin::Ptr& skin)
+{
+    _selectedModels->Clear();
+
+    if (!skin) return;
+
+    for (const auto& model : skin->getModels())
+    {
+        auto row = _selectedModels->AddItem();
+        row[_selectedModelColumns.name] = wxVariant(wxDataViewIconText(model));
+        row.SendItemAdded();
+    }
+}
+
 void SkinEditor::updateSkinControlsFromSelection()
 {
-    auto selectedSkin = _skinTreeView->GetSelectedDeclName();
+    auto skin = getSelectedSkin();
 
-    getControl<wxWindow>("SkinEditorNotebook")->Enable(!selectedSkin.empty());
-    getControl<wxWindow>("SkinEditorEditSkinDefinitionLabel")->Enable(!selectedSkin.empty());
-    getControl<wxWindow>("SkinEditorSkinNameLabel")->Enable(!selectedSkin.empty());
-    getControl<wxWindow>("SkinEditorSkinName")->Enable(!selectedSkin.empty());
+    getControl<wxWindow>("SkinEditorNotebook")->Enable(skin != nullptr);
+    getControl<wxWindow>("SkinEditorEditSkinDefinitionLabel")->Enable(skin != nullptr);
+    getControl<wxWindow>("SkinEditorSkinNameLabel")->Enable(skin != nullptr);
+    getControl<wxWindow>("SkinEditorSkinName")->Enable(skin != nullptr);
 
-    auto skin = GlobalDeclarationManager().findDeclaration(decl::Type::Skin, selectedSkin);
-
-    if (selectedSkin.empty() || !skin)
+    if (!skin)
     {
         getControl<wxTextCtrl>("SkinEditorSkinName")->SetValue("");
+        _selectedModels->Clear();
+        _remappings->Clear();
         updateSkinButtonSensitivity();
         return;
     }
 
     getControl<wxTextCtrl>("SkinEditorSkinName")->SetValue(skin->getDeclName());
+    updateModelControlsFromSkin(skin);
 
     updateSkinButtonSensitivity();
 }

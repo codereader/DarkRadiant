@@ -1,6 +1,7 @@
 #pragma once
 
 #include "icommandsystem.h"
+#include "modelskin.h"
 
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
@@ -79,8 +80,11 @@ private:
     void setupRemappingPanel();
     void setupPreview();
 
+    decl::ISkin::Ptr getSelectedSkin();
+
     void updateSkinButtonSensitivity();
     void updateSkinControlsFromSelection();
+    void updateModelControlsFromSkin(const decl::ISkin::Ptr& skin);
 
     void onCloseButton(wxCommandEvent& ev);
     void onSkinSelectionChanged(wxDataViewEvent& ev);

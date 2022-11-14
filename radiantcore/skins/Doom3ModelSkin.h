@@ -39,6 +39,13 @@ public:
 		return getDeclFilePath();
 	}
 
+    std::set<std::string> getModels() override
+    {
+        ensureParsed();
+
+        return _matchingModels;
+    }
+
 	// Get this skin's remap for the provided material name (if any).
 	std::string getRemap(const std::string& name) override
     {

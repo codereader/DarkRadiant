@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 #include "imodule.h"
 #include <sigc++/signal.h>
 #include "ideclmanager.h"
@@ -22,6 +23,9 @@ public:
 	 * empty string.
 	 */
 	virtual std::string getRemap(const std::string& name) = 0;
+
+    // Returns the list of models this skin applies to
+    virtual std::set<std::string> getModels() = 0;
 };
 
 } // namespace
