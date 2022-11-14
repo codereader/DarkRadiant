@@ -110,6 +110,15 @@ void Skin::commitModifications()
 
 void Skin::revertModifications()
 {
+    auto currentName = getDeclName();
+
+    // Reverting the name to its original should notify the decl manager
+    if (currentName != getOriginalDeclName())
+    {
+        // This will in turn call getDeclName()
+        GlobalDeclarationManager().renameDeclaration(decl::Type::Skin, currentName, getOriginalDeclName());
+    }
+
     _current = _original;
     onParsedContentsChanged();
 }
