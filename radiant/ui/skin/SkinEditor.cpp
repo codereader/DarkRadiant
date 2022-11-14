@@ -47,6 +47,7 @@ SkinEditor::SkinEditor() :
     setupPreview();
 
     getControl<wxButton>("SkinEditorCloseButton")->Bind(wxEVT_BUTTON, &SkinEditor::onCloseButton, this);
+    getControl<wxTextCtrl>("SkinEditorSkinName")->Bind(wxEVT_TEXT, &SkinEditor::onSkinNameChanged, this);
 
     // Set the default size of the window
     FitToScreen(0.9f, 0.9f);
@@ -309,15 +310,30 @@ void SkinEditor::onSkinSelectionChanged(wxDataViewEvent& ev)
 
     _skinModifiedConn.disconnect();
 
-    auto skin = getSelectedSkin();
+    _skin = getSelectedSkin();
 
-    if (skin)
+    if (_skin)
     {
-        _skinModifiedConn = skin->signal_DeclarationChanged().connect(
+        _skinModifiedConn = _skin->signal_DeclarationChanged().connect(
             sigc::mem_fun(*this, &SkinEditor::onSkinDeclarationChanged));
     }
 
     updateSkinControlsFromSelection();
+}
+
+void SkinEditor::onSkinNameChanged(wxCommandEvent& ev)
+{
+    if (_controlUpdateInProgress) return;
+
+    // Rename the active skin decl
+    auto nameEntry = static_cast<wxTextCtrl*>(ev.GetEventObject());
+
+    GlobalModelSkinCache().renameSkin(_skin->getDeclName(), nameEntry->GetValue().ToStdString());
+    auto item = _skinTreeView->GetTreeModel()->FindString(_skin->getDeclName(), _columns.declName);
+
+    // Make sure the item is selected again, it will be de-selected by the rename operation
+    _skinTreeView->Select(item);
+    _skinTreeView->EnsureVisible(item);
 }
 
 void SkinEditor::onSkinDeclarationChanged()

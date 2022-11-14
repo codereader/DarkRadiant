@@ -23,6 +23,8 @@ class SkinEditor final :
     private wxutil::XmlResourceBasedWidget
 {
 private:
+    decl::ISkin::Ptr _skin;
+
     ModelTreeView* _modelTreeView;
     std::unique_ptr<wxutil::ModelPreview> _modelPreview;
     wxutil::D3DeclarationViewCtrl* _sourceView;
@@ -97,6 +99,7 @@ private:
     void updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin);
     void updateSourceView(const decl::ISkin::Ptr& skin);
 
+    void onSkinNameChanged(wxCommandEvent& ev);
     void onCloseButton(wxCommandEvent& ev);
     void onAddModelToSkin(wxCommandEvent& ev);
     void onRemoveModelFromSkin(wxCommandEvent& ev);
