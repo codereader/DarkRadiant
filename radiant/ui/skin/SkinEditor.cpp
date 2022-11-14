@@ -8,6 +8,7 @@
 #include <wx/button.h>
 
 #include "ui/modelselector/ModelTreeView.h"
+#include "util/ScopedBoolLock.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/sourceview/DeclarationSourceView.h"
@@ -30,7 +31,8 @@ namespace
 SkinEditor::SkinEditor() :
     DialogBase(DIALOG_TITLE),
     _selectedModels(new wxutil::TreeModel(_selectedModelColumns, true)),
-    _remappings(new wxutil::TreeModel(_remappingColumns, true))
+    _remappings(new wxutil::TreeModel(_remappingColumns, true)),
+    _controlUpdateInProgress(false)
 {
     loadNamedPanel(this, "SkinEditorMainPanel");
 
@@ -137,6 +139,12 @@ void SkinEditor::setupSelectedModelList()
     auto toolbarItem = toolbar->GetContainingSizer()->GetItem(toolbar);
     item->SetBorder(toolbarItem->GetSize().GetHeight() + 3);
     item->SetFlag(item->GetFlag() | wxTOP);
+
+    auto addButton = getControl<wxWindow>("SkinEditorAddModelButton");
+    addButton->Bind(wxEVT_BUTTON, &SkinEditor::onAddModelToSkin, this);
+
+    auto removeButton = getControl<wxWindow>("SkinEditorRemoveModelButton");
+    removeButton->Bind(wxEVT_BUTTON, &SkinEditor::onRemoveModelFromSkin, this);
 }
 
 void SkinEditor::setupPreview()
@@ -244,6 +252,8 @@ void SkinEditor::updateSourceView(const decl::ISkin::Ptr& skin)
 
 void SkinEditor::updateSkinControlsFromSelection()
 {
+    util::ScopedBoolLock lock(_controlUpdateInProgress);
+
     auto skin = getSelectedSkin();
 
     getControl<wxWindow>("SkinEditorNotebook")->Enable(skin != nullptr);
@@ -295,17 +305,47 @@ void SkinEditor::onCloseButton(wxCommandEvent& ev)
 
 void SkinEditor::onSkinSelectionChanged(wxDataViewEvent& ev)
 {
+    if (_controlUpdateInProgress) return;
+
     updateSkinControlsFromSelection();
 }
 
 void SkinEditor::onModelTreeSelectionChanged(wxDataViewEvent& ev)
 {
+    if (_controlUpdateInProgress) return;
+
     updateModelButtonSensitivity();
 }
 
 void SkinEditor::onSkinModelSelectionChanged(wxDataViewEvent& ev)
 {
+    if (_controlUpdateInProgress) return;
+
     updateModelButtonSensitivity();
+}
+
+void SkinEditor::onAddModelToSkin(wxCommandEvent& ev)
+{
+    if (_controlUpdateInProgress) return;
+
+    auto skin = getSelectedSkin();
+    auto model = getSelectedModelFromTree();
+
+    if (!skin || model.empty()) return;
+
+    skin->addModel(model);
+}
+
+void SkinEditor::onRemoveModelFromSkin(wxCommandEvent& ev)
+{
+    if (_controlUpdateInProgress) return;
+
+    auto skin = getSelectedSkin();
+    auto model = getSelectedSkinModel();
+
+    if (!skin || model.empty()) return;
+
+    skin->removeModel(model);
 }
 
 int SkinEditor::ShowModal()

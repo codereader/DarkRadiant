@@ -64,6 +64,8 @@ private:
     wxutil::PanedPosition _leftPanePosition;
     wxutil::PanedPosition _rightPanePosition;
 
+    bool _controlUpdateInProgress;
+
 private:
     SkinEditor();
     ~SkinEditor() override;
@@ -92,6 +94,8 @@ private:
     void updateSourceView(const decl::ISkin::Ptr& skin);
 
     void onCloseButton(wxCommandEvent& ev);
+    void onAddModelToSkin(wxCommandEvent& ev);
+    void onRemoveModelFromSkin(wxCommandEvent& ev);
     void onModelTreeSelectionChanged(wxDataViewEvent& ev);
     void onSkinModelSelectionChanged(wxDataViewEvent& ev);
     void onSkinSelectionChanged(wxDataViewEvent& ev);
