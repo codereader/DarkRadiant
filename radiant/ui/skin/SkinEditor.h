@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sigc++/connection.h>
+
 #include "icommandsystem.h"
 #include "modelskin.h"
 
@@ -66,6 +68,8 @@ private:
 
     bool _controlUpdateInProgress;
 
+    sigc::connection _skinModifiedConn;
+
 private:
     SkinEditor();
     ~SkinEditor() override;
@@ -99,6 +103,8 @@ private:
     void onModelTreeSelectionChanged(wxDataViewEvent& ev);
     void onSkinModelSelectionChanged(wxDataViewEvent& ev);
     void onSkinSelectionChanged(wxDataViewEvent& ev);
+
+    void onSkinDeclarationChanged();
 
     template<typename ObjectClass>
     ObjectClass* getControl(const std::string& name)

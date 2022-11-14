@@ -72,7 +72,7 @@ SkinEditor::SkinEditor() :
 
 SkinEditor::~SkinEditor()
 {
-    
+    _skinModifiedConn.disconnect();
 }
 
 void SkinEditor::setupModelTreeView()
@@ -307,6 +307,22 @@ void SkinEditor::onSkinSelectionChanged(wxDataViewEvent& ev)
 {
     if (_controlUpdateInProgress) return;
 
+    _skinModifiedConn.disconnect();
+
+    auto skin = getSelectedSkin();
+
+    if (skin)
+    {
+        _skinModifiedConn = skin->signal_DeclarationChanged().connect(
+            sigc::mem_fun(*this, &SkinEditor::onSkinDeclarationChanged));
+    }
+
+    updateSkinControlsFromSelection();
+}
+
+void SkinEditor::onSkinDeclarationChanged()
+{
+    // Refresh all controls
     updateSkinControlsFromSelection();
 }
 

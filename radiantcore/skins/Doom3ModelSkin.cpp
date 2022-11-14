@@ -156,10 +156,12 @@ std::string Skin::generateSyntax()
 {
     std::stringstream output;
 
+    output << std::endl;
+
     // Export models (indentation one tab)
     for (const auto& model : _current->matchingModels)
     {
-        output << "\t" << model << std::endl;
+        output << "\tmodel\t\"" << model << "\"" << std::endl;
     }
 
     if (!_current->matchingModels.empty())
