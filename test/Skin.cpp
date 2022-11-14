@@ -46,6 +46,45 @@ TEST_F(ModelSkinTest, FindSkinsIsCaseInsensitive)
     EXPECT_EQ(tileSkin->getRemap("textures/atest/a"), "textures/numbers/10");
 }
 
+inline bool containsRemap(const std::vector<decl::ISkin::Remapping>& remaps, 
+    const std::string& original, const std::string& replacement)
+{
+    for (const auto& remap : remaps)
+    {
+        if (remap.Original == original && remap.Replacement == replacement)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+TEST_F(ModelSkinTest, GetAllRemaps)
+{
+    auto skin = GlobalModelSkinCache().findSkin("skin_with_wildcard");
+
+    const auto& remaps = skin->getAllRemappings();
+
+    EXPECT_EQ(remaps.size(), 2);
+    EXPECT_TRUE(containsRemap(remaps, "textures/common/caulk", "textures/common/shadowcaulk"));
+    EXPECT_TRUE(containsRemap(remaps, "*", "textures/common/nodraw"));
+}
+
+TEST_F(ModelSkinTest, GetModels)
+{
+    // Skin without any models listed
+    auto skin = GlobalModelSkinCache().findSkin("skin_with_wildcard");
+    EXPECT_EQ(skin->getModels().size(), 0);
+
+    // Skin with 2 models
+    skin = GlobalModelSkinCache().findSkin("separated_tile_skin");
+    const auto& models = skin->getModels();
+    EXPECT_EQ(models.size(), 2);
+    EXPECT_TRUE(models.count("models/ase/separated_tiles.ase"), 1);
+    EXPECT_TRUE(models.count("models/ase/separated_tiles22.ase"), 1);
+}
+
 TEST_F(ModelSkinTest, GetRemap)
 {
     auto tileSkin = GlobalModelSkinCache().findSkin("tile_skin2");

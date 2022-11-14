@@ -34,7 +34,7 @@ public:
     virtual std::string getRemap(const std::string& name) = 0;
 
     // Returns the list of models this skin applies to
-    virtual std::set<std::string> getModels() = 0;
+    virtual const std::set<std::string>& getModels() = 0;
 
     // The list of all remappings defined in this skin
     virtual const std::vector<Remapping>& getAllRemappings() = 0;

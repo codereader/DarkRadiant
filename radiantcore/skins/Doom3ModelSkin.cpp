@@ -17,7 +17,7 @@ std::string Skin::getSkinFileName() const
 	return getDeclFilePath();
 }
 
-std::set<std::string> Skin::getModels()
+const std::set<std::string>& Skin::getModels()
 {
     ensureParsed();
 
