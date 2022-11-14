@@ -16,6 +16,7 @@
 namespace ui
 {
 
+class SkinEditorTreeView;
 class ModelTreeView;
 
 class SkinEditor final :
@@ -30,7 +31,7 @@ private:
     wxutil::D3DeclarationViewCtrl* _sourceView;
 
     wxutil::DeclarationTreeView::Columns _columns;
-    wxutil::DeclarationTreeView* _skinTreeView;
+    SkinEditorTreeView* _skinTreeView;
 
     struct SelectedModelColumns :
         public wxutil::TreeModel::ColumnRecord

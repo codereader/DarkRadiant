@@ -7,6 +7,7 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 
+#include "SkinEditorTreeView.h"
 #include "ui/modelselector/ModelTreeView.h"
 #include "util/ScopedBoolLock.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
@@ -20,7 +21,6 @@ namespace ui
 namespace
 {
     constexpr const char* const DIALOG_TITLE = N_("Skin Editor");
-    constexpr const char* const SKIN_ICON = "icon_skin.png";
 
     const std::string RKEY_ROOT = "user/ui/skinEditor/";
     const std::string RKEY_SPLIT_POS_LEFT = RKEY_ROOT + "splitPosLeft";
@@ -100,7 +100,7 @@ void SkinEditor::setupModelTreeView()
 void SkinEditor::setupSkinTreeView()
 {
     auto* panel = getControl<wxPanel>("SkinEditorSkinTreeView");
-    _skinTreeView = new wxutil::DeclarationTreeView(panel, decl::Type::Skin, _columns, wxDV_SINGLE | wxDV_NO_HEADER);
+    _skinTreeView = new SkinEditorTreeView(panel, _columns, wxDV_SINGLE | wxDV_NO_HEADER);
     _skinTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onSkinSelectionChanged, this);
 
     // Single visible column, containing the directory/decl name and the icon
@@ -386,7 +386,7 @@ int SkinEditor::ShowModal()
     _windowPosition.applyPosition();
 
     _modelTreeView->Populate();
-    _skinTreeView->Populate(std::make_shared<wxutil::ThreadedDeclarationTreePopulator>(decl::Type::Skin, _columns, SKIN_ICON));
+    _skinTreeView->Populate();
 
     updateSkinControlsFromSelection();
 
