@@ -4,10 +4,11 @@
 
 #include "wxutil/WindowPosition.h"
 #include "wxutil/PanedPosition.h"
-#include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/dataview/DeclarationTreeView.h"
+#include "wxutil/XmlResourceBasedWidget.h"
 #include "wxutil/dialog/DialogBase.h"
 #include "wxutil/preview/ModelPreview.h"
+#include "wxutil/sourceview/SourceView.h"
 
 namespace ui
 {
@@ -21,6 +22,7 @@ class SkinEditor final :
 private:
     ModelTreeView* _modelTreeView;
     std::unique_ptr<wxutil::ModelPreview> _modelPreview;
+    wxutil::D3DeclarationViewCtrl* _sourceView;
 
     wxutil::DeclarationTreeView::Columns _columns;
     wxutil::DeclarationTreeView* _skinTreeView;
@@ -29,17 +31,33 @@ private:
         public wxutil::TreeModel::ColumnRecord
     {
         SelectedModelColumns() :
-            icon(add(wxutil::TreeModel::Column::Icon)),
-            name(add(wxutil::TreeModel::Column::String))
+            name(add(wxutil::TreeModel::Column::IconText))
         {}
 
-        wxutil::TreeModel::Column icon;
         wxutil::TreeModel::Column name;
     };
 
     SelectedModelColumns _selectedModelColumns;
     wxutil::TreeModel::Ptr _selectedModels;
     wxutil::TreeView* _selectedModelList;
+
+    struct RemappingColumns :
+        public wxutil::TreeModel::ColumnRecord
+    {
+        RemappingColumns() :
+            active(add(wxutil::TreeModel::Column::Boolean)),
+            original(add(wxutil::TreeModel::Column::String)),
+            replacement(add(wxutil::TreeModel::Column::String))
+        {}
+
+        wxutil::TreeModel::Column active;
+        wxutil::TreeModel::Column original;
+        wxutil::TreeModel::Column replacement;
+    };
+
+    RemappingColumns _remappingColumns;
+    wxutil::TreeModel::Ptr _remappings;
+    wxutil::TreeView* _remappingList;
 
     wxutil::WindowPosition _windowPosition;
     wxutil::PanedPosition _leftPanePosition;
@@ -58,6 +76,7 @@ private:
     void setupModelTreeView();
     void setupSkinTreeView();
     void setupSelectedModelList();
+    void setupRemappingPanel();
     void setupPreview();
 
     template<typename ObjectClass>

@@ -7,6 +7,8 @@
 #include "ui/modelselector/ModelTreeView.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
+#include "wxutil/sourceview/DeclarationSourceView.h"
+#include "wxutil/sourceview/SourceView.h"
 
 namespace ui
 {
@@ -24,16 +26,19 @@ namespace
 
 SkinEditor::SkinEditor() :
     DialogBase(DIALOG_TITLE),
-    _selectedModels(new wxutil::TreeModel(_selectedModelColumns, true))
+    _selectedModels(new wxutil::TreeModel(_selectedModelColumns, true)),
+    _remappings(new wxutil::TreeModel(_remappingColumns, true))
 {
     loadNamedPanel(this, "SkinEditorMainPanel");
 
     makeLabelBold(this, "SkinEditorSkinDefinitionsLabel");
     makeLabelBold(this, "SkinEditorEditSkinDefinitionLabel");
+    makeLabelBold(this, "SkinEditorDeclarationSourceLabel");
 
     setupModelTreeView();
     setupSkinTreeView();
     setupSelectedModelList();
+    setupRemappingPanel();
     setupPreview();
 
     // Set the default size of the window
@@ -113,8 +118,8 @@ void SkinEditor::setupSelectedModelList()
     auto* panel = getControl<wxPanel>("SkinEditorSelectedModelList");
     _selectedModelList = wxutil::TreeView::CreateWithModel(panel, _selectedModels.get(), wxDV_SINGLE | wxDV_NO_HEADER);
 
-    // Single visible column, containing the directory/decl name and the icon
-    _selectedModelList->AppendIconTextColumn(_("Model"), _columns.iconAndName.getColumnIndex(),
+    // Single visible column
+    _selectedModelList->AppendIconTextColumn(_("Model"), _selectedModelColumns.name.getColumnIndex(),
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
     _selectedModelList->EnableSearchPopup(false);
 
@@ -132,6 +137,27 @@ void SkinEditor::setupPreview()
     auto panel = getControl<wxPanel>("SkinEditorPreviewPanel");
     _modelPreview = std::make_unique<wxutil::ModelPreview>(panel);
     panel->GetSizer()->Add(_modelPreview->getWidget(), 1, wxEXPAND);
+
+    panel = getControl<wxPanel>("SkinEditorDeclarationPanel");
+    _sourceView = new wxutil::D3DeclarationViewCtrl(panel);
+    panel->GetSizer()->Add(_sourceView, 1, wxEXPAND);
+}
+
+void SkinEditor::setupRemappingPanel()
+{
+    auto panel = getControl<wxPanel>("SkinEditorRemappingPanel");
+
+    _remappingList = wxutil::TreeView::CreateWithModel(panel, _remappings.get(), wxDV_SINGLE);
+
+    _remappingList->AppendToggleColumn(_("Active"), _remappingColumns.active.getColumnIndex(),
+        wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    _remappingList->AppendTextColumn(_("Original"), _remappingColumns.original.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    _remappingList->AppendTextColumn(_("Replacement"), _remappingColumns.replacement.getColumnIndex(),
+        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
+    _remappingList->EnableSearchPopup(false);
+
+    panel->GetSizer()->Add(_remappingList, 1, wxEXPAND, 0);
 }
 
 int SkinEditor::ShowModal()

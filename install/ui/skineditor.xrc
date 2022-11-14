@@ -291,10 +291,13 @@
 														<orient>wxVERTICAL</orient>
 														<object class="sizeritem">
 															<option>1</option>
-															<flag>wxEXPAND|wxLEFT</flag>
-															<border>0</border>
+															<flag>wxALL|wxEXPAND</flag>
+															<border>6</border>
 															<object class="wxPanel" name="SkinEditorRemappingPanel">
 																<style>wxTAB_TRAVERSAL</style>
+																<object class="wxBoxSizer">
+																	<orient>wxVERTICAL</orient>
+																</object>
 															</object>
 														</object>
 													</object>
@@ -326,8 +329,20 @@
 											<orient>wxVERTICAL</orient>
 										</object>
 									</object>
-									<object class="wxPanel" name="m_panel50">
+									<object class="wxPanel" name="SkinEditorDeclarationPanel">
 										<style>wxTAB_TRAVERSAL</style>
+										<object class="wxBoxSizer">
+											<orient>wxVERTICAL</orient>
+											<object class="sizeritem">
+												<option>0</option>
+												<flag>wxALL</flag>
+												<border>6</border>
+												<object class="wxStaticText" name="SkinEditorDeclarationSourceLabel">
+													<label>Skin Declaration Source</label>
+													<wrap>-1</wrap>
+												</object>
+											</object>
+										</object>
 									</object>
 								</object>
 							</object>
