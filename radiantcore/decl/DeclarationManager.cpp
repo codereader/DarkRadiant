@@ -522,15 +522,18 @@ void DeclarationManager::removeDeclarationFromFile(const IDeclaration::Ptr& decl
     }
 }
 
-bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName, const std::string& newName)
+bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName_Incoming, const std::string& newName)
 {
     auto result = false;
 
-    if (oldName == newName)
+    if (oldName_Incoming == newName)
     {
         rWarning() << "Cannot rename, the new name is no different" << std::endl;
         return result;
     }
+
+    // Create a local copy, the reference might point to the same string as the newName
+    std::string oldName = oldName_Incoming;
 
     // Acquire the lock and perform the rename
     doWithDeclarationLock(type, [&](NamedDeclarations& decls)

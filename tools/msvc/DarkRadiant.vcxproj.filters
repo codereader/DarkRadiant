@@ -715,6 +715,9 @@
     <ClCompile Include="..\..\radiant\ui\skin\SkinEditor.cpp">
       <Filter>src\ui\skin</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiant\ui\skin\SkinEditorTreeView.cpp">
+      <Filter>src\ui\skin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiant\camera\CameraSettings.h">

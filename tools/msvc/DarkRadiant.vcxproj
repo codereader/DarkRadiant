@@ -349,6 +349,7 @@
     <ClCompile Include="..\..\radiant\ui\script\ScriptWindow.cpp" />
     <ClCompile Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.cpp" />
     <ClCompile Include="..\..\radiant\ui\skin\SkinEditor.cpp" />
+    <ClCompile Include="..\..\radiant\ui\skin\SkinEditorTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\CommandStatus.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\MapStatistics.cpp" />

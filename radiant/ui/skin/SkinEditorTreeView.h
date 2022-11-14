@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "wxutil/dataview/DeclarationTreeView.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 
@@ -18,20 +19,17 @@ private:
     constexpr static const char* const SKIN_ICON = "icon_skin.png";
     const Columns& _columns;
 
-public:
-    SkinEditorTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE) :
-        DeclarationTreeView(parent, decl::Type::Skin, columns, style),
-        _columns(columns)
-    {
-        
-    }
+    // Subscriptions to the material manager
+    sigc::connection _declRenamed;
 
-    virtual void Populate()
-    {
-        DeclarationTreeView::Populate(
-            std::make_shared<wxutil::ThreadedDeclarationTreePopulator>(decl::Type::Skin, _columns, SKIN_ICON)
-        );
-    }
+public:
+    SkinEditorTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
+    ~SkinEditorTreeView() override;
+
+    virtual void Populate();
+
+private:
+    void onDeclarationRenamed(decl::Type type, const std::string& oldName, const std::string& newName);
 };
 
 }
