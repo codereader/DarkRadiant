@@ -81,14 +81,19 @@ private:
     void setupPreview();
 
     decl::ISkin::Ptr getSelectedSkin();
+    std::string getSelectedModelFromTree();
+    std::string getSelectedSkinModel();
 
     void updateSkinButtonSensitivity();
+    void updateModelButtonSensitivity();
     void updateSkinControlsFromSelection();
     void updateModelControlsFromSkin(const decl::ISkin::Ptr& skin);
     void updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin);
     void updateSourceView(const decl::ISkin::Ptr& skin);
 
     void onCloseButton(wxCommandEvent& ev);
+    void onModelTreeSelectionChanged(wxDataViewEvent& ev);
+    void onSkinModelSelectionChanged(wxDataViewEvent& ev);
     void onSkinSelectionChanged(wxDataViewEvent& ev);
 
     template<typename ObjectClass>

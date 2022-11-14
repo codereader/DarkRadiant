@@ -77,7 +77,7 @@ void SkinEditor::setupModelTreeView()
 {
     auto* panel = getControl<wxPanel>("SkinEditorModelTreeView");
     _modelTreeView = new ModelTreeView(panel);
-    //_modelTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::_onModelSelectionChanged, this);
+    _modelTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onModelTreeSelectionChanged, this);
 
     auto definitionLabel = getControl<wxStaticText>("SkinEditorModelListLabel");
 
@@ -123,6 +123,7 @@ void SkinEditor::setupSelectedModelList()
 {
     auto* panel = getControl<wxPanel>("SkinEditorSelectedModelList");
     _selectedModelList = wxutil::TreeView::CreateWithModel(panel, _selectedModels.get(), wxDV_SINGLE | wxDV_NO_HEADER);
+    _selectedModelList->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onSkinModelSelectionChanged, this);
 
     // Single visible column
     _selectedModelList->AppendIconTextColumn(_("Model"), _selectedModelColumns.name.getColumnIndex(),
@@ -170,6 +171,20 @@ decl::ISkin::Ptr SkinEditor::getSelectedSkin()
 {
     auto selectedSkin = _skinTreeView->GetSelectedDeclName();
     return selectedSkin.empty() ? decl::ISkin::Ptr() : GlobalModelSkinCache().findSkin(selectedSkin);
+}
+
+std::string SkinEditor::getSelectedModelFromTree()
+{
+    return _modelTreeView->GetSelectedModelPath();
+}
+
+std::string SkinEditor::getSelectedSkinModel()
+{
+    auto item = _selectedModelList->GetSelection();
+    if (!item.IsOk()) return {};
+
+    wxutil::TreeModel::Row row(item, *_selectedModels);
+    return row[_selectedModelColumns.name].getString().ToStdString();
 }
 
 void SkinEditor::updateSkinButtonSensitivity()
@@ -240,6 +255,7 @@ void SkinEditor::updateSkinControlsFromSelection()
     updateModelControlsFromSkin(skin);
     updateRemappingControlsFromSkin(skin);
     updateSkinButtonSensitivity();
+    updateModelButtonSensitivity();
 
     if (!skin)
     {
@@ -250,6 +266,28 @@ void SkinEditor::updateSkinControlsFromSelection()
     getControl<wxTextCtrl>("SkinEditorSkinName")->SetValue(skin->getDeclName());
 }
 
+void SkinEditor::updateModelButtonSensitivity()
+{
+    // Update the button sensitivity
+    auto addButton = getControl<wxWindow>("SkinEditorAddModelButton");
+    auto removeButton = getControl<wxWindow>("SkinEditorRemoveModelButton");
+    auto selectedModel = getSelectedModelFromTree();
+    auto selectedSkin = getSelectedSkin();
+
+    // Add button is active if there's a skin and the selected model is not already part of the skin
+    if (selectedSkin && !selectedModel.empty() && selectedSkin->getModels().count(selectedModel) == 0)
+    {
+        addButton->Enable();
+    }
+    else
+    {
+        addButton->Disable();
+    }
+
+    // Remove button is active if we have a selection in the skin model list
+    removeButton->Enable(!getSelectedSkinModel().empty());
+}
+
 void SkinEditor::onCloseButton(wxCommandEvent& ev)
 {
     EndModal(wxCLOSE);
@@ -258,6 +296,16 @@ void SkinEditor::onCloseButton(wxCommandEvent& ev)
 void SkinEditor::onSkinSelectionChanged(wxDataViewEvent& ev)
 {
     updateSkinControlsFromSelection();
+}
+
+void SkinEditor::onModelTreeSelectionChanged(wxDataViewEvent& ev)
+{
+    updateModelButtonSensitivity();
+}
+
+void SkinEditor::onSkinModelSelectionChanged(wxDataViewEvent& ev)
+{
+    updateModelButtonSensitivity();
 }
 
 int SkinEditor::ShowModal()
