@@ -93,6 +93,15 @@ bool Skin::isModified()
     return _current != _original;
 }
 
+void Skin::setIsModified()
+{
+    if (!isModified())
+    {
+        ensureSkinDataBackup();
+        signal_DeclarationChanged().emit();
+    }
+}
+
 void Skin::commitModifications()
 {
     _original = _current;

@@ -93,6 +93,10 @@ public:
 	 */
 	virtual ISkin::Ptr findSkin(const std::string& name) = 0;
 
+    // Renames the skin named oldName to newName, and returns true if the operation was successful. 
+    // If the new name is already in use, this returns false too.
+    virtual bool renameSkin(const std::string& oldName, const std::string& newName) = 0;
+
 	/**
 	 * Return the skins associated with the given model.
 	 *

@@ -22,6 +22,21 @@ decl::ISkin::Ptr Doom3SkinCache::findSkin(const std::string& name)
     );
 }
 
+bool Doom3SkinCache::renameSkin(const std::string& oldName, const std::string& newName)
+{
+    auto result = GlobalDeclarationManager().renameDeclaration(decl::Type::Skin, oldName, newName);
+
+    if (result)
+    {
+        // Look up the changed skin and mark it as modified
+        auto skin = std::static_pointer_cast<Skin>(
+            GlobalDeclarationManager().findDeclaration(decl::Type::Skin, newName));
+        skin->setIsModified();
+    }
+
+    return result;
+}
+
 const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model)
 {
     static StringList _emptyList;

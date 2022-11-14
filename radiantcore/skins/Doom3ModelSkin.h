@@ -58,6 +58,7 @@ public:
     void foreachMatchingModel(const std::function<void(const std::string&)>& functor);
 
     bool isModified() override;
+    void setIsModified();
     void commitModifications() override;
     void revertModifications() override;
 
