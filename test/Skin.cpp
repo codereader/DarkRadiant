@@ -291,9 +291,31 @@ TEST_F(ModelSkinTest, RenameSkin)
     EXPECT_EQ(signalCount, 1) << "Signal has not been emitted";
 
     EXPECT_TRUE(GlobalModelSkinCache().findSkin(newName)) << "Lookup by the new name should have succeeded";
-    EXPECT_FALSE(GlobalModelSkinCache().findSkin(oldName)) << "Lookup by the new name should have succeeded";
+    EXPECT_FALSE(GlobalModelSkinCache().findSkin(oldName)) << "Lookup by the old name should not have succeeded";
 }
 
+TEST_F(ModelSkinTest, RevertSkinRename)
+{
+    constexpr auto oldName = "separated_tile_skin";
+    constexpr auto newName = "newSkinName";
+    auto skin = GlobalModelSkinCache().findSkin(oldName);
+    EXPECT_FALSE(skin->isModified()) << "Skin should be unmodified at start";
+
+    GlobalModelSkinCache().renameSkin(oldName, newName);
+
+    EXPECT_TRUE(skin->isModified()) << "Skin should be modified now";
+
+    std::size_t signalCount = 0;
+    skin->signal_DeclarationChanged().connect([&] { ++signalCount; });
+
+    skin->revertModifications();
+
+    EXPECT_FALSE(skin->isModified()) << "Skin should be unmodified again";
+    EXPECT_EQ(signalCount, 1) << "Signal has not been emitted";
+
+    EXPECT_TRUE(GlobalModelSkinCache().findSkin(oldName)) << "Lookup by the old name should have succeeded";
+    EXPECT_FALSE(GlobalModelSkinCache().findSkin(newName)) << "Lookup by the new name should not have succeeded";
+}
 TEST_F(ModelSkinTest, ReloadDeclsRefreshesModels)
 {
     // Create a temporary file holding a new skin
