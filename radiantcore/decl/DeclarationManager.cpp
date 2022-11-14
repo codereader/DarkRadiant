@@ -564,6 +564,11 @@ bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName
         result = true;
     });
 
+    if (result)
+    {
+        signal_DeclRenamed().emit(type, oldName, newName);
+    }
+
     return result;
 }
 
@@ -702,6 +707,11 @@ sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
 {
     std::lock_guard lock(_signalAddLock);
     return _declsReloadedSignals.try_emplace(type).first->second;
+}
+
+sigc::signal<void(Type, const std::string&, const std::string&)>& DeclarationManager::signal_DeclRenamed()
+{
+    return _declRenamedSignal;
 }
 
 void DeclarationManager::emitDeclsReloadedSignal(Type type)

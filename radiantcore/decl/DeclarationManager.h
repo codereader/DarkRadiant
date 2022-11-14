@@ -60,6 +60,8 @@ private:
     std::map<Type, sigc::signal<void>> _declsReloadedSignals;
     std::mutex _signalAddLock; // mutex used to ensure only one thread is adding values to the above maps
 
+    sigc::signal<void(Type, const std::string&, const std::string&)> _declRenamedSignal;
+
     std::size_t _parseStamp = 0;
     bool _reparseInProgress = false;
 
@@ -81,6 +83,7 @@ public:
     void foreachDeclaration(Type type, const std::function<void(const IDeclaration::Ptr&)>& functor) override;
     sigc::signal<void>& signal_DeclsReloading(Type type) override;
     sigc::signal<void>& signal_DeclsReloaded(Type type) override;
+    sigc::signal<void(Type, const std::string&, const std::string&)>& signal_DeclRenamed() override;
     void reloadDeclarations() override;
     bool renameDeclaration(Type type, const std::string& oldName, const std::string& newName) override;
     void removeDeclaration(Type type, const std::string& name) override;

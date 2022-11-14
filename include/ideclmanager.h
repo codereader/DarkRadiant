@@ -183,6 +183,10 @@ public:
     // Signal emitted when the decls of the given type have been (re-)loaded
     // Note that this signal can be fired on an arbitrary thread
     virtual sigc::signal<void>& signal_DeclsReloaded(Type type) = 0;
+
+    // Signal emitted when a declaration is renamed
+    // The type, the old name and the new name will be passed as arguments
+    virtual sigc::signal<void(Type, const std::string&, const std::string&)>& signal_DeclRenamed() = 0;
 };
 
 }
