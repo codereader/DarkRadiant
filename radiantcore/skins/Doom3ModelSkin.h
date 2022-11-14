@@ -17,11 +17,22 @@ namespace skins
 class Skin :
     public decl::DeclarationBase<decl::ISkin>
 {
-    // The list of models this skin is matching
-    std::set<std::string> _matchingModels;
+    struct SkinData
+    {
+        using Ptr = std::shared_ptr<SkinData>;
 
-	// Ordered list of texture remaps (as they appear in the decl)
-    std::vector<Remapping> _remaps;
+        // The list of models this skin is matching
+        std::set<std::string> matchingModels;
+
+	    // Ordered list of texture remaps (as they appear in the decl)
+        std::vector<Remapping> remaps;
+    };
+
+    // The unchanged skin data
+    SkinData::Ptr _original;
+
+    // The current skin data (might be modified)
+    SkinData::Ptr _current;
 
 public:
     Skin(const std::string& name);
@@ -41,6 +52,10 @@ public:
 
     // Visit the functor with the name of each model mentioned in this skin declaration
     void foreachMatchingModel(const std::function<void(const std::string&)>& functor);
+
+    bool isModified() override;
+    void commitModifications() override;
+    void revertModifications() override;
 
 protected:
     void onBeginParsing() override;

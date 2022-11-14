@@ -81,8 +81,8 @@ TEST_F(ModelSkinTest, GetModels)
     skin = GlobalModelSkinCache().findSkin("separated_tile_skin");
     const auto& models = skin->getModels();
     EXPECT_EQ(models.size(), 2);
-    EXPECT_TRUE(models.count("models/ase/separated_tiles.ase"), 1);
-    EXPECT_TRUE(models.count("models/ase/separated_tiles22.ase"), 1);
+    EXPECT_EQ(models.count("models/ase/separated_tiles.ase"), 1);
+    EXPECT_EQ(models.count("models/ase/separated_tiles22.ase"), 1);
 }
 
 TEST_F(ModelSkinTest, GetRemap)

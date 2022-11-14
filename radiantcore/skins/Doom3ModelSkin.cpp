@@ -4,7 +4,9 @@ namespace skins
 {
 
 Skin::Skin(const std::string& name) :
-    DeclarationBase<decl::ISkin>(decl::Type::Skin, name)
+    DeclarationBase<decl::ISkin>(decl::Type::Skin, name),
+    _original(std::make_shared<SkinData>()),
+    _current(_original)
 {}
 
 std::string Skin::getName() const
@@ -21,7 +23,7 @@ const std::set<std::string>& Skin::getModels()
 {
     ensureParsed();
 
-    return _matchingModels;
+    return _current->matchingModels;
 }
 
 std::string Skin::getRemap(const std::string& name)
@@ -29,7 +31,7 @@ std::string Skin::getRemap(const std::string& name)
     ensureParsed();
 
     // The remaps are applied in the order they appear in the decl
-    for (const auto& remapping : _remaps)
+    for (const auto& remapping : _current->remaps)
     {
         if (remapping.Original == "*" || remapping.Original == name)
         {
@@ -44,14 +46,14 @@ void Skin::addRemap(const std::string& src, const std::string& dst)
 {
     ensureParsed();
 
-    _remaps.emplace_back(Remapping{ src, dst });
+    _current->remaps.emplace_back(Remapping{ src, dst });
 }
 
 void Skin::foreachMatchingModel(const std::function<void(const std::string&)>& functor)
 {
     ensureParsed();
 
-    for (const auto& model : _matchingModels)
+    for (const auto& model : _current->matchingModels)
     {
         functor(model);
     }
@@ -59,13 +61,28 @@ void Skin::foreachMatchingModel(const std::function<void(const std::string&)>& f
 
 const std::vector<decl::ISkin::Remapping>& Skin::getAllRemappings()
 {
-    return _remaps;
+    return _current->remaps;
+}
+
+bool Skin::isModified()
+{
+    return _current != _original;
+}
+
+void Skin::commitModifications()
+{
+    // TODO
+}
+
+void Skin::revertModifications()
+{
+    // TODO
 }
 
 void Skin::onBeginParsing()
 {
-    _remaps.clear();
-    _matchingModels.clear();
+    _current->remaps.clear();
+    _current->matchingModels.clear();
 }
 
 void Skin::parseFromTokens(parser::DefTokeniser& tokeniser)
@@ -86,12 +103,12 @@ void Skin::parseFromTokens(parser::DefTokeniser& tokeniser)
         // this is a remap declaration
         if (key == "model")
         {
-            _matchingModels.insert(value);
+            _current->matchingModels.insert(value);
         }
         else
         {
             // Add the pair, preserving any wildcards "*"
-            _remaps.emplace_back(Remapping{ std::move(key), std::move(value) });
+            _current->remaps.emplace_back(Remapping{ std::move(key), std::move(value) });
         }
     }
 }

@@ -38,6 +38,16 @@ public:
 
     // The list of all remappings defined in this skin
     virtual const std::vector<Remapping>& getAllRemappings() = 0;
+
+    // Returns true if the skin has changed since it has been parsed
+    virtual bool isModified() = 0;
+
+    // Save any modifications, after this call isModified() will return false
+    virtual void commitModifications() = 0;
+
+    // Discard any modifications, reverting this to the state it had after parsing.
+    // After this call isModified() will return false again.
+    virtual void revertModifications() = 0;
 };
 
 } // namespace
