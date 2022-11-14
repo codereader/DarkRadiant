@@ -166,7 +166,7 @@
 												<option>0</option>
 												<flag>wxALIGN_CENTER_VERTICAL</flag>
 												<border>12</border>
-												<object class="wxStaticText" name="m_staticText87">
+												<object class="wxStaticText" name="SkinEditorSkinNameLabel">
 													<label>Skin Name:</label>
 													<wrap>-1</wrap>
 												</object>
@@ -175,7 +175,7 @@
 												<option>1</option>
 												<flag>wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT</flag>
 												<border>6</border>
-												<object class="wxTextCtrl" name="m_textCtrl48">
+												<object class="wxTextCtrl" name="SkinEditorSkinName">
 													<value></value>
 												</object>
 											</object>

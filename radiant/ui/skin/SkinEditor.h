@@ -79,6 +79,12 @@ private:
     void setupRemappingPanel();
     void setupPreview();
 
+    void updateSkinButtonSensitivity();
+    void updateSkinControlsFromSelection();
+
+    void onCloseButton(wxCommandEvent& ev);
+    void onSkinSelectionChanged(wxDataViewEvent& ev);
+
     template<typename ObjectClass>
     ObjectClass* getControl(const std::string& name)
     {

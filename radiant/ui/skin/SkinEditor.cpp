@@ -2,6 +2,8 @@
 
 #include <wx/dataview.h>
 #include <wx/splitter.h>
+#include <wx/textctrl.h>
+#include <wx/button.h>
 
 #include "i18n.h"
 #include "ui/modelselector/ModelTreeView.h"
@@ -40,6 +42,8 @@ SkinEditor::SkinEditor() :
     setupSelectedModelList();
     setupRemappingPanel();
     setupPreview();
+
+    getControl<wxButton>("SkinEditorCloseButton")->Bind(wxEVT_BUTTON, &SkinEditor::onCloseButton, this);
 
     // Set the default size of the window
     FitToScreen(0.8f, 0.9f);
@@ -93,6 +97,7 @@ void SkinEditor::setupSkinTreeView()
 {
     auto* panel = getControl<wxPanel>("SkinEditorSkinTreeView");
     _skinTreeView = new wxutil::DeclarationTreeView(panel, decl::Type::Skin, _columns, wxDV_SINGLE | wxDV_NO_HEADER);
+    _skinTreeView->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onSkinSelectionChanged, this);
 
     // Single visible column, containing the directory/decl name and the icon
     _skinTreeView->AppendIconTextColumn(decl::getTypeName(decl::Type::Skin), _columns.iconAndName.getColumnIndex(),
@@ -160,6 +165,46 @@ void SkinEditor::setupRemappingPanel()
     panel->GetSizer()->Add(_remappingList, 1, wxEXPAND, 0);
 }
 
+void SkinEditor::updateSkinButtonSensitivity()
+{
+    auto selectedSkin = _skinTreeView->GetSelectedDeclName();
+
+    getControl<wxButton>("SkinEditorCopyDefButton")->Enable(!selectedSkin.empty());
+}
+
+void SkinEditor::updateSkinControlsFromSelection()
+{
+    auto selectedSkin = _skinTreeView->GetSelectedDeclName();
+
+    getControl<wxWindow>("SkinEditorNotebook")->Enable(!selectedSkin.empty());
+    getControl<wxWindow>("SkinEditorEditSkinDefinitionLabel")->Enable(!selectedSkin.empty());
+    getControl<wxWindow>("SkinEditorSkinNameLabel")->Enable(!selectedSkin.empty());
+    getControl<wxWindow>("SkinEditorSkinName")->Enable(!selectedSkin.empty());
+
+    auto skin = GlobalDeclarationManager().findDeclaration(decl::Type::Skin, selectedSkin);
+
+    if (selectedSkin.empty() || !skin)
+    {
+        getControl<wxTextCtrl>("SkinEditorSkinName")->SetValue("");
+        updateSkinButtonSensitivity();
+        return;
+    }
+
+    getControl<wxTextCtrl>("SkinEditorSkinName")->SetValue(skin->getDeclName());
+
+    updateSkinButtonSensitivity();
+}
+
+void SkinEditor::onCloseButton(wxCommandEvent& ev)
+{
+    EndModal(wxCLOSE);
+}
+
+void SkinEditor::onSkinSelectionChanged(wxDataViewEvent& ev)
+{
+    updateSkinControlsFromSelection();
+}
+
 int SkinEditor::ShowModal()
 {
     // Restore the position
@@ -167,6 +212,8 @@ int SkinEditor::ShowModal()
 
     _modelTreeView->Populate();
     _skinTreeView->Populate(std::make_shared<wxutil::ThreadedDeclarationTreePopulator>(decl::Type::Skin, _columns, SKIN_ICON));
+
+    updateSkinControlsFromSelection();
 
     int returnCode = DialogBase::ShowModal();
 
