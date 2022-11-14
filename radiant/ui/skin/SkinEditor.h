@@ -86,6 +86,7 @@ private:
     void updateSkinControlsFromSelection();
     void updateModelControlsFromSkin(const decl::ISkin::Ptr& skin);
     void updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin);
+    void updateSourceView(const decl::ISkin::Ptr& skin);
 
     void onCloseButton(wxCommandEvent& ev);
     void onSkinSelectionChanged(wxDataViewEvent& ev);

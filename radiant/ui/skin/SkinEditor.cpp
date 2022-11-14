@@ -47,7 +47,7 @@ SkinEditor::SkinEditor() :
     getControl<wxButton>("SkinEditorCloseButton")->Bind(wxEVT_BUTTON, &SkinEditor::onCloseButton, this);
 
     // Set the default size of the window
-    FitToScreen(0.8f, 0.9f);
+    FitToScreen(0.9f, 0.9f);
 
     Layout();
     Fit();
@@ -211,6 +211,22 @@ void SkinEditor::updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin)
     }
 }
 
+void SkinEditor::updateSourceView(const decl::ISkin::Ptr& skin)
+{
+    if (skin)
+    {
+        // Surround the definition with curly braces, these are not included
+        auto definition = fmt::format("{0}\n{{{1}}}", skin->getDeclName(), skin->getBlockSyntax().contents);
+        _sourceView->SetValue(definition);
+    }
+    else
+    {
+        _sourceView->SetValue("");
+    }
+
+    _sourceView->Enable(skin != nullptr);
+}
+
 void SkinEditor::updateSkinControlsFromSelection()
 {
     auto skin = getSelectedSkin();
@@ -220,20 +236,18 @@ void SkinEditor::updateSkinControlsFromSelection()
     getControl<wxWindow>("SkinEditorSkinNameLabel")->Enable(skin != nullptr);
     getControl<wxWindow>("SkinEditorSkinName")->Enable(skin != nullptr);
 
+    updateSourceView(skin);
+    updateModelControlsFromSkin(skin);
+    updateRemappingControlsFromSkin(skin);
+    updateSkinButtonSensitivity();
+
     if (!skin)
     {
         getControl<wxTextCtrl>("SkinEditorSkinName")->SetValue("");
-        _selectedModels->Clear();
-        _remappings->Clear();
-        updateSkinButtonSensitivity();
         return;
     }
 
     getControl<wxTextCtrl>("SkinEditorSkinName")->SetValue(skin->getDeclName());
-    updateModelControlsFromSkin(skin);
-    updateRemappingControlsFromSkin(skin);
-
-    updateSkinButtonSensitivity();
 }
 
 void SkinEditor::onCloseButton(wxCommandEvent& ev)
