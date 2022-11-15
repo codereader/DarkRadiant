@@ -71,7 +71,7 @@ public:
         auto button = new wxBitmapButton(panel, wxID_ANY, wxutil::GetLocalBitmap("treeView16.png"));
         button->Bind(wxEVT_BUTTON, [=](auto& ev)
         {
-            auto selector = new MaterialChooser(panel, MaterialSelector::TextureFilter::Regular, ctrl);
+            auto selector = new MaterialChooser(panel, MaterialSelector::TextureFilter::All, ctrl);
             selector->ShowModal();
         });
 

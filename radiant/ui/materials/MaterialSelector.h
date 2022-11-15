@@ -32,6 +32,7 @@ public:
     {
         Regular, // prefix: "textures/"
         Lights,  // prefix: light/, fog/
+        All,     // Shows all textures, no filter
     };
 
 private:
