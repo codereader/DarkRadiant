@@ -218,6 +218,10 @@ TEST_F(ModelSkinTest, ClearRemappings)
     EXPECT_TRUE(skin->getAllRemappings().empty()) << "Remappings should be empty now";
     EXPECT_TRUE(skin->isModified()) << "Skin should be modified now";
     EXPECT_EQ(signalCount, 1) << "Signal should have been emitted";
+
+    // Clearing an empty remapping list doesn't do anything
+    skin->clearRemappings();
+    EXPECT_EQ(signalCount, 1) << "Signal should not have been emitted again";
 }
 
 TEST_F(ModelSkinTest, AddRemapping)

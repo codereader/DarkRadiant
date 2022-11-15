@@ -90,17 +90,59 @@ const std::vector<decl::ISkin::Remapping>& Skin::getAllRemappings()
 
 void Skin::addRemapping(const Remapping& remapping)
 {
-    
+    ensureParsed();
+
+    for (const auto& existing : _current->remaps)
+    {
+        if (existing.Original == remapping.Original && existing.Replacement == remapping.Replacement)
+        {
+            return; // duplicate found, do nothing
+        }
+    }
+
+    ensureSkinDataBackup();
+    _current->remaps.push_back(remapping);
+    onParsedContentsChanged();
 }
 
 void Skin::removeRemapping(const std::string& material)
 {
-    
+    ensureParsed();
+
+    // Check if there's any remap (otherwise avoid marking this skin as modified)
+    bool hasRemap = false;
+    for (auto it = _current->remaps.begin(); it != _current->remaps.end(); ++it)
+    {
+        if (it->Original != material) continue;
+
+        hasRemap = true;
+        break;
+    }
+
+    if (!hasRemap) return;
+
+    ensureSkinDataBackup();
+
+    // Remove that first matching remap
+    for (auto it = _current->remaps.begin(); it != _current->remaps.end(); ++it)
+    {
+        if (it->Original != material) continue;
+
+        _current->remaps.erase(it);
+        onParsedContentsChanged();
+        break;
+    }
 }
 
 void Skin::clearRemappings()
 {
-    
+    ensureParsed();
+
+    if (_current->remaps.empty()) return; // nothing to do
+
+    ensureSkinDataBackup();
+    _current->remaps.clear();
+    onParsedContentsChanged();
 }
 
 bool Skin::isModified()
