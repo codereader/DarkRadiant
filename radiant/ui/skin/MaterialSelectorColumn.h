@@ -5,6 +5,7 @@
 #include <wx/renderer.h>
 #include <wx/textctrl.h>
 
+#include "ui/materials/MaterialChooser.h"
 #include "wxutil/Bitmap.h"
 
 namespace ui
@@ -68,6 +69,12 @@ public:
         ctrl->SelectAll();
 
         auto button = new wxBitmapButton(panel, wxID_ANY, wxutil::GetLocalBitmap("treeView16.png"));
+        button->Bind(wxEVT_BUTTON, [=](auto& ev)
+        {
+            auto selector = new MaterialChooser(panel, MaterialSelector::TextureFilter::Regular, ctrl);
+            selector->ShowModal();
+        });
+
         panel->GetSizer()->Add(ctrl, 1, wxALIGN_CENTER_VERTICAL | wxRIGHT, 6);
         panel->GetSizer()->Add(button, 0, wxALIGN_CENTER_VERTICAL);
 
