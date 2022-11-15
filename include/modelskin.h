@@ -45,6 +45,15 @@ public:
     // The list of all remappings defined in this skin
     virtual const std::vector<Remapping>& getAllRemappings() = 0;
 
+    // Adds the given remapping to this skin (doesn't check for redundancy)
+    virtual void addRemapping(const Remapping& remapping) = 0;
+
+    // Removes the remapping for the given (source) material
+    virtual void removeRemapping(const std::string& material) = 0;
+
+    // Removes all remappings from this skin
+    virtual void clearRemappings() = 0;
+
     // Returns true if the skin has changed since it has been parsed
     virtual bool isModified() = 0;
 

@@ -47,6 +47,9 @@ public:
     void removeModel(const std::string& model) override;
 
     const std::vector<Remapping>& getAllRemappings() override;
+    void addRemapping(const Remapping& remapping) override;
+    void removeRemapping(const std::string& material) override;
+    void clearRemappings() override;
 
 	// Get this skin's remap for the provided material name (if any).
     std::string getRemap(const std::string& name) override;

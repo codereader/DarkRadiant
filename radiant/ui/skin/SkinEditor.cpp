@@ -32,7 +32,8 @@ SkinEditor::SkinEditor() :
     DialogBase(DIALOG_TITLE),
     _selectedModels(new wxutil::TreeModel(_selectedModelColumns, true)),
     _remappings(new wxutil::TreeModel(_remappingColumns, true)),
-    _controlUpdateInProgress(false)
+    _controlUpdateInProgress(false),
+    _skinUpdateInProgress(false)
 {
     loadNamedPanel(this, "SkinEditorMainPanel");
 
@@ -173,6 +174,8 @@ void SkinEditor::setupRemappingPanel()
         wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
     _remappingList->EnableSearchPopup(false);
 
+    _remappingList->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &SkinEditor::onRemappingRowChanged, this);
+
     panel->GetSizer()->Add(_remappingList, 1, wxEXPAND, 0);
 }
 
@@ -223,9 +226,26 @@ void SkinEditor::updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin)
 
     if (!skin) return;
 
+    // The wildcard item goes first
+    auto wildcardRow = _remappings->AddItem();
+
+    wildcardRow[_remappingColumns.active] = false;
+    wildcardRow[_remappingColumns.original] = "*";
+    wildcardRow[_remappingColumns.replacement] = "";
+
+    wildcardRow.SendItemAdded();
+
     for (const auto& remapping : skin->getAllRemappings())
     {
         auto row = _remappings->AddItem();
+
+        if (remapping.Original == "*")
+        {
+            wildcardRow[_remappingColumns.active] = true;
+            wildcardRow[_remappingColumns.replacement] = remapping.Replacement;
+            wildcardRow.SendItemChanged();
+            continue;
+        }
 
         row[_remappingColumns.active] = true;
         row[_remappingColumns.original] = remapping.Original;
@@ -366,8 +386,8 @@ void SkinEditor::onSkinNameChanged(wxCommandEvent& ev)
 {
     if (_controlUpdateInProgress) return;
 
-    // Unsubscribe from skin updates, subscribe again when done here
-    _skinModifiedConn.disconnect();
+    // Block declaration changed signals
+    util::ScopedBoolLock lock(_skinUpdateInProgress);
 
     // Rename the active skin decl
     auto nameEntry = static_cast<wxTextCtrl*>(ev.GetEventObject());
@@ -385,6 +405,8 @@ void SkinEditor::onSkinNameChanged(wxCommandEvent& ev)
 
 void SkinEditor::onSkinDeclarationChanged()
 {
+    if (_skinUpdateInProgress) return;
+
     // Refresh all controls
     updateSkinControlsFromSelection();
 }
@@ -407,17 +429,29 @@ void SkinEditor::onAddModelToSkin(wxCommandEvent& ev)
 {
     if (_controlUpdateInProgress) return;
 
+    // Block declaration changed signals
+    util::ScopedBoolLock lock(_skinUpdateInProgress);
+
     auto skin = getSelectedSkin();
     auto model = getSelectedModelFromTree();
 
     if (!skin || model.empty()) return;
 
     skin->addModel(model);
+
+    updateModelControlsFromSkin(skin);
+
+    // Select the added model
+    auto modelItem = _selectedModels->FindString(model, _selectedModelColumns.name);
+    _selectedModelList->Select(modelItem);
 }
 
 void SkinEditor::onRemoveModelFromSkin(wxCommandEvent& ev)
 {
     if (_controlUpdateInProgress) return;
+
+    // Block declaration changed signals
+    util::ScopedBoolLock lock(_skinUpdateInProgress);
 
     auto skin = getSelectedSkin();
     auto model = getSelectedSkinModel();
@@ -425,6 +459,29 @@ void SkinEditor::onRemoveModelFromSkin(wxCommandEvent& ev)
     if (!skin || model.empty()) return;
 
     skin->removeModel(model);
+
+    updateModelControlsFromSkin(skin);
+}
+
+void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
+{
+    if (_controlUpdateInProgress || !_skin) return;
+
+    util::ScopedBoolLock lock(_skinUpdateInProgress);
+
+    // Load all active remapping rows into the skin
+    _skin->clearRemappings();
+
+    _remappings->ForeachNode([&](const wxutil::TreeModel::Row& row)
+    {
+        if (!row[_remappingColumns.active].getBool()) return;
+
+        decl::ISkin::Remapping remapping;
+        remapping.Original = row[_remappingColumns.original].getString().ToStdString();
+        remapping.Replacement = row[_remappingColumns.replacement].getString().ToStdString();
+
+        _skin->addRemapping(remapping);
+    });
 }
 
 int SkinEditor::ShowModal()

@@ -70,6 +70,7 @@ private:
     wxutil::PanedPosition _rightPanePosition;
 
     bool _controlUpdateInProgress;
+    bool _skinUpdateInProgress;
 
     sigc::connection _skinModifiedConn;
 
@@ -109,6 +110,7 @@ private:
     void onSkinModelSelectionChanged(wxDataViewEvent& ev);
     void onSkinSelectionChanged(wxDataViewEvent& ev);
     void handleSkinSelectionChanged();
+    void onRemappingRowChanged(wxDataViewEvent& ev);
 
     void onSkinDeclarationChanged();
 

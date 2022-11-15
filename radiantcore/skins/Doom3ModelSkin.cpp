@@ -88,6 +88,21 @@ const std::vector<decl::ISkin::Remapping>& Skin::getAllRemappings()
     return _current->remaps;
 }
 
+void Skin::addRemapping(const Remapping& remapping)
+{
+    
+}
+
+void Skin::removeRemapping(const std::string& material)
+{
+    
+}
+
+void Skin::clearRemappings()
+{
+    
+}
+
 bool Skin::isModified()
 {
     return _current != _original;

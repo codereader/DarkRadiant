@@ -203,6 +203,75 @@ TEST_F(ModelSkinTest, RemoveModel)
     EXPECT_EQ(signalCount, 1) << "Signal should have been emitted";
 }
 
+TEST_F(ModelSkinTest, ClearRemappings)
+{
+    // Skin with 2 models
+    auto skin = GlobalModelSkinCache().findSkin("separated_tile_skin");
+    EXPECT_FALSE(skin->isModified()) << "Skin should be unmodified at start";
+    EXPECT_FALSE(skin->getAllRemappings().empty()) << "Remappings should not be empty at start";
+
+    std::size_t signalCount = 0;
+    skin->signal_DeclarationChanged().connect([&] { ++signalCount; });
+
+    skin->clearRemappings();
+
+    EXPECT_TRUE(skin->getAllRemappings().empty()) << "Remappings should be empty now";
+    EXPECT_TRUE(skin->isModified()) << "Skin should be modified now";
+    EXPECT_EQ(signalCount, 1) << "Signal should have been emitted";
+}
+
+TEST_F(ModelSkinTest, AddRemapping)
+{
+    // Skin with 2 models
+    auto skin = GlobalModelSkinCache().findSkin("separated_tile_skin");
+    EXPECT_FALSE(skin->isModified()) << "Skin should be unmodified at start";
+
+    constexpr auto original = "texture/original";
+    constexpr auto replacement = "texture/replacement";
+    EXPECT_FALSE(containsRemap(skin->getAllRemappings(), original, replacement));
+
+    std::size_t signalCount = 0;
+    skin->signal_DeclarationChanged().connect([&] { ++signalCount; });
+
+    skin->addRemapping(decl::ISkin::Remapping{ original, replacement });
+
+    EXPECT_TRUE(containsRemap(skin->getAllRemappings(), original, replacement)) << "Remapping has not been added";
+    EXPECT_TRUE(skin->isModified()) << "Skin should be modified now";
+    EXPECT_EQ(signalCount, 1) << "Signal should have been emitted";
+
+    // Adding the same again doesn't change anything
+    skin->addRemapping(decl::ISkin::Remapping{ original, replacement });
+    EXPECT_EQ(signalCount, 1) << "Signal should not have been emitted";
+}
+
+TEST_F(ModelSkinTest, RemoveRemapping)
+{
+    // Skin with 2 models
+    auto skin = GlobalModelSkinCache().findSkin("separated_tile_skin");
+    EXPECT_FALSE(skin->isModified()) << "Skin should be unmodified at start";
+
+    auto original = skin->getAllRemappings().begin()->Original;
+    auto replacement = skin->getAllRemappings().begin()->Replacement;
+    EXPECT_TRUE(containsRemap(skin->getAllRemappings(), original, replacement)) << "Remapping not found?";
+
+    std::size_t signalCount = 0;
+    skin->signal_DeclarationChanged().connect([&] { ++signalCount; });
+
+    skin->removeRemapping(original);
+
+    EXPECT_FALSE(containsRemap(skin->getAllRemappings(), original, replacement)) << "Remapping has not been removed";
+    EXPECT_TRUE(skin->isModified()) << "Skin should be modified now";
+    EXPECT_EQ(signalCount, 1) << "Signal should have been emitted";
+
+    // Removing again doesn't change anything
+    skin->removeRemapping(original);
+    EXPECT_EQ(signalCount, 1) << "Signal should not have been emitted";
+
+    // Removing a non-existent mapping doesn't do anything either
+    skin->removeRemapping("nonexistent");
+    EXPECT_EQ(signalCount, 1) << "Signal should not have been emitted";
+}
+
 TEST_F(ModelSkinTest, RemoveNonexistentModel)
 {
     // Skin with 2 models
