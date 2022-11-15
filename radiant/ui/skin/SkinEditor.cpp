@@ -175,8 +175,15 @@ void SkinEditor::setupRemappingPanel()
     _remappingList->EnableSearchPopup(false);
 
     _remappingList->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &SkinEditor::onRemappingRowChanged, this);
+    _remappingList->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onRemappingSelectionChanged, this);
 
-    panel->GetSizer()->Add(_remappingList, 1, wxEXPAND, 0);
+    panel->GetSizer()->Prepend(_remappingList, 1, wxEXPAND, 0);
+
+    auto button = getControl<wxButton>("SkinEditorAddMaterialsFromModelsButton");
+    // TODO
+
+    auto removeButton = getControl<wxButton>("SkinEditorRemoveMappingButton");
+    removeButton->Bind(wxEVT_BUTTON, &SkinEditor::onRemoveSelectedMapping, this);
 }
 
 decl::ISkin::Ptr SkinEditor::getSelectedSkin()
@@ -197,6 +204,15 @@ std::string SkinEditor::getSelectedSkinModel()
 
     wxutil::TreeModel::Row row(item, *_selectedModels);
     return row[_selectedModelColumns.name].getString().ToStdString();
+}
+
+std::string SkinEditor::getSelectedRemappingSourceMaterial()
+{
+    auto item = _remappingList->GetSelection();
+    if (!item.IsOk()) return {};
+
+    wxutil::TreeModel::Row row(item, *_remappings);
+    return row[_remappingColumns.original].getString().ToStdString();
 }
 
 void SkinEditor::updateSkinButtonSensitivity()
@@ -253,6 +269,14 @@ void SkinEditor::updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin)
 
         row.SendItemAdded();
     }
+
+    updateRemappingButtonSensitivity();
+}
+
+void SkinEditor::updateRemappingButtonSensitivity()
+{
+    auto selectedSource = getSelectedRemappingSourceMaterial();
+    getControl<wxButton>("SkinEditorRemoveMappingButton")->Enable(!selectedSource.empty() && selectedSource != "*");
 }
 
 void SkinEditor::updateSourceView(const decl::ISkin::Ptr& skin)
@@ -486,6 +510,28 @@ void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
     });
 
     updateSkinTreeItem();
+    updateSourceView(_skin);
+}
+
+void SkinEditor::onRemappingSelectionChanged(wxCommandEvent& ev)
+{
+    updateRemappingButtonSensitivity();
+}
+
+void SkinEditor::onRemoveSelectedMapping(wxCommandEvent& ev)
+{
+    if (_controlUpdateInProgress || !_skin) return;
+
+    util::ScopedBoolLock lock(_skinUpdateInProgress);
+
+    auto selectedSource = getSelectedRemappingSourceMaterial();
+
+    if (selectedSource.empty()) return;
+
+    _skin->removeRemapping(selectedSource);
+
+    updateSkinTreeItem();
+    updateRemappingControlsFromSkin(_skin);
     updateSourceView(_skin);
 }
 

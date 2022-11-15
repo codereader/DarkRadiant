@@ -93,6 +93,7 @@ private:
     decl::ISkin::Ptr getSelectedSkin();
     std::string getSelectedModelFromTree();
     std::string getSelectedSkinModel();
+    std::string getSelectedRemappingSourceMaterial();
 
     void updateSkinButtonSensitivity();
     void updateModelButtonSensitivity();
@@ -101,6 +102,7 @@ private:
     void updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin);
     void updateSourceView(const decl::ISkin::Ptr& skin);
     void updateSkinTreeItem();
+    void updateRemappingButtonSensitivity();
 
     void onSkinNameChanged(wxCommandEvent& ev);
     void onCloseButton(wxCommandEvent& ev);
@@ -111,6 +113,8 @@ private:
     void onSkinSelectionChanged(wxDataViewEvent& ev);
     void handleSkinSelectionChanged();
     void onRemappingRowChanged(wxDataViewEvent& ev);
+    void onRemoveSelectedMapping(wxCommandEvent& ev);
+    void onRemappingSelectionChanged(wxCommandEvent& ev);
 
     void onSkinDeclarationChanged();
 

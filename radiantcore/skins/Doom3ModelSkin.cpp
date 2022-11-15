@@ -239,7 +239,7 @@ std::string Skin::generateSyntax()
         output << "\tmodel\t\"" << model << "\"" << std::endl;
     }
 
-    if (!_current->matchingModels.empty())
+    if (!_current->matchingModels.empty() && !_current->remaps.empty())
     {
         output << std::endl;
     }
