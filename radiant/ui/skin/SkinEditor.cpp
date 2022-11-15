@@ -7,6 +7,7 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 
+#include "MaterialSelectorColumn.h"
 #include "SkinEditorTreeView.h"
 #include "ui/modelselector/ModelTreeView.h"
 #include "util/ScopedBoolLock.h"
@@ -168,14 +169,16 @@ void SkinEditor::setupRemappingPanel()
 
     _remappingList->AppendToggleColumn(_("Active"), _remappingColumns.active.getColumnIndex(),
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-    _remappingList->AppendTextColumn(_("Original"), _remappingColumns.original.getColumnIndex(),
-        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-    _remappingList->AppendTextColumn(_("Replacement"), _remappingColumns.replacement.getColumnIndex(),
-        wxDATAVIEW_CELL_INERT, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
-    _remappingList->EnableSearchPopup(false);
+
+    auto originalColumn = new MaterialSelectorColumn(_("Original"), _remappingColumns.original.getColumnIndex());
+    _remappingList->AppendColumn(originalColumn);
+
+    auto replacementColumn = new MaterialSelectorColumn(_("Replacement"), _remappingColumns.replacement.getColumnIndex());
+    _remappingList->AppendColumn(replacementColumn);
 
     _remappingList->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &SkinEditor::onRemappingRowChanged, this);
     _remappingList->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onRemappingSelectionChanged, this);
+    _remappingList->EnableSearchPopup(false);
 
     panel->GetSizer()->Prepend(_remappingList, 1, wxEXPAND, 0);
 

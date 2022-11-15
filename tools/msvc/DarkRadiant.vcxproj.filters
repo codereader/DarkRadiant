@@ -1440,6 +1440,9 @@
     <ClInclude Include="..\..\radiant\ui\skin\SkinEditorTreeView.h">
       <Filter>src\ui\skin</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\radiant\ui\skin\MaterialSelectorColumn.h">
+      <Filter>src\ui\skin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\..\radiant\darkradiant.rc" />
