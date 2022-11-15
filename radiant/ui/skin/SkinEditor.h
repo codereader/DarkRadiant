@@ -102,6 +102,7 @@ private:
     void updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin);
     void updateSourceView(const decl::ISkin::Ptr& skin);
     void updateSkinTreeItem();
+    void updateModelPreview();
     void updateRemappingButtonSensitivity();
 
     void onSkinNameChanged(wxCommandEvent& ev);

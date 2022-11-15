@@ -384,6 +384,29 @@ void SkinEditor::updateSkinTreeItem()
     row.SendItemChanged();
 }
 
+void SkinEditor::updateModelPreview()
+{
+    if (!_skin)
+    {
+        _modelPreview->setModel({});
+        _modelPreview->setSkin({});
+        return;
+    }
+
+    // If we have a valid model selection, use it
+    auto model = getSelectedSkinModel();
+
+    // Fall back to use the first model if nothing selected
+    if (model.empty())
+    {
+        const auto& allModels = _skin->getModels();
+        model = allModels.empty() ? "" : *allModels.begin();
+    }
+
+    _modelPreview->setModel(model);
+    _modelPreview->setSkin(_skin->getDeclName());
+}
+
 void SkinEditor::onCloseButton(wxCommandEvent& ev)
 {
     EndModal(wxCLOSE);
@@ -409,6 +432,7 @@ void SkinEditor::handleSkinSelectionChanged()
     }
 
     updateSkinControlsFromSelection();
+    updateModelPreview();
 }
 
 void SkinEditor::onSkinNameChanged(wxCommandEvent& ev)
@@ -452,6 +476,7 @@ void SkinEditor::onSkinModelSelectionChanged(wxDataViewEvent& ev)
     if (_controlUpdateInProgress) return;
 
     updateModelButtonSensitivity();
+    updateModelPreview();
 }
 
 void SkinEditor::onAddModelToSkin(wxCommandEvent& ev)
