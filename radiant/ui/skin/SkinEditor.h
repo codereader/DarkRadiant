@@ -99,6 +99,7 @@ private:
     void updateModelControlsFromSkin(const decl::ISkin::Ptr& skin);
     void updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin);
     void updateSourceView(const decl::ISkin::Ptr& skin);
+    void updateSkinTreeItem();
 
     void onSkinNameChanged(wxCommandEvent& ev);
     void onCloseButton(wxCommandEvent& ev);
@@ -107,6 +108,7 @@ private:
     void onModelTreeSelectionChanged(wxDataViewEvent& ev);
     void onSkinModelSelectionChanged(wxDataViewEvent& ev);
     void onSkinSelectionChanged(wxDataViewEvent& ev);
+    void handleSkinSelectionChanged();
 
     void onSkinDeclarationChanged();
 

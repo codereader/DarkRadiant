@@ -267,14 +267,15 @@ void SkinEditor::updateSkinControlsFromSelection()
     updateRemappingControlsFromSkin(skin);
     updateSkinButtonSensitivity();
     updateModelButtonSensitivity();
+    updateSkinTreeItem();
 
-    if (!skin)
+    auto name = skin ? skin->getDeclName() : "";
+    auto nameCtrl = getControl<wxTextCtrl>("SkinEditorSkinName");
+
+    if (nameCtrl->GetValue() != name)
     {
-        getControl<wxTextCtrl>("SkinEditorSkinName")->SetValue("");
-        return;
+        nameCtrl->SetValue(name);
     }
-
-    getControl<wxTextCtrl>("SkinEditorSkinName")->SetValue(skin->getDeclName());
 }
 
 void SkinEditor::updateModelButtonSensitivity()
@@ -299,6 +300,41 @@ void SkinEditor::updateModelButtonSensitivity()
     removeButton->Enable(!getSelectedSkinModel().empty());
 }
 
+void SkinEditor::updateSkinTreeItem()
+{
+    if (!_skin) return;
+
+    auto item = _skinTreeView->GetTreeModel()->FindString(_skin->getDeclName(), _columns.declName);
+
+    if (!item.IsOk())
+    {
+        return;
+    }
+
+    bool isModified = _skin->isModified();
+
+    wxutil::TreeModel::Row row(item, *_skinTreeView->GetModel());
+
+    row[_columns.iconAndName].setAttr(!row[_columns.isFolder].getBool() ?
+        wxutil::TreeViewItemStyle::Modified(isModified) : wxDataViewItemAttr()
+    );
+
+    wxDataViewIconText value = row[_columns.iconAndName];
+
+    if (!isModified && value.GetText().EndsWith("*"))
+    {
+        value.SetText(value.GetText().RemoveLast(1));
+        row[_columns.iconAndName] = wxVariant(value);
+    }
+    else if (isModified && !value.GetText().EndsWith("*"))
+    {
+        value.SetText(value.GetText() + "*");
+        row[_columns.iconAndName] = wxVariant(value);
+    }
+
+    row.SendItemChanged();
+}
+
 void SkinEditor::onCloseButton(wxCommandEvent& ev)
 {
     EndModal(wxCLOSE);
@@ -308,6 +344,11 @@ void SkinEditor::onSkinSelectionChanged(wxDataViewEvent& ev)
 {
     if (_controlUpdateInProgress) return;
 
+    handleSkinSelectionChanged();
+}
+
+void SkinEditor::handleSkinSelectionChanged()
+{
     _skinModifiedConn.disconnect();
 
     _skin = getSelectedSkin();
@@ -325,6 +366,9 @@ void SkinEditor::onSkinNameChanged(wxCommandEvent& ev)
 {
     if (_controlUpdateInProgress) return;
 
+    // Unsubscribe from skin updates, subscribe again when done here
+    _skinModifiedConn.disconnect();
+
     // Rename the active skin decl
     auto nameEntry = static_cast<wxTextCtrl*>(ev.GetEventObject());
 
@@ -334,6 +378,9 @@ void SkinEditor::onSkinNameChanged(wxCommandEvent& ev)
     // Make sure the item is selected again, it will be de-selected by the rename operation
     _skinTreeView->Select(item);
     _skinTreeView->EnsureVisible(item);
+    handleSkinSelectionChanged(); // also updates all controls
+
+    nameEntry->SetFocus();
 }
 
 void SkinEditor::onSkinDeclarationChanged()
