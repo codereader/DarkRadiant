@@ -440,6 +440,7 @@ void SkinEditor::onAddModelToSkin(wxCommandEvent& ev)
     skin->addModel(model);
 
     updateModelControlsFromSkin(skin);
+    updateSkinTreeItem();
 
     // Select the added model
     auto modelItem = _selectedModels->FindString(model, _selectedModelColumns.name);
@@ -461,6 +462,7 @@ void SkinEditor::onRemoveModelFromSkin(wxCommandEvent& ev)
     skin->removeModel(model);
 
     updateModelControlsFromSkin(skin);
+    updateSkinTreeItem();
 }
 
 void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
@@ -482,6 +484,9 @@ void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
 
         _skin->addRemapping(remapping);
     });
+
+    updateSkinTreeItem();
+    updateSourceView(_skin);
 }
 
 int SkinEditor::ShowModal()
