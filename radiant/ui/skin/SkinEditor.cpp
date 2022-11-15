@@ -179,8 +179,8 @@ void SkinEditor::setupRemappingPanel()
 
     panel->GetSizer()->Prepend(_remappingList, 1, wxEXPAND, 0);
 
-    auto button = getControl<wxButton>("SkinEditorAddMaterialsFromModelsButton");
-    // TODO
+    auto populateButton = getControl<wxButton>("SkinEditorAddMaterialsFromModelsButton");
+    populateButton->Bind(wxEVT_BUTTON, &SkinEditor::onPopulateMappingsFromModel, this);
 
     auto removeButton = getControl<wxButton>("SkinEditorRemoveMappingButton");
     removeButton->Bind(wxEVT_BUTTON, &SkinEditor::onRemoveSelectedMapping, this);
@@ -502,11 +502,12 @@ void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
     {
         if (!row[_remappingColumns.active].getBool()) return;
 
-        decl::ISkin::Remapping remapping;
-        remapping.Original = row[_remappingColumns.original].getString().ToStdString();
-        remapping.Replacement = row[_remappingColumns.replacement].getString().ToStdString();
+        auto original = row[_remappingColumns.original].getString().ToStdString();
+        auto replacement = row[_remappingColumns.replacement].getString().ToStdString();
 
-        _skin->addRemapping(remapping);
+        if (original == replacement) return;
+
+        _skin->addRemapping(decl::ISkin::Remapping{ std::move(original), std::move(replacement) });
     });
 
     updateSkinTreeItem();
@@ -530,9 +531,55 @@ void SkinEditor::onRemoveSelectedMapping(wxCommandEvent& ev)
 
     _skin->removeRemapping(selectedSource);
 
+    // Remove the selected item only
+    auto item = _remappings->FindString(selectedSource, _remappingColumns.original);
+    _remappings->RemoveItem(item);
+
     updateSkinTreeItem();
-    updateRemappingControlsFromSkin(_skin);
     updateSourceView(_skin);
+}
+
+void SkinEditor::onPopulateMappingsFromModel(wxCommandEvent& ev)
+{
+    if (_controlUpdateInProgress || !_skin) return;
+
+    util::ScopedBoolLock lock(_controlUpdateInProgress);
+
+    std::set<std::string> allMaterials;
+
+    // Get all associated models and ask them for their materials
+    for (const auto& modelPath : _skin->getModels())
+    {
+        auto model = GlobalModelCache().getModel(modelPath);
+
+        if (!model) continue;
+
+        for (const auto& material : model->getActiveMaterials())
+        {
+            allMaterials.insert(material);
+        }
+    }
+
+    std::set<std::string> existingMappingSources;
+
+    _remappings->ForeachNode([&](const wxutil::TreeModel::Row& row)
+    {
+        existingMappingSources.insert(row[_remappingColumns.original].getString().ToStdString());
+    });
+
+    // Ensure a mapping entry for each collected material
+    for (const auto& material : allMaterials)
+    {
+        if (existingMappingSources.count(material) > 0) continue;
+
+        auto row = _remappings->AddItem();
+
+        row[_remappingColumns.active] = false;
+        row[_remappingColumns.original] = material;
+        row[_remappingColumns.replacement] = material; // use the original as replacement
+
+        row.SendItemAdded();
+    }
 }
 
 int SkinEditor::ShowModal()

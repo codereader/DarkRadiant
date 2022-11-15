@@ -115,6 +115,7 @@ private:
     void onRemappingRowChanged(wxDataViewEvent& ev);
     void onRemoveSelectedMapping(wxCommandEvent& ev);
     void onRemappingSelectionChanged(wxCommandEvent& ev);
+    void onPopulateMappingsFromModel(wxCommandEvent& ev);
 
     void onSkinDeclarationChanged();
 
