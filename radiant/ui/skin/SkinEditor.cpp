@@ -1,6 +1,8 @@
 #include "SkinEditor.h"
 
 #include "i18n.h"
+#include "imodelcache.h"
+#include "ieclass.h"
 
 #include <wx/dataview.h>
 #include <wx/splitter.h>
@@ -553,7 +555,9 @@ void SkinEditor::onPopulateMappingsFromModel(wxCommandEvent& ev)
     // Get all associated models and ask them for their materials
     for (const auto& modelPath : _skin->getModels())
     {
-        auto model = GlobalModelCache().getModel(modelPath);
+        // Check for modelDefs, and redirect to load the mesh instead
+        auto eclass = GlobalEntityClassManager().findModel(modelPath);
+        auto model = GlobalModelCache().getModel(eclass ? eclass->getMesh() : modelPath);
 
         if (!model) continue;
 
