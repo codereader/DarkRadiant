@@ -124,7 +124,10 @@ private:
     void onRemappingSelectionChanged(wxCommandEvent& ev);
     void onPopulateMappingsFromModel(wxCommandEvent& ev);
     void onReplacementEntryChanged(const std::string& material);
+    void onDiscardChanges(wxCommandEvent& ev);
     void onSkinDeclarationChanged();
+
+    void discardChanges();
 
     template<typename ObjectClass>
     ObjectClass* getControl(const std::string& name)

@@ -15,6 +15,7 @@
 #include "util/ScopedBoolLock.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
+#include "wxutil/dialog/MessageBox.h"
 #include "wxutil/sourceview/DeclarationSourceView.h"
 #include "wxutil/sourceview/SourceView.h"
 
@@ -124,6 +125,8 @@ void SkinEditor::setupSkinTreeView()
 
     panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_skinTreeView, 1, wxEXPAND);
+
+    getControl<wxButton>("SkinEditorRevertButton")->Bind(wxEVT_BUTTON, &SkinEditor::onDiscardChanges, this);
 }
 
 void SkinEditor::setupSelectedModelList()
@@ -172,10 +175,10 @@ void SkinEditor::setupRemappingPanel()
     _remappingList->AppendToggleColumn(_("Active"), _remappingColumns.active.getColumnIndex(),
         wxDATAVIEW_CELL_ACTIVATABLE, wxCOL_WIDTH_AUTOSIZE, wxALIGN_NOT, wxDATAVIEW_COL_SORTABLE);
 
-    auto originalColumn = new MaterialSelectorColumn(_("Original"), _remappingColumns.original.getColumnIndex());
+    auto originalColumn = new MaterialSelectorColumn(_("Original (click to edit)"), _remappingColumns.original.getColumnIndex());
     _remappingList->AppendColumn(originalColumn);
 
-    auto replacementColumn = new MaterialSelectorColumn(_("Replacement"), _remappingColumns.replacement.getColumnIndex());
+    auto replacementColumn = new MaterialSelectorColumn(_("Replacement (click to edit)"), _remappingColumns.replacement.getColumnIndex());
     _remappingList->AppendColumn(replacementColumn);
 
     replacementColumn->signal_onMaterialSelected().connect(
@@ -227,9 +230,8 @@ std::string SkinEditor::getSelectedRemappingSourceMaterial()
 
 void SkinEditor::updateSkinButtonSensitivity()
 {
-    auto selectedSkin = _skinTreeView->GetSelectedDeclName();
-
-    getControl<wxButton>("SkinEditorCopyDefButton")->Enable(!selectedSkin.empty());
+    getControl<wxButton>("SkinEditorCopyDefButton")->Enable(_skin != nullptr);
+    getControl<wxButton>("SkinEditorRevertButton")->Enable(_skin && _skin->isModified());
 }
 
 void SkinEditor::updateModelControlsFromSkin(const decl::ISkin::Ptr& skin)
@@ -412,6 +414,19 @@ void SkinEditor::updateModelPreview()
     _modelPreview->setSkin(_skin->getDeclName());
 }
 
+void SkinEditor::discardChanges()
+{
+    if (!_skin) return;
+
+    util::ScopedBoolLock lock(_skinUpdateInProgress);
+
+    // Stop editing on all columns
+    _remappingList->CancelEditing();
+
+    _skin->revertModifications();
+    updateSkinControlsFromSelection();
+}
+
 void SkinEditor::onCloseButton(wxCommandEvent& ev)
 {
     EndModal(wxCLOSE);
@@ -500,6 +515,7 @@ void SkinEditor::onAddModelToSkin(wxCommandEvent& ev)
 
     updateModelControlsFromSkin(skin);
     updateSkinTreeItem();
+    updateSkinButtonSensitivity();
 
     // Select the added model
     auto modelItem = _selectedModels->FindString(model, _selectedModelColumns.name);
@@ -522,6 +538,7 @@ void SkinEditor::onRemoveModelFromSkin(wxCommandEvent& ev)
 
     updateModelControlsFromSkin(skin);
     updateSkinTreeItem();
+    updateSkinButtonSensitivity();
 }
 
 void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
@@ -547,6 +564,7 @@ void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
 
     updateSkinTreeItem();
     updateSourceView(_skin);
+    updateSkinButtonSensitivity();
 }
 
 void SkinEditor::onRemappingEditStarted(wxDataViewEvent& ev)
@@ -650,6 +668,21 @@ void SkinEditor::onReplacementEntryChanged(const std::string& material)
 
     row[_remappingColumns.replacement] = material;
     row.SendItemChanged();
+}
+
+void SkinEditor::onDiscardChanges(wxCommandEvent& ev)
+{
+    if (!_skin) return;
+
+    // The material we're editing has been changed from the saved one
+    wxutil::Messagebox box(_("Discard Changes"),
+        fmt::format(_("Do you want to discard all the changes to the skin\n{0}?"), _skin->getDeclName()),
+        IDialog::MESSAGE_ASK, this);
+
+    if (box.run() == IDialog::RESULT_YES)
+    {
+        discardChanges();
+    }
 }
 
 int SkinEditor::ShowModal()

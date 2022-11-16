@@ -212,6 +212,15 @@ void TreeView::Rebuild()
 }
 #endif
 
+void TreeView::CancelEditing()
+{
+    for (unsigned i = 0; i < GetColumnCount(); ++i)
+    {
+        auto column = GetColumn(i);
+        column->GetRenderer()->CancelEditing();
+    }
+}
+
 void TreeView::SendSelectionChangeEvent(const wxDataViewItem& item)
 {
     // In wxWidgets 3.1.x the wxDataViewEvent constructors have changed, switch on it
