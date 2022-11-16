@@ -414,7 +414,8 @@ TEST_F(ModelSkinTest, CopySkin)
         receivedType = type;
     });
 
-    EXPECT_TRUE(skinManager.findSkin("separated_tile_skin"));
+    auto originalSkin = skinManager.findSkin("separated_tile_skin");
+    EXPECT_TRUE(originalSkin);
     EXPECT_FALSE(skinManager.findSkin("skin/copytest"));
 
     // Copy name must not be empty => returns empty material
@@ -427,6 +428,7 @@ TEST_F(ModelSkinTest, CopySkin)
     auto skin = skinManager.copySkin("separated_tile_skin", "skin/copytest");
     EXPECT_TRUE(skin) << "No skin copy has been created";
     EXPECT_EQ(skin->getDeclName(), "skin/copytest") << "Wrong name assigned";
+    EXPECT_EQ(skin->getBlockSyntax().contents, originalSkin->getBlockSyntax().contents) << "Contents not copied";
     EXPECT_TRUE(skinManager.skinCanBeModified(skin->getDeclName()));
     EXPECT_EQ(skin->getBlockSyntax().fileInfo.name, "");
     EXPECT_EQ(skin->getBlockSyntax().fileInfo.topDir, "");

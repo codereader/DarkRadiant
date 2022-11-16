@@ -1168,7 +1168,7 @@ TEST_F(DeclManagerTest, DeclCreatedSignal)
     std::size_t signalCount = 0;
     decl::Type receivedType;
     std::string receivedDeclName;
-    GlobalDeclarationManager().signal_DeclRemoved().connect([&](decl::Type type, const std::string& name)
+    GlobalDeclarationManager().signal_DeclCreated().connect([&](decl::Type type, const std::string& name)
     {
         ++signalCount;
         receivedType = type;

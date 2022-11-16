@@ -132,6 +132,8 @@ IDeclaration::Ptr DeclarationManager::findOrCreateDeclaration(Type type, const s
         syntax.name = name;
 
         returnValue = createOrUpdateDeclaration(type, syntax);
+
+        signal_DeclCreated().emit(type, name);
     });
 
     // If the value is still empty at this point, throw
