@@ -31,6 +31,7 @@ class Doom3SkinCache :
 
 	sigc::signal<void> _sigSkinsReloaded;
     sigc::connection _declsReloadedConnection;
+    sigc::connection _declRemovedConnection;
 
 public:
     decl::ISkin::Ptr findSkin(const std::string& name) override;
@@ -56,6 +57,7 @@ public:
 private:
     void onSkinDeclsReloaded();
     void updateModelsInScene();
+    void onSkinDeclRemoved(decl::Type type, const std::string& name);
 };
 
 } // namespace

@@ -125,9 +125,11 @@ TEST_F(ModelSkinTest, FindMatchingSkins)
     EXPECT_EQ(separatedSkins.at(0), "separated_tile_skin");
 
     auto tileSkins = GlobalModelSkinCache().getSkinsForModel("models/ase/tiles.ase");
-    EXPECT_EQ(tileSkins.size(), 2);
+    EXPECT_EQ(tileSkins.size(), 4);
     expectSkinIsListed(tileSkins, "tile_skin");
     expectSkinIsListed(tileSkins, "tile_skin2");
+    expectSkinIsListed(tileSkins, "skin_declared_in_pk4");
+    expectSkinIsListed(tileSkins, "another_skin_declared_in_pk4");
 }
 
 TEST_F(ModelSkinTest, GetAllSkins)
@@ -493,6 +495,37 @@ TEST_F(ModelSkinTest, ReloadDeclsRefreshesModelsUsingSignal)
     activeMaterials = model->getIModel().getActiveMaterials();
     EXPECT_EQ(activeMaterials.size(), 1);
     EXPECT_EQ(activeMaterials.at(0), "textures/common/noclip");
+}
+
+TEST_F(ModelSkinTest, SkinCacheUpdatedAfterSkinRemoval)
+{
+    constexpr auto skinToRemove = "tile_skin2";
+    constexpr auto associatedModel = "models/ase/tiles.ase";
+
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::Skin, skinToRemove);
+    EXPECT_TRUE(decl);
+
+    // Check prerequisites, skin should be listed
+    auto allSkins = GlobalModelSkinCache().getAllSkins();
+    EXPECT_NE(std::find(allSkins.begin(), allSkins.end(), skinToRemove), allSkins.end());
+
+    // Skin should be reported as matching skin for a model
+    auto skinsForModel = GlobalModelSkinCache().getSkinsForModel(associatedModel);
+    EXPECT_NE(std::find(skinsForModel.begin(), skinsForModel.end(), skinToRemove), skinsForModel.end());
+
+    // Create a backup copy of the decl file we're going to manipulate
+    BackupCopy backup(_context.getTestProjectPath() + decl->getDeclFilePath());
+
+    GlobalDeclarationManager().removeDeclaration(decl->getDeclType(), decl->getDeclName());
+
+    // The skin should disappear from both skin lists
+    allSkins = GlobalModelSkinCache().getAllSkins();
+    EXPECT_EQ(std::find(allSkins.begin(), allSkins.end(), skinToRemove), allSkins.end())
+        << "Skin should have disappeared from the all skins list";
+
+    skinsForModel = GlobalModelSkinCache().getSkinsForModel(associatedModel);
+    EXPECT_EQ(std::find(skinsForModel.begin(), skinsForModel.end(), skinToRemove), skinsForModel.end())
+        << "Skin should have disappeared from the model list";
 }
 
 }
