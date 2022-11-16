@@ -178,8 +178,13 @@ void SkinEditor::setupRemappingPanel()
     auto replacementColumn = new MaterialSelectorColumn(_("Replacement"), _remappingColumns.replacement.getColumnIndex());
     _remappingList->AppendColumn(replacementColumn);
 
+    replacementColumn->signal_onMaterialSelected().connect(
+        sigc::mem_fun(*this, &SkinEditor::onReplacementEntryChanged));
+
     _remappingList->Bind(wxEVT_DATAVIEW_ITEM_VALUE_CHANGED, &SkinEditor::onRemappingRowChanged, this);
     _remappingList->Bind(wxEVT_DATAVIEW_SELECTION_CHANGED, &SkinEditor::onRemappingSelectionChanged, this);
+    _remappingList->Bind(wxEVT_DATAVIEW_ITEM_EDITING_STARTED, &SkinEditor::onRemappingEditStarted, this);
+    _remappingList->Bind(wxEVT_DATAVIEW_ITEM_EDITING_DONE, &SkinEditor::onRemappingEditDone, this);
     _remappingList->EnableSearchPopup(false);
 
     panel->GetSizer()->Prepend(_remappingList, 1, wxEXPAND, 0);
@@ -544,6 +549,31 @@ void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
     updateSourceView(_skin);
 }
 
+void SkinEditor::onRemappingEditStarted(wxDataViewEvent& ev)
+{
+    // Save the previous values into the model row, to restore it on cancel
+    wxutil::TreeModel::Row row(ev.GetItem(), *_remappings);
+
+    row[_remappingColumns.unchangedOriginal] = row[_remappingColumns.original].getString();
+    row[_remappingColumns.unchangedReplacement] = row[_remappingColumns.replacement].getString();
+}
+
+void SkinEditor::onRemappingEditDone(wxDataViewEvent& ev)
+{
+    wxutil::TreeModel::Row row(ev.GetItem(), *_remappings);
+
+    if (ev.IsEditCancelled())
+    {
+        // Revert to previous value
+        row[_remappingColumns.original] = row[_remappingColumns.unchangedOriginal].getString();
+        row[_remappingColumns.replacement] = row[_remappingColumns.unchangedReplacement].getString();
+        row.SendItemChanged();
+    }
+
+    row[_remappingColumns.unchangedOriginal] = std::string();
+    row[_remappingColumns.unchangedReplacement] = std::string();
+}
+
 void SkinEditor::onRemappingSelectionChanged(wxCommandEvent& ev)
 {
     updateRemappingButtonSensitivity();
@@ -612,6 +642,14 @@ void SkinEditor::onPopulateMappingsFromModel(wxCommandEvent& ev)
 
         row.SendItemAdded();
     }
+}
+
+void SkinEditor::onReplacementEntryChanged(const std::string& material)
+{
+    wxutil::TreeModel::Row row(_remappingList->GetSelection(), *_remappings);
+
+    row[_remappingColumns.replacement] = material;
+    row.SendItemChanged();
 }
 
 int SkinEditor::ShowModal()

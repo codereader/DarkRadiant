@@ -53,12 +53,16 @@ private:
         RemappingColumns() :
             active(add(wxutil::TreeModel::Column::Boolean)),
             original(add(wxutil::TreeModel::Column::String)),
-            replacement(add(wxutil::TreeModel::Column::String))
+            replacement(add(wxutil::TreeModel::Column::String)),
+            unchangedOriginal(add(wxutil::TreeModel::Column::String)),
+            unchangedReplacement(add(wxutil::TreeModel::Column::String))
         {}
 
         wxutil::TreeModel::Column active;
         wxutil::TreeModel::Column original;
         wxutil::TreeModel::Column replacement;
+        wxutil::TreeModel::Column unchangedOriginal;
+        wxutil::TreeModel::Column unchangedReplacement;
     };
 
     RemappingColumns _remappingColumns;
@@ -114,10 +118,12 @@ private:
     void onSkinSelectionChanged(wxDataViewEvent& ev);
     void handleSkinSelectionChanged();
     void onRemappingRowChanged(wxDataViewEvent& ev);
+    void onRemappingEditStarted(wxDataViewEvent& ev);
+    void onRemappingEditDone(wxDataViewEvent& ev);
     void onRemoveSelectedMapping(wxCommandEvent& ev);
     void onRemappingSelectionChanged(wxCommandEvent& ev);
     void onPopulateMappingsFromModel(wxCommandEvent& ev);
-
+    void onReplacementEntryChanged(const std::string& material);
     void onSkinDeclarationChanged();
 
     template<typename ObjectClass>

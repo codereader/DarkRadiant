@@ -19,10 +19,17 @@ private:
 
     constexpr static auto EDITOR_TEXT_CONTROL_NAME = "TextEntry";
 
+    sigc::signal<void(const std::string&)> _sigMaterialSelected;
+
 public:
     MaterialSelectorRenderer() :
         wxDataViewCustomRenderer(wxDataViewTextRenderer::GetDefaultType(), wxDATAVIEW_CELL_EDITABLE)
     {}
+
+    sigc::signal<void(const std::string&)>& signal_onMaterialSelected()
+    {
+        return _sigMaterialSelected;
+    }
 
     bool Render(wxRect cell, wxDC* dc, int state) override
     {
@@ -64,6 +71,9 @@ public:
         ctrl->SetName(EDITOR_TEXT_CONTROL_NAME);
         ctrl->SetSize(wxSize(rect.GetWidth() - 32, -1));
 
+        // Dispatch the signal when the control is receiving a value
+        ctrl->Bind(wxEVT_TEXT, [ctrl, this](auto& ev) { signal_onMaterialSelected().emit(ctrl->GetValue().ToStdString()); });
+
         // select the text in the control an place the cursor at the end
         ctrl->SetInsertionPointEnd();
         ctrl->SelectAll();
@@ -98,11 +108,33 @@ public:
 class MaterialSelectorColumn :
     public wxDataViewColumn
 {
+private:
+    sigc::signal<void(const std::string&)> _sigMaterialSelected;
+    sigc::connection _rendererSelectionConn;
+
 public:
     MaterialSelectorColumn(const std::string& title, int modelColumn, int width = wxCOL_WIDTH_AUTOSIZE,
                    wxAlignment align = wxALIGN_LEFT, int flags = wxDATAVIEW_COL_RESIZABLE) :
         wxDataViewColumn(title, new MaterialSelectorRenderer(), modelColumn, width, align, flags)
-    {}
+    {
+        // Dispatch the browser selection signal
+        auto renderer = static_cast<MaterialSelectorRenderer*>(GetRenderer());
+        _rendererSelectionConn = renderer->signal_onMaterialSelected().connect(
+            [this](const std::string& value) { signal_onMaterialSelected().emit(value); });
+    }
+
+    ~MaterialSelectorColumn() override
+    {
+        _rendererSelectionConn.disconnect();
+    }
+
+    // A signal that is sent out as soon as a material is selected in the browse dialog
+    // This doesn't mean that the selected material is going to be accepted, but it can be
+    // used to live-update other preview widgets
+    sigc::signal<void(const std::string&)>& signal_onMaterialSelected()
+    {
+        return _sigMaterialSelected;
+    }
 };
 
 

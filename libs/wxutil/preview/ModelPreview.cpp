@@ -182,6 +182,7 @@ void ModelPreview::applySkin()
 
         if (skin)
         {
+            _skinDeclChangedConn.disconnect();
             _skinDeclChangedConn = skin->signal_DeclarationChanged().connect(
                 sigc::mem_fun(*this, &ModelPreview::onSkinDeclarationChanged));
         }
@@ -193,6 +194,7 @@ void ModelPreview::applySkin()
 void ModelPreview::onSkinDeclarationChanged()
 {
     applySkin();
+    queueDraw();
 }
 
 } // namespace ui
