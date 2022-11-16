@@ -542,7 +542,7 @@ TEST_F(ModelSkinTest, ReloadDeclsRefreshesModelsUsingSignal)
     EXPECT_EQ(activeMaterials.at(0), "textures/common/noclip");
 }
 
-TEST_F(ModelSkinTest, SkinCacheUpdatedAfterSkinRemoval)
+TEST_F(ModelSkinTest, SkinIsUnlistedAfterSkinRemoval)
 {
     constexpr auto skinToRemove = "tile_skin2";
     constexpr auto associatedModel = "models/ase/tiles.ase";
@@ -571,6 +571,84 @@ TEST_F(ModelSkinTest, SkinCacheUpdatedAfterSkinRemoval)
     skinsForModel = GlobalModelSkinCache().getSkinsForModel(associatedModel);
     EXPECT_EQ(std::find(skinsForModel.begin(), skinsForModel.end(), skinToRemove), skinsForModel.end())
         << "Skin should have disappeared from the model list";
+}
+
+TEST_F(ModelSkinTest, SkinIsListedAfterSkinCreation)
+{
+    constexpr auto skinToAdd = "some/new/skin";
+
+    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::Skin, skinToAdd));
+
+    // Check prerequisites, skin should not be listed
+    auto allSkins = GlobalModelSkinCache().getAllSkins();
+    EXPECT_EQ(std::find(allSkins.begin(), allSkins.end(), skinToAdd), allSkins.end());
+
+    GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Skin, skinToAdd);
+
+    // The skin should appear on the all skins lists
+    allSkins = GlobalModelSkinCache().getAllSkins();
+    EXPECT_NE(std::find(allSkins.begin(), allSkins.end(), skinToAdd), allSkins.end())
+        << "Skin should appear on the all skins list";
+}
+
+TEST_F(ModelSkinTest, SkinIsListedAfterSkinCopy)
+{
+    constexpr auto skinToCopy = "tile_skin2";
+
+    auto originalSkin = GlobalModelSkinCache().findSkin(skinToCopy);
+    EXPECT_TRUE(originalSkin);
+    auto associatedModel = *originalSkin->getModels().begin();
+
+    auto nameOfCopy = "some/copied/skin";
+
+    // Check prerequisites, skin should not be listed
+    auto allSkins = GlobalModelSkinCache().getAllSkins();
+    EXPECT_EQ(std::find(allSkins.begin(), allSkins.end(), nameOfCopy), allSkins.end());
+
+    // Skin should not be reported as matching skin for a model
+    auto skinsForModel = GlobalModelSkinCache().getSkinsForModel(associatedModel);
+    EXPECT_EQ(std::find(skinsForModel.begin(), skinsForModel.end(), nameOfCopy), skinsForModel.end());
+
+    GlobalModelSkinCache().copySkin(skinToCopy, nameOfCopy);
+
+    // The skin should appear on both skin lists now
+    allSkins = GlobalModelSkinCache().getAllSkins();
+    EXPECT_NE(std::find(allSkins.begin(), allSkins.end(), nameOfCopy), allSkins.end())
+        << "Skin should appear on the all skins list";
+
+    skinsForModel = GlobalModelSkinCache().getSkinsForModel(associatedModel);
+    EXPECT_NE(std::find(skinsForModel.begin(), skinsForModel.end(), nameOfCopy), skinsForModel.end())
+        << "Skin should appear on the model list";
+}
+
+// Modifying a skin might affect the list of models it is associated with
+TEST_F(ModelSkinTest, SkinIsListedAfterSkinChange)
+{
+    constexpr auto skinToModify = "tile_skin2";
+
+    auto originalSkin = GlobalModelSkinCache().findSkin(skinToModify);
+    EXPECT_TRUE(originalSkin);
+    auto associatedModel = *originalSkin->getModels().begin();
+
+    // Skin should be reported as matching skin for a model
+    auto skinsForModel = GlobalModelSkinCache().getSkinsForModel(associatedModel);
+    EXPECT_NE(std::find(skinsForModel.begin(), skinsForModel.end(), skinToModify), skinsForModel.end());
+
+    // Modify the skin, check the result
+    originalSkin->removeModel(associatedModel);
+
+    skinsForModel = GlobalModelSkinCache().getSkinsForModel(associatedModel);
+    EXPECT_EQ(std::find(skinsForModel.begin(), skinsForModel.end(), skinToModify), skinsForModel.end())
+        << "Skin should have disappeared from the matching skin list";
+
+    // Modify the skin again, adding it back
+    auto syntax = originalSkin->getBlockSyntax();
+    syntax.contents = "\n\nmodel \"" + associatedModel + "\"\n\n" + syntax.contents;
+    originalSkin->setBlockSyntax(syntax);
+
+    skinsForModel = GlobalModelSkinCache().getSkinsForModel(associatedModel);
+    EXPECT_NE(std::find(skinsForModel.begin(), skinsForModel.end(), skinToModify), skinsForModel.end())
+        << "Skin should have reappeared on the matching skin list";
 }
 
 }

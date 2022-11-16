@@ -130,6 +130,9 @@ void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
         sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclsReloaded)
     );
 
+    _declCreatedConnection = GlobalDeclarationManager().signal_DeclCreated().connect(
+        sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclCreated)
+    );
     _declRemovedConnection = GlobalDeclarationManager().signal_DeclRemoved().connect(
         sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclRemoved)
     );
@@ -137,11 +140,31 @@ void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
 
 void Doom3SkinCache::shutdownModule()
 {
+    _declCreatedConnection.disconnect();
     _declRemovedConnection.disconnect();
     _declsReloadedConnection.disconnect();
 
     _modelSkins.clear();
     _allSkins.clear();
+}
+
+void Doom3SkinCache::onSkinDeclCreated(decl::Type type, const std::string& name)
+{
+    if (type != decl::Type::Skin) return;
+
+    // Add the skin to the cached lists
+    std::lock_guard<std::mutex> lock(_cacheLock);
+
+    _allSkins.push_back(name);
+
+    auto skin = findSkin(name);
+    if (!skin) return;
+
+    for (const auto& modelName : skin->getModels())
+    {
+        auto& matchingSkins = _modelSkins.try_emplace(modelName).first->second;
+        matchingSkins.push_back(skin->getDeclName());
+    }
 }
 
 void Doom3SkinCache::onSkinDeclRemoved(decl::Type type, const std::string& name)
