@@ -237,7 +237,9 @@ void SkinEditor::updateSkinButtonSensitivity()
 {
     getControl<wxButton>("SkinEditorCopyDefButton")->Enable(_skin != nullptr);
     getControl<wxButton>("SkinEditorRevertButton")->Enable(_skin && _skin->isModified());
-    getControl<wxButton>("SkinEditorSaveButton")->Enable(_skin && _skin->isModified());
+
+    getControl<wxButton>("SkinEditorSaveButton")->Enable(
+        _skin && _skin->isModified() && GlobalModelSkinCache().skinCanBeModified(_skin->getDeclName()));
 }
 
 void SkinEditor::updateModelControlsFromSkin(const decl::ISkin::Ptr& skin)
@@ -310,7 +312,9 @@ void SkinEditor::updateSourceView(const decl::ISkin::Ptr& skin)
         _sourceView->SetValue("");
     }
 
+    // No source editing at the moment
     _sourceView->Enable(skin != nullptr);
+    _sourceView->SetReadOnly(true);
 }
 
 void SkinEditor::updateSkinControlsFromSelection()
@@ -318,11 +322,15 @@ void SkinEditor::updateSkinControlsFromSelection()
     util::ScopedBoolLock lock(_controlUpdateInProgress);
 
     auto skin = getSelectedSkin();
+    auto skinCanBeModified = skin && GlobalModelSkinCache().skinCanBeModified(skin->getDeclName());
 
-    getControl<wxWindow>("SkinEditorNotebook")->Enable(skin != nullptr);
-    getControl<wxWindow>("SkinEditorEditSkinDefinitionLabel")->Enable(skin != nullptr);
-    getControl<wxWindow>("SkinEditorSkinNameLabel")->Enable(skin != nullptr);
-    getControl<wxWindow>("SkinEditorSkinName")->Enable(skin != nullptr);
+    // Enable/disable notebook tabs independently to allow page switching
+    getControl<wxWindow>("SkinEditorTargetModels")->Enable(skinCanBeModified);
+    getControl<wxWindow>("SkinEditorRemappings")->Enable(skinCanBeModified);
+
+    getControl<wxWindow>("SkinEditorEditSkinDefinitionLabel")->Enable(skinCanBeModified);
+    getControl<wxWindow>("SkinEditorSkinNameLabel")->Enable(skinCanBeModified);
+    getControl<wxWindow>("SkinEditorSkinName")->Enable(skinCanBeModified);
 
     updateSourceView(skin);
     updateModelControlsFromSkin(skin);
