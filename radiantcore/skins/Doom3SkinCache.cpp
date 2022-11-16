@@ -70,6 +70,8 @@ const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model)
 
     std::lock_guard<std::mutex> lock(_cacheLock);
 
+    ensureCacheIsUpdated();
+
     auto existing = _modelSkins.find(model);
     return existing != _modelSkins.end() ? existing->second : _emptyList;
 }
@@ -77,6 +79,8 @@ const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model)
 const StringList& Doom3SkinCache::getAllSkins()
 {
     std::lock_guard<std::mutex> lock(_cacheLock);
+
+    ensureCacheIsUpdated();
 
     return _allSkins;
 }
@@ -89,6 +93,24 @@ bool Doom3SkinCache::skinCanBeModified(const std::string& name)
 
     const auto& fileInfo = decl->getBlockSyntax().fileInfo;
     return fileInfo.name.empty() || fileInfo.getIsPhysicalFile();
+}
+
+void Doom3SkinCache::ensureCacheIsUpdated()
+{
+    if (_skinsPendingReparse.empty()) return;
+
+    for (const auto& name : _skinsPendingReparse)
+    {
+        handleSkinRemoval(name);
+
+        // Only add the skin if it's still existing
+        if (findSkin(name))
+        {
+            handleSkinAddition(name);
+        }
+    }
+
+    _skinsPendingReparse.clear();
 }
 
 sigc::signal<void> Doom3SkinCache::signal_skinsReloaded()
@@ -143,12 +165,23 @@ void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
 
 void Doom3SkinCache::shutdownModule()
 {
+    unsubscribeFromAllSkins();
+
     _declCreatedConnection.disconnect();
+    _declRenamedConnection.disconnect();
     _declRemovedConnection.disconnect();
     _declsReloadedConnection.disconnect();
 
     _modelSkins.clear();
     _allSkins.clear();
+    _skinsPendingReparse.clear();
+}
+
+void Doom3SkinCache::subscribeToSkin(const decl::ISkin::Ptr& skin)
+{
+    _declChangedConnections[skin->getDeclName()] = skin->signal_DeclarationChanged().connect(
+        [skinPtr = skin.get(), this] { onSkinDeclChanged(*skinPtr); }
+    );
 }
 
 void Doom3SkinCache::handleSkinAddition(const std::string& name)
@@ -164,10 +197,14 @@ void Doom3SkinCache::handleSkinAddition(const std::string& name)
         auto& matchingSkins = _modelSkins.try_emplace(modelName).first->second;
         matchingSkins.push_back(skin->getDeclName());
     }
+
+    subscribeToSkin(skin);
 }
 
 void Doom3SkinCache::handleSkinRemoval(const std::string& name)
 {
+    _declChangedConnections.erase(name);
+
     // Remove the skin from the cached lists
     auto allSkinIt = std::find(_allSkins.begin(), _allSkins.end(), name);
     if (allSkinIt != _allSkins.end())
@@ -199,6 +236,7 @@ void Doom3SkinCache::onSkinDeclRemoved(decl::Type type, const std::string& name)
 
     std::lock_guard<std::mutex> lock(_cacheLock);
     handleSkinRemoval(name);
+    _skinsPendingReparse.erase(name);
 }
 
 void Doom3SkinCache::onSkinDeclRenamed(decl::Type type, const std::string& oldName, const std::string& newName)
@@ -210,11 +248,30 @@ void Doom3SkinCache::onSkinDeclRenamed(decl::Type type, const std::string& oldNa
     handleSkinAddition(newName);
 }
 
+void Doom3SkinCache::unsubscribeFromAllSkins()
+{
+    for (auto& [_, conn] : _declChangedConnections)
+    {
+        conn.disconnect();
+    }
+
+    _declChangedConnections.clear();
+}
+
+void Doom3SkinCache::onSkinDeclChanged(decl::ISkin& skin)
+{
+    std::lock_guard<std::mutex> lock(_cacheLock);
+
+    // Add it to the pile, it will be processed once we need to access the cached lists
+    _skinsPendingReparse.insert(skin.getDeclName());
+}
+
 void Doom3SkinCache::onSkinDeclsReloaded()
 {
     {
         std::lock_guard<std::mutex> lock(_cacheLock);
 
+        unsubscribeFromAllSkins();
         _modelSkins.clear();
         _allSkins.clear();
 
@@ -230,6 +287,8 @@ void Doom3SkinCache::onSkinDeclsReloaded()
                 auto& matchingSkins = _modelSkins.try_emplace(modelName).first->second;
                 matchingSkins.push_back(skin->getDeclName());
             });
+
+            subscribeToSkin(skin);
         });
     }
 
