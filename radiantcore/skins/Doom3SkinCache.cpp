@@ -136,6 +136,9 @@ void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
     _declRemovedConnection = GlobalDeclarationManager().signal_DeclRemoved().connect(
         sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclRemoved)
     );
+    _declRenamedConnection = GlobalDeclarationManager().signal_DeclRenamed().connect(
+        sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclRenamed)
+    );
 }
 
 void Doom3SkinCache::shutdownModule()
@@ -148,13 +151,9 @@ void Doom3SkinCache::shutdownModule()
     _allSkins.clear();
 }
 
-void Doom3SkinCache::onSkinDeclCreated(decl::Type type, const std::string& name)
+void Doom3SkinCache::handleSkinAddition(const std::string& name)
 {
-    if (type != decl::Type::Skin) return;
-
     // Add the skin to the cached lists
-    std::lock_guard<std::mutex> lock(_cacheLock);
-
     _allSkins.push_back(name);
 
     auto skin = findSkin(name);
@@ -167,13 +166,9 @@ void Doom3SkinCache::onSkinDeclCreated(decl::Type type, const std::string& name)
     }
 }
 
-void Doom3SkinCache::onSkinDeclRemoved(decl::Type type, const std::string& name)
+void Doom3SkinCache::handleSkinRemoval(const std::string& name)
 {
-    if (type != decl::Type::Skin) return;
-
     // Remove the skin from the cached lists
-    std::lock_guard<std::mutex> lock(_cacheLock);
-
     auto allSkinIt = std::find(_allSkins.begin(), _allSkins.end(), name);
     if (allSkinIt != _allSkins.end())
     {
@@ -188,6 +183,31 @@ void Doom3SkinCache::onSkinDeclRemoved(decl::Type type, const std::string& name)
             matchingSkins.erase(found);
         }
     }
+}
+
+void Doom3SkinCache::onSkinDeclCreated(decl::Type type, const std::string& name)
+{
+    if (type != decl::Type::Skin) return;
+
+    std::lock_guard<std::mutex> lock(_cacheLock);
+    handleSkinAddition(name);
+}
+
+void Doom3SkinCache::onSkinDeclRemoved(decl::Type type, const std::string& name)
+{
+    if (type != decl::Type::Skin) return;
+
+    std::lock_guard<std::mutex> lock(_cacheLock);
+    handleSkinRemoval(name);
+}
+
+void Doom3SkinCache::onSkinDeclRenamed(decl::Type type, const std::string& oldName, const std::string& newName)
+{
+    if (type != decl::Type::Skin) return;
+
+    std::lock_guard<std::mutex> lock(_cacheLock);
+    handleSkinRemoval(oldName);
+    handleSkinAddition(newName);
 }
 
 void Doom3SkinCache::onSkinDeclsReloaded()

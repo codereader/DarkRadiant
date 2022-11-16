@@ -651,4 +651,38 @@ TEST_F(ModelSkinTest, SkinIsListedAfterSkinChange)
         << "Skin should have reappeared on the matching skin list";
 }
 
+// Renaming a skin affects the internal lists in the global model skin cache
+TEST_F(ModelSkinTest, SkinIsListedAfterSkinRename)
+{
+    constexpr auto skinToRename = "tile_skin2";
+    constexpr auto newName = "some/new/skin";
+
+    auto originalSkin = GlobalModelSkinCache().findSkin(skinToRename);
+    EXPECT_TRUE(originalSkin);
+    auto associatedModel = *originalSkin->getModels().begin();
+
+    // Check prerequisites, skin should be listed
+    auto allSkins = GlobalModelSkinCache().getAllSkins();
+    EXPECT_NE(std::find(allSkins.begin(), allSkins.end(), skinToRename), allSkins.end());
+
+    // Skin should be reported as matching skin for a model
+    auto skinsForModel = GlobalModelSkinCache().getSkinsForModel(associatedModel);
+    EXPECT_NE(std::find(skinsForModel.begin(), skinsForModel.end(), skinToRename), skinsForModel.end());
+
+    GlobalModelSkinCache().renameSkin(skinToRename, newName);
+
+    // The skin should appear with the new name now
+    allSkins = GlobalModelSkinCache().getAllSkins();
+    EXPECT_NE(std::find(allSkins.begin(), allSkins.end(), newName), allSkins.end())
+        << "Skin should be listed with its new name";
+    EXPECT_EQ(std::find(allSkins.begin(), allSkins.end(), skinToRename), allSkins.end())
+        << "Old skin name should be gone now";
+
+    skinsForModel = GlobalModelSkinCache().getSkinsForModel(associatedModel);
+    EXPECT_NE(std::find(skinsForModel.begin(), skinsForModel.end(), newName), skinsForModel.end())
+        << "New skin name should be associated now";
+    EXPECT_EQ(std::find(skinsForModel.begin(), skinsForModel.end(), skinToRename), skinsForModel.end())
+        << "Old skin name should not be associated";
+}
+
 }
