@@ -23,7 +23,7 @@ private:
 
 public:
     MaterialSelectorRenderer() :
-        wxDataViewCustomRenderer(wxDataViewTextRenderer::GetDefaultType(), wxDATAVIEW_CELL_EDITABLE)
+        wxDataViewCustomRenderer("string", wxDATAVIEW_CELL_EDITABLE)
     {}
 
     sigc::signal<void(const std::string&)>& signal_onMaterialSelected()
