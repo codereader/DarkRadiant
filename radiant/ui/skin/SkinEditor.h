@@ -87,6 +87,9 @@ public:
 
     static void ShowDialog(const cmd::ArgumentList& args);
 
+protected:
+    bool _onDeleteEvent() override;
+
 private:
     void setupModelTreeView();
     void setupSkinTreeView();
@@ -130,6 +133,9 @@ private:
 
     bool saveChanges();
     void discardChanges();
+
+    bool askUserAboutModifiedSkin();
+    bool okToCloseDialog();
 
     template<typename ObjectClass>
     ObjectClass* getControl(const std::string& name)

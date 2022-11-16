@@ -428,6 +428,65 @@ void SkinEditor::updateModelPreview()
     _modelPreview->setSkin(_skin->getDeclName());
 }
 
+bool SkinEditor::askUserAboutModifiedSkin()
+{
+    if (!_skin) return true;
+
+    // Get the original name
+    auto origName = _skin->getDeclName();
+
+    // Does not make sense to save a null skin
+    assert(!origName.empty());
+
+    // The skin we're editing has been changed from the saved one
+    wxutil::Messagebox box(_("Save Changes"),
+        fmt::format(_("Do you want to save the changes to the skin\n{0}?"), origName),
+        IDialog::MESSAGE_SAVECONFIRMATION, this);
+
+    switch (box.run())
+    {
+    case IDialog::RESULT_YES:
+        // User wants to save, return true if save was successful
+        return saveChanges();
+
+    case IDialog::RESULT_NO:
+        // user doesn't want to save
+        discardChanges();
+        return true; // proceed
+
+    default:
+        // Cancel or anything else: don't proceed
+        return false;
+    }
+}
+
+bool SkinEditor::okToCloseDialog()
+{
+    // Check all unsaved skins
+    std::list<decl::ISkin::Ptr> modifiedDecls;
+    for (const auto& skinName : GlobalModelSkinCache().getAllSkins())
+    {
+        if (auto skin = GlobalModelSkinCache().findSkin(skinName); skin->isModified())
+        {
+            modifiedDecls.push_back(skin);
+        }
+    }
+
+    for (const auto& skin : modifiedDecls)
+    {
+        _skinTreeView->SetSelectedDeclName(skin->getDeclName());
+
+        // Prompt user to save or discard
+        if (!askUserAboutModifiedSkin())
+        {
+            return false; // cancel the close event
+        }
+    }
+
+    // At this point, everything is saved
+    return true;
+}
+
 bool SkinEditor::saveChanges()
 {
     if (!_skin || !_skin->isModified())
@@ -514,9 +573,18 @@ void SkinEditor::discardChanges()
     updateSkinControlsFromSelection();
 }
 
+bool SkinEditor::_onDeleteEvent()
+{
+    // Return true if okToCloseDialog() vetoes the close event
+    return !okToCloseDialog();
+}
+
 void SkinEditor::onCloseButton(wxCommandEvent& ev)
 {
-    EndModal(wxCLOSE);
+    if (okToCloseDialog())
+    {
+        EndModal(wxCLOSE);
+    }
 }
 
 void SkinEditor::onSkinSelectionChanged(wxDataViewEvent& ev)
