@@ -304,6 +304,8 @@ void SkinEditor::updateRemappingButtonSensitivity()
 
 void SkinEditor::updateSourceView(const decl::ISkin::Ptr& skin)
 {
+    _sourceView->SetReadOnly(false);
+
     if (skin)
     {
         // Surround the definition with curly braces, these are not included
@@ -315,8 +317,8 @@ void SkinEditor::updateSourceView(const decl::ISkin::Ptr& skin)
         _sourceView->SetValue("");
     }
 
-    // No source editing at the moment
     _sourceView->Enable(skin != nullptr);
+    // No source editing at the moment
     _sourceView->SetReadOnly(true);
 }
 
