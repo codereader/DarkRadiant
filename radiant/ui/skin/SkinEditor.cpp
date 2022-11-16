@@ -468,7 +468,7 @@ bool SkinEditor::okToCloseDialog()
     std::list<decl::ISkin::Ptr> modifiedDecls;
     for (const auto& skinName : GlobalModelSkinCache().getAllSkins())
     {
-        if (auto skin = GlobalModelSkinCache().findSkin(skinName); skin->isModified())
+        if (auto skin = GlobalModelSkinCache().findSkin(skinName); skin && skin->isModified())
         {
             modifiedDecls.push_back(skin);
         }

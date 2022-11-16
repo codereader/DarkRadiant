@@ -9,12 +9,14 @@ SkinEditorTreeView::SkinEditorTreeView(wxWindow* parent, const Columns& columns,
 {
     _declRenamed = GlobalDeclarationManager().signal_DeclRenamed().connect(
         sigc::mem_fun(this, &SkinEditorTreeView::onDeclarationRenamed));
-    // TODO: removed event
+    _declRemoved = GlobalDeclarationManager().signal_DeclRemoved().connect(
+        sigc::mem_fun(this, &SkinEditorTreeView::onDeclarationRemoved));
 }
 
 SkinEditorTreeView::~SkinEditorTreeView()
 {
     _declRenamed.disconnect();
+    _declRemoved.disconnect();
 }
 
 void SkinEditorTreeView::Populate()
@@ -31,6 +33,14 @@ void SkinEditorTreeView::onDeclarationRenamed(decl::Type type, const std::string
     wxutil::ThreadedDeclarationTreePopulator populator(type, _columns, SKIN_ICON);
     populator.RemoveSingleDecl(GetTreeModel(), oldName);
     populator.AddSingleDecl(GetTreeModel(), newName);
+}
+
+void SkinEditorTreeView::onDeclarationRemoved(decl::Type type, const std::string& name)
+{
+    if (type != decl::Type::Skin) return;
+
+    wxutil::ThreadedDeclarationTreePopulator populator(type, _columns, SKIN_ICON);
+    populator.RemoveSingleDecl(GetTreeModel(), name);
 }
 
 }
