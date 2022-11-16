@@ -188,6 +188,10 @@ public:
     // The type, the old name and the new name will be passed as arguments
     virtual sigc::signal<void(Type, const std::string&, const std::string&)>& signal_DeclRenamed() = 0;
 
+    // Signal emitted when a declaration has been created (e.g. by findOrCreateDeclaration),
+    // passing the type and name of the created decl as argument
+    virtual sigc::signal<void(Type, const std::string&)>& signal_DeclCreated() = 0;
+
     // Signal emitted when a declaration has been removed (by removeDeclaration),
     // passing the type and name of the removed decl as argument
     virtual sigc::signal<void(Type, const std::string&)>& signal_DeclRemoved() = 0;

@@ -36,6 +36,7 @@ class Doom3SkinCache :
 public:
     decl::ISkin::Ptr findSkin(const std::string& name) override;
     bool renameSkin(const std::string& oldName, const std::string& newName) override;
+    decl::ISkin::Ptr copySkin(const std::string& nameOfOriginal, const std::string& nameOfCopy) override;
     const StringList& getSkinsForModel(const std::string& model) override;
     const StringList& getAllSkins() override;
     bool skinCanBeModified(const std::string& name) override;

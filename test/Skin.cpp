@@ -401,6 +401,46 @@ TEST_F(ModelSkinTest, SkinCanBeModified)
     EXPECT_FALSE(GlobalModelSkinCache().skinCanBeModified("nonexistent_skin")) << "Nonexistent skin is not writable";
 }
 
+TEST_F(ModelSkinTest, CopySkin)
+{
+    auto& skinManager = GlobalModelSkinCache();
+
+    std::string receivedName;
+    decl::Type receivedType;
+
+    GlobalDeclarationManager().signal_DeclCreated().connect([&](decl::Type type, const std::string& name)
+    {
+        receivedName = name;
+        receivedType = type;
+    });
+
+    EXPECT_TRUE(skinManager.findSkin("separated_tile_skin"));
+    EXPECT_FALSE(skinManager.findSkin("skin/copytest"));
+
+    // Copy name must not be empty => returns empty material
+    EXPECT_FALSE(skinManager.copySkin("separated_tile_skin", ""));
+
+    // Source material name must be existent
+    EXPECT_FALSE(skinManager.copySkin("skin/menotexist", "skin/copytest"));
+
+    // This copy operation should succeed
+    auto skin = skinManager.copySkin("separated_tile_skin", "skin/copytest");
+    EXPECT_TRUE(skin) << "No skin copy has been created";
+    EXPECT_EQ(skin->getDeclName(), "skin/copytest") << "Wrong name assigned";
+    EXPECT_TRUE(skinManager.skinCanBeModified(skin->getDeclName()));
+    EXPECT_EQ(skin->getBlockSyntax().fileInfo.name, "");
+    EXPECT_EQ(skin->getBlockSyntax().fileInfo.topDir, "");
+
+    // Check signal emission
+    EXPECT_EQ(receivedName, skin->getDeclName()) << "Wrong name in signal";
+    EXPECT_EQ(receivedType, skin->getDeclType()) << "Wrong type in signal";
+
+    // Creating another copy will create a new name
+    auto skin2 = skinManager.copySkin("separated_tile_skin", "skin/copytest");
+    EXPECT_TRUE(skin2);
+    EXPECT_NE(skin2->getDeclName(), skin->getDeclName()) << "Conflicting name assigned";
+}
+
 TEST_F(ModelSkinTest, ReloadDeclsRefreshesModels)
 {
     // Create a temporary file holding a new skin

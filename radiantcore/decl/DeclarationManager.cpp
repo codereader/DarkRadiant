@@ -719,6 +719,11 @@ sigc::signal<void(Type, const std::string&, const std::string&)>& DeclarationMan
     return _declRenamedSignal;
 }
 
+sigc::signal<void(Type, const std::string&)>& DeclarationManager::signal_DeclCreated()
+{
+    return _declCreatedSignal;
+}
+
 sigc::signal<void(Type, const std::string&)>& DeclarationManager::signal_DeclRemoved()
 {
     return _declRemovedSignal;

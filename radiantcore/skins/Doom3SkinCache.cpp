@@ -30,6 +30,11 @@ bool Doom3SkinCache::renameSkin(const std::string& oldName, const std::string& n
     return result;
 }
 
+decl::ISkin::Ptr Doom3SkinCache::copySkin(const std::string& nameOfOriginal, const std::string& nameOfCopy)
+{
+    return {};
+}
+
 const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model)
 {
     static StringList _emptyList;

@@ -105,6 +105,14 @@ public:
 	 */
 	virtual ISkin::Ptr findSkin(const std::string& name) = 0;
 
+    /**
+     * Copies the existing material and creates a new skin with the suggested name.
+     * If the suggested name is already present, a non-conflicting name will be generated and used instead.
+     * Returns the new skin reference - or an empty reference if the original skin is not existing
+     * or if the suggested name is empty.
+     */
+    virtual ISkin::Ptr copySkin(const std::string& nameOfOriginal, const std::string& nameOfCopy) = 0;
+
     // Renames the skin named oldName to newName, and returns true if the operation was successful. 
     // If the new name is already in use, this returns false too.
     virtual bool renameSkin(const std::string& oldName, const std::string& newName) = 0;

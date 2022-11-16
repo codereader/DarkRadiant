@@ -1160,6 +1160,32 @@ TEST_F(DeclManagerTest, DeclRenamedSignal)
     EXPECT_EQ(receivedNewName, "decl/renamed/1") << "Wrong new name delivered";
 }
 
+TEST_F(DeclManagerTest, DeclCreatedSignal)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    std::size_t signalCount = 0;
+    decl::Type receivedType;
+    std::string receivedDeclName;
+    GlobalDeclarationManager().signal_DeclRemoved().connect([&](decl::Type type, const std::string& name)
+    {
+        ++signalCount;
+        receivedType = type;
+        receivedDeclName = name;
+    });
+
+    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/newlycreated"));
+    EXPECT_EQ(signalCount, 0) << "findDeclaration should not create anything";
+
+    auto decl = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::TestDecl, "decl/newlycreated");
+    EXPECT_TRUE(decl) << "No decl created";
+
+    EXPECT_EQ(signalCount, 1) << "Signal should have been fired exactly once";
+    EXPECT_EQ(receivedType, decl::Type::TestDecl) << "Wrong type delivered";
+    EXPECT_EQ(receivedDeclName, "decl/newlycreated") << "Wrong name delivered";
+}
+
 TEST_F(DeclManagerTest, DeclRemovedSignal)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
