@@ -1,6 +1,7 @@
 #include "Doom3SkinCache.h"
 
 #include "iscenegraph.h"
+#include "ifiletypes.h"
 #include "ideclmanager.h"
 #include "module/StaticModule.h"
 #include "decl/DeclarationCreator.h"
@@ -108,6 +109,7 @@ const StringSet& Doom3SkinCache::getDependencies() const
 	if (_dependencies.empty())
     {
 		_dependencies.insert(MODULE_DECLMANAGER);
+		_dependencies.insert(MODULE_FILETYPES);
 	}
 
 	return _dependencies;
@@ -122,6 +124,7 @@ void Doom3SkinCache::initialiseModule(const IApplicationContext& ctx)
 {
     GlobalDeclarationManager().registerDeclType("skin", std::make_shared<decl::DeclarationCreator<Skin>>(decl::Type::Skin));
     GlobalDeclarationManager().registerDeclFolder(decl::Type::Skin, SKINS_FOLDER, SKIN_FILE_EXTENSION);
+    GlobalFiletypes().registerPattern("skin", FileTypePattern(_("Skin File"), "skin", "*.skin"));
 
     _declsReloadedConnection = GlobalDeclarationManager().signal_DeclsReloaded(decl::Type::Skin).connect(
         sigc::mem_fun(this, &Doom3SkinCache::onSkinDeclsReloaded)
