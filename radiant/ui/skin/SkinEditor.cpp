@@ -502,7 +502,7 @@ bool SkinEditor::saveChanges()
         while (true)
         {
             // Ask the user where to save it
-            wxutil::FileChooser chooser(this, _("Select Skin file"), false, "material", SKIN_FILE_EXTENSION);
+            wxutil::FileChooser chooser(this, _("Select Skin file"), false, "skin", SKIN_FILE_EXTENSION);
 
             fs::path skinPath = game::current::getWriteableGameResourcePath();
             skinPath /= SKINS_FOLDER;
@@ -571,6 +571,22 @@ void SkinEditor::discardChanges()
 
     // Stop editing on all columns
     _remappingList->CancelEditing();
+
+    if (_skin->isModified() && _skin->getBlockSyntax().fileInfo.name.empty())
+    {
+        // This decl has been created but not saved yet, discarding it means removing it
+        try
+        {
+            GlobalDeclarationManager().removeDeclaration(decl::Type::Skin, _skin->getDeclName());
+        }
+        catch (const std::runtime_error& ex)
+        {
+            rError() << "Could not delete the skin: " << ex.what() << std::endl;
+            wxutil::Messagebox::ShowError(ex.what(), this);
+        }
+
+        return;
+    }
 
     _skin->revertModifications();
     updateSkinControlsFromSelection();
