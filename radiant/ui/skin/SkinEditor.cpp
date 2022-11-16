@@ -130,6 +130,7 @@ void SkinEditor::setupSkinTreeView()
     panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_skinTreeView, 1, wxEXPAND);
 
+    getControl<wxButton>("SkinEditorNewDefButton")->Bind(wxEVT_BUTTON, &SkinEditor::onNewSkin, this);
     getControl<wxButton>("SkinEditorCopyDefButton")->Bind(wxEVT_BUTTON, &SkinEditor::onCopySkin, this);
     getControl<wxButton>("SkinEditorRevertButton")->Bind(wxEVT_BUTTON, &SkinEditor::onDiscardChanges, this);
     getControl<wxButton>("SkinEditorSaveButton")->Bind(wxEVT_BUTTON, &SkinEditor::onSaveChanges, this);
@@ -885,6 +886,21 @@ void SkinEditor::onDiscardChanges(wxCommandEvent& ev)
     if (box.run() == IDialog::RESULT_YES)
     {
         discardChanges();
+    }
+}
+
+void SkinEditor::onNewSkin(wxCommandEvent& ev)
+{
+    auto candidate = decl::generateNonConflictingName(decl::Type::Skin, "new_skin");
+    auto newSkin = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Skin, candidate);
+
+    _skinTreeView->SetSelectedDeclName(newSkin->getDeclName());
+
+    // Mark this skin as modified
+    if (_skin)
+    {
+        _skin->addModel("-");
+        _skin->removeModel("-");
     }
 }
 
