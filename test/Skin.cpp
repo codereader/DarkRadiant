@@ -389,6 +389,16 @@ TEST_F(ModelSkinTest, RevertSkinRename)
     EXPECT_TRUE(GlobalModelSkinCache().findSkin(oldName)) << "Lookup by the old name should have succeeded";
     EXPECT_FALSE(GlobalModelSkinCache().findSkin(newName)) << "Lookup by the new name should not have succeeded";
 }
+
+TEST_F(ModelSkinTest, SkinCanBeModified)
+{
+    EXPECT_FALSE(GlobalModelSkinCache().skinCanBeModified("skin_declared_in_pk4")) << "PK4 skin is not writable";
+    EXPECT_FALSE(GlobalModelSkinCache().skinCanBeModified("another_skin_declared_in_pk4")) << "PK4 skin is not writable";
+    EXPECT_TRUE(GlobalModelSkinCache().skinCanBeModified("tile_skin")) << "Filesystem skin is writable";
+
+    EXPECT_FALSE(GlobalModelSkinCache().skinCanBeModified("nonexistent_skin")) << "Nonexistent skin is not writable";
+}
+
 TEST_F(ModelSkinTest, ReloadDeclsRefreshesModels)
 {
     // Create a temporary file holding a new skin

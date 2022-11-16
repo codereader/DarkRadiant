@@ -47,6 +47,16 @@ const StringList& Doom3SkinCache::getAllSkins()
     return _allSkins;
 }
 
+bool Doom3SkinCache::skinCanBeModified(const std::string& name)
+{
+    auto decl = findSkin(name);
+
+    if (!decl) return false;
+
+    const auto& fileInfo = decl->getBlockSyntax().fileInfo;
+    return fileInfo.name.empty() || fileInfo.getIsPhysicalFile();
+}
+
 sigc::signal<void> Doom3SkinCache::signal_skinsReloaded()
 {
 	return _sigSkinsReloaded;

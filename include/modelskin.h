@@ -128,6 +128,12 @@ public:
 	 */
 	virtual const StringList& getAllSkins() = 0;
 
+    /**
+     * A skin can be modified if it has been declared in a physical file,
+     * i.e. outside a PAK file.
+     */
+    virtual bool skinCanBeModified(const std::string& name) = 0;
+
 	/**
 	 * greebo: Reloads all skins from the definition files.
 	 */

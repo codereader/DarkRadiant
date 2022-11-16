@@ -37,6 +37,7 @@ public:
     bool renameSkin(const std::string& oldName, const std::string& newName) override;
     const StringList& getSkinsForModel(const std::string& model) override;
     const StringList& getAllSkins() override;
+    bool skinCanBeModified(const std::string& name) override;
 
 	/**
 	 * greebo: Clears and reloads all skins.
