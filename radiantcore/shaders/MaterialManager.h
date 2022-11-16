@@ -107,8 +107,6 @@ private:
     // Unloads all the existing shaders and calls activeShadersChangedNotify()
     void freeShaders();
 
-    std::string ensureNonConflictingName(const std::string& name);
-
     void onMaterialDefsReloaded();
 };
 

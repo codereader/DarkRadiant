@@ -429,6 +429,7 @@ TEST_F(ModelSkinTest, CopySkin)
     EXPECT_TRUE(skin) << "No skin copy has been created";
     EXPECT_EQ(skin->getDeclName(), "skin/copytest") << "Wrong name assigned";
     EXPECT_EQ(skin->getBlockSyntax().contents, originalSkin->getBlockSyntax().contents) << "Contents not copied";
+    EXPECT_TRUE(skin->isModified()) << "Copied skin should be set to modified";
     EXPECT_TRUE(skinManager.skinCanBeModified(skin->getDeclName()));
     EXPECT_EQ(skin->getBlockSyntax().fileInfo.name, "");
     EXPECT_EQ(skin->getBlockSyntax().fileInfo.topDir, "");

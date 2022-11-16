@@ -1,7 +1,9 @@
 #pragma once
 
+#include "ideclmanager.h"
 #include "ifilesystem.h"
 #include "os/path.h"
+#include "fmt/format.h"
 
 namespace decl
 {
@@ -51,6 +53,20 @@ inline std::string geRelativeDeclSavePath(const std::string& fullPath, const std
     }
 
     return pathRelativeToDeclFolder;
+}
+
+// Returns a name that doesn't exist yet for this type
+inline std::string generateNonConflictingName(Type type, const std::string& name)
+{
+    auto candidate = name;
+    auto i = 0;
+
+    while (GlobalDeclarationManager().findDeclaration(type, candidate))
+    {
+        candidate += fmt::format("{0:02d}", ++i);
+    }
+
+    return candidate;
 }
 
 }

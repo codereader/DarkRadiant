@@ -20,6 +20,8 @@
 #include "materials/ParseLib.h"
 #include <functional>
 
+#include "decl/DeclLib.h"
+
 namespace
 {
     const char* TEXTURE_PREFIX = "textures/";
@@ -168,23 +170,10 @@ IShaderExpression::Ptr MaterialManager::createShaderExpressionFromString(const s
     return ShaderExpression::createFromString(exprStr);
 }
 
-std::string MaterialManager::ensureNonConflictingName(const std::string& name)
-{
-    auto candidate = name;
-    auto i = 0;
-
-    while (_library->definitionExists(candidate))
-    {
-        candidate += fmt::format("{0:02d}", ++i);
-    }
-
-    return candidate;
-}
-
 MaterialPtr MaterialManager::createEmptyMaterial(const std::string& name)
 {
     // Find a non-conflicting name and create an empty declaration
-    auto candidate = ensureNonConflictingName(name);
+    auto candidate = decl::generateNonConflictingName(decl::Type::Material, name);
     auto decl = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Material, candidate);
 
     auto material = _library->findShader(candidate);
@@ -230,7 +219,7 @@ MaterialPtr MaterialManager::copyMaterial(const std::string& nameOfOriginal, con
         return MaterialPtr();
     }
 
-    auto candidate = ensureNonConflictingName(nameOfCopy);
+    auto candidate = decl::generateNonConflictingName(decl::Type::Material, nameOfCopy);
 
     if (!_library->definitionExists(nameOfOriginal))
     {

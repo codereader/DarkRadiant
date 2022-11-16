@@ -4,6 +4,7 @@
 #include "ideclmanager.h"
 #include "module/StaticModule.h"
 #include "decl/DeclarationCreator.h"
+#include "decl/DeclLib.h"
 
 namespace skins
 {
@@ -32,7 +33,34 @@ bool Doom3SkinCache::renameSkin(const std::string& oldName, const std::string& n
 
 decl::ISkin::Ptr Doom3SkinCache::copySkin(const std::string& nameOfOriginal, const std::string& nameOfCopy)
 {
-    return {};
+    if (nameOfCopy.empty())
+    {
+        rWarning() << "Cannot copy, the new name must not be empty" << std::endl;
+        return {};
+    }
+
+    auto candidate = decl::generateNonConflictingName(decl::Type::Skin, nameOfCopy);
+
+    auto existing = GlobalDeclarationManager().findDeclaration(decl::Type::Skin, nameOfOriginal);
+
+    if (!existing)
+    {
+        rWarning() << "Cannot copy non-existent skin " << nameOfOriginal << std::endl;
+        return {};
+    }
+
+    auto copiedSkin = std::static_pointer_cast<Skin>(
+        GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::Skin, candidate));
+
+    // Replace the syntax block of the target with the one of the original
+    auto syntax = existing->getBlockSyntax();
+    syntax.name = nameOfCopy;
+    syntax.fileInfo = vfs::FileInfo{ "", "", vfs::Visibility::HIDDEN };
+
+    copiedSkin->setBlockSyntax(syntax);
+    copiedSkin->setIsModified();
+
+    return copiedSkin;
 }
 
 const StringList& Doom3SkinCache::getSkinsForModel(const std::string& model)
