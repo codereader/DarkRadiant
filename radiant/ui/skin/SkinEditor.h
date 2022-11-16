@@ -129,6 +129,7 @@ private:
     void onReplacementEntryChanged(const std::string& material);
     void onSaveChanges(wxCommandEvent& ev);
     void onDiscardChanges(wxCommandEvent& ev);
+    void onCopySkin(wxCommandEvent& ev);
     void onDeleteSkin(wxCommandEvent& ev);
     void onSkinDeclarationChanged();
 

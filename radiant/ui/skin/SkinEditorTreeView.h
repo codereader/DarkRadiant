@@ -20,8 +20,9 @@ private:
     const Columns& _columns;
 
     // Subscriptions to the material manager
-    sigc::connection _declRenamed;
+    sigc::connection _declCreated;
     sigc::connection _declRemoved;
+    sigc::connection _declRenamed;
 
 public:
     SkinEditorTreeView(wxWindow* parent, const Columns& columns, long style = wxDV_SINGLE);
@@ -30,6 +31,7 @@ public:
     virtual void Populate();
 
 private:
+    void onDeclarationCreated(decl::Type type, const std::string& name);
     void onDeclarationRenamed(decl::Type type, const std::string& oldName, const std::string& newName);
     void onDeclarationRemoved(decl::Type type, const std::string& name);
 };

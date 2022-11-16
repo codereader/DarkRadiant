@@ -130,6 +130,7 @@ void SkinEditor::setupSkinTreeView()
     panel->GetSizer()->Add(treeToolbar, 0, wxEXPAND | wxBOTTOM, 6);
     panel->GetSizer()->Add(_skinTreeView, 1, wxEXPAND);
 
+    getControl<wxButton>("SkinEditorCopyDefButton")->Bind(wxEVT_BUTTON, &SkinEditor::onCopySkin, this);
     getControl<wxButton>("SkinEditorRevertButton")->Bind(wxEVT_BUTTON, &SkinEditor::onDiscardChanges, this);
     getControl<wxButton>("SkinEditorSaveButton")->Bind(wxEVT_BUTTON, &SkinEditor::onSaveChanges, this);
     getControl<wxButton>("SkinEditorDeleteDefButton")->Bind(wxEVT_BUTTON, &SkinEditor::onDeleteSkin, this);
@@ -867,6 +868,16 @@ void SkinEditor::onDiscardChanges(wxCommandEvent& ev)
     {
         discardChanges();
     }
+}
+
+void SkinEditor::onCopySkin(wxCommandEvent& ev)
+{
+    if (!_skin) return;
+
+    auto newSkinName = _skin->getDeclName() + _("_copy");
+    auto newSkin = GlobalModelSkinCache().copySkin(_skin->getDeclName(), newSkinName);
+
+    _skinTreeView->SetSelectedDeclName(newSkin->getDeclName());
 }
 
 void SkinEditor::onDeleteSkin(wxCommandEvent& ev)
