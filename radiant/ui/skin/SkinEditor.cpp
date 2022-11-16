@@ -19,6 +19,7 @@
 #include "wxutil/FileChooser.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
+#include "wxutil/decl/DeclFileInfo.h"
 #include "wxutil/dialog/MessageBox.h"
 #include "wxutil/sourceview/DeclarationSourceView.h"
 #include "wxutil/sourceview/SourceView.h"
@@ -57,6 +58,10 @@ SkinEditor::SkinEditor() :
 
     getControl<wxButton>("SkinEditorCloseButton")->Bind(wxEVT_BUTTON, &SkinEditor::onCloseButton, this);
     getControl<wxTextCtrl>("SkinEditorSkinName")->Bind(wxEVT_TEXT, &SkinEditor::onSkinNameChanged, this);
+
+    auto oldInfoPanel = getControl<wxPanel>("SkinEditorSaveNotePanel");
+    auto declFileInfo = new wxutil::DeclFileInfo(oldInfoPanel->GetParent(), decl::Type::Skin);
+    replaceControl(oldInfoPanel, declFileInfo);
 
     // Set the default size of the window
     FitToScreen(0.9f, 0.9f);
@@ -352,6 +357,23 @@ void SkinEditor::updateSkinControlsFromSelection()
     {
         nameCtrl->SetValue(name);
     }
+
+    updateDeclFileInfo();
+}
+
+void SkinEditor::updateDeclFileInfo()
+{
+    auto declFileInfo = getControl<wxutil::DeclFileInfo>("SkinEditorSaveNotePanel");
+
+    if (_skin)
+    {
+        declFileInfo->Show();
+        declFileInfo->SetDeclarationName(_skin->getDeclName());
+    }
+    else
+    {
+        declFileInfo->Hide();
+    }
 }
 
 void SkinEditor::updateModelButtonSensitivity()
@@ -588,11 +610,13 @@ void SkinEditor::discardChanges()
             wxutil::Messagebox::ShowError(ex.what(), this);
         }
 
-        return;
+        handleSkinSelectionChanged();
     }
-
-    _skin->revertModifications();
-    updateSkinControlsFromSelection();
+    else
+    {
+        _skin->revertModifications();
+        updateSkinControlsFromSelection();
+    }
 }
 
 void SkinEditor::deleteSkin()

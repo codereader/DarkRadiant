@@ -111,6 +111,7 @@ private:
     void updateSkinTreeItem();
     void updateModelPreview();
     void updateRemappingButtonSensitivity();
+    void updateDeclFileInfo();
 
     void onSkinNameChanged(wxCommandEvent& ev);
     void onCloseButton(wxCommandEvent& ev);
