@@ -611,7 +611,7 @@
                                                                                     <property name="minimize_button">0</property>
                                                                                     <property name="minimum_size"></property>
                                                                                     <property name="moveable">1</property>
-                                                                                    <property name="name">SkinEditorSaveDefButton1</property>
+                                                                                    <property name="name">SkinEditorSaveButton</property>
                                                                                     <property name="pane_border">1</property>
                                                                                     <property name="pane_position"></property>
                                                                                     <property name="pane_size"></property>
@@ -683,7 +683,7 @@
                                                                                     <property name="minimize_button">0</property>
                                                                                     <property name="minimum_size"></property>
                                                                                     <property name="moveable">1</property>
-                                                                                    <property name="name">SkinEditorDeleteDefButton1</property>
+                                                                                    <property name="name">SkinEditorDeleteDefButton</property>
                                                                                     <property name="pane_border">1</property>
                                                                                     <property name="pane_position"></property>
                                                                                     <property name="pane_size"></property>

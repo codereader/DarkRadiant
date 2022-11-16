@@ -6,6 +6,9 @@
 #include <sigc++/signal.h>
 #include "ideclmanager.h"
 
+constexpr const char* const SKINS_FOLDER = "skins/";
+constexpr const char* const SKIN_FILE_EXTENSION = ".skin";
+
 namespace decl
 {
 

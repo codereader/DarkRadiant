@@ -9,10 +9,14 @@
 #include <wx/textctrl.h>
 #include <wx/button.h>
 
+#include "gamelib.h"
+#include "os/path.h"
 #include "MaterialSelectorColumn.h"
 #include "SkinEditorTreeView.h"
+#include "decl/DeclLib.h"
 #include "ui/modelselector/ModelTreeView.h"
 #include "util/ScopedBoolLock.h"
+#include "wxutil/FileChooser.h"
 #include "wxutil/dataview/ResourceTreeViewToolbar.h"
 #include "wxutil/dataview/ThreadedDeclarationTreePopulator.h"
 #include "wxutil/dialog/MessageBox.h"
@@ -127,6 +131,7 @@ void SkinEditor::setupSkinTreeView()
     panel->GetSizer()->Add(_skinTreeView, 1, wxEXPAND);
 
     getControl<wxButton>("SkinEditorRevertButton")->Bind(wxEVT_BUTTON, &SkinEditor::onDiscardChanges, this);
+    getControl<wxButton>("SkinEditorSaveButton")->Bind(wxEVT_BUTTON, &SkinEditor::onSaveChanges, this);
 }
 
 void SkinEditor::setupSelectedModelList()
@@ -232,6 +237,7 @@ void SkinEditor::updateSkinButtonSensitivity()
 {
     getControl<wxButton>("SkinEditorCopyDefButton")->Enable(_skin != nullptr);
     getControl<wxButton>("SkinEditorRevertButton")->Enable(_skin && _skin->isModified());
+    getControl<wxButton>("SkinEditorSaveButton")->Enable(_skin && _skin->isModified());
 }
 
 void SkinEditor::updateModelControlsFromSkin(const decl::ISkin::Ptr& skin)
@@ -412,6 +418,79 @@ void SkinEditor::updateModelPreview()
 
     _modelPreview->setModel(model);
     _modelPreview->setSkin(_skin->getDeclName());
+}
+
+bool SkinEditor::saveChanges()
+{
+    if (!_skin || !_skin->isModified())
+    {
+        return true;
+    }
+
+    if (_skin->getBlockSyntax().fileInfo.fullPath().empty())
+    {
+        while (true)
+        {
+            // Ask the user where to save it
+            wxutil::FileChooser chooser(this, _("Select Skin file"), false, "material", SKIN_FILE_EXTENSION);
+
+            fs::path skinPath = game::current::getWriteableGameResourcePath();
+            skinPath /= SKINS_FOLDER;
+
+            if (!os::fileOrDirExists(skinPath.string()))
+            {
+                rMessage() << "Ensuring skin path: " << skinPath << std::endl;
+                fs::create_directories(skinPath);
+            }
+
+            // Point the file chooser to that new file
+            chooser.setCurrentPath(skinPath.string());
+            chooser.askForOverwrite(false);
+
+            auto result = chooser.display();
+
+            if (result.empty())
+            {
+                return false; // save aborted
+            }
+
+            try
+            {
+                // Setting the path might fail if it's invalid, try to set it and break the loop
+                auto skinsFolder = os::standardPathWithSlash(std::string(SKINS_FOLDER));
+                auto pathRelativeToSkinsFolder = decl::geRelativeDeclSavePath(os::standardPath(result), skinsFolder, SKIN_FILE_EXTENSION);
+
+                _skin->setFileInfo(vfs::FileInfo(skinsFolder, pathRelativeToSkinsFolder, vfs::Visibility::NORMAL));
+                break;
+            }
+            catch (const std::invalid_argument& ex)
+            {
+                // Invalid path, notify user and get ready for the next round
+                wxutil::Messagebox::ShowError(ex.what(), this);
+            }
+        }
+    }
+
+    try
+    {
+        // Write to the specified .mtr file
+        _skin->commitModifications();
+        GlobalDeclarationManager().saveDeclaration(_skin);
+
+        _skinTreeView->SetSelectedDeclName(_skin->getDeclName());
+    }
+    catch (const std::runtime_error& ex)
+    {
+        rError() << "Could not save file: " << ex.what() << std::endl;
+        wxutil::Messagebox::ShowError(ex.what(), this);
+
+        return false; // failure means to abort the process
+    }
+
+    updateSkinTreeItem();
+    updateSkinButtonSensitivity();
+
+    return true;
 }
 
 void SkinEditor::discardChanges()
@@ -683,6 +762,13 @@ void SkinEditor::onDiscardChanges(wxCommandEvent& ev)
     {
         discardChanges();
     }
+}
+
+void SkinEditor::onSaveChanges(wxCommandEvent& ev)
+{
+    if (!_skin) return;
+
+    saveChanges();
 }
 
 int SkinEditor::ShowModal()

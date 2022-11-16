@@ -1,6 +1,5 @@
 #include "Doom3SkinCache.h"
 
-#include "itextstream.h"
 #include "iscenegraph.h"
 #include "ideclmanager.h"
 #include "module/StaticModule.h"
@@ -8,12 +7,6 @@
 
 namespace skins
 {
-
-namespace
-{
-    constexpr const char* const SKINS_FOLDER = "skins/";
-    constexpr const char* const SKIN_FILE_EXTENSION = ".skin";
-}
 
 decl::ISkin::Ptr Doom3SkinCache::findSkin(const std::string& name)
 {
