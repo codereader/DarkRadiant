@@ -130,6 +130,8 @@ IDeclaration::Ptr DeclarationManager::findOrCreateDeclaration(Type type, const s
 
         syntax.typeName = getTypenameByType(type);
         syntax.name = name;
+        // Derive the mod name from the path it can be written to
+        syntax.modName = game::current::getModPath(game::current::getWriteableGameResourcePath());
 
         returnValue = createOrUpdateDeclaration(type, syntax);
 

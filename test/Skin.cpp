@@ -433,6 +433,8 @@ TEST_F(ModelSkinTest, CopySkin)
     EXPECT_TRUE(skinManager.skinCanBeModified(skin->getDeclName()));
     EXPECT_EQ(skin->getBlockSyntax().fileInfo.name, "");
     EXPECT_EQ(skin->getBlockSyntax().fileInfo.topDir, "");
+    EXPECT_EQ(skin->getBlockSyntax().getModName(), GlobalGameManager().currentGame()->getName())
+        << "Copy should have the current game name set, since we don't have a mod in the unit tests";
 
     // Check signal emission
     EXPECT_EQ(receivedName, skin->getDeclName()) << "Wrong name in signal";
