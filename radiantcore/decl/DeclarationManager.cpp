@@ -396,6 +396,8 @@ void DeclarationManager::removeDeclaration(Type type, const std::string& name)
             decl->second->setBlockSyntax(syntax);
 
             decls.erase(decl);
+
+            signal_DeclRemoved().emit(type, name);
         }
     });
 }
@@ -717,6 +719,11 @@ sigc::signal<void(Type, const std::string&, const std::string&)>& DeclarationMan
     return _declRenamedSignal;
 }
 
+sigc::signal<void(Type, const std::string&)>& DeclarationManager::signal_DeclRemoved()
+{
+    return _declRemovedSignal;
+}
+
 void DeclarationManager::emitDeclsReloadedSignal(Type type)
 {
     signal_DeclsReloaded(type).emit();
@@ -986,6 +993,8 @@ void DeclarationManager::shutdownModule()
     _creatorsByTypename.clear();
     _declsReloadingSignals.clear();
     _declsReloadedSignals.clear();
+    _declRenamedSignal.clear();
+    _declRemovedSignal.clear();
 }
 
 void DeclarationManager::reloadDeclsCmd(const cmd::ArgumentList& _)

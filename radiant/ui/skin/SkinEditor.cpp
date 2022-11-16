@@ -132,6 +132,7 @@ void SkinEditor::setupSkinTreeView()
 
     getControl<wxButton>("SkinEditorRevertButton")->Bind(wxEVT_BUTTON, &SkinEditor::onDiscardChanges, this);
     getControl<wxButton>("SkinEditorSaveButton")->Bind(wxEVT_BUTTON, &SkinEditor::onSaveChanges, this);
+    getControl<wxButton>("SkinEditorDeleteDefButton")->Bind(wxEVT_BUTTON, &SkinEditor::onDeleteSkin, this);
 }
 
 void SkinEditor::setupSelectedModelList()
@@ -235,11 +236,12 @@ std::string SkinEditor::getSelectedRemappingSourceMaterial()
 
 void SkinEditor::updateSkinButtonSensitivity()
 {
+    auto skinCanBeModified = _skin && GlobalModelSkinCache().skinCanBeModified(_skin->getDeclName());
+
     getControl<wxButton>("SkinEditorCopyDefButton")->Enable(_skin != nullptr);
     getControl<wxButton>("SkinEditorRevertButton")->Enable(_skin && _skin->isModified());
-
-    getControl<wxButton>("SkinEditorSaveButton")->Enable(
-        _skin && _skin->isModified() && GlobalModelSkinCache().skinCanBeModified(_skin->getDeclName()));
+    getControl<wxButton>("SkinEditorDeleteDefButton")->Enable(skinCanBeModified);
+    getControl<wxButton>("SkinEditorSaveButton")->Enable(skinCanBeModified && _skin->isModified());
 }
 
 void SkinEditor::updateModelControlsFromSkin(const decl::ISkin::Ptr& skin)
@@ -573,6 +575,33 @@ void SkinEditor::discardChanges()
     updateSkinControlsFromSelection();
 }
 
+void SkinEditor::deleteSkin()
+{
+    if (!_skin) return;
+
+    auto fileInfo = _skin->getBlockSyntax().fileInfo.isEmpty() ? _("") : " " + _skin->getBlockSyntax().fileInfo.fullPath();
+
+    if (wxutil::Messagebox::Show(_("Confirm Removal"),
+        fmt::format(_("The selected skin {0} will be removed,\nincluding its source text in the .skin file{1}.\n"
+            "This action cannot be undone. Are you sure you want to remove this skin?"),
+            _skin->getDeclName(), fileInfo), IDialog::MESSAGE_ASK, this) == IDialog::RESULT_NO)
+    {
+        return;
+    }
+
+    try
+    {
+        GlobalDeclarationManager().removeDeclaration(decl::Type::Skin, _skin->getDeclName());
+    }
+    catch (const std::runtime_error& ex)
+    {
+        rError() << "Could not delete the skin: " << ex.what() << std::endl;
+        wxutil::Messagebox::ShowError(ex.what(), this);
+    }
+
+    handleSkinSelectionChanged();
+}
+
 bool SkinEditor::_onDeleteEvent()
 {
     // Return true if okToCloseDialog() vetoes the close event
@@ -838,6 +867,13 @@ void SkinEditor::onDiscardChanges(wxCommandEvent& ev)
     {
         discardChanges();
     }
+}
+
+void SkinEditor::onDeleteSkin(wxCommandEvent& ev)
+{
+    if (!_skin) return;
+
+    deleteSkin();
 }
 
 void SkinEditor::onSaveChanges(wxCommandEvent& ev)

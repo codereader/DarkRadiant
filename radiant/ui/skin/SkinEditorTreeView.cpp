@@ -9,6 +9,7 @@ SkinEditorTreeView::SkinEditorTreeView(wxWindow* parent, const Columns& columns,
 {
     _declRenamed = GlobalDeclarationManager().signal_DeclRenamed().connect(
         sigc::mem_fun(this, &SkinEditorTreeView::onDeclarationRenamed));
+    // TODO: removed event
 }
 
 SkinEditorTreeView::~SkinEditorTreeView()
