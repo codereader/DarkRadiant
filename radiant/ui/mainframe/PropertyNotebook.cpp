@@ -8,6 +8,8 @@
 
 #include <wx/settings.h>
 
+#include "util/ScopedBoolLock.h"
+
 namespace ui
 {
 
@@ -25,7 +27,8 @@ PropertyNotebook::PropertyNotebook(wxWindow* parent, AuiLayout& owner) :
     wxAuiNotebook(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, 
         wxNB_TOP | wxAUI_NB_TAB_MOVE | wxAUI_NB_SCROLL_BUTTONS),
     _layout(owner),
-    _dropHint(nullptr)
+    _dropHint(nullptr),
+    _restoreInProgress(false)
 {
     SetName("PropertyNotebook");
 
@@ -135,6 +138,8 @@ void PropertyNotebook::onNotebookPaneClosed()
 
 void PropertyNotebook::onPageSwitch(wxBookCtrlEvent& ev)
 {
+    if (_restoreInProgress) return;
+
     // Store the page's name into the registry for later retrieval
     registry::setValue(RKEY_LAST_SHOWN_PAGE, getSelectedPageName());
 
@@ -305,6 +310,9 @@ void PropertyNotebook::restoreDefaultState()
 
 void PropertyNotebook::restoreState()
 {
+    // Inhibit the page switch events during restore
+    util::ScopedBoolLock restoreLock(_restoreInProgress);
+
     // Check the user settings first
     auto userDefinedPages = GlobalRegistry().findXPath(RKEY_PAGES + "[not(@default='true')]//*");
 

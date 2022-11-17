@@ -40,6 +40,8 @@ private:
 
     wxFrame* _dropHint;
 
+    bool _restoreInProgress;
+
 public:
     PropertyNotebook(wxWindow* parent, AuiLayout& owner);
     ~PropertyNotebook() override;

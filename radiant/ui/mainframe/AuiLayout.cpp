@@ -747,6 +747,13 @@ void AuiLayout::restoreStateFromRegistry()
             ensureControlIsInactive(paneInfo.window);
         }
     }
+
+    // Make sure the currently shown tab is made active after everything is restored
+    // this way tabs can work with the restored window sizes
+    if (propertyPane.IsShown())
+    {
+        _propertyNotebook->onNotebookPaneRestored();
+    }
 }
 
 void AuiLayout::ensureVisibleCenterPane()
