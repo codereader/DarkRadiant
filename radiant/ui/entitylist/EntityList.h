@@ -6,6 +6,7 @@
 #include <sigc++/connection.h>
 
 #include "wxutil/DockablePanel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 namespace wxutil
 {
@@ -19,7 +20,8 @@ namespace ui
 
 class EntityList :
 	public wxutil::DockablePanel,
-    public selection::SelectionSystem::Observer
+    public selection::SelectionSystem::Observer,
+    public wxutil::SingleIdleCallback
 {
 private:
 	// The GraphTreeModel instance
@@ -44,6 +46,8 @@ private:
 
 	std::set<wxDataViewItem, DataViewItemLess> _selection;
 
+    wxDataViewItem _itemToScrollToWhenIdle;
+
 public:
 	EntityList(wxWindow* parent);
     ~EntityList() override;
@@ -51,6 +55,8 @@ public:
 protected:
     void onPanelActivated() override;
     void onPanelDeactivated() override;
+
+    void onIdle() override;
 
 private:
     void connectListeners();

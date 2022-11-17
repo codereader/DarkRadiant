@@ -64,6 +64,9 @@ void EntityList::onPanelDeactivated()
     // Unselect everything when hiding the dialog
     util::ScopedBoolLock lock(_callbackActive);
     _treeView->UnselectAll();
+
+    cancelCallbacks();
+    _itemToScrollToWhenIdle.Unset();
 }
 
 void EntityList::connectListeners()
@@ -216,6 +219,15 @@ void EntityList::expandRootNode()
 	}
 }
 
+void EntityList::onIdle()
+{
+    if (_itemToScrollToWhenIdle.IsOk())
+    {
+        _treeView->EnsureVisible(_itemToScrollToWhenIdle);
+        _itemToScrollToWhenIdle.Unset();
+    }
+}
+
 void EntityList::onTreeViewSelection(const wxDataViewItem& item, bool selected)
 {
 	if (selected)
@@ -226,8 +238,9 @@ void EntityList::onTreeViewSelection(const wxDataViewItem& item, bool selected)
 		// Remember this item
 		_selection.insert(item);
 
-		// Scroll to the row
-		_treeView->EnsureVisible(item);
+		// Scroll to the row, but don't do this immediately (can be expensive)
+        _itemToScrollToWhenIdle = item;
+        requestIdleCallback();
 	}
 	else
 	{
