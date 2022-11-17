@@ -60,4 +60,24 @@ TEST_F(CurveTest, SplineWithoutModelKeyIsSelectable)
     performSelectionTestOnSplineEntity("spline_without_model");
 }
 
+TEST_F(CurveTest, CreateCatmullRomCurve)
+{
+    GlobalCommandSystem().executeCommand("CreateCurveCatmullRom");
+    auto entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
+
+    EXPECT_EQ(entity->getKeyValue("classname"), "func_splinemover") << "wrong eclass";
+    EXPECT_NE(entity->getKeyValue("curve_CatmullRomSpline"), "") << "catmull rom key is missing";
+    EXPECT_EQ(entity->getKeyValue("model"), "") << "model spawnarg should be empty";
+}
+
+TEST_F(CurveTest, CreateNurbsCurve)
+{
+    GlobalCommandSystem().executeCommand("CreateCurveNURBS");
+    auto entity = Node_getEntity(GlobalSelectionSystem().ultimateSelected());
+
+    EXPECT_EQ(entity->getKeyValue("classname"), "func_splinemover") << "wrong eclass";
+    EXPECT_NE(entity->getKeyValue("curve_Nurbs"), "") << "catmull rom key is missing";
+    EXPECT_EQ(entity->getKeyValue("model"), "") << "model spawnarg should be empty";
+}
+
 }
