@@ -35,6 +35,8 @@ EntityList::EntityList(wxWindow* parent) :
     
 EntityList::~EntityList()
 {
+    _nodesToUpdate.clear();
+
     // In OSX we might receive callbacks during shutdown, so disable any events
     if (_treeView != nullptr)
     {
@@ -67,6 +69,7 @@ void EntityList::onPanelDeactivated()
 
     cancelCallbacks();
     _itemToScrollToWhenIdle.Unset();
+    _nodesToUpdate.clear();
 }
 
 void EntityList::connectListeners()
@@ -155,6 +158,8 @@ void EntityList::refreshTreeModel()
 {
     // Refresh the whole tree
     _selection.clear();
+    _nodesToUpdate.clear();
+    _itemToScrollToWhenIdle.Unset();
 
     _treeModel.refresh();
 
@@ -170,14 +175,16 @@ void EntityList::refreshTreeModel()
 
 void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
 {
-    // Don't update already updating, also ignore components
-    if (_callbackActive || isComponent) return;
+    // Ignore all types except entities, also ignore components
+    // Don't update during scene updates caused by ourselves
+    if (_callbackActive || isComponent || node->getNodeType() != scene::INode::Type::Entity) return;
 
     util::ScopedBoolLock lock(_callbackActive);
     wxWindowUpdateLocker freezer(_treeView);
 
-    _treeModel.updateSelectionStatus(node, std::bind(&EntityList::onTreeViewSelection, this,
-        std::placeholders::_1, std::placeholders::_2));
+    // Remember this for later, we select the tree items during idle processing
+    _nodesToUpdate.push_back(node);
+    requestIdleCallback();
 }
 
 void EntityList::onFilterConfigChanged()
@@ -221,6 +228,17 @@ void EntityList::expandRootNode()
 
 void EntityList::onIdle()
 {
+    if (!_nodesToUpdate.empty())
+    {
+        for (const auto& node : _nodesToUpdate)
+        {
+            _treeModel.updateSelectionStatus(node, std::bind(&EntityList::onTreeViewSelection, this,
+                std::placeholders::_1, std::placeholders::_2));
+        }
+
+        _nodesToUpdate.clear();
+    }
+
     if (_itemToScrollToWhenIdle.IsOk())
     {
         _treeView->EnsureVisible(_itemToScrollToWhenIdle);
@@ -254,7 +272,7 @@ void EntityList::onSelection(wxDataViewEvent& ev)
 {
 	if (_callbackActive) return; // avoid loops
 
-	wxutil::TreeView* view = static_cast<wxutil::TreeView*>(ev.GetEventObject());
+	auto view = static_cast<wxutil::TreeView*>(ev.GetEventObject());
 
 	wxDataViewItemArray newSelection;
 	view->GetSelections(newSelection);
@@ -263,19 +281,19 @@ void EntityList::onSelection(wxDataViewEvent& ev)
 
 	std::vector<wxDataViewItem> diff(newSelection.size() + _selection.size());
 
-	// Calculate the difference between these two sets
-	std::vector<wxDataViewItem>::iterator end = std::set_symmetric_difference(
+	// Calculate the difference between the new selection and the old one
+	auto end = std::set_symmetric_difference(
 		newSelection.begin(), newSelection.end(), _selection.begin(), _selection.end(), diff.begin());
 
-	for (std::vector<wxDataViewItem>::iterator i = diff.begin(); i != end; ++i)
+	for (auto i = diff.begin(); i != end; ++i)
 	{
 		// Load the instance pointer from the columns
 		wxutil::TreeModel::Row row(*i, *_treeModel.getModel());
-		scene::INode* node = static_cast<scene::INode*>(row[_treeModel.getColumns().node].getPointer());
+		auto node = static_cast<scene::INode*>(row[_treeModel.getColumns().node].getPointer());
 
-		ISelectable* selectable = dynamic_cast<ISelectable*>(node);
+		auto selectable = dynamic_cast<ISelectable*>(node);
 
-		if (selectable != NULL)
+		if (selectable != nullptr)
 		{
 			// We've found a selectable instance
 

@@ -35,11 +35,12 @@ public:
 
 private:
 	// This maps scene::Nodes to TreeNode structures to allow fast lookups in the tree
-    typedef std::map<scene::INodeWeakPtr, GraphTreeNodePtr, std::owner_less<scene::INodeWeakPtr> > NodeMap;
-	NodeMap _nodemap;
+    std::map<scene::INodeWeakPtr, GraphTreeNode::Ptr, std::owner_less<scene::INodeWeakPtr>> _nodemap;
 
 	// The NULL treenode, must always be empty
-	const GraphTreeNodePtr _nullTreeNode;
+	const GraphTreeNode::Ptr _nullTreeNode;
+
+    GraphTreeNode::Ptr _mapRootNode;
 
 	// The actual model
 	TreeColumns _columns;
@@ -50,15 +51,15 @@ private:
 
 public:
 	GraphTreeModel();
-	~GraphTreeModel();
+	~GraphTreeModel() override;
 
-	// Inserts the instance into the tree, returns the GtkTreeIter*
-	const GraphTreeNodePtr& insert(const scene::INodePtr& node);
-	// Removes the given instance from the tree
+	// Inserts a node into the tree
+	const GraphTreeNode::Ptr& insert(const scene::INodePtr& node);
+	// Removes the given node from the tree
 	void erase(const scene::INodePtr& node);
 
-	// Tries to lookup the given node in the tree, can return the NULL node
-	const GraphTreeNodePtr& find(const scene::INodePtr& node) const;
+	// Tries to lookup the given node in the tree, can return an empty node
+	const GraphTreeNode::Ptr& find(const scene::INodePtr& node) const;
 
 	// Remove everything from the TreeModel
 	void clear();
@@ -90,17 +91,19 @@ public:
 	// scene::Graph::Observer implementation
 
 	// Gets called when a new <node> is inserted into the scenegraph
-	void onSceneNodeInsert(const scene::INodePtr& node);
+	void onSceneNodeInsert(const scene::INodePtr& node) override;
 	// Gets called when <node> is removed from the scenegraph
-	void onSceneNodeErase(const scene::INodePtr& node);
+	void onSceneNodeErase(const scene::INodePtr& node) override;
+
+    static bool NodeIsRelevant(const scene::INodePtr& node)
+    {
+        auto nodeType = node->getNodeType();
+        return nodeType == scene::INode::Type::Entity || nodeType == scene::INode::Type::MapRoot;
+    }
 
 private:
-	// Looks up the parent of the given node, can return NULL (empty shared_ptr)
-	const GraphTreeNodePtr& findParentNode(const scene::INodePtr& node) const;
-
-	// Tries to lookup the iterator to the parent item of the given node,
-	// returns NULL if not found
-	wxDataViewItem findParentIter(const scene::INodePtr& node) const;
+	// Tries to lookup the insert position for the given node
+	wxDataViewItem findParentIter(const scene::INodePtr& node);
 };
 
 } // namespace ui
