@@ -133,7 +133,7 @@ void Curve::curveChanged()
 {
 	// Recalculate the tesselation
 	tesselate();
-    _renderCurve.queueUpdate();
+    updateRenderable();
 
 	// Recalculate bounds
     _bounds = AABB();

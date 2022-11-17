@@ -1,5 +1,6 @@
 #pragma once
 
+#include <sigc++/connection.h>
 #include "Curve.h"
 #include "CurveEditInstance.h"
 #include "render/RenderableGeometry.h"
@@ -11,16 +12,27 @@ class RenderableCurveVertices :
     public render::RenderableGeometry
 {
 private:
-    const Curve& _curve;
+    Curve& _curve;
     const CurveEditInstance& _instance;
     bool _updateNeeded;
+    sigc::connection _curveChangedHandler;
 
 public:
-    RenderableCurveVertices(const Curve& curve, const CurveEditInstance& instance) :
+    RenderableCurveVertices(Curve& curve, const CurveEditInstance& instance) :
         _curve(curve),
         _instance(instance),
         _updateNeeded(true)
-    {}
+    {
+        // Update this renderable when the curve vertices are changed
+        _curveChangedHandler = _curve.signal_curveChanged().connect(
+            sigc::mem_fun(*this, &RenderableCurveVertices::queueUpdate)
+        );
+    }
+
+    ~RenderableCurveVertices() override
+    {
+        _curveChangedHandler.disconnect();
+    }
 
     void queueUpdate()
     {
