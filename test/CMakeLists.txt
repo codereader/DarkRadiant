@@ -10,6 +10,7 @@ add_executable(drtest
                CommandSystem.cpp
                ContinuousBuffer.cpp
                CSG.cpp
+               Curves.cpp
                DeclManager.cpp
                DefBlockSyntaxParser.cpp
                DefTokenisers.cpp

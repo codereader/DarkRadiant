@@ -1,3 +1,5 @@
+#include "algorithm/Selection.h"
+
 #include "RadiantTest.h"
 
 #include "ishaders.h"
@@ -668,22 +670,6 @@ TEST_F(CameraViewSelectionTest, TwosidedModelFacingUpIsSelectable)
     performModelSelectionTest("twosided_ivy_facing_up", true);
 }
 
-void performPointSelectionOnPosition(const Vector3& position, selection::SelectionSystem::EModifier modifier)
-{
-    // Construct an orthoview centered at the position
-    render::View view(false);
-    algorithm::constructCenteredOrthoview(view, position);
-    auto test = algorithm::constructOrthoviewSelectionTest(view);
-
-    GlobalSelectionSystem().selectPoint(test, modifier, false);
-}
-
-void performPointSelectionOnNodePosition(const scene::INodePtr& node, selection::SelectionSystem::EModifier modifier)
-{
-    auto nodePosition = node->worldAABB().getOrigin();
-    performPointSelectionOnPosition(nodePosition, modifier);
-}
-
 // Ortho: Toggle worldspawn brush selection in primitive mode
 TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveMode)
 {
@@ -695,10 +681,10 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveMode)
 
     expectNodeSelectionStatus({}, { brush, unrelatedBrush });
 
-    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({ brush  }, { unrelatedBrush });
 
-    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({}, { brush, unrelatedBrush });
 }
 
@@ -719,10 +705,10 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointPrimitiveModeFavoursEntities)
 
     expectNodeSelectionStatus({}, { brush, funcStatic });
 
-    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({ funcStatic  }, { brush });
 
-    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({}, { funcStatic, brush });
 }
 
@@ -743,7 +729,7 @@ TEST_F(OrthoViewSelectionTest, ReplaceSelectPointPrimitiveMode)
     Node_setSelected(funcStatic, true);
 
     // Run selection in replace mode, this should unselect the previous items
-    performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eReplace);
+    algorithm::performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eReplace);
     expectNodeSelectionStatus({ brush2  }, { brush1, funcStatic });
 }
 
@@ -763,27 +749,27 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointPrimitiveMode)
     expectNodeSelectionStatus({}, { brush4, patch4, funcStatic, torch1, torch2 });
 
     // First selection in replace mode should select the func_static, since entities are favoured
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eReplace);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eReplace);
     expectNodeSelectionStatus({ funcStatic }, { brush4, patch4, torch1, torch2 });
 
     // Second cycle should have the next entity selected
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ torch1 }, { brush4, patch4, funcStatic, torch2 });
 
     // Third cycle should select the brush in between the func_static and brush 1
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ torch2 }, { brush4, patch4, funcStatic, torch1 });
 
     // Fourth cycle should select topmost primitive
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ brush4 }, { patch4, funcStatic, torch1, torch2 });
 
     // Fifth cycle should select the second primitive
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ patch4 }, { brush4, funcStatic, torch1, torch2 });
 
     // Sixth cycle should select the first entity again
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ funcStatic }, { brush4, patch4, torch1, torch2 });
 }
 
@@ -798,13 +784,13 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointOnlyOneCandidate)
     EXPECT_FALSE(Node_isSelected(brush2)) << "Brush 2 should be unselected at first";
 
     // First selection in replace mode should select brush 2
-    performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eReplace);
+    algorithm::performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eReplace);
     EXPECT_TRUE(Node_isSelected(brush2)) << "brush 2 should be selected now";
 
     // Second cycle should have the topmost brush selected
-    performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eCycle);
     EXPECT_TRUE(Node_isSelected(brush2)) << "brush 2 should remain selected";
-    performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eCycle);
     EXPECT_TRUE(Node_isSelected(brush2)) << "brush 2 should remain selected";
 }
 
@@ -827,10 +813,10 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointEntityMode)
 
     // Since the func_static is located above the torch, it should get selected first
     // The worldspawn primitives should be ignored
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({ funcStatic  }, { torch1, brush4, patch4 });
 
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({}, { funcStatic, torch1, brush4, patch4 });
 }
 
@@ -849,19 +835,19 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointEntityMode)
     expectNodeSelectionStatus({}, { funcStatic, torch1, torch2 });
 
     // First selection in replace mode should select the func_static, since entities are favoured
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eReplace);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eReplace);
     expectNodeSelectionStatus({ funcStatic }, { torch1, torch2 });
 
     // Second cycle should have the topmost torch selected
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ torch1 }, { funcStatic, torch2 });
 
     // Third cycle should have the second torch selected
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ torch2 }, { torch1, funcStatic });
 
     // Fourth cycle should select func_static again
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ funcStatic }, { torch1, torch2 });
 }
 
@@ -882,7 +868,7 @@ TEST_F(OrthoViewSelectionTest, ReplaceSelectPointEntityMode)
     Node_setSelected(funcStatic, true);
 
     // Run selection in replace mode, this should unselect the previous items
-    performPointSelectionOnNodePosition(funcStaticAboveTorches, selection::SelectionSystem::eReplace);
+    algorithm::performPointSelectionOnNodePosition(funcStaticAboveTorches, selection::SelectionSystem::eReplace);
     expectNodeSelectionStatus({ funcStaticAboveTorches }, { funcStatic });
 }
 
@@ -902,10 +888,10 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointGroupPartMode)
     expectNodeSelectionStatus({}, { funcStatic, funcStatic2, funcStaticBrush, funcStatic2Brush, torch1 });
 
     // The torch sits below the func_static_above_torches, only their child brush will be selected
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({ funcStatic2Brush }, { funcStatic, funcStatic2, funcStaticBrush, torch1 });
 
-    performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(torch1, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({}, { funcStatic, funcStatic2, funcStaticBrush, funcStatic2Brush, torch1 });
 }
 
@@ -926,7 +912,7 @@ TEST_F(OrthoViewSelectionTest, ReplaceSelectPointGroupPartMode)
     Node_setSelected(funcStatic2Brush, true);
 
     // Select the other child primitive of the other func_static, it should replace the selection
-    performPointSelectionOnNodePosition(funcStatic, selection::SelectionSystem::eReplace);
+    algorithm::performPointSelectionOnNodePosition(funcStatic, selection::SelectionSystem::eReplace);
     expectNodeSelectionStatus({ funcStaticBrush }, { funcStatic, funcStatic2, funcStatic2Brush });
 }
 
@@ -947,19 +933,19 @@ TEST_F(OrthoViewSelectionTest, CycleSelectPointGroupPartMode)
     expectNodeSelectionStatus({}, { funcStaticTop, funcStaticMiddle, funcStaticBottom, topBrush, middleBrush, bottomBrush });
 
     // First selection in replace mode should select the top brush
-    performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eReplace);
+    algorithm::performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eReplace);
     expectNodeSelectionStatus({ topBrush }, { funcStaticTop, funcStaticMiddle, funcStaticBottom, middleBrush, bottomBrush });
 
     // Second cycle should have the middle brush selected
-    performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ middleBrush }, { funcStaticTop, funcStaticMiddle, funcStaticBottom, topBrush, bottomBrush });
 
     // Third cycle should have the bottom brush selected
-    performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ bottomBrush }, { funcStaticTop, funcStaticMiddle, funcStaticBottom, topBrush, middleBrush });
 
     // Fourth cycle should select the top brush again
-    performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eCycle);
     expectNodeSelectionStatus({ topBrush }, { funcStaticTop, funcStaticMiddle, funcStaticBottom, middleBrush, bottomBrush });
 }
 
@@ -1198,12 +1184,12 @@ TEST_F(OrthoViewSelectionTest, ToggleVertexSelectionComponentMode)
     auto vertexPosition = patch->ctrlAt(0, 0).vertex;
 
     // Select
-    performPointSelectionOnPosition(vertexPosition, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnPosition(vertexPosition, selection::SelectionSystem::eToggle);
     EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "Component selection count is wrong";
 
     // De-select again
-    performPointSelectionOnPosition(vertexPosition, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnPosition(vertexPosition, selection::SelectionSystem::eToggle);
     EXPECT_FALSE(componentSelectable->isSelectedComponents()) << "Vertex should have been de-selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 0) << "Component selection count is wrong";
 }
@@ -1247,7 +1233,7 @@ TEST_F(OrthoViewSelectionTest, CycleVertexSelectionComponentMode)
     EXPECT_FALSE(componentSelectable->isSelectedComponents());
 
     // Select the position of the top vertex (replace mode)
-    performPointSelectionOnPosition(topVertex, selection::SelectionSystem::eReplace);
+    algorithm::performPointSelectionOnPosition(topVertex, selection::SelectionSystem::eReplace);
     EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "Component selection count is wrong";
 
@@ -1259,7 +1245,7 @@ TEST_F(OrthoViewSelectionTest, CycleVertexSelectionComponentMode)
     moveSelectedComponentsTo(patch4, -delta); // move back
 
     // Select middle vertex using cycle mode
-    performPointSelectionOnPosition(topVertex, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnPosition(topVertex, selection::SelectionSystem::eCycle);
     EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "Component selection count is wrong";
 
@@ -1268,7 +1254,7 @@ TEST_F(OrthoViewSelectionTest, CycleVertexSelectionComponentMode)
     moveSelectedComponentsTo(patch4, -delta); // move back
 
     // Select bottom vertex using cycle mode
-    performPointSelectionOnPosition(topVertex, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnPosition(topVertex, selection::SelectionSystem::eCycle);
     EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "Component selection count is wrong";
 
@@ -1277,7 +1263,7 @@ TEST_F(OrthoViewSelectionTest, CycleVertexSelectionComponentMode)
     moveSelectedComponentsTo(patch4, -delta); // move back
 
     // Select top vertex again using cycle mode
-    performPointSelectionOnPosition(topVertex, selection::SelectionSystem::eCycle);
+    algorithm::performPointSelectionOnPosition(topVertex, selection::SelectionSystem::eCycle);
     EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "Component selection count is wrong";
 
@@ -1316,14 +1302,14 @@ TEST_F(OrthoViewSelectionTest, ReplaceVertexSelectionComponentMode)
     EXPECT_FALSE(componentSelectable->isSelectedComponents());
 
     // Select the position of the top vertex (toggle mode)
-    performPointSelectionOnPosition(leftVertex, selection::SelectionSystem::eToggle);
-    performPointSelectionOnPosition(otherVertex, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnPosition(leftVertex, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnPosition(otherVertex, selection::SelectionSystem::eToggle);
 
     EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 2) << "Component selection count is wrong";
 
     // Select the right vertex using replace mode
-    performPointSelectionOnPosition(rightVertex, selection::SelectionSystem::eReplace);
+    algorithm::performPointSelectionOnPosition(rightVertex, selection::SelectionSystem::eReplace);
     EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 1) << "Component selection count is wrong";
 
@@ -1423,8 +1409,8 @@ TEST_F(OrthoViewSelectionTest, DragManipulateSelectedVerticesComponentMode)
     EXPECT_TRUE(algorithm::patchHasVertex(*patch, vertex2));
     EXPECT_TRUE(algorithm::patchHasVertices(*patch, vertices));
 
-    performPointSelectionOnPosition(vertex1, selection::SelectionSystem::eToggle);
-    performPointSelectionOnPosition(vertex2, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnPosition(vertex1, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnPosition(vertex2, selection::SelectionSystem::eToggle);
     EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 2) << "2 Vertices should have been selected";
 
@@ -1476,8 +1462,8 @@ TEST_F(OrthoViewSelectionTest, DragComponentSelectionIsTransient)
     EXPECT_TRUE(algorithm::patchHasVertices(*patch, vertices));
 
     // Select two unrelated vertices
-    performPointSelectionOnPosition(vertices.at(4), selection::SelectionSystem::eToggle);
-    performPointSelectionOnPosition(vertices.at(7), selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnPosition(vertices.at(4), selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnPosition(vertices.at(7), selection::SelectionSystem::eToggle);
 
     EXPECT_TRUE(componentSelectable->isSelectedComponents()) << "Vertex should have been selected";
     EXPECT_EQ(GlobalSelectionSystem().countSelectedComponents(), 2) << "2 Vertices should have been selected";
@@ -1509,7 +1495,7 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectPointInFocusMode)
     expectNodeSelectionStatus({}, { brush, brush2, brush3 });
 
     // Trying to select brush 1 should select brush 3, since 1 is not part of the focus
-    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({ brush3 }, { brush2, brush });
 
     // Move brush 3
@@ -1538,7 +1524,7 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectFuncStaticInFocusMode)
     expectNodeSelectionStatus({}, { funcStaticTop, topBrush });
 
     // Aim at the brush and select it, this should have the entity selected as usual
-    performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(topBrush, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({ funcStaticTop }, { topBrush });
 
     // Move the func_static
@@ -1574,7 +1560,7 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectGroupItemInFocusMode)
 
     // Aim at one brush (not brush1, since the entity below it will take precedenec)
     // Selecting brush 2 will select the entire group
-    performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({ brush, brush2, brush3 }, {});
 
     // Enter focus mode with the group selected
@@ -1582,10 +1568,10 @@ TEST_F(OrthoViewSelectionTest, ToggleSelectGroupItemInFocusMode)
     expectNodeSelectionStatus({}, { brush, brush2, brush3 });
 
     // Aim at one brush and select it, this should not select the entire group
-    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({ brush }, { brush2, brush3 });
 
-    performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(brush2, selection::SelectionSystem::eToggle);
     expectNodeSelectionStatus({ brush, brush2 }, { brush3 });
 }
 
@@ -1606,7 +1592,7 @@ TEST_F(OrthoViewSelectionTest, UnfocusedNodeIsAddedToFocusOnSelection)
     auto originalFocusBounds = GlobalSelectionSystem().getSelectionFocusBounds();
 
     // Try to perform selecting the brush
-    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
 
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 0) << "Still nothing should be selected";
     EXPECT_FALSE(Node_isSelected(brush)) << "Selection should not have succeeded";
@@ -1616,7 +1602,7 @@ TEST_F(OrthoViewSelectionTest, UnfocusedNodeIsAddedToFocusOnSelection)
     Node_setSelected(brush, false);
 
     // This point selection ought to succeed now
-    performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
+    algorithm::performPointSelectionOnNodePosition(brush, selection::SelectionSystem::eToggle);
 
     EXPECT_EQ(GlobalSelectionSystem().countSelected(), 1) << "Brush should be selected now";
     EXPECT_TRUE(Node_isSelected(brush)) << "Selection should have succeeded";
