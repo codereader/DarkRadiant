@@ -61,6 +61,14 @@ public:
     void showDropHint(const wxRect& size);
     void hideDropHint();
 
+    // Called when the (floating) property panel is becoming visible again
+    // Ensures that the active tab is becoming active
+    void onNotebookPaneRestored();
+
+    // Called when the property panel (as a floating window) is hidden
+    // This method ensures that the active tab is becoming inactive
+    void onNotebookPaneClosed();
+
 private:
     void restoreState(const xml::NodeList& pagesPath);
 

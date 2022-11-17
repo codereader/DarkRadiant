@@ -117,6 +117,22 @@ std::string PropertyNotebook::getSelectedPageName()
     return findControlNameByWindow(win);
 }
 
+void PropertyNotebook::onNotebookPaneRestored()
+{
+    auto selectedPageIndex = GetSelection();
+    auto page = GetPage(selectedPageIndex);
+
+    _layout.ensureControlIsActive(page);
+}
+
+void PropertyNotebook::onNotebookPaneClosed()
+{
+    auto selectedPageIndex = GetSelection();
+    auto page = GetPage(selectedPageIndex);
+
+    _layout.ensureControlIsInactive(page);
+}
+
 void PropertyNotebook::onPageSwitch(wxBookCtrlEvent& ev)
 {
     // Store the page's name into the registry for later retrieval
