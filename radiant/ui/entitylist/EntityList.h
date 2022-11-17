@@ -69,7 +69,7 @@ private:
 
 	/** greebo: Updates the treeview contents
 	 */
-	void update();
+	void updateSelectionStatus();
 
     // Repopulate the entire treestore from the scenegraph
     void refreshTreeModel();

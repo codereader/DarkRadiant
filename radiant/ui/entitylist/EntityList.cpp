@@ -142,7 +142,7 @@ void EntityList::populateWindow()
 	_visibleOnly->Bind(wxEVT_CHECKBOX, &EntityList::onVisibleOnlyToggle, this);
 }
 
-void EntityList::update()
+void EntityList::updateSelectionStatus()
 {
 	// Disable callbacks and traverse the treemodel
     util::ScopedBoolLock lock(_callbackActive);
@@ -171,6 +171,9 @@ void EntityList::refreshTreeModel()
     }
 
     expandRootNode();
+
+    // Update the selection status of all nodes
+    updateSelectionStatus();
 }
 
 void EntityList::selectionChanged(const scene::INodePtr& node, bool isComponent)
@@ -205,7 +208,7 @@ void EntityList::onRowExpand(wxDataViewEvent& ev)
 
 	// greebo: This is a possible optimisation point. Don't update the entire tree,
 	// but only the expanded subtree.
-	update();
+    updateSelectionStatus();
 }
 
 void EntityList::onVisibleOnlyToggle(wxCommandEvent& ev)

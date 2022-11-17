@@ -35,7 +35,7 @@ public:
         {
             // Insert this node into the GraphTreeModel
             _model.insert(node);
-            return false; // don't traverse entity children
+            return node->getNodeType() == scene::INode::Type::MapRoot; // don't traverse entity children
         }
 
         return true; // traverse children
