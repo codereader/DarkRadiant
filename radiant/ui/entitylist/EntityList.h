@@ -47,7 +47,7 @@ private:
 	std::set<wxDataViewItem, DataViewItemLess> _selection;
 
     wxDataViewItem _itemToScrollToWhenIdle;
-    std::vector<scene::INodePtr> _nodesToUpdate;
+    std::vector<scene::INodeWeakPtr> _nodesToUpdate;
 
 public:
 	EntityList(wxWindow* parent);

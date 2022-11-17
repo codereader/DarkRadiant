@@ -230,8 +230,11 @@ void EntityList::onIdle()
 {
     if (!_nodesToUpdate.empty())
     {
-        for (const auto& node : _nodesToUpdate)
+        for (const auto& weakNode : _nodesToUpdate)
         {
+            auto node = weakNode.lock();
+            if (!node) continue;
+
             _treeModel.updateSelectionStatus(node, std::bind(&EntityList::onTreeViewSelection, this,
                 std::placeholders::_1, std::placeholders::_2));
         }
