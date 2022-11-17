@@ -438,11 +438,18 @@ void EntityInspector::onPanelActivated()
 {
     connectListeners();
     refresh();
+
+    _panedPosition.connect(_paned);
+    _panedPosition.loadFromPath(RKEY_PANE_STATE);
 }
 
 void EntityInspector::onPanelDeactivated()
 {
+    // Save current position and disconnect the tracker to not receive
+    // faulty sizes during reconstruction of the parent window
     _panedPosition.saveToPath(RKEY_PANE_STATE);
+    _panedPosition.disconnect();
+
     disconnectListeners();
 }
 

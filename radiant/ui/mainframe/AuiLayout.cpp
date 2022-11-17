@@ -482,9 +482,9 @@ void AuiLayout::toggleControlInPropertyPanel(const std::string& controlName)
         // Ensure the floating pane is visible
         if (!propertyPane.IsShown())
         {
-            _propertyNotebook->onNotebookPaneRestored();
             propertyPane.Show(true);
             _auiMgr.Update();
+            _propertyNotebook->onNotebookPaneRestored();
         }
     }
     else // Property panel is docked
@@ -495,9 +495,9 @@ void AuiLayout::toggleControlInPropertyPanel(const std::string& controlName)
         // Ensure the non-floating property panel is visible
         if (!propertyPane.IsShown())
         {
-            _propertyNotebook->onNotebookPaneRestored();
             propertyPane.Show(true);
             _auiMgr.Update();
+            _propertyNotebook->onNotebookPaneRestored();
         }
     }
 }
