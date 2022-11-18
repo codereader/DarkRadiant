@@ -17,19 +17,24 @@
 namespace ui
 {
 
+namespace
+{
+    constexpr const char* const RKEY_WINDOW_STATE = "user/ui/scriptWindow/";
+}
+
 ScriptWindow::ScriptWindow(wxWindow* parent) :
     DockablePanel(parent),
 	_outView(new wxutil::ConsoleView(this))
 {
 	SetSizer(new wxBoxSizer(wxVERTICAL));
 
-	auto vertPane = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
-    vertPane->SetMinimumPaneSize(10); // disallow unsplitting
+    _paned = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D);
+    _paned->SetMinimumPaneSize(10); // disallow unsplitting
 
-	GetSizer()->Add(vertPane, 1, wxEXPAND);
+	GetSizer()->Add(_paned, 1, wxEXPAND);
 
 	// Edit panel has a label and a "run" button
-	auto editPanel = new wxPanel(vertPane, wxID_ANY);
+	auto editPanel = new wxPanel(_paned, wxID_ANY);
 	editPanel->SetSizer(new wxBoxSizer(wxVERTICAL));
 
 	auto editLabel = new wxStaticText(editPanel, wxID_ANY, _("Python Script Input"));
@@ -57,11 +62,11 @@ ScriptWindow::ScriptWindow(wxWindow* parent) :
 	editPanel->GetSizer()->Add(buttonPanel, 0, wxEXPAND);
 
 	// Pack the scrolled textview and the entry box to the vbox
-	_outView->Reparent(vertPane);
-	_view->Reparent(vertPane);
+	_outView->Reparent(_paned);
+	_view->Reparent(_paned);
 
-	vertPane->SplitHorizontally(editPanel, _outView);
-	vertPane->SetSashPosition(150);
+	_paned->SplitHorizontally(editPanel, _outView);
+	_paned->SetSashPosition(150);
 
     // Add the initial import statement
     _view->SetValue(fmt::format(R"(import darkradiant as dr
@@ -70,6 +75,11 @@ ScriptWindow::ScriptWindow(wxWindow* parent) :
 # {0}
 # or the scripts/test.py in DarkRadiant installation folder.
 )", scriptReferenceUrl));
+}
+
+ScriptWindow::~ScriptWindow()
+{
+    _panedPosition.saveToPath(RKEY_WINDOW_STATE);
 }
 
 void ScriptWindow::onRunScript(wxCommandEvent& ev)
@@ -106,5 +116,34 @@ void ScriptWindow::onRunScript(wxCommandEvent& ev)
 			result->errorOccurred ? wxutil::ConsoleView::ModeError : wxutil::ConsoleView::ModeStandard);
 	}
 }
+
+void ScriptWindow::onPanelActivated()
+{
+    _panedPosition.connect(_paned);
+    _panedPosition.loadFromPath(RKEY_WINDOW_STATE);
+}
+
+void ScriptWindow::onPanelDeactivated()
+{
+    // Save current position and disconnect the tracker to not receive
+    // faulty sizes during reconstruction of the parent window
+    _panedPosition.saveToPath(RKEY_WINDOW_STATE);
+    _panedPosition.disconnect();
+}
+
+void ScriptWindow::restoreSettings()
+{
+    // Find the information stored in the registry
+    if (GlobalRegistry().keyExists(RKEY_WINDOW_STATE))
+    {
+        _panedPosition.loadFromPath(RKEY_WINDOW_STATE);
+    }
+    else
+    {
+        // No saved information, apply standard value
+        _panedPosition.setPosition(300);
+    }
+}
+
 
 } // namespace script
