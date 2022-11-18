@@ -313,6 +313,7 @@
     </toolbar>
     <userGuideUrl value="https://www.darkradiant.net/userguide" />
     <forumUrl value="https://forums.thedarkmod.com/index.php?/forum/51-darkradiant-feedback-and-development/" />
+    <scriptReferenceUrl value="https://wiki.thedarkmod.com/index.php?title=DarkRadiant_Script_Reference" />
     <vcs>
       <git>
           <autoFetchEnabled value="1" />

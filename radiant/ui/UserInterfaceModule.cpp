@@ -477,6 +477,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
 	GlobalCommandSystem().addCommand("ShowUserGuide", Documentation::showUserGuide);
 	GlobalCommandSystem().addCommand("OpenForumUrl", Documentation::OpenForumUrl);
+	GlobalCommandSystem().addCommand("OpenScriptReference", Documentation::OpenScriptReference);
 #ifndef WIN32
 	GlobalCommandSystem().addCommand("ShowOfflineUserGuide", Documentation::showOfflineUserGuide);
 #endif

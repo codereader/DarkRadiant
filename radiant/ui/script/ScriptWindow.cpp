@@ -9,8 +9,10 @@
 #include <wx/splitter.h>
 #include <wx/sizer.h>
 #include <wx/stattext.h>
+#include "registry/registry.h"
 
 #include "string/replace.h"
+#include "ui/Documentation.h"
 
 namespace ui
 {
@@ -32,14 +34,27 @@ ScriptWindow::ScriptWindow(wxWindow* parent) :
 
 	auto editLabel = new wxStaticText(editPanel, wxID_ANY, _("Python Script Input"));
 
+    auto buttonPanel = new wxFlexGridSizer(1, 2, 6, 6);
+    buttonPanel->AddGrowableCol(1);
+
 	auto runButton = new wxButton(editPanel, wxID_ANY, _("Run Script"));
 	runButton->Bind(wxEVT_BUTTON, &ScriptWindow::onRunScript, this);
+    buttonPanel->Add(runButton, 0, wxALIGN_LEFT);
+
+    auto scriptReferenceUrl = registry::getValue<std::string>(RKEY_SCRIPT_REFERENCE_URL);
+
+    if (!scriptReferenceUrl.empty())
+    {
+        auto referenceButton = new wxButton(editPanel, wxID_ANY, _("Open Script Reference"));
+        referenceButton->Bind(wxEVT_BUTTON, [] (auto&) { Documentation::OpenScriptReference({}); });
+        buttonPanel->Add(referenceButton, 0, wxALIGN_RIGHT);
+    }
 
     _view = new wxutil::PythonSourceViewCtrl(editPanel);
 
 	editPanel->GetSizer()->Add(editLabel, 0);
 	editPanel->GetSizer()->Add(_view, 1, wxEXPAND);
-	editPanel->GetSizer()->Add(runButton, 0);
+	editPanel->GetSizer()->Add(buttonPanel, 0, wxEXPAND);
 
 	// Pack the scrolled textview and the entry box to the vbox
 	_outView->Reparent(vertPane);
@@ -47,6 +62,14 @@ ScriptWindow::ScriptWindow(wxWindow* parent) :
 
 	vertPane->SplitHorizontally(editPanel, _outView);
 	vertPane->SetSashPosition(150);
+
+    // Add the initial import statement
+    _view->SetValue(fmt::format(R"(import darkradiant as dr
+
+# Enter your script code here. For reference, see
+# {0}
+# or the scripts/test.py in DarkRadiant installation folder.
+)", scriptReferenceUrl));
 }
 
 void ScriptWindow::onRunScript(wxCommandEvent& ev)

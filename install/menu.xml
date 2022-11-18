@@ -315,6 +315,7 @@
 	<subMenu name="help" caption="&amp;Help">
 		<menuItem name="about" caption="&amp;About" command="About" />
         <menuItem name="openForumLink" caption="&amp;Community Forum" command="OpenForumUrl" />
+        <menuItem name="openScriptRef" caption="&amp;Script Reference Wiki Article" command="OpenScriptReference" />
 		<menuItem name="userGuide" caption="&amp;User Guide (Online)" command="ShowUserGuide" />
 		<menuItem name="userGuideLocal" caption="&amp;User Guide (Local)" command="ShowOfflineUserGuide" />
 	</subMenu>
