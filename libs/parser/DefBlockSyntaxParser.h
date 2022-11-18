@@ -407,9 +407,11 @@ class DefBlockSyntaxTokeniserFunc
         Whitespace,               // on whitespace
         Token,                    // non-whitespace, non-control character
         BracedBlock,              // within a braced block
-        QuotedStringWithinBlock,  // within a quoted string within a block
         BlockComment,             // within a /* block comment */
         EolComment,               // on an EOL comment starting with //
+        QuotedStringWithinBlock,  // within a quoted string within a block
+        BlockCommentWithinBlock,  // within a /* block comment */ within a block
+        EolCommentWithinBlock,    // an EOL within a block
     };
 
     constexpr static const char* const Delims = " \t\n\v\r";
@@ -473,7 +475,7 @@ public:
                 
                 if (ch == '/')
                 {
-                    // Token type not yet determined switch to forward slash mode
+                    // Could be a comment
                     tok.value += ch;
                     ++next;
 
@@ -529,6 +531,28 @@ public:
                     // ignoring any control characters within that string
                     state = State::QuotedStringWithinBlock;
                 }
+                else if (ch == '/')
+                {
+                    // Could be a comment, check the next character, it determines what we have
+                    if (next != end)
+                    {
+                        if (*next == '*')
+                        {
+                            state = State::BlockCommentWithinBlock;
+                            tok.value += '*';
+                            ++next;
+                            continue;
+                        }
+
+                        if (*next == '/')
+                        {
+                            state = State::EolCommentWithinBlock;
+                            tok.value += '/';
+                            ++next;
+                            continue;
+                        }
+                    }
+                }
                 continue;
 
             case State::QuotedStringWithinBlock:
@@ -554,6 +578,7 @@ public:
                 return true;
 
             case State::BlockComment:
+            case State::BlockCommentWithinBlock:
                 // Inside a delimited comment, we add everything to the token 
                 // and check for the "*/" sequence.
                 tok.value += ch;
@@ -565,17 +590,32 @@ public:
                     // Add the slash and close this block comment
                     tok.value += '/';
                     ++next;
-                    return true;
+
+                    if (state == State::BlockComment)
+                    {
+                        return true;
+                    }
+
+                    // switch back to block mode
+                    state = State::BracedBlock;
                 }
 
                 continue; // carry on
 
             case State::EolComment:
+            case State::EolCommentWithinBlock:
                 // This comment lasts until the end of the line.
                 if (ch == '\r' || ch == '\n')
                 {
                     // Stop here, leave next where it is
-                    return true;
+                    if (state == State::EolComment)
+                    {
+                        return true;
+                    }
+                    
+                    // switch back to block mode
+                    state = State::BracedBlock;
+                    continue;
                 }
                 
                 // Add to comment and continue

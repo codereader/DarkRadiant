@@ -176,7 +176,7 @@ TEST(DefBlockSyntaxTokeniser, QuoteWithinLineComment)
         "    \"key\" \"value\" // comment with quote\"", // has a quote at the end of the line
         "    \"key2\" \"value2\" // comment\" with quote", // has a quote in the middle
         "    \"key3\" \"value3\" // the third opening \" quote", // has a quote in the middle
-        "}"
+        "}",
         "entityDef tork {}"
     }, "\n"); // use a specific line break to be platform independent here
 
@@ -203,6 +203,7 @@ TEST(DefBlockSyntaxTokeniser, QuoteWithinLineComment)
     ++it;
     EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
     EXPECT_EQ((*it).value, "entityDef");
+    ++it;
     EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
     ++it;
     EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
@@ -220,7 +221,7 @@ TEST(DefBlockSyntaxTokeniser, QuoteWithinBlockComment)
         "entityDef something",
         "{",
         "    \"key\" \"value\" /* comment with quote\" */", // comment has a quote in it
-        "}"
+        "}",
         "entityDef tork {}"
     }, "\n"); // use a specific line break to be platform independent here
 
@@ -247,6 +248,7 @@ TEST(DefBlockSyntaxTokeniser, QuoteWithinBlockComment)
     ++it;
     EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
     EXPECT_EQ((*it).value, "entityDef");
+    ++it;
     EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
     ++it;
     EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
