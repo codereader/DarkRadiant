@@ -2,7 +2,6 @@
 
 #include "iselection.h"
 #include "GraphTreeModel.h"
-#include <set>
 #include <sigc++/connection.h>
 
 #include "wxutil/DockablePanel.h"
@@ -35,16 +34,6 @@ private:
 	wxCheckBox* _visibleOnly;
 
 	sigc::connection _filtersConfigChangedConn;
-
-	struct DataViewItemLess
-	{
-		bool operator() (const wxDataViewItem& a, const wxDataViewItem& b) const
-		{
-			return a.GetID() < b.GetID();
-		}
-	};
-
-	std::set<wxDataViewItem, DataViewItemLess> _selection;
 
     wxDataViewItem _itemToScrollToWhenIdle;
     std::vector<scene::INodeWeakPtr> _nodesToUpdate;

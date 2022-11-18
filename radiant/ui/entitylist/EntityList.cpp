@@ -5,6 +5,7 @@
 #include "registry/Widgets.h"
 #include "entitylib.h"
 #include "scenelib.h"
+#include "inode.h"
 #include "iselectable.h"
 #include "i18n.h"
 
@@ -157,7 +158,6 @@ void EntityList::updateSelectionStatus()
 void EntityList::refreshTreeModel()
 {
     // Refresh the whole tree
-    _selection.clear();
     _nodesToUpdate.clear();
     _itemToScrollToWhenIdle.Unset();
 
@@ -259,9 +259,6 @@ void EntityList::onTreeViewSelection(const wxDataViewItem& item, bool selected)
 		// Select the row in the TreeView
 		_treeView->Select(item);
 
-		// Remember this item
-		_selection.insert(item);
-
 		// Scroll to the row, but don't do this immediately (can be expensive)
         _itemToScrollToWhenIdle = item;
         requestIdleCallback();
@@ -269,8 +266,6 @@ void EntityList::onTreeViewSelection(const wxDataViewItem& item, bool selected)
 	else
 	{
 		_treeView->Unselect(item);
-
-		_selection.erase(item);
 	} 
 }
 
@@ -283,46 +278,51 @@ void EntityList::onSelection(wxDataViewEvent& ev)
 	wxDataViewItemArray newSelection;
 	view->GetSelections(newSelection);
 
-	std::sort(newSelection.begin(), newSelection.end(), DataViewItemLess());
+    std::set<scene::INode*> desiredSelection;
+    std::set<scene::INode*> mapSelection;
 
-	std::vector<wxDataViewItem> diff(newSelection.size() + _selection.size());
+    for (const auto& item : newSelection)
+    {
+        // Load the instance pointer from the columns
+        wxutil::TreeModel::Row row(item, *_treeModel.getModel());
+        desiredSelection.insert(static_cast<scene::INode*>(row[_treeModel.getColumns().node].getPointer()));
+    }
+
+    // Check the existing map selection to run a diff
+    GlobalSelectionSystem().foreachSelected([&](const scene::INodePtr& node)
+    {
+        mapSelection.insert(node.get());
+    });
 
 	// Calculate the difference between the new selection and the old one
-	auto end = std::set_symmetric_difference(
-		newSelection.begin(), newSelection.end(), _selection.begin(), _selection.end(), diff.begin());
+    std::vector<scene::INode*> diff;
+    diff.reserve(desiredSelection.size() + mapSelection.size());
 
-	for (auto i = diff.begin(); i != end; ++i)
+	std::set_symmetric_difference(desiredSelection.begin(), desiredSelection.end(),
+        mapSelection.begin(), mapSelection.end(), std::back_inserter(diff));
+
+	for (auto node : diff)
 	{
-		// Load the instance pointer from the columns
-		wxutil::TreeModel::Row row(*i, *_treeModel.getModel());
-		auto node = static_cast<scene::INode*>(row[_treeModel.getColumns().node].getPointer());
-
 		auto selectable = dynamic_cast<ISelectable*>(node);
 
-		if (selectable != nullptr)
-		{
-			// We've found a selectable instance
+        if (selectable == nullptr) continue;
 
-			// Disable update to avoid loopbacks
-			_callbackActive = true;
+        // Disable update to avoid loopbacks
+        _callbackActive = true;
 
-			// Select the instance
-			bool isSelected = view->IsSelected(*i);
-			selectable->setSelected(isSelected);
+        // Should the instance be selected?
+        bool shouldBeSelected = desiredSelection.count(node) > 0;
+        selectable->setSelected(shouldBeSelected);
 
-			if (isSelected && _focusSelected->GetValue())
-			{
-                auto originAndAngles = scene::getOriginAndAnglesToLookAtNode(*node);
-                GlobalCommandSystem().executeCommand("FocusViews", cmd::ArgumentList{ originAndAngles.first, originAndAngles.second });
-			}
+        if (shouldBeSelected && _focusSelected->GetValue())
+        {
+            auto originAndAngles = scene::getOriginAndAnglesToLookAtNode(*node);
+            GlobalCommandSystem().executeCommand("FocusViews", cmd::ArgumentList{ originAndAngles.first, originAndAngles.second });
+        }
 
-			// Now reactivate the callbacks
-			_callbackActive = false;
-		}
+            // Now reactivate the callbacks
+        _callbackActive = false;
 	}
-
-	_selection.clear();
-	_selection.insert(newSelection.begin(), newSelection.end());
 }
 
 } // namespace ui
