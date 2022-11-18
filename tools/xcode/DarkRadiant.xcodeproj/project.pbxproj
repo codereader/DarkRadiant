@@ -660,6 +660,12 @@
 		3A3832E8290B9FA20049C4A1 /* ModelNodeBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3832E4290B9FA20049C4A1 /* ModelNodeBase.h */; };
 		3A3832EB290B9FD70049C4A1 /* SceneSelectionTesters.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832E9290B9FD50049C4A1 /* SceneSelectionTesters.cpp */; };
 		3A3832EC290B9FD70049C4A1 /* SceneSelectionTesters.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A3832EA290B9FD60049C4A1 /* SceneSelectionTesters.h */; };
+		3A3832EE29276D330049C4A1 /* skineditor.xrc in Resources */ = {isa = PBXBuildFile; fileRef = 3A3832ED29276D2F0049C4A1 /* skineditor.xrc */; };
+		3A3832EF29276D710049C4A1 /* skineditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A3832ED29276D2F0049C4A1 /* skineditor.xrc */; };
+		3A3832F029276D8A0049C4A1 /* skineditor.xrc in CopyFiles */ = {isa = PBXBuildFile; fileRef = 3A3832ED29276D2F0049C4A1 /* skineditor.xrc */; };
+		3A3832F829276DC70049C4A1 /* SkinEditorTreeView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832F429276DC50049C4A1 /* SkinEditorTreeView.cpp */; };
+		3A3832F929276DC70049C4A1 /* SkinEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832F729276DC70049C4A1 /* SkinEditor.cpp */; };
+		3A3832FB29276DEE0049C4A1 /* Doom3ModelSkin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A3832FA29276DED0049C4A1 /* Doom3ModelSkin.cpp */; };
 		3A8D4CC0263C7895000C068E /* Bitmap.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBE263C7893000C068E /* Bitmap.h */; };
 		3A8D4CC1263C7895000C068E /* LocalBitmapArtProvider.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */; };
 		3AA6E07923B2343200BF9AD7 /* ParticleEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3AE6F3F623B1B764008A1B2D /* ParticleEditor.cpp */; };
@@ -2672,6 +2678,7 @@
 			dstPath = Resources/ui;
 			dstSubfolderSpec = 16;
 			files = (
+				3A3832EF29276D710049C4A1 /* skineditor.xrc in CopyFiles */,
 				3A3830AA272D33350049C4A1 /* convertmodeldialog.xrc in CopyFiles */,
 				3A3830AB272D33350049C4A1 /* gameconnection.xrc in CopyFiles */,
 				3A3830AC272D33350049C4A1 /* texturetoolmanipulationpanel.xrc in CopyFiles */,
@@ -3035,6 +3042,7 @@
 			dstPath = Contents/Resources/ui;
 			dstSubfolderSpec = 1;
 			files = (
+				3A3832F029276D8A0049C4A1 /* skineditor.xrc in CopyFiles */,
 				3A3830C0272D33610049C4A1 /* convertmodeldialog.xrc in CopyFiles */,
 				3A3830C1272D33610049C4A1 /* gameconnection.xrc in CopyFiles */,
 				3A3830C2272D33610049C4A1 /* texturetoolmanipulationpanel.xrc in CopyFiles */,
@@ -3752,6 +3760,13 @@
 		3A3832E4290B9FA20049C4A1 /* ModelNodeBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ModelNodeBase.h; path = ../../radiantcore/model/ModelNodeBase.h; sourceTree = SOURCE_ROOT; };
 		3A3832E9290B9FD50049C4A1 /* SceneSelectionTesters.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SceneSelectionTesters.cpp; path = ../../radiantcore/selection/SceneSelectionTesters.cpp; sourceTree = SOURCE_ROOT; };
 		3A3832EA290B9FD60049C4A1 /* SceneSelectionTesters.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SceneSelectionTesters.h; path = ../../radiantcore/selection/SceneSelectionTesters.h; sourceTree = SOURCE_ROOT; };
+		3A3832ED29276D2F0049C4A1 /* skineditor.xrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = skineditor.xrc; path = ../../install/ui/skineditor.xrc; sourceTree = SOURCE_ROOT; };
+		3A3832F329276DC50049C4A1 /* SkinEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinEditor.h; path = ../../radiant/ui/skin/SkinEditor.h; sourceTree = SOURCE_ROOT; };
+		3A3832F429276DC50049C4A1 /* SkinEditorTreeView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkinEditorTreeView.cpp; path = ../../radiant/ui/skin/SkinEditorTreeView.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832F529276DC60049C4A1 /* MaterialSelectorColumn.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MaterialSelectorColumn.h; path = ../../radiant/ui/skin/MaterialSelectorColumn.h; sourceTree = SOURCE_ROOT; };
+		3A3832F629276DC60049C4A1 /* SkinEditorTreeView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SkinEditorTreeView.h; path = ../../radiant/ui/skin/SkinEditorTreeView.h; sourceTree = SOURCE_ROOT; };
+		3A3832F729276DC70049C4A1 /* SkinEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SkinEditor.cpp; path = ../../radiant/ui/skin/SkinEditor.cpp; sourceTree = SOURCE_ROOT; };
+		3A3832FA29276DED0049C4A1 /* Doom3ModelSkin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Doom3ModelSkin.cpp; path = ../../radiantcore/skins/Doom3ModelSkin.cpp; sourceTree = SOURCE_ROOT; };
 		3A8D4CBE263C7893000C068E /* Bitmap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Bitmap.h; path = ../../libs/wxutil/Bitmap.h; sourceTree = SOURCE_ROOT; };
 		3A8D4CBF263C7894000C068E /* LocalBitmapArtProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LocalBitmapArtProvider.h; path = ../../libs/wxutil/LocalBitmapArtProvider.h; sourceTree = SOURCE_ROOT; };
 		3AA6E08623BB4E9F00BF9AD7 /* GLWidget.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GLWidget.h; path = ../../libs/wxutil/GLWidget.h; sourceTree = SOURCE_ROOT; };
@@ -6138,6 +6153,18 @@
 			name = fx;
 			sourceTree = "<group>";
 		};
+		3A3832F229276DB30049C4A1 /* skin */ = {
+			isa = PBXGroup;
+			children = (
+				3A3832F529276DC60049C4A1 /* MaterialSelectorColumn.h */,
+				3A3832F729276DC70049C4A1 /* SkinEditor.cpp */,
+				3A3832F329276DC50049C4A1 /* SkinEditor.h */,
+				3A3832F429276DC50049C4A1 /* SkinEditorTreeView.cpp */,
+				3A3832F629276DC60049C4A1 /* SkinEditorTreeView.h */,
+			);
+			name = skin;
+			sourceTree = "<group>";
+		};
 		3AC88715253C1D0A00E6CCCE /* picomodel */ = {
 			isa = PBXGroup;
 			children = (
@@ -6941,6 +6968,7 @@
 		3AE6F41F23B1B8DA008A1B2D /* skins */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832FA29276DED0049C4A1 /* Doom3ModelSkin.cpp */,
 				3AE6F42023B1B8F7008A1B2D /* Doom3ModelSkin.h */,
 				3AE6F42123B1B8F7008A1B2D /* Doom3SkinCache.cpp */,
 				3AE6F42223B1B8F7008A1B2D /* Doom3SkinCache.h */,
@@ -7425,6 +7453,7 @@
 		3AEBE4E31E5229AB0062D9AF /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832ED29276D2F0049C4A1 /* skineditor.xrc */,
 				3A383092272D32E50049C4A1 /* convertmodeldialog.xrc */,
 				3A383091272D32E40049C4A1 /* gameconnection.xrc */,
 				3A383093272D32E50049C4A1 /* texturetoolmanipulationpanel.xrc */,
@@ -8177,6 +8206,7 @@
 		3AF744971E4F861B003465B5 /* ui */ = {
 			isa = PBXGroup;
 			children = (
+				3A3832F229276DB30049C4A1 /* skin */,
 				3A38327928DDDA7D0049C4A1 /* fx */,
 				3A383222285A13F10049C4A1 /* console */,
 				3AF744981E4F861B003465B5 /* aas */,
@@ -10239,6 +10269,7 @@
 				3A383067272D31C60049C4A1 /* textool_normalise.png in Resources */,
 				3A383077272D31C70049C4A1 /* rotate_cw.png in Resources */,
 				3A38306F272D31C60049C4A1 /* arrow_right_blue.png in Resources */,
+				3A3832EE29276D330049C4A1 /* skineditor.xrc in Resources */,
 				3A382FA226C176340049C4A1 /* three_way_merge.png in Resources */,
 				3A3831442859E3990049C4A1 /* shadowmap_fp.glsl in Resources */,
 				3AE6F1DB1F6E953F008A1B2D /* prey.game in Resources */,
@@ -10625,6 +10656,7 @@
 				3A38328228DDDABB0049C4A1 /* MaterialChooser.cpp in Sources */,
 				3A3832DF290B9F600049C4A1 /* TextureBrowserPanel.cpp in Sources */,
 				3AF745AD1E4F861B003465B5 /* StartupMapLoader.cpp in Sources */,
+				3A3832F929276DC70049C4A1 /* SkinEditor.cpp in Sources */,
 				3A3832BB290B91B70049C4A1 /* PropertyNotebook.cpp in Sources */,
 				3AF7461E1E4F861B003465B5 /* ModelPropertyEditor.cpp in Sources */,
 				3AE5C2F126392EED00643850 /* MenuItem.cpp in Sources */,
@@ -10659,6 +10691,7 @@
 				3AE6F340239F4FE1008A1B2D /* GlobalKeyEventFilter.cpp in Sources */,
 				3AF7465B1E4F861C003465B5 /* BrushCreatorTool.cpp in Sources */,
 				3AE5C2DE26392EB900643850 /* MaterialEditorModule.cpp in Sources */,
+				3A3832F829276DC70049C4A1 /* SkinEditorTreeView.cpp in Sources */,
 				3A3832C6290B92170049C4A1 /* OrthoBackgroundPanel.cpp in Sources */,
 				3AC88A8F25BC0FA800E6CCCE /* MediaBrowserTreeView.cpp in Sources */,
 				3AF746231E4F861B003465B5 /* SoundPropertyEditor.cpp in Sources */,
@@ -10903,6 +10936,7 @@
 				3AFF049E253ABCB1002B1472 /* Group.cpp in Sources */,
 				3AFF0567253AE222002B1472 /* FontLoader.cpp in Sources */,
 				3AFF0586253AE32F002B1472 /* KeyValue.cpp in Sources */,
+				3A3832FB29276DEE0049C4A1 /* Doom3ModelSkin.cpp in Sources */,
 				3AFF0588253AE32F002B1472 /* ModelKey.cpp in Sources */,
 				3A38311D272D36D30049C4A1 /* TextureToolSelectionSystem.cpp in Sources */,
 				3AFF053E253AE0A6002B1472 /* CounterManager.cpp in Sources */,
