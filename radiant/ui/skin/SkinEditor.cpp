@@ -8,6 +8,7 @@
 #include <wx/splitter.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
+#include <wx/bookctrl.h>
 
 #include "gamelib.h"
 #include "os/path.h"
@@ -59,6 +60,11 @@ SkinEditor::SkinEditor() :
     getControl<wxButton>("SkinEditorCloseButton")->Bind(wxEVT_BUTTON, &SkinEditor::onCloseButton, this);
     getControl<wxTextCtrl>("SkinEditorSkinName")->Bind(wxEVT_TEXT, &SkinEditor::onSkinNameChanged, this);
 
+    getControl<wxNotebook>("SkinEditorNotebook")->Bind(wxEVT_NOTEBOOK_PAGE_CHANGED, [&](auto& ev)
+    {
+        _remappingList->CancelEditing(); // Stop editing when switching tabs
+    });
+
     auto oldInfoPanel = getControl<wxPanel>("SkinEditorSaveNotePanel");
     auto declFileInfo = new wxutil::DeclFileInfo(oldInfoPanel->GetParent(), decl::Type::Skin);
     replaceControl(oldInfoPanel, declFileInfo);
@@ -87,6 +93,9 @@ SkinEditor::SkinEditor() :
 
 SkinEditor::~SkinEditor()
 {
+    // Stop editing on all columns
+    _remappingList->CancelEditing();
+
     _skinModifiedConn.disconnect();
 }
 
@@ -267,6 +276,7 @@ void SkinEditor::updateModelControlsFromSkin(const decl::ISkin::Ptr& skin)
 
 void SkinEditor::updateRemappingControlsFromSkin(const decl::ISkin::Ptr& skin)
 {
+    _remappingList->CancelEditing(); // stop editing when re-populating anything
     _remappings->Clear();
 
     if (!skin) return;
@@ -522,6 +532,9 @@ bool SkinEditor::saveChanges()
         return true;
     }
 
+    // Stop editing on all columns
+    _remappingList->CancelEditing();
+
     if (_skin->getBlockSyntax().fileInfo.fullPath().empty())
     {
         while (true)
@@ -662,6 +675,9 @@ void SkinEditor::onCloseButton(wxCommandEvent& ev)
 
 void SkinEditor::onSkinSelectionChanged(wxDataViewEvent& ev)
 {
+    // Stop editing on all columns
+    _remappingList->CancelEditing();
+
     if (_controlUpdateInProgress) return;
 
     handleSkinSelectionChanged();
@@ -837,6 +853,8 @@ void SkinEditor::onRemoveSelectedMapping(wxCommandEvent& ev)
 
     _skin->removeRemapping(selectedSource);
 
+    _remappingList->CancelEditing(); // stop editing
+
     // Remove the selected item only
     auto item = _remappings->FindString(selectedSource, _remappingColumns.original);
     _remappings->RemoveItem(item);
@@ -850,6 +868,8 @@ void SkinEditor::onPopulateMappingsFromModel(wxCommandEvent& ev)
     if (_controlUpdateInProgress || !_skin) return;
 
     util::ScopedBoolLock lock(_controlUpdateInProgress);
+
+    _remappingList->CancelEditing(); // stop editing
 
     std::set<std::string> allMaterials;
 

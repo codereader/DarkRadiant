@@ -217,7 +217,11 @@ void TreeView::CancelEditing()
     for (unsigned i = 0; i < GetColumnCount(); ++i)
     {
         auto column = GetColumn(i);
-        column->GetRenderer()->CancelEditing();
+
+        if (column->GetRenderer()->GetEditorCtrl())
+        {
+            column->GetRenderer()->CancelEditing();
+        }
     }
 }
 
