@@ -466,15 +466,14 @@ void MapResource::saveFile(const MapFormat& format, const scene::IMapRootNodePtr
 
 	try
 	{
-		// Pass the traversal function and the root of the subgraph to export
-		exporter->exportMap(root, traverse);
+        // Pass the traversal function and the root of the subgraph to export
+        exporter->exportMap(root, traverse);
+        exporter.reset();
 	}
 	catch (FileOperation::OperationCancelled&)
 	{
 		throw OperationException(_("Map writing cancelled"));
 	}
-
-	exporter.reset();
 
 	// Check for any stream failures now that we're done writing
 	if (outFileStream.fail())
