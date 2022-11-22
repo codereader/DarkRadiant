@@ -69,6 +69,7 @@
   <launchable type="desktop-id">net.darkradiant.DarkRadiant.desktop</launchable>
 
   <releases>
+    <release version="3.7.0" date="2022-11-22"/>
     <release version="3.6.0" date="2022-11-12"/>
     <release version="3.5.0" date="2022-10-28"/>
     <release version="3.4.0" date="2022-10-09"/>
