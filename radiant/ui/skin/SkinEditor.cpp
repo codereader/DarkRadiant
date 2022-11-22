@@ -794,7 +794,7 @@ void SkinEditor::onRemappingRowChanged(wxDataViewEvent& ev)
     // Load all active remapping rows into the skin
     _skin->clearRemappings();
 
-    _remappings->ForeachNode([&](const wxutil::TreeModel::Row& row)
+    _remappings->ForeachNode([&](wxutil::TreeModel::Row& row)
     {
         if (!row[_remappingColumns.active].getBool()) return;
 
@@ -915,6 +915,7 @@ void SkinEditor::onReplacementEntryChanged(const std::string& material)
     wxutil::TreeModel::Row row(_remappingList->GetSelection(), *_remappings);
 
     row[_remappingColumns.replacement] = material;
+    row[_remappingColumns.active] = true; // activate edited rows
     row.SendItemChanged();
 }
 
