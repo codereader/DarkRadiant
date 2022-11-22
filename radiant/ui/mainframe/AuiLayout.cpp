@@ -164,6 +164,13 @@ void AuiLayout::handlePaneClosed(wxAuiPaneInfo& pane)
 
     ensureControlIsInactive(pane.window);
 
+    // If this is the (floating) property panel that is closing,
+    // notify it to ensure the last active tab is becoming inactive
+    if (pane.window == _propertyNotebook)
+    {
+        _propertyNotebook->onNotebookPaneClosed();
+    }
+
     // Find and remove the pane info structure
     for (auto i = _panes.begin(); i != _panes.end(); ++i)
     {
@@ -462,6 +469,8 @@ void AuiLayout::toggleControlInPropertyPanel(const std::string& controlName)
         // Toggling a visible tab in the floating panel hides the whole notebook
         if (propertyPane.IsShown() && _propertyNotebook->controlIsVisible(controlName))
         {
+            // Ensure active controls are deactivated
+            _propertyNotebook->onNotebookPaneClosed();
             propertyPane.Hide();
             _auiMgr.Update();
             return;
@@ -475,6 +484,7 @@ void AuiLayout::toggleControlInPropertyPanel(const std::string& controlName)
         {
             propertyPane.Show(true);
             _auiMgr.Update();
+            _propertyNotebook->onNotebookPaneRestored();
         }
     }
     else // Property panel is docked
@@ -487,6 +497,7 @@ void AuiLayout::toggleControlInPropertyPanel(const std::string& controlName)
         {
             propertyPane.Show(true);
             _auiMgr.Update();
+            _propertyNotebook->onNotebookPaneRestored();
         }
     }
 }
@@ -735,6 +746,13 @@ void AuiLayout::restoreStateFromRegistry()
         {
             ensureControlIsInactive(paneInfo.window);
         }
+    }
+
+    // Make sure the currently shown tab is made active after everything is restored
+    // this way tabs can work with the restored window sizes
+    if (propertyPane.IsShown())
+    {
+        _propertyNotebook->onNotebookPaneRestored();
     }
 }
 

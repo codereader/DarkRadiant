@@ -299,6 +299,10 @@ ModelSelector::Result ModelSelector::showAndBlock(const std::string& curModel,
 
     _result = Result();
 
+    // Ensure the model selector is parented to the main frame,
+    // it might have been constructed at a time when this was still null
+    Reparent(GlobalMainFrame().getWxTopLevelWindow());
+
     // show and enter recursive main loop.
     int returnCode = ShowModal();
 

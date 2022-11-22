@@ -150,9 +150,9 @@ public:
         {
             IEntityClassPtr result;
 
-            foreachEntity([&](Entity* entity)
+            foreachEntity([&](const IEntityNodePtr& entityNode)
             {
-                auto eclass = entity->getEntityClass();
+                auto eclass = entityNode->getEntity().getEntityClass();
 
                 if (!result)
                 {
@@ -180,9 +180,9 @@ public:
         {
             std::set<std::string> values;
 
-            foreachEntity([&](Entity* entity)
+            foreachEntity([&](const IEntityNodePtr& entity)
             {
-                values.emplace(std::move(entity->getKeyValue(key)));
+                values.emplace(std::move(entity->getEntity().getKeyValue(key)));
             });
 
             return values.size() == 1 ? *values.begin() : std::string();
@@ -191,7 +191,7 @@ public:
         return _spawnargs.getSharedKeyValue(key);
     }
 
-    void foreachEntity(const std::function<void(Entity*)>& functor) override
+    void foreachEntity(const std::function<void(const IEntityNodePtr&)>& functor) override
     {
         for (auto& tracked : _trackedEntities)
         {
@@ -199,12 +199,12 @@ public:
             
             if (!node) continue;
 
-            auto entity = Node_getEntity(node);
-            assert(entity != nullptr);
+            auto entityNode = scene::node_cast<IEntityNode>(node);
+            assert(entityNode);
             
-            if (entity)
+            if (entityNode)
             {
-                functor(entity);
+                functor(entityNode);
             }
         }
     }

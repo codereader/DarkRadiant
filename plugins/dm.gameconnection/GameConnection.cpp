@@ -26,6 +26,7 @@
 #include <wx/process.h>
 
 #include "GameConnectionControl.h"
+#include "messages/MapFileOperation.h"
 #include "messages/NotificationMessage.h"
 
 namespace gameconn
@@ -757,9 +758,18 @@ std::string saveMapDiff(const DiffEntityStatuses& entityStatuses)
 
         // Get a scoped exporter class
         auto exporter = GlobalMapModule().createMapExporter(writer, root, outStream);
-        exporter->exportMap(root, scene::traverseSubset(subsetNodes));
 
-        // end the life of the exporter instance here to finish the scene
+        try
+        {
+            // Pass the traversal function and the root of the subgraph to export
+            exporter->exportMap(root, scene::traverseSubset(subsetNodes));
+            // end the life of the exporter instance here to finish the scene
+            exporter.reset();
+        }
+        catch (map::FileOperation::OperationCancelled&)
+        {
+            radiant::NotificationMessage::SendInformation(_("Map export cancelled"));
+        }
     }
 
     return outStream.str();

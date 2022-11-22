@@ -27,6 +27,11 @@ ModelPreview::ModelPreview(wxWindow* parent) :
     EntityPreview(parent)
 {}
 
+ModelPreview::~ModelPreview()
+{
+    _skinDeclChangedConn.disconnect();
+}
+
 const std::string& ModelPreview::getModel() const
 {
     return _model;
@@ -64,6 +69,7 @@ void ModelPreview::setModel(const std::string& model)
 void ModelPreview::setSkin(const std::string& skin) {
 
     _skin = skin;
+    _skinDeclChangedConn.disconnect();
     queueSceneUpdate();
 
     // Redraw
@@ -83,6 +89,7 @@ void ModelPreview::setupSceneGraph()
         setEntity(entity);
 
         entity->enable(scene::Node::eHidden);
+        entity->getEntity().setKeyValue("model", "-");
     }
     catch (std::runtime_error&)
     {
@@ -126,13 +133,7 @@ void ModelPreview::prepareScene()
         getEntity()->addChildNode(_modelNode);
 
         // Apply the skin
-        model::ModelNodePtr model = Node_getModel(_modelNode);
-
-        if (model)
-        {
-            auto skin = GlobalModelSkinCache().findSkin(_skin);
-            model->getIModel().applySkin(skin);
-        }
+        applySkin();
 
         // Apply the idle pose if possible
         if (modelDef)
@@ -155,7 +156,7 @@ void ModelPreview::prepareScene()
         _lastModel = _model;
 
         // Done loading, emit the signal
-        _modelLoadedSignal.emit(model);
+        _modelLoadedSignal.emit(Node_getModel(_modelNode));
     }
 }
 
@@ -172,6 +173,29 @@ AABB ModelPreview::getSceneBounds()
 sigc::signal<void, const model::ModelNodePtr&>& ModelPreview::signal_ModelLoaded()
 {
     return _modelLoadedSignal;
+}
+
+void ModelPreview::applySkin()
+{
+    if (auto model = Node_getModel(_modelNode); model)
+    {
+        auto skin = GlobalModelSkinCache().findSkin(_skin);
+
+        if (skin)
+        {
+            _skinDeclChangedConn.disconnect();
+            _skinDeclChangedConn = skin->signal_DeclarationChanged().connect(
+                sigc::mem_fun(*this, &ModelPreview::onSkinDeclarationChanged));
+        }
+
+        model->getIModel().applySkin(skin);
+    }
+}
+
+void ModelPreview::onSkinDeclarationChanged()
+{
+    applySkin();
+    queueDraw();
 }
 
 } // namespace ui

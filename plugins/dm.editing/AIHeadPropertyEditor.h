@@ -18,16 +18,16 @@ class AIHeadPropertyEditor final :
 private:
 	// The top-level widget
 	wxPanel* _widget;
-
     IEntitySelection& _entities;
-
     ITargetKey::Ptr _key;
+    sigc::signal<void(const std::string&, const std::string&)> _sigKeyValueApplied;
 
 public:
-	~AIHeadPropertyEditor();
+	~AIHeadPropertyEditor() override;
 
 	wxPanel* getWidget() override;
-	void updateFromEntities();
+	void updateFromEntities() override;
+    sigc::signal<void(const std::string&, const std::string&)>& signal_keyValueApplied() override;
 
 	AIHeadPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key);
 

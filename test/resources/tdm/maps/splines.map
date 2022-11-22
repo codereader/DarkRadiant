@@ -1,0 +1,37 @@
+Version 2
+// entity 0
+{
+"classname" "func_splinemover"
+"name" "spline_without_model"
+"curve_Nurbs" "3 ( 112.221680 64.540161 39.270699  119.221680 168.540161 39.270699  53.221680 196.540161 39.270699 )"
+"origin" "112.22 64.54 39.2707"
+"rotation" "1 0 0 0 1 0 0 0 1"
+}
+// entity 1
+{
+"classname" "func_splinemover"
+"name" "spline_with_child_brush"
+"curve_Nurbs" "3 ( -43.778320 102.540161 -46.729301  -68.778320 167.540161 -46.729301  70.221680 164.540161 -46.729301 )"
+"model" "spline_with_child_brush"
+"origin" "-44 97 -79"
+// primitive 0
+{
+brushDef3
+{
+( 0 0 1 -5 ) ( ( 0.015625 0 7.25 ) ( 0 0.015625 53.0859375 ) ) "textures/common/nodraw" 0 0 0
+( 0 1 0 -8 ) ( ( 0.015625 0 -53.07031249999994 ) ( 0 0.015625 -0.1796869933605201 ) ) "textures/common/nodraw" 0 0 0
+( 1 0 0 -10 ) ( ( 0.015625 0 7.25 ) ( 0 0.015625 -0.1015620008111 ) ) "textures/common/nodraw" 0 0 0
+( 0 0 -1 -6 ) ( ( 0.015625 0 7.25 ) ( 0 0.015625 -52.0703125 ) ) "textures/common/nodraw" 0 0 0
+( 0 -1 0 -8 ) ( ( 0.015625 0 52.08593749999994 ) ( 0 0.015625 -0.1015620008111018 ) ) "textures/common/nodraw" 0 0 0
+( -1 0 0 -10 ) ( ( 0.015625 0 -7.25 ) ( 0 0.015625 -0.1015620008111 ) ) "textures/common/nodraw" 0 0 0
+}
+}
+}
+// entity 2
+{
+"classname" "func_splinemover"
+"name" "spline_without_child_brush"
+"model" "spline_without_child_brush"
+"curve_Nurbs" "3 ( 7.558594 -51.923996 30.000000  57.558594 -1.923996 30.000000  57.558594 48.075989 30.000000 )"
+"origin" "7.559 -51.924 30"
+}

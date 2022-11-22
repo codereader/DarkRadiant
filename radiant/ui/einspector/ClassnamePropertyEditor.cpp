@@ -42,17 +42,19 @@ ClassnamePropertyEditor::ClassnamePropertyEditor(wxWindow* parent, IEntitySelect
 
 void ClassnamePropertyEditor::_onBrowseButton(wxCommandEvent& ev)
 {
-	std::string currentEclass = _entities.getSharedKeyValue(_key->getFullKey(), false);
+	auto currentEclass = _entities.getSharedKeyValue(_key->getFullKey(), false);
 
 	// Use the EntityClassChooser dialog to get a selection from the user
-	std::string selection = wxutil::EntityClassChooser::ChooseEntityClass(
+	auto selectedEclass = wxutil::EntityClassChooser::ChooseEntityClass(
         wxutil::EntityClassChooser::Purpose::SelectClassname, currentEclass);
 
 	// Only apply if the classname has actually changed
-	if (!selection.empty() && selection != currentEclass)
+	if (!selectedEclass.empty() && selectedEclass != currentEclass)
 	{
 		// Apply the classname change to the current selection, dispatch the command
-		GlobalCommandSystem().executeCommand("SetEntityKeyValue", _key->getFullKey(), selection);
+		GlobalCommandSystem().executeCommand("SetEntityKeyValue", _key->getFullKey(), selectedEclass);
+
+        signal_keyValueApplied().emit(_key->getFullKey(), selectedEclass);
 	}
 }
 

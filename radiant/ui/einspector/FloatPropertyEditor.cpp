@@ -23,14 +23,14 @@ FloatPropertyEditor::FloatPropertyEditor(wxWindow* parent, IEntitySelection& ent
   _key(key)
 {
 	// Construct the main widget (will be managed by the base class)
-	wxPanel* mainVBox = new wxPanel(parent, wxID_ANY);
+	auto mainVBox = new wxPanel(parent, wxID_ANY);
 	mainVBox->SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
 	// Register the main widget in the base class
 	setMainWidget(mainVBox);
 
 	// Create the HScale and pack into widget
-	_spinCtrl = new wxSpinCtrlDouble(parent, wxID_ANY);
+	_spinCtrl = new wxSpinCtrlDouble(mainVBox, wxID_ANY);
 
 	_spinCtrl->SetIncrement(1.0);
 	_spinCtrl->SetMinSize(wxSize(75, -1));
@@ -59,7 +59,7 @@ void FloatPropertyEditor::_onApply(wxCommandEvent& ev)
 {
 	float value = static_cast<float>(_spinCtrl->GetValue());
 
-	setKeyValue(_key->getFullKey(), string::to_string(value));
+    setKeyValueOnSelection(_key->getFullKey(), string::to_string(value));
 }
 
 }

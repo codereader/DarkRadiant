@@ -1171,6 +1171,9 @@
     <ClCompile Include="..\..\radiantcore\selection\SceneSelectionTesters.cpp">
       <Filter>src\selection</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\radiantcore\skins\Doom3ModelSkin.cpp">
+      <Filter>src\skins</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\radiantcore\modulesystem\ModuleLoader.h">

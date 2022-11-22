@@ -54,6 +54,8 @@
 #include "messages/NotificationMessage.h"
 
 #include <fmt/format.h>
+
+#include "messages/MapFileOperation.h"
 #include "scene/ChildPrimitives.h"
 #include "scene/merge/GraphComparer.h"
 #include "scene/merge/MergeOperation.h"
@@ -1246,11 +1248,19 @@ void Map::exportSelected(std::ostream& out, const MapFormatPtr& format)
 
     // Create our main MapExporter walker for traversal
     auto writer = format->getMapWriter();
-    MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
-    exporter.disableProgressMessages();
+    
+    try
+    {
+        MapExporter exporter(*writer, GlobalSceneGraph().root(), out);
+        exporter.disableProgressMessages();
 
-    // Pass the traverseSelected function and start writing selected nodes
-    exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
+        // Pass the traverseSelected function and start writing selected nodes
+        exporter.exportMap(GlobalSceneGraph().root(), scene::traverseSelected);
+    }
+    catch (FileOperation::OperationCancelled&)
+    {
+        radiant::NotificationMessage::SendInformation(_("Map export cancelled"));
+    }
 }
 
 void Map::onMergeActionAdded(const scene::merge::IMergeAction::Ptr& action)

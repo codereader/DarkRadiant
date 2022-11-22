@@ -25,9 +25,9 @@ public:
     static std::string ConstructName(ColourShaderType type, const Colour4& colour);
 
 protected:
-    virtual void construct() override;
-
-    virtual void onMergeModeChanged() override;
+    void construct() override;
+    bool supportsVertexColours() const override;
+    void onMergeModeChanged() override;
 };
 
 }

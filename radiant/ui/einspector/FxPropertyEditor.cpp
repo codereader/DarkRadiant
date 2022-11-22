@@ -37,13 +37,15 @@ void FxPropertyEditor::_onBrowseButton(wxCommandEvent& ev)
 	auto currentDecl = _entities.getSharedKeyValue(_key->getFullKey(), false);
 
 	// Use the EntityClassChooser dialog to get a selection from the user
-	auto selection = FxChooser::ChooseDeclaration(currentDecl);
+	auto selectedDecl = FxChooser::ChooseDeclaration(currentDecl);
 
 	// Only apply if the classname has actually changed
-	if (!selection.empty() && selection != currentDecl)
+	if (!selectedDecl.empty() && selectedDecl != currentDecl)
 	{
 		// Apply the change to the current selection, dispatch the command
-		GlobalCommandSystem().executeCommand("SetEntityKeyValue", _key->getFullKey(), selection);
+		GlobalCommandSystem().executeCommand("SetEntityKeyValue", _key->getFullKey(), selectedDecl);
+
+        signal_keyValueApplied().emit(_key->getFullKey(), selectedDecl);
 	}
 }
 

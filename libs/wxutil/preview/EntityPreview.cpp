@@ -6,6 +6,7 @@
 #include "scene/BasicRootNode.h"
 
 #include "../dialog/MessageBox.h"
+#include "scene/PrefabBoundsAccumulator.h"
 #include "string/convert.h"
 
 namespace wxutil
@@ -43,8 +44,17 @@ void EntityPreview::setEntity(const IEntityNodePtr& entity)
     {
         getScene()->root()->addChildNode(_entity);
 
-        // Remember the entity bounds including children
-        _untransformedEntityBounds = _entity->worldAABB();
+        // Remember the entity bounds including children, but without light or speaker radii
+        scene::PrefabBoundsAccumulator accumulator;
+        accumulator.visit(_entity);
+
+        _entity->foreachNode([&](const scene::INodePtr& node)
+        {
+            accumulator.visit(node);
+            return true;
+        });
+
+        _untransformedEntityBounds = accumulator.getBounds();
     }
     else
     {
@@ -98,7 +108,7 @@ void EntityPreview::prepareScene()
     if (_entity)
     {
         // Reset the default view, facing down to the model from diagonally above the bounding box
-        double distance = _entity->worldAABB().getRadius() * _defaultCamDistanceFactor;
+        double distance = getSceneBounds().getRadius() * _defaultCamDistanceFactor;
 
         setViewOrigin(Vector3(1, 1, 1) * distance);
         setViewAngles(Vector3(34, 135, 0));

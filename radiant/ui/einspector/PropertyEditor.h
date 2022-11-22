@@ -40,6 +40,8 @@ protected:
 	// The selected entities we're working with
     IEntitySelection& _entities;
 
+    sigc::signal<void(const std::string&, const std::string&)> _sigKeyValueApplied;
+
 	// Protected constructor
 	PropertyEditor(IEntitySelection& entities);
 
@@ -56,12 +58,13 @@ protected:
 	 * This takes care of calling setKeyValue() on the selected entities
 	 * as well as managing the UndoSystem.
 	 */
-	virtual void setKeyValue(const std::string& key, const std::string& value);
+	virtual void setKeyValueOnSelection(const std::string& key, const std::string& value);
 
 	/**
 	 * greebo: Convenience method to retrieve a keyvalue from the edited entity.
+	 * Note: This also considers inherited key values.
 	 */
-	virtual std::string getKeyValue(const std::string& key);
+	virtual std::string getKeyValueFromSelection(const std::string& key);
 
 	/**
 	 * greebo: Since many property editors consists of a single browse button, 
@@ -83,8 +86,10 @@ public:
 	// IPropertyEditor implementation
 	wxPanel* getWidget() override;
 
-    virtual void updateFromEntities() override
+    void updateFromEntities() override
     {}
+
+    sigc::signal<void(const std::string&, const std::string&)>& signal_keyValueApplied() override;
 };
 
 } // namespace

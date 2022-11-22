@@ -122,6 +122,15 @@ void ColourShader::construct()
         state.m_linewidth = 1;
         state.m_pointsize = 1;
 
+        if (isMergeModeEnabled())
+        {
+            // merge mode, switch to transparent grey rendering
+            state.setColour({ 0, 0, 0, 0.05f });
+
+            state.m_blend_src = GL_SRC_ALPHA;
+            state.m_blend_dst = GL_ONE_MINUS_SRC_ALPHA;
+        }
+
         // Applicable to both views
         enableViewType(RenderViewType::OrthoView);
         enableViewType(RenderViewType::Camera);
@@ -133,11 +142,21 @@ void ColourShader::construct()
     }
 }
 
+bool ColourShader::supportsVertexColours() const
+{
+    return !isMergeModeEnabled();
+}
+
 void ColourShader::onMergeModeChanged()
 {
-    // Only the wireframe shader is reacting to this
-    if (_type != ColourShaderType::OrthoviewSolid) return;
-    
+    // Only certain shaders are reacting to this
+    if (_type != ColourShaderType::OrthoviewSolid &&
+        _type != ColourShaderType::CameraAndOrthoview &&
+        _type != ColourShaderType::CameraAndOrthoViewOutline)
+    {
+        return;
+    }
+
     // Rebuild the shader, the construct() method will react to the state
     removePasses();
     clearPasses();

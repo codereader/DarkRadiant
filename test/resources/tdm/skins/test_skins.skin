@@ -19,6 +19,7 @@ tile_skin2
 separated_tile_skin
 {
 	model "models/ase/separated_tiles.ase"
+	model "models/ase/separated_tiles22.ase"
 
 	material textures/numbers/11
 	textures/numbers/1 textures/numbers/11

@@ -41,7 +41,7 @@ void BooleanPropertyEditor::updateFromEntity()
 void BooleanPropertyEditor::_onToggle(wxCommandEvent& ev)
 {
 	// Set the key based on the checkbutton state
-	setKeyValue(_key->getFullKey(), _checkBox->IsChecked() ? "1" : "0");
+    setKeyValueOnSelection(_key->getFullKey(), _checkBox->IsChecked() ? "1" : "0");
 }
 
 } // namespace

@@ -412,6 +412,9 @@
     <ClInclude Include="..\..\libs\selection\EntitiesFirstSelector.h">
       <Filter>selection</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\libs\decl\DeclLib.h">
+      <Filter>decl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="util">

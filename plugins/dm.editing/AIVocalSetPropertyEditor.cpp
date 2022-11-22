@@ -48,6 +48,11 @@ void AIVocalSetPropertyEditor::updateFromEntities()
 	// Nothing to do
 }
 
+sigc::signal<void(const std::string&, const std::string&)>& AIVocalSetPropertyEditor::signal_keyValueApplied()
+{
+    return _sigKeyValueApplied;
+}
+
 IPropertyEditor::Ptr AIVocalSetPropertyEditor::CreateNew(wxWindow* parent, IEntitySelection& entities,
     const ITargetKey::Ptr& key)
 {
@@ -64,10 +69,14 @@ void AIVocalSetPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	// Show and block
 	if (dialog->ShowModal() == wxID_OK)
 	{
-        _entities.foreachEntity([&](Entity* entity)
+        auto selectedSet = dialog->getSelectedVocalSet();
+
+        _entities.foreachEntity([&](const IEntityNodePtr& entity)
         {
-            entity->setKeyValue(DEF_VOCAL_SET_KEY, dialog->getSelectedVocalSet());
+            entity->getEntity().setKeyValue(DEF_VOCAL_SET_KEY, selectedSet);
         });
+
+        signal_keyValueApplied().emit(DEF_VOCAL_SET_KEY, selectedSet);
 	}
 
 	dialog->Destroy();

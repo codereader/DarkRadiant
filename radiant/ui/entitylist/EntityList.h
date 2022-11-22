@@ -2,10 +2,10 @@
 
 #include "iselection.h"
 #include "GraphTreeModel.h"
-#include <set>
 #include <sigc++/connection.h>
 
 #include "wxutil/DockablePanel.h"
+#include "wxutil/event/SingleIdleCallback.h"
 
 namespace wxutil
 {
@@ -19,7 +19,8 @@ namespace ui
 
 class EntityList :
 	public wxutil::DockablePanel,
-    public selection::SelectionSystem::Observer
+    public selection::SelectionSystem::Observer,
+    public wxutil::SingleIdleCallback
 {
 private:
 	// The GraphTreeModel instance
@@ -34,15 +35,8 @@ private:
 
 	sigc::connection _filtersConfigChangedConn;
 
-	struct DataViewItemLess
-	{
-		bool operator() (const wxDataViewItem& a, const wxDataViewItem& b) const
-		{
-			return a.GetID() < b.GetID();
-		}
-	};
-
-	std::set<wxDataViewItem, DataViewItemLess> _selection;
+    wxDataViewItem _itemToScrollToWhenIdle;
+    std::vector<scene::INodeWeakPtr> _nodesToUpdate;
 
 public:
 	EntityList(wxWindow* parent);
@@ -51,6 +45,8 @@ public:
 protected:
     void onPanelActivated() override;
     void onPanelDeactivated() override;
+
+    void onIdle() override;
 
 private:
     void connectListeners();
@@ -62,7 +58,7 @@ private:
 
 	/** greebo: Updates the treeview contents
 	 */
-	void update();
+	void updateSelectionStatus();
 
     // Repopulate the entire treestore from the scenegraph
     void refreshTreeModel();

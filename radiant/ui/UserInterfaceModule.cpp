@@ -68,6 +68,7 @@
 #include "ui/mapselector/MapSelector.h"
 #include "ui/merge/MapMergeControl.h"
 #include "ui/PointFileChooser.h"
+#include "ui/skin/SkinEditor.h"
 
 #include <wx/version.h>
 
@@ -476,6 +477,7 @@ void UserInterfaceModule::registerUICommands()
 	GlobalCommandSystem().addCommand("About", AboutDialog::showDialog);
 	GlobalCommandSystem().addCommand("ShowUserGuide", Documentation::showUserGuide);
 	GlobalCommandSystem().addCommand("OpenForumUrl", Documentation::OpenForumUrl);
+	GlobalCommandSystem().addCommand("OpenScriptReference", Documentation::OpenScriptReference);
 #ifndef WIN32
 	GlobalCommandSystem().addCommand("ShowOfflineUserGuide", Documentation::showOfflineUserGuide);
 #endif
@@ -488,6 +490,7 @@ void UserInterfaceModule::registerUICommands()
 
 	// Add the callback event
 	GlobalCommandSystem().addCommand("ParticlesEditor", ParticleEditor::DisplayDialog);
+	GlobalCommandSystem().addCommand("SkinEditor", SkinEditor::ShowDialog);
 
 	// Register the "create layer" command
 	GlobalCommandSystem().addCommand("CreateNewLayerDialog", CreateLayerDialog::CreateNewLayer,

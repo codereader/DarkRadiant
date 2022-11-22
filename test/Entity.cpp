@@ -493,6 +493,7 @@ TEST_F(EntityTest, OverrideLightVolumeColour)
 TEST_F(EntityTest, FuncStaticLocalToWorld)
 {
     auto funcStatic = algorithm::createEntityByClassName("func_static");
+    funcStatic->getEntity().setKeyValue("model", "models/torch.lwo");
     auto& spawnArgs = funcStatic->getEntity();
     spawnArgs.setKeyValue("origin", "0 0 0");
 
@@ -686,6 +687,7 @@ TEST_F(EntityTest, LightTransformedByParent)
     // inherit the transformation of its parent).
     auto light = algorithm::createEntityByClassName("light");
     auto parentModel = algorithm::createEntityByClassName("func_static");
+    parentModel->getEntity().setKeyValue("model", "models/torch.lwo");
     scene::addNodeToContainer(light, parentModel);
     scene::addNodeToContainer(parentModel, GlobalMapModule().getRoot());
 

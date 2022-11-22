@@ -48,6 +48,11 @@ void AIHeadPropertyEditor::updateFromEntities()
 	// nothing to do
 }
 
+sigc::signal<void(const std::string&, const std::string&)>& AIHeadPropertyEditor::signal_keyValueApplied()
+{
+    return _sigKeyValueApplied;
+}
+
 IPropertyEditor::Ptr AIHeadPropertyEditor::CreateNew(wxWindow* parent, IEntitySelection& entities,
     const ITargetKey::Ptr& key)
 {
@@ -64,10 +69,14 @@ void AIHeadPropertyEditor::onChooseButton(wxCommandEvent& ev)
 	// Show and block
 	if (dialog->ShowModal() == wxID_OK)
 	{
-        _entities.foreachEntity([&](Entity* entity)
+        auto selectedHead = dialog->getSelectedHead();
+
+        _entities.foreachEntity([&](const IEntityNodePtr& entity)
         {
-            entity->setKeyValue(DEF_HEAD_KEY, dialog->getSelectedHead());
+            entity->getEntity().setKeyValue(DEF_HEAD_KEY, selectedHead);
         });
+
+        signal_keyValueApplied().emit(DEF_HEAD_KEY, selectedHead);
 	}
 
 	dialog->Destroy();

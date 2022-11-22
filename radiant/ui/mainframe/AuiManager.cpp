@@ -34,7 +34,7 @@ void AuiManager::DockPanelToNotebook(AuiFloatingFrame* frame)
 bool AuiManager::MouseCursorIsHoveringNotebook()
 {
     auto point = wxGetMousePosition();
-    return _notebook && _notebook->IsShown() && _notebook->GetScreenRect().Contains(point);
+    return _notebook && _notebook->IsShownOnScreen() && _notebook->GetScreenRect().Contains(point);
 }
 
 bool AuiManager::CanDockPanel(const wxAuiPaneInfo& p)

@@ -1,10 +1,9 @@
 #pragma once
 
-#include "iscenegraph.h"
-#include "ientity.h"
 #include "GraphTreeModel.h"
 
-namespace ui {
+namespace ui
+{
 
 /**
  * greebo: The purpose of this class is to traverse the entire scenegraph and
@@ -30,24 +29,17 @@ public:
 		_model.clear();
 	}
 
-	// NodeVisitor implementation
-	bool pre(const scene::INodePtr& node)
-	{
-		if ((!_visibleNodesOnly || node->visible()) && node->getNodeType() != scene::INode::Type::EntityConnection)
-		{
-			// Insert this node into the GraphTreeModel
-			_model.insert(node);
-		}
+    bool pre(const scene::INodePtr& node) override
+    {
+        if ((!_visibleNodesOnly || node->visible()) && GraphTreeModel::NodeIsRelevant(node))
+        {
+            // Insert this node into the GraphTreeModel
+            _model.insert(node);
+            return node->getNodeType() == scene::INode::Type::MapRoot; // don't traverse entity children
+        }
 
-		Entity* ent = Node_getEntity(node);
-
-		if (ent != NULL && ent->isWorldspawn()) {
-			// Don't accumulate the worldspawn brushes
-			return false;
-		}
-
-		return true; // traverse children
-	}
+        return true; // traverse children
+    }
 };
 
-} // namespace ui
+} // namespace

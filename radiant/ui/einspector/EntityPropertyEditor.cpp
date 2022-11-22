@@ -37,7 +37,7 @@ void EntityPropertyEditor::onBrowseButtonClick()
 		UndoableCommand cmd("changeKeyValue");
 
 		// Apply the change
-        setKeyValue(_key->getFullKey(), selection);
+        setKeyValueOnSelection(_key->getFullKey(), selection);
 	}
 }
 

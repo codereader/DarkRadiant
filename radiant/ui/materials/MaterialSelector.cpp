@@ -36,14 +36,20 @@ public:
     ThreadedMaterialLoader(const wxutil::DeclarationTreeView::Columns& columns, MaterialSelector::TextureFilter filter) :
         ThreadedDeclarationTreePopulator(decl::Type::Material, columns, TEXTURE_ICON)
     {
-        if (filter == MaterialSelector::TextureFilter::Lights)
+        switch (filter)
         {
+        case MaterialSelector::TextureFilter::Lights:
             _prefixes = game::current::getLightTexturePrefixes();
-        }
-        else
-        {
+            break;
+
+        case MaterialSelector::TextureFilter::Regular:
             _prefixes = std::vector<std::string>{ GlobalMaterialManager().getTexturePrefix() };
-        }
+            break;
+
+        case MaterialSelector::TextureFilter::All:
+            _prefixes = std::vector<std::string>();
+            break;
+        };
     }
 
     ~ThreadedMaterialLoader() override
@@ -58,18 +64,29 @@ protected:
 
         GlobalMaterialManager().foreachShaderName([&](const std::string& materialName)
         {
+            if (_prefixes.empty()) // no filter?
+            {
+                AddMaterial(populator, materialName);
+                return;
+            }
+
             for (const std::string& prefix : _prefixes)
             {
                 if (string::istarts_with(materialName, prefix))
                 {
-                    populator.addPath(materialName, [&](wxutil::TreeModel::Row& row,
-                        const std::string& path, const std::string& leafName, bool isFolder)
-                    {
-                        AssignValuesToRow(row, path, path, leafName, isFolder);
-                    });
+                    AddMaterial(populator, materialName);
                     break; // don't consider any further prefixes
                 }
             }
+        });
+    }
+
+    void AddMaterial(wxutil::VFSTreePopulator& populator, const std::string& materialName)
+    {
+        populator.addPath(materialName, [&](wxutil::TreeModel::Row& row,
+            const std::string& path, const std::string& leafName, bool isFolder)
+        {
+            AssignValuesToRow(row, path, path, leafName, isFolder);
         });
     }
 };

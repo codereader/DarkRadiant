@@ -5,6 +5,7 @@
 #include "imodel.h"
 
 #include <sigc++/signal.h>
+#include <sigc++/connection.h>
 #include <string>
 
 namespace wxutil
@@ -35,9 +36,11 @@ private:
     scene::INodePtr _modelNode;
 
     sigc::signal<void, const model::ModelNodePtr&> _modelLoadedSignal;
+    sigc::connection _skinDeclChangedConn;
 
 public:
     ModelPreview(wxWindow* parent);
+    ~ModelPreview() override;
 
     // Returns the name of the current model
     const std::string& getModel() const;
@@ -71,6 +74,8 @@ protected:
 
     void setupSceneGraph() override;
     AABB getSceneBounds() override;
+    void applySkin();
+    void onSkinDeclarationChanged();
 };
 
 } // namespace

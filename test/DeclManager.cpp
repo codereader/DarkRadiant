@@ -1129,6 +1129,91 @@ TEST_F(DeclManagerTest, RenameDeclaration)
     EXPECT_EQ(newSyntax.fileInfo.fullPath(), oldSyntax.fileInfo.fullPath());
 }
 
+TEST_F(DeclManagerTest, DeclRenamedSignal)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    expectDeclIsPresent(decl::Type::TestDecl, "decl/precedence_test/1");
+    expectDeclIsNotPresent(decl::Type::TestDecl, "decl/renamed/1");
+
+    auto oldDecl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/precedence_test/1");
+
+    std::size_t signalCount = 0;
+    decl::Type receivedType;
+    std::string receivedOldName;
+    std::string receivedNewName;
+    GlobalDeclarationManager().signal_DeclRenamed().connect([&](decl::Type type, const std::string& oldName, const std::string& newName)
+    {
+        ++signalCount;
+        receivedType = type;
+        receivedOldName = oldName;
+        receivedNewName = newName;
+    });
+
+    EXPECT_TRUE(GlobalDeclarationManager().renameDeclaration(
+        decl::Type::TestDecl, "decl/precedence_test/1", "decl/renamed/1"));
+
+    EXPECT_EQ(signalCount, 1) << "Signal should have been fired exactly once";
+    EXPECT_EQ(receivedType, decl::Type::TestDecl) << "Wrong type delivered";
+    EXPECT_EQ(receivedOldName, "decl/precedence_test/1") << "Wrong old name delivered";
+    EXPECT_EQ(receivedNewName, "decl/renamed/1") << "Wrong new name delivered";
+}
+
+TEST_F(DeclManagerTest, DeclCreatedSignal)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    std::size_t signalCount = 0;
+    decl::Type receivedType;
+    std::string receivedDeclName;
+    GlobalDeclarationManager().signal_DeclCreated().connect([&](decl::Type type, const std::string& name)
+    {
+        ++signalCount;
+        receivedType = type;
+        receivedDeclName = name;
+    });
+
+    EXPECT_FALSE(GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/newlycreated"));
+    EXPECT_EQ(signalCount, 0) << "findDeclaration should not create anything";
+
+    auto decl = GlobalDeclarationManager().findOrCreateDeclaration(decl::Type::TestDecl, "decl/newlycreated");
+    EXPECT_TRUE(decl) << "No decl created";
+
+    EXPECT_EQ(signalCount, 1) << "Signal should have been fired exactly once";
+    EXPECT_EQ(receivedType, decl::Type::TestDecl) << "Wrong type delivered";
+    EXPECT_EQ(receivedDeclName, "decl/newlycreated") << "Wrong name delivered";
+}
+
+TEST_F(DeclManagerTest, DeclRemovedSignal)
+{
+    GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());
+    GlobalDeclarationManager().registerDeclFolder(decl::Type::TestDecl, TEST_DECL_FOLDER, ".decl");
+
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::TestDecl, "decl/removal/1");
+    EXPECT_TRUE(decl);
+
+    // Create a backup copy of the decl file we're going to manipulate
+    BackupCopy backup(_context.getTestProjectPath() + decl->getDeclFilePath());
+
+    std::size_t signalCount = 0;
+    decl::Type receivedType;
+    std::string receivedDeclName;
+    GlobalDeclarationManager().signal_DeclRemoved().connect([&](decl::Type type, const std::string& name)
+    {
+        ++signalCount;
+        receivedType = type;
+        receivedDeclName = name;
+    });
+
+    GlobalDeclarationManager().removeDeclaration(decl::Type::TestDecl, "decl/removal/1");
+
+    EXPECT_EQ(signalCount, 1) << "Signal should have been fired exactly once";
+    EXPECT_EQ(receivedType, decl::Type::TestDecl) << "Wrong type delivered";
+    EXPECT_EQ(receivedDeclName, "decl/removal/1") << "Wrong name delivered";
+}
+
 TEST_F(DeclManagerTest, RenameDeclarationFailsIfNotExisting)
 {
     GlobalDeclarationManager().registerDeclType("testdecl", std::make_shared<TestDeclarationCreator>());

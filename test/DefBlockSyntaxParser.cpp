@@ -167,6 +167,98 @@ testdecl2 decltable3 { { 0, 0, 0, 0, 1, 1 } }
     });
 }
 
+TEST(DefBlockSyntaxTokeniser, QuoteWithinLineComment)
+{
+    auto input = string::join(std::vector<std::string>
+    {
+        "entityDef something",
+        "{",
+        "    \"key\" \"value\" // comment with quote\"", // has a quote at the end of the line
+        "    \"key2\" \"value2\" // comment\" with quote", // has a quote in the middle
+        "    \"key3\" \"value3\" // the third opening \" quote", // has a quote in the middle
+        "}",
+        "entityDef tork {}"
+    }, "\n"); // use a specific line break to be platform independent here
+
+    auto tokeniser = createTokeniser(input);
+    auto it = tokeniser.getIterator();
+
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
+    EXPECT_EQ((*it).value, "entityDef");
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
+    EXPECT_EQ((*it).value, "something");
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::BracedBlock);
+    EXPECT_NE((*it).value.find("key2"), std::string::npos);
+    EXPECT_NE((*it).value.find("value2"), std::string::npos);
+    EXPECT_NE((*it).value.find("// comment with quote\""), std::string::npos);
+    EXPECT_NE((*it).value.find("// comment\" with quote"), std::string::npos);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
+    EXPECT_EQ((*it).value, "entityDef");
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
+    EXPECT_EQ((*it).value, "tork");
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::BracedBlock);
+}
+
+TEST(DefBlockSyntaxTokeniser, QuoteWithinBlockComment)
+{
+    auto input = string::join(std::vector<std::string>
+    {
+        "entityDef something",
+        "{",
+        "    \"key\" \"value\" /* comment with quote\" */", // comment has a quote in it
+        "}",
+        "entityDef tork {}"
+    }, "\n"); // use a specific line break to be platform independent here
+
+    auto tokeniser = createTokeniser(input);
+    auto it = tokeniser.getIterator();
+
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
+    EXPECT_EQ((*it).value, "entityDef");
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
+    EXPECT_EQ((*it).value, "something");
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::BracedBlock);
+    EXPECT_NE((*it).value.find("key"), std::string::npos);
+    EXPECT_NE((*it).value.find("value"), std::string::npos);
+    EXPECT_NE((*it).value.find("/* comment with quote\" */"), std::string::npos);
+    EXPECT_EQ((*it).value.find("tork"), std::string::npos);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
+    EXPECT_EQ((*it).value, "entityDef");
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Token);
+    EXPECT_EQ((*it).value, "tork");
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::Whitespace);
+    ++it;
+    EXPECT_EQ((*it).type, parser::DefSyntaxToken::Type::BracedBlock);
+}
+
 using DefBlockSyntaxParserTest = RadiantTest;
 
 TEST_F(DefBlockSyntaxParserTest, ParseEmptyText)
@@ -588,5 +680,4 @@ TEST_F(DefBlockSyntaxParserTest, ParseTrailingNullByte2)
         EXPECT_TRUE(syntaxNode);
     }
 }
-
 }

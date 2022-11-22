@@ -1,11 +1,11 @@
 #pragma once
 
 #include "modelskin.h"
-#include "decl/DeclarationBase.h"
 
 #include <string>
-#include <map>
 #include <memory>
+
+#include "decl/EditableDeclaration.h"
 
 namespace skins
 {
@@ -16,97 +16,62 @@ namespace skins
  * the model that this skin is associated with.
  */
 class Skin :
-    public decl::DeclarationBase<decl::ISkin>
+    public decl::EditableDeclaration<decl::ISkin>
 {
-    // The list of models this skin is matching
-    std::set<std::string> _matchingModels;
+    struct SkinData
+    {
+        using Ptr = std::shared_ptr<SkinData>;
 
-	// Ordered list of texture remaps (as they appear in the decl)
-    std::vector<std::pair<std::string, std::string>> _remaps;
+        // The list of models this skin is matching
+        std::set<std::string> matchingModels;
+
+	    // Ordered list of texture remaps (as they appear in the decl)
+        std::vector<Remapping> remaps;
+    };
+
+    // The unchanged skin data
+    SkinData::Ptr _original;
+
+    // The current skin data (might be modified)
+    SkinData::Ptr _current;
 
 public:
-    Skin(const std::string& name) :
-        DeclarationBase<decl::ISkin>(decl::Type::Skin, name)
-	{}
+    Skin(const std::string& name);
 
-	std::string getName() const
-    {
-		return getDeclName();
-	}
+    std::string getName() const;
 
-	std::string getSkinFileName() const
-    {
-		return getDeclFilePath();
-	}
+    std::string getSkinFileName() const;
+
+    const std::set<std::string>& getModels() override;
+    void addModel(const std::string& model) override;
+    void removeModel(const std::string& model) override;
+
+    const std::vector<Remapping>& getAllRemappings() override;
+    void addRemapping(const Remapping& remapping) override;
+    void removeRemapping(const std::string& material) override;
+    void clearRemappings() override;
 
 	// Get this skin's remap for the provided material name (if any).
-	std::string getRemap(const std::string& name) override
-    {
-        ensureParsed();
-
-        // The remaps are applied in the order they appear in the decl
-        for (const auto& pair : _remaps)
-        {
-            if (pair.first == "*" || pair.first == name)
-            {
-                return pair.second;
-            }
-        }
-
-        return {};
-	}
+    std::string getRemap(const std::string& name) override;
 
 	// Add a remap pair to this skin
-	void addRemap(const std::string& src, const std::string& dst)
-    {
-		_remaps.emplace_back(src, dst);
-	}
+    void addRemap(const std::string& src, const std::string& dst);
 
     // Visit the functor with the name of each model mentioned in this skin declaration
-    void foreachMatchingModel(const std::function<void(const std::string&)>& functor)
-    {
-        ensureParsed();
+    void foreachMatchingModel(const std::function<void(const std::string&)>& functor);
 
-        for (const auto& model : _matchingModels)
-        {
-            functor(model);
-        }
-    }
+    bool isModified() override;
+    void setIsModified();
+    void commitModifications() override;
+    void revertModifications() override;
 
 protected:
-    void onBeginParsing() override
-    {
-        _remaps.clear();
-        _matchingModels.clear();
-    }
+    void onBeginParsing() override;
+    void parseFromTokens(parser::DefTokeniser& tokeniser) override;
+    std::string generateSyntax() override;
 
-    void parseFromTokens(parser::DefTokeniser& tokeniser) override
-    {
-        // [ "skin" ] <name>
-        // "{"
-        //      [ "model" <modelname> ]
-        //      ( <sourceTex> <destTex> )*
-        //      ( * <destTex>)*
-        // "}"
-        while (tokeniser.hasMoreTokens())
-        {
-            // Read key/value pairs until end of decl
-            auto key = tokeniser.nextToken();
-            auto value = tokeniser.nextToken();
-
-            // If this is a model key, add to the model->skin map, otherwise assume
-            // this is a remap declaration
-            if (key == "model")
-            {
-                _matchingModels.insert(value);
-            }
-            else
-            {
-                // Add the pair, preserving any wildcards "*"
-                addRemap(key, value);
-            }
-        }
-    }
+private:
+    void ensureSkinDataBackup();
 };
 
 

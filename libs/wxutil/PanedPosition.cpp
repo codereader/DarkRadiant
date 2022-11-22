@@ -26,7 +26,10 @@ PanedPosition::~PanedPosition()
 
 void PanedPosition::connect(wxSplitterWindow* paned)
 {
-    wxASSERT(_paned == NULL); // detect weirdness
+    if (_paned != nullptr)
+    {
+        disconnect();
+    }
 
     _paned = paned;
 

@@ -348,6 +348,8 @@
     <ClCompile Include="..\..\radiant\ui\script\ScriptUserInterfaceModule.cpp" />
     <ClCompile Include="..\..\radiant\ui\script\ScriptWindow.cpp" />
     <ClCompile Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.cpp" />
+    <ClCompile Include="..\..\radiant\ui\skin\SkinEditor.cpp" />
+    <ClCompile Include="..\..\radiant\ui\skin\SkinEditorTreeView.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\CommandStatus.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.cpp" />
     <ClCompile Include="..\..\radiant\ui\statusbar\MapStatistics.cpp" />
@@ -576,6 +578,9 @@
     <ClInclude Include="..\..\radiant\ui\script\ScriptWindow.h" />
     <ClInclude Include="..\..\radiant\ui\SelectionModeToggle.h" />
     <ClInclude Include="..\..\radiant\ui\selectionset\SelectionSetToolmenu.h" />
+    <ClInclude Include="..\..\radiant\ui\skin\MaterialSelectorColumn.h" />
+    <ClInclude Include="..\..\radiant\ui\skin\SkinEditor.h" />
+    <ClInclude Include="..\..\radiant\ui\skin\SkinEditorTreeView.h" />
     <ClInclude Include="..\..\radiant\ui\statusbar\CommandStatus.h" />
     <ClInclude Include="..\..\radiant\ui\statusbar\EditingStopwatchStatus.h" />
     <ClInclude Include="..\..\radiant\ui\statusbar\MapStatistics.h" />

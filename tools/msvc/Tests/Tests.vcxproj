@@ -64,6 +64,7 @@
     <ClInclude Include="..\..\..\test\algorithm\FileUtils.h" />
     <ClInclude Include="..\..\..\test\algorithm\Primitives.h" />
     <ClInclude Include="..\..\..\test\algorithm\Scene.h" />
+    <ClInclude Include="..\..\..\test\algorithm\Selection.h" />
     <ClInclude Include="..\..\..\test\algorithm\View.h" />
     <ClInclude Include="..\..\..\test\algorithm\XmlUtils.h" />
     <ClInclude Include="..\..\..\test\FakeClipboardModule.h" />
@@ -94,6 +95,7 @@
     <ClCompile Include="..\..\..\test\CommandSystem.cpp" />
     <ClCompile Include="..\..\..\test\ContinuousBuffer.cpp" />
     <ClCompile Include="..\..\..\test\CSG.cpp" />
+    <ClCompile Include="..\..\..\test\Curves.cpp" />
     <ClCompile Include="..\..\..\test\DeclManager.cpp" />
     <ClCompile Include="..\..\..\test\DefBlockSyntaxParser.cpp" />
     <ClCompile Include="..\..\..\test\DefTokenisers.cpp" />

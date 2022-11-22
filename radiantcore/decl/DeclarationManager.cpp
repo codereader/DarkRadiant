@@ -130,8 +130,12 @@ IDeclaration::Ptr DeclarationManager::findOrCreateDeclaration(Type type, const s
 
         syntax.typeName = getTypenameByType(type);
         syntax.name = name;
+        // Derive the mod name from the path it can be written to
+        syntax.modName = game::current::getModPath(game::current::getWriteableGameResourcePath());
 
         returnValue = createOrUpdateDeclaration(type, syntax);
+
+        signal_DeclCreated().emit(type, name);
     });
 
     // If the value is still empty at this point, throw
@@ -396,6 +400,8 @@ void DeclarationManager::removeDeclaration(Type type, const std::string& name)
             decl->second->setBlockSyntax(syntax);
 
             decls.erase(decl);
+
+            signal_DeclRemoved().emit(type, name);
         }
     });
 }
@@ -522,15 +528,18 @@ void DeclarationManager::removeDeclarationFromFile(const IDeclaration::Ptr& decl
     }
 }
 
-bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName, const std::string& newName)
+bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName_Incoming, const std::string& newName)
 {
     auto result = false;
 
-    if (oldName == newName)
+    if (oldName_Incoming == newName)
     {
         rWarning() << "Cannot rename, the new name is no different" << std::endl;
         return result;
     }
+
+    // Create a local copy, the reference might point to the same string as the newName
+    std::string oldName = oldName_Incoming;
 
     // Acquire the lock and perform the rename
     doWithDeclarationLock(type, [&](NamedDeclarations& decls)
@@ -563,6 +572,11 @@ bool DeclarationManager::renameDeclaration(Type type, const std::string& oldName
 
         result = true;
     });
+
+    if (result)
+    {
+        signal_DeclRenamed().emit(type, oldName, newName);
+    }
 
     return result;
 }
@@ -702,6 +716,21 @@ sigc::signal<void>& DeclarationManager::signal_DeclsReloaded(Type type)
 {
     std::lock_guard lock(_signalAddLock);
     return _declsReloadedSignals.try_emplace(type).first->second;
+}
+
+sigc::signal<void(Type, const std::string&, const std::string&)>& DeclarationManager::signal_DeclRenamed()
+{
+    return _declRenamedSignal;
+}
+
+sigc::signal<void(Type, const std::string&)>& DeclarationManager::signal_DeclCreated()
+{
+    return _declCreatedSignal;
+}
+
+sigc::signal<void(Type, const std::string&)>& DeclarationManager::signal_DeclRemoved()
+{
+    return _declRemovedSignal;
 }
 
 void DeclarationManager::emitDeclsReloadedSignal(Type type)
@@ -973,6 +1002,8 @@ void DeclarationManager::shutdownModule()
     _creatorsByTypename.clear();
     _declsReloadingSignals.clear();
     _declsReloadedSignals.clear();
+    _declRenamedSignal.clear();
+    _declRemovedSignal.clear();
 }
 
 void DeclarationManager::reloadDeclsCmd(const cmd::ArgumentList& _)
