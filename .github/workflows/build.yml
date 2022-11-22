@@ -51,7 +51,7 @@ jobs:
       shell: powershell
       
     - name: Setup VSTest.console.exe
-      uses: darenm/Setup-VSTest@v1
+      uses: darenm/Setup-VSTest@v1.2
 
     - name: Run Unit Tests
       run: |
