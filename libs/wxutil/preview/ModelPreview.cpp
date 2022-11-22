@@ -89,6 +89,7 @@ void ModelPreview::setupSceneGraph()
         setEntity(entity);
 
         entity->enable(scene::Node::eHidden);
+        entity->getEntity().setKeyValue("model", "-");
     }
     catch (std::runtime_error&)
     {
