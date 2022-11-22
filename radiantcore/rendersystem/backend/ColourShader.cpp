@@ -133,6 +133,11 @@ void ColourShader::construct()
     }
 }
 
+bool ColourShader::supportsVertexColours() const
+{
+    return !isMergeModeEnabled();
+}
+
 void ColourShader::onMergeModeChanged()
 {
     // Only the wireframe shader is reacting to this
