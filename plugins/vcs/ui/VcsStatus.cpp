@@ -41,6 +41,8 @@ VcsStatus::VcsStatus(wxWindow* parent) :
 {
     _mapStatus = findNamedObject<wxStaticText>(_panel, "MapStatusLabel");
     _remoteStatus = findNamedObject<wxStaticText>(_panel, "RemoteStatusLabel");
+
+    _panel->SetMinSize(wxSize(300, -1));
     
     auto* vcsMenu = findNamedObject<wxBitmapButton>(_panel, "VcsMenuButton");
     vcsMenu->Hide();

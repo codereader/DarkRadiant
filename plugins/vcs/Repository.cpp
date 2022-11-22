@@ -9,6 +9,7 @@
 #include "Tree.h"
 #include "Diff.h"
 #include "GitException.h"
+#include "Signature.h"
 #include "os/path.h"
 #include "os/file.h"
 #include "fmt/format.h"
@@ -328,9 +329,7 @@ void Repository::createCommit(const CommitMetadata& metadata, const Reference::P
 
     rMessage() << "Creating commit with user " << metadata.name << std::endl;
 
-    git_signature* signature;
-    auto error = git_signature_now(&signature, metadata.name.c_str(), metadata.email.c_str());
-    GitException::ThrowOnError(error);
+    Signature signature(metadata.name, metadata.email);
 
     // Add all working copy changes
     index->updateAll();
@@ -343,7 +342,7 @@ void Repository::createCommit(const CommitMetadata& metadata, const Reference::P
     if (head)
     {
         git_oid headOid;
-        error = git_reference_name_to_id(&headOid, _repository, head->getName().c_str());
+        auto error = git_reference_name_to_id(&headOid, _repository, head->getName().c_str());
         GitException::ThrowOnError(error);
         
         auto parentCommit = Commit::LookupFromOid(_repository, &headOid);
@@ -363,9 +362,9 @@ void Repository::createCommit(const CommitMetadata& metadata, const Reference::P
     }
 
     git_oid commitOid;
-    error = git_commit_create(&commitOid,
+    auto error = git_commit_create(&commitOid,
         _repository, head ? head->getName().c_str() : "HEAD",
-        signature, signature,
+        signature.get(), signature.get(),
         nullptr, metadata.message.c_str(),
         tree->_get(),
         parentCommits.size(), parentCommits.data());
