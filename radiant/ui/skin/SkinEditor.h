@@ -138,6 +138,8 @@ private:
     bool saveChanges();
     void discardChanges();
     void deleteSkin();
+    void populateSkinListWithModelMaterials();
+    bool skinHasBeenNewlyCreated();
 
     bool askUserAboutModifiedSkin();
     bool okToCloseDialog();

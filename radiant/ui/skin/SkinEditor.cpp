@@ -535,7 +535,7 @@ bool SkinEditor::saveChanges()
     // Stop editing on all columns
     _remappingList->CancelEditing();
 
-    if (_skin->getBlockSyntax().fileInfo.fullPath().empty())
+    if (skinHasBeenNewlyCreated())
     {
         while (true)
         {
@@ -764,6 +764,21 @@ void SkinEditor::onAddModelToSkin(wxCommandEvent& ev)
     // Select the added model
     auto modelItem = _selectedModels->FindString(model, _selectedModelColumns.name);
     _selectedModelList->Select(modelItem);
+
+    // Preview should show the newly added model
+    updateModelPreview();
+
+    // In case this is a newly created skin, all model additions auomatically
+    // populate the skin tree view with suggestions
+    if (skinHasBeenNewlyCreated())
+    {
+        populateSkinListWithModelMaterials();
+    }
+}
+
+bool SkinEditor::skinHasBeenNewlyCreated()
+{
+    return _skin && _skin->getBlockSyntax().fileInfo.fullPath().empty();
 }
 
 void SkinEditor::onRemoveModelFromSkin(wxCommandEvent& ev)
@@ -863,14 +878,8 @@ void SkinEditor::onRemoveSelectedMapping(wxCommandEvent& ev)
     updateSourceView(_skin);
 }
 
-void SkinEditor::onPopulateMappingsFromModel(wxCommandEvent& ev)
+void SkinEditor::populateSkinListWithModelMaterials()
 {
-    if (_controlUpdateInProgress || !_skin) return;
-
-    util::ScopedBoolLock lock(_controlUpdateInProgress);
-
-    _remappingList->CancelEditing(); // stop editing
-
     std::set<std::string> allMaterials;
 
     // Get all associated models and ask them for their materials
@@ -891,9 +900,9 @@ void SkinEditor::onPopulateMappingsFromModel(wxCommandEvent& ev)
     std::set<std::string> existingMappingSources;
 
     _remappings->ForeachNode([&](const wxutil::TreeModel::Row& row)
-    {
-        existingMappingSources.insert(row[_remappingColumns.original].getString().ToStdString());
-    });
+        {
+            existingMappingSources.insert(row[_remappingColumns.original].getString().ToStdString());
+        });
 
     // Ensure a mapping entry for each collected material
     for (const auto& material : allMaterials)
@@ -908,6 +917,17 @@ void SkinEditor::onPopulateMappingsFromModel(wxCommandEvent& ev)
 
         row.SendItemAdded();
     }
+}
+
+void SkinEditor::onPopulateMappingsFromModel(wxCommandEvent& ev)
+{
+    if (_controlUpdateInProgress || !_skin) return;
+
+    util::ScopedBoolLock lock(_controlUpdateInProgress);
+
+    _remappingList->CancelEditing(); // stop editing
+
+    populateSkinListWithModelMaterials();
 }
 
 void SkinEditor::onReplacementEntryChanged(const std::string& material)
