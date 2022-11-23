@@ -71,7 +71,7 @@ VcsStatus::VcsStatus(wxWindow* parent) :
 
     createPopupMenu();
 
-    _statusTimer.Start(500);
+    _statusTimer.Start(5000);
 }
 
 VcsStatus::~VcsStatus()
