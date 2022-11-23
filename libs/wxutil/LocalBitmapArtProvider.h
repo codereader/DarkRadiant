@@ -34,24 +34,29 @@ public:
         wxArtProvider::Remove(this);
     }
 
-	wxBitmap CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
-	{
+    wxBitmap CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
+    {
         auto filename = id.ToStdString();
-		const auto& prefix = ArtIdPrefix();
+        const auto& prefix = ArtIdPrefix();
 
         // We listen only to "darkradiant" art IDs
-		if (string::starts_with(filename, prefix))
-		{
-			std::string filePath = _searchPath + filename.substr(prefix.length());
+        if (string::starts_with(filename, prefix))
+        {
+            std::string filePath = _searchPath + filename.substr(prefix.length());
 
-			if (os::fileOrDirExists(filePath))
-			{
-				return wxBitmap(wxImage(filePath));
-			}
-		}
+            if (os::fileOrDirExists(filePath)) {
+                wxBitmap bm;
+                if (bm.LoadFile(filePath)) {
+                    return bm;
+                }
+                else {
+                    rError() << "Failed to load bitmap [" << filePath << "]\n";
+                }
+            }
+        }
 
-		return wxNullBitmap;
-	}
+        return wxNullBitmap;
+    }
 
 	static const std::string& ArtIdPrefix()
 	{
