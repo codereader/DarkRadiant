@@ -1,6 +1,7 @@
 #include "XYWnd.h"
 
 #include "i18n.h"
+#include "iclipper.h"
 #include "iscenegraph.h"
 #include "iundo.h"
 #include "ui/imainframe.h"
@@ -36,6 +37,7 @@
 #include <fmt/format.h>
 #include <sigc++/functors/mem_fun.h>
 #include <functional>
+#include <wx/sizer.h>
 
 namespace ui
 {
