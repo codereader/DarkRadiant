@@ -51,7 +51,7 @@ class TextureThumbnailBrowser :
 
     // Height of the entire virtual space of texture tiles. This changes when
     // textures are added or removed.
-    int _entireSpaceHeight;
+    int _entireSpaceHeight = 0;
 
     std::string _shader;
 
