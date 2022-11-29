@@ -8,6 +8,7 @@
 #include "icolourscheme.h"
 #include "ifavourites.h"
 #include "ishaderclipboard.h"
+#include "icommandsystem.h"
 
 #include "wxutil/menu/IconTextMenuItem.h"
 #include "wxutil/GLWidget.h"
@@ -527,7 +528,7 @@ Vector2i TextureThumbnailBrowser::getNextPositionForTexture(const Texture& tex)
 
     // Wrap to the next row if there is not enough horizontal space for this
     // texture
-    if (currentPos.origin.x() + nWidth > _viewportSize.x() - VIEWPORT_BORDER
+    if (currentPos.origin.x() + nWidth > getViewportSize().x() - VIEWPORT_BORDER
         && currentPos.rowAdvance != 0)
     {
         currentPos.origin.x() = VIEWPORT_BORDER;
@@ -563,7 +564,7 @@ void TextureThumbnailBrowser::clampOriginY()
         _viewportOriginY = 0;
     }
 
-    int lower = std::min(_viewportSize.y() - getTotalHeight(), 0);
+    int lower = std::min(getViewportSize().y() - getTotalHeight(), 0);
 
     if (_viewportOriginY < lower)
     {
@@ -673,7 +674,7 @@ void TextureThumbnailBrowser::focus(const std::string& name)
 
 MaterialPtr TextureThumbnailBrowser::getShaderAtCoords(int x, int y)
 {
-    y += getOriginY() - _viewportSize.y();
+    y += getOriginY() - getViewportSize().y();
 
     for (const auto& tile : _tiles)
     {
@@ -703,7 +704,7 @@ void TextureThumbnailBrowser::selectTextureAt(int mx, int my)
 
 void TextureThumbnailBrowser::draw()
 {
-	if (_viewportSize.x() == 0 || _viewportSize.y() == 0)
+	if (getViewportSize().x() == 0 || getViewportSize().y() == 0)
 	{
 		return;
 	}
@@ -714,7 +715,7 @@ void TextureThumbnailBrowser::draw()
 
     Vector3 colorBackground = GlobalColourSchemeManager().getColour("texture_background");
     glClearColor(colorBackground[0], colorBackground[1], colorBackground[2], 0);
-    glViewport(0, 0, _viewportSize.x(), _viewportSize.y());
+    glViewport(0, 0, getViewportSize().x(), getViewportSize().y());
 
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -726,7 +727,7 @@ void TextureThumbnailBrowser::draw()
     glDisable (GL_DEPTH_TEST);
     glDisable(GL_BLEND);
 
-    glOrtho(0, _viewportSize.x(), getOriginY() - _viewportSize.y(), getOriginY(), -100, 100);
+    glOrtho(0, getViewportSize().x(), getOriginY() - getViewportSize().y(), getOriginY(), -100, 100);
 
 	debug::assertNoGlErrors();
 
@@ -843,21 +844,32 @@ void TextureThumbnailBrowser::updateScroll()
     {
         int totalHeight = getTotalHeight();
 
-        totalHeight = std::max(totalHeight, _viewportSize.y());
+        totalHeight = std::max(totalHeight, getViewportSize().y());
 
-		_scrollbar->SetScrollbar(-getOriginY(), _viewportSize.y(), totalHeight, _viewportSize.y());
+        _scrollbar->SetScrollbar(-getOriginY(), getViewportSize().y(), totalHeight,
+                                 getViewportSize().y());
     }
 }
 
 int TextureThumbnailBrowser::getViewportHeight()
 {
-    return _viewportSize.y();
+    return getViewportSize().y();
 }
 
 void TextureThumbnailBrowser::onScrollChanged(wxScrollEvent& ev)
 {
 	setOriginY(-ev.GetPosition());
 	queueDraw();
+}
+
+const Vector2i& TextureThumbnailBrowser::getViewportSize()
+{
+    if (!_viewportSize) {
+        auto size = GetClientSize();
+        _viewportSize = Vector2i(size.GetWidth(), size.GetHeight());
+    }
+
+    return *_viewportSize;
 }
 
 void TextureThumbnailBrowser::onGLResize(wxSizeEvent& ev)
@@ -892,14 +904,14 @@ void TextureThumbnailBrowser::onGLMouseButtonPress(wxMouseEvent& ev)
 
         // Store the coords of the mouse pointer for later reference
         _popupX = static_cast<int>(ev.GetX());
-        _popupY = _viewportSize.y() - 1 - static_cast<int>(ev.GetY());
+        _popupY = getViewportSize().y() - 1 - static_cast<int>(ev.GetY());
         _startOrigin = _viewportOriginY;
     }
 	else if (ev.LeftDown())
     {
         selectTextureAt(
             static_cast<int>(ev.GetX()),
-            _viewportSize.y() - 1 - static_cast<int>(ev.GetY())
+            getViewportSize().y() - 1 - static_cast<int>(ev.GetY())
         );
     }
 }
