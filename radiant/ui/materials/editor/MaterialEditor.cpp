@@ -20,6 +20,7 @@
 #include <wx/statbmp.h>
 #include <wx/clrpicker.h>
 
+#include "os/file.h"
 #include "wxutil/sourceview/SourceView.h"
 #include "wxutil/FileChooser.h"
 #include "wxutil/dialog/MessageBox.h"

@@ -45,6 +45,61 @@ log_black_hole(GLogLevelFlags, const GLogField*, gsize, gpointer)
 // The startup event which will be queued in App::OnInit()
 wxDEFINE_EVENT(EV_RadiantStartup, wxCommandEvent);
 
+/**
+ * Implements wxWidget's ArtProvider interface to allow custom stock item IDs for
+ * bitmaps used in toolbars and other controls. The schema for these custom ArtIDs
+ * is "darkradiant:filename.png" where filename.png is a file in DR's bitmap folder.
+ * This schema is also valid when specified in XRC files.
+ */
+class RadiantApp::ArtProvider final: public wxArtProvider
+{
+    std::string _searchPath;
+
+public:
+    // Use an absolute file path to the list of search paths this provider is covering
+    ArtProvider(const std::string& searchPath) :
+        _searchPath(searchPath)
+    {
+        wxArtProvider::Push(this);
+    }
+
+    wxBitmap CreateBitmap(const wxArtID& id, const wxArtClient& client, const wxSize& size)
+    {
+        auto filename = id.ToStdString();
+        const auto& prefix = ArtIdPrefix();
+
+        // We listen only to "darkradiant" art IDs
+        if (string::starts_with(filename, prefix))
+        {
+            std::string filePath = _searchPath + filename.substr(prefix.length());
+
+            if (os::fileOrDirExists(filePath)) {
+                wxBitmap bm;
+                if (bm.LoadFile(filePath)) {
+                    return bm;
+                }
+                else {
+                    rError() << "Failed to load bitmap [" << filePath << "]\n";
+                }
+            }
+        }
+
+        return wxNullBitmap;
+    }
+
+    static const std::string& ArtIdPrefix()
+    {
+        static std::string _artIdPrefix = "darkradiant:";
+        return _artIdPrefix;
+    }
+};
+
+RadiantApp::RadiantApp()
+{}
+
+RadiantApp::~RadiantApp()
+{}
+
 bool RadiantApp::OnInit()
 {
 	if (!wxApp::OnInit()) return false;
@@ -132,7 +187,7 @@ void RadiantApp::initWxWidgets()
 #endif
 
     // Register the local art provider
-    _bitmapArtProvider = std::make_unique<wxutil::LocalBitmapArtProvider>(_context.getBitmapsPath());
+    _bitmapArtProvider = std::make_unique<ArtProvider>(_context.getBitmapsPath());
 }
 
 void RadiantApp::cleanupWxWidgets()

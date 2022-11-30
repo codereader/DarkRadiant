@@ -11,6 +11,7 @@
 #include <wx/bookctrl.h>
 
 #include "gamelib.h"
+#include "os/file.h"
 #include "os/path.h"
 #include "MaterialSelectorColumn.h"
 #include "SkinEditorTreeView.h"

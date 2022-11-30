@@ -472,27 +472,27 @@ int XYWndManager::getUniqueID() const
 */
 Vector3 XYWndManager::getFocusPosition()
 {
-	Vector3 position(0,0,0);
+    Vector3 position(0,0,0);
 
-	if (GlobalSelectionSystem().countSelected() != 0)
-	{
-		position = GlobalSelectionSystem().getCurrentSelectionCenter();
-	}
+    if (GlobalSelectionSystem().countSelected() != 0)
+    {
+        position = GlobalSelectionSystem().getCurrentSelectionCenter();
+    }
     else if (GlobalSelectionSystem().selectionFocusIsActive())
     {
         // Use the selection focus area if nothing is selected
         position = GlobalSelectionSystem().getSelectionFocusBounds().getOrigin();
     }
-	else
+    else
     {
-		auto cam = GlobalCamera().getActiveCamWnd();
+        auto cam = GlobalCamera().getActiveCamWnd();
 
-		if (cam != NULL) {
-			position = cam->getCameraOrigin();
-		}
-	}
+        if (cam != NULL) {
+            position = cam->getCameraOrigin();
+        }
+    }
 
-	return position;
+    return position;
 }
 
 const std::string& XYWndManager::getName() const
