@@ -172,6 +172,14 @@ void RadiantApp::initWxWidgets()
     // strings from cluttering up the console
     wxLog::SetLogLevel(wxLOG_Warning);
 
+    // On Linux, display wxWidgets log messages on stderr rather than popping up largely
+    // useless (modal and often repeated) dialog boxes. TODO: find a better solution for
+    // Windows as well (probably redirecting them to the in-application Console would be
+    // best since stderr is not easily accessible).
+#if defined(__linux__)
+    wxLog::SetActiveTarget(new wxLogStderr() /* lifetime managed by wxWidgets */);
+#endif
+
     wxFileSystem::AddHandler(new wxLocalFSHandler);
     wxXmlResource::Get()->InitAllHandlers();
 
