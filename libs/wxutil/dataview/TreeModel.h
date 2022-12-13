@@ -407,8 +407,8 @@ public:
 	// Add a new item below the root element
 	Row AddItem();
 
-	// Add a new item below the given element
-	Row AddItem(const wxDataViewItem& parent);
+	/// Add a new item below the given element
+	Row AddItemUnderParent(const wxDataViewItem& parent);
 
 	// Removes the item, returns TRUE on success
 	bool RemoveItem(const wxDataViewItem& item);

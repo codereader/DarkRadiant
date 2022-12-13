@@ -129,7 +129,7 @@ public:
 			return;
 		}
 
-		wxutil::TreeModel::Row row = _store->AddItem(_parent);
+		wxutil::TreeModel::Row row = _store->AddItemUnderParent(_parent);
 
         wxutil::Icon icon(PropertyEditorFactory::getBitmapFor(attr.getType()));
 
@@ -221,7 +221,7 @@ void AddPropertyDialog::populateTreeView()
 			}
 
 			// Category sorted, add this property below it
-			item = _treeStore->AddItem(mIter->second).getItem();
+			item = _treeStore->AddItemUnderParent(mIter->second).getItem();
 
 			_treeStore->ItemAdded(mIter->second, item);
 		}

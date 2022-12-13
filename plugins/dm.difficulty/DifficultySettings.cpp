@@ -154,7 +154,7 @@ void DifficultySettings::updateTreeModel()
         if (!setting.iter.IsOk())
         {
             // No iter corresponding to this setting yet, insert it
-			setting.iter = classIter.IsOk() ? _store->AddItem(classIter).getItem() : _store->AddItem().getItem();
+			setting.iter = classIter.IsOk() ? _store->AddItemUnderParent(classIter).getItem() : _store->AddItem().getItem();
 			settingAdded = true;
         }
 
@@ -279,7 +279,7 @@ wxDataViewItem DifficultySettings::findOrInsertClassname(const std::string& clas
 
 wxDataViewItem DifficultySettings::insertClassName(const std::string& className, const wxDataViewItem& parent)
 {
-    wxutil::TreeModel::Row row = parent.IsOk() ? _store->AddItem(parent) : _store->AddItem();
+    wxutil::TreeModel::Row row = parent.IsOk() ? _store->AddItemUnderParent(parent) : _store->AddItem();
     
     wxDataViewItemAttr black;
 	black.SetColour(wxColor(0,0,0));
