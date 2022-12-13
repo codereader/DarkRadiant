@@ -600,12 +600,36 @@ wxString TreeModel::GetColumnType(unsigned int col) const
 void TreeModel::GetValue(wxVariant &variant,
                          const wxDataViewItem &item, unsigned int col) const
 {
-	Node* owningNode = item.IsOk() ? static_cast<Node*>(item.GetID()) : _rootNode.get();
+    Node* owningNode = item.IsOk() ? static_cast<Node*>(item.GetID()) : _rootNode.get();
 
-	if (col < owningNode->values.size())
-	{
-		variant = owningNode->values[col];
-	}
+    // Return the value from the node if present
+    if (col < owningNode->values.size()) {
+        variant = owningNode->values[col];
+    }
+    else {
+        // GTK tree views don't like model columns returning no data, so return a default
+        // value if an explicit value hasn't been set for this cell.
+        switch (_columns[col].type) {
+        case Column::String:
+        case Column::Double:
+        case Column::Integer:
+            variant = wxString();
+            break;
+
+        case Column::Boolean:
+            variant = false;
+            break;
+
+        case Column::Pointer:
+        case Column::Icon:
+        case Column::IconText:
+            variant = static_cast<void*>(nullptr);
+            break;
+
+        default:
+            throw std::logic_error("TreeModel::GetValue(): NumTypes is not a valid column type");
+        }
+    }
 }
 
 bool TreeModel::SetValue(const wxVariant& variant,
