@@ -632,20 +632,26 @@ void TreeModel::GetValue(wxVariant &variant,
     }
 }
 
-bool TreeModel::SetValue(const wxVariant& variant,
-                        const wxDataViewItem& item,
-                        unsigned int col)
+bool TreeModel::SetValue(const wxVariant& variant, const wxDataViewItem& item, unsigned int col)
 {
-	Node* owningNode = item.IsOk() ? static_cast<Node*>(item.GetID()) : _rootNode.get();
+    // wxGTK and wxWidgets 3.1.0+ doesn't like rendering number values as text so let's
+    // store numbers as strings automatically
+    wxVariant value = variant;
+    const auto type = _columns[col].type;
+    if ((type == Column::Integer || type == Column::Double) && variant.GetType() != "string") {
+        value = variant.GetString();
+    }
 
-	if (owningNode->values.size() < col + 1)
-	{
-		owningNode->values.resize(col + 1);
-	}
-	
-	owningNode->values[col] = variant;
+    // Find the node to contain the value
+    Node* owningNode = item.IsOk() ? static_cast<Node*>(item.GetID()) : _rootNode.get();
+    if (owningNode->values.size() < col + 1) {
+        owningNode->values.resize(col + 1);
+    }
 
-	return true;
+    // Assign the value
+    owningNode->values[col] = value;
+
+    return true;
 }
 
 bool TreeModel::GetAttr(const wxDataViewItem& item, unsigned int col, wxDataViewItemAttr& attr) const
