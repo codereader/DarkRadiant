@@ -243,6 +243,8 @@ inline void applyIdlePose(const INodePtr& node, const IModelDef::Ptr& modelDef)
     // Set the animation to play
     auto md5model = dynamic_cast<md5::IMD5Model*>(&(modelNode->getIModel()));
 
+    if (!md5model) return;
+
     // Look up the "idle" anim if there is one
     auto found = modelDef->getAnim("idle");
 
