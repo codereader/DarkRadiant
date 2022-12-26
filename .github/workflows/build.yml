@@ -11,6 +11,7 @@ jobs:
       SOLUTION_FILE_PATH: .\DarkRadiant.sln
       TESTS_FILE_PATH: .\install\Tests.exe
       BUILD_CONFIGURATION: Release
+      GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
     - uses: actions/checkout@v3
