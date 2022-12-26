@@ -174,7 +174,6 @@
     <ClInclude Include="..\..\libs\wxutil\GLWidget.h" />
     <ClInclude Include="..\..\libs\wxutil\Icon.h" />
     <ClInclude Include="..\..\libs\wxutil\IConv.h" />
-    <ClInclude Include="..\..\libs\wxutil\LocalBitmapArtProvider.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\CommandMenuItem.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\FilterPopupMenu.h" />
     <ClInclude Include="..\..\libs\wxutil\menu\IconTextMenuItem.h" />
