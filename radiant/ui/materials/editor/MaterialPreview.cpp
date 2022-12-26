@@ -314,10 +314,21 @@ void MaterialPreview::setupSceneGraph()
 
         // Make sure the shaderParm11 spawnarg is present
         Node_getEntity(_entity)->setKeyValue("shaderParm11", "0");
+        Node_getEntity(_entity)->setKeyValue("model", "-");
 
         _rootNode->addChildNode(_entity);
 
         setupTestModel();
+
+        // Hide all models that are not the test model
+        _entity->foreachNode([&](const scene::INodePtr& child)
+        {
+            if (Node_getModel(child) && child != _model)
+            {
+                child->enable(scene::Node::eHidden);
+            }
+            return true;
+        });
 
         getScene()->setRoot(_rootNode);
 
