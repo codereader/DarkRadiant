@@ -167,18 +167,7 @@ public:
 		// get/set operators
 		ItemValueProxy& operator=(const wxVariant& data)
 		{
-			// wxGTK and wxWidgets 3.1.0+ doesn't like rendering number values as text
-			// so let's store numbers as strings automatically
-			if ((_column.type == Column::Integer || _column.type == Column::Double) &&
-				 data.GetType() != "string")
-			{
-				wxVariant stringified(data.GetString());
-				_model.SetValue(stringified, _item, _column.getColumnIndex());
-			}
-			else
-			{
-				_model.SetValue(data, _item, _column.getColumnIndex());
-			}
+            _model.SetValue(data, _item, _column.getColumnIndex());
 
 			// Newly assigned values are enabled by default
 			_model.SetEnabled(_item, _column.getColumnIndex(), true);
@@ -407,8 +396,8 @@ public:
 	// Add a new item below the root element
 	Row AddItem();
 
-	// Add a new item below the given element
-	Row AddItem(const wxDataViewItem& parent);
+	/// Add a new item below the given element
+	Row AddItemUnderParent(const wxDataViewItem& parent);
 
 	// Removes the item, returns TRUE on success
 	bool RemoveItem(const wxDataViewItem& item);

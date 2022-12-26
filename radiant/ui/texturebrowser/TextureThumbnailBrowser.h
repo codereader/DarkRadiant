@@ -9,6 +9,8 @@
 #include "wxutil/DockablePanel.h"
 #include "wxutil/event/SingleIdleCallback.h"
 
+#include <optional>
+
 namespace wxutil
 {
     class NonModalEntry;
@@ -40,16 +42,16 @@ class TextureThumbnailBrowser :
 
     // Size of the 2D viewport. This is the geometry of the render window, not
     // the entire virtual space.
-    Vector2i _viewportSize;
+    std::optional<Vector2i> _viewportSize;
 
     // Y origin of the virtual space with respect to the current viewport.
     // Starts at zero, then becomes more negative as the view is scrolled
     // downwards.
-    int _viewportOriginY;
+    int _viewportOriginY = 0;
 
     // Height of the entire virtual space of texture tiles. This changes when
     // textures are added or removed.
-    int _entireSpaceHeight;
+    int _entireSpaceHeight = 0;
 
     std::string _shader;
 
@@ -149,6 +151,7 @@ protected:
     void clearFilter();
 
 private:
+    const Vector2i& getViewportSize();
     int getViewportHeight();
 
     // Callback needed for DeferredAdjustment

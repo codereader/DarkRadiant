@@ -19,7 +19,7 @@ namespace fsview
 
 namespace
 {
-    const char* const FOLDER_ICON = "folder.png";
+    const char* const FOLDER_ICON = "folder16.png";
     const char* const FILE_ICON = "file.png";
 }
 

@@ -39,13 +39,13 @@ public:
 	};
 
 private:
-	wxPanel* _dialogPanel;
+	wxPanel* _dialogPanel = nullptr;
 
 	// Model preview widget
 	std::unique_ptr<ui::MapPreview> _preview;
 
 	// Main tree view with the folder hierarchy
-	wxutil::FileSystemView* _treeView;
+	wxutil::FileSystemView* _treeView = nullptr;
 
 	// The window position tracker
 	wxutil::WindowPosition _position;
@@ -56,19 +56,19 @@ private:
 
 	IMapResourcePtr _mapResource;
 
-	wxTextCtrl* _description;
+	wxTextCtrl* _description = nullptr;
 
-    wxRadioButton* _useModPath;
-    wxRadioButton* _useCustomPath;
-    wxRadioButton* _useRecentPath;
-    wxComboBox* _recentPathSelector;
-    wxutil::PathEntry* _customPath;
-	wxCheckBox* _insertAsGroupBox;
-	wxCheckBox* _recalculatePrefabOriginBox;
+    wxRadioButton* _useModPath = nullptr;
+    wxRadioButton* _useCustomPath = nullptr;
+    wxRadioButton* _useRecentPath = nullptr;
+    wxComboBox* _recentPathSelector = nullptr;
+    wxutil::PathEntry* _customPath = nullptr;
+	wxCheckBox* _insertAsGroupBox = nullptr;
+	wxCheckBox* _recalculatePrefabOriginBox = nullptr;
 
     std::list<std::string> _recentPaths;
 
-	bool _handlingSelectionChange;
+	bool _handlingSelectionChange = false;
 
 private:
 	// Private constructor, creates widgets

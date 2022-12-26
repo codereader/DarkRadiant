@@ -67,7 +67,7 @@ const wxDataViewItem& VFSTreePopulator::addRecursive(const std::string& path,
         addRecursive(path.substr(0, slashPos), func, recursionLevel + 1) : _topLevel;
 
 	// Append a node to the tree view for this child
-	TreeModel::Row row = _store->AddItem(parIter);
+	TreeModel::Row row = _store->AddItemUnderParent(parIter);
 
     // Call the population callback. If recursionLevel > 0 we had at least one
     // path split operation, so this must be a folder

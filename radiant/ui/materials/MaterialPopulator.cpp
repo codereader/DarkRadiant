@@ -160,7 +160,7 @@ wxutil::TreeModel::Row MaterialPopulator::InsertFolder(const wxutil::TreeModel::
     const std::string& path, const std::string& leafName, const wxDataViewItem& parentItem, bool isOtherMaterial)
 {
     // Append a node to the tree view for this child
-    auto row = model->AddItem(parentItem);
+    auto row = model->AddItemUnderParent(parentItem);
 
     row[_columns.isOtherMaterialsFolder] = isOtherMaterial;
 
@@ -172,7 +172,7 @@ wxutil::TreeModel::Row MaterialPopulator::InsertFolder(const wxutil::TreeModel::
 void MaterialPopulator::InsertTexture(const wxutil::TreeModel::Ptr& model,
     const std::string& path, const std::string& declName, const std::string& leafName, const wxDataViewItem& parentItem)
 {
-    auto row = model->AddItem(parentItem);
+    auto row = model->AddItemUnderParent(parentItem);
 
     // Assign additional columns
     row[_columns.isOtherMaterialsFolder] = false;

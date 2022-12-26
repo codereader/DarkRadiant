@@ -229,7 +229,7 @@ protected:
         const std::string& leafName, const wxDataViewItem& parentItem)
     {
         // Append a node to the tree view for this child
-        auto row = model->AddItem(parentItem);
+        auto row = model->AddItemUnderParent(parentItem);
 
         AssignValuesToRow(row, path, path, leafName, true);
 
@@ -239,7 +239,7 @@ protected:
     void InsertDecl(const TreeModel::Ptr& model, const std::string& path, const std::string& declName, 
         const std::string& leafName, const wxDataViewItem& parentItem)
     {
-        auto row = model->AddItem(parentItem);
+        auto row = model->AddItemUnderParent(parentItem);
 
         // Call will invoke Row::SendItemAdded()
         AssignValuesToRow(row, path, declName, leafName, false);

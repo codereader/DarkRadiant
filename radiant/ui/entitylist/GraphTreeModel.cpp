@@ -36,7 +36,7 @@ const GraphTreeNode::Ptr& GraphTreeModel::insert(const scene::INodePtr& node)
 	// Insert this iterator below a possible parent iterator
 	auto parentIter = findParentIter(node);
 
-	wxutil::TreeModel::Row row = parentIter ? _model->AddItem(parentIter) : _model->AddItem();
+	wxutil::TreeModel::Row row = parentIter ? _model->AddItemUnderParent(parentIter) : _model->AddItem();
 
 	// Create a new GraphTreeNode
 	auto gtNode = std::make_shared<GraphTreeNode>(node, row.getItem());

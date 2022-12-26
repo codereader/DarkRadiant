@@ -91,7 +91,7 @@ public:
 
 		for (const auto& skinName : skinList)
 		{
-			wxutil::TreeModel::Row skinRow = store.AddItem(row.getItem());
+			wxutil::TreeModel::Row skinRow = store.AddItemUnderParent(row.getItem());
 
             auto fullSkinPath = fullPath + "/" + skinName;
             isFavourite = isExplicit && _favourites.count(fullSkinPath) > 0;

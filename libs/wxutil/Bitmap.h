@@ -1,7 +1,7 @@
 #pragma once
 
-#include "LocalBitmapArtProvider.h"
 #include "wxutil/Bitmap.h"
+#include <wx/artprov.h>
 
 namespace wxutil
 {
@@ -15,7 +15,7 @@ namespace wxutil
  */
 inline wxBitmap GetLocalBitmap(const std::string& name)
 {
-    return wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + name);
+    return wxArtProvider::GetBitmap("darkradiant:" + name);
 }
 
 /**
@@ -28,7 +28,7 @@ inline wxBitmap GetLocalBitmap(const std::string& name)
  */
 inline wxBitmap GetLocalBitmap(const std::string& name, const wxArtClient& client)
 {
-    return wxArtProvider::GetBitmap(LocalBitmapArtProvider::ArtIdPrefix() + name, client);
+    return wxArtProvider::GetBitmap("darkradiant:" + name, client);
 }
 
 }

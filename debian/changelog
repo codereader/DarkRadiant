@@ -1,3 +1,12 @@
+darkradiant (3.6.0~jammy1) jammy; urgency=medium
+
+  * New Selection Focus feature (Ctrl-F).
+  * Add Radiant.findEntityByName script method.
+  * Media Browser shows a thumbnail preview when selecting folders.
+  * Map is remembering layer visibilities between loads.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Tue, 15 Nov 2022 20:28:13 +0000
+
 darkradiant (3.5.0~jammy1) jammy; urgency=medium
 
   * More customisable layout: all windows and panes can be dragged and

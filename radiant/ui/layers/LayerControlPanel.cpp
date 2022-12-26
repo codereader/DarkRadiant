@@ -272,7 +272,7 @@ public:
             processLayer(parentLayerId, _layerManager.getLayerName(parentLayerId));
 
         // Parent item located, insert this layer as child element
-        auto row = _layerStore->AddItem(parentItem);
+        auto row = _layerStore->AddItemUnderParent(parentItem);
 
         row[_columns.id] = layerId;
         row[_columns.name] = layerName;

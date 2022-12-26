@@ -3,6 +3,7 @@
 #include "TextureBrowserManager.h"
 #include "ifavourites.h"
 #include "MapTextureBrowser.h"
+#include <wx/sizer.h>
 
 namespace ui
 {

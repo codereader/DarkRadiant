@@ -30,7 +30,7 @@ private:
 	wxTextAttr _warningAttr;
 	wxTextAttr _standardAttr;
 
-	TextMode _bufferMode;
+	TextMode _bufferMode = ModeStandard;
 	std::string _buffer;
 
     typedef std::vector<std::pair<TextMode, std::string> > LineBuffer;

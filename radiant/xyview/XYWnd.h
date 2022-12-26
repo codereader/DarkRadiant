@@ -93,8 +93,8 @@ private:
     int _chasemouseDeltaX;
     int _chasemouseDeltaY;
 
-    Matrix4 _projection;
-    Matrix4 _modelView;
+    Matrix4 _projection = Matrix4::getIdentity();
+    Matrix4 _modelView = Matrix4::getIdentity();
 
     int _width;
     int _height;
