@@ -126,7 +126,7 @@ void ModelSelector::setupAdvancedPanel(wxWindow* parent)
 
 	// Refresh preview when material visibility changed
     _materialsList->signal_visibilityChanged().connect(
-		sigc::mem_fun(*_modelPreview, &wxutil::ModelPreview::queueDraw)
+		sigc::mem_fun(*this, &ModelSelector::onMaterialVisibilityStatusChanged)
     );
 
     auto entityPage = findNamedPanel(parent, "ModelRelatedEntitiesPanel");
@@ -171,6 +171,17 @@ void ModelSelector::onShowClassDefinition()
 
     view->ShowModal();
     view->Destroy();
+}
+
+void ModelSelector::onMaterialVisibilityStatusChanged()
+{
+    // Tell the model to refresh its surfaces
+    if (_modelPreview->getModelNode())
+    {
+        _modelPreview->getModelNode()->onFiltersChanged();
+    }
+
+    _modelPreview->queueDraw();
 }
 
 void ModelSelector::onRelatedEntitySelectionChange(wxDataViewEvent& ev)

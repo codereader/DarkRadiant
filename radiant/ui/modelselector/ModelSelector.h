@@ -153,7 +153,7 @@ private:
 	void onSkinsOrModelsReloaded();
 
 	void onModelLoaded(const model::ModelNodePtr& modelNode);
-
+    void onMaterialVisibilityStatusChanged();
 	void onMainFrameShuttingDown();
 
 protected:
