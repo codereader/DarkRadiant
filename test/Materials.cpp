@@ -1919,4 +1919,48 @@ TEST_F(MaterialsTest, DescriptionClearedBeforeParsing)
     EXPECT_EQ(material->getDescription(), "") << "Description has not been cleared before reparse";
 }
 
+// On template change the material emits a materialChanged signal. Requesting the editor image
+// in a subscribed changed handler should immediately see the changed editor image, not the old one
+TEST_F(MaterialsTest, EditorImageUpdatedBeforeMaterialChangedSignalEmission)
+{
+    // This is a missing material that should not have an editor image
+    auto material = GlobalMaterialManager().getMaterial("this_material_is_missing");
+
+    auto previousEditorImage = material->getEditorImage();
+    EXPECT_TRUE(previousEditorImage) << "Even non-existent materials have an editor image";
+    EXPECT_TRUE(material->isEditorImageNoTex()) << "Non-existent materials should have a shader-not-found editor image";
+
+    // When the material becomes available (e.g. in the course of a mod change) its syntax block will be assigned
+    // through setSyntaxBlock(). The editor image must update to the new syntax
+    auto decl = GlobalDeclarationManager().findDeclaration(decl::Type::Material, material->getName());
+    EXPECT_TRUE(decl) << "The decl should have been created by the material manager";
+
+    auto receivedEditorImage = TexturePtr();
+    auto receivedEditorImageWasNoTex = false;
+    auto handlerFired = false;
+
+    // Subscribe to the material changed handler
+    material->sig_materialChanged().connect([&]
+    {
+        handlerFired = true;
+        receivedEditorImage = material->getEditorImage();
+        receivedEditorImageWasNoTex = material->isEditorImageNoTex();
+    });
+
+    // Assigning a syntax block should trigger a reparse next time the description is requested
+    auto newSyntax = decl->getBlockSyntax();
+    newSyntax.contents = R"(
+    qer_editorimage	textures/numbers/0
+)";
+    decl->setBlockSyntax(newSyntax);
+
+    // Requesting the editor image in the handler should deliver the updated texture now
+    EXPECT_TRUE(handlerFired) << "Handler has not been invoked at all";
+    EXPECT_NE(receivedEditorImage, previousEditorImage) << "Editor image should have been changed in the handler";
+    EXPECT_FALSE(receivedEditorImageWasNoTex) << "Editor image should not be the shader-not-found texture in the handler";
+
+    EXPECT_NE(material->getEditorImage(), previousEditorImage) << "Editor image should have been changed";
+    EXPECT_FALSE(material->isEditorImageNoTex()) << "Editor image should have been updated";
+}
+
 }
