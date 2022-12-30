@@ -72,6 +72,11 @@ public:
         {
             ThrowIfCancellationRequested();
 
+            if (decl->getBlockSyntax().fileInfo.visibility == vfs::Visibility::HIDDEN)
+            {
+                return; // skip hidden declarations
+            }
+
             auto fullPath = GenerateFullDeclPath(decl);
 
             // Sort the decl into the tree and set the values
