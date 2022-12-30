@@ -1534,6 +1534,8 @@ std::string ShaderTemplate::generateSyntax()
 
 void ShaderTemplate::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
 {
+    EditableDeclaration<IShaderTemplate>::onSyntaxBlockAssigned(block);
+
     // Don't call onTemplateChanged() since that is meant is to be used
     // when the template is modified after parsing
     // Just emit the template changed signal

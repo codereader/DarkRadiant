@@ -159,6 +159,8 @@ void ParticleDef::parseFromTokens(parser::DefTokeniser& tokeniser)
 
 void ParticleDef::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
 {
+    EditableDeclaration<IParticleDef>::onSyntaxBlockAssigned(block);
+
     _changedSignal.emit();
 }
 

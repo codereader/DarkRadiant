@@ -62,6 +62,16 @@ public:
     }
 
 protected:
+    void onSyntaxBlockAssigned(const DeclarationBlockSyntax& block) override
+    {
+        // Assigning a new syntax block overrides any previous edits to the decl
+        // Otherwise the block contents would immediately get overwritten again
+        // in getBlockSyntax() by invoking generateSyntax()
+        _syntaxBlockInvalidated = false;
+
+        DeclarationBase<DeclarationInterface>::onSyntaxBlockAssigned(block);
+    }
+
     // Needs to be called by subclasses when members change and the
     // syntax block (that has been used to parse them) is no longer valid
     // The next time client code will acquire the syntax block, the subclass

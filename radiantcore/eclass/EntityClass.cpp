@@ -61,6 +61,8 @@ sigc::signal<void>& EntityClass::changedSignal()
 
 void EntityClass::onSyntaxBlockAssigned(const decl::DeclarationBlockSyntax& block)
 {
+    DeclarationBase<IEntityClass>::onSyntaxBlockAssigned(block);
+
     clear();
     emitChangedSignal();
 }
