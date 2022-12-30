@@ -601,12 +601,12 @@ void CShader::subscribeToTemplateChanges()
     // Disconnect from any signal first
     _templateChanged.disconnect();
 
-    _templateChanged = _template->sig_TemplateChanged().connect([this]()
+    _templateChanged = _template->sig_TemplateChanged().connect([this]
     {
-        _sigMaterialModified.emit();
-
-        // Check if the editor image needs an update
+        // Check if the editor image needs an update, do this before firing the handler
         updateEditorImage();
+
+        _sigMaterialModified.emit();
     });
 }
 
