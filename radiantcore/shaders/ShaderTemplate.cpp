@@ -1214,6 +1214,7 @@ void ShaderTemplate::clear()
     _layers.clear();
     _currentLayer.reset(new Doom3ShaderLayer(*this));
 
+    description.clear();
     _suppressChangeSignal = false;
     _lightFalloffCubeMapType = IShaderLayer::MapType::Map;
     fogLight = false;
