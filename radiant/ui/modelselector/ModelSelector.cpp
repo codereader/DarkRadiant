@@ -83,7 +83,7 @@ ModelSelector::ModelSelector() :
     findNamedObject<wxButton>(this, "ModelSelectorOkButton")->Bind(wxEVT_BUTTON, &ModelSelector::onOK, this);
     findNamedObject<wxButton>(this, "ModelSelectorCancelButton")->Bind(wxEVT_BUTTON, &ModelSelector::onCancel, this);
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Bind(wxEVT_BUTTON, &ModelSelector::onReloadModels, this);
-	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Bind(wxEVT_BUTTON, &ModelSelector::onReloadSkins, this);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadDeclsButton")->Bind(wxEVT_BUTTON, &ModelSelector::onReloadSkins, this);
 	findNamedObject<wxButton>(this, "ModelSelectorRescanFoldersButton")->Bind(wxEVT_BUTTON, &ModelSelector::onRescanFolders, this);
 
 	Bind(wxEVT_CLOSE_WINDOW, &ModelSelector::_onDeleteEvent, this);
@@ -272,7 +272,7 @@ void ModelSelector::onMainFrameShuttingDown()
 void ModelSelector::onTreeViewPopulationFinished(wxutil::ResourceTreeView::PopulationFinishedEvent& ev)
 {
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(true);
-	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(true);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadDeclsButton")->Enable(true);
 	findNamedObject<wxButton>(this, "ModelSelectorRescanFoldersButton")->Enable(true);
 
     // The modelDefs folder should start in collapsed state
@@ -508,7 +508,7 @@ void ModelSelector::onCancel(wxCommandEvent& ev)
 void ModelSelector::onReloadModels(wxCommandEvent& ev)
 {
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(false);
-	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadDeclsButton")->Enable(false);
 	findNamedObject<wxButton>(this, "ModelSelectorRescanFoldersButton")->Enable(false);
 
 	// This will fire the models reloaded signal after some time
@@ -518,17 +518,17 @@ void ModelSelector::onReloadModels(wxCommandEvent& ev)
 void ModelSelector::onReloadSkins(wxCommandEvent& ev)
 {
 	findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(false);
-	findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
+	findNamedObject<wxButton>(this, "ModelSelectorReloadDeclsButton")->Enable(false);
     findNamedObject<wxButton>(this, "ModelSelectorRescanFoldersButton")->Enable(false);
 
 	// When this is done, the skins reloaded signal is fired
-	GlobalModelSkinCache().refresh();
+	GlobalDeclarationManager().reloadDeclarations();
 }
 
 void ModelSelector::onRescanFolders(wxCommandEvent& ev)
 {
     findNamedObject<wxButton>(this, "ModelSelectorReloadModelsButton")->Enable(false);
-    findNamedObject<wxButton>(this, "ModelSelectorReloadSkinsButton")->Enable(false);
+    findNamedObject<wxButton>(this, "ModelSelectorReloadDeclsButton")->Enable(false);
     findNamedObject<wxButton>(this, "ModelSelectorRescanFoldersButton")->Enable(false);
 
     // This will fire the onTreeViewPopulationFinished event when done

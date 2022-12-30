@@ -124,9 +124,9 @@
 						<option>0</option>
 						<flag>wxRIGHT</flag>
 						<border>6</border>
-						<object class="wxButton" name="ModelSelectorReloadSkinsButton">
+						<object class="wxButton" name="ModelSelectorReloadDeclsButton">
 							<tooltip>Reload Skin declarations. Will rescan the model folders afterwards.</tooltip>
-							<label>Reload Skins</label>
+							<label>Reload Decls</label>
 							<default>0</default>
 							<markup>0</markup>
 							<bitmap />
