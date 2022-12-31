@@ -52,6 +52,11 @@ DeclarationSourceView* DeclarationTreeView::CreateDeclarationView(const decl::ID
     return view;
 }
 
+std::string DeclarationTreeView::GetResourcePath(const TreeModel::Row& row)
+{
+    return row[_columns.declName];
+}
+
 void DeclarationTreeView::_onShowDefinition()
 {
     auto declName = GetSelectedDeclName();

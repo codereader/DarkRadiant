@@ -48,6 +48,8 @@ protected:
     // Creates the definition view that should be used to show the given declaration
     virtual DeclarationSourceView* CreateDeclarationView(const decl::IDeclaration::Ptr& decl);
 
+    std::string GetResourcePath(const TreeModel::Row& row) override;
+
 private:
     void _onShowDefinition();
     bool _showDefinitionEnabled();
