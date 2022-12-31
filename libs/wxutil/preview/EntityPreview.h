@@ -47,6 +47,8 @@ protected:
 
     void onModelRotationChanged() override;
 
+    virtual void setupInitialViewPosition();
+
 public:
     EntityPreview(wxWindow* parent);
 

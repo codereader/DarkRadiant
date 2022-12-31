@@ -76,6 +76,7 @@ protected:
     AABB getSceneBounds() override;
     void applySkin();
     void onSkinDeclarationChanged();
+    void setupInitialViewPosition() override;
 };
 
 } // namespace

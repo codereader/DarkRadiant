@@ -141,22 +141,27 @@ void ModelPreview::prepareScene()
             scene::applyIdlePose(_modelNode, modelDef);
         }
 
-        if (_lastModel != _model)
-        {
-            // Reset the model rotation
-            resetModelRotation();
-
-            // Reset the default view, facing down to the model from diagonally above the bounding box
-            double distance = getSceneBounds().getRadius() * _defaultCamDistanceFactor;
-
-            setViewOrigin(Vector3(1, 1, 1) * distance);
-            setViewAngles(Vector3(34, 135, 0));
-        }
+        setupInitialViewPosition();
 
         _lastModel = _model;
 
         // Done loading, emit the signal
         _modelLoadedSignal.emit(Node_getModel(_modelNode));
+    }
+}
+
+void ModelPreview::setupInitialViewPosition()
+{
+    if (_lastModel != _model)
+    {
+        // Reset the model rotation
+        resetModelRotation();
+
+        // Reset the default view, facing down to the model from diagonally above the bounding box
+        double distance = getSceneBounds().getRadius() * _defaultCamDistanceFactor;
+
+        setViewOrigin(getSceneBounds().getOrigin() + Vector3(1, 1, 1) * distance);
+        setViewAngles(Vector3(34, 135, 0));
     }
 }
 

@@ -105,6 +105,14 @@ void EntityPreview::prepareScene()
     // Reset the model rotation
     resetModelRotation();
 
+    setupInitialViewPosition();
+
+    // Trigger an initial update of the subgraph
+    GlobalFilterSystem().updateSubgraph(getScene()->root());
+}
+
+void EntityPreview::setupInitialViewPosition()
+{
     if (_entity)
     {
         // Reset the default view, facing down to the model from diagonally above the bounding box
@@ -113,9 +121,6 @@ void EntityPreview::prepareScene()
         setViewOrigin(Vector3(1, 1, 1) * distance);
         setViewAngles(Vector3(34, 135, 0));
     }
-
-    // Trigger an initial update of the subgraph
-    GlobalFilterSystem().updateSubgraph(getScene()->root());
 }
 
 void EntityPreview::queueSceneUpdate()
