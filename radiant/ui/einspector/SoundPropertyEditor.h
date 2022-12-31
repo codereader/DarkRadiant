@@ -18,6 +18,7 @@ private:
 private:
 
 	void onBrowseButtonClick() override;
+    void onAssignSilence(wxCommandEvent& ev);
 
 public:
 

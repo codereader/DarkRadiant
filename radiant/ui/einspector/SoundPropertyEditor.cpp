@@ -11,8 +11,12 @@
 #include <wx/button.h>
 #include <wx/sizer.h>
 
+#include "wxutil/Bitmap.h"
+
 namespace ui
 {
+
+constexpr const char* const SILENCE_SHADER = "silence";
 
 // Main constructor
 SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, IEntitySelection& entities, const ITargetKey::Ptr& key)
@@ -22,10 +26,27 @@ SoundPropertyEditor::SoundPropertyEditor(wxWindow* parent, IEntitySelection& ent
 	constructBrowseButtonPanel(parent, _("Choose sound..."),
 		PropertyEditorFactory::getBitmapFor("sound"));
 
-    if (!module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
+    if (module::GlobalModuleRegistry().moduleExists(MODULE_SOUNDMANAGER))
+    {
+        // Check if there's a silence shader to display the button
+        auto button = new wxButton(getWidget(), wxID_ANY, _("Assign Silence"));
+        button->SetBitmap(wxutil::GetLocalBitmap("icon_sound_mute.png"));
+        button->Bind(wxEVT_BUTTON, &SoundPropertyEditor::onAssignSilence, this);
+        button->SetToolTip(_("Assigns the 'silence' sound shader (if available)"));
+
+        getWidget()->GetSizer()->Add(button, 0, wxALIGN_CENTER_VERTICAL | wxLEFT, 6);
+
+        button->Enable(GlobalSoundManager().getSoundShader(SILENCE_SHADER) != nullptr);
+    }
+    else
     {
         getWidget()->Disable();
     }
+}
+
+void SoundPropertyEditor::onAssignSilence(wxCommandEvent& ev)
+{
+    setKeyValueOnSelection(_key->getFullKey(), SILENCE_SHADER);
 }
 
 void SoundPropertyEditor::onBrowseButtonClick()
