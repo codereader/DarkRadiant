@@ -1232,6 +1232,10 @@ void ShaderTemplate::clear()
     _polygonOffset = 0.0f;
     _coverage = Material::MC_UNDETERMINED;
     _parseFlags = 0;
+    _frobStageType = Material::FrobStageType::Default;
+    _frobStageMapExpression.reset();
+    _frobStageRgbParameter[0].set(0, 0, 0);
+    _frobStageRgbParameter[1].set(0, 0, 0);
     
     _decalInfo.stayMilliSeconds = 0;
     _decalInfo.fadeMilliSeconds = 0;

@@ -191,6 +191,21 @@ void CShader::setDescription(const std::string& description)
     _template->setDescription(description);
 }
 
+Material::FrobStageType CShader::getFrobstageType()
+{
+    return _template->getFrobstageType();
+}
+
+IMapExpression::Ptr CShader::getFrobstageMapExpression()
+{
+    return _template->getFrobstageMapExpression();
+}
+
+Vector3 CShader::getFrobstageRgbParameter(std::size_t index)
+{
+    return _template->getFrobstageRgbParameter(index);
+}
+
 bool CShader::IsInUse() const {
 	return m_bInUse;
 }

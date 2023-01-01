@@ -90,10 +90,13 @@ public:
 	Coverage getCoverage() const override;
 	std::string getDescription() const override;
     void setDescription(const std::string& description) override;
+    FrobStageType getFrobstageType() override;
+    IMapExpression::Ptr getFrobstageMapExpression() override;
+    Vector3 getFrobstageRgbParameter(std::size_t index) override;
 	std::string getDefinition() override;
 	bool isAmbientLight() const override;
 	bool isBlendLight() const override;
-	bool isCubicLight() const;
+	bool isCubicLight() const override;
 	bool isFogLight() const override;
     void setIsAmbientLight(bool newValue) override;
     void setIsBlendLight(bool newValue) override;

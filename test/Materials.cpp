@@ -1458,25 +1458,76 @@ TEST_F(MaterialsTest, MaterialParserStageCondition)
     EXPECT_EQ(material->getLayer(0)->getConditionExpression()->getExpressionString(), "(parm4 > 0)");
 }
 
-TEST_F(MaterialsTest, MaterialParserFrobstageTexture)
+TEST_F(MaterialsTest, MaterialParserFrobStageNotspecified)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobStage5");
+
+    EXPECT_EQ(material->getFrobstageType(), Material::FrobStageType::Default);
+    EXPECT_FALSE(material->getFrobstageMapExpression());
+}
+
+TEST_F(MaterialsTest, MaterialParserFrobStageTexture)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobStage1");
 
-    // TODO
+    EXPECT_EQ(material->getFrobstageType(), Material::FrobStageType::Texture);
+    EXPECT_EQ(material->getFrobstageMapExpression()->getExpressionString(), "textures/some/thing");
+
+    // frobstage_texture textures/some/thing 0.15 0.40
+    EXPECT_EQ(material->getFrobstageRgbParameter(0), Vector3(0.15, 0.15, 0.15));
+    EXPECT_EQ(material->getFrobstageRgbParameter(1), Vector3(0.4, 0.4, 0.4));
 }
 
-TEST_F(MaterialsTest, MaterialParserFrobstageDiffuse)
+TEST_F(MaterialsTest, MaterialParserFrobStageTextureRgb)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobStage1_rgb");
+
+    EXPECT_EQ(material->getFrobstageType(), Material::FrobStageType::Texture);
+    EXPECT_EQ(material->getFrobstageMapExpression()->getExpressionString(), "textures/some/thing");
+
+    // frobstage_texture textures/some/thing (0.25 0.3 0.4) (0.50 0.6 0.7)
+    EXPECT_EQ(material->getFrobstageRgbParameter(0), Vector3(0.25, 0.3, 0.4));
+    EXPECT_EQ(material->getFrobstageRgbParameter(1), Vector3(0.5, 0.6, 0.7));
+}
+
+TEST_F(MaterialsTest, MaterialParserFrobStageDiffuse)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobStage2");
 
-    // TODO
+    EXPECT_EQ(material->getFrobstageType(), Material::FrobStageType::Diffuse);
+    EXPECT_FALSE(material->getFrobstageMapExpression());
+
+    // frobstage_diffuse 0.25 0.50 (no separate RGB factors, the float defines the grey value)
+    EXPECT_EQ(material->getFrobstageRgbParameter(0), Vector3(0.25, 0.25, 0.25));
+    EXPECT_EQ(material->getFrobstageRgbParameter(1), Vector3(0.5, 0.5, 0.5));
 }
 
-TEST_F(MaterialsTest, MaterialParserFrobstageNone)
+TEST_F(MaterialsTest, MaterialParserFrobStageDiffuseRgb)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobStage3");
 
-    // TODO
+    EXPECT_EQ(material->getFrobstageType(), Material::FrobStageType::Diffuse);
+    EXPECT_FALSE(material->getFrobstageMapExpression());
+
+    // frobstage_diffuse (0.25 0.3 0.4) (0.50 0.6 0.7)
+    EXPECT_EQ(material->getFrobstageRgbParameter(0), Vector3(0.25, 0.3, 0.4));
+    EXPECT_EQ(material->getFrobstageRgbParameter(1), Vector3(0.5, 0.6, 0.7));
+}
+
+TEST_F(MaterialsTest, MaterialParserFrobStageNone)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobStage4");
+
+    EXPECT_EQ(material->getFrobstageType(), Material::FrobStageType::None);
+    EXPECT_FALSE(material->getFrobstageMapExpression());
+}
+
+TEST_F(MaterialsTest, MaterialDefaultFrobStageSetup)
+{
+    auto material = GlobalMaterialManager().createEmptyMaterial("dummy_material");
+
+    EXPECT_EQ(material->getFrobstageType(), Material::FrobStageType::Default);
+    EXPECT_FALSE(material->getFrobstageMapExpression());
 }
 
 TEST_F(MaterialsTest, MaterialFrobStageDetection)

@@ -190,6 +190,15 @@ public:
 		MC_TRANSLUCENT		// blended with background
 	};
 
+    // TDM 2.11 frob stage keyword
+    enum class FrobStageType
+    {
+        Default,    // no frobstage keyword in this material
+        Diffuse,    // frobstage_diffuse has been declared: frobstage_diffuse 0.25 0.50
+        Texture,    // frobstage_texture textures/some/thing 0.15 0.40
+        None,       // frobstage_none
+    };
+
 	virtual ~Material() {}
 
     /// Return the editor image texture for this shader.
@@ -414,6 +423,16 @@ public:
 
     // Set the description text of this material
 	virtual void setDescription(const std::string& description) = 0;
+
+    // Returns the frob stage type this material is using (defaults to FrobStageType::Default)
+    virtual FrobStageType getFrobstageType() = 0;
+
+    // When FrobStageType::Texture: defines the texture that has been declared using frobstage_texture
+    virtual shaders::IMapExpression::Ptr getFrobstageMapExpression() = 0;
+
+    // frobstage_diffuse and frobstage_texture accept two (r g b) or float expressions
+    // Index is [0..1]. The first parameter is additive, second is multiplicative
+    virtual Vector3 getFrobstageRgbParameter(std::size_t index) = 0;
 
 	 /// Return TRUE if the shader is visible, FALSE if it is filtered or
 	 /// disabled in any other way.
