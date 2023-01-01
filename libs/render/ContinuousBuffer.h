@@ -199,14 +199,14 @@ public:
         _unsyncedModifications.emplace_back(ModifiedMemoryChunk{ handle, elementOffset, numElements });
     }
 
-    // Returns true if the size of this size actually changed
+    // Returns true if the size of this slot actually changed
     bool resizeData(Handle handle, std::size_t elementCount)
     {
         auto& slot = _slots[handle];
 
         if (elementCount > slot.Size)
         {
-            throw std::logic_error("Cannot resize to a large amount than allocated in GeometryStore::Buffer::resizeData");
+            throw std::logic_error("Cannot resize to a larger amount than allocated in GeometryStore::Buffer::resizeData");
         }
 
         if (slot.Used == elementCount) return false; // no size change
@@ -317,7 +317,6 @@ public:
             buffer->bind();
             buffer->setData(0, reinterpret_cast<unsigned char*>(_buffer.data()),
                 _buffer.size() * sizeof(ElementType));
-            verifyBufferData(buffer, "After copying everything");
             buffer->unbind();
         }
         else
@@ -329,12 +328,20 @@ public:
 
             // Size is the same, apply the updates to the GPU buffer
             // Determine the modified memory range
-            for (auto modifiedChunk : _unsyncedModifications)
+            for (auto& modifiedChunk : _unsyncedModifications)
             {
                 auto& slot = _slots[modifiedChunk.handle];
 
+                // Prevent the slot from exceeding its boundaries
+                // It's possible that this is chunk has been modified before it has been freed
+                if (modifiedChunk.numElements > slot.Size)
+                {
+                    modifiedChunk.numElements = slot.Size;
+                }
+
                 minimumOffset = std::min(slot.Offset + modifiedChunk.offset, minimumOffset);
                 maximumOffset = std::max(slot.Offset + modifiedChunk.offset + modifiedChunk.numElements, maximumOffset);
+
                 elementsToCopy += modifiedChunk.numElements;
             }
 
@@ -362,8 +369,6 @@ public:
                         (maximumOffset - minimumOffset) * sizeof(ElementType));
                 }
 
-                verifyBufferData(buffer, "After copying elements");
-
                 buffer->unbind();
             }
         }
@@ -372,29 +377,6 @@ public:
     }
 
 private:
-    void verifyBufferData(const IBufferObject::Ptr& buffer, const char* eventString)
-    {
-        if (!std::is_same_v<ElementType, unsigned int>) return;
-
-        for (const auto& slot : _slots)
-        {
-            if (!slot.Occupied) continue;
-
-            auto bufferData = buffer->getData(slot.Offset * sizeof(ElementType), slot.Used * sizeof(ElementType));
-
-            auto bufferElements = reinterpret_cast<const ElementType*>(bufferData.data());
-
-            for (auto i = 0; i < slot.Used; ++i)
-            {
-                if (_buffer.at(slot.Offset + i) != bufferElements[i])
-                {
-                    rMessage() << "Buffer data corruption (" << eventString << ")" << std::endl;
-                    return;
-                }
-            }
-        }
-    }
-
     bool findLeftFreeSlot(const SlotInfo& slotToTouch, Handle& found)
     {
         auto numSlots = _slots.size();
@@ -440,9 +422,8 @@ private:
         Handle rightmostFreeSlotIndex = static_cast<Handle>(numSlots);
         std::size_t rightmostFreeOffset = 0;
         std::size_t rightmostFreeSize = 0;
-        Handle slotIndex = 0;
 
-        for (slotIndex = 0; slotIndex < numSlots; ++slotIndex)
+        for (Handle slotIndex = 0; slotIndex < numSlots; ++slotIndex)
         {
             auto& slot = _slots[slotIndex];
 
