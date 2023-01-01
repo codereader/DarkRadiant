@@ -55,6 +55,9 @@ public:
     // Uploads the given data to the buffer, starting at the given offset
     virtual void setData(std::size_t offset, const unsigned char* firstElement, std::size_t numBytes) = 0;
 
+    // Downloads the specified data chunk
+    virtual std::vector<unsigned char> getData(std::size_t offset, std::size_t numBytes) = 0;
+
     // Re-allocates the memory of this buffer, does not transfer the data 
     // from the old internal buffer to the new one.
     virtual void resize(std::size_t newSize) = 0;

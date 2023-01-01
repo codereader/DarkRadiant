@@ -51,6 +51,16 @@ private:
             glBufferSubData(_target, static_cast<GLintptr>(offset), static_cast<GLsizeiptr>(numBytes), firstElement);
         }
 
+        std::vector<unsigned char> getData(std::size_t offset, std::size_t numBytes) override
+        {
+            std::vector<unsigned char> data;
+            data.resize(numBytes);
+
+            glGetBufferSubData(_target, static_cast<GLintptr>(offset), static_cast<GLsizeiptr>(numBytes), data.data());
+
+            return data;
+        }
+
         // Re-allocates the memory of this buffer, does not transfer the data 
         // from the old internal buffer to the new one.
         void resize(std::size_t newSize) override

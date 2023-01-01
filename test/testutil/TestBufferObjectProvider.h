@@ -29,6 +29,11 @@ public:
         }
     }
 
+    std::vector<unsigned char> getData(std::size_t offset, std::size_t numBytes) override
+    {
+        return {};
+    }
+
     void resize(std::size_t newSize) override
     {
         buffer = std::vector<unsigned char>(newSize, '\0');

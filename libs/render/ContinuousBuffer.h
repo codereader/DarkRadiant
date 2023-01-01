@@ -5,6 +5,7 @@
 #include <limits>
 #include <vector>
 #include "igeometrystore.h"
+#include "itextstream.h"
 
 namespace render
 {
@@ -316,6 +317,7 @@ public:
             buffer->bind();
             buffer->setData(0, reinterpret_cast<unsigned char*>(_buffer.data()),
                 _buffer.size() * sizeof(ElementType));
+            verifyBufferData(buffer, "After copying everything");
             buffer->unbind();
         }
         else
@@ -360,6 +362,8 @@ public:
                         (maximumOffset - minimumOffset) * sizeof(ElementType));
                 }
 
+                verifyBufferData(buffer, "After copying elements");
+
                 buffer->unbind();
             }
         }
@@ -368,6 +372,29 @@ public:
     }
 
 private:
+    void verifyBufferData(const IBufferObject::Ptr& buffer, const char* eventString)
+    {
+        if (!std::is_same_v<ElementType, unsigned int>) return;
+
+        for (const auto& slot : _slots)
+        {
+            if (!slot.Occupied) continue;
+
+            auto bufferData = buffer->getData(slot.Offset * sizeof(ElementType), slot.Used * sizeof(ElementType));
+
+            auto bufferElements = reinterpret_cast<const ElementType*>(bufferData.data());
+
+            for (auto i = 0; i < slot.Used; ++i)
+            {
+                if (_buffer.at(slot.Offset + i) != bufferElements[i])
+                {
+                    rMessage() << "Buffer data corruption (" << eventString << ")" << std::endl;
+                    return;
+                }
+            }
+        }
+    }
+
     bool findLeftFreeSlot(const SlotInfo& slotToTouch, Handle& found)
     {
         auto numSlots = _slots.size();

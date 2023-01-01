@@ -42,6 +42,21 @@ public:
       bitangent(bitangent_),
       colour(colour_)
     {}
+
+    bool operator==(const RenderVertex& other) const
+    {
+        return texcoord == other.texcoord &&
+            normal == other.normal &&
+            vertex == other.vertex &&
+            tangent == other.tangent &&
+            bitangent == other.bitangent &&
+            colour == other.colour;
+    }
+
+    bool operator!=(const RenderVertex& other) const
+    {
+        return !operator==(other);
+    }
 };
 
 }
