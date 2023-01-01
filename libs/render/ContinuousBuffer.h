@@ -345,6 +345,9 @@ public:
                 elementsToCopy += modifiedChunk.numElements;
             }
 
+            // Restrict the maximum offset to the buffer size just to be safe
+            maximumOffset = std::min(maximumOffset, _buffer.size());
+
             // Copy the data in one single operation or in multiple, depending on the effort
             if (elementsToCopy > 0)
             {
