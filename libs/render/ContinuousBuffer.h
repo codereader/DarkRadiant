@@ -4,6 +4,7 @@
 #include <stack>
 #include <limits>
 #include <vector>
+#include <fstream>
 #include "igeometrystore.h"
 #include "itextstream.h"
 
@@ -19,6 +20,18 @@ struct BufferTransaction
     std::size_t offset;
     std::size_t numChangedElements;
 };
+
+template<typename Element>
+inline std::string formatElement(const Element& element)
+{
+    return fmt::format("{0:0000} ", element);
+}
+
+template<>
+inline std::string formatElement(const RenderVertex& vertex)
+{
+    return "vertex";
+}
 
 }
 
@@ -180,6 +193,11 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset);
         slot.Used = numElements;
 
+        if (slot.Offset + 0 + numElements > _buffer.size())
+        {
+            throw std::logic_error("Modified chunk would extend beyond buffer limits");
+        }
+
         _unsyncedModifications.emplace_back(ModifiedMemoryChunk{ handle, 0, numElements });
     }
 
@@ -196,22 +214,33 @@ public:
         std::copy(elements.begin(), elements.end(), _buffer.begin() + slot.Offset + elementOffset);
         slot.Used = std::max(slot.Used, elementOffset + numElements);
 
+        if (slot.Offset + elementOffset + numElements > _buffer.size())
+        {
+            throw std::logic_error("Modified chunk would extend beyond buffer limits");
+        }
+
         _unsyncedModifications.emplace_back(ModifiedMemoryChunk{ handle, elementOffset, numElements });
     }
 
-    // Returns true if the size of this size actually changed
+    // Returns true if the size of this slot actually changed
     bool resizeData(Handle handle, std::size_t elementCount)
     {
         auto& slot = _slots[handle];
 
         if (elementCount > slot.Size)
         {
-            throw std::logic_error("Cannot resize to a large amount than allocated in GeometryStore::Buffer::resizeData");
+            throw std::logic_error("Cannot resize to a larger amount than allocated in GeometryStore::Buffer::resizeData");
         }
 
         if (slot.Used == elementCount) return false; // no size change
 
         slot.Used = elementCount;
+
+        if (slot.Offset + 0 + elementCount > _buffer.size())
+        {
+            throw std::logic_error("Modified chunk would extend beyond buffer limits");
+        }
+
         _unsyncedModifications.emplace_back(ModifiedMemoryChunk{ handle, 0, elementCount });
         return true;
     }
@@ -223,6 +252,14 @@ public:
         releasedSlot.Used = 0;
 
         _allocatedElements -= releasedSlot.Size;
+
+        for (const auto& modification : _unsyncedModifications)
+        {
+            if (modification.handle == handle)
+            {
+                int i = 6;
+            }
+        }
 
         // Check if the slot can merge with an adjacent one
         Handle slotIndexToMerge = std::numeric_limits<Handle>::max();
@@ -264,6 +301,14 @@ public:
         {
             for (const auto& transaction : transactions)
             {
+                auto slotIndex = getHandle(transaction.slot);
+                const auto& slot = _slots.at(slotIndex);
+
+                if (slot.Offset + transaction.offset + transaction.numChangedElements > _buffer.size())
+                {
+                    throw std::logic_error("Modified chunk would extend beyond buffer limits");
+                }
+
                 _unsyncedModifications.emplace_back(ModifiedMemoryChunk{
                     getHandle(transaction.slot), transaction.offset, transaction.numChangedElements });
             }
@@ -313,11 +358,15 @@ public:
             buffer->resize(currentBufferSize);
             _lastSyncedBufferSize = currentBufferSize;
 
+            rMessage() << getElementName() << "Syncing entire buffer" << std::endl;
+
             // Re-upload everything
             buffer->bind();
+            dumpSlots(buffer, "_before");
             buffer->setData(0, reinterpret_cast<unsigned char*>(_buffer.data()),
                 _buffer.size() * sizeof(ElementType));
             verifyBufferData(buffer, "After copying everything");
+            dumpSlots(buffer, "_after");
             buffer->unbind();
         }
         else
@@ -335,17 +384,30 @@ public:
 
                 minimumOffset = std::min(slot.Offset + modifiedChunk.offset, minimumOffset);
                 maximumOffset = std::max(slot.Offset + modifiedChunk.offset + modifiedChunk.numElements, maximumOffset);
+
+                if (slot.Offset + modifiedChunk.offset + modifiedChunk.numElements > _buffer.size())
+                {
+                    //throw std::logic_error("Modified chunk cannot extend beyond buffer limits");
+                }
+
                 elementsToCopy += modifiedChunk.numElements;
             }
+
+            // FIX: The maximum offset must not exceed the buffer limits
+            //maximumOffset = std::min(_buffer.size(), maximumOffset);
 
             // Copy the data in one single operation or in multiple, depending on the effort
             if (elementsToCopy > 0)
             {
                 buffer->bind();
 
+                dumpSlots(buffer, "_before");
+
                 // Less than a couple of operations will be copied piece by piece
                 if (_unsyncedModifications.size() < 100)
                 {
+                    rMessage() << getElementName() << "Syncing < 100 modifications (" << elementsToCopy << " elements)" << std::endl;
+
                     for (auto modifiedChunk : _unsyncedModifications)
                     {
                         auto& slot = _slots[modifiedChunk.handle];
@@ -357,12 +419,15 @@ public:
                 }
                 else // copy everything in between minimum and maximum in one operation
                 {
+                    rMessage() << getElementName() << "Syncing range modification (" << elementsToCopy << " elements, range = [" << minimumOffset << "," << maximumOffset << "])" << std::endl;
+
                     buffer->setData(minimumOffset * sizeof(ElementType),
                         reinterpret_cast<unsigned char*>(_buffer.data() + minimumOffset),
                         (maximumOffset - minimumOffset) * sizeof(ElementType));
                 }
 
                 verifyBufferData(buffer, "After copying elements");
+                dumpSlots(buffer, "_after");
 
                 buffer->unbind();
             }
@@ -372,12 +437,19 @@ public:
     }
 
 private:
+    const char* getElementName()
+    {
+        return std::is_same_v<ElementType, unsigned int> ? "[Indices]: " : "[Vertices]: ";
+    }
+
     void verifyBufferData(const IBufferObject::Ptr& buffer, const char* eventString)
     {
-        if (!std::is_same_v<ElementType, unsigned int>) return;
+        //if (!std::is_same_v<ElementType, unsigned int>) return;
 
-        for (const auto& slot : _slots)
+        for (auto slotIndex = 0; slotIndex < _slots.size(); ++slotIndex)
         {
+            const auto& slot = _slots.at(slotIndex);
+
             if (!slot.Occupied) continue;
 
             auto bufferData = buffer->getData(slot.Offset * sizeof(ElementType), slot.Used * sizeof(ElementType));
@@ -388,11 +460,67 @@ private:
             {
                 if (_buffer.at(slot.Offset + i) != bufferElements[i])
                 {
-                    rMessage() << "Buffer data corruption (" << eventString << ")" << std::endl;
+                    rMessage() << getElementName() << "Buffer data corruption in slot index " << slotIndex << " (" << eventString << ")" << std::endl;
+                    dumpSlots(buffer, "_corruption");
                     return;
                 }
             }
         }
+    }
+
+    void dumpSlots(const IBufferObject::Ptr& buffer, const char* suffix)
+    {
+        if (!std::is_same_v<ElementType, unsigned int>) return;
+
+        std::ofstream local(std::string("c:/temp/local_buffer") + suffix + ".txt");
+        std::ofstream fbo(std::string("c:/temp/frame_buffer") + suffix + ".txt");
+
+        std::map<std::size_t, const SlotInfo*> _sortedSlots;
+
+        for (auto slotIndex = 0; slotIndex < _slots.size(); ++slotIndex)
+        {
+            const auto& slot = _slots.at(slotIndex);
+            _sortedSlots[slot.Offset] = &slot;
+        }
+
+        for (const auto& [slotIndex, slotPtr] : _sortedSlots)
+        {
+            const auto& slot = *slotPtr;
+
+            auto slotInfo = fmt::format("Slot {0:0000} (OFS: {1:00000} S: {2:00000} U: {3:00000})", slotIndex, slot.Offset, slot.Size, slot.Used);
+
+            local << slotInfo;
+            fbo << slotInfo;
+
+            if (!slot.Occupied)
+            {
+                local << "-\n";
+                fbo << "-\n";
+                continue;
+            }
+
+            // Dump data
+            auto bufferData = buffer->getData(slot.Offset * sizeof(ElementType), slot.Used * sizeof(ElementType));
+            auto bufferElements = reinterpret_cast<const ElementType*>(bufferData.data());
+
+            local << "[";
+            fbo << "[";
+
+            for (auto i = 0; i < slot.Used; ++i)
+            {
+                local << detail::formatElement(_buffer.at(slot.Offset + i));
+                fbo << detail::formatElement(bufferElements[i]);
+            }
+
+            local << "]";
+            fbo << "]";
+
+            local << "\n";
+            fbo << "\n";
+        }
+
+        local.close();
+        fbo.close();
     }
 
     bool findLeftFreeSlot(const SlotInfo& slotToTouch, Handle& found)
