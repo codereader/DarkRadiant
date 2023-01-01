@@ -1458,6 +1458,27 @@ TEST_F(MaterialsTest, MaterialParserStageCondition)
     EXPECT_EQ(material->getLayer(0)->getConditionExpression()->getExpressionString(), "(parm4 > 0)");
 }
 
+TEST_F(MaterialsTest, MaterialParserFrobstageTexture)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobStage1");
+
+    // TODO
+}
+
+TEST_F(MaterialsTest, MaterialParserFrobstageDiffuse)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobStage2");
+
+    // TODO
+}
+
+TEST_F(MaterialsTest, MaterialParserFrobstageNone)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobStage3");
+
+    // TODO
+}
+
 TEST_F(MaterialsTest, MaterialFrobStageDetection)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobstage_present1");

@@ -1,0 +1,31 @@
+
+textures/parsertest/frobStage1
+{
+    stone
+    description	"vine_friendly"
+
+    diffusemap      textures/some/thing
+    bumpmap         textures/some/thing_local
+
+    frobstage_texture textures/some/thing 0.15 0.40
+}
+
+textures/parsertest/frobStage2
+{
+	stone
+
+	qer_editorimage		textures/some/thing_ed
+	diffusemap			textures/some/thing
+
+	frobstage_diffuse 0.25 0.50
+}
+
+textures/parsertest/frobStage3
+{
+	stone
+
+	qer_editorimage		textures/some/thing_ed
+	diffusemap			textures/some/thing
+
+	frobstage_none
+}
