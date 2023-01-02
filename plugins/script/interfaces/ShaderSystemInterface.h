@@ -635,6 +635,44 @@ public:
         if (_material) _material->setLightFalloffCubeMapType(type);
     }
 
+    Material::FrobStageType getFrobStageType()
+    {
+        return _material ? _material->getFrobStageType() : Material::FrobStageType::Default;
+    }
+
+    void setFrobStageType(Material::FrobStageType type)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setFrobStageType(type);
+    }
+
+    std::string getFrobStageMapExpressionString()
+    {
+        return _material && _material->getFrobStageMapExpression() ? _material->getFrobStageMapExpression()->getExpressionString() : "";
+    }
+
+    void setFrobStageMapExpressionFromString(const std::string& expr)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setFrobStageMapExpressionFromString(expr);
+    }
+
+    Vector3 getFrobStageRgbParameter(std::size_t index)
+    {
+        return _material ? _material->getFrobStageRgbParameter(index) : Vector3(0, 0, 0);
+    }
+
+    void setFrobStageRgbParameter(std::size_t index, const Vector3& value)
+    {
+        throwIfMaterialCannotBeModified();
+        if (_material) _material->setFrobStageRgbParameter(index, value);
+    }
+
+    void setFrobStageParameter(std::size_t index, double value)
+    {
+        setFrobStageRgbParameter(index, Vector3(value, value, value));
+    }
+
     std::string getRenderBumpArguments()
     {
         return _material ? _material->getRenderBumpArguments() : std::string();
