@@ -91,8 +91,12 @@ public:
 	std::string getDescription() const override;
     void setDescription(const std::string& description) override;
     FrobStageType getFrobStageType() override;
+    void setFrobStageType(FrobStageType type) override;
     IMapExpression::Ptr getFrobStageMapExpression() override;
+    void setFrobStageMapExpressionFromString(const std::string& expr) override;
     Vector3 getFrobStageRgbParameter(std::size_t index) override;
+    void setFrobStageParameter(std::size_t index, double value) override;
+    void setFrobStageRgbParameter(std::size_t index, const Vector3& value) override;
 	std::string getDefinition() override;
 	bool isAmbientLight() const override;
 	bool isBlendLight() const override;

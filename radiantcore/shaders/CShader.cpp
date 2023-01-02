@@ -196,14 +196,38 @@ Material::FrobStageType CShader::getFrobStageType()
     return _template->getFrobStageType();
 }
 
+void CShader::setFrobStageType(Material::FrobStageType type)
+{
+    ensureTemplateCopy();
+    // TODO
+}
+
 IMapExpression::Ptr CShader::getFrobStageMapExpression()
 {
     return _template->getFrobStageMapExpression();
 }
 
+void CShader::setFrobStageMapExpressionFromString(const std::string& expr)
+{
+    ensureTemplateCopy();
+    // TODO
+}
+
 Vector3 CShader::getFrobStageRgbParameter(std::size_t index)
 {
     return _template->getFrobStageRgbParameter(index);
+}
+
+void CShader::setFrobStageParameter(std::size_t index, double value)
+{
+    ensureTemplateCopy();
+    // TODO
+}
+
+void CShader::setFrobStageRgbParameter(std::size_t index, const Vector3& value)
+{
+    ensureTemplateCopy();
+    // TODO
 }
 
 bool CShader::IsInUse() const {

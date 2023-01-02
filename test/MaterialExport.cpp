@@ -1174,6 +1174,56 @@ TEST_F(MaterialExportTest, EditorImage)
     expectDefinitionDoesNotContain(material, "qer_editorimage");
 }
 
+TEST_F(MaterialExportTest, FrobStageKeywords)
+{
+    auto material = GlobalMaterialManager().getMaterial("textures/exporttest/empty");
+
+    EXPECT_EQ(material->getFrobStageType(), Material::FrobStageType::Default);
+
+    // None
+    material->setFrobStageType(Material::FrobStageType::None);
+    EXPECT_TRUE(material->isModified());
+    expectDefinitionContains(material, "frobstage_none");
+
+    // Diffuse
+    material->setFrobStageType(Material::FrobStageType::Diffuse);
+    material->setFrobStageParameter(0, 0.2);
+    material->setFrobStageParameter(1, 0.5);
+    expectDefinitionContains(material, "frobstage_diffuse 0.2 0.5");
+
+    material->setFrobStageRgbParameter(1, Vector3(0.1, 0.3, 0.5));
+    expectDefinitionContains(material, "frobstage_diffuse 0.2 (0.1 0.3 0.5)");
+
+    material->setFrobStageRgbParameter(0, Vector3(0.7, 0.8, 0.6));
+    expectDefinitionContains(material, "frobstage_diffuse (0.7 0.8 0.6) (0.1 0.3 0.5)");
+
+    // Texture
+    material->setFrobStageType(Material::FrobStageType::Texture);
+
+    // Still contains the RGB values from the diffuse test above
+    expectDefinitionContains(material, "frobstage_texture _white (0.7 0.8 0.6) (0.1 0.3 0.5)");
+
+    material->setFrobStageParameter(0, 0.2);
+    material->setFrobStageParameter(1, 0.5);
+    expectDefinitionContains(material, "frobstage_texture _white 0.2 0.5");
+
+    material->setFrobStageMapExpressionFromString("textures/just/something");
+    expectDefinitionContains(material, "frobstage_texture textures/just/something 0.2 0.5");
+
+    material->setFrobStageRgbParameter(0, Vector3(0.7, 0.8, 0.6));
+    expectDefinitionContains(material, "frobstage_texture textures/just/something (0.7 0.8 0.6) 0.5");
+
+    material->setFrobStageRgbParameter(1, Vector3(0.1, 0.3, 0.5));
+    expectDefinitionContains(material, "frobstage_texture textures/just/something (0.7 0.8 0.6) (0.1 0.3 0.5)");
+
+    // Back to default
+    material->setFrobStageType(Material::FrobStageType::Default);
+    EXPECT_TRUE(material->isModified());
+
+    expectDefinitionDoesNotContainAnyOf(material, { "frobstage_none", "frobstage_diffuse",
+        "frobstage_texture", "textures/just/something", "(0.7 0.8 0.6)" });
+}
+
 TEST_F(MaterialExportTest, AmbientRimColour)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/withAmbientRimColor");

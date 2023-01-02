@@ -427,12 +427,24 @@ public:
     // Returns the frob stage type this material is using (defaults to FrobStageType::Default)
     virtual FrobStageType getFrobStageType() = 0;
 
+    // Sets the frob stage type. Might assign a _white frob stage map expression (if empty).
+    virtual void setFrobStageType(FrobStageType type) = 0;
+
     // When FrobStageType::Texture: defines the texture that has been declared using frobstage_texture
     virtual shaders::IMapExpression::Ptr getFrobStageMapExpression() = 0;
+
+    // Sets the frob stage map expression (applicable to FrobStageType::Texture)
+    virtual void setFrobStageMapExpressionFromString(const std::string& expr) = 0;
 
     // frobstage_diffuse and frobstage_texture accept two (r g b) or float expressions
     // Index is [0..1]. The first parameter is additive, second is multiplicative
     virtual Vector3 getFrobStageRgbParameter(std::size_t index) = 0;
+
+    // Assigns the RGB components to the frob stage parameter with the given index => "(x y z)"
+    virtual void setFrobStageRgbParameter(std::size_t index, const Vector3& value) = 0;
+
+    // Assigns a single uniform value to the frob stage parameter with the given index => "x"
+    virtual void setFrobStageParameter(std::size_t index, double value) = 0;
 
 	 /// Return TRUE if the shader is visible, FALSE if it is filtered or
 	 /// disabled in any other way.
