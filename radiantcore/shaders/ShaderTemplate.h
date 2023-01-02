@@ -606,6 +606,10 @@ private:
 	bool parseSurfaceFlags(parser::DefTokeniser&, const std::string&);
 	bool parseMaterialType(parser::DefTokeniser&, const std::string&);
 	bool parseCondition(parser::DefTokeniser&, const std::string&);
+	bool parseFrobstageKeywords(parser::DefTokeniser&, const std::string&);
+
+    // Parses a vector3 "(x y z)" into Vector3(x,y,z) or a single float "x" into a Vector3(x,x,x)
+	Vector3 parseScalarOrVector3(parser::DefTokeniser&);
 	IShaderExpression::Ptr parseSingleExpressionTerm(parser::DefTokeniser& tokeniser);
 	void parseRenderMapSize(parser::DefTokeniser&, bool optional);
 

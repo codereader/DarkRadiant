@@ -1137,6 +1137,57 @@ bool ShaderTemplate::parseMaterialType(parser::DefTokeniser& tokeniser, const st
     return false;
 }
 
+bool ShaderTemplate::parseFrobstageKeywords(parser::DefTokeniser& tokeniser, const std::string& token)
+{
+    if (!string::starts_with(token, "frobstage_")) return false;
+
+    auto suffix = token.substr(10);
+
+    if (suffix == "texture")
+    {
+        _frobStageType = Material::FrobStageType::Texture;
+        _frobStageMapExpression = MapExpression::createForToken(tokeniser);
+        _frobStageRgbParameter[0] = parseScalarOrVector3(tokeniser);
+        _frobStageRgbParameter[1] = parseScalarOrVector3(tokeniser);
+        return true;
+    }
+
+    if (suffix == "diffuse")
+    {
+        _frobStageType = Material::FrobStageType::Diffuse;
+        _frobStageRgbParameter[0] = parseScalarOrVector3(tokeniser);
+        _frobStageRgbParameter[1] = parseScalarOrVector3(tokeniser);
+        return true;
+    }
+    
+    if (suffix == "none")
+    {
+        _frobStageType = Material::FrobStageType::None;
+        return true;
+    }
+
+    return false;
+}
+
+Vector3 ShaderTemplate::parseScalarOrVector3(parser::DefTokeniser& tokeniser)
+{
+    auto token = tokeniser.nextToken();
+
+    if (token == "(") // vector
+    {
+        auto x = string::convert<Vector3::ElementType>(tokeniser.nextToken());
+        auto y = string::convert<Vector3::ElementType>(tokeniser.nextToken());
+        auto z = string::convert<Vector3::ElementType>(tokeniser.nextToken());
+        tokeniser.assertNextToken(")");
+
+        return Vector3(x, y, z);
+    }
+
+    // scalar
+    auto value = string::convert<Vector3::ElementType>(token);
+    return Vector3(value, value, value);
+}
+
 bool ShaderTemplate::parseSurfaceFlags(parser::DefTokeniser& tokeniser,
                                        const std::string& token)
 {
@@ -1287,6 +1338,7 @@ void ShaderTemplate::parseFromTokens(parser::DefTokeniser& tokeniser)
                     if (parseBlendShortcuts(tokeniser, token)) continue;
                     if (parseSurfaceFlags(tokeniser, token)) continue;
                     if (parseMaterialType(tokeniser, token)) continue;
+                    if (parseFrobstageKeywords(tokeniser, token)) continue;
 
                     rWarning() << "Material keyword not recognised: " << token << std::endl;
 
