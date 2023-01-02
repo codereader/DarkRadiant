@@ -502,19 +502,19 @@ public:
         onTemplateChanged();
     }
 
-    Material::FrobStageType getFrobstageType()
+    Material::FrobStageType getFrobStageType()
 	{
         ensureParsed();
         return _frobStageType;
 	}
 
-    IMapExpression::Ptr getFrobstageMapExpression()
+    IMapExpression::Ptr getFrobStageMapExpression()
 	{
         ensureParsed();
         return _frobStageMapExpression;
 	}
 
-    Vector3 getFrobstageRgbParameter(std::size_t index)
+    Vector3 getFrobStageRgbParameter(std::size_t index)
 	{
         ensureParsed();
         return index < 2 ? _frobStageRgbParameter[index] : Vector3(0,0,0);

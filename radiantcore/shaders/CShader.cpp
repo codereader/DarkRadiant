@@ -191,19 +191,19 @@ void CShader::setDescription(const std::string& description)
     _template->setDescription(description);
 }
 
-Material::FrobStageType CShader::getFrobstageType()
+Material::FrobStageType CShader::getFrobStageType()
 {
-    return _template->getFrobstageType();
+    return _template->getFrobStageType();
 }
 
-IMapExpression::Ptr CShader::getFrobstageMapExpression()
+IMapExpression::Ptr CShader::getFrobStageMapExpression()
 {
-    return _template->getFrobstageMapExpression();
+    return _template->getFrobStageMapExpression();
 }
 
-Vector3 CShader::getFrobstageRgbParameter(std::size_t index)
+Vector3 CShader::getFrobStageRgbParameter(std::size_t index)
 {
-    return _template->getFrobstageRgbParameter(index);
+    return _template->getFrobStageRgbParameter(index);
 }
 
 bool CShader::IsInUse() const {
