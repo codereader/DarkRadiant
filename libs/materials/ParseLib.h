@@ -404,6 +404,27 @@ inline std::string getStringForClampType(ClampType type)
     return std::string();
 }
 
+constexpr std::pair<Material::FrobStageType, const char*> FrobStageTypeNames[]
+{
+    { Material::FrobStageType::Default, "" },
+    { Material::FrobStageType::Diffuse, "frobstage_diffuse" },
+    { Material::FrobStageType::Texture, "frobstage_texture" },
+    { Material::FrobStageType::None, "frobstage_none" },
+};
+
+inline std::string getStringForFrobStageType(Material::FrobStageType type)
+{
+    for (const auto& pair : FrobStageTypeNames)
+    {
+        if (type == pair.first)
+        {
+            return pair.second;
+        }
+    }
+
+    return std::string();
+}
+
 constexpr int NUM_MAX_VERTEX_PARMS = 4;
 constexpr int NUM_MAX_FRAGMENT_MAPS = 8;
 

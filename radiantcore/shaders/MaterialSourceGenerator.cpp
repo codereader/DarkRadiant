@@ -441,6 +441,19 @@ std::ostream& operator<<(std::ostream& stream, Doom3ShaderLayer& layer)
     return stream;
 }
 
+// Writes (x y z) or just a single number without parentheses if the vector has uniform values
+void writeScalarOrVector3(std::ostream& stream, const Vector3& vec)
+{
+    if (vec.x() == vec.y() && vec.y() == vec.z())
+    {
+        stream << vec.x();
+    }
+    else
+    {
+        stream << "(" << vec.x() << " " << vec.y() << " " << vec.z() << ")";
+    }
+}
+
 // Write the material to the given stream (one tab indentation)
 std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
 {
@@ -674,6 +687,29 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     for (const auto& layer : shaderTemplate.getLayers())
     {
         stream << *layer;
+    }
+
+    // FrobStage keywords
+    if (shaderTemplate.getFrobStageType() != Material::FrobStageType::Default)
+    {
+        stream << "\n";
+        stream << getStringForFrobStageType(shaderTemplate.getFrobStageType());
+
+        if (shaderTemplate.getFrobStageType() == Material::FrobStageType::Texture)
+        {
+            stream << " ";
+            const auto& expr = shaderTemplate.getFrobStageMapExpression();
+            stream << (expr ? expr->getExpressionString() : "_white"); // don't export invalid syntax
+        }
+
+        if (shaderTemplate.getFrobStageType() == Material::FrobStageType::Diffuse ||
+            shaderTemplate.getFrobStageType() == Material::FrobStageType::Texture)
+        {
+            stream << " ";
+            writeScalarOrVector3(stream, shaderTemplate.getFrobStageRgbParameter(0));
+            stream << " ";
+            writeScalarOrVector3(stream, shaderTemplate.getFrobStageRgbParameter(1));
+        }
     }
 
     return stream;
