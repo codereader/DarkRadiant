@@ -52,9 +52,15 @@ ShaderTemplate::ShaderTemplate(const ShaderTemplate& other) :
     _renderBumpArguments(other._renderBumpArguments),
     _renderBumpFlatArguments(other._renderBumpFlatArguments),
     _parseFlags(other._parseFlags),
-    _guiDeclName(other._guiDeclName)
+    _guiDeclName(other._guiDeclName),
+    _frobStageType(other._frobStageType)
 {
     _editorTex = other._editorTex ? MapExpression::createForString(other._editorTex->getExpressionString()) : MapExpressionPtr();
+    _frobStageMapExpression = other._frobStageMapExpression ? 
+        MapExpression::createForString(other._frobStageMapExpression->getExpressionString()) : MapExpressionPtr();
+
+    _frobStageRgbParameter[0] = other._frobStageRgbParameter[0];
+    _frobStageRgbParameter[1] = other._frobStageRgbParameter[1];
 
     _ambientRimColour[0] = other._ambientRimColour[0];
     _ambientRimColour[1] = other._ambientRimColour[1];
