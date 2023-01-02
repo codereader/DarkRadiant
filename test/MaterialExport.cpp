@@ -1200,7 +1200,7 @@ TEST_F(MaterialExportTest, FrobStageKeywords)
     // Texture
     material->setFrobStageType(Material::FrobStageType::Texture);
 
-    // Still contains the RGB values from the diffuse test above
+    // Still contains the RGB values from the diffuse test above, but with the default _white
     expectDefinitionContains(material, "frobstage_texture _white (0.7 0.8 0.6) (0.1 0.3 0.5)");
 
     material->setFrobStageParameter(0, 0.2);

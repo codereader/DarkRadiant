@@ -119,6 +119,47 @@ void ShaderTemplate::setDecalInfo(const Material::DecalInfo& info)
     onTemplateChanged();
 }
 
+void ShaderTemplate::setFrobStageType(Material::FrobStageType type)
+{
+    ensureParsed();
+
+    _frobStageType = type;
+
+    onTemplateChanged();
+}
+
+void ShaderTemplate::setFrobStageMapExpressionFromString(const std::string& expr)
+{
+    ensureParsed();
+
+    if (!expr.empty())
+    {
+        _frobStageMapExpression = MapExpression::createForString(expr);
+    }
+    else
+    {
+        _frobStageMapExpression.reset();
+    }
+
+    onTemplateChanged();
+}
+
+void ShaderTemplate::setFrobStageParameter(std::size_t index, double value)
+{
+    setFrobStageRgbParameter(index, Vector3(value, value, value));
+}
+
+void ShaderTemplate::setFrobStageRgbParameter(std::size_t index, const Vector3& value)
+{
+    if (index > 1) throw std::out_of_range("Index must be 0 or 1");
+
+    ensureParsed();
+
+    _frobStageRgbParameter[index] = value;
+
+    onTemplateChanged();
+}
+
 IShaderExpression::Ptr ShaderTemplate::parseSingleExpressionTerm(parser::DefTokeniser& tokeniser)
 {
 	std::string token = tokeniser.nextToken();

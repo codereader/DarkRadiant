@@ -520,6 +520,11 @@ public:
         return index < 2 ? _frobStageRgbParameter[index] : Vector3(0,0,0);
 	}
 
+    void setFrobStageType(Material::FrobStageType type);
+    void setFrobStageMapExpressionFromString(const std::string& expr);
+    void setFrobStageParameter(std::size_t index, double value);
+    void setFrobStageRgbParameter(std::size_t index, const Vector3& value);
+
     std::size_t addLayer(IShaderLayer::Type type);
     void removeLayer(std::size_t index);
     void swapLayerPosition(std::size_t first, std::size_t second);

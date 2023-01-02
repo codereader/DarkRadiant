@@ -199,7 +199,7 @@ Material::FrobStageType CShader::getFrobStageType()
 void CShader::setFrobStageType(Material::FrobStageType type)
 {
     ensureTemplateCopy();
-    // TODO
+    _template->setFrobStageType(type);
 }
 
 IMapExpression::Ptr CShader::getFrobStageMapExpression()
@@ -210,7 +210,7 @@ IMapExpression::Ptr CShader::getFrobStageMapExpression()
 void CShader::setFrobStageMapExpressionFromString(const std::string& expr)
 {
     ensureTemplateCopy();
-    // TODO
+    _template->setFrobStageMapExpressionFromString(expr);
 }
 
 Vector3 CShader::getFrobStageRgbParameter(std::size_t index)
@@ -221,13 +221,13 @@ Vector3 CShader::getFrobStageRgbParameter(std::size_t index)
 void CShader::setFrobStageParameter(std::size_t index, double value)
 {
     ensureTemplateCopy();
-    // TODO
+    _template->setFrobStageParameter(index, value);
 }
 
 void CShader::setFrobStageRgbParameter(std::size_t index, const Vector3& value)
 {
     ensureTemplateCopy();
-    // TODO
+    _template->setFrobStageRgbParameter(index, value);
 }
 
 bool CShader::IsInUse() const {
