@@ -52,6 +52,7 @@ print('DecalInfo.endColour: {0}'.format(newMaterial.getDecalInfo().endColour))
 print('Coverage: {0}'.format(newMaterial.getCoverage()))
 print('Light Falloff Map Type: {0}'.format(newMaterial.getLightFalloffCubeMapType()))
 print('Renderbump Arguments: {0}'.format(newMaterial.getRenderBumpArguments()))
+print('FrobStage Type: {0}'.format(newMaterial.getFrobStageType()))
 
 # There are a couple of pre-defined sort requests, corresponding to the engine code
 newMaterial.setSortRequest(dr.Material.SortRequest.NEAREST)
@@ -66,6 +67,17 @@ newMaterial.setSpectrum(5)
 newMaterial.setIsFogLight(1)
 newMaterial.setIsBlendLight(0)
 newMaterial.setDescription("New Material")
+
+newMaterial.setFrobStageType(dr.Material.FrobStageType.DIFFUSE)
+newMaterial.setFrobStageParameter(0, 0.4) # assign the same value to all RGB components
+newMaterial.setFrobStageRgbParameter(1, dr.Vector3(0.1, 0.2, 0.3)) # assign RGB components separately
+
+print('\n\Material definition with frobstage_diffuse:\n{0}\n{{{1}}}\n\n'.format(newMaterial.getName(), newMaterial.getDefinition()))
+
+newMaterial.setFrobStageType(dr.Material.FrobStageType.TEXTURE)
+newMaterial.setFrobStageMapExpressionFromString("textures/common/white")
+
+print('\n\Material definition with frobstage_texture:\n{0}\n{{{1}}}\n\n'.format(newMaterial.getName(), newMaterial.getDefinition()))
 
 stageIndex = newMaterial.addStage(dr.MaterialStage.Type.BLEND)
 

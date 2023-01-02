@@ -692,7 +692,7 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
     // FrobStage keywords
     if (shaderTemplate.getFrobStageType() != Material::FrobStageType::Default)
     {
-        stream << "\n";
+        stream << "\n\t";
         stream << getStringForFrobStageType(shaderTemplate.getFrobStageType());
 
         if (shaderTemplate.getFrobStageType() == Material::FrobStageType::Texture)
@@ -710,6 +710,8 @@ std::ostream& operator<<(std::ostream& stream, ShaderTemplate& shaderTemplate)
             stream << " ";
             writeScalarOrVector3(stream, shaderTemplate.getFrobStageRgbParameter(1));
         }
+
+        stream << "\n";
     }
 
     return stream;
