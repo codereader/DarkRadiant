@@ -91,11 +91,9 @@ protected:
     }
 };
 
-MaterialSelector::MaterialSelector(wxWindow* parent, const std::function<void()>& selectionChanged,
-    TextureFilter textureFilter) :
-    DeclarationSelector(parent, decl::Type::Material),
-    _textureFilter(textureFilter),
-	_selectionChanged(selectionChanged)
+MaterialSelector::MaterialSelector(wxWindow* parent, TextureFilter textureFilter)
+: DeclarationSelector(parent, decl::Type::Material),
+  _textureFilter(textureFilter)
 {
     AddPreviewToBottom(new TexturePreviewCombo(this));
 
@@ -114,10 +112,7 @@ MaterialPtr MaterialSelector::getSelectedShader()
 
 void MaterialSelector::onTreeViewSelectionChanged()
 {
-    if (_selectionChanged)
-    {
-        _selectionChanged();
-    }
+    _selectionChanged();
 }
 
 } // namespace
