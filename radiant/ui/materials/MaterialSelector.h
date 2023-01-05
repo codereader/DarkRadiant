@@ -38,18 +38,21 @@ public:
 private:
     TextureFilter _textureFilter;
 
-	std::function<void()> _selectionChanged;
+    sigc::signal<void()> _selectionChanged;
 
 public:
-	/** Constructor.
-	 *
-	 * @selectionChanged: Functor invoked when the tree view selection changes.
-	 * @filter: which texture set to show in the selector
-	 */
-    MaterialSelector(wxWindow* parent, const std::function<void()>& selectionChanged, TextureFilter filter);
+    /**
+     * @brief Constructor.
+     * 
+     * @param filter Texture set to show in the selector
+     */
+    MaterialSelector(wxWindow* parent, TextureFilter filter);
 
-	// Get the selected Material
-	MaterialPtr getSelectedShader();
+    // Get the selected Material
+    MaterialPtr getSelectedShader();
+
+    /// Signal emitted when the selection is changed by the user
+    sigc::signal<void()> signal_selectionChanged() const { return _selectionChanged; }
 
     void Populate() override;
 

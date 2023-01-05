@@ -8,11 +8,17 @@
 namespace ui
 {
 
-MaterialChooser::MaterialChooser(wxWindow* parent, MaterialSelector::TextureFilter filter, wxTextCtrl* targetEntry) :
-	wxutil::DeclarationSelectorDialog(decl::Type::Material, _("Choose Material"), "MaterialChooser", parent),
-	_targetEntry(targetEntry)
+MaterialChooser::MaterialChooser(wxWindow* parent, MaterialSelector::TextureFilter filter,
+                                 wxTextCtrl* targetEntry)
+: wxutil::DeclarationSelectorDialog(decl::Type::Material, _("Choose Material"), "MaterialChooser",
+                                    parent),
+  _targetEntry(targetEntry)
 {
-    SetSelector(new MaterialSelector(this, std::bind(&MaterialChooser::shaderSelectionChanged, this), filter));
+    auto* selector = new MaterialSelector(this, filter);
+    selector->signal_selectionChanged().connect(
+        sigc::mem_fun(this, &MaterialChooser::shaderSelectionChanged)
+    );
+    SetSelector(selector);
 }
 
 sigc::signal<void>& MaterialChooser::signal_shaderChanged()
