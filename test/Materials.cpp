@@ -1518,7 +1518,7 @@ TEST_F(MaterialsTest, MaterialParserFrobStageNone)
 {
     auto material = GlobalMaterialManager().getMaterial("textures/parsertest/frobStage4");
 
-    EXPECT_EQ(material->getFrobStageType(), Material::FrobStageType::None);
+    EXPECT_EQ(material->getFrobStageType(), Material::FrobStageType::NoFrobStage);
     EXPECT_FALSE(material->getFrobStageMapExpression());
 }
 

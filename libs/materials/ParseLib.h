@@ -409,7 +409,7 @@ constexpr std::pair<Material::FrobStageType, const char*> FrobStageTypeNames[]
     { Material::FrobStageType::Default, "" },
     { Material::FrobStageType::Diffuse, "frobstage_diffuse" },
     { Material::FrobStageType::Texture, "frobstage_texture" },
-    { Material::FrobStageType::None, "frobstage_none" },
+    { Material::FrobStageType::NoFrobStage, "frobstage_none" },
 };
 
 inline std::string getStringForFrobStageType(Material::FrobStageType type)

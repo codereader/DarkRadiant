@@ -1203,7 +1203,7 @@ bool ShaderTemplate::parseFrobstageKeywords(parser::DefTokeniser& tokeniser, con
     
     if (suffix == "none")
     {
-        _frobStageType = Material::FrobStageType::None;
+        _frobStageType = Material::FrobStageType::NoFrobStage;
         return true;
     }
 

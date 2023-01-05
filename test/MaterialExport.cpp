@@ -1181,7 +1181,7 @@ TEST_F(MaterialExportTest, FrobStageKeywords)
     EXPECT_EQ(material->getFrobStageType(), Material::FrobStageType::Default);
 
     // None
-    material->setFrobStageType(Material::FrobStageType::None);
+    material->setFrobStageType(Material::FrobStageType::NoFrobStage);
     EXPECT_TRUE(material->isModified());
     expectDefinitionContains(material, "frobstage_none");
 

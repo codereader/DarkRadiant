@@ -193,10 +193,10 @@ public:
     // TDM 2.11 frob stage keyword
     enum class FrobStageType
     {
-        Default,    // no frobstage keyword in this material
-        Diffuse,    // frobstage_diffuse has been declared: frobstage_diffuse 0.25 0.50
-        Texture,    // frobstage_texture textures/some/thing 0.15 0.40
-        None,       // frobstage_none
+        Default,     // no frobstage keyword in this material
+        Diffuse,     // frobstage_diffuse has been declared: frobstage_diffuse 0.25 0.50
+        Texture,     // frobstage_texture textures/some/thing 0.15 0.40
+        NoFrobStage, // frobstage_none
     };
 
 	virtual ~Material() {}

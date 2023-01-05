@@ -215,7 +215,7 @@ void ShaderSystemInterface::registerInterface(py::module& scope, py::dict& globa
         .value("DEFAULT", Material::FrobStageType::Default)
         .value("DIFFUSE", Material::FrobStageType::Diffuse)
         .value("TEXTURE", Material::FrobStageType::Texture)
-        .value("NONE", Material::FrobStageType::None)
+        .value("NONE", Material::FrobStageType::NoFrobStage)
         .export_values();
 
     py::enum_<IShaderLayer::Type>(stage, "Type")
