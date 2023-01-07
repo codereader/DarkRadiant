@@ -198,7 +198,7 @@ private:
 		double remainingWidth = _lineWidth - _charWidth;
 		double charWidth = ch.getWidth();
 
-		if (!noclip && charWidth > remainingWidth)
+		if (!noclip && charWidth > remainingWidth + 1e-3)
 		{
 			return false;
 		}
@@ -230,7 +230,7 @@ private:
 			wordWidthFit -= word.back().getWidth();
 		}
 
-		if (!noclip && wordWidthFit > remainingWidth)
+		if (!noclip && wordWidthFit > remainingWidth + 1e-3)
 		{
 			return false;
 		}
