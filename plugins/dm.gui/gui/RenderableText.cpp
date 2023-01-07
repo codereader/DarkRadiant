@@ -173,6 +173,8 @@ void RenderableText::recompile()
 					else
 					{
 						// Not enough space, add one more character then break
+						// stgatilov: that's for compability with Doom 3 engine
+						// see also: #5914 and https://forums.thedarkmod.com/index.php?/topic/21710-implicit-linebreaks-in-text/
 						curLine->addChar(word[0], glyphSet, true);
 						word.erase(0, 1);
 						break;
