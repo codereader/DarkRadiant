@@ -1,3 +1,11 @@
+darkradiant (3.7.0~jammy1) jammy; urgency=medium
+
+  * New feature: Skin Editor
+  * Script Window usability improvements
+  * Various bug fixes.
+
+ -- Matthew Mott <orbweaver3d@gmail.com>  Wed, 11 Jan 2023 20:29:21 +0000
+
 darkradiant (3.6.0~jammy1) jammy; urgency=medium
 
   * New Selection Focus feature (Ctrl-F).
