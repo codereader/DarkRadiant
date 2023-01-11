@@ -1,6 +1,7 @@
 #include "AuiLayout.h"
 
 #include "i18n.h"
+#include "registry/registry.h"
 #include "ui/imenumanager.h"
 #include "ui/imainframe.h"
 #include "ui/iuserinterface.h"
